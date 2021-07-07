@@ -302,6 +302,26 @@ class Translator extends Util\Singleton
     }
 
     /**
+     * Converte il numero in ore.
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    public static function numberToHours($string)
+    {
+        $string = !isset($string) ? 0 : $string;
+
+        $ore = number_format($string, 2);
+        $splitted_hour = explode('.', $ore);
+        $hour = $splitted_hour[0];
+        $minutes = ($splitted_hour[1] / 100) * 60;
+        $time = $hour.':'.sprintf('%02d', $minutes);
+
+        return $time;
+    }
+
+    /**
      * Aggiunge i contenuti della cartella specificata alle traduzioni disponibili.
      *
      * @param string $path
@@ -358,25 +378,5 @@ class Translator extends Util\Singleton
         );
 
         self::$formatter->setPrecision(auth()->check() ? setting('Cifre decimali per importi') : 2);
-    }
-
-     /**
-     * Converte il numero in ore.
-     *
-     * @param string     $string
-     *
-     * @return string
-     */
-    public static function numberToHours($string)
-    {
-        $string = !isset($string) ? 0 : $string;
-
-        $ore = number_format($string, 2);
-        $splitted_hour = explode('.', $ore);
-        $hour = $splitted_hour[0];
-        $minutes = ($splitted_hour[1]/100)*60;
-        $time = $hour.":".sprintf("%02d", $minutes);
-
-        return $time;
     }
 }

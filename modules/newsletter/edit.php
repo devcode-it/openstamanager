@@ -147,8 +147,8 @@ echo '
         <h3 class="panel-title">
             '.tr('Destinatari').'
             <span> ('.$anagrafiche->count().')</span> <div class="pull-right" >
-            '.(($anagrafiche->where('email', '')->count()>0) ? ' <span title="'.tr('Indirizzi e-mail mancanti').'" class="tip label label-danger clickable">'.$anagrafiche->where('email', '')->count().'</span>' : '')
-            .(($anagrafiche->where('enable_newsletter', false)->count()>0) ? ' <span title="'.tr('Indirizzi e-mail senza consenso per newsletter').'" class="tip label label-warning clickable">'.$anagrafiche->where('enable_newsletter', false)->count().'</span>' : '').'</div>
+            '.(($anagrafiche->where('email', '')->count() > 0) ? ' <span title="'.tr('Indirizzi e-mail mancanti').'" class="tip label label-danger clickable">'.$anagrafiche->where('email', '')->count().'</span>' : '')
+            .(($anagrafiche->where('enable_newsletter', false)->count() > 0) ? ' <span title="'.tr('Indirizzi e-mail senza consenso per newsletter').'" class="tip label label-warning clickable">'.$anagrafiche->where('enable_newsletter', false)->count().'</span>' : '').'</div>
         </h3>
     </div>
 
@@ -175,7 +175,7 @@ if (!$anagrafiche->isEmpty()) {
         $mail_id = $anagrafica->pivot->id_email;
         $mail = Mail::find($mail_id);
         if (!empty($mail) && !empty($mail->sent_at)) {
-            $data = '<span class="fa fa-paper-plane text-success" > '. timestampFormat($mail->sent_at).'</span>';
+            $data = '<span class="fa fa-paper-plane text-success" > '.timestampFormat($mail->sent_at).'</span>';
         } else {
             $data = '<span class="fa fa-clock-o text-info" >
              '.tr('Non ancora inviata').'</span>';
@@ -188,10 +188,10 @@ if (!$anagrafiche->isEmpty()) {
                     <td class="text-left">'.$anagrafica->tipo.'</td>
                     <td class="text-left">
                     '.((!empty($anagrafica->email) ? '
-                    {[ "type": "text", "name": "email", "id": "email_'.rand(0,99999).'", "readonly": "1", "class": "email-mask", "value": "'.$anagrafica->email.'", "validation": "email" ]}': '<span class="fa fa-close text-danger"> '.tr('Indirizzo e-mail mancante').'</span>')).'</td>
+                    {[ "type": "text", "name": "email", "id": "email_'.rand(0, 99999).'", "readonly": "1", "class": "email-mask", "value": "'.$anagrafica->email.'", "validation": "email" ]}' : '<span class="fa fa-close text-danger"> '.tr('Indirizzo e-mail mancante').'</span>')).'</td>
                     <td class="text-center">'.$data.'</td>
                     <td class="text-left">
-                    '.((!empty($anagrafica->enable_newsletter)) ? '<span class="fa fa-check text-success"> '.tr('Abilitato').'</span>': '<span class="fa fa-exclamation-triangle text-warning"> '.tr('Disabilitato').'</span>').'
+                    '.((!empty($anagrafica->enable_newsletter)) ? '<span class="fa fa-check text-success"> '.tr('Abilitato').'</span>' : '<span class="fa fa-exclamation-triangle text-warning"> '.tr('Disabilitato').'</span>').'
                     </td>
                     <td class="text-center">
                         <a class="btn btn-danger ask btn-xs" data-backto="record-edit" data-op="remove_receiver" data-id="'.$anagrafica->id.'">

@@ -30,7 +30,7 @@ $revisione = Preventivo::find($id_record)->ultima_revisione;
 
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "value": "Revisione n. <?php echo $revisione+1; ?>" ]}
+            {[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "value": "Revisione n. <?php echo $revisione + 1; ?>" ]}
         </div>
     </div>
 

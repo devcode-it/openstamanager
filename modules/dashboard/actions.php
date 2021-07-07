@@ -109,9 +109,8 @@ switch (filter('op')) {
             ];
         }
 
-        if (setting('Visualizza informazioni aggiuntive sul calendario')){
-
-            ## Box allDay
+        if (setting('Visualizza informazioni aggiuntive sul calendario')) {
+            //# Box allDay
             $query = 'SELECT
                 co_preventivi.id,
                 co_preventivi.nome,
@@ -134,35 +133,35 @@ switch (filter('op')) {
             $alldays = $dbo->fetchArray($query);
 
             foreach ($alldays as $preventivo) {
-                if(!empty($preventivo['data_accettazione']) && $preventivo['data_accettazione']!='0000-00-00'){
+                if (!empty($preventivo['data_accettazione']) && $preventivo['data_accettazione'] != '0000-00-00') {
                     $results[] = [
                         'id' => 'A_'.$modulo_preventivi->id.'_'.$preventivo['id'],
                         'idintervento' => $preventivo['id'],
-                        'idtecnico' => "",
+                        'idtecnico' => '',
                         'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div>'.'<b>Accettazione prev. '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
                         'start' => $preventivo['data_accettazione'],
                         'end' => $preventivo['data_accettazione'],
                         'url' => base_path().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$preventivo['id'],
-                        'backgroundColor' => "#ff7f50",
-                        'textColor' => color_inverse("#ff7f50"),
-                        'borderColor' => "#ff7f50",
+                        'backgroundColor' => '#ff7f50',
+                        'textColor' => color_inverse('#ff7f50'),
+                        'borderColor' => '#ff7f50',
                         'allDay' => true,
                         'eventStartEditable' => false,
                     ];
                 }
 
-                if($preventivo['data_accettazione'] != $preventivo['data_conclusione'] && $preventivo['data_conclusione']!='0000-00-00' && !empty($preventivo['data_conclusione']) ){
+                if ($preventivo['data_accettazione'] != $preventivo['data_conclusione'] && $preventivo['data_conclusione'] != '0000-00-00' && !empty($preventivo['data_conclusione'])) {
                     $results[] = [
                         'id' => 'B_'.$modulo_preventivi->id.'_'.$preventivo['id'],
                         'idintervento' => $preventivo['id'],
-                        'idtecnico' => "",
+                        'idtecnico' => '',
                         'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div>'.'<b>Conclusione prev. '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
                         'start' => $preventivo['data_conclusione'],
                         'end' => $preventivo['data_conclusione'],
                         'url' => base_path().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$preventivo['id'],
-                        'backgroundColor' => "#ff7f50",
-                        'textColor' => color_inverse("#ff7f50"),
-                        'borderColor' => "#ff7f50",
+                        'backgroundColor' => '#ff7f50',
+                        'textColor' => color_inverse('#ff7f50'),
+                        'borderColor' => '#ff7f50',
                         'allDay' => true,
                         'eventStartEditable' => false,
                     ];
@@ -208,7 +207,7 @@ switch (filter('op')) {
         $timeStart = filter('timeStart');
         $timeEnd = filter('timeEnd');
 
-        if (empty($allday)){
+        if (empty($allday)) {
             // Lettura dati intervento di riferimento
             $query = 'SELECT in_interventi_tecnici.idintervento, in_interventi.id, idtecnico, orario_inizio, orario_fine, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS nome_tecnico, (SELECT colore FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS colore FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE in_interventi.id='.prepare($id).' '.Modules::getAdditionalsQuery('Interventi');
             $rs = $dbo->fetchArray($query);
@@ -237,7 +236,7 @@ switch (filter('op')) {
                 $tooltip = '<b>'.tr('Numero intervento').'</b>: '.$rs[0]['codice'].'<br/>';
 
                 $tooltip .= '<b>'.tr('Data richiesta').'</b>: '.Translator::timestampToLocale($rs[0]['data_richiesta']).'<br/>';
-                
+
                 if (!empty($rs[0]['data_scadenza'])) {
                     $tooltip .= '<b>'.tr('Data scadenza').'</b>: '.Translator::timestampToLocale($rs[0]['data_scadenza']).'<br/>';
                 }
@@ -262,7 +261,6 @@ switch (filter('op')) {
                     $tooltip .= '<b>'.tr('Informazioni aggiuntive').'</b>: '.nl2br($rs[0]['informazioniaggiuntive']).'<br/>';
                 }
 
-
                 $tooltip .= '<b>'.tr('Ragione sociale').'</b>: '.nl2br($rs[0]['ragione_sociale']).'<br/>';
 
                 if (!empty($rs[0]['telefono'])) {
@@ -280,9 +278,7 @@ switch (filter('op')) {
                 if (!empty($rs[0]['note_anagrafica'])) {
                     $tooltip .= '<b>'.tr('Note anagrafica').'</b>: '.nl2br($rs[0]['note_anagrafica']).'<br/>';
                 }
-               
-            }else{
-
+            } else {
                 $query = 'SELECT
                 co_preventivi.nome,
                 co_preventivi.numero,
@@ -293,17 +289,12 @@ switch (filter('op')) {
                 FROM co_preventivi
                     LEFT JOIN co_statipreventivi ON co_preventivi.idstato = co_statipreventivi.id
                 WHERE co_preventivi.id='.prepare($id);
-              
-                
+
                 $rs = $dbo->fetchArray($query);
 
-
                 $tooltip = '<b>Prev. '.$rs[0]['numero'].'</b> '.$rs[0]['nome'].''.(($rs[0]['have_attachments']) ? ' <i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'<br><b>'.tr('Cliente').':</b> '.$rs[0]['cliente'];
-
-
             }
 
-            
             $tooltip .= '
             <script type="text/javascript">
                 $(".shorten").shorten({
@@ -312,7 +303,6 @@ switch (filter('op')) {
                     showChars : 200
                 });
             </script>';
-
 
             echo $tooltip;
         }

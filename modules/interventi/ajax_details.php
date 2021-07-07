@@ -5,9 +5,8 @@ include_once __DIR__.'/../../core.php';
 $id_anagrafica = get('id_anagrafica');
 $op = get('op');
 
-switch($op){
-    case "dettagli":
-
+switch ($op) {
+    case 'dettagli':
         echo "
         <div class='row'>";
 
@@ -17,18 +16,18 @@ switch($op){
         echo "
             <div class='col-md-4'>
                 <b>CONTRATTI:</b><hr style='margin-top:5px;margin-bottom:15px;'>";
-        if(sizeof($rs_contratti)>0){
-            foreach($rs_contratti AS $contratto){
+        if (sizeof($rs_contratti) > 0) {
+            foreach ($rs_contratti as $contratto) {
                 echo "
                 <div class='alert alert-info' style='margin-bottom: 10px;'>
-                    ".$contratto['descrizione']."
-                </div>";
+                    ".$contratto['descrizione'].'
+                </div>';
             }
-        }else{
-            echo "Nessun contratto per questo cliente...";
+        } else {
+            echo 'Nessun contratto per questo cliente...';
         }
-        echo "  
-            </div>";
+        echo '  
+            </div>';
 
         //Fatture emesse o parzialnente pagate
         $rs_documenti = $dbo->fetchArray("SELECT co_documenti.id AS id, CONCAT('Fattura ', numero_esterno, ' del ', DATE_FORMAT(data, '%d/%m/%Y')) AS descrizione FROM co_documenti WHERE idstatodocumento IN(SELECT id FROM co_statidocumento WHERE descrizione IN('Emessa', 'Parzialmente pagato')) AND idanagrafica=".prepare($id_anagrafica));
@@ -36,43 +35,40 @@ switch($op){
         echo "
             <div class='col-md-4'>
                 <b>Fatture:</b><hr style='margin-top:5px;margin-bottom:15px;'>";
-        if(sizeof($rs_documenti)>0){
-            foreach($rs_documenti AS $documento){
-
-                $rs_scadenze = $dbo->fetchArray("SELECT * FROM co_scadenziario WHERE iddocumento=".prepare($documento['id']));
+        if (sizeof($rs_documenti) > 0) {
+            foreach ($rs_documenti as $documento) {
+                $rs_scadenze = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE iddocumento='.prepare($documento['id']));
 
                 echo "
                     <div class='alert alert-info' style='margin-bottom: 10px;'>
-                        ".$documento['descrizione']."<br>";
-                foreach($rs_scadenze AS $scadenza){
-                    echo Translator::dateToLocale($scadenza['scadenza'])." - ".Translator::numberToLocale($scadenza['da_pagare'])." €<br>";
+                        ".$documento['descrizione'].'<br>';
+                foreach ($rs_scadenze as $scadenza) {
+                    echo Translator::dateToLocale($scadenza['scadenza']).' - '.Translator::numberToLocale($scadenza['da_pagare']).' €<br>';
                 }
-                echo "
-                    </div>";
+                echo '
+                    </div>';
             }
-        }else{
-            echo "Nessuna fattura per questo cliente...";
+        } else {
+            echo 'Nessuna fattura per questo cliente...';
         }
-        echo "  
-            </div>";
+        echo '  
+            </div>';
 
         //Note dell'anagrafica
-        $rs_anagrafica = $dbo->fetchOne("SELECT note FROM an_anagrafiche WHERE idanagrafica=".prepare($id_anagrafica));
+        $rs_anagrafica = $dbo->fetchOne('SELECT note FROM an_anagrafiche WHERE idanagrafica='.prepare($id_anagrafica));
 
-        if($rs_anagrafica['note']!=''){
+        if ($rs_anagrafica['note'] != '') {
             echo "
             <div class='col-md-4'>
                 <b>NOTE CLIENTE:</b><hr style='margin-top:5px;margin-bottom:15px;'>
-                <div class='alert alert-info' style='margin-bottom: 10px;'>".$rs_anagrafica['note']."</div>
-            </div>";
-        }else{
-            echo "Nessuna nota per questo cliente...";
+                <div class='alert alert-info' style='margin-bottom: 10px;'>".$rs_anagrafica['note'].'</div>
+            </div>';
+        } else {
+            echo 'Nessuna nota per questo cliente...';
         }
 
-        echo "
-        </div>";
+        echo '
+        </div>';
 
         break;
 }
-
-?>

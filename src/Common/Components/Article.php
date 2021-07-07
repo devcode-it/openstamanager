@@ -294,7 +294,7 @@ abstract class Article extends Accounting
 
         if ($documento instanceof \Modules\Interventi\Intervento) {
             $id_sede = $this->idsede_partenza;
-        } else{
+        } else {
             $id_sede = $documento->direzione == 'uscita' ? $documento->idsede_destinazione : $documento->idsede_partenza;
         }
 

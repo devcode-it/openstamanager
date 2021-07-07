@@ -121,19 +121,17 @@ switch (filter('op')) {
 
         //Controllo indirizzo e-mail aggiunto
         foreach ($newsletter->anagrafiche as $anagrafica) {
-
-            if (!empty($anagrafica['email'])){
+            if (!empty($anagrafica['email'])) {
                 $check = Validate::isValidEmail($anagrafica['email']);
 
                 if (empty($check['valid-format'])) {
                     $errors[] = $anagrafica['email'];
                 }
-            }else{
+            } else {
                 $errors[] = tr('Indirizzo e-mail mancante per "_EMAIL_"', [
                     '_EMAIL_' => $anagrafica['ragione_sociale'],
                 ]);
             }
-
         }
 
         if (!empty($errors)) {
@@ -148,7 +146,7 @@ switch (filter('op')) {
             flash()->warning(tr('Attenzione questi indirizzi e-mail non sembrano essere validi: _EMAIL_ ', [
                 '_EMAIL_' => $message,
             ]));
-        }else{
+        } else {
             flash()->info(tr('Nuovi destinatari aggiunti correttamente alla newsletter!'));
         }
 
@@ -167,22 +165,17 @@ switch (filter('op')) {
         //$receiver = post('id');
 
         $anagrafiche = $newsletter->anagrafiche;
-        
-        foreach ($anagrafiche as $anagrafica) {
-            
-            $newsletter->anagrafiche()->detach($anagrafica->id);
 
+        foreach ($anagrafiche as $anagrafica) {
+            $newsletter->anagrafiche()->detach($anagrafica->id);
         }
 
-        
         flash()->info(tr('Tutti i destinatari sono stati rimossi dalla newsletter!'));
 
         break;
 
-
     // Duplica newsletter
     case 'copy':
-
         $new = $newsletter->replicate();
         $new->state = 'DEV';
         $new->completed_at = null;
@@ -190,10 +183,7 @@ switch (filter('op')) {
 
         $id_record = $new->id;
 
-       
         flash()->info(tr('Newsletter duplicata correttamente!'));
 
         break;
-
-
 }

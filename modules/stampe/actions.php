@@ -21,7 +21,6 @@ include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'update':
-
         if (!empty(intval(post('predefined'))) && !empty(post('module'))) {
             $dbo->query('UPDATE zz_prints SET predefined = 0 WHERE zz_prints.id != '.prepare($id_record).' AND id_module = '.post('module'));
         }
@@ -34,7 +33,6 @@ switch (post('op')) {
         $print->order = post('order');
         $print->predefined = intval(post('predefined'));
 
-       
         $print->save();
 
         flash()->info(tr('Modifiche salvate correttamente'));

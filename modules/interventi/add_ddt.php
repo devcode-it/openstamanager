@@ -37,6 +37,7 @@ if (!empty($id_documento)) {
         'documento' => $documento,
         'documento_finale' => $documento_finale,
         'tipo_documento_finale' => Intervento::class,
+        'superamento_soglia_qta' => setting('Permetti il superamento della soglia quantità dei documenti di origine'),
     ];
 
     echo App::load('importa.php', [], $options, true);

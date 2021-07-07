@@ -38,7 +38,7 @@ echo '
             echo ' <td></td>
             <td class="text-right">'.moneyFormat(abs($record['totale']), 2).'</td>';
         }
-        
+
         $scalare += $record['totale'];
 
         echo '

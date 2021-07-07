@@ -179,13 +179,13 @@ if (!$righe->isEmpty()) {
     <tbody>';
 
     foreach ($righe as $riga) {
-        if(setting('Formato ore in stampa')=='Sessantesimi'){
-            if($riga->um=='ore'){
+        if (setting('Formato ore in stampa') == 'Sessantesimi') {
+            if ($riga->um == 'ore') {
                 $qta = Translator::numberToHours($riga->qta);
-            } else{
+            } else {
                 $qta = Translator::numberToLocale($riga->qta, 'qta');
             }
-        } else{
+        } else {
             $qta = Translator::numberToLocale($riga->qta, 'qta');
         }
         // Articolo
@@ -332,9 +332,9 @@ foreach ($sessioni as $i => $sessione) {
 }
 
 // Ore lavorate
-if(setting('Formato ore in stampa')=='Sessantesimi'){
+if (setting('Formato ore in stampa') == 'Sessantesimi') {
     $ore_totali = Translator::numberToHours($documento->ore_totali);
-} else{
+} else {
     $ore_totali = Translator::numberToLocale($documento->ore_totali, 2);
 }
 

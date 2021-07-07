@@ -31,7 +31,7 @@ switch (post('op')) {
         $lvl = post('lvl');
 
         if (post('id_conto') !== null) {
-            if($lvl=='2'){
+            if ($lvl == '2') {
                 // Controllo che non sia stato usato un numero non valido del conto
                 $query = 'SELECT idpianodeiconti1, numero FROM co_pianodeiconti2 WHERE numero='.prepare($numero).' AND idpianodeiconti1='.prepare($id_conto);
                 $rs = $dbo->fetchArray($query);
@@ -39,7 +39,7 @@ switch (post('op')) {
                 if (sizeof($rs) == 0) {
                     $query = 'INSERT INTO co_pianodeiconti2(numero, descrizione, idpianodeiconti1) VALUES('.prepare($numero).', '.prepare($descrizione).', '.prepare($id_conto).')';
                 }
-            }else {
+            } else {
                 // Controllo che non sia stato usato un numero non valido del conto
                 $query = 'SELECT idpianodeiconti2, numero FROM co_pianodeiconti3 WHERE numero='.prepare($numero).' AND idpianodeiconti2='.prepare($id_conto);
                 $rs = $dbo->fetchArray($query);
@@ -52,7 +52,7 @@ switch (post('op')) {
             if ($dbo->query($query)) {
                 flash()->info(tr('Nuovo conto aggiunto!'));
             } else {
-            flash()->error(tr('Il numero scelto è già esistente!'));
+                flash()->error(tr('Il numero scelto è già esistente!'));
             }
         }
 

@@ -181,9 +181,9 @@ abstract class Component extends Model
     /**
      * Copia l'oggetto (articolo, riga, descrizione) nel corrispettivo per il documento indicato.
      *
-     * @param Document      $document           Documento di destinazione
-     * @param float|null    $qta                Quantità da riportare
-     * @param boolean       $evadi_qta_parent   Definisce se evadere la quantità di provenienza 
+     * @param Document   $document         Documento di destinazione
+     * @param float|null $qta              Quantità da riportare
+     * @param bool       $evadi_qta_parent Definisce se evadere la quantità di provenienza
      *
      * @return self
      */
@@ -367,7 +367,7 @@ abstract class Component extends Model
             $original = $this->getOriginalComponent();
 
             // Controllo per evitare di superare la quantità totale del componente di origine
-            if ($original->qta_rimanente < $diff) {
+            if ($original->qta_rimanente < $diff && empty(setting('Permetti il superamento della soglia quantità dei documenti di origine'))) {
                 $diff = $original->qta_rimanente;
                 $value = $previous + $diff;
             }

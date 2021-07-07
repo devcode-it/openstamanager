@@ -693,7 +693,7 @@ class FatturaElettronica
         if ($is_privato_estero) {
             $result['IdFiscaleIVA']['IdPaese'] = $anagrafica->nazione->iso2;
             $result['IdFiscaleIVA']['IdCodice'] = '999999999';
-            unset( $result['Anagrafica']['CodiceFiscale'] );
+            unset($result['Anagrafica']['CodiceFiscale']);
         }
 
         if (!empty($anagrafica['nome']) or !empty($anagrafica['cognome'])) {
@@ -910,7 +910,7 @@ class FatturaElettronica
             // Con la nuova versione in vigore dal 01/01/2021, questo nodo diventa ripetibile.
             $result['DatiRitenuta'] = [
                 'TipoRitenuta' => (Validate::isValidTaxCode($azienda['codice_fiscale']) and $cliente['tipo'] == 'Privato') ? 'RT01' : 'RT02',
-                'ImportoRitenuta' =>  $totale_ritenutaacconto,
+                'ImportoRitenuta' => $totale_ritenutaacconto,
                 'AliquotaRitenuta' => $percentuale,
                 'CausalePagamento' => setting("Causale ritenuta d'acconto"),
             ];
@@ -1027,7 +1027,6 @@ class FatturaElettronica
 
         // Se imposto il vettore deve essere indicata anche la p.iva nella sua anagrafica
         if ($documento->tipo->descrizione == 'Fattura accompagnatoria di vendita') {
-
             if ($documento['idvettore']) {
                 $vettore = Anagrafica::find($documento['idvettore']);
                 $result['DatiAnagraficiVettore'] = static::getDatiAnagrafici($vettore);
@@ -1050,27 +1049,26 @@ class FatturaElettronica
             }
         }
 
-        if (!empty($documento['idsede_destinazione'])){
-            
+        if (!empty($documento['idsede_destinazione'])) {
             $sede = $database->fetchOne('SELECT * FROM an_sedi WHERE id='.prepare($documento['idsede_destinazione']));
 
-            if (!empty($sede['indirizzo'])){
+            if (!empty($sede['indirizzo'])) {
                 $result['IndirizzoResa']['Indirizzo'] = $sede['indirizzo'];
             }
 
-            if (!empty($sede['cap'])){
+            if (!empty($sede['cap'])) {
                 $result['IndirizzoResa']['CAP'] = $sede['cap'];
             }
 
-            if (!empty($sede['citta'])){
+            if (!empty($sede['citta'])) {
                 $result['IndirizzoResa']['Comune'] = $sede['citta'];
             }
 
-            if (!empty($sede['provincia'])){
+            if (!empty($sede['provincia'])) {
                 $result['IndirizzoResa']['Provincia'] = $sede['provincia'];
             }
 
-            if (!empty($sede['id_nazione'])){
+            if (!empty($sede['id_nazione'])) {
                 $rs_nazione = $database->fetchOne('SELECT * FROM an_nazioni WHERE id='.prepare($sede['id_nazione']));
 
                 $result['IndirizzoResa']['Nazione'] = $rs_nazione['iso2'];

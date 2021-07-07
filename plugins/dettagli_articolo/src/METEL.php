@@ -26,7 +26,7 @@ namespace Plugins\DettagliArticolo;
  */
 class METEL
 {
-    const HEADER = [
+    public const HEADER = [
         1 => 'Identificazione tracciato',
         21 => 'Sigla Azienda',
         24 => 'Partita IVA',
@@ -41,7 +41,7 @@ class METEL
         153 => 'Filler (spazi)',
     ];
 
-    const ROW = [
+    public const ROW = [
         1 => 'Sigla Marchio',
         4 => 'Codice Prodotto Azienda',
         20 => 'Codice EAN',

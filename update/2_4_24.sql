@@ -64,3 +64,6 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 -- Aggiunta vista "Esigibilità" per il modulo "IVA" 
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
 (NULL, (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='IVA'), 'Esigibilità', 'IF(esigibilita=\'I\', \'IVA ad esigibilità immediata\', IF(esigibilita=\'D\', \'IVA ad esigibilità differita\', \'Scissione dei pagamenti\'))', 5, 1, 0, 0, '', '', 1, 0, 0);
+
+-- Gestione righe da documenti esterni
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES ('Permetti il superamento della soglia quantità dei documenti di origine', '0', 'boolean', '1', 'Generali', '20', NULL);

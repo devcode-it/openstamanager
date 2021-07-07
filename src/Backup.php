@@ -29,7 +29,7 @@ use Util\Zip;
 class Backup
 {
     /** @var string Pattern per i nomi dei backup */
-    const PATTERN = 'OSM backup YYYY-m-d H_i_s';
+    public const PATTERN = 'OSM backup YYYY-m-d H_i_s';
 
     /** @var array Elenco delle variabili che identificano i backup giornalieri */
     protected static $daily_replaces = [

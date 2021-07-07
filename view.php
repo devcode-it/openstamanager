@@ -30,74 +30,75 @@ if (empty($file)) {
 $link = base_path().'/'.$file->filepath;
 
 // Force download of the file
-if (get('force') == '1') {
+if (get('download') == '1') {
     header('Content-Type: application/octet-stream');
-    header("Content-Transfer-Encoding: Binary"); 
-    header("Content-disposition: attachment; filename=\"" . basename($file->original_name) . "\""); 
-    readfile($docroot.'/'.$file->filepath);
+    header('Content-Transfer-Encoding: Binary');
+    header('Content-disposition: attachment; filename="'.basename($file->original_name).'"');
+    readfile(base_dir().'/'.$file->filepath);
+    //download(base_dir().'/'.$file->filepath, basename($file->original_name));
     exit();
+}
+
+if ($file->isFatturaElettronica()) {
+    $content = file_get_contents(base_dir().'/'.$file->filepath);
+
+    // Individuazione stylesheet
+    $default_stylesheet = 'asso-invoice';
+
+    $name = basename($file->original_name);
+    $filename = explode('.', $name)[0];
+    $pieces = explode('_', $filename);
+    $stylesheet = $pieces[2];
+
+    $stylesheet = base_dir().'/plugins/xml/'.$stylesheet.'.xsl';
+    $stylesheet = file_exists($stylesheet) ? $stylesheet : base_dir().'/plugins/xml/'.$default_stylesheet.'.xsl';
+
+    // XML
+    $xml = new DOMDocument();
+    $xml->loadXML($content);
+
+    // XSL
+    $xsl = new DOMDocument();
+    $xsl->load($stylesheet);
+
+    // XSLT
+    $xslt = new XSLTProcessor();
+    $xslt->importStylesheet($xsl);
+
+    echo '
+<style>
+    #notifica {
+        min-width: 860px !important;
+    }
+</style>';
+
+    echo $xslt->transformToXML($xml);
 } else {
-    if ($file->isFatturaElettronica()) {
-        $content = file_get_contents(base_dir().'/'.$file->filepath);
+    echo '
+<style>
+    body, iframe, img{
+        border: 0;
+        margin: 0;
+        max-width: 100%;
+    }
+    iframe{
+        width:100%;
+        height:100%;
+        min-height: 500px;
+    }
+</style>';
 
-        // Individuazione stylesheet
-        $default_stylesheet = 'asso-invoice';
-
-        $name = basename($file->original_name);
-        $filename = explode('.', $name)[0];
-        $pieces = explode('_', $filename);
-        $stylesheet = $pieces[2];
-
-        $stylesheet = base_dir().'/plugins/xml/'.$stylesheet.'.xsl';
-        $stylesheet = file_exists($stylesheet) ? $stylesheet : base_dir().'/plugins/xml/'.$default_stylesheet.'.xsl';
-
-        // XML
-        $xml = new DOMDocument();
-        $xml->loadXML($content);
-
-        // XSL
-        $xsl = new DOMDocument();
-        $xsl->load($stylesheet);
-
-        // XSLT
-        $xslt = new XSLTProcessor();
-        $xslt->importStylesheet($xsl);
-
+    if ($file->isImage()) {
         echo '
-    <style>
-        #notifica {
-            min-width: 860px !important;
-        }
-    </style>';
-
-        echo $xslt->transformToXML($xml);
+    <img src="'.$link.'"></img>';
     } else {
+        if ($file->isPDF()) {
+            $src = \Prints::getPDFLink($file->filepath);
+        }
+
         echo '
-    <style>
-        body, iframe, img{
-            border: 0;
-            margin: 0;
-            max-width: 100%;
-        }
-        iframe{
-            width:100%;
-            height:100%;
-            min-height: 500px;
-        }
-    </style>';
-
-        if ($file->isImage()) {
-            echo '
-        <img src="'.$link.'"></img>';
-        } else {
-            if ($file->isPDF()) {
-                $src = \Prints::getPDFLink($file->filepath);
-            }
-
-            echo '
-        <iframe src="'.base_path().'/view.php?file_id='.$file_id.'&force=1">
-            <a src="'.base_path().'/view.php?file_id='.$file_id.'&force=1">'.tr('Il browser non supporta i contenuti iframe: clicca qui per raggiungere il file originale').'</a>
-        </iframe>';
-        }
+    <iframe src="'.base_path().'/view.php?file_id='.$file_id.'&download=1">
+        <a src="'.base_path().'/view.php?file_id='.$file_id.'&download=1">'.tr('Il browser non supporta i contenuti iframe: clicca qui per raggiungere il file originale').'</a>
+    </iframe>';
     }
 }

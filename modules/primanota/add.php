@@ -148,7 +148,7 @@ foreach ($id_documenti as $id_documento) {
     if ($is_insoluto) {
         $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare) AS rata, iddocumento FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) = ABS(pagato) ORDER BY updated_at DESC LIMIT 0, 1');
     } else {
-        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, iddocumento FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato)'. (!empty($id_scadenze) ? 'AND id IN('.implode(',',$id_scadenze).')' : '').' ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
+        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, iddocumento FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato)'.(!empty($id_scadenze) ? 'AND id IN('.implode(',', $id_scadenze).')' : '').' ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
     }
 
     // Selezione prima scadenza

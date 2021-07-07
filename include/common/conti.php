@@ -22,15 +22,6 @@ if ($module['name'] != 'Fatture di acquisto' && $module['name'] != 'Fatture di v
     return;
 }
 
-if ($options['dir'] == 'entrata') {
-    $show_rivalsa = ((setting('Percentuale rivalsa') != '') or (!empty($result['idrivalsainps'])));
-    $show_ritenuta_acconto = ((setting("Percentuale ritenuta d'acconto") != '') or (!empty($result['idritenutaacconto'])));
-    $show_ritenuta_acconto |= !empty($options['id_ritenuta_acconto_predefined']);
-} else {
-    $show_rivalsa = 1;
-    $show_ritenuta_acconto = 1;
-}
-
 // Percentuale rivalsa e Percentuale ritenuta d'acconto
 if ($options['action'] == 'edit') {
     $id_rivalsa_inps = $result['idrivalsainps'];
@@ -54,37 +45,30 @@ if ($options['action'] == 'edit') {
 
 $calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto ?: setting("Metodologia calcolo ritenuta d'acconto predefinito");
 
-if ($show_rivalsa == 1 || $show_ritenuta_acconto == 1) {
-    echo '
+echo '
 <div class="row">';
 
     // Rivalsa INPS
-    if ($show_rivalsa == 1) {
-        echo '
+    echo '
     <div class="col-md-4">
         {[ "type": "select", "label": "'.tr('Rivalsa').'", "name": "id_rivalsa_inps", "value": "'.$id_rivalsa_inps.'", "values": "query=SELECT * FROM co_rivalse", "help": "'.(($options['dir'] == 'entrata') ? setting('Tipo Cassa Previdenziale') : null).'" ]}
     </div>';
-    }
 
     // Ritenuta d'acconto
-    if ($show_ritenuta_acconto == 1) {
-        echo '
+    echo '
     <div class="col-md-4">
         {[ "type": "select", "label": "'.tr("Ritenuta d'acconto").'", "name": "id_ritenuta_acconto", "value": "'.$id_ritenuta_acconto.'", "values": "query=SELECT * FROM co_ritenutaacconto" ]}
     </div>';
-    }
 
     // Calcola ritenuta d'acconto su
-    if ($show_ritenuta_acconto == 1) {
-        echo '
+    echo '
     <div class="col-md-4">
-        {[ "type": "select", "label": "'.tr("Calcola ritenuta d'acconto su").'", "name": "calcolo_ritenuta_acconto", "value": "'.$calcolo_ritenuta_acconto.'", "values": "list=\"IMP\":\"Imponibile\", \"IMP+RIV\":\"Imponibile + rivalsa\"", "required": "1" ]}
+        {[ "type": "select", "label": "'.tr("Calcola ritenuta d'acconto su").'", "name": "calcolo_ritenuta_acconto", "value": "'.$calcolo_ritenuta_acconto.'", "values": "list=\"IMP\":\"Imponibile\", \"IMP+RIV\":\"Imponibile + rivalsa\""]}
     </div>';
-    }
 
     echo '
 </div>';
-}
+
 
 if (!empty($options['show-ritenuta-contributi']) || empty($options['hide_conto'])) {
     $width = !empty($options['show-ritenuta-contributi']) && empty($options['hide_conto']) ? 6 : 12;
@@ -111,3 +95,25 @@ if (!empty($options['show-ritenuta-contributi']) || empty($options['hide_conto']
     echo '
 </div>';
 }
+
+echo '
+<script>
+    $(document).ready(function(){
+        if(input("id_ritenuta_acconto").get()){
+            $("#calcolo_ritenuta_acconto").prop("required", true);
+        } else{
+            $("#calcolo_ritenuta_acconto").prop("required", false);
+            input("calcolo_ritenuta_acconto").set("");
+        }
+
+        $("#id_ritenuta_acconto").on("change", function(){
+            if(input("id_ritenuta_acconto").get()){
+                $("#calcolo_ritenuta_acconto").prop("required", true);
+                
+            } else{
+                $("#calcolo_ritenuta_acconto").prop("required", false);
+                input("calcolo_ritenuta_acconto").set("");
+            }
+        });
+    });
+</script>';

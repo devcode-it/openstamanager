@@ -171,8 +171,6 @@ if (in_array($final_module['name'], ['Fatture di vendita', 'Fatture di acquisto'
     }
     $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
 
-    $show_rivalsa = !empty($id_rivalsa_inps);
-    $show_ritenuta_acconto = setting("Percentuale ritenuta d'acconto") != '' || !empty($id_ritenuta_acconto);
     $show_ritenuta_contributi = !empty($documento_finale['id_ritenuta_contributi']);
 
     $id_conto = $documento_finale['idconto'];
@@ -187,20 +185,17 @@ if (in_array($final_module['name'], ['Fatture di vendita', 'Fatture di acquisto'
         </div>
         <div class="box-body">';
 
-    if ($show_rivalsa || $show_ritenuta_acconto) {
         echo '
             <div class="row">';
 
         // Rivalsa INPS
-        if ($show_rivalsa) {
             echo '
                 <div class="col-md-4">
                     {[ "type": "select", "label": "'.tr('Rivalsa').'", "name": "id_rivalsa_inps", "value": "'.$id_rivalsa_inps.'", "values": "query=SELECT * FROM co_rivalse", "help": "'.($options['dir'] == 'entrata' ? setting('Tipo Cassa Previdenziale') : null).'" ]}
                 </div>';
-        }
+
 
         // Ritenuta d'acconto
-        if ($show_ritenuta_acconto) {
             echo '
                 <div class="col-md-4">
                     {[ "type": "select", "label": "'.tr("Ritenuta d'acconto").'", "name": "id_ritenuta_acconto", "value": "'.$id_ritenuta_acconto.'", "values": "query=SELECT * FROM co_ritenutaacconto" ]}
@@ -211,11 +206,9 @@ if (in_array($final_module['name'], ['Fatture di vendita', 'Fatture di acquisto'
                 <div class="col-md-4">
                     {[ "type": "select", "label": "'.tr("Calcola ritenuta d'acconto su").'", "name": "calcolo_ritenuta_acconto", "value": "'.$calcolo_ritenuta_acconto.'", "values": "list=\"IMP\":\"Imponibile\", \"IMP+RIV\":\"Imponibile + rivalsa\"", "required": "1" ]}
                 </div>';
-        }
 
         echo '
             </div>';
-    }
 
     $width = $show_ritenuta_contributi ? 6 : 12;
 
@@ -550,4 +543,23 @@ echo '
 }
 
 ricalcolaTotale();  
+
+    $(document).ready(function(){
+        if(input("id_ritenuta_acconto").get()){
+            $("#calcolo_ritenuta_acconto").prop("required", true);
+        } else{
+            $("#calcolo_ritenuta_acconto").prop("required", false);
+            input("calcolo_ritenuta_acconto").set("");
+        }
+
+        $("#id_ritenuta_acconto").on("change", function(){
+            if(input("id_ritenuta_acconto").get()){
+                $("#calcolo_ritenuta_acconto").prop("required", true);
+                
+            } else{
+                $("#calcolo_ritenuta_acconto").prop("required", false);
+                input("calcolo_ritenuta_acconto").set("");
+            }
+        });
+    });
 </script>';

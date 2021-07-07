@@ -26,8 +26,8 @@ $componenti = $dbo->fetchArray('SELECT my_componenti_articoli.*, my_impianti.ida
 $installati = 0;
 $disinstallati = 0;
 
-foreach($componenti as $componente){
-    if(!empty($componente['pre_id_articolo'])){
+foreach ($componenti as $componente) {
+    if (!empty($componente['pre_id_articolo'])) {
         $id_articolo = $componente['pre_id_articolo'];
         $check_value = 1;
         $box = 'danger';
@@ -36,8 +36,8 @@ foreach($componenti as $componente){
         $text = 'DISINSTALLATO';
         $class = 'danger';
         $title = ''.tr('Storico').'';
-        $table ='default';
-        if($disinstallati==0){
+        $table = 'default';
+        if ($disinstallati == 0) {
             echo '
             <div class="row">
                 <div class="col-md-12 text-center">
@@ -45,9 +45,9 @@ foreach($componenti as $componente){
                 </div>
             </div>
             <hr>';
-            $disinstallati++;
+            ++$disinstallati;
         }
-    } else{
+    } else {
         $id_articolo = $componente['id_articolo'];
         $check_value = 0;
         $box = 'primary';
@@ -56,8 +56,8 @@ foreach($componenti as $componente){
         $text = 'INSTALLATO';
         $class = 'primary';
         $title = ''.tr('Dati').'';
-        $table ='primary';
-        if($installati==0){
+        $table = 'primary';
+        if ($installati == 0) {
             echo '
             <div class="row">
                 <div class="col-md-12 text-center">
@@ -65,15 +65,15 @@ foreach($componenti as $componente){
                 </div>
             </div>
             <hr>';
-            $installati++;
+            ++$installati;
         }
     }
 
     $allegati = $dbo->fetchOne('SELECT COUNT(id) AS num FROM zz_files WHERE id_plugin='.prepare($id_plugin).' AND id_record='.$componente['id'].' GROUP BY id_record')['num'];
 
-    if($allegati){
+    if ($allegati) {
         $icon = 'fa fa-check text-success';
-    } else{
+    } else {
         $icon = 'fa fa-times text-danger';
     }
 
@@ -158,13 +158,13 @@ foreach($componenti as $componente){
                                     </a>
                                 </div>';
 
-                            if(!empty($componente['id_articolo'])){
-                                echo '
+    if (!empty($componente['id_articolo'])) {
+        echo '
                                 <div class="col-md-9">
                                     <button type="button" class="btn btn-warning pull-right" onclick="sostituisci('.$componente['id'].')"><i class="fa fa-cog"></i> '.tr('Sostituisci').'</button>
                                 </div>';
-                            }
-                                echo '
+    }
+    echo '
                                 <div class="col-md-1 pull-right">
                                     <button type="submit" class="btn btn-success pull-right"><i class="fa fa-check"></i> '.tr('Salva').'</button>
                                 </div>
@@ -174,7 +174,7 @@ foreach($componenti as $componente){
                 </div>
             </div>
         </div>
-    </form>'; 
+    </form>';
 }
 
 echo '

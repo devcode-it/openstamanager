@@ -48,11 +48,11 @@ class MissingReceiptTask extends Manager
             ->get();
 
         // Ricerca delle ricevute dedicate
-        foreach ($in_attesa as $fattura){
+        foreach ($in_attesa as $fattura) {
             $ricevute = Interaction::getInvoiceRecepits($fattura->id);
 
             // Importazione di tutte le ricevute trovate
-            foreach ($ricevute as $ricevuta){
+            foreach ($ricevute as $ricevuta) {
                 $name = $ricevuta['name'];
 
                 Ricevuta::process($name);

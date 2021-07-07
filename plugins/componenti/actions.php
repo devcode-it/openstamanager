@@ -25,17 +25,17 @@ $operazione = filter('op');
 
 switch ($operazione) {
     case 'update':
-        $articolo = (array)post('id_articolo');
-        $data_installazione = (array)post('data_installazione');
-        $data_disinstallazione = (array)post('data_disinstallazione');
-        $data_registrazione = (array)post('data_registrazione');
-        $note = (array)post('note');
+        $articolo = (array) post('id_articolo');
+        $data_installazione = (array) post('data_installazione');
+        $data_disinstallazione = (array) post('data_disinstallazione');
+        $data_registrazione = (array) post('data_registrazione');
+        $note = (array) post('note');
 
         $key = key($articolo);
 
-        if(post('sostituito')){
+        if (post('sostituito')) {
             $field_articolo = 'pre_id_articolo';
-        } else{
+        } else {
             $field_articolo = 'id_articolo';
         }
 
@@ -46,7 +46,7 @@ switch ($operazione) {
             'data_registrazione' => $data_registrazione[$key] ?: null,
             'note' => $note[$key],
         ], ['id' => $key]);
-        
+
         flash()->info(tr('Salvataggio completato!'));
         $dbo->commitTransaction();
         header('Location: '.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'#tab_'.$id_plugin);
@@ -69,11 +69,10 @@ switch ($operazione) {
         $old_id = get('id_old');
         $old = $dbo->selectOne('my_componenti_articoli', '*', ['id' => $old_id]);
 
-        if(!empty($old['id_articolo'])){
-
-            if(empty($old['data_disinstallazione'])){
+        if (!empty($old['id_articolo'])) {
+            if (empty($old['data_disinstallazione'])) {
                 $data = Carbon::now();
-            } else{
+            } else {
                 $data = $old['data_disinstallazione'];
             }
 
@@ -81,7 +80,7 @@ switch ($operazione) {
                 'pre_id_articolo' => $old['id_articolo'],
                 'id_articolo' => 0,
                 'data_disinstallazione' => $data,
-            ],[
+            ], [
                 'id' => $old_id,
             ]);
 
@@ -102,7 +101,7 @@ switch ($operazione) {
             ]);
 
             flash()->info(tr('Informazioni salvate correttamente!'));
-        } else{
+        } else {
             flash()->warning(tr('Inserire un articolo prima di effettuare la sostituzione!'));
         }
 

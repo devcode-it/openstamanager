@@ -96,17 +96,17 @@ class DettaglioPrezzo extends Model
             ->whereNull('massimo');
     }
 
-    public static function dettagli($id_articolo, $id_anagrafica, $direzione, $qta=null)
+    public static function dettagli($id_articolo, $id_anagrafica, $direzione, $qta = null)
     {
         $dettagli = self::where('id_articolo', $id_articolo)
             ->where('id_anagrafica', $id_anagrafica)
             ->where('dir', $direzione);
-            
-        if($qta==null){
+
+        if ($qta == null) {
             $dettagli = $dettagli
                 ->whereNotNull('minimo')
                 ->whereNotNull('massimo');
-        } else{
+        } else {
             $dettagli = $dettagli
                 ->where('minimo', '<=', $qta)
                 ->where('massimo', '>=', $qta);

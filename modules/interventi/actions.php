@@ -308,7 +308,7 @@ switch (post('op')) {
         }
 
         $qta = post('qta');
-        
+
         $articolo->idsede_partenza = post('idsede_partenza');
         $articolo->descrizione = post('descrizione');
         $articolo->um = post('um') ?: null;
@@ -413,7 +413,7 @@ switch (post('op')) {
         if (post('create_document') == 'on') {
             $stato = Stato::find(post('id_stato_intervento'));
             $tipo = TipoSessione::find(post('id_tipo_intervento'));
-            
+
             $anagrafica = post('idanagrafica') ? Anagrafica::find(post('idanagrafica')) : $documento->anagrafica;
 
             $intervento = Intervento::build($anagrafica, $tipo, $stato, post('data'));
@@ -437,12 +437,12 @@ switch (post('op')) {
 
                 $copia = $riga->copiaIn($intervento, $qta);
 
-            // Aggiornamento seriali
-            if ($copia->isArticolo()) {
-                $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
+                // Aggiornamento seriali
+                if ($copia->isArticolo()) {
+                    $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
 
-                $copia->serials = $serials;
-            }
+                    $copia->serials = $serials;
+                }
 
                 $copia->save();
             }

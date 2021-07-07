@@ -23,7 +23,7 @@ include_once __DIR__.'/../../core.php';
 // select-options
 
 if (setting('Attiva scorciatoie da tastiera')) {
-echo '<div class="alert alert-info">
+    echo '<div class="alert alert-info">
     <i class="fa fa-info-circle"></i> '.tr('Scorciatoie da tastiera: <b>F7</b> - Barcode, <b>F8</b> - Carico, <b>F9</b> - Sarico, <b>F10</b> - Spostamento').'
 </div>';
 }

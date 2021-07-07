@@ -28,7 +28,7 @@ $module_anagrafiche = Modules::get('Anagrafiche');
 // Verifica aggiuntive sulla sequenzialità dei numeri
 $numero_previsto = verifica_numero_intervento($intervento);
 
-if (!empty($numero_previsto) && intval((setting('Verifica numero intervento'))) ) {
+if (!empty($numero_previsto) && intval((setting('Verifica numero intervento')))) {
     echo '
 <div class="alert alert-warning">
     <i class="fa fa-warning"></i> '.tr("E' assente una attività di numero _NUM_ in data precedente o corrispondente a _DATE_: si potrebbero verificare dei problemi con la numerazione corrente delle attività", [
@@ -386,7 +386,7 @@ echo '
 
 		<div class="panel-body">
         <?php
-        if($show_prezzi){
+        if ($show_prezzi) {
             echo "
             <div class=\"pull-right\">
                 <a class='btn btn-default btn-details' onclick=\"$('.extra').removeClass('hide'); $(this).addClass('hide'); $('#dontshowall_dettagli').removeClass('hide');\" id='showall_dettagli'><i class='fa fa-square-o'></i> <?php echo tr('Visualizza dettaglio costi'); ?></a>

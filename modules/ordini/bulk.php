@@ -19,11 +19,11 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
 use Modules\Fatture\Tipo;
 use Modules\Ordini\Ordine;
-use Modules\Articoli\Articolo as ArticoloOriginale;
 
 $module_fatture = 'Fatture di vendita';
 

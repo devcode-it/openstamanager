@@ -24,9 +24,8 @@ use Carbon\CarbonInterval;
 use Common\Components\Component;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
-use Modules\Interventi\Intervento;
-use Modules\Ordini\Ordine;
 use Modules\Fatture\Fattura;
+use Modules\Interventi\Intervento;
 use Modules\TipiIntervento\Tipo as TipoSessione;
 use Traits\RecordTrait;
 use Traits\ReferenceTrait;
@@ -253,7 +252,7 @@ class Preventivo extends Document
         if ($qta_evasa == 0) {
             $descrizione = 'In lavorazione';
             $codice_intervento = 'OK';
-        } else if($trigger->getDocument() instanceof Fattura){
+        } elseif ($trigger->getDocument() instanceof Fattura) {
             $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
             $codice_intervento = 'FAT';
         } else {

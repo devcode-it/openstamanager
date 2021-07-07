@@ -34,11 +34,11 @@ $final_module = Modules::get($name);
 // IVA predefinita
 $id_iva = $id_iva ?: setting('Iva predefinita');
 
-if($final_module['name']=='Interventi'){
+if ($final_module['name'] == 'Interventi') {
     $righe = $documento->getRighe()->where('qta_rimanente', '>', 0)->where('is_descrizione', '=', 0);
-}elseif($final_module['name']=='Ordini fornitore'){
+} elseif ($final_module['name'] == 'Ordini fornitore') {
     $righe = $documento->getRighe();
-}else{
+} else {
     $righe = $documento->getRighe()->where('qta_rimanente', '>', 0);
 }
 
@@ -266,19 +266,19 @@ echo '
             <tbody id="righe_documento_importato">';
 
 foreach ($righe as $i => $riga) {
-    if($final_module['name']=='Ordini fornitore'){
+    if ($final_module['name'] == 'Ordini fornitore') {
         $qta_rimanente = $riga['qta'];
-    }else{
+    } else {
         $qta_rimanente = $riga['qta_rimanente'];
     }
 
     $attr = 'checked="checked"';
-    if($original_module['name']=='Preventivi'){
-        if(empty($riga['confermato']) && $riga['is_descrizione']==0){
+    if ($original_module['name'] == 'Preventivi') {
+        if (empty($riga['confermato']) && $riga['is_descrizione'] == 0) {
             $attr = '';
         }
     }
-    
+
     // Descrizione
     echo '
                 <tr data-local_id="'.$i.'">
@@ -312,7 +312,7 @@ foreach ($righe as $i => $riga) {
                     <td style="vertical-align:middle">
                         {[ "type": "number", "name": "qta_da_evadere['.$riga['id'].']", "id": "qta_'.$i.'", "required": 1, "value": "'.$qta_rimanente.'", "decimals": "qta", "min-value": "0", "extra": "'.(($riga['is_descrizione']) ? 'readonly' : '').' onkeyup=\"ricalcolaTotaleRiga('.$i.');\"" ]}
                     </td>';
- 
+
     echo '
                     <td style="vertical-align:middle" class="text-right">
                         <span id="subtotale_'.$i.'"></span>

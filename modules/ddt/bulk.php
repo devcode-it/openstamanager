@@ -19,11 +19,11 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
 use Modules\Fatture\Tipo;
-use Modules\Articoli\Articolo as ArticoloOriginale;
 
 if ($module['name'] == 'Ddt di vendita') {
     $dir = 'entrata';

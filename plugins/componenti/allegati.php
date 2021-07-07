@@ -19,4 +19,4 @@
 
 include_once __DIR__.'/../../core.php';
 
-echo '{( "name": "filelist_and_upload", "id":"'.rand(1,999).'", "id_record": "'.get('id').'", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'" )}';
+echo '{( "name": "filelist_and_upload", "id":"'.rand(1, 999).'", "id_record": "'.get('id').'", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'" )}';

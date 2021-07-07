@@ -469,7 +469,7 @@ switch (post('op')) {
                 $copia->qta = $qta;
                 $copia->qta_evasa = 0;
                 $copia->costo_unitario = 0;
-                
+
                 // Impostazione al prezzo di acquisto per Articoli
                 if ($copia->isArticolo()) {
                     $copia->setSconto(0, 'PRC');
@@ -477,11 +477,11 @@ switch (post('op')) {
                     $articolo = $copia->articolo;
 
                     $fornitore = DettaglioPrezzo::dettagli($riga->idarticolo, $anagrafica->id, $dir, $qta)->first();
-                    if(empty($fornitore)){
-                        $fornitore = DettaglioPrezzo::dettaglioPredefinito($riga->idarticolo, $anagrafica->id, $dir)->first(); 
+                    if (empty($fornitore)) {
+                        $fornitore = DettaglioPrezzo::dettaglioPredefinito($riga->idarticolo, $anagrafica->id, $dir)->first();
                     }
 
-                    $prezzo_unitario = $fornitore->prezzo_unitario-($fornitore->prezzo_unitario*$fornitore->percentuale/100);
+                    $prezzo_unitario = $fornitore->prezzo_unitario - ($fornitore->prezzo_unitario * $fornitore->percentuale / 100);
 
                     $copia->setPrezzoUnitario($fornitore ? $prezzo_unitario : $articolo->prezzo_acquisto, $copia->aliquota->id);
                     $copia->setSconto($fornitore->sconto_percentuale ?: 0, 'PRC');
@@ -496,7 +496,7 @@ switch (post('op')) {
             $ordine->idstatoordine = post('id_stato');
             $ordine->save();
         }
-        
+
         ricalcola_costiagg_ordine($id_record);
 
         flash()->info(tr('Ordine _NUM_ aggiunto!', [
@@ -545,11 +545,11 @@ switch (post('op')) {
                     $articolo = $copia->articolo;
 
                     $fornitore = DettaglioPrezzo::dettagli($riga->idarticolo, $anagrafica->id, $dir, $qta)->first();
-                    if(empty($fornitore)){
-                        $fornitore = DettaglioPrezzo::dettaglioPredefinito($riga->idarticolo, $anagrafica->id, $dir)->first(); 
+                    if (empty($fornitore)) {
+                        $fornitore = DettaglioPrezzo::dettaglioPredefinito($riga->idarticolo, $anagrafica->id, $dir)->first();
                     }
-                    
-                    $prezzo_unitario = $fornitore->prezzo_unitario-($fornitore->prezzo_unitario*$fornitore->percentuale/100);
+
+                    $prezzo_unitario = $fornitore->prezzo_unitario - ($fornitore->prezzo_unitario * $fornitore->percentuale / 100);
 
                     $copia->setPrezzoUnitario($fornitore ? $prezzo_unitario : $articolo->prezzo_acquisto, $copia->aliquota->id);
                     $copia->setSconto($fornitore->sconto_percentuale ?: 0, 'PRC');

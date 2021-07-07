@@ -287,7 +287,6 @@ switch (post('op')) {
 
         break;
 
-
     // Elenco fatture Scadute per il cliente
     case 'fatture_scadute':
         $id_anagrafica = post('id_anagrafica');
@@ -313,7 +312,6 @@ switch (post('op')) {
 
         break;
 
-
     // eliminazione documento
     case 'delete':
         try {
@@ -324,7 +322,7 @@ switch (post('op')) {
 
             // Azzeramento collegamento della rata contrattuale alla pianificazione
             $dbo->query('UPDATE co_fatturazione_contratti SET iddocumento=0 WHERE iddocumento='.prepare($id_record));
-            
+
             // Eliminazione allegati collegati
             Uploads::deleteLinked([
                 'id_module' => $id_module,

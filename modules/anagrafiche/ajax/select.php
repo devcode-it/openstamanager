@@ -295,9 +295,9 @@ switch ($resource) {
                 $filter[] = 'id='.prepare($element);
             }
 
-            if( isset($superselect['idclientefinale']) ){
+            if (isset($superselect['idclientefinale'])) {
                 $where[] = '(idanagrafica='.prepare($superselect['idanagrafica']).' OR idanagrafica='.prepare($superselect['idclientefinale']).')';
-            }else{
+            } else {
                 $where[] = 'idanagrafica='.prepare($superselect['idanagrafica']);
             }
 

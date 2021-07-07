@@ -241,14 +241,14 @@ class CSV extends CSVImporter
             }
         }
 
-         // Gestione um
-         $um = null;
-         if (!empty($record['um'])) {
-             $um = $database->fetchOne('SELECT id FROM `mg_unitamisura` WHERE `valore`='.prepare($record['um']));
-             if (empty($um)) {
+        // Gestione um
+        $um = null;
+        if (!empty($record['um'])) {
+            $um = $database->fetchOne('SELECT id FROM `mg_unitamisura` WHERE `valore`='.prepare($record['um']));
+            if (empty($um)) {
                 $database->query('INSERT INTO `mg_unitamisura` (`valore`) VALUES ('.prepare($record['um']).')');
-             }
-         }
+            }
+        }
 
         // Individuazione dell'IVA di vendita tramite il relativo Codice
         $aliquota = null;

@@ -179,7 +179,7 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
 
     $netto_fattura = get_netto_fattura($iddocumento);
     $totale_fattura = get_totale_fattura($iddocumento);
-    $totale_fattura = $is_nota ? -$totale_fattura: $totale_fattura;
+    $totale_fattura = $is_nota ? -$totale_fattura : $totale_fattura;
 
     $imponibile_fattura = get_imponibile_fattura($iddocumento);
 

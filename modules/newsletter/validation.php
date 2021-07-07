@@ -23,16 +23,13 @@ $name = filter('name');
 $value = filter('value');
 
 switch ($name) {
-    
     case 'email':
-
         $check = Validate::isValidEmail($value);
-       
 
         if (empty($check['valid-format'])) {
             $result = false;
             $errors[] = tr("L'email inserita non possiede un formato valido");
-        }else{
+        } else {
             $result = true;
         }
 
@@ -40,8 +37,6 @@ switch ($name) {
             $result = false;
             $errors[] = tr("Impossibile verificare l'origine dell'email");
         }
-        
-        
 
         if (!empty($errors)) {
             $message = tr('Attenzione').':<ul>';
@@ -51,7 +46,6 @@ switch ($name) {
             $message .= '</ul>';
         }
 
-      
         $response = [
             'result' => $result,
             'message' => $message,

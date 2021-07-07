@@ -38,8 +38,8 @@ use Plugins\DichiarazioniIntento\Dichiarazione;
 use Plugins\ExportFE\FatturaElettronica;
 use Traits\RecordTrait;
 use Traits\ReferenceTrait;
-use Util\Generator;
 use Translator;
+use Util\Generator;
 
 class Fattura extends Document
 {

@@ -113,7 +113,7 @@ if (!empty($movimenti)) {
                 </td>
                 
                 <td class="text-center">
-                    '.( $movimento->nomesede ?: tr('Sede legale') ).'
+                    '.($movimento->nomesede ?: tr('Sede legale')).'
                 </td>';
 
         // Data

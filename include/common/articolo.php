@@ -24,7 +24,7 @@ $qta_minima = 0;
 if (empty($result['idarticolo'])) {
     // Sede partenza
     if ($module['name'] == 'Interventi') {
-    echo '
+        echo '
     <div class="row">
         <div class="col-md-4">
         {[ "type": "select", "label": "'.tr('Partenza merce').'", "required": "1", "id":"idsede", "name": "idsede_partenza",  "ajax-source": "sedi_azienda", "value": "'.($result['idsede_partenza'] ?: $options['idsede_partenza']).'" ]}

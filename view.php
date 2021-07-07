@@ -32,8 +32,8 @@ $link = base_path().'/'.$file->filepath;
 // Force download of the file
 if (get('force') == '1') {
     header('Content-Type: application/octet-stream');
-    header("Content-Transfer-Encoding: Binary"); 
-    header("Content-disposition: attachment; filename=\"" . basename($file->original_name) . "\""); 
+    header('Content-Transfer-Encoding: Binary');
+    header('Content-disposition: attachment; filename="'.basename($file->original_name).'"');
     readfile($docroot.'/'.$file->filepath);
     exit();
 } else {

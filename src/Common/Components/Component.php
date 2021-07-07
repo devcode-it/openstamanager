@@ -181,9 +181,9 @@ abstract class Component extends Model
     /**
      * Copia l'oggetto (articolo, riga, descrizione) nel corrispettivo per il documento indicato.
      *
-     * @param Document      $document           Documento di destinazione
-     * @param float|null    $qta                Quantità da riportare
-     * @param boolean       $evadi_qta_parent   Definisce se evadere la quantità di provenienza 
+     * @param Document   $document         Documento di destinazione
+     * @param float|null $qta              Quantità da riportare
+     * @param bool       $evadi_qta_parent Definisce se evadere la quantità di provenienza
      *
      * @return self
      */

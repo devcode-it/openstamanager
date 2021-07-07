@@ -230,94 +230,85 @@ class Update
         if (!self::isUpdateCompleted()) {
             $update = self::getCurrentUpdate();
 
-            $file = base_dir().'/'.$update['directory'].$update['filename'];
+            $file = slashes(base_dir().substr($update['directory'], 1).$update['filename']);
 
             $database = database();
 
-            try {
-                // Esecuzione delle query
-                if (!empty($update['sql']) && (!empty($update['done']) || is_null($update['done'])) && file_exists($file.'.sql')) {
-                    $queries = readSQLFile($file.'.sql', ';');
-                    $count = count($queries);
+            // Esecuzione delle query
+            if (!empty($update['sql']) && (!empty($update['done']) || is_null($update['done'])) && file_exists($file.'.sql')) {
+                $queries = readSQLFile($file.'.sql', ';');
+                $count = count($queries);
 
-                    $start = empty($update['done']) ? 0 : $update['done'] - 2;
-                    $end = ($start + $rate + 1) > $count ? $count : $start + $rate + 1;
+                $start = empty($update['done']) ? 0 : $update['done'] - 2;
+                $end = ($start + $rate + 1) > $count ? $count : $start + $rate + 1;
 
-                    if ($start < $end) {
-                        for ($i = $start; $i < $end; ++$i) {
-                            try {
-                                $database->query($queries[$i]);
-                            } catch (\Exception $e) {
-                                throw new PDOException(tr('Aggiornamento fallito').': '.$queries[$i]);
-                            }
-
-                            $database->query('UPDATE `updates` SET `done` = :done WHERE id = :id', [
-                                ':done' => $i + 3,
-                                ':id' => $update['id'],
-                            ]);
+                if ($start < $end) {
+                    for ($i = $start; $i < $end; ++$i) {
+                        try {
+                            $database->query($queries[$i]);
+                        } catch (\Exception $e) {
+                            throw new PDOException($queries[$i]);
                         }
 
-                        // Restituisce l'indice della prima e dell'ultima query eseguita, con la differenza relativa per l'avanzamento dell'aggiornamento
-                        return [
-                            $start,
-                            $end,
-                            $count,
+                        $database->query('UPDATE `updates` SET `done` = :done WHERE id = :id', [
+                            ':done' => $i + 3,
+                            ':id' => $update['id'],
+                        ]);
+                    }
+
+                    // Restituisce l'indice della prima e dell'ultima query eseguita, con la differenza relativa per l'avanzamento dell'aggiornamento
+                    return [
+                        $start,
+                        $end,
+                        $count,
+                    ];
+                }
+            }
+
+            // Imposta l'aggiornamento nello stato di esecuzione dello script
+            $database->query('UPDATE `updates` SET `done` = :done WHERE id = :id', [
+                ':done' => 0,
+                ':id' => $update['id'],
+            ]);
+
+            // Permessi di default delle viste
+            if ($database->tableExists('zz_views')) {
+                $gruppi = $database->fetchArray('SELECT `id` FROM `zz_groups`');
+                $viste = $database->fetchArray('SELECT `id` FROM `zz_views` WHERE `id` NOT IN (SELECT `id_vista` FROM `zz_group_view`)');
+
+                $array = [];
+                foreach ($viste as $vista) {
+                    foreach ($gruppi as $gruppo) {
+                        $array[] = [
+                            'id_gruppo' => $gruppo['id'],
+                            'id_vista' => $vista['id'],
                         ];
                     }
                 }
-
-                // Imposta l'aggiornamento nello stato di esecuzione dello script
-                $database->query('UPDATE `updates` SET `done` = :done WHERE id = :id', [
-                    ':done' => 0,
-                    ':id' => $update['id'],
-                ]);
-
-                // Permessi di default delle viste
-                if ($database->tableExists('zz_views')) {
-                    $gruppi = $database->fetchArray('SELECT `id` FROM `zz_groups`');
-                    $viste = $database->fetchArray('SELECT `id` FROM `zz_views` WHERE `id` NOT IN (SELECT `id_vista` FROM `zz_group_view`)');
-
-                    $array = [];
-                    foreach ($viste as $vista) {
-                        foreach ($gruppi as $gruppo) {
-                            $array[] = [
-                                'id_gruppo' => $gruppo['id'],
-                                'id_vista' => $vista['id'],
-                            ];
-                        }
-                    }
-                    if (!empty($array)) {
-                        $database->insert('zz_group_view', $array);
-                    }
+                if (!empty($array)) {
+                    $database->insert('zz_group_view', $array);
                 }
-
-                // Normalizzazione di charset e collation
-                self::normalizeDatabase($database->getDatabaseName());
-
-                // Normalizzazione dei campi per l'API
-                self::executeScript(base_dir().'/update/api.php');
-
-                // Esecuzione dello script
-                if (!empty($update['script']) && file_exists($file.'.php')) {
-                    self::executeScript($file.'.php');
-                }
-
-                // Imposta l'aggiornamento come completato
-                $database->query('UPDATE `updates` SET `done` = :done WHERE id = :id', [
-                    ':done' => 1,
-                    ':id' => $update['id'],
-                ]);
-
-                // Normalizzazione di charset e collation
-                self::normalizeDatabase($database->getDatabaseName());
-
-                return true;
-            } catch (\Exception $e) {
-                $logger = logger();
-                $logger->addRecord(\Monolog\Logger::EMERGENCY, $e->getMessage());
             }
 
-            return false;
+            // Normalizzazione di charset e collation
+            self::normalizeDatabase($database->getDatabaseName());
+
+            // Normalizzazione dei campi per l'API
+            self::executeScript(base_dir().'/update/api.php');
+
+            // Esecuzione dello script
+            if (!empty($update['script']) && file_exists($file.'.php')) {
+                self::executeScript($file.'.php');
+            }
+
+            // Imposta l'aggiornamento come completato
+            $database->query('UPDATE `updates` SET `done` = :done WHERE id = :id', [
+                ':done' => 1,
+                ':id' => $update['id'],
+            ]);
+
+            // Normalizzazione di charset e collation
+            self::normalizeDatabase($database->getDatabaseName());
         }
 
         return true;
@@ -426,8 +417,8 @@ class Update
             // Inserimento degli aggiornamenti individuati
             foreach ($results as $result) {
                 // Individuazione di script e sql
-                $sql = file_exists($result['path'].'.sql') ? 1 : 0;
-                $script = file_exists($result['path'].'.php') ? 1 : 0;
+                $sql = file_exists(base_dir().$result['path'].'.sql') ? 1 : 0;
+                $script = file_exists(base_dir().$result['path'].'.php') ? 1 : 0;
 
                 // Reimpostazione degli stati per gli aggiornamenti precedentemente presenti
                 $pos = array_search($result['path'], $versions);
@@ -563,6 +554,8 @@ class Update
      */
     protected static function normalizeDatabase($database_name)
     {
+        return;
+
         set_time_limit(0);
         ignore_user_abort(true);
 

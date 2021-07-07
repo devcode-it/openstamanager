@@ -27,12 +27,6 @@ use Illuminate\Support\Facades\Schema;
  */
 class Database
 {
-    /** @var \Illuminate\Database\Capsule\Manager Gestore di connessione Laravel */
-    protected $capsule;
-
-    /** @var string Nome del database */
-    protected $database_name;
-
     /** @var bool Stato di connessione del database */
     protected $is_connected;
     /** @var bool Stato di installazione del database */
@@ -122,7 +116,7 @@ class Database
      */
     public function getDatabaseName()
     {
-        return $this->database_name;
+        return DB::connection()->getDatabaseName();
     }
 
     /**

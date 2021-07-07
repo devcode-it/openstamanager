@@ -64,7 +64,7 @@
             </div>
 
             <div class="box-body">
-                {!! azienda_form !!}
+                {!! $azienda_form !!}
 
                 <div class="box box-outline box-success collapsed-box">
                     <div class="box-header with-border">

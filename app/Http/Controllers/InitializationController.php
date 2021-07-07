@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Filter;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Models\Group;
@@ -101,6 +102,7 @@ class InitializationController extends Controller
         $idtipoanagrafica = $database->fetchOne("SELECT idtipoanagrafica AS id FROM an_tipianagrafiche WHERE descrizione='Azienda'")['id'];
         $readonly_tipo = true;
         $skip_permissions = true;
+        $api_request = false;
         include base_path('legacy').'/modules/anagrafiche/add.php';
         $anagrafica = ob_get_clean();
 
@@ -166,8 +168,14 @@ class InitializationController extends Controller
     {
         $dbo = $database = database();
 
-        $this->filter->set('post', 'op', 'add');
+        // Inizializzazione forzata per Filter
+        Filter::getPOST();
+        Filter::set('post', 'op', 'add');
+
+        // Salvataggio anagrafica tramite modulo Anagrafiche
         $id_module = module('Anagrafiche')['id'];
+        $skip_permissions = true;
+        $api_request = false;
         include base_path('legacy').'/modules/anagrafiche/actions.php';
 
         // Logo stampe

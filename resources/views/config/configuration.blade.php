@@ -96,11 +96,13 @@
                     <div class="col-md-4">
                         <span>*<small><small>{{ tr('Campi obbligatori') }}</small></small></span>
                     </div>
+
                     <div class="col-md-4 text-right">
                         <button type="button" id="test" class="btn btn-warning btn-block">
                             <i class="fa fa-file-text"></i> {{ tr('Testa il database') }}
                         </button>
                     </div>
+
                     <div class="col-md-4 text-right">
                         <button type="submit" id="install" class="btn btn-success btn-block">
                             <i class="fa fa-check"></i> {{ tr('Installa') }}
@@ -148,46 +150,66 @@
         });
 
         $("#install").on("click", function() {
-            if ($(this).closest("form").parsley().validate()) {
-                let restore = buttonLoading("#install");
-                $("#config-form").submit();
+            testConnection(this).then(function (response){
+                const result = response['test'];
 
-                //buttonRestore("#install", restore);
-            }
+                if (result !== 0 && result !== 1){
+                    $("#config-form").submit();
+                }
+            });
         });
 
         $("#test").on("click", function() {
-            if ($(this).closest("form").parsley().validate()) {
-                let restore = buttonLoading("#test");
-                $("#install").prop('disabled', true);
+            testConnection(this).then(function (response) {
+                const result = response['test'];
 
-                $(this).closest("form").ajaxSubmit({
-                    url: globals.configuration.test_url,
-                    data: {
-                        test: 1,
-                    },
-                    type: "get",
-                    success: function (data) {
-                        data = parseFloat(data.trim());
-
-                        buttonRestore("#test", restore);
-                        $("#install").prop('disabled', false);
-
-                        if (data === 0) {
-                            swal(globals.configuration.translations.error, globals.configuration.translations.errorMessage, "error");
-                        } else if (data === 1) {
-                            swal(globals.configuration.translations.permissions, globals.configuration.translations.permissionsMessage, "error");
-                        } else {
-                            swal(globals.configuration.translations.success, globals.configuration.translations.successMessage, "success");
-                        }
-                    },
-                    error: function (xhr, error, thrown) {
-                        ajaxError(xhr, error, thrown);
-                    }
-                });
-            }
+                if (result === 0) {
+                    swal(globals.configuration.translations.error, globals.configuration.translations.errorMessage, "error");
+                } else if (result === 1) {
+                    swal(globals.configuration.translations.permissions, globals.configuration.translations.permissionsMessage, "error");
+                } else {
+                    swal(globals.configuration.translations.success, globals.configuration.translations.successMessage, "success");
+                }
+            });
         });
     });
+
+    /**
+     *
+     * @param button
+     * @returns Promise
+     */
+    function testConnection(button) {
+        const form = $(button).closest("form");
+
+        // Validazione form
+        if (!form.parsley().validate()) {
+            return new Promise((resolve, reject) => {
+                reject()
+            });
+        }
+
+        // Impostazione dei button utilizzati
+        let restore = buttonLoading(button);
+        $("#install").prop('disabled', true);
+
+        // Lettura della configurazione inserita
+        let data = getInputsData(form);
+
+        // Tentativo di validazione della configurazione
+        return $.ajax({
+            url: globals.configuration.test_url,
+            type: "GET",
+            data: data,
+            dataType: "JSON",
+            success: function (response) {
+                // Ripristino button utilizzati
+                buttonRestore(button, restore);
+                $("#install").prop('disabled', false);
+            },
+            error: ajaxError
+        });
+    }
 
     function languageFlag(item) {
         if (!item.id) {

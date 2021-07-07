@@ -30,7 +30,7 @@ require __DIR__.'/auth.php';
 Route::get('/', function () {
     $module = auth()->user()->getFirstAvailableModule();
 
-    return redirect('controller.php?id_module='.$module->id);
+    return redirect('legacy/controller.php?id_module='.$module->id);
 })
     ->middleware(['auth']);
 
@@ -39,12 +39,23 @@ Route::get('/requirements', [RequirementsController::class, 'index'])
     ->name('requirements');
 
 // Sezione di configurazione
-Route::get('/config', [ConfigurationController::class, 'index'])
-    ->name('configuration');
-Route::get('/config-test', [ConfigurationController::class, 'test'])
-    ->name('configuration-test');
-Route::post('/config', [ConfigurationController::class, 'save'])
-    ->name('configuration-save');
+Route::prefix('config')
+    ->group(function () {
+        Route::get('/', [ConfigurationController::class, 'index'])
+            ->name('configuration');
+
+        Route::get('/test', [ConfigurationController::class, 'test'])
+            ->name('configuration-test');
+
+        Route::get('/cache', [ConfigurationController::class, 'cache'])
+            ->name('configuration-cache');
+
+        Route::get('/write', [ConfigurationController::class, 'write'])
+            ->name('configuration-write');
+
+        Route::post('/save', [ConfigurationController::class, 'save'])
+            ->name('configuration-save');
+    });
 
 // Installazione aggiornamenti del gestionale
 Route::get('/update', [UpdateController::class, 'index'])

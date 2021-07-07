@@ -25,11 +25,13 @@
 
     <div id="update-info" class="hidden">
         <div class="progress">
-            <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
+            <div class="progress-bar progress-bar-warning bg-warning progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
                 <span>0%</span>
             </div>
         </div>
+
         <hr>
+
         <div class="box box-outline box-info text-center collapsed-box">
             <div class="box-header with-border">
                 <h3 class="box-title"><a class="clickable" data-widget="collapse">{{ tr('Log') }}</a></h3>
@@ -40,15 +42,20 @@
             <div class="box-body info text-left"></div>
         </div>
     </div>
-    <div id="result"></div>
+
+    <!-- Eventuale fallimento durante l'aggiornamento -->
+    <div class="alert alert-danger hidden" id="error">
+        <i class="fa fa-times"></i> <strong id="error-type"></strong>: <span id="error-message"></span>
+
+        <br>
+
+        <button type="button" class="btn btn-warning" onclick="location.reload()">
+            <i class="fa fa-refresh"></i> {{ tr('Riprova') }}
+        </button>
+    </div>
 
     <div style="display: none;" id="completed">
         <p><strong>{{ tr('Aggiornamento completato') }}</strong> <i class="fa fa-smile-o"></i></p>
-
-        @if($installing)
-            <!-- Istruzioni per la prima installazione -->
-            <p class="text-danger">{{ tr("E' fortemente consigliato rimuovere i permessi di scrittura dal file _FILE_", ['_FILE_' => '<b>config.inc.php</b>']) }}.</p>
-        @endif
 
         <a class="btn btn-success btn-block" href="{{ route('login') }}">
             <i class="fa fa-check"></i> {{ tr('Continua') }}
@@ -95,9 +102,20 @@
 
                     if (!response['completed']) {
                         executeUpdate();
+                    } else {
+                        $("#completed").show();
                     }
                 },
-                error: ajaxError
+                error: function(xhr, error, thrown){
+                    ajaxError(xhr, error, thrown);
+
+                    // Messaggio informativo fisso
+                    if (xhr.responseJSON){
+                        $("#error").removeClass("hidden");
+                        $("#error-type").html(xhr.responseJSON.exception);
+                        $("#error-message").html(xhr.responseJSON.message);
+                    }
+                }
             });
         }
 
@@ -114,10 +132,6 @@
         function setPercent(percent) {
             $("#update-info .progress-bar").width(percent + "%");
             $("#update-info .progress-bar span").text(percent + "%");
-
-            if (percent >= 100) {
-                $("#completed").show();
-            }
         }
 
         function addVersion(version) {

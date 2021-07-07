@@ -97,7 +97,7 @@ class EnsureConfiguration
      */
     protected function checkConfiguration($route)
     {
-        $configuration_paths = ['configuration', 'configuration-save', 'configuration-test'];
+        $configuration_paths = ['configuration', 'configuration-save', 'configuration-write', 'configuration-test'];
         $configuration_completed = ConfigurationController::isConfigured();
 
         if ($configuration_completed) {

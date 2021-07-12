@@ -1,7 +1,7 @@
 -- Colonna n. protocollo per fatture di acquisto
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE name='Fatture di acquisto'), 'N. Prot.', 'co_documenti.numero', 1, 1, 0, 0, '', '', 0, 0, 0);
- 
+
 -- Formattazione colonna data modulo Ordini fornitore
 UPDATE `zz_views` SET `format`=1 WHERE `zz_views`.`name`='Data' AND `zz_views`.`id_module`=(SELECT `id` FROM `zz_modules` WHERE name='Ordini fornitore');
 
@@ -14,10 +14,10 @@ INSERT INTO `zz_views` ( `id_module`, `name`, `query`, `order`, `search`, `slow`
 ((SELECT `id` FROM `zz_modules` WHERE name='Newsletter'), 'Destinatari', '(SELECT COUNT(*) FROM `em_newsletter_anagrafica` WHERE `em_newsletter_anagrafica`.`id_newsletter` = `em_newsletters`.`id`)', 5, 1, 0, 0, '', '', 1, 0, 0);
 
 -- Aggiorno colonna completato per newsletter
-UPDATE `zz_views` SET `query` = 'IF(completed_at IS NULL, \'No\', CONCAT(\'Sì \', \'(\', DATE_FORMAT(completed_at, \'%d/%m/%Y %H:%i:%s\' ), \')\'))', `order` = 6 WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE name='Newsletter') AND `name` = 'Completato'; 
+UPDATE `zz_views` SET `query` = 'IF(completed_at IS NULL, \'No\', CONCAT(\'Sì \', \'(\', DATE_FORMAT(completed_at, \'%d/%m/%Y %H:%i:%s\' ), \')\'))', `order` = 6 WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE name='Newsletter') AND `name` = 'Completato';
 
 -- Visualizza informazioni aggiuntive sul calendario
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Visualizza informazioni aggiuntive sul calendario', '0', 'boolean', '1', 'Dashboard', '1', 'Visualizza sul calendario il box Tutto il giorno dove possono essere presenti informazioni aggiuntve'); 
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Visualizza informazioni aggiuntive sul calendario', '0', 'boolean', '1', 'Dashboard', '1', 'Visualizza sul calendario il box Tutto il giorno dove possono essere presenti informazioni aggiuntve');
 
 -- Rinominate stampe ordini fornitore
 UPDATE `zz_prints` SET `title` = 'Richiesta di offerta (RdO)' WHERE `zz_prints`.`name` = 'Ordine fornitore (senza costi)';
@@ -55,13 +55,13 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 (NULL, (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Utenti e permessi'), 'N. utenti', '(SELECT COUNT(`id`) FROM `zz_users` WHERE `idgruppo` = `zz_groups`.`id`)', 3, 1, 0, 0, '', '', 1, 0, 0);
 
 -- Aggiunto campo confermato, data e ora evasione in righe preventivi
-ALTER TABLE `co_righe_preventivi` ADD `data_evasione` DATE NULL DEFAULT NULL AFTER `id`, ADD `ora_evasione` TIME NULL DEFAULT NULL AFTER `data_evasione`; 
+ALTER TABLE `co_righe_preventivi` ADD `data_evasione` DATE NULL DEFAULT NULL AFTER `id`, ADD `ora_evasione` TIME NULL DEFAULT NULL AFTER `data_evasione`;
 ALTER TABLE `co_righe_preventivi` ADD `confermato` BOOLEAN NOT NULL AFTER `id_dettaglio_fornitore`;
 UPDATE `co_righe_preventivi` SET `confermato` = 1;
 
 -- Aggiunta impostazione per impegnare o meno automaticamente le quantità nei preventivi
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Conferma automaticamente le quantità nei preventivi', '1', 'boolean', '1', 'Preventivi', NULL, NULL);
--- Aggiunta vista "Esigibilità" per il modulo "IVA" 
+-- Aggiunta vista "Esigibilità" per il modulo "IVA"
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
 (NULL, (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='IVA'), 'Esigibilità', 'IF(esigibilita=\'I\', \'IVA ad esigibilità immediata\', IF(esigibilita=\'D\', \'IVA ad esigibilità differita\', \'Scissione dei pagamenti\'))', 5, 1, 0, 0, '', '', 1, 0, 0);
 
@@ -73,6 +73,14 @@ INSERT INTO `zz_views` ( `id_module`, `name`, `query`, `order`, `search`, `slow`
 ((SELECT `id` FROM `zz_modules` WHERE name='Ordini cliente'), 'Rif. fattura', 'fattura.info', 11, 1, 0, 0, '', '', 1, 0, 0),
 ((SELECT `id` FROM `zz_modules` WHERE name='Ordini fornitore'), 'Rif. fattura', 'fattura.info', 8, 1, 0, 0, '', '', 1, 0, 0);
 
-UPDATE `zz_modules` SET `options` = 'SELECT |select|\nFROM `or_ordini`\n     LEFT JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`\n     LEFT JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`\n     LEFT JOIN (\n         SELECT `idordine`,\n                SUM(`qta` - `qta_evasa`) AS `qta_da_evadere`,\n                SUM(`subtotale` - `sconto`) AS `totale_imponibile`,\n                SUM(`subtotale` - `sconto` + `iva`) AS `totale`\n         FROM `or_righe_ordini`\n         GROUP BY `idordine`\n     ) AS righe ON `or_ordini`.`id` = `righe`.`idordine`\n	LEFT JOIN (\n		SELECT `idordine`,\n        MIN(`data_evasione`) AS `data_evasione`\n        FROM `or_righe_ordini`\n        WHERE (`qta` - `qta_evasa`)>0\n        GROUP BY `idordine`\n    ) AS `righe_da_evadere` ON `righe`.`idordine`=`righe_da_evadere`.`idordine`\n    LEFT JOIN (\n    SELECT GROUP_CONCAT(co_documenti.numero_esterno SEPARATOR \", \") AS info, co_righe_documenti.idordine FROM    co_documenti INNER JOIN co_righe_documenti ON co_documenti.id = co_righe_documenti.iddocumento GROUP BY idordine\n) AS fattura ON fattura.idordine = or_ordini.id\nWHERE 1=1 AND `dir` = \'entrata\' |date_period(`data`)|\nHAVING 2=2\nORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC' WHERE `zz_modules`.`name` = 'Ordini cliente'; 
+UPDATE `zz_modules` SET `options` = 'SELECT |select|\nFROM `or_ordini`\n     LEFT JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`\n     LEFT JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`\n     LEFT JOIN (\n         SELECT `idordine`,\n                SUM(`qta` - `qta_evasa`) AS `qta_da_evadere`,\n                SUM(`subtotale` - `sconto`) AS `totale_imponibile`,\n                SUM(`subtotale` - `sconto` + `iva`) AS `totale`\n         FROM `or_righe_ordini`\n         GROUP BY `idordine`\n     ) AS righe ON `or_ordini`.`id` = `righe`.`idordine`\n	LEFT JOIN (\n		SELECT `idordine`,\n        MIN(`data_evasione`) AS `data_evasione`\n        FROM `or_righe_ordini`\n        WHERE (`qta` - `qta_evasa`)>0\n        GROUP BY `idordine`\n    ) AS `righe_da_evadere` ON `righe`.`idordine`=`righe_da_evadere`.`idordine`\n    LEFT JOIN (\n    SELECT GROUP_CONCAT(co_documenti.numero_esterno SEPARATOR \", \") AS info, co_righe_documenti.idordine FROM    co_documenti INNER JOIN co_righe_documenti ON co_documenti.id = co_righe_documenti.iddocumento GROUP BY idordine\n) AS fattura ON fattura.idordine = or_ordini.id\nWHERE 1=1 AND `dir` = \'entrata\' |date_period(`data`)|\nHAVING 2=2\nORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC' WHERE `zz_modules`.`name` = 'Ordini cliente';
 
 UPDATE `zz_modules` SET `options` = 'SELECT |select|\nFROM `or_ordini`\n     LEFT JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`\n     LEFT JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`\n     LEFT JOIN (\n         SELECT `idordine`,\n                SUM(`qta` - `qta_evasa`) AS `qta_da_evadere`,\n                SUM(`subtotale` - `sconto`) AS `totale_imponibile`,\n                SUM(`subtotale` - `sconto` + `iva`) AS `totale`\n         FROM `or_righe_ordini`\n         GROUP BY `idordine`\n     ) AS righe ON `or_ordini`.`id` = `righe`.`idordine`\n	LEFT JOIN (\n		SELECT `idordine`,\n        MIN(`data_evasione`) AS `data_evasione`\n        FROM `or_righe_ordini`\n        WHERE (`qta` - `qta_evasa`)>0\n        GROUP BY `idordine`\n    ) AS `righe_da_evadere` ON `righe`.`idordine`=`righe_da_evadere`.`idordine`\n    LEFT JOIN (\n    SELECT GROUP_CONCAT(co_documenti.numero_esterno SEPARATOR \", \") AS info, co_righe_documenti.idordine FROM    co_documenti INNER JOIN co_righe_documenti ON co_documenti.id = co_righe_documenti.iddocumento GROUP BY idordine\n) AS fattura ON fattura.idordine = or_ordini.id\nWHERE 1=1 AND `dir` = \'uscita\' |date_period(`data`)|\nHAVING 2=2\nORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC' WHERE `zz_modules`.`name` = 'Ordini fornitore';
+
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES
+(NULL, 'app-v1', 'retrieve', 'sedi-azienda', 'API\\App\\v1\\SediAzienda', '1'),
+(NULL, 'app-v1', 'retrieve', 'sedi-azienda-cleanup', 'API\\App\\v1\\SediAzienda', '1'),
+(NULL, 'app-v1', 'retrieve', 'sede-azienda', 'API\\App\\v1\\SediAzienda', '1'),
+(NULL, 'app-v1', 'retrieve', 'movimenti-manuali', 'API\\App\\v1\\MovimentiManuali', '1'),
+(NULL, 'app-v1', 'retrieve', 'movimenti-manuali-cleanup', 'API\\App\\v1\\MovimentiManuali', '1'),
+(NULL, 'app-v1', 'create', 'movimento-manuale', 'API\\App\\v1\\MovimentiManuali', '1');

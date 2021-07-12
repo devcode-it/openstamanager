@@ -32,15 +32,17 @@ class Movimento extends Model
     protected $document;
     protected $table = 'mg_movimenti';
 
-    public static function build(Articolo $articolo, $qta, $descrizone, $data, $document = null)
+    public static function build(Articolo $articolo, $qta, $descrizione, $data, $document = null, $id_sede = null)
     {
         $model = new static();
 
         $model->articolo()->associate($articolo);
 
         $model->qta = $qta;
-        $model->descrizone = $descrizone;
+        $model->movimento = $descrizione;
         $model->data = $data;
+
+        $model->idsede = $id_sede ?: 0; // Sede legale
 
         if (!empty($document)) {
             $class = get_class($document);
@@ -92,7 +94,7 @@ class Movimento extends Model
 
     public function articolo()
     {
-        return $this->hasOne(Articolo::class, 'idarticolo');
+        return $this->belongsTo(Articolo::class, 'idarticolo');
     }
 
     /**

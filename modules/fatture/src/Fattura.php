@@ -305,6 +305,16 @@ class Fattura extends Document
     }
 
     /**
+     * Calcola l'IVA INDETRAIBILE totale della fattura.
+     *
+     * @return float
+     */
+    public function getIvaIndetraibileAttribute()
+    {
+        return $this->calcola('iva_indetraibile');
+    }
+
+    /**
      * Calcola l'iva della rivalsa INPS totale della fattura.
      *
      * @return float

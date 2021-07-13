@@ -47,6 +47,7 @@ class Articoli extends AppResource
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT mg_articoli.id AS id,
             mg_articoli.codice,
+            mg_articoli.barcode,
             mg_articoli.descrizione,
             mg_articoli.prezzo_vendita,
             mg_articoli.prezzo_acquisto,

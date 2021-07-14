@@ -39,9 +39,6 @@ switch (post('op')) {
         $sede->provincia = post('provincia');
         $sede->km = post('km');
         $sede->id_nazione = post('id_nazione') ?: null;
-        $sede->gaddress = post('gaddress');
-        $sede->lat = post('lat');
-        $sede->lng = post('lng');
         $sede->telefono = post('telefono');
         $sede->cellulare = post('cellulare');
         $sede->fax = post('fax');

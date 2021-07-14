@@ -46,7 +46,7 @@ class Clienti extends AppResource
             // Elenco di interventi di interesse
             $risorsa_interventi = $this->getRisorsaInterventi();
             // Da applicazione, i Clienti sono sincronizzati prima degli Interventi: last_sync_at permette di identificare le stesse modifiche
-            $interventi = $risorsa_interventi->getModifiedRecords($last_sync_at);
+            $interventi = $risorsa_interventi->getModifiedRecords(null);
             if (empty($interventi)) {
                 return [];
             }

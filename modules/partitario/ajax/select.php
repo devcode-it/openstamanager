@@ -77,7 +77,7 @@ switch ($resource) {
             $filter[] = 'co_pianodeiconti3.id='.prepare($element);
         }
 
-        $where[] = "co_pianodeiconti2.dir='entrata'";
+        $where[] = "(co_pianodeiconti2.dir='entrata' OR co_pianodeiconti2.dir='entrata/uscita')";
 
         if (!empty($search)) {
             $search_fields[] = "CONCAT( co_pianodeiconti2.numero, '.', co_pianodeiconti3.numero, ' ', co_pianodeiconti3.descrizione ) LIKE ".prepare('%'.$search.'%');
@@ -92,7 +92,7 @@ switch ($resource) {
             $filter[] = 'co_pianodeiconti3.id='.prepare($element);
         }
 
-        $where[] = "co_pianodeiconti2.dir='uscita'";
+        $where[] = "(co_pianodeiconti2.dir='uscita' OR co_pianodeiconti2.dir='entrata/uscita')";
 
         if (!empty($search)) {
             $search_fields[] = "CONCAT( co_pianodeiconti2.numero, '.', co_pianodeiconti3.numero, ' ', co_pianodeiconti3.descrizione ) LIKE ".prepare('%'.$search.'%');

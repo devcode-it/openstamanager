@@ -54,7 +54,7 @@ $info = $dbo->fetchOne($query);
         </div>
 
         <div class="col-md-4 <?php echo intval($lvl != 2) ? 'hidden' : ''; ?>">
-            {[ "type": "select", "label": "<?php echo tr('Utilizza come'); ?>", "name": "dir", "value": "<?php echo $info['dir']; ?>", "values": "list=\"entrata\":\"Ricavo\", \"uscita\":\"Costo\", \"\": \"Non usare\"" ]}
+            {[ "type": "select", "label": "<?php echo tr('Utilizza come'); ?>", "name": "dir", "value": "<?php echo $info['dir']; ?>", "values": "list=\"entrata\":\"Ricavo\", \"uscita\":\"Costo\", \"entrata/uscita\":\"Ricavo e Costo\", \"\": \"Non usare\"" ]}
         </div>
     </div>
     <br>

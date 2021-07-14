@@ -291,7 +291,7 @@ echo '
             <!-- RIGA 4 -->
             <div class="row">
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento", "value": "$idtipointervento$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento", "required": 1, "ajax-source": "tipiintervento", "value": "$idtipointervento$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
 
                 <div class="col-md-4">
@@ -631,8 +631,10 @@ $(document).ready(function() {
 			// session_set("superselect,idzona", $(this).selectData().idzona, 0);
 
             // Impostazione del tipo intervento da anagrafica
-            input("idtipointervento").getElement()
-                .selectSetNew(data.idtipointervento, data.idtipointervento_descrizione);
+            if(data.idtipointervento){
+                input("idtipointervento").getElement()
+                    .selectSetNew(data.idtipointervento, data.idtipointervento_descrizione);
+            }
 		}
     });
     
@@ -672,8 +674,10 @@ $(document).ready(function() {
             contratto.getElement().selectReset();
             ordine.getElement().selectReset();
 
-            input("idtipointervento").getElement()
-                .selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
+            if($(this).selectData().idtipointervento){
+                input("idtipointervento").getElement()
+                    .selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
+            }
         }
 	});
 

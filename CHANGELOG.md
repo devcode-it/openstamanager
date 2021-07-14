@@ -41,15 +41,16 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunta nel calendario della Dashboard visualizzazione dei preventivi pianificabili in corrispondenza alla data di accettazione e conclusione.
  - Aggiunta impostazione per la visualizzazione delle ore nella stampa intervento (Decimale, Sessantesimi).
  - Aggiunta possibilità di selezionare la sede di partenza della merce in fase di aggiunta articolo da un'attività
- - Sostituito plugin **Componenti** nel modulo Impianti con la possibilità di inserire gli articoli di magazzino
  - Aggiunta colonna Scaduto nel modulo Scadenzario
  - Aggiunto campi confermato, data e ora evasione nel modulo **Preventivi**
  - Aggiunta possibilità di creare un nuovi conti di secondo livello dal modulo **Piano dei conti**
  - Aggiunta impostazione per la rimozione del blocco sulle quantità massime importabili fra documenti
  - Aggiunta colonna **Rif. fattura** nei moduli Ordini cliente e fornitore
+ - Aggiunta gestione come costo e ricavo per i conti di secondo livello 
  
 ### Fixed
- - 
+ - Sostituito plugin **Componenti** nel modulo Impianti con la possibilità di inserire gli articoli di magazzino
+ - Possibilità di ripristinare un conto cliente/fornitore dal modulo **Anagrafiche** se eliminato
 
 ## 2.4.23 (2021-05-18)
 

@@ -328,6 +328,18 @@ switch (post('op')) {
         }
 
         break;
+
+    case 'risolvi_conto':
+        $anagrafica = Anagrafica::find($id_record);
+        $tipo = post('tipo');
+
+        if($tipo=='cliente'){
+            $anagrafica->fixCliente($anagrafica);
+        } else{
+            $anagrafica->fixfornitore($anagrafica);
+        }
+
+        break;
 }
 
 // Operazioni aggiuntive per il logo e filigrana stampe

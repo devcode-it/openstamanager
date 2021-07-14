@@ -53,16 +53,16 @@ $nazione_anagrafica = $anagrafica->sedeLegale->nazione;
 // Avvisi problemi scheda anagrafica
 $problemi_anagrafica = [];
 if ($is_cliente && empty($record['idconto_cliente'])) {
-    array_push($problemi_anagrafica, ' Piano dei conti mancante per il cliente');
+    $problemi_anagrafica[] = '<div class="row" style="margin-bottom:5px;"><div class="col-md-3">'.tr('Piano dei conti mancante per il cliente').'</div><button type="button" class="btn btn-xs btn-success" onclick="risolviConto(\'cliente\')"><i class="fa fa-cog"></i> '.tr('Risolvi').'</button></div>';
 }
 
 if ($is_fornitore && empty($record['idconto_fornitore'])) {
-    array_push($problemi_anagrafica, ' Piano dei conti mancante per il fornitore');
+    $problemi_anagrafica[] = '<div class="row"><div class="col-md-3">'.tr('Piano dei conti mancante per il fornitore').'</div><button type="button" class="btn btn-xs btn-success" onclick="risolviConto(\'fornitore\')"><i class="fa fa-cog"></i> '.tr('Risolvi').'</button></div>';
 }
 
 if (sizeof($problemi_anagrafica) > 0) {
-    echo '<div class="alert alert-warning"><i class="fa fa-warning"></i> '.tr('Attenzione: _CAMPI_', [
-    '_CAMPI_' => implode(', ', $problemi_anagrafica),
+    echo '<div class="alert alert-warning"><i class="fa fa-warning"></i> '.tr('ATTENZIONE: <br>_CAMPI_', [
+    '_CAMPI_' => implode('', $problemi_anagrafica),
     ]).'</div>';
 }
 
@@ -373,6 +373,28 @@ echo '
                     });
                });
             }
+
+            function risolviConto(tipo){
+                $.ajax({
+                    url: globals.rootdir + "/actions.php",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        id_module: globals.id_module,
+                        id_record: globals.id_record,
+                        tipo: tipo,
+                        op: "risolvi_conto",
+                    },
+                    success: function (response) {
+                        location.reload();
+                    },
+                    error: function() {
+                        location.reload();
+                    }
+                });
+            } 
+
+
         </script>';
 
 if ($is_cliente or $is_fornitore or $is_tecnico) {

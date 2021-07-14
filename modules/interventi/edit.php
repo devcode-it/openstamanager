@@ -395,7 +395,7 @@ echo '
             <div class=\"clearfix\"></div>
 			<br>";
         }
-        ?>	
+        ?>
 
 			<div class="row">
 				<div class="col-md-12" id="tecnici"></div>
@@ -631,11 +631,13 @@ $(document).ready(function() {
 			// session_set("superselect,idzona", $(this).selectData().idzona, 0);
 
             // Impostazione del tipo intervento da anagrafica
-            input("idtipointervento").getElement()
-                .selectSetNew(data.idtipointervento, data.idtipointervento_descrizione);
+            if (data.idtipointervento) {
+                input("idtipointervento").getElement()
+                    .selectSet(data.idtipointervento);
+            }
 		}
     });
-    
+
     //gestione del cliente finale
     cliente_finale.change(function() {
         updateSelectOption("idclientefinale", $(this).val());
@@ -672,8 +674,12 @@ $(document).ready(function() {
             contratto.getElement().selectReset();
             ordine.getElement().selectReset();
 
-            input("idtipointervento").getElement()
-                .selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
+             // Impostazione del tipo intervento da preventivo
+            var data = (this).selectData()
+            if (data.idtipointervento) {
+                input("idtipointervento").getElement()
+                    .selectSet(data.idtipointervento);
+            }
         }
 	});
 

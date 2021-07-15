@@ -165,6 +165,14 @@ echo '
         <div class="col-md-4">
             {[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "required": 1, "value": "'.(!$id_cliente ? $id_anagrafica : $id_cliente).'", "ajax-source": "clienti", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Cliente&readonly_tipo=1", "readonly": "'.((empty($id_anagrafica) && empty($id_cliente)) ? 0 : 1).'" ]}
         </div>
+
+        <div class="col-md-4">
+            {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione", "value": "'.$id_sede.'", "ajax-source": "sedi" ]}
+        </div>
+
+        <div class="col-md-4">
+            {[ "type": "select", "label": "'.tr('Per conto di').'", "name": "idclientefinale", "value": "'.$id_cliente_finale.'", "ajax-source": "clienti" ]}
+        </div>
     </div>
 
     <div class="row">
@@ -215,20 +223,6 @@ echo '
         </div>
 
 		<div class="box-body">
-			<div class="row">
-                <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT id, CONCAT_WS(\' - \', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "placeholder": "'.tr('Nessuna zona').'", "help": "'.tr('La zona viene definita automaticamente in base al cliente selezionato').'.", "readonly": "1", "value": "'.$id_zona.'" ]}
-                </div>
-
-				<div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione", "value": "'.$id_sede.'", "ajax-source": "sedi" ]}
-				</div>
-
-				<div class="col-md-4">
-					{[ "type": "select", "label": "'.tr('Per conto di').'", "name": "idclientefinale", "value": "'.$id_cliente_finale.'", "ajax-source": "clienti" ]}
-				</div>
-			</div>
-
 			<div class="row">
                 <div class="col-md-4">
                     {[ "type": "timestamp", "label": "'.tr('Data/ora scadenza').'", "name": "data_scadenza", "required": 0, "value": "'.$data_scadenza.'" ]}
@@ -295,13 +289,17 @@ echo '
 
 		<div class="box-body">
 			<div class="row">
-				<div class="col-md-6">
+				<div class="col-md-4">
 					{[ "type": "timestamp", "label": "'.tr('Inizio attività').'", "name": "orario_inizio", "required": '.($origine_dashboard ? 1 : 0).', "value": "'.$inizio_sessione.'" ]}
 				</div>
 
-                <div class="col-md-6">
+                <div class="col-md-4">
 					{[ "type": "timestamp", "label": "'.tr('Fine attività').'", "name": "orario_fine", "required": '.($origine_dashboard ? 1 : 0).', "value": "'.$fine_sessione.'" ]}
 				</div>
+
+                <div class="col-md-4">
+                    {[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT id, CONCAT_WS(\' - \', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "placeholder": "'.tr('Nessuna zona').'", "help": "'.tr('La zona viene definita automaticamente in base al cliente selezionato').'.", "readonly": "1", "value": "'.$id_zona.'" ]}
+                </div>
 			</div>
 
 			<div class="row">

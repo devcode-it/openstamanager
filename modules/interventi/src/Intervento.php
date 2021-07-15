@@ -58,7 +58,7 @@ class Intervento extends Document
 
         $model->anagrafica()->associate($anagrafica);
         $model->stato()->associate($stato);
-        $model->tipoSessione()->associate($tipo_sessione);
+        $model->tipo()->associate($tipo_sessione);
 
         $model->codice = static::getNextCodice($data_richiesta);
         $model->data_richiesta = $data_richiesta;
@@ -157,11 +157,6 @@ class Intervento extends Document
     }
 
     public function tipo()
-    {
-        return $this->belongsTo(Tipo::class, 'idtipointervento');
-    }
-
-    public function tipoSessione()
     {
         return $this->belongsTo(TipoSessione::class, 'idtipointervento');
     }

@@ -185,29 +185,28 @@ if (in_array($final_module['name'], ['Fatture di vendita', 'Fatture di acquisto'
         </div>
         <div class="box-body">';
 
-        echo '
+    echo '
             <div class="row">';
 
-        // Rivalsa INPS
-            echo '
+    // Rivalsa INPS
+    echo '
                 <div class="col-md-4">
                     {[ "type": "select", "label": "'.tr('Rivalsa').'", "name": "id_rivalsa_inps", "value": "'.$id_rivalsa_inps.'", "values": "query=SELECT * FROM co_rivalse", "help": "'.($options['dir'] == 'entrata' ? setting('Tipo Cassa Previdenziale') : null).'" ]}
                 </div>';
 
-
-        // Ritenuta d'acconto
-            echo '
+    // Ritenuta d'acconto
+    echo '
                 <div class="col-md-4">
                     {[ "type": "select", "label": "'.tr("Ritenuta d'acconto").'", "name": "id_ritenuta_acconto", "value": "'.$id_ritenuta_acconto.'", "values": "query=SELECT * FROM co_ritenutaacconto" ]}
                 </div>';
 
-            // Calcola ritenuta d'acconto su
-            echo '
+    // Calcola ritenuta d'acconto su
+    echo '
                 <div class="col-md-4">
                     {[ "type": "select", "label": "'.tr("Calcola ritenuta d'acconto su").'", "name": "calcolo_ritenuta_acconto", "value": "'.$calcolo_ritenuta_acconto.'", "values": "list=\"IMP\":\"Imponibile\", \"IMP+RIV\":\"Imponibile + rivalsa\"", "required": "1" ]}
                 </div>';
 
-        echo '
+    echo '
             </div>';
 
     $width = $show_ritenuta_contributi ? 6 : 12;

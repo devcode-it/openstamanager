@@ -23,8 +23,6 @@ use API\Interfaces\CreateInterface;
 use API\Interfaces\RetrieveInterface;
 use API\Resource;
 use Modules\Emails\Account;
-use Modules\Emails\Mail;
-use Modules\Emails\Template;
 use Notifications\EmailNotification;
 
 class SegnalazioneBug extends Resource implements RetrieveInterface, CreateInterface
@@ -58,7 +56,6 @@ class SegnalazioneBug extends Resource implements RetrieveInterface, CreateInter
         $mail->subject = 'Segnalazione bug App OSM '.$request['version'];
 
         $infos = [
-
         ];
 
         $body = '';

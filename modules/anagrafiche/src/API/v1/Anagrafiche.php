@@ -128,40 +128,40 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
 
         $anagrafica = Anagrafica::find($request['id']);
 
-        if(isset($data['ragione_sociale'])){
+        if (isset($data['ragione_sociale'])) {
             $anagrafica->ragione_sociale = $data['ragione_sociale'];
         }
-        if(isset($data['piva'])){
+        if (isset($data['piva'])) {
             $anagrafica->piva = $data['piva'];
         }
-        if(isset($data['codice_fiscale'])){
+        if (isset($data['codice_fiscale'])) {
             $anagrafica->codice_fiscale = $data['codice_fiscale'];
         }
-        if(isset($data['indirizzo'])){
+        if (isset($data['indirizzo'])) {
             $anagrafica->indirizzo = $data['indirizzo'];
         }
-        if(isset($data['citta'])){
+        if (isset($data['citta'])) {
             $anagrafica->citta = $data['citta'];
         }
-        if(isset($data['provincia'])){
+        if (isset($data['provincia'])) {
             $anagrafica->provincia = $data['provincia'];
         }
-        if(isset($data['id_nazione'])){
+        if (isset($data['id_nazione'])) {
             $anagrafica->id_nazione = $data['id_nazione'];
         }
-        if(isset($data['telefono'])){
+        if (isset($data['telefono'])) {
             $anagrafica->telefono = $data['telefono'];
         }
-        if(isset($data['fax'])){
+        if (isset($data['fax'])) {
             $anagrafica->fax = $data['fax'];
         }
-        if(isset($data['cellulare'])){
+        if (isset($data['cellulare'])) {
             $anagrafica->cellulare = $data['cellulare'];
         }
-        if(isset($data['email'])){
+        if (isset($data['email'])) {
             $anagrafica->email = $data['email'];
         }
-        if(isset($data['tipi'])){
+        if (isset($data['tipi'])) {
             $anagrafica->tipologie = (array) $data['tipi'];
         }
 

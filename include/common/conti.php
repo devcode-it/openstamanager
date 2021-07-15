@@ -69,7 +69,6 @@ echo '
     echo '
 </div>';
 
-
 if (!empty($options['show-ritenuta-contributi']) || empty($options['hide_conto'])) {
     $width = !empty($options['show-ritenuta-contributi']) && empty($options['hide_conto']) ? 6 : 12;
 

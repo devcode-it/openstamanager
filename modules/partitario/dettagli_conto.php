@@ -25,7 +25,7 @@ $id_conto = get('id_conto');
 
 // Calcolo totale conto da elenco movimenti di questo conto
 $query = 'SELECT co_movimenti.*,
-    SUM(totale) AS totale,
+    SUM(ROUND(totale,2)) AS totale,
     dir FROM co_movimenti
 LEFT OUTER JOIN co_documenti ON co_movimenti.iddocumento = co_documenti.id
 LEFT OUTER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id

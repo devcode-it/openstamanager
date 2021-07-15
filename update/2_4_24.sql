@@ -93,7 +93,7 @@ FROM `or_ordini`
         GROUP BY `idordine`
     ) AS `righe_da_evadere` ON `righe`.`idordine`=`righe_da_evadere`.`idordine`
     LEFT JOIN (
-    SELECT GROUP_CONCAT(co_documenti.numero_esterno SEPARATOR \", \") AS info, co_righe_documenti.idordine FROM    co_documenti INNER JOIN co_righe_documenti ON co_documenti.id = co_righe_documenti.iddocumento GROUP BY idordine
+    SELECT GROUP_CONCAT(DISTINCT co_documenti.numero_esterno SEPARATOR \", \") AS info, co_righe_documenti.idordine FROM    co_documenti INNER JOIN co_righe_documenti ON co_documenti.id = co_righe_documenti.iddocumento GROUP BY idordine
 ) AS fattura ON fattura.idordine = or_ordini.id
 WHERE 1=1 AND `dir` = ''entrata'' |date_period(`data`)|
 HAVING 2=2
@@ -119,7 +119,7 @@ FROM `or_ordini`
         GROUP BY `idordine`
     ) AS `righe_da_evadere` ON `righe`.`idordine`=`righe_da_evadere`.`idordine`
     LEFT JOIN (
-    SELECT GROUP_CONCAT(co_documenti.numero_esterno SEPARATOR \", \") AS info, co_righe_documenti.idordine FROM    co_documenti INNER JOIN co_righe_documenti ON co_documenti.id = co_righe_documenti.iddocumento GROUP BY idordine
+    SELECT GROUP_CONCAT(DISTINCT co_documenti.numero_esterno SEPARATOR \", \") AS info, co_righe_documenti.idordine FROM    co_documenti INNER JOIN co_righe_documenti ON co_documenti.id = co_righe_documenti.iddocumento GROUP BY idordine
 ) AS fattura ON fattura.idordine = or_ordini.id
 WHERE 1=1 AND `dir` = ''uscita'' |date_period(`data`)|
 HAVING 2=2

@@ -22,7 +22,6 @@ namespace API\App\v1;
 use API\App\AppResource;
 use Carbon\Carbon;
 use Modules\Articoli\Articolo;
-use Modules\Articoli\Movimento;
 
 class MovimentiManuali extends AppResource
 {
@@ -47,7 +46,7 @@ class MovimentiManuali extends AppResource
         $data_movimento = new Carbon($data['created_at']);
 
         $id_movimento = $articolo->movimenta($data['qta'], $data['descrizione'], $data_movimento, true, [
-            'idsede' => $data['id_sede_azienda']
+            'idsede' => $data['id_sede_azienda'],
         ]);
 
         return [

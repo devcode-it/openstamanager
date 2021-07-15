@@ -330,9 +330,9 @@ switch (post('op')) {
         $anagrafica = Anagrafica::find($id_record);
         $tipo = post('tipo');
 
-        if($tipo=='cliente'){
+        if ($tipo == 'cliente') {
             $anagrafica->fixCliente($anagrafica);
-        } else{
+        } else {
             $anagrafica->fixfornitore($anagrafica);
         }
 

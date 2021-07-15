@@ -132,5 +132,6 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 (NULL, 'app-v1', 'retrieve', 'movimenti-manuali', 'API\\App\\v1\\MovimentiManuali', '1'),
 (NULL, 'app-v1', 'retrieve', 'movimenti-manuali-cleanup', 'API\\App\\v1\\MovimentiManuali', '1'),
 (NULL, 'app-v1', 'create', 'movimento-manuale', 'API\\App\\v1\\MovimentiManuali', '1'),
+(NULL, 'app-v1', 'retrieve', 'controllo-clienti', 'API\\App\\v1\\ControlloClienti', '1'),
 (NULL, 'app-v1', 'retrieve', 'segnalazione-bug', 'API\\App\\v1\\SegnalazioneBug', '1'),
 (NULL, 'app-v1', 'create', 'segnalazione-bug', 'API\\App\\v1\\SegnalazioneBug', '1');

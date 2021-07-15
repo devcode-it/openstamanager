@@ -58,7 +58,7 @@ echo "
             if ($documento->direzione == 'uscita') {
                 echo "
             <th class='text-center' style='width:11%'>".tr('Codice', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:11%'>".tr('Codice fornitore', [], ['upper' => true])."</th>";
+            <th class='text-center' style='width:11%'>".tr('Codice fornitore', [], ['upper' => true]).'</th>';
             }
 
             if ($has_image) {
@@ -119,7 +119,7 @@ foreach ($righe as $riga) {
             <td class="text-center" style="vertical-align: middle">
                 '.($riga->articolo ? $riga->articolo->dettaglioFornitore($documento->idanagrafica)->codice_fornitore : '').'
             </td>';
-    }          
+    }
 
     echo '
             <td>
@@ -234,7 +234,7 @@ $netto_a_pagare = $documento->netto;
 $show_sconto = $sconto > 0;
 
 $colspan = 5;
-($documento->direzione == 'uscita' ? $colspan+=2 : $colspan);
+($documento->direzione == 'uscita' ? $colspan += 2 : $colspan);
 ($has_image ? $colspan++ : $colspan);
 
 // TOTALE COSTI FINALI

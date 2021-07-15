@@ -28,7 +28,7 @@ $smtp = $template->account;
 $body = $module->replacePlaceholders($id_record, $template['body']);
 $subject = $module->replacePlaceholders($id_record, $template['subject']);
 
-$email = $module->replacePlaceholders($id_record, '{email}');
+$emails = explode( ';', $module->replacePlaceholders($id_record, '{email}') );
 $id_anagrafica = $module->replacePlaceholders($id_record, '{id_anagrafica}');
 
 // Campi mancanti
@@ -80,10 +80,17 @@ if (!empty($template['bcc'])) {
 echo '
 
     <b>'.tr('Destinatari').' <span class="tip" title="'.tr('Email delle sedi, dei referenti o agente collegato all\'anagrafica.').'"><i class="fa fa-question-circle-o"></i></span></b>
-    <div class="row" id="lista-destinatari">
-        <div class="col-md-12">
-            {[ "type": "email", "name": "destinatari[0]", "value": "'.$email.'", "icon-before": "choice|email", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari", "required": 1 ]}
-        </div>
+    <div class="row" id="lista-destinatari">';
+
+        $idx = 0;
+
+        foreach( $emails as $email ){
+            echo '
+            <div class="col-md-12">
+                {[ "type": "email", "name": "destinatari['.$idx++.']", "value": "'.$email.'", "icon-before": "choice|email", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari", "required": 1 ]}
+            </div>';
+        }
+echo '
     </div>
 
     <br>

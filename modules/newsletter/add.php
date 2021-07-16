@@ -26,7 +26,7 @@ echo '
 
 	<div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Template email').'", "name": "id_template", "values": "query=SELECT id, name AS descrizione FROM em_templates", "required": 1 ]}
+            {[ "type": "select", "label": "'.tr('Template email').'", "name": "id_template", "values": "query=SELECT id, name AS descrizione FROM em_templates WHERE deleted_at IS NULL ORDER BY descrizione", "required": 1 ]}
         </div>
 
         <div class="col-md-6">

@@ -18,6 +18,7 @@
  */
 
 use Modules\Newsletter\Newsletter;
+use Modules\Emails\Template;
 
 include_once __DIR__.'/../../core.php';
 
@@ -25,4 +26,6 @@ if (isset($id_record)) {
     $newsletter = Newsletter::find($id_record);
 
     $record = $newsletter->toArray();
+
+    $template = Template::find($record['id_template']);
 }

@@ -18,8 +18,15 @@
  */
 
 use Modules\Emails\Mail;
+use Modules\Emails\Template;
 
 include_once __DIR__.'/../../core.php';
+
+//Controllo se il template è ancora attivo
+if( empty($template) ){
+    echo '
+    <div class=" alert alert-danger">'.tr('ATTENZIONE! Questa newsletter risulta collegata ad un template non più presente a sistema').'</div>';
+}
 
 $block_edit = $newsletter->state != 'DEV';
 
@@ -53,7 +60,7 @@ echo '
             <div class="row">
                 <div class="col-md-6">
                     '.Modules::link('Template email', $record['id_template'], null, null, 'class="pull-right"').'
-                    {[ "type": "select", "label": "'.tr('Template email').'", "name": "id_template", "values": "query=SELECT id, name AS descrizione FROM em_templates", "required": 1, "value": "$id_template$", "readonly": 1 ]}
+                    {[ "type": "select", "label": "'.tr('Template email').'", "name": "id_template", "values": "query=SELECT id, name AS descrizione FROM em_templates WHERE deleted_at IS NULL ORDER BY descrizione", "required": 1, "value": "$id_template$", "readonly": 1 ]}
                 </div>
 
                 <div class="col-md-6">
@@ -152,7 +159,7 @@ echo '
         </h3>
     </div>
 
-    <div class="panel-body">';
+    <div class="panel-body" style="max-height:700px;overflow-y:auto;">';
 
 if (!$anagrafiche->isEmpty()) {
     echo '

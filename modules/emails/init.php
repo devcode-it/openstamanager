@@ -17,8 +17,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\Newsletter\Newsletter;
+
 include_once __DIR__.'/../../core.php';
 
 if (isset($id_record)) {
     $record = $dbo->fetchOne('SELECT * FROM em_templates WHERE id='.prepare($id_record).' AND deleted_at IS NULL');
+
+    //Controllo se ci sono newletter collegate a questo template
+    $newsletters = Newsletter::where('id_template',$id_record)->get();
 }

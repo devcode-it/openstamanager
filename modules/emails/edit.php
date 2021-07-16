@@ -150,9 +150,23 @@ echo '
 
 </form>
 <?php
+if( !empty($newsletters)){
+    echo '
+    <div class="alert alert-danger">
+        '.tr('Questo template non può essere rimosso dal sistema perchè collegato alle seguenti newsletter:').'
+        <ul>';
 
-if (!$record['predefined']) {
-    ?>
+        foreach($newsletters as $newsletter){
+            echo '
+            <li>'.Modules::link('Newsletter', $newsletter->id, $newsletter->name, null, '').'</li>';
+        }
+
+    echo '
+        </ul>
+    </div>';
+
+}elseif (!$record['predefined']) {
+?>
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>

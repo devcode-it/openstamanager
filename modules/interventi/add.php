@@ -313,7 +313,6 @@ echo '
 		</div>
 	</div>
 
-
 	<!-- DETTAGLI CLIENTE -->
     <div class="box box-success collapsable collapsed-box">
         <div class="box-header with-border">
@@ -325,11 +324,10 @@ echo '
             </div>
 		</div>
 
-        <div class="box-body" id="dettagli_ciente">
-            Prima seleziona un cliente...
+        <div class="box-body" id="dettagli_cliente">
+            '.tr('Prima seleziona un cliente').'...
         </div>
     </div>
-
 
 	<!-- PULSANTI -->
 	<div class="row">
@@ -416,25 +414,26 @@ echo '
 
     // Gestione della modifica dell\'anagrafica
 	anagrafica.change(function() {
-        updateSelectOption("idanagrafica", $(this).val());
-        session_set("superselect,idanagrafica", $(this).val(), 0);
+        let value = $(this).val();
+        updateSelectOption("idanagrafica", value);
+        session_set("superselect,idanagrafica",value, 0);
 
-        let value = !$(this).val();
-        let placeholder = value ? "'.tr('Seleziona prima un cliente').'" : "'.tr("Seleziona un'opzione").'";
+        let selected = !$(this).val();
+        let placeholder = selected ? "'.tr('Seleziona prima un cliente').'" : "'.tr("Seleziona un'opzione").'";
 
-        sede.setDisabled(value)
+        sede.setDisabled(selected)
             .getElement().selectReset(placeholder);
 
-        preventivo.setDisabled(value)
+        preventivo.setDisabled(selected)
             .getElement().selectReset(placeholder);
 
-        contratto.setDisabled(value)
+        contratto.setDisabled(selected)
             .getElement().selectReset(placeholder);
 
-        ordine.setDisabled(value)
+        ordine.setDisabled(selected)
             .getElement().selectReset(placeholder);
 
-        input("idimpianti").setDisabled(value);
+        input("idimpianti").setDisabled(selected);
 
         let data = anagrafica.getData();
 		if (data) {
@@ -447,12 +446,12 @@ echo '
 		}
 
         if (data !== undefined) {
-            //Carico nel panel i dettagli del cliente
-            $.get("'.base_path().'/modules/interventi/ajax_details.php?op=dettagli&id_anagrafica="+$(this).val(), function(data){
-                $("#dettagli_ciente").html(data);
+            // Carico nel panel i dettagli del cliente
+            $.get("'.base_path().'/ajax_complete.php?module=Interventi&op=dettagli&id_anagrafica=" + value, function(data){
+                $("#dettagli_cliente").html(data);
             });
-        }else{
-            $("#dettagli_ciente").html("Prima seleziona un cliente...");
+        } else {
+            $("#dettagli_cliente").html("'.tr('Seleziona prima un cliente').'...");
         }
 	});
 

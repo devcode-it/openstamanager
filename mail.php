@@ -28,7 +28,7 @@ $smtp = $template->account;
 $body = $module->replacePlaceholders($id_record, $template['body']);
 $subject = $module->replacePlaceholders($id_record, $template['subject']);
 
-$emails = explode( ';', $module->replacePlaceholders($id_record, '{email}') );
+$emails = explode(';', $module->replacePlaceholders($id_record, '{email}'));
 $id_anagrafica = $module->replacePlaceholders($id_record, '{id_anagrafica}');
 
 // Campi mancanti
@@ -84,7 +84,7 @@ echo '
 
         $idx = 0;
 
-        foreach( $emails as $email ){
+        foreach ($emails as $email) {
             echo '
             <div class="col-md-12">
                 {[ "type": "email", "name": "destinatari['.$idx++.']", "value": "'.$email.'", "icon-before": "choice|email", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari", "required": 1 ]}

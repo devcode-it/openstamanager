@@ -15,7 +15,7 @@ $numero_documenti = 5;
 switch ($op) {
     case 'dettagli':
         // Informazioni sui contratti
-        $modulo_contratti = Module::get('Contratti');
+        $modulo_contratti = Module::pool('Contratti');
         if ($modulo_contratti->permission != '-') {
             // Contratti attivi per l'anagrafica
             $contratti = Contratto::where('idanagrafica', '=', $id_anagrafica)
@@ -43,7 +43,7 @@ switch ($op) {
         }
 
         // Informazioni sui preventivi
-        $modulo_preventivi = Module::get('Preventivi');
+        $modulo_preventivi = Module::pool('Preventivi');
         if ($modulo_preventivi->permission != '-') {
             // Preventivi attivi
             $preventivi = Preventivo::where('idanagrafica', '=', $id_anagrafica)
@@ -69,7 +69,7 @@ switch ($op) {
         }
 
         // Informazioni sui preventivi
-        $modulo_fatture_vendita = Module::get('Fatture di vendita');
+        $modulo_fatture_vendita = Module::pool('Fatture di vendita');
         if ($modulo_fatture_vendita->permission != '-') {
             // Fatture attive
             $fatture = Fattura::where('idanagrafica', '=', $id_anagrafica)

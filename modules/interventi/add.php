@@ -25,6 +25,7 @@ include_once __DIR__.'/../../core.php';
 $id_anagrafica = filter('idanagrafica');
 $id_sede = filter('idsede');
 $richiesta = filter('richiesta');
+$id_tipo = filter('id_tipo');
 
 $origine_dashboard = get('ref') !== null;
 $module_anagrafiche = Modules::get('Anagrafiche');

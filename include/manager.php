@@ -165,9 +165,12 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
     echo '
     <div class="row" data-target="'.$table_id.'">
         <div class="col-md-5">
-            <div class="btn-group" role="group">
+            <div class="btn-group select-controller-container" role="group">
                 <button type="button" class="btn btn-primary btn-select-all">'.tr('Seleziona tutto').'</button>
-                <button type="button" class="btn btn-default btn-select-none">'.tr('Deseleziona tutto').'</button>
+                <button type="button" class="btn btn-default btn-select-none">
+                    '.tr('Deseleziona tutto').'
+                    <span class="badge selected-count">0</span>
+                </button>
             </div>
         </div>
 
@@ -175,7 +178,7 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
 
     if (!empty($bulk)) {
         echo '
-            <button class="btn btn-primary btn-block dropdown-toggle bulk-container disabled" type="button" data-toggle="dropdown" disabled>'.tr('Azioni di gruppo').' <span class="caret"></span></button>
+            <button class="btn btn-primary btn-block dropdown-toggle actions-container disabled" type="button" data-toggle="dropdown" disabled>'.tr('Azioni di gruppo').' <span class="caret"></span></button>
             <ul class="dropdown-menu" data-target="'.$table_id.'" role="menu">';
 
         foreach ($bulk as $key => $value) {
@@ -200,14 +203,14 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
 
         <div class="col-md-5 text-right">
             <i class="fa fa-question-circle-o tip" title="'.tr('Le operazioni di esportazione, copia e stampa sono limitate alle righe selezionate e visibili della tabella').'. '.tr('Per azioni su tutti i contenuti selezionati, utilizzare le Azioni di gruppo').'."></i>
-            <div class="btn-group" role="group">';
+            <div class="btn-group export-container" role="group">';
 
     if (setting('Abilita esportazione Excel e PDF')) {
         echo '
                 <div class="btn-group">
                     <button type="button" class="btn btn-primary table-btn btn-csv disabled" disabled>'.tr('Esporta').'</button>
 
-                    <button type="button" class="btn btn-primary  table-btn disabled dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button type="button" class="btn btn-primary table-btn disabled dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="caret"></span>
                         <span class="sr-only">Toggle Dropdown</span>
                     </button>
@@ -220,7 +223,7 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
                 </div>';
     } else {
         echo '
-            <button type="button" class="btn btn-primary table-btn btn-csv disabled" disabled>'.tr('Esporta').'</button>';
+                <button type="button" class="btn btn-primary table-btn btn-csv disabled" disabled>'.tr('Esporta').'</button>';
     }
 
     echo '

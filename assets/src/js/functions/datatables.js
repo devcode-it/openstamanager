@@ -364,10 +364,10 @@ function getTableSearch() {
  * @param selector
  */
 function getTable(selector) {
-    var table = $(selector);
+    const table = $(selector);
 
-    var selected = new Map();
-    var selected_ids = table.data('selected') ? table.data('selected').split(';') : [];
+    const selected = new Map();
+    const selected_ids = table.data('selected') ? table.data('selected').split(';') : [];
     selected_ids.forEach(function (item, index) {
         selected.set(item, true);
     });
@@ -388,11 +388,14 @@ function getTable(selector) {
         datatable: table.DataTable(),
 
         // Funzioni per i contenitori relativi alla tabella
-        getButtonsContainer: function () {
-            return $('.row[data-target="' + table.attr('id') + '"]').find('.table-btn');
+        getSelectControllerContainer: function () {
+            return $('.row[data-target="' + table.attr('id') + '"]').find('.select-controller-container');
+        },
+        getExportContainer: function () {
+            return $('.row[data-target="' + table.attr('id') + '"]').find('.export-container');
         },
         getActionsContainer: function () {
-            return $('.row[data-target="' + table.attr('id') + '"]').find('.bulk-container');
+            return $('.row[data-target="' + table.attr('id') + '"]').find('.actions-container');
         },
 
         // Gestione delle righe selezionate
@@ -401,18 +404,23 @@ function getTable(selector) {
             return Array.from(selected.keys());
         },
         saveSelectedRows: function () {
-            var selected_rows = this.getSelectedRows();
+            const selected_rows = this.getSelectedRows();
             table.data('selected', selected_rows.join(';'));
 
-            var bulk_container = this.getActionsContainer();
-            var btn_container = this.getButtonsContainer();
+            // Abilitazione dinamica di azioni di gruppo e esportazione
+            const bulk_container = this.getActionsContainer();
+            const export_buttons = this.getExportContainer().find('.table-btn');
             if (selected_rows.length > 0) {
                 bulk_container.removeClass('disabled').attr('disabled', false);
-                btn_container.removeClass('disabled').attr('disabled', false);
+                export_buttons.removeClass('disabled').attr('disabled', false);
             } else {
                 bulk_container.addClass('disabled').attr('disabled', true);
-                btn_container.addClass('disabled').attr('disabled', true);
+                export_buttons.addClass('disabled').attr('disabled', true);
             }
+
+            // Aggiornamento contatore delle selezioni
+            this.getSelectControllerContainer()
+                .find('.selected-count').html(selected_rows.length);
 
             // Aggiornamento del footer nel caso sia richiesto
             if (globals.restrict_summables_to_selected) {

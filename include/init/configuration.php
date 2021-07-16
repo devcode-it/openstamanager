@@ -197,7 +197,7 @@ if (post('db_host') !== null) {
         {
             "src": "assets/dist/img/logo.png",
             "type": "image/png",
-            "sizes": "512x512"
+            "sizes": "489x91"
         }
     ]
 }';

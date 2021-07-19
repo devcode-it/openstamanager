@@ -106,71 +106,6 @@ function get_ivaindetraibile_ddt($id_ddt)
 }
 
 /**
- * Questa funzione rimuove un articolo dal ddt data e lo riporta in magazzino
- * 	$idarticolo		integer		codice dell'articolo da scollegare dal ddt
- * 	$idddt		 	integer		codice del ddt da cui scollegare l'articolo.
- *
- * @deprecated 2.4.11
- */
-function rimuovi_articolo_daddt($idarticolo, $idddt, $idrigaddt)
-{
-    global $dir;
-
-    $dbo = database();
-
-    // Leggo la quantità di questo articolo in ddt
-    $query = 'SELECT qta, subtotale FROM dt_righe_ddt WHERE id='.prepare($idrigaddt);
-    $rs = $dbo->fetchArray($query);
-    $qta = floatval($rs[0]['qta']);
-    $subtotale = $rs[0]['subtotale'];
-
-    // Leggo l'idordine
-    $query = 'SELECT idordine FROM dt_righe_ddt WHERE id='.prepare($idrigaddt);
-    $rs = $dbo->fetchArray($query);
-    $idordine = $rs[0]['idordine'];
-
-    $non_rimovibili = seriali_non_rimuovibili('id_riga_ddt', $idrigaddt, $dir);
-    if (!empty($non_rimovibili)) {
-        return false;
-    }
-
-    // Ddt di vendita
-    if ($dir == 'entrata') {
-        add_movimento_magazzino($idarticolo, $qta, ['idddt' => $idddt]);
-
-        // Se il ddt è stato generato da un ordine tolgo questa quantità dalla quantità evasa
-        if (!empty($idordine)) {
-            $dbo->query('UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$qta.' WHERE idarticolo='.prepare($idarticolo).' AND idordine='.prepare($idordine));
-        }
-    }
-
-    // Ddt di acquisto
-    else {
-        add_movimento_magazzino($idarticolo, -$qta, ['idddt' => $idddt]);
-
-        // Se il ddt è stato generato da un ordine tolgo questa quantità dalla quantità evasa
-        if (!empty($idordine)) {
-            $dbo->query('UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$qta.' WHERE idarticolo='.prepare($idarticolo).' AND idordine='.prepare($idordine));
-        }
-    }
-
-    $dbo->query($query);
-
-    // Elimino la riga dal ddt
-    $dbo->query('DELETE FROM `dt_righe_ddt` WHERE id='.prepare($idrigaddt).' AND idddt='.prepare($idddt));
-
-    //Aggiorno lo stato dell'ordine
-    if (setting('Cambia automaticamente stato ordini fatturati') && !empty($idordine)) {
-        $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($idordine).'") WHERE id = '.prepare($idordine));
-    }
-
-    // Elimino i seriali utilizzati dalla riga
-    $dbo->query('DELETE FROM `mg_prodotti` WHERE id_articolo = '.prepare($idarticolo).' AND id_riga_ddt = '.prepare($idrigaddt));
-
-    return true;
-}
-
-/**
  * Ricalcola i costi aggiuntivi in ddt (rivalsa inps, ritenuta d'acconto, marca da bollo)
  * Deve essere eseguito ogni volta che si aggiunge o toglie una riga
  * $idddt				int		ID del ddt
@@ -253,65 +188,6 @@ function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto 
     } else {
         $dbo->query("UPDATE dt_ddt SET ritenutaacconto='0', bollo='0', rivalsainps='0', iva_rivalsainps='0' WHERE id='$idddt'");
     }
-}
-
-/**
- * Questa funzione aggiunge un articolo nel ddt
- * $iddocumento	integer		id dell'ordine
- * $idarticolo		integer		id dell'articolo da inserire nell'ordine
- * $idiva			integer		id del codice iva associato all'articolo
- * $qta			float		quantità dell'articolo nell'ordine
- * $prezzo			float		prezzo totale degli articoli (prezzounitario*qtà).
- *
- * @deprecated 2.4.11
- */
-function add_articolo_inddt($idddt, $idarticolo, $descrizione, $idiva, $qta, $idum, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT')
-{
-    global $dir;
-    global $idordine;
-
-    $dbo = database();
-
-    // Lettura unità di misura dell'articolo
-    if (empty($idum)) {
-        $rs = $dbo->fetchArray('SELECT um FROM mg_articoli WHERE id='.prepare($idarticolo));
-        $um = $rs[0]['valore'];
-    } else {
-        $um = $idum;
-    }
-
-    // Lettura iva dell'articolo
-    $rs2 = $dbo->fetchArray('SELECT percentuale, indetraibile FROM co_iva WHERE id='.prepare($idiva));
-    $iva = ($prezzo - $sconto) / 100 * $rs2[0]['percentuale'];
-    $iva_indetraibile = $iva / 100 * $rs2[0]['indetraibile'];
-
-    if ($qta > 0) {
-        $rsart = $dbo->fetchArray('SELECT abilita_serial FROM mg_articoli WHERE id='.prepare($idarticolo));
-
-        $dbo->query('INSERT INTO dt_righe_ddt(idddt, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, qta, abilita_serial, um, `order`) VALUES ('.prepare($idddt).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($qta).', '.prepare($rsart[0]['abilita_serial']).', '.prepare($um).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM dt_righe_ddt AS t WHERE idddt='.prepare($idddt).'))');
-
-        $idriga = $dbo->lastInsertedID();
-
-        /*
-            Ddt cliente
-        */
-        if ($dir == 'entrata') {
-            // Decremento la quantità dal magazzino centrale
-            add_movimento_magazzino($idarticolo, -$qta, ['idddt' => $idddt]);
-        }
-        /*
-            Ddt fornitore
-        */
-        elseif ($dir == 'uscita') {
-            // Decremento la quantità dal magazzino centrale
-            add_movimento_magazzino($idarticolo, $qta, ['idddt' => $idddt]);
-        }
-
-        // Inserisco il riferimento dell'ordine alla riga
-        $dbo->query('UPDATE dt_righe_ddt SET idordine='.prepare($idordine).' WHERE id='.prepare($idriga));
-    }
-
-    return $idriga;
 }
 
 /**

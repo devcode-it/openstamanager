@@ -48,7 +48,6 @@ class App
             'app.min.css',
             'style.min.css',
             'themes.min.css',
-            'dropzone.min.css',
         ],
 
         // Print CSS
@@ -61,7 +60,6 @@ class App
             'app.min.js',
             'functions.min.js',
             'custom.min.js',
-            'dropzone.min.js',
             'i18n/parsleyjs/|lang|.min.js',
             'i18n/select2/|lang|.min.js',
             'i18n/moment/|lang|.min.js',

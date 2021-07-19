@@ -221,18 +221,20 @@ class App
             $result = array_unique(array_merge(self::$assets[$section], $config['assets'][$section]));
 
             foreach ($result as $key => $element) {
-                $element = $paths[$dir].'/'.$element;
+                $element = string_starts_with($element, 'http') ? $element : $paths[$dir].'/'.$element;
 
-                foreach ($lang_replace as $replace) {
-                    $name = str_replace('|lang|', $replace, $element);
+                if (string_contains($element, '|lang|')) {
+                    foreach ($lang_replace as $replace) {
+                        $name = str_replace('|lang|', $replace, $element);
 
-                    if (file_exists(base_dir().str_replace(base_path(), '', $name))) {
-                        $assets_element = $name;
-                        break;
+                        if (file_exists(base_dir().str_replace(base_path(), '', $name))) {
+                            $element = $name;
+                            break;
+                        }
                     }
                 }
 
-                $result[$key] = $assets_element.'?v='.$version;
+                $result[$key] = $element.'?v='.$version;
             }
 
             $assets[$section] = $result;

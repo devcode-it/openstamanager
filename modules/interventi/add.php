@@ -53,7 +53,7 @@ $id_stato = $stato['idstatointervento'];
 // Se è indicata un'anagrafica relativa, si carica il tipo di intervento di default impostato
 if (!empty($id_anagrafica)) {
     $anagrafica = $dbo->fetchOne('SELECT idtipointervento_default, idzona FROM an_anagrafiche WHERE idanagrafica='.prepare($id_anagrafica));
-    $id_tipo = $anagrafica['idtipointervento_default'];
+    $id_tipo = $id_tipo ?: $anagrafica['idtipointervento_default'];
     $id_zona = $anagrafica['idzona'];
 }
 

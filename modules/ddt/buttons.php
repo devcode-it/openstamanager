@@ -17,14 +17,54 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Models\Module;
+
 include_once __DIR__.'/../../core.php';
 
-$stati = $dbo->fetchArray('SELECT descrizione FROM `dt_statiddt` WHERE `is_fatturabile` = 1');
+// Informazioni sui movimenti interni
+if (!empty($ddt->id_ddt_trasporto_interno)) {
+    $id_module_collegamento = $ddt->direzione == 'entrata' ? Module::pool('Ddt di acquisto')->id : Module::pool('Ddt di vendita')->id;
+
+    echo '
+<div class="tip" data-toggle="tooltip" title="'.tr("Questo ddt è impostato sull'anagrafica Azienda, e pertanto rappresenta un trasporto interno di merce: il movimento tra sedi distinte è necessario completato tramite un DDT in direzione opposta").'.">
+    <a class="btn btn-info" href="'.base_url().'/editor.php?id_module='.$id_module_collegamento.'&id_record='.$ddt->id_ddt_trasporto_interno.'">
+        <i class="fa fa-truck"></i> '.tr('DDT di completamento trasporto').'
+    </a>
+</div>';
+} elseif ($azienda->id == $ddt->anagrafica->id) {
+    echo '
+<div class="tip" data-toggle="tooltip" title="'.tr("Questo ddt è impostato sull'anagrafica Azienda, e pertanto rappresenta un trasporto interno di merce: per completare il movimento tra sedi distinte, è necessario generare un DDT in direzione opposta tramite questo pulsante").'.">
+    <button class="btn btn-warning '.($ddt->isImportabile() ? '' : 'disabled').'" onclick="completaTrasporto()">
+        <i class="fa fa-truck"></i> '.tr('Completa trasporto ').'
+    </button>
+</div>
+
+<script>
+function completaTrasporto() {
+    swal({
+        title: "'.tr('Completare il trasporto?').'",
+        text: "'.tr('Sei sicuro di voler completare il trasporto interno tramite un DDT in direzione opposta?').'",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonClass: "btn btn-lg btn-success",
+        confirmButtonText: "'.tr('Completa').'",
+    }).then(
+        function() {
+            location.href = globals.rootdir + "/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=completa_trasporto&backto=record-edit";
+        },
+        function() {}
+    );
+}
+</script>';
+}
+
+// Informazioni sull'importabilità del DDT
+$stati = $database->fetchArray('SELECT descrizione FROM `dt_statiddt` WHERE `is_fatturabile` = 1');
 foreach ($stati as $stato) {
     $stati_importabili[] = $stato['descrizione'];
 }
 
-$causali = $dbo->fetchArray('SELECT descrizione FROM `dt_causalet` WHERE `is_importabile` = 1');
+$causali = $database->fetchArray('SELECT descrizione FROM `dt_causalet` WHERE `is_importabile` = 1');
 foreach ($causali as $causale) {
     $causali_importabili[] = $causale['descrizione'];
 }

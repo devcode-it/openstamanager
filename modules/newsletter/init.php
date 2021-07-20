@@ -17,8 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Modules\Newsletter\Newsletter;
 use Modules\Emails\Template;
+use Modules\Newsletter\Newsletter;
 
 include_once __DIR__.'/../../core.php';
 

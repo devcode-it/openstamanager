@@ -135,3 +135,6 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 (NULL, 'app-v1', 'retrieve', 'controllo-clienti', 'API\\App\\v1\\ControlloClienti', '1'),
 (NULL, 'app-v1', 'retrieve', 'segnalazione-bug', 'API\\App\\v1\\SegnalazioneBug', '1'),
 (NULL, 'app-v1', 'create', 'segnalazione-bug', 'API\\App\\v1\\SegnalazioneBug', '1');
+
+-- Aggiunto collegamento tra DDT in direzioni opposte per gestione movimentazioni interne tra sedi
+ALTER TABLE `dt_ddt` ADD `id_ddt_trasporto_interno` INT(11) NULL, ADD FOREIGN KEY (`id_ddt_trasporto_interno`) REFERENCES `dt_ddt`(`id`) ON DELETE CASCADE;

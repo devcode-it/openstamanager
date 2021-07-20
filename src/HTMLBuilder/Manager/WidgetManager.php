@@ -258,7 +258,7 @@ class WidgetManager implements ManagerInterface
             // Aggiungo ad uno ad uno tutti i widget
             foreach ($widgets as $widget) {
                 $result .= '
-    <li class="col-sm-6 col-md-4 col-lg-'.intval(12 / $row_max).' li-widget" id="widget_'.$widget['id'].'">';
+    <li class="col-sm-6 col-md-4 col-lg-'.intval(12 / $row_max).' li-widget" id="widget_'.$widget['id'].'" data-id="'.$widget['id'].'">';
 
                 $info = array_merge($options, [
                     'id' => $widget['id'],

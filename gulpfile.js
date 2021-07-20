@@ -86,7 +86,7 @@ const JS = gulp.parallel(() => {
         'html5sortable/dist/html5sortable.js',
         'bootstrap-colorpicker/dist/js/bootstrap-colorpicker.js',
         'moment/moment.js',
-        //'components-jqueryui/jquery-ui.js',
+        'components-jqueryui/jquery-ui.js',
         'datatables.net/js/jquery.dataTables.js',
         'datatables.net-buttons/js/dataTables.buttons.js',
         'datatables.net-buttons/js/buttons.colVis.js',

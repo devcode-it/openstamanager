@@ -1085,6 +1085,14 @@ div.tip {
     background-color: rgba(255, 99, 71, 0.6) !important;
 }
 
-.login-box .img-responsive{
+.login-box .img-responsive {
     padding: 18px 0px 4px;
+}
+
+.no-selection {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }

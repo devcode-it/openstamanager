@@ -84,29 +84,25 @@ $(document).ready(function() {
         id_record: "'.$id_record.'",
     }, "'.$checks_id.'");
 
-    $(".checklist").sortable({
+    sortable(".checklist", {
         placeholder: "sort-highlight",
         handle: ".handle",
         forcePlaceholderSize: true,
         zIndex: 999999,
-        update: function(event, ui) {
-            var order = [];
-            $(".checklist > li").each( function(){
-                order.push($(this).data("id"));
-            });
+    })[0].addEventListener("sortupdate", function(e) {
+        let order = $(".checklist > li[data-id]").toArray().map(a => $(a).data("id"))
 
-            $.post(globals.rootdir + "/actions.php", {
-                id_module: "'.$id_module.'",
-                id_plugin: "'.$id_plugin.'",
-                id_record: "'.$id_record.'",
+        $.post(globals.rootdir + "/actions.php", {
+            id_module: globals.id_module,
+            id_plugin: "'.$id_plugin.'",
+            id_record: globals.id_record,
                 op: "ordina-checks",
-                order: order.join(","),
-            });
-        }
+            order: order.join(","),
+        });
     });
 
     $(".checklist").todoList({
-        onCheck  : function () {
+        onCheck: function () {
             var id = $(this).parent().data("id");
 
             checklists["'.$checks_id.'"].toggleCheck(id);

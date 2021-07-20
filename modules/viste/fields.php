@@ -144,7 +144,7 @@ echo '
 
 foreach ($fields as $field) {
     echo '
-                    <p class="clickable" data-id="'.$field['id'].'">
+                    <p class="clickable no-selection" data-id="'.$field['id'].'">
                         <i class="fa fa-sort"></i>
                         ';
 
@@ -243,30 +243,19 @@ echo '
     $(document).ready(function() {
         $("#save-buttons").hide();
 
-        $(".sortable").disableSelection();
-        $(".sortable").each(function() {
-            $(this).sortable({
-                axis: "y",
-                cursor: "move",
-                dropOnEmpty: true,
-                scroll: true,
-                update: function(event, ui) {
+        sortable(".sortable", {
+            axis: "y",
+            cursor: "move",
+            dropOnEmpty: true,
+            scroll: true,
+        })[0].addEventListener("sortupdate", function(e) {
+            let order = $(".sortable p[data-id]").toArray().map(a => $(a).data("id"))
 
-                    var order = "";
-                    $("div.panel-body.sortable  p[data-id]").each( function() {
-                        order += ","+$(this).data("id");
-                    });
-
-                    order = order.replace(/^,/, "");
-
-                    $.post(globals.rootdir + "/actions.php", {
-                        id: ui.item.data("id"),
-                        id_module: '.$id_module.',
-                        id_record: '.$id_record.',
-                        op: "update_position",
-                        order: order,
-                    });
-                }
+            $.post(globals.rootdir + "/actions.php", {
+                id_module: globals.id_module,
+                id_record: globals.id_record,
+                op: "update_position",
+                order: order.join(","),
             });
         });
     });

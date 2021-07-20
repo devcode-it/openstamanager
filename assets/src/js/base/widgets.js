@@ -17,35 +17,36 @@
  */
 
 $(document).ready(function () {
-    $("#widget-top, #widget-right").sortable({
+    const widgets = sortable("#widget-top, #widget-right", {
+        forcePlaceholderSize: true,
         items: 'li',
         cursor: 'move',
         dropOnEmpty: true,
-        connectWith: '.widget',
+        acceptFrom: '.widget',
         scroll: true,
-        helper: 'clone',
-        start: function (event, ui) {
-            // Salvo la lista da cui proviene il drag
-            src_list = ($(this).attr('id')).replace('widget-', '');
+    });
 
-            // Evidenzio le aree dei widget
-            $('.widget').addClass('bordered').sortable('refreshPositions');
-        },
-        stop: function (event, ui) {
+    for (const sorting of widgets) {
+        sorting.addEventListener("sortupdate", function (e) {
             // Rimuovo l'evidenziazione dell'area widget
             $('.widget').removeClass('bordered');
 
             // Salvo la lista su cui ho eseguito il drop
-            dst_list = (ui.item.parent().attr('id')).replace('widget-', '');
+            const location = $(e.detail.destination.container).attr('id').replace('widget-', '');
 
-            var order = $(this).sortable('toArray').toString();
-            $.post(globals.rootdir + "/actions.php?id_module=" + globals.order_manager_id, {
-                op: 'sort_widgets',
-                location: dst_list,
-                ids: order,
+            let order = $(".widget li[data-id]").toArray().map(a => $(a).data("id"))
+            $.post(globals.rootdir + "/actions.php", {
+                id_module: globals.order_manager_id,
                 id_module_widget: globals.id_module,
-                id_record: globals.id_record,
+                op: 'sort_widgets',
+                location: location,
+                order: order.join(','),
             });
-        }
-    });
+        });
+
+        sorting.addEventListener("sortstart", function (e) {
+            // Evidenzio le aree dei widget
+            $('.widget').addClass('bordered');
+        });
+    }
 });

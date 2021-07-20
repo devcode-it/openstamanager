@@ -536,14 +536,14 @@ class FatturaElettronica
         // se privato/pa o azienda
         if ($data['tipo'] == 'Privato' or $data['tipo'] == 'Ente pubblico') {
             // se privato/pa chiedo obbligatoriamente codice fiscale
-            $fields['codice_fiscale'] = 'Codice Fiscale';
+            $fields['codice_fiscale'] = ($data['nazione']->iso2 == 'IT' ? 'Codice Fiscale' : '');
             // se pa chiedo codice unico ufficio
             $fields['codice_destinatario'] = ($data['tipo'] == 'Ente pubblico' && empty($data['codice_destinatario'])) ? 'Codice unico ufficio' : '';
         } else {
             // se azienda chiedo partita iva
             $fields['piva'] = 'Partita IVA';
             // se italiana e non ho impostato ne il codice destinatario ne indirizzo PEC chiedo la compilazione di almeno uno dei due
-            $fields['codice_destinatario'] = (empty($data['codice_destinatario']) and empty($data['pec']) && intval($data['nazione'] == 'IT')) ? 'Codice destinatario o indirizzo PEC' : '';
+            $fields['codice_destinatario'] = (empty($data['codice_destinatario']) and empty($data['pec']) && intval($data['nazione']->iso2 == 'IT')) ? 'Codice destinatario o indirizzo PEC' : '';
         }
 
         $missing = [];

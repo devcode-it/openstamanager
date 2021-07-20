@@ -34,15 +34,21 @@ $final_module = Modules::get($name);
 // IVA predefinita
 $id_iva = $id_iva ?: setting('Iva predefinita');
 
+$righe_totali = $documento->getRighe();
 if ($final_module['name'] == 'Interventi') {
-    $righe = $documento->getRighe()->where('qta_rimanente', '>', 0)->where('is_descrizione', '=', 0);
+    $righe = $righe_totali->where('is_descrizione', '=', 0)
+        ->where('qta_rimanente', '>', 0);
+    $righe_evase = $righe_totali->where('is_descrizione', '=', 0)
+        ->where('qta_rimanente', '=', 0);
 } elseif ($final_module['name'] == 'Ordini fornitore') {
-    $righe = $documento->getRighe();
+    $righe = $righe_totali;
+    $righe_evase = collect();
 } else {
-    $righe = $documento->getRighe()->where('qta_rimanente', '>', 0);
+    $righe = $righe_totali->where('qta_rimanente', '>', 0);
+    $righe_evase = $righe_totali->where('qta_rimanente', '=', 0);
 }
 
-if (empty($righe)) {
+if ($righe->isEmpty()) {
     echo '
 <p>'.tr('Non ci sono elementi da evadere').'...</p>';
 
@@ -355,21 +361,56 @@ echo '
         </table>
     </div>';
 
-echo '
-<div class="alert alert-warning hidden" id="articoli_sottoscorta">
-    <table class="table table-condensed">
-        <thead>
-            <tr>
-                <th>'.tr('Articolo').'</th>
-                <th class="text-center tip" width="150" title="'.tr('Quantità richiesta').'">'.tr('Q.tà').'</th>
-                <th class="text-center tip" width="150" title="'.tr('Quantità disponibile nel magazzino del gestionale').'">'.tr('Q.tà magazzino').'</th>
-                <th class="text-center" width="150">'.tr('Scarto').'</th>
-            </tr>
-        </thead>
+// Elenco righe evase completametne
+if (!$righe_evase->isEmpty()) {
+    echo '
+    <div class="box box-info collapsable collapsed-box">
+        <div class="box-header with-border">
+            <h3 class="box-title">'.tr('Righe evase completamente').'</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+            </div>
+        </div>
 
-        <tbody></tbody>
-    </table>
-</div>';
+        <table class="box-body table table-striped table-hover table-condensed">
+            <thead>
+                <tr>
+                    <th>'.tr('Descrizione').'</th>
+                    <th width="10%" class="text-center">'.tr('Q.tà').'</th>
+                </tr>
+            </thead>
+            <tbody>';
+
+    foreach ($righe_evase as $riga) {
+        echo '
+                <tr>
+                    <td>'.$riga->descrizione.'</td>
+                    <td class="text-center">'.numberFormat($riga->qta, 'qta').' '.$riga->um.'</td>
+                </tr>';
+    }
+
+    echo '
+            </tbody>
+        </table>
+    </div>';
+}
+
+// Gestione articolo sottoscorta
+echo '
+    <div class="alert alert-warning hidden" id="articoli_sottoscorta">
+        <table class="table table-condensed">
+            <thead>
+                <tr>
+                    <th>'.tr('Articolo').'</th>
+                    <th class="text-center tip" width="150" title="'.tr('Quantità richiesta').'">'.tr('Q.tà').'</th>
+                    <th class="text-center tip" width="150" title="'.tr('Quantità disponibile nel magazzino del gestionale').'">'.tr('Q.tà magazzino').'</th>
+                    <th class="text-center" width="150">'.tr('Scarto').'</th>
+                </tr>
+            </thead>
+
+            <tbody></tbody>
+        </table>
+    </div>';
 
 echo '
 
@@ -386,10 +427,7 @@ echo '
 echo '
 <script>$(document).ready(init)</script>';
 
-echo '
-<script type="text/javascript">
-';
-
+// Individuazione scorte
 $articoli = $documento->articoli->groupBy('idarticolo');
 $scorte = [];
 foreach ($articoli as $elenco) {
@@ -407,144 +445,144 @@ foreach ($articoli as $elenco) {
 }
 
 echo '
-var scorte = '.json_encode($scorte).';
-var abilita_scorte = '.intval(!$documento::$movimenta_magazzino && !empty($options['tipo_documento_finale']) && $options['tipo_documento_finale']::$movimenta_magazzino).';
+<script type="text/javascript">
+    var scorte = '.json_encode($scorte).';
+    var permetti_documento_vuoto = '.intval(!empty($options['allow-empty'])).';
+    var abilita_scorte = '.intval(!$documento::$movimenta_magazzino && !empty($options['tipo_documento_finale']) && $options['tipo_documento_finale']::$movimenta_magazzino).';
 
-function controllaMagazzino() {
-    if(!abilita_scorte) return;
+    function controllaMagazzino() {
+        if(!abilita_scorte) return;
 
-    let righe = $("#righe_documento_importato tr");
+        let righe = $("#righe_documento_importato tr");
 
-    // Lettura delle righe selezionate per l\'improtazione
-    let richieste = {};
-    for(const r of righe) {
-        let riga = $(r);
-        let id = $(riga).data("local_id");
-        let id_articolo = riga.find("[id^=id_articolo_]").text();
+        // Lettura delle righe selezionate per l\'improtazione
+        let richieste = {};
+        for(const r of righe) {
+            let riga = $(r);
+            let id = $(riga).data("local_id");
+            let id_articolo = riga.find("[id^=id_articolo_]").text();
 
-        if (!$("#checked_" + id).is(":checked") || !id_articolo) {
-            continue;
+            if (!$("#checked_" + id).is(":checked") || !id_articolo) {
+                continue;
+            }
+
+            let qta = parseFloat(riga.find("input[id^=qta_]").val());
+            richieste[id_articolo] = richieste[id_articolo] ? richieste[id_articolo] + qta : qta;
         }
 
-        let qta = parseFloat(riga.find("input[id^=qta_]").val());
-        richieste[id_articolo] = richieste[id_articolo] ? richieste[id_articolo] + qta : qta;
-    }
+        let sottoscorta = $("#articoli_sottoscorta");
+        let body = sottoscorta.find("tbody");
+        body.html("");
 
-    let sottoscorta = $("#articoli_sottoscorta");
-    let body = sottoscorta.find("tbody");
-    body.html("");
+        for(const id_articolo in richieste) {
+            let qta_scorta = parseFloat(scorte[id_articolo]["qta"]);
+            let qta_richiesta = parseFloat(richieste[id_articolo]);
+            if ((qta_richiesta > qta_scorta) && (scorte[id_articolo]["servizio"] !== 1)) {
+                body.append(`<tr>
+            <td>` + scorte[id_articolo]["descrizione"] + `</td>
+            <td class="text-right">` + qta_richiesta.toLocale() + `</td>
+            <td class="text-right">` + qta_scorta.toLocale() + `</td>
+            <td class="text-right">` + (qta_richiesta - qta_scorta).toLocale() + `</td>
+        </tr>`);
+            }
+        }
 
-    for(const id_articolo in richieste) {
-        let qta_scorta = parseFloat(scorte[id_articolo]["qta"]);
-        let qta_richiesta = parseFloat(richieste[id_articolo]);
-        if ((qta_richiesta > qta_scorta) && (scorte[id_articolo]["servizio"] !== 1) ) {
-            body.append(`<tr>
-        <td>` + scorte[id_articolo]["descrizione"] + `</td>
-        <td class="text-right">` + qta_richiesta.toLocale() + `</td>
-        <td class="text-right">` + qta_scorta.toLocale() + `</td>
-        <td class="text-right">` + (qta_richiesta - qta_scorta).toLocale() + `</td>
-    </tr>`);
+        if (body.html()) {
+            sottoscorta.removeClass("hidden");
+        } else {
+            sottoscorta.addClass("hidden");
         }
     }
 
-    if (body.html()) {
-        sottoscorta.removeClass("hidden");
-    } else {
-        sottoscorta.addClass("hidden");
-    }
-}
+    $("input[name=righe]").each(function() {
+        ricalcolaTotaleRiga($(this).val());
+    });
 
-$("input[name=righe]").each(function() {
-    ricalcolaTotaleRiga($(this).val());
-});
-
-function ricalcolaTotaleRiga(r) {
-    let prezzo_unitario = $("#prezzo_unitario_" + r).val();
-    let sconto = $("#sconto_unitario_" + r).val();
-
-    let max_qta_input = $("#max_qta_" + r);
-    let qta_max = max_qta_input.val();
-
-    prezzo_unitario = parseFloat(prezzo_unitario);
-    sconto = parseFloat(sconto);
-    qta_max = parseFloat(qta_max);
-
-    let prezzo_scontato = prezzo_unitario - sconto;
-
-    let qta = ($("#qta_" + r).val()).toEnglish();
-
-    // Se inserisco una quantità da evadere maggiore di quella rimanente, la imposto al massimo possibile
-    if (qta > qta_max) {
-        qta = qta_max;
-
-        $("#qta_" + r).val(qta);
-    }
-
-    // Se tolgo la spunta della casella dell\'evasione devo azzerare i conteggi
-    if (isNaN(qta) || !$("#checked_" + r).is(":checked")) {
-        qta = 0;
-    }
-
-    let serial_select = $("#serial_" + r);
-    serial_select.selectClear();
-    serial_select.select2("destroy");
-    serial_select.data("maximum", qta);
-    start_superselect();
-
-    let subtotale = (prezzo_scontato * qta).toLocale();
-
-    $("#subtotale_" + r).html(subtotale + " " + globals.currency);
-
-
-    ricalcolaTotale();
-}
-
-function ricalcolaTotale() {
-    let totale = 0.00;
-    let totale_qta = 0;
-
-    $("input[id*=qta_]").each(function() {
-        let qta = ($(this).val()).toEnglish();
-        let r = $(this).attr("id").replace("qta_", "");
-
-        if (!$("#checked_" + r).is(":checked") || isNaN(qta)) {
-            qta = 0;
-        }
-
+    function ricalcolaTotaleRiga(r) {
         let prezzo_unitario = $("#prezzo_unitario_" + r).val();
         let sconto = $("#sconto_unitario_" + r).val();
 
+        let max_qta_input = $("#max_qta_" + r);
+        let qta_max = max_qta_input.val();
+
         prezzo_unitario = parseFloat(prezzo_unitario);
         sconto = parseFloat(sconto);
-    
+        qta_max = parseFloat(qta_max);
+
         let prezzo_scontato = prezzo_unitario - sconto;
 
-        if(prezzo_scontato) {
-            totale += prezzo_scontato * qta;
+        let qta = ($("#qta_" + r).val()).toEnglish();
+
+        // Se inserisco una quantità da evadere maggiore di quella rimanente, la imposto al massimo possibile
+        if (qta > qta_max) {
+            qta = qta_max;
+
+            $("#qta_" + r).val(qta);
         }
 
-        totale_qta += qta;
-    });
+        // Se tolgo la spunta della casella dell\'evasione devo azzerare i conteggi
+        if (isNaN(qta) || !$("#checked_" + r).is(":checked")) {
+            qta = 0;
+        }
 
-    $("#totale").html((totale.toLocale()) + " " + globals.currency);';
+        let serial_select = $("#serial_" + r);
+        serial_select.selectClear();
+        serial_select.select2("destroy");
+        serial_select.data("maximum", qta);
+        start_superselect();
 
-if (empty($options['allow-empty'])) {
-    echo '
-    if (totale_qta > 0) {
-        $("#submit_btn").show();
-    } else {
-        $("#submit_btn").hide();
-    }';
-}
+        let subtotale = (prezzo_scontato * qta).toLocale();
 
-echo '
-    controllaMagazzino();
-}
+        $("#subtotale_" + r).html(subtotale + " " + globals.currency);
 
-ricalcolaTotale();  
+
+        ricalcolaTotale();
+    }
+
+    function ricalcolaTotale() {
+        let totale = 0.00;
+        let totale_qta = 0;
+
+        $("input[id*=qta_]").each(function() {
+            let qta = ($(this).val()).toEnglish();
+            let r = $(this).attr("id").replace("qta_", "");
+
+            if (!$("#checked_" + r).is(":checked") || isNaN(qta)) {
+                qta = 0;
+            }
+
+            let prezzo_unitario = $("#prezzo_unitario_" + r).val();
+            let sconto = $("#sconto_unitario_" + r).val();
+
+            prezzo_unitario = parseFloat(prezzo_unitario);
+            sconto = parseFloat(sconto);
+
+            let prezzo_scontato = prezzo_unitario - sconto;
+
+            if(prezzo_scontato) {
+                totale += prezzo_scontato * qta;
+            }
+
+            totale_qta += qta;
+        });
+
+        $("#totale").html((totale.toLocale()) + " " + globals.currency);
+
+        if (!permetti_documento_vuoto) {
+            if (totale_qta > 0) {
+                $("#submit_btn").show();
+            } else {
+                $("#submit_btn").hide();
+            }
+        }
+
+        controllaMagazzino();
+    }
+
+    ricalcolaTotale();
 
     $(document).ready(function(){
-        if(input("id_ritenuta_acconto").get()){
+        if(input("id_ritenuta_acconto").get()) {
             $("#calcolo_ritenuta_acconto").prop("required", true);
         } else{
             $("#calcolo_ritenuta_acconto").prop("required", false);
@@ -552,9 +590,8 @@ ricalcolaTotale();
         }
 
         $("#id_ritenuta_acconto").on("change", function(){
-            if(input("id_ritenuta_acconto").get()){
+            if(input("id_ritenuta_acconto").get()) {
                 $("#calcolo_ritenuta_acconto").prop("required", true);
-                
             } else{
                 $("#calcolo_ritenuta_acconto").prop("required", false);
                 input("calcolo_ritenuta_acconto").set("");

@@ -23,7 +23,7 @@ use Modules\Emails\Template;
 include_once __DIR__.'/../../core.php';
 
 //Controllo se il template è ancora attivo
-if( empty($template) ){
+if (empty($template)) {
     echo '
     <div class=" alert alert-danger">'.tr('ATTENZIONE! Questa newsletter risulta collegata ad un template non più presente a sistema').'</div>';
 }

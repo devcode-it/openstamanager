@@ -25,5 +25,5 @@ if (isset($id_record)) {
     $record = $dbo->fetchOne('SELECT * FROM em_templates WHERE id='.prepare($id_record).' AND deleted_at IS NULL');
 
     //Controllo se ci sono newletter collegate a questo template
-    $newsletters = Newsletter::where('id_template',$id_record)->get();
+    $newsletters = Newsletter::where('id_template', $id_record)->get();
 }

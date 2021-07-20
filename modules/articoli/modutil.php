@@ -19,8 +19,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Articoli\Articolo;
-
 /**
  * Funzione per aggiornare le sedi nei movimenti di magazzino.
  */

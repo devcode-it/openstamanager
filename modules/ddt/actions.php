@@ -19,6 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\DDT\Components\Articolo;
@@ -26,6 +27,7 @@ use Modules\DDT\Components\Descrizione;
 use Modules\DDT\Components\Riga;
 use Modules\DDT\Components\Sconto;
 use Modules\DDT\DDT;
+use Modules\DDT\Stato;
 use Modules\DDT\Tipo;
 
 $module = Modules::get($id_module);
@@ -36,7 +38,7 @@ if ($module['name'] == 'Ddt di vendita') {
     $dir = 'uscita';
 }
 
-switch (post('op')) {
+switch (filter('op')) {
     case 'add':
         $idanagrafica = post('idanagrafica');
         $data = post('data');
@@ -421,14 +423,58 @@ switch (post('op')) {
 
         break;
 
-        case 'update_position':
-            $order = explode(',', post('order', true));
+    case 'update_position':
+        $order = explode(',', post('order', true));
 
-            foreach ($order as $i => $id_riga) {
-                $dbo->query('UPDATE `dt_righe_ddt` SET `order` = '.prepare($i + 1).' WHERE id='.prepare($id_riga));
-            }
+        foreach ($order as $i => $id_riga) {
+            $dbo->query('UPDATE `dt_righe_ddt` SET `order` = '.prepare($i + 1).' WHERE id='.prepare($id_riga));
+        }
 
-            break;
+        break;
+
+    /*
+     * Gestione della generazione di DDT in direzione opposta a quella corrente, per completare il riferimento di trasporto interno tra sedi distinte dell'anagrafica Azienda.
+     */
+    case 'completa_trasporto':
+        $tipo = Tipo::where('dir', '!=', $ddt->direzione)->first();
+        $stato = Stato::where('descrizione', '=', 'Evaso')->first();
+
+        // Duplicazione DDT
+        $copia = $ddt->replicate();
+        $copia->tipo()->associate($tipo);
+        $copia->stato()->associate($stato);
+        $copia->id_ddt_trasporto_interno = $ddt->id;
+
+        // Inversione sedi
+        $copia->idsede_partenza = $ddt->idsede_destinazione;
+        $copia->idsede_destinazione = $ddt->idsede_partenza;
+
+        $copia->save();
+
+        // Copia righe
+        $righe = $ddt->getRighe();
+        foreach ($righe as $riga) {
+            $copia_riga = $riga->replicate();
+
+            // Aggiornamento riferimenti
+            $copia_riga->idddt = $copia->id;
+            $copia_riga->original_id = null;
+            $copia_riga->original_type = null;
+
+            $copia_riga->save();
+
+            // Movimentazione forzata in direzione del documento
+            $copia_riga->movimenta($riga->qta);
+        }
+
+        // Salvataggio riferimento
+        $ddt->id_ddt_trasporto_interno = $copia->id;
+        $ddt->save();
+
+        $id_record = $copia->id;
+        $id_module = $ddt->direzione == 'entrata' ? Module::pool('Ddt di acquisto')->id : Module::pool('Ddt di vendita')->id;
+
+        break;
 }
 
 // Aggiornamento stato degli ordini presenti in questa fattura in base alle quantità totali evase

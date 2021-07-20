@@ -158,58 +158,58 @@ echo '
 echo '
 <script>
     var emails = [];
+    var id_anagrafica = "'.$id_anagrafica.'";
+    var pec = "'.$smtp['pec']. '";
 
-    $(document).ready(function() {';
+    $(document).ready(function() {
+        // Auto-completamento destinatario
+        if (id_anagrafica) {
+            $(document).load(globals.rootdir + "/ajax_complete.php?module=Anagrafiche&op=get_email&id_anagrafica=" + id_anagrafica + (pec ? "&type=pec" : ""), function(response) {
+                emails = JSON.parse(response);
 
-        // Autocompletamento destinatario
-        if (!empty($id_anagrafica)) {
-            echo '
-		$(document).load(globals.rootdir + "/ajax_complete.php?module=Anagrafiche&op=get_email&id_anagrafica='.$id_anagrafica.(($smtp['pec']) ? '&type=pec' : '').'", function(response) {
-            emails = JSON.parse(response);
+                $(".destinatari").each(function(){
+                    addAutoComplete(this);
+                });
 
-            $(".destinatari").each(function(){
-                addAutoComplete(this);
+                aggiungiDestinatario();
             });
-
-            aggiungiDestinatario();
-        });';
         }
-
-        echo '
-
     });
 
     function inviaEmail() {
-        if($("#email-form").parsley().validate() && confirm("Inviare e-mail?")) {
-            $("#email-form").submit();
+        const form = $("#email-form");
+
+        if (form.parsley().validate() && confirm("Inviare e-mail?")) {
+            form.submit();
         }
     }
 
-    function addAutoComplete(input){
-        $(input).autocomplete({
-            source: emails,
+    function addAutoComplete(input) {
+        autocomplete({
             minLength: 0,
-            close: function() {
+            input: input,
+            emptyMsg: globals.translations.noResults,
+            fetch: function (text, update) {
+                text = text.toLowerCase();
+                const suggestions = emails.filter(n => n.value.toLowerCase().startsWith(text));
+                update(suggestions);
+            },
+            onSelect: function (item) {
+                input.value = item.value;
                 aggiungiDestinatario();
             },
-        }).focus(function() {
-            $(this).autocomplete("search", $(this).val());
         });
     }
 
     function aggiungiDestinatario() {
-        var last = $("#lista-destinatari input").last();
+        const last = $("#lista-destinatari input").last();
 
         if (last.val()) {
-            cleanup_inputs();
+            const nuovaRiga = aggiungiContenuto("#lista-destinatari", "#template-destinatario", {"-id-": $("#lista-destinatari > div").length});
 
-            aggiungiContenuto("#lista-destinatari", "#template-destinatario", {"-id-": $("#lista-destinatari > div").length});
-
-            $(".destinatari").each(function(){
+            nuovaRiga.find(".destinatari").each(function(){
                 addAutoComplete(this);
             });
-
-            restart_inputs();
         }
     }
 </script>';

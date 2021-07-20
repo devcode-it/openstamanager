@@ -81,7 +81,8 @@ input[type=file] {
     position: fixed;
 }
 
-.ui-autocomplete {
+.autocomplete, .ui-autocomplete {
+    background: white;
     z-index: 10000;
     min-width: 160px;
     padding: 10px;
@@ -94,8 +95,23 @@ input[type=file] {
     border-radius: 5px;
 }
 
-.ui-autocomplete-category {
-    font-size: 150%;
+.autocomplete .group, .ui-autocomplete-category {
+    font-size: 1.5em;
+    background: inherit;
+}
+
+.autocomplete > div {
+    padding: 5px;
+}
+
+.highlight {
+    background: #FFFF66;
+}
+
+.autocomplete > div:hover:not(.group),
+.autocomplete > div.selected {
+    background: #F5F5F5;
+    cursor: pointer;
 }
 
 .ui-autocomplete-scrollable {

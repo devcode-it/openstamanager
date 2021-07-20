@@ -108,19 +108,28 @@ if (Auth::check()) {
         'details' => tr('Dettagli'),
         'loading' => tr('Caricamento'),
         'waiting' => tr('Impossibile procedere'),
-        'waiting_msg' => tr('Prima di proseguire devi selezionare alcuni elementi!'),
+        'waitingMessage' => tr('Prima di proseguire devi selezionare alcuni elementi!'),
         'hooksExecuting' => tr('Hooks in esecuzione'),
         'hookExecuting' => tr('Hook "_NAME_" in esecuzione'),
         'hookMultiple' => tr('Hai _NUM_ notifiche'),
         'hookSingle' => tr('Hai 1 notifica'),
         'hookNone' => tr('Nessuna notifica'),
         'singleCalendar' => tr("E' presente un solo periodo!"),
+        'noResults' => tr("Nessun elemento trovato"),
     ];
     foreach ($translations as $key => $value) {
         echo '
                 '.$key.': "'.addslashes($value).'",';
     }
     echo '
+                allegati: {
+                    messaggio: "'.tr("Clicca o trascina qui per caricare uno o più file").'",
+                    maxFilesize: "'.tr('Max upload: _SIZE_ MB').'",
+                    errore: "'.tr('Errore').'",
+                    modifica: "'.tr('Modifica allegato').'",
+                    elimina: "'.tr('Vuoi eliminare questo file?').'",
+                    procedi: "'.tr('Procedi').'",
+                },
                 ajax: {
                     "missing": {
                         "title": "'.tr('Errore').'",
@@ -292,7 +301,7 @@ if (Auth::check()) {
 
         hotkeys("f1,f2,f3,f4", function(event, handler) {
             switch (handler.key) {
-                case "f1": 
+                case "f1":
                     event.preventDefault();
                     $("button[data-toggle]").first().trigger("click");
                   break;
@@ -453,7 +462,8 @@ if (Auth::check()) {
                         <div class="input-group">
                             <input type="text" name="q" class="form-control" id="supersearch" placeholder="'.tr('Cerca').'..."/>
 							<span class="input-group-btn">
-								<button class="btn btn-flat" id="search-btn" name="search" type="submit" ><i class="fa fa-search"></i>
+								<button class="btn btn-flat" id="search-btn" name="search" type="submit">
+								    <i class="fa fa-search"></i>
 								</button>
 							</span>
 

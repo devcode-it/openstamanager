@@ -21,6 +21,7 @@ namespace HTMLBuilder\Manager;
 
 use Models\Setting;
 use Models\Upload;
+use Util\FileSystem;
 
 /**
  * Gestione allegati.
@@ -47,11 +48,14 @@ class FileManager implements ManagerInterface
         // ID del form
         $attachment_id = 'attachments_'.$options['id_module'].'_'.$options['id_plugin'];
 
+        $upload_max_filesize = ini_get('upload_max_filesize');
+        $upload_max_filesize = substr($upload_max_filesize, 0, -1);
+
         $dbo = database();
 
         // Codice HTML
         $result = '
-<div id="'.$attachment_id.'" >';
+<div class="gestione-allegati" id="'.$attachment_id.'" data-id_module="'.$options['id_module'].'" data-id_plugin="'.$options['id_plugin'].'" data-id_record="'.$options['id_record'].'" data-max_filesize="'.$upload_max_filesize.'">';
 
         if (!empty($options['showpanel'])) {
             $result .= '
@@ -79,14 +83,18 @@ class FileManager implements ManagerInterface
     <div class="box-header with-border">
         <h3 class="box-title">'.(!empty($category) ? $category : tr('Generale')).'</h3>
 
-        {[ "type": "text", "class": "hide category-name", "value": "'.$category.'" ]}
+        {[ "type": "text", "class": "hidden category-name", "value": "'.$category.'" ]}
 
         <div class="box-tools pull-right">';
 
                 if (!empty($category) && !in_array($category, ['Fattura Elettronica'])) {
                     $result .= '
-            <button type="button" class="btn btn-box-tool category-save hide">
+            <button type="button" class="btn btn-box-tool category-save hidden">
                 <i class="fa fa-check"></i>
+            </button>
+
+            <button type="button" class="btn btn-box-tool category-cancel hidden">
+                <i class="fa fa-close"></i>
             </button>
 
             <button type="button" class="btn btn-box-tool category-edit">
@@ -115,7 +123,7 @@ class FileManager implements ManagerInterface
                     $file = Upload::find($r['id']);
 
                     $result .= '
-        <tr id="row_'.$r['id'].'" >
+        <tr id="row_'.$r['id'].'" data-id="'.$r['id'].'" data-filename="'.$r['filename'].'">
             <td align="left">';
 
                     if ($file->user && $file->user->photo) {
@@ -133,38 +141,38 @@ class FileManager implements ManagerInterface
                     <i class="fa fa-external-link"></i> '.$r['name'].'
                 </a>
 
-                <small> ('.$file->extension.')'.((!empty($file->size)) ? ' ('.\Util\FileSystem::formatBytes($file->size).')' : '').' '.(((setting('Logo stampe') == $r['filename']) || (setting('Filigrana stampe') == $r['filename'])) ? '<i class="fa fa-file-text-o"></i>' : '').'</small>'.'
+                <small> ('.$file->extension.')'.((!empty($file->size)) ? ' ('. FileSystem::formatBytes($file->size).')' : '').' '.(((setting('Logo stampe') == $r['filename']) || (setting('Filigrana stampe') == $r['filename'])) ? '<i class="fa fa-file-text-o"></i>' : '').'</small>'.'
             </td>
 
-            <td>'.\Translator::timestampToLocale($r['created_at']).'</td>
+            <td>'.timestampFormat($r['created_at']).'</td>
 
             <td class="text-center">
-                <a class="btn btn-xs btn-primary" href="'.base_path().'/actions.php?id_module='.$options['id_module'].'&op=download-allegato&id='.$r['id'].'&filename='.$r['filename'].'" target="_blank">
+                <button type="button" class="btn btn-xs btn-primary" onclick="saggiungiAllegato(this)">
                     <i class="fa fa-download"></i>
-                </a>';
+                </button>';
 
                     // Anteprime supportate dal browser
                     if ($file->hasPreview()) {
                         $result .= '
-                <button class="btn btn-xs btn-info" type="button" data-title="'.prepareToField($r['name']).' <small style=\'color:white\'><i>('.$r['filename'].')</i></small>" data-href="'.base_path().'/view.php?file_id='.$r['id'].'">
+                <button type="button" class="btn btn-xs btn-info" onclick="visualizzaAllegato(this)">
                     <i class="fa fa-eye"></i>
                 </button>';
                     } else {
                         $result .= '
-                <button class="btn btn-xs btn-default disabled" title="'.tr('Anteprima file non disponibile').'" disabled>
+                <button type="button" class="btn btn-xs btn-default disabled" title="'.tr('Anteprima file non disponibile').'" disabled>
                     <i class="fa fa-eye"></i>
                 </button>';
                     }
 
                     if (!$options['readonly']) {
                         $result .= '
-                <button type="button" class="btn btn-xs btn-warning" data-href="'.base_path().'/actions.php?op=visualizza-modifica-allegato&id_module='.$options['id_module'].'&id_allegato='.$r['id'].'" data-title="'.tr('Modifica allegato').'">
+                <button type="button" class="btn btn-xs btn-warning" onclick="modificaAllegato(this)">
                     <i class="fa fa-edit"></i>
                 </button>
 
-                <a class="btn btn-xs btn-danger ask" data-backto="record-edit" data-msg="'.tr('Vuoi eliminare questo file?').'" data-op="rimuovi-allegato" data-filename="'.$r['filename'].'" data-id_record="'.$r['id_record'].'" data-id_plugin="'.$options['id_plugin'].'" data-before="show_'.$attachment_id.'" data-callback="reload_'.$attachment_id.'">
+                <button type="button" class="btn btn-xs btn-danger" onclick="rimuoviAllegato(this)">
                     <i class="fa fa-trash"></i>
-                </a>';
+                </button>';
                     }
 
                     $result .= '
@@ -214,147 +222,42 @@ class FileManager implements ManagerInterface
 
         $source = array_clean(array_column($categories, 'category'));
 
-        $upload_max_filesize = ini_get('upload_max_filesize');
-        $upload_max_filesize = substr($upload_max_filesize, 0, -1);
-
         $result .= '
 <script>$(document).ready(init)</script>
 
 <script>
-
-// Disabling autoDiscover, otherwise Dropzone will try to attach twice.
-Dropzone.autoDiscover = false;
-
 $(document).ready(function() {
-    let dropzone_id = "#'.$attachment_id.' .dropzone";
-    if ($(dropzone_id).length == 0) {
-        return;
-    }
+    const container = $("#'.$attachment_id.'");
 
-    let dragdrop = new Dropzone(dropzone_id, {
-        dictDefaultMessage: "'.tr('Clicca o trascina qui per caricare uno o più file').'.<br>('.tr('Max upload: _SIZE_', [
-            '_SIZE_' => $upload_max_filesize.' MB',
-        ]).')",
-        paramName: "file",
-        maxFilesize: '.$upload_max_filesize.', // MB
-        uploadMultiple: false,
-        parallelUploads: 2,
-        addRemoveLinks: false,
-        autoProcessQueue: true,
-        autoQueue: true,
-        url: "'.base_path().'/actions.php?op=aggiungi-allegato&id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'",
-        init: function (file, xhr, formData) {
-            this.on("success", function (file) {
-                dragdrop.removeFile(file);
-            });
-
-            this.on("complete", function (file) {
-                // Ricarico solo quando ho finito
-                if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-                    reload_'.$attachment_id.'();
-                }
-            });
-        }
-    });
-
-    // Modifica categoria
-    $("#'.$attachment_id.' .category-edit").click(function() {
-        var nome = $(this).parent().parent().find(".box-title");
-        var save_button = $(this).parent().find(".category-save");
-        var input = $(this).parent().parent().find(".category-name");
-
-        nome.hide();
-        $(this).hide();
-
-        input.removeClass("hide");
-        save_button.removeClass("hide");
-    });
-
-    $("#'.$attachment_id.' .category-save").click(function() {
-        var nome = $(this).parent().parent().find(".box-title");
-        var input = $(this).parent().parent().find(".category-name");
-
-        show_'.$attachment_id.'();
-
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            cache: false,
-            type: "POST",
-            data: {
-                id_module: "'.$options['id_module'].'",
-                id_plugin: "'.$options['id_plugin'].'",
-                id_record: "'.$options['id_record'].'",
-                op: "modifica-categoria-allegato",
-                category: nome.text(),
-                name: input.val(),
-            },
-            success: function(data) {
-                reload_'.$attachment_id.'();
-            },
-            error: function(data) {
-                reload_'.$attachment_id.'();
-            }
-        });
-    });
-
-    function getFilenameAndExtension(path) {
-        let filename_extension = path.replace(/^.*[\\\/]/, \'\');
-        let filename = filename_extension.substring(0, filename_extension.lastIndexOf(\'.\'));
-        let ext = filename_extension.split(\'.\').pop();
-
-        return [filename, ext];
-    }
-
-    // Auto-completamento categoria
-    $("#'.$attachment_id.' #categoria_allegato").autocomplete({
-        source: '.json_encode($source).',
-        minLength: 0
-    }).focus(function() {
-        $(this).autocomplete("search", $(this).val())
-    });
-
-    var data = {
-        op: "aggiungi-allegato",
-        id_module: "'.$options['id_module'].'",
-        id_plugin: "'.$options['id_plugin'].'",
-        id_record: "'.$options['id_record'].'",
-    };
-
-    // Upload
-    $("#'.$attachment_id.' #upload").click(function(){
-        $form = $("#'.$attachment_id.' #upload-form");
-
-        $form.ajaxSubmit({
-            url: globals.rootdir + "/actions.php",
-            data: data,
-            type: "post",
-            uploadProgress: function(event, position, total, percentComplete) {
-                $("#'.$attachment_id.' #upload").prop("disabled", true).html(percentComplete + "%").removeClass("btn-success").addClass("btn-info");
-            },
-            success: function(data){
-                reload_'.$attachment_id.'();
-            },
-            error: function(data) {
-                alert("'.tr('Errore').': " + data);
-            }
-        });
-    });
+    initGestioneAllegati(container);
+    impostaCategorieAllegatiDisponibili(container, '.json_encode($source).');
 });
 
-function show_'.$attachment_id.'() {
-    localLoading($("#'.$attachment_id.' .panel-body"), true);
-}
+// Modifica categoria
+$("#'.$attachment_id.' .category-edit").click(function() {
+    const container = $(this).closest(".gestione-allegati");
 
-function reload_'.$attachment_id.'() {
-    $("#'.$attachment_id.'").load(globals.rootdir + "/ajax.php?op=list_attachments&id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'", function() {
-        localLoading($("#'.$attachment_id.' .panel-body"), false);
+    modificaCategoriaAllegati(container, this);
+});
 
-        var id = $("#'.$attachment_id.' table tr").eq(-1).attr("id");
-        if (id !== undefined) {
-            $("#" + id).effect("highlight", {}, 1500);
-        }
-    });
-}
+$("#'.$attachment_id.' .category-save").click(function() {
+    const container = $(this).closest(".gestione-allegati");
+
+    salvaCategoriaAllegati(container, this);
+});
+
+$("#'.$attachment_id.' .category-cancel").click(function() {
+    const container = $(this).closest(".gestione-allegati");
+
+    ricaricaAllegati(gestione);
+});
+
+// Upload
+$("#'.$attachment_id.' #upload").click(function(){
+    const container = $(this).closest(".gestione-allegati");
+
+    aggiungiAllegato(container);
+});
 </script>';
 
         return $result;

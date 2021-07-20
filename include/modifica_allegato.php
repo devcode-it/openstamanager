@@ -56,12 +56,34 @@ $source = array_clean(array_column($categories, 'category'));
 
 echo '
 <script>
+var categorie = '.json_encode($source).';
+
 // Auto-completamento categoria
-$("#modifica-allegato #categoria_allegato").autocomplete({
-    source: '.json_encode($source).',
-    minLength: 0
-}).focus(function() {
-    $(this).autocomplete("search", $(this).val())
+$(document).ready(function () {
+    const input = $("#modifica-allegato #categoria_allegato")[0];
+
+    autocomplete({
+        minLength: 0,
+        input: input,
+        emptyMsg: globals.translations.noResults,
+        fetch: function (text, update) {
+            text = text.toLowerCase();
+            const suggestions = categorie.filter(n => n.toLowerCase().startsWith(text));
+
+            // Trasformazione risultati in formato leggibile
+            const results = suggestions.map(function (result) {
+                return {
+                    label: result,
+                    value: result
+                }
+            });
+
+            update(results);
+        },
+        onSelect: function (item) {
+            input.value = item.label;
+        },
+    });
 });
 </script>
 <script>$(document).ready(init)</script>';

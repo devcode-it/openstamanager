@@ -52,7 +52,11 @@ function openModal(title, href) {
         }
     });
 
-    var content = '<div class="modal-dialog modal-lg">\
+    // Promise per la gestione degli eventi
+    const d = $.Deferred();
+    $(id).one('shown.bs.modal', d.resolve);
+
+    const content = '<div class="modal-dialog modal-lg">\
     <div class="modal-content">\
         <div class="modal-header bg-light-blue">\
             <button type="button" class="close" data-dismiss="modal">\
@@ -68,7 +72,7 @@ function openModal(title, href) {
 
     // Lettura contenuto div
     if (href.substr(0, 1) === '#') {
-        var data = $(href).html();
+        const data = $(href).html();
 
         $(id).html(content.replace("|data|", data));
         $(id).modal('show');
@@ -80,6 +84,8 @@ function openModal(title, href) {
             }
         });
     }
+
+    return d.promise();
 }
 
 /**

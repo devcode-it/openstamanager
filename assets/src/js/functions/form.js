@@ -158,6 +158,7 @@ function salvaForm(form, data = {}, button = null) {
             buttonRestore(button, restore);
 
             reject();
+            return;
         }
 
         // Gestione grafica di salvataggio

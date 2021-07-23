@@ -118,8 +118,8 @@ foreach ($primo_livello as $conto_primo) {
                 LEFT OUTER JOIN (
                     SELECT COUNT(idconto) AS numero_movimenti,
                        idconto,
-                       SUM(ROUND(totale, 2)) AS totale,
-                       SUM(ROUND(totale_reddito, 2)) AS totale_reddito
+                       SUM(totale) AS totale,
+                       SUM(totale_reddito) AS totale_reddito
                     FROM co_movimenti
                     WHERE data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']).' GROUP BY idconto
                 ) movimenti ON co_pianodeiconti3.id=movimenti.idconto

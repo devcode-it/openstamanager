@@ -46,6 +46,8 @@ $page = 0;
 foreach ($articoli as $articolo) {
     echo '
     <div class="barcode-cell">
+        <p style="font-size:11pt;"><b>'.$articolo->codice.'</b></p><br>
+        <p style="font-size:15pt;"><b>'.moneyFormat($articolo->prezzo_vendita).'</b></p><br>
         <barcode code="'.$articolo->barcode.'" type="C39" height="2" size="0.65" class="barcode" />
         <p><b>'.$articolo->barcode.'</b></p>
     </div>';

@@ -138,3 +138,6 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 
 -- Aggiunto collegamento tra DDT in direzioni opposte per gestione movimentazioni interne tra sedi
 ALTER TABLE `dt_ddt` ADD `id_ddt_trasporto_interno` INT(11) NULL, ADD FOREIGN KEY (`id_ddt_trasporto_interno`) REFERENCES `dt_ddt`(`id`) ON DELETE CASCADE;
+
+-- Aggiunto ragruppamento referenti per sede
+UPDATE `zz_plugins` SET `options` = ' { \"main_query\": [ { \"type\": \"table\", \"fields\": \"Nome, Indirizzo, Città, CAP, Provincia, Referente\", \"query\": \"SELECT an_sedi.id, an_sedi.nomesede AS Nome, an_sedi.indirizzo AS Indirizzo, an_sedi.citta AS Città, an_sedi.cap AS CAP, an_sedi.provincia AS Provincia, GROUP_CONCAT(an_referenti.nome SEPARATOR \\\", \\\") AS Referente FROM an_sedi LEFT OUTER JOIN an_referenti ON idsede = an_sedi.id WHERE 1=1 AND an_sedi.idanagrafica=|id_parent| GROUP BY an_sedi.id HAVING 2=2 ORDER BY an_sedi.id DESC\"} ]}' WHERE `zz_plugins`.`name` = 'Sedi'; 

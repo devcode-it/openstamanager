@@ -126,7 +126,7 @@ switch (filter('op')) {
             (
                 (co_preventivi.data_accettazione >= '.prepare($start).' AND co_preventivi.data_accettazione <= '.prepare($end).')
                 OR (co_preventivi.data_conclusione >= '.prepare($start).' AND co_preventivi.data_conclusione <= '.prepare($end).')
-            )   
+            )
             AND
                 co_statipreventivi.is_pianificabile=1';
 

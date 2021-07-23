@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Contratti\Contratto;
 use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
+use Modules\Interventi\Intervento;
 use Modules\Ordini\Ordine;
 use Modules\Preventivi\Preventivo;
 use Modules\TipiIntervento\Tipo as TipoSessione;
@@ -325,6 +326,11 @@ class Anagrafica extends Model
     public function dichiarazioni()
     {
         return $this->hasMany(Dichiarazione::class, 'id_anagrafica');
+    }
+
+    public function interventi()
+    {
+        return $this->hasMany(Intervento::class, 'idanagrafica');
     }
 
     // Metodi statici

@@ -178,6 +178,7 @@ class Response
                 $messages = array_column(self::$status, 'message');
 
                 $array['message'] = $messages[array_search($array['status'], $codes)];
+                http_response_code($array['status']);
             }
 
             $flags = JSON_FORCE_OBJECT;

@@ -40,21 +40,21 @@ $(document).ready(function () {
     }
 
     // Menu ordinabile
-    $(".sidebar-menu").sortable({
-        cursor: 'move',
+    if (!globals.is_mobile) {
+        sortable(".sidebar-menu", {
+            axis: "y",
+            cursor: "move",
+            dropOnEmpty: true,
+            scroll: true,
+        })[0].addEventListener("sortupdate", function(e) {
+            let order = $(".sidebar-menu > .treeview[data-id]").toArray().map(a => $(a).data("id"))
 
-        stop: function (event, ui) {
-            let order = $(this).sortable('toArray').toString();
-
-            $.post(globals.rootdir + "/actions.php?id_module=" + globals.order_manager_id, {
-                op: 'sort_modules',
-                ids: order
+            $.post(globals.rootdir + "/actions.php", {
+                id_module: globals.order_manager_id,
+                op: "sort_modules",
+                order: order.join(","),
             });
-        }
-    });
-
-    if (globals.is_mobile) {
-        $(".sidebar-menu").sortable("disable");
+        });
     }
 
     $(".sidebar-toggle").click(function () {

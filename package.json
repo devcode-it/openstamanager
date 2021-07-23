@@ -3,6 +3,7 @@
     "main": "gulpfile.js",
     "dependencies": {
         "admin-lte": "^2.4.0",
+        "autocompleter": "^6.1.1",
         "autonumeric": "^4.6.0",
         "autosize": "^3.0.21",
         "bootstrap": "^3.3.7",
@@ -22,6 +23,7 @@
         "fullcalendar": "^3.4.0",
         "geocomplete": "^1.7.0",
         "hotkeys-js": "^3.8.5",
+        "html5sortable": "^0.13.2",
         "inputmask": "^3.3.9",
         "jquery": "^3.5.1",
         "jquery-form": "^4.2.1",

@@ -82,6 +82,8 @@ const JS = gulp.parallel(() => {
     const vendor = [
         'jquery/dist/jquery.js',
         'autosize/dist/autosize.js',
+        'autocompleter/autocomplete.js',
+        'html5sortable/dist/html5sortable.js',
         'bootstrap-colorpicker/dist/js/bootstrap-colorpicker.js',
         'moment/moment.js',
         'components-jqueryui/jquery-ui.js',

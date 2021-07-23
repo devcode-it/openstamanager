@@ -30,7 +30,7 @@ $fields = $dbo->fetchArray('SELECT *, (SELECT GROUP_CONCAT(zz_groups.nome) FROM 
 foreach ($fields as $field) {
     echo '
     <div class="panel panel-default clickable col-md-4" data-id="'.$field['id'].'">
-        <div class="panel-body">
+        <div class="panel-body no-selection">
             <input type="checkbox" name="visibile" '.($field['visible'] ? 'checked' : '').'>
 
             <span class="text-'.($field['visible'] ? 'success' : 'danger').'">'.$field['name'].'<br><small>( '.$field['gruppi_con_accesso'].')</small></span>
@@ -76,22 +76,19 @@ echo '
 
     // Ordinamento dinamico delle colonne
     $(document).ready(function() {
-        $(".sortable").disableSelection();
-        $(".sortable").each(function() {
-            $(this).sortable({
-                cursor: "move",
-                dropOnEmpty: true,
-                scroll: true,
-                update: function(event, ui) {
-                    let order = $(".panel[data-id]").toArray().map(a => $(a).data("id"))
+        sortable(".sortable", {
+            axis: "y",
+            cursor: "move",
+            dropOnEmpty: true,
+            scroll: true,
+        })[0].addEventListener("sortupdate", function(e) {
+            let order = $(".panel[data-id]").toArray().map(a => $(a).data("id"))
+            console.log(order);
 
-                    $.post(globals.rootdir + "/actions.php", {
-                        id: ui.item.data("id"),
-                        id_module: "'.$id_module.'",
-                        op: "ordina_colonne",
-                        order: order.join(","),
-                    });
-                }
+            $.post(globals.rootdir + "/actions.php", {
+                id_module: globals.id_module,
+                op: "ordina_colonne",
+                order: order.join(","),
             });
         });
     });

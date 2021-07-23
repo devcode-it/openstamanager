@@ -27,13 +27,13 @@ $id_articolo = $id_record;
 echo '
 <div class="nav-tabs-custom">
     <ul class="nav-tabs-li nav nav-tabs nav-justified">
-        <li class="active"><a href="#tab_'.$id_plugin.'" onclick="apriTab(this)" data-tab="clienti"  id="clienti-tab">'.tr('Clienti').'</a></li>
-
-        <li><a href="#tab_'.$id_plugin.'" onclick="apriTab(this)" data-tab="fornitori">'.tr('Fornitori').'</a></li>
+        <li class="active"><a href="#tab_'.$id_plugin.'" onclick="apriTab(this)" data-tab="fornitori" id="fornitori-tab">'.tr('Fornitori').'</a></li>
+    
+        <li><a href="#tab_'.$id_plugin.'" onclick="apriTab(this)" data-tab="clienti" id="clienti-tab">'.tr('Clienti').'</a></li>
     </ul>
 
     <div class="tab-content">
-        <div class="tab-pane active" id="clienti">
+        <div class="tab-pane" id="clienti">
             <div class="box">
                 <div class="box-header">
                     <h3 class="box-title">'.tr('Informazioni specifiche per cliente').'</h3>
@@ -140,7 +140,7 @@ if (!$clienti->isEmpty()) {
 echo '
         </div>
 
-        <div class="tab-pane" id="fornitori">
+        <div class="tab-pane active" id="fornitori">
             <div class="box">
                 <div class="box-header">
                     <h3 class="box-title">'.tr('Informazioni specifiche per fornitore').'</h3>
@@ -330,7 +330,7 @@ echo '
 
 <script>
 $(document).ready(function (){
-    apriTab($("#clienti-tab")[0]);
+    apriTab($("#fornitori-tab")[0]);
 });
 
 function modificaPrezzi(button) {

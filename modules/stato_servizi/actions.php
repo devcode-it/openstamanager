@@ -121,38 +121,21 @@ switch (filter('op')) {
 
     // Ordinamento moduli di primo livello
     case 'sort_modules':
-        $rs = $dbo->fetchArray('SELECT id FROM zz_modules WHERE enabled = 1 AND parent IS NULL ORDER BY `order` ASC');
+        $order = explode(',', post('order', true));
 
-        if ($_POST['ids'] != implode(',', array_column($rs, 'id'))) {
-            $ids = explode(',', $_POST['ids']);
-
-            for ($i = 0; $i < count($ids); ++$i) {
-                $dbo->query('UPDATE zz_modules SET `order`='.prepare($i).' WHERE id='.prepare($ids[$i]));
-            }
-
-            flash()->info(tr('Posizione delle voci di menù aggiornata!'));
+        foreach ($order as $i => $id) {
+            $dbo->query('UPDATE zz_modules SET `order`='.prepare($i).' WHERE id='.prepare($id));
         }
 
         break;
 
     case 'sort_widgets':
-        $location = post('location');
-        $id_module_widget = post('id_module_widget');
+        $order = explode(',', post('order', true));
 
-        $location = empty($id_record) ? 'controller_'.$location : 'editor_'.$location;
-
-        $rs = $dbo->fetchArray("SELECT CONCAT('widget_', id) AS id FROM zz_widgets WHERE enabled = 1 AND location = ".prepare($location).' AND id_module = '.prepare($id_module_widget).' ORDER BY `order` ASC');
-
-        if ($_POST['ids'] != implode(',', array_column($rs, 'id'))) {
-            $ids = explode(',', $_POST['ids']);
-
-            for ($i = 0; $i < count($ids); ++$i) {
-                $id = explode('_', $ids[$i]);
-                $dbo->query('UPDATE zz_widgets SET `order`='.prepare($i).' WHERE id='.prepare($id[1]));
-            }
-
-            flash()->info(tr('Posizioni widgets aggiornate!'));
+        foreach ($order as $i => $id) {
+            $dbo->query('UPDATE zz_widgets SET `order`='.prepare($i).' WHERE id='.prepare($id));
         }
+
         break;
 
     case 'sizes':

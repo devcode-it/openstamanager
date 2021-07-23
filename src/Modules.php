@@ -357,7 +357,7 @@ class Modules
             if ($active) {
                 $result .= ' active actual';
             }
-            $result .= '" id="'.$element['id'].'">
+            $result .= '" id="'.$element['id'].'" data-id="'.$element['id'].'">
                 <a href="'.$link.'" target="'.$target.'" >
                     <i class="'.$element['icon'].'"></i>
                     <span>'.$title.'</span>';

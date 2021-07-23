@@ -17,88 +17,75 @@
  */
 
 $(document).ready(function () {
-    $('#supersearch').keyup(function () {
-        $(document).ajaxStop();
+    const searchInput = $('#supersearch');
+    const searchButton = searchInput.parent().find('i');
+    const searches = [];
 
-        if ($(this).val() == '') {
-            $(this).removeClass('wait');
-        } else {
-            $(this).addClass('wait');
-        }
-    });
+    autocomplete({
+        minLength: 1,
+        input: searchInput[0],
+        emptyMsg: globals.translations.noResults,
+        debounceWaitMs: 500,
+        fetch: function(text, update) {
+            text = text.toLowerCase();
 
-    $.widget("custom.supersearch", $.ui.autocomplete, {
-        _create: function () {
-            this._super();
-            this.widget().menu("option", "items", "> :not(.ui-autocomplete-category)");
-        },
-        _renderMenu: function (ul, items) {
-            if (items[0].value == undefined) {
-                $('#supersearch').removeClass('wait');
-                ul.html('');
-            } else {
-                var that = this,
-                    currentCategory = "";
+            // Registrazione ricerca
+            searches.push(text);
+            searchButton
+                .removeClass('fa-search')
+                .addClass('fa-spinner fa-spin');
 
-                ul.addClass('ui-autocomplete-scrollable');
-                ul.css('z-index', '999');
-
-                $.each(items, function (index, item) {
-
-                    if (item.category != currentCategory) {
-                        ul.append("<li class='ui-autocomplete-category'>" + item.category + "</li>");
-                        currentCategory = item.category;
-                    }
-
-                    that._renderItemData(ul, item);
-                });
-            }
-        },
-        _renderItem: function (ul, item) {
-            return $("<li>")
-                .append("<a href='" + item.link + "' title='Clicca per aprire'><b>" + item.value + "</b><br/>" + item.label + "</a>")
-                .appendTo(ul);
-        }
-    });
-
-    // Configurazione supersearch
-    var $super = $('#supersearch').supersearch({
-        minLength: 3,
-        select: function (event, ui) {
-            location.href = ui.item.link;
-        },
-        source: function (request, response) {
             $.ajax({
                 url: globals.rootdir + '/ajax_search.php',
-                dataType: "json",
+                dataType: "JSON",
                 data: {
-                    term: request.term
+                    term: text,
                 },
-
-                complete: function (jqXHR) {
-                    $('#supersearch').removeClass('wait');
-                },
-
                 success: function (data) {
-                    if (data == null) {
-                        response($.map(['a'], function (item) {
-                            return false;
-                        }));
-                    } else {
-                        response($.map(data, function (item) {
-                            labels = (item.labels).toString();
-                            labels = labels.replace('<br/>,', '<br/>');
+                    // Fix per gestione risultati null
+                    data = data ? data : [];
 
-                            return {
-                                label: labels,
-                                category: item.category,
-                                link: item.link,
-                                value: item.title
-                            }
-                        }));
+                    // Trasformazione risultati in formato leggibile
+                    const results = data.map(function (result) {
+                        return {
+                            label: result.label ? result.label : '<h4>' + result.title + '</h4>' + result.labels
+                                .join('').split('<br/>,').join('<br/>'),
+                            group: result.category,
+                            link: result.link,
+                            value: result.title
+                        }
+                    });
+
+                    // Rimozione ricerca in corso
+                    searches.pop();
+                    if (searches.length === 0) {
+                        searchButton
+                            .removeClass('fa-spinner fa-spin')
+                            .addClass('fa-search');
                     }
+
+                    update(results);
+                },
+                error: function (){
+                    searchButton
+                        .removeClass('fa-spinner fa-spin')
+                        .addClass('fa-exclamation-triangle');
                 }
             });
+        },
+        preventSubmit: true,
+        disableAutoSelect: true,
+        onSelect: function(item) {
+            window.location.href = item.link;
+        },
+        customize: function(input, inputRect, container, maxHeight) {
+            container.style.width = '600px';
+        },
+        render: function(item, currentValue){
+            const itemElement = document.createElement("div");
+            itemElement.innerHTML = item.label;
+            // <a href='" + item.link + "' title='Clicca per aprire'><b>" + item.value + "</b><br/>" + item.label + "</a>
+            return itemElement;
         }
     });
 });

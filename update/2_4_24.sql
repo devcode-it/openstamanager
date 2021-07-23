@@ -138,3 +138,5 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 
 -- Aggiunto collegamento tra DDT in direzioni opposte per gestione movimentazioni interne tra sedi
 ALTER TABLE `dt_ddt` ADD `id_ddt_trasporto_interno` INT(11) NULL, ADD FOREIGN KEY (`id_ddt_trasporto_interno`) REFERENCES `dt_ddt`(`id`) ON DELETE CASCADE;
+
+UPDATE `zz_group_module` SET `clause` = 'in_interventi.id IN (SELECT idintervento FROM in_interventi_tecnici WHERE idintervento=in_interventi.id AND idtecnico=|id_anagrafica| UNION SELECT id_intervento FROM in_interventi_tecnici_assegnati WHERE id_intervento=in_interventi.id AND id_tecnico=|id_anagrafica|)' WHERE `zz_group_module`.`name` = 'Mostra interventi ai tecnici coinvolti';

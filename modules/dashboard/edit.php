@@ -335,7 +335,7 @@ $modulo_interventi = Modules::get('Interventi');
 echo '
 <script type="text/javascript">
     globals.dashboard = {
-        load_url: globals.rootdir + "/actions.php?id_module='.$id_module.'",
+        load_url: "'.$structure->fileurl('ajax.php').'?id_module='.$id_module.'",
         style: "'.$def.'",
         show_sunday: '.intval(setting('Visualizzare la domenica sul calendario')).',
         start_time: "'.setting('Ora inizio sul calendario').'",
@@ -559,7 +559,7 @@ echo '
             select: function(start, end, allDay) { // info
                 // let start = info.start;
                 // let end = info.end;
-                
+
                 let is_allDay = !start.hasTime() && !end.hasTime();
 
                 if (is_allDay!==true){
@@ -580,7 +580,7 @@ echo '
             editable: globals.dashboard.write_permission,
             eventDrop: function(event, delta, revertFunc ) {// info
                 // let event = info.event;
-                
+
                 if (event.allDay!==true){
                     $.post(globals.dashboard.load_url, {
                         op: "modifica_intervento",
@@ -599,7 +599,7 @@ echo '
 
                         if (data !=="ok"){
                             revertFunc(); // info.revert();
-                        }                       
+                        }
 
                     });
                 }else{
@@ -617,7 +617,7 @@ echo '
                     timeEnd: moment(event.end).format("YYYY-MM-DD HH:mm")
                 }, function (data, response) {
                     data = $.trim(data);
-                  
+
                     if (response == "success" && data !== "ok") {
                         swal("'.tr('Attenzione').'", data, "warning");
                     }else if (response !== "success"){

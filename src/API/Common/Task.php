@@ -86,7 +86,7 @@ class Task extends Resource implements RetrieveInterface, CreateInterface
 
         $endpointParts = parse_url($endpoint);
         $endpointParts['path'] = $endpointParts['path'] ?: '/';
-        $endpointParts['port'] = $endpointParts['port'] ?: $endpointParts['scheme'] === 'https' ? 443 : 80;
+        $endpointParts['port'] = $endpointParts['port'] ?: ($endpointParts['scheme'] === 'https' ? 443 : 80);
 
         $contentLength = strlen($postData);
 

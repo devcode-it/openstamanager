@@ -70,7 +70,17 @@ $default_header$
 					<p>$c_indirizzo$<br> $c_citta_full$</p>
 					<p>$c_telefono$ $c_cellulare$</p>
                 </td>
-            </tr>
+            </tr>';
+		if (!empty($destinazione)) {
+			echo '
+			<tr>
+				<td class="border-full" style="height:16mm;">
+					<p class="small-bold">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
+					'.$destinazione.'
+				</td>
+			</tr>';
+		}
+		echo '
         </table>
     </div>
 

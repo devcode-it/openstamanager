@@ -24,4 +24,34 @@ use Modules\Preventivi\Preventivo;
 $documento = Preventivo::find($id_record);
 
 $id_cliente = $documento['idanagrafica'];
-$id_sede = $documento['idsede'];
+
+// Leggo i dati della destinazione (se 0=sede legale, se!=altra sede da leggere da tabella an_sedi)
+$destinazione = '';
+if (!empty($documento->idsede)) {
+    $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale, id_nazione FROM an_sedi WHERE idanagrafica='.prepare($id_cliente).' AND id='.prepare($documento->idsede));
+
+    if (!empty($rsd[0]['nomesede'])) {
+        $destinazione .= $rsd[0]['nomesede'].'<br/>';
+    }
+    if (!empty($rsd[0]['indirizzo'])) {
+        $destinazione .= $rsd[0]['indirizzo'].'<br/>';
+    }
+    if (!empty($rsd[0]['indirizzo2'])) {
+        $destinazione .= $rsd[0]['indirizzo2'].'<br/>';
+    }
+    if (!empty($rsd[0]['cap'])) {
+        $destinazione .= $rsd[0]['cap'].' ';
+    }
+    if (!empty($rsd[0]['citta'])) {
+        $destinazione .= $rsd[0]['citta'];
+    }
+    if (!empty($rsd[0]['provincia'])) {
+        $destinazione .= ' ('.$rsd[0]['provincia'].')';
+    }
+    if (!empty($rsd[0]['id_nazione'])) {
+        $nazione = $database->fetchOne('SELECT * FROM an_nazioni WHERE id = '.prepare($rsd[0]['id_nazione']));
+        if ($nazione['iso2'] != 'IT') {
+            $destinazione .= ' - '.$nazione['name'];
+        }
+    }
+}

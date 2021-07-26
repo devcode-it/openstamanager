@@ -52,7 +52,6 @@ $module_name = ($record['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture d
 
 $id_cliente = $record['idanagrafica'];
 $tipo_cliente = $record['tipo_cliente'];
-$id_sede = $record['idsede_destinazione'];
 
 $tipo_doc = $record['tipo_doc'];
 $numero = !empty($record['numero_esterno']) ? $record['numero_esterno'] : $record['numero'];

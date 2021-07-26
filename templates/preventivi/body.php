@@ -109,7 +109,17 @@ echo '
                 <td class="border-right border-bottom text-right">
                     <small>$c_codicefiscale$</small>
                 </td>
-            </tr>
+            </tr>';
+        if (!empty($destinazione)) {
+            echo '
+            <tr>
+                <td colspan="2" class="border-full" style="height:16mm;">
+                    <p class="small-bold">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
+                    <small>'.$destinazione.'</small>
+                </td>
+            </tr>';
+        }
+        echo '
         </table>
     </div>
 </div>';

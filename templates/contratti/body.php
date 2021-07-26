@@ -29,6 +29,7 @@ echo '
 <div class="row">
     <div class="col-xs-6">
         <div class="text-center" style="height:5mm;">
+            <br><br>
             <b>'.tr('Contratto num. _NUM_ del _DATE_', [
                 '_NUM_' => $documento['numero'],
                 '_DATE_' => Translator::dateToLocale($documento['data_bozza']),
@@ -58,7 +59,8 @@ echo '
                 <td colspan=2 class="border-full" style="height:16mm;">
                     <p class="small-bold">'.tr('Spett.le', [], ['upper' => true]).'</p>
                     <p>$c_ragionesociale$</p>
-                    <p>$c_indirizzo$ $c_citta_full$</p>
+                    <p>$c_indirizzo$</p>
+                    <p>$c_citta_full$</p>
                 </td>
             </tr>
 
@@ -78,7 +80,18 @@ echo '
                 <td class="border-right border-bottom text-right">
                     <small>$c_codicefiscale$</small>
                 </td>
-            </tr>
+            </tr>';
+
+        if (!empty($destinazione)) {
+            echo '
+            <tr>
+                <td colspan=2 class="border-full" style="height:16mm;">
+                    <p class="small-bold">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
+                    <small>'.$destinazione.'</small>
+                </td>
+            </tr>';
+        }
+        echo '
         </table>
     </div>
 </div>';

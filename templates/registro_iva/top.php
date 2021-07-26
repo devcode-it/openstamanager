@@ -49,7 +49,7 @@ echo '<h4><b>'.$titolo.'</b></h4>
     <thead>
         <tr>
             <th>'.tr('Prot.').'</th>
-            <th>'.tr('Data comp.').'</th>
+            <th>'.tr('Data reg.').'</th>
             <th>'.tr('N<sup>o</sup>&nbsp;doc.').'</th>
             <th>'.tr('Data doc.').'</th>
             <th>'.tr('Tipo').'</th>

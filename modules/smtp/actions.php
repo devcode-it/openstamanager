@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-switch (post('op')) {
+switch (filter('op')) {
     case 'add':
         $dbo->insert('em_accounts', [
             'name' => post('name'),
@@ -39,6 +39,8 @@ switch (post('op')) {
             $dbo->query('UPDATE em_accounts SET predefined = 0');
         }
 
+        $abilita_oauth2 = post('abilita_oauth2');
+
         $dbo->update('em_accounts', [
             'name' => post('name'),
             'note' => post('note'),
@@ -53,6 +55,9 @@ switch (post('op')) {
             'timeout' => post('timeout'),
             'ssl_no_verify' => post('ssl_no_verify'),
             'predefined' => $predefined,
+            'provider' => $abilita_oauth2 ? post('provider') : null,
+            'client_id' => $abilita_oauth2 ? post('client_id') : null,
+            'client_secret' => $abilita_oauth2 ? post('client_secret') : null,
         ], ['id' => $id_record]);
 
         flash()->info(tr('Informazioni salvate correttamente!'));
@@ -95,6 +100,12 @@ switch (post('op')) {
         $account->delete();
 
         flash()->info(tr('Account email eliminato!'));
+
+        break;
+
+    case 'oauth2':
+        $redirect = base_path().'/oauth2.php?id_account='.$account->id;
+        redirect($redirect);
 
         break;
 }

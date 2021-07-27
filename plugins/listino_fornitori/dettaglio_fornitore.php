@@ -19,7 +19,7 @@
 
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo;
-use Plugins\DettagliArticolo\DettaglioFornitore;
+use Plugins\ListinoFornitori\DettaglioFornitore;
 
 include_once __DIR__.'/../../core.php';
 

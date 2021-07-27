@@ -19,7 +19,7 @@
 
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo;
-use Plugins\DettagliArticolo\DettaglioPrezzo;
+use Plugins\ListinoClienti\DettaglioPrezzo;
 
 include_once __DIR__.'/../../core.php';
 
@@ -64,7 +64,7 @@ echo '
         } else {
             echo '<th class="text-center col-md-4"></th>';
         }
-    echo '      
+    echo '
     </tr>
     <tr>
         <td class="text-center">'.$anagrafica->ragione_sociale.'</td>
@@ -74,7 +74,7 @@ echo '
         } else {
             echo '<td></td>';
         }
-    echo '   
+    echo '
     </tr>
 </table>
 
@@ -244,7 +244,7 @@ function cambioImpostazioni() {
 
     let prezzi_variabili = $("#prezzi");
 
-    if (!modifica_prezzi.get()){     
+    if (!modifica_prezzi.get()){
         $(".info_prezzi").hide();
     } else {
         $(".info_prezzi").show();

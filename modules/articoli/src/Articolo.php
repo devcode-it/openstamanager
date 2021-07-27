@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules;
 use Modules\Interventi\Components\Articolo as ArticoloIntervento;
 use Modules\Iva\Aliquota;
-use Plugins\DettagliArticolo\DettaglioFornitore;
+use Plugins\ListinoFornitori\DettaglioFornitore;
 use Traits\RecordTrait;
 use Uploads;
 

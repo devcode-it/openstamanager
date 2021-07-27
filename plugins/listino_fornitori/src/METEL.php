@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace Plugins\DettagliArticolo;
+namespace Plugins\ListinoFornitori;
 
 /**
  * Formato: https://www.metel.it/wp-content/uploads/2020/04/536_L001_1r18_listino_021.pdf.
@@ -26,7 +26,7 @@ namespace Plugins\DettagliArticolo;
  */
 class METEL
 {
-    public const HEADER = [
+    const HEADER = [
         1 => 'Identificazione tracciato',
         21 => 'Sigla Azienda',
         24 => 'Partita IVA',

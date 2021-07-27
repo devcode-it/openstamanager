@@ -1,4 +1,4 @@
-UPDATE `zz_modules` SET `name` = 'Piani di sconto/rincaro' WHERE `name` = 'Listini';
+UPDATE `zz_modules` SET `name` = 'Piani di sconto/magg.' WHERE `name` = 'Listini';
 
 -- Creazione modulo Listini
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Listini', 'Listini', 'listini', 'SELECT |select|
@@ -117,8 +117,8 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format
 
 UPDATE `zz_views` SET `default` = 1 WHERE `zz_views`.`id_module` = (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Interventi') AND (`zz_views`.`name` = 'Tecnici' OR `zz_views`.`name` = 'Rif. fattura');
 
--- Modifica directory Piani di sconto/rincaro
-UPDATE `zz_modules` SET `directory` = 'piano_sconto' WHERE `zz_modules`.`name` = 'Piani di sconto/rincaro';
+-- Modifica directory Piani di sconto/magg.
+UPDATE `zz_modules` SET `directory` = 'piano_sconto' WHERE `zz_modules`.`name` = 'Piani di sconto/magg.';
 
 -- Aggiunto flag rinnovo automatico in contratti
 ALTER TABLE `co_contratti` ADD `rinnovo_automatico` TINYINT(1) NOT NULL DEFAULT '0' AFTER `rinnovabile`;
@@ -171,7 +171,7 @@ UPDATE `co_iva` SET `codice_natura_fe` = 'N6.9' WHERE `codice_natura_fe` = 'N6';
 -- Aumento testo descrizione per righe attività (da 255 caratteri)
 ALTER TABLE `in_righe_interventi` CHANGE `descrizione` `descrizione` TEXT NULL;
 
-ALTER TABLE `co_tipidocumento` CHANGE `descrizione` `descrizione` VARCHAR(125) NOT NULL; 
+ALTER TABLE `co_tipidocumento` CHANGE `descrizione` `descrizione` VARCHAR(125) NOT NULL;
 
 -- Aggiunta tipologia documento TD 25
 INSERT INTO `co_tipidocumento` (`id`, `descrizione`, `dir`, `reversed`, `codice_tipo_documento_fe`) VALUES
@@ -198,16 +198,16 @@ UPDATE `em_emails` SET `attempt` = '10', `em_emails`.`failed_at` = NOW() WHERE `
 -- Aggiunto deleted_at per tipi di documento
 ALTER TABLE `co_tipidocumento` ADD `deleted_at` DATETIME NULL DEFAULT NULL AFTER `codice_tipo_documento_fe`;
 -- Aggiunti campi predefined, enabled, help  per tipi di documento
-ALTER TABLE `co_tipidocumento` ADD `predefined` TINYINT NOT NULL DEFAULT '0' AFTER `codice_tipo_documento_fe`; 
+ALTER TABLE `co_tipidocumento` ADD `predefined` TINYINT NOT NULL DEFAULT '0' AFTER `codice_tipo_documento_fe`;
 ALTER TABLE `co_tipidocumento` ADD `enabled` TINYINT NOT NULL DEFAULT '1' AFTER `predefined`;
-ALTER TABLE `co_tipidocumento` ADD `help` VARCHAR(255) NULL AFTER `enabled`; 
-UPDATE `co_tipidocumento` SET `predefined` = '1' WHERE `co_tipidocumento`.`descrizione` = 'Fattura immediata di vendita'; 
-UPDATE `co_tipidocumento` SET `predefined` = '1' WHERE `co_tipidocumento`.`descrizione` = 'Fattura immediata di acquisto'; 
+ALTER TABLE `co_tipidocumento` ADD `help` VARCHAR(255) NULL AFTER `enabled`;
+UPDATE `co_tipidocumento` SET `predefined` = '1' WHERE `co_tipidocumento`.`descrizione` = 'Fattura immediata di vendita';
+UPDATE `co_tipidocumento` SET `predefined` = '1' WHERE `co_tipidocumento`.`descrizione` = 'Fattura immediata di acquisto';
 
 UPDATE `co_tipidocumento` SET `help` = 'Fattura emessa entro le ore 24 del giorno di effettuazione dell’operazione.' WHERE `co_tipidocumento`.`descrizione` = 'Fattura immediata di acquisto';
 UPDATE `co_tipidocumento` SET `help` = 'Fattura emessa entro le ore 24 del giorno di effettuazione dell’operazione.' WHERE `co_tipidocumento`.`descrizione` = 'Fattura immediata di vendita';
-UPDATE `co_tipidocumento` SET `help` = "Fattura emessa entro il giorno 15 del mese successivo a quello di effettuazione dell'operazione  (art. 21 comma 4 lett. a) del D.P.R. 633/1972)." WHERE `co_tipidocumento`.`descrizione` = 'Fattura differita di acquisto'; 
-UPDATE `co_tipidocumento` SET `help` = "Fattura emessa entro il giorno 15 del mese successivo a quello di effettuazione dell'operazione  (art. 21 comma 4 lett. a) del D.P.R. 633/1972)." WHERE `co_tipidocumento`.`descrizione` = 'Fattura differita di vendita'; 
+UPDATE `co_tipidocumento` SET `help` = "Fattura emessa entro il giorno 15 del mese successivo a quello di effettuazione dell'operazione  (art. 21 comma 4 lett. a) del D.P.R. 633/1972)." WHERE `co_tipidocumento`.`descrizione` = 'Fattura differita di acquisto';
+UPDATE `co_tipidocumento` SET `help` = "Fattura emessa entro il giorno 15 del mese successivo a quello di effettuazione dell'operazione  (art. 21 comma 4 lett. a) del D.P.R. 633/1972)." WHERE `co_tipidocumento`.`descrizione` = 'Fattura differita di vendita';
 
 -- Innesto nuovo modulo Tipi documento
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES (NULL, 'Tipi documento', 'Tipi documento', 'tipi_documento', 'SELECT |select| FROM `co_tipidocumento` WHERE 1=1 AND deleted_at IS NULL  HAVING 2=2', '', 'fa fa-angle-right', '2.4.20', '2.4.20', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Tabelle'), '1', '1', '0', '0');

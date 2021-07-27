@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace Plugins\DettagliArticolo;
+namespace Plugins\ListinoFornitori;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;

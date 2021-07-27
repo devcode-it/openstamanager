@@ -2952,7 +2952,7 @@ msgid "Ritenuta d'acconto predefinita"
 msgstr ""
 
 #: modules/anagrafiche/edit.php:474 modules/anagrafiche/edit.php:536
-msgid "Piano di sconto/rincaro su articoli"
+msgid "Piano di sconto/magg. su articoli"
 msgstr ""
 
 #: modules/anagrafiche/edit.php:478
@@ -3338,7 +3338,7 @@ msgid "Aggiornare il prezzo di acquisto per gli articoli selezionati?"
 msgstr ""
 
 #: modules/articoli/bulk.php:74
-msgid "Percentuale sconto/rincaro"
+msgid "Percentuale sconto/magg."
 msgstr ""
 
 #: modules/articoli/buttons.php:24 modules/articoli/buttons.php:29
@@ -3474,11 +3474,11 @@ msgid "Seleziona un componente"
 msgstr ""
 
 #: modules/articoli/edit.php:283
-msgid "Prezzo articolo secondo i piani di sconto/rincaro"
+msgid "Prezzo articolo secondo i piani di sconto/magg."
 msgstr ""
 
 #: modules/articoli/edit.php:294
-msgid "Piano di sconto/rincaro"
+msgid "Piano di sconto/magg."
 msgstr ""
 
 #: modules/articoli/edit.php:295
@@ -3490,7 +3490,7 @@ msgid "Base"
 msgstr ""
 
 #: modules/articoli/edit.php:319
-msgid "Non ci sono piani di sconto/rincaro caricati"
+msgid "Non ci sono piani di sconto/magg. caricati"
 msgstr ""
 
 #: modules/articoli/edit.php:387
@@ -6737,7 +6737,7 @@ msgid "Listino eliminato!"
 msgstr ""
 
 #: modules/listini/add.php:32 modules/listini/edit.php:32
-msgid "Sconto/rincaro combinato"
+msgid "Sconto/magg. combinato"
 msgstr ""
 
 #: modules/listini/add.php:32 modules/listini/edit.php:32
@@ -6752,7 +6752,7 @@ msgid "Sono ammessi i segni + e -"
 msgstr ""
 
 #: modules/listini/add.php:36 modules/listini/edit.php:36
-msgid "Sconto/rincaro"
+msgid "Sconto/magg."
 msgstr ""
 
 #: modules/misure/actions.php:31 modules/misure/actions.php:58

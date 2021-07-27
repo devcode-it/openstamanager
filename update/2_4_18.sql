@@ -31,8 +31,8 @@ INSERT INTO `zz_tasks` (`id`, `name`, `class`, `expression`, `last_executed_at`)
 
 DELETE FROM `zz_hooks` WHERE `class` = 'Modules\\Backups\\BackupHook';
 
--- Modifica dei Listini in Piani di sconto/rincaro
-UPDATE `zz_modules` SET `title` = 'Piani di sconto/rincaro' WHERE `name` = 'Listini';
+-- Modifica dei Listini in Piani di sconto/magg.
+UPDATE `zz_modules` SET `title` = 'Piani di sconto/magg.' WHERE `name` = 'Listini';
 
 -- Aggiunto supporto ai prezzi per Articoli specifici per Anagrafica e range di quantità
 CREATE TABLE IF NOT EXISTS `mg_prezzi_articoli` (

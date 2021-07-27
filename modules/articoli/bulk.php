@@ -171,7 +171,7 @@ $operations['change-acquisto'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna prezzo di acquisto').'</span>',
     'data' => [
         'title' => tr('Aggiornare il prezzo di acquisto per gli articoli selezionati?'),
-        'msg' => 'Per indicare uno sconto inserire la percentuale con il segno meno, al contrario per un rincaro inserire la percentuale senza segno.<br><br>{[ "type": "number", "label": "'.tr('Percentuale sconto/rincaro').'", "name": "percentuale", "required": 1, "icon-after": "%" ]}',
+        'msg' => 'Per indicare uno sconto inserire la percentuale con il segno meno, al contrario per un rincaro inserire la percentuale senza segno.<br><br>{[ "type": "number", "label": "'.tr('Percentuale sconto/magg.').'", "name": "percentuale", "required": 1, "icon-after": "%" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,
@@ -182,7 +182,7 @@ $operations['change-vendita'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna prezzo di vendita').'</span>',
     'data' => [
         'title' => tr('Aggiornare il prezzo di vendita per gli articoli selezionati?'),
-        'msg' => 'Per indicare uno sconto inserire la percentuale con il segno meno, al contrario per un rincaro inserire la percentuale senza segno.<br><br>{[ "type": "number", "label": "'.tr('Percentuale sconto/rincaro').'", "name": "percentuale", "required": 1, "icon-after": "%" ]}',
+        'msg' => 'Per indicare uno sconto inserire la percentuale con il segno meno, al contrario per un rincaro inserire la percentuale senza segno.<br><br>{[ "type": "number", "label": "'.tr('Percentuale sconto/magg.').'", "name": "percentuale", "required": 1, "icon-after": "%" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

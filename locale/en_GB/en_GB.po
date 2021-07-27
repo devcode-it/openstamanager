@@ -3184,7 +3184,7 @@ msgid "Ritenuta d'acconto predefinita"
 msgstr "Default withholding tax"
 
 #: modules/anagrafiche/edit.php:492 modules/anagrafiche/edit.php:554
-msgid "Piano di sconto/rincaro su articoli"
+msgid "Piano di sconto/magg. su articoli"
 msgstr "Customer accounts plan"
 
 #: modules/anagrafiche/edit.php:496
@@ -3605,7 +3605,7 @@ msgid "Aggiornare il prezzo di acquisto per gli articoli selezionati?"
 msgstr "Update the purchase price for the selected items?"
 
 #: modules/articoli/bulk.php:83
-msgid "Percentuale sconto/rincaro"
+msgid "Percentuale sconto/magg."
 msgstr "Taxable percentage "
 
 #: modules/articoli/bulk.php:91
@@ -3819,11 +3819,11 @@ msgid "Seleziona un componente"
 msgstr "Select a component"
 
 #: modules/articoli/edit.php:317
-msgid "Prezzo articolo secondo i piani di sconto/rincaro"
+msgid "Prezzo articolo secondo i piani di sconto/magg."
 msgstr "Item price per list"
 
 #: modules/articoli/edit.php:328
-msgid "Piano di sconto/rincaro"
+msgid "Piano di sconto/magg."
 msgstr "Supplier chart of accounts"
 
 #: modules/articoli/edit.php:329
@@ -3835,7 +3835,7 @@ msgid "Base"
 msgstr "Base"
 
 #: modules/articoli/edit.php:353
-msgid "Non ci sono piani di sconto/rincaro caricati"
+msgid "Non ci sono piani di sconto/magg. caricati"
 msgstr "There are no price list loaded"
 
 #: modules/articoli/edit.php:421 modules/articoli/plugins/articoli.lotti.php:201
@@ -7912,7 +7912,7 @@ msgid "Listino eliminato!"
 msgstr "List eliminated!"
 
 #: modules/piano_sconto/add.php:32 modules/piano_sconto/edit.php:32
-msgid "Sconto/rincaro combinato"
+msgid "Sconto/magg. combinato"
 msgstr "Inflation/discount"
 
 #: modules/piano_sconto/add.php:32 modules/piano_sconto/edit.php:32
@@ -7928,7 +7928,7 @@ msgid "Sono ammessi i segni + e -"
 msgstr "+ And - signs are allowed"
 
 #: modules/piano_sconto/add.php:36 modules/piano_sconto/edit.php:36
-msgid "Sconto/rincaro"
+msgid "Sconto/magg."
 msgstr "Inflation/discount"
 
 #: modules/porti/actions.php:77 modules/spedizioni/actions.php:76

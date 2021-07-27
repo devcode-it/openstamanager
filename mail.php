@@ -159,7 +159,7 @@ echo '
 <script>
     var emails = [];
     var id_anagrafica = "'.$id_anagrafica.'";
-    var pec = "'.$smtp['pec']. '";
+    var pec = "'.$smtp['pec'].'";
 
     $(document).ready(function() {
         // Auto-completamento destinatario

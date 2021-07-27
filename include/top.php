@@ -115,7 +115,7 @@ if (Auth::check()) {
         'hookSingle' => tr('Hai 1 notifica'),
         'hookNone' => tr('Nessuna notifica'),
         'singleCalendar' => tr("E' presente un solo periodo!"),
-        'noResults' => tr("Nessun elemento trovato"),
+        'noResults' => tr('Nessun elemento trovato'),
     ];
     foreach ($translations as $key => $value) {
         echo '
@@ -123,7 +123,7 @@ if (Auth::check()) {
     }
     echo '
                 allegati: {
-                    messaggio: "'.tr("Clicca o trascina qui per caricare uno o più file").'",
+                    messaggio: "'.tr('Clicca o trascina qui per caricare uno o più file').'",
                     maxFilesize: "'.tr('Max upload: _SIZE_ MB').'",
                     errore: "'.tr('Errore').'",
                     modifica: "'.tr('Modifica allegato').'",
@@ -205,6 +205,8 @@ if (Auth::check()) {
                 start_date_formatted: "'.Translator::dateToLocale($_SESSION['period_start']).'",
                 end_date: "'.$_SESSION['period_end'].'",
                 end_date_formatted: "'.Translator::dateToLocale($_SESSION['period_end']).'",
+
+                collapse_plugin_sidebar: '.intval(setting('Nascondere la barra dei plugin di default')).',
 
                 ckeditorToolbar: [
 					["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","SpellChecker", "Scayt", "-","Link","Unlink","-","Bold","Italic","Underline","Superscript","SpecialChar","HorizontalRule","-","JustifyLeft","JustifyCenter","JustifyRight","JustifyBlock","-","NumberedList","BulletedList","Outdent","Indent","Blockquote","-","Styles","Format","Image","Table", "TextColor", "BGColor" ],
@@ -405,23 +407,23 @@ if (Auth::check()) {
                                 </ul>
                             </li>
 
-                            <li><a href="#" onclick="window.print()" class="tip nav-button" title="'.tr('Stampa').'">
+                            <li class="nav-button"><a href="#" onclick="window.print()" class="tip nav-button" title="'.tr('Stampa').'">
                                 <i class="fa fa-print"></i>
                             </a></li>
 
-                            <li><a href="'.base_path().'/bug.php" class="tip nav-button" title="'.tr('Segnalazione bug').'">
+                            <li class="nav-button"><a href="'.base_path().'/bug.php" class="tip nav-button" title="'.tr('Segnalazione bug').'">
                                 <i class="fa fa-bug"></i>
                             </a></li>
 
-                            <li><a href="'.base_path().'/log.php" class="tip nav-button" title="'.tr('Log accessi').'">
+                            <li class="nav-button"><a href="'.base_path().'/log.php" class="tip nav-button" title="'.tr('Log accessi').'">
                                 <i class="fa fa-book"></i>
                             </a></li>
 
-                            <li><a href="'.base_path().'/info.php" class="tip nav-button" title="'.tr('Informazioni').'">
+                            <li class="nav-button"><a href="'.base_path().'/info.php" class="tip nav-button" title="'.tr('Informazioni').'">
                                 <i class="fa fa-info"></i>
                             </a></li>
 
-                            <li><a href="'.base_path().'/index.php?op=logout" onclick="sessionStorage.clear()" class="bg-red tip" title="'.tr('Esci').'">
+                            <li class="nav-button"><a href="'.base_path().'/index.php?op=logout" onclick="sessionStorage.clear()" class="bg-red tip" title="'.tr('Esci').'">
                                 <i class="fa fa-power-off"></i>
                             </a></li>
                         </ul>
@@ -482,7 +484,7 @@ if (Auth::check()) {
     if (string_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php')) {
         // Menu laterale per la visualizzazione dei plugin
         echo '
-        <aside class="control-sidebar control-sidebar-light control-sidebar-shown">
+        <aside class="control-sidebar control-sidebar-light">
             <h4 class="text-center">'.tr('Plugin disponibili').'</h4>
             <ul class="nav nav-tabs nav-pills nav-stacked">
                 <li data-toggle="control-sidebar" class="active">
@@ -542,7 +544,7 @@ if (Auth::check()) {
 
     echo '
             <!-- Right side column. Contains the navbar and content of the page -->
-            <aside class="content-wrapper '.(string_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php') ? 'with-control-sidebar' : '').'">
+            <aside class="content-wrapper">
 
                 <!-- Main content -->
                 <section class="content">

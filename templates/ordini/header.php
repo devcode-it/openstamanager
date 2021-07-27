@@ -71,16 +71,16 @@ $default_header$
 					<p>$c_telefono$ $c_cellulare$</p>
                 </td>
             </tr>';
-		if (!empty($destinazione)) {
-			echo '
+        if (!empty($destinazione)) {
+            echo '
 			<tr>
 				<td class="border-full" style="height:16mm;">
 					<p class="small-bold">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
 					'.$destinazione.'
 				</td>
 			</tr>';
-		}
-		echo '
+        }
+        echo '
         </table>
     </div>
 

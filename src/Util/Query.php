@@ -167,7 +167,7 @@ class Query
         $search_filters = [];
         foreach ($search as $field => $original_value) {
             $pos = array_search($field, $total['fields']);
-            $value = trim($original_value);
+            $value = is_array($original_value) ? $original_value : trim($original_value);
 
             if (isset($value) && $pos !== false) {
                 $search_query = $total['search_inside'][$pos];

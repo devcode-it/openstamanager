@@ -126,6 +126,7 @@ function start_datatables() {
                     {
                         extend: 'print',
                         autoPrint: true,
+                        footer: true,
                         customize: function (win) {
                             $(win.document.body)
                                 .css('font-size', '10pt')

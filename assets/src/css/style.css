@@ -1033,13 +1033,13 @@ div.tip {
         margin-right: 230px;
     }
 
-    .control-sidebar-shown {
+    .control-sidebar-open {
         right: 0;
         display: block !important;
     }
 
-    .control-sidebar.control-sidebar-shown,
-    .control-sidebar.control-sidebar-shown + .control-sidebar-bg {
+    .control-sidebar.control-sidebar-open,
+    .control-sidebar.control-sidebar-open + .control-sidebar-bg {
         right: 0;
     }
 

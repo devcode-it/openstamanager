@@ -32,11 +32,11 @@ $(document).ready(function () {
         $(this).find('ul').stop().slideUp();
     });
 
-    $menulist = $('.treeview-menu > li.active');
-    for (i = 0; i < $menulist.length; i++) {
-        $list = $($menulist[i]);
-        $list.parent().show().parent().addClass('active');
-        $list.parent().parent().find('i.fa-angle-left').removeClass('fa-angle-left').addClass('fa-angle-down');
+    const elenco_menu = $('.treeview-menu > li.active');
+    for (i = 0; i < elenco_menu.length; i++) {
+        const elemento = $(elenco_menu[i]);
+        elemento.parent().show().parent().addClass('active');
+        elemento.parent().parent().find('i.fa-angle-left').removeClass('fa-angle-left').addClass('fa-angle-down');
     }
 
     // Menu ordinabile
@@ -46,7 +46,7 @@ $(document).ready(function () {
             cursor: "move",
             dropOnEmpty: true,
             scroll: true,
-        })[0].addEventListener("sortupdate", function(e) {
+        })[0].addEventListener("sortupdate", function (e) {
             let order = $(".sidebar-menu > .treeview[data-id]").toArray().map(a => $(a).data("id"))
 
             $.post(globals.rootdir + "/actions.php", {
@@ -57,19 +57,52 @@ $(document).ready(function () {
         });
     }
 
-    $(".sidebar-toggle").click(function () {
-        setTimeout(function () {
-            window.dispatchEvent(new Event('resize'));
-        }, 350);
-    });
-
-    // Mostra/nasconde sidebar sx
+    // Mostra/nasconde sidebar del menu principale
     $(".sidebar-toggle").on("click", function () {
         if ($("body").hasClass("sidebar-collapse")) {
             session_set("settings,sidebar-collapse", 0, 1, 0);
         } else {
             session_set("settings,sidebar-collapse", 1, 0, 0);
         }
+
+        setTimeout(function () {
+            window.dispatchEvent(new Event('resize'));
+        }, 350);
     });
 
+    // Barra plugin laterale
+    const pluginToggle = $(".control-sidebar-toggle");
+    const largeScreen = screen.width > 1200;
+
+    // Gestione click sul pulsante per il toggle
+    pluginToggle.on("click", function () {
+        $("aside.content-wrapper, .main-footer").toggleClass("with-control-sidebar");
+
+        toggleControlSidebar();
+    });
+
+    // Gestione click sulla sidebar per evitare chiusura
+    $(".control-sidebar").on("click", function (e) {
+        if (largeScreen && e.target.tagName !== 'H4' && $(".main-footer").hasClass("with-control-sidebar")) {
+            toggleControlSidebar();
+        }
+    });
+
+    // Barra plugin laterale disabilitata per schermi piccoli
+    if (largeScreen && !globals.collapse_plugin_sidebar) {
+        pluginToggle.click();
+    }
 });
+
+/**
+ * Funzione dedicata alla gestione del toggle della sidebar.
+ */
+function toggleControlSidebar() {
+    const sidebar = $(".control-sidebar");
+
+    sidebar.toggleClass("control-sidebar-open");
+
+    if (sidebar.hasClass("control-sidebar-open")) {
+        sidebar.show();
+    }
+}

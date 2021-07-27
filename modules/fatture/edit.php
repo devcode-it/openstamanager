@@ -138,7 +138,7 @@ if ($dir == 'entrata') {
                         array_push($campi_mancanti, 'Partita IVA');
                         array_push($campi_mancanti, 'Codice fiscale');
                     }
-                    
+
                     $nazione = Nazione::find($rs2[0]['id_nazione']);
                     //se è un privato o un ente pubblico controllo il codice fiscale
                     if ((($rs2[0]['tipo'] == 'Privato' && $nazione->iso2 == 'IT') or $rs2[0]['tipo'] == 'Ente pubblico') and empty($rs2[0]['codice_fiscale'])) {

@@ -55,12 +55,23 @@ switch (filter('op')) {
             'timeout' => post('timeout'),
             'ssl_no_verify' => post('ssl_no_verify'),
             'predefined' => $predefined,
-            'provider' => $abilita_oauth2 ? post('provider') : null,
-            'client_id' => $abilita_oauth2 ? post('client_id') : null,
-            'client_secret' => $abilita_oauth2 ? post('client_secret') : null,
+            'provider' => post('provider'),
+            'client_id' => post('client_id'),
+            'client_secret' => post('client_secret'),
         ], ['id' => $id_record]);
 
         flash()->info(tr('Informazioni salvate correttamente!'));
+
+        // Rimozione informazioni OAuth2 in caso di disabilitazione
+        if (!$abilita_oauth2) {
+            $dbo->update('em_accounts', [
+                'provider' => null,
+                'client_id' => null,
+                'client_secret' => null,
+                'access_token' => null,
+                'refresh_token' => null,
+            ], ['id' => $id_record]);
+        }
 
         // Validazione indirizzo email mittente
         $check_email = Validate::isValidEmail(post('from_address'));

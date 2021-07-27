@@ -162,27 +162,6 @@ class OAuth2
         return unserialize($this->account->access_token);
     }
 
-    protected function checkTokens() {
-        $access_token = unserialize($this->account->access_token);
-
-        if (!empty($access_token) && $access_token->hasExpired()) {
-            // Tentativo di refresh del token di accesso
-            $refresh_token = $this->account->refresh_token;
-            if (!empty($refresh_token)) {
-                $access_token = $this->getProvider()->getAccessToken('refresh_token', [
-                    'refresh_token' => $this->account->refresh_token,
-                ]);
-                
-                $refresh_token = $access_token->getRefreshToken();
-            } else {
-                $access_token = null;
-                $refresh_token = null;
-            }
-
-            $this->updateTokens($access_token, $refresh_token);
-        }
-    }
-    
     /**
      * Imposta l'access token per l'autenticazione OAuth2.
      *
@@ -193,5 +172,27 @@ class OAuth2
         $this->account->access_token = serialize($access_token);
         $this->account->refresh_token = $refresh_token;
         $this->account->save();
+    }
+
+    protected function checkTokens()
+    {
+        $access_token = unserialize($this->account->access_token);
+
+        if (!empty($access_token) && $access_token->hasExpired()) {
+            // Tentativo di refresh del token di accesso
+            $refresh_token = $this->account->refresh_token;
+            if (!empty($refresh_token)) {
+                $access_token = $this->getProvider()->getAccessToken('refresh_token', [
+                    'refresh_token' => $this->account->refresh_token,
+                ]);
+
+                $refresh_token = $access_token->getRefreshToken();
+            } else {
+                $access_token = null;
+                $refresh_token = null;
+            }
+
+            $this->updateTokens($access_token, $refresh_token);
+        }
     }
 }

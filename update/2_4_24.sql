@@ -148,4 +148,5 @@ ALTER TABLE `em_accounts` ADD `provider` varchar(255),
     ADD `client_id` TEXT,
     ADD `client_secret` TEXT,
     ADD `oauth2_state` TEXT,
-    ADD `access_token` TEXT;
+    ADD `access_token` TEXT,
+    ADD `refresh_token` TEXT;

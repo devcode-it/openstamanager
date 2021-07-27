@@ -21,6 +21,7 @@ if (!empty($state)) {
 
     // Impostazione access token a null per reimpostare la configurazione
     $account->access_token = null;
+    $account->refresh_token = null;
     $account->save();
 }
 
@@ -31,10 +32,10 @@ if (empty($account)) {
 }
 
 // Inizializzazione
-$oauth = new OAuth2($account);
+$oauth2 = new OAuth2($account);
 
 // Redirect all'URL di autorizzazione del servizio esterno
-$redirect = $oauth->configure($code, $state);
+$redirect = $oauth2->configure($code, $state);
 
 // Redirect automatico al record
 if (empty($redirect)) {

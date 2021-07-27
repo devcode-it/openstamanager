@@ -37,7 +37,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
 
     public function __construct($account = null, $exceptions = null)
     {
-        parent::__construct($exceptions);
+        parent::__construct(true);
 
         $this->CharSet = 'UTF-8';
 
@@ -54,7 +54,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
             $this->IsSMTP();
 
             // Impostazioni di debug
-            $this->SMTPDebug = \App::debug() ? 2 : 0;
+            $this->SMTPDebug = 2;
             $this->Debugoutput = function ($str, $level) {
                 $this->infos[] = $str;
             };
@@ -212,6 +212,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
         // Segnalazione degli errori
         if (!$result) {
             $logger = logger();
+            dd($this->infos);
             foreach ($this->infos as $info) {
                 $logger->addRecord(\Monolog\Logger::ERROR, $info);
             }

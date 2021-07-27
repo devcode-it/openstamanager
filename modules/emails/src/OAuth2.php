@@ -33,6 +33,7 @@ class OAuth2
             'help' => 'https://docs.openstamanager.com/faq/configurazione-oauth2#google',
         ],
     ];
+
     protected $provider;
     protected $account;
 
@@ -44,7 +45,7 @@ class OAuth2
     }
 
     /**
-     * Inizializza il ->inprovider per l'autenticazione OAuth2.
+     * Inizializza il provider per l'autenticazione OAuth2.
      */
     public function init()
     {
@@ -57,6 +58,7 @@ class OAuth2
             'clientId' => $this->account->client_id,
             'clientSecret' => $this->account->client_secret,
             'redirectUri' => $redirect_uri,
+            'accessType' => 'offline',
         ]);
 
         // Configurazioni specifiche per il provider di Microsoft Azure
@@ -112,14 +114,14 @@ class OAuth2
             // Fetch the authorization URL from the provider; this returns the
             // urlAuthorize option and generates and applies any necessary parameters
             // (e.g. state).
-            $authorizationUrl = $provider->getAuthorizationUrl($options);
+            $authorization_url = $provider->getAuthorizationUrl($options);
 
             // Get the state generated for you and store it to the session.
             $this->account->oauth2_state = $provider->getState();
             $this->account->save();
 
             // Redirect the user to the authorization URL.
-            return $authorizationUrl;
+            return $authorization_url;
         } elseif (!empty($this->account->oauth2_state) && $this->account->oauth2_state !== $state) {
             $this->account->oauth2_state = null;
             $this->account->save();
@@ -129,27 +131,23 @@ class OAuth2
             $this->account->oauth2_state = null;
             $this->account->save();
 
-            // Try to get an access token using the authorization code grant.
-            $accessToken = $provider->getAccessToken('authorization_code', [
+            // Try to get an access token using the authorization code grant
+            $access_token = $provider->getAccessToken('authorization_code', [
                 'code' => $code,
             ]);
-            //dd($accessToken);
+            $refresh_token = $access_token->getRefreshToken();
 
-            $this->setAccessToken($accessToken);
+            $this->updateTokens($access_token, $refresh_token);
         }
 
         return null;
     }
 
-    /**
-     * Imposta l'access token per l'autenticazione OAuth2.
-     *
-     * @param AccessToken|null
-     */
-    public function setAccessToken($value)
+    public function getRefreshToken()
     {
-        $this->account->access_token = serialize($value);
-        $this->account->save();
+        $this->checkTokens();
+
+        return $this->account->refresh_token;
     }
 
     /**
@@ -159,32 +157,41 @@ class OAuth2
      */
     public function getAccessToken()
     {
+        $this->checkTokens();
+
+        return unserialize($this->account->access_token);
+    }
+
+    protected function checkTokens() {
         $access_token = unserialize($this->account->access_token);
 
         if (!empty($access_token) && $access_token->hasExpired()) {
-            // Tentativo di refresh del token di accessp
-            if (!empty($access_token->getRefreshToken())) {
+            // Tentativo di refresh del token di accesso
+            $refresh_token = $this->account->refresh_token;
+            if (!empty($refresh_token)) {
                 $access_token = $this->getProvider()->getAccessToken('refresh_token', [
-                    'refresh_token' => $access_token->getRefreshToken(),
+                    'refresh_token' => $this->account->refresh_token,
                 ]);
+                
+                $refresh_token = $access_token->getRefreshToken();
             } else {
                 $access_token = null;
+                $refresh_token = null;
             }
 
-            $this->setAccessToken($access_token);
+            $this->updateTokens($access_token, $refresh_token);
         }
-
-        return $access_token;
     }
-
-    public function getRefreshToken()
+    
+    /**
+     * Imposta l'access token per l'autenticazione OAuth2.
+     *
+     * @param AccessToken|null
+     */
+    public function updateTokens($access_token, $refresh_token)
     {
-        $access_token = unserialize($this->account->access_token);
-
-        if (!empty($access_token)) {
-            return $access_token->getRefreshToken();
-        }
-
-        return null;
+        $this->account->access_token = serialize($access_token);
+        $this->account->refresh_token = $refresh_token;
+        $this->account->save();
     }
 }

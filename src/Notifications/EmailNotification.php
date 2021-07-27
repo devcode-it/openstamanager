@@ -23,6 +23,8 @@ use Modules\Emails\Account;
 use Modules\Emails\Mail;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\OAuth;
+use PHPMailer\PHPMailer\SMTP;
 use Prints;
 use Uploads;
 
@@ -35,45 +37,63 @@ class EmailNotification extends PHPMailer implements NotificationInterface
 
     public function __construct($account = null, $exceptions = null)
     {
-        parent::__construct($exceptions);
+        parent::__construct(true);
 
         $this->CharSet = 'UTF-8';
 
         // Configurazione di base
-        $config = Account::find($account);
-        if (empty($config)) {
-            $config = Account::where('predefined', true)->first();
+        $account = $account instanceof Account ? $account : Account::find($account);
+        if (empty($account)) {
+            $account = Account::where('predefined', true)->first();
         }
 
         // Preparazione email
         $this->IsHTML(true);
 
-        if (!empty($config['server'])) {
-            $this->IsSMTP(true);
+        if (!empty($account['server'])) {
+            $this->IsSMTP();
 
             // Impostazioni di debug
-            $this->SMTPDebug = \App::debug() ? 2 : 0;
+            $this->SMTPDebug = 2;
             $this->Debugoutput = function ($str, $level) {
                 $this->infos[] = $str;
             };
 
             // Impostazioni dell'host
-            $this->Host = $config['server'];
-            $this->Port = $config['port'];
+            $this->Host = $account['server'];
+            $this->Port = $account['port'];
 
             // Impostazioni di autenticazione
-            if (!empty($config['username'])) {
+            if (!empty($account['username'])) {
                 $this->SMTPAuth = true;
-                $this->Username = $config['username'];
-                $this->Password = $config['password'];
+                $this->Username = $account['username'];
+
+                // Configurazione OAuth2
+                if (!empty($account['access_token'])) {
+                    $oauth2 = $account->getGestoreOAuth2();
+
+                    $this->AuthType = 'XOAUTH2';
+                    $this->setOAuth(
+                        new OAuth([
+                            'provider' => $oauth2->getProvider(),
+                            'refreshToken' => $oauth2->getRefreshToken(),
+                            'clientId' => $account->client_id,
+                            'clientSecret' => $account->client_secret,
+                            'userName' => $account->username,
+                        ])
+                    );
+                } else {
+                    $this->Password = $account['password'];
+                }
             }
 
             // Impostazioni di sicurezza
-            if (in_array(strtolower($config['encryption']), ['ssl', 'tls'])) {
-                $this->SMTPSecure = strtolower($config['encryption']);
+            if (in_array(strtolower($account['encryption']), ['ssl', 'tls'])) {
+                $this->SMTPSecure = strtolower($account['encryption']);
             }
 
-            if (!empty($config['ssl_no_verify'])) {
+            // Disabilitazione verifica host
+            if (!empty($account['ssl_no_verify'])) {
                 $this->SMTPOptions = [
                     'ssl' => [
                         'verify_peer' => false,
@@ -84,8 +104,8 @@ class EmailNotification extends PHPMailer implements NotificationInterface
             }
         }
 
-        $this->From = $config['from_address'];
-        $this->FromName = $config['from_name'];
+        $this->From = $account['from_address'];
+        $this->FromName = $account['from_name'];
 
         $this->WordWrap = 78;
     }
@@ -192,6 +212,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
         // Segnalazione degli errori
         if (!$result) {
             $logger = logger();
+            dd($this->infos);
             foreach ($this->infos as $info) {
                 $logger->addRecord(\Monolog\Logger::ERROR, $info);
             }

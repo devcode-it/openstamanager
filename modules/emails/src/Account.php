@@ -34,6 +34,9 @@ class Account extends Model
 
     protected $table = 'em_accounts';
 
+    /** @var OAuth2 */
+    protected $gestoreOAuth2;
+
     public function testConnection()
     {
         // Impostazione di connected_at a NULL
@@ -52,6 +55,17 @@ class Account extends Model
         }
 
         return $result;
+    }
+
+    public function getGestoreOAuth2()
+    {
+        if (isset($this->gestoreOAuth2)) {
+            return $this->gestoreOAuth2;
+        }
+
+        $this->gestoreOAuth2 = new OAuth2($this);
+
+        return $this->gestoreOAuth2;
     }
 
     /* Relazioni Eloquent */

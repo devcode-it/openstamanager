@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-switch (post('op')) {
+switch (filter('op')) {
     case 'add':
         $dbo->insert('em_accounts', [
             'name' => post('name'),
@@ -39,6 +39,8 @@ switch (post('op')) {
             $dbo->query('UPDATE em_accounts SET predefined = 0');
         }
 
+        $abilita_oauth2 = post('abilita_oauth2');
+
         $dbo->update('em_accounts', [
             'name' => post('name'),
             'note' => post('note'),
@@ -53,9 +55,23 @@ switch (post('op')) {
             'timeout' => post('timeout'),
             'ssl_no_verify' => post('ssl_no_verify'),
             'predefined' => $predefined,
+            'provider' => post('provider'),
+            'client_id' => post('client_id'),
+            'client_secret' => post('client_secret'),
         ], ['id' => $id_record]);
 
         flash()->info(tr('Informazioni salvate correttamente!'));
+
+        // Rimozione informazioni OAuth2 in caso di disabilitazione
+        if (!$abilita_oauth2) {
+            $dbo->update('em_accounts', [
+                'provider' => null,
+                'client_id' => null,
+                'client_secret' => null,
+                'access_token' => null,
+                'refresh_token' => null,
+            ], ['id' => $id_record]);
+        }
 
         // Validazione indirizzo email mittente
         $check_email = Validate::isValidEmail(post('from_address'));
@@ -95,6 +111,12 @@ switch (post('op')) {
         $account->delete();
 
         flash()->info(tr('Account email eliminato!'));
+
+        break;
+
+    case 'oauth2':
+        $redirect = base_path().'/oauth2.php?id_account='.$account->id;
+        redirect($redirect);
 
         break;
 }

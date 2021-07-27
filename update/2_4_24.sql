@@ -142,3 +142,11 @@ ALTER TABLE `dt_ddt` ADD `id_ddt_trasporto_interno` INT(11) NULL, ADD FOREIGN KE
 -- Aggiunto ragruppamento referenti per sede
 UPDATE `zz_plugins` SET `options` = ' { \"main_query\": [ { \"type\": \"table\", \"fields\": \"Nome, Indirizzo, Città, CAP, Provincia, Referente\", \"query\": \"SELECT an_sedi.id, an_sedi.nomesede AS Nome, an_sedi.indirizzo AS Indirizzo, an_sedi.citta AS Città, an_sedi.cap AS CAP, an_sedi.provincia AS Provincia, GROUP_CONCAT(an_referenti.nome SEPARATOR \\\", \\\") AS Referente FROM an_sedi LEFT OUTER JOIN an_referenti ON idsede = an_sedi.id WHERE 1=1 AND an_sedi.idanagrafica=|id_parent| GROUP BY an_sedi.id HAVING 2=2 ORDER BY an_sedi.id DESC\"} ]}' WHERE `zz_plugins`.`name` = 'Sedi'; 
 UPDATE `zz_group_module` SET `clause` = 'in_interventi.id IN (SELECT idintervento FROM in_interventi_tecnici WHERE idintervento=in_interventi.id AND idtecnico=|id_anagrafica| UNION SELECT id_intervento FROM in_interventi_tecnici_assegnati WHERE id_intervento=in_interventi.id AND id_tecnico=|id_anagrafica|)' WHERE `zz_group_module`.`name` = 'Mostra interventi ai tecnici coinvolti';
+
+-- Aggiunto supporto autenticazione OAuth 2
+ALTER TABLE `em_accounts` ADD `provider` varchar(255),
+    ADD `client_id` TEXT,
+    ADD `client_secret` TEXT,
+    ADD `oauth2_state` TEXT,
+    ADD `access_token` TEXT,
+    ADD `refresh_token` TEXT;

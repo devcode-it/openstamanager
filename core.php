@@ -55,7 +55,7 @@ $rootdir = ROOTDIR;
 $baseurl = BASEURL;
 
 // Sicurezza della sessioni
-ini_set('session.cookie_samesite', 'strict');
+//ini_set('session.cookie_samesite', 'strict');
 ini_set('session.use_trans_sid', '0');
 ini_set('session.use_only_cookies', '1');
 

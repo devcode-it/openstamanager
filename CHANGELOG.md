@@ -41,33 +41,41 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunta nel calendario della Dashboard visualizzazione dei preventivi pianificabili in corrispondenza alla data di accettazione e conclusione.
  - Aggiunta impostazione per la visualizzazione delle ore nella stampa intervento (Decimale, Sessantesimi).
  - Aggiunta possibilità di selezionare la sede di partenza della merce in fase di aggiunta articolo da un'attività
- - Aggiunta colonna Scaduto nel modulo Scadenzario
+ - Aggiunta colonna *Scaduto* nel modulo **Scadenzario**
  - Aggiunto campi confermato, data e ora evasione nel modulo **Preventivi**
  - Aggiunta possibilità di creare un nuovi conti di secondo livello dal modulo **Piano dei conti**
  - Aggiunta impostazione per la rimozione del blocco sulle quantità massime importabili fra documenti
  - Aggiunta colonna **Rif. fattura** nei moduli Ordini cliente e fornitore
- - Aggiunta gestione come costo e ricavo per i conti di secondo livello 
- - Aggiunta creazione automatica DDT inverso in DDT per Azienda
- - Aggiunto codice e prezzo nella stampa barcode
+ - Aggiunta gestione come costo e ricavo per i conti di secondo livello
+ - Aggiunta gestione di DDT di trasporto interno tra sedi dell'anagrafica Azienda, con creazione semplificata del DDT di direzione opposta
+ - Aggiunto codice e prezzo nella stampa *Barcode*
  - Aggiunto riquadro destinazione diversa nella stampe documenti (se presente)
  - Aggiunta azione di gruppo in **Fatture di acquisto** per l'esportazione delle fatture FE in PDF
- - Aggiunto plugin separato per la visualizzazione dei listini clienti e fornitori
- - Introduzione importazione Preventivi e Contratti in Attività 
- - Aggiunta colonna reddito nella stampa del **Bilancio** 
- 
+ - Separazione plugin per la visualizzazione di *Listini Clienti* e *Listini Fornitori*
+ - Introduzione importazione Preventivi e Contratti in Attività
+ - Aggiunta colonna reddito nella stampa del **Bilancio**
+ - Aggiunta autenticazione OAuth2 per gli **Account email** (funzionante con Google, sperimentale con Microsoft)
+ - Aggiunta importazione di **Preventivi** e **Contratti** in **Attività**, senza collegamento contabile per i *Consuntivi*
+ - Aggiunta sezione di riepilogo dettagli Cliente in apertura di nuove **Attività**
+
+### Modificato (Changed)
+ - Rimossa dipendenza JQuery per la gestione dell'ordinamento (righe e widget) e per la ricerca generale
+ - Modifica del sistema di selezione delle righe nelle tabelle principali, per aggiungere un contatore delle righe selezionate
+
 ### Fixed
  - Sostituito plugin **Componenti** nel modulo Impianti con la possibilità di inserire gli articoli di magazzino
  - Possibilità di ripristinare un conto cliente/fornitore dal modulo **Anagrafiche** se eliminato
- - Fix visualizzazione referenti nel plugin Sedi
- - Fix stampa registro iva
- - Fix css personalizzato
+ - Fix visualizzazione referenti nel plugin **Sedi**
+ - Fix stampa *Registro IVA*
+ - Fix inclusione CSS personalizzato da **Impostazioni**
+ - Fix esportazione footer delle tabelle principali
 
 ## 2.4.23 (2021-05-18)
 
 ### Aggiunto (Added)
  - Nuovo *Sconto finale* per gli **Ordini**, **Preventivi**, **DDT** e **Contratti**, influenza il valore *Netto a pagare* del documento.
- - Nuovo filtro in attività per mostrare al tecnico solo le attività assegnate. 
- - Nuovo filtro in contratti per mostrare al cliente solo i contratti collegati. 
+ - Nuovo filtro in attività per mostrare al tecnico solo le attività assegnate.
+ - Nuovo filtro in contratti per mostrare al cliente solo i contratti collegati.
  - Nuovo pulsante **Duplica Template** per copiare un template già esistente.
  - Aggiunto controllo nelle fatture di vendita per segnalare l'eventuale fatturazione di un'attività con la data di una sessione futura rispetto alla data della fattura.
  - Aggiunta possibilità di creare un ordine fornitore da un preventivo.

@@ -19,6 +19,7 @@
 
 namespace Plugins\ImportFE;
 
+use Common\Components\Component;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Articoli\Categoria;
@@ -173,8 +174,9 @@ class FatturaOrdinaria extends FatturaElettronica
             $obj->descrizione = $riga['Descrizione'];
 
             // Collegamento al documento di riferimento
-            if (!empty($tipi_riferimenti[$key])) {
-                list($riferimento_precedente, $nuovo_riferimento) = $obj->impostaOrigine($tipi_riferimenti[$key], $id_riferimenti[$key]);
+            if (!empty($tipi_riferimenti[$key]) && is_subclass_of($tipi_riferimenti[$key], Component::class)) {
+                $riga_origine = ($tipi_riferimenti[$key])::find($id_riferimenti[$key]);
+                list($riferimento_precedente, $nuovo_riferimento) = $obj->impostaOrigine($riga_origine);
 
                 // Correzione della descrizione
                 $obj->descrizione = str_replace($riferimento_precedente, '', $obj->descrizione);

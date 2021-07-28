@@ -34,6 +34,8 @@ use InvalidArgumentException;
  *
  * @property string original_type
  * @property string original_id
+ * @property string original_document_id
+ * @property string original_document_type
  *
  * @template T
  *
@@ -201,8 +203,10 @@ abstract class Component extends Model
 
         // Attributi dell'oggetto da copiare
         $attributes = $this->getAttributes();
-        unset($attributes['id']);
-        unset($attributes['order']);
+
+        // Rimozione attributi problematici
+        $remove = ['id', 'order', 'original_id', 'original_type', 'original_document_id', 'original_document_type'];
+        $attributes = array_diff_key($attributes, array_flip($remove));
 
         if ($qta !== null) {
             $attributes['qta'] = $qta;
@@ -219,18 +223,17 @@ abstract class Component extends Model
         // Riferimento di origine per l'evasione automatica della riga
         if ($evadi_qta_parent) {
             // Mantenimento dell'origine della riga precedente
-            $model->original_id = $attributes['original_id'];
-            $model->original_type = $attributes['original_type'];
+            // Utilizzato per la rimozione del riferimento precedente dalla descrizione
+            $model->original_id = $this->original_id;
+            $model->original_type = $this->original_type;
 
             // Aggiornamento dei riferimenti
-            list($riferimento_precedente, $nuovo_riferimento) = $model->impostaOrigine($current, $this->id);
+            list($riferimento_precedente, $nuovo_riferimento) = $model->impostaOrigine($this);
 
             // Correzione della descrizione
             $attributes['descrizione'] = str_replace($riferimento_precedente, '', $attributes['descrizione']);
             $attributes['descrizione'] .= $nuovo_riferimento;
         }
-        unset($attributes['original_id']);
-        unset($attributes['original_type']);
 
         // Impostazione del genitore
         $model->setDocument($document);
@@ -266,28 +269,48 @@ abstract class Component extends Model
      *
      * @return array
      */
-    public function impostaOrigine($type, $id)
+    public function impostaOrigine($riga)
     {
         $riferimento_precedente = null;
         $nuovo_riferimento = null;
 
         // Rimozione del riferimento precedente dalla descrizione
         if ($this->hasOriginalComponent()) {
-            $riferimento = $this->getOriginalComponent()->getDocument()->getReference();
-            $riferimento_precedente = "\nRif. ".strtolower($riferimento);
+            $riferimento_precedente = self::getDescrizioneRiferimento(
+                $this->getOriginalComponent()->getDocument()
+            );
         }
 
-        $this->original_id = $id;
-        $this->original_type = $type;
+        // Informazioni del nuovo riferimento
+        if (!empty($riga)) {
+            $this->original_id = $riga->id;
+            $this->original_type = get_class($riga);
 
-        // Aggiunta del riferimento nella descrizione
-        $origine = $type::find($id);
-        if (!empty($origine)) {
-            $riferimento = $origine->getDocument()->getReference();
-            $nuovo_riferimento = "\nRif. ".strtolower($riferimento);
+            $documento_origine = $riga->getDocument();
+            $this->original_document_id = $documento_origine->id;
+            $this->original_document_type = get_class($documento_origine);
+
+            // Aggiunta del riferimento nella descrizione
+            $nuovo_riferimento = self::getDescrizioneRiferimento(
+                $documento_origine
+            );
+        }
+        // Rimozione dei riferimenti precedenti
+        else {
+            $this->original_id = null;
+            $this->original_type = null;
+            $this->original_document_id = null;
+            $this->original_document_type = null;
         }
 
         return [$riferimento_precedente, $nuovo_riferimento];
+    }
+
+    public static function getDescrizioneRiferimento(Document $origine)
+    {
+        $riferimento = $origine->getReference();
+
+        return "\nRif. ".strtolower($riferimento);
     }
 
     /**

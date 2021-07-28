@@ -436,9 +436,12 @@ $("#codice_cig, #codice_cup").bind("keyup change", function(e) {
 
 // Collegamenti diretti
 // Fatture o interventi collegati a questo contratto
-$elementi = $dbo->fetchArray('SELECT 0 AS `codice`, `co_documenti`.`id` AS `id`, `co_documenti`.`numero` AS `numero`, `co_documenti`.`numero_esterno` AS `numero_esterno`,  `co_documenti`.`data`, `co_tipidocumento`.`descrizione` AS `tipo_documento`, `co_tipidocumento`.`dir` AS `dir`  FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idcontratto` = '.prepare($id_record).')'.'
+$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento`.`descrizione` AS tipo_documento, IF(`co_tipidocumento`.`dir` = \'entrata\', \'Fatture di vendita\', \'Fatture di acquisto\') AS modulo FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idcontratto` = '.prepare($id_record).')
+
 UNION
-SELECT  `in_interventi`.`codice` AS `codice`, `in_interventi`.`id` AS `id`, 0 AS `numero`, 0 AS `numero_esterno`, `in_interventi`.`data_richiesta` AS `data`, 0 AS `tipo_documento`, 0 AS `dir` FROM `in_interventi` WHERE `in_interventi`.`id_contratto` = '.prepare($id_record).' ORDER BY `data` ');
+SELECT `in_interventi`.`id`, `in_interventi`.`data_richiesta`, `in_interventi`.`codice`, NULL, \'Attività\', \'Interventi\' FROM `in_interventi` JOIN `in_righe_interventi` ON `in_righe_interventi`.`idintervento` = `in_interventi`.`id` WHERE (`in_righe_interventi`.`original_document_id` = '.prepare($contratto->id).' AND `in_righe_interventi`.`original_document_type` = '.prepare(get_class($contratto)).') OR `in_interventi`.`id_contratto` = '.prepare($id_record).'
+
+ORDER BY `data` ');
 
 if (!empty($elementi)) {
     echo '
@@ -455,31 +458,15 @@ if (!empty($elementi)) {
         <ul>';
 
     // Elenco attività o contratti collegati
-    foreach ($elementi as $riga) {
-        if (!empty($riga['dir'])) {
-            $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
-                '_DOC_' => $riga['tipo_documento'],
-                '_NUM_' => !empty($riga['numero_esterno']) ? $riga['numero_esterno'] : $riga['numero'],
-                '_DATE_' => Translator::dateToLocale($riga['data']),
-            ]);
+    foreach ($elementi as $elemento) {
+        $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
+            '_DOC_' => $elemento['tipo_documento'],
+            '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
+            '_DATE_' => Translator::dateToLocale($elemento['data']),
+        ]);
 
-            $modulo = ($riga['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
-            $id = $riga['id'];
-
-            echo '
-            <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
-        } else {
-            $descrizione = tr('Intervento num. _NUM_ del _DATE_', [
-                '_NUM_' => $riga['codice'],
-                '_DATE_' => Translator::dateToLocale($riga['data']),
-            ]);
-
-            $modulo = 'Interventi';
-            $id = $riga['id'];
-
-            echo '
-            <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
-        }
+        echo '
+            <li>'.Modules::link($elemento['modulo'], $elemento['id'], $descrizione).'</li>';
     }
 
     echo '

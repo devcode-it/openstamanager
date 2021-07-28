@@ -158,7 +158,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
     $sessioni = $intervento->sessioni;
 
     if (empty($sessioni)) {
-        flash()->warning(tr("L'intervento _NUM_ non ha sessioni di lavoro!", [
+        flash()->warning(tr("L'attività _NUM_ non ha sessioni di lavoro!", [
             '_NUM_' => $codice,
         ]));
     } else {
@@ -171,7 +171,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $sessione = $gruppo->first();
             $riga = Riga::build($fattura);
 
-            $riga->descrizione = tr("Ore di lavoro dell'intervento _NUM_ del _DATE_", [
+            $riga->descrizione = tr("Ore di lavoro dell'attività _NUM_ del _DATE_", [
                 '_NUM_' => $codice,
                 '_DATE_' => dateFormat($data),
             ]);
@@ -202,7 +202,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $diritto_chiamata = $gruppo->first();
             $riga = Riga::build($fattura);
 
-            $riga->descrizione = tr("Diritto di chiamata dell'intervento _NUM_ del _DATE_", [
+            $riga->descrizione = tr("Diritto di chiamata dell'attività _NUM_ del _DATE_", [
                 '_NUM_' => $codice,
                 '_DATE_' => dateFormat($data),
             ]);
@@ -236,7 +236,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $viaggio = $gruppo->first();
             $riga = Riga::build($fattura);
 
-            $riga->descrizione = tr("Trasferta dell'intervento _NUM_ del _DATE_", [
+            $riga->descrizione = tr("Trasferta dell'attività _NUM_ del _DATE_", [
                 '_NUM_' => $codice,
                 '_DATE_' => dateFormat($data),
             ]);

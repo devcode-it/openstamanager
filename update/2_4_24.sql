@@ -158,3 +158,22 @@ INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`,
 (NULL, 'Piani di sconto/maggiorazione', 'Piani di sconto/magg.', (SELECT `id` FROM `zz_modules` WHERE `name`='Articoli'), (SELECT `id` FROM `zz_modules` WHERE `name`='Articoli'), 'tab', 'piani_sconto_maggiorazione', 'custom');
 
 UPDATE `zz_modules` SET `name` = 'Piani di sconto/maggiorazione' WHERE `name` = 'Piani di sconto/magg.';
+
+-- Aggiunta riferimento documenti
+ALTER TABLE `co_righe_promemoria` ADD `original_document_type` varchar(255) AFTER `original_type`, ADD `original_document_id` int(11) AFTER `original_type`;
+ALTER TABLE `in_righe_interventi` ADD `original_document_type` varchar(255) AFTER `original_type`, ADD `original_document_id` int(11) AFTER `original_type`;
+ALTER TABLE `co_righe_contratti` ADD `original_document_type` varchar(255) AFTER `original_type`, ADD `original_document_id` int(11) AFTER `original_type`;
+ALTER TABLE `co_righe_preventivi` ADD `original_document_type` varchar(255) AFTER `original_type`, ADD `original_document_id` int(11) AFTER `original_type`;
+ALTER TABLE `co_righe_documenti` ADD `original_document_type` varchar(255) AFTER `original_type`, ADD `original_document_id` int(11) AFTER `original_type`;
+ALTER TABLE `or_righe_ordini` ADD `original_document_type` varchar(255) AFTER `original_type`, ADD `original_document_id` int(11) AFTER `original_type`;
+ALTER TABLE `dt_righe_ddt` ADD `original_document_type` varchar(255) AFTER `original_type`, ADD `original_document_id` int(11) AFTER `original_type`;
+
+UPDATE `co_righe_documenti` SET `original_document_id` = `idcontratto`, `original_document_type` = 'Modules\\Contratti\\Contratto' WHERE `idcontratto` != 0;
+UPDATE `co_righe_documenti` SET `original_document_id` = `idpreventivo`, `original_document_type` = 'Modules\\Preventivi\\Preventivo' WHERE `idpreventivo` != 0;
+UPDATE `co_righe_documenti` SET `original_document_id` = `idintervento`, `original_document_type` = 'Modules\\Interventi\\Intervento' WHERE `idintervento` IS NOT NULL;
+UPDATE `co_righe_documenti` SET `original_document_id` = `idordine`, `original_document_type` = 'Modules\\Ordini\\Ordine' WHERE `idordine` != 0;
+UPDATE `co_righe_documenti` SET `original_document_id` = `idintervento`, `original_document_type` = 'Modules\\DDT\\DDT' WHERE `idddt` != 0;
+
+UPDATE `dt_righe_ddt` SET `original_document_id` = `idordine`, `original_document_type` = 'Modules\\Ordini\\Ordine' WHERE `idordine` != 0;
+
+UPDATE `or_righe_ordini` SET `original_document_id` = `idpreventivo`, `original_document_type` = 'Modules\\Preventivi\\Preventivo' WHERE `idpreventivo` != 0;

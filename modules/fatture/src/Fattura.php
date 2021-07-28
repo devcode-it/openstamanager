@@ -128,7 +128,7 @@ class Fattura extends Document
         }
 
         // Sede aziendale scelta tra le sedi disponibili per l'utente
-        $id_sede = $user->sedi[0];
+        $id_sede = $user->id_sede_principale;
         if ($direzione == 'entrata') {
             $model->idsede_destinazione = $id_sede;
         } else {

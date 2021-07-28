@@ -79,23 +79,17 @@ switch (filter('op')) {
 
             // Foto
             if (!empty($_FILES['photo']['tmp_name'])) {
-                $utente->photo = $_FILES['photo'];
+                $utente->setPhoto($_FILES['photo']);
             }
 
             // Anagrafica
-            $id_anagrafica = filter('idanag');
-            $utente->id_anagrafica = $id_anagrafica;
-
+            $utente->id_anagrafica = filter('id_anagrafica');
             $utente->save();
 
-            $dbo->query('DELETE FROM zz_user_sedi WHERE id_user = '.prepare($id_utente));
-            $sedi = post('idsede');
-            if (empty($sedi)) {
-                $sedi = [0];
-            }
-            foreach ($sedi as $id_sede) {
-                $dbo->query('INSERT INTO `zz_user_sedi` (`id_user`,`idsede`) VALUES ('.prepare($id_utente).', '.prepare($id_sede).')');
-            }
+            // Aggiornamento sede collegata
+            $id_sedi_abilitate = (array) post('id_sedi_abilitate');
+            $id_sedi_abilitate = array_diff($id_sedi_abilitate, [0]); // Rimozione sede legale
+            $utente->sediAbilitate()->sync($id_sedi_abilitate);
         } else {
             flash()->error(tr('Utente già esistente!'));
         }
@@ -111,7 +105,7 @@ switch (filter('op')) {
         if (!empty($password)) {
             $utente->password = $password;
         } elseif (!empty($_FILES['photo']['tmp_name'])) {
-            $utente->photo = $_FILES['photo'];
+            $utente->setPhoto($_FILES['photo']);
         }
 
         $utente->save();

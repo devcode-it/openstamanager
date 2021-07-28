@@ -272,8 +272,9 @@ switch ($resource) {
 
         $where[] = 'idanagrafica='.prepare($id_azienda);
         //admin o utente senza una sede prefissata, avrà accesso a tutte le sedi
-        if (!empty($user->sedi) and !$user->is_admin) {
-            $where[] = 'id IN('.implode(',', $user->sedi).')';
+        $id_sedi_abilitate = $user->sediAbilitate->pluck('id')->all();
+        if (!empty($id_sedi_abilitate) && !$user->is_admin) {
+            $where[] = 'id IN('.implode(',', $id_sedi_abilitate).')';
         }
 
         if (!empty($search)) {

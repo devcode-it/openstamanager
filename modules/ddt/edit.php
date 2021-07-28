@@ -522,7 +522,8 @@ if (!empty($elementi)) {
 <?php
 // Eliminazione ddt solo se ho accesso alla sede aziendale
 $field_name = ($dir == 'entrata') ? 'idsede_partenza' : 'idsede_destinazione';
-if (in_array($record[$field_name], $user->sedi)) {
+$id_sedi_abilitate = $user->sediAbilitate->pluck('id')->all();
+if (in_array($record[$field_name], $id_sedi_abilitate)) {
     ?>
     <a class="btn btn-danger ask" data-backto="record-list">
         <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>

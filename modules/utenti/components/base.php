@@ -28,37 +28,30 @@ echo '
 		<div class="col-md-12">
 		{[ "type": "text", "label": "'.tr('Username').'", "name": "username", "required": 1, "value": "'.$utente['username'].'", "validation": "username||'.($utente['id'] ?: 0).'" ]}
 		</div>
-    </div>';
-
-echo '
+    </div>
 
     <div class="row">
 		<div class="col-md-12">
 		{[ "type": "text", "label": "'.tr('Email').'", "name": "email", "required": 0, "value": "'.$utente['email'].'" ]}
 		</div>
-    </div>';
-
-    echo '
+    </div>
 
 	<div class="row">
 		<div class="col-md-12">
-		{[ "type": "select", "label": "'.tr('Collega ad una anagrafica').'", "name": "idanag", "required": 1, "ajax-source": "anagrafiche_utenti", "value": "'.$utente['id_anagrafica'].'", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].(isset($gruppo) ? '|tipoanagrafica='.$gruppo : '').'" ]}
+		{[ "type": "select", "label": "'.tr('Anagrafica collegata').'", "name": "id_anagrafica", "required": 1, "ajax-source": "anagrafiche_utenti", "value": "'.$utente['id_anagrafica'].'", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].(isset($gruppo) ? '|tipoanagrafica='.$gruppo : '').'" ]}
 		</div>
 	</div>
 
 	<div class="row">
 		<div class="col-md-12">
-		    {[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede[]", "ajax-source": "sedi_azienda", "multiple": "1", "value":"'.($sedi ?: '').'", "help": "'.tr('Sede Azienda abilitata per la movimentazione degli articoli.').'" ]}
+		    {[ "type": "select", "label": "'.tr('Sedi abilitate').'", "name": "id_sedi_abilitate[]", "ajax-source": "sedi_azienda", "value": "'.implode(',', $id_sedi_abilitate).'", "multiple": 1, "help": "'.tr('Sede Azienda abilitata per la movimentazione degli articoli.').'" ]}
 		</div>
-	</div>';
+	</div>
 
-echo '
     <script type="text/javascript">
         $(document).ready(function() {
-            $("#idanag").change(function() {
-                session_set("superselect,idanagrafica", $(this).val(), 0);
-
-                $("#idsede").selectReset();
+            $("#id_anagrafica").change(function() {
+                $("#id_sede").selectReset();
             })
         });
     </script>';

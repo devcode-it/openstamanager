@@ -102,9 +102,9 @@ class DDT extends Document
 
         // Imposto, come sede aziendale, la prima sede disponibile come utente
         if ($direzione == 'entrata') {
-            $model->idsede_partenza = $user->sedi[0];
+            $model->idsede_partenza = $user->id_sede_principale;
         } else {
-            $model->idsede_destinazione = $user->sedi[0];
+            $model->idsede_destinazione = $user->id_sede_principale;
         }
 
         $model->save();

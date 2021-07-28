@@ -128,7 +128,7 @@ return [
     'zz_tasks_logs',
     'zz_tokens',
     'zz_users',
-    'zz_user_sedi',
+    'zz_user_sede',
     'zz_views',
     'zz_widgets',
 ];

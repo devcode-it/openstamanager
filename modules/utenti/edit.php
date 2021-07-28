@@ -69,10 +69,10 @@ if (!empty($utenti)) {
 			<td>-</td>';
         }
 
-        $sedi = $dbo->fetchOne('SELECT GROUP_CONCAT(nomesede SEPARATOR ", "  ) as nomesede FROM zz_user_sedi INNER JOIN ((SELECT "0" AS id, "Sede legale" AS nomesede) UNION (SELECT id, nomesede FROM an_sedi)) sedi ON zz_user_sedi.idsede=sedi.id WHERE id_user='.prepare($utente['id']).' GROUP BY id_user ')['nomesede'];
+        $elenco_sedi = $dbo->fetchOne('SELECT GROUP_CONCAT(nomesede SEPARATOR ", ") AS elenco FROM zz_user_sede INNER JOIN ((SELECT "0" AS id, "Sede legale" AS nomesede) UNION (SELECT id, nomesede FROM an_sedi)) sedi ON zz_user_sede.id_sede = sedi.id WHERE id_utente = '.prepare($utente['id']).' GROUP BY id_utente')['elenco'];
 
         echo '
-            <td>'.$sedi.'</td>';
+            <td>'.$elenco_sedi.'</td>';
 
         echo '
             <td>';

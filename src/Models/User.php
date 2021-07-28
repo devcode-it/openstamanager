@@ -23,6 +23,7 @@ use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Intervention\Image\ImageManagerStatic;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Anagrafiche\Sede;
 
 class User extends Model
 {
@@ -33,6 +34,8 @@ class User extends Model
     protected $appends = [
         'is_admin',
         'gruppo',
+        'nome_completo',
+        'id_sede_principale',
         'id_anagrafica',
     ];
 
@@ -111,19 +114,11 @@ class User extends Model
         return $this->gruppo;
     }
 
-    public function getSediAttribute()
+    public function getIdSedePrincipaleAttribute()
     {
-        $database = database();
+        $sede_principale = $this->sediAbilitate()->first();
 
-        // Estraggo le sedi dell'utente loggato
-        $sedi = $database->fetchArray('SELECT idsede FROM zz_user_sedi WHERE id_user='.prepare($this->id));
-
-        // Se l'utente non ha sedi, è come se ce le avesse tutte disponibili per retrocompatibilità
-        if (empty($sedi)) {
-            $sedi = $database->fetchArray('SELECT "0" AS idsede UNION SELECT id AS idsede FROM an_sedi WHERE idanagrafica='.prepare($this->idanagrafica));
-        }
-
-        return array_column($sedi, 'idsede');
+        return $sede_principale ? $sede_principale->id : 0;
     }
 
     public function setPasswordAttribute($value)
@@ -142,7 +137,19 @@ class User extends Model
         return base_path().'/'.$image->filepath;
     }
 
-    public function setPhotoAttribute($value)
+    public function getNomeCompletoAttribute()
+    {
+        $anagrafica = $this->anagrafica;
+        if (empty($anagrafica)) {
+            return $this->username;
+        }
+
+        return $anagrafica->ragione_sociale.' ('.$this->username.')';
+    }
+
+    // Funzioni
+
+    public function setPhoto($upload_data)
     {
         $module = \Modules::get('Utenti e permessi');
 
@@ -155,8 +162,8 @@ class User extends Model
         $old_photo = Upload::where($data)->get();
 
         // Informazioni sull'immagine
-        $filepath = is_array($value) ? $value['tmp_name'] : $value;
-        $info = Upload::getInfo(is_array($value) ? $value['name'] : $value);
+        $filepath = is_array($upload_data) ? $upload_data['tmp_name'] : $upload_data;
+        $info = Upload::getInfo(is_array($upload_data) ? $upload_data['name'] : $upload_data);
         $file = base_dir().'/files/temp_photo.'.$info['extension'];
 
         // Ridimensionamento
@@ -180,16 +187,6 @@ class User extends Model
         }
 
         $this->image_file_id = $upload->id;
-    }
-
-    public function getNomeCompletoAttribute()
-    {
-        $anagrafica = $this->anagrafica;
-        if (empty($anagrafica)) {
-            return $this->username;
-        }
-
-        return $anagrafica->ragione_sociale.' ('.$this->username.')';
     }
 
     public function getApiTokens()
@@ -223,7 +220,7 @@ class User extends Model
         return $this->hasMany(Log::class, 'id_utente');
     }
 
-    public function notes()
+    public function note()
     {
         return $this->hasMany(Note::class, 'id_utente');
     }
@@ -231,6 +228,11 @@ class User extends Model
     public function anagrafica()
     {
         return $this->belongsTo(Anagrafica::class, 'idanagrafica');
+    }
+
+    public function sediAbilitate()
+    {
+        return $this->belongsToMany(Sede::class, 'zz_user_sede', 'id_utente', 'id_sede');
     }
 
     public function image()

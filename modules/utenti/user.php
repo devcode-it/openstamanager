@@ -40,9 +40,10 @@ if (!empty($id_record)) {
     $gruppo = $gruppi[$gruppo_utente];
 }
 
-// Lettura sedi dell'utente già impostate
+// Lettura delle sedi abilitate per l'utente
+$id_sedi_abilitate = [];
 if (!empty($user)) {
-    $sedi = $dbo->fetchOne('SELECT GROUP_CONCAT(idsede) as sedi FROM zz_user_sedi WHERE id_user='.prepare($id_utente).' GROUP BY id_user')['sedi'];
+    $id_sedi_abilitate = $user->sediAbilitate->pluck('id')->all();
 }
 
 echo '
@@ -64,13 +65,13 @@ if (!empty($user)) {
     </div>
 
     <script>
-        function no_check_pwd(){
+        function disabilitaPassword() {
             $("#password").attr("disabled", true);
             $("#submit-button").attr("disabled", false).removeClass("disabled");
         }
 
         $("#modals > div").on("shown.bs.modal", function () {
-            no_check_pwd();
+            disabilitaPassword();
         });
 
         $("#change_password").change(function() {
@@ -78,7 +79,7 @@ if (!empty($user)) {
                 $("#password").attr("disabled", false);
                 $("#password").change();
             } else {
-                no_check_pwd();
+                disabilitaPassword();
             }
         });
     </script>';

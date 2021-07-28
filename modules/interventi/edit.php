@@ -416,6 +416,26 @@ echo '
 <?php
 
 if (!$block_edit) {
+    // Lettura preventivi accettati, in attesa di conferma o in lavorazione
+    $prev_query = 'SELECT COUNT(*) AS tot FROM co_preventivi WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstato IN(SELECT id FROM co_statipreventivi WHERE is_fatturabile = 1) AND default_revision=1 AND co_preventivi.id IN (SELECT idpreventivo FROM co_righe_preventivi WHERE co_righe_preventivi.idpreventivo = co_preventivi.id AND (qta - qta_evasa) > 0)';
+    $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
+    echo '
+                    <div class="tip" data-toggle="tooltip" title="'.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'.">
+                        <a class="btn btn-sm btn-primary '.(!empty($preventivi) ? '' : ' disabled').'" data-href="'.$structure->fileurl('add_preventivo.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-title="'.tr('Aggiungi preventivo').'" data-toggle="tooltip">
+                            <i class="fa fa-plus"></i> '.tr('Preventivo').'
+                        </a>
+                    </div>';
+
+    // Lettura contratti accettati, in attesa di conferma o in lavorazione
+    $contr_query = 'SELECT COUNT(*) AS tot FROM co_contratti WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstato IN( SELECT id FROM co_staticontratti WHERE is_fatturabile = 1) AND co_contratti.id IN (SELECT idcontratto FROM co_righe_contratti WHERE co_righe_contratti.idcontratto = co_contratti.id AND (qta - qta_evasa) > 0)';
+    $contratti = $dbo->fetchArray($contr_query)[0]['tot'];
+    echo '
+                    <div class="tip" data-toggle="tooltip" title="'.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'.">
+                        <a class="btn btn-sm btn-primary '.(!empty($contratti) ? '' : ' disabled').'"  data-href="'.$structure->fileurl('add_contratto.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-title="'.tr('Aggiungi contratto').'">
+                            <i class="fa fa-plus"></i> '.tr('Contratto').'
+                        </a>
+                    </div>';
+
     // Lettura ddt (entrata o uscita)
     $ddt_query = 'SELECT COUNT(*) AS tot FROM dt_ddt
             LEFT JOIN `dt_causalet` ON `dt_causalet`.`id` = `dt_ddt`.`idcausalet`
@@ -428,8 +448,8 @@ if (!$block_edit) {
                 AND dt_ddt.id IN (SELECT idddt FROM dt_righe_ddt WHERE dt_righe_ddt.idddt = dt_ddt.id AND (qta - qta_evasa) > 0)';
     $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
     echo '
-            <div class="tip" data-toggle="tooltip" title="'.tr('DDT in uscita per il Cliente che si trovano nello stato di Evaso o Parzialmente Evaso con una Causale importabile.').'">
-                <button type="button" class="btn btn-sm btn-primary'.(!empty($ddt) ? '' : ' disabled').'" data-href="'.base_path().'/modules/interventi/add_ddt.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="'.tr('Aggiungi DDT in uscita').'">
+            <div class="tip" data-toggle="tooltip" title="'.tr('DDT in uscita per il Cliente che si trovano nello stato di Evaso o Parzialmente Evaso con una Causale importabile').'. '.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'.">
+                <button type="button" class="btn btn-sm btn-primary'.(!empty($ddt) ? '' : ' disabled').'" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="'.tr('Aggiungi DDT in uscita').'">
                     <i class="fa fa-plus"></i> '.tr('Ddt').'
                 </button>
             </div>';

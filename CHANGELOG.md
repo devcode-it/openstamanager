@@ -47,10 +47,20 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunta impostazione per la rimozione del blocco sulle quantità massime importabili fra documenti
  - Aggiunta colonna **Rif. fattura** nei moduli Ordini cliente e fornitore
  - Aggiunta gestione come costo e ricavo per i conti di secondo livello 
+ - Aggiunta creazione automatica DDT inverso in DDT per Azienda
+ - Aggiunto codice e prezzo nella stampa barcode
+ - Aggiunto riquadro destinazione diversa nella stampe documenti (se presente)
+ - Aggiunta azione di gruppo in **Fatture di acquisto** per l'esportazione delle fatture FE in PDF
+ - Aggiunto plugin separato per la visualizzazione dei listini clienti e fornitori
+ - Introduzione importazione Preventivi e Contratti in Attività 
+ - Aggiunta colonna reddito nella stampa del **Bilancio** 
  
 ### Fixed
  - Sostituito plugin **Componenti** nel modulo Impianti con la possibilità di inserire gli articoli di magazzino
  - Possibilità di ripristinare un conto cliente/fornitore dal modulo **Anagrafiche** se eliminato
+ - Fix visualizzazione referenti nel plugin Sedi
+ - Fix stampa registro iva
+ - Fix css personalizzato
 
 ## 2.4.23 (2021-05-18)
 

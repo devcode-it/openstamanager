@@ -144,7 +144,12 @@ foreach ($handlers as $handler) {
 }
 
 // Imposta Monolog come gestore degli errori
-Monolog\ErrorHandler::register($logger, [], Monolog\Logger::ERROR, Monolog\Logger::ERROR);
+$handler = new Monolog\ErrorHandler($logger);
+if (!API\Response::isAPIRequest()) {
+    $handler->registerErrorHandler([]);
+    $handler->registerExceptionHandler(Monolog\Logger::ERROR);
+}
+$handler->registerFatalHandler(Monolog\Logger::ERROR);
 
 // Database
 $dbo = $database = database();

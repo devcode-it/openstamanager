@@ -33,9 +33,9 @@ if (!empty($ddt->id_ddt_trasporto_interno)) {
 </div>';
 } elseif ($azienda->id == $ddt->anagrafica->id) {
     echo '
-<div class="tip" data-toggle="tooltip" title="'.tr("Questo ddt è impostato sull'anagrafica Azienda, e pertanto rappresenta un trasporto interno di merce: per completare il movimento tra sedi distinte, è necessario generare un DDT in direzione opposta tramite questo pulsante").'.">
+<div class="tip" data-toggle="tooltip" title="'.tr("Questo ddt è impostato sull'anagrafica Azienda, e pertanto rappresenta un trasferimento interno di merci tra sedi distinte dell'Azienda: per completare la movimentazione, è necessario generare un DDT in direzione opposta tramite questo pulsante").'.">
     <button class="btn btn-warning '.($ddt->isImportabile() ? '' : 'disabled').'" onclick="completaTrasporto()">
-        <i class="fa fa-truck"></i> '.tr('Completa trasporto ').'
+        <i class="fa fa-truck"></i> '.tr('Completa trasferimento tra sedi ').'
     </button>
 </div>
 

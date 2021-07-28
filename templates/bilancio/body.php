@@ -80,17 +80,17 @@ echo '
                 echo '
                     <tr>
                         <td colspan="2"><h6><b>Totale Attività</b></h6></td>
-                        <td class="text-right"><h6><b>'.numberFormat(abs($totale_attivita)).'</b></h6></td>
+                        <td class="text-right" style="font-size:8pt;"><b>'.numberFormat(abs($totale_attivita)).'</b></td>
                     </tr>';
                     if ($utile_perdita > 0) {
                         echo '
                         <tr>
                             <td colspan="2"><h6><b>Perdita</b></h6></td>
-                            <td class="text-right"><h6><b>'.numberFormat(abs($utile_perdita)).'</b></h6></td>
+                            <td class="text-right" style="font-size:8pt;"><b>'.numberFormat(abs($utile_perdita)).'</b></td>
                         </tr>
                         <tr>
                             <td colspan="2"><h6><b>Totale a pareggio</b></h6></td>
-                            <td class="text-right"><h6><b>'.numberFormat(abs($totale_attivita) + abs($utile_perdita)).'</b></h6></td>
+                            <td class="text-right" style="font-size:8pt;"><b>'.numberFormat(abs($totale_attivita) + abs($utile_perdita)).'</b></td>
                         </tr>';
                     }
                 echo '
@@ -155,17 +155,17 @@ echo '
                 echo '
                     <tr>
                         <td colspan="2"><h6><b>Totale Passività</b></h6></td>
-                        <td class="text-right"><h6><b>'.numberFormat(abs($totale_passivita)).'</b></h6></td>
+                        <td class="text-right" style="font-size:8pt;"><b>'.numberFormat(abs($totale_passivita)).'</b></td>
                     </tr>';
                     if ($utile_perdita < 0) {
                         echo '
                         <tr>
                             <td colspan="2"><h6><b>Utile</b></h6></td>
-                            <td class="text-right"><h6><b>'.numberFormat(abs($utile_perdita)).'</b></h6></td>
+                            <td class="text-right" style="font-size:8pt;"><b>'.numberFormat(abs($utile_perdita)).'</b></td>
                         </tr>
                         <tr>
                             <td colspan="2"><h6><b>Totale a pareggio</b></h6></td>
-                            <td class="text-right"><h6><b>'.numberFormat(abs($totale_passivita) + abs($utile_perdita)).'</b></h6></td>
+                            <td class="text-right" style="font-size:8pt;"><b>'.numberFormat(abs($totale_passivita) + abs($utile_perdita)).'</b></td>
                         </tr>';
                     }
                 echo '
@@ -187,13 +187,13 @@ echo '
             <table class="table table-striped table-bordered" style=" overflow:hidden;" id="contents">
                 <thead>
                     <tr>
-                        <th colspan="3"><h5>Costi</h5></th>
+                        <th colspan="4"><h5>Costi</h5></th>
                     </tr>
                     <tr>
-                        <th width="15%">CONTO</th>
-                        <th width="60%">DESCRIZIONE</th>
-                        <th width="25%">SALDO</th>
-
+                        <th width="12%">CONTO</th>
+                        <th>DESCRIZIONE</th>
+                        <th width="21%">SALDO</th>
+                        <th width="21%">REDDITO</th>
                     </tr>
                 </thead>
                 <tbody>';
@@ -206,6 +206,7 @@ echo '
                                 <td><b>'.$liv2_e['numero'].'</b></td>
                                 <td><b>'.$liv2_e['descrizione'].'</b></td>
                                 <td class="text-right"><b>'.numberFormat($liv2_e['totale']).'</b></td>
+                                <td class="text-right"><b>'.numberFormat($liv2_e['totale_reddito']).'</b></td>
                             </tr>';
 
                             foreach ($liv3_economico as $liv3_e) {
@@ -215,6 +216,7 @@ echo '
                                         <td>'.$liv3_e['numero'].'</td>
                                         <td>'.$liv3_e['descrizione'].'</td>
                                         <td class="text-right">'.numberFormat($liv3_e['totale']).'</td>
+                                        <td class="text-right">'.numberFormat($liv3_e['totale_reddito']).'</td>
                                     </tr>';
                                 }
                             }
@@ -223,17 +225,20 @@ echo '
                 echo '
                     <tr>
                         <td colspan="2"><h6><b>Totale costi</b></h6></td>
-                        <td class="text-right"><h6><b>'.numberFormat(abs($totale_costi)).'</b></h6></td>
+                        <td class="text-right" style="font-size:8pt;"><b>'.numberFormat(abs($totale_costi)).'</b></td>
+                        <td></td>
                     </tr>';
                     if ($utile_perdita < 0) {
                         echo '
                         <tr>
                             <td colspan="2"><h6><b>Utile</b></h6></td>
-                            <td class="text-right"><h6><b>'.numberFormat(abs($utile_perdita)).'</b></h6></td>
+                            <td class="text-right" style="font-size:8pt;"><b>'.numberFormat(abs($utile_perdita)).'</b></td>
+                            <td></td>
                         </tr>
                         <tr>
                             <td colspan="2"><h6><b>Totale a pareggio</b></h6></td>
-                            <td class="text-right"><h6><b>'.numberFormat(abs($totale_costi) + abs($utile_perdita)).'</b></h6></td>
+                            <td class="text-right" style="font-size:8pt;"><b>'.numberFormat(abs($totale_costi) + abs($utile_perdita)).'</b></td>
+                            <td></td>
                         </tr>';
                     }
                 echo '
@@ -246,14 +251,13 @@ echo '
             <table class="table table-striped table-bordered" style=" overflow:hidden;" id="contents">
                 <thead>
                     <tr>
-                    
-                        <th colspan="3"><h5>Ricavi</h5></th>
+                        <th colspan="4"><h5>Ricavi</h5></th>
                     </tr>
                     <tr>
-                        <th width="15%">CONTO</th>
-                        <th width="60%">DESCRIZIONE</th>
-                        <th width="25%">SALDO</th>
-
+                        <th width="12%">CONTO</th>
+                        <th>DESCRIZIONE</th>
+                        <th width="21%">SALDO</th>
+                        <th width="21%">REDDITO</th>
                     </tr>
                 </thead>
                 <tbody>';
@@ -266,6 +270,7 @@ echo '
                             <td><b>'.$liv2_e['numero'].'</b></td>
                             <td><b>'.$liv2_e['descrizione'].'</b></td>
                             <td class="text-right"><b>'.numberFormat(abs($liv2_e['totale'])).'</b></td>
+                            <td class="text-right"><b>'.numberFormat(abs($liv2_e['totale_reddito'])).'</b></td>
                         </tr>';
 
                         foreach ($liv3_economico as $liv3_e) {
@@ -275,6 +280,7 @@ echo '
                                     <td>'.$liv3_e['numero'].'</td>
                                     <td>'.$liv3_e['descrizione'].'</td>
                                     <td class="text-right">'.numberFormat(abs($liv3_e['totale'])).'</td>
+                                    <td class="text-right">'.numberFormat(abs($liv3_e['totale_reddito'])).'</td>
                                 </tr>';
                             }
                         }
@@ -283,17 +289,19 @@ echo '
                 echo '
                     <tr>
                         <td colspan="2"><h6><b>Totale ricavi</b></h6></td>
-                        <td class="text-right"><h6><b>'.numberFormat(abs($totale_ricavi)).'</b></h6></td>
+                        <td style="font-size:8pt;" class="text-right"><b>'.numberFormat(abs($totale_ricavi)).'</b></td>
+                        <td></td>
                     </tr>';
                     if ($utile_perdita > 0) {
                         echo '
                         <tr>
                             <td colspan="2"><h6><b>Perdita</b></h6></td>
-                            <td class="text-right"><h6><b>'.numberFormat(abs($utile_perdita)).'</b></h6></td>
+                            <td class="text-right" style="font-size:8pt;"><b>'.numberFormat(abs($utile_perdita)).'</b></td>
                         </tr>
                         <tr>
                             <td colspan="2"><h6><b>Totale a pareggio</b></td>
-                            <td class="text-right"><h6><b>'.numberFormat(abs($totale_ricavi) + abs($utile_perdita)).'</b></h6></td>
+                            <td class="text-right" style="font-size:8pt;"><b>'.numberFormat(abs($totale_ricavi) + abs($utile_perdita)).'</b></td>
+                            <td></td>
                         </tr>';
                     }
                 echo '

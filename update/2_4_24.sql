@@ -173,6 +173,7 @@ UPDATE `co_righe_documenti` SET `original_document_id` = `idpreventivo`, `origin
 UPDATE `co_righe_documenti` SET `original_document_id` = `idintervento`, `original_document_type` = 'Modules\\Interventi\\Intervento' WHERE `idintervento` IS NOT NULL;
 UPDATE `co_righe_documenti` SET `original_document_id` = `idordine`, `original_document_type` = 'Modules\\Ordini\\Ordine' WHERE `idordine` != 0;
 UPDATE `co_righe_documenti` SET `original_document_id` = `idintervento`, `original_document_type` = 'Modules\\DDT\\DDT' WHERE `idddt` != 0;
+UPDATE `co_righe_documenti` INNER JOIN `co_righe_documenti` AS origine ON `origine`.`id` = `co_righe_documenti`.`ref_riga_documento` SET `co_righe_documenti`.`original_document_id` = `origine`.`iddocumento`, `co_righe_documenti`.`original_document_type` = 'Modules\\Fatture\\Fattura' WHERE `co_righe_documenti`.`ref_riga_documento` IS NOT NULL;
 
 UPDATE `dt_righe_ddt` SET `original_document_id` = `idordine`, `original_document_type` = 'Modules\\Ordini\\Ordine' WHERE `idordine` != 0;
 

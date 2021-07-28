@@ -28,7 +28,7 @@ use Modules\Ordini\Components\Sconto;
 use Modules\Ordini\Ordine;
 use Modules\Ordini\Tipo;
 use Modules\Preventivi\Preventivo;
-use Plugins\DettagliArticolo\DettaglioPrezzo;
+use Plugins\ListinoClienti\DettaglioPrezzo;
 
 $module = Modules::get($id_module);
 

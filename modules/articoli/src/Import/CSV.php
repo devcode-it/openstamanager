@@ -26,7 +26,7 @@ use Modules\Anagrafiche\Sede;
 use Modules\Articoli\Articolo;
 use Modules\Articoli\Categoria;
 use Modules\Iva\Aliquota;
-use Plugins\DettagliArticolo\DettaglioPrezzo;
+use Plugins\ListinoClienti\DettaglioPrezzo;
 
 /**
  * Struttura per la gestione delle operazioni di importazione (da CSV) degli Articoli.

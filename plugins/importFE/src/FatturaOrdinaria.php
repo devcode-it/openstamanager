@@ -26,7 +26,7 @@ use Modules\Articoli\Categoria;
 use Modules\Fatture\Components\Articolo;
 use Modules\Fatture\Components\Riga;
 use Modules\Fatture\Fattura;
-use Plugins\DettagliArticolo\DettaglioPrezzo;
+use Plugins\ListinoClienti\DettaglioPrezzo;
 use UnexpectedValueException;
 use Util\XML;
 

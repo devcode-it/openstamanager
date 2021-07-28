@@ -24,7 +24,7 @@ use Modules\Articoli\Articolo;
 use Modules\Preventivi\Components\Articolo as ArticoloPreventivo;
 use Modules\Preventivi\Preventivo;
 use Modules\TipiIntervento\Tipo as TipoSessione;
-use Plugins\DettagliArticolo\DettaglioPrezzo;
+use Plugins\ListinoClienti\DettaglioPrezzo;
 use Prints;
 
 switch (post('op')) {

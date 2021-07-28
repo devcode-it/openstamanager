@@ -24,7 +24,7 @@ use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Articoli\Articolo as Original;
 use Modules\Articoli\Movimento;
-use Plugins\DettagliArticolo\DettaglioFornitore;
+use Plugins\ListinoFornitori\DettaglioFornitore;
 use UnexpectedValueException;
 
 abstract class Article extends Accounting

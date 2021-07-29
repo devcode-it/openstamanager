@@ -87,13 +87,6 @@ class AllegatiInterventi extends AppResource
         return $record;
     }
 
-    public static function getTempDirectory()
-    {
-        return DIRECTORY_SEPARATOR.
-        trim(sys_get_temp_dir(), DIRECTORY_SEPARATOR).
-        DIRECTORY_SEPARATOR;
-    }
-
     public function createRecord($data)
     {
         $module = Modules::get('Interventi');
@@ -104,8 +97,7 @@ class AllegatiInterventi extends AppResource
             throw new InternalError();
         }
 
-        $file = self::getTempDirectory().$data['nome'];
-        //$path = stream_get_meta_data($file)['uri'];
+        $file = temp_file($data['nome']);
         file_put_contents($file, base64_decode($content[1]));
 
         // Salvataggio del file come allegato

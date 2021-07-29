@@ -219,17 +219,14 @@ function getDatatablesButtons(table) {
             extend: 'print',
             autoPrint: true,
             footer: false, // Non funzionante in Firefox, e saltuarmente in Chrome
-            customize: function (win) {
-                const datatable = getTable(table).datatable;
-
+            customize: function (win, config, datatable) {
                 const footer = datatable.table().footer().children[0];
-                console.log(footer);
 
                 const body = $(win.document.body);
                 body.find('table')
                     .addClass('compact')
                     .css('font-size', 'inherit')
-                    .append(footer);
+                    .append(footer.cloneNode(true));
 
                 body.find('td:first-child, th:first-child')
                     .addClass('hide');

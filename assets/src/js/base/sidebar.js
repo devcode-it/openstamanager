@@ -83,7 +83,7 @@ $(document).ready(function () {
 
     // Gestione click sulla sidebar per evitare chiusura
     $(".control-sidebar").on("click", function (e) {
-        if (largeScreen && e.target.tagName !== 'H4' && $(".main-footer").hasClass("with-control-sidebar")) {
+        if (largeScreen && e.target.tagName === 'A' && $(".main-footer").hasClass("with-control-sidebar")) {
             toggleControlSidebar();
         }
     });

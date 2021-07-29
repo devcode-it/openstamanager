@@ -27,7 +27,7 @@ $rs = $dbo->fetchArray('SELECT *,
        giorni_preavviso_rinnovo,
        (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=co_contratti.idanagrafica) AS ragione_sociale
 FROM co_contratti WHERE
-        idstato IN (SELECT id FROM co_staticontratti WHERE is_fatturabile = 1) AND
+        idstato IN (SELECT id FROM co_staticontratti WHERE is_pianificabile = 1) AND
         rinnovabile = 1 AND
         YEAR(data_conclusione) > 1970 AND
         (SELECT id FROM co_contratti contratti WHERE contratti.idcontratto_prev = co_contratti.id) IS NULL

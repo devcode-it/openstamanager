@@ -1,0 +1,129 @@
+name: OpenSTAManager CI
+
+on:
+  workflow_dispatch
+
+jobs:
+  tests:
+    runs-on: ubuntu-18.04
+    
+    strategy:
+      matrix:
+        python-version: [3.9]
+        php-version: ['7.4']
+        
+    steps:
+    - uses: actions/checkout@v2
+
+#    - name: Set up PHP ${{ matrix.php-version }}
+#      uses: shivammathur/setup-php@v2
+#      with:
+#        php-version: ${{ matrix.php-version }}
+#        extensions: zip, mbstring, pdo_mysql, mysql, dom, xsl, openssl, intl, curl, soap, gd
+ 
+    - name: Setup PHP
+      run: |
+        sudo apt install libapache2-mod-php7.4
+        sudo sed -i 's,^post_max_size =.*$,post_max_size = 32M,' /etc/php/7.4/apache2/php.ini
+        sudo sed -i 's,^upload_max_filesize =.*$,upload_max_filesize = 32M,' /etc/php/7.4/apache2/php.ini
+      
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+        
+    - name: Install SeleniumBase
+      uses: actions/checkout@v2
+      with:
+        repository: seleniumbase/SeleniumBase
+        path: selenium-base
+  
+    - name: Configure SeleniumBase
+      run: |
+        cd selenium-base
+        python setup.py install
+
+    - name: Install Chrome and Firefox
+      run: |
+        sudo apt install google-chrome-stable
+        sudo apt-get install firefox
+
+    - name: Check the console scripts interface
+      run: |
+        seleniumbase
+        sbase
+
+    - name: Install chromedriver and geckodriver (Firefox Webdriver)
+      run: |
+        seleniumbase install chromedriver
+        seleniumbase install geckodriver
+
+    - name: Make sure pytest is working
+      run: |
+        echo "def test_1(): pass" > nothing.py
+        pytest nothing.py
+
+    - name: Make sure nosetests is working
+      run: |
+        echo "def test_2(): pass" > nothing2.py
+        nosetests nothing2.py
+    
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v2
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+
+    - name: Install Composer dependencies
+      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+    - name: Use NPM and Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+    - name: Install NPM and compile assets
+      run: |
+        yarn install
+        npm run build-OSM
+
+
+    - name: Copy OSM to www root
+      run: |
+        sudo cp -R /home/runner/work/openstamanager/openstamanager /var/www/html/
+        sudo chmod -R 0777 /var/www/html/openstamanager
+        sudo rm /var/www/html/openstamanager/.htaccess
+        
+    - name: Check out test repository
+      uses: actions/checkout@v2
+      with:
+        repository: devcode-it/openstamanager-tests
+        path: python-tests
+
+    - name: Install Python dependencies
+      run: |
+        cd python-tests/
+        python -m pip install --upgrade pip
+        python -m pip install pytest
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      
+    - name: Restart apache
+      run: sudo service apache2 restart
+      
+    - name: Restart MySQL
+      run: sudo service mysql restart
+
+    - name: Init test configuration
+      run: |
+        curl http://localhost/openstamanager/
+        sudo cat /var/log/apache2/access.log
+        cd python-tests/
+        echo -ne "{\n    \"login\": {\n        \"password\": \"adminadmin\",\n        \"username\": \"admin\"\n    },\n    \"database\": {\n        \"host\": \"localhost\",\n        \"user\": \"root\",\n        \"pass\": \"root\",\n        \"name\": \"osm\"\n    },\n    \"server\": \"http://localhost/openstamanager/\",\n    \"browser\": \"firefox\",\n    \"headless\": true\n}" > config.json
+        pytest Init.py
+    
+    - name: Execute tests
+      run: |
+        cd python-tests/
+        pytest tests

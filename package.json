@@ -1,5 +1,5 @@
 {
-    "name": "osm_rewrite",
+    "name": "openstamanager",
     "packageManager": "yarn@3.0.0",
     "private": true,
     "scripts": {
@@ -17,18 +17,24 @@
         "@babel/eslint-parser": "^7",
         "@babel/eslint-plugin": "^7",
         "@babel/preset-flow": "^7",
+        "browser-sync": "^2",
+        "browser-sync-webpack-plugin": "2",
         "eslint": "^7",
         "eslint-config-airbnb-base": "^14",
         "eslint-plugin-flowtype": "^5",
         "eslint-plugin-import": "^2",
         "flow-bin": "^0",
         "laravel-mix": "^6",
+        "laravel-mix-serve": "^2",
+        "lmvh": "^1",
+        "resolve-url-loader": "4",
         "sass": "^1",
         "sass-loader": "^12",
         "stylelint": "^13",
         "stylelint-config-idiomatic-order": "^8",
         "stylelint-config-recommended-scss": "^4",
         "stylelint-config-standard": "^22",
-        "stylelint-scss": "^3"
+        "stylelint-scss": "^3",
+        "webpack": "^5"
     }
 }

@@ -16,6 +16,13 @@
         "eslint": "^7",
         "eslint-config-airbnb-base": "^14",
         "eslint-plugin-import": "^2",
-        "laravel-mix": "^6"
+        "laravel-mix": "^6",
+        "sass": "^1",
+        "sass-loader": "^12",
+        "stylelint": "^13",
+        "stylelint-config-idiomatic-order": "^8",
+        "stylelint-config-recommended-scss": "^4",
+        "stylelint-config-standard": "^22",
+        "stylelint-scss": "^3"
     }
 }

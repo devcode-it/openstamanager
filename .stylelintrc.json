@@ -1,0 +1,12 @@
+{
+    "extends": [
+        "stylelint-config-standard",
+        "stylelint-config-recommended-scss",
+        "stylelint-config-idiomatic-order"
+    ],
+    "rules": {
+        "indentation": 4,
+        "selector-type-no-unknown": null,
+        "no-eol-whitespace": null
+    }
+}

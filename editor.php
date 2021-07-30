@@ -472,19 +472,19 @@ if ($read_only || !empty($block_edit)) {
 
             var content_was_modified = false;
 
-            //controllo se digito qualche valore o cambio qualche select
-            $("input, textarea, select").bind("change paste keyup", function(event) {
+            // Controllo se digito qualche valore o cambio qualche select
+            $(".content input, .content textarea, .content select").bind("change paste keyup", function(event) {
                 if (event.keyCode >= 32) {
                     content_was_modified = true;
                 }
             });
 
-            $(".superselect, .superselectajax").on("change", function (e) {
+            $(".content .superselect, .content .superselectajax").on("change", function (e) {
                 content_was_modified = true;
             });
 
-            //tolgo il controllo se sto salvando
-            $(".btn-success, button[type=submit]").bind("click", function() {
+            // Tolgo il controllo se sto salvando
+            $(".content .btn-success, .content button[type=submit]").bind("click", function() {
                 content_was_modified = false;
             });
 

@@ -302,7 +302,7 @@ function verifica_numero_intervento(Intervento $intervento)
     }
 
     $data = $intervento->data_richiesta;
-    $documenti = Intervento::where('data_richiesta', '=', $data)
+    $documenti = Intervento::whereDate('data_richiesta', '=', $data->format('Y-m-d'))
         ->get();
 
     // Recupero maschera per questo segmento
@@ -310,12 +310,12 @@ function verifica_numero_intervento(Intervento $intervento)
 
     if ((strpos($maschera, 'YYYY') !== false) or (strpos($maschera, 'yy') !== false)) {
         $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice', [
-            'DATE(data_richiesta) < '.prepare(date('Y-m-d', strtotime($data))),
-            'YEAR(data_richiesta) = '.prepare(date('Y', strtotime($data))),
+            'DATE(data_richiesta) < '.prepare($data->format('Y-m-d')),
+            'YEAR(data_richiesta) = '.prepare($data->format('Y')),
         ], $data);
     } else {
         $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice', [
-            'DATE(data_richiesta) < '.prepare(date('Y-m-d', strtotime($data))),
+            'DATE(data_richiesta) < '.prepare($data->format('Y-m-d')),
         ]);
     }
 

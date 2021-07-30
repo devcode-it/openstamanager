@@ -1,0 +1,73 @@
+{
+    "name": "devcode-it/openstamanager",
+    "type": "project",
+    "description": "Gestionale open-source per assistenza tecnica e fatturazione elettronica",
+    "license": "GPL-3.0",
+    "keywords": [
+        "gestionale",
+        "assistenza tecnica",
+        "fatturazione elettronica",
+        "open-source"
+    ],
+    "homepage": "https://www.openstamanager.com/",
+    "authors": [
+        {
+            "name": "DevCode s.r.l.",
+            "email": "info@openstamanager.com",
+            "homepage": "https://www.devcode.it/",
+            "role": "Developer"
+        },
+        {
+            "name": "Thomas Zilio (Dasc3er)",
+            "role": "Contributor"
+        },
+        {
+            "name": "Maicol Battistini (maicol07)",
+            "email": "webmaster@maicol07.it",
+            "homepage": "https://maicol07.it",
+            "role": "Contributor"
+        }
+    ],
+    "require": {
+        "php": "^8",
+        "fideloper/proxy": "^4",
+        "fruitcake/laravel-cors": "^2",
+        "guzzlehttp/guzzle": "^7",
+        "laravel/framework": "^8",
+        "laravel/tinker": "^2"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-latest",
+        "facade/ignition": "^2",
+        "fakerphp/faker": "^1",
+        "laravel/sail": "^1",
+        "mockery/mockery": "^1",
+        "nunomaduro/collision": "^5"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

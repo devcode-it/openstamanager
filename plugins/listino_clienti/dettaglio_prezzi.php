@@ -266,4 +266,5 @@ input("prezzo_qta").change(function () {
 })
 
 $(document).ready(cambioImpostazioni);
+content_was_modified = false;
 </script>';

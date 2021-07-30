@@ -12,10 +12,16 @@
         "production": "mix --production"
     },
     "devDependencies": {
+        "@babel/cli": "^7",
+        "@babel/core": "^7",
+        "@babel/eslint-parser": "^7",
         "@babel/eslint-plugin": "^7",
+        "@babel/preset-flow": "^7",
         "eslint": "^7",
         "eslint-config-airbnb-base": "^14",
+        "eslint-plugin-flowtype": "^5",
         "eslint-plugin-import": "^2",
+        "flow-bin": "^0",
         "laravel-mix": "^6",
         "sass": "^1",
         "sass-loader": "^12",

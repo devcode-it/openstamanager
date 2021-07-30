@@ -42,7 +42,8 @@
         "fakerphp/faker": "^1",
         "laravel/sail": "^1",
         "mockery/mockery": "^1",
-        "nunomaduro/collision": "^5"
+        "nunomaduro/collision": "^5",
+        "friendsofphp/php-cs-fixer": "^3"
     },
     "autoload": {
         "psr-4": {

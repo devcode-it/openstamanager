@@ -1,4 +1,6 @@
 {
+    "name": "osm_rewrite",
+    "packageManager": "yarn@3.0.0",
     "private": true,
     "scripts": {
         "dev": "npm run development",

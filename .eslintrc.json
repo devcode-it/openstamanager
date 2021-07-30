@@ -1,0 +1,36 @@
+{
+    "env": {
+        "browser": true,
+        "es6": true,
+        "commonjs": true,
+        "jquery": true
+    },
+    "plugins": [
+        "@babel"
+    ],
+    "extends": [
+        "airbnb-base"
+    ],
+    "globals": {
+        "Atomics": "readonly",
+        "SharedArrayBuffer": "readonly"
+    },
+    "parserOptions": {
+        "ecmaVersion": 2021,
+        "sourceType": "module"
+    },
+    "rules": {
+        "@babel/new-cap": "error",
+        "@babel/no-invalid-this": "off",
+        "@babel/no-unused-expressions": "error",
+        "@babel/semi": "error",
+        "object-curly-spacing": "off",
+        "eol-last": "off",
+        "no-multiple-empty-lines": "off",
+        "func-names": "off",
+        "comma-dangle": [
+            "error",
+            "only-multiline"
+        ]
+    }
+}

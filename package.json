@@ -12,6 +12,10 @@
         "production": "mix --production"
     },
     "devDependencies": {
+        "@babel/eslint-plugin": "^7",
+        "eslint": "^7",
+        "eslint-config-airbnb-base": "^14",
+        "eslint-plugin-import": "^2",
         "laravel-mix": "^6"
     }
 }

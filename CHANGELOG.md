@@ -41,7 +41,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunta percentuale di imponibilità nel modulo **Piano dei conti** sezione **Ricavi** per il calcolo del **Totale reddito**.
 
 ### Modificato (Changed)
-
+ - In fase di importazione **Fattura di acquisto** la data competenza ora viene allineata alla data di emissione
 ### Fixed
 
 ## 2.4.24 (2021-07-28)

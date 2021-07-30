@@ -11,11 +11,18 @@
         "prod": "npm run production",
         "production": "mix --production"
     },
+    "dependencies": {
+        "@inertiajs/inertia": "^0.1.9",
+        "@tebe/inertia-mithril": "^0",
+        "mithril": "^2"
+    },
     "devDependencies": {
         "@babel/cli": "^7",
         "@babel/core": "^7",
         "@babel/eslint-parser": "^7",
         "@babel/eslint-plugin": "^7",
+        "@babel/plugin-transform-react-jsx": "^7",
+        "@babel/preset-env": "^7",
         "@babel/preset-flow": "^7",
         "browser-sync": "^2",
         "browser-sync-webpack-plugin": "2",
@@ -23,6 +30,7 @@
         "eslint-config-airbnb-base": "^14",
         "eslint-plugin-flowtype": "^5",
         "eslint-plugin-import": "^2",
+        "extract-text-webpack-plugin": "^3",
         "flow-bin": "^0",
         "laravel-mix": "^6",
         "laravel-mix-serve": "^2",

@@ -13,3 +13,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::redirect('/', 'setup');
+Route::inertia('setup', 'SetupPage');

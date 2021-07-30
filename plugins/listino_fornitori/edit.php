@@ -39,7 +39,7 @@ echo '
 
             <div class="col-md-3">
                 <div class="btn-group btn-group-flex">
-                    <button type="button" class="btn btn-info" style="margin-top:25px;" onclick="aggiungiPrezzi(this)">
+                    <button type="button" class="btn btn-info" style="margin-top:25px;" onclick="aggiungiPrezzi(this, true)">
                         <i class="fa fa-money"></i> '.tr('Prezzi').'
                     </button>
 
@@ -177,7 +177,7 @@ if (!$fornitori_disponibili->isEmpty()) {
 
             <td class="text-right">
                 '.moneyFormat($dettaglio->prezzo_unitario).'
-                <p><small class="label label-default tip" title="'.Translator::timestampToLocale($dettaglio['updated_at']).'"><i class="fa fa-clock-o"></i> '.Carbon::parse($dettaglio['updated_at'])->diffForHumans().'</small></p>
+                <p><small class="label label-default tip" title="'.Translator::timestampToLocale($dettaglio['updated_at']).'"><i class="fa fa-clock-o"></i> '.$dettaglio->updated_at->diffForHumans().'</small></p>
             </td>
 
             <td class="text-right">
@@ -210,32 +210,6 @@ if (!$fornitori_disponibili->isEmpty()) {
 
 echo '
 <script>
-function modificaPrezzi(button) {
-    let tr = $(button).closest("tr");
-    let id_anagrafica = tr.data("id_anagrafica");
-    let direzione = tr.data("direzione");
-
-    gestionePrezzi(id_anagrafica, direzione);
-}
-
-function gestionePrezzi(id_anagrafica, direzione) {
-    openModal("'.tr('Gestisci prezzi specifici').'", "'.Plugin::pool('Listino Clienti')->fileurl('dettaglio_prezzi.php').'?id_plugin='.$id_plugin.'&id_module='.$id_module.'&id_parent='.$id_record.'&id_articolo='.$id_record.'&id_anagrafica=" + id_anagrafica + "&direzione=" + direzione);
-}
-
-function aggiungiPrezzi(button) {
-    let panel = $(button).closest(".box");
-    let tab = panel.closest(".tab-pane");
-
-    let direzione = tab.attr("id") === "fornitori" ? "uscita" : "entrata";
-    let id_anagrafica = panel.find("select").val();
-
-    if (id_anagrafica) {
-        gestionePrezzi(id_anagrafica, direzione);
-    } else {
-        swal("'.tr('Attenzione').'", "'.tr('Inserire un\'anagrafica').'", "warning");
-    }
-}
-
 function modificaFornitore(id_riga, id_anagrafica) {
     openModal("Modifica dati fornitore", "'.$structure->fileurl('dettaglio_fornitore.php').'?id_plugin='.$id_plugin.'&id_module='.$id_module.'&id_parent='.$id_record.'&id_articolo='.$id_record.'&id_riga=" + id_riga + "&id_anagrafica=" + id_anagrafica);
 }

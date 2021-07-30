@@ -36,7 +36,7 @@ echo '
             </div>
 
             <div class="col-md-3">
-                <button type="button" class="btn btn-info btn-block" style="margin-top:25px;" onclick="aggiungiPrezzi(this)">
+                <button type="button" class="btn btn-info btn-block" style="margin-top:25px;" onclick="aggiungiPrezzi(this, false)">
                     <i class="fa fa-money"></i> '.tr('Prezzi').'
                 </button>
             </div>
@@ -141,11 +141,10 @@ function gestionePrezzi(id_anagrafica, direzione) {
     openModal("'.tr('Gestisci prezzi specifici').'", "'.$structure->fileurl('dettaglio_prezzi.php').'?id_plugin='.$id_plugin.'&id_module='.$id_module.'&id_parent='.$id_record.'&id_articolo='.$id_record.'&id_anagrafica=" + id_anagrafica + "&direzione=" + direzione);
 }
 
-function aggiungiPrezzi(button) {
+function aggiungiPrezzi(button, is_uscita) {
     let panel = $(button).closest(".box");
-    let tab = panel.closest(".tab-pane");
 
-    let direzione = tab.attr("id") === "fornitori" ? "uscita" : "entrata";
+    let direzione = is_uscita ? "uscita" : "entrata";
     let id_anagrafica = panel.find("select").val();
 
     if (id_anagrafica) {

@@ -156,9 +156,9 @@ function searchFieldName(field) {
  *
  * @param {int} module_id
  * @param {string} field
- * @param {mixed} value
+ * @param {string} value
  */
-function searchTable(module_id, field, value) {
+function setTableSearch(module_id, field, value) {
     session_set('module_' + module_id + ',' + 'search_' + searchFieldName(field), value, 0);
 }
 
@@ -272,6 +272,7 @@ function getDatatablesButtons(table) {
 
 function initComplete(settings) {
     const api = this.api();
+    const $this = $(this);
     const search = getTableSearch();
 
     api.columns('.search').every(function () {
@@ -305,7 +306,7 @@ function initComplete(settings) {
                 }
 
                 function start_search(module_id, field, search_value) {
-                    searchTable(module_id, field, search_value);
+                    setTableSearch(module_id, field, search_value);
                     column.search(search_value).draw();
                 }
 

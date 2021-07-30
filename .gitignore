@@ -1,4 +1,8 @@
+# Custom rules
 /.vscode
+composer.lock
+yarn.lock
+.yarn/cache/*
 
 # Created by https://www.toptal.com/developers/gitignore/api/phpstorm,laravel,composer,yarn
 # Edit at https://www.toptal.com/developers/gitignore?templates=phpstorm,laravel,composer,yarn
@@ -154,7 +158,7 @@ fabric.properties
 
 # if you are NOT using Zero-installs, then:
 # comment the following lines
-!.yarn/cache
+# !.yarn/cache
 
 # and uncomment the following lines
 # .pnp.*

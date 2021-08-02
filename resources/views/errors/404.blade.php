@@ -7,11 +7,3 @@
 
 @section('error_message', tr('Oops! Pagina non trovata'))
 @section('error_info', tr('Non siamo riusciti a trovare la pagina che stavi cercando'))
-
-@section('js')
-    @if(\App\Http\Controllers\ConfigurationController::isConfigured() && !auth()->check())
-    <script>
-        location.href = "{{ route('login') }}";
-    </script>
-    @endif
-@endsection

@@ -15,7 +15,8 @@ use DevCode\CausaliTrasporto\Controllers\CausaliTrasportoController;
 |
 */
 
-Route::prefix('causali-trasporto')
+Route::middleware('web')
+    ->prefix('causali-trasporto')
     ->group(function () {
         Route::get('', [CausaliTrasportoController::class, 'index']);
 

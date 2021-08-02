@@ -185,8 +185,10 @@ class Prints
 
         if (self::isOldStandard($print)) {
             return self::oldLoader($infos['id'], $id_record, $directory, $return_string);
-        } else {
+        } elseif (!self::isCompletelyCustom($print)) {
             return self::loader($infos['id'], $id_record, $directory, $return_string);
+        } else {
+            return self::customLoader($infos['id'], $id_record, $directory, $return_string);
         }
     }
 
@@ -327,7 +329,21 @@ class Prints
      */
     protected static function isNewStandard($print)
     {
-        return !self::isOldStandard($print);
+        return !self::isOldStandard($print) && !self::isCompletelyCustom($print);
+    }
+
+    /**
+     * Controlla se la stampa segue lo standard completamente autonomo.
+     *
+     * @param string|int $print
+     *
+     * @return bool
+     */
+    protected static function isCompletelyCustom($print)
+    {
+        $infos = self::get($print);
+
+        return file_exists($infos['full_directory'].'/stampa.php') || file_exists($infos['full_directory'].'/custom/stampa.php');
     }
 
     /**
@@ -644,6 +660,38 @@ class Prints
         // Creazione effettiva del PDF
         $pdf = $mpdf->Output($path, $mode);
         $file['pdf'] = $pdf;
+
+        return $file;
+    }
+
+    /**
+     * Gestore per il formato di stampa completamente gestito dalla stampa stessa.
+     * Rischiede la compilazione della variabile $file, utilizzata coe return.
+     *
+     * @param $id_print
+     * @param $id_record
+     * @param null  $directory
+     * @param false $return_string
+     *
+     * @return array
+     */
+    protected static function customLoader($id_print, $id_record, $directory = null, $return_string = false)
+    {
+        $infos = self::get($id_print);
+        $options = self::readOptions($infos['options']);
+
+        $dbo = $database = database();
+        $user = Auth::user();
+
+        $file = null;
+
+        // Decido se usare la stampa personalizzata (se esiste) oppure quella standard
+        // La stampa personalizzata deve gestire tutto manualmente
+        if (file_exists($infos['full_directory'].'/custom/stampa.php')) {
+            include $infos['full_directory'].'/custom/stampa.php';
+        } else {
+            include $infos['full_directory'].'/stampa.php';
+        }
 
         return $file;
     }

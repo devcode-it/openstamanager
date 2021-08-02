@@ -2,6 +2,7 @@
 
 [include]
 resources/js
+resources/js/**
 
 [libs]
 

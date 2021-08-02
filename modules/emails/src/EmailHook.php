@@ -33,12 +33,14 @@ class EmailHook extends Manager
 
     public function needsExecution()
     {
+        // Email fallite nelle ultime 4 ore
         $diff = date('Y-m-d H:i:s', strtotime('-4 hours'));
         $failed = function ($query) use ($diff) {
             $query->where('failed_at', '<', $diff)
                 ->orWhereNull('failed_at');
         };
 
+        // Email da inviare per tutti gli account
         $accounts = Account::all();
         $remaining = Mail::whereNull('sent_at')
             ->where($failed)
@@ -51,15 +53,23 @@ class EmailHook extends Manager
 
     public function execute()
     {
+        // Email fallite nelle ultime 4 ore
         $diff = date('Y-m-d H:i:s', strtotime('-4 hours'));
         $failed = function ($query) use ($diff) {
             $query->where('failed_at', '<', $diff)
                 ->orWhereNull('failed_at');
         };
 
+        // Parametri per l'invio
+        $numero_tentativi = setting('Numero massimo di tentativi');
+        $numero_email = setting('Numero email da inviare in contemporanea per account');
+        $numero_email = $numero_email < 1 ? 1 : $numero_email;
+
+        // Selezione email per account
         $accounts = Account::all();
-        $list = [];
+        $lista = [];
         foreach ($accounts as $account) {
+            // Ultima email inviata per l'account
             $last_mail = $account->emails()
                 ->whereNotNull('sent_at')
                 ->orderBy('sent_at')
@@ -70,31 +80,32 @@ class EmailHook extends Manager
             $now = new Carbon();
             $diff_milliseconds = $date->diffInMilliseconds($now);
 
+            // Timeout per l'uso dell'account email
             if (empty($last_mail) || $diff_milliseconds > $account->timeout) {
-                $mail = Mail::whereNull('sent_at')
+                $lista_account = Mail::whereNull('sent_at')
                     ->where('id_account', $account->id)
                     ->where($failed)
-                    ->where('attempt', '<', setting('Numero massimo di tentativi'))
+                    ->where('attempt', '<', $numero_tentativi)
                     ->orderBy('created_at')
-                    ->first();
+                    ->take($numero_email)
+                    ->get();
 
-                if (!empty($mail)) {
-                    $list[] = $mail;
+                if (!empty($lista_account)) {
+                    $lista = array_merge($lista, $lista_account);
                 }
             }
         }
 
-        foreach ($list as $mail) {
-            $email = EmailNotification::build($mail);
-
+        // Invio effettivo
+        foreach ($lista as $lista_account) {
             try {
-                // Invio mail
+                $email = EmailNotification::build($lista_account);
                 $email->send();
             } catch (Exception $e) {
             }
         }
 
-        return $list;
+        return $lista;
     }
 
     public function response()
@@ -102,10 +113,13 @@ class EmailHook extends Manager
         $yesterday = date('Y-m-d', strtotime('-1 days'));
         $user = auth()->getUser();
 
+        // Numero di email inviate
         $current = Mail::whereDate('sent_at', '>', $yesterday)
             ->where('attempt', '<', setting('Numero massimo di tentativi'))
             ->where('created_by', $user->id)
             ->count();
+
+        // Numero totale di email
         $total = Mail::where(function ($query) use ($yesterday) {
             $query->whereDate('sent_at', '>', $yesterday)
                 ->orWhereNull('sent_at');

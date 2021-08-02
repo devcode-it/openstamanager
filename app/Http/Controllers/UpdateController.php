@@ -70,6 +70,11 @@ class UpdateController extends Controller
     {
         $migrator = self::getMigrator();
 
+        // Fallback per creazione tabella di migrazioni
+        if (!$migrator->getRepository()->repositoryExists()) {
+            $migrator->getRepository()->createRepository();
+        }
+
         $paths = array_merge(
             $migrator->paths(),
             [app()->databasePath().DIRECTORY_SEPARATOR.'migrations']
@@ -144,7 +149,7 @@ class UpdateController extends Controller
         $result = Update::doUpdate(self::$legacyUpdateRate);
 
         $rate = 0;
-        if (is_array($result)) {
+        if (!is_bool($result) && is_array($result)) {
             $rate = $result[1] - $result[0];
         } elseif (!empty($update['script'])) {
             $rate = self::$legacyScriptValue;

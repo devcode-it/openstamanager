@@ -46,7 +46,6 @@
         "league/csv": "^8.2",
         "mpdf/mpdf": "^8.0.10",
         "mpociot/vat-calculator": "^2.3",
-        "nwidart/laravel-modules": "^8.2",
         "owasp/csrf-protector-php": "^1.0",
         "phpmailer/phpmailer": "^6.0",
         "respect/validation": "^1.1",

@@ -8,6 +8,7 @@ use App\Http\Controllers\RequirementsController;
 use App\Http\Controllers\UpdateController;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class EnsureConfiguration
 {
@@ -70,10 +71,18 @@ class EnsureConfiguration
      */
     protected function checkRequirements($route)
     {
+        // Controllo nella cache per evitare controlli in sequenza
+        $completed = Cache::get('requisiti_soddisfatti');
+        if ($completed) {
+            return true;
+        }
+
         $configuration_paths = ['requirements'];
         $requirements_satisfied = RequirementsController::isSatisfied();
 
         if ($requirements_satisfied) {
+            Cache::put('requisiti_soddisfatti', true);
+
             // Redirect nel caso in cui i requisiti siano soddisfatti
             if (in_array($route->getName(), $configuration_paths)) {
                 $this->setRedirect(route('configuration'));
@@ -97,10 +106,18 @@ class EnsureConfiguration
      */
     protected function checkConfiguration($route)
     {
+        // Controllo nella cache per evitare controlli in sequenza
+        $completed = Cache::get('configurazione_completata');
+        if ($completed) {
+            return true;
+        }
+
         $configuration_paths = ['configuration', 'configuration-save', 'configuration-write', 'configuration-test'];
         $configuration_completed = ConfigurationController::isConfigured();
 
         if ($configuration_completed) {
+            Cache::put('configurazione_completata', true);
+
             // Redirect nel caso in cui la configurazione sia correttamente funzionante
             if (in_array($route->getName(), $configuration_paths)) {
                 $this->setRedirect(route('update'));
@@ -124,10 +141,18 @@ class EnsureConfiguration
      */
     protected function checkMigrations($route)
     {
+        // Controllo nella cache per evitare controlli in sequenza
+        $completed = Cache::get('aggiornamenti_eseguiti');
+        if ($completed) {
+            return true;
+        }
+
         $update_paths = ['update', 'update-execute'];
         $update_completed = UpdateController::isCompleted();
 
         if ($update_completed) {
+            Cache::put('aggiornamenti_eseguiti', true);
+
             // Redirect nel caso in cui la configurazione sia correttamente funzionante
             if (in_array($route->getName(), $update_paths)) {
                 $this->setRedirect(route('initialization'));
@@ -151,10 +176,18 @@ class EnsureConfiguration
      */
     protected function checkInitialization($route)
     {
+        // Controllo nella cache per evitare controlli in sequenza
+        $completed = Cache::get('inizializzazione_completata');
+        if ($completed) {
+            return true;
+        }
+
         $initialization_paths = ['initialization', 'initialization-save'];
         $initialization_completed = InitializationController::isInitialized();
 
         if ($initialization_completed) {
+            Cache::put('inizializzazione_completata', true);
+
             // Redirect nel caso in cui la configurazione sia correttamente funzionante
             if (in_array($route->getName(), $initialization_paths)) {
                 $this->setRedirect(route('login'));

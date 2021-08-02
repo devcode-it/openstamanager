@@ -1,9 +1,13 @@
 import m from 'mithril';
-import {InertiaApp} from '@tebe/inertia-mithril';
+import {createInertiaApp} from '@maicol07/inertia-mithril';
 
 const app = document.getElementById('app');
 
-InertiaApp.initialPage = JSON.parse(app.dataset.page);
-InertiaApp.resolveComponent = async (name) => (await import(`./Views/${name}`)).default;
-
-m.mount(app, InertiaApp);
+// noinspection JSIgnoredPromiseFromCall
+createInertiaApp({
+  title: (title) => `${title} - OpenStaManager`,
+  resolve: async (name) => import(`./Views/${name}`),
+  setup({ el, app }) {
+    m.mount(el, app);
+  },
+});

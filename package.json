@@ -12,9 +12,9 @@
         "production": "mix --production"
     },
     "dependencies": {
-        "@inertiajs/inertia": "^0.1.9",
-        "@tebe/inertia-mithril": "^0",
-        "mithril": "^2"
+        "@inertiajs/inertia": "^0.10.0",
+        "@maicol07/inertia-mithril": "^0.3.3",
+        "mithril": "^2.0.4"
     },
     "devDependencies": {
         "@babel/cli": "^7",

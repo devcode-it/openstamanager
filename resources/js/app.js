@@ -1,7 +1,7 @@
 import m from 'mithril';
 import {createInertiaApp} from '@maicol07/inertia-mithril';
 
-const app = document.getElementById('app');
+global.m = m;
 
 // noinspection JSIgnoredPromiseFromCall
 createInertiaApp({

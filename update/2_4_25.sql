@@ -4,3 +4,21 @@ UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(dati.id) AS dato FROM(SELECT id,
 -- Aggiunto numero di email da inviare in contemporanea
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES
 (NULL, 'Numero email da inviare in contemporanea per account', '10', 'integer', 1, 'Newsletter', 2, 'Numero di email della Coda di invio da inviare in contemporanea per account email');
+
+-- Aggiornamento gestione destinatari per newsletter e liste relative
+ALTER TABLE `em_newsletter_anagrafica` DROP FOREIGN KEY `em_newsletter_anagrafica_ibfk_2`;
+ALTER TABLE `em_newsletter_anagrafica`
+    ADD `record_type` VARCHAR(255) NOT NULL BEFORE `id_anagrafica`, CHANGE `id_anagrafica` `record_id` INT(11) NOT NULL;
+UPDATE `em_newsletter_anagrafica`
+SET `record_type` ='Modules\\Anagrafiche\\Anagrafica';
+
+ALTER TABLE `em_list_anagrafica` DROP FOREIGN KEY `em_list_anagrafica_ibfk_2`;
+ALTER TABLE `em_list_anagrafica`
+    ADD `record_type` VARCHAR(255) NOT NULL BEFORE `id_anagrafica`, CHANGE `id_anagrafica` `record_id` INT(11) NOT NULL;
+UPDATE `em_list_anagrafica`
+SET `record_type` ='Modules\\Anagrafiche\\Anagrafica';
+
+ALTER TABLE `em_list_anagrafica` RENAME TO `em_list_receiver`;
+ALTER TABLE `em_newsletter_anagrafica` RENAME TO `em_newsletter_receiver`;
+
+UPDATE `zz_views` SET `query` = '(SELECT COUNT(*) FROM `em_newsletter_receiver` WHERE `em_newsletter_receiver`.`id_newsletter` = `em_newsletters`.`id`)' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE name='Newsletter') AND `name` = 'Destinatari';

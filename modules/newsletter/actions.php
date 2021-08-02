@@ -17,6 +17,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\Anagrafiche\Anagrafica;
+use Modules\Anagrafiche\Referente;
+use Modules\Anagrafiche\Sede;
+use Modules\Emails\Mail;
 use Modules\Emails\Template;
 use Modules\Newsletter\Lista;
 use Modules\Newsletter\Newsletter;
@@ -66,7 +70,7 @@ switch (filter('op')) {
                 continue;
             }
 
-            $mail = \Modules\Emails\Mail::build($user, $template, $anagrafica->id);
+            $mail = Mail::build($user, $template, $anagrafica->id);
 
             $mail->addReceiver($anagrafica['email']);
             $mail->subject = $newsletter->subject;
@@ -109,17 +113,54 @@ switch (filter('op')) {
         break;
 
     case 'add_receivers':
-        $receivers = post('receivers');
+        $destinatari = [];
 
+        // Selezione manuale
+        $id_receivers = post('receivers');
+        foreach ($id_receivers as $id_receiver) {
+            list($tipo, $id) = explode('_', $id_receiver);
+            if ($tipo == 'anagrafica') {
+                $type = Anagrafica::class;
+            } elseif ($tipo == 'sede') {
+                $type = Sede::class;
+            } else {
+                $type = Referente::class;
+            }
+
+            $destinatari[] = [
+                'record_type' => $type,
+                'record_id' => $id,
+            ];
+        }
+
+        // Selezione da lista newsletter
         $id_list = post('id_list');
         if (!empty($id_list)) {
             $list = Lista::find($id_list);
-            $receivers = $list->anagrafiche->pluck('idanagrafica');
+            $receivers = $list->getDestinatari();
+            $receivers = $receivers->map(function ($item, $key) {
+                return [
+                    'record_type' => get_class($item),
+                    'record_id' => $item->id,
+                ];
+            });
+
+            $destinatari = $receivers->toArray();
         }
 
-        $newsletter->anagrafiche()->syncWithoutDetaching($receivers);
+        // Aggiornamento destinatari
+        foreach ($destinatari as $destinatario) {
+            $data = array_merge($destinatario, [
+                'id_newsletter' => $newsletter->id,
+            ]);
 
-        //Controllo indirizzo e-mail aggiunto
+            $registrato = $database->select('em_newsletter_receiver', '*', $data);
+            if (empty($registrato)) {
+                $database->insert('em_newsletter_receiver', $data);
+            }
+        }
+
+        // Controllo indirizzo e-mail aggiunto
         foreach ($newsletter->anagrafiche as $anagrafica) {
             if (!empty($anagrafica['email'])) {
                 $check = Validate::isValidEmail($anagrafica['email']);
@@ -153,22 +194,23 @@ switch (filter('op')) {
         break;
 
     case 'remove_receiver':
-        $receiver = post('id');
+        $receiver_id = post('id');
+        $receiver_type = post('type');
 
-        $newsletter->anagrafiche()->detach($receiver);
+        $database->delete('em_newsletter_receiver', [
+            'record_type' => $receiver_type,
+            'record_id' => $receiver_id,
+            'id_newsletter' => $newsletter->id,
+        ]);
 
         flash()->info(tr('Destinatario rimosso dalla newsletter!'));
 
         break;
 
-    case 'remove_all_receiver':
-        //$receiver = post('id');
-
-        $anagrafiche = $newsletter->anagrafiche;
-
-        foreach ($anagrafiche as $anagrafica) {
-            $newsletter->anagrafiche()->detach($anagrafica->id);
-        }
+    case 'remove_all_receivers':
+        $database->delete('em_newsletter_receiver', [
+            'id_newsletter' => $newsletter->id,
+        ]);
 
         flash()->info(tr('Tutti i destinatari sono stati rimossi dalla newsletter!'));
 

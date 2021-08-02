@@ -23,6 +23,8 @@ use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Anagrafiche\Referente;
+use Modules\Anagrafiche\Sede;
 use Traits\RecordTrait;
 
 class Lista extends Model
@@ -49,10 +51,48 @@ class Lista extends Model
 
         $query = $this->query;
         if (!empty($query)) {
-            $results = database()->fetchArray($query);
+            $database = database();
 
-            $anagrafiche = array_column($results, 'id');
-            $this->anagrafiche()->sync($anagrafiche);
+            // Rimozione record precedenti
+            $database->delete('em_list_receiver', [
+                'id_list' => $this->id,
+            ]);
+
+            // Ricerca nuovi record
+            $results = $database->fetchArray($query);
+            $gruppi = collect($results)
+                ->groupBy('tipo');
+
+            // Preparazione al salvataggio
+            $destinatari = [];
+            foreach ($gruppi as $tipo => $gruppo) {
+                if ($tipo == 'anagrafica') {
+                    $type = Anagrafica::class;
+                } elseif ($tipo == 'sede') {
+                    $type = Sede::class;
+                } else {
+                    $type = Referente::class;
+                }
+
+                foreach ($gruppo as $record) {
+                    $destinatari[] = [
+                        'record_type' => $type,
+                        'record_id' => $record['id'],
+                    ];
+                }
+            }
+
+            // Aggiornamento destinatari
+            foreach ($destinatari as $destinatario) {
+                $data = array_merge($destinatario, [
+                    'id_list' => $this->id,
+                ]);
+
+                $registrato = $database->select('em_list_receiver', '*', $data);
+                if (empty($registrato)) {
+                    $database->insert('em_list_receiver', $data);
+                }
+            }
         }
 
         return $result;
@@ -60,9 +100,33 @@ class Lista extends Model
 
     // Relazione Eloquent
 
+    public function getDestinatari()
+    {
+        return $this->anagrafiche
+            ->concat($this->sedi)
+            ->concat($this->referenti);
+    }
+
     public function anagrafiche()
     {
-        return $this->belongsToMany(Anagrafica::class, 'em_list_anagrafica', 'id_list', 'id_anagrafica')->withTrashed();
+        return $this
+            ->belongsToMany(Anagrafica::class, 'em_list_receiver', 'id_list', 'record_id')
+            ->where('record_type', '=', Anagrafica::class)
+            ->withTrashed();
+    }
+
+    public function sedi()
+    {
+        return $this
+            ->belongsToMany(Sede::class, 'em_list_receiver', 'id_list', 'record_id')
+            ->where('record_type', '=', Sede::class);
+    }
+
+    public function referenti()
+    {
+        return $this
+            ->belongsToMany(Referente::class, 'em_list_receiver', 'id_list', 'record_id')
+            ->where('record_type', '=', Referente::class);
     }
 
     /**

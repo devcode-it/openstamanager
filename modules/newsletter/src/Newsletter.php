@@ -24,6 +24,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Models\User;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Anagrafiche\Referente;
+use Modules\Anagrafiche\Sede;
 use Modules\Emails\Account;
 use Modules\Emails\Mail;
 use Modules\Emails\Template;
@@ -84,14 +86,43 @@ class Newsletter extends Model
 
     // Relazione Eloquent
 
+    public function getDestinatari()
+    {
+        return $this->anagrafiche
+            ->concat($this->sedi)
+            ->concat($this->referenti);
+    }
+
     public function anagrafiche()
     {
-        return $this->belongsToMany(Anagrafica::class, 'em_newsletter_anagrafica', 'id_newsletter', 'id_anagrafica')->orderByRaw('IF(email=\'\',email,enable_newsletter) ASC')->orderBy('ragione_sociale', 'ASC')->withPivot('id_email')->withTrashed();
+        return $this
+            ->belongsToMany(Anagrafica::class, 'em_newsletter_receiver', 'id_newsletter', 'record_id')
+            ->where('record_type', '=', Anagrafica::class)
+            ->withPivot('id_email')
+            ->orderByRaw('IF(email=\'\',email,enable_newsletter) ASC')
+            ->orderBy('ragione_sociale', 'ASC')
+            ->withTrashed();
+    }
+
+    public function sedi()
+    {
+        return $this
+            ->belongsToMany(Sede::class, 'em_newsletter_receiver', 'id_newsletter', 'record_id')
+            ->where('record_type', '=', Sede::class)
+            ->withPivot('id_email');
+    }
+
+    public function referenti()
+    {
+        return $this
+            ->belongsToMany(Referente::class, 'em_newsletter_receiver', 'id_newsletter', 'record_id')
+            ->where('record_type', '=', Referente::class)
+            ->withPivot('id_email');
     }
 
     public function emails()
     {
-        return $this->belongsToMany(Mail::class, 'em_newsletter_anagrafica', 'id_newsletter', 'id_email')->withPivot('id_anagrafica');
+        return $this->belongsToMany(Mail::class, 'em_newsletter_receiver', 'id_newsletter', 'id_email')->withPivot('id_anagrafica');
     }
 
     public function account()

@@ -17,6 +17,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\Anagrafiche\Anagrafica;
+use Modules\Anagrafiche\Referente;
+use Modules\Anagrafiche\Sede;
 use Modules\Newsletter\Lista;
 
 include_once __DIR__.'/../../core.php';
@@ -53,18 +56,51 @@ switch (filter('op')) {
         break;
 
     case 'add_receivers':
-        $receivers = post('receivers');
+        $destinatari = [];
 
-        $lista->anagrafiche()->syncWithoutDetaching($receivers);
+        // Selezione manuale
+        $id_receivers = post('receivers');
+        foreach ($id_receivers as $id_receiver) {
+            list($tipo, $id) = explode('_', $id_receiver);
+            if ($tipo == 'anagrafica') {
+                $type = Anagrafica::class;
+            } elseif ($tipo == 'sede') {
+                $type = Sede::class;
+            } else {
+                $type = Referente::class;
+            }
+
+            $destinatari[] = [
+                'record_type' => $type,
+                'record_id' => $id,
+            ];
+        }
+
+        // Aggiornamento destinatari
+        foreach ($destinatari as $destinatario) {
+            $data = array_merge($destinatario, [
+                'id_list' => $lista->id,
+            ]);
+
+            $registrato = $database->select('em_list_receiver', '*', $data);
+            if (empty($registrato)) {
+                $database->insert('em_list_receiver', $data);
+            }
+        }
 
         flash()->info(tr('Aggiunti nuovi destinatari alla lista!'));
 
         break;
 
     case 'remove_receiver':
-        $receiver = post('id');
+        $receiver_id = post('id');
+        $receiver_type = post('type');
 
-        $lista->anagrafiche()->detach($receiver);
+        $database->delete('em_list_receiver', [
+            'record_type' => $receiver_type,
+            'record_id' => $receiver_id,
+            'id_list' => $lista->id,
+        ]);
 
         flash()->info(tr('Destinatario rimosso dalla lista!'));
 

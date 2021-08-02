@@ -17,6 +17,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\Anagrafiche\Anagrafica;
+use Modules\Anagrafiche\Referente;
+use Modules\Anagrafiche\Sede;
+
 include_once __DIR__.'/../../core.php';
 
 echo '
@@ -46,7 +50,7 @@ echo '
             <div class="row">
                 <div class="col-md-12">
                     {[ "type": "textarea", "label": "'.tr('Query dinamica').'", "name": "query", "required": 0, "value": "$query$", "help": "'.tr("La query SQL deve restituire gli identificativi delle anagrafiche da inserire nella lista, sotto un campo di nome ''id''").'. '.tr('Per esempio: _SQL_', [
-                        '_SQL_' => 'SELECT idanagrafica AS id FROM an_anagrafiche',
+                        '_SQL_' => 'SELECT idanagrafica AS id, \'anagrafica\' AS tipo FROM an_anagrafiche',
                     ]).'" ]}
                 </div>
             </div>
@@ -67,7 +71,7 @@ echo '
         <div class="box-body">
             <div class="row">
                 <div class="col-md-12">
-                    {[ "type": "select", "label": "'.tr('Destinatari').'", "name": "receivers[]", "ajax-source": "anagrafiche_newsletter", "multiple": 1, "disabled": '.intval(!empty($lista->query)).' ]}
+                    {[ "type": "select", "label": "'.tr('Destinatari').'", "name": "receivers[]", "ajax-source": "destinatari_newsletter", "multiple": 1, "disabled": '.intval(!empty($lista->query)).' ]}
                 </div>
             </div>
 
@@ -82,7 +86,7 @@ echo '
     </div>
 </form>';
 
-$anagrafiche = $lista->anagrafiche;
+$destinatari = $lista->getDestinatari();
 
 echo '
 <!-- Destinatari -->
@@ -90,13 +94,13 @@ echo '
     <div class="panel-heading">
         <h3 class="panel-title">
             '.tr('Destinatari').'
-            <span class="badge">'.$anagrafiche->count().'</span>
+            <span class="badge">'.$destinatari->count().'</span>
         </h3>
     </div>
 
     <div class="panel-body">';
 
-if (!$anagrafiche->isEmpty()) {
+if (!$destinatari->isEmpty()) {
     echo '
         <table class="table table-hover table-condensed table-bordered">
             <thead>
@@ -109,13 +113,22 @@ if (!$anagrafiche->isEmpty()) {
 
             <tbody>';
 
-    foreach ($anagrafiche as $anagrafica) {
+    foreach ($destinatari as $destinatario) {
+        $anagrafica = $destinatario instanceof Anagrafica ? $destinatario : $destinatario->anagrafica;
+        $descrizione = $anagrafica->ragione_sociale;
+
+        if ($destinatario instanceof Sede) {
+            $descrizione .= ' ['.$destinatario->nomesede.']';
+        } elseif ($destinatario instanceof Referente) {
+            $descrizione .= ' ['.$destinatario->nome.']';
+        }
+
         echo '
-                <tr '.(empty($anagrafica->email) ? 'class="bg-danger"' : '').'>
-                    <td>'.Modules::link('Anagrafiche', $anagrafica->id, $anagrafica->ragione_sociale).'</td>
-                    <td class="text-center">'.$anagrafica->email.'</td>
+                <tr '.(empty($destinatario->email) ? 'class="bg-danger"' : '').'>
+                    <td>'.Modules::link('Anagrafiche', $anagrafica->id, $descrizione).'</td>
+                    <td class="text-center">'.$destinatario->email.'</td>
                     <td class="text-center">
-                        <a class="btn btn-danger ask btn-sm '.(!empty($lista->query) ? 'disabled' : '').'" data-backto="record-edit" data-op="remove_receiver" data-id="'.$anagrafica->id.'" '.(!empty($lista->query) ? 'disabled' : '').'>
+                        <a class="btn btn-danger ask btn-sm '.(!empty($lista->query) ? 'disabled' : '').'" data-backto="record-edit" data-op="remove_receiver" data-type="'.get_class($destinatario).'" data-id="'.$destinatario->id.'" '.(!empty($lista->query) ? 'disabled' : '').'>
                             <i class="fa fa-trash"></i>
                         </a>
                     </td>
@@ -127,7 +140,7 @@ if (!$anagrafiche->isEmpty()) {
         </table>';
 } else {
     echo '
-        <p>'.tr('Nessuna anagrafica collegata alla lista').'.</p>';
+        <p>'.tr('Nessun destinatario collegato alla lista').'.</p>';
 }
 
     echo '

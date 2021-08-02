@@ -17,8 +17,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Carbon\Carbon;
-use Models\Plugin;
 use Plugins\ListinoClienti\DettaglioPrezzo;
 use Plugins\ListinoFornitori\DettaglioFornitore;
 

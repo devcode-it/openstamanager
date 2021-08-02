@@ -20,53 +20,66 @@
 include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
-    case 'anagrafiche_newsletter':
-        $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta != '' OR provincia != '', CONCAT(' (', citta, IF(provincia != '', provincia, ''), ')'), ''), ' [', email, ']') AS descrizione, `an_tipianagrafiche`.`descrizione` AS optgroup FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY `optgroup` ASC, ragione_sociale ASC";
-
-        foreach ($elements as $element) {
-            $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
-        }
-
-        if (empty($filter)) {
-            $where[] = 'deleted_at IS NULL';
-            $where[] = 'enable_newsletter = 1';
-        }
-
+    case 'destinatari_newsletter':
+        // Gestione campi di ricerca
         if (!empty($search)) {
-            $search_fields[] = 'ragione_sociale LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '|nome| LIKE '.prepare('%'.$search.'%');
             $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
             $search_fields[] = 'provincia LIKE '.prepare('%'.$search.'%');
             $search_fields[] = 'email LIKE '.prepare('%'.$search.'%');
         }
 
         // Aggiunta filtri di ricerca
-        if (!empty($search_fields)) {
-            $where[] = '('.implode(' OR ', $search_fields).')';
-        }
+        $where = empty($search_fields) ? '1=1' : '('.implode(' OR ', $search_fields).')';
 
-        if (!empty($filter)) {
-            $where[] = '('.implode(' OR ', $filter).')';
-        }
+        $destinatari = collect();
 
-        $query = str_replace('|where|', !empty($where) ? 'WHERE '.implode(' AND ', $where) : '', $query);
+        // Gestione anagrafiche come destinatari
+        $query = "SELECT CONCAT('anagrafica_', an_anagrafiche.idanagrafica) AS id,
+           CONCAT(an_anagrafiche.ragione_sociale, IF(an_anagrafiche.citta != '' OR an_anagrafiche.provincia != '', CONCAT(' (', an_anagrafiche.citta, IF(an_anagrafiche.provincia != '', an_anagrafiche.provincia, ''), ')'), ''), ' [', email, ']') AS text,
+           `an_tipianagrafiche`.`descrizione` AS optgroup
+        FROM an_anagrafiche
+            INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica
+            INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica
+        WHERE an_anagrafiche.deleted_at IS NULL AND an_anagrafiche.enable_newsletter = 1 AND 1=1
+        ORDER BY `optgroup` ASC, ragione_sociale ASC";
 
-        $rs = $dbo->fetchArray($query);
-        foreach ($rs as $r) {
-            if ($prev != $r['optgroup']) {
-                $results[] = ['text' => $r['optgroup'], 'children' => []];
-                $prev = $r['optgroup'];
-            }
+        $query = str_replace('1=1', !empty($where) ? replace($where, ['|nome|' => 'ragione_sociale']) : '', $query);
+        $anagrafiche = $database->fetchArray($query);
+        $destinatari = $destinatari->concat($anagrafiche);
 
-            $results[count($results) - 1]['children'][] = [
-                'id' => $r['id'],
-                'text' => $r['descrizione'],
-                'descrizione' => $r['descrizione'],
-            ];
-        }
+        // Gestione sedi come destinatari
+        $query = "SELECT CONCAT('sede_', an_sedi.id) AS id,
+           CONCAT(an_anagrafiche.ragione_sociale, ' (', an_sedi.nomesede, IF(an_sedi.citta != '' OR an_sedi.provincia != '', CONCAT(' :', an_sedi.citta, IF(an_sedi.provincia != '', an_sedi.provincia, ''), ''), ''), ')', ' [', an_sedi.email, ']') AS text,
+           'Sedi' AS optgroup
+        FROM an_sedi
+            INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = an_sedi.idanagrafica
+        WHERE an_anagrafiche.deleted_at IS NULL AND an_anagrafiche.enable_newsletter = 1 AND 1=1
+        ORDER BY `optgroup` ASC, ragione_sociale ASC";
+
+        $query = str_replace('1=1', !empty($where) ? replace($where, ['|nome|' => 'nomesede LIKE '.prepare('%'.$search.'%').' AND ragione_sociale']) : '', $query);
+        $sedi = $database->fetchArray($query);
+        $destinatari = $destinatari->concat($sedi);
+
+        // Gestione referenti come destinatari
+        $query = "SELECT CONCAT('referente_', an_referenti.id) AS id,
+           CONCAT(an_anagrafiche.ragione_sociale, ' (', an_referenti.nome, ') [', an_referenti.email, ']') AS text,
+           'Referenti' AS optgroup
+        FROM an_referenti
+            INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = an_referenti.idanagrafica
+        WHERE an_anagrafiche.deleted_at IS NULL AND an_anagrafiche.enable_newsletter = 1 AND 1=1
+        ORDER BY `optgroup` ASC, ragione_sociale ASC";
+
+        $query = str_replace('1=1', !empty($where) ? replace($where, ['|nome|' => 'nomesede LIKE '.prepare('%'.$search.'%').' AND ragione_sociale']) : '', $query);
+        $referenti = $database->fetchArray($query);
+        $destinatari = $destinatari->concat($referenti);
+
+        $results = $destinatari->toArray();
+
         break;
 
     case 'liste_newsletter':
-        $query = "SELECT id, CONCAT(name, ' (', (SELECT COUNT(*) FROM em_list_anagrafica WHERE em_lists.id = em_list_anagrafica.id_list), ' destinatari)') AS descrizione FROM em_lists |where| ORDER BY `name` ASC";
+        $query = "SELECT id, CONCAT(name, ' (', (SELECT COUNT(*) FROM em_list_receiver WHERE em_lists.id = em_list_receiver.id_list), ' destinatari)') AS descrizione FROM em_lists |where| ORDER BY `name` ASC";
 
         foreach ($elements as $element) {
             $filter[] = 'id='.prepare($element);

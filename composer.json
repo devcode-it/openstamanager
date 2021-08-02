@@ -32,6 +32,8 @@
         "barryvdh/laravel-debugbar": "^3.5",
         "danielstjules/stringy": "^3.1",
         "davidepastore/codice-fiscale": "^0.6.0",
+        "devcode-it/aggiornamenti": "@dev",
+        "devcode-it/causali-trasporto": "@dev",
         "ezyang/htmlpurifier": "^4.8",
         "fideloper/proxy": "^4.4",
         "filp/whoops": "^2.1",
@@ -58,6 +60,7 @@
         "facade/ignition": "^2.5",
         "fakerphp/faker": "^1.9.1",
         "friendsofphp/php-cs-fixer": "^3.0",
+        "jeroen-g/laravel-packager": "^2.5",
         "laravel/homestead": "^12.2",
         "mockery/mockery": "^1.4.2",
         "nunomaduro/collision": "^5.0",
@@ -67,11 +70,6 @@
         "optimize-autoloader": true,
         "preferred-install": "dist",
         "sort-packages": true
-    },
-    "extra": {
-        "laravel": {
-            "dont-discover": []
-        }
     },
     "autoload": {
         "psr-4": {
@@ -149,5 +147,28 @@
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
         ]
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": [
+                "jeroen-g/laravel-packager"
+            ]
+        }
+    },
+    "repositories": {
+        "devcode-it/aggiornamenti": {
+            "type": "path",
+            "url": "./packages/devcode-it/aggiornamenti",
+            "options": {
+                "symlink": true
+            }
+        },
+        "devcode-it/causali-trasporto": {
+            "type": "path",
+            "url": "./packages/devcode-it/causali-trasporto",
+            "options": {
+                "symlink": true
+            }
+        }
     }
 }

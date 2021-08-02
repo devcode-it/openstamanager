@@ -1,0 +1,41 @@
+{
+    "name": "devcode-it/causali-trasporto",
+    "description": ":package_description",
+    "license": "license",
+    "authors": [
+        {
+            "name": "author name",
+            "email": "author email",
+            "homepage": "author homepage"
+        }
+    ],
+    "homepage": "https://github.com/devcode-it/causali-trasporto",
+    "keywords": ["Laravel", "CausaliTrasporto"],
+    "require": {
+        "illuminate/support": "~7|~8"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~9.0",
+        "orchestra/testbench": "~5|~6"
+    },
+    "autoload": {
+        "psr-4": {
+            "DevCode\\CausaliTrasporto\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DevCode\\CausaliTrasporto\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "DevCode\\CausaliTrasporto\\ServiceProvider"
+            ],
+            "aliases": {
+                "CausaliTrasporto": "DevCode\\CausaliTrasporto\\Facades\\CausaliTrasporto"
+            }
+        }
+    }
+}

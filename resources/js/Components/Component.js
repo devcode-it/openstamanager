@@ -53,46 +53,43 @@ export default class Component implements ComponentAttrs {
    * @inheritdoc
    * @abstract
    */
-  view(vnode: Mithril.vnode) {}
+  view(vnode: Mithril.Vnode): Mithril.Children {}
 
   /**
    * @inheritdoc
    */
-  oninit(vnode: Mithril.vnode) {
+  oninit(vnode: Mithril.Vnode) {
     this.setAttrs(vnode.attrs);
   }
 
   /**
    * @inheritdoc
    */
-  oncreate(vnode: Mithril.vnode) {
+  oncreate(vnode: Mithril.VnodeDOM) {
     this.element = vnode.dom;
   }
 
   /**
    * @inheritdoc
    */
-  onbeforeupdate(vnode: Mithril.vnode) {
+  onbeforeupdate(vnode: Mithril.VnodeDOM) {
     this.setAttrs(vnode.attrs);
   }
 
   /**
    * @inheritdoc
    */
-  onupdate(vnode: Mithril.vnode) {
-  }
+  onupdate(vnode: Mithril.VnodeDOM) {}
 
   /**
    * @inheritdoc
    */
-  onbeforeremove(vnode: Mithril.vnode) {
-  }
+  onbeforeremove(vnode: Mithril.VnodeDOM) {}
 
   /**
    * @inheritdoc
    */
-  onremove(vnode: Mithril.vnode) {
-  }
+  onremove(vnode: Mithril.VnodeDOM) {}
 
   /**
    * Returns a jQuery object for this component's element. If you pass in a
@@ -120,7 +117,7 @@ export default class Component implements ComponentAttrs {
    *
    * @see https://mithril.js.org/hyperscript.html#mselector,-attributes,-children
    */
-  static component(attrs = {}, children = null): Mithril.vnode {
+  static component(attrs = {}, children = null): Mithril.Vnode {
     const componentAttrs: Record<string, unknown> = { ...attrs};
 
     return Mithril.m(this, componentAttrs, children);

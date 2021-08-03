@@ -36,6 +36,7 @@
             "only-multiline"
         ],
         "class-methods-use-this": "off",
-        "flowtype/no-types-missing-file-annotation": "off"
+        "flowtype/no-types-missing-file-annotation": "off",
+        "no-underscore-dangle": "off"
     }
 }

@@ -9,8 +9,8 @@ export default class Page extends Component {
   page = JSON.parse($('#app').attr('data-page'));
 
   __(key: string, replace: Object = {}) {
-    let translation = this.page.language[key]
-      ? this.page.language[key]
+    let translation = this.page.translations[key]
+      ? this.page.translations[key]
       : key;
 
     Object.keys(replace).forEach((k: string) => {

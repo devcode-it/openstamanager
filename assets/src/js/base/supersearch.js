@@ -18,6 +18,10 @@
 
 $(document).ready(function () {
     const searchInput = $('#supersearch');
+    if (searchInput.length === 0) {
+        return;
+    }
+
     const searchButton = searchInput.parent().find('i');
     const searches = [];
 

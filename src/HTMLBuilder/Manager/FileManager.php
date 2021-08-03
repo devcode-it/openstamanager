@@ -123,7 +123,7 @@ class FileManager implements ManagerInterface
                     $file = Upload::find($r['id']);
 
                     $result .= '
-        <tr id="row_'.$r['id'].'" data-id="'.$r['id'].'" data-filename="'.$r['filename'].'">
+        <tr id="row_'.$file->id.'" data-id="'.$file->id.'" data-filename="'.$file->filename.'" data-nome="'.$file->name.'">
             <td align="left">';
 
                     if ($file->user && $file->user->photo) {
@@ -137,17 +137,17 @@ class FileManager implements ManagerInterface
 
                     $result .= '
 
-                <a href="'.base_path().'/view.php?file_id='.$r['id'].'" target="_blank">
-                    <i class="fa fa-external-link"></i> '.$r['name'].'
+                <a href="'.base_path().'/view.php?file_id='.$file->id.'" target="_blank">
+                    <i class="fa fa-external-link"></i> '.$file->name.'
                 </a>
 
-                <small> ('.$file->extension.')'.((!empty($file->size)) ? ' ('.FileSystem::formatBytes($file->size).')' : '').' '.(((setting('Logo stampe') == $r['filename']) || (setting('Filigrana stampe') == $r['filename'])) ? '<i class="fa fa-file-text-o"></i>' : '').'</small>'.'
+                <small> ('.$file->extension.')'.((!empty($file->size)) ? ' ('.FileSystem::formatBytes($file->size).')' : '').' '.(((setting('Logo stampe') == $file->filename) || (setting('Filigrana stampe') == $file->filename)) ? '<i class="fa fa-file-text-o"></i>' : '').'</small>'.'
             </td>
 
-            <td>'.timestampFormat($r['created_at']).'</td>
+            <td>'.timestampFormat($file['created_at']).'</td>
 
             <td class="text-center">
-                <button type="button" class="btn btn-xs btn-primary" onclick="saggiungiAllegato(this)">
+                <button type="button" class="btn btn-xs btn-primary" onclick="aggiungiAllegato(this)">
                     <i class="fa fa-download"></i>
                 </button>';
 

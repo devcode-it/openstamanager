@@ -41,20 +41,24 @@ $(document).ready(function () {
 
     // Menu ordinabile
     if (!globals.is_mobile) {
-        sortable(".sidebar-menu", {
+        const menu = sortable(".sidebar-menu", {
             axis: "y",
             cursor: "move",
             dropOnEmpty: true,
             scroll: true,
-        })[0].addEventListener("sortupdate", function (e) {
-            let order = $(".sidebar-menu > .treeview[data-id]").toArray().map(a => $(a).data("id"))
+        })[0];
 
-            $.post(globals.rootdir + "/actions.php", {
-                id_module: globals.order_manager_id,
-                op: "sort_modules",
-                order: order.join(","),
+        if (menu) {
+            menu.addEventListener("sortupdate", function (e) {
+                let order = $(".sidebar-menu > .treeview[data-id]").toArray().map(a => $(a).data("id"))
+
+                $.post(globals.rootdir + "/actions.php", {
+                    id_module: globals.order_manager_id,
+                    op: "sort_modules",
+                    order: order.join(","),
+                });
             });
-        });
+        }
     }
 
     // Mostra/nasconde sidebar del menu principale

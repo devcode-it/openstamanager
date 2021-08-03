@@ -5,4 +5,6 @@ import Component from './Component';
  *
  * @abstract
  */
-export default class Page extends Component {}
+export default class Page extends Component {
+  page = JSON.parse($('#app').attr('data-page'));
+}

@@ -95,5 +95,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="@types/mithril" level="application" />
+    <orderEntry type="library" name="@types/jquery" level="application" />
   </component>
 </module>

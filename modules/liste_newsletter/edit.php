@@ -17,9 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Modules\Anagrafiche\Anagrafica;
-use Modules\Anagrafiche\Referente;
-use Modules\Anagrafiche\Sede;
+use Models\Module;
 
 include_once __DIR__.'/../../core.php';
 
@@ -49,9 +47,16 @@ echo '
 
             <div class="row">
                 <div class="col-md-12">
-                    {[ "type": "textarea", "label": "'.tr('Query dinamica').'", "name": "query", "required": 0, "value": "$query$", "help": "'.tr("La query SQL deve restituire gli identificativi delle anagrafiche da inserire nella lista, sotto un campo di nome ''id''").'. '.tr('Per esempio: _SQL_', [
-                        '_SQL_' => 'SELECT idanagrafica AS id, \'anagrafica\' AS tipo FROM an_anagrafiche',
-                    ]).'" ]}
+                '.input([
+                    'type' => 'textarea',
+                    'label' => tr('Query dinamica'),
+                    'name' => 'query',
+                    'required' => 0,
+                    'value' => $lista->query,
+                    'help' => tr("La query SQL deve restituire gli identificativi delle anagrafiche da inserire nella lista, sotto un campo di nome ''id''").'. '.tr('Per esempio: _SQL_', [
+                        '_SQL_' => 'SELECT idanagrafica AS id, \'Modules\\Anagrafiche\\Anagrafica\' AS tipo FROM an_anagrafiche',
+                    ]),
+                ]).'
                 </div>
             </div>
         </div>
@@ -86,7 +91,8 @@ echo '
     </div>
 </form>';
 
-$destinatari = $lista->getDestinatari();
+$numero_destinatari = $lista->destinatari()->count();
+$destinatari_senza_mail = $lista->getNumeroDestinatariSenzaEmail();
 
 echo '
 <!-- Destinatari -->
@@ -94,59 +100,64 @@ echo '
     <div class="panel-heading">
         <h3 class="panel-title">
             '.tr('Destinatari').'
-            <span class="badge">'.$destinatari->count().'</span>
+            <span> ('.$numero_destinatari.')</span> <div class="pull-right" >
+            '.(($destinatari_senza_mail > 0) ? ' <span title="'.tr('Indirizzi e-mail mancanti').'" class="tip label label-danger clickable">'.$destinatari_senza_mail.'</span>' : '')
+    .'<span title="'.tr('Indirizzi e-mail senza consenso per newsletter').'" class="tip label label-warning clickable" id="numero_consenso_disabilitato"></span></div>
         </h3>
     </div>
 
-    <div class="panel-body">';
-
-if (!$destinatari->isEmpty()) {
-    echo '
-        <table class="table table-hover table-condensed table-bordered">
+    <div class="panel-body">
+        <table class="table table-hover table-condensed table-bordered" id="destinatari">
             <thead>
                 <tr>
-                    <th>'.tr('Nome').'</th>
-                    <th class="text-center">'.tr('Indirizzo').'</th>
+                    <th>'.tr('Ragione sociale').'</th>
+                    <th>'.tr('Tipo').'</th>
+                    <th>'.tr('Tipologia').'</th>
+                    <th class="text-center">'.tr('E-mail').'</th>
+                    <th class="text-center">'.tr('Newsletter').'</th>
                     <th class="text-center" width="60">#</th>
                 </tr>
             </thead>
-
-            <tbody>';
-
-    foreach ($destinatari as $destinatario) {
-        $anagrafica = $destinatario instanceof Anagrafica ? $destinatario : $destinatario->anagrafica;
-        $descrizione = $anagrafica->ragione_sociale;
-
-        if ($destinatario instanceof Sede) {
-            $descrizione .= ' ['.$destinatario->nomesede.']';
-        } elseif ($destinatario instanceof Referente) {
-            $descrizione .= ' ['.$destinatario->nome.']';
-        }
-
-        echo '
-                <tr '.(empty($destinatario->email) ? 'class="bg-danger"' : '').'>
-                    <td>'.Modules::link('Anagrafiche', $anagrafica->id, $descrizione).'</td>
-                    <td class="text-center">'.$destinatario->email.'</td>
-                    <td class="text-center">
-                        <a class="btn btn-danger ask btn-sm '.(!empty($lista->query) ? 'disabled' : '').'" data-backto="record-edit" data-op="remove_receiver" data-type="'.get_class($destinatario).'" data-id="'.$destinatario->id.'" '.(!empty($lista->query) ? 'disabled' : '').'>
-                            <i class="fa fa-trash"></i>
-                        </a>
-                    </td>
-                </tr>';
-    }
-
-    echo '
-            </tbody>
-        </table>';
-} else {
-    echo '
-        <p>'.tr('Nessun destinatario collegato alla lista').'.</p>';
-}
-
-    echo '
+        </table>
     </div>
 </div>
 
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> '.tr('Elimina').'
 </a>';
+
+echo '
+<script>
+globals.newsletter = {
+    senza_consenso: "'.$lista->getNumeroDestinatariSenzaConsenso().'",
+    table_url: "'.Module::pool('Newsletter')->fileurl('ajax/table.php').'?id_list='.$id_record.'",
+};
+
+$(document).ready(function() {
+    const senza_consenso = $("#numero_consenso_disabilitato");
+    if (globals.newsletter.senza_consenso > 0) {
+        senza_consenso.text(globals.newsletter.senza_consenso);
+    } else {
+        senza_consenso.hide();
+    }
+
+    $("#destinatari").DataTable({
+        language: globals.translations.datatables,
+        retrieve: true,
+        ordering: false,
+        searching: true,
+        paging: true,
+        order: [],
+        lengthChange: false,
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: globals.newsletter.table_url,
+            type: "GET",
+            dataSrc: "data",
+        },
+        searchDelay: 500,
+        pageLength: 50,
+    });
+});
+</script>';

@@ -22,7 +22,7 @@ use Modules\Anagrafiche\Referente;
 use Modules\Anagrafiche\Sede;
 use Modules\Emails\Mail;
 use Modules\Emails\Template;
-use Modules\Newsletter\Lista;
+use Modules\ListeNewsletter\Lista;
 use Modules\Newsletter\Newsletter;
 
 include_once __DIR__.'/../../core.php';
@@ -60,33 +60,44 @@ switch (filter('op')) {
         break;
 
     case 'send':
-        $anagrafiche = $newsletter->anagrafiche;
         $template = $newsletter->template;
-
         $uploads = $newsletter->uploads()->pluck('id');
 
-        foreach ($anagrafiche as $anagrafica) {
-            if (empty($anagrafica['email']) || empty($anagrafica['enable_newsletter'])) {
+        $destinatari = $newsletter->destinatari();
+        foreach ($destinatari as $destinatario) {
+            $anagrafica = $destinatario instanceof Anagrafica ? $destinatario : $destinatario->anagrafica;
+            $abilita_newsletter = $anagrafica->enable_newsletter;
+            if (empty($destinatario->email) || empty($abilita_newsletter)) {
                 continue;
             }
 
+            // Inizializzazione email
             $mail = Mail::build($user, $template, $anagrafica->id);
 
-            $mail->addReceiver($anagrafica['email']);
+            // Completamento informazioni
+            $mail->addReceiver($destinatario->email);
             $mail->subject = $newsletter->subject;
             $mail->content = $newsletter->content;
-
             $mail->id_newsletter = $newsletter->id;
 
+            // Registrazione allegati
             foreach ($uploads as $upload) {
                 $mail->addUpload($upload);
             }
 
             $mail->save();
 
-            $newsletter->anagrafiche()->updateExistingPivot($anagrafica->id, ['id_email' => $mail->id]);
+            // Aggiornamento riferimento per la newsletter
+            $database->update('em_newsletter_receiver', [
+                'id_email' => $mail->id,
+            ], [
+                'record_type' => get_class($destinatario),
+                'record_id' => $destinatario->id,
+                'id_newsletter' => $newsletter->id,
+            ]);
         }
 
+        // Aggiornamento stato newsletter
         $newsletter->state = 'WAIT';
         $newsletter->save();
 
@@ -98,13 +109,23 @@ switch (filter('op')) {
         $mails = $newsletter->emails;
 
         foreach ($mails as $mail) {
-            if (empty($mail->sent_at)) {
-                $newsletter->emails()->updateExistingPivot($mail->id, ['id_email' => null], false);
-
-                $mail->delete();
+            if (!empty($mail->sent_at)) {
+                continue;
             }
+
+            // Rimozione riferimento email dalla newsletter
+            $database->update('em_newsletter_receiver', [
+                'id_email' => $null,
+            ], [
+                'id_email' => $mail->id,
+                'id_newsletter' => $newsletter->id,
+            ]);
+
+            // Rimozione email
+            $mail->delete();
         }
 
+        // Aggiornamento stato newsletter
         $newsletter->state = 'DEV';
         $newsletter->save();
 
@@ -113,8 +134,6 @@ switch (filter('op')) {
         break;
 
     case 'add_receivers':
-        $destinatari = [];
-
         // Selezione manuale
         $id_receivers = post('receivers');
         foreach ($id_receivers as $id_receiver) {
@@ -127,50 +146,55 @@ switch (filter('op')) {
                 $type = Referente::class;
             }
 
-            $destinatari[] = [
+            // Dati di registrazione
+            $data = [
                 'record_type' => $type,
                 'record_id' => $id,
-            ];
-        }
-
-        // Selezione da lista newsletter
-        $id_list = post('id_list');
-        if (!empty($id_list)) {
-            $list = Lista::find($id_list);
-            $receivers = $list->getDestinatari();
-            $receivers = $receivers->map(function ($item, $key) {
-                return [
-                    'record_type' => get_class($item),
-                    'record_id' => $item->id,
-                ];
-            });
-
-            $destinatari = $receivers->toArray();
-        }
-
-        // Aggiornamento destinatari
-        foreach ($destinatari as $destinatario) {
-            $data = array_merge($destinatario, [
                 'id_newsletter' => $newsletter->id,
-            ]);
+            ];
 
+            // Aggiornamento destinatari
             $registrato = $database->select('em_newsletter_receiver', '*', $data);
             if (empty($registrato)) {
                 $database->insert('em_newsletter_receiver', $data);
             }
         }
 
-        // Controllo indirizzo e-mail aggiunto
-        foreach ($newsletter->anagrafiche as $anagrafica) {
-            if (!empty($anagrafica['email'])) {
-                $check = Validate::isValidEmail($anagrafica['email']);
+        // Selezione da lista newsletter
+        $id_list = post('id_list');
+        if (!empty($id_list)) {
+            // Rimozione preventiva dei record duplicati dalla newsletter
+            $database->query('DELETE em_newsletter_receiver.* FROM em_newsletter_receiver
+                INNER JOIN em_list_receiver ON em_list_receiver.record_type = em_newsletter_receiver.record_type AND em_list_receiver.record_id = em_newsletter_receiver.record_id
+            WHERE em_newsletter_receiver.id_newsletter = '.prepare($newsletter->id).' AND em_list_receiver.id_list = '.prepare($id_list));
+
+            // Copia dei record della lista newsletter
+            $database->query('INSERT INTO em_newsletter_receiver (id_newsletter, record_type, record_id) SELECT '.prepare($newsletter->id).', record_type, record_id FROM em_list_receiver WHERE id_list = '.prepare($id_list));
+        }
+
+        /*
+        // Controllo indirizzo e-mail presente
+        $destinatari = $newsletter->destinatari();
+        foreach ($destinatari as $destinatario) {
+            $anagrafica = $destinatario instanceof Anagrafica ? $destinatario : $destinatario->anagrafica;
+
+            if (!empty($destinatario->email)) {
+                $check = Validate::isValidEmail($destinatario->email);
 
                 if (empty($check['valid-format'])) {
-                    $errors[] = $anagrafica['email'];
+                    $errors[] = $destinatario->email;
                 }
             } else {
-                $errors[] = tr('Indirizzo e-mail mancante per "_EMAIL_"', [
-                    '_EMAIL_' => $anagrafica['ragione_sociale'],
+                $descrizione = $anagrafica->ragione_sociale;
+
+                if ($destinatario instanceof Sede) {
+                    $descrizione .= ' ['.$destinatario->nomesede.']';
+                } elseif ($destinatario instanceof Referente) {
+                    $descrizione .= ' ['.$destinatario->nome.']';
+                }
+
+                $errors[] = tr('Indirizzo e-mail mancante per "_NOME_"', [
+                    '_NOME_' => $descrizione,
                 ]);
             }
         }
@@ -181,7 +205,7 @@ switch (filter('op')) {
                 $message .= '<li>'.$error.'</li>';
             }
             $message .= '</ul>';
-        }
+        }*/
 
         if (!empty($message)) {
             flash()->warning(tr('Attenzione questi indirizzi e-mail non sembrano essere validi: _EMAIL_ ', [

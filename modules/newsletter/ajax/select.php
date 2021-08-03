@@ -24,9 +24,9 @@ switch ($resource) {
         // Gestione campi di ricerca
         if (!empty($search)) {
             $search_fields[] = '|nome| LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'provincia LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'email LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '|table|.citta LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '|table|.provincia LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '|table|.email LIKE '.prepare('%'.$search.'%');
         }
 
         // Aggiunta filtri di ricerca
@@ -39,12 +39,15 @@ switch ($resource) {
            CONCAT(an_anagrafiche.ragione_sociale, IF(an_anagrafiche.citta != '' OR an_anagrafiche.provincia != '', CONCAT(' (', an_anagrafiche.citta, IF(an_anagrafiche.provincia != '', an_anagrafiche.provincia, ''), ')'), ''), ' [', email, ']') AS text,
            `an_tipianagrafiche`.`descrizione` AS optgroup
         FROM an_anagrafiche
-            INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica
-            INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica
+            INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica = an_tipianagrafiche_anagrafiche.idanagrafica
+            INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica = an_tipianagrafiche.idtipoanagrafica
         WHERE an_anagrafiche.deleted_at IS NULL AND an_anagrafiche.enable_newsletter = 1 AND 1=1
         ORDER BY `optgroup` ASC, ragione_sociale ASC";
 
-        $query = str_replace('1=1', !empty($where) ? replace($where, ['|nome|' => 'ragione_sociale']) : '', $query);
+        $query = str_replace('1=1', !empty($where) ? replace($where, [
+            '|nome|' => 'ragione_sociale',
+            '|table|' => 'an_anagrafiche',
+        ]) : '', $query);
         $anagrafiche = $database->fetchArray($query);
         $destinatari = $destinatari->concat($anagrafiche);
 
@@ -57,7 +60,10 @@ switch ($resource) {
         WHERE an_anagrafiche.deleted_at IS NULL AND an_anagrafiche.enable_newsletter = 1 AND 1=1
         ORDER BY `optgroup` ASC, ragione_sociale ASC";
 
-        $query = str_replace('1=1', !empty($where) ? replace($where, ['|nome|' => 'nomesede LIKE '.prepare('%'.$search.'%').' AND ragione_sociale']) : '', $query);
+        $query = str_replace('1=1', !empty($where) ? replace($where, [
+            '|nome|' => 'nomesede LIKE '.prepare('%'.$search.'%').' OR ragione_sociale',
+            '|table|' => 'an_sedi',
+        ]) : '', $query);
         $sedi = $database->fetchArray($query);
         $destinatari = $destinatari->concat($sedi);
 
@@ -70,7 +76,10 @@ switch ($resource) {
         WHERE an_anagrafiche.deleted_at IS NULL AND an_anagrafiche.enable_newsletter = 1 AND 1=1
         ORDER BY `optgroup` ASC, ragione_sociale ASC";
 
-        $query = str_replace('1=1', !empty($where) ? replace($where, ['|nome|' => 'nomesede LIKE '.prepare('%'.$search.'%').' AND ragione_sociale']) : '', $query);
+        $query = str_replace('1=1', !empty($where) ? replace($where, [
+            '|nome|' => 'an_referenti.nome LIKE '.prepare('%'.$search.'%').' OR ragione_sociale',
+            '|table|' => 'an_anagrafiche',
+        ]) : '', $query);
         $referenti = $database->fetchArray($query);
         $destinatari = $destinatari->concat($referenti);
 

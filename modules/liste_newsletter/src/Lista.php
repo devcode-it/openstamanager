@@ -17,71 +17,53 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace Modules\Newsletter;
+namespace Modules\ListeNewsletter;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Models\User;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Referente;
 use Modules\Anagrafiche\Sede;
-use Modules\Emails\Account;
-use Modules\Emails\Mail;
-use Modules\Emails\Template;
 use Traits\RecordTrait;
 
-class Newsletter extends Model
+class Lista extends Model
 {
     use SimpleModelTrait;
     use SoftDeletes;
     use RecordTrait;
 
-    protected $table = 'em_newsletters';
+    protected $table = 'em_lists';
 
-    public static function build(User $user, Template $template, $name)
+    public static function build($name)
     {
         $model = new static();
-
-        $model->user()->associate($user);
-        $model->template()->associate($template);
         $model->name = $name;
-
-        $model->subject = $template->subject;
-        $model->content = $template->body;
-
-        $model->state = 'DEV';
 
         $model->save();
 
         return $model;
     }
 
-    /**
-     * Restituisce il nome del modulo a cui l'oggetto è collegato.
-     *
-     * @return string
-     */
-    public function getModuleAttribute()
+    public function save(array $options = [])
     {
-        return 'Newsletter';
-    }
+        $result = parent::save($options);
 
-    public function fixStato()
-    {
-        $mails = $this->emails;
+        $query = $this->query;
+        if (!empty($query)) {
+            $database = database();
 
-        $completed = true;
-        foreach ($mails as $mail) {
-            if (empty($mail->sent_at)) {
-                $completed = false;
-                break;
-            }
+            // Rimozione record precedenti
+            $database->delete('em_list_receiver', [
+                'id_list' => $this->id,
+            ]);
+
+            // Ricerca nuovi record
+            $number = $database->fetchNum($query);
+            $database->query('INSERT INTO em_list_receiver (id_list, record_id, record_type) '.str_replace_first('SELECT', 'SELECT '.prepare($this->id).',', $query));
         }
 
-        $this->state = $completed ? 'OK' : $this->state;
-        $this->completed_at = $completed ? date('Y-m-d H:i:s') : $this->completed_at;
-        $this->save();
+        return $result;
     }
 
     public function getNumeroDestinatariSenzaEmail()
@@ -136,26 +118,16 @@ class Newsletter extends Model
 
     public function destinatari()
     {
-        return $this->hasMany(Destinatario::class, 'id_newsletter');
+        return $this->hasMany(Destinatario::class, 'id_list');
     }
 
-    public function emails()
+    /**
+     * Restituisce il nome del modulo a cui l'oggetto è collegato.
+     *
+     * @return string
+     */
+    public function getModuleAttribute()
     {
-        return $this->belongsToMany(Mail::class, 'em_newsletter_receiver', 'id_newsletter', 'id_email')->withPivot(['record_id', 'record_type']);
-    }
-
-    public function account()
-    {
-        return $this->belongsTo(Account::class, 'id_account');
-    }
-
-    public function template()
-    {
-        return $this->belongsTo(Template::class, 'id_template');
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'created_by');
+        return 'Liste';
     }
 }

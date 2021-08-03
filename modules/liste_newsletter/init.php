@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Modules\Newsletter\Lista;
+use Modules\ListeNewsletter\Lista;
 
 include_once __DIR__.'/../../core.php';
 

@@ -20,7 +20,7 @@
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Referente;
 use Modules\Anagrafiche\Sede;
-use Modules\Newsletter\Lista;
+use Modules\ListeNewsletter\Lista;
 
 include_once __DIR__.'/../../core.php';
 

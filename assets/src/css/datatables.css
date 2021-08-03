@@ -237,3 +237,8 @@ div.dataTables_wrapper {
 .dataTables_info .select-info {
     display: none;
 }
+
+.dataTables_processing
+{
+    z-index: 1050
+}

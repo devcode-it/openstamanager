@@ -78,6 +78,7 @@
             "Modules\\RitenuteContributi\\": ["modules/ritenute_contributi/custom/src/", "modules/ritenute_contributi/src/"],
             "Modules\\Rivalse\\": ["modules/rivalse/custom/src/", "modules/rivalse/src/"],
             "Modules\\Newsletter\\": ["modules/newsletter/custom/src/", "modules/newsletter/src/"],
+            "Modules\\ListeNewsletter\\": ["modules/liste_newsletter/custom/src/", "modules/liste_newsletter/src/"],
             "Modules\\Iva\\": ["modules/iva/custom/src/", "modules/iva/src/"],
             "Modules\\DDT\\": ["modules/ddt/custom/src/", "modules/ddt/src/"],
             "Modules\\Fatture\\": ["modules/fatture/custom/src/", "modules/fatture/src/"],

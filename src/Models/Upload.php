@@ -206,7 +206,7 @@ class Upload extends Model
      */
     public function isImage()
     {
-        $list = ['jpg', 'png', 'gif', 'jpeg', 'bmp', 'svg'];
+        $list = ['jpg', 'png', 'gif', 'jpeg', 'bmp'];
 
         return in_array($this->extension, $list);
     }

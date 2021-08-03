@@ -91,11 +91,14 @@ if ($file->isFatturaElettronica()) {
     if ($file->isImage()) {
         echo '
     <img src="'.$link.'"></img>';
-    } else {
-        if ($file->isPDF()) {
-            $src = \Prints::getPDFLink($file->filepath);
-        }
+    } elseif ($file->isPDF()) {
+        $preview = \Prints::getPDFLink($file->filepath);
 
+        echo '
+    <iframe src="'.($preview ?: $link).'">
+        <a src="'.$link.'">'.tr('Il browser non supporta i contenuti iframe: clicca qui per raggiungere il file originale').'</a>
+    </iframe>';
+    } else {
         echo '
     <iframe src="'.base_path().'/view.php?file_id='.$file_id.'&download=1">
         <a src="'.base_path().'/view.php?file_id='.$file_id.'&download=1">'.tr('Il browser non supporta i contenuti iframe: clicca qui per raggiungere il file originale').'</a>

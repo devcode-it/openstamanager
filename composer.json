@@ -39,6 +39,7 @@
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
+        "kkomelin/laravel-translatable-string-exporter": "^1",
         "facade/ignition": "^2",
         "fakerphp/faker": "^1",
         "laravel/sail": "^1",

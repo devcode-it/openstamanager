@@ -15,3 +15,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', 'setup');
 Route::inertia('setup', 'SetupPage');
+
+Route::get('lang/{language}', function ($language) {
+    app()->setLocale($language);
+
+    return redirect()->back();
+})->name('language');

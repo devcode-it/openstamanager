@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use Nette\Utils\Json;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -37,7 +38,15 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request)
     {
         return array_merge(parent::share($request), [
-            //
+            'locale' => fn () => app()->getLocale(),
+            'translations' => function () {
+                $json = resource_path('lang/'.app()->getLocale().'.json');
+                if (!file_exists($json)) {
+                    return [];
+                }
+
+                return Json::decode(file_get_contents($json));
+            },
         ]);
     }
 }

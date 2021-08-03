@@ -35,7 +35,8 @@
         "guzzlehttp/guzzle": "^7",
         "inertiajs/inertia-laravel": "^0.4.4",
         "laravel/framework": "^8",
-        "laravel/tinker": "^2"
+        "laravel/tinker": "^2",
+        "nette/utils": "^3"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",

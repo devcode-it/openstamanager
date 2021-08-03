@@ -5,7 +5,7 @@ export default class SetupPage extends Page {
   view(vnode) {
     return (
       <>
-        <p>Hello World!</p>
+        <p>{this.__('Hello World!')}</p>
       </>
     );
   }

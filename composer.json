@@ -30,6 +30,7 @@
     ],
     "require": {
         "php": "^8",
+        "ext-pdo": "*",
         "fideloper/proxy": "^4",
         "fruitcake/laravel-cors": "^2",
         "guzzlehttp/guzzle": "^7",

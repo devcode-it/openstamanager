@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::redirect('/', 'setup');
+
+// ----- INERTIA ROUTES ----- //
+/* @noinspection PhpUndefinedMethodInspection */
 Route::inertia('setup', 'SetupPage');
 
 Route::get('lang/{language}', function ($language) {

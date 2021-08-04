@@ -673,7 +673,7 @@ if (!$block_edit) {
         $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
         echo '
                     <div class="tip">
-                        <a class="btn btn-sm btn-primary'.(!empty($ddt) ? '' : ' disabled').'" data-href="'.$structure->fileurl('add_ddt.php').'.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="'.tr('Aggiungi ddt').'">
+                        <a class="btn btn-sm btn-primary'.(!empty($ddt) ? '' : ' disabled').'" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="'.tr('Aggiungi ddt').'">
                             <i class="fa fa-plus"></i> '.tr('Ddt').'
                         </a>
 					</div>';

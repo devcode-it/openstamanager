@@ -76,6 +76,7 @@ echo '
 
     <tbody>';
 
+$totale_qta = 0;
 $totali = [];
 foreach ($data['results'] as $r) {
     $valore_magazzino = $r['prezzo_acquisto'] * $r['qta_totale'];
@@ -91,12 +92,12 @@ foreach ($data['results'] as $r) {
             <td class="text-right">'.moneyFormat($valore_magazzino).'</td>
         </tr>';
 
+    $totale_qta += $r['qta_totale'];
     $totali[] = $valore_magazzino;
 }
 
 // Totali
 $totale_acquisto = sum($totali);
-$totale_qta = sum(array_column($rs, 'qta_totale'));
 echo '
     </tbody>
 

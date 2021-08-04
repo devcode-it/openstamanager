@@ -53,7 +53,7 @@ class Sessione extends Model
     public static function build(Intervento $intervento, Anagrafica $anagrafica, $inizio, $fine)
     {
         if (!$anagrafica->isTipo('Tecnico')) {
-            throw new InvalidArgumentException();
+            throw new InvalidArgumentException("Anagrafica di tipo diverso da Tecnico");
         }
 
         $model = new static();

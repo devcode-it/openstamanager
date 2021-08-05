@@ -40,6 +40,7 @@
         "nette/utils": "^3"
     },
     "require-dev": {
+        "barryvdh/laravel-ide-helper": "^2",
         "roave/security-advisories": "dev-latest",
         "kkomelin/laravel-translatable-string-exporter": "^1",
         "facade/ignition": "^2",

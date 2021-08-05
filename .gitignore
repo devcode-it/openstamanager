@@ -165,3 +165,5 @@ fabric.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/phpstorm,laravel,composer,yarn
 
+/.phpstorm.meta.php
+/_ide_helper.php

@@ -48,7 +48,7 @@ class SegnalazioneBug extends Resource implements RetrieveInterface, CreateInter
         $account = Account::where('predefined', true)->first();
 
         // Preparazione email
-        $mail = new EmailNotification($account, true);
+        $mail = new EmailNotification($account);
 
         // Destinatario
         $mail->AddAddress(self::$bug_email);

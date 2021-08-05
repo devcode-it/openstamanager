@@ -67,7 +67,7 @@ class EmailHook extends Manager
 
         // Selezione email per account
         $accounts = Account::all();
-        $lista = [];
+        $lista = collect();
         foreach ($accounts as $account) {
             // Ultima email inviata per l'account
             $last_mail = $account->emails()
@@ -90,9 +90,7 @@ class EmailHook extends Manager
                     ->take($numero_email)
                     ->get();
 
-                if (!empty($lista_account)) {
-                    $lista = array_merge($lista, $lista_account);
-                }
+                $lista = $lista->concat($lista_account);
             }
         }
 

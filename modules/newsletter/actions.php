@@ -66,7 +66,7 @@ switch (filter('op')) {
 
         $destinatari = $newsletter->destinatari();
         $count = $destinatari->count();
-        for ($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < $count; ++$i) {
             $destinatario = $destinatari->skip($i)->first();
             $origine = $destinatario->getOrigine();
 

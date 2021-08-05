@@ -68,7 +68,9 @@ if (!empty($results)) {
         </table>';
 } else {
     echo '
-<div class=\'alert alert-info\' ><i class=\'fa fa-info-circle\'></i> '.tr('Nessun intervento su questo impianto').'.</div>';
+<div class="alert alert-info">
+    <i class="fa fa-info-circle"></i> '.tr('Nessun intervento su questo impianto').'.
+</div>';
 }
 
 echo '

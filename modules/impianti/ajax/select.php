@@ -77,4 +77,36 @@ switch ($resource) {
             }
         }
         break;
+
+    /*
+     * Opzioni utilizzate:
+     * - matricola
+     */
+    case 'componenti':
+        if (isset($superselect['matricola'])) {
+            $query = 'SELECT my_componenti.id, CONCAT("#", my_componenti.id, ": ", mg_articoli.codice, " - ", mg_articoli.descrizione) AS descrizione
+            FROM my_componenti
+                INNER JOIN mg_articoli ON mg_articoli.id = my_componenti.id_articolo
+            |where| ORDER BY my_componenti.id';
+
+            foreach ($elements as $element) {
+                $filter[] = 'my_componenti.id = '.prepare($element);
+            }
+
+            $where = [
+                'my_componenti.data_sostituzione IS NULL',
+                'my_componenti.data_rimozione IS NULL',
+            ];
+
+            $impianti = $superselect['matricola'];
+            if (!empty($impianti)){
+                $where[] = 'my_componenti.id_impianto IN ('.$impianti.')';
+            }
+
+            if (!empty($search)) {
+                $search[] = 'my_componenti.note LIKE '.prepare('%'.$search.'%');
+            }
+        }
+
+        break;
 }

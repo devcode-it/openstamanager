@@ -25,3 +25,35 @@ UPDATE `zz_views` SET `query` = '(SELECT COUNT(*) FROM `em_newsletter_receiver` 
 
 ALTER TABLE `em_newsletter_receiver` ADD `id` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT;
 ALTER TABLE `em_list_receiver` ADD `id` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT;
+
+--
+-- Passaggio Componenti Impianti esistenti al nuovo formato come Articoli
+--
+
+-- Correzioni tabella Componenti
+ALTER TABLE `my_componenti_articoli` RENAME TO `my_componenti`;
+ALTER TABLE `my_componenti` ADD `id_componente_vecchio` INT(11), ADD `id_intervento` INT(11), ADD `id_sostituzione` INT(11), CHANGE `note` `note` TEXT, CHANGE `data_disinstallazione` `data_rimozione` DATE NULL, ADD `data_sostituzione` DATE NULL;
+
+-- Introduzione categoria dedicata ai Componenti
+INSERT INTO `mg_categorie` (`nome`, `colore`, `nota`) VALUES ('Componenti', '#ffffff', '');
+INSERT INTO `mg_articoli` (`codice`, `descrizione`, `id_categoria`) SELECT DISTINCT(`filename`), `nome`, (SELECT `id` FROM `mg_categorie` WHERE `nome` = 'Componenti' LIMIT 1) FROM `my_impianto_componenti`;
+
+-- Trasposizione componenti esistenti
+INSERT INTO `my_componenti` (`id_componente_vecchio`, `id_impianto`, `id_intervento`, `id_articolo`, `data_registrazione`, `data_sostituzione`) SELECT `id`, `idimpianto`, `idintervento`, (SELECT `id` FROM `mg_articoli` WHERE `codice` = `my_impianto_componenti`.`filename` LIMIT 1), `data`, `data_sostituzione` FROM `my_impianto_componenti`;
+
+UPDATE `my_componenti`
+    INNER JOIN `my_componenti` t ON `t`.`id_componente_vecchio` = `my_componenti`.`id_sostituzione`
+SET `my_componenti`.`id_sostituzione` = `t`.`id` WHERE `my_componenti`.`id_componente_vecchio` IS NOT NULL;
+
+-- Aggiornamento collegamenti dinamico Componenti-Interventi
+ALTER TABLE `my_componenti_interventi` DROP FOREIGN KEY `my_componenti_interventi_ibfk_2`;
+DELETE FROM `my_componenti_interventi` WHERE `id_componente` NOT IN (SELECT `id_componente_vecchio` FROM `my_componenti`);
+UPDATE `my_componenti_interventi` SET `id_componente` = (SELECT `id` FROM `my_componenti` WHERE `id_componente_vecchio` = `my_componenti_interventi`.`id_componente`);
+ALTER TABLE `my_componenti_interventi` ADD FOREIGN KEY (`id_componente`) REFERENCES `my_componenti`(`id`) ON DELETE CASCADE;
+
+-- Aggiornamento foreign keys
+ALTER TABLE `my_componenti` ADD FOREIGN KEY (`id_intervento`) REFERENCES `in_interventi`(`id`) ON DELETE SET NULL,
+    ADD FOREIGN KEY (`id_sostituzione`) REFERENCES `my_componenti`(`id`) ON DELETE SET NULL,
+    ADD FOREIGN KEY (`id_impianto`) REFERENCES `my_impianti`(`id`) ON DELETE CASCADE,
+    ADD FOREIGN KEY (`id_articolo`) REFERENCES `mg_articoli`(`id`) ON DELETE CASCADE;
+

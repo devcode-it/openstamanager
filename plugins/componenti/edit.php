@@ -17,177 +17,235 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Models\Plugin;
+use Plugins\ComponentiImpianti\Componente;
+
 include_once __DIR__.'/../../core.php';
 
-echo '<hr>';
+$compontenti_impianto = Componente::where('id_impianto', '=', $id_record);
 
-$componenti = $dbo->fetchArray('SELECT my_componenti_articoli.*, my_impianti.idanagrafica, CONCAT(a.codice, " - ", a.descrizione) AS art_sostituito, CONCAT(b.codice, " - ", b.descrizione)  AS art_installato, a.codice FROM my_componenti_articoli LEFT JOIN my_impianti ON my_componenti_articoli.id_impianto=my_impianti.id LEFT JOIN mg_articoli AS a ON my_componenti_articoli.pre_id_articolo=a.id LEFT JOIN mg_articoli AS b ON my_componenti_articoli.id_articolo=b.id WHERE id_impianto='.prepare($id_record).' ORDER BY data_registrazione, id_articolo DESC');
+$componenti_installati = (clone $compontenti_impianto)
+    ->whereNull('data_sostituzione')
+    ->whereNull('data_rimozione')
+    ->get();
+$componenti_sostituiti = (clone $compontenti_impianto)
+    ->whereNotNull('data_sostituzione')
+    ->get();
+$componenti_rimossi = (clone $compontenti_impianto)
+    ->whereNotNull('data_rimozione')
+    ->get();
 
-$installati = 0;
-$disinstallati = 0;
+echo generaListaComponenti($componenti_installati, [
+    'type' => 'primary',
+    'title' => tr('Componenti installati'),
+    'date' => 'data_installazione',
+    'date_name' => tr('Installato'),
+]);
 
-foreach ($componenti as $componente) {
-    if (!empty($componente['pre_id_articolo'])) {
-        $id_articolo = $componente['pre_id_articolo'];
-        $check_value = 1;
-        $box = 'danger';
-        $articolo = $componente['art_sostituito'];
-        $data = dateFormat($componente['data_disinstallazione']);
-        $text = 'DISINSTALLATO';
-        $class = 'danger';
-        $title = ''.tr('Storico').'';
-        $table = 'default';
-        if ($disinstallati == 0) {
-            echo '
-            <div class="row">
-                <div class="col-md-12 text-center">
-                    <h4 class="text-danger">ARTICOLI DISINSTALLATI</h4>
-                </div>
-            </div>
-            <hr>';
-            ++$disinstallati;
-        }
-    } else {
-        $id_articolo = $componente['id_articolo'];
-        $check_value = 0;
-        $box = 'primary';
-        $articolo = $componente['art_installato'];
-        $data = dateFormat($componente['data_installazione']);
-        $text = 'INSTALLATO';
-        $class = 'primary';
-        $title = ''.tr('Dati').'';
-        $table = 'primary';
-        if ($installati == 0) {
-            echo '
-            <div class="row">
-                <div class="col-md-12 text-center">
-                    <h4 class="text-blue">ARTICOLI INSTALLATI</h4>
-                </div>
-            </div>
-            <hr>';
-            ++$installati;
-        }
-    }
+echo generaListaComponenti($componenti_sostituiti, [
+    'type' => 'warning',
+    'title' => tr('Componenti sostituiti'),
+    'date' => 'data_sostituzione',
+    'date_name' => tr('Sostituzione'),
+]);
 
-    $allegati = $dbo->fetchOne('SELECT COUNT(id) AS num FROM zz_files WHERE id_plugin='.prepare($id_plugin).' AND id_record='.$componente['id'].' GROUP BY id_record')['num'];
+echo generaListaComponenti($componenti_rimossi, [
+    'type' => 'danger',
+    'title' => tr('Componenti rimossi'),
+    'date' => 'data_rimozione',
+    'date_name' => tr('Rimosso'),
+]);
 
-    if ($allegati) {
-        $icon = 'fa fa-check text-success';
-    } else {
-        $icon = 'fa fa-times text-danger';
+function generaListaComponenti($componenti, $options)
+{
+    $type = $options['type'];
+    $title = $options['title'];
+    $date = $options['date'];
+    $date_name = $options['date_name'];
+
+    $database = database();
+    $plugin = Plugin::pool('Componenti');
+    $module = $plugin->module;
+
+    if (empty($componenti) || $componenti->isEmpty()) {
+        return;
     }
 
     echo '
-    <form action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post" role="form">
-        <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
-        <input type="hidden" name="id_record" value="'.$id_record.'">
-        <input type="hidden" name="sostituito" value="'.$check_value.'">
-        <input type="hidden" name="backto" value="record-edit">
-        <input type="hidden" name="op" value="update">
+<div class="row">
+    <div class="col-md-12 text-center">
+        <h4 class="text-'.$type.'">'.$title.'</h4>
+    </div>
+</div>
+<hr>';
 
+    echo '
+<div class="box collapsed-box box-'.$type.'">
+    <div class="box-header with-border mini">
+        <table class="table" style="margin:0; padding:0;">
+            <thead>
+                <tr>
+                    <th class="text-center">'.tr('ID', [], ['upper' => true]).'</td>
+                    <th class="text-center">'.tr('Articolo', [], ['upper' => true]).'</td>
+                    <th class="text-center" width="20%">'.tr($date_name, [], ['upper' => true]).'</th>
+                    <th class="text-center" width="20%">'.tr('Registrazione', [], ['upper' => true]).'</th>
+                    <th class="text-center" width="10%">'.tr('Allegati', [], ['upper' => true]).'</th>
+                </tr>
+            </thead>
 
-        <div class="panel-group" id="accordion">
-            <div class="box collapsed-box box-'.$box.'">
-                <div class="box-header with-border mini">
-                    <small class="text-'.$class.'">
-                        <table class="table" style="margin:0; padding:0;">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">'.tr('ARTICOLO').'</td>
-                                    <th class="text-center" width="20%">'.$text.'</th>
-                                    <th class="text-center" width="20%">'.tr('REGISTRAZIONE').'</th> 
-                                    <th class="text-center" width="10%">'.tr('ALLEGATI').'</th>
-                                </tr>
-                                <tr>
-                                    <td class="text-center">'.$articolo.'</td>
-                                    <td class="text-center">'.$data.'</td>
-                                    <td class="text-center">'.dateFormat($componente['data_registrazione']).'</td>
-                                    <td class="text-center"><i class="'.$icon.' fa-lg"></i></td>
-                                </tr>
-                            </thead>
-                        </table>
-                    </small>
+            <tbody>';
 
-                    <div class="box-tools pull-right">
-                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                            <i class="fa fa-plus"></i>
-                        </button>
-                    </div>
-                </div>
-                <div id="collapse_'.$j.'" class="box-body">
-                    <div class="panel panel-'.$table.'">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">'.$title.'</h3>
-                        </div>
-                    
+    foreach ($componenti as $componente) {
+        $articolo = $componente->articolo;
+        $numero_allegati = $database->fetchNum('SELECT id FROM zz_files WHERE id_plugin='.prepare($id_plugin).' AND id_record='.$componente['id'].' GROUP BY id_record');
 
-                        <div class="panel-body">
-                        
-                            <div class="row">
-                                <div class="col-md-6">
-                                    {[ "type":"select","label":"'.tr('Articolo').'","name":"id_articolo['.$componente['id'].']", "required":"1","value":"'.$id_articolo.'", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero": 1} ]}
-                                </div>
-                                <div class="col-md-2">
-                                    {[ "type":"date","label":"'.tr('Data registrazione').'","name":"data_registrazione['.$componente['id'].']", "value":"'.$componente['data_registrazione'].'" ]}
-                                </div>
-                                <div class="col-md-2">
-                                    {[ "type":"date","label":"'.tr('Data installazione').'","name":"data_installazione['.$componente['id'].']", "value":"'.$componente['data_installazione'].'" ]}
-                                </div>
+        $data = dateFormat($componente[$date]);
+        $icona_allegati = $numero_allegati == 0 ? 'fa fa-times text-danger' : 'fa fa-check text-success';
 
-                                <div class="col-md-2">
-                                    {[ "type":"date","label":"'.tr('Data disinstallazione').'","name":"data_disinstallazione['.$componente['id'].']", "value":"'.$componente['data_disinstallazione'].'" ]}
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-12">
-                                    {[ "type":"textarea","label":"'.tr('Note').'","name":"note['.$componente['id'].']", "value":"'.$componente['note'].'" ]}
-                                </div>
-                            </div>
-
-                            <!-- PULSANTI -->
-                            <div class="row">
-                                <div class="col-md-1">
-                                    <button type="button" class="btn btn-danger" onclick="elimina('.$componente['id'].')"><i class="fa fa-trash"></i> '.tr('Elimina').'</button>
-                                </div>
-                                <div class="col-md-1">
-                                    <a onclick="openModal(\'Aggiungi file\', \''.$structure->fileurl('allegati.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'id_record='.$id_record.'&id='.$componente['id'].'\');" class="btn btn-default">
-                                            <i class="fa fa-file-text-o"></i> '.tr('Allegati _NUM_', [
-                                                '_NUM_' => $allegati,
-                                            ]).'
-                                    </a>
-                                </div>';
-
-    if (!empty($componente['id_articolo'])) {
         echo '
-                                <div class="col-md-9">
-                                    <button type="button" class="btn btn-warning pull-right" onclick="sostituisci('.$componente['id'].')"><i class="fa fa-cog"></i> '.tr('Sostituisci').'</button>
-                                </div>';
-    }
-    echo '
-                                <div class="col-md-1 pull-right">
-                                    <button type="submit" class="btn btn-success pull-right"><i class="fa fa-check"></i> '.tr('Salva').'</button>
-                                </div>
+                <tr class="riga-componente" data-id="'.$componente->id.'">
+                    <td class="text-center">#'.$componente->id.'</td>
+                    <td class="text-center">'.$articolo->codice.' - '.$articolo->descrizione.'</td>
+                    <td class="text-center">'.$data.'</td>
+                    <td class="text-center">'.dateFormat($componente->data_registrazione).'</td>
+                    <td class="text-center">
+                        <i class="'.$icona_allegati.' fa-lg"></i>
+
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" onclick="toggleDettagli(this)">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr class="dettagli-componente" data-id="'.$componente->id.'" style="display: none">
+                    <td colspan="4">
+                        <div class="panel panel-'.$type.'">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">'.tr('Dati').'</h3>
+                            </div>
+
+                            <div class="panel-body">
+                                <form action="'.base_path().'/editor.php" method="post" role="form">
+                                    <input type="hidden" name="id_module" value="'.$module->id.'">
+                                    <input type="hidden" name="id_record" value="'.$componente->id_impianto.'">
+                                    <input type="hidden" name="id_plugin" value="'.$plugin->id.'">
+
+                                    <input type="hidden" name="id_componente" value="'.$componente->id.'">
+                                    <input type="hidden" name="backto" value="record-edit">
+                                    <input type="hidden" name="op" value="update">
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "id": "id_articolo_'.$componente->id.'", "disabled": "1", "value": "'.$componente->id_articolo.'", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero": 1} ]}
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            {[ "type": "date", "label": "'.tr('Data registrazione').'", "name": "data_registrazione", "id": "data_registrazione_'.$componente->id.'", "value": "'.$componente['data_registrazione'].'" ]}
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            {[ "type": "date", "label": "'.tr('Data installazione').'", "name": "data_installazione", "id": "data_installazione_'.$componente->id.'", "value": "'.$componente['data_installazione'].'" ]}
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            {[ "type": "date", "label": "'.tr('Data rimozione').'", "name": "data_rimozione", "id": "data_rimozione_'.$componente->id.'", "value": "'.$componente['data_rimozione'].'" ]}
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            {[ "type": "ckeditor", "label": "'.tr('Note').'", "name": "note", "id": "note_'.$componente->id.'", "value": "'.$componente['note'].'" ]}
+                                        </div>
+                                    </div>
+
+                                    <!-- PULSANTI -->
+                                    <div class="row">';
+        if (empty($componente->id_sostituzione)) {
+            echo '
+                                        <div class="col-md-1">
+                                            <button type="button" class="btn btn-danger" onclick="rimuoviComponente(this)">
+                                                <i class="fa fa-trash"></i> '.tr('Rimuovi').'
+                                            </button>
+                                        </div>';
+        }
+
+        echo '
+                                        <div class="col-md-1">
+                                            <button type="button" class="btn btn-default" onclick="gestisciAllegati(this)">
+                                                <i class="fa fa-file-text-o"></i> '.tr('Allegati (_NUM_)', [
+                                                    '_NUM_' => $numero_allegati,
+                                                ]).'
+                                            </button>
+                                        </div>';
+
+        if (empty($componente->id_sostituzione)) {
+            echo '
+                                        <div class="col-md-9">
+                                            <button type="button" class="btn btn-warning pull-right" onclick="sostituisciComponente(this)">
+                                                <i class="fa fa-cog"></i> '.tr('Sostituisci').'
+                                            </button>
+                                        </div>';
+        }
+        echo '
+                                        <div class="col-md-1 pull-right">
+                                            <button type="submit" class="btn btn-success pull-right">
+                                                <i class="fa fa-check"></i> '.tr('Salva').'
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </form>';
+                    </td>
+                </tr>';
+    }
+
+    echo '
+            </tbody>
+        </table>
+
+    </div>
+</div>';
 }
 
 echo '
 <script>
-    function sostituisci(id) {
-        if(confirm("'.tr('Vuoi sostituire questo componente?').'")){
-            redirect("'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituisci&backto=record-edit&id_plugin='.$id_plugin.'&id_old="+id);
+    function toggleDettagli(trigger) {
+        const tr = $(trigger).closest("tr");
+        const dettagli = tr.next();
+
+        if (dettagli.css("display") === "none"){
+            dettagli.show(500);
+        } else {
+            dettagli.hide(500);
         }
     }
 
-    function elimina(id) {
+    function gestisciAllegati(trigger) {
+        const tr = $(trigger).closest("tr");
+        const id_componente = tr.data("id");
+
+        openModal(\'Aggiungi file\', \''.$structure->fileurl('allegati.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'id_record='.$id_record.'&id=\' + id_componente);
+    }
+
+    function sostituisciComponente(trigger) {
+        const tr = $(trigger).closest("tr");
+        const id_componente = tr.data("id");
+
+        if(confirm("'.tr('Vuoi sostituire questo componente?').'")) {
+            redirect("'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituisci&backto=record-edit&id_plugin='.$id_plugin.'&id_componente=" + id_componente + "&hash=tab_'.$structure->id.'");
+        }
+    }
+
+    function rimuoviComponente(trigger) {
+        const tr = $(trigger).closest("tr");
+        const id_componente = tr.data("id");
+
         if(confirm("'.tr('Vuoi eliminare questo componente?').'")){
-            redirect("'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=delete&backto=record-edit&id_plugin='.$id_plugin.'&id="+id);
+            redirect("'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=delete&backto=record-edit&id_plugin='.$id_plugin.'&id=" + id_componente + "&hash=tab_'.$structure->id.'");
         }
     }
 

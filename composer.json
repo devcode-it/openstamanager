@@ -109,7 +109,8 @@
             "Plugins\\PianificazioneFatturazione\\": ["plugins/pianificazione_fatturazione/custom/src/", "plugins/pianificazione_fatturazione/src/"],
             "Plugins\\StatisticheArticoli\\": ["plugins/statistiche_articoli/custom/src/", "plugins/statistiche_articoli/src/"],
             "Plugins\\ListinoClienti\\": ["plugins/listino_clienti/custom/src/", "plugins/listino_clienti/src/"],
-            "Plugins\\ListinoFornitori\\": ["plugins/listino_fornitori/custom/src/", "plugins/listino_fornitori/src/"]
+            "Plugins\\ListinoFornitori\\": ["plugins/listino_fornitori/custom/src/", "plugins/listino_fornitori/src/"],
+            "Plugins\\ComponentiImpianti\\": ["plugins/componenti/custom/src/", "plugins/componenti/src/"]
         },
         "files": [
             "lib/functions.php",

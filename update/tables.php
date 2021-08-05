@@ -92,7 +92,7 @@ return [
     'my_impianti_categorie',
     'my_impianti_contratti',
     'my_impianti_interventi',
-    'my_impianto_componenti',
+    'my_componenti',
     'or_ordini',
     'or_righe_ordini',
     'or_statiordine',

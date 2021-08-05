@@ -23,7 +23,7 @@ $matricole = (array) post('matricole');
 
 // Salvo gli impianti selezionati
 if (filter('op') == 'link_impianti') {
-    $matricole_old = $dbo->fetchArray('SELECT * FROM my_impianti_interventi WHERE idintervento='.prepare($id_record));
+    $matricole_old = $dbo->fetchArray('SELECT * FROM my_impianti_interventi WHERE idintervento = '.prepare($id_record));
     $matricole_old = array_column($matricole_old, 'idimpianto');
 
     // Individuazione delle matricole mancanti
@@ -31,7 +31,7 @@ if (filter('op') == 'link_impianti') {
         if (!in_array($matricola, $matricole)) {
             $dbo->query('DELETE FROM my_impianti_interventi WHERE idintervento='.prepare($id_record).' AND idimpianto = '.prepare($matricola));
 
-            $components = $dbo->fetchArray('SELECT * FROM my_impianto_componenti WHERE idimpianto = '.prepare($matricola));
+            $components = $dbo->fetchArray('SELECT * FROM my_componenti WHERE id_impianto = '.prepare($matricola));
             if (!empty($components)) {
                 foreach ($components as $component) {
                     $dbo->query('DELETE FROM my_componenti_interventi WHERE id_componente = '.prepare($component['id']).' AND id_intervento = '.prepare($id_record));
@@ -51,7 +51,7 @@ if (filter('op') == 'link_impianti') {
     $components = (array) post('componenti');
     $id_impianto = post('id_impianto');
 
-    $dbo->query('DELETE FROM my_componenti_interventi WHERE id_componente IN (SELECT id FROM my_impianto_componenti WHERE idimpianto = '.prepare($id_impianto).') AND id_intervento = '.prepare($id_record));
+    $dbo->query('DELETE FROM my_componenti_interventi WHERE id_componente IN (SELECT id FROM my_componenti WHERE id_impianto = '.prepare($id_impianto).') AND id_intervento = '.prepare($id_record));
 
     foreach ($components as $component) {
         $dbo->query('INSERT INTO my_componenti_interventi(id_componente, id_intervento) VALUES ('.prepare($component).', '.prepare($id_record).')');
@@ -87,13 +87,13 @@ echo '
         <div class="row">';
 foreach ($impianti_collegati as $impianto) {
     echo '
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <table class="table table-hover table-condensed table-striped">';
 
     // MATRICOLA
     echo '
                     <tr>
-                        <td class="text-right">'.tr('Matricola').':</td>
+                        <td class="text-right" width="25%">'.tr('Matricola').':</td>
                         <td valign="top">'.$impianto['matricola'].'</td>
                     </tr>';
 
@@ -135,7 +135,9 @@ foreach ($impianti_collegati as $impianto) {
 
                                 {[ "type": "select", "label": "'.tr('Componenti').'", "multiple": 1, "name": "componenti[]", "id": "componenti_'.$impianto['id'].'", "ajax-source": "componenti", "select-options": {"matricola": '.$impianto['id'].'}, "value": "'.implode(',', $ids).'", "readonly": "'.!empty($readonly).'", "disabled": "'.!empty($disabled).'" ]}
 
-                                <button type="submit" class="btn btn-success" '.$disabled.'><i class="fa fa-check"></i> '.tr('Salva componenti').'</button>
+                                <button type="submit" class="btn btn-success" '.$disabled.'>
+                                    <i class="fa fa-check"></i> '.tr('Salva componenti').'
+                                </button>
                             </form>
                         </td>
                     </tr>

@@ -24,6 +24,7 @@ use Modules\Emails\Mail;
 use Modules\Emails\Template;
 use Modules\ListeNewsletter\Lista;
 use Modules\Newsletter\Newsletter;
+use Respect\Validation\Validator as v;
 
 include_once __DIR__.'/../../core.php';
 
@@ -64,10 +65,16 @@ switch (filter('op')) {
         $uploads = $newsletter->uploads()->pluck('id');
 
         $destinatari = $newsletter->destinatari();
-        foreach ($destinatari as $destinatario) {
-            $anagrafica = $destinatario instanceof Anagrafica ? $destinatario : $destinatario->anagrafica;
+        $count = $destinatari->count();
+        for ($i = 0; $i < $count; $i++) {
+            $destinatario = $destinatari->skip($i)->first();
+            $origine = $destinatario->getOrigine();
+
+            $anagrafica = $origine instanceof Anagrafica ? $origine : $origine->anagrafica;
+
             $abilita_newsletter = $anagrafica->enable_newsletter;
-            if (empty($destinatario->email) || empty($abilita_newsletter)) {
+            $email = $destinatario->email;
+            if (empty($email) || empty($abilita_newsletter) || !v::email()->validate($email)) {
                 continue;
             }
 
@@ -75,7 +82,7 @@ switch (filter('op')) {
             $mail = Mail::build($user, $template, $anagrafica->id);
 
             // Completamento informazioni
-            $mail->addReceiver($destinatario->email);
+            $mail->addReceiver($email);
             $mail->subject = $newsletter->subject;
             $mail->content = $newsletter->content;
             $mail->id_newsletter = $newsletter->id;
@@ -88,13 +95,8 @@ switch (filter('op')) {
             $mail->save();
 
             // Aggiornamento riferimento per la newsletter
-            $database->update('em_newsletter_receiver', [
-                'id_email' => $mail->id,
-            ], [
-                'record_type' => get_class($destinatario),
-                'record_id' => $destinatario->id,
-                'id_newsletter' => $newsletter->id,
-            ]);
+            $destinatario->id_email = $mail->id;
+            $destinatario->save();
         }
 
         // Aggiornamento stato newsletter

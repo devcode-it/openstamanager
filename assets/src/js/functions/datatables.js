@@ -116,7 +116,7 @@ function start_datatables() {
                 } else {
                     $('#mini-loader').hide();
                 }
-            })
+            });
         }
     });
 }

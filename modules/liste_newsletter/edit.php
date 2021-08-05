@@ -141,7 +141,7 @@ $(document).ready(function() {
         senza_consenso.hide();
     }
 
-    $("#destinatari").DataTable({
+    const table = $("#destinatari").DataTable({
         language: globals.translations.datatables,
         retrieve: true,
         ordering: false,
@@ -158,6 +158,14 @@ $(document).ready(function() {
         },
         searchDelay: 500,
         pageLength: 50,
+    });
+
+    table.on("processing.dt", function (e, settings, processing) {
+        if (processing) {
+            $("#mini-loader").show();
+        } else {
+            $("#mini-loader").hide();
+        }
     });
 });
 </script>';

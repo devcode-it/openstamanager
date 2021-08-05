@@ -183,12 +183,12 @@ class Prints
             exit();
         }
 
-        if (self::isOldStandard($print)) {
-            return self::oldLoader($infos['id'], $id_record, $directory, $return_string);
-        } elseif (!self::isCompletelyCustom($print)) {
-            return self::loader($infos['id'], $id_record, $directory, $return_string);
-        } else {
+        if (self::isCompletelyCustom($print)) {
             return self::customLoader($infos['id'], $id_record, $directory, $return_string);
+        } elseif (self::isOldStandard($print)) {
+            return self::oldLoader($infos['id'], $id_record, $directory, $return_string);
+        } else {
+            return self::loader($infos['id'], $id_record, $directory, $return_string);
         }
     }
 

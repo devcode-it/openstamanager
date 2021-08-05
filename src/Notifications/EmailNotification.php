@@ -37,7 +37,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
 
     public function __construct($account = null, $exceptions = null)
     {
-        parent::__construct(true);
+        parent::__construct($exceptions);
 
         $this->CharSet = 'UTF-8';
 
@@ -215,7 +215,6 @@ class EmailNotification extends PHPMailer implements NotificationInterface
         // Segnalazione degli errori
         if (!$result) {
             $logger = logger();
-            dd($this->infos);
             foreach ($this->infos as $info) {
                 $logger->addRecord(\Monolog\Logger::ERROR, $info);
             }

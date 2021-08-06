@@ -369,6 +369,8 @@ abstract class Component extends Model
         $new->qta_evasa = 0;
         $new->original_type = null;
         $new->original_id = null;
+        $new->original_document_type = null;
+        $new->original_document_id = null;
 
         return $new;
     }

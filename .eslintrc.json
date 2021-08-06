@@ -11,7 +11,8 @@
     ],
     "extends": [
         "airbnb-base",
-        "plugin:flowtype/recommended"
+        "plugin:flowtype/recommended",
+        "plugin:mithril/recommended"
     ],
     "globals": {
         "Atomics": "readonly",
@@ -37,6 +38,7 @@
         ],
         "class-methods-use-this": "off",
         "flowtype/no-types-missing-file-annotation": "off",
-        "no-underscore-dangle": "off"
+        "no-underscore-dangle": "off",
+        "mithril/jsx-no-target-blank": "off"
     }
 }

@@ -195,7 +195,7 @@ if (post('db_host') !== null) {
     "generated" : "true",
     "icons" : [
         {
-            "src": "assets/dist/img/logo.png",
+            "src": "assets/dist/img/logo_completo.png",
             "type": "image/png",
             "sizes": "489x91"
         }
@@ -329,7 +329,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     echo '
         <div class="box box-center-large box-warning">
             <div class="box-header with-border text-center">
-                <img src="'.$img.'/logo.png" width="300" alt="'.tr('OSM Logo').'">
+                <img src="'.$img.'/logo_completo.png" width="300" alt="'.tr('OSM Logo').'">
             </div>
 
             <div class="box-body" id="smartwizard">

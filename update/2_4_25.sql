@@ -25,3 +25,6 @@ UPDATE `zz_views` SET `query` = '(SELECT COUNT(*) FROM `em_newsletter_receiver` 
 
 ALTER TABLE `em_newsletter_receiver` ADD `id` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT;
 ALTER TABLE `em_list_receiver` ADD `id` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT;
+
+-- Aggiunta procedura import conti
+INSERT INTO `zz_imports` (`id_module`, `name`, `class`) VALUES ((SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Piano dei conti'), 'Piano dei conti', 'Modules\\Partitario\\Import\\CSV');

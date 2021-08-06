@@ -14,6 +14,18 @@
     "dependencies": {
         "@inertiajs/inertia": "^0.10.0",
         "@maicol07/inertia-mithril": "^0.3.3",
+        "@material/card": "^12.0.0",
+        "@material/layout-grid": "^12.0.0",
+        "@material/mwc-button": "^0.22.1",
+        "@material/mwc-checkbox": "^0.22.1",
+        "@material/mwc-fab": "^0.22.1",
+        "@material/mwc-formfield": "^0.22.1",
+        "@material/mwc-select": "^0.22.1",
+        "@material/mwc-textarea": "^0.22.1",
+        "@material/mwc-textfield": "^0.22.1",
+        "@material/ripple": "^12.0.0",
+        "@material/theme": "^12.0.0",
+        "@mdi/font": "^5.9.55",
         "jquery": "^3.6.0",
         "mithril": "^2.0.4"
     },

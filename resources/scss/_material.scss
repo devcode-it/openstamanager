@@ -1,0 +1,162 @@
+@use "variables";
+@use '~@material/theme' with (
+    $primary: variables.$primary,
+    $secondary: variables.$secondary
+);
+@use "~@material/card";
+@use "~@material/layout-grid/mdc-layout-grid";
+@use "~@mdi/font";
+
+@include card.core-styles;
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--mdc-theme-text-primary-on-background, black);
+    font-family: #{variables.$headings_font};
+}
+
+p,
+small {
+    color: var(--mdc-theme-text-primary-on-background, black);
+    font-family: #{variables.$body_font};
+}
+
+body {
+    background-color: var(--mdc-theme-background, #fff);
+}
+
+/* ---------------------------
+    MDC Cards
+--------------------------- */
+.mdc-card {
+    padding: 16px;
+}
+
+.mdc-card__thumbnail {
+    padding-right: 16px;
+    font-size: 24px;
+}
+
+.mdc-card__title {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-family: var(--mdc-typography-headline1-font-family, variables.$body_font);
+    font-size: 1.25rem;
+    font-weight: 500;
+    letter-spacing: 0.0125em;
+    line-height: 2rem;
+}
+
+.mdc-card__subhead {
+    display: block;
+    font-family: var(--mdc-typography-subtitle1-font-family, variables.$body_font);
+}
+
+.mdc-card__supporting-text {
+    display: block;
+    padding-top: 16px;
+    font-family: var(--mdc-typography-font-family, variables.$body_font);
+}
+
+.mdc-card__title,
+.mdc-card__subhead,
+.mdc-card__supporting-text {
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    text-decoration: inherit;
+    text-transform: inherit;
+}
+
+.mdc-card__subhead,
+.mdc-card__supporting-text {
+    font-size: 0.875rem;
+    font-weight: 400;
+    letter-spacing: 0.0178571429em;
+    line-height: 1.25rem;
+    opacity: 0.6;
+}
+
+/* ---------------------------
+    MDC Sticky FABs
+--------------------------- */
+
+mwc-fab.sticky {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+}
+
+/* ---------------------------
+    MDC Theme and Typography
+--------------------------- */
+:root {
+    --mdc-theme-primary: #{variables.$primary};
+    --mdc-theme-primary2: #{variables.$primary}; // Fix for MWC Drawer styling
+    --mdc-theme-secondary: #{variables.$secondary};
+    --mdc-theme-background: #fff;
+    --mdc-theme-surface: #fff;
+    --mdc-theme-error: #b00020;
+    --mdc-theme-text-primary-on-background: #000d;
+    --mdc-theme-text-icon-on-background: #00000060;
+    --mdc-theme-outline-color: #e0e0e0;
+    --mdc-typography-font-family: #{variables.$body_font};
+    --mdc-typography-button-font-family: #{variables.$headings_font};
+
+    @each $type in headline1, headline2, headline3, headline4, headline5, headline6, subtitle1, subtitle2 {
+        --mdc-typography-#{$type}-font-family: #{variables.$body_font};
+        --mdc-typography-#{$type}-font-weight: 500;
+    }
+}
+
+.mdc-high-contrast {
+    --mdc-theme-primary: #{lighten(variables.$primary, 100%)};
+    --mdc-theme-primary2: #{lighten(variables.$primary, 50%)}; // Fix for MWC Drawer styling
+    --mdc-theme-secondary: #{variables.$secondary};
+    --mdc-theme-on-primary: #000;
+    --mdc-theme-on-secondary: #000;
+    --mdc-theme-error: #cf6679;
+    --mdc-theme-text-primary-on-background: #fff;
+    --mdc-theme-text-secondary-on-background: #b9b9b989;
+    --mdc-theme-text-icon-on-background: #e7e7e7;
+    --mdc-theme-background: #121212;
+    --mdc-theme-surface: #121212;
+    --mdc-ripple-color: #fff;
+    --mdc-button-outline-color: #e0e0e0;
+    --mdc-dialog-heading-ink-color: #fff;
+    --mdc-dialog-content-ink-color: #fff;
+    --mdc-checkbox-unchecked-color: #fff;
+    --mdc-text-field-idle-line-color: #fff;
+
+    [slot="appContent"] {
+        color: var(--mdc-theme-on-primary, #{variables.$primary});
+    }
+
+    a {
+        color: var(--mdc-theme-primary, #{variables.$primary});
+    }
+
+    mwc-textfield {
+        --mdc-theme-primary: var(--mdc-theme-secondary, #{variables.$secondary});
+    }
+
+    mwc-icon-button,
+    i.mdi:not(.light-bg) {
+        color: var(--mdc-theme-text-icon-on-background, #000d);
+    }
+
+    mwc-button {
+        --mdc-ripple-color: var(--mdc-theme-primary, #{variables.$primary});
+
+        &[raised] {
+            --mdc-ripple-color: unset;
+
+            i.mdi {
+                color: unset;
+            }
+        }
+    }
+}

@@ -28,7 +28,7 @@ use Util\Zip;
 
 // Segmenti
 $id_fatture = module('Fatture di vendita')['id'];
-if (!!session('module_'.$id_fatture.'.id_segment') === null)) {
+if (session('module_'.$id_fatture.'.id_segment') === null) {
     $segments = Modules::getSegments($id_fatture);
     session(['module_'.$id_fatture.'.id_segment' => isset($segments[0]['id']) ? $segments[0]['id'] : null]);
 }
@@ -247,7 +247,7 @@ switch (post('op')) {
         break;
 }
 
-if (App::debug()) {
+if (AppLegacy::debug()) {
     $operations['delete-bulk'] = [
         'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span> <span class="label label-danger">beta</span>',
     ];

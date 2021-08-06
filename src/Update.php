@@ -389,6 +389,28 @@ class Update
     }
 
     /**
+     * Ottiene i contenuti di un file.
+     *
+     * @param string $file
+     *
+     * @return string
+     */
+    public static function getFile($file)
+    {
+        $file = (string_contains($file, base_dir().DIRECTORY_SEPARATOR)) ? $file : base_dir().DIRECTORY_SEPARATOR.$file;
+
+        $result = '';
+
+        $filepath = realpath($file);
+        if (!empty($filepath)) {
+            $result = file_get_contents($filepath);
+            $result = str_replace(["\r\n", "\n"], '', $result);
+        }
+
+        return trim($result);
+    }
+
+    /**
      * Controlla la presenza di aggiornamenti e prepara il database per la procedura.
      */
     protected static function prepareToUpdate()
@@ -533,28 +555,6 @@ class Update
         }
 
         return $update['directory'].'/update/'.$version;
-    }
-
-    /**
-     * Ottiene i contenuti di un file.
-     *
-     * @param string $file
-     *
-     * @return string
-     */
-    public static function getFile($file)
-    {
-        $file = (string_contains($file, base_dir().DIRECTORY_SEPARATOR)) ? $file : base_dir().DIRECTORY_SEPARATOR.$file;
-
-        $result = '';
-
-        $filepath = realpath($file);
-        if (!empty($filepath)) {
-            $result = file_get_contents($filepath);
-            $result = str_replace(["\r\n", "\n"], '', $result);
-        }
-
-        return trim($result);
     }
 
     /**

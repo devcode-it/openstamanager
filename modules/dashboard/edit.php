@@ -48,7 +48,7 @@ if (session('dashboard.idtecnici') === null) {
             $list[] = "'".$tecnico['id']."'";
         }
     }
-    
+
     session(['dashboard.idtecnici' => $list]);
 }
 
@@ -57,7 +57,7 @@ if (session('dashboard.idstatiintervento') === null) {
     foreach ($stati_intervento as $stato) {
         $list[] = "'".$stato['id']."'";
     }
-    
+
     session(['dashboard.idstatiintervento' => $list]);
 }
 
@@ -66,7 +66,7 @@ if (session('dashboard.idtipiintervento') === null) {
     foreach ($tipi_intervento as $tipo) {
         $list[] = "'".$tipo['id']."'";
     }
-    
+
     session(['dashboard.idtipiintervento' => $list]);
 }
 

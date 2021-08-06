@@ -31,9 +31,9 @@ $module_fatture = 'Fatture di vendita';
 
 // Segmenti
 $id_fatture = module($module_fatture)['id'];
-if (!!session('module_'.$id_fatture.'.id_segment') === null)) {
+if (session('module_'.$id_fatture.'.id_segment') === null) {
     $segments = Modules::getSegments($id_fatture);
-    session('module_'.$id_fatture.'.id_segment') = isset($segments[0]['id']) ? $segments[0]['id'] : null;
+    session('module_'.$id_fatture.'.id_segment', isset($segments[0]['id']) ? $segments[0]['id'] : null);
 }
 $id_segment = session('module_'.$id_fatture.'.id_segment');
 $idconto = setting('Conto predefinito fatture di vendita');

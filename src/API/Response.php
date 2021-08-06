@@ -165,7 +165,6 @@ class Response
 
         $code = self::$status[$error]['code'];
 
-
         return self::response([
             'status' => $code,
         ]);

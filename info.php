@@ -42,7 +42,7 @@ if (file_exists(base_dir().'/assistenza.php')) {
     echo '
         <div class="row">
             <div class="col-md-8">
-                <p>'.tr('<b>OpenSTAManager</b> è un <b>software libero</b> mantenuto da <a href="https://www.devcode.it" target="_blank">Devcode Srl</a>').'.</p>
+                <p>'.tr('<b>OpenSTAManager</b> è un <b>software libero</b> mantenuto da <a href="https://www.devcode.it" target="_blank">DevCode Srl</a>').'.</p>
 
                 <p>'.tr('Il nome significa "Gestore di STA (<b>Servizio Tecnico Assistenza</b>) aperto" ed è stato creato per gestire e archiviare l\'assistenza tecnica fornita ai propri clienti').'.</p>
             </div>

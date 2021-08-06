@@ -96,7 +96,7 @@ class Upload extends Model
         }
         $name = isset($data['name']) ? $data['name'] : $name;
         $category = isset($data['category']) ? $data['category'] : $category;
-        
+
         // Nome e categoria dell'allegato
         $model->name = !empty($name) ? $name : $original_name;
         $model->category = $category;
@@ -124,8 +124,7 @@ class Upload extends Model
         if (
             (is_array($source) && is_uploaded_file($source['tmp_name']) && !move_uploaded_file($source['tmp_name'], $file)) ||
             (is_string($source) && is_file($source) && !copy($source, $file)) ||
-            (is_string($source) && !is_file($source) && file_put_contents($file, $source) === false)
-            ($source instanceof UploadedFile && !$source->storeAs($directory, $filename))
+            (is_string($source) && !is_file($source) && file_put_contents($file, $source) === false)($source instanceof UploadedFile && !$source->storeAs($directory, $filename))
         ) {
             throw new UnexpectedValueException("Errore durante il salvataggio dell'allegato");
         }

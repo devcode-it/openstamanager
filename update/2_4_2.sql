@@ -455,7 +455,8 @@ UPDATE `zz_plugins` SET `script` = '', `options` = '	{ "main_query": [	{	"type":
 UPDATE `an_referenti` SET `idsede` = 0 WHERE `idsede` = -1;
 
 -- Rimozione co_preventivi_interventi
-ALTER TABLE `in_interventi` ADD `id_preventivo` int(11), ADD FOREIGN KEY (`id_preventivo`) REFERENCES `co_preventivi`(`id`) ON DELETE CASCADE, ADD `id_contratto` int(11), ADD FOREIGN KEY (`id_contratto`) REFERENCES `co_contratti`(`id`) ON DELETE CASCADE;
+ALTER TABLE `in_interventi` ADD `id_preventivo` int(11), ADD `id_contratto` int(11);
+--ALTER TABLE `in_interventi` ADD FOREIGN KEY (`id_preventivo`) REFERENCES `co_preventivi`(`id`) ON DELETE CASCADE, ADD FOREIGN KEY (`id_contratto`) REFERENCES `co_contratti`(`id`) ON DELETE CASCADE;
 UPDATE `in_interventi` SET `id_preventivo` = (SELECT `idpreventivo` FROM `co_preventivi_interventi` WHERE `co_preventivi_interventi`.`idintervento` = `in_interventi`.`id` LIMIT 1);
 DROP TABLE `co_preventivi_interventi`;
 
@@ -560,7 +561,7 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_preventivi` WHERE 
 DELETE FROM co_righe_preventivi  WHERE  idpreventivo NOT IN (SELECT id FROM co_preventivi);
 
 -- Chiave secondaria per le righe del preventivo
-ALTER TABLE `co_righe_preventivi` ADD FOREIGN KEY (`idpreventivo`) REFERENCES `co_preventivi`(`id`) ON DELETE CASCADE;
+--ALTER TABLE `co_righe_preventivi` ADD FOREIGN KEY (`idpreventivo`) REFERENCES `co_preventivi`(`id`) ON DELETE CASCADE;
 
 -- Tabella categorie
 CREATE TABLE IF NOT EXISTS `my_impianti_categorie` (

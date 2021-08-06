@@ -230,7 +230,7 @@ switch (post('op')) {
             $intervento->delete();
 
             // Elimino il collegamento al componente
-            $dbo->query('DELETE FROM my_componenti WHERE idintervento='.prepare($id_record));
+            $dbo->query('DELETE FROM my_componenti WHERE id_intervento='.prepare($id_record));
 
             // Eliminazione associazione tecnici collegati all'intervento
             $dbo->query('DELETE FROM in_interventi_tecnici WHERE idintervento='.prepare($id_record));

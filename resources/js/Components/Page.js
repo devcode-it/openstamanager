@@ -6,7 +6,15 @@ import Component from './Component';
  * @abstract
  */
 export default class Page extends Component {
-  page = JSON.parse($('#app').attr('data-page'));
+  page: {
+    component: string,
+    locale: string,
+    props: Object,
+    translations: Object,
+    url: string,
+    version: string,
+    ...
+  } = JSON.parse($('#app').attr('data-page'));
 
   __(key: string, replace: Object = {}) {
     let translation = this.page.translations[key]

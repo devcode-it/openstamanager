@@ -70,6 +70,7 @@ echo '
 <script>
 globals.impostazioni = {
     errors: {},
+    numero_ricerche: 0,
 };
 
 $("[id^=impostazioni]").click(function() {
@@ -77,11 +78,29 @@ $("[id^=impostazioni]").click(function() {
 });
 
 $("#ricerca_impostazioni").change(function (){
-    let ricerca = $(this).val();
+    const ricerca = $(this).val();
+    const icon = $(this).parent().find("span");
     $(".box").removeClass("hidden");
+
+    // Segnalazione ricerca in corso
+    globals.impostazioni.numero_ricerche = globals.impostazioni.numero_ricerche + 1;
+    // Impostazione icona di caricamento
+    icon
+        .addClass("fa-spinner fa-spin")
+        .removeClass("fa-search")
 
     if (ricerca) {
         $.get("'.$structure->fileurl('actions.php').'?id_module='.$id_module.'&op=ricerca&search=" + ricerca, function(data) {
+            // Segnalazione ricerca completata
+            globals.impostazioni.numero_ricerche = globals.impostazioni.numero_ricerche - 1;
+
+            // Impostazione icona di ricerca
+            if (globals.impostazioni.numero_ricerche === 0){
+                icon
+                    .removeClass("fa-spinner fa-spin")
+                    .addClass("fa-search")
+            }
+
             $(".box").addClass("hidden");
 
             let sezioni = JSON.parse(data);

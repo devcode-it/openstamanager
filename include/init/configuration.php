@@ -110,7 +110,7 @@ if (post('db_host') !== null) {
         }
 
         echo $state;
-        throw new \App\Exceptions\LegacyExitException();
+        throw new \LegacyExitException();
     }
 
     // Creazione della configurazione
@@ -204,7 +204,7 @@ if (post('db_host') !== null) {
             file_put_contents('manifest.json', $manifest);
 
             redirect_legacy(base_url().'/index.php');
-            throw new \App\Exceptions\LegacyExitException();
+            throw new \LegacyExitException();
         }
     }
 }
@@ -609,4 +609,4 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 
 include_once AppLegacy::filepath('include|custom|', 'bottom.php');
 
-throw new \App\Exceptions\LegacyExitException();
+throw new \LegacyExitException();

@@ -88,7 +88,7 @@ class Permissions
             if (!auth()->check() && getURLPath() == slashes(base_url().'/index.php')) {
                 redirect_legacy(base_url().'/');
                 $result = false;
-                throw new \App\Exceptions\LegacyExitException();
+                throw new \LegacyExitException();
             } else {
                 if (!empty(self::$permissions)) {
                     foreach (self::$permissions as $module) {

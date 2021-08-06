@@ -88,7 +88,7 @@ if (filter('op') == 'send') {
     }
 
     redirect_legacy(base_url().'/bug.php');
-    throw new \App\Exceptions\LegacyExitException();
+    throw new \LegacyExitException();
 }
 
 $pageTitle = tr('Bug');

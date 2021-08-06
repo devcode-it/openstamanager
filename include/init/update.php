@@ -109,7 +109,7 @@ if (filter('action') == 'do_update') {
         </a>';
     }
 
-    throw new \App\Exceptions\LegacyExitException();
+    throw new \LegacyExitException();
 } elseif (Update::isUpdateAvailable()) {
     // Controllo se l'aggiornamento è in esecuzione
     if (Update::isUpdateLocked() && filter('force') === null) {
@@ -131,7 +131,7 @@ if (filter('action') == 'do_update') {
 
         include_once AppLegacy::filepath('include|custom|', 'bottom.php');
 
-        throw new \App\Exceptions\LegacyExitException();
+        throw new \LegacyExitException();
     }
 
     $firstuse = !$dbo->isInstalled() ? 'true' : 'false';

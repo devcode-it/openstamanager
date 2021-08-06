@@ -62,7 +62,7 @@ if (auth()->check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()
     } else {
         redirect_legacy(base_url().'/index.php?op=logout');
     }
-    throw new \App\Exceptions\LegacyExitException();
+    throw new \LegacyExitException();
 }
 
 // Procedura di installazione

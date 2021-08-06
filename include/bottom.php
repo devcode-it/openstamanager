@@ -41,7 +41,7 @@ echo '
         </div><!-- ./wrapper -->';
 
 if (auth()->check()) {
-    if (!empty($_SESSION['keep_alive'])) {
+    if (session('keep_alive') === true) {
         echo '
 		<script> setInterval("session_keep_alive()", 5*60*1000); </script>';
     }
@@ -88,10 +88,3 @@ echo '
         <script>$(document).ready(init)</script>
 	</body>
 </html>';
-
-// Retrocompatibilità
-if (!empty($id_record) || basename($_SERVER['PHP_SELF']) == 'controller.php' || basename($_SERVER['PHP_SELF']) == 'index.php') {
-    unset($_SESSION['infos']);
-    unset($_SESSION['errors']);
-    unset($_SESSION['warnings']);
-}

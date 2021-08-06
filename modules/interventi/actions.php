@@ -336,7 +336,7 @@ switch (post('op')) {
         // Collegamento all'Impianto tramite generazione Componente
         $id_impianto = post('id_impianto');
         $impianto = Impianto::find($id_impianto);
-        if (!empty($impianto)){
+        if (!empty($impianto)) {
             // Data di inizio dell'intervento (data_richiesta in caso di assenza di sessioni)
             $data_registrazione = $intervento->inizio ?: $intervento->data_richiesta;
 

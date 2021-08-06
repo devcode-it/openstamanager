@@ -99,7 +99,7 @@ switch ($resource) {
             ];
 
             $impianti = $superselect['matricola'];
-            if (!empty($impianti)){
+            if (!empty($impianti)) {
                 $where[] = 'my_componenti.id_impianto IN ('.$impianti.')';
             }
 

@@ -24,6 +24,14 @@ include_once __DIR__.'/../../core.php';
 
 $compontenti_impianto = Componente::where('id_impianto', '=', $id_record);
 
+// Avviso sul numero di componenti
+if ($compontenti_impianto->count() == 0){
+    echo '
+<div class="alert alert-info">
+    <i class="fa fa-info-circle"></i> '.tr("Nessun componente disponibile per l'impianto corrente").'
+</div>';
+}
+
 $componenti_installati = (clone $compontenti_impianto)
     ->whereNull('data_sostituzione')
     ->whereNull('data_rimozione')
@@ -35,40 +43,43 @@ $componenti_rimossi = (clone $compontenti_impianto)
     ->whereNotNull('data_rimozione')
     ->get();
 
-echo generaListaComponenti($componenti_installati, [
-    'type' => 'primary',
-    'title' => tr('Componenti installati'),
-    'date' => 'data_installazione',
-    'date_name' => tr('Installato'),
-]);
+$elenchi = [
+    [
+        'componenti' => $componenti_installati,
+        'type' => 'primary',
+        'title' => tr('Componenti installati'),
+        'date' => 'data_installazione',
+        'date_name' => tr('Installato'),
+    ],
+    [
+        'componenti' => $componenti_sostituiti,
+        'type' => 'warning',
+        'title' => tr('Componenti sostituiti'),
+        'date' => 'data_sostituzione',
+        'date_name' => tr('Sostituzione'),
+    ],
+    [
+        'componenti' => $componenti_rimossi,
+        'type' => 'danger',
+        'title' => tr('Componenti rimossi'),
+        'date' => 'data_rimozione',
+        'date_name' => tr('Rimosso'),
+    ]
+];
 
-echo generaListaComponenti($componenti_sostituiti, [
-    'type' => 'warning',
-    'title' => tr('Componenti sostituiti'),
-    'date' => 'data_sostituzione',
-    'date_name' => tr('Sostituzione'),
-]);
+$plugin = Plugin::pool('Componenti');
+$module = $plugin->module;
 
-echo generaListaComponenti($componenti_rimossi, [
-    'type' => 'danger',
-    'title' => tr('Componenti rimossi'),
-    'date' => 'data_rimozione',
-    'date_name' => tr('Rimosso'),
-]);
-
-function generaListaComponenti($componenti, $options)
-{
-    $type = $options['type'];
-    $title = $options['title'];
-    $date = $options['date'];
-    $date_name = $options['date_name'];
-
-    $database = database();
-    $plugin = Plugin::pool('Componenti');
-    $module = $plugin->module;
+// Generazione elenchi HTML
+foreach($elenchi as $elenco){
+    $componenti = $elenco['componenti'];
+    $type = $elenco['type'];
+    $title = $elenco['title'];
+    $date = $elenco['date'];
+    $date_name = $elenco['date_name'];
 
     if (empty($componenti) || $componenti->isEmpty()) {
-        return;
+        continue;
     }
 
     echo '
@@ -120,7 +131,7 @@ function generaListaComponenti($componenti, $options)
                 </tr>
 
                 <tr class="dettagli-componente" data-id="'.$componente->id.'" style="display: none">
-                    <td colspan="4">
+                    <td colspan="5">
                         <div class="panel panel-'.$type.'">
                             <div class="panel-heading">
                                 <h3 class="panel-title">'.tr('Dati').'</h3>

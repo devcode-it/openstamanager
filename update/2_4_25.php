@@ -12,16 +12,16 @@ foreach ($componenti_interessati as $componente) {
     // Lettura da impostazioni INI
     $array = Ini::read($componente['contenuto']);
     foreach ($array as $nome => $c) {
-        $note .= $nome.': '.$array[$nome]['valore'].'\\n';
+        $note .= '<p>'.$nome.': '.$array[$nome]['valore'].'</p>\\n';
     }
 
     // Aggiornmaneto note
-    $database->update('my_componenti_articoli', [
+    $database->update('my_componenti', [
         'note' => $note,
     ], ['id' => $componente['id']]);
 }
 
 // Rimozione dati deprecati
-$database->query('ALTER TABLE `my_componenti` DROP `pre_id_articolo`, DROP `id_componente_vecchio`');
-$database->query('DROP TABLE `my_impianto_componenti`');
+//$database->query('ALTER TABLE `my_componenti` DROP `pre_id_articolo`, DROP `id_componente_vecchio`');
+//$database->query('DROP TABLE `my_impianto_componenti`');
 

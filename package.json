@@ -27,7 +27,10 @@
         "@material/theme": "^12.0.0",
         "@mdi/font": "^5.9.55",
         "jquery": "^3.6.0",
-        "mithril": "^2.0.4"
+        "locale-code": "^2.0.2",
+        "lodash": "^4.17.21",
+        "mithril": "^2.0.4",
+        "mithril-node-render": "^3.0.1"
     },
     "devDependencies": {
         "@babel/cli": "^7.14.8",

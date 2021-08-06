@@ -16,7 +16,13 @@ use Illuminate\Support\Facades\Route;
 Route::redirect('/', 'setup');
 
 // ----- INERTIA ROUTES ----- //
-Route::inertia('setup', 'SetupPage');
+Route::inertia('setup', 'SetupPage', [
+    'languages' => array_map(
+        static fn ($file) => basename($file, '.json'),
+        glob(resource_path('lang').'/*.json')
+    ),
+    'license' => file_get_contents(base_path('LICENSE')),
+]);
 
 Route::get('lang/{language}', function ($language) {
     app()->setLocale($language);

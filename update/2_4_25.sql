@@ -36,7 +36,7 @@ ALTER TABLE `my_componenti` ADD `id_componente_vecchio` INT(11), ADD `id_interve
 
 -- Introduzione categoria dedicata ai Componenti
 INSERT INTO `mg_categorie` (`nome`, `colore`, `nota`) VALUES ('Componenti', '#ffffff', '');
-INSERT INTO `mg_articoli` (`codice`, `descrizione`, `id_categoria`) SELECT DISTINCT(`filename`), `nome`, (SELECT `id` FROM `mg_categorie` WHERE `nome` = 'Componenti' LIMIT 1) FROM `my_impianto_componenti`;
+INSERT INTO `mg_articoli` (`codice`, `descrizione`, `id_categoria`, `attivo`) SELECT DISTINCT(`filename`), `nome`, (SELECT `id` FROM `mg_categorie` WHERE `nome` = 'Componenti' LIMIT 1), 1 FROM `my_impianto_componenti`;
 
 -- Trasposizione componenti esistenti
 INSERT INTO `my_componenti` (`id_componente_vecchio`, `id_impianto`, `id_intervento`, `id_articolo`, `data_registrazione`, `data_sostituzione`) SELECT `id`, `idimpianto`, `idintervento`, (SELECT `id` FROM `mg_articoli` WHERE `codice` = `my_impianto_componenti`.`filename` LIMIT 1), `data`, `data_sostituzione` FROM `my_impianto_componenti`;

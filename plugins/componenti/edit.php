@@ -256,7 +256,7 @@ echo '
         const id_componente = tr.data("id");
 
         if(confirm("'.tr('Vuoi eliminare questo componente?').'")){
-            redirect("'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=delete&backto=record-edit&id_plugin='.$id_plugin.'&id=" + id_componente + "&hash=tab_'.$structure->id.'");
+            redirect("'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=rimuovi&backto=record-edit&id_plugin='.$id_plugin.'&id_componente=" + id_componente + "&hash=tab_'.$structure->id.'");
         }
     }
 

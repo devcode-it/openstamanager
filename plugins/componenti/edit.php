@@ -25,7 +25,7 @@ include_once __DIR__.'/../../core.php';
 $compontenti_impianto = Componente::where('id_impianto', '=', $id_record);
 
 // Avviso sul numero di componenti
-if ($compontenti_impianto->count() == 0){
+if ($compontenti_impianto->count() == 0) {
     echo '
 <div class="alert alert-info">
     <i class="fa fa-info-circle"></i> '.tr("Nessun componente disponibile per l'impianto corrente").'
@@ -64,14 +64,14 @@ $elenchi = [
         'title' => tr('Componenti rimossi'),
         'date' => 'data_rimozione',
         'date_name' => tr('Rimosso'),
-    ]
+    ],
 ];
 
 $plugin = Plugin::pool('Componenti');
 $module = $plugin->module;
 
 // Generazione elenchi HTML
-foreach($elenchi as $elenco){
+foreach ($elenchi as $elenco) {
     $componenti = $elenco['componenti'];
     $type = $elenco['type'];
     $title = $elenco['title'];

@@ -124,7 +124,7 @@ $img = App::getPaths()['img'];
 echo '
 <div class="box box-center-large box-warning">
     <div class="box-header with-border text-center">
-        <img src="'.$img.'/logo.png" class="logo-image" alt="'.tr('OSM Logo').'">
+        <img src="'.$img.'/logo_completo.png" class="logo-image" alt="'.tr('OSM Logo').'">
     </div>
 
     <div class="box-body">

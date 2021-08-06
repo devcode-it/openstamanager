@@ -358,6 +358,9 @@ echo '
             url: globals.rootdir + "/add.php?id_module='.$modulo_interventi->id.'",
         },
         error: "'.tr('Errore durante la creazione degli eventi').'",
+        genericError: "'.tr('Errore').'",
+        genericWarning: "'.tr('Attenzione').'",
+        informazioni_aggiuntive: '.intval(setting('Visualizza informazioni aggiuntive sul calendario')).',
     };
 
     function aggiorna_contatore(counter_id) {
@@ -408,7 +411,7 @@ echo '
             $("#elenco-promemoria").html(data);
 
             $("#external-events .fc-event").each(function () {
-			    $(this).draggable({
+                $(this).draggable({
                     zIndex: 999,
                     revert: true,
                     revertDuration: 0,
@@ -507,7 +510,7 @@ echo '
             header: {
                 left: "prev,next today",
                 center: "title",
-				right: "month,agendaWeek,agendaDay"
+                right: "month,agendaWeek,agendaDay"
             },
             timeFormat: globals.dashboard.timeFormat,
             slotLabelFormat: globals.dashboard.timeFormat,
@@ -518,7 +521,7 @@ echo '
             lazyFetching: true,
             selectMirror: true,
             eventLimit: false, // allow "more" link when too many events
-            allDaySlot: '.intval(setting('Visualizza informazioni aggiuntive sul calendario')).',
+            allDaySlot: globals.dashboard.informazioni_aggiuntive,
 
             loading: function (isLoading, view) {
                 if (isLoading) {
@@ -556,13 +559,12 @@ echo '
             },
 
             selectable: globals.dashboard.write_permission,
-            select: function(start, end, allDay) { // info
+            select: function (start, end, allDay) { // info
                 // let start = info.start;
                 // let end = info.end;
 
-                let is_allDay = !start.hasTime() && !end.hasTime();
-
-                if (is_allDay!==true){
+                let intero_giorno = !start.hasTime() && !end.hasTime();
+                if (intero_giorno !== true) {
                     let data = moment(start).format("YYYY-MM-DD");
                     let data_fine = moment(end).format("YYYY-MM-DD");
                     let orario_inizio = moment(start).format("HH:mm");
@@ -578,35 +580,35 @@ echo '
             },
 
             editable: globals.dashboard.write_permission,
-            eventDrop: function(event, delta, revertFunc ) {// info
+            eventDrop: function (event, delta, revertFunc) {// info
                 // let event = info.event;
 
-                if (event.allDay!==true){
+                if (event.allDay !== true) {
                     $.post(globals.dashboard.load_url, {
                         op: "modifica_intervento",
                         id: event.id,
                         idintervento: event.idintervento,
                         timeStart: moment(event.start).format("YYYY-MM-DD HH:mm"),
                         timeEnd: moment(event.end).format("YYYY-MM-DD HH:mm")
-                    }, function (data, response) {
+                    }, function (data, responseType) {
                         data = $.trim(data);
 
-                        if (response == "success" && data !== "ok") {
-                            swal("'.tr('Attenzione').'", data, "warning");
-                        }else if (response !== "success"){
-                            swal("'.tr('Errore').'", data, "error");
+                        if (responseType === "success" && data !== "ok") {
+                            swal(globals.dashboard.genericWarning, data, "warning");
+                        } else if (responseType !== "success") {
+                            swal(globals.dashboard.genericError, data, "error");
                         }
 
-                        if (data !=="ok"){
+                        if (data !== "ok") {
                             revertFunc(); // info.revert();
                         }
 
                     });
-                }else{
+                } else {
                     revertFunc();
                 }
             },
-            eventResize: function(event, delta, revertFunc) { // info
+            eventResize: function (event, delta, revertFunc) { // info
                 // let event = info.event;
 
                 $.post(globals.dashboard.load_url, {
@@ -615,16 +617,16 @@ echo '
                     idintervento: event.idintervento,
                     timeStart: moment(event.start).format("YYYY-MM-DD HH:mm"),
                     timeEnd: moment(event.end).format("YYYY-MM-DD HH:mm")
-                }, function (data, response) {
+                }, function (data, responseType) {
                     data = $.trim(data);
 
-                    if (response == "success" && data !== "ok") {
-                        swal("'.tr('Attenzione').'", data, "warning");
-                    }else if (response !== "success"){
-                        swal("'.tr('Errore').'", data, "error");
+                    if (responseType === "success" && data !== "ok") {
+                        swal(globals.dashboard.genericWarning, data, "warning");
+                    } else if (responseType !== "success") {
+                        swal(globals.dashboard.genericError, data, "error");
                     }
 
-                    if (data !=="ok"){
+                    if (data !== "ok") {
                         revertFunc(); // info.revert();
                     }
 
@@ -632,7 +634,7 @@ echo '
             },
 
             // eventPositioned: function (info) {
-            eventAfterRender: function(event, element) {
+            eventAfterRender: function (event, element) {
                 // let event = info.event;
                 // let element = $(info.el);
                 element.find(".fc-title").html(event.title);
@@ -640,7 +642,7 @@ echo '
 
                 if (globals.dashboard.tooltip == 1) {
                     element.tooltipster({
-                        content: "'.tr('Caricamento...').'",
+                        content: globals.translations.loading + "...",
                         animation: "grow",
                         updateAnimation: "grow",
                         contentAsHTML: true,
@@ -652,11 +654,11 @@ echo '
                         touchDevices: true,
                         trigger: "hover",
                         position: "left",
-                        functionBefore: function(instance, helper) {
+                        functionBefore: function (instance, helper) {
                             let $origin = $(helper.origin);
 
                             if ($origin.data("loaded") !== true) {
-                            $.post(globals.dashboard.load_url, {
+                                $.post(globals.dashboard.load_url, {
                                     op: "tooltip_info",
                                     id_record: id_record,
                                     allDay: event.allDay,
@@ -674,7 +676,7 @@ echo '
                 url: globals.dashboard.load_url + "&op=interventi_periodo",
                 type: "GET",
                 error: function () {
-                    swal("'.tr('Errore').'", globals.dashboard.error, "error");
+                    swal(globals.dashboard.genericError, globals.dashboard.error, "error");
                 }
             }
         });

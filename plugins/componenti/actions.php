@@ -20,105 +20,69 @@
 include_once __DIR__.'/../../core.php';
 
 use Carbon\Carbon;
+use Modules\Articoli\Articolo;
+use Modules\Impianti\Impianto;
+use Plugins\ComponentiImpianti\Componente;
 
 $operazione = filter('op');
 
 switch ($operazione) {
-    case 'update':
-        $articolo = (array) post('id_articolo');
-        $data_installazione = (array) post('data_installazione');
-        $data_disinstallazione = (array) post('data_disinstallazione');
-        $data_registrazione = (array) post('data_registrazione');
-        $note = (array) post('note');
+    case 'add':
+        $impianto = Impianto::find($id_record);
 
-        $key = key($articolo);
+        $id_articolo = filter('id_articolo');
+        $articolo = Articolo::find($id_articolo);
 
-        if (post('sostituito')) {
-            $field_articolo = 'pre_id_articolo';
-        } else {
-            $field_articolo = 'id_articolo';
-        }
-
-        $dbo->update('my_componenti_articoli', [
-            $field_articolo => $articolo[$key],
-            'data_installazione' => $data_installazione[$key] ?: null,
-            'data_disinstallazione' => $data_disinstallazione[$key] ?: null,
-            'data_registrazione' => $data_registrazione[$key] ?: null,
-            'note' => $note[$key],
-        ], ['id' => $key]);
+        $componente = Componente::build($impianto, $articolo, new Carbon());
 
         flash()->info(tr('Salvataggio completato!'));
-        $dbo->commitTransaction();
-        header('Location: '.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'#tab_'.$id_plugin);
-        exit;
 
         break;
 
-    case 'add':
-        $dbo->insert('my_componenti_articoli', [
-            'id_impianto' => $id_record,
-            'data_registrazione' => Carbon::now(),
-            'id_articolo' => post('id_articolo'),
-        ]);
+    case 'update':
+        $id_componente = filter('id_componente');
+        $componente = Componente::find($id_componente);
+
+        $componente->data_registrazione = filter('data_registrazione') ?: null;
+        $componente->data_installazione = filter('data_installazione') ?: null;
+        $componente->data_rimozione = filter('data_rimozione') ?: null;
+        $componente->note = filter('note') ?: null;
+
+        $componente->save();
 
         flash()->info(tr('Salvataggio completato!'));
-
         break;
 
     case 'sostituisci':
-        $old_id = get('id_old');
-        $old = $dbo->selectOne('my_componenti_articoli', '*', ['id' => $old_id]);
+        $id_componente = filter('id_componente');
+        $componente = Componente::find($id_componente);
 
-        if (!empty($old['id_articolo'])) {
-            if (empty($old['data_disinstallazione'])) {
-                $data = Carbon::now();
-            } else {
-                $data = $old['data_disinstallazione'];
-            }
+        // Creazione copia del componenten
+        $copia = $componente->replicate();
+        $copia->data_registrazione = new Carbon();
+        $copia->data_installazione = new Carbon();
+        $copia->data_sostituzione = null;
+        $copia->data_rimozione = null;
+        // Rimozione riferimento intervento di installazione
+        $copia->id_intervento = null;
+        $copia->save();
 
-            $dbo->update('my_componenti_articoli', [
-                'pre_id_articolo' => $old['id_articolo'],
-                'id_articolo' => 0,
-                'data_disinstallazione' => $data,
-            ], [
-                'id' => $old_id,
-            ]);
+        // Sostituzione del componente indicato
+        $componente->data_sostituzione = new Carbon();
+        $componente->id_sostituzione = $copia->id;
+        $componente->save();
 
-            $dbo->query('CREATE TEMPORARY TABLE tmp SELECT * FROM my_componenti_articoli WHERE id= '.prepare($old_id));
-            $dbo->query('ALTER TABLE tmp DROP id');
-            $dbo->query('INSERT INTO my_componenti_articoli SELECT NULL,tmp. * FROM tmp');
-            $new_id = $dbo->lastInsertedID();
-            $dbo->query('DROP TEMPORARY TABLE tmp');
-
-            $dbo->update('my_componenti_articoli', [
-                'id_articolo' => $old['id_articolo'],
-                'pre_id_articolo' => 0,
-                'data_registrazione' => Carbon::now(),
-                'data_installazione' => $data,
-                'data_disinstallazione' => null,
-            ], [
-                'id' => $new_id,
-            ]);
-
-            flash()->info(tr('Informazioni salvate correttamente!'));
-        } else {
-            flash()->warning(tr('Inserire un articolo prima di effettuare la sostituzione!'));
-        }
-
-        $dbo->commitTransaction();
-        header('Location: '.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'#tab_'.$id_plugin);
-        exit;
+        flash()->info(tr('Informazioni salvate correttamente!'));
 
         break;
 
-    case 'delete':
-        $dbo->query('DELETE FROM my_componenti_articoli WHERE id='.prepare(get('id')));
+    case 'rimuovi':
+        $id_componente = filter('id_componente');
+        $componente = Componente::find($id_componente);
 
-        flash()->info(tr('Componente eliminato!'));
+        $componente->data_rimozione = new Carbon();
+        $componente->save();
 
-        $dbo->commitTransaction();
-        header('Location: '.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'#tab_'.$id_plugin);
-        exit;
-
+        flash()->info(tr('Componente rimosso!'));
         break;
 }

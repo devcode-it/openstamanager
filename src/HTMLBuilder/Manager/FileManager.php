@@ -147,7 +147,7 @@ class FileManager implements ManagerInterface
             <td>'.timestampFormat($file['created_at']).'</td>
 
             <td class="text-center">
-                <button type="button" class="btn btn-xs btn-primary" onclick="aggiungiAllegato(this)">
+                <button type="button" class="btn btn-xs btn-primary" onclick="scaricaAllegato(this)">
                     <i class="fa fa-download"></i>
                 </button>';
 

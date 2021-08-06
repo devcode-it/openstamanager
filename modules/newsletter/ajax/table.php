@@ -1,5 +1,6 @@
 <?php
 
+use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Referente;
 use Modules\Anagrafiche\Sede;
@@ -56,6 +57,7 @@ $destinatari_filtrati = (clone $destinatari)
     ->skip($start)->take($length)
     ->get();
 
+$modulo_anagrafiche = Module::pool('Anagrafiche');
 $righe = [];
 foreach ($destinatari_filtrati as $destinatario) {
     $origine = $destinatario->getOrigine();
@@ -84,7 +86,7 @@ foreach ($destinatari_filtrati as $destinatario) {
                 'readonly' => '1',
                 'class' => 'email-mask',
                 'value' => $origine->email,
-                'validation' => 'email',
+                'validation' => 'email|'.$modulo_anagrafiche->id.'|'.$destinatario->record_id,
             ]) :
             '<span class="text-danger"><i class="fa fa-close"></i> '.tr('Indirizzo e-mail mancante').'</span>'
         ).'

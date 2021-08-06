@@ -23,6 +23,7 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Emails\Mail;
 use Modules\Emails\Template;
+use Modules\Impianti\Impianto;
 use Modules\Interventi\Components\Articolo;
 use Modules\Interventi\Components\Riga;
 use Modules\Interventi\Components\Sconto;
@@ -30,6 +31,7 @@ use Modules\Interventi\Components\Sessione;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
 use Modules\TipiIntervento\Tipo as TipoSessione;
+use Plugins\ComponentiImpianti\Componente;
 use Plugins\PianificazioneInterventi\Promemoria;
 
 switch (post('op')) {
@@ -228,7 +230,7 @@ switch (post('op')) {
             $intervento->delete();
 
             // Elimino il collegamento al componente
-            $dbo->query('DELETE FROM my_impianto_componenti WHERE idintervento='.prepare($id_record));
+            $dbo->query('DELETE FROM my_componenti WHERE id_intervento='.prepare($id_record));
 
             // Eliminazione associazione tecnici collegati all'intervento
             $dbo->query('DELETE FROM in_interventi_tecnici WHERE idintervento='.prepare($id_record));
@@ -331,8 +333,18 @@ switch (post('op')) {
             flash()->info(tr('Articolo aggiunto!'));
         }
 
-        // Collegamento all'impianto
-        link_componente_to_articolo($id_record, post('idimpianto'), $articolo->idarticolo, $qta);
+        // Collegamento all'Impianto tramite generazione Componente
+        $id_impianto = post('id_impianto');
+        $impianto = Impianto::find($id_impianto);
+        if (!empty($impianto)) {
+            // Data di inizio dell'intervento (data_richiesta in caso di assenza di sessioni)
+            $data_registrazione = $intervento->inizio ?: $intervento->data_richiesta;
+
+            // Creazione in base alla quantità
+            for ($q = 0; $q < $articolo->qta; ++$q) {
+                $componente = Componente::build($impianto, $articolo->articolo, $data_registrazione);
+            }
+        }
 
         break;
 

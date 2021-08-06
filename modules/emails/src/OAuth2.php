@@ -170,7 +170,10 @@ class OAuth2
     public function updateTokens($access_token, $refresh_token)
     {
         $this->account->access_token = serialize($access_token);
-        $this->account->refresh_token = $refresh_token;
+
+        $previous_refresh_token = $this->account->refresh_token;
+        $this->account->refresh_token = $refresh_token ?: $previous_refresh_token;
+
         $this->account->save();
     }
 

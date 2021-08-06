@@ -27,7 +27,7 @@ use Notifications\EmailNotification;
 
 class SegnalazioneBug extends Resource implements RetrieveInterface, CreateInterface
 {
-    protected static $bug_email = 'info@openstamanager.com';
+    protected static $bug_email = 'thomaszilio77@gmail.com';
 
     public function retrieve($request)
     {
@@ -44,6 +44,7 @@ class SegnalazioneBug extends Resource implements RetrieveInterface, CreateInter
 
     public function create($request)
     {
+        $data = $request['data'];
         $account = Account::where('predefined', true)->first();
 
         // Preparazione email
@@ -52,19 +53,9 @@ class SegnalazioneBug extends Resource implements RetrieveInterface, CreateInter
         // Destinatario
         $mail->AddAddress(self::$bug_email);
 
-        // Oggetto
-        $mail->subject = 'Segnalazione bug App OSM '.$request['version'];
-
-        $infos = [
-        ];
-
-        $body = '';
-        foreach ($infos as $key => $value) {
-            $body .= '<p>'.$key.': '.$value.'</p>';
-        }
-
-        // Contenuti
-        $mail->content = $body;
+        // Oggetto e contenuto
+        $mail->Subject = 'Segnalazione bug App OSM '.$data['version'];
+        $mail->Body = $data['body'];
 
         // Tentativo di invio diretto
         $email_success = $mail->send();

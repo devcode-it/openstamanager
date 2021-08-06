@@ -28,7 +28,7 @@ include_once App::filepath('include|custom|', 'top.php');
 echo '
 <div class="box">
     <div class="box-header">
-        <img src="'.$paths['img'].'/logo.png" class="pull-left img-responsive" width="300" alt="'.tr('OSM Logo').'">
+        <img src="'.$paths['img'].'/logo_completo.png" class="pull-left img-responsive" width="300" alt="'.tr('OSM Logo').'">
         <div class="pull-right">
             <i class="fa fa-info"></i> '.tr('Informazioni').'
         </div>

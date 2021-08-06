@@ -211,7 +211,7 @@ function modificaAllegato(button) {
  * Funzione per gestire il download di un allegato.
  * @param button
  */
-function aggiungiAllegato(button) {
+function scaricaAllegato(button) {
     const gestione = $(button).closest(".gestione-allegati");
     const allegato = $(button).closest("tr").data();
 

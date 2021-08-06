@@ -52,6 +52,8 @@ function get_ore_intervento($id_intervento)
  * @param int $id_impianto
  * @param int $id_articolo
  * @param int $qta
+ *
+ * @deprecated 2.4.25
  */
 function link_componente_to_articolo($id_intervento, $id_impianto, $id_articolo, $qta)
 {

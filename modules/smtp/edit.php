@@ -121,7 +121,7 @@ echo '
         <div class="box-body">
             <div class="row">
                 <div class="col-md-6">
-                <span class="label label-warning pull-right hidden" id="guida-configurazione"></span>
+                    <span class="label label-warning pull-right hidden" id="guida-configurazione"></span>
                     {[ "type": "select", "label": "'.tr('Provider account').'", "name": "provider", "value": "$provider$", "values": '.json_encode($elenco_provider).', "disabled": "'.intval(empty($account->provider)).'" ]}
                 </div>
 
@@ -142,6 +142,10 @@ echo '
                 <div class="col-md-6">
                     {[ "type": "text", "label": "'.tr('Client Secret').'", "name": "client_secret", "value": "$client_secret$", "disabled": "'.intval(empty($account->provider)).'" ]}
                 </div>
+            </div>
+
+            <div class="alert alert-info">
+                <i class="fa fa-info-circle"></i> '.tr('Durante la procedura di configurazione verrà effettuato il logout dal gestionale').'.
             </div>
         </div>
     </div>

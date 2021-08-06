@@ -26,7 +26,7 @@ echo '
 	<input type="hidden" name="op" value="add">
 
 	<div class="row">
-		<div class="col-md-6">
+		<div class="col-md-12">
             {["type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "ajax-source": "articoli", "value": "", "required": 1, "select-options": {"permetti_movimento_a_zero": 1} ]}
 		</div>
 	</div>
@@ -34,7 +34,9 @@ echo '
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
+			<button type="submit" class="btn btn-primary">
+			    <i class="fa fa-plus"></i> '.tr('Aggiungi').'
+			</button>
 		</div>
 	</div>
 </form>';

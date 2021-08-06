@@ -695,7 +695,7 @@ $(document).ready(function() {
             ordine.getElement().selectReset();
 
              // Impostazione del tipo intervento da preventivo
-            var data = (this).selectData()
+            var data = $(this).selectData()
             if (data.idtipointervento) {
                 input("idtipointervento").getElement()
                     .selectSet(data.idtipointervento);

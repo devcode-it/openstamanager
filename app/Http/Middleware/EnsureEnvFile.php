@@ -26,6 +26,8 @@ class EnsureEnvFile
 
             // Generazione automatica delle key Laravel
             Artisan::call('key:generate');
+            Artisan::call('cache:clear');
+            Artisan::call('config:cache');
             header('Refresh: 0;');
 
             return response('Missing app key');

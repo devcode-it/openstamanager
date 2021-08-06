@@ -19,6 +19,7 @@ class Language
 
         $locale = env('APP_LOCALE', 'it_IT');
         $manager->setLocale($locale);
+        app()->setLocale($locale);
 
         return $next($request);
     }

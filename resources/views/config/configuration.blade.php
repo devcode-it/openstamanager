@@ -5,10 +5,10 @@
 
 @section('body')
 <div class="container pb-5">
-    <form action="{{ route('configuration-save') }}" method="post" id="config-form">
+    <form action="{{ route('config.save') }}" method="post" id="config-form">
         @csrf
 
-        <div class="py-5 text-center">
+        <div class="py-5 text-center" style="margin-top: 40px">
             <img class="d-block mx-auto mb-4" src="{{ url('/') }}/assets/img/full_logo.png" alt="{{ tr('Logo OpenSTAManager') }}">
             <h2>{!! tr('Benvenuto in _NAME_!', ['_NAME_' => '<strong>'.tr('OpenSTAManager').'</strong>']) !!}</h2>
             <p class="lead">{!! tr('Puoi procedere alla configurazione tecnica del software attraverso i parametri seguenti, che potranno essere corretti secondo necessità tramite il file _FILE_', ['_FILE_' => '<i>.env</i>']) !!}. </p>
@@ -118,7 +118,7 @@
 @section('js')
 <script>
     globals.configuration = {
-        test_url: "{{ route('configuration-test') }}",
+        test_url: "{{ route('config.test') }}",
         translations: {
             error: "{{ tr('Errore della configurazione') }}",
             errorMessage: "{{ tr('La configurazione non è corretta') }}.",

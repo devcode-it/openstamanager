@@ -85,7 +85,7 @@ class EnsureConfiguration
 
             // Redirect nel caso in cui i requisiti siano soddisfatti
             if (in_array($route->getName(), $configuration_paths)) {
-                $this->setRedirect(route('configuration'));
+                $this->setRedirect(route('config.index'));
             }
         } else {
             // Redirect per requisiti incompleti
@@ -112,20 +112,22 @@ class EnsureConfiguration
             return true;
         }
 
-        $configuration_paths = ['configuration', 'configuration-save', 'configuration-write', 'configuration-test'];
         $configuration_completed = ConfigurationController::isConfigured();
+
+        $parts = explode('.', $route->getName());
+        $is_configuration_path = $parts[0] == 'config';
 
         if ($configuration_completed) {
             Cache::put('configurazione_completata', true);
 
             // Redirect nel caso in cui la configurazione sia correttamente funzionante
-            if (in_array($route->getName(), $configuration_paths)) {
+            if ($is_configuration_path) {
                 $this->setRedirect(route('update'));
             }
         } else {
             // Redirect per configurazione mancante
-            if (!in_array($route->getName(), $configuration_paths)) {
-                $this->setRedirect(route('configuration'));
+            if (!$is_configuration_path) {
+                $this->setRedirect(route('config.index'));
             }
         }
 

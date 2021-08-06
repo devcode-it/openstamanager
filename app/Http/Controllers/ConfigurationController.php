@@ -91,10 +91,13 @@ class ConfigurationController extends Controller
      */
     public function cache(Request $request)
     {
+        $route = route('config.index');
+
         // Refresh della cache sulla configurazione
+        Artisan::call('cache:clear');
         Artisan::call('config:cache');
 
-        return redirect(route('configuration'));
+        return redirect($route);
     }
 
     /**
@@ -119,7 +122,7 @@ class ConfigurationController extends Controller
         // Controllo sullo stato della connessione
         $result = $this->checkConnection($request);
         if ($result === null) {
-            return redirect(route('configuration'));
+            return redirect(route('config.index'));
         }
 
         $env = $this->buildEnvFrom($request->all());
@@ -130,11 +133,11 @@ class ConfigurationController extends Controller
 
         // Redirect in caso di fallimento
         if ($result === false) {
-            return redirect(route('configuration-write'))
+            return redirect(route('config.write'))
                 ->withInput();
         }
 
-        return redirect(route('configuration-cache'));
+        return redirect(route('config.cache'));
     }
 
     /**
@@ -255,33 +258,13 @@ class ConfigurationController extends Controller
         $content = file_get_contents($file);
 
         foreach ($config as $key => $value) {
-            $content = str_replace(
-                "$key=".$this->getCurrentEnvValue($key),
-                "$key=".$value,
+            $content = preg_replace(
+                '/'.preg_quote($key."=")."(.*)/",
+                $key."=".$value,
                 $content
             );
         }
 
         return $content;
-    }
-
-    /**
-     * Restituisce il valore (fisico) corrente per una chiave del file .env.
-     *
-     * @param $key
-     *
-     * @return mixed|string
-     */
-    protected function getCurrentEnvValue($key)
-    {
-        if (is_bool(env($key))) {
-            $old = env($key) ? 'true' : 'false';
-        } elseif (env($key) === null) {
-            $old = 'null';
-        } else {
-            $old = env($key);
-        }
-
-        return $old;
     }
 }

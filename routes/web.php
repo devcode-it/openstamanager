@@ -39,23 +39,22 @@ Route::get('/requirements', [RequirementsController::class, 'index'])
     ->name('requirements');
 
 // Sezione di configurazione
-Route::prefix('config')
-    ->group(function () {
-        Route::get('/', [ConfigurationController::class, 'index'])
-            ->name('configuration');
+Route::group(['as' => 'config.', 'prefix' => 'config'], function () {
+    Route::get('/', [ConfigurationController::class, 'index'])
+        ->name('index');
 
-        Route::get('/test', [ConfigurationController::class, 'test'])
-            ->name('configuration-test');
+    Route::get('/test', [ConfigurationController::class, 'test'])
+        ->name('test');
 
-        Route::get('/cache', [ConfigurationController::class, 'cache'])
-            ->name('configuration-cache');
+    Route::get('/cache', [ConfigurationController::class, 'cache'])
+        ->name('cache');
 
-        Route::get('/write', [ConfigurationController::class, 'write'])
-            ->name('configuration-write');
+    Route::get('/write', [ConfigurationController::class, 'write'])
+        ->name('write');
 
-        Route::post('/save', [ConfigurationController::class, 'save'])
-            ->name('configuration-save');
-    });
+    Route::post('/save', [ConfigurationController::class, 'save'])
+        ->name('save');
+});
 
 // Installazione aggiornamenti del gestionale
 Route::get('/update', [UpdateController::class, 'index'])

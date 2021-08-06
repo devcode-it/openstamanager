@@ -9,7 +9,7 @@
 @section('content')
 <p>{!! tr('Sembra che non ci siano i permessi di scrittura sul file _FILE_', ['_FILE_' => '<b>.env</b>']) !!}. {{ tr('Per completare la configurazione del gestionale, è necessario inserire provare nuovamente attraverso il pulsante "Riprova" oppure inserire manualmente il contenuto sottostante nel file indicato') }}.</p>
 
-<form action="{{ route('configuration-save') }}" method="post">
+<form action="{{ route('config.save') }}" method="post">
     @foreach($params as $key => $value)
         <input type="hidden" name="{{ $key }}" value="{{ $value }}">
     @endforeach
@@ -39,7 +39,7 @@
         <p>{!! tr('Inserire il seguente testo nel file _FILE_', ['_FILE_' => '<b>.env</b>']) !!}.</p>
         <p><strong>{{ tr('Attenzione!') }}</strong> {!! tr('A seguito del completamento manuale della configurazione, è necessario utilizzare il pulsante dedicato "Completa inserimento" oppure eseguire da riga di comando _CMD_', ['_CMD_' => "<kbd>php artisan config:cache</kbd>"]) !!}.</p>
 
-        <a class="btn btn-success" href="{{ route('configuration-cache') }}">
+        <a class="btn btn-success" href="{{ route('config.cache') }}">
             <i class="fa fa-download"></i> {{ tr('Completa inserimento') }}
         </a>
 

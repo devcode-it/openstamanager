@@ -43,6 +43,7 @@
         "barryvdh/laravel-ide-helper": "^2",
         "roave/security-advisories": "dev-latest",
         "kkomelin/laravel-translatable-string-exporter": "^1",
+        "jeroen-g/laravel-packager": "^2",
         "facade/ignition": "^2",
         "fakerphp/faker": "^1",
         "laravel/sail": "^1",
@@ -75,5 +76,14 @@
         "sort-packages": true
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": {
+        "openstamanger/tipi-attivita": {
+            "type": "path",
+            "url": "C:\\Users\\Maicol\\Documents\\Progetti\\Web\\osm_rewrite\\packages/openstamanger/tipi-attività",
+            "options": {
+                "symlink": true
+            }
+        }
+    }
 }

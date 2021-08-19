@@ -34,10 +34,12 @@
         "fideloper/proxy": "^4",
         "fruitcake/laravel-cors": "^2",
         "guzzlehttp/guzzle": "^7",
-        "inertiajs/inertia-laravel": "^0.4.4",
+        "inertiajs/inertia-laravel": "^0",
         "laravel/framework": "^8",
         "laravel/tinker": "^2",
-        "nette/utils": "^3"
+        "nette/utils": "^3",
+        "riverskies/laravel-mobile-detect": "^1",
+        "tightenco/ziggy":  "^1"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2",
@@ -76,14 +78,5 @@
         "sort-packages": true
     },
     "minimum-stability": "dev",
-    "prefer-stable": true,
-    "repositories": {
-        "openstamanger/tipi-attivita": {
-            "type": "path",
-            "url": "C:\\Users\\Maicol\\Documents\\Progetti\\Web\\osm_rewrite\\packages/openstamanger/tipi-attività",
-            "options": {
-                "symlink": true
-            }
-        }
-    }
+    "prefer-stable": true
 }

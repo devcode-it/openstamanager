@@ -2,7 +2,7 @@
 // noinspection JSUnresolvedFunction
 
 const mix = require('laravel-mix');
-require('lmvh');
+require('laravel-mix-versionhash');
 require('laravel-mix-serve');
 
 /*

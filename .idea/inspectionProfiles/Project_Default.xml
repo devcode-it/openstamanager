@@ -74,10 +74,12 @@
     <inspection_tool class="HtmlUnknownAttribute" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="myValues">
         <value>
-          <list size="3">
+          <list size="5">
             <item index="0" class="java.lang.String" itemvalue="slot" />
             <item index="1" class="java.lang.String" itemvalue="class" />
             <item index="2" class="java.lang.String" itemvalue="tabindex" />
+            <item index="3" class="java.lang.String" itemvalue="divider" />
+            <item index="4" class="java.lang.String" itemvalue="padded" />
           </list>
         </value>
       </option>
@@ -89,12 +91,13 @@
         <item value="raised" />
         <item value="outlined" />
         <item value="disabled" />
+        <item value="indeterminate" />
       </myValues>
     </inspection_tool>
     <inspection_tool class="HtmlUnknownTag" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="myValues">
         <value>
-          <list size="10">
+          <list size="17">
             <item index="0" class="java.lang.String" itemvalue="nobr" />
             <item index="1" class="java.lang.String" itemvalue="noembed" />
             <item index="2" class="java.lang.String" itemvalue="comment" />
@@ -105,6 +108,13 @@
             <item index="7" class="java.lang.String" itemvalue="mwc-fab" />
             <item index="8" class="java.lang.String" itemvalue="mwc-button" />
             <item index="9" class="java.lang.String" itemvalue="mwc-icon-button" />
+            <item index="10" class="java.lang.String" itemvalue="mwc-top-app-bar-fixed" />
+            <item index="11" class="java.lang.String" itemvalue="mwc-drawer" />
+            <item index="12" class="java.lang.String" itemvalue="mwc-list" />
+            <item index="13" class="java.lang.String" itemvalue="mwc-list-item" />
+            <item index="14" class="java.lang.String" itemvalue="mwc-menu" />
+            <item index="15" class="java.lang.String" itemvalue="top-app-bar" />
+            <item index="16" class="java.lang.String" itemvalue="material-drawer" />
           </list>
         </value>
       </option>
@@ -113,6 +123,7 @@
     <inspection_tool class="JSXNamespaceValidation" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="MethodShouldBeFinalInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="MethodVisibilityInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
+    <inspection_tool class="NpmUsedModulesInstalled" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="PhpCSFixerValidationInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="CODING_STANDARD" value="Custom" />
       <option name="CUSTOM_RULESET_PATH" value="$PROJECT_DIR$/.php-cs-fixer.php" />

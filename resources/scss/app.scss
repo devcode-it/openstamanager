@@ -1,5 +1,27 @@
-@import "variables";
+@use 'variables';
+
+@import '~modern-normalize/modern-normalize.css';
 @import 'material';
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--mdc-theme-text-primary-on-background, black);
+    font-family: #{variables.$headings_font};
+}
+
+p,
+small {
+    color: var(--mdc-theme-text-primary-on-background, black);
+    font-family: #{variables.$body_font};
+}
+
+body {
+    background-color: var(--mdc-theme-background, #fff);
+}
 
 hr {
     border-color: rgba(0, 0, 0, 0.12);
@@ -7,7 +29,7 @@ hr {
 }
 
 .mdi {
-    //width: 24px;
+    font-size: 24px;
     line-height: 1;
 }
 
@@ -45,4 +67,38 @@ mwc-fab#contrast-switcher {
     right: -15%;
     width: 500px;
     opacity: 0.1;
+}
+
+/* ----------------------------
+    Footer
+--------------------------- */
+footer {
+    position: fixed;
+    z-index: 6;
+    bottom: 0;
+    display: flex;
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-top: var(--mdc-theme-outline-color) solid 1px;
+    background-color: var(--mdc-theme-background, white);
+    color: var(--mdc-theme-text-primary-on-background, #000);
+
+    --mdc-theme-primary: #{variables.$primary};
+}
+
+.left-footer {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    padding-left: 10px;
+}
+
+.left-footer * {
+    display: inline;
+    vertical-align: middle;
+}
+
+.right-footer {
+    position: relative;
 }

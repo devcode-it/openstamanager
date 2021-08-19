@@ -39,6 +39,7 @@
         "class-methods-use-this": "off",
         "flowtype/no-types-missing-file-annotation": "off",
         "no-underscore-dangle": "off",
+        "import/no-extraneous-dependencies": "off",
         "mithril/jsx-no-target-blank": "off"
     }
 }

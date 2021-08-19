@@ -1,5 +1,3 @@
-import {MDCRipple} from '@material/ripple';
-import Mithril from 'mithril';
 import Component from '../Component';
 
 export default class Card extends Component {
@@ -18,10 +16,5 @@ export default class Card extends Component {
       style={vnode.attrs.style ?? ''}>
       {vnode.children}
     </div>;
-  }
-
-  oncreate(vnode: Mithril.VnodeDOM) {
-    super.oncreate(vnode);
-    $('.mdc-card__primary-action').each((index, element) => new MDCRipple(element));
   }
 }

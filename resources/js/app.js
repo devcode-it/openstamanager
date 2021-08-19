@@ -1,10 +1,6 @@
-import jQuery from 'jquery';
 import m from 'mithril';
 import {createInertiaApp} from '@maicol07/inertia-mithril';
-
-global.$ = jQuery;
-global.jQuery = jQuery;
-global.m = m;
+import './_material';
 
 // noinspection JSIgnoredPromiseFromCall
 createInertiaApp({

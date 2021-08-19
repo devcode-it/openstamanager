@@ -46,4 +46,12 @@ class HandleInertiaRequests extends Middleware
             },
         ]);
     }
+
+    public function rootView(Request $request): string
+    {
+        if (in_array($request->route()?->uri(), ['setup', 'login'], true)) {
+            return 'external';
+        }
+        return $this->rootView;
+    }
 }

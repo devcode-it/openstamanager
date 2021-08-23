@@ -613,7 +613,7 @@ class FatturaElettronica
         $cliente = $fattura->getCliente();
 
         $sede = database()->fetchOne('SELECT `codice_destinatario` FROM `an_sedi` WHERE `id` = '.prepare($documento['idsede_destinazione']));
-        if (!empty($sede)) {
+        if (!empty($sede['codice_destinatario'])) {
             $codice_destinatario = $sede['codice_destinatario'];
         } else {
             $codice_destinatario = $cliente->codice_destinatario;

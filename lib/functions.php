@@ -202,7 +202,7 @@ function get_client_ip()
         $ipaddress = 'UNKNOWN';
     }
 
-    return $ipaddress;
+    return strip_tags($ipaddress);
 }
 
 /**

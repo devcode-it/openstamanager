@@ -265,10 +265,7 @@ class FatturaOrdinaria extends FatturaElettronica
         $totali_righe = array_column($righe, 'PrezzoTotale');
         $totale_righe = sum($totali_righe);
 
-        $dati_generali = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
-        $totale_documento = floatval($dati_generali['ImportoTotaleDocumento']);
-
-        $diff = $totale_documento ? abs($totale_documento) - abs($fattura->totale) : abs($totale_righe) - abs($fattura->totale_imponibile);
+        $diff = abs($totale_righe) - abs($fattura->totale_imponibile);
         if (!empty($diff)) {
             // Rimozione dell'IVA calcolata automaticamente dal gestionale
             $iva_arrotondamento = database()->fetchOne('SELECT * FROM co_iva WHERE percentuale=0 AND deleted_at IS NULL');

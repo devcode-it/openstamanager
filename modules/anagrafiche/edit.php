@@ -311,7 +311,7 @@ echo '
             function calcolaPercorso() {
                 const indirizzo_partenza = getIndirizzoAzienda();
                 const indirizzo_destinazione = getIndirizzoAnagrafica();
-                window.open("https://maps.google.com/maps/dir/" + indirizzo_partenza + "/" + indirizzo_destinazione);
+                window.open("https://www.google.com/maps/dir/?api=1&origin=" + indirizzo_partenza + "&destination=" + indirizzo_destinazione);
             }
 
             function getIndirizzoAzienda() {

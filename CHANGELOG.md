@@ -4,7 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.4.25 (2021-00-00)](#2425-2021-00-00)
+- [2.4.25 (2021-08-25)](#2425-2021-08-25)
 - [2.4.24 (2021-07-28)](#2424-2021-07-28)
 - [2.4.23 (2021-05-18)](#2423-2021-05-18)
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
@@ -36,7 +36,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
-## 2.4.25 (2021-00-00)
+## 2.4.25 (2021-08-25)
 
 ### Aggiunto (Added)
  - Aggiunta percentuale di imponibilità nel modulo **Piano dei conti** sezione **Ricavi** per il calcolo del **Totale reddito**.
@@ -47,6 +47,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 
 ### Modificato (Changed)
  - In fase di importazione **Fattura di acquisto** la data competenza ora viene allineata alla data di emissione
+
 ### Fixed
 - Fix calcolo totale della **Stampa inventario**
 - Fix aggiunta **DDT** in una **Fattura di vendita**

@@ -123,7 +123,7 @@ foreach ($elenchi as $elenco) {
                         <i class="'.$icona_allegati.' fa-lg"></i>
 
                         <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-box-tool" onclick="toggleDettagli(this)">
+                        <button type="button" class="btn btn-box-tool" onclick="toggleDettagli(this)">
                                 <i class="fa fa-plus"></i>
                             </button>
                         </div>
@@ -230,8 +230,12 @@ echo '
 
         if (dettagli.css("display") === "none"){
             dettagli.show(500);
+            $(trigger).children().removeClass("fa-plus"); 
+            $(trigger).children().addClass("fa-minus");
         } else {
             dettagli.hide(500);
+            $(trigger).children().removeClass("fa-minus"); 
+            $(trigger).children().addClass("fa-plus");
         }
     }
 

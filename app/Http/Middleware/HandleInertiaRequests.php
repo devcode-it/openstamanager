@@ -38,7 +38,7 @@ class HandleInertiaRequests extends Middleware
             'locale' => fn () => app()->getLocale(),
             'translations' => function () {
                 $json = resource_path('lang/'.app()->getLocale().'.json');
-                if (!file_exists($json)) {
+                if (!is_file($json)) {
                     return [];
                 }
 

@@ -5,9 +5,12 @@
 );
 @use "~@material/card";
 @use "~@material/layout-grid/mdc-layout-grid";
+@use "~@material/data-table/data-table";
 @use "~@mdi/font";
 
 @include card.core-styles;
+@include data-table.core-styles;
+@include data-table.theme-baseline;
 
 /* ---------------------------
     MWC Components

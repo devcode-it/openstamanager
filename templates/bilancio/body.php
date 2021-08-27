@@ -51,7 +51,7 @@ echo '
 
                             foreach ($liv3_patrimoniale as $liv3_p) {
                                 // Visualizzo solo i conti di livello 3 relativi al conto di livello 2
-                                if ($liv2_p['id'] == $liv3_p['idpianodeiconti2']) {
+                                if ($liv2_p['id'] == $liv3_p['idpianodeiconti2'] && $liv3_p['totale']!=0) {
                                     echo '
                                     <tr>
                                         <td>'.$liv3_p['numero'].'</td>
@@ -60,20 +60,23 @@ echo '
                                     </tr>';
                                 }
                             }
-                            if ($liv2_p['descrizione'] == 'Crediti clienti e crediti diversi') {
-                                echo '
+
+                            if(empty(get('elenco_analitico'))){
+                                if ($liv2_p['descrizione'] == 'Crediti clienti e crediti diversi') {
+                                    echo '
+                                        <tr>
+                                            <td></td>
+                                            <td>Clienti</td>
+                                            <td class="text-right">'.numberFormat($crediti_clienti).'</td>
+                                        </tr>';
+                                } elseif ($liv2_p['descrizione'] == 'Debiti fornitori e debiti diversi') {
+                                    echo '
                                     <tr>
                                         <td></td>
-                                        <td>Clienti</td>
-                                        <td class="text-right">'.numberFormat($crediti_clienti).'</td>
+                                        <td>Fornitori</td>
+                                        <td class="text-right">'.numberFormat($debiti_fornitori).'</td>
                                     </tr>';
-                            } elseif ($liv2_p['descrizione'] == 'Debiti fornitori e debiti diversi') {
-                                echo '
-                                <tr>
-                                    <td></td>
-                                    <td>Fornitori</td>
-                                    <td class="text-right">'.numberFormat($debiti_fornitori).'</td>
-                                </tr>';
+                                }
                             }
                         }
                     }
@@ -126,7 +129,7 @@ echo '
                             </tr>';
 
                             foreach ($liv3_patrimoniale as $liv3_p) {
-                                if ($liv2_p['id'] == $liv3_p['idpianodeiconti2']) {
+                                if ($liv2_p['id'] == $liv3_p['idpianodeiconti2'] && $liv3_p['totale']!=0) {
                                     echo '
                                     <tr>
                                         <td>'.$liv3_p['numero'].'</td>
@@ -135,20 +138,23 @@ echo '
                                     </tr>';
                                 }
                             }
-                            if ($liv2_p['descrizione'] == 'Crediti clienti e crediti diversi') {
-                                echo '
+
+                            if(empty(get('elenco_analitico'))){
+                                if ($liv2_p['descrizione'] == 'Crediti clienti e crediti diversi') {
+                                    echo '
+                                        <tr>
+                                            <td></td>
+                                            <td>Clienti</td>
+                                            <td class="text-right">'.numberFormat(abs($crediti_clienti)).'</td>
+                                        </tr>';
+                                } elseif ($liv2_p['descrizione'] == 'Debiti fornitori e debiti diversi') {
+                                    echo '
                                     <tr>
                                         <td></td>
-                                        <td>Clienti</td>
-                                        <td class="text-right">'.numberFormat(abs($crediti_clienti)).'</td>
+                                        <td>Fornitori</td>
+                                        <td class="text-right">'.numberFormat(abs($debiti_fornitori)).'</td>
                                     </tr>';
-                            } elseif ($liv2_p['descrizione'] == 'Debiti fornitori e debiti diversi') {
-                                echo '
-                                <tr>
-                                    <td></td>
-                                    <td>Fornitori</td>
-                                    <td class="text-right">'.numberFormat(abs($debiti_fornitori)).'</td>
-                                </tr>';
+                                }
                             }
                         }
                     }
@@ -210,7 +216,7 @@ echo '
                             </tr>';
 
                             foreach ($liv3_economico as $liv3_e) {
-                                if ($liv2_e['id'] == $liv3_e['idpianodeiconti2']) {
+                                if ($liv2_e['id'] == $liv3_e['idpianodeiconti2'] && $liv3_e['totale']!=0) {
                                     echo '
                                     <tr>
                                         <td>'.$liv3_e['numero'].'</td>
@@ -274,7 +280,7 @@ echo '
                         </tr>';
 
                         foreach ($liv3_economico as $liv3_e) {
-                            if ($liv2_e['id'] == $liv3_e['idpianodeiconti2']) {
+                            if ($liv2_e['id'] == $liv3_e['idpianodeiconti2'] && $liv3_e['totale']!=0) {
                                 echo '
                                 <tr>
                                     <td>'.$liv3_e['numero'].'</td>

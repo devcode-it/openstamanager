@@ -178,7 +178,7 @@ class Intervento extends Document
 
     public function descrizioni()
     {
-        return $this->righe()->where('is_descrizione', 1);
+        return $this->hasMany(Components\Descrizione::class, 'idintervento');
     }
 
     public function sessioni()

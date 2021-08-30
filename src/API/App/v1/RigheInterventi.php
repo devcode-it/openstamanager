@@ -25,6 +25,7 @@ use Auth;
 use Carbon\Carbon;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Interventi\Components\Articolo;
+use Modules\Interventi\Components\Descrizione;
 use Modules\Interventi\Components\Riga;
 use Modules\Interventi\Components\Sconto;
 use Modules\Interventi\Intervento;
@@ -201,6 +202,8 @@ class RigheInterventi extends AppResource
     {
         if (!empty($data['is_sconto'])) {
             $type = Sconto::class;
+        } elseif (!empty($data['is_descrizione'])) {
+            $type = Descrizione::class;
         } elseif (!empty($data['is_articolo'])) {
             $type = Articolo::class;
         } else {

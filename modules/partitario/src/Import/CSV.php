@@ -19,7 +19,6 @@
 
 namespace Modules\Partitario\Import;
 
-use Carbon\Carbon;
 use Importer\CSVImporter;
 
 /**
@@ -62,36 +61,34 @@ class CSV extends CSVImporter
         $database = database();
         $primary_key = $this->getPrimaryKey();
 
-        $numero = explode('.',$record['numero']);
+        $numero = explode('.', $record['numero']);
         $codice_conto2 = $numero[0];
         $codice_conto3 = $numero[1];
 
         //Estraggo il conto1
-        $idpianodeiconti1 = $database->fetchOne("SELECT id FROM co_pianodeiconti1 WHERE LOWER(descrizione)=LOWER(".prepare($record['idpianodeiconti1']).")")['id'];
+        $idpianodeiconti1 = $database->fetchOne('SELECT id FROM co_pianodeiconti1 WHERE LOWER(descrizione)=LOWER('.prepare($record['idpianodeiconti1']).')')['id'];
 
         //Estraggo il conto,
-        $idpianodeiconti2 = $database->fetchOne("SELECT id FROM co_pianodeiconti2 WHERE numero=".prepare($codice_conto2))['id'];
+        $idpianodeiconti2 = $database->fetchOne('SELECT id FROM co_pianodeiconti2 WHERE numero='.prepare($codice_conto2))['id'];
 
-        if( empty($idpianodeiconti2) && empty($codice_conto3) ){
-            $database->insert('co_pianodeiconti2',[
+        if (empty($idpianodeiconti2) && empty($codice_conto3)) {
+            $database->insert('co_pianodeiconti2', [
                 'numero' => $codice_conto2,
                 'descrizione' => $record['descrizione'],
                 'idpianodeiconti1' => $idpianodeiconti1,
                 'dir' => $record['dir'],
             ]);
-        }elseif( !empty($idpianodeiconti2) && !empty($codice_conto3) ){
+        } elseif (!empty($idpianodeiconti2) && !empty($codice_conto3)) {
+            $idpianodeiconti3 = $database->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE numero='.prepare($codice_conto3).' AND idpianodeiconti2='.prepare($idpianodeiconti2))['id'];
 
-            $idpianodeiconti3 = $database->fetchOne("SELECT id FROM co_pianodeiconti3 WHERE numero=".prepare($codice_conto3)." AND idpianodeiconti2=".prepare($idpianodeiconti2))['id'];
-
-            if( empty($idpianodeiconti3) ){
-                $database->insert('co_pianodeiconti3',[
+            if (empty($idpianodeiconti3)) {
+                $database->insert('co_pianodeiconti3', [
                     'numero' => $codice_conto3,
                     'descrizione' => $record['descrizione'],
                     'idpianodeiconti2' => $idpianodeiconti2,
                     'dir' => $record['dir'],
                 ]);
             }
-
         }
     }
 
@@ -103,7 +100,4 @@ class CSV extends CSVImporter
             ['Patrimoniale', '110.000010', 'Riepilogativo clienti', ''],
         ];
     }
-
 }
-
-  

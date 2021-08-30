@@ -51,7 +51,7 @@ echo '
 
                             foreach ($liv3_patrimoniale as $liv3_p) {
                                 // Visualizzo solo i conti di livello 3 relativi al conto di livello 2
-                                if ($liv2_p['id'] == $liv3_p['idpianodeiconti2'] && $liv3_p['totale']!=0) {
+                                if ($liv2_p['id'] == $liv3_p['idpianodeiconti2'] && $liv3_p['totale'] != 0) {
                                     echo '
                                     <tr>
                                         <td>'.$liv3_p['numero'].'</td>
@@ -61,7 +61,7 @@ echo '
                                 }
                             }
 
-                            if(empty(get('elenco_analitico'))){
+                            if (empty(get('elenco_analitico'))) {
                                 if ($liv2_p['descrizione'] == 'Crediti clienti e crediti diversi') {
                                     echo '
                                         <tr>
@@ -129,7 +129,7 @@ echo '
                             </tr>';
 
                             foreach ($liv3_patrimoniale as $liv3_p) {
-                                if ($liv2_p['id'] == $liv3_p['idpianodeiconti2'] && $liv3_p['totale']!=0) {
+                                if ($liv2_p['id'] == $liv3_p['idpianodeiconti2'] && $liv3_p['totale'] != 0) {
                                     echo '
                                     <tr>
                                         <td>'.$liv3_p['numero'].'</td>
@@ -139,7 +139,7 @@ echo '
                                 }
                             }
 
-                            if(empty(get('elenco_analitico'))){
+                            if (empty(get('elenco_analitico'))) {
                                 if ($liv2_p['descrizione'] == 'Crediti clienti e crediti diversi') {
                                     echo '
                                         <tr>
@@ -216,7 +216,7 @@ echo '
                             </tr>';
 
                             foreach ($liv3_economico as $liv3_e) {
-                                if ($liv2_e['id'] == $liv3_e['idpianodeiconti2'] && $liv3_e['totale']!=0) {
+                                if ($liv2_e['id'] == $liv3_e['idpianodeiconti2'] && $liv3_e['totale'] != 0) {
                                     echo '
                                     <tr>
                                         <td>'.$liv3_e['numero'].'</td>
@@ -280,7 +280,7 @@ echo '
                         </tr>';
 
                         foreach ($liv3_economico as $liv3_e) {
-                            if ($liv2_e['id'] == $liv3_e['idpianodeiconti2'] && $liv3_e['totale']!=0) {
+                            if ($liv2_e['id'] == $liv3_e['idpianodeiconti2'] && $liv3_e['totale'] != 0) {
                                 echo '
                                 <tr>
                                     <td>'.$liv3_e['numero'].'</td>

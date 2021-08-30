@@ -142,6 +142,8 @@ echo '
                 <div class="col-md-6">
                     {[ "type": "text", "label": "'.tr('Client Secret').'", "name": "client_secret", "value": "$client_secret$", "disabled": "'.intval(empty($account->provider)).'" ]}
                 </div>
+
+                <div id="config-provider"></div>
             </div>
 
             <div class="alert alert-info">
@@ -149,14 +151,34 @@ echo '
             </div>
         </div>
     </div>
-</form>
+</form>';
 
+// Inizializzazione dei form per campi personalizzati
+foreach ($providers as $key => $provider) {
+    echo '
+<div class="hidden" id="provider-'.$key.'">';
+
+    $config = $provider['class']::getConfigInputs();
+    foreach ($config as $name => $field) {
+        $field['name'] = 'config['.$name.']';
+        $field['value'] = $account->oauth2_config[$name];
+
+        echo '
+    <div class="col-md-6">'.input($field).'</div>';
+    }
+
+    echo '
+</div>';
+}
+
+echo '
 <script>
 var abilita_oauth2 = input("abilita_oauth2");
 var provider = input("provider");
 var client_id = input("client_id");
 var client_secret = input("client_secret");
 var guida = $("#guida-configurazione");
+var config = $("#config-provider");
 
 abilita_oauth2.change(function() {
     const disable = !abilita_oauth2.get();
@@ -175,6 +197,10 @@ provider.change(function() {
     } else {
         guida.addClass("hidden");
     }
+
+    // Impostazione dei dati aggiuntivi da configurare
+    config.html("")
+    aggiungiContenuto(config, "#provider-" + data.id);
 })
 
 $(document).ready(function() {

@@ -9,7 +9,6 @@ WHERE `id_componente_vecchio` IS NOT NULL');
 foreach ($componenti_interessati as $componente) {
     $note = '';
 
-
     // Lettura da impostazioni INI
     $array = Ini::read($componente['contenuto']);
     foreach ($array as $nome => $c) {

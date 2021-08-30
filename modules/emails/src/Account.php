@@ -34,6 +34,10 @@ class Account extends Model
 
     protected $table = 'em_accounts';
 
+    protected $casts = [
+        'oauth2_config' => 'array',
+    ];
+
     /** @var OAuth2 */
     protected $gestoreOAuth2;
 

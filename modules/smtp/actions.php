@@ -55,9 +55,12 @@ switch (filter('op')) {
             'timeout' => post('timeout'),
             'ssl_no_verify' => post('ssl_no_verify'),
             'predefined' => $predefined,
+
+            // OAuth2
             'provider' => post('provider'),
             'client_id' => post('client_id'),
             'client_secret' => post('client_secret'),
+            'oauth2_config' => json_encode(post('config')),
         ], ['id' => $id_record]);
 
         flash()->info(tr('Informazioni salvate correttamente!'));
@@ -70,6 +73,7 @@ switch (filter('op')) {
                 'client_secret' => null,
                 'access_token' => null,
                 'refresh_token' => null,
+                'oauth2_config' => null,
             ], ['id' => $id_record]);
         }
 

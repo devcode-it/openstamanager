@@ -4,32 +4,21 @@ namespace Modules\Emails;
 
 use InvalidArgumentException;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
-use League\OAuth2\Client\Provider\Google;
 use League\OAuth2\Client\Token\AccessToken;
-use TheNetworg\OAuth2\Client\Provider\Azure;
+use Modules\Emails\OAuth2\Google;
+use Modules\Emails\OAuth2\Microsoft;
 
 class OAuth2
 {
     public static $providers = [
         'microsoft' => [
             'name' => 'Microsoft',
-            'class' => Azure::class,
-            'options' => [
-                'scope' => [
-                    'offline_access',
-                    'https://graph.microsoft.com/SMTP.Send',
-                    //'https://outlook.office.com/IMAP.AccessAsUser.All'
-                ],
-            ],
+            'class' => Microsoft::class,
             'help' => 'https://docs.openstamanager.com/faq/configurazione-oauth2#microsoft',
         ],
         'google' => [
             'name' => 'Google',
             'class' => Google::class,
-            'options' => [
-                'scope' => ['https://mail.google.com/'],
-                'accessType' => 'offline',
-            ],
             'help' => 'https://docs.openstamanager.com/faq/configurazione-oauth2#google',
         ],
     ];
@@ -41,31 +30,11 @@ class OAuth2
     {
         $this->account = $account;
 
-        $this->init();
-    }
-
-    /**
-     * Inizializza il provider per l'autenticazione OAuth2.
-     */
-    public function init()
-    {
+        // Inizializza il provider per l'autenticazione OAuth2.
         $redirect_uri = base_url().'/oauth2.php';
 
         $class = $this->getProviderConfiguration()['class'];
-
-        // Authorization
-        $this->provider = new $class([
-            'clientId' => $this->account->client_id,
-            'clientSecret' => $this->account->client_secret,
-            'redirectUri' => $redirect_uri,
-            'accessType' => 'offline',
-        ]);
-
-        // Configurazioni specifiche per il provider di Microsoft Azure
-        if ($this->provider instanceof Azure) {
-            $this->provider->defaultEndPointVersion = Azure::ENDPOINT_VERSION_2_0;
-            $this->provider->tenant = 'consumers';
-        }
+        $this->provider = new $class($this->account, $redirect_uri);
     }
 
     public function getProvider()
@@ -109,7 +78,7 @@ class OAuth2
         }
 
         $provider = $this->getProvider();
-        $options = $this->getProviderConfiguration()['options'];
+        $options = $provider->getOptions();
         if (empty($code)) {
             // Fetch the authorization URL from the provider; this returns the
             // urlAuthorize option and generates and applies any necessary parameters

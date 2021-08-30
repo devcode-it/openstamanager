@@ -129,21 +129,23 @@ echo '
                     {[ "type": "checkbox", "label": "'.tr('Abilita OAuth2').'", "name": "abilita_oauth2", "value": "'.intval(!empty($account->provider)).'" ]}
                 </div>
 
-                <div class="col-md-3">
-                    <a type="button" class="btn btn-success btn-block '.(empty($account->provider) || empty($account->client_id) || empty($account->client_secret) ? 'disabled' : '').'" style="margin-top: 25px" href="'.base_url().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=oauth2">
-                        <i class="fa fa-refresh"></i> '.(empty($account->access_token) ? tr('Completa configurazione') : tr('Ripeti configurazione')).'
-                    </a>
-                </div>
+                <div id="oauth2-config">
+                    <div class="col-md-3">
+                        <a type="button" class="btn btn-success btn-block '.(empty($account->provider) || empty($account->client_id) || empty($account->client_secret) ? 'disabled' : '').'" style="margin-top: 25px" href="'.base_url().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=oauth2">
+                            <i class="fa fa-refresh"></i> '.(empty($account->access_token) ? tr('Completa configurazione') : tr('Ripeti configurazione')).'
+                        </a>
+                    </div>
 
-                <div class="col-md-6">
-                    {[ "type": "text", "label": "'.tr('Client ID').'", "name": "client_id", "value": "$client_id$", "disabled": "'.intval(empty($account->provider)).'" ]}
-                </div>
+                    <div class="col-md-6">
+                        {[ "type": "text", "label": "'.tr('Client ID').'", "name": "client_id", "value": "$client_id$", "disabled": "'.intval(empty($account->provider)).'" ]}
+                    </div>
 
-                <div class="col-md-6">
-                    {[ "type": "text", "label": "'.tr('Client Secret').'", "name": "client_secret", "value": "$client_secret$", "disabled": "'.intval(empty($account->provider)).'" ]}
-                </div>
+                    <div class="col-md-6">
+                        {[ "type": "text", "label": "'.tr('Client Secret').'", "name": "client_secret", "value": "$client_secret$", "disabled": "'.intval(empty($account->provider)).'" ]}
+                    </div>
 
-                <div id="config-provider"></div>
+                    <div id="provider-config"></div>
+                </div>
             </div>
 
             <div class="alert alert-info">
@@ -178,14 +180,16 @@ var provider = input("provider");
 var client_id = input("client_id");
 var client_secret = input("client_secret");
 var guida = $("#guida-configurazione");
-var config = $("#config-provider");
+var config = $("#provider-config");
 
 abilita_oauth2.change(function() {
     const disable = !abilita_oauth2.get();
     provider.setDisabled(disable);
 
-    client_id.setDisabled(disable);
-    client_secret.setDisabled(disable);
+    const inputs = $("#oauth2-config .openstamanager-input");
+    for (i of inputs) {
+        input(i).setDisabled(disable);
+    }
 });
 
 provider.change(function() {

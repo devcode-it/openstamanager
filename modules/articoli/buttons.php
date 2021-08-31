@@ -19,6 +19,14 @@
 
 include_once __DIR__.'/../../core.php';
 
+// Messaggio informativo per variante
+if ($articolo->isVariante()) {
+    echo '
+<div class="badge badge-info">'.tr('Variante: _NAME_', [
+    '_NAME_' => $articolo->nome_variante,
+]).'</div>';
+}
+
 echo '
 <button type="button" class="btn btn-primary" onclick="duplicaArticolo()">
     <i class="fa fa-copy"></i> '.tr('Duplica articolo').'

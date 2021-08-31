@@ -20,6 +20,7 @@
 use Carbon\Carbon;
 use Modules\Articoli\Articolo;
 use Modules\Articoli\Categoria;
+use Modules\CombinazioniArticoli\Combinazione;
 use Util\Ini;
 
 include_once __DIR__.'/../../core.php';
@@ -60,6 +61,9 @@ switch (post('op')) {
         $articolo->prezzo_acquisto = post('prezzo_acquisto');
         $articolo->setPrezzoVendita(post('prezzo_vendita'), post('idiva_vendita'));
         $articolo->save();
+
+        // Aggiornamento delle varianti per i campi comuni
+        Combinazione::sincronizzaVarianti($articolo);
 
         if (!empty(post('qta'))) {
             $data_movimento = new Carbon();
@@ -131,6 +135,9 @@ switch (post('op')) {
         $articolo->note = post('note');
 
         $articolo->save();
+
+        // Aggiornamento delle varianti per i campi comuni
+        Combinazione::sincronizzaVarianti($articolo);
 
         // Leggo la quantità attuale per capire se l'ho modificata
         $old_qta = $record['qta'];

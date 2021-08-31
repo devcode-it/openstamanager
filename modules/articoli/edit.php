@@ -17,8 +17,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Util\Ini;
-
 include_once __DIR__.'/../../core.php';
 
 ?><form action="" method="post" id="edit-form" enctype="multipart/form-data">
@@ -265,55 +263,7 @@ echo '
         </div>
 
     </div>
-
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Aggiungi informazioni componente personalizzato'); ?></h3>
-		</div>
-
-		<div class="panel-body">
-<?php
-
-    echo '
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="componente_filename">'.tr('Seleziona un componente').':</label>';
-    echo "
-                        <select class=\"form-control superselect\" id=\"componente_filename\" name=\"componente_filename\" onchange=\"$.post('".base_path()."/modules/impianti/actions.php', {op: 'load_componente', idarticolo: '".$id_record."', filename: $(this).find('option:selected').val() }, function(response){ $('#info_componente').html( response ); start_superselect();    $('.datepicker').datetimepicker({  locale: globals.locale, format: 'L' } ); } );\">\n";
-    echo '
-                            <option value="0">'.tr('Nessuno').'</option>';
-
-    $cmp = Ini::getList(base_dir().'/files/impianti/');
-
-    if (count($cmp) > 0) {
-        for ($c = 0; $c < count($cmp); ++$c) {
-            ($record['componente_filename'] == $cmp[$c][0]) ? $attr = 'selected="selected"' : $attr = '';
-            echo '
-                            <option value="'.$cmp[$c][0]."\" $attr>".$cmp[$c][1]."</option>\n";
-        }
-    }
-
-    echo '
-                        </select>
-                    </div>
-                </div>
-            </div>';
-
-    echo '
-            <div id="info_componente">';
-
-    crea_form_componente($record['contenuto']);
-
-    echo '
-            </div>';
-
-echo '
-		</div>
-	</div>
-</form>';
-
-?>
+</form>
 
 {( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
 

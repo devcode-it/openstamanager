@@ -23,6 +23,8 @@ use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules;
+use Modules\AttributiCombinazioni\ValoreAttributo;
+use Modules\CombinazioniArticoli\Combinazione;
 use Modules\Interventi\Components\Articolo as ArticoloIntervento;
 use Modules\Iva\Aliquota;
 use Plugins\ListinoFornitori\DettaglioFornitore;
@@ -139,6 +141,16 @@ class Articolo extends Model
         }
     }
 
+    /**
+     * Verifica se l'articolo corrente è una variante per una Combinazione.
+     *
+     * @return bool
+     */
+    public function isVariante()
+    {
+        return !empty($this->id_combinazione);
+    }
+
     // Attributi Eloquent
 
     public function getImmagineUploadAttribute()
@@ -178,11 +190,37 @@ class Articolo extends Model
         return 'Articoli';
     }
 
+    public function getNomeVarianteAttribute()
+    {
+        $valori = database()->fetchArray("SELECT CONCAT(`mg_attributi`.`titolo`, ': ', `mg_valori_attributi`.`nome`) AS nome
+        FROM `mg_articolo_attributo`
+            INNER JOIN `mg_valori_attributi` ON `mg_valori_attributi`.`id` = `mg_articolo_attributo`.`id_valore`
+            INNER JOIN `mg_attributi` ON `mg_attributi`.`id` = `mg_valori_attributi`.`id_attributo`
+
+            INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `mg_articolo_attributo`.`id_articolo`
+            INNER JOIN `mg_combinazioni` ON `mg_combinazioni`.`id` = `mg_articoli`.`id_combinazione`
+            INNER JOIN `mg_attributo_combinazione` ON `mg_attributo_combinazione`.`id_combinazione` = `mg_combinazioni`.`id` AND `mg_attributo_combinazione`.`id_attributo` = `mg_attributi`.`id`
+        WHERE `mg_articoli`.`id` = ".prepare($this->id).'
+        ORDER BY `mg_attributo_combinazione`.`order`');
+
+        return implode(', ', array_column($valori, 'nome'));
+    }
+
     // Relazioni Eloquent
 
     public function articoli()
     {
         return $this->hasMany(ArticoloIntervento::class, 'idarticolo');
+    }
+
+    public function combinazione()
+    {
+        return $this->belongsTo(Combinazione::class, 'id_combinazione');
+    }
+
+    public function attributi()
+    {
+        return $this->belongsToMany(ValoreAttributo::class, 'mg_articolo_attributo', 'id_articolo', 'id_valore');
     }
 
     /**

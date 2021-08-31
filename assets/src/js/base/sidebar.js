@@ -87,8 +87,13 @@ $(document).ready(function () {
 
     // Gestione click sulla sidebar per evitare chiusura
     $(".control-sidebar").on("click", function (e) {
-        if (largeScreen && e.target.tagName === 'A' && $(".main-footer").hasClass("with-control-sidebar")) {
-            toggleControlSidebar();
+        const target = $(e.target);
+        if (largeScreen && $(".main-footer").hasClass("with-control-sidebar")) {
+            if (e.target.tagName === 'A') {
+                toggleControlSidebar();
+            } else if (e.target.tagName === 'LI' && target.find("a").hasClass("disabled")) {
+                toggleControlSidebar();
+            }
         }
     });
 

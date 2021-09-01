@@ -40,7 +40,7 @@ echo '
             <thead>
                 <tr>
                     <th>'.tr('Valore').'</th>
-                    <th width="10%">#</th>
+                    <th width="10%" class="text-center">#</th>
                 </tr>
             </thead>
 

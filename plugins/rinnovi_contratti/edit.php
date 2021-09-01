@@ -27,14 +27,13 @@ echo '
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update_rinnovo">
     <input type="hidden" name="id_record" value="'.$id_record.'">
-    
+
     <div class="panel panel-primary">
 		<div class="panel-heading">
 			<h3 class="panel-title">'.tr('Informazioni per rinnovo').'</h3>
 		</div>
 
 		<div class="panel-body">
-
             <div class="row">
                 <div class="col-md-3">
                     {[ "type": "checkbox", "label": "'.tr('Rinnovabile').'", "name": "rinnovabile", "help": "'.tr('Il contratto è rinnovabile?').'", "value": "$rinnovabile$" ]}
@@ -44,7 +43,7 @@ echo '
                     {[ "type": "checkbox", "label": "'.tr('Rinnovo automatico').'", "name": "rinnovo_automatico", "help": "'.tr('Il contratto è da rinnovare automaticamente alla scadenza').'", "value": "$rinnovo_automatico$", "disabled": '.($record['rinnovabile'] ? 0 : 1).' ]}
                 </div>
 
-                
+
                 <div class="col-md-3">
                     {[ "type": "number", "label": "'.tr('Preavviso per rinnovo').'", "name": "giorni_preavviso_rinnovo", "decimals": "2", "value": "$giorni_preavviso_rinnovo$", "icon-after": "giorni", "disabled": '.($record['rinnovabile'] ? 0 : 1).' ]}
                 </div>
@@ -62,13 +61,17 @@ echo '
 </form>';
 
 echo '
-    <table class="table table-hover table-condensed table-bordered table-striped">
+<table class="table table-hover table-condensed table-bordered table-striped">
+    <thead>
         <tr>
             <th>'.tr('Descrizione').'</th>
             <th width="100">'.tr('Totale').'</th>
             <th width="150">'.tr('Data inizio').'</th>
             <th width="150">'.tr('Data conclusione').'</th>
-        </tr>';
+        </tr>
+    </thead>
+
+    <tbody>';
 
 while (!empty($id_contratto_precedente)) {
     $rs = $dbo->fetchArray('SELECT nome, numero, data_accettazione, data_conclusione, budget, idcontratto_prev FROM co_contratti WHERE id='.prepare($id_contratto_precedente));
@@ -89,4 +92,15 @@ while (!empty($id_contratto_precedente)) {
 }
 
 echo '
-    </table>';
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    input("rinnovabile").on("change", function() {
+        const disabled = parseInt($(this).val()) === 0;
+
+        input("giorni_preavviso_rinnovo").setDisabled(disabled);
+        input("ore_preavviso_rinnovo").setDisabled(disabled);
+        input("rinnovo_automatico").setDisabled(disabled);
+    });
+</script>';

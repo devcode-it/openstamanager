@@ -36,6 +36,11 @@ switch ($resource) {
             LEFT JOIN co_banche banca_acquisti ON co_pagamenti.idconto_acquisti = banca_acquisti.id_pianodeiconti3
         |where| GROUP BY co_pagamenti.descrizione ORDER BY co_pagamenti.descrizione ASC";
 
+        // Filtri per banche dell'Azienda
+        $id_azienda = setting('Azienda predefinita');
+        $where[] = 'banca_vendite.id_anagrafica = '.prepare($id_azienda);
+        $where[] = 'banca_acquisti.id_anagrafica = '.prepare($id_azienda);
+
         foreach ($elements as $element) {
             $filter[] = 'co_pagamenti.id = '.prepare($element);
         }

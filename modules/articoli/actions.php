@@ -180,6 +180,7 @@ switch (post('op')) {
         if (!empty($_FILES) && !empty($_FILES['immagine']['name'])) {
             $upload = Uploads::upload($_FILES['immagine'], [
                 'name' => 'Immagine',
+                'category' => 'Immagini',
                 'id_module' => $id_module,
                 'id_record' => $id_record,
             ], [

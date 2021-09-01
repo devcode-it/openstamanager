@@ -61,5 +61,5 @@ ALTER TABLE `my_componenti` ADD FOREIGN KEY (`id_intervento`) REFERENCES `in_int
 
 -- Aggiunte colonne Sedi e Referenti in tabella Anagrafiche
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
-(NULL, (SELECT `id` FROM `zz_modules` WHERE name = 'Anagrafiche'), 'Referenti', '(SELECT GROUP_CONCAT(nome SEPARATOR '', '') FROM an_referenti WHERE an_referenti .idanagrafica = an_anagrafiche.idanagrafica)', 11, 0, 0, 0, '', '', 1, 0, 1),
-(NULL, (SELECT `id` FROM `zz_modules` WHERE name = 'Anagrafiche'), 'Sedi', '(SELECT GROUP_CONCAT(nomesede SEPARATOR '', '') FROM an_sedi WHERE an_sedi.idanagrafica = an_anagrafiche.idanagrafica)', 10, 0, 0, 0, '', '', 1, 0, 1);
+(NULL, (SELECT `id` FROM `zz_modules` WHERE name = 'Anagrafiche'), 'Referenti', '(SELECT GROUP_CONCAT(nome SEPARATOR '', '') FROM an_referenti WHERE an_referenti .idanagrafica = an_anagrafiche.idanagrafica)', 11, 1, 0, 0, '', '', 1, 0, 1),
+(NULL, (SELECT `id` FROM `zz_modules` WHERE name = 'Anagrafiche'), 'Sedi', '(SELECT GROUP_CONCAT(nomesede SEPARATOR '', '') FROM an_sedi WHERE an_sedi.idanagrafica = an_anagrafiche.idanagrafica)', 10, 1, 0, 0, '', '', 1, 0, 1);

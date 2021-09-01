@@ -54,6 +54,7 @@ CREATE TABLE IF NOT EXISTS `mg_articolo_attributo` (
     `id_valore` int(11) NOT NULL,
     `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY(`id_articolo`, `id_valore`),
     FOREIGN KEY (`id_articolo`) REFERENCES `mg_articoli`(`id`),
     FOREIGN KEY (`id_valore`) REFERENCES `mg_valori_attributi`(`id`)
 ) ENGINE=InnoDB;

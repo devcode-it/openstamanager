@@ -38,7 +38,7 @@ if (isset($id_record)) {
     }
 
     // Rimozione .p7m dal nome del file (causa eventuale estrazione da ZIP)
-    $record['name'] = str_replace('.p7m', '', $record['name']);
+    $record['name'] = preg_replace('/(.+)\.p7m$/i', '{1}', $record['name']);
 
     if (empty($record)) {
         flash()->warning(tr('Nessuna fattura da importare!'));

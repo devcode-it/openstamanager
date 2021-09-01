@@ -493,17 +493,6 @@ if (!empty($elementi)) {
 echo '
 <script type="text/javascript">
 $(document).ready(function() {
-    $("#rinnovabile").click(function() {
-        if ($(this).is(":checked")){
-            input("giorni_preavviso_rinnovo").enable();
-            input("rinnovo_automatico").enable();
-
-        }else{
-            input("giorni_preavviso_rinnovo").disable();
-            input("rinnovo_automatico").disable();
-        }
-    });
-
     $("#data_conclusione").on("dp.change", function (e) {
         let data_accettazione = $("#data_accettazione");
         data_accettazione.data("DateTimePicker").maxDate(e.date);
@@ -514,4 +503,3 @@ $(document).ready(function() {
     });
 });
 </script>';
-?>

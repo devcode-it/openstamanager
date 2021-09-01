@@ -32,11 +32,18 @@ use Plugins\PianificazioneInterventi\Promemoria;
 switch (post('op')) {
     case 'add':
         $idanagrafica = post('idanagrafica');
-        $nome = post('nome');
-
         $anagrafica = Anagrafica::find($idanagrafica);
 
-        $contratto = Contratto::build($anagrafica, $nome);
+        // Generazione Contratto
+        $contratto = Contratto::build($anagrafica, post('nome'));
+
+        // Salvataggio informazioni sul rinnovo
+        $contratto->rinnovabile = post('rinnovabile');
+        $contratto->rinnovo_automatico = post('rinnovo_automatico');
+        $contratto->giorni_preavviso_rinnovo = post('giorni_preavviso_rinnovo');
+        $contratto->ore_preavviso_rinnovo = post('ore_preavviso_rinnovo');
+        $contratto->save();
+
         $id_record = $contratto->id;
 
         flash()->info(tr('Aggiunto contratto numero _NUM_!', [

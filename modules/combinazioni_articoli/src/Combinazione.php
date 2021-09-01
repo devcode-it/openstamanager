@@ -167,13 +167,23 @@ class Combinazione extends Model
     protected function sincronizzaCampi($values)
     {
         $articoli = $this->articoli->pluck('id')->all();
+        if (empty($articoli)) {
+            return;
+        }
 
+        // Aggiornamento dati varianti
         database()->table('mg_articoli')
             ->whereIn('id', $articoli)
             ->update($values);
 
+        // Filtro campi combinazioni
+        $combo = collect($values)->filter(function ($value, $key) {
+            return in_array($key, self::$campi_combinazione);
+        });
+
+        // Aggiornamento dati combinazioni
         database()->table('mg_combinazioni')
             ->where('id', $this->id)
-            ->update($values);
+            ->update($combo->toArray());
     }
 }

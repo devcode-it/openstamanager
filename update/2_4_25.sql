@@ -139,3 +139,9 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `visible`, 
     (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Attributi Combinazioni'), 'Nome', 'mg_attributi.nome', 2, 1, 0, 1),
     (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Combinazioni'), 'id', 'mg_combinazioni.id', 1, 0, 0, 1),
     (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Combinazioni'), 'Nome', 'mg_combinazioni.nome', 2, 1, 0, 1);
+
+-- Introduzione della Banca nelle tabelle Fatture
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`) VALUES
+    ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Banca', '(SELECT CONCAT(co_banche.nome, '' - '' , co_banche.iban) AS descrizione FROM co_banche WHERE co_banche.id = id_banca_azienda)', 6, 1, 0, 1),
+    ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'Banca',
+     '(SELECT CONCAT(co_banche.nome, '' - '' , co_banche.iban) FROM co_banche WHERE co_banche.id = id_banca_azienda)', 6, 1, 0, 1);

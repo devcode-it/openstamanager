@@ -44,7 +44,7 @@ switch ($resource) {
         foreach ($elements as $element) {
             $filter[] = 'co_pagamenti.id = '.prepare($element);
         }
-        
+
         if (!empty($superselect['codice_modalita_pagamento_fe'])) {
             $where[] = 'codice_modalita_pagamento_fe = '.prepare($superselect['codice_modalita_pagamento_fe']);
         }

@@ -43,7 +43,7 @@ use Models\PrintTemplate;
                     {[ "type": "text", "label": "<?php echo tr('Nome del file'); ?>", "name": "filename", "required": 1, "value": "$filename$" ]}
 				</div>
 
-               
+
 
 			</div>
 
@@ -62,13 +62,19 @@ use Models\PrintTemplate;
 				</div>
 
                 <?php
-                    if (empty($stampa_predefinita = PrintTemplate::where('predefined', true)->where('id_module', $record['id_module'])->orderBy('id')->first())) {
-                        $stampa_predefinita->name = 'Nessuna';
+                $stampa_predefinita = PrintTemplate::where('predefined', true)
+                    ->where('id_module', $record['id_module'])
+                    ->orderBy('id')
+                    ->first();
+                    if (!empty($stampa_predefinita)) {
+                        $nome_stampa_predefinita = $stampa_predefinita->name;
+                    } else {
+                        $nome_stampa_predefinita = 'Nessuna';
                     }
                 ?>
-                
+
                 <div class="col-md-3">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Predefinita'); ?>", "help" : "<?php echo tr('Attiva per impostare questa stampa come predefinita. Attualmente la stampa predefinita per questo modulo è: '.$stampa_predefinita->name); ?>", "name": "predefined", "value": "$predefined$", "disabled": "<?php echo intval($record['predefined']); ?>" ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Predefinita'); ?>", "help" : "<?php echo tr('Attiva per impostare questa stampa come predefinita. Attualmente la stampa predefinita per questo modulo è: '.$nome_stampa_predefinita); ?>", "name": "predefined", "value": "$predefined$", "disabled": "<?php echo intval($record['predefined']); ?>" ]}
                 </div>
 
             </div>

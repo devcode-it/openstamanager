@@ -88,6 +88,9 @@ class Combinazione extends Model
         if ($articoli->isEmpty()) {
             $articolo = Articolo::build($this->nome, $this->nome);
             $articolo->id_combinazione = $this->id;
+
+            $articolo->id_categoria = $this->id_categoria;
+            $articolo->id_sottocategoria = $this->id_sottocategoria;
         } else {
             $articolo = $articoli->first()->replicate();
         }

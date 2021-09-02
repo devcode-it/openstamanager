@@ -80,3 +80,6 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Banca', '(SELECT CONCAT(co_banche.nome, '' - '' , co_banche.iban) AS descrizione FROM co_banche WHERE co_banche.id = id_banca_azienda)', 6, 1, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'Banca',
 '(SELECT CONCAT(co_banche.nome, '' - '' , co_banche.iban) FROM co_banche WHERE co_banche.id = id_banca_azienda)', 6, 1, 0, 1);
+
+-- Rimosso reversed sulle note di debito
+UPDATE `co_tipidocumento` SET `reversed` = '0' WHERE `co_tipidocumento`.`descrizione` = 'Nota di debito';

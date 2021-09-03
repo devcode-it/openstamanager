@@ -22,17 +22,6 @@ use Modules\Anagrafiche\Anagrafica;
 
 include_once __DIR__.'/../../core.php';
 
-$has_images = null;
-
-// Righe documento
-$righe = $documento->getRighe();
-
-foreach ($righe as $riga) {
-    if ($riga->articolo->immagine) {
-        $has_images = 1;
-    }
-}
-
 $anagrafica = Anagrafica::find($documento['idanagrafica']);
 $pagamento = $dbo->fetchOne('SELECT * FROM co_pagamenti WHERE id = '.prepare($documento['idpagamento']));
 
@@ -44,8 +33,22 @@ if (!empty($anagrafica->idbanca_vendite)) {
     $banca = $dbo->fetchOne('SELECT co_banche.nome, co_banche.iban, co_banche.bic FROM co_banche INNER JOIN co_pianodeiconti3 ON co_banche.id_pianodeiconti3 = co_pianodeiconti3.id WHERE co_pianodeiconti3.id = '.prepare($pagamento['idconto_vendite']).' AND co_banche.deleted_at IS NULL');
 }
 
+// Righe documento
+$righe = $documento->getRighe();
+
+$has_image = $righe->search(function ($item) {
+    return !empty($item->articolo->immagine);
+}) !== false;
+
+$columns = 6;
+if ($has_image) {
+    ++$columns;
+}
+
+$columns = $options['pricing'] ? $columns : 3;
+
 // Creazione righe fantasma
-$autofill = new \Util\Autofill($options['pricing'] ? (($has_images) ? 7 : 6) : 3);
+$autofill = new \Util\Autofill($columns);
 $autofill->setRows(20, 10);
 
 echo '
@@ -138,7 +141,7 @@ echo "
         <tr>
             <th class='text-center'>#</th>";
 
-if ($has_images) {
+if ($has_image) {
     echo "
             <th class='text-center' width='95' >Foto</th>";
 }
@@ -173,13 +176,18 @@ foreach ($righe as $riga) {
                 '.$num.'
             </td>';
 
-    if ($has_images) {
-        echo '<td class=\"text-center\" style=\"vertical-align: middle\" >';
-        if (!empty($riga->articolo->immagine)) {
-            echo '<img src="files/articoli/'.$riga->articolo->immagine.'" width="78">';
-        }
+    if ($has_image) {
+        if ($riga->isArticolo() && !empty($riga->articolo->image)) {
+            echo '
+            <td align="center">
+                <img src="'.$riga->articolo->image.'" style="max-height: 80px; max-width:120px">
+            </td>';
 
-        echo '</td>';
+            $autofill->set(5);
+        } else {
+            echo '
+            <td></td>';
+        }
     }
 
     echo '

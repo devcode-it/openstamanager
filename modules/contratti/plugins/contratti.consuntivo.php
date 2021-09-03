@@ -284,43 +284,54 @@ echo '
     </big>
     <br><br>';
 
-if (!empty($totale_ore_contratto)) {
     echo '
     <div class="row">
         <big class="col-md-4 col-md-offset-4 text-center">
-            <table class="table text-left table-striped table-bordered">
+            <table class="table text-left table-striped table-bordered">';
+            if (!empty($totale_ore_contratto)) {
+                echo '
                 <tr>
                     <td>'.tr('Ore a contratto').':</td>
                     <td class="text-right">'.Translator::numberToLocale($totale_ore_contratto).'</td>
-                </tr>
+                </tr>';
+            }
+                echo '
                 <tr>
                     <td>'.tr('Ore erogate totali').':</td>
                     <td class="text-right">'.Translator::numberToLocale($totale_ore).'</td>
-                </tr>
+                </tr>';
+            if (!empty($totale_ore_contratto)) {
+                echo '
                 <tr>
                     <td>'.tr('Ore residue totali').':</td>
                     <td class="text-right">'.Translator::numberToLocale(floatval($totale_ore_contratto) - floatval($totale_ore)).'</td>
-                </tr>
-
+                </tr>';
+            }
+                echo '
                 <tr>
                     <td>'.tr('Ore erogate concluse').':</td>
                     <td class="text-right">'.Translator::numberToLocale($totale_ore_completate).'</td>
-                </tr>
+                </tr>';
+            if (!empty($totale_ore_contratto)) {
+                echo '
                 <tr>
                     <td>'.tr('Ore residue concluse').':</td>
                     <td class="text-right">'.Translator::numberToLocale(floatval($totale_ore_contratto) - floatval($totale_ore_completate)).'</td>
-                </tr>
+                </tr>';
+            }
+            echo '
             </table>
         </big>
     </div>';
-} else {
+
+if (empty($totale_ore_contratto)) {
     echo '
     <div class="alert alert-info">
         <p>'.tr('Per monitorare il consumo ore, inserisci almeno una riga con unità di misura "ore"').'.</p>
     </div>';
 }
 
-    echo '
+echo '
 </div>';
 
 /*

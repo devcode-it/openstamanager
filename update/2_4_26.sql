@@ -83,3 +83,9 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 
 -- Rimosso reversed sulle note di debito
 UPDATE `co_tipidocumento` SET `reversed` = '0' WHERE `co_tipidocumento`.`descrizione` = 'Nota di debito';
+
+-- Fix recupero informazioni sui servizi attivi
+UPDATE `zz_cache` SET `expire_at` = NULL WHERE `zz_cache`.`name` = 'Informazioni su Services';
+
+-- Fix flag default per i plugin
+UPDATE `zz_plugins` SET `default` = 1, `version` = '' WHERE `zz_plugins`.`name` IN ('Impianti del cliente', 'Impianti', 'Referenti', 'Sedi', 'Statistiche', 'Interventi svolti', 'Componenti ini', 'Movimenti', 'Serial', 'Consuntivo', 'Consuntivo', 'Pianificazione interventi', 'Ddt del cliente', 'Fatturazione Elettronica', 'Fatturazione Elettronica', 'Revisioni', 'Ricevute FE', 'Giacenze', 'Rinnovi', 'Statistiche', 'Dichiarazioni d''Intento', 'Pianificazione fatturazione', 'Listino Clienti', 'Storico attività', 'Consuntivo', 'Allegati', 'Componenti', 'Listino Fornitori', 'Piani di sconto/maggiorazione', 'Varianti Articolo')

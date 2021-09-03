@@ -32,44 +32,50 @@ class ServicesHook extends CachedManager
 
     public function cacheData()
     {
-        $response = Services::request('POST', 'informazioni_servizi');
-        $body = Services::responseBody($response);
+        $response = Services::request('GET', 'info');
 
-        return $body['services'];
+        return Services::responseBody($response);
     }
 
     public function response()
     {
         $servizi = $this->getCache()->content;
+        $limite_scadenze = (new Carbon())->addDays(60);
 
         // Elaborazione dei servizi in scadenza
-        $limite_scadenze = (new Carbon())->addDays(60);
-        $servizi_in_scadenza = [];
-        foreach ($servizi as $servizio) {
-            // Gestione per data di scadenza
-            $scadenza = new Carbon($servizio['expiration_at']);
-            if (
-                (isset($servizio['expiration_at']) && $scadenza->lessThan($limite_scadenze))
-            ) {
-                $servizi_in_scadenza[] = $servizio['name'].' ('.$scadenza->diffForHumans().')';
-            }
-
-            // Gestione per crediti
-            elseif (
-                (isset($servizio['credits']) && $servizio['credits'] < 100)
-            ) {
-                $servizi_in_scadenza[] = $servizio['name'].' ('.$servizio['credits'].' crediti)';
-            }
-        }
+        $risorse_in_scadenza = self::getRisorseInScadenza($servizi['risorse-api'], $limite_scadenze);
 
         $message = tr('I seguenti servizi sono in scadenza: _LIST_', [
-            '_LIST_' => implode(', ', $servizi_in_scadenza),
+            '_LIST_' => implode(', ', $risorse_in_scadenza->pluck('nome')->all()),
         ]);
 
         return [
             'icon' => 'fa fa-refresh text-warning',
             'message' => $message,
-            'show' => !empty($servizi_in_scadenza),
+            'show' => !$risorse_in_scadenza->isEmpty(),
         ];
+    }
+
+    /**
+     * Restituisce l'elenco delle risorse API in scadenza, causa data oppure crediti.
+     *
+     * @param $servizi
+     */
+    public static function getRisorseInScadenza($risorse, $limite_scadenze)
+    {
+        // Elaborazione dei servizi in scadenza
+        $risorse_in_scadenza = collect($risorse)
+            ->filter(function ($item) use ($limite_scadenze) {
+                return (isset($item['expiration_at']) && Carbon::parse($item['expiration_at'])->lessThan($limite_scadenze))
+                    || (isset($item['credits']) && $item['credits'] < 100);
+            });
+
+        return $risorse_in_scadenza->transform(function ($item, $key) {
+            return [
+                'nome' => $item['name'],
+                'data_scadenza' => $item['expiration_at'],
+                'crediti' => $item['credits'],
+            ];
+        });
     }
 }

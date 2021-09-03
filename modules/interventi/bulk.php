@@ -34,6 +34,11 @@ if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
 }
 $id_segment = $_SESSION['module_'.$id_fatture]['id_segment'];
 
+$idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
+    'predefined' => 1,
+    'dir' => 'entrata',
+])['id'];
+
 switch (post('op')) {
     case 'export-bulk':
         $dir = base_dir().'/files/export_interventi/';
@@ -78,7 +83,7 @@ switch (post('op')) {
 
         $data = date('Y-m-d');
         $dir = 'entrata';
-        $tipo_documento = Tipo::where('descrizione', 'Fattura immediata di vendita')->first();
+        $tipo_documento = Tipo::where('id', post('idtipodocumento'))->first();
 
         $id_iva = setting('Iva predefinita');
         $id_conto = setting('Conto predefinito fatture di vendita');
@@ -264,7 +269,8 @@ if (App::debug()) {
         'data' => [
            'title' => tr('Fatturare gli _TYPE_ selezionati?', ['_TYPE_' => strtolower($module['name'])]).' <small><i class="fa fa-question-circle-o tip" title="'.tr('Verranno fatturati solo gli interventi completati non collegati a contratti o preventivi').'."></i></small>',
             'msg' => '{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle fatture di vendita non ancora emesse?').'</small>", "placeholder": "'.tr('Aggiungere alle fatture di vendita nello stato bozza?').'", "name": "accodare" ]}<br>
-            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module=\''.$id_fatture.'\' AND is_fiscale = 1 ORDER BY name", "value": "'.$id_segment.'" ]}',
+            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module=\''.$id_fatture.'\' AND is_fiscale = 1 ORDER BY name", "value": "'.$id_segment.'" ]}<br>
+            {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, CONCAT(codice_tipo_documento_fe, \' - \', descrizione) AS descrizione FROM co_tipidocumento WHERE enabled = 1 AND dir =\'entrata\' ORDER BY codice_tipo_documento_fe", "value": "'.$idtipodocumento.'" ]}',
             'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',
             'blank' => false,

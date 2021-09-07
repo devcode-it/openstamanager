@@ -2,8 +2,9 @@ import Component from '../Component';
 
 export default class Content extends Component {
   view(vnode) {
+    this.attrs.addClassNames('mdc-card__content');
     return (
-      <div class="mdc-card__content">
+      <div {...this.attrs.all()}>
         {vnode.children}
       </div>
     );

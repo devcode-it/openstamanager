@@ -1,10 +1,12 @@
-import Component from '../Component';
 import '@material/mwc-ripple';
+
+import Component from '../Component';
 
 export default class PrimaryAction extends Component {
   view(vnode) {
+    this.attrs.addClassNames('mdc-card__primary-action');
     return (
-      <div class="mdc-card__primary-action" tabindex="0">
+      <div {...this.attrs.all()} tabindex="0">
         <mwc-ripple/>
         {vnode.children}
       </div>

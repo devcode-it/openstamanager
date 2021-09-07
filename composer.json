@@ -39,7 +39,9 @@
         "laravel/tinker": "^2",
         "nette/utils": "^3",
         "riverskies/laravel-mobile-detect": "^1",
-        "tightenco/ziggy":  "^1"
+        "tightenco/ziggy": "^1",
+        "innocenzi/laravel-vite": "^0.1.4",
+        "openstamanager/tipi-attivita": "@dev"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2",

@@ -22,6 +22,7 @@ Route::inertia('setup', 'SetupPage', [
         glob(resource_path('lang').'/*.json')
     ),
     'license' => file_get_contents(base_path('LICENSE')),
+    'title' => __('Configurazione'),
 ]);
 
 Route::get('lang/{language}', function ($language) {

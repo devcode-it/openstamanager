@@ -1,5 +1,6 @@
-import * as Mithril from 'mithril';
-import * as render from 'mithril-node-render';
+import {Vnode} from 'mithril';
+import {sync as render} from 'mithril-node-render';
+
 import Component from './Component';
 
 /**
@@ -21,21 +22,22 @@ export default class Page extends Component {
   /**
    * Ritorna una traduzione
    *
-   * @param {string|Mithril.Vnode} key Stringa di cui prelevare la traduzione
+   * @param {string|Vnode} key Stringa di cui prelevare la traduzione
    * @param {Object|boolean} replace Eventuali parametri da rimpiazzare.
    * Se il parametro è "true" (valore booleano), verrà ritornato il valore come stringa
    * (stesso funzionamento del parametro dedicato (sotto ↓))
    * @param {boolean} returnAsString Se impostato a "true" vien ritornata una stringa invece di
    * un Vnode di Mithril
-   * @returns {Mithril.Vnode}
+   *
+   * @returns {Vnode}
    *
    * @protected
    */
   __(
-    key: string | Mithril.Vnode,
+    key: string | Vnode,
     replace: Object | boolean = {},
     returnAsString: boolean = false
-  ): Mithril.Vnode {
+  ): Vnode {
     let translation = (this.page.translations && this.page.translations[key])
       ? this.page.translations[key] : key;
 
@@ -44,11 +46,11 @@ export default class Page extends Component {
       return translation;
     }
 
-    Object.keys(replace).forEach(async (k: string) => {
-      // "'attrs' in replace[k]" controlla se replace[k] è un vnode di Mithril
-      translation = translation.replace(`:${k}`, ((typeof replace[k] === 'object' && 'attrs' in replace[k]) ? render.sync(replace[k]) : replace[k]));
-    });
+    for (const k of Object.keys(replace)) {
+      // `'attrs' in replace[k]` controlla se replace[k] è un vnode di Mithril
+      translation = translation.replace(`:${k}`, ((typeof replace[k] === 'object' && 'attrs' in replace[k]) ? render(replace[k]) : replace[k]));
+    }
 
-    return returnAsString ? translation : Mithril.m.trust(translation);
+    return returnAsString ? translation : window.m.trust(translation);
   }
 }

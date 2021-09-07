@@ -1,8 +1,16 @@
-/* eslint-disable no-unused-vars */
-import * as Mithril from 'mithril';
+import classnames, {Argument as ClassNames} from 'classnames';
+import collect, {Collection} from 'collect.js';
+import m, {
+  Children, ClassComponent,
+  Vnode, VnodeDOM
+} from 'mithril';
 
-export interface ComponentAttrs extends Mithril.Attributes {}
+interface Attributes extends Collection {
+  addClassNames(...classNames: ClassNames[]): void,
+  addStyles(...styles: string[]): void
+}
 
+// noinspection SpellCheckingInspection
 /**
  * @abstract
  *
@@ -31,9 +39,9 @@ export interface ComponentAttrs extends Mithril.Attributes {}
  * @example
  * return m('div', MyComponent.component({foo: 'bar'), m('p', 'Hello World!'));
  *
- * @see https://mithril.js.org/components.html
+ * @see https://js.org/components.html
  */
-export default class Component implements ComponentAttrs {
+export default class Component implements ClassComponent {
   /**
    * The root DOM element for the component.
    *
@@ -42,54 +50,58 @@ export default class Component implements ComponentAttrs {
   element: Element;
 
   /**
-   * The attributes passed into the component.
+   * The attributes passed into the component. They are transformed into a collection by initAttrs.
    *
-   * @see https://mithril.js.org/components.html#passing-data-to-components
+   * @method <string> addClassNames()
+   *
+   * @see https://js.org/components.html#passing-data-to-components
+   * @see initAttrs
+   *
    * @protected
    */
-  attrs;
+  attrs: Attributes;
 
   /**
    * @inheritdoc
    * @abstract
    */
-  view(vnode: Mithril.Vnode): Mithril.Children {}
+  view(vnode: Vnode): Children {}
 
   /**
    * @inheritdoc
    */
-  oninit(vnode: Mithril.Vnode) {
+  oninit(vnode: Vnode) {
     this.setAttrs(vnode.attrs);
   }
 
   /**
    * @inheritdoc
    */
-  oncreate(vnode: Mithril.VnodeDOM) {
+  oncreate(vnode: VnodeDOM) {
     this.element = vnode.dom;
   }
 
   /**
    * @inheritdoc
    */
-  onbeforeupdate(vnode: Mithril.VnodeDOM) {
+  onbeforeupdate(vnode: VnodeDOM) {
     this.setAttrs(vnode.attrs);
   }
 
   /**
    * @inheritdoc
    */
-  onupdate(vnode: Mithril.VnodeDOM) {}
+  onupdate(vnode: VnodeDOM) {}
 
   /**
    * @inheritdoc
    */
-  onbeforeremove(vnode: Mithril.VnodeDOM) {}
+  onbeforeremove(vnode: VnodeDOM) {}
 
   /**
    * @inheritdoc
    */
-  onremove(vnode: Mithril.VnodeDOM) {}
+  onremove(vnode: VnodeDOM) {}
 
   /**
    * Returns a jQuery object for this component's element. If you pass in a
@@ -105,22 +117,22 @@ export default class Component implements ComponentAttrs {
    * @final
    * @protected
    */
-  /* $(selector?: string): JQuery {
+  $(selector?: string): JQuery {
     const $element: JQuery<HTMLElement> = $(this.element);
-    return selector ? $element.find(selector) : $element;
-  }; */
+    return selector ? $element.find((element) => selector(element)) : $element;
+  }
 
 
   /**
    * Convenience method to attach a component without JSX.
    * Has the same effect as calling `m(THIS_CLASS, attrs, children)`.
    *
-   * @see https://mithril.js.org/hyperscript.html#mselector,-attributes,-children
+   * @see https://js.org/hyperscript.html#mselector,-attributes,-children
    */
-  static component(attrs = {}, children = null): Mithril.Vnode {
-    const componentAttrs: Record<string, unknown> = { ...attrs};
+  static component(attributes = {}, children): Vnode {
+    const componentAttributes: Record<string, any> = { ...attributes};
 
-    return Mithril.m(this, componentAttrs, children);
+    return m(this, componentAttributes, children);
   }
 
   /**
@@ -129,17 +141,32 @@ export default class Component implements ComponentAttrs {
    *
    * @private
    */
-  setAttrs(attrs = {}): void {
-    this.initAttrs(attrs);
-    if (attrs) {
-      if ('children' in attrs) {
+  setAttrs(attributes: Object = {}): void {
+    this.initAttrs(attributes);
+    if (attributes) {
+      if ('children' in attributes) {
+        // noinspection JSUnresolvedVariable
         throw new Error(`[${this.constructor.name}] The "children" attribute of attrs should never be used. Either pass children in as the vnode children or rename the attribute`);
       }
-      if ('tag' in attrs) {
+      if ('tag' in attributes) {
+        // noinspection JSUnresolvedVariable
         throw new Error(`[${this.constructor.name}] You cannot use the "tag" attribute name with Mithril 2.`);
       }
     }
-    this.attrs = attrs;
+    this.attrs = collect(attributes);
+    this.attrs.macro('addClassNames', (...classNames: ClassNames[]) => {
+      this.attrs.put('className', classnames(this.attrs.get('className'), ...classNames));
+    });
+    this.attrs.macro('addStyles', (...styles: string[]) => {
+      let s: string = this.attrs.get('style', '');
+
+      if (!s.trimEnd().endsWith(';')) {
+        s += '; ';
+      }
+
+      s += styles.join('; ');
+      this.attrs.put('style', s);
+    });
   }
 
   /**
@@ -149,5 +176,5 @@ export default class Component implements ComponentAttrs {
    *
    * @protected
    */
-  initAttrs(attrs): void {}
+  initAttrs(attributes: Object): void {}
 }

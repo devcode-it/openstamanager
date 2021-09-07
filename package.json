@@ -1,15 +1,16 @@
 {
     "name": "openstamanager",
-    "packageManager": "yarn@3.0.0",
+    "version": "3.0.0",
+    "packageManager": "pnpm",
     "private": true,
+    "main": "resources/js/index.js",
     "scripts": {
-        "dev": "npm run development",
-        "development": "mix",
-        "watch": "mix watch",
-        "watch-poll": "mix watch -- --watch-options-poll=1000",
-        "hot": "mix watch --hot",
-        "prod": "npm run production",
-        "production": "mix --production"
+        "build": "vite build",
+        "serve": "php artisan serve",
+        "watch": "vite build --watch",
+        "serve-watch": "concurrently --raw npm:serve npm:watch ",
+        "prepublishOnly": "pnpm run build",
+        "preinstall": "npx only-allow pnpm"
     },
     "dependencies": {
         "@inertiajs/inertia": "^0.10.0",
@@ -34,13 +35,15 @@
         "@material/theme": "^12.0.0",
         "@mdi/font": "^5.9.55",
         "classnames": "^2.3.1",
+        "collect.js": "^4.28.6",
         "jquery": "^3.6.0",
         "lit-element": "^2.5.1",
         "locale-code": "^2.0.2",
         "lodash": "^4.17.21",
         "mithril": "^2.0.4",
         "mithril-node-render": "^3.0.1",
-        "modern-normalize": "^1.1.0"
+        "modern-normalize": "^1.1.0",
+        "openstamanager": "link:."
     },
     "devDependencies": {
         "@babel/cli": "^7.14.8",
@@ -50,8 +53,8 @@
         "@babel/plugin-transform-react-jsx": "^7.14.9",
         "@babel/preset-env": "^7.14.9",
         "@babel/preset-flow": "^7.14.5",
-        "browser-sync": "^2.27.5",
-        "browser-sync-webpack-plugin": "2.3.0",
+        "@bunchtogether/vite-plugin-flow": "github:maicol07/vite-plugin-flow",
+        "concurrently": "^6.2.1",
         "eslint": "^7.32.0",
         "eslint-config-airbnb-base": "^14.2.1",
         "eslint-plugin-flowtype": "^5.8.2",
@@ -70,6 +73,8 @@
         "stylelint-config-recommended-scss": "^4.3.0",
         "stylelint-config-standard": "^22.0.0",
         "stylelint-scss": "^3.20.1",
-        "webpack": "^5.47.1"
+        "typescript": "^4.4.2",
+        "vite": "^2.5.3",
+        "vite-plugin-fonts": "^0.2.2"
     }
 }

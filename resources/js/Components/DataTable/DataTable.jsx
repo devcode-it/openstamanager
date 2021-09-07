@@ -1,18 +1,19 @@
 import '@material/mwc-linear-progress';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-select';
+
 import Component from '../Component';
 import Mdi from '../Mdi';
 
 export default class DataTable extends Component {
   view(vnode) {
-    return <div className="mdc-data-table" {...vnode.attrs}>
+    return <div className="mdc-data-table" {...this.attrs.all()}>
       <div className="mdc-data-table__table-container">
         <table className="mdc-data-table__table" aria-label={vnode.attrs['aria-label']}>
           {vnode.children}
         </table>
 
-        {vnode.attrs.paginated ? <div className="mdc-data-table__pagination">
+        {this.attrs.has('paginated') ? <div className="mdc-data-table__pagination">
           <div className="mdc-data-table__pagination-trailing">
             <div className="mdc-data-table__pagination-rows-per-page">
               <div className="mdc-data-table__pagination-rows-per-page-label">
@@ -20,6 +21,8 @@ export default class DataTable extends Component {
               </div>
 
               <mwc-select className="mdc-data-table__pagination-rows-per-page-select">
+                {/* TODO: Rendere dinamico (permetti a chi chiama il componente di
+                scegliere i valori da visualizzare */}
                 <mwc-list-item value="10">10</mwc-list-item>
                 <mwc-list-item value="25">25</mwc-list-item>
                 <mwc-list-item value="50">50</mwc-list-item>
@@ -30,6 +33,7 @@ export default class DataTable extends Component {
 
             <div className="mdc-data-table__pagination-navigation">
               <div className="mdc-data-table__pagination-total">
+                {/* TODO: Aggiungere i18n */}
                 1‑10 di 100
               </div>
               <mwc-icon-button className="mdc-data-table__pagination-button" data-page="first" disabled>
@@ -54,6 +58,5 @@ export default class DataTable extends Component {
         </div>
       </div>
     </div>;
-    // TODO: Inserire traduzioni
   }
 }

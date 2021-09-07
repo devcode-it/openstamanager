@@ -6,30 +6,32 @@ import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-select';
 import '@material/mwc-textarea';
 import '@material/mwc-textfield';
+
+import collect from 'collect.js';
 import LocaleCode from 'locale-code';
 import Mithril from 'mithril';
 
-import Page from '../Components/Page';
-import LayoutGrid from '../Components/Grid/LayoutGrid';
-import Row from '../Components/Grid/Row';
-import Cell from '../Components/Grid/Cell';
-import Mdi from '../Components/Mdi';
+import logoUrl from '@/static/images/logo_completo.png';
+
 import Card from '../Components/Card/Card';
 import Content from '../Components/Card/Content';
+import Cell from '../Components/Grid/Cell';
+import LayoutGrid from '../Components/Grid/LayoutGrid';
+import Row from '../Components/Grid/Row';
+import Mdi from '../Components/Mdi';
+import Page from '../Components/Page';
 
 export default class SetupPage extends Page {
-  // eslint-disable-next-line no-unused-vars
   view(vnode) {
-    const listItems: array[Mithril.Vnode] = [];
+    const listItems: Array[Mithril.Vnode] = [];
 
-    // noinspection JSUnresolvedVariable
-    this.page.props.languages.forEach((lang) => {
-      const prop = {
+    for (const lang of this.page.props.languages) {
+      const attributes = {
         selected: this.page.props.locale === lang
       };
       const langCode = lang.replace('_', '-');
       listItems.push(
-        <mwc-list-item graphic="icon" value={lang} {...prop}>
+        <mwc-list-item graphic="icon" value={lang} {...attributes}>
           <img
             slot="graphic"
             style="border-radius: 4px;"
@@ -39,22 +41,28 @@ export default class SetupPage extends Page {
         <span>{LocaleCode.getLanguageNativeName(langCode)}</span>
       </mwc-list-item>
       );
-    });
+    }
+
+    const examplesTexts = collect();
+    for (const example of ['localhost', 'root', 'mysql', 'openstamanager']) {
+      examplesTexts.put(example, this.__('Esempio: :example', {example}, true));
+    }
 
     return (
       <>
-        <Card outlined class="center" style="width: 85%;">
+        <Card outlined className="center" style="width: 85%;">
           <Content>
-            <img src="images/logo_completo.png" class="center" alt={this.__('OpenSTAManager')} />
+            <img src={logoUrl} className="center" alt={this.__('OpenSTAManager')} />
             <LayoutGrid>
               <Row>
                 <Cell columnspan-desktop="8">
                   <h2>{this.__('Benvenuto in :name!', {name: <strong>{this.__('OpenSTAManager')}</strong>})}</h2>
                   <p>{this.__('Puoi procedere alla configurazione tecnica del software attraverso i '
                     + 'parametri seguenti, che potranno essere corretti secondo necessità tramite il file .env.')}<br/>
-                    {this.__("Se necessiti supporto puoi contattarci tramite l':contact_link o tramite il nostro :forum_link.", {
-                      contact_link: <a href="https://www.openstamanager.com/contattaci/?subject=Assistenza%20installazione%20OSM">{this.__('assistenza ufficiale')}</a>,
-                      forum_link: <a href="https://forum.openstamanager.com">{this.__('forum')}</a>
+                    {this.__("Se necessiti supporto puoi contattarci tramite l':contactLink o tramite il nostro :forumLink.", {
+                      // eslint-disable-next-line no-secrets/no-secrets
+                      contactLink: <a href="https://www.openstamanager.com/contattaci/?subject=Assistenza%20installazione%20OSM">{this.__('assistenza ufficiale')}</a>,
+                      forumLink: <a href="https://forum.openstamanager.com">{this.__('forum')}</a>
                     })}</p>
                   <h4>{this.__('Formato date')}</h4>
                   <small>
@@ -77,16 +85,16 @@ export default class SetupPage extends Page {
                   <h4>{this.__('Database')}</h4>
                   <Row>
                     <Cell columnspan="4">
-                      <mwc-textfield name="host" label={this.__('Host', true)} required helper={this.__('Esempio: :example', {example: 'localhost'}, true)} />
+                      <mwc-textfield name="host" label={this.__('Host', true)} required helper={examplesTexts.get('localhost')} />
                     </Cell>
                     <Cell columnspan="4">
-                      <mwc-textfield name="username" label={this.__('Nome utente', true)} required helper={this.__('Esempio: :example', {example: 'root'}, true)} />
+                      <mwc-textfield name="username" label={this.__('Nome utente', true)} required helper={examplesTexts.get('root')} />
                     </Cell>
                     <Cell columnspan="4">
-                      <mwc-textfield name="password" label={this.__('Password', true)} required helper={this.__('Esempio: :example', {example: 'mysql'}, true)} />
+                      <mwc-textfield name="password" label={this.__('Password', true)} required helper={examplesTexts.get('mysql')} />
                     </Cell>
                     <Cell columnspan="4">
-                      <mwc-textfield name="database_name" label={this.__('Nome database', true)} required helper={this.__('Esempio: :example', {example: 'openstamanager'}, true)} />
+                      <mwc-textfield name="database_name" label={this.__('Nome database', true)} required helper={examplesTexts.get('openstamanager')} />
                     </Cell>
                   </Row>
                   <hr/>
@@ -134,8 +142,8 @@ export default class SetupPage extends Page {
             </LayoutGrid>
           </Content>
         </Card>
-        <mwc-fab id="contrast-switcher" class="sticky contrast-light" label={this.__('Attiva/disattiva contrasto elevato', true)}>
-          <Mdi icon="contrast-circle" slot="icon" class="light-bg"/>
+        <mwc-fab id="contrast-switcher" className="sticky contrast-light" label={this.__('Attiva/disattiva contrasto elevato', true)}>
+          <Mdi icon="contrast-circle" slot="icon" className="light-bg"/>
         </mwc-fab>
       </>
     );

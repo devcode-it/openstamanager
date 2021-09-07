@@ -1,11 +1,11 @@
-import Page from './Page';
-import DataTable from './DataTable/DataTable';
-import TableHeadCell from './DataTable/TableHeadCell';
-import TableHead from './DataTable/TableHead';
-import TableHeadRow from './DataTable/TableHeadRow';
-import TableBody from './DataTable/TableBody';
-import TableRow from './DataTable/TableRow';
-import TableCell from './DataTable/TableCell';
+import DataTable from '../DataTable/DataTable';
+import TableBody from '../DataTable/TableBody';
+import TableCell from '../DataTable/TableCell';
+import TableHead from '../DataTable/TableHead';
+import TableHeadCell from '../DataTable/TableHeadCell';
+import TableHeadRow from '../DataTable/TableHeadRow';
+import TableRow from '../DataTable/TableRow';
+import Page from '../Page';
 
 /**
  * @abstract
@@ -21,16 +21,16 @@ export default class ListPage extends Page {
 
   view(vnode) {
     const columns = this.columns.map(
-      (column, i) => (
-        <TableHeadCell key={i} type={null}>
+      (column, index) => (
+        <TableHeadCell key={index}>
           {column}
         </TableHeadCell>
       )
     );
 
-    const rows = this.rows.length ? this.rows.map((row, i) => (
-      <TableRow key={i}>
-        {row.map((cell, index) => <TableCell key={index}>{cell}</TableCell>)}
+    const rows = this.rows.length > 0 ? this.rows.map((row, index) => (
+      <TableRow key={index}>
+        {row.map((cell, index_) => <TableCell key={index_}>{cell}</TableCell>)}
       </TableRow>
     )) : <TableRow><TableCell colspan={columns.length}>{this.__('Non sono presenti dati')}</TableCell></TableRow>;
 

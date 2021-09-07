@@ -1,0 +1,23 @@
+import Component from '../Component';
+
+export default class Cell extends Component {
+  view(vnode) {
+    const spans = [];
+    for (const device of ['desktop', 'tablet', 'phone']) {
+      const key = `columnspan-${device}`;
+      if (this.attrs.has(key)) {
+        spans.push(`mdc-layout-grid__cell--span-${this.attrs.get(key)}-${device}`);
+      }
+    }
+
+    this.attrs.addClassNames('mdc-layout-grid__cell', {
+      [`mdc-layout-grid__cell--span-${this.attrs.columnspan}`]: this.attrs.has('columnspan'),
+      [`mdc-layout-grid__cell--order-${this.attrs.get('order')}`]: this.attrs.has('order'),
+      [`mdc-layout-grid__cell--align-${this.attrs.get('align')}`]: this.attrs.has('align')
+    }, spans);
+
+    return <div {...this.attrs.all()}>
+      {vnode.children}
+    </div>;
+  }
+}

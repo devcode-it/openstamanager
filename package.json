@@ -13,8 +13,8 @@
         "preinstall": "npx only-allow pnpm"
     },
     "dependencies": {
-        "@inertiajs/inertia": "^0.10.0",
-        "@maicol07/inertia-mithril": "^0.3.3",
+        "@inertiajs/inertia": "^0.10.1",
+        "@maicol07/inertia-mithril": "^0.4",
         "@material/card": "^12.0.0",
         "@material/data-table": "^12.0.0",
         "@material/layout-grid": "^12.0.0",
@@ -33,7 +33,7 @@
         "@material/mwc-textfield": "^0.22.1",
         "@material/mwc-top-app-bar": "^0.22.1",
         "@material/theme": "^12.0.0",
-        "@mdi/font": "^5.9.55",
+        "@mdi/font": "^6.1.95",
         "@open-wc/eslint-config": "^4.3.0",
         "async-wait-until": "^2.0.7",
         "classnames": "^2.3.1",

@@ -20,6 +20,16 @@ mwc-button .mdi {
     font-size: 18px;
 }
 
+mwc-icon-button {
+    .mdi {
+        opacity: 0.54;
+    }
+
+    &:hover .mdi {
+        opacity: 0.84;
+    }
+}
+
 mwc-list > a,
 mwc-menu > a {
     text-decoration: none;
@@ -39,6 +49,7 @@ mwc-list-item {
     }
 }
 
+//noinspection Stylelint
 material-drawer {
     --mdc-theme-primary: var(--mdc-theme-primary2, variables.$primary);
 

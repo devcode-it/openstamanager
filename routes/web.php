@@ -1,5 +1,7 @@
 <?php
 
+/** @noinspection UnusedFunctionResultInspection */
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,7 +21,7 @@ Route::redirect('/', 'setup');
 Route::inertia('setup', 'SetupPage', [
     'languages' => array_map(
         static fn ($file) => basename($file, '.json'),
-        glob(resource_path('lang').'/*.json')
+        glob(resource_path('lang').'/*.json', GLOB_NOSORT)
     ),
     'license' => file_get_contents(base_path('LICENSE')),
     'title' => __('Configurazione'),

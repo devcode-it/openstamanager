@@ -1,6 +1,6 @@
 <mwc-list activatable>
     @foreach([
-        'tipi-attività' => [
+        'tipi-attivita' => [
             'icon' => 'shape',
             'text' => __('Tipi attività')
         ]

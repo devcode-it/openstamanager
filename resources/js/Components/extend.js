@@ -23,27 +23,27 @@
  *   // something that needs to be run on creation and update
  * });
  *
- * @param {object} obj The object that owns the method
+ * @param {object} proto The prototype of the object/class that owns the method
  * @param {string|string[]} methods The name or names of the method(s) to extend
  * @param {function} callback A callback which mutates the method's output
  */
-export function extend(obj, methods, callback) {
+export function extend(proto, methods, callback) {
   const allMethods = Array.isArray(methods) ? methods : [methods];
 
-  allMethods.forEach((method) => {
-    const original = obj[method];
+  for (const method of allMethods) {
+    const original = proto[method];
 
     // eslint-disable-next-line no-param-reassign
-    obj[method] = function (...args) {
-      const value = original ? original.apply(this, args) : undefined;
+    proto[method] = function (...arguments_) {
+      const value = original ? original.apply(this, arguments_) : undefined;
 
-      callback.apply(this, [value].concat(args));
+      Reflect.apply(callback, this, [value, ...arguments_]);
 
       return value;
     };
 
-    Object.assign(obj[method], original);
-  });
+    Object.assign(proto[method], original);
+  }
 }
 
 /**
@@ -76,14 +76,14 @@ export function extend(obj, methods, callback) {
 export function override(object, methods, newMethod) {
   const allMethods = Array.isArray(methods) ? methods : [methods];
 
-  allMethods.forEach((method) => {
+  for (const method of allMethods) {
     const original = object[method];
 
     // eslint-disable-next-line no-param-reassign
-    object[method] = function (...args) {
-      return newMethod.apply(this, [original.bind(this)].concat(args));
+    object[method] = function (...arguments_) {
+      return Reflect.apply(newMethod, this, [original.bind(this), ...arguments_]);
     };
 
     Object.assign(object[method], original);
-  });
+  }
 }

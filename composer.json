@@ -79,6 +79,13 @@
         "preferred-install": "dist",
         "sort-packages": true
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../osm_tipi_attività",
+            "symlink": true
+        }
+    ],
     "minimum-stability": "dev",
     "prefer-stable": true
 }

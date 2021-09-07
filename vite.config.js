@@ -30,12 +30,12 @@ export default defineConfig({
   },
   optimizeDeps: {
     esbuildOptions: {
-      plugins: [esbuildFlowPlugin(/\.(flow|jsx?)$/, (path) => (/\.jsx$/.test(path) ? 'jsx' : 'js'), {
+      plugins: [esbuildFlowPlugin(/\.(flow|jsx?)$/, path => (/\.jsx$/.test(path) ? 'jsx' : 'js'), {
         all: true,
         pretty: true,
-        ignoreUninitializedFields: false,
+        ignoreUninitializedFields: false
       })]
-    },
+    }
   },
   plugins: [
     flowPlugin({
@@ -44,7 +44,7 @@ export default defineConfig({
       flow: {
         all: true,
         pretty: true,
-        ignoreUninitializedFields: false,
+        ignoreUninitializedFields: false
       }
     })
     /* NOT WORKING. Waiting a fix

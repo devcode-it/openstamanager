@@ -1,7 +1,7 @@
-import {css} from 'lit-element';
 import {Drawer as MWCDrawer} from '@material/mwc-drawer';
+import {css} from 'lit-element';
 
-class Drawer extends MWCDrawer {
+export default class MaterialDrawer extends MWCDrawer {
   static styles = [MWCDrawer.styles, css`
     :first-child {
       border-right: none;
@@ -13,4 +13,5 @@ class Drawer extends MWCDrawer {
     }
   `];
 }
-global.customElements.define('material-drawer', Drawer);
+
+window.customElements.define('material-drawer', MaterialDrawer);

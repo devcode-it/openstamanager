@@ -201,15 +201,15 @@ switch (post('op')) {
                     $failed[] = $fattura->numero_esterno;
                 } else {
                     if ($r['dir'] == 'entrata') {
-                        $src = $fe->getFilename();
-                        $dst = $src;
+                        $dst = $fe->getFilename();
+                        $src = $dbo->selectOne('zz_files', 'filename', ['original' => $dst])['filename'];
                     } else {
                         $src = basename($fattura->uploads()->where('name', 'Fattura Elettronica')->first()->filepath);
                         $dst = basename($fattura->uploads()->where('name', 'Fattura Elettronica')->first()->original_name);
                     }
 
                     $file = slashes($module->upload_directory.'/'.$src);
-                    $dest = slashes($dir.'/tmp/'.$dst);
+                    $dest = slashes($dir.'tmp/'.$dst);
 
                     $result = copy($file, $dest);
 

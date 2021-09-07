@@ -52,7 +52,7 @@ if (count($preventivo->revisioni) > 1) {
 				</div>
 
                 <div class="col-md-3">
-                    {[ "type": "date", "label": "<?php echo tr('Data bozza'); ?>", "name": "data_bozza", "value": "$data_bozza$" ]}
+                    {[ "type": "date", "label": "<?php echo tr('Data bozza'); ?>", "name": "data_bozza","required": 1, "value": "$data_bozza$" ]}
                 </div>
 
                 <div class="col-md-2">

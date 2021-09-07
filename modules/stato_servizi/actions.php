@@ -21,101 +21,230 @@ include_once __DIR__.'/../../core.php';
 
 use API\Services;
 use Models\Cache;
+use Models\Module;
+use Models\Plugin;
 use Util\FileSystem;
 
 $id = post('id');
 
 switch (filter('op')) {
-    case 'uninstall':
-        if (!empty($id)) {
-            // Leggo l'id del modulo
-            $rs = $dbo->fetchArray('SELECT id, name, directory FROM zz_modules WHERE id='.prepare($id).' AND `default`=0');
-            $modulo = $rs[0]['title'];
-            $module_dir = $rs[0]['directory'];
+    case 'rimuovi-modulo':
+        $id = filter('id');
+        $is_plugin = filter('tipo') == 'plugin';
+        if (empty($id)) {
+            echo json_encode([]);
+        }
 
-            if (count($rs) == 1) {
-                // Elimino il modulo dal menu
-                $dbo->query('DELETE FROM zz_modules WHERE id='.prepare($id).' OR parent='.prepare($id));
+        // Ricerca del modulo/plugin tra quelli disponibili
+        if (!$is_plugin) {
+            $struttura = Module::where('default', '=', 0)->find($id);
+        } else {
+            $struttura = Plugin::where('default', '=', 0)->find($id);
+        }
 
-                $uninstall_script = base_dir().'/modules/'.$module_dir.'/update/uninstall.php';
+        // Modulo/plugin non trovato
+        if (empty($struttura)) {
+            echo json_encode([]);
+        }
 
-                if (file_exists($uninstall_script)) {
-                    include_once $uninstall_script;
-                }
+        // Eliminazione del modulo/plugin dal sistema di navigazione
+        $struttura->delete();
 
-                delete(base_dir().'/modules/'.$module_dir.'/');
+        // Esecuzione dello script di disinstallazione (se presente)
+        $uninstall_script = $struttura->path.'/update/uninstall.php';
+        if (file_exists($uninstall_script)) {
+            include_once $uninstall_script;
+        }
 
-                flash()->info(tr('Modulo "_MODULE_" disinstallato!', [
-                    '_MODULE_' => $modulo,
-                ]));
+        // Eliminazione dei file del modulo/plugin
+        delete($struttura->path);
+
+        // Messaggio informativo
+        if (!$is_plugin) {
+            flash()->info(tr('Modulo "_NAME_" disinstallato!', [
+                '_NAME_' => $struttura->title,
+            ]));
+        } else {
+            flash()->info(tr('Plugin "_NAME_" disinstallato!', [
+                '_NAME_' => $struttura->title,
+            ]));
+        }
+
+        echo json_encode([]);
+
+        break;
+
+    case 'disabilita-modulo':
+        $id = filter('id');
+        $is_plugin = filter('tipo') == 'plugin';
+
+        // Disabilitazione del modulo indicato
+        $database->table($is_plugin ? 'zz_plugins' : 'zz_modules')
+            ->where('id', '=', $id)
+            ->update(['enabled' => 0]);
+
+        // Cascata in tutti i sotto-moduli
+        if (!$is_plugin) {
+            $moduli_interessati = collect([$id]);
+            while (!$moduli_interessati->isEmpty()) {
+                $id_modulo = $moduli_interessati->pop();
+
+                // Disabilitazione dei sotto-moduli
+                $database->table('zz_modules')
+                    ->where('parent', '=', $id_modulo)
+                    ->update(['enabled' => 0]);
+
+                // Ricerca sotto-moduli
+                $sotto_moduli = $database->table('zz_modules')
+                    ->where('parent', '=', $id_modulo)
+                    ->select('id')
+                    ->get()->pluck('id');
+                $moduli_interessati->concat($sotto_moduli);
             }
         }
 
-        break;
+        // Disabilitazione modulo/plugin indicato
+        $moduli_sempre_attivi = ['Utenti e permessi', 'Stato dei servizi'];
+        $database->table('zz_modules')
+            ->whereIn('name', $moduli_sempre_attivi)
+            ->update(['enabled' => 1]);
 
-    case 'disable':
-        $dbo->query('UPDATE `zz_modules` SET `enabled` = 0 WHERE (`id` = '.prepare($id).' OR `parent` = '.prepare($id).') AND `id` != '.prepare(Modules::get('Stato dei servizi')['id']));
+        // Messaggio informativo
+        $struttura = $is_plugin ? Plugin::find($id) : Module::find($id);
+        if (!$is_plugin) {
+            flash()->info(tr('Modulo "_NAME_" disabilitato!', [
+                '_NAME_' => $struttura->title,
+            ]));
+        } else {
+            flash()->info(tr('Plugin "_NAME_" disabilitato!', [
+                '_NAME_' => $struttura->title,
+            ]));
+        }
 
-        flash()->info(tr('Modulo "_MODULE_" disabilitato!', [
-            '_MODULE_' => Modules::get($id)['title'],
-        ]));
-
-        break;
-
-    case 'enable':
-        $dbo->query('UPDATE `zz_modules` SET `enabled` = 1 WHERE `id` = '.prepare($id).' OR `parent` = '.prepare($id));
-
-        flash()->info(tr('Modulo "_MODULE_" abilitato!', [
-            '_MODULE_' => Modules::get($id)['title'],
-        ]));
-
-        break;
-
-    case 'disable_widget':
-        $dbo->query('UPDATE zz_widgets SET enabled = 0 WHERE id = '.prepare($id));
-
-        $rs = $dbo->fetchArray('SELECT id, name FROM zz_widgets WHERE id='.prepare($id));
-        $widget = $rs[0]['name'];
-
-        flash()->info(tr('Widget "_WIDGET_" disabilitato!', [
-            '_WIDGET_' => $widget,
-        ]));
+        echo json_encode([]);
 
         break;
 
-    case 'enable_widget':
-        $dbo->query('UPDATE zz_widgets SET enabled=1 WHERE id='.prepare($id));
+    case 'abilita-sotto-modulo':
+        $id = filter('id');
 
-        $rs = $dbo->fetchArray('SELECT id, name FROM zz_widgets WHERE id='.prepare($id));
-        $widget = $rs[0]['name'];
+        // Cascata in tutti i sotto-moduli
+        $moduli_interessati = collect([$id]);
+        while (!$moduli_interessati->isEmpty()) {
+            $id_modulo = $moduli_interessati->pop();
 
-        flash()->info(tr('Widget "_WIDGET_" abilitato!', [
-            '_WIDGET_' => $widget,
-        ]));
+            // Disabilitazione dei sotto-moduli
+            $database->table('zz_modules')
+                ->where('parent', '=', $id_modulo)
+                ->update(['enabled' => 1]);
+
+            // Ricerca sotto-moduli
+            $sotto_moduli = $database->table('zz_modules')
+                ->where('parent', '=', $id_modulo)
+                ->select('id')
+                ->get()->pluck('id');
+            $moduli_interessati->concat($sotto_moduli);
+        }
+
+        // no break
+    case 'abilita-modulo':
+        $id = filter('id');
+        $is_plugin = filter('tipo') == 'plugin';
+
+        // Abilitazione del modulo/plugin indicato
+        $database->table($is_plugin ? 'zz_plugins' : 'zz_modules')
+            ->where('id', '=', $id)
+            ->update(['enabled' => 1]);
+
+        // Messaggio informativo
+        $struttura = $is_plugin ? Plugin::find($id) : Module::find($id);
+        if (!isset($moduli_interessati)) {
+            if (!$is_plugin) {
+                flash()->info(tr('Modulo "_NAME_" abilitato!', [
+                    '_NAME_' => $struttura->title,
+                ]));
+            } else {
+                flash()->info(tr('Plugin "_NAME_" abilitato!', [
+                    '_NAME_' => $struttura->title,
+                ]));
+            }
+        } else {
+            $modulo = Modules::get($id);
+            flash()->info(tr('Moduli sotto a "_NAME_" abilitati!', [
+                '_NAME_' => $struttura->title,
+            ]));
+        }
+
+        echo json_encode([]);
 
         break;
 
-    case 'change_position_widget_top':
-        $dbo->query("UPDATE zz_widgets SET location='controller_top' WHERE id=".prepare($id));
+    case 'disabilita-widget':
+        $id = filter('id');
 
-        $rs = $dbo->fetchArray('SELECT id, name FROM zz_widgets WHERE id='.prepare($id));
-        $widget = $rs[0]['name'];
+        // Abilitazione del widget indicato
+        $database->table('zz_widgets')
+            ->where('id', '=', $id)
+            ->update(['enabled' => 0]);
 
-        flash()->info(tr('Posizione del widget "_WIDGET_" aggiornata!', [
-            '_WIDGET_' => $widget,
+        // Messaggio informativo
+        $widget = $database->table('zz_widgets')
+            ->where('id', '=', $id)
+            ->first();
+        flash()->info(tr('Widget "_NAME_" disabilitato!', [
+            '_NAME_' => $widget->name,
         ]));
+
+        echo json_encode([]);
 
         break;
 
-    case 'change_position_widget_right':
-        $dbo->query("UPDATE zz_widgets SET location='controller_right' WHERE id=".prepare($id));
+    case 'abilita-widget':
+        $id = filter('id');
 
-        $rs = $dbo->fetchArray('SELECT id, name FROM zz_widgets WHERE id='.prepare($id));
-        $widget = $rs[0]['name'];
+        // Abilitazione del widget indicato
+        $database->table('zz_widgets')
+            ->where('id', '=', $id)
+            ->update(['enabled' => 1]);
 
-        flash()->info(tr('Posizione del widget "_WIDGET_" aggiornata!', [
-            '_WIDGET_' => $widget,
+        // Messaggio informativo
+        $widget = $database->table('zz_widgets')
+            ->where('id', '=', $id)
+            ->first();
+        flash()->info(tr('Widget "_NAME_" abilitato!', [
+            '_NAME_' => $widget->name,
         ]));
+
+        echo json_encode([]);
+
+        break;
+
+    case 'sposta-widget':
+        $id = filter('id');
+
+        // Individuazione widget
+        $widget = $database->table('zz_widgets')
+            ->where('id', '=', $id)
+            ->first();
+        if (empty($widget)) {
+            echo json_encode([]);
+        }
+
+        // Individuazione dello spostamento da effettuare
+        $pieces = explode('_', $widget->location);
+        $location = $pieces[0].'_'.($pieces[1] == 'right' ? 'top' : 'right');
+
+        // Abilitazione del widget indicato
+        $database->table('zz_widgets')
+            ->where('id', '=', $id)
+            ->update(['location' => $location]);
+
+        // Messaggio informativo
+        flash()->info(tr('Posizione del widget "_NAME_" aggiornata!', [
+            '_NAME_' => $widget->name,
+        ]));
+
+        echo json_encode([]);
 
         break;
 
@@ -178,14 +307,18 @@ switch (filter('op')) {
 
         $informazioni = $info->content;
 
-        // Formattazione dei contenuti
+        // Restrizione storico agli ultimi 3 anni
         $history = (array) $informazioni['history'];
+        $history = array_slice($history, 0, 3);
+
+        // Formattazione dei contenuti dello storico
         foreach ($history as $key => $value) {
             $history[$key]['size'] = Filesystem::formatBytes($value['size']);
             $history[$key]['invoices_size'] = Filesystem::formatBytes($value['invoices_size']);
             $history[$key]['notifies_size'] = Filesystem::formatBytes($value['notifies_size']);
         }
 
+        // Formattazione dei contenuti generici
         echo json_encode([
             'invoice_number' => $informazioni['invoice_number'],
             'size' => Filesystem::formatBytes($informazioni['size']),

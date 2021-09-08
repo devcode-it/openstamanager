@@ -10,7 +10,7 @@ import Page from '../Page';
 /**
  * @abstract
  */
-export default class ListPage extends Page {
+export default class RecordsPage extends Page {
   columns: Array<{
     id: string,
     title: string,

@@ -40,6 +40,8 @@ switch ($resource) {
         $id_azienda = setting('Azienda predefinita');
         $where[] = 'banca_vendite.id_anagrafica = '.prepare($id_azienda);
         $where[] = 'banca_acquisti.id_anagrafica = '.prepare($id_azienda);
+        $where[] = 'banca_acquisti.deleted_at IS NULL';
+        $where[] = 'banca_vendite.deleted_at IS NULL';
 
         foreach ($elements as $element) {
             $filter[] = 'co_pagamenti.id = '.prepare($element);

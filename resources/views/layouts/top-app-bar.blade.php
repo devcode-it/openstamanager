@@ -1,6 +1,6 @@
 <mwc-icon-button slot="navigationIcon"><i class="mdi mdi-menu"></i></mwc-icon-button>
 <div slot="title" style="display: flex; align-items: center;">
-    <img src="{{vite_asset('images/logo.png')}}" alt="@lang('OpenSTAManager')" style="margin-right: 8px;">
+    <img src="{{vite_asset('images/logo.png')}}" alt="@lang('OpenSTAManager')" style="height: 50px; margin-right: 8px;">
     <span>@lang('OpenSTAManager')</span>
 </div>
 

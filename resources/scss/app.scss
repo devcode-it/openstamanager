@@ -52,6 +52,18 @@ main {
     transform: translateY(-50%);
 }
 
+.logo-bg-sticky {
+    position: fixed;
+    z-index: 1;
+    top: 60%;
+    right: -15%;
+    width: 500px;
+    opacity: 0.1;
+}
+
+/* ----------------------------
+    MWC styles
+ ------------------------------ */
 mwc-fab#contrast-switcher {
     &.contrast-light {
         --mdc-theme-secondary: black;
@@ -62,15 +74,6 @@ mwc-fab#contrast-switcher {
         --mdc-theme-secondary: white;
         --mdc-theme-on-secondary: black;
     }
-}
-
-.logo-bg-sticky {
-    position: fixed;
-    z-index: 1;
-    top: 60%;
-    right: -15%;
-    width: 500px;
-    opacity: 0.1;
 }
 
 /* ----------------------------
@@ -95,14 +98,15 @@ footer {
     display: flex;
     flex: 1;
     align-items: center;
-    padding-left: 10px;
-}
+    padding-left: 16px;
 
-.left-footer * {
-    display: inline;
-    vertical-align: middle;
+    * {
+        display: inline;
+        vertical-align: middle;
+    }
 }
 
 .right-footer {
     position: relative;
+    padding-right: 16px;
 }

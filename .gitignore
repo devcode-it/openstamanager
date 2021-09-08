@@ -1,11 +1,10 @@
 # Custom rules
 /.vscode
 composer.lock
-yarn.lock
-.yarn/cache/*
+public/build
 
-# Created by https://www.toptal.com/developers/gitignore/api/phpstorm,laravel,composer,yarn
-# Edit at https://www.toptal.com/developers/gitignore?templates=phpstorm,laravel,composer,yarn
+# Created by https://www.toptal.com/developers/gitignore/api/phpstorm,laravel,composer
+# Edit at https://www.toptal.com/developers/gitignore?templates=phpstorm,laravel,composer
 
 ### Composer ###
 composer.phar
@@ -147,23 +146,7 @@ fabric.properties
 # https://plugins.jetbrains.com/plugin/12206-codestream
 .idea/codestream.xml
 
-### yarn ###
-# https://yarnpkg.com/advanced/qa#which-files-should-be-gitignored
-
-.yarn/*
-!.yarn/releases
-!.yarn/plugins
-!.yarn/sdks
-!.yarn/versions
-
-# if you are NOT using Zero-installs, then:
-# comment the following lines
-# !.yarn/cache
-
-# and uncomment the following lines
-# .pnp.*
-
-# End of https://www.toptal.com/developers/gitignore/api/phpstorm,laravel,composer,yarn
+# End of https://www.toptal.com/developers/gitignore/api/phpstorm,laravel,composer
 
 /.phpstorm.meta.php
 /_ide_helper.php

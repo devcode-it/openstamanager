@@ -84,12 +84,15 @@ switch (filter('op')) {
 
         if (isset($id_record) && empty($documenti)) {
             $dbo->query('DELETE FROM `dt_causalet` WHERE `id`='.prepare($id_record));
-            flash()->info(tr('Tipologia di _TYPE_ eliminata con successo.', [
-                '_TYPE_' => 'causale',
-            ]));
         } else {
-            flash()->error(tr('Sono presenti dei documenti collegati a questa causale'));
+            $dbo->update('dt_causalet',[
+                'deleted_at' => date("Y-m-d H:i:s"),
+            ],['id' => $id_record]);
         }
+
+        flash()->info(tr('Tipologia di _TYPE_ eliminata con successo.', [
+            '_TYPE_' => 'causale',
+        ]));
 
         break;
 }

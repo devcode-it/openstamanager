@@ -26,6 +26,9 @@ switch ($resource) {
         foreach ($elements as $element) {
             $filter[] = 'id='.prepare($element);
         }
+        if (empty($filter)) {
+            $where[] = 'dt_causalet.deleted_at IS NULL';
+        }
         if (!empty($search)) {
             $search_fields[] = 'descrizione LIKE '.prepare('%'.$search.'%');
         }

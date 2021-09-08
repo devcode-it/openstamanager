@@ -89,3 +89,6 @@ UPDATE `zz_cache` SET `expire_at` = NULL WHERE `zz_cache`.`name` = 'Informazioni
 
 -- Fix flag default per i plugin
 UPDATE `zz_plugins` SET `default` = 1, `version` = '' WHERE `zz_plugins`.`name` IN ('Impianti del cliente', 'Impianti', 'Referenti', 'Sedi', 'Statistiche', 'Interventi svolti', 'Componenti ini', 'Movimenti', 'Serial', 'Consuntivo', 'Consuntivo', 'Pianificazione interventi', 'Ddt del cliente', 'Fatturazione Elettronica', 'Fatturazione Elettronica', 'Revisioni', 'Ricevute FE', 'Giacenze', 'Rinnovi', 'Statistiche', 'Dichiarazioni d''Intento', 'Pianificazione fatturazione', 'Listino Clienti', 'Storico attività', 'Consuntivo', 'Allegati', 'Componenti', 'Listino Fornitori', 'Piani di sconto/maggiorazione', 'Varianti Articolo')
+
+-- Escludo dalla lista movimenti quelli collegati ad articoli eliminati
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_movimenti` JOIN `mg_articoli` ON `mg_articoli`.id = `mg_movimenti`.`idarticolo` LEFT JOIN `an_sedi` ON `mg_movimenti`.`idsede` = `an_sedi`.`id` WHERE 1=1 AND mg_articoli.deleted_at IS NULL HAVING 2=2 ORDER BY mg_movimenti.data DESC, mg_movimenti.created_at DESC' WHERE `zz_modules`.`name` = 'Movimenti'; 

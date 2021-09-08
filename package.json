@@ -57,6 +57,7 @@
         "@babel/preset-flow": "^7.14.5",
         "@bunchtogether/vite-plugin-flow": "github:maicol07/vite-plugin-flow",
         "@open-wc/eslint-config": "^4.3.0",
+        "@openstamanager/vite-config": "github:maicol07/openstamanager-vite-config",
         "concurrently": "^6.2.1",
         "eslint": "^7.32.0",
         "eslint-config-airbnb-base": "^14.2.1",

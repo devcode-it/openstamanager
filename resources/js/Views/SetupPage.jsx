@@ -22,7 +22,7 @@ import Mdi from '../Components/Mdi';
 import Page from '../Components/Page';
 
 export default class SetupPage extends Page {
-  view(vnode) {
+  languages() {
     const listItems: Array[Mithril.Vnode] = [];
 
     for (const lang of this.page.props.languages) {
@@ -35,14 +35,19 @@ export default class SetupPage extends Page {
           <img
             slot="graphic"
             style="border-radius: 4px;"
-            src={`https://lipis.github.io/flag-icon-css/flags/4x3/${LocaleCode.getCountryCode(langCode).toLowerCase()}.svg`}
+            src={`https://lipis.github.io/flag-icon-css/flags/4x3/${LocaleCode.getCountryCode(langCode)
+              .toLowerCase()}.svg`}
             alt={LocaleCode.getLanguageNativeName(langCode)}>
           </img>
-        <span>{LocaleCode.getLanguageNativeName(langCode)}</span>
-      </mwc-list-item>
+          <span>{LocaleCode.getLanguageNativeName(langCode)}</span>
+        </mwc-list-item>
       );
     }
 
+    return listItems;
+  }
+
+  view(vnode) {
     const examplesTexts = collect();
     for (const example of ['localhost', 'root', 'mysql', 'openstamanager']) {
       examplesTexts.put(example, this.__('Esempio: :example', {example}, true));
@@ -117,7 +122,7 @@ export default class SetupPage extends Page {
                 <Cell>
                   <h4>{this.__('Lingua')}</h4>
                   <mwc-select>
-                    {listItems}
+                    {this.languages()}
                   </mwc-select>
                   <hr />
                   <h4>{this.__('Licenza')}</h4>

@@ -1,3 +1,5 @@
+import {Children} from 'mithril';
+
 import DataTable from '../DataTable/DataTable';
 import TableBody from '../DataTable/TableBody';
 import TableCell from '../DataTable/TableCell';
@@ -19,32 +21,45 @@ export default class RecordsPage extends Page {
 
   rows: Array<Array<string>> = [];
 
-  view(vnode) {
-    const columns = this.columns.map(
+  tableColumns(): Children {
+    return this.columns.map(
       (column, index) => (
         <TableHeadCell key={index}>
           {column}
         </TableHeadCell>
       )
     );
+  }
 
-    const rows = this.rows.length > 0 ? this.rows.map((row, index) => (
+  tableRows(): Children {
+    if (this.rows.length === 0) {
+      return (
+        <TableRow>
+          <TableCell colspan={this.columns.length}>
+            {this.__('Non sono presenti dati')}
+          </TableCell>
+        </TableRow>);
+    }
+
+    return this.rows.map((row, index) => (
       <TableRow key={index}>
         {row.map((cell, index_) => <TableCell key={index_}>{cell}</TableCell>)}
       </TableRow>
-    )) : <TableRow><TableCell colspan={columns.length}>{this.__('Non sono presenti dati')}</TableCell></TableRow>;
+    ));
+  }
 
+  view(vnode) {
     return (
       <>
         <h2>{this.title}</h2>
         <DataTable>
           <TableHead>
             <TableHeadRow>
-              {columns}
+              {this.tableColumns()}
             </TableHeadRow>
           </TableHead>
           <TableBody>
-            {rows}
+            {this.tableRows()}
           </TableBody>
         </DataTable>
       </>

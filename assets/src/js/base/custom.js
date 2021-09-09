@@ -106,5 +106,5 @@ $(document).ready(function () {
  * TODO: Recheck with the select2 GH issue and remove once this is fixed on their side
  */
 $(document).on('select2:open', () => {
-    document.querySelector('.select2-search__field').focus();
+    document.querySelector('.select2-container--open .select2-search__field').focus();
 });

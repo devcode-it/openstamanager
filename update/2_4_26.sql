@@ -97,4 +97,4 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_movimenti` JOIN `m
 ALTER TABLE `dt_causalet` ADD `deleted_at` TIMESTAMP NULL AFTER `updated_at`; 
 
 -- Modifico il filtro del modulo
-UPDATE `zz_modules` SET `options2` = 'SELECT |select| FROM `dt_causalet` WHERE 1=1 AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_modules`.`name` = 'Causali';
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `dt_causalet` WHERE 1=1 AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_modules`.`name` = 'Causali';

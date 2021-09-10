@@ -51,6 +51,8 @@ class Clienti extends AppResource
                 return [];
             }
 
+            // Problema noto: questo sistema non rileva le anagrafiche esistenti se il Tecnico inizia a lavorare su una Attività creata dopo l'ultima sincronizzazione
+            // Risolto da applicazione con ricerca del record locale per il Cliente
             $id_interventi = array_keys($interventi);
             $query .= '
                 AND an_anagrafiche.idanagrafica IN (

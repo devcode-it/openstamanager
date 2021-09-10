@@ -550,11 +550,11 @@ if (!function_exists('temp_file')) {
 
         // $base_directory = trim(sys_get_temp_dir(), DIRECTORY_SEPARATOR);
         $base_directory = implode(DIRECTORY_SEPARATOR, [
-            trim(base_dir(), DIRECTORY_SEPARATOR),
+            rtrim(base_dir(), DIRECTORY_SEPARATOR),
             'files',
             'temp',
         ]);
-        $file = trim($base_directory, DIRECTORY_SEPARATOR).
+        $file = rtrim($base_directory, DIRECTORY_SEPARATOR).
             DIRECTORY_SEPARATOR.
             ltrim($name, DIRECTORY_SEPARATOR);
 

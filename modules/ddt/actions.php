@@ -440,10 +440,17 @@ switch (filter('op')) {
         $stato = Stato::where('descrizione', '=', 'Evaso')->first();
 
         // Duplicazione DDT
-        $copia = $ddt->replicate();
-        $copia->tipo()->associate($tipo);
+        $copia = DDT::build($ddt->anagrafica, $tipo, $ddt->data);
         $copia->stato()->associate($stato);
         $copia->id_ddt_trasporto_interno = $ddt->id;
+        $copia->idaspettobeni = $ddt->idaspettobeni;
+        $copia->idcausalet = $ddt->idcausalet;
+        $copia->idspedizione = $ddt->idspedizione;
+        $copia->n_colli = $ddt->n_colli;
+        $copia->idpagamento = $ddt->idpagamento;
+        $copia->idporto = $ddt->idporto;
+        $copia->idvettore = $ddt->idvettore;
+        $copia->data_ora_trasporto = $ddt->data_ora_trasporto;
 
         // Inversione sedi
         $copia->idsede_partenza = $ddt->idsede_destinazione;
@@ -455,6 +462,7 @@ switch (filter('op')) {
         $righe = $ddt->getRighe();
         foreach ($righe as $riga) {
             $copia_riga = $riga->replicate();
+            $copia_riga->setDocument($copia);
 
             // Aggiornamento riferimenti
             $copia_riga->idddt = $copia->id;

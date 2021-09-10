@@ -1,6 +1,7 @@
 import '../scss/app.scss';
 import './_material';
 
+import {InertiaProgress} from '@inertiajs/progress';
 import {createInertiaApp} from '@maicol07/inertia-mithril';
 import {waitUntil} from 'async-wait-until';
 import jQuery from 'jquery';
@@ -13,6 +14,8 @@ m.Fragment = '[';
 window.$ = jQuery;
 window.jQuery = jQuery;
 window.m = m;
+
+InertiaProgress.init();
 
 // noinspection JSIgnoredPromiseFromCall
 createInertiaApp({

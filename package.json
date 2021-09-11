@@ -79,6 +79,7 @@
         "flow-bin": "^0.159.0",
         "flow-remove-types": "^2.159.0",
         "laravel-vite": "^0.0.16",
+        "rollup-plugin-livereload": "^2.0.5",
         "sass": "^1.39.0",
         "stylelint": "^13.13.1",
         "stylelint-config-idiomatic-order": "^8.1.0",

@@ -2,6 +2,7 @@
 /.vscode
 composer.lock
 public/build
+resources/static/vendor/
 .idea/inertia.xml
 .idea/git_toolbox_prj.xml
 

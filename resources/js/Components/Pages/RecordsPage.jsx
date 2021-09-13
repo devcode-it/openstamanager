@@ -14,7 +14,7 @@ import TableRow from '../DataTable/TableRow';
 import Mdi from '../Mdi';
 import Page from '../Page';
 
-type ColumnT = {
+export type ColumnT = {
   id?: string,
   title: string,
   type: 'checkbox' | 'numeric' | null

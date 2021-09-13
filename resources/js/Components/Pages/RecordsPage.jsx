@@ -38,7 +38,8 @@ export default class RecordsPage extends Page {
             {typeof column === 'string' ? column : column.title}
           </TableHeadCell>
         )
-      );
+      )
+      .toArray();
   }
 
   tableRows(): Children {

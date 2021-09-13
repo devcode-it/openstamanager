@@ -2,6 +2,8 @@
 /.vscode
 composer.lock
 public/build
+.idea/inertia.xml
+.idea/git_toolbox_prj.xml
 
 # Created by https://www.toptal.com/developers/gitignore/api/phpstorm,laravel,composer
 # Edit at https://www.toptal.com/developers/gitignore?templates=phpstorm,laravel,composer

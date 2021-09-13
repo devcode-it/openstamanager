@@ -25,6 +25,9 @@ switch ($resource) {
      * - codice_modalita_pagamento_fe
      */
     case 'pagamenti':
+        // Filtri per banche dell'Azienda
+        $id_azienda = setting('Azienda predefinita');
+
         $query = "SELECT co_pagamenti.id,
            CONCAT_WS(' - ', codice_modalita_pagamento_fe, descrizione) AS descrizione,
            banca_vendite.id AS id_banca_vendite,
@@ -32,16 +35,9 @@ switch ($resource) {
            banca_acquisti.id AS id_banca_acquisti,
            CONCAT(banca_acquisti.nome, ' - ', banca_acquisti.iban) AS descrizione_banca_acquisti
         FROM co_pagamenti
-            LEFT JOIN co_banche banca_vendite ON co_pagamenti.idconto_vendite = banca_vendite.id_pianodeiconti3
-            LEFT JOIN co_banche banca_acquisti ON co_pagamenti.idconto_acquisti = banca_acquisti.id_pianodeiconti3
-        |where| GROUP BY co_pagamenti.descrizione ORDER BY co_pagamenti.descrizione ASC";
-
-        // Filtri per banche dell'Azienda
-        $id_azienda = setting('Azienda predefinita');
-        $where[] = 'banca_vendite.id_anagrafica = '.prepare($id_azienda);
-        $where[] = 'banca_acquisti.id_anagrafica = '.prepare($id_azienda);
-        $where[] = 'banca_acquisti.deleted_at IS NULL';
-        $where[] = 'banca_vendite.deleted_at IS NULL';
+            LEFT JOIN co_banche banca_vendite ON co_pagamenti.idconto_vendite = banca_vendite.id_pianodeiconti3 AND banca_vendite.id_anagrafica = ".prepare($id_azienda).' AND banca_vendite.deleted_at IS NULL AND banca_vendite.predefined = 1
+            LEFT JOIN co_banche banca_acquisti ON co_pagamenti.idconto_acquisti = banca_acquisti.id_pianodeiconti3 AND banca_acquisti.id_anagrafica = '.prepare($id_azienda).' AND banca_acquisti.deleted_at IS NULL AND banca_acquisti.predefined = 1
+        |where| GROUP BY co_pagamenti.descrizione ORDER BY co_pagamenti.descrizione ASC';
 
         foreach ($elements as $element) {
             $filter[] = 'co_pagamenti.id = '.prepare($element);

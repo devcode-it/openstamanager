@@ -164,11 +164,11 @@ class FatturaOrdinaria extends FatturaElettronica
 
                 $obj->movimentazione($movimentazione);
 
-                $target_type = 'Modules\Fatture\Components\Articolo';
+                $target_type = Articolo::class;
             } else {
                 $obj = Riga::build($fattura);
 
-                $target_type = 'Modules\Fatture\Components\Riga';
+                $target_type = Riga::class;
             }
 
             $obj->descrizione = $riga['Descrizione'];

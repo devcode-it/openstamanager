@@ -1,3 +1,7 @@
+import '@material/mwc-dialog';
+import '@material/mwc-fab';
+
+import collect from 'collect.js';
 import {Children} from 'mithril';
 
 import DataTable from '../DataTable/DataTable';
@@ -10,28 +14,31 @@ import TableRow from '../DataTable/TableRow';
 import Mdi from '../Mdi';
 import Page from '../Page';
 
+type ColumnT = {
+  id?: string,
+  title: string,
+  type: 'checkbox' | 'numeric' | null
+}
+
 /**
  * @abstract
  */
 export default class RecordsPage extends Page {
-  columns: Array<{
-    id: string,
-    title: string,
-    type: string | null
-  }>;
+  columns: Object<ColumnT> | Array<ColumnT>;
 
   rows: Array<Array<string>> = [];
 
   dialogs: Array<Children>;
 
   tableColumns(): Children {
-    return this.columns.map(
-      (column, index) => (
-        <TableHeadCell key={index}>
-          {column}
-        </TableHeadCell>
-      )
-    );
+    return collect(this.columns)
+      .map(
+        (column: ColumnT, id: string) => (
+          <TableHeadCell id={id} key={id} {...column}>
+            {column.title}
+          </TableHeadCell>
+        )
+      );
   }
 
   tableRows(): Children {

@@ -7,6 +7,7 @@ import TableHead from '../DataTable/TableHead';
 import TableHeadCell from '../DataTable/TableHeadCell';
 import TableHeadRow from '../DataTable/TableHeadRow';
 import TableRow from '../DataTable/TableRow';
+import Mdi from '../Mdi';
 import Page from '../Page';
 
 /**
@@ -20,6 +21,8 @@ export default class RecordsPage extends Page {
   }>;
 
   rows: Array<Array<string>> = [];
+
+  dialogs: Array<Children>;
 
   tableColumns(): Children {
     return this.columns.map(
@@ -62,7 +65,24 @@ export default class RecordsPage extends Page {
             {this.tableRows()}
           </TableBody>
         </DataTable>
+
+        <mwc-fab id="add-record" label={this.__('Aggiungi')} class="sticky">
+          <Mdi icon="plus" slot="icon"/>
+        </mwc-fab>
+        {this.dialogs}
       </>
     );
+  }
+
+  oncreate(vnode) {
+    super.oncreate(vnode);
+
+    $('mwc-fab#add-record')
+      .on('click', function () {
+        $(this)
+          .next('mwc-dialog#add-record-dialog')
+          .get(0)
+          .open();
+      });
   }
 }

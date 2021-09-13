@@ -451,10 +451,8 @@ switch (filter('op')) {
         $copia->idporto = $ddt->idporto;
         $copia->idvettore = $ddt->idvettore;
         $copia->data_ora_trasporto = $ddt->data_ora_trasporto;
-
-        // Inversione sedi
-        $copia->idsede_partenza = $ddt->idsede_destinazione;
-        $copia->idsede_destinazione = $ddt->idsede_partenza;
+        $copia->idsede_partenza = $ddt->idsede_partenza;
+        $copia->idsede_destinazione = $ddt->idsede_destinazione;
 
         $copia->save();
 

@@ -24,7 +24,7 @@ export type ColumnT = {
  * @abstract
  */
 export default class RecordsPage extends Page {
-  columns: Object<ColumnT> | Array<ColumnT>;
+  columns: Object<string | ColumnT> | Array<ColumnT>;
 
   rows: Array<Array<string>> = [];
 
@@ -33,9 +33,9 @@ export default class RecordsPage extends Page {
   tableColumns(): Children {
     return collect(this.columns)
       .map(
-        (column: ColumnT, id: string) => (
-          <TableHeadCell id={id} key={id} {...column}>
-            {column.title}
+        (column: ColumnT | string, id: string) => (
+          <TableHeadCell id={id} key={id} {...(column ?? {})}>
+            {typeof column === 'string' ? column : column.title}
           </TableHeadCell>
         )
       );

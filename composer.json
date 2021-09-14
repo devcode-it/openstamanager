@@ -40,20 +40,19 @@
         "nette/utils": "^3",
         "riverskies/laravel-mobile-detect": "^1",
         "tightenco/ziggy": "^1",
-        "innocenzi/laravel-vite": "^0.1.4",
-        "openstamanager/tipi-attivita": "@dev"
+        "innocenzi/laravel-vite": "^0",
+        "devcode-it/openstamanager-standard-modules": "@dev"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2",
-        "roave/security-advisories": "dev-latest",
-        "kkomelin/laravel-translatable-string-exporter": "^1",
-        "jeroen-g/laravel-packager": "^2",
         "facade/ignition": "^2",
         "fakerphp/faker": "^1",
+        "friendsofphp/php-cs-fixer": "^3",
+        "kkomelin/laravel-translatable-string-exporter": "^1",
         "laravel/sail": "^1",
         "mockery/mockery": "^1",
         "nunomaduro/collision": "^5",
-        "friendsofphp/php-cs-fixer": "^3"
+        "roave/security-advisories": "dev-latest"
     },
     "autoload": {
         "psr-4": {
@@ -82,7 +81,7 @@
     "repositories": [
         {
             "type": "path",
-            "url": "../osm_tipi_attività",
+            "url": "../osm_standard_modules",
             "symlink": true
         }
     ],

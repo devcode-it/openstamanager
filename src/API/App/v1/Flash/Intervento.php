@@ -30,10 +30,37 @@ use Carbon\Carbon;
 
 class Intervento extends Resource implements UpdateInterface
 {
-    public function update($request)
+    /**
+     * Elenco risorse API.
+     *
+     * @var array
+     */
+    protected $risorse;
+
+    /**
+     * Verifica sulla presenza di conflitti.
+     *
+     * @var bool
+     */
+    protected $conflitti_rilevati = false;
+
+    /**
+     * Record da considerare per l'importazione.
+     *
+     * @var array
+     */
+    protected $records = [];
+
+    /**
+     * Response delle richieste.
+     *
+     * @var array
+     */
+    protected $response = [];
+
+    public function __construct()
     {
-        // Elenco risorse API
-        $risorse = [
+        $this->risorse = [
             'cliente' => new Clienti(),
             'intervento' => new Interventi(),
 
@@ -41,41 +68,22 @@ class Intervento extends Resource implements UpdateInterface
             'sessioni' => new SessioniInterventi(),
             'allegati' => new AllegatiInterventi(),
         ];
-        $sezioni = array_keys($risorse);
+    }
 
-        // Generazione record semplificati
-        $records = [];
-        foreach ($sezioni as $sezione) {
-            if (isset($request[$sezione][0])) {
-                foreach ($request[$sezione] as $record) {
-                    $records[] = [$record, $risorse[$sezione]];
-                }
-            } elseif (!empty($request[$sezione])) {
-                $records[] = [$request[$sezione], $risorse[$sezione]];
-            }
-        }
-
+    public function update($request)
+    {
         // Controlli sui conflitti
-        $conflict = false;
-        foreach ($records as $key => [$record, $risorsa]) {
-            $ultima_modifica = new Carbon($record['updated_at']);
-            $ultima_sincronizzazione = new Carbon($record['last_sync_at']);
-            if (!empty($record['last_sync_at']) && !$ultima_modifica->greaterThan($ultima_sincronizzazione)) {
-                unset($records[$key]);
-                continue;
+        foreach ($request as $key => $record) {
+            $records = $record;
+            if (!isset($records[0])) {
+                $records = [$records];
             }
 
-            $modifiche = $risorsa->getModifiedRecords($record['last_sync_at']);
-            $modifiche = array_keys($modifiche);
-
-            if (in_array($record['id'], $modifiche)) {
-                $conflict = true;
-                break;
-            }
+            $this->processaRecords($key, $records);
         }
 
         // Messaggio di conflitto in caso di problematica riscontrata
-        if ($conflict) {
+        if ($this->conflitti_rilevati) {
             return [
                 'status' => 200,
                 'message' => 'CONFLICT',
@@ -83,16 +91,87 @@ class Intervento extends Resource implements UpdateInterface
         }
 
         // Salvataggio delle modifiche
-        foreach ($records as [$record, $risorsa]) {
-            if (!empty($record['deleted_at'])) {
-                $risorsa->deleteRecord($record['id']);
-            } elseif (!empty($record['remote_id'])) {
-                $risorsa->updateRecord($record);
-            } else {
-                $risorsa->createRecord($record);
+        foreach ($this->records as $key => $records) {
+            $this->importaRecords($key, $records);
+        }
+
+        return $this->response;
+    }
+
+    /**
+     * @param $key
+     * @param $records
+     */
+    protected function processaRecords($key, $request)
+    {
+        $records = [];
+
+        // Controlli sui conflitti
+        foreach ($request as $id => $record) {
+            $risorsa = $this->risorse[$key];
+            if (empty($risorsa) || empty($record)) {
+                continue;
+            }
+
+            $includi = $this->verificaConflitti($record, $risorsa);
+            if ($includi) {
+                $records[$id] = $record;
             }
         }
 
-        return [];
+        // Registrazione dei record individuati
+        if (!empty($records)) {
+            $this->records[$key] = $records;
+        }
+    }
+
+    /**
+     * @param $key
+     * @param $records
+     */
+    protected function importaRecords($key, $records)
+    {
+        $this->response[$key] = [];
+        $risorsa = $this->risorse[$key];
+
+        foreach ($records as $id => $record) {
+            // Fix id_cliente per Intervento in caso di generazione da zero
+            if ($risorsa instanceof Interventi && !empty($this->response['cliente'][$id])) {
+                $record['id_cliente'] = $this->response['cliente'][$id]['id'];
+            }
+
+            $response = null;
+            if (!empty($record['deleted_at'])) {
+                $risorsa->deleteRecord($record['id']);
+            } elseif (!empty($record['remote_id'])) {
+                $response = $risorsa->updateRecord($record);
+            } else {
+                $response = $risorsa->createRecord($record);
+            }
+
+            $this->response[$key][$id] = $response;
+        }
+    }
+
+    /**
+     * @param $record
+     * @param $risorsa
+     *
+     * @return bool
+     */
+    protected function verificaConflitti($record, $risorsa)
+    {
+        $ultima_modifica = new Carbon($record['updated_at']);
+        $ultima_sincronizzazione = new Carbon($record['last_sync_at']);
+        if (!empty($record['last_sync_at']) && !$ultima_modifica->greaterThan($ultima_sincronizzazione)) {
+            return false;
+        }
+
+        $modifiche = $risorsa->getModifiedRecords($record['last_sync_at']);
+        $modifiche = array_keys($modifiche);
+
+        $this->conflitti_rilevati |= in_array($record['id'], $modifiche);
+
+        return true;
     }
 }

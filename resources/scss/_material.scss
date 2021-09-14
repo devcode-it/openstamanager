@@ -127,13 +127,20 @@ top-app-bar {
 }
 
 /* ---------------------------
-    MDC Sticky FABs
+    MDC FABs
 --------------------------- */
+mwc-fab {
+    --mdc-icon-font: inherit;
 
-mwc-fab.sticky {
-    position: fixed;
-    right: 16px;
-    bottom: 16px;
+    &.sticky {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+    }
+}
+
+top-app-bar mwc-fab.sticky {
+    bottom: 61px;
 }
 
 /* ---------------------------

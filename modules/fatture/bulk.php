@@ -387,7 +387,7 @@ if (App::debug()) {
     $operations['export-csv'] = [
         'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta selezionati').'</span> <span class="label label-danger" >beta</span>',
         'data' => [
-            'msg' => tr('Vuoi davvero esportare un CSV con tutte le fatture?'),
+            'msg' => tr('Vuoi davvero esportare un CSV con le fatture selezionate?'),
             'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-danger',
             'blank' => true,

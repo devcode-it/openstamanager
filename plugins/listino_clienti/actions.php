@@ -45,13 +45,16 @@ switch (filter('op')) {
             if (empty($dettaglio_predefinito)) {
                 $dettaglio_predefinito = DettaglioPrezzo::build($articolo, $anagrafica, $direzione);
             }
-            $dettaglio_predefinito->sconto_percentuale = $sconto;
-            $dettaglio_predefinito->setPrezzoUnitario($prezzo_unitario);
-            $dettaglio_predefinito->save();
-            if ($articolo->id_fornitore == $anagrafica->idanagrafica && $direzione == 'uscita') {
-                $prezzo_unitario = $prezzo_unitario - ($prezzo_unitario * $sconto / 100);
-                $articolo->prezzo_acquisto = $prezzo_unitario;
-                $articolo->save();
+
+            if($dettaglio_predefinito->sconto_percentuale != $sconto || $dettaglio_predefinito->prezzo_unitario!= $prezzo_unitario){
+                $dettaglio_predefinito->sconto_percentuale = $sconto;
+                $dettaglio_predefinito->setPrezzoUnitario($prezzo_unitario);
+                $dettaglio_predefinito->save();
+                if ($articolo->id_fornitore == $anagrafica->idanagrafica && $direzione == 'uscita') {
+                    $prezzo_unitario = $prezzo_unitario - ($prezzo_unitario * $sconto / 100);
+                    $articolo->prezzo_acquisto = $prezzo_unitario;
+                    $articolo->save();
+                }
             }
         }
 
@@ -76,11 +79,13 @@ switch (filter('op')) {
                     $dettaglio = DettaglioPrezzo::build($articolo, $anagrafica, $direzione);
                 }
 
-                $dettaglio->minimo = $minimi[$key];
-                $dettaglio->massimo = $massimi[$key];
-                $dettaglio->sconto_percentuale = $sconti[$key];
-                $dettaglio->setPrezzoUnitario($prezzo_unitario);
-                $dettaglio->save();
+                if($dettaglio->minimo != $minimi[$key] || $dettaglio->massimo != $massimi[$key] || $dettaglio->sconto_percentuale != $sconti[$key] || $dettaglio->prezzo_unitario != $prezzo_unitario){
+                    $dettaglio->minimo = $minimi[$key];
+                    $dettaglio->massimo = $massimi[$key];
+                    $dettaglio->sconto_percentuale = $sconti[$key];
+                    $dettaglio->setPrezzoUnitario($prezzo_unitario);
+                    $dettaglio->save();
+                }
             }
         } else {
             $dettagli->delete();

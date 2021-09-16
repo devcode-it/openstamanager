@@ -44,7 +44,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 ### Modificato (Changed)
  
 ### Fixed
-
+ - Fix orario della modifica del listino di riferimento dell'articolo
 ## 2.4.25 (2021-08-25)
 
 ### Aggiunto (Added)

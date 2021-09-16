@@ -89,17 +89,37 @@ if (!empty($options['create_document'])) {
 
         $stato_predefinito = $database->fetchOne("SELECT id FROM co_statidocumento WHERE descrizione = 'Bozza'");
 
+        if(!empty($options['reversed'])){
+            $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
+                'dir' => $dir,
+                'descrizione' => 'Nota di credito',
+            ])['id'];
+        } elseif(in_array($original_module['name'], ['Ddt di vendita', 'Ddt di acquisto'])){
+            $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
+                'dir' => $dir,
+                'descrizione' => ($dir=='uscita' ? 'Fattura differita di acquisto' : 'Fattura differita di vendita'),
+            ])['id'];
+        } else{
+            $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
+                'predefined' => 1,
+                'dir' => $dir,
+            ])['id'];
+        }
+
         echo '
-            <input type="hidden" name="reversed" value="'.$options['reversed'].'">
             <div class="col-md-6">
                 {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT * FROM co_statidocumento WHERE descrizione IN (\'Emessa\', \'Bozza\')", "value": "'.$stato_predefinito['id'].'"]}
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-4">
+                {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, CONCAT(codice_tipo_documento_fe, \' - \', descrizione) AS descrizione FROM co_tipidocumento WHERE enabled = 1 AND dir = '.prepare($dir).' ORDER BY codice_tipo_documento_fe", "value": "'.$idtipodocumento.'" ]}
+            </div>
+
+            <div class="col-md-4">
                 {[ "type": "select", "label": "'.tr('Ritenuta contributi').'", "name": "id_ritenuta_contributi", "value": "$id_ritenuta_contributi$", "values": "query=SELECT * FROM co_ritenuta_contributi" ]}
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-4">
                 {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.prepare($final_module['id']).' ORDER BY name", "value": "'.$id_segment.'" ]}
             </div>';
     }

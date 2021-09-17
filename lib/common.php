@@ -70,6 +70,10 @@ function sum($first, $second = null, $decimals = 4)
  */
 function calcola_sconto($data)
 {
+    if (!isset($data['cumulativo'])) {
+        $data['cumulativo'] = true;
+    }
+
     if ($data['tipo'] == 'PRC') {
         $result = 0;
 
@@ -80,7 +84,9 @@ function calcola_sconto($data)
             $discount = $price / 100 * floatval($percentage);
 
             $result += $discount;
-            $price -= $discount;
+            if ($data['cumulativo']) {
+                $price -= $discount;
+            }
         }
     } else {
         $result = floatval($data['sconto']);

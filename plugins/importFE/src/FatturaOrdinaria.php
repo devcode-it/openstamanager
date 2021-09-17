@@ -223,36 +223,49 @@ class FatturaOrdinaria extends FatturaElettronica
             // Sconti e maggiorazioni
             $sconti = $riga['ScontoMaggiorazione'];
             if (!empty($sconti)) {
+                $sconto_unitario = 0;
                 $sconti = $sconti[0] ? $sconti : [$sconti];
-                $tipo = !empty($sconti[0]['Percentuale']) ? 'PRC' : 'UNT';
 
-                $lista = [];
+                // Determina il tipo di sconto in caso di sconti misti UNT e PRC
                 foreach ($sconti as $sconto) {
-                    $unitario = $sconto['Percentuale'] ?: $sconto['Importo'];
-
-                    // Sconto o Maggiorazione
-                    $lista[] = ($sconto['Tipo'] == 'SC') ? $unitario : -$unitario;
+                    $tipo_sconto = !empty($sconto['Importo']) ? 'UNT' : 'PRC';
+                    if(!empty($tipo) && $tipo_sconto!=$tipo){
+                        $tipo = 'UNT';
+                    } else{
+                        $tipo = $tipo_sconto;
+                    }
                 }
 
-                if ($tipo == 'PRC') {
-                    $elenco = implode('+', $lista);
-                    $sconto = calcola_sconto([
-                        'sconto' => $elenco,
-                        'prezzo' => $obj->prezzo_unitario,
-                        'tipo' => 'PRC',
-                        'qta' => $obj->qta,
-                    ]);
+                foreach ($sconti as $sconto) {
+                    $unitario = $sconto['Importo'] ?: $sconto['Percentuale'];
 
-                    /*
-                     * Trasformazione di sconti multipli in sconto percentuale combinato.
-                     * Esempio: 40% + 30% è uno sconto del 42%.
-                     */
-                    $sconto_unitario = $sconto * 100 / $obj->imponibile;
-                } else {
-                    $sconto_unitario = sum($lista);
+                    // Sconto o Maggiorazione
+                    $sconto_riga = ($sconto['Tipo'] == 'SC') ? $unitario : -$unitario;
+
+                    $tipo_sconto = !empty($sconto['Importo']) ? 'UNT' : 'PRC';
+                    if ($tipo_sconto == 'PRC') {
+                        $sconto_calcolato = calcola_sconto([
+                            'sconto' => $sconto_riga,
+                            'prezzo' => $obj->prezzo_unitario,
+                            'tipo' => 'PRC',
+                            'qta' => $obj->qta,
+                            'cumulativo' => false,
+                        ]);
+    
+                        if($tipo == 'PRC'){
+                            $tot_sconto = $sconto_calcolato * 100 / $obj->imponibile;
+                        } else {
+                            $tot_sconto = $sconto_calcolato;
+                        }
+                    } else{
+                        $tot_sconto = $sconto_riga;
+                    }
+
+                    $sconto_unitario += $tot_sconto;    
                 }
 
                 $obj->setSconto($sconto_unitario, $tipo);
+                $tipo = null;
             }
 
             $obj->save();

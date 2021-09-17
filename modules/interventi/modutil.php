@@ -193,6 +193,10 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $qta_gruppo = $gruppo->sum('ore');
             $riga->qta = round($qta_gruppo, $decimals);
 
+            // Riferimento al documento di origine
+            $riga->original_document_type = get_class($intervento);
+            $riga->original_document_id = $intervento->id;
+
             $riga->save();
         }
 
@@ -221,6 +225,10 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $riga->prezzo_unitario = $diritto_chiamata->prezzo_diritto_chiamata;
 
             $riga->qta = $gruppo->count();
+
+            // Riferimento al documento di origine
+            $riga->original_document_type = get_class($intervento);
+            $riga->original_document_id = $intervento->id;
 
             $riga->save();
         }
@@ -255,6 +263,10 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $riga->prezzo_unitario = $viaggio->prezzo_km_unitario;
             $riga->setSconto($viaggio->scontokm_unitario, $viaggio->tipo_scontokm);
 
+            // Riferimento al documento di origine
+            $riga->original_document_type = get_class($intervento);
+            $riga->original_document_id = $intervento->id;
+
             $riga->qta = $qta_trasferta;
 
             $riga->save();
@@ -265,7 +277,6 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
     $righe = $intervento->getRighe();
     foreach ($righe as $riga) {
         $qta = $riga->qta;
-
         $copia = $riga->copiaIn($fattura, $qta);
 
         $copia->id_conto = $id_conto;

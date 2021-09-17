@@ -94,12 +94,15 @@ if ($dir == 'entrata') {
     }
 
     // Verifica la data dell'intervento rispetto alla data della fattura
-    $righe_interventi = $fattura->getRighe()->where('idintervento', '!=', null);
-    if (!empty($righe_interventi)) {
-        foreach ($righe_interventi as $riga_intervento) {
-            $intervento = Intervento::find($riga_intervento->idintervento);
+    $fatturazione_futura = false;
+    $data_fattura = new Carbon($fattura->data);
+    $interventi_collegati = $fattura->getDocumentiCollegati()[Intervento::class];
+    if (!empty($interventi_collegati)) {
+        foreach ($interventi_collegati as $intervento) {
+            $fine_intervento = $intervento->fine ?: $intervento->data_richiesta;
+            $fine_intervento = new Carbon($fine_intervento);
 
-            if ((new Carbon($intervento->fine))->diffInDays(new Carbon($fattura->data), false) < 0) {
+            if ($fine_intervento->diffInDays($data_fattura, false) < 0) {
                 $fatturazione_futura = true;
                 break;
             }

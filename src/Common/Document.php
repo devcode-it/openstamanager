@@ -45,6 +45,41 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
         return static::$movimenta_magazzino;
     }
 
+    /**
+     * Restituisce tutti i documenti collegati al documento corrente attraverso la procedura di importazione delle righe.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getDocumentiCollegati()
+    {
+        $riferimenti = collect([
+            $this->descrizioni()
+                ->select(['original_document_id', 'original_document_type'])
+                ->get(),
+            $this->righe()
+                ->select(['original_document_id', 'original_document_type'])
+                ->get(),
+            $this->articoli()
+                ->select(['original_document_id', 'original_document_type'])
+                ->get(),
+            $this->sconti()
+                ->select(['original_document_id', 'original_document_type'])
+                ->get(),
+        ])->flatten();
+
+        return $riferimenti->reject(function ($item) {
+            return empty($item->original_document_type);
+        })->unique(function ($item) {
+            return $item->original_document_type.'|'.$item->original_document_id;
+        })->mapToGroups(function ($item) {
+            return [$item->original_document_type => ($item->original_document_type)::find($item->original_document_id)];
+        });
+    }
+
+    /**
+     * Restituisce tutte le righe collegate al documento.
+     * @return \Illuminate\Support\Collection|iterable
+     */
     public function getRighe()
     {
         $results = $this->mergeCollections($this->descrizioni, $this->righe, $this->articoli, $this->sconti);
@@ -54,6 +89,12 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
         });
     }
 
+    /**
+     * Restituisce la riga con tipo e identificativo corrispondente.
+     * @param $type
+     * @param $id
+     * @return mixed
+     */
     public function getRiga($type, $id)
     {
         $righe = $this->getRighe();
@@ -63,6 +104,10 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
         });
     }
 
+    /**
+     * Restituisce le righe del documento raggruppate per documento di origine.
+     * @return \Illuminate\Support\Collection|iterable
+     */
     public function getRigheRaggruppate()
     {
         $righe = $this->getRighe();

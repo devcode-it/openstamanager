@@ -101,3 +101,6 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `dt_causalet` WHERE 1=
 
 -- Fix query per la lista newsletter predefinita
 UPDATE `em_lists` SET `query` = 'SELECT idanagrafica AS id, ''Modules\\\\Anagrafiche\\\\Anagrafica'' AS tipo FROM an_anagrafiche' WHERE `query` = 'SELECT idanagrafica AS id FROM an_anagrafiche WHERE email != ''''';
+
+-- Fix riferimento documento per righe create da Interventi
+UPDATE `co_righe_documenti` SET `original_document_id` = `idintervento`, `original_document_type` = 'Modules\\Interventi\\Intervento' WHERE `idintervento` IS NOT NULL;

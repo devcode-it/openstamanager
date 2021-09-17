@@ -863,11 +863,12 @@ if (!empty($note_accredito)) {
 // Eliminazione ddt solo se ho accesso alla sede aziendale
 $field_name = ($dir == 'entrata') ? 'idsede_partenza' : 'idsede_destinazione';
 if (in_array($record[$field_name], $user->sedi)) {
-    ?>
-    <a class="btn btn-danger ask" data-backto="record-list">
-        <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
-    </a>
-<?php
+    $disabilita_eliminazione = in_array($fattura->codice_stato_fe, ['RC', 'MC', 'EC01']);
+
+    echo '
+    <a class="btn btn-danger ask '.($disabilita_eliminazione ? 'disabled' : '').'" data-backto="record-list" '.($disabilita_eliminazione ? 'disabled' : '').'>
+        <i class="fa fa-trash"></i> '.tr('Elimina').'
+    </a>';
 }
 
 echo '

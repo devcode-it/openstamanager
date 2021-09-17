@@ -100,7 +100,10 @@ ALTER TABLE `dt_causalet` ADD `deleted_at` TIMESTAMP NULL AFTER `updated_at`;
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `dt_causalet` WHERE 1=1 AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_modules`.`name` = 'Causali';
 
 -- Fix query per la lista newsletter predefinita
-UPDATE `em_lists` SET `query` = 'SELECT idanagrafica AS id, ''Modules\\\\Anagrafiche\\\\Anagrafica'' AS tipo FROM an_anagrafiche' WHERE `query` = 'SELECT idanagrafica AS id FROM an_anagrafiche WHERE email != ''''';
+UPDATE `em_lists` SET `query` = 'SELECT idanagrafica AS id, ''Modules\\\\Anagrafiche\\\\Anagrafica'' AS tipo FROM an_anagrafiche', `name` = 'Tutte le Anagrafiche (Sedi legali)' WHERE `query` = 'SELECT idanagrafica AS id FROM an_anagrafiche WHERE email != ''''';
+
+INSERT INTO `em_lists` (`id`, `name`, `description`, `query`, `deleted_at`) VALUES
+(NULL, 'Tutti i Referenti', 'Indirizzi email validi per ogni referente caricata a sistema', 'SELECT id, ''Modules\\\\Anagrafiche\\\\Referente'' AS tipo FROM an_referenti', NULL);
 
 -- Fix riferimento documento per righe create da Interventi
 UPDATE `co_righe_documenti` SET `original_document_id` = `idintervento`, `original_document_type` = 'Modules\\Interventi\\Intervento' WHERE `idintervento` IS NOT NULL;

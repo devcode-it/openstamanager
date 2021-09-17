@@ -95,7 +95,7 @@ class Intervento extends Resource implements UpdateInterface
             $this->importaRecords($key, $records);
         }
 
-        return $this->response;
+        return $this->forceToString($this->response);
     }
 
     /**
@@ -136,8 +136,10 @@ class Intervento extends Resource implements UpdateInterface
 
         foreach ($records as $id => $record) {
             // Fix id_cliente per Intervento in caso di generazione da zero
-            if ($risorsa instanceof Interventi && !empty($this->response['cliente'][$id])) {
+            if ($risorsa instanceof Interventi && !empty($this->response['cliente'][$id]) && !empty($this->response['cliente'][$id]['id'])) {
                 $record['id_cliente'] = $this->response['cliente'][$id]['id'];
+            } elseif (!($risorsa instanceof Clienti) && !empty($this->response['intervento'][0]) && !empty($this->response['intervento'][0]['id'])){
+                $record['id_intervento'] = $this->response['intervento'][0]['id'];
             }
 
             $response = null;
@@ -173,5 +175,29 @@ class Intervento extends Resource implements UpdateInterface
         $this->conflitti_rilevati |= in_array($record['id'], $modifiche);
 
         return true;
+    }
+
+    /**
+     * Converte i valori numerici in stringhe.
+     *
+     * @param $list
+     *
+     * @return array
+     */
+    protected function forceToString($list)
+    {
+        $result = [];
+        // Fix per la gestione dei contenuti numerici
+        foreach ($list as $key => $value) {
+            if (is_numeric($value)) {
+                $result[$key] = (string) $value;
+            } elseif (is_array($value)) {
+                $result[$key] = $this->forceToString($value);
+            } else {
+                $result[$key] = $value;
+            }
+        }
+
+        return $result;
     }
 }

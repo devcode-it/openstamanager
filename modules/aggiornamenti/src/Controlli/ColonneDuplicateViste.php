@@ -20,8 +20,6 @@
 namespace Modules\Aggiornamenti\Controlli;
 
 use Models\Module;
-use Modules\Fatture\Fattura;
-use Util\XML;
 
 class ColonneDuplicateViste extends Controllo
 {
@@ -39,7 +37,7 @@ class ColonneDuplicateViste extends Controllo
     {
         $duplicati = database()->fetchArray('SELECT `id_module`, `name` FROM `zz_views` GROUP BY `id_module`, `name` HAVING COUNT(`name`) > 1');
 
-        foreach ($duplicati as $colonna){
+        foreach ($duplicati as $colonna) {
             $modulo = Module::pool($colonna['id_module']);
 
             $this->addResult([

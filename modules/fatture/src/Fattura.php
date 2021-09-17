@@ -464,7 +464,7 @@ class Fattura extends Document
 
         $file = $this->uploads()->where('name', '=', 'Fattura Elettronica')->first();
         if (empty($file)) {
-            throw new InvalidArgumentException("Fattura Elettronica non trovata");
+            throw new InvalidArgumentException('Fattura Elettronica non trovata');
         }
 
         return $file->getContent();

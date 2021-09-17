@@ -78,6 +78,7 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
 
     /**
      * Restituisce tutte le righe collegate al documento.
+     *
      * @return \Illuminate\Support\Collection|iterable
      */
     public function getRighe()
@@ -91,8 +92,10 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
 
     /**
      * Restituisce la riga con tipo e identificativo corrispondente.
+     *
      * @param $type
      * @param $id
+     *
      * @return mixed
      */
     public function getRiga($type, $id)
@@ -106,6 +109,7 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
 
     /**
      * Restituisce le righe del documento raggruppate per documento di origine.
+     *
      * @return \Illuminate\Support\Collection|iterable
      */
     public function getRigheRaggruppate()

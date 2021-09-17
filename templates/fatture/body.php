@@ -64,10 +64,10 @@ foreach ($righe as $riga) {
     $descrizione = $riga->descrizione;
 
     // Aggiunta riferimento più profondo per DDT attraverso Interventi
-    if ($riga->hasOriginalComponent() && $riga->original_document_type == Intervento::class){
+    if ($riga->hasOriginalComponent() && $riga->original_document_type == Intervento::class) {
         $riga_origine = $riga->getOriginalComponent();
 
-        if ($riga_origine->hasOriginalComponent()){
+        if ($riga_origine->hasOriginalComponent()) {
             $riferimento = $riga_origine->getOriginalComponent()
                 ->getDocument()->getReference();
 

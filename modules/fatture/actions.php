@@ -21,7 +21,6 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
-use Modules\DDT\DDT;
 use Modules\Fatture\Components\Articolo;
 use Modules\Fatture\Components\Descrizione;
 use Modules\Fatture\Components\Riga;

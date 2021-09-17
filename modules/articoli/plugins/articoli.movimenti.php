@@ -111,7 +111,7 @@ if (!empty($movimenti)) {
                 <td>
                     '.$movimento->descrizione.''.($movimento->hasDocument() ? ' - '.reference($movimento->getDocument()) : '').'
                 </td>
-                
+
                 <td class="text-center">
                     '.($movimento->nomesede ?: tr('Sede legale')).'
                 </td>';
@@ -128,7 +128,7 @@ if (!empty($movimenti)) {
 
         if (Auth::admin() && $movimento->isManuale()) {
             echo '
-                    <a class="btn btn-danger btn-xs ask" data-backto="record-edit" data-op="delmovimento" data-idmovimento="'.$movimento['idmovimento'].'">
+                    <a class="btn btn-danger btn-xs ask" data-backto="record-edit" data-op="delmovimento" data-idmovimento="'.$movimento['id'].'">
                         <i class="fa fa-trash"></i>
                     </a>';
         }

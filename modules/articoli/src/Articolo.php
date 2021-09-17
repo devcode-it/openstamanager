@@ -257,11 +257,17 @@ class Articolo extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Query\Builder
      */
-    public function movimentiComposti()
+    public function movimentiComposti($mostra_vuoti = false)
     {
-        return $this->movimenti()
-            ->selectRaw('*, mg_movimenti.id AS idmovimento, mg_movimenti.created_at AS data_movimento, sum(mg_movimenti.qta) as qta_documento, IFNULL(mg_movimenti.reference_type, mg_movimenti.id) as tipo_gruppo')
-            ->groupBy('tipo_gruppo', 'mg_movimenti.reference_id');
+        $movimenti = $this->movimenti()
+            ->selectRaw('*, mg_movimenti.created_at AS data_movimento, SUM(mg_movimenti.qta) as qta_documento, IFNULL(mg_movimenti.reference_type, mg_movimenti.id) as tipo_gruppo')
+            ->groupBy(['tipo_gruppo', 'mg_movimenti.reference_id']);
+
+        if (!empty($mostra_vuoti)){
+            return $movimenti;
+        }
+
+        return $movimenti->havingRaw('mg_movimenti.reference_type IS NULL OR qta_documento != 0');
     }
 
     public function categoria()

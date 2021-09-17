@@ -20,6 +20,7 @@
 namespace Modules\Fatture\Gestori;
 
 use Modules\Fatture\Fattura;
+use Modules\Scadenzario\Gruppo;
 use Modules\Scadenzario\Scadenza;
 use Plugins\ImportFE\FatturaElettronica as FatturaElettronicaImport;
 use Util\XML;
@@ -36,6 +37,15 @@ class Scadenze
     public function __construct(Fattura $fattura)
     {
         $this->fattura = $fattura;
+    }
+
+    public function getGruppo(){
+        // Generazione Gruppo Scadenze di riferimento
+        if (empty($this->fattura->gruppoScadenze)) {
+            $gruppo = Gruppo::build($this->fattura->getReference(), $this->fattura);
+        }
+
+        return $this->fattura->gruppoScadenze;
     }
 
     /**
@@ -86,7 +96,7 @@ class Scadenze
      */
     public function rimuovi()
     {
-        database()->delete('co_scadenze', ['iddocumento' => $this->fattura->id]);
+        $this->getGruppo()->rimuoviScadenze();
     }
 
     /**
@@ -95,20 +105,11 @@ class Scadenze
      * @param float  $importo
      * @param string $data_scadenza
      * @param bool   $is_pagato
-     * @param string $type
+     * @param string $tipo
      */
-    protected function registraScadenza(Fattura $fattura, $importo, $data_scadenza, $is_pagato, $type = 'fattura')
+    protected static function registraScadenza(Fattura $fattura, $importo, $data_scadenza, $is_pagato, $tipo = 'fattura')
     {
-        $numero = $fattura->numero_esterno ?: $fattura->numero;
-        $descrizione = $fattura->tipo->descrizione.' numero '.$numero;
-
-        // TODO $descrizione Gruppo
-        $scadenza = Scadenza::build($importo, $data_scadenza, $type, $is_pagato);
-
-        $scadenza->fattura()->associate($fattura);
-        $scadenza->data_emissione = $fattura->data;
-
-        $scadenza->save();
+        return Scadenza::build($fattura->getGruppo(), $importo, $data_scadenza, $tipo, $is_pagato);
     }
 
     /**

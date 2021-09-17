@@ -300,9 +300,6 @@ switch (post('op')) {
         try {
             $fattura->delete();
 
-            $dbo->query('DELETE FROM co_scadenze WHERE iddocumento='.prepare($id_record));
-            $dbo->query('DELETE FROM co_movimenti WHERE iddocumento='.prepare($id_record));
-
             // Azzeramento collegamento della rata contrattuale alla pianificazione
             $dbo->query('UPDATE co_fatturazione_contratti SET iddocumento=0 WHERE iddocumento='.prepare($id_record));
 
@@ -350,10 +347,11 @@ switch (post('op')) {
 
     case 'reopen':
         if (!empty($id_record)) {
-            $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Bozza') WHERE id=".prepare($id_record));
-            elimina_movimenti($id_record, 1);
-            elimina_scadenze($id_record);
-            ricalcola_costiagg_fattura($id_record);
+            $stato = Stato::where('descrizione', '=', 'Bozza')->first();
+
+            $fattura->stato()->associate($stato);
+            $fattura->save();
+
             flash()->info(tr('Fattura riaperta!'));
         }
 

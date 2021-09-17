@@ -79,6 +79,7 @@ if (!empty($fatture_generate_errore->count())) {
 }
 
 // Controllo se ci sono fatture in elaborazione da più di 7 giorni per le quali non ho ancora una ricevuta
+
 $data_limite = (new Carbon())->subDays(7);
 $fatture_generate = Fattura::vendita()
     ->where('codice_stato_fe', 'WAIT')

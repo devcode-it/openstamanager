@@ -52,6 +52,30 @@ class Gruppo extends Model
         return $model;
     }
 
+    /**
+     * Metodo per la gestione dei trigger alla modifica delle scadenze del gruppo.
+     * @param Scadenza $trigger
+     */
+    public function triggerScadenza(Scadenza $trigger){
+        $this->totale_pagato = $this->scadenze()->sum('pagato');
+        $this->save();
+    }
+
+    /**
+     * Metodo per rimuovere completamente le scadenze associate al gruppo.
+     * Da utilizzare per le Fatture.
+     */
+    public function rimuoviScadenze() {
+        $this->scadenze->delete();
+    }
+
+    public function delete()
+    {
+        $this->rimuoviScadenze();
+
+        return parent::delete();
+    }
+
     // Relazioni Eloquent
 
     public function fattura()

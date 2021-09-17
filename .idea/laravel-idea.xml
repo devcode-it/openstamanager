@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="InertiaPackage">
+    <option name="pagesExtension" value="jsx" />
+    <option name="pagesPaths">
+      <list>
+        <option value="resources/js/Views" />
+      </list>
+    </option>
+  </component>
   <component name="LaravelIdeaMainSettings">
     <option name="defaultLanguage" value="it" />
     <option name="frameworkFound" value="true" />

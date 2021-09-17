@@ -89,17 +89,17 @@ if (!empty($options['create_document'])) {
 
         $stato_predefinito = $database->fetchOne("SELECT id FROM co_statidocumento WHERE descrizione = 'Bozza'");
 
-        if(!empty($options['reversed'])){
+        if (!empty($options['reversed'])) {
             $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
                 'dir' => $dir,
                 'descrizione' => 'Nota di credito',
             ])['id'];
-        } elseif(in_array($original_module['name'], ['Ddt di vendita', 'Ddt di acquisto'])){
+        } elseif (in_array($original_module['name'], ['Ddt di vendita', 'Ddt di acquisto'])) {
             $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
                 'dir' => $dir,
-                'descrizione' => ($dir=='uscita' ? 'Fattura differita di acquisto' : 'Fattura differita di vendita'),
+                'descrizione' => ($dir == 'uscita' ? 'Fattura differita di acquisto' : 'Fattura differita di vendita'),
             ])['id'];
-        } else{
+        } else {
             $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
                 'predefined' => 1,
                 'dir' => $dir,

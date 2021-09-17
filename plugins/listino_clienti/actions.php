@@ -46,7 +46,7 @@ switch (filter('op')) {
                 $dettaglio_predefinito = DettaglioPrezzo::build($articolo, $anagrafica, $direzione);
             }
 
-            if($dettaglio_predefinito->sconto_percentuale != $sconto || $dettaglio_predefinito->prezzo_unitario!= $prezzo_unitario){
+            if ($dettaglio_predefinito->sconto_percentuale != $sconto || $dettaglio_predefinito->prezzo_unitario != $prezzo_unitario) {
                 $dettaglio_predefinito->sconto_percentuale = $sconto;
                 $dettaglio_predefinito->setPrezzoUnitario($prezzo_unitario);
                 $dettaglio_predefinito->save();
@@ -79,7 +79,7 @@ switch (filter('op')) {
                     $dettaglio = DettaglioPrezzo::build($articolo, $anagrafica, $direzione);
                 }
 
-                if($dettaglio->minimo != $minimi[$key] || $dettaglio->massimo != $massimi[$key] || $dettaglio->sconto_percentuale != $sconti[$key] || $dettaglio->prezzo_unitario != $prezzo_unitario){
+                if ($dettaglio->minimo != $minimi[$key] || $dettaglio->massimo != $massimi[$key] || $dettaglio->sconto_percentuale != $sconti[$key] || $dettaglio->prezzo_unitario != $prezzo_unitario) {
                     $dettaglio->minimo = $minimi[$key];
                     $dettaglio->massimo = $massimi[$key];
                     $dettaglio->sconto_percentuale = $sconti[$key];

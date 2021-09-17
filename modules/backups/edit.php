@@ -80,7 +80,7 @@ function restore() {
 }
 
 // Creazione backup
-function backup(){
+function creaBackup(button){
     swal({
         title: "'.tr('Nuovo backup').'",
         text: "'.tr('Sei sicuro di voler creare un nuovo backup?').'",
@@ -88,10 +88,32 @@ function backup(){
         showCancelButton: true,
         confirmButtonClass: "btn btn-lg btn-success",
         confirmButtonText: "'.tr('Crea').'",
-    }).then(
-    function() {
-        location.href = globals.rootdir + "/editor.php?id_module='.$id_module.'&op=backup";
-    }, function() {});
+    }).then(function() {
+        let restore = buttonLoading(button);
+        $("#main_loading").show();
+
+        $.ajax({
+            url: globals.rootdir + "/actions.php",
+            type: "GET",
+            data: {
+                id_module: globals.id_module,
+                op: "backup",
+            },
+            success: function(data) {
+                $("#main_loading").fadeOut();
+                buttonRestore(button, restore);
+
+                // Ricaricamento della pagina corrente
+                window.location.reload();
+            },
+            error: function() {
+                swal("'.tr('Errore').'", "'.tr('Errore durante la creazione del backup').'", "error");
+                renderMessages();
+
+                buttonRestore(button, restore);
+            }
+        });
+    }).catch(swal.noop);
 }
 
 // Caricamento
@@ -100,7 +122,7 @@ function loadSize(number, id){
 
     $.ajax({
         url: globals.rootdir + "/actions.php",
-        type: "get",
+        type: "GET",
         data: {
             id_module: globals.id_module,
             op: "size",
@@ -294,7 +316,9 @@ if (file_exists($backup_dir)) {
 // Creazione backup
 if (!empty($backup_dir)) {
     echo '
-<button type="button" class="btn btn-primary pull-right" onclick="backup()"><i class="fa fa-database"></i> '.tr('Crea backup').'...</button>
+<button type="button" class="btn btn-primary pull-right" onclick="creaBackup(this)">
+    <i class="fa fa-database"></i> '.tr('Crea backup').'...
+</button>
 
 <div class="clearfix"></div>';
 }

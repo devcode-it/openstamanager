@@ -18,6 +18,7 @@
  */
 
 use Ifsnop\Mysqldump\Mysqldump;
+use Util\FileSystem;
 use Util\Generator;
 use Util\Zip;
 
@@ -148,6 +149,8 @@ class Backup
      */
     public static function create()
     {
+        self::checkSpace();
+
         $backup_dir = self::getDirectory();
         $backup_name = self::getNextName();
 
@@ -274,6 +277,40 @@ class Backup
             delete($extraction_dir);
         }
         delete(base_dir().'/database.sql');
+    }
+
+    /**
+     * Effettua i controlli relativi allo spazio disponibile per l'esecuzione del backup;.
+     */
+    public static function checkSpace()
+    {
+        $scarto = 1.1;
+
+        // Informazioni di base sui limiti di spazio
+        $spazio_libero = disk_free_space('.');
+        if (!empty(setting('Soft quota'))) {
+            $soft_quota = (float) setting('Soft quota'); // Impostazione in GB
+            $soft_quota = $soft_quota * (1024 ** 3); // Trasformazione in GB
+        }
+
+        // Informazioni sullo spazio occupato
+        $spazio_occupato = $spazio_necessario = FileSystem::folderSize(base_dir(), ['htaccess']);
+        $cartelle_ignorate = [
+            self::getDirectory(),
+            'node_modules',
+            'tests',
+            'tmp',
+        ];
+        foreach ($cartelle_ignorate as $path) {
+            $spazio_necessario -= FileSystem::folderSize($path);
+        }
+
+        // Errori visualizzati
+        if (isset($soft_quota) && $soft_quota < ($spazio_necessario + $spazio_occupato) * $scarto) {
+            throw new InvalidArgumentException('Spazio disponibile in esaurimento');
+        } elseif ($spazio_libero < ($spazio_necessario) * $scarto) {
+            throw new InvalidArgumentException('Spazio del server in esaurimento');
+        }
     }
 
     /**

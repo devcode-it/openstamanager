@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 if (isset($id_record)) {
+    $has_access = \Util\Query::checkAccess($id_record);
     $id_module = Modules::get('Articoli')['id'];
     redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record);
 }

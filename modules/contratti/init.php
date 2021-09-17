@@ -22,6 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\Contratti\Contratto;
 
 if (isset($id_record)) {
+    $has_access = \Util\Query::checkAccess($id_record);
     $contratto = Contratto::find($id_record);
 
     $record = $dbo->fetchOne('SELECT *,

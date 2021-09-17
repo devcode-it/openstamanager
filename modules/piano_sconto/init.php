@@ -22,6 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\PianiSconto\PianoSconto;
 
 if (isset($id_record)) {
+    $has_access = \Util\Query::checkAccess($id_record);
     $record = $dbo->fetchOne('SELECT * FROM mg_listini WHERE id='.prepare($id_record));
 
     $listino = PianoSconto::find($id_record);

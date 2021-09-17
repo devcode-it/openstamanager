@@ -22,6 +22,7 @@ include_once __DIR__.'/../../core.php';
 $id_original = filter('id_original');
 
 if (isset($id_record)) {
+    $has_access = \Util\Query::checkAccess($id_record);
     include __DIR__.'/init.php';
 }
 

@@ -23,6 +23,7 @@ use Plugins\ImportFE\FatturaElettronica;
 use Plugins\ImportFE\Interaction;
 
 if (isset($id_record)) {
+    $has_access = \Util\Query::checkAccess($id_record);
     $files = Interaction::getFileList();
     $record = $files[$id_record - 1];
 

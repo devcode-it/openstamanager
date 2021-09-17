@@ -57,6 +57,7 @@ switch (post('op')) {
 
     case 'update':
         if (isset($id_record)) {
+    $has_access = \Util\Query::checkAccess($id_record);
             $idstatoordine = post('idstatoordine');
             $idpagamento = post('idpagamento');
             $idsede = post('idsede');

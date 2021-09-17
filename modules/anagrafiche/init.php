@@ -27,6 +27,7 @@ foreach ($rs as $riga) {
 }
 
 if (isset($id_record)) {
+    $has_access = \Util\Query::checkAccess($id_record);
     $anagrafica = Anagrafica::withTrashed()->find($id_record);
 
     $record = $dbo->fetchOne('SELECT *,

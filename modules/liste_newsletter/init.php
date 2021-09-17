@@ -22,6 +22,7 @@ use Modules\ListeNewsletter\Lista;
 include_once __DIR__.'/../../core.php';
 
 if (isset($id_record)) {
+    $has_access = \Util\Query::checkAccess($id_record);
     $lista = Lista::find($id_record);
 
     $record = $lista->toArray();

@@ -28,6 +28,7 @@ if ($module['name'] == 'Fatture di vendita') {
 }
 
 if (isset($id_record)) {
+    $has_access = \Util\Query::checkAccess($id_record);
     $fattura = Fattura::with('tipo', 'stato')->find($id_record);
     $dir = $fattura->direzione;
 

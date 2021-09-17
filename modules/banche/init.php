@@ -22,6 +22,7 @@ use Modules\Banche\Banca;
 include_once __DIR__.'/../../core.php';
 
 if (isset($id_record)) {
+    $has_access = \Util\Query::checkAccess($id_record);
     $banca = Banca::find($id_record);
 
     if (!empty($banca)) {

@@ -26,6 +26,7 @@ switch (post('op')) {
         $i = 0;
         foreach ($id_records as $id_record) {
             if (isset($id_record)) {
+    $has_access = \Util\Query::checkAccess($id_record);
                 $mail = Mail::find($id_record);
                 if (empty($mail->sent_at)) {
                     $mail->delete();

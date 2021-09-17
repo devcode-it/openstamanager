@@ -22,6 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Models\PrintTemplate;
 
 if (isset($id_record)) {
+    $has_access = \Util\Query::checkAccess($id_record);
     $print = PrintTemplate::find($id_record);
     $record = $print->toArray();
 }

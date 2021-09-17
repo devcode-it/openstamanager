@@ -32,40 +32,10 @@ if (empty($id_record) && !empty($id_module) && empty($id_plugin)) {
 
 include_once App::filepath('include|custom|', 'top.php');
 
-if (!empty($id_record)) {
-    Util\Query::setSegments(false);
-    $query = Util\Query::getQuery($structure, [
-        'id' => $id_record,
-    ]);
-    Util\Query::setSegments(true);
-}
-// Rimozione della condizione deleted_at IS NULL per visualizzare anche i record eliminati
-if (preg_match('/[`]*([a-z0-9_]*)[`]*[\.]*([`]*deleted_at[`]* IS NULL)/i', $query, $m)) {
-    $conditions_to_remove = [];
+// Inclusione gli elementi fondamentali
+include_once base_dir().'/actions.php';
 
-    $condition = trim($m[0]);
-
-    if (!empty($table_name)) {
-        $condition = $table_name.'.'.$condition;
-    }
-
-    $conditions_to_remove[] = ' AND '.$condition;
-    $conditions_to_remove[] = $condition.' AND ';
-
-    $query = str_replace($conditions_to_remove, '', $query);
-    $query = str_replace($condition, '', $query);
-}
-
-$query = null;
-
-$has_access = !empty($query) ? $dbo->fetchNum($query) !== 0 : true;
-
-if ($has_access) {
-    // Inclusione gli elementi fondamentali
-    include_once base_dir().'/actions.php';
-}
-
-if (empty($record) || !$has_access) {
+if (empty($record) || (isset($has_access) && !$has_access)) {
     echo '
         <div class="text-center">
     		<h3 class="text-muted">'.

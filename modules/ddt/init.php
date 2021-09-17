@@ -31,6 +31,7 @@ if ($module['name'] == 'Ddt di vendita') {
 }
 
 if (isset($id_record)) {
+    $has_access = \Util\Query::checkAccess($id_record);
     $ddt = DDT::with('tipo', 'stato')->find($id_record);
 
     $record = $dbo->fetchOne('SELECT dt_ddt.*,

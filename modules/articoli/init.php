@@ -22,6 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\Articoli\Articolo;
 
 if (isset($id_record)) {
+    $has_access = \Util\Query::checkAccess($id_record);
     $articolo = Articolo::withTrashed()->find($id_record);
     $articolo->nome_variante;
 

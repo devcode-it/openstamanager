@@ -324,6 +324,40 @@ class Query
     }
 
     /**
+     * Controlla se l'utente ha accesso a un record specifico seguendo la query principale del modulo.
+     *
+     * @return bool
+     * @throws \Exception
+     */
+    public static function checkAccess($id_record){
+
+        self::setSegments(false);
+        $query = self::getQuery(Modules::getCurrent(), [
+            'id' => $id_record,
+        ]);
+        self::setSegments(true);
+
+        // Rimozione della condizione deleted_at IS NULL per visualizzare anche i record eliminati
+        if (preg_match('/[`]*([a-z0-9_]*)[`]*[\.]*([`]*deleted_at[`]* IS NULL)/i', $query, $m)) {
+            $conditions_to_remove = [];
+
+            $condition = trim($m[0]);
+
+            if (!empty($table_name)) {
+                $condition = $table_name.'.'.$condition;
+            }
+
+            $conditions_to_remove[] = ' AND '.$condition;
+            $conditions_to_remove[] = $condition.' AND ';
+
+            $query = str_replace($conditions_to_remove, '', $query);
+            $query = str_replace($condition, '', $query);
+        }
+
+        return !empty($query) ? database()->fetchNum($query) !== 0 : true;
+    }
+
+    /**
      * Sostituisce la prima occorenza di una determinata stringa.
      *
      * @param string $str_pattern

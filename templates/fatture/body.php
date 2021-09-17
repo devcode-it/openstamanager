@@ -17,6 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\Interventi\Intervento;
+
 include_once __DIR__.'/../../core.php';
 
 $v_iva = [];
@@ -58,6 +60,23 @@ foreach ($righe as $riga) {
     $v_iva[$r['desc_iva']] = sum($v_iva[$r['desc_iva']], $riga->iva);
     $v_totale[$r['desc_iva']] = sum($v_totale[$r['desc_iva']], $riga->totale_imponibile);
 
+    // Descrizione della riga
+    $descrizione = $riga->descrizione;
+
+    // Aggiunta riferimento più profondo per DDT attraverso Interventi
+    if ($riga->hasOriginalComponent() && $riga->original_document_type == Intervento::class){
+        $riga_origine = $riga->getOriginalComponent();
+
+        if ($riga_origine->hasOriginalComponent()){
+            $riferimento = $riga_origine->getOriginalComponent()
+                ->getDocument()->getReference();
+
+            $descrizione .= "\n".tr('Rif. _DOCUMENT_', [
+                '_DOCUMENT_' => strtolower($riferimento),
+            ]);
+        }
+    }
+
     echo '
         <tr>';
 
@@ -68,7 +87,7 @@ foreach ($righe as $riga) {
 
     echo '
             <td>
-                '.nl2br(strip_tags($riga->descrizione));
+                '.nl2br(strip_tags($descrizione));
 
     if ($riga->isArticolo()) {
         // Codice articolo

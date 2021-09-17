@@ -32,7 +32,15 @@ use Util\XML;
  */
 class Scadenze
 {
+    /**
+     * @var Fattura
+     */
     private $fattura;
+
+    /**
+     * @var Gruppo
+     */
+    private $gruppo;
 
     public function __construct(Fattura $fattura)
     {
@@ -40,12 +48,19 @@ class Scadenze
     }
 
     public function getGruppo(){
-        // Generazione Gruppo Scadenze di riferimento
-        if (empty($this->fattura->gruppoScadenze)) {
-            $gruppo = Gruppo::build($this->fattura->getReference(), $this->fattura);
+        if (isset($this->gruppo)){
+            return $this->gruppo;
         }
 
-        return $this->fattura->gruppoScadenze;
+        // Ricerca Gruppo Scadenza associato alla Fattura
+        $this->gruppo = Gruppo::where('id_documento', '=', $this->fattura->id)->first();
+
+        // Generazione Gruppo Scadenza associato alla Fattura
+        if (empty($this->gruppo)){
+            $this->gruppo = Gruppo::build($this->fattura->getReference(), $this->fattura);
+        }
+
+        return $this->gruppo;
     }
 
     /**
@@ -87,7 +102,7 @@ class Scadenze
 
             $importo = -$ritenuta_acconto;
 
-            self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, 'ritenutaacconto');
+            $this->registraScadenza($importo, $scadenza, $is_pagato, 'ritenutaacconto');
         }
     }
 
@@ -107,9 +122,9 @@ class Scadenze
      * @param bool   $is_pagato
      * @param string $tipo
      */
-    protected static function registraScadenza(Fattura $fattura, $importo, $data_scadenza, $is_pagato, $tipo = 'fattura')
+    protected function registraScadenza($importo, $data_scadenza, $is_pagato, $tipo = 'fattura')
     {
-        return Scadenza::build($fattura->getGruppo(), $importo, $data_scadenza, $tipo, $is_pagato);
+        return Scadenza::build($this->getGruppo(), $importo, $data_scadenza, $tipo, $is_pagato);
     }
 
     /**
@@ -140,7 +155,7 @@ class Scadenze
                 $scadenza = !empty($rata['DataScadenzaPagamento']) ? FatturaElettronicaImport::parseDate($rata['DataScadenzaPagamento']) : $this->fattura->data;
                 $importo = $this->fattura->isNota() ? $rata['ImportoPagamento'] : -$rata['ImportoPagamento'];
 
-                self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato);
+                $this->registraScadenza($importo, $scadenza, $is_pagato);
             }
         }
 
@@ -166,7 +181,7 @@ class Scadenze
             $scadenza = $rata['scadenza'];
             $importo = $direzione == 'uscita' ? -$rata['importo'] : $rata['importo'];
 
-            self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato);
+            $this->registraScadenza($importo, $scadenza, $is_pagato);
         }
     }
 }

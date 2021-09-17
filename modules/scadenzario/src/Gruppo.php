@@ -66,7 +66,7 @@ class Gruppo extends Model
      * Da utilizzare per le Fatture.
      */
     public function rimuoviScadenze() {
-        $this->scadenze->delete();
+        $this->scadenze()->delete();
     }
 
     public function delete()

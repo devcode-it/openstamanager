@@ -35,55 +35,50 @@ echo '
 	<div class="panel panel-primary">
 		<div class="panel-heading">
 			<h3 class="panel-title">
-			    '.tr('Dettagli scadenza').'
-                <button type="button" class="btn btn-xs btn-info pull-right tip '.(empty($documento) ? 'disabled' : '').'" id="add-scadenza" '.(empty($documento) ? 'disabled' : '').' title="'.tr('È possibile aggiungere scadenze solo se è presente il collegamento a un documento, in caso contrario è consigliato creare più scadenze con la stessa descrizione').'">
-                    <i class="fa fa-plus"></i> '.tr('Aggiungi scadenza').'
-                </button>
+			    '.tr('Gruppo Scadenze').'
             </h3>
 		</div>
 
-		<div class="panel-body">
-			<div class="row">
-
-				<!-- Info scadenza -->
-				<div class="col-md-6">';
+		<div class="panel-body">';
 
 if (!empty($documento)) {
     echo '
-					<table class="table table-striped table-hover table-condensed table-bordered">
-                        <tr>
-                            <th width="120">'.($dir == 'entrata' ? tr('Cliente') : tr('Fornitore')).':</th>
-                            <td>
-                                '.Modules::link('Anagrafiche', $documento->anagrafica->id, $documento->anagrafica->ragione_sociale).'
-                            </td>
-                        </tr>
+            <div class="row">
+                <div class="col-md-4">
+                    <h4>' . tr('Documento') . '</h4>
+                    ' . Modules::link($documento->getModule(), $documento->id, $documento->getReference()) . '
+                </div>
 
-                        <tr>
-                            <th>'.tr('Documento').':</th>
-                            <td>'.$documento->tipo->descrizione.'</td>
-                        </tr>
+                <div class="col-md-4">
+                    <h4>' . ($documento->direzione == 'entrata' ? tr('Cliente') : tr('Fornitore')) . '</h4>
+                    ' . Modules::link('Anagrafiche', $documento->anagrafica->id, $documento->anagrafica->ragione_sociale) . '
+                </div>
 
-                        <tr>
-                            <th>'.tr('Numero').':</th>
-                            <td>'.$numero.'</td>
-                        </tr>
+                <div class="col-md-4">
+                    <h4>' . tr('Netto a pagare') . '</h4>
+                    ' . moneyFormat($documento->netto) . '
+                </div>
+            </div>
 
-                        <tr>
-                            <th>'.tr('Data').':</th>
-                            <td>'.Translator::dateToLocale($documento->data).'</td>
-                        </tr>
+            <div class="clearfix"></div>
+            <br>';
+}
+    echo '
+            <div class="row">
+                <div class="col-md-8">
+                    {[ "type": "text", "label": "'.tr('Descrizione').'", "name": "descrizione", "value": "'.$gruppo['descrizione'].'" ]}
+                </div>
 
-                        <tr>
-                            <th>'.tr('Netto a pagare').':</th>
-                            <td>'.moneyFormat($documento->netto).'</td>
-                        </tr>
+                <div class="col-md-4">
+                    {[ "type": "date", "label": "'.tr('Data di emissione').'", "name": "data_emissione", "value": "'.$gruppo['data_emissione'].'" ]}
+                </div>
+            </div>
 
-                        <tr>
-                            <th>'.tr('Note').':</th>
-                            <td>
-                                {[ "type": "textarea", "name": "note", "value": "'.$record['note'].'" ]}
-                            </td>
-                        </tr>
+            <div class="row">
+                <div class="col-md-12">
+                    {[ "type": "ckeditor", "label": "'.tr('Note').'", "name": "note", "value": "'.$gruppo['note'].'" ]}
+                </div>
+            </div>';
 
                         <tr>
                             <th>'.tr('Distinta').':</th>
@@ -125,96 +120,96 @@ if (!empty($documento)) {
 }
 
 echo '
-				</div>
+        </div>
+    </div>
 
-				<!-- Elenco scadenze -->
-				<div class="col-md-6">
-					<table class="table table-hover table-condensed table-bordered">
-                        <thead>
-                            <tr>
-                                <th width="150">'.tr('Data').'</th>
-                                <th width="150">'.tr('Importo').'</th>
-                                <th width="150">'.tr('Pagato').'</th>
-                                <th width="150">'.tr('Data concordata').'</th>
-                            </tr>
-                        </thead>
+    <!-- Elenco scadenze -->
+	<div class="box box-primary">
+		<div class="box-header">
+			<h3 class="box-title">'.tr('Elenco scadenza').'</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-xs btn-info tip '.(empty($documento) ? 'disabled' : '').'" id="add-scadenza" '.(empty($documento) ? 'disabled' : '').' title="'.tr('È possibile aggiungere scadenze solo se è presente il collegamento a un documento, in caso contrario è consigliato creare più scadenze con la stessa descrizione').'">
+                    <i class="fa fa-plus"></i> '.tr('Aggiungi scadenza').'
+                </button>
+            </div>
+		</div>
 
-                        <tbody id="scadenze">';
+		<div class="box-body">
+            <table class="table table-hover table-condensed table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center" width="150">'.tr('Data').'</th>
+                        <th class="text-center" width="150">'.tr('Importo').'</th>
+                        <th class="text-center" width="150">'.tr('Pagato').'</th>
+                        <th class="text-center" width="150">'.tr('Data concordata').'</th>
+                        <th class="text-center" width="150">'.tr('Note').'</th>
+                    </tr>
+                </thead>
 
-foreach ($scadenze as $i => $scadenza) {
+                <tbody id="scadenze">';
+
+    foreach ($scadenze as $i => $scadenza) {
     if ($scadenza['da_pagare'] == $scadenza['pagato']) {
-        $class = 'success';
+    $class = 'success';
     } elseif (abs($scadenza['pagato']) == 0) {
-        $class = 'danger';
+    $class = 'danger';
     } elseif (abs($scadenza['pagato']) <= abs($scadenza['da_pagare'])) {
-        $class = 'warning';
+    $class = 'warning';
     } else {
-        $class = 'danger';
+    $class = 'danger';
     }
 
     echo '
-                        <tr class="'.$class.'">
-                            <input type="hidden" name="id_scadenza['.$i.']" value="'.$scadenza['id'].'">
+                    <tr class="'.$class.'">
+                        <input type="hidden" name="id_scadenza['.$i.']" value="'.$scadenza['id'].'">
 
-                            <td align="center">
-                                {[ "type": "date", "name": "scadenza['.$i.']", "value": "'.$scadenza['scadenza'].'" ]}
-                            </td>
+                        <td class="text-center">
+                            {[ "type": "date", "name": "scadenza['.$i.']", "value": "'.$scadenza['scadenza'].'" ]}
+                        </td>
 
-                            <td class="text-right">
-                                {[ "type": "number", "name": "da_pagare['.$i.']", "decimals": 2, "value": "'.numberFormat($scadenza['da_pagare'], 2).'", "onchange": "controlloTotale()" ]}
-                            </td>
+                        <td class="text-right">
+                            {[ "type": "number", "name": "da_pagare['.$i.']", "decimals": 2, "value": "'.numberFormat($scadenza['da_pagare'], 2).'", "onchange": "controlloTotale()" ]}
+                        </td>
 
-                            <td class="text-right">
-                                {[ "type": "number", "name": "pagato['.$i.']", "decimals": 2, "value": "'.numberFormat($scadenza['pagato']).'"  ]}
-                            </td>
+                        <td class="text-right">
+                            {[ "type": "number", "name": "pagato['.$i.']", "decimals": 2, "value": "'.numberFormat($scadenza['pagato']).'"  ]}
+                        </td>
 
-                            <td align="center">
-                                {[ "type": "date", "name": "data_concordata['.$i.']", "value": "'.$scadenza['data_concordata'].'" ]}
-                            </td>
-                        </tr>';
-}
+                        <td class="text-center">
+                            {[ "type": "date", "name": "data_concordata['.$i.']", "value": "'.$scadenza['data_concordata'].'" ]}
+                        </td>
 
-echo '
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td class="text-right"><b>'.tr('Totale').'</b></td>
-                                <td class="text-right" id="totale_utente">'.numberFormat($totale_da_pagare).'</td>
-                                <td class="text-right"></td>
-                                <td class="text-right"></td>
-                            </tr>
-                        </tfoot>
-					</table>';
+                        <td>
+                            {[ "type": "textarea", "name": "note['.$i.']", "value": "'.$scadenza['note'].'" ]}
+                        </td>
+                    </tr>';
+    }
 
-if ($totale_da_pagare != 0) {
     echo '
-                    <div class="pull-right">
-                        <a onclick="launch_modal(\''.tr('Registra contabile pagamento').'\', \''.base_path().'/add.php?id_module='.Modules::get('Prima nota')['id'].'&'.(!empty($record['iddocumento']) ? 'id_documenti='.$record['iddocumento'].'&single=1' : 'id_scadenze='.$id_record).'\');" class="btn btn-sm btn-primary">
-                            <i class="fa fa-euro"></i> '.tr('Registra contabile pagamento...').'
-                        </a>
-                    </div>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="text-right"><b>'.tr('Totale').'</b></td>
+                        <td class="text-right" id="totale_utente">'.numberFormat($totale_da_pagare).'</td>
+                        <td class="text-right"></td>
+                        <td class="text-right"></td>
+                    </tr>
+                </tfoot>
+            </table>
 
-					<div class="clearfix"></div>
-                    <br>';
-}
-?>
+            <div class="alert alert-warning hide" id="totale">'.tr('Il totale da pagare non corrisponde con il totale della fattura che è pari a _MONEY_', [
+                '_MONEY_' => '<b>'.moneyFormat($totale_da_pagare).'</b>',
+            ]); ?>.<br><?php echo tr('Differenza di _TOT_ _CURRENCY_', [
+                    '_TOT_' => '<span id="diff"></span>',
+                    '_CURRENCY_' => currency(),
+                ]).'.
+            </div>
 
-					<div class="alert alert-warning hide" id="totale"><?php echo tr('Il totale da pagare non corrisponde con il totale della fattura che è pari a _MONEY_', [
-                        '_MONEY_' => '<b>'.moneyFormat($totale_da_pagare).'</b>',
-                    ]); ?>.<br><?php echo tr('Differenza di _TOT_ _CURRENCY_', [
-                            '_TOT_' => '<span id="diff"></span>',
-                            '_CURRENCY_' => currency(),
-                        ]); ?>.
-					</div>
-
-					<input type="hidden" id="totale_da_pagare" value="<?php echo round($totale_da_pagare, 2); ?>">
-				</div>
-			</div>
+            <input type="hidden" id="totale_da_pagare" value="'.round($totale_da_pagare, 2).'">
 		</div>
 	</div>
-</form>
+</form>';
 
-<?php
 $id_scadenza = $id_record;
 
 // Forzatura per allegare file sempre al primo record
@@ -241,7 +236,7 @@ echo '
         <tr class="danger">
             <input type="hidden" name="id_scadenza[-id-]" value="">
 
-            <td align="center">
+            <td class="text-center">
                 {[ "type": "date", "name": "scadenza[-id-]" ]}
             </td>
 
@@ -253,8 +248,12 @@ echo '
                 {[ "type": "number", "name": "pagato[-id-]", "decimals": 2 ]}
             </td>
 
-            <td align="center">
+            <td class="text-center">
                 {[ "type": "date", "name": "data_concordata[-id-]" ]}
+            </td>
+
+            <td>
+                {[ "type": "textarea", "name": "note[-id-]" ]}
             </td>
         </tr>
     </tbody>

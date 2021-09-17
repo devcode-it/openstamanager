@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS `co_gruppi_scadenze` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `id_documento` int(11) DEFAULT NULL,
     `descrizione` varchar(255) NOT NULL,
+    `note` TEXT,
     `data_emissione` date DEFAULT NULL,
     `totale_pagato` decimal(12, 6) NOT NULL,
     `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,

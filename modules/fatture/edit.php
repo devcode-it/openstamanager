@@ -334,7 +334,7 @@ elseif ($record['stato'] == 'Bozza') {
                     <p class="pull-left"><strong>'.tr('Scadenze').'</strong></p>
 
                     <div class="btn-group pull-right">
-                        '.Modules::link('Scadenzario', $fattura->gruppoScadenze->id, tr('<i class="fa fa-edit tip" title="'.tr('Modifica scadenze').'"></i>'), '', 'class="btn btn-xs btn-primary"');
+                        '.Modules::link('Scadenzario', $fattura->getGruppoScadenze()->id, tr('<i class="fa fa-edit tip" title="'.tr('Modifica scadenze').'"></i>'), '', 'class="btn btn-xs btn-primary"');
 
                     // Ricalcola scadenze disponibile solo per fatture di acquisto
                     if ($fattura->isFE() && $ricalcola && $module['name'] == 'Fatture di acquisto') {

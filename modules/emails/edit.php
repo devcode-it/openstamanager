@@ -127,7 +127,7 @@ if (!empty($variables)) {
 
     foreach ($variables as $variable => $value) {
         echo '
-            <li><code>{'.$variable.'}</code></li>';
+            <li><code>'.$variable.'</code></li>';
     }
 
     echo '

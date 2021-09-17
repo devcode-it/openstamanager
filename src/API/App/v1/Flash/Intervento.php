@@ -95,7 +95,7 @@ class Intervento extends Resource implements UpdateInterface
             $this->importaRecords($key, $records);
         }
 
-        return $this->response;
+        return $this->forceToString($this->response);
     }
 
     /**
@@ -175,5 +175,29 @@ class Intervento extends Resource implements UpdateInterface
         $this->conflitti_rilevati |= in_array($record['id'], $modifiche);
 
         return true;
+    }
+
+    /**
+     * Converte i valori numerici in stringhe.
+     *
+     * @param $list
+     *
+     * @return array
+     */
+    protected function forceToString($list)
+    {
+        $result = [];
+        // Fix per la gestione dei contenuti numerici
+        foreach ($list as $key => $value) {
+            if (is_numeric($value)) {
+                $result[$key] = (string) $value;
+            } elseif (is_array($value)) {
+                $result[$key] = $this->forceToString($value);
+            } else {
+                $result[$key] = $value;
+            }
+        }
+
+        return $result;
     }
 }

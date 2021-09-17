@@ -136,6 +136,13 @@ if (Services::isEnabled()) {
 
             <hr><br>
 
+            <div class="alert alert-warning hidden" role="alert" id="spazio-fe">
+                <i class="fa fa-warning"></i> '.tr('Spazio per Fatture Elettroniche in esaurimento: _NUM_/_TOT_', [
+                    '_NUM_' => '<span id="spazio-fe-occupato"></span>',
+                    '_TOT_' => '<span id="spazio-fe-totale"></span>',
+                ]).'. '.tr("Contatta l'assistenza per maggiori informazioni").'.
+            </div>
+
             <h4>'.tr('Statistiche su Fatture Elettroniche').'</h4>
             <table class="table table-striped">
                 <thead>
@@ -236,7 +243,14 @@ function aggiornaStatisticheFE(){
         },
         success: function (response) {
             $("#fe_numero").html(response.invoice_number);
-            $("#fe_spazio").html(response.size);
+            $("#fe_spazio").html(response.spazio_occupato);
+
+            // Informazioni sullo spazio occupato
+            $("#spazio-fe-occupato").html(response.spazio_occupato);
+            $("#spazio-fe-totale").html(response.spazio_totale);
+            if (response.avviso_spazio) {
+                $("#spazio-fe").removeClass("hidden");
+            }
 
             if (response.history.length) {
                 for (let i = 0; i < response.history.length; i++) {

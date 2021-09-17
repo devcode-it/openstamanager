@@ -307,6 +307,9 @@ switch (filter('op')) {
 
         $informazioni = $info->content;
 
+        $spazio_totale = floatval($informazioni['maxSize']) * (1024 ** 2);
+        $avviso_spazio = !empty($spazio_totale) && floatval($informazioni['size']) > 0.9 * $spazio_totale;
+
         // Restrizione storico agli ultimi 3 anni
         $history = (array) $informazioni['history'];
         $history = array_slice($history, 0, 3);
@@ -321,9 +324,13 @@ switch (filter('op')) {
         // Formattazione dei contenuti generici
         echo json_encode([
             'invoice_number' => $informazioni['invoice_number'],
-            'size' => Filesystem::formatBytes($informazioni['size']),
             'invoices_size' => Filesystem::formatBytes($informazioni['invoices_size']),
             'notifies_size' => Filesystem::formatBytes($informazioni['notifies_size']),
+
+            'avviso_spazio' => $avviso_spazio,
+            'spazio_totale' => Filesystem::formatBytes($spazio_totale),
+            'spazio_occupato' => Filesystem::formatBytes($informazioni['size']),
+
             'history' => $history,
         ]);
         break;

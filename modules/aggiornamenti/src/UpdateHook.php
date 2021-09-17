@@ -44,7 +44,7 @@ class UpdateHook extends CachedManager
     public function response()
     {
         $update = $this->getCache()->content;
-        if ($update == Update::getVersion()) {
+        if ($update == Update::getVersion() || empty(setting('Attiva aggiornamenti'))) {
             $update = null;
         }
 

@@ -19,58 +19,48 @@
 
 namespace Modules\Scadenzario;
 
+use Carbon\Carbon;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Fatture\Fattura;
 
-class Scadenza extends Model
+class Gruppo extends Model
 {
     use SimpleModelTrait;
 
-    protected $table = 'co_scadenze';
+    protected $table = 'co_gruppi_scadenze';
 
     protected $dates = [
-        'scadenza',
-        'data_pagamento',
+        'data_emissione',
     ];
 
-    public static function build(Gruppo $gruppo, $importo, $data_scadenza, $tipo = 'fattura', $is_pagato = false)
+    public static function build($descrizione, Fattura $fattura = null)
     {
         $model = new static();
 
-        $model->gruppo()->associate($gruppo);
+        $model->descrizione = $descrizione;
 
-        $model->scadenza = $data_scadenza;
-        $model->da_pagare = $importo;
-        $model->tipo = $tipo;
-
-        $model->pagato = $is_pagato ? $importo : 0;
-        $model->data_pagamento = $is_pagato ? $data_scadenza : null;
+        if (!empty($fattura)) {
+            $model->fattura()->associate($fattura);
+            $model->data_emissione = $fattura->data;
+        } else {
+            $model->data_emissione = new Carbon();
+        }
 
         $model->save();
 
         return $model;
     }
 
-    public function save(array $options = [])
-    {
-        $result = parent::save($options);
-
-        // Trigger per il gruppo al cambiamento della scadenza
-        $this->gruppo->triggerScadenza($this);
-
-        return $result;
-    }
-
     // Relazioni Eloquent
-
-    public function gruppo()
-    {
-        return $this->belongsTo(Gruppo::class, 'id_gruppo');
-    }
 
     public function fattura()
     {
-        return $this->gruppo->fattura();
+        return $this->belongsTo(Fattura::class, 'id_documento');
+    }
+
+    public function scadenze()
+    {
+        return $this->hasMany(Scadenza::class, 'id_gruppo');
     }
 }

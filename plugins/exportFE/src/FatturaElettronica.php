@@ -1580,8 +1580,8 @@ class FatturaElettronica
             'CondizioniPagamento' => ($co_pagamenti['prc'] == 100) ? 'TP02' : 'TP01',
         ];
 
-        $co_scadenziario = $database->fetchArray('SELECT * FROM `co_scadenziario` WHERE `iddocumento` = '.prepare($documento['id']));
-        foreach ($co_scadenziario as $scadenza) {
+        $co_scadenze = $database->fetchArray('SELECT * FROM `co_scadenze` WHERE `iddocumento` = '.prepare($documento['id']));
+        foreach ($co_scadenze as $scadenza) {
             $pagamento = [
                 'ModalitaPagamento' => $co_pagamenti['codice_modalita_pagamento_fe'],
                 'DataScadenzaPagamento' => $scadenza['scadenza'],

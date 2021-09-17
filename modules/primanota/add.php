@@ -67,7 +67,7 @@ $permetti_modelli = (count($id_documenti) + count($id_scadenze)) <= 1;
 
 // Scadenze
 foreach ($id_scadenze as $id_scadenza) {
-    $scadenza = $database->fetchOne('SELECT *, SUM(da_pagare - pagato) AS rata FROM co_scadenziario WHERE id='.prepare($id_scadenza));
+    $scadenza = $database->fetchOne('SELECT *, SUM(da_pagare - pagato) AS rata FROM co_scadenze WHERE id='.prepare($id_scadenza));
     if (!empty($scadenza['iddocumento'])) {
         $id_documenti[] = $scadenza['iddocumento'];
         continue;
@@ -148,9 +148,9 @@ foreach ($id_documenti as $id_documento) {
 
     // Se sto registrando un insoluto, leggo l'ultima scadenza pagata altrimenti leggo la scadenza della fattura
     if ($is_insoluto) {
-        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare) AS rata, iddocumento FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) = ABS(pagato) ORDER BY updated_at DESC LIMIT 0, 1');
+        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare) AS rata, iddocumento FROM co_scadenze WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) = ABS(pagato) ORDER BY updated_at DESC LIMIT 0, 1');
     } else {
-        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, iddocumento FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato)'.(!empty($id_scadenze) ? 'AND id IN('.implode(',', $id_scadenze).')' : '').' ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
+        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, iddocumento FROM co_scadenze WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato)'.(!empty($id_scadenze) ? 'AND id IN('.implode(',', $id_scadenze).')' : '').' ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
     }
 
     // Selezione prima scadenza

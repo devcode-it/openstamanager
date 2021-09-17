@@ -86,7 +86,7 @@ class Scadenze
      */
     public function rimuovi()
     {
-        database()->delete('co_scadenziario', ['iddocumento' => $this->fattura->id]);
+        database()->delete('co_scadenze', ['iddocumento' => $this->fattura->id]);
     }
 
     /**
@@ -102,9 +102,10 @@ class Scadenze
         $numero = $fattura->numero_esterno ?: $fattura->numero;
         $descrizione = $fattura->tipo->descrizione.' numero '.$numero;
 
-        $scadenza = Scadenza::build($descrizione, $importo, $data_scadenza, $type, $is_pagato);
+        // TODO $descrizione Gruppo
+        $scadenza = Scadenza::build($importo, $data_scadenza, $type, $is_pagato);
 
-        $scadenza->documento()->associate($fattura);
+        $scadenza->fattura()->associate($fattura);
         $scadenza->data_emissione = $fattura->data;
 
         $scadenza->save();

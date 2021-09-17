@@ -17,20 +17,21 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Modules\Fatture\Fattura;
+use Modules\Scadenzario\Gruppo;
 
 include_once __DIR__.'/../../core.php';
 
 if (isset($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM co_scadenziario WHERE id = '.prepare($id_record));
-    $documento = Fattura::find($record['iddocumento']);
+    $gruppo = Gruppo::find($id_record);
+    $documento = $gruppo->fattura;
+    $scadenze = $gruppo->scadenze;
+
+    $record = $gruppo->toArray();
 
     // Scelgo la query in base alla scadenza
     if (!empty($documento)) {
-        $scadenze = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE iddocumento = '.prepare($documento->id).' ORDER BY scadenza ASC');
         $totale_da_pagare = $documento->netto;
     } else {
-        $scadenze = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE id = '.prepare($id_record).' ORDER BY scadenza ASC');
-        $totale_da_pagare = sum(array_column($scadenze, 'da_pagare'));
+        $totale_da_pagare = sum(array_column($scadenze->toArray(), 'da_pagare'));
     }
 }

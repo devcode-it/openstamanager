@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-if (empty($dbo->fetchArray('SELECT * FROM co_scadenziario'))) {
+if (empty($dbo->fetchArray('SELECT * FROM co_scadenze'))) {
     $class = 'muted';
     $disabled = 'disabled';
 } else {

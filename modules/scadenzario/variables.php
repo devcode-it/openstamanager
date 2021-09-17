@@ -17,17 +17,17 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-$r = $dbo->fetchOne('SELECT co_scadenziario.*, co_documenti.*,
+$r = $dbo->fetchOne('SELECT co_scadenze.*, co_documenti.*,
 	an_anagrafiche.email,
 	an_anagrafiche.pec,
 	an_anagrafiche.ragione_sociale,
-    co_scadenziario.da_pagare - co_scadenziario.pagato AS totale,
+    co_scadenze.da_pagare - co_scadenze.pagato AS totale,
 	(SELECT pec FROM em_accounts WHERE em_accounts.id='.prepare($template['id_account']).') AS is_pec,
 	(SELECT descrizione FROM co_pagamenti WHERE co_pagamenti.id = co_documenti.idpagamento) AS pagamento
-FROM co_scadenziario
-    INNER JOIN co_documenti ON co_documenti.id = co_scadenziario.iddocumento
+FROM co_scadenze
+    INNER JOIN co_documenti ON co_documenti.id = co_scadenze.iddocumento
     INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica
-WHERE co_scadenziario.pagato != co_scadenziario.da_pagare AND co_scadenziario.iddocumento = (SELECT iddocumento FROM co_scadenziario s WHERE id='.prepare($id_record).')');
+WHERE co_scadenze.pagato != co_scadenze.da_pagare AND co_scadenze.iddocumento = (SELECT iddocumento FROM co_scadenze s WHERE id='.prepare($id_record).')');
 
 $logo_azienda = str_replace(base_dir(), base_path(), App::filepath('templates/base|custom|/logo_azienda.jpg'));
 

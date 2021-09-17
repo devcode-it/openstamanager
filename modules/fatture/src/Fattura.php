@@ -34,6 +34,7 @@ use Modules\Fatture\Gestori\Scadenze as GestoreScadenze;
 use Modules\Pagamenti\Pagamento;
 use Modules\PrimaNota\Movimento;
 use Modules\RitenuteContributi\RitenutaContributi;
+use Modules\Scadenzario\Gruppo;
 use Modules\Scadenzario\Scadenza;
 use Plugins\DichiarazioniIntento\Dichiarazione;
 use Plugins\ExportFE\FatturaElettronica;
@@ -440,9 +441,15 @@ class Fattura extends Document
         return $this->hasOne(Components\Riga::class, 'iddocumento')->where('id', $this->id_riga_bollo);
     }
 
+    public function gruppoScadenze()
+    {
+        return $this->hasOne(Gruppo::class, 'id_documento');
+    }
+
     public function scadenze()
     {
-        return $this->hasMany(Scadenza::class, 'iddocumento')->orderBy('scadenza');
+        return $this->gruppoScadenze->scadenze()
+            ->orderBy('scadenza');
     }
 
     public function movimentiContabili()

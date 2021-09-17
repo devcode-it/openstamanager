@@ -280,10 +280,10 @@ switch (post('op')) {
             ->select('*', 'co_documenti.id AS id', 'co_documenti.data AS data')
             ->where('idanagrafica', $id_anagrafica)
             ->whereIn('idstatodocumento', [$stato1->id, $stato2->id])
-            ->join('co_scadenziario', 'co_documenti.id', '=', 'co_scadenziario.iddocumento')
-            ->where('co_scadenziario.da_pagare', '>', 'co_scadenziario.pagato')
-            ->whereRaw('co_scadenziario.scadenza < NOW()')
-            ->groupBy('co_scadenziario.iddocumento')
+            ->join('co_scadenze', 'co_documenti.id', '=', 'co_scadenze.iddocumento')
+            ->where('co_scadenze.da_pagare', '>', 'co_scadenze.pagato')
+            ->whereRaw('co_scadenze.scadenza < NOW()')
+            ->groupBy('co_scadenze.iddocumento')
             ->get();
 
         $results = [];
@@ -300,7 +300,7 @@ switch (post('op')) {
         try {
             $fattura->delete();
 
-            $dbo->query('DELETE FROM co_scadenziario WHERE iddocumento='.prepare($id_record));
+            $dbo->query('DELETE FROM co_scadenze WHERE iddocumento='.prepare($id_record));
             $dbo->query('DELETE FROM co_movimenti WHERE iddocumento='.prepare($id_record));
 
             // Azzeramento collegamento della rata contrattuale alla pianificazione

@@ -17,17 +17,24 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\Scadenzario\Gruppo;
+use Modules\Scadenzario\Scadenza;
+
 include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'add':
+        // Creazione nuovo Gruppo Scadenze
+        $descrizione = post('descrizione');
+        $gruppo = Gruppo::build($descrizione);
+
+        // Creazione Scadenza associata al gruppo
         $data = post('data');
         $tipo = post('tipo');
         $da_pagare = post('da_pagare');
-        $descrizione = post('descrizione');
+        $scadenza = Scadenza::build($gruppo, $da_pagare, $data, $tipo);
 
-        $dbo->query('INSERT INTO co_scadenziario(descrizione, tipo, data_emissione, scadenza, da_pagare, pagato) VALUES('.prepare($descrizione).', '.prepare($tipo).', CURDATE(), '.prepare($data).', '.prepare($da_pagare).", '0')");
-        $id_record = $dbo->lastInsertedID();
+        $id_record = $scadenza->id;
 
         flash()->info(tr('Scadenza inserita!'));
         break;
@@ -77,7 +84,7 @@ switch (post('op')) {
 
             $id_scadenza = post('id_scadenza')[$id];
             if (!empty($id_scadenza)) {
-                $database->update('co_scadenziario', [
+                $database->update('co_scadenze', [
                     'descrizione' => $descrizione,
                     'da_pagare' => $da_pagare,
                     'pagato' => $pagato,
@@ -88,10 +95,10 @@ switch (post('op')) {
                 ], ['id' => $id_scadenza]);
 
                 if ($da_pagare == 0) {
-                    $database->delete('co_scadenziario', ['id' => $id]);
+                    $database->delete('co_scadenze', ['id' => $id]);
                 }
             } else {
-                $database->insert('co_scadenziario', [
+                $database->insert('co_scadenze', [
                     'descrizione' => $descrizione,
                     'tipo' => $tipo,
                     'iddocumento' => $iddocumento,
@@ -116,7 +123,8 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $dbo->query("DELETE FROM co_scadenziario WHERE id='".$id_record."'");
+        $gruppo->delete();
+
         flash()->info(tr('Scadenza eliminata!'));
         break;
 }

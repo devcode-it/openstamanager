@@ -106,7 +106,7 @@ if (!empty($documento)) {
 
                     '.Modules::link($documento->module, $record['iddocumento'], '<i class="fa fa-folder-open"></i> '.tr('Apri documento'), null, 'class="btn btn-primary"');
 } else {
-    $scadenza = $dbo->fetchOne('SELECT * FROM co_scadenziario WHERE id = '.prepare($id_record));
+    $scadenza = $dbo->fetchOne('SELECT * FROM co_scadenze WHERE id = '.prepare($id_record));
 
     echo input([
         'type' => 'textarea',
@@ -219,7 +219,7 @@ $id_scadenza = $id_record;
 
 // Forzatura per allegare file sempre al primo record
 if (!empty($documento)) {
-    $id_scadenza = $dbo->fetchOne('SELECT id FROM co_scadenziario WHERE iddocumento='.prepare($documento->id).' ORDER BY id')['id'];
+    $id_scadenza = $dbo->fetchOne('SELECT id FROM co_scadenze WHERE iddocumento='.prepare($documento->id).' ORDER BY id')['id'];
 }
 ?>
 

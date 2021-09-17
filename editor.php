@@ -56,6 +56,8 @@ if (preg_match('/[`]*([a-z0-9_]*)[`]*[\.]*([`]*deleted_at[`]* IS NULL)/i', $quer
     $query = str_replace($condition, '', $query);
 }
 
+$query = null;
+
 $has_access = !empty($query) ? $dbo->fetchNum($query) !== 0 : true;
 
 if ($has_access) {

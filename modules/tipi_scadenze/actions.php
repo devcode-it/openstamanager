@@ -37,10 +37,9 @@ switch (filter('op')) {
 
                 //aggiorno anche il segmento
                 $dbo->update('zz_segments', [
-                    'clause' => 'co_scadenziario.tipo="'.$nome.'"',
+                    'clause' => 'co_gruppi_scadenze.tipo="'.$nome.'"',
                     'name' => 'Scadenzario '.$nome,
                 ], [
-                    'clause' => 'co_scadenziario.tipo="'.$nome_prev.'"',
                     'name' => 'Scadenzario '.$nome_prev,
                     'id_module' => Modules::get('Scadenzario')['id'],
                 ]);
@@ -75,7 +74,7 @@ switch (filter('op')) {
                 $dbo->insert('zz_segments', [
                     'id_module' => Modules::get('Scadenzario')['id'],
                     'name' => 'Scadenzario '.$nome,
-                    'clause' => 'co_scadenziario.tipo="'.$nome.'"',
+                    'clause' => 'co_scadenze.tipo="'.$nome.'"',
                     'position' => 'WHR',
                 ]);
 
@@ -99,7 +98,7 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        $documenti = $dbo->fetchNum('SELECT id FROM co_scadenziario WHERE tipo = (SELECT nome FROM co_tipi_scadenze WHERE id = '.prepare($id_record).')');
+        $documenti = $dbo->fetchNum('SELECT id FROM co_scadenze WHERE tipo = (SELECT nome FROM co_tipi_scadenze WHERE id = '.prepare($id_record).')');
 
         if (isset($id_record) && empty($documenti)) {
             $dbo->query('DELETE FROM `co_tipi_scadenze` WHERE `can_delete` = 1 AND `id`='.prepare($id_record));

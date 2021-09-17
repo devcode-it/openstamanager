@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 // Collegamenti con scadenzaio (numerici)
-$scadenze = $dbo->fetchNum('SELECT id FROM  co_scadenziario WHERE tipo = '.prepare($record['nome']));
+$scadenze = $dbo->fetchNum('SELECT id FROM  co_scadenze WHERE tipo = '.prepare($record['nome']));
 
 if ($record['can_delete'] and empty($scadenze)) {
     $attr = '';

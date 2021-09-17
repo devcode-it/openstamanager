@@ -33,7 +33,7 @@ $tecnici_disponibili = $dbo->fetchArray("SELECT an_anagrafiche.idanagrafica AS i
     INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica
     LEFT OUTER JOIN in_interventi_tecnici ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica
     INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id
-WHERE an_anagrafiche.deleted_at IS NULL AND an_tipianagrafiche.descrizione='Tecnico' ".Modules::getAdditionalsQuery('Interventi').'
+WHERE an_anagrafiche.deleted_at IS NULL AND an_tipianagrafiche.descrizione='Tecnico' ".Modules::getAdditionalsQuery('Interventi', null, false).'
 GROUP BY an_anagrafiche.idanagrafica
 ORDER BY ragione_sociale ASC');
 

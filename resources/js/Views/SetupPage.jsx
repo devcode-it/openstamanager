@@ -50,7 +50,7 @@ export default class SetupPage extends Page {
   view(vnode) {
     const examplesTexts = collect();
     for (const example of ['localhost', 'root', 'mysql', 'openstamanager']) {
-      examplesTexts.put(example, this.__('Esempio: :example', {example}, true));
+      examplesTexts.put(example, this.__('Esempio: :example', {example}));
     }
 
     return (
@@ -77,29 +77,36 @@ export default class SetupPage extends Page {
                   </small>
                   <Row style="margin-top: 8px;">
                     <Cell>
-                      <mwc-textfield name="timestamp_format" label={this.__('Formato data lunga', true)} required value="d/m/Y H:i"/>
+                      <mwc-textfield name="timestamp_format" label={this.__('Formato data lunga')}
+                                     required value="d/m/Y H:i"/>
                     </Cell>
                     <Cell>
-                      <mwc-textfield name="date_format" label={this.__('Formato data corta', true)} required value="d/m/Y"/>
+                      <mwc-textfield name="date_format" label={this.__('Formato data corta')}
+                                     required value="d/m/Y"/>
                     </Cell>
                     <Cell>
-                      <mwc-textfield name="time_format" label={this.__('Formato orario', true)} required value="H:i"/>
+                      <mwc-textfield name="time_format" label={this.__('Formato orario')} required
+                                     value="H:i"/>
                     </Cell>
                   </Row>
                   <hr/>
                   <h4>{this.__('Database')}</h4>
                   <Row>
                     <Cell columnspan="4">
-                      <mwc-textfield name="host" label={this.__('Host', true)} required helper={examplesTexts.get('localhost')} />
+                      <mwc-textfield name="host" label={this.__('Host')} required
+                                     helper={examplesTexts.get('localhost')}/>
                     </Cell>
                     <Cell columnspan="4">
-                      <mwc-textfield name="username" label={this.__('Nome utente', true)} required helper={examplesTexts.get('root')} />
+                      <mwc-textfield name="username" label={this.__('Nome utente')} required
+                                     helper={examplesTexts.get('root')}/>
                     </Cell>
                     <Cell columnspan="4">
-                      <mwc-textfield name="password" label={this.__('Password', true)} required helper={examplesTexts.get('mysql')} />
+                      <mwc-textfield name="password" label={this.__('Password')} required
+                                     helper={examplesTexts.get('mysql')}/>
                     </Cell>
                     <Cell columnspan="4">
-                      <mwc-textfield name="database_name" label={this.__('Nome database', true)} required helper={examplesTexts.get('openstamanager')} />
+                      <mwc-textfield name="database_name" label={this.__('Nome database')} required
+                                     helper={examplesTexts.get('openstamanager')}/>
                     </Cell>
                   </Row>
                   <hr/>
@@ -108,13 +115,13 @@ export default class SetupPage extends Page {
                       <small>{this.__('* Campi obbligatori')}</small>
                     </Cell>
                     <Cell>
-                      <mwc-button raised label={this.__('Salva e installa', true)}>
-                        <Mdi icon="check" slot="icon" />
+                      <mwc-button raised label={this.__('Salva e installa')}>
+                        <Mdi icon="check" slot="icon"/>
                       </mwc-button>
                     </Cell>
                     <Cell>
-                      <mwc-button outlined label={this.__('Testa il database', true)}>
-                        <Mdi icon="test-tube" slot="icon" />
+                      <mwc-button outlined label={this.__('Testa il database')}>
+                        <Mdi icon="test-tube" slot="icon"/>
                       </mwc-button>
                     </Cell>
                   </Row>
@@ -130,14 +137,14 @@ export default class SetupPage extends Page {
                   <mwc-textarea value={this.page.props.license} rows="15" cols="40" disabled />
                   <Row style="margin-top: 5px;">
                     <Cell columnspan-desktop="8" columnspan-tablet="8">
-                      <mwc-formfield label={this.__('Ho visionato e accetto la licenza', true)}>
-                        <mwc-checkbox name="license_agreement" />
+                      <mwc-formfield label={this.__('Ho visionato e accetto la licenza')}>
+                        <mwc-checkbox name="license_agreement"/>
                       </mwc-formfield>
                     </Cell>
                     <Cell>
                       <a href="https://www.gnu.org/licenses/translations.en.html#GPL" target="_blank">
-                        <mwc-button label={this.__('Versioni tradotte', true)}>
-                          <Mdi icon="license" slot="icon" />
+                        <mwc-button label={this.__('Versioni tradotte')}>
+                          <Mdi icon="license" slot="icon"/>
                         </mwc-button>
                       </a>
                     </Cell>
@@ -147,7 +154,8 @@ export default class SetupPage extends Page {
             </LayoutGrid>
           </Content>
         </Card>
-        <mwc-fab id="contrast-switcher" className="sticky contrast-light" label={this.__('Attiva/disattiva contrasto elevato', true)}>
+        <mwc-fab id="contrast-switcher" className="sticky contrast-light"
+                 label={this.__('Attiva/disattiva contrasto elevato')}>
           <Mdi icon="contrast-circle" slot="icon" className="light-bg"/>
         </mwc-fab>
       </>

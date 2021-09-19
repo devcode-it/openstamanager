@@ -1,6 +1,7 @@
 import {Vnode} from 'mithril';
 import {sync as render} from 'mithril-node-render';
 
+import {containsHTML} from '../utils';
 import Component from './Component';
 
 /**
@@ -42,7 +43,7 @@ export default class Page extends Component {
       ? this.page.translations[key] : key;
 
     // Ritorna la traduzione come stringa (senza sostituzione di parametri)
-    if (replace === true) {
+    if ((typeof replace === 'boolean' && replace) || (replace.length === 0 && !containsHTML(translation))) {
       return translation;
     }
 
@@ -51,6 +52,10 @@ export default class Page extends Component {
       translation = translation.replace(`:${k}`, ((typeof replace[k] === 'object' && 'attrs' in replace[k]) ? render(replace[k]) : replace[k]));
     }
 
-    return returnAsString ? translation : window.m.trust(translation);
+    if (returnAsString || !containsHTML(translation)) {
+      return translation;
+    }
+
+    return window.m.trust(translation);
   }
 }

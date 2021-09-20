@@ -17,15 +17,15 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-include_once __DIR__.'/../../core.php';
-use Modules;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo;
+use Modules\Articoli\Export\CSV;
 use Modules\Preventivi\Components\Articolo as ArticoloPreventivo;
 use Modules\Preventivi\Preventivo;
 use Modules\TipiIntervento\Tipo as TipoSessione;
 use Plugins\ListinoClienti\DettaglioPrezzo;
-use Prints;
+
+include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'change-acquisto':
@@ -154,6 +154,19 @@ switch (post('op')) {
         exit();
 
         break;
+
+    case 'export-csv':
+        $file = temp_file();
+        $exporter = new CSV($file);
+
+        // Esportazione dei record selezionati
+        $anagrafiche = Articolo::whereIn('id', $id_records)->get();
+        $exporter->setRecords($anagrafiche);
+
+        $count = $exporter->exportRecords();
+
+        download($file, 'articoli.csv');
+        break;
 }
 
 if (App::debug()) {
@@ -166,6 +179,16 @@ if (App::debug()) {
         ],
     ];
 }
+
+$operations['export-csv'] = [
+    'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta selezionati').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi esportare un CSV con le anagrafiche selezionate?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-success',
+        'blank' => true,
+    ],
+];
 
 $operations['change-acquisto'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna prezzo di acquisto').'</span>',

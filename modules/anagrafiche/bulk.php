@@ -83,24 +83,25 @@ $operations = [];
 
 if (App::debug()) {
     $operations['delete-bulk'] = [
-        'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span> <span class="label label-danger" >beta</span>',
+        'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span> <span class="label label-danger">beta</span>',
         'data' => [
             'msg' => tr('Vuoi davvero eliminare le anagrafiche selezionate?'),
             'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-danger',
         ],
     ];
-
-    $operations['export-csv'] = [
-        'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta selezionati').'</span> <span class="label label-danger" >beta</span>',
-        'data' => [
-            'msg' => tr('Vuoi davvero esportare un CSV con le anagrafiche selezionate?'),
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-danger',
-            'blank' => true,
-        ],
-    ];
 }
+
+$operations['export-csv'] = [
+    'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta selezionati').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi esportare un CSV con le anagrafiche selezionate?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-success',
+        'blank' => true,
+    ],
+];
+
 
 if (App::debug() && $google) {
     $operations['ricerca-coordinate'] = [

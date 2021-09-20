@@ -89,7 +89,13 @@ abstract class CSVExporter implements ExporterInterface
             $dot_notation = explode('.', $nome);
             $contenuto = $record;
             foreach ($dot_notation as $segment) {
-                $contenuto = isset($contenuto[$segment]) ? $contenuto[$segment] : null;
+                $contenuto = $contenuto[$segment] ?? null;
+            }
+
+            // Formattazione automatica del campo
+            $type = $field['type'] ?? 'string';
+            if ($type == 'number') {
+                $contenuto = numberFormat($contenuto);
             }
 
             $row[] = $contenuto;

@@ -381,19 +381,19 @@ switch (post('op')) {
 
 if (App::debug()) {
     $operations['delete-bulk'] = [
-        'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span> <span class="label label-danger" >beta</span>',
-    ];
-
-    $operations['export-csv'] = [
-        'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta selezionati').'</span> <span class="label label-danger" >beta</span>',
-        'data' => [
-            'msg' => tr('Vuoi davvero esportare un CSV con le fatture selezionate?'),
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-danger',
-            'blank' => true,
-        ],
+        'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span> <span class="label label-danger">beta</span>',
     ];
 }
+
+$operations['export-csv'] = [
+    'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta selezionati').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi esportare un CSV con le fatture selezionate?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-success',
+        'blank' => true,
+    ],
+];
 
 $operations['copy-bulk'] = [
     'text' => '<span><i class="fa fa-copy"></i> '.tr('Duplica selezionati').'</span>',

@@ -38,16 +38,14 @@ switch (post('op')) {
         break;
 }
 
-if (App::debug()) {
-    $operations['export-csv'] = [
-        'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta selezionati').'</span> <span class="label label-danger" >beta</span>',
-        'data' => [
-            'msg' => tr('Vuoi davvero esportare un CSV con tutti gli impianti?'),
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-danger',
-            'blank' => true,
-        ],
-    ];
-}
+$operations['export-csv'] = [
+    'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta selezionati').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi esportare un CSV con tutti gli impianti?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-success',
+        'blank' => true,
+    ],
+];
 
 return $operations;

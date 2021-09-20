@@ -419,7 +419,7 @@ $riga = $contratto->getRiga($type, $id_riga);
 
         break;
 
-        case 'import':
+    case 'import':
         $rs = $dbo->fetchArray('SELECT * FROM co_contratti_tipiintervento WHERE idcontratto = '.prepare(post('idcontratto')).' AND idtipointervento='.prepare(post('idtipointervento')));
 
         // Se la riga in_tipiintervento esiste, la aggiorno...

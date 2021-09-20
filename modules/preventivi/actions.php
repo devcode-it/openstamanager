@@ -117,7 +117,7 @@ switch (post('op')) {
         }
 
         flash()->info(tr('Preventivo duplicato correttamente!'));
-    break;
+        break;
 
     case 'addintervento':
         if (post('idintervento') !== null) {

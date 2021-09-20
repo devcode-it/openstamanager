@@ -70,7 +70,7 @@ function skip() {
 function cleanup(){
     $.ajax({
         url: globals.rootdir + "/actions.php",
-        type: "get",
+        type: "GET",
         data: {
             id_module: "'.$id_module.'",
             id_plugin: "'.$id_plugin.'",
@@ -81,7 +81,7 @@ function cleanup(){
 
     $.ajax({
         url: globals.rootdir + "/actions.php",
-        type: "get",
+        type: "GET",
         data: {
             id_module: "'.$id_module.'",
             id_plugin: "'.$id_plugin.'",

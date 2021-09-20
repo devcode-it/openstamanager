@@ -134,7 +134,7 @@ function testQuery(){
     $.ajax({
         url: "'.base_path().'/actions.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&op=test",
         cache: false,
-        type: "post",
+        type: "POST",
         processData: false,
         contentType: false,
         dataType : "html",

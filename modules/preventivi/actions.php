@@ -52,7 +52,7 @@ switch (post('op')) {
 
     case 'update':
         if (isset($id_record)) {
-    $has_access = \Util\Query::checkAccess($id_record);
+            $has_access = \Util\Query::checkAccess($id_record);
             $preventivo->idstato = post('idstato');
             $preventivo->nome = post('nome');
             $preventivo->idanagrafica = post('idanagrafica');

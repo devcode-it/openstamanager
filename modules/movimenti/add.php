@@ -30,9 +30,6 @@ if (setting('Attiva scorciatoie da tastiera')) {
 
 ?>
 
-
-
-
 <form action="" method="post" id="add-form">
     <input type="hidden" name="op" value="add">
     <input type="hidden" name="backto" value="record-edit">
@@ -104,14 +101,14 @@ echo '
 <script>
     // Lettura codici da lettore barcode
     $(document).unbind("keyup");
-    $("#modals > div").on( "shown.bs.modal", function(){';
+    $("#modals > div").on("shown.bs.modal", function(){';
         if (setting('Attiva scorciatoie da tastiera')) {
             echo 'EnableHotkeys()';
         }
-echo '  
+echo '
         $("#barcode").focus();
     });
-    
+
     $(document).on("keyup", function (event) {
         if ($(":focus").is("input, textarea")) {
             return;
@@ -120,8 +117,8 @@ echo '
         let key = window.event ? event.keyCode : event.which; // IE vs Netscape/Firefox/Opera
         $("#articolo-missing").addClass("hidden");
         let barcode = $("#barcode");
-            
-        if ( barcode.val() == "" && $("#idarticolo").val() == null && key === 13 ){
+
+        if (barcode.val() == "" && $("#idarticolo").val() == null && key === 13) {
             swal("'.tr('Inserisci barcode o seleziona un articolo').'", "", "warning");
         }
         else if (key === 13) {
@@ -134,13 +131,13 @@ echo '
         }
     });
 
-    function abilitaSede(id){
+    function abilitaSede(id) {
         $(id).removeClass("disabled")
             .attr("disabled", false)
             .attr("required", true);
     }
 
-    function disabilitaSede(id){
+    function disabilitaSede(id) {
         $(id).addClass("disabled")
             .attr("disabled", true)
             .attr("required", false);
@@ -273,19 +270,19 @@ echo '
 
         hotkeys("f7,f8,f9,f10", function(event, handler) {
             switch (handler.key) {
-                case "f7": 
+                case "f7":
                     event.preventDefault();
                     $("#barcode").focus();
                 break;
-                case "f8": 
+                case "f8":
                     event.preventDefault();
                     input("causale").set("1");
                 break;
-                case "f9": 
+                case "f9":
                     event.preventDefault();
                     input("causale").set("2");
                 break;
-                case "f10": 
+                case "f10":
                     event.preventDefault();
                     input("causale").set("3");
                 break;

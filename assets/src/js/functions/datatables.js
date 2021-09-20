@@ -491,7 +491,7 @@ function getTable(selector) {
             return $.ajax({
                 url: globals.rootdir + "/ajax.php",
                 type: "POST",
-                dataType: "json",
+                dataType: "JSON",
                 data: {
                     id_module: this.id_module,
                     id_plugin: this.id_plugin,

@@ -79,7 +79,7 @@ switch (filter('op')) {
     case 'active_users':
         $posizione = get('id_module');
         if (isset($id_record)) {
-    $has_access = \Util\Query::checkAccess($id_record);
+            $has_access = \Util\Query::checkAccess($id_record);
             $posizione .= ', '.get('id_record');
         }
 

@@ -40,7 +40,7 @@ class Stat {
 
         $.ajax({
             url: this.calendar.info.url + "/" + this.file,
-            type: "get",
+            type: "GET",
             data: data,
             success: function(data){
                 callback(data)

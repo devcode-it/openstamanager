@@ -74,12 +74,12 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
 			{[ "type": "select", "label": "<?php echo tr('Sezionale'); ?>", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='<?php echo $id_module; ?>' ORDER BY name", "value": "<?php echo $_SESSION['module_'.$id_module]['id_segment']; ?>" ]}
 		</div>
 	</div>
-    
+
     <div id="info" class="hidden">
         <div  class="row">
             <div class="col-md-6 ">
                 <div id="info-title-bozza" class="box">
-            
+
                     <div class="box-header with-border">
                         <h3 class="box-title"><?php echo tr('Fatture in stato Bozza del cliente'); ?></h3>
                         <div class="box-tools pull-right">
@@ -131,14 +131,14 @@ $(document).ready(function () {
             $.ajax({
                 url: globals.rootdir + "/actions.php",
                 type: "POST",
-                dataType: "json",
+                dataType: "JSON",
                 data: {
                     id_module: globals.id_module,
                     id_anagrafica: data.id,
                     op: "fatture_bozza",
                 },
                 success: function (results) {
-                    
+
                     $("#info").removeClass("box-info");
                     $("#info").removeClass("box-warning");
                     if (results.length === 0){
@@ -162,7 +162,7 @@ $(document).ready(function () {
             $.ajax({
                 url: globals.rootdir + "/actions.php",
                 type: "POST",
-                dataType: "json",
+                dataType: "JSON",
                 data: {
                     id_module: globals.id_module,
                     id_anagrafica: data.id,

@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 switch (filter('op')) {
     case 'update':
         if (isset($id_record)) {
-    $has_access = \Util\Query::checkAccess($id_record);
+            $has_access = \Util\Query::checkAccess($id_record);
             $database->update('mg_causali_movimenti', [
                 'nome' => post('nome'),
                 'tipo_movimento' => post('tipo_movimento'),
@@ -48,7 +48,7 @@ switch (filter('op')) {
 
     case 'delete':
         if (isset($id_record)) {
-    $has_access = \Util\Query::checkAccess($id_record);
+            $has_access = \Util\Query::checkAccess($id_record);
             $dbo->query('DELETE FROM `mg_causali_movimenti` WHERE `id`='.prepare($id_record));
 
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [

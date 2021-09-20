@@ -133,7 +133,7 @@ function import_fe(button, file, data_registrazione) {
 
     $.ajax({
         url: globals.rootdir + "/actions.php",
-        type: "get",
+        type: "GET",
         data: {
             id_module: globals.id_module,
             id_plugin: '.$id_plugin.',
@@ -176,7 +176,7 @@ function process_fe(button, file) {
 
         $.ajax({
             url: globals.rootdir + "/actions.php",
-            type: "get",
+            type: "GET",
             data: {
                 id_module: globals.id_module,
                 id_plugin: '.$id_plugin.',
@@ -204,7 +204,7 @@ function delete_fe(button, file_id) {
 
         $.ajax({
             url: globals.rootdir + "/actions.php",
-            type: "get",
+            type: "GET",
             data: {
                 id_module: globals.id_module,
                 id_plugin: '.$id_plugin.',

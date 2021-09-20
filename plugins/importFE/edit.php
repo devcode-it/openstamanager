@@ -46,7 +46,7 @@ echo '
                         id_module: "'.$id_module.'",
                         id_plugin: "'.$id_plugin.'",
                     },
-                    type: "post",
+                    type: "POST",
                     success: function(data){
                         data = JSON.parse(data);
 
@@ -170,7 +170,7 @@ function importAll(btn) {
                 id_module: "'.$id_module.'",
                 id_plugin: "'.$id_plugin.'",
             },
-            type: "post",
+            type: "POST",
             success: function(data){
                 data = JSON.parse(data);
 
@@ -179,7 +179,7 @@ function importAll(btn) {
                 data.forEach(function(element) {
                     $.ajax({
                         url: globals.rootdir + "/actions.php",
-                        type: "get",
+                        type: "GET",
                         data: {
                             id_module: "'.$id_module.'",
                             id_plugin: "'.$id_plugin.'",

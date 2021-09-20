@@ -141,7 +141,7 @@ function aggiungiAllegato(gestione) {
     form.ajaxSubmit({
         url: globals.rootdir + "/actions.php",
         data: data,
-        type: "post",
+        type: "POST",
         uploadProgress: function (event, position, total, percentComplete) {
             $(id + " #upload").prop("disabled", true).html(percentComplete + "%").removeClass("btn-success").addClass("btn-info");
         },

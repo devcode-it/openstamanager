@@ -367,7 +367,7 @@ function rimuoviRiga(button) {
         $.ajax({
             url: globals.rootdir + "/actions.php",
             type: "POST",
-            dataType: "json",
+            dataType: "JSON",
             data: {
                 id_module: globals.id_module,
                 id_record: globals.id_record,

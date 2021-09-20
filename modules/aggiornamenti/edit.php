@@ -165,7 +165,7 @@ function search(button) {
 
     $.ajax({
         url: globals.rootdir + "/actions.php",
-        type: "post",
+        type: "POST",
         data: {
             id_module: globals.id_module,
             op: "check",

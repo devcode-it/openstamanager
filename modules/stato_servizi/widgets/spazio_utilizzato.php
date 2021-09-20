@@ -33,7 +33,7 @@ function formatBytes(a,b=2){if(0===a)return"0 Bytes";const c=0>b?0:b,d=Math.floo
 $(document).ready(function() {
     $.ajax({
         url: globals.rootdir + "/actions.php",
-        type: "get",
+        type: "GET",
         data: {
             id_module: '.$module->id.',
             op: "sizes",

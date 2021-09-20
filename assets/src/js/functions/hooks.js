@@ -22,7 +22,7 @@
 function startHooks() {
     $.ajax({
         url: globals.rootdir + "/ajax.php",
-        type: "get",
+        type: "GET",
         data: {
             op: "hooks",
         },
@@ -58,7 +58,7 @@ function startHooks() {
 function startHook(hook, init) {
     $.ajax({
         url: globals.rootdir + "/ajax.php",
-        type: "get",
+        type: "GET",
         data: {
             op: "hook-lock",
             id: hook.id,
@@ -94,7 +94,7 @@ function startHook(hook, init) {
 function executeHook(hook, token) {
     $.ajax({
         url: globals.rootdir + "/ajax.php",
-        type: "get",
+        type: "GET",
         data: {
             op: "hook-execute",
             id: hook.id,
@@ -127,7 +127,7 @@ function executeHook(hook, token) {
 function updateHook(hook) {
     $.ajax({
         url: globals.rootdir + "/ajax.php",
-        type: "get",
+        type: "GET",
         data: {
             op: "hook-response",
             id: hook.id,

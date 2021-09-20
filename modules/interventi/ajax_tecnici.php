@@ -314,7 +314,7 @@ function add_tecnici(id_tecnico) {
             op: "add_sessione",
             id_tecnico: id_tecnico,
         },
-        type: "post",
+        type: "POST",
         success: function() {
             caricaTecnici();
             caricaCosti();
@@ -343,7 +343,7 @@ function elimina_sessione(id_sessione) {
                 op: "delete_sessione",
                 id_sessione: id_sessione,
             },
-            type: "post",
+            type: "POST",
             success: function() {
                 caricaTecnici();
                 caricaCosti();

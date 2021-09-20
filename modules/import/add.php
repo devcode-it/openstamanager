@@ -59,7 +59,7 @@ include_once __DIR__.'/../../core.php';
     $("#example").click(function() {
         $.ajax({
             url: globals.rootdir + "/actions.php",
-            type: "post",
+            type: "POST",
             data: {
                 op: "example",
                 id_module: globals.id_module,

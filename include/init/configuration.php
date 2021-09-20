@@ -299,7 +299,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                         data: {
                             test: 1,
                         },
-                        type: "post",
+                        type: "POST",
                         success: function(data){
                             data = parseFloat(data.trim());
 

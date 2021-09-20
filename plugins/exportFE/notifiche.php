@@ -115,8 +115,8 @@ function gestioneRicevuta(button, name, type) {
 
     $.ajax({
         url: globals.rootdir + "/actions.php",
-        type: "post",
-        dataType: "json",
+        type: "POST",
+        dataType: "JSON",
         data: {
             op: "gestione_ricevuta",
             id_module: "'.$id_module.'",

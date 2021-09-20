@@ -60,7 +60,7 @@ foreach ($primo_livello as $conto_primo) {
 <div class="box conto1">
     <div class="box-header">
         <h3 class="box-title">
-            '.$titolo.' 
+            '.$titolo.'
             <button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" title="'.tr('Aggiungi un nuovo conto...').'" onclick="aggiungiConto('.$conto_primo['id'].', 2)">
                 <i class="fa fa-plus-circle"></i>
             </button>
@@ -451,7 +451,7 @@ echo '
 
         $.ajax({
             url: "'.$structure->fileurl('dettagli_conto.php').'",
-            type: "get",
+            type: "GET",
             data: {
                 id_module: globals.id_module,
                 id_conto: id_conto,

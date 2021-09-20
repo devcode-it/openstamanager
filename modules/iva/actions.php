@@ -91,7 +91,7 @@ switch (filter('op')) {
 
     case 'delete':
         if (isset($id_record)) {
-    $has_access = \Util\Query::checkAccess($id_record);
+            $has_access = \Util\Query::checkAccess($id_record);
             $dbo->query('UPDATE `co_iva` SET deleted_at = NOW() WHERE `id`='.prepare($id_record));
 
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo', [

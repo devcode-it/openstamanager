@@ -50,7 +50,7 @@ function submitAjax(form, data, callback, errorCallback) {
     $(form).ajaxSubmit({
         url: globals.rootdir + "/actions.php",
         data: data,
-        type: "post",
+        type: "POST",
         success: function (data) {
             let response = data.trim();
 

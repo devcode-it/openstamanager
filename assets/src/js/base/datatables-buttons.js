@@ -64,7 +64,7 @@ $(document).ready(function () {
             url: table.ajax.url(),
             data: params,
             type: 'GET',
-            dataType: "json",
+            dataType: "JSON",
             success: function (response) {
                 var row_ids = response.data.map(function (a) {
                     return a.id;

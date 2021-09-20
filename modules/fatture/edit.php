@@ -786,7 +786,7 @@ if ($dir == 'uscita' && $fattura->isFE()) {
     $(document).ready(function() {
         $.ajax({
             url: globals.rootdir + "/actions.php",
-            type: "post",
+            type: "POST",
             data: {
                 id_module: globals.id_module,
                 id_record: globals.id_record,

@@ -46,7 +46,7 @@ function compile(btn) {
         url: globals.rootdir + "/actions.php",
         cache: false,
         type: "GET",
-        dataType: "json",
+        dataType: "JSON",
         data: {
             id_module: "'.$id_module.'",
             id_plugin: "'.$id_plugin.'",
@@ -93,7 +93,7 @@ function compilaRiferimenti(btn) {
         url: globals.rootdir + "/actions.php",
         cache: false,
         type: "GET",
-        dataType: "json",
+        dataType: "JSON",
         data: {
             id_module: "'.$id_module.'",
             id_plugin: "'.$id_plugin.'",

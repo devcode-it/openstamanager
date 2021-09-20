@@ -188,7 +188,7 @@ function upload(btn) {
                 id_module: "'.$id_module.'",
                 id_plugin: "'.$id_plugin.'",
             },
-            type: "post",
+            type: "POST",
             success: function(data){
                 importMessage(data);
 
@@ -246,7 +246,7 @@ function importAll(btn) {
                 id_module: "'.$id_module.'",
                 id_plugin: "'.$id_plugin.'",
             },
-            type: "post",
+            type: "POST",
             success: function(data){
                 data = JSON.parse(data);
 

@@ -47,8 +47,9 @@ class Scadenze
         $this->fattura = $fattura;
     }
 
-    public function getGruppo(){
-        if (isset($this->gruppo)){
+    public function getGruppo()
+    {
+        if (isset($this->gruppo)) {
             return $this->gruppo;
         }
 
@@ -56,7 +57,7 @@ class Scadenze
         $this->gruppo = Gruppo::where('id_documento', '=', $this->fattura->id)->first();
 
         // Generazione Gruppo Scadenza associato alla Fattura
-        if (empty($this->gruppo)){
+        if (empty($this->gruppo)) {
             $this->gruppo = Gruppo::build($this->fattura->getReference(), $this->fattura);
         }
 

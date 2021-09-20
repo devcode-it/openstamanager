@@ -126,7 +126,7 @@ class HTMLWrapper implements WrapperInterface
 
             $.ajax({
                 url: globals.rootdir + "/actions.php",
-                type: "post",
+                type: "POST",
                 data: {
                     id_module: "'.$id_module.'",
                     id_record: "'.$id_record.'",

@@ -187,7 +187,7 @@ if (!empty($numero_documenti)) {
                 iban: iban.get(),
             },
             type: 'GET',
-            dataType: "json",
+            dataType: "JSON",
             success: function (response) {
                 compilaCampi(response);
             },
@@ -221,7 +221,7 @@ if (!empty($numero_documenti)) {
                 id_nazione: id_nazione.get(),
             },
             type: 'GET',
-            dataType: "json",
+            dataType: "JSON",
             success: function (response) {
                 compilaCampi(response);
             },

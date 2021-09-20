@@ -45,18 +45,18 @@ if (!empty($documento)) {
     echo '
             <div class="row">
                 <div class="col-md-4">
-                    <h4>' . tr('Documento') . '</h4>
-                    ' . Modules::link($documento->getModule(), $documento->id, $documento->getReference()) . '
+                    <h4>'.tr('Documento').'</h4>
+                    '.Modules::link($documento->getModule(), $documento->id, $documento->getReference()).'
                 </div>
 
                 <div class="col-md-4">
-                    <h4>' . ($documento->direzione == 'entrata' ? tr('Cliente') : tr('Fornitore')) . '</h4>
-                    ' . Modules::link('Anagrafiche', $documento->anagrafica->id, $documento->anagrafica->ragione_sociale) . '
+                    <h4>'.($documento->direzione == 'entrata' ? tr('Cliente') : tr('Fornitore')).'</h4>
+                    '.Modules::link('Anagrafiche', $documento->anagrafica->id, $documento->anagrafica->ragione_sociale).'
                 </div>
 
                 <div class="col-md-4">
-                    <h4>' . tr('Netto a pagare') . '</h4>
-                    ' . moneyFormat($documento->netto) . '
+                    <h4>'.tr('Netto a pagare').'</h4>
+                    '.moneyFormat($documento->netto).'
                 </div>
             </div>
 
@@ -149,17 +149,17 @@ echo '
                 <tbody id="scadenze">';
 
     foreach ($scadenze as $i => $scadenza) {
-    if ($scadenza['da_pagare'] == $scadenza['pagato']) {
-    $class = 'success';
-    } elseif (abs($scadenza['pagato']) == 0) {
-    $class = 'danger';
-    } elseif (abs($scadenza['pagato']) <= abs($scadenza['da_pagare'])) {
-    $class = 'warning';
-    } else {
-    $class = 'danger';
-    }
+        if ($scadenza['da_pagare'] == $scadenza['pagato']) {
+            $class = 'success';
+        } elseif (abs($scadenza['pagato']) == 0) {
+            $class = 'danger';
+        } elseif (abs($scadenza['pagato']) <= abs($scadenza['da_pagare'])) {
+            $class = 'warning';
+        } else {
+            $class = 'danger';
+        }
 
-    echo '
+        echo '
                     <tr class="'.$class.'">
                         <input type="hidden" name="id_scadenza['.$i.']" value="'.$scadenza['id'].'">
 

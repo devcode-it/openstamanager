@@ -62,7 +62,7 @@ switch (filter('op')) {
 
     case 'update':
         if (isset($id_record)) {
-    $has_access = \Util\Query::checkAccess($id_record);
+            $has_access = \Util\Query::checkAccess($id_record);
             $idstatoddt = post('idstatoddt');
             $idpagamento = post('idpagamento');
             $numero_esterno = post('numero_esterno');

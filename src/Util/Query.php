@@ -326,11 +326,12 @@ class Query
     /**
      * Controlla se l'utente ha accesso a un record specifico seguendo la query principale del modulo.
      *
-     * @return bool
      * @throws \Exception
+     *
+     * @return bool
      */
-    public static function checkAccess($id_record){
-
+    public static function checkAccess($id_record)
+    {
         self::setSegments(false);
         $query = self::getQuery(Modules::getCurrent(), [
             'id' => $id_record,

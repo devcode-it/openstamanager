@@ -198,8 +198,8 @@ if ($fattura !== null) {
 
                 $.ajax({
                     url: globals.rootdir + "/actions.php",
-                    type: "post",
-                    dataType: "json",
+                    type: "POST",
+                    dataType: "JSON",
                     data: {
                         op: "send",
                         id_module: "'.$id_module.'",
@@ -239,7 +239,7 @@ if ($fattura !== null) {
 
             $.ajax({
                 url: globals.rootdir + "/actions.php",
-                type: "post",
+                type: "POST",
                 data: {
                     op: "verify",
                     id_module: "'.$id_module.'",

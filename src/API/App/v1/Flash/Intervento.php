@@ -138,7 +138,7 @@ class Intervento extends Resource implements UpdateInterface
             // Fix id_cliente per Intervento in caso di generazione da zero
             if ($risorsa instanceof Interventi && !empty($this->response['cliente'][$id]) && !empty($this->response['cliente'][$id]['id'])) {
                 $record['id_cliente'] = $this->response['cliente'][$id]['id'];
-            } elseif (!($risorsa instanceof Clienti) && !empty($this->response['intervento'][0]) && !empty($this->response['intervento'][0]['id'])){
+            } elseif (!($risorsa instanceof Clienti) && !empty($this->response['intervento'][0]) && !empty($this->response['intervento'][0]['id'])) {
                 $record['id_intervento'] = $this->response['intervento'][0]['id'];
             }
 

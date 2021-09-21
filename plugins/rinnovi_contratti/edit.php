@@ -74,7 +74,7 @@ echo '
 
 $counter = 0;
 while (!empty($id_contratto_precedente) && $counter < 50) {
-    $counter++;
+    ++$counter;
     $rs = $dbo->fetchArray('SELECT nome, numero, data_accettazione, data_conclusione, budget, idcontratto_prev FROM co_contratti WHERE id='.prepare($id_contratto_precedente));
 
     echo '

@@ -229,9 +229,9 @@ class FatturaOrdinaria extends FatturaElettronica
                 // Determina il tipo di sconto in caso di sconti misti UNT e PRC
                 foreach ($sconti as $sconto) {
                     $tipo_sconto = !empty($sconto['Importo']) ? 'UNT' : 'PRC';
-                    if(!empty($tipo) && $tipo_sconto!=$tipo){
+                    if (!empty($tipo) && $tipo_sconto != $tipo) {
                         $tipo = 'UNT';
-                    } else{
+                    } else {
                         $tipo = $tipo_sconto;
                     }
                 }
@@ -251,17 +251,17 @@ class FatturaOrdinaria extends FatturaElettronica
                             'qta' => $obj->qta,
                             'cumulativo' => false,
                         ]);
-    
-                        if($tipo == 'PRC'){
+
+                        if ($tipo == 'PRC') {
                             $tot_sconto = $sconto_calcolato * 100 / $obj->imponibile;
                         } else {
                             $tot_sconto = $sconto_calcolato;
                         }
-                    } else{
+                    } else {
                         $tot_sconto = $sconto_riga;
                     }
 
-                    $sconto_unitario += $tot_sconto;    
+                    $sconto_unitario += $tot_sconto;
                 }
 
                 $obj->setSconto($sconto_unitario, $tipo);

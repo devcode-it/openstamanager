@@ -20,7 +20,6 @@
 namespace Modules\Articoli\Export;
 
 use Exporter\CSVExporter;
-use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo;
 
 /**

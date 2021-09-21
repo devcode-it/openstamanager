@@ -27,6 +27,7 @@ use Modules\Preventivi\Components\Descrizione;
 use Modules\Preventivi\Components\Riga;
 use Modules\Preventivi\Components\Sconto;
 use Modules\Preventivi\Preventivo;
+use Modules\Preventivi\Stato;
 use Modules\TipiIntervento\Tipo as TipoSessione;
 
 switch (post('op')) {
@@ -98,7 +99,10 @@ switch (post('op')) {
         $new->numero = Preventivo::getNextNumero(Carbon::now());
         $new->data_bozza = Carbon::now();
         $new->data_conclusione = Carbon::now()->addMonth();
-        $new->stato = 'Bozza';
+
+        $stato_preventivo = Stato::where('descrizione', '=', 'Bozza')->first();
+        $new->stato()->associate($stato_preventivo);
+
         $new->save();
 
         $new->master_revision = $new->id;
@@ -367,7 +371,10 @@ switch (post('op')) {
 
         // Copia del preventivo
         $new = $preventivo->replicate();
-        $new->stato = 'Bozza';
+
+        $stato_preventivo = Stato::where('descrizione', '=', 'Bozza')->first();
+        $new->stato()->associate($stato_preventivo);
+
         $new->save();
 
         $new->default_revision = 1;

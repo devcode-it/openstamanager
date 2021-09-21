@@ -27,6 +27,7 @@ use Modules\Contratti\Components\Descrizione;
 use Modules\Contratti\Components\Riga;
 use Modules\Contratti\Components\Sconto;
 use Modules\Contratti\Contratto;
+use Modules\Contratti\Stato;
 use Plugins\PianificazioneInterventi\Promemoria;
 
 switch (post('op')) {
@@ -130,7 +131,9 @@ switch (post('op')) {
     case 'copy':
         $new = $contratto->replicate();
         $new->numero = Contratto::getNextNumero();
-        $new->stato = 'Bozza';
+
+        $stato = Stato::where('descrizione', '=', 'Bozza')->first();
+        $new->stato()->associate($stato);
         $new->save();
 
         $id_record = $new->id;
@@ -349,13 +352,17 @@ $riga = $contratto->getRiga($type, $id_riga);
         $diff = $contratto->data_conclusione->diffAsCarbonInterval($contratto->data_accettazione);
 
         $new_contratto = $contratto->replicate();
+
         $new_contratto->numero = Contratto::getNextNumero();
 
         $new_contratto->idcontratto_prev = $contratto->id;
         $new_contratto->data_accettazione = $contratto->data_conclusione->copy()->addDays(1);
         $new_contratto->data_conclusione = $new_contratto->data_accettazione->copy()->add($diff);
         $new_contratto->data_bozza = Carbon::now();
-        $new_contratto->stato = 'Bozza';
+
+        $stato = Stato::where('descrizione', '=', 'Bozza')->first();
+        $new_contratto->stato()->associate($stato);
+
         $new_contratto->save();
         $new_idcontratto = $new_contratto->id;
 

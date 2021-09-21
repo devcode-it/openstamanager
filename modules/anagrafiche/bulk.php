@@ -102,7 +102,6 @@ $operations['export-csv'] = [
     ],
 ];
 
-
 if (App::debug() && $google) {
     $operations['ricerca-coordinate'] = [
         'text' => '<span><i class="fa fa-map"></i> '.tr('Ricerca coordinate').'</span>',

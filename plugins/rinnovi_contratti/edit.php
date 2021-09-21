@@ -43,7 +43,6 @@ echo '
                     {[ "type": "checkbox", "label": "'.tr('Rinnovo automatico').'", "name": "rinnovo_automatico", "help": "'.tr('Il contratto è da rinnovare automaticamente alla scadenza').'", "value": "$rinnovo_automatico$", "disabled": '.($record['rinnovabile'] ? 0 : 1).' ]}
                 </div>
 
-
                 <div class="col-md-3">
                     {[ "type": "number", "label": "'.tr('Preavviso per rinnovo').'", "name": "giorni_preavviso_rinnovo", "decimals": "2", "value": "$giorni_preavviso_rinnovo$", "icon-after": "giorni", "disabled": '.($record['rinnovabile'] ? 0 : 1).' ]}
                 </div>
@@ -73,7 +72,9 @@ echo '
 
     <tbody>';
 
-while (!empty($id_contratto_precedente)) {
+$counter = 0;
+while (!empty($id_contratto_precedente) && $counter < 50) {
+    ++$counter;
     $rs = $dbo->fetchArray('SELECT nome, numero, data_accettazione, data_conclusione, budget, idcontratto_prev FROM co_contratti WHERE id='.prepare($id_contratto_precedente));
 
     echo '

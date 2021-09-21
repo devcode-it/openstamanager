@@ -42,7 +42,7 @@ $stati_pianificabili = $dbo->fetchOne('SELECT GROUP_CONCAT(`descrizione` SEPARAT
 echo '
 <div class="tip" data-toggle="tooltip" title="'.tr('Il contratto è rinnovabile se sono definite le date di accettazione e conclusione e si trova in uno stato di questi stati: _STATE_LIST_', [
         '_STATE_LIST_' => $stati_pianificabili,
-    ]).'">
+    ]).'" id="rinnova">
     <button type="button" class="btn btn-warning ask '.($rinnova ? '' : 'disabled').'" data-backto="record-edit" data-op="renew" data-msg="'.tr('Rinnovare questo contratto?').'" data-button="'.tr('Rinnova').'" data-class="btn btn-lg btn-warning">
         <i class="fa fa-refresh"></i> '.tr('Rinnova').'...
     </button>

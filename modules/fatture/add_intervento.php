@@ -19,6 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Fatture\Fattura;
+
 $module = Modules::get($id_module);
 
 if ($module['name'] == 'Fatture di vendita') {
@@ -29,9 +31,9 @@ if ($module['name'] == 'Fatture di vendita') {
     $conti = 'conti-acquisti';
 }
 
-$info = $dbo->fetchOne('SELECT * FROM co_documenti WHERE id='.prepare($id_record));
-$numero = ($info['numero_esterno'] != '') ? $info['numero_esterno'] : $info['numero'];
-$idanagrafica = $info['idanagrafica'];
+$fattura = Fattura::find($id_record);
+$numero = ($fattura->numero_esterno != '') ? $fattura->numero_esterno : $fattura->numero;
+$idanagrafica = $fattura->idanagrafica;
 
 $idconto = ($dir == 'entrata') ? setting('Conto predefinito fatture di vendita') : setting('Conto predefinito fatture di acquisto');
 
@@ -108,7 +110,7 @@ $options['id_ritenuta_acconto_predefined'] = $ritenuta_acconto['id_ritenuta_acco
 echo App::internalLoad('conti.php', [], $options);
 
 // Leggo l'iva predefinita dall'articolo e se non c'è leggo quella predefinita generica
-$idiva = $idiva ?: setting('Iva predefinita');
+$idiva = $fattura->anagrafica->idiva_vendite ?: setting('Iva predefinita');
 
 // Iva
 echo '

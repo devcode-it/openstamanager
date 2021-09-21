@@ -287,12 +287,21 @@ Input.prototype.get = function () {
  * @returns {Input}
  */
 Input.prototype.set = function (value) {
+    const previous = this.get();
+
     // Gestione dei valori per l'editor
     if (this.element.hasClass("editor-input") && typeof CKEDITOR !== 'undefined') {
         const name = this.element.attr("id");
         CKEDITOR.instances[name].setData(value);
     } else {
         this.element.val(value).trigger("change");
+
+        // Impostazione valore per checkbox
+        let group = this.element.closest(".form-group");
+        const checkbox = group.find("input[type=checkbox]");
+        if (checkbox.length && parseInt(value) !== previous) {
+            checkbox.click();
+        }
     }
 
     return this;

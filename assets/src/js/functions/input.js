@@ -287,8 +287,6 @@ Input.prototype.get = function () {
  * @returns {Input}
  */
 Input.prototype.set = function (value) {
-    const previous = this.get();
-
     // Gestione dei valori per l'editor
     if (this.element.hasClass("editor-input") && typeof CKEDITOR !== 'undefined') {
         const name = this.element.attr("id");
@@ -298,9 +296,10 @@ Input.prototype.set = function (value) {
 
         // Impostazione valore per checkbox
         let group = this.element.closest(".form-group");
-        const checkbox = group.find("input[type=checkbox]");
-        if (checkbox.length && parseInt(value) !== previous) {
-            checkbox.click();
+        if (group.find("input[type=checkbox]").length) {
+            value = value === true || parseInt(value) !== 1;
+            group.find("[type=hidden]").val(+value).trigger('change')
+            group.find("[type=checkbox]").prop("checked", value);
         }
     }
 

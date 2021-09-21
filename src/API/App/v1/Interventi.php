@@ -216,6 +216,7 @@ class Interventi extends AppResource
         $record->richiesta = $data['richiesta'];
         $record->descrizione = $data['descrizione'];
         $record->informazioniaggiuntive = $data['informazioni_aggiuntive'];
+        $record->idsede_destinazione = $data['id_sede'] ?: 0;
 
         // Salvataggio firma eventuale
         if (empty($record->firma_nome) && !empty($data['firma_nome'])) {

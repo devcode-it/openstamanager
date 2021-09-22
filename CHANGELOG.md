@@ -41,6 +41,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 ### Aggiunto (Added)
  - Aggiunto modal in fase di **Stampa Bilancio** per visualizzare o meno l'elenco analitico dei clienti e fornitori
  - Aggiunta scelta del tipo documento in fase di creazione fattura da un altro documento 
+ - Aggiunta possibilità di creare delle ricorrenze per gli **Interventi** in fase di aggiunta.
 ### Modificato (Changed)
  
 ### Fixed

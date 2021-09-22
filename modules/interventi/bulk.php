@@ -33,7 +33,6 @@ if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
     $_SESSION['module_'.$id_fatture]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
 }
 $id_segment = $_SESSION['module_'.$id_fatture]['id_segment'];
-
 $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
     'predefined' => 1,
     'dir' => 'entrata',

@@ -31,22 +31,16 @@ $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 $pagamento = Pagamento::find($documento['idpagamento']);
 
 // Banca dell'Azienda corrente impostata come predefinita per il Cliente
-$banca_azienda = Banca::where('id_anagrafica', '=', $anagrafica_azienda->id);
+$banca_azienda = Banca::where('id_anagrafica', '=', $anagrafica_azienda->id)
+    ->where('id_pianodeiconti3', '=', $pagamento['idconto_vendite'] ?: 0);
 try {
     $banca = (clone $banca_azienda)
         ->findOrFail($anagrafica->idbanca_vendite);
 } catch (ModelNotFoundException $e) {
     // Ricerca prima banca dell'Azienda con Conto corrispondente
     $banca = (clone $banca_azienda)
-        ->where('id_pianodeiconti3', '=', $pagamento['idconto_vendite'])
+        ->orderBy('predefined', 'DESC')
         ->first();
-
-    // Ricerca prima banca dell'Azienda con Conto corrispondente
-    if (empty($banca)) {
-        $banca = (clone $banca_azienda)
-            ->where('id_pianodeiconti3', '=', 0)
-            ->first();
-    }
 }
 
 // Ri.Ba: Banca predefinita *del Cliente* piuttosto che dell'Azienda

@@ -162,7 +162,7 @@ class FatturaOrdinaria extends FatturaElettronica
             if (!empty($articolo)) {
                 $articolo->idconto_acquisto = $conto[$key];
                 $articolo->save();
-                
+
                 $obj = Articolo::build($fattura, $articolo);
 
                 $obj->movimentazione($movimentazione);

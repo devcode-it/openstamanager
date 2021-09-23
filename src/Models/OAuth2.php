@@ -22,6 +22,7 @@ namespace Models;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
+use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
 
@@ -37,6 +38,9 @@ class OAuth2 extends Model
         'config' => 'array',
     ];
 
+    /**
+     * @return AbstractProvider
+     */
     public function getProvider()
     {
         // Inizializza il provider per l'autenticazione OAuth2.
@@ -145,6 +149,25 @@ class OAuth2 extends Model
         $this->checkTokens();
 
         return unserialize($this->attributes['access_token']);
+    }
+
+    /**
+     * Effettua una richiesta utilizzando il token di accesso prestabilito.
+     *
+     * @param string $method
+     * @param string $url
+     * @param array  $options
+     *
+     * @return array
+     */
+    public function request($method, $url, $options = [])
+    {
+        $provider = $this->getProvider();
+        $accessToken = $this->getAccessToken();
+
+        $request = $provider->getAuthenticatedRequest($method, $url, $accessToken, $options);
+
+        return $provider->getParsedResponse($request);
     }
 
     /**

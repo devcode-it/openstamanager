@@ -114,12 +114,12 @@ foreach ($destinatari_filtrati as $destinatario) {
 
     $riga = array_merge($riga, [
         '<div class="text-center">'.
-        (!empty($anagrafica->enable_newsletter) ?
+        (!empty($origine->enable_newsletter) ?
             '<span class="text-success"><i class="fa fa-check"></i> '.tr('Abilitato').'</span>' :
             '<span class="text-warning"><i class="fa fa-exclamation-triangle"></i> '.tr('Disabilitato').'</span>'
         ).'
         </div>',
-        '<div class="text-center">'.(empty($lista) && !empty($origine->email) && !empty($anagrafica->enable_newsletter) ? '
+        '<div class="text-center">'.(empty($lista) && !empty($origine->email) && !empty($origine->enable_newsletter) ? '
             <a class="btn btn-warning btn-xs" data-type="'.get_class($origine).'" data-id="'.$origine->id.'" data-email="'.$origine->email.'" onclick="testInvio(this)">
                 <i class="fa fa-paper-plane "></i>
             </a>' : '').'

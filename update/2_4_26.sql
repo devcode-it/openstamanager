@@ -127,3 +127,8 @@ CREATE TABLE IF NOT EXISTS `zz_oauth2` (
 
 ALTER TABLE `em_accounts` ADD `id_oauth2` INT(11) DEFAULT NULL,
     ADD FOREIGN KEY (`id_oauth2`) REFERENCES `zz_oauth2`(`id`);
+
+-- Aggiunta opt-out Newsletter per Referenti e Sedi
+ALTER TABLE `an_referenti` ADD `enable_newsletter` BOOLEAN DEFAULT TRUE;
+ALTER TABLE `an_sedi` ADD `enable_newsletter` BOOLEAN DEFAULT TRUE;
+

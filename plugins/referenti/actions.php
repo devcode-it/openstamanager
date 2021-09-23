@@ -46,6 +46,8 @@ switch ($operazione) {
         break;
 
     case 'updatereferente':
+        $opt_out_newsletter = post('disable_newsletter');
+
         $dbo->update('an_referenti', [
             'idanagrafica' => $id_parent,
             'nome' => post('nome'),
@@ -53,6 +55,8 @@ switch ($operazione) {
             'telefono' => post('telefono'),
             'email' => post('email'),
             'idsede' => post('idsede'),
+
+            'enable_newsletter' => empty($opt_out_newsletter),
         ], ['id' => $id_record]);
 
         flash()->info(tr('Salvataggio completato!'));

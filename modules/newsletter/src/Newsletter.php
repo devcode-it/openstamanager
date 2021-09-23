@@ -147,7 +147,7 @@ class Newsletter extends Model
 
         $anagrafica = $origine instanceof Anagrafica ? $origine : $origine->anagrafica;
 
-        $abilita_newsletter = $anagrafica->enable_newsletter;
+        $abilita_newsletter = $origine->enable_newsletter;
         $email = $destinatario->email;
         if (empty($email) || empty($abilita_newsletter) || !v::email()->validate($email)) {
             return null;

@@ -119,7 +119,10 @@ foreach ($destinatari_filtrati as $destinatario) {
             '<span class="text-warning"><i class="fa fa-exclamation-triangle"></i> '.tr('Disabilitato').'</span>'
         ).'
         </div>',
-        '<div class="text-center">
+        '<div class="text-center">'.(empty($lista) && !empty($origine->email) && !empty($anagrafica->enable_newsletter) ? '
+            <a class="btn btn-warning btn-xs" data-type="'.get_class($origine).'" data-id="'.$origine->id.'" data-email="'.$origine->email.'" onclick="testInvio(this)">
+                <i class="fa fa-paper-plane "></i>
+            </a>' : '').'
             <a class="btn btn-danger ask btn-xs" data-backto="record-edit" data-op="remove_receiver" data-type="'.get_class($origine).'" data-id="'.$origine->id.'">
                 <i class="fa fa-trash"></i>
             </a>

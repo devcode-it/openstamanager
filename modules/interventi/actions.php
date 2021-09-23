@@ -214,37 +214,37 @@ switch (post('op')) {
             'id_tecnico' => $tecnici_assegnati,
         ]);
 
-        if(!empty(post('ricorsiva'))){
+        if (!empty(post('ricorsiva'))) {
             $periodicita = post('periodicita');
             $data = post('data_inizio_ricorrenza');
-            $interval = post('tipo_periodicita')!='manual' ? post('tipo_periodicita') : 'days'; 
+            $interval = post('tipo_periodicita') != 'manual' ? post('tipo_periodicita') : 'days';
             $stato = Stato::find(post('idstatoricorrenze'));
 
             // Estraggo le date delle ricorrenze
-            if (post('metodo_ricorrenza')=='data') {
+            if (post('metodo_ricorrenza') == 'data') {
                 $data_fine = post('data_fine_ricorrenza');
-                while(strtotime($data)<=strtotime($data_fine)){
+                while (strtotime($data) <= strtotime($data_fine)) {
                     $data = date('Y-m-d', strtotime('+'.$periodicita.' '.$interval.'', strtotime($data)));
                     $w = date('w', strtotime($data));
                     //Escludo sabato e domenica
-                    if($w=='6'){
+                    if ($w == '6') {
                         $data = date('Y-m-d', strtotime('+2 day', strtotime($data)));
-                    }else if($w=='0'){
+                    } elseif ($w == '0') {
                         $data = date('Y-m-d', strtotime('+1 day', strtotime($data)));
                     }
-                    if ($data<=$data_fine) {
+                    if ($data <= $data_fine) {
                         $date_ricorrenze[] = $data;
                     }
                 }
             } else {
                 $ricorrenze = post('numero_ricorrenze');
-                for($i=0; $i<$ricorrenze; $i++){
+                for ($i = 0; $i < $ricorrenze; ++$i) {
                     $data = date('Y-m-d', strtotime('+'.$periodicita.' '.$interval.'', strtotime($data)));
                     $w = date('w', strtotime($data));
                     //Escludo sabato e domenica
-                    if($w=='6'){
+                    if ($w == '6') {
                         $data = date('Y-m-d', strtotime('+2 day', strtotime($data)));
-                    }else if($w=='0'){
+                    } elseif ($w == '0') {
                         $data = date('Y-m-d', strtotime('+1 day', strtotime($data)));
                     }
 
@@ -252,7 +252,7 @@ switch (post('op')) {
                 }
             }
 
-            foreach($date_ricorrenze as $data_ricorrenza){
+            foreach ($date_ricorrenze as $data_ricorrenza) {
                 $intervento = Intervento::find($id_record);
                 $new = $intervento->replicate();
                 // Calcolo il nuovo codice
@@ -274,16 +274,16 @@ switch (post('op')) {
                             $diff = strtotime($sessione->orario_inizio) - strtotime($inizio_old);
                             $orario_inizio = date('Y-m-d H:i:s', (strtotime($sessione->orario_inizio) + $diff));
                         }
-        
+
                         $diff_fine = strtotime($sessione->orario_fine) - strtotime($sessione->orario_inizio);
                         $orario_fine = date('Y-m-d H:i:s', (strtotime($orario_inizio) + $diff_fine));
-        
+
                         $new_sessione = $sessione->replicate();
                         $new_sessione->idintervento = $new->id;
                         $new_sessione->orario_inizio = $orario_inizio;
                         $new_sessione->orario_fine = $orario_fine;
                         $new_sessione->save();
-        
+
                         ++$numero_sessione;
                         $inizio_old = $sessione->orario_inizio;
                     }
@@ -297,11 +297,11 @@ switch (post('op')) {
                     'id_tecnico' => $tecnici_assegnati,
                 ]);
 
-                $n_ricorrenze++;
+                ++$n_ricorrenze;
             }
 
             flash()->info(tr('Aggiunte _NUM_ nuove ricorrenze!', [
-              '_NUM_' => $n_ricorrenze,  
+              '_NUM_' => $n_ricorrenze,
             ]));
         }
 

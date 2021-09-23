@@ -24,7 +24,8 @@ use Modules\Emails\Mail;
 use Modules\Emails\Template;
 use Modules\ListeNewsletter\Lista;
 use Modules\Newsletter\Newsletter;
-use Respect\Validation\Validator as v;
+use Notifications\EmailNotification;
+use PHPMailer\PHPMailer\Exception;
 
 include_once __DIR__.'/../../core.php';
 
@@ -61,42 +62,19 @@ switch (filter('op')) {
         break;
 
     case 'send':
-        $template = $newsletter->template;
-        $uploads = $newsletter->uploads()->pluck('id');
+        $newsletter = Newsletter::find($id_record);
 
         $destinatari = $newsletter->destinatari();
         $count = $destinatari->count();
         for ($i = 0; $i < $count; ++$i) {
             $destinatario = $destinatari->skip($i)->first();
-            $origine = $destinatario->getOrigine();
-
-            $anagrafica = $origine instanceof Anagrafica ? $origine : $origine->anagrafica;
-
-            $abilita_newsletter = $anagrafica->enable_newsletter;
-            $email = $destinatario->email;
-            if (empty($email) || empty($abilita_newsletter) || !v::email()->validate($email)) {
-                continue;
-            }
-
-            // Inizializzazione email
-            $mail = Mail::build($user, $template, $anagrafica->id);
-
-            // Completamento informazioni
-            $mail->addReceiver($email);
-            $mail->subject = $newsletter->subject;
-            $mail->content = $newsletter->content;
-            $mail->id_newsletter = $newsletter->id;
-
-            // Registrazione allegati
-            foreach ($uploads as $upload) {
-                $mail->addUpload($upload);
-            }
-
-            $mail->save();
+            $mail = $newsletter->inviaDestinatario($destinatario);
 
             // Aggiornamento riferimento per la newsletter
-            $destinatario->id_email = $mail->id;
-            $destinatario->save();
+            if (!empty($mail)) {
+                $destinatario->id_email = $mail->id;
+                $destinatario->save();
+            }
         }
 
         // Aggiornamento stato newsletter
@@ -104,6 +82,38 @@ switch (filter('op')) {
         $newsletter->save();
 
         flash()->info(tr('Campagna newsletter in invio!'));
+
+        break;
+
+    case 'test':
+        $receiver_id = post('id');
+        $receiver_type = post('type');
+
+        // Individuazione destinatario interessato
+        $newsletter = Newsletter::find($id_record);
+        $destinatario = $newsletter->destinatari()
+            ->where('record_type', '=', $receiver_type)
+            ->where('record_id', '=', $receiver_id)
+            ->first();
+
+        // Generazione email e tentativo di invio
+        $inviata = false;
+        if (!empty($destinatario)) {
+            $mail = $newsletter->inviaDestinatario($destinatario, true);
+
+            try {
+                $email = EmailNotification::build($mail, true);
+                $email->send();
+
+                $inviata = true;
+            } catch (Exception $e) {
+                // $mail->delete();
+            }
+        }
+
+        echo json_encode([
+            'result' => $inviata,
+        ]);
 
         break;
 

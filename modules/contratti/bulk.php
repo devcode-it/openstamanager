@@ -40,7 +40,6 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
     'dir' => 'entrata',
 ])['id'];
 
-
 switch (post('op')) {
     case 'crea_fattura':
         $documenti = collect();

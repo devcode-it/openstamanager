@@ -29,6 +29,7 @@ use Modules\Anagrafiche\Sede;
 use Modules\Emails\Account;
 use Modules\Emails\Mail;
 use Modules\Emails\Template;
+use Respect\Validation\Validator as v;
 use Traits\RecordTrait;
 
 class Newsletter extends Model
@@ -130,6 +131,45 @@ class Newsletter extends Model
     {
         return $this->destinatari()
             ->where('record_type', '=', $tipo);
+    }
+
+    /**
+     * Metodo per inviare l'email della newsletter a uno specifico destinatario.
+     *
+     * @return Mail|null
+     */
+    public function inviaDestinatario(Destinatario $destinatario, $test = false)
+    {
+        $template = $this->template;
+        $uploads = $this->uploads()->pluck('id');
+
+        $origine = $destinatario->getOrigine();
+
+        $anagrafica = $origine instanceof Anagrafica ? $origine : $origine->anagrafica;
+
+        $abilita_newsletter = $anagrafica->enable_newsletter;
+        $email = $destinatario->email;
+        if (empty($email) || empty($abilita_newsletter) || !v::email()->validate($email)) {
+            return null;
+        }
+
+        // Inizializzazione email
+        $mail = Mail::build(auth()->getUser(), $template, $anagrafica->id);
+
+        // Completamento informazioni
+        $mail->addReceiver($email);
+        $mail->subject = ($test ? '[Test] ' : '').$this->subject;
+        $mail->content = $this->content;
+        $mail->id_newsletter = $this->id;
+
+        // Registrazione allegati
+        foreach ($uploads as $upload) {
+            $mail->addUpload($upload);
+        }
+
+        $mail->save();
+
+        return $mail;
     }
 
     // Relazione Eloquent

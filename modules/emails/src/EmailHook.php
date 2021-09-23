@@ -95,9 +95,9 @@ class EmailHook extends Manager
         }
 
         // Invio effettivo
-        foreach ($lista as $lista_account) {
+        foreach ($lista as $mail) {
             try {
-                $email = EmailNotification::build($lista_account);
+                $email = EmailNotification::build($mail);
                 $email->send();
             } catch (Exception $e) {
             }

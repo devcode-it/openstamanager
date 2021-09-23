@@ -44,7 +44,7 @@ switch (post('op')) {
     case 'crea_fattura':
         $documenti = collect();
         $numero_totale = 0;
-        
+
         $tipo_documento = Tipo::where('id', post('idtipodocumento'))->first();
 
         $stato_documenti_accodabili = Stato::where('descrizione', 'Bozza')->first();

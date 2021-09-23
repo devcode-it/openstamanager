@@ -17,6 +17,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Models\Module;
+use Models\OAuth2;
+use Modules\Emails\Account;
+
 include_once __DIR__.'/../../core.php';
 
 switch (filter('op')) {
@@ -34,6 +38,8 @@ switch (filter('op')) {
         break;
 
     case 'update':
+        $account = Account::find($id_record);
+
         $predefined = post('predefined');
         if (!empty($predefined)) {
             $dbo->query('UPDATE em_accounts SET predefined = 0');
@@ -55,26 +61,38 @@ switch (filter('op')) {
             'timeout' => post('timeout'),
             'ssl_no_verify' => post('ssl_no_verify'),
             'predefined' => $predefined,
-
-            // OAuth2
-            'provider' => post('provider'),
-            'client_id' => post('client_id'),
-            'client_secret' => post('client_secret'),
-            'oauth2_config' => json_encode(post('config')),
         ], ['id' => $id_record]);
 
         flash()->info(tr('Informazioni salvate correttamente!'));
 
         // Rimozione informazioni OAuth2 in caso di disabilitazione
         if (!$abilita_oauth2) {
-            $dbo->update('em_accounts', [
-                'provider' => null,
-                'client_id' => null,
-                'client_secret' => null,
-                'access_token' => null,
-                'refresh_token' => null,
-                'oauth2_config' => null,
-            ], ['id' => $id_record]);
+            $oauth2 = $account->oauth2;
+            if (!empty($oauth2)) {
+                $account->oauth2()->dissociate();
+                $account->save();
+
+                $oauth2->delete();
+            }
+        }
+        // Aggiornamento delle informazioni per OAuth2
+        else {
+            $oauth2 = $account->oauth2 ?: OAuth2::build();
+
+            $oauth2->class = post('provider');
+            $oauth2->client_id = post('client_id');
+            $oauth2->client_secret = post('client_secret');
+            $oauth2->config = post('config');
+
+            // Link di redirect dopo la configurazione
+            $modulo_account_email = Module::pool('Account email');
+            $oauth2->after_configuration = base_path().'/editor.php?id_module='.$modulo_account_email->id.'&id_record='.$id_record;
+
+            $oauth2->save();
+
+            // Associazione Account-OAuth2
+            $account->oauth2()->associate($oauth2);
+            $account->save();
         }
 
         // Validazione indirizzo email mittente
@@ -119,7 +137,9 @@ switch (filter('op')) {
         break;
 
     case 'oauth2':
-        $redirect = base_path().'/oauth2.php?id_account='.$account->id;
+        $oauth2 = $account->oauth2;
+
+        $redirect = base_path().'/oauth2.php?id='.$oauth2->id;
         redirect($redirect);
 
         break;

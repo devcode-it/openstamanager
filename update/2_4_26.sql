@@ -107,3 +107,23 @@ INSERT INTO `em_lists` (`id`, `name`, `description`, `query`, `deleted_at`) VALU
 
 -- Fix riferimento documento per righe create da Interventi
 UPDATE `co_righe_documenti` SET `original_document_id` = `idintervento`, `original_document_type` = 'Modules\\Interventi\\Intervento' WHERE `idintervento` IS NOT NULL;
+
+-- Generalizzazione della configurazione OAuth2
+CREATE TABLE IF NOT EXISTS `zz_oauth2` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `class` varchar(255) DEFAULT NULL,
+    `client_id` text DEFAULT NULL,
+    `client_secret` text DEFAULT NULL,
+    `config` text DEFAULT NULL,
+    `state` text DEFAULT NULL,
+    `access_token` text DEFAULT NULL,
+    `refresh_token` text DEFAULT NULL,
+    `after_configuration` text DEFAULT NULL,
+    `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` timestamp NULL DEFAULT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+ALTER TABLE `em_accounts` ADD `id_oauth2` INT(11) DEFAULT NULL,
+    ADD FOREIGN KEY (`id_oauth2`) REFERENCES `zz_oauth2`(`id`);

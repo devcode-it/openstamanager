@@ -1,50 +1,63 @@
 <?php
+/*
+ * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
+ * Copyright (C) DevCode s.r.l.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
-namespace Modules\Emails;
+namespace Models;
 
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
-use Modules\Emails\OAuth2\Google;
-use Modules\Emails\OAuth2\Microsoft;
 
-class OAuth2
+class OAuth2 extends Model
 {
-    public static $providers = [
-        'microsoft' => [
-            'name' => 'Microsoft',
-            'class' => Microsoft::class,
-            'help' => 'https://docs.openstamanager.com/faq/configurazione-oauth2#microsoft',
-        ],
-        'google' => [
-            'name' => 'Google',
-            'class' => Google::class,
-            'help' => 'https://docs.openstamanager.com/faq/configurazione-oauth2#google',
-        ],
-    ];
+    use SimpleModelTrait;
 
     protected $provider;
-    protected $account;
 
-    public function __construct(Account $account)
-    {
-        $this->account = $account;
+    protected $table = 'zz_oauth2';
 
-        // Inizializza il provider per l'autenticazione OAuth2.
-        $redirect_uri = base_url().'/oauth2.php';
-
-        $class = $this->getProviderConfiguration()['class'];
-        $this->provider = new $class($this->account, $redirect_uri);
-    }
+    protected $casts = [
+        'config' => 'array',
+    ];
 
     public function getProvider()
     {
-        return $this->provider;
-    }
+        // Inizializza il provider per l'autenticazione OAuth2.
+        if (!isset($this->provider)) {
+            $config = $this->config ?? [];
+            $config = array_merge($config, [
+                'clientId' => $this->client_id,
+                'clientSecret' => $this->client_secret,
+                'redirectUri' => base_url().'/oauth2.php',
+                'accessType' => 'offline',
+            ]);
 
-    public function getProviderConfiguration()
-    {
-        return self::$providers[$this->account->provider];
+            $class = $this->class;
+            if (!class_exists($class)) {
+                throw new InvalidArgumentException('Classe non esistente');
+            }
+
+            $this->provider = new $class($config);
+        }
+
+        return $this->provider;
     }
 
     public function needsConfiguration()
@@ -78,7 +91,7 @@ class OAuth2
         }
 
         $provider = $this->getProvider();
-        $options = $provider->getOptions();
+        $options = method_exists($provider, 'getOptions') ? $provider->getOptions() : [];
         if (empty($code)) {
             // Fetch the authorization URL from the provider; this returns the
             // urlAuthorize option and generates and applies any necessary parameters
@@ -86,19 +99,19 @@ class OAuth2
             $authorization_url = $provider->getAuthorizationUrl($options);
 
             // Get the state generated for you and store it to the session.
-            $this->account->oauth2_state = $provider->getState();
-            $this->account->save();
+            $this->state = $provider->getState();
+            $this->save();
 
             // Redirect the user to the authorization URL.
             return $authorization_url;
-        } elseif (!empty($this->account->oauth2_state) && $this->account->oauth2_state !== $state) {
-            $this->account->oauth2_state = null;
-            $this->account->save();
+        } elseif (!empty($this->state) && $this->state !== $state) {
+            $this->state = null;
+            $this->save();
 
             throw new InvalidArgumentException();
         } else {
-            $this->account->oauth2_state = null;
-            $this->account->save();
+            $this->state = null;
+            $this->save();
 
             // Try to get an access token using the authorization code grant
             $access_token = $provider->getAccessToken('authorization_code', [
@@ -112,11 +125,14 @@ class OAuth2
         return null;
     }
 
+    /**
+     * @return string|null
+     */
     public function getRefreshToken()
     {
         $this->checkTokens();
 
-        return $this->account->refresh_token;
+        return $this->attributes['refresh_token'];
     }
 
     /**
@@ -128,34 +144,37 @@ class OAuth2
     {
         $this->checkTokens();
 
-        return unserialize($this->account->access_token);
+        return unserialize($this->attributes['access_token']);
     }
 
     /**
-     * Imposta l'access token per l'autenticazione OAuth2.
+     * Imposta Access Token e Refresh Token per l'autenticazione OAuth2.
      *
      * @param AccessToken|null
      */
-    public function updateTokens($access_token, $refresh_token)
+    protected function updateTokens($access_token, $refresh_token)
     {
-        $this->account->access_token = serialize($access_token);
+        $this->access_token = serialize($access_token);
 
-        $previous_refresh_token = $this->account->refresh_token;
-        $this->account->refresh_token = $refresh_token ?: $previous_refresh_token;
+        $previous_refresh_token = $this->refresh_token;
+        $this->refresh_token = $refresh_token ?: $previous_refresh_token;
 
-        $this->account->save();
+        $this->save();
     }
 
+    /**
+     * Controlla la validità dei token correnti e ne effettua il refresh se necessario.
+     */
     protected function checkTokens()
     {
-        $access_token = unserialize($this->account->access_token);
+        $access_token = unserialize($this->access_token);
 
         if (!empty($access_token) && $access_token->hasExpired()) {
             // Tentativo di refresh del token di accesso
-            $refresh_token = $this->account->refresh_token;
+            $refresh_token = $this->refresh_token;
             if (!empty($refresh_token)) {
                 $access_token = $this->getProvider()->getAccessToken('refresh_token', [
-                    'refresh_token' => $this->account->refresh_token,
+                    'refresh_token' => $this->refresh_token,
                 ]);
 
                 $refresh_token = $access_token->getRefreshToken();

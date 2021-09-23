@@ -134,7 +134,7 @@ echo '
                                     <tr>
                                         <td>'.$liv3_p['numero'].'</td>
                                         <td>'.$liv3_p['descrizione'].'</td>
-                                        <td class="text-right">'.numberFormat(abs($liv3_p['totale'])).'</td>
+                                        <td class="text-right">'.numberFormat(-$liv3_p['totale']).'</td>
                                     </tr>';
                                 }
                             }

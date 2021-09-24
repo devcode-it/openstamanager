@@ -202,7 +202,7 @@ if (filter('action') == 'do_update') {
 
     foreach ($updates as $update) {
         if ($update['sql'] && (!empty($update['done']) || is_null($update['done']))) {
-            $queries = readSQLFile(base_dir().$update['directory'].$update['filename'].'.sql', ';');
+            $queries = readSQLFile(base_dir().'/'.$update['directory'].$update['filename'].'.sql', ';');
             $total += count($queries);
 
             if (intval($update['done']) > 1) {
@@ -214,7 +214,7 @@ if (filter('action') == 'do_update') {
             $total += $scriptValue;
         }
     }
-
+    
     echo '
                 <script>
                     $(document).ready(function(){

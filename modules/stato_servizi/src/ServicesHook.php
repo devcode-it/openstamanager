@@ -21,29 +21,15 @@ namespace Modules\StatoServizi;
 
 use API\Services;
 use Carbon\Carbon;
-use Hooks\CachedManager;
+use Hooks\Manager;
 
-class ServicesHook extends CachedManager
+class ServicesHook extends Manager
 {
-    public function getCacheName()
-    {
-        return 'Informazioni su Services';
-    }
-
-    public function cacheData()
-    {
-        $response = Services::request('GET', 'info');
-
-        return Services::responseBody($response);
-    }
-
     public function response()
     {
-        $servizi = $this->getCache()->content;
-        $limite_scadenze = (new Carbon())->addDays(60);
-
         // Elaborazione dei servizi in scadenza
-        $risorse_in_scadenza = self::getRisorseInScadenza($servizi['risorse-api'], $limite_scadenze);
+        $limite_scadenze = (new Carbon())->addDays(60);
+        $risorse_in_scadenza = Services::getRisorseInScadenza($limite_scadenze);
 
         $message = tr('I seguenti servizi sono in scadenza: _LIST_', [
             '_LIST_' => implode(', ', $risorse_in_scadenza->pluck('nome')->all()),
@@ -56,26 +42,13 @@ class ServicesHook extends CachedManager
         ];
     }
 
-    /**
-     * Restituisce l'elenco delle risorse API in scadenza, causa data oppure crediti.
-     *
-     * @param $servizi
-     */
-    public static function getRisorseInScadenza($risorse, $limite_scadenze)
+    public function execute()
     {
-        // Elaborazione dei servizi in scadenza
-        $risorse_in_scadenza = collect($risorse)
-            ->filter(function ($item) use ($limite_scadenze) {
-                return (isset($item['expiration_at']) && Carbon::parse($item['expiration_at'])->lessThan($limite_scadenze))
-                    || (isset($item['credits']) && $item['credits'] < 100);
-            });
+        return false;
+    }
 
-        return $risorse_in_scadenza->transform(function ($item, $key) {
-            return [
-                'nome' => $item['name'],
-                'data_scadenza' => $item['expiration_at'],
-                'crediti' => $item['credits'],
-            ];
-        });
+    public function needsExecution()
+    {
+        return false;
     }
 }

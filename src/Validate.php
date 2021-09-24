@@ -98,7 +98,7 @@ class Validate
         } */
 
         // Controllo attraverso apilayer
-        if (Services::isEnabled()) {
+        if (Services::verificaRisorsaAttiva('Verifica Partita IVA')) {
             $response = Services::request('post', 'check_iva', [
                 'partita_iva' => $vat_number,
             ]);
@@ -151,7 +151,7 @@ class Validate
         }
 
         // Controllo attraverso apilayer
-        if (Services::isEnabled()) {
+        if (Services::verificaRisorsaAttiva('Verifica Email')) {
             $response = Services::request('post', 'check_email', [
                 'email' => $email,
             ]);

@@ -19,7 +19,9 @@
 
 namespace API;
 
+use Carbon\Carbon;
 use GuzzleHttp\Client;
+use Models\Cache;
 
 /**
  * Classe per l'interazione con API esterne.
@@ -30,11 +32,98 @@ class Services
 {
     protected static $client = null;
 
+    /**
+     * Controlla se il gestionale ha accesso a Services.
+     *
+     * @return bool
+     */
     public static function isEnabled()
     {
         return !empty(setting('OSMCloud Services API Token'));
     }
 
+    /**
+     * Restituisce le informazioni disponibili su Services.
+     *
+     * @return array
+     */
+    public static function getInformazioni($force = false)
+    {
+        $cache = Cache::pool('Informazioni su Services');
+
+        // Aggiornamento dei contenuti della cache
+        if (!$cache->isValid() || $force) {
+            $response = self::request('GET', 'info');
+            $content = self::responseBody($response);
+
+            $cache->set($content);
+
+            return $content;
+        }
+
+        return $cache->content;
+    }
+
+    /**
+     * Restituisce i servizi attivi attraverso Services.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public static function getServiziAttivi()
+    {
+        return collect(self::getInformazioni()['servizi']);
+    }
+
+    /**
+     * Restituisce le risorse attive in Services.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public static function getRisorseAttive()
+    {
+        return collect(self::getInformazioni()['risorse-api']);
+    }
+
+    /**
+     * Controlla se il gestionale ha accesso a una specifica risorsa di Services.
+     *
+     * @return bool
+     */
+    public static function verificaRisorsaAttiva($servizio)
+    {
+        return self::isEnabled() && self::getRisorseAttive()->search(function ($item) use ($servizio) {
+            return $item['name'] == $servizio;
+        }) !== false;
+    }
+
+    /**
+     * Restituisce le risorse in scadenza per assenza di crediti oppure per data di fine prossima.
+     *
+     * @param Carbon $limite_scadenze
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public static function getRisorseInScadenza($limite_scadenze)
+    {
+        return self::getRisorseAttive()
+            ->filter(function ($item) use ($limite_scadenze) {
+                return (isset($item['expiration_at']) && Carbon::parse($item['expiration_at'])->lessThan($limite_scadenze))
+                    || (isset($item['credits']) && $item['credits'] < 100);
+            });
+    }
+
+    /**
+     * Effettua una richiesta a Services.
+     *
+     * @param $type
+     * @param $resource
+     * @param array $data
+     * @param array $options
+     *
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     */
     public static function request($type, $resource, $data = [], $options = [])
     {
         $client = static::getClient();
@@ -53,6 +142,13 @@ class Services
         return $client->request($type, '', $options);
     }
 
+    /**
+     * Restituisce il corpo JSON della risposta in array.
+     *
+     * @param $response
+     *
+     * @return array
+     */
     public static function responseBody($response)
     {
         $body = $response->getBody();

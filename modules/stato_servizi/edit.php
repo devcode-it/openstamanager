@@ -19,8 +19,6 @@
 
 use API\Services;
 use Carbon\Carbon;
-use Models\Cache;
-use Modules\StatoServizi\ServicesHook;
 
 include_once __DIR__.'/../../core.php';
 
@@ -28,12 +26,6 @@ include_once __DIR__.'/../../core.php';
 echo '
 <div class="row">';
 
-/**
- * Contenuto aggiornato e gestito dall'Hook ServicesHook.
- *
- * @var array
- */
-$response = Cache::pool('Informazioni su Services')->content;
 $limite_scadenze = (new Carbon())->addDays(60);
 if (Services::isEnabled()) {
     echo '
@@ -48,7 +40,7 @@ if (Services::isEnabled()) {
 
             <div class="box-body">';
 
-    $servizi = collect($response['servizi'])->flatten(1);
+    $servizi = Services::getServiziAttivi()->flatten(1);
     if (!$servizi->isEmpty()) {
         echo '
                 <table class="table table-striped table-hover">
@@ -99,8 +91,9 @@ if (Services::isEnabled()) {
             <div class="box-body">';
 
     // Elaborazione delle risorse API in scadenza
-    if (!empty($response['risorse-api'])) {
-        $risorse_in_scadenza = ServicesHook::getRisorseInScadenza($response['risorse-api'], $limite_scadenze);
+    $risorse_attive = Services::getRisorseAttive();
+    if (!$risorse_attive->isEmpty()) {
+        $risorse_in_scadenza = Services::getRisorseInScadenza($limite_scadenze);
         if (!$risorse_in_scadenza->isEmpty()) {
             echo '
                 <p>'.tr('Le seguenti risorse sono in scadenza:').'</p>
@@ -115,11 +108,12 @@ if (Services::isEnabled()) {
 
                     <tbody>';
             foreach ($risorse_in_scadenza as $servizio) {
-                $scadenza = Carbon::parse($servizio['data_scadenza']);
+                $scadenza = Carbon::parse($servizio['expiration_at']);
+
                 echo '
                         <tr>
-                            <td>'.$servizio['nome'].'</td>
-                            <td>'.$servizio['crediti'].'</td>
+                            <td>'.$servizio['name'].'</td>
+                            <td>'.$servizio['credits'].'</td>
                             <td>'.dateFormat($scadenza).' ('.$scadenza->diffForHumans().')</td>
                         </tr>';
             }

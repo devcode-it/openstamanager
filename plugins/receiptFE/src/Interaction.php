@@ -29,6 +29,11 @@ use Models\Cache;
  */
 class Interaction extends Services
 {
+    public static function isEnabled()
+    {
+        return parent::isEnabled() && self::verificaRisorsaAttiva('Fatturazione Elettronica');
+    }
+
     public static function getReceiptList()
     {
         $list = self::getRemoteList();

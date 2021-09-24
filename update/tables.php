@@ -99,6 +99,7 @@ return [
     'mg_valori_attributi',
     'my_impianto_componenti',
     'my_componenti',
+    'zz_oauth2',
     'or_ordini',
     'or_righe_ordini',
     'or_statiordine',

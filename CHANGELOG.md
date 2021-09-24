@@ -51,6 +51,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Fix orario della modifica del listino di riferimento dell'articolo
  - Fix movimentazione articoli tra due sedi tramite **DDT**
  - Fix duplicazione **Pagamenti**
+ 
 ## 2.4.25 (2021-08-25)
 
 ### Aggiunto (Added)

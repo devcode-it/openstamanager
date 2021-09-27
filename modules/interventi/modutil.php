@@ -184,7 +184,16 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $riga->id_rivalsa_inps = $id_rivalsa_inps;
 
             $riga->prezzo_unitario = $sessione->prezzo_orario;
-            $riga->setSconto($sessione->sconto_unitario, $sessione->tipo_sconto);
+
+            //Calcolo lo sconto unitario della sessione in base all'impostazione sui prezzi ivati
+            $iva = $dbo->table('co_iva')->where('id',$id_iva)->first();
+            if( $sessione->tipo_sconto=='UNT' && setting('Utilizza prezzi di vendita comprensivi di IVA') ){
+                $sconto_unitario = $sessione->sconto_unitario + (($sessione->sconto_unitario*$iva->percentuale)/100);
+            }else{
+                $sconto_unitario = $sessione->sconto_unitario;
+            }
+
+            $riga->setSconto($sconto_unitario, $sessione->tipo_sconto);
 
             $qta_gruppo = $gruppo->sum('ore');
             $riga->qta = round($qta_gruppo, $decimals);

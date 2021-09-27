@@ -346,10 +346,16 @@ if (!empty($righe)) {
         if (!empty($codice_principale)) {
             if (!empty($anagrafica) && empty($id_articolo)) {
                 $id_articolo = $database->fetchOne('SELECT id_articolo AS id FROM mg_fornitore_articolo WHERE codice_fornitore = '.prepare($codice_principale).' AND id_fornitore = '.prepare($anagrafica->id))['id'];
+                if (empty($id_articolo)) {
+                    $id_articolo = $database->fetchOne('SELECT id_articolo AS id FROM mg_fornitore_articolo WHERE REPLACE(codice_fornitore, " ", "") = '.prepare($codice_principale).' AND id_fornitore = '.prepare($anagrafica->id))['id'];
+                }
             }
-
+            
             if (empty($id_articolo)) {
                 $id_articolo = $database->fetchOne('SELECT id FROM mg_articoli WHERE codice = '.prepare($codice_principale))['id'];
+                if (empty($id_articolo)) {
+                    $id_articolo = $database->fetchOne('SELECT id FROM mg_articoli WHERE REPLACE(codice, " ", "") = '.prepare($codice_principale))['id'];
+                }
             }
         }
 

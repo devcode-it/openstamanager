@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.26 (2021-09-24)](#2426-2021-09-24)
 - [2.4.25 (2021-08-25)](#2425-2021-08-25)
 - [2.4.24 (2021-07-28)](#2424-2021-07-28)
 - [2.4.23 (2021-05-18)](#2423-2021-05-18)
@@ -36,15 +37,21 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
-## 2.4.26 (2021-00-00)
+## 2.4.26 (2021-09-24)
 
 ### Aggiunto (Added)
  - Aggiunto modal in fase di **Stampa Bilancio** per visualizzare o meno l'elenco analitico dei clienti e fornitori
  - Aggiunta scelta del tipo documento in fase di creazione fattura da un altro documento 
+ - Aggiunta possibilità di creare delle ricorrenze per gli **Interventi** in fase di aggiunta
+ - Aggiunta scelta del tipo documento in fase di creazione fattura da un azione di gruppo di un altro documento
+ - Aggiunta sistema di gestione Combinazioni Articoli
 ### Modificato (Changed)
- 
+ - Modificata query per generare liste in **Newsletter**
 ### Fixed
  - Fix orario della modifica del listino di riferimento dell'articolo
+ - Fix movimentazione articoli tra due sedi tramite **DDT**
+ - Fix duplicazione **Pagamenti**
+ 
 ## 2.4.25 (2021-08-25)
 
 ### Aggiunto (Added)

@@ -293,6 +293,14 @@ Input.prototype.set = function (value) {
         CKEDITOR.instances[name].setData(value);
     } else {
         this.element.val(value).trigger("change");
+
+        // Impostazione valore per checkbox
+        let group = this.element.closest(".form-group");
+        if (group.find("input[type=checkbox]").length) {
+            value = value === true || parseInt(value) !== 1;
+            group.find("[type=hidden]").val(+value).trigger('change')
+            group.find("[type=checkbox]").prop("checked", value);
+        }
     }
 
     return this;

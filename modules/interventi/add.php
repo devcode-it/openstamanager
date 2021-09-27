@@ -47,7 +47,7 @@ if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
 }
 
 // Stato di default associato all'attivitò
-$stato = $dbo->fetchArray("SELECT * FROM in_statiintervento WHERE descrizione = 'In programmazione'");
+$stato = $dbo->fetchArray("SELECT * FROM in_statiintervento WHERE codice = 'WIP'");
 $id_stato = $stato['idstatointervento'];
 
 // Se è indicata un'anagrafica relativa, si carica il tipo di intervento di default impostato
@@ -314,6 +314,58 @@ echo '
 		</div>
 	</div>
 
+    <!-- RICORRENZA -->
+    <div class="box box-warning collapsable collapsed-box">
+        <div class="box-header with-border">
+			<h3 class="box-title">'.tr('Ricorrenza').'</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
+		</div>
+
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-4">
+                    {[ "type": "checkbox", "label": "'.tr('Ricorsiva').'", "name": "ricorsiva", "value": "" ]}
+                </div>
+
+                <div class="col-md-4 ricorrenza">
+                    {[ "type": "timestamp", "label": "'.tr('Data/ora inizio').'", "name": "data_inizio_ricorrenza", "value": "'.($data_richiesta ?: '-now-').'" ]}
+                </div>
+
+                <div class="col-md-4 ricorrenza">
+                    {[ "type": "number", "label": "'.tr('Periodicità').'", "name": "periodicita", "decimals": "0", "icon-after": "choice|period|months", "value": "1" ]}
+                </div>
+            </div>
+
+            <div class="row ricorrenza">
+                <div class="col-md-4">
+                    {[ "type": "select", "label": "'.tr('Metodo fine ricorrenza').'", "name": "metodo_ricorrenza", "values": "list=\"data\":\"Data fine\",\"numero\":\"Numero ricorrenze\"" ]}
+                </div>
+
+                <div class="col-md-4">
+                    {[ "type": "timestamp", "label": "'.tr('Data/ora fine').'", "name": "data_fine_ricorrenza" ]}
+                </div>
+
+                <div class="col-md-4">
+                    {[ "type": "number", "label": "'.tr('Numero ricorrenze').'", "name": "numero_ricorrenze", "decimals": "0" ]}
+                </div>
+            </div>
+
+            <div class="row ricorrenza">
+                <div class="col-md-4">
+                    {[ "type": "select", "label": "'.tr('Stato ricorrenze').'", "name": "idstatoricorrenze", "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL AND is_completato=0" ]}
+                </div>
+
+                <div class="col-md-4">
+                    {[ "type": "checkbox", "label": "'.tr('Riporta sessioni di lavoro').'", "name": "riporta_sessioni", "value": "" ]}
+                </div>
+            </div>
+        </div>
+    </div>
+
 	<!-- DETTAGLI CLIENTE -->
     <div class="box box-success collapsable collapsed-box">
         <div class="box-header with-border">
@@ -407,6 +459,9 @@ echo '
                 location.reload();
             });
         }
+
+        // Ricorrenza
+        $(".ricorrenza").addClass("hidden");
     });
 
 	input("idtecnico").change(function() {
@@ -597,4 +652,32 @@ if (filter('orario_fine') !== null) {
     function deassegnaTuttiTecnici() {
         input("tecnici_assegnati").getElement().selectReset();
     }
+
+    $("#ricorsiva").on("change", function(){
+        if ($(this).is(":checked")) {
+            $(".ricorrenza").removeClass("hidden");
+            $("#data_inizio_ricorrenza").attr("required", true);
+            $("#metodo_ricorrenza").attr("required", true);
+            $("#idstatoricorrenze").attr("required", true);
+        } else {
+            $(".ricorrenza").addClass("hidden");
+            $("#data_inizio_ricorrenza").attr("required", false);
+            $("#metodo_ricorrenza").attr("required", false);
+            $("#idstatoricorrenze").attr("required", false);
+        }
+    });
+
+    $("#metodo_ricorrenza").on("change", function(){
+        if ($(this).val()=="data") {
+            input("data_fine_ricorrenza").enable();
+            $("#data_fine_ricorrenza").attr("required", true);
+            input("numero_ricorrenze").disable();
+            input("numero_ricorrenze").set("");  
+        } else {
+            input("numero_ricorrenze").enable();
+            input("data_fine_ricorrenza").disable();
+            input("data_fine_ricorrenza").set("");
+            $("#data_fine_ricorrenza").attr("required", false);
+        }
+    });
 </script>';

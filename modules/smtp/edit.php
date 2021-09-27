@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Modules\Emails\OAuth2;
+use Modules\Emails\Account;
 
 include_once __DIR__.'/../../core.php';
 
@@ -101,16 +101,18 @@ echo '
     </div>';
 
 // Elenco provider disponibili
-$providers = OAuth2::$providers;
+$providers = Account::$providers;
 $elenco_provider = [];
 foreach ($providers as $key => $provider) {
     $elenco_provider[] = [
-        'id' => $key,
+        'id' => $provider['class'],
+        'short' => $key,
         'text' => $provider['name'],
         'help' => $provider['help'],
     ];
 }
 
+$oauth2 = $account->oauth2;
 echo '
     <!-- OAuth2 -->
     <div class="box box-info">
@@ -122,30 +124,30 @@ echo '
             <div class="row">
                 <div class="col-md-6">
                     <span class="label label-warning pull-right hidden" id="guida-configurazione"></span>
-                    {[ "type": "select", "label": "'.tr('Provider account').'", "name": "provider", "value": "$provider$", "values": '.json_encode($elenco_provider).', "disabled": "'.intval(empty($account->provider)).'" ]}
+                    {[ "type": "select", "label": "'.tr('Provider account').'", "name": "provider", "value": '.json_encode($oauth2->class).', "values": '.json_encode($elenco_provider).', "disabled": "'.intval(empty($oauth2)).'" ]}
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "checkbox", "label": "'.tr('Abilita OAuth2').'", "name": "abilita_oauth2", "value": "'.intval(!empty($account->provider)).'" ]}
+                    {[ "type": "checkbox", "label": "'.tr('Abilita OAuth2').'", "name": "abilita_oauth2", "value": "'.intval(!empty($oauth2)).'" ]}
                 </div>
 
-                <div id="oauth2-config">
-                    <div class="col-md-3">
-                        <a type="button" class="btn btn-success btn-block '.(empty($account->provider) || empty($account->client_id) || empty($account->client_secret) ? 'disabled' : '').'" style="margin-top: 25px" href="'.base_url().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=oauth2">
-                            <i class="fa fa-refresh"></i> '.(empty($account->access_token) ? tr('Completa configurazione') : tr('Ripeti configurazione')).'
-                        </a>
-                    </div>
-
-                    <div class="col-md-6">
-                        {[ "type": "text", "label": "'.tr('Client ID').'", "name": "client_id", "value": "$client_id$", "disabled": "'.intval(empty($account->provider)).'" ]}
-                    </div>
-
-                    <div class="col-md-6">
-                        {[ "type": "text", "label": "'.tr('Client Secret').'", "name": "client_secret", "value": "$client_secret$", "disabled": "'.intval(empty($account->provider)).'" ]}
-                    </div>
-
-                    <div id="provider-config"></div>
+                <div class="col-md-3 oauth2-config">
+                    <a type="button" class="btn btn-success btn-block '.(empty($oauth2->class) || empty($oauth2->client_id) || empty($oauth2->client_secret) ? 'disabled' : '').'" style="margin-top: 25px" href="'.base_url().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=oauth2">
+                        <i class="fa fa-refresh"></i> '.(empty($oauth2->access_token) ? tr('Completa configurazione') : tr('Ripeti configurazione')).'
+                    </a>
                 </div>
+            </div>
+
+            <div class="row oauth2-config">
+                <div class="col-md-6">
+                    {[ "type": "text", "label": "'.tr('Client ID').'", "name": "client_id", "value": "'.$oauth2->client_id.'", "disabled": "'.intval(empty($oauth2)).'" ]}
+                </div>
+
+                <div class="col-md-6">
+                    {[ "type": "text", "label": "'.tr('Client Secret').'", "name": "client_secret", "value": "'.$oauth2->client_secret.'", "disabled": "'.intval(empty($oauth2)).'" ]}
+                </div>
+
+                <div id="provider-config"></div>
             </div>
 
             <div class="alert alert-info">
@@ -163,7 +165,7 @@ foreach ($providers as $key => $provider) {
     $config = $provider['class']::getConfigInputs();
     foreach ($config as $name => $field) {
         $field['name'] = 'config['.$name.']';
-        $field['value'] = $account->oauth2_config[$name];
+        $field['value'] = $oauth2 ? $oauth2->config[$name] : null;
 
         echo '
     <div class="col-md-6">'.input($field).'</div>';
@@ -186,7 +188,7 @@ abilita_oauth2.change(function() {
     const disable = !abilita_oauth2.get();
     provider.setDisabled(disable);
 
-    const inputs = $("#oauth2-config .openstamanager-input");
+    const inputs = $(".oauth2-config .openstamanager-input");
     for (i of inputs) {
         input(i).setDisabled(disable);
     }
@@ -204,7 +206,7 @@ provider.change(function() {
 
     // Impostazione dei dati aggiuntivi da configurare
     config.html("")
-    aggiungiContenuto(config, "#provider-" + data.id);
+    aggiungiContenuto(config, "#provider-" + data.short);
 })
 
 $(document).ready(function() {

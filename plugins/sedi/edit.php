@@ -95,10 +95,15 @@ echo '
 			{[ "type": "text", "label": "'.tr('Indirizzo email').'", "name": "email", "value": "$email$" ]}
 		</div>
 
-		<div class="col-md-6">
+        <div class="col-md-3">
+            {[ "type": "checkbox", "label": "'.tr('Opt-out per newsletter').'", "name": "disable_newsletter", "id": "disable_newsletter_m", "value": "'.empty($record['enable_newsletter']).'" ]}
+        </div>
+
+		<div class="col-md-3">
 			{[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "ajax-source": "zone",  "value": "$idzona$", "placeholder": "'.tr('Nessuna zona').'", "icon-after": "add|'.Modules::get('Zone')['id'].'" ]}
 		</div>
 	</div>
+
 	<div class="row">
 		<div class="col-md-12">
 			{[ "type": "textarea", "label": "'.tr('Note').'", "name": "note", "value": "$note$" ]}

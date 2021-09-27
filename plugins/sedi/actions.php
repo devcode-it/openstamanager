@@ -53,6 +53,8 @@ switch ($operazione) {
         break;
 
     case 'updatesede':
+        $opt_out_newsletter = post('disable_newsletter');
+
         $dbo->update('an_sedi', [
             'nomesede' => post('nomesede'),
             'indirizzo' => post('indirizzo'),
@@ -73,6 +75,8 @@ switch ($operazione) {
             'gaddress' => post('gaddress'),
             'lat' => post('lat'),
             'lng' => post('lng'),
+
+            'enable_newsletter' => empty($opt_out_newsletter),
         ], ['id' => $id_record]);
 
         flash()->info(tr('Salvataggio completato!'));

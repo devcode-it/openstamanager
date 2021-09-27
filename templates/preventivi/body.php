@@ -18,19 +18,36 @@
  */
 
 use Carbon\CarbonInterval;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Banche\Banca;
+use Modules\Pagamenti\Pagamento;
 
 include_once __DIR__.'/../../core.php';
 
 $anagrafica = Anagrafica::find($documento['idanagrafica']);
-$pagamento = $dbo->fetchOne('SELECT * FROM co_pagamenti WHERE id = '.prepare($documento['idpagamento']));
+$anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 
-// Verifico se c'è una banca predefinita per il mio cliente
-if (!empty($anagrafica->idbanca_vendite)) {
-    $banca = $dbo->fetchOne('SELECT co_banche.nome, co_banche.iban, co_banche.bic FROM co_banche WHERE co_banche.id_pianodeiconti3 = '.prepare($pagamento['idconto_vendite']).' AND co_banche.id_anagrafica = '.prepare($anagrafica->id).' AND co_banche.id ='.prepare($anagrafica->idbanca_vendite));
-} elseif (!empty($pagamento['idconto_vendite'])) {
-    // Altrimenti prendo quella associata la metodo di pagamento selezionato
-    $banca = $dbo->fetchOne('SELECT co_banche.nome, co_banche.iban, co_banche.bic FROM co_banche WHERE co_banche.id_pianodeiconti3 = '.prepare($pagamento['idconto_vendite']).' AND co_banche.id_anagrafica = '.prepare($anagrafica->id).' AND co_banche.deleted_at IS NULL');
+$pagamento = Pagamento::find($documento['idpagamento']);
+
+// Banca dell'Azienda corrente impostata come predefinita per il Cliente
+$banca_azienda = Banca::where('id_anagrafica', '=', $anagrafica_azienda->id)
+    ->where('id_pianodeiconti3', '=', $pagamento['idconto_vendite'] ?: 0);
+try {
+    $banca = (clone $banca_azienda)
+        ->findOrFail($anagrafica->idbanca_vendite);
+} catch (ModelNotFoundException $e) {
+    // Ricerca prima banca dell'Azienda con Conto corrispondente
+    $banca = (clone $banca_azienda)
+        ->orderBy('predefined', 'DESC')
+        ->first();
+}
+
+// Ri.Ba: Banca predefinita *del Cliente* piuttosto che dell'Azienda
+if ($pagamento->isRiBa()) {
+    $banca = Banca::where('id_anagrafica', $anagrafica->id)
+        ->where('predefined', 1)
+        ->first();
 }
 
 // Righe documento

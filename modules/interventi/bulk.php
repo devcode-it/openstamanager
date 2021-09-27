@@ -33,7 +33,6 @@ if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
     $_SESSION['module_'.$id_fatture]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
 }
 $id_segment = $_SESSION['module_'.$id_fatture]['id_segment'];
-
 $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
     'predefined' => 1,
     'dir' => 'entrata',
@@ -85,7 +84,6 @@ switch (post('op')) {
         $dir = 'entrata';
         $tipo_documento = Tipo::where('id', post('idtipodocumento'))->first();
 
-        $id_iva = setting('Iva predefinita');
         $id_conto = setting('Conto predefinito fatture di vendita');
 
         $accodare = post('accodare');
@@ -96,8 +94,10 @@ switch (post('op')) {
         // Lettura righe selezionate
         foreach ($interventi as $intervento) {
             $id_anagrafica = $intervento['idanagrafica'];
-
             $id_documento = $id_documento_cliente[$id_anagrafica];
+
+            $anagrafica = Anagrafica::find($id_anagrafica);
+            $id_iva = $anagrafica->idiva_vendite ?: setting('Iva predefinita');
 
             // Se non c'è già una fattura appena creata per questo cliente, creo una fattura nuova
             if (empty($id_documento)) {
@@ -109,7 +109,6 @@ switch (post('op')) {
                 }
 
                 if (empty($id_documento)) {
-                    $anagrafica = Anagrafica::find($id_anagrafica);
                     $fattura = Fattura::build($anagrafica, $tipo_documento, $data, $id_segment);
 
                     $id_documento = $fattura->id;

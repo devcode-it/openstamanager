@@ -2,7 +2,6 @@
 
 namespace Modules\Emails\OAuth2;
 
-use Modules\Emails\Account;
 use TheNetworg\OAuth2\Client\Provider\Azure;
 
 class Microsoft extends Azure implements ProviderInterface
@@ -24,18 +23,15 @@ class Microsoft extends Azure implements ProviderInterface
         ],
     ];
 
-    public function __construct(Account $account, $redirect_uri)
+    public function __construct(array $options = [], array $collaborators = [])
     {
-        parent::__construct([
-            'clientId' => $account->client_id,
-            'clientSecret' => $account->client_secret,
-            'redirectUri' => $redirect_uri,
-            'accessType' => 'offline',
+        // Configurazioni specifiche per il provider di Microsoft Azure
+        $config = array_merge($options, [
+            'defaultEndPointVersion' => parent::ENDPOINT_VERSION_2_0,
+            'tenant' => $options['tenant_id'],
         ]);
 
-        // Configurazioni specifiche per il provider di Microsoft Azure
-        $this->defaultEndPointVersion = parent::ENDPOINT_VERSION_2_0;
-        $this->tenant = $account->oauth2_config['tenant_id'];
+        parent::__construct($config, $collaborators);
     }
 
     public function getOptions()

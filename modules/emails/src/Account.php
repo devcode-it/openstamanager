@@ -23,6 +23,8 @@ use Carbon\Carbon;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\Emails\OAuth2\Google;
+use Modules\Emails\OAuth2\Microsoft;
 use Notifications\EmailNotification;
 use Traits\LocalPoolTrait;
 
@@ -32,14 +34,20 @@ class Account extends Model
     use LocalPoolTrait;
     use SoftDeletes;
 
-    protected $table = 'em_accounts';
-
-    protected $casts = [
-        'oauth2_config' => 'array',
+    public static $providers = [
+        'microsoft' => [
+            'name' => 'Microsoft',
+            'class' => Microsoft::class,
+            'help' => 'https://docs.openstamanager.com/faq/configurazione-oauth2#microsoft',
+        ],
+        'google' => [
+            'name' => 'Google',
+            'class' => Google::class,
+            'help' => 'https://docs.openstamanager.com/faq/configurazione-oauth2#google',
+        ],
     ];
 
-    /** @var OAuth2 */
-    protected $gestoreOAuth2;
+    protected $table = 'em_accounts';
 
     public function testConnection()
     {
@@ -61,22 +69,16 @@ class Account extends Model
         return $result;
     }
 
-    public function getGestoreOAuth2()
-    {
-        if (isset($this->gestoreOAuth2)) {
-            return $this->gestoreOAuth2;
-        }
-
-        $this->gestoreOAuth2 = new OAuth2($this);
-
-        return $this->gestoreOAuth2;
-    }
-
     /* Relazioni Eloquent */
 
     public function templates()
     {
         return $this->hasMany(Template::class, 'id_account');
+    }
+
+    public function oauth2()
+    {
+        return $this->belongsTo(\Models\OAuth2::class, 'id_oauth2');
     }
 
     public function emails()

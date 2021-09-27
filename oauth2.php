@@ -1,8 +1,23 @@
 <?php
+/*
+ * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
+ * Copyright (C) DevCode s.r.l.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
-use Models\Module;
-use Modules\Emails\Account;
-use Modules\Emails\OAuth2;
+use Models\OAuth2;
 
 $skip_permissions = true;
 include_once __DIR__.'/core.php';
@@ -12,12 +27,12 @@ session_write_close();
 $state = $_GET['state'];
 $code = $_GET['code'];
 
-// Account individuato via oauth2_state
+// Account individuato via state
 if (!empty($state)) {
-    $account = Account::where('oauth2_state', '=', $state)
+    $account = OAuth2::where('state', '=', $state)
         ->first();
 } else {
-    $account = Account::find(get('id_account'));
+    $account = OAuth2::find(get('id'));
 
     // Impostazione access token a null per reimpostare la configurazione
     $account->access_token = null;
@@ -31,16 +46,12 @@ if (empty($account)) {
     return;
 }
 
-// Inizializzazione
-$oauth2 = new OAuth2($account);
-
 // Redirect all'URL di autorizzazione del servizio esterno
-$redirect = $oauth2->configure($code, $state);
+$redirect = $account->configure($code, $state);
 
 // Redirect automatico al record
 if (empty($redirect)) {
-    $modulo_account_email = Module::pool('Account email');
-    $redirect = base_path().'/editor.php?id_module='.$modulo_account_email->id.'&id_record='.$account->id;
+    $redirect = $account->after_configuration;
 }
 
 if (empty($_GET['error'])) {

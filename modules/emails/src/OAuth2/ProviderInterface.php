@@ -2,12 +2,8 @@
 
 namespace Modules\Emails\OAuth2;
 
-use Modules\Emails\Account;
-
 interface ProviderInterface
 {
-    public function __construct(Account $account, $redirect_uri);
-
     /**
      * Restituisce l'array di configurazione per la connessione remota al servizio del provider.
      *

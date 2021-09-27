@@ -240,4 +240,47 @@ $(document).ready(function() {
         }
     });
 });
+
+function testInvio(button) {
+    const destinatario_id = $(button).data("id");
+    const destinatario_type = $(button).data("type");
+    const email = $(button).data("email");
+
+    swal({
+        title: "'.tr('Invio di test?').'",
+        html: `'.tr("Vuoi effettuare un invio di test all'indirizzo _EMAIL_?", ['_EMAIL_' => '${email}']).' '.tr("L'email non sarà registrata come inviata, e l'invio della newsletter non escluderà questo indirizzo").'.`,
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "'.tr('Invia').'",
+        confirmButtonClass: "btn btn-lg btn-success",
+    }).then(function() {
+        const restore = buttonLoading(button);
+        $.ajax({
+            url: globals.rootdir + "/actions.php",
+            type: "POST",
+            dataType: "JSON",
+            data: {
+                id_module: globals.id_module,
+                id_record: globals.id_record,
+                op: "test",
+                id: destinatario_id,
+                type: destinatario_type,
+            },
+            success: function (response) {
+                buttonRestore(button, restore);
+
+                if (response.result) {
+                    swal("'.tr('Invio completato').'", "", "success");
+                } else {
+                    swal("'.tr('Invio fallito').'", "", "error");
+                }
+            },
+            error: function() {
+                buttonRestore(button, restore);
+
+                swal("'.tr('Errore').'", "'.tr("Errore durante l'invio dell'email").'", "error");
+            }
+        });
+    });
+}
 </script>';

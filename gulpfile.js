@@ -399,6 +399,7 @@ function release(done) {
         '!include/custom/**',
         '!backup/**',
         '!files/**',
+        'files/temp/.gitkeep',
         '!logs/**',
         '!config.inc.php',
         '!update/structure.php',

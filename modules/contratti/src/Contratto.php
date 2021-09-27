@@ -50,8 +50,10 @@ class Contratto extends Document
      * @var array
      */
     protected $dates = [
+        'data_bozza',
         'data_conclusione',
         'data_accettazione',
+        'data_rifiuto',
     ];
 
     /**

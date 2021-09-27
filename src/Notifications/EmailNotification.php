@@ -69,16 +69,15 @@ class EmailNotification extends PHPMailer implements NotificationInterface
                 $this->Username = $account['username'];
 
                 // Configurazione OAuth2
-                if (!empty($account['access_token'])) {
-                    $oauth2 = $account->getGestoreOAuth2();
-
+                $oauth2 = $account->oauth2;
+                if (!empty($oauth2)) {
                     $this->AuthType = 'XOAUTH2';
                     $this->setOAuth(
                         new OAuth([
                             'provider' => $oauth2->getProvider(),
                             'refreshToken' => $oauth2->getRefreshToken(),
-                            'clientId' => $account->client_id,
-                            'clientSecret' => $account->client_secret,
+                            'clientId' => $oauth2->client_id,
+                            'clientSecret' => $oauth2->client_secret,
                             'userName' => $account->username,
                         ])
                     );

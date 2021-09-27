@@ -214,6 +214,97 @@ switch (post('op')) {
             'id_tecnico' => $tecnici_assegnati,
         ]);
 
+        if (!empty(post('ricorsiva'))) {
+            $periodicita = post('periodicita');
+            $data = post('data_inizio_ricorrenza');
+            $interval = post('tipo_periodicita') != 'manual' ? post('tipo_periodicita') : 'days';
+            $stato = Stato::find(post('idstatoricorrenze'));
+
+            // Estraggo le date delle ricorrenze
+            if (post('metodo_ricorrenza') == 'data') {
+                $data_fine = post('data_fine_ricorrenza');
+                while (strtotime($data) <= strtotime($data_fine)) {
+                    $data = date('Y-m-d', strtotime('+'.$periodicita.' '.$interval.'', strtotime($data)));
+                    $w = date('w', strtotime($data));
+                    //Escludo sabato e domenica
+                    if ($w == '6') {
+                        $data = date('Y-m-d', strtotime('+2 day', strtotime($data)));
+                    } elseif ($w == '0') {
+                        $data = date('Y-m-d', strtotime('+1 day', strtotime($data)));
+                    }
+                    if ($data <= $data_fine) {
+                        $date_ricorrenze[] = $data;
+                    }
+                }
+            } else {
+                $ricorrenze = post('numero_ricorrenze');
+                for ($i = 0; $i < $ricorrenze; ++$i) {
+                    $data = date('Y-m-d', strtotime('+'.$periodicita.' '.$interval.'', strtotime($data)));
+                    $w = date('w', strtotime($data));
+                    //Escludo sabato e domenica
+                    if ($w == '6') {
+                        $data = date('Y-m-d', strtotime('+2 day', strtotime($data)));
+                    } elseif ($w == '0') {
+                        $data = date('Y-m-d', strtotime('+1 day', strtotime($data)));
+                    }
+
+                    $date_ricorrenze[] = $data;
+                }
+            }
+
+            foreach ($date_ricorrenze as $data_ricorrenza) {
+                $intervento = Intervento::find($id_record);
+                $new = $intervento->replicate();
+                // Calcolo il nuovo codice
+                $new->codice = Intervento::getNextCodice($data_ricorrenza);
+                $new->data_richiesta = $data_ricorrenza;
+                $new->idstatointervento = $stato->idstatointervento;
+                $new->save();
+                $idintervento = $new->id;
+
+                // Inserimento sessioni
+                if (!empty(post('riporta_sessioni'))) {
+                    $numero_sessione = 0;
+                    $sessioni = $intervento->sessioni;
+                    foreach ($sessioni as $sessione) {
+                        // Se è la prima sessione che copio importo la data con quella della richiesta
+                        if ($numero_sessione == 0) {
+                            $orario_inizio = date('Y-m-d', strtotime($data_ricorrenza)).' '.date('H:i:s', strtotime($sessione->orario_inizio));
+                        } else {
+                            $diff = strtotime($sessione->orario_inizio) - strtotime($inizio_old);
+                            $orario_inizio = date('Y-m-d H:i:s', (strtotime($sessione->orario_inizio) + $diff));
+                        }
+
+                        $diff_fine = strtotime($sessione->orario_fine) - strtotime($sessione->orario_inizio);
+                        $orario_fine = date('Y-m-d H:i:s', (strtotime($orario_inizio) + $diff_fine));
+
+                        $new_sessione = $sessione->replicate();
+                        $new_sessione->idintervento = $new->id;
+                        $new_sessione->orario_inizio = $orario_inizio;
+                        $new_sessione->orario_fine = $orario_fine;
+                        $new_sessione->save();
+
+                        ++$numero_sessione;
+                        $inizio_old = $sessione->orario_inizio;
+                    }
+                }
+
+                // Assegnazione dei tecnici all'intervento
+                $tecnici_assegnati = (array) post('tecnici_assegnati');
+                $dbo->sync('in_interventi_tecnici_assegnati', [
+                    'id_intervento' => $new->id,
+                ], [
+                    'id_tecnico' => $tecnici_assegnati,
+                ]);
+
+                ++$n_ricorrenze;
+            }
+
+            flash()->info(tr('Aggiunte _NUM_ nuove ricorrenze!', [
+              '_NUM_' => $n_ricorrenze,
+            ]));
+        }
+
         if (post('ref') == 'dashboard') {
             flash()->clearMessage('info');
             flash()->clearMessage('warning');

@@ -357,6 +357,8 @@ if (!empty($righe)) {
                     $id_articolo = $database->fetchOne('SELECT id FROM mg_articoli WHERE REPLACE(codice, " ", "") = '.prepare($codice_principale))['id'];
                 }
             }
+
+            $idconto_acquisto = $database->fetchOne('SELECT idconto_acquisto FROM mg_articoli WHERE id = '.prepare($id_articolo))['idconto_acquisto'];
         }
 
         $qta = $riga['Quantita'];

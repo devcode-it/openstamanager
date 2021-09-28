@@ -294,6 +294,14 @@ echo '
     </div>';
 
 // Righe
+if (setting('Aggiorna info di acquisto')=='Non aggiornare'){
+    $update_info = 'update_not';
+} elseif (setting('Aggiorna info di acquisto')=='Aggiorna prezzo di listino'){ 
+    $update_info ='update_price'; 
+} else{
+    $update_info = 'update_all';
+}
+
 $righe = $fattura_pa->getRighe();
 if (!empty($righe)) {
     echo '
@@ -413,34 +421,45 @@ if (!empty($righe)) {
                 <input type="hidden" name="id_riga_riferimento_vendita['.$key.']" id="id_riga_riferimento_vendita_'.$key.'" value="">
                 <input type="hidden" name="tipo_riga_riferimento_vendita['.$key.']" id="tipo_riga_riferimento_vendita_'.$key.'" value="">
 
-                <div class="col-md-12">
+                <div class="box collapsed-box" style="background:#eeeeee;">
+                    <div class="box-header">
+                        <div class="row">
+                            <div class="col-md-5">
+                                {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "select-options": '.json_encode(['permetti_movimento_a_zero' => 1, 'dir' => 'entrata', 'idanagrafica' => $anagrafica ? $anagrafica->id : '']).', "icon-after": "add|'.Modules::get('Articoli')['id'].'|codice='.str_replace('\\', '/', htmlentities($codice_principale)).'&descrizione='.str_replace('\\', '/', str_replace('\'', '&lsquo;', htmlentities($riga['Descrizione']))).'", "value": "'.$id_articolo.'", "label": "'.tr('Articolo').'", "extra": "data-id=\''.$key.'\'" ]}
+                            </div>
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "select-options": '.json_encode(['permetti_movimento_a_zero' => 1, 'dir' => 'entrata', 'idanagrafica' => $anagrafica ? $anagrafica->id : '']).', "icon-after": "add|'.Modules::get('Articoli')['id'].'|codice='.str_replace('\\', '/', htmlentities($codice_principale)).'&descrizione='.str_replace('\\', '/', str_replace('\'', '&lsquo;', htmlentities($riga['Descrizione']))).'", "value": "'.$id_articolo.'", "label": "'.tr('Articolo').'", "extra": "data-id=\''.$key.'\'" ]}
-                        </div>
+                            <div class="col-md-3">
+                                {[ "type": "select", "name": "conto['.$key.']", "id": "conto-'.$key.'", "ajax-source": "conti-acquisti", "required": 1, "label": "'.tr('Conto acquisti').'", "value": "'.$idconto_acquisto.'" ]}
+                            </div>
 
-                        <div class="col-md-3">
-                            {[ "type": "select", "name": "conto['.$key.']", "id": "conto-'.$key.'", "ajax-source": "conti-acquisti", "required": 1, "label": "'.tr('Conto acquisti').'", "value": "'.$idconto_acquisto.'" ]}
-                        </div>
+                            <div class="col-md-3">
+                                {[ "type": "select", "name": "iva['.$key.']", "values": '.json_encode('query='.$query).', "required": 1, "label": "'.tr('Aliquota IVA').'" ]}
+                            </div>
 
-                        <div class="col-md-3">
-                            {[ "type": "select", "name": "iva['.$key.']", "values": '.json_encode('query='.$query).', "required": 1, "label": "'.tr('Aliquota IVA').'" ]}
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-3">
-                            {[ "type": "select", "name": "selezione_riferimento['.$key.']", "ajax-source": "riferimenti-fe", "select-options": '.json_encode(['id_anagrafica' => $anagrafica ? $anagrafica->id : '']).', "label": "'.tr('Riferimento acquisto').'", "icon-after": '.json_encode('<button type="button" onclick="rimuoviRiferimento(this)" class="btn btn-primary disabled" id="rimuovi_riferimento_'.$key.'"><i class="fa fa-close"></i></button>').', "help": "'.tr('Articoli contenuti in Ordini o DDT del Fornitore').'" ]}
-                        </div>
-
-                        <div class="col-md-3">
-                            {[ "type": "select", "name": "selezione_riferimento_vendita['.$key.']", "ajax-source": "riferimenti-vendita-fe", "select-options": '.json_encode(['id_articolo' => $id_articolo]).', "label": "'.tr('Riferimento vendita').'", "icon-after": '.json_encode('<button type="button" onclick="rimuoviRiferimentoVendita(this)" class="btn btn-primary disabled" id="rimuovi_riferimento_vendita_'.$key.'"><i class="fa fa-close"></i></button>').', "help": "'.tr('Articoli contenuti in Ordini Cliente').'" ]}
+                            <div class="col-md-1 box-tools">
+                                <br>
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse" onclick="$(this).find(\'i\').toggleClass(\'fa-plus\').toggleClass(\'fa-minus\');">
+                                <i class="fa fa-plus"></i> '.tr('Altro').'
+                                </button>
+                            </div>
                         </div>
                     </div>
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                {[ "type": "select", "name": "selezione_riferimento['.$key.']", "ajax-source": "riferimenti-fe", "select-options": '.json_encode(['id_anagrafica' => $anagrafica ? $anagrafica->id : '']).', "label": "'.tr('Riferimento acquisto').'", "icon-after": '.json_encode('<button type="button" onclick="rimuoviRiferimento(this)" class="btn btn-primary disabled" id="rimuovi_riferimento_'.$key.'"><i class="fa fa-close"></i></button>').', "help": "'.tr('Articoli contenuti in Ordini o DDT del Fornitore').'" ]}
+                            </div>
 
+                            <div class="col-md-3">
+                                {[ "type": "select", "name": "selezione_riferimento_vendita['.$key.']", "ajax-source": "riferimenti-vendita-fe", "select-options": '.json_encode(['id_articolo' => $id_articolo]).', "label": "'.tr('Riferimento vendita').'", "icon-after": '.json_encode('<button type="button" onclick="rimuoviRiferimentoVendita(this)" class="btn btn-primary disabled" id="rimuovi_riferimento_vendita_'.$key.'"><i class="fa fa-close"></i></button>').', "help": "'.tr('Articoli contenuti in Ordini Cliente').'" ]}
+                            </div>
+
+                            <div class="col-md-6">
+                                {[ "type": "select", "name": "update_info['.$key.']", "values": "list=\"update_not\":\"Non aggiornare\", \"update_price\":\"Aggiorna prezzo di listino\", \"update_all\":\"Aggiorna prezzo di acquisto + imposta fornitore predefinito\"", "label": "'.tr('Aggiorna info di acquisto').'", "value": "'.$update_info.'" ]}
+                            </div>
+                        </div>
+                    </div> 
                 </div>
-
             </td>
         </tr>';
     }

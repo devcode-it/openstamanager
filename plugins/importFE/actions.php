@@ -132,6 +132,7 @@ switch (filter('op')) {
             'movimentazione' => post('movimentazione'),
             'crea_articoli' => post('crea_articoli'),
             'is_ritenuta_pagata' => post('is_ritenuta_pagata'),
+            'update_info' => post('update_info'),
         ];
 
         $fattura_pa = FatturaElettronica::manage($filename);

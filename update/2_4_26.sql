@@ -130,6 +130,3 @@ ALTER TABLE `em_accounts` ADD `id_oauth2` INT(11) DEFAULT NULL,
 -- Aggiunta opt-out Newsletter per Referenti e Sedi
 ALTER TABLE `an_referenti` ADD `enable_newsletter` BOOLEAN DEFAULT TRUE;
 ALTER TABLE `an_sedi` ADD `enable_newsletter` BOOLEAN DEFAULT TRUE;
-
--- Aggiunta impostazione aggiornamento prezzi e fornitore in fase di import FE
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Aggiorna info di acquisto', 'Non aggiornare', 'list[Non aggiornare,Aggiorna prezzo di listino,Aggiorna prezzo di acquisto + imposta fornitore predefinito]', '1', 'Fatturazione', '16', NULL);

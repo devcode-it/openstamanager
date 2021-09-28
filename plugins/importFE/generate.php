@@ -417,11 +417,11 @@ if (!empty($righe)) {
 
                     <div class="row">
                         <div class="col-md-6">
-                            {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "select-options": '.json_encode(['permetti_movimento_a_zero' => 1, 'dir' => 'entrata', 'idanagrafica' => $anagrafica ? $anagrafica->id : '']).', "icon-after": "add|'.Modules::get('Articoli')['id'].'|codice='.str_replace('\\', '/', htmlentities($codice_principale)).'&descrizione='.str_replace('\\', '/', str_replace('\'', '&lsquo;', htmlentities($riga['Descrizione']))).'", "value": "'.$id_articolo.'", "label": "'.tr('Articolo').'" ]}
+                            {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "select-options": '.json_encode(['permetti_movimento_a_zero' => 1, 'dir' => 'entrata', 'idanagrafica' => $anagrafica ? $anagrafica->id : '']).', "icon-after": "add|'.Modules::get('Articoli')['id'].'|codice='.str_replace('\\', '/', htmlentities($codice_principale)).'&descrizione='.str_replace('\\', '/', str_replace('\'', '&lsquo;', htmlentities($riga['Descrizione']))).'", "value": "'.$id_articolo.'", "label": "'.tr('Articolo').'", "extra": "data-id=\''.$key.'\'" ]}
                         </div>
 
                         <div class="col-md-3">
-                            {[ "type": "select", "name": "conto['.$key.']", "ajax-source": "conti-acquisti", "required": 1, "label": "'.tr('Conto acquisti').'" ]}
+                            {[ "type": "select", "name": "conto['.$key.']", "id": "conto-'.$key.'", "ajax-source": "conti-acquisti", "required": 1, "label": "'.tr('Conto acquisti').'", "value": "'.$idconto_acquisto.'" ]}
                         </div>
 
                         <div class="col-md-3">
@@ -683,6 +683,11 @@ function rimuoviRiferimentoVendita(button) {
 }
 
 $("[id^=\'articoli\']").change(function() {
+    $("#conto-"+$(this).data("id")).selectReset();
     updateSelectOption("id_articolo", $(this).val());
+    let data = $(this).selectData();
+    if(data!==undefined){
+        $("#conto-"+$(this).data("id")).selectSetNew(data.idconto_acquisto, data.idconto_acquisto_title);
+    }
 });
 </script>';

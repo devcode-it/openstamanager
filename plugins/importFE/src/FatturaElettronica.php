@@ -320,6 +320,9 @@ class FatturaElettronica
         $fattura->idpagamento = $id_pagamento;
         $fattura->is_ritenuta_pagata = $is_ritenuta_pagata;
 
+        // Banca addebito
+        $fattura->id_banca_azienda = $fattura->anagrafica->idbanca_acquisti ?: null;
+
         // Riferimento per nota di credito e debito
         $fattura->ref_documento = $ref_fattura ?: null;
 

@@ -4,6 +4,7 @@ import '@material/mwc-fab';
 import collect from 'collect.js';
 import {Children} from 'mithril';
 
+import {Model} from '../../Models';
 import DataTable from '../DataTable/DataTable.jsx';
 import TableBody from '../DataTable/TableBody.jsx';
 import TableCell from '../DataTable/TableCell.jsx';
@@ -29,6 +30,8 @@ export default class RecordsPage extends Page {
   rows: string[][] = [];
 
   dialogs: Children[];
+
+  model: Model;
 
   tableColumns(): Children {
     return collect(this.columns)

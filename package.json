@@ -39,6 +39,7 @@
         "async-wait-until": "^2.0.7",
         "classnames": "^2.3.1",
         "collect.js": "^4.29.0",
+        "javel": "^0.1.7",
         "jquery": "^3.6.0",
         "lit-element": "^3.0.0",
         "locale-code": "^2.0.2",
@@ -46,7 +47,8 @@
         "mithril": "^2.0.4",
         "mithril-node-render": "^3.0.2",
         "modern-normalize": "^1.1.0",
-        "openstamanager": "link:."
+        "openstamanager": "link:.",
+        "redaxios": "^0.4.1"
     },
     "devDependencies": {
         "@adeira/babel-preset-adeira": "^4.0.0",

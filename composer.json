@@ -41,7 +41,7 @@
         "riverskies/laravel-mobile-detect": "^1",
         "tightenco/ziggy": "^1",
         "innocenzi/laravel-vite": "^0",
-        "openstamanager/standard-modules": "@dev"
+        "openstamanager/standard_modules": "@dev"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2",

@@ -32,7 +32,7 @@ class ServicesHook extends Manager
         $risorse_in_scadenza = Services::getRisorseInScadenza($limite_scadenze);
 
         $message = tr('I seguenti servizi sono in scadenza: _LIST_', [
-            '_LIST_' => implode(', ', $risorse_in_scadenza->pluck('nome')->all()),
+            '_LIST_' => implode(', ', $risorse_in_scadenza->pluck('name')->all()),
         ]);
 
         return [

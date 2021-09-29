@@ -43,7 +43,7 @@ if (count($split1) !== 1) {
     $split = explode('/', $split1[0]);
     $vendor = $split[0];
     $module = $split[1];
-    $path = "vendor/$vendor/$module/index.js";
+    $path = "vendor/$vendor/$module/js/index.js";
 }
 @endphp
 @empty($path)

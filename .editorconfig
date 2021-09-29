@@ -6,5 +6,5 @@ charset = utf-8
 [*.md]
 trim_trailing_whitespace = false
 
-[*.{yml,yaml}]
+[*.{yml,yaml,js,eslintrc.js}]
 indent_size = 2

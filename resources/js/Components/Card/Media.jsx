@@ -1,4 +1,4 @@
-import Component from '../Component';
+import Component from '../Component.jsx';
 
 export default class Media extends Component {
   view(vnode) {

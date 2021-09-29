@@ -1,6 +1,6 @@
 import '@material/mwc-ripple';
 
-import Component from '../Component';
+import Component from '../Component.jsx';
 
 export default class PrimaryAction extends Component {
   view(vnode) {

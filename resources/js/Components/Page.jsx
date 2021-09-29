@@ -2,7 +2,7 @@ import {Vnode} from 'mithril';
 import {sync as render} from 'mithril-node-render';
 
 import {containsHTML} from '../utils';
-import Component from './Component';
+import Component from './Component.jsx';
 
 /**
  * The `Page` component
@@ -13,8 +13,8 @@ export default class Page extends Component {
   page: {
     component: string,
     locale: string,
-    props: Object,
-    translations: Object,
+    props: {...},
+    translations: {...},
     url: string,
     version: string,
     ...
@@ -36,7 +36,7 @@ export default class Page extends Component {
    */
   __(
     key: string | Vnode,
-    replace: Object | boolean = {},
+    replace: {...} | boolean = {},
     returnAsString: boolean = false
   ): Vnode {
     let translation = (this.page.translations && this.page.translations[key])

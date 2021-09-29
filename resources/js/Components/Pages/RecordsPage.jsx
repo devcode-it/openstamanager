@@ -4,15 +4,15 @@ import '@material/mwc-fab';
 import collect from 'collect.js';
 import {Children} from 'mithril';
 
-import DataTable from '../DataTable/DataTable';
-import TableBody from '../DataTable/TableBody';
-import TableCell from '../DataTable/TableCell';
-import TableHead from '../DataTable/TableHead';
-import TableHeadCell from '../DataTable/TableHeadCell';
-import TableHeadRow from '../DataTable/TableHeadRow';
-import TableRow from '../DataTable/TableRow';
-import Mdi from '../Mdi';
-import Page from '../Page';
+import DataTable from '../DataTable/DataTable.jsx';
+import TableBody from '../DataTable/TableBody.jsx';
+import TableCell from '../DataTable/TableCell.jsx';
+import TableHead from '../DataTable/TableHead.jsx';
+import TableHeadCell from '../DataTable/TableHeadCell.jsx';
+import TableHeadRow from '../DataTable/TableHeadRow.jsx';
+import TableRow from '../DataTable/TableRow.jsx';
+import Mdi from '../Mdi.jsx';
+import Page from '../Page.jsx';
 
 export type ColumnT = {
   id?: string,
@@ -24,11 +24,11 @@ export type ColumnT = {
  * @abstract
  */
 export default class RecordsPage extends Page {
-  columns: Object<string | ColumnT> | Array<ColumnT>;
+  columns: string[] | {[string]: ColumnT} | ColumnT[];
 
-  rows: Array<Array<string>> = [];
+  rows: string[][] = [];
 
-  dialogs: Array<Children>;
+  dialogs: Children[];
 
   tableColumns(): Children {
     return collect(this.columns)

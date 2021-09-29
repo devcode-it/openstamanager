@@ -13,13 +13,13 @@ import Mithril from 'mithril';
 
 import logoUrl from '@/static/images/logo_completo.png';
 
-import Card from '../Components/Card/Card';
-import Content from '../Components/Card/Content';
-import Cell from '../Components/Grid/Cell';
-import LayoutGrid from '../Components/Grid/LayoutGrid';
-import Row from '../Components/Grid/Row';
-import Mdi from '../Components/Mdi';
-import Page from '../Components/Page';
+import Card from '../Components/Card/Card.jsx';
+import Content from '../Components/Card/Content.jsx';
+import Cell from '../Components/Grid/Cell.jsx';
+import LayoutGrid from '../Components/Grid/LayoutGrid.jsx';
+import Row from '../Components/Grid/Row.jsx';
+import Mdi from '../Components/Mdi.jsx';
+import Page from '../Components/Page.jsx';
 
 export default class SetupPage extends Page {
   languages() {

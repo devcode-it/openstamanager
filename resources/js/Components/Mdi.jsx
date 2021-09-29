@@ -1,4 +1,4 @@
-import Component from './Component';
+import Component from './Component.jsx';
 
 export default class Mdi extends Component {
   view(vnode) {
@@ -7,8 +7,8 @@ export default class Mdi extends Component {
   }
 }
 
-/*
-    Quando MWC supporterà pienamente le icone SVG potremo fare così:
+/**
+    Quando MWC supporterà pienamente le icone SVG si potrà fare così:
     import * as mdi from '@mdi/js';
     import {camelCase} from 'lodash/string';
 
@@ -16,4 +16,6 @@ export default class Mdi extends Component {
     {...vnode.attrs} viewBox={vnode.attrs.viewBox ?? '0 0 24 24'}>
       <path d={vnode.attrs.icon ? mdi[camelCase(`mdi-${vnode.attrs.icon}`)] : ''} />
     </svg>;
+
+    @see https://github.com/material-components/material-web/issues/1812
 */

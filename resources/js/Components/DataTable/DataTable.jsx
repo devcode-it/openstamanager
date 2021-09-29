@@ -2,8 +2,8 @@ import '@material/mwc-linear-progress';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-select';
 
-import Component from '../Component';
-import Mdi from '../Mdi';
+import Component from '../Component.jsx';
+import Mdi from '../Mdi.jsx';
 
 export default class DataTable extends Component {
   view(vnode) {

@@ -10,7 +10,8 @@ interface Attributes extends Collection {
   addStyles(...styles: string[]): void
 }
 
-// noinspection SpellCheckingInspection
+// eslint-disable-next-line no-secrets/no-secrets
+// noinspection SpellCheckingInspection,JSUnusedGlobalSymbols
 /**
  * @abstract
  *
@@ -119,7 +120,7 @@ export default class Component implements ClassComponent {
    */
   $(selector?: string): JQuery {
     const $element: JQuery<HTMLElement> = $(this.element);
-    return selector ? $element.find((element) => selector(element)) : $element;
+    return selector ? $element.find(element => selector(element)) : $element;
   }
 
 
@@ -129,7 +130,7 @@ export default class Component implements ClassComponent {
    *
    * @see https://js.org/hyperscript.html#mselector,-attributes,-children
    */
-  static component(attributes = {}, children): Vnode {
+  static component(attributes: {...} = {}, children): Vnode {
     const componentAttributes: Record<string, any> = { ...attributes};
 
     return m(this, componentAttributes, children);
@@ -141,7 +142,7 @@ export default class Component implements ClassComponent {
    *
    * @private
    */
-  setAttrs(attributes: Object = {}): void {
+  setAttrs(attributes: {...} = {}): void {
     this.initAttrs(attributes);
     if (attributes) {
       if ('children' in attributes) {
@@ -176,5 +177,5 @@ export default class Component implements ClassComponent {
    *
    * @protected
    */
-  initAttrs(attributes: Object): void {}
+  initAttrs(attributes: {...}): void {}
 }

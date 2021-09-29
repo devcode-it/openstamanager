@@ -3,7 +3,7 @@
 /**
  * Check if class/object A is the same as or a subclass of class B.
  */
-export function subclassOf(A: Object, B: Object): boolean {
+export function subclassOf(A: {...}, B: {...}): boolean {
   // noinspection JSUnresolvedVariable
   return A && (A === B || A.prototype instanceof B);
 }

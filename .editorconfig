@@ -7,5 +7,5 @@ end_of_line = lf
 [*.md]
 trim_trailing_whitespace = false
 
-[*.{yml,yaml,js,eslintrc.js}]
+[*.{yml,yaml,js,jsx,eslintrc.js}]
 indent_size = 2

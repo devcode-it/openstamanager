@@ -25,7 +25,7 @@ export type ColumnT = {
  * @abstract
  */
 export default class RecordsPage extends Page {
-  columns: {[string]: [string]} | {[string]: ColumnT} | ColumnT[];
+  columns: {[string]: [string] | ColumnT} | ColumnT[];
 
   rows: string[][] = [];
 

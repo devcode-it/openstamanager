@@ -10,7 +10,6 @@
       <data directive="@cannot" injection="true" prefix="&lt;?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)-&gt;denies(" suffix=")): ?&gt;" />
       <data directive="@case" injection="true" prefix="&lt;?php case (" suffix="): ?&gt;" />
       <data directive="@choice" injection="true" prefix="&lt;?php echo app('translator')-&gt;choice(" suffix="); ?&gt;" />
-      <data directive="@class" injection="true" prefix="class=&quot;&lt;?php echo \Illuminate\Support\Arr::toCssClasses(" suffix=")?&gt;&quot;" />
       <data directive="@client" />
       <data directive="@component" injection="true" prefix="&lt;?php $__env-&gt;startComponent(" suffix="); ?&gt;" />
       <data directive="@componentfirst" injection="true" prefix="&lt;?php $__env-&gt;startComponentFirst(" suffix="); ?&gt;" />
@@ -70,6 +69,7 @@
       <data directive="@includeFirst" injection="true" prefix="&lt;?php echo $__env-&gt;first(" suffix=", \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))-&gt;render(); ?&gt;" />
       <data directive="@includeUnless" injection="true" prefix="&lt;?php echo $__env-&gt;renderWhen(! " suffix=", \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path'])); ?&gt;" />
       <data directive="@includeWhen" injection="true" prefix="&lt;?php echo $__env-&gt;renderWhen(" suffix=", \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path'])); ?&gt;" />
+      <data directive="@inertia" />
       <data directive="@isset" injection="true" prefix="&lt;?php if(isset(" suffix=")): ?&gt;" />
       <data directive="@json" injection="true" prefix="&lt;?php echo json_encode(" suffix=") ?&gt;" />
       <data directive="@lang" injection="true" prefix="&lt;?php echo app('translator')-&gt;get(" suffix="); ?&gt;" />

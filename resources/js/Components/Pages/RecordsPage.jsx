@@ -18,7 +18,7 @@ import Page from '../Page.jsx';
 export type ColumnT = {
   id?: string,
   title: string,
-  type: 'checkbox' | 'numeric' | null
+  type?: 'checkbox' | 'numeric'
 }
 
 /**

@@ -37,7 +37,7 @@ export default class RecordsPage extends Page {
     return collect(this.columns)
       .map(
         (column: ColumnT | string, id: string) => (
-          <TableHeadCell id={id} key={id} {...(column ?? {})}>
+          <TableHeadCell id={id} key={id} {...((typeof column === 'object') ? column : {})}>
             {typeof column === 'string' ? column : column.title}
           </TableHeadCell>
         )

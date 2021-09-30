@@ -51,6 +51,7 @@ if (count($split1) !== 1) {
 <script type="importmap">
 {
   "imports": {
+    "openstamanager": "{{vite_asset('index.js')}}",
     "external_module": "{{vite_asset($path)}}"
   }
 }

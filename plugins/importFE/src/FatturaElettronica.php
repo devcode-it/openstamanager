@@ -21,6 +21,7 @@ namespace Plugins\ImportFE;
 
 use Modules;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Banche\Banca;
 use Modules\Anagrafiche\Nazione;
 use Modules\Anagrafiche\Tipo as TipoAnagrafica;
 use Modules\Fatture\Fattura;
@@ -320,8 +321,14 @@ class FatturaElettronica
         $fattura->idpagamento = $id_pagamento;
         $fattura->is_ritenuta_pagata = $is_ritenuta_pagata;
 
-        // Banca addebito
-        $fattura->id_banca_azienda = $fattura->anagrafica->idbanca_acquisti ?: null;
+        // Banca addebito del cliente o banca collegata al pagamento
+        if (!empty($fattura->anagrafica->idbanca_acquisti)) {
+            $banca = $fattura->anagrafica->idbanca_acquisti;
+        } else {
+            $banca = Banca::where('id_pianodeiconti3', $fattura->pagamento->idconto_acquisti)->where('id_anagrafica', setting('Azienda predefinita'))->first()->id;
+        }
+
+        $fattura->id_banca_azienda = $banca;
 
         // Riferimento per nota di credito e debito
         $fattura->ref_documento = $ref_fattura ?: null;

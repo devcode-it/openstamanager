@@ -312,7 +312,7 @@ $(document).on("keyup change", "input[id*=dare]", function() {
     let row = $(this).parent().parent();
 
     if (!$(this).prop("disabled")) {
-        row.find("input[id*=avere]").prop("disabled", !!$(this).val());
+        row.find("input[id*=avere]").prop("disabled", $(this).val().toEnglish());
 
         controllaConti();
     }
@@ -322,7 +322,7 @@ $(document).on("keyup change", "input[id*=avere]", function() {
     let row = $(this).parent().parent();
 
     if (!$(this).prop("disabled")) {
-        row.find("input[id*=dare]").prop("disabled", !!$(this).val());
+        row.find("input[id*=dare]").prop("disabled", $(this).val().toEnglish());
 
         controllaConti();
     }

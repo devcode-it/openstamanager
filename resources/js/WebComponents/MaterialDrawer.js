@@ -1,5 +1,5 @@
 import {Drawer as MWCDrawer} from '@material/mwc-drawer';
-import {css} from 'lit-element';
+import {css} from 'lit';
 
 export default class MaterialDrawer extends MWCDrawer {
   static styles = [MWCDrawer.styles, css`

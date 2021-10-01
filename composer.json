@@ -35,22 +35,19 @@
         "fruitcake/laravel-cors": "^2",
         "guzzlehttp/guzzle": "^7",
         "inertiajs/inertia-laravel": "^0",
+        "innocenzi/laravel-vite": "^0",
         "laravel/framework": "^8",
         "laravel/tinker": "^2",
         "nette/utils": "^3",
+        "openstamanager/standard_modules": "@dev",
         "riverskies/laravel-mobile-detect": "^1",
-        "tightenco/ziggy": "^1",
-        "innocenzi/laravel-vite": "^0",
-        "openstamanager/standard_modules": "@dev"
+        "tightenco/ziggy": "^1"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2",
         "facade/ignition": "^2",
-        "fakerphp/faker": "^1",
         "friendsofphp/php-cs-fixer": "^3",
         "kkomelin/laravel-translatable-string-exporter": "^1",
-        "laravel/sail": "^1",
-        "mockery/mockery": "^1",
         "nunomaduro/collision": "^5",
         "roave/security-advisories": "dev-latest"
     },

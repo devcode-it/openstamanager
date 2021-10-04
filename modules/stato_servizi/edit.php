@@ -128,68 +128,71 @@ if (Services::isEnabled()) {
 
         echo '
 
-            <hr><br>
+                <hr><br>
 
-            <div class="alert alert-warning hidden" role="alert" id="spazio-fe">
-                <i class="fa fa-warning"></i> '.tr('Spazio per Fatture Elettroniche in esaurimento: _NUM_/_TOT_', [
-                    '_NUM_' => '<span id="spazio-fe-occupato"></span>',
-                    '_TOT_' => '<span id="spazio-fe-totale"></span>',
-                ]).'. '.tr("Contatta l'assistenza per maggiori informazioni").'.
-            </div>
+                <div class="alert alert-warning hidden" role="alert" id="spazio-fe">
+                    <i class="fa fa-warning"></i> '.tr('Spazio per Fatture Elettroniche in esaurimento: _NUM_/_TOT_', [
+                        '_NUM_' => '<span id="spazio-fe-occupato"></span>',
+                        '_TOT_' => '<span id="spazio-fe-totale"></span>',
+                    ]).'. '.tr("Contatta l'assistenza per maggiori informazioni").'.
+                </div>
 
-            <h4>'.tr('Statistiche su Fatture Elettroniche').'</h4>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>'.tr('Anno').'</th>
-                        <th>
-                            '.tr('Documenti archiviati').'
-                            <span class="tip" title="'.tr('Fatture attive e relative ricevute, fatture passive').'.">
-                                <i class="fa fa-question-circle-o"></i>
-                            </span>
-                        </th>
+                <h4>'.tr('Statistiche su Fatture Elettroniche').'</h4>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>'.tr('Anno').'</th>
+                            <th>
+                                '.tr('Documenti archiviati').'
+                                <span class="tip" title="'.tr('Fatture attive e relative ricevute, fatture passive').'.">
+                                    <i class="fa fa-question-circle-o"></i>
+                                </span>
+                            </th>
 
-                        <th>
-                            '.tr('Totale spazio occupato').'
-                            <span class="tip" title="'.tr('Fatture attive con eventuali allegati e ricevute, fatture passive con eventuali allegati').'.">
-                                <i class="fa fa-question-circle-o"></i>
-                            </span>
-                        </th>
-                    </tr>
-                </thead>
+                            <th>
+                                '.tr('Totale spazio occupato').'
+                                <span class="tip" title="'.tr('Fatture attive con eventuali allegati e ricevute, fatture passive con eventuali allegati').'.">
+                                    <i class="fa fa-question-circle-o"></i>
+                                </span>
+                            </th>
+                        </tr>
+                    </thead>
 
-                <tbody id="elenco-fe">
-                    <tr class="info">
-                        <td>'.tr('Totale').'</td>
-                        <td id="fe_numero"></td>
-                        <td id="fe_spazio"></td>
-                    </tr>
-                </tbody>
-            </table>
+                    <tbody id="elenco-fe">
+                        <tr class="info">
+                            <td>'.tr('Totale').'</td>
+                            <td id="fe_numero"></td>
+                            <td id="fe_spazio"></td>
+                        </tr>
+                    </tbody>
+                </table>
 
-            <script>
-            $(document).ready(function (){
-                aggiornaStatisticheFE();
-            });
-            </script>';
+                <script>
+                $(document).ready(function (){
+                    aggiornaStatisticheFE();
+                });
+                </script>';
     } else {
         echo '
-            <div class="alert alert-warning" role="alert">
-                <i class="fa fa-warning"></i> '.tr('Nessuna risorsa Services abilitata').'.
-            </div>';
+                <div class="alert alert-warning" role="alert">
+                    <i class="fa fa-warning"></i> '.tr('Nessuna risorsa Services abilitata').'.
+                </div>';
     }
 
     echo '
 
+            </div>
         </div>
     </div>';
 } else {
+    /*
     echo '
     <div class="col-md-12 col-lg-6">
         <div class="alert alert-warning" role="alert">
             <i class="fa fa-warning"></i> '.tr("Configurazione per l'accesso Services non completata correttamente").'. '.tr('Per abilitare i servizi, compilare l\'impostazione "OSMCloud Services API Token"').'.
         </div>
     </div>';
+    */
 }
 
 echo '

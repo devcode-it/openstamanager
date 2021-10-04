@@ -38,7 +38,7 @@ class ServicesHook extends Manager
         return [
             'icon' => 'fa fa-refresh text-warning',
             'message' => $message,
-            'show' => !$risorse_in_scadenza->isEmpty(),
+            'show' => Services::isEnabled() && !$risorse_in_scadenza->isEmpty(),
         ];
     }
 

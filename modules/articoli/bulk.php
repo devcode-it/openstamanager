@@ -49,11 +49,14 @@ switch (post('op')) {
         break;
 
     case 'change-vendita':
+        $percentuale = post('percentuale');
+        $prezzo_partenza = post('prezzo_partenza');
+
         foreach ($id_records as $id) {
             $articolo = Articolo::find($id);
-            $percentuale = post('percentuale');
+            $prezzo_partenza = post('prezzo_partenza')=='vendita' ? $articolo->prezzo_vendita : $articolo->prezzo_acquisto;
 
-            $new_prezzo_vendita = $articolo->prezzo_vendita + ($articolo->prezzo_vendita * $percentuale / 100);
+            $new_prezzo_vendita = $prezzo_partenza + ($prezzo_partenza * $percentuale / 100);
             $articolo->setPrezzoVendita($new_prezzo_vendita, $articolo->idiva_vendita);
             $articolo->save();
         }
@@ -205,7 +208,9 @@ $operations['change-vendita'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna prezzo di vendita').'</span>',
     'data' => [
         'title' => tr('Aggiornare il prezzo di vendita per gli articoli selezionati?'),
-        'msg' => 'Per indicare uno sconto inserire la percentuale con il segno meno, al contrario per un rincaro inserire la percentuale senza segno.<br><br>{[ "type": "number", "label": "'.tr('Percentuale sconto/magg.').'", "name": "percentuale", "required": 1, "icon-after": "%" ]}',
+        'msg' => 'Per indicare uno sconto inserire la percentuale con il segno meno, al contrario per un rincaro inserire la percentuale senza segno.<br><br>
+        {[ "type": "select", "label": "'.tr('Partendo da:').'", "name": "prezzo_partenza", "required": 1, "values": "list=\"acquisto\":\"Prezzo di acquisto\",\"vendita\":\"Prezzo di vendita\"" ]}<br>
+        {[ "type": "number", "label": "'.tr('Percentuale sconto/magg.').'", "name": "percentuale", "required": 1, "icon-after": "%" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

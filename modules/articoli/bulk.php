@@ -170,6 +170,29 @@ switch (post('op')) {
 
         download($file, 'articoli.csv');
         break;
+
+    case 'change-categoria':
+        $categoria = post('id_categoria');
+        $n_articoli = 0;
+
+        foreach ($id_records as $id) {
+            $articolo = Articolo::find($id);
+            $articolo->id_categoria = $categoria;
+            $articolo->id_sottocategoria = null;
+            $articolo->save();
+
+            ++$n_articoli;
+        }
+
+        if ($n_articoli > 0) {
+            flash()->info(tr('Categoria cambiata a _NUM_ articoli!', [
+                '_NUM_' => $n_articoli,
+            ]));
+        } else {
+            flash()->warning(tr('Nessun articolo modificato!'));
+        }
+
+        break;
 }
 
 if (App::debug()) {
@@ -250,6 +273,17 @@ $operations['crea-preventivo'] = [
         {[ "type": "select", "label": "'.tr('Cliente').'", "name": "id_cliente", "ajax-source": "clienti", "required": 1 ]}
         {[ "type": "select", "label": "'.tr('Tipo di attività').'", "name": "id_tipo", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento", "required": 1 ]}
         {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "value": "-now-" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
+
+$operations['change-categoria'] = [
+    'text' => '<span><i class="fa fa-briefcase"></i> '.tr('Aggiorna categoria').'</span>',
+    'data' => [
+        'title' => tr('Cambiare la categoria?'),
+        'msg' => tr('Per ciascun articolo selezionato, verrà modificata la categoria').'
+        <br><br>{[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 1, "ajax-source": "categorie" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
     ],

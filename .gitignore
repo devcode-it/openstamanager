@@ -6,6 +6,9 @@ resources/static/vendor/
 .idea/inertia.xml
 .idea/git_toolbox_prj.xml
 .php-cs-fixer.cache
+.phpstorm.meta.php
+_ide_helper.php
+_ide_helper_models.php
 
 # Created by https://www.toptal.com/developers/gitignore/api/phpstorm,laravel,composer
 # Edit at https://www.toptal.com/developers/gitignore?templates=phpstorm,laravel,composer

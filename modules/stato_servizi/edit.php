@@ -184,12 +184,14 @@ if (Services::isEnabled()) {
         </div>
     </div>';
 } else {
+    /*
     echo '
     <div class="col-md-12 col-lg-6">
         <div class="alert alert-warning" role="alert">
             <i class="fa fa-warning"></i> '.tr("Configurazione per l'accesso Services non completata correttamente").'. '.tr('Per abilitare i servizi, compilare l\'impostazione "OSMCloud Services API Token"').'.
         </div>
     </div>';
+    */
 }
 
 echo '

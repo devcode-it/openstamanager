@@ -2,7 +2,6 @@ import BaseModel from 'javel';
 import {snakeCase} from 'lodash';
 import redaxios from 'redaxios';
 
-// noinspection JSUnusedGlobalSymbols
 export default class Model extends BaseModel {
   urlPath: string;
 

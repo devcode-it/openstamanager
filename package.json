@@ -31,6 +31,7 @@
         "@material/mwc-menu": "^0.25.1",
         "@material/mwc-ripple": "^0.25.1",
         "@material/mwc-select": "^0.25.1",
+        "@material/mwc-snackbar": "^0.25.1",
         "@material/mwc-textarea": "^0.25.1",
         "@material/mwc-textfield": "^0.25.1",
         "@material/mwc-top-app-bar": "^0.25.1",

@@ -1,11 +1,13 @@
 import '@material/mwc-dialog';
 import '@material/mwc-fab';
+import '@material/mwc-snackbar';
 
 import type {TextFieldInputMode, TextFieldType} from '@material/mwc-textfield/mwc-textfield-base';
 import collect from 'collect.js';
 import {Children} from 'mithril';
 
 import {Model} from '../../Models';
+import {showSnackbar} from '../../utils';
 import DataTable from '../DataTable/DataTable.jsx';
 import TableBody from '../DataTable/TableBody.jsx';
 import TableCell from '../DataTable/TableCell.jsx';
@@ -78,7 +80,8 @@ export default class RecordsPage extends Page {
 
   sections: { [string]: SectionT } | [SectionT];
 
-  recordDialog: Children = <mwc-dialog heading={this.__('Aggiungi nuovo record')}>
+  recordDialog: Children = <mwc-dialog id="add-record-dialog"
+                                       heading={this.__('Aggiungi nuovo record')}>
     <form method="PUT">
       {(() => {
         const sections = collect(this.sections);
@@ -179,12 +182,24 @@ export default class RecordsPage extends Page {
     super.oncreate(vnode);
 
     $('mwc-fab#add-record')
-      .on('click', function () {
-        const dialog = $(this)
+      .on('click', (clickEvent) => {
+        const dialog = $(clickEvent.delegateTarget)
           .next('mwc-dialog#add-record-dialog');
 
         dialog.find('form')
-          .attr('method', 'PUT');
+          .attr('method', 'PUT')
+          .off()
+          .on('submit', async (event) => {
+            event.preventDefault();
+            const fd = new FormData(event.delegateTarget);
+            // noinspection JSUnresolvedFunction
+            const instance = await this.model.create(fd);
+            if (instance.id) {
+              this.rows.push(instance.all());
+              m.redraw();
+              await showSnackbar(this.__('Record creato'), 2.5);
+            }
+          });
         dialog.find('mwc-textfield')
           .val('');
 

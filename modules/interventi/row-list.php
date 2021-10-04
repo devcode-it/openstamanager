@@ -47,7 +47,7 @@ if (!$righe->isEmpty()) {
             </tr>
         </thead>
 
-        <tbody>';
+        <tbody class="sortable">';
 
     foreach ($righe as $riga) {
         $extra = '';
@@ -158,6 +158,10 @@ if (!$righe->isEmpty()) {
                     <a class="btn btn-xs btn-danger" title="'.tr('Rimuovi riga').'" onclick="rimuoviRiga(this)">
                         <i class="fa fa-trash"></i>
                     </a>
+
+                    <a class="btn btn-xs btn-default handle" title="'.tr('Modifica ordine delle righe').'">
+                        <i class="fa fa-sort"></i>
+                    </a>
                 </div>';
 
             echo '
@@ -234,4 +238,23 @@ function modificaSeriali(button) {
 
     openModal("'.tr('Aggiorna SN').'", globals.rootdir + "/modules/fatture/add_serial.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&riga_id=" + id + "&riga_type=" + type);
 }
+
+$(document).ready(function() {
+	sortable(".sortable", {
+        axis: "y",
+        handle: ".handle",
+        cursor: "move",
+        dropOnEmpty: true,
+        scroll: true,
+    })[0].addEventListener("sortupdate", function(e) {
+        let order = $(".table tr[data-id]").toArray().map(a => $(a).data("id"))
+
+        $.post(globals.rootdir + "/actions.php", {
+            id_module: globals.id_module,
+            id_record: globals.id_record,
+            op: "update_position",
+            order: order.join(","),
+        });
+    });
+});
 </script>';

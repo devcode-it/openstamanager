@@ -10,3 +10,6 @@ UPDATE `zz_cache` SET `valid_time` = '1 day' WHERE `zz_cache`.`name` = 'Informaz
 
 -- Ridotto il valid time per la cache informazioni su spazio FE
 UPDATE `zz_cache` SET `valid_time` = '1 day' WHERE `zz_cache`.`name` = 'Informazioni su spazio FE';
+
+-- Ordinamento righe intervento
+ALTER TABLE `in_righe_interventi` ADD `order` INT NOT NULL AFTER `idsede_partenza`;

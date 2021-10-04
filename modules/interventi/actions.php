@@ -740,4 +740,13 @@ switch (post('op')) {
         flash()->info(tr('Attività duplicata correttamente!'));
 
         break;
+
+    case 'update_position':
+        $order = explode(',', post('order', true));
+
+        foreach ($order as $i => $id_riga) {
+            $dbo->query('UPDATE `in_righe_interventi` SET `order` = '.prepare($i + 1).' WHERE id='.prepare($id_riga));
+        }
+
+        break;
 }

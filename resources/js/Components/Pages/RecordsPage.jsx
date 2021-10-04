@@ -78,7 +78,7 @@ export default class RecordsPage extends Page {
   columns: { [string]: [string] | ColumnT } | ColumnT[];
   rows: string[][] = [];
 
-  sections: { [string]: SectionT } | [SectionT];
+  sections: { [string]: SectionT } | SectionT[];
 
   recordDialog: Children = <mwc-dialog id="add-record-dialog"
                                        heading={this.__('Aggiungi nuovo record')}>

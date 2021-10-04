@@ -193,6 +193,28 @@ switch (post('op')) {
         }
 
         break;
+
+    case 'change-iva':
+        $iva = post('id_iva');
+        $n_articoli = 0;
+
+        foreach ($id_records as $id) {
+            $articolo = Articolo::find($id);
+            $articolo->idiva_vendita = $iva;
+            $articolo->save();
+
+            ++$n_articoli;
+        }
+
+        if ($n_articoli > 0) {
+            flash()->info(tr('Categoria cambiata a _NUM_ articoli!', [
+                '_NUM_' => $n_articoli,
+            ]));
+        } else {
+            flash()->warning(tr('Nessun articolo modificato!'));
+        }
+
+        break;
 }
 
 if (App::debug()) {
@@ -284,6 +306,17 @@ $operations['change-categoria'] = [
         'title' => tr('Cambiare la categoria?'),
         'msg' => tr('Per ciascun articolo selezionato, verrà modificata la categoria').'
         <br><br>{[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 1, "ajax-source": "categorie" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
+
+$operations['change-iva'] = [
+    'text' => '<span><i class="fa fa-percent"></i> '.tr('Aggiorna aliquota iva').'</span>',
+    'data' => [
+        'title' => tr('Cambiare l\'aliquota iva?'),
+        'msg' => tr('Per ciascun articolo selezionato, verrà modificata l\'aliquota iva').'
+        <br><br>{[ "type": "select", "label": "'.tr('Iva').'", "name": "id_iva", "required": 1, "ajax-source": "iva" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
     ],

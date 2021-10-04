@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use JsonSerializable;
 
-class UserResource extends JsonResource
+class ApiResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

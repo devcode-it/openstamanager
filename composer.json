@@ -31,6 +31,7 @@
     "require": {
         "php": "^8",
         "ext-pdo": "*",
+        "f9webltd/laravel-api-response-helpers": "^1.4",
         "fideloper/proxy": "^4",
         "fruitcake/laravel-cors": "^2",
         "guzzlehttp/guzzle": "^7",

@@ -1,6 +1,7 @@
 import '@material/mwc-dialog';
 import '@material/mwc-fab';
 
+import type {TextFieldInputMode, TextFieldType} from '@material/mwc-textfield/mwc-textfield-base';
 import collect from 'collect.js';
 import {Children} from 'mithril';
 
@@ -12,8 +13,10 @@ import TableHead from '../DataTable/TableHead.jsx';
 import TableHeadCell from '../DataTable/TableHeadCell.jsx';
 import TableHeadRow from '../DataTable/TableHeadRow.jsx';
 import TableRow from '../DataTable/TableRow.jsx';
+import {Cell, LayoutGrid, Row} from '../Grid';
 import Mdi from '../Mdi.jsx';
 import Page from '../Page.jsx';
+
 
 export type ColumnT = {
   id?: string,
@@ -21,12 +24,99 @@ export type ColumnT = {
   type?: 'checkbox' | 'numeric'
 }
 
+export type FieldT = {
+  id?: string,
+  value?: string,
+  type?: TextFieldType,
+  label?: string,
+  placeholder?: string,
+  prefix?: string,
+  suffix?: string,
+  icon?: string,
+  iconTrailing?: string,
+  disabled?: boolean,
+  charCounter?: boolean,
+  outlined?: boolean,
+  helper?: string,
+  helperPersistent?: boolean | string,
+  required?: boolean,
+  minLength?: number,
+  maxLength?: number,
+  validationMessage?: string,
+  pattern?: string,
+  min?: number | string,
+  max?: number | string,
+  size?: number | null,
+  step?: number | null,
+  autoValidate?: boolean,
+  validity?: ValidityState,
+  willValidate?: boolean,
+  validityTransform?: (value: string, nativeValidity: ValidityState) => Partial<ValidityState> |
+    null,
+  validateOnInitialRender?: boolean,
+  name?: string,
+  inputMode?: TextFieldInputMode,
+  readOnly?: boolean,
+  autocapitalize: 'on' | 'off' | 'sentences' | 'none' | 'words' | 'characters',
+  endAligned?: boolean,
+  ...
+};
+
+export type SectionT = FieldT[] | {
+  id?: string,
+  heading?: string,
+  columns?: number,
+  fields: FieldT[] | { [string]: FieldT }
+};
+
 /**
  * @abstract
  */
 export default class RecordsPage extends Page {
-  columns: {[string]: [string] | ColumnT} | ColumnT[];
+  columns: { [string]: [string] | ColumnT } | ColumnT[];
   rows: string[][] = [];
+
+  sections: { [string]: SectionT } | [SectionT];
+
+  recordDialog: Children = <mwc-dialog heading={this.__('Aggiungi nuovo record')}>
+    <form method="PUT">
+      {(() => {
+        const sections = collect(this.sections);
+
+        sections.map((section, index) => (
+          <>
+            <div id={section.id ?? index}>
+              <h2>{section.heading}</h2>
+              <LayoutGrid>
+                <Row>
+                  {(() => {
+                    const fields = collect(section.fields);
+
+                    return fields.map((field, fieldIndex) => (
+                      <Cell key={fieldIndex} columnspan={12 / (section.columns ?? 3)}>
+                        <mwc-textfield {...field} id={field.id ?? fieldIndex}
+                                       name={field.name ?? field.id ?? fieldIndex}/>
+                      </Cell>))
+                      .toArray();
+                  })()}
+                </Row>
+              </LayoutGrid>
+            </div>
+            {index !== sections.keys()
+              .last() && <hr/>}
+          </>
+        ));
+        return sections.toArray();
+      })()}
+    </form>
+
+    <mwc-button slot="primaryAction" dialogAction="discard">
+      {this.__('Conferma')}
+    </mwc-button>
+    <mwc-button slot="secondaryAction" dialogAction="cancel">
+      {this.__('Annulla')}
+    </mwc-button>
+  </mwc-dialog>;
 
   dialogs: Children[];
 
@@ -79,6 +169,7 @@ export default class RecordsPage extends Page {
         <mwc-fab id="add-record" label={this.__('Aggiungi')} class="sticky">
           <Mdi icon="plus" slot="icon"/>
         </mwc-fab>
+        {this.recordDialog}
         {this.dialogs}
       </>
     );
@@ -89,9 +180,15 @@ export default class RecordsPage extends Page {
 
     $('mwc-fab#add-record')
       .on('click', function () {
-        $(this)
-          .next('mwc-dialog#add-record-dialog')
-          .get(0)
+        const dialog = $(this)
+          .next('mwc-dialog#add-record-dialog');
+
+        dialog.find('form')
+          .attr('method', 'PUT');
+        dialog.find('mwc-textfield')
+          .val('');
+
+        dialog.get(0)
           .open();
       });
   }

@@ -90,6 +90,7 @@ if (Auth::check()) {
         'secondSemester' => tr('II semestre'),
         'thisMonth' => tr('Questo mese'),
         'lastMonth' => tr('Mese scorso'),
+        'nextMonth' => tr('Mese prossimo'),
         'thisYear' => tr("Quest'anno"),
         'lastYear' => tr('Anno scorso'),
         'apply' => tr('Applica'),

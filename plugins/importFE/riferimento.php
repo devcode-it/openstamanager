@@ -75,7 +75,7 @@ foreach ($righe as $riga) {
             <td class="text-right">'.moneyFormat($riga->prezzo_unitario_corrente).'</td>
             <td class="text-center">';
 
-    if ($qta_rimanente >= $qta) {
+    if ($qta_rimanente >= $qta || !empty(setting('Permetti il superamento della soglia quantità dei documenti di origine'))) {
         echo '
                 <button type="button" class="btn btn-info btn-xs" onclick="selezionaRiga(this)">
                     <i class="fa fa-check"></i>

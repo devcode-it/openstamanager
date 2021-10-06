@@ -225,8 +225,6 @@ export default class RecordsPage extends Page {
               await showSnackbar(this.__('Record creato'), 2.5);
             }
           });
-        dialog.find('mwc-textfield')
-          .val('');
 
         dialog.get(0)
           .show();

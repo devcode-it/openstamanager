@@ -4,6 +4,7 @@ import '@material/mwc-snackbar';
 
 import type {TextFieldInputMode, TextFieldType} from '@material/mwc-textfield/mwc-textfield-base';
 import collect from 'collect.js';
+import {snakeCase} from 'lodash/string';
 import {Children} from 'mithril';
 
 import {Model} from '../../Models';
@@ -125,6 +126,8 @@ export default class RecordsPage extends Page {
 
   model: Model;
 
+  saveModelWithSnakeCase: boolean = true;
+
   async oninit(vnode) {
     // eslint-disable-next-line no-param-reassign
     vnode.state.data = await this.model.all();
@@ -201,7 +204,16 @@ export default class RecordsPage extends Page {
           .off()
           .on('submit', async (event) => {
             event.preventDefault();
+
             const fd = new FormData(event.delegateTarget);
+
+            if (this.saveModelWithSnakeCase) {
+              for (const [key, value] of fd.entries()) {
+                fd.set(snakeCase(key), value);
+                fd.delete(key);
+              }
+            }
+
             // noinspection JSUnresolvedFunction
             const instance = await this.model.create(fd);
             if (instance.id) {

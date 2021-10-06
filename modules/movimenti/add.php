@@ -327,3 +327,22 @@ echo '
         </div>
     </div>
 </div>';
+
+echo '
+<script>
+
+    $("#idsede_partenza").change(function(){
+        updateSelectOption("idsede_partenza", $(this).val());
+        session_set("superselect,idsede_partenza", $(this).val(), 0);
+
+        $("#idarticolo").selectReset();
+    });
+
+    $("#idsede_destinazione").change(function(){
+        updateSelectOption("idsede_destinazione", $(this).val());
+        session_set("superselect,idsede_destinazione", $(this).val(), 0);
+
+        $("#idarticolo").selectReset();
+    });
+
+</script>';

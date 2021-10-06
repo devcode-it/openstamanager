@@ -161,6 +161,9 @@ if ($dir == 'entrata') {
                     if (empty($rs2[0]['id_nazione'])) {
                         array_push($campi_mancanti, 'Nazione');
                     }
+                    if (empty($rs2[0]['provincia'])) {
+                        array_push($campi_mancanti, 'Provincia');
+                    }
 
                     if (sizeof($campi_mancanti) > 0) {
                         echo "<div class='alert alert-warning'><i class='fa fa-warning'></i> Prima di procedere alla stampa completa i seguenti campi dell'anagrafica Cliente: <b>".implode(', ', $campi_mancanti).'</b><br/>

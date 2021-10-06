@@ -87,6 +87,7 @@
       <excludeFolder url="file://$MODULE_DIR$/.yarn/cache" />
       <excludeFolder url="file://$MODULE_DIR$/public/build" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/f9webltd/laravel-api-response-helpers" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/maicol07/laravel-json-api-resource" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -226,7 +226,7 @@ export default class RecordsPage extends Page {
           .val('');
 
         dialog.get(0)
-          .open();
+          .show();
       });
   }
 }

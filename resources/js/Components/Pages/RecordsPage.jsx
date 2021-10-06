@@ -81,47 +81,6 @@ export default class RecordsPage extends Page {
 
   sections: { [string]: SectionT } | SectionT[];
 
-  recordDialog: Children = <mwc-dialog id="add-record-dialog"
-                                       heading={this.__('Aggiungi nuovo record')}>
-    <form method="PUT">
-      {(() => {
-        const sections = collect(this.sections);
-
-        sections.map((section, index) => (
-          <>
-            <div id={section.id ?? index}>
-              <h2>{section.heading}</h2>
-              <LayoutGrid>
-                <Row>
-                  {(() => {
-                    const fields = collect(section.fields);
-
-                    return fields.map((field, fieldIndex) => (
-                      <Cell key={fieldIndex} columnspan={12 / (section.columns ?? 3)}>
-                        <mwc-textfield {...field} id={field.id ?? fieldIndex}
-                                       name={field.name ?? field.id ?? fieldIndex}/>
-                      </Cell>))
-                      .toArray();
-                  })()}
-                </Row>
-              </LayoutGrid>
-            </div>
-            {index !== sections.keys()
-              .last() && <hr/>}
-          </>
-        ));
-        return sections.toArray();
-      })()}
-    </form>
-
-    <mwc-button slot="primaryAction" dialogAction="discard">
-      {this.__('Conferma')}
-    </mwc-button>
-    <mwc-button slot="secondaryAction" dialogAction="cancel">
-      {this.__('Annulla')}
-    </mwc-button>
-  </mwc-dialog>;
-
   dialogs: Children[];
 
   model: Model;
@@ -167,6 +126,50 @@ export default class RecordsPage extends Page {
     ));
   }
 
+  recordDialog() {
+    return (
+      <mwc-dialog id="add-record-dialog" heading={this.__('Aggiungi nuovo record')}>
+        <form method="PUT">
+          {(() => {
+            const sections = collect(this.sections);
+
+            return sections.map((section, index) => (
+              <>
+                <div id={section.id ?? index}>
+                  <h2>{section.heading}</h2>
+                  <LayoutGrid>
+                    <Row>
+                      {(() => {
+                        const fields = collect(section.fields);
+
+                        return fields.map((field, fieldIndex) => (
+                          <Cell key={fieldIndex} columnspan={12 / (section.columns ?? 3)}>
+                            <mwc-textfield {...field} id={field.id ?? fieldIndex}
+                                           name={field.name ?? field.id ?? fieldIndex}/>
+                          </Cell>))
+                          .toArray();
+                      })()}
+                    </Row>
+                  </LayoutGrid>
+                </div>
+                {index !== sections.keys()
+                  .last() && <hr/>}
+              </>
+            ))
+              .toArray();
+          })()}
+        </form>
+
+        <mwc-button slot="primaryAction" dialogAction="discard">
+          {this.__('Conferma')}
+        </mwc-button>
+        <mwc-button slot="secondaryAction" dialogAction="cancel">
+          {this.__('Annulla')}
+        </mwc-button>
+      </mwc-dialog>
+    );
+  }
+
   view(vnode) {
     return (
       <>
@@ -185,7 +188,7 @@ export default class RecordsPage extends Page {
         <mwc-fab id="add-record" label={this.__('Aggiungi')} class="sticky">
           <Mdi icon="plus" slot="icon"/>
         </mwc-fab>
-        {this.recordDialog}
+        {this.recordDialog()}
         {this.dialogs}
       </>
     );

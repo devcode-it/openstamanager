@@ -11,7 +11,7 @@ export default class Cell extends Component {
     }
 
     this.attrs.addClassNames('mdc-layout-grid__cell', {
-      [`mdc-layout-grid__cell--span-${this.attrs.columnspan}`]: this.attrs.has('columnspan'),
+      [`mdc-layout-grid__cell--span-${this.attrs.get('columnspan')}`]: this.attrs.has('columnspan'),
       [`mdc-layout-grid__cell--order-${this.attrs.get('order')}`]: this.attrs.has('order'),
       [`mdc-layout-grid__cell--align-${this.attrs.get('align')}`]: this.attrs.has('align')
     }, spans);

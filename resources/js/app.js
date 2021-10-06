@@ -4,7 +4,7 @@ import './_material';
 import {InertiaProgress} from '@inertiajs/progress';
 import {createInertiaApp} from '@maicol07/inertia-mithril';
 import {waitUntil} from 'async-wait-until';
-import jQuery from 'jquery';
+import jQuery from 'jquery/dist/jquery.slim.min';
 import m from 'mithril';
 
 // Fix Mithril JSX durante la compilazione

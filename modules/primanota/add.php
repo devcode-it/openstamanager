@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Banche\Banca;
 use Modules\Fatture\Fattura;
 
 /**
@@ -137,8 +138,9 @@ foreach ($id_documenti as $id_documento) {
     $is_importo_avere = ($dir == 'entrata' && !$is_nota_credito && !$is_insoluto) || ($dir == 'uscita' && ($is_nota_credito || $is_insoluto));
 
     // Predisposizione prima riga
+    $banca = Banca::find($fattura->id_banca_azienda);
     $conto_field = 'idconto_'.($dir == 'entrata' ? 'vendite' : 'acquisti');
-    $id_conto_aziendale = $fattura->pagamento[$conto_field] ?: setting('Conto aziendale predefinito');
+    $id_conto_aziendale = $banca->id_pianodeiconti3 ?: ($fattura->pagamento[$conto_field] ?: setting('Conto aziendale predefinito'));
 
     // Predisposizione conto crediti clienti
     $conto_field = 'idconto_'.($dir == 'entrata' ? 'cliente' : 'fornitore');

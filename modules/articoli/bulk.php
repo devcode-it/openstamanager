@@ -49,11 +49,14 @@ switch (post('op')) {
         break;
 
     case 'change-vendita':
+        $percentuale = post('percentuale');
+        $prezzo_partenza = post('prezzo_partenza');
+
         foreach ($id_records as $id) {
             $articolo = Articolo::find($id);
-            $percentuale = post('percentuale');
+            $prezzo_partenza = post('prezzo_partenza')=='vendita' ? $articolo->prezzo_vendita : $articolo->prezzo_acquisto;
 
-            $new_prezzo_vendita = $articolo->prezzo_vendita + ($articolo->prezzo_vendita * $percentuale / 100);
+            $new_prezzo_vendita = $prezzo_partenza + ($prezzo_partenza * $percentuale / 100);
             $articolo->setPrezzoVendita($new_prezzo_vendita, $articolo->idiva_vendita);
             $articolo->save();
         }
@@ -167,6 +170,51 @@ switch (post('op')) {
 
         download($file, 'articoli.csv');
         break;
+
+    case 'change-categoria':
+        $categoria = post('id_categoria');
+        $n_articoli = 0;
+
+        foreach ($id_records as $id) {
+            $articolo = Articolo::find($id);
+            $articolo->id_categoria = $categoria;
+            $articolo->id_sottocategoria = null;
+            $articolo->save();
+
+            ++$n_articoli;
+        }
+
+        if ($n_articoli > 0) {
+            flash()->info(tr('Categoria cambiata a _NUM_ articoli!', [
+                '_NUM_' => $n_articoli,
+            ]));
+        } else {
+            flash()->warning(tr('Nessun articolo modificato!'));
+        }
+
+        break;
+
+    case 'change-iva':
+        $iva = post('id_iva');
+        $n_articoli = 0;
+
+        foreach ($id_records as $id) {
+            $articolo = Articolo::find($id);
+            $articolo->idiva_vendita = $iva;
+            $articolo->save();
+
+            ++$n_articoli;
+        }
+
+        if ($n_articoli > 0) {
+            flash()->info(tr('Categoria cambiata a _NUM_ articoli!', [
+                '_NUM_' => $n_articoli,
+            ]));
+        } else {
+            flash()->warning(tr('Nessun articolo modificato!'));
+        }
+
+        break;
 }
 
 if (App::debug()) {
@@ -205,7 +253,9 @@ $operations['change-vendita'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna prezzo di vendita').'</span>',
     'data' => [
         'title' => tr('Aggiornare il prezzo di vendita per gli articoli selezionati?'),
-        'msg' => 'Per indicare uno sconto inserire la percentuale con il segno meno, al contrario per un rincaro inserire la percentuale senza segno.<br><br>{[ "type": "number", "label": "'.tr('Percentuale sconto/magg.').'", "name": "percentuale", "required": 1, "icon-after": "%" ]}',
+        'msg' => 'Per indicare uno sconto inserire la percentuale con il segno meno, al contrario per un rincaro inserire la percentuale senza segno.<br><br>
+        {[ "type": "select", "label": "'.tr('Partendo da:').'", "name": "prezzo_partenza", "required": 1, "values": "list=\"acquisto\":\"Prezzo di acquisto\",\"vendita\":\"Prezzo di vendita\"" ]}<br>
+        {[ "type": "number", "label": "'.tr('Percentuale sconto/magg.').'", "name": "percentuale", "required": 1, "icon-after": "%" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,
@@ -245,6 +295,28 @@ $operations['crea-preventivo'] = [
         {[ "type": "select", "label": "'.tr('Cliente').'", "name": "id_cliente", "ajax-source": "clienti", "required": 1 ]}
         {[ "type": "select", "label": "'.tr('Tipo di attività').'", "name": "id_tipo", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento", "required": 1 ]}
         {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "value": "-now-" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
+
+$operations['change-categoria'] = [
+    'text' => '<span><i class="fa fa-briefcase"></i> '.tr('Aggiorna categoria').'</span>',
+    'data' => [
+        'title' => tr('Cambiare la categoria?'),
+        'msg' => tr('Per ciascun articolo selezionato, verrà modificata la categoria').'
+        <br><br>{[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 1, "ajax-source": "categorie" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
+
+$operations['change-iva'] = [
+    'text' => '<span><i class="fa fa-percent"></i> '.tr('Aggiorna aliquota iva').'</span>',
+    'data' => [
+        'title' => tr('Cambiare l\'aliquota iva?'),
+        'msg' => tr('Per ciascun articolo selezionato, verrà modificata l\'aliquota iva').'
+        <br><br>{[ "type": "select", "label": "'.tr('Iva').'", "name": "id_iva", "required": 1, "ajax-source": "iva" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
     ],

@@ -21,6 +21,7 @@ namespace Plugins\ImportFE;
 
 use Modules;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Banche\Banca;
 use Modules\Anagrafiche\Nazione;
 use Modules\Anagrafiche\Tipo as TipoAnagrafica;
 use Modules\Fatture\Fattura;
@@ -320,6 +321,15 @@ class FatturaElettronica
         $fattura->idpagamento = $id_pagamento;
         $fattura->is_ritenuta_pagata = $is_ritenuta_pagata;
 
+        // Banca addebito del cliente o banca collegata al pagamento
+        if (!empty($fattura->anagrafica->idbanca_acquisti)) {
+            $banca = $fattura->anagrafica->idbanca_acquisti;
+        } else {
+            $banca = Banca::where('id_pianodeiconti3', $fattura->pagamento->idconto_acquisti)->where('id_anagrafica', setting('Azienda predefinita'))->first()->id;
+        }
+
+        $fattura->id_banca_azienda = $banca;
+
         // Riferimento per nota di credito e debito
         $fattura->ref_documento = $ref_fattura ?: null;
 
@@ -359,7 +369,7 @@ class FatturaElettronica
     {
         $this->saveFattura($info['id_pagamento'], $info['id_segment'], $info['id_tipo'], $info['data_registrazione'], $info['ref_fattura'], $info['is_ritenuta_pagata']);
 
-        $this->saveRighe($info['articoli'], $info['iva'], $info['conto'], $info['movimentazione'], $info['crea_articoli'], $info['tipo_riga_riferimento'], $info['id_riga_riferimento'], $info['tipo_riga_riferimento_vendita'], $info['id_riga_riferimento_vendita']);
+        $this->saveRighe($info['articoli'], $info['iva'], $info['conto'], $info['movimentazione'], $info['crea_articoli'], $info['tipo_riga_riferimento'], $info['id_riga_riferimento'], $info['tipo_riga_riferimento_vendita'], $info['id_riga_riferimento_vendita'], $info['update_info']);
 
         $this->saveAllegati();
 

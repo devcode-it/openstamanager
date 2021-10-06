@@ -22,23 +22,38 @@ namespace Modules\StatoServizi;
 use API\Services;
 use Carbon\Carbon;
 use Hooks\Manager;
+use Models\Module;
 
 class ServicesHook extends Manager
 {
     public function response()
     {
-        // Elaborazione dei servizi in scadenza
         $limite_scadenze = (new Carbon())->addDays(60);
-        $risorse_in_scadenza = Services::getRisorseInScadenza($limite_scadenze);
+        $message = '';
 
-        $message = tr('I seguenti servizi sono in scadenza: _LIST_', [
-            '_LIST_' => implode(', ', $risorse_in_scadenza->pluck('nome')->all()),
-        ]);
+        // Elaborazione dei servizi in scadenza
+        $servizi_in_scadenza = Services::getServiziInScadenza($limite_scadenze);
+        if (!$servizi_in_scadenza->isEmpty()) {
+            $message .= tr('I seguenti servizi sono in scadenza: _LIST_', [
+                '_LIST_' => implode(', ', $servizi_in_scadenza->pluck('nome')->all()),
+            ]).'. ';
+        }
+
+        // Elaborazione delle risorse Services in scadenza
+        $risorse_in_scadenza = Services::getRisorseInScadenza($limite_scadenze);
+        if (!$risorse_in_scadenza->isEmpty()) {
+            $message .= tr('Le seguenti risorse Services sono in scadenza: _LIST_', [
+                '_LIST_' => implode(', ', $risorse_in_scadenza->pluck('name')->all()),
+            ]);
+        }
+
+        $module = Module::pool('Stato dei servizi');
 
         return [
             'icon' => 'fa fa-refresh text-warning',
             'message' => $message,
-            'show' => !$risorse_in_scadenza->isEmpty(),
+            'link' => base_path().'/controller.php?id_module='.$module->id,
+            'show' => Services::isEnabled() && !empty($message),
         ];
     }
 

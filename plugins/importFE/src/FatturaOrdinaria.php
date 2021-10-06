@@ -110,12 +110,14 @@ class FatturaOrdinaria extends FatturaElettronica
         return $this->forceArray($result);
     }
 
-    public function saveRighe($articoli, $iva, $conto, $movimentazione = true, $crea_articoli = false, $tipi_riferimenti = [], $id_riferimenti = [], $tipi_riferimenti_vendita = [], $id_riferimenti_vendita = [])
+    public function saveRighe($articoli, $iva, $conto, $movimentazione = true, $crea_articoli = false, $tipi_riferimenti = [], $id_riferimenti = [], $tipi_riferimenti_vendita = [], $id_riferimenti_vendita = [], $update_info = [])
     {
         $info = $this->getRitenutaRivalsa();
 
         $righe = $this->getRighe();
         $fattura = $this->getFattura();
+        $anagrafica = Anagrafica::find($fattura->idanagrafica);
+        $direzione = 'uscita';
 
         $id_ritenuta_acconto = $info['id_ritenuta_acconto'];
         $id_rivalsa = $info['id_rivalsa'];
@@ -150,8 +152,6 @@ class FatturaOrdinaria extends FatturaElettronica
                     $articolo->idconto_acquisto = $conto[$key];
                     $articolo->save();
 
-                    $direzione = 'uscita';
-                    $anagrafica = Anagrafica::find($fattura->idanagrafica);
                     $dettaglio_prezzo = DettaglioPrezzo::build($articolo, $anagrafica, $direzione);
 
                     $dettaglio_prezzo->setPrezzoUnitario($riga['PrezzoUnitario']);
@@ -162,7 +162,7 @@ class FatturaOrdinaria extends FatturaElettronica
             if (!empty($articolo)) {
                 $articolo->idconto_acquisto = $conto[$key];
                 $articolo->save();
-
+                
                 $obj = Articolo::build($fattura, $articolo);
 
                 $obj->movimentazione($movimentazione);
@@ -254,7 +254,7 @@ class FatturaOrdinaria extends FatturaElettronica
                             'qta' => $obj->qta,
                             'cumulativo' => false,
                         ]);
-
+    
                         if ($tipo == 'PRC') {
                             $tot_sconto = $sconto_calcolato * 100 / $obj->imponibile;
                         } else {
@@ -264,14 +264,42 @@ class FatturaOrdinaria extends FatturaElettronica
                         $tot_sconto = $sconto_riga;
                     }
 
-                    $sconto_unitario += $tot_sconto;
+                    $sconto_unitario += $tot_sconto;    
                 }
 
-                $obj->setSconto($sconto_unitario, $tipo);
-                $tipo = null;
+                $obj->setSconto($sconto_unitario, $tipo);   
             }
 
+            // Aggiornamento prezzo di acquisto e fornitore predefinito in base alle impostazioni
+            if (!empty($articolo)) {
+                if ($update_info[$key]=='update_price' || $update_info[$key]=='update_all') {
+                    $dettaglio_predefinito = DettaglioPrezzo::dettaglioPredefinito($articolo->id, $anagrafica->idanagrafica, $direzione)
+                    ->first();
+
+                    // Aggiungo associazione fornitore-articolo se non presente
+                    if (empty($dettaglio_predefinito)) {
+                        $dettaglio_predefinito = DettaglioPrezzo::build($articolo, $anagrafica, $direzione);
+                    }
+                    
+                    // Aggiornamento listino
+                    $dettaglio_predefinito->sconto_percentuale = 0;
+                    $dettaglio_predefinito->setPrezzoUnitario($obj->prezzo_unitario);
+                    $dettaglio_predefinito->save();
+
+                    // Aggiornamento fornitore predefinito
+                    if ($update_info[$key]=='update_all') {
+                        // Aggiornamento prezzo di acquisto e fornitore predefinito
+                        $articolo->prezzo_acquisto = $obj->prezzo_unitario;
+                        $articolo->id_fornitore = $anagrafica->idanagrafica;
+                        $articolo->save();
+                    }
+                }
+            }
+
+            $tipo = null;
+            $sconto_unitario = null;
             $obj->save();
+
         }
 
         // Ricaricamento della fattura

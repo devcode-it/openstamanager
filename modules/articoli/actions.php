@@ -60,6 +60,8 @@ switch (post('op')) {
         $articolo->threshold_qta = post('threshold_qta');
         $articolo->prezzo_acquisto = post('prezzo_acquisto');
         $articolo->setPrezzoVendita(post('prezzo_vendita'), post('idiva_vendita'));
+        $articolo->idconto_vendita = post('idconto_vendita');
+        $articolo->idconto_acquisto = post('idconto_acquisto');
         $articolo->save();
 
         // Aggiornamento delle varianti per i campi comuni

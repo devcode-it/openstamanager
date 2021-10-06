@@ -126,6 +126,7 @@ function start_complete_calendar(id, callback) {
     ranges[globals.translations.secondSemester] = [moment("06", "MM"), moment("12", "MM").endOf('month')];
     ranges[globals.translations.thisMonth] = [moment().startOf('month'), moment().endOf('month')];
     ranges[globals.translations.lastMonth] = [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')];
+    ranges[globals.translations.nextMonth] = [moment().add(1, 'month').startOf('month'), moment().add(1, 'month').endOf('month')];
     ranges[globals.translations.thisYear] = [moment().startOf('year'), moment().endOf('year')];
     ranges[globals.translations.lastYear] = [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')];
 

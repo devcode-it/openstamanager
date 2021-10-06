@@ -62,12 +62,12 @@ switch ($resource) {
 
         if ($usare_iva_anagrafica) {
             $query .= '
-            IFNULL(iva_anagrafica.id, IFNULL(iva_predefinita.id, iva_articolo.id)) AS idiva_vendita,
-            IFNULL(iva_anagrafica.descrizione, IFNULL(iva_predefinita.descrizione, iva_articolo.descrizione)) AS iva_vendita,';
+            IFNULL(iva_anagrafica.id, IFNULL(iva_articolo.id, iva_predefinita.id)) AS idiva_vendita,
+            IFNULL(iva_anagrafica.descrizione, IFNULL(iva_articolo.descrizione, iva_predefinita.descrizione)) AS iva_vendita,';
         } else {
             $query .= '
-            IFNULL(iva_predefinita.id, iva_articolo.id) AS idiva_vendita,
-            IFNULL(iva_predefinita.descrizione, iva_articolo.descrizione) AS iva_vendita,';
+            IFNULL(iva_articolo.id, iva_predefinita.id) AS idiva_vendita,
+            IFNULL(iva_articolo.descrizione, iva_predefinita.descrizione) AS iva_vendita,';
         }
 
         $query .= '

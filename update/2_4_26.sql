@@ -130,4 +130,3 @@ ALTER TABLE `em_accounts` ADD `id_oauth2` INT(11) DEFAULT NULL,
 -- Aggiunta opt-out Newsletter per Referenti e Sedi
 ALTER TABLE `an_referenti` ADD `enable_newsletter` BOOLEAN DEFAULT TRUE;
 ALTER TABLE `an_sedi` ADD `enable_newsletter` BOOLEAN DEFAULT TRUE;
-

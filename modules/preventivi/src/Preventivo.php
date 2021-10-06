@@ -55,6 +55,8 @@ class Preventivo extends Document
         'data_rifiuto',
     ];
 
+    protected $info = [];
+
     /**
      * Crea un nuovo preventivo.
      *

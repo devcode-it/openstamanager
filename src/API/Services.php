@@ -75,6 +75,22 @@ class Services
     }
 
     /**
+     * Restituisce i servizi in scadenza per data di conclusione prossima.
+     *
+     * @param Carbon $limite_scadenze
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public static function getServiziInScadenza($limite_scadenze)
+    {
+        return self::getServiziAttivi()
+            ->flatten(1)
+            ->filter(function ($item) use ($limite_scadenze) {
+                return (isset($item['data_conclusione']) && Carbon::parse($item['data_conclusione'])->lessThan($limite_scadenze));
+            });
+    }
+
+    /**
      * Restituisce le risorse attive in Services.
      *
      * @return \Illuminate\Support\Collection

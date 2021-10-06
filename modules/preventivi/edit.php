@@ -143,9 +143,6 @@ echo '
                 </div>
 
 			</div>
-			<div class="row">
-
-			</div>
 
 			<div class="row">
 				<div class="col-md-12">
@@ -167,7 +164,7 @@ echo '
 
             <div class="row">
 				<div class="col-md-12">
-					{[ "type": "ckeditor", "use_full_ckeditor": 1, "label": "<?php echo tr('Condizioni generali di fornitura'); ?>", "name": "condizioni_fornitura", "class": "autosize", "value": "$condizioni_fornitura$" ]}
+					{[ "type": "ckeditor", "use_full_ckeditor": 0, "label": "<?php echo tr('Condizioni generali di fornitura'); ?>", "name": "condizioni_fornitura", "class": "autosize", "value": "$condizioni_fornitura$" ]}
 				</div>
 			</div>
 

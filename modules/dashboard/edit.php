@@ -564,7 +564,7 @@ echo '
                 // let end = info.end;
 
                 let intero_giorno = !start.hasTime() && !end.hasTime();
-                if (intero_giorno !== true) {
+                if (intero_giorno !== true || globals.dashboard.informazioni_aggiuntive==0) {
                     let data = moment(start).format("YYYY-MM-DD");
                     let data_fine = moment(end).format("YYYY-MM-DD");
                     let orario_inizio = moment(start).format("HH:mm");

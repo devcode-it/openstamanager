@@ -87,6 +87,16 @@ include_once __DIR__.'/../../core.php';
                     {[ "type": "select", "label": "<?php echo tr('Iva di vendita'); ?>", "name": "idiva_vendita", "ajax-source": "iva", "valore_predefinito": "Iva predefinita", "help": "<?php echo tr('Se non specificata, verrà utilizzata l\'iva di default delle impostazioni'); ?>" ]}
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    {[ "type": "select", "label": "<?php echo tr('Conto predefinito di acquisto'); ?>", "name": "idconto_acquisto", "ajax-source": "conti-acquisti" ]}
+                </div>
+
+                <div class="col-md-6">
+                    {[ "type": "select", "label": "<?php echo tr('Conto predefinito di vendita'); ?>", "name": "idconto_vendita", "ajax-source": "conti-vendite" ]}
+                </div>
+            </div>
         </div>
     </div>
 

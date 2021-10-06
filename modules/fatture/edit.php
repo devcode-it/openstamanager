@@ -134,7 +134,7 @@ if ($dir == 'entrata') {
 			<?php
 
                 if ($dir == 'entrata') {
-                    $rs2 = $dbo->fetchArray('SELECT piva, codice_fiscale, citta, indirizzo, cap, provincia, id_nazione, tipo FROM an_anagrafiche WHERE idanagrafica='.prepare($record['idanagrafica']));
+                    $rs2 = $dbo->fetchArray('SELECT piva, codice_fiscale, citta, indirizzo, cap, id_nazione, tipo FROM an_anagrafiche WHERE idanagrafica='.prepare($record['idanagrafica']));
                     $campi_mancanti = [];
 
                     //di default è un azienda e chiedo la partita iva
@@ -160,9 +160,6 @@ if ($dir == 'entrata') {
                     }
                     if (empty($rs2[0]['id_nazione'])) {
                         array_push($campi_mancanti, 'Nazione');
-                    }
-                    if (empty($rs2[0]['provincia'])) {
-                        array_push($campi_mancanti, 'Provincia');
                     }
 
                     if (sizeof($campi_mancanti) > 0) {

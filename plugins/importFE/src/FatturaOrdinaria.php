@@ -249,10 +249,9 @@ class FatturaOrdinaria extends FatturaElettronica
                     if ($tipo_sconto == 'PRC') {
                         $sconto_calcolato = calcola_sconto([
                             'sconto' => $sconto_riga,
-                            'prezzo' => $obj->prezzo_unitario,
+                            'prezzo' => $sconto_unitario ? $obj->prezzo_unitario-($sconto_calcolato/$obj->qta) : $obj->prezzo_unitario,
                             'tipo' => 'PRC',
                             'qta' => $obj->qta,
-                            'cumulativo' => false,
                         ]);
     
                         if ($tipo == 'PRC') {
@@ -295,7 +294,7 @@ class FatturaOrdinaria extends FatturaElettronica
                     }
                 }
             }
-
+            
             $tipo = null;
             $sconto_unitario = null;
             $obj->save();

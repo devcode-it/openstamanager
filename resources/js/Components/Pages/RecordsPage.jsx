@@ -125,6 +125,16 @@ export default class RecordsPage extends Page {
 
   model: Model;
 
+  async oninit(vnode) {
+    // eslint-disable-next-line no-param-reassign
+    vnode.state.data = await this.model.all();
+    if (vnode.state.data) {
+      this.rows.push(vnode.state.data.all);
+    } else {
+      m.redraw();
+    }
+  }
+
   tableColumns(): Children {
     return collect(this.columns)
       .map(

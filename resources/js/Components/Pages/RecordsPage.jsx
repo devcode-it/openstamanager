@@ -119,11 +119,17 @@ export default class RecordsPage extends Page {
         </TableRow>);
     }
 
-    return this.rows.map((row, index) => (
-      <TableRow key={index}>
-        {row.map((cell, index_) => <TableCell key={index_}>{cell}</TableCell>)}
-      </TableRow>
-    ));
+    return this.rows.map((row, index) => {
+      if (typeof row === 'undefined') {
+        return [];
+      }
+
+      return (
+        <TableRow key={index}>
+          {row.map((cell, index_) => <TableCell key={index_}>{cell}</TableCell>)}
+        </TableRow>
+      );
+    });
   }
 
   recordDialog() {

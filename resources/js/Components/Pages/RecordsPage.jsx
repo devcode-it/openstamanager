@@ -166,7 +166,7 @@ export default class RecordsPage extends Page {
           })()}
         </form>
 
-        <mwc-button slot="primaryAction" dialogAction="discard">
+        <mwc-button slot="primaryAction" dialogAction="confirm">
           {this.__('Conferma')}
         </mwc-button>
         <mwc-button slot="secondaryAction" dialogAction="cancel">
@@ -207,9 +207,14 @@ export default class RecordsPage extends Page {
       .on('click', (clickEvent) => {
         const dialog = $(clickEvent.delegateTarget)
           .next('mwc-dialog#add-record-dialog');
+        const form = dialog.find('form');
 
-        dialog.find('form')
-          .attr('method', 'PUT')
+        dialog.find('mwc-button[dialogAction="confirm"]')
+          .on('click', () => {
+            form.trigger('submit');
+          });
+
+        form.attr('method', 'PUT')
           .off()
           .on('submit', async (event) => {
             event.preventDefault();

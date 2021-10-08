@@ -235,8 +235,11 @@ export default class RecordsPage extends Page {
                 data[key] = field.value;
               });
 
-            // noinspection JSUnresolvedFunction
-            const response = await this.model.create(data);
+            // eslint-disable-next-line new-cap
+            const instance: Model = new this.model();
+            instance.setAttributes(data);
+
+            const response = await instance.save();
             if (response.getModelId()) {
               dialog.get(0)
                 .close();

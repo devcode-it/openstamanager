@@ -13,6 +13,16 @@ export default class Model extends BaseModel {
     return super.getAttribute(attributeName);
   }
 
+  setAttribute(attributeName: string, value: any): void {
+    super.setAttribute(attributeName, value);
+  }
+
+  setAttributes(attributes: { [string]: any }): void {
+    for (const [attribute, value] of Object.entries(attributes)) {
+      this.setAttribute(attribute, value);
+    }
+  }
+
   getJsonApiBaseUrl(): string {
     return '/api';
   }

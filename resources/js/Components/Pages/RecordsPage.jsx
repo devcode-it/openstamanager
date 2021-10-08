@@ -77,7 +77,7 @@ export type SectionT = FieldT[] | {
  */
 export default class RecordsPage extends Page {
   columns: { [string]: [string] | ColumnT } | ColumnT[];
-  rows: string[][] = [];
+  rows: string[][] | Model[] = [];
 
   sections: { [string]: SectionT } | SectionT[];
 
@@ -88,11 +88,10 @@ export default class RecordsPage extends Page {
   saveModelWithSnakeCase: boolean = true;
 
   async oninit(vnode) {
-    // eslint-disable-next-line no-param-reassign
-    vnode.state.data = await this.model.all();
+    // noinspection JSUnresolvedFunction
+    vnode.state.data = (await this.model.all()).getData();
     if (vnode.state.data) {
-      this.rows.push(vnode.state.data.all);
-    } else {
+      this.rows = vnode.state.data;
       m.redraw();
     }
   }
@@ -113,20 +112,27 @@ export default class RecordsPage extends Page {
     if (this.rows.length === 0) {
       return (
         <TableRow>
-          <TableCell colspan={this.columns.length}>
+          <TableCell colspan={Object.keys(this.columns).length} style="text-align: center;">
             {this.__('Non sono presenti dati')}
           </TableCell>
         </TableRow>);
     }
 
-    return this.rows.map((row, index) => {
-      if (typeof row === 'undefined') {
-        return [];
+    return this.rows.map((row: string[] | Model[], index) => {
+      let cells = [];
+
+      if (row instanceof Model) {
+        // eslint-disable-next-line guard-for-in
+        for (const attribute in this.columns) {
+          cells.push(row.getAttribute(snakeCase(attribute)));
+        }
+      } else {
+        cells = row;
       }
 
       return (
         <TableRow key={index}>
-          {row.map((cell, index_) => <TableCell key={index_}>{cell}</TableCell>)}
+          {cells.map((cell: string, index_) => <TableCell key={index_}>{cell}</TableCell>)}
         </TableRow>
       );
     });
@@ -166,7 +172,7 @@ export default class RecordsPage extends Page {
           })()}
         </form>
 
-        <mwc-button slot="primaryAction" dialogAction="confirm">
+        <mwc-button type="submit" slot="primaryAction">
           {this.__('Conferma')}
         </mwc-button>
         <mwc-button slot="secondaryAction" dialogAction="cancel">
@@ -207,9 +213,9 @@ export default class RecordsPage extends Page {
       .on('click', (clickEvent) => {
         const dialog = $(clickEvent.delegateTarget)
           .next('mwc-dialog#add-record-dialog');
-        const form = dialog.find('form');
+        const form: JQuery = dialog.find('form');
 
-        dialog.find('mwc-button[dialogAction="confirm"]')
+        dialog.find('mwc-button[type="submit"]')
           .on('click', () => {
             form.trigger('submit');
           });
@@ -219,21 +225,26 @@ export default class RecordsPage extends Page {
           .on('submit', async (event) => {
             event.preventDefault();
 
-            const fd = new FormData(event.delegateTarget);
-
-            if (this.saveModelWithSnakeCase) {
-              for (const [key, value] of fd.entries()) {
-                fd.set(snakeCase(key), value);
-                fd.delete(key);
-              }
-            }
-
             // noinspection JSUnresolvedFunction
-            const instance = await this.model.create(fd);
-            if (instance.id) {
-              this.rows.push(instance.all());
-              m.redraw();
-              await showSnackbar(this.__('Record creato'), 2.5);
+            if (form.isValid()) {
+              const data = {};
+
+              form.find('mwc-textfield, mwc-textarea')
+                .each((index, field) => {
+                  const key = this.saveModelWithSnakeCase ? snakeCase(field.id) : field.id;
+                  data[key] = field.value;
+                });
+
+              // noinspection JSUnresolvedFunction
+              const response = await this.model.create(data);
+              if (response.getModelId()) {
+                dialog.close();
+                this.rows.push(response.getModel());
+                m.redraw();
+                await showSnackbar(this.__('Record creato'), 4000);
+              }
+            } else {
+              await showSnackbar(this.__('Campi non validi. Controlla i dati inseriti'));
             }
           });
 

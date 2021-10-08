@@ -33,7 +33,31 @@ createInertiaApp({
     // noinspection JSUnresolvedVariable
     return window.extmodule[page];
   },
-  setup({ el, app }) {
+  setup({
+    el,
+    app
+  }) {
     m.mount(el, app);
   }
 });
+
+$.fn.isValid = function () {
+  if (this.prop('tagName')
+    .toLowerCase() === 'form') {
+    let isValid: boolean = true;
+
+    this.find('mwc-textfield, mwc-textarea')
+      .each((index: number, field: HTMLInputElement) => {
+        if (!field.checkValidity()) {
+          isValid = false;
+          return false;
+        }
+
+        return true;
+      });
+
+    return isValid;
+  }
+
+  return this[0].checkValidity();
+};

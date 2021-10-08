@@ -4,7 +4,7 @@ import '@material/mwc-snackbar';
 
 import type {TextFieldInputMode, TextFieldType} from '@material/mwc-textfield/mwc-textfield-base';
 import collect from 'collect.js';
-import {snakeCase} from 'lodash/string';
+import {snakeCase} from 'lodash-es/string';
 import {Children} from 'mithril';
 
 import {Model} from '../../Models';

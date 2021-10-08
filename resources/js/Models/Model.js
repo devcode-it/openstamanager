@@ -1,5 +1,5 @@
 import {Model as BaseModel, PluralResponse} from 'coloquent';
-import {snakeCase} from 'lodash';
+import {snakeCase} from 'lodash-es';
 
 export default class Model extends BaseModel {
   /**

@@ -1,12 +1,13 @@
+import {type Cash} from 'cash-dom/dist/cash';
 import classnames, {Argument as ClassNames} from 'classnames';
 import collect, {Collection} from 'collect.js';
 import m, {
-  Children, ClassComponent,
-  Vnode, VnodeDOM
+  Children, ClassComponent, Vnode, VnodeDOM
 } from 'mithril';
 
 interface Attributes extends Collection {
   addClassNames(...classNames: ClassNames[]): void,
+
   addStyles(...styles: string[]): void
 }
 
@@ -26,7 +27,7 @@ interface Attributes extends Collection {
  *  - The static `initAttrs` method allows a convenient way to provide defaults (or to otherwise
  *    modify) the attrs that have been passed into a component.
  *  - When the component is created in the DOM, we store its DOM element under `this.element`;
- *    this lets us use jQuery to modify child DOM state from internal methods via the `this.$()`
+ *    this lets us use Cash to modify child DOM state from internal methods via the `this.$()`
  *    method.
  *  - A convenience `component` method, which serves as an alternative to hyperscript and JSX.
  *
@@ -105,21 +106,21 @@ export default class Component implements ClassComponent {
   onremove(vnode: VnodeDOM) {}
 
   /**
-   * Returns a jQuery object for this component's element. If you pass in a
-   * selector string, this method will return a jQuery object, using the current
+   * Returns a Cash object for this component's element. If you pass in a
+   * selector string, this method will return a Cash object, using the current
    * element as its buffer.
    *
-   * For example, calling `component.$('li')` will return a jQuery object
+   * For example, calling `component.$('li')` will return a Cash object
    * containing all of the `li` elements inside the DOM element of this
    * component.
    *
-   * @param [selector] a jQuery-compatible selector string
-   * @returns the jQuery object for the DOM node
+   * @param [selector] a Cash-compatible selector string
+   * @returns the Cash object for the DOM node
    * @final
    * @protected
    */
-  $(selector?: string): JQuery {
-    const $element: JQuery<HTMLElement> = $(this.element);
+  $(selector?: string): Cash {
+    const $element: Cash<HTMLElement> = $(this.element);
     return selector ? $element.find(element => selector(element)) : $element;
   }
 

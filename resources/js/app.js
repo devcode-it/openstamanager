@@ -5,15 +5,14 @@ import '@mdi/font/css/materialdesignicons.min.css';
 import {InertiaProgress} from '@inertiajs/progress';
 import {createInertiaApp} from '@maicol07/inertia-mithril';
 import {waitUntil} from 'async-wait-until';
-import jQuery from 'jquery/dist/jquery.slim.min';
+import $ from 'cash-dom';
 import m from 'mithril';
 
 // Fix Mithril JSX durante la compilazione
 m.Fragment = '[';
 
 // Variabili globali
-window.$ = jQuery;
-window.jQuery = jQuery;
+window.$ = $;
 window.m = m;
 
 InertiaProgress.init();

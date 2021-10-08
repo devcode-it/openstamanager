@@ -3,6 +3,7 @@ import '@material/mwc-fab';
 import '@material/mwc-snackbar';
 
 import type {TextFieldInputMode, TextFieldType} from '@material/mwc-textfield/mwc-textfield-base';
+import {type Cash} from 'cash-dom/dist/cash';
 import collect from 'collect.js';
 import {snakeCase} from 'lodash-es/string';
 import {Children} from 'mithril';
@@ -209,47 +210,47 @@ export default class RecordsPage extends Page {
   oncreate(vnode) {
     super.oncreate(vnode);
 
-    $('mwc-fab#add-record')
-      .on('click', (clickEvent) => {
-        const dialog = $(clickEvent.delegateTarget)
-          .next('mwc-dialog#add-record-dialog');
-        const form: JQuery = dialog.find('form');
+    const fab: Cash = $('mwc-fab#add-record');
+    fab.on('click', () => {
+      const dialog: Cash = fab.next('mwc-dialog#add-record-dialog');
+      const form: Cash = dialog.find('form');
 
-        dialog.find('mwc-button[type="submit"]')
-          .on('click', () => {
-            form.trigger('submit');
-          });
+      dialog.find('mwc-button[type="submit"]')
+        .on('click', () => {
+          form.trigger('submit');
+        });
 
-        form.attr('method', 'PUT')
-          .off()
-          .on('submit', async (event) => {
-            event.preventDefault();
+      form.attr('method', 'PUT')
+        .off()
+        .on('submit', async (event) => {
+          event.preventDefault();
+
+          // noinspection JSUnresolvedFunction
+          if (form.isValid()) {
+            const data = {};
+
+            form.find('mwc-textfield, mwc-textarea')
+              .each((index, field) => {
+                const key = this.saveModelWithSnakeCase ? snakeCase(field.id) : field.id;
+                data[key] = field.value;
+              });
 
             // noinspection JSUnresolvedFunction
-            if (form.isValid()) {
-              const data = {};
-
-              form.find('mwc-textfield, mwc-textarea')
-                .each((index, field) => {
-                  const key = this.saveModelWithSnakeCase ? snakeCase(field.id) : field.id;
-                  data[key] = field.value;
-                });
-
-              // noinspection JSUnresolvedFunction
-              const response = await this.model.create(data);
-              if (response.getModelId()) {
-                dialog.close();
-                this.rows.push(response.getModel());
-                m.redraw();
-                await showSnackbar(this.__('Record creato'), 4000);
-              }
-            } else {
-              await showSnackbar(this.__('Campi non validi. Controlla i dati inseriti'));
+            const response = await this.model.create(data);
+            if (response.getModelId()) {
+              dialog.get(0)
+                .close();
+              this.rows.push(response.getModel());
+              m.redraw();
+              await showSnackbar(this.__('Record creato'), 4000);
             }
-          });
+          } else {
+            await showSnackbar(this.__('Campi non validi. Controlla i dati inseriti'));
+          }
+        });
 
-        dialog.get(0)
-          .show();
-      });
+      dialog.get(0)
+        .show();
+    });
   }
 }

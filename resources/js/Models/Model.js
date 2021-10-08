@@ -1,28 +1,19 @@
-import BaseModel from 'javel';
+import {Model as BaseModel, PluralResponse} from 'coloquent';
 import {snakeCase} from 'lodash';
-import redaxios from 'redaxios';
 
 export default class Model extends BaseModel {
-  urlPath: string;
+  /**
+   * Just an alias to the get() method
+   */
+  static all(): Promise<PluralResponse<InstanceType<Model>>> {
+    return this.get();
+  }
 
-  baseUrl(): string {
+  getJsonApiBaseUrl(): string {
     return '/api';
   }
 
-  buildUrl({params}): Array {
-    return [this.urlPath ?? snakeCase(this.constructor.name), ...params];
-  }
-
-  makeRequest({
-    method, url, data, query
-  }: {
-    method: 'get' | 'post' | 'put' | 'patch' | 'delete' | 'options' | 'head' | 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD',
-    url: string,
-    data: any,
-    query: {...}
-  }): Promise {
-    return redaxios({
-      method, url, data, params: query
-    });
+  getJsonApiType(): string {
+    return (super.getJsonApiType() ?? snakeCase(this.constructor.name));
   }
 }

@@ -40,7 +40,7 @@
         "async-wait-until": "^2.0.7",
         "classnames": "^2.3.1",
         "collect.js": "^4.29.0",
-        "javel": "^0.1.7",
+        "coloquent": "^2.4.0",
         "jquery": "^3.6.0",
         "lit": "^2.0.0",
         "locale-code": "^2.0.2",

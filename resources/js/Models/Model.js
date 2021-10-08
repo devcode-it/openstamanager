@@ -9,6 +9,10 @@ export default class Model extends BaseModel {
     return this.get();
   }
 
+  getAttribute(attributeName: string): any {
+    return super.getAttribute(attributeName);
+  }
+
   getJsonApiBaseUrl(): string {
     return '/api';
   }

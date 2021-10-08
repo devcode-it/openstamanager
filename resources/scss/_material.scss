@@ -7,8 +7,6 @@
 @use "@material/layout-grid/mdc-layout-grid";
 @use "@material/data-table/data-table";
 
-@import "https://cdn.jsdelivr.net/npm/@mdi/font@6.1.95/css/materialdesignicons.min.css";
-
 @include card.core-styles;
 @include data-table.core-styles;
 @include data-table.theme-baseline;

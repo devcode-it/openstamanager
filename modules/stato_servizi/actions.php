@@ -328,6 +328,7 @@ switch (filter('op')) {
             'notifies_size' => Filesystem::formatBytes($informazioni['notifies_size']),
 
             'avviso_spazio' => $avviso_spazio,
+            'maxNumber' => $informazioni['maxNumber'],
             'spazio_totale' => Filesystem::formatBytes($spazio_totale),
             'spazio_occupato' => Filesystem::formatBytes($informazioni['size']),
 

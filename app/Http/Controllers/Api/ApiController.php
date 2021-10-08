@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUndefinedMethodInspection */
 
 namespace App\Http\Controllers\Api;
 
@@ -28,7 +28,7 @@ class ApiController extends Controller
     public function store(Request $request): JsonResponse|Resource
     {
         $instance = new $this->model();
-        $instance->fill($request->all());
+        $instance->fill($request->input('data.attributes'));
 
         $created = $instance->save();
 
@@ -59,7 +59,7 @@ class ApiController extends Controller
             return $this->error(Response::HTTP_NOT_FOUND, __('Risorsa non trovata.'));
         }
 
-        $instance->fill($request->all());
+        $instance->fill($request->input('data.attributes'));
         $updated = $instance->save();
 
         return $updated ? new Resource($instance) : $this->error(Response::HTTP_INTERNAL_SERVER_ERROR, __('Impossibile salvare le modifiche'));

@@ -19,9 +19,9 @@ export function containsHTML(string_: string): boolean {
 /**
  * Show a snackbar
  */
-export async function showSnackbar(message: string, duration: number, acceptText = 'OK', cancelText = 'Annulla'): Promise<boolean> {
+export async function showSnackbar(message: string, duration: number = 5000, acceptText = 'OK', cancelText: ?string): Promise<boolean> {
   const snackbar = document.createElement('mwc-snackbar');
-  snackbar.label = message;
+  snackbar.labelText = message;
   snackbar.timeoutMs = duration;
   if (acceptText) {
     const button = document.createElement('mwc-button');
@@ -36,15 +36,18 @@ export async function showSnackbar(message: string, duration: number, acceptText
     snackbar.append(button);
   }
   document.body.append(snackbar);
-  let resolve: (value?: boolean) => void;
-  const reasonPromise = new Promise()((response) => {
-    resolve = response;
-  });
+
+  // eslint-disable-next-line unicorn/consistent-function-scoping
+  const response = (value?: boolean) => value;
+
+  // noinspection JSUnusedLocalSymbols
+  const reasonPromise = new Promise((resolve, reject) => {});
   snackbar.addEventListener('MDCSnackbar:closed', (event) => {
-    resolve(event?.detail?.reason === 'action' ?? false);
+    response(event?.detail?.reason === 'action' ?? false);
   });
-  snackbar.open();
-  const acceptOrReject = await reasonPromise;
-  snackbar.remove();
-  return acceptOrReject;
+  snackbar.show();
+  snackbar.addEventListener('MDCSnackbar:closed', () => {
+    snackbar.remove();
+  });
+  return reasonPromise;
 }

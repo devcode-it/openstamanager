@@ -158,6 +158,7 @@ top-app-bar mwc-fab.sticky {
     --mdc-theme-outline-color: #e0e0e0;
     --mdc-typography-font-family: #{variables.$body_font};
     --mdc-typography-button-font-family: #{variables.$headings_font};
+    --mdc-snackbar-action-color: #{variables.$secondary};
 
     @each $type in headline1, headline2, headline3, headline4, headline5, headline6, subtitle1, subtitle2 {
         --mdc-typography-#{$type}-font-family: #{variables.$body_font};

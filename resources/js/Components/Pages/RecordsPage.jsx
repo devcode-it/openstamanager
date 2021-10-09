@@ -157,8 +157,8 @@ export default class RecordsPage extends Page {
 
                         return fields.map((field, fieldIndex) => (
                           <Cell key={fieldIndex} columnspan={12 / (section.columns ?? 3)}>
-                            <mwc-textfield {...field} id={field.id ?? fieldIndex}
-                                           name={field.name ?? field.id ?? fieldIndex}/>
+                            <text-field {...field} id={field.id ?? fieldIndex}
+                                        name={field.name ?? field.id ?? fieldIndex}/>
                           </Cell>))
                           .toArray();
                       })()}
@@ -229,7 +229,7 @@ export default class RecordsPage extends Page {
           if (form.isValid()) {
             const data = {};
 
-            form.find('mwc-textfield, mwc-textarea')
+            form.find('text-field, text-area')
               .each((index, field) => {
                 const key = this.saveModelWithSnakeCase ? snakeCase(field.id) : field.id;
                 data[key] = field.value;

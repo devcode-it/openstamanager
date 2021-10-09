@@ -1,9 +1,11 @@
 // noinspection JSUnusedGlobalSymbols
 
+import {type Cash} from 'cash-dom/dist/cash';
+
 /**
  * Check if class/object A is the same as or a subclass of class B.
  */
-export function subclassOf(A: {...}, B: {...}): boolean {
+export function subclassOf(A: { ... }, B: { ... }): boolean {
   // noinspection JSUnresolvedVariable
   return A && (A === B || A.prototype instanceof B);
 }
@@ -50,4 +52,23 @@ export async function showSnackbar(message: string, duration: number = 5000, acc
     snackbar.remove();
   });
   return reasonPromise;
+}
+
+export function isFormValid(element: Cash | HTMLFontElement) {
+  let form = element;
+
+  if (form instanceof HTMLFormElement) {
+    form = $(form);
+  }
+
+  let isValid: boolean = true;
+
+  form.find('text-field, text-area')
+    .each((index: number, field: HTMLInputElement) => {
+      if (!field.reportValidity()) {
+        isValid = false;
+      }
+    });
+
+  return isValid;
 }

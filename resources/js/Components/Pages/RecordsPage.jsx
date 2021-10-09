@@ -12,7 +12,10 @@ import {snakeCase} from 'lodash-es/string';
 import {Children} from 'mithril';
 
 import {Model} from '../../Models';
-import {showSnackbar} from '../../utils';
+import {
+  isFormValid,
+  showSnackbar
+} from '../../utils';
 import DataTable from '../DataTable/DataTable.jsx';
 import TableBody from '../DataTable/TableBody.jsx';
 import TableCell from '../DataTable/TableCell.jsx';
@@ -232,8 +235,7 @@ export default class RecordsPage extends Page {
         .on('submit', async (event) => {
           event.preventDefault();
 
-          // noinspection JSUnresolvedFunction
-          if (form.isValid()) {
+          if (isFormValid(form)) {
             const data = {};
 
             form.find('text-field, text-area')

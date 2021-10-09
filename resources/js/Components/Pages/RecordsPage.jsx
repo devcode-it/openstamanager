@@ -2,8 +2,11 @@ import '@material/mwc-dialog';
 import '@material/mwc-fab';
 import '@material/mwc-snackbar';
 
-import type {TextFieldInputMode, TextFieldType} from '@material/mwc-textfield/mwc-textfield-base';
-import {type Cash} from 'cash-dom/dist/cash';
+import type {
+  TextFieldInputMode,
+  TextFieldType
+} from '@material/mwc-textfield/mwc-textfield-base';
+import type {Cash} from 'cash-dom/dist/cash';
 import collect from 'collect.js';
 import {snakeCase} from 'lodash-es/string';
 import {Children} from 'mithril';
@@ -17,7 +20,11 @@ import TableHead from '../DataTable/TableHead.jsx';
 import TableHeadCell from '../DataTable/TableHeadCell.jsx';
 import TableHeadRow from '../DataTable/TableHeadRow.jsx';
 import TableRow from '../DataTable/TableRow.jsx';
-import {Cell, LayoutGrid, Row} from '../Grid';
+import {
+  Cell,
+  LayoutGrid,
+  Row
+} from '../Grid';
 import Mdi from '../Mdi.jsx';
 import Page from '../Page.jsx';
 

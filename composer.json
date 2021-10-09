@@ -78,9 +78,8 @@
     },
     "repositories": [
         {
-            "type": "path",
-            "url": "../osm_standard_modules",
-            "symlink": true
+            "type": "vcs",
+            "url": "https://github.com/maicol07/osm_standard_modules"
         }
     ],
     "minimum-stability": "dev",

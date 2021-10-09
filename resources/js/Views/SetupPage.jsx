@@ -11,7 +11,8 @@ import collect from 'collect.js';
 import LocaleCode from 'locale-code';
 import Mithril from 'mithril';
 
-import logoUrl from '@/static/images/logo_completo.png';
+// eslint-disable-next-line import/no-absolute-path
+import logoUrl from '/images/logo_completo.png';
 
 import Card from '../Components/Card/Card.jsx';
 import Content from '../Components/Card/Content.jsx';

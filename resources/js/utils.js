@@ -1,6 +1,6 @@
 // noinspection JSUnusedGlobalSymbols
 
-import {type Cash} from 'cash-dom/dist/cash';
+import type {Cash} from 'cash-dom/dist/cash';
 
 /**
  * Check if class/object A is the same as or a subclass of class B.

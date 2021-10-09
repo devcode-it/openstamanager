@@ -1,8 +1,11 @@
-import {type Cash} from 'cash-dom/dist/cash';
+import type {Cash} from 'cash-dom/dist/cash';
 import classnames, {Argument as ClassNames} from 'classnames';
 import collect, {Collection} from 'collect.js';
 import m, {
-  Children, ClassComponent, Vnode, VnodeDOM
+  Children,
+  ClassComponent,
+  Vnode,
+  VnodeDOM
 } from 'mithril';
 
 interface Attributes extends Collection {

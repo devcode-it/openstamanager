@@ -1,6 +1,6 @@
 import '../scss/app.scss';
 import './_material';
-import '@mdi/font/css/materialdesignicons.min.css';
+import '@mdi/font/scss/materialdesignicons.scss';
 
 import {InertiaProgress} from '@inertiajs/progress';
 import {createInertiaApp} from '@maicol07/inertia-mithril';

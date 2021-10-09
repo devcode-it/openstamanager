@@ -91,5 +91,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="@types/mithril" level="application" />
     <orderEntry type="library" name="@types/mithril" level="application" />
+    <orderEntry type="library" name="es-module-shims" level="application" />
+    <orderEntry type="library" name="es-module-shims" level="application" />
   </component>
 </module>

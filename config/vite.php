@@ -77,7 +77,7 @@ return [
     | the feature.
     | https://laravel-vite.innocenzi.dev/guide/configuration.html#ping-timeout
     */
-    'ping_timeout' => .5,
+    'ping_timeout' => 5,
 
     /*
     |--------------------------------------------------------------------------

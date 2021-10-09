@@ -5,9 +5,11 @@
     "private": true,
     "main": "resources/js/index.js",
     "scripts": {
+        "dev": "vite",
         "build": "vite build",
         "serve": "php artisan serve",
         "watch": "vite build --watch",
+        "serve-dev": "concurrently --raw npm:serve npm:dev",
         "serve-watch": "concurrently --raw npm:serve npm:watch",
         "prepublishOnly": "pnpm run build",
         "preinstall": "npx only-allow pnpm"
@@ -48,7 +50,6 @@
         "mithril": "^2.0.4",
         "mithril-node-render": "^3.0.2",
         "modern-normalize": "^1.1.0",
-        "openstamanager": "link:.",
         "redaxios": "^0.4.1"
     },
     "devDependencies": {
@@ -85,7 +86,6 @@
         "flow-bin": "^0.161.0",
         "flow-remove-types": "^2.161.0",
         "laravel-vite": "^0.0.21",
-        "rollup-plugin-livereload": "^2.0.5",
         "sass": "^1.42.1",
         "stylelint": "^13.13.1",
         "stylelint-config-idiomatic-order": "^8.1.0",

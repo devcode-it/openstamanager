@@ -230,36 +230,34 @@ export default class RecordsPage extends Page {
           form.trigger('submit');
         });
 
-      form.attr('method', 'PUT')
-        .off()
-        .on('submit', async (event) => {
-          event.preventDefault();
+      form.on('submit', async (event) => {
+        event.preventDefault();
 
-          if (isFormValid(form)) {
-            const data = {};
+        if (isFormValid(form)) {
+          const data = {};
 
-            form.find('text-field, text-area')
-              .each((index, field) => {
-                const key = this.saveModelWithSnakeCase ? snakeCase(field.id) : field.id;
-                data[key] = field.value;
-              });
+          form.find('text-field, text-area')
+            .each((index, field) => {
+              const key = this.saveModelWithSnakeCase ? snakeCase(field.id) : field.id;
+              data[key] = field.value;
+            });
 
-            // eslint-disable-next-line new-cap
-            const instance: Model = new this.model();
-            instance.setAttributes(data);
+          // eslint-disable-next-line new-cap
+          const instance: Model = new this.model();
+          instance.setAttributes(data);
 
-            const response = await instance.save();
-            if (response.getModelId()) {
-              dialog.get(0)
-                .close();
-              this.rows.push(response.getModel());
-              m.redraw();
-              await showSnackbar(this.__('Record creato'), 4000);
-            }
-          } else {
-            await showSnackbar(this.__('Campi non validi. Controlla i dati inseriti'));
+          const response = await instance.save();
+          if (response.getModelId()) {
+            dialog.get(0)
+              .close();
+            this.rows.push(response.getModel());
+            m.redraw();
+            await showSnackbar(this.__('Record creato'), 4000);
           }
-        });
+        } else {
+          await showSnackbar(this.__('Campi non validi. Controlla i dati inseriti'));
+        }
+      });
 
       dialog.get(0)
         .show();

@@ -16,6 +16,10 @@ import {
   isFormValid,
   showSnackbar
 } from '../../utils';
+import type {
+  TextArea,
+  TextField
+} from '../../WebComponents';
 import DataTable from '../DataTable/DataTable.jsx';
 import TableBody from '../DataTable/TableBody.jsx';
 import TableCell from '../DataTable/TableCell.jsx';
@@ -237,7 +241,7 @@ export default class RecordsPage extends Page {
           const data = {};
 
           form.find('text-field, text-area')
-            .each((index, field) => {
+            .each((index, field: TextField | TextArea) => {
               const key = this.saveModelWithSnakeCase ? snakeCase(field.id) : field.id;
               data[key] = field.value;
             });

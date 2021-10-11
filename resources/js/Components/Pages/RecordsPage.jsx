@@ -8,7 +8,6 @@ import type {
 } from '@material/mwc-textfield/mwc-textfield-base';
 import type {Cash} from 'cash-dom/dist/cash';
 import collect from 'collect.js';
-import {snakeCase} from 'lodash-es/string';
 import {Children} from 'mithril';
 
 import {Model} from '../../Models';
@@ -100,8 +99,6 @@ export default class RecordsPage extends Page {
 
   model: Model;
 
-  saveModelWithSnakeCase: boolean = true;
-
   async oninit(vnode) {
     // noinspection JSUnresolvedFunction
     vnode.state.data = (await this.model.all()).getData();
@@ -139,7 +136,7 @@ export default class RecordsPage extends Page {
       if (row instanceof Model) {
         // eslint-disable-next-line guard-for-in
         for (const attribute in this.columns) {
-          cells.push(row.getAttribute(snakeCase(attribute)));
+          cells.push(row[attribute]);
         }
       } else {
         cells = row;
@@ -238,17 +235,13 @@ export default class RecordsPage extends Page {
         event.preventDefault();
 
         if (isFormValid(form)) {
-          const data = {};
+          // eslint-disable-next-line new-cap
+          const instance: Model = new this.model();
 
           form.find('text-field, text-area')
             .each((index, field: TextField | TextArea) => {
-              const key = this.saveModelWithSnakeCase ? snakeCase(field.id) : field.id;
-              data[key] = field.value;
+              instance[field.id] = field.value;
             });
-
-          // eslint-disable-next-line new-cap
-          const instance: Model = new this.model();
-          instance.setAttributes(data);
 
           const response = await instance.save();
           if (response.getModelId()) {

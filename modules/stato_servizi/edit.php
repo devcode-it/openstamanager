@@ -69,8 +69,8 @@ if (Services::isEnabled()) {
                 </table>';
     } else {
         echo '
-                <div class="alert alert-warning" role="alert">
-                    <i class="fa fa-warning"></i> '.tr('Nessun servizio abilitato al momento').'.
+                <div class="alert alert-info" role="alert">
+                    <i class="fa fa-info"></i> '.tr('Nessun servizio abilitato al momento').'.
                 </div>';
     }
 
@@ -130,11 +130,12 @@ if (Services::isEnabled()) {
 
                 <hr><br>
 
-                <div class="alert alert-warning hidden" role="alert" id="spazio-fe">
-                    <i class="fa fa-warning"></i> '.tr('Spazio per Fatture Elettroniche in esaurimento: _NUM_/_TOT_', [
+                <div class="alert hidden" role="alert" id="spazio-fe">
+                    <i id="spazio-fe-icon" class=""></i> <span>'.tr('Spazio per fatture elettroniche _TEXT_: _NUM_ utilizzati su _TOT_ disponibili', [
+                        '_TEXT_' => '<span id="spazio-fe-text"></span>',
                         '_NUM_' => '<span id="spazio-fe-occupato"></span>',
                         '_TOT_' => '<span id="spazio-fe-totale"></span>',
-                    ]).'. '.tr("Contatta l'assistenza per maggiori informazioni").'.
+                    ]).'.<br>'.tr("Contatta l'assistenza per maggiori informazioni").'</span>.
                 </div>
 
                 <h4>'.tr('Statistiche su Fatture Elettroniche').'</h4>
@@ -247,17 +248,52 @@ function aggiornaStatisticheFE(){
             $("#spazio-fe-totale").html(response.spazio_totale);
             if (response.avviso_spazio) {
                 $("#spazio-fe").removeClass("hidden");
+
+                if (response.spazio_occupato<response.spazio_totale){
+                    $("#spazio-fe-icon").addClass("fa fa-warning");
+                    $("#spazio-fe").addClass("alert-warning");
+                    $("#spazio-fe-text").html("'.tr('in esaurimento').'");
+                  
+                   
+                }
+                else if (response.spazio_occupato>=response.spazio_totale){
+                    $("#spazio-fe-icon").addClass("fa fa-times");
+                    $("#spazio-fe").addClass("alert-danger");
+                    $("#spazio-fe-text").html("'.tr('esaurito').'");
+                }
             }
+            
+
 
             if (response.history.length) {
-                for (let i = 0; i < response.history.length; i++) {
-                    const data = response.history[i];
+                var current_year = new Date().getFullYear();
 
-                    $("#elenco-fe").append(`<tr>
+                for (let i = 0; i < response.history.length; i++) {
+                    
+                    const data = response.history[i];
+                    if (data["year"] == current_year){
+                        
+                        highlight = "<tr class=\"highlight\">";
+
+                        if (response.maxNumber < data["number"])
+                            data["number"] = "<i class=\"fa fa-warning\" ></i> " + data["number"];
+
+                        if (response.maxNumber>0)
+                            data["number"] = data["number"] + " / " + response.maxNumber;
+
+                      
+
+
+                    }else{
+                        highlight = "<tr>";
+                    }
+
+                    $("#elenco-fe").append(highlight + `
                         <td>` + data["year"] + `</td>
                         <td>` + data["number"] + `</td>
                         <td>` + data["size"] + `</td>
                     </tr>`);
+                   
                 }
             }
         }

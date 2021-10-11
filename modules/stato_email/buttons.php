@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-if (($record['attempt'] >= 10) && empty($record['sent_at'])) {
+if (!empty($record['failed_at'])) {
     echo '
         <span class="label label-danger">
             <i class="fa fa-times"></i> '.tr('Email fallita il: ').Translator::timestampToLocale($record['failed_at']).'

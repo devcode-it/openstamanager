@@ -417,6 +417,9 @@ abstract class Component extends Model
      */
     protected function customBeforeDataCopiaIn($original)
     {
+        if(!empty($original->idiva)){
+            $this->idiva = $original->idiva;
+        }
     }
 
     /**

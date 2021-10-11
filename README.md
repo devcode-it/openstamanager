@@ -1,6 +1,7 @@
-<p align="center">
+<div align="center">
   <a href="https://openstamanager.com">
-    <img src="https://www.openstamanager.com/wp-content/uploads/2015/04/logo_full-2.png">
+    <!--suppress HtmlUnknownTarget -->
+    <img src="resources\static\images\logo_completo.png" alt="OpenSTAManager">
   </a>
 
   <p align="center">
@@ -13,7 +14,7 @@
     &middot;
     <a href="https://forum.openstamanager.com">Forum</a>
   </p>
-</p>
+</div>
 
 <br>
 
@@ -38,37 +39,49 @@ Secondo questa definizione, OpenSTAManager riesce a generalizzare al proprio int
 
 La documentazione ufficiale è disponibile all'indirizzo <https://docs.openstamanager.com/>.
 
-<!-- TOC depthFrom:2 depthTo:6 orderedList:false updateOnSave:true withLinks:true -->
-
-- [Requisiti](#requisiti)
-- [Installazione](#installazione)
-    - [Versioni](#versioni)
-    - [GitHub](#github)
-- [Perché software open-source](#perché-software-open-source)
-- [Community](#community)
-- [Contribuire](#contribuire)
-- [Sviluppatori](#sviluppatori)
-- [Licenza](#licenza)
-
-<!-- /TOC -->
-
 ## Requisiti
 
-L'installazione del gestionale richiede la presenza di un server web con abilitato il [DBMS MySQL](https://www.mysql.com)  e il linguaggio di programmazione [PHP](https://php.net).
+L'installazione del gestionale richiede un server web con le seguenti tecnologie disponibili:
 
-- PHP >= 7.2
-- MySQL >= 5.7
+- [PHP](https://php.net) 8.0+
+- Un database a scelta tra:
+    - [MySQL](https://www.mysql.com) 5.7+ (consigliato)
+    - [PostgreSQL](https://www.postgresql.org) 9.6+
+    - [SQLite](https://www.sqlite.org) 3.8.8+ (non consigliato, in quanto viene salvato "in chiaro" sul filesystem del
+      server)
+    - [SQL Server](https://www.microsoft.com/it-it/sql-server) 2017+
+- Accesso SSH (**facoltativo**)
+- [Composer](https://getcomposer.org/) installato e disponibile da linea di comando (**facoltativo**)
 
-Per ulteriori informazioni sui pacchetti che forniscono questi elementi di default, visitare la sezione [Installazione](https://docs.openstamanager.com/guide/configurazione/installazione) della documentazione.
+e un dispositivo (client) con le seguenti tecnologie disponibili:
+
+- Browser moderno, a scelta tra:
+    - [Microsoft Edge](https://www.microsoft.com/it-it/edge) 85+ (consigliato)
+    - [Google Chrome](https://www.google.com/intl/it_it/chrome/) 85+
+    - [Mozilla Firefox](https://www.mozilla.org/it/firefox/) 79+
+    - [Safari](https://www.apple.com/it/safari/) 14+
+    - [Samsung Internet](https://www.samsung.com/it/apps/samsung-internet/) 15+
+
+_Alcune note:_
+
+- _**Non** è supportato nessun browser diverso dai precedenti, nemmeno in versioni più datate. Pertanto, anche se il
+  gestionale potrebbe funzionare, non è garantita assistenza su tali browser. Si citano come esempi: Internet Explorer,
+  Opera, Opera Mini, Opera Mobile e UC Browser._
+- _È consigliato utilizzare uno tra i seguenti browser per le migliori prestazioni: Microsoft Edge, Google Chrome o
+  Samsung Internet_
+
+Per ulteriori informazioni sui pacchetti che forniscono questi elementi di default, visitare la
+sezione [Installazione](https://docs.openstamanager.com/guide/configurazione/installazione) della documentazione.
 
 ## Installazione
 
 Per procedere all'installazione è necessario seguire i seguenti punti:
 
 1. [Scaricare una release ufficiale del progetto](https://github.com/devcode-it/openstamanager/releases).
-2. Creare una cartella (ad esempio `openstamanager`) nella root del server web installato ed estrarvi il contenuto della release scaricata. Il percorso della cartella root del server varia in base al software in utilizzo:
+2. Creare una cartella (ad esempio `openstamanager`) nella root del server web installato ed estrarvi il contenuto della
+   release scaricata. Il percorso della cartella root del server varia in base al software in utilizzo:
 
-   - LAMP (`/var/www/html`)
+    - LAMP (`/var/www/html`)
    - XAMPP (`C:/xampp/htdocs` per Windows, `/opt/lampp/htdocs/` per Linux, `/Applications/XAMPP/htdocs/` per MAC)
    - WAMP (`C:\wamp\www`)
    - MAMP (`C:\MAMP\htdocs` per Windows, `/Applications/MAMP/htdocs` per MAC)

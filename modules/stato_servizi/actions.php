@@ -314,21 +314,26 @@ switch (filter('op')) {
         $history = (array) $informazioni['history'];
         $history = array_slice($history, 0, 3);
 
+        $max_number = $informazioni['maxNumber'];
+        $avviso_numero = !empty($max_number) && floatval($history[0]['number']) > 0.9 * $max_number;
+
+
         // Formattazione dei contenuti dello storico
         foreach ($history as $key => $value) {
-            $history[$key]['size'] = Filesystem::formatBytes($value['size']);
-            $history[$key]['invoices_size'] = Filesystem::formatBytes($value['invoices_size']);
-            $history[$key]['notifies_size'] = Filesystem::formatBytes($value['notifies_size']);
+            $history[$key]['size'] = (($history[$key]['size'])? Filesystem::formatBytes($value['size']) : '-' );
+            //$history[$key]['invoices_size'] = Filesystem::formatBytes($value['invoices_size']);
+            //$history[$key]['notifies_size'] = Filesystem::formatBytes($value['notifies_size']);
         }
 
         // Formattazione dei contenuti generici
         echo json_encode([
-            'invoice_number' => $informazioni['invoice_number'],
-            'invoices_size' => Filesystem::formatBytes($informazioni['invoices_size']),
-            'notifies_size' => Filesystem::formatBytes($informazioni['notifies_size']),
+            //'invoices_size' => Filesystem::formatBytes($informazioni['invoices_size']),
+            //'notifies_size' => Filesystem::formatBytes($informazioni['notifies_size']),
 
+            'invoice_number' => $informazioni['invoice_number'],
+            'maxNumber' => $max_number,
+            'avviso_numero' => $avviso_numero,
             'avviso_spazio' => $avviso_spazio,
-            'maxNumber' => $informazioni['maxNumber'],
             'spazio_totale' => Filesystem::formatBytes($spazio_totale),
             'spazio_occupato' => Filesystem::formatBytes($informazioni['size']),
 

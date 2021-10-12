@@ -108,6 +108,20 @@ export default class RecordsPage extends Page {
     }
   }
 
+  async onupdate(vnode) {
+    const rows = $('.mdc-data-table__row[data-model-id]');
+    if (rows.length > 0) {
+      rows.on(
+        'click',
+        (event: PointerEvent) => {
+          this.updateRecord($(event.target)
+            .parent('tr')
+            .data('model-id'));
+        }
+      );
+    }
+  }
+
   tableColumns(): Children {
     return collect(this.columns)
       .map(
@@ -143,17 +157,52 @@ export default class RecordsPage extends Page {
       }
 
       return (
-        <TableRow key={index}>
+        <TableRow key={index} data-model-id={row.id} style="cursor: pointer">
           {cells.map((cell: string, index_) => <TableCell key={index_}>{cell}</TableCell>)}
         </TableRow>
       );
     });
   }
 
+  async updateRecord(id: number) {
+    // noinspection JSUnresolvedFunction
+    const instance: Model = (await this.model.find(id)).getData();
+    const dialog = $('mwc-dialog#add-record-dialog');
+
+    // eslint-disable-next-line sonarjs/no-duplicate-string
+    dialog.find('text-field, text-area')
+      .each((index, field: TextField | TextArea) => {
+        field.value = instance[field.id];
+      });
+
+    dialog.find('mwc-button#delete-button')
+      .show()
+      .on('click', () => {
+        const confirmDialog = $('mwc-dialog#confirm-delete-record-dialog');
+        confirmDialog.find('mwc-button#confirm-button')
+          .on('click', async () => {
+            await instance.delete();
+            this.rows = this.rows.filter(row => row.id !== instance.id);
+            m.redraw();
+            confirmDialog.get(0)
+              .close();
+            dialog.get(0)
+              .close();
+            await showSnackbar(this.__('Record eliminato!'), 4000);
+          });
+        confirmDialog.get(0)
+          .show();
+      });
+
+    dialog.get(0)
+      .show();
+  }
+
   recordDialog() {
     return (
       <mwc-dialog id="add-record-dialog" heading={this.__('Aggiungi nuovo record')}>
         <form method="PUT">
+          <text-field id="id" name="id" style="display: none;" data-default-value=""/>
           {(() => {
             const sections = collect(this.sections);
 
@@ -169,7 +218,8 @@ export default class RecordsPage extends Page {
                         return fields.map((field, fieldIndex) => (
                           <Cell key={fieldIndex} columnspan={12 / (section.columns ?? 3)}>
                             <text-field {...field} id={field.id ?? fieldIndex}
-                                        name={field.name ?? field.id ?? fieldIndex}/>
+                                        name={field.name ?? field.id ?? fieldIndex}
+                                        data-default-value={field.value ?? ''}/>
                           </Cell>))
                           .toArray();
                       })()}
@@ -190,6 +240,20 @@ export default class RecordsPage extends Page {
         <mwc-button slot="secondaryAction" dialogAction="cancel">
           {this.__('Annulla')}
         </mwc-button>
+        <mwc-button id="delete-button" slot="secondaryAction" label={this.__('Elimina')}
+                    style="--mdc-theme-primary: var(--mdc-theme-error, red); float: left; display: none;">
+          <Mdi icon="delete-outline" slot="icon"/>
+        </mwc-button>
+      </mwc-dialog>
+    );
+  }
+
+  deleteRecordDialog(): Children {
+    return (
+      <mwc-dialog id="confirm-delete-record-dialog">
+        <p>{this.__('Sei sicuro di voler eliminare questo record?')}</p>
+        <mwc-button id="confirm-button" slot="primaryAction" label={this.__('Sì')}/>
+        <mwc-button slot="secondaryAction" dialogAction="discard" label={this.__('No')}/>
       </mwc-dialog>
     );
   }
@@ -213,6 +277,7 @@ export default class RecordsPage extends Page {
           <Mdi icon="plus" slot="icon"/>
         </mwc-fab>
         {this.recordDialog()}
+        {this.deleteRecordDialog()}
         {this.dialogs}
       </>
     );
@@ -222,42 +287,66 @@ export default class RecordsPage extends Page {
     super.oncreate(vnode);
 
     const fab: Cash = $('mwc-fab#add-record');
+    const dialog: Cash = fab.next('mwc-dialog#add-record-dialog');
+    const form: Cash = dialog.find('form');
+
     fab.on('click', () => {
-      const dialog: Cash = fab.next('mwc-dialog#add-record-dialog');
-      const form: Cash = dialog.find('form');
-
-      dialog.find('mwc-button[type="submit"]')
-        .on('click', () => {
-          form.trigger('submit');
+      form.find('text-field, text-area')
+        .each((index, field) => {
+          field.value = $(field)
+            .data('default-value');
         });
-
-      form.on('submit', async (event) => {
-        event.preventDefault();
-
-        if (isFormValid(form)) {
-          // eslint-disable-next-line new-cap
-          const instance: Model = new this.model();
-
-          form.find('text-field, text-area')
-            .each((index, field: TextField | TextArea) => {
-              instance[field.id] = field.value;
-            });
-
-          const response = await instance.save();
-          if (response.getModelId()) {
-            dialog.get(0)
-              .close();
-            this.rows.push(response.getModel());
-            m.redraw();
-            await showSnackbar(this.__('Record creato'), 4000);
-          }
-        } else {
-          await showSnackbar(this.__('Campi non validi. Controlla i dati inseriti'));
-        }
-      });
+      dialog.find('mwc-button#delete-button')
+        .hide();
 
       dialog.get(0)
         .show();
+    });
+
+    dialog.find('mwc-button[type="submit"]')
+      .on('click', () => {
+        form.trigger('submit');
+      });
+
+    form.on('submit', async (event) => {
+      event.preventDefault();
+
+      if (isFormValid(form)) {
+        // eslint-disable-next-line new-cap
+        const instance: Model = new this.model();
+
+        form.find('text-field, text-area')
+          .each((index, field: TextField | TextArea) => {
+            instance[field.id] = field.value;
+          });
+
+        const response = await instance.save();
+        if (response.getModelId()) {
+          dialog.get(0)
+            .close();
+
+          const id = form.find('text-field#id')
+            .val();
+          const model = response.getModel();
+
+          if (id !== '') {
+            let index = 0;
+            for (const row of this.rows) {
+              if (row.id === model.id) {
+                this.rows[index] = model;
+                break;
+              }
+              index += 1;
+            }
+          } else {
+            this.rows.push(model);
+          }
+          m.redraw();
+          await showSnackbar(this.__('Record salvato'), 4000);
+        }
+      } else {
+        await showSnackbar(this.__('Campi non validi. Controlla i dati inseriti'));
+      }
     });
   }
 }

@@ -4,6 +4,9 @@ import {
 } from 'coloquent';
 import {snakeCase} from 'lodash-es';
 
+/**
+ * @property {number} id
+ */
 export default class Model extends BaseModel {
   /**
    * Just an alias to the get() method

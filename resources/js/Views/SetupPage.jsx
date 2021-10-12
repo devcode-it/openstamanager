@@ -5,7 +5,7 @@ import '@material/mwc-formfield';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-select';
 import '@material/mwc-textarea';
-import '@material/mwc-textfield';
+import '../WebComponents/TextField';
 
 import collect from 'collect.js';
 import LocaleCode from 'locale-code';
@@ -78,36 +78,50 @@ export default class SetupPage extends Page {
                   </small>
                   <Row style="margin-top: 8px;">
                     <Cell>
-                      <mwc-textfield name="timestamp_format" label={this.__('Formato data lunga')}
-                                     required value="d/m/Y H:i"/>
+                      <text-field name="timestamp_format" label={this.__('Formato data lunga')}
+                                  required value="d/m/Y H:i">
+                        <Mdi icon="calendar-clock" slot="icon"/>
+                      </text-field>
                     </Cell>
                     <Cell>
-                      <mwc-textfield name="date_format" label={this.__('Formato data corta')}
-                                     required value="d/m/Y"/>
+                      <text-field name="date_format" label={this.__('Formato data corta')}
+                                  required value="d/m/Y">
+                        <Mdi icon="calendar-month-outline" slot="icon"/>
+                      </text-field>
                     </Cell>
                     <Cell>
-                      <mwc-textfield name="time_format" label={this.__('Formato orario')} required
-                                     value="H:i"/>
+                      <text-field name="time_format" label={this.__('Formato orario')} required
+                                  value="H:i">
+                        <Mdi icon="clock-outline" slot="icon"/>
+                      </text-field>
                     </Cell>
                   </Row>
                   <hr/>
                   <h4>{this.__('Database')}</h4>
                   <Row>
                     <Cell columnspan="4">
-                      <mwc-textfield name="host" label={this.__('Host')} required
-                                     helper={examplesTexts.get('localhost')}/>
+                      <text-field name="host" label={this.__('Host')} required
+                                  helper={examplesTexts.get('localhost')}>
+                        <Mdi icon="server-network" slot="icon"/>
+                      </text-field>
                     </Cell>
                     <Cell columnspan="4">
-                      <mwc-textfield name="username" label={this.__('Nome utente')} required
-                                     helper={examplesTexts.get('root')}/>
+                      <text-field name="username" label={this.__('Nome utente')} required
+                                  helper={examplesTexts.get('root')}>
+                        <Mdi icon="account-outline" slot="icon"/>
+                      </text-field>
                     </Cell>
                     <Cell columnspan="4">
-                      <mwc-textfield name="password" label={this.__('Password')} required
-                                     helper={examplesTexts.get('mysql')}/>
+                      <text-field name="password" label={this.__('Password')} required
+                                  helper={examplesTexts.get('mysql')}>
+                        <Mdi icon="lock-outline" slot="icon"/>
+                      </text-field>
                     </Cell>
                     <Cell columnspan="4">
-                      <mwc-textfield name="database_name" label={this.__('Nome database')} required
-                                     helper={examplesTexts.get('openstamanager')}/>
+                      <text-field name="database_name" label={this.__('Nome database')} required
+                                  helper={examplesTexts.get('openstamanager')}>
+                        <Mdi icon="database-outline" slot="icon"/>
+                      </text-field>
                     </Cell>
                   </Row>
                   <hr/>
@@ -166,9 +180,18 @@ export default class SetupPage extends Page {
   oncreate(vnode: Mithril.VnodeDOM) {
     super.oncreate(vnode);
 
-    $('mwc-fab#contrast-switcher').on('click', function () {
-      $(this).toggleClass('contrast-light').toggleClass('contrast-dark');
-      $('body').toggleClass('mdc-high-contrast');
-    });
+    $('mwc-fab#contrast-switcher')
+      .on('click', function () {
+        $(this)
+          .toggleClass('contrast-light')
+          .toggleClass('contrast-dark');
+        $('body')
+          .toggleClass('mdc-high-contrast');
+      });
+
+    // Fix for mwc button inside <a> tags
+    $('a')
+      .has('mwc-button')
+      .css('text-decoration', 'none');
   }
 }

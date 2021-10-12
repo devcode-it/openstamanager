@@ -61,6 +61,10 @@ main {
     opacity: 0.1;
 }
 
+.record-dialog {
+    --mdc-layout-grid-margin-desktop: 0;
+}
+
 /* ----------------------------
     MWC styles
  ------------------------------ */

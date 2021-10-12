@@ -97,6 +97,8 @@ export default class RecordsPage extends Page {
 
   dialogs: Children[];
 
+  recordDialogMaxWidth: string | number = '75%';
+
   model: Model;
 
   async oninit(vnode) {
@@ -200,7 +202,9 @@ export default class RecordsPage extends Page {
 
   recordDialog() {
     return (
-      <mwc-dialog id="add-record-dialog" heading={this.__('Aggiungi nuovo record')}>
+      <mwc-dialog id="add-record-dialog" class="record-dialog"
+                  heading={this.__('Aggiungi nuovo record')}
+                  style={`--mdc-dialog-max-width: ${this.recordDialogMaxWidth}`}>
         <form method="PUT">
           <text-field id="id" name="id" style="display: none;" data-default-value=""/>
           {(() => {
@@ -209,7 +213,7 @@ export default class RecordsPage extends Page {
             return sections.map((section, index) => (
               <>
                 <div id={section.id ?? index}>
-                  <h2>{section.heading}</h2>
+                  <h4 class="mdc-typography--overline">{section.heading}</h4>
                   <LayoutGrid>
                     <Row>
                       {(() => {

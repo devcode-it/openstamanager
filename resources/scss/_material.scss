@@ -6,6 +6,7 @@
 @use "@material/card";
 @use "@material/layout-grid/mdc-layout-grid";
 @use "@material/data-table/data-table";
+@use "@material/typography/mdc-typography";
 
 @include card.core-styles;
 @include data-table.core-styles;

@@ -38,6 +38,7 @@
         "@material/mwc-textfield": "^0.25.1",
         "@material/mwc-top-app-bar": "^0.25.1",
         "@material/theme": "^13.0.0",
+        "@material/typography": "^13.0.0",
         "@mdi/font": "^6.2.95",
         "async-wait-until": "^2.0.7",
         "cash-dom": "^8.1.0",

@@ -363,7 +363,7 @@ if (filter('op') == 'aggiungi-allegato') {
         }
     }
 
-    if (($nome == 'Logo stampe' || $nome = 'Filigrana stampe') && (setting('Azienda predefinita') == $id_record)) {
+    if (($nome == 'Logo stampe' || $nome == 'Filigrana stampe') && (setting('Azienda predefinita') == $id_record)) {
         Settings::setValue($nome, $upload->filename);
     }
 }

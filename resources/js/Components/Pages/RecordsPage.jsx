@@ -7,7 +7,7 @@ import type {
   TextFieldType
 } from '@material/mwc-textfield/mwc-textfield-base';
 import type {Cash} from 'cash-dom/dist/cash';
-import collect from 'collect.js';
+import collect, {Collection} from 'collect.js';
 import {Children} from 'mithril';
 
 import {Model} from '../../Models';
@@ -91,7 +91,7 @@ export type SectionT = FieldT[] | {
  */
 export default class RecordsPage extends Page {
   columns: { [string]: [string] | ColumnT } | ColumnT[];
-  rows: string[][] | Model[] = [];
+  rows: Collection<Model> = collect({});
 
   sections: { [string]: SectionT } | SectionT[];
 
@@ -105,7 +105,9 @@ export default class RecordsPage extends Page {
     // noinspection JSUnresolvedFunction
     vnode.state.data = (await this.model.all()).getData();
     if (vnode.state.data) {
-      this.rows = vnode.state.data;
+      for (const record of vnode.state.data) {
+        this.rows.put(record.id, record);
+      }
       m.redraw();
     }
   }
@@ -137,25 +139,22 @@ export default class RecordsPage extends Page {
   }
 
   tableRows(): Children {
-    if (this.rows.length === 0) {
+    if (this.rows.isEmpty()) {
       return (
         <TableRow>
-          <TableCell colspan={Object.keys(this.columns).length} style="text-align: center;">
+          <TableCell colspan={collect(this.columns)
+            .count()} style="text-align: center;">
             {this.__('Non sono presenti dati')}
           </TableCell>
         </TableRow>);
     }
 
-    return this.rows.map((row: string[] | Model[], index) => {
-      let cells = [];
+    return this.rows.map((row: Model, index) => {
+      const cells = [];
 
-      if (row instanceof Model) {
-        // eslint-disable-next-line guard-for-in
-        for (const attribute in this.columns) {
-          cells.push(row[attribute]);
-        }
-      } else {
-        cells = row;
+      // eslint-disable-next-line guard-for-in
+      for (const attribute in this.columns) {
+        cells.push(row[attribute]);
       }
 
       return (
@@ -184,7 +183,7 @@ export default class RecordsPage extends Page {
         confirmDialog.find('mwc-button#confirm-button')
           .on('click', async () => {
             await instance.delete();
-            this.rows = this.rows.filter(row => row.id !== instance.id);
+            this.rows.forget(instance.id);
             m.redraw();
             confirmDialog.get(0)
               .close();
@@ -329,22 +328,9 @@ export default class RecordsPage extends Page {
           dialog.get(0)
             .close();
 
-          const id = form.find('text-field#id')
-            .val();
           const model = response.getModel();
+          this.rows.put(model.id, model);
 
-          if (id !== '') {
-            let index = 0;
-            for (const row of this.rows) {
-              if (row.id === model.id) {
-                this.rows[index] = model;
-                break;
-              }
-              index += 1;
-            }
-          } else {
-            this.rows.push(model);
-          }
           m.redraw();
           await showSnackbar(this.__('Record salvato'), 4000);
         }

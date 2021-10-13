@@ -42,17 +42,22 @@
         $module = $split[1];
         $path = "vendor/$vendor/$module/index.js";
     }
-    $vite_server = app()->make(\Innocenzi\Vite\Vite::class)->isDevelopmentServerRunning();
+
+    $osm_index = vite_asset('resources/js/index.js');
+    if (!Str::contains($osm_index, config('vite.dev_url'))) {
+        $osm_index = Str::replace('resources/js', '', $osm_index);
+    }
 @endphp
 @empty($path)
 @else
     <script type="importmap">
     {
       "imports": {
-        "openstamanager": "{{$vite_server ? vite_asset('resources/js/index.js') : vite_asset('index.js')}}",
+        "openstamanager": "{{$osm_index}}",
         "external_module": "{{vite_asset($path)}}"
       }
     }
+
 
 
 

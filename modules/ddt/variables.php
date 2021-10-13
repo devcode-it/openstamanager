@@ -28,4 +28,5 @@ return [
     'note' => $r['note'],
     'data' => Translator::dateToLocale($r['data']),
     'id_anagrafica' => $r['idanagrafica'],
+    'ragione_sociale' => $r['ragione_sociale'],
 ];

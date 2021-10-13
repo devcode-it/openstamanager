@@ -48,10 +48,11 @@
     <script type="importmap">
     {
       "imports": {
-        "openstamanager": "{{vite_asset('resources/js/index.js')}}",
+        "openstamanager": "{{File::exists(vite_asset('resources/js/index.js')) ? vite_asset('resources/js/index.js') : vite_asset('index.js')}}",
         "external_module": "{{vite_asset($path)}}"
       }
     }
+
 
 
 

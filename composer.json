@@ -45,6 +45,7 @@
         "tightenco/ziggy": "^1"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.6",
         "barryvdh/laravel-ide-helper": "^2",
         "facade/ignition": "^2",
         "friendsofphp/php-cs-fixer": "^3",

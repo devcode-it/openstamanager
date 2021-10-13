@@ -162,7 +162,8 @@ export default class RecordsPage extends Page {
           {cells.map((cell: string, index_) => <TableCell key={index_}>{cell}</TableCell>)}
         </TableRow>
       );
-    });
+    })
+      .toArray();
   }
 
   async updateRecord(id: number) {

@@ -103,19 +103,16 @@ Se siete inoltre interessati a supporto e assistenza professionali, li potete ri
 
 ### GitHub
 
-Nel caso si stia utilizzando la versione direttamente ottenuta dalla repository di GitHub, è necessario eseguire i seguenti comandi da linea di comando per completare le dipendenze PHP (tramite [Composer](https://getcomposer.org)) e gli assets (tramite [Yarn](https://yarnpkg.com)) del progetto.
+Nel caso si stia utilizzando la versione direttamente ottenuta dalla repository di GitHub, è necessario eseguire i seguenti comandi da linea di comando per completare le dipendenze PHP (tramite [Composer](https://getcomposer.org)) e gli assets (tramite [PNPM](https://pnpm.js.org/)) del progetto.
 
 ```bash
 php composer.phar install
-yarn global add gulp
-yarn install
-gulp
-```
+pnpm install
+pnpm run build
 
-In alternativa alla sequenza di comandi precedente, è possibile utilizzare il seguente comando (richiede l'installazione di GIT e Yarn, oltre che l'inserimento dell'archivio `composer.phar` nella cartella principale del progetto):
-
-```bash
-yarn run develop-OSM
+php artisan key:generate
+php artisan migrate
+php artisan vendor:publish
 ```
 
 Per ulteriori informazioni, visitare le sezioni [Assets](https://docs.openstamanager.com/docs/base/assets) e [Framework](https://docs.openstamanager.com/docs/base/framework) della documentazione.

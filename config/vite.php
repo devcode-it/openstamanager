@@ -1,35 +1,5 @@
 <?php
 
-/**
- * List all the directories under a directory.
- *
- * @param string $dir            Parent directory
- * @param false  $include_parent Include parent directory in the returned array
- * @param bool   $relative       Use relative paths instead of absolute ones
- * @source https://www.php.net/manual/en/function.glob.php#82182
- */
-function listdirs(string $dir, bool $include_parent = false, bool $relative = true): array
-{
-    $dirs = $include_parent ? [$dir] : [];
-    $next = 0;
-
-    while (true) {
-        $glob = glob($dir.'/*', GLOB_ONLYDIR);
-
-        if (count($glob) > 0) {
-            foreach ($glob as $_dir) {
-                $dirs[] = $_dir;
-            }
-        } else {
-            break;
-        }
-
-        $dir = $dirs[$next++];
-    }
-
-    return $relative ? array_unique(array_map(static fn ($dir) => ltrim(str_replace(base_path(), '', $dir), DIRECTORY_SEPARATOR), $dirs)) : $dirs;
-}
-
 return [
     /*
     |--------------------------------------------------------------------------
@@ -39,10 +9,9 @@ return [
     | entry points and will not be required in the configuration file.
     | To disable the feature, set to false.
     */
-    'entrypoints' => array_merge(
-        listdirs(resource_path('js'), true),
-        [resource_path('scss/app.scss')] // listdirs(resource_path('scss'), true)
-    ),
+    'entrypoints' => [
+        'resources/js',
+    ],
     'ignore_patterns' => ['/\\.d\\.ts$/'],
 
     /*
@@ -77,7 +46,7 @@ return [
     | the feature.
     | https://laravel-vite.innocenzi.dev/guide/configuration.html#ping-timeout
     */
-    'ping_timeout' => 5,
+    'ping_timeout' => false,
 
     /*
     |--------------------------------------------------------------------------

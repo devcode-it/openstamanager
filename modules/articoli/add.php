@@ -59,7 +59,7 @@ include_once __DIR__.'/../../core.php';
         <div class="box-body">
             <div class="row">
                 <div class="col-md-4">
-                    {[ "type": "number", "label": "<?php echo tr('Prezzo di acquisto'); ?>", "name": "prezzo_acquisto", "icon-after": "<?php echo currency(); ?>" ]}
+                    {[ "type": "number", "label": "<?php echo tr('Prezzo di acquisto'); ?>", "name": "prezzo_acquisto", "icon-after": "<?php echo currency(); ?>", "value": "<?php echo htmlentities(filter('prezzo_acquisto')) ?: 0; ?>" ]}
                 </div>
 
                 <div class="col-md-4">

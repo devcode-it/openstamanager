@@ -53,15 +53,9 @@
     <script type="importmap">
     {
       "imports": {
-        "openstamanager": "{{$osm_index}}",
         "external_module": "{{vite_asset($path)}}"
       }
     }
-
-
-
-
-
 
     </script>
     <script type="module">

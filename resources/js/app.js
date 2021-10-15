@@ -4,7 +4,10 @@ import '@mdi/font/scss/materialdesignicons.scss';
 
 import {InertiaProgress} from '@inertiajs/progress';
 import {createInertiaApp} from '@maicol07/inertia-mithril';
-import {waitUntil} from 'async-wait-until';
+import {
+  WAIT_FOREVER,
+  waitUntil
+} from 'async-wait-until';
 import $ from 'cash-dom';
 import m from 'mithril';
 
@@ -29,7 +32,9 @@ createInertiaApp({
 
     const [, page] = split;
     // noinspection JSUnresolvedVariable
-    await waitUntil(() => typeof window.extmodule !== 'undefined');
+    await waitUntil(() => typeof window.extmodule !== 'undefined', {
+      timeout: WAIT_FOREVER
+    });
     // noinspection JSUnresolvedVariable
     return window.extmodule[page];
   },

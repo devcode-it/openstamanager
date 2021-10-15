@@ -146,16 +146,9 @@ class FatturaOrdinaria extends FatturaElettronica
                     }
 
                     $articolo = ArticoloOriginale::build($codice, $riga['Descrizione'], $categoria);
-                    $articolo->prezzo_acquisto = $riga['PrezzoUnitario'];
-                    $articolo->id_fornitore = $fattura->idanagrafica;
                     $articolo->um = $riga['UnitaMisura'];
                     $articolo->idconto_acquisto = $conto[$key];
                     $articolo->save();
-
-                    $dettaglio_prezzo = DettaglioPrezzo::build($articolo, $anagrafica, $direzione);
-
-                    $dettaglio_prezzo->setPrezzoUnitario($riga['PrezzoUnitario']);
-                    $dettaglio_prezzo->save();
                 }
             }
 
@@ -280,15 +273,24 @@ class FatturaOrdinaria extends FatturaElettronica
                         $dettaglio_predefinito = DettaglioPrezzo::build($articolo, $anagrafica, $direzione);
                     }
                     
+                    // Imposto lo sconto nel listino solo se è una percentuale, se è un importo lo sottraggo dal prezzo
+                    if ($tipo == 'PRC') {
+                        $dettaglio_predefinito->sconto_percentuale = $sconto_unitario;
+                        $prezzo_unitario = $obj->prezzo_unitario;
+                        $prezzo_acquisto = $obj->prezzo_unitario - ($obj->prezzo_unitario * $sconto_unitario / 100);
+                    } else {
+                        $prezzo_unitario = $obj->prezzo_unitario - $sconto_unitario;
+                        $prezzo_acquisto = $prezzo_unitario;
+                    }
+
                     // Aggiornamento listino
-                    $dettaglio_predefinito->sconto_percentuale = 0;
-                    $dettaglio_predefinito->setPrezzoUnitario($obj->prezzo_unitario);
+                    $dettaglio_predefinito->setPrezzoUnitario($prezzo_unitario);
                     $dettaglio_predefinito->save();
 
                     // Aggiornamento fornitore predefinito
                     if ($update_info[$key]=='update_all') {
                         // Aggiornamento prezzo di acquisto e fornitore predefinito
-                        $articolo->prezzo_acquisto = $obj->prezzo_unitario;
+                        $articolo->prezzo_acquisto = $prezzo_acquisto;
                         $articolo->id_fornitore = $anagrafica->idanagrafica;
                         $articolo->save();
                     }

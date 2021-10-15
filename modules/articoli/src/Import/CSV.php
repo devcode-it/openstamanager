@@ -19,7 +19,10 @@
 
 namespace Modules\Articoli\Import;
 
+use Uploads;
+use Modules;
 use Carbon\Carbon;
+use Models\Upload;
 use Importer\CSVImporter;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Sede;
@@ -42,6 +45,14 @@ class CSV extends CSVImporter
                 'field' => 'codice',
                 'label' => 'Codice',
                 'primary_key' => true,
+            ],
+            [
+                'field' => 'immagine',
+                'label' => 'Immagine',
+                'names' => [
+                    'Immagine',
+                    'Foto',
+                ],
             ],
             [
                 'field' => 'descrizione',
@@ -210,6 +221,8 @@ class CSV extends CSVImporter
     {
         $database = database();
         $primary_key = $this->getPrimaryKey();
+        $url = $record['immagine'];
+        unset($record['immagine']);
 
         // Fix per campi con contenuti derivati da query implicite
         if (!empty($record['id_fornitore'])) {
@@ -316,6 +329,34 @@ class CSV extends CSVImporter
         $articolo->movimenta($qta_movimento, tr('Movimento da importazione'), new Carbon(), false, [
             'idsede' => $id_sede,
         ]);
+
+        //Gestione immagine
+        if ( !empty($url) ) {
+            $file_content = file_get_contents($url);
+
+            if( !empty($file_content) ){
+                $name = "immagine_".$articolo->id.'.'.Upload::getExtensionFromMimeType($file_content);
+
+                $upload = Uploads::upload($file_content, [
+                    'name' => 'Immagine',
+                    'category' => 'Immagini',
+                    'original_name' => $name,
+                    'id_module' => Modules::get('Articoli')['id'],
+                    'id_record' => $articolo->id,
+                ], [
+                    'thumbnails' => true,
+                ]);
+                $filename = $upload->filename;
+
+                if (!empty($filename)) {
+                    $database->update('mg_articoli', [
+                        'immagine' => $filename,
+                    ], [
+                        'id' => $articolo->id,
+                    ]);
+                }
+            }
+        }
     }
 
     public static function getExample()

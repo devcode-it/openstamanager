@@ -5,7 +5,7 @@
     "private": true,
     "main": "resources/js/index.js",
     "scripts": {
-        "dev": "vite",
+        "dev": "php artisan osm:dev-server-fix && vite",
         "build": "vite build",
         "serve": "php artisan serve",
         "watch": "vite build --watch",

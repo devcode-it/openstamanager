@@ -31,6 +31,7 @@ import {
   LayoutGrid,
   Row
 } from '../Grid';
+import LoadingButton from '../LoadingButton.jsx';
 import Mdi from '../Mdi.jsx';
 import Page from '../Page.jsx';
 
@@ -181,17 +182,21 @@ export default class RecordsPage extends Page {
       .show()
       .on('click', () => {
         const confirmDialog = $('mwc-dialog#confirm-delete-record-dialog');
-        confirmDialog.find('mwc-button#confirm-button')
-          .on('click', async () => {
-            await instance.delete();
-            this.rows.forget(instance.id);
-            m.redraw();
-            confirmDialog.get(0)
-              .close();
-            dialog.get(0)
-              .close();
-            await showSnackbar(this.__('Record eliminato!'), 4000);
-          });
+        const confirmButton = confirmDialog.find('mwc-button#confirm-button');
+        const loading: Cash = confirmButton.find('mwc-circular-progress');
+
+        confirmButton.on('click', async () => {
+          loading.show();
+
+          await instance.delete();
+
+          this.rows.forget(instance.id);
+          m.redraw();
+          await showSnackbar(this.__('Record eliminato!'), 4000);
+        });
+
+        loading.hide();
+
         confirmDialog.get(0)
           .show();
       });
@@ -238,9 +243,7 @@ export default class RecordsPage extends Page {
           })()}
         </form>
 
-        <mwc-button type="submit" slot="primaryAction">
-          {this.__('Conferma')}
-        </mwc-button>
+        <LoadingButton type="submit" slot="primaryAction" label={this.__('Conferma')}/>
         <mwc-button slot="secondaryAction" dialogAction="cancel">
           {this.__('Annulla')}
         </mwc-button>
@@ -256,7 +259,7 @@ export default class RecordsPage extends Page {
     return (
       <mwc-dialog id="confirm-delete-record-dialog">
         <p>{this.__('Sei sicuro di voler eliminare questo record?')}</p>
-        <mwc-button id="confirm-button" slot="primaryAction" label={this.__('Sì')}/>
+        <LoadingButton id="confirm-button" slot="primaryAction" label={this.__('Sì')}/>
         <mwc-button slot="secondaryAction" dialogAction="discard" label={this.__('No')}/>
       </mwc-dialog>
     );
@@ -300,6 +303,10 @@ export default class RecordsPage extends Page {
           field.value = $(field)
             .data('default-value');
         });
+
+      dialog.find('mwc-button[type="submit"] mwc-circular-progress')
+        .hide();
+
       dialog.find('mwc-button#delete-button')
         .hide();
 
@@ -307,13 +314,15 @@ export default class RecordsPage extends Page {
         .show();
     });
 
-    dialog.find('mwc-button[type="submit"]')
-      .on('click', () => {
-        form.trigger('submit');
-      });
+    const button = dialog.find('mwc-button[type="submit"]');
+    button.on('click', () => {
+      form.trigger('submit');
+    });
+    const loading: Cash = button.find('mwc-circular-progress');
 
     form.on('submit', async (event) => {
       event.preventDefault();
+      loading.show();
 
       if (isFormValid(form)) {
         // eslint-disable-next-line new-cap
@@ -336,6 +345,7 @@ export default class RecordsPage extends Page {
           await showSnackbar(this.__('Record salvato'), 4000);
         }
       } else {
+        loading.hide();
         await showSnackbar(this.__('Campi non validi. Controlla i dati inseriti'));
       }
     });

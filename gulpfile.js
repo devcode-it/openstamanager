@@ -52,7 +52,7 @@ const inquirer = require('inquirer');
 // Configurazione
 const config = {
     production: 'public/assets', // Cartella di destinazione
-    development: 'legacy/assets/src', // Cartella dei file di personalizzazione
+    development: 'vendor/devcode-it/legacy/assets/src', // Cartella dei file di personalizzazione
     debug: false,
     nodeDirectory: './node_modules', // Percorso per node_modules
     paths: {
@@ -313,14 +313,6 @@ function chartjs() {
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/chartjs'));
 }
 
-function csrf() {
-    return gulp.src([
-        './vendor/owasp/csrf-protector-php/js/csrfprotector.js',
-    ])
-        .pipe(flatten())
-        .pipe(gulp.dest(config.production + '/' + config.paths.js + '/csrf'));
-}
-
 function pdfjs() {
     const web = gulp.src([
         config.nodeDirectory + '/pdf.js/web/**/*',
@@ -489,7 +481,7 @@ function clean() {
 }
 
 // Operazioni di default per la generazione degli assets
-const bower = gulp.series(clean, gulp.parallel(JS, CSS, images, fonts, phpDebugBar, ckeditor, colorpicker, i18n, pdfjs, hotkeys, chartjs, password_strength, csrf));
+const bower = gulp.series(clean, gulp.parallel(JS, CSS, images, fonts, phpDebugBar, ckeditor, colorpicker, i18n, pdfjs, hotkeys, chartjs, password_strength));
 
 // Debug su CSS e JS
 exports.srcJS = srcJS;

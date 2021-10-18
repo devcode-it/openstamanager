@@ -25,16 +25,16 @@ include_once __DIR__.'/../../core.php';
 // Informazioni sui servizi attivi
 echo '
 <div class="row">';
-
-$limite_scadenze = (new Carbon())->addDays(60);
+$days = 60;
+$limite_scadenze = (new Carbon())->addDays($days);
 if (Services::isEnabled()) {
     echo '
     <!-- Informazioni sui Servizi attivi -->
     <div class="col-md-12 col-lg-6">
-        <div class="box box-success">
+        <div class="box box-primary">
             <div class="box-header">
                 <h3 class="box-title">
-                    '.tr('Servizi attivi').'
+                    '.tr('Servizi').'
                 </h3>
             </div>
 
@@ -43,12 +43,12 @@ if (Services::isEnabled()) {
     $servizi = Services::getServiziAttivi()->flatten(1);
     if (!$servizi->isEmpty()) {
         echo '
-                <table class="table table-striped table-hover">
+                <table class="box-body table table-striped table-hover table-condensed">
                     <thead>
                         <tr>
+                            <th width="50%">'.tr('Nome').'</th>
                             <th>'.tr('Tipo').'</th>
-                            <th>'.tr('Nome').'</th>
-                            <th>'.tr('Scadenza').'</th>
+                            <th width="30%">'.tr('Scadenza').'</th>
                         </tr>
                     </thead>
 
@@ -57,9 +57,9 @@ if (Services::isEnabled()) {
             $scadenza = Carbon::parse($servizio['data_conclusione']);
 
             echo '
-                        <tr class="'.($scadenza->lessThan($limite_scadenze) ? 'info' : '').'">
-                            <td>'.$servizio['sottocategoria'].'</td>
+                        <tr class="'.($scadenza->lessThan(Carbon::now()) ? 'danger' : ($scadenza->lessThan($limite_scadenze) ? 'warning' : '')).'">
                             <td>'.$servizio['codice'].' - '.$servizio['nome'].'</td>
+                            <td>'.$servizio['sottocategoria'].'</td>
                             <td>'.dateFormat($scadenza).' ('.$scadenza->diffForHumans().')</td>
                         </tr>';
         }
@@ -84,7 +84,7 @@ if (Services::isEnabled()) {
         <div class="box box-primary">
             <div class="box-header">
                 <h3 class="box-title">
-                    '.tr('Risorse Services').'
+                    '.tr('Risorse').'
                 </h3>
             </div>
 
@@ -94,26 +94,39 @@ if (Services::isEnabled()) {
     $risorse_attive = Services::getRisorseAttive();
     if (!$risorse_attive->isEmpty()) {
         $risorse_in_scadenza = Services::getRisorseInScadenza($limite_scadenze);
+        $risorse_scadute = Services::getRisorseScadute();
 
-        if (!$risorse_in_scadenza->isEmpty()) {
-            echo '
-                <div class="alert alert-warning" role="alert"> <i class="fa fa-warning"></i> '.tr('Attenzione, _NUM_ risorse sono in scadenza:', [
-                    '_NUM_' => $risorse_in_scadenza->count(),
-                ]).'</div>';
+        if (!$risorse_in_scadenza->isEmpty() || !$risorse_scadute->isEmpty() ) {
+            
+            if (!$risorse_in_scadenza->isEmpty()){
+                echo '
+                    <div class="alert alert-warning" role="alert"> <i class="fa fa-clock-o"></i> '.tr('Attenzione, _NUM_ risorse sono in scadenza o stanno per esaurire i crediti:', [
+                        '_NUM_' => $risorse_in_scadenza->count(),
+                    ]).'</div>';
+
+            }
+
+            if (!$risorse_scadute->isEmpty()){
+                echo '
+                    <div class="alert alert-danger" role="alert"> <i class="fa fa-exclamation-triangle"></i> '.tr('Attenzione, _NUM_ risorse sono scadute o hanno esaurito i crediti:', [
+                        '_NUM_' => $risorse_scadute->count(),
+                    ]).'</div>';
+            }
+        
         } else {
             echo '
-            <div class="alert alert-success" role="alert"> <i class="fa fa-check"></i> '.tr('Bene, tutte le risorse sono attive e non presentano avvisi:', [
+            <div class="alert alert-success" role="alert"> <i class="fa fa-check-circle"></i> '.tr('Bene, tutte le risorse sono attive e non presentano avvisi:', [
                 '_NUM_' => $risorse_attive->count(),
             ]).'</div>';
         }
 
         echo '
-            <table class="table table-striped table-hover">
+            <table class="box-body table table-striped table-hover table-condensed">
                 <thead>
                     <tr>
                         <th width="50%">'.tr('Nome').'</th>
                         <th>'.tr('Crediti').'</th>
-                        <th>'.tr('Scadenza').'</th>
+                        <th width="30%">'.tr('Scadenza').'</th>
                     </tr>
                 </thead>
                 
@@ -122,24 +135,23 @@ if (Services::isEnabled()) {
         foreach ($risorse_attive as $servizio) {
             $scadenza = Carbon::parse($servizio['expiration_at']);
             echo '
-                <tr>
+                <tr class="'.($scadenza->lessThan(Carbon::now()) ? 'danger' : ($scadenza->lessThan($limite_scadenze) ? 'warning' : '')).'">
                     <td>'.$servizio['name'].'</td>
                     <td>'.(($servizio['credits'] < 100 && $servizio['credits']) ? '<b><i class="fa fa-icon fa-warning" ></i>' : '').(($servizio['credits']) ? $servizio['credits'] : '-').(($servizio['credits'] < 100 && $servizio['credits']) ? '</b>' : '').'</td>
-                    <td>'.((Carbon::now()->diffInDays($scadenza, false) < 60 && $scadenza) ? '<b><i class="fa fa-icon fa-warning" ></i>' : '').dateFormat($scadenza).' ('.$scadenza->diffForHumans().')'.((Carbon::now()->diffInDays($scadenza, false) < 60 && $scadenza) ? '</b>' : '').'</td>
+                    <td>'.((Carbon::now()->diffInDays($scadenza, false) < $days && $scadenza) ? '<b><i class="fa fa-icon fa-warning" ></i>' : '').dateFormat($scadenza).' ('.$scadenza->diffForHumans().')'.((Carbon::now()->diffInDays($scadenza, false) < $days && $scadenza) ? '</b>' : '').'</td>
                 </tr>';
         }
 
         echo '
                 </tbody>
-            </table><hr>';
+            </table></div></div>';
 
         //Il servizio Fatturazione Elettronica deve essere presente per visualizzare le Statistiche su Fatture Elettroniche
         if (Services::getRisorseAttive()->where('name', 'Fatturazione Elettronica')->count()) {
             echo '
 
                 <div class="panel panel-info">
-
-                    <div class="panel-heading" >  <i class="fa fa-file"></i> '.tr('Statistiche su Fatture Elettroniche').'</div>
+                    <div class="panel-heading" >  <i class="fa fa-bar-chart"></i> '.tr('Statistiche su Fatture Elettroniche').'</div>
 
                     <div class="panel-body">
                                 
@@ -161,7 +173,7 @@ if (Services::isEnabled()) {
                         </div>
 
 
-                        <table class="table table-striped">
+                        <table class="box-body table table-striped table-hover table-condensed">
                             <thead>
                                 <tr>
                                     <th>'.tr('Anno').'</th>
@@ -182,7 +194,7 @@ if (Services::isEnabled()) {
                             </thead>
 
                             <tbody id="elenco-fe">
-                                <tr class="info">
+                                <tr style="background-color:#CCCCCC;" >
                                     <td>'.tr('Totale').'</td>
                                     <td id="fe_numero"></td>
                                     <td id="fe_spazio"></td>
@@ -205,9 +217,6 @@ if (Services::isEnabled()) {
     }
 
     echo '
-
-            </div>
-        </div>
     </div>';
 } else {
     /*
@@ -303,7 +312,7 @@ function aggiornaStatisticheFE(){
                     const data = response.history[i];
                     if (data["year"] == '.date('Y').'){
                         
-                        var highlight = "<tr style=\"background-color:#FFFEEE;\" >";
+                        var highlight = "<tr class=\"info\" >";
                         var number =  data["number"];
 
                         if (response.maxNumber>0 && response.maxNumber)

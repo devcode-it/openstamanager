@@ -214,7 +214,7 @@ if (filter('action') == 'do_update') {
             $total += $scriptValue;
         }
     }
-    
+
     echo '
                 <script>
                     $(document).ready(function(){

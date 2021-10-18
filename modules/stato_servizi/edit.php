@@ -94,22 +94,17 @@ if (Services::isEnabled()) {
     $risorse_attive = Services::getRisorseAttive();
     if (!$risorse_attive->isEmpty()) {
         $risorse_in_scadenza = Services::getRisorseInScadenza($limite_scadenze);
-        
+
         if (!$risorse_in_scadenza->isEmpty()) {
             echo '
                 <div class="alert alert-warning" role="alert"> <i class="fa fa-warning"></i> '.tr('Attenzione, _NUM_ risorse sono in scadenza:', [
-
-                    '_NUM_' =>  $risorse_in_scadenza->count()
-
+                    '_NUM_' => $risorse_in_scadenza->count(),
                 ]).'</div>';
-               
-        }else{
-
-        echo '
+        } else {
+            echo '
             <div class="alert alert-success" role="alert"> <i class="fa fa-check"></i> '.tr('Bene, tutte le risorse sono attive e non presentano avvisi:', [
-                '_NUM_' => $risorse_attive->count()
+                '_NUM_' => $risorse_attive->count(),
             ]).'</div>';
-
         }
 
         echo '
@@ -124,25 +119,23 @@ if (Services::isEnabled()) {
                 
                 <tbody>';
 
-            foreach ($risorse_attive as $servizio) {
-                $scadenza = Carbon::parse($servizio['expiration_at']);
-                echo '
+        foreach ($risorse_attive as $servizio) {
+            $scadenza = Carbon::parse($servizio['expiration_at']);
+            echo '
                 <tr>
                     <td>'.$servizio['name'].'</td>
-                    <td>'.(($servizio['credits']<100 && $servizio['credits'])? '<b><i class="fa fa-icon fa-warning" ></i>': '' ).(($servizio['credits'])? $servizio['credits']: '-' ).(($servizio['credits']<100 && $servizio['credits'])? '</b>': '' ).'</td>
-                    <td>'.((Carbon::now()->diffInDays($scadenza, false)<60 && $scadenza)? '<b><i class="fa fa-icon fa-warning" ></i>': '' ).dateFormat($scadenza).' ('.$scadenza->diffForHumans().')'.((Carbon::now()->diffInDays($scadenza, false)<60 && $scadenza)? '</b>': '' ).'</td>
+                    <td>'.(($servizio['credits'] < 100 && $servizio['credits']) ? '<b><i class="fa fa-icon fa-warning" ></i>' : '').(($servizio['credits']) ? $servizio['credits'] : '-').(($servizio['credits'] < 100 && $servizio['credits']) ? '</b>' : '').'</td>
+                    <td>'.((Carbon::now()->diffInDays($scadenza, false) < 60 && $scadenza) ? '<b><i class="fa fa-icon fa-warning" ></i>' : '').dateFormat($scadenza).' ('.$scadenza->diffForHumans().')'.((Carbon::now()->diffInDays($scadenza, false) < 60 && $scadenza) ? '</b>' : '').'</td>
                 </tr>';
-            }
+        }
 
         echo '
                 </tbody>
             </table><hr>';
-    
 
-       
         //Il servizio Fatturazione Elettronica deve essere presente per visualizzare le Statistiche su Fatture Elettroniche
-        if (Services::getRisorseAttive()->where('name','Fatturazione Elettronica')->count()){
-        echo '
+        if (Services::getRisorseAttive()->where('name', 'Fatturazione Elettronica')->count()) {
+            echo '
 
                 <div class="panel panel-info">
 
@@ -203,7 +196,6 @@ if (Services::isEnabled()) {
                     aggiornaStatisticheFE();
                 });
                 </script>';
-
         }
     } else {
         echo '

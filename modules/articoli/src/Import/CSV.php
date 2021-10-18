@@ -19,17 +19,17 @@
 
 namespace Modules\Articoli\Import;
 
-use Uploads;
-use Modules;
 use Carbon\Carbon;
-use Models\Upload;
 use Importer\CSVImporter;
+use Models\Upload;
+use Modules;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Sede;
 use Modules\Articoli\Articolo;
 use Modules\Articoli\Categoria;
 use Modules\Iva\Aliquota;
 use Plugins\ListinoClienti\DettaglioPrezzo;
+use Uploads;
 
 /**
  * Struttura per la gestione delle operazioni di importazione (da CSV) degli Articoli.
@@ -331,11 +331,11 @@ class CSV extends CSVImporter
         ]);
 
         //Gestione immagine
-        if ( !empty($url) ) {
+        if (!empty($url)) {
             $file_content = file_get_contents($url);
 
-            if( !empty($file_content) ){
-                $name = "immagine_".$articolo->id.'.'.Upload::getExtensionFromMimeType($file_content);
+            if (!empty($file_content)) {
+                $name = 'immagine_'.$articolo->id.'.'.Upload::getExtensionFromMimeType($file_content);
 
                 $upload = Uploads::upload($file_content, [
                     'name' => 'Immagine',

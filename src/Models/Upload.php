@@ -222,7 +222,7 @@ class Upload extends Model
 
     /**
      * @return string
-    */
+     */
     public static function getExtensionFromMimeType($file_content)
     {
         $finfo = finfo_open();

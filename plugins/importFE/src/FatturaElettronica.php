@@ -21,9 +21,9 @@ namespace Plugins\ImportFE;
 
 use Modules;
 use Modules\Anagrafiche\Anagrafica;
-use Modules\Banche\Banca;
 use Modules\Anagrafiche\Nazione;
 use Modules\Anagrafiche\Tipo as TipoAnagrafica;
+use Modules\Banche\Banca;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato as StatoFattura;
 use Modules\Fatture\Tipo as TipoFattura;

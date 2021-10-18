@@ -155,7 +155,7 @@ class FatturaOrdinaria extends FatturaElettronica
             if (!empty($articolo)) {
                 $articolo->idconto_acquisto = $conto[$key];
                 $articolo->save();
-                
+
                 $obj = Articolo::build($fattura, $articolo);
 
                 $obj->movimentazione($movimentazione);
@@ -242,11 +242,11 @@ class FatturaOrdinaria extends FatturaElettronica
                     if ($tipo_sconto == 'PRC') {
                         $sconto_calcolato = calcola_sconto([
                             'sconto' => $sconto_riga,
-                            'prezzo' => $sconto_unitario ? $obj->prezzo_unitario-($sconto_calcolato/$obj->qta) : $obj->prezzo_unitario,
+                            'prezzo' => $sconto_unitario ? $obj->prezzo_unitario - ($sconto_calcolato / $obj->qta) : $obj->prezzo_unitario,
                             'tipo' => 'PRC',
                             'qta' => $obj->qta,
                         ]);
-    
+
                         if ($tipo == 'PRC') {
                             $tot_sconto = $sconto_calcolato * 100 / $obj->imponibile;
                         } else {
@@ -256,15 +256,15 @@ class FatturaOrdinaria extends FatturaElettronica
                         $tot_sconto = $sconto_riga;
                     }
 
-                    $sconto_unitario += $tot_sconto;    
+                    $sconto_unitario += $tot_sconto;
                 }
 
-                $obj->setSconto($sconto_unitario, $tipo);   
+                $obj->setSconto($sconto_unitario, $tipo);
             }
 
             // Aggiornamento prezzo di acquisto e fornitore predefinito in base alle impostazioni
             if (!empty($articolo)) {
-                if ($update_info[$key]=='update_price' || $update_info[$key]=='update_all') {
+                if ($update_info[$key] == 'update_price' || $update_info[$key] == 'update_all') {
                     $dettaglio_predefinito = DettaglioPrezzo::dettaglioPredefinito($articolo->id, $anagrafica->idanagrafica, $direzione)
                     ->first();
 
@@ -272,7 +272,7 @@ class FatturaOrdinaria extends FatturaElettronica
                     if (empty($dettaglio_predefinito)) {
                         $dettaglio_predefinito = DettaglioPrezzo::build($articolo, $anagrafica, $direzione);
                     }
-                    
+
                     // Imposto lo sconto nel listino solo se è una percentuale, se è un importo lo sottraggo dal prezzo
                     if ($tipo == 'PRC') {
                         $dettaglio_predefinito->sconto_percentuale = $sconto_unitario;
@@ -288,7 +288,7 @@ class FatturaOrdinaria extends FatturaElettronica
                     $dettaglio_predefinito->save();
 
                     // Aggiornamento fornitore predefinito
-                    if ($update_info[$key]=='update_all') {
+                    if ($update_info[$key] == 'update_all') {
                         // Aggiornamento prezzo di acquisto e fornitore predefinito
                         $articolo->prezzo_acquisto = $prezzo_acquisto;
                         $articolo->id_fornitore = $anagrafica->idanagrafica;
@@ -296,11 +296,10 @@ class FatturaOrdinaria extends FatturaElettronica
                     }
                 }
             }
-            
+
             $tipo = null;
             $sconto_unitario = null;
             $obj->save();
-
         }
 
         // Ricaricamento della fattura

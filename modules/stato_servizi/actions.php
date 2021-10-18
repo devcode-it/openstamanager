@@ -317,10 +317,9 @@ switch (filter('op')) {
         $max_number = $informazioni['maxNumber'];
         $avviso_numero = !empty($max_number) && floatval($history[0]['number']) > 0.9 * $max_number;
 
-
         // Formattazione dei contenuti dello storico
         foreach ($history as $key => $value) {
-            $history[$key]['size'] = (($history[$key]['size'])? Filesystem::formatBytes($value['size']) : '-' );
+            $history[$key]['size'] = (($history[$key]['size']) ? Filesystem::formatBytes($value['size']) : '-');
             //$history[$key]['invoices_size'] = Filesystem::formatBytes($value['invoices_size']);
             //$history[$key]['notifies_size'] = Filesystem::formatBytes($value['notifies_size']);
         }

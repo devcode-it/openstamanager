@@ -294,11 +294,11 @@ echo '
     </div>';
 
 // Righe
-if (setting('Aggiorna info di acquisto')=='Non aggiornare'){
+if (setting('Aggiorna info di acquisto') == 'Non aggiornare') {
     $update_info = 'update_not';
-} elseif (setting('Aggiorna info di acquisto')=='Aggiorna prezzo di listino'){ 
-    $update_info ='update_price'; 
-} else{
+} elseif (setting('Aggiorna info di acquisto') == 'Aggiorna prezzo di listino') {
+    $update_info = 'update_price';
+} else {
     $update_info = 'update_all';
 }
 
@@ -358,7 +358,7 @@ if (!empty($righe)) {
                     $id_articolo = $database->fetchOne('SELECT id_articolo AS id FROM mg_fornitore_articolo WHERE REPLACE(codice_fornitore, " ", "") = '.prepare($codice_principale).' AND id_fornitore = '.prepare($anagrafica->id))['id'];
                 }
             }
-            
+
             if (empty($id_articolo)) {
                 $id_articolo = $database->fetchOne('SELECT id FROM mg_articoli WHERE codice = '.prepare($codice_principale))['id'];
                 if (empty($id_articolo)) {

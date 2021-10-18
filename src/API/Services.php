@@ -86,7 +86,7 @@ class Services
         return self::getServiziAttivi()
             ->flatten(1)
             ->filter(function ($item) use ($limite_scadenze) {
-                return (isset($item['data_conclusione']) && Carbon::parse($item['data_conclusione'])->lessThan($limite_scadenze));
+                return isset($item['data_conclusione']) && Carbon::parse($item['data_conclusione'])->lessThan($limite_scadenze);
             });
     }
 

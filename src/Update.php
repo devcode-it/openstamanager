@@ -17,6 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
+
 /**
  * Classe dedicata alla gestione delle procedure di aggiornamento del database del progetto.
  *
@@ -207,6 +209,11 @@ class Update
             if (class_exists('\Models\Cache')) {
                 \Models\Cache::pool('Ultima versione di OpenSTAManager disponibile')->set(null);
             }
+
+            // Correzione permessi per le cartelle backup e files
+            $fs = new SymfonyFilesystem();
+            $fs->chmod('backup', 0777, 0000, true);
+            $fs->chmod('files', 0777, 0000, true);
 
             return true;
         }

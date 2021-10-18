@@ -186,10 +186,10 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $riga->prezzo_unitario = $sessione->prezzo_orario;
 
             //Calcolo lo sconto unitario della sessione in base all'impostazione sui prezzi ivati
-            $iva = $dbo->table('co_iva')->where('id',$id_iva)->first();
-            if( $sessione->tipo_sconto=='UNT' && setting('Utilizza prezzi di vendita comprensivi di IVA') ){
-                $sconto_unitario = $sessione->sconto_unitario + (($sessione->sconto_unitario*$iva->percentuale)/100);
-            }else{
+            $iva = $dbo->table('co_iva')->where('id', $id_iva)->first();
+            if ($sessione->tipo_sconto == 'UNT' && setting('Utilizza prezzi di vendita comprensivi di IVA')) {
+                $sconto_unitario = $sessione->sconto_unitario + (($sessione->sconto_unitario * $iva->percentuale) / 100);
+            } else {
                 $sconto_unitario = $sessione->sconto_unitario;
             }
 

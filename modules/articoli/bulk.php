@@ -54,7 +54,7 @@ switch (post('op')) {
 
         foreach ($id_records as $id) {
             $articolo = Articolo::find($id);
-            $prezzo_partenza = post('prezzo_partenza')=='vendita' ? $articolo->prezzo_vendita : $articolo->prezzo_acquisto;
+            $prezzo_partenza = post('prezzo_partenza') == 'vendita' ? $articolo->prezzo_vendita : $articolo->prezzo_acquisto;
 
             $new_prezzo_vendita = $prezzo_partenza + ($prezzo_partenza * $percentuale / 100);
             $articolo->setPrezzoVendita($new_prezzo_vendita, $articolo->idiva_vendita);

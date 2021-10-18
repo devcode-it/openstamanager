@@ -38,6 +38,15 @@ class Upload extends Model
         'htm' => 'text/html',
     ];
 
+    /** @var array Elenco delle estensioni file per mime type */
+    protected static $extension_association = [
+        'image/gif' => 'gif',
+        'image/bmp' => 'bmp',
+        'image/jpg' => 'jpg',
+        'image/jpeg' => 'jpg',
+        'image/png' => 'png',
+    ];
+
     protected $table = 'zz_files';
 
     protected $file_info;
@@ -209,6 +218,18 @@ class Upload extends Model
         $list = ['jpg', 'png', 'gif', 'jpeg', 'bmp'];
 
         return in_array($this->extension, $list);
+    }
+
+    /**
+     * @return string
+     */
+    public static function getExtensionFromMimeType($file_content)
+    {
+        $finfo = finfo_open();
+        $mime_type = finfo_buffer($finfo, $file_content, FILEINFO_MIME_TYPE);
+        finfo_close($finfo);
+
+        return self::$extension_association[$mime_type];
     }
 
     /**

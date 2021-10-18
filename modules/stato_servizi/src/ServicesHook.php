@@ -34,23 +34,46 @@ class ServicesHook extends Manager
         // Elaborazione dei servizi in scadenza
         $servizi_in_scadenza = Services::getServiziInScadenza($limite_scadenze);
         if (!$servizi_in_scadenza->isEmpty()) {
-            $message .= tr('I seguenti servizi sono in scadenza: _LIST_', [
-                '_LIST_' => implode(', ', $servizi_in_scadenza->pluck('nome')->all()),
-            ]).'. ';
+            $message .= '<i class="fa fa-clock-o text-warning"> </i> ';
+            $message .= tr('I seguenti servizi sono in scadenza:<ul><li> _LIST_', [
+                '_LIST_' => implode('</li><li>', $servizi_in_scadenza->pluck('nome')->all()),
+            ]).'</ul>';
         }
+
+
+        // Elaborazione delle risorse Services scadute
+        $risorse_scadute = Services::getRisorseScadute();
+        if (!$risorse_scadute->isEmpty()) {
+            $message .= '<i class="fa fa-exclamation-triangle text-danger"> </i> ';
+            $message .= tr('Le seguenti risorse sono scadute:<ul><li> _LIST_', [
+                '_LIST_' => implode('</li><li>', $risorse_scadute->pluck('name')->all()),
+            ]).'</ul>';
+        }
+
+        // Elaborazione dei servizi scaduti
+        $servizi_scaduti = Services::getServiziScaduti();
+        if (!$servizi_scaduti->isEmpty()) {
+            $message .= '<i class="fa fa-exclamation-triangle text-danger"> </i> ';
+            $message .= tr('I seguenti servizi sono scaduti:<ul><li> _LIST_', [
+                '_LIST_' => implode('</li><li>', $servizi_scaduti->pluck('nome')->all()),
+            ]).'</ul>';
+        }
+
 
         // Elaborazione delle risorse Services in scadenza
         $risorse_in_scadenza = Services::getRisorseInScadenza($limite_scadenze);
         if (!$risorse_in_scadenza->isEmpty()) {
-            $message .= tr('Le seguenti risorse Services sono in scadenza: _LIST_', [
-                '_LIST_' => implode(', ', $risorse_in_scadenza->pluck('name')->all()),
-            ]);
+            $message .= '<i class="fa fa-clock-o text-warning"> </i> ';
+            $message .= tr('Le seguenti risorse sono in scadenza:<ul><li> _LIST_', [
+                '_LIST_' => implode('</li><li>', $risorse_in_scadenza->pluck('name')->all()),
+            ]).'</ul>';
         }
+
 
         $module = Module::pool('Stato dei servizi');
 
         return [
-            'icon' => 'fa fa-refresh text-warning',
+            'icon' => null,
             'message' => $message,
             'link' => base_path().'/controller.php?id_module='.$module->id,
             'show' => Services::isEnabled() && !empty($message),

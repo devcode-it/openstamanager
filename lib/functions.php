@@ -25,6 +25,10 @@
 
 use HTMLBuilder\HTMLBuilder;
 use Models\OperationLog;
+use Symfony\Component\Filesystem\Exception\IOException;
+use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
+use Symfony\Component\Finder\Finder;
+use Util\FileSystem;
 
 /**
  * Esegue il redirect.
@@ -71,12 +75,12 @@ function sanitizeFilename($filename)
 function delete($files)
 {
     // Filesystem Symfony
-    $fs = new Symfony\Component\Filesystem\Filesystem();
+    $fs = new SymfonyFilesystem();
 
     // Eliminazione
     try {
         $fs->remove($files);
-    } catch (Symfony\Component\Filesystem\Exception\IOException $e) {
+    } catch (IOException $e) {
         return false;
     }
 
@@ -110,7 +114,7 @@ function copyr($source, $destination, $ignores = [])
         return false;
     }
 
-    $files = Symfony\Component\Finder\Finder::create()
+    $files = Finder::create()
         ->files()
         ->exclude((array) $ignores['dirs'])
         ->ignoreDotFiles(false)
@@ -124,14 +128,17 @@ function copyr($source, $destination, $ignores = [])
     $result = true;
 
     // Filesystem Symfony
-    $fs = new Symfony\Component\Filesystem\Filesystem();
+    $fs = new SymfonyFilesystem();
+
+    $fs->chmod($destination, 0777, 0000, true);
+
     foreach ($files as $file) {
         $filename = rtrim($destination, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$file->getRelativePathname();
 
-        // Copia
+        // Copia effettiva del file
         try {
-            $fs->copy($file, $filename);
-        } catch (Symfony\Component\Filesystem\Exception\IOException $e) {
+            $fs->copy($file, $filename, true);
+        } catch (IOException $e) {
             $result = false;
         }
     }

@@ -41,17 +41,6 @@ trait RelationTrait
         return $this->document();
     }
 
-    public function getNettoAttribute()
-    {
-        $result = $this->totale - $this->ritenuta_acconto - $this->ritenuta_contributi;
-
-        if ($this->getDocument()->split_payment) {
-            $result = $result - $this->iva;
-        }
-
-        return $result;
-    }
-
     /**
      * Restituisce i dati aggiuntivi per la fattura elettronica dell'elemento.
      *

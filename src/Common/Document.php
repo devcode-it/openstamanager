@@ -196,7 +196,7 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
      */
     public function getTotaleAttribute()
     {
-        return $this->calcola('totale');
+        return $this->calcola('totale_imponibile') + $this->calcola('iva') + $this->rivalsa_inps + $this->iva_rivalsa_inps;
     }
 
     /**
@@ -305,7 +305,10 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
      */
     public function getNettoAttribute()
     {
-        $netto = $this->calcola('netto');
+        $netto = $this->totale - $this->ritenuta_acconto - $this->ritenuta_contributi;
+        if ($this->split_payment) {
+            $netto = $netto - $this->iva;
+        }
         $sconto_finale = $this->getScontoFinale();
 
         return $netto - $sconto_finale;

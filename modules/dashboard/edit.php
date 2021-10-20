@@ -45,7 +45,9 @@ if (!isset($_SESSION['dashboard']['idtecnici'])) {
     $_SESSION['dashboard']['idtecnici'] = ["'-1'"];
 
     foreach ($tecnici_disponibili as $tecnico) {
-        $_SESSION['dashboard']['idtecnici'][] = "'".$tecnico['id']."'";
+        if(($user['gruppo']=='Tecnici' && $user['idanagrafica']==$tecnico['id']) || $user['gruppo']!='Tecnici'){
+            $_SESSION['dashboard']['idtecnici'][] = "'".$tecnico['id']."'";
+        }
     }
 }
 

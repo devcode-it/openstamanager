@@ -159,7 +159,7 @@ if (empty($record) || !$has_access) {
     // Pulsanti di default
     echo '
                     <div id="pulsanti">
-                        <a class="btn btn-warning" href="'.base_path().'/controller.php?id_module='.$id_module.'">
+                        <a class="btn btn-warning" id="back" href="'.base_path().'/controller.php?id_module='.$id_module.'">
                             <i class="fa fa-chevron-left"></i> '.tr("Torna all'elenco").'
                         </a>
 
@@ -462,7 +462,7 @@ if ($read_only || !empty($block_edit)) {
     if ($read_only) {
         echo '
 				$("a.btn, button, input[type=button], input[type=submit]", "section.content").hide();
-                $("a.btn-info, button.btn-info, input[type=button].btn-info", "section.content").show();';
+                $("a.btn-info, button.btn-info, input[type=button].btn-info", "section.content" "#back").show();';
     }
 
     echo '

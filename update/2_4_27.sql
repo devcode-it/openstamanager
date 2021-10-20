@@ -16,3 +16,6 @@ ALTER TABLE `in_righe_interventi` ADD `order` INT NOT NULL AFTER `idsede_partenz
 
 -- Aggiunta widget per la sincronizzazione esterna delle liste newsletter
 INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`, `query`, `bgcolor`, `icon`, `print_link`, `more_link`, `more_link_type`, `php_include`, `text`, `enabled`, `order`) VALUES (NULL, 'Sincronizzazione disiscritti', 'custom', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Liste newsletter'), 'controller_top', 'col-md-12', NULL, '#4ccc4c', 'fa fa-envelope ', '', './modules/liste_newsletter/widgets/opt-out.php', 'popup', './modules/liste_newsletter/widgets/opt-out.php', 'Sincronizza disiscritti dal servizio esterno', '0', '1');
+
+-- Aggiunto order by data nella gestione documentale
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `do_documenti`\nINNER JOIN `do_categorie` ON `do_categorie`.`id` = `do_documenti`.`idcategoria`\nWHERE 1=1 AND `deleted_at` IS NULL AND\n (SELECT `idgruppo` FROM `zz_users` WHERE `zz_users`.`id` = |id_utente|) IN (SELECT `id_gruppo` FROM `do_permessi` WHERE `id_categoria` = `do_documenti`.`idcategoria`)\n |date_period(`data`)| OR data IS NULL\nHAVING 2=2 ORDER BY `data` DESC' WHERE `zz_modules`.`name` = 'Gestione documentale';

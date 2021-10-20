@@ -307,7 +307,7 @@ class FatturaOrdinaria extends FatturaElettronica
 
         // Arrotondamenti differenti nella fattura XML
         $totali_righe = array_column($righe, 'PrezzoTotale');
-        $totale_righe = sum($totali_righe);
+        $totale_righe = sum($totali_righe, null, 2);
 
         $diff = abs($totale_righe) - abs($fattura->totale_imponibile);
         if (!empty($diff)) {

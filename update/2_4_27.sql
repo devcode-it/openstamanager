@@ -13,3 +13,6 @@ UPDATE `zz_cache` SET `valid_time` = '1 day' WHERE `zz_cache`.`name` = 'Informaz
 
 -- Ordinamento righe intervento
 ALTER TABLE `in_righe_interventi` ADD `order` INT NOT NULL AFTER `idsede_partenza`;
+
+-- Aggiunta widget per la sincronizzazione esterna delle liste newsletter
+INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`, `query`, `bgcolor`, `icon`, `print_link`, `more_link`, `more_link_type`, `php_include`, `text`, `enabled`, `order`) VALUES (NULL, 'Sincronizzazione disiscritti', 'custom', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Liste newsletter'), 'controller_top', 'col-md-12', NULL, '#4ccc4c', 'fa fa-envelope ', '', './modules/liste_newsletter/widgets/opt-out.php', 'popup', './modules/liste_newsletter/widgets/opt-out.php', 'Sincronizza disiscritti dal servizio esterno', '0', '1');

@@ -113,7 +113,8 @@
             "Plugins\\StatisticheArticoli\\": ["plugins/statistiche_articoli/custom/src/", "plugins/statistiche_articoli/src/"],
             "Plugins\\ListinoClienti\\": ["plugins/listino_clienti/custom/src/", "plugins/listino_clienti/src/"],
             "Plugins\\ListinoFornitori\\": ["plugins/listino_fornitori/custom/src/", "plugins/listino_fornitori/src/"],
-            "Plugins\\ComponentiImpianti\\": ["plugins/componenti/custom/src/", "plugins/componenti/src/"]
+            "Plugins\\ComponentiImpianti\\": ["plugins/componenti/custom/src/", "plugins/componenti/src/"],
+            "Modules\\StatoEmail\\": ["modules/stato_email/custom/src/", "modules/stato_email/src/"]
         },
         "files": [
             "lib/functions.php",

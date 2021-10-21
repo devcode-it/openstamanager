@@ -19,3 +19,10 @@ INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`
 
 -- Aggiunto order by data nella gestione documentale
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `do_documenti`\nINNER JOIN `do_categorie` ON `do_categorie`.`id` = `do_documenti`.`idcategoria`\nWHERE 1=1 AND `deleted_at` IS NULL AND\n (SELECT `idgruppo` FROM `zz_users` WHERE `zz_users`.`id` = |id_utente|) IN (SELECT `id_gruppo` FROM `do_permessi` WHERE `id_categoria` = `do_documenti`.`idcategoria`)\n |date_period(`data`)| OR data IS NULL\nHAVING 2=2 ORDER BY `data` DESC' WHERE `zz_modules`.`name` = 'Gestione documentale';
+
+-- Task per l'eliminazione automatica della coda d'invio
+INSERT INTO `zz_tasks` (`id`, `name`, `class`, `expression`, `next_execution_at`, `last_executed_at`) VALUES
+(NULL, 'Eliminazione automatica coda d\'invio', 'Modules\\StatoEmail\\EliminaMailTask', '0 */4 * * *', NULL, NULL);
+
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES
+(NULL, 'Numero di giorni mantenimento coda di invio', '0', 'integer', 1, 'Mail', 1, NULL);

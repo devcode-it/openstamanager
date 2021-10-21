@@ -137,13 +137,6 @@ switch (filter('op')) {
 
         $fattura_pa = FatturaElettronica::manage($filename);
         $id_fattura = $fattura_pa->save($info);
-
-        ricalcola_costiagg_fattura($id_fattura);
-        elimina_scadenze($id_fattura);
-        elimina_movimenti($id_fattura, 0);
-        aggiungi_scadenza($id_fattura, post('pagamento'));
-        aggiungi_movimento($id_fattura, 'uscita');
-
         $fattura_pa->delete();
 
         // Aggiorno la tipologia di anagrafica fornitore

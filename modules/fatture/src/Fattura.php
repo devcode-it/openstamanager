@@ -578,8 +578,9 @@ class Fattura extends Document
         // Operazioni al cambiamento di stato
         // Bozza o Annullato -> Stato diverso da Bozza o Annullato
         if (
-            in_array($stato_precedente->descrizione, ['Bozza', 'Annullata'])
-            && !in_array($this->stato['descrizione'], ['Bozza', 'Annullata'])
+            (in_array($stato_precedente->descrizione, ['Bozza', 'Annullata'])
+            && !in_array($this->stato['descrizione'], ['Bozza', 'Annullata'])) 
+            || $options[0] == 'forza_emissione'
         ) {
             // Registrazione scadenze
             $this->registraScadenze($this->stato['descrizione'] == 'Pagato');

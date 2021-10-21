@@ -373,6 +373,8 @@ class FatturaElettronica
 
         $this->saveAllegati();
 
+        $this->getFattura()->save(['forza_emissione']);
+
         return $this->getFattura()->id;
     }
 

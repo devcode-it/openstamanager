@@ -51,7 +51,7 @@ class Movimenti
 
     public function generateMastrino()
     {
-        $descrizione = $this->fattura->getReference();
+        $descrizione = $this->fattura->getReference(1);
         $data = $this->fattura->data_competenza;
 
         $mastrino = Mastrino::build($descrizione, $data, false, false);

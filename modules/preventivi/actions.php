@@ -106,6 +106,8 @@ switch (post('op')) {
         $new->save();
 
         $new->master_revision = $new->id;
+        $new->descrizione_revision = '';
+        $new->numero_revision = 0;
         $new->save();
 
         $id_record = $new->id;

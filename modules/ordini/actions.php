@@ -84,7 +84,7 @@ switch (post('op')) {
 
             $ordine->idanagrafica = post('idanagrafica');
             $ordine->idreferente = post('idreferente');
-            $ordine->data = post('data');
+            $ordine->data = post('data') ?: null;
             $ordine->numero = post('numero');
             $ordine->numero_esterno = post('numero_esterno');
             $ordine->note = post('note');
@@ -103,7 +103,7 @@ switch (post('op')) {
             $ordine->ritenutaacconto = 0;
 
             $ordine->numero_cliente = post('numero_cliente');
-            $ordine->data_cliente = post('data_cliente');
+            $ordine->data_cliente = post('data_cliente') ?: null;
 
             $ordine->id_documento_fe = post('numero_cliente');
             $ordine->codice_commessa = post('codice_commessa');

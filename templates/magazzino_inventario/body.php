@@ -45,10 +45,23 @@ $query = Modules::replaceAdditionals($id_module, $query);
 // Modifiche alla query principale
 $query = preg_replace('/FROM `mg_articoli`/', ' FROM mg_articoli LEFT JOIN (SELECT idarticolo, SUM(qta) AS qta_totale FROM mg_movimenti WHERE data <='.prepare($period_end).' GROUP BY idarticolo) movimenti ON movimenti.idarticolo=mg_articoli.id ', $query);
 
-$query = preg_replace('/^SELECT /', 'SELECT mg_articoli.prezzo_acquisto,', $query);
 $query = preg_replace('/^SELECT /', 'SELECT mg_articoli.prezzo_vendita,', $query);
 $query = preg_replace('/^SELECT /', 'SELECT mg_articoli.um,', $query);
 $query = preg_replace('/^SELECT /', 'SELECT movimenti.qta_totale,', $query);
+
+if (post('acquisto') == 'standard') {
+    $query = preg_replace('/^SELECT /', 'SELECT mg_articoli.prezzo_acquisto AS acquisto,', $query);
+    $text = "al prezzo presente nella scheda articolo";
+} elseif(post('acquisto') == 'first') {  
+    $query = preg_replace('/^SELECT /', 'SELECT (SELECT (prezzo_unitario-sconto_unitario) AS acquisto FROM co_righe_documenti LEFT JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id WHERE co_documenti.idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="uscita") AND idarticolo=mg_articoli.id ORDER BY co_righe_documenti.id  ASC LIMIT 0,1) AS acquisto,', $query);
+    $text = "al primo articolo acquistato";
+} elseif(post('acquisto') == 'last') {
+    $query = preg_replace('/^SELECT /', 'SELECT (SELECT (prezzo_unitario-sconto_unitario) AS acquisto FROM co_righe_documenti LEFT JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id WHERE co_documenti.idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="uscita") AND idarticolo=mg_articoli.id ORDER BY co_righe_documenti.id  DESC LIMIT 0,1) AS acquisto,', $query);
+    $text = "all'ultimo articolo acquistato";
+} else {
+    $query = preg_replace('/^SELECT /', 'SELECT (SELECT (SUM(prezzo_unitario-sconto_unitario)/SUM(qta)) AS acquisto FROM co_righe_documenti LEFT JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id WHERE co_documenti.idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="uscita") AND idarticolo=mg_articoli.id) AS acquisto,', $query);
+    $text = "alla media ponderata dell'articolo";
+}
 
 if (post('tipo') == 'nozero') {
     $query = str_replace('2=2', '2=2 AND movimenti.qta_totale > 0', $query);
@@ -60,6 +73,13 @@ echo '
 <h3>'.tr('Inventario al _DATE_', [
     '_DATE_' => Translator::dateToLocale($period_end),
 ], ['upper' => true]).'</h3>
+
+<p style="color:#aaa; font-size:10px;" class="text-right">
+    '.tr("Prezzo di acquisto calcolato in base _TEXT_",
+        [
+            "_TEXT_" => $text,
+        ]).'
+</p>
 
 <table class="table table-bordered">
     <thead>
@@ -88,7 +108,7 @@ foreach ($data['results'] as $r) {
             <td>'.$r['Descrizione'].'</td>
             <td class="text-right">'.moneyFormat($r['prezzo_vendita']).'</td>
             <td class="text-right">'.Translator::numberToLocale($r['qta_totale']).' '.$r['um'].'</td>
-            <td class="text-right">'.moneyFormat($r['prezzo_acquisto']).'</td>
+            <td class="text-right">'.moneyFormat($r['acquisto']).'</td>
             <td class="text-right">'.moneyFormat($valore_magazzino).'</td>
         </tr>';
 

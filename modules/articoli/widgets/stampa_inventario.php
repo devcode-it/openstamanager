@@ -27,8 +27,12 @@ echo '
 
 	<div class="row">
 
-        <div class="col-md-3">
+        <div class="col-md-4">
 			{[ "type": "select", "label": "'.tr('Articoli da stampare').'", "name": "tipo", "required": "1", "values": "list=\"full\": \"'.tr('Tutti').'\", \"nozero\": \"'.tr('Solo esistenti').'\"", "value": "nozero" ]}
+		</div>
+
+		<div class="col-md-4">
+			{[ "type": "select", "label": "'.tr('Prezzo di acquisto').'", "name": "acquisto", "required": "1", "values": "list=\"standard\": \"'.tr('Scheda articolo').'\", \"first\": \"'.tr('Primo acquisto').'\", \"last\": \"'.tr('Ultimo acquisto').'\", \"media\": \"'.tr('Media ponderata').'\"", "value": "standard" ]}
 		</div>
 
 		<div class="col-md-2">

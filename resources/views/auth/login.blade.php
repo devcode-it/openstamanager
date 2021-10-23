@@ -71,7 +71,6 @@
 
             <div class="box-body text-center">
                 <p>{{ tr('Sono stati effettuati troppi tentativi di accesso consecutivi!') }}</p>
-                <p>{{ tr('Tempo rimanente (in secondi)') }}: <span id="brute-timeout">{{ brute.timeout + 1 }}</span></p>
             </div>
         </div>
         <script>

@@ -47,6 +47,9 @@ class Kernel extends HttpKernel
             Language::class,
             EnsureCalendarPeriod::class,
             EnsureConfiguration::class,
+        ],
+
+        'legacy' => [
             HTMLBuilder::class,
         ],
 

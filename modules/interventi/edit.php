@@ -532,7 +532,7 @@ $articoli = $intervento->articoli;
 	    <div class="alert alert-warning"><i class="fa fa-warning"></i> '.tr('Questo intervento non è ancora stato firmato dal cliente').'.</div>';
         } else {
             echo '
-	    <img src="'.base_url().'/files/interventi/'.$record['firma_file'].'" class="img-thumbnail"><div>&nbsp;</div>
+	    <img src="'.base_path().'/files/interventi/'.$record['firma_file'].'" class="img-thumbnail"><div>&nbsp;</div>
 	   	<div class="col-md-6 col-md-offset-3 alert alert-success"><i class="fa fa-check"></i> '.tr('Firmato il _DATE_ alle _TIME_ da _PERSON_', [
             '_DATE_' => dateFormat($record['firma_data']),
             '_TIME_' => timeFormat($record['firma_data']),

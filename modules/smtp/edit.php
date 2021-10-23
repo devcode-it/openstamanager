@@ -132,7 +132,7 @@ echo '
                 </div>
 
                 <div class="col-md-3 oauth2-config">
-                    <a type="button" class="btn btn-success btn-block '.(empty($oauth2->class) || empty($oauth2->client_id) || empty($oauth2->client_secret) ? 'disabled' : '').'" style="margin-top: 25px" href="'.base_url().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=oauth2">
+                    <a type="button" class="btn btn-success btn-block '.(empty($oauth2->class) || empty($oauth2->client_id) || empty($oauth2->client_secret) ? 'disabled' : '').'" style="margin-top: 25px" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=oauth2">
                         <i class="fa fa-refresh"></i> '.(empty($oauth2->access_token) ? tr('Completa configurazione') : tr('Ripeti configurazione')).'
                     </a>
                 </div>

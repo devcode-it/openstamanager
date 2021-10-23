@@ -138,7 +138,7 @@ foreach ($elenchi as $elenco) {
                             </div>
 
                             <div class="panel-body">
-                                <form action="'.base_url().'/editor.php" method="post" role="form">
+                                <form action="'.base_path().'/editor.php" method="post" role="form">
                                     <input type="hidden" name="id_module" value="'.$module->id.'">
                                     <input type="hidden" name="id_record" value="'.$componente->id_impianto.'">
                                     <input type="hidden" name="id_plugin" value="'.$plugin->id.'">
@@ -251,7 +251,7 @@ echo '
         const id_componente = tr.data("id");
 
         if(confirm("'.tr('Vuoi sostituire questo componente?').'")) {
-            redirect("'.base_url().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituisci&backto=record-edit&id_plugin='.$id_plugin.'&id_componente=" + id_componente + "&hash=tab_'.$structure->id.'");
+            redirect("'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituisci&backto=record-edit&id_plugin='.$id_plugin.'&id_componente=" + id_componente + "&hash=tab_'.$structure->id.'");
         }
     }
 
@@ -260,7 +260,7 @@ echo '
         const id_componente = tr.data("id");
 
         if(confirm("'.tr('Vuoi eliminare questo componente?').'")){
-            redirect("'.base_url().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=rimuovi&backto=record-edit&id_plugin='.$id_plugin.'&id_componente=" + id_componente + "&hash=tab_'.$structure->id.'");
+            redirect("'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=rimuovi&backto=record-edit&id_plugin='.$id_plugin.'&id_componente=" + id_componente + "&hash=tab_'.$structure->id.'");
         }
     }
 

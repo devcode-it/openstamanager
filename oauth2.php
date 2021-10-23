@@ -55,8 +55,8 @@ if (empty($redirect)) {
 }
 
 if (empty($_GET['error'])) {
-    redirect($redirect);
-    exit();
+    redirect_legacy($redirect);
+    throw new \LegacyExitException();;
 } else {
     echo $_GET['error'].'<br>'.$_GET['error_description'].'
 <br><br>

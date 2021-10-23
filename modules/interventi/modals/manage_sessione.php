@@ -41,7 +41,7 @@ if (!empty($intervento->id_contratto)) {
     $query = 'SELECT in_tipiintervento.idtipointervento AS id, descrizione, in_tariffe.costo_ore AS prezzo_ore_unitario, in_tariffe.costo_km AS prezzo_km_unitario, in_tariffe.costo_dirittochiamata AS prezzo_dirittochiamata FROM in_tipiintervento JOIN in_tariffe ON in_tipiintervento.idtipointervento = in_tariffe.idtipointervento WHERE in_tariffe.idtecnico = '.prepare($sessione['idtecnico']).' ORDER BY descrizione';
 }
 echo '
-<form id="add_form" action="'.base_url().'/editor.php?id_module='.$id_module.'&id_record='.get('id_record').'" method="post">
+<form id="add_form" action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.get('id_record').'" method="post">
     <input type="hidden" name="op" value="'.$op.'">
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="id_sessione" value="'.$sessione['id'].'">

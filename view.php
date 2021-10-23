@@ -27,7 +27,7 @@ if (empty($file)) {
     return;
 }
 
-$link = base_url().'/'.$file->filepath;
+$link = base_path().'/'.$file->filepath;
 
 // Force download of the file
 if (get('download') == '1') {
@@ -36,7 +36,7 @@ if (get('download') == '1') {
     header('Content-disposition: attachment; filename="'.basename($file->original_name).'"');
     readfile(base_dir().'/'.$file->filepath);
     //download(base_dir().'/'.$file->filepath, basename($file->original_name));
-    exit();
+    throw new \LegacyExitException();;
 }
 
 if ($file->isFatturaElettronica()) {
@@ -100,8 +100,8 @@ if ($file->isFatturaElettronica()) {
     </iframe>';
     } else {
         echo '
-    <iframe src="'.base_url().'/view.php?file_id='.$file_id.'&download=1">
-        <a src="'.base_url().'/view.php?file_id='.$file_id.'&download=1">'.tr('Il browser non supporta i contenuti iframe: clicca qui per raggiungere il file originale').'</a>
+    <iframe src="'.base_path().'/view.php?file_id='.$file_id.'&download=1">
+        <a src="'.base_path().'/view.php?file_id='.$file_id.'&download=1">'.tr('Il browser non supporta i contenuti iframe: clicca qui per raggiungere il file originale').'</a>
     </iframe>';
     }
 }

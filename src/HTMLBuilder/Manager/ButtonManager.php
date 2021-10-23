@@ -59,7 +59,7 @@ class ButtonManager implements ManagerInterface
             $template_email = TemplateEmail::find($options['id']);
 
             $result = [
-                'link' => base_url().'/mail.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id='.$options['id'].$options['parameters'],
+                'link' => base_path().'/mail.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id='.$options['id'].$options['parameters'],
                 'title' => tr('Invia').' '.((strtoupper($template_email['name']) == $template_email['name']) ? $template_email['name'] : lcfirst($template_email['name'])),
                 'icon' => $template_email['icon'],
                 'type' => 'modal',
@@ -68,7 +68,7 @@ class ButtonManager implements ManagerInterface
             $template_sms = TemplateSMS::find($options['id']);
 
             $result = [
-                'link' => base_url().'/modules/sms/sms.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id='.$options['id'].$options['parameters'],
+                'link' => base_path().'/modules/sms/sms.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id='.$options['id'].$options['parameters'],
                 'title' => tr('Invia').' '.((strtoupper($template_sms['name']) == $template_sms['name']) ? $template_sms['name'] : lcfirst($template_sms['name'])),
                 'icon' => $template_sms['icon'],
                 'type' => 'modal',

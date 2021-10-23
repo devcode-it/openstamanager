@@ -87,7 +87,7 @@ if (filter('op') == 'send') {
         delete($backup_file);
     }
 
-    redirect_legacy(base_url().'/bug.php');
+    redirect_legacy(base_path().'/bug.php');
     throw new \LegacyExitException();
 }
 

@@ -81,7 +81,7 @@ class Task extends Resource implements RetrieveInterface, CreateInterface
      */
     protected function request()
     {
-        $endpoint = base_url().'/cron.php';
+        $endpoint = base_path().'/cron.php';
         $postData = json_encode([]);
 
         $endpointParts = parse_url($endpoint);

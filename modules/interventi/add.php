@@ -27,6 +27,14 @@ $id_sede = filter('idsede');
 $richiesta = filter('richiesta');
 $id_tipo = filter('id_tipo');
 
+$id_cliente = null;
+$id_cliente_finale = null;
+$id_preventivo = null;
+$data_richiesta = null;
+$data_scadenza = null;
+$impianti_collegati = null;
+$id_zona = null;
+
 $origine_dashboard = get('ref') !== null;
 $module_anagrafiche = module('Anagrafiche');
 $id_plugin_sedi = Plugins::get('Sedi')['id'];
@@ -48,7 +56,7 @@ if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
 }
 
 // Stato di default associato all'attivitò
-$stato = $dbo->fetchArray("SELECT * FROM in_statiintervento WHERE codice = 'WIP'");
+$stato = $dbo->fetchOne("SELECT * FROM in_statiintervento WHERE codice = 'WIP'");
 $id_stato = $stato['idstatointervento'];
 
 // Se è indicata un'anagrafica relativa, si carica il tipo di intervento di default impostato
@@ -518,7 +526,7 @@ echo '
 
         if (data !== undefined) {
             // Carico nel panel i dettagli del cliente
-            $.get("'.base_url().'/ajax_complete.php?module=Interventi&op=dettagli&id_anagrafica=" + value, function(data){
+            $.get("'.base_path().'/ajax_complete.php?module=Interventi&op=dettagli&id_anagrafica=" + value, function(data){
                 $("#dettagli_cliente").html(data);
             });
         } else {

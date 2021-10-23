@@ -15,7 +15,7 @@ use DevCode\CausaliTrasporto\Controllers\CausaliTrasportoController;
 |
 */
 
-Route::middleware('web')
+Route::middleware(['web', 'legacy'])
     ->group(function () {
         // Route di fallback generale
         Route::any('/legacy/{path}', [LegacyController::class, 'index'])

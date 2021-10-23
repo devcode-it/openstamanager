@@ -32,9 +32,9 @@ FROM co_documenti
 WHERE co_documenti.id='.prepare($id_record));
 
 if (!empty(setting('Logo stampe'))) {
-    $logo_azienda = base_url().'/'.Models\Upload::where('filename', setting('Logo stampe'))->first()->fileurl;
+    $logo_azienda = base_path().'/'.Models\Upload::where('filename', setting('Logo stampe'))->first()->fileurl;
 } else {
-    $logo_azienda = str_replace(base_dir(), base_url(), AppLegacy::filepath('templates/base|custom|/logo_azienda.jpg'));
+    $logo_azienda = str_replace(base_dir(), base_path(), AppLegacy::filepath('templates/base|custom|/logo_azienda.jpg'));
     $logo_azienda = str_replace('\\', '/', $logo_azienda);
 }
 

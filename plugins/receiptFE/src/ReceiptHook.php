@@ -113,7 +113,7 @@ class ReceiptHook extends Manager
             'icon' => 'fa fa-ticket text-'.$color,
             'message' => $message,
             'show' => $notify,
-            'link' => base_url().'/controller.php?id_module='.$module->id,
+            'link' => base_path().'/controller.php?id_module='.$module->id,
         ];
     }
 }

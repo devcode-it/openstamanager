@@ -314,7 +314,7 @@ class Modules
             return '';
         }
 
-        $link = (!empty($element['option']) && $element['option'] != 'menu') ? base_url().'/controller.php?id_module='.$element['id'] : 'javascript:;';
+        $link = (!empty($element['option']) && $element['option'] != 'menu') ? base_path().'/controller.php?id_module='.$element['id'] : 'javascript:;';
         $title = $element['title'];
         $target = '_self'; // $target = ($element['new'] == 1) ? '_blank' : '_self';
         $active = ($actual == $element['name']);

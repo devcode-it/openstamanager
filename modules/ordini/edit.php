@@ -211,7 +211,7 @@ if (!$block_edit) {
     if ($dir == 'entrata') {
         echo '
         <div class="tip">
-            <a class="btn btn-sm btn-primary '.(!empty($preventivi) ? '' : ' disabled').'" data-href="'.base_url().'/modules/ordini/add_preventivo.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="'.tr('Aggiungi preventivo').'" data-toggle="tooltip">
+            <a class="btn btn-sm btn-primary '.(!empty($preventivi) ? '' : ' disabled').'" data-href="'.base_path().'/modules/ordini/add_preventivo.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="'.tr('Aggiungi preventivo').'" data-toggle="tooltip">
                 <i class="fa fa-plus"></i> '.tr('Preventivo').'
             </a>
         </div>';

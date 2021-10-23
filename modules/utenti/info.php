@@ -39,7 +39,7 @@ if (!empty($rs)) {
     $anagrafica = $rs[0];
 }
 
-$api = base_url().'/api/?token='.$token;
+$api = base_path().'/api/?token='.$token;
 $module = module('Utenti e permessi');
 
 echo '

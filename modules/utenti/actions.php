@@ -116,7 +116,7 @@ switch (filter('op')) {
 
         $utente->save();
 
-        redirect_legacy(base_url().'/modules/utenti/info.php');
+        redirect_legacy(base_path().'/modules/utenti/info.php');
 
         break;
 

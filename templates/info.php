@@ -148,7 +148,7 @@ $replaces = array_merge($replaces, [
     'default_logo' => $default_logo,
     'logo' => $logo,
     'base_dir()' => base_dir(),
-    'base_link()' => base_url(),
+    'base_link()' => base_path(),
     'directory' => Prints::get($id_print)['full_directory'],
     'footer' => !empty($footer) ? $footer : '',
     'dicitura_fissa_fattura' => setting('Dicitura fissa fattura').((setting('Regime Fiscale') != 'RF02' && setting('Regime Fiscale') != 'RF19' && setting('Regime Fiscale') != 'RF18' && $tipo_cliente != 'Privato') ? tr('Documento privo di valenza fiscale (art 21 dpr 633/72).') : ''),

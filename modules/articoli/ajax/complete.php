@@ -140,14 +140,6 @@ switch ($resource) {
         ]);
         $results = $database->fetchArray($query_anagrafica);
 
-        // Lettura dei prezzi relativi all'articolo, senza anagrafica collegata
-        if (empty($results)) {
-            $query_predefinito = replace($query, [
-                '|where|' => '',
-            ]);
-            $results = $database->fetchArray($query_predefinito);
-        }
-
         // Lettura dei prezzi registrati direttamente sull'articolo, per compatibilità con il formato standard
         if (empty($results)) {
             $result = $database->fetchOne('SELECT prezzo_acquisto, '.($prezzi_ivati ? 'prezzo_vendita_ivato' : 'prezzo_vendita').' AS prezzo_vendita FROM mg_articoli WHERE id = '.prepare($id_articolo));

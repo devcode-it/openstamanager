@@ -23,6 +23,7 @@ use Plugins\ListinoClienti\DettaglioPrezzo;
 include_once __DIR__.'/../../core.php';
 
 $id_articolo = $id_record;
+$module_anagrafiche = Modules::get('Anagrafiche');
 echo '
 <div class="box">
     <div class="box-header">
@@ -32,7 +33,7 @@ echo '
     <div class="box-body">
         <div class="row">
             <div class="col-md-9">
-                {[ "type": "select", "label": "'.tr('Cliente').'", "name": "id_cliente_informazioni",  "required":"1", "ajax-source": "clienti" ]}
+                {[ "type": "select", "label": "'.tr('Cliente').'", "name": "id_cliente_informazioni",  "required":"1", "ajax-source": "clienti", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Cliente&readonly_tipo=1" ]}
             </div>
 
             <div class="col-md-3">

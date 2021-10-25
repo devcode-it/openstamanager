@@ -36,7 +36,7 @@ switch (post('op')) {
         $dbo->update('do_documenti', [
             'idcategoria' => post('idcategoria'),
             'nome' => post('nome'),
-            'descrizione' => post('descrizione') ?: null,
+            'descrizione' => post('descrizione', true) ?: null,
             'data' => post('data') ?: null,
         ], ['id' => $id_record]);
 

@@ -115,7 +115,7 @@ if (!empty($impianti)) {
         echo '
             <tr>
                 <td colspan="2" class="text-left" >'.tr('Matricola').': <b>'.$impianti[$i]['matricola'].'</b></td>
-                <td colspan="2" class="text-left" >'.tr('Data').': <b>'.Translator::dataToLocale($impianti[$i]['data']).'</b></td>
+                <td colspan="2" class="text-left" >'.tr('Data').': <b>'.Translator::dateToLocale($impianti[$i]['data']).'</b></td>
             </tr>
             <tr>
                 <td colspan="4" class="text-left" >'.tr('Nome').': <b>'.$impianti[$i]['nome'].'</b></td>

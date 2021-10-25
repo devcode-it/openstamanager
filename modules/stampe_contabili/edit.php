@@ -74,4 +74,22 @@ echo '
             </div>
         </div>
     </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">'.tr('Piano dei conti').'</h3>
+            </div>
+
+            <div class="panel-body">
+                <button type="button" class="btn btn-primary col-md-2" data-toggle="modal" data-title="'.tr('Stampa Bilancio').'" data-href="'.base_path().'/modules/stampe_contabili/stampa_bilancio.php" ><i class="fa fa-print fa-2x"></i> <br>'.tr('Stampa').'<br>'.tr('bilancio').'</button>
+               
+                '.Prints::getLink('Mastrino', 1, 'btn-primary col-md-4 col-md-push-1', '<br>'.tr('Stampa situazione').'<br>'.tr('patrimoniale'), '|default| fa-2x', 'lev=1').'
+
+                '.Prints::getLink('Mastrino', 2, 'btn-primary col-md-4 col-md-push-2', '<br>'.tr('Stampa situazione').'<br>'.tr('economica'), '|default| fa-2x', 'lev=1').'
+            </div>
+        </div>
+    </div>
 </div>';

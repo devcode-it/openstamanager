@@ -32,7 +32,6 @@ if ($bilancio_gia_aperto) {
 
 echo '
 <div class="text-right">
-    <button type="button" class="btn btn-lg btn-info" data-toggle="modal" data-title="'.tr('Stampa Bilancio').'" data-href="'.base_path().'/modules/partitario/stampa_bilancio.php" ><i class="fa fa-print"></i> '.tr('Stampa Bilancio').'</button>
     <button type="button" class="btn btn-lg '.$btn_class.'" data-op="apri-bilancio" data-title="'.tr('Apertura bilancio').'" data-backto="record-list" data-msg="'.$msg.'" data-button="'.tr('Riprendi saldi').'" data-class="btn btn-lg btn-warning" onclick="message( this );">
         <i class="fa fa-folder-open"></i> '.tr('Apertura bilancio').'
     </button>
@@ -60,9 +59,6 @@ foreach ($primo_livello as $conto_primo) {
                 <i class="fa fa-plus-circle"></i>
             </button>
         </h3>
-        <div class="pull-right">
-           '.Prints::getLink('Mastrino', $conto_primo['id'], null, tr('Stampa'), null, 'lev=1').'
-        </div>
     </div>
 
     <div class="box-body">';

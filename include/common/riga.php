@@ -74,7 +74,44 @@ if ($options['dir'] == 'entrata') {
 
             margine = isNaN(margine) || !isFinite(margine) ? 0: margine; // Fix per magine NaN
 
-            div.html("<small>&nbsp;'.tr('Guadagno').': " + guadagno.toLocale() + " " + globals.currency + " &nbsp; '.tr('Margine').': " + margine.toLocale() + " %</small>");
+            var mediaponderata = parseFloat($("#idarticolo").selectData().media_ponderata);
+
+            div.html("<table cellpadding=1>\
+                        <tr>\
+                            <td>\
+                                <small>&nbsp;'.tr('Guadagno').':</small>\
+                            </td>\
+                            <td align=\"right\">\
+                                <small>" + guadagno.toLocale() + "</small>\
+                            </td>\
+                            <td align=\"right\">\
+                                <small>" + globals.currency + "</small>\
+                            </td>\
+                        </tr>\
+                        <tr>\
+                            <td>\
+                                <small>&nbsp;'.tr('Margine').':</small>\
+                            </td>\
+                            <td align=\"right\">\
+                                <small>" + margine.toLocale() + "<small>\
+                            </td>\
+                            <td align=\"right\">\
+                                <small>&nbsp;%<small>\
+                            </td>\
+                        </tr>\
+                        <tr>\
+                            <td>\
+                                <small>&nbsp;'.tr('Costo medio').':</small>\
+                            </td>\
+                            <td align=\"right\">\
+                                <small>" + mediaponderata.toLocale() + "</small>\
+                            </td>\
+                            <td align=\"right\">\
+                                <small>" + globals.currency + "</small>\
+                            </td>\
+                        </tr>\
+                    </table>");
+                    
             if (guadagno < 0) {
                 parent.addClass("has-error");
                 div.addClass("label-danger").removeClass("label-success");

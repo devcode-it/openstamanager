@@ -22,10 +22,13 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `do_documenti`\nINNER 
 
 -- Task per l'eliminazione automatica della coda d'invio
 INSERT INTO `zz_tasks` (`id`, `name`, `class`, `expression`, `next_execution_at`, `last_executed_at`) VALUES
-(NULL, 'Eliminazione automatica coda d\'invio', 'Modules\\StatoEmail\\EliminaMailTask', '0 */4 * * *', NULL, NULL);
+(NULL, "Eliminazione automatica coda d'invio", 'Modules\\StatoEmail\\EliminaMailTask', '0 */4 * * *', NULL, NULL);
 
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES
 (NULL, 'Numero di giorni mantenimento coda di invio', '0', 'integer', 1, 'Mail', 1, NULL);
 
 -- Plugin contratti del cliente
 INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES (NULL, 'Contratti del cliente', 'Contratti del cliente', '2', '2', 'tab', 'contratti_cliente.php', '1', '0', '0', '', '', NULL, NULL, '', '');
+
+-- Aggiunto campo descrizione (facoltativo) in gestione documentale
+ALTER TABLE `do_documenti` ADD `descrizione` TEXT NULL AFTER `nome`; 

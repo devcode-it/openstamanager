@@ -100,7 +100,7 @@ if (Services::isEnabled()) {
             
             if (!$risorse_in_scadenza->isEmpty()){
                 echo '
-                    <div class="alert alert-warning" role="alert"> <i class="fa fa-clock-o"></i> '.tr('Attenzione, _NUM_ risorse sono in scadenza o stanno per esaurire i crediti:', [
+                    <div class="alert alert-warning" role="alert"> <i class="fa fa-clock-o"></i> '.tr('Attenzione, alcune risorse sono in scadenza o stanno per esaurire i crediti:', [
                         '_NUM_' => $risorse_in_scadenza->count(),
                     ]).'</div>';
 
@@ -108,7 +108,7 @@ if (Services::isEnabled()) {
 
             if (!$risorse_scadute->isEmpty()){
                 echo '
-                    <div class="alert alert-danger" role="alert"> <i class="fa fa-exclamation-triangle"></i> '.tr('Attenzione, _NUM_ risorse sono scadute o hanno esaurito i crediti:', [
+                    <div class="alert alert-danger" role="alert"> <i class="fa fa-exclamation-triangle"></i> '.tr('Attenzione, alcune risorse sono scadute o hanno esaurito i crediti:', [
                         '_NUM_' => $risorse_scadute->count(),
                     ]).'</div>';
             }

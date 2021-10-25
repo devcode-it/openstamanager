@@ -37,8 +37,6 @@ include_once __DIR__.'/../../core.php';
 					{[ "type": "text", "label": "Nome", "name": "nome", "required": 1, "value": "$nome$", "extra": "" ]}
 				</div>
 
-
-
 				<div class="col-md-3">
 					{[ "type": "select", "label": "Categoria", "name": "idcategoria", "required": 1, "ajax-source": "categorie_documenti", "value": "$idcategoria$", "extra": "" ]}
 				</div>
@@ -48,6 +46,12 @@ include_once __DIR__.'/../../core.php';
 					{[ "type": "date", "label": "Data", "name": "data", "class": "datepicker text-center", "value": "$data$", "extra": "" ]}
 				</div>
 
+			</div>
+			
+			<div class="row">
+				<div class="col-md-12">
+					{[ "type": "ckeditor", "use_full_ckeditor": 1, "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "value": "$descrizione$" ]}
+				</div>
 			</div>
 		</div>
 	</div>

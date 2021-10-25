@@ -215,6 +215,29 @@ switch (post('op')) {
         }
 
         break;
+
+    case 'set-acquisto-ifzero':
+        $n_art = 0;
+        foreach ($id_records as $id) {
+            $articolo = Articolo::find($id);
+
+            if ($articolo->prezzo_acquisto==0 && empty($articolo->idfornitore)) {
+                $new_prezzo_acquisto = $dbo->fetchOne('SELECT (prezzo_unitario-sconto_unitario) AS prezzo_acquisto FROM co_righe_documenti LEFT JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id LEFT JOIN co_tipidocumento ON co_tipidocumento.id=co_documenti.idtipodocumento WHERE idarticolo='.prepare($id).' AND dir="uscita" ORDER BY co_documenti.data DESC, co_righe_documenti.id DESC LIMIT 0,1')['prezzo_acquisto'];
+
+                $articolo->prezzo_acquisto = $new_prezzo_acquisto;
+                $articolo->save();
+
+                if ($new_prezzo_acquisto!=0) {
+                    $n_art++;
+                }
+            }
+        }
+
+        flash()->info(tr('Prezzi di acquisto aggiornati per _NUM_ articoli!', [
+            '_NUM_' => $n_art,
+        ]));
+
+        break;
 }
 
 if (App::debug()) {
@@ -319,6 +342,17 @@ $operations['change-iva'] = [
         <br><br>{[ "type": "select", "label": "'.tr('Iva').'", "name": "id_iva", "required": 1, "ajax-source": "iva" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
+    ],
+];
+
+$operations['set-acquisto-ifzero'] = [
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Imposta prezzo di acquisto da fattura ').'</span>',
+    'data' => [
+        'title' => tr('Impostare il prezzo di acquisto per gli articoli selezionati?'),
+        'msg' => 'Il prezzo di acquisto verrà impostato sugli articoli che non hanno nessun prezzo di acquisto inserito e verrà aggiornato in base alla fattura di acquisto più recente',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
     ],
 ];
 

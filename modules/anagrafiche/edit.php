@@ -31,20 +31,20 @@ if (!$is_cliente && !$is_fornitore && $is_tecnico) {
 
     foreach ($ignore as $plugin) {
         echo '
-<script>
-    $("#link-tab_'.$plugin['id'].'").addClass("disabled");
-</script>';
+        <script>
+            $("#link-tab_'.$plugin['id'].'").addClass("disabled");
+        </script>';
     }
 }
 
 if (!$is_cliente) {
-    $ignore = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Impianti del cliente' OR name='Ddt del cliente'");
+    $ignore = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name IN ('Impianti del cliente','Contratti del cliente','Ddt del cliente')");
 
     foreach ($ignore as $plugin) {
         echo '
-<script>
-    $("#link-tab_'.$plugin['id'].'").addClass("disabled");
-</script>';
+        <script>
+            $("#link-tab_'.$plugin['id'].'").addClass("disabled");
+        </script>';
     }
 }
 

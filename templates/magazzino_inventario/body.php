@@ -59,7 +59,7 @@ if (post('acquisto') == 'standard') {
     $query = preg_replace('/^SELECT /', 'SELECT (SELECT (prezzo_unitario-sconto_unitario) AS acquisto FROM co_righe_documenti LEFT JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id WHERE co_documenti.idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="uscita") AND idarticolo=mg_articoli.id ORDER BY co_righe_documenti.id  DESC LIMIT 0,1) AS acquisto,', $query);
     $text = "all'ultimo articolo acquistato";
 } else {
-    $query = preg_replace('/^SELECT /', 'SELECT (SELECT (SUM(prezzo_unitario-sconto_unitario)/SUM(qta)) AS acquisto FROM co_righe_documenti LEFT JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id WHERE co_documenti.idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="uscita") AND idarticolo=mg_articoli.id) AS acquisto,', $query);
+    $query = preg_replace('/^SELECT /', 'SELECT (SELECT (SUM((prezzo_unitario-sconto_unitario)*qta)/SUM(qta)) AS acquisto FROM co_righe_documenti LEFT JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id WHERE co_documenti.idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="uscita") AND idarticolo=mg_articoli.id) AS acquisto,', $query);
     $text = "alla media ponderata dell'articolo";
 }
 
@@ -99,7 +99,7 @@ echo '
 $totale_qta = 0;
 $totali = [];
 foreach ($data['results'] as $r) {
-    $valore_magazzino = $r['prezzo_acquisto'] * $r['qta_totale'];
+    $valore_magazzino = $r['acquisto'] * $r['qta_totale'];
 
     echo '
         <tr>

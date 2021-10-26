@@ -71,10 +71,13 @@ if ($options['dir'] == 'entrata') {
             var margine = (((prezzo - sconto) * 100) / costo_unitario) - 100;
             var parent = $("#costo_unitario").closest("div").parent();
             var div = parent.find("div[id*=\"errors\"]");
+            var mediaponderata = 0;
 
             margine = isNaN(margine) || !isFinite(margine) ? 0: margine; // Fix per magine NaN
 
-            var mediaponderata = parseFloat($("#idarticolo").selectData().media_ponderata);
+            if ($("#idarticolo").val()) {
+                mediaponderata = parseFloat($("#idarticolo").selectData().media_ponderata);
+            }
 
             div.html("<table class=\"table table-extra-condensed\" style=\"margin-top:7px;\" >\
                         <tr>\

@@ -352,7 +352,5 @@ function aggiornaQtaMinima() {
         div.removeClass("text-danger").addClass("text-success");
     }
 }
-if (direzione === "entrata") {
-    aggiorna_guadagno();
-}
+
 </script>';

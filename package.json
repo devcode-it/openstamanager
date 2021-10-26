@@ -20,7 +20,7 @@
         "dropzone": "^5.7.2",
         "eonasdan-bootstrap-datetimepicker": "^4.17.47",
         "font-awesome": "^4.7.0",
-        "fullcalendar": "^3.4.0",
+        "fullcalendar": "^3.10.4",
         "geocomplete": "^1.7.0",
         "hotkeys-js": "^3.8.5",
         "html5sortable": "^0.13.2",

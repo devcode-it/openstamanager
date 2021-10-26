@@ -107,7 +107,7 @@ if ($options['dir'] == 'entrata') {
                                 <small>&nbsp;'.tr('Costo medio').':</small>\
                             </td>\
                             <td align=\"right\">\
-                                <small>" + mediaponderata.toLocale() + "</small>\
+                                <small>" + (mediaponderata!=0 ? mediaponderata.toLocale() : "- ") + "</small>\
                             </td>\
                             <td align=\"center\">\
                                 <small>" + globals.currency + "</small>\

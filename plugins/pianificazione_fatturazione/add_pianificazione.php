@@ -55,10 +55,10 @@ echo '
                         {[ "type": "select", "label": "'.tr('Ricorrenza fatturazione').'", "name": "scadenza", "values": "list=\"\":\"Seleziona un\'opzione\", \"Mensile\":\"Mensile\", \"Bimestrale\":\"Bimestrale\", \"Trimestrale\":\"Trimestrale\", \"Quadrimestrale\":\"Quadrimestrale\", \"Semestrale\":\"Semestrale\", \"Annuale\":\"Annuale\"", "value": "Mensile", "help":"'.tr('Specificare la cadenza con cui creare la pianificazione fatturazione').'" ]}
                     </div>
                     <div class="col-md-3">
-                        {[ "type": "select", "label": "'.tr('Giorno di fatturazione').'", "name": "cadenza_fatturazione", "values": "list=\"\":\"Seleziona un\'opzione\", \"Inizio\":\"Inizio mese\", \"Fine\":\"Fine mese\", \"Giorno\":\"Giorno fisso\" ", "value": "Inizio", "help":"'.tr('Specificare per la pianificazione fatturazione se si desidera creare le fatture a inizio mese o alla fine. Se non specificata alcuna opzione saranno create di default a fine mese.').'" ]}
+                        {[ "type": "select", "label": "'.tr('Giorno di fatturazione').'", "name": "cadenza_fatturazione", "values": "list=\"\":\"Seleziona un\'opzione\", \"Inizio\":\"Inizio mese\", \"Fine\":\"Fine mese\", \"Giorno\":\"Giorno fisso\" ", "value": "Inizio", "help":"'.tr('Specificare per la pianificazione fatturazione se si desidera creare le fatture ad inizio o alla fine del mese. Se non specificata alcuna opzione saranno create di default a fine mese.').'" ]}
                     </div>
-                    <div class="col-md-3" id="div_giorno_fisso" hidden>
-                        {[ "type": "select", "label": "'.tr('Giorno fisso fatturazione').'", "name": "giorno_fisso", "values": '.json_encode($giorni_fatturazione).', "value": "1", "help":"'.tr('Selezionare il giorno fisso di fatturazione.').'" ]}
+                    <div class="col-md-3">
+                        {[ "type": "select", "label": "'.tr('Giorno fisso fatturazione').'", "disabled": 1, "name": "giorno_fisso", "id":"giorno_fisso", "values": '.json_encode($giorni_fatturazione).', "value": "", "help":"'.tr('Selezionare il giorno fisso di fatturazione.').'" ]}
                     </div>
                     <input type="hidden" name="data_inizio" value="'.$contratto->data_accettazione.'">
                 </div>
@@ -127,16 +127,25 @@ foreach ($righe as $riga) {
 
                 <div class="row">
                     <div class="col-md-9">
-                        {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione['.$riga->id.']", "value": "'.$descrizione.'" ]}
+                        {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione['.$riga->id.']", "value": "'.$descrizione.'", "extra": "rows=6" ]}
 
-                        {[ "type": "number", "label": "'.tr('Q.tà per fattura').'", "class":"qta_fattura", "name": "qta['.$riga->id.']", "required": 1, "value": "1", "decimals": "qta", "min-value": "1", "icon-after":"'.tr('Su _TOT_', [
+                        {[ "type": "number", "label": "'.tr('Q.tà per fattura').'", "class":"qta_fattura", "name": "qta['.$riga->id.']", "required": 1, "value": "1", "decimals": "qta", "min-value": "1", "icon-after":"'.tr('su _TOT_ totali', [
                             '_TOT_' => Translator::numberToLocale(($riga->qta - $riga->qta_evasa)),
                         ]).'", "options":"'.str_replace('"', '\"', $options).'" ]}
                     </div>
                     <div class="col-md-3" id="totali_'.$riga->id.'">
                     </div>
-                </div>
-                <hr>';
+                </div>';
+
+               
+
+echo '          <div class="label label-warning alert_rate hide">
+                    <i class="fa fa-warning"></i> <span>'.tr('Attenzione, sono previste _RATE_ rate su _TOT_ quantità totali', [
+                        '_RATE_' => '<span class="num_rate"></span>',
+                        '_TOT_' => '<span class="qta_disponibili">'.Translator::numberToLocale(($riga->qta - $riga->qta_evasa)).'</span>',
+                    ]).'</span>.
+                </div><hr>';
+
 }
 
 echo '
@@ -148,7 +157,7 @@ echo '
 echo '
             <div class="row">
                 <div class="col-md-12 text-right">
-                    <button type="submit" class="btn btn-primary"><i class="fa fa-chevron-right"></i> '.tr('Procedi').'</button>
+                    <button type="submit" class="btn btn-primary" id="btn_procedi" ><i class="fa fa-chevron-right"></i> '.tr('Procedi').'</button>
                 </div>
             </div>
             </div>
@@ -167,6 +176,7 @@ echo '
         get_prezzi();
     });
 
+   
     $("#scadenza").change(function(){
         caricaCadenza();
     });
@@ -181,6 +191,20 @@ echo '
         });
     }
 
+    function controlloProcedi(){
+        var len = 0;
+        $(this).change(function() {
+           
+            len = $("input[type=checkbox]:checked.check_periodo").length;
+           
+            if (len>0){
+                $("#btn_procedi").removeClass("disabled");
+            }else{
+                $("#btn_procedi").addClass("disabled");
+            }
+    
+        });
+    }
 
     function selezionaTutto(){
         var check = 0;
@@ -192,6 +216,17 @@ echo '
         });
 
         $("#total_check").html("Rate: " + check).trigger("change");
+        $(".num_rate").html(check).trigger("change");
+
+        var qta_disponibili = 0;
+        $(".alert_rate").each(function (){
+            qta_disponibili = parseFloat($(this).find(".qta_disponibili").text());
+            if (check > qta_disponibili ){
+                $(this).removeClass("hide");
+            }else{
+                $(this).addClass("hide");
+            }
+        });
     }
 
     function deselezionaTutto(){
@@ -204,6 +239,18 @@ echo '
         });
 
         $("#total_check").html("Rate: " + check).trigger("change");
+        $(".num_rate").html(check).trigger("change");
+
+        var qta_disponibili = 0;
+        $(".alert_rate").each(function (){
+            qta_disponibili = parseFloat($(this).find(".qta_disponibili").text());
+            if (check > qta_disponibili ){
+                $(this).removeClass("hide");
+            }else{
+                $(this).addClass("hide");
+            }
+        });
+
     }
 
     $(".qta_fattura").change(function(){
@@ -232,12 +279,14 @@ echo '
         });
     }
 
-    $("#cadenza_fatturazione").change(function(){
+    $("#cadenza_fatturazione").change(function(event){
+        event.preventDefault();
         if( $(this).val()=="Giorno" ){
-            $("#div_giorno_fisso").show();
+            $("#giorno_fisso").prop("required", true);
+            input("giorno_fisso").enable();
         }else{
-            $("#giorno_fisso").selectReset();
-            $("#div_giorno_fisso").hide();
+            $("#giorno_fisso").prop("required", false);
+            input("giorno_fisso").disable();
         }
     })
 

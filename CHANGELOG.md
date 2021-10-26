@@ -4,7 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.4.27 (2021-10-25)](#2427-2021-10-25)
+- [2.4.27 (2021-10-25)](#2427-2021-10-26)
 - [2.4.26 (2021-09-24)](#2426-2021-09-24)
 - [2.4.25 (2021-08-25)](#2425-2021-08-25)
 - [2.4.24 (2021-07-28)](#2424-2021-07-28)
@@ -38,7 +38,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
-## 2.4.27 (2021-10-25)
+## 2.4.27 (2021-10-26)
 
 ### Aggiunto (Added)
  - Aggiunta selezione automatica **banca** in fase di importazione fattura elettronica

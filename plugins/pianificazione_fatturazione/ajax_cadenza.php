@@ -67,7 +67,7 @@ echo '
         echo '
         <div class="col-md-3">
             <label for="m_'.$count.'">
-                <input type="checkbox" class="unblockable" id="m_'.$count.'" name="selezione_periodo['.$count.']" '.$checked.' />
+                <input type="checkbox" onchange="controlloProcedi();" class="unblockable check_periodo" id="m_'.$count.'" name="selezione_periodo['.$count.']" '.$checked.' />
                 '.ucfirst($data_corrente->formatLocalized('%B %Y')).'
             </label>
             <input type="hidden" name="periodo['.$count.']" value="'.$data.'">
@@ -89,6 +89,18 @@ echo '
             }
         });
         $("#total_check").html("Rate: " + check).trigger("change");
+        $(".num_rate").html(check).trigger("change");
+
+        var qta_disponibili = 0;
+        $(".alert_rate").each(function (){
+            qta_disponibili = parseFloat($(this).find(".qta_disponibili").text());
+            if (check > qta_disponibili ){
+                $(this).removeClass("hide");
+            }else{
+                $(this).addClass("hide");
+            }
+        });
+
     });
 
     $("#periodi input").change(function(){
@@ -99,5 +111,17 @@ echo '
             }
         });
         $("#total_check").html("Rate: " + check).trigger("change");
+        $(".num_rate").html(check).trigger("change");
+
+        var qta_disponibili = 0;
+        $(".alert_rate").each(function (){
+            qta_disponibili = parseFloat($(this).find(".qta_disponibili").text());
+            if (check > qta_disponibili ){
+                $(this).removeClass("hide");
+            }else{
+                $(this).addClass("hide");
+            }
+        });
+
     });
 </script>';

@@ -117,7 +117,7 @@ if (!$pianificazioni->isEmpty()) {
 } else {
     echo '
     <div class="alert alert-info">
-        <i class="fa fa-info-circle"></i> '.tr('Pianificazione della fatturazione non impostata per questo contratto').'.
+        <i class="fa fa-info-circle"></i> '.tr('Nessuna pianificazione della fatturazione impostata per questo contratto').'.
     </div>
 
     <button type="button" '.(!empty($is_pianificabile) ? '' : 'disabled').' title="'.tr('Aggiungi una nuova pianificazione').'" data-toggle="tooltip" class="btn btn-primary pull-right tip" id="pianifica">

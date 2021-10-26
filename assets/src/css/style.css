@@ -1097,12 +1097,11 @@ div.tip {
     user-select: none;
 }
 
-
 .table-extra-condensed > thead > tr > th,
 .table-extra-condensed > tbody > tr > th,
 .table-extra-condensed > tfoot > tr > th,
 .table-extra-condensed > thead > tr > td,
 .table-extra-condensed > tbody > tr > td,
 .table-extra-condensed > tfoot > tr > td {
-  padding: 2px;
+    padding: 2px;
 }

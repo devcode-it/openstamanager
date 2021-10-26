@@ -60,9 +60,9 @@ echo '
         <th class="text-center col-md-4">'.($direzione == 'entrata' ? tr('Cliente') : tr('Fornitore')).'</th>
         <th class="text-center col-md-4">'.tr('Prezzo predefinito').'</th>';
         if ($direzione == 'uscita') {
-            echo '<th class="text-center col-md-4">'.tr('Fornitore predefinito').'</th>';
+            echo '<th class="text-center col-md-4">'.tr('E\' il fornitore predefinito?').'</th>';
         } else {
-            echo '<th class="text-center col-md-4"></th>';
+            echo '<th class="text-center col-md-4">'.tr('Fornitore predefinito').'</th>';
         }
     echo '
     </tr>
@@ -72,7 +72,7 @@ echo '
         if ($direzione == 'uscita') {
             echo '<td class="text-center"><i class="fa fa-'.$icon.' text-'.$color.'"></i> '.$text.'</td>';
         } else {
-            echo '<td></td>';
+            echo '<td class="text-center">'.(!empty($articolo->id_fornitore) ? Anagrafica::find($articolo->id_fornitore)->ragione_sociale : tr('Nessuno')).'</td>';
         }
     echo '
     </tr>
@@ -89,7 +89,7 @@ echo '
 
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "checkbox", "label": "'.tr('Imposta prezzo per questa anagrafica').'", "name": "modifica_prezzi", "value": "'.intval(!empty($dettaglio_predefinito)).'" ]}
+            {[ "type": "checkbox", "label": "'.tr('Imposta prezzo specifico per questa anagrafica').'", "name": "modifica_prezzi", "value": "'.intval(!empty($dettaglio_predefinito)).'" ]}
         </div>
     </div>
 
@@ -97,6 +97,7 @@ echo '
         <div class="info_prezzi">
             <div class="col-md-4">
                 {[ "type": "number", "label": "'.tr('Prezzo specifico').'", "name": "prezzo_unitario_fisso", "value": "'.($prezzi_ivati ? $dettaglio_predefinito->prezzo_unitario_ivato : $dettaglio_predefinito->prezzo_unitario).'", "icon-after": "'.currency().'", "help": "'.($prezzi_ivati ? tr('Importo IVA inclusa') : '').'" ]}
+                <button type="button" style="margin-top:-10px;" class="btn btn-xs btn-info pull-right '.($prezzo_predefinito>0 ? "" : "disabled").'" onclick="copiaPrezzoPredefinito()"><i class="fa fa-refresh"></i> '.tr('Importa').'</button>
             </div>
 
             <div class="col-md-4">
@@ -107,7 +108,7 @@ echo '
 
     <div class="row">
         <div id="imposta_prezzo_qta" class="col-md-4">
-            {[ "type": "checkbox", "label": "'.tr('Imposta un prezzo in base alla quantità').'", "name": "prezzo_qta", "value": "'.intval($dettagli->count() != 0).'" ]}
+            {[ "type": "checkbox", "label": "'.tr('Imposta prezzo in base alla quantità').'", "name": "prezzo_qta", "value": "'.intval($dettagli->count() != 0).'" ]}
         </div>
     </div>
 
@@ -214,6 +215,11 @@ echo '
 <script>$(document).ready(init);</script>
 
 <script>
+
+function copiaPrezzoPredefinito() {
+    $("#prezzo_unitario_fisso").val('.$prezzo_predefinito.').trigger("change");
+}
+
 var key = '.$dettagli->count().';
 function aggiungiPrezzo(button) {
     cleanup_inputs();
@@ -266,5 +272,5 @@ input("prezzo_qta").change(function () {
 })
 
 $(document).ready(cambioImpostazioni);
-content_was_modified = false;
+    content_was_modified = false;
 </script>';

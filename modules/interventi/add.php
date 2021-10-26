@@ -213,7 +213,7 @@ echo '
 $espandi_dettagli = setting('Espandi automaticamente la sezione "Dettagli aggiuntivi"');
 echo '
     <!-- DATI AGGIUNTIVI -->
-    <div class="box box-warning collapsable '.(empty($espandi_dettagli) ? 'collapsed-box' : '').'">
+    <div class="box box-info collapsable '.(empty($espandi_dettagli) ? 'collapsed-box' : '').'">
         <div class="box-header with-border">
             <h3 class="box-title">'.tr('Dettagli aggiuntivi').'</h3>
             <div class="box-tools pull-right">
@@ -277,10 +277,10 @@ if (empty($id_intervento)) {
 }
 
 echo '
-	<!-- ORE DI LAVORO -->
-    <div class="box box-primary collapsable '.($origine_dashboard ? '' : 'collapsed-box').'">
+	<!-- ORE LAVORO -->
+    <div class="box box-info collapsable '.($origine_dashboard ? '' : 'collapsed-box').'">
         <div class="box-header with-border">
-			<h3 class="box-title">'.tr('Ore di lavoro').'</h3>
+			<h3 class="box-title">'.tr('Ore lavoro').'</h3>
             <div class="box-tools pull-right">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse">
                     <i class="fa fa-'.($origine_dashboard ? 'minus' : 'plus').'"></i>
@@ -315,7 +315,7 @@ echo '
 	</div>
 
     <!-- RICORRENZA -->
-    <div class="box box-warning collapsable collapsed-box">
+    <div class="box box-info collapsable collapsed-box">
         <div class="box-header with-border">
 			<h3 class="box-title">'.tr('Ricorrenza').'</h3>
             <div class="box-tools pull-right">
@@ -328,7 +328,7 @@ echo '
         <div class="box-body">
             <div class="row">
                 <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "'.tr('Ricorsiva').'", "name": "ricorsiva", "value": "" ]}
+                    {[ "type": "checkbox", "label": "'.tr('Attività ricorrente').'", "name": "ricorsiva", "value": "" ]}
                 </div>
 
                 <div class="col-md-4 ricorrenza">
@@ -367,7 +367,7 @@ echo '
     </div>
 
 	<!-- DETTAGLI CLIENTE -->
-    <div class="box box-success collapsable collapsed-box">
+    <div class="box box-info collapsable collapsed-box">
         <div class="box-header with-border">
 			<h3 class="box-title">'.tr('Dettagli cliente').'</h3>
             <div class="box-tools pull-right">
@@ -378,7 +378,7 @@ echo '
 		</div>
 
         <div class="box-body" id="dettagli_cliente">
-            '.tr('Prima seleziona un cliente').'...
+            '.tr('Seleziona prima un cliente').'...
         </div>
     </div>
 

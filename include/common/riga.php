@@ -79,7 +79,7 @@ if ($options['dir'] == 'entrata') {
                 mediaponderata = parseFloat($("#idarticolo").selectData().media_ponderata);
             }
 
-            div.html("<table cellpadding=1>\
+            div.html("<table class=\"table table-extra-condensed\" style=\"margin-top:7px;\" >\
                         <tr>\
                             <td>\
                                 <small>&nbsp;'.tr('Guadagno').':</small>\
@@ -87,7 +87,7 @@ if ($options['dir'] == 'entrata') {
                             <td align=\"right\">\
                                 <small>" + guadagno.toLocale() + "</small>\
                             </td>\
-                            <td align=\"right\">\
+                            <td align=\"center\">\
                                 <small>" + globals.currency + "</small>\
                             </td>\
                         </tr>\
@@ -98,7 +98,7 @@ if ($options['dir'] == 'entrata') {
                             <td align=\"right\">\
                                 <small>" + margine.toLocale() + "<small>\
                             </td>\
-                            <td align=\"right\">\
+                            <td align=\"center\">\
                                 <small>&nbsp;%<small>\
                             </td>\
                         </tr>\
@@ -109,7 +109,7 @@ if ($options['dir'] == 'entrata') {
                             <td align=\"right\">\
                                 <small>" + mediaponderata.toLocale() + "</small>\
                             </td>\
-                            <td align=\"right\">\
+                            <td align=\"center\">\
                                 <small>" + globals.currency + "</small>\
                             </td>\
                         </tr>\
@@ -163,7 +163,7 @@ if (in_array($module['name'], ['Ordini cliente', 'Ordini fornitore', 'Preventivi
         $confermato = $result['confermato'];
     }
     echo '
-    <div class="box box-warning collapsable collapsed-box">
+    <div class="box box-info collapsable collapsed-box">
         <div class="box-header with-border">
             <h3 class="box-title">'.tr('Informazioni aggiuntive').'</h3>
             <div class="box-tools pull-right">

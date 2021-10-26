@@ -62,15 +62,28 @@ if (Services::isEnabled()) {
                             <td>'.$servizio['codice'].' - '.$servizio['nome'].'</td>
                             <td>'.$servizio['sottocategoria'].'</td>
                             <td>'.dateFormat($scadenza).' ('.$scadenza->diffForHumans().')</td>
-                            <td>
-                                <a type="button" href="https://marketplace.devcode.it/" target="_blank" class="btn btn-xs btn-primary '.($scadenza->lessThan($limite_scadenze) ? "" : "hide").'" onclick="copiaPrezzoPredefinito()"><i class="fa fa-shopping-cart"></i> '.tr('Rinnova').'</a>
+                            <td class="text-center" >
+                                <input type="checkbox" class="check_rinnova '.($scadenza->lessThan($limite_scadenze) ? "" : "hide").'" name="rinnova[]" value="'.$servizio['codice'].'">
                             </td>
-
                         </tr>';
         }
 
+        
+        $servizi_in_scadenza = Services::getServiziInScadenza($limite_scadenze);
+        $servizi_scaduti = Services::getServiziScaduti();
+        if (!$servizi_in_scadenza->isEmpty() || !$servizi_scaduti->isEmpty()){
+        //TODO: Il tasto deve preparare correttamente il carrello con servizi e le risorse in scadenza, considerando anche eventuali ampliamenti (es. spazio FE esaurito o in esaurimento)
+        echo '      </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4">
+                                <a type="button" href="https://marketplace.devcode.it/" target="_blank" id="btn_rinnova" class="btn btn-xs btn-primary pull-right disabled" ><i class="fa fa-shopping-cart"></i> '.tr('Rinnova').'</a>
+                            </td>
+                        </tr>
+                    </tfoot>';
+        }
+                        
         echo '
-                    </tbody>
                 </table>';
     } else {
         echo '
@@ -155,7 +168,7 @@ if (Services::isEnabled()) {
         if (Services::getRisorseAttive()->where('name', 'Fatturazione Elettronica')->count()) {
             echo '
 
-                <div class="panel panel-info">
+                <div class="panel panel-primary">
                     <div class="panel-heading" >  <i class="fa fa-bar-chart"></i> '.tr('Statistiche su Fatture Elettroniche').'</div>
 
                     <div class="panel-body">
@@ -198,13 +211,13 @@ if (Services::isEnabled()) {
                                 </tr>
                             </thead>
 
-                            <tbody id="elenco-fe">
+                            <tfoot id="elenco-fe">
                                 <tr style="background-color:#CCCCCC;" >
                                     <td>'.tr('Totale').'</td>
                                     <td id="fe_numero"></td>
                                     <td id="fe_spazio"></td>
                                 </tr>
-                            </tbody>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -268,6 +281,24 @@ echo '
 </div>
 
 <script>
+
+$(".check_rinnova").each(function() {
+    
+    var len = 0;
+
+    input(this).change(function() {
+        
+        len = $("input[type=checkbox]:checked.check_rinnova").length;
+
+        if (len>0){
+            $("#btn_rinnova").removeClass("disabled");
+        }else{
+            $("#btn_rinnova").addClass("disabled");
+        }
+
+    });
+});
+
 function aggiornaStatisticheFE(){
     $.ajax({
         url: globals.rootdir + "/actions.php",
@@ -289,6 +320,7 @@ function aggiornaStatisticheFE(){
             if (response.avviso_spazio) {
 
                 $("#spazio-fe").removeClass("hidden");
+                $("input.check_rinnova").addClass("disabled");
 
                 response.spazio_occupato = parseFloat(response.spazio_occupato);
                 response.spazio_totale = parseFloat(response.spazio_totale);
@@ -314,7 +346,6 @@ function aggiornaStatisticheFE(){
             }
             
             if (response.history.length) {
-               
 
                 for (let i = 0; i < response.history.length; i++) {
                     
@@ -336,6 +367,7 @@ function aggiornaStatisticheFE(){
                         if (response.avviso_numero) {
 
                             $("#numero-fe").removeClass("hidden");
+                            $("input.check_rinnova").addClass("disabled");
 
                             if (number<response.maxNumber){
                                 $("#numero-fe-icon").addClass("fa fa-clock-o");
@@ -349,7 +381,6 @@ function aggiornaStatisticheFE(){
                             }
 
                         }
-
 
                     }else{
                         var highlight = "<tr>";

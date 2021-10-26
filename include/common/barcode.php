@@ -268,7 +268,7 @@ function verificaPrezzoArticolo(tr) {
 
     let div = prezzo_unitario_input.closest("div").parent().find("div[id*=errors]");
 
-    if (prezzo_previsto === prezzo_unitario) {
+    if (prezzo_previsto === prezzo_unitario || prezzo_previsto === 0) {
         div.css("padding-top", "0");
         div.html("");
 
@@ -276,7 +276,7 @@ function verificaPrezzoArticolo(tr) {
     }
 
     div.css("padding-top", "5px");
-    div.html(`<small class="label label-warning" >'.tr('Prezzo suggerito').': ` + prezzo_previsto.toLocale() + globals.currency + `<button type="button" class="btn btn-xs btn-info pull-right" onclick="aggiornaPrezzoArticolo(this)"><i class="fa fa-refresh"></i> '.tr('Aggiorna').'</button></small>`);
+    div.html(`<small class="label label-info" >'.tr('Prezzo suggerito').': ` + prezzo_previsto.toLocale() + " " + globals.currency + `<button type="button" class="btn btn-xs btn-info pull-right" onclick="aggiornaPrezzoArticolo(this)"><i class="fa fa-refresh"></i> '.tr('Aggiorna').'</button></small>`);
 }
 
 /**
@@ -314,7 +314,7 @@ function verificaScontoArticolo(tr) {
     }
 
     div.css("padding-top", "5px");
-    div.html(`<small class="label label-warning" >'.tr('Sconto suggerito').': ` + sconto_previsto.toLocale()  + `%<button type="button" class="btn btn-xs btn-info pull-right" onclick="aggiornaScontoArticolo(this)"><i class="fa fa-refresh"></i> '.tr('Aggiorna').'</button></small>`);
+    div.html(`<small class="label label-info" >'.tr('Sconto suggerito').': ` + sconto_previsto.toLocale()  + `%<button type="button" class="btn btn-xs btn-info pull-right" onclick="aggiornaScontoArticolo(this)"><i class="fa fa-refresh"></i> '.tr('Aggiorna').'</button></small>`);
 }
 
 /**

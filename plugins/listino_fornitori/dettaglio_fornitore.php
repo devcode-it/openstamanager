@@ -38,9 +38,9 @@ if (!empty($id_riga)) {
 }
 
 echo '
-<p>'.tr('Informazioni relative al fornitore _NAME_', [
-    '_NAME_' => $anagrafica->ragione_sociale,
-]).'.</p>
+<p>'.tr('Informazioni relative al fornitore: _NAME_', [
+    '_NAME_' => '<b>'.$anagrafica->ragione_sociale.'</b>',
+]).'</p>
 
 <form action="" method="post">
     <input type="hidden" name="backto" value="record-edit">

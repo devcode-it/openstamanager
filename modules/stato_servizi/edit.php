@@ -49,6 +49,7 @@ if (Services::isEnabled()) {
                             <th width="50%">'.tr('Nome').'</th>
                             <th>'.tr('Tipo').'</th>
                             <th width="30%">'.tr('Scadenza').'</th>
+                            <th width="10%" class="text-center" >'.tr('#').'</th>
                         </tr>
                     </thead>
 
@@ -61,6 +62,10 @@ if (Services::isEnabled()) {
                             <td>'.$servizio['codice'].' - '.$servizio['nome'].'</td>
                             <td>'.$servizio['sottocategoria'].'</td>
                             <td>'.dateFormat($scadenza).' ('.$scadenza->diffForHumans().')</td>
+                            <td>
+                                <a type="button" href="https://marketplace.devcode.it/" target="_blank" class="btn btn-xs btn-primary '.($scadenza->lessThan($limite_scadenze) ? "" : "hide").'" onclick="copiaPrezzoPredefinito()"><i class="fa fa-shopping-cart"></i> '.tr('Rinnova').'</a>
+                            </td>
+
                         </tr>';
         }
 
@@ -98,6 +103,13 @@ if (Services::isEnabled()) {
 
         if (!$risorse_in_scadenza->isEmpty() || !$risorse_scadute->isEmpty() ) {
             
+            if (!$risorse_scadute->isEmpty()){
+                echo '
+                    <div class="alert alert-danger" role="alert"> <i class="fa fa-exclamation-triangle"></i> '.tr('Attenzione, alcune risorse sono scadute o hanno esaurito i crediti:', [
+                        '_NUM_' => $risorse_scadute->count(),
+                    ]).'</div>';
+            }
+
             if (!$risorse_in_scadenza->isEmpty()){
                 echo '
                     <div class="alert alert-warning" role="alert"> <i class="fa fa-clock-o"></i> '.tr('Attenzione, alcune risorse sono in scadenza o stanno per esaurire i crediti:', [
@@ -105,19 +117,12 @@ if (Services::isEnabled()) {
                     ]).'</div>';
 
             }
-
-            if (!$risorse_scadute->isEmpty()){
-                echo '
-                    <div class="alert alert-danger" role="alert"> <i class="fa fa-exclamation-triangle"></i> '.tr('Attenzione, alcune risorse sono scadute o hanno esaurito i crediti:', [
-                        '_NUM_' => $risorse_scadute->count(),
-                    ]).'</div>';
-            }
         
         } else {
-            echo '
+            /*echo '
             <div class="alert alert-success" role="alert"> <i class="fa fa-check-circle"></i> '.tr('Bene, tutte le risorse sono attive e non presentano avvisi:', [
                 '_NUM_' => $risorse_attive->count(),
-            ]).'</div>';
+            ]).'</div>';*/
         }
 
         echo '
@@ -137,8 +142,8 @@ if (Services::isEnabled()) {
             echo '
                 <tr class="'.($scadenza->lessThan(Carbon::now()) ? 'danger' : ($scadenza->lessThan($limite_scadenze) ? 'warning' : '')).'">
                     <td>'.$servizio['name'].'</td>
-                    <td>'.(($servizio['credits'] < 100 && $servizio['credits']) ? '<b><i class="fa fa-icon fa-warning" ></i>' : '').(($servizio['credits']) ? $servizio['credits'] : '-').(($servizio['credits'] < 100 && $servizio['credits']) ? '</b>' : '').'</td>
-                    <td>'.((Carbon::now()->diffInDays($scadenza, false) < $days && $scadenza) ? '<b><i class="fa fa-icon fa-warning" ></i>' : '').dateFormat($scadenza).' ('.$scadenza->diffForHumans().')'.((Carbon::now()->diffInDays($scadenza, false) < $days && $scadenza) ? '</b>' : '').'</td>
+                    <td>'.(($servizio['credits'] < 100 && $servizio['credits'] !== null) ? '<b><i class="fa fa-icon fa-warning text-warning" ></i> ' : '').(($servizio['credits'] !== null) ? $servizio['credits'] : '-').(($servizio['credits'] < 100 && $servizio['credits'] !== null) ? '</b>' : '').'</td>
+                    <td>'.((Carbon::now()->diffInDays($scadenza, false) < $days && $scadenza) ? '<b><i class="fa fa-icon fa-warning text-warning" ></i> ' : '').dateFormat($scadenza).' ('.$scadenza->diffForHumans().')'.((Carbon::now()->diffInDays($scadenza, false) < $days && $scadenza) ? '</b>' : '').'</td>
                 </tr>';
         }
 
@@ -156,20 +161,20 @@ if (Services::isEnabled()) {
                     <div class="panel-body">
                                 
                         <div class="alert hidden" role="alert" id="spazio-fe">
-                            <i id="spazio-fe-icon" class=""></i> <span>'.tr('Spazio per fatture elettroniche _TEXT_: _NUM_ utilizzati su _TOT_ disponibili', [
+                            <i id="spazio-fe-icon" class=""></i> <span>'.tr('Attenzione, spazio per fatture elettroniche _TEXT_: _NUM_ utilizzati su _TOT_ disponibili', [
                                 '_TEXT_' => '<span id="spazio-fe-text"></span>',
                                 '_NUM_' => '<span id="spazio-fe-occupato"></span>',
                                 '_TOT_' => '<span id="spazio-fe-totale"></span>',
-                            ]).'.<br>'.tr("Contatta l'assistenza per risolvere il problema").'</span>.
+                            ]).'.<br>'.tr("Contattare l'assistenza per risolvere il problema").'</span>.
                         </div>
 
 
                         <div class="alert hidden" role="alert" id="numero-fe">
-                            <i id="numero-fe-icon" class=""></i> <span>'.tr('Numero di fatture elettroniche per l\'annualità _TEXT_: _NUM_ documenti transitati su _TOT_ disponibili', [
+                            <i id="numero-fe-icon" class=""></i> <span>'.tr('Attenzione, numero di fatture elettroniche per l\'annualità _TEXT_: _NUM_ documenti transitati su _TOT_ disponibili', [
                                 '_TEXT_' => '<span id="numero-fe-text"></span>',
                                 '_NUM_' => '<span id="numero-fe-occupato"></span>',
                                 '_TOT_' => '<span id="numero-fe-totale"></span>',
-                            ]).'.<br>'.tr("Contatta l'assistenza per risolvere il problema").'</span>.
+                            ]).'.<br>'.tr("Contattare l'assistenza per risolvere il problema").'</span>.
                         </div>
 
 
@@ -178,14 +183,14 @@ if (Services::isEnabled()) {
                                 <tr>
                                     <th>'.tr('Anno').'</th>
                                     <th>
-                                        '.tr('Documenti archiviati').'
+                                        '.tr('N. documenti archiviati').'
                                         <span class="tip" title="'.tr('Fatture attive e relative ricevute, fatture passive').'.">
                                             <i class="fa fa-question-circle-o"></i>
                                         </span>
                                     </th>
 
                                     <th>
-                                        '.tr('Totale spazio occupato').'
+                                        '.tr('Spazio utilizzato').'
                                         <span class="tip" title="'.tr('Fatture attive con eventuali allegati e ricevute, fatture passive con eventuali allegati').'.">
                                             <i class="fa fa-question-circle-o"></i>
                                         </span>
@@ -277,28 +282,32 @@ function aggiornaStatisticheFE(){
             
             $("#fe_spazio").html(response.spazio_occupato);
 
-            if (response.spazio_totale){
-                $("#fe_spazio").html($("#fe_spazio").html() + " / " + response.spazio_totale);
-
-                if (response.spazio_occupato>response.spazio_totale && response.avviso_spazio){
-                    $("#fe_spazio").html("<span style=\"font-weight:bold;\" ><i class=\"fa fa-warning\" ></i> " + $("#fe_spazio").html() + "</span>");
-                }
-            }
-
             // Informazioni sullo spazio occupato
             $("#spazio-fe-occupato").html(response.spazio_occupato);
             $("#spazio-fe-totale").html(response.spazio_totale);
+
             if (response.avviso_spazio) {
 
                 $("#spazio-fe").removeClass("hidden");
 
+                response.spazio_occupato = parseFloat(response.spazio_occupato);
+                response.spazio_totale = parseFloat(response.spazio_totale);
+
+                if (response.spazio_totale){
+                    $("#fe_spazio").html($("#fe_spazio").html() + " / " + response.spazio_totale);
+    
+                    if (response.spazio_occupato>response.spazio_totale && response.avviso_spazio){
+                        $("#fe_spazio").html("<span style=\"font-weight:bold;\" ><i class=\"fa fa-warning text-warning\" ></i> " + $("#fe_spazio").html() + "</span>");
+                    }
+                }
+
                 if (response.spazio_occupato<response.spazio_totale){
-                    $("#spazio-fe-icon").addClass("fa fa-warning");
+                    $("#spazio-fe-icon").addClass("fa fa-clock-o");
                     $("#spazio-fe").addClass("alert-warning");
                     $("#spazio-fe-text").html("'.tr('in esaurimento').'"); 
                 }
                 else if (response.spazio_occupato>=response.spazio_totale){
-                    $("#spazio-fe-icon").addClass("fa fa-times");
+                    $("#spazio-fe-icon").addClass("fa fa-warning");
                     $("#spazio-fe").addClass("alert-danger");
                     $("#spazio-fe-text").html("'.tr('terminato').'");
                 }
@@ -319,7 +328,7 @@ function aggiornaStatisticheFE(){
                             data["number"] = number + " / " + response.maxNumber;
 
                         if (response.avviso_numero)
-                            data["number"] = "<span style=\"font-weight:bold;\" > <i class=\"fa fa-warning\" ></i> " + data["number"] + "</span>";
+                            data["number"] = "<span style=\"font-weight:bold;\" > <i class=\"fa fa-warning text-warning\" ></i> " + data["number"] + "</span>";
 
                         $("#numero-fe-occupato").html(number);
                         $("#numero-fe-totale").html(response.maxNumber);
@@ -329,12 +338,12 @@ function aggiornaStatisticheFE(){
                             $("#numero-fe").removeClass("hidden");
 
                             if (number<response.maxNumber){
-                                $("#numero-fe-icon").addClass("fa fa-warning");
+                                $("#numero-fe-icon").addClass("fa fa-clock-o");
                                 $("#numero-fe").addClass("alert-warning");
                                 $("#numero-fe-text").html("'.tr('in esaurimento').'"); 
                             }
                             else if (number>=response.maxNumber){
-                                $("#numero-fe-icon").addClass("fa fa-times");
+                                $("#numero-fe-icon").addClass("fa fa-warning");
                                 $("#numero-fe").addClass("alert-danger");
                                 $("#numero-fe-text").html("'.tr('esaurito').'");
                             }

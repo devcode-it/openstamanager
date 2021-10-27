@@ -80,7 +80,7 @@ class DatiFattureElettroniche extends Controllo
             }
 
             // Se riscontro un'anomalia
-            if ($fattura_vendita->anagrafica->piva != $dati_anagrafici['IdFiscaleIVA']['IdCodice'] || $fattura_vendita->anagrafica->codice_fiscale != $dati_anagrafici['CodiceFiscale'] || $fattura_vendita->totale != $totale_documento_xml) {
+            if ($fattura_vendita->anagrafica->piva != $dati_anagrafici['IdFiscaleIVA']['IdCodice'] || $fattura_vendita->anagrafica->codice_fiscale != $dati_anagrafici['CodiceFiscale'] || numberFormat($fattura_vendita->totale) != numberFormat($totale_documento_xml)) {
                 $anomalia = [
                     'fattura_vendita' => $fattura_vendita,
                     'codice_fiscale_xml' => !empty($dati_anagrafici['CodiceFiscale']) ? $dati_anagrafici['CodiceFiscale'] : null,

@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-if ($options['hide_header']) {
+if ($options['hide-header']) {
     echo '
 	<!-- Intestazione vuota fornitore -->
 	<div class="row" style="height:111px;">

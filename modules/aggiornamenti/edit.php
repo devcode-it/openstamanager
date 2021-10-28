@@ -54,7 +54,7 @@ if (function_exists('customComponents')) {
             echo '
 			</table>
 
-			<p><strong>'.tr("Si sconsiglia l'aggiornamento senza il supporto dell'assistenza ufficiale").'.</strong></p>';
+			<div class="alert alert-warning" role="alert"> <i class="fa fa-exclamation-triangle"></i> '.tr("Attenzione, il gestionale presenta delle personalizzazioni: si sconsiglia l'aggiornamento senza il supporto dell'assistenza ufficiale").'.</div>';
         } else {
             echo '
 			<p>'.tr('Non ci sono strutture personalizzate').'.</p>';
@@ -115,7 +115,7 @@ if (setting('Attiva aggiornamenti')) {
 
     if (!empty($alerts)) {
         echo '
-<div class="alert alert-warning">
+<div class="alert alert-info">
     <p>'.tr('Devi modificare il seguenti parametri del file di configurazione PHP (_FILE_) per poter caricare gli aggiornamenti', [
         '_FILE_' => '<b>php.ini</b>',
     ]).':<ul>';
@@ -198,7 +198,25 @@ function search(button) {
 
 			        {[ "type": "file", "name": "blob", "required": 1, "accept": ".zip" ]}
 
-                    <button type="button" class="btn btn-primary pull-right" onclick="update()">
+                    ';
+
+                    if (!empty($custom) || !empty($tables)) {
+                        $disabled = 'disabled'; 
+echo '                  <input type="checkbox" id="aggiorna_custom" class="pull-left" style="margin-top:10px;"  value="1" >&nbsp;
+                        <label for="aggiorna_custom" style="margin-top:7px;" >'.tr("Desidero comunque procedere all'aggiornamento").'.</label>
+                        <script>
+                            $("#aggiorna_custom").change(function() {
+                                if(this.checked) {
+                                    $("#aggiorna").removeClass("disabled");
+                                }else{
+                                    $("#aggiorna").addClass("disabled");
+                                }
+                            });
+                        </script>';
+                    }
+echo '
+
+                    <button type="button" class="btn btn-primary pull-right '.$disabled.'" id="aggiorna" onclick="update()">
                         <i class="fa fa-upload"></i> '.tr('Carica').'
                     </button>
                 </form>

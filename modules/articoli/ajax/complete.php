@@ -35,7 +35,7 @@ switch ($resource) {
             SELECT idddt AS id, "Ddt" AS tipo, "Ddt di vendita" AS modulo, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM dt_ddt WHERE id=idddt) AS n_documento, (SELECT numero_esterno FROM dt_ddt WHERE id=idddt) AS n2_documento, (SELECT data FROM dt_ddt WHERE id=idddt) AS data_documento FROM dt_righe_ddt WHERE idarticolo='.$idarticolo.' AND idddt IN(SELECT id FROM dt_ddt WHERE idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir="entrata") AND idanagrafica='.prepare($idanagrafica).') LIMIT 0,5');
 
             if (sizeof($documenti) > 0) {
-                echo "<br/><table cellspacing='0' class='table-striped table-bordered' >\n";
+                echo "<br/><table class='table table-striped table-bordered table-extra-condensed' >\n";
                 echo "<tr><th width='180'>Documento</th>\n";
                 echo "<th width='100' class='text-right' >Totale</th></tr>\n";
 
@@ -64,7 +64,7 @@ switch ($resource) {
         SELECT idddt AS id, "Ddt" AS tipo, "Ddt di vendita" AS modulo, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM dt_ddt WHERE id=idddt) AS n_documento, (SELECT numero_esterno FROM dt_ddt WHERE id=idddt) AS n2_documento, (SELECT data FROM dt_ddt WHERE id=idddt) AS data_documento FROM dt_righe_ddt WHERE idarticolo='.prepare($idarticolo).' AND idddt IN(SELECT id FROM dt_ddt WHERE idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir="entrata")) LIMIT 0,5');
 
         if (sizeof($documenti) > 0) {
-            echo "<br/><table cellspacing='0' class='table-striped table-bordered' >\n";
+            echo "<br/><table class='table table-striped table-bordered table-extra-condensed' >\n";
             echo "<tr><th width='180'>Documento</th>\n";
             echo "<th width='100' class='text-right' >Totale</th></tr>\n";
 
@@ -92,7 +92,7 @@ switch ($resource) {
         SELECT idddt AS id, "Ddt" AS tipo, "Ddt di acquisto" AS modulo, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM dt_ddt WHERE id=idddt) AS n_documento, (SELECT numero_esterno FROM dt_ddt WHERE id=idddt) AS n2_documento, (SELECT data FROM dt_ddt WHERE id=idddt) AS data_documento FROM dt_righe_ddt WHERE idarticolo='.prepare($idarticolo).' AND idddt IN(SELECT id FROM dt_ddt WHERE idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir="uscita")) LIMIT 0,5');
 
         if (sizeof($documenti) > 0) {
-            echo "<br/><table cellspacing='0' class='table-striped table-bordered' >\n";
+            echo "<br/><table class='table table-striped table-bordered table-extra-condensed' >\n";
             echo "<tr><th width='180'>Documento</th>\n";
             echo "<th width='100' class='text-right' >Totale</th></tr>\n";
 
@@ -139,14 +139,6 @@ switch ($resource) {
             '|where|' => ' AND id_anagrafica = '.prepare($id_anagrafica),
         ]);
         $results = $database->fetchArray($query_anagrafica);
-
-        // Lettura dei prezzi relativi all'articolo, senza anagrafica collegata
-        if (empty($results)) {
-            $query_predefinito = replace($query, [
-                '|where|' => '',
-            ]);
-            $results = $database->fetchArray($query_predefinito);
-        }
 
         // Lettura dei prezzi registrati direttamente sull'articolo, per compatibilità con il formato standard
         if (empty($results)) {

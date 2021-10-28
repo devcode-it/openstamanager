@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 if ($record['titolo'] != $prev_titolo && get('lev') == 1) {
     echo '
     <tr>
-        <th colspan="4">'.$record['titolo'].'</th>
+        <th colspan="5">'.$record['titolo'].'</th>
     </tr>';
 }
 

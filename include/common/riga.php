@@ -71,10 +71,50 @@ if ($options['dir'] == 'entrata') {
             var margine = (((prezzo - sconto) * 100) / costo_unitario) - 100;
             var parent = $("#costo_unitario").closest("div").parent();
             var div = parent.find("div[id*=\"errors\"]");
+            var mediaponderata = 0;
 
             margine = isNaN(margine) || !isFinite(margine) ? 0: margine; // Fix per magine NaN
 
-            div.html("<small>&nbsp;'.tr('Guadagno').': " + guadagno.toLocale() + " " + globals.currency + " &nbsp; '.tr('Margine').': " + margine.toLocale() + " %</small>");
+            if ($("#idarticolo").val()) {
+                mediaponderata = parseFloat($("#idarticolo").selectData().media_ponderata);
+            }
+
+            div.html("<table class=\"table table-extra-condensed\" style=\"margin-top:7px;\" >\
+                        <tr>\
+                            <td>\
+                                <small>&nbsp;'.tr('Guadagno').':</small>\
+                            </td>\
+                            <td align=\"right\">\
+                                <small>" + guadagno.toLocale() + "</small>\
+                            </td>\
+                            <td align=\"center\">\
+                                <small>" + globals.currency + "</small>\
+                            </td>\
+                        </tr>\
+                        <tr>\
+                            <td>\
+                                <small>&nbsp;'.tr('Margine').':</small>\
+                            </td>\
+                            <td align=\"right\">\
+                                <small>" + margine.toLocale() + "<small>\
+                            </td>\
+                            <td align=\"center\">\
+                                <small>&nbsp;%<small>\
+                            </td>\
+                        </tr>\
+                        <tr>\
+                            <td>\
+                                <small>&nbsp;'.tr('Costo medio').':</small>\
+                            </td>\
+                            <td align=\"right\">\
+                                <small>" + (mediaponderata!=0 ? mediaponderata.toLocale() : "- ") + "</small>\
+                            </td>\
+                            <td align=\"center\">\
+                                <small>" + globals.currency + "</small>\
+                            </td>\
+                        </tr>\
+                    </table>");
+                    
             if (guadagno < 0) {
                 parent.addClass("has-error");
                 div.addClass("label-danger").removeClass("label-success");
@@ -123,7 +163,7 @@ if (in_array($module['name'], ['Ordini cliente', 'Ordini fornitore', 'Preventivi
         $confermato = $result['confermato'];
     }
     echo '
-    <div class="box box-warning collapsable collapsed-box">
+    <div class="box box-info collapsable collapsed-box">
         <div class="box-header with-border">
             <h3 class="box-title">'.tr('Informazioni aggiuntive').'</h3>
             <div class="box-tools pull-right">

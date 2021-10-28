@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.27 (2021-10-25)](#2427-2021-10-26)
 - [2.4.26 (2021-09-24)](#2426-2021-09-24)
 - [2.4.25 (2021-08-25)](#2425-2021-08-25)
 - [2.4.24 (2021-07-28)](#2424-2021-07-28)
@@ -36,6 +37,40 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.3 (2018-02-16)](#23-2018-02-16)
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
+
+## 2.4.27 (2021-10-26)
+
+### Aggiunto (Added)
+ - Aggiunta selezione automatica **banca** in fase di importazione fattura elettronica
+ - Aggiunta selezione automatica del **conto di acquisto** articolo in fase di importazione fattura elettronica
+ - Aggiunto select **conto acquisto/vendita** in fase di creazione articolo
+ - Aggiunto select per aggiornare i prezzi di acquisto dell'articolo in fase di importazione fattura elettronica
+ - Aggiunto filtro per mostrare gli impianti ai tecnici assegnati
+ - Aggiunto ordinamento righe in interventi 
+ - Aggiunta azione di gruppo per **rincaro prezzi di vendita** articoli con possibilità di scelta del prezzo di partenza 
+ - Aggiunta azione di gruppo per cambiare la **categoria** degli articoli
+ - Aggiunta azione di gruppo per aggiornare l'aliquota iva degli articoli
+ - Aggiunto **Mese prossimo** nel calendario
+ - Aggiunta variabile ragione sociale per l'invio mail da ddt
+ - Aggiunta immagine in import CSV articoli
+ - Aggiunta selezione prezzo di acquisto per stampa inventario
+ - Aggiunto costo medio in fase di aggiunta riga articolo 
+ - Aggiunta azione di gruppo per aggiornare il prezzo di acquisto per gli articoli a cui non è impostato, in base all'ultima fattura di acquisto
+### Modificato (Changed)
+ - Ampliata **ricerca articoli** in importazione fatturazione elettronica per collegamento automatico
+ - Ridotto il valid time per la cache
+ - Ordinamento **gestione documentale** per data decrescente 
+ - Spostamento stampe situazione contabile e bilancio in **Stampe contabili**
+### Fixed
+ - Fix sconti in **fatturazione interventi**
+ - Fix statistiche **fatture**
+ - Fix aggiunta intervento da dashboard vista mese
+ - Fix selezione iva in aggiunta riga articolo
+ - Fix cambio stato intervento in fase di eliminazione riga da fattura
+ - Fix selezione iva in **crea fattura** da contratto
+ - Fix filigrana stampe
+ - Fix arrotondamento automatico
+ - Fix azzeramento revisione in duplicazione **preventivo**
 
 ## 2.4.26 (2021-09-24)
 

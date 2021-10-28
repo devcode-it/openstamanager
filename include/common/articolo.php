@@ -53,8 +53,7 @@ if (empty($result['idarticolo'])) {
     $qta_minima = $articolo['qta_minima'];
 
     echo '
-    <p><strong>'.tr('Articolo').':</strong> '.$articolo['codice'].' - '.$articolo['descrizione'].'.</p>
-    <input type="hidden" name="idarticolo" id="idarticolo" value="'.$articolo['id'].'">
+    {[ "type": "select", "disabled":"1", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$result['idarticolo'].'", "ajax-source": "articoli", "select-options": '.json_encode($options['select-options']['articoli']).', "icon-after": "add|'.Modules::get('Articoli')['id'].'" ]}
 
     <script>
         $(document).ready(function (){
@@ -267,7 +266,7 @@ function verificaPrezzoArticolo() {
 
     let div = prezzo_unitario_input.closest("div").parent().find("div[id*=errors]");
 
-    if (prezzo_previsto === prezzo_unitario) {
+    if (prezzo_previsto === prezzo_unitario || prezzo_previsto === 0 ) {
         div.css("padding-top", "0");
         div.html("");
 
@@ -275,7 +274,7 @@ function verificaPrezzoArticolo() {
     }
 
     div.css("padding-top", "5px");
-    div.html(`<small class="label label-warning" >'.tr('Prezzo suggerito').': ` + prezzo_previsto.toLocale() + globals.currency + `<button type="button" class="btn btn-xs btn-info pull-right" onclick="aggiornaPrezzoArticolo()"><i class="fa fa-refresh"></i> '.tr('Aggiorna').'</button></small>`);
+    div.html(`<small class="label label-info" >'.tr('Prezzo suggerito').': ` + prezzo_previsto.toLocale() + " " + globals.currency + `<button type="button" class="btn btn-xs btn-info pull-right" onclick="aggiornaPrezzoArticolo()"><i class="fa fa-refresh"></i> '.tr('Aggiorna').'</button></small>`);
 }
 
 /**
@@ -297,7 +296,7 @@ function verificaScontoArticolo() {
     }
 
     div.css("padding-top", "5px");
-    div.html(`<small class="label label-warning" >'.tr('Sconto suggerito').': ` + sconto_previsto.toLocale()  + `%<button type="button" class="btn btn-xs btn-info pull-right" onclick="aggiornaScontoArticolo()"><i class="fa fa-refresh"></i> '.tr('Aggiorna').'</button></small>`);
+    div.html(`<small class="label label-info" >'.tr('Sconto suggerito').': ` + sconto_previsto.toLocale()  + `%<button type="button" class="btn btn-xs btn-info pull-right" onclick="aggiornaScontoArticolo()"><i class="fa fa-refresh"></i> '.tr('Aggiorna').'</button></small>`);
 }
 
 /**
@@ -353,7 +352,5 @@ function aggiornaQtaMinima() {
         div.removeClass("text-danger").addClass("text-success");
     }
 }
-if (direzione === "entrata") {
-    aggiorna_guadagno();
-}
+
 </script>';

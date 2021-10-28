@@ -114,10 +114,12 @@ echo '
     <table id="table-serials" class="table table-striped table-hover table-condensed table-bordered text-center datatables">
         <thead>
             <tr>
-                <th id="th_Serial">'.tr('Serial').'</th>
-                <th id="th_Data di creazione">'.tr('Data di creazione').'</th>
-                <th id="th_Documento di vendita">'.tr('Documento di vendita').'</th>
-                <th id="th_Totale">'.tr('Totale').'</th>
+                <th>'.tr('Serial').'</th>
+                <th>'.tr('Data di creazione').'</th>
+                <th>'.tr('Documento di acquisto').'</th>
+                <th>'.tr('Prezzo di acquisto').'</th>
+                <th>'.tr('Documento di vendita').'</th>
+                <th>'.tr('Prezzo di vendita').'</th>
                 <th class="text-center">#</th>
             </tr>
         </thead>
@@ -131,6 +133,91 @@ for ($i = 0; $i < count($rs2); ++$i) {
 
     echo '
             <td>'.Translator::timestampToLocale($rs2[$i]['created_at']).'</td>';
+
+    // Ricerca acquisti
+    $acquisti = $dbo->fetchArray('SELECT * FROM mg_prodotti WHERE dir=\'uscita\' AND id_articolo='.prepare($id_record).' AND (id_riga_documento IS NOT NULL OR id_riga_ordine IS NOT NULL OR id_riga_ddt IS NOT NULL) AND serial='.prepare($rs2[$i]['serial']));
+
+    if (!empty($acquisti)) {
+        echo '
+            <td>';
+
+        $totali = [];
+
+        foreach ($acquisti as $acquisto) {
+            // Acquistato su fatture
+            if (!empty($acquisto['id_riga_documento'])) {
+                $module_id = Modules::get('Fatture di acquisto')['id'];
+
+                // Ricerca vendite su fatture
+                $query = 'SELECT *, ( SELECT descrizione FROM co_tipidocumento WHERE id=(SELECT idtipodocumento FROM co_documenti WHERE id=iddocumento) ) AS tipo_documento, ( SELECT `dir` FROM co_tipidocumento WHERE id=(SELECT idtipodocumento FROM co_documenti WHERE id=iddocumento) ) AS `dir`, ( SELECT numero FROM co_documenti WHERE id=iddocumento ) AS numero, ( SELECT numero_esterno FROM co_documenti WHERE id=iddocumento ) AS numero_esterno, ( SELECT data FROM co_documenti WHERE id=iddocumento ) AS data FROM co_righe_documenti WHERE co_righe_documenti.id='.prepare($acquisto['id_riga_documento']);
+                $data = $dbo->fetchArray($query);
+
+                $id = $data[0]['iddocumento'];
+            }
+
+            // Acquistato su ddt
+            elseif (!empty($acquisto['id_riga_ddt'])) {
+                $module_id = Modules::get('Ddt di acquisto')['id'];
+
+                $query = 'SELECT *, ( SELECT descrizione FROM dt_tipiddt WHERE id=(SELECT idtipoddt FROM dt_ddt WHERE id=idddt) ) AS tipo_documento, ( SELECT `dir` FROM dt_tipiddt WHERE id=(SELECT idtipoddt FROM dt_ddt WHERE id=idddt) ) AS `dir`, ( SELECT numero FROM dt_ddt WHERE id=idddt ) AS numero, ( SELECT numero_esterno FROM dt_ddt WHERE id=idddt ) AS numero_esterno, ( SELECT data FROM dt_ddt WHERE id=idddt ) AS data FROM dt_righe_ddt WHERE dt_righe_ddt.id='.prepare($acquisto['id_riga_ddt']);
+                $data = $dbo->fetchArray($query);
+
+                $id = $data[0]['idddt'];
+            }
+
+            // Inserito su ordini
+            elseif (!empty($acquisto['id_riga_ordine'])) {
+                $module_id = Modules::get('Ordini cliente')['id'];
+
+                // Ricerca inserimenti su ordini
+                $query = 'SELECT *, ( SELECT descrizione FROM or_tipiordine WHERE id=(SELECT idtipoordine FROM or_ordini WHERE id=idordine) ) AS tipo_documento, ( SELECT `dir` FROM or_tipiordine WHERE id=(SELECT idtipoordine FROM or_ordini WHERE id=idordine) ) AS `dir`, ( SELECT numero FROM or_ordini WHERE id=idordine ) AS numero, ( SELECT numero_esterno FROM or_ordini WHERE id=idordine ) AS numero_esterno, ( SELECT data FROM or_ordini WHERE id=idordine ) AS data FROM or_righe_ordini WHERE  or_righe_ordini.id='.prepare($acquisto['id_riga_ordine']);
+                $data = $dbo->fetchArray($query);
+
+                $id = $data[0]['idordine'];
+            }
+
+            $totali[] = [$data[0]['subtotale'], $data[0]['iva']];
+
+            $numero = !empty($data[0]['numero_esterno']) ? $data[0]['numero_esterno'] : $data[0]['numero'];
+
+            $text = tr('_DOC_ num. _NUM_ del _DATE_', [
+                '_DOC_' => $data[0]['tipo_documento'],
+                '_NUM_' => $numero,
+                '_DATE_' => Translator::dateToLocale($data[0]['data']),
+            ]).(!empty($extra) ? ' '.$extra : '');
+
+            echo 
+                Modules::link($module_id, $id, $text).'<br>';
+        }
+    
+        echo '
+            </td>
+
+            <td class="text-center">';
+        foreach ($totali as $value) {
+            $subtotale = $value[0];
+            $iva = $value[1];
+
+            echo '
+                <span>'.moneyFormat($subtotale + $iva).'</span>';
+            if (!empty($subtotale) && !empty($iva)) {
+                echo '
+                <small style="color:#555;">('.Translator::numberToLocale($subtotale).' + '.Translator::numberToLocale($iva).')</small>';
+            }
+            echo '
+                <br>';
+        }
+    
+        echo '
+            </td>';
+    }
+
+    // Non venduto
+    else {
+        echo '
+            <td></td>
+            <td></td>';
+    }
 
     // Ricerca vendite
     $vendite = $dbo->fetchArray('SELECT * FROM mg_prodotti WHERE dir=\'entrata\' AND id_articolo='.prepare($id_record).' AND serial='.prepare($rs2[$i]['serial']));
@@ -155,7 +242,6 @@ for ($i = 0; $i < count($rs2); ++$i) {
 
             // Venduto su ddt
             elseif (!empty($vendita['id_riga_ddt'])) {
-                $numero = ($rs3[0]['numero_esterno'] != '') ? $rs3[0]['numero_esterno'] : $rs3[0]['numero'];
                 $module_id = Modules::get('Ddt di vendita')['id'];
 
                 $query = 'SELECT *, ( SELECT descrizione FROM dt_tipiddt WHERE id=(SELECT idtipoddt FROM dt_ddt WHERE id=idddt) ) AS tipo_documento, ( SELECT `dir` FROM dt_tipiddt WHERE id=(SELECT idtipoddt FROM dt_ddt WHERE id=idddt) ) AS `dir`, ( SELECT numero FROM dt_ddt WHERE id=idddt ) AS numero, ( SELECT numero_esterno FROM dt_ddt WHERE id=idddt ) AS numero_esterno, ( SELECT data FROM dt_ddt WHERE id=idddt ) AS data FROM dt_righe_ddt WHERE dt_righe_ddt.id='.prepare($vendita['id_riga_ddt']);
@@ -202,10 +288,10 @@ for ($i = 0; $i < count($rs2); ++$i) {
                 '_DOC_' => $data[0]['tipo_documento'],
                 '_NUM_' => $numero,
                 '_DATE_' => Translator::dateToLocale($data[0]['data']),
-            ]).(!empty($extra) ? ' '.$extra : '');
-
-            echo '
-            '.Modules::link($module_id, $id, $text).'<br>';
+            ]).(!empty($extra) ? ' '.$extra : '');  
+            
+            echo
+                Modules::link($module_id, $id, $text).'<br>';
         }
 
         echo '
@@ -236,13 +322,9 @@ for ($i = 0; $i < count($rs2); ++$i) {
     else {
         // Documento di vendita
         echo '
-            <td></td>';
+            <td></td>
+            <td></td>
 
-        // Totale
-        echo '
-            <td></td>';
-
-        echo '
             <td class="text-center">
                 <a class="btn btn-danger btn-sm ask" data-backto="record-edit" data-op="delprodotto" data-idprodotto="'.$rs2[$i]['id'].'">
                     <i class="fa fa-trash"></i>

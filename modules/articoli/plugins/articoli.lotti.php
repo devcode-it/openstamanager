@@ -176,7 +176,7 @@ for ($i = 0; $i < count($rs2); ++$i) {
                 $id = $data[0]['idordine'];
             }
 
-            $totali[] = [($data[0]['prezzo_unitario']-$data[0]['sconto_unitario']), $data[0]['iva']];
+            $totali[] = [($data[0]['prezzo_unitario']-$data[0]['sconto_unitario']), $data[0]['iva_unitaria']];
 
             $numero = !empty($data[0]['numero_esterno']) ? $data[0]['numero_esterno'] : $data[0]['numero'];
 
@@ -278,7 +278,7 @@ for ($i = 0; $i < count($rs2); ++$i) {
                 ]);
             }
 
-            $totali[] = [($data[0]['prezzo_unitario']-$data[0]['sconto_unitario']), $data[0]['iva']];
+            $totali[] = [($data[0]['prezzo_unitario']-$data[0]['sconto_unitario']), $data[0]['iva_unitaria']];
 
             $numero = !empty($data[0]['numero_esterno']) ? $data[0]['numero_esterno'] : $data[0]['numero'];
 

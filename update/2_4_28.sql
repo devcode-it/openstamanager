@@ -1,2 +1,2 @@
 -- Aggiunto help per impostazione
-UPDATE `zz_settings` SET `help` = 'Documenti di Vendita quali Fatture e DDT' WHERE `zz_settings`.`nome` = 'Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita'; 
+UPDATE `zz_settings` SET `help` = 'Documenti di Vendita quali Fatture, DDT e Attività' WHERE `zz_settings`.`nome` = 'Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita'; 

@@ -176,7 +176,7 @@ for ($i = 0; $i < count($rs2); ++$i) {
                 $id = $data[0]['idordine'];
             }
 
-            $totali[] = [$data[0]['subtotale'], $data[0]['iva']];
+            $totali[] = [($data[0]['prezzo_unitario']-$data[0]['sconto_unitario']), $data[0]['iva']];
 
             $numero = !empty($data[0]['numero_esterno']) ? $data[0]['numero_esterno'] : $data[0]['numero'];
 
@@ -272,15 +272,13 @@ for ($i = 0; $i < count($rs2); ++$i) {
                 $id = $data[0]['idintervento'];
 
                 $data[0]['tipo_documento'] = tr('Intervento').' '.$data[0]['codice'];
-                $data[0]['subtotale'] = $data[0]['prezzo_vendita'] * $data[0]['qta'];
-                $data[0]['iva'] = 0;
 
                 $extra = tr('(q.tà _QTA_)', [
                     '_QTA_' => $data[0]['qta'],
                 ]);
             }
 
-            $totali[] = [$data[0]['subtotale'], $data[0]['iva']];
+            $totali[] = [($data[0]['prezzo_unitario']-$data[0]['sconto_unitario']), $data[0]['iva']];
 
             $numero = !empty($data[0]['numero_esterno']) ? $data[0]['numero_esterno'] : $data[0]['numero'];
 

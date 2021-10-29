@@ -695,7 +695,7 @@ if (!$block_edit) {
 
     // Lettura articoli
     $art_query = 'SELECT id FROM mg_articoli WHERE attivo = 1 AND deleted_at IS NULL';
-    if ($dir == 'entrata') {
+    if ($dir == 'entrata' && !setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita')) {
         $art_query .= ' AND (qta > 0 OR servizio = 1)';
     } else {
         //Gli articoli possono essere creati al volo direttamente dal modale di aggiunta articolo

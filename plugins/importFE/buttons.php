@@ -59,7 +59,10 @@ function compile(btn) {
                 return;
             }
 
-            $("#id_tipo").selectSet(response.id_tipo);
+            if(!$("#id_tipo").val()) {
+                $("#id_tipo").selectSet(response.id_tipo);
+            }
+            
             $("#pagamento").selectSetNew(response.pagamento.id, response.pagamento.descrizione);
 
             $("select[name^=iva]").each(function(){

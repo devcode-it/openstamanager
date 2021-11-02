@@ -204,9 +204,7 @@ class FatturaOrdinaria extends FatturaElettronica
             // Nel caso il prezzo sia negativo viene gestito attraverso l'inversione della quantità (come per le note di credito)
             // TODO: per migliorare la visualizzazione, sarebbe da lasciare negativo il prezzo e invertire gli sconti.
             $prezzo = $riga['PrezzoUnitario'];
-            $prezzo = $riga['PrezzoUnitario'] < 0 ? -$prezzo : $prezzo;
             $qta = $riga['Quantita'] ?: 1;
-            $qta = $riga['PrezzoUnitario'] < 0 ? -$qta : $qta;
 
             // Prezzo e quantità
             $obj->prezzo_unitario = $prezzo;
@@ -309,7 +307,7 @@ class FatturaOrdinaria extends FatturaElettronica
         $totali_righe = array_column($righe, 'PrezzoTotale');
         $totale_righe = sum($totali_righe, null, 2);
 
-        $diff = abs($totale_righe) - abs($fattura->totale_imponibile);
+        $diff = round(abs($totale_righe) - abs($fattura->totale_imponibile), 2);
         if (!empty($diff)) {
             // Rimozione dell'IVA calcolata automaticamente dal gestionale
             $iva_arrotondamento = database()->fetchOne('SELECT * FROM co_iva WHERE percentuale=0 AND deleted_at IS NULL');

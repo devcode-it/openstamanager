@@ -781,7 +781,7 @@ if ($dir == 'uscita' && $fattura->isFE()) {
 
                 if (stored == null) {
                     div.addClass("alert-info").html("'.tr("Il file XML non contiene il nodo ''ImportoTotaleDocumento'': impossibile controllare corrispondenza dei totali").'.")
-                } else if (stored == calculated){
+                } else if (stored.toLocale() == calculated.toLocale()){
                     div.addClass("alert-success").html("'.tr('Il totale del file XML corrisponde a quello calcolato dal gestionale').'.")
                 } else {
                     div.addClass("alert-warning").html("'.tr('Il totale del file XML non corrisponde a quello calcolato dal gestionale: previsto _XML_, calcolato _CALC_ (differenza _DIFF_)', [

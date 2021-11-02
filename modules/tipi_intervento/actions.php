@@ -24,6 +24,7 @@ include_once __DIR__.'/../../core.php';
 switch (post('op')) {
     case 'update':
         $tipo->descrizione = post('descrizione');
+        $tipo->calcola_km = post('calcola_km');
         $tipo->tempo_standard = post('tempo_standard');
 
         $tipo->costo_orario = post('costo_orario');
@@ -41,6 +42,7 @@ switch (post('op')) {
 
     case 'add':
         $codice = post('codice');
+        $tipo->calcola_km = post('calcola_km');
         $descrizione = post('descrizione');
 
         $tipo = Tipo::build($codice, $descrizione);

@@ -68,15 +68,17 @@ class Sessione extends Model
         $model->orario_inizio = $inizio;
         $model->orario_fine = $fine;
 
-        // Sede secondaria
-        if (!empty($intervento['idsede_destinazione'])) {
-            $sede = database()->fetchOne('SELECT km FROM an_sedi WHERE id = '.prepare($intervento['idsede_destinazione']));
-            $km = $sede['km'];
-        }
+        if ($tipo_sessione->calcola_km) {
+            // Sede secondaria
+            if (!empty($intervento['idsede_destinazione'])) {
+                $sede = database()->fetchOne('SELECT km FROM an_sedi WHERE id = '.prepare($intervento['idsede_destinazione']));
+                $km = $sede['km'];
+            }
 
-        // Sede legale dell'anagrafica
-        else {
-            $km = $intervento->anagrafica->sedeLegale->km;
+            // Sede legale dell'anagrafica
+            else {
+                $km = $intervento->anagrafica->sedeLegale->km;
+            }
         }
 
         $model->km = empty($km) ? 0 : $km;

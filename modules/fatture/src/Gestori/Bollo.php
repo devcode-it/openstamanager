@@ -50,7 +50,7 @@ class Bollo
         $righe_bollo = $this->fattura->getRighe()->filter(function ($item, $key) {
             return $item->aliquota != null && in_array($item->aliquota->codice_natura_fe, ['N1', 'N2.1', 'N2.2', 'N3.1', 'N3.2', 'N3.3', 'N3.4', 'N3.5', 'N3.6', 'N4']);
         });
-        $importo_righe_bollo = $righe_bollo->sum('netto');
+        $importo_righe_bollo = $righe_bollo->sum('totale_imponibile');
 
         // Leggo la marca da bollo se c'è e se il netto a pagare supera la soglia
         $bollo = ($this->fattura->direzione == 'uscita') ? $this->fattura->bollo : setting('Importo marca da bollo');

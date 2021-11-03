@@ -207,7 +207,7 @@ switch (post('op')) {
         }
 
         if ($n_articoli > 0) {
-            flash()->info(tr('Categoria cambiata a _NUM_ articoli!', [
+            flash()->info(tr('Aliquota iva cambiata a _NUM_ articoli!', [
                 '_NUM_' => $n_articoli,
             ]));
         } else {
@@ -236,6 +236,28 @@ switch (post('op')) {
         flash()->info(tr('Prezzi di acquisto aggiornati per _NUM_ articoli!', [
             '_NUM_' => $n_art,
         ]));
+
+        break;
+
+    case 'change-um':
+        $um = post('um');
+        $n_articoli = 0;
+
+        foreach ($id_records as $id) {
+            $articolo = Articolo::find($id);
+            $articolo->um = $um;
+            $articolo->save();
+
+            ++$n_articoli;
+        }
+
+        if ($n_articoli > 0) {
+            flash()->info(tr('Unità di misura cambiata a _NUM_ articoli!', [
+                '_NUM_' => $n_articoli,
+            ]));
+        } else {
+            flash()->warning(tr('Nessun articolo modificato!'));
+        }
 
         break;
 }
@@ -353,6 +375,17 @@ $operations['set-acquisto-ifzero'] = [
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,
+    ],
+];
+
+$operations['change-um'] = [
+    'text' => '<span><i class="fa fa-balance-scale"></i> '.tr('Aggiorna unità di misura').'</span>',
+    'data' => [
+        'title' => tr('Cambiare l\'unità di misura?'),
+        'msg' => tr('Per ciascun articolo selezionato, verrà modificata l\'unità di misura').'
+        <br><br>{[ "type": "select", "label": "'.tr('Unità di misura').'", "name": "um", "required": 1, "ajax-source": "misure" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
     ],
 ];
 

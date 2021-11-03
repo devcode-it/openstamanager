@@ -454,8 +454,15 @@ if (!$block_edit) {
                 </button>
             </div>';
 
+    // Lettura articoli
+    $art_query = 'SELECT id FROM mg_articoli WHERE attivo = 1 AND deleted_at IS NULL';
+    if (!setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita')) {
+        $art_query .= ' AND (qta > 0 OR servizio = 1)';
+    }
+
+    $articoli = $dbo->fetchNum($art_query);
     echo '
-            <button type="button" class="btn btn-sm btn-primary tip" title="'.tr('Aggiungi articolo').'" onclick="gestioneArticolo(this)">
+            <button type="button" class="btn btn-sm btn-primary tip'.(!empty($articoli) ? '' : ' disabled').'" title="'.tr('Aggiungi articolo').'" onclick="gestioneArticolo(this)">
                 <i class="fa fa-plus"></i> '.tr('Articolo').'
             </button>';
 

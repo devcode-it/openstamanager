@@ -76,7 +76,6 @@ package-lock.json
 assets/dist/
 backup/*
 !backup/.htaccess
-custom/
 files/*
 !files/.htaccess
 !files/impianti/

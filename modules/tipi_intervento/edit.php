@@ -25,12 +25,16 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 
 	<div class="row">
-		<div class="col-md-4">
+		<div class="col-md-3">
 			{[ "type": "span", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "value": "$codice$" ]}
 		</div>
 
-		<div class="col-md-6">
+		<div class="col-md-5">
 			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
+		</div>
+
+		<div class="col-md-2">
+			{[ "type": "checkbox", "label": "<?php echo tr('Calcola km'); ?>", "name": "calcola_km", "help": "<?php echo tr('Specifica se inserire automaticamente i km percorsi tra sede azienda e sede cliente'); ?>.", "value": "$calcola_km$"  ]}
 		</div>
 
 		<div class="col-md-2">

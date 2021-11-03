@@ -79,7 +79,7 @@ switch ($resource) {
             mg_articoli.idconto_acquisto,
             categoria.`nome` AS categoria,
             sottocategoria.`nome` AS sottocategoria,
-            (SUM((co_righe_documenti.prezzo_unitario-co_righe_documenti.sconto_unitario)*co_righe_documenti.qta)/SUM(co_righe_documenti.qta)) AS media_ponderata,
+            righe.media_ponderata,
 
             CONCAT(conto_vendita_categoria .numero, '.', conto_vendita_sottocategoria.numero, ' ', conto_vendita_sottocategoria.descrizione) AS idconto_vendita_title,
             CONCAT(conto_acquisto_categoria .numero, '.', conto_acquisto_sottocategoria.numero, ' ', conto_acquisto_sottocategoria.descrizione) AS idconto_acquisto_title
@@ -92,9 +92,10 @@ switch ($resource) {
             LEFT JOIN co_pianodeiconti3 AS conto_acquisto_sottocategoria ON conto_acquisto_sottocategoria.id=mg_articoli.idconto_acquisto
                 LEFT JOIN co_pianodeiconti2 AS conto_acquisto_categoria ON conto_acquisto_sottocategoria.idpianodeiconti2=conto_acquisto_categoria.id
 
-            LEFT JOIN co_righe_documenti ON co_righe_documenti.idarticolo=mg_articoli.id
+            LEFT JOIN (SELECT co_righe_documenti.idarticolo AS id, (SUM((co_righe_documenti.prezzo_unitario-co_righe_documenti.sconto_unitario)*co_righe_documenti.qta)/SUM(co_righe_documenti.qta)) AS media_ponderata FROM co_righe_documenti
             LEFT JOIN co_documenti ON co_documenti.id=co_righe_documenti.iddocumento
-            LEFT JOIN co_tipidocumento ON co_tipidocumento.id=co_documenti.idtipodocumento
+            LEFT JOIN co_tipidocumento ON co_tipidocumento.id=co_documenti.idtipodocumento WHERE co_tipidocumento.dir='uscita' GROUP BY co_righe_documenti.idarticolo) AS righe
+            ON righe.id=mg_articoli.id
             LEFT JOIN co_iva AS iva_articolo ON iva_articolo.id = mg_articoli.idiva_vendita
             LEFT JOIN co_iva AS iva_predefinita ON iva_predefinita.id = (SELECT valore FROM zz_settings WHERE nome = 'Iva predefinita')";
 
@@ -137,7 +138,6 @@ switch ($resource) {
 
         $where[] = 'mg_articoli.attivo = 1';
         $where[] = 'mg_articoli.deleted_at IS NULL';
-        $where[] = '(co_tipidocumento.dir="uscita" OR co_tipidocumento.dir IS NULL)';
 
         if (!empty($search)) {
             $search_fields[] = 'mg_articoli.descrizione LIKE '.prepare('%'.$search.'%');

@@ -695,7 +695,7 @@ if (!$block_edit) {
 
     // Lettura articoli
     $art_query = 'SELECT id FROM mg_articoli WHERE attivo = 1 AND deleted_at IS NULL';
-    if ($dir == 'entrata') {
+    if ($dir == 'entrata' && !setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita')) {
         $art_query .= ' AND (qta > 0 OR servizio = 1)';
     } else {
         //Gli articoli possono essere creati al volo direttamente dal modale di aggiunta articolo
@@ -781,7 +781,7 @@ if ($dir == 'uscita' && $fattura->isFE()) {
 
                 if (stored == null) {
                     div.addClass("alert-info").html("'.tr("Il file XML non contiene il nodo ''ImportoTotaleDocumento'': impossibile controllare corrispondenza dei totali").'.")
-                } else if (stored == calculated){
+                } else if (stored.toLocale() == calculated.toLocale()){
                     div.addClass("alert-success").html("'.tr('Il totale del file XML corrisponde a quello calcolato dal gestionale').'.")
                 } else {
                     div.addClass("alert-warning").html("'.tr('Il totale del file XML non corrisponde a quello calcolato dal gestionale: previsto _XML_, calcolato _CALC_ (differenza _DIFF_)', [

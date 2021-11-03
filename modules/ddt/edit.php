@@ -355,9 +355,19 @@ if (!$block_edit) {
             <a class="btn btn-sm btn-primary'.(!empty($ordini) ? '' : ' disabled').'" data-href="'.base_path().'/modules/ddt/add_ordine.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Ordine').'">
                 <i class="fa fa-plus"></i> '.tr('Ordine').'
             </a>';
+    
+    // Lettura articoli
+    $art_query = 'SELECT id FROM mg_articoli WHERE attivo = 1 AND deleted_at IS NULL';
+    if ($dir == 'entrata' && !setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita')) {
+        $art_query .= ' AND (qta > 0 OR servizio = 1)';
+    } else {
+        //Gli articoli possono essere creati al volo direttamente dal modale di aggiunta articolo
+        $art_query .= ' OR 1=1';
+    }
 
+    $articoli = $dbo->fetchNum($art_query);
     echo '
-            <button type="button" class="btn btn-sm btn-primary tip" title="'.tr('Aggiungi articolo').'" onclick="gestioneArticolo(this)">
+            <button type="button" class="btn btn-sm btn-primary tip'.(!empty($articoli) ? '' : ' disabled').'" title="'.tr('Aggiungi articolo').'" onclick="gestioneArticolo(this)">
                 <i class="fa fa-plus"></i> '.tr('Articolo').'
             </button>';
 

@@ -142,6 +142,7 @@ switch ($operazione) {
 
     case 'reset':
         $dbo->query('DELETE FROM `co_fatturazione_contratti` WHERE `idcontratto`='.prepare($id_record));
+        $dbo->query('DELETE FROM `co_righe_contratti` WHERE `idpianificazione` IS NOT NULL');
         flash()->info(tr('Pianificazione rimossa'));
 
         break;

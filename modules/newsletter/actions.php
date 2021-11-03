@@ -26,6 +26,7 @@ use Modules\ListeNewsletter\Lista;
 use Modules\Newsletter\Newsletter;
 use Notifications\EmailNotification;
 use PHPMailer\PHPMailer\Exception;
+use Modules\Newsletter\Lista as ListaNewsletter;
 
 include_once __DIR__.'/../../core.php';
 
@@ -175,6 +176,15 @@ switch (filter('op')) {
         // Selezione da lista newsletter
         $id_list = post('id_list');
         if (!empty($id_list)) {
+
+            //Aggiornamento della lista
+            $lista = ListaNewsletter::find($id_list);
+            $query =  $lista->query;
+            if (check_query($query)) {
+                $lista->query = html_entity_decode($query);
+            }
+            $lista->save();
+
             // Rimozione preventiva dei record duplicati dalla newsletter
             $database->query('DELETE em_newsletter_receiver.* FROM em_newsletter_receiver
                 INNER JOIN em_list_receiver ON em_list_receiver.record_type = em_newsletter_receiver.record_type AND em_list_receiver.record_id = em_newsletter_receiver.record_id

@@ -260,6 +260,50 @@ switch (post('op')) {
         }
 
         break;
+
+    case 'change-conto-acquisto':
+        $conto_acquisto = post('conto_acquisto');
+        $n_articoli = 0;
+
+        foreach ($id_records as $id) {
+            $articolo = Articolo::find($id);
+            $articolo->idconto_acquisto = $conto_acquisto;
+            $articolo->save();
+
+            ++$n_articoli;
+        }
+
+        if ($n_articoli > 0) {
+            flash()->info(tr('Conto predefinito di acquisto cambiato a _NUM_ articoli!', [
+                '_NUM_' => $n_articoli,
+            ]));
+        } else {
+            flash()->warning(tr('Nessun articolo modificato!'));
+        }
+
+        break;
+
+    case 'change-conto-vendita':
+        $conto_vendita = post('conto_vendita');
+        $n_articoli = 0;
+
+        foreach ($id_records as $id) {
+            $articolo = Articolo::find($id);
+            $articolo->idconto_vendita = $conto_vendita;
+            $articolo->save();
+
+            ++$n_articoli;
+        }
+
+        if ($n_articoli > 0) {
+            flash()->info(tr('Conto predefinito di vendita cambiato a _NUM_ articoli!', [
+                '_NUM_' => $n_articoli,
+            ]));
+        } else {
+            flash()->warning(tr('Nessun articolo modificato!'));
+        }
+
+        break;
 }
 
 if (App::debug()) {
@@ -384,6 +428,28 @@ $operations['change-um'] = [
         'title' => tr('Cambiare l\'unità di misura?'),
         'msg' => tr('Per ciascun articolo selezionato, verrà modificata l\'unità di misura').'
         <br><br>{[ "type": "select", "label": "'.tr('Unità di misura').'", "name": "um", "required": 1, "ajax-source": "misure" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
+
+$operations['change-conto-acquisto'] = [
+    'text' => '<span><i class="fa fa-money"></i> '.tr('Aggiorna conto predefinito di acquisto').'</span>',
+    'data' => [
+        'title' => tr('Cambiare il conto predefinito di acquisto?'),
+        'msg' => tr('Per ciascun articolo selezionato, verrà modificato il conto predefinito di acquisto').'
+        <br><br>{[ "type": "select", "label": "'.tr('Conto acquisto').'", "name": "conto_acquisto", "required": 1, "ajax-source": "conti-acquisti" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
+
+$operations['change-conto-vendita'] = [
+    'text' => '<span><i class="fa fa-money"></i> '.tr('Aggiorna conto predefinito di vendita').'</span>',
+    'data' => [
+        'title' => tr('Cambiare il conto predefinito di vendita?'),
+        'msg' => tr('Per ciascun articolo selezionato, verrà modificato il conto predefinito di vendita').'
+        <br><br>{[ "type": "select", "label": "'.tr('Conto vendita').'", "name": "conto_vendita", "required": 1, "ajax-source": "conti-vendite" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
     ],

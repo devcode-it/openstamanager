@@ -20,6 +20,7 @@
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo;
 use Modules\Articoli\Export\CSV;
+use Modules\Iva\Aliquota;
 use Modules\Preventivi\Components\Articolo as ArticoloPreventivo;
 use Modules\Preventivi\Preventivo;
 use Modules\TipiIntervento\Tipo as TipoSessione;
@@ -51,12 +52,34 @@ switch (post('op')) {
     case 'change-vendita':
         $percentuale = post('percentuale');
         $prezzo_partenza = post('prezzo_partenza');
+        $tipologia = post('tipologia');
+        $arrotondamento = post('arrotondamento');
+        $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
         foreach ($id_records as $id) {
             $articolo = Articolo::find($id);
             $prezzo_partenza = post('prezzo_partenza') == 'vendita' ? $articolo->prezzo_vendita : $articolo->prezzo_acquisto;
+            $aliquota_iva = floatval(Aliquota::find($articolo->idiva_vendita)->percentuale);
 
             $new_prezzo_vendita = $prezzo_partenza + ($prezzo_partenza * $percentuale / 100);
+
+            // Arrotondamento
+            if (!empty($tipologia) && !empty($arrotondamento)) {
+                if ($tipologia == 'ivato') {
+                    $new_prezzo_vendita = $new_prezzo_vendita + ($new_prezzo_vendita * $aliquota_iva / 100);
+                }
+
+                $new_prezzo_vendita = ceil($new_prezzo_vendita / $arrotondamento) * $arrotondamento;
+            }
+
+            if (in_array($tipologia, ['ivato', '']) && !$prezzi_ivati) {
+                $new_prezzo_vendita = $new_prezzo_vendita * 100 / (100 + $aliquota_iva);
+            }
+
+            if (in_array($tipologia, ['imponibile', '']) && $prezzi_ivati) {
+                $new_prezzo_vendita = $new_prezzo_vendita + ($new_prezzo_vendita * $aliquota_iva / 100);
+            }
+
             $articolo->setPrezzoVendita($new_prezzo_vendita, $articolo->idiva_vendita);
             $articolo->save();
         }
@@ -344,7 +367,9 @@ $operations['change-vendita'] = [
         'title' => tr('Aggiornare il prezzo di vendita per gli articoli selezionati?'),
         'msg' => 'Per indicare uno sconto inserire la percentuale con il segno meno, al contrario per un rincaro inserire la percentuale senza segno.<br><br>
         {[ "type": "select", "label": "'.tr('Partendo da:').'", "name": "prezzo_partenza", "required": 1, "values": "list=\"acquisto\":\"Prezzo di acquisto\",\"vendita\":\"Prezzo di vendita\"" ]}<br>
-        {[ "type": "number", "label": "'.tr('Percentuale sconto/magg.').'", "name": "percentuale", "required": 1, "icon-after": "%" ]}',
+        {[ "type": "number", "label": "'.tr('Percentuale sconto/magg.').'", "name": "percentuale", "required": 1, "icon-after": "%" ]}<br>
+        {[ "type": "select", "label": "'.tr('Arrotonda prezzo:').'", "name": "tipologia", "values": "list=\"0\":\"Non arrotondare\",\"imponibile\":\"Imponibile\",\"ivato\":\"Ivato\"", "value": 0 ]}<br>
+        {[ "type": "select", "label": "'.tr('Arrotondamento:').'", "name": "arrotondamento", "values": "list=\"0.1\":\"0,10 €\",\"1\":\"1,00 €\",\"10\":\"10,00 €\",\"100\":\"100,00 €\"" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

@@ -53,7 +53,7 @@ if (empty($result['idarticolo'])) {
     $qta_minima = $articolo['qta_minima'];
 
     echo '
-    {[ "type": "select", "disabled":"1", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$result['idarticolo'].'", "ajax-source": "articoli", "select-options": '.json_encode($options['select-options']['articoli']).', "icon-after": "add|'.Modules::get('Articoli')['id'].'" ]}
+    {[ "type": "select", "disabled":"1", "label": "'.tr('Articolo').'", "name": "idarticolo", "value": "'.$result['idarticolo'].'", "ajax-source": "articoli", "select-options": '.json_encode($options['select-options']['articoli']).', "icon-after": "add|'.Modules::get('Articoli')['id'].'" ]}
 
     <script>
         $(document).ready(function (){

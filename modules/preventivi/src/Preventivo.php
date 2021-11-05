@@ -95,7 +95,6 @@ class Preventivo extends Document
         } else {
             $model->data_bozza = $data_bozza;
         }
-        $model->data_conclusione = Carbon::now()->addMonth();
 
         if (!empty($id_sede)) {
             $model->idsede = $id_sede;

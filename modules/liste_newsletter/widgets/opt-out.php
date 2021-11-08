@@ -38,7 +38,7 @@ if (!empty($is_number_request)) {
     echo '<small>
     '.(
         $servizio_abilitato ?
-        tr('Clicca qui per avviare la sincronizzazione con il servizio esterno la gestione dei dsiscritti') :
+        tr('Clicca qui per avviare la sincronizzazione con il servizio esterno la gestione dei disiscritti') :
         tr('Servizio non abilitato')
     ).'
     </small>';

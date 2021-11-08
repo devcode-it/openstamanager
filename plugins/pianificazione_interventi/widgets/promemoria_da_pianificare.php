@@ -17,6 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Carbon\Carbon;
 use Plugins\PianificazioneInterventi\Promemoria;
 
 include_once __DIR__.'/../../../core.php';

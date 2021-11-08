@@ -232,7 +232,10 @@ abstract class Component extends Model
 
             // Correzione della descrizione
             $attributes['descrizione'] = str_replace($riferimento_precedente, '', $attributes['descrizione']);
-            $attributes['descrizione'] .= $nuovo_riferimento;
+
+            if (setting('Aggiungi riferimento tra documenti')) {
+                $attributes['descrizione'] .= $nuovo_riferimento;
+            }
         }
 
         // Impostazione del genitore

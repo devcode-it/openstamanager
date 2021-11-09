@@ -74,7 +74,6 @@ echo '
 <script>
 	function avvia_stampa (){
 		window.open("'.$link.'&dir='.$dir.'&id_sezionale="+$("#id_sezionale").val()+"&date_start="+$("#date_start").val()+"&date_end="+$("#date_end").val()+"");
-	return false;
 	}
 $("#format").change(function() {
 	session_set("stampe_contabili,format", $(this).val(), 0, 0);

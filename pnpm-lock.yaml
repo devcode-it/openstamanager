@@ -40,6 +40,7 @@ specifiers:
   '@open-wc/eslint-config': ^7.0.0
   '@openstamanager/eslint-config': github:maicol07/eslint-config-openstamanager
   '@openstamanager/vite-config': github:maicol07/openstamanager-vite-config
+  '@types/ziggy-js': ^1.3.0
   async-wait-until: ^2.0.8
   babel-plugin-transform-flow-enums: ^0.0.2
   cash-dom: ^8.1.0
@@ -140,6 +141,7 @@ devDependencies:
   '@open-wc/eslint-config': 7.0.0_@babel+eslint-plugin@7.14.5
   '@openstamanager/eslint-config': github.com/maicol07/eslint-config-openstamanager/1eafa549ce83e3ea90686924f9e535b4ace0503a_c5d4514ba6429a1ce9551b3d2c1dbe1f
   '@openstamanager/vite-config': github.com/maicol07/openstamanager-vite-config/d8ac3e7c1dec6545e66ffc30f2bde9841890bae5_59b805e6a080e72f118350aaf64b789d
+  '@types/ziggy-js': 1.3.0
   babel-plugin-transform-flow-enums: 0.0.2_@babel+core@7.16.0
   concurrently: 6.3.0
   eslint: 7.32.0
@@ -2526,6 +2528,10 @@ packages:
       - supports-color
     dev: true
 
+  /@types/history/4.7.9:
+    resolution: {integrity: sha512-MUc6zSmU3tEVnkQ78q0peeEjKWPUADMlC/t++2bI8WnAG2tvYRPIgHG8lWkXwqc8MsUF6Z2MOf+Mh5sazOmhiQ==}
+    dev: true
+
   /@types/json-schema/7.0.9:
     resolution: {integrity: sha512-qcUXuemtEu+E5wZSJHNxUXeCZhAfXKQ41D+duX+VYPde7xyEVZci+/oXKJL13tnRs9lR2pr4fod59GT6/X1/yQ==}
     dev: true
@@ -2559,6 +2565,12 @@ packages:
   /@types/trusted-types/2.0.2:
     resolution: {integrity: sha512-F5DIZ36YVLE+PN+Zwws4kJogq47hNgX3Nx6WyDJ3kcplxyke3XIzB8uK5n/Lpm1HBsbGzd6nmGehL8cPekP+Tg==}
     dev: false
+
+  /@types/ziggy-js/1.3.0:
+    resolution: {integrity: sha512-032wBOrdDKZPA6drFTdd6xkzbainwgLc3h0uBrg+iEL82iSW/BEQFRNm/mpBPG+INFYHfmYaaxryI2uNj9B9qg==}
+    dependencies:
+      '@types/history': 4.7.9
+    dev: true
 
   /@typescript-eslint/eslint-plugin/5.3.1_4daca2483796bdceece3758b04dba2a1:
     resolution: {integrity: sha512-cFImaoIr5Ojj358xI/SDhjog57OK2NqlpxwdcgyxDA3bJlZcJq5CPzUXtpD7CxI2Hm6ATU7w5fQnnkVnmwpHqw==}

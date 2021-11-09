@@ -98,7 +98,7 @@
     <inspection_tool class="HtmlUnknownTag" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="myValues">
         <value>
-          <list size="18">
+          <list size="20">
             <item index="0" class="java.lang.String" itemvalue="nobr" />
             <item index="1" class="java.lang.String" itemvalue="noembed" />
             <item index="2" class="java.lang.String" itemvalue="comment" />
@@ -117,6 +117,8 @@
             <item index="15" class="java.lang.String" itemvalue="top-app-bar" />
             <item index="16" class="java.lang.String" itemvalue="material-drawer" />
             <item index="17" class="java.lang.String" itemvalue="mwc-dialog" />
+            <item index="18" class="java.lang.String" itemvalue="text-field" />
+            <item index="19" class="java.lang.String" itemvalue="text-area" />
           </list>
         </value>
       </option>

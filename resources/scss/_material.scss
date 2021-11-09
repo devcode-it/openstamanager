@@ -6,11 +6,14 @@
 @use "@material/card";
 @use "@material/layout-grid/mdc-layout-grid";
 @use "@material/data-table/data-table";
-@use "@material/typography/mdc-typography";
+@use "@material/typography";
+
+@import "include-media/dist/include-media";
 
 @include card.core-styles;
 @include data-table.core-styles;
 @include data-table.theme-baseline;
+@include typography.core-styles;
 
 /* ---------------------------
     MWC Components
@@ -129,12 +132,18 @@ top-app-bar {
     MDC FABs
 --------------------------- */
 mwc-fab {
-    --mdc-icon-font: inherit;
+    --mdc-icon-font: none;
 
     &.sticky {
         position: fixed;
         right: 16px;
         bottom: 16px;
+    }
+
+    @include media('>desktop') {
+        &.sticky {
+            right: 1.5rem;
+        }
     }
 }
 
@@ -192,7 +201,9 @@ top-app-bar mwc-fab.sticky {
         color: var(--mdc-theme-primary, #{variables.$primary});
     }
 
-    mwc-textfield {
+    mwc-textfield,
+    text-field,
+    text-area {
         --mdc-theme-primary: var(--mdc-theme-secondary, #{variables.$secondary});
     }
 
@@ -211,5 +222,9 @@ top-app-bar mwc-fab.sticky {
                 color: unset;
             }
         }
+    }
+
+    mwc-fab {
+        --mdc-theme-on-secondary: white;
     }
 }

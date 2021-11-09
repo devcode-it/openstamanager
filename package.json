@@ -46,6 +46,7 @@
         "classnames": "^2.3.1",
         "collect.js": "^4.29.0",
         "coloquent": "^2.4.0",
+        "include-media": "^1.4.10",
         "lit": "^2.0.2",
         "locale-code": "^2.0.2",
         "lodash-es": "^4.17.21",

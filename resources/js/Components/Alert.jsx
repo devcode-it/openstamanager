@@ -48,7 +48,7 @@ export default class Alert extends Component implements ClassComponent<{
     );
   }
 
-  oninit() {
+  oninit(vnode) {
     if (this.attrs.get('id')) {
       this.attrs.put('id', uniqueId('dialog_'));
     }

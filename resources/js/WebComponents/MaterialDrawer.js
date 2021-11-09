@@ -11,6 +11,10 @@ export default class MaterialDrawer extends MWCDrawer {
       color: var(--mdc-theme-text-primary-on-background);
       background-color: var(--mdc-theme-background);
     }
+    
+    .mdc-drawer {
+      height: calc(100% - 64px);
+    }
   `];
 }
 

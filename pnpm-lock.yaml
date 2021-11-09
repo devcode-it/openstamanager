@@ -69,6 +69,7 @@ specifiers:
   lit: ^2.0.2
   locale-code: ^2.0.2
   lodash-es: ^4.17.21
+  lottie-web: ^5.8.0
   mithril: ^2.0.4
   mithril-node-render: ^3.0.2
   modern-normalize: ^1.1.0
@@ -119,6 +120,7 @@ dependencies:
   lit: 2.0.2
   locale-code: 2.0.2
   lodash-es: 4.17.21
+  lottie-web: 5.8.0
   mithril: 2.0.4
   mithril-node-render: 3.0.2_mithril@2.0.4
   modern-normalize: 1.1.0
@@ -5033,6 +5035,10 @@ packages:
     dependencies:
       js-tokens: 4.0.0
     dev: true
+
+  /lottie-web/5.8.0:
+    resolution: {integrity: sha512-MieQQXm1TvRfsa0IEqd+R9EZ+2IxKHETOh6tuooP526BF42BrPtrA1oIPOWatNinB9eIaUzN40ZWD0TjyQz5Yw==}
+    dev: false
 
   /lru-cache/6.0.0:
     resolution: {integrity: sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==}

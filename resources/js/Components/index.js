@@ -1,5 +1,6 @@
 // noinspection JSUnusedGlobalSymbols
 
+export {default as Alert} from './Alert.jsx';
 export * from './Card';
 export { default as Component } from './Component.jsx';
 export * from './DataTable';

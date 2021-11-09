@@ -50,6 +50,7 @@
         "lit": "^2.0.2",
         "locale-code": "^2.0.2",
         "lodash-es": "^4.17.21",
+        "lottie-web": "^5.8.0",
         "mithril": "^2.0.4",
         "mithril-node-render": "^3.0.2",
         "modern-normalize": "^1.1.0",

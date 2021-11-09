@@ -1,6 +1,9 @@
-import Component from '../Component.jsx';
+import {type ClassComponent} from 'mithril';
 
-export default class Card extends Component {
+import Component from '../Component.jsx';
+import Content from './Content.jsx';
+
+export default class Card extends Component implements ClassComponent<{outlined?: boolean}> {
   view(vnode) {
     this.attrs.addClassNames('mdc-card', {
       'mdc-card--outlined': this.attrs.has('outlined')
@@ -8,7 +11,7 @@ export default class Card extends Component {
 
     return (
       <div {...this.attrs.all()}>
-        {vnode.children}
+        <Content>{vnode.children}</Content>
       </div>
     );
   }

@@ -1,6 +1,11 @@
+import {type ClassComponent} from 'mithril';
+
 import Component from '../Component.jsx';
 
-export default class LayoutGrid extends Component {
+export default class LayoutGrid extends Component implements ClassComponent<{
+  align?: string,
+  fixed?: boolean
+}> {
   view(vnode) {
     this.attrs.addClassNames('mdc-layout-grid', {
       'mdc-layout-grid--fixed-column-width': this.attrs.has('fixed'),

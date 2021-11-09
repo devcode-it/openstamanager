@@ -1,8 +1,10 @@
+import {type ClassComponent} from 'mithril';
+
 import Component from './Component.jsx';
 
-export default class Mdi extends Component {
+export default class Mdi extends Component implements ClassComponent<{icon?: string}> {
   view(vnode) {
-    this.attrs.addClassNames('mdi', `mdi-${vnode.attrs.icon}`);
+    this.attrs.addClassNames('mdi', `mdi-${this.attrs.pull('icon')}`);
     return <i {...this.attrs.all()} />;
   }
 }

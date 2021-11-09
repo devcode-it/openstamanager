@@ -1,6 +1,15 @@
+import {type ClassComponent} from 'mithril';
+
 import Component from '../Component.jsx';
 
-export default class Cell extends Component {
+export default class Cell extends Component implements ClassComponent<{
+  align?: string;
+  columnspan?: number,
+  'columnspan-desktop'?: number,
+  'columnspan-tablet'?: number,
+  'columnspan-phone'?: number,
+  order?: number,
+}> {
   view(vnode) {
     const spans = [];
     for (const device of ['desktop', 'tablet', 'phone']) {

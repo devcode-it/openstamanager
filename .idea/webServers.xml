@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="db314d88-3809-497a-b944-c97a848507a4" name="Laragon" url="http://osm.local.dev">
+        <fileTransfer mountedRoot="C:\laragon\www\osm" accessType="MOUNT" port="0" />
+      </webServer>
+    </option>
+  </component>
+</project>

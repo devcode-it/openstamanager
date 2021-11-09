@@ -69,5 +69,8 @@
 @client
 
 @vite('app')
+
+@include('layouts.translations')
+
 </body>
 </html>

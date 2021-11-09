@@ -145,7 +145,7 @@ export default class RecordsPage extends Page {
         <TableRow>
           <TableCell colspan={collect(this.columns)
             .count()} style="text-align: center;">
-            {this.__('Non sono presenti dati')}
+            {__('Non sono presenti dati')}
           </TableCell>
         </TableRow>);
     }
@@ -192,7 +192,7 @@ export default class RecordsPage extends Page {
 
           this.rows.forget(instance.id);
           m.redraw();
-          await showSnackbar(this.__('Record eliminato!'), 4000);
+          await showSnackbar(__('Record eliminato!'), 4000);
         });
 
         loading.hide();
@@ -208,7 +208,7 @@ export default class RecordsPage extends Page {
   recordDialog() {
     return (
       <mwc-dialog id="add-record-dialog" class="record-dialog"
-                  heading={this.__('Aggiungi nuovo record')}
+                  heading={__('Aggiungi nuovo record')}
                   style={`--mdc-dialog-max-width: ${this.recordDialogMaxWidth}`}>
         <form method="PUT">
           <text-field id="id" name="id" style="display: none;" data-default-value=""/>
@@ -243,11 +243,11 @@ export default class RecordsPage extends Page {
           })()}
         </form>
 
-        <LoadingButton type="submit" slot="primaryAction" label={this.__('Conferma')}/>
+        <LoadingButton type="submit" slot="primaryAction" label={__('Conferma')}/>
         <mwc-button slot="secondaryAction" dialogAction="cancel">
-          {this.__('Annulla')}
+          {__('Annulla')}
         </mwc-button>
-        <mwc-button id="delete-button" slot="secondaryAction" label={this.__('Elimina')}
+        <mwc-button id="delete-button" slot="secondaryAction" label={__('Elimina')}
                     style="--mdc-theme-primary: var(--mdc-theme-error, red); float: left; display: none;">
           <Mdi icon="delete-outline" slot="icon"/>
         </mwc-button>
@@ -258,9 +258,9 @@ export default class RecordsPage extends Page {
   deleteRecordDialog(): Children {
     return (
       <mwc-dialog id="confirm-delete-record-dialog">
-        <p>{this.__('Sei sicuro di voler eliminare questo record?')}</p>
-        <LoadingButton id="confirm-button" slot="primaryAction" label={this.__('Sì')}/>
-        <mwc-button slot="secondaryAction" dialogAction="discard" label={this.__('No')}/>
+        <p>{__('Sei sicuro di voler eliminare questo record?')}</p>
+        <LoadingButton id="confirm-button" slot="primaryAction" label={__('Sì')}/>
+        <mwc-button slot="secondaryAction" dialogAction="discard" label={__('No')}/>
       </mwc-dialog>
     );
   }
@@ -280,7 +280,7 @@ export default class RecordsPage extends Page {
           </TableBody>
         </DataTable>
 
-        <mwc-fab id="add-record" label={this.__('Aggiungi')} class="sticky">
+        <mwc-fab id="add-record" label={__('Aggiungi')} class="sticky">
           <Mdi icon="plus" slot="icon"/>
         </mwc-fab>
         {this.recordDialog()}
@@ -342,11 +342,11 @@ export default class RecordsPage extends Page {
           this.rows.put(model.id, model);
 
           m.redraw();
-          await showSnackbar(this.__('Record salvato'), 4000);
+          await showSnackbar(__('Record salvato'), 4000);
         }
       } else {
         loading.hide();
-        await showSnackbar(this.__('Campi non validi. Controlla i dati inseriti'));
+        await showSnackbar(__('Campi non validi. Controlla i dati inseriti'));
       }
     });
   }

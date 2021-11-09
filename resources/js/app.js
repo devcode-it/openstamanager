@@ -11,12 +11,15 @@ import {
 import $ from 'cash-dom';
 import m from 'mithril';
 
+import {__} from './utils';
+
 // Fix Mithril JSX durante la compilazione
 m.Fragment = '[';
 
 // Variabili globali
 window.$ = $;
 window.m = m;
+window.__ = __;
 
 InertiaProgress.init();
 

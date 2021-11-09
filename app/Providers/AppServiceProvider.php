@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Nette\Utils\Json;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +20,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        cache()->rememberForever(
+            'translations_' . app()->getLocale(),
+            fn () => Json::encode(
+                Json::decode(file_get_contents(resource_path('lang/'.app()->getLocale().'.json')))
+            )
+        );
     }
 }

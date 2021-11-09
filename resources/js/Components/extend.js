@@ -33,7 +33,6 @@ export function extend(proto, methods, callback) {
   for (const method of allMethods) {
     const original = proto[method];
 
-    // eslint-disable-next-line no-param-reassign
     proto[method] = function (...arguments_) {
       const value = original ? original.apply(this, arguments_) : undefined;
 
@@ -79,7 +78,6 @@ export function override(object, methods, newMethod) {
   for (const method of allMethods) {
     const original = object[method];
 
-    // eslint-disable-next-line no-param-reassign
     object[method] = function (...arguments_) {
       return Reflect.apply(newMethod, this, [original.bind(this), ...arguments_]);
     };

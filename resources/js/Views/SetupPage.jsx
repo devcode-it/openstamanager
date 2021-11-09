@@ -51,74 +51,74 @@ export default class SetupPage extends Page {
   view(vnode) {
     const examplesTexts = collect();
     for (const example of ['localhost', 'root', 'mysql', 'openstamanager']) {
-      examplesTexts.put(example, this.__('Esempio: :example', {example}));
+      examplesTexts.put(example, __('Esempio: :example', {example}));
     }
 
     return (
       <>
         <Card outlined className="center" style="width: 85%;">
           <Content>
-            <img src={logoUrl} className="center" alt={this.__('OpenSTAManager')} />
+            <img src={logoUrl} className="center" alt={__('OpenSTAManager')} />
             <LayoutGrid>
               <Row>
                 <Cell columnspan-desktop="8">
-                  <h2>{this.__('Benvenuto in :name!', {name: <strong>{this.__('OpenSTAManager')}</strong>})}</h2>
-                  <p>{this.__('Puoi procedere alla configurazione tecnica del software attraverso i '
+                  <h2>{__('Benvenuto in :name!', {name: <strong>{__('OpenSTAManager')}</strong>})}</h2>
+                  <p>{__('Puoi procedere alla configurazione tecnica del software attraverso i '
                     + 'parametri seguenti, che potranno essere corretti secondo necessità tramite il file .env.')}<br/>
-                    {this.__("Se necessiti supporto puoi contattarci tramite l':contactLink o tramite il nostro :forumLink.", {
+                    {__("Se necessiti supporto puoi contattarci tramite l':contactLink o tramite il nostro :forumLink.", {
                       // eslint-disable-next-line no-secrets/no-secrets
-                      contactLink: <a href="https://www.openstamanager.com/contattaci/?subject=Assistenza%20installazione%20OSM">{this.__('assistenza ufficiale')}</a>,
-                      forumLink: <a href="https://forum.openstamanager.com">{this.__('forum')}</a>
+                      contactLink: <a href="https://www.openstamanager.com/contattaci/?subject=Assistenza%20installazione%20OSM">{__('assistenza ufficiale')}</a>,
+                      forumLink: <a href="https://forum.openstamanager.com">{__('forum')}</a>
                     })}</p>
-                  <h4>{this.__('Formato date')}</h4>
+                  <h4>{__('Formato date')}</h4>
                   <small>
-                    {this.__('I formati sono impostabili attraverso lo standard previsto da :link.',
+                    {__('I formati sono impostabili attraverso lo standard previsto da :link.',
                       {link: <a href="https://www.php.net/manual/en/function.date.php#refsect1-function.date-parameters">PHP</a>})
                     }
                   </small>
                   <Row style="margin-top: 8px;">
                     <Cell>
-                      <text-field name="timestamp_format" label={this.__('Formato data lunga')}
+                      <text-field name="timestamp_format" label={__('Formato data lunga')}
                                   required value="d/m/Y H:i">
                         <Mdi icon="calendar-clock" slot="icon"/>
                       </text-field>
                     </Cell>
                     <Cell>
-                      <text-field name="date_format" label={this.__('Formato data corta')}
+                      <text-field name="date_format" label={__('Formato data corta')}
                                   required value="d/m/Y">
                         <Mdi icon="calendar-month-outline" slot="icon"/>
                       </text-field>
                     </Cell>
                     <Cell>
-                      <text-field name="time_format" label={this.__('Formato orario')} required
+                      <text-field name="time_format" label={__('Formato orario')} required
                                   value="H:i">
                         <Mdi icon="clock-outline" slot="icon"/>
                       </text-field>
                     </Cell>
                   </Row>
                   <hr/>
-                  <h4>{this.__('Database')}</h4>
+                  <h4>{__('Database')}</h4>
                   <Row>
                     <Cell columnspan="4">
-                      <text-field name="host" label={this.__('Host')} required
+                      <text-field name="host" label={__('Host')} required
                                   helper={examplesTexts.get('localhost')}>
                         <Mdi icon="server-network" slot="icon"/>
                       </text-field>
                     </Cell>
                     <Cell columnspan="4">
-                      <text-field name="username" label={this.__('Nome utente')} required
+                      <text-field name="username" label={__('Nome utente')} required
                                   helper={examplesTexts.get('root')}>
                         <Mdi icon="account-outline" slot="icon"/>
                       </text-field>
                     </Cell>
                     <Cell columnspan="4">
-                      <text-field name="password" label={this.__('Password')} required
+                      <text-field name="password" label={__('Password')} required
                                   helper={examplesTexts.get('mysql')}>
                         <Mdi icon="lock-outline" slot="icon"/>
                       </text-field>
                     </Cell>
                     <Cell columnspan="4">
-                      <text-field name="database_name" label={this.__('Nome database')} required
+                      <text-field name="database_name" label={__('Nome database')} required
                                   helper={examplesTexts.get('openstamanager')}>
                         <Mdi icon="database-outline" slot="icon"/>
                       </text-field>
@@ -127,38 +127,38 @@ export default class SetupPage extends Page {
                   <hr/>
                   <Row>
                     <Cell>
-                      <small>{this.__('* Campi obbligatori')}</small>
+                      <small>{__('* Campi obbligatori')}</small>
                     </Cell>
                     <Cell>
-                      <mwc-button raised label={this.__('Salva e installa')}>
+                      <mwc-button raised label={__('Salva e installa')}>
                         <Mdi icon="check" slot="icon"/>
                       </mwc-button>
                     </Cell>
                     <Cell>
-                      <mwc-button outlined label={this.__('Testa il database')}>
+                      <mwc-button outlined label={__('Testa il database')}>
                         <Mdi icon="test-tube" slot="icon"/>
                       </mwc-button>
                     </Cell>
                   </Row>
                 </Cell>
                 <Cell>
-                  <h4>{this.__('Lingua')}</h4>
+                  <h4>{__('Lingua')}</h4>
                   <mwc-select>
                     {this.languages()}
                   </mwc-select>
                   <hr />
-                  <h4>{this.__('Licenza')}</h4>
-                  <p>{this.__('OpenSTAManager è tutelato dalla licenza GPL 3.0, da accettare obbligatoriamente per poter utilizzare il gestionale.')}</p>
+                  <h4>{__('Licenza')}</h4>
+                  <p>{__('OpenSTAManager è tutelato dalla licenza GPL 3.0, da accettare obbligatoriamente per poter utilizzare il gestionale.')}</p>
                   <mwc-textarea value={this.page.props.license} rows="15" cols="40" disabled />
                   <Row style="margin-top: 5px;">
                     <Cell columnspan-desktop="8" columnspan-tablet="8">
-                      <mwc-formfield label={this.__('Ho visionato e accetto la licenza')}>
+                      <mwc-formfield label={__('Ho visionato e accetto la licenza')}>
                         <mwc-checkbox name="license_agreement"/>
                       </mwc-formfield>
                     </Cell>
                     <Cell>
                       <a href="https://www.gnu.org/licenses/translations.en.html#GPL" target="_blank">
-                        <mwc-button label={this.__('Versioni tradotte')}>
+                        <mwc-button label={__('Versioni tradotte')}>
                           <Mdi icon="license" slot="icon"/>
                         </mwc-button>
                       </a>
@@ -170,7 +170,7 @@ export default class SetupPage extends Page {
           </Content>
         </Card>
         <mwc-fab id="contrast-switcher" className="sticky contrast-light"
-                 label={this.__('Attiva/disattiva contrasto elevato')}>
+                 label={__('Attiva/disattiva contrasto elevato')}>
           <Mdi icon="contrast-circle" slot="icon" className="light-bg"/>
         </mwc-fab>
       </>

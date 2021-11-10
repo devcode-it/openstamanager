@@ -2,7 +2,8 @@
     "extends": [
         "stylelint-config-standard",
         "stylelint-config-recommended-scss",
-        "stylelint-config-idiomatic-order"
+        "stylelint-config-idiomatic-order",
+        "stylelint-config-html"
     ],
     "rules": {
         "indentation": 4,

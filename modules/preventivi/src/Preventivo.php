@@ -277,12 +277,15 @@ class Preventivo extends Document
         $this->stato()->associate($stato);
         $this->save();
 
-        // Trasferimento degli interventi collegati
-        $interventi = $this->interventi;
-        $stato_intervento = \Modules\Interventi\Stato::where('codice', $codice_intervento)->first();
-        foreach ($interventi as $intervento) {
-            $intervento->stato()->associate($stato_intervento);
-            $intervento->save();
+        //cambio stato agli interventi solo se sto fatturando il preventivo
+        if ($trigger->getDocument() instanceof Fattura){
+            // Trasferimento degli interventi collegati
+            $interventi = $this->interventi;
+            $stato_intervento = \Modules\Interventi\Stato::where('codice', $codice_intervento)->first();
+            foreach ($interventi as $intervento) {
+                $intervento->stato()->associate($stato_intervento);
+                $intervento->save();
+            }
         }
     }
 

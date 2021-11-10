@@ -692,7 +692,7 @@ class FatturaElettronica
         if ($is_privato_estero) {
             $result['IdFiscaleIVA']['IdPaese'] = $anagrafica->nazione->iso2;
             $result['IdFiscaleIVA']['IdCodice'] = '999999999';
-            unset($result['Anagrafica']['CodiceFiscale']);
+            unset($result['CodiceFiscale']);
         }
 
         if (!empty($anagrafica['nome']) or !empty($anagrafica['cognome'])) {

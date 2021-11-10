@@ -272,7 +272,7 @@ switch (post('op')) {
                             $orario_inizio = date('Y-m-d', strtotime($data_ricorrenza)).' '.date('H:i:s', strtotime($sessione->orario_inizio));
                         } else {
                             $diff = strtotime($sessione->orario_inizio) - strtotime($inizio_old);
-                            $orario_inizio = date('Y-m-d H:i:s', (strtotime($sessione->orario_inizio) + $diff));
+                            $orario_inizio = date('Y-m-d H:i:s', (strtotime($new_sessione->orario_inizio) + $diff));
                         }
 
                         $diff_fine = strtotime($sessione->orario_fine) - strtotime($sessione->orario_inizio);
@@ -719,7 +719,7 @@ switch (post('op')) {
                     $orario_inizio = date('Y-m-d', strtotime($data_richiesta)).' '.date('H:i:s', strtotime($sessione->orario_inizio));
                 } else {
                     $diff = strtotime($sessione->orario_inizio) - strtotime($inizio_old);
-                    $orario_inizio = date('Y-m-d H:i:s', (strtotime($sessione->orario_inizio) + $diff));
+                    $orario_inizio = date('Y-m-d H:i:s', (strtotime($new_sessione->orario_inizio) + $diff));
                 }
 
                 $diff_fine = strtotime($sessione->orario_fine) - strtotime($sessione->orario_inizio);

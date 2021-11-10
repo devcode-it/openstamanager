@@ -87,7 +87,7 @@ echo '
         foreach ($emails as $email) {
             echo '
             <div class="col-md-12">
-                {[ "type": "email", "name": "destinatari['.$idx++.']", "value": "'.$email.'", "icon-before": "choice|email", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari", "required": 1 ]}
+                {[ "type": "email", "name": "destinatari['.$idx++.']", "value": "'.$email.'", "icon-before": "choice|email", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari", "required": 0 ]}
             </div>';
         }
 echo '
@@ -166,9 +166,12 @@ echo '
         if (id_anagrafica) {
             $(document).load(globals.rootdir + "/ajax_complete.php?module=Anagrafiche&op=get_email&id_anagrafica=" + id_anagrafica + (pec ? "&type=pec" : ""), function(response) {
                 emails = JSON.parse(response);
-
+                let num = 0;
                 $(".destinatari").each(function(){
                     addAutoComplete(this);
+                    if (num++==0) {
+                        $(this).prop("required", true);
+                    }
                 });
 
                 aggiungiDestinatario();

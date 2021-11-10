@@ -50,7 +50,7 @@
         "lit": "^2.0.2",
         "locale-code": "^2.0.2",
         "lodash-es": "^4.17.21",
-        "lottie-web": "^5.8.0",
+        "lottie-web": "^5.8.1",
         "mithril": "^2.0.4",
         "mithril-node-render": "^3.0.2",
         "modern-normalize": "^1.1.0",
@@ -60,7 +60,7 @@
         "@adeira/babel-preset-adeira": "^4.0.0",
         "@adeira/eslint-config": "^6.7.2",
         "@babel/core": "^7.16.0",
-        "@babel/eslint-parser": "^7.16.0",
+        "@babel/eslint-parser": "^7.16.3",
         "@babel/eslint-plugin": "^7.14.5",
         "@babel/plugin-proposal-throw-expressions": "^7.16.0",
         "@babel/plugin-syntax-flow": "^7.16.0",
@@ -79,7 +79,7 @@
         "eslint-config-airbnb-base": "^15.0.0",
         "eslint-plugin-flowtype": "^8.0.3",
         "eslint-plugin-github": "^4.3.4",
-        "eslint-plugin-import": "^2.25.2",
+        "eslint-plugin-import": "^2.25.3",
         "eslint-plugin-mithril": "^0.2.0",
         "eslint-plugin-new-with-error": "^2.0.0",
         "eslint-plugin-no-secrets": "^0.8.9",
@@ -103,7 +103,7 @@
         "stylelint-config-standard": "^23.0.0",
         "stylelint-scss": "^4.0.0",
         "typescript": "^4.4.4",
-        "vite": "^2.6.13",
+        "vite": "^2.6.14",
         "vite-plugin-fonts": "^0.2.2"
     }
 }

@@ -31,7 +31,6 @@
     "require": {
         "php": "^8",
         "ext-pdo": "*",
-        "maicol07/laravel-json-api-resource": "dev-master",
         "fideloper/proxy": "^4",
         "fruitcake/laravel-cors": "^2",
         "guzzlehttp/guzzle": "^7",
@@ -39,6 +38,7 @@
         "innocenzi/laravel-vite": "^0",
         "laravel/framework": "^8",
         "laravel/tinker": "^2",
+        "maicol07/laravel-json-api-resource": "dev-master",
         "nette/utils": "^3",
         "openstamanager/standard_modules": "@dev",
         "riverskies/laravel-mobile-detect": "^1",

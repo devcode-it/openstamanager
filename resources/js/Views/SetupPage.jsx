@@ -112,7 +112,7 @@ export default class SetupPage extends Page {
                       </text-field>
                     </Cell>
                     <Cell columnspan="4">
-                      <text-field name="password" label={__('Password')} required
+                      <text-field name="password" label={__('Password')}
                                   helper={examplesTexts.get('mysql')}>
                         <Mdi icon="lock-outline" slot="icon"/>
                       </text-field>

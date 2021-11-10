@@ -15,12 +15,14 @@ import Mithril from 'mithril';
 import logoUrl from '/images/logo_completo.png';
 
 import Card from '../Components/Card/Card.jsx';
-import Content from '../Components/Card/Content.jsx';
 import Cell from '../Components/Grid/Cell.jsx';
 import LayoutGrid from '../Components/Grid/LayoutGrid.jsx';
 import Row from '../Components/Grid/Row.jsx';
 import Mdi from '../Components/Mdi.jsx';
 import Page from '../Components/Page.jsx';
+import redaxios from 'redaxios';
+import {Alert} from '../Components';
+import {getFormData} from '../utils';
 
 export default class SetupPage extends Page {
   languages() {
@@ -57,7 +59,7 @@ export default class SetupPage extends Page {
     return (
       <>
         <Card outlined className="center" style="width: 85%;">
-          <Content>
+          <form id="setup">
             <img src={logoUrl} className="center" alt={__('OpenSTAManager')} />
             <LayoutGrid>
               <Row>
@@ -130,12 +132,12 @@ export default class SetupPage extends Page {
                       <small>{__('* Campi obbligatori')}</small>
                     </Cell>
                     <Cell>
-                      <mwc-button raised label={__('Salva e installa')}>
+                      <mwc-button id="save-install" raised label={__('Salva e installa')} onclick={this.onSaveButtonClicked.bind(this)}>
                         <Mdi icon="check" slot="icon"/>
                       </mwc-button>
                     </Cell>
                     <Cell>
-                      <mwc-button outlined label={__('Testa il database')}>
+                      <mwc-button id="test-db" outlined label={__('Testa il database')} onclick={this.onTestButtonClicked.bind(this)}>
                         <Mdi icon="test-tube" slot="icon"/>
                       </mwc-button>
                     </Cell>
@@ -167,12 +169,16 @@ export default class SetupPage extends Page {
                 </Cell>
               </Row>
             </LayoutGrid>
-          </Content>
+          </form>
         </Card>
         <mwc-fab id="contrast-switcher" className="sticky contrast-light"
                  label={__('Attiva/disattiva contrasto elevato')}>
           <Mdi icon="contrast-circle" slot="icon" className="light-bg"/>
         </mwc-fab>
+        <Alert id="test-connection-alert-error" icon="error"/>
+        <Alert id="test-connection-alert-success" icon="success">
+          <p>{__('Connessione al database riuscita')}</p>
+        </Alert>
       </>
     );
   }
@@ -193,5 +199,53 @@ export default class SetupPage extends Page {
     $('a')
       .has('mwc-button')
       .css('text-decoration', 'none');
+  }
+
+  onTestButtonClicked(event: Event) {
+    this.testDatabase();
+  }
+
+  onSaveButtonClicked(event: Event) {
+    const form = $(event.target).closest('form');
+    form.requestSubmit();
+  }
+
+  onFormSubmit(event: Event) {
+    const form = $(event.target).closest('form');
+
+    this.saveDatabase(formData);
+  }
+
+  async testDatabase(silent = false): boolean {
+    const form = $('form');
+    let response;
+
+    try {
+      response = await redaxios.options(window.route('setup.test'), {data: getFormData(form)});
+    } catch (error) {
+      if (!silent) {
+        const alert = $('#test-connection-alert-error');
+        alert.find('.content').text(__('Si è verificato un errore durante la connessione al'
+          + ' database: :error', {error: error.data.error}));
+        alert.get(0).show();
+      }
+      return false;
+    }
+
+    if (response.data.success) {
+      if (!silent) {
+        document.querySelector('#test-connection-alert-success')
+          .show();
+      }
+      return true;
+    }
+
+    if (!silent) {
+      const alert = $('#test-connection-alert-error');
+      alert.find('.content').text(__('Si è verificato un errore durante la connessione al'
+        + ' database: :error', {error: response.data.error}));
+      alert.get(0).show();
+    }
+    return false;
   }
 }

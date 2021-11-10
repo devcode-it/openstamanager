@@ -56,7 +56,11 @@ export async function showSnackbar(message: string, duration: number = 5000, acc
   return reasonPromise;
 }
 
-export function isFormValid(element: Cash | HTMLFontElement) {
+export function getFormData(form: Cash): {...} {
+  return Object.fromEntries(new FormData(form[0]));
+}
+
+export function isFormValid(element: Cash | HTMLFormElement): boolean {
   let form = element;
 
   if (form instanceof HTMLFormElement) {

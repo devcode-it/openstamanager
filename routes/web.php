@@ -2,6 +2,7 @@
 
 /** @noinspection UnusedFunctionResultInspection */
 
+use App\Http\Controllers\SetupController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', 'setup');
 
-// ----- INERTIA ROUTES ----- //
+// ----- PUBLIC ROUTES ----- //
 Route::inertia('setup', 'SetupPage', [
     'languages' => cache()->rememberForever('app.languages', fn () => array_map(
         static fn ($file) => basename($file, '.json'),
@@ -25,6 +26,7 @@ Route::inertia('setup', 'SetupPage', [
     )),
     'license' => cache()->rememberForever('app.license', fn () => file_get_contents(base_path('LICENSE'))),
 ]);
+Route::options('setup/test', [SetupController::class, 'testDatabase'])->name('setup.test')->withoutMiddleware('csrf')->middleware(\Illuminatech\MultipartMiddleware\MultipartFormDataParser::class);
 
 Route::get('lang/{language}', function ($language) {
     app()->setLocale($language);

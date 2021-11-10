@@ -189,5 +189,6 @@
     </inspection_tool>
     <inspection_tool class="Stylelint" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="TransitiveDependenciesUsageInspection" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="UnusedFunctionResultInspection" enabled="false" level="WARNING" enabled_by_default="false" />
   </profile>
 </component>

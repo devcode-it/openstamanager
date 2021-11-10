@@ -19,12 +19,11 @@ Route::redirect('/', 'setup');
 
 // ----- INERTIA ROUTES ----- //
 Route::inertia('setup', 'SetupPage', [
-    'languages' => array_map(
+    'languages' => cache()->rememberForever('app.languages', fn () => array_map(
         static fn ($file) => basename($file, '.json'),
         glob(resource_path('lang').'/*.json', GLOB_NOSORT)
-    ),
-    'license' => file_get_contents(base_path('LICENSE')),
-    'title' => __('Configurazione'),
+    )),
+    'license' => cache()->rememberForever('app.license', fn () => file_get_contents(base_path('LICENSE'))),
 ]);
 
 Route::get('lang/{language}', function ($language) {

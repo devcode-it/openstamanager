@@ -1,3 +1,5 @@
+import '@material/mwc-dialog';
+
 import {type Cash} from 'cash-dom/dist/cash';
 import {uniqueId} from 'lodash-es';
 import Lottie from 'lottie-web';
@@ -42,13 +44,13 @@ export default class Alert extends Component implements ClassComponent<{
           {vnode.children}
         </div>
 
-        <mwc-button label={__('OK')} slot="primaryAction" dialogAction="ok"/>
-        ${actions}
+        {actions.length > 0 ? actions : <mwc-button label={__('OK')} slot="primaryAction" dialogAction="ok"/>}
       </mwc-dialog>
     );
   }
 
   oninit(vnode) {
+    super.oninit(vnode);
     if (this.attrs.get('id')) {
       this.attrs.put('id', uniqueId('dialog_'));
     }
@@ -57,16 +59,22 @@ export default class Alert extends Component implements ClassComponent<{
   oncreate(vnode) {
     const dialog: Cash = $(`#${this.attrs.get('id')}`);
 
-    const animation = Lottie.loadAnimation({
-      container: dialog.find('.graphic')[0],
-      renderer: 'svg',
-      loop: false,
-      autoplay: false,
-      path: new URL(`./animations/${this.attrs.pull('icon')}.png`, import.meta.url).href
-    });
+    if (this.attrs.has('icon')) {
+      const animation = Lottie.loadAnimation({
+        container: dialog.find('.graphic')[0],
+        renderer: 'svg',
+        loop: false,
+        autoplay: false,
+        path: new URL(`/animations/${this.attrs.pull('icon')}.json`, import.meta.url).href
+      });
 
-    dialog.on('opened', () => {
-      animation.play();
-    });
+      dialog.on('opening', () => {
+        animation.goToAndStop(0);
+      });
+
+      dialog.on('opened', () => {
+        animation.play();
+      });
+    }
   }
 }

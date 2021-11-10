@@ -26,10 +26,10 @@ Route::inertia('setup', 'SetupPage', [
     )),
     'license' => cache()->rememberForever('app.license', fn () => file_get_contents(base_path('LICENSE'))),
 ]);
-Route::options('setup/test', [SetupController::class, 'testDatabase'])->name('setup.test')->withoutMiddleware('csrf')->middleware(\Illuminatech\MultipartMiddleware\MultipartFormDataParser::class);
+Route::options('setup/test', [SetupController::class, 'testDatabase'])->name('setup.test')->withoutMiddleware('csrf');
 
 Route::get('lang/{language}', function ($language) {
     app()->setLocale($language);
 
     return redirect()->back();
-})->name('language');
+})->name('app.language');

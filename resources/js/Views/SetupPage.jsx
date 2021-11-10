@@ -145,7 +145,7 @@ export default class SetupPage extends Page {
                 </Cell>
                 <Cell>
                   <h4>{__('Lingua')}</h4>
-                  <mwc-select>
+                  <mwc-select id="language-select">
                     {this.languages()}
                   </mwc-select>
                   <hr />
@@ -195,6 +195,8 @@ export default class SetupPage extends Page {
           .toggleClass('mdc-high-contrast');
       });
 
+    $('mwc-select#language-select').on('action', this.onLanguageSelected);
+
     // Fix for mwc button inside <a> tags
     $('a')
       .has('mwc-button')
@@ -214,6 +216,10 @@ export default class SetupPage extends Page {
     const form = $(event.target).closest('form');
 
     this.saveDatabase(formData);
+  }
+
+  onLanguageSelected(event: Event) {
+    window.location.href = window.route('app.language', {language: event.target.value});
   }
 
   async testDatabase(silent = false): boolean {

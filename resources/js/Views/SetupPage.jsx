@@ -38,7 +38,7 @@ export default class SetupPage extends Page {
           <img
             slot="graphic"
             style="border-radius: 4px;"
-            src={`https://lipis.github.io/flag-icon-css/flags/4x3/${LocaleCode.getCountryCode(langCode)
+            src={`https://flagicons.lipis.dev/flags/4x3/${LocaleCode.getCountryCode(langCode)
               .toLowerCase()}.svg`}
             alt={LocaleCode.getLanguageNativeName(langCode)}>
           </img>

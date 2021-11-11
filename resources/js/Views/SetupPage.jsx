@@ -70,25 +70,25 @@ export default class SetupPage extends Page {
                       forumLink: <a href="https://forum.openstamanager.com">{__('forum')}</a>
                     })}</p>
                   <h4>{__('Formato date')}</h4>
-                  <small>
+                  <p className="mdc-typography--subtitle2" style="font-size: small;">
                     {__('I formati sono impostabili attraverso lo standard previsto da :link.',
                       {link: <a href="https://www.php.net/manual/en/function.date.php#refsect1-function.date-parameters">PHP</a>})
                     }
-                  </small>
-                  <mwc-layout-grid inner style="margin-top: 8px;">
-                    <mwc-layout-grid-cell >
+                  </p>
+                  <mwc-layout-grid inner>
+                    <mwc-layout-grid-cell>
                       <text-field name="timestamp_format" label={__('Formato data lunga')}
                                   required value="d/m/Y H:i">
                         <Mdi icon="calendar-clock" slot="icon"/>
                       </text-field>
                     </mwc-layout-grid-cell>
-                    <mwc-layout-grid-cell >
+                    <mwc-layout-grid-cell>
                       <text-field name="date_format" label={__('Formato data corta')}
                                   required value="d/m/Y">
                         <Mdi icon="calendar-month-outline" slot="icon"/>
                       </text-field>
                     </mwc-layout-grid-cell>
-                    <mwc-layout-grid-cell >
+                    <mwc-layout-grid-cell>
                       <text-field name="time_format" label={__('Formato orario')} required
                                   value="H:i">
                         <Mdi icon="clock-outline" slot="icon"/>
@@ -125,22 +125,22 @@ export default class SetupPage extends Page {
                   </mwc-layout-grid>
                   <hr/>
                   <mwc-layout-grid inner>
-                    <mwc-layout-grid-cell >
+                    <mwc-layout-grid-cell>
                       <small>{__('* Campi obbligatori')}</small>
                     </mwc-layout-grid-cell>
-                    <mwc-layout-grid-cell >
+                    <mwc-layout-grid-cell>
                       <mwc-button id="save-install" raised label={__('Salva e installa')} onclick={this.onSaveButtonClicked.bind(this)}>
                         <Mdi icon="check" slot="icon"/>
                       </mwc-button>
                     </mwc-layout-grid-cell>
-                    <mwc-layout-grid-cell >
+                    <mwc-layout-grid-cell>
                       <mwc-button id="test-db" outlined label={__('Testa il database')} onclick={this.onTestButtonClicked.bind(this)}>
                         <Mdi icon="test-tube" slot="icon"/>
                       </mwc-button>
                     </mwc-layout-grid-cell>
                   </mwc-layout-grid>
                 </mwc-layout-grid-cell>
-                <mwc-layout-grid-cell >
+                <mwc-layout-grid-cell>
                   <h4>{__('Lingua')}</h4>
                   <mwc-select id="language-select">
                     {this.languages()}
@@ -148,14 +148,14 @@ export default class SetupPage extends Page {
                   <hr />
                   <h4>{__('Licenza')}</h4>
                   <p>{__('OpenSTAManager è tutelato dalla licenza GPL 3.0, da accettare obbligatoriamente per poter utilizzare il gestionale.')}</p>
-                  <mwc-textarea value={this.page.props.license} rows="15" cols="40" disabled />
-                  <mwc-layout-grid inner="" style="margin-top: 5px;">
+                  <mwc-textarea value={this.page.props.license} rows="15" cols="40" disabled style="margin-bottom: 8px;"/>
+                  <mwc-layout-grid inner>
                     <mwc-layout-grid-cell span-desktop="8" span-tablet="8">
                       <mwc-formfield label={__('Ho visionato e accetto la licenza')}>
                         <mwc-checkbox name="license_agreement"/>
                       </mwc-formfield>
                     </mwc-layout-grid-cell>
-                    <mwc-layout-grid-cell >
+                    <mwc-layout-grid-cell>
                       <a href="https://www.gnu.org/licenses/translations.en.html#GPL" target="_blank">
                         <mwc-button label={__('Versioni tradotte')}>
                           <Mdi icon="license" slot="icon"/>

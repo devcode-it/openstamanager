@@ -93,6 +93,7 @@
         <item value="outlined" />
         <item value="disabled" />
         <item value="indeterminate" />
+        <item value="inner" />
       </myValues>
     </inspection_tool>
     <inspection_tool class="HtmlUnknownTag" enabled="true" level="WARNING" enabled_by_default="true">

@@ -5,23 +5,21 @@ import '@material/mwc-formfield';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-select';
 import '@material/mwc-textarea';
+import 'mwc-layout-grid';
 import '../WebComponents/TextField';
 
 import collect from 'collect.js';
 import LocaleCode from 'locale-code';
 import Mithril from 'mithril';
+import redaxios from 'redaxios';
 
 // eslint-disable-next-line import/no-absolute-path
 import logoUrl from '/images/logo_completo.png';
 
+import {Alert} from '../Components';
 import Card from '../Components/Card/Card.jsx';
-import Cell from '../Components/Grid/Cell.jsx';
-import LayoutGrid from '../Components/Grid/LayoutGrid.jsx';
-import Row from '../Components/Grid/Row.jsx';
 import Mdi from '../Components/Mdi.jsx';
 import Page from '../Components/Page.jsx';
-import redaxios from 'redaxios';
-import {Alert} from '../Components';
 import {getFormData} from '../utils';
 
 export default class SetupPage extends Page {
@@ -61,9 +59,8 @@ export default class SetupPage extends Page {
         <Card outlined className="center" style="width: 85%;">
           <form id="setup">
             <img src={logoUrl} className="center" alt={__('OpenSTAManager')} />
-            <LayoutGrid>
-              <Row>
-                <Cell columnspan-desktop="8">
+            <mwc-layout-grid>
+                <mwc-layout-grid-cell span-desktop="8">
                   <h2>{__('Benvenuto in :name!', {name: <strong>{__('OpenSTAManager')}</strong>})}</h2>
                   <p>{__('Puoi procedere alla configurazione tecnica del software attraverso i '
                     + 'parametri seguenti, che potranno essere corretti secondo necessità tramite il file .env.')}<br/>
@@ -78,72 +75,72 @@ export default class SetupPage extends Page {
                       {link: <a href="https://www.php.net/manual/en/function.date.php#refsect1-function.date-parameters">PHP</a>})
                     }
                   </small>
-                  <Row style="margin-top: 8px;">
-                    <Cell>
+                  <mwc-layout-grid inner style="margin-top: 8px;">
+                    <mwc-layout-grid-cell >
                       <text-field name="timestamp_format" label={__('Formato data lunga')}
                                   required value="d/m/Y H:i">
                         <Mdi icon="calendar-clock" slot="icon"/>
                       </text-field>
-                    </Cell>
-                    <Cell>
+                    </mwc-layout-grid-cell>
+                    <mwc-layout-grid-cell >
                       <text-field name="date_format" label={__('Formato data corta')}
                                   required value="d/m/Y">
                         <Mdi icon="calendar-month-outline" slot="icon"/>
                       </text-field>
-                    </Cell>
-                    <Cell>
+                    </mwc-layout-grid-cell>
+                    <mwc-layout-grid-cell >
                       <text-field name="time_format" label={__('Formato orario')} required
                                   value="H:i">
                         <Mdi icon="clock-outline" slot="icon"/>
                       </text-field>
-                    </Cell>
-                  </Row>
+                    </mwc-layout-grid-cell>
+                  </mwc-layout-grid>
                   <hr/>
                   <h4>{__('Database')}</h4>
-                  <Row>
-                    <Cell columnspan="4">
+                  <mwc-layout-grid inner>
+                    <mwc-layout-grid-cell span="4">
                       <text-field name="host" label={__('Host')} required
                                   helper={examplesTexts.get('localhost')}>
                         <Mdi icon="server-network" slot="icon"/>
                       </text-field>
-                    </Cell>
-                    <Cell columnspan="4">
+                    </mwc-layout-grid-cell>
+                    <mwc-layout-grid-cell span="4">
                       <text-field name="username" label={__('Nome utente')} required
                                   helper={examplesTexts.get('root')}>
                         <Mdi icon="account-outline" slot="icon"/>
                       </text-field>
-                    </Cell>
-                    <Cell columnspan="4">
+                    </mwc-layout-grid-cell>
+                    <mwc-layout-grid-cell span="4">
                       <text-field name="password" label={__('Password')}
                                   helper={examplesTexts.get('mysql')}>
                         <Mdi icon="lock-outline" slot="icon"/>
                       </text-field>
-                    </Cell>
-                    <Cell columnspan="4">
+                    </mwc-layout-grid-cell>
+                    <mwc-layout-grid-cell span="4">
                       <text-field name="database_name" label={__('Nome database')} required
                                   helper={examplesTexts.get('openstamanager')}>
                         <Mdi icon="database-outline" slot="icon"/>
                       </text-field>
-                    </Cell>
-                  </Row>
+                    </mwc-layout-grid-cell>
+                  </mwc-layout-grid>
                   <hr/>
-                  <Row>
-                    <Cell>
+                  <mwc-layout-grid inner>
+                    <mwc-layout-grid-cell >
                       <small>{__('* Campi obbligatori')}</small>
-                    </Cell>
-                    <Cell>
+                    </mwc-layout-grid-cell>
+                    <mwc-layout-grid-cell >
                       <mwc-button id="save-install" raised label={__('Salva e installa')} onclick={this.onSaveButtonClicked.bind(this)}>
                         <Mdi icon="check" slot="icon"/>
                       </mwc-button>
-                    </Cell>
-                    <Cell>
+                    </mwc-layout-grid-cell>
+                    <mwc-layout-grid-cell >
                       <mwc-button id="test-db" outlined label={__('Testa il database')} onclick={this.onTestButtonClicked.bind(this)}>
                         <Mdi icon="test-tube" slot="icon"/>
                       </mwc-button>
-                    </Cell>
-                  </Row>
-                </Cell>
-                <Cell>
+                    </mwc-layout-grid-cell>
+                  </mwc-layout-grid>
+                </mwc-layout-grid-cell>
+                <mwc-layout-grid-cell >
                   <h4>{__('Lingua')}</h4>
                   <mwc-select id="language-select">
                     {this.languages()}
@@ -152,23 +149,22 @@ export default class SetupPage extends Page {
                   <h4>{__('Licenza')}</h4>
                   <p>{__('OpenSTAManager è tutelato dalla licenza GPL 3.0, da accettare obbligatoriamente per poter utilizzare il gestionale.')}</p>
                   <mwc-textarea value={this.page.props.license} rows="15" cols="40" disabled />
-                  <Row style="margin-top: 5px;">
-                    <Cell columnspan-desktop="8" columnspan-tablet="8">
+                  <mwc-layout-grid inner="" style="margin-top: 5px;">
+                    <mwc-layout-grid-cell span-desktop="8" span-tablet="8">
                       <mwc-formfield label={__('Ho visionato e accetto la licenza')}>
                         <mwc-checkbox name="license_agreement"/>
                       </mwc-formfield>
-                    </Cell>
-                    <Cell>
+                    </mwc-layout-grid-cell>
+                    <mwc-layout-grid-cell >
                       <a href="https://www.gnu.org/licenses/translations.en.html#GPL" target="_blank">
                         <mwc-button label={__('Versioni tradotte')}>
                           <Mdi icon="license" slot="icon"/>
                         </mwc-button>
                       </a>
-                    </Cell>
-                  </Row>
-                </Cell>
-              </Row>
-            </LayoutGrid>
+                    </mwc-layout-grid-cell>
+                  </mwc-layout-grid>
+                </mwc-layout-grid-cell>
+            </mwc-layout-grid>
           </form>
         </Card>
         <mwc-fab id="contrast-switcher" className="sticky contrast-light"

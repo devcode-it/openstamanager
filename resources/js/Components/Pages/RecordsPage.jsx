@@ -26,11 +26,6 @@ import TableHead from '../DataTable/TableHead.jsx';
 import TableHeadCell from '../DataTable/TableHeadCell.jsx';
 import TableHeadRow from '../DataTable/TableHeadRow.jsx';
 import TableRow from '../DataTable/TableRow.jsx';
-import {
-  Cell,
-  LayoutGrid,
-  Row
-} from '../Grid';
 import LoadingButton from '../LoadingButton.jsx';
 import Mdi from '../Mdi.jsx';
 import Page from '../Page.jsx';
@@ -219,21 +214,19 @@ export default class RecordsPage extends Page {
               <>
                 <div id={section.id ?? index}>
                   <h4 class="mdc-typography--overline">{section.heading}</h4>
-                  <LayoutGrid>
-                    <Row>
+                  <mwc-layout-grid>
                       {(() => {
                         const fields = collect(section.fields);
 
                         return fields.map((field, fieldIndex) => (
-                          <Cell key={fieldIndex} columnspan={12 / (section.columns ?? 3)}>
+                          <mwc-layout-grid-cell key={fieldIndex} span={12 / (section.columns ?? 3)}>
                             <text-field {...field} id={field.id ?? fieldIndex}
                                         name={field.name ?? field.id ?? fieldIndex}
                                         data-default-value={field.value ?? ''}/>
-                          </Cell>))
+                          </mwc-layout-grid-cell>))
                           .toArray();
                       })()}
-                    </Row>
-                  </LayoutGrid>
+                  </mwc-layout-grid>
                 </div>
                 {index !== sections.keys()
                   .last() && <hr/>}

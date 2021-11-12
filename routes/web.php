@@ -16,7 +16,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::redirect('/', 'setup');
+Route::get('/', function () {
+    if (!empty(DB::connection()->getDatabaseName())) {
+        return route('setup');
+    }
+
+    //return route('auth.login');
+});
 
 // ----- PUBLIC ROUTES ----- //
 Route::inertia('setup', 'SetupPage', [
@@ -27,6 +33,7 @@ Route::inertia('setup', 'SetupPage', [
     'license' => cache()->rememberForever('app.license', fn () => file_get_contents(base_path('LICENSE'))),
 ]);
 Route::options('setup/test', [SetupController::class, 'testDatabase'])->name('setup.test')->withoutMiddleware('csrf');
+Route::put('setup/save', [SetupController::class, 'save'])->name('setup.save');
 
 Route::get('lang/{language}', function ($language) {
     app()->setLocale($language);

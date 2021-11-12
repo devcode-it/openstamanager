@@ -20,7 +20,10 @@ import {Alert} from '../Components';
 import Card from '../Components/Card/Card.jsx';
 import Mdi from '../Components/Mdi.jsx';
 import Page from '../Components/Page.jsx';
-import {getFormData} from '../utils';
+import {
+  getFormData,
+  showSnackbar
+} from '../utils';
 
 export default class SetupPage extends Page {
   languages() {
@@ -142,7 +145,7 @@ export default class SetupPage extends Page {
                 </mwc-layout-grid-cell>
                 <mwc-layout-grid-cell>
                   <h4>{__('Lingua')}</h4>
-                  <mwc-select id="language-select">
+                  <mwc-select id="language-select" name="locale">
                     {this.languages()}
                   </mwc-select>
                   <hr />
@@ -205,13 +208,7 @@ export default class SetupPage extends Page {
 
   onSaveButtonClicked(event: Event) {
     const form = $(event.target).closest('form');
-    form.requestSubmit();
-  }
-
-  onFormSubmit(event: Event) {
-    const form = $(event.target).closest('form');
-
-    this.saveDatabase(formData);
+    this.save(getFormData(form));
   }
 
   onLanguageSelected(event: Event) {
@@ -238,5 +235,22 @@ export default class SetupPage extends Page {
         .show();
     }
     return true;
+  }
+
+  async save(data: {...}) {
+    const test = this.testDatabase(true);
+    if (!test) {
+      return;
+    }
+
+    try {
+      await redaxios.put(window.route('setup.save'), data);
+    } catch (error) {
+      await showSnackbar(error.data.error_description);
+      return;
+    }
+
+    await showSnackbar(__('Impostazioni salvate correttamente'));
+    window.location.href = window.route('auth.login');
   }
 }

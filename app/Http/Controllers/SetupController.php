@@ -6,7 +6,9 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 class SetupController extends Controller
@@ -85,5 +87,34 @@ class SetupController extends Controller
         return response()->json([
             'error' => __("L'utente del database non ha i seguenti permessi necessari: ", $requirements),
         ], Response::HTTP_BAD_REQUEST);
+    }
+
+    /**
+     * Metodo indirizzato al salvataggio della configurazione.
+     */
+    public function save(Request $request)
+    {
+        $text = '<?php return '.var_export(config('database'), true).';';
+        $result = File::put(config_path('database.php'), $text);
+
+        // Errore in caso di fallimento
+        if ($result === false) {
+            $chmodded = File::chmod(config_path('database.php'), 0644);
+            $result = File::put(config_path('database.php'), $text);
+            if ($result === false) {
+                return response()->json([
+                    'error' => 'writing',
+                    'error_description' => __('Impossibile scrivere il file di configurazione. :action', ['action' => !$chmodded ? 'Controllare i permessi del file config/databasee.php' : '']),
+                ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        // Refresh della cache sulla configurazione
+        Artisan::call('cache:clear');
+        Artisan::call('config:cache');
+
+        setting($request->only(['timestamp_format', 'date_format', 'time_format', 'locale']));
+
+        return response()->noContent();
     }
 }

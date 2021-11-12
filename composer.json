@@ -31,6 +31,7 @@
     "require": {
         "php": "^8",
         "ext-pdo": "*",
+        "akaunting/laravel-setting": "^1.2.7",
         "fideloper/proxy": "^4",
         "fruitcake/laravel-cors": "^2",
         "guzzlehttp/guzzle": "^7",

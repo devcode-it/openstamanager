@@ -218,14 +218,13 @@ export default class SetupPage extends Page {
     window.location.href = window.route('app.language', {language: event.target.value});
   }
 
-  async testDatabase(silent = false): boolean {
+  async testDatabase(silentSuccess = false, silentError = false): boolean {
     const form = $('form');
-    let response;
 
     try {
-      response = await redaxios.options(window.route('setup.test'), {data: getFormData(form)});
+      await redaxios.options(window.route('setup.test'), {data: getFormData(form)});
     } catch (error) {
-      if (!silent) {
+      if (!silentError) {
         const alert = $('#test-connection-alert-error');
         alert.find('.content').text(__('Si è verificato un errore durante la connessione al'
           + ' database: :error', {error: error.data.error}));
@@ -234,20 +233,10 @@ export default class SetupPage extends Page {
       return false;
     }
 
-    if (response.data.success) {
-      if (!silent) {
-        document.querySelector('#test-connection-alert-success')
-          .show();
-      }
-      return true;
+    if (!silentSuccess) {
+      document.querySelector('#test-connection-alert-success')
+        .show();
     }
-
-    if (!silent) {
-      const alert = $('#test-connection-alert-error');
-      alert.find('.content').text(__('Si è verificato un errore durante la connessione al'
-        + ' database: :error', {error: response.data.error}));
-      alert.get(0).show();
-    }
-    return false;
+    return true;
   }
 }

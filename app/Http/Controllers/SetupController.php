@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Symfony\Component\HttpFoundation\Response;
 
 class SetupController extends Controller
 {
@@ -15,7 +15,7 @@ class SetupController extends Controller
      * Verifica la connessione al database secondo i parametri indicati nella richiesta.
      * Restituisce un array di permessi mancanti in caso la connessione avvenga con successo, oppure null in caso contrario.
      */
-    final public function testDatabase(Request $request): JsonResponse
+    final public function testDatabase(Request $request): Response|JsonResponse
     {
         $database_name = $request->input('database_name');
 
@@ -79,12 +79,10 @@ class SetupController extends Controller
         }
 
         if (count($requirements) === 0) {
-            return response()->json([
-                'success' => true,
-            ]);
+            return response()->noContent();
         }
-        return \response()->json([
-            'success' => false,
+
+        return response()->json([
             'error' => __("L'utente del database non ha i seguenti permessi necessari: ", $requirements),
         ], Response::HTTP_BAD_REQUEST);
     }

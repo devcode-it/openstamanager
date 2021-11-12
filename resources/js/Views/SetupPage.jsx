@@ -1,3 +1,4 @@
+import '@maicol07/mwc-layout-grid';
 import '@material/mwc-button';
 import '@material/mwc-checkbox';
 import '@material/mwc-fab';
@@ -5,7 +6,6 @@ import '@material/mwc-formfield';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-select';
 import '@material/mwc-textarea';
-import 'mwc-layout-grid';
 import '../WebComponents/TextField';
 
 import collect from 'collect.js';

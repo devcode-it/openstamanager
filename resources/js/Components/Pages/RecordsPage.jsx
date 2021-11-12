@@ -1,3 +1,4 @@
+import '@maicol07/mwc-layout-grid';
 import '@material/mwc-dialog';
 import '@material/mwc-fab';
 import '@material/mwc-snackbar';

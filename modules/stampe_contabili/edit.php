@@ -34,11 +34,11 @@ echo '
             </div>
 
             <div class="panel-body">
-                <button type="button" class="btn btn-primary col-md-3" data-toggle="modal" data-title="'.tr('Stampa registro IVA vendite').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?dir=entrata&nome_stampa=Registro IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Stampa registro').'<br>'.tr('IVA vendite').'</button>
+                <button type="button" class="btn btn-primary col-md-3" data-toggle="modal" data-title="'.tr('Stampa registro IVA vendite').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?dir=entrata&nome_stampa=Registro IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Registro').'<br>'.tr('IVA vendite').'</button>
 
-                <button type="button" class="btn btn-primary col-md-3 col-md-push-1" data-toggle="modal" data-title="'.tr('Stampa registro IVA acquisti').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?dir=uscita&nome_stampa=Registro IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Stampa registro').'<br>'.tr('IVA acquisti').'</button>
+                <button type="button" class="btn btn-primary col-md-3 col-md-push-1" data-toggle="modal" data-title="'.tr('Stampa registro IVA acquisti').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?dir=uscita&nome_stampa=Registro IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Registro').'<br>'.tr('IVA acquisti').'</button>
 
-                <button type="button" class="btn btn-primary col-md-4 col-md-push-2" data-toggle="modal" data-title="'.tr('Stampa liquidazione IVA').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?nome_stampa=Liquidazione IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Stampa liquidazione').'<br>'.tr('IVA').'</button>
+                <button type="button" class="btn btn-primary col-md-4 col-md-push-2" data-toggle="modal" data-title="'.tr('Stampa liquidazione IVA').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?nome_stampa=Liquidazione IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Liquidazione').'<br>'.tr('IVA').'</button>
             </div>
         </div>
     </div>
@@ -53,7 +53,7 @@ echo '
             </div>
 
             <div class="panel-body">
-                '.Prints::getLink('Spesometro', $id_record, 'btn-primary col-md-5', '<br>'.tr('Stampa dati fatture').'<br>'.tr(' vendite e acquisti'), '|default| fa-2x', 'dir=uscita').'
+                '.Prints::getLink('Spesometro', $id_record, 'btn-primary col-md-5', '<br>'.tr('Dati fatture').'<br>'.tr(' vendite e acquisti'), '|default| fa-2x', 'dir=uscita').'
             </div>
         </div>
     </div>
@@ -61,16 +61,16 @@ echo '
     <div class="col-md-4">
         <div class="panel panel-primary">
             <div class="panel-heading">
-                <h3 class="panel-title">'.tr('Fatturato<br> dal _START_ al _END_', [
+                <h3 class="panel-title">'.tr('Dati economici<br> dal _START_ al _END_', [
                     '_START_' => Translator::dateToLocale($_SESSION['period_start']),
                     '_END_' => Translator::dateToLocale($_SESSION['period_end']),
                 ]).'</h3>
             </div>
 
             <div class="panel-body">
-                '.Prints::getLink('Fatturato', $id_record, 'btn-primary col-md-5', '<br>'.tr('Stampa fatturato').'<br>'.tr('in entrata'), '|default| fa-2x', 'dir=entrata').'
+                '.Prints::getLink('Fatturato', $id_record, 'btn-primary col-md-5', '<br>'.tr('Stampa').'<br>'.tr('Fatturato'), '|default| fa-2x', 'dir=entrata').'
 
-                '.Prints::getLink('Fatturato', $id_record, 'btn-primary col-md-5 col-md-push-2', '<br>'.tr('Stampa fatturato').'<br>'.tr('in uscita'), '|default| fa-2x', 'dir=uscita').'
+                '.Prints::getLink('Fatturato', $id_record, 'btn-primary col-md-5 col-md-push-2', '<br>'.tr('Stampa').'<br>'.tr('Acquisti').'<br>', '|default| fa-2x', 'dir=uscita').'
             </div>
         </div>
     </div>
@@ -80,15 +80,27 @@ echo '
     <div class="col-md-4">
         <div class="panel panel-primary">
             <div class="panel-heading">
-                <h3 class="panel-title">'.tr('Piano dei conti').'</h3>
+                <h3 class="panel-title">'.tr('Contabilità').'</h3>
             </div>
 
             <div class="panel-body">
-                <button type="button" class="btn btn-primary col-md-2" data-toggle="modal" data-title="'.tr('Stampa Bilancio').'" data-href="'.base_path().'/modules/stampe_contabili/stampa_bilancio.php" ><i class="fa fa-print fa-2x"></i> <br>'.tr('Stampa').'<br>'.tr('bilancio').'</button>
+                <button type="button" class="btn btn-primary col-md-3" data-toggle="modal" data-title="'.tr('Stampa Bilancio').'" data-href="'.base_path().'/modules/stampe_contabili/stampa_bilancio.php" ><i class="fa fa-print fa-2x"></i> <br>'.tr('Stampa').'<br>'.tr('Bilancio').'<br></button>
                
-                '.Prints::getLink('Mastrino', 1, 'btn-primary col-md-4 col-md-push-1', '<br>'.tr('Stampa situazione').'<br>'.tr('patrimoniale'), '|default| fa-2x', 'lev=1').'
+                '.Prints::getLink('Mastrino', 1, 'btn-primary col-md-3 col-md-push-1', '<br>'.tr('Situazione').'<br>'.tr('patrimoniale'), '|default| fa-2x', 'lev=1').'
 
-                '.Prints::getLink('Mastrino', 2, 'btn-primary col-md-4 col-md-push-2', '<br>'.tr('Stampa situazione').'<br>'.tr('economica'), '|default| fa-2x', 'lev=1').'
+                '.Prints::getLink('Mastrino', 2, 'btn-primary col-md-3 col-md-push-2', '<br>'.tr('Situazione').'<br>'.tr('economica'), '|default| fa-2x', 'lev=1').'
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">'.tr('Libro giornale').'</h3>
+            </div>
+
+            <div class="panel-body">
+                '.Prints::getLink('Libro giornale', 2, 'btn-primary col-md-4', '<br>'.tr('Libro').'<br>'.tr('giornale'), '|default| fa-2x').'
             </div>
         </div>
     </div>

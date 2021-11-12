@@ -38,7 +38,7 @@ echo '
 
             <div class="row">
                 <div class="col-md-12">
-                    {[ "type": "select", "label": "'.tr('Attributi').'", "name": "attributi[]", "value": "'.implode(',', $combinazione->attributi->pluck('id')->all()).'", "values": "query=SELECT id, nome AS descrizione FROM mg_attributi WHERE deleted_at IS NULL", "required": 1, "multiple": 1, "help": "'.tr('Attributi abilitati per la combinazione corrente').'", "disabled": "'.($numero_varianti !== 0).'" ]}
+                    {[ "type": "select", "label": "'.tr('Attributi').'", "name": "attributi[]", "value": "'.implode(',', $combinazione->attributi->pluck('id')->all()).'", "values": "query=SELECT id, nome AS descrizione FROM mg_attributi WHERE deleted_at IS NULL", "required": 1, "multiple": 1, "help": "'.tr('Attributi abilitati per la combinazione corrente').'" ]}
                 </div>
             </div>
         </div>

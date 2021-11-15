@@ -315,7 +315,7 @@ if (Auth::check()) {
                   break;
                 case "f3":
                     event.preventDefault();
-                    $("#print-button_p").first().trigger("click");
+                    window.open($("#print-button_p").first().attr("href"));
                   break;
                 case "f4":
                     event.preventDefault();

@@ -150,7 +150,7 @@ echo '
 
 </form>
 <?php
-if (!empty($newsletters)) {
+if (!empty($newsletters[0])) {
     echo '
     <div class="alert alert-danger">
         '.tr('Questo template non può essere rimosso dal sistema perchè collegato alle seguenti newsletter:').'

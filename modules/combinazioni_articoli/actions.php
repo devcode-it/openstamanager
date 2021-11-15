@@ -27,9 +27,7 @@ switch (filter('op')) {
             $id_record = $combinazione->id;
 
             // Selezione attributi per la combinazione
-            if ($combinazione->articoli()->count() == 0) {
-                $combinazione->attributi()->sync((array) post('attributi'));
-            }
+            $combinazione->attributi()->sync((array) post('attributi'));
 
             flash()->info(tr('Combinazione aggiornata correttamente!'));
         } else {

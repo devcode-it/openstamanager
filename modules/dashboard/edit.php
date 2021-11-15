@@ -501,6 +501,7 @@ echo '
 
     function create_calendar() {
         var calendarElement = document.getElementById("calendar");
+        var clickCnt = 0;
 
         var calendar = $(calendarElement).fullCalendar({
             /* plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin], */
@@ -633,8 +634,34 @@ echo '
                     }
 
                 });
-            },
+            },';
 
+if(isMobile() && setting('Utilizzare i tooltip sul calendario')){
+    echo '
+            eventClick: function(info) {
+                let link = info.link;
+                let element = $(this);
+                clickCnt++;         
+                if (clickCnt === 1) {
+                    oneClickTimer = setTimeout(function() {
+                        clickCnt = 0;
+                        element.trigger("mouseenter");
+                    }, 400);
+                } else if (clickCnt === 2) {
+                    clearTimeout(oneClickTimer);
+                    clickCnt = 0;
+                    location.href = link;
+                }          
+            },';
+}else{
+    echo '
+            eventClick: function(info) {
+                let link = info.link;
+                location.href = link;       
+            },';
+}
+
+echo '
             // eventPositioned: function (info) {
             eventAfterRender: function (event, element) {
                 // let event = info.event;

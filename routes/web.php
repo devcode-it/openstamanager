@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    if (!empty(DB::connection()->getDatabaseName())) {
+    if (empty(DB::connection()->getDatabaseName())) {
         return route('setup');
     }
 

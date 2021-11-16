@@ -96,11 +96,11 @@ include_once __DIR__.'/../../core.php';
             </div>
 
             <div class="col-md-4">
-                {[ "type": "text", "label": "<?php echo tr('Codice banca nazionale (ABI)'); ?>", "name": "branch_code", "class": "alphanumeric-mask", "value": "$branch_code$" ]}
+                {[ "type": "text", "label": "<?php echo tr('Codice banca nazionale (ABI)'); ?>", "name": "bank_code", "class": "alphanumeric-mask", "value": "$bank_code$" ]}
             </div>
 
             <div class="col-md-4">
-                {[ "type": "text", "label": "<?php echo tr('Codice filiale (CAB)'); ?>", "name": "bank_code", "class": "alphanumeric-mask", "value": "$bank_code$" ]}
+                {[ "type": "text", "label": "<?php echo tr('Codice filiale (CAB)'); ?>", "name": "branch_code", "class": "alphanumeric-mask", "value": "$branch_code$" ]}
             </div>
         </div>
 

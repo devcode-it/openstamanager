@@ -92,7 +92,8 @@ class Combinazione extends Model
             $articolo->id_categoria = $this->id_categoria;
             $articolo->id_sottocategoria = $this->id_sottocategoria;
         } else {
-            $articolo = $articoli->first()->replicate();
+            $articolo_base = $articoli->first();
+            $articolo = $articolo_base->replicate();
         }
         $articolo->descrizione = $this->nome.' ['.implode(', ', $variante).']';
         $articolo->codice = $this->codice.'-'.implode('|', $variante);
@@ -104,6 +105,19 @@ class Combinazione extends Model
                 'id_articolo' => $articolo->id,
                 'id_valore' => $id_valore,
             ]);
+        }
+
+        // Salvataggio immagine relativa
+        if (!$articoli->isEmpty()) {
+            $nome_immagine = $articolo_base->immagine_upload->name;
+            $allegato = $articolo_base->uploads()->where('name', $nome_immagine)->first();
+            $allegato->copia([
+                'id_module' => $articolo->getModule()->id,
+                'id_record' => $articolo->id,
+            ]);
+
+            $articolo->immagine = $articolo->uploads()->where('name', $nome_immagine)->first()->filename;
+            $articolo->save();
         }
     }
 

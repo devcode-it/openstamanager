@@ -1,7 +1,7 @@
-@use 'variables';
-@use 'material';
+@use "variables";
+@use "material";
 
-@import 'modern-normalize/modern-normalize.css';
+@import "modern-normalize/modern-normalize.css";
 
 h1,
 h2,
@@ -24,7 +24,7 @@ body {
 }
 
 hr {
-    border-color: rgba(0, 0, 0, 0.12);
+    border-color: rgb(0 0 0 / 12%);
     margin: 16px 0;
 }
 
@@ -39,7 +39,6 @@ main {
 
 .center {
     display: block;
-    width: 50%;
     margin-right: auto;
     margin-left: auto;
 }
@@ -48,7 +47,6 @@ main {
     position: absolute;
     top: 50%;
     margin: 0;
-    -ms-transform: translateY(-50%);
     transform: translateY(-50%);
 }
 

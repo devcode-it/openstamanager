@@ -1,3 +1,4 @@
+import '@maicol07/mwc-card';
 import '@maicol07/mwc-layout-grid';
 import '@material/mwc-button';
 import '@material/mwc-checkbox';
@@ -17,7 +18,6 @@ import redaxios from 'redaxios';
 import logoUrl from '/images/logo_completo.png';
 
 import {Alert} from '../Components';
-import Card from '../Components/Card/Card.jsx';
 import Mdi from '../Components/Mdi.jsx';
 import Page from '../Components/Page.jsx';
 import {
@@ -59,7 +59,7 @@ export default class SetupPage extends Page {
 
     return (
       <>
-        <Card outlined className="center" style="width: 85%;">
+        <mwc-card outlined className="center" style="width: 95%;">
           <form id="setup">
             <img src={logoUrl} className="center" alt={__('OpenSTAManager')} />
             <mwc-layout-grid>
@@ -169,7 +169,7 @@ export default class SetupPage extends Page {
                 </mwc-layout-grid-cell>
             </mwc-layout-grid>
           </form>
-        </Card>
+        </mwc-card>
         <mwc-fab id="contrast-switcher" className="sticky contrast-light"
                  label={__('Attiva/disattiva contrasto elevato')}>
           <Mdi icon="contrast-circle" slot="icon" className="light-bg"/>

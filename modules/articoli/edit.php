@@ -53,7 +53,7 @@ include_once __DIR__.'/../../core.php';
                         </div>
 
                         <div class="col-md-6">
-                            {[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "subcategoria", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie", "select-options": <?php echo json_encode(['id_categoria' => $record['id_categoria']]); ?>, "icon-after": "add|<?php echo Modules::get('Categorie articoli')['id']; ?>"|id_original=<?php echo $record['id_categoria']; ?>" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "subcategoria", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie", "select-options": <?php echo json_encode(['id_categoria' => $record['id_categoria']]); ?>, "icon-after": "add|<?php echo Modules::get('Categorie articoli')['id']; ?>|id_original=<?php echo $record['id_categoria']; ?>" ]}
                         </div>
                     </div>
                 </div>

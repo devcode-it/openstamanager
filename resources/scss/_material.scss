@@ -1,5 +1,5 @@
 @use "variables";
-@use '@material/theme' with (
+@use "@material/theme" with (
     $primary: variables.$primary,
     $secondary: variables.$secondary
 );
@@ -73,59 +73,8 @@ top-app-bar {
     --mdc-theme-on-primary: var(--mdc-theme-text-primary-on-background, #5f6368);
 }
 
-.mwc-button--rounded {
+mwc-button.rounded {
     --mdc-shape-small: 100px;
-}
-
-/* ---------------------------
-    MDC Cards
---------------------------- */
-.mdc-card {
-    padding: 16px;
-}
-
-.mdc-card__thumbnail {
-    padding-right: 16px;
-    font-size: 24px;
-}
-
-.mdc-card__title {
-    margin-top: 0;
-    margin-bottom: 0;
-    font-family: var(--mdc-typography-headline1-font-family, variables.$body_font);
-    font-size: 1.25rem;
-    font-weight: 500;
-    letter-spacing: 0.0125em;
-    line-height: 2rem;
-}
-
-.mdc-card__subhead {
-    display: block;
-    font-family: var(--mdc-typography-subtitle1-font-family, variables.$body_font);
-}
-
-.mdc-card__supporting-text {
-    display: block;
-    padding-top: 16px;
-    font-family: var(--mdc-typography-font-family, variables.$body_font);
-}
-
-.mdc-card__title,
-.mdc-card__subhead,
-.mdc-card__supporting-text {
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-font-smoothing: antialiased;
-    text-decoration: inherit;
-    text-transform: inherit;
-}
-
-.mdc-card__subhead,
-.mdc-card__supporting-text {
-    font-size: 0.875rem;
-    font-weight: 400;
-    letter-spacing: 0.0178571429em;
-    line-height: 1.25rem;
-    opacity: 0.6;
 }
 
 /* ---------------------------
@@ -140,7 +89,8 @@ mwc-fab {
         bottom: 16px;
     }
 
-    @include media('>desktop') {
+    //noinspection SassScssResolvedByNameOnly
+    @include media(">desktop") {
         &.sticky {
             right: 1.5rem;
         }
@@ -154,6 +104,7 @@ top-app-bar mwc-fab.sticky {
 /* ---------------------------
     MDC Theme and Typography
 --------------------------- */
+//noinspection Stylelint
 :root {
     --mdc-theme-primary: #{variables.$primary};
     --mdc-theme-primary2: #{variables.$primary}; // Fix for MWC Drawer styling

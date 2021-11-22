@@ -87,10 +87,10 @@ foreach ($rs as $r) {
 
 // Referenti anagrafiche
 $fields = [
-    'Nome' => 'nome',
-    'Mansione' => 'mansione',
-    'Telefono' => 'telefono',
-    'Email' => 'email',
+    'Nome' => 'an_referenti.nome',
+    'Mansione' => 'an_mansioni.nome',
+    'Telefono' => 'an_referenti.telefono',
+    'Email' => 'an_referenti.email',
 ];
 
 $query = 'SELECT *, idanagrafica as id';
@@ -99,7 +99,7 @@ foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM an_referenti WHERE idanagrafica IN('.implode(',', $idanagrafiche).') ';
+$query .= ' FROM an_referenti LEFT JOIN an_mansioni ON an_referenti.idmansione=an_mansioni.id WHERE idanagrafica IN('.implode(',', $idanagrafiche).') ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE "%'.$term.'%"';

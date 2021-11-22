@@ -110,7 +110,7 @@ echo '
 			<div class="row">
 
 				<div class="col-md-4">
-					{[ "type": "text", "label": "'.tr('Email').'", "name": "email", "class": "email-mask", "placeholder":"casella@dominio.ext", "icon-before": "<i class=\"fa fa-envelope\"></i>" ]}
+					{[ "type": "text", "label": "'.tr('Email').'", "name": "email", "class": "email-mask", "placeholder":"casella@dominio.ext", "icon-before": "<i class=\"fa fa-envelope\"></i>", "validation": "email" ]}
 				</div>
 
 				<div class="col-md-4">

@@ -48,6 +48,7 @@ switch (post('op')) {
         ], ['id' => $id_record]);
 
         $dbo->sync('em_print_template', ['id_template' => $id_record], ['id_print' => (array) post('prints')]);
+        $dbo->sync('em_mansioni_template', ['id_template' => $id_record], ['idmansione' => (array) post('idmansioni')]);
 
         flash()->info(tr('Informazioni salvate correttamente!'));
 

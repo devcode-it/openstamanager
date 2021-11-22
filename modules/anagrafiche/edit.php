@@ -209,7 +209,7 @@ if (sizeof($problemi_anagrafica) > 0) {
                             </div>
 
                             <div class="col-md-4">
-                                {[ "type": "text", "label": "<?php echo tr('Email'); ?>", "name": "email", "placeholder": "casella@dominio.ext", "value": "$email$", "icon-before": "<i class='fa fa-envelope'></i>", "validation": "email" ]}
+                                {[ "type": "text", "label": "<?php echo tr('Email'); ?>", "name": "email", "class": "email-mask", "placeholder": "casella@dominio.ext", "value": "$email$", "icon-before": "<i class='fa fa-envelope'></i>", "validation": "email" ]}
                             </div>
                         </div>
 

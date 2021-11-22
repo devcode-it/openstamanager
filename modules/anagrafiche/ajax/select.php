@@ -289,10 +289,10 @@ switch ($resource) {
      */
     case 'referenti':
         if (isset($superselect['idanagrafica'])) {
-            $query = 'SELECT id, nome AS descrizione, an_referenti.mansione AS optgroup FROM an_referenti |where| ORDER BY optgroup, nome';
+            $query = 'SELECT an_referenti.id, an_referenti.nome AS descrizione, an_mansioni.nome AS optgroup FROM an_referenti LEFT JOIN an_mansioni ON an_referenti.idmansione=an_mansioni.id |where| ORDER BY optgroup, an_referenti.nome';
 
             foreach ($elements as $element) {
-                $filter[] = 'id='.prepare($element);
+                $filter[] = 'an_referenti.id='.prepare($element);
             }
 
             if (isset($superselect['idclientefinale'])) {
@@ -302,7 +302,7 @@ switch ($resource) {
             }
 
             if (!empty($search)) {
-                $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = 'an_referenti.nome LIKE '.prepare('%'.$search.'%');
             }
         }
         break;

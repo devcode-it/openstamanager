@@ -111,13 +111,16 @@ class Combinazione extends Model
         if (!$articoli->isEmpty()) {
             $nome_immagine = $articolo_base->immagine_upload->name;
             $allegato = $articolo_base->uploads()->where('name', $nome_immagine)->first();
-            $allegato->copia([
-                'id_module' => $articolo->getModule()->id,
-                'id_record' => $articolo->id,
-            ]);
 
-            $articolo->immagine = $articolo->uploads()->where('name', $nome_immagine)->first()->filename;
-            $articolo->save();
+            if (!empty($allegato)) {
+                $allegato->copia([
+                    'id_module' => $articolo->getModule()->id,
+                    'id_record' => $articolo->id,
+                ]);
+
+                $articolo->immagine = $articolo->uploads()->where('name', $nome_immagine)->first()->filename;
+                $articolo->save();
+            }
         }
     }
 

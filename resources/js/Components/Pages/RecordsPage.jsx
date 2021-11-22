@@ -21,11 +21,8 @@ import type {
   TextField
 } from '../../WebComponents';
 import DataTable from '../DataTable/DataTable.jsx';
-import TableBody from '../DataTable/TableBody.jsx';
 import TableCell from '../DataTable/TableCell.jsx';
-import TableHead from '../DataTable/TableHead.jsx';
-import TableHeadCell from '../DataTable/TableHeadCell.jsx';
-import TableHeadRow from '../DataTable/TableHeadRow.jsx';
+import TableColumn from '../DataTable/TableColumn.jsx';
 import TableRow from '../DataTable/TableRow.jsx';
 import LoadingButton from '../LoadingButton.jsx';
 import Mdi from '../Mdi.jsx';
@@ -127,9 +124,9 @@ export default class RecordsPage extends Page {
     return collect(this.columns)
       .map(
         (column: ColumnT | string, id: string) => (
-          <TableHeadCell id={id} key={id} {...((typeof column === 'object') ? column : {})}>
+          <TableColumn id={id} key={id} {...((typeof column === 'object') ? column : {})}>
             {typeof column === 'string' ? column : column.title}
-          </TableHeadCell>
+          </TableColumn>
         )
       )
       .toArray();
@@ -138,7 +135,7 @@ export default class RecordsPage extends Page {
   tableRows(): Children {
     if (this.rows.isEmpty()) {
       return (
-        <TableRow>
+        <TableRow key="no-data">
           <TableCell colspan={collect(this.columns)
             .count()} style="text-align: center;">
             {__('Non sono presenti dati')}
@@ -263,15 +260,9 @@ export default class RecordsPage extends Page {
     return (
       <>
         <h2>{this.title}</h2>
-        <DataTable>
-          <TableHead>
-            <TableHeadRow>
-              {this.tableColumns()}
-            </TableHeadRow>
-          </TableHead>
-          <TableBody>
-            {this.tableRows()}
-          </TableBody>
+        <DataTable checkable>
+          {this.tableColumns()}
+          {this.tableRows()}
         </DataTable>
 
         <mwc-fab id="add-record" label={__('Aggiungi')} class="sticky">

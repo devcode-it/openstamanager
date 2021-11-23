@@ -260,7 +260,7 @@ export default class RecordsPage extends Page {
     return (
       <>
         <h2>{this.title}</h2>
-        <DataTable checkable>
+        <DataTable checkable paginated rows-per-page="1">
           {this.tableColumns()}
           {this.tableRows()}
         </DataTable>

@@ -44,13 +44,16 @@ export default class DataTable extends Component {
               </div>
 
               <mwc-select className="mdc-data-table__pagination-rows-per-page-select">
-                {/* TODO: Rendere dinamico (permetti a chi chiama il componente di
-                scegliere i valori da visualizzare */}
-                <mwc-list-item value="10">10</mwc-list-item>
-                <mwc-list-item value="25">25</mwc-list-item>
-                <mwc-list-item value="50">50</mwc-list-item>
-                <mwc-list-item value="75">75</mwc-list-item>
-                <mwc-list-item value="100">100</mwc-list-item>
+                {this.attrs.get('rows-per-page', '10,25,50,75,100').split(',').map(
+                  (value) => {
+                    const rowsPerPage = Number.parseInt(value, 10);
+                    return (
+                      <mwc-list-item key={rowsPerPage} value={rowsPerPage}>
+                        {rowsPerPage}
+                      </mwc-list-item>
+                    );
+                  }
+                )}
               </mwc-select>
             </div>
 

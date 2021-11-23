@@ -49,28 +49,36 @@ if ($record['can_delete']) {
 
 			<div class="row">
 
-				<div class="col-md-6">
+				<div class="col-md-3">
 					{[ "type": "checkbox", "label": "<?php echo tr('Abilita notifiche'); ?>", "name": "notifica", "help": "<?php echo tr('Quando l\'attività passa in questo stato viene inviata una notifica ai destinatari designati.'); ?>.", "value": "$notifica$" ]}
 				</div>
+
+			</div>
+			<hr>
+			<div class="row">
 
 				<div class="col-md-6">
 					{[ "type": "select", "label": "<?php echo tr('Template email'); ?>", "name": "email", "value": "$id_email$", "values": "query=SELECT id, name AS descrizione FROM em_templates WHERE id_module = <?php echo Modules::get('Interventi')['id']; ?> AND deleted_at IS NULL", "disabled": <?php echo intval(empty($record['notifica'])); ?> ]}
 				</div>
 
-				
+				<div class="col-md-6">
+					{[ "type": "email", "label": "<?php echo tr('Destinatario aggiuntivo'); ?>", "name": "destinatari", "value": "$destinatari$", "icon-before": "<i class='fa fa-envelope'></i>", "disabled": <?php echo intval(empty($record['notifica'])); ?>, "class": "email-mask" ]}
+				</div>
+
 			</div>
+
 			<div class="row">
 
-				<div class="col-md-3">
+				<div class="col-md-4">
 					{[ "type": "checkbox", "label": "<?php echo tr('Notifica al cliente'); ?>", "name": "notifica_cliente", "help": "<?php echo tr('Quando l\'attività passa in questo stato viene inviata una notifica al cliente.'); ?>.", "value": "$notifica_cliente$" ]}
 				</div>
 
-				<div class="col-md-3">
-					{[ "type": "checkbox", "label": "<?php echo tr('Notifica ai tecnici'); ?>", "name": "notifica_tecnici", "help": "<?php echo tr('Quando l\'attività passa in questo stato viene inviata una notifica ai tecnici assegnati.'); ?>.", "value": "$notifica_tecnici$" ]}
+				<div class="col-md-4">
+					{[ "type": "checkbox", "label": "<?php echo tr('Notifica ai tecnici assegnati'); ?>", "name": "notifica_tecnico_sessione", "help": "<?php echo tr('Quando l\'attività passa in questo stato viene inviata una notifica ai tecnici assegnati.'); ?>.", "value": "$notifica_tecnico_sessione$" ]}
 				</div>
 
-				<div class="col-md-6">
-					{[ "type": "text", "label": "<?php echo tr('Destinatari aggiuntivi'); ?>", "name": "destinatari", "value": "$destinatari$", "disabled": <?php echo intval(empty($record['notifica'])); ?> ]}
+				<div class="col-md-4">
+					{[ "type": "checkbox", "label": "<?php echo tr('Notifica ai tecnici delle sessioni'); ?>", "name": "notifica_tecnico_assegnato", "help": "<?php echo tr('Quando l\'attività passa in questo stato viene inviata una notifica ai tecnici delle sessioni.'); ?>.", "value": "$notifica_tecnico_assegnato$" ]}
 				</div>
 
 			</div>
@@ -108,25 +116,32 @@ if ($record['can_delete']) {
 		});
 		$('#colore').parent().find('.square').css( 'background', $('#colore').val() );
 
+		notifica();
+	});
 
 	$("#notifica").change(function() {
-		if ($(this).is(":checked")) {
+		notifica();
+	});
+
+	function notifica() {
+		if ($("#notifica").is(":checked")) {
 			$("#email").attr("required", true);
 			$("#email").attr("disabled", false);
 			$("#destinatari").attr("disabled", false);
 			$("#notifica_cliente").attr("disabled", false);
-			$("#notifica_tecnici").attr("disabled", false);
+			$("#notifica_tecnico_sessione").attr("disabled", false);
+			$("#notifica_tecnico_assegnato").attr("disabled", false);
 		}else{
 			$("#email").attr("required", false);
 			$("#email").attr("disabled", true);
 			$("#destinatari").attr("disabled", true);
 			$("#destinatari").val("");
 			$("#notifica_cliente").attr("disabled", true);
-			$("#notifica_tecnici").attr("disabled", true);
+			$("#notifica_tecnico_sessione").attr("disabled", true);
+			$("#notifica_tecnico_assegnato").attr("disabled", true);
 			$("#notifica_cliente").val([0]);
-			$("#notifica_tecnici").val([0]);
+			$("#notifica_tecnico_sessione").val([0]);
+			$("#notifica_tecnico_assegnato").val([0]);
 		}
-	});
-
-	});
+	}
 </script>

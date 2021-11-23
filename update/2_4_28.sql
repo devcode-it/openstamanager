@@ -57,3 +57,17 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `visible`, 
 UPDATE `zz_plugins` SET `options` = '	{ \"main_query\": [	{	\"type\": \"table\", \"fields\": \"Nominativo, Mansione, Telefono, Indirizzo email, Sede\",	\"query\": \"SELECT an_referenti.id, an_referenti.nome AS Nominativo, an_mansioni.nome AS Mansione, an_referenti.telefono AS Telefono, an_referenti.email AS \'Indirizzo email\', IF(idsede = 0, \'Sede legale\', an_sedi.nomesede) AS Sede FROM an_referenti LEFT OUTER JOIN an_sedi ON idsede = an_sedi.id LEFT OUTER JOIN an_mansioni ON idmansione = an_mansioni.id WHERE 1=1 AND an_referenti.idanagrafica=|id_parent| HAVING 2=2 ORDER BY an_referenti.id DESC\"}	]}' WHERE `zz_plugins`.`name` = 'Referenti';
 
 CREATE TABLE IF NOT EXISTS `em_mansioni_template` ( `id` INT NOT NULL AUTO_INCREMENT , `idmansione` INT NOT NULL , `id_template` INT NOT NULL , `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `updated_at` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (`id`));
+
+-- Aggiunta notifiche ai tecnici assegnati
+ALTER TABLE `in_statiintervento` CHANGE `notifica_tecnici` `notifica_tecnico_sessione` TINYINT(4) NOT NULL; 
+
+ALTER TABLE `in_statiintervento` ADD `notifica_tecnico_assegnato` TINYINT(4) NOT NULL AFTER `notifica_tecnico_sessione`; 
+
+UPDATE `in_statiintervento` SET `notifica_tecnico_assegnato`=`notifica_tecnico_sessione`;
+
+UPDATE `zz_settings` SET `nome` = 'Notifica al tecnico l\'aggiunta della sessione nell\'attività', `order`=15 WHERE `zz_settings`.`nome` = 'Notifica al tecnico l\'assegnazione all\'attività';
+
+UPDATE `zz_settings` SET `nome` = 'Notifica al tecnico la rimozione della sessione dall\'attività', `order`=16 WHERE `zz_settings`.`nome` = 'Notifica al tecnico la rimozione dall\'attività';
+
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Notifica al tecnico l''assegnazione all''attività', '0', 'boolean', '1', 'Attività', 17, 'Notifica via email al tecnico l''assegnazione di una nuova attività  (l''indirizzo email deve essere specificato nella sua anagrafica)');
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Notifica al tecnico la rimozione dell''assegnazione dall''attività', '0', 'boolean', '1', 'Attività', 18, 'Notifica via email al tecnico la rimozione dell''assegnazione dall''attività (l''indirizzo email deve essere specificato nella sua anagrafica)');

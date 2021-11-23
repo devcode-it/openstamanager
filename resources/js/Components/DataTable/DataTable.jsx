@@ -62,16 +62,16 @@ export default class DataTable extends Component {
                 {__('1-:chunk di :total', {chunk: <span id="chunk">10</span>, total: <span id="total">100</span>})}
               </div>
               <mwc-icon-button className="mdc-data-table__pagination-button" data-page="first" disabled>
-                <Mdi icon="page_first"/>
+                <Mdi icon="page-first"/>
               </mwc-icon-button>
               <mwc-icon-button className="mdc-data-table__pagination-button" data-page="prev" disabled>
-                <Mdi icon="chevron_left"/>
+                <Mdi icon="chevron-left"/>
               </mwc-icon-button>
               <mwc-icon-button className="mdc-data-table__pagination-button" data-page="next">
-                <Mdi icon="chevron_right"/>
+                <Mdi icon="chevron-right"/>
               </mwc-icon-button>
               <mwc-icon-button className="mdc-data-table__pagination-button" data-page="last">
-                <Mdi icon="chevron_last"/>
+                <Mdi icon="page-last"/>
               </mwc-icon-button>
             </div>
           </div>

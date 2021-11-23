@@ -71,3 +71,5 @@ UPDATE `zz_settings` SET `nome` = 'Notifica al tecnico la rimozione della sessio
 
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Notifica al tecnico l''assegnazione all''attività', '0', 'boolean', '1', 'Attività', 17, 'Notifica via email al tecnico l''assegnazione di una nuova attività  (l''indirizzo email deve essere specificato nella sua anagrafica)');
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Notifica al tecnico la rimozione dell''assegnazione dall''attività', '0', 'boolean', '1', 'Attività', 18, 'Notifica via email al tecnico la rimozione dell''assegnazione dall''attività (l''indirizzo email deve essere specificato nella sua anagrafica)');
+
+UPDATE `zz_settings` SET `valore` = '2' WHERE `zz_settings`.`nome` = 'Numero massimo di tentativi';

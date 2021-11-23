@@ -57,3 +57,5 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `visible`, 
 UPDATE `zz_plugins` SET `options` = '	{ \"main_query\": [	{	\"type\": \"table\", \"fields\": \"Nominativo, Mansione, Telefono, Indirizzo email, Sede\",	\"query\": \"SELECT an_referenti.id, an_referenti.nome AS Nominativo, an_mansioni.nome AS Mansione, an_referenti.telefono AS Telefono, an_referenti.email AS \'Indirizzo email\', IF(idsede = 0, \'Sede legale\', an_sedi.nomesede) AS Sede FROM an_referenti LEFT OUTER JOIN an_sedi ON idsede = an_sedi.id LEFT OUTER JOIN an_mansioni ON idmansione = an_mansioni.id WHERE 1=1 AND an_referenti.idanagrafica=|id_parent| HAVING 2=2 ORDER BY an_referenti.id DESC\"}	]}' WHERE `zz_plugins`.`name` = 'Referenti';
 
 CREATE TABLE IF NOT EXISTS `em_mansioni_template` ( `id` INT NOT NULL AUTO_INCREMENT , `idmansione` INT NOT NULL , `id_template` INT NOT NULL , `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `updated_at` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (`id`));
+
+UPDATE `zz_settings` SET `valore` = '2' WHERE `zz_settings`.`nome` = 'Numero massimo di tentativi';

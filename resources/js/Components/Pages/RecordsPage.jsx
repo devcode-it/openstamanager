@@ -107,11 +107,14 @@ export default class RecordsPage extends Page {
   }
 
   async onupdate(vnode) {
-    const rows = $('.mdc-data-table__row[data-model-id]');
+    const rows: Cash = $('.mdc-data-table__row[data-model-id]');
     if (rows.length > 0) {
       rows.on(
         'click',
         (event: PointerEvent) => {
+          if (event.target.tagName === 'MWC-CHECKBOX') {
+            return;
+          }
           this.updateRecord($(event.target)
             .parent('tr')
             .data('model-id'));

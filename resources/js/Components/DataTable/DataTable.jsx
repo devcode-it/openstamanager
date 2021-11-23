@@ -2,6 +2,7 @@ import '@material/mwc-linear-progress';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-select';
 
+import {type Cash} from 'cash-dom/dist/cash';
 import {
   type Children,
   type Vnode
@@ -113,5 +114,75 @@ export default class DataTable extends Component {
     }
 
     return filtered;
+  }
+
+  oncreate(vnode) {
+    super.oncreate(vnode);
+
+    $(this.element).find('thead th[sortable], thead th[sortable] mwc-icon-button-toggle').on('click', this.onColumnClicked.bind(this));
+  }
+
+  showProgress() {
+    $(this.element).find('.mdc-data-table__progress-indicator mwc-linear-progress').get(0).open();
+  }
+
+  hideProgress() {
+    $(this.element).find('.mdc-data-table__progress-indicator mwc-linear-progress').get(0).open();
+  }
+
+  onColumnClicked(event: Event) {
+    this.showProgress();
+
+    const column: Cash = $(event.target).closest('th');
+    const ascendingClass = 'mdc-data-table__header-cell--sorted';
+    const descendingClass = 'mdc-data-table__header-cell--sorted-descending';
+
+    // If it's already sorted change direction
+    if (column.hasClass(ascendingClass)) {
+      column.toggleClass(descendingClass);
+    }
+
+    // Clean previously sorted info and arrows
+    const columns = $(this.element).find('thead th');
+    columns.removeClass(ascendingClass);
+    columns.find('mwc-icon-button-toggle').hide();
+
+    // Add ony one header to sort
+    column.addClass(ascendingClass);
+
+    // Check if need descending sorting
+    const isDescending = column.hasClass(descendingClass);
+
+    // Do sorting
+    this.sortTable(column.index() + 1, isDescending, column.attr('type') === 'numeric');
+  }
+
+  sortTable(columnIndex: number, isDescending: boolean, isNumeric: boolean) {
+    const sorted = [...$(this.element).find(`tr td:nth-child(${columnIndex})`)].sort((a: HTMLElement, b: HTMLElement) => {
+      let aValue = a.textContent;
+      let bValue = b.textContent;
+
+      if (isNumeric) {
+        aValue = Number.parseFloat(aValue);
+        bValue = Number.parseFloat(bValue);
+      }
+
+      if (!isDescending) {
+        const temporary = aValue;
+        aValue = bValue;
+        bValue = temporary;
+      }
+
+      if (typeof aValue === 'string') {
+        return aValue.localeCompare(bValue);
+      }
+
+      return aValue < bValue ? -1 : (aValue > bValue ? 1 : 0);
+    });
+
+    for (const cell of sorted) {
+      const row = $(cell).parent();
+      row.appendTo(row.parent());
+    }
   }
 }

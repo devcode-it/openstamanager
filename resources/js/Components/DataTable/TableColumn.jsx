@@ -49,10 +49,13 @@ export default class TableColumn extends Component {
         .children('mwc-checkbox');
 
       checkbox.on('change', () => {
-        $(vnode.dom)
+        const row: Cash = $(this.element)
           .closest('table')
-          .find('tbody tr[checkable] mwc-checkbox')
-          .prop('checked', checkbox.prop('checked'));
+          .find('tbody tr[checkable]');
+
+        row.addClass('mdc-data-table__row--selected');
+
+        row.find('mwc-checkbox').prop('checked', checkbox.prop('checked'));
       });
     }
 

@@ -14,7 +14,7 @@ export default class TableCell extends Component {
     });
 
     if ((!vnode.children || vnode.children.length === 0) && this.attrs.get('type') === 'checkbox') {
-      vnode.children = <mwc-checkbox/>;
+      vnode.children = <mwc-checkbox className="mdc-data-table__row-checkbox"/>;
     }
 
     return <td {...this.attrs.all()}>{vnode.children}</td>;

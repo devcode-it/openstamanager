@@ -34,7 +34,7 @@ export default class TableColumn extends Component {
     }
 
     if ((!vnode.children || vnode.children.length === 0) && this.attrs.get('type') === 'checkbox') {
-      vnode.children = <mwc-checkbox/>;
+      vnode.children = <mwc-checkbox className="mdc-data-table__header-row-checkbox" />;
     }
 
     return <th {...this.attrs.all()} role="columnheader" scope="col">{vnode.children}</th>;

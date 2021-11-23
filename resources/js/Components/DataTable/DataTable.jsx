@@ -21,10 +21,7 @@ export default class DataTable extends Component {
         <table className="mdc-data-table__table" aria-label={this.attrs.get('aria-label')}>
           <thead>
             <tr className="mdc-data-table__header-row">
-              {this.attrs.has('checkable')
-                && <TableColumn type="checkbox">
-                  <mwc-checkbox/>
-                </TableColumn>}
+              {this.attrs.has('checkable') && <TableColumn type="checkbox"/>}
               {this.tableColumns(vnode.children)}
             </tr>
           </thead>

@@ -32,7 +32,7 @@ UPDATE `zz_prints` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name`
 -- Aggiunta stampa libro giornale
 INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name`='Stampe contabili'), '1', 'Libro giornale', 'Libro giornale', 'Libro giornale', 'libro_giornale', 'idconto', '', 'fa fa-print', '', '', '0', '0', '1', '1');
 
-'-- Aggiunta tabella mansioni
+-- Aggiunta tabella mansioni
 CREATE TABLE IF NOT EXISTS `an_mansioni` ( `id` INT NOT NULL AUTO_INCREMENT , `nome` VARCHAR(100) NOT NULL , `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `updated_at` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`));
 
 INSERT INTO `an_mansioni`(
@@ -80,3 +80,12 @@ UPDATE `co_righe_documenti` SET `iva`=-`iva` WHERE `iva`>0 AND `iva_unitaria`<0;
 
 -- Modifica impostazione eliminazione automatica coda d'invio
 UPDATE `zz_settings` SET `help` = 'L\'impostazione è valida solamente per l\'eliminazione della coda d\'invio delle newsletter.' WHERE `zz_settings`.`nome` = 'Numero di giorni mantenimento coda di invio';
+
+-- Migliorie modulo Coda di invio
+INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`, `note`, `predefined`, `predefined_accredito`, `predefined_addebito`, `is_fiscale`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'Tutte', '1=1', 'WHR', '####', '', 1, 0, 0, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'Non inviate', '1=1 AND sent_at IS NULL', 'WHR', '####', '', 0, 0, 0, 0);
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'Tentativi', '`em_emails`.`attempt`', 7, 1, 0, 0, '', '', 1, 0, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'Data creazione', '`em_emails`.`created_at`', 9, 1, 0, 1, '', '', 1, 0, 0);
+UPDATE `zz_views` SET `format` = '0' WHERE `zz_views`.`name` = 'Utente' AND id_module=(SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'); 

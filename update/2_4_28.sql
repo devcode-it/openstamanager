@@ -77,3 +77,6 @@ UPDATE `zz_settings` SET `valore` = '2' WHERE `zz_settings`.`nome` = 'Numero mas
 -- Cambio segno subtotale e iva per righe negative
 UPDATE `co_righe_documenti` SET `subtotale`=-`subtotale` WHERE `subtotale`>0 AND `prezzo_unitario`<0;
 UPDATE `co_righe_documenti` SET `iva`=-`iva` WHERE `iva`>0 AND `iva_unitaria`<0;
+
+-- Modifica impostazione eliminazione automatica coda d'invio
+UPDATE `zz_settings` SET `help` = 'L\'impostazione è valida solamente per l\'eliminazione della coda d\'invio delle newsletter.' WHERE `zz_settings`.`nome` = 'Numero di giorni mantenimento coda di invio';

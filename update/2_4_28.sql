@@ -73,3 +73,7 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Notifica al tecnico la rimozione dell''assegnazione dall''attività', '0', 'boolean', '1', 'Attività', 18, 'Notifica via email al tecnico la rimozione dell''assegnazione dall''attività (l''indirizzo email deve essere specificato nella sua anagrafica)');
 
 UPDATE `zz_settings` SET `valore` = '2' WHERE `zz_settings`.`nome` = 'Numero massimo di tentativi';
+
+-- Cambio segno subtotale e iva per righe negative
+UPDATE `co_righe_documenti` SET `subtotale`=-`subtotale` WHERE `subtotale`>0 AND `prezzo_unitario`<0;
+UPDATE `co_righe_documenti` SET `iva`=-`iva` WHERE `iva`>0 AND `iva_unitaria`<0;

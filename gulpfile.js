@@ -506,7 +506,10 @@ exports.default = bower;
 // Watch task - lanciato con `gulp watch`, resta in attesa e ogni volta che viene modificato un asset in src
 // viene aggiornata la dist
 gulp.task('watch', function () {
+    gulp.watch('assets/src/css/*.css', gulp.series(srcCSS, CSS));
+    gulp.watch('assets/src/css/print/*.css', gulp.series(srcCSS, CSS));
     gulp.watch('assets/src/css/themes/*.css', gulp.series(srcCSS, CSS));
-    gulp.watch('assets/src/js/modules/*.js', gulp.series(srcJS, JS));
+    gulp.watch('assets/src/js/base/*.js', gulp.series(srcJS, JS));
+    gulp.watch('assets/src/js/functions/*.js', gulp.series(srcJS, JS));
     gulp.watch('assets/src/img/*', gulp.series(images));
 });

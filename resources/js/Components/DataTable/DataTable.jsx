@@ -1,6 +1,6 @@
 import '@material/mwc-linear-progress';
 import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-select';
+import '../../WebComponents/Select';
 
 import {type Cash} from 'cash-dom/dist/cash';
 import {
@@ -40,7 +40,12 @@ export default class DataTable extends Component {
                 {__('Righe per pagina')}
               </div>
 
-              <mwc-select className="mdc-data-table__pagination-rows-per-page-select">
+              <material-select
+                outlined
+                className="mdc-data-table__pagination-rows-per-page-select"
+                fixedMenuPosition
+                style="--mdc-select-width: 112px; --mdc-select-height: 36px; --mdc-menu-item-height: 36px;"
+              >
                 {this.attrs.get('rows-per-page', '10,25,50,75,100').split(',').map(
                   (value) => {
                     const rowsPerPage = Number.parseInt(value, 10);
@@ -51,7 +56,7 @@ export default class DataTable extends Component {
                     );
                   }
                 )}
-              </mwc-select>
+              </material-select>
             </div>
 
             <div className="mdc-data-table__pagination-navigation">

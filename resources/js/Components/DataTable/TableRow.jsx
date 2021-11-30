@@ -20,7 +20,7 @@ export default class TableRow extends Component {
     );
   }
 
-  checkbox(children: Array<Children>): Children {
+  checkbox(children: Children[]): Children {
     if (!this.attrs.has('checkable')) {
       return <></>;
     }

@@ -40,7 +40,7 @@ function getFlag(language: string, slot: string = 'graphic', styles: {...} = {})
 
 export default class SetupPage extends Page {
   languages() {
-    const listItems: Array[Mithril.Vnode] = [];
+    const listItems: Mithril.Vnode[] = [];
 
     for (const lang of this.page.props.languages) {
       const attributes = {

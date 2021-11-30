@@ -87,11 +87,11 @@ export default class DataTable extends Component {
     </div>;
   }
 
-  tableColumns(children: Array<Children>) {
+  tableColumns(children: Children[]) {
     return this.filterElements(children.flat(), TableColumn);
   }
 
-  tableRows(children: Array<Children>) {
+  tableRows(children: Children[]) {
     let rows = this.filterElements(children.flat(), TableRow);
 
     if (this.attrs.has('checkable')) {
@@ -105,11 +105,11 @@ export default class DataTable extends Component {
     return rows;
   }
 
-  tableFooter(children: Array<Children>) {
+  tableFooter(children: Children[]) {
     return this.filterElements(children.flat(), TableFooter);
   }
 
-  filterElements(elements: Array<Children>, tag: Component | string): Array<Children> {
+  filterElements(elements: Children[], tag: Component | string): Children[] {
     const filtered = [];
 
     for (const element: Vnode of elements) {

@@ -8,6 +8,7 @@ import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-select';
 import '@material/mwc-textarea';
 import '../WebComponents/TextField';
+import '../WebComponents/Select';
 
 import collect from 'collect.js';
 import LocaleCode from 'locale-code';
@@ -25,6 +26,18 @@ import {
   showSnackbar
 } from '../utils';
 
+function getFlag(language: string, slot: string = 'graphic', styles: {...} = {}) {
+  styles.display ??= 'flex';
+  return (
+    <div slot={slot} style={styles}>
+      <img style="border-radius: 4px;"
+           src={`https://flagicons.lipis.dev/flags/4x3/${LocaleCode.getCountryCode(language)
+             .toLowerCase()}.svg`}
+           alt={LocaleCode.getLanguageNativeName(language)}/>
+    </div>
+  );
+}
+
 export default class SetupPage extends Page {
   languages() {
     const listItems: Array[Mithril.Vnode] = [];
@@ -36,16 +49,14 @@ export default class SetupPage extends Page {
       const langCode = lang.replace('_', '-');
       listItems.push(
         <mwc-list-item graphic="icon" value={lang} {...attributes}>
-          <img
-            slot="graphic"
-            style="border-radius: 4px;"
-            src={`https://flagicons.lipis.dev/flags/4x3/${LocaleCode.getCountryCode(langCode)
-              .toLowerCase()}.svg`}
-            alt={LocaleCode.getLanguageNativeName(langCode)}>
-          </img>
+          {getFlag(langCode)}
           <span>{LocaleCode.getLanguageNativeName(langCode)}</span>
         </mwc-list-item>
       );
+
+      if (attributes.selected) {
+        listItems.push(getFlag(langCode, 'icon', {display: 'block', width: '24px', lineHeight: '22px'}));
+      }
     }
 
     return listItems;
@@ -145,9 +156,9 @@ export default class SetupPage extends Page {
                 </mwc-layout-grid-cell>
                 <mwc-layout-grid-cell>
                   <h4>{__('Lingua')}</h4>
-                  <mwc-select id="language-select" name="locale">
+                  <material-select id="language-select" name="locale">
                     {this.languages()}
-                  </mwc-select>
+                  </material-select>
                   <hr />
                   <h4>{__('Licenza')}</h4>
                   <p>{__('OpenSTAManager è tutelato dalla licenza GPL 3.0, da accettare obbligatoriamente per poter utilizzare il gestionale.')}</p>

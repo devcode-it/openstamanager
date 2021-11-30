@@ -15,13 +15,15 @@ import TableFooter from './TableFooter.jsx';
 import TableRow from './TableRow.jsx';
 
 export default class DataTable extends Component {
-  rows: Cash[];
+  rows: Cash[] = [];
   columns: Children[];
   footer: Children[];
 
   rowsPerPage = {
     options: [10, 25, 50, 75, 100],
-    default: 10
+    currentStart: 0,
+    value: 10,
+    currentEnd: 10
   }
 
   onbeforeupdate(vnode) {
@@ -42,9 +44,32 @@ export default class DataTable extends Component {
     let defaultRowsPerPage = this.attrs.get('default-rows-per-page');
     if (Number.isInteger(defaultRowsPerPage)) {
       defaultRowsPerPage = Number.parseInt(defaultRowsPerPage, 10);
+
       if (!this.rowsPerPage.options.includes(defaultRowsPerPage)) {
-        [this.rowsPerPage.default] = this.rowsPerPage.options;
+        [defaultRowsPerPage] = this.rowsPerPage.options;
       }
+      this.rowsPerPage.value = defaultRowsPerPage;
+    }
+
+    if (this.rowsPerPage.currentStart === 0) {
+      this.rowsPerPage.currentEnd = this.rowsPerPage.value >= this.rows.length ? this.rows.length
+        : defaultRowsPerPage;
+    }
+  }
+
+  onupdate(vnode) {
+    super.onupdate(vnode);
+
+    const rows: Cash = $(this.element).find('tbody tr');
+    rows.hide();
+
+    // eslint-disable-next-line no-plusplus
+    for (let index = this.rowsPerPage.currentStart; index < this.rowsPerPage.currentEnd; index++) {
+      rows.eq(index).show();
+    }
+
+    if (this.rowsPerPage.currentStart === 0) {
+      this.paginate('first');
     }
   }
 
@@ -60,7 +85,7 @@ export default class DataTable extends Component {
           </thead>
 
           <tbody className="mdc-data-table__content">
-            {this.rows}
+          {this.rows}
           </tbody>
 
           {this.footer}
@@ -78,13 +103,16 @@ export default class DataTable extends Component {
                 className="mdc-data-table__pagination-rows-per-page-select"
                 fixedMenuPosition
                 style="--mdc-select-width: 112px; --mdc-select-height: 36px; --mdc-menu-item-height: 36px;"
-                value={this.rowsPerPage.default}
               >
                 {this.rowsPerPage.options.map(
                   rowsPerPage => (
-                      <mwc-list-item key={rowsPerPage} value={rowsPerPage}>
-                        {rowsPerPage}
-                      </mwc-list-item>
+                    <mwc-list-item
+                      key={rowsPerPage}
+                      value={rowsPerPage}
+                      selected={this.rowsPerPage.value === rowsPerPage}
+                    >
+                      {rowsPerPage}
+                    </mwc-list-item>
                   )
                 )}
               </material-select>
@@ -92,16 +120,17 @@ export default class DataTable extends Component {
 
             <div className="mdc-data-table__pagination-navigation">
               <div className="mdc-data-table__pagination-total">
-                {__('1-:chunk di :total', {
-                  chunk: <span className="mdc-data-table__pagination-chunk">10</span>,
-                  total: <span className="mdc-data-table__pagination-total">100</span>
+                {__(':start-:chunk di :total', {
+                  start: this.rowsPerPage.currentStart + 1,
+                  chunk: this.rowsPerPage.currentEnd,
+                  total: this.rows.length
                 })}
               </div>
               <mwc-icon-button className="mdc-data-table__pagination-button" data-page="first"
                                disabled>
                 <Mdi icon="page-first"/>
               </mwc-icon-button>
-              <mwc-icon-button className="mdc-data-table__pagination-button" data-page="prev"
+              <mwc-icon-button className="mdc-data-table__pagination-button" data-page="previous"
                                disabled>
                 <Mdi icon="chevron-left"/>
               </mwc-icon-button>
@@ -149,14 +178,18 @@ export default class DataTable extends Component {
     return filtered;
   }
 
-
-
   oncreate(vnode) {
     super.oncreate(vnode);
 
     $(this.element)
       .find('thead th[sortable], thead th[sortable] mwc-icon-button-toggle')
       .on('click', this.onColumnClicked.bind(this));
+
+    $(this.element).find('.mdc-data-table__pagination-rows-per-page-select')
+      .on('selected', this.onPaginationSelected.bind(this));
+
+    $(this.element).find('.mdc-data-table__pagination-button')
+      .on('click', this.onPaginationButtonClicked.bind(this));
   }
 
   showProgress() {
@@ -233,6 +266,51 @@ export default class DataTable extends Component {
       const row = $(cell)
         .parent();
       row.appendTo(row.parent());
+    }
+  }
+
+  onPaginationSelected(event: Event) {
+    this.rowsPerPage.value = $(event.target).find('mwc-list-item').eq(event.detail.index).val();
+    this.rowsPerPage.currentStart = 0;
+    this.rowsPerPage.currentEnd = this.rowsPerPage.value;
+    m.redraw();
+  }
+
+  onPaginationButtonClicked(event: Event) {
+    const button: Cash = $(event.target);
+    this.paginate(button.data('page'));
+    m.redraw();
+  }
+
+  paginate(action: 'first' | 'next' | 'previous' | 'last') {
+    const increments = {
+      first: -this.rowsPerPage.currentStart,
+      next: this.rowsPerPage.value,
+      previous: -this.rowsPerPage.value,
+      last: this.rows.length - this.rowsPerPage.currentStart
+    };
+    const increment = increments[action];
+
+    if (action !== 'first') {
+      this.rowsPerPage.currentStart += increment;
+    }
+
+    if (action !== 'last') {
+      this.rowsPerPage.currentEnd += increment;
+    }
+
+    const paginationButtons: Cash = $(this.element).find('.mdc-data-table__pagination-button');
+    const disabled = {
+      first: this.rowsPerPage.currentStart === 0,
+      previous: this.rowsPerPage.currentStart === 0,
+      next: this.rowsPerPage.currentEnd >= this.rows.length,
+      last: this.rowsPerPage.currentEnd >= this.rows.length
+    };
+
+    for (const button of paginationButtons) {
+      const buttonElement = $(button);
+      const buttonAction = buttonElement.data('page');
+      buttonElement.prop('disabled', disabled[buttonAction]);
     }
   }
 }

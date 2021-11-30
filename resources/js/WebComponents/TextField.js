@@ -1,6 +1,5 @@
 import {TextField as MWCTextField} from '@material/mwc-textfield';
 import {waitUntil} from 'async-wait-until';
-import classnames from 'classnames';
 import {
   html,
   type TemplateResult
@@ -10,13 +9,50 @@ import {
 export default class TextField extends MWCTextField {
   async connectedCallback() {
     super.connectedCallback();
+
+    // Wait until slots are added to DOM
     await waitUntil(() => this.shadowRoot.querySelectorAll('slot[name^=icon]').length > 0);
+
     const slots = this.shadowRoot.querySelectorAll('slot[name^=icon]');
     for (const slot: HTMLSlotElement of slots) {
+      const slotClass = `mdc-text-field__icon--${slot.name === 'icon' ? 'leading' : 'trailing'}`;
+      const rootClass = `mdc-text-field--with-${slot.name === 'icon' ? 'leading' : 'trailing'}-icon`;
+      const slotParent = slot.parentElement;
+      const rootElement = this.shadowRoot.firstElementChild;
+
+      // Check if slot has content
       if (slot.assignedNodes().length > 0) {
-        this[slot.name] = ' ';
+        slotParent.classList.add(slotClass);
+        rootElement.classList.add(rootClass);
       }
+
+      // Listen for changes in slot (added/removed)
+      slot.addEventListener('slotchange', () => {
+        if (slot.assignedNodes().length > 0) {
+          slotParent.classList.add(slotClass);
+          rootElement.classList.add(rootClass);
+        } else {
+          slotParent.classList.remove(slotClass);
+          rootElement.classList.remove(rootClass);
+        }
+      });
     }
+  }
+
+  renderLeadingIcon() {
+    return this.renderIcon();
+  }
+
+  renderTrailingIcon() {
+    return this.renderIcon(true);
+  }
+
+  renderIcon(isTrailingIcon: boolean = false): TemplateResult {
+    return html`
+      <span class="mdc-text-field__icon">
+          <slot name="icon${isTrailingIcon ? 'Trailing' : ''}"></slot>
+        </span>
+    `;
   }
 
   get nativeValidationMessage() {
@@ -45,26 +81,6 @@ export default class TextField extends MWCTextField {
       this.validationMessage = this.nativeValidationMessage;
     }
     return isValid;
-  }
-
-  renderLeadingIcon() {
-    return this.renderIcon();
-  }
-
-  renderTrailingIcon() {
-    return this.renderIcon(true);
-  }
-
-  renderIcon(isTrailingIcon: boolean = false): TemplateResult {
-    const classes = {
-      'mdc-text-field__icon--leading': !isTrailingIcon,
-      'mdc-text-field__icon--trailing': isTrailingIcon
-    };
-
-    return html`
-      <span class="mdc-text-field__icon ${classnames(classes)}">
-          <slot name="icon${isTrailingIcon ? 'Trailing' : ''}"></slot>
-        </span>`;
   }
 }
 

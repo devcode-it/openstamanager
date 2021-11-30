@@ -15,30 +15,55 @@ import TableFooter from './TableFooter.jsx';
 import TableRow from './TableRow.jsx';
 
 export default class DataTable extends Component {
-  view(vnode) {
-    const rowsPerPageOptions: number[] = this.attrs.get('rows-per-page', '10,25,50,75,100').split(',')
-      .map((rowsPerPage: string) => Number.parseInt(rowsPerPage, 10));
+  rows: Cash[];
+  columns: Children[];
+  footer: Children[];
 
-    let defaultRowsPerPage = Number.parseInt(this.attrs.get('default-rows-per-page', 10), 10);
-    if (!rowsPerPageOptions.includes(defaultRowsPerPage)) {
-      [defaultRowsPerPage] = rowsPerPageOptions;
+  rowsPerPage = {
+    options: [10, 25, 50, 75, 100],
+    default: 10
+  }
+
+  onbeforeupdate(vnode) {
+    super.onbeforeupdate(vnode);
+
+    const children = (vnode.children: Children[]).flat();
+
+    this.rows = this.tableRows(children);
+    this.columns = this.filterElements(children, TableColumn);
+    this.footer = this.filterElements(children, TableFooter);
+
+    const rowsPerPage = this.attrs.get('rows-per-page');
+    if (rowsPerPage) {
+      this.rowsPerPage.options = rowsPerPage.split(',')
+        .map((value: string) => Number.parseInt(value, 10));
     }
 
+    let defaultRowsPerPage = this.attrs.get('default-rows-per-page');
+    if (Number.isInteger(defaultRowsPerPage)) {
+      defaultRowsPerPage = Number.parseInt(defaultRowsPerPage, 10);
+      if (!this.rowsPerPage.options.includes(defaultRowsPerPage)) {
+        [this.rowsPerPage.default] = this.rowsPerPage.options;
+      }
+    }
+  }
+
+  view(vnode) {
     return <div className="mdc-data-table" {...this.attrs.all()}>
       <div className="mdc-data-table__table-container">
         <table className="mdc-data-table__table" aria-label={this.attrs.get('aria-label')}>
           <thead>
-            <tr className="mdc-data-table__header-row">
-              {this.attrs.has('checkable') && <TableColumn type="checkbox"/>}
-              {this.tableColumns(vnode.children)}
-            </tr>
+          <tr className="mdc-data-table__header-row">
+            {this.attrs.has('checkable') && <TableColumn type="checkbox"/>}
+            {this.columns}
+          </tr>
           </thead>
 
           <tbody className="mdc-data-table__content">
-            {this.tableRows(vnode.children)}
+            {this.rows}
           </tbody>
 
-          {this.tableFooter(vnode.children)}
+          {this.footer}
         </table>
 
         {this.attrs.has('paginated') && <div className="mdc-data-table__pagination">
@@ -53,9 +78,9 @@ export default class DataTable extends Component {
                 className="mdc-data-table__pagination-rows-per-page-select"
                 fixedMenuPosition
                 style="--mdc-select-width: 112px; --mdc-select-height: 36px; --mdc-menu-item-height: 36px;"
-                value={defaultRowsPerPage}
+                value={this.rowsPerPage.default}
               >
-                {rowsPerPageOptions.map(
+                {this.rowsPerPage.options.map(
                   (value) => {
                     const rowsPerPage = Number.parseInt(value, 10);
                     return (
@@ -70,12 +95,17 @@ export default class DataTable extends Component {
 
             <div className="mdc-data-table__pagination-navigation">
               <div className="mdc-data-table__pagination-total">
-                {__('1-:chunk di :total', {chunk: <span id="chunk">10</span>, total: <span id="total">100</span>})}
+                {__('1-:chunk di :total', {
+                  chunk: <span className="mdc-data-table__pagination-chunk">10</span>,
+                  total: <span className="mdc-data-table__pagination-total">100</span>
+                })}
               </div>
-              <mwc-icon-button className="mdc-data-table__pagination-button" data-page="first" disabled>
+              <mwc-icon-button className="mdc-data-table__pagination-button" data-page="first"
+                               disabled>
                 <Mdi icon="page-first"/>
               </mwc-icon-button>
-              <mwc-icon-button className="mdc-data-table__pagination-button" data-page="prev" disabled>
+              <mwc-icon-button className="mdc-data-table__pagination-button" data-page="prev"
+                               disabled>
                 <Mdi icon="chevron-left"/>
               </mwc-icon-button>
               <mwc-icon-button className="mdc-data-table__pagination-button" data-page="next">
@@ -96,26 +126,18 @@ export default class DataTable extends Component {
     </div>;
   }
 
-  tableColumns(children: Children[]) {
-    return this.filterElements(children.flat(), TableColumn);
-  }
-
-  tableRows(children: Children[]) {
-    let rows = this.filterElements(children.flat(), TableRow);
+  tableRows(children: Children[]): Children[] {
+    let rows = this.filterElements(children, TableRow);
 
     if (this.attrs.has('checkable')) {
       rows = rows.map((row: Vnode) => (
-          <TableRow key={row.attrs.key} checkable {...row.attrs}>
-            {row.children}
-          </TableRow>
+        <TableRow key={row.attrs.key} checkable {...row.attrs}>
+          {row.children}
+        </TableRow>
       ));
     }
 
     return rows;
-  }
-
-  tableFooter(children: Children[]) {
-    return this.filterElements(children.flat(), TableFooter);
   }
 
   filterElements(elements: Children[], tag: Component | string): Children[] {
@@ -130,10 +152,14 @@ export default class DataTable extends Component {
     return filtered;
   }
 
+
+
   oncreate(vnode) {
     super.oncreate(vnode);
 
-    $(this.element).find('thead th[sortable], thead th[sortable] mwc-icon-button-toggle').on('click', this.onColumnClicked.bind(this));
+    $(this.element)
+      .find('thead th[sortable], thead th[sortable] mwc-icon-button-toggle')
+      .on('click', this.onColumnClicked.bind(this));
   }
 
   showProgress() {
@@ -155,7 +181,8 @@ export default class DataTable extends Component {
   onColumnClicked(event: Event) {
     this.showProgress();
 
-    const column: Cash = $(event.target).closest('th');
+    const column: Cash = $(event.target)
+      .closest('th');
     const ascendingClass = 'mdc-data-table__header-cell--sorted';
     const descendingClass = 'mdc-data-table__header-cell--sorted-descending';
 
@@ -165,9 +192,11 @@ export default class DataTable extends Component {
     }
 
     // Clean previously sorted info and arrows
-    const columns = $(this.element).find('thead th');
+    const columns = $(this.element)
+      .find('thead th');
     columns.removeClass(ascendingClass);
-    columns.find('mwc-icon-button-toggle').hide();
+    columns.find('mwc-icon-button-toggle')
+      .hide();
 
     // Add ony one header to sort
     column.addClass(ascendingClass);
@@ -180,7 +209,8 @@ export default class DataTable extends Component {
   }
 
   sortTable(columnIndex: number, isDescending: boolean, isNumeric: boolean) {
-    const sorted = [...$(this.element).find(`tr td:nth-child(${columnIndex})`)].sort((a: HTMLElement, b: HTMLElement) => {
+    const sorted = [...$(this.element)
+      .find(`tr td:nth-child(${columnIndex})`)].sort((a: HTMLElement, b: HTMLElement) => {
       let aValue = a.textContent;
       let bValue = b.textContent;
 
@@ -203,7 +233,8 @@ export default class DataTable extends Component {
     });
 
     for (const cell of sorted) {
-      const row = $(cell).parent();
+      const row = $(cell)
+        .parent();
       row.appendTo(row.parent());
     }
   }

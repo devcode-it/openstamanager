@@ -16,6 +16,14 @@ import TableRow from './TableRow.jsx';
 
 export default class DataTable extends Component {
   view(vnode) {
+    const rowsPerPageOptions: number[] = this.attrs.get('rows-per-page', '10,25,50,75,100').split(',')
+      .map((rowsPerPage: string) => Number.parseInt(rowsPerPage, 10));
+
+    let defaultRowsPerPage = Number.parseInt(this.attrs.get('default-rows-per-page', 10), 10);
+    if (!rowsPerPageOptions.includes(defaultRowsPerPage)) {
+      [defaultRowsPerPage] = rowsPerPageOptions;
+    }
+
     return <div className="mdc-data-table" {...this.attrs.all()}>
       <div className="mdc-data-table__table-container">
         <table className="mdc-data-table__table" aria-label={this.attrs.get('aria-label')}>
@@ -45,8 +53,9 @@ export default class DataTable extends Component {
                 className="mdc-data-table__pagination-rows-per-page-select"
                 fixedMenuPosition
                 style="--mdc-select-width: 112px; --mdc-select-height: 36px; --mdc-menu-item-height: 36px;"
+                value={defaultRowsPerPage}
               >
-                {this.attrs.get('rows-per-page', '10,25,50,75,100').split(',').map(
+                {rowsPerPageOptions.map(
                   (value) => {
                     const rowsPerPage = Number.parseInt(value, 10);
                     return (

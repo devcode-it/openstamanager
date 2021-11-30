@@ -81,14 +81,11 @@ export default class DataTable extends Component {
                 value={this.rowsPerPage.default}
               >
                 {this.rowsPerPage.options.map(
-                  (value) => {
-                    const rowsPerPage = Number.parseInt(value, 10);
-                    return (
+                  rowsPerPage => (
                       <mwc-list-item key={rowsPerPage} value={rowsPerPage}>
                         {rowsPerPage}
                       </mwc-list-item>
-                    );
-                  }
+                  )
                 )}
               </material-select>
             </div>

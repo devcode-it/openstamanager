@@ -128,11 +128,19 @@ export default class DataTable extends Component {
   }
 
   showProgress() {
-    $(this.element).addClass('mdc-data-table--in-progress').find('.mdc-data-table__progress-indicator mwc-linear-progress').get(0).open();
+    $(this.element)
+      .addClass('mdc-data-table--in-progress')
+      .find('.mdc-data-table__progress-indicator mwc-linear-progress')
+      .get(0)
+      .open();
   }
 
   hideProgress() {
-    $(this.element).removeClass('mdc-data-table--in-progress').find('.mdc-data-table__progress-indicator mwc-linear-progress').get(0).open();
+    $(this.element)
+      .removeClass('mdc-data-table--in-progress')
+      .find('.mdc-data-table__progress-indicator mwc-linear-progress')
+      .get(0)
+      .open();
   }
 
   onColumnClicked(event: Event) {

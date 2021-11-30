@@ -372,6 +372,7 @@ if (!empty($righe)) {
         $qta = $riga['Quantita'];
         $um = $riga['UnitaMisura'];
         $prezzo_unitario = $riga['PrezzoUnitario'] ?: $riga['Importo'];
+        $is_descrizione = empty((float)$riga['Quantita']) && empty((float)$prezzo_unitario);
 
         echo '
         <tr data-id="'.$key.'" data-qta="'.$qta.'" data-prezzo_unitario="'.$prezzo_unitario.'" data-iva_percentuale="'.$riga['AliquotaIVA'].'">
@@ -404,8 +405,11 @@ if (!empty($righe)) {
                 ]).'
                 <span id="riferimento_'.$key.'_iva"></span>
             </td>
-        </tr>
+        </tr>';
 
+        
+        if (!$is_descrizione) {
+            echo '
         <tr id="dati_'.$key.'">
             <td colspan="4" class="row">
                 <span class="hide" id="aliquota['.$key.']">'.$riga['AliquotaIVA'].'</span>
@@ -462,6 +466,24 @@ if (!empty($righe)) {
                 </div>
             </td>
         </tr>';
+        } else {
+            echo '
+                <input type="hidden" name="qta_riferimento['.$key.']" id="qta_riferimento_'.$key.'" value="'.$riga['Quantita'].'">
+
+                <input type="hidden" name="tipo_riferimento['.$key.']" id="tipo_riferimento_'.$key.'" value="">
+                <input type="hidden" name="id_riferimento['.$key.']" id="id_riferimento_'.$key.'" value="">
+                <input type="hidden" name="id_riga_riferimento['.$key.']" id="id_riga_riferimento_'.$key.'" value="">
+                <input type="hidden" name="tipo_riga_riferimento['.$key.']" id="tipo_riga_riferimento_'.$key.'" value="">
+
+                <input type="hidden" name="tipo_riferimento_vendita['.$key.']" id="tipo_riferimento_vendita_'.$key.'" value="">
+                <input type="hidden" name="id_riferimento_vendita['.$key.']" id="id_riferimento_vendita_'.$key.'" value="">
+                <input type="hidden" name="id_riga_riferimento_vendita['.$key.']" id="id_riga_riferimento_vendita_'.$key.'" value="">
+                <input type="hidden" name="tipo_riga_riferimento_vendita['.$key.']" id="tipo_riga_riferimento_vendita_'.$key.'" value="">
+                
+                <input type="hidden" name="conto['.$key.']" value="">
+                <input type="hidden" name="iva['.$key.']" value="">
+                <input type="hidden" name="update_info['.$key.']" value="">';
+        }
     }
 
     echo '

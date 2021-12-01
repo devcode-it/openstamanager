@@ -27,7 +27,10 @@ import {
 } from '../utils';
 
 function getFlag(language: string, slot: string = 'graphic', styles: {...} = {}) {
-  styles.display ??= 'flex';
+  if (!styles.display) {
+    styles.display = 'flex';
+  }
+
   return (
     <div slot={slot} style={styles}>
       <img style="border-radius: 4px;"

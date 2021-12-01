@@ -208,7 +208,7 @@ export default class SetupPage extends Page {
           .toggleClass('mdc-high-contrast');
       });
 
-    $('mwc-select#language-select').on('action', this.onLanguageSelected);
+    $('#language-select').on('action', this.onLanguageSelected);
 
     // Fix for mwc button inside <a> tags
     $('a')
@@ -226,7 +226,10 @@ export default class SetupPage extends Page {
   }
 
   onLanguageSelected(event: Event) {
-    window.location.href = window.route('app.language', {language: event.target.value});
+    const {detail, target: select} = event;
+    const selected = $(select).find(`mwc-list-item:nth-child(${detail.index + 1}) [slot="graphic"] img`);
+    $(select).find('[slot="icon"] img').attr('src', selected.attr('src'));
+    window.location.href = window.route('app.language', {language: select.value});
   }
 
   async testDatabase(silentSuccess = false, silentError = false): boolean {

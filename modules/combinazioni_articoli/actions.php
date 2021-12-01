@@ -44,7 +44,7 @@ switch (filter('op')) {
         break;
 
     case 'gestione-variante':
-        $combinazione->generaVariante((array) filter('attributo'));
+        $combinazione->generaVariante((array) filter('attributo'), filter('id_articolo'));
 
         flash()->info(tr('Variante aggiunta correttamente!'));
 

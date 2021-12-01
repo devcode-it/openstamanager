@@ -58,7 +58,9 @@
         "symfony/translation": "^3.3",
         "symfony/var-dumper": "^3.3",
         "thenetworg/oauth2-azure": "^2.0",
-        "willdurand/geocoder": "^3.3"
+        "willdurand/geocoder": "^3.3",
+        "digitick/sepa-xml": "^1.6",
+        "wdog/sdd_ita": "dev-master"
     },
     "require-dev": {
         "codeception/codeception": "^3.0",
@@ -114,7 +116,8 @@
             "Plugins\\ListinoClienti\\": ["plugins/listino_clienti/custom/src/", "plugins/listino_clienti/src/"],
             "Plugins\\ListinoFornitori\\": ["plugins/listino_fornitori/custom/src/", "plugins/listino_fornitori/src/"],
             "Plugins\\ComponentiImpianti\\": ["plugins/componenti/custom/src/", "plugins/componenti/src/"],
-            "Modules\\StatoEmail\\": ["modules/stato_email/custom/src/", "modules/stato_email/src/"]
+            "Modules\\StatoEmail\\": ["modules/stato_email/custom/src/", "modules/stato_email/src/"],
+            "Plugins\\PresentazioniBancarie\\": ["plugins/presentazioni_bancarie/custom/src/", "plugins/presentazioni_bancarie/src/"]
         },
         "files": [
             "lib/functions.php",
@@ -124,13 +127,19 @@
             "lib/deprecated.php"
         ]
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/wdog/sdd_ita"
+        }
+    ],
     "config": {
         "sort-packages": true,
         "optimize-autoloader": false,
         "apcu-autoloader": true,
         "prefer-stable": true,
         "platform": {
-            "php": "5.6.4"
+            "php": "7.1"
         }
     }
 }

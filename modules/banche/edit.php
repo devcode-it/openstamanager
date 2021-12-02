@@ -153,10 +153,10 @@ if (!empty($numero_documenti)) {
     var components = [branch_code, bank_code, account_number, check_digits, national_check_digits, id_nazione];
 
     $(document).ready(function (){
-        iban.trigger("change");
+        iban.trigger("keyup");
     });
 
-    iban.change(function () {
+    iban.on("keyup", function () {
         if (!iban.isDisabled()){
             let value = iban.get();
             for (const component of components){
@@ -168,7 +168,7 @@ if (!empty($numero_documenti)) {
     });
 
     for (const component of components){
-        component.change(function () {
+        component.on("keyup", function () {
             let i = input(this);
             if (!i.isDisabled()) {
                 iban.setDisabled(i.get() !== "")

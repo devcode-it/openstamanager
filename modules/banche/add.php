@@ -46,6 +46,20 @@ echo '
 		</div>
 	</div>
 
+	<div class="row">
+		<div class="col-md-4">
+			{[ "type": "select", "label": "'.tr('Nazione').'", "name": "id_nazione", "ajax-source": "nazioni" ]}
+		</div>
+
+		<div class="col-md-4">
+			{[ "type": "text", "label": "'.tr('Codice banca nazionale (ABI)').'", "name": "bank_code", "class": "alphanumeric-mask" ]}
+		</div>
+
+		<div class="col-md-4">
+			{[ "type": "text", "label": "'.tr('Codice filiale (CAB)').'", "name": "branch_code", "class": "alphanumeric-mask" ]}
+		</div>
+	</div>
+
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
@@ -55,3 +69,99 @@ echo '
 		</div>
 	</div>
 </form>';
+?>
+<script>
+    var iban = input("iban");
+
+    var branch_code = input("branch_code");
+    var bank_code = input("bank_code");
+    var id_nazione = input("id_nazione");
+
+    var components = [branch_code, bank_code, id_nazione];
+
+    $(document).ready(function (){
+        iban.trigger("keyup");
+    });
+
+    iban.on("keyup", function () {
+        if (!iban.isDisabled()){
+            let value = iban.get();
+            for (const component of components){
+                component.setDisabled(value !== "")
+            }
+
+            scomponiIban();
+        }
+    });
+
+    for (const component of components){
+        component.on("keyup", function () {
+            let i = input(this);
+            if (!i.isDisabled()) {
+                iban.setDisabled(i.get() !== "")
+
+                componiIban();
+            }
+        });
+    }
+
+    function scomponiIban() {
+        $.ajax({
+            url: globals.rootdir + '/actions.php',
+            data: {
+                id_module: globals.id_module,
+                op: "decompose",
+                iban: iban.get(),
+            },
+            type: 'GET',
+            dataType: "json",
+            success: function (response) {
+                compilaCampi(response);
+            },
+            error: function() {
+                toastr["error"]("<?php echo tr('Formato IBAN non valido'); ?>");
+            }
+        });
+    }
+
+    function componiIban() {
+        // Controllo su campi con valore impostato
+        let continua = false;
+        for (const component of components){
+            continua |= !([undefined, null, ""].includes(component.get()));
+        }
+
+        if (!continua){
+            return;
+        }
+
+        $.ajax({
+            url: globals.rootdir + '/actions.php',
+            data: {
+                id_module: globals.id_module,
+                op: "compose",
+                branch_code: branch_code.get(),
+                bank_code: bank_code.get(),
+                id_nazione: id_nazione.get(),
+            },
+            type: 'GET',
+            dataType: "json",
+            success: function (response) {
+                compilaCampi(response);
+            },
+            error: function() {
+                toastr["error"]("<?php echo tr('Formato IBAN non valido'); ?>");
+            }
+        });
+    }
+
+    function compilaCampi(values) {
+        for([key, value] of Object.entries(values)) {
+            if (typeof value === 'object' && value !== null) {
+                input(key).getElement().selectSetNew(value.id, value.text, value);
+            } else {
+                input(key).set(value);
+            }
+        }
+    }
+</script>

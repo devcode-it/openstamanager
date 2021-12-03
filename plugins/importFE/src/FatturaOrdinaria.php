@@ -209,7 +209,8 @@ class FatturaOrdinaria extends FatturaElettronica
                 $obj->id_rivalsa_inps = $id_rivalsa;
                 $obj->ritenuta_contributi = $ritenuta_contributi;
 
-                if (!empty($riga['Ritenuta'])) {
+                // Inserisco la ritenuta se è specificata nella riga o se non è specificata nella riga ma è presente in Dati ritenuta (quindi comprende tutte le righe)
+                if (!empty($riga['Ritenuta']) || $info['ritenuta_norighe']==true) {
                     $obj->id_ritenuta_acconto = $id_ritenuta_acconto;
                     $obj->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
                 }
@@ -430,9 +431,11 @@ class FatturaOrdinaria extends FatturaElettronica
         $ritenuta = $dati_generali['DatiRitenuta'];
         if (!empty($ritenuta)) {
             $totali = [];
+            $ritenuta_norighe = true;
             foreach ($righe as $riga) {
                 if (!empty($riga['Ritenuta'])) {
                     $totali[] = $riga['PrezzoTotale'];
+                    $ritenuta_norighe = false;
                 }
             }
             $totale = sum($totali);
@@ -463,6 +466,7 @@ class FatturaOrdinaria extends FatturaElettronica
             'id_ritenuta_acconto' => $id_ritenuta_acconto,
             'id_rivalsa' => $id_rivalsa,
             'rivalsa_in_ritenuta' => $rivalsa_in_ritenuta,
+            'ritenuta_norighe' => $ritenuta_norighe,
         ];
     }
 }

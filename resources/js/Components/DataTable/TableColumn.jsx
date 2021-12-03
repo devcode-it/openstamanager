@@ -55,11 +55,10 @@ export default class TableColumn extends Component {
     super.oncreate(vnode);
 
     if (this.attrs.get('type') === 'checkbox') {
-      window.vnode = $(vnode.dom);
-      const checkbox = $(vnode.dom)
-        .children('mwc-checkbox');
+      const checkbox = $(this.element)
+        .children('.mdc-data-table__header-row-checkbox');
 
-      checkbox.on('change', () => this.onCheckboxClicked.bind(this));
+      checkbox.on('change', this.onCheckboxClicked.bind(this));
     }
 
     // Handle click on column (add arrows)
@@ -72,14 +71,19 @@ export default class TableColumn extends Component {
     $(this.element).find('.mdc-data-table__filter-textfield').on('input', this.onFilterInput.bind(this));
   }
 
-  onCheckboxClicked() {
+  onCheckboxClicked(event: Event) {
     const row: Cash = $(this.element)
       .closest('table')
       .find('tbody tr[checkable]');
 
-    row.addClass('mdc-data-table__row--selected');
+    const selectedClass = 'mdc-data-table__row--selected';
+    if (event.target.checked) {
+      row.addClass(selectedClass);
+    } else {
+      row.removeClass(selectedClass);
+    }
 
-    row.find('mwc-checkbox').prop('checked', checkbox.prop('checked'));
+    row.find('mwc-checkbox').prop('checked', event.target.checked);
   }
 
   onClassChanged(mutations: MutationRecord[]) {

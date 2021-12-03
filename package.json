@@ -41,6 +41,7 @@
         "@material/mwc-textarea": "^0.25.3",
         "@material/mwc-textfield": "^0.25.3",
         "@material/mwc-top-app-bar": "^0.25.3",
+        "@material/textfield": "^13.0.0",
         "@material/theme": "^13.0.0",
         "@material/typography": "^13.0.0",
         "@mdi/font": "^6.5.95",

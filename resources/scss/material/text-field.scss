@@ -1,0 +1,19 @@
+@use "@material/textfield";
+
+$sizes: ("comfortable": -2, "dense": -3, "compact": -4);
+
+@each $density, $value in $sizes {
+    //noinspection Stylelint
+    .mdc-text-field--#{$density} {
+        &.mdc-text-field--outlined {
+            @include textfield.outlined-density($value);
+        }
+        &:not(.mdc-text-field--outlined) {
+            @include textfield.density($value);
+        }
+
+        &:not(.mdc-text-field--outlined) .mdc-floating-label {
+            display: inherit;
+        }
+    }
+}

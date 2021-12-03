@@ -39,6 +39,7 @@ specifiers:
   '@material/mwc-textarea': ^0.25.3
   '@material/mwc-textfield': ^0.25.3
   '@material/mwc-top-app-bar': ^0.25.3
+  '@material/textfield': ^13.0.0
   '@material/theme': ^13.0.0
   '@material/typography': ^13.0.0
   '@mdi/font': ^6.5.95
@@ -120,6 +121,7 @@ dependencies:
   '@material/mwc-textarea': 0.25.3
   '@material/mwc-textfield': 0.25.3
   '@material/mwc-top-app-bar': 0.25.3
+  '@material/textfield': 13.0.0
   '@material/theme': 13.0.0
   '@material/typography': 13.0.0
   '@mdi/font': 6.5.95
@@ -2448,6 +2450,25 @@ packages:
       '@material/shape': 14.0.0-canary.261f2db59.0
       '@material/theme': 14.0.0-canary.261f2db59.0
       '@material/typography': 14.0.0-canary.261f2db59.0
+      tslib: 2.3.1
+    dev: false
+
+  /@material/textfield/13.0.0:
+    resolution: {integrity: sha512-CzodrOqx8wzj2AQngMpISURJID4jVOHf4CtiPoj32LG8bWLn5ZfAAX2aA2rO6NPyDYsFm0aEnlfMhnDwQyPoYw==}
+    dependencies:
+      '@material/animation': 13.0.0
+      '@material/base': 13.0.0
+      '@material/density': 13.0.0
+      '@material/dom': 13.0.0
+      '@material/feature-targeting': 13.0.0
+      '@material/floating-label': 13.0.0
+      '@material/line-ripple': 13.0.0
+      '@material/notched-outline': 13.0.0
+      '@material/ripple': 13.0.0
+      '@material/rtl': 13.0.0
+      '@material/shape': 13.0.0
+      '@material/theme': 13.0.0
+      '@material/typography': 13.0.0
       tslib: 2.3.1
     dev: false
 

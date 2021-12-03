@@ -1,12 +1,32 @@
 import {TextField as MWCTextField} from '@material/mwc-textfield';
 import {waitUntil} from 'async-wait-until';
 import {
+  css,
   html,
-  type TemplateResult
+  type TemplateResult,
+  unsafeCSS
 } from 'lit';
+
+import styles from '../../scss/material/text-field.scss';
+import classnames from 'classnames';
 
 // noinspection JSCheckFunctionSignatures
 export default class TextField extends MWCTextField {
+  static styles = [MWCTextField.styles, css`${unsafeCSS(styles)}`];
+
+  static properties = {
+    ...MWCTextField.properties,
+    comfortable: {
+      type: Boolean
+    },
+    dense: {
+      type: Boolean
+    },
+    compact: {
+      type: Boolean
+    }
+  }
+
   async connectedCallback() {
     super.connectedCallback();
 
@@ -37,6 +57,39 @@ export default class TextField extends MWCTextField {
         }
       });
     }
+  }
+
+  render(): TemplateResult {
+    const shouldRenderCharCounter = this.charCounter && this.maxLength !== -1;
+    const shouldRenderHelperText = !!this.helper || !!this.validationMessage || shouldRenderCharCounter;
+
+    /** @classMap */
+    const classes = {
+      'mdc-text-field--disabled': this.disabled,
+      'mdc-text-field--no-label': !this.label,
+      'mdc-text-field--filled': !this.outlined,
+      'mdc-text-field--outlined': this.outlined,
+      'mdc-text-field--with-leading-icon': this.icon,
+      'mdc-text-field--with-trailing-icon': this.iconTrailing,
+      'mdc-text-field--end-aligned': this.endAligned,
+      'mdc-text-field--comfortable': this.comfortable,
+      'mdc-text-field--dense': this.dense,
+      'mdc-text-field--compact': this.compact
+    };
+
+    return html`
+      <label class="mdc-text-field ${classnames(classes)}">
+        ${this.renderRipple()}
+        ${this.outlined ? this.renderOutline() : this.renderLabel()}
+        ${this.renderLeadingIcon()}
+        ${this.renderPrefix()}
+        ${this.renderInput(shouldRenderHelperText)}
+        ${this.renderSuffix()}
+        ${this.renderTrailingIcon()}
+        ${this.renderLineRipple()}
+      </label>
+      ${this.renderHelperText(shouldRenderHelperText, shouldRenderCharCounter)}
+    `;
   }
 
   renderLeadingIcon() {

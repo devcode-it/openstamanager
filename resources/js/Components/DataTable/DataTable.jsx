@@ -71,6 +71,16 @@ export default class DataTable extends Component {
     if (this.rowsPerPage.currentStart === 0) {
       this.paginate('first');
     }
+
+    $(this.element)
+      .find('thead th.mdc-data-table__header-cell--with-sort')
+      .on('click', this.onColumnClicked.bind(this));
+
+    $(this.element).find('.mdc-data-table__pagination-rows-per-page-select')
+      .on('selected', this.onPaginationSelected.bind(this));
+
+    $(this.element).find('.mdc-data-table__pagination-button')
+      .on('click', this.onPaginationButtonClicked.bind(this));
   }
 
   view(vnode) {
@@ -180,16 +190,6 @@ export default class DataTable extends Component {
 
   oncreate(vnode) {
     super.oncreate(vnode);
-
-    $(this.element)
-      .find('thead th[sortable], thead th[sortable] mwc-icon-button-toggle')
-      .on('click', this.onColumnClicked.bind(this));
-
-    $(this.element).find('.mdc-data-table__pagination-rows-per-page-select')
-      .on('selected', this.onPaginationSelected.bind(this));
-
-    $(this.element).find('.mdc-data-table__pagination-button')
-      .on('click', this.onPaginationButtonClicked.bind(this));
   }
 
   showProgress() {
@@ -267,6 +267,8 @@ export default class DataTable extends Component {
         .parent();
       row.appendTo(row.parent());
     }
+
+    this.hideProgress();
   }
 
   onPaginationSelected(event: Event) {

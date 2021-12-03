@@ -102,3 +102,6 @@ INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`,
 
 -- Aggiunte note interne in template email
 ALTER TABLE `em_templates` ADD `note_aggiuntive` TEXT NOT NULL AFTER `predefined`;
+
+-- Eliminazione modulo gestione componenti
+DELETE FROM `zz_modules` WHERE `zz_modules`.`name` = 'Gestione componenti';

@@ -114,6 +114,12 @@ echo '
                 </div>
             </div>
 
+            <div class="row">
+				<div class="col-md-12">
+					{[ "type": "textarea", "label": "<?php echo tr('Note interne'); ?>", "name": "note_aggiuntive", "value": "$note_aggiuntive$", "class": "unblockable" ]}
+				</div>
+			</div>
+
 <?php
 
 // Variabili utilizzabili

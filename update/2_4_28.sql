@@ -99,3 +99,6 @@ INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`,
 ALTER TABLE `co_scadenziario` ADD `presentazioni_exported_at` TIMESTAMP NULL DEFAULT NULL;
 
 INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES (NULL, 'Presentazioni Bancarie', 'Presentazioni Bancarie', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'), 'tab_main', '', '1', '1', '0', '', '', NULL, 'custom', 'presentazioni_bancarie', '');
+
+-- Aggiunte note interne in template email
+ALTER TABLE `em_templates` ADD `note_aggiuntive` TEXT NOT NULL AFTER `predefined`;

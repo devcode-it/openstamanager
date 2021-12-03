@@ -1,5 +1,6 @@
-@use "variables";
-@use "@material/theme" with (
+@use "sass:color";
+@use "../variables";
+@use "node_modules/@material/theme/index" with (
     $primary: variables.$primary,
     $secondary: variables.$secondary
 );
@@ -14,6 +15,26 @@
 @include data-table.core-styles;
 @include data-table.theme-baseline;
 @include typography.core-styles;
+
+/* ---------------------------
+    MDC Data Table
+ ----------------------------- */
+
+//noinspection Stylelint
+.mdc-data-table__header-cell {
+    &:not(.mdc-data-table__header-cell--checkbox) {
+        padding: 8px 16px;
+    }
+
+    .mdc-data-table__header-cell-label {
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .mdc-data-table__filter-textfield {
+        width: fit-content;
+    }
+}
 
 /* ---------------------------
     MWC Components
@@ -126,8 +147,8 @@ top-app-bar mwc-fab.sticky {
 }
 
 .mdc-high-contrast {
-    --mdc-theme-primary: #{lighten(variables.$primary, 100%)};
-    --mdc-theme-primary2: #{lighten(variables.$primary, 50%)}; // Fix for MWC Drawer styling
+    --mdc-theme-primary: #{color.adjust(variables.$primary, $lightness: 100%)};
+    --mdc-theme-primary2: #{color.adjust(variables.$primary, $lightness: 50%)}; // Fix for MWC Drawer styling
     --mdc-theme-secondary: #{variables.$secondary};
     --mdc-theme-on-primary: #000;
     --mdc-theme-on-secondary: #000;

@@ -95,6 +95,9 @@
         <item value="indeterminate" />
         <item value="inner" />
         <item value="fixedmenuposition" />
+        <item value="comfortable" />
+        <item value="dense" />
+        <item value="compact" />
       </myValues>
     </inspection_tool>
     <inspection_tool class="HtmlUnknownTag" enabled="true" level="WARNING" enabled_by_default="true">

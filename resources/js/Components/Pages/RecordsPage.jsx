@@ -127,7 +127,7 @@ export default class RecordsPage extends Page {
     return collect(this.columns)
       .map(
         (column: ColumnT | string, id: string) => (
-          <TableColumn id={id} key={id} {...((typeof column === 'object') ? column : {})} sortable>
+          <TableColumn id={id} key={id} {...((typeof column === 'object') ? column : {})} sortable filterable>
             {typeof column === 'string' ? column : column.title}
           </TableColumn>
         )

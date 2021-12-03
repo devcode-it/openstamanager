@@ -37,6 +37,17 @@ export default class TableColumn extends Component {
       vnode.children = <mwc-checkbox className="mdc-data-table__header-row-checkbox" />;
     }
 
+    if (this.attrs.get('type') !== 'checkbox' && this.attrs.has('filterable')) {
+      vnode.children = (
+        <>
+          {vnode.children}
+          <div style="margin-top: 8px;">
+            <text-field outlined className="mdc-data-table__filter-textfield" label={__('Filtro')} compact/>
+          </div>
+        </>
+      );
+    }
+
     return <th {...this.attrs.all()} role="columnheader" scope="col">{vnode.children}</th>;
   }
 
@@ -80,6 +91,20 @@ export default class TableColumn extends Component {
     observer.observe(this.element, {
       attributes: true,
       attributeFilter: ['class']
+    });
+
+    $(this.element).find('.mdc-data-table__filter-textfield').on('input', (event: InputEvent) => {
+      const index = $(this.element).index();
+      const rows: Cash = $(this.element)
+        .closest('table')
+        .find('tbody tr');
+      rows.hide();
+      rows.filter(
+        (index_, element) => $(element)
+          .find(`td:nth-child(${index + 1})`)
+          .text()
+          .search(event.target.value) !== -1
+      ).show();
     });
   }
 }

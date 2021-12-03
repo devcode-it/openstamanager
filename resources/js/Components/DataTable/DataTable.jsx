@@ -214,33 +214,39 @@ export default class DataTable extends Component {
     const column: Cash = $(event.target)
       .closest('th');
     const ascendingClass = 'mdc-data-table__header-cell--sorted';
-    const descendingClass = 'mdc-data-table__header-cell--sorted-descending';
-
-    // If it's already sorted change direction
-    if (column.hasClass(ascendingClass)) {
-      column.toggleClass(descendingClass);
-    }
 
     // Clean previously sorted info and arrows
     const columns = $(this.element)
       .find('thead th');
     columns.removeClass(ascendingClass);
-    columns.find('mwc-icon-button-toggle')
-      .hide();
+    columns.off('click').on('click', this.onColumnClicked.bind(this));
 
     // Add ony one header to sort
     column.addClass(ascendingClass);
 
-    // Check if need descending sorting
-    const isDescending = column.hasClass(descendingClass);
-
     // Do sorting
-    this.sortTable(column.index() + 1, isDescending, column.attr('type') === 'numeric');
+    this.sortTable(column.attr('id'), false);
+
+    // Set/remove callbacks
+    column.off('click');
+    column.find('mwc-icon-button-toggle').on('click', () => {
+      this.sortTable(column.attr('id'));
+    });
   }
 
-  sortTable(columnIndex: number, isDescending: boolean, isNumeric: boolean) {
-    const sorted = [...$(this.element)
-      .find(`tr td:nth-child(${columnIndex})`)].sort((a: HTMLElement, b: HTMLElement) => {
+  sortTable(columnId: number, toggleClass = true) {
+    const column: Cash = $(`#${columnId}`);
+    const cells = $(this.element).find(`tr td:nth-child(${column.index() + 1})`).get();
+
+    // Handle button class
+    if (toggleClass) {
+      column.toggleClass('mdc-data-table__header-cell--sorted-descending');
+    }
+
+    const isNumeric = column.attr('type') === 'numeric';
+    const isDescending = column.hasClass('mdc-data-table__header-cell--sorted-descending');
+
+    cells.sort((a: HTMLElement, b: HTMLElement) => {
       let aValue = a.textContent;
       let bValue = b.textContent;
 
@@ -262,7 +268,7 @@ export default class DataTable extends Component {
       return aValue < bValue ? -1 : (aValue > bValue ? 1 : 0);
     });
 
-    for (const cell of sorted) {
+    for (const cell of cells) {
       const row = $(cell)
         .parent();
       row.appendTo(row.parent());

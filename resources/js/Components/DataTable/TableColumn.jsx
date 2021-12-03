@@ -98,8 +98,11 @@ export default class TableColumn extends Component {
       button.prop('on', onValue);
 
       if (classList.contains(ascendingClass) || classList.contains(descendingClass)) {
-        $(this.element).css('cursor', 'auto').off('click');
+        $(this.element).css('cursor', 'auto');
         button.show();
+      } else if (!classList.contains(ascendingClass) && !classList.contains(descendingClass)) {
+        $(this.element).css('cursor', 'pointer');
+        button.hide();
       }
     }
   }

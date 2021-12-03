@@ -59,52 +59,55 @@ export default class TableColumn extends Component {
       const checkbox = $(vnode.dom)
         .children('mwc-checkbox');
 
-      checkbox.on('change', () => {
-        const row: Cash = $(this.element)
-          .closest('table')
-          .find('tbody tr[checkable]');
-
-        row.addClass('mdc-data-table__row--selected');
-
-        row.find('mwc-checkbox').prop('checked', checkbox.prop('checked'));
-      });
+      checkbox.on('change', () => this.onCheckboxClicked.bind(this));
     }
 
     // Handle click on column (add arrows)
-    const observer = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        const {classList} = mutation.target;
-        const ascendingClass = 'mdc-data-table__header-cell--sorted';
-        const descendingClass = 'mdc-data-table__header-cell--sorted-descending';
-
-        const onValue = classList.contains(descendingClass);
-
-        const button: Cash = $(this.element).find('mwc-icon-button-toggle');
-        button.prop('on', onValue);
-
-        if (classList.contains(ascendingClass) || classList.contains(descendingClass)) {
-          $(this.element).css('cursor', 'auto').off('click');
-          button.show();
-        }
-      }
-    });
+    const observer = new MutationObserver(this.onClassChanged.bind(this));
     observer.observe(this.element, {
       attributes: true,
       attributeFilter: ['class']
     });
 
-    $(this.element).find('.mdc-data-table__filter-textfield').on('input', (event: InputEvent) => {
-      const index = $(this.element).index();
-      const rows: Cash = $(this.element)
-        .closest('table')
-        .find('tbody tr');
-      rows.hide();
-      rows.filter(
-        (index_, element) => $(element)
-          .find(`td:nth-child(${index + 1})`)
-          .text()
-          .search(event.target.value) !== -1
-      ).show();
-    });
+    $(this.element).find('.mdc-data-table__filter-textfield').on('input', this.onFilterInput.bind(this));
+  }
+
+  onCheckboxClicked() {
+    const row: Cash = $(this.element)
+      .closest('table')
+      .find('tbody tr[checkable]');
+
+    row.addClass('mdc-data-table__row--selected');
+
+    row.find('mwc-checkbox').prop('checked', checkbox.prop('checked'));
+  }
+
+  onClassChanged(mutations: MutationRecord[]) {
+    for (const mutation of mutations) {
+      const {classList} = mutation.target;
+      const ascendingClass = 'mdc-data-table__header-cell--sorted';
+      const descendingClass = 'mdc-data-table__header-cell--sorted-descending';
+
+      const onValue = classList.contains(descendingClass);
+
+      const button: Cash = $(this.element).find('mwc-icon-button-toggle');
+      button.prop('on', onValue);
+
+      if (classList.contains(ascendingClass) || classList.contains(descendingClass)) {
+        $(this.element).css('cursor', 'auto').off('click');
+        button.show();
+      }
+    }
+  }
+
+  onFilterInput(event: InputEvent) {
+    const index = $(this.element).index();
+    const rows: Cash = $(this.element).closest('table').find('tbody tr');
+    rows.hide();
+    rows.filter((index_, element) => $(element)
+      .find(`td:nth-child(${index + 1})`)
+      .text()
+      .search(event.target.value) !== -1
+    ).show();
   }
 }

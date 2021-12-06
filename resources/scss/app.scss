@@ -50,6 +50,15 @@ main {
     transform: translateY(-50%);
 }
 
+.ext-container {
+    width: 95%;
+    margin-top: 16px;
+}
+
+.ext-container-small {
+    width: 50%;
+}
+
 .logo-bg-sticky {
     position: fixed;
     z-index: 1;

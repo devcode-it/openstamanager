@@ -73,7 +73,7 @@ export default class SetupPage extends Page {
 
     return (
       <>
-        <mwc-card outlined className="center" style="width: 95%;">
+        <mwc-card outlined className="center ext-container">
           <form id="setup">
             <img src={logoUrl} className="center" alt={__('OpenSTAManager')} />
             <mwc-layout-grid>

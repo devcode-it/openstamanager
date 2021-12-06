@@ -23,9 +23,7 @@ class AppServiceProvider extends ServiceProvider
     {
         cache()->rememberForever(
             'translations_'.app()->getLocale(),
-            fn () => Json::encode(
-                Json::decode(file_get_contents(resource_path('lang/'.app()->getLocale().'.json')))
-            )
+            fn () => Json::decode(file_get_contents(resource_path('lang/'.app()->getLocale().'.json')))
         );
     }
 }

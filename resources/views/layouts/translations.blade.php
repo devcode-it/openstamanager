@@ -3,5 +3,5 @@
     $translations = cache('translations_' . app()->getLocale());
 @endphp
 <script>
-  window.translations = JSON.parse('{!! $translations !!}')
+  window.translations = @js($translations);
 </script>

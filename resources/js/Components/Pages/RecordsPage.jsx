@@ -229,8 +229,6 @@ export default class RecordsPage extends Page {
                       })()}
                   </mwc-layout-grid>
                 </div>
-                {index !== sections.keys()
-                  .last() && <hr/>}
               </>
             ))
               .toArray();

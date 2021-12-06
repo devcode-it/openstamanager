@@ -77,3 +77,15 @@ echo '
     <button class="btn btn-info '.($ddt->isImportabile() ? '' : 'disabled').'" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-toggle="modal" data-title="'.tr('Crea ').($ddt->reversed ? 'nota di credito' : ($dir == 'entrata' ? 'fattura di vendita' : 'fattura di acquisto')).'"><i class="fa fa-magic"></i> '.tr('Crea ').($ddt->reversed ? 'nota di credito' : ($dir == 'entrata' ? 'fattura di vendita' : 'fattura di acquisto')).'
     </button>
 </div>';
+
+// Duplica ddt
+echo '
+<button type="button" class="btn btn-primary" onclick="if( confirm(\''.tr('Duplicare questo ddt?').'\') ){ $(\'#copia-ddt\').submit(); }">
+    <i class="fa fa-copy"></i> '.tr('Duplica ddt').'
+</button>';
+
+echo '
+<form action="" method="post" id="copia-ddt">
+    <input type="hidden" name="backto" value="record-edit">
+    <input type="hidden" name="op" value="copy">
+</form>';

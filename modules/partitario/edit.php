@@ -31,10 +31,16 @@ if ($bilancio_gia_aperto) {
 }
 
 echo '
-<div class="text-right">
-    <button type="button" class="btn btn-lg '.$btn_class.'" data-op="apri-bilancio" data-title="'.tr('Apertura bilancio').'" data-backto="record-list" data-msg="'.$msg.'" data-button="'.tr('Riprendi saldi').'" data-class="btn btn-lg btn-warning" onclick="message( this );">
-        <i class="fa fa-folder-open"></i> '.tr('Apertura bilancio').'
-    </button>
+<div class="row">
+    <div class="col-md-offset-4 col-md-4">
+            <input type="text" class="form-control input-lg text-center" id="input-cerca" placeholder="'.tr('Cerca').'...">
+    </div>
+
+    <div class="col-md-4 text-right">
+        <button type="button" class="btn btn-lg '.$btn_class.'" data-op="apri-bilancio" data-title="'.tr('Apertura bilancio').'" data-backto="record-list" data-msg="'.$msg.'" data-button="'.tr('Riprendi saldi').'" data-class="btn btn-lg btn-warning" onclick="message( this );">
+            <i class="fa fa-folder-open"></i> '.tr('Apertura bilancio').'
+        </button>
+    </div>
 </div>';
 
 // Livello 1
@@ -51,7 +57,7 @@ foreach ($primo_livello as $conto_primo) {
 
     echo '
 <hr>
-<div class="box">
+<div class="box conto1">
     <div class="box-header">
         <h3 class="box-title">
             '.$titolo.' 
@@ -70,158 +76,160 @@ foreach ($primo_livello as $conto_primo) {
     foreach ($secondo_livello as $conto_secondo) {
         // Livello 2
         echo '
-        <div class="pull-right">
-            '.Prints::getLink('Mastrino', $conto_secondo['id'], 'btn-info btn-xs', '', null, 'lev=2').'
+        <div class="conto2">
+            <div class="pull-right">
+                '.Prints::getLink('Mastrino', $conto_secondo['id'], 'btn-info btn-xs', '', null, 'lev=2').'
 
-            <button type="button" class="btn btn-warning btn-xs" onclick="modificaConto('.$conto_secondo['id'].', 2)">
-                <i class="fa fa-edit"></i>
-            </button>
-        </div>
+                <button type="button" class="btn btn-warning btn-xs" onclick="modificaConto('.$conto_secondo['id'].', 2)">
+                    <i class="fa fa-edit"></i>
+                </button>
+            </div>
 
-        <h5>
-            <b>'.$conto_secondo['numero'].' '.$conto_secondo['descrizione'].'</b>
-            <button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" title="'.tr('Aggiungi un nuovo conto...').'" onclick="aggiungiConto('.$conto_secondo['id'].')">
-            <i class="fa fa-plus-circle"></i>
-            </button>
-        </h5>
+            <h5>
+                <b>'.$conto_secondo['numero'].' '.$conto_secondo['descrizione'].'</b>
+                <button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" title="'.tr('Aggiungi un nuovo conto...').'" onclick="aggiungiConto('.$conto_secondo['id'].')">
+                <i class="fa fa-plus-circle"></i>
+                </button>
+            </h5>
 
-        <div class="table-responsive">
-            <table class="table table-striped table-hover table-condensed">
-                <thead>
-                    <tr>
-                        <th>'.tr('Descrizione').'</th>
-                        <th style="width: 10%" class="text-center">'.tr('Importo').'</th>';
-        if ($conto_primo['descrizione'] == 'Economico') {
-            echo '
-                            <th style="width: 10%" class="text-center">'.tr('Importo reddito').'</th>';
-        }
-        echo '
-                    </tr>
-                </thead>
-
-                <tbody>';
-
-        // Livello 3
-        $query3 = 'SELECT `co_pianodeiconti3`.*, movimenti.numero_movimenti, movimenti.totale, movimenti.totale_reddito, anagrafica.idanagrafica, anagrafica.deleted_at
-            FROM `co_pianodeiconti3`
-                LEFT OUTER JOIN (
-                    SELECT idanagrafica,
-                           idconto_cliente,
-                           idconto_fornitore,
-                           deleted_at
-                    FROM an_anagrafiche
-                ) AS anagrafica ON co_pianodeiconti3.id IN (anagrafica.idconto_cliente, anagrafica.idconto_fornitore)
-                LEFT OUTER JOIN (
-                    SELECT COUNT(idconto) AS numero_movimenti,
-                       idconto,
-                       SUM(totale) AS totale,
-                       SUM(totale_reddito) AS totale_reddito
-                    FROM co_movimenti
-                    WHERE data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']).' GROUP BY idconto
-                ) movimenti ON co_pianodeiconti3.id=movimenti.idconto
-            WHERE `idpianodeiconti2` = '.prepare($conto_secondo['id']).' ORDER BY numero ASC';
-        $terzo_livello = $dbo->fetchArray($query3);
-        foreach ($terzo_livello as $conto_terzo) {
-            // Se il conto non ha documenti collegati posso eliminarlo
-            $numero_movimenti = $conto_terzo['numero_movimenti'];
-
-            $totale_conto = $conto_terzo['totale'];
-            $totale_reddito = $conto_terzo['totale_reddito'];
-            if ($conto_primo['descrizione'] != 'Patrimoniale') {
-                $totale_conto = -$totale_conto;
-                $totale_reddito = -$totale_reddito;
-            }
-
-            $totale_conto2 += $totale_conto;
-            $totale_reddito2 += $totale_reddito;
-
-            echo '
-                <tr style="'.(!empty($numero_movimenti) ? '' : 'opacity: 0.5;').'">
-                    <td>';
-
-            // Possibilità di esplodere i movimenti del conto
-            if (!empty($numero_movimenti)) {
-                echo '
-                        <button type="button" id="movimenti-'.$conto_terzo['id'].'" class="btn btn-default btn-xs plus-btn"><i class="fa fa-plus"></i></button>';
-            }
-
-            // Span con i pulsanti
-            echo '
-                        <span class="hide tools pull-right">';
-
-            //  Possibilità di visionare l'anagrafica
-            $id_anagrafica = $conto_terzo['idanagrafica'];
-            $anagrafica_deleted = $conto_terzo['deleted_at'];
-            if (isset($id_anagrafica)) {
-                echo Modules::link('Anagrafiche', $id_anagrafica, ' <i title="'.(isset($anagrafica_deleted) ? tr('Anagrafica eliminata') : tr('Visualizza anagrafica')).'" class="btn btn-'.(isset($anagrafica_deleted) ? 'danger' : 'primary').' btn-xs fa fa-user" ></i>');
-            }
-
-            // Stampa mastrino
-            if (!empty($numero_movimenti)) {
-                echo '
-                            '.Prints::getLink('Mastrino', $conto_terzo['id'], 'btn-info btn-xs', '', null, 'lev=3');
-            }
-
-            // Pulsante per aggiornare il totale reddito del conto di livello 3
-            echo '
-                            <button type="button" class="btn btn-info btn-xs" onclick="aggiornaReddito('.$conto_terzo['id'].')">
-                                <i class="fa fa-refresh"></i>
-                            </button>';
-
-            // Pulsante per modificare il nome del conto di livello 3
-            echo '
-                            <button type="button" class="btn btn-warning btn-xs" onclick="modificaConto('.$conto_terzo['id'].')">
-                                <i class="fa fa-edit"></i>
-                            </button>';
-
-            // Possibilità di eliminare il conto se non ci sono movimenti collegati
-            if ($numero_movimenti <= 0) {
-                echo '
-                            <a class="btn btn-danger btn-xs ask" data-toggle="tooltip" title="'.tr('Elimina').'" data-backto="record-list" data-op="del" data-idconto="'.$conto_terzo['id'].'">
-                                <i class="fa fa-trash"></i>
-                            </a>';
-            }
-
-            echo '
-                        </span>';
-
-            // Span con info del conto
-            echo '
-                        <span class="clickable" id="movimenti-'.$conto_terzo['id'].'">
-                            &nbsp;'.$conto_secondo['numero'].'.'.$conto_terzo['numero'].' '.$conto_terzo['descrizione'].($conto_terzo['percentuale_deducibile'] < 100 ? ' <span class="text-muted">('.tr('deducibile al _PERC_%', ['_PERC_' => Translator::numberToLocale($conto_terzo['percentuale_deducibile'], 0)]).')</span>' : '').'
-                        </span>
-                        <div id="conto_'.$conto_terzo['id'].'" style="display:none;"></div>
-                    </td>
-
-                    <td class="text-right">
-                        '.moneyFormat($totale_conto, 2).'
-                    </td>';
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th>'.tr('Descrizione').'</th>
+                            <th style="width: 10%" class="text-center">'.tr('Importo').'</th>';
             if ($conto_primo['descrizione'] == 'Economico') {
                 echo '
-                        <td class="text-right">
-                            '.moneyFormat($totale_reddito, 2).'
-                        </td>';
+                                <th style="width: 10%" class="text-center">'.tr('Importo reddito').'</th>';
             }
             echo '
-                </tr>';
-        }
+                        </tr>
+                    </thead>
 
-        echo '
-                </tbody>
+                    <tbody>';
 
-                <tfoot>
-                    <tr>
-                        <th class="text-right">'.tr('Totale').'</th>
-                        <th class="text-right">'.moneyFormat($totale_conto2).'</th>';
-        if ($conto_primo['descrizione'] == 'Economico') {
-            echo '<th class="text-right">'.moneyFormat($totale_reddito2).'</th>';
-        }
-        echo '
-                    </tr>
-                </tfoot>
-            </table>
+            // Livello 3
+            $query3 = 'SELECT `co_pianodeiconti3`.*, movimenti.numero_movimenti, movimenti.totale, movimenti.totale_reddito, anagrafica.idanagrafica, anagrafica.deleted_at
+                FROM `co_pianodeiconti3`
+                    LEFT OUTER JOIN (
+                        SELECT idanagrafica,
+                            idconto_cliente,
+                            idconto_fornitore,
+                            deleted_at
+                        FROM an_anagrafiche
+                    ) AS anagrafica ON co_pianodeiconti3.id IN (anagrafica.idconto_cliente, anagrafica.idconto_fornitore)
+                    LEFT OUTER JOIN (
+                        SELECT COUNT(idconto) AS numero_movimenti,
+                        idconto,
+                        SUM(totale) AS totale,
+                        SUM(totale_reddito) AS totale_reddito
+                        FROM co_movimenti
+                        WHERE data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']).' GROUP BY idconto
+                    ) movimenti ON co_pianodeiconti3.id=movimenti.idconto
+                WHERE `idpianodeiconti2` = '.prepare($conto_secondo['id']).' ORDER BY numero ASC';
+            $terzo_livello = $dbo->fetchArray($query3);
+            foreach ($terzo_livello as $conto_terzo) {
+                // Se il conto non ha documenti collegati posso eliminarlo
+                $numero_movimenti = $conto_terzo['numero_movimenti'];
 
-            <br><br>
+                $totale_conto = $conto_terzo['totale'];
+                $totale_reddito = $conto_terzo['totale_reddito'];
+                if ($conto_primo['descrizione'] != 'Patrimoniale') {
+                    $totale_conto = -$totale_conto;
+                    $totale_reddito = -$totale_reddito;
+                }
+
+                $totale_conto2 += $totale_conto;
+                $totale_reddito2 += $totale_reddito;
+
+                echo '
+                    <tr class="conto3" style="'.(!empty($numero_movimenti) ? '' : 'opacity: 0.5;').'">
+                        <td>';
+
+                // Possibilità di esplodere i movimenti del conto
+                if (!empty($numero_movimenti)) {
+                    echo '
+                            <button type="button" id="movimenti-'.$conto_terzo['id'].'" class="btn btn-default btn-xs plus-btn"><i class="fa fa-plus"></i></button>';
+                }
+
+                // Span con i pulsanti
+                echo '
+                            <span class="hide tools pull-right">';
+
+                //  Possibilità di visionare l'anagrafica
+                $id_anagrafica = $conto_terzo['idanagrafica'];
+                $anagrafica_deleted = $conto_terzo['deleted_at'];
+                if (isset($id_anagrafica)) {
+                    echo Modules::link('Anagrafiche', $id_anagrafica, ' <i title="'.(isset($anagrafica_deleted) ? tr('Anagrafica eliminata') : tr('Visualizza anagrafica')).'" class="btn btn-'.(isset($anagrafica_deleted) ? 'danger' : 'primary').' btn-xs fa fa-user" ></i>');
+                }
+
+                // Stampa mastrino
+                if (!empty($numero_movimenti)) {
+                    echo '
+                                '.Prints::getLink('Mastrino', $conto_terzo['id'], 'btn-info btn-xs', '', null, 'lev=3');
+                }
+
+                // Pulsante per aggiornare il totale reddito del conto di livello 3
+                echo '
+                                <button type="button" class="btn btn-info btn-xs" onclick="aggiornaReddito('.$conto_terzo['id'].')">
+                                    <i class="fa fa-refresh"></i>
+                                </button>';
+
+                // Pulsante per modificare il nome del conto di livello 3
+                echo '
+                                <button type="button" class="btn btn-warning btn-xs" onclick="modificaConto('.$conto_terzo['id'].')">
+                                    <i class="fa fa-edit"></i>
+                                </button>';
+
+                // Possibilità di eliminare il conto se non ci sono movimenti collegati
+                if ($numero_movimenti <= 0) {
+                    echo '
+                                <a class="btn btn-danger btn-xs ask" data-toggle="tooltip" title="'.tr('Elimina').'" data-backto="record-list" data-op="del" data-idconto="'.$conto_terzo['id'].'">
+                                    <i class="fa fa-trash"></i>
+                                </a>';
+                }
+
+                echo '
+                            </span>';
+
+                // Span con info del conto
+                echo '
+                            <span class="clickable" id="movimenti-'.$conto_terzo['id'].'">
+                                &nbsp;'.$conto_secondo['numero'].'.'.$conto_terzo['numero'].' '.$conto_terzo['descrizione'].($conto_terzo['percentuale_deducibile'] < 100 ? ' <span class="text-muted">('.tr('deducibile al _PERC_%', ['_PERC_' => Translator::numberToLocale($conto_terzo['percentuale_deducibile'], 0)]).')</span>' : '').'
+                            </span>
+                            <div id="conto_'.$conto_terzo['id'].'" style="display:none;"></div>
+                        </td>
+
+                        <td class="text-right">
+                            '.moneyFormat($totale_conto, 2).'
+                        </td>';
+                if ($conto_primo['descrizione'] == 'Economico') {
+                    echo '
+                            <td class="text-right">
+                                '.moneyFormat($totale_reddito, 2).'
+                            </td>';
+                }
+                echo '
+                    </tr>';
+            }
+
+            echo '
+                    </tbody>
+
+                    <tfoot>
+                        <tr class="totali">
+                            <th class="text-right">'.tr('Totale').'</th>
+                            <th class="text-right">'.moneyFormat($totale_conto2).'</th>';
+            if ($conto_primo['descrizione'] == 'Economico') {
+                echo '<th class="text-right">'.moneyFormat($totale_reddito2).'</th>';
+            }
+            echo '
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <br><br>
+            </div>
         </div>';
         // Somma dei totali
         if ($conto_primo['descrizione'] == 'Patrimoniale') {
@@ -245,7 +253,7 @@ foreach ($primo_livello as $conto_primo) {
     echo '
     </div>
 
-        <table class="table table-condensed table-hover">';
+        <table class="table table-condensed table-hover totali">';
 
     // Riepiloghi
     if ($conto_primo['descrizione'] == 'Patrimoniale') {
@@ -348,7 +356,7 @@ foreach ($primo_livello as $conto_primo) {
                 </td>
             </tr>
 
-            <tr>
+            <tr class="totali">
                 <th class="text-right">
                     <big>'.tr('Utile/perdita').':</big>
                 </th>
@@ -460,4 +468,29 @@ echo '
     function aggiornaReddito(id_conto){
         openModal("'.tr('Ricalcola importo deducibile').'", "'.$structure->fileurl('aggiorna_reddito.php').'?id=" + id_conto)
     }
+
+    $("#input-cerca").keyup(function(){
+        var text = $(this).val();
+        
+        if( text == "" ){
+            $(".conto1").show();
+            $(".conto2").show();
+            $(".conto3").show();
+            $(".totali").show();
+        } else {  
+            $(".conto1").hide();
+            $(".conto2").hide();
+            $(".conto3").hide();
+            $(".totali").hide();
+            $(".conto1:contains(" + text + ")").show();
+            $(".conto2:contains(" + text + ")").show();
+            $(".conto3:contains(" + text + ")").show();
+        }
+    });
+        
+    $.expr[":"].contains = $.expr.createPseudo(function(arg) {
+        return function( elem ) {
+            return $(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
+        };
+    });
 </script>';

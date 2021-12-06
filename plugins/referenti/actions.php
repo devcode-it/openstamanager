@@ -27,7 +27,7 @@ switch ($operazione) {
             $dbo->insert('an_referenti', [
                 'idanagrafica' => $id_parent,
                 'nome' => post('nome'),
-                'mansione' => post('mansione'),
+                'idmansione' => post('idmansione'),
                 'telefono' => post('telefono'),
                 'email' => post('email'),
                 'idsede' => post('idsede'),
@@ -51,7 +51,7 @@ switch ($operazione) {
         $dbo->update('an_referenti', [
             'idanagrafica' => $id_parent,
             'nome' => post('nome'),
-            'mansione' => post('mansione'),
+            'idmansione' => post('idmansione'),
             'telefono' => post('telefono'),
             'email' => post('email'),
             'idsede' => post('idsede'),

@@ -29,6 +29,7 @@ $id_tipo = filter('id_tipo');
 
 $origine_dashboard = get('ref') !== null;
 $module_anagrafiche = Modules::get('Anagrafiche');
+$id_plugin_sedi = Plugins::get('Sedi')['id'];
 
 // Calcolo dell'orario di inizio e di fine sulla base delle informazioni fornite
 $orario_inizio = filter('orario_inizio');
@@ -168,7 +169,7 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione", "value": "'.$id_sede.'", "ajax-source": "sedi" ]}
+            {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione", "value": "'.$id_sede.'", "ajax-source": "sedi", "icon-after": "add|'.$module_anagrafiche['id'].'|id_plugin='.$id_plugin_sedi.'&id_parent='.$id_anagrafica.'" ]}
         </div>
 
         <div class="col-md-4">
@@ -509,6 +510,12 @@ echo '
         } else {
             $("#dettagli_cliente").html("'.tr('Seleziona prima un cliente').'...");
         }
+
+        plus_sede = $("#idsede_destinazione").parent().find(".btn");
+        plus_sede.attr("onclick", plus_sede.attr("onclick").replace(/id_parent=[0-9]*/, "id_parent=" + value));
+
+        plus_impianto = $("#idimpianti").parent().find(".btn");
+        plus_impianto.attr("onclick", plus_impianto.attr("onclick").replace(/id_anagrafica=[0-9]*/, "id_anagrafica=" + value));
 	});
 
     // Gestione della modifica della sede selezionato

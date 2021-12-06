@@ -34,6 +34,12 @@ foreach ($attributi as $key => $attributo) {
 		</div>';
 }
 
+// Scelta articolo esistente
+echo '
+        <div class="col-md-4">
+			{[ "type": "select", "label": "'.tr('Collega articolo esistente').' ('.tr('facoltativo').')", "name": "id_articolo", "ajax-source": "articoli", "select-options": {"solo_non_varianti": 1, "permetti_movimento_a_zero": 1} ]}
+		</div>';
+
 echo '
     </div>
 

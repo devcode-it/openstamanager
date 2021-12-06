@@ -32,6 +32,7 @@ switch ($resource) {
         $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
         $usare_dettaglio_fornitore = $superselect['dir'] == 'uscita';
         $usare_iva_anagrafica = $superselect['dir'] == 'entrata' && !empty($superselect['idanagrafica']);
+        $solo_non_varianti = $superselect['solo_non_varianti'];
 
         $query = "SELECT
             IF(`categoria`.`nome` IS NOT NULL, CONCAT(`categoria`.`nome`, IF(`sottocategoria`.`nome` IS NOT NULL, CONCAT(' (', `sottocategoria`.`nome`, ')'), '-')), '<i>".tr('Nessuna categoria')."</i>') AS optgroup,
@@ -138,6 +139,10 @@ switch ($resource) {
 
         $where[] = 'mg_articoli.attivo = 1';
         $where[] = 'mg_articoli.deleted_at IS NULL';
+
+        if ($solo_non_varianti) {
+            $where[] = 'mg_articoli.id_combinazione IS NULL';
+        }
 
         if (!empty($search)) {
             $search_fields[] = 'mg_articoli.descrizione LIKE '.prepare('%'.$search.'%');

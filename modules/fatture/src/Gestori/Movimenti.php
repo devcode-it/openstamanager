@@ -20,6 +20,7 @@
 namespace Modules\Fatture\Gestori;
 
 use Modules\Fatture\Fattura;
+use Modules\Iva\Aliquota;
 use Modules\PrimaNota\Mastrino;
 use Modules\PrimaNota\Movimento;
 
@@ -75,6 +76,7 @@ class Movimenti
         $is_acquisto = $direzione == 'uscita';
         $split_payment = $this->fattura->split_payment;
         $is_nota = $this->fattura->isNota();
+        $reverse_charge = 0;
 
         // Totali utili per i movimenti
         $totale = $this->fattura->totale;
@@ -126,6 +128,10 @@ class Movimenti
                     'avere' => $imponibile,
                 ];
             }
+
+            if (substr($riga->aliquota->codice_natura_fe, 0, 2) == 'N6' && $is_acquisto) {
+                $reverse_charge += $riga->totale_imponibile;
+            }
         }
 
         /*
@@ -149,6 +155,20 @@ class Movimenti
             $movimenti[] = [
                 'id_conto' => $id_conto,
                 'avere' => $iva_indetraibile,
+            ];
+        }
+
+        /*
+        * Reverse charge
+        * Viene registrato solo il movimento impostando l'iva predefinita (l'iva della riga rimane a 0)
+        */
+        if($reverse_charge) {
+            $id_conto = setting('Conto per Iva su acquisti');
+            $iva_predefinita = floatval(Aliquota::find(setting('Iva predefinita'))->percentuale);
+            $iva_reverse_charge = $reverse_charge * $iva_predefinita / 100;
+            $movimenti[] = [
+                'id_conto' => $id_conto,
+                'avere' => $iva_reverse_charge,
             ];
         }
 

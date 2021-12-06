@@ -17,11 +17,19 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-include_once __DIR__.'/../../core.php';
+include_once __DIR__.'/../../../core.php';
 
-$cmp = \Util\Ini::getList(base_dir().'/files/impianti/');
+switch ($resource) {
+    case 'mansioni':
+        $query = 'SELECT id, nome AS descrizione FROM an_mansioni |where| ORDER BY nome ASC';
 
-if (!empty($id_record) && isset($cmp[$id_record - 1])) {
-    $record['nomefile'] = $cmp[$id_record - 1][0];
-    $record['contenuto'] = file_get_contents(base_dir().'/files/impianti/'.$record['nomefile']);
+        foreach ($elements as $element) {
+            $filter[] = 'id='.prepare($element);
+        }
+
+        if (!empty($search)) {
+            $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
+        }
+
+        break;
 }

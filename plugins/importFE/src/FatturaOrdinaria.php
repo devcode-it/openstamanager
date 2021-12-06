@@ -24,6 +24,7 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Articoli\Categoria;
 use Modules\Fatture\Components\Articolo;
+use Modules\Fatture\Components\Descrizione;
 use Modules\Fatture\Components\Riga;
 use Modules\Fatture\Fattura;
 use Plugins\ListinoClienti\DettaglioPrezzo;
@@ -123,12 +124,15 @@ class FatturaOrdinaria extends FatturaElettronica
         $id_rivalsa = $info['id_rivalsa'];
         $calcolo_ritenuta_acconto = $info['rivalsa_in_ritenuta'] ? 'IMP+RIV' : 'IMP';
         $ritenuta_contributi = !empty($fattura->id_ritenuta_contributi);
+        $conto_arrotondamenti = null;
 
         foreach ($righe as $key => $riga) {
             $articolo = ArticoloOriginale::find($articoli[$key]);
 
             $riga['PrezzoUnitario'] = floatval($riga['PrezzoUnitario']);
             $riga['Quantita'] = floatval($riga['Quantita']);
+
+            $is_descrizione = empty($riga['Quantita']) && empty($riga['PrezzoUnitario']);
 
             $codici = $riga['CodiceArticolo'] ?: [];
             $codici = !empty($codici) && !isset($codici[0]) ? [$codici] : $codici;
@@ -161,6 +165,10 @@ class FatturaOrdinaria extends FatturaElettronica
                 $obj->movimentazione($movimentazione);
 
                 $target_type = Articolo::class;
+            } elseif($is_descrizione) {
+                $obj = Descrizione::build($fattura);
+
+                $target_type = Descrizione::class;
             } else {
                 $obj = Riga::build($fattura);
 
@@ -190,113 +198,121 @@ class FatturaOrdinaria extends FatturaElettronica
                 ]);
             }
 
-            $obj->id_iva = $iva[$key];
-            $obj->idconto = $conto[$key];
+            if (!$is_descrizione) {
+                $obj->id_iva = $iva[$key];
+                $obj->idconto = $conto[$key];
 
-            $obj->id_rivalsa_inps = $id_rivalsa;
-            $obj->ritenuta_contributi = $ritenuta_contributi;
-
-            if (!empty($riga['Ritenuta'])) {
-                $obj->id_ritenuta_acconto = $id_ritenuta_acconto;
-                $obj->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
-            }
-
-            // Nel caso il prezzo sia negativo viene gestito attraverso l'inversione della quantità (come per le note di credito)
-            // TODO: per migliorare la visualizzazione, sarebbe da lasciare negativo il prezzo e invertire gli sconti.
-            $prezzo = $riga['PrezzoUnitario'];
-            $qta = $riga['Quantita'] ?: 1;
-
-            // Prezzo e quantità
-            $obj->prezzo_unitario = $prezzo;
-            $obj->qta = $qta;
-
-            if (!empty($riga['UnitaMisura'])) {
-                $obj->um = $riga['UnitaMisura'];
-            }
-
-            // Sconti e maggiorazioni
-            $sconti = $riga['ScontoMaggiorazione'];
-            if (!empty($sconti)) {
-                $sconto_unitario = 0;
-                $sconti = $sconti[0] ? $sconti : [$sconti];
-
-                // Determina il tipo di sconto in caso di sconti misti UNT e PRC
-                foreach ($sconti as $sconto) {
-                    $tipo_sconto = !empty($sconto['Importo']) ? 'UNT' : 'PRC';
-                    if (!empty($tipo) && $tipo_sconto != $tipo) {
-                        $tipo = 'UNT';
-                    } else {
-                        $tipo = $tipo_sconto;
-                    }
+                if (empty($conto_arrotondamenti) && !empty($conto[$key]) ){
+                    $conto_arrotondamenti = $conto[$key];
                 }
 
-                foreach ($sconti as $sconto) {
-                    $unitario = $sconto['Importo'] ?: $sconto['Percentuale'];
+                $obj->id_rivalsa_inps = $id_rivalsa;
+                $obj->ritenuta_contributi = $ritenuta_contributi;
 
-                    // Sconto o Maggiorazione
-                    $sconto_riga = ($sconto['Tipo'] == 'SC') ? $unitario : -$unitario;
+                // Inserisco la ritenuta se è specificata nella riga o se non è specificata nella riga ma è presente in Dati ritenuta (quindi comprende tutte le righe)
+                if (!empty($riga['Ritenuta']) || $info['ritenuta_norighe']==true) {
+                    $obj->id_ritenuta_acconto = $id_ritenuta_acconto;
+                    $obj->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
+                }
 
-                    $tipo_sconto = !empty($sconto['Importo']) ? 'UNT' : 'PRC';
-                    if ($tipo_sconto == 'PRC') {
-                        $sconto_calcolato = calcola_sconto([
-                            'sconto' => $sconto_riga,
-                            'prezzo' => $sconto_unitario ? $obj->prezzo_unitario - ($sconto_calcolato / $obj->qta) : $obj->prezzo_unitario,
-                            'tipo' => 'PRC',
-                            'qta' => $obj->qta,
-                        ]);
+                // Nel caso il prezzo sia negativo viene gestito attraverso l'inversione della quantità (come per le note di credito)
+                // TODO: per migliorare la visualizzazione, sarebbe da lasciare negativo il prezzo e invertire gli sconti.
+                $prezzo = $riga['PrezzoUnitario'];
+                $qta = $riga['Quantita'] ?: 1;
 
-                        if ($tipo == 'PRC') {
-                            $tot_sconto = $sconto_calcolato * 100 / $obj->imponibile;
+                // Prezzo e quantità
+                $obj->prezzo_unitario = $prezzo;
+                $obj->qta = $qta;
+
+                if (!empty($riga['UnitaMisura'])) {
+                    $obj->um = $riga['UnitaMisura'];
+                }
+
+                // Sconti e maggiorazioni
+                $sconti = $riga['ScontoMaggiorazione'];
+                if (!empty($sconti)) {
+                    $sconto_unitario = 0;
+                    $sconti = $sconti[0] ? $sconti : [$sconti];
+
+                    // Determina il tipo di sconto in caso di sconti misti UNT e PRC
+                    foreach ($sconti as $sconto) {
+                        $tipo_sconto = !empty($sconto['Importo']) ? 'UNT' : 'PRC';
+                        if (!empty($tipo) && $tipo_sconto != $tipo) {
+                            $tipo = 'UNT';
                         } else {
-                            $tot_sconto = $sconto_calcolato;
+                            $tipo = $tipo_sconto;
                         }
-                    } else {
-                        $tot_sconto = $sconto_riga;
                     }
 
-                    $sconto_unitario += $tot_sconto;
+                    foreach ($sconti as $sconto) {
+                        $unitario = $sconto['Importo'] ?: $sconto['Percentuale'];
+
+                        // Sconto o Maggiorazione
+                        $sconto_riga = ($sconto['Tipo'] == 'SC') ? $unitario : -$unitario;
+
+                        $tipo_sconto = !empty($sconto['Importo']) ? 'UNT' : 'PRC';
+                        if ($tipo_sconto == 'PRC') {
+                            $sconto_calcolato = calcola_sconto([
+                                'sconto' => $sconto_riga,
+                                'prezzo' => $sconto_unitario ? $obj->prezzo_unitario - ($sconto_calcolato / $obj->qta) : $obj->prezzo_unitario,
+                                'tipo' => 'PRC',
+                                'qta' => $obj->qta,
+                            ]);
+
+                            if ($tipo == 'PRC') {
+                                $tot_sconto = $sconto_calcolato * 100 / $obj->imponibile;
+                            } else {
+                                $tot_sconto = $sconto_calcolato;
+                            }
+                        } else {
+                            $tot_sconto = $sconto_riga;
+                        }
+
+                        $sconto_unitario += $tot_sconto;
+                    }
+
+                    $obj->setSconto($sconto_unitario, $tipo);
                 }
 
-                $obj->setSconto($sconto_unitario, $tipo);
-            }
+                // Aggiornamento prezzo di acquisto e fornitore predefinito in base alle impostazioni
+                if (!empty($articolo)) {
+                    if ($update_info[$key] == 'update_price' || $update_info[$key] == 'update_all') {
+                        $dettaglio_predefinito = DettaglioPrezzo::dettaglioPredefinito($articolo->id, $anagrafica->idanagrafica, $direzione)
+                        ->first();
 
-            // Aggiornamento prezzo di acquisto e fornitore predefinito in base alle impostazioni
-            if (!empty($articolo)) {
-                if ($update_info[$key] == 'update_price' || $update_info[$key] == 'update_all') {
-                    $dettaglio_predefinito = DettaglioPrezzo::dettaglioPredefinito($articolo->id, $anagrafica->idanagrafica, $direzione)
-                    ->first();
+                        // Aggiungo associazione fornitore-articolo se non presente
+                        if (empty($dettaglio_predefinito)) {
+                            $dettaglio_predefinito = DettaglioPrezzo::build($articolo, $anagrafica, $direzione);
+                        }
 
-                    // Aggiungo associazione fornitore-articolo se non presente
-                    if (empty($dettaglio_predefinito)) {
-                        $dettaglio_predefinito = DettaglioPrezzo::build($articolo, $anagrafica, $direzione);
-                    }
+                        // Imposto lo sconto nel listino solo se è una percentuale, se è un importo lo sottraggo dal prezzo
+                        if ($tipo == 'PRC') {
+                            $dettaglio_predefinito->sconto_percentuale = $sconto_unitario;
+                            $prezzo_unitario = $obj->prezzo_unitario;
+                            $prezzo_acquisto = $obj->prezzo_unitario - ($obj->prezzo_unitario * $sconto_unitario / 100);
+                        } else {
+                            $prezzo_unitario = $obj->prezzo_unitario - $sconto_unitario;
+                            $prezzo_acquisto = $prezzo_unitario;
+                        }
 
-                    // Imposto lo sconto nel listino solo se è una percentuale, se è un importo lo sottraggo dal prezzo
-                    if ($tipo == 'PRC') {
-                        $dettaglio_predefinito->sconto_percentuale = $sconto_unitario;
-                        $prezzo_unitario = $obj->prezzo_unitario;
-                        $prezzo_acquisto = $obj->prezzo_unitario - ($obj->prezzo_unitario * $sconto_unitario / 100);
-                    } else {
-                        $prezzo_unitario = $obj->prezzo_unitario - $sconto_unitario;
-                        $prezzo_acquisto = $prezzo_unitario;
-                    }
+                        // Aggiornamento listino
+                        $dettaglio_predefinito->setPrezzoUnitario($prezzo_unitario);
+                        $dettaglio_predefinito->save();
 
-                    // Aggiornamento listino
-                    $dettaglio_predefinito->setPrezzoUnitario($prezzo_unitario);
-                    $dettaglio_predefinito->save();
-
-                    // Aggiornamento fornitore predefinito
-                    if ($update_info[$key] == 'update_all') {
-                        // Aggiornamento prezzo di acquisto e fornitore predefinito
-                        $articolo->prezzo_acquisto = $prezzo_acquisto;
-                        $articolo->id_fornitore = $anagrafica->idanagrafica;
-                        $articolo->save();
+                        // Aggiornamento fornitore predefinito
+                        if ($update_info[$key] == 'update_all') {
+                            // Aggiornamento prezzo di acquisto e fornitore predefinito
+                            $articolo->prezzo_acquisto = $prezzo_acquisto;
+                            $articolo->id_fornitore = $anagrafica->idanagrafica;
+                            $articolo->save();
+                        }
                     }
                 }
+
+                $tipo = null;
+                $sconto_unitario = null;
             }
 
-            $tipo = null;
-            $sconto_unitario = null;
             $obj->save();
         }
 
@@ -317,7 +333,7 @@ class FatturaOrdinaria extends FatturaElettronica
 
             $obj->descrizione = tr('Arrotondamento calcolato in automatico');
             $obj->id_iva = $iva_arrotondamento['id'];
-            $obj->idconto = $conto[0];
+            $obj->idconto = $conto_arrotondamenti;
             $obj->prezzo_unitario = round($diff, 4);
             $obj->qta = 1;
 
@@ -415,9 +431,11 @@ class FatturaOrdinaria extends FatturaElettronica
         $ritenuta = $dati_generali['DatiRitenuta'];
         if (!empty($ritenuta)) {
             $totali = [];
+            $ritenuta_norighe = true;
             foreach ($righe as $riga) {
                 if (!empty($riga['Ritenuta'])) {
                     $totali[] = $riga['PrezzoTotale'];
+                    $ritenuta_norighe = false;
                 }
             }
             $totale = sum($totali);
@@ -448,6 +466,7 @@ class FatturaOrdinaria extends FatturaElettronica
             'id_ritenuta_acconto' => $id_ritenuta_acconto,
             'id_rivalsa' => $id_rivalsa,
             'rivalsa_in_ritenuta' => $rivalsa_in_ritenuta,
+            'ritenuta_norighe' => $ritenuta_norighe,
         ];
     }
 }

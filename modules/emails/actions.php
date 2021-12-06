@@ -45,9 +45,11 @@ switch (post('op')) {
             'bcc' => post('bcc'),
             'body' => $_POST['body'], // post('body'),
             'read_notify' => post('read_notify'),
+            'note_aggiuntive' => post('note_aggiuntive'),
         ], ['id' => $id_record]);
 
         $dbo->sync('em_print_template', ['id_template' => $id_record], ['id_print' => (array) post('prints')]);
+        $dbo->sync('em_mansioni_template', ['id_template' => $id_record], ['idmansione' => (array) post('idmansioni')]);
 
         flash()->info(tr('Informazioni salvate correttamente!'));
 

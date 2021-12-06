@@ -36,6 +36,11 @@ switch (filter('op')) {
         $modifica_prezzi = filter('modifica_prezzi');
         if (empty($modifica_prezzi)) {
             $dbo->query('DELETE FROM mg_prezzi_articoli WHERE id_articolo='.prepare($id_articolo).' AND id_anagrafica='.prepare($id_anagrafica).' AND minimo IS NULL AND massimo IS NULL');
+
+            if ($id_anagrafica == $articolo->id_fornitore && $direzione == 'uscita') {
+                $articolo->id_fornitore = null;
+                $articolo->save();
+            }
         } else {
             // Salvataggio del prezzo predefinito
             $prezzo_unitario = filter('prezzo_unitario_fisso');

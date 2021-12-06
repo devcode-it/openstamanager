@@ -76,7 +76,7 @@ class Combinazione extends Model
      *
      * @param $valori_attributi
      */
-    public function generaVariante($valori_attributi)
+    public function generaVariante($valori_attributi, $id_articolo = null)
     {
         $database = database();
 
@@ -84,20 +84,42 @@ class Combinazione extends Model
         $variante = ValoreAttributo::findMany($valori_attributi)->pluck('nome')->all();
 
         // Generazione Articolo di base
-        $articoli = $this->articoli;
-        if ($articoli->isEmpty()) {
-            $articolo = Articolo::build($this->nome, $this->nome);
-            $articolo->id_combinazione = $this->id;
+        if (empty($id_articolo)) {
+            $articoli = $this->articoli;
+            if ($articoli->isEmpty()) {
+                $articolo = Articolo::build($this->nome, $this->nome);
+                $articolo->id_combinazione = $this->id;
 
-            $articolo->id_categoria = $this->id_categoria;
-            $articolo->id_sottocategoria = $this->id_sottocategoria;
-        } else {
-            $articolo_base = $articoli->first();
-            $articolo = $articolo_base->replicate();
+                $articolo->id_categoria = $this->id_categoria;
+                $articolo->id_sottocategoria = $this->id_sottocategoria;
+            } else {
+                $articolo_base = $articoli->first();
+                $articolo = $articolo_base->replicate();
+
+                $nome_immagine = $articolo_base->immagine_upload->name;
+                $allegato = $articolo_base->uploads()->where('name', $nome_immagine)->first();
+
+                if (!empty($allegato)) {
+                    $allegato->copia([
+                        'id_module' => $articolo->getModule()->id,
+                        'id_record' => $articolo->id,
+                    ]);
+
+                    $articolo->immagine = $articolo->uploads()->where('name', $nome_immagine)->first()->filename;
+                    $articolo->save();
+                }
+            }
+            $articolo->descrizione = $this->nome.' ['.implode(', ', $variante).']';
+            $articolo->codice = $this->codice.'-'.implode('|', $variante);
+            $articolo->save();
         }
-        $articolo->descrizione = $this->nome.' ['.implode(', ', $variante).']';
-        $articolo->codice = $this->codice.'-'.implode('|', $variante);
-        $articolo->save();
+        
+        // Uso di un articolo già esistente
+        else {
+            $articolo = Articolo::find($id_articolo);
+            $articolo->id_combinazione = $this->id;
+            $articolo->save();
+        }
 
         // Associazione valori della variante
         foreach ($valori_attributi as $id => $id_valore) {
@@ -105,19 +127,6 @@ class Combinazione extends Model
                 'id_articolo' => $articolo->id,
                 'id_valore' => $id_valore,
             ]);
-        }
-
-        // Salvataggio immagine relativa
-        if (!$articoli->isEmpty()) {
-            $nome_immagine = $articolo_base->immagine_upload->name;
-            $allegato = $articolo_base->uploads()->where('name', $nome_immagine)->first();
-            $allegato->copia([
-                'id_module' => $articolo->getModule()->id,
-                'id_record' => $articolo->id,
-            ]);
-
-            $articolo->immagine = $articolo->uploads()->where('name', $nome_immagine)->first()->filename;
-            $articolo->save();
         }
     }
 

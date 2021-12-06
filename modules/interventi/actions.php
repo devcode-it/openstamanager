@@ -70,15 +70,60 @@ switch (post('op')) {
         $intervento->codice_cig = post('codice_cig');
         $intervento->save();
 
-        // Assegnazione dei tecnici all'intervento
         $tecnici_assegnati = (array) post('tecnici_assegnati');
+
+        
+        $tecnici_presenti_array = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico', ['id_intervento' => $intervento->id]);
+
+        foreach($tecnici_presenti_array as $tecnico_presente) {
+            $tecnici_presenti[] = $tecnico_presente['id_tecnico'];
+
+            // Notifica rimozione tecnico assegnato
+            if (setting('Notifica al tecnico la rimozione dell\'assegnazione dall\'attività')) {
+                if (!in_array($tecnico_presente['id_tecnico'], $tecnici_assegnati)){
+                    $tecnico = Anagrafica::find($tecnico_presente['id_tecnico']);
+                    if (!empty($tecnico['email'])) {
+                        $template = Template::pool('Notifica rimozione intervento');
+
+                        if (!empty($template)) {
+                            $mail = Mail::build(auth()->getUser(), $template, $intervento->id);
+                            $mail->addReceiver($tecnico['email']);
+                            $mail->save();
+                        }
+                    }
+                }
+            }
+        }
+
+        foreach ($tecnici_assegnati as $tecnico_assegnato){
+
+            // Notifica aggiunta tecnico assegnato
+            if (setting('Notifica al tecnico l\'assegnazione all\'attività')) {
+                if (!in_array($tecnico_assegnato, $tecnici_presenti)){
+                    $tecnico = Anagrafica::find($tecnico_assegnato);
+
+                    if (!empty($tecnico['email'])) {
+                        $template = Template::pool('Notifica intervento');
+
+                        if (!empty($template)) {
+                            $mail = Mail::build(auth()->getUser(), $template, $intervento->id);
+                            $mail->addReceiver($tecnico['email']);
+                            $mail->save();
+                        }
+                    }
+                }
+            }
+
+        }
+
+        // Assegnazione dei tecnici all'intervento
         $dbo->sync('in_interventi_tecnici_assegnati', [
             'id_intervento' => $id_record,
         ], [
             'id_tecnico' => $tecnici_assegnati,
         ]);
 
-        // Notifica chiusura intervento
+        // Notifica cambio stato intervento
         $stato = $dbo->selectOne('in_statiintervento', '*', ['idstatointervento' => post('idstatointervento')]);
         if (!empty($stato['notifica']) && $stato['idstatointervento'] != $record['idstatointervento']) {
             $template = Template::find($stato['id_email']);
@@ -98,18 +143,22 @@ switch (post('op')) {
                 }
             }
 
-            if (!empty($stato['notifica_tecnici'])) {
+            if (!empty($stato['notifica_tecnico_sessione'])) {
                 $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'idtecnico', ['idintervento' => $id_record]);
-                $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS idtecnico', ['id_intervento' => $id_record]);
-                $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
+            }
 
-                foreach ($tecnici as $tecnico) {
-                    $mail_tecnico = $dbo->selectOne('an_anagrafiche', '*', ['idanagrafica' => $tecnico]);
-                    if (!empty($mail_tecnico['email'])) {
-                        $mail = Mail::build(auth()->getUser(), $template, $id_record);
-                        $mail->addReceiver($mail_tecnico['email']);
-                        $mail->save();
-                    }
+            if (!empty($stato['notifica_tecnico_assegnato'])) {
+                $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS idtecnico', ['id_intervento' => $id_record]);
+            }
+                
+            $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
+
+            foreach ($tecnici as $tecnico) {
+                $mail_tecnico = $dbo->selectOne('an_anagrafiche', '*', ['idanagrafica' => $tecnico]);
+                if (!empty($mail_tecnico['email'])) {
+                    $mail = Mail::build(auth()->getUser(), $template, $id_record);
+                    $mail->addReceiver($mail_tecnico['email']);
+                    $mail->save();
                 }
             }
         }
@@ -213,6 +262,23 @@ switch (post('op')) {
         ], [
             'id_tecnico' => $tecnici_assegnati,
         ]);
+
+        foreach ($tecnici_assegnati as $tecnico_assegnato){
+            $tecnico = Anagrafica::find($tecnico_assegnato);
+
+            // Notifica al tecnico
+            if (setting('Notifica al tecnico l\'assegnazione all\'attività')) {
+                if (!empty($tecnico['email'])) {
+                    $template = Template::pool('Notifica intervento');
+
+                    if (!empty($template)) {
+                        $mail = Mail::build(auth()->getUser(), $template, $intervento->id);
+                        $mail->addReceiver($tecnico['email']);
+                        $mail->save();
+                    }
+                }
+            }
+        }
 
         if (!empty(post('ricorsiva'))) {
             $periodicita = post('periodicita');
@@ -636,7 +702,7 @@ switch (post('op')) {
         $dbo->query('DELETE FROM in_interventi_tecnici WHERE id='.prepare($id_sessione));
 
         // Notifica rimozione dell' intervento al tecnico
-        if (setting('Notifica al tecnico la rimozione dall\'attività')) {
+        if (setting('Notifica al tecnico la rimozione della sessione dall\'attività')) {
             if (!empty($tecnico['email'])) {
                 $template = Template::pool('Notifica rimozione intervento');
 

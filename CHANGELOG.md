@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.28 (2021-12-)](#2428-2021-12-)
 - [2.4.27 (2021-10-25)](#2427-2021-10-26)
 - [2.4.26 (2021-09-24)](#2426-2021-09-24)
 - [2.4.25 (2021-08-25)](#2425-2021-08-25)
@@ -38,6 +39,57 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
+## 2.4.28 (2021-12-)
+
+### Aggiunto (Added)
+ - Aggiunta colonna documento di acquisto e prezzo nel plugin **seriali**
+ - Aggiunto flag Calcola km nel modulo **tipi di attività**
+ - Aggiunta azione di gruppo per aggiornare unità di misura degli **articoli**
+ - Aggiunta azione di gruppo per aggiornare liste **newsletter**
+ - Aggiunta azione di gruppo in **articoli** per aggiornare conto acquisto/vendita
+ - Aggiunta colonna mail Inviata in **attività**
+ - Aggiunta gestione dell'arrotondamento nell'azione di gruppo per aggiornare il prezzo di vendita 
+ - Aggiunta impostazione per riportare il riferimento del documento 
+ - Aggiunto controllo widget Fatturato per escludere le fatture in stato Bozza 
+ - Aggiunta stampa **libro giornale**
+ - Aggiunta creazione sottocategoria al volo dal modulo **articoli**
+ - Aggiunta creazione dinamica della sede in attività
+ - Aggiunta tabella **mansioni** e gestione aggiunta destinatari mail
+ - Aggiunte impostazioni per notificare intervento ai tecnici 
+ - Aggiunte nuove colonne nel widget **interventi da programmare**
+ - Aggiunto filtro di ricerca nel Piano dei conti
+ - Aggiunto plugin **Movimenti contabili** in Fatture e Anagrafiche 
+ - Aggiunta possibilità di associare varianti della combinazione collegandole ad articoli esistenti
+ - Aggiunto plugin **Presentazioni bancarie** in Scadenzario
+ - Aggiunta gestione Abi e Cab in fase di creazione banca
+ - Aggiunte note interne in template mail
+ - Aggiunta duplicazione **DDT**
+ 
+### Modificato (Changed)
+ - Compilazione automatica tipo documento in fase di import FE solo se il campo non è impostato 
+ - Rimossa data conclusione preventivo automatica
+ - Miglioramenti modal modifica sessione tecnico
+ - Modifica apertura attività in dashboard con click e doppio click da smartphone
+ - Migliorie modulo Coda di invio
+ - Importazione righe della fattura elettronica con quantità e importo a 0 come riga di tipo descrizione
+ - Rimosso modulo Gestione componenti
+
+### Fixed
+ - Fix controllo corrispondenza tra xml e documento
+ - Fix stampa senza intestazione **fattura di vendita**
+ - Fix eliminazione movimenti manuali
+ - Fix stampa registro iva
+ - Fix select articoli
+ - Fix calcolo prezzi e iva tabella **seriali**
+ - Fix importazione fatture con importi negativi
+ - Fix destinatari modal invio mail
+ - Fix calcolo guadagno riga
+ - Fix pulsante disabilita widget
+ - Fix calcolo sessioni interventi in fase di duplicazione
+ - Fix stampa documento tramite comando da tastiera
+ - Fix campi abi cab nel modulo **banche**
+ - Fix stampa fatturato
+
 ## 2.4.27 (2021-10-26)
 
 ### Aggiunto (Added)
@@ -56,11 +108,13 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunta selezione prezzo di acquisto per stampa inventario
  - Aggiunto costo medio in fase di aggiunta riga articolo 
  - Aggiunta azione di gruppo per aggiornare il prezzo di acquisto per gli articoli a cui non è impostato, in base all'ultima fattura di acquisto
+
 ### Modificato (Changed)
  - Ampliata **ricerca articoli** in importazione fatturazione elettronica per collegamento automatico
  - Ridotto il valid time per la cache
  - Ordinamento **gestione documentale** per data decrescente 
  - Spostamento stampe situazione contabile e bilancio in **Stampe contabili**
+
 ### Fixed
  - Fix sconti in **fatturazione interventi**
  - Fix statistiche **fatture**

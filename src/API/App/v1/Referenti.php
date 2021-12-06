@@ -50,14 +50,15 @@ class Referenti extends AppResource implements RetrieveInterface
     public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
-        $query = 'SELECT id,
+        $query = 'SELECT an_referenti.id,
             idanagrafica AS id_cliente,
             IF(idsede = 0, NULL, idsede) AS id_sede,
-            nome,
-            mansione,
+            an_referenti.nome,
+            an_mansioni.nome AS mansione,
             telefono,
             email
-        FROM an_referenti
+        FROM an_referenti 
+        LEFT JOIN an_mansioni ON an_referenti.idmansione=an_mansioni.id 
         WHERE an_referenti.id = '.prepare($id);
 
         $record = database()->fetchOne($query);

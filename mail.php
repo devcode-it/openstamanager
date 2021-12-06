@@ -31,6 +31,17 @@ $subject = $module->replacePlaceholders($id_record, $template['subject']);
 $emails = explode(';', $module->replacePlaceholders($id_record, '{email}'));
 $id_anagrafica = $module->replacePlaceholders($id_record, '{id_anagrafica}');
 
+// Aggiungo email referenti in base alla mansione impostata nel template
+$mansioni = $dbo->select('em_mansioni_template', 'idmansione', ['id_template' => $template->id]);
+foreach ($mansioni as $mansione) {
+    $referenti = $dbo->select('an_referenti', 'email', ['idmansione' => $mansione['idmansione']]);
+    foreach ($referenti as $referente) {
+        if (!in_array($referente['email'], $emails)) {
+            $emails[] = $referente['email'];
+        }
+    }
+}
+
 // Campi mancanti
 $campi_mancanti = [];
 

@@ -87,13 +87,22 @@ if (!$record['predefined']) {
 
 // Stampe
 $selected_prints = $dbo->fetchArray('SELECT id_print FROM em_print_template WHERE id_template = '.prepare($id_record));
-$selected = array_column($selected_prints, 'id_print');
+$selected_prints = array_column($selected_prints, 'id_print');
+
+$selected_mansioni = $dbo->fetchArray('SELECT idmansione FROM em_mansioni_template WHERE id_template = '.prepare($id_record));
+$selected_mansioni = array_column($selected_mansioni, 'idmansione');
 
 echo '
 
             <div class="row">
                 <div class="col-md-12">
-                    {[ "type": "select", "multiple": "1", "label": "'.tr('Stampe').'", "name": "prints[]", "value": "'.implode(',', $selected).'", "values": "query=SELECT id, title AS text FROM zz_prints WHERE id_module = '.prepare($record['id_module']).' AND enabled=1" ]}
+                    {[ "type": "select", "multiple": "1", "label": "'.tr('Stampe').'", "name": "prints[]", "value": "'.implode(',', $selected_prints).'", "values": "query=SELECT id, title AS text FROM zz_prints WHERE id_module = '.prepare($record['id_module']).' AND enabled=1" ]}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    {[ "type": "select", "multiple": "1", "label": "'.tr('Mansioni').'", "name": "idmansioni[]", "value": "'.implode(',', $selected_mansioni).'", "ajax-source": "mansioni" ]}
                 </div>
             </div>';
 
@@ -104,6 +113,12 @@ echo '
                     {[ "type": "ckeditor", "label": "<?php echo tr('Contenuto'); ?>", "name": "body", "value": "$body$" ]}
                 </div>
             </div>
+
+            <div class="row">
+				<div class="col-md-12">
+					{[ "type": "textarea", "label": "<?php echo tr('Note interne'); ?>", "name": "note_aggiuntive", "value": "$note_aggiuntive$", "class": "unblockable" ]}
+				</div>
+			</div>
 
 <?php
 

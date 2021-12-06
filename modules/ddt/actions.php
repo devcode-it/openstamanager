@@ -481,6 +481,36 @@ switch (filter('op')) {
         $id_module = $ddt->direzione == 'entrata' ? Module::pool('Ddt di acquisto')->id : Module::pool('Ddt di vendita')->id;
 
         break;
+
+    // Duplica ddt
+    case 'copy':
+        $new = $ddt->replicate();
+        $new->numero = DDT::getNextNumero($new->data, $dir);
+        $new->numero_esterno = DDT::getNextNumeroSecondario($new->data, $dir);
+
+        $stato = Stato::where('descrizione', '=', 'Bozza')->first();
+        $new->stato()->associate($stato);
+        $new->save();
+
+        $id_record = $new->id;
+
+        $righe = $ddt->getRighe();
+        foreach ($righe as $riga) {
+            $new_riga = $riga->replicate();
+            $new_riga->setDocument($new);
+
+            $new_riga->qta_evasa = 0;
+            $new_riga->idordine = 0;
+            $new_riga->save();
+
+            if ($new_riga->isArticolo()) {
+                $new_riga->movimenta($new_riga->qta);
+            }
+        }
+
+        flash()->info(tr('DDT duplicato correttamente!'));
+
+        break;
 }
 
 // Aggiornamento stato degli ordini presenti in questa fattura in base alle quantità totali evase

@@ -33,7 +33,7 @@ echo '
         </div>
 
         <div class="col-md-6">
-            {[ "type": "text", "label": "'.tr('Mansione').'", "name": "mansione", "required": 1, "value" : "$mansione$" ]}
+        {[ "type": "select", "label": "'.tr('Mansione').'", "name": "idmansione", "ajax-source": "mansioni", "required": 1, "value" : "$idmansione$" ]}
         </div>
     </div>
 
@@ -43,7 +43,7 @@ echo '
         </div>
 
         <div class="col-md-6">
-            {[ "type": "text", "label": "'.tr('Indirizzo email').'", "name": "email", "value" : "$email$" ]}
+            {[ "type": "text", "label": "'.tr('Indirizzo email').'", "name": "email", "class": "email-mask", "value" : "$email$", "validation": "email" ]}
         </div>
     </div>
 
@@ -68,11 +68,3 @@ echo '
 		</div>
 	</div>
 </form>';
-?>
-<script>
-    $(document).ready( function(){
-        $(document).load("ajax_complete.php?op=get_mansioni", function(response){
-            $("#mansione").autocomplete({source: response.split("|")});
-        } );
-    });
-</script>

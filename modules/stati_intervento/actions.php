@@ -29,7 +29,8 @@ switch (post('op')) {
             'is_fatturabile' => post('is_fatturabile'),
             'notifica' => post('notifica'),
             'notifica_cliente' => post('notifica_cliente'),
-            'notifica_tecnici' => post('notifica_tecnici'),
+            'notifica_tecnico_sessione' => post('notifica_tecnico_sessione'),
+            'notifica_tecnico_assegnato' => post('notifica_tecnico_sessione'),
             'id_email' => post('email') ?: null,
             'destinatari' => post('destinatari'),
         ], ['idstatointervento' => $id_record]);

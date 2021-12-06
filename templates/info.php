@@ -129,9 +129,15 @@ $default_footer = !empty($options['hide-footer']) ? '' : $default_footer;
 // Logo di default
 $default_logo = App::filepath('templates/base|custom|/logo_azienda.jpg');
 
-// Logo generico
+/* Logo generico
 if (!empty(setting('Logo stampe'))) {
     $custom_logo = App::filepath('files/anagrafiche/'.setting('Logo stampe'));
+}
+*/
+$logo_allegato = $dbo->fetchOne("SELECT * FROM zz_files WHERE id_module=".prepare(Modules::get('Anagrafiche')['id'])." AND id_record=".prepare($azienda['idanagrafica'])." AND `name`='Logo stampe' ");
+
+if (!empty($logo_allegato)) {
+    $custom_logo = App::filepath('files/anagrafiche/'.$logo_allegato['filename']);
 }
 
 // Logo specifico della stampa

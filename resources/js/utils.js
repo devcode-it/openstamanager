@@ -1,5 +1,7 @@
 // noinspection JSUnusedGlobalSymbols
 
+import '@material/mwc-snackbar';
+
 import type {Cash} from 'cash-dom/dist/cash';
 import {type Vnode} from 'mithril';
 import {sync as render} from 'mithril-node-render';
@@ -21,15 +23,33 @@ export function containsHTML(string_: string): boolean {
 }
 
 /**
- * Show a snackbar
+ * Shows a snackbar
+ *
+ * @param {string} labelText
+ * @param {number|false} timeoutMs Automatic dismiss timeout in milliseconds. Value must be
+ * between 4000 and 10000 (or false to disable the timeout completely) or an error will be
+ * thrown. Defaults to 5000 (5 seconds).
+ * @param {string} actionText Text of the action button
+ * @param {string} cancelText Text of the cancel button
+ * @param {boolean} closeOtherSnackbars Whether to close other snackbars before showing this one
  */
-export async function showSnackbar(message: string, duration: number = 5000, acceptText = 'OK', cancelText: ?string): Promise<boolean> {
+export async function showSnackbar(labelText: string, timeoutMs: number | false = 5000, actionText = 'OK', cancelText: ?string, closeOtherSnackbars = true): Promise<boolean> {
+  if (closeOtherSnackbars) {
+    const snackbars = document.querySelectorAll('mwc-snackbar');
+    for (const snackbar of snackbars) {
+      if (snackbar.open) {
+        snackbar.close();
+      }
+      snackbar.remove();
+    }
+  }
+
   const snackbar = document.createElement('mwc-snackbar');
-  snackbar.labelText = message;
-  snackbar.timeoutMs = duration;
-  if (acceptText) {
+  snackbar.labelText = labelText;
+  snackbar.timeoutMs = timeoutMs || -1;
+  if (actionText) {
     const button = document.createElement('mwc-button');
-    button.label = acceptText;
+    button.label = actionText;
     button.slot = 'action';
     snackbar.append(button);
   }

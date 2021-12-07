@@ -55,6 +55,7 @@ specifiers:
   collect.js: ^4.29.3
   coloquent: ^2.4.0
   concurrently: ^6.4.0
+  csstype: ^3.0.10
   eslint: ^7.32.0
   eslint-config-airbnb-base: ^15.0.0
   eslint-plugin-flowtype: ^8.0.3
@@ -161,6 +162,7 @@ devDependencies:
   autoprefixer: 10.4.0_postcss@8.4.4
   babel-plugin-transform-flow-enums: 0.0.2_@babel+core@7.16.0
   concurrently: 6.4.0
+  csstype: 3.0.10
   eslint: 7.32.0
   eslint-config-airbnb-base: 15.0.0_a820dc868cc8cd66d8297be6779b9035
   eslint-plugin-flowtype: 8.0.3_f352da6f9c36c27d4e75da053be5baab
@@ -3236,6 +3238,10 @@ packages:
     resolution: {integrity: sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==}
     engines: {node: '>=4'}
     hasBin: true
+    dev: true
+
+  /csstype/3.0.10:
+    resolution: {integrity: sha512-2u44ZG2OcNUO9HDp/Jl8C07x6pU/eTR3ncV91SiK3dhG9TWvRVsCoJw14Ckx5DgWkzGA3waZWO3d7pgqpUI/XA==}
     dev: true
 
   /damerau-levenshtein/1.0.7:

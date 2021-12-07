@@ -5,6 +5,7 @@ import {type ClassComponent} from 'mithril';
 
 import Component from './Component.jsx';
 import Mdi from './Mdi.jsx';
+import type CSS from 'csstype';
 
 export default class LoadingButton extends Component implements ClassComponent<Button> {
   view(vnode) {
@@ -14,12 +15,29 @@ export default class LoadingButton extends Component implements ClassComponent<B
         <span slot="icon" style="display: inline;">
             <mwc-circular-progress
               indeterminate
-              style={`display: none; vertical-align: bottom; ${this.attrs.has('raised') ? '--mdc-theme-primary: #ffffff;' : ''}'`}/>
+              style={this.getCSSProperties()}/>
           {this.attrs.has('icon') ? <Mdi icon={this.attrs.get('icon')}/> : ''}
         </span>
         </mwc-button>
       </>
     );
+  }
+
+  getCSSProperties() {
+    const css: CSS.Properties<> = {
+      display: 'none',
+      verticalAlign: 'bottom'
+    };
+
+    if (this.attrs.has('raised')) {
+      css['--mdc-theme-primary'] = '#ffffff';
+    }
+
+    if (this.attrs.has('icon')) {
+      css.marginRight = '8px';
+    }
+
+    return css;
   }
 
   oncreate(vnode) {

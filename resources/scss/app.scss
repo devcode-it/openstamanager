@@ -59,6 +59,11 @@ main {
     width: 50%;
 }
 
+.stretch {
+    //noinspection CssInvalidPropertyValue
+    width: stretch;
+}
+
 .logo-bg-sticky {
     position: fixed;
     z-index: 1;

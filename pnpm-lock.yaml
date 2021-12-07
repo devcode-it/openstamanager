@@ -48,6 +48,7 @@ specifiers:
   '@openstamanager/vite-config': github:maicol07/openstamanager-vite-config
   '@types/ziggy-js': ^1.3.0
   async-wait-until: ^2.0.9
+  autoprefixer: ^10.4.0
   babel-plugin-transform-flow-enums: ^0.0.2
   cash-dom: ^8.1.0
   classnames: ^2.3.1
@@ -157,6 +158,7 @@ devDependencies:
   '@openstamanager/eslint-config': github.com/maicol07/eslint-config-openstamanager/1eafa549ce83e3ea90686924f9e535b4ace0503a_c7ebab677158e3b480cf85bd63c03aa6
   '@openstamanager/vite-config': github.com/maicol07/openstamanager-vite-config/d8ac3e7c1dec6545e66ffc30f2bde9841890bae5_d97a2efaa2b85460d32e373b064b7335
   '@types/ziggy-js': 1.3.0
+  autoprefixer: 10.4.0_postcss@8.4.4
   babel-plugin-transform-flow-enums: 0.0.2_@babel+core@7.16.0
   concurrently: 6.4.0
   eslint: 7.32.0
@@ -2901,6 +2903,22 @@ packages:
     engines: {node: '>= 0.12.0', npm: '>= 1.0.0'}
     dev: false
 
+  /autoprefixer/10.4.0_postcss@8.4.4:
+    resolution: {integrity: sha512-7FdJ1ONtwzV1G43GDD0kpVMn/qbiNqyOPMFTX5nRffI+7vgWoFEc6DcXOxHJxrWNDXrZh18eDsZjvZGUljSRGA==}
+    engines: {node: ^10 || ^12 || >=14}
+    hasBin: true
+    peerDependencies:
+      postcss: ^8.1.0
+    dependencies:
+      browserslist: 4.18.1
+      caniuse-lite: 1.0.30001280
+      fraction.js: 4.1.2
+      normalize-range: 0.1.2
+      picocolors: 1.0.0
+      postcss: 8.4.4
+      postcss-value-parser: 4.1.0
+    dev: true
+
   /axe-core/4.3.5:
     resolution: {integrity: sha512-WKTW1+xAzhMS5dJsxWkliixlO/PqC4VhmO9T4juNYcaTg9jzWiJsou6m5pxWYGfigWbwzJWeFY6z47a+4neRXA==}
     engines: {node: '>=4'}
@@ -4456,6 +4474,10 @@ packages:
         optional: true
     dev: false
 
+  /fraction.js/4.1.2:
+    resolution: {integrity: sha512-o2RiJQ6DZaR/5+Si0qJUIy637QMRudSi9kU/FFzx9EZazrIdnBgpU+3sEWCxAVhH2RtxW2Oz+T4p2o8uOPVcgA==}
+    dev: true
+
   /fs.realpath/1.0.0:
     resolution: {integrity: sha1-FQStJSMVjKpA20onh8sBQRmU6k8=}
     dev: true
@@ -5324,6 +5346,11 @@ packages:
 
   /normalize-path/3.0.0:
     resolution: {integrity: sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==}
+    engines: {node: '>=0.10.0'}
+    dev: true
+
+  /normalize-range/0.1.2:
+    resolution: {integrity: sha1-LRDAa9/TEuqXd2laTShDlFa3WUI=}
     engines: {node: '>=0.10.0'}
     dev: true
 

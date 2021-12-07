@@ -1,11 +1,11 @@
 import '@material/mwc-circular-progress';
 
 import {type Button} from '@material/mwc-button';
+import type CSS from 'csstype';
 import {type ClassComponent} from 'mithril';
 
 import Component from './Component.jsx';
 import Mdi from './Mdi.jsx';
-import type CSS from 'csstype';
 
 export default class LoadingButton extends Component implements ClassComponent<Button> {
   view(vnode) {

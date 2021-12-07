@@ -105,3 +105,8 @@ ALTER TABLE `em_templates` ADD `note_aggiuntive` TEXT NOT NULL AFTER `predefined
 
 -- Eliminazione modulo gestione componenti
 DELETE FROM `zz_modules` WHERE `zz_modules`.`name` = 'Gestione componenti';
+
+-- Aggiunta distinta scadenze
+ALTER TABLE `co_scadenziario` ADD `distinta` VARCHAR(255) NULL AFTER `presentazioni_exported_at`;
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'), 'Distinta', 'co_scadenziario.distinta', 15, 1, 0, 0, '', '', 0, 0, 0);

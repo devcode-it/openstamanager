@@ -19,6 +19,30 @@
 
 include_once __DIR__.'/../../core.php';
 
+switch (post('op')) {
+    case 'change_distinta':
+        $distinta = post('distinta');
+
+        $n_scadenze = 0;
+        foreach ($id_records as $id) {
+            $database->update('co_scadenziario', [
+                'distinta' => $distinta,
+            ], ['id' => $id]);
+
+            ++$n_scadenze;
+        }
+
+        if ($n_scadenze > 0) {
+            flash()->info(tr('Distinta aggiornata a _NUM_ scadenze!', [
+                '_NUM_' => $n_scadenze,
+            ]));
+        } else {
+            flash()->warning(tr('Nessuna scadenza modificata!'));
+        }
+
+    break;
+}
+
 $operations['registrazione-contabile'] = [
     'text' => '<span><i class="fa fa-calculator"></i> '.tr('Registrazione contabile').'</span>',
     'data' => [
@@ -26,6 +50,18 @@ $operations['registrazione-contabile'] = [
         'type' => 'modal',
         'origine' => 'scadenzario',
         'url' => base_path().'/add.php?id_module='.Modules::get('Prima nota')['id'],
+    ],
+];
+
+$operations['change_distinta'] = [
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna distinta'),
+    'data' => [
+        'title' => tr('Aggiornare la distinta per le scadenze selezionate?'),
+        'msg' => tr('Per ciascuna scadenza selezionata verrà aggiornata la distinta').'.<br>
+        <br>{[ "type": "text", "label": "'.tr('Distinta').'", "name": "distinta", "required": 1 ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
     ],
 ];
 

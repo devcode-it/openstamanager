@@ -85,6 +85,13 @@ if (!empty($documento)) {
                             </td>
                         </tr>
 
+                        <tr>
+                            <th>'.tr('Distinta').':</th>
+                            <td>
+                                {[ "type": "text", "name": "distinta", "value": "'.$record['distinta'].'" ]}
+                            </td>
+                        </tr>
+
                     </table>
 
                     '.Modules::link($documento->module, $record['iddocumento'], '<i class="fa fa-folder-open"></i> '.tr('Apri documento'), null, 'class="btn btn-primary"');
@@ -97,6 +104,13 @@ if (!empty($documento)) {
         'name' => 'descrizione',
         'required' => 1,
         'value' => $scadenza['descrizione'],
+    ]);
+
+    echo input([
+        'type' => 'text',
+        'label' => tr('Distinta'),
+        'name' => 'distinta',
+        'value' => $scadenza['distinta'],
     ]);
 }
 

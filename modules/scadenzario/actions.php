@@ -84,6 +84,7 @@ switch (post('op')) {
                     'scadenza' => $scadenza,
                     'data_concordata' => $data_concordata,
                     'note' => post('note'),
+                    'distinta' => post('distinta') ?: null,
                 ], ['id' => $id_scadenza]);
 
                 if ($da_pagare == 0) {

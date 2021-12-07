@@ -37,20 +37,24 @@ Route::name('auth.')->group(static function () {
         ->name('auth.logout');*/
 });
 
-Route::inertia('setup', 'SetupPage', [
-    'languages' => cache()->rememberForever('app.languages', fn () => array_map(
-        static fn ($file) => basename($file, '.json'),
-        glob(resource_path('lang').'/*.json', GLOB_NOSORT)
-    )),
-    'license' => cache()->rememberForever('app.license', fn () => file_get_contents(base_path('LICENSE'))),
-]);
+Route::name('setup.')->group(static function () {
+    Route::inertia('setup', 'SetupPage', [
+        'languages' => cache()->rememberForever('app.languages', fn () => array_map(
+            static fn ($file) => basename($file, '.json'),
+            glob(resource_path('lang').'/*.json', GLOB_NOSORT)
+        )),
+        'license' => cache()->rememberForever('app.license', fn () => file_get_contents(base_path('LICENSE'))),
+    ]);
 
-Route::options('setup/test', [SetupController::class, 'testDatabase'])
-    ->name('setup.test')
-    ->withoutMiddleware('csrf');
+    Route::options('setup/test', [SetupController::class, 'testDatabase'])
+        ->name('test')
+        ->withoutMiddleware('csrf');
 
-Route::put('setup/save', [SetupController::class, 'save'])
-    ->name('setup.save');
+    Route::put('setup/save', [SetupController::class, 'save'])
+        ->name('save');
+});
+
+
 
 Route::get('lang/{language}', static function ($language) {
     app()->setLocale($language);

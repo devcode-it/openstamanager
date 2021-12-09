@@ -30,7 +30,7 @@ class HandleInertiaRequests extends Middleware
 
     final public function rootView(Request $request): string
     {
-        if (in_array($request->route()?->uri(), ['setup', 'login'], true)) {
+        if (in_array($request->route()?->uri(), ['setup', 'login', 'setup/admin'], true)) {
             return 'external';
         }
 

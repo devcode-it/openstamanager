@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -9,6 +10,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class SetupController extends Controller
@@ -114,6 +116,17 @@ class SetupController extends Controller
         Artisan::call('config:cache');
 
         setting($request->only(['timestamp_format', 'date_format', 'time_format', 'locale']));
+
+        return response()->noContent();
+    }
+
+    public function saveAdmin(Request $request): Response
+    {
+        $user = new User();
+        $user->username = $request->input('username');
+        $user->email = $request->input('email');
+        $user->password = Hash::make($request->input('password'));
+        $user->save();
 
         return response()->noContent();
     }

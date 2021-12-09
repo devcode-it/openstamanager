@@ -46,12 +46,18 @@ Route::name('setup.')->group(static function () {
         'license' => cache()->rememberForever('app.license', fn () => file_get_contents(base_path('LICENSE'))),
     ]);
 
+    Route::inertia('setup/admin', 'AdminSetupPage')
+        ->name('admin');
+
     Route::options('setup/test', [SetupController::class, 'testDatabase'])
         ->name('test')
         ->withoutMiddleware('csrf');
 
     Route::put('setup/save', [SetupController::class, 'save'])
         ->name('save');
+
+    Route::put('setup/admin', [SetupController::class, 'saveAdmin'])
+        ->name('admin.save');
 });
 
 

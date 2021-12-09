@@ -301,6 +301,8 @@ class CSV extends CSVImporter
             'um' => $record['um'],
             'barcode' => $record['barcode'],
             'id_fornitore' => $record['id_fornitore'],
+            'id_categoria' => $categoria->id,
+            'id_sottocategoria' => $sottocategoria->id,
             'ubicazione' => $record['ubicazione'],
             'note' => $record['note'],
         ]);

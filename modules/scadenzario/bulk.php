@@ -19,6 +19,12 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Anagrafiche\Anagrafica;
+use Modules\Fatture\Fattura;
+use Modules\Scadenzario\Scadenza;
+
+$anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
+
 switch (post('op')) {
     case 'change_distinta':
         $distinta = post('distinta');
@@ -40,7 +46,27 @@ switch (post('op')) {
             flash()->warning(tr('Nessuna scadenza modificata!'));
         }
 
-    break;
+        break;
+
+    case 'change-bank':
+        $list = [];
+        foreach ($id_records as $id) {
+            $scadenza = Scadenza::find($id);
+            if ($scadenza->iddocumento){
+                $documento = Fattura::find($scadenza->iddocumento);
+                $documento->id_banca_azienda = post('id_banca');
+                $documento->save();
+                array_push($list, $documento->numero_esterno);
+            }
+        }
+
+        if ($list){
+            flash()->info(tr('Banca aggiornata per le Fatture _LIST_ !', [
+                '_LIST_' => implode(',', $list),
+            ]));
+        }
+
+        break;
 }
 
 $operations['registrazione-contabile'] = [
@@ -62,6 +88,17 @@ $operations['change_distinta'] = [
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,
+    ],
+];
+
+$operations['change-bank'] = [
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna banca').'</span>',
+    'data' => [
+        'title' => tr('Aggiornare la banca?'),
+        'msg' => tr('Per ciascuna scadenza selezionata, verrà aggiornata la banca della fattura di riferimento e quindi di conseguenza di tutte le scadenze collegate').'
+        <br><br>{[ "type": "select", "label": "'.tr('Banca').'", "name": "id_banca", "required": 1, "values": "query=SELECT id, CONCAT (nome, \' - \' , iban) AS descrizione FROM co_banche WHERE id_anagrafica='.prepare($anagrafica_azienda->idanagrafica).'" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
     ],
 ];
 

@@ -20,12 +20,15 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Aggiornamenti\Controlli\DatiFattureElettroniche;
+use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Export\CSV;
 use Modules\Fatture\Fattura;
 use Plugins\ExportFE\FatturaElettronica;
 use Plugins\ExportFE\Interaction;
 use Util\XML;
 use Util\Zip;
+
+$anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 
 switch (post('op')) {
     case 'export-bulk':
@@ -377,6 +380,21 @@ switch (post('op')) {
 
         flash()->info(tr('Fatture eliminate!'));
         break;
+
+    case 'change-bank':
+        $list = [];
+        foreach ($id_records as $id) {
+            $documento = Fattura::find($id);
+            $documento->id_banca_azienda = post('id_banca');
+            $documento->save();
+            array_push($list, $fattura->numero_esterno);
+        }
+
+        flash()->info(tr('Banca aggiornata per le Fatture _LIST_ !', [
+            '_LIST_' => implode(',', $list),
+        ]));
+
+        break;
 }
 
 if (App::debug()) {
@@ -468,6 +486,17 @@ $operations['export-xml-bulk'] = [
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => true,
+    ],
+];
+
+$operations['change-bank'] = [
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna banca').'</span>',
+    'data' => [
+        'title' => tr('Aggiornare la banca?'),
+        'msg' => tr('Per ciascuna fattura selezionato, verrà aggiornata la banca').'
+        <br><br>{[ "type": "select", "label": "'.tr('Banca').'", "name": "id_banca", "required": 1, "values": "query=SELECT id, CONCAT (nome, \' - \' , iban) AS descrizione FROM co_banche WHERE id_anagrafica='.prepare($anagrafica_azienda->idanagrafica).'" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
     ],
 ];
 

@@ -343,7 +343,7 @@ if (App::debug()) {
 $operations['export-csv'] = [
     'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta selezionati').'</span>',
     'data' => [
-        'msg' => tr('Vuoi esportare un CSV con le anagrafiche selezionate?'),
+        'msg' => tr('Vuoi esportare un CSV con gli articoli selezionati?'),
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-success',
         'blank' => true,

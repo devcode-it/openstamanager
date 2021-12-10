@@ -273,10 +273,12 @@ class CSV extends CSVImporter
         $articolo = null;
         // Ricerca sulla base della chiave primaria se presente
         if (!empty($primary_key)) {
-            $articolo = Articolo::where($primary_key, $record[$primary_key])->first();
+            $articolo = Articolo::where($primary_key, $record[$primary_key])->withTrashed()->first();
         }
         if (empty($articolo)) {
             $articolo = Articolo::build($record['codice'], $record['descrizione'], $categoria, $sottocategoria);
+        } else {
+            $articolo->restore();
         }
 
         $articolo->idiva_vendita = $aliquota->id;
@@ -299,6 +301,8 @@ class CSV extends CSVImporter
             'um' => $record['um'],
             'barcode' => $record['barcode'],
             'id_fornitore' => $record['id_fornitore'],
+            'id_categoria' => $categoria->id,
+            'id_sottocategoria' => $sottocategoria->id,
             'ubicazione' => $record['ubicazione'],
             'note' => $record['note'],
         ]);

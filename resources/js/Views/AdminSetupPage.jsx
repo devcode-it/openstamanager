@@ -50,15 +50,14 @@ export default class AdminSetupPage extends Page {
     this.loading = $(this.element).find('#login-button mwc-circular-progress');
 
     $(this.element)
-      .find('#login-button')
+      .find('#create-account-button')
       .on('click', this.onCreateAccountButtonClicked.bind(this));
   }
 
   async onCreateAccountButtonClicked() {
     this.loading.show();
 
-    const formData = getFormData($(this.element)
-      .find('#login'));
+    const formData = getFormData($(this.element).find('#new-admin'));
 
     formData._token = $('meta[name="csrf-token"]').attr('content');
 
@@ -70,5 +69,6 @@ export default class AdminSetupPage extends Page {
     }
 
     Inertia.visit('/');
+    showSnackbar(__('Account creato con successo. Puoi ora accedere.'));
   }
 }

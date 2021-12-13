@@ -212,8 +212,11 @@ class Update
 
             // Correzione permessi per le cartelle backup e files
             $fs = new SymfonyFilesystem();
-            $fs->chmod('backup', 0777, 0000, true);
-            $fs->chmod('files', 0777, 0000, true);
+
+            try {
+                $fs->chmod('backup', 0777, 0000, true);
+                $fs->chmod('files', 0777, 0000, true);
+            } catch (\Exception $e) {}
 
             return true;
         }

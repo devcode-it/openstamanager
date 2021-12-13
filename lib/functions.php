@@ -130,7 +130,9 @@ function copyr($source, $destination, $ignores = [])
     // Filesystem Symfony
     $fs = new SymfonyFilesystem();
 
-    $fs->chmod($destination, 0777, 0000, true);
+    try {
+        $fs->chmod($destination, 0777, 0000, true);
+    } catch (\Exception $e) {}
 
     foreach ($files as $file) {
         $filename = rtrim($destination, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$file->getRelativePathname();

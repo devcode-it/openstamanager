@@ -321,7 +321,7 @@ abstract class Accounting extends Component
      */
     public function getMarginePercentualeAttribute()
     {
-        return $this->imponibile ? (1 - ($this->spesa / $this->imponibile)) * 100 : 100;
+        return $this->imponibile ? (($this->imponibile / $this->spesa) - 1) * 100 : 100;
     }
 
     /**

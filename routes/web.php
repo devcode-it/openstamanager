@@ -22,20 +22,30 @@ Route::get('/', static function () {
         return redirect()->route('setup');
     }
 
+    if (auth()->hasUser()) {
+        return redirect()->route('dashboard');
+    }
+
     return redirect()->route('auth.login');
 });
 
-Route::name('auth.')->group(static function () {
-    Route::inertia('login', 'LoginPage')
-        ->name('login');
-    /*Route::inertia('password-request', '')
-        ->name('password-request');*/
+Route::inertia('dashboard', 'Dashboard')
+    ->middleware('auth')
+    ->name('dashboard');
 
-    Route::post('login', [AuthController::class, 'authenticate'])
+Route::name('auth.')
+    ->middleware('guest')
+    ->group(static function () {
+        Route::inertia('login', 'LoginPage')
+        ->name('login');
+        /*Route::inertia('password-request', '')
+            ->name('password-request');*/
+
+        Route::post('login', [AuthController::class, 'authenticate'])
         ->name('authenticate');
-    /*Route::post('logout', 'Auth\LoginController@logout')
-        ->name('auth.logout');*/
-});
+        /*Route::post('logout', 'Auth\LoginController@logout')
+            ->name('auth.logout');*/
+    });
 
 Route::name('setup.')->group(static function () {
     Route::inertia('setup', 'SetupPage', [
@@ -59,8 +69,6 @@ Route::name('setup.')->group(static function () {
     Route::put('setup/admin', [SetupController::class, 'saveAdmin'])
         ->name('admin.save');
 });
-
-
 
 Route::get('lang/{language}', static function ($language) {
     app()->setLocale($language);

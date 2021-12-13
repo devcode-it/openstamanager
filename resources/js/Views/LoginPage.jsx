@@ -1,7 +1,7 @@
 import '@maicol07/mwc-card';
+import '@maicol07/mwc-layout-grid';
 import '@material/mwc-checkbox';
 import '@material/mwc-formfield';
-import '@maicol07/mwc-layout-grid';
 import '../WebComponents/TextField';
 
 import type {Cash} from 'cash-dom';
@@ -78,8 +78,9 @@ export default class LoginPage extends Page {
     } catch (error) {
       showSnackbar(Object.values(error.data.errors).join(' '), false);
       this.loading.hide();
+      return;
     }
 
-    // Inertia.visit(window.route('dashboard'));
+    window.location.href = window.route('dashboard');
   }
 }

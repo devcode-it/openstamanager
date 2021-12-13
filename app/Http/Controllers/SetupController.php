@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class SetupController extends Controller
 {
@@ -120,8 +121,17 @@ class SetupController extends Controller
         return response()->noContent();
     }
 
-    public function saveAdmin(Request $request): Response
+    public function saveAdmin(Request $request): Response|JsonResponse
     {
+        try {
+            $request->validate([
+                'username' => 'required|string|min:3|max:255|exists:users,username',
+                'password' => 'required|string|min:6|max:255',
+                'email' => 'required|string|email|max:255|exists:users,email',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
         $user = new User();
         $user->username = $request->input('username');
         $user->email = $request->input('email');

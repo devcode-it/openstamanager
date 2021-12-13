@@ -13,8 +13,10 @@ import Mdi from '../Components/Mdi.jsx';
 import Page from '../Components/Page.jsx';
 import {
   getFormData,
+  isFormValid,
   showSnackbar
 } from '../utils';
+import type {TextField} from '@material/mwc-textfield';
 
 export default class AdminSetupPage extends Page {
   loading: Cash;
@@ -26,16 +28,16 @@ export default class AdminSetupPage extends Page {
         <form id="new-admin" style="padding: 16px; text-align: center;">
           <h3 style="margin-top: 0;">{__('Creazione account amministratore')}</h3>
           <p>{__('Inserisci le informazioni richieste per creare un nuovo account amministratore.')}</p>
-          <text-field label={__('Nome utente')} id="username" name="username" style="margin-bottom: 16px;">
+          <text-field label={__('Nome utente')} id="username" name="username" required style="margin-bottom: 16px;">
             <Mdi icon="account-outline" slot="icon"/>
           </text-field>
-          <text-field label={__('Email')} id="email" name="email" style="margin-bottom: 16px;">
+          <text-field label={__('Email')} id="email" name="email" type="email" required style="margin-bottom: 16px;">
             <Mdi icon="email-outline" slot="icon"/>
           </text-field>
-          <text-field label={__('Password')} id="password" name="password" type="password" style="margin-bottom: 16px;">
+          <text-field label={__('Password')} id="password" name="password" type="password" required style="margin-bottom: 16px;">
             <Mdi icon="lock-outline" slot="icon"/>
           </text-field>
-          <text-field label={__('Conferma password')} id="password_confirm" name="password_confirm" type="password" style="margin-bottom: 16px;">
+          <text-field label={__('Conferma password')} id="password_confirm" name="password_confirm" type="password" required style="margin-bottom: 16px;">
             <Mdi icon="repeat-variant" slot="icon"/>
           </text-field>
           <LoadingButton raised id="create-account-button" label={__('Crea account')} icon="account-plus-outline"/>
@@ -57,7 +59,20 @@ export default class AdminSetupPage extends Page {
   async onCreateAccountButtonClicked() {
     this.loading.show();
 
-    const formData = getFormData($(this.element).find('#new-admin'));
+    const form = $(this.element).find('form#new-admin');
+    const password: TextField = form.find('#password').get(0);
+    const passwordConfirm: TextField = form.find('#password_confirm').get(0);
+
+    passwordConfirm.setCustomValidity(
+      password.value !== passwordConfirm.value ? __('Le password non corrispondono') : ''
+    );
+
+    if (!isFormValid(form)) {
+      this.loading.hide();
+      return;
+    }
+
+    const formData = getFormData(form);
 
     formData._token = $('meta[name="csrf-token"]').attr('content');
 
@@ -66,6 +81,7 @@ export default class AdminSetupPage extends Page {
     } catch (error) {
       showSnackbar(Object.values(error.data.errors).join(' '), false);
       this.loading.hide();
+      return;
     }
 
     Inertia.visit('/');

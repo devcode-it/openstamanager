@@ -11,13 +11,13 @@
     @endforeach
 </mwc-menu>
 <mwc-menu corner="BOTTOM_LEFT" id="user-info" trigger="user-info-btn">
-    @if (Auth::hasUser())
+    @if (auth()->hasUser() && auth()->user()->picture)
         <img class="mdc-elevation--z2" src="{{auth()->user()->picture}}" alt="{{auth()->user()->username}}" style="border-radius: 50%;">
     @else
         <i class="mdi mdi-account-outline mdc-elevation--z2"></i>
     @endif
     <br>
-    <b style="margin-top: 16px;">{{auth()->user()?->getFullName()}}</b>
+    <b style="margin-top: 16px;">{{auth()->user()?->username}}</b>
     <br>
     <span>{{auth()->user()?->email}}</span>
     <br>

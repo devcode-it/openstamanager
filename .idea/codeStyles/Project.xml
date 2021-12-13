@@ -9,6 +9,7 @@
       <option name="USE_EXPLICIT_JS_EXTENSION" value="TRUE" />
       <option name="VAR_DECLARATION_WRAP" value="2" />
       <option name="IMPORTS_WRAP" value="2" />
+      <option name="IMPORT_SORT_MODULE_NAME" value="true" />
     </JSCodeStyleSettings>
     <MarkdownNavigatorCodeStyleSettings>
       <option name="WRAP_ON_TYPING" value="1" />

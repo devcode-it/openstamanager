@@ -328,11 +328,13 @@ class CSV extends CSVImporter
             $id_sede = $sede->id;
         }
 
-        $qta_movimento = $qta_registrata - $giacenze[$id_sede][0];
+        if( isset($record['qta']) ) {
+            $qta_movimento = $qta_registrata - $giacenze[$id_sede][0];
 
-        $articolo->movimenta($qta_movimento, tr('Movimento da importazione'), new Carbon(), false, [
-            'idsede' => $id_sede,
-        ]);
+            $articolo->movimenta($qta_movimento, tr('Movimento da importazione'), new Carbon(), false, [
+                'idsede' => $id_sede,
+            ]);
+        }
 
         //Gestione immagine
         if (!empty($url)) {

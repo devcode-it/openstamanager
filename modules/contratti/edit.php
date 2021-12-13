@@ -134,6 +134,19 @@ if (strtotime($record['data_conclusione']) < strtotime($record['data_accettazion
 					{[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "class": "autosize", "value": "$descrizione$" ]}
 				</div>
 			</div>
+
+<?php
+            // Nascondo le note interne ai clienti
+            if ($user->gruppo != 'Clienti') {
+                echo '
+                <div class="row">
+                    <div class="col-md-12">
+                        {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows=\'5\'" ]}
+                    </div>
+                </div>';
+            }
+?>
+
 		</div>
 	</div>
 

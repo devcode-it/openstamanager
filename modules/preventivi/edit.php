@@ -168,6 +168,18 @@ echo '
 				</div>
 			</div>
 
+<?php
+            // Nascondo le note interne ai clienti
+            if ($user->gruppo != 'Clienti') {
+                echo '
+                <div class="row">
+                    <div class="col-md-12">
+                        {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows=\'5\'" ]}
+                    </div>
+                </div>';
+            }
+?>
+
             <!--div class="pull-right">
 				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
 			</div-->

@@ -110,3 +110,7 @@ DELETE FROM `zz_modules` WHERE `zz_modules`.`name` = 'Gestione componenti';
 ALTER TABLE `co_scadenziario` ADD `distinta` VARCHAR(255) NULL AFTER `presentazioni_exported_at`;
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'), 'Distinta', 'co_scadenziario.distinta', 15, 1, 0, 0, '', '', 0, 0, 1);
+
+-- Aggiunte note interne in Contratti e Preventivi
+ALTER TABLE `co_preventivi` ADD `informazioniaggiuntive` TEXT NULL DEFAULT NULL AFTER `sconto_finale_percentuale`; 
+ALTER TABLE `co_contratti` ADD `informazioniaggiuntive` TEXT NULL DEFAULT NULL AFTER `sconto_finale_percentuale`; 

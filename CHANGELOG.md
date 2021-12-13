@@ -67,6 +67,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunto codice distinta nello scadenzario
  - Aggiunta azione di gruppo Aggiorna banca da Scadenzario e Fatture
  - Aggiunto pulsante di modifica per le varianti di una combinazione
+ - Aggiunte note interne in Preventivi e Contratti
  
 ### Modificato (Changed)
  - Compilazione automatica tipo documento in fase di import FE solo se il campo non è impostato 

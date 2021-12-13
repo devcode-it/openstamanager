@@ -63,6 +63,7 @@ switch (post('op')) {
             $preventivo->tempi_consegna = post('tempi_consegna');
             $preventivo->numero = post('numero');
             $preventivo->condizioni_fornitura = post('condizioni_fornitura');
+            $preventivo->informazioniaggiuntive = post('informazioniaggiuntive');
 
             // Informazioni sulle date del documento
             $preventivo->data_bozza = post('data_bozza') ?: null;

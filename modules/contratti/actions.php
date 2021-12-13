@@ -73,6 +73,7 @@ switch (post('op')) {
             $contratto->numero = post('numero');
             $contratto->budget = $budget;
             $contratto->idreferente = post('idreferente');
+            $contratto->informazioniaggiuntive = post('informazioniaggiuntive');
 
             // Informazioni sulle date del documento
             $contratto->data_bozza = post('data_bozza') ?: null;

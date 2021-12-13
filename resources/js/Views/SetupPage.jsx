@@ -209,11 +209,6 @@ export default class SetupPage extends Page {
       });
 
     $('#language-select').on('action', this.onLanguageSelected);
-
-    // Fix for mwc button inside <a> tags
-    $('a')
-      .has('mwc-button')
-      .css('text-decoration', 'none');
   }
 
   onTestButtonClicked(event: Event) {

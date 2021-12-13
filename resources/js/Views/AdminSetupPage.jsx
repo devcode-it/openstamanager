@@ -40,7 +40,7 @@ export default class AdminSetupPage extends Page {
           <text-field label={__('Conferma password')} id="password_confirm" name="password_confirm" type="password" required style="margin-bottom: 16px;">
             <Mdi icon="repeat-variant" slot="icon"/>
           </text-field>
-          <LoadingButton raised id="create-account-button" label={__('Crea account')} icon="account-plus-outline"/>
+          <LoadingButton raised id="create-account-button" label={__('Crea account')} icon="account-plus-outline" type="submit" />
         </form>
       </mwc-card>
     );
@@ -56,7 +56,8 @@ export default class AdminSetupPage extends Page {
       .on('click', this.onCreateAccountButtonClicked.bind(this));
   }
 
-  async onCreateAccountButtonClicked() {
+  async onCreateAccountButtonClicked(event: PointerEvent) {
+    event.preventDefault();
     this.loading.show();
 
     const form = $(this.element).find('form#new-admin');

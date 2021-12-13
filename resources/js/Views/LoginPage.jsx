@@ -37,7 +37,7 @@ export default class LoginPage extends Page {
           <mwc-formfield label={__('Ricordami')} style="display: block;">
             <mwc-checkbox id="remember" name="remember"/>
           </mwc-formfield>
-          <LoadingButton raised id="login-button" label={__('Accedi')} icon="login-variant" style="float: right;"/>
+          <LoadingButton type="submit" raised id="login-button" label={__('Accedi')} icon="login-variant" style="float: right;"/>
           <mwc-button dense label="Password dimenticata" style="margin-top: 16px;">
             <Mdi icon="lock-question" slot="icon"/>
           </mwc-button>
@@ -56,7 +56,8 @@ export default class LoginPage extends Page {
       .on('click', this.onLoginButtonClicked.bind(this));
   }
 
-  async onLoginButtonClicked() {
+  async onLoginButtonClicked(event: PointerEvent) {
+    event.preventDefault();
     this.loading.show();
 
     const form = $(this.element).find('#login');

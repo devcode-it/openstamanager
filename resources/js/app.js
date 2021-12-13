@@ -1,5 +1,4 @@
 import '../scss/app.scss';
-import './_material';
 import '@mdi/font/scss/materialdesignicons.scss';
 
 import {InertiaProgress} from '@inertiajs/progress';
@@ -43,5 +42,6 @@ createInertiaApp({
     app
   }) {
     m.mount(el, app);
+    import('./_material');
   }
 });

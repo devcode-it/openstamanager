@@ -2,6 +2,7 @@ import '@maicol07/mwc-card';
 import '../WebComponents/TextField';
 
 import {Inertia} from '@inertiajs/inertia';
+import type {TextField} from '@material/mwc-textfield';
 import type {Cash} from 'cash-dom';
 import redaxios from 'redaxios';
 
@@ -16,7 +17,6 @@ import {
   isFormValid,
   showSnackbar
 } from '../utils';
-import type {TextField} from '@material/mwc-textfield';
 
 export default class AdminSetupPage extends Page {
   loading: Cash;

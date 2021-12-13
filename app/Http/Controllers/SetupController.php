@@ -125,9 +125,9 @@ class SetupController extends Controller
     {
         try {
             $request->validate([
-                'username' => 'required|string|min:3|max:255|exists:users,username',
+                'username' => 'required|string|min:3|max:255|unique:users,username',
                 'password' => 'required|string|min:6|max:255',
-                'email' => 'required|string|email|max:255|exists:users,email',
+                'email' => 'required|string|email|max:255|unique:users,email',
             ]);
         } catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors()], 422);

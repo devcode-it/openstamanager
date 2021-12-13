@@ -43,13 +43,15 @@ class AuthController extends Controller
     private function rules(Request $request): array
     {
         $additional_validation = '';
+        $db_field = 'username';
         if (filter_var($request->input('username'), FILTER_VALIDATE_EMAIL)) {
             $additional_validation = '|email';
+            $db_field = 'email';
         }
 
         return [
-            'username' => 'required'.$additional_validation,
-            'password' => 'required',
+            'username' => "required|string|exists:users,$db_field|$additional_validation",
+            'password' => 'required|string',
             'remember' => 'boolean',
         ];
     }

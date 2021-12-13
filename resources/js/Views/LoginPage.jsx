@@ -15,6 +15,7 @@ import Mdi from '../Components/Mdi.jsx';
 import Page from '../Components/Page.jsx';
 import {
   getFormData,
+  isFormValid,
   showSnackbar
 } from '../utils';
 
@@ -27,10 +28,10 @@ export default class LoginPage extends Page {
         <img src={logoUrl} className="center stretch" alt={__('OpenSTAManager')}/>
         <form id="login" style="padding: 16px; text-align: center;">
           <h3 style="margin-top: 0;">{__('Accedi')}</h3>
-          <text-field label={__('Nome utente/email')} id="username" name="username" style="margin-bottom: 16px;">
+          <text-field label={__('Nome utente/email')} id="username" name="username" required style="margin-bottom: 16px;">
             <Mdi icon="account-outline" slot="icon"/>
           </text-field>
-          <text-field label={__('Password')} id="password" name="password" type="password">
+          <text-field label={__('Password')} id="password" name="password" required type="password">
             <Mdi icon="lock-outline" slot="icon"/>
           </text-field>
           <mwc-formfield label={__('Ricordami')} style="display: block;">
@@ -58,8 +59,14 @@ export default class LoginPage extends Page {
   async onLoginButtonClicked() {
     this.loading.show();
 
-    const formData = getFormData($(this.element)
-      .find('#login'));
+    const form = $(this.element).find('#login');
+
+    if (!isFormValid(form)) {
+      this.loading.hide();
+      return;
+    }
+
+    const formData = getFormData(form);
 
     formData._token = $('meta[name="csrf-token"]').attr('content');
 

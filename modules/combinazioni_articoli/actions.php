@@ -43,7 +43,24 @@ switch (filter('op')) {
 
         break;
 
-    case 'gestione-variante':
+    case 'edit-variante':
+        $valori = (array) filter('attributo');
+        $id_articolo = filter('id_articolo');
+
+        $database->delete('mg_articolo_attributo', ['id_articolo' => $id_articolo]);
+       
+        foreach ($valori as $valore){
+            $database->insert('mg_articolo_attributo', [
+                'id_articolo' => $id_articolo,
+                'id_valore' => $valore,
+            ]);
+        }
+
+        flash()->info(tr('Variante modificata correttamente!'));
+
+        break;
+
+    case 'add-variante':
         $combinazione->generaVariante((array) filter('attributo'), filter('id_articolo'));
 
         flash()->info(tr('Variante aggiunta correttamente!'));

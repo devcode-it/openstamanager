@@ -67,6 +67,7 @@ echo '
                     <th width="10%">'.tr('Foto').'</th>
                     <th>'.tr('Variante').'</th>
                     <th>'.tr('Articolo').'</th>
+                    <th class="text-center">'.tr('#').'</th>
                 </tr>
             </thead>
 
@@ -79,6 +80,11 @@ foreach ($articoli as $articolo) {
                     <td><img class="img-thumbnail img-responsive" src="'.$articolo->image.'"></td>
                     <td>'.$articolo->nome_variante.'</td>
                     <td>'.Modules::link('Articoli', $articolo->id, $articolo->codice.' - '.$articolo->descrizione).'</td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-warning btn-xs" onclick="modificaVariante('.$articolo->id.')">
+                            <i class="fa fa-edit"></i>
+                        </button>
+                    </td>
                 </tr>';
 }
 
@@ -95,7 +101,12 @@ echo '
 <script>
 function aggiungiVariante(button) {
     // Apertura modal
-    openModal("'.tr('Aggiungi variante').'", "'.$module->fileurl('gestione-variante.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record);
+    openModal("'.tr('Aggiungi variante').'", "'.$module->fileurl('add-variante.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record);
+}
+
+function modificaVariante(id) {
+    // Modifica modal
+    openModal("'.tr('Modifica variante').'", "'.$module->fileurl('edit-variante.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&id_articolo=" + id);
 }
 
 function generaVarianti(button) {

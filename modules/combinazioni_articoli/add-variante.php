@@ -19,7 +19,7 @@ $varianti_esistenti = array_column($varianti_esistenti, 'variante');
 
 echo '
 <form action="" method="post" id="form-variante">
-    <input type="hidden" name="op" value="gestione-variante">
+    <input type="hidden" name="op" value="add-variante">
     <input type="hidden" name="backto" value="record-edit">
 
     <p>'.tr('Completa le informazioni dei diversi Attributi per generare una variante della Combinazione').'.</p>

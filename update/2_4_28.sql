@@ -48,7 +48,7 @@ ALTER TABLE `an_referenti` DROP `mansione`;
 
 -- Aggiunto modulo mansioni referenti
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES
-(NULL, 'Mansioni referenti', 'Mansioni referenti', 'mansioni', 'SELECT |select| FROM an_mansioni ORDER BY `nome`', NULL, 'fa fa-angle-right', '1.0', '2.*', '100', '40', '1', '1');
+(NULL, 'Mansioni referenti', 'Mansioni referenti', 'mansioni', 'SELECT |select| FROM an_mansioni ORDER BY `nome`', NULL, 'fa fa-angle-right', '1.0', '2.*', '100', (SELECT `id` FROM `zz_modules` AS t WHERE `name`='Tabelle'), '1', '1');
 
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `visible`, `format`, `default`) VALUES
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Mansioni referenti'), 'id', 'an_mansioni.id', 1, 0, 0, 1),

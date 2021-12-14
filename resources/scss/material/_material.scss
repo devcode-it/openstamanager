@@ -4,14 +4,11 @@
     $primary: variables.$primary,
     $secondary: variables.$secondary
 );
-@use "@material/card";
-@use "@material/layout-grid/mdc-layout-grid";
 @use "@material/data-table/data-table";
 @use "@material/typography";
 
 @import "include-media/dist/include-media";
 
-@include card.core-styles;
 @include data-table.core-styles;
 @include data-table.theme-baseline;
 @include typography.core-styles;

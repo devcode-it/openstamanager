@@ -30,40 +30,9 @@
 
 @include('layouts.top-app-bar-menus')
 
-<!-- Load module outside core -->
-<script async src="https://unpkg.com/es-module-shims@0.12.8/dist/es-module-shims.js"></script>
-@php
-    $component = Route::current()->parameter('component');
-    $split1 = explode('::', $component);
-    $path = null;
-    if (count($split1) !== 1) {
-        $split = explode('/', $split1[0]);
-        $vendor = $split[0];
-        $module = $split[1];
-        $path = "vendor/$vendor/$module/index.js";
-    }
-
-    $osm_index = vite_asset('resources/js/index.js');
-    if (!Str::contains($osm_index, config('vite.dev_url'))) {
-        $osm_index = Str::replace('resources/js', '', $osm_index);
-    }
-@endphp
-@empty($path)
-@else
-    <script type="importmap">
-    {
-      "imports": {
-        "external_module": "{{vite_asset($path)}}"
-      }
-    }
-
-    </script>
-    <script type="module">
-      import * as extModule from 'external_module';
-
-      window.extmodule = extModule;
-    </script>
-@endempty
+<script>
+  window.import_path = '{{Str::contains(vite_asset(''), config('vite.dev_url')) ? config('vite.dev_url') : '.'}}';
+</script>
 
 @routes
 @client

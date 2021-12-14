@@ -3,12 +3,9 @@ import '@mdi/font/scss/materialdesignicons.scss';
 
 import {InertiaProgress} from '@inertiajs/progress';
 import {createInertiaApp} from '@maicol07/inertia-mithril';
-import {
-  WAIT_FOREVER,
-  waitUntil
-} from 'async-wait-until';
 import $ from 'cash-dom';
 import m from 'mithril';
+// noinspection SpellCheckingInspection
 import redaxios from 'redaxios';
 
 import {__} from './utils';
@@ -27,16 +24,21 @@ createInertiaApp({
     const split = name.split('::');
 
     if (split.length === 1) {
-      return (await import(`./Views/${name}.jsx`)).default;
+      // Load bundled page
+      const {default: page} = await import(`./Views/${name}.jsx`);
+      return page;
     }
 
-    const [, page] = split;
+    // Load page from module
+    const [modulePath, page] = split;
+
     // noinspection JSUnresolvedVariable
-    await waitUntil(() => typeof window.extmodule !== 'undefined', {
-      timeout: WAIT_FOREVER
-    });
-    // noinspection JSUnresolvedVariable
-    return window.extmodule[page];
+    const osmModule = await import(
+      /* @vite-ignore */
+      `${window.import_path}/vendor/${modulePath}/index.js`
+    );
+
+    return osmModule[page];
   },
   setup({
     el,

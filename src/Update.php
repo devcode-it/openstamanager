@@ -18,6 +18,7 @@
  */
 
 use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
+use Symfony\Component\Filesystem\Exception\IOException;
 
 /**
  * Classe dedicata alla gestione delle procedure di aggiornamento del database del progetto.
@@ -216,7 +217,7 @@ class Update
             try {
                 $fs->chmod('backup', 0777, 0000, true);
                 $fs->chmod('files', 0777, 0000, true);
-            } catch (\Exception $e) {}
+            } catch (IOException $e) {}
 
             return true;
         }

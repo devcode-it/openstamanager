@@ -132,7 +132,7 @@ function copyr($source, $destination, $ignores = [])
 
     try {
         $fs->chmod($destination, 0777, 0000, true);
-    } catch (\Exception $e) {}
+    } catch (IOException $e) {}
 
     foreach ($files as $file) {
         $filename = rtrim($destination, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$file->getRelativePathname();

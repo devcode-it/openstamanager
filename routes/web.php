@@ -3,6 +3,7 @@
 /** @noinspection UnusedFunctionResultInspection */
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\SetupController;
 use Illuminate\Support\Facades\Route;
 
@@ -48,13 +49,13 @@ Route::name('auth.')
 Route::name('password.')
     ->middleware('guest')
     ->group(static function () {
-        Route::post('forgot', [AuthController::class, 'forgot'])
+        Route::post('forgot', [PasswordController::class, 'forgotPassword'])
             ->name('forgot');
 
         Route::inertia('reset', 'ResetPasswordPage')
             ->name('reset');
 
-        Route::post('reset', [AuthController::class, 'resetPassword'])
+        Route::post('reset', [PasswordController::class, 'resetPassword'])
             ->name('resetPassword');
     });
 

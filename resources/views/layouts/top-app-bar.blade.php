@@ -14,7 +14,7 @@
     <i class="mdi mdi-calendar-range-outline"></i>
 </mwc-icon-button>
 <mwc-icon-button id="user-info-btn" slot="actionItems" label="@lang('Il tuo profilo')">
-    @if (Auth::hasUser())
+    @if (auth()->hasUser() && auth()->user()->picture)
         <img src="{{auth()->user()->picture}}" alt="{{auth()->user()->username}}" style="border-radius: 50%;">
     @else
         <i class="mdi mdi-account-outline"></i>

@@ -12,9 +12,9 @@
 </mwc-menu>
 <mwc-menu corner="BOTTOM_LEFT" id="user-info" trigger="user-info-btn">
     @if (auth()->hasUser() && auth()->user()->picture)
-        <img class="mdc-elevation--z2" src="{{auth()->user()->picture}}" alt="{{auth()->user()->username}}" style="border-radius: 50%;">
+        <img class="user-image mdc-elevation--z2" src="{{auth()->user()->picture}}" alt="{{auth()->user()->username}}">
     @else
-        <i class="mdi mdi-account-outline mdc-elevation--z2"></i>
+        <i class="user-image mdi mdi-account-outline"></i>
     @endif
     <br>
     <b style="margin-top: 16px;">{{auth()->user()?->username}}</b>
@@ -30,5 +30,4 @@
     <mwc-button id="logout-button" outlined label="@lang('Esci')" style="margin-top: 16px;">
         <i class="mdi mdi-logout-variant" slot="icon"></i>
     </mwc-button>
-    <hr>
 </mwc-menu>

@@ -77,6 +77,27 @@ main {
     --mdc-layout-grid-margin-desktop: 0;
 }
 
+#user-info {
+    text-align: center;
+
+    --mdc-menu-min-width: 25em;
+
+    .mdi {
+        vertical-align: text-bottom;
+    }
+
+    .user-image {
+        &img {
+            width: 150px;
+            border-radius: 50%;
+        }
+
+        &.mdi {
+            font-size: 50px;
+        }
+    }
+}
+
 /* ----------------------------
     MWC styles
  ------------------------------ */

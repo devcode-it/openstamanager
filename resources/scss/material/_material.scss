@@ -1,10 +1,11 @@
 @use "sass:color";
 @use "../variables";
-@use "node_modules/@material/theme/index" with (
+@use "@material/theme" with (
     $primary: variables.$primary,
     $secondary: variables.$secondary
 );
 @use "@material/data-table/data-table";
+@use "@material/elevation/mdc-elevation";
 @use "@material/typography";
 
 @import "include-media/dist/include-media";

@@ -21,6 +21,7 @@ import {
 
 export default class LoginPage extends Page {
   loading: Cash;
+  forgotPasswordLoading: Cash;
 
   view(vnode) {
     return (
@@ -46,9 +47,14 @@ export default class LoginPage extends Page {
             style="float: right;"
             onclick={this.onLoginButtonClicked.bind(this)}
           />
-          <mwc-button dense label="Password dimenticata" style="margin-top: 16px;">
-            <Mdi icon="lock-question" slot="icon"/>
-          </mwc-button>
+          <LoadingButton
+            dense
+            id="forgot-password-button"
+            label="Password dimenticata"
+            icon="lock-question"
+            style="margin-top: 16px;"
+            onclick={this.onForgotPasswordButtonClicked.bind(this)}
+          />
         </form>
       </mwc-card>
     );
@@ -58,6 +64,7 @@ export default class LoginPage extends Page {
     super.oncreate(vnode);
 
     this.loading = $(this.element).find('#login-button mwc-circular-progress');
+    this.forgotPasswordLoading = $(this.element).find('#forgot-password-button mwc-circular-progress');
   }
 
   async onLoginButtonClicked(event: PointerEvent) {
@@ -81,11 +88,39 @@ export default class LoginPage extends Page {
         data: formData
       });
     } catch (error) {
+      // noinspection ES6MissingAwait
       showSnackbar(Object.values(error.data.errors).join(' '), false);
       this.loading.hide();
       return;
     }
 
     window.location.href = window.route('dashboard');
+  }
+
+  async onForgotPasswordButtonClicked() {
+    this.forgotPasswordLoading.show();
+    const field: HTMLFormElement = document.querySelector('#username');
+    field.type = 'email';
+    if (!field.reportValidity()) {
+      field.type = 'text';
+      return;
+    }
+    field.type = 'text';
+
+    try {
+      await redaxios.post(window.route('password.forgot'), {
+        email: field.value,
+        _token: $('meta[name="csrf-token"]').attr('content')
+      });
+    } catch (error) {
+      // noinspection ES6MissingAwait
+      showSnackbar(Object.values(error.data.errors).join(' '), false);
+      this.loading.hide();
+      return;
+    }
+
+    // noinspection ES6MissingAwait
+    showSnackbar(__('La password è stata inviata alla tua email'));
+    this.loading.hide();
   }
 }

@@ -37,14 +37,25 @@ Route::name('auth.')
     ->middleware('guest')
     ->group(static function () {
         Route::inertia('login', 'LoginPage')
-        ->name('login');
-        /*Route::inertia('password-request', '')
-            ->name('password-request');*/
-
+            ->name('login');
         Route::post('login', [AuthController::class, 'authenticate'])
-        ->name('authenticate');
+            ->name('authenticate');
+
         /*Route::post('logout', 'Auth\LoginController@logout')
             ->name('auth.logout');*/
+    });
+
+Route::name('password.')
+    ->middleware('guest')
+    ->group(static function () {
+        Route::post('forgot', [AuthController::class, 'forgot'])
+            ->name('forgot');
+
+        Route::inertia('reset', 'ResetPasswordPage')
+            ->name('reset');
+
+        Route::post('reset', [AuthController::class, 'resetPassword'])
+            ->name('resetPassword');
     });
 
 Route::name('setup.')->group(static function () {

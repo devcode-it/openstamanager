@@ -7,6 +7,7 @@ import {
   type Children,
   type Vnode
 } from 'mithril';
+import PropTypes from 'prop-types';
 
 import Component from '../Component.jsx';
 import Mdi from '../Mdi.jsx';
@@ -15,6 +16,14 @@ import TableFooter from './TableFooter.jsx';
 import TableRow from './TableRow.jsx';
 
 export default class DataTable extends Component {
+  static propTypes = {
+    'rows-per-page': PropTypes.number,
+    'default-rows-per-page': PropTypes.number,
+    'aria-label': PropTypes.string,
+    checkable: PropTypes.bool,
+    paginated: PropTypes.bool
+  };
+
   rows: Cash[] = [];
   columns: Children[];
   footer: Children[];

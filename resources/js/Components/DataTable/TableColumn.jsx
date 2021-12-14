@@ -1,15 +1,19 @@
 import '@material/mwc-icon-button-toggle';
 
-import {type Cash} from 'cash-dom/dist/cash';
+import {type Cash} from 'cash-dom';
+import PropTypes from 'prop-types';
 
 import Component from '../Component.jsx';
 import Mdi from '../Mdi.jsx';
 
-/**
- * Attributes:
- * - type?: numeric, checkbox
- */
 export default class TableColumn extends Component {
+  static propTypes = {
+    type: PropTypes.oneOf(['numeric', 'checkbox']),
+    id: PropTypes.string,
+    sortable: PropTypes.bool,
+    filterable: PropTypes.bool
+  };
+
   view(vnode) {
     this.attrs.addClassNames('mdc-data-table__header-cell', {
       [`mdc-data-table__header-cell--${this.attrs.get('type')}`]: this.attrs.has('type')
@@ -111,10 +115,11 @@ export default class TableColumn extends Component {
     const index = $(this.element).index();
     const rows: Cash = $(this.element).closest('table').find('tbody tr');
     rows.hide();
-    rows.filter((index_, element) => $(element)
-      .find(`td:nth-child(${index + 1})`)
-      .text()
-      .search(event.target.value) !== -1
-    ).show();
+    rows.filter((index_, element) => (
+      $(element)
+        .find(`td:nth-child(${index + 1})`)
+        .text()
+        .search(event.target.value) !== -1
+    )).show();
   }
 }

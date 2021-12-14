@@ -58,6 +58,7 @@
         "mithril": "^2.0.4",
         "mithril-node-render": "^3.0.2",
         "modern-normalize": "^1.1.0",
+        "prop-types": "^15.7.2",
         "redaxios": "^0.4.1"
     },
     "devDependencies": {

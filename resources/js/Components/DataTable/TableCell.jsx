@@ -1,13 +1,14 @@
 import {type Cash} from 'cash-dom/dist/cash';
 import {inRange} from 'lodash-es';
+import PropTypes from 'prop-types';
 
 import Component from '../Component.jsx';
 
-/**
- * Attributes:
- * - type: numeric, checkbox
- */
 export default class TableCell extends Component {
+  static propTypes = {
+    type: PropTypes.string
+  };
+
   view(vnode) {
     this.attrs.addClassNames('mdc-data-table__cell', {
       [`mdc-data-table__cell--${this.attrs.get('type')}`]: this.attrs.has('type')
@@ -28,7 +29,7 @@ export default class TableCell extends Component {
       .find('tbody tr[checkable] mwc-checkbox');
 
     const cell: Cash = $(this.element);
-    cell.children('mwc-checkbox').on('change', (event) => {
+    cell.children('mwc-checkbox').on('change', () => {
       const row = cell.parent();
       row.toggleClass('mdc-data-table__row--selected');
 

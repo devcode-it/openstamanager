@@ -3,11 +3,18 @@ import '@material/mwc-circular-progress';
 import {type Button} from '@material/mwc-button';
 import type CSS from 'csstype';
 import {type ClassComponent} from 'mithril';
+import PropTypes from 'prop-types';
 
 import Component from './Component.jsx';
 import Mdi from './Mdi.jsx';
 
-export default class LoadingButton extends Component implements ClassComponent<Button> {
+class LoadingButton extends Component implements ClassComponent<{ ...Button, icon?: string }> {
+  static propTypes = {
+    icon: PropTypes.string,
+    raised: PropTypes.bool,
+    outlined: PropTypes.bool
+  };
+
   view(vnode) {
     return (
       <>
@@ -47,3 +54,5 @@ export default class LoadingButton extends Component implements ClassComponent<B
       .attr('density', -7);
   }
 }
+
+export default LoadingButton;

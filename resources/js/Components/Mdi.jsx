@@ -1,8 +1,13 @@
 import {type ClassComponent} from 'mithril';
+import PropTypes from 'prop-types';
 
 import Component from './Component.jsx';
 
 export default class Mdi extends Component implements ClassComponent<{icon?: string}> {
+  static propTypes = {
+    icon: PropTypes.string
+  };
+
   view(vnode) {
     this.attrs.addClassNames('mdi', `mdi-${this.attrs.pull('icon')}`);
     return <i {...this.attrs.all()} />;

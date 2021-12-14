@@ -27,11 +27,8 @@
         </mwc-button>
     </a>
     <br>
-    <form action="" method="post">
-        @csrf
-        <mwc-button outlined type="submit" label="@lang('Esci')" style="margin-top: 16px;">
-            <i class="mdi mdi-logout-variant" slot="icon"></i>
-        </mwc-button>
-    </form>
+    <mwc-button id="logout-button" outlined label="@lang('Esci')" style="margin-top: 16px;">
+        <i class="mdi mdi-logout-variant" slot="icon"></i>
+    </mwc-button>
     <hr>
 </mwc-menu>

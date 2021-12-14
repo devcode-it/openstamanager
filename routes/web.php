@@ -39,11 +39,12 @@ Route::name('auth.')
     ->group(static function () {
         Route::inertia('login', 'LoginPage')
             ->name('login');
+
         Route::post('login', [AuthController::class, 'authenticate'])
             ->name('authenticate');
 
-        /*Route::post('logout', 'Auth\LoginController@logout')
-            ->name('auth.logout');*/
+        Route::post('logout', [AuthController::class, 'logout'])
+            ->name('logout');
     });
 
 Route::name('password.')

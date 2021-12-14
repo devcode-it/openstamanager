@@ -9,6 +9,7 @@ import {
 } from 'async-wait-until';
 import $ from 'cash-dom';
 import m from 'mithril';
+import redaxios from 'redaxios';
 
 import {__} from './utils';
 
@@ -44,4 +45,9 @@ createInertiaApp({
     m.mount(el, app);
     import('./_material');
   }
+});
+
+$('#logout-button').on('click', async () => {
+  await redaxios.post(window.route('auth.logout'));
+  window.location.href = window.route('auth.login');
 });

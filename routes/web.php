@@ -40,7 +40,7 @@ Route::name('auth.')
         Route::inertia('login', 'LoginPage')
             ->name('login');
 
-        Route::post('login', [AuthController::class, 'authenticate'])
+        Route::post('login', [AuthController::class, 'login'])
             ->name('authenticate');
 
         Route::post('logout', [AuthController::class, 'logout'])

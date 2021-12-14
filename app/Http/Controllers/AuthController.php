@@ -13,7 +13,7 @@ class AuthController extends Controller
     /**
      * Handle an authentication attempt.
      */
-    public function authenticate(Request $request): JsonResponse|Response
+    public function login(Request $request): JsonResponse|Response
     {
         try {
             $request->validate($this->rules($request));
@@ -30,6 +30,9 @@ class AuthController extends Controller
 
         if (auth()->attempt($credentials, $request->get('remember'))) {
             $request->session()->regenerate();
+            if ($request->hasSession()) {
+                $request->session()->put('auth.password_confirmed_at', time());
+            }
 
             return response()->noContent();
         }

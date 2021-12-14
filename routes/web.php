@@ -3,6 +3,7 @@
 /** @noinspection UnusedFunctionResultInspection */
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\SetupController;
 use Illuminate\Support\Facades\Route;
@@ -23,16 +24,8 @@ Route::get('/', static function () {
         return redirect()->route('setup');
     }
 
-    if (auth()->hasUser()) {
-        return redirect()->route('dashboard');
-    }
-
     return redirect()->route('auth.login');
 });
-
-Route::inertia('dashboard', 'Dashboard')
-    ->middleware('auth')
-    ->name('dashboard');
 
 Route::name('auth.')
     ->middleware('guest')
@@ -88,3 +81,11 @@ Route::get('lang/{language}', static function ($language) {
 
     return redirect()->back();
 })->name('app.language');
+
+Route::inertia('dashboard', 'Dashboard')
+    ->middleware('auth')
+    ->name('dashboard');
+
+Route::get('modules/{filter?}', [Controller::class, 'getModules'])
+    ->middleware('auth')
+    ->name('modules');

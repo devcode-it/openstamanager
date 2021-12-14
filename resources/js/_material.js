@@ -6,7 +6,9 @@ import '@material/mwc-menu';
 import './WebComponents/TopAppBar';
 import './WebComponents/MaterialDrawer';
 
+import {Inertia} from '@inertiajs/inertia';
 import type {Dialog as MWCDialog} from '@material/mwc-dialog';
+import {ListItem as MWCListItem} from '@material/mwc-list/mwc-list-item';
 import type {Menu as MWCMenu} from '@material/mwc-menu';
 import $ from 'cash-dom';
 
@@ -31,6 +33,18 @@ const drawer = document.querySelector('material-drawer');
 if (drawer) {
   drawer.parentElement.addEventListener('MDCTopAppBar:nav', () => {
     drawer.open = !drawer.open;
+  });
+
+  // Drawer items click
+  $(drawer).find('a.drawer-item').on('click', function (event: PointerEvent) {
+    event.preventDefault();
+    Inertia.visit(this.href);
+    const drawerItem: MWCListItem = this.firstElementChild;
+    drawerItem.activated = true;
+    $(this).siblings('.drawer-item')
+      .filter((index, item) => $(item).has('mwc-list-item[activated]'))
+      .find('mwc-list-item')
+      .prop('activated', false);
   });
 }
 

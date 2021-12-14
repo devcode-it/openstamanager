@@ -6,7 +6,7 @@ export default class Dashboard extends Page {
       <div>
         <h2>{__('Dashboard')}</h2>
         <p>
-          This is the dashboard page.
+          {__('Seleziona una voce dal menu a sinistra')}
         </p>
       </div>
     );

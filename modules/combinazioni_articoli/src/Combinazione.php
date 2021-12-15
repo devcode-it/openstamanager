@@ -44,10 +44,13 @@ class Combinazione extends Model
 
     public function delete()
     {
+        $database = database();
+        
         // Rimozione articoli collegati
         $articoli = $this->articoli;
         foreach ($articoli as $articolo) {
             $articolo->delete();
+            $database->query('DELETE FROM mg_articolo_attributo WHERE id_articolo='.prepare($articolo['id']));
         }
 
         return parent::delete();

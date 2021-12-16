@@ -595,6 +595,7 @@ function caricaTecnici() {
 
     localLoading(container, true);
     return $.get("'.$structure->fileurl('ajax_tecnici.php').'?id_module='.$id_module.'&id_record='.$id_record.'", function(data) {
+        caricaRighe();
         container.html(data);
         localLoading(container, false);
     });

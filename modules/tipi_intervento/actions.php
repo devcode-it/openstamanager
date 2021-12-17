@@ -114,4 +114,60 @@ switch (post('op')) {
         ]);
 
         break;
+
+    case 'addriga':
+
+        $idiva = post('idiva');
+        $descrizione = post('descrizione');
+        $qta = post('qta');
+        $um = post('um');
+        $id_tipointervento = post('id_tipointervento');
+        $prezzo_acquisto = post('prezzo_acquisto');
+        $prezzo_vendita = post('prezzo_vendita');
+        $subtotale = $qta * $prezzo_vendita;
+
+        $query = 'INSERT INTO in_righe_tipiinterventi(id_tipointervento, prezzo_acquisto, prezzo_vendita, descrizione, qta, um, subtotale, idiva) VALUES ('.prepare($id_tipointervento).', '.prepare($prezzo_acquisto).', '.prepare($prezzo_vendita).', '.prepare($descrizione).', '.prepare($qta).', '.prepare($um).', '.prepare($subtotale).', '.prepare($idiva).')';
+        $dbo->query($query);
+
+        flash()->info(tr('Riga aggiunta!'));
+
+        break;
+
+    case 'editriga':
+
+        $idiva = post('idiva');
+        $descrizione = post('descrizione');
+        $qta = post('qta');
+        $um = post('um');
+        $idriga = post('idriga');
+        $id_tipointervento = post('id_tipointervento');
+        $prezzo_acquisto = post('prezzo_acquisto');
+        $prezzo_vendita = post('prezzo_vendita');
+        $subtotale = $qta * $prezzo_vendita;
+
+        $query = 'UPDATE in_righe_tipiinterventi SET'.
+            ' descrizione='.prepare($descrizione).','.
+            ' qta='.prepare($qta).','.
+            ' idiva='.prepare($idiva).','.
+            ' um='.prepare($um).','.
+            ' id_tipointervento='.prepare($id_tipointervento).','.
+            ' prezzo_acquisto='.prepare($prezzo_acquisto).','.
+            ' prezzo_vendita='.prepare($prezzo_vendita).','.
+            ' subtotale='.$subtotale.
+            ' WHERE id='.prepare($idriga);
+        $dbo->query($query);
+
+        flash()->info(tr('Riga modificata!'));
+
+        break;
+
+    case 'delriga':
+    
+        $idriga = post('idriga');
+        $query = "DELETE FROM in_righe_tipiinterventi WHERE id=".prepare($idriga);
+        $dbo->query($query);
+
+        flash()->info(tr('Riga eliminata!'));
+
+        break;
 }

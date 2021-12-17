@@ -87,6 +87,24 @@ include_once __DIR__.'/../../core.php';
 			</div>
 		</div>
 	</div>
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<h3 class="panel-title"><?php echo tr('Righe aggiuntive predefinite'); ?></h3>
+		</div>
+
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-md-12" id="righe">
+					<script>$('#righe').load('<?php echo $module->fileurl('ajax_righe.php');?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');</script>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 text-right">
+					<button type="button" class="btn btn-primary" onclick="launch_modal('<?php echo tr('Aggiungi riga');?>', '<?php echo $module->fileurl('add_righe.php');?>?id_module=<?php echo $id_module;?>&id_record=<?php echo $id_record;?>', 1);"><i class="fa fa-plus"></i><?php echo tr(' Aggiungi');?>..</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </form>
 
 <?php

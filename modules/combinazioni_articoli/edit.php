@@ -67,7 +67,7 @@ echo '
                     <th width="10%">'.tr('Foto').'</th>
                     <th>'.tr('Variante').'</th>
                     <th>'.tr('Articolo').'</th>
-                    <th class="text-center">'.tr('#').'</th>
+                    <th class="text-center" width="13%"></th>
                 </tr>
             </thead>
 
@@ -82,7 +82,10 @@ foreach ($articoli as $articolo) {
                     <td>'.Modules::link('Articoli', $articolo->id, $articolo->codice.' - '.$articolo->descrizione).'</td>
                     <td class="text-center">
                         <button type="button" class="btn btn-warning btn-xs" onclick="modificaVariante('.$articolo->id.')">
-                            <i class="fa fa-edit"></i>
+                            <i class="fa fa-edit"></i> '.tr('Modifica').'
+                        </button>
+                        <button type="button" class="btn btn-danger btn-xs" onclick="rimuoviVariante('.$articolo->id.')">
+                            <i class="fa fa-remove"></i> '.tr('Rimuovi').'
                         </button>
                     </td>
                 </tr>';
@@ -107,6 +110,12 @@ function aggiungiVariante(button) {
 function modificaVariante(id) {
     // Modifica modal
     openModal("'.tr('Modifica variante').'", "'.$module->fileurl('edit-variante.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&id_articolo=" + id);
+}
+
+function rimuoviVariante(id) {
+    if( confirm(\'Rimuovere la variante dalla combinazione?\') ){ 
+        $.post( \''.base_path().'/modules/combinazioni_articoli/actions.php\', { op: \'remove-variante\', id_articolo: + id }, function(data){ location.href=\''.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'\'; } ); 
+    }
 }
 
 function generaVarianti(button) {

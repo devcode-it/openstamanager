@@ -9,7 +9,9 @@ import {snakeCase} from 'lodash-es';
  */
 export default class Model extends BaseModel {
   /**
-   * Just an alias to the get() method
+   * Just an alias to the get() method.
+   *
+   * Returns all the instances of the model.
    */
   static all(): Promise<PluralResponse<InstanceType<Model>>> {
     return this.get();
@@ -19,6 +21,18 @@ export default class Model extends BaseModel {
     for (const [attribute, value] of Object.entries(attributes)) {
       this[attribute] = value;
     }
+  }
+
+  getAttribute(attributeName: string): any {
+    return super.getAttribute(attributeName);
+  }
+
+  setAttribute(attributeName: string, value: any) {
+    super.setAttribute(attributeName, value);
+  }
+
+  getAttributes(): { [p: string]: any } {
+    return super.getAttributes();
   }
 
   getJsonApiBaseUrl(): string {

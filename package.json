@@ -1,8 +1,8 @@
 {
     "name": "openstamanager",
-    "version": "3.0.0",
+    "version": "3.0.0-dev.1",
     "packageManager": "pnpm",
-    "private": true,
+    "files": [],
     "scripts": {
         "dev": "php artisan osm:dev-server-fix && vite",
         "build": "vite build",
@@ -10,7 +10,6 @@
         "watch": "vite build --watch",
         "serve-dev": "concurrently --raw npm:serve npm:dev",
         "serve-watch": "concurrently --raw npm:serve npm:watch",
-        "prepublishOnly": "pnpm run build",
         "preinstall": "npx only-allow pnpm"
     },
     "dependencies": {
@@ -110,5 +109,8 @@
         "typescript": "^4.5.4",
         "vite": "^2.7.2",
         "vite-plugin-fonts": "^0.2.2"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }

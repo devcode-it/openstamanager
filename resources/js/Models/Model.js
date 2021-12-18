@@ -8,6 +8,33 @@ import {snakeCase} from 'lodash-es';
  * @property {number} id
  */
 export default class Model extends BaseModel {
+  constructor() {
+    super();
+
+    // Return a proxy of this object to allow dynamic attributes getters and setters
+    return new Proxy(this, {
+      get(target: this, property, receiver) {
+        const snakeCasedProperty = snakeCase(property);
+
+        if (snakeCasedProperty in target.getAttributes()) {
+          return target.getAttribute(snakeCasedProperty);
+        }
+
+        return Reflect.get(target, property, receiver);
+      },
+      set(target: this, property, value, receiver) {
+        const snakeCasedProperty = snakeCase(property);
+
+        if (snakeCasedProperty in target.getAttributes()) {
+          target.setAttribute(snakeCasedProperty, value);
+          return true;
+        }
+
+        return Reflect.set(target, property, value, receiver);
+      }
+    });
+  }
+
   /**
    * Just an alias to the get() method.
    *

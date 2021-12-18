@@ -3,7 +3,6 @@
     "version": "3.0.0",
     "packageManager": "pnpm",
     "private": true,
-    "main": "resources/js/index.js",
     "scripts": {
         "dev": "php artisan osm:dev-server-fix && vite",
         "build": "vite build",

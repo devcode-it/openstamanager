@@ -6,8 +6,11 @@ import {snakeCase} from 'lodash-es';
 
 /**
  * @property {number} id
+ * @abstract
  */
 export default class Model extends BaseModel {
+  jsonApiType: string;
+
   constructor() {
     super();
 

@@ -19,11 +19,14 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Carbon\Carbon;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Contratti\Contratto;
+use Modules\Contratti\Stato as StatoContratto;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
 use Modules\Fatture\Tipo;
+use Plugins\PianificazioneInterventi\Promemoria;
 
 $module_fatture = 'Fatture di vendita';
 
@@ -39,6 +42,7 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
     'predefined' => 1,
     'dir' => 'entrata',
 ])['id'];
+$stati_pianificabili = $dbo->fetchOne('SELECT GROUP_CONCAT(`descrizione` SEPARATOR ", ") AS stati_pianificabili FROM `co_staticontratti` WHERE `is_pianificabile` = 1')['stati_pianificabili'];
 
 switch (post('op')) {
     case 'crea_fattura':
@@ -115,7 +119,101 @@ switch (post('op')) {
         }
 
         if ($numero_totale > 0) {
-            flash()->info(tr('_NUM_ contratto fatturati!', [
+            flash()->info(tr('_NUM_ contratti fatturati!', [
+                '_NUM_' => $numero_totale,
+            ]));
+        } else {
+            flash()->warning(tr('Nessun contratto fatturato!'));
+        }
+        break;
+
+    case 'renew_contratto':
+        $numero_totale = 0;
+
+
+        // Lettura righe selezionate
+        foreach ($id_records as $id) {
+            $contratto = Contratto::find($id);
+            $rinnova = !empty($contratto->data_accettazione) && !empty($contratto->data_conclusione) && $contratto->data_accettazione != '0000-00-00' && $contratto->data_conclusione != '0000-00-00' && $contratto->stato->is_pianificabile && $contratto->rinnovabile;
+
+            if($rinnova) {
+                $diff = $contratto->data_conclusione->diffAsCarbonInterval($contratto->data_accettazione);
+
+                $new_contratto = $contratto->replicate();
+
+                $new_contratto->numero = Contratto::getNextNumero();
+
+                $new_contratto->idcontratto_prev = $contratto->id;
+                $new_contratto->data_accettazione = $contratto->data_conclusione->copy()->addDays(1);
+                $new_contratto->data_conclusione = $new_contratto->data_accettazione->copy()->add($diff);
+                $new_contratto->data_bozza = Carbon::now();
+
+                $stato = StatoContratto::where('descrizione', '=', 'Bozza')->first();
+                $new_contratto->stato()->associate($stato);
+
+                $new_contratto->save();
+                $new_idcontratto = $new_contratto->id;
+
+                // Correzioni dei prezzi per gli interventi
+                $dbo->query('DELETE FROM co_contratti_tipiintervento WHERE idcontratto='.prepare($new_idcontratto));
+                $dbo->query('INSERT INTO co_contratti_tipiintervento(idcontratto, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico) SELECT '.prepare($new_idcontratto).', idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico FROM co_contratti_tipiintervento AS z WHERE idcontratto='.prepare($contratto->id));
+                $new_contratto->save();
+
+                // Replico le righe del contratto
+                $righe = $contratto->getRighe();
+                foreach ($righe as $riga) {
+                    $new_riga = $riga->replicate();
+                    $new_riga->qta_evasa = 0;
+                    $new_riga->idcontratto = $new_contratto->id;
+
+                    $new_riga->save();
+                }
+
+                // Replicazione degli impianti
+                $impianti = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_contratti WHERE idcontratto='.prepare($contratto->id));
+                $dbo->sync('my_impianti_contratti', ['idcontratto' => $new_idcontratto], ['idimpianto' => array_column($impianti, 'idimpianto')]);
+
+                // Replicazione dei promemoria
+                $promemoria = $dbo->fetchArray('SELECT * FROM co_promemoria WHERE idcontratto='.prepare($contratto->id));
+                $giorni = $contratto->data_conclusione->diffInDays($contratto->data_accettazione);
+                foreach ($promemoria as $p) {
+                    $dbo->insert('co_promemoria', [
+                        'idcontratto' => $new_idcontratto,
+                        'data_richiesta' => date('Y-m-d', strtotime($p['data_richiesta'].' +'.$giorni.' day')),
+                        'idtipointervento' => $p['idtipointervento'],
+                        'richiesta' => $p['richiesta'],
+                        'idimpianti' => $p['idimpianti'],
+                    ]);
+                    $id_promemoria = $dbo->lastInsertedID();
+
+                    $promemoria = Promemoria::find($p['id']);
+                    $righe = $promemoria->getRighe();
+                    foreach ($righe as $riga) {
+                        $new_riga = $riga->replicate();
+                        $new_riga->id_promemoria = $id_promemoria;
+                        $new_riga->save();
+                    }
+
+                    // Copia degli allegati
+                    $allegati = $promemoria->uploads();
+                    foreach ($allegati as $allegato) {
+                        $allegato->copia([
+                            'id_module' => $id_module,
+                            'id_plugin' => Plugins::get('Pianificazione interventi')['id'],
+                            'id_record' => $id_promemoria,
+                        ]);
+                    }
+                }
+
+                // Cambio stato precedente contratto in concluso (non più pianificabile)
+                $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `idstato`= (SELECT id FROM co_staticontratti WHERE is_pianificabile = 0 AND is_fatturabile = 1 AND descrizione = \'Concluso\')  WHERE `id` = '.prepare($contratto->id));
+
+                $numero_totale++;
+            }
+        }
+
+        if ($numero_totale > 0) {
+            flash()->info(tr('_NUM_ contratti rinnovati!', [
                 '_NUM_' => $numero_totale,
             ]));
         } else {
@@ -131,6 +229,17 @@ $operations['crea_fattura'] = [
         'msg' => '{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle fatture di vendita non ancora emesse?').'</small>", "placeholder": "'.tr('Aggiungere alle fatture esistenti non ancora emesse?').'", "name": "accodare" ]}<br>
         {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module=\''.$id_fatture.'\' AND is_fiscale = 1 ORDER BY name", "value": "'.$id_segment.'" ]}<br>
         {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, CONCAT(codice_tipo_documento_fe, \' - \', descrizione) AS descrizione FROM co_tipidocumento WHERE enabled = 1 AND dir =\'entrata\' ORDER BY codice_tipo_documento_fe", "value": "'.$idtipodocumento.'" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
+    ],
+];
+
+$operations['renew_contratto'] = [
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Rinnova contratti').'</span>',
+    'data' => [
+        'title' => tr('Rinnovare i contratti selezionati?').'</span>',
+        'msg' => ''.tr('Il contratto è rinnovabile se sono definite le date di accettazione e conclusione e si trova in uno di questi stati: _STATE_LIST_', ['_STATE_LIST_' => $stati_pianificabili]),
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

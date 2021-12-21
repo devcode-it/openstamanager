@@ -110,7 +110,7 @@ class Preventivo extends Document
         if (!empty($id_pagamento)) {
             $model->idpagamento = $id_pagamento;
         }
-        $model->condizioni_fornitura = setting('Condizioni generali di fornitura');
+        $model->condizioni_fornitura = setting('Condizioni generali di fornitura preventivi');
 
         $model->save();
 

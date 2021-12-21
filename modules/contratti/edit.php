@@ -135,6 +135,12 @@ if (strtotime($record['data_conclusione']) < strtotime($record['data_accettazion
 				</div>
 			</div>
 
+            <div class="row">
+				<div class="col-md-12">
+					{[ "type": "ckeditor", "use_full_ckeditor": 0, "label": "<?php echo tr('Condizioni generali di fornitura'); ?>", "name": "condizioni_fornitura", "class": "autosize", "value": "$condizioni_fornitura$" ]}
+				</div>
+			</div>
+
 <?php
             // Nascondo le note interne ai clienti
             if ($user->gruppo != 'Clienti') {

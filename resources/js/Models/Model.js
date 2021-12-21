@@ -2,7 +2,10 @@ import {
   Model as BaseModel,
   PluralResponse
 } from 'coloquent';
-import {snakeCase} from 'lodash-es';
+import {
+  capitalize,
+  snakeCase
+} from 'lodash-es';
 
 /**
  * @property {number} id
@@ -17,8 +20,12 @@ export default class Model extends BaseModel {
     // Return a proxy of this object to allow dynamic attributes getters and setters
     return new Proxy(this, {
       get(target: this, property, receiver) {
-        const snakeCasedProperty = snakeCase(property);
+        const accessor = target[`get${capitalize(property)}Attribute`];
+        if (typeof accessor === 'function') {
+          return accessor();
+        }
 
+        const snakeCasedProperty = snakeCase(property);
         if (snakeCasedProperty in target.getAttributes()) {
           return target.getAttribute(snakeCasedProperty);
         }
@@ -26,8 +33,12 @@ export default class Model extends BaseModel {
         return Reflect.get(target, property, receiver);
       },
       set(target: this, property, value, receiver) {
-        const snakeCasedProperty = snakeCase(property);
+        const mutator = target[`set${capitalize(property)}Attribute`];
+        if (typeof mutator === 'function') {
+          return mutator(value);
+        }
 
+        const snakeCasedProperty = snakeCase(property);
         if (snakeCasedProperty in target.getAttributes()) {
           target.setAttribute(snakeCasedProperty, value);
           return true;

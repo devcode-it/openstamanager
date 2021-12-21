@@ -67,6 +67,16 @@ switch (filter('op')) {
 
         break;
 
+    case 'remove-variante':
+        $id_articolo = filter('id_articolo');
+
+        $database->delete('mg_articolo_attributo', ['id_articolo' => $id_articolo]);
+        $database->update('mg_articoli', ['id_combinazione' => null], ['id' => $id_articolo]);
+
+        flash()->info(tr('Variante rimossa correttamente!'));
+
+        break;
+
     case 'genera-varianti':
         $combinazione->generaTutto();
 

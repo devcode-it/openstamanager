@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../../core.php';
 
 $idarticolo = get('idarticolo');
+$limit = get('limit');
 
 switch ($resource) {
     // Legge gli ultimi prezzi di vendita di un determinato cliente e un determinato articolo e li visualizza per suggerire il prezzo di vendita
@@ -61,10 +62,10 @@ switch ($resource) {
         // Ultime 5 vendite totali
         $documenti = $dbo->fetchArray('SELECT iddocumento AS id, "Fattura" AS tipo, "Fatture di vendita" AS modulo, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM co_documenti WHERE id=iddocumento) AS n_documento, (SELECT numero_esterno FROM co_documenti WHERE id=iddocumento) AS n2_documento, (SELECT data FROM co_documenti WHERE id=iddocumento) AS data_documento FROM co_righe_documenti WHERE idarticolo='.prepare($idarticolo).' AND iddocumento IN(SELECT id FROM co_documenti WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="entrata"))
         UNION
-        SELECT idddt AS id, "Ddt" AS tipo, "Ddt di vendita" AS modulo, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM dt_ddt WHERE id=idddt) AS n_documento, (SELECT numero_esterno FROM dt_ddt WHERE id=idddt) AS n2_documento, (SELECT data FROM dt_ddt WHERE id=idddt) AS data_documento FROM dt_righe_ddt WHERE idarticolo='.prepare($idarticolo).' AND idddt IN(SELECT id FROM dt_ddt WHERE idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir="entrata")) LIMIT 0,5');
+        SELECT idddt AS id, "Ddt" AS tipo, "Ddt di vendita" AS modulo, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM dt_ddt WHERE id=idddt) AS n_documento, (SELECT numero_esterno FROM dt_ddt WHERE id=idddt) AS n2_documento, (SELECT data FROM dt_ddt WHERE id=idddt) AS data_documento FROM dt_righe_ddt WHERE idarticolo='.prepare($idarticolo).' AND idddt IN(SELECT id FROM dt_ddt WHERE idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir="entrata")) LIMIT 0,'.$limit.'');
 
         if (sizeof($documenti) > 0) {
-            echo "<br/><table class='table table-striped table-bordered table-extra-condensed' >\n";
+            echo "<table class='table table-striped table-bordered table-extra-condensed' >\n";
             echo "<tr><th width='180'>Documento</th>\n";
             echo "<th width='100' class='text-right' >Totale</th></tr>\n";
 
@@ -78,7 +79,7 @@ switch ($resource) {
             }
             echo "</table>\n";
         } else {
-            echo '<br/>'.tr('Nessuna vendita trovata di questo articolo')."...<br/>\n";
+            echo ''.tr('Nessuna vendita trovata di questo articolo')."...<br/>\n";
         }
 
         break;
@@ -89,10 +90,10 @@ switch ($resource) {
         // Ultimi 5 acquisti totali
         $documenti = $dbo->fetchArray('SELECT iddocumento AS id, "Fattura" AS tipo, "Fatture di acquisto" AS modulo, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM co_documenti WHERE id=iddocumento) AS n_documento, (SELECT numero_esterno FROM co_documenti WHERE id=iddocumento) AS n2_documento, (SELECT data FROM co_documenti WHERE id=iddocumento) AS data_documento FROM co_righe_documenti WHERE idarticolo='.prepare($idarticolo).' AND iddocumento IN(SELECT id FROM co_documenti WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="uscita"))
         UNION
-        SELECT idddt AS id, "Ddt" AS tipo, "Ddt di acquisto" AS modulo, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM dt_ddt WHERE id=idddt) AS n_documento, (SELECT numero_esterno FROM dt_ddt WHERE id=idddt) AS n2_documento, (SELECT data FROM dt_ddt WHERE id=idddt) AS data_documento FROM dt_righe_ddt WHERE idarticolo='.prepare($idarticolo).' AND idddt IN(SELECT id FROM dt_ddt WHERE idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir="uscita")) LIMIT 0,5');
+        SELECT idddt AS id, "Ddt" AS tipo, "Ddt di acquisto" AS modulo, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM dt_ddt WHERE id=idddt) AS n_documento, (SELECT numero_esterno FROM dt_ddt WHERE id=idddt) AS n2_documento, (SELECT data FROM dt_ddt WHERE id=idddt) AS data_documento FROM dt_righe_ddt WHERE idarticolo='.prepare($idarticolo).' AND idddt IN(SELECT id FROM dt_ddt WHERE idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir="uscita")) LIMIT 0,'.$limit.'');
 
         if (sizeof($documenti) > 0) {
-            echo "<br/><table class='table table-striped table-bordered table-extra-condensed' >\n";
+            echo "<table class='table table-striped table-bordered table-extra-condensed' >\n";
             echo "<tr><th width='180'>Documento</th>\n";
             echo "<th width='100' class='text-right' >Totale</th></tr>\n";
 
@@ -106,7 +107,7 @@ switch ($resource) {
             }
             echo "</table>\n";
         } else {
-            echo '<br/>'.tr('Nessun acquisto trovato di questo articolo')."...<br/>\n";
+            echo ''.tr('Nessun acquisto trovato di questo articolo')."...<br/>\n";
         }
 
         break;

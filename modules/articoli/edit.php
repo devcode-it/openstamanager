@@ -261,6 +261,44 @@ echo '
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <?php echo tr('Ultimi 20 prezzi di acquisto'); ?>
+                    </h3>
+                </div>
+
+                <div class="panel-body">
+                    <div class="clearfix"></div>
+
+                    <div class="row">
+                        <div class="col-md-12" id="prezziacquisto"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <?php echo tr('Ultimi 20 prezzi di vendita'); ?>
+                    </h3>
+                </div>
+
+                <div class="panel-body">
+                    <div class="clearfix"></div>
+
+                    <div class="row">
+                        <div class="col-md-12" id="prezzivendita"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
 </form>
@@ -379,5 +417,9 @@ $(document).ready(function(){
     if(input('id_fornitore').get()){
         input('prezzo_acquisto').disable();
     }
+
+    $("#prezziacquisto").load("<?php echo base_path(); ?>/ajax_complete.php?module=Articoli&op=getprezziacquisto&idarticolo="+ <?php echo $id_record; ?> + "&limit=20");
+
+    $("#prezzivendita").load("<?php echo base_path(); ?>/ajax_complete.php?module=Articoli&op=getprezzivendita&idarticolo="+ <?php echo $id_record; ?> + "&limit=20");
 });
 </script>

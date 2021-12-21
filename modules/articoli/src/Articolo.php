@@ -131,6 +131,7 @@ class Articolo extends Model
 
         // Calcolo prezzo di vendita ivato e non ivato
         $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
+        $id_iva = $id_iva ?: setting('Iva predefinita');
         $percentuale_aliquota = floatval(Aliquota::find($id_iva)->percentuale);
         if ($prezzi_ivati) {
             $this->prezzo_vendita_ivato = $prezzo_vendita;

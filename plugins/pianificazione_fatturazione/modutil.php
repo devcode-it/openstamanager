@@ -2,7 +2,7 @@
 
     include_once __DIR__.'/../../core.php';
 
-    function variables($descrizione = '', $inizio = null, $fine = null)
+    function variables($descrizione = '', $inizio = null, $fine = null, $rata = null, $numero_fatture = null)
     {
         $mese = [
             '01' => 'Gennaio',
@@ -24,6 +24,8 @@
                 <li><code>{data_inizio}</code></li>
                 <li><code>{data_fine}</code></li>
                 <li><code>{mese_fatturazione}</code></li>
+                <li><code>{rata_attuale}</code></li>
+                <li><code>{numero_rate}</code></li>
             </ul>';
 
         if (!empty($descrizione)) {
@@ -31,6 +33,8 @@
             $result['descrizione'] = str_replace('{data_inizio}', Translator::dateToLocale($inizio), $result['descrizione']);
             $result['descrizione'] = str_replace('{data_fine}', Translator::dateToLocale($fine), $result['descrizione']);
             $result['descrizione'] = str_replace('{mese_fatturazione}', $mese[date('m', strtotime($inizio))], $result['descrizione']);
+            $result['descrizione'] = str_replace('{rata_attuale}', $rata, $result['descrizione']);
+            $result['descrizione'] = str_replace('{numero_rate}', $numero_fatture, $result['descrizione']);
         }
 
         return $result;

@@ -80,7 +80,6 @@
         "csstype": "^3.0.10",
         "eslint": "^7.32.0",
         "eslint-plugin-flowtype": "^5.9.2",
-        "eslint-plugin-github": "^4.2.0",
         "eslint-plugin-mithril": "^0.2.0",
         "eslint-plugin-lit": "^1.6.1",
         "eslint-plugin-new-with-error": "^2.0.0",

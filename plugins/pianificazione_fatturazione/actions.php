@@ -102,7 +102,7 @@ switch ($operazione) {
                         $qta_riga = ($qta[$r->id] <= ($r->qta - $qta_evasa) ? $qta[$r->id] : ($r->qta - $qta_evasa));
                         $descrizione = post('descrizione')[$r->id];
 
-                        $descrizione = variables($descrizione, $inizio, $fine)['descrizione'];
+                        $descrizione = variables($descrizione, $inizio, $fine, $rata, $numero_fatture)['descrizione'];
 
                         $inizio = $fine;
                         $fine = date('Y-m-d', strtotime($timeing, strtotime($inizio)));

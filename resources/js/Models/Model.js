@@ -8,6 +8,8 @@ import {
 } from 'lodash-es';
 
 /**
+ * The base model for all models.
+ *
  * @property {number} id
  * @abstract
  */

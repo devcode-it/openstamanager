@@ -94,7 +94,6 @@ specifiers:
   stylelint-scss: ^4.0.1
   typescript: ^4.5.4
   vite: ^2.7.2
-  vite-plugin-fonts: ^0.2.2
 
 dependencies:
   '@inertiajs/inertia': 0.10.1
@@ -192,7 +191,6 @@ devDependencies:
   stylelint-scss: 4.0.1_stylelint@14.1.0
   typescript: 4.5.4
   vite: 2.7.2_sass@1.45.0
-  vite-plugin-fonts: 0.2.2_vite@2.7.2
 
 packages:
 
@@ -6581,14 +6579,6 @@ packages:
     dependencies:
       spdx-correct: 3.1.1
       spdx-expression-parse: 3.0.1
-    dev: true
-
-  /vite-plugin-fonts/0.2.2_vite@2.7.2:
-    resolution: {integrity: sha512-fhzhsrTiuzlDjSO6g5sV5EVIIvbb8lmsaIY6eUTBM4lcF55x40UBpHrcyvNwIhQG211g0lu83XC7oZlkmvdkMA==}
-    peerDependencies:
-      vite: ^2.0.0
-    dependencies:
-      vite: 2.7.2_sass@1.45.0
     dev: true
 
   /vite/2.7.2_sass@1.45.0:

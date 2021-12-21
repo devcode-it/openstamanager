@@ -240,7 +240,7 @@ switch (post('op')) {
                 $totale_documento_indicato = abs(floatval($dati_generali['ImportoTotaleDocumento']));
 
                 // Calcolo del totale basato sui DatiRiepilogo
-                if (empty($totale_documento) && empty($dati_generali['ScontoMaggiorazione'])) {
+                if (empty($totale_documento_indicato) && empty($dati_generali['ScontoMaggiorazione'])) {
                     $totale_documento = 0;
 
                     $riepiloghi = $xml['FatturaElettronicaBody']['DatiBeniServizi']['DatiRiepilogo'];
@@ -264,7 +264,7 @@ switch (post('op')) {
             'stored' => $totale_documento,
             'calculated' => $fattura->totale,
         ]);
-
+        
         break;
 
     // Elenco fatture in stato Bozza per il cliente

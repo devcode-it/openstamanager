@@ -22,11 +22,14 @@ include_once __DIR__.'/../../core.php';
 use Modules\Interventi\Intervento;
 
 $intervento = Intervento::find($record['id']);
+$sessioni = $intervento->sessioni;
 
+$ore = $sessioni->sum('ore');
 $imponibile = empty($options['dir']) ? $intervento->imponibile : $intervento->spesa;
 $sconto = empty($options['dir']) ? $intervento->sconto : 0;
 $totale_imponibile = empty($options['dir']) ? $intervento->totale_imponibile : $intervento->spesa;
 
+$somma_ore[] = $ore;
 $somma_imponibile[] = $imponibile;
 $somma_sconto[] = $sconto;
 $somma_totale_imponibile[] = $totale_imponibile;
@@ -54,20 +57,21 @@ echo '
         <p><small><b>'.tr('Cliente').':</b> '.$intervento->anagrafica->ragione_sociale.'</small></p>
         <p><small><b>'.tr('Stato').':</b> '.$intervento->stato->descrizione.'</small></p>
         <p><small><b>'.tr('Data richiesta').':</b> '.dateFormat($intervento->data_richiesta).'</small></p>
-        <p><small><b>'.tr('Richiesta').':</b> '.$intervento->richiesta.'</small></p>
+        <p><small><b>'.tr('Richiesta').':</b> '.$intervento->richiesta.'</p>
+        <p><b>'.tr('Descrizione').':</b> '.$intervento->descrizione.'</small></p>
     </td>
+    <td class="text-center">'.Translator::numberToLocale($ore).'</td>
     <td class="text-center">'.($pricing ? moneyFormat($imponibile, 2) : '-').'</td>
     <td class="text-center">'.($pricing && empty($options['dir']) ? moneyFormat($sconto, 2) : '-').'</td>
     <td class="text-center">'.($pricing ? moneyFormat($totale_imponibile, 2) : '-').'</td>
 </tr>';
 
 // Sessioni
-$sessioni = $intervento->sessioni;
 if (count($sessioni) > 0) {
     echo '
 <tr>
     <td style="border-top: 0; border-bottom: 0;"></td>
-    <th style="background-color: #eee"><small>'.tr('Sessioni').'</small></th>
+    <th style="background-color: #eee" colspan="2"><small>'.tr('Sessioni').'</small></th>
     <th class="text-center" style="background-color: #eee"><small>'.tr('Data').'</small></th>
     <th class="text-center" style="background-color: #eee"><small>'.tr('Inizio').'</small></th>
     <th class="text-center" style="background-color: #eee"><small>'.tr('Fine').'</small></th>
@@ -77,7 +81,7 @@ if (count($sessioni) > 0) {
         echo '
 <tr>
     <td style="border-top: 0; border-bottom: 0;"></td>
-    <td><small>'.$sessione->anagrafica->ragione_sociale.' <small>('.$sessione->tipo->descrizione.')</small></td>
+    <td colspan="2"><small>'.$sessione->anagrafica->ragione_sociale.' <small>('.$sessione->tipo->descrizione.')</small></td>
     <td class="text-center"><small>'.dateFormat($sessione->orario_inizio).'</small></td>
     <td class="text-center"><small>'.timeFormat($sessione->orario_inizio).'</small></td>
     <td class="text-center"><small>'.timeFormat($sessione->orario_fine).'</small></td>
@@ -91,7 +95,7 @@ if (!$righe->isEmpty()) {
     echo '
 <tr>
     <td style="border-top: 0; border-bottom: 0;"></td>
-    <th style="background-color: #eee"><small>'.tr('Materiale utilizzato e spese aggiuntive').'</small></th>
+    <th style="background-color: #eee" colspan="2"><small>'.tr('Materiale utilizzato e spese aggiuntive').'</small></th>
     <th class="text-center" style="background-color: #eee"><small>'.tr('Qta').'</small></th>
     <th class="text-center" style="background-color: #eee"><small>'.tr('Prezzo unitario').'</small></th>
     <th class="text-center" style="background-color: #eee"><small>'.tr('Imponibile').'</small></th>
@@ -104,7 +108,7 @@ if (!$righe->isEmpty()) {
         echo '
 <tr>
     <td style="border-top: 0; border-bottom: 0;"></td>
-    <td><small>'.$riga->descrizione.'</small></td>
+    <td colspan="2"><small>'.$riga->descrizione.'</small></td>
     <td class="text-center"><small>'.$riga->qta.' '.$riga->um.'</small></td>
     <td class="text-center"><small>'.($pricing ? moneyFormat($prezzo) : '-').'</small></td>
     <td class="text-center"><small>'.($pricing ? moneyFormat($totale) : '-').'</small></td>

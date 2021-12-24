@@ -87,7 +87,7 @@ export type SectionsT = { [string]: SectionT } | SectionT[];
 /**
  * @abstract
  */
-export default class RecordsPage extends Page {
+export class RecordsPage extends Page {
   columns: ColumnsT;
   rows: RowsT = collect({});
 

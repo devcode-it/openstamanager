@@ -80,14 +80,18 @@ export type SectionT = FieldT[] | {
   fields: FieldT[] | { [string]: FieldT }
 };
 
+export type ColumnsT = { [string]: [string] | ColumnT } | ColumnT[];
+export type RowsT = Collection<Model>;
+export type SectionsT = { [string]: SectionT } | SectionT[];
+
 /**
  * @abstract
  */
 export default class RecordsPage extends Page {
-  columns: { [string]: [string] | ColumnT } | ColumnT[];
-  rows: Collection<Model> = collect({});
+  columns: ColumnsT;
+  rows: RowsT = collect({});
 
-  sections: { [string]: SectionT } | SectionT[];
+  sections: SectionsT;
 
   dialogs: Children[];
 

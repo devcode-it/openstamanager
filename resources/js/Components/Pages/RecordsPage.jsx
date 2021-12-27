@@ -97,29 +97,33 @@ export class RecordsPage extends Page {
 
   recordDialogMaxWidth: string | number = '75%';
 
-  model: Model;
+  model: typeof Model;
+
+  /** @private */
+  data: Model[] = {};
 
   async oninit(vnode) {
-    // noinspection JSUnresolvedFunction
-    vnode.state.data = (await this.model.all()).getData();
-    if (vnode.state.data) {
-      for (const record of vnode.state.data) {
+    const response = await this.model.all();
+    this.data = response.getData();
+
+    if (this.data.length > 0) {
+      for (const record of this.data) {
         this.rows.put(record.id, record);
       }
       m.redraw();
     }
   }
 
-  async onupdate(vnode) {
+  onupdate(vnode) {
     const rows: Cash = $('.mdc-data-table__row[data-model-id]');
     if (rows.length > 0) {
       rows.on(
         'click',
-        (event: PointerEvent) => {
+        async (event: PointerEvent) => {
           if (event.target.tagName === 'MWC-CHECKBOX') {
             return;
           }
-          this.updateRecord($(event.target)
+          await this.updateRecord($(event.target)
             .parent('tr')
             .data('model-id'));
         }
@@ -168,8 +172,8 @@ export class RecordsPage extends Page {
   }
 
   async updateRecord(id: number) {
-    // noinspection JSUnresolvedFunction
-    const instance: Model = (await this.model.find(id)).getData();
+    const response = await this.model.find(id);
+    const instance = response.getData();
     const dialog = $('mwc-dialog#add-record-dialog');
 
     // eslint-disable-next-line sonarjs/no-duplicate-string
@@ -190,6 +194,7 @@ export class RecordsPage extends Page {
 
           await instance.delete();
 
+          // noinspection JSUnresolvedVariable
           this.rows.forget(instance.id);
           m.redraw();
           await showSnackbar(__('Record eliminato!'), 4000);
@@ -210,7 +215,7 @@ export class RecordsPage extends Page {
       <mwc-dialog id="add-record-dialog" class="record-dialog"
                   heading={__('Aggiungi nuovo record')}
                   style={`--mdc-dialog-max-width: ${this.recordDialogMaxWidth}`}>
-        <form method="PUT">
+        <form>
           <text-field id="id" name="id" style="display: none;" data-default-value=""/>
           {(() => {
             const sections = collect(this.sections);

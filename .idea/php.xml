@@ -110,7 +110,6 @@
       <path value="$PROJECT_DIR$/vendor/devcode-it/openstamanager-standard-modules" />
       <path value="$PROJECT_DIR$/vendor/psr/http-factory" />
       <path value="$PROJECT_DIR$/vendor/laravel/serializable-closure" />
-      <path value="$PROJECT_DIR$/vendor/openstamanager/standard_modules" />
       <path value="$PROJECT_DIR$/vendor/maicol07/laravel-json-api-resource" />
       <path value="$PROJECT_DIR$/vendor/maximebf/debugbar" />
       <path value="$PROJECT_DIR$/vendor/barryvdh/laravel-debugbar" />

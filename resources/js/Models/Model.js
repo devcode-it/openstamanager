@@ -20,6 +20,7 @@ export default class Model extends BaseModel {
     super();
 
     // Return a proxy of this object to allow dynamic attributes getters and setters
+    // eslint-disable-next-line no-constructor-return
     return new Proxy(this, {
       get(target: this, property, receiver) {
         const accessor = target[`get${capitalize(property)}Attribute`];

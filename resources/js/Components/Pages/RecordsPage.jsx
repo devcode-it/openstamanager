@@ -33,7 +33,8 @@ import Page from '../Page.jsx';
 export type ColumnT = {
   id?: string,
   title: string,
-  type?: 'checkbox' | 'numeric'
+  type?: 'checkbox' | 'numeric',
+  valueModifier?: (instance: Model, prop: string) => any
 }
 
 export type SectionT = {
@@ -43,7 +44,7 @@ export type SectionT = {
   fields: TextFieldT[] | TextAreaT | SelectT[] | { [string]: TextFieldT | TextAreaT | SelectT }
 };
 
-export type ColumnsT = { [string]: [string] | ColumnT } | ColumnT[];
+export type ColumnsT = { [string]: [string] | ColumnT };
 export type RowsT = Collection<Model>;
 export type SectionsT = { [string]: SectionT } | SectionT[];
 
@@ -62,15 +63,12 @@ export class RecordsPage extends Page {
 
   model: typeof Model;
 
-  /** @private */
-  data: Model[] = {};
-
   async oninit(vnode) {
     const response = await this.model.all();
-    this.data = response.getData();
+    const data: Model[] = response.getData();
 
-    if (this.data.length > 0) {
-      for (const record of this.data) {
+    if (data.length > 0) {
+      for (const record of data) {
         this.rows.put(record.id, record);
       }
       m.redraw();
@@ -118,21 +116,17 @@ export class RecordsPage extends Page {
         </TableRow>);
     }
 
-    return this.rows.map((row: Model, index) => {
-      const cells = [];
-
-      // eslint-disable-next-line guard-for-in
-      for (const attribute in this.columns) {
-        cells.push(row[attribute]);
-      }
-
-      return (
-        <TableRow key={index} data-model-id={row.id} style="cursor: pointer">
-          {cells.map((cell: string, index_) => <TableCell key={index_}>{cell}</TableCell>)}
-        </TableRow>
-      );
-    })
-      .toArray();
+    return this.rows.map((instance: Model, index) => (
+      <TableRow key={index} data-model-id={instance.id} style="cursor: pointer">
+        {collect(this.columns).map((column, index_) => (
+          <TableCell key={index_}>{
+            (typeof column === 'object'
+              ? (column.valueModifier ? column.valueModifier(instance, column.id ?? index_) : instance[column.id ?? index_])
+              : instance[index_])
+          }</TableCell>
+        )).toArray()}
+      </TableRow>
+    )).toArray();
   }
 
   async updateRecord(id: number) {
@@ -143,7 +137,14 @@ export class RecordsPage extends Page {
     // eslint-disable-next-line sonarjs/no-duplicate-string
     dialog.find('text-field, text-area, select')
       .each((index, field: TextFieldT | TextAreaT | SelectT) => {
-        field.value = instance[field.id];
+        let value = instance[field.id];
+        const column = this.columns[field.id];
+
+        if (typeof column === 'object' && column.valueModifier) {
+          value = column.valueModifier(instance, field.id);
+        }
+
+        return value;
       });
 
     dialog.find('mwc-button#delete-button')
@@ -195,11 +196,11 @@ export class RecordsPage extends Page {
                       return fields.map((field, fieldIndex) => (
                         <mwc-layout-grid-cell key={fieldIndex}
                                               span={12 / (section.columns ?? 3)}>
-                          {m(field.elementType, {
+                          {m(field.elementType ?? 'text-field', {
                             ...field,
                             id: field.id ?? fieldIndex,
                             name: field.name ?? field.id ?? fieldIndex,
-                            'data-default-value': field.value ?? field.selected
+                            'data-default-value': field.value ?? (field.selected ?? '')
                           })}
                         </mwc-layout-grid-cell>
                       ))

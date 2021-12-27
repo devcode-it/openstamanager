@@ -3,15 +3,16 @@ import '@material/mwc-dialog';
 import '@material/mwc-fab';
 import '@material/mwc-snackbar';
 
-import type {
-  TextFieldInputMode,
-  TextFieldType
-} from '@material/mwc-textfield/mwc-textfield-base';
 import type {Cash} from 'cash-dom/dist/cash';
 import collect, {Collection} from 'collect.js';
 import {Children} from 'mithril';
 
 import {Model} from '../../Models';
+import type {
+  SelectT,
+  TextAreaT,
+  TextFieldT
+} from '../../types';
 import {
   isFormValid,
   showSnackbar
@@ -35,49 +36,11 @@ export type ColumnT = {
   type?: 'checkbox' | 'numeric'
 }
 
-export type FieldT = {
-  id?: string,
-  value?: string,
-  type?: TextFieldType,
-  label?: string,
-  placeholder?: string,
-  prefix?: string,
-  suffix?: string,
-  icon?: string,
-  iconTrailing?: string,
-  disabled?: boolean,
-  charCounter?: boolean,
-  outlined?: boolean,
-  helper?: string,
-  helperPersistent?: boolean | string,
-  required?: boolean,
-  minLength?: number,
-  maxLength?: number,
-  validationMessage?: string,
-  pattern?: string,
-  min?: number | string,
-  max?: number | string,
-  size?: number | null,
-  step?: number | null,
-  autoValidate?: boolean,
-  validity?: ValidityState,
-  willValidate?: boolean,
-  validityTransform?: (value: string, nativeValidity: ValidityState) => Partial<ValidityState> |
-    null,
-  validateOnInitialRender?: boolean,
-  name?: string,
-  inputMode?: TextFieldInputMode,
-  readOnly?: boolean,
-  autocapitalize: 'on' | 'off' | 'sentences' | 'none' | 'words' | 'characters',
-  endAligned?: boolean,
-  ...
-};
-
-export type SectionT = FieldT[] | {
+export type SectionT = {
   id?: string,
   heading?: string,
   columns?: number,
-  fields: FieldT[] | { [string]: FieldT }
+  fields: TextFieldT[] | TextAreaT | SelectT[] | { [string]: TextFieldT | TextAreaT | SelectT }
 };
 
 export type ColumnsT = { [string]: [string] | ColumnT } | ColumnT[];
@@ -135,7 +98,8 @@ export class RecordsPage extends Page {
     return collect(this.columns)
       .map(
         (column: ColumnT | string, id: string) => (
-          <TableColumn id={id} key={id} {...((typeof column === 'object') ? column : {})} sortable filterable>
+          <TableColumn id={id} key={id} {...((typeof column === 'object') ? column : {})} sortable
+                       filterable>
             {typeof column === 'string' ? column : column.title}
           </TableColumn>
         )
@@ -177,8 +141,8 @@ export class RecordsPage extends Page {
     const dialog = $('mwc-dialog#add-record-dialog');
 
     // eslint-disable-next-line sonarjs/no-duplicate-string
-    dialog.find('text-field, text-area')
-      .each((index, field: TextField | TextArea) => {
+    dialog.find('text-field, text-area, select')
+      .each((index, field: TextFieldT | TextAreaT | SelectT) => {
         field.value = instance[field.id];
       });
 
@@ -225,17 +189,22 @@ export class RecordsPage extends Page {
                 <div id={section.id ?? index}>
                   <h4 class="mdc-typography--overline">{section.heading}</h4>
                   <mwc-layout-grid>
-                      {(() => {
-                        const fields = collect(section.fields);
+                    {(() => {
+                      const fields = collect(section.fields);
 
-                        return fields.map((field, fieldIndex) => (
-                          <mwc-layout-grid-cell key={fieldIndex} span={12 / (section.columns ?? 3)}>
-                            <text-field {...field} id={field.id ?? fieldIndex}
-                                        name={field.name ?? field.id ?? fieldIndex}
-                                        data-default-value={field.value ?? ''}/>
-                          </mwc-layout-grid-cell>))
-                          .toArray();
-                      })()}
+                      return fields.map((field, fieldIndex) => (
+                        <mwc-layout-grid-cell key={fieldIndex}
+                                              span={12 / (section.columns ?? 3)}>
+                          {m(field.elementType, {
+                            ...field,
+                            id: field.id ?? fieldIndex,
+                            name: field.name ?? field.id ?? fieldIndex,
+                            'data-default-value': field.value ?? field.selected
+                          })}
+                        </mwc-layout-grid-cell>
+                      ))
+                        .toArray();
+                    })()}
                   </mwc-layout-grid>
                 </div>
               </>
@@ -293,7 +262,7 @@ export class RecordsPage extends Page {
     const form: Cash = dialog.find('form');
 
     fab.on('click', () => {
-      form.find('text-field, text-area')
+      form.find('text-field, text-area, material-select')
         .each((index, field) => {
           field.value = $(field)
             .data('default-value');
@@ -323,7 +292,7 @@ export class RecordsPage extends Page {
         // eslint-disable-next-line new-cap
         const instance: Model = new this.model();
 
-        form.find('text-field, text-area')
+        form.find('text-field, text-area, material-select')
           .each((index, field: TextField | TextArea) => {
             instance[field.id] = field.value;
           });

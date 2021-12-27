@@ -153,9 +153,15 @@ if (!empty($interventi)) {
                     <td class="text-right success">'.moneyFormat($articolo->imponibile).$sconto.'</td>
                 </tr>';
 
-                // Raggruppamento per categoria articolo
-                $materiali[$articolo->articolo->categoria->nome]['costo'] += $articolo->spesa;
-                $materiali[$articolo->articolo->categoria->nome]['ricavo'] += $articolo->imponibile - $articolo->sconto;
+                // Raggruppamento per articolo con lo stesso prezzo
+                $ricavo = ($articolo->imponibile - $articolo->sconto) / $articolo->qta;
+                $costo = $articolo->spesa / $articolo->qta;
+                $descrizione = $articolo->articolo->codice.' - '.$articolo->articolo->descrizione;
+
+                $materiali_art[$descrizione][$ricavo][$costo]['id'] = $articolo->articolo->id;
+                $materiali_art[$descrizione][$ricavo][$costo]['qta'] += $articolo->qta;
+                $materiali_art[$descrizione][$ricavo][$costo]['costo'] += $articolo->spesa;
+                $materiali_art[$descrizione][$ricavo][$costo]['ricavo'] += $articolo->imponibile - $articolo->sconto;
             }
 
             echo '
@@ -186,6 +192,11 @@ if (!empty($interventi)) {
                     <td class="text-right danger">'.moneyFormat($riga->spesa).'</td>
                     <td class="text-right success">'.moneyFormat($riga->imponibile).$sconto.'</td>
                 </tr>';
+
+                // Raggruppamento per riga
+                $materiali_righe[$riga->descrizione]['qta'] += $riga->qta;
+                $materiali_righe[$riga->descrizione]['costo'] += $riga->spesa;
+                $materiali_righe[$riga->descrizione]['ricavo'] += $riga->imponibile - $riga->sconto;
             }
 
             echo '
@@ -340,20 +351,40 @@ if ($diff > 0) {
         </div>
 
         <div class="col-md-6">
-            <table class="table text-left table-striped table-bordered">
+                <table class="table text-left table-striped table-bordered">
                 <tr>
                     <th>'.tr('Materiale').'</th>
+                    <th width="8%">'.tr('Qtà').'</th>
                     <th width="16%">'.tr('Costo').'</th>
                     <th width="16%">'.tr('Ricavo').'</th>
                     <th width="23%">'.tr('Margine').'</th>
                 </tr>';
-            ksort($materiali);
-            foreach ($materiali as $key => $materiale){
+            ksort($materiali_art);
+            foreach ($materiali_art as $key => $materiali_array1){
+                foreach ($materiali_array1 as $materiali_array2){
+                    foreach ($materiali_array2 as $materiale){
+                        $margine = $materiale['ricavo'] - $materiale['costo'];
+                        $margine_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int)((($materiale['ricavo'] / $materiale['costo']) - 1) * 100) : 100;
+                echo '
+                <tr>
+                    <td>'.Modules::link('Articoli', $materiale['id'], $key).'</td>
+                    <td class="text-center">'.$materiale['qta'].'</td>
+                    <td class="text-right">'.Translator::numberToLocale($materiale['costo']).' €</td>
+                    <td class="text-right">'.Translator::numberToLocale($materiale['ricavo']).' €</td>
+                    <td class="text-right '.($margine>0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$margine_prc.'%)</td>
+                </tr>';
+                    }
+                }
+            }
+
+            ksort($materiali_righe);
+            foreach ($materiali_righe as $key => $materiale){
                 $margine = $materiale['ricavo'] - $materiale['costo'];
                 $margine_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int)((($materiale['ricavo'] / $materiale['costo']) - 1) * 100) : 100;
                 echo '
                 <tr>
                     <td>'.$key.'</td>
+                    <td class="text-center">'.$materiale['qta'].'</td>
                     <td class="text-right">'.Translator::numberToLocale($materiale['costo']).' €</td>
                     <td class="text-right">'.Translator::numberToLocale($materiale['ricavo']).' €</td>
                     <td class="text-right '.($margine>0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$margine_prc.'%)</td>

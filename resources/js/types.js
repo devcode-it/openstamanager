@@ -1,4 +1,4 @@
-import {ListItemBase} from '@material/mwc-list/mwc-list-item-base';
+import type {ListItemBase} from '@material/mwc-list/mwc-list-item-base';
 import type {
   TextAreaCharCounter,
   TextFieldInputMode,

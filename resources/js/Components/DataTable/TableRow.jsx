@@ -1,5 +1,6 @@
 import '@material/mwc-checkbox';
 
+import {collect} from 'collect.js';
 import {
   type Children,
   type Vnode
@@ -31,7 +32,8 @@ export default class TableRow extends Component {
     }
 
     for (const child: Vnode of children) {
-      if (child.attrs.type === 'checkbox') {
+      const attributes = collect(child.attrs)
+      if (attributes.get('type') === 'checkbox') {
         break;
       }
     }

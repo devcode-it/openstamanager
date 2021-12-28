@@ -2,19 +2,19 @@
     @php
         $modules = app(\App\Http\Controllers\Controller::class)
             ->getModules(request());
-        $routes = [
+        $entries = [
             'dashboard' => [
                 'icon' => 'view-dashboard-outline',
                 'text' => __('Dashboard')
             ],
         ];
         foreach ($modules as $module) {
-            $to_merge[] = $module->routes;
+            $to_merge[] = $module->drawer_entries;
         }
 
-        $routes = array_merge($routes, ...$to_merge);
+        $entries = array_merge($entries, ...$to_merge);
     @endphp
-    @foreach($routes as $route => $details)
+    @foreach($entries as $route => $details)
         @switch($route)
             @case('hr')
                 <li divider padded role="separator"></li>

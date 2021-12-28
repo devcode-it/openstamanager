@@ -196,19 +196,20 @@ switch (post('op')) {
 
     case 'change-categoria':
         $categoria = post('id_categoria');
+        $sottocategoria = post('subcategoria');
         $n_articoli = 0;
 
         foreach ($id_records as $id) {
             $articolo = Articolo::find($id);
             $articolo->id_categoria = $categoria;
-            $articolo->id_sottocategoria = null;
+            $articolo->id_sottocategoria = $sottocategoria ?: null;
             $articolo->save();
 
             ++$n_articoli;
         }
 
         if ($n_articoli > 0) {
-            flash()->info(tr('Categoria cambiata a _NUM_ articoli!', [
+            flash()->info(tr('Categoria e Sottocategoria aggiornata a _NUM_ articoli!', [
                 '_NUM_' => $n_articoli,
             ]));
         } else {
@@ -415,11 +416,12 @@ $operations['crea-preventivo'] = [
 ];
 
 $operations['change-categoria'] = [
-    'text' => '<span><i class="fa fa-briefcase"></i> '.tr('Aggiorna categoria').'</span>',
+    'text' => '<span><i class="fa fa-briefcase"></i> '.tr('Aggiorna categoria e sottocategoria').'</span>',
     'data' => [
-        'title' => tr('Cambiare la categoria?'),
-        'msg' => tr('Per ciascun articolo selezionato, verrà modificata la categoria').'
-        <br><br>{[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 1, "ajax-source": "categorie" ]}',
+        'title' => tr('Cambiare la categoria e la sottocategoria?'),
+        'msg' => tr('Per ciascun articolo selezionato, verrà modificata la categoria e la sottocategoria').'
+        <br><br>{[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 1, "ajax-source": "categorie", "extra": "onchange=\"$(\'#subcategoria\').enable();updateSelectOption(\'id_categoria\', $(\'#id_categoria\').val());session_set(\'superselect,id_categoria\', $(\'#id_categoria\').val(), 0);$(\'#subcategoria\').val(null).trigger(\'change\');\"" ]}<br>
+        {[ "type": "select", "label": "'.tr('Sottocategoria').'", "name": "subcategoria", "ajax-source": "sottocategorie", "select-options": "{\'id_categoria\': 0}", "disabled": "1" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
     ],

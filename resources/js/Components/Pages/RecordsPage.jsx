@@ -119,11 +119,9 @@ export class RecordsPage extends Page {
     return this.rows.map((instance: Model, index) => (
       <TableRow key={index} data-model-id={instance.id} style="cursor: pointer">
         {collect(this.columns).map((column, index_) => (
-          <TableCell key={index_}>{
-            (typeof column === 'object'
-              ? (column.valueModifier ? column.valueModifier(instance, column.id ?? index_) : instance[column.id ?? index_])
-              : instance[index_])
-          }</TableCell>
+          <TableCell key={index_}>
+            {this.getModelValue(instance, column.id ?? index_)}
+          </TableCell>
         )).toArray()}
       </TableRow>
     )).toArray();
@@ -136,16 +134,9 @@ export class RecordsPage extends Page {
 
     // eslint-disable-next-line sonarjs/no-duplicate-string
     dialog.find('text-field, text-area, select')
-      .each((index, field: TextFieldT | TextAreaT | SelectT) => {
-        let value = instance[field.id];
-        const column = this.columns[field.id];
-
-        if (typeof column === 'object' && column.valueModifier) {
-          value = column.valueModifier(instance, field.id);
-        }
-
-        return value;
-      });
+      .each(
+        (index, field: TextFieldT | TextAreaT | SelectT) => this.getModelValue(instance, field.id)
+      );
 
     dialog.find('mwc-button#delete-button')
       .show()
@@ -314,5 +305,16 @@ export class RecordsPage extends Page {
         await showSnackbar(__('Campi non validi. Controlla i dati inseriti'));
       }
     });
+  }
+
+  getModelValue(model: Model, field: string): any {
+    const column = this.columns[field]
+    let value = model[field];
+
+    if (typeof column === 'object' && column.valueModifier) {
+      value = column.valueModifier(model, field);
+    }
+
+    return value;
   }
 }

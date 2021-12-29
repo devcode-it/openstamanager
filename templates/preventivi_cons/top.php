@@ -74,9 +74,10 @@ echo '
     <thead>
         <tr>
             <th colspan="2">'.tr('Documento', [], ['upper' => true]).'</th>
-            <th class="text-center">'.tr('Imponibile', [], ['upper' => true]).'</th>
-            <th class="text-center">'.tr('Sconto', [], ['upper' => true]).'</th>
-            <th class="text-center">'.tr('Totale imponibile', [], ['upper' => true]).'</th>
+            <th class="text-center" style="width:10%">'.tr('Ore', [], ['upper' => true]).'</th>
+            <th class="text-center" style="width:15%">'.tr('Imponibile', [], ['upper' => true]).'</th>
+            <th class="text-center" style="width:15%">'.tr('Sconto', [], ['upper' => true]).'</th>
+            <th class="text-center" style="width:15%">'.tr('Totale imponibile', [], ['upper' => true]).'</th>
         </tr>
     </thead>
 

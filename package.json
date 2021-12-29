@@ -8,8 +8,8 @@
         "build": "vite build",
         "serve": "php artisan serve",
         "watch": "vite build --watch",
-        "serve-dev": "concurrently --raw npm:serve npm:dev",
-        "serve-watch": "concurrently --raw npm:serve npm:watch",
+        "serve-dev": "concurrently --raw pnpm:serve pnpm:dev",
+        "serve-watch": "concurrently --raw pnpm:serve pnpm:watch",
         "preinstall": "npx only-allow pnpm"
     },
     "dependencies": {

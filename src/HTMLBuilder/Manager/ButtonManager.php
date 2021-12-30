@@ -19,7 +19,8 @@
 
 namespace HTMLBuilder\Manager;
 
-use Modules\Emails\Template;
+use Modules\Emails\Template AS TemplateEmail;
+use Modules\SMS\Template AS TemplateSMS;
 
 /**
  * @since 2.4
@@ -32,7 +33,7 @@ class ButtonManager implements ManagerInterface
 
         // Impostazione id HTML automatico
         if (empty($options['html_id'])) {
-            $options['html_id'] = ($options['type'] == 'print') ? 'print-button' : 'email-button';
+            $options['html_id'] = ($options['type'] == 'print') ? 'print-button' : (($options['type'] == 'email') ? 'email-button' : (($options['type'] == 'sms') ? 'sms' : ''));
         }
 
         if (isset($options['id'])) {
@@ -54,13 +55,22 @@ class ButtonManager implements ManagerInterface
                 'title' => tr('Stampa').' '.((strtoupper($print['title']) == $print['title']) ? $print['title'] : lcfirst($print['title'])),
                 'icon' => $print['icon'],
             ];
-        } else {
-            $template = Template::find($options['id']);
+        } elseif ($options['type'] == 'email') {
+            $template_email = TemplateEmail::find($options['id']);
 
             $result = [
                 'link' => base_path().'/mail.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id='.$options['id'].$options['parameters'],
-                'title' => tr('Invia').' '.((strtoupper($template['name']) == $template['name']) ? $template['name'] : lcfirst($template['name'])),
-                'icon' => $template['icon'],
+                'title' => tr('Invia').' '.((strtoupper($template_email['name']) == $template_email['name']) ? $template_email['name'] : lcfirst($template_email['name'])),
+                'icon' => $template_email['icon'],
+                'type' => 'modal',
+            ];
+        } elseif ($options['type'] == 'sms') {
+            $template_sms = TemplateSMS::find($options['id']);
+
+            $result = [
+                'link' => base_path().'/modules/sms/sms.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id='.$options['id'].$options['parameters'],
+                'title' => tr('Invia').' '.((strtoupper($template_sms['name']) == $template_sms['name']) ? $template_sms['name'] : lcfirst($template_sms['name'])),
+                'icon' => $template_sms['icon'],
                 'type' => 'modal',
             ];
         }
@@ -107,8 +117,10 @@ class ButtonManager implements ManagerInterface
 
         if ($options['type'] == 'print') {
             $results = \Prints::getModulePrints($options['id_module']);
-        } else {
-            $results = Template::where('id_module', $options['id_module'])->get()->toArray();
+        } elseif ($options['type'] == 'email') {
+            $results = TemplateEmail::where('id_module', $options['id_module'])->get()->toArray();
+        } elseif ($options['type'] == 'sms') {
+            $results = TemplateSMS::where('id_module', $options['id_module'])->get()->toArray();
         }
 
         return $results;
@@ -186,8 +198,10 @@ class ButtonManager implements ManagerInterface
     {
         if ($options['type'] == 'print') {
             $result = '<i class="fa fa-print"></i> '.tr('Stampa');
-        } else {
+        } elseif ($options['type'] == 'email') {
             $result = '<i class="fa fa-envelope"></i> '.tr('Invia');
+        } elseif ($options['type'] == 'sms') {
+            $result = '<i class="fa fa-comment"></i> '.tr('Invia');
         }
 
         return $result;

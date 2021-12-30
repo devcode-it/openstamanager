@@ -166,7 +166,14 @@ if (empty($record) || !$has_access) {
                         <div class="pull-right">
                             {( "name": "button", "type": "print", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "id_record": "'.$id_record.'" )}
 
-                            {( "name": "button", "type": "email", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "id_record": "'.$id_record.'" )}
+                            {( "name": "button", "type": "email", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "id_record": "'.$id_record.'" )}';
+
+                        if (Modules::get('Account SMS')) {
+                            echo '
+                            {( "name": "button", "type": "sms", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "id_record": "'.$id_record.'" )}';
+                        }
+
+                            echo '
 
                             <div class="btn-group" id="save-buttons">
                                 <a class="btn btn-success" id="'.(!empty($record['deleted_at']) ? 'restore' : 'save').'">

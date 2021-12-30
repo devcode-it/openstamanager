@@ -25,4 +25,5 @@ $anagrafica = Anagrafica::find($id_record);
 return [
     'ragione_sociale' => $anagrafica->ragione_sociale,
     'codice' => $anagrafica->codice,
+    'id_anagrafica' => $anagrafica->idanagrafica,
 ];

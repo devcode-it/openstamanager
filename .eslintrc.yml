@@ -1,5 +1,5 @@
 root: true
 extends:
-  - '@openstamanager'
+  - '@maicol07'
 globals:
   __: true

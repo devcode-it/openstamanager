@@ -93,10 +93,14 @@ export default class Model extends BaseModel {
     const response = await relationship.first();
     const istanza = response.getData();
 
-    for (const [model: typeof Model, callback: (model: Model) => (void | any)] of callbacks) {
+    let callback;
+    for (const [model: typeof Model, callback_: (model: Model) => (void | any)] of callbacks) {
       if (istanza instanceof model) {
-        return callback(istanza);
+        callback = callback_;
+        break;
       }
     }
+
+    return callback(istanza);
   }
 }

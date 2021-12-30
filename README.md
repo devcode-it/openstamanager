@@ -4,14 +4,14 @@
     <img src="resources\static\images\logo_completo.png" alt="OpenSTAManager">
   </a>
 
-  <p align="center">
+<p align="center">
     Il software gestionale open-source per l'assistenza tecnica e la fatturazione.
     <br>
     <br>
     <a href="https://www.openstamanager.com">Sito web</a>
-    &middot;
+    ·
     <a href="https://docs.openstamanager.com/">Documentazione</a>
-    &middot;
+    ·
     <a href="https://forum.openstamanager.com">Forum</a>
   </p>
 </div>
@@ -42,7 +42,7 @@ Secondo questa definizione, OpenSTAManager riesce a generalizzare al proprio int
 della contabilità e della gestione del magazzino, presentando inoltre moduli piuttosto avanzati e destinati a
 complementare l'attività aziendale in relazione agli interventi di assistenza della realtà lavorativa in oggetto.
 
-La documentazione ufficiale è disponibile all'indirizzo <https://docs.openstamanager.com/>.
+La documentazione ufficiale è disponibile all'indirizzo [https://docs.openstamanager.com/](https://docs.openstamanager.com/).
 
 ## Requisiti
 
@@ -50,30 +50,30 @@ L'installazione del gestionale richiede un server web con le seguenti tecnologie
 
 - [PHP](https://php.net) 8.0+
 - Un database a scelta tra:
-    - [MySQL](https://www.mysql.com) 5.7+ (consigliato)
-    - [PostgreSQL](https://www.postgresql.org) 9.6+
-    - [SQLite](https://www.sqlite.org) 3.8.8+ (non consigliato, in quanto viene salvato "in chiaro" sul filesystem del
-      server)
-    - [SQL Server](https://www.microsoft.com/it-it/sql-server) 2017+
+  - [MySQL](https://www.mysql.com) 5.7+ (consigliato)
+  - [PostgreSQL](https://www.postgresql.org) 9.6+
+  - [SQLite](https://www.sqlite.org) 3.8.8+ (non consigliato, in quanto viene salvato "in chiaro" sul filesystem del
+    server)
+  - [SQL Server](https://www.microsoft.com/it-it/sql-server) 2017+
 - Accesso SSH (**facoltativo**)
 - [Composer](https://getcomposer.org/) installato e disponibile da linea di comando (**facoltativo**)
 
 e un dispositivo (client) con le seguenti tecnologie disponibili:
 
 - Browser moderno, a scelta tra:
-    - [Microsoft Edge](https://www.microsoft.com/it-it/edge) 85+ (consigliato)
-    - [Google Chrome](https://www.google.com/intl/it_it/chrome/) 85+
-    - [Mozilla Firefox](https://www.mozilla.org/it/firefox/) 79+
-    - [Safari](https://www.apple.com/it/safari/) 14+
-    - [Samsung Internet](https://www.samsung.com/it/apps/samsung-internet/) 15+
+  - [Microsoft Edge](https://www.microsoft.com/it-it/edge) 83+
+  - [Google Chrome](https://www.google.com/intl/it_it/chrome/) 93+
+  - [Mozilla Firefox](https://www.mozilla.org/it/firefox/) 92+
+  - [Opera](https://www.opera.com) 79+
+  - [Safari](https://www.apple.com/it/safari/) (attualmente solo nella sua versione [Technology Preview](https://developer.apple.com/safari/technology-preview/) 33+)
 
 _Alcune note:_
 
 - _**Non** è supportato nessun browser diverso dai precedenti, nemmeno in versioni più datate. Pertanto, anche se il
   gestionale potrebbe funzionare, non è garantita assistenza su tali browser. Si citano come esempi: Internet Explorer,
-  Opera, Opera Mini, Opera Mobile e UC Browser._
-- _È consigliato utilizzare uno tra i seguenti browser per le migliori prestazioni: Microsoft Edge, Google Chrome o
-  Samsung Internet_
+  Samsung Internet, Opera Mini, Opera Mobile, UC Browser, Safari per iOS._
+- _È fortemente consigliato aggiornare sempre il proprio browser alla versione più recente e non interrompere la ricezione degli aggiornamenti raggiunta la versione minima indicata_
+- _Il gestionale viene testato sui 3 principali browser (Edge, Chrome, Firefox) nella loro versione più recente_
 
 Per ulteriori informazioni sui pacchetti che forniscono questi elementi di default, visitare la
 sezione [Installazione](https://docs.openstamanager.com/guide/configurazione/installazione) della documentazione.
@@ -86,13 +86,12 @@ Per procedere all'installazione è necessario seguire i seguenti punti:
 2. Creare una cartella (ad esempio `openstamanager`) nella root del server web installato ed estrarvi il contenuto della
    release scaricata. Il percorso della cartella root del server varia in base al software in utilizzo:
 
-    - LAMP (`/var/www/html`)
-    - XAMPP (`C:/xampp/htdocs` per Windows, `/opt/lampp/htdocs/` per Linux, `/Applications/XAMPP/htdocs/` per MAC)
-    - WAMP (`C:\wamp\www`)
-    - MAMP (`C:\MAMP\htdocs` per Windows, `/Applications/MAMP/htdocs` per MAC)
-
+   - LAMP (`/var/www/html`)
+   - XAMPP (`C:/xampp/htdocs` per Windows, `/opt/lampp/htdocs/` per Linux, `/Applications/XAMPP/htdocs/` per MAC)
+   - WAMP (`C:\wamp\www`)
+   - MAMP (`C:\MAMP\htdocs` per Windows, `/Applications/MAMP/htdocs` per MAC)
 3. Creare un database vuoto (tramite [PHPMyAdmin](http://localhost/phpmyadmin/) o riga di comando).
-4. Accedere a <http://localhost/openstamanager> dal vostro browser.
+4. Accedere a [http://localhost/openstamanager](http://localhost/openstamanager) dal vostro browser.
 5. Inserire i dati di configurazione per collegarsi al database.
 6. Procedere all'installazione del software, cliccando sul pulsante **Installa**.
 
@@ -109,7 +108,7 @@ su GitHub (per versioni precedenti alla 2.3,
 visitare [SourceForge](https://sourceforge.net/projects/openstamanager/files)).
 
 Nel caso utilizziate il programma per uso commerciale, si consiglia di scaricare le release disponibili nel sito
-ufficiale del progetto (<https://www.openstamanager.com>), evitando di utilizzare direttamente il codice della
+ufficiale del progetto ([https://www.openstamanager.com](https://www.openstamanager.com)), evitando di utilizzare direttamente il codice della
 repository. Se siete inoltre interessati a supporto e assistenza professionali, li potete richiedere
 nella [sezione dedicata](https://www.openstamanager.com/per-le-aziende/).
 
@@ -148,7 +147,7 @@ La community è una componente importante in un progetto open-source, perché me
 di loro e permette pertanto l'individuazione di soluzioni innovative e migliori.
 
 Siamo presenti su [Facebook](https://www.facebook.com/openstamanager), e il nostro forum ufficiale è disponibile
-all'indirizzo <https://forum.openstamanager.com>, dove potete segnalare i vostri problemi e soddisfare le vostre
+all'indirizzo [https://forum.openstamanager.com](https://forum.openstamanager.com), dove potete segnalare i vostri problemi e soddisfare le vostre
 curiosità nelle sezioni più adeguate:
 
 - [Idee, suggerimenti e consigli](https://forum.openstamanager.com/viewforum.php?f=1)

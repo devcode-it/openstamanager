@@ -71,14 +71,14 @@ foreach ($righe as $riga) {
     $info_evasione = '';
     if (!empty($riga->data_evasione)) {
         $evasione = new Carbon\Carbon($riga->data_evasione);
-        if ($today->diffInDays($evasione, false) < 0) {
+        if ($today->diffInDays($evasione, false) < 0 && $riga->qta_evasa < $riga->qta) {
             $evasione_icon = 'fa fa-warning text-danger';
             $evasione_help = tr('Da consegnare _NUM_ giorni fa',
                 [
                     '_NUM_' => $today->diffInDays($evasione),
                 ]
             );
-        } elseif ($today->diffInDays($evasione, false) == 0) {
+        } elseif ($today->diffInDays($evasione, false) == 0 && $riga->qta_evasa < $riga->qta) {
             $evasione_icon = 'fa fa-clock-o text-warning';
             $evasione_help = tr('Da consegnare oggi');
         } else {

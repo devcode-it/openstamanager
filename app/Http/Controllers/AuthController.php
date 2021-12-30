@@ -28,7 +28,7 @@ class AuthController extends Controller
             unset($credentials['username']);
         }
 
-        if (auth()->attempt($credentials, $request->get('remember'))) {
+        if (auth()->attempt($credentials, $request->get('remember') === 'on')) {
             $request->session()->regenerate();
             if ($request->hasSession()) {
                 $request->session()->put('auth.password_confirmed_at', time());
@@ -70,7 +70,7 @@ class AuthController extends Controller
         return [
             'username' => "required|string|exists:users,$db_field|$additional_validation",
             'password' => 'required|string',
-            'remember' => 'boolean',
+            'remember' => 'string|in:on',
         ];
     }
 }

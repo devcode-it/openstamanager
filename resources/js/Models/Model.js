@@ -1,6 +1,7 @@
 import {
-  Model as BaseModel,
-  PluralResponse
+  type PluralResponse,
+  type ToOneRelation,
+  Model as BaseModel
 } from 'coloquent';
 import {
   capitalize,
@@ -85,5 +86,17 @@ export default class Model extends BaseModel {
 
   getJsonApiType(): string {
     return (super.getJsonApiType() ?? snakeCase(this.constructor.name));
+  }
+
+  /** @protected */
+  async relationshipValue(relationship: ToOneRelation<Model, this>, callbacks: Map<typeof Model, (model: Model) => (void | any)>): void | any {
+    const response = await relationship.first();
+    const istanza = response.getData();
+
+    for (const [model: typeof Model, callback: (model: Model) => (void | any)] of callbacks) {
+      if (istanza instanceof model) {
+        return callback(istanza);
+      }
+    }
   }
 }

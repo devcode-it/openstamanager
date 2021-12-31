@@ -187,7 +187,7 @@ export class RecordsPage extends Page {
                       return fields.map((field, fieldIndex) => (
                         <mwc-layout-grid-cell key={fieldIndex}
                                               span={12 / (section.columns ?? 3)}>
-                          {m(field.elementType ?? 'text-field', {
+                          {m(field.elementType ?? this.getElementFromType(field.type), {
                             ...field,
                             id: field.id ?? fieldIndex,
                             name: field.name ?? field.id ?? fieldIndex,
@@ -316,5 +316,22 @@ export class RecordsPage extends Page {
     }
 
     return value;
+  }
+
+  getElementFromType(type: string) {
+    switch (type) {
+      case 'text':
+        return 'text-field';
+      case 'textarea':
+        return 'text-area';
+      case 'select':
+        return 'material-textfield';
+      /* Case 'checkbox':
+        return Checkbox;
+      case 'radio':
+        return Radio; */
+      default:
+        return 'text-field';
+    }
   }
 }

@@ -133,7 +133,7 @@ export class RecordsPage extends Page {
     const dialog = $('mwc-dialog#add-record-dialog');
 
     // eslint-disable-next-line sonarjs/no-duplicate-string
-    dialog.find('text-field, text-area, select')
+    dialog.find('text-field, text-area, material-select')
       .each(
         (index, field: TextFieldT | TextAreaT | SelectT) => this.getModelValue(instance, field.id)
       );

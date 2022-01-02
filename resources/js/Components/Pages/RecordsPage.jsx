@@ -325,7 +325,7 @@ export class RecordsPage extends Page {
       case 'textarea':
         return 'text-area';
       case 'select':
-        return 'material-textfield';
+        return 'material-select';
       /* Case 'checkbox':
         return Checkbox;
       case 'radio':

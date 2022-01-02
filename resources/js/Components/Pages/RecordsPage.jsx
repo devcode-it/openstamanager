@@ -64,6 +64,7 @@ export class RecordsPage extends Page {
   model: typeof Model;
 
   async oninit(vnode) {
+    super.oninit(vnode);
     const response = await this.model.all();
     const data: Model[] = response.getData();
 

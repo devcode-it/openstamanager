@@ -31,7 +31,7 @@ class Controller extends BaseController
                 $drawer_entries[] = config("$id.drawer_entries");
             }
 
-            $module->drawer_entries = array_merge(...$drawer_entries);
+            $module->drawer_entries = array_merge(...array_filter($drawer_entries, static fn ($entry) => $entry !== null));
 
             return $module;
         });

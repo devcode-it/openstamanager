@@ -14,6 +14,7 @@ import type {
   TextFieldT
 } from '../../types';
 import {
+  getFormData,
   isFormValid,
   showSnackbar
 } from '../../utils';
@@ -62,6 +63,8 @@ export class RecordsPage extends Page {
   recordDialogMaxWidth: string | number = 'auto';
 
   model: typeof Model;
+
+  customSetter: (model: Model, fields: Cash) => void;
 
   /**
    * What fields should take precedence when saving the record
@@ -290,15 +293,19 @@ export class RecordsPage extends Page {
         // eslint-disable-next-line new-cap
         const instance: Model = new this.model();
 
-        const fields = form.find('text-field, text-area, material-select');
-        for (const fieldName of this.fieldsPrecedence) {
-          const field = fields.find(`#${fieldName}`);
-          instance[field.attr('id')] = field.val();
-        }
+        if (this.customSetter) {
+          this.customSetter(instance, getFormData(form));
+        } else {
+          const fields = form.find('text-field, text-area, material-select');
+          fields.filter(this.fieldsPrecedence.map(value => `#${value}`).join(', '))
+            .each((index, field) => {
+              instance[field.id] = field.value;
+            });
 
-        fields.each((index, field: TextField | TextArea) => {
-          instance[field.id] = field.value;
-        });
+          fields.each((index, field: TextField | TextArea) => {
+            instance[field.id] = field.value;
+          });
+        }
 
         const response = await instance.save();
         if (response.getModelId()) {

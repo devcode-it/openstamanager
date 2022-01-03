@@ -6,3 +6,6 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 
 -- Rimossa visualizzazione stampe disabilitate
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `zz_prints` WHERE 1=1 AND enabled=1 HAVING 2=2' WHERE `zz_modules`.`name` = 'Stampe'; 
+
+-- Filtro che esclude gli articoli eliminati dal widget degli articoli in esaurimento
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM mg_articoli WHERE qta < threshold_qta AND attivo=1 AND deleted_at IS NULL' WHERE `zz_widgets`.`name` = 'Articoli in esaurimento'; 

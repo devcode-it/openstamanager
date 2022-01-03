@@ -59,9 +59,14 @@ export class RecordsPage extends Page {
 
   dialogs: Children[];
 
-  recordDialogMaxWidth: string | number = '75%';
+  recordDialogMaxWidth: string | number = 'auto';
 
   model: typeof Model;
+
+  /**
+   * What fields should take precedence when saving the record
+   */
+  fieldsPrecedence: string[] = [];
 
   async oninit(vnode) {
     super.oninit(vnode);
@@ -193,7 +198,7 @@ export class RecordsPage extends Page {
                             id: field.id ?? fieldIndex,
                             name: field.name ?? field.id ?? fieldIndex,
                             'data-default-value': field.value ?? (field.selected ?? '')
-                          })}
+                          }, this.getFieldBody(field))}
                         </mwc-layout-grid-cell>
                       ))
                         .toArray();
@@ -285,10 +290,15 @@ export class RecordsPage extends Page {
         // eslint-disable-next-line new-cap
         const instance: Model = new this.model();
 
-        form.find('text-field, text-area, material-select')
-          .each((index, field: TextField | TextArea) => {
-            instance[field.id] = field.value;
-          });
+        const fields = form.find('text-field, text-area, material-select');
+        for (const fieldName of this.fieldsPrecedence) {
+          const field = fields.find(`#${fieldName}`);
+          instance[field.attr('id')] = field.val();
+        }
+
+        fields.each((index, field: TextField | TextArea) => {
+          instance[field.id] = field.value;
+        });
 
         const response = await instance.save();
         if (response.getModelId()) {
@@ -328,11 +338,31 @@ export class RecordsPage extends Page {
       case 'select':
         return 'material-select';
       /* Case 'checkbox':
-        return Checkbox;
       case 'radio':
         return Radio; */
       default:
         return 'text-field';
+    }
+  }
+
+  getFieldBody(field: TextFieldT | TextAreaT | SelectT) {
+    switch (field.type) {
+      case 'select':
+        return (
+          <>
+            {field.options.map((option: { value: string, label: string }) => {
+              return (
+                <mwc-list-item key={option} value={option.value}>{option.label}</mwc-list-item>
+              );
+            })}
+          </>
+        );
+      case 'checkbox':
+        return '';
+      case 'radio':
+        return '';
+      default:
+        return '';
     }
   }
 }

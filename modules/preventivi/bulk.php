@@ -60,7 +60,7 @@ switch (post('op')) {
             $anagrafica = $documento_import->anagrafica;
             $id_anagrafica = $anagrafica->id;
 
-            if (!$documento_import->stato->is_pianificabile) {
+            if (!$documento_import->stato->is_fatturabile && !$documento_import->stato->is_completato) {
                 break;
             }
 
@@ -101,12 +101,14 @@ switch (post('op')) {
 
                         //Fix per idconto righe fattura
                         $articolo = ArticoloOriginale::find($copia->idarticolo);
-                        $copia->id_conto = ($articolo->idconto_vendita ? $articolo->idconto_vendita : $idconto);
+                        $copia->idconto = ($articolo->idconto_vendita ? $articolo->idconto_vendita : $idconto);
 
                         // Aggiornamento seriali dalla riga dell'ordine
                         if ($copia->isArticolo()) {
                             $copia->serials = $riga->serials;
                         }
+
+                        $copia->save();
                     }
                 }
             }

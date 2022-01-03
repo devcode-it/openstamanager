@@ -50,8 +50,8 @@ export default class DataTable extends Component {
         .map((value: string) => Number.parseInt(value, 10));
     }
 
-    let defaultRowsPerPage = this.attrs.get('default-rows-per-page');
-    if (Number.isInteger(defaultRowsPerPage)) {
+    let defaultRowsPerPage = this.attrs.get('default-rows-per-page', 10);
+    if (typeof defaultRowsPerPage === 'string' && Number.isInteger(defaultRowsPerPage)) {
       defaultRowsPerPage = Number.parseInt(defaultRowsPerPage, 10);
 
       if (!this.rowsPerPage.options.includes(defaultRowsPerPage)) {

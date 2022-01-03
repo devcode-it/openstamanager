@@ -127,6 +127,7 @@ export default class Model extends BaseModel {
     if (!istanza && !Array.isArray(model)) {
       // eslint-disable-next-line new-cap
       istanza = new model();
+      this.setRelation(relation, istanza);
     }
 
     return callback(istanza);

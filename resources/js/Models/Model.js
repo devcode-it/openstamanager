@@ -129,6 +129,6 @@ export default class Model extends BaseModel {
       istanza = new model();
     }
 
-    return callback(istanza ?? model);
+    return callback(istanza);
   }
 }

@@ -130,6 +130,6 @@ export default class Model extends BaseModel {
       this.setRelation(relation, istanza);
     }
 
-    return callback(istanza);
+    return callback(istanza, value);
   }
 }

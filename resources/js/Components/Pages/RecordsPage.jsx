@@ -353,23 +353,24 @@ export class RecordsPage extends Page {
   }
 
   getFieldBody(field: TextFieldT | TextAreaT | SelectT) {
+    const list = [];
     switch (field.type) {
       case 'select':
-        return (
-          <>
-            {field.options.map((option: { value: string, label: string }) => {
-              return (
-                <mwc-list-item key={option} value={option.value}>{option.label}</mwc-list-item>
-              );
-            })}
-          </>
-        );
+        for (const option: { value: string, label: string } of field.options) {
+          list.push(<mwc-list-item key={option} value={option.value}>{option.label}</mwc-list-item>)
+        }
+        break;
       case 'checkbox':
         return '';
       case 'radio':
         return '';
       default:
-        return '';
     }
+
+    if (field.icon) {
+      list.push(<Mdi icon={field.icon} slot="icon"/>);
+    }
+
+    return list;
   }
 }

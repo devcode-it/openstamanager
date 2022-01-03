@@ -122,9 +122,13 @@ export default class Model extends BaseModel {
     const relation = this[`relationAttributes${capitalize(action)}`][attribute];
     const callback = this.relationValues[relation][action][attribute];
 
-    // eslint-disable-next-line new-cap
-    const istanza = this.getRelation(relation) ?? new this.relationValues[relation].model();
+    let istanza = this.getRelation(relation);
+    const model = this.relationValues[relation].model
+    if (!istanza && !Array.isArray(model)) {
+      // eslint-disable-next-line new-cap
+      istanza = new model();
+    }
 
-    return callback(istanza);
+    return callback(istanza ?? model);
   }
 }

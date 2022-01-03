@@ -222,7 +222,15 @@ switch (post('op')) {
     // Duplica articolo
     case 'copy':
         $new = $articolo->replicate();
-        $new->codice = post('codice', true);
+        
+        //Se non specifico il codice articolo lo imposto uguale all'id della riga
+        if (empty(post('codice'))) {
+            $codice = $dbo->fetchOne('SELECT MAX(id) as codice FROM mg_articoli')['codice'] + 1;
+        } else {
+            $codice = post('codice', true);
+        }
+
+        $new->codice = $codice;
         $new->qta = 0;
         $new->save();
 

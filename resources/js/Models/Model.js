@@ -30,17 +30,22 @@ export default class Model extends BaseModel {
   }} = {}
 
   /**
-   * Specifies the list of attributes that should be obtained from the model
+   * Specifies the list of attributes that should be obtained from the model relation
    * @type {{[p: string]: string}}
    * @private
    */
   #relationAttributesGet: {[string]: string} = {};
   /**
-   * Specifies the list of attributes that should be set in the model
+   * Specifies the list of attributes that should be set in the model relation
    * @type {{[p: string]: string}}
    * @private
    */
   #relationAttributesSet: {[string]: string} = {};
+
+  /**
+   * Specifies the list of attributes that should be set in the model
+   */
+  attributes: string[];
 
   constructor() {
     super();
@@ -69,7 +74,7 @@ export default class Model extends BaseModel {
         }
 
         const snakeCasedProperty = snakeCase(property);
-        if (snakeCasedProperty in target.getAttributes()) {
+        if (snakeCasedProperty in this.attributes) {
           target.setAttribute(snakeCasedProperty, value);
           return true;
         }

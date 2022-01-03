@@ -294,7 +294,7 @@ export class RecordsPage extends Page {
         const instance: Model = new this.model();
 
         if (this.customSetter) {
-          this.customSetter(instance, getFormData(form));
+          this.customSetter(instance, collect(getFormData(form)));
         } else {
           const fields = form.find('text-field, text-area, material-select');
           fields.filter(this.fieldsPrecedence.map(value => `#${value}`).join(', '))

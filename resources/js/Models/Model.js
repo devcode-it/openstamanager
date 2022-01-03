@@ -3,10 +3,7 @@ import {
   type ToOneRelation,
   Model as BaseModel
 } from 'coloquent';
-import {
-  capitalize,
-  snakeCase
-} from 'lodash-es';
+import {snakeCase} from 'lodash-es';
 
 /**
  * The base model for all models.
@@ -24,11 +21,6 @@ export default class Model extends BaseModel {
     // eslint-disable-next-line no-constructor-return
     return new Proxy(this, {
       get(target: this, property, receiver) {
-        const accessor = target[`get${capitalize(property)}Attribute`];
-        if (typeof accessor === 'function') {
-          return accessor();
-        }
-
         const snakeCasedProperty = snakeCase(property);
         if (snakeCasedProperty in target.getAttributes()) {
           return target.getAttribute(snakeCasedProperty);
@@ -37,11 +29,6 @@ export default class Model extends BaseModel {
         return Reflect.get(target, property, receiver);
       },
       set(target: this, property, value, receiver) {
-        const mutator = target[`set${capitalize(property)}Attribute`];
-        if (typeof mutator === 'function') {
-          return mutator(value);
-        }
-
         const snakeCasedProperty = snakeCase(property);
         if (snakeCasedProperty in target.getAttributes()) {
           target.setAttribute(snakeCasedProperty, value);

@@ -1,8 +1,12 @@
+import {collect} from 'collect.js';
 import {
   type PluralResponse,
   Model as BaseModel
 } from 'coloquent';
-import {snakeCase} from 'lodash-es';
+import {
+  capitalize,
+  snakeCase
+} from 'lodash-es';
 
 // noinspection JSPotentiallyInvalidConstructorUsage
 /**
@@ -26,19 +30,29 @@ export default class Model extends BaseModel {
   }} = {}
 
   /**
-   * Specifies the list of attributes that should be obtained/set from/to the model
+   * Specifies the list of attributes that should be obtained from the model
    * @type {{[p: string]: string}}
+   * @private
    */
-  relationAttributes: {[string]: string} = {};
+  #relationAttributesGet: {[string]: string} = {};
+  /**
+   * Specifies the list of attributes that should be set in the model
+   * @type {{[p: string]: string}}
+   * @private
+   */
+  #relationAttributesSet: {[string]: string} = {};
 
   constructor() {
     super();
+    const collection = collect(this.relationValues);
+    this.#relationAttributesGet = collection.pluck('get').keys().all();
+    this.#relationAttributesSet = collection.pluck('set').keys().all();
 
     // Return a proxy of this object to allow dynamic attributes getters and setters
     // eslint-disable-next-line no-constructor-return
     return new Proxy(this, {
       get(target: this, property, receiver) {
-        if (property in target.relationAttributes) {
+        if (property in target.#relationAttributesGet) {
           return target.relationValue(property);
         }
 
@@ -50,7 +64,7 @@ export default class Model extends BaseModel {
         return Reflect.get(target, property, receiver);
       },
       set(target: this, property, value, receiver) {
-        if (property in target.relationAttributes) {
+        if (property in target.#relationAttributesSet) {
           return target.relationValue(property, 'set', value);
         }
 
@@ -105,7 +119,7 @@ export default class Model extends BaseModel {
    */
   // eslint-disable-next-line default-param-last
   relationValue(attribute: string, action: 'get' | 'set' = 'get', value: any): void | any {
-    const relation = this.relationAttributes[attribute];
+    const relation = this[`relationAttributes${capitalize(action)}`][attribute];
     const callback = this.relationValues[relation][action][attribute];
 
     // eslint-disable-next-line new-cap

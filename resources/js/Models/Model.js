@@ -1,10 +1,10 @@
 import {
   type PluralResponse,
-  type ToOneRelation,
   Model as BaseModel
 } from 'coloquent';
 import {snakeCase} from 'lodash-es';
 
+// noinspection JSPotentiallyInvalidConstructorUsage
 /**
  * The base model for all models.
  *
@@ -14,6 +14,23 @@ import {snakeCase} from 'lodash-es';
 export default class Model extends BaseModel {
   jsonApiType: string;
 
+  /**
+   * Specifies the list of relationships, with their model(s) and getters/setters
+   *
+   * @type {{[p: string]: {model: typeof Model, get, set}}}
+   */
+  relationValues: {[string]: {
+    model: typeof Model | (typeof Model)[],
+    get: {[string]: (models: Model | Model[]) => any},
+    set: {[string]: (models: Model | Model[]) => void},
+  }} = {}
+
+  /**
+   * Specifies the list of attributes that should be obtained/set from/to the model
+   * @type {{[p: string]: string}}
+   */
+  relationAttributes: {[string]: string} = {};
+
   constructor() {
     super();
 
@@ -21,6 +38,10 @@ export default class Model extends BaseModel {
     // eslint-disable-next-line no-constructor-return
     return new Proxy(this, {
       get(target: this, property, receiver) {
+        if (property in target.relationAttributes) {
+          return target.relationValue(property);
+        }
+
         const snakeCasedProperty = snakeCase(property);
         if (snakeCasedProperty in target.getAttributes()) {
           return target.getAttribute(snakeCasedProperty);
@@ -29,6 +50,10 @@ export default class Model extends BaseModel {
         return Reflect.get(target, property, receiver);
       },
       set(target: this, property, value, receiver) {
+        if (property in target.relationAttributes) {
+          return target.relationValue(property, 'set', value);
+        }
+
         const snakeCasedProperty = snakeCase(property);
         if (snakeCasedProperty in target.getAttributes()) {
           target.setAttribute(snakeCasedProperty, value);
@@ -75,18 +100,16 @@ export default class Model extends BaseModel {
     return (super.getJsonApiType() ?? snakeCase(this.constructor.name));
   }
 
-  /** @protected */
-  async relationshipValue(relationship: ToOneRelation<Model, this>, callbacks: Map<typeof Model, (model: Model) => (void | any)>): void | any {
-    const response = await relationship.first();
-    const istanza = response.getData();
+  /**
+   * Returns the attribute of the specified relationship.
+   */
+  // eslint-disable-next-line default-param-last
+  relationValue(attribute: string, action: 'get' | 'set' = 'get', value: any): void | any {
+    const relation = this.relationAttributes[attribute];
+    const callback = this.relationValues[relation][action][attribute];
 
-    let callback;
-    for (const [model: typeof Model, callback_: (model: Model) => (void | any)] of callbacks) {
-      if (istanza instanceof model) {
-        callback = callback_;
-        break;
-      }
-    }
+    // eslint-disable-next-line new-cap
+    const istanza = this.getRelation(relation) ?? new this.relationValues[relation].model();
 
     return callback(istanza);
   }

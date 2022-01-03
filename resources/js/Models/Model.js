@@ -30,13 +30,13 @@ export default class Model extends BaseModel {
   }} = {}
 
   /**
-   * Specifies the list of attributes that should be obtained from the model
+   * Specifies the list of attributes that should be obtained from the model relation
    * @type {{[p: string]: string}}
    * @private
    */
   #relationAttributesGet: {[string]: string} = {};
   /**
-   * Specifies the list of attributes that should be set in the model
+   * Specifies the list of attributes that should be set in the model relation
    * @type {{[p: string]: string}}
    * @private
    */

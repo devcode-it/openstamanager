@@ -68,13 +68,7 @@ export default class Model extends BaseModel {
           return target.relationValue(property, 'set', value);
         }
 
-        const snakeCasedProperty = snakeCase(property);
-        if (snakeCasedProperty in target.getAttributes()) {
-          target.setAttribute(snakeCasedProperty, value);
-          return true;
-        }
-
-        return Reflect.set(target, property, value, receiver);
+        return target.setAttribute(snakeCase(property), value);;
       }
     });
   }

@@ -9,3 +9,6 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `zz_prints` WHERE 1=1 
 
 -- Filtro che esclude gli articoli eliminati dal widget degli articoli in esaurimento
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM mg_articoli WHERE qta < threshold_qta AND attivo=1 AND deleted_at IS NULL' WHERE `zz_widgets`.`name` = 'Articoli in esaurimento'; 
+
+-- Fix problema iva di vendita preselezionata
+ALTER TABLE `mg_articoli` CHANGE `idiva_vendita` `idiva_vendita` INT(11) NULL DEFAULT NULL;

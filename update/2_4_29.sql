@@ -12,3 +12,4 @@ UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM mg_articoli WHE
 
 -- Fix problema iva di vendita preselezionata
 ALTER TABLE `mg_articoli` CHANGE `idiva_vendita` `idiva_vendita` INT(11) NULL DEFAULT NULL;
+UPDATE `mg_articoli` SET `idiva_vendita`=NULL WHERE `idiva_vendita`=0;

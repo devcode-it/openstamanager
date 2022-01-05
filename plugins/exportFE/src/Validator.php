@@ -648,9 +648,10 @@ class Validator
                     '—' => '-',
                     '…' => '...',
                     '~' => '-',
+                    '®' => '',
                 ]);
 
-                $output = preg_replace('/[[:^print:]]/', ' ', utf8_decode($output));
+                $output = self::sanitizeXML($output);
             }
 
             // Riduzione delle dimensioni
@@ -685,5 +686,32 @@ class Validator
         }
 
         return $output;
+    }
+
+
+    /**
+     * Removes invalid characters from a UTF-8 XML string
+     *
+     * @param string a XML string potentially containing invalid characters
+     * @return string
+     */
+    static function sanitizeXML($string)
+    {
+        $result = '';
+        $current = '';
+        $length = strlen($string);
+
+        for ($i=0; $i < $length; $i++) {
+            $current = ord($string{$i});
+
+            if ($current < 0x20 || $current > 0x7E) {
+                $result .= ' ';
+            }
+            else {
+                $result .= chr($current);
+            }
+        }
+        
+        return $result;
     }
 }

@@ -22,6 +22,7 @@
     "baseUrl": "."
   },
   "include": [
-    "resources/**/*"
+    "resources/js/*",
+    "vite.config.ts"
   ]
 }

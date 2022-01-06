@@ -59,7 +59,7 @@ export type TextFieldT = FieldT & {
   name?: string
   inputMode?: TextFieldInputMode
   readOnly?: boolean
-  autocapitalize:
+  autocapitalize?:
   | 'on'
   | 'off'
   | 'sentences'
@@ -78,14 +78,14 @@ export type TextAreaT = FieldT & {
   willValidate?: boolean
   helperPersistent?: boolean | string
   maxLength?: number
-  elementType: 'text-area'
+  elementType?: 'text-area'
 };
 export type SelectT = FieldT & {
   multiple?: boolean
   naturalMenuWidth?: boolean
   fixedMenuPosition?: boolean
   willValidate?: boolean
-  elementType: 'material-select'
+  elementType?: 'material-select'
   selected?: ListItemBase | null
   items?: ListItemBase[]
   index?: number

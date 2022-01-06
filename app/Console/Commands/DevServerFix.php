@@ -28,7 +28,7 @@ class DevServerFix extends Command
     {
         foreach (glob(resource_path('static/vendor') . '/*/*/index.js', GLOB_NOSORT) as $file) {
             $content = File::get($file);
-            File::put($file, str_replace('../../../index.js', '/resources/js/index.js', $content));
+            File::put($file, str_replace('../../../index.js', '/resources/js/index.ts', $content));
         }
 
         return Command::SUCCESS;

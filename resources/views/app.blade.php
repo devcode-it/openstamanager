@@ -31,7 +31,7 @@
 @include('layouts.top-app-bar-menus')
 
 <script>
-  window.import_path = '{{Str::contains(vite_asset(''), config('vite.dev_url')) ? config('vite.dev_url') : '.'}}';
+  window.importPath = '{{Str::contains(vite_asset(''), config('vite.dev_url')) ? config('vite.dev_url') : '.'}}';
 </script>
 
 @routes

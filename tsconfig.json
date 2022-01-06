@@ -1,22 +1,24 @@
 {
     "compilerOptions": {
+        "experimentalDecorators": true,
         "target": "esnext",
         "module": "esnext",
         "moduleResolution": "node",
         "strict": true,
+        "strictPropertyInitialization": false,
         "jsx": "preserve",
         "sourceMap": true,
         "resolveJsonModule": true,
         "esModuleInterop": true,
         "lib": [
             "esnext",
-            "dom"
+            "dom",
+            "dom.iterable"
         ],
         "types": [
             "vite/client"
         ],
-        "baseUrl": ".",
-        "paths": []
+        "baseUrl": "."
     },
     "include": [
         "resources/**/*"

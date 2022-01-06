@@ -117,7 +117,7 @@ return [
     | the development server starts.
     */
     'commands' => [
-        'vite:aliases',
+        //'vite:aliases',
         // 'typescript:generate'
     ],
 ];

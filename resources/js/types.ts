@@ -67,7 +67,7 @@ export type TextFieldT = FieldT & {
   | 'words'
   | 'characters'
   endAligned?: boolean
-  elementType: 'text-field'
+  elementType?: 'text-field'
 };
 export type TextAreaT = FieldT & {
   rows?: number

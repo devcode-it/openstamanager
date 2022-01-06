@@ -39,52 +39,46 @@ export async function showSnackbar(
   actionText = 'OK',
   cancelText: string | false = false,
   closeOtherSnackbars = true
-): Promise<unknown> {
-  if (closeOtherSnackbars) {
-    const snackbars = document.querySelectorAll('mwc-snackbar');
+): Promise<string | 'action' | 'dismiss' | undefined> {
+  return new Promise((resolve, reject) => {
+    if (closeOtherSnackbars) {
+      const snackbars = document.querySelectorAll('mwc-snackbar');
 
-    for (const snackbar of snackbars) {
-      if (snackbar.open) {
-        snackbar.close();
+      for (const snackbar of snackbars) {
+        if (snackbar.open) {
+          snackbar.close();
+        }
+
+        snackbar.remove();
       }
-
-      snackbar.remove();
     }
-  }
 
-  const snackbar = document.createElement('mwc-snackbar');
-  snackbar.labelText = labelText;
-  snackbar.timeoutMs = timeoutMs || -1;
+    const snackbar = document.createElement('mwc-snackbar');
+    snackbar.labelText = labelText;
+    snackbar.timeoutMs = timeoutMs || -1;
 
-  if (actionText) {
-    const button = document.createElement('mwc-button');
-    button.label = actionText;
-    button.slot = 'action';
-    snackbar.append(button);
-  }
+    if (actionText) {
+      const button = document.createElement('mwc-button');
+      button.label = actionText;
+      button.slot = 'action';
+      snackbar.append(button);
+    }
 
-  if (cancelText) {
-    const button = document.createElement('mwc-button');
-    button.label = cancelText;
-    button.slot = 'cancel';
-    snackbar.append(button);
-  }
+    if (cancelText) {
+      const button = document.createElement('mwc-button');
+      button.label = cancelText;
+      button.slot = 'cancel';
+      snackbar.append(button);
+    }
+    document.body.append(snackbar);
 
-  document.body.append(snackbar);
+    snackbar.addEventListener('MDCSnackbar:closed', (event: Event & Partial<{detail: {reason?: string}}>) => {
+      snackbar.close();
+      resolve(event.detail?.reason);
+    });
 
-  // eslint-disable-next-line unicorn/consistent-function-scoping
-  const response = (value?: boolean) => value;
-
-  // noinspection JSUnusedLocalSymbols
-  const reasonPromise = new Promise((resolve, reject) => {});
-  snackbar.addEventListener('MDCSnackbar:closed', (event: Event & Partial<{detail: {reason?: string}}>) => {
-    response(event?.detail?.reason === 'action' ?? false);
+    snackbar.show();
   });
-  snackbar.show();
-  snackbar.addEventListener('MDCSnackbar:closed', () => {
-    snackbar.remove();
-  });
-  return reasonPromise;
 }
 export function getFormData(form: Cash) {
   return Object.fromEntries<string | File>(new FormData(form[0] as HTMLFormElement));

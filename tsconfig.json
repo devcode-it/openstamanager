@@ -1,26 +1,27 @@
 {
-    "compilerOptions": {
-        "experimentalDecorators": true,
-        "target": "esnext",
-        "module": "esnext",
-        "moduleResolution": "node",
-        "strict": true,
-        "strictPropertyInitialization": false,
-        "jsx": "preserve",
-        "sourceMap": true,
-        "resolveJsonModule": true,
-        "esModuleInterop": true,
-        "lib": [
-            "esnext",
-            "dom",
-            "dom.iterable"
-        ],
-        "types": [
-            "vite/client"
-        ],
-        "baseUrl": "."
-    },
-    "include": [
-        "resources/**/*"
-    ]
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "strict": true,
+    "strictPropertyInitialization": false,
+    "jsx": "preserve",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable"
+    ],
+    "types": [
+      "vite/client",
+      "vite-plugin-pwa/client"
+    ],
+    "baseUrl": "."
+  },
+  "include": [
+    "resources/**/*"
+  ]
 }

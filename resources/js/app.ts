@@ -10,10 +10,14 @@ import cash from 'cash-dom';
 import Mithril from 'mithril';
 // noinspection SpellCheckingInspection
 import redaxios from 'redaxios';
+import {registerSW} from 'virtual:pwa-register';
 import type router from 'ziggy-js';
 
 import {type Page} from './Components';
-import {__ as translator} from './utils';
+import {
+  __ as translator,
+  showSnackbar
+} from './utils';
 
 // Variabili globali
 declare global {
@@ -66,3 +70,17 @@ $('#logout-button')
     await redaxios.post(route('auth.logout'));
     window.location.href = route('auth.login');
   });
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+const updateSW = registerSW({
+  async onNeedRefresh() {
+    const action = await showSnackbar(__('Aggiornamento del frontend disponibile!'), false, __('Ricarica'), __('Annulla'));
+    if (action === 'action') {
+      await updateSW();
+    }
+  },
+  onOfflineReady() {
+    // eslint-disable-next-line no-void
+    void showSnackbar(__('È ora possibile lavorare offline!'), false);
+  }
+}) as (reloadPage?: boolean) => Promise<void>;

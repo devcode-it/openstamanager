@@ -89,6 +89,12 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/debug" />
       <excludeFolder url="file://$MODULE_DIR$/storage" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/akaunting/laravel-setting" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/menarasolutions/geographer" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/menarasolutions/geographer-data" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/menarasolutions/geographer-it" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/openstamanager/anagrafiche" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/openstamanager/attivita.tipi" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/wikimedia/composer-merge-plugin" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

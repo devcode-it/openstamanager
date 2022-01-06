@@ -1,6 +1,7 @@
 # Custom rules
 /.vscode
 composer.lock
+composer.local.json
 public/build
 resources/static/vendor/
 .idea/inertia.xml

@@ -1,6 +1,3 @@
-/* eslint-disable no-var,vars-on-top */
-// noinspection ES6ConvertVarToLetConst
-
 import '../scss/app.scss';
 import '@mdi/font/scss/materialdesignicons.scss';
 
@@ -11,7 +8,6 @@ import Mithril from 'mithril';
 // noinspection SpellCheckingInspection
 import redaxios from 'redaxios';
 import {registerSW} from 'virtual:pwa-register';
-import type router from 'ziggy-js';
 
 import {type Page} from './Components';
 import {
@@ -20,16 +16,6 @@ import {
 } from './utils';
 
 // Variabili globali
-declare global {
-  const importPath: string;
-  const translations: {[key: string]: string};
-  const route: typeof router;
-
-  var $: typeof cash;
-  var m: typeof Mithril;
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  var __: typeof translator;
-}
 globalThis.$ = cash;
 globalThis.m = Mithril;
 globalThis.__ = translator;

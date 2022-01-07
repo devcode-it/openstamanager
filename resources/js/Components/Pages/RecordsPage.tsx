@@ -48,7 +48,7 @@ export type ColumnsT = Record<string, string | ColumnT>;
 export type RowsT = Collection<Model>;
 export type SectionsT = Record<string, SectionT> | SectionT[];
 
-type IndexedModel = Model & {[prop: string]: any};
+export type IndexedModel = Model & {[prop: string]: any};
 
 /**
  * @abstract

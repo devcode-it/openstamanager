@@ -73,7 +73,7 @@
         "stylelint-config-recommended-scss": "^5.0.2",
         "stylelint-config-standard": "^24.0.0",
         "stylelint-scss": "^4.1.0",
-        "vite-plugin-pwa": "^0.11.12"
+        "vite-plugin-pwa": "0.11.11"
     },
     "publishConfig": {
         "access": "public"

@@ -59,7 +59,7 @@ specifiers:
   stylelint-config-recommended-scss: ^5.0.2
   stylelint-config-standard: ^24.0.0
   stylelint-scss: ^4.1.0
-  vite-plugin-pwa: ^0.11.12
+  vite-plugin-pwa: 0.11.11
 
 dependencies:
   '@inertiajs/inertia': 0.10.1
@@ -122,7 +122,7 @@ devDependencies:
   stylelint-config-recommended-scss: 5.0.2
   stylelint-config-standard: 24.0.0
   stylelint-scss: 4.1.0
-  vite-plugin-pwa: 0.11.12
+  vite-plugin-pwa: 0.11.11
 
 packages:
 
@@ -3812,7 +3812,7 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       at-least-node: 1.0.0
-      graceful-fs: 4.2.8
+      graceful-fs: 4.2.9
       jsonfile: 6.1.0
       universalify: 2.0.0
     dev: true
@@ -3944,14 +3944,9 @@ packages:
     resolution: {integrity: sha1-L0SUrIkZ43Z8XLtpHp9GMyQoXUM=}
     dev: true
 
-  /graceful-fs/4.2.8:
-    resolution: {integrity: sha512-qkIilPUYcNhJpd33n0GBXTB1MMPp14TxEsEs0pTrsSVucApsYzW5V+Q8Qxhik6KU3evy+qkAAowTByymK0avdg==}
-    dev: true
-
   /graceful-fs/4.2.9:
     resolution: {integrity: sha512-NtNxqUcXgpW2iMrfqSfR73Glt39K+BLwWsPs94yR63v45T0Wbej7eRmL5cWfwEgqXnmjQp3zaJTshdRW/qC2ZQ==}
     dev: true
-    optional: true
 
   /grapheme-splitter/1.0.4:
     resolution: {integrity: sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ==}
@@ -4388,7 +4383,7 @@ packages:
     dependencies:
       universalify: 2.0.0
     optionalDependencies:
-      graceful-fs: 4.2.8
+      graceful-fs: 4.2.9
     dev: true
 
   /jsonpointer/5.0.0:
@@ -5893,8 +5888,8 @@ packages:
       spdx-expression-parse: 3.0.1
     dev: true
 
-  /vite-plugin-pwa/0.11.12:
-    resolution: {integrity: sha512-XqFmA4y9C4RBb5osSsa26GVwOSwbzf2GNVcT5+06KYYdguqLpuI9FW7iV/akZqg0OUNUpH4tHfme8SnHA4PIXA==}
+  /vite-plugin-pwa/0.11.11:
+    resolution: {integrity: sha512-/nSLS7VfGN5UrL4a1ALGEQAyga/H0hYZjEkwPehiEFW1PM1DTi1A8GkPCsmevKwR6vt10P+5wS1wrvSgwQemzw==}
     dependencies:
       debug: 4.3.3
       fast-glob: 3.2.7

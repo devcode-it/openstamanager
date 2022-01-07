@@ -59,7 +59,7 @@ specifiers:
   stylelint-config-recommended-scss: ^5.0.2
   stylelint-config-standard: ^24.0.0
   stylelint-scss: ^4.1.0
-  vite-plugin-pwa: 0.11.11
+  vite-plugin-pwa: ^0.11.12
 
 dependencies:
   '@inertiajs/inertia': 0.10.1
@@ -122,7 +122,7 @@ devDependencies:
   stylelint-config-recommended-scss: 5.0.2
   stylelint-config-standard: 24.0.0
   stylelint-scss: 4.1.0
-  vite-plugin-pwa: 0.11.11
+  vite-plugin-pwa: 0.11.12
 
 packages:
 
@@ -5888,8 +5888,8 @@ packages:
       spdx-expression-parse: 3.0.1
     dev: true
 
-  /vite-plugin-pwa/0.11.11:
-    resolution: {integrity: sha512-/nSLS7VfGN5UrL4a1ALGEQAyga/H0hYZjEkwPehiEFW1PM1DTi1A8GkPCsmevKwR6vt10P+5wS1wrvSgwQemzw==}
+  /vite-plugin-pwa/0.11.12:
+    resolution: {integrity: sha512-XqFmA4y9C4RBb5osSsa26GVwOSwbzf2GNVcT5+06KYYdguqLpuI9FW7iV/akZqg0OUNUpH4tHfme8SnHA4PIXA==}
     dependencies:
       debug: 4.3.3
       fast-glob: 3.2.7

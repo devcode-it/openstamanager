@@ -14,7 +14,6 @@ import type {
 
 import {
   IModel,
-  IndexedModel,
   Model
 } from '../../Models';
 import type {
@@ -36,7 +35,7 @@ export type ColumnT = {
   id?: string
   title: string
   type?: 'checkbox' | 'numeric'
-  valueModifier?: (instance: IModel<IndexedModel>, property: string) => any
+  valueModifier?: (instance: IModel, property: string) => any
 };
 export type SectionT = {
   id?: string
@@ -49,7 +48,7 @@ export type SectionT = {
   | Record<string, TextFieldT | TextAreaT | SelectT>
 };
 export type ColumnsT = Record<string, string | ColumnT>;
-export type RowsT = Collection<IModel<IndexedModel>>;
+export type RowsT = Collection<IModel>;
 export type SectionsT = Record<string, SectionT> | SectionT[];
 
 /**
@@ -63,7 +62,7 @@ export class RecordsPage extends Page {
   recordDialogMaxWidth: string | number = 'auto';
   model: typeof Model;
   customSetter: (
-    model: IModel<IndexedModel>,
+    model: IModel,
     fields: Collection<File | string>
   ) => void;
 
@@ -133,7 +132,7 @@ export class RecordsPage extends Page {
     }
 
     return this.rows
-      .map((instance: IModel<IndexedModel>, index: string) => (
+      .map((instance: IModel, index: string) => (
         <TableRow
           key={index}
           data-model-id={instance.getId()}
@@ -154,7 +153,7 @@ export class RecordsPage extends Page {
   async updateRecord(id: number) {
     // @ts-ignore
     const response = await this.model.find(id);
-    const instance = response.getData() as IModel<IndexedModel>;
+    const instance = response.getData() as IModel;
     const dialog = $('mwc-dialog#add-record-dialog');
 
     dialog
@@ -334,7 +333,7 @@ export class RecordsPage extends Page {
       if (isFormValid(form)) {
         // @ts-ignore
         // eslint-disable-next-line new-cap
-        const instance = new this.model() as IModel<IndexedModel>;
+        const instance = new this.model() as IModel;
 
         if (this.customSetter) {
           this.customSetter(instance, collect(getFormData(form)));
@@ -358,7 +357,7 @@ export class RecordsPage extends Page {
           if (dialogElement) {
             (dialogElement as MWCDialog).close();
           }
-          this.rows.put((model as IndexedModel).getId(), model);
+          this.rows.put((model as Model).getId(), model);
           m.redraw();
           await showSnackbar(__('Record salvato'), 4000);
         }
@@ -369,7 +368,7 @@ export class RecordsPage extends Page {
     });
   }
 
-  getModelValue(model: IndexedModel, field: string): any {
+  getModelValue(model: IModel, field: string): any {
     const column = this.columns[field];
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     let value: any = model[field];

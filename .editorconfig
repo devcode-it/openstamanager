@@ -177,7 +177,7 @@ ij_xml_space_around_equals_in_attribute = false
 ij_xml_space_inside_empty_tag = false
 ij_xml_text_wrap = normal
 
-[{*.ats,*.cts,*.mts,*.ts}]
+[{*.ats,*.cts,*.mts,*.ts,*.tsx}]
 indent_size = 2
 max_line_length = 100
 tab_width = 2

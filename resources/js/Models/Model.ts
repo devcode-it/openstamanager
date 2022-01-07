@@ -4,10 +4,20 @@ import {
 } from 'coloquent';
 import {snakeCase} from 'lodash';
 
+export interface IndexedModel extends Model {
+  [prop: string]: any;
+}
+
+export interface InstantiableModel<T extends IndexedModel> {
+  new (): T;
+}
+
+export type IModel<T extends IndexedModel> = InstanceType<InstantiableModel<T>>;
+
 /**
  * The base model for all models.
  */
-export default abstract class Model extends BaseModel {
+export abstract class Model extends BaseModel {
   jsonApiType: string = '';
 
   constructor() {

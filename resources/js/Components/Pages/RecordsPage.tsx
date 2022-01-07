@@ -12,7 +12,11 @@ import type {
   VnodeDOM
 } from 'mithril';
 
-import {Model} from '../../Models';
+import {
+  IModel,
+  IndexedModel,
+  Model
+} from '../../Models';
 import type {
   FieldT,
   SelectT,
@@ -32,7 +36,7 @@ export type ColumnT = {
   id?: string
   title: string
   type?: 'checkbox' | 'numeric'
-  valueModifier?: (instance: Model, property: string) => any
+  valueModifier?: (instance: IModel<IndexedModel>, property: string) => any
 };
 export type SectionT = {
   id?: string
@@ -45,10 +49,8 @@ export type SectionT = {
   | Record<string, TextFieldT | TextAreaT | SelectT>
 };
 export type ColumnsT = Record<string, string | ColumnT>;
-export type RowsT = Collection<Model>;
+export type RowsT = Collection<IModel<IndexedModel>>;
 export type SectionsT = Record<string, SectionT> | SectionT[];
-
-export type IndexedModel = Model & {[prop: string]: any};
 
 /**
  * @abstract
@@ -60,7 +62,10 @@ export class RecordsPage extends Page {
   dialogs: Children[];
   recordDialogMaxWidth: string | number = 'auto';
   model: typeof Model;
-  customSetter: (model: Model, fields: Collection<File | string>) => void;
+  customSetter: (
+    model: IModel<IndexedModel>,
+    fields: Collection<File | string>
+  ) => void;
 
   /**
    * What fields should take precedence when saving the record
@@ -128,7 +133,7 @@ export class RecordsPage extends Page {
     }
 
     return this.rows
-      .map((instance: IndexedModel, index: string) => (
+      .map((instance: IModel<IndexedModel>, index: string) => (
         <TableRow
           key={index}
           data-model-id={instance.getId()}
@@ -149,7 +154,7 @@ export class RecordsPage extends Page {
   async updateRecord(id: number) {
     // @ts-ignore
     const response = await this.model.find(id);
-    const instance = response.getData() as IndexedModel;
+    const instance = response.getData() as IModel<IndexedModel>;
     const dialog = $('mwc-dialog#add-record-dialog');
 
     dialog
@@ -329,7 +334,7 @@ export class RecordsPage extends Page {
       if (isFormValid(form)) {
         // @ts-ignore
         // eslint-disable-next-line new-cap
-        const instance = new this.model() as IndexedModel;
+        const instance = new this.model() as IModel<IndexedModel>;
 
         if (this.customSetter) {
           this.customSetter(instance, collect(getFormData(form)));

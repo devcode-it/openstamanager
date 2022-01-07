@@ -137,7 +137,7 @@ export class RecordsPage extends Page {
           {collect(this.columns)
             .map((column, index_: string) => (
               <TableCell key={index_}>
-                {this.getModelValue(instance, (typeof column === 'object' ? column.id : index_) as string)}
+                {this.getModelValue(instance, (column as ColumnT).id ?? index_)}
               </TableCell>
             ))
             .toArray()}

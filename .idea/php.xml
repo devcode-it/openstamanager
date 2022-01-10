@@ -115,12 +115,12 @@
       <path value="$PROJECT_DIR$/vendor/barryvdh/laravel-debugbar" />
       <path value="$PROJECT_DIR$/vendor/symfony/debug" />
       <path value="$PROJECT_DIR$/vendor/akaunting/laravel-setting" />
+      <path value="$PROJECT_DIR$/vendor/wikimedia/composer-merge-plugin" />
       <path value="$PROJECT_DIR$/vendor/menarasolutions/geographer" />
-      <path value="$PROJECT_DIR$/vendor/menarasolutions/geographer-data" />
       <path value="$PROJECT_DIR$/vendor/menarasolutions/geographer-it" />
+      <path value="$PROJECT_DIR$/vendor/menarasolutions/geographer-data" />
       <path value="$PROJECT_DIR$/vendor/openstamanager/anagrafiche" />
       <path value="$PROJECT_DIR$/vendor/openstamanager/attivita.tipi" />
-      <path value="$PROJECT_DIR$/vendor/wikimedia/composer-merge-plugin" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.0">

@@ -7,12 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
 use Maicol07\LaravelJsonApiResource\Http\Resource\JsonApi\Resource;
 use Maicol07\LaravelJsonApiResource\Http\Resource\JsonApi\ResourceCollection;
 
 class ApiController extends Controller
 {
+    /**
+     * The parent model used by the controller.
+     */
     protected string|Model $model = Model::class;
+
+    /**
+     * @var array{string: Model | array}
+     */
+    protected array $relationships = [];
 
     /**
      * Display a listing of the resource.
@@ -30,6 +39,11 @@ class ApiController extends Controller
     {
         $instance = new $this->model();
         $instance->fill($request->input('data.attributes'));
+
+        foreach ($request->input('data.relationships') as $key => $data) {
+            $model = $this->relationships[$key];
+            $instance->{$key}()->associate($model::find(Arr::get($data, 'data.id')));
+        }
 
         $created = $instance->save();
 

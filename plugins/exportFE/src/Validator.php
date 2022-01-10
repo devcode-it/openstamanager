@@ -702,7 +702,7 @@ class Validator
         $length = strlen($string);
 
         for ($i=0; $i < $length; $i++) {
-            $current = ord($string{$i});
+            $current = ord($string[$i]);
 
             if ($current < 0x20 || $current > 0x7E) {
                 $result .= ' ';

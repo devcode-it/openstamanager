@@ -3,7 +3,7 @@ import '@material/mwc-list/mwc-list-item';
 import '../../WebComponents/Select';
 
 import type {LinearProgress as MWCLinearProgress} from '@material/mwc-linear-progress';
-import type {Cash} from 'cash-dom/dist/cash';
+import type {Cash} from 'cash-dom';
 import type {
   Children,
   Vnode,
@@ -59,6 +59,7 @@ export default class DataTable extends Component<Attributes> {
         .map((value: string) => Number.parseInt(value, 10));
     }
 
+    // @ts-ignore (Waiting proper fix from collect.jsd devs)
     let defaultRowsPerPage: number = Number.parseInt(this.attrs.get('default-rows-per-page', '10') as string, 10);
 
     if (Number.isInteger(defaultRowsPerPage)) {

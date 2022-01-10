@@ -1,7 +1,6 @@
 import '@material/mwc-dialog';
-import 'cash-dom/dist/cash';
 
-import type {Cash} from 'cash-dom/dist/cash';
+import type {Cash} from 'cash-dom';
 import {uniqueId} from 'lodash';
 import Lottie from 'lottie-web';
 import type {

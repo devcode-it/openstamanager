@@ -2,7 +2,7 @@
 import '@material/mwc-snackbar';
 import 'mithril';
 
-import type {Cash} from 'cash-dom/dist/cash';
+import type {Cash} from 'cash-dom';
 import type {Vnode} from 'mithril';
 import {sync as render} from 'mithril-node-render';
 
@@ -40,7 +40,7 @@ export async function showSnackbar(
   cancelText: string | false = false,
   closeOtherSnackbars = true
 ): Promise<string | 'action' | 'dismiss' | undefined> {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     if (closeOtherSnackbars) {
       const snackbars = document.querySelectorAll('mwc-snackbar');
 

@@ -1,10 +1,13 @@
 function readPackage(pkg) {
-  /** @type {object} */
-  pkg.dependencies = {
-    ...pkg.peerDependencies,
-    ...pkg.dependencies,
+  const pkgs = ['@openstamanager/vite-config'];
+  if (pkg.name in pkgs) {
+    /** @type {object} */
+    pkg.dependencies = {
+      ...pkg.peerDependencies,
+      ...pkg.dependencies,
+    }
+    pkg.peerDependencies = {};
   }
-  pkg.peerDependencies = {};
 
   return pkg;
 }

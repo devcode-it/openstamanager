@@ -73,7 +73,8 @@ export class RecordsPage extends Page {
 
   async oninit(vnode: Vnode) {
     super.oninit(vnode);
-    const response = await this.model.all();
+    // @ts-ignore
+    const response = await this.model.with(this.model.relationships).get();
     const data = response.getData() as Model[];
 
     if (data.length > 0) {
@@ -152,7 +153,7 @@ export class RecordsPage extends Page {
 
   async updateRecord(id: number) {
     // @ts-ignore
-    const response = await this.model.find(id);
+    const response = await this.model.with(this.model.relationships).find(id);
     const instance = response.getData() as IModel;
     const dialog = $('mwc-dialog#add-record-dialog');
 

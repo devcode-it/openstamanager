@@ -17,9 +17,10 @@ class ApiController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): ResourceCollection
+    public function index(Request $request): ResourceCollection
     {
-        return new ResourceCollection($this->model::all());
+        return (new ResourceCollection($this->model::all()))
+            ->include(explode(',', $request->input('include')));
     }
 
     /**
@@ -38,7 +39,7 @@ class ApiController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(int $id): Resource|JsonResponse
+    public function show(int $id, Request $request): Resource|JsonResponse
     {
         $instance = $this->model::find($id);
 
@@ -46,7 +47,8 @@ class ApiController extends Controller
             return $this->error(Response::HTTP_NOT_FOUND, __('Risorsa non trovata.'));
         }
 
-        return new Resource($instance);
+        return (new Resource($instance))
+            ->include(explode(',', $request->input('include')));
     }
 
     /**

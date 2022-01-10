@@ -59,6 +59,7 @@ specifiers:
   stylelint-config-recommended-scss: ^5.0.2
   stylelint-config-standard: ^24.0.0
   stylelint-scss: ^4.1.0
+  vite: 2.6.14
   vite-plugin-pwa: ^0.11.12
 
 dependencies:
@@ -122,6 +123,7 @@ devDependencies:
   stylelint-config-recommended-scss: 5.0.2
   stylelint-config-standard: 24.0.0
   stylelint-scss: 4.1.0
+  vite: 2.6.14
   vite-plugin-pwa: 0.11.12
 
 packages:
@@ -5898,6 +5900,31 @@ packages:
       vite: 2.7.10
       workbox-build: 6.4.2
       workbox-window: 6.4.2
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /vite/2.6.14:
+    resolution: {integrity: sha512-2HA9xGyi+EhY2MXo0+A2dRsqsAG3eFNEVIo12olkWhOmc8LfiM+eMdrXf+Ruje9gdXgvSqjLI9freec1RUM5EA==}
+    engines: {node: '>=12.2.0'}
+    hasBin: true
+    peerDependenciesMeta:
+      less:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+    dependencies:
+      esbuild: 0.13.15
+      less: 4.1.2
+      postcss: 8.4.5
+      resolve: 1.21.0
+      rollup: 2.63.0
+      sass: 1.46.0
+      stylus: 0.56.0
+    optionalDependencies:
+      fsevents: 2.3.2
     transitivePeerDependencies:
       - supports-color
     dev: true

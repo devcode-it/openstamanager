@@ -364,6 +364,7 @@ export class RecordsPage extends Page {
           }
 
           this.rows.put(model.getId(), model);
+          loading.hide();
           m.redraw();
           await showSnackbar(__('Record salvato'), 4000);
         }

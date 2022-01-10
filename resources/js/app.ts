@@ -1,6 +1,3 @@
-import '../scss/app.scss';
-import '@mdi/font/scss/materialdesignicons.scss';
-
 import {InertiaProgress} from '@inertiajs/progress';
 import {createInertiaApp} from '@maicol07/inertia-mithril';
 import cash from 'cash-dom';
@@ -47,7 +44,6 @@ await createInertiaApp({
   },
   setup({el, app}: {el: Element, app: Mithril.ComponentTypes}) {
     m.mount(el, app);
-    import('./_material');
   }
 });
 

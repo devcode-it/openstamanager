@@ -4,6 +4,8 @@
     <meta name="csrf-token" content="{{csrf_token()}}">
     <title>@lang('OpenSTAManager')</title>
 
+    @client
+
     <link rel="apple-touch-icon" sizes="180x180" href="{{vite_asset('images/favicon/apple-touch-icon.png')}}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{vite_asset('images/favicon/favicon-32x32.png')}}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{vite_asset('images/favicon/favicon-16x16.png')}}">
@@ -13,4 +15,7 @@
     <meta name="msapplication-config" content="{{vite_asset('images/favicon/browserconfig.xml')}}">
     <meta name="theme-color" content="#3f3f3f">
     <meta name="description" content="Your app description">
+
+    @vite('styles')
+    @vite('_material')
 </head>

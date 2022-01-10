@@ -6,7 +6,6 @@
 
         @routes
 
-        @client
         @vite('app')
 
         @include('layouts.translations')

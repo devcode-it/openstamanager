@@ -35,7 +35,6 @@
 </script>
 
 @routes
-@client
 
 @vite('app')
 

@@ -16,13 +16,13 @@
       "dom.iterable"
     ],
     "types": [
-      "vite/client",
       "vite-plugin-pwa/client"
     ],
     "baseUrl": "."
   },
+  "exclude": ["**/node_modules", "**/.*/"],
   "include": [
-    "resources/js/*",
+    "resources/js/**/*",
     "vite.config.ts"
   ]
 }

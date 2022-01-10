@@ -8,6 +8,8 @@
                 'text' => __('Dashboard')
             ],
         ];
+
+        $to_merge = [];
         foreach ($modules as $module) {
             $to_merge[] = $module->drawer_entries;
         }

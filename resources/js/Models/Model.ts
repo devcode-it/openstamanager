@@ -5,7 +5,7 @@ import {
 import {snakeCase} from 'lodash';
 
 export interface InstantiableModel<T extends Model> {
-  new (): Model | T;
+  new (): (Model | T) & {[prop: string]: any};
 }
 
 export type IModel<T extends Model = Model> = InstanceType<InstantiableModel<T>>;
@@ -14,8 +14,8 @@ export type IModel<T extends Model = Model> = InstanceType<InstantiableModel<T>>
  * The base model for all models.
  */
 export abstract class Model extends BaseModel {
-  jsonApiType: string = '';
-  [prop: string]: any;
+  public static relationships: string[] = [];
+  protected jsonApiType: string = '';
 
   constructor() {
     super();

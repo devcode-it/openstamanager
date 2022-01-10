@@ -6,4 +6,17 @@
   <component name="ProjectResources">
     <resource url="https://cdn.jsdelivr.net/npm/@mdi/font@5.9.55/css/materialdesignicons.min.css" location="$PROJECT_DIR$" />
   </component>
+  <component name="net.techminded.npmania.NpmaniaSettingsState">
+    <option name="actions">
+      <map>
+        <entry key="npm run-script build" value="npm run-script build" />
+        <entry key="npm run-script dev" value="npm run-script dev" />
+        <entry key="npm run-script preinstall" value="npm run-script preinstall" />
+        <entry key="npm run-script serve" value="npm run-script serve" />
+        <entry key="npm run-script serve-dev" value="npm run-script serve-dev" />
+        <entry key="npm run-script serve-watch" value="npm run-script serve-watch" />
+        <entry key="npm run-script watch" value="npm run-script watch" />
+      </map>
+    </option>
+  </component>
 </project>

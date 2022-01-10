@@ -1,0 +1,62 @@
+style: github
+template: CHANGELOG.tpl.md
+info:
+    title: CHANGELOG
+    repository_url: https://github.com/maicol07/flarum-ext-sso
+options:
+    commits:
+        filters:
+            Type:
+                - feat
+                - update
+                - perf
+                - fix
+                - fixed
+                - revert
+                - rename
+                - refactor
+                - style
+                - docs
+                - build
+                - ci
+                - chore
+    commit_groups:
+        sort_by: Custom
+        title_order:
+            - feat
+            - update
+            - perf
+            - fix
+            - fixed
+            - revert
+            - rename
+            - refactor
+            - style
+            - docs
+            - build
+            - ci
+            - chore
+        title_maps:
+            feat: ✨ Features
+            fix: 🐛 Bug Fixes
+            fixed: 🐛 Bug Fixes
+            perf: ⚡ Performance Improvements
+            docs: 📝 Docs changes
+            refactor: ♻ Code Refactoring
+            rename: 🚚 Renamed
+            revert: ⏪ Reverted
+            update: 🔄 Updates
+            build: 👷 Building scripts changes
+            chore: Other changes
+            style: 🎨 Code styling
+            ci: 👷 CI changes
+    header:
+        pattern: "^(\\w*)(?:\\(([\\w\\$\\.\\-\\*\\s]*)\\))?\\:\\s(.*)$"
+        pattern_maps:
+            - Type
+            - Scope
+            - Subject
+    notes:
+        keywords:
+            - BREAKING CHANGE
+            - 💥

@@ -1,0 +1,40 @@
+name: Build changelog
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+    inputs:
+      next_version:
+        description: "Next version tag"
+        required: false
+      commit_message:
+        description: "Commit message"
+        required: false
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      -   name: Checkout repo
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            submodules: recursive
+      -   uses: maicol07/github-changelog-action@patch-1
+          with:
+            next_version: ${{ github.event.inputs.next_version }}
+      -   uses: oleksiyrudenko/gha-git-credentials@v2-latest
+          with:
+            token: '${{ secrets.GITHUB_TOKEN }}'
+      -   run: "git commit -m \"changelog: 🔖 Updated changelog for commit ${{ github.sha }}\" -a"
+          if: ${{ !github.event.inputs.commit_message && !github.event.inputs.next_version }}
+      -   run: "git commit -m \"release: 🔖 ${{ github.event.inputs.next_version }}\" -a"
+          if: ${{ !github.event.inputs.commit_message && github.event.inputs.next_version }}
+      -   run: "git commit -m \"${{ github.event.inputs.commit_message }}\" -a"
+          if: ${{ github.event.inputs.commit_message }}
+      -   name: Push changes
+          uses: ad-m/github-push-action@master
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            branch: ${{ github.ref }}

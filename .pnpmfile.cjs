@@ -1,6 +1,7 @@
 function readPackage(pkg) {
-  const pkgs = ['@openstamanager/vite-config'];
-  if (pkg.name in pkgs) {
+  const pkgs = ['@openstamanager/vite-config', '@maicol07/eslint-config'];
+
+  if (pkgs.includes(pkg.name)) {
     /** @type {object} */
     pkg.dependencies = {
       ...pkg.peerDependencies,

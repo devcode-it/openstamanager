@@ -332,33 +332,38 @@ export class RecordsPage extends Page {
       loading.show();
 
       if (isFormValid(form)) {
+        const data = collect(getFormData(form));
         // @ts-ignore
         // eslint-disable-next-line new-cap
-        const instance = new this.model() as IModel;
+        const instance = this.rows.get(data.get('id'), new this.model() as IModel) as IModel;
 
         if (this.customSetter) {
-          this.customSetter(instance, collect(getFormData(form)));
+          // eslint-disable-next-line @typescript-eslint/await-thenable
+          await this.customSetter(instance, data);
         } else {
-          const fields = form.find('text-field, text-area, material-select');
-          fields
-            .filter(this.fieldsPrecedence.map((value) => `#${value}`).join(', '))
-            .each((index, field) => {
-              instance[field.id] = (field as HTMLInputElement).value;
-            });
-          fields.each((index, field) => {
-            instance[field.id] = (field as HTMLInputElement).value;
+          const filtered = data
+            .filter((item: any, id: string) => this.fieldsPrecedence.includes(id));
+
+          // @ts-ignore
+          (filtered.isEmpty() ? filtered : data).each((value: string, id: string) => {
+            instance[id] = value;
           });
         }
 
         const response = await instance.save();
+        const modelId = response.getModelId();
 
-        const model = response.getModel();
-        if (model) {
+        if (modelId) {
+          // @ts-ignore
+          const newResponse = await this.model.with(this.model.relationships).find(modelId);
+          const model = newResponse.getData() as IModel;
+
           const dialogElement = dialog.get(0);
           if (dialogElement) {
             (dialogElement as MWCDialog).close();
           }
-          this.rows.put((model as Model).getId(), model);
+
+          this.rows.put(model.getId(), model);
           m.redraw();
           await showSnackbar(__('Record salvato'), 4000);
         }
@@ -369,7 +374,7 @@ export class RecordsPage extends Page {
     });
   }
 
-  getModelValue(model: IModel, field: string): any {
+  getModelValue(model: IModel, field: string, raw = false): any {
     const column = this.columns[field];
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     let value: any = model[field];
@@ -379,7 +384,7 @@ export class RecordsPage extends Page {
       value = column.valueModifier(model, field);
     }
 
-    return value;
+    return (value || raw) ? value : '';
   }
 
   getElementFromType(type: string) {

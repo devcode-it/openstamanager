@@ -3,7 +3,42 @@ import osmConfig from '@openstamanager/vite-config';
 import {defineConfig} from 'laravel-vite';
 import {VitePWA} from 'vite-plugin-pwa';
 
-export default defineConfig(osmConfig())
+export default defineConfig(osmConfig({
+  build: {
+    minify: true
+  },
+  optimizeDeps: {
+    exclude: [
+      '@maicol07/inertia-mithril',
+      '@maicol07/mwc-card',
+      '@maicol07/mwc-layout-grid',
+      '@material/mwc-button',
+      '@material/mwc-checkbox',
+      '@material/mwc-circular-progress',
+      '@material/mwc-dialog',
+      '@material/mwc-drawer',
+      '@material/mwc-fab',
+      '@material/mwc-formfield',
+      '@material/mwc-icon-button',
+      '@material/mwc-icon-button-toggle',
+      '@material/mwc-linear-progress',
+      '@material/mwc-list',
+      '@material/mwc-menu',
+      '@material/mwc-select',
+      '@material/mwc-snackbar',
+      '@material/mwc-textarea',
+      '@material/mwc-textfield',
+      '@material/mwc-top-app-bar',
+      'async-wait-until',
+      'lodash',
+      'lit',
+      'lit/decorators.js',
+      'cash-dom',
+      'redaxios'
+    ]
+  }
+}))
+  // @ts-ignore
   .withPlugins(...VitePWA({
     includeAssets: [
       'images/favicon/favicon.ico',

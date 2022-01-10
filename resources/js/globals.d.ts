@@ -8,7 +8,7 @@ import type router from 'ziggy-js';
 import type {__ as translator} from './utils';
 
 declare global {
-  const importPath: string;
+  let importPath: string;
   const translations: {[key: string]: string};
   const route: typeof router;
 

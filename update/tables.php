@@ -75,6 +75,7 @@ return [
     'in_interventi_tecnici',
     'in_interventi_tecnici_assegnati',
     'in_righe_interventi',
+    'in_righe_tipiinterventi',
     'in_statiintervento',
     'in_tariffe',
     'in_tipiintervento',

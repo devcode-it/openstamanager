@@ -30,11 +30,13 @@ $numero_previsto = verifica_numero_intervento($intervento);
 
 if (!empty($numero_previsto) && intval((setting('Verifica numero intervento')))) {
     echo '
-<div class="alert alert-warning">
-    <i class="fa fa-warning"></i> '.tr("E' assente una attività di numero _NUM_ in data precedente o corrispondente a _DATE_: potrebbero esserci alcuni errori di continuità con la numerazione delle attività", [
+<div class="alert alert-warning alert-dismissable">
+    <i class="fa fa-warning"></i> '.tr("E' assente una attività con numero _NUM_ in data precedente o corrispondente al _DATE_: potrebbero esserci alcuni errori di continuità con la numerazione delle attività", [
             '_DATE_' => dateFormat($intervento->data_richiesta),
             '_NUM_' => '"'.$numero_previsto.'"',
         ]).'.</b>
+
+    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
 </div>';
 }
 

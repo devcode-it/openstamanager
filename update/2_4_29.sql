@@ -13,3 +13,7 @@ UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM mg_articoli WHE
 -- Fix problema iva di vendita preselezionata
 ALTER TABLE `mg_articoli` CHANGE `idiva_vendita` `idiva_vendita` INT(11) NULL DEFAULT NULL;
 UPDATE `mg_articoli` SET `idiva_vendita`=NULL WHERE `idiva_vendita`=0;
+
+-- Impostazione per la modifica di altri tecnici nell'app
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES
+(NULL, 'Abilita la modifica di altri tecnici', '1', 'boolean', 1, 'Applicazione', 4, '');

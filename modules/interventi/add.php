@@ -442,6 +442,10 @@ echo '
            ordine.disable();
            input("idimpianti").disable();
            input("componenti").disable();
+        } else{
+           let value = anagrafica.get();
+           updateSelectOption("idanagrafica", value);
+           session_set("superselect,idanagrafica",value, 0);
         }
 
 		// Quando modifico orario inizio, allineo anche l\'orario fine

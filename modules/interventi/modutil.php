@@ -343,7 +343,7 @@ function verifica_numero_intervento(Intervento $intervento)
     // Recupero maschera per questo segmento
     $maschera = setting('Formato codice attività');
 
-    if ((strpos($maschera, 'YYYY') !== false) or (strpos($maschera, 'yy') !== false)) {
+    if ((strpos($maschera, 'YYYY') == false) or (strpos($maschera, 'yy') == false)) {
         $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice', [
             'DATE(data_richiesta) < '.prepare($data->format('Y-m-d')),
             'YEAR(data_richiesta) = '.prepare($data->format('Y')),

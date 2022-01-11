@@ -310,7 +310,7 @@ class FatturaElettronica
         $dati_generali = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
         $data = self::parseDate($dati_generali['Data']);
 
-        $fattura = $this->prepareFattura($id_tipo, $data, $id_sezionale, $ref_fattura);
+        $fattura = $this->prepareFattura($id_tipo, $data, $data_registrazione, $id_sezionale, $ref_fattura);
         $this->fattura = $fattura;
 
         $numero_esterno = $dati_generali['Numero'];
@@ -383,13 +383,13 @@ class FatturaElettronica
         return date('Y-m-d', strtotime($data));
     }
 
-    protected function prepareFattura($id_tipo, $data, $id_sezionale, $ref_fattura)
+    protected function prepareFattura($id_tipo, $data, $data_registrazione, $id_sezionale, $ref_fattura)
     {
         $anagrafica = $this->saveAnagrafica();
 
         $tipo = TipoFattura::where('id', $id_tipo)->first();
 
-        $fattura = Fattura::build($anagrafica, $tipo, $data, $id_sezionale);
+        $fattura = Fattura::build($anagrafica, $tipo, $data, $id_sezionale, null, $data_registrazione);
         $this->fattura = $fattura;
 
         // Riferimento per nota di credito e debito

@@ -341,9 +341,9 @@ class FatturaOrdinaria extends FatturaElettronica
         }
     }
 
-    protected function prepareFattura($id_tipo, $data, $id_sezionale, $ref_fattura)
+    protected function prepareFattura($id_tipo, $data, $data_registrazione, $id_sezionale, $ref_fattura)
     {
-        $fattura = parent::prepareFattura($id_tipo, $data, $id_sezionale, $ref_fattura);
+        $fattura = parent::prepareFattura($id_tipo, $data, $data_registrazione, $id_sezionale, $ref_fattura);
         $database = database();
 
         $righe = $this->getRighe();

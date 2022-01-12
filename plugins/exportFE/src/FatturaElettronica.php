@@ -1446,9 +1446,8 @@ class FatturaElettronica
             $id_iva_dichiarazione = setting("Iva per lettere d'intento");
             if (!empty($dichiarazione) && $riga->aliquota->id == $id_iva_dichiarazione) {
                 $dettaglio[]['AltriDatiGestionali'] = [
-                    'TipoDato' => 'AswDichInt',
+                    'TipoDato' => 'INTENTO',
                     'RiferimentoTesto' => $dichiarazione->numero_protocollo,
-                    'RiferimentoNumero' => $dichiarazione->numero_progressivo,
                     'RiferimentoData' => $dichiarazione->data_emissione,
                 ];
             }

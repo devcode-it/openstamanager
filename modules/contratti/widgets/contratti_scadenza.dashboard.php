@@ -29,7 +29,7 @@ $rs = $dbo->fetchArray('SELECT *,
 FROM co_contratti WHERE
         rinnovabile = 1 AND
         YEAR(data_conclusione) > 1970 AND
-        (SELECT id FROM co_contratti contratti WHERE contratti.idcontratto_prev = co_contratti.id) IS NULL
+        co_contratti.id NOT IN (SELECT idcontratto_prev FROM co_contratti contratti)
 HAVING (ore_rimanenti < ore_preavviso_rinnovo OR DATEDIFF(data_conclusione, NOW()) < ABS(giorni_preavviso_rinnovo))
 ORDER BY giorni_rimanenti ASC, ore_rimanenti ASC');
 

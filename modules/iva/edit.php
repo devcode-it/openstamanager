@@ -127,7 +127,7 @@ $(document).ready(function() {
 if ($res) {
     echo '
     <div class="alert alert-warning">
-        <p>'.tr('Ci sono '.count($res).' documenti collegati a questa aliquota IVA. Non è possibile eliminarla o modificarne alcuni campi.').'</p>
+        <p>'.tr('Ci sono '.$res.' documenti collegati a questa aliquota IVA. Non è possibile eliminarla o modificarne alcuni campi.').'</p>
     </div>';
 } else {
     echo '

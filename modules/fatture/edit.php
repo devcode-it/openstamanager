@@ -798,7 +798,7 @@ if ($dir == 'uscita' && $fattura->isFE()) {
 }
 ?>
 
-{( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
+{( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$", "abilita_genera": "<?php echo $abilita_genera; ?>" )}
 
 <?php
 if ($dir == 'entrata') {

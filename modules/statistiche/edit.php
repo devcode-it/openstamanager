@@ -275,7 +275,7 @@ echo '
     </div>
 </div>';
 
-// Interventi per tipologia
+// Numero interventi per tipologia
 $tipi = $dbo->fetchArray('SELECT * FROM `in_tipiintervento`');
 
 $dataset = '';
@@ -299,7 +299,7 @@ foreach ($tipi as $tipo) {
 echo '
 <div class="box box-info">
     <div class="box-header with-border">
-        <h3 class="box-title">'.tr('Interventi per tipologia').'</h3>
+        <h3 class="box-title">'.tr('Numero interventi per tipologia').'</h3>
 
         <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse">
@@ -307,14 +307,70 @@ echo '
             </button>
         </div>
     </div>
-    <canvas class="box-body collapse in" id="interventi" height="100"></canvas>
+    <canvas class="box-body collapse in" id="interventi_n_tipologia" height="100"></canvas>
 </div>';
 
-// Script per il grafico degli interventi per tipologia
+// Script per il grafico del numero interventi per tipologia
 echo '
 <script>
 $(document).ready(function() {
-    new Chart(document.getElementById("interventi").getContext("2d"), {
+    new Chart(document.getElementById("interventi_n_tipologia").getContext("2d"), {
+        type: "bar",
+        data: {
+            labels: months,
+            datasets: [
+                '.$dataset.'
+            ]
+        },
+        options: {
+            responsive: true,
+            legend: {
+                position: "bottom",
+            },
+        }
+    });
+});
+</script>';
+
+
+// Ore interventi per tipologia
+$dataset = '';
+foreach ($tipi as $tipo) {
+    $interventi = $dbo->fetchArray('SELECT ROUND( SUM(in_interventi_tecnici.ore), 2 ) AS result, YEAR(in_interventi.data_richiesta) AS year, MONTH(in_interventi.data_richiesta) AS month FROM in_interventi INNER JOIN in_interventi_tecnici ON in_interventi.id=in_interventi_tecnici.idintervento WHERE in_interventi.idtipointervento = '.prepare($tipo['idtipointervento']).' AND in_interventi.data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end).' GROUP BY YEAR(in_interventi.data_richiesta), MONTH(in_interventi.data_richiesta) ORDER BY YEAR(in_interventi.data_richiesta) ASC, MONTH(in_interventi.data_richiesta) ASC');
+
+    $interventi = Stats::monthly($interventi, $start, $end);
+
+    //Random color
+    $background = '#'.dechex(rand(256, 16777215));
+
+    $dataset .= '{
+        label: "'.$tipo['descrizione'].'",
+        backgroundColor: "'.$background.'",
+        data: [
+            '.implode(',', array_column($interventi, 'result')).'
+        ]
+    },';
+}
+
+echo '
+<div class="box box-info">
+    <div class="box-header with-border">
+        <h3 class="box-title">'.tr('Ore interventi per tipologia').'</h3>
+
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <canvas class="box-body collapse in" id="interventi_ore_tipologia" height="100"></canvas>
+</div>';
+
+// Script per il grafico delle ore interventi per tipologia
+echo '
+<script>
+$(document).ready(function() {
+    new Chart(document.getElementById("interventi_ore_tipologia").getContext("2d"), {
         type: "bar",
         data: {
             labels: months,

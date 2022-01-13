@@ -386,36 +386,41 @@ class Prints
             include $infos['full_directory'].'/pdfgen.'.$infos['directory'].'.php';
         }
 
-        // Sostituzione di variabili generiche
-        $report = str_replace('$body$', $body, $report);
-        $report = str_replace('$footer$', $footer, $report);
+        if(empty($filename)){
+            // Sostituzione di variabili generiche
+            $report = str_replace('$body$', $body, $report);
+            $report = str_replace('$footer$', $footer, $report);
 
-        $report = str_replace('$font_size$', $font_size, $report);
-        $report = str_replace('$body_table_params$', $body_table_params, $report);
-        $report = str_replace('$table$', $table, $report);
+            $report = str_replace('$font_size$', $font_size, $report);
+            $report = str_replace('$body_table_params$', $body_table_params, $report);
+            $report = str_replace('$table$', $table, $report);
 
-        // Footer di default
-        if (!string_contains($report, '<page_footer>')) {
-            $report .= '<page_footer>$default_footer$</page_footer>';
+            // Footer di default
+            if (!string_contains($report, '<page_footer>')) {
+                $report .= '<page_footer>$default_footer$</page_footer>';
+            }
+
+            // Operazioni di sostituzione
+            include base_dir().'/templates/replace.php';
+
+            $mode = !empty($directory) ? 'F' : 'I';
+            $mode = !empty($return_string) ? 'S' : $mode;
+
+            $file = self::getFile($infos, $id_record, $directory, $replaces);
+            $title = $file['name'];
+            $path = $file['path'];
+
+            $html2pdf = new Spipu\Html2Pdf\Html2Pdf($orientation, $format, 'it', true, 'UTF-8');
+
+            $html2pdf->writeHTML($report);
+            $html2pdf->pdf->setTitle($title);
+
+            $pdf = $html2pdf->output($path, $mode);
+            $file['pdf'] = $pdf;
+        }else{
+            $file = self::getFile($infos, $id_record, $directory, $replaces);
+            $file['pdf'] = file_get_contents($filename);
         }
-
-        // Operazioni di sostituzione
-        include base_dir().'/templates/replace.php';
-
-        $mode = !empty($directory) ? 'F' : 'I';
-        $mode = !empty($return_string) ? 'S' : $mode;
-
-        $file = self::getFile($infos, $id_record, $directory, $replaces);
-        $title = $file['name'];
-        $path = $file['path'];
-
-        $html2pdf = new Spipu\Html2Pdf\Html2Pdf($orientation, $format, 'it', true, 'UTF-8');
-
-        $html2pdf->writeHTML($report);
-        $html2pdf->pdf->setTitle($title);
-
-        $pdf = $html2pdf->output($path, $mode);
-        $file['pdf'] = $pdf;
 
         return $file;
     }
@@ -553,77 +558,17 @@ class Prints
             }
         }
 
-        // Generazione dei contenuti dell'header
-        ob_start();
-        $print_header = self::filepath($id_print, 'header.php');
-        if (!empty($print_header)) {
-            include $print_header;
-        }
-        $head = ob_get_clean();
-
-        // Header di default
-        $head = !empty($head) ? $head : '$default_header$';
-
-        // Generazione dei contenuti del footer
-        ob_start();
-        $print_footer = self::filepath($id_print, 'footer.php');
-        if (!empty($print_footer)) {
-            include $print_footer;
-        }
-        $foot = ob_get_clean();
-
-        // Footer di default
-        $foot = !empty($foot) ? $foot : '$default_footer$';
-
-        // Operazioni di sostituzione
-        include base_dir().'/templates/replace.php';
-
-        // Impostazione di header e footer
-        $mpdf->SetHTMLHeader($head);
-        $mpdf->SetHTMLFooter($foot);
-
-        // Generazione dei contenuti della stampa
-
-        if (!empty($single_pieces)) {
+        if(empty($filename)){
+            // Generazione dei contenuti dell'header
             ob_start();
-            $print_top = self::filepath($id_print, 'top.php');
-            if (!empty($print_top)) {
-                include $print_top;
+            $print_header = self::filepath($id_print, 'header.php');
+            if (!empty($print_header)) {
+                include $print_header;
             }
-            $top = ob_get_clean();
+            $head = ob_get_clean();
 
-            $top = str_replace(array_keys($replaces), array_values($replaces), $top);
-
-            $mpdf->WriteHTML($top);
-
-            $print_piece = self::filepath($id_print, 'piece.php');
-            foreach ($records as $record) {
-                ob_start();
-                if (!empty($print_piece)) {
-                    include $print_piece;
-                }
-                $piece = ob_get_clean();
-
-                $mpdf->WriteHTML($piece);
-            }
-
-            ob_start();
-            $print_bottom = self::filepath($id_print, 'bottom.php');
-            if (!empty($print_bottom)) {
-                include $print_bottom;
-            }
-            $bottom = ob_get_clean();
-
-            $bottom = str_replace(array_keys($replaces), array_values($replaces), $bottom);
-
-            $mpdf->WriteHTML($bottom);
-
-            $report = '';
-        }
-
-        // Footer per l'ultima pagina
-        if (!empty($options['last-page-footer'])) {
-            $is_last_page = true;
+            // Header di default
+            $head = !empty($head) ? $head : '$default_header$';
 
             // Generazione dei contenuti del footer
             ob_start();
@@ -632,35 +577,100 @@ class Prints
                 include $print_footer;
             }
             $foot = ob_get_clean();
+
+            // Footer di default
+            $foot = !empty($foot) ? $foot : '$default_footer$';
+
+            // Operazioni di sostituzione
+            include base_dir().'/templates/replace.php';
+
+            // Impostazione di header e footer
+            $mpdf->SetHTMLHeader($head);
+            $mpdf->SetHTMLFooter($foot);
+
+            // Generazione dei contenuti della stampa
+
+            if (!empty($single_pieces)) {
+                ob_start();
+                $print_top = self::filepath($id_print, 'top.php');
+                if (!empty($print_top)) {
+                    include $print_top;
+                }
+                $top = ob_get_clean();
+
+                $top = str_replace(array_keys($replaces), array_values($replaces), $top);
+
+                $mpdf->WriteHTML($top);
+
+                $print_piece = self::filepath($id_print, 'piece.php');
+                foreach ($records as $record) {
+                    ob_start();
+                    if (!empty($print_piece)) {
+                        include $print_piece;
+                    }
+                    $piece = ob_get_clean();
+
+                    $mpdf->WriteHTML($piece);
+                }
+
+                ob_start();
+                $print_bottom = self::filepath($id_print, 'bottom.php');
+                if (!empty($print_bottom)) {
+                    include $print_bottom;
+                }
+                $bottom = ob_get_clean();
+
+                $bottom = str_replace(array_keys($replaces), array_values($replaces), $bottom);
+
+                $mpdf->WriteHTML($bottom);
+
+                $report = '';
+            }
+
+            // Footer per l'ultima pagina
+            if (!empty($options['last-page-footer'])) {
+                $is_last_page = true;
+
+                // Generazione dei contenuti del footer
+                ob_start();
+                $print_footer = self::filepath($id_print, 'footer.php');
+                if (!empty($print_footer)) {
+                    include $print_footer;
+                }
+                $foot = ob_get_clean();
+            }
+
+            // Operazioni di sostituzione
+            include base_dir().'/templates/replace.php';
+
+            $mode = !empty($directory) ? 'F' : 'I';
+            $mode = !empty($return_string) ? 'S' : $mode;
+
+            $file = self::getFile($infos, $id_record, $directory, $replaces);
+            $title = $file['name'];
+            $path = $file['path'];
+
+            // Impostazione del titolo del PDF
+            $mpdf->SetTitle($title);
+
+            // Aggiunta dei contenuti
+            $mpdf->WriteHTML($report);
+
+            // Impostazione footer per l'ultima pagina
+            if (!empty($options['last-page-footer'])) {
+                $mpdf->WriteHTML('<div class="fake-footer">'.$foot.'</div>');
+
+                $mpdf->WriteHTML('<div style="position:absolute; bottom: 13mm; margin-right: '.($settings['margins']['right']).'mm">'.$foot.'</div>');
+            }
+
+            // Creazione effettiva del PDF
+            $pdf = $mpdf->Output($path, $mode);
+            $file['pdf'] = $pdf;
+        }else{
+            $file = self::getFile($infos, $id_record, $directory, $replaces);
+            $file['pdf'] = file_get_contents($filename);
         }
-
-        // Operazioni di sostituzione
-        include base_dir().'/templates/replace.php';
-
-        $mode = !empty($directory) ? 'F' : 'I';
-        $mode = !empty($return_string) ? 'S' : $mode;
-
-        $file = self::getFile($infos, $id_record, $directory, $replaces);
-        $title = $file['name'];
-        $path = $file['path'];
-
-        // Impostazione del titolo del PDF
-        $mpdf->SetTitle($title);
-
-        // Aggiunta dei contenuti
-        $mpdf->WriteHTML($report);
-
-        // Impostazione footer per l'ultima pagina
-        if (!empty($options['last-page-footer'])) {
-            $mpdf->WriteHTML('<div class="fake-footer">'.$foot.'</div>');
-
-            $mpdf->WriteHTML('<div style="position:absolute; bottom: 13mm; margin-right: '.($settings['margins']['right']).'mm">'.$foot.'</div>');
-        }
-
-        // Creazione effettiva del PDF
-        $pdf = $mpdf->Output($path, $mode);
-        $file['pdf'] = $pdf;
-
+        
         return $file;
     }
 

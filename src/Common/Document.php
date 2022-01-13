@@ -226,7 +226,7 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
      */
     public function getMarginePercentualeAttribute()
     {
-        return $this->imponibile ? (($this->totale_imponibile / $this->spesa) - 1) * 100 : 100;
+        return ($this->totale_imponibile && $this->spesa) ? (($this->totale_imponibile / $this->spesa) - 1) * 100 : 100;
     }
 
     public function delete()

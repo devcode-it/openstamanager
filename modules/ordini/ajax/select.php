@@ -42,7 +42,7 @@ switch ($resource) {
             if (empty($elements)) {
                 $where[] = 'an_anagrafiche.idanagrafica='.prepare($superselect['idanagrafica']);
 
-                $stato = !empty($superselect['stato']) ? $superselect['stato'] : 'completato';
+                $stato = !empty($superselect['stato']) ? $superselect['stato'] : 'is_fatturabile';
                 $where[] = 'idstatoordine IN (SELECT `id` FROM `or_statiordine` WHERE '.$stato.' = 1)';
             }
         }

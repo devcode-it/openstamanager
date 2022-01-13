@@ -1356,11 +1356,7 @@ class FatturaElettronica
             }
 
             // Non ammesso ’
-            // $descrizione = html_entity_decode($riga['descrizione'], ENT_HTML5, 'UTF-8');
-            $descrizione = str_replace('&gt;', ' ', $riga['descrizione']);
-            $descrizione = str_replace('…', '...', $descrizione);
-            $descrizione = str_replace('’', ' ', $descrizione);
-            $descrizione = str_replace('ø', 'diametro', $descrizione);
+            $descrizione = $riga['descrizione'];
 
             // Aggiunta dei riferimenti ai documenti
             if (setting('Riferimento dei documenti in Fattura Elettronica') && $riga->hasOriginalComponent()) {
@@ -1450,9 +1446,8 @@ class FatturaElettronica
             $id_iva_dichiarazione = setting("Iva per lettere d'intento");
             if (!empty($dichiarazione) && $riga->aliquota->id == $id_iva_dichiarazione) {
                 $dettaglio[]['AltriDatiGestionali'] = [
-                    'TipoDato' => 'AswDichInt',
-                    'RiferimentoTesto' => $dichiarazione->numero_protocollo,
-                    'RiferimentoNumero' => $dichiarazione->numero_progressivo,
+                    'TipoDato' => 'INTENTO',
+                    'RiferimentoNumero' => $dichiarazione->numero_protocollo,
                     'RiferimentoData' => $dichiarazione->data_emissione,
                 ];
             }

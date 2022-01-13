@@ -168,11 +168,13 @@ class FileManager implements ManagerInterface
                         $result .= '
                 <button type="button" class="btn btn-xs btn-warning" onclick="modificaAllegato(this)">
                     <i class="fa fa-edit"></i>
-                </button>
-
+                </button>';
+                        if (!$file->isFatturaElettronica() || $options['abilita_genera']) {
+                            $result .= '
                 <button type="button" class="btn btn-xs btn-danger" onclick="rimuoviAllegato(this)">
                     <i class="fa fa-trash"></i>
                 </button>';
+                        }
                     }
 
                     $result .= '

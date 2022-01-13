@@ -91,7 +91,7 @@ class Fattura extends Document
      *
      * @return self
      */
-    public static function build(Anagrafica $anagrafica, Tipo $tipo_documento, $data, $id_segment, $numero_esterno = null)
+    public static function build(Anagrafica $anagrafica, Tipo $tipo_documento, $data, $id_segment, $numero_esterno = null, $data_registrazione = null)
     {
         $model = new static();
 
@@ -120,7 +120,7 @@ class Fattura extends Document
 
         // Salvataggio delle informazioni
         $model->data = $data;
-        $model->data_registrazione = $data;
+        $model->data_registrazione = $data_registrazione ?: $data;
         $model->data_competenza = $data;
         $model->id_segment = $id_segment;
         $model->idconto = $id_conto;
@@ -224,7 +224,7 @@ class Fattura extends Document
         // Calcolo dei numeri fattura
         if ($value != $previous) {
             $direzione = $this->tipo->dir;
-            $data = $this->data;
+            $data = $this->data_registrazione;
 
             $this->numero = static::getNextNumero($data, $direzione, $value);
 
@@ -757,7 +757,7 @@ class Fattura extends Document
         $maschera = Generator::getMaschera($id_segment);
 
         $ultimo = Generator::getPreviousFrom($maschera, 'co_documenti', 'numero', [
-            'YEAR(data) = '.prepare(date('Y', strtotime($data))),
+            'YEAR(data_registrazione) = '.prepare(date('Y', strtotime($data))),
             'id_segment = '.prepare($id_segment),
         ]);
         $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));

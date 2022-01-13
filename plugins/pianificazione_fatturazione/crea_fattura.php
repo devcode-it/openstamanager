@@ -26,9 +26,13 @@ $pianificazione = Pianificazione::find($id_rata);
 $contratto = $pianificazione->contratto;
 
 $id_pianificazione = $pianificazione->id;
-$numero_rata = $contratto->pianificazioni->search(function ($item) use ($id_pianificazione) {
-    return $item->id = $id_pianificazione;
-}) + 1;
+
+foreach($contratto->pianificazioni as $i => $p){
+    if( $p->id == $id_pianificazione ){
+        $numero_rata = $i+1;
+        break;
+    }
+}
 
 $module_fattura = Modules::get('Fatture di vendita');
 

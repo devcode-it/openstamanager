@@ -17,6 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+ use Carbon\Carbon;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Contratti\Components\Articolo;
 use Modules\Contratti\Components\Riga;
@@ -95,8 +96,9 @@ switch ($operazione) {
                 $qta_evasa = $r->qta_evasa;
                 $data_scadenza = '';
                 $inizio = $date_pianificazioni[0];
-                $fine = date('Y-m-d', strtotime($inizio.' -1 days'));
-                $fine = date('Y-m-d', strtotime($fine.' '.$timeing));
+                $fine = date('Y-m-d', strtotime($inizio.' '.$timeing));
+                $fine = date('Y-m-d', strtotime($fine.' -1 days'));
+
                 for ($rata = 1; $rata <= $numero_fatture; ++$rata) {
                     if ($qta_evasa < $r->qta) {
                         $qta_riga = ($qta[$r->id] <= ($r->qta - $qta_evasa) ? $qta[$r->id] : ($r->qta - $qta_evasa));
@@ -105,8 +107,10 @@ switch ($operazione) {
                         $descrizione = variables($descrizione, $inizio, $fine, $rata, $numero_fatture)['descrizione'];
 
                         $inizio = $fine;
-                        $fine = date('Y-m-d', strtotime($timeing, strtotime($inizio)));
                         $inizio = date('Y-m-d', strtotime($inizio.' +1 days'));
+
+                        $fine = date('Y-m-d', strtotime($inizio.' '.$timeing));
+                        $fine = date('Y-m-d', strtotime($fine.' -1 days'));
 
                         $prezzo_unitario = ($r->subtotale / $r->qta);
 

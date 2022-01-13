@@ -18,7 +18,10 @@
     "types": [
       "vite-plugin-pwa/client"
     ],
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "/images/logo_completo.png": ["resources/static/images/logo_completo.png"]
+    }
   },
   "exclude": ["**/node_modules", "**/.*/"],
   "include": [

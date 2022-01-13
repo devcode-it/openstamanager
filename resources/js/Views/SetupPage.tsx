@@ -6,7 +6,7 @@ import '@material/mwc-fab';
 import '@material/mwc-formfield';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-select';
-import '@material/mwc-textarea';
+import '../WebComponents/TextArea';
 import '../WebComponents/TextField';
 import '../WebComponents/Select';
 
@@ -16,6 +16,7 @@ import LocaleCode from 'locale-code';
 import type {Vnode, VnodeDOM} from 'mithril';
 import redaxios, {Response} from 'redaxios';
 
+// @ts-ignore
 // eslint-disable-next-line import/no-absolute-path
 import logoUrl from '/images/logo_completo.png';
 
@@ -23,7 +24,6 @@ import {Alert} from '../Components';
 import Mdi from '../Components/Mdi';
 import Page from '../Components/Page';
 import {getFormData, showSnackbar} from '../utils';
-import {TextArea} from '../WebComponents';
 
 function getFlag(language: string, slot: string = 'graphic', styles: CSS.Properties = {}) {
   if (!styles.display) {
@@ -87,7 +87,7 @@ export default class SetupPage extends Page {
       <>
         <mwc-card outlined className="center ext-container">
           <form id="setup">
-            <img src={logoUrl} className="center" alt={__('OpenSTAManager')} />
+            <img src={logoUrl as string} className="center" alt={__('OpenSTAManager')} />
             <mwc-layout-grid>
               <mwc-layout-grid-cell span-desktop={8}>
                 <h2>
@@ -247,10 +247,10 @@ export default class SetupPage extends Page {
                     'OpenSTAManager è tutelato dalla licenza GPL 3.0, da accettare obbligatoriamente per poter utilizzare il gestionale.'
                   )}
                 </p>
-                <TextArea
+                <text-area
                   value={this.page.props.license as string}
-                  rows="15"
-                  cols="40"
+                  rows={15}
+                  cols={40}
                   disabled
                   style="margin-bottom: 8px;"
                 />

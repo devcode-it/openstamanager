@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', static function () {
     if (empty(DB::connection()->getDatabaseName())) {
-        return redirect()->route('setup');
+        return redirect()->route('setup.index');
     }
 
     return redirect()->route('auth.login');
@@ -60,7 +60,7 @@ Route::name('setup.')->group(static function () {
             glob(resource_path('lang').'/*.json', GLOB_NOSORT)
         )),
         'license' => cache()->rememberForever('app.license', fn () => file_get_contents(base_path('LICENSE'))),
-    ]);
+    ])->name('index');
 
     Route::inertia('setup/admin', 'AdminSetupPage')
         ->name('admin');

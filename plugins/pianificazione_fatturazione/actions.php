@@ -17,7 +17,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Carbon\Carbon;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Contratti\Components\Articolo;
 use Modules\Contratti\Components\Riga;

@@ -67,13 +67,15 @@ function compile(btn) {
 
             $("select[name^=iva]").each(function(){
                 var aliquota = $(this).closest("tr").find("[id^=aliquota]").text();
-                if (response.iva[aliquota] !== undefined){
+                if (response.iva[aliquota] !== undefined && !$(this).val()){
                     $(this).selectSet(response.iva[aliquota].id);
                 }
             });
 
             $("select[name^=conto]").each(function(){
-                $(this).selectSetNew(response.conto.id, response.conto.descrizione);
+                if (!$(this).val()){
+                    $(this).selectSetNew(response.conto.id, response.conto.descrizione);
+                }
             });
         },
         error: function(data) {

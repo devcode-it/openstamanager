@@ -441,6 +441,7 @@ $("#idanagrafica_c").change(function() {
     session_set("superselect,idanagrafica", $(this).val(), 0);
 
     $("#idsede").selectReset();
+    $("#matricolaimpianto").selectReset();
 });
 
 $("#codice_cig, #codice_cup").bind("keyup change", function(e) {

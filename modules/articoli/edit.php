@@ -341,11 +341,11 @@ $("#scorporaIva").click( function() {
 
 // Collegamenti diretti
 // Fatture, ddt, preventivi collegati a questo articolo
-$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idarticolo` = '.prepare($id_record).')
+$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir`, SUM(co_righe_documenti.qta) AS qta_totale, ((SUM(co_righe_documenti.prezzo_unitario)-SUM(co_righe_documenti.sconto_unitario))/SUM(co_righe_documenti.qta)) AS prezzo_unitario, SUM(co_righe_documenti.prezzo_unitario)-SUM(co_righe_documenti.sconto_unitario) AS prezzo_totale FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` INNER JOIN `co_righe_documenti` ON `co_documenti`.`id`=`co_righe_documenti`.`iddocumento` WHERE `co_righe_documenti`.`idarticolo` = '.prepare($id_record).' GROUP BY co_documenti.id
 
-UNION SELECT `dt_ddt`.`id`, `dt_ddt`.`data`, `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`, `dt_tipiddt`.`descrizione` AS tipo_documento, `dt_tipiddt`.`dir` FROM `dt_ddt` JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` WHERE `dt_ddt`.`id` IN (SELECT `idddt` FROM `dt_righe_ddt` WHERE `idarticolo` = '.prepare($id_record).')
+UNION SELECT `dt_ddt`.`id`, `dt_ddt`.`data`, `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`, `dt_tipiddt`.`descrizione` AS tipo_documento, `dt_tipiddt`.`dir`, SUM(dt_righe_ddt.qta) AS qta_totale, ((SUM(dt_righe_ddt.prezzo_unitario)-SUM(dt_righe_ddt.sconto_unitario))/SUM(dt_righe_ddt.qta)) AS prezzo_unitario, SUM(dt_righe_ddt.prezzo_unitario)-SUM(dt_righe_ddt.sconto_unitario) AS prezzo_totale FROM `dt_ddt` JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` INNER JOIN `dt_righe_ddt` ON `dt_ddt`.`id`=`dt_righe_ddt`.`idddt` WHERE `dt_righe_ddt`.`idarticolo` = '.prepare($id_record).' GROUP BY dt_ddt.id
 
-UNION SELECT `co_preventivi`.`id`, `co_preventivi`.`data_bozza`, `co_preventivi`.`numero`,  0 AS numero_esterno , "Preventivo" AS tipo_documento, 0 AS dir FROM `co_preventivi` WHERE `co_preventivi`.`id` IN (SELECT `idpreventivo` FROM `co_righe_preventivi` WHERE `idarticolo` = '.prepare($id_record).')  ORDER BY `data`');
+UNION SELECT `co_preventivi`.`id`, `co_preventivi`.`data_bozza`, `co_preventivi`.`numero`,  0 AS numero_esterno , "Preventivo" AS tipo_documento, 0 AS dir, SUM(co_righe_preventivi.qta) AS qta_totale, ((SUM(co_righe_preventivi.prezzo_unitario)-SUM(co_righe_preventivi.sconto_unitario))/SUM(co_righe_preventivi.qta)) AS prezzo_unitario, SUM(co_righe_preventivi.prezzo_unitario)-SUM(co_righe_preventivi.sconto_unitario) AS prezzo_totale FROM `co_preventivi` INNER JOIN `co_righe_preventivi` ON `co_preventivi`.`id`=`co_righe_preventivi`.`idpreventivo` WHERE `co_righe_preventivi`.`idarticolo` = '.prepare($id_record).' GROUP BY co_preventivi.id ORDER BY `data`');
 
 if (!empty($elementi)) {
     echo '
@@ -359,7 +359,13 @@ if (!empty($elementi)) {
         </div>
     </div>
     <div class="box-body">
-        <ul>';
+        <table class="table table-striped table-bordered table-extra-condensed">
+            <tr>
+                <th>'.tr('Documento').'</td>
+                <th width="12%" class="text-center">'.tr('Quantità').'</td>
+                <th width="15%" class="text-center">'.tr('Prezzo unitario').'</td>
+                <th width="15%" class="text-center">'.tr('Prezzo totale').'</td>
+            <tr>';
 
     foreach ($elementi as $elemento) {
         $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
@@ -381,11 +387,16 @@ if (!empty($elementi)) {
         $id = $elemento['id'];
 
         echo '
-            <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+            <tr>
+                <td>'.Modules::link($modulo, $id, $descrizione).'</td>
+                <td class="text-center">'.Translator::numberToLocale($elemento['qta_totale']).'</td>
+                <td class="text-right">'.moneyFormat($elemento['prezzo_unitario']).'</td>
+                <td class="text-right">'.moneyFormat($elemento['prezzo_totale']).'</td>
+            <tr>';
     }
 
     echo '
-        </ul>
+        </table>
     </div>
 </div>';
 }

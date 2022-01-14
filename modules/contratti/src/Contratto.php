@@ -206,7 +206,7 @@ class Contratto extends Document
     public function fixDataConclusione()
     {
         // Calcolo della data di conclusione in base alla validità
-        if ($this->isDataConclusioneAutomatica()) {
+        if ($this->isDataConclusioneAutomatica() && !empty($this->data_accettazione)) {
             $intervallo = CarbonInterval::make($this->validita.' '.$this->tipo_validita);
             $data = Carbon::make($this->data_accettazione)->add($intervallo);
             $this->data_conclusione = $data->subDays(1);

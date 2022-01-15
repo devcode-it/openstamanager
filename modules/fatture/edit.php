@@ -397,8 +397,8 @@ elseif ($record['stato'] == 'Bozza') {
                 ?>
 
                 <div class="col-md-3">
-                    <?php echo !empty($record['id_ritenuta_contributi']) ? Modules::link('Ritenute contributi', $record['id_ritenuta_contributi'], null, null, 'class="pull-right"') : ''; ?>
-                    {[ "type": "select", "label": "<?php echo tr('Ritenuta contributi'); ?>", "name": "id_ritenuta_contributi", "value": "$id_ritenuta_contributi$", "values": "query=SELECT *, CONCAT(descrizione,(IF(percentuale>0, CONCAT(\" - \", percentuale, \"% sul \", percentuale_imponibile, \"% imponibile\"), \"\"))) AS descrizione FROM co_ritenuta_contributi", "help": "<?php echo tr('Ritenuta contributi da applicare alle righe della fattura.'); ?>"  ]}
+                    <?php echo !empty($record['id_ritenuta_contributi']) ? Modules::link('Ritenute previdenziali', $record['id_ritenuta_contributi'], null, null, 'class="pull-right"') : ''; ?>
+                    {[ "type": "select", "label": "<?php echo tr('Ritenuta previdenziale'); ?>", "name": "id_ritenuta_contributi", "value": "$id_ritenuta_contributi$", "values": "query=SELECT *, CONCAT(descrizione,(IF(percentuale>0, CONCAT(\" - \", percentuale, \"% sul \", percentuale_imponibile, \"% imponibile\"), \"\"))) AS descrizione FROM co_ritenuta_contributi", "help": "<?php echo tr('Ritenuta previdenziale da applicare alle righe della fattura.'); ?>"  ]}
                 </div>
 
                 <?php

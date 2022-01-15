@@ -75,9 +75,9 @@ foreach ($righe as $riga) {
         $descrizione_conto = $dbo->fetchOne('SELECT descrizione FROM co_pianodeiconti3 WHERE id = '.prepare($riga->id_conto))['descrizione'];
 
         $extra_riga = replace('_DESCRIZIONE_CONTO__ID_DOCUMENTO__NUMERO_RIGA__CODICE_COMMESSA__CODICE_CIG__CODICE_CUP__RITENUTA_ACCONTO__RITENUTA_CONTRIBUTI__RIVALSA_', [
-            '_RIVALSA_' => $riga->rivalsa_inps ? '<br>Rivalsa: '.moneyFormat(abs($riga->rivalsa_inps)) : null,
+            '_RIVALSA_' => $riga->rivalsa_inps ? '<br>'.tr('Cassa previdenziale').': '.moneyFormat(abs($riga->rivalsa_inps)) : null,
             '_RITENUTA_ACCONTO_' => $riga->ritenuta_acconto ? '<br>Ritenuta acconto: '.moneyFormat(abs($riga->ritenuta_acconto)) : null,
-            '_RITENUTA_CONTRIBUTI_' => $riga->ritenuta_contributi ? '<br>Ritenuta contributi: '.moneyFormat(abs($riga->ritenuta_contributi)) : null,
+            '_RITENUTA_CONTRIBUTI_' => $riga->ritenuta_contributi ? '<br>Ritenuta previdenziale: '.moneyFormat(abs($riga->ritenuta_contributi)) : null,
             '_DESCRIZIONE_CONTO_' => $descrizione_conto ?: '<span class="label label-danger" ><i class="fa fa-exclamation-triangle"></i>
             '.tr('Conto mancante').'</span>',
             '_ID_DOCUMENTO_' => $id_documento_fe ? ' - DOC: '.$id_documento_fe : null,
@@ -305,7 +305,7 @@ if (!empty($rivalsa_inps)) {
     }
 
     echo '
-                <b>'.tr('Rivalsa', [], ['upper' => true]).' :</b>
+                <b>'.tr('Cassa previdenziale', [], ['upper' => true]).' :</b>
             </td>
             <td class="text-right">
                 '.moneyFormat($rivalsa_inps, 2).'
@@ -360,12 +360,12 @@ if (!empty($ritenuta_acconto)) {
         </tr>';
 }
 
-// RITENUTA CONTRIBUTI
+// RITENUTA PREVIDENZIALE
 if (!empty($ritenuta_contributi)) {
     echo '
         <tr>
             <td colspan="5" class="text-right">
-                <b>'.tr('Ritenuta contributi', [], ['upper' => true]).':</b>
+                <b>'.tr('Ritenuta previdenziale', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
                 '.moneyFormat($ritenuta_contributi, 2).'

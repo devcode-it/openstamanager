@@ -140,7 +140,7 @@ class Fattura extends Document
         $model->addebita_bollo = setting('Addebita marca da bollo al cliente');
 
         // Ritenuta contributi predefinita
-        $id_ritenuta_contributi = ($tipo_documento->dir == 'entrata') ? setting('Ritenuta contributi') : null;
+        $id_ritenuta_contributi = ($tipo_documento->dir == 'entrata') ? setting('Ritenuta previdenziale predefinita') : null;
         $model->id_ritenuta_contributi = $id_ritenuta_contributi ?: null;
 
         // Banca predefinita per l'anagrafica controparte

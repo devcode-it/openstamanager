@@ -37,9 +37,9 @@ if ($options['action'] == 'edit') {
     // Fattura di vendita
     elseif ($options['dir'] == 'entrata') {
         // Caso particolare per aggiunta articolo
-        $id_rivalsa_inps = ($options['op'] == 'addarticolo') ? '' : setting('Percentuale rivalsa');
+        $id_rivalsa_inps = ($options['op'] == 'addarticolo') ? '' : setting('Cassa previdenziale predefinita');
 
-        $id_ritenuta_acconto = $options['id_ritenuta_acconto_predefined'] ?: setting("Percentuale ritenuta d'acconto");
+        $id_ritenuta_acconto = $options['id_ritenuta_acconto_predefined'] ?: setting("Ritenuta d'acconto predefinita");
     }
 }
 
@@ -48,10 +48,10 @@ $calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto ?: setting("Metodologia ca
 echo '
 <div class="row">';
 
-    // Rivalsa INPS
+    // Cassa previdenziale
     echo '
     <div class="col-md-4">
-        {[ "type": "select", "label": "'.tr('Rivalsa').'", "name": "id_rivalsa_inps", "value": "'.$id_rivalsa_inps.'", "values": "query=SELECT * FROM co_rivalse", "help": "'.(($options['dir'] == 'entrata') ? setting('Tipo Cassa Previdenziale') : null).'" ]}
+        {[ "type": "select", "label": "'.tr('Cassa previdenziale').'", "name": "id_rivalsa_inps", "value": "'.$id_rivalsa_inps.'", "values": "query=SELECT * FROM co_rivalse", "help": "'.(($options['dir'] == 'entrata') ? setting('Tipo Cassa Previdenziale') : null).'" ]}
     </div>';
 
     // Ritenuta d'acconto
@@ -75,11 +75,11 @@ if (!empty($options['show-ritenuta-contributi']) || empty($options['hide_conto']
     echo '
 <div class="row">';
 
-    // Ritenuta contributi
+    // Ritenuta previdenziale
     if (!empty($options['show-ritenuta-contributi'])) {
         echo '
     <div class="col-md-'.$width.'">
-        {[ "type": "checkbox", "label": "'.tr('Ritenuta contributi').'", "name": "ritenuta_contributi", "value": "'.$result['ritenuta_contributi'].'" ]}
+        {[ "type": "checkbox", "label": "'.tr('Ritenuta previdenziale').'", "name": "ritenuta_contributi", "value": "'.$result['ritenuta_contributi'].'" ]}
     </div>';
     }
 

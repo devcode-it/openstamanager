@@ -138,7 +138,7 @@ function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto 
         // Leggo la rivalsa inps se c'è (per i ddt di vendita lo leggo dalle impostazioni)
         if ($dir == 'entrata') {
             if (!empty($idrivalsainps)) {
-                $idrivalsainps = setting('Percentuale rivalsa');
+                $idrivalsainps = setting('Cassa previdenziale predefinita');
             }
         }
 
@@ -159,7 +159,7 @@ function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto 
         // Leggo la ritenuta d'acconto se c'è (per i ddt di vendita lo leggo dalle impostazioni)
         if (!empty($idritenutaacconto)) {
             if ($dir == 'entrata') {
-                $idritenutaacconto = setting("Percentuale ritenuta d'acconto");
+                $idritenutaacconto = setting("Ritenuta d'acconto predefinita");
             }
         }
 

@@ -73,7 +73,7 @@ class Anagrafica extends Model
         $model->cognome = $cognome;
 
         $model->codice = static::getNextCodice();
-        $model->id_ritenuta_acconto_vendite = setting("Percentuale ritenuta d'acconto");
+        $model->id_ritenuta_acconto_vendite = setting("Ritenuta d'acconto predefinita");
         $model->save();
 
         $model->tipologie = $tipologie;

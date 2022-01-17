@@ -153,8 +153,8 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
 {
     $dbo = database();
 
-    $id_rivalsa_inps = $id_rivalsa_inps !== false ? $id_rivalsa_inps : setting('Percentuale rivalsa');
-    $id_ritenuta_acconto = $id_ritenuta_acconto !== false ? $id_ritenuta_acconto : setting("Percentuale ritenuta d'acconto");
+    $id_rivalsa_inps = $id_rivalsa_inps !== false ? $id_rivalsa_inps : setting('Cassa previdenziale predefinita');
+    $id_ritenuta_acconto = $id_ritenuta_acconto !== false ? $id_ritenuta_acconto : setting("Ritenuta d'acconto predefinita");
     $calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto !== false ? $calcolo_ritenuta_acconto : setting("Metodologia calcolo ritenuta d'acconto predefinito");
 
     $fattura = Fattura::find($id_fattura);

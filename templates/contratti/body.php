@@ -275,11 +275,11 @@ if ($options['pricing']) {
     </tr>';
 
     if ($sconto_finale) {
-        // SCONTO FINALE
+        // SCONTO IN FATTURA
         echo '
         <tr>
             <td colspan="3" class="text-right border-top">
-                <b>'.tr('Sconto finale', [], ['upper' => true]).':</b>
+                <b>'.tr('Sconto in fattura', [], ['upper' => true]).':</b>
             </td>
             <th colspan="2" class="text-right">
                 <b>'.moneyFormat($sconto_finale, 2).'</b>

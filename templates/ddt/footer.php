@@ -87,11 +87,11 @@ if ($options['pricing']) {
     </tr>';
 
     if ($sconto_finale) {
-        // Riga 4 SCONTO FINALE
+        // Riga 4 SCONTO IN FATTURA
         echo "
         <tr>
             <td>
-                <p class='small-bold'>".tr('Sconto finale', [], ['upper' => true])."</p>
+                <p class='small-bold'>".tr('Sconto in fattura', [], ['upper' => true])."</p>
             </td>
         </tr>
 

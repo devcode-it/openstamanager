@@ -397,8 +397,8 @@ elseif ($record['stato'] == 'Bozza') {
                 ?>
 
                 <div class="col-md-3">
-                    <?php echo !empty($record['id_ritenuta_contributi']) ? Modules::link('Ritenute contributi', $record['id_ritenuta_contributi'], null, null, 'class="pull-right"') : ''; ?>
-                    {[ "type": "select", "label": "<?php echo tr('Ritenuta contributi'); ?>", "name": "id_ritenuta_contributi", "value": "$id_ritenuta_contributi$", "values": "query=SELECT *, CONCAT(descrizione,(IF(percentuale>0, CONCAT(\" - \", percentuale, \"% sul \", percentuale_imponibile, \"% imponibile\"), \"\"))) AS descrizione FROM co_ritenuta_contributi", "help": "<?php echo tr('Ritenuta contributi da applicare alle righe della fattura.'); ?>"  ]}
+                    <?php echo !empty($record['id_ritenuta_contributi']) ? Modules::link('Ritenute previdenziali', $record['id_ritenuta_contributi'], null, null, 'class="pull-right"') : ''; ?>
+                    {[ "type": "select", "label": "<?php echo tr('Ritenuta previdenziale'); ?>", "name": "id_ritenuta_contributi", "value": "$id_ritenuta_contributi$", "values": "query=SELECT *, CONCAT(descrizione,(IF(percentuale>0, CONCAT(\" - \", percentuale, \"% sul \", percentuale_imponibile, \"% imponibile\"), \"\"))) AS descrizione FROM co_ritenuta_contributi", "help": "<?php echo tr('Ritenuta previdenziale da applicare alle righe della fattura.'); ?>"  ]}
                 </div>
 
                 <?php
@@ -441,7 +441,7 @@ elseif ($record['stato'] == 'Bozza') {
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "number", "label": "'.tr('Sconto finale').'", "name": "sconto_finale", "value": "'.($fattura->sconto_finale_percentuale ?: $fattura->sconto_finale).'", "icon-after": "choice|untprc|'.(empty($fattura->sconto_finale) ? 'PRC' : 'UNT').'", "help": "'.tr('Sconto finale in fattura, utilizzabile per applicare sconti sul Netto a pagare del documento e le relative scadenze').'. '.tr('Per utilizzarlo in relazione a una riga della Fattura Elettronica, inserire il tipo di dato in \'\'Attributi avanzati\'\' -> \'\'Altri Dati Gestionali\'\' -> \'\'TipoDato\'\' e il testo di descrizione in \'\'Attributi avanzati\'\' -> \'\'Altri Dati Gestionali\'\' -> \'\'RiferimentoTesto\'\' della specifica riga').'. '.tr('Nota: lo sconto finale in fattura non influenza i movimenti contabili').'." ]}
+                    {[ "type": "number", "label": "'.tr('Sconto in fattura').'", "name": "sconto_finale", "value": "'.($fattura->sconto_finale_percentuale ?: $fattura->sconto_finale).'", "icon-after": "choice|untprc|'.(empty($fattura->sconto_finale) ? 'PRC' : 'UNT').'", "help": "'.tr('Sconto in fattura, utilizzabile per applicare sconti sul Netto a pagare del documento e le relative scadenze').'. '.tr('Per utilizzarlo in relazione a una riga della Fattura Elettronica, inserire il tipo di dato in \'\'Attributi avanzati\'\' -> \'\'Altri Dati Gestionali\'\' -> \'\'TipoDato\'\' e il testo di descrizione in \'\'Attributi avanzati\'\' -> \'\'Altri Dati Gestionali\'\' -> \'\'RiferimentoTesto\'\' della specifica riga').'. '.tr('Nota: lo sconto in fattura non influenza i movimenti contabili').'." ]}
                 </div>
             </div>';
 

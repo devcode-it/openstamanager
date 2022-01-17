@@ -27,7 +27,7 @@ switch (post('op')) {
 $operations['aggiorna-liste'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna liste').'</span>',
     'data' => [
-        'msg' => tr(''),
+        'msg' => tr('Vuoi davvero aggiornare le liste dei destinatari?'),
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-danger',
     ],

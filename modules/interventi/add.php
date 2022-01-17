@@ -169,7 +169,7 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione", "value": "'.$id_sede.'", "ajax-source": "sedi", "icon-after": "add|'.$module_anagrafiche['id'].'|id_plugin='.$id_plugin_sedi.'&id_parent='.$id_anagrafica.'" ]}
+            {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione", "value": "'.$id_sede.'", "ajax-source": "sedi", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica]).', "icon-after": "add|'.$module_anagrafiche['id'].'|id_plugin='.$id_plugin_sedi.'&id_parent='.$id_anagrafica.'" ]}
         </div>
 
         <div class="col-md-4">
@@ -231,7 +231,7 @@ echo '
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Impianto').'", "multiple": 1, "name": "idimpianti[]", "value": "'.$impianti_collegati.'", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.($id_anagrafica ?: '""').'}, "icon-after": "add|'.Modules::get('Impianti')['id'].'|id_anagrafica='.$id_anagrafica.'" ]}
+                    {[ "type": "select", "label": "'.tr('Impianto').'", "multiple": 1, "name": "idimpianti[]", "value": "'.$impianti_collegati.'", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.($id_anagrafica ?: '""').', "idsede_destinazione": '.$id_sede.'}, "icon-after": "add|'.Modules::get('Impianti')['id'].'|id_anagrafica='.$id_anagrafica.'" ]}
                 </div>
 
                 <div class="col-md-4">

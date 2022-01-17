@@ -24,6 +24,7 @@ echo '
 
 echo '
     <td>'.str_pad($record['idmovimenti'], 8, '0', STR_PAD_LEFT).'</td>
+    <td>'.$record['numero'].'</td>
     <td>'.Translator::datetoLocale($record['data_registrazione']).'</td>
     <td>'.$record['numero_esterno'].'</td>
     <td>'.Translator::datetoLocale($record['data']).'</td>

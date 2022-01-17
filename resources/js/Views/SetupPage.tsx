@@ -382,6 +382,6 @@ export default class SetupPage extends Page {
     }
 
     await showSnackbar(__('Impostazioni salvate correttamente'));
-    window.location.href = route('auth.login');
+    window.location.href = route('setup.admin');
   }
 }

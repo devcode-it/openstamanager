@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\SetupController;
+use App\Http\Middleware\CheckConfigurationMiddleware;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,13 +20,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', static function () {
-    if (empty(DB::connection()->getDatabaseName())) {
-        return redirect()->route('setup.index');
-    }
-
-    return redirect()->route('auth.login');
-});
+Route::get('/', static fn () => redirect()->route('auth.login'))
+    ->middleware(CheckConfigurationMiddleware::class);
 
 Route::name('auth.')
     ->middleware('guest')
@@ -53,21 +49,21 @@ Route::name('password.')
             ->name('resetPassword');
     });
 
-Route::name('setup.')->group(static function () {
+Route::name('setup.')->middleware(CheckConfigurationMiddleware::class)->group(static function () {
     Route::inertia('setup', 'SetupPage', [
         'languages' => cache()->rememberForever('app.languages', fn () => array_map(
             static fn ($file) => basename($file, '.json'),
             glob(resource_path('lang').'/*.json', GLOB_NOSORT)
         )),
         'license' => cache()->rememberForever('app.license', fn () => file_get_contents(base_path('LICENSE'))),
-    ])->name('index');
+    ])
+        ->name('index');
 
     Route::inertia('setup/admin', 'AdminSetupPage')
         ->name('admin');
 
     Route::options('setup/test', [SetupController::class, 'testDatabase'])
-        ->name('test')
-        ->withoutMiddleware('csrf');
+        ->name('test');
 
     Route::put('setup/save', [SetupController::class, 'save'])
         ->name('save');

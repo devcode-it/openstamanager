@@ -116,6 +116,9 @@ class SetupController extends Controller
         Artisan::call('cache:clear');
         Artisan::call('config:cache');
 
+        // Avvia migrations
+        Artisan::call('migrate', ['--force' => true]);
+
         setting($request->only(['timestamp_format', 'date_format', 'time_format', 'locale']));
 
         return response()->noContent();

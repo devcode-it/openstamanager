@@ -34,3 +34,6 @@ UPDATE `zz_modules` SET `name` = 'Casse previdenziali', `title` = 'Casse previde
 
 -- Aggiornamento impostazione predefinita ritenuta d'acconto
 UPDATE `zz_settings` SET `nome` = 'Ritenuta d''acconto predefinita' WHERE `nome` = 'Percentuale ritenuta d''acconto';
+
+-- Fix vista tecnici assegnati
+UPDATE `zz_views` SET `query` = 'GROUP_CONCAT(DISTINCT(SELECT DISTINCT(ragione_sociale) FROM an_anagrafiche WHERE idanagrafica = in_interventi_tecnici_assegnati.id_tecnico) SEPARATOR \', \')' WHERE `zz_views`.`name` = 'Tecnici assegnati';

@@ -49,7 +49,7 @@ export type SectionT = {
 };
 export type ColumnsT = Record<string, string | ColumnT>;
 export type RowsT = Collection<IModel>;
-export type SectionsT = Record<string, SectionT> | SectionT[];
+export type SectionsT = SectionT[];
 
 /**
  * @abstract

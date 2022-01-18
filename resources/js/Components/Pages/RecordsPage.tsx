@@ -11,6 +11,7 @@ import type {
   Vnode,
   VnodeDOM
 } from 'mithril';
+import {sync as render} from 'mithril-node-render';
 
 import {
   IModel,
@@ -160,7 +161,8 @@ export class RecordsPage extends Page {
     dialog
       // eslint-disable-next-line sonarjs/no-duplicate-string
       .find('text-field, text-area, material-select')
-      .each((index, field) => {
+      .each(async (index, field) => {
+        field.innerHTML = await this.getFieldBody(field as HTMLFormElement);
         (field as HTMLInputElement).value = this.getModelValue(instance, field.id) as string;
       });
 
@@ -227,8 +229,7 @@ export class RecordsPage extends Page {
                                   name: field.name ?? field.id ?? fieldIndex,
                                   'data-default-value':
                                     field.value ?? (field as SelectT).selected ?? ''
-                                },
-                                this.getFieldBody(field)
+                                }
                               )}
                             </mwc-layout-grid-cell>
                           ))
@@ -310,8 +311,10 @@ export class RecordsPage extends Page {
     fab.on('click', () => {
       form
         .find('text-field, text-area, material-select')
-        .each((index, field) => {
-          (field as HTMLInputElement).value = $(field).data('default-value') as string;
+        .each(async (index, field) => {
+          field.innerHTML = await this.getFieldBody(field as HTMLFormElement);
+          (field as HTMLInputElement).value = $(field)
+            .data('default-value') as string;
         });
       dialog.find('mwc-button[type="submit"] mwc-circular-progress').hide();
       dialog.find('mwc-button#delete-button').hide();
@@ -407,18 +410,27 @@ export class RecordsPage extends Page {
     }
   }
 
-  getFieldBody(field: FieldT | TextFieldT | TextAreaT | SelectT) {
+  async getFieldBody(field: HTMLFormElement) {
     const list = [];
 
-    switch (field.type) {
+    switch (field.type ?? field.getAttribute('type')) {
       case 'select':
-        // @ts-ignore
-        for (const option of (field as SelectT).options) {
-          list.push(
-            <mwc-list-item key={option.value} value={option.value}>
-              {option.label}
-            </mwc-list-item>
-          );
+        // eslint-disable-next-line no-case-declarations
+        const section = this.sections.find((value) => field.id in value.fields);
+        // eslint-disable-next-line no-case-declarations
+        let {options} = (section?.fields as Record<string, SelectT>)[field.id];
+        if (options instanceof Promise) {
+          options = await options;
+        }
+
+        if (options) {
+          for (const option of options) {
+            list.push(render(
+              <mwc-list-item key={option.value} value={option.value}>
+                {option.label}
+              </mwc-list-item>
+            ));
+          }
         }
 
         break;
@@ -433,9 +445,9 @@ export class RecordsPage extends Page {
     }
 
     if (field.icon) {
-      list.push(<Mdi icon={field.icon} slot="icon" />);
+      list.push(render(<Mdi icon={(field as FieldT).icon} slot="icon"/>));
     }
 
-    return list;
+    return list.join('');
   }
 }

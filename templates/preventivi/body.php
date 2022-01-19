@@ -44,7 +44,7 @@ try {
 }
 
 // Ri.Ba: Banca predefinita *del Cliente* piuttosto che dell'Azienda
-if ($pagamento->isRiBa()) {
+if ($pagamento && $pagamento->isRiBa()) {
     $banca = Banca::where('id_anagrafica', $anagrafica->id)
         ->where('predefined', 1)
         ->first();

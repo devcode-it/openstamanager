@@ -42,15 +42,40 @@ include_once __DIR__.'/../../core.php';
 </form>
 
 <?php
-// Collegamenti diretti (numerici)
-$mansioni_collegate = $dbo->fetchNum('SELECT id FROM an_referenti WHERE idmansione='.prepare($id_record));
 
-if (!empty($mansioni_collegate)) {
+$elementi = $dbo->fetchArray('SELECT an_referenti.nome, an_anagrafiche.ragione_sociale, an_anagrafiche.idanagrafica FROM an_referenti LEFT JOIN an_anagrafiche ON an_referenti.idanagrafica=an_anagrafiche.idanagrafica WHERE idmansione='.prepare($id_record));
+
+if (!empty($elementi)) {
     echo '
-<div class="alert alert-danger">
-    '.tr('Ci sono _NUM_ referenti collegati', [
-        '_NUM_' => $mansioni_collegate,
-    ]).'.
+<div class="box box-warning collapsable collapsed-box">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Referenti collegati: _NUM_', [
+            '_NUM_' => count($elementi),
+        ]).'</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+    <div class="box-body">
+        <ul>';
+
+    foreach ($elementi as $elemento) {
+        $descrizione = tr('_REF_  (_ANAGRAFICA_)', [
+        '_REF_' => $elemento['nome'],
+        '_ANAGRAFICA_' => $elemento['ragione_sociale'],
+    ]);
+
+        
+    $plugin = 'Referenti';
+    $id = $elemento['idanagrafica'];
+
+        echo '
+            <li>'.Plugins::link($plugin, $id, $descrizione).'</li>';
+    }
+
+    echo '
+        </ul>
+    </div>
 </div>';
 }
 ?>

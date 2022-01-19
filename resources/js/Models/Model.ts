@@ -42,10 +42,10 @@ export abstract class Model extends BaseModel {
    * Just an alias to the get() method.
    *
    * Returns all the instances of the model.
-   */ // @ts-ignore
-  static all(): Promise<PluralResponse<InstanceType<Model>>> {
+   */
+  static all(): Promise<PluralResponse<IModel>> {
     // @ts-ignore
-    return this.get();
+    return this.with(this.relationships).get();
   }
 
   setAttributes(attributes: Record<string, any>): void {

@@ -80,6 +80,12 @@ export type TextAreaT = FieldT & {
   maxLength?: number
   elementType?: 'text-area'
 };
+
+export type SelectOptionsT = {
+  label: string
+  value: string
+}[];
+
 export type SelectT = FieldT & {
   multiple?: boolean
   naturalMenuWidth?: boolean
@@ -89,11 +95,9 @@ export type SelectT = FieldT & {
   selected?: ListItemBase | null
   items?: ListItemBase[]
   index?: number
-  options?: {
-    label: string
-    value: string
-  }[]
+  options?: SelectOptionsT | Promise<SelectOptionsT>
 };
+
 export type MaterialIcons =
   | '10k'
   | '10mp'

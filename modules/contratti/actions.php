@@ -420,7 +420,7 @@ $riga = $contratto->getRiga($type, $id_riga);
         }
 
         // Cambio stato precedente contratto in concluso (non più pianificabile)
-        $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `idstato`= (SELECT id FROM co_staticontratti WHERE is_pianificabile = 0 AND is_fatturabile = 1 AND descrizione = \'Concluso\')  WHERE `id` = '.prepare($id_record));
+        $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `idstato`= (SELECT id FROM co_staticontratti WHERE descrizione = \'Concluso\')  WHERE `id` = '.prepare($id_record));
 
         flash()->info(tr('Contratto rinnovato!'));
 

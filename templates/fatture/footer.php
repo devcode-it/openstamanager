@@ -339,8 +339,8 @@ if ($has_split_payment) {
 }
 
 /*
- * Riga di riepilogo per lo Sconto finale sulla fattura.
- * Sconto finale | Totale (+ Rivalsa INPS - Ritenuta - Totale IVA [se split payment] - Sconto finale)
+ * Riga di riepilogo per lo sconto in fattura.
+ * Sconto in | Totale (+ Rivalsa INPS - Ritenuta - Totale IVA [se split payment] - Sconto finale)
  */
 if ($has_sconto_finale) {
     $first_colspan = 1;

@@ -120,7 +120,7 @@ if (!empty($options['create_document'])) {
             </div>
             
             <div class="col-md-4">
-                {[ "type": "select", "label": "'.tr('Ritenuta contributi').'", "name": "id_ritenuta_contributi", "value": "$id_ritenuta_contributi$", "values": "query=SELECT * FROM co_ritenuta_contributi" ]}
+                {[ "type": "select", "label": "'.tr('Ritenuta previdenziale').'", "name": "id_ritenuta_contributi", "value": "$id_ritenuta_contributi$", "values": "query=SELECT * FROM co_ritenuta_contributi" ]}
             </div>';
     }
 
@@ -187,13 +187,13 @@ if (!empty($options['create_document'])) {
     </div>';
 }
 
-// Conto, rivalsa INPS, ritenuta d'acconto e ritenuta contributi
+// Conto, rivalsa INPS, ritenuta d'acconto e ritenuta previdenziale
 if (in_array($final_module['name'], ['Fatture di vendita', 'Fatture di acquisto']) && !in_array($original_module['name'], ['Fatture di vendita', 'Fatture di acquisto'])) {
-    $id_rivalsa_inps = setting('Percentuale rivalsa');
+    $id_rivalsa_inps = setting('Cassa previdenziale predefinita');
     if ($dir == 'uscita') {
         $id_ritenuta_acconto = $documento->anagrafica->id_ritenuta_acconto_acquisti;
     } else {
-        $id_ritenuta_acconto = $documento->anagrafica->id_ritenuta_acconto_vendite ?: setting("Percentuale ritenuta d'acconto");
+        $id_ritenuta_acconto = $documento->anagrafica->id_ritenuta_acconto_vendite ?: setting("Ritenuta d'acconto predefinita");
     }
     $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
 
@@ -240,11 +240,11 @@ if (in_array($final_module['name'], ['Fatture di vendita', 'Fatture di acquisto'
     echo '
             <div class="row">';
 
-    // Ritenuta contributi
+    // Ritenuta previdenziale
     if ($show_ritenuta_contributi) {
         echo '
                 <div class="col-md-'.$width.'">
-                    {[ "type": "checkbox", "label": "'.tr('Ritenuta contributi').'", "name": "ritenuta_contributi", "value": "1" ]}
+                    {[ "type": "checkbox", "label": "'.tr('Ritenuta previdenziale').'", "name": "ritenuta_contributi", "value": "1" ]}
                 </div>';
     }
 

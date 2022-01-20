@@ -21,6 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\DDT\DDT;
 use Modules\Ordini\Ordine;
+use Modules\Fatture\Fattura;
 use Plugins\ImportFE\FatturaElettronica;
 use Plugins\ImportFE\Interaction;
 
@@ -138,6 +139,7 @@ switch (filter('op')) {
         $fattura_pa = FatturaElettronica::manage($filename);
         $id_fattura = $fattura_pa->save($info);
         $fattura_pa->delete();
+        $fattura = Fattura::find($id_fattura);
 
         // Aggiorno la tipologia di anagrafica fornitore
         $anagrafica = $database->fetchOne('SELECT idanagrafica FROM co_documenti WHERE co_documenti.id='.prepare($id_fattura));
@@ -166,6 +168,11 @@ switch (filter('op')) {
             redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_fattura);
         } elseif (!empty($file)) {
             redirect(base_path().'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&sequence=1');
+            flash()->warning(tr('È stata appena creata la fattura numero _NUM_ del _DATA_ (_ANAGRAFICA_)', [
+                '_NUM_' => $fattura->numero,
+                '_DATA_' => dateFormat($fattura->data),
+                '_ANAGRAFICA_' => $fattura->anagrafica->ragione_sociale,
+            ]));
         } else {
             flash()->info(tr('Tutte le fatture salvate sono state importate!'));
             redirect(base_path().'/controller.php?id_module='.$id_module);

@@ -35,13 +35,13 @@ echo '
     </button>
 </div>';
 
-$rinnova = !empty($record['data_accettazione']) && !empty($record['data_conclusione']) && $record['data_accettazione'] != '0000-00-00' && $record['data_conclusione'] != '0000-00-00' && $record['is_pianificabile'] && $record['rinnovabile'];
+$rinnova = !empty($record['data_accettazione']) && !empty($record['data_conclusione']) && $record['data_accettazione'] != '0000-00-00' && $record['data_conclusione'] != '0000-00-00' && $record['is_completato'] && $record['rinnovabile'];
 
-$stati_pianificabili = $dbo->fetchOne('SELECT GROUP_CONCAT(`descrizione` SEPARATOR ", ") AS stati_pianificabili FROM `co_staticontratti` WHERE `is_pianificabile` = 1')['stati_pianificabili'];
+$stati_completati = $dbo->fetchOne('SELECT GROUP_CONCAT(`descrizione` SEPARATOR ", ") AS stati_completati FROM `co_staticontratti` WHERE `is_completato` = 1')['stati_completati'];
 
 echo '
 <div class="tip" data-toggle="tooltip" title="'.tr('Il contratto è rinnovabile se sono definite le date di accettazione e conclusione e si trova in uno di questi stati: _STATE_LIST_', [
-        '_STATE_LIST_' => $stati_pianificabili,
+        '_STATE_LIST_' => $stati_completati,
     ]).'" id="rinnova">
     <button type="button" class="btn btn-warning ask '.($rinnova ? '' : 'disabled').'" data-backto="record-edit" data-op="renew" data-msg="'.tr('Rinnovare questo contratto?').'" data-button="'.tr('Rinnova').'" data-class="btn btn-lg btn-warning">
         <i class="fa fa-refresh"></i> '.tr('Rinnova').'...

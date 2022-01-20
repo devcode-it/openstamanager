@@ -273,12 +273,12 @@ echo '
             <td></td>
         </tr>';
 
-// SCONTO FINALE
+// SCONTO IN FATTURA
 if (!empty($sconto_finale)) {
     echo '
         <tr>
             <td colspan="5" class="text-right">
-                <b>'.tr('Sconto finale', [], ['upper' => true]).':</b>
+                <b>'.tr('Sconto in fattura', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
                 '.moneyFormat($sconto_finale, 2).'

@@ -80,7 +80,7 @@ if (!empty($documento->dichiarazione)) {
 $ritenuta_acconto = $dbo->fetchOne('SELECT id_ritenuta_acconto_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS id_ritenuta_acconto FROM an_anagrafiche WHERE idanagrafica='.prepare($documento['idanagrafica']));
 $id_ritenuta_acconto = $ritenuta_acconto['id_ritenuta_acconto'];
 if ($dir == 'entrata' && empty($id_ritenuta_acconto)) {
-    $id_ritenuta_acconto = setting("Percentuale ritenuta d'acconto");
+    $id_ritenuta_acconto = setting("Ritenuta d'acconto predefinita");
 }
 $options['id_ritenuta_acconto_predefined'] = $id_ritenuta_acconto;
 

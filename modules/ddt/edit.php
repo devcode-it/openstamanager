@@ -263,7 +263,7 @@ if ($dir == 'entrata') {
 
         <div class="row">
             <div class="col-md-3">
-                {[ "type": "number", "label": "'.('Sconto finale').'", "name": "sconto_finale", "value": "'.($ddt->sconto_finale_percentuale ?: $ddt->sconto_finale).'", "icon-after": "choice|untprc|'.(empty($ddt->sconto_finale) ? 'PRC' : 'UNT').'", "help": "'.tr('Sconto finale, utilizzabile per applicare sconti sul Netto a pagare del documento').'." ]}
+                {[ "type": "number", "label": "'.('Sconto in fattura').'", "name": "sconto_finale", "value": "'.($ddt->sconto_finale_percentuale ?: $ddt->sconto_finale).'", "icon-after": "choice|untprc|'.(empty($ddt->sconto_finale) ? 'PRC' : 'UNT').'", "help": "'.tr('Sconto in fattura, utilizzabile per applicare sconti sul netto a pagare del documento').'." ]}
             </div>
         </div>';
 }

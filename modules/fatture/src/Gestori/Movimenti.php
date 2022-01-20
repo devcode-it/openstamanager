@@ -207,7 +207,7 @@ class Movimenti
         }
 
         /*
-        * 7) Ritenuta contributi
+        * 7) Ritenuta previdenziale
         * Conto "Conto per Erario c/enasarco": DARE per Vendita, AVERE per Acquisto
         * Conto della controparte: AVERE per Vendita, DARE per Acquisto
         */

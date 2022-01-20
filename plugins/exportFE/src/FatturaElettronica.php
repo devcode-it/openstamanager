@@ -1447,8 +1447,8 @@ class FatturaElettronica
             if (!empty($dichiarazione) && $riga->aliquota->id == $id_iva_dichiarazione) {
                 $dettaglio[]['AltriDatiGestionali'] = [
                     'TipoDato' => 'INTENTO',
-                    'RiferimentoNumero' => $dichiarazione->numero_protocollo,
-                    'RiferimentoData' => $dichiarazione->data_emissione,
+                    'RiferimentoTesto' => $dichiarazione->numero_protocollo,
+                    'RiferimentoData' => $dichiarazione->data_protocollo,
                 ];
             }
 

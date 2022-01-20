@@ -128,39 +128,21 @@ type ReplaceObject = Record<string, string | Vnode | number | boolean>;
  * @protected
  */
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export function __(
-  key: string,
-  replace: ReplaceObject | boolean = {},
-  returnAsString: boolean = false
-): string {
+export function __(key: string, replace: ReplaceObject = {}): string {
   let translation = key;
 
-  // noinspection JSUnresolvedVariable
   if (translations && translations[key]) {
     translation = translations[key];
   }
 
-  // Returns translation as string (no parameters replacement)
-  if (replace === true
-    || (typeof replace === 'object' && !containsHTML(translation))
-  ) {
-    return translation;
-  }
-
-  for (const k of Object.keys(replace)) {
-    const replacement = (replace as ReplaceObject)[k];
-
+  for (const [parameter, replacement] of Object.entries(replace)) {
     // `'attrs' in replacement` checks if `replacement` is a Mithril Vnode.
-    translation = translation.replace(
-      `:${k}`,
-      typeof replacement === 'object' && 'attrs' in replacement
-        ? render(replacement)
-        : replacement as string
-    );
-  }
+    const isVnode = typeof replacement === 'object' && 'attrs' in replacement;
 
-  if (returnAsString || !containsHTML(translation)) {
-    return translation;
+    translation = translation.replace(
+      `:${parameter}`,
+      isVnode ? render(replacement) : replacement as string
+    );
   }
 
   return translation;

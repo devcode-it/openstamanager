@@ -352,10 +352,14 @@ switch (filter('op')) {
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
-                    if ($documento->tipo->dir == 'uscita') {
+                    if ($documento->tipo->descrizione=='Ddt in uscita' || $documento->tipo->descrizione=='Ddt in entrata') {
+                        // TODO: estrarre il listino corrispondente se presente
                         $originale = ArticoloOriginale::find($riga->idarticolo);
+
+                        $prezzo = $documento->tipo->descrizione=='Ddt in entrata' ? $originale->prezzo_vendita : $originale->prezzo_acquisto;
                         $id_iva = $originale->idiva_vendita ? $originale->idiva_vendita : setting('Iva predefinita');
-                        $copia->setPrezzoUnitario($originale->prezzo_vendita, $id_iva);
+
+                        $copia->setPrezzoUnitario($prezzo, $id_iva);
                     }
                     $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
 

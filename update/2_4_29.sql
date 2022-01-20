@@ -37,3 +37,6 @@ UPDATE `zz_settings` SET `nome` = 'Ritenuta d''acconto predefinita' WHERE `nome`
 
 -- Fix vista tecnici assegnati
 UPDATE `zz_views` SET `query` = 'GROUP_CONCAT(DISTINCT(SELECT DISTINCT(ragione_sociale) FROM an_anagrafiche WHERE idanagrafica = in_interventi_tecnici_assegnati.id_tecnico) SEPARATOR \', \')' WHERE `zz_views`.`name` = 'Tecnici assegnati';
+
+-- Fix options Mansioni referenti
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM an_mansioni WHERE 1=1 HAVING 2=2 ORDER BY `nome`' WHERE `zz_modules`.`name` = 'Mansioni referenti'; 

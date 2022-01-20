@@ -50,7 +50,7 @@ if (!empty($movimenti)) {
             $descrizione = $movimento['conto2'].'.'.$movimento['conto3'].' - '.$movimento['descrizione'];
 
             if( $movimento['primanota']==1 ){
-                $descrizione = Modules::link('Scadenzario',$movimento['id_scadenza'],$descrizione);
+                $descrizione = Modules::link('Prima nota',$movimento['idmastrino'],$descrizione);
             }
 
             echo '

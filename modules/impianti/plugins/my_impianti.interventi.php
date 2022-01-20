@@ -164,7 +164,7 @@ echo '
             <input type="hidden" name="backto" value="record-edit">
             <div class="row">
                 <div class="col-xs-12 col-md-6">
-                    {[ "type": "select", "name": "matricole[]", "multiple": 1, "value": "'.implode(',', $impianti).'", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "extra": "'.$readonly.'" ]}
+                    {[ "type": "select", "name": "matricole[]", "multiple": 1, "value": "'.implode(',', $impianti).'", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.($record['idsede_destinazione'] ?: '""').'}, "extra": "'.$readonly.'" ]}
                 </div>
             </div>
             <br><br>

@@ -9,6 +9,7 @@
         <list>
           <option value="\Codeception\Util\Debug::debug" />
           <option value="\Codeception\Util\Debug::pause" />
+          <option value="\Doctrine::dump" />
           <option value="\Doctrine\Common\Util\Debug::dump" />
           <option value="\Doctrine\Common\Util\Debug::export" />
           <option value="\Illuminate\Support\Debug\Dumper::dump" />
@@ -19,6 +20,7 @@
           <option value="\TYPO3\CMS\Core\Utility\DebugUtility::debug" />
           <option value="\Zend\Debug\Debug::dump" />
           <option value="\Zend\Di\Display\Console::export" />
+          <option value="\Zend_Debug::dump" />
           <option value="dd" />
           <option value="debug_print_backtrace" />
           <option value="debug_zval_dump" />

@@ -88,6 +88,7 @@
       <data directive="@routes" />
       <data directive="@section" injection="true" prefix="&lt;?php $__env-&gt;startSection(" suffix="); ?&gt;" />
       <data directive="@sectionMissing" injection="true" prefix="&lt;?php if (empty(trim($__env-&gt;yieldContent(" suffix=")))): ?&gt;" />
+      <data directive="@setting" injection="true" prefix="&lt;?php _bladeDirective(" suffix="); ?&gt;" />
       <data directive="@show" />
       <data directive="@slot" injection="true" prefix="&lt;?php $__env-&gt;slot(" suffix="); ?&gt;" />
       <data directive="@stack" injection="true" prefix="&lt;?php echo $__env-&gt;yieldPushContent(" suffix="); ?&gt;" />

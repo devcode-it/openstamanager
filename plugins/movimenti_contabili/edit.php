@@ -45,16 +45,22 @@ if (!empty($movimenti)) {
         <tbody>';
 
         foreach ($movimenti as $movimento) {
-        $documento = $modulo == 'Anagrafiche' ? Fattura::find($movimento['iddocumento']) : null;
-        $scalare += $movimento['totale'];
-        echo '
-            <tr>
-                <td class="text-center">'.Translator::dateToLocale($movimento['data']).'</td>
-                <td>'.$movimento['conto2'].'.'.$movimento['conto3'].' - '.$movimento['descrizione'].'<small class="pull-right text-right text-muted" style="font-size:8pt;">'.($documento ? $documento->getReference() : '').'</small></td>
-                <td class="text-right">'.($movimento['totale']>0 ? moneyFormat(abs($movimento['totale'])) : "").'</td>
-                <td class="text-right">'.($movimento['totale']<0 ? moneyFormat(abs($movimento['totale'])) : "").'</td>
-                <td class="text-right">'.moneyFormat($scalare).'</td>
-            </tr>';
+            $documento = $modulo == 'Anagrafiche' ? Fattura::find($movimento['iddocumento']) : null;
+            $scalare += $movimento['totale'];
+            $descrizione = $movimento['conto2'].'.'.$movimento['conto3'].' - '.$movimento['descrizione'];
+
+            if( $movimento['primanota']==1 ){
+                $descrizione = Modules::link('Scadenzario',$movimento['id_scadenza'],$descrizione);
+            }
+
+            echo '
+                <tr>
+                    <td class="text-center">'.Translator::dateToLocale($movimento['data']).'</td>
+                    <td>'.$descrizione.'<small class="pull-right text-right text-muted" style="font-size:8pt;">'.($documento ? $documento->getReference() : '').'</small></td>
+                    <td class="text-right">'.($movimento['totale']>0 ? moneyFormat(abs($movimento['totale'])) : "").'</td>
+                    <td class="text-right">'.($movimento['totale']<0 ? moneyFormat(abs($movimento['totale'])) : "").'</td>
+                    <td class="text-right">'.moneyFormat($scalare).'</td>
+                </tr>';
         }
     echo '
         </tbody>

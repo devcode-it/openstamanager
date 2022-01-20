@@ -10,8 +10,10 @@
     <option name="actions">
       <map>
         <entry key="npm run-script build" value="npm run-script build" />
+        <entry key="npm run-script build:dev" value="npm run-script build:dev" />
         <entry key="npm run-script dev" value="npm run-script dev" />
         <entry key="npm run-script preinstall" value="npm run-script preinstall" />
+        <entry key="npm run-script scss-types" value="npm run-script scss-types" />
         <entry key="npm run-script serve" value="npm run-script serve" />
         <entry key="npm run-script serve-dev" value="npm run-script serve-dev" />
         <entry key="npm run-script serve-watch" value="npm run-script serve-watch" />

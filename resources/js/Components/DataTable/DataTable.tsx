@@ -45,6 +45,36 @@ export default class DataTable extends Component<Attributes> {
     currentEnd: 10
   };
 
+  oninit(vnode: Vnode<Attributes>) {
+    super.oninit(vnode);
+
+    let defaultRowsPerPage: number = Number.parseInt(this.attrs.get('default-rows-per-page', '10') as string, 10);
+
+    if (Number.isInteger(defaultRowsPerPage)) {
+      if (!this.rowsPerPage.options.includes(defaultRowsPerPage)) {
+        [defaultRowsPerPage] = this.rowsPerPage.options;
+      }
+
+      this.rowsPerPage.value = defaultRowsPerPage;
+    }
+  }
+
+  oncreate(vnode: VnodeDOM<Attributes>) {
+    super.oncreate(vnode);
+
+    $(this.element)
+      .find('thead th.mdc-data-table__header-cell--with-sort')
+      .on('click', this.onColumnClicked.bind(this));
+    $(this.element)
+      .find('.mdc-data-table__pagination-rows-per-page-select')
+      .val(String(this.rowsPerPage.value))
+      .on('selected', this.onPaginationSelected.bind(this));
+    $(this.element)
+      // eslint-disable-next-line sonarjs/no-duplicate-string
+      .find('.mdc-data-table__pagination-button')
+      .on('click', this.onPaginationButtonClicked.bind(this));
+  }
+
   onbeforeupdate(vnode: VnodeDOM<Attributes, this>) {
     super.onbeforeupdate(vnode);
     const children = (vnode.children as Children[]).flat();
@@ -57,53 +87,24 @@ export default class DataTable extends Component<Attributes> {
       this.rowsPerPage.options = rowsPerPage
         .split(',')
         .map((value: string) => Number.parseInt(value, 10));
-    }
 
-    // @ts-ignore (Waiting proper fix from collect.jsd devs)
-    let defaultRowsPerPage: number = Number.parseInt(this.attrs.get('default-rows-per-page', '10') as string, 10);
 
-    if (Number.isInteger(defaultRowsPerPage)) {
-      if (!this.rowsPerPage.options.includes(defaultRowsPerPage)) {
-        [defaultRowsPerPage] = this.rowsPerPage.options;
+      if (this.rowsPerPage.currentStart === 0) {
+        this.rowsPerPage.currentEnd = this.rowsPerPage.value >= this.rows.length
+          ? this.rows.length
+          : this.rowsPerPage.value;
       }
-
-      this.rowsPerPage.value = defaultRowsPerPage;
-    }
-
-    if (this.rowsPerPage.currentStart === 0) {
-      this.rowsPerPage.currentEnd = this.rowsPerPage.value >= this.rows.length
-        ? this.rows.length
-        : defaultRowsPerPage;
     }
   }
 
   onupdate(vnode: VnodeDOM<Attributes, this>) {
     super.onupdate(vnode);
     const rows: Cash = $(this.element).find('tbody tr');
-    rows.hide();
-
-    // eslint-disable-next-line no-plusplus
-    for (
-      let index = this.rowsPerPage.currentStart;
-      index < this.rowsPerPage.currentEnd;
-      index += 1
-    ) {
-      rows.eq(index).show();
-    }
+    rows.hide().slice(this.rowsPerPage.currentStart, this.rowsPerPage.currentEnd).show();
 
     if (this.rowsPerPage.currentStart === 0) {
       this.paginate('first');
     }
-
-    $(this.element)
-      .find('thead th.mdc-data-table__header-cell--with-sort')
-      .on('click', this.onColumnClicked.bind(this));
-    $(this.element)
-      .find('.mdc-data-table__pagination-rows-per-page-select')
-      .on('selected', this.onPaginationSelected.bind(this));
-    $(this.element)
-      .find('.mdc-data-table__pagination-button')
-      .on('click', this.onPaginationButtonClicked.bind(this));
   }
 
   view() {
@@ -142,11 +143,7 @@ export default class DataTable extends Component<Attributes> {
                     style="--mdc-select-width: 112px; --mdc-select-height: 36px; --mdc-menu-item-height: 36px;"
                   >
                     {this.rowsPerPage.options.map((rowsPerPage) => (
-                      <mwc-list-item
-                        key={rowsPerPage}
-                        value={String(rowsPerPage)}
-                        selected={this.rowsPerPage.value === rowsPerPage}
-                      >
+                      <mwc-list-item key={rowsPerPage} value={String(rowsPerPage)}>
                         {rowsPerPage}
                       </mwc-list-item>
                     ))}
@@ -157,7 +154,9 @@ export default class DataTable extends Component<Attributes> {
                   <div className="mdc-data-table__pagination-total">
                     {__(':start-:chunk di :total', {
                       start: this.rowsPerPage.currentStart + 1,
-                      chunk: this.rowsPerPage.currentEnd,
+                      chunk: this.rowsPerPage.currentEnd > this.rows.length
+                        ? this.rows.length
+                        : this.rowsPerPage.currentEnd,
                       total: this.rows.length
                     })}
                   </div>
@@ -315,44 +314,49 @@ export default class DataTable extends Component<Attributes> {
   }
 
   onPaginationSelected(event: Event & {detail: {index: number}}) {
-    this.rowsPerPage.value = Number.parseInt(
-      $(event.target as Element)
-        .find('mwc-list-item')
-        .eq(event.detail.index)
-        .val() as string,
-      10
-    );
-    this.rowsPerPage.currentStart = 0;
-    this.rowsPerPage.currentEnd = this.rowsPerPage.value;
+    const selectValue = $(event.target as HTMLFormElement).val();
+    const rowsPerPage = Number.parseInt(selectValue as string, 10);
+    this.rowsPerPage = {
+      ...this.rowsPerPage,
+      value: rowsPerPage,
+      currentStart: 0,
+      currentEnd: rowsPerPage
+    };
+
     m.redraw();
   }
 
   onPaginationButtonClicked(event: Event) {
-    const button: Cash = $(event.target as Element);
-    this.paginate(button.data('page') as PaginationAction);
+    const button: HTMLButtonElement | null = (event.target as HTMLElement).closest('.mdc-data-table__pagination-button');
+    this.paginate(button?.dataset.page as PaginationAction);
     m.redraw();
   }
 
   paginate(action: PaginationAction) {
-    const increments = {
-      first: -this.rowsPerPage.currentStart,
-      next: this.rowsPerPage.value,
-      previous: -this.rowsPerPage.value,
-      last: this.rows.length - this.rowsPerPage.currentStart
-    };
-    const increment = increments[action];
+    if (action === 'first' || action === 'last') {
+      const checkPagination = () => (action === 'first' ? this.rowsPerPage.currentStart > 0 : this.rowsPerPage.currentEnd < this.rows.length);
 
-    if (action !== 'first') {
+      let check = checkPagination();
+      while (check) {
+        this.paginate(action === 'first' ? 'previous' : 'next');
+        check = checkPagination();
+      }
+    } else {
+      const increments = {
+        next: this.rowsPerPage.value,
+        previous: -this.rowsPerPage.value
+      };
+      const increment = increments[action];
+
       this.rowsPerPage.currentStart += increment;
-    }
+      if (this.rowsPerPage.currentStart < 0) {
+        this.rowsPerPage.currentStart = 0;
+      }
 
-    if (action !== 'last') {
       this.rowsPerPage.currentEnd += increment;
     }
 
-    const paginationButtons = this.element.querySelectorAll(
-      '.mdc-data-table__pagination-button'
-    );
+    const paginationButtons: NodeListOf<HTMLButtonElement> = this.element.querySelectorAll('.mdc-data-table__pagination-button');
     const disabled = {
       first: this.rowsPerPage.currentStart === 0,
       previous: this.rowsPerPage.currentStart === 0,
@@ -361,9 +365,7 @@ export default class DataTable extends Component<Attributes> {
     };
 
     for (const button of paginationButtons) {
-      const buttonElement = $(button);
-      const buttonAction = buttonElement.data('page') as PaginationAction;
-      buttonElement.prop('disabled', disabled[buttonAction]);
+      button.disabled = disabled[button.dataset.page as PaginationAction];
     }
   }
 

@@ -40,3 +40,6 @@ UPDATE `zz_views` SET `query` = 'GROUP_CONCAT(DISTINCT(SELECT DISTINCT(ragione_s
 
 -- Fix options Mansioni referenti
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM an_mansioni WHERE 1=1 HAVING 2=2 ORDER BY `nome`' WHERE `zz_modules`.`name` = 'Mansioni referenti'; 
+
+-- Nuova stampa Ordine cliente (senza codici)
+INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name`='Ordini cliente'), '1', 'Ordine cliente (senza codici)', 'Ordine cliente (senza codici)', 'Ordine cliente num. {numero} del {data}', 'ordini', 'idordine', '{\"pricing\": true, \"last-page-footer\": true, \"hide_codice\": true}', 'fa fa-print', '', '', '0', '0', '1', '1');

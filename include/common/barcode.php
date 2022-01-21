@@ -50,7 +50,9 @@ echo '
             </tr>
         </table>
     </div>
-</div> ';
+</div> 
+
+<input type="hidden" name="permetti_movimenti_sotto_zero" id="permetti_movimenti_sotto_zero" value="'.setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita').'">';
 
 echo '
 <script>
@@ -102,7 +104,8 @@ $("#barcode").off("keyup").on("keyup", function (event) {
         }
 
         let qta_input = $("#riga_barcode_" + result.id).find("[name^=qta]");
-        if (result.qta == 0) {
+        let permetti_movimenti_sotto_zero = $("#permetti_movimenti_sotto_zero").val();
+        if (result.qta <= 0 && permetti_movimenti_sotto_zero == 0) {
             $("#articolo-qta").removeClass("hidden");
             barcodeReset();
             return;

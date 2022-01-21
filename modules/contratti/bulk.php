@@ -42,7 +42,7 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
     'predefined' => 1,
     'dir' => 'entrata',
 ])['id'];
-$stati_pianificabili = $dbo->fetchOne('SELECT GROUP_CONCAT(`descrizione` SEPARATOR ", ") AS stati_pianificabili FROM `co_staticontratti` WHERE `is_pianificabile` = 1')['stati_pianificabili'];
+$stati_completati = $dbo->fetchOne('SELECT GROUP_CONCAT(`descrizione` SEPARATOR ", ") AS stati_completati FROM `co_staticontratti` WHERE `is_completato` = 1')['stati_completati'];
 
 switch (post('op')) {
     case 'crea_fattura':
@@ -134,7 +134,7 @@ switch (post('op')) {
         // Lettura righe selezionate
         foreach ($id_records as $id) {
             $contratto = Contratto::find($id);
-            $rinnova = !empty($contratto->data_accettazione) && !empty($contratto->data_conclusione) && $contratto->data_accettazione != '0000-00-00' && $contratto->data_conclusione != '0000-00-00' && $contratto->stato->is_pianificabile && $contratto->rinnovabile;
+            $rinnova = !empty($contratto->data_accettazione) && !empty($contratto->data_conclusione) && $contratto->data_accettazione != '0000-00-00' && $contratto->data_conclusione != '0000-00-00' && $contratto->stato->is_completato && $contratto->rinnovabile;
 
             if($rinnova) {
                 $diff = $contratto->data_conclusione->diffAsCarbonInterval($contratto->data_accettazione);
@@ -206,7 +206,7 @@ switch (post('op')) {
                 }
 
                 // Cambio stato precedente contratto in concluso (non più pianificabile)
-                $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `idstato`= (SELECT id FROM co_staticontratti WHERE is_pianificabile = 0 AND is_fatturabile = 1 AND descrizione = \'Concluso\')  WHERE `id` = '.prepare($contratto->id));
+                $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `idstato`= (SELECT id FROM co_staticontratti WHERE descrizione = \'Concluso\')  WHERE `id` = '.prepare($contratto->id));
 
                 $numero_totale++;
             }

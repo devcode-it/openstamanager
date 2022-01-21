@@ -105,7 +105,7 @@ $("#barcode").off("keyup").on("keyup", function (event) {
 
         let qta_input = $("#riga_barcode_" + result.id).find("[name^=qta]");
         let permetti_movimenti_sotto_zero = $("#permetti_movimenti_sotto_zero").val();
-        if (result.qta <= 0 && permetti_movimenti_sotto_zero == 0) {
+        if (result.qta <= 0 && permetti_movimenti_sotto_zero == 0 && direzione === "entrata") {
             $("#articolo-qta").removeClass("hidden");
             barcodeReset();
             return;

@@ -73,7 +73,7 @@ if ($module['name'] == 'Interventi') {
     echo '
 <div class="row">
     <div class="col-md-12">
-        {[ "type": "select", "label": "'.tr('Impianto su cui installare').'", "name": "id_impianto", "value": "", "ajax-source": "impianti-intervento", "select-options": '.json_encode($options['select-options']['impianti']).', "help": "'.tr("La selezione di un Impianto in questo campo provocherà l'installazione di un nuovo Componente basato sull'Articolo corrente").'" ]}
+        {[ "type": "select", "label": "'.tr('Impianto su cui installare').'", "name": "id_impianto", "value": "'.$result['idimpianto'].'", "ajax-source": "impianti-intervento", "select-options": '.json_encode($options['select-options']['impianti']).', "disabled": "'.($result['idimpianto'] ? 1 : 0).'", "help": "'.tr("La selezione di un Impianto in questo campo provocherà l'installazione di un nuovo Componente basato sull'Articolo corrente").'" ]}
     </div>
 </div>';
 }

@@ -471,6 +471,7 @@ switch (post('op')) {
         $articolo->idsede_partenza = post('idsede_partenza');
         $articolo->descrizione = post('descrizione');
         $articolo->um = post('um') ?: null;
+        $articolo->idimpianto = post('id_impianto') ?: null;
 
         $articolo->costo_unitario = post('costo_unitario') ?: 0;
         $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));

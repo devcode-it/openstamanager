@@ -17,6 +17,7 @@
         <entry key="npm run-script serve" value="npm run-script serve" />
         <entry key="npm run-script serve-dev" value="npm run-script serve-dev" />
         <entry key="npm run-script serve-watch" value="npm run-script serve-watch" />
+        <entry key="npm run-script vite-workaround" value="npm run-script vite-workaround" />
         <entry key="npm run-script watch" value="npm run-script watch" />
       </map>
     </option>

@@ -26,6 +26,12 @@
   "exclude": ["**/node_modules", "**/.*/"],
   "include": [
     "resources/js/**/*",
+    "gulpfile.ts",
     "vite.config.ts"
-  ]
+  ],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  }
 }

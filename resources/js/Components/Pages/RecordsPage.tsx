@@ -39,18 +39,13 @@ export type ColumnT = {
   valueModifier?: (instance: IModel, property: string) => any
 };
 export type SectionT = {
-  id?: string
   heading?: string
   columns?: number
-  fields:
-  | TextFieldT[]
-  | TextAreaT
-  | SelectT[]
-  | Record<string, TextFieldT | TextAreaT | SelectT>
+  fields: Record<string, TextFieldT | TextAreaT | SelectT>
 };
 export type ColumnsT = Record<string, string | ColumnT>;
 export type RowsT = Collection<IModel>;
-export type SectionsT = SectionT[];
+export type SectionsT = Record<string, SectionT>;
 
 /**
  * @abstract
@@ -207,9 +202,9 @@ export class RecordsPage extends Page {
           {(() => {
             const sections = collect(this.sections);
             return sections
-              .map((section, index: string | number) => (
+              .map((section, id: string) => (
                 <>
-                  <div id={section.id ?? index}>
+                  <div id={id}>
                     <h4 class="mdc-typography--overline">{section.heading}</h4>
                     <mwc-layout-grid>
                       {(() => {
@@ -416,9 +411,9 @@ export class RecordsPage extends Page {
     switch (field.type ?? field.getAttribute('type')) {
       case 'select':
         // eslint-disable-next-line no-case-declarations
-        const section = this.sections.find((value) => field.id in value.fields);
+        const section = collect(this.sections).first((s) => field.id in s.fields);
         // eslint-disable-next-line no-case-declarations
-        let {options} = (section?.fields as Record<string, SelectT>)[field.id];
+        let {options} = section.fields[field.id] as SelectT;
         if (options instanceof Promise) {
           options = await options;
         }

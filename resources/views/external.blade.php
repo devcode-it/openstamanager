@@ -3,11 +3,6 @@
     @include('layouts.head')
     <body>
         @inertia
-
-        @routes
-
-        @vite('app')
-
-        @include('layouts.translations')
+        @include('layouts.footer')
     </body>
 </html>

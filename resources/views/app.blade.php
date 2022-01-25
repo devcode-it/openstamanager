@@ -33,16 +33,7 @@
 
 @include('layouts.top-app-bar-menus')
 
-<script>
-  window.importPath = '{{Str::contains(vite_asset(''), config('vite.dev_url')) ? config('vite.dev_url') : '.'}}';
-  window.modules = @js($modules);
-</script>
-
-@routes
-
-@vite('app')
-
-@include('layouts.translations')
+@include('layouts.footer')
 
 </body>
 </html>

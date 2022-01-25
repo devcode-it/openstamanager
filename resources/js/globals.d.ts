@@ -5,11 +5,13 @@ import type cash from 'cash-dom';
 import type Mithril from 'mithril';
 import type router from 'ziggy-js';
 
+import {OpenSTAManager} from './types/modules';
 import type {__ as translator} from './utils';
 
 declare global {
   let importPath: string;
-  const translations: {[key: string]: string};
+  let translations: Record<string, string>;
+  let modules: Record<string, OpenSTAManager.Modules>;
   const route: typeof router;
 
   var $: typeof cash;

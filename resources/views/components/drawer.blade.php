@@ -1,18 +1,12 @@
 <mwc-list activatable>
     @php
-        $entries = [
-            'dashboard' => [
+        /** @var \Illuminate\Support\Collection $modules */
+        $entries = $modules->pluck('drawer_entries')
+        ->collapse()
+            ->prepend([
                 'icon' => 'view-dashboard-outline',
                 'text' => __('Dashboard')
-            ],
-        ];
-
-        $to_merge = [];
-        foreach ($modules as $module) {
-            $to_merge[] = $module->drawer_entries;
-        }
-
-        $entries = array_merge($entries, ...$to_merge);
+            ], 'dashboard');
     @endphp
     @foreach($entries as $route => $details)
         @switch($route)

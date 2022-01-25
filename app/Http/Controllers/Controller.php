@@ -25,13 +25,15 @@ class Controller extends BaseController
         $modules = $packages->filter(fn ($package) => $package->type === 'openstamanager-module');
 
         $modules->transform(function ($module) {
-            $drawer_entries = [];
+            $osm_modules = collect($module->extra->{'osm-modules'});
 
-            foreach ($module->extra->{'osm-modules'} as $id => $data) {
-                $drawer_entries[] = config("$id.drawer_entries");
-            }
+            $module->drawer_entries = $osm_modules
+                ->mapWithKeys(fn ($item, $name) => config("$name.drawer_entries"))
+                ->whereNotNull()
+                ->all();
 
-            $module->drawer_entries = array_merge(...array_filter($drawer_entries, static fn ($entry) => $entry !== null));
+            // Modules (for Frontend)
+            $module->modules = $osm_modules->mapWithKeys(fn ($item, $key) => [$module->name => $item]);
 
             return $module;
         });

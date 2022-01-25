@@ -2,7 +2,7 @@
     @php
         /** @var \Illuminate\Support\Collection $modules */
         $entries = $modules->pluck('drawer_entries')
-        ->collapse()
+            ->collapse()
             ->prepend([
                 'icon' => 'view-dashboard-outline',
                 'text' => __('Dashboard')

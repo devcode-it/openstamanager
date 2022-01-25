@@ -57,10 +57,6 @@ export class RecordsPage extends Page {
   dialogs: Children[];
   recordDialogMaxWidth: string | number = 'auto';
   model: typeof Model;
-  customSetter: (
-    model: IModel,
-    fields: Collection<File | string>
-  ) => void;
 
   /**
    * What fields should take precedence when saving the record
@@ -303,74 +299,75 @@ export class RecordsPage extends Page {
     const form: Cash = dialog.find('form');
 
     // Open "New record" dialog
-    fab.on('click', () => {
-      form
-        .find('text-field, text-area, material-select')
-        .each(async (index, field) => {
-          field.innerHTML = await this.getFieldBody(field as HTMLFormElement);
-          (field as HTMLInputElement).value = $(field)
-            .data('default-value') as string;
-        });
-      dialog.find('mwc-button[type="submit"] mwc-circular-progress').hide();
-      dialog.find('mwc-button#delete-button').hide();
-      const dialogElement: HTMLElement & Partial<MWCDialog> | undefined = dialog.get(0);
-      if (dialogElement) {
-        (dialogElement as MWCDialog).show();
-      }
-    });
+    fab.on('click', this.openNewRecordDialog.bind(this, form, dialog));
 
     const button = dialog.find('mwc-button[type="submit"]');
-    button.on('click', () => {
-      form.trigger('submit');
-    });
+    button.on('click', () => form.trigger('submit'));
+    form.on('submit', this.submitForm.bind(this, button, dialog, form));
+  }
 
+  openNewRecordDialog(form: Cash, dialog: Cash) {
+    form
+      .find('text-field, text-area, material-select')
+      .each(async (index, field) => {
+        field.innerHTML = await this.getFieldBody(field as HTMLFormElement);
+        (field as HTMLInputElement).value = $(field)
+          .data('default-value') as string;
+      });
+    dialog.find('mwc-button[type="submit"] mwc-circular-progress').hide();
+    dialog.find('mwc-button#delete-button').hide();
+    const dialogElement: HTMLElement & Partial<MWCDialog> | undefined = dialog.get(0);
+    if (dialogElement) {
+      (dialogElement as MWCDialog).show();
+    }
+  }
+
+  async submitForm(button: Cash, dialog: Cash, form: Cash, event: SubmitEvent) {
+    event.preventDefault();
     const loading: Cash = button.find('mwc-circular-progress');
-    form.on('submit', async (event: SubmitEvent) => {
-      event.preventDefault();
-      loading.show();
+    loading.show();
 
-      if (isFormValid(form)) {
-        const data = collect(getFormData(form));
+    if (isFormValid(form)) {
+      const data = collect(getFormData(form));
+      // @ts-ignore
+      // eslint-disable-next-line new-cap
+      const instance = this.rows.get(data.get('id'), new this.model() as IModel) as IModel;
+
+      const modelId = await this.setter(instance, data);
+
+      if (modelId) {
         // @ts-ignore
-        // eslint-disable-next-line new-cap
-        const instance = this.rows.get(data.get('id'), new this.model() as IModel) as IModel;
+        const newResponse = await this.model.with(this.model.relationships)
+          .find(modelId);
+        const model = newResponse.getData() as IModel;
 
-        if (this.customSetter) {
-          // eslint-disable-next-line @typescript-eslint/await-thenable
-          await this.customSetter(instance, data);
-        } else {
-          const filtered = data
-            .filter((item: any, id: string) => this.fieldsPrecedence.includes(id));
-
-          // @ts-ignore
-          (filtered.isEmpty() ? filtered : data).each((value: string, id: string) => {
-            instance[id] = value;
-          });
+        const dialogElement = dialog.get(0);
+        if (dialogElement) {
+          (dialogElement as MWCDialog).close();
         }
 
-        const response = await instance.save();
-        const modelId = response.getModelId();
-
-        if (modelId) {
-          // @ts-ignore
-          const newResponse = await this.model.with(this.model.relationships).find(modelId);
-          const model = newResponse.getData() as IModel;
-
-          const dialogElement = dialog.get(0);
-          if (dialogElement) {
-            (dialogElement as MWCDialog).close();
-          }
-
-          this.rows.put(model.getId(), model);
-          loading.hide();
-          m.redraw();
-          await showSnackbar(__('Record salvato'), 4000);
-        }
-      } else {
+        this.rows.put(model.getId(), model);
         loading.hide();
-        await showSnackbar(__('Campi non validi. Controlla i dati inseriti'));
+        m.redraw();
+        await showSnackbar(__('Record salvato'), 4000);
       }
+    } else {
+      loading.hide();
+      await showSnackbar(__('Campi non validi. Controlla i dati inseriti'));
+    }
+  }
+
+  async setter(model: IModel, data: Collection<File | string>) {
+    const filtered = data
+      .filter((item: any, id: string) => this.fieldsPrecedence.includes(id));
+
+    // @ts-ignore
+    (filtered.isEmpty() ? filtered : data).each((value: string, id: string) => {
+      model[id] = value;
     });
+
+    const response = await model.save();
+    return response.getModelId();
   }
 
   getModelValue(model: IModel, field: string, raw = false): any {

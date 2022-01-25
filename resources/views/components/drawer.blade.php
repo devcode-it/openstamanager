@@ -1,7 +1,5 @@
 <mwc-list activatable>
     @php
-        $modules = app(\App\Http\Controllers\Controller::class)
-            ->getModules(request());
         $entries = [
             'dashboard' => [
                 'icon' => 'view-dashboard-outline',

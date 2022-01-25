@@ -2,11 +2,14 @@
 <html lang="{{app()->getLocale()}}">
 @include('layouts.head')
 <body class="mdc-typography @if(session('high-contrast')) mdc-high-contrast @endif">
-
+@php
+    $modules = app(\App\Http\Controllers\Controller::class)
+                ->getModules(request());
+@endphp
 <top-app-bar>
     @include('layouts.top-app-bar')
     <material-drawer @mobile type="modal" @elsenotmobile type="dismissible" open @endmobile>
-        @include('layouts.drawer')
+        <x-drawer :modules="$modules"></x-drawer>
         <div slot="appContent">
             <main>
                 @inertia

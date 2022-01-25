@@ -25,7 +25,7 @@
             </span>
         </div>
         <div class="right-footer">
-            <b>@lang('Versione')</b> {{trim(file_get_contents(base_path('VERSION')))}}
+            <strong>@lang('Versione')</strong> {{trim(file_get_contents(base_path('VERSION')))}}
             <small>(<code>{{trim(file_get_contents(base_path('REVISION')))}}</code>)</small>
         </div>
     </footer>

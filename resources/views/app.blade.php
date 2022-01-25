@@ -35,6 +35,7 @@
 
 <script>
   window.importPath = '{{Str::contains(vite_asset(''), config('vite.dev_url')) ? config('vite.dev_url') : '.'}}';
+  window.modules = @js($modules);
 </script>
 
 @routes

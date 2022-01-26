@@ -4,7 +4,7 @@ import {
 } from 'coloquent';
 import {snakeCase} from 'lodash';
 
-export interface InstantiableModel<T extends Model> {
+export interface InstantiableModel<T extends Model = Model> {
   new (): (Model | T) & {[prop: string]: any};
 }
 

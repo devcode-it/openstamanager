@@ -459,7 +459,9 @@ export class RecordsPage extends Page {
     switch (field.type ?? field.getAttribute('type')) {
       case 'select': {
         const section = collect(this.sections)
-          .first((s) => field.id in s.fields);
+          // (temporary) .first((s) => field.id in s.fields);
+          .filter((s) => field.id in s.fields)
+          .first();
         let {options} = section.fields[field.id] as SelectT;
         if (options instanceof Promise) {
           options = await options;

@@ -7,7 +7,7 @@ import redaxios from 'redaxios';
 import {registerSW} from 'virtual:pwa-register';
 
 import {type Page} from './Components';
-import {OpenSTAManager} from './typings/modules';
+import {OpenSTAManager} from './typings';
 import {
   __ as translator,
   showSnackbar

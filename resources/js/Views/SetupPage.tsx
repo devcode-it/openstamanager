@@ -4,21 +4,18 @@ import '@material/mwc-button';
 import '@material/mwc-checkbox';
 import '@material/mwc-fab';
 import '@material/mwc-formfield';
-import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-list/mwc-list-item.js';
 import '@material/mwc-select';
 import '../WebComponents/TextArea';
 import '../WebComponents/TextField';
 import '../WebComponents/Select';
 
-import type {Dialog as MWCDialog} from '@material/mwc-dialog';
+import logoUrl from '@openstamanager/assets/images/logo_completo.png';
 import type CSS from 'csstype';
 import LocaleCode from 'locale-code';
 import type {Vnode, VnodeDOM} from 'mithril';
 import redaxios, {Response} from 'redaxios';
 
-import logoUrl from '@openstamanager/assets/images/logo_completo.png';
-
-import {Alert} from '../Components';
 import Mdi from '../Components/Mdi';
 import Page from '../Components/Page';
 import {getFormData, showSnackbar} from '../utils';
@@ -85,7 +82,7 @@ export default class SetupPage extends Page {
       <>
         <mwc-card outlined className="center ext-container">
           <form id="setup">
-            <img src={logoUrl as string} className="center" alt={__('OpenSTAManager')} />
+            <img src={logoUrl} className="center" alt={__('OpenSTAManager')} />
             <mwc-layout-grid>
               <mwc-layout-grid-cell span-desktop={8}>
                 <h2>
@@ -282,10 +279,6 @@ export default class SetupPage extends Page {
         >
           <Mdi icon="contrast-circle" slot="icon" className="light-bg" />
         </mwc-fab>
-        <Alert id="test-connection-alert-error" icon="error" />
-        <Alert id="test-connection-alert-success" icon="success">
-          <p>{__('Connessione al database riuscita')}</p>
-        </Alert>
       </>
     );
   }
@@ -334,32 +327,18 @@ export default class SetupPage extends Page {
       });
     } catch (error: any) {
       if (!silentError) {
-        const alert = this.element.querySelector('#test-connection-alert-error');
-        if (alert) {
-          const content = alert.querySelector('.content');
-
-          if (content) {
-            content.textContent = __(
-              'Si è verificato un errore durante la connessione al'
-              + ' database: :error',
-              {
-                error: (error as Response<{error: string}>).data.error
-              }
-            );
-          }
-
-          (alert as MWCDialog).show();
-        }
+        await showSnackbar(
+          __('Si è verificato un errore durante la connessione al database: :error', {
+            error: (error as Response<{error: string}>).data.error
+          })
+        );
       }
 
       return false;
     }
 
     if (!silentSuccess) {
-      const alert = document.querySelector('#test-connection-alert-success');
-      if (alert) {
-        (alert as MWCDialog).show();
-      }
+      await showSnackbar(__('Connessione al database riuscita'));
     }
 
     return true;

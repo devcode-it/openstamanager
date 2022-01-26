@@ -53,7 +53,6 @@
     "lit": "^2.1.1",
     "locale-code": "^2.0.2",
     "lodash": "npm:lodash-es@^4.17.21",
-    "lottie-web": "^5.8.1",
     "mithril": "^2.0.4",
     "mithril-node-render": "^3.0.2",
     "modern-normalize": "^1.1.0",

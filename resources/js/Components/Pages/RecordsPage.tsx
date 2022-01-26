@@ -368,19 +368,23 @@ export class RecordsPage extends Page {
   }
 
   async setter(model: IModel, data: Collection<File | string>) {
-    const filtered = data
-      .filter((item: any, id: string) => this.fieldsPrecedence.includes(id));
+    const firstFields = data.only(this.fieldsPrecedence);
+    const fields = data.except(this.fieldsPrecedence);
+
+    firstFields.each((currentItem, key) => {
+      fields.put(key, currentItem);
+    });
 
     const relations: Record<string, IModel> = {};
 
-    (filtered.isNotEmpty() ? filtered.merge<string | File>(data) : data).each((value: string, field: string) => {
-      if (field.includes(':')) {
+    data.each((value, field) => {
+      if (typeof field === 'string' && field.includes(':')) {
         const [relation, fieldName] = field.split(':');
         const relationModel = this.getRelation(model, relation);
         relationModel[fieldName] = value;
         relations[relation] = relationModel;
       } else {
-        model[field] = value;
+        model[field as string] = value;
       }
     });
 

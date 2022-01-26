@@ -411,7 +411,8 @@ export class RecordsPage extends Page {
       return relationModel;
     }
 
-    const relationship = model[relation] as ToOneRelation<IModel> | ToManyRelation<IModel>;
+    const relationship = (model[relation] as Function)() as
+      ToOneRelation<IModel> | ToManyRelation<IModel>;
     const RelationshipModel = relationship.getType() as InstantiableModel;
     return createIfNotExists ? new RelationshipModel() : undefined;
   }

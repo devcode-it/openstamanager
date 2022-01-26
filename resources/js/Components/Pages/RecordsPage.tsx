@@ -380,7 +380,7 @@ export class RecordsPage extends Page {
     data.each((value, field) => {
       if (typeof field === 'string' && field.includes(':')) {
         const [relation, fieldName] = field.split(':');
-        const relationModel = this.getRelation(model, relation);
+        const relationModel = this.getRelation(model, relation, true) as IModel;
         relationModel[fieldName] = value;
         relations[relation] = relationModel;
       } else {
@@ -401,23 +401,27 @@ export class RecordsPage extends Page {
     return response.getModelId();
   }
 
-  getRelation(model: IModel, relation: string) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    const relationModel = model[`get${capitalize(relation)}`]() as IModel;
+  getRelation(model: IModel, relation: string, createIfNotExists = false) {
+    const relationModel = (model[`get${capitalize(relation)}`] as Function)() as IModel;
     if (relationModel) {
       return relationModel;
     }
 
     const relationship = model[relation] as ToOneRelation<IModel> | ToManyRelation<IModel>;
-    const modelClass = relationship.getType() as InstantiableModel;
-    // eslint-disable-next-line new-cap
-    return new modelClass();
+    const RelationshipModel = relationship.getType() as InstantiableModel;
+    return createIfNotExists ? new RelationshipModel() : undefined;
   }
 
   getModelValue(model: IModel, field: string, raw = false): any {
     const column = this.columns[field];
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    let value: any = model[field];
+    let value: unknown;
+    if (field.includes(':')) {
+      const [relation, fieldName] = field.split(':');
+      const relationModel = this.getRelation(model, relation);
+      value = relationModel?.[fieldName];
+    } else {
+      value = model[field];
+    }
 
     if (typeof column === 'object' && column.valueModifier) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

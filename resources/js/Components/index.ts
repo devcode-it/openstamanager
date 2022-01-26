@@ -1,7 +1,6 @@
 /* eslint-disable import/export */
 // noinspection JSUnusedGlobalSymbols
 
-export {default as Alert} from './Alert';
 export {default as Component} from './Component';
 export * from './DataTable';
 export {extend, override} from './extend';

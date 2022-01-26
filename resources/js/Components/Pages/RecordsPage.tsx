@@ -489,7 +489,7 @@ export class RecordsPage extends Page {
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const {icon} = field;
-    if (typeof icon === 'string') {
+    if (icon) {
       list.push(render(<Mdi icon={icon} slot="icon"/>));
     }
 

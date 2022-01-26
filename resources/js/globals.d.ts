@@ -5,7 +5,7 @@ import type cash from 'cash-dom';
 import type Mithril from 'mithril';
 import type router from 'ziggy-js';
 
-import {OpenSTAManager} from './typings/modules';
+import {OpenSTAManager} from './typings';
 import type {__ as translator} from './utils';
 
 declare global {

@@ -12,7 +12,7 @@ import logoUrl from '/images/logo_completo.png';
 import LoadingButton from '../Components/LoadingButton';
 import Mdi from '../Components/Mdi';
 import Page from '../Components/Page';
-import type {ErrorResponse} from '../types';
+import type {ErrorResponse} from '../typings';
 import {
   getFormData,
   isFormValid,

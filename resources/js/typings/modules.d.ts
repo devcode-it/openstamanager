@@ -1,4 +1,4 @@
-import {MaterialIcons} from '../types';
+import {MaterialIcons} from './icons';
 
 declare module OpenSTAManager {
   export type Modules = Record<string, Module>;

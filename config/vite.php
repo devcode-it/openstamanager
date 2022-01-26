@@ -49,7 +49,10 @@ return [
     | These aliases will be added to the Vite configuration and used
     | to generate a proper tsconfig.json file.
     */
-    'aliases' => [],
+    'aliases' => [
+        '@openstamanager/assets' => 'resources/static',
+        '@openstamanager/scss' => 'resources/scss',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -115,7 +118,7 @@ return [
     | the development server starts.
     */
     'commands' => [
-        //'vite:aliases',
+        'vite:aliases',
         // 'typescript:generate'
     ],
 ];

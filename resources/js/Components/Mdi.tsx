@@ -1,7 +1,8 @@
+import {MaterialIcons} from '../typings';
 import Component from './Component';
 
 type Attributes = {
-  icon?: string
+  icon?: MaterialIcons
 };
 
 declare global {

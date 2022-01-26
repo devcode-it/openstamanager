@@ -60,7 +60,7 @@
     "redaxios": "^0.4.1"
   },
   "devDependencies": {
-    "@maicol07/eslint-config": "^2.1.2",
+    "@maicol07/eslint-config": "^2.1.4",
     "@openstamanager/vite-config": "github:devcode-it/openstamanager-vite-config",
     "@types/gulp": "^4.0.0",
     "@types/lodash": "^4.14.178",

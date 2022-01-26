@@ -28,7 +28,7 @@ import type {
   SelectT,
   TextAreaT,
   TextFieldT
-} from '../../types';
+} from '../../typings';
 import {
   getFormData,
   isFormValid,
@@ -56,6 +56,8 @@ export type SectionT = {
 export type ColumnsT = Record<string, string | ColumnT>;
 export type RowsT = Collection<IModel>;
 export type SectionsT = Record<string, SectionT>;
+
+const FIELDS: string = 'text-field, text-area, material-select';
 
 /**
  * @abstract
@@ -160,8 +162,8 @@ export class RecordsPage extends Page {
     const dialog = $('mwc-dialog#add-record-dialog');
 
     dialog
-      // eslint-disable-next-line sonarjs/no-duplicate-string
-      .find('text-field, text-area, material-select')
+      // eslint-disable-next-line unicorn/no-array-callback-reference
+      .find(FIELDS)
       .each(async (index, field) => {
         field.innerHTML = await this.getFieldBody(field as HTMLFormElement);
         (field as HTMLInputElement).value = this.getModelValue(instance, field.id) as string;
@@ -318,7 +320,8 @@ export class RecordsPage extends Page {
 
   openNewRecordDialog(form: Cash, dialog: Cash) {
     form
-      .find('text-field, text-area, material-select')
+      // eslint-disable-next-line unicorn/no-array-callback-reference
+      .find(FIELDS)
       .each(async (index, field) => {
         field.innerHTML = await this.getFieldBody(field as HTMLFormElement);
         (field as HTMLInputElement).value = $(field)
@@ -340,7 +343,6 @@ export class RecordsPage extends Page {
     if (isFormValid(form)) {
       const data = collect(getFormData(form));
       // @ts-ignore
-      // eslint-disable-next-line new-cap
       const instance = this.rows.get(data.get('id'), new this.model() as IModel) as IModel;
 
       const modelId = await this.setter(instance, data);
@@ -424,7 +426,6 @@ export class RecordsPage extends Page {
     }
 
     if (typeof column === 'object' && column.valueModifier) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       value = column.valueModifier(model, field);
     }
 
@@ -450,14 +451,13 @@ export class RecordsPage extends Page {
     }
   }
 
-  async getFieldBody(field: HTMLFormElement) {
+  async getFieldBody(field: HTMLFormElement & FieldT) {
     const list = [];
 
     switch (field.type ?? field.getAttribute('type')) {
-      case 'select':
-        // eslint-disable-next-line no-case-declarations
-        const section = collect(this.sections).first((s) => field.id in s.fields);
-        // eslint-disable-next-line no-case-declarations
+      case 'select': {
+        const section = collect(this.sections)
+          .first((s) => field.id in s.fields);
         let {options} = section.fields[field.id] as SelectT;
         if (options instanceof Promise) {
           options = await options;
@@ -474,18 +474,18 @@ export class RecordsPage extends Page {
         }
 
         break;
-
+      }
       case 'checkbox':
         return '';
-
       case 'radio':
         return '';
-
       default:
     }
 
-    if (field.icon) {
-      list.push(render(<Mdi icon={(field as FieldT).icon} slot="icon"/>));
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const {icon} = field;
+    if (typeof icon === 'string') {
+      list.push(render(<Mdi icon={icon} slot="icon"/>));
     }
 
     return list.join('');

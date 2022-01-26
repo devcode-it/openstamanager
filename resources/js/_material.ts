@@ -26,7 +26,7 @@ import $, {
   type Element
 } from 'cash-dom';
 
-import type {JSXElement} from './types';
+import type {JSXElement} from './typings';
 
 // Declare Material JSX components
 declare global {

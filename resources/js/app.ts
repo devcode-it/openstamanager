@@ -7,7 +7,7 @@ import redaxios from 'redaxios';
 import {registerSW} from 'virtual:pwa-register';
 
 import {type Page} from './Components';
-import {OpenSTAManager} from './types/modules';
+import {OpenSTAManager} from './typings/modules';
 import {
   __ as translator,
   showSnackbar
@@ -72,7 +72,6 @@ $('#logout-button')
     window.location.href = route('auth.login');
   });
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 const updateSW = registerSW({
   async onNeedRefresh() {
     const action = await showSnackbar(__('Aggiornamento del frontend disponibile!'), false, __('Ricarica'), __('Annulla'));

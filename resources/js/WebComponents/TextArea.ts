@@ -1,8 +1,7 @@
 import {TextArea as MWCTextArea} from '@material/mwc-textarea';
-// eslint-disable-next-line import/extensions
 import {customElement} from 'lit/decorators.js';
 
-import {type JSXElement} from '../types';
+import {type JSXElement} from '../typings';
 
 declare global {
   namespace JSX {

@@ -1,14 +1,13 @@
 import {TextField as MWCTextField} from '@material/mwc-textfield';
+import styles from '@openstamanager/scss/material/text-field.scss';
 import {waitUntil} from 'async-wait-until';
 import classnames from 'classnames';
 import {
   type TemplateResult, css, html, unsafeCSS
 } from 'lit';
-// eslint-disable-next-line import/extensions
 import {customElement, property} from 'lit/decorators.js';
 
-import styles from '../../scss/material/text-field.scss';
-import type {JSXElement} from '../types';
+import type {JSXElement} from '../typings';
 
 declare global {
   namespace JSX {

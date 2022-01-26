@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -17,4 +16,5 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import gulp from 'gulp';

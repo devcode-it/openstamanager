@@ -16,9 +16,7 @@ import LocaleCode from 'locale-code';
 import type {Vnode, VnodeDOM} from 'mithril';
 import redaxios, {Response} from 'redaxios';
 
-// @ts-ignore
-// eslint-disable-next-line import/no-absolute-path
-import logoUrl from '/images/logo_completo.png';
+import logoUrl from '@openstamanager/assets/images/logo_completo.png';
 
 import {Alert} from '../Components';
 import Mdi from '../Components/Mdi';

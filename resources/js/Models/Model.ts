@@ -21,7 +21,7 @@ export abstract class Model extends BaseModel {
     super();
 
     // Return a proxy of this object to allow dynamic attributes getters and setters
-    // eslint-disable-next-line no-constructor-return, @typescript-eslint/no-unsafe-return
+    // eslint-disable-next-line no-constructor-return
     return new Proxy(this, {
       get(target, property: string, receiver): any {
         const snakeCasedProperty = snakeCase(property);

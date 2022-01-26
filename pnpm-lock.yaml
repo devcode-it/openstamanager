@@ -3,7 +3,7 @@ lockfileVersion: 5.3
 specifiers:
   '@inertiajs/inertia': ^0.10.1
   '@inertiajs/progress': ^0.2.7
-  '@maicol07/eslint-config': ^2.1.2
+  '@maicol07/eslint-config': ^2.1.4
   '@maicol07/inertia-mithril': ^0.4.2
   '@maicol07/mwc-card': ^0.25.3
   '@maicol07/mwc-layout-grid': ^0.25.3-1
@@ -113,7 +113,7 @@ dependencies:
   redaxios: 0.4.1
 
 devDependencies:
-  '@maicol07/eslint-config': 2.1.2
+  '@maicol07/eslint-config': 2.1.4
   '@openstamanager/vite-config': github.com/devcode-it/openstamanager-vite-config/9399c4a34b39c0a80408db47575794f089465be5_sass@1.49.0
   '@types/gulp': 4.0.9
   '@types/lodash': 4.14.178
@@ -1346,8 +1346,8 @@ packages:
     resolution: {integrity: sha512-B2JdRMwCGv+VpIRj3CYVQBx3muPDeE8y+HPgWqzrAHsO5/40BpwDFZeplIV790BaTqDVUDvZOKMSbuFM9zWC0w==}
     dev: false
 
-  /@maicol07/eslint-config/2.1.2:
-    resolution: {integrity: sha512-9h75NkOwRvAUh52O1NsvYeFaVkOGxd8QNwQtpPLxXYjoM2IrJO59Al6wG+rVaI2np25ssMVuag+s3RO0rzuzeg==}
+  /@maicol07/eslint-config/2.1.4:
+    resolution: {integrity: sha512-g6PHY17wIU9zKnQEEo8hd/6q7Zyz4iUC13JaMUITUMSwls19mNUqGnK4eYuo8+wzu8vPgvks/RA/AZE0T6wsgg==}
     dependencies:
       '@typescript-eslint/eslint-plugin': 5.9.1_46ff1e3eeda39b5395c18b563a83af7a
       '@typescript-eslint/parser': 5.9.1_eslint@8.6.0+typescript@4.5.5
@@ -2956,7 +2956,7 @@ packages:
       postcss: ^8.1.0
     dependencies:
       browserslist: 4.19.1
-      caniuse-lite: 1.0.30001301
+      caniuse-lite: 1.0.30001302
       fraction.js: 4.1.2
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -3107,7 +3107,7 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001301
+      caniuse-lite: 1.0.30001302
       electron-to-chromium: 1.4.53
       escalade: 3.1.1
       node-releases: 2.0.1
@@ -3173,8 +3173,8 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /caniuse-lite/1.0.30001301:
-    resolution: {integrity: sha512-csfD/GpHMqgEL3V3uIgosvh+SVIQvCh43SNu9HRbP1lnxkKm1kjDG4f32PP571JplkLjfS+mg2p1gxR7MYrrIA==}
+  /caniuse-lite/1.0.30001302:
+    resolution: {integrity: sha512-YYTMO+tfwvgUN+1ZnRViE53Ma1S/oETg+J2lISsqi/ZTNThj3ZYBOKP2rHwJc37oCsPqAzJ3w2puZHn0xlLPPw==}
     dev: true
 
   /cash-dom/8.1.0:

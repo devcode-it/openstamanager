@@ -2,10 +2,9 @@ import {Select as MWCSelect} from '@material/mwc-select';
 import {waitUntil} from 'async-wait-until';
 import type {TemplateResult} from 'lit';
 import {css, html} from 'lit';
-// eslint-disable-next-line import/extensions
 import {customElement} from 'lit/decorators.js';
 
-import type {JSXElement} from '../types';
+import type {JSXElement} from '../typings';
 
 declare global {
   namespace JSX {

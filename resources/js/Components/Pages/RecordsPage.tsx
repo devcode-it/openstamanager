@@ -382,9 +382,11 @@ export class RecordsPage extends Page {
     data.each((value, field) => {
       if (typeof field === 'string' && field.includes(':')) {
         const [relation, fieldName] = field.split(':');
-        const relationModel = this.getRelation(model, relation, true) as IModel;
-        relationModel[fieldName] = value;
-        relations[relation] = relationModel;
+        const relationModel = this.getRelation(model, relation, true);
+        if (relationModel) {
+          relationModel[fieldName] = value;
+          relations[relation] = relationModel;
+        }
       } else {
         model[field as string] = value;
       }

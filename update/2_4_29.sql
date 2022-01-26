@@ -52,3 +52,6 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select|\r\nFROM `or_ordini`\r\n LEF
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente'), 'icon_Inviata', 'IF(`email`.`id_email` IS NOT NULL, \'fa fa-envelope text-success\', \'\')', 12, 1, 0, 0, '', '', 1, 0, 0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore'), 'icon_Inviata', 'IF(`email`.`id_email` IS NOT NULL, \'fa fa-envelope text-success\', \'\')', 12, 1, 0, 0, '', '', 0, 0, 0);
+
+-- Fix massimale dichiarazione d'intento
+ALTER TABLE `co_dichiarazioni_intento` CHANGE `massimale` `massimale` DECIMAL(15,6) NOT NULL; 

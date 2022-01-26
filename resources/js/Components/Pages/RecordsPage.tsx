@@ -159,35 +159,39 @@ export class RecordsPage extends Page {
     // @ts-ignore
     const response = await this.model.with(this.model.relationships).find(id);
     const instance = response.getData() as IModel;
-    const dialog = $('mwc-dialog#add-record-dialog');
+    const dialog: MWCDialog | null = document.querySelector('mwc-dialog#add-record-dialog');
 
-    dialog
-      // eslint-disable-next-line unicorn/no-array-callback-reference
-      .find(FIELDS)
-      .each(async (index, field) => {
-        field.innerHTML = await this.getFieldBody(field as HTMLFormElement);
-        (field as HTMLInputElement).value = this.getModelValue(instance, field.id) as string;
-      });
+    if (dialog) {
+      for (const field of dialog.querySelectorAll(FIELDS)) {
+        const value = this.getModelValue(instance, field.id) as string;
 
-    dialog
-      .find('mwc-button#delete-button')
-      .show()
-      .on('click', () => {
-        const confirmDialog = $('mwc-dialog#confirm-delete-record-dialog');
-        const confirmButton = confirmDialog.find('mwc-button#confirm-button');
-        const loading: Cash = confirmButton.find('mwc-circular-progress');
-        confirmButton.on('click', async () => {
-          loading.show();
-          await instance.delete();
-          // noinspection JSUnresolvedVariable
-          this.rows.forget(instance.getId());
-          m.redraw();
-          await showSnackbar(__('Record eliminato!'), 4000);
+        // eslint-disable-next-line no-await-in-loop
+        field.innerHTML = await this.getFieldBody(field as HTMLFormElement, value);
+
+        (field as HTMLInputElement).value = value;
+      }
+
+      $(dialog)
+        .find('mwc-button#delete-button')
+        .show()
+        .on('click', () => {
+          const confirmDialog = $('mwc-dialog#confirm-delete-record-dialog');
+          const confirmButton = confirmDialog.find('mwc-button#confirm-button');
+          const loading: Cash = confirmButton.find('mwc-circular-progress');
+          confirmButton.on('click', async () => {
+            loading.show();
+            await instance.delete();
+            // noinspection JSUnresolvedVariable
+            this.rows.forget(instance.getId());
+            m.redraw();
+            await showSnackbar(__('Record eliminato!'), 4000);
+          });
+          loading.hide();
+          (confirmDialog.get(0) as MWCDialog).show();
         });
-        loading.hide();
-        (confirmDialog.get(0) as MWCDialog).show();
-      });
-    (dialog.get(0) as MWCDialog).show();
+
+      dialog.show();
+    }
   }
 
   recordDialog() {
@@ -454,7 +458,7 @@ export class RecordsPage extends Page {
     }
   }
 
-  async getFieldBody(field: HTMLFormElement & FieldT) {
+  async getFieldBody(field: HTMLFormElement & FieldT, value?: string) {
     const list = [];
 
     switch (field.type ?? field.getAttribute('type')) {
@@ -471,7 +475,8 @@ export class RecordsPage extends Page {
         if (options) {
           for (const option of options) {
             list.push(render(
-              <mwc-list-item key={option.value} value={option.value}>
+              <mwc-list-item key={option.value} value={option.value}
+                             selected={option.value === value} activated={option.value === value}>
                 {option.label}
               </mwc-list-item>
             ));

@@ -6,6 +6,11 @@ import '@material/mwc-snackbar';
 import type {Dialog as MWCDialog} from '@material/mwc-dialog';
 import type {Cash} from 'cash-dom';
 import collect, {type Collection} from 'collect.js';
+import {
+  ToManyRelation,
+  ToOneRelation
+} from 'coloquent';
+import {capitalize} from 'lodash';
 import type {
   Children,
   Vnode,
@@ -15,6 +20,7 @@ import {sync as render} from 'mithril-node-render';
 
 import {
   IModel,
+  InstantiableModel,
   Model
 } from '../../Models';
 import type {
@@ -23,7 +29,11 @@ import type {
   TextAreaT,
   TextFieldT
 } from '../../types';
-import {getFormData, isFormValid, showSnackbar} from '../../utils';
+import {
+  getFormData,
+  isFormValid,
+  showSnackbar
+} from '../../utils';
 import DataTable from '../DataTable/DataTable';
 import TableCell from '../DataTable/TableCell';
 import TableColumn from '../DataTable/TableColumn';
@@ -361,13 +371,43 @@ export class RecordsPage extends Page {
     const filtered = data
       .filter((item: any, id: string) => this.fieldsPrecedence.includes(id));
 
-    // @ts-ignore
-    (filtered.isEmpty() ? filtered : data).each((value: string, id: string) => {
-      model[id] = value;
+    const relations: Record<string, IModel> = {};
+
+    (filtered.isNotEmpty() ? filtered.merge<string | File>(data) : data).each((value: string, field: string) => {
+      if (field.includes(':')) {
+        const [relation, fieldName] = field.split(':');
+        const relationModel = this.getRelation(model, relation);
+        relationModel[fieldName] = value;
+        relations[relation] = relationModel;
+      } else {
+        model[field] = value;
+      }
     });
+
+    // Save relations
+    for (const [relation, relatedModel] of Object.entries(relations)) {
+      // eslint-disable-next-line no-await-in-loop
+      const response = await relatedModel.save();
+      if (response.getModelId) {
+        model.setRelation(relation, response.getModelId());
+      }
+    }
 
     const response = await model.save();
     return response.getModelId();
+  }
+
+  getRelation(model: IModel, relation: string) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    const relationModel = model[`get${capitalize(relation)}`]() as IModel;
+    if (relationModel) {
+      return relationModel;
+    }
+
+    const relationship = model[relation] as ToOneRelation<IModel> | ToManyRelation<IModel>;
+    const modelClass = relationship.getType() as InstantiableModel;
+    // eslint-disable-next-line new-cap
+    return new modelClass();
   }
 
   getModelValue(model: IModel, field: string, raw = false): any {

@@ -378,7 +378,6 @@ export class RecordsPage extends Page {
     }
   }
 
-  // eslint-disable-next-line sonarjs/cognitive-complexity
   async setter(model: IModel, data: Collection<File | string>) {
     const firstFields = data.only(this.fieldsPrecedence);
     const fields = data.except(this.fieldsPrecedence);
@@ -390,25 +389,18 @@ export class RecordsPage extends Page {
     const relations: Record<string, IModel> = {};
 
     for (const [field, value] of Object.entries(data.all())) {
-      if (field.includes(':')) {
-        let [relation, fieldName]: (string | undefined)[] = field.split(':');
-        let relationModel: IModel;
+      if ((model as unknown as typeof Model).relationships.includes(field)) {
+        relations[field] = await this.getRelation(model, field, false, Number(value)) as IModel;
+      }
 
-        if (fieldName && !relation) {
-          // If the field is a model id, we need to save the relation and not the field itself
-          relation = fieldName;
-          fieldName = undefined;
-          relationModel = await this.getRelation(model, relation, false, Number(value)) as IModel;
-        } else {
-          relationModel = relation in relations
-            ? relations[relation]
-            : await this.getRelation(model, relation, true) as IModel;
-        }
+      if (field.includes(':')) {
+        const [relation, fieldName]: (string | undefined)[] = field.split(':');
+        const relationModel: IModel = relation in relations
+          ? relations[relation]
+          : await this.getRelation(model, relation, true) as IModel;
 
         if (relationModel) {
-          if (fieldName) {
-            relationModel[fieldName] = value;
-          }
+          relationModel[fieldName] = value;
           relations[relation] = relationModel;
         }
       } else {

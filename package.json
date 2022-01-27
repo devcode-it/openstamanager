@@ -49,6 +49,7 @@
     "classnames": "^2.3.1",
     "collect.js": "^4.31.3",
     "coloquent": "^2.4.1",
+    "deepmerge-ts": "^2.0.1",
     "include-media": "^1.4.10",
     "lit": "^2.1.1",
     "locale-code": "^2.0.2",

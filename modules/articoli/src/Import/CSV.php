@@ -293,6 +293,12 @@ class CSV extends CSVImporter
 
         // Salvataggio delle informazioni generali
         $articolo->fill($record);
+
+        $articolo->fill([
+            'id_categoria' => $categoria->id ?: $articolo['id_categoria'],
+            'id_sottocategoria' => $sottocategoria->id ?: $articolo['id_sottocategoria'],
+        ]);
+
         $articolo->save();
 
         // Aggiornamento dettaglio prezzi

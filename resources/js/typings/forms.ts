@@ -87,6 +87,5 @@ export type SelectT = FieldT & {
   items?: ListItemBase[]
   index?: number
   options?: SelectOptionsT | Promise<SelectOptionsT>,
-  model?: typeof Model,
-  labelAttribute?: string
+  relationship?: [typeof Model, string],
 };

@@ -510,10 +510,10 @@ export class RecordsPage extends Page {
 
         const select = section.fields[field.id] as SelectT;
         let {options} = select;
-        const {model, labelAttribute} = select;
+        const {relationship} = select;
 
-        if (model && labelAttribute) {
-          options = this.getModelSelectOptions(model, labelAttribute);
+        if (Array.isArray(relationship) && relationship.length === 2) {
+          options = this.getModelSelectOptions(relationship[0], relationship[1]);
         }
 
         if (options instanceof Promise) {

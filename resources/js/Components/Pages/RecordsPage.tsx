@@ -410,7 +410,10 @@ export class RecordsPage extends Page {
   }
 
   getRelation(model: IModel, relation: string, createIfNotExists = false) {
-    const relationModel = (model[`get${capitalize(relation)}`] as Function)() as IModel;
+    const relationModelGetter = model[`get${capitalize(relation)}`] as Function | undefined;
+    const relationModel: IModel | undefined = (typeof relationModelGetter === 'function'
+      ? relationModelGetter()
+      : model.getRelation(relation)) as IModel;
     if (relationModel) {
       return relationModel;
     }

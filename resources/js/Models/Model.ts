@@ -66,6 +66,10 @@ export abstract class Model extends BaseModel {
     return super.getAttributes();
   }
 
+  getRelation(relationName: string): IModel | any {
+    return super.getRelation(relationName);
+  }
+
   getJsonApiBaseUrl(): string {
     return '/api';
   }

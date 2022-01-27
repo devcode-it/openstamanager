@@ -6,6 +6,7 @@ import {
 } from '@material/mwc-textfield';
 
 import {MaterialIcons} from './icons';
+import {Model} from '../Models';
 
 export interface FieldT {
   id?: string
@@ -85,5 +86,7 @@ export type SelectT = FieldT & {
   selected?: ListItemBase | null
   items?: ListItemBase[]
   index?: number
-  options?: SelectOptionsT | Promise<SelectOptionsT>
+  options?: SelectOptionsT | Promise<SelectOptionsT>,
+  model?: typeof Model,
+  labelAttribute?: string
 };

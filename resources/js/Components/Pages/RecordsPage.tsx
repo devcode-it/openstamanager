@@ -507,7 +507,15 @@ export class RecordsPage extends Page {
           // (temporary) .first((s) => field.id in s.fields);
           .filter((s) => field.id in s.fields)
           .first();
-        let {options} = section.fields[field.id] as SelectT;
+
+        const select = section.fields[field.id] as SelectT;
+        let {options} = select;
+        const {model, labelAttribute} = select;
+
+        if (model && labelAttribute) {
+          options = this.getModelSelectOptions(model, labelAttribute);
+        }
+
         if (options instanceof Promise) {
           options = await options;
         }
@@ -541,7 +549,10 @@ export class RecordsPage extends Page {
     return list.join('');
   }
 
-  async getModelSelectOptions(model: typeof Model, labelAttribute: string): Promise<SelectOptionsT> {
+  async getModelSelectOptions(
+    model: typeof Model,
+    labelAttribute: string
+  ): Promise<SelectOptionsT> {
     const response = await model.all();
     const categories = response.getData();
 

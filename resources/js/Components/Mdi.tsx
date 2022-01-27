@@ -22,7 +22,7 @@ export default class Mdi extends Component<Attributes> {
 /**
  Quando MWC supporterà pienamente le icone SVG si potrà fare così:
  import * as mdi from '@mdi/js';
- import {camelCase} from 'lodash/string';
+ import {camelCase} from 'lodash-es';
 
  return <svg class={`mdi ${vnode.attrs.class ?? ''}`}
  {...vnode.attrs} viewBox={vnode.attrs.viewBox ?? '0 0 24 24'}>

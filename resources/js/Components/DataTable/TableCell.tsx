@@ -1,5 +1,5 @@
 import type {Cash} from 'cash-dom/dist/cash';
-import {inRange} from 'lodash';
+import {inRange} from 'lodash-es';
 import type {
   Vnode,
   VnodeDOM

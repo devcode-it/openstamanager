@@ -2,7 +2,7 @@ import {
   type PluralResponse,
   Model as BaseModel
 } from 'coloquent';
-import {snakeCase} from 'lodash';
+import {snakeCase} from 'lodash-es';
 
 export interface InstantiableModel<T extends Model = Model> {
   new (): (Model | T) & {[prop: string]: any};

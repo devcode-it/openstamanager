@@ -10,7 +10,7 @@ import {
   ToManyRelation,
   ToOneRelation
 } from 'coloquent';
-import {capitalize} from 'lodash';
+import {capitalize} from 'lodash-es';
 import type {
   Children,
   Vnode,

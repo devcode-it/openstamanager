@@ -293,18 +293,18 @@ class CSV extends CSVImporter
 
         // Salvataggio delle informazioni generali
         $articolo->fill([
-            'codice' => $record['codice'],
-            'descrizione' => $record['descrizione'],
-            'prezzo_acquisto' => $record['prezzo_acquisto'],
-            'peso_lordo' => $record['peso_lordo'],
-            'volume' => $record['volume'],
-            'um' => $record['um'],
-            'barcode' => $record['barcode'],
-            'id_fornitore' => $record['id_fornitore'],
-            'id_categoria' => $categoria->id,
-            'id_sottocategoria' => $sottocategoria->id,
-            'ubicazione' => $record['ubicazione'],
-            'note' => $record['note'],
+            'codice' => $record['codice'] ?: $articolo['codice'],
+            'descrizione' => $record['descrizione'] ?: $articolo['descrizione'],
+            'prezzo_acquisto' => $record['prezzo_acquisto'] ?: $articolo['prezzo_acquisto'],
+            'peso_lordo' => $record['peso_lordo'] ?: $articolo['peso_lordo'],
+            'volume' => $record['volume'] ?: $articolo['volume'],
+            'um' => $record['um'] ?: $articolo['um'],
+            'barcode' => $record['barcode'] ?: $articolo['barcode'],
+            'id_fornitore' => $record['id_fornitore'] ?: $articolo['id_fornitore'],
+            'id_categoria' => $categoria->id ?: $articolo['id_categoria'],
+            'id_sottocategoria' => $sottocategoria->id ?: $articolo['id_sottocategoria'],
+            'ubicazione' => $record['ubicazione'] ?: $articolo['ubicazione'],
+            'note' => $record['note'] ?: $articolo['note'],
         ]);
         $articolo->save();
 

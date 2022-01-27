@@ -26,6 +26,7 @@ import {
 } from '../../Models';
 import type {
   FieldT,
+  SelectOptionsT,
   SelectT,
   TextAreaT,
   TextFieldT
@@ -538,5 +539,15 @@ export class RecordsPage extends Page {
     }
 
     return list.join('');
+  }
+
+  async getModelSelectOptions(model: typeof Model, labelAttribute: string): Promise<SelectOptionsT> {
+    const response = await model.all();
+    const categories = response.getData();
+
+    return categories.map((instance: IModel) => ({
+      value: instance.getId() as string,
+      label: instance[labelAttribute] as string
+    }));
   }
 }

@@ -146,7 +146,7 @@ export class RecordsPage extends Page {
           {collect(this.columns)
             .map((column, index_: string) => (
               <TableCell key={index_}>
-                {this.getModelValue(instance, (column as ColumnT).id ?? index_)}
+                {this.getModelValue(instance, (column as ColumnT).id ?? index_, true)}
               </TableCell>
             ))
             .toArray()}
@@ -421,7 +421,7 @@ export class RecordsPage extends Page {
     return createIfNotExists ? new RelationshipModel() : undefined;
   }
 
-  getModelValue(model: IModel, field: string, raw = false): any {
+  getModelValue(model: IModel, field: string, useValueModifier = false, raw = false): any {
     const column = this.columns[field];
     let value: unknown;
     if (field.includes(':')) {
@@ -432,7 +432,7 @@ export class RecordsPage extends Page {
       value = model[field];
     }
 
-    if (typeof column === 'object' && column.valueModifier) {
+    if (useValueModifier && typeof column === 'object' && column.valueModifier) {
       value = column.valueModifier(value, field, model);
     }
 

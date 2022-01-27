@@ -88,6 +88,8 @@ switch ($operazione) {
         if ($numero_fatture > 0) {
             $righe_contratto = $contratto->getRighe();
             $subtotale = [];
+            $pianificata = [];
+            $non_pianificata = [];
 
             // Creazione nuove righe
             $qta = post('qta');
@@ -128,9 +130,9 @@ switch ($operazione) {
                         $riga->save();
 
                         $qta_evasa += $qta_riga;
-                        $pianificata[] = $pianificazioni[$rata];
+                        $pianificata = $pianificazioni[$rata];
                     } else {
-                        $non_pianificata[] = $pianificazioni[$rata];
+                        $non_pianificata = $pianificazioni[$rata];
                     }
                 }
                 $r->delete();

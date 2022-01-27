@@ -46,7 +46,7 @@ export type ColumnT = {
   id?: string
   title: string
   type?: 'checkbox' | 'numeric'
-  valueModifier?: (instance: IModel, property: string) => any
+  valueModifier?: (value: any, field: string, model: IModel) => any
 };
 export type SectionT = {
   heading?: string
@@ -433,7 +433,7 @@ export class RecordsPage extends Page {
     }
 
     if (typeof column === 'object' && column.valueModifier) {
-      value = column.valueModifier(model, field);
+      value = column.valueModifier(value, field, model);
     }
 
     return (value || raw) ? value : '';

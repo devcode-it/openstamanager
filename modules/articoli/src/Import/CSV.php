@@ -292,20 +292,7 @@ class CSV extends CSVImporter
         $nome_sede = $record['nome_sede'];
 
         // Salvataggio delle informazioni generali
-        $articolo->fill([
-            'codice' => $record['codice'] ?: $articolo['codice'],
-            'descrizione' => $record['descrizione'] ?: $articolo['descrizione'],
-            'prezzo_acquisto' => $record['prezzo_acquisto'] ?: $articolo['prezzo_acquisto'],
-            'peso_lordo' => $record['peso_lordo'] ?: $articolo['peso_lordo'],
-            'volume' => $record['volume'] ?: $articolo['volume'],
-            'um' => $record['um'] ?: $articolo['um'],
-            'barcode' => $record['barcode'] ?: $articolo['barcode'],
-            'id_fornitore' => $record['id_fornitore'] ?: $articolo['id_fornitore'],
-            'id_categoria' => $categoria->id ?: $articolo['id_categoria'],
-            'id_sottocategoria' => $sottocategoria->id ?: $articolo['id_sottocategoria'],
-            'ubicazione' => $record['ubicazione'] ?: $articolo['ubicazione'],
-            'note' => $record['note'] ?: $articolo['note'],
-        ]);
+        $articolo->fill($record);
         $articolo->save();
 
         // Aggiornamento dettaglio prezzi

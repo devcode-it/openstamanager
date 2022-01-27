@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import '@maicol07/mwc-layout-grid';
 import '@material/mwc-dialog';
 import '@material/mwc-fab';
@@ -144,11 +145,15 @@ export class RecordsPage extends Page {
           style="cursor: pointer"
         >
           {collect(this.columns)
-            .map((column, index_: string) => (
-              <TableCell key={index_}>
-                {this.getModelValue(instance, (column as ColumnT).id ?? index_, true)}
-              </TableCell>
-            ))
+            .map((column, index_: string) => {
+              const columnId = (column as ColumnT).id ?? index_;
+
+              this.getModelValue(instance, columnId, true).then((value: string) => {
+                $(`td#${columnId}-${index}`).text(value);
+              }).catch(() => {}).finally(() => {});
+
+              return <TableCell id={`${columnId}-${index}`} key={index_}/>;
+            })
             .toArray()}
         </TableRow>
       ))
@@ -163,9 +168,8 @@ export class RecordsPage extends Page {
 
     if (dialog) {
       for (const field of dialog.querySelectorAll(FIELDS)) {
-        const value = this.getModelValue(instance, field.id) as string;
+        const value = await this.getModelValue(instance, field.id) as string;
 
-        // eslint-disable-next-line no-await-in-loop
         field.innerHTML = await this.getFieldBody(field as HTMLFormElement, value);
 
         (field as HTMLInputElement).value = value;
@@ -384,18 +388,21 @@ export class RecordsPage extends Page {
 
     const relations: Record<string, IModel> = {};
 
-    data.each((value, field) => {
-      if (typeof field === 'string' && field.includes(':')) {
+    for (const [field, value] of Object.entries(data.all())) {
+      if (field.includes(':')) {
         let [relation, fieldName]: (string | undefined)[] = field.split(':');
+        let relationModel: IModel;
+
         if (fieldName && !relation) {
           // If the field is a model id, we need to save the relation and not the field itself
           relation = fieldName;
           fieldName = undefined;
+          relationModel = await this.getRelation(model, relation, false, Number(value)) as IModel;
+        } else {
+          relationModel = relation in relations
+            ? relations[relation]
+            : await this.getRelation(model, relation, true) as IModel;
         }
-
-        const relationModel = relation in relations
-          ? relations[relation]
-          : this.getRelation(model, relation, true);
 
         if (relationModel) {
           if (fieldName) {
@@ -404,13 +411,12 @@ export class RecordsPage extends Page {
           relations[relation] = relationModel;
         }
       } else {
-        model[field as string] = value;
+        model[field] = value;
       }
-    });
+    }
 
     // Save relations
     for (const [relation, relatedModel] of Object.entries(relations)) {
-      // eslint-disable-next-line no-await-in-loop
       const response = await relatedModel.save();
       if (response.getModelId) {
         model.setRelation(relation, response.getModelId());
@@ -421,27 +427,45 @@ export class RecordsPage extends Page {
     return response.getModelId();
   }
 
-  getRelation(model: IModel, relation: string, createIfNotExists = false) {
-    const relationModelGetter = model[`get${capitalize(relation)}`] as Function | undefined;
-    const relationModel: IModel | undefined = (typeof relationModelGetter === 'function'
-      ? relationModelGetter()
+  async getRelation(
+    model: IModel,
+    relation: string,
+    createIfNotExists: boolean = false,
+    id?: number
+  ) {
+    const getter = `get${capitalize(relation)}`;
+    const relationModel: IModel | undefined = (typeof model[getter] === 'function'
+      ? (model[getter] as Function)()
       : model.getRelation(relation)) as IModel;
+
     if (relationModel) {
       return relationModel;
     }
 
     const relationship = (model[relation] as Function)() as
       ToOneRelation<IModel> | ToManyRelation<IModel>;
-    const RelationshipModel = relationship.getType() as InstantiableModel;
-    return createIfNotExists ? new RelationshipModel() : undefined;
+    const RelationshipModel = relationship.getType() as typeof Model | InstantiableModel;
+
+    if (id) {
+      // @ts-ignore
+      const response = await (RelationshipModel as typeof Model).find(id);
+      return response.getData() as IModel;
+    }
+
+    return createIfNotExists ? new (RelationshipModel as InstantiableModel)() : undefined;
   }
 
-  getModelValue(model: IModel, field: string, useValueModifier = false, raw = false): any {
+  async getModelValue(
+    model: IModel,
+    field: string,
+    useValueModifier = false,
+    raw = false
+  ): Promise<any> {
     const column = this.columns[field];
     let value: unknown;
     if (field.includes(':')) {
       const [relation, fieldName] = field.split(':');
-      const relationModel = this.getRelation(model, relation);
+      const relationModel = await this.getRelation(model, relation);
       value = relationModel?.[fieldName];
     } else {
       value = model[field];

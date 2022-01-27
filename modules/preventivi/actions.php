@@ -99,7 +99,6 @@ switch (post('op')) {
         $new = $preventivo->replicate();
         $new->numero = Preventivo::getNextNumero(Carbon::now());
         $new->data_bozza = Carbon::now();
-        $new->data_conclusione = Carbon::now()->addMonth();
 
         $stato_preventivo = Stato::where('descrizione', '=', 'Bozza')->first();
         $new->stato()->associate($stato_preventivo);

@@ -4,16 +4,6 @@ import type {TemplateResult} from 'lit';
 import {css, html} from 'lit';
 import {customElement} from 'lit/decorators.js';
 
-import type {JSXElement} from '../typings';
-
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'material-select': JSXElement<Select>;
-    }
-  }
-}
-
 @customElement('material-select')
 export default class Select extends MWCSelect {
   static styles = [

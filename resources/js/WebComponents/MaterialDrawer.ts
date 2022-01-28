@@ -2,16 +2,6 @@ import {Drawer as MWCDrawer} from '@material/mwc-drawer';
 import {css} from 'lit';
 import {customElement} from 'lit/decorators.js';
 
-import type {JSXElement} from '../typings';
-
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'material-drawer': JSXElement<MaterialDrawer>;
-    }
-  }
-}
-
 @customElement('material-drawer')
 export default class MaterialDrawer extends MWCDrawer {
   static styles = [

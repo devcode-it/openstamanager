@@ -7,16 +7,6 @@ import {
 } from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
-import type {JSXElement} from '../typings';
-
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'text-field': JSXElement<TextField>;
-    }
-  }
-}
-
 @customElement('text-field')
 export default class TextField extends MWCTextField {
   static styles = [...MWCTextField.styles, css`${unsafeCSS(styles)}`];

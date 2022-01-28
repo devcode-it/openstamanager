@@ -199,7 +199,7 @@ export class RecordsPage extends Page {
     }
   }
 
-  recordDialog(): JSX.Element | JSX.Element[] {
+  recordDialog(): Children {
     return (
       <mwc-dialog
         id="add-record-dialog"

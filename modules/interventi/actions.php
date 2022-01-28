@@ -190,14 +190,10 @@ switch (post('op')) {
             $id_promemoria = post('idcontratto_riga');
             $idtipointervento = post('idtipointervento');
             $idsede_partenza = post('idsede_partenza');
-            $idsede_destinazione = post('idsede_destinazione');
+            $idsede_destinazione = post('idsede_destinazione') ?: 0;
 
             if (post('idclientefinale')) {
                 $intervento->idclientefinale = post('idclientefinale');
-            }
-
-            if (post('idsede_destinazione')) {
-                $intervento->idsede_destinazione = post('idsede_destinazione');
             }
 
             $intervento->id_preventivo = post('idpreventivo');

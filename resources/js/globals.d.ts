@@ -27,11 +27,13 @@ import {
   OpenSTAManager
 } from './typings';
 import type {__ as translator} from './utils';
-import MaterialDrawer from './WebComponents/MaterialDrawer';
-import Select from './WebComponents/Select';
-import TextArea from './WebComponents/TextArea';
-import TextField from './WebComponents/TextField';
-import TopAppBar from './WebComponents/TopAppBar';
+import {
+  MaterialDrawer,
+  Select,
+  TextArea,
+  TextField,
+  TopAppBar
+} from './WebComponents';
 
 declare global {
   let importPath: string;

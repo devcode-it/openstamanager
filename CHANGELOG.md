@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.29 (2022-01-28)](#2429-2022-01-28)
 - [2.4.28 (2021-12-13)](#2428-2021-12-13)
 - [2.4.27 (2021-10-25)](#2427-2021-10-26)
 - [2.4.26 (2021-09-24)](#2426-2021-09-24)
@@ -38,6 +39,63 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.3 (2018-02-16)](#23-2018-02-16)
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
+
+## 2.4.29 (2022-01-28)
+
+### Aggiunto (Added)
+ - Aggiunto campo **sito web** per l'importazione Anagrafiche
+ - Aggiunta data esportazione Ri.Ba. in scadenza
+ - Aggiunto salvataggio impianto nelle righe intervento
+ - Aggiunta stampa ordine cliente (senza codici)
+ - Aggiunta tabella nel modulo Articoli per visualizzare **ultimi prezzi**
+ - Integrazione nuove tabelle nel plugin Consuntivo
+ - Aggiunto condizioni generali di fornitura nel modulo Contratti
+ - Aggiunta azione di gruppo **Rinnova contratti** nel modulo Contratti
+ - Aggiunta modifica sottocategoria da azione di gruppo nel modulo **Articoli**
+ - Aggiunta tabella per i documenti collegati articoli
+ - Aggiunto avviso con informazioni fattura creata per import in sequenza
+ - Aggiunta colonna **protocollo** in stampa registro iva
+ - Aggiunti referenti collegati in Mansioni
+ - Aggiunta link **scadenza** ai movimenti di primanota
+ - Aggiunta vista **Email Inviata** in Ordini
+
+### Modificato (Changed)
+ - Gestione rimozione collegamento variante-attributo di una Combinazione
+ - Miglioramenti stampa riepilogo interventi
+ - Calcolo automatico **codice articolo** in fase di duplicazione se non specificato
+ - Modifica stampa preventivi senza totale per visualizzazione prezzo ivato
+ - Modifica stampa scadenzario con **intestazione ridotta**
+ - Bloccata rimozione allegati FE se fattura non è generabile
+ - Miglioramenti compilazione automatica import FE
+ - Aggiornamento terminologie fiscali
+ - Modificato controllo **stato** per rinnovo contratti
+ 
+### Fixed
+ - Fix calcolo margine percentuale
+ - Fix per import articoli senza quantità
+ - Fix calcolo prezzo vendita articolo
+ - Fix calcolo totale tra fattura e xml
+ - Fix articoli in esaurimento
+ - Fix problema iva di vendita preselezionata
+ - Fix calcolo numero protocollo in base a data registrazione
+ - Fix controllo numero intervento
+ - Fix widget preventivi in lavorazione
+ - Fix avviso modulo Iva 
+ - Fix numero lettera intento
+ - Fix numerazione rata
+ - Fix validità contratto
+ - Fix set sede in pianificazione interventi
+ - Fix vista tecnici assegnati
+ - Fix calcolo numero protocollo Parcella
+ - Fix cambio stato al rinnovo contratto
+ - Fix importazione documento in ddt
+ - Fix apertura bilancio
+ - Fix aggiunta destinatari referenti
+ - Fix aggiunta articoli Barcode
+ - Fix massimale dichiarazione d'intento
+ - Fix eliminazione pianificazione fatturazione nel modulo Contratti
+ - Fix data conclusione in fase di duplicazione preventivo
+ - Fix import CSV articolo
 
 ## 2.4.28 (2021-12-13)
 

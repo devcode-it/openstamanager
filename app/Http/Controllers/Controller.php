@@ -33,7 +33,13 @@ class Controller extends BaseController
                 ->all();
 
             // Modules (for Frontend)
-            $module->modules = $osm_modules->mapWithKeys(fn ($item, $key) => [$module->name => $item]);
+            $module->modules = $osm_modules->map(function ($item) use ($module) {
+                $split = explode('/', $module->name);
+                $item->moduleFullName = $module->name;
+                $item->moduleVendor = $split[0];
+                $item->moduleName = $split[1];
+                return $item;
+            });
 
             return $module;
         });

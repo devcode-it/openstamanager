@@ -29,7 +29,7 @@ for (const [name, module] of Object.entries(modules)) {
     // eslint-disable-next-line no-await-in-loop,@typescript-eslint/no-unsafe-assignment
     importedModules[name] = await import(
       /* @vite-ignore */
-      `${importPath}/vendor/${name}/index.js`
+      `${importPath}/vendor/${module.moduleVendor}/${name}/index.js`
     );
 
     importedModules[name].bootstrap?.();

@@ -5,5 +5,6 @@ export declare namespace OpenSTAManager {
   export interface Module {
     hasBootstrap?: boolean;
     icon: MaterialIcons;
+    moduleVendor: string;
   }
 }

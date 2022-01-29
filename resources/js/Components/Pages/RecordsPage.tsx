@@ -389,7 +389,8 @@ export class RecordsPage extends Page {
     const relations: Record<string, IModel> = {};
 
     for (const [field, value] of Object.entries(data.all())) {
-      if ((model as unknown as typeof Model).relationships.includes(field)) {
+      const proto = (Object.getPrototypeOf(model) as Model).constructor as typeof Model;
+      if (proto.relationships.includes(field)) {
         relations[field] = await this.getRelation(model, field, false, Number(value)) as IModel;
       }
 

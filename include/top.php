@@ -413,7 +413,7 @@ if (Auth::check()) {
                                 <i class="fa fa-print"></i>
                             </a></li>
 
-                            <li class="nav-button"><a href="'.base_path().'/bug.php" class="tip nav-button" title="'.tr('Segnalazione bug').'">
+                            <li class="nav-button hide"><a href="'.base_path().'/bug.php" class="tip nav-button" title="'.tr('Segnalazione bug').'">
                                 <i class="fa fa-bug"></i>
                             </a></li>
 

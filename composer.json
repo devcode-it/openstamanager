@@ -140,6 +140,9 @@
         "prefer-stable": true,
         "platform": {
             "php": "7.1"
+        },
+        "allow-plugins": {
+            "kylekatarnls/update-helper": true
         }
     }
 }

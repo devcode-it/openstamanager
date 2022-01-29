@@ -175,9 +175,6 @@ $righe = $intervento->getRighe();
         </tbody>';
 
         if ($show_prezzi) {
-
-            // Calcoli
-            $righe = $intervento->getRighe();
             
             // IMPONIBILE
             echo '

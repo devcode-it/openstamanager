@@ -386,28 +386,12 @@ export class RecordsPage extends Page {
       fields.put(key, currentItem);
     });
 
-    const relations: Record<string, IModel> = {};
+    const relations = await this.loadRelations(model, data);
 
-    for (const [field, value] of Object.entries(data.all())) {
-      const proto = (Object.getPrototypeOf(model) as Model).constructor as typeof Model;
-      if (proto.relationships.includes(field)) {
-        relations[field] = await this.getRelation(model, field, false, Number(value)) as IModel;
-      }
-
-      if (field.includes(':')) {
-        const [relation, fieldName]: (string | undefined)[] = field.split(':');
-        const relationModel: IModel = relation in relations
-          ? relations[relation]
-          : await this.getRelation(model, relation, true) as IModel;
-
-        if (relationModel) {
-          relationModel[fieldName] = value;
-          relations[relation] = relationModel;
-        }
-      } else {
-        model[field] = value;
-      }
-    }
+    await Promise.all(
+      data.except(Object.keys(relations))
+        .map((value, key: string) => this.saveModelField(model, relations, key, value as string))
+    );
 
     // Save relations
     for (const [relation, relatedModel] of Object.entries(relations)) {
@@ -419,6 +403,48 @@ export class RecordsPage extends Page {
 
     const response = await model.save();
     return response.getModelId();
+  }
+
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async saveModelField(
+    model: IModel,
+    relations: Record<string, IModel>,
+    field: string,
+    value: string
+  ) {
+    model[field] = value;
+    return true;
+  }
+
+  async loadRelations(model: IModel, data: Collection<File | string>) {
+    const relations: Record<string, IModel> = {};
+    const proto = (Object.getPrototypeOf(model) as Model).constructor as typeof Model;
+
+    const relationsData = data.filter(
+      (value: any, field: string) => proto.relationships.includes(field)
+    );
+
+    for (const [field, value] of Object.entries(relationsData.all())) {
+      relations[field] = await this.getRelation(model, field, false, Number(value)) as IModel;
+    }
+
+    const relationsFields = data.except(relationsData.keys()
+      .all())
+      .filter((value: any, field: string) => field.includes(':'));
+
+    for (const [field, value] of Object.entries(relationsFields.all())) {
+      const [relation, fieldName]: (string | undefined)[] = field.split(':');
+      const relationModel: IModel = relation in relations
+        ? relations[relation]
+        : await this.getRelation(model, relation, true) as IModel;
+
+      if (relationModel) {
+        relationModel[fieldName] = value;
+        relations[relation] = relationModel;
+      }
+    }
+
+    return relations;
   }
 
   async getRelation(

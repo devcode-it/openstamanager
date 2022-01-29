@@ -31,7 +31,7 @@ echo '
                 <th class="text-center" width="150">'.tr('Prezzo unitario').'</th>
                 <th class="text-center" width="150">'.tr('Iva unitaria').'</th>
                 <th class="text-center" width="150">'.tr('Importo').'</th>
-                <th width="60"></th>
+                <th width="60">&nbsp;</th>
             </tr>
         </thead>
 

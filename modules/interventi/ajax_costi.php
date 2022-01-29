@@ -95,7 +95,7 @@ if ($show_prezzi) {
         </td>
     </tr>';
 
-    // SCONTO
+    // Totale sconto
     if (!empty($sconto)) {
         echo '
     <tr>
@@ -130,7 +130,7 @@ if ($show_prezzi) {
         </td>
     </tr>';
 
-    // Totale preventivo
+    // Totale attività
     echo '
     <tr>
         <td colspan="3" class="text-right">

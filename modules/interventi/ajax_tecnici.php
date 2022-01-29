@@ -61,7 +61,7 @@ if (!empty($sessioni)) {
 
             if (!$is_completato) {
                 echo '
-            <th width="100" class="text-center">#</th>';
+            <th width="100" class="text-center">&nbsp;</th>';
             }
 
             echo '

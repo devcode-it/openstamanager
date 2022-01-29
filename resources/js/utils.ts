@@ -1,4 +1,5 @@
 // noinspection JSUnusedGlobalSymbols
+
 import '@material/mwc-snackbar';
 import 'mithril';
 
@@ -7,6 +8,7 @@ import type {Vnode} from 'mithril';
 import {sync as render} from 'mithril-node-render';
 
 type GenericObject = object & {prototype: any};
+
 /**
  * Check if class/object A is the same as or a subclass of class B.
  */
@@ -44,12 +46,12 @@ export async function showSnackbar(
     if (closeOtherSnackbars) {
       const snackbars = document.querySelectorAll('mwc-snackbar');
 
-      for (const snackbar of snackbars) {
-        if (snackbar.open) {
-          snackbar.close();
+      for (const snackbar1 of snackbars) {
+        if (snackbar1.open) {
+          snackbar1.close();
         }
 
-        snackbar.remove();
+        snackbar1.remove();
       }
     }
 
@@ -120,8 +122,6 @@ type ReplaceObject = Record<string, string | Vnode | number | boolean>;
  * @param {Object|boolean} replace Eventuali parametri da rimpiazzare.
  * Se il parametro è "true" (valore booleano), verrà ritornato il valore come stringa
  * (stesso funzionamento del parametro dedicato (sotto ↓))
- * @param {boolean} returnAsString Se impostato a "true" vien ritornata una stringa invece di
- * un Vnode di Mithril
  *
  * @returns {string} Stringa se non contiene HTML, altrimenti Vnode
  *
@@ -146,4 +146,16 @@ export function __(key: string, replace: ReplaceObject = {}): string {
   }
 
   return translation;
+}
+
+export function getPropertyDescriptor(object: object, property: string) {
+  return Object.getOwnPropertyDescriptor(Object.getPrototypeOf(object), property);
+}
+
+export function hasGetter(object: object, property: string): boolean {
+  return getPropertyDescriptor(object, property)?.get !== undefined;
+}
+
+export function hasSetter(object: object, property: string): boolean {
+  return getPropertyDescriptor(object, property)?.set !== undefined;
 }

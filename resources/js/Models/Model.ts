@@ -4,8 +4,13 @@ import {
 } from 'coloquent';
 import {snakeCase} from 'lodash-es';
 
+import {
+  hasGetter,
+  hasSetter
+} from '../utils';
+
 export interface InstantiableModel<T extends Model = Model> {
-  new (): (Model | T) & {[prop: string]: any};
+  new(): (Model | T) & {[prop: string]: any};
 }
 
 export type IModel<T extends Model = Model> = InstanceType<InstantiableModel<T>>;
@@ -24,6 +29,10 @@ export abstract class Model extends BaseModel {
     // eslint-disable-next-line no-constructor-return
     return new Proxy(this, {
       get(target, property: string, receiver): any {
+        if (hasGetter(target, property)) {
+          return Reflect.get(target, property, receiver);
+        }
+
         const snakeCasedProperty = snakeCase(property);
         if (snakeCasedProperty in target.getAttributes()) {
           return target.getAttribute(snakeCasedProperty);
@@ -32,6 +41,10 @@ export abstract class Model extends BaseModel {
         return Reflect.get(target, property, receiver);
       },
       set(target, property: string, value) {
+        if (hasSetter(target, property)) {
+          return Reflect.set(target, property, value);
+        }
+
         target.setAttribute(snakeCase(property), value);
         return true;
       }

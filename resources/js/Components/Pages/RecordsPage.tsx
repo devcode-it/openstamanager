@@ -388,10 +388,7 @@ export class RecordsPage extends Page {
 
     const relations = await this.loadRelations(model, data);
 
-    await Promise.all(
-      data.except(Object.keys(relations))
-        .map((value, key: string) => this.saveModelField(model, relations, key, value as string))
-    );
+    await this.saveFields(model, relations, data);
 
     // Save relations
     for (const [relation, relatedModel] of Object.entries(relations)) {
@@ -406,14 +403,26 @@ export class RecordsPage extends Page {
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  async saveModelField(
+  async saveFields(
     model: IModel,
     relations: Record<string, IModel>,
-    field: string,
-    value: string
+    data: Collection<File | string>
   ) {
-    model[field] = value;
-    return true;
+    for (const [field, value] of Object.entries(data.all())) {
+      if (field.includes(':')) {
+        const [relation, fieldName]: (string | undefined)[] = field.split(':');
+        const relationModel: IModel = relation in relations
+          ? relations[relation]
+          : await this.getRelation(model, relation, true) as IModel;
+
+        if (relationModel) {
+          relationModel[fieldName] = value;
+          relations[relation] = relationModel;
+        }
+      } else {
+        model[field] = value;
+      }
+    }
   }
 
   async loadRelations(model: IModel, data: Collection<File | string>) {
@@ -426,22 +435,6 @@ export class RecordsPage extends Page {
 
     for (const [field, value] of Object.entries(relationsData.all())) {
       relations[field] = await this.getRelation(model, field, false, Number(value)) as IModel;
-    }
-
-    const relationsFields = data.except(relationsData.keys()
-      .all())
-      .filter((value: any, field: string) => field.includes(':'));
-
-    for (const [field, value] of Object.entries(relationsFields.all())) {
-      const [relation, fieldName]: (string | undefined)[] = field.split(':');
-      const relationModel: IModel = relation in relations
-        ? relations[relation]
-        : await this.getRelation(model, relation, true) as IModel;
-
-      if (relationModel) {
-        relationModel[fieldName] = value;
-        relations[relation] = relationModel;
-      }
     }
 
     return relations;

@@ -393,8 +393,8 @@ export class RecordsPage extends Page {
     // Save relations
     for (const [relation, relatedModel] of Object.entries(relations)) {
       const response = await relatedModel.save();
-      if (response.getModelId) {
-        model.setRelation(relation, response.getModelId());
+      if (response.getModelId()) {
+        model.setRelation(relation, response.getModel());
       }
     }
 

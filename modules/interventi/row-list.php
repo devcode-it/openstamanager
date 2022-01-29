@@ -174,8 +174,6 @@ $righe = $intervento->getRighe();
     echo '
         </tbody>';
 
-        $show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
-
         if ($show_prezzi) {
 
             // Calcoli

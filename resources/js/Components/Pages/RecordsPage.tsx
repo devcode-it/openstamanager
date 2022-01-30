@@ -43,6 +43,7 @@ import TableRow from '../DataTable/TableRow';
 import LoadingButton from '../LoadingButton';
 import Mdi from '../Mdi';
 import Page from '../Page';
+import {Select} from '../../WebComponents';
 
 export type ColumnT = {
   id?: string
@@ -102,9 +103,27 @@ export class RecordsPage extends Page {
           return;
         }
 
-        await this.updateRecord($(cell).parent('tr').data('model-id') as number);
+        await this.updateRecord($(cell)
+          .parent('tr')
+          .data('model-id') as number);
       });
     }
+
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          const select = entry.target as Select;
+          if (select.fixedMenuPosition) {
+            select.addEventListener('opened', () => select.style.setProperty('--mdc-menu-min-width', `${select.offsetWidth}px`));
+          }
+        }
+      }
+    }, {threshold: [0]});
+
+    $('material-select')
+      .each((index, element) => {
+        observer.observe(element);
+      });
   }
 
   tableColumns(): JSX.Element[] {
@@ -240,7 +259,8 @@ export class RecordsPage extends Page {
                                   id: field.id ?? fieldIndex,
                                   name: field.name ?? field.id ?? fieldIndex,
                                   'data-default-value':
-                                    field.value ?? (field as SelectT).selected ?? ''
+                                    field.value ?? (field as SelectT).selected ?? '',
+                                  fixedMenuPosition: field.type === 'select'
                                 }
                               )}
                             </mwc-layout-grid-cell>

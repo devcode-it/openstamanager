@@ -2,8 +2,8 @@
 
 /** @noinspection UnusedFunctionResultInspection */
 
-use App\Http\Controllers\Api\UserController;
-use Illuminate\Support\Facades\Route;
+use LaravelJsonApi\Laravel\Facades\JsonApiRoute;
+use LaravelJsonApi\Laravel\Http\Controllers\JsonApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,7 +16,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::apiResource('users', UserController::class);
+JsonApiRoute::server('v1')
+    ->prefix('v1')
+    ->resources(function ($server) {
+        $server->resource('users', JsonApiController::class);
+    });
 
 /*
  * Prossimamente, per le chiamate alla API autenticate:

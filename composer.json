@@ -39,6 +39,7 @@
     "innocenzi/laravel-vite": "^0",
     "laravel/framework": "^8",
     "laravel/tinker": "^2",
+    "laravel-json-api/laravel": "^1",
     "maicol07/laravel-json-api-resource": "dev-master",
     "nette/utils": "^3",
     "riverskies/laravel-mobile-detect": "^1",

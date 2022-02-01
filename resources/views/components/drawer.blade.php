@@ -1,7 +1,7 @@
 <mwc-list activatable>
     @php
-        /** @var \Illuminate\Support\Collection $modules */
-        $entries = $modules->pluck('drawer_entries')
+        assert($modules instanceof \Illuminate\Support\Collection);
+        $entries = $modules->pluck('config.drawer_entries')
             ->collapse()
             ->prepend([
                 'icon' => 'view-dashboard-outline',

@@ -27,8 +27,8 @@ class Controller extends BaseController
         $modules->transform(function ($module) {
             $osm_modules = collect($module->extra->{'osm-modules'});
 
-            $module->drawer_entries = $osm_modules
-                ->mapWithKeys(fn ($item, $name) => config("$name.drawer_entries"))
+            $module->config = $osm_modules
+                ->mapWithKeys(fn($item, $name) => config("$name"))
                 ->whereNotNull()
                 ->all();
 

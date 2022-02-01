@@ -374,7 +374,7 @@ export class RecordsPage extends Page {
       // @ts-ignore
       const instance = this.rows.get(data.get('id'), new this.model() as IModel) as IModel;
 
-      const modelId = await this.setter(instance, data);
+      const modelId = await this.setter(instance, data.except(['id']));
 
       if (modelId) {
         // @ts-ignore
@@ -428,7 +428,8 @@ export class RecordsPage extends Page {
     relations: Record<string, IModel>,
     data: Collection<File | string>
   ) {
-    for (const [field, value] of Object.entries(data.all())) {
+    for (const [field, value] of Object.entries(data.except(Object.keys(relations))
+      .all())) {
       if (field.includes(':')) {
         const [relation, fieldName]: (string | undefined)[] = field.split(':');
         const relationModel: IModel = relation in relations

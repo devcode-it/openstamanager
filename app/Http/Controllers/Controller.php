@@ -18,11 +18,11 @@ class Controller extends BaseController
     use DispatchesJobs;
     use ValidatesRequests;
 
-    public function getModules(Request $request, ?array $filter = null): JsonResponse|Collection
+    public function getModules(?Request $request = null, ?array $filter = null): JsonResponse|Collection
     {
         $packages = collect(Json::decode(File::get(base_path('vendor/composer/installed.json')))->packages);
 
-        $modules = $packages->filter(fn ($package) => $package->type === 'openstamanager-module');
+        $modules = $packages->filter(fn($package) => $package->type === 'openstamanager-module');
 
         $modules->transform(function ($module) {
             $osm_modules = collect($module->extra->{'osm-modules'});
@@ -46,6 +46,6 @@ class Controller extends BaseController
 
         $filtered = $modules->only($filter);
 
-        return $request->wantsJson() ? response()->json($filtered) : $filtered;
+        return ($request && $request->wantsJson()) ? response()->json($filtered) : $filtered;
     }
 }

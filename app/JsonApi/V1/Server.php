@@ -30,9 +30,8 @@ class Server extends BaseServer
             ->getModules()
             ->pluck('config.api.schemas')
             ->reject(null)
-            ->merge([
-                UserSchema::class,
-            ])->all();
+            ->push(UserSchema::class)
+            ->all();
     }
 
     /**

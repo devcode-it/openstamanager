@@ -31,6 +31,7 @@ class Server extends BaseServer
             ->pluck('config.api.schemas')
             ->reject(null)
             ->push(UserSchema::class)
+            ->flatten()
             ->all();
     }
 

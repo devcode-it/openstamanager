@@ -28,8 +28,8 @@ class Controller extends BaseController
             $osm_modules = collect($module->extra->{'osm-modules'});
 
             $module->config = $osm_modules
-                ->mapWithKeys(fn($item, $name) => config("$name"))
-                ->whereNotNull()
+                ->mapWithKeys(fn($item, $name) => config($name) ?? include base_path("vendor/$module->name/config/{$name}.php"))
+                ->reject(null)
                 ->all();
 
             // Modules (for Frontend)
@@ -38,6 +38,7 @@ class Controller extends BaseController
                 $item->moduleFullName = $module->name;
                 $item->moduleVendor = $split[0];
                 $item->moduleName = $split[1];
+
                 return $item;
             });
 

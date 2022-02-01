@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -42,7 +44,12 @@ class ApiController extends Controller
 
         foreach ($request->input('data.relationships') as $key => $data) {
             $model = $this->relationships[$key];
-            $instance->{$key}()->associate($model::find(Arr::get($data, 'data.id')));
+            $relation = $instance->{$key}();
+            if ($relation instanceof HasOne) {
+                $relation->save($model::find(Arr::get($data, 'data.id')));
+            } elseif ($relation instanceof HasMany) {
+                $relation->saveMany($model::findMany(Arr::get($data, 'data.id')));
+            }
         }
 
         $created = $instance->save();

@@ -22,26 +22,26 @@ include_once __DIR__.'/init.php';
 $show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
 $righe = $intervento->getRighe();
-if (!$righe->isEmpty()) {
+
     echo '
 <div class="table-responsive">
     <table class="table table-striped table-hover table-condensed table-bordered">
         <thead>
             <tr>
                 <th>'.tr('Descrizione').'</th>
-                <th class="text-center" width="8%">'.tr('Q.tà').'</th>';
+                <th class="text-center" width="80">'.tr('Q.tà').'</th>';
 
     if ($show_prezzi) {
         echo '
-                <th class="text-center" width="15%">'.tr('Prezzo di acquisto').'</th>
-                <th class="text-center" width="15%">'.tr('Prezzo di vendita').'</th>
-                <th class="text-center" width="10%">'.tr('Iva unitaria').'</th>
-                <th class="text-center" width="15%">'.tr('Importo').'</th>';
+                <th class="text-center" width="150">'.tr('Prezzo di acquisto').'</th>
+                <th class="text-center" width="150">'.tr('Prezzo di vendita').'</th>
+                <th class="text-center" width="150">'.tr('Iva unitaria').'</th>
+                <th class="text-center" width="150">'.tr('Importo').'</th>';
     }
 
     if (!$record['flag_completato']) {
         echo '
-                <th class="text-center" width="120" class="text-center">'.tr('#').'</th>';
+                <th class="text-center" width="60" class="text-center">'.tr('&nbsp;').'</th>';
     }
     echo '
             </tr>
@@ -172,13 +172,27 @@ if (!$righe->isEmpty()) {
     }
 
     echo '
-        </tbody>
+        </tbody>';
+
+        if ($show_prezzi) {
+            
+            // IMPONIBILE
+            echo '
+            <tr>
+                <td colspan="'.((!$record['flag_completato']) ? 5 : 4).'" class="text-right">
+                    <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
+                </td>
+                <td class="text-right">
+                    '.moneyFormat($righe->sum('totale_imponibile'), 2).'
+                </td>
+                <td></td>
+            </tr>';
+
+        }
+
+    echo'
     </table>
 </div>';
-} else {
-    echo '
-<p>'.tr('Nessuna riga presente').'.</p>';
-}
 
 echo '
 <script type="text/javascript">

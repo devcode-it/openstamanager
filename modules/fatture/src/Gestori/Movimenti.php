@@ -122,6 +122,13 @@ class Movimenti
 
             $imponibile = $riga->totale_imponibile;
             $imponibile = $is_nota ? -$imponibile : $imponibile; // Inversione di segno per le note
+
+            $rivalsa_inps = $is_nota ? -$riga->rivalsa_inps : $riga->rivalsa_inps;
+
+            if ($this->fattura->direzione == 'uscita') {
+                $imponibile = sum($imponibile, $rivalsa_inps);
+            }
+
             if (!empty($imponibile)) {
                 $movimenti[] = [
                     'id_conto' => $id_conto,
@@ -176,9 +183,7 @@ class Movimenti
         * 5) Rivalsa INPS sul relativo conto
         * Rivalsa INPS (senza IVA) -> AVERE per Vendita, DARE per Acquisto
         */
-        $rivalsa_inps = $this->fattura->rivalsa_inps;
-        $rivalsa_inps = $is_nota ? -$rivalsa_inps : $rivalsa_inps; // Inversione di segno per le note
-        if (!empty($rivalsa_inps)) {
+        if (!empty($rivalsa_inps) && $this->fattura->direzione == 'entrata') {
             $id_conto = setting('Conto per Erario c/INPS');
             $movimenti[] = [
                 'id_conto' => $id_conto,

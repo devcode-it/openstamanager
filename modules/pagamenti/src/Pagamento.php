@@ -20,7 +20,7 @@
 namespace Modules\Pagamenti;
 
 use Common\SimpleModelTrait;
-use DateTime;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Pagamento extends Model
@@ -49,18 +49,27 @@ class Pagamento extends Model
         $results = [];
         $count = 0;
         foreach ($rate as $key => $rata) {
-            $date = new DateTime($data);
-
+            $date = new Carbon($data);
+            
             // X giorni esatti
             if ($rata['giorno'] == 0) {
                 // Offset della rata
-                $date->modify('+'.($rata['num_giorni']).' day');
+                if ($rata['num_giorni']%30 == 0){
+                    $date->addMonthsNoOverflow( round($rata['num_giorni']/30) );
+                } else {
+                    $date->addDay( $rata['num_giorni'] );
+                }
             }
 
             // Ultimo del mese
             elseif ($rata['giorno'] < 0) {
-                // Offset della rata in mesi
-                $date->modify('+'.($rata['num_giorni'].' day'));
+                // Offset della rata
+                if ($rata['num_giorni']%30 == 0){
+                    $date->addMonthsNoOverflow( round($rata['num_giorni']/30) );
+                } else {
+                    $date->addDay( $rata['num_giorni'] );
+                }
+
                 $date->modify('last day of this month');
 
                 // Opzione ultimo del mese più X giorni
@@ -75,8 +84,12 @@ class Pagamento extends Model
             // Giorno preciso del mese
             else {
                 // Offset della rata
-                $date->modify('+'.($rata['num_giorni']).' day');
-
+                if ($rata['num_giorni']%30 == 0){
+                    $date->addMonthsNoOverflow( round($rata['num_giorni']/30) );
+                } else {
+                    $date->addDay( $rata['num_giorni'] );
+                }
+                
                 // Individuazione giorno effettivo (se il giorno indicato è eccessivamente grande, viene preso il massimo possibile)
                 $date->modify('last day of this month');
                 $last_day = $date->format('d');

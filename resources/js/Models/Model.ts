@@ -84,7 +84,7 @@ export abstract class Model extends BaseModel {
   }
 
   getJsonApiBaseUrl(): string {
-    return '/api';
+    return '/api/v1';
   }
 
   getJsonApiType(): string {

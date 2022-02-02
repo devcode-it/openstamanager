@@ -31,11 +31,13 @@ import type {
   TextAreaT,
   TextFieldT
 } from '../../typings';
+import {JSONAPI} from '../../typings';
 import {
   getFormData,
   isFormValid,
   showSnackbar
 } from '../../utils';
+import type {Select} from '../../WebComponents';
 import DataTable from '../DataTable/DataTable';
 import TableCell from '../DataTable/TableCell';
 import TableColumn from '../DataTable/TableColumn';
@@ -43,7 +45,6 @@ import TableRow from '../DataTable/TableRow';
 import LoadingButton from '../LoadingButton';
 import Mdi from '../Mdi';
 import Page from '../Page';
-import {Select} from '../../WebComponents';
 
 export type ColumnT = {
   id?: string
@@ -388,14 +389,14 @@ export class RecordsPage extends Page {
         }
 
         this.rows.put(model.getId(), model);
-        loading.hide();
         m.redraw();
         await showSnackbar(__('Record salvato'), 4000);
       }
     } else {
-      loading.hide();
       await showSnackbar(__('Campi non validi. Controlla i dati inseriti'));
     }
+
+    loading.hide();
   }
 
   async setter(model: IModel, data: Collection<File | string>) {
@@ -410,16 +411,23 @@ export class RecordsPage extends Page {
 
     await this.saveFields(model, relations, data);
 
-    // Save relations
-    for (const [relation, relatedModel] of Object.entries(relations)) {
-      const response = await relatedModel.save();
-      if (response.getModelId()) {
-        model.setRelation(relation, response.getModel());
+    try {
+      // Save relations
+      for (const [relation, relatedModel] of Object.entries(relations)) {
+        const response = await relatedModel.save();
+        if (response.getModelId()) {
+          model.setRelation(relation, response.getModel());
+        }
       }
-    }
 
-    const response = await model.save();
-    return response.getModelId();
+      const response = await model.save();
+      return response.getModelId();
+    } catch (error) {
+      const {errors} = (error as JSONAPI.RequestError).response.data;
+      const errorMessage = errors.map((error_) => error_.detail)
+        .join(';\n');
+      void showSnackbar(__('Errore durante il salvataggio: :error', {error: errorMessage}), false);
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await

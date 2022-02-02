@@ -15,6 +15,9 @@
     <MarkdownNavigatorCodeStyleSettings>
       <option name="WRAP_ON_TYPING" value="1" />
     </MarkdownNavigatorCodeStyleSettings>
+    <PHPCodeStyleSettings>
+      <option name="VARIABLE_NAMING_STYLE" value="SNAKE_CASE" />
+    </PHPCodeStyleSettings>
     <TypeScriptCodeStyleSettings version="0">
       <option name="FORCE_SEMICOLON_STYLE" value="true" />
       <option name="PREFER_AS_TYPE_CAST" value="true" />

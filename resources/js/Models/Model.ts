@@ -1,6 +1,7 @@
 import {
   type PluralResponse,
-  Model as BaseModel
+  Model as BaseModel,
+  PaginationStrategy
 } from 'coloquent';
 import {snakeCase} from 'lodash-es';
 
@@ -21,6 +22,7 @@ export type IModel<T extends Model = Model> = InstanceType<InstantiableModel<T>>
 export abstract class Model extends BaseModel {
   public static relationships: string[] = [];
   protected jsonApiType: string = '';
+  protected static paginationStrategy = PaginationStrategy.PageBased;
 
   constructor() {
     super();

@@ -921,7 +921,6 @@ $(document).ready(function () {
 
     $("#data_registrazione").on("dp.change", function (e) {
         let data_competenza = $("#data_competenza");
-        data_competenza.data("DateTimePicker").minDate(e.date);
 
         if(data_competenza.data("DateTimePicker").date() < e.date){
             data_competenza.data("DateTimePicker").date(e.date);

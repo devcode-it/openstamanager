@@ -21,8 +21,8 @@ export type IModel<T extends Model = Model> = InstanceType<InstantiableModel<T>>
  */
 export abstract class Model extends BaseModel {
   public static relationships: string[] = [];
-  protected jsonApiType: string = '';
   protected static paginationStrategy = PaginationStrategy.PageBased;
+  protected static jsonApiBaseUrl = '/api/v1';
 
   constructor() {
     super();
@@ -77,20 +77,8 @@ export abstract class Model extends BaseModel {
     super.setAttribute(attributeName, value);
   }
 
-  getAttributes(): {[p: string]: any} {
-    return super.getAttributes();
-  }
-
   getRelation(relationName: string): IModel | any {
     return super.getRelation(relationName);
-  }
-
-  getJsonApiBaseUrl(): string {
-    return '/api/v1';
-  }
-
-  getJsonApiType(): string {
-    return (super.getJsonApiType() ?? snakeCase(this.constructor.name));
   }
 
   getId() {

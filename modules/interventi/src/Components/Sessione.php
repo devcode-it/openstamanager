@@ -365,13 +365,13 @@ class Sessione extends Model
     }
 
     /**
-     * Restituisce la spesa (costo_unitario * qta) relativa all'elemento.
+     * Restituisce la spesa relativa all'elemento.
      *
      * @return float
      */
     public function getSpesaAttribute()
     {
-        return $this->costo_manodopera;
+        return $this->costo_manodopera + $this->costo_viaggio + $this->costo_diritto_chiamata;
     }
 
     /**

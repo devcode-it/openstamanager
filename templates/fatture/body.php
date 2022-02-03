@@ -25,8 +25,8 @@ $v_iva = [];
 $v_totale = [];
 
 // Creazione righe fantasma
-$autofill = new \Util\Autofill(6, 60);
-$rows_per_page = $fattura_accompagnatoria ? 18 : 23;
+$autofill = new \Util\Autofill(6, 40);
+$rows_per_page = $fattura_accompagnatoria ? 13 : 18;
 if (!empty($options['last-page-footer'])) {
     $rows_per_page += 7;
 }

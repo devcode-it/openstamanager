@@ -20,19 +20,25 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Interventi\Intervento;
+use Modules\Iva\Aliquota;
 
 $intervento = Intervento::find($record['id']);
 $sessioni = $intervento->sessioni;
+$iva_predefinita = floatval(Aliquota::find(setting('Iva predefinita'))->percentuale);
 
 $ore = $sessioni->sum('ore');
-$imponibile = empty($options['dir']) ? $intervento->imponibile : $intervento->spesa;
-$sconto = empty($options['dir']) ? $intervento->sconto : 0;
-$totale_imponibile = empty($options['dir']) ? $intervento->totale_imponibile : $intervento->spesa;
+$imponibile = $tipo=='cliente' ? $intervento->imponibile : $intervento->spesa;
+$sconto = $tipo=='cliente' ? $intervento->sconto : 0;
+$totale_imponibile = $tipo=='cliente' ? $intervento->totale_imponibile : $intervento->spesa;
+$iva = $tipo=='cliente' ? $intervento->iva : (($intervento->spesa * $iva_predefinita) / 100);
+$totale_ivato = $tipo=='cliente' ? $intervento->totale : ($intervento->spesa + $iva);
 
 $somma_ore[] = $ore;
 $somma_imponibile[] = $imponibile;
 $somma_sconto[] = $sconto;
 $somma_totale_imponibile[] = $totale_imponibile;
+$somma_iva[] = $iva;
+$somma_totale_ivato[] = $totale_ivato;
 
 $pricing = isset($pricing) ? $pricing : true;
 
@@ -57,8 +63,12 @@ echo '
         <p><small><b>'.tr('Cliente').':</b> '.$intervento->anagrafica->ragione_sociale.'</small></p>
         <p><small><b>'.tr('Stato').':</b> '.$intervento->stato->descrizione.'</small></p>
         <p><small><b>'.tr('Data richiesta').':</b> '.dateFormat($intervento->data_richiesta).'</small></p>
-        <p><small><b>'.tr('Richiesta').':</b> '.$intervento->richiesta.'</p>
-        <p><b>'.tr('Descrizione').':</b> '.$intervento->descrizione.'</small></p>
+        <p><small><b>'.tr('Richiesta').':</b> '.$intervento->richiesta.'</p>';
+    if ($intervento->descrizione) {
+    echo'
+        <p><b>'.tr('Descrizione').':</b> '.$intervento->descrizione.'</small></p>';
+    }
+echo '
     </td>
     <td class="text-center">'.Translator::numberToLocale($ore).'</td>
     <td class="text-center">'.($pricing ? moneyFormat($imponibile, 2) : '-').'</td>
@@ -97,13 +107,13 @@ if (!$righe->isEmpty()) {
     <td style="border-top: 0; border-bottom: 0;"></td>
     <th style="background-color: #eee" colspan="2"><small>'.tr('Materiale utilizzato e spese aggiuntive').'</small></th>
     <th class="text-center" style="background-color: #eee"><small>'.tr('Qta').'</small></th>
-    <th class="text-center" style="background-color: #eee"><small>'.tr('Prezzo unitario').'</small></th>
-    <th class="text-center" style="background-color: #eee"><small>'.tr('Imponibile').'</small></th>
+    <th class="text-center" style="background-color: #eee"><small>'.($tipo=='cliente' ? tr('Prezzo unitario') : tr('Costo unitario')).'</small></th>
+    <th class="text-center" style="background-color: #eee"><small>'.($tipo=='cliente' ? tr('Imponibile') : tr('Costo netto')).'</small></th>
 </tr>';
 
     foreach ($righe as $riga) {
-        $prezzo = empty($options['dir']) ? $riga->prezzo_unitario : $riga->costo_unitario;
-        $totale = empty($options['dir']) ? $riga->totale_imponibile : $riga->spesa;
+        $prezzo = $tipo=='cliente' ? $riga->prezzo_unitario : $riga->costo_unitario;
+        $totale = $tipo=='cliente' ? $riga->totale_imponibile : $riga->spesa;
 
         echo '
 <tr>

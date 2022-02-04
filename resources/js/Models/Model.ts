@@ -43,7 +43,7 @@ export abstract class Model extends BaseModel {
         return Reflect.get(target, property, receiver);
       },
       set(target, property: string, value) {
-        if (hasSetter(target, property)) {
+        if (hasSetter(target, property) || property === 'id') {
           return Reflect.set(target, property, value);
         }
 

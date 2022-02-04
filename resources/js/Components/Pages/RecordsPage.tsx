@@ -438,6 +438,7 @@ export class RecordsPage extends Page {
   ) {
     for (const [field, value] of Object.entries(data.except(Object.keys(relations))
       .all())) {
+      const fieldValue = value !== '' ? value : undefined;
       if (field.includes(':')) {
         const [relation, fieldName]: (string | undefined)[] = field.split(':');
         const relationModel: IModel = relation in relations
@@ -445,11 +446,11 @@ export class RecordsPage extends Page {
           : await this.getRelation(model, relation, true) as IModel;
 
         if (relationModel) {
-          relationModel[fieldName] = value;
+          relationModel[fieldName] = fieldValue;
           relations[relation] = relationModel;
         }
       } else {
-        model[field] = value;
+        model[field] = fieldValue;
       }
     }
   }

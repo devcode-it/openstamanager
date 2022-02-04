@@ -113,20 +113,4 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 
 -- Aggiunte note interne in Contratti e Preventivi
 ALTER TABLE `co_preventivi` ADD `informazioniaggiuntive` TEXT NULL DEFAULT NULL AFTER `sconto_finale_percentuale`; 
-ALTER TABLE `co_contratti` ADD `informazioniaggiuntive` TEXT NULL DEFAULT NULL AFTER `sconto_finale_percentuale`; 
-
--- Aggiunta righe aggiuntive per tipologia intervento
-CREATE TABLE `in_righe_tipiinterventi` (
-  `id` int NOT NULL,
-  `id_tipointervento` varchar(25) NOT NULL,
-  `descrizione` varchar(255) DEFAULT NULL,
-  `qta` decimal(12,4) NOT NULL,
-  `um` varchar(25) DEFAULT NULL,
-  `prezzo_acquisto` decimal(12,4) NOT NULL,
-  `prezzo_vendita` decimal(12,4) NOT NULL,
-  `idiva` int NOT NULL,
-  `subtotale` decimal(12,4) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP ,
-PRIMARY KEY (`id`)) ENGINE = InnoDB; 
-ALTER TABLE `in_righe_tipiinterventi` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT;
+ALTER TABLE `co_contratti` ADD `informazioniaggiuntive` TEXT NULL DEFAULT NULL AFTER `sconto_finale_percentuale`;

@@ -4,6 +4,7 @@ import '@material/mwc-dialog';
 import '@material/mwc-fab';
 import '@material/mwc-snackbar';
 
+import type {Button as MWCButton} from '@material/mwc-button';
 import type {Dialog as MWCDialog} from '@material/mwc-dialog';
 import type {Cash} from 'cash-dom';
 import collect, {type Collection} from 'collect.js';
@@ -73,6 +74,8 @@ export class RecordsPage extends Page {
   dialogs: Children[];
   recordDialogMaxWidth: string | number = 'auto';
   model: typeof Model;
+  /** A list of relations to delete when deleting the record */
+  relationsToDelete: string[] = [];
 
   /**
    * What fields should take precedence when saving the record
@@ -82,7 +85,8 @@ export class RecordsPage extends Page {
   async oninit(vnode: Vnode) {
     super.oninit(vnode);
     // @ts-ignore
-    const response = await this.model.with(this.model.relationships).get();
+    const response = await this.model.with(this.model.relationships)
+      .get();
     const data = response.getData() as Model[];
 
     if (data.length > 0) {
@@ -199,21 +203,7 @@ export class RecordsPage extends Page {
       $(dialog)
         .find('mwc-button#delete-button')
         .show()
-        .on('click', () => {
-          const confirmDialog = $('mwc-dialog#confirm-delete-record-dialog');
-          const confirmButton = confirmDialog.find('mwc-button#confirm-button');
-          const loading: Cash = confirmButton.find('mwc-circular-progress');
-          confirmButton.on('click', async () => {
-            loading.show();
-            await instance.delete();
-            // noinspection JSUnresolvedVariable
-            this.rows.forget(instance.getId());
-            m.redraw();
-            await showSnackbar(__('Record eliminato!'), 4000);
-          });
-          loading.hide();
-          (confirmDialog.get(0) as MWCDialog).show();
-        });
+        .on('click', this.openDeleteRecordDialog.bind(this, dialog, instance));
 
       dialog.show();
     }
@@ -357,11 +347,23 @@ export class RecordsPage extends Page {
         (field as HTMLInputElement).value = $(field)
           .data('default-value') as string;
       });
-    dialog.find('mwc-button[type="submit"] mwc-circular-progress').hide();
-    dialog.find('mwc-button#delete-button').hide();
+    dialog.find('mwc-button[type="submit"] mwc-circular-progress')
+      .hide();
+    dialog.find('mwc-button#delete-button')
+      .hide();
     const dialogElement: HTMLElement & Partial<MWCDialog> | undefined = dialog.get(0);
     if (dialogElement) {
       (dialogElement as MWCDialog).show();
+    }
+  }
+
+  openDeleteRecordDialog(recordDialog: MWCDialog, instance: IModel) {
+    const dialog: MWCDialog | null = document.querySelector('mwc-dialog#confirm-delete-record-dialog');
+    if (dialog) {
+      dialog.show();
+      const confirmButton: MWCButton | null = dialog.querySelector('mwc-button#confirm-button');
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      confirmButton?.addEventListener('click', this.deleteRecord.bind(this, recordDialog, dialog, confirmButton, instance));
     }
   }
 
@@ -453,6 +455,38 @@ export class RecordsPage extends Page {
         model[field] = fieldValue;
       }
     }
+  }
+
+  async deleteRecord(
+    recordDialog: MWCDialog,
+    dialog: MWCDialog,
+    button: MWCButton,
+    instance: IModel
+  ) {
+    const loading = $(button.querySelector('mwc-circular-progress'));
+    loading.show();
+
+    try {
+      for (const relation of this.relationsToDelete) {
+        const relatedModel = await this.getRelation(instance, relation, false);
+        if (relatedModel) {
+          await relatedModel.delete();
+        }
+      }
+      await instance.delete();
+      this.rows.forget(instance.getId());
+      m.redraw();
+      void showSnackbar(__('Record eliminato!'), 4000);
+      dialog.close();
+      recordDialog.close();
+    } catch (error) {
+      const {errors} = (error as JSONAPI.RequestError).response.data;
+      const errorMessage = errors.map((error_) => error_.detail)
+        .join(';\n');
+      void showSnackbar(__('Errore durante l\'eliminazione: :error', {error: errorMessage}), false);
+    }
+
+    loading.hide();
   }
 
   async loadRelations(model: IModel, data: Collection<File | string>) {

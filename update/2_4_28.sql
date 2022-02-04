@@ -20,7 +20,7 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Combinazioni'), 'Codice', 'mg_combinazioni.codice', 1, 1, 0, 0, '', '', 1, 0, 0);
 
 -- Aggiunta impostazione per impostare o meno il riferimento del documento
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Aggiungi riferimento tra documenti', '1', 'boolean', '1', 'Generali', '18', 'Permette l\'aggiunta del riferimento al documento nella descrizione della riga importata');
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Aggiungi riferimento tra documenti', '1', 'boolean', '1', 'Generali', '18', 'Permette l''aggiunta del riferimento al documento nella descrizione della riga importata');
 
 -- Aggiunto controllo sul widget fatturato per non conteggiare le fatture in Bozza
 UPDATE `zz_widgets` SET `query` = 'SELECT\n CONCAT_WS(\' \', REPLACE(REPLACE(REPLACE(FORMAT((\n SELECT SUM(\n (co_righe_documenti.subtotale - co_righe_documenti.sconto) * IF(co_tipidocumento.reversed, -1, 1)\n )\n ), 2), \',\', \'#\'), \'.\', \',\'), \'#\', \'.\'), \'&euro;\') AS dato\nFROM co_righe_documenti\n INNER JOIN co_documenti ON co_righe_documenti.iddocumento = co_documenti.id\n INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id\n INNER JOIN co_statidocumento ON co_documenti.idstatodocumento = co_statidocumento.id\nWHERE co_statidocumento.descrizione!=\'Bozza\' AND co_tipidocumento.dir=\'entrata\' |segment| AND data >= \'|period_start|\' AND data <= \'|period_end|\' AND 1=1' WHERE `zz_widgets`.`name` = 'Fatturato';
@@ -65,9 +65,9 @@ ALTER TABLE `in_statiintervento` ADD `notifica_tecnico_assegnato` TINYINT(4) NOT
 
 UPDATE `in_statiintervento` SET `notifica_tecnico_assegnato`=`notifica_tecnico_sessione`;
 
-UPDATE `zz_settings` SET `nome` = 'Notifica al tecnico l\'aggiunta della sessione nell\'attività', `order`=15 WHERE `zz_settings`.`nome` = 'Notifica al tecnico l\'assegnazione all\'attività';
+UPDATE `zz_settings` SET `nome` = 'Notifica al tecnico l''aggiunta della sessione nell''attività', `order`=15 WHERE `zz_settings`.`nome` = 'Notifica al tecnico l''assegnazione all''attività';
 
-UPDATE `zz_settings` SET `nome` = 'Notifica al tecnico la rimozione della sessione dall\'attività', `order`=16 WHERE `zz_settings`.`nome` = 'Notifica al tecnico la rimozione dall\'attività';
+UPDATE `zz_settings` SET `nome` = 'Notifica al tecnico la rimozione della sessione dall''attività', `order`=16 WHERE `zz_settings`.`nome` = 'Notifica al tecnico la rimozione dall''attività';
 
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Notifica al tecnico l''assegnazione all''attività', '0', 'boolean', '1', 'Attività', 17, 'Notifica via email al tecnico l''assegnazione di una nuova attività  (l''indirizzo email deve essere specificato nella sua anagrafica)');
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Notifica al tecnico la rimozione dell''assegnazione dall''attività', '0', 'boolean', '1', 'Attività', 18, 'Notifica via email al tecnico la rimozione dell''assegnazione dall''attività (l''indirizzo email deve essere specificato nella sua anagrafica)');
@@ -79,7 +79,7 @@ UPDATE `co_righe_documenti` SET `subtotale`=-`subtotale` WHERE `subtotale`>0 AND
 UPDATE `co_righe_documenti` SET `iva`=-`iva` WHERE `iva`>0 AND `iva_unitaria`<0;
 
 -- Modifica impostazione eliminazione automatica coda d'invio
-UPDATE `zz_settings` SET `help` = 'L\'impostazione è valida solamente per l\'eliminazione della coda d\'invio delle newsletter.' WHERE `zz_settings`.`nome` = 'Numero di giorni mantenimento coda di invio';
+UPDATE `zz_settings` SET `help` = 'L''impostazione è valida solamente per l''eliminazione della coda d''invio delle newsletter.' WHERE `zz_settings`.`nome` = 'Numero di giorni mantenimento coda di invio';
 
 -- Migliorie modulo Coda di invio
 INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`, `note`, `predefined`, `predefined_accredito`, `predefined_addebito`, `is_fiscale`) VALUES
@@ -129,4 +129,4 @@ CREATE TABLE `in_righe_tipiinterventi` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP ,
 PRIMARY KEY (`id`)) ENGINE = InnoDB; 
-ALTER TABLE `in_righe_tipiinterventi` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT; 
+ALTER TABLE `in_righe_tipiinterventi` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT;

@@ -183,10 +183,36 @@ $righe = $intervento->getRighe();
                     <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
                 </td>
                 <td class="text-right">
-                    '.moneyFormat($righe->sum('totale_imponibile'), 2).'
+                    '.moneyFormat($intervento->imponibile, 2).'
                 </td>
                 <td></td>
             </tr>';
+
+        // SCONTO
+        if (!empty($intervento->sconto)) {
+            echo '
+            <tr>
+                <td colspan="'.((!$record['flag_completato']) ? 5 : 4).'" class="text-right">
+                    <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
+                </td>
+                <td class="text-right">
+                    '.moneyFormat($intervento->sconto, 2).'
+                </td>
+                <td></td>
+            </tr>';
+
+            // Totale imponibile scontato
+            echo '
+            <tr>
+                <td colspan="'.((!$record['flag_completato']) ? 5 : 4).'" class="text-right">
+                    <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
+                </td>
+                <td class="text-right">
+                    '.moneyFormat($intervento->totale_imponibile, 2).'
+                </td>
+                <td></td>
+            </tr>';
+        }
 
         }
 

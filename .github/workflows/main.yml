@@ -126,4 +126,4 @@ jobs:
     - name: Execute tests
       run: |
         cd python-tests/
-        pytest tests
+        python -m unittest discover tests -p '*.py'

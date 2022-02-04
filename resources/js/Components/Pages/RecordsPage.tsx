@@ -401,6 +401,7 @@ export class RecordsPage extends Page {
     loading.hide();
   }
 
+  // eslint-disable-next-line consistent-return
   async setter(model: IModel, data: Collection<File | string>) {
     const firstFields = data.only(this.fieldsPrecedence);
     const fields = data.except(this.fieldsPrecedence);
@@ -411,7 +412,7 @@ export class RecordsPage extends Page {
 
     const relations = await this.loadRelations(model, data);
 
-    await this.saveFields(model, relations, data);
+    await this.setFields(model, relations, data);
 
     try {
       // Save relations
@@ -433,7 +434,7 @@ export class RecordsPage extends Page {
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  async saveFields(
+  async setFields(
     model: IModel,
     relations: Record<string, IModel>,
     data: Collection<File | string>

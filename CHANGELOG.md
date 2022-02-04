@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.30 (2022-02-04)](#2430-2022-02-04)
 - [2.4.29 (2022-01-28)](#2429-2022-01-28)
 - [2.4.28 (2021-12-13)](#2428-2021-12-13)
 - [2.4.27 (2021-10-25)](#2427-2021-10-26)
@@ -39,6 +40,24 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.3 (2018-02-16)](#23-2018-02-16)
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
+
+## 2.4.30 (2022-02-04)
+
+### Aggiunto (Added)
+ - Aggiunta azione di gruppo **Copia listini**
+ - Aggiunta stampa riepilogo interventi **interno**
+ 
+### Modificato (Changed)
+ - Spostamento movimento cassa previdenziale a costo per acquisti
+ 
+### Fixed
+ - Fix partita iva FE per privati esteri
+ - Fix calcolo **scadenze**
+ - Fix grafica barra plugin
+ - Fix selezione interventi fatturabili
+ - Fix minore data **competenza** fattura
+ - Fix calcolo **costi** intervento
+ - Fix query nel file sql **update**
 
 ## 2.4.29 (2022-01-28)
 

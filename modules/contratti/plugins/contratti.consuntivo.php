@@ -21,6 +21,12 @@ include_once __DIR__.'/../../../core.php';
 
 use Modules\Interventi\Intervento;
 
+$tipologie = [];
+$tecnici = [];
+$stati_intervento = [];
+$materiali_art = [];
+$materiali_righe = [];
+
 // Tabella con riepilogo interventi
 $interventi = Intervento::where('id_contratto', $id_record)->get();
 $totale_ore_completate = 0;

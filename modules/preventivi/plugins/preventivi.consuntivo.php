@@ -21,6 +21,12 @@ include_once __DIR__.'/../../../core.php';
 
 use Modules\Interventi\Intervento;
 
+$tipologie = [];
+$tecnici = [];
+$stati_intervento = [];
+$materiali_art = [];
+$materiali_righe = [];
+
 // Tabella con riepilogo interventi
 $interventi = Intervento::where('id_preventivo', $id_record)->get();
 if (!empty($interventi)) {

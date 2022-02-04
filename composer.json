@@ -15,7 +15,7 @@
     }],
     "type": "project",
     "require": {
-        "php": ">=5.6.4",
+        "php": ">=7.1",
         "ext-curl": "*",
         "ext-dom": "*",
         "ext-fileinfo": "*",
@@ -29,7 +29,7 @@
         "ext-xsl": "*",
         "ext-zip": "*",
         "aluguest/ical-easy-reader": "^1.5",
-        "danielstjules/stringy": "^3.1",
+        "voku/stringy": "~6.0",
         "davidepastore/codice-fiscale": "^0.6.0",
         "dragonmantank/cron-expression": "^1.0",
         "ezyang/htmlpurifier": "^4.8",

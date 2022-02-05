@@ -38,9 +38,16 @@ switch (post('op')) {
         $nome = post('nome');
 
         if ($dbo->fetchNum('SELECT * FROM `an_mansioni` WHERE `nome`='.prepare($nome)) == 0) {
-            $dbo->query('INSERT INTO `an_mansioni` (`nome`) VALUES ('.prepare($nome).')');
+           
+            $dbo->insert('an_mansioni', [
+                'nome' => $nome,
+            ]);
 
             $id_record = $dbo->lastInsertedID();
+
+            if (isAjaxRequest()) {
+                echo json_encode(['id' => $id_record, 'text' => $nome]);
+            }
 
             flash()->info(tr('Aggiunta nuova _TYPE_', [
                 '_TYPE_' => 'mansione',

@@ -257,7 +257,7 @@ if (empty($id_intervento)) {
 		<div class="box-body">
 	        <div class="row">
                 <div class="col-md-12">
-                    {[ "type": "select", "label": "'.tr('Tecnici assegnati').'", "multiple": "1", "name": "tecnici_assegnati[]", "ajax-source": "tecnici", "value": "", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Tecnico" ]}
+                    {[ "type": "select", "label": "'.tr('Tecnici assegnati').'", "multiple": "1", "name": "tecnici_assegnati[]", "ajax-source": "tecnici", "value": "", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Tecnico&readonly_tipo=1" ]}
                     <div class="row">
                         <div class="col-md-12">
                             <div class="btn-group">
@@ -306,7 +306,7 @@ echo '
 
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "select", "label": "'.tr('Tecnici').'", "multiple": "1", "name": "idtecnico[]", "required": '.($origine_dashboard ? 1 : 0).', "ajax-source": "tecnici", "value": "'.$id_tecnico.'", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Tecnico||'.(empty($id_tecnico) ? '' : 'disabled').'" ]}
+					{[ "type": "select", "label": "'.tr('Tecnici').'", "multiple": "1", "name": "idtecnico[]", "required": '.($origine_dashboard ? 1 : 0).', "ajax-source": "tecnici", "value": "'.$id_tecnico.'", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Tecnico&readonly_tipo=1||'.(empty($id_tecnico) ? '' : 'disabled').'" ]}
 				</div>
 			</div>
 

@@ -109,14 +109,15 @@ if (Auth::check()) {
         'details' => tr('Dettagli'),
         'loading' => tr('Caricamento'),
         'waiting' => tr('Impossibile procedere'),
-        'waitingMessage' => tr('Prima di proseguire devi selezionare alcuni elementi!'),
+        'waitingMessage' => tr('Prima di proseguire devi selezionare alcuni elementi.'),
         'hooksExecuting' => tr('Hooks in esecuzione'),
         'hookExecuting' => tr('Hook "_NAME_" in esecuzione'),
         'hookMultiple' => tr('Hai _NUM_ notifiche'),
         'hookSingle' => tr('Hai 1 notifica'),
         'hookNone' => tr('Nessuna notifica'),
-        'singleCalendar' => tr("E' presente un solo periodo!"),
+        'singleCalendar' => tr("E' presente un solo periodo."),
         'noResults' => tr('Nessun elemento trovato'),
+        'signatureMissing' => tr('Firma mancante.'),
     ];
     foreach ($translations as $key => $value) {
         echo '

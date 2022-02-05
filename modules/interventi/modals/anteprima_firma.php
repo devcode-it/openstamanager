@@ -120,7 +120,9 @@ if (get('anteprima') !== null) {
 
         saveButton.addEventListener("click", function (event) {
             if (signaturePad.isEmpty()) {
-                alert("Please provide signature first.");
+                alert(globals.translations.signatureMissing);
+                event.preventDefault();
+                return;
             } else {
                 image_data = signaturePad.toDataURL("image/jpeg", 100);
                 $('#firma_base64').val(image_data);

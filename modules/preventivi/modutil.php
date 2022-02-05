@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Preventivi\Preventivo;
+use Modules\Interventi\Intervento;
 
 function get_imponibile_preventivo($idpreventivo)
 {
@@ -47,3 +48,16 @@ function get_stato_preventivo($idpreventivo)
         return 'Non evaso';
     }
 }
+
+
+function get_totale_interventi_preventivo($idpreventivo)
+{
+  
+    $interventi = Intervento::where('id_preventivo', $idpreventivo)->get();
+    $array_interventi = $interventi->toArray();
+
+    $totale = sum(array_column($array_interventi, 'totale_imponibile'));
+
+    return $totale;
+}
+

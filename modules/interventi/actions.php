@@ -755,6 +755,9 @@ switch (post('op')) {
         $new->codice = Intervento::getNextCodice($data_richiesta);
         $new->data_richiesta = $data_richiesta;
         $new->data_scadenza = post('data_scadenza');
+        $new->firma_file = '';
+        $new->firma_data = null;
+        $new->firma_nome = '';
 
         $new->save();
 

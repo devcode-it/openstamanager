@@ -600,7 +600,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                     <div class="tab-pane'.(!$is_cliente && !$is_fornitore && $is_tecnico ? ' active' : '').''.(!$is_tecnico ? ' hide' : '').'" id="tecnico">
                         <div class="row">
                             <div class="col-md-6">
-                                {[ "type": "text", "label": "'.tr('Colore').'", "name": "colore", "class": "colorpicker text-center", "value": "$colore$", "extra": "maxlength=\'7\'", "icon-after": "<div class=\'img-circle square\'></div>" ]}
+                                {[ "type": "text", "label": "'.tr('Colore').'", "name": "colore", "id": "colore_t", "class": "colorpicker text-center", "value": "$colore$", "extra": "maxlength=\'7\'", "icon-after": "<div class=\'img-circle square\'></div>" ]}
                             </div>
                         </div>
                     </div>';
@@ -820,10 +820,10 @@ if (empty($record['deleted_at'])) {
 <script>
 	$(document).ready( function() {
 		$(".colorpicker").colorpicker().on("changeColor", function() {
-			$("#colore").parent().find(".square").css("background", $("#colore").val());
+			$("#colore_t").parent().find(".square").css("background", $("#colore_t").val());
 		});
 
-		$("#colore").parent().find(".square").css("background", $("#colore").val());
+		$("#colore_t").parent().find(".square").css("background", $("#colore_t").val());
 
 		// Abilito solo ragione sociale oppure solo cognome-nome in base a cosa compilo
 		$('#nome, #cognome').bind("keyup change", function(e) {

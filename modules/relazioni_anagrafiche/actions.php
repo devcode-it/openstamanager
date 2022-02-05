@@ -23,10 +23,11 @@ switch (filter('op')) {
     case 'update':
         $descrizione = filter('descrizione');
         $colore = filter('colore');
+        $is_bloccata = filter('is_bloccata');
 
         if (isset($descrizione)) {
             if ($dbo->fetchNum('SELECT * FROM `an_relazioni` WHERE `descrizione`='.prepare($descrizione).' AND `id`!='.prepare($id_record)) == 0) {
-                $dbo->query('UPDATE `an_relazioni` SET `descrizione`='.prepare($descrizione).', `colore`='.prepare($colore).' WHERE `id`='.prepare($id_record));
+                $dbo->query('UPDATE `an_relazioni` SET `descrizione`='.prepare($descrizione).', `colore`='.prepare($colore).', `is_bloccata`='.prepare($is_bloccata).' WHERE `id`='.prepare($id_record));
                 flash()->info(tr('Salvataggio completato.'));
             } else {
                 flash()->error(tr("E' già presente una relazione _NAME_.", [
@@ -42,10 +43,11 @@ switch (filter('op')) {
     case 'add':
         $descrizione = filter('descrizione');
         $colore = filter('colore');
+        $is_bloccata = filter('is_bloccata');
 
         if (isset($descrizione)) {
             if ($dbo->fetchNum('SELECT * FROM `an_relazioni` WHERE `descrizione`='.prepare($descrizione)) == 0) {
-                $dbo->query('INSERT INTO `an_relazioni` (`descrizione`, `colore` ) VALUES ('.prepare($descrizione).', '.prepare($colore).' )');
+                $dbo->query('INSERT INTO `an_relazioni` (`descrizione`, `colore`, `is_bloccata`  ) VALUES ('.prepare($descrizione).', '.prepare($colore).', '.prepare($is_bloccata).' )');
 
                 $id_record = $dbo->lastInsertedID();
 

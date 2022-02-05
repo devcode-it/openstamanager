@@ -15,3 +15,6 @@ CREATE TABLE IF NOT EXISTS `in_righe_tipiinterventi` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP ,
 PRIMARY KEY (`id`));
+
+-- Aggiunto flag is_bloccata per relazioni
+ALTER TABLE `an_relazioni ` ADD `is_bloccata` tinyint DEFAULT NULL AFTER `colore`;

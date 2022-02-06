@@ -79,20 +79,20 @@ if (isAjaxRequest()) {
 <script>
 $(document).ready(function(){
     $("#form_'.$id_module.'-'.$id_plugin.'").find("form").submit(function () {
-        let $form = $(this);
+        var form = input(this);
 
         salvaForm(this, {
             id_module: "'.$id_module.'",
             id_plugin: "'.$id_plugin.'",
         }).then(function(response) {
             // Selezione automatica nuovo valore per il select
-            let select = "#'.get('select').'";
-            if ($(select).val() !== undefined) {
-                $(select).selectSetNew(response.id, response.text, response.data);
-                $(select).change();
+            var select = input("'.get('select').'");
+            if (select) {
+                select.getElement().selectSetNew(response.id, response.text, response.data);
+                //select.change();
             }
 
-            $form.closest("div[id^=bs-popup").modal("hide");
+            form.getElement().closest("div[id^=bs-popup").modal("hide");
         })
 
         return false;

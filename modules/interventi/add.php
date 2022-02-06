@@ -515,10 +515,10 @@ echo '
             $("#dettagli_cliente").html("'.tr('Seleziona prima un cliente').'...");
         }
 
-        plus_sede = $("#idsede_destinazione").parent().find(".btn");
+        plus_sede = $(".modal #idsede_destinazione").parent().find(".btn");
         plus_sede.attr("onclick", plus_sede.attr("onclick").replace(/id_parent=[0-9]*/, "id_parent=" + value));
 
-        plus_impianto = $("#idimpianti").parent().find(".btn");
+        plus_impianto = $(".modal #idimpianti").parent().find(".btn");
         plus_impianto.attr("onclick", plus_impianto.attr("onclick").replace(/id_anagrafica=[0-9]*/, "id_anagrafica=" + value));
 	});
 

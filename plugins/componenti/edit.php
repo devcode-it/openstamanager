@@ -153,11 +153,11 @@ foreach ($elenchi as $elenco) {
                                         </div>
 
                                         <div class="col-md-2">
-                                            {[ "type": "date", "label": "'.tr('Data registrazione').'", "name": "data_registrazione", "id": "data_registrazione_'.$componente->id.'", "value": "'.$componente['data_registrazione'].'" ]}
+                                            {[ "type": "date", "label": "'.tr('Data installazione').'", "name": "data_installazione", "id": "data_installazione_'.$componente->id.'", "value": "'.$componente['data_installazione'].'" ]}
                                         </div>
 
                                         <div class="col-md-2">
-                                            {[ "type": "date", "label": "'.tr('Data installazione').'", "name": "data_installazione", "id": "data_installazione_'.$componente->id.'", "value": "'.$componente['data_installazione'].'" ]}
+                                            {[ "type": "date", "label": "'.tr('Data registrazione').'", "name": "data_registrazione", "id": "data_registrazione_'.$componente->id.'", "value": "'.$componente['data_registrazione'].'" ]}
                                         </div>
 
                                         <div class="col-md-2">

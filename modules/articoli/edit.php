@@ -217,7 +217,7 @@ include_once __DIR__.'/../../core.php';
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 if (empty($prezzi_ivati)) {
     echo '
-                            <button type="button" class="btn btn-info btn-xs pull-right tip pull-right" title="'.tr('Scorpora iva dal prezzo di vendita.').'" id="scorporaIva">
+                            <button type="button" class="btn btn-info btn-xs pull-right tip pull-right" title="'.tr('Scorpora l\'IVA dal prezzo di vendita.').'" id="scorporaIva">
                                 <i class="fa fa-calculator"></i>
                             </button>';
 }
@@ -239,7 +239,7 @@ echo '
                         </div>
 
                         <div class="col-md-6">
-                            {[ "type": "checkbox", "label": "<?php echo tr('Questo articolo è un servizio'); ?>", "name": "servizio", "value": "$servizio$", "help": "<?php echo tr('Le quantità non saranno considerate'); ?>", "placeholder": "<?php echo tr('Servizio'); ?>" ]}
+                            {[ "type": "checkbox", "label": "<?php echo tr('Questo articolo è un servizio'); ?>", "name": "servizio", "value": "$servizio$", "help": "<?php echo tr('Le quantità non saranno considerate.'); ?>", "placeholder": "<?php echo tr('Servizio'); ?>" ]}
                         </div>
                     </div>
 

@@ -43,8 +43,16 @@ foreach ($modules as $name => $values) {
     ];
 }
 
-// PHP
+//PHP
 $settings = [
+
+    'php_version' => [
+        'type' => 'php',
+        'description' => '7.4 - 8.0',
+        'minimum' => '7.4',
+        'maximum' => '8.0',
+    ],
+
     'zip' => [
         'type' => 'ext',
         'description' => tr('Permette di leggere e scrivere gli archivi compressi ZIP e i file al loro interno'),
@@ -98,13 +106,23 @@ $settings = [
         'type' => 'value',
         'description' => '>32M',
     ],
+
 ];
 
 $php = [];
 foreach ($settings as $name => $values) {
     $description = $values['description'];
 
-    if ($values['type'] == 'ext') {
+    if ($values['type'] == 'php') {
+
+        $description = tr('Valore consigliato: _VALUE_ (Valore attuale: _PHP_VERSION_)', [
+            '_VALUE_' => $description,
+            '_PHP_VERSION_' => phpversion(),
+        ]);
+
+        $status = (version_compare(phpversion(), $values['minimum']) < 0 || (version_compare(phpversion(), $values['maximum']) > 0) ? 0 : 1);
+
+    } elseif ($values['type'] == 'ext') {
         $status = extension_loaded($name);
     } else {
         $ini = str_replace(['k', 'M'], ['000', '000000'], ini_get($name));
@@ -161,11 +179,13 @@ foreach ($dirs as $name => $description) {
 
 $requirements = [
     tr('Apache') => $apache,
-    tr('PHP (_VERSION_)', [
+    tr('PHP (_VERSION_ _SUPPORTED_)', [
         '_VERSION_' => phpversion(),
+        '_SUPPORTED_' =>  (version_compare(phpversion(), $settings['php_version']['minimum']) < 0 || (version_compare(phpversion(), $settings['php_version']['maximum']) > 0) ? '<small><small class="label label-danger" ><i class="fa fa-warning"></i> '.tr('versioni supportate:').' '.$settings['php_version']['minimum'].' - '.$settings['php_version']['maximum'].'</small></small>' : '' )
     ]) => $php,
     tr('Percorsi di servizio') => $directories,
 ];
+
 
 // Tabelle di riepilogo
 foreach ($requirements as $key => $values) {

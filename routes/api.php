@@ -4,6 +4,7 @@
 
 use LaravelJsonApi\Laravel\Facades\JsonApiRoute;
 use LaravelJsonApi\Laravel\Http\Controllers\JsonApiController;
+use LaravelJsonApi\Laravel\Routing\ResourceRegistrar;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,14 +19,6 @@ use LaravelJsonApi\Laravel\Http\Controllers\JsonApiController;
 
 JsonApiRoute::server('v1')
     ->prefix('v1')
-    ->resources(function ($server) {
+    ->resources(function (ResourceRegistrar $server) {
         $server->resource('users', JsonApiController::class);
     });
-
-/*
- * Prossimamente, per le chiamate alla API autenticate:
- *
- * Route::middleware('auth:api')->group(function () {
-
-});
-*/

@@ -82,7 +82,7 @@ L'installazione del gestionale richiede la presenza di un server web con abilita
 </tr>
 </table>
 
-Per ulteriori informazioni sui pacchetti che forniscono questi elementi di default, visitare la sezione [Installazione](https://docs.openstamanager.com/guide/configurazione/installazione) della documentazione.
+Per ulteriori informazioni sui pacchetti che forniscono questi elementi di default, visitare la sezione [Installazione](https://docs.openstamanager.com/configurazione/installazione) della documentazione.
 
 ## Installazione
 

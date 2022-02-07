@@ -56,10 +56,33 @@ La documentazione ufficiale è disponibile all'indirizzo <https://docs.openstama
 
 L'installazione del gestionale richiede la presenza di un server web con abilitato il [DBMS MySQL](https://www.mysql.com)  e il linguaggio di programmazione [PHP](https://php.net).
 
-- PHP >= 7.2
-- MySQL >= 5.7
+<table>
+<tr>
+<td valign="top">
+    
+| PHP | EOL | Supportato |
+|-----|-----|:----------:|
+| 8.1 | 25/11/2023 | ❌ |
+| 8.0 | 26/11/2023 | ✔️ |
+| 7.4 | 28/11/2022 | ✔️ |
+| 7.3 | 06/12/2021 | ❌ |
+| 7.2 | 30/11/2020 | ❌ |
+    
+</td>
+<td valign="top">
+    
+| MYSQL | EOL | Supportato |
+|-----|-----|:----------:|
+| 8.0 | 01/04/2026 | ✔️ |
+| 5.7 | 21/10/2023 | ✔️ |
+| 5.6 | 05/02/2021 | ❌ |
 
-Per ulteriori informazioni sui pacchetti che forniscono questi elementi di default, visitare la sezione [Installazione](https://docs.openstamanager.com/guide/configurazione/installazione) della documentazione.
+    
+</td>
+</tr>
+</table>
+
+Per ulteriori informazioni sui pacchetti che forniscono questi elementi di default, visitare la sezione [Installazione](https://docs.openstamanager.com/configurazione/installazione) della documentazione.
 
 ## Installazione
 

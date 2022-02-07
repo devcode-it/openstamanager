@@ -21,7 +21,7 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'clienti':
-        $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')')), IF(deleted_at IS NULL, '', ' (".tr('eliminata').")')) AS descrizione, idtipointervento_default AS idtipointervento, in_tipiintervento.descrizione AS idtipointervento_descrizione, an_anagrafiche.idzona FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica LEFT JOIN in_tipiintervento ON an_anagrafiche.idtipointervento_default=in_tipiintervento.idtipointervento |where| ORDER BY ragione_sociale";
+        $query = "SELECT an_anagrafiche.idanagrafica AS id, is_bloccata, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')')), IF(deleted_at IS NULL, '', ' (".tr('eliminata').")'), IF(is_bloccata = 1, CONCAT(' (', an_relazioni.descrizione, ')'), '') ) AS descrizione, idtipointervento_default AS idtipointervento, in_tipiintervento.descrizione AS idtipointervento_descrizione, an_anagrafiche.idzona FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica LEFT JOIN in_tipiintervento ON an_anagrafiche.idtipointervento_default=in_tipiintervento.idtipointervento LEFT JOIN an_relazioni ON an_anagrafiche.idrelazione=an_relazioni.id |where| ORDER BY ragione_sociale";
 
         foreach ($elements as $element) {
             $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
@@ -37,6 +37,23 @@ switch ($resource) {
             $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
             $search_fields[] = 'provincia LIKE '.prepare('%'.$search.'%');
         }
+
+        $data = AJAX::selectResults($query, $where, $filter, $search_fields, $limit, $custom);
+        $rs = $data['results'];
+
+        foreach ($rs as $k => $r) {
+
+            $rs[$k] = array_merge($r, [
+                'text' => $r['descrizione'],
+                'disabled' => $r['is_bloccata'],
+            ]);
+
+        }
+
+        $results = [
+            'results' => $rs,
+            'recordsFiltered' => $data['recordsFiltered'],
+        ];
 
         break;
 

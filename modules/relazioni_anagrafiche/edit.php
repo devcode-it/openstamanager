@@ -31,10 +31,14 @@ include_once __DIR__.'/../../core.php';
 
 		<div class="panel-body">
 			<div class="row">
-				<div class="col-md-9">
+				<div class="col-md-6">
 					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
 				</div>
 
+				<div class="col-md-3">
+					{[ "type": "checkbox", "label": "<?php echo tr('Blocca anagrafiche collegate'); ?>", "name": "is_bloccata", "value": "$is_bloccata$",  "help":"<?php echo tr('Le anagrafiche associate a questa relazione saranno bloccate'); ?>." ]}
+				</div>
+				
 				<div class="col-md-3">
 					{[ "type": "text", "label": "<?php echo tr('Colore'); ?>", "name": "colore", "required": 1, "class": "colorpicker text-center", "value": "$colore$", "extra": "maxlength='7'", "icon-after": "<div class='img-circle square'></div>" ]}
 				</div>

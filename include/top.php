@@ -18,7 +18,7 @@
  */
 
 use Util\FileSystem;
-
+$lang = '';
 include_once __DIR__.'/../core.php';
 
 $paths = App::getPaths();
@@ -109,14 +109,15 @@ if (Auth::check()) {
         'details' => tr('Dettagli'),
         'loading' => tr('Caricamento'),
         'waiting' => tr('Impossibile procedere'),
-        'waitingMessage' => tr('Prima di proseguire devi selezionare alcuni elementi!'),
+        'waitingMessage' => tr('Prima di proseguire devi selezionare alcuni elementi.'),
         'hooksExecuting' => tr('Hooks in esecuzione'),
         'hookExecuting' => tr('Hook "_NAME_" in esecuzione'),
         'hookMultiple' => tr('Hai _NUM_ notifiche'),
         'hookSingle' => tr('Hai 1 notifica'),
         'hookNone' => tr('Nessuna notifica'),
-        'singleCalendar' => tr("E' presente un solo periodo!"),
+        'singleCalendar' => tr("E' presente un solo periodo."),
         'noResults' => tr('Nessun elemento trovato'),
+        'signatureMissing' => tr('Firma mancante.'),
     ];
     foreach ($translations as $key => $value) {
         echo '
@@ -391,6 +392,15 @@ if (Auth::check()) {
                      <!-- Navbar Right Menu -->
                      <div class="navbar-custom-menu">
                         <ul class="nav navbar-nav">
+
+                            <li class="nav-button hide"><a href="'.base_path().'/bug.php" class="tip nav-button" title="'.tr('Segnalazione bug').'">
+                                <i class="fa fa-bug"></i>
+                            </a></li>
+
+                            <li class="nav-button" >
+                                <p style="padding:10px 15px;">&nbsp;</p>
+                            </li>
+
                             <li class="dropdown notifications-menu nav-button">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                     <i class="fa fa-bell-o"></i>
@@ -408,13 +418,9 @@ if (Auth::check()) {
                                     </ul></li>
                                 </ul>
                             </li>
-
+                            
                             <li class="nav-button"><a href="#" onclick="window.print()" class="tip nav-button" title="'.tr('Stampa').'">
                                 <i class="fa fa-print"></i>
-                            </a></li>
-
-                            <li class="nav-button hide"><a href="'.base_path().'/bug.php" class="tip nav-button" title="'.tr('Segnalazione bug').'">
-                                <i class="fa fa-bug"></i>
                             </a></li>
 
                             <li class="nav-button"><a href="'.base_path().'/log.php" class="tip nav-button" title="'.tr('Log accessi').'">

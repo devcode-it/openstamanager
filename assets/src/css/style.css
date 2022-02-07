@@ -136,8 +136,10 @@ input[type=file] {
 }
 
 .navbar a:hover,
-.logo:hover {
-    text-decoration: none
+.logo:hover,
+.alert a, .alert a:hover,
+a:hover, a:focus {
+    text-decoration: none;
 }
 
 .no-padding {
@@ -1022,9 +1024,6 @@ div.tip {
 
 .control-sidebar {
     top: 50px;
-}
-
-.control-sidebar {
     padding-top: 10px;
 }
 
@@ -1041,7 +1040,6 @@ div.tip {
     .control-sidebar.control-sidebar-open,
     .control-sidebar.control-sidebar-open + .control-sidebar-bg {
         right: 0;
-        top: 50px;
     }
 
     .control-sidebar-toggle {

@@ -19,45 +19,28 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Preventivi\Preventivo;
+use Modules\Contratti\Contratto;
 use Modules\Interventi\Intervento;
 
-function get_imponibile_preventivo($idpreventivo)
-{
-    $preventivo = Preventivo::find($idpreventivo);
-
-    return $preventivo->totale_imponibile;
-}
-
 /**
- * Restituisce lo stato del preventivo in base alle righe.
+* Calcolo imponibile contratto (totale_righe - sconto)
  */
-function get_stato_preventivo($idpreventivo)
+
+function get_imponibile_contratto($idcontratto)
 {
-    $dbo = database();
+    $contratto = Contratto::find($idcontratto);
 
-    $rs = $dbo->fetchArray('SELECT SUM(qta) AS qta, SUM(qta_evasa) AS qta_evasa FROM co_righe_preventivi GROUP BY idpreventivo HAVING idpreventivo='.prepare($idpreventivo));
-
-    if ($rs[0]['qta_evasa'] > 0) {
-        if ($rs[0]['qta'] > $rs[0]['qta_evasa']) {
-            return 'Parzialmente evaso';
-        } elseif ($rs[0]['qta'] == $rs[0]['qta_evasa']) {
-            return 'Evaso';
-        }
-    } else {
-        return 'Non evaso';
-    }
+    return $contratto->totale_imponibile;
 }
 
 
-function get_totale_interventi_preventivo($idpreventivo)
+function get_totale_interventi_contratto($idcontratto)
 {
   
-    $interventi = Intervento::where('id_preventivo', $idpreventivo)->get();
+    $interventi = Intervento::where('id_contratto', $idcontratto)->get();
     $array_interventi = $interventi->toArray();
 
     $totale = sum(array_column($array_interventi, 'totale_imponibile'));
 
     return $totale;
 }
-

@@ -257,7 +257,7 @@ if (empty($id_intervento)) {
 		<div class="box-body">
 	        <div class="row">
                 <div class="col-md-12">
-                    {[ "type": "select", "label": "'.tr('Tecnici assegnati').'", "multiple": "1", "name": "tecnici_assegnati[]", "ajax-source": "tecnici", "value": "", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Tecnico" ]}
+                    {[ "type": "select", "label": "'.tr('Tecnici assegnati').'", "multiple": "1", "name": "tecnici_assegnati[]", "ajax-source": "tecnici", "value": "", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Tecnico&readonly_tipo=1" ]}
                     <div class="row">
                         <div class="col-md-12">
                             <div class="btn-group">
@@ -306,7 +306,7 @@ echo '
 
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "select", "label": "'.tr('Tecnici').'", "multiple": "1", "name": "idtecnico[]", "required": '.($origine_dashboard ? 1 : 0).', "ajax-source": "tecnici", "value": "'.$id_tecnico.'", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Tecnico||'.(empty($id_tecnico) ? '' : 'disabled').'" ]}
+					{[ "type": "select", "label": "'.tr('Tecnici').'", "multiple": "1", "name": "idtecnico[]", "required": '.($origine_dashboard ? 1 : 0).', "ajax-source": "tecnici", "value": "'.$id_tecnico.'", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Tecnico&readonly_tipo=1||'.(empty($id_tecnico) ? '' : 'disabled').'" ]}
 				</div>
 			</div>
 
@@ -515,10 +515,10 @@ echo '
             $("#dettagli_cliente").html("'.tr('Seleziona prima un cliente').'...");
         }
 
-        plus_sede = $("#idsede_destinazione").parent().find(".btn");
+        plus_sede = $(".modal #idsede_destinazione").parent().find(".btn");
         plus_sede.attr("onclick", plus_sede.attr("onclick").replace(/id_parent=[0-9]*/, "id_parent=" + value));
 
-        plus_impianto = $("#idimpianti").parent().find(".btn");
+        plus_impianto = $(".modal #idimpianti").parent().find(".btn");
         plus_impianto.attr("onclick", plus_impianto.attr("onclick").replace(/id_anagrafica=[0-9]*/, "id_anagrafica=" + value));
 	});
 

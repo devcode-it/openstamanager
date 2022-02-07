@@ -76,7 +76,7 @@ include_once __DIR__.'/../../core.php';
                     <?php
                     if (!setting('Utilizza prezzi di vendita comprensivi di IVA')) {
                         echo '
-                    <button type="button" class="btn btn-info btn-xs pull-right tip pull-right" title="'.tr('Scorpora iva dal prezzo di vendita.').'" id="scorpora_iva_add"><i class="fa fa-calculator" aria-hidden="true"></i></button>';
+                    <button type="button" class="btn btn-info btn-xs pull-right tip pull-right" title="'.tr('Scorpora l\'IVA dal prezzo di vendita.').'" id="scorpora_iva_add"><i class="fa fa-calculator" aria-hidden="true"></i></button>';
                     }
                     ?>
 

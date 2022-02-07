@@ -112,6 +112,11 @@ function toggleControlSidebar() {
     sidebar.toggleClass("control-sidebar-open");
 
     if (sidebar.hasClass("control-sidebar-open")) {
-        sidebar.show();
+        sidebar.delay(50)
+        .animate(
+          {width: "show"},
+          350,
+          'easeInOutQuint'
+        );
     }
 }

@@ -80,7 +80,7 @@ switch (filter('op')) {
                 ]);
 
                 if (isAjaxRequest()) {
-                    echo json_encode(['id' => $nome, 'text' => $descrizione]);
+                    echo json_encode(['id' => $id_record, 'text' => $descrizione]);
                 }
 
                 flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [

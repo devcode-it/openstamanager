@@ -110,7 +110,7 @@ if ($segment!='Tutti') {
         'data' => [
             'title' => tr('Selezionare prima un segmento tra "Clienti" e "Fornitori"'),
             'msg' => '',
-            'button' => tr(''),
+            'button' => '',
             'class' => 'hide',
         ],
     ];

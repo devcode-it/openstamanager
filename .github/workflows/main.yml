@@ -5,7 +5,7 @@ on:
 
 jobs:
   tests:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-18.10
     
     strategy:
       matrix:
@@ -120,10 +120,10 @@ jobs:
         curl http://localhost/openstamanager/
         sudo cat /var/log/apache2/access.log
         cd python-tests/
-        echo -ne "{\n    \"login\": {\n        \"password\": \"adminadmin\",\n        \"username\": \"admin\"\n    },\n    \"database\": {\n        \"host\": \"localhost\",\n        \"user\": \"root\",\n        \"pass\": \"root\",\n        \"name\": \"osm\"\n    },\n    \"server\": \"http://localhost/openstamanager/\",\n    \"browser\": \"firefox\",\n    \"headless\": true\n}" > config.json
-        pytest Init.py
+        echo -ne "{\n    \"login\": {\n        \"password\": \"adminadmin\",\n        \"username\": \"admin\"\n    },\n    \"database\": {\n        \"host\": \"localhost\",\n        \"user\": \"root\",\n        \"pass\": \"root\",\n        \"name\": \"osm\"\n    },\n    \"server\": \"http://localhost/openstamanager/\",\n    \"browser\": \"chrome\",\n    \"headless\": true\n}" > config.json
+        #pytest Init.py
     
     - name: Execute tests
       run: |
         cd python-tests/
-        pytest tests
+        python -m unittest discover tests -p '*.py'

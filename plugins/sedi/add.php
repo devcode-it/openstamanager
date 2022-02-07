@@ -29,8 +29,12 @@ echo '
     <input type="hidden" name="id_record" value="">
 
 	<div class="row">
-		<div class="col-md-12">
-			{[ "type": "text", "label": "'.tr('Nome sede').'", "name": "nomesede", "required": 1 ]}
+		<div class="col-md-6">
+			{[ "type": "select", "label": "'.tr('Anagrafica').'", "name": "id_anagrafica", "required": "1", "value": "'.$id_parent.'", "ajax-source": "anagrafiche", "disabled": 1 ]}
+		</div>
+
+		<div class="col-md-6">
+				{[ "type": "text", "label": "'.tr('Nome sede').'", "name": "nomesede", "required": 1 ]}
 		</div>
 	</div>
 

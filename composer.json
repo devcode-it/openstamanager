@@ -15,7 +15,7 @@
     }],
     "type": "project",
     "require": {
-        "php": ">=5.6.4",
+        "php": ">=7.4",
         "ext-curl": "*",
         "ext-dom": "*",
         "ext-fileinfo": "*",
@@ -29,14 +29,14 @@
         "ext-xsl": "*",
         "ext-zip": "*",
         "aluguest/ical-easy-reader": "^1.5",
-        "danielstjules/stringy": "^3.1",
+        "voku/stringy": "~6.0",
         "davidepastore/codice-fiscale": "^0.6.0",
         "dragonmantank/cron-expression": "^1.0",
         "ezyang/htmlpurifier": "^4.8",
         "filp/whoops": "^2.1",
         "guzzlehttp/guzzle": "^6.3",
         "ifsnop/mysqldump-php": "^2.3",
-        "illuminate/database": "~5.4.0",
+        "illuminate/database": "^6.0",
         "intervention/image": "^2.3",
         "league/csv": "^8.2",
         "league/oauth2-client": "^2.6",
@@ -139,7 +139,7 @@
         "apcu-autoloader": true,
         "prefer-stable": true,
         "platform": {
-            "php": "7.1"
+            "php": "7.4"
         },
         "allow-plugins": {
             "kylekatarnls/update-helper": true

@@ -38,8 +38,7 @@ switch (filter('op')) {
 
             $fornitore = DettaglioFornitore::build($anagrafica, $articolo);
         } else {
-            $fornitore = $precedente->replicate();
-            $precedente->delete();
+            $fornitore = $precedente;
         }
 
         $fornitore->codice_fornitore = post('codice_fornitore');

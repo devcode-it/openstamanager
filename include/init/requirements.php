@@ -47,10 +47,10 @@ foreach ($modules as $name => $values) {
 $settings = [
 
     'php_version' => [
-        'type' => 'php',
-        'description' => '7.4 - 8.0',
-        'minimum' => '7.4',
-        'maximum' => '8.0',
+        'type' => 'version',
+        'description' => '7.4.x - 8.0.x',
+        'minimum' => '7.4.0',
+        'maximum' => '8.0.15',
     ],
 
     'zip' => [
@@ -113,14 +113,14 @@ $php = [];
 foreach ($settings as $name => $values) {
     $description = $values['description'];
 
-    if ($values['type'] == 'php') {
+    if ($values['type'] == 'version') {
 
         $description = tr('Valore consigliato: _VALUE_ (Valore attuale: _PHP_VERSION_)', [
             '_VALUE_' => $description,
             '_PHP_VERSION_' => phpversion(),
         ]);
 
-        $status = (version_compare(phpversion(), $values['minimum']) < 0 || (version_compare(phpversion(), $values['maximum']) > 0) ? 0 : 1);
+        $status = ((version_compare(phpversion(), $values['minimum'], ">=") && version_compare(phpversion(), $values['maximum'], "<=")) ? 1 : 0);
 
     } elseif ($values['type'] == 'ext') {
         $status = extension_loaded($name);
@@ -150,6 +150,14 @@ foreach ($settings as $name => $values) {
 
     $type = ($values['type'] == 'ext') ? tr('Estensione') : tr('Impostazione');
 
+    if ($values['type'] == 'ext'){
+        $type =  tr('Estensione');
+    }elseif ($values['type'] == 'version') {
+        $type =  tr('Versione');
+    }else{
+        $type =  tr('Impostazione');
+    }
+
     $php[] = [
         'name' => $name,
         'description' => $description,
@@ -157,6 +165,36 @@ foreach ($settings as $name => $values) {
         'type' => $type,
     ];
 }
+
+// MySQL
+$db = [
+
+    'mysql_version' => [
+        'type' => 'mysql',
+        'description' => '5.7.x - 8.0.x',
+        'minimum' => '5.7.0',
+        'maximum' => '8.0.27',
+    ],
+
+];
+
+foreach ($db as $name => $values) {
+    $description = $values['description'];
+    $description = tr('Valore consigliato: _VALUE_ (Valore attuale: _MYSQL_VERSION_)', [
+        '_VALUE_' => $description,
+        '_MYSQL_VERSION_' => $database->getMySQLVersion(),
+    ]);
+
+    $status = ((version_compare($database->getMySQLVersion(), $values['minimum'], ">=") && version_compare($database->getMySQLVersion(), $values['maximum'], "<=")) ? 1 : 0);
+
+    $mysql[] = [
+        'name' => $name,
+        'description' => $description,
+        'status' => $status,
+        'type' => tr('Versione'),
+    ];
+}
+
 
 // Percorsi di servizio
 $dirs = [
@@ -181,8 +219,9 @@ $requirements = [
     tr('Apache') => $apache,
     tr('PHP (_VERSION_ _SUPPORTED_)', [
         '_VERSION_' => phpversion(),
-        '_SUPPORTED_' =>  (version_compare(phpversion(), $settings['php_version']['minimum']) < 0 || (version_compare(phpversion(), $settings['php_version']['maximum']) > 0) ? '<small><small class="label label-danger" ><i class="fa fa-warning"></i> '.tr('versioni supportate:').' '.$settings['php_version']['minimum'].' - '.$settings['php_version']['maximum'].'</small></small>' : '' )
+        '_SUPPORTED_' =>  ( ( version_compare(phpversion(), $settings['php_version']['minimum'], ">=") && version_compare(phpversion(), $settings['php_version']['maximum'], "<=") ) ? '' : '<small><small class="label label-danger" ><i class="fa fa-warning"></i> '.tr('versioni supportate:').' '.$settings['php_version']['description'].'</small></small>')
     ]) => $php,
+    tr('MySQL') => $mysql,
     tr('Percorsi di servizio') => $directories,
 ];
 

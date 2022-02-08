@@ -291,7 +291,7 @@ switch (post('op')) {
             $articolo->movimenta($count, tr('Carico magazzino con serial da _INIZIO_ a _FINE_', [
                 '_INIZIO_' => $serial_start,
                 '_FINE_' => $serial_end,
-            ]), date());
+            ]), date('Y-m-d'));
         }
 
         flash()->info(tr('Aggiunti _NUM_ seriali!', [
@@ -316,7 +316,7 @@ switch (post('op')) {
             if (setting("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number")) {
                 $articolo->movimenta(-1, tr('Eliminazione dal magazzino del prodotto con serial _SERIAL_', [
                     '_SERIAL_' => $rs[0]['serial'],
-                ]), date());
+                ]), date('Y-m-d'));
             }
 
             flash()->info(tr('Prodotto rimosso!'));

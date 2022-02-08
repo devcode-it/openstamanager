@@ -300,7 +300,12 @@ class Preventivo extends Document
     {
         $maschera = setting('Formato codice preventivi');
 
-        if ((strpos($maschera, 'YYYY') !== false) or (strpos($maschera, 'yy') !== false)) {
+        if (strpos($maschera, 'm') !== false) {
+            $ultimo = Generator::getPreviousFrom($maschera, 'co_preventivi', 'numero', [
+                'YEAR(data_bozza) = '.prepare(date('Y', strtotime($data))),
+                'MONTH(data_bozza) = '.prepare(date('m', strtotime($data))),
+            ]);
+        } elseif ((strpos($maschera, 'YYYY') !== false) or (strpos($maschera, 'yy') !== false)) {
             $ultimo = Generator::getPreviousFrom($maschera, 'co_preventivi', 'numero', [
                 'YEAR(data_bozza) = '.prepare(date('Y', strtotime($data))),
             ]);

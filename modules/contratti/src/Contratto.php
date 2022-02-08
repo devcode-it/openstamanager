@@ -80,10 +80,9 @@ class Contratto extends Document
         $model->anagrafica()->associate($anagrafica);
         $model->stato()->associate($stato_documento);
 
-        $model->numero = static::getNextNumero();
-
         $model->nome = $nome;
         $model->data_bozza = Carbon::now();
+        $model->numero = static::getNextNumero($model->data_bozza);
 
         if (!empty($id_agente)) {
             $model->idagente = $id_agente;
@@ -272,7 +271,19 @@ class Contratto extends Document
     {
         $maschera = setting('Formato codice contratti');
 
-        $ultimo = Generator::getPreviousFrom($maschera, 'co_contratti', 'numero');
+        if (strpos($maschera, 'm') !== false) {
+            $ultimo = Generator::getPreviousFrom($maschera, 'co_contratti', 'numero', [
+                'YEAR(data_bozza) = '.prepare(date('Y', strtotime($data))),
+                'MONTH(data_bozza) = '.prepare(date('m', strtotime($data))),
+            ]);
+        } elseif ((strpos($maschera, 'YYYY') !== false) or (strpos($maschera, 'yy') !== false)) {
+            $ultimo = Generator::getPreviousFrom($maschera, 'co_contratti', 'numero', [
+                'YEAR(data_bozza) = '.prepare(date('Y', strtotime($data))),
+            ]);
+        } else {
+            $ultimo = Generator::getPreviousFrom($maschera, 'co_contratti', 'numero');
+        }
+
         $numero = Generator::generate($maschera, $ultimo);
 
         return $numero;

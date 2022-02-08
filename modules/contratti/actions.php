@@ -132,7 +132,7 @@ switch (post('op')) {
      // Duplica contratto
     case 'copy':
         $new = $contratto->replicate();
-        $new->numero = Contratto::getNextNumero();
+        $new->numero = Contratto::getNextNumero($contratto->data_bozza);
 
         $stato = Stato::where('descrizione', '=', 'Bozza')->first();
         $new->stato()->associate($stato);
@@ -355,12 +355,11 @@ $riga = $contratto->getRiga($type, $id_riga);
 
         $new_contratto = $contratto->replicate();
 
-        $new_contratto->numero = Contratto::getNextNumero();
-
         $new_contratto->idcontratto_prev = $contratto->id;
         $new_contratto->data_accettazione = $contratto->data_conclusione->copy()->addDays(1);
         $new_contratto->data_conclusione = $new_contratto->data_accettazione->copy()->add($diff);
         $new_contratto->data_bozza = Carbon::now();
+        $new_contratto->numero = Contratto::getNextNumero($new_contratto->data_bozza);
 
         $stato = Stato::where('descrizione', '=', 'Bozza')->first();
         $new_contratto->stato()->associate($stato);

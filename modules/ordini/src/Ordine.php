@@ -226,11 +226,25 @@ class Ordine extends Document
 
         $maschera = setting('Formato numero secondario ordine');
 
-        $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero_esterno', [
-            'YEAR(data) = '.prepare(date('Y', strtotime($data))),
-            'idtipoordine IN (SELECT id FROM or_tipiordine WHERE dir = '.prepare($direzione).')',
-        ]);
-        $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
+        if (strpos($maschera, 'm') !== false) {
+            $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero_esterno', [
+                'YEAR(data) = '.prepare(date('Y', strtotime($data))),
+                'MONTH(data) = '.prepare(date('m', strtotime($data))),
+                'idtipoordine IN (SELECT id FROM or_tipiordine WHERE dir = '.prepare($direzione).')',
+            ]);
+        } elseif ((strpos($maschera, 'YYYY') !== false) or (strpos($maschera, 'yy') !== false)) {
+            $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero_esterno', [
+                'YEAR(data) = '.prepare(date('Y', strtotime($data))),
+                'idtipoordine IN (SELECT id FROM or_tipiordine WHERE dir = '.prepare($direzione).')',
+            ]);
+        } else {
+            $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero_esterno', [
+                'YEAR(data) = '.prepare(date('Y', strtotime($data))),
+                'idtipoordine IN (SELECT id FROM or_tipiordine WHERE dir = '.prepare($direzione).')',
+            ]);
+        }
+
+        $numero = Generator::generate($maschera, $ultimo);
 
         return $numero;
     }

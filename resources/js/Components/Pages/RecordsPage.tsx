@@ -64,6 +64,8 @@ export type SectionsT = Record<string, SectionT>;
 
 const FIELDS: string = 'text-field, text-area, material-select';
 
+// TODO: Refactor con l'utilizzo di sottocomponenti (es. per le dialog)
+
 /**
  * @abstract
  */
@@ -540,11 +542,27 @@ export class RecordsPage extends Page {
     raw = false
   ): Promise<any> {
     const column = this.columns[field];
+    const sectionField = collect(this.sections)
+      .pluck(`fields.${field}`)
+      .first() as SelectT | null;
     let value: unknown;
-    if (field.includes(':')) {
-      const [relation, fieldName] = field.split(':');
-      const relationModel = await this.getRelation(model, relation);
-      value = relationModel?.[fieldName];
+    if (field.includes(':') || sectionField?.relationship) {
+      let relation;
+      let fieldName = '';
+
+      if (field.includes(':')) {
+        [relation, fieldName] = field.split(':');
+        const blankModel = await this.getRelation(model, relation);
+        const relatedModel = await blankModel?.fresh();
+        value = relatedModel?.[fieldName];
+      } else {
+        if (Array.isArray(sectionField?.relationship)) {
+          fieldName = sectionField?.relationship[1] as string;
+        }
+        relation = field;
+        const relatedModel = await this.getRelation(model, relation);
+        value = relatedModel?.getId();
+      }
     } else {
       value = model[field];
     }

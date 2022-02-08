@@ -12,7 +12,10 @@ import {
   ToManyRelation,
   ToOneRelation
 } from 'coloquent';
-import {capitalize} from 'lodash-es';
+import {
+  capitalize,
+  snakeCase
+} from 'lodash-es';
 import type {
   Children,
   Vnode,
@@ -430,7 +433,7 @@ export class RecordsPage extends Page {
       }
 
       for (const [relation, relatedModel] of Object.entries(relations)) {
-        model.setRelation(relation, relatedModel);
+        model.setRelation(snakeCase(relation), relatedModel);
       }
 
       const response = await model.save();

@@ -42,13 +42,12 @@ switch (post('op')) {
 
     case 'add':
         $codice = post('codice');
-        $tipo->calcola_km = post('calcola_km');
         $descrizione = post('descrizione');
 
         $tipo = Tipo::build($codice, $descrizione);
 
         $tipo->tempo_standard = post('tempo_standard');
-
+        $tipo->calcola_km = post('calcola_km');
         $tipo->costo_orario = post('costo_orario');
         $tipo->costo_km = post('costo_km');
         $tipo->costo_diritto_chiamata = post('costo_diritto_chiamata');

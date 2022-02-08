@@ -15,7 +15,7 @@
     }],
     "type": "project",
     "require": {
-        "php": ">=7.4",
+        "php": ">=7.2",
         "ext-curl": "*",
         "ext-dom": "*",
         "ext-fileinfo": "*",
@@ -138,6 +138,7 @@
         "optimize-autoloader": false,
         "apcu-autoloader": true,
         "prefer-stable": true,
+        "platform-check": false,
         "platform": {
             "php": "7.4"
         },

@@ -82,6 +82,17 @@ $_SESSION['module_'.$record['id_module']]['id_segment'] = $previous_module;
 					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$" ]}
 				</div>
 			</div>
+<?php
+        if (!empty($record['is_fiscale'])) {
+?>
+            <div class="row">
+				<div class="col-md-12">
+					{[ "type": "textarea", "label": "<?php echo tr('Dicitura fissa'); ?>", "name": "dicitura_fissa", "value": "$dicitura_fissa$" ]}
+				</div>
+			</div>
+<?php
+        }
+?>
 		</div>
 	</div>
 

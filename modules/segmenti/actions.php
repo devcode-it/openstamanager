@@ -49,6 +49,7 @@ switch (post('op')) {
             'clause' => $_POST['clause'],
             'pattern' => $pattern,
             'note' => post('note'),
+            'dicitura_fissa' => post('dicitura_fissa'),
             'position' => post('position'),
             'predefined' => $predefined,
             'is_fiscale' => post('is_fiscale'),

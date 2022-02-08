@@ -189,11 +189,13 @@ class Fattura extends Document
             ->where('data_inizio', '<', $now)
             ->where('data_fine', '>', $now)
             ->first();
+
+        $notes = [];
         if (!empty($dichiarazione)) {
             $model->dichiarazione()->associate($dichiarazione);
 
             // Registrazione dell'operazione nelle note
-            $model->note = tr("Operazione non imponibile come da vostra dichiarazione d'intento nr _PROT_ del _PROT_DATE_ emessa in data _RELEASE_DATE_, da noi registrata al nr _ID_ del _DATE_", [
+            $notes[] = tr("Operazione non imponibile come da vostra dichiarazione d'intento nr _PROT_ del _PROT_DATE_ emessa in data _RELEASE_DATE_, da noi registrata al nr _ID_ del _DATE_", [
                     '_PROT_' => $dichiarazione->numero_protocollo,
                     '_PROT_DATE_' => Translator::dateToLocale($dichiarazione->data_protocollo),
                     '_RELEASE_DATE_' => Translator::dateToLocale($dichiarazione->data_emissione),
@@ -202,6 +204,12 @@ class Fattura extends Document
                 ]).'.';
         }
 
+        $dicitura_fissa = database()->selectOne('zz_segments', 'dicitura_fissa', ['id' => $id_segment])['dicitura_fissa'];
+        if ($dicitura_fissa) {
+           $notes[] = $dicitura_fissa; 
+        }
+        
+        $model->note = implode("\n", $notes);
         $model->save();
 
         return $model;

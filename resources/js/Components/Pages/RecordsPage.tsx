@@ -417,12 +417,20 @@ export class RecordsPage extends Page {
     await this.setFields(model, relations, data);
 
     try {
-      // Save relations
+      // Save relations (only those that changed)
+      const relationsToSave = data.filter((value: any, key: string) => key.includes(':'))
+        .keys()
+        .map((item) => item.split(':')[0])
+        .unique()
+        .all();
+
+      for (const relation of relationsToSave) {
+        const response = await relations[relation].save();
+        relations[relation] = response.getModel() as IModel;
+      }
+
       for (const [relation, relatedModel] of Object.entries(relations)) {
-        const response = await relatedModel.save();
-        if (response.getModelId()) {
-          model.setRelation(relation, response.getModel());
-        }
+        model.setRelation(relation, relatedModel);
       }
 
       const response = await model.save();

@@ -24,6 +24,8 @@ $operazione = filter('op');
 switch ($operazione) {
     case 'addreferente':
         if (!empty(post('nome'))) {
+            $opt_out_newsletter = post('disable_newsletter');
+
             $dbo->insert('an_referenti', [
                 'idanagrafica' => $id_parent,
                 'nome' => post('nome'),
@@ -31,6 +33,7 @@ switch ($operazione) {
                 'telefono' => post('telefono'),
                 'email' => post('email'),
                 'idsede' => post('idsede'),
+                'enable_newsletter' => empty($opt_out_newsletter),
             ]);
             $id_record = $dbo->lastInsertedID();
 
@@ -55,7 +58,6 @@ switch ($operazione) {
             'telefono' => post('telefono'),
             'email' => post('email'),
             'idsede' => post('idsede'),
-
             'enable_newsletter' => empty($opt_out_newsletter),
         ], ['id' => $id_record]);
 

@@ -19,6 +19,10 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Iva\Aliquota;
+
+$codice = Aliquota::max('id')+1;
+
 ?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
@@ -29,7 +33,7 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "number", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "required": 1, "decimals":0, "min-value":"0", "max-value":"999", "maxlength": 3 ]}
+			{[ "type": "number", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "required": 1, "decimals":0, "min-value":"0", "max-value":"999", "maxlength": 3, "value": "<?php echo $codice; ?>", "validation": "codice" ]}
 		</div>
 	</div>
 

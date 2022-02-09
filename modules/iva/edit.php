@@ -79,7 +79,7 @@ if ($res) {
 
             <div class="row">
 				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "value": "$codice$", "required": 1, "decimals":0, "min-value":"0", "max-value":"999", "maxlength": 3, "extra": "<?php echo $attr; ?>" ]}
+					{[ "type": "number", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "value": "$codice$", "required": 1, "decimals":0, "min-value":"0", "max-value":"999", "maxlength": 3, "extra": "<?php echo $attr; ?>", "validation": "codice" ]}
 				</div>
 
 				<div class="col-md-4">

@@ -50,7 +50,7 @@ $settings = [
         'type' => 'version',
         'description' => '7.4.x - 8.0.x',
         'minimum' => '7.4.0',
-        'maximum' => '8.0.15',
+        'maximum' => '8.0.99',
     ],
 
     'zip' => [
@@ -98,13 +98,20 @@ $settings = [
     //    'type' => 'value',
     //    'description' => true,
     //],
+    
     'upload_max_filesize' => [
         'type' => 'value',
         'description' => '>32M',
     ],
+
     'post_max_size' => [
         'type' => 'value',
         'description' => '>32M',
+    ],
+
+    'max_input_vars' => [
+        'type' => 'value',
+        'description' => '>5000',
     ],
 
 ];
@@ -173,7 +180,7 @@ $db = [
         'type' => 'mysql',
         'description' => '5.7.x - 8.0.x',
         'minimum' => '5.7.0',
-        'maximum' => '8.0.27',
+        'maximum' => '8.0.99',
     ],
 
 ];

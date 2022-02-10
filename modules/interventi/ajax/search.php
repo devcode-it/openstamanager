@@ -46,7 +46,7 @@ foreach ($fields as $name => $value) {
 
 $query .= ' WHERE ('.implode(' OR ', $where).') ';
 
-$query .= ' '.Modules::getAdditionalsQuery('Interventi');
+$query .= ' '.Modules::getAdditionalsQuery('Interventi', null, false);
 
 $rs = $dbo->fetchArray($query);
 

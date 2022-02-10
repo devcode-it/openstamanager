@@ -20,10 +20,10 @@
 include_once __DIR__.'/../../../core.php';
 include_once __DIR__.'/../../../../core.php';
 
-$show_costi = true;
+$show_prezzi = true;
 // Limitazione delle azioni dei tecnici
 if ($user['gruppo'] == 'Tecnici') {
-    $show_costi = !empty($user['idanagrafica']) && setting('Mostra i prezzi al tecnico');
+    $show_prezzi = !empty($user['idanagrafica']) && setting('Mostra i prezzi al tecnico');
 }
 
 $sessione = $dbo->fetchOne('SELECT in_interventi_tecnici.*, an_anagrafiche.ragione_sociale, an_anagrafiche.deleted_at, in_interventi_tecnici.tipo_scontokm AS tipo_sconto_km, in_interventi_tecnici.prezzo_ore_unitario, in_interventi_tecnici.prezzo_km_unitario, in_interventi_tecnici.prezzo_dirittochiamata FROM in_interventi_tecnici INNER JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica WHERE in_interventi_tecnici.id = '.prepare(get('id_sessione')));
@@ -50,6 +50,7 @@ echo '
         </div>
     </div>';
 
+$class = $show_prezzi ? '' : 'hide';
 // Orari
 echo '
     <div class="row">
@@ -88,7 +89,6 @@ echo '
             {[ "type": "number", "label": "'.tr('Sconto orario').'", "name": "sconto", "value": "'.$sessione['sconto_unitario'].'", "icon-after": "choice|untprc|'.$sessione['tipo_sconto'].'"]}
         </div>';
 
-    $class = $show_costi ? '' : 'hide';
     // Sconto km
     echo '
         <div class="col-md-4 '.$class.'">

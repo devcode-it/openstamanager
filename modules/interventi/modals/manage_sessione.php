@@ -20,6 +20,8 @@
 include_once __DIR__.'/../../../core.php';
 include_once __DIR__.'/../../../../core.php';
 
+use Modules\Interventi\Intervento;
+
 $show_prezzi = true;
 // Limitazione delle azioni dei tecnici
 if ($user['gruppo'] == 'Tecnici') {
@@ -31,6 +33,13 @@ $sessione = $dbo->fetchOne('SELECT in_interventi_tecnici.*, an_anagrafiche.ragio
 $op = 'edit_sessione';
 $button = '<i class="fa fa-edit"></i> '.tr('Modifica');
 
+$intervento = Intervento::find($id_record);
+
+if (!empty($intervento->id_contratto)) {
+    $query = 'SELECT in_tipiintervento.idtipointervento AS id, descrizione, co_contratti_tipiintervento.costo_ore AS prezzo_ore_unitario, co_contratti_tipiintervento.costo_km AS prezzo_km_unitario, co_contratti_tipiintervento.costo_dirittochiamata AS prezzo_dirittochiamata FROM in_tipiintervento JOIN co_contratti_tipiintervento ON in_tipiintervento.idtipointervento = co_contratti_tipiintervento.idtipointervento WHERE co_contratti_tipiintervento.idcontratto = '.prepare($intervento->id_contratto).' ORDER BY descrizione';
+} else{
+    $query = 'SELECT in_tipiintervento.idtipointervento AS id, descrizione, in_tariffe.costo_ore AS prezzo_ore_unitario, in_tariffe.costo_km AS prezzo_km_unitario, in_tariffe.costo_dirittochiamata AS prezzo_dirittochiamata FROM in_tipiintervento JOIN in_tariffe ON in_tipiintervento.idtipointervento = in_tariffe.idtipointervento WHERE in_tariffe.idtecnico = '.prepare($sessione['idtecnico']).' ORDER BY descrizione';
+}
 echo '
 <form id="add_form" action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.get('id_record').'" method="post">
     <input type="hidden" name="op" value="'.$op.'">
@@ -46,7 +55,7 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "idtipointerventot", "value": "'.$sessione['idtipointervento'].'", "required": 1, "values": "query=SELECT in_tipiintervento.idtipointervento AS id, descrizione, in_tariffe.costo_ore AS prezzo_ore_unitario, in_tariffe.costo_km AS prezzo_km_unitario, in_tariffe.costo_dirittochiamata AS prezzo_dirittochiamata FROM in_tipiintervento JOIN in_tariffe ON in_tipiintervento.idtipointervento = in_tariffe.idtipointervento WHERE in_tariffe.idtecnico = '.prepare($sessione['idtecnico']).' ORDER BY descrizione" ]}
+            {[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "idtipointerventot", "value": "'.$sessione['idtipointervento'].'", "required": 1, "values": "query='.$query.'" ]}
         </div>
     </div>';
 

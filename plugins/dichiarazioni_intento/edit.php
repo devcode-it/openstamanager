@@ -28,21 +28,23 @@ echo '
 	<input type="hidden" name="op" value="update">
 
 	<div class="row">
-		<div class="col-md-3">
-			{[ "type": "text", "label": "'.tr('Numero progressivo').'", "name": "numero_progressivo", "required": 1, "value": "'.$record['numero_progressivo'].'" ]}
-		</div>
 
-		<div class="col-md-3">
-			{[ "type": "date", "label": "'.tr('Data di ricezione').'", "name": "data", "required": 1, "value": "'.$record['data'].'" ]}
-		</div>
-
-		<div class="col-md-3">
-			{[ "type": "text", "label": "'.tr('Numero protocollo').'", "name": "numero_protocollo", "required": 1, "value": "'.$record['numero_protocollo'].'" ]}
+		<div class="col-md-4">
+			{[ "type": "text", "label": "'.tr('Numero protocollo').'", "name": "numero_protocollo", "required": 1, "value": "'.$record['numero_protocollo'].'", "help": "'.tr("Il numero di protocollo della dichiarazione d'intento, rilevabile dalla ricevuta telematica rilasciata dall'Agenzia delle entrate, è composto di due parti:<br><ul><li>la prima, formata da 17 cifre (es. 08060120341234567), che rappresenta il protocollo di ricezione;</li><li>la seconda, di 6 cifre (es. 000001), che rappresenta il progressivo e deve essere separata dalla prima dal segno '-' oppure dal segno '/'</li></ul>").'", "maxlength": "24", "charcounter": 1 ]}
 		</div>
 
 		<div class="col-md-3">
 			{[ "type": "date", "label": "'.tr('Data protocollo').'", "name": "data_protocollo", "value": "'.$record['data_protocollo'].'", "required": 1 ]}
 		</div>
+
+		<div class="col-md-2">
+			{[ "type": "text", "label": "'.tr('Progressivo int.').'", "name": "numero_progressivo", "required": 1, "value": "'.$record['numero_progressivo'].'", "help": "'.tr("Progressivo ad uso interno").'" ]}
+		</div>	
+
+		<div class="col-md-3">
+			{[ "type": "date", "label": "'.tr('Data di ricezione').'", "name": "data", "required": 1, "value": "'.$record['data'].'" ]}
+		</div>
+
 	</div>
 
 	<div class="row">

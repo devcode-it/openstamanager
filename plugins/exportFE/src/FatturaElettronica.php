@@ -1442,6 +1442,7 @@ class FatturaElettronica
             }
 
             // Dichiarazione d'intento
+            //Il numero di protocollo della dichiarazione d’intento, rilevabile dalla ricevuta telematica rilasciata dall’Agenzia delle entrate, è composto da 2 parti 17+6 (protocollo di ricezione della dichiarazione d’intento e il suo progressivo)
             $dichiarazione = $documento->dichiarazione;
             $id_iva_dichiarazione = setting("Iva per lettere d'intento");
             if (!empty($dichiarazione) && $riga->aliquota->id == $id_iva_dichiarazione) {

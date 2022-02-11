@@ -26,7 +26,6 @@ use Modules\ListeNewsletter\Lista;
 use Modules\Newsletter\Newsletter;
 use Notifications\EmailNotification;
 use PHPMailer\PHPMailer\Exception;
-use Modules\Newsletter\Lista as ListaNewsletter;
 
 include_once __DIR__.'/../../core.php';
 
@@ -178,7 +177,7 @@ switch (filter('op')) {
         if (!empty($id_list)) {
 
             //Aggiornamento della lista
-            $lista = ListaNewsletter::find($id_list);
+            $lista = Lista::find($id_list);
             $query =  $lista->query;
             if (check_query($query)) {
                 $lista->query = html_entity_decode($query);

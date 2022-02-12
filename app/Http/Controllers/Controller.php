@@ -32,12 +32,12 @@ class Controller extends BaseController
                 ->reject(null)
                 ->all();
 
-            // Modules (for Frontend)
-            $module->modules = $osm_modules->map(function ($item) use ($module) {
-                $split = explode('/', $module->name);
+            // Modules
+            $module->modules = $osm_modules->map(function ($item, $key) use ($module) {
+                $split = explode('/', $module->name, 2);
                 $item->moduleFullName = $module->name;
                 $item->moduleVendor = $split[0];
-                $item->moduleName = $split[1];
+                $item->moduleName = $key;
 
                 return $item;
             });

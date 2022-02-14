@@ -83,7 +83,12 @@ export async function showSnackbar(
   });
 }
 export function getFormData(form: Cash) {
-  return Object.fromEntries<string | File>(new FormData(form[0] as HTMLFormElement));
+  const data: Record<string, any> = {};
+  const inputs = form.find('text-field, material-select, text-area');
+  inputs.each((index, input) => {
+    data[input.id] = (input as HTMLInputElement).value;
+  });
+  return data;
 }
 export function isFormValid(element: Cash | HTMLFormElement): boolean {
   let form = element;

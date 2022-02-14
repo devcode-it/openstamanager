@@ -43,6 +43,7 @@
     "maicol07/laravel-json-api-resource": "dev-master",
     "nette/utils": "^3",
     "riverskies/laravel-mobile-detect": "^1",
+    "spatie/file-system-watcher": "^1.0",
     "tightenco/ziggy": "^1",
     "wikimedia/composer-merge-plugin": "^2"
   },

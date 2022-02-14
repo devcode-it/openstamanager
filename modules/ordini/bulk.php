@@ -19,11 +19,13 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
-use Modules\Fatture\Tipo;
+use Modules\Fatture\Tipo as TipoFattura;
 use Modules\Ordini\Ordine;
+use Modules\Ordini\Tipo;
 
 $module_fatture = 'Fatture di vendita';
 
@@ -45,7 +47,7 @@ switch (post('op')) {
         $documenti = collect();
         $numero_totale = 0;
 
-        $tipo_documento = Tipo::where('id', post('idtipodocumento'))->first();
+        $tipo_documento = TipoFattura::where('id', post('idtipodocumento'))->first();
 
         $stato_documenti_accodabili = Stato::where('descrizione', 'Bozza')->first();
         $accodare = post('accodare');
@@ -141,6 +143,55 @@ switch (post('op')) {
         }
 
     break;
+
+    case 'unisci_rdo':
+        $id_stato = post('id_stato');
+        $data = post('data') ?: null;
+        $tipo = Tipo::where('dir', 'uscita')->first();
+        
+        $numero_ordini = [];
+        $fornitori = [];
+        $new_ordini = [];
+
+        foreach ($id_records as $id) {
+            $ordine = Ordine::find($id);
+
+            if (in_array($ordine->stato->descrizione, ['Bozza', 'In attesa di conferma', 'Accettato'])) {
+                // Controllo se è già stato creato un nuovo ordine per l'anagrafica
+                if (in_array($ordine->idanagrafica, array_keys($new_ordini))) {
+                    $new_ordine = Ordine::find($new_ordini[$ordine->idanagrafica]);
+                } else {
+                    $anagrafica = Anagrafica::find($ordine->idanagrafica);
+                    $new_ordine = Ordine::build($anagrafica, $tipo, $data);
+                    $new_ordine->idstatoordine = $id_stato;
+                    $new_ordine->data = $data;
+                    $new_ordine->save();
+
+                    $new_ordini[$ordine->idanagrafica] = $new_ordine->id;
+                    $numero_ordini[] = $new_ordine->numero;
+                }
+
+                $righe = $ordine->getRighe();
+
+                foreach ($righe as $riga) {
+                    $new_riga = $riga->replicate();
+                    $new_riga->setDocument($new_ordine);
+                    $new_riga->save();
+                }
+
+                $ordine->delete();
+            }
+        }
+
+        if (sizeof($numero_ordini) > 0) {
+            flash()->info(tr('Sono stati creati i seguenti ordini: ', [
+                '_NUM_' => implode(',', $numero_ordini),
+            ]));
+        } else {
+            flash()->warning(tr('Nessun ordine creato!'));
+        }
+
+    break;
 }
 if ($module['name'] == 'Ordini cliente') {
     $operations['crea_fattura'] = [
@@ -155,6 +206,21 @@ if ($module['name'] == 'Ordini cliente') {
             'blank' => false,
         ],
     ];
+} else {
+    if (App::debug()) {
+        $operations['unisci_rdo'] = [
+            'text' => '<span><i class="fa fa-refresh"></i> '.tr('Unisci rdo'),
+            'data' => [
+                'title' => tr('Unire gli ordini selezionati?'),
+                'msg' => tr('Gli ordini saranno processati solo se in uno dei seguenti stati: Bozza, In attesa di conferma, Accettato.<br>Tutti gli ordini processati verranno eliminati e verrà creato un nuovo ordine unificato per fornitore.').'<br>
+                <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT id, descrizione FROM or_statiordine" ]}<br>
+                <br>{[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1]}',
+                'button' => tr('Procedi'),
+                'class' => 'btn btn-lg btn-warning',
+                'blank' => false,
+            ],
+        ];
+    }
 }
 
 $operations['cambia_stato'] = [
@@ -169,4 +235,4 @@ $operations['cambia_stato'] = [
     ],
 ];
 
-    return $operations;
+return $operations;

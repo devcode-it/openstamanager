@@ -1,7 +1,7 @@
 import {
-  type PluralResponse,
   Model as BaseModel,
-  PaginationStrategy
+  PaginationStrategy,
+  type PluralResponse
 } from 'coloquent';
 import {snakeCase} from 'lodash-es';
 
@@ -31,7 +31,9 @@ export abstract class Model extends BaseModel {
     // eslint-disable-next-line no-constructor-return
     return new Proxy(this, {
       get(target, property: string, receiver): any {
-        if (hasGetter(target, property)) {
+        const whitelistAttributes = ['attributes', 'relations'];
+        // @ts-ignore
+        if (hasGetter(target, property) || whitelistAttributes.includes(property) || typeof target[property] === 'function') {
           return Reflect.get(target, property, receiver);
         }
 

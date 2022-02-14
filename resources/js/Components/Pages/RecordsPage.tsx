@@ -547,10 +547,11 @@ export class RecordsPage extends Page {
     model: IModel,
     field: string,
     useValueModifier = false,
+    sections = this.sections,
     raw = false
   ): Promise<any> {
     const column = this.columns[field];
-    const sectionField = collect(this.sections)
+    const sectionField = collect(sections)
       .pluck(`fields.${field}`)
       .first() as SelectT | null;
     let value: unknown;

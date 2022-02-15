@@ -613,8 +613,13 @@ export class RecordsPage extends Page {
           .first();
 
         const select = section.fields[field.id] as SelectT;
-        let {options} = select;
+        // eslint-disable-next-line prefer-const
+        let {options, required} = select;
         const {relationship} = select;
+
+        if (!required) {
+          list.push(<mwc-list-item key="null" value=""/>);
+        }
 
         if (Array.isArray(relationship) && relationship.length === 2) {
           options = this.getModelSelectOptions(relationship[0], relationship[1]);

@@ -10,3 +10,6 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_scadenziario`\nLEF
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'), 'icon_Inviato', 'IF(`email`.`id_email` IS NOT NULL, ''fa fa-envelope text-success'', '''')', 16, 1, 0, 0, '', '', 1, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'), 'icon_title_Inviato', 'IF(`email`.`id_email` IS NOT NULL, ''Inviato'', '''')', 17, 1, 0, 0, '', '', 0, 0, 1);
+
+-- Set tipo intervento tempo_standard = 1
+UPDATE `in_tipiintervento` SET `tempo_standard` = '1' WHERE `in_tipiintervento`.`tempo_standard` = 0 OR `in_tipiintervento`.`tempo_standard` IS NULL; 

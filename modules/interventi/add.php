@@ -36,7 +36,7 @@ $orario_inizio = filter('orario_inizio');
 $orario_fine = filter('orario_fine');
 if (null == $orario_inizio || '00:00:00' == $orario_inizio) {
     $orario_inizio = date('H').':00:00';
-    $orario_fine = date('H', time() + 60 * 60).':00:00';
+    $orario_fine = date('H').':00:00';
 }
 
 // Un utente del gruppo Tecnici può aprire attività solo a proprio nome
@@ -197,7 +197,7 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Tipo').'", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "'.$id_tipo.'", "ajax-source": "tipiintervento" ]}
+            {[ "type": "select", "label": "'.tr('Tipo').'", "name": "idtipointervento", "required": 1, "value": "'.$id_tipo.'", "ajax-source": "tipiintervento" ]}
         </div>
 
          <div class="col-md-4">
@@ -571,24 +571,18 @@ echo '
 
         input("componenti").setDisabled(!$(this).val())
             .getElement().selectReset();
-	});';
+	});
 
-if (filter('orario_fine') !== null) {
-    echo '
-	// Automatismo del tempo standard
+    // Automatismo del tempo standard
     input("idtipointervento").change(function() {
-        let data = $(this).selectData();
-		if (data && data.tempo_standard > 0) {
+        let data = $("#idtipointervento").selectData();
+        if (data && data.tempo_standard > 0) {
             let orario_inizio = input("orario_inizio").get();
-
-            if (moment(orario_inizio, globals.timestamp_format, globals.locale).isValid()) {
-                let tempo_standard = data.tempo_standard * 60;
-                let nuovo_orario_fine = moment(orario_inizio).add(tempo_standard, "m");
-                input("orario_fine").set(moment(nuovo_orario_fine).format(globals.timestamp_format));
-            }
-		}
-	});';
-}
+            let tempo_standard = data.tempo_standard * 60;
+            let nuovo_orario_fine = moment(orario_inizio, "DD/MM/YYYY HH:mm").add(tempo_standard, "m").format("DD/MM/YYYY HH:mm");
+            input("orario_fine").set(nuovo_orario_fine);
+        }
+    });';
 
         if (!$origine_dashboard) {
             echo '

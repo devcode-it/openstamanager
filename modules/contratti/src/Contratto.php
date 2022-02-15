@@ -267,7 +267,7 @@ class Contratto extends Document
      *
      * @return string
      */
-    public static function getNextNumero()
+    public static function getNextNumero($data)
     {
         $maschera = setting('Formato codice contratti');
 

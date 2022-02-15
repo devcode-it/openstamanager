@@ -84,6 +84,8 @@ export class RecordsPage extends Page {
    */
   fieldsPrecedence: string[] = [];
 
+  defaultRowsPerPage: number = 10;
+
   async oninit(vnode: Vnode) {
     super.oninit(vnode);
     // @ts-ignore
@@ -310,7 +312,7 @@ export class RecordsPage extends Page {
     return (
       <>
         <h2>{this.title}</h2>
-        <DataTable checkable paginated>
+        <DataTable checkable paginated default-rows-per-page={this.defaultRowsPerPage}>
           {this.tableColumns()}
           {this.tableRows()}
         </DataTable>

@@ -27,8 +27,10 @@ use Plugins\ExportFE\FatturaElettronica;
 use Plugins\ExportFE\Interaction;
 use Util\XML;
 use Util\Zip;
+use Modules\Fatture\Stato;
 
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
+$stato_emessa = $dbo->selectOne('co_statidocumento', 'id', ['descrizione' => 'Emessa'])['id'];
 
 switch (post('op')) {
     case 'export-bulk':
@@ -395,6 +397,70 @@ switch (post('op')) {
         ]));
 
         break;
+
+    case 'change-stato':
+        $list = [];
+        $new_stato = Stato::where('descrizione', 'Emessa')->first();
+
+        foreach ($id_records as $id) {
+            $fattura = Fattura::find($id);
+            $stato_precedente = Stato::find($fattura->idstatodocumento);
+
+            if ($stato_precedente->descrizione == 'Bozza') {
+                $fattura->stato()->associate($new_stato);
+                $results = $fattura->save();
+                $message = '';
+
+                foreach ($results as $numero => $result) {
+                    foreach ($result as $title => $links) {
+                        foreach ($links as $link => $errors) {
+                            if (empty($title)) {
+                                flash()->warning(tr('La fattura elettronica num. _NUM_ potrebbe avere delle irregolarità!', [
+                                    '_NUM_' => $numero,
+                                ]).' '.tr('Controllare i seguenti campi: _LIST_', [
+                                        '_LIST_' => implode(', ', $errors),
+                                    ]).'.');
+                            } else {
+                                $message .= '
+                                    <p><b>'.$title.' '.$link.'</b></p>
+                                    <ul>';
+
+                                foreach ($errors as $error) {
+                                    if (!empty($error)) {
+                                        $message .= '
+                                            <li>'.$error.'</li>';
+                                    }
+                                }
+
+                                $message .= '
+                                    </ul>';
+                            }
+                        }
+                    }
+                }
+
+                if ($message) {
+                    // Messaggi informativi sulle problematiche
+                    $message = tr('La fattura elettronica numero _NUM_ non è stata generata a causa di alcune informazioni mancanti', [
+                        '_NUM_' => $numero,
+                    ]).':'.$message;
+
+                    flash()->warning($message);
+                }
+
+                array_push($list, $fattura->numero_esterno);
+            }
+        }
+
+        if (!empty($list)) {
+            flash()->info(tr('Le fatture _LIST_ sono state emesse!', [
+                '_LIST_' => implode(',', $list),
+            ]));
+        } else {
+            flash()->warning(tr('Nessuna fattura emessa!'));
+        }
+
+        break;
 }
 
 if (App::debug()) {
@@ -493,12 +559,24 @@ $operations['change-bank'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna banca').'</span>',
     'data' => [
         'title' => tr('Aggiornare la banca?'),
-        'msg' => tr('Per ciascuna fattura selezionato, verrà aggiornata la banca').'
+        'msg' => tr('Per ciascuna fattura selezionata, verrà aggiornata la banca').'
         <br><br>{[ "type": "select", "label": "'.tr('Banca').'", "name": "id_banca", "required": 1, "values": "query=SELECT id, CONCAT (nome, \' - \' , iban) AS descrizione FROM co_banche WHERE id_anagrafica='.prepare($anagrafica_azienda->idanagrafica).'" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
     ],
 ];
+
+if ($dir == 'entrata') {
+    $operations['change-stato'] = [
+        'text' => '<span><i class="fa fa-refresh"></i> '.tr('Emetti fatture').'</span>',
+        'data' => [
+            'title' => tr('Emissione fatture'),
+            'msg' => tr('Vuoi emettere le fatture selezionate? Verranno emesse solo le fatture in Bozza'),
+            'button' => tr('Procedi'),
+            'class' => 'btn btn-lg btn-warning',
+        ],
+    ];
+}
 
 if (Interaction::isEnabled()) {
     $operations['hook-send'] = [

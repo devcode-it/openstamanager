@@ -4,14 +4,15 @@
     $primary: variables.$primary,
     $secondary: variables.$secondary
 );
-@use "@material/data-table/data-table";
+@use "@material/data-table";
+@use "@material/data-table/data-table" as dataTable;
 @use "@material/elevation/mdc-elevation";
 @use "@material/typography";
 
 @import "include-media/dist/include-media";
 
-@include data-table.core-styles;
-@include data-table.theme-baseline;
+@include dataTable.core-styles;
+@include dataTable.theme-baseline;
 @include typography.core-styles;
 
 /* ---------------------------
@@ -33,6 +34,16 @@
         width: fit-content;
     }
 }
+
+$sizes: ("tight": -1, "comfortable": -2, "dense": -3, "compact": -4);
+
+@each $density, $value in $sizes {
+    //noinspection Stylelint
+    .mdc-data-table--#{$density} {
+        @include data-table.density($value);
+    }
+}
+
 
 /* ---------------------------
     MWC Components

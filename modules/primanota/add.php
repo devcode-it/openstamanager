@@ -84,16 +84,16 @@ foreach ($id_scadenze as $id_scadenza) {
         'iddocumento' => null,
         'id_scadenza' => $scadenza['id'],
         'id_conto' => null,
-        'dare' => ($dir == 'entrata') ? 0 : $scadenza['rata'],
-        'avere' => ($dir == 'entrata') ? $scadenza['rata'] : 0,
+        'dare' => ($dir == 'uscita') ? 0 : $scadenza['rata'],
+        'avere' => ($dir == 'uscita') ? $scadenza['rata'] : 0,
     ];
 
     $righe_documento[] = [
         'iddocumento' => null,
         'id_scadenza' => $scadenza['id'],
         'id_conto' => $id_conto_controparte,
-        'dare' => ($dir == 'entrata') ? $scadenza['rata'] : 0,
-        'avere' => ($dir == 'entrata') ? 0 : $scadenza['rata'],
+        'dare' => ($dir == 'uscita') ? $scadenza['rata'] : 0,
+        'avere' => ($dir == 'uscita') ? 0 : $scadenza['rata'],
     ];
 
     // Se è un insoluto, inverto i valori

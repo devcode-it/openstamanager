@@ -1,6 +1,8 @@
 <component name="InspectionProjectProfileManager">
   <profile version="1.0">
     <option name="myName" value="Project Default" />
+    <inspection_tool class="ContractViolationInspection" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="ES6MissingAwait" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="ES6UnusedImports" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="EditorConfigPartialOverride" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="Eslint" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -9,6 +11,7 @@
         <list>
           <option value="\Codeception\Util\Debug::debug" />
           <option value="\Codeception\Util\Debug::pause" />
+          <option value="\Doctrine::dump" />
           <option value="\Doctrine\Common\Util\Debug::dump" />
           <option value="\Doctrine\Common\Util\Debug::export" />
           <option value="\Illuminate\Support\Debug\Dumper::dump" />
@@ -19,6 +22,7 @@
           <option value="\TYPO3\CMS\Core\Utility\DebugUtility::debug" />
           <option value="\Zend\Debug\Debug::dump" />
           <option value="\Zend\Di\Display\Console::export" />
+          <option value="\Zend_Debug::dump" />
           <option value="dd" />
           <option value="debug_print_backtrace" />
           <option value="debug_zval_dump" />
@@ -103,7 +107,7 @@
     <inspection_tool class="HtmlUnknownTag" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="myValues">
         <value>
-          <list size="27">
+          <list size="28">
             <item index="0" class="java.lang.String" itemvalue="nobr" />
             <item index="1" class="java.lang.String" itemvalue="noembed" />
             <item index="2" class="java.lang.String" itemvalue="comment" />
@@ -131,6 +135,7 @@
             <item index="24" class="java.lang.String" itemvalue="slot" />
             <item index="25" class="java.lang.String" itemvalue="mwc-circular-progress" />
             <item index="26" class="java.lang.String" itemvalue="mwc-snackbar" />
+            <item index="27" class="java.lang.String" itemvalue="material-select" />
           </list>
         </value>
       </option>

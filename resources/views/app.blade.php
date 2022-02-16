@@ -2,11 +2,14 @@
 <html lang="{{app()->getLocale()}}">
 @include('layouts.head')
 <body class="mdc-typography @if(session('high-contrast')) mdc-high-contrast @endif">
-
+@php
+    $modules = app(\App\Http\Controllers\Controller::class)
+                ->getModules(request());
+@endphp
 <top-app-bar>
     @include('layouts.top-app-bar')
     <material-drawer @mobile type="modal" @elsenotmobile type="dismissible" open @endmobile>
-        @include('layouts.drawer')
+        <x-drawer :modules="$modules"></x-drawer>
         <div slot="appContent">
             <main>
                 @inertia
@@ -22,7 +25,7 @@
             </span>
         </div>
         <div class="right-footer">
-            <b>@lang('Versione')</b> {{trim(file_get_contents(base_path('VERSION')))}}
+            <strong>@lang('Versione')</strong> {{trim(file_get_contents(base_path('VERSION')))}}
             <small>(<code>{{trim(file_get_contents(base_path('REVISION')))}}</code>)</small>
         </div>
     </footer>
@@ -30,15 +33,7 @@
 
 @include('layouts.top-app-bar-menus')
 
-<script>
-  window.importPath = '{{Str::contains(vite_asset(''), config('vite.dev_url')) ? config('vite.dev_url') : '.'}}';
-</script>
-
-@routes
-
-@vite('app')
-
-@include('layouts.translations')
+@include('layouts.footer')
 
 </body>
 </html>

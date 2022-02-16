@@ -1,16 +1,5 @@
 import {TextArea as MWCTextArea} from '@material/mwc-textarea';
-// eslint-disable-next-line import/extensions
 import {customElement} from 'lit/decorators.js';
-
-import {type JSXElement} from '../types';
-
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'text-area': JSXElement<TextArea>;
-    }
-  }
-}
 
 @customElement('text-area')
 export default class TextArea extends MWCTextArea {

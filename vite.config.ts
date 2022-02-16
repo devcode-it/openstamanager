@@ -30,7 +30,7 @@ export default defineConfig(osmConfig({
       '@material/mwc-textfield',
       '@material/mwc-top-app-bar',
       'async-wait-until',
-      'lodash',
+      'lodash-es',
       'lit',
       'lit/decorators.js',
       'cash-dom',

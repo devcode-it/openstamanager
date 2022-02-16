@@ -1,11 +1,18 @@
+/* eslint-disable no-await-in-loop */
 import '@maicol07/mwc-layout-grid';
 import '@material/mwc-dialog';
 import '@material/mwc-fab';
 import '@material/mwc-snackbar';
 
+import type {Button as MWCButton} from '@material/mwc-button';
 import type {Dialog as MWCDialog} from '@material/mwc-dialog';
 import type {Cash} from 'cash-dom';
 import collect, {type Collection} from 'collect.js';
+import {
+  ToManyRelation,
+  ToOneRelation
+} from 'coloquent';
+import {capitalize} from 'lodash-es';
 import type {
   Children,
   Vnode,
@@ -15,15 +22,23 @@ import {sync as render} from 'mithril-node-render';
 
 import {
   IModel,
+  InstantiableModel,
   Model
 } from '../../Models';
 import type {
   FieldT,
+  SelectOptionsT,
   SelectT,
   TextAreaT,
   TextFieldT
-} from '../../types';
-import {getFormData, isFormValid, showSnackbar} from '../../utils';
+} from '../../typings';
+import {JSONAPI} from '../../typings';
+import {
+  getFormData,
+  isFormValid,
+  showSnackbar
+} from '../../utils';
+import type {Select} from '../../WebComponents';
 import DataTable from '../DataTable/DataTable';
 import TableCell from '../DataTable/TableCell';
 import TableColumn from '../DataTable/TableColumn';
@@ -36,21 +51,20 @@ export type ColumnT = {
   id?: string
   title: string
   type?: 'checkbox' | 'numeric'
-  valueModifier?: (instance: IModel, property: string) => any
+  valueModifier?: (value: any, field: string, model: IModel) => any
 };
 export type SectionT = {
-  id?: string
   heading?: string
   columns?: number
-  fields:
-  | TextFieldT[]
-  | TextAreaT
-  | SelectT[]
-  | Record<string, TextFieldT | TextAreaT | SelectT>
+  fields: Record<string, TextFieldT | TextAreaT | SelectT>
 };
 export type ColumnsT = Record<string, string | ColumnT>;
 export type RowsT = Collection<IModel>;
-export type SectionsT = SectionT[];
+export type SectionsT = Record<string, SectionT>;
+
+const FIELDS: string = 'text-field, text-area, material-select';
+
+// TODO: Refactor con l'utilizzo di sottocomponenti (es. per le dialog)
 
 /**
  * @abstract
@@ -62,10 +76,8 @@ export class RecordsPage extends Page {
   dialogs: Children[];
   recordDialogMaxWidth: string | number = 'auto';
   model: typeof Model;
-  customSetter: (
-    model: IModel,
-    fields: Collection<File | string>
-  ) => void;
+  /** A list of relations to delete when deleting the record */
+  relationsToDelete: string[] = [];
 
   /**
    * What fields should take precedence when saving the record
@@ -75,7 +87,8 @@ export class RecordsPage extends Page {
   async oninit(vnode: Vnode) {
     super.oninit(vnode);
     // @ts-ignore
-    const response = await this.model.with(this.model.relationships).get();
+    const response = await this.model.with(this.model.relationships)
+      .get();
     const data = response.getData() as Model[];
 
     if (data.length > 0) {
@@ -97,9 +110,27 @@ export class RecordsPage extends Page {
           return;
         }
 
-        await this.updateRecord($(cell).parent('tr').data('model-id') as number);
+        await this.updateRecord($(cell)
+          .parent('tr')
+          .data('model-id') as number);
       });
     }
+
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          const select = entry.target as Select;
+          if (select.fixedMenuPosition) {
+            select.addEventListener('opened', () => select.style.setProperty('--mdc-menu-min-width', `${select.offsetWidth}px`));
+          }
+        }
+      }
+    }, {threshold: [0]});
+
+    $('material-select')
+      .each((index, element) => {
+        observer.observe(element);
+      });
   }
 
   tableColumns(): JSX.Element[] {
@@ -141,11 +172,15 @@ export class RecordsPage extends Page {
           style="cursor: pointer"
         >
           {collect(this.columns)
-            .map((column, index_: string) => (
-              <TableCell key={index_}>
-                {this.getModelValue(instance, (column as ColumnT).id ?? index_)}
-              </TableCell>
-            ))
+            .map((column, index_: string) => {
+              const columnId = (column as ColumnT).id ?? index_;
+
+              this.getModelValue(instance, columnId, true).then((value: string) => {
+                $(`td#${columnId}-${index}`).text(value);
+              }).catch(() => {}).finally(() => {});
+
+              return <TableCell id={`${columnId}-${index}`} key={index_}/>;
+            })
             .toArray()}
         </TableRow>
       ))
@@ -156,38 +191,27 @@ export class RecordsPage extends Page {
     // @ts-ignore
     const response = await this.model.with(this.model.relationships).find(id);
     const instance = response.getData() as IModel;
-    const dialog = $('mwc-dialog#add-record-dialog');
+    const dialog: MWCDialog | null = document.querySelector('mwc-dialog#add-record-dialog');
 
-    dialog
-      // eslint-disable-next-line sonarjs/no-duplicate-string
-      .find('text-field, text-area, material-select')
-      .each(async (index, field) => {
-        field.innerHTML = await this.getFieldBody(field as HTMLFormElement);
-        (field as HTMLInputElement).value = this.getModelValue(instance, field.id) as string;
-      });
+    if (dialog) {
+      for (const field of dialog.querySelectorAll(FIELDS)) {
+        const value = await this.getModelValue(instance, field.id) as string;
 
-    dialog
-      .find('mwc-button#delete-button')
-      .show()
-      .on('click', () => {
-        const confirmDialog = $('mwc-dialog#confirm-delete-record-dialog');
-        const confirmButton = confirmDialog.find('mwc-button#confirm-button');
-        const loading: Cash = confirmButton.find('mwc-circular-progress');
-        confirmButton.on('click', async () => {
-          loading.show();
-          await instance.delete();
-          // noinspection JSUnresolvedVariable
-          this.rows.forget(instance.getId());
-          m.redraw();
-          await showSnackbar(__('Record eliminato!'), 4000);
-        });
-        loading.hide();
-        (confirmDialog.get(0) as MWCDialog).show();
-      });
-    (dialog.get(0) as MWCDialog).show();
+        field.innerHTML = await this.getFieldBody(field as HTMLFormElement, value);
+
+        (field as HTMLInputElement).value = value;
+      }
+
+      $(dialog)
+        .find('mwc-button#delete-button')
+        .show()
+        .on('click', this.openDeleteRecordDialog.bind(this, dialog, instance));
+
+      dialog.show();
+    }
   }
 
-  recordDialog() {
+  recordDialog(): Children {
     return (
       <mwc-dialog
         id="add-record-dialog"
@@ -207,9 +231,9 @@ export class RecordsPage extends Page {
           {(() => {
             const sections = collect(this.sections);
             return sections
-              .map((section, index: string | number) => (
+              .map((section, id: string) => (
                 <>
-                  <div id={section.id ?? index}>
+                  <div id={id}>
                     <h4 class="mdc-typography--overline">{section.heading}</h4>
                     <mwc-layout-grid>
                       {(() => {
@@ -228,7 +252,8 @@ export class RecordsPage extends Page {
                                   id: field.id ?? fieldIndex,
                                   name: field.name ?? field.id ?? fieldIndex,
                                   'data-default-value':
-                                    field.value ?? (field as SelectT).selected ?? ''
+                                    field.value ?? (field as SelectT).selected ?? '',
+                                  fixedMenuPosition: field.type === 'select'
                                 }
                               )}
                             </mwc-layout-grid-cell>
@@ -308,84 +333,251 @@ export class RecordsPage extends Page {
     const form: Cash = dialog.find('form');
 
     // Open "New record" dialog
-    fab.on('click', () => {
-      form
-        .find('text-field, text-area, material-select')
-        .each(async (index, field) => {
-          field.innerHTML = await this.getFieldBody(field as HTMLFormElement);
-          (field as HTMLInputElement).value = $(field)
-            .data('default-value') as string;
-        });
-      dialog.find('mwc-button[type="submit"] mwc-circular-progress').hide();
-      dialog.find('mwc-button#delete-button').hide();
-      const dialogElement: HTMLElement & Partial<MWCDialog> | undefined = dialog.get(0);
-      if (dialogElement) {
-        (dialogElement as MWCDialog).show();
-      }
-    });
+    fab.on('click', this.openNewRecordDialog.bind(this, form, dialog));
 
     const button = dialog.find('mwc-button[type="submit"]');
-    button.on('click', () => {
-      form.trigger('submit');
-    });
-
-    const loading: Cash = button.find('mwc-circular-progress');
-    form.on('submit', async (event: SubmitEvent) => {
-      event.preventDefault();
-      loading.show();
-
-      if (isFormValid(form)) {
-        const data = collect(getFormData(form));
-        // @ts-ignore
-        // eslint-disable-next-line new-cap
-        const instance = this.rows.get(data.get('id'), new this.model() as IModel) as IModel;
-
-        if (this.customSetter) {
-          // eslint-disable-next-line @typescript-eslint/await-thenable
-          await this.customSetter(instance, data);
-        } else {
-          const filtered = data
-            .filter((item: any, id: string) => this.fieldsPrecedence.includes(id));
-
-          // @ts-ignore
-          (filtered.isEmpty() ? filtered : data).each((value: string, id: string) => {
-            instance[id] = value;
-          });
-        }
-
-        const response = await instance.save();
-        const modelId = response.getModelId();
-
-        if (modelId) {
-          // @ts-ignore
-          const newResponse = await this.model.with(this.model.relationships).find(modelId);
-          const model = newResponse.getData() as IModel;
-
-          const dialogElement = dialog.get(0);
-          if (dialogElement) {
-            (dialogElement as MWCDialog).close();
-          }
-
-          this.rows.put(model.getId(), model);
-          loading.hide();
-          m.redraw();
-          await showSnackbar(__('Record salvato'), 4000);
-        }
-      } else {
-        loading.hide();
-        await showSnackbar(__('Campi non validi. Controlla i dati inseriti'));
-      }
-    });
+    button.on('click', () => form.trigger('submit'));
+    form.on('submit', this.submitForm.bind(this, button, dialog, form));
   }
 
-  getModelValue(model: IModel, field: string, raw = false): any {
-    const column = this.columns[field];
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    let value: any = model[field];
+  openNewRecordDialog(form: Cash, dialog: Cash) {
+    form
+      // eslint-disable-next-line unicorn/no-array-callback-reference
+      .find(FIELDS)
+      .each(async (index, field) => {
+        field.innerHTML = await this.getFieldBody(field as HTMLFormElement);
+        (field as HTMLInputElement).value = $(field)
+          .data('default-value') as string;
+      });
+    dialog.find('mwc-button[type="submit"] mwc-circular-progress')
+      .hide();
+    dialog.find('mwc-button#delete-button')
+      .hide();
+    const dialogElement: HTMLElement & Partial<MWCDialog> | undefined = dialog.get(0);
+    if (dialogElement) {
+      (dialogElement as MWCDialog).show();
+    }
+  }
 
-    if (typeof column === 'object' && column.valueModifier) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      value = column.valueModifier(model, field);
+  openDeleteRecordDialog(recordDialog: MWCDialog, instance: IModel) {
+    const dialog: MWCDialog | null = document.querySelector('mwc-dialog#confirm-delete-record-dialog');
+    if (dialog) {
+      dialog.show();
+      const confirmButton: MWCButton | null = dialog.querySelector('mwc-button#confirm-button');
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      confirmButton?.addEventListener('click', this.deleteRecord.bind(this, recordDialog, dialog, confirmButton, instance));
+    }
+  }
+
+  async submitForm(button: Cash, dialog: Cash, form: Cash, event: SubmitEvent) {
+    event.preventDefault();
+    const loading: Cash = button.find('mwc-circular-progress');
+    loading.show();
+
+    if (isFormValid(form)) {
+      const data = collect(getFormData(form));
+      // @ts-ignore
+      const instance = this.rows.get(data.get('id'), new this.model() as IModel) as IModel;
+
+      const modelId = await this.setter(instance, data.except(['id']));
+
+      if (modelId) {
+        // @ts-ignore
+        const newResponse = await this.model.with(this.model.relationships)
+          .find(modelId);
+        const model = newResponse.getData() as IModel;
+
+        const dialogElement = dialog.get(0);
+        if (dialogElement) {
+          (dialogElement as MWCDialog).close();
+        }
+
+        this.rows.put(model.getId(), model);
+        m.redraw();
+        await showSnackbar(__('Record salvato'), 4000);
+      }
+    } else {
+      await showSnackbar(__('Campi non validi. Controlla i dati inseriti'));
+    }
+
+    loading.hide();
+  }
+
+  // eslint-disable-next-line consistent-return
+  async setter(model: IModel, data: Collection<File | string>) {
+    const firstFields = data.only(this.fieldsPrecedence);
+    const fields = data.except(this.fieldsPrecedence);
+
+    firstFields.each((currentItem, key) => {
+      fields.put(key, currentItem);
+    });
+
+    const relations = await this.loadRelations(model, data);
+
+    await this.setFields(model, relations, data);
+
+    try {
+      // Save relations (only those that changed)
+      const relationsToSave = data.filter((value: any, key: string) => key.includes(':'))
+        .keys()
+        .map((item) => item.split(':')[0])
+        .unique()
+        .all();
+
+      for (const relation of relationsToSave) {
+        const response = await relations[relation].save();
+        relations[relation] = response.getModel() as IModel;
+      }
+
+      for (const [relation, relatedModel] of Object.entries(relations)) {
+        model.setRelation(relation, relatedModel);
+      }
+
+      const response = await model.save();
+      return response.getModelId();
+    } catch (error) {
+      const {errors} = (error as JSONAPI.RequestError).response.data;
+      const errorMessage = errors.map((error_) => error_.detail)
+        .join(';\n');
+      void showSnackbar(__('Errore durante il salvataggio: :error', {error: errorMessage}), false);
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async setFields(
+    model: IModel,
+    relations: Record<string, IModel>,
+    data: Collection<File | string>
+  ) {
+    for (const [field, value] of Object.entries(data.except(Object.keys(relations))
+      .all())) {
+      const fieldValue = value !== '' ? value : undefined;
+      if (field.includes(':')) {
+        const [relation, fieldName]: (string | undefined)[] = field.split(':');
+        const relationModel: IModel = relation in relations
+          ? relations[relation]
+          : await this.getRelation(model, relation, true) as IModel;
+
+        if (relationModel) {
+          relationModel[fieldName] = fieldValue;
+          relations[relation] = relationModel;
+        }
+      } else {
+        model[field] = fieldValue;
+      }
+    }
+  }
+
+  async deleteRecord(
+    recordDialog: MWCDialog,
+    dialog: MWCDialog,
+    button: MWCButton,
+    instance: IModel
+  ) {
+    const loading = $(button.querySelector('mwc-circular-progress'));
+    loading.show();
+
+    try {
+      for (const relation of this.relationsToDelete) {
+        const relatedModel = await this.getRelation(instance, relation, false);
+        if (relatedModel) {
+          await relatedModel.delete();
+        }
+      }
+      await instance.delete();
+      this.rows.forget(instance.getId());
+      m.redraw();
+      void showSnackbar(__('Record eliminato!'), 4000);
+      dialog.close();
+      recordDialog.close();
+    } catch (error) {
+      const {errors} = (error as JSONAPI.RequestError).response.data;
+      const errorMessage = errors.map((error_) => error_.detail)
+        .join(';\n');
+      void showSnackbar(__('Errore durante l\'eliminazione: :error', {error: errorMessage}), false);
+    }
+
+    loading.hide();
+  }
+
+  async loadRelations(model: IModel, data: Collection<File | string>) {
+    const relations: Record<string, IModel> = {};
+    const proto = (Object.getPrototypeOf(model) as Model).constructor as typeof Model;
+
+    const relationsData = data.filter(
+      (value: any, field: string) => proto.relationships.includes(field)
+    );
+
+    for (const [field, value] of Object.entries(relationsData.all())) {
+      relations[field] = await this.getRelation(model, field, false, Number(value)) as IModel;
+    }
+
+    return relations;
+  }
+
+  async getRelation(
+    model: IModel,
+    relation: string,
+    createIfNotExists: boolean = false,
+    id?: number
+  ) {
+    const getter = `get${capitalize(relation)}`;
+    const relationModel: IModel | undefined = (typeof model[getter] === 'function'
+      ? (model[getter] as Function)()
+      : model.getRelation(relation)) as IModel;
+
+    if (relationModel) {
+      return relationModel;
+    }
+
+    const relationship = (model[relation] as Function)() as
+      ToOneRelation<IModel> | ToManyRelation<IModel>;
+    const RelationshipModel = relationship.getType() as typeof Model | InstantiableModel;
+
+    if (id) {
+      // @ts-ignore
+      const response = await (RelationshipModel as typeof Model).find(id);
+      return response.getData() as IModel;
+    }
+
+    return createIfNotExists ? new (RelationshipModel as InstantiableModel)() : undefined;
+  }
+
+  async getModelValue(
+    model: IModel,
+    field: string,
+    useValueModifier = false,
+    sections = this.sections,
+    raw = false
+  ): Promise<any> {
+    const column = this.columns[field];
+    const sectionField = collect(sections)
+      .pluck(`fields.${field}`)
+      .first() as SelectT | null;
+    let value: unknown;
+    if (field.includes(':') || sectionField?.relationship) {
+      let relation;
+      let fieldName = '';
+
+      if (field.includes(':')) {
+        [relation, fieldName] = field.split(':');
+        const blankModel = await this.getRelation(model, relation);
+        const relatedModel = await blankModel?.fresh();
+        value = relatedModel?.[fieldName];
+      } else {
+        if (Array.isArray(sectionField?.relationship)) {
+          fieldName = sectionField?.relationship[1] as string;
+        }
+        relation = field;
+        const relatedModel = await this.getRelation(model, relation);
+        value = relatedModel?.getId();
+      }
+    } else {
+      value = model[field];
+    }
+
+    if (useValueModifier && typeof column === 'object' && column.valueModifier) {
+      value = column.valueModifier(value, field, model);
     }
 
     return (value || raw) ? value : '';
@@ -410,15 +602,29 @@ export class RecordsPage extends Page {
     }
   }
 
-  async getFieldBody(field: HTMLFormElement) {
+  async getFieldBody(field: HTMLFormElement & FieldT, value?: string) {
     const list = [];
 
     switch (field.type ?? field.getAttribute('type')) {
-      case 'select':
-        // eslint-disable-next-line no-case-declarations
-        const section = this.sections.find((value) => field.id in value.fields);
-        // eslint-disable-next-line no-case-declarations
-        let {options} = (section?.fields as Record<string, SelectT>)[field.id];
+      case 'select': {
+        const section = collect(this.sections)
+          // (temporary) .first((s) => field.id in s.fields);
+          .filter((s) => field.id in s.fields)
+          .first();
+
+        const select = section.fields[field.id] as SelectT;
+        // eslint-disable-next-line prefer-const
+        let {options, required} = select;
+        const {relationship} = select;
+
+        if (!required) {
+          list.push(<mwc-list-item key="null" value=""/>);
+        }
+
+        if (Array.isArray(relationship) && relationship.length === 2) {
+          options = this.getModelSelectOptions(relationship[0], relationship[1]);
+        }
+
         if (options instanceof Promise) {
           options = await options;
         }
@@ -426,7 +632,8 @@ export class RecordsPage extends Page {
         if (options) {
           for (const option of options) {
             list.push(render(
-              <mwc-list-item key={option.value} value={option.value}>
+              <mwc-list-item key={option.value} value={option.value}
+                             selected={option.value === value} activated={option.value === value}>
                 {option.label}
               </mwc-list-item>
             ));
@@ -434,20 +641,33 @@ export class RecordsPage extends Page {
         }
 
         break;
-
+      }
       case 'checkbox':
         return '';
-
       case 'radio':
         return '';
-
       default:
     }
 
-    if (field.icon) {
-      list.push(render(<Mdi icon={(field as FieldT).icon} slot="icon"/>));
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const {icon} = field;
+    if (icon) {
+      list.push(render(<Mdi icon={icon} slot="icon"/>));
     }
 
     return list.join('');
+  }
+
+  async getModelSelectOptions(
+    model: typeof Model,
+    labelAttribute: string
+  ): Promise<SelectOptionsT> {
+    const response = await model.all();
+    const categories = response.getData();
+
+    return categories.map((instance: IModel) => ({
+      value: instance.getId() as string,
+      label: instance[labelAttribute] as string
+    }));
   }
 }

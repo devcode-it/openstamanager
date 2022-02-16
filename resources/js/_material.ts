@@ -6,19 +6,8 @@ import './WebComponents/TopAppBar';
 import './WebComponents/MaterialDrawer';
 
 import {Inertia} from '@inertiajs/inertia';
-import type {MWCCard} from '@maicol07/mwc-card';
-import type {LayoutGrid as MWCLayoutGrid, LayoutGridCell as MWCLayoutGridCell} from '@maicol07/mwc-layout-grid';
-import type {Button as MWCButton} from '@material/mwc-button';
-import type {Checkbox as MWCCheckbox} from '@material/mwc-checkbox';
-import type {CircularProgress as MWCCircularProgress} from '@material/mwc-circular-progress';
 import type {Dialog as MWCDialog} from '@material/mwc-dialog';
 import type {Drawer as MWCDrawer} from '@material/mwc-drawer';
-import type {Fab as MWCFab} from '@material/mwc-fab';
-import type {Formfield as MWCFormfield} from '@material/mwc-formfield';
-import type {IconButton as MWCIconButton} from '@material/mwc-icon-button';
-import type {IconButtonToggle as MWCIconButtonToggle} from '@material/mwc-icon-button-toggle';
-import type {LinearProgress as MWCLinearProgress} from '@material/mwc-linear-progress';
-import type {List as MWCList} from '@material/mwc-list';
 import type {ListItem as MWCListItem} from '@material/mwc-list/mwc-list-item';
 import type {Menu as MWCMenu} from '@material/mwc-menu';
 import $, {
@@ -26,30 +15,6 @@ import $, {
   type Element
 } from 'cash-dom';
 
-import type {JSXElement} from './types';
-
-// Declare Material JSX components
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'mwc-button': JSXElement<MWCButton & {dialogAction?: string | 'ok' | 'discard' | 'close' | 'cancel' | 'accept' | 'decline'}>;
-      'mwc-checkbox': JSXElement<MWCCheckbox>;
-      'mwc-card': JSXElement<MWCCard>
-      'mwc-circular-progress': JSXElement<MWCCircularProgress>;
-      'mwc-dialog': JSXElement<MWCDialog>;
-      'mwc-fab': JSXElement<MWCFab>;
-      'mwc-formfield': JSXElement<MWCFormfield>;
-      'mwc-icon-button': JSXElement<MWCIconButton>;
-      'mwc-icon-button-toggle': JSXElement<MWCIconButtonToggle>;
-      'mwc-layout-grid': JSXElement<MWCLayoutGrid>;
-      'mwc-layout-grid-cell': JSXElement<MWCLayoutGridCell> & {'span-desktop'?: number, 'span-tablet'?: number, 'span-phone'?: number};
-      'mwc-linear-progress': JSXElement<MWCLinearProgress>;
-      'mwc-list': JSXElement<MWCList>;
-      'mwc-list-item': JSXElement<MWCListItem>;
-      'mwc-menu': JSXElement<MWCMenu>;
-    }
-  }
-}
 
 // Remove the ugly underline under mwc button text when inside <a> tags.
 $('a').has('mwc-button').css('text-decoration', 'none');

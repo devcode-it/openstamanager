@@ -16,16 +16,31 @@
       "dom.iterable"
     ],
     "types": [
+      "vite/client",
       "vite-plugin-pwa/client"
     ],
     "baseUrl": ".",
     "paths": {
-      "/images/logo_completo.png": ["resources/static/images/logo_completo.png"]
+      "@openstamanager/assets/*": [
+        "/"
+      ],
+      "@openstamanager/scss/*": [
+        "resources/scss/*"
+      ]
     }
   },
-  "exclude": ["**/node_modules", "**/.*/"],
+  "exclude": [
+    "**/node_modules",
+    "**/.*/"
+  ],
   "include": [
     "resources/js/**/*",
+    "gulpfile.ts",
     "vite.config.ts"
-  ]
+  ],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  }
 }

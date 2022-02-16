@@ -11,13 +11,12 @@ import type {
 } from 'mithril';
 import redaxios from 'redaxios';
 
-// eslint-disable-next-line import/no-absolute-path
-import logoUrl from '/images/logo_completo.png';
+import logoUrl from '@openstamanager/assets/images/logo_completo.png';
 
 import LoadingButton from '../Components/LoadingButton';
 import Mdi from '../Components/Mdi';
 import Page from '../Components/Page';
-import {ErrorResponse} from '../types';
+import {ErrorResponse} from '../typings';
 import {
   getFormData,
   isFormValid,

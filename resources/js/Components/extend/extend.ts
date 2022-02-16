@@ -3,8 +3,8 @@
  */
 
 /**
- * Type that returns an array of all keys of a provided object that are of the provided type,
- * or a subtype of the type.
+ * Type that returns an array of all keys of a provided object that are of
+ * of the provided type, or a subtype of the type.
  */
 declare type KeysOfType<Type extends object, Match> = {
   [Key in keyof Type]-?: Type[Key] extends Match ? Key : never;

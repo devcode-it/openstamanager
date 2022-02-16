@@ -7,6 +7,7 @@ import redaxios from 'redaxios';
 import {registerSW} from 'virtual:pwa-register';
 
 import {type Page} from './Components';
+import {OpenSTAManager} from './typings';
 import {
   __ as translator,
   showSnackbar
@@ -18,6 +19,22 @@ globalThis.m = Mithril;
 globalThis.__ = translator;
 
 InertiaProgress.init();
+
+const importedModules: Record<string, {default: any, bootstrap?: Function}> = {};
+
+// @ts-ignore
+const modules = globalThis.modules as OpenSTAManager.Modules;
+for (const [name, module] of Object.entries(modules)) {
+  if (module.hasBootstrap) {
+    // eslint-disable-next-line no-await-in-loop,@typescript-eslint/no-unsafe-assignment
+    importedModules[name] = await import(
+      /* @vite-ignore */
+      `${importPath}/vendor/${module.moduleVendor}/${name}/index.js`
+    );
+
+    importedModules[name].bootstrap?.();
+  }
+}
 
 await createInertiaApp({
   title: ((title) => `${title} - OpenSTAManager`),
@@ -35,10 +52,12 @@ await createInertiaApp({
     const [modulePath, page] = split;
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const osmModule: {default: unknown, [key: string]: unknown} = await import(
-      /* @vite-ignore */
-      `${importPath}/vendor/${modulePath}/index.js`
-    );
+    const osmModule: {default: unknown, [key: string]: unknown} = modulePath in importedModules
+      ? importedModules[modulePath]
+      : await import(
+        /* @vite-ignore */
+        `${importPath}/vendor/${modulePath}/index.js`
+      );
 
     return osmModule[page];
   },
@@ -53,7 +72,6 @@ $('#logout-button')
     window.location.href = route('auth.login');
   });
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 const updateSW = registerSW({
   async onNeedRefresh() {
     const action = await showSnackbar(__('Aggiornamento del frontend disponibile!'), false, __('Ricarica'), __('Annulla'));

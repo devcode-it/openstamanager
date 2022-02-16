@@ -29,6 +29,7 @@ use Modules\Articoli\Articolo;
 use Modules\Articoli\Categoria;
 use Modules\Iva\Aliquota;
 use Plugins\ListinoClienti\DettaglioPrezzo;
+use Plugins\ListinoFornitori\DettaglioFornitore;
 use Uploads;
 
 /**
@@ -154,6 +155,18 @@ class CSV extends CSVImporter
                 'label' => 'Anagrafica listino',
             ],
             [
+                'field' => 'codice_fornitore',
+                'label' => 'Codice fornitore',
+            ],
+            [
+                'field' => 'barcode_fornitore',
+                'label' => 'Barcode fornitore',
+            ],
+            [
+                'field' => 'descrizione_fornitore',
+                'label' => 'Descrizione fornitore',
+            ],
+            [
                 'field' => 'qta_minima',
                 'label' => 'Qta minima',
             ],
@@ -214,6 +227,10 @@ class CSV extends CSVImporter
             }
 
             $database->query('DELETE FROM mg_prezzi_articoli WHERE id_articolo = '.prepare($articolo->id).' AND id_anagrafica = '.prepare($anagrafica->id));
+
+            if (!empty($dettagli['codice_fornitore']) && !empty($dettagli['descrizione_fornitore'])) {
+                $database->query('DELETE FROM mg_fornitore_articolo WHERE id_articolo = '.prepare($articolo->id).' AND id_anagrafica = '.prepare($anagrafica->id));
+            }
         }
     }
 
@@ -291,6 +308,28 @@ class CSV extends CSVImporter
         $qta_registrata = (float) ($record['qta']);
         $nome_sede = $record['nome_sede'];
 
+        // Aggiornamento dettaglio prezzi
+        $dettagli['anagrafica_listino'] = $record['anagrafica_listino'];
+        $dettagli['qta_minima'] = $record['qta_minima'];
+        $dettagli['qta_massima'] = $record['qta_massima'];
+        $dettagli['prezzo_listino'] = $record['prezzo_listino'];
+        $dettagli['sconto_listino'] = $record['sconto_listino'];
+        $dettagli['dir'] = $record['dir'];
+        $dettagli['codice_fornitore'] = $record['codice_fornitore'];
+        $dettagli['barcode_fornitore'] = $record['barcode_fornitore'];
+        $dettagli['descrizione_fornitore'] = $record['descrizione_fornitore'];
+        $this->aggiornaDettaglioPrezzi($articolo, $dettagli);
+
+        unset($record['anagrafica_listino']);
+        unset($record['qta_minima']);
+        unset($record['qta_massima']);
+        unset($record['prezzo_listino']);
+        unset($record['sconto_listino']);
+        unset($record['dir']);
+        unset($record['codice_fornitore']);
+        unset($record['barcode_fornitore']);
+        unset($record['descrizione_fornitore']);
+
         // Salvataggio delle informazioni generali
         $articolo->fill($record);
 
@@ -300,15 +339,6 @@ class CSV extends CSVImporter
         ]);
 
         $articolo->save();
-
-        // Aggiornamento dettaglio prezzi
-        $dettagli['anagrafica_listino'] = $record['anagrafica_listino'];
-        $dettagli['qta_minima'] = $record['qta_minima'];
-        $dettagli['qta_massima'] = $record['qta_massima'];
-        $dettagli['prezzo_listino'] = $record['prezzo_listino'];
-        $dettagli['sconto_listino'] = $record['sconto_listino'];
-        $dettagli['dir'] = $record['dir'];
-        $this->aggiornaDettaglioPrezzi($articolo, $dettagli);
 
         // Movimentazione della quantità registrata
         $giacenze = $articolo->getGiacenze();
@@ -361,11 +391,11 @@ class CSV extends CSVImporter
     public static function getExample()
     {
         return [
-            ['Codice', 'Barcode', 'Descrizione', 'Fornitore predefinito', 'Quantità', 'Unità di misura', 'Prezzo acquisto', 'Prezzo vendita', 'Peso lordo (KG)', 'Volume (M3)', 'Categoria', 'Sottocategoria', 'Ubicazione', 'Note', 'Anagrafica listino', 'Qta minima', 'Qta massima', 'Prezzo listino', 'Sconto listino', 'Cliente/Fornitore listino'],
-            ['00004', '719376861871', 'Articolo', 'Mario Rossi', '10', 'Kg', '5.25', '12.72', '10.2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova', 'Mario Rossi', '', '', '10', '5', 'Fornitore'],
-            ['00004', '719376861871', 'Articolo', 'Mario Rossi', '10', 'Kg', '5.25', '12.72', '10.2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova', 'Mario Rossi', '1', '10', '9', '', 'Fornitore'],
-            ['00004', '719376861871', 'Articolo', 'Mario Rossi', '10', 'Kg', '5.25', '12.72', '10.2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova', 'Mario Rossi', '11', '20', '8', '5', 'Fornitore'],
-            ['00004', '719376861871', 'Articolo', 'Mario Rossi', '10', 'Kg', '5.25', '12.72', '10.2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova', 'Mario Verdi', '1', '10', '20', '10', 'Cliente'],
+            ['Codice', 'Barcode', 'Descrizione', 'Fornitore predefinito', 'Quantità', 'Unità di misura', 'Prezzo acquisto', 'Prezzo vendita', 'Peso lordo (KG)', 'Volume (M3)', 'Categoria', 'Sottocategoria', 'Ubicazione', 'Note', 'Anagrafica listino', 'Codice fornitore', 'Barcode fornitore', 'Descrizione fornitore', 'Qta minima', 'Qta massima', 'Prezzo listino', 'Sconto listino', 'Cliente/Fornitore listino'],
+            ['00004', '719376861871', 'Articolo', 'Mario Rossi', '10', 'Kg', '5.25', '12.72', '10.2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova', 'Mario Rossi', 'artforn01', '384574557484', 'Articolo di prova fornitore', '', '', '10', '5', 'Fornitore'],
+            ['00004', '719376861871', 'Articolo', 'Mario Rossi', '10', 'Kg', '5.25', '12.72', '10.2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova', 'Mario Rossi', 'artforn01', '384574557484', 'Articolo di prova fornitore', '1', '10', '9', '', 'Fornitore'],
+            ['00004', '719376861871', 'Articolo', 'Mario Rossi', '10', 'Kg', '5.25', '12.72', '10.2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova', 'Mario Rossi', 'artforn01', '384574557484', 'Articolo di prova fornitore', '11', '20', '8', '5', 'Fornitore'],
+            ['00004', '719376861871', 'Articolo', 'Mario Rossi', '10', 'Kg', '5.25', '12.72', '10.2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova', 'Mario Verdi', '', '', '', '1', '10', '20', '10', 'Cliente'],
         ];
     }
 
@@ -394,6 +424,14 @@ class CSV extends CSVImporter
             }
 
             $dettaglio_predefinito->save();
+
+            if ($dettagli['dir'] == 'uscita' && !empty($dettagli['codice_fornitore']) && !empty($dettagli['descrizione_fornitore'])) {
+                $fornitore = DettaglioFornitore::build($anagrafica, $articolo);
+                $fornitore->codice_fornitore = $dettagli['codice_fornitore'];
+                $fornitore->barcode_fornitore = $dettagli['barcode_fornitore'];
+                $fornitore->descrizione = $dettagli['descrizione_fornitore'];
+                $fornitore->save();
+            }
         }
     }
 }

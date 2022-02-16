@@ -152,6 +152,7 @@ switch ($resource) {
             if ($usare_dettaglio_fornitore) {
                 $search_fields[] = 'mg_fornitore_articolo.descrizione LIKE '.prepare('%'.$search.'%');
                 $search_fields[] = 'mg_fornitore_articolo.codice_fornitore LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = 'mg_fornitore_articolo.barcode_fornitore LIKE '.prepare('%'.$search.'%');
             }
         }
 

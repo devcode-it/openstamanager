@@ -79,8 +79,9 @@ if (!$fornitori_disponibili->isEmpty()) {
         echo '
         <tr>
             <th>'.tr('Fornitore').'</th>
-            <th width="150">'.tr('Codice').'</th>
             <th>'.tr('Descrizione').'</th>
+            <th width="150">'.tr('Codice').'</th>
+            <th width="150">'.tr('Barcode').'</th>
             <th class="text-center" width="210">'.tr('Q.tà minima ordinabile').'</th>
             <th class="text-center" width="150">'.tr('Tempi di consegna').'</th>
             <th class="text-center" width="150">#</th>
@@ -93,12 +94,16 @@ if (!$fornitori_disponibili->isEmpty()) {
 
         if (!empty($dettaglio)) {
             echo '
+            <td>
+                '.$dettaglio['descrizione'].'
+            </td>
+            
             <td class="text-center">
                 '.$dettaglio['codice_fornitore'].'
             </td>
 
-            <td>
-                '.$dettaglio['descrizione'].'
+            <td class="text-center">
+                '.$dettaglio['barcode_fornitore'].'
             </td>
 
             <td class="text-right">
@@ -112,8 +117,9 @@ if (!$fornitori_disponibili->isEmpty()) {
             </td>';
         } else {
             echo '
-            <td class="text-center">-</td>
             <td>-</td>
+            <td class="text-center">-</td>
+            <td class="text-center">-</td>
             <td class="text-right">-</td>
             <td class="text-right">-</td>';
         }
@@ -152,7 +158,7 @@ if (!$fornitori_disponibili->isEmpty()) {
         if (!empty($prezzi) && !$prezzi->isEmpty()) {
             echo '
         <tr>
-            <td></td>
+            <td colspan="2"></td>
             <th class="text-center">'.tr('Q.tà minima').'</th>
             <th class="text-center">'.tr('Q.tà massima').'</th>
             <th class="text-center">'.tr('Prezzo unitario').'</th>
@@ -163,7 +169,7 @@ if (!$fornitori_disponibili->isEmpty()) {
             foreach ($prezzi as $key => $dettaglio) {
                 echo '
         <tr '.(($anagrafica->id == $articolo->id_fornitore) ? 'class="success"' : '').'>
-            <td></td>
+            <td colspan="2"></td>
 
             <td class="text-right">
                 '.($dettaglio->minimo ? numberFormat($dettaglio->minimo) : '-').'

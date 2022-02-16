@@ -13,3 +13,6 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 
 -- Set tipo intervento tempo_standard = 1
 UPDATE `in_tipiintervento` SET `tempo_standard` = '1' WHERE `in_tipiintervento`.`tempo_standard` = 0 OR `in_tipiintervento`.`tempo_standard` IS NULL; 
+
+-- Aggiunto campo Barcode fornitore
+ALTER TABLE `mg_fornitore_articolo` ADD `barcode_fornitore` VARCHAR(255) NOT NULL AFTER `codice_fornitore`; 

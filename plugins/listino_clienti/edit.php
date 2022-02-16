@@ -53,8 +53,8 @@ $clienti = DettaglioPrezzo::where('id_articolo', $id_articolo)
     ->groupBy('id_anagrafica');
 if (!$clienti->isEmpty()) {
     echo '
-<table class="table table-condensed table-bordered">
-    <thead>
+<table class="table table-striped table-condensed table-bordered">
+    <tbody>
         <tr>
             <th>'.tr('Cliente').'</th>
             <th class="text-center" width="210">'.tr('Q.tà minima').'</th>
@@ -62,10 +62,7 @@ if (!$clienti->isEmpty()) {
             <th class="text-center" width="150">'.tr('Prezzo unitario').'</th>
             <th class="text-center" width="150">'.tr('Sconto').'</th>
             <th class="text-center" width="150">#</th>
-        </tr>
-    </thead>
-
-    <tbody>';
+        </tr>';
 
     foreach ($clienti as $id_cliente => $prezzi) {
         $anagrafica = $prezzi->first()->anagrafica;

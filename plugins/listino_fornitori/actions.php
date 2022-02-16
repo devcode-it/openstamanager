@@ -42,6 +42,7 @@ switch (filter('op')) {
         }
 
         $fornitore->codice_fornitore = post('codice_fornitore');
+        $fornitore->barcode_fornitore = post('barcode_fornitore');
         $fornitore->descrizione = post('descrizione');
         $fornitore->qta_minima = post('qta_minima');
         $fornitore->giorni_consegna = post('giorni_consegna');

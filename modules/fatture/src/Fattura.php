@@ -565,7 +565,7 @@ class Fattura extends Document
         $is_fiscale = $this->isFiscale();
 
         // Salvataggio effettivo
-        $result = parent::save($options);
+        parent::save($options);
 
         // Fix dei campi statici
         $this->id_riga_bollo = $this->gestoreBollo->manageRigaMarcaDaBollo();
@@ -581,7 +581,7 @@ class Fattura extends Document
         }
 
         // Salvataggio effettivo
-        $result = parent::save($options);
+        parent::save($options);
 
         // Operazioni al cambiamento di stato
         // Bozza o Annullato -> Stato diverso da Bozza o Annullato
@@ -618,6 +618,42 @@ class Fattura extends Document
             if (!empty($dichiarazione)) {
                 $dichiarazione->fixTotale();
                 $dichiarazione->save();
+            }
+        }
+
+        // Operazioni automatiche per le Fatture Elettroniche
+        if ($this->direzione == 'entrata' && $stato_precedente->descrizione == 'Bozza' && $this->stato['descrizione'] == 'Emessa') {
+            $stato_fe = database()->fetchOne('SELECT * FROM fe_stati_documento WHERE codice = '.prepare($this->codice_stato_fe));
+            $abilita_genera = empty($this->codice_stato_fe) || intval($stato_fe['is_generabile']);
+
+            // Generazione automatica della Fattura Elettronica
+            $checks = FatturaElettronica::controllaFattura($this);
+            $fattura_elettronica = new FatturaElettronica($this->id);
+            if ($abilita_genera && empty($checks)) {
+                $fattura_elettronica->save(base_dir().'/'.FatturaElettronica::getDirectory());
+
+                if (!$fattura_elettronica->isValid()) {
+                    $errors = $fattura_elettronica->getErrors();
+
+                    $result[$this->numero_esterno][0][0] = $errors;
+                }
+            } elseif (!empty($checks)) {
+                // Rimozione eventuale fattura generata erronamente
+                // Fix per la modifica di dati interni su fattura già generata
+                if ($abilita_genera) {
+                    $fattura_elettronica->delete();
+                }
+                foreach ($checks as $check) {
+                    $errors = [];
+                    foreach ($check['errors'] as $error) {
+                        if (!empty($error)) {
+                            $errors = $error;
+                        }
+                    }
+                    if (!empty($errors)) {
+                        $result[$this->numero_esterno][$check['name']][$check['link']] = $check['errors'];
+                    }
+                }
             }
         }
 

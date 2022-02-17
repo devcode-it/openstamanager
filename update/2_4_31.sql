@@ -16,3 +16,6 @@ UPDATE `in_tipiintervento` SET `tempo_standard` = '1' WHERE `in_tipiintervento`.
 
 -- Aggiunto campo Barcode fornitore
 ALTER TABLE `mg_fornitore_articolo` ADD `barcode_fornitore` VARCHAR(255) NOT NULL AFTER `codice_fornitore`; 
+
+-- Aggiunta impostazione per scegliere colore sessioni dashboard
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Visualizzazione colori sessioni', 'Sfondo colore stato - bordo colore tecnico', 'list[Sfondo colore stato - bordo colore tecnico,Sfondo colore tecnico - bordo colore stato]', '1', 'Dashboard', '7', '');

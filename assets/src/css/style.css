@@ -708,6 +708,10 @@ input.small-width {
     cursor: pointer;
 }
 
+.fc-event {
+    border-top-width: 10px;
+}
+
 .fc-event-primary {
     background-color: #3a87ad;
     border: 1px solid #3a87ad;

@@ -141,6 +141,8 @@ $("#idarticolo").on("change", function() {
         $("#prezzi").html("");
         $("#prezzivendita").html("");
         $("#prezziacquisto").html("");
+        $("#prezzo_unitario").val("");
+        $("#sconto").val("");
     }
 
     if (!$(this).val()) {
@@ -186,7 +188,6 @@ $("#idarticolo").on("change", function() {
 
     $("#um").selectSetNew($data.um, $data.um);
     // Aggiornamento automatico di guadagno e margine
-
 });
 
 $("#idsede").on("change", function() {
@@ -276,7 +277,10 @@ function verificaPrezzoArticolo() {
     }
 
     div.css("padding-top", "5px");
-    div.html(`<small class="label label-info" >'.tr('Prezzo suggerito').': ` + prezzo_previsto.toLocale() + " " + globals.currency + `<button type="button" class="btn btn-xs btn-info pull-right" onclick="aggiornaPrezzoArticolo()"><i class="fa fa-refresh"></i> '.tr('Aggiorna').'</button></small>`);
+    div.html(`<small class="label label-info" id="listino" >'.tr('Prezzo').': ` + prezzo_previsto.toLocale() + " " + globals.currency + " " + `'.Plugins::link(($options['dir'] == 'uscita' ? 'Listino Fornitori' : 'Listino Clienti'), $options['idanagrafica'], null, null, '').'<button type="button" class="btn btn-xs btn-info pull-right" onclick="aggiornaPrezzoArticolo()"><i class="fa fa-refresh"></i> '.tr('Aggiorna').'</button></small>`);
+    
+    edit_listino = $("#listino").find("a");
+        edit_listino.attr("href", edit_listino.attr("href").replace(/id_record=[0-9]*/, "id_record=" + $("#idarticolo").val()));
 }
 
 /**

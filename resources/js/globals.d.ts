@@ -28,6 +28,7 @@ import {
 } from './typings';
 import type {__ as translator} from './utils';
 import {
+  IconButton,
   MaterialDrawer,
   Select,
   TextArea,
@@ -47,12 +48,14 @@ declare global {
   var __: typeof translator;
 
   namespace JSX {
+    // noinspection JSUnusedGlobalSymbols
     interface IntrinsicElements {
+      'icon-button': JSXElement<IconButton>;
       'material-drawer': JSXElement<MaterialDrawer>;
       'material-select': JSXElement<Select>;
       'mwc-button': JSXElement<MWCButton & {dialogAction?: string | 'ok' | 'discard' | 'close' | 'cancel' | 'accept' | 'decline'}>;
       'mwc-checkbox': JSXElement<MWCCheckbox>;
-      'mwc-card': JSXElement<MWCCard>
+      'mwc-card': JSXElement<MWCCard>;
       'mwc-circular-progress': JSXElement<MWCCircularProgress>;
       'mwc-dialog': JSXElement<MWCDialog>;
       'mwc-fab': JSXElement<MWCFab>;

@@ -1,5 +1,6 @@
 // noinspection JSUnusedGlobalSymbols
 
+export {default as IconButton} from './IconButton';
 export {default as MaterialDrawer} from './MaterialDrawer';
 export {default as Select} from './Select';
 export {default as TextArea} from './TextArea';

@@ -19,3 +19,6 @@ ALTER TABLE `mg_fornitore_articolo` ADD `barcode_fornitore` VARCHAR(255) NOT NUL
 
 -- Aggiunta impostazione per scegliere colore sessioni dashboard
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Visualizzazione colori sessioni', 'Sfondo colore stato - bordo colore tecnico', 'list[Sfondo colore stato - bordo colore tecnico,Sfondo colore tecnico - bordo colore stato]', '1', 'Dashboard', '7', '');
+
+-- Aggiunta impostazione per riportare nei documenti tutti i riferimenti collegati
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Mantieni riferimenti tra tutti i documenti collegati', '1', 'boolean', '1', 'Generali', '19', 'Permette l''aggiunta dei riferimenti di tutti i documenti collegati');

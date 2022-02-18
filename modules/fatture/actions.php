@@ -752,7 +752,7 @@ switch (post('op')) {
 
         // Messaggio informativo
         $message = tr('_DOC_ aggiunto!', [
-            '_DOC_' => $documento->getReference(),
+            '_DOC_' => $fattura->getReference(),
         ]);
         flash()->info($message);
 

@@ -26,7 +26,7 @@ $(document).ready(function () {
     $("#pulsanti .pull-right").hide();
 })
 </script>
-<p>'.tr('Riepilogo di esportazione per i pagamenti ai fornitori').'.</p>';
+<p>'.tr('Riepilogo di esportazione dei pagamenti').'.</p>';
 
 // Azienda predefinita
 $azienda = Anagrafica::find(setting('Azienda predefinita'));
@@ -35,10 +35,8 @@ if (empty($banca_azienda)) {
     echo '
 <div class="alert alert-warning">
     <i class="fa fa-warning"></i>
-    '.tr("L'anagrafica Azienda non ha impostati i campi Codice IBAN e BIC per l'esecuzione dei pagamenti").'.
-
-    '.Modules::link('Anagrafiche', $azienda->id, tr('Imposta'), null, 'class="btn btn-warning pull-right"').'
-    <div class="clearfix"></div>
+    '.tr("La banca dell'azienda non è definita o non ha impostati i campi Codice IBAN e BIC").'.
+    '.Modules::link('Banche', $azienda->id, tr('Imposta'), null, null).'
 </div>';
 }
 

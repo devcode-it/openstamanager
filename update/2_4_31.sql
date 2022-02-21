@@ -22,3 +22,7 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 
 -- Aggiunta impostazione per riportare nei documenti tutti i riferimenti collegati
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Mantieni riferimenti tra tutti i documenti collegati', '1', 'boolean', '1', 'Generali', '19', 'Permette l''aggiunta dei riferimenti di tutti i documenti collegati');
+
+-- Aggiunta colonna Codice in Anagrafiche
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche'), 'Codice', 'an_anagrafiche.codice', 1, 1, 0, 0, '', '', 0, 0, 1);

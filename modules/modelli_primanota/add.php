@@ -19,6 +19,40 @@
 
 include_once __DIR__.'/../../core.php';
 
+function renderRiga($id, $riga)
+{
+    // Conto
+    echo '
+    <tr>
+        <td>
+            {[ "type": "select", "name": "idconto['.$id.']", "id": "conto'.$id.'", "value": "'.($riga['idconto'] ?: '').'", "ajax-source": "conti-modelliprimanota" ]}
+        </td>';
+
+    // Dare
+    echo '
+        <td>
+            {[ "type": "number", "name": "dare['.$id.']", "id": "dare'.$id.'", "value": "'.($riga['totale'] > 0 ? abs($riga['totale']) : 0).'" ]}
+        </td>';
+
+    // Avere
+    echo '
+        <td>
+            {[ "type": "number", "name": "avere['.$id.']", "id": "avere'.$id.'", "value": "'.($riga['totale'] < 0 ? abs($riga['totale']) : 0).'" ]}
+        </td>
+    </tr>';
+}
+
+// Nuova riga
+echo '
+<table class="hide">
+    <tbody id="template">';
+
+renderRiga('-id-', null);
+
+echo '
+    </tbody>
+</table>';
+
 ?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
@@ -41,6 +75,10 @@ include_once __DIR__.'/../../core.php';
         Form di aggiunta riga movimento
     */
     echo '
+	<button class="btn btn-info btn-xs pull-right" type="button" id="addriga" onclick="addRiga(this)">
+        <i class="fa fa-plus"></i> '.tr('Aggiungi riga').'
+    </button>
+    <br><br>
     <table class="table table-striped table-condensed table-hover table-bordered"
         <tr>
 			<th width="60%">'.tr('Conto').'</th>
@@ -48,25 +86,11 @@ include_once __DIR__.'/../../core.php';
 			<th width="20%">'.tr('Avere').'</th>
         </tr>';
 
-    for ($i = 0; $i < 10; ++$i) {
-        $required = ($i <= 1) ? 1 : 0;
+	$counter = 0;
 
-        // Conto
-        echo '
-			<tr>
-				<td>
-					{[ "type": "select", "name": "idconto['.$i.']", "ajax-source": "conti", "required": "'.$required.'" ]}
-				</td>
-
-				<td class="text-right">
-                    {[ "type": "number", "name": "dare['.$i.']", "id": "dare'.$id.'", "value": "'.($rs[$i]['totale'] > 0 ? $rs[$i]['totale'] : '').'"]}
-                </td>
-                
-                <td class="text-right">
-                    {[ "type": "number", "name": "avere['.$i.']", "id": "avere'.$id.'", "value": "'.($rs[$i]['totale'] < 0 ? abs($rs[$i]['totale']) : '').'"]}
-                </td>
-			</tr>';
-    }
+	foreach ($rs as $r) {
+		renderRiga($counter++, $r);
+	}
 
     echo '
         </table>';
@@ -110,41 +134,72 @@ include_once __DIR__.'/../../core.php';
 </form>
 
 <script>
-	$(document).ready( function() {
-		$('#modals select').on('change', function() {
-			if($(this).parent().parent().find('input[disabled]').length != 1){
-				if($(this).val()) {
-					$(this).parent().parent().find('input').prop("disabled", false);
-				}
-				else{
-					$(this).parent().parent().find('input').prop("disabled", true);
-					$(this).parent().parent().find('input').val("");
-				}
-			}
-		});
-	});
+	$(document).ready(function() {
+		// Fix per l\'inizializzazione degli input
+        $("input[id*=dare], input[id*=avere]").each(function() {
+            if (input(this).get() === 0) {
+                $(this).prop("disabled", true);
+            } else {
+                $(this).prop("disabled", false);
+            }
+        });
 
-	$("#modals input[id*=dare], #modals input[id*=avere]").each(function() {
-		if (input(this).get() === 0) {
-			$(this).prop("disabled", true);
-		} else {
-			$(this).prop("disabled", false);
+        // Trigger dell\'evento keyup() per la prima volta, per eseguire i dovuti controlli nel caso siano predisposte delle righe in prima nota
+        $("input[id*=dare][value!=\'\'], input[id*=avere][value!=\'\']").keyup();
+
+        $("select[id*=idconto]").click(function() {
+            $("input[id*=dare][value!=\'\'], input[id*=avere][value!=\'\']").keyup();
+        });
+
+		// Creazione delle eventuali righe aggiuntive
+		let table = $("#modals table").first();
+		let button = table.parent().find("button").first();
+		let row_needed = $("#modals select").length;
+		let row_count = table.find("tr").length - 2;
+		while (row_count < row_needed) {
+			button.click();
+			row_count++;
 		}
-	});
 		
-	$(document).on("keyup change", "#modals input[id*=dare]", function() {
-		let row = $(this).parent().parent();
+    });
 
-		if (!$(this).prop("disabled")) {
-			row.find("#modals input[id*=avere]").prop("disabled", input(this).get() !== 0);
-		}
-	});
+    $(document).on("change", "select", function() {
+        let row = $(this).parent().parent();
 
-	$(document).on("keyup change", "#modals input[id*=avere]", function() {
-		let row = $(this).parent().parent();
+        if (row.find("input[disabled]").length > 1) {
+            row.find("input").prop("disabled", !$(this).val());
+        }
+    });
 
-		if (!$(this).prop("disabled")) {
-			row.find("#modals input[id*=dare]").prop("disabled", input(this).get() !== 0);
-		}
-	});
+    $(document).on("keyup change", "input[id*=dare]", function() {
+        let row = $(this).parent().parent();
+
+        if (!$(this).prop("disabled")) {
+            row.find("input[id*=avere]").prop("disabled", $(this).val().toEnglish());
+        }
+    });
+
+    $(document).on("keyup change", "input[id*=avere]", function() {
+        let row = $(this).parent().parent();
+
+        if (!$(this).prop("disabled")) {
+            row.find("input[id*=dare]").prop("disabled", $(this).val().toEnglish());
+        }
+    });
+
+    var n = <?php echo $counter; ?>;
+    function addRiga(btn) {
+        var raggruppamento = $(btn).parent();
+        cleanup_inputs();
+
+        var tabella = raggruppamento.find("tbody");
+        var content = $("#template").html();
+        var text = replaceAll(content, "-id-", "" + n);
+        tabella.append(text);
+
+        restart_inputs();
+        n++;
+    }
+
+    $(document).ready(init);
 </script>

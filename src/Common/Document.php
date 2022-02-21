@@ -287,7 +287,7 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
      */
     public function getScontoFinale()
     {
-        $netto = $this->calcola('netto');
+        $netto = $this->netto;
 
         if (!empty($this->sconto_finale_percentuale)) {
             $sconto = $netto * ($this->sconto_finale_percentuale / 100);

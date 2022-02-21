@@ -278,7 +278,7 @@ abstract class Component extends Model
         $nuovo_riferimento = null;
 
         // Rimozione del riferimento precedente dalla descrizione
-        if ($this->hasOriginalComponent()) {
+        if ($this->hasOriginalComponent() && empty(setting('Mantieni riferimenti tra tutti i documenti collegati'))) {
             $riferimento_precedente = self::getDescrizioneRiferimento(
                 $this->getOriginalComponent()->getDocument()
             );

@@ -63,6 +63,9 @@ switch (filter('op')) {
         $esente = post('esente');
         $percentuale = empty($esente) ? post('percentuale') : 0;
         $codice_natura = post('codice_natura_fe') ?: null;
+        $esigibilita = post('esigibilita');
+        $indetraibile = post('indetraibile');
+
         if ($dbo->fetchNum('SELECT * FROM `co_iva` WHERE `descrizione` = '.prepare($descrizione).' AND `codice` = '.prepare($codice)) == 0) {
             $dbo->insert('co_iva', [
                 'descrizione' => $descrizione,
@@ -70,7 +73,8 @@ switch (filter('op')) {
                 'codice' => $codice,
                 'codice_natura_fe' => $codice_natura,
                 'percentuale' => $percentuale,
-                'indetraibile' => post('indetraibile'),
+                'indetraibile' => $indetraibile,
+                'esigibilita' => $esigibilita,
             ]);
             $id_record = $dbo->lastInsertedID();
 

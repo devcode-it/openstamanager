@@ -56,14 +56,13 @@ $tipo_cliente = $record['tipo_cliente'];
 $tipo_doc = $record['tipo_doc'];
 $numero = !empty($record['numero_esterno']) ? $record['numero_esterno'] : $record['numero'];
 
+// Fix per le fattura accompagnatorie
+$fattura_accompagnatoria = ($record['tipo_doc'] == 'Fattura accompagnatoria di vendita');
+
 // Caso particolare per le fatture pro forma
 if (empty($record['is_fiscale'])) {
     $tipo_doc = tr('Fattura pro forma');
 }
-
-// Fix per le fattura accompagnatorie
-$fattura_accompagnatoria = ($record['tipo_doc'] == 'Fattura accompagnatoria di vendita');
-$tipo_doc = ($fattura_accompagnatoria) ? 'Fattura accompagnatoria di vendita' : $tipo_doc;
 
 // Leggo i dati della destinazione (se 0=sede legale, se!=altra sede da leggere da tabella an_sedi)
 $destinazione = '';

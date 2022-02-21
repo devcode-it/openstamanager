@@ -258,7 +258,7 @@ class Ordine extends Document
 
     public function getReferenceNumber()
     {
-        return $this->numero_esterno ?: $this->numero;
+        return $this->numero_cliente ?: ($this->numero_esterno ?: $this->numero);
     }
 
     public function getReferenceDate()

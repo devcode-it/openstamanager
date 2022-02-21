@@ -183,11 +183,17 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$id_contratto.'", "ajax-source": "contratti", "readonly": "'.(empty($id_contratto) ? 0 : 1).'", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica]).' ]}
+            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$id_contratto.'", "ajax-source": "contratti", "readonly": "'.(empty($id_contratto) ? 0 : 1).'", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica]).', "icon-after": "add|'.Modules::get('Contratti')['id'].'|pianificabile=1&idanagrafica='.$id_anagrafica.'" ]}
         </div>
 
         <div class="col-md-4">
             {[ "type": "select", "label": "'.tr('Ordine').'", "name": "idordine", "ajax-source": "ordini-cliente", "value": "'.$id_ordine.'", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica]).' ]}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "ajax-source": "referenti", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica, 'idclientefinale' => $id_cliente_finale]).', "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|id_plugin='.Plugins::get('Referenti')['id'].'&id_parent='.$id_anagrafica.'" ]}
         </div>
     </div>
 
@@ -401,6 +407,7 @@ if (!empty($id_intervento)) {
        input("idpreventivo").disable();
        input("idcontratto").disable();
        input("idordine").disable();
+       input("idreferente").disable();
        input("idimpianti").disable();
        input("componenti").disable();
        input("idanagrafica").disable();
@@ -433,6 +440,8 @@ echo '
     var contratto = input("idcontratto");
     var preventivo = input("idpreventivo");
     var ordine = input("idordine");
+    var referente = input("idreferente");
+    var cliente_finale = input("idclientefinale");
 
 	$(document).ready(function() {
         if(!anagrafica.get()){
@@ -440,6 +449,7 @@ echo '
            preventivo.disable();
            contratto.disable();
            ordine.disable();
+           referente.disable();
            input("idimpianti").disable();
            input("componenti").disable();
         } else{
@@ -494,6 +504,9 @@ echo '
         ordine.setDisabled(selected)
             .getElement().selectReset(placeholder);
 
+        referente.setDisabled(selected)
+            .getElement().selectReset(placeholder);
+
         input("idimpianti").setDisabled(selected);
 
         let data = anagrafica.getData();
@@ -520,7 +533,22 @@ echo '
 
         plus_impianto = $(".modal #idimpianti").parent().find(".btn");
         plus_impianto.attr("onclick", plus_impianto.attr("onclick").replace(/id_anagrafica=[0-9]*/, "id_anagrafica=" + value));
+
+        plus_contratto = $(".modal #idcontratto").parent().find(".btn");
+        plus_contratto.attr("onclick", plus_contratto.attr("onclick").replace(/idanagrafica=[0-9]*/, "idanagrafica=" + value));
+
+        plus_referente = $(".modal #idreferente").parent().find(".btn");
+        plus_referente.attr("onclick", plus_referente.attr("onclick").replace(/id_parent=[0-9]*/, "id_parent=" + value));
 	});
+
+    //gestione del cliente finale
+    cliente_finale.change(function() {
+        updateSelectOption("idclientefinale", $(this).val());
+        session_set("superselect,idclientefinale", $(this).val(), 0);
+
+        referente.getElement()
+            .selectReset("'.tr("Seleziona un'opzione").'");
+    });
 
     // Gestione della modifica della sede selezionato
 	sede.change(function() {

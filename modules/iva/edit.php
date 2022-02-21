@@ -58,7 +58,12 @@ if ($res) {
 
 		<div class="panel-body">
 			<div class="row">
-				<div class="col-md-12">
+
+                <div class="col-md-4">
+					{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "value": "$codice$", "required": 1, "decimals": 0, "min-value": "0", "max-value": "999", "maxlength": 3, "extra": "<?php echo $attr; ?>", "validation": "codice" ]}
+				</div>
+
+				<div class="col-md-8">
 					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
 				</div>
 			</div>
@@ -71,19 +76,15 @@ if ($res) {
 				<div class="col-md-4">
 					{[ "type": "number", "label": "<?php echo tr('Percentuale'); ?>", "name": "percentuale", "id": "percentuale-edit", "value": "$percentuale$", "icon-after": "<i class=\"fa fa-percent\"></i>", "disabled": <?php echo intval($record['esente']); ?>, "readonly": "<?php echo $is_readonly; ?>", "extra": "<?php echo $attr; ?>", "max-value": "100" ]}
 				</div>
-
-				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo tr('Indetraibile'); ?>", "name": "indetraibile", "value": "$indetraibile$", "icon-after": "<i class=\"fa fa-percent\"></i>", "readonly": "<?php echo $is_readonly; ?>", "extra": "<?php echo $attr; ?>", "max-value": "100" ]}
+                
+                <div class="col-md-4">
+					{[ "type": "select", "label": "<?php echo tr('Codice Natura (Fatturazione Elettronica)'); ?>", "name": "codice_natura_fe", "value": "$codice_natura_fe$", "required": <?php echo intval($record['esente']); ?>, "disabled": <?php echo intval(!$record['esente']); ?>, "values": "query=SELECT codice as id, CONCAT(codice, ' - ', descrizione) AS descrizione FROM fe_natura", "readonly": "<?php echo $is_readonly; ?>", "extra": "<?php echo $attr; ?>" ]}
 				</div>
 			</div>
 
             <div class="row">
-				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "value": "$codice$", "required": 1, "decimals":0, "min-value":"0", "max-value":"999", "maxlength": 3, "extra": "<?php echo $attr; ?>", "validation": "codice" ]}
-				</div>
-
-				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Codice Natura (Fatturazione Elettronica)'); ?>", "name": "codice_natura_fe", "value": "$codice_natura_fe$", "required": <?php echo intval($record['esente']); ?>, "disabled": <?php echo intval(!$record['esente']); ?>, "values": "query=SELECT codice as id, CONCAT(codice, ' - ', descrizione) AS descrizione FROM fe_natura", "readonly": "<?php echo $is_readonly; ?>", "extra": "<?php echo $attr; ?>" ]}
+                <div class="col-md-4">
+					{[ "type": "number", "label": "<?php echo tr('Indetraibile'); ?>", "name": "indetraibile", "value": "$indetraibile$", "icon-after": "<i class=\"fa fa-percent\"></i>", "readonly": "<?php echo $is_readonly; ?>", "extra": "<?php echo $attr; ?>", "max-value": "100" ]}
 				</div>
 
                 <div class="col-md-4">

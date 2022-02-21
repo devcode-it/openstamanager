@@ -64,8 +64,6 @@ switch (post('op')) {
         break;
 
     case 'update':
-        $stato_precedente = $fattura->stato;
-
         $stato = Stato::find(post('idstatodocumento'));
         $fattura->stato()->associate($stato);
 
@@ -145,58 +143,44 @@ switch (post('op')) {
 
         $fattura->setScontoFinale(post('sconto_finale'), post('tipo_sconto_finale'));
 
-        $fattura->save();
+        $results = $fattura->save();
+        $message = '';
 
-        // Operazioni automatiche per le Fatture Elettroniche
-        if ($fattura->direzione == 'entrata' && $stato_precedente->descrizione == 'Bozza' && $stato['descrizione'] == 'Emessa') {
-            $stato_fe = $database->fetchOne('SELECT * FROM fe_stati_documento WHERE codice = '.prepare($fattura->codice_stato_fe));
-            $abilita_genera = empty($fattura->codice_stato_fe) || intval($stato_fe['is_generabile']);
+        foreach ($results as $numero => $result) {
+            foreach ($result as $title => $links) {
+                foreach ($links as $link => $errors) {
+                    if (empty($title)) {
+                        flash()->warning(tr('La fattura elettronica num. _NUM_ potrebbe avere delle irregolarità!', [
+                            '_NUM_' => $numero,
+                        ]).' '.tr('Controllare i seguenti campi: _LIST_', [
+                                '_LIST_' => implode(', ', $errors),
+                            ]).'.');
+                    } else {
+                        $message .= '
+                            <p><b>'.$title.' '.$link.'</b></p>
+                            <ul>';
 
-            // Generazione automatica della Fattura Elettronica
-            $checks = FatturaElettronica::controllaFattura($fattura);
-            $fattura_elettronica = new FatturaElettronica($id_record);
-            if ($abilita_genera && empty($checks)) {
-                $file = $fattura_elettronica->save(base_dir().'/'.FatturaElettronica::getDirectory());
-
-                flash()->info(tr('Fattura elettronica generata correttamente!'));
-
-                if (!$fattura_elettronica->isValid()) {
-                    $errors = $fattura_elettronica->getErrors();
-
-                    flash()->warning(tr('La fattura elettronica potrebbe avere delle irregolarità!').' '.tr('Controllare i seguenti campi: _LIST_', [
-                            '_LIST_' => implode(', ', $errors),
-                        ]).'.');
-                }
-            }
-            // Visualizzazione degli errori
-            elseif (!empty($checks)) {
-                // Rimozione eventuale fattura generata erronamente
-                // Fix per la modifica di dati interni su fattura già generata
-                if ($abilita_genera) {
-                    $fattura_elettronica->delete();
-                }
-
-                // Messaggi informativi sulle problematiche
-                $message = tr('La fattura elettronica non è stata generata a causa di alcune informazioni mancanti').':';
-
-                foreach ($checks as $check) {
-                    $message .= '
-<p><b>'.$check['name'].' '.$check['link'].'</b></p>
-<ul>';
-
-                    foreach ($check['errors'] as $error) {
-                        if (!empty($error)) {
-                            $message .= '
-<li>'.$error.'</li>';
+                        foreach ($errors as $error) {
+                            if (!empty($error)) {
+                                $message .= '
+                                    <li>'.$error.'</li>';
+                            }
                         }
+
+                        $message .= '
+                            </ul>';
                     }
-
-                    $message .= '
-</ul>';
                 }
-
-                flash()->warning($message);
             }
+        }
+
+        if ($message) {
+            // Messaggi informativi sulle problematiche
+            $message = tr('La fattura elettronica numero _NUM_ non è stata generata a causa di alcune informazioni mancanti', [
+                '_NUM_' => $numero,
+            ]).':'.$message;
+
+            flash()->warning($message);
         }
 
         aggiorna_sedi_movimenti('documenti', $id_record);
@@ -768,7 +752,7 @@ switch (post('op')) {
 
         // Messaggio informativo
         $message = tr('_DOC_ aggiunto!', [
-            '_DOC_' => $documento->getReference(),
+            '_DOC_' => $fattura->getReference(),
         ]);
         flash()->info($message);
 

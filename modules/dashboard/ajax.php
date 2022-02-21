@@ -94,6 +94,14 @@ switch (filter('op')) {
 
         $results = [];
         foreach ($sessioni as $sessione) {
+            if (setting('Visualizzazione colori sessioni') == 'Sfondo colore stato - bordo colore tecnico') {
+                $backgroundcolor = $sessione['colore'];
+                $bordercolor = $sessione['colore_tecnico'];
+            } else {
+                $backgroundcolor = $sessione['colore_tecnico'];
+                $bordercolor = $sessione['colore'];
+            }
+
             $results[] = [
                 'id' => $sessione['id'],
                 'idintervento' => $sessione['idintervento'],
@@ -102,9 +110,9 @@ switch (filter('op')) {
                 'start' => $sessione['orario_inizio'],
                 'end' => $sessione['orario_fine'],
                 'link' => base_path().'/editor.php?id_module='.$modulo_interventi->id.'&id_record='.$sessione['idintervento'],
-                'backgroundColor' => $sessione['colore'],
-                'textColor' => color_inverse($sessione['colore']),
-                'borderColor' => ($sessione['colore_tecnico'] == '#FFFFFF') ? color_darken($sessione['colore_tecnico'], 100) : $sessione['colore_tecnico'],
+                'backgroundColor' => $backgroundcolor,
+                'textColor' => color_inverse($backgroundcolor),
+                'borderColor' => ($bordercolor == '#FFFFFF') ? color_darken($bordercolor, 100) : $bordercolor,
                 'allDay' => false,
             ];
         }

@@ -29,6 +29,7 @@ use Modules\Articoli\Articolo;
 use Modules\Articoli\Categoria;
 use Modules\Iva\Aliquota;
 use Plugins\ListinoClienti\DettaglioPrezzo;
+use Plugins\ListinoFornitori\DettaglioFornitore;
 use Uploads;
 
 /**
@@ -53,6 +54,10 @@ class CSV extends CSVImporter
                     'Immagine',
                     'Foto',
                 ],
+            ],
+            [
+                'field' => 'import_immagine',
+                'label' => 'Import immagine',
             ],
             [
                 'field' => 'descrizione',
@@ -154,6 +159,18 @@ class CSV extends CSVImporter
                 'label' => 'Anagrafica listino',
             ],
             [
+                'field' => 'codice_fornitore',
+                'label' => 'Codice fornitore',
+            ],
+            [
+                'field' => 'barcode_fornitore',
+                'label' => 'Barcode fornitore',
+            ],
+            [
+                'field' => 'descrizione_fornitore',
+                'label' => 'Descrizione fornitore',
+            ],
+            [
                 'field' => 'qta_minima',
                 'label' => 'Qta minima',
             ],
@@ -214,6 +231,10 @@ class CSV extends CSVImporter
             }
 
             $database->query('DELETE FROM mg_prezzi_articoli WHERE id_articolo = '.prepare($articolo->id).' AND id_anagrafica = '.prepare($anagrafica->id));
+
+            if (!empty($dettagli['codice_fornitore']) && !empty($dettagli['descrizione_fornitore'])) {
+                $database->query('DELETE FROM mg_fornitore_articolo WHERE id_articolo = '.prepare($articolo->id).' AND id_anagrafica = '.prepare($anagrafica->id));
+            }
         }
     }
 
@@ -291,6 +312,72 @@ class CSV extends CSVImporter
         $qta_registrata = (float) ($record['qta']);
         $nome_sede = $record['nome_sede'];
 
+        // Aggiornamento dettaglio prezzi
+        $dettagli['anagrafica_listino'] = $record['anagrafica_listino'];
+        $dettagli['qta_minima'] = $record['qta_minima'];
+        $dettagli['qta_massima'] = $record['qta_massima'];
+        $dettagli['prezzo_listino'] = $record['prezzo_listino'];
+        $dettagli['sconto_listino'] = $record['sconto_listino'];
+        $dettagli['dir'] = $record['dir'];
+        $dettagli['codice_fornitore'] = $record['codice_fornitore'];
+        $dettagli['barcode_fornitore'] = $record['barcode_fornitore'];
+        $dettagli['descrizione_fornitore'] = $record['descrizione_fornitore'];
+        $this->aggiornaDettaglioPrezzi($articolo, $dettagli);
+
+        //Gestione immagine
+        if (!empty($url) && !empty($record['import_immagine'])) {
+            $file_content = file_get_contents($url);
+
+            if (!empty($file_content)) {
+                if ($record['import_immagine'] == 2 || $record['import_immagine'] == 4) {
+                    Uploads::deleteLinked([
+                        'id_module' => Modules::get('Articoli')['id'],
+                        'id_record' => $articolo->id,
+                    ]);
+
+                    $database->update('mg_articoli', [
+                        'immagine' => '',
+                    ], [
+                        'id' => $articolo->id,
+                    ]);
+                }
+
+                $name = 'immagine_'.$articolo->id.'.'.Upload::getExtensionFromMimeType($file_content);
+
+                $upload = Uploads::upload($file_content, [
+                    'name' => 'Immagine',
+                    'category' => 'Immagini',
+                    'original_name' => $name,
+                    'id_module' => Modules::get('Articoli')['id'],
+                    'id_record' => $articolo->id,
+                ], [
+                    'thumbnails' => true,
+                ]);
+                $filename = $upload->filename;
+
+                if ($record['import_immagine'] == 1 || $record['import_immagine'] == 2) {
+                    if (!empty($filename)) {
+                        $database->update('mg_articoli', [
+                            'immagine' => $filename,
+                        ], [
+                            'id' => $articolo->id,
+                        ]);
+                    }
+                }
+            }
+        }
+
+        unset($record['import_immagine']);
+        unset($record['anagrafica_listino']);
+        unset($record['qta_minima']);
+        unset($record['qta_massima']);
+        unset($record['prezzo_listino']);
+        unset($record['sconto_listino']);
+        unset($record['dir']);
+        unset($record['codice_fornitore']);
+        unset($record['barcode_fornitore']);
+        unset($record['descrizione_fornitore']);
+
         // Salvataggio delle informazioni generali
         $articolo->fill($record);
 
@@ -300,15 +387,6 @@ class CSV extends CSVImporter
         ]);
 
         $articolo->save();
-
-        // Aggiornamento dettaglio prezzi
-        $dettagli['anagrafica_listino'] = $record['anagrafica_listino'];
-        $dettagli['qta_minima'] = $record['qta_minima'];
-        $dettagli['qta_massima'] = $record['qta_massima'];
-        $dettagli['prezzo_listino'] = $record['prezzo_listino'];
-        $dettagli['sconto_listino'] = $record['sconto_listino'];
-        $dettagli['dir'] = $record['dir'];
-        $this->aggiornaDettaglioPrezzi($articolo, $dettagli);
 
         // Movimentazione della quantità registrata
         $giacenze = $articolo->getGiacenze();
@@ -328,44 +406,21 @@ class CSV extends CSVImporter
                 'idsede' => $id_sede,
             ]);
         }
-
-        //Gestione immagine
-        if (!empty($url)) {
-            $file_content = file_get_contents($url);
-
-            if (!empty($file_content)) {
-                $name = 'immagine_'.$articolo->id.'.'.Upload::getExtensionFromMimeType($file_content);
-
-                $upload = Uploads::upload($file_content, [
-                    'name' => 'Immagine',
-                    'category' => 'Immagini',
-                    'original_name' => $name,
-                    'id_module' => Modules::get('Articoli')['id'],
-                    'id_record' => $articolo->id,
-                ], [
-                    'thumbnails' => true,
-                ]);
-                $filename = $upload->filename;
-
-                if (!empty($filename)) {
-                    $database->update('mg_articoli', [
-                        'immagine' => $filename,
-                    ], [
-                        'id' => $articolo->id,
-                    ]);
-                }
-            }
-        }
     }
 
     public static function getExample()
     {
         return [
-            ['Codice', 'Barcode', 'Descrizione', 'Fornitore predefinito', 'Quantità', 'Unità di misura', 'Prezzo acquisto', 'Prezzo vendita', 'Peso lordo (KG)', 'Volume (M3)', 'Categoria', 'Sottocategoria', 'Ubicazione', 'Note', 'Anagrafica listino', 'Qta minima', 'Qta massima', 'Prezzo listino', 'Sconto listino', 'Cliente/Fornitore listino'],
-            ['00004', '719376861871', 'Articolo', 'Mario Rossi', '10', 'Kg', '5.25', '12.72', '10.2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova', 'Mario Rossi', '', '', '10', '5', 'Fornitore'],
-            ['00004', '719376861871', 'Articolo', 'Mario Rossi', '10', 'Kg', '5.25', '12.72', '10.2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova', 'Mario Rossi', '1', '10', '9', '', 'Fornitore'],
-            ['00004', '719376861871', 'Articolo', 'Mario Rossi', '10', 'Kg', '5.25', '12.72', '10.2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova', 'Mario Rossi', '11', '20', '8', '5', 'Fornitore'],
-            ['00004', '719376861871', 'Articolo', 'Mario Rossi', '10', 'Kg', '5.25', '12.72', '10.2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova', 'Mario Verdi', '1', '10', '20', '10', 'Cliente'],
+            ['Codice', 'Barcode', 'Immagine', 'Import immagine', 'Descrizione', 'Fornitore predefinito', 'Quantità', 'Unità di misura', 'Prezzo acquisto', 'Prezzo vendita', 'Peso lordo (KG)', 'Volume (M3)', 'Categoria', 'Sottocategoria', 'Ubicazione', 'Note', 'Anagrafica listino', 'Codice fornitore', 'Barcode fornitore', 'Descrizione fornitore', 'Qta minima', 'Qta massima', 'Prezzo listino', 'Sconto listino', 'Cliente/Fornitore listino'],
+            ['00004', '719376861871', 'https://immagini.com/immagine.jpg', '1', 'Articolo', 'Mario Rossi', '10', 'Kg', '5.25', '12.72', '10.2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova', 'Mario Rossi', 'artforn01', '384574557484', 'Articolo di prova fornitore', '', '', '10', '5', 'Fornitore'],
+            ['00004', '719376861871', 'https://immagini.com/immagine.jpg', '2', 'Articolo', 'Mario Rossi', '10', 'Kg', '5.25', '12.72', '10.2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova', 'Mario Rossi', 'artforn01', '384574557484', 'Articolo di prova fornitore', '1', '10', '9', '', 'Fornitore'],
+            ['00004', '719376861871', 'https://immagini.com/immagine.jpg', '3', 'Articolo', 'Mario Rossi', '10', 'Kg', '5.25', '12.72', '10.2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova', 'Mario Rossi', 'artforn01', '384574557484', 'Articolo di prova fornitore', '11', '20', '8', '5', 'Fornitore'],
+            ['00004', '719376861871', '', '', 'Articolo', 'Mario Rossi', '10', 'Kg', '5.25', '12.72', '10.2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova', 'Mario Verdi', '', '', '', '1', '10', '20', '10', 'Cliente'],
+            [],
+            ['Import immagine = 1 -> Permette di importare l\'immagine come principale dell\'articolo mantenendo gli altri allegati già presenti'],
+            ['Import immagine = 2 -> Permette di importare l\'immagine come principale dell\'articolo rimuovendo tutti gli allegati presenti'],
+            ['Import immagine = 3 -> Permette di importare l\'immagine come allegato dell\'articolo mantenendo gli altri allegati già presenti'],
+            ['Import immagine = 4 -> Permette di importare l\'immagine come allegato dell\'articolo rimuovendo tutti gli allegati presenti'],
         ];
     }
 
@@ -394,6 +449,14 @@ class CSV extends CSVImporter
             }
 
             $dettaglio_predefinito->save();
+
+            if ($dettagli['dir'] == 'uscita' && !empty($dettagli['codice_fornitore']) && !empty($dettagli['descrizione_fornitore'])) {
+                $fornitore = DettaglioFornitore::build($anagrafica, $articolo);
+                $fornitore->codice_fornitore = $dettagli['codice_fornitore'];
+                $fornitore->barcode_fornitore = $dettagli['barcode_fornitore'];
+                $fornitore->descrizione = $dettagli['descrizione_fornitore'];
+                $fornitore->save();
+            }
         }
     }
 }

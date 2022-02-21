@@ -39,6 +39,11 @@ switch (post('op')) {
         $contratto = Contratto::build($anagrafica, post('nome'));
 
         // Salvataggio informazioni sul rinnovo
+        $contratto->idstato = post('idstato');
+        $contratto->validita = post('validita');
+        $contratto->tipo_validita = post('tipo_validita');
+        $contratto->data_accettazione = post('data_accettazione') ?: null;
+        $contratto->data_conclusione = post('data_conclusione') ?: null;
         $contratto->rinnovabile = post('rinnovabile');
         $contratto->rinnovo_automatico = post('rinnovo_automatico');
         $contratto->giorni_preavviso_rinnovo = post('giorni_preavviso_rinnovo');
@@ -46,6 +51,10 @@ switch (post('op')) {
         $contratto->save();
 
         $id_record = $contratto->id;
+
+        if (isAjaxRequest()) {
+            echo json_encode(['id' => $id_record, 'text' => 'Contratto '.$contratto->numero.' del '.dateFormat($contratto->data_bozza).' - '.$contratto->nome]);
+        }
 
         flash()->info(tr('Aggiunto contratto numero _NUM_!', [
             '_NUM_' => $contratto['numero'],

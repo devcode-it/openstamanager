@@ -21,6 +21,8 @@ include_once __DIR__.'/../../core.php';
 
 $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : $user['idanagrafica'];
 
+$stati = get('pianificabile') ? 'SELECT id, descrizione FROM co_staticontratti WHERE is_pianificabile=1' : 'SELECT id, descrizione FROM co_staticontratti';
+
 echo '
 <form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
@@ -39,10 +41,33 @@ echo '
 		</div>
 	</div>
 
+    <div class="row">
+        <div class="col-md-3">
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstato", "required": 1, "values": "query='.$stati.'" ]}
+        </div>
+
+        <div class="col-md-3">
+            {[ "type": "date", "label": "'.tr('Data accettazione').'", "name": "data_accettazione" ]}
+        </div>
+
+        <div class="col-md-3">
+            {[ "type": "date", "label": "'.tr('Data conclusione').'", "name": "data_conclusione" ]}
+        </div>
+
+        <div class="col-md-3">
+            {[ "type": "number", "label": "'.tr('Validità contratto').'", "name": "validita", "decimals": "0", "icon-after": "choice|period|'.$record['tipo_validita'].'", "help": "'.tr('Il campo Validità contratto viene utilizzato per il calcolo della Data di conclusione del contratto').'" ]}
+        </div>
+    </div>
+
     <!-- Informazioni rinnovo -->
-    <div class="box box-primary">
+    <div class="box box-primary collapsable collapsed-box">
         <div class="box-header">
             <h3 class="box-title">'.tr('Informazioni per rinnovo').'</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
         </div>
 
         <div class="box-body">
@@ -83,5 +108,14 @@ echo '
         input("giorni_preavviso_rinnovo").setDisabled(disabled);
         input("ore_preavviso_rinnovo").setDisabled(disabled);
         input("rinnovo_automatico").setDisabled(disabled);
+    });
+
+    $("#data_conclusione").on("dp.change", function (e) {
+        let data_accettazione = $("#data_accettazione");
+        data_accettazione.data("DateTimePicker").maxDate(e.date);
+
+        if(data_accettazione.data("DateTimePicker").date() > e.date){
+            data_accettazione.data("DateTimePicker").date(e.date);
+        }
     });
 </script>';

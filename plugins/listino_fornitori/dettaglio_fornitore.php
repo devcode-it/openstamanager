@@ -52,8 +52,12 @@ echo '
     <input type="hidden" name="id_articolo" value="'.$id_articolo.'">
 
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
             {[ "type": "text", "label": "'.tr('Codice fornitore').'", "name": "codice_fornitore", "required": 1, "value": "'.$fornitore['codice_fornitore'].'" ]}
+        </div>
+
+        <div class="col-md-6">
+            {[ "type": "text", "label": "'.tr('Barcode').'", "name": "barcode_fornitore", "value": "'.$fornitore['barcode_fornitore'].'" ]}
         </div>
     </div>
 

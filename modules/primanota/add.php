@@ -126,10 +126,10 @@ foreach ($id_documenti as $id_documento) {
         continue;
     }
 
-    if (empty($id_anagrafica_movimenti)) {
+    if ($id_anagrafica_movimenti == null) {
         $id_anagrafica_movimenti = $fattura->idanagrafica;
     } elseif ($fattura->idanagrafica != $id_anagrafica_movimenti) {
-        $id_anagrafica_movimenti = null;
+        $id_anagrafica_movimenti = 0;
     }
 
     $numeri_fatture[] = !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'];
@@ -204,7 +204,7 @@ if ($numero_documenti + $numero_scadenze > 1) {
 
         $descrizione = $is_ultimo_importo_avere ? tr('Inc. fatture _NAME_ num. _LIST_') : tr('Pag. fatture _NAME_ num. _LIST_');
         $descrizione = replace($descrizione, [
-            '_NAME_' => $anagrafica_movimenti->ragione_sociale,
+            '_NAME_' => $anagrafica_movimenti->ragione_sociale ?: '',
             '_LIST_' => implode(', ', $numeri_fatture),
         ]);
     } else {

@@ -1,20 +1,38 @@
 <?php
 
+use Plugins\PresentazioniBancarie\Gestore;
+use Modules\Banche\Banca;
+
 include_once __DIR__.'/init.php';
 
 if (!empty($records)) {
+
     include $structure->filepath('generate.php');
 
     return;
-}
 
-if (empty($banca_azienda)) {
-    echo '
+}else{
+
+    $banca_azienda = Banca::where('id_anagrafica', Gestore::getAzienda()->id)
+    ->where('predefined', 1)
+    ->first();
+
+    try {
+        
+        if (empty($banca_azienda)) {
+echo '
 <div class="alert alert-warning">
     <i class="fa fa-warning"></i>
     '.tr("La banca dell'azienda non è definita o non ha impostati i campi Codice IBAN e BIC").'.
-    '.Modules::link('Banche', $azienda->id, tr('Imposta'), null, null).'
+    '.Modules::link('Banche', null, tr('Imposta'), null, null).'
 </div>';
+        }
+
+    }
+    catch (Exception $e) {
+
+    }
+
 }
 
 

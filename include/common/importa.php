@@ -265,6 +265,12 @@ echo '
             <h3 class="box-title">'.tr('Righe da importare').'</h3>
         </div>
 
+        <div class="row">
+            <div class="col-md-12">
+                {["type":"checkbox", "label":"'.tr('Seleziona/Deseleziona tutto').'", "name":"import_all", "value":"1"]}
+            </div>
+        </div>
+
         <table class="box-body table table-striped table-hover table-condensed">
             <thead>
                 <tr>
@@ -310,7 +316,7 @@ foreach ($righe as $i => $riga) {
 
     // Checkbox - da evadere?
     echo '
-                        <input type="checkbox" '.$attr.' id="checked_'.$i.'" name="evadere['.$riga['id'].']" value="on" onclick="ricalcolaTotaleRiga('.$i.');" />';
+                        <input class="check" type="checkbox" '.$attr.' id="checked_'.$i.'" name="evadere['.$riga['id'].']" value="on" onclick="ricalcolaTotaleRiga('.$i.');" />';
 
     $descrizione = ($riga->isArticolo() ? $riga->articolo->codice.' - ' : '').$riga['descrizione'];
 
@@ -617,5 +623,21 @@ echo '
                 input("calcolo_ritenuta_acconto").set("");
             }
         });
+    });
+
+    $("#import_all").click(function(){    
+        if( $(this).is(":checked") ){
+            $(".check").each(function(){
+                if( !$(this).is(":checked") ){
+                    $(this).trigger("click");
+                }
+            });
+        }else{
+            $(".check").each(function(){
+                if( $(this).is(":checked") ){
+                    $(this).trigger("click");
+                }
+            });
+        }
     });
 </script>';

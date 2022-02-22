@@ -10,8 +10,14 @@
   <component name="LaravelIdeaMainSettings">
     <option name="defaultLanguage" value="it" />
     <option name="frameworkFound" value="true" />
+    <option name="generationBooleanSettings">
+      <map>
+        <entry key="createConsoleCommand:inTheNewMenu" value="true" />
+      </map>
+    </option>
     <option name="generationStringSettings">
       <map>
+        <entry key="createEloquentScope:namespace" value="Models\Scopes" />
         <entry key="createModel:namespace" value="Models" />
       </map>
     </option>

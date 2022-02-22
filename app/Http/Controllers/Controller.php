@@ -28,7 +28,9 @@ class Controller extends BaseController
             $osm_modules = collect($module->extra->{'osm-modules'});
 
             $module->config = $osm_modules
-                ->mapWithKeys(fn($item, $name) => config($name) ?? include base_path("vendor/$module->name/config/{$name}.php"))
+                ->mapWithKeys(
+                    fn($item, $name) => config($name) ?? include base_path("vendor/$module->name/config/$name.php")
+                )
                 ->reject(null)
                 ->all();
 

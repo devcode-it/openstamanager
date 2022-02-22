@@ -17,6 +17,7 @@
     </MarkdownNavigatorCodeStyleSettings>
     <PHPCodeStyleSettings>
       <option name="VARIABLE_NAMING_STYLE" value="SNAKE_CASE" />
+      <option name="SPACE_BEFORE_SHORT_CLOSURE_LEFT_PARENTHESIS" value="true" />
     </PHPCodeStyleSettings>
     <TypeScriptCodeStyleSettings version="0">
       <option name="FORCE_SEMICOLON_STYLE" value="true" />

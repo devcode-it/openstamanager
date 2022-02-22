@@ -297,7 +297,7 @@ echo '
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "$idstatointervento$", "class": "unblockable" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL ORDER BY descrizione", "value": "$idstatointervento$", "class": "unblockable" ]}
                 </div>
 <?php
 

@@ -207,7 +207,7 @@ echo '
         </div>
 
          <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "'.$id_stato.'" ]}
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL ORDER BY descrizione", "value": "'.$id_stato.'" ]}
         </div>
     </div>
 
@@ -363,7 +363,7 @@ echo '
 
             <div class="row ricorrenza">
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Stato ricorrenze').'", "name": "idstatoricorrenze", "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL AND is_completato=0" ]}
+                    {[ "type": "select", "label": "'.tr('Stato ricorrenze').'", "name": "idstatoricorrenze", "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL AND is_completato=0 ORDER BY descrizione" ]}
                 </div>
 
                 <div class="col-md-4">

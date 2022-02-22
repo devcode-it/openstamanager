@@ -281,7 +281,7 @@ if (App::debug()) {
         'data' => [
             'title' => tr('Vuoi davvero cambiare lo stato per questi interventi?'),
             'msg' => tr('Seleziona lo stato in cui spostare tutti gli interventi non completati').'.<br>
-            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL" ]}',
+            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL ORDER BY descrizione" ]}',
             'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',
             'blank' => false,
@@ -293,7 +293,7 @@ if (App::debug()) {
         'data' => [
             'title' => tr('Vuoi davvero fare una copia degli interventi selezionati?'),
             'msg' => '<br>{[ "type": "timestamp", "label": "'.tr('Data/ora richiesta').'", "name": "data_richiesta", "required": 0, "value": "-now-", "required":1 ]}
-            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "" ]}
+            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL ORDER BY descrizione", "value": "" ]}
             <br>{[ "type":"checkbox", "label":"'.tr('Duplica righe').'", "name":"righe", "value":"" ]}
             <br>{[ "type":"checkbox", "label":"'.tr('Duplica sessioni').'", "name":"sessioni", "value":"" ]}',
             'button' => tr('Procedi'),

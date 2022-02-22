@@ -29,6 +29,17 @@ if ($module['name'] == 'Ddt di vendita') {
     $dir = 'uscita';
 }
 
+$numero_previsto = verifica_numero_ddt($ddt);
+if (!empty($numero_previsto)) {
+    echo '
+    <div class="alert alert-warning">
+        <i class="fa fa-warning"></i> '.tr("E' assente una fattura di vendita di numero _NUM_ in data precedente o corrispondente a _DATE_: si potrebbero verificare dei problemi con la numerazione corrente delle fatture", [
+                '_DATE_' => dateFormat($fattura->data),
+                '_NUM_' => '"'.$numero_previsto.'"',
+            ]).'.</b>
+    </div>';
+}
+
 ?>
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">

@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\DDT\DDT;
+use Util\Generator;
 
 /**
  * Funzione per generare un nuovo numero per il ddt.
@@ -212,4 +213,46 @@ function get_stato_ddt($idddt)
             return 'Evaso';
         }
     }
+}
+
+function verifica_numero_ddt(DDT $ddt)
+{
+    global $dbo;
+
+    if (empty($ddt->numero_esterno)) {
+        return null;
+    }
+
+    $data = $ddt->data;
+    $tipo = $ddt->tipo;
+
+    $documenti = DDT::where('idtipoddt', $tipo->id)
+        ->where('data', $data)
+        ->get();
+
+    // Recupero maschera per questo segmento
+    $maschera = setting('Formato numero secondario ddt');
+
+    $ultimo = Generator::getPreviousFrom($maschera, 'dt_ddt', 'numero_esterno', [
+        'data < '.prepare(date('Y-m-d', strtotime($data))),
+        'YEAR(data) = '.prepare(date('Y', strtotime($data))),
+        'idtipoddt = '.prepare($tipo->id),
+    ], $data);
+    
+    do {
+        $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
+
+        $filtered = $documenti->reject(function ($item, $key) use ($numero) {
+            return $item->numero_esterno == $numero;
+        });
+
+        if ($documenti->count() == $filtered->count()) {
+            return $numero;
+        }
+
+        $documenti = $filtered;
+        $ultimo = $numero;
+    } while ($numero != $fattura->numero_esterno);
+
+    return null;
 }

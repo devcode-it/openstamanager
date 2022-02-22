@@ -102,7 +102,8 @@ export default class TableColumn extends Component<Attributes> {
     });
     $(this.element)
       .find('.mdc-data-table__filter-textfield')
-      .on('input', this.onFilterInput.bind(this));
+      .on('input', this.onFilterInput.bind(this))
+      .on('click', (event: Event) => event.stopPropagation());
   }
 
   onCheckboxClicked(event: Event) {

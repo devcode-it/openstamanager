@@ -59,6 +59,8 @@ if ($file->isFatturaElettronica()) {
     $xslt->importStylesheet($xsl);
     echo $xslt->transformToXML($xml);
 
+    exit;
+
     echo '
 <style>
     #notifica {

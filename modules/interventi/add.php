@@ -149,10 +149,7 @@ echo '
 <form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="ref" value="'.get('ref').'">
-	<input type="hidden" name="backto" value="record-edit">
-
-    <!-- Fix creazione da Anagrafica -->
-    <input type="hidden" name="id_record" value="">';
+	<input type="hidden" name="backto" value="record-edit">';
 
 if (!empty($id_promemoria_contratto)) {
     echo '<input type="hidden" name="idcontratto_riga" value="'.$id_promemoria_contratto.'">';

@@ -42,9 +42,6 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="dir" value="<?php echo $dir; ?>">
 
-    <!-- Fix creazione da Anagrafica -->
-    <input type="hidden" name="id_record" value="">
-
 	<div class="row">
 
         <?php

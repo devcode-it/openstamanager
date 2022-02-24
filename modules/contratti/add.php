@@ -28,9 +28,6 @@ echo '
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
 
-    <!-- Fix creazione da Anagrafica -->
-    <input type="hidden" name="id_record" value="">
-
 	<div class="row">
 		<div class="col-md-6">
 			 {[ "type": "text", "label": "'.tr('Nome').'", "name": "nome", "required": 1 ]}

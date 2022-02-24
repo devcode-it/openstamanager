@@ -25,9 +25,6 @@ echo '
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="add">
 
-    <!-- Fix creazione da Anagrafica -->
-    <input type="hidden" name="id_record" value="">
-
     <div class="row">
 
 		<div class="col-md-4">

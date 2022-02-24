@@ -305,9 +305,6 @@ class CSV extends CSVImporter
         $articolo->idiva_vendita = $aliquota->id;
         $articolo->attivo = 1;
 
-        // Prezzo di vendita
-        $articolo->setPrezzoVendita($record['prezzo_vendita'], $aliquota->id ? $aliquota->id : setting('Iva predefinita'));
-
         // Esportazione della quantità indicata
         $qta_registrata = (float) ($record['qta']);
         $nome_sede = $record['nome_sede'];
@@ -385,6 +382,9 @@ class CSV extends CSVImporter
             'id_categoria' => $categoria->id ?: $articolo['id_categoria'],
             'id_sottocategoria' => $sottocategoria->id ?: $articolo['id_sottocategoria'],
         ]);
+
+        // Prezzo di vendita
+        $articolo->setPrezzoVendita($record['prezzo_vendita'], $aliquota->id ? $aliquota->id : setting('Iva predefinita'));
 
         $articolo->save();
 

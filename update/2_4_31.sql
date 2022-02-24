@@ -26,3 +26,7 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 -- Aggiunta colonna Codice in Anagrafiche
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche'), 'Codice', 'an_anagrafiche.codice', 1, 1, 0, 0, '', '', 0, 0, 1);
+
+-- Aggiunta opzione formattazione HTML nelle viste per la gestione dei campi CKeditor
+ALTER TABLE `zz_views` ADD `html_format` TINYINT NOT NULL DEFAULT '1' AFTER `format`; 
+UPDATE `zz_views` SET `html_format` = '1'; 

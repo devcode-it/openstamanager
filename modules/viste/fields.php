@@ -87,20 +87,25 @@ foreach ($fields as $key => $field) {
                         </div>
 
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 {[ "type": "checkbox", "label": "'.tr('Ricercabile').'", "name": "search['.$key.']", "value": "'.$field['search'].'", "help": "'.tr('Indica se il campo è ricercabile').'" ]}
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 {[ "type": "checkbox", "label": "'.tr('Ricerca lenta').'", "name": "slow['.$key.']", "value": "'.$field['slow'].'", "help": "'.tr("Indica se la ricerca per questo campo è lenta (da utilizzare nel caso di evidenti rallentamenti, mostra solo un avviso all'utente").'" ]}
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 {[ "type": "checkbox", "label": "'.tr('Sommabile').'", "name": "sum['.$key.']", "value": "'.$field['summable'].'", "help": "'.tr('Indica se il campo è da sommare').'" ]}
                             </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                {[ "type": "checkbox", "label": "'.tr('Formattazione automatica').'", "name": "format['.$key.']", "value": "'.$field['format'].'", "help": "'.tr('Indica se il campo deve essere formattabile in modo automatico, per esempio valori numerici o date.').'" ]}
+                            </div>
 
-                            <div class="col-md-3">
-                                {[ "type": "checkbox", "label": "'.tr('Formattabile').'", "name": "format['.$key.']", "value": "'.$field['format'].'", "help": "'.tr('Indica se il campo è formattabile in modo automatico').'" ]}
+                            <div class="col-md-4">
+                                {[ "type": "checkbox", "label": "'.tr('Utilizza HTML').'", "name": "html_format['.$key.']", "value": "'.$field['html_format'].'", "help": "'.tr('Indica se il campo deve mantenere la formattazione HTML. Impostazione utile per i campi di testo con editor.').'" ]}
                             </div>
                         </div>
 

@@ -121,6 +121,11 @@ if (!empty($query)) {
 
             $value = trim($r[$field]);
 
+            // Formattazione HTML
+            if (empty($total['html_format'][$pos]) && !empty($value)) {
+                $value = strip_tags($value);
+            }
+
             // Formattazione automatica
             if (!empty($total['format'][$pos]) && !empty($value)) {
                 if (formatter()->isStandardTimestamp($value)) {

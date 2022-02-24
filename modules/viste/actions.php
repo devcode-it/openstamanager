@@ -55,6 +55,7 @@ switch (filter('op')) {
                     'search' => post('search')[$c],
                     'slow' => post('slow')[$c],
                     'format' => post('format')[$c],
+                    'html_format' => post('html_format')[$c],
                     'summable' => post('sum')[$c],
                     'search_inside' => post('search_inside')[$c],
                     'order_by' => post('order_by')[$c],

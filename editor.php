@@ -283,7 +283,7 @@ if (empty($record) || !$has_access) {
 
                 <script>
                 $(document).ready(function(){
-                    let form = $("#module-edit").parent().find("form").first();
+                    let form = $("#edit-form").first();
 
                     // Ultima sezione/campo del form
                     let last = form.find(".panel").last();

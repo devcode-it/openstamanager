@@ -139,7 +139,7 @@ class Prints
      * @param string     $directory
      * @param bool       $return_string
      */
-    public static function render($print, $id_record, $directory = null, $return_string = false)
+    public static function render($print, $id_record, $directory = null, $return_string = false, $overwrite = true)
     {
         //ob_end_clean(); // Compatibilità con versioni vecchie delle stampe
         $dbo = $database = database();
@@ -186,9 +186,9 @@ class Prints
         if (self::isCompletelyCustom($print)) {
             return self::customLoader($infos['id'], $id_record, $directory, $return_string);
         } elseif (self::isOldStandard($print)) {
-            return self::oldLoader($infos['id'], $id_record, $directory, $return_string);
+            return self::oldLoader($infos['id'], $id_record, $directory, $return_string, $overwrite);
         } else {
-            return self::loader($infos['id'], $id_record, $directory, $return_string);
+            return self::loader($infos['id'], $id_record, $directory, $return_string, $overwrite);
         }
     }
 
@@ -354,7 +354,7 @@ class Prints
      * @param string     $directory
      * @param bool       $return_string
      */
-    protected static function oldLoader($id_print, $id_record, $directory = null, $return_string = false)
+    protected static function oldLoader($id_print, $id_record, $directory = null, $return_string = false, $overwrite = true)
     {
         $format = 'A4';
 
@@ -415,6 +415,20 @@ class Prints
             $html2pdf->writeHTML($report);
             $html2pdf->pdf->setTitle($title);
 
+            // Ridenominazione file se l'impostazione è disattivata
+            if (!$overwrite) {
+                $index = 1;
+
+                $file_parts = pathinfo($path);
+                $filename_no_extension = $file_parts['filename'];
+
+                while (file_exists($directory.'/'.$file_parts['basename'])) {
+                    $path = $file_parts['dirname'].'/'.$filename_no_extension.'_'.$index++.'.'.$file_parts['extension'];
+
+                    $file_parts = pathinfo($path);
+                }
+            }
+
             $pdf = $html2pdf->output($path, $mode);
             $file['pdf'] = $pdf;
         }else{
@@ -458,7 +472,7 @@ class Prints
      * @param string     $directory
      * @param bool       $return_string
      */
-    protected static function loader($id_print, $id_record, $directory = null, $return_string = false)
+    protected static function loader($id_print, $id_record, $directory = null, $return_string = false, $overwrite = true)
     {
         $infos = self::get($id_print);
         $options = self::readOptions($infos['options']);
@@ -649,6 +663,20 @@ class Prints
             $file = self::getFile($infos, $id_record, $directory, $replaces);
             $title = $file['name'];
             $path = $file['path'];
+
+            // Ridenominazione file se l'impostazione è disattivata
+            if (!$overwrite) {
+                $index = 1;
+
+                $file_parts = pathinfo($path);
+                $filename_no_extension = $file_parts['filename'];
+
+                while (file_exists($directory.'/'.$file_parts['basename'])) {
+                    $path = $file_parts['dirname'].'/'.$filename_no_extension.'_'.$index++.'.'.$file_parts['extension'];
+
+                    $file_parts = pathinfo($path);
+                }
+            }
 
             // Impostazione del titolo del PDF
             $mpdf->SetTitle($title);

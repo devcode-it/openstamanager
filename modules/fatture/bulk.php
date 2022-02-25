@@ -53,7 +53,7 @@ switch (post('op')) {
             foreach ($fatture as $r) {
                 $print = Prints::getModulePredefinedPrint($id_module);
 
-                Prints::render($print['id'], $r['id'], $dir.'tmp/');
+                Prints::render($print['id'], $r['id'], $dir.'tmp/', false, false);
             }
 
             // Creazione zip

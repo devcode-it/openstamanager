@@ -29,6 +29,8 @@ if ($modulo == 'Anagrafiche') {
     $movimenti = $dbo->fetchArray('SELECT co_movimenti.*, SUM(totale) AS totale, co_pianodeiconti3.descrizione, co_pianodeiconti3.numero AS conto3, co_pianodeiconti2.numero AS conto2 FROM co_movimenti LEFT JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id LEFT JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE iddocumento='.prepare($id_record).' GROUP BY idmastrino, idconto ORDER BY data, idmastrino');
 }
 
+$idmastrini_processati = [-1];
+
 if (!empty($movimenti)) {
     echo '
     <table class="table table-hover table-condensed table-bordered table-striped" style="font-size:11pt;">
@@ -61,6 +63,33 @@ if (!empty($movimenti)) {
                     <td class="text-right">'.($movimento['totale']<0 ? moneyFormat(abs($movimento['totale'])) : "").'</td>
                     <td class="text-right">'.moneyFormat($scalare).'</td>
                 </tr>';
+
+            $idmastrini_processati[] = $movimento['idmastrino'];
+        }
+
+        // Altri movimenti del mastrino collegati ma non direttamente collegati alla fattura (es. spese bancarie)
+        if ($modulo != 'Anagrafiche') {
+            $altri_movimenti = $dbo->fetchArray('SELECT co_movimenti.*, SUM(totale) AS totale, co_pianodeiconti3.descrizione, co_pianodeiconti3.numero AS conto3, co_pianodeiconti2.numero AS conto2 FROM co_movimenti LEFT JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id LEFT JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE iddocumento=0 AND idmastrino IN('.implode(',', $idmastrini_processati).') GROUP BY idmastrino, idconto ORDER BY data, idmastrino');
+
+            foreach ($altri_movimenti as $altro_movimento) {
+                $documento = $modulo == 'Anagrafiche' ? Fattura::find($altro_movimento['iddocumento']) : null;
+                $scalare += $altro_movimento['totale'];
+                $descrizione = $altro_movimento['conto2'].'.'.$altro_movimento['conto3'].' - '.$altro_movimento['descrizione'];
+
+                if( $altro_movimento['primanota']==1 ){
+                    $descrizione = Modules::link('Prima nota',$altro_movimento['idmastrino'],$descrizione);
+                }
+
+                echo '
+                    <tr>
+                        <td class="text-center">'.Translator::dateToLocale($altro_movimento['data']).'</td>
+                        <td>'.$descrizione.'<small class="pull-right text-right text-muted" style="font-size:8pt;">'.($documento ? $documento->getReference() : '').'</small></td>
+                        <td class="text-right">'.($altro_movimento['totale']>0 ? moneyFormat(abs($altro_movimento['totale'])) : "").'</td>
+                        <td class="text-right">'.($altro_movimento['totale']<0 ? moneyFormat(abs($altro_movimento['totale'])) : "").'</td>
+                        <td class="text-right">'.moneyFormat($scalare).'</td>
+                    </tr>';
+
+            }
         }
     echo '
         </tbody>

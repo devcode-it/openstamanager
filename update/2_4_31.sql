@@ -30,3 +30,6 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 -- Aggiunta opzione formattazione HTML nelle viste per la gestione dei campi CKeditor
 ALTER TABLE `zz_views` ADD `html_format` TINYINT NOT NULL DEFAULT '1' AFTER `format`; 
 UPDATE `zz_views` SET `html_format` = '1'; 
+
+-- Correzione widget valore magazzino
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(\" \", REPLACE(REPLACE(REPLACE(FORMAT(SUM(prezzo_acquisto*qta),2), \",\", \"#\"), \".\", \",\"), \"#\", \".\"), \"&euro;\") AS dato FROM mg_articoli WHERE qta>0 AND deleted_at IS NULL AND servizio=0' WHERE `zz_widgets`.`name` = 'Valore magazzino';

@@ -7,8 +7,7 @@ echo '
     <input type="hidden" name="op" value="add">
     <input type="hidden" name="backto" value="record-edit">
 
-    <!-- Fix per generazione da record esistente -->
-    <input type="hidden" name="id_record" value="">
+
 
     <div class="row">
         <div class="col-md-6">

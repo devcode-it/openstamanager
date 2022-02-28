@@ -55,7 +55,7 @@ class SelectHandler implements HandlerInterface
 
         // Inizializzazione del codice HTML
         $result = '
-    <select |attr|>';
+    <select autocomplete="off" |attr|>';
 
         // Delega della generazione del codice HTML in base alle caratteristiche del formato
         // Gestione delle richieste AJAX (se il campo "ajax-source" è impostato)

@@ -252,7 +252,7 @@ function verifica_numero_ddt(DDT $ddt)
 
         $documenti = $filtered;
         $ultimo = $numero;
-    } while ($numero != $fattura->numero_esterno);
+    } while ($numero != $ddt->numero_esterno);
 
     return null;
 }

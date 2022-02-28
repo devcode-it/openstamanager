@@ -56,7 +56,7 @@ switch (post('op')) {
             foreach ($interventi as $r) {
                 $print = Prints::getModulePredefinedPrint($id_module);
 
-                Prints::render($print['id'], $r['id'], $dir.'tmp/');
+                Prints::render($print['id'], $r['id'], $dir.'tmp/', false, false);
             }
 
             $dir = slashes($dir);

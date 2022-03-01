@@ -491,37 +491,58 @@ if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
 
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Tipo di spedizione').'", "name": "idspedizione", "values": "query=SELECT id, descrizione FROM dt_spedizione ORDER BY descrizione ASC", "value": "$idspedizione$" ]}
+                    {[ "type": "select", "label": "'.tr('Tipo di spedizione').'", "name": "idspedizione", "values": "query=SELECT id, descrizione, esterno FROM dt_spedizione ORDER BY descrizione ASC", "value": "$idspedizione$" ]}
                 </div>
 
-                <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Vettore').'", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica=Vettore|'.((($record['idspedizione'] != 3) and ($record['stato'] == 'Bozza')) ? '' : 'disabled').'", "disabled": '.intval($record['idspedizione'] == 3).', "required": '.intval($record['idspedizione'] != 3).' ]}
+                <div class="col-md-3">';
+                    if (!empty($record['idvettore'])) {
+                        echo Modules::link('Anagrafiche', $record['idvettore'], null, null, 'class="pull-right"');
+                    }
+                    $esterno = $dbo->selectOne('dt_spedizione', 'esterno', [
+                        'id' => $record['idspedizione'],
+                    ])['esterno'];
+?>
+
+                    {[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo empty($esterno) || (!empty($esterno) && !empty($record['idvettore'])) ? 1 : 0; ?>, "required": <?php echo !empty($esterno) ?: 0; ?>, "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo ($esterno and (intval(!$record['flag_completato']) || empty($record['idvettore']))) ? '' : 'disabled'; ?>", "class": "<?php echo empty($record['idvettore']) ? 'unblockable' : ''; ?>" ]}
                 </div>
 
                 <script>
                     $("#idspedizione").change(function() {
-                        if ($(this).val() == 3) {
+                        if($(this).val()){
+                            if (!$(this).selectData().esterno) {
+                                $("#idvettore").attr("required", false);
+                                input("idvettore").disable();
+                                $("label[for=idvettore]").text("<?php echo tr('Vettore'); ?>");
+                                $("#idvettore").selectReset("<?php echo tr("Seleziona un\'opzione"); ?>");
+                                $(".btn_idvettore").prop("disabled", true);
+                                $(".btn_idvettore").addClass("disabled");
+                            }else{
+                                $("#idvettore").attr("required", true);
+                                input("idvettore").enable();
+                                $("label[for=idvettore]").text("<?php echo tr('Vettore'); ?>*");
+                                $(".btn_idvettore").prop("disabled", false);
+                                $(".btn_idvettore").removeClass("disabled");
+
+                            }
+                        } else{
                             $("#idvettore").attr("required", false);
-                            $("#idvettore").attr("disabled", true);
-                            $("label[for=idvettore]").text("'.tr('Vettore').'");
-							$("#idvettore").selectReset(" '.tr("Seleziona un'opzione").'");
-							$("#idvettore").next().next().find("button.bound:nth-child(1)").prop("disabled", true);
-                        }else{
-                            $("#idvettore").attr("required", true);
-                            $("#idvettore").attr("disabled", false);
-                            $("label[for=idvettore]").text("'.tr('Vettore').'*");
-							$("#idvettore").next().next().find("button.bound:nth-child(1)").prop("disabled", false);
+                            input("idvettore").disable();
+                            $("label[for=idvettore]").text("<?php echo tr('Vettore'); ?>");
+                            $("#idvettore").selectReset("<?php echo tr("Seleziona un\'opzione"); ?>");
+                            $(".btn_idvettore").prop("disabled", true);
+                            $(".btn_idvettore").addClass("disabled");
                         }
                     });
 
-					$("#idcausalet").change(function() {
+                    $("#idcausalet").change(function() {
                         if ($(this).val() == 3) {
                             $("#tipo_resa").attr("disabled", false);
                         }else{
-							$("#tipo_resa").attr("disabled", true);
+                            $("#tipo_resa").attr("disabled", true);
                         }
                     });
-                </script>';
+                </script>
+<?php
 
     $tipo_resa = [
         [

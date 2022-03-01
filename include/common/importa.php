@@ -521,10 +521,10 @@ echo '
     }
 
     $("input[name=righe]").each(function() {
-        ricalcolaTotaleRiga($(this).val());
+        ricalcolaTotaleRiga($(this).val(), first = true);
     });
 
-    function ricalcolaTotaleRiga(r) {
+    function ricalcolaTotaleRiga(r, first) {
         let prezzo_unitario = $("#prezzo_unitario_" + r).val();
         let sconto = $("#sconto_unitario_" + r).val();
 
@@ -551,11 +551,12 @@ echo '
             qta = 0;
         }
 
-        let serial_select = $("#serial_" + r);
-        serial_select.selectClear();
-        serial_select.select2("destroy");
-        serial_select.data("maximum", qta);
-        start_superselect();
+        if (!first) {
+            let serial_select = $("#serial_" + r);
+            serial_select.selectClear();
+            serial_select.data("maximum", qta);
+            initSelectInput("#serial_" + r);
+        }
 
         let subtotale = (prezzo_scontato * qta).toLocale();
 

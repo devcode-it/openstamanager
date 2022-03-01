@@ -36,11 +36,11 @@ include_once __DIR__.'/../../core.php';
 				</div>
 
                 <div class="col-md-3">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Spedizione predefinita'); ?>", "name": "predefined", "value": "$predefined$", "help":"<?php echo tr('Impostare questo tipo di spedizione come predefinito per i ddt'); ?>." ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Spedizione predefinita'); ?>", "name": "predefined", "value": "$predefined$", "help":"<?php echo tr('Impostare questo tipo di spedizione come predefinito per i documenti'); ?>." ]}
                 </div>
 
 				<div class="col-md-3">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Spedizione con vettore'); ?>", "name": "esterno", "value": "$esterno$", "help":"<?php echo tr('Impostare per rendere obbligatorio il campo vettore in fase di modifica ddt'); ?>." ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Rendi obbligatorio il vettore'); ?>", "name": "esterno", "value": "$esterno$", "help":"<?php echo tr('Impostare per rendere obbligatorio il campo vettore in fase di modifica documento'); ?>." ]}
                 </div>
 			</div>
 		</div>

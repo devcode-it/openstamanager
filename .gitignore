@@ -10,6 +10,7 @@ resources/static/vendor/
 .phpstorm.meta.php
 _ide_helper.php
 _ide_helper_models.php
+.idea/dataSources.xml
 .idea/deployment.xml
 .idea/discord.xml
 .idea/php.xml

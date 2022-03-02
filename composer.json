@@ -37,10 +37,9 @@
     "guzzlehttp/guzzle": "^7",
     "inertiajs/inertia-laravel": "^0",
     "innocenzi/laravel-vite": "^0",
+    "laravel-json-api/laravel": "^2",
     "laravel/framework": "^8",
     "laravel/tinker": "^2",
-    "laravel-json-api/laravel": "^1",
-    "maicol07/laravel-json-api-resource": "dev-master",
     "nette/utils": "^3",
     "riverskies/laravel-mobile-detect": "^1",
     "spatie/file-system-watcher": "^1.0",
@@ -51,11 +50,11 @@
     "astrotomic/ignition-stackoverflow": "^1",
     "barryvdh/laravel-debugbar": "^3",
     "barryvdh/laravel-ide-helper": "^2",
-    "spatie/laravel-ignition": "^1",
-    "friendsofphp/php-cs-fixer": "^3",
     "kkomelin/laravel-translatable-string-exporter": "^1",
+    "friendsofphp/php-cs-fixer": "^3",
     "nunomaduro/collision": "^5",
-    "roave/security-advisories": "dev-latest"
+    "roave/security-advisories": "dev-latest",
+    "spatie/laravel-ignition": "^1"
   },
   "autoload": {
     "psr-4": {
@@ -79,7 +78,10 @@
   "config": {
     "optimize-autoloader": true,
     "preferred-install": "dist",
-    "sort-packages": true
+    "sort-packages": true,
+    "allow-plugins": {
+      "wikimedia/composer-merge-plugin": true
+    }
   },
   "extra": {
     "merge-plugin": {

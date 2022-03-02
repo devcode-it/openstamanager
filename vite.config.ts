@@ -5,7 +5,7 @@ import {VitePWA} from 'vite-plugin-pwa';
 
 export default defineConfig(osmConfig({
   build: {
-    minify: true
+    minify: false
   },
   optimizeDeps: {
     exclude: [
@@ -38,7 +38,7 @@ export default defineConfig(osmConfig({
     ]
   }
 }))
-  // @ts-ignore
+  // eslint-disable-next-line new-cap
   .withPlugins(...VitePWA({
     includeAssets: [
       'images/favicon/favicon.ico',

@@ -2,9 +2,9 @@ import {IconButton as MWCIconButton} from '@material/mwc-icon-button';
 import styles from '@openstamanager/scss/material/icon-button.scss';
 import classnames from 'classnames';
 import {
+  type TemplateResult,
   css,
   html,
-  type TemplateResult,
   unsafeCSS
 } from 'lit';
 import {

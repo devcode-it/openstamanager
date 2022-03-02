@@ -27,7 +27,7 @@ if (empty($file)) {
     return;
 }
 
-$link = base_path().'/'.$file->filepath;
+$link = base_url().'/'.$file->filepath;
 
 // Force download of the file
 if (get('download') == '1') {
@@ -100,8 +100,8 @@ if ($file->isFatturaElettronica()) {
     </iframe>';
     } else {
         echo '
-    <iframe src="'.base_path().'/view.php?file_id='.$file_id.'&download=1">
-        <a src="'.base_path().'/view.php?file_id='.$file_id.'&download=1">'.tr('Il browser non supporta i contenuti iframe: clicca qui per raggiungere il file originale').'</a>
+    <iframe src="'.base_url().'/view.php?file_id='.$file_id.'&download=1">
+        <a src="'.base_url().'/view.php?file_id='.$file_id.'&download=1">'.tr('Il browser non supporta i contenuti iframe: clicca qui per raggiungere il file originale').'</a>
     </iframe>';
     }
 }

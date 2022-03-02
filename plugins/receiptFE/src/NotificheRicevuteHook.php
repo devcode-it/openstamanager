@@ -51,6 +51,7 @@ class NotificheRicevuteHook extends Manager
             ->count();
 
         // Messaggio di importazione
+        $message = null;
         if (!empty($in_attesa) && !empty($con_errore)) {
             $message = tr('Sono presenti _ERR_ fatture elettroniche con ricevute di scarto o errori di trasmissione, _WAIT_ in attesa di ricevuta da più di 7 giorni', [
                 '_ERR_' => $con_errore,
@@ -74,7 +75,7 @@ class NotificheRicevuteHook extends Manager
             'icon' => 'fa fa-ticket text-yellow',
             'message' => $message,
             'show' => $con_errore != 0 || $in_attesa != 0,
-            'link' => base_path().'/controller.php?id_module='.$module->id.'#tab_'.$plugin->id,
+            'link' => base_url().'/controller.php?id_module='.$module->id.'#tab_'.$plugin->id,
         ];
     }
 

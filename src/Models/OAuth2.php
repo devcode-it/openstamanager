@@ -49,7 +49,7 @@ class OAuth2 extends Model
             $config = array_merge($config, [
                 'clientId' => $this->client_id,
                 'clientSecret' => $this->client_secret,
-                'redirectUri' => base_path().'/oauth2.php',
+                'redirectUri' => base_url().'/oauth2.php',
                 'accessType' => 'offline',
             ]);
 

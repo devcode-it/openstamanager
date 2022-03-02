@@ -386,7 +386,7 @@ class Query
                 $search[] = $view['search'];
                 $slow[] = $view['slow'];
                 $format[] = $view['format'];
-                $html_format[] = $view['html_format'];
+                $html_format[] = $view??['html_format'];
 
                 if ($view['summable']) {
                     $summable[] = 'SUM(`'.trim($view['name']."`) AS 'sum_".(count($fields) - 1)."'");

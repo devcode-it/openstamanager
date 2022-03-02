@@ -34,11 +34,11 @@ echo '
             </div>
 
             <div class="panel-body">
-                <button type="button" class="btn btn-primary col-md-3" data-toggle="modal" data-title="'.tr('Stampa registro IVA vendite').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?dir=entrata&nome_stampa=Registro IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Registro').'<br>'.tr('IVA vendite').'</button>
+                <button type="button" class="btn btn-primary col-md-3" data-toggle="modal" data-title="'.tr('Stampa registro IVA vendite').'" data-href="'.base_url().'/modules/stampe_contabili/stampe_contabili.php?dir=entrata&nome_stampa=Registro IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Registro').'<br>'.tr('IVA vendite').'</button>
 
-                <button type="button" class="btn btn-primary col-md-3 col-md-push-1" data-toggle="modal" data-title="'.tr('Stampa registro IVA acquisti').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?dir=uscita&nome_stampa=Registro IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Registro').'<br>'.tr('IVA acquisti').'</button>
+                <button type="button" class="btn btn-primary col-md-3 col-md-push-1" data-toggle="modal" data-title="'.tr('Stampa registro IVA acquisti').'" data-href="'.base_url().'/modules/stampe_contabili/stampe_contabili.php?dir=uscita&nome_stampa=Registro IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Registro').'<br>'.tr('IVA acquisti').'</button>
 
-                <button type="button" class="btn btn-primary col-md-4 col-md-push-2" data-toggle="modal" data-title="'.tr('Stampa liquidazione IVA').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?nome_stampa=Liquidazione IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Liquidazione').'<br>'.tr('IVA').'</button>
+                <button type="button" class="btn btn-primary col-md-4 col-md-push-2" data-toggle="modal" data-title="'.tr('Stampa liquidazione IVA').'" data-href="'.base_url().'/modules/stampe_contabili/stampe_contabili.php?nome_stampa=Liquidazione IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Liquidazione').'<br>'.tr('IVA').'</button>
             </div>
         </div>
     </div>
@@ -84,7 +84,7 @@ echo '
             </div>
 
             <div class="panel-body">
-                <button type="button" class="btn btn-primary col-md-3" data-toggle="modal" data-title="'.tr('Stampa Bilancio').'" data-href="'.base_path().'/modules/stampe_contabili/stampa_bilancio.php" ><i class="fa fa-print fa-2x"></i> <br>'.tr('Stampa').'<br>'.tr('Bilancio').'<br></button>
+                <button type="button" class="btn btn-primary col-md-3" data-toggle="modal" data-title="'.tr('Stampa Bilancio').'" data-href="'.base_url().'/modules/stampe_contabili/stampa_bilancio.php" ><i class="fa fa-print fa-2x"></i> <br>'.tr('Stampa').'<br>'.tr('Bilancio').'<br></button>
                
                 '.Prints::getLink('Mastrino', 1, 'btn-primary col-md-3 col-md-push-1', '<br>'.tr('Situazione').'<br>'.tr('patrimoniale'), '|default| fa-2x', 'lev=1').'
 

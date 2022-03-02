@@ -358,7 +358,7 @@ class Gestore
             // Generazione filename
             $filename = $this->id_riba.'.txt';
             $file = $path.'/'.$filename;
-            $files[] = base_path().'/'.$file;
+            $files[] = base_url().'/'.$file;
 
             // Salvataggio del file
             file_put_contents(base_dir().'/'.$file, $content);
@@ -372,7 +372,7 @@ class Gestore
             // Generazione filename
             $filename = $this->id_credito_diretto.'.xml';
             $file = $path.'/'.$filename;
-            $files[] = base_path().'/'.$file;
+            $files[] = base_url().'/'.$file;
 
             // Salvataggio del file
             file_put_contents(base_dir().'/'.$file, $xml);
@@ -395,7 +395,7 @@ class Gestore
             // Generazione filename
             $filename = $this->id_debito_diretto.'.xml';
             $file = $path.'/'.$filename;
-            $files[] = base_path().'/'.$file;
+            $files[] = base_url().'/'.$file;
 
             // Salvataggio del file
             file_put_contents(base_dir().'/'.$file, $xml);

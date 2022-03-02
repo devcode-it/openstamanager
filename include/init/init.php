@@ -114,7 +114,7 @@ if (post('action') == 'init') {
         }
     }
 
-    redirect_legacy(base_path(), 'js');
+    redirect_legacy(base_url(), 'js');
     throw new \LegacyExitException();
 }
 

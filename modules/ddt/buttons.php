@@ -27,7 +27,7 @@ if (!empty($ddt->id_ddt_trasporto_interno)) {
 
     echo '
 <div class="tip" data-toggle="tooltip" title="'.tr("Questo ddt è impostato sull'anagrafica Azienda, e pertanto rappresenta un trasporto interno di merce: il movimento tra sedi distinte è necessario completato tramite un DDT in direzione opposta").'.">
-    <a class="btn btn-info" href="'.base_path().'/editor.php?id_module='.$id_module_collegamento.'&id_record='.$ddt->id_ddt_trasporto_interno.'">
+    <a class="btn btn-info" href="'.base_url().'/editor.php?id_module='.$id_module_collegamento.'&id_record='.$ddt->id_ddt_trasporto_interno.'">
         <i class="fa fa-truck"></i> '.tr('DDT di completamento trasporto').'
     </a>
 </div>';

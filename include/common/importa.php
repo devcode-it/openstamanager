@@ -55,7 +55,7 @@ if ($righe->isEmpty()) {
     return;
 }
 
-$link = !empty($documento_finale) ? base_path().'/editor.php?id_module='.$final_module['id'].'&id_record='.$documento_finale->id : base_path().'/controller.php?id_module='.$final_module['id'];
+$link = !empty($documento_finale) ? base_url().'/editor.php?id_module='.$final_module['id'].'&id_record='.$documento_finale->id : base_url().'/controller.php?id_module='.$final_module['id'];
 
 echo '
 <form action="'.$link.'" method="post">

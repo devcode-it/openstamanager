@@ -300,9 +300,9 @@ function redirectOperation($id_module, $id_record)
         $hash = $hash == '#tab_0' ? '' : $hash;
 
         if ($backto == 'record-edit') {
-            redirect_legacy(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash);
+            redirect_legacy(base_url().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash);
         } elseif ($backto == 'record-list') {
-            redirect_legacy(base_path().'/controller.php?id_module='.$id_module.$hash);
+            redirect_legacy(base_url().'/controller.php?id_module='.$id_module.$hash);
         }
 
         throw new \LegacyExitException();
@@ -350,7 +350,7 @@ function getURLPath()
     if (substr($path, 0, strlen($prefix)) == $prefix) {
         $path = substr($path, strlen($prefix));
     } else {
-        $path = str_replace(base_dir(), base_path(), $path);
+        $path = str_replace(base_dir(), base_url(), $path);
     }
 
     return slashes($path);
@@ -404,7 +404,7 @@ function check_query($query)
  *
  * @return string
  */
-function base_path()
+function base_url()
 {
     return url('/legacy/');
 }

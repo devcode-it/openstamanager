@@ -20,5 +20,6 @@ Route::middleware(['web', 'legacy'])
         // Route di fallback generale
         Route::any('/legacy/{path}', [LegacyController::class, 'index'])
             ->name('legacy')
-            ->where('path', '.*');
+            ->where('path', '.*')
+            ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
     });

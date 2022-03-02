@@ -526,7 +526,7 @@ echo '
 
         if (data !== undefined) {
             // Carico nel panel i dettagli del cliente
-            $.get("'.base_path().'/ajax_complete.php?module=Interventi&op=dettagli&id_anagrafica=" + value, function(data){
+            $.get("'.base_url().'/ajax_complete.php?module=Interventi&op=dettagli&id_anagrafica=" + value, function(data){
                 $("#dettagli_cliente").html(data);
             });
         } else {

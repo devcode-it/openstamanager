@@ -75,7 +75,7 @@ $operations['registrazione-contabile'] = [
         'title' => tr('Registrazione contabile'),
         'type' => 'modal',
         'origine' => 'scadenzario',
-        'url' => base_path().'/add.php?id_module='.module('Prima nota')['id'],
+        'url' => base_url().'/add.php?id_module='.module('Prima nota')['id'],
     ],
 ];
 

@@ -44,7 +44,7 @@ class Zip
      */
     public static function getExtractionDirectory()
     {
-        return base_path().'/tmp';
+        return base_url().'/tmp';
     }
 
     /**

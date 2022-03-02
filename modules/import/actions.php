@@ -49,7 +49,7 @@ switch (filter('op')) {
             // Generazione del file
             $import_manager::createExample($filepath);
 
-            echo base_path().'/'.$file;
+            echo base_url().'/'.$file;
         }
 
         break;

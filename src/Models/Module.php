@@ -73,7 +73,7 @@ class Module extends Model
         if (in_array($this->permission, ['r', 'rw'])) {
             $link = !empty($id_record) ? 'editor.php?id_module='.$this->id.'&id_record='.$id_record : 'controller.php?id_module='.$this->id;
 
-            return '<a href="'.base_path().'/'.$link.'#'.$anchor.'" '.$extra.'>'.$testo.'</a>';
+            return '<a href="'.base_url().'/'.$link.'#'.$anchor.'" '.$extra.'>'.$testo.'</a>';
         } else {
             return $alternativo;
         }

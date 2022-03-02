@@ -42,7 +42,7 @@ echo '<!DOCTYPE html>
 
 if (file_exists(base_dir().'/manifest.json')) {
     echo '
-        <link rel="manifest" href="'.base_path().'/manifest.json">';
+        <link rel="manifest" href="'.base_url().'/manifest.json">';
 }
 
 // CSS
@@ -181,7 +181,7 @@ if (auth()->check()) {
 
 			globals = {
                 content_was_modified: false,
-                rootdir: "'.base_path().'",
+                rootdir: "'.base_url().'",
                 js: "'.$paths['js'].'",
                 css: "'.$paths['css'].'",
                 img: "'.$paths['img'].'",
@@ -259,7 +259,7 @@ if (auth()->check()) {
         <script>
             globals = {
                 content_was_modified: false,
-                rootdir: "'.base_path().'",
+                rootdir: "'.base_url().'",
 
                 search: {},
                 translations: {
@@ -411,7 +411,7 @@ if (auth()->check()) {
                      <div class="navbar-custom-menu">
                         <ul class="nav navbar-nav">
 
-                            <li class="nav-button hide"><a href="'.base_path().'/bug.php" class="tip nav-button" title="'.tr('Segnalazione bug').'">
+                            <li class="nav-button hide"><a href="'.base_url().'/bug.php" class="tip nav-button" title="'.tr('Segnalazione bug').'">
                                 <i class="fa fa-bug"></i>
                             </a></li>
 

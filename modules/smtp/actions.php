@@ -86,7 +86,7 @@ switch (filter('op')) {
 
             // Link di redirect dopo la configurazione
             $modulo_account_email = Module::pool('Account email');
-            $oauth2->after_configuration = base_path().'/editor.php?id_module='.$modulo_account_email->id.'&id_record='.$id_record;
+            $oauth2->after_configuration = base_url().'/editor.php?id_module='.$modulo_account_email->id.'&id_record='.$id_record;
 
             $oauth2->save();
 
@@ -139,7 +139,7 @@ switch (filter('op')) {
     case 'oauth2':
         $oauth2 = $account->oauth2;
 
-        $redirect = base_path().'/oauth2.php?id='.$oauth2->id;
+        $redirect = base_url().'/oauth2.php?id='.$oauth2->id;
         redirect($redirect);
 
         break;

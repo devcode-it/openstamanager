@@ -111,7 +111,7 @@ switch (post('op')) {
         session('superselect.id_articolo_barcode') = $id_records;
         $id_print = Prints::getPrints()['Barcode'];
 
-        redirect(base_path().'/pdfgen.php?id_print='.$id_print.'&id_record='.Articolo::where('barcode', '!=', '')->first()->id);
+        redirect(base_url().'/pdfgen.php?id_print='.$id_print.'&id_record='.Articolo::where('barcode', '!=', '')->first()->id);
         throw new \LegacyExitException();;
 
         break;
@@ -177,7 +177,7 @@ switch (post('op')) {
         }
 
         $database->commitTransaction();
-        redirect(base_path().'/editor.php?id_module='.module('Preventivi')['id'].'&id_record='.$id_preventivo);
+        redirect(base_url().'/editor.php?id_module='.module('Preventivi')['id'].'&id_record='.$id_preventivo);
         throw new \LegacyExitException();;
 
         break;

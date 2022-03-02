@@ -14,25 +14,12 @@
         "email": "info@openstamanager.com"
     }],
     "require": {
-        "php": ">=7.2",
-        "ext-curl": "*",
-        "ext-dom": "*",
-        "ext-fileinfo": "*",
-        "ext-intl": "*",
-        "ext-json": "*",
-        "ext-libxml": "*",
-        "ext-mbstring": "*",
-        "ext-openssl": "*",
-        "ext-pdo": "*",
-        "ext-simplexml": "*",
-        "ext-xsl": "*",
-        "ext-zip": "*",
         "aluguest/ical-easy-reader": "^1.5",
         "voku/stringy": "~6.0",
         "davidepastore/codice-fiscale": "^0.6.0",
         "ezyang/htmlpurifier": "^4.8",
         "ifsnop/mysqldump-php": "^2.3",
-        "illuminate/support": "~7|~8",
+        "illuminate/support": "~9",
         "intervention/image": "^2.3",
         "league/oauth2-client": "^2.6",
         "league/oauth2-google": "^3.0",
@@ -50,6 +37,12 @@
         "phpunit/phpunit": "~9.0",
         "orchestra/testbench": "~5|~6"
     },
+    "repositories": [
+        {
+            "url": "https://github.com/wdog/sdd_ita.git",
+            "type": "git"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "": "src/",

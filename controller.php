@@ -20,9 +20,9 @@
 include_once __DIR__.'/core.php';
 
 if (!empty($id_record) && !empty($id_module)) {
-    redirect_legacy(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record);
+    redirect_legacy(base_url().'/editor.php?id_module='.$id_module.'&id_record='.$id_record);
 } elseif (empty($id_module)) {
-    redirect_legacy(base_path().'/');
+    redirect_legacy(base_url().'/');
 }
 
 include_once AppLegacy::filepath('include|custom|', 'top.php');

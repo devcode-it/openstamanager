@@ -24,7 +24,7 @@ class LegacyController extends BaseController
         $response = response($output);
 
         // Fix content-type per contenuti non HTML
-        if (ends_with($path, '.js')) {
+        if (string_ends_with($path, '.js')) {
             $response = $response->header('Content-Type', 'application/javascript');
         } elseif (string_contains($path, 'pdfgen.php')) {
             $response = $response->header('Content-Type', 'application/pdf');

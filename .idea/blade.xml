@@ -12,7 +12,7 @@
       <data directive="@case" injection="true" prefix="&lt;?php case (" suffix="): ?&gt;" />
       <data directive="@choice" injection="true" prefix="&lt;?php echo app('translator')-&gt;choice(" suffix="); ?&gt;" />
       <data directive="@class" injection="true" prefix="class=&quot;&lt;?php echo \Illuminate\Support\Arr::toCssClasses(" suffix=")?&gt;&quot;" />
-      <data directive="@client" />
+      <data directive="@client" injection="true" prefix="&lt;?php echo vite_client(" suffix="); ?&gt;" />
       <data directive="@component" injection="true" prefix="&lt;?php $__env-&gt;startComponent(" suffix="); ?&gt;" />
       <data directive="@componentfirst" injection="true" prefix="&lt;?php $__env-&gt;startComponentFirst(" suffix="); ?&gt;" />
       <data directive="@continue" injection="true" prefix="&lt;?php if(" suffix=") continue; ?&gt;" />
@@ -95,10 +95,11 @@
       <data directive="@stack" injection="true" prefix="&lt;?php echo $__env-&gt;yieldPushContent(" suffix="); ?&gt;" />
       <data directive="@stop" />
       <data directive="@switch" injection="true" prefix="&lt;?php switch(" suffix="): ?&gt;" />
+      <data directive="@tag" injection="true" prefix="&lt;?php echo vite_tag(" suffix="); ?&gt;" />
       <data directive="@unless" injection="true" prefix="&lt;?php if (! (" suffix=")): ?&gt;" />
       <data directive="@unset" injection="true" prefix="&lt;?php unset(" suffix="); ?&gt;" />
       <data directive="@verbatim" />
-      <data directive="@vite" injection="true" prefix="&lt;?php echo vite_entry(" suffix="); ?&gt;" />
+      <data directive="@vite" injection="true" prefix="&lt;?php echo vite_tags(" suffix="); ?&gt;" />
       <data directive="@while" injection="true" prefix="&lt;?php while(" suffix="): ?&gt;" />
       <data directive="@yield" injection="true" prefix="&lt;?php echo $__env-&gt;yieldContent(" suffix="); ?&gt;" />
     </directives>

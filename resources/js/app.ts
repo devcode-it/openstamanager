@@ -1,7 +1,7 @@
 import {InertiaProgress} from '@inertiajs/progress';
 import {createInertiaApp} from '@maicol07/inertia-mithril';
 import cash from 'cash-dom';
-import Mithril from 'mithril';
+import Mithril, {ClassComponent} from 'mithril';
 // noinspection SpellCheckingInspection
 import redaxios from 'redaxios';
 import {registerSW} from 'virtual:pwa-register';
@@ -20,17 +20,17 @@ globalThis.__ = translator;
 
 InertiaProgress.init();
 
-const importedModules: Record<string, {default: any, bootstrap?: Function}> = {};
+const importedModules: Record<string, OpenSTAManager.ImportedModule> = {};
 
 // @ts-ignore
 const modules = globalThis.modules as OpenSTAManager.Modules;
 for (const [name, module] of Object.entries(modules)) {
   if (module.hasBootstrap) {
-    // eslint-disable-next-line no-await-in-loop,@typescript-eslint/no-unsafe-assignment
+    // eslint-disable-next-line no-await-in-loop
     importedModules[name] = await import(
       /* @vite-ignore */
-      `${importPath}/vendor/${module.moduleVendor}/${name}/index.js`
-    );
+      `${window.location.origin}/modules/${module.moduleVendor}/${name}/index.js`
+      ) as OpenSTAManager.ImportedModule;
 
     importedModules[name].bootstrap?.();
   }
@@ -51,18 +51,23 @@ await createInertiaApp({
     // Load page from module
     const [modulePath, page] = split;
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const osmModule: {default: unknown, [key: string]: unknown} = modulePath in importedModules
+    const osmModule = modulePath in importedModules
       ? importedModules[modulePath]
       : await import(
         /* @vite-ignore */
-        `${importPath}/vendor/${modulePath}/index.js`
-      );
+        `${window.location.origin}/modules/${modulePath}/index.js`
+        ) as OpenSTAManager.ImportedModule;
 
-    return osmModule[page];
+    return osmModule[page] as ClassComponent;
   },
-  setup({el, app}: {el: Element, app: Mithril.ComponentTypes}) {
-    m.mount(el, app);
+  setup({el, App, props}) {
+    if (!el) {
+      throw new Error('No mounting HTMLElement found');
+    }
+
+    m.mount(el, {
+      view: () => m(App, props)
+    });
   }
 });
 

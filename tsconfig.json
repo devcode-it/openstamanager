@@ -21,8 +21,8 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@openstamanager/assets/*": [
-        "/"
+      "@openstamanager/images/*": [
+        "public/images/*"
       ],
       "@openstamanager/scss/*": [
         "resources/scss/*"
@@ -35,12 +35,6 @@
   ],
   "include": [
     "resources/js/**/*",
-    "gulpfile.ts",
     "vite.config.ts"
-  ],
-  "ts-node": {
-    "compilerOptions": {
-      "module": "commonjs"
-    }
-  }
+  ]
 }

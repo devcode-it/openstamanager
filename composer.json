@@ -34,7 +34,7 @@
     "akaunting/laravel-setting": "^1.2",
     "guzzlehttp/guzzle": "^7.4",
     "inertiajs/inertia-laravel": "^0.5",
-    "innocenzi/laravel-vite": "^0.1",
+    "innocenzi/laravel-vite": "^0.2",
     "laravel-json-api/laravel": "^2.1",
     "laravel/framework": "^9.0",
     "laravel/tinker": "^2.7",

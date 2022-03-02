@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="PROJECT" libraries="{@types/prop-types}" />
-    <excludedPredefinedLibrary name="osm3/node_modules" />
+    <file url="PROJECT" libraries="{@types/prop-types, osm3/node_modules}" />
   </component>
 </project>

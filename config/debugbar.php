@@ -13,10 +13,9 @@ return [
      |
      */
 
-    'enabled' => env('DEBUGBAR_ENABLED', null),
+    'enabled' => config('app.debug'),
     'except' => [
-        'telescope*',
-        'horizon*',
+        'hook/*',
     ],
 
     /*

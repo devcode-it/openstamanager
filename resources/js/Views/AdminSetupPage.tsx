@@ -6,8 +6,7 @@ import type {Cash} from 'cash-dom';
 import type {VnodeDOM} from 'mithril';
 import redaxios from 'redaxios';
 
-// eslint-disable-next-line import/no-absolute-path
-import logoUrl from '/images/logo_completo.png';
+import logoUrl from '@openstamanager/images/logo_completo.png';
 
 import LoadingButton from '../Components/LoadingButton';
 import Mdi from '../Components/Mdi';

@@ -7,7 +7,6 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
 use Symfony\Component\Finder\SplFileInfo;
 
 class PublishModulesAssets extends Command
@@ -20,7 +19,7 @@ class PublishModulesAssets extends Command
     protected $signature = 'osm:publish {--force : Overwrite any existing files}
                     {--all : Publish assets for all modules without prompt}
                     {--module=* : One or many modules slug that have assets you want to publish}
-                    {--D : Publish assets in development mode}';
+                    {--dev : Publish assets in development mode}';
 
     /**
      * The console command description.
@@ -34,7 +33,7 @@ class PublishModulesAssets extends Command
      *
      * @return void
      */
-    public function __construct(private Controller $controller)
+    public function __construct(private readonly Controller $controller)
     {
         parent::__construct();
     }
@@ -70,14 +69,17 @@ class PublishModulesAssets extends Command
         }
 
         // Check boolean options
-        $dev = $this->option('D');
+        $dev = $this->option('dev');
         $force = $this->option('force');
+
+        $replacement = "from '../../../build/index.js'";
+        if ($dev) {
+            $url = config('vite.configs.default.dev_server.url');
+            $replacement = "from '$url/resources/js/index.ts'";
+        }
 
         foreach ($modules as $module) {
             $tag = "$module:assets";
-            if ($dev) {
-                $tag .= '-dev';
-            }
 
             $this->call('vendor:publish', [
                 '--tag' => $tag,
@@ -90,9 +92,9 @@ class PublishModulesAssets extends Command
             collect($dirs)
                 ->flatMap(fn($dir) => File::allFiles($dir))
                 ->filter(fn(SplFileInfo $file) => $file->getExtension() === 'js')
-                ->each(function (SplFileInfo $file) use ($patch_failures) {
+                ->each(function (SplFileInfo $file) use ($replacement, $patch_failures) {
                     $content = str($file->getContents())
-                        ->replaceMatches("/from [\"']openstamanager[\"']/", "from '../../../index.js'")
+                        ->replaceMatches("/from [\"']openstamanager[\"']/", $replacement)
                         ->replaceMatches(
                             "/from [\"']@(?<vendor>[\w.-]+)\/(?<module>[\w.-]+)[\"']/",
                             "from '../../$1/$2/index.js'"

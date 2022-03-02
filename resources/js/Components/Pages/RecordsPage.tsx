@@ -371,7 +371,7 @@ export class RecordsPage extends Page {
     }
   }
 
-  async submitForm(button: Cash, dialog: Cash, form: Cash, event: SubmitEvent) {
+  async submitForm(button: Cash, dialog: Cash, form: Cash, event: SubmitEvent & {keepDialogOpen?: boolean}) {
     event.preventDefault();
     const loading: Cash = button.find('mwc-circular-progress');
     loading.show();
@@ -390,16 +390,16 @@ export class RecordsPage extends Page {
         const model = newResponse.getData() as IModel;
 
         const dialogElement = dialog.get(0);
-        if (dialogElement) {
+        if (dialogElement && !event.keepDialogOpen) {
           (dialogElement as MWCDialog).close();
         }
 
         this.rows.put(model.getId(), model);
         m.redraw();
-        await showSnackbar(__('Record salvato'), 4000);
+        void showSnackbar(__('Record salvato'), 4000);
       }
     } else {
-      await showSnackbar(__('Campi non validi. Controlla i dati inseriti'));
+      void showSnackbar(__('Campi non validi. Controlla i dati inseriti'));
     }
 
     loading.hide();
@@ -553,9 +553,18 @@ export class RecordsPage extends Page {
     raw = false
   ): Promise<any> {
     const column = this.columns[field];
-    const sectionField = collect(sections)
-      .pluck(`fields.${field}`)
-      .first() as SelectT | null;
+    let sectionField = collect(sections)
+      .pluck<SelectT | null, string, string>(`fields.${field}`)
+      .first();
+    if (!sectionField) {
+      const collection = collect(sections);
+      const key = collection.search(
+        (section) => section.fields[field] !== undefined
+      ) as string | false;
+      if (key) {
+        sectionField = collection.get(key)?.fields[field] as SelectT;
+      }
+    }
     let value: unknown;
     if (field.includes(':') || sectionField?.relationship) {
       let relation;
@@ -620,11 +629,11 @@ export class RecordsPage extends Page {
         const {relationship} = select;
 
         if (!required) {
-          list.push(<mwc-list-item key="null" value=""/>);
+          list.push(render(<mwc-list-item key="null" value=""/>));
         }
 
-        if (Array.isArray(relationship) && relationship.length === 2) {
-          options = this.getModelSelectOptions(relationship[0], relationship[1]);
+        if (Array.isArray(relationship) && relationship.length >= 2) {
+          options = this.getModelSelectOptions(relationship[0], relationship[1], relationship[2]);
         }
 
         if (options instanceof Promise) {
@@ -662,14 +671,20 @@ export class RecordsPage extends Page {
 
   async getModelSelectOptions(
     model: typeof Model,
-    labelAttribute: string
+    labelAttribute: string,
+    filter: (model: IModel, index: number, models: IModel[]) => boolean = () => true
   ): Promise<SelectOptionsT> {
-    const response = await model.all();
-    const categories = response.getData();
+    // @ts-ignore
+    const response = await model.with(model.relationships)
+      .get();
+    const models = response.getData();
 
-    return categories.map((instance: IModel) => ({
-      value: instance.getId() as string,
-      label: instance[labelAttribute] as string
-    }));
+    // @ts-ignore
+    return models.filter((element, index, array) => filter(element, index, array))
+      // @ts-ignore
+      .map((instance: IModel) => ({
+        value: instance.getId() as string,
+        label: instance[labelAttribute] as string
+      }));
   }
 }

@@ -3,7 +3,7 @@
 composer.lock
 composer.local.json
 public/build
-resources/static/vendor/
+public/modules
 .idea/inertia.xml
 .idea/git_toolbox_prj.xml
 .php-cs-fixer.cache

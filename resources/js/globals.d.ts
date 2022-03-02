@@ -37,7 +37,6 @@ import {
 } from './WebComponents';
 
 declare global {
-  let importPath: string;
   let translations: Record<string, string>;
   let modules: Record<string, OpenSTAManager.Modules>;
   const route: typeof router;

@@ -4,7 +4,7 @@ import '@material/mwc-checkbox';
 import '@material/mwc-formfield';
 import '../WebComponents/TextField';
 
-import logoUrl from '@openstamanager/assets/images/logo_completo.png';
+import logoUrl from '@openstamanager/images/logo_completo.png';
 import type {Cash} from 'cash-dom';
 import type {
   Vnode,
@@ -16,7 +16,11 @@ import LoadingButton from '../Components/LoadingButton';
 import Mdi from '../Components/Mdi';
 import Page from '../Components/Page';
 import {ErrorResponse} from '../typings';
-import {getFormData, isFormValid, showSnackbar} from '../utils';
+import {
+  getFormData,
+  isFormValid,
+  showSnackbar
+} from '../utils';
 
 export default class LoginPage extends Page {
   loading: Cash;
@@ -39,7 +43,7 @@ export default class LoginPage extends Page {
             required
             style="margin-bottom: 16px;"
           >
-            <Mdi icon="account-outline" slot="icon" />
+            <Mdi icon="account-outline" slot="icon"/>
           </text-field>
           <text-field
             label={__('Password')}
@@ -48,10 +52,10 @@ export default class LoginPage extends Page {
             required
             type="password"
           >
-            <Mdi icon="lock-outline" slot="icon" />
+            <Mdi icon="lock-outline" slot="icon"/>
           </text-field>
           <mwc-formfield label={__('Ricordami')} style="display: block;">
-            <mwc-checkbox id="remember" name="remember" />
+            <mwc-checkbox id="remember" name="remember"/>
           </mwc-formfield>
           <LoadingButton
             type="submit"
@@ -77,16 +81,19 @@ export default class LoginPage extends Page {
 
   oncreate(vnode: VnodeDOM) {
     super.oncreate(vnode);
-    this.loading = $(this.element).find('#login-button mwc-circular-progress');
-    this.forgotPasswordLoading = $(this.element).find(
-      '#forgot-password-button mwc-circular-progress'
-    );
+    this.loading = $(this.element)
+      .find('#login-button mwc-circular-progress');
+    this.forgotPasswordLoading = $(this.element)
+      .find(
+        '#forgot-password-button mwc-circular-progress'
+      );
   }
 
   async onLoginButtonClicked(event: PointerEvent) {
     event.preventDefault();
     this.loading.show();
-    const form = $(this.element).find('#login');
+    const form = $(this.element)
+      .find('#login');
 
     if (!isFormValid(form)) {
       this.loading.hide();
@@ -94,7 +101,8 @@ export default class LoginPage extends Page {
     }
 
     const formData = getFormData(form);
-    formData._token = $('meta[name="csrf-token"]').attr('content') as string;
+    formData._token = $('meta[name="csrf-token"]')
+      .attr('content') as string;
 
     try {
       await redaxios(route('auth.authenticate'), {
@@ -103,7 +111,8 @@ export default class LoginPage extends Page {
       });
     } catch (error: any) {
       this.loading.hide();
-      await showSnackbar(Object.values((error as ErrorResponse).data.errors).join(' '), false);
+      await showSnackbar(Object.values((error as ErrorResponse).data.errors)
+        .join(' '), false);
       return;
     }
 
@@ -131,7 +140,8 @@ export default class LoginPage extends Page {
         });
       } catch (error: any) {
         this.loading.hide();
-        await showSnackbar(Object.values((error as ErrorResponse).data.errors).join(' '), false);
+        await showSnackbar(Object.values((error as ErrorResponse).data.errors)
+          .join(' '), false);
         return;
       }
 

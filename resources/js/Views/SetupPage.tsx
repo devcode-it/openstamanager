@@ -10,7 +10,7 @@ import '../WebComponents/TextArea';
 import '../WebComponents/TextField';
 import '../WebComponents/Select';
 
-import logoUrl from '@openstamanager/assets/images/logo_completo.png';
+import logoUrl from '@openstamanager/images/logo_completo.png';
 import type CSS from 'csstype';
 import LocaleCode from 'locale-code';
 import type {Vnode, VnodeDOM} from 'mithril';

@@ -11,7 +11,7 @@ import type {
 } from 'mithril';
 import redaxios from 'redaxios';
 
-import logoUrl from '@openstamanager/assets/images/logo_completo.png';
+import logoUrl from '@openstamanager/images/logo_completo.png';
 
 import LoadingButton from '../Components/LoadingButton';
 import Mdi from '../Components/Mdi';
@@ -62,7 +62,7 @@ export default class ResetPasswordPage extends Page {
             required
             type="password"
           >
-            <Mdi icon="lock-outline" slot="icon" />
+            <Mdi icon="lock-outline" slot="icon"/>
           </text-field>
           <text-field
             label={__('Conferma password')}
@@ -72,7 +72,7 @@ export default class ResetPasswordPage extends Page {
             required
             style="margin-top: 16px;"
           >
-            <Mdi icon="repeat-variant" slot="icon" />
+            <Mdi icon="repeat-variant" slot="icon"/>
           </text-field>
           <LoadingButton
             type="submit"
@@ -90,17 +90,21 @@ export default class ResetPasswordPage extends Page {
 
   oncreate(vnode: VnodeDOM) {
     super.oncreate(vnode);
-    this.loading = $(this.element).find('#reset-password mwc-circular-progress');
+    this.loading = $(this.element)
+      .find('#reset-password mwc-circular-progress');
   }
 
   async onResetPasswordButtonClicked(event: PointerEvent) {
     event.preventDefault();
     this.loading.show();
-    const form = $(this.element).find('#reset-password');
+    const form = $(this.element)
+      .find('#reset-password');
 
     // noinspection DuplicatedCode
-    const password: HTMLElement | undefined = form.find('#password').get(0);
-    const passwordConfirm: HTMLElement | undefined = form.find('#password_confirm').get(0);
+    const password: HTMLElement | undefined = form.find('#password')
+      .get(0);
+    const passwordConfirm: HTMLElement | undefined = form.find('#password_confirm')
+      .get(0);
 
     validatePassword(password as HTMLInputElement, passwordConfirm as HTMLInputElement);
 
@@ -110,13 +114,15 @@ export default class ResetPasswordPage extends Page {
     }
 
     const formData = getFormData(form);
-    formData._token = $('meta[name="csrf-token"]').attr('content') as string;
+    formData._token = $('meta[name="csrf-token"]')
+      .attr('content') as string;
 
     try {
       await redaxios.put(route('password.resetPassword'), formData);
     } catch (error: any) {
       this.loading.hide();
-      await showSnackbar(Object.values((error as ErrorResponse).data.errors).join(' '), false);
+      await showSnackbar(Object.values((error as ErrorResponse).data.errors)
+        .join(' '), false);
       return;
     }
 

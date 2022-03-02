@@ -27,7 +27,11 @@
         </mwc-button>
     </a>
     <br>
-    <mwc-button id="logout-button" outlined label="@lang('Esci')" style="margin-top: 16px;">
-        <i class="mdi mdi-logout-variant" slot="icon"></i>
-    </mwc-button>
+    <form id="logout" action="{{ route('auth.logout') }}">
+        @csrf
+        <mwc-button id="logout-button" outlined label="@lang('Esci')" style="margin-top: 16px;"
+                    onclick="this.parent.submit();">
+            <i class="mdi mdi-logout-variant" slot="icon"></i>
+        </mwc-button>
+    </form>
 </mwc-menu>

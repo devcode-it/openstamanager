@@ -33,6 +33,8 @@ Route::name('auth.')
             ->name('authenticate');
 
         Route::post('logout', [AuthController::class, 'logout'])
+            ->withoutMiddleware('guest')
+            ->middleware('auth')
             ->name('logout');
     });
 

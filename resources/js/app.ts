@@ -73,7 +73,12 @@ await createInertiaApp({
 
 $('#logout-button')
   .on('click', async () => {
-    await redaxios.post(route('auth.logout'));
+    await redaxios.post(route('auth.logout'), {}, {
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
+          .attr('content')
+      }
+    });
     window.location.href = route('auth.login');
   });
 

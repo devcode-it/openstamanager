@@ -1,35 +1,5 @@
 <?php
 
-/**
- * List all the directories under a directory.
- *
- * @param string $dir            Parent directory
- * @param false  $include_parent Include parent directory in the returned array
- * @param bool   $relative       Use relative paths instead of absolute ones
- * @source https://www.php.net/manual/en/function.glob.php#82182
- */
-if (!function_exists('listdirs')) {
-    function listdirs(string $dir, bool $include_parent = false, bool $relative = true): array
-    {
-        $dirs = $include_parent ? [$dir] : [];
-        $next = 0;
-
-        while (true) {
-            $glob = glob($dir.'/*', GLOB_ONLYDIR);
-
-            if (count($glob) > 0) {
-                $dirs = [...$dirs, ...array_values($glob)];
-            } else {
-                break;
-            }
-
-            $dir = $dirs[$next++];
-        }
-
-        return $relative ? array_unique(array_map(static fn ($dir) => ltrim(str_replace(base_path(), '', $dir), DIRECTORY_SEPARATOR), $dirs)) : $dirs;
-    }
-}
-
 return [
     /*
     |--------------------------------------------------------------------------
@@ -39,7 +9,12 @@ return [
     | entry points and will not be required in the configuration file.
     | To disable the feature, set to false.
     */
-    'entrypoints' => listdirs(resource_path('js'), true),
+    'entrypoints' => [
+        resource_path('js/index.ts'),
+        resource_path('js/styles.ts'),
+        resource_path('js/_material.ts'),
+        resource_path('js/app.ts')
+    ],
     'ignore_patterns' => ['/\\.d\\.ts$/'],
 
     /*

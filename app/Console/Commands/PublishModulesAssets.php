@@ -91,7 +91,7 @@ class PublishModulesAssets extends Command
                 ->flatMap(fn($dir) => File::allFiles($dir))
                 ->filter(fn(SplFileInfo $file) => $file->getExtension() === 'js')
                 ->each(function (SplFileInfo $file) use ($patch_failures) {
-                    $content = Str::of($file->getContents())
+                    $content = str($file->getContents())
                         ->replaceMatches("/from [\"']openstamanager[\"']/", "from '../../../index.js'")
                         ->replaceMatches(
                             "/from [\"']@(?<vendor>[\w.-]+)\/(?<module>[\w.-]+)[\"']/",

@@ -78,3 +78,6 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `visible`, 
 
 -- Summable per Q.tà, Q.tà disponibile, Q.tà impegnata e Q.tà ordinata
 UPDATE `zz_views` SET `summable` = '1' WHERE (`zz_views`.`name` = 'Q.tà ordinata' OR  `zz_views`.`name` = 'Q.tà' OR  `zz_views`.`name` = 'Q.tà disponibile' OR  `zz_views`.`name` = 'Q.tà impegnata') AND `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'); 
+
+-- Stampe definitive registri iva
+CREATE TABLE `co_stampecontabili` ( `id` INT NOT NULL AUTO_INCREMENT , `id_print` INT NOT NULL , `date_start` DATE NOT NULL , `date_end` DATE NOT NULL , `first_page` INT NOT NULL , `last_page` INT NOT NULL , `dir` VARCHAR(255) NOT NULL , PRIMARY KEY (`id`));

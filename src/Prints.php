@@ -698,6 +698,8 @@ class Prints
             $file = self::getFile($infos, $id_record, $directory, $replaces);
             $file['pdf'] = file_get_contents($filename);
         }
+
+        $file['pages'] = $mpdf->pages;
         
         return $file;
     }

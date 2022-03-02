@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Util\FileSystem;
 
 class RequirementsController extends Controller
@@ -42,7 +43,7 @@ class RequirementsController extends Controller
         $list = config('requirements');
         if (!empty($file)) {
             $file = realpath($file);
-            if (string_starts_with($file)) {
+            if (Str::startsWith($file)) {
                 $list = include $file;
             }
         }
@@ -89,9 +90,9 @@ class RequirementsController extends Controller
                 $ini = FileSystem::convertBytes($value);
                 $real = FileSystem::convertBytes($suggested);
 
-                if (starts_with($values['suggested'], '>')) {
+                if (Str::startsWith($values['suggested'], '>')) {
                     $status = $ini >= substr($real, 1);
-                } elseif (starts_with($values['suggested'], '<')) {
+                } elseif (Str::startsWith($values['suggested'], '<')) {
                     $status = $ini <= substr($real, 1);
                 } else {
                     $status = ($real == $ini);

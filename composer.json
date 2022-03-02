@@ -15,7 +15,7 @@
     }],
     "type": "project",
     "require": {
-        "php": "^7.3|^8.0",
+        "php": "^8.0.2",
         "ext-curl": "*",
         "ext-dom": "*",
         "ext-fileinfo": "*",
@@ -32,26 +32,21 @@
         "danielstjules/stringy": "^3.1",
         "devcode-it/aggiornamenti": "@dev",
         "devcode-it/causali-trasporto": "@dev",
-        "devcode-it/legacy": "@dev",
-        "fideloper/proxy": "^4.4",
-        "filp/whoops": "^2.1",
-        "fruitcake/laravel-cors": "^2.0",
+        "devcode-it/legacy": "dev-legacy",
         "guzzlehttp/guzzle": "^7.0.1",
         "intervention/image": "^2.3",
-        "laravel/framework": "^8.12",
+        "laravel/framework": "^9.0",
         "laravel/tinker": "^2.5",
+        "spatie/laravel-ignition": "^1.0",
         "symfony/polyfill-ctype": "^1.8",
-        "symfony/polyfill-php70": "^1.8",
-        "zerospam/laravel-gettext": "^7.2"
+        "symfony/polyfill-php70": "^1.8"
     },
     "require-dev": {
-        "facade/ignition": "^2.5",
         "fakerphp/faker": "^1.9.1",
         "friendsofphp/php-cs-fixer": "^3.0",
         "jeroen-g/laravel-packager": "^2.5",
-        "laravel/homestead": "^12.2",
         "mockery/mockery": "^1.4.2",
-        "nunomaduro/collision": "^5.0",
+        "nunomaduro/collision": "^6.1",
         "phpunit/phpunit": "^9.3.3"
     },
     "config": {
@@ -66,7 +61,8 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
-            "app/helpers.php"
+            "app/helpers.php",
+            "app/LaravelGettext/Support/helpers.php"
         ]
     },
     "autoload-dev": {
@@ -95,27 +91,34 @@
             ]
         }
     },
-    "repositories": {
-        "devcode-it/aggiornamenti": {
+    "repositories": [
+        {
+            "url": "https://github.com/wdog/sdd_ita.git",
+            "type": "git"
+        },
+        {
+            "name": "devcode-it/aggiornamenti",
             "type": "path",
             "url": "./packages/devcode-it/aggiornamenti",
             "options": {
                 "symlink": true
             }
         },
-        "devcode-it/causali-trasporto": {
+        {
+            "name": "devcode-it/causali-trasporto",
             "type": "path",
             "url": "./packages/devcode-it/causali-trasporto",
             "options": {
                 "symlink": true
             }
         },
-        "devcode-it/legacy": {
+        {
+            "name": "devcode-it/legacy",
             "type": "path",
             "url": "../legacy",
             "options": {
                 "symlink": true
             }
         }
-    }
+    ]
 }

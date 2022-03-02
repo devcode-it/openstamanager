@@ -126,7 +126,7 @@ return [
     /*
      * The adapter used to sync the laravel built-in locale
      */
-    'adapter' => \Xinax\LaravelGettext\Adapters\LaravelAdapter::class,
+    'adapter' => \App\LaravelGettext\Adapters\LaravelAdapter::class,
 
     /*
      * Where to store the current locale/domain
@@ -134,9 +134,9 @@ return [
      * By default, in the session.
      * Can be changed for only memory or your own storage mechanism
      *
-     * @see \Xinax\LaravelGettext\Storages\Storage
+     * @see \App\LaravelGettext\Storages\Storage
      */
-    'storage' => \Xinax\LaravelGettext\Storages\SessionStorage::class,
+    'storage' => \App\LaravelGettext\Storages\SessionStorage::class,
 
     /*
      * Use custom locale that is not supported by the system
@@ -150,7 +150,7 @@ return [
      * The "_n" and "ngettext" are plural translation functions
      * The "dgettext" function allows a translation domain to be explicitly specified
      *
-     * "__" and "_n" and "_i" and "_s" are helpers functions @see \Xinax\LaravelGettext\Support\helpers.php
+     * "__" and "_n" and "_i" and "_s" are helpers functions @see \App\LaravelGettext\Support\helpers.php
      */
     'keywords-list' => ['_', '__', '_i', '_s', 'gettext', '_n:1,2', 'ngettext:1,2', 'dgettext:2', 'tr'],
 ];

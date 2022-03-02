@@ -3,7 +3,7 @@
 namespace App\View\Components\Inputs;
 
 use App\View\Components\InputWrapper;
-use Illuminate\View\Component;
+use Illuminate\View\Component;use Illuminate\Support\Str;
 
 class Number extends InputWrapper
 {
@@ -40,7 +40,7 @@ class Number extends InputWrapper
 
         // Gestione della precisione (numero specifico, oppure "qta" per il valore previsto nell'impostazione "Cifre decimali per quantità").
         $decimals = $this->get('decimals');
-        if (string_starts_with($decimals, 'qta')) {
+        if (Str::startsWith($decimals, 'qta')) {
             $decimals = setting('Cifre decimali per quantità');
 
             // Se non è previsto un valore minimo, lo imposta a 1

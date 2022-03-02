@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Xinax\LaravelGettext\Facades\LaravelGettext;
+use App\LaravelGettext\Facades\LaravelGettext;
 
 class Language
 {

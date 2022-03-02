@@ -9,6 +9,7 @@ use App\Http\Controllers\UpdateController;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class EnsureConfiguration
 {
@@ -33,7 +34,7 @@ class EnsureConfiguration
     public function handle(Request $request, Closure $next)
     {
         $route = $request->route();
-        if (starts_with($route->parameter('path'), 'assets')) {
+        if (Str::startsWith($route->parameter('path'), 'assets')) {
             return $next($request);
         }
 

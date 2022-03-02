@@ -4,13 +4,15 @@ return [
     // Directories to search in.
     'directories' => [
         'app',
-        'resources',
+        'resources/js',
+        'resources/views',
     ],
 
     // File Patterns to search for.
     'patterns' => [
         '*.php',
-        '*.js',
+        '*.ts',
+        '*.tsx',
     ],
 
     // Indicates whether new lines are allowed in translations.

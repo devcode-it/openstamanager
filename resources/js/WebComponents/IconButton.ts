@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/unbound-method,sonarjs/no-nested-template-literals */
 import {IconButton as MWCIconButton} from '@material/mwc-icon-button';
 import styles from '@openstamanager/scss/material/icon-button.scss';
 import classnames from 'classnames';
 import {
   css,
   html,
-  TemplateResult,
+  type TemplateResult,
   unsafeCSS
 } from 'lit';
 import {
@@ -25,7 +24,6 @@ export default class IconButton extends MWCIconButton {
   @property({type: Boolean}) declare compact: boolean;
   @property({type: Boolean, attribute: 'extra-compact'}) declare extraCompact: boolean;
 
-  /** @soyTemplate */
   protected override render(): TemplateResult {
     /** @classMap */
     const classes = {
@@ -36,25 +34,28 @@ export default class IconButton extends MWCIconButton {
       'mdc-icon-button--extra-compact': this.extraCompact
     };
 
+    const icon = this.icon ? html`<i class="material-icons">${this.icon}</i>` : '';
+
     return html`
       <button
         class="mdc-icon-button mdc-icon-button--display-flex ${classnames(classes)}"
         aria-label="${this.ariaLabel || this.icon}"
         aria-haspopup="${ifDefined(this.ariaHasPopup)}"
         ?disabled="${this.disabled}"
-        @focus="${this.handleRippleFocus}"
-        @blur="${this.handleRippleBlur}"
-        @mousedown="${this.handleRippleMouseDown}"
-        @mouseenter="${this.handleRippleMouseEnter}"
-        @mouseleave="${this.handleRippleMouseLeave}"
-        @touchstart="${this.handleRippleTouchStart}"
-        @touchend="${this.handleRippleDeactivate}"
-        @touchcancel="${this.handleRippleDeactivate}"
-      >${this.renderRipple()}
-        ${this.icon ? html`<i class="material-icons">${this.icon}</i>` : ''}
-        <span
-        ><slot></slot
-        ></span>
+        @focus="${this.handleRippleFocus.bind(this)}"
+        @blur="${this.handleRippleBlur.bind(this)}"
+        @mousedown="${this.handleRippleMouseDown.bind(this)}"
+        @mouseenter="${this.handleRippleMouseEnter.bind(this)}"
+        @mouseleave="${this.handleRippleMouseLeave.bind(this)}"
+        @touchstart="${this.handleRippleTouchStart.bind(this)}"
+        @touchend="${this.handleRippleDeactivate.bind(this)}"
+        @touchcancel="${this.handleRippleDeactivate.bind(this)}"
+      >
+        ${this.renderRipple()}
+        ${icon}
+        <span>
+          <slot></slot>
+        </span>
       </button>
     `;
   }

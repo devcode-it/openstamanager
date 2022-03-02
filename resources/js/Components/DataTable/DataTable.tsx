@@ -1,5 +1,5 @@
 import '@material/mwc-linear-progress';
-import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-list/mwc-list-item.js';
 import '../../WebComponents/Select';
 
 import type {LinearProgress as MWCLinearProgress} from '@material/mwc-linear-progress';

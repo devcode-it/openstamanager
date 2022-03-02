@@ -5,6 +5,6 @@ declare module 'mithril-node-render' {
 
   export const escapeText: string;
   export const escapeAttribute: string;
-  export default function render(vnode: m.Vnode | m.Vnode[]): string;
+  export default function render(vnode: m.Vnode | m.Vnode[]): Promise<string>;
   export function sync(vnode: m.Vnode | m.Vnode[]): string;
 }

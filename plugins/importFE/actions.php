@@ -228,15 +228,6 @@ switch (filter('op')) {
         });
         $id_tipo = $tipi->sort()->keys()->last();
 
-        // Ricerca del tipo di pagamento più utilizzato
-        $pagamenti = $fatture->mapToGroups(function ($item, $key) {
-            return [$item->pagamento->id => $item->pagamento];
-        });
-        $id_pagamento = $pagamenti->map(function ($item, $key) {
-            return $item->count();
-        })->sort()->keys()->last();
-        $pagamento = $pagamenti[$id_pagamento]->first();
-
         // Ricerca del conto più utilizzato
         $conti = $righe->groupBy(function ($item, $key) {
             return $item->idconto;

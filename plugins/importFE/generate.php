@@ -18,6 +18,7 @@
  */
 
 use Carbon\Carbon;
+use Modules\Pagamenti\Pagamento;
 use Plugins\ImportFE\FatturaElettronica;
 
 include_once __DIR__.'/../../core.php';
@@ -262,6 +263,7 @@ echo '
     </div>';
 
 // Pagamento
+$pagamento = Pagamento::where('codice_modalita_pagamento_fe', $codice_modalita_pagamento)->where('predefined', '1')->first();
 echo '
     <div class="row" >
 		<div class="col-md-3">
@@ -269,7 +271,7 @@ echo '
 		        <i class="fa fa-refresh"></i> '.tr('Visualizza tutte le modalità').'
             </button>
 
-            {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "pagamento", "required": 1, "ajax-source": "pagamenti", "select-options": '.json_encode(['codice_modalita_pagamento_fe' => $codice_modalita_pagamento]).' ]}
+            {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "pagamento", "required": 1, "ajax-source": "pagamenti", "select-options": '.json_encode(['codice_modalita_pagamento_fe' => $codice_modalita_pagamento]).', "value": "'.$pagamento->id.'" ]}
         </div>';
 
 // Movimentazioni

@@ -2,6 +2,7 @@ import {InertiaProgress} from '@inertiajs/progress';
 import {createInertiaApp} from '@maicol07/inertia-mithril';
 import cash from 'cash-dom';
 import Mithril, {ClassComponent} from 'mithril';
+import prntr from 'prntr';
 // noinspection SpellCheckingInspection
 import redaxios from 'redaxios';
 import {registerSW} from 'virtual:pwa-register';
@@ -71,6 +72,7 @@ await createInertiaApp({
   }
 });
 
+// Top app bar buttons
 $('#logout-button')
   .on('click', async () => {
     await redaxios.post(route('auth.logout'), {}, {
@@ -80,6 +82,13 @@ $('#logout-button')
       }
     });
     window.location.href = route('auth.login');
+  });
+$('#navbar-print')
+  .on('click', () => {
+    prntr({
+      printable: 'app',
+      type: 'html'
+    });
   });
 
 const updateSW = registerSW({

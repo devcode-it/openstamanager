@@ -55,6 +55,7 @@ specifiers:
   modern-normalize: ^1.1.0
   postcss: ^8.4.7
   postcss-html: ^1.3.0
+  prntr: ^2.0.11
   redaxios: ^0.4.1
   sass: ^1.49.9
   stylelint: ^14.5.3
@@ -112,6 +113,7 @@ dependencies:
   mithril: 2.0.4
   mithril-node-render: 3.0.2_mithril@2.0.4
   modern-normalize: 1.1.0
+  prntr: 2.0.11
   redaxios: 0.4.1
 
 devDependencies:
@@ -2889,16 +2891,20 @@ packages:
     dev: true
 
   /binary-extensions/2.2.0:
-    resolution: {integrity: sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==}
-    engines: {node: '>=8'}
+    resolution: { integrity: sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA== }
+    engines: { node: '>=8' }
     dev: true
 
   /blocking-elements/0.1.1:
-    resolution: {integrity: sha512-/SLWbEzMoVIMZACCyhD/4Ya2M1PWP1qMKuiymowPcI+PdWDARqeARBjhj73kbUBCxEmTZCUu5TAqxtwUO9C1Ig==}
+    resolution: { integrity: sha512-/SLWbEzMoVIMZACCyhD/4Ya2M1PWP1qMKuiymowPcI+PdWDARqeARBjhj73kbUBCxEmTZCUu5TAqxtwUO9C1Ig== }
+    dev: false
+
+  /bowser/2.11.0:
+    resolution: { integrity: sha512-AlcaJBi/pqqJBIQ8U9Mcpc9i8Aqxn88Skv5d+xBX006BY5u8N3mGLHa5Lgppa7L/HfwgwLgZ6NYs+Ag6uUmJRA== }
     dev: false
 
   /brace-expansion/1.1.11:
-    resolution: {integrity: sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==}
+    resolution: { integrity: sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA== }
     dependencies:
       balanced-match: 1.0.2
       concat-map: 0.0.1
@@ -5209,9 +5215,15 @@ packages:
     dev: true
 
   /pretty-bytes/5.6.0:
-    resolution: {integrity: sha512-FFw039TmrBqFK8ma/7OL3sDz/VytdtJr044/QUJtH0wK9lb9jLq9tJyIxUwtQJHwar2BqtiA4iCWSwo9JLkzFg==}
-    engines: {node: '>=6'}
+    resolution: { integrity: sha512-FFw039TmrBqFK8ma/7OL3sDz/VytdtJr044/QUJtH0wK9lb9jLq9tJyIxUwtQJHwar2BqtiA4iCWSwo9JLkzFg== }
+    engines: { node: '>=6' }
     dev: true
+
+  /prntr/2.0.11:
+    resolution: { integrity: sha512-A/GUmJUWM5mDDkcAA9OdE91+DLHoApveH0LFO3IQ5urYqWNz85GI2xMAVMf0ZCK4Ko+m3TQn3Rj6ntq+KgXRTA== }
+    dependencies:
+      bowser: 2.11.0
+    dev: false
 
   /process-nextick-args/2.0.1:
     resolution: { integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag== }

@@ -19,6 +19,12 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Iva\Aliquota;
+
+$prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
+$iva_predefinita = setting('Iva predefinita');
+$aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
+
 ?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
@@ -63,16 +69,10 @@ include_once __DIR__.'/../../core.php';
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "number", "label": "<?php echo tr('Quantità iniziale'); ?>", "name": "qta", "decimals": "qta" ]}
+                    {[ "type": "number", "label": "<?php echo tr('Coefficiente di vendita'); ?>", "name": "coefficiente", "help": "<?php echo tr('Imposta un coefficiente per calcolare automaticamente il prezzo di vendita quando cambia il prezzo di acquisto'); ?>." ]}
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "number", "label": "<?php echo tr('Soglia minima quantità'); ?>", "name": "threshold_qta", "decimals": "qta", "min-value": "undefined" ]}
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6">
                     <?php
                     if (!setting('Utilizza prezzi di vendita comprensivi di IVA')) {
                         echo '
@@ -82,9 +82,22 @@ include_once __DIR__.'/../../core.php';
 
                     {[ "type": "number", "label": "<?php echo tr('Prezzo di vendita'); ?>", "name": "prezzo_vendita", "icon-after": "<?php echo currency(); ?>", "help": "<?php echo setting('Utilizza prezzi di vendita comprensivi di IVA') ? tr('Importo IVA inclusa') : ''; ?>" ]}
                 </div>
+                
+            </div>
 
-                <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-4">
+                    {[ "type": "number", "label": "<?php echo tr('Quantità iniziale'); ?>", "name": "qta", "decimals": "qta" ]}
+                </div>
+
+                <div class="col-md-4">
+                    {[ "type": "number", "label": "<?php echo tr('Soglia minima quantità'); ?>", "name": "threshold_qta", "decimals": "qta", "min-value": "undefined" ]}
+                </div>
+
+                <div class="col-md-4">
                     {[ "type": "select", "label": "<?php echo tr('Iva di vendita'); ?>", "name": "idiva_vendita", "ajax-source": "iva", "valore_predefinito": "Iva predefinita", "help": "<?php echo tr('Se non specificata, verrà utilizzata l\'iva di default delle impostazioni'); ?>" ]}
+                    <input type="hidden" name="prezzi_ivati" value="<?php echo $prezzi_ivati; ?>">
+                    <input type="hidden" name="aliquota_predefinita" value="<?php echo $aliquota_predefinita; ?>">
                 </div>
             </div>
 
@@ -109,6 +122,9 @@ include_once __DIR__.'/../../core.php';
 </form>
 
 <script>
+iva_vendita = $("#add-form").find("#idiva_vendita");
+percentuale = 0;
+
 $(document).ready(function () {
     var sub = $('#add-form').find('#subcategoria_add');
     var original = sub.parent().find(".input-group-addon button").attr("onclick");
@@ -128,24 +144,65 @@ $(document).ready(function () {
         }
     });
 
+    input("coefficiente").on('keyup', function(){
+        if (iva_vendita.val()) {
+            percentuale = parseFloat(iva_vendita.selectData().percentuale);
+        }
+        if (!percentuale) {
+            percentuale =  parseFloat(input("aliquota_predefinita").get());
+        }
+        if (input("coefficiente").get()) {
+            let prezzo_vendita = input('prezzo_acquisto').get() * input("coefficiente").get();
+            if (parseFloat(input("prezzi_ivati").get())) {
+                prezzo_vendita = prezzo_vendita + (prezzo_vendita * percentuale / 100);
+            }
+            input("prezzo_vendita").set(prezzo_vendita);
+            input("prezzo_vendita").disable();
+            $("#scorpora_iva_add").addClass("disabled");
+        } else {
+            input("prezzo_vendita").enable();
+            $("#scorpora_iva_add").removeClass("disabled");
+        }
+    });
+
+    input("prezzo_acquisto").on('keyup change', function(){
+        if (iva_vendita.val()) {
+            percentuale = parseFloat(iva_vendita.selectData().percentuale);
+        }
+        if (!percentuale) {
+            percentuale =  parseFloat(input("aliquota_predefinita").get());
+        }
+        if (input("coefficiente").get()) {
+            let prezzo_vendita = input('prezzo_acquisto').get() * input("coefficiente").get();
+            if (parseFloat(input("prezzi_ivati").get())) {
+                prezzo_vendita = prezzo_vendita + (prezzo_vendita * percentuale / 100);
+            }
+            input("prezzo_vendita").set(prezzo_vendita);
+            input("prezzo_vendita").disable();
+            $("#scorpora_iva_add").addClass("disabled");
+        } else {
+            input("prezzo_vendita").enable();
+            $("#scorpora_iva_add").removeClass("disabled");
+        }
+    });
+
     $("#scorpora_iva_add").click( function() {
         scorpora_iva_add();
     });
 });
 
 function scorpora_iva_add() {
-    if ($("#add-form").find("#idiva_vendita").val() != '') {
-        var percentuale = parseFloat($("#add-form").find("#idiva_vendita").selectData().percentuale);
-        if(!percentuale) return;
-
-        var input = $("#add-form").find("#prezzo_vendita");
-        var prezzo = input.val().toEnglish();
-
-        var scorporato = prezzo * 100 / (100 + percentuale);
-
-        input.val(scorporato);
-    }else{
-        swal("<?php echo tr('Attenzione'); ?>", "<?php echo tr('Seleziona Iva di vendita.'); ?>", "warning");
+    if (iva_vendita.val()) {
+        percentuale = parseFloat(iva_vendita.selectData().percentuale);
     }
+    if (!percentuale) {
+        percentuale =  parseFloat(input("aliquota_predefinita").get());
+    }
+    if(!percentuale) return;
+
+    let input = $("#prezzo_vendita");
+    let prezzo = input.val().toEnglish();
+    let scorporato = prezzo * 100 / (100 + percentuale);
+    input.val(scorporato);
 }
 </script>

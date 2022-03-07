@@ -99,6 +99,7 @@ foreach ($fields as $key => $field) {
                                 {[ "type": "checkbox", "label": "'.tr('Sommabile').'", "name": "sum['.$key.']", "value": "'.$field['summable'].'", "help": "'.tr('Indica se il campo è da sommare').'" ]}
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="col-md-4">
                                 {[ "type": "checkbox", "label": "'.tr('Formattazione automatica').'", "name": "format['.$key.']", "value": "'.$field['format'].'", "help": "'.tr('Indica se il campo deve essere formattabile in modo automatico, per esempio valori numerici o date.').'" ]}
@@ -201,20 +202,26 @@ echo '
             </div>
 
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     {[ "type": "checkbox", "label": "'.tr('Ricercabile').'", "name": "search[-id-]" ]}
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     {[ "type": "checkbox", "label": "'.tr('Ricerca lenta').'", "name": "slow[-id-]" ]}
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     {[ "type": "checkbox", "label": "'.tr('Sommabile').'", "name": "sum[-id-]" ]}
                 </div>
+            </div>
 
-                <div class="col-md-3">
-                    {[ "type": "checkbox", "label": "'.tr('Formattabile').'", "name": "format[-id-]" ]}
+            <div class="row">
+                <div class="col-md-4">
+                    {[ "type": "checkbox", "label": "'.tr('Formattazione automatica').'", "name": "format[-id-]", "help": "'.tr('Indica se il campo deve essere formattabile in modo automatico, per esempio valori numerici o date.').'" ]}
+                </div>
+
+                <div class="col-md-4">
+                    {[ "type": "checkbox", "label": "'.tr('Utilizza HTML').'", "name": "html_format[-id-]", "help": "'.tr('Indica se il campo deve mantenere la formattazione HTML. Impostazione utile per i campi di testo con editor.').'" ]}
                 </div>
             </div>
 

@@ -28,8 +28,8 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche'), 'Codice', 'an_anagrafiche.codice', 1, 1, 0, 0, '', '', 0, 0, 1);
 
 -- Aggiunta opzione formattazione HTML nelle viste per la gestione dei campi CKeditor
-ALTER TABLE `zz_views` ADD `html_format` TINYINT NOT NULL DEFAULT '1' AFTER `format`; 
-UPDATE `zz_views` SET `html_format` = '1'; 
+ALTER TABLE `zz_views` ADD `html_format` TINYINT NOT NULL DEFAULT '0' AFTER `format`; 
+UPDATE `zz_views` SET `html_format` = '0'; 
 
 -- Correzione widget valore magazzino
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(\" \", REPLACE(REPLACE(REPLACE(FORMAT(SUM(prezzo_acquisto*qta),2), \",\", \"#\"), \".\", \",\"), \"#\", \".\"), \"&euro;\") AS dato FROM mg_articoli WHERE qta>0 AND deleted_at IS NULL AND servizio=0 AND 1=1', `help` = 'Articoli a magazzino (tutti o solo attivi secondo il segmento)' WHERE `zz_widgets`.`name` = 'Valore magazzino';

@@ -26,7 +26,7 @@ Route::get('/', static fn () => redirect()->route('auth.login'))
 Route::name('auth.')
     ->middleware('guest')
     ->group(static function () {
-        Route::inertia('login', 'LoginPage')
+        Route::inertia('login', 'LoginPage', ['external' => true])
             ->name('login');
 
         Route::post('login', [AuthController::class, 'login'])
@@ -44,7 +44,7 @@ Route::name('password.')
         Route::post('forgot', [PasswordController::class, 'forgotPassword'])
             ->name('forgot');
 
-        Route::inertia('reset', 'ResetPasswordPage')
+        Route::inertia('reset', 'ResetPasswordPage', ['external' => true])
             ->name('reset');
 
         Route::post('reset', [PasswordController::class, 'resetPassword'])
@@ -53,15 +53,16 @@ Route::name('password.')
 
 Route::name('setup.')->middleware(CheckConfigurationMiddleware::class)->group(static function () {
     Route::inertia('setup', 'SetupPage', [
-        'languages' => cache()->rememberForever('app.languages', fn () => array_map(
-            static fn ($file) => basename($file, '.json'),
-            glob(resource_path('lang').'/*.json', GLOB_NOSORT)
+        'languages' => cache()->rememberForever('app.languages', fn() => array_map(
+            static fn($file) => basename($file, '.json'),
+            glob(resource_path('lang') . '/*.json', GLOB_NOSORT)
         )),
-        'license' => cache()->rememberForever('app.license', fn () => file_get_contents(base_path('LICENSE'))),
+        'license' => cache()->rememberForever('app.license', fn() => file_get_contents(base_path('LICENSE'))),
+        'external' => true,
     ])
         ->name('index');
 
-    Route::inertia('setup/admin', 'AdminSetupPage')
+    Route::inertia('setup/admin', 'AdminSetupPage', ['external' => true])
         ->name('admin');
 
     Route::options('setup/test', [SetupController::class, 'testDatabase'])

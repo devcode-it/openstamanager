@@ -1,9 +1,3 @@
-<mwc-icon-button slot="navigationIcon"><i class="mdi mdi-menu"></i></mwc-icon-button>
-<div slot="title" style="display: flex; align-items: center;">
-    <img src="{{asset('images/logo.png')}}" alt="@lang('OpenSTAManager')" style="height: 50px; margin-right: 8px;">
-    <span>@lang('OpenSTAManager')</span>
-</div>
-
 <mwc-icon-button id="navbar-notifications" slot="actionItems" label="@lang('Notifiche')">
     <i class="mdi mdi-bell-outline"></i>
 </mwc-icon-button>

@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html lang="{{app()->getLocale()}}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
@@ -19,3 +21,29 @@
     @tag('styles')
     @tag('_material')
 </head>
+
+<body class="mdc-typography @if(session('high-contrast')) mdc-high-contrast @endif">
+@php
+    /** @var $modules */
+    assert($modules instanceof Illuminate\Support\Collection);
+
+    /** @var string $translations */
+    $translations = cache('translations_' . app()->getLocale());
+@endphp
+
+@yield('contents')
+
+<script>
+    window.modules = @js($modules->pluck('modules')->collapse()->all());
+    window.translations = @js($translations);
+    window.user = @js(auth()->user());
+    window.version = @js(trim(file_get_contents(base_path('VERSION'))));
+    window.revision = @js(trim(file_get_contents(base_path('REVISION'))));
+
+    window.theme = @js(session('high-contrast') ? 'high-contrast' : 'light');
+</script>
+
+@routes
+@tag('app')
+</body>
+</html>

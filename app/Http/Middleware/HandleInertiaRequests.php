@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -30,7 +31,10 @@ class HandleInertiaRequests extends Middleware
 
     final public function rootView(Request $request): string
     {
-        if (in_array($request->route()?->uri(), ['setup', 'login', 'setup/admin'], true)) {
+        /** @var array{external?: bool}|null $route_props */
+        $route_props = $request->route('props');
+
+        if (Arr::get($route_props, 'external', false)) {
             return 'external';
         }
 

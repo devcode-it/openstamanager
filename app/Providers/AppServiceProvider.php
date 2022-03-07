@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Http\Controllers\Controller;
 use Exception;
 use Illuminate\Support\ServiceProvider;
 use Nette\Utils\Json;
@@ -19,11 +20,13 @@ class AppServiceProvider extends ServiceProvider
      * Bootstrap any application services.
      * @throws Exception
      */
-    public function boot(): void
+    public function boot(Controller $controller): void
     {
         cache()->rememberForever(
-            'translations_'.app()->getLocale(),
-            fn () => Json::decode(file_get_contents(resource_path('lang/'.app()->getLocale().'.json')))
+            'translations_' . app()->getLocale(),
+            fn() => Json::decode(file_get_contents(resource_path('lang/' . app()->getLocale() . '.json')))
         );
+
+        view()->share('modules', $controller->getModules(request()));
     }
 }

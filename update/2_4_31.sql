@@ -70,7 +70,7 @@ INSERT INTO `zz_segments` (`id`, `id_module`, `name`, `clause`, `position`, `pat
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Solo attivi', 'attivo=1', 'WHR', '####', '', 0, 0, 0, 0);
 
 -- Correzione widget articoli in magazzino
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(\" \", REPLACE(REPLACE(REPLACE(FORMAT(SUM(qta),2), \",\", \"#\"), \".\", \",\"), \"#\", \".\"), \"unit&agrave;\") AS dato FROM mg_articoli WHERE qta>0 AND deleted_at IS NULL AND servizio=0 AND 1=1' WHERE `zz_widgets`.`name` = 'Articoli in magazzino', `help` = 'Articoli a magazzino (tutti o solo attivi secondo il segmento)';
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(\" \", REPLACE(REPLACE(REPLACE(FORMAT(SUM(qta),2), \",\", \"#\"), \".\", \",\"), \"#\", \".\"), \"unit&agrave;\") AS dato FROM mg_articoli WHERE qta>0 AND deleted_at IS NULL AND servizio=0 AND 1=1', `help` = 'Articoli a magazzino (tutti o solo attivi secondo il segmento)' WHERE `zz_widgets`.`name` = 'Articoli in magazzino';
 
 -- Aggiunta colonna "Servizio" per vista Articoli
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `visible`, `format`, `default`) VALUES
@@ -84,3 +84,6 @@ CREATE TABLE `co_stampecontabili` ( `id` INT NOT NULL AUTO_INCREMENT , `id_print
 
 -- Coefficiente di vendita
 ALTER TABLE `mg_articoli` ADD `coefficiente` DECIMAL(12,6) NOT NULL AFTER `prezzo_acquisto`; 
+
+-- Codice iva in selezione Iva per lettere d'intento
+UPDATE `zz_settings` SET `tipo` = 'query=SELECT id, CONCAT(codice,\' - \',descrizione) AS descrizione FROM `co_iva` WHERE codice_natura_fe LIKE \'N3.%\' AND deleted_at IS NULL ORDER BY descrizione ASC' WHERE `zz_settings`.`nome` = 'Iva per lettere d''intento'; 

@@ -242,8 +242,18 @@ switch (post('op')) {
                 }
             }
 
-        flash()->info(tr('Interventi eliminati!'));
-        break;
+            flash()->info(tr('Interventi eliminati!'));
+
+            break;
+
+        case 'stampa-riepilogo':
+            $_SESSION['superselect']['interventi'] = $id_records;
+            $id_print = Prints::getPrints()['Riepilogo interventi'];
+
+            redirect(base_path().'/pdfgen.php?id_print='.$id_print.'&tipo='.post('tipo'));
+            exit();
+
+            break;
 }
 
 if (App::debug()) {
@@ -299,6 +309,17 @@ if (App::debug()) {
             'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',
             'blank' => false,
+        ],
+    ];
+
+    $operations['stampa-riepilogo'] = [
+        'text' => '<span><i class="fa fa-print"></i> '.tr('Stampa riepilogo'),
+        'data' => [
+            'title' => tr('Stampare il riepilogo delle attività selezionate?'),
+            'msg' => '<br>{[ "type": "select", "label": "'.tr('Stampa riepilogo').'", "name": "tipo", "required": "1", "values": "list=\"cliente\": \"Clienti\", \"interno\": \"Interno\"", "value": "cliente" ]}',
+            'button' => tr('Stampa'),
+            'class' => 'btn btn-lg btn-warning',
+            'blank' => true,
         ],
     ];
 

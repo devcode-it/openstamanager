@@ -30,21 +30,16 @@ $total = Util\Query::readQuery($module);
 // Lettura parametri modulo
 $module_query = $total['query'];
 
-$search_filters = [];
+$selected = [];
 
-if (is_array($_SESSION['module_'.$id_module])) {
-    foreach ($_SESSION['module_'.$id_module] as $field => $value) {
-        if (!empty($value) && string_starts_with($field, 'search_')) {
-            $field_name = str_replace('search_', '', $field);
-            $field_name = str_replace('__', ' ', $field_name);
-            $field_name = str_replace('-', ' ', $field_name);
-            array_push($search_filters, '`'.$field_name.'` LIKE "%'.$value.'%"');
-        }
+if (is_array($_SESSION['superselect']['interventi'])) {
+    foreach ($_SESSION['superselect']['interventi'] as $value) {
+        array_push($selected, '`id` = "'.$value.'"'); 
     }
 }
 
-if (!empty($search_filters)) {
-    $module_query = str_replace('2=2', '2=2 AND ('.implode(' AND ', $search_filters).') ', $module_query);
+if (!empty($selected)) {
+    $module_query = str_replace('2=2', '2=2 AND ('.implode(' OR ', $selected).') ', $module_query);
 }
 
 // Filtri derivanti dai permessi (eventuali)

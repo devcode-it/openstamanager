@@ -92,3 +92,6 @@ UPDATE `zz_settings` SET `tipo` = 'query=SELECT id, CONCAT(codice,\' - \',descri
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Listini'), 'Codice', '(SELECT codice_fornitore FROM mg_fornitore_articolo WHERE id_articolo=mg_prezzi_articoli.id_articolo AND id_fornitore=mg_prezzi_articoli.id_anagrafica AND deleted_at IS NULL)', 8, 1, 0, 0, 1, '', '', 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Listini'), 'Barcode', '(SELECT barcode_fornitore FROM mg_fornitore_articolo WHERE id_articolo=mg_prezzi_articoli.id_articolo AND id_fornitore=mg_prezzi_articoli.id_anagrafica AND deleted_at IS NULL)', 9, 1, 0, 0, 1, '', '', 0, 0, 1);
+
+-- Rimozione widget Stampa riepilogo
+DELETE FROM `zz_widgets` WHERE `zz_widgets`.`name` = 'Stampa riepilogo';

@@ -22,6 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\Contratti\Contratto;
 use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
+use Modules\Interventi\Intervento;
 use Modules\Ordini\Ordine;
 use Modules\Preventivi\Preventivo;
 
@@ -43,10 +44,14 @@ if (get('documento') == 'fattura') {
     $final_module = 'Ddt di vendita';
     $op = 'add_documento';
     $tipo_documento_finale = DDT::class;
-} else {
+} elseif (get('documento') == 'contratto') {
     $final_module = 'Contratti';
     $op = 'add_preventivo';
     $tipo_documento_finale = Contratto::class;
+} else {
+    $final_module = 'Interventi';
+    $op = 'add_documento';
+    $tipo_documento_finale = Intervento::class;
 }
 
 $options = [

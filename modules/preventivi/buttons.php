@@ -70,6 +70,12 @@ echo '
             </a>
         </li>
 
+        <li>
+		    <a class="'.($disabled ? '' : 'disabled').'" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=intervento" data-toggle="modal" data-title="'.tr('Crea attività').'">
+                <i class="fa fa-file-o"></i> '.tr('Attività').'
+            </a>
+        </li>
+
 		<li>
 		    <a class="'.($disabled ? '' : 'disabled').'" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ddt" data-toggle="modal" data-title="'.tr('Crea ordine cliente').'">
                 <i class="fa fa-truck"></i> '.tr('DDT in uscita').'

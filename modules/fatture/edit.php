@@ -40,29 +40,13 @@ if ($dir == 'entrata') {
 // Informazioni sulla dichiarazione d'intento, visibili solo finchè la fattura è in bozza
 if ($dir == 'entrata' && !empty($fattura->dichiarazione) ) {
     $diff = $fattura->dichiarazione->massimale - $fattura->dichiarazione->totale;
-
     $diff_in_days = Carbon::parse($fattura->dichiarazione->data_fine)->diffAsCarbonInterval($fattura->data);
-
- 
 
     $id_iva = setting("Iva per lettere d'intento");
     $iva = Aliquota::find($id_iva);
 
     if (!empty($iva)) {
-
-        if ($fattura->stato->descrizione == 'Bozza' && ($diff > 0)){
-        
-            
-                echo '
-            <div class="alert alert-info">
-                <i class="fa fa-info"></i> '.tr("La fattura è collegata a una dichiarazione d'intento con una diponibilità di _MONEY_: per collegare una riga alla dichiarazione è sufficiente specificare come IVA _IVA_", [
-                        '_MONEY_' => moneyFormat(abs($diff)),
-                        '_IVA_' => '"<b>'.$iva->codice.' - '.$iva->descrizione.'</b>"',
-                    ]).'.</b>
-            </div>';
-          
-        }
-        
+         
         if ($diff == 0) {
             echo '
         <div class="alert alert-warning">
@@ -83,7 +67,7 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione) ) {
         elseif ($diff_in_days < 0) {
             echo '
         <div class="alert alert-warning">
-            <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento ha come data di fine validità _SCADENZA_ mentre la fattura ha data _DATA_", [
+            <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento ha come data fine validità _SCADENZA_ mentre la fattura ha data _DATA_", [
                 '_SCADENZA_' => dateFormat($fattura->dichiarazione->data_fine),
                 '_DATA_' => dateFormat($fattura->data),
             ]).'.</b>
@@ -101,6 +85,18 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione) ) {
     }
 }
 
+// Ricordo che si sta emettendo una fattura conto terzi
+if ($dir == 'entrata' && $fattura->stato->descrizione == 'Bozza' ) {
+    if ($fattura->is_fattura_conto_terzi){
+
+        echo '
+        <div class="alert alert-info">
+            <i class="fa fa-info"></i> '.tr("Questa è una fattura per conto di terzi. Nell'XML della Fattura Elettronica sarà indicato il fornitore _FORNITORE_ come cessionario e il cliente come cedente/prestatore", ['_FORNITORE_' => '"<b>'.stripslashes($database->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')))['ragione_sociale']).'</b>"',]).'.</b>
+        </div>';
+
+    }
+
+}
 // Verifica aggiuntive sulla sequenzialità dei numeri
 if ($dir == 'entrata') {
     $numero_previsto = verifica_numero_fattura($fattura);
@@ -398,25 +394,33 @@ elseif ($record['stato'] == 'Bozza') {
                 }
                 ?>
 			</div>
-
+            
+            <!-- Split payment + Fattura per conto terzi (solo uscita) + Sconto in fattura (solo uscita) -->
             <div class="row">
-				<div class="col-md-3">
-					{[ "type": "checkbox", "label": "<?php echo tr('Split payment'); ?>", "name": "split_payment", "value": "$split_payment$", "help": "<?php echo tr('Abilita lo split payment per questo documento. Le aliquote iva con natura N6.X (reverse charge) non saranno disponibili.'); ?>", "placeholder": "<?php echo tr('Split payment'); ?>" ]}
-				</div>
-
-				<?php
-                // TODO: Fattura per conto del fornitore (es. cooperative agricole che emettono la fattura per conto dei propri soci produttori agricoli conferenti)
-                if ($dir == 'entrata') {
-                    ?>
-					<div class="col-md-3">
-						{[ "type": "checkbox", "label": "<?php echo tr('Fattura per conto terzi'); ?>", "name": "is_fattura_conto_terzi", "value": "$is_fattura_conto_terzi$", "help": "<?php echo tr('Nell\'xml della FE imposta il fornitore ('.stripslashes($database->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')))['ragione_sociale']).') come cessionario e il cliente come cedente/prestatore.'); ?>", "placeholder": "<?php echo tr('Fattura per conto terzi'); ?>" ]}
-					</div>
-
-				<?php
-                }
-                ?>
 
                 <div class="col-md-3">
+                        {[ "type": "checkbox", "label": "<?php echo tr('Split payment'); ?>", "name": "split_payment", "value": "$split_payment$", "help": "<?php echo tr('Abilita lo split payment per questo documento. Le aliquote iva con natura N6.X (reverse charge) non saranno disponibili.'); ?>", "placeholder": "<?php echo tr('Split payment'); ?>" ]}
+                    </div>
+
+                    <?php
+                    // TODO: Fattura per conto del fornitore (es. cooperative agricole che emettono la fattura per conto dei propri soci produttori agricoli conferenti)
+                    if ($dir == 'entrata') {
+                        ?>
+                        <div class="col-md-3">
+                            {[ "type": "checkbox", "label": "<?php echo tr('Fattura per conto terzi'); ?>", "name": "is_fattura_conto_terzi", "value": "$is_fattura_conto_terzi$", "help": "<?php echo tr('Nell\'XML della Fattura Elettronica sarà indicato il fornitore ('.stripslashes($database->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')))['ragione_sociale']).') come cessionario e il cliente come cedente/prestatore.'); ?>", "placeholder": "<?php echo tr('Fattura per conto terzi'); ?>" ]}
+                        </div>
+
+                    <?php
+                        echo '<div class="col-md-3">
+                            {[ "type": "number", "label": "'.tr('Sconto in fattura').'", "name": "sconto_finale", "value": "'.($fattura->sconto_finale_percentuale ?: $fattura->sconto_finale).'", "icon-after": "choice|untprc|'.(empty($fattura->sconto_finale) ? 'PRC' : 'UNT').'", "help": "'.tr('Sconto in fattura, utilizzabile per applicare sconti sul Netto a pagare del documento e le relative scadenze').'. '.tr('Per utilizzarlo in relazione a una riga della Fattura Elettronica, inserire il tipo di dato in \'\'Attributi avanzati\'\' -> \'\'Altri Dati Gestionali\'\' -> \'\'TipoDato\'\' e il testo di descrizione in \'\'Attributi avanzati\'\' -> \'\'Altri Dati Gestionali\'\' -> \'\'RiferimentoTesto\'\' della specifica riga').'. '.tr('Nota: lo sconto in fattura non influenza i movimenti contabili').'." ]}
+                        </div>';
+
+                    }
+                    ?>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
                     <?php echo !empty($record['id_ritenuta_contributi']) ? Modules::link('Ritenute previdenziali', $record['id_ritenuta_contributi'], null, null, 'class="pull-right"') : ''; ?>
                     {[ "type": "select", "label": "<?php echo tr('Ritenuta previdenziale'); ?>", "name": "id_ritenuta_contributi", "value": "$id_ritenuta_contributi$", "values": "query=SELECT *, CONCAT(descrizione,(IF(percentuale>0, CONCAT(\" - \", percentuale, \"% sul \", percentuale_imponibile, \"% imponibile\"), \"\"))) AS descrizione FROM co_ritenuta_contributi", "help": "<?php echo tr('Ritenuta previdenziale da applicare alle righe della fattura.'); ?>"  ]}
                 </div>
@@ -424,20 +428,20 @@ elseif ($record['stato'] == 'Bozza') {
                 <?php
                 if ($dir == 'uscita') {
                     echo '
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                         {[ "type": "checkbox", "label": "'.tr('Ritenuta pagata dal fornitore').'", "name": "is_ritenuta_pagata", "value": "$is_ritenuta_pagata$" ]}
                     </div>';
                 }
                 if ($dir == 'entrata') {
                     echo '
-                    <div class="col-md-3">';
+                    <div class="col-md-6">';
 
                     if (!empty($record['id_dichiarazione_intento'])) {
                         echo Plugins::link("Dichiarazioni d'Intento", $record['idanagrafica'], null, null, 'class="pull-right"');
                     }
 
                     echo '
-                        {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "data": "'.$record['data'].'"},"value": "$id_dichiarazione_intento$" ]}
+                        {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento", "help": "'.tr('Elenco delle dichiarazioni d\'intento definite all\'interno dell\'anagrafica del cliente').'.", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "data": "'.$record['data'].'"},"value": "$id_dichiarazione_intento$" ]}
                     </div>';
                 }
             echo '
@@ -458,10 +462,6 @@ elseif ($record['stato'] == 'Bozza') {
 
                 <div class="col-md-3 bollo">
                     {[ "type": "number", "label": "'.tr('Importo marca da bollo').'", "name": "bollo", "value": "$bollo$"]}
-                </div>
-
-                <div class="col-md-3">
-                    {[ "type": "number", "label": "'.tr('Sconto in fattura').'", "name": "sconto_finale", "value": "'.($fattura->sconto_finale_percentuale ?: $fattura->sconto_finale).'", "icon-after": "choice|untprc|'.(empty($fattura->sconto_finale) ? 'PRC' : 'UNT').'", "help": "'.tr('Sconto in fattura, utilizzabile per applicare sconti sul Netto a pagare del documento e le relative scadenze').'. '.tr('Per utilizzarlo in relazione a una riga della Fattura Elettronica, inserire il tipo di dato in \'\'Attributi avanzati\'\' -> \'\'Altri Dati Gestionali\'\' -> \'\'TipoDato\'\' e il testo di descrizione in \'\'Attributi avanzati\'\' -> \'\'Altri Dati Gestionali\'\' -> \'\'RiferimentoTesto\'\' della specifica riga').'. '.tr('Nota: lo sconto in fattura non influenza i movimenti contabili').'." ]}
                 </div>
             </div>';
 
@@ -650,8 +650,23 @@ if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
 }
 
 echo '
-</form>
+</form>';
 
+//Dich. intento collegata
+if ($dir == 'entrata' && !empty($fattura->dichiarazione)){
+
+    if ($fattura->stato->descrizione == 'Bozza'){
+            
+            echo '
+        <div class="alert alert-info">
+            <i class="fa fa-info"></i> '.tr("La fattura è collegata ad una dichiarazione d'intento con diponibilità residura pari a _MONEY_.", [  '_MONEY_' => moneyFormat(abs($diff)),]).'<br>'.tr("Per collegare una riga alla dichiarazione è sufficiente specificare come IVA _IVA_", ['_IVA_' => '"<b>'.$iva->codice.' - '.$iva->descrizione.'</b>"',]).'.</b>
+        </div>';
+
+    }
+   
+}
+
+echo '
 <!-- RIGHE -->
 <div class="panel panel-primary">
 	<div class="panel-heading">

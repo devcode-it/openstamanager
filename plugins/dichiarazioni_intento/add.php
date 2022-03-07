@@ -43,18 +43,18 @@ echo '
 		</div>
 
 		<div class="col-md-3">
-			{[ "type": "date", "label": "'.tr('Data di ricezione').'", "name": "data", "required": 1, "value": "-now-" ]}
+			{[ "type": "date", "label": "'.tr('Data ricezione').'", "name": "data", "required": 1, "value": "-now-" ]}
 		</div>
 
 	</div>
 
 	<div class="row">
 		<div class="col-md-3">
-			{[ "type": "date", "label": "'.tr('Data di inizio').'", "name": "data_inizio", "required": 1 ]}
+			{[ "type": "date", "label": "'.tr('Data inizio').'", "name": "data_inizio", "required": 1 ]}
 		</div>
 
         <div class="col-md-3">
-			{[ "type": "date", "label": "'.tr('Data di fine').'", "name": "data_fine", "required": 1 ]}
+			{[ "type": "date", "label": "'.tr('Data fine').'", "name": "data_fine", "required": 1 ]}
 		</div>
 
 		<div class="col-md-3">

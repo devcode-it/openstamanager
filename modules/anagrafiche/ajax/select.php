@@ -356,8 +356,9 @@ switch ($resource) {
      * Opzioni utilizzate:
      * - idanagrafica
      */
+    
     case 'dichiarazioni_intento':
-        $query = "SELECT id, CONCAT(CONCAT_WS(' - ', numero_protocollo, numero_progressivo), ' data di fine ', DATE_FORMAT(data_fine, '%d/%m/%Y')) AS descrizione FROM co_dichiarazioni_intento |where| ORDER BY data";
+        $query = "SELECT id, CONCAT('Prot. ', numero_protocollo, ' con data fine ', DATE_FORMAT(data_fine, '%d/%m/%Y'),' - utilizzati ',REPLACE(REPLACE(REPLACE(FORMAT(SUM(totale),2), ',', '#'), '.', ','), '#', '.'), ' su ' , REPLACE(REPLACE(REPLACE(FORMAT(SUM(massimale),2), ',', '#'), '.', ','), '#', '.'),  ' &euro;' ) AS descrizione FROM co_dichiarazioni_intento |where| ORDER BY data";
 
         foreach ($elements as $element) {
             $filter[] = 'id='.prepare($element);

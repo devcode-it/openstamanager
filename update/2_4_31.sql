@@ -95,3 +95,6 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 
 -- Rimozione widget Stampa riepilogo
 DELETE FROM `zz_widgets` WHERE `zz_widgets`.`name` = 'Stampa riepilogo';
+
+
+INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES (NULL, (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Prima nota'), (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Prima nota'), 'Prima nota', 'Prima nota', 'Prima nota del {data}', 'prima_nota', 'idmastrino', '', 'fa fa-print', '', '', '0', '1', '1', '1');

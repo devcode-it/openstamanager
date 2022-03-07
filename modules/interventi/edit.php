@@ -101,7 +101,7 @@ if (!empty($record['idcontratto'])) {
 }
 echo '
 
-                            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$record['id_contratto'].'", "ajax-source": "contratti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'" ]}
+                            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$record['id_contratto'].'", "ajax-source": "contratti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.Modules::get('Contratti')['id'].'|pianificabile=1&idanagrafica='.$record['idanagrafica'].'" ]}
 
                             <input type="hidden" name="idcontratto_riga" value="'.$idcontratto_riga.'">
                         </div>

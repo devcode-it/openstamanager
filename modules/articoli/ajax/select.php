@@ -162,7 +162,7 @@ switch ($resource) {
         // Utilizzo dell'impostazione per disabilitare articoli con quantità <= 0
         $permetti_movimenti_sotto_zero = setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita') ? true : $superselect['permetti_movimento_a_zero'];
 
-        // IVA da impostazioni
+        // Eventuali articoli disabilitati
         foreach ($rs as $k => $r) {
             // Lettura movimenti delle mie sedi
             $qta_sede = $dbo->fetchOne('SELECT SUM(mg_movimenti.qta) AS qta FROM mg_movimenti LEFT JOIN an_sedi ON an_sedi.id = mg_movimenti.idsede WHERE mg_movimenti.idarticolo = '.prepare($r['id']).' AND idsede = '.prepare($superselect['idsede_partenza']))['qta'];

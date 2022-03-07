@@ -17,6 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Carbon\Carbon;
+
 include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
@@ -358,25 +360,54 @@ switch ($resource) {
      */
     
     case 'dichiarazioni_intento':
-        $query = "SELECT id, CONCAT('Prot. ', numero_protocollo, ' con data fine ', DATE_FORMAT(data_fine, '%d/%m/%Y'),' - utilizzati ',REPLACE(REPLACE(REPLACE(FORMAT(SUM(totale),2), ',', '#'), '.', ','), '#', '.'), ' su ' , REPLACE(REPLACE(REPLACE(FORMAT(SUM(massimale),2), ',', '#'), '.', ','), '#', '.'),  ' &euro;' ) AS descrizione FROM co_dichiarazioni_intento |where| ORDER BY data";
 
-        foreach ($elements as $element) {
-            $filter[] = 'id='.prepare($element);
-        }
+        if (isset($superselect['idanagrafica']) && isset($superselect['data'])) {
+            //$query = "SELECT id, CONCAT('N. prot. ', numero_protocollo, ' (periodo dal ', DATE_FORMAT(data_inizio, '%d/%m/%Y'), ' al ' ,DATE_FORMAT(data_fine, '%d/%m/%Y'),') (utilizzati ',REPLACE(REPLACE(REPLACE(FORMAT(SUM(totale),2), ',', '#'), '.', ','), '#', '.'), ' su ' , REPLACE(REPLACE(REPLACE(FORMAT(SUM(massimale),2), ',', '#'), '.', ','), '#', '.'),  ' &euro;)' ) AS descrizione, data_inizio, data_fine FROM co_dichiarazioni_intento |where| ORDER BY `data`, `id`";
 
-        $where[] = '( '.prepare($superselect['data']).' BETWEEN data_inizio AND data_fine)';
+            $query = "SELECT id, numero_protocollo, data_inizio, data_fine, massimale, totale FROM co_dichiarazioni_intento |where| ORDER BY data";
 
-        //$where[] = 'data_inizio < NOW()';
-        //$where[] = 'data_fine > NOW()';
-        if (empty($filter)) {
-            $where[] = 'deleted_at IS NULL';
-        }
 
-        $where[] = 'id_anagrafica='.prepare($superselect['idanagrafica']);
 
-        if (!empty($search)) {
-            $search_fields[] = 'numero_protocollo LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'numero_progressivo LIKE '.prepare('%'.$search.'%');
+            foreach ($elements as $element) {
+                $filter[] = 'id='.prepare($element);
+            }
+            
+
+            //$where[] = '( '.prepare($superselect['data']).' BETWEEN data_inizio AND data_fine)';
+
+            //$where[] = 'data_inizio < NOW()';
+            //$where[] = 'data_fine > NOW()';
+
+            if (empty($filter)) {
+                $where[] = 'deleted_at IS NULL';
+            }
+
+            $where[] = 'id_anagrafica='.prepare($superselect['idanagrafica']);
+
+            if (!empty($search)) {
+                $search_fields[] = 'numero_protocollo LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = 'numero_progressivo LIKE '.prepare('%'.$search.'%');
+            }
+
+            $data = AJAX::selectResults($query, $where, $filter, $search_fields, $limit, $custom);
+            $rs = $data['results'];
+
+            foreach ($rs as $k => $r) {   
+                               
+                $currentDate = date('Y-m-d', strtotime($superselect['data']));   
+                $startDate = date('Y-m-d', strtotime($r['data_inizio']));
+                $endDate = date('Y-m-d', strtotime($r['data_fine']));
+
+                $rs[$k] = array_merge($r, [
+                    'text' => tr('N. prot.').' '.$r['numero_protocollo'].' - '.Translator::numberToLocale($r['totale']).'/'.Translator::numberToLocale($r['massimale']).' &euro; ['.Translator::dateToLocale($r['data_fine']).']',
+                    'disabled' => (($currentDate < $startDate) || ($currentDate > $endDate)),
+                ]);
+            }
+
+            $results = [
+                'results' => $rs,
+                'recordsFiltered' => $data['recordsFiltered'],
+            ];
         }
 
         break;

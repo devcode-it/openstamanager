@@ -212,6 +212,23 @@ class CSV extends CSVImporter
                 'field' => 'tipo',
                 'label' => 'Tipologia',
             ],
+            [
+                'field' => 'codice_destinatario',
+                'label' => 'Codice Destinatario FE',
+                'names' => [
+                    'Codice Destinatario FE',
+                    'codice destinatario FE',
+                ],
+            ],
+            [
+                'field' => 'split_payment',
+                'label' => 'Split Payment',
+                'names' => [
+                    'Split Payment',
+                    'split payment',
+                    'split_payment',
+                ],
+            ],
         ];
     }
 

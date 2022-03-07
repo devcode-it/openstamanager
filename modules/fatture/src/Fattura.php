@@ -165,7 +165,7 @@ class Fattura extends Document
         $id_banca_azienda = $anagrafica->{'idbanca_'.$conto};
         if (empty($id_banca_azienda)) {
             $azienda = Anagrafica::find(setting('Azienda predefinita'));
-            $id_banca_azienda = $database->fetchOne('SELECT id FROM co_banche WHERE id_pianodeiconti3 = (SELECT idconto_'.$conto.' FROM co_pagamenti WHERE id = :id_pagamento) AND id_anagrafica = :id_anagrafica', [
+            $id_banca_azienda = $database->fetchOne('SELECT id FROM co_banche WHERE deleted_at IS NULL AND id_pianodeiconti3 = (SELECT idconto_'.$conto.' FROM co_pagamenti WHERE id = :id_pagamento) AND id_anagrafica = :id_anagrafica', [
                 ':id_pagamento' => $id_pagamento,
                 ':id_anagrafica' => $azienda->id,
             ])['id'];
@@ -210,6 +210,13 @@ class Fattura extends Document
         }
         
         $model->note = implode("\n", $notes);
+
+        if ($tipo_documento->descrizione == 'Fattura accompagnatoria di vendita') {
+            $model->idporto = database()->fetchOne('SELECT id FROM dt_porto WHERE predefined = 1')['id'];
+            $model->idcausalet = database()->fetchOne('SELECT id FROM dt_causalet WHERE predefined = 1')['id'];
+            $model->idspedizione = database()->fetchOne('SELECT id FROM dt_spedizione WHERE predefined = 1')['id'];
+        }
+
         $model->save();
 
         return $model;

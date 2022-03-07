@@ -28,16 +28,20 @@ $smtp = $template->account;
 $body = $module->replacePlaceholders($id_record, $template['body']);
 $subject = $module->replacePlaceholders($id_record, $template['subject']);
 
-$emails = explode(';', $module->replacePlaceholders($id_record, '{email}'));
+$emails = [];
+if ($module->replacePlaceholders($id_record, '{email}')) {
+    $emails = explode(';', $module->replacePlaceholders($id_record, '{email}'));
+} 
+
 $id_anagrafica = $module->replacePlaceholders($id_record, '{id_anagrafica}');
 
 // Aggiungo email referenti in base alla mansione impostata nel template
 $mansioni = $dbo->select('em_mansioni_template', 'idmansione', ['id_template' => $template->id]);
 foreach ($mansioni as $mansione) {
-    $referenti = $dbo->select('an_referenti', 'email', ['idmansione' => $mansione['idmansione'], 'idanagrafica' => $id_anagrafica]);
+    $referenti = $dbo->table('an_referenti')->where('idmansione', $mansione['idmansione'])->where('idanagrafica', $id_anagrafica)->where('email', '!=', '')->get();
     foreach ($referenti as $referente) {
-        if (!in_array($referente['email'], $emails)) {
-            $emails[] = $referente['email'];
+        if (!in_array($referente->email, $emails)) {
+            $emails[] = $referente->email;
         }
     }
 }
@@ -99,6 +103,13 @@ echo '
             echo '
             <div class="col-md-12">
                 {[ "type": "email", "name": "destinatari['.$idx++.']", "value": "'.$email.'", "icon-before": "choice|email", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari", "required": 0 ]}
+            </div>';
+        }
+
+        if (empty($emails)) {
+            echo '
+            <div class="col-md-12">
+                {[ "type": "email", "name": "destinatari['.$idx++.']", "value": "", "icon-before": "choice|email", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari", "required": 0 ]}
             </div>';
         }
 echo '

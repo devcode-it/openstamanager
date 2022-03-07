@@ -19,6 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Carbon\Carbon;
 use Modules\DDT\DDT;
 use Modules\Ordini\Ordine;
 use Modules\Fatture\Fattura;
@@ -228,15 +229,6 @@ switch (filter('op')) {
         });
         $id_tipo = $tipi->sort()->keys()->last();
 
-        // Ricerca del tipo di pagamento più utilizzato
-        $pagamenti = $fatture->mapToGroups(function ($item, $key) {
-            return [$item->pagamento->id => $item->pagamento];
-        });
-        $id_pagamento = $pagamenti->map(function ($item, $key) {
-            return $item->count();
-        })->sort()->keys()->last();
-        $pagamento = $pagamenti[$id_pagamento]->first();
-
         // Ricerca del conto più utilizzato
         $conti = $righe->groupBy(function ($item, $key) {
             return $item->idconto;
@@ -289,10 +281,40 @@ switch (filter('op')) {
 
         $results = [];
 
+        // Dati ordini
+        $DatiOrdini = $fattura_pa->getBody()['DatiGenerali']['DatiOrdineAcquisto'];
+        $DatiDDT = $fattura_pa->getBody()['DatiGenerali']['DatiDDT'];
+
+
+        // Riorganizzazione dati ordini per numero di riga
+        $dati_ordini = [];
+        foreach ($DatiOrdini as $dato) {
+            foreach ($dato['RiferimentoNumeroLinea'] as $dati => $linea) {
+                $dati_ordini[(int)$linea] = [
+                    'numero' => $dato['IdDocumento'],
+                    'anno' => ( new Carbon($dato['Data']) )->format('Y'),
+                ];
+            }
+        }
+
+        // Riorganizzazione dati ordini per numero di riga
+        $dati_ddt = [];
+        foreach ($DatiDDT as $dato) {
+            foreach ($dato['RiferimentoNumeroLinea'] as $dati => $linea) {
+                $dati_ddt[(int)$linea] = [
+                    'numero' => $dato['NumeroDDT'],
+                    'anno' => ( new Carbon($dato['DataDDT']) )->format('Y'),
+                ];
+            }
+        }
+
         // Iterazione sulle singole righe
         $righe = $fattura_pa->getRighe();
         foreach ($righe as $key => $riga) {
             $collegamento = null;
+            $match_documento_da_fe = true;
+
+            $numero_linea = (int)$riga['NumeroLinea'];
 
             // Visualizzazione codici articoli
             $codici = $riga['CodiceArticolo'] ?: [];
@@ -303,10 +325,18 @@ switch (filter('op')) {
             foreach ($codici as $codice) {
                 if (!empty($anagrafica) && empty($id_articolo)) {
                     $id_articolo = $database->fetchOne('SELECT id_articolo AS id FROM mg_fornitore_articolo WHERE codice_fornitore = '.prepare($codice['CodiceValore']).' AND id_fornitore = '.prepare($anagrafica->id))['id'];
+
+                    if (empty($id_articolo)) {
+                        $id_articolo = $database->fetchOne('SELECT id_articolo AS id FROM mg_fornitore_articolo WHERE REPLACE(codice_fornitore, " ", "") = '.prepare($codice['CodiceValore']).' AND id_fornitore = '.prepare($anagrafica->id))['id'];
+                    }
                 }
 
                 if (empty($id_articolo)) {
-                    $id_articolo = $database->fetchOne('SELECT id FROM mg_articoli WHERE codice = '.prepare($codice['CodiceValore']))['id'];
+                    $id_articolo = $database->fetchOne('SELECT id FROM mg_articoli WHERE codice = '.prepare($codice['CodiceValore']).' AND deleted_at IS NULL')['id'];
+
+                    if (empty($id_articolo)) {
+                        $id_articolo = $database->fetchOne('SELECT id FROM mg_articoli WHERE REPLACE(codice, " ", "") = '.prepare($codice['CodiceValore']).' AND deleted_at IS NULL')['id'];
+                    }
                 }
 
                 if (!empty($id_articolo)) {
@@ -314,46 +344,126 @@ switch (filter('op')) {
                 }
             }
 
+            // Se nella fattura elettronica è indicato un DDT cerco quel documento specifico
+            $ddt = $dati_ddt[$numero_linea];
             $query = "SELECT dt_righe_ddt.id, dt_righe_ddt.idddt AS id_documento, dt_righe_ddt.is_descrizione, dt_righe_ddt.idarticolo, dt_righe_ddt.is_sconto, 'ddt' AS ref,
-            CONCAT('DDT num. ', IF(numero_esterno != '', numero_esterno, numero), ' del ', DATE_FORMAT(data, '%d/%m/%Y'), ' [', (SELECT descrizione FROM dt_statiddt WHERE id = idstatoddt)  , ']') AS opzione
-        FROM dt_righe_ddt
-            INNER JOIN dt_ddt ON dt_ddt.id = dt_righe_ddt.idddt
-        WHERE dt_ddt.idanagrafica = ".prepare($anagrafica->id)." AND |where_ddt|
+                CONCAT('DDT num. ', IF(numero_esterno != '', numero_esterno, numero), ' del ', DATE_FORMAT(data, '%d/%m/%Y'), ' [', (SELECT descrizione FROM dt_statiddt WHERE id = idstatoddt)  , ']') AS opzione
+            FROM dt_righe_ddt
+                INNER JOIN dt_ddt ON dt_ddt.id = dt_righe_ddt.idddt
+            WHERE
+                dt_ddt.numero_esterno = ".prepare($ddt['numero'])."
+                AND
+                YEAR(dt_ddt.data) = ".prepare($ddt['anno'])."
+                AND
+                dt_ddt.idanagrafica = ".prepare($anagrafica->id)."
+                AND
+                |where|";
 
-        UNION SELECT or_righe_ordini.id, or_righe_ordini.idordine AS id_documento, or_righe_ordini.is_descrizione, or_righe_ordini.idarticolo, or_righe_ordini.is_sconto, 'ordine' AS ref,
-            CONCAT('Ordine num. ', IF(numero_esterno != '', numero_esterno, numero), ' del ', DATE_FORMAT(data, '%d/%m/%Y'), ' [', (SELECT descrizione FROM or_statiordine WHERE id = idstatoordine)  , ']') AS opzione
-        FROM or_righe_ordini
-            INNER JOIN or_ordini ON or_ordini.id = or_righe_ordini.idordine
-        WHERE or_ordini.idanagrafica = ".prepare($anagrafica->id).' AND |where_ordini|';
-
-            // Ricerca di righe DDT/Ordine con stesso Articolo
+            // Ricerca di righe DDT con stesso Articolo
             if (!empty($id_articolo)) {
                 $query_articolo = replace($query, [
-                    '|where_ddt|' => 'dt_righe_ddt.idarticolo = '.prepare($id_articolo),
-                    '|where_ordini|' => 'or_righe_ordini.idarticolo = '.prepare($id_articolo),
+                    '|where|' => 'dt_righe_ddt.idarticolo = '.prepare($id_articolo),
                 ]);
 
                 $collegamento = $database->fetchOne($query_articolo);
             }
 
-            // Ricerca di righe DDT/Ordine per stessa descrizione
+            // Ricerca di righe DDT per stessa descrizione
             if (empty($collegamento)) {
+                $match_documento_da_fe = false;
                 $query_descrizione = replace($query, [
-                    '|where_ddt|' => 'dt_righe_ddt.descrizione = '.prepare($riga['Descrizione']),
-                    '|where_ordini|' => 'or_righe_ordini.descrizione = '.prepare($riga['Descrizione']),
+                    '|where|' => 'dt_righe_ddt.descrizione = '.prepare($riga['Descrizione']),
                 ]);
 
                 $collegamento = $database->fetchOne($query_descrizione);
             }
 
-            // Ricerca di righe DDT/Ordine per stesso importo
-            if (empty($collegamento)) {
-                $query_descrizione = replace($query, [
-                    '|where_ddt|' => 'dt_righe_ddt.prezzo_unitario = '.prepare($riga['PrezzoUnitario']),
-                    '|where_ordini|' => 'or_righe_ordini.prezzo_unitario = '.prepare($riga['PrezzoUnitario']),
-                ]);
 
-                $collegamento = $database->fetchOne($query_descrizione);
+            // Se nella fattura elettronica NON è indicato un DDT ed è indicato anche un ordine
+            // cerco per quell'ordine
+            if (empty($collegamento)) {
+                $ordine = $dati_ordini[$numero_linea];
+                $query = "SELECT or_righe_ordini.id, or_righe_ordini.idordine AS id_documento, or_righe_ordini.is_descrizione, or_righe_ordini.idarticolo, or_righe_ordini.is_sconto, 'ordine' AS ref,
+                    CONCAT('Ordine num. ', IF(numero_esterno != '', numero_esterno, numero), ' del ', DATE_FORMAT(data, '%d/%m/%Y'), ' [', (SELECT descrizione FROM or_statiordine WHERE id = idstatoordine)  , ']') AS opzione
+                FROM or_righe_ordini
+                    INNER JOIN or_ordini ON or_ordini.id = or_righe_ordini.idordine
+                WHERE
+                    or_ordini.numero_esterno = ".prepare($ddt['numero'])."
+                    AND
+                    YEAR(or_ordini.data) = ".prepare($ddt['anno'])."
+                    AND
+                    or_ordini.idanagrafica = ".prepare($anagrafica->id)."
+                    AND
+                    |where|";
+
+                // Ricerca di righe Ordine con stesso Articolo
+                if (!empty($id_articolo)) {
+                    $query_articolo = replace($query, [
+                        '|where|' => 'or_righe_ordini.idarticolo = '.prepare($id_articolo),
+                    ]);
+
+                    $collegamento = $database->fetchOne($query_articolo);
+                }
+
+                // Ricerca di righe Ordine per stessa descrizione
+                if (empty($collegamento)) {
+                    $query_descrizione = replace($query, [
+                        '|where|' => 'or_righe_ordini.descrizione = '.prepare($riga['Descrizione']),
+                    ]);
+
+                    $collegamento = $database->fetchOne($query_descrizione);
+                }
+            }
+
+
+            /**
+             * TENTATIVO 2: ricerca solo per articolo o descrizione su documenti
+             * non referenziati nella fattura elettronica
+             */
+            // Se non ci sono Ordini o DDT cerco per contenuto
+            if (empty($collegamento)) {
+                $match_documento_da_fe = false;
+                $query = "SELECT dt_righe_ddt.id, dt_righe_ddt.idddt AS id_documento, dt_righe_ddt.is_descrizione, dt_righe_ddt.idarticolo, dt_righe_ddt.is_sconto, 'ddt' AS ref,
+                CONCAT('DDT num. ', IF(numero_esterno != '', numero_esterno, numero), ' del ', DATE_FORMAT(data, '%d/%m/%Y'), ' [', (SELECT descrizione FROM dt_statiddt WHERE id = idstatoddt)  , ']') AS opzione
+            FROM dt_righe_ddt
+                INNER JOIN dt_ddt ON dt_ddt.id = dt_righe_ddt.idddt
+            WHERE dt_ddt.idanagrafica = ".prepare($anagrafica->id)." AND |where_ddt|
+
+            UNION SELECT or_righe_ordini.id, or_righe_ordini.idordine AS id_documento, or_righe_ordini.is_descrizione, or_righe_ordini.idarticolo, or_righe_ordini.is_sconto, 'ordine' AS ref,
+                CONCAT('Ordine num. ', IF(numero_esterno != '', numero_esterno, numero), ' del ', DATE_FORMAT(data, '%d/%m/%Y'), ' [', (SELECT descrizione FROM or_statiordine WHERE id = idstatoordine)  , ']') AS opzione
+            FROM or_righe_ordini
+                INNER JOIN or_ordini ON or_ordini.id = or_righe_ordini.idordine
+            WHERE or_ordini.idanagrafica = ".prepare($anagrafica->id).' AND |where_ordini|';
+
+                // Ricerca di righe DDT/Ordine con stesso Articolo
+                if (!empty($id_articolo)) {
+                    $query_articolo = replace($query, [
+                        '|where_ddt|' => 'dt_righe_ddt.idarticolo = '.prepare($id_articolo),
+                        '|where_ordini|' => 'or_righe_ordini.idarticolo = '.prepare($id_articolo),
+                    ]);
+
+                    $collegamento = $database->fetchOne($query_articolo);
+                }
+
+                // Ricerca di righe DDT/Ordine per stessa descrizione
+                if (empty($collegamento)) {
+                    $query_descrizione = replace($query, [
+                        '|where_ddt|' => 'dt_righe_ddt.descrizione = '.prepare($riga['Descrizione']),
+                        '|where_ordini|' => 'or_righe_ordini.descrizione = '.prepare($riga['Descrizione']),
+                    ]);
+
+                    $collegamento = $database->fetchOne($query_descrizione);
+                }
+
+                // Ricerca di righe DDT/Ordine per stesso importo
+                if (empty($collegamento)) {
+                    $query_descrizione = replace($query, [
+                        '|where_ddt|' => 'dt_righe_ddt.prezzo_unitario = '.prepare($riga['PrezzoUnitario']),
+                        '|where_ordini|' => 'or_righe_ordini.prezzo_unitario = '.prepare($riga['PrezzoUnitario']),
+                    ]);
+
+                    $collegamento = $database->fetchOne($query_descrizione);
+                }
             }
 
             if (!empty($collegamento)) {
@@ -383,6 +493,7 @@ switch (filter('op')) {
                         'id' => $collegamento['id_documento'],
                         'descrizione' => reference($documento, tr('Origine')),
                         'opzione' => $collegamento['opzione'],
+                        'match_documento_da_fe' => $match_documento_da_fe,
                     ],
                     'riga' => [
                         'tipo' => get_class($riga),

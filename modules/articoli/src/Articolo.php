@@ -143,6 +143,30 @@ class Articolo extends Model
     }
 
     /**
+     * Imposta il prezzo di acquisto e aggiorna il prezzo di vendita in base al coefficiente.
+     *
+     * @param $value
+     */
+    public function setPrezzoAcquistoAttribute($value)
+    {
+        $this->attributes['prezzo_acquisto'] = $value;
+
+        if (!empty($this->coefficiente)) {
+            $prezzo_vendita = $value * $this->coefficiente;
+
+            $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
+            $id_iva = $this->idiva_vendita ?: setting('Iva predefinita');
+            $percentuale_aliquota = floatval(Aliquota::find($id_iva)->percentuale);
+
+            if ($prezzi_ivati) {
+                $prezzo_vendita = $prezzo_vendita * (1 + $percentuale_aliquota / 100);
+            }
+
+            $this->setPrezzoVendita($prezzo_vendita, $this->idiva_vendita);
+        }
+    }
+
+    /**
      * Verifica se l'articolo corrente è una variante per una Combinazione.
      *
      * @return bool

@@ -213,7 +213,6 @@ if (!empty($numero_previsto)) {
 
                  <script>
                     $("#idspedizione").change(function() {
-                        //Per tutti tipi di spedizione, a parte "Espressa" o "Vettore", il campo vettore non deve essere richiesto
                         if($(this).val()){
                             if (!$(this).selectData().esterno) {
                                 $("#idvettore").attr("required", false);

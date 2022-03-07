@@ -258,6 +258,19 @@ if (in_array($final_module['name'], ['Fatture di vendita', 'Fatture di acquisto'
     </div>';
 }
 
+$has_serial = 0;
+if (!empty($options['serials'])) {
+    foreach ($righe as $riga) {
+        if (!empty($riga['abilita_serial'])) {
+            $serials = $riga->serials ?: 0;
+
+            if (!empty($serials)) {
+                $has_serial = 1;
+            }
+        }
+    }
+}
+
 // Righe del documento
 echo '
     <div class="box box-success">
@@ -279,7 +292,7 @@ echo '
                     <th width="15%">'.tr('Q.tà da evadere').'</th>
                     <th width="20%" class="text-center">'.tr('Subtot.').'</th>';
 
-if (!empty($options['serials'])) {
+if (!empty($has_serial)) {
     echo '
                     <th width="20%">'.tr('Seriali').'</th>';
 }
@@ -322,6 +335,19 @@ foreach ($righe as $i => $riga) {
 
     echo '&nbsp;'.nl2br($descrizione);
 
+    if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
+        $serials = $riga->serials;
+        $mancanti = abs($riga->qta) - count($serials);
+
+        if (!empty($mancanti)) {
+            echo '
+                <br><b><small class="text-danger">'.tr('_NUM_ serial mancanti', [
+                        '_NUM_' => $mancanti,
+                    ]).'</small></b>';
+        }
+    }
+
+
     echo '
                     </td>';
 
@@ -343,7 +369,7 @@ foreach ($righe as $i => $riga) {
                     </td>';
 
     // Seriali
-    if (!empty($options['serials'])) {
+    if (!empty($has_serial)) {
         echo '
                     <td style="vertical-align:middle">';
 
@@ -521,10 +547,10 @@ echo '
     }
 
     $("input[name=righe]").each(function() {
-        ricalcolaTotaleRiga($(this).val());
+        ricalcolaTotaleRiga($(this).val(), first = true);
     });
 
-    function ricalcolaTotaleRiga(r) {
+    function ricalcolaTotaleRiga(r, first) {
         let prezzo_unitario = $("#prezzo_unitario_" + r).val();
         let sconto = $("#sconto_unitario_" + r).val();
 
@@ -551,11 +577,12 @@ echo '
             qta = 0;
         }
 
-        let serial_select = $("#serial_" + r);
-        serial_select.selectClear();
-        serial_select.select2("destroy");
-        serial_select.data("maximum", qta);
-        start_superselect();
+        if (!first) {
+            let serial_select = $("#serial_" + r);
+            serial_select.selectClear();
+            serial_select.data("maximum", qta);
+            initSelectInput("#serial_" + r);
+        }
 
         let subtotale = (prezzo_scontato * qta).toLocale();
 

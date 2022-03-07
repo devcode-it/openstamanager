@@ -17,14 +17,18 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-if (!empty($page)) {
-    echo '
-    <p class="text-right">
-        '.tr('_YEAR_/_PAGE_', [
-            '_PAGE_' => $page++,
-            '_YEAR_' => date('Y'),
-        ]).'
-    </p>';
-} else {
-    echo '<p></p>';
+include_once __DIR__.'/../../../core.php';
+
+switch ($resource) {
+    case 'controlla_stampa':
+        $date_start = get('date_start');
+        $date_end = get('date_end');
+        $id_print = get('id_print');
+        $dir = get('dir');
+
+        $stampa_definitiva = $database->fetchOne('SELECT id FROM co_stampecontabili WHERE id_print='.prepare($id_print).' AND dir='.prepare($dir).' AND date_start='.prepare($date_start).' AND date_end='.prepare($date_end))['id'];
+
+        echo json_encode($stampa_definitiva ?: 0);
+
+        break;
 }

@@ -32,4 +32,63 @@ ALTER TABLE `zz_views` ADD `html_format` TINYINT NOT NULL DEFAULT '1' AFTER `for
 UPDATE `zz_views` SET `html_format` = '1'; 
 
 -- Correzione widget valore magazzino
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(\" \", REPLACE(REPLACE(REPLACE(FORMAT(SUM(prezzo_acquisto*qta),2), \",\", \"#\"), \".\", \",\"), \"#\", \".\"), \"&euro;\") AS dato FROM mg_articoli WHERE qta>0 AND deleted_at IS NULL AND servizio=0' WHERE `zz_widgets`.`name` = 'Valore magazzino';
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(\" \", REPLACE(REPLACE(REPLACE(FORMAT(SUM(prezzo_acquisto*qta),2), \",\", \"#\"), \".\", \",\"), \"#\", \".\"), \"&euro;\") AS dato FROM mg_articoli WHERE qta>0 AND deleted_at IS NULL AND servizio=0 AND 1=1', `help` = 'Articoli a magazzino (tutti o solo attivi secondo il segmento)' WHERE `zz_widgets`.`name` = 'Valore magazzino';
+
+-- Aggiunte informazioni nella colonna sede per la Sede legale in Interventi
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `in_interventi`\nINNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`\nLEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`\nLEFT JOIN `in_interventi_tecnici_assegnati` ON `in_interventi_tecnici_assegnati`.`id_intervento` = `in_interventi`.`id`\nLEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`idstatointervento`\nLEFT JOIN (\n    SELECT an_sedi.id, CONCAT(an_sedi.nomesede, \'<br />\',IF(an_sedi.telefono!=\'\',CONCAT(an_sedi.telefono,\'<br />\'),\'\'),IF(an_sedi.cellulare!=\'\',CONCAT(an_sedi.cellulare,\'<br />\'),\'\'),an_sedi.citta,IF(an_sedi.indirizzo!=\'\',CONCAT(\' - \',an_sedi.indirizzo),\'\')) AS info FROM an_sedi\n) AS sede_destinazione ON sede_destinazione.id = in_interventi.idsede_destinazione\nLEFT JOIN (\n    SELECT co_righe_documenti.idintervento, CONCAT(\'Fatt. \', co_documenti.numero_esterno, \' del \', DATE_FORMAT(co_documenti.data, \'%d/%m/%Y\')) AS info FROM co_documenti INNER JOIN co_righe_documenti ON co_documenti.id = co_righe_documenti.iddocumento\n) AS fattura ON fattura.idintervento = in_interventi.id\nLEFT JOIN (SELECT `zz_operations`.`id_email`, `zz_operations`.`id_record`\n    FROM `zz_operations`\n    INNER JOIN `em_emails` ON `zz_operations`.`id_email` = `em_emails`.`id`\n    INNER JOIN `em_templates` ON `em_emails`.`id_template` = `em_templates`.`id`\n    INNER JOIN `zz_modules` ON `zz_operations`.`id_module` = `zz_modules`.`id` \n    WHERE `zz_modules`.`name` = \'Interventi\' AND `zz_operations`.`op` = \'send-email\' \n    GROUP BY `zz_operations`.`id_record`) AS email ON email.id_record=in_interventi.id\nWHERE 1=1 |date_period(`orario_inizio`,`data_richiesta`)|\nGROUP BY `in_interventi`.`id`\nHAVING 2=2\nORDER BY IFNULL(`orario_fine`, `data_richiesta`) DESC' WHERE `zz_modules`.`name` = 'Interventi';
+UPDATE `zz_views` SET `query` = 'IF(in_interventi.idsede_destinazione > 0, sede_destinazione.info, CONCAT(\'Sede legale<br>\',IF(an_anagrafiche.telefono!=\'\',CONCAT(an_anagrafiche.telefono,\'<br />\'),\'\'),IF(an_anagrafiche.cellulare!=\'\',CONCAT(an_anagrafiche.cellulare,\'<br />\'),\'\'),IF(an_anagrafiche.citta!=\'\',an_anagrafiche.citta,\'\'),IF(an_anagrafiche.indirizzo!=\'\',CONCAT(\' - \',an_anagrafiche.indirizzo),\'\')))' WHERE `zz_views`.`name` = 'Sede' AND `id_module`=(SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
+
+-- Aggiunto pagamenti predefiniti per importazione FE
+ALTER TABLE `co_pagamenti` ADD `predefined` TINYINT NOT NULL AFTER `idconto_acquisti`; 
+INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `idconto_vendite`, `idconto_acquisti`, `predefined`, `codice_modalita_pagamento_fe`) VALUES (NULL, 'Ri.Ba.', '0', '0', '100.00', '2', '2', '1', 'MP12');
+UPDATE `co_pagamenti` SET `predefined` = '1' WHERE `co_pagamenti`.`descrizione` = 'Contanti' AND `codice_modalita_pagamento_fe`='MP01'; 
+UPDATE `co_pagamenti` SET `predefined` = '1' WHERE `co_pagamenti`.`descrizione` = 'Assegno' AND `codice_modalita_pagamento_fe`='MP02'; 
+UPDATE `co_pagamenti` SET `predefined` = '1' WHERE `co_pagamenti`.`descrizione` = 'Assegno circolare' AND `codice_modalita_pagamento_fe`='MP03'; 
+UPDATE `co_pagamenti` SET `predefined` = '1' WHERE `co_pagamenti`.`descrizione` = 'Contanti presso Tesoreria' AND `codice_modalita_pagamento_fe`='MP04'; 
+UPDATE `co_pagamenti` SET `predefined` = '1' WHERE `co_pagamenti`.`descrizione` = 'Bonifico bancario' AND `codice_modalita_pagamento_fe`='MP05'; 
+UPDATE `co_pagamenti` SET `predefined` = '1' WHERE `co_pagamenti`.`descrizione` = 'Vaglia cambiario' AND `codice_modalita_pagamento_fe`='MP06'; 
+UPDATE `co_pagamenti` SET `predefined` = '1' WHERE `co_pagamenti`.`descrizione` = 'Bollettino bancario' AND `codice_modalita_pagamento_fe`='MP07'; 
+UPDATE `co_pagamenti` SET `predefined` = '1' WHERE `co_pagamenti`.`descrizione` = 'Bancomat' AND `codice_modalita_pagamento_fe`='MP08'; 
+UPDATE `co_pagamenti` SET `predefined` = '1' WHERE `co_pagamenti`.`descrizione` = 'RID' AND `codice_modalita_pagamento_fe`='MP09'; 
+UPDATE `co_pagamenti` SET `predefined` = '1' WHERE `co_pagamenti`.`descrizione` = 'RID utenze' AND `codice_modalita_pagamento_fe`='MP10'; 
+UPDATE `co_pagamenti` SET `predefined` = '1' WHERE `co_pagamenti`.`descrizione` = 'RID veloce' AND `codice_modalita_pagamento_fe`='MP11'; 
+UPDATE `co_pagamenti` SET `predefined` = '1' WHERE `co_pagamenti`.`descrizione` = 'MAV' AND `codice_modalita_pagamento_fe`='MP13'; 
+UPDATE `co_pagamenti` SET `predefined` = '1' WHERE `co_pagamenti`.`descrizione` = 'Quietanza erario' AND `codice_modalita_pagamento_fe`='MP14'; 
+UPDATE `co_pagamenti` SET `predefined` = '1' WHERE `co_pagamenti`.`descrizione` = 'Giroconto su conti di contabilità speciale' AND `codice_modalita_pagamento_fe`='MP15'; 
+UPDATE `co_pagamenti` SET `predefined` = '1' WHERE `co_pagamenti`.`descrizione` = 'Domiciliazione bancaria' AND `codice_modalita_pagamento_fe`='MP16'; 
+UPDATE `co_pagamenti` SET `predefined` = '1' WHERE `co_pagamenti`.`descrizione` = 'Domiciliazione postale' AND `codice_modalita_pagamento_fe`='MP17'; 
+UPDATE `co_pagamenti` SET `predefined` = '1' WHERE `co_pagamenti`.`descrizione` = 'Bollettino di c/c postale' AND `codice_modalita_pagamento_fe`='MP18'; 
+UPDATE `co_pagamenti` SET `predefined` = '1' WHERE `co_pagamenti`.`descrizione` = 'SEPA Direct Debit' AND `codice_modalita_pagamento_fe`='MP19'; 
+UPDATE `co_pagamenti` SET `predefined` = '1' WHERE `co_pagamenti`.`descrizione` = 'SEPA Direct Debit CORE' AND `codice_modalita_pagamento_fe`='MP20'; 
+UPDATE `co_pagamenti` SET `predefined` = '1' WHERE `co_pagamenti`.`descrizione` = 'SEPA Direct Debit B2B' AND `codice_modalita_pagamento_fe`='MP21'; 
+UPDATE `co_pagamenti` SET `predefined` = '1' WHERE `co_pagamenti`.`descrizione` = 'Trattenuta su somme già riscosse' AND `codice_modalita_pagamento_fe`='MP22'; 
+UPDATE `co_pagamenti` SET `predefined` = '1' WHERE `co_pagamenti`.`descrizione` = 'PagoPA' AND `codice_modalita_pagamento_fe`='MP23'; 
+
+-- Segmento Tutti/Solo attivi per articoli.
+INSERT INTO `zz_segments` (`id`, `id_module`, `name`, `clause`, `position`, `pattern`, `note`, `predefined`, `predefined_accredito`, `predefined_addebito`, `is_fiscale`) VALUES
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Tutti', '1=1', 'WHR', '####', '', 1, 0, 0, 0),
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Solo attivi', 'attivo=1', 'WHR', '####', '', 0, 0, 0, 0);
+
+-- Correzione widget articoli in magazzino
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(\" \", REPLACE(REPLACE(REPLACE(FORMAT(SUM(qta),2), \",\", \"#\"), \".\", \",\"), \"#\", \".\"), \"unit&agrave;\") AS dato FROM mg_articoli WHERE qta>0 AND deleted_at IS NULL AND servizio=0 AND 1=1', `help` = 'Articoli a magazzino (tutti o solo attivi secondo il segmento)' WHERE `zz_widgets`.`name` = 'Articoli in magazzino';
+
+-- Aggiunta colonna "Servizio" per vista Articoli
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `visible`, `format`, `default`) VALUES
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Servizio', 'IF(mg_articoli.servizio, ''Sì'', ''No'')', 13, 1, 0, 1);
+
+-- Summable per Q.tà, Q.tà disponibile, Q.tà impegnata e Q.tà ordinata
+UPDATE `zz_views` SET `summable` = '1' WHERE (`zz_views`.`name` = 'Q.tà ordinata' OR  `zz_views`.`name` = 'Q.tà' OR  `zz_views`.`name` = 'Q.tà disponibile' OR  `zz_views`.`name` = 'Q.tà impegnata') AND `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'); 
+
+-- Stampe definitive registri iva
+CREATE TABLE `co_stampecontabili` ( `id` INT NOT NULL AUTO_INCREMENT , `id_print` INT NOT NULL , `date_start` DATE NOT NULL , `date_end` DATE NOT NULL , `first_page` INT NOT NULL , `last_page` INT NOT NULL , `dir` VARCHAR(255) NOT NULL , PRIMARY KEY (`id`));
+
+-- Coefficiente di vendita
+ALTER TABLE `mg_articoli` ADD `coefficiente` DECIMAL(12,6) NOT NULL AFTER `prezzo_acquisto`; 
+
+-- Codice iva in selezione Iva per lettere d'intento
+UPDATE `zz_settings` SET `tipo` = 'query=SELECT id, CONCAT(codice,\' - \',descrizione) AS descrizione FROM `co_iva` WHERE codice_natura_fe LIKE \'N3.%\' AND deleted_at IS NULL ORDER BY descrizione ASC' WHERE `zz_settings`.`nome` = 'Iva per lettere d''intento'; 
+
+-- Aggiunte colonne codice e barcode fornitore in listini
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Listini'), 'Codice', '(SELECT codice_fornitore FROM mg_fornitore_articolo WHERE id_articolo=mg_prezzi_articoli.id_articolo AND id_fornitore=mg_prezzi_articoli.id_anagrafica AND deleted_at IS NULL)', 8, 1, 0, 0, 1, '', '', 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Listini'), 'Barcode', '(SELECT barcode_fornitore FROM mg_fornitore_articolo WHERE id_articolo=mg_prezzi_articoli.id_articolo AND id_fornitore=mg_prezzi_articoli.id_anagrafica AND deleted_at IS NULL)', 9, 1, 0, 0, 1, '', '', 0, 0, 1);

@@ -48,6 +48,12 @@ class XML
             throw new Exception($message);
         }
 
+        $xpath = '//*[not(normalize-space())]';
+
+        foreach (array_reverse($xml->xpath($xpath)) as $remove) {
+            unset($remove[0]);
+        }
+
         $result = json_decode(json_encode($xml), true);
 
         return $result;

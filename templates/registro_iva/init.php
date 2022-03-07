@@ -51,6 +51,10 @@ GROUP BY co_documenti.id, co_righe_documenti.idiva
 ORDER BY CAST(co_documenti.'.(($dir == 'entrata') ? 'data' : 'numero').' AS '.(($dir == 'entrata') ? 'DATE' : 'UNSIGNED').'), co_documenti.'.(($dir == 'entrata') ? 'numero_esterno' : 'data_competenza');
 $records = $dbo->fetchArray($query);
 
+if (empty(get('notdefinitiva'))) {
+    $page = $dbo->fetchOne('SELECT first_page FROM co_stampecontabili WHERE dir='.prepare(filter('dir')).' AND  date_start='.prepare(filter('date_start')).' AND date_end='.prepare(filter('date_end')))['first_page'];
+}
+
 // Sostituzioni specifiche
 $custom = [
     'tipo' => $tipo,

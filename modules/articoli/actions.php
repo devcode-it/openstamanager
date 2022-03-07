@@ -58,8 +58,12 @@ switch (post('op')) {
 
         $articolo->barcode = post('barcode');
         $articolo->threshold_qta = post('threshold_qta');
+        $articolo->coefficiente = post('coefficiente');
+        $articolo->idiva_vendita = post('idiva_vendita');
         $articolo->prezzo_acquisto = post('prezzo_acquisto');
-        $articolo->setPrezzoVendita(post('prezzo_vendita'), post('idiva_vendita'));
+        if (empty(post('coefficiente'))) {
+            $articolo->setPrezzoVendita(post('prezzo_vendita'), post('idiva_vendita'));
+        }
         $articolo->idconto_vendita = post('idconto_vendita');
         $articolo->idconto_acquisto = post('idconto_acquisto');
         $articolo->save();
@@ -116,6 +120,8 @@ switch (post('op')) {
         $articolo->abilita_serial = post('abilita_serial');
         $articolo->ubicazione = post('ubicazione');
         $articolo->threshold_qta = post('threshold_qta');
+        $articolo->coefficiente = post('coefficiente');
+        $articolo->idiva_vendita = post('idiva_vendita');
         $articolo->prezzo_acquisto = post('prezzo_acquisto');
         $articolo->idconto_vendita = post('idconto_vendita');
         $articolo->idconto_acquisto = post('idconto_acquisto');
@@ -129,7 +135,9 @@ switch (post('op')) {
         $articolo->fattore_um_secondaria = post('fattore_um_secondaria');
         $articolo->qta_multipla = post('qta_multipla');
 
-        $articolo->setPrezzoVendita(post('prezzo_vendita'), post('idiva_vendita'));
+        if (empty(post('coefficiente'))) {
+            $articolo->setPrezzoVendita(post('prezzo_vendita'), post('idiva_vendita'));
+        }
 
         $componente = post('componente_filename');
         $articolo->componente_filename = $componente;

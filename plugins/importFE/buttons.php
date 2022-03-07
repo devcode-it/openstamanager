@@ -106,11 +106,13 @@ function compilaRiferimenti(btn) {
                 return;
             }
 
-            for (const [id_riga, data] of response.entries()) {
-                // Selezione dinamica
-                $("#selezione_riferimento" + id_riga).selectSetNew(data.documento.id, data.documento.opzione);
+            for (id_riga in response) {
+                data = response[id_riga];
 
-                // Impostazione del riferiment
+                // Selezione dinamica
+                $("#selezione_riferimento" + id_riga).addClass("already-loaded").selectSetNew(data.documento.id, data.documento.opzione).removeClass("already-loaded");
+
+                // Impostazione del riferimento
                 impostaRiferimento(id_riga, data.documento, data.riga);
             }
         },

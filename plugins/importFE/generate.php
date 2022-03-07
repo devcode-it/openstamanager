@@ -18,6 +18,7 @@
  */
 
 use Carbon\Carbon;
+use Modules\Pagamenti\Pagamento;
 use Plugins\ImportFE\FatturaElettronica;
 
 include_once __DIR__.'/../../core.php';
@@ -262,6 +263,7 @@ echo '
     </div>';
 
 // Pagamento
+$pagamento = Pagamento::where('codice_modalita_pagamento_fe', $codice_modalita_pagamento)->where('predefined', '1')->first();
 echo '
     <div class="row" >
 		<div class="col-md-3">
@@ -269,7 +271,7 @@ echo '
 		        <i class="fa fa-refresh"></i> '.tr('Visualizza tutte le modalità').'
             </button>
 
-            {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "pagamento", "required": 1, "ajax-source": "pagamenti", "select-options": '.json_encode(['codice_modalita_pagamento_fe' => $codice_modalita_pagamento]).' ]}
+            {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "pagamento", "required": 1, "ajax-source": "pagamenti", "select-options": '.json_encode(['codice_modalita_pagamento_fe' => $codice_modalita_pagamento]).', "value": "'.$pagamento->id.'" ]}
         </div>';
 
 // Movimentazioni
@@ -323,6 +325,34 @@ if (!empty($righe)) {
             </thead>
 
             <tbody>';
+    
+    // Dati ordini
+    $DatiOrdini = $fattura_pa->getBody()['DatiGenerali']['DatiOrdineAcquisto'];
+    $DatiDDT = $fattura_pa->getBody()['DatiGenerali']['DatiDDT'];
+
+
+    // Riorganizzazione dati ordini per numero di riga
+    $dati_ordini = [];
+    foreach ($DatiOrdini as $dato) {
+        foreach ($dato['RiferimentoNumeroLinea'] as $dati => $linea) {
+            $dati_ordini[(int)$linea] = [
+                'numero' => $dato['IdDocumento'],
+                'data' => ( new Carbon($dato['Data']) )->format('d/m/Y'),
+            ];
+        }
+    }
+
+    // Riorganizzazione dati ordini per numero di riga
+    $dati_ddt = [];
+    foreach ($DatiDDT as $dato) {
+        foreach ($dato['RiferimentoNumeroLinea'] as $dati => $linea) {
+            $dati_ddt[(int)$linea] = [
+                'numero' => $dato['NumeroDDT'],
+                'data' => ( new Carbon($dato['DataDDT']) )->format('d/m/Y'),
+            ];
+        }
+    }
+
 
     foreach ($righe as $key => $riga) {
         $query = "SELECT id, IF(codice IS NULL, descrizione, CONCAT(codice, ' - ', descrizione)) AS descrizione FROM co_iva WHERE deleted_at IS NULL AND percentuale = ".prepare($riga['AliquotaIVA']);
@@ -374,11 +404,23 @@ if (!empty($righe)) {
         $prezzo_unitario = $riga['PrezzoUnitario'] ?: $riga['Importo'];
         $is_descrizione = empty((float)$riga['Quantita']) && empty((float)$prezzo_unitario);
 
+        $riferimento_fe = '';
+
+        if ($dati_ddt[(int)$riga['NumeroLinea']]) {
+            $riferimento_fe = tr('DDT _NUMERO_ del _DATA_',
+                [
+                    '_NUMERO_' => $dati_ddt[(int)$riga['NumeroLinea']]['numero'],
+                    '_DATA_' => $dati_ddt[(int)$riga['NumeroLinea']]['data'],
+                ]);
+        }
+        
+
         echo '
         <tr data-id="'.$key.'" data-qta="'.$qta.'" data-prezzo_unitario="'.$prezzo_unitario.'" data-iva_percentuale="'.$riga['AliquotaIVA'].'">
             <td>
                 '.(empty($codice_principale) ? '<span class="label label-warning pull-right text-muted articolo-warning hidden">'.tr('Creazione automatica articolo non disponibile').'</span>' : '').'
-                <small class="pull-right text-muted" id="riferimento_'.$key.'"></small>
+                <small class="pull-right text-muted" id="riferimento_'.$key.'"></small><br>
+                <small class="pull-right text-muted">'.$riferimento_fe.'</small>
 
 
                 '.$riga['Descrizione'].'<br>
@@ -560,13 +602,15 @@ input("crea_articoli").on("change", function (){
     }
 });
 
- $("select[name^=selezione_riferimento").change(function() {
-    let $this = $(this);
-    let data = $this.selectData();
+$("select[name^=selezione_riferimento").change(function() {
+    if (!$(this).hasClass("already-loaded")) {
+        let $this = $(this);
+        let data = $this.selectData();
 
-    if (data) {
-        let riga = $this.closest("tr").prev();
-        selezionaRiferimento(riga, data.tipo, data.id, data.dir);
+        if (data) {
+            let riga = $this.closest("tr").prev();
+            selezionaRiferimento(riga, data.tipo, data.id, data.dir);
+        }
     }
 });
 
@@ -649,23 +693,29 @@ function impostaRiferimento(id_riga, documento, riga) {
     let riga_fe = $("#id_riga_riferimento_" + id_riga).closest("tr").prev();
 
     // Informazioni visibili sulla quantità
-    impostaContenuto(riga_fe.data("qta"), riga.qta, (riga.um ? " " + riga.um : ""), "#riferimento_" + id_riga + "_qta");
+    impostaContenuto(riga_fe.data("qta"), riga.qta, (riga.um ? " " + riga.um : ""), "#riferimento_" + id_riga + "_qta", true);
 
     // Informazioni visibili sul prezzo unitario
-    impostaContenuto(riga_fe.data("prezzo_unitario"), riga.prezzo_unitario, " " + globals.currency, "#riferimento_" + id_riga + "_prezzo");
+    impostaContenuto(riga_fe.data("prezzo_unitario"), riga.prezzo_unitario, " " + globals.currency, "#riferimento_" + id_riga + "_prezzo", true);
 
     // Informazioni visibili sull\'aliquota IVA
-    impostaContenuto(riga_fe.data("iva_percentuale"), riga.iva_percentuale, "%", "#riferimento_" + id_riga + "_iva");
+    impostaContenuto(riga_fe.data("iva_percentuale"), parseInt(riga.iva_percentuale), "%", "#riferimento_" + id_riga + "_iva", false);
 
     $("#riferimento_" + id_riga).html(documento.descrizione ? documento.descrizione : "");
 
     var descrizione = riga.descrizione;
-    console.log(descrizione);
     if(typeof descrizione !== "undefined"){
-        descrizione = descrizione.replace(/_/g, " ");
+        descrizione = descrizione.replace(/_/g, " ").replace(/\n/g, "<br>");
     }
 
-    $("#riferimento_" + id_riga + "_descrizione").html(descrizione ? descrizione : "");
+    // Dettagli del documento trovato
+    icona_documento = documento.match_documento_da_fe ? "fa-check-circle text-success" : "fa-question-circle text-orange";
+    tooltip_icona = documento.match_documento_da_fe ? "La corrispondenza trovata è avvenuta in base a quanto ha specificato il fornitore nella fattura elettronica" : "Nessuna corrispondenza con quanto ha specificato il fornitore nella fattura elettronica, il riferimento potrebbe non essere corretto";
+
+    $("#riferimento_" + id_riga + "_descrizione").html("<br><b class=\"tip\" title=\"" + tooltip_icona + "\"><i class=\"fa " + icona_documento + "\"></i> " + documento.opzione + "</b><br>");
+
+    // Dettagli della riga trovata
+    $("#riferimento_" + id_riga + "_descrizione").append(descrizione ? descrizione : "");
 
     // Colorazione dell\'intera riga
     let warnings = riga_fe.find(".text-warning");
@@ -677,7 +727,7 @@ function impostaRiferimento(id_riga, documento, riga) {
 }
 
 // Informazioni visibili sull\'aliquota IVA
-function impostaContenuto(valore_riga, valore_riferimento, contenuto_successivo, id_elemento) {
+function impostaContenuto(valore_riga, valore_riferimento, contenuto_successivo, id_elemento, parse_riferimento) {
     let elemento = $(id_elemento);
     if (valore_riferimento === undefined) {
         elemento.html("");
@@ -687,7 +737,7 @@ function impostaContenuto(valore_riga, valore_riferimento, contenuto_successivo,
     valore_riga = parseFloat(valore_riga);
     valore_riferimento = parseFloat(valore_riferimento);
 
-    let contenuto = valore_riferimento.toLocale() + contenuto_successivo;
+    let contenuto = (parse_riferimento ? valore_riferimento.toLocale() + contenuto_successivo : valore_riferimento + contenuto_successivo);
     if (valore_riferimento === valore_riga) {
         contenuto = `<i class="fa fa-check"></i> ` + contenuto;
         elemento.addClass("text-success").removeClass("text-warning");

@@ -19,36 +19,46 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Models\Module;
+
 $id_record = filter('id_record');
 $dir = filter('dir');
 $nome_stampa = filter('nome_stampa');
+$id_print = $dbo->fetchOne('SELECT id FROM zz_prints WHERE name='.prepare($nome_stampa))['id'];
+$id_module = Module::pool('Stampe contabili')->id;
 
 // Trovo id_print della stampa
 $link = Prints::getHref($nome_stampa, $id_record);
 
 echo '
-<form action="" method="post" onsubmit="if($(this).parsley().validate()) { return avvia_stampa(); }" >
+<div class="alert alert-info hidden" id="period">
+    <i class="fa fa-exclamation-circle"></i> '.tr('Non è possibile creare la stampa definitiva nel periodo selezionato, è necessario prima impostare un trimestre!').'
+</div>
 
+<div class="alert alert-warning hidden" id="is_definitiva">
+    <i class="fa fa-warning"></i> '.tr('È già presente la stampa definitiva per il periodo selezionato!').'
+</div>
+
+<form action="" method="post" id="form" >
 	<div class="row">';
-
-        if ($nome_stampa != 'Liquidazione IVA') {
-            echo '
+		if ($nome_stampa != 'Liquidazione IVA') {
+			echo '
 		<div class="col-md-4">
 			{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_sezionale", "required": "1", "values": "query=SELECT id AS id, name AS descrizione FROM zz_segments WHERE id_module = (SELECT id FROM zz_modules WHERE name = \''.(($dir == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto').'\') AND is_fiscale = 1 UNION SELECT  0 AS id, \'Tutti i sezionali\' AS descrizione" ]}
 		</div>';
-        }
-        echo '
+		}
+		echo '
 		<div class="col-md-4">
-			{[ "type": "date", "label": "'.tr('Data inizio').'", "required": "1", "name": "date_start", "value": "'.Translator::dateToLocale($_SESSION['period_start']).'" ]}
+			{[ "type": "date", "label": "'.tr('Data inizio').'", "required": "1", "name": "date_start", "value": "'.$_SESSION['period_start'].'" ]}
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "date", "label": "'.tr('Data fine').'", "required": "1", "name": "date_end", "value": "'.Translator::dateToLocale($_SESSION['period_end']).'" ]}
+			{[ "type": "date", "label": "'.tr('Data fine').'", "required": "1", "name": "date_end", "value": "'.$_SESSION['period_end'].'" ]}
 		</div>
 
 	</div>';
 
-echo '
+	echo '
 	<div class="row">
 		<div class="col-md-4">
 			{[ "type": "select", "label": "'.tr('Formato').'", "name": "format", "required": "1", "values": "list=\"A4\": \"'.tr('A4').'\", \"A3\": \"'.tr('A3').'\"", "value": "'.$_SESSION['stampe_contabili']['format'].'" ]}
@@ -56,34 +66,180 @@ echo '
 
 		<div class="col-md-4">
 			{[ "type": "select", "label": "'.tr('Orientamento').'", "name": "orientation", "required": "1", "values": "list=\"L\": \"'.tr('Orizzontale').'\", \"P\": \"'.tr('Verticale').'\"", "value": "'.$_SESSION['stampe_contabili']['orientation'].'" ]}
-		</div>
+		</div>';
 
+	if ($nome_stampa != 'Liquidazione IVA') {
+		echo '
 		<div class="col-md-4">
+			{[ "type": "checkbox", "label": "'.tr('Definitiva').'", "disabled": "1", "name": "definitiva", "help": "'.tr('Per abilitare il pulsante è necessario impostare nei campi Data inizio e Data fine uno dei 4 trimestri e non deve essere già stata creata la stampa definitiva del periodo selezionato').'" ]}
+		</div>';
+	}
+
+	echo '
+		<div class="col-md-4 pull-right">
 			<p style="line-height:14px;">&nbsp;</p>
-			<button type="submit" class="btn btn-primary btn-block">
+			<button type="button" class="btn btn-primary btn-block" onclick="if($(\'#form\').parsley().validate()) { return avvia_stampa(); }">
 				<i class="fa fa-print"></i> '.tr('Stampa').'
 			</button>
 		</div>
 	</div>
-
 </form>
+<br>';
 
-<script>$(document).ready(init)</script>';
+if ($nome_stampa != 'Liquidazione IVA') {
+	$elementi = $dbo->fetchArray('SELECT * FROM co_stampecontabili WHERE date_end BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']).' AND id_print='.prepare($id_print).' AND dir='.prepare($dir));
+	echo '
+	<div class="box box-primary collapsable collapsed-box">
+		<div class="box-header with-border">
+			<h3 class="box-title"><i class="fa fa-print"></i> '.tr('Stampe definitive registro iva _DIR_ dal _START_ al _END_', [
+				'_DIR_' => $dir == 'entrata' ? 'vendite' : 'acquisti',
+				'_START_' => dateFormat($_SESSION['period_start']),
+				'_END_' => dateFormat($_SESSION['period_end']),
+			]).'</h3>
+			<div class="box-tools pull-right">
+				<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+			</div>
+		</div>
+		<div class="box-body">
+			<ul>';
+
+		foreach ($elementi as $elemento) {
+			$descrizione = tr('Stampa definitiva dal _START_ al _END_ (_FIRST_-_LAST_)', [
+				'_START_' => dateFormat($elemento['date_start']),
+				'_END_' => dateFormat($elemento['date_end']),
+				'_FIRST_' => $elemento['first_page'],
+				'_LAST_' => $elemento['last_page'],
+			]);		
+
+			$file = $dbo->selectOne('zz_files', '*', ['id_module' => $id_module, 'id_record' => $elemento['id']]);
+
+			echo '
+				<li>
+					<a class="btn btn-xs btn-primary" href="'.base_path().'/actions.php?id_module='.$id_module.'&op=download-allegato&id='.$file['id'].'&filename='.$file['filename'].'" target="_blank"><i class="fa fa-download"></i>
+					</a>
+					'.$descrizione.'
+				</li>';
+		}
+
+		if (empty($elementi)) {
+			echo '<p class="text-center">'.tr('Nessuna stampa presente').'</p>';
+		}
+
+		echo '
+			</ul>
+		</div>
+	</div>';
+
+	echo '
+	<script>
+		$(document).ready(init);
+
+		$(document).ready(function () {
+			eseguiControlli();
+		});
+
+		$("#date_start").blur(function(){
+			eseguiControlli();
+		});
+
+		$("#date_end").blur(function(){
+			eseguiControlli();
+		});
+
+		function eseguiControlli() {
+			let date_start = $("#date_start").data("DateTimePicker").date().format("YYYY-MM-DD");
+			let date_end = $("#date_end").data("DateTimePicker").date().format("YYYY-MM-DD");
+
+			controllaDate(date_start, date_end);
+		}
+
+		// Controllo se le date inserite corrispondono ad uno dei 4 trimestri
+		function controllaDate(date_start, date_end) {
+			let intervallo_corretto = 0;
+			let date = new Date(date_start);
+			let year = date.getFullYear();
+			let m_start = 0;
+			let m_end = 3;
+			
+			for (i=0; i<=3; i++) {
+				let start = new Date(year, m_start, 1);
+				let end = new Date(year, m_end, 0);
+
+				int_start = start.getFullYear() +  "-" + ("0" + (start.getMonth() + 1)).slice(-2) + "-" + ("0" + start.getDate()).slice(-2);
+				int_end = end.getFullYear() +  "-" + ("0" + (end.getMonth() + 1)).slice(-2) + "-" + ("0" + end.getDate()).slice(-2);
+
+				if (date_start == int_start && date_end == int_end) {
+					intervallo_corretto = 1;	
+				}
+				m_start += 3;
+				m_end += 3;
+			}
+			$("#is_definitiva").addClass("hidden");
+
+			if (intervallo_corretto) {
+				$("#period").addClass("hidden");
+				controllaStampa(date_start, date_end);
+			} else {
+				$("#period").removeClass("hidden");
+				input("definitiva").disable();
+				$("#definitiva").prop("checked", false);
+			}
+		}
+
+		// Controllo se è già stata creata una stampa definitiva nel periodo selezionato
+		function controllaStampa(date_start, date_end) {
+			$(document).load(globals.rootdir + "/ajax_complete.php?module=stampe_contabili&op=controlla_stampa&dir='.$dir.'&id_print='.$id_print.'&date_start=" + date_start + "&date_end=" + date_end, function(response) {
+				let stampa_definitiva = response;
+
+				if (stampa_definitiva==0) {
+					$("#is_definitiva").addClass("hidden");
+					input("definitiva").enable();
+				} else {
+					$("#is_definitiva").removeClass("hidden");
+					input("definitiva").disable();
+					$("#definitiva").prop("checked", false);
+				}
+			});
+		}
+	</script>';
+}
 
 echo '
 <script>
 	function avvia_stampa (){
-		window.open("'.$link.'&dir='.$dir.'&id_sezionale="+$("#id_sezionale").val()+"&date_start="+$("#date_start").val()+"&date_end="+$("#date_end").val()+"");
+		if ($("#definitiva").is(":checked")) {
+			let date_start = $("#date_start").data("DateTimePicker").date().format("YYYY-MM-DD");
+			let date_end = $("#date_end").data("DateTimePicker").date().format("YYYY-MM-DD");
+
+			$.ajax({
+				url: globals.rootdir + "/actions.php",
+				type: "POST",
+				data: {
+					id_module: globals.id_module,
+					op: "crea_definitiva",
+					date_start: date_start,
+					date_end: date_end,
+					id_print: '.$id_print.',
+					id_sezionale: $("#id_sezionale").val(),
+					dir: "'.$dir.'",
+				},
+				success: function(result) {
+					window.open("'.$link.'&dir='.$dir.'&id_sezionale="+$("#id_sezionale").val()+"&date_start="+$("#date_start").val()+"&date_end="+$("#date_end").val()+"");
+					$("#modals > div").modal("hide");
+				}
+			});
+		} else {
+			window.open("'.$link.'&dir='.$dir.'&notdefinitiva=1&id_sezionale="+$("#id_sezionale").val()+"&date_start="+$("#date_start").val()+"&date_end="+$("#date_end").val()+"");
+			$("#modals > div").modal("hide");
+		}
+		
 	}
-$("#format").change(function() {
-	session_set("stampe_contabili,format", $(this).val(), 0, 0);
-});
 
-$("#orientation").change(function() {
-	session_set("stampe_contabili,orientation", $(this).val(), 0, 0);
-});
+	$("#format").change(function() {
+		session_set("stampe_contabili,format", $(this).val(), 0, 0);
+	});
 
-$(function() {
-
-});
+	$("#orientation").change(function() {
+		session_set("stampe_contabili,orientation", $(this).val(), 0, 0);
+	});
 </script>';

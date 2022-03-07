@@ -28,7 +28,7 @@ echo '
 	<div class="row">
 
         <div class="col-md-4">
-			{[ "type": "select", "label": "'.tr('Articoli da stampare').'", "name": "tipo", "required": "1", "values": "list=\"full\": \"'.tr('Tutti').'\", \"nozero\": \"'.tr('Solo esistenti').'\"", "value": "nozero" ]}
+			{[ "type": "select", "label": "'.tr('Articoli da stampare').'", "name": "tipo", "required": "1", "values": "list=\"full\": \"'.tr('Tutti').'\", \"nozero\": \"'.tr('Solo esistenti').'\"", "value": "nozero", "help": "'.tr("''Solo esistenti'' indica articoli (attivi o disattivi) con quantità totale maggiore di 0").'." ]}
 		</div>
 
 		<div class="col-md-4">

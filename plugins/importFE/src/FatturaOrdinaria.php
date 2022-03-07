@@ -126,6 +126,11 @@ class FatturaOrdinaria extends FatturaElettronica
         $ritenuta_contributi = !empty($fattura->id_ritenuta_contributi);
         $conto_arrotondamenti = null;
 
+        // Disattivo temporaneamente l'impostazione per evadere solo le quantità previste
+        $original_setting_evasione = setting('Permetti il superamento della soglia quantità dei documenti di origine');
+
+        \Settings::setValue('Permetti il superamento della soglia quantità dei documenti di origine', 1);
+
         foreach ($righe as $key => $riga) {
             $articolo = ArticoloOriginale::find($articoli[$key]);
 
@@ -178,9 +183,9 @@ class FatturaOrdinaria extends FatturaElettronica
             $obj->descrizione = $riga['Descrizione'];
 
             // Collegamento al documento di riferimento
-            if (!empty($tipi_riferimenti[$key]) && is_subclass_of($tipi_riferimenti[$key], Component::class)) {
+            if (!empty($tipi_riferimenti[$key]) && is_subclass_of($tipi_riferimenti[$key], Component::class) && !empty($id_riferimenti[$key])) {
                 $riga_origine = ($tipi_riferimenti[$key])::find($id_riferimenti[$key]);
-                list($riferimento_precedente, $nuovo_riferimento) = $obj->impostaOrigine($riga_origine);
+                list($riferimento_precedente, $nuovo_riferimento) = $obj->impostaOrigine($tipi_riferimenti[$key], $id_riferimenti[$key]);
 
                 // Correzione della descrizione
                 $obj->descrizione = str_replace($riferimento_precedente, '', $obj->descrizione);
@@ -315,6 +320,9 @@ class FatturaOrdinaria extends FatturaElettronica
 
             $obj->save();
         }
+
+        // Ripristino l'impostazione iniziale di evasione quantità
+        \Settings::setValue('Permetti il superamento della soglia quantità dei documenti di origine', $original_setting_evasione);
 
         // Ricaricamento della fattura
         $fattura->refresh();

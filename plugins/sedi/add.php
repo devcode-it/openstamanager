@@ -25,6 +25,9 @@ echo '
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="addsede">
 
+	<!-- Fix creazione da Anagrafica -->
+    <input type="hidden" name="id_record" value="">
+
 	<div class="row">
 		<div class="col-md-6">
 			{[ "type": "select", "label": "'.tr('Anagrafica').'", "name": "id_anagrafica", "required": "1", "value": "'.$id_parent.'", "ajax-source": "anagrafiche", "disabled": 1 ]}

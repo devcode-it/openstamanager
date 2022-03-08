@@ -18,7 +18,7 @@ class Controller extends BaseController
     use DispatchesJobs;
     use ValidatesRequests;
 
-    public function getModules(?Request $request = null, ?array $filter = null): JsonResponse|Collection
+    public function getModules(?Request $request = null): JsonResponse|Collection
     {
         $packages = collect(Json::decode(File::get(base_path('vendor/composer/installed.json')))->packages);
 
@@ -47,7 +47,7 @@ class Controller extends BaseController
             return $module;
         });
 
-        $filtered = $modules->only($filter);
+        $filtered = $modules->only($request?->input('filter'));
 
         return ($request && $request->wantsJson()) ? response()->json($filtered) : $filtered;
     }

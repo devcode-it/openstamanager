@@ -84,7 +84,3 @@ Route::get('lang/{language}', static function ($language) {
 Route::inertia('dashboard', 'Dashboard')
     ->middleware('auth')
     ->name('dashboard');
-
-Route::get('modules/{filter?}', [Controller::class, 'getModules'])
-    ->middleware('auth')
-    ->name('modules');

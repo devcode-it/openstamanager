@@ -2,6 +2,7 @@
 
 /** @noinspection UnusedFunctionResultInspection */
 
+use App\Http\Controllers\Controller;
 use LaravelJsonApi\Laravel\Facades\JsonApiRoute;
 use LaravelJsonApi\Laravel\Http\Controllers\JsonApiController;
 use LaravelJsonApi\Laravel\Routing\ResourceRegistrar;
@@ -22,3 +23,6 @@ JsonApiRoute::server('v1')
     ->resources(function (ResourceRegistrar $server) {
         $server->resource('users', JsonApiController::class);
     });
+
+Route::get('modules', [Controller::class, 'getModules'])
+    ->name('modules');

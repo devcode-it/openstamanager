@@ -309,7 +309,7 @@ if (!empty($righe)) {
     echo '
     <h4>
         '.tr('Righe').'
-        <button type="button" class="btn btn-info btn-sm pull-right" onclick="copy()"><i class="fa fa-copy"></i> '.tr('Copia dati contabili dalla prima riga valorizzata').'</button>
+        <button type="button" class="btn btn-info btn-sm pull-right" onclick="copia()"><i class="fa fa-copy"></i> '.tr('Copia dati contabili dalla prima riga valorizzata').'</button>
         <div class="clearfix"></div>
     </h4>
 
@@ -535,7 +535,7 @@ if (!empty($righe)) {
 
     echo '
     <script>
-    function copy() {
+    function copia() {
         let aliquote = $("select[name^=iva");
         let conti = $("select[name^=conto");
 

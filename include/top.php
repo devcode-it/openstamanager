@@ -502,12 +502,28 @@ if (Auth::check()) {
                 </li>';
 
         // Tab dei plugin
-        $plugins = $dbo->fetchArray('SELECT id, title FROM zz_plugins WHERE idmodule_to='.prepare($id_module)." AND position='tab' AND enabled = 1 ORDER BY zz_plugins.order DESC");
+        $plugins = $dbo->fetchArray('SELECT id, title, options, options2 FROM zz_plugins WHERE idmodule_to='.prepare($id_module)." AND position='tab' AND enabled = 1 ORDER BY zz_plugins.order DESC");
         foreach ($plugins as $plugin) {
+            
+         
+            //Badge count per record plugin
+            $count = 0;
+            if (!empty($plugin['options2'])){
+                $opt = json_decode($plugin['options2'], true);
+            }else{
+                $opt = json_decode($plugin['options'], true);
+            }
+
+            if (!empty($opt)){
+                $q = str_replace('|id_parent|', $id_record, $opt['main_query'][0]['query']);
+                $count = $dbo->fetchNum($q);
+            }
+
             echo '
                 <li data-toggle="control-sidebar">
                     <a data-toggle="tab" href="#tab_'.$plugin['id'].'" id="link-tab_'.$plugin['id'].'">
                         '.$plugin['title'].'
+                        <span class="badge">'.($count>0 ? $count: '').'</span>
                     </a>
                 </li>';
         }

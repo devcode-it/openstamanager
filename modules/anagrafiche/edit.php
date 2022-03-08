@@ -226,6 +226,13 @@ if (sizeof($problemi_anagrafica) > 0) {
                                 {[ "type": "number", "label": "<?php echo tr('Distanza'); ?>", "name": "km", "decimals":"1", "class": "text-center", "value": "$km$", "icon-after": "Km" ]}
                             </div>
                         </div>
+                   
+                        <div class="row">
+                            <div class="col-md-12">
+                                {[ "type": "checkbox", "label": "<?php echo tr('Opt-out per newsletter'); ?>", "name": "disable_newsletter", "value": "<?php echo empty($record['enable_newsletter']); ?>", "help": "<?php echo tr('Blocco per l\'invio delle email.'); ?>" ]}
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -697,12 +704,6 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 						{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$", "maxlength": 255, "charcounter": 1 ]}
 					</div>
 				</div>
-
-                <div class="row">
-                    <div class="col-md-12">
-                        {[ "type": "checkbox", "label": "<?php echo tr('Opt-out per newsletter'); ?>", "name": "disable_newsletter", "value": "<?php echo empty($record['enable_newsletter']); ?>" ]}
-                    </div>
-                </div>
 			</div>
 		</div>
 	</fieldset>

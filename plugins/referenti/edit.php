@@ -53,7 +53,7 @@ echo '
         </div>
 
         <div class="col-md-6">
-            {[ "type": "checkbox", "label": "'.tr('Opt-out per newsletter').'", "name": "disable_newsletter", "id": "disable_newsletter_m", "value": "'.empty($record['enable_newsletter']).'" ]}
+            {[ "type": "checkbox", "label": "'.tr('Opt-out per newsletter').'", "name": "disable_newsletter", "id": "disable_newsletter_m", "value": "'.empty($record['enable_newsletter']).'", "help": "'.tr('Blocco per l\'invio delle email.').'" ]}
         </div>
     </div>
 

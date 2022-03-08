@@ -90,6 +90,13 @@ echo '
 		</div>
 	</div>
 
+	<div class="row">
+		<div class="col-md-12">
+			{[ "type": "checkbox", "label": "'.tr('Opt-out per newsletter').'", "name": "disable_newsletter", "id": "disable_newsletter_m",  "value": "0", "help": "'.tr("Blocco per l'invio delle email.").'" ]}
+		</div>
+	</div>
+
+
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">

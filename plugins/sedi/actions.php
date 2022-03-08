@@ -24,6 +24,7 @@ $operazione = filter('op');
 switch ($operazione) {
     case 'addsede':
          if (!empty(post('nomesede'))) {
+            $opt_out_newsletter = post('disable_newsletter');
              $dbo->insert('an_sedi', [
                 'idanagrafica' => $id_parent,
                 'nomesede' => post('nomesede'),
@@ -38,6 +39,7 @@ switch ($operazione) {
                 'email' => post('email'),
                 'id_nazione' => !empty(post('id_nazione')) ? post('id_nazione') : null,
                 'idzona' => !empty(post('id_zona')) ? post('id_zona') : 0,
+                'enable_newsletter' => empty($opt_out_newsletter),
             ]);
              $id_record = $dbo->lastInsertedID();
 

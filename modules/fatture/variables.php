@@ -18,17 +18,17 @@
  */
 
 $r = $dbo->fetchOne('SELECT co_documenti.*,
+    an_anagrafiche.pec,
     IF( (an_referenti.email IS NOT NULL AND an_referenti.email!=""), an_referenti.email, an_anagrafiche.email) AS email,
     an_anagrafiche.idconto_cliente,
     an_anagrafiche.idconto_fornitore,
-	an_anagrafiche.pec,
 	an_anagrafiche.ragione_sociale,
 	co_tipidocumento.descrizione AS tipo_documento,
-	(SELECT pec FROM em_accounts WHERE em_accounts.id='.prepare($template['id_account']).') AS is_pec
+    (SELECT pec FROM em_accounts WHERE em_accounts.id='.prepare($template['id_account']).') AS is_pec
 FROM co_documenti
-    INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica
-    INNER JOIN co_tipidocumento ON co_tipidocumento.id=co_documenti.idtipodocumento
-    LEFT OUTER JOIN an_referenti ON an_referenti.id=co_documenti.idreferente
+    INNER JOIN an_anagrafiche ON co_documenti.idanagrafica = an_anagrafiche.idanagrafica
+    INNER JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento
+    LEFT OUTER JOIN an_referenti ON an_referenti.id = co_documenti.idreferente
 WHERE co_documenti.id='.prepare($id_record));
 
 if (!empty(setting('Logo stampe'))) {
@@ -54,7 +54,7 @@ $r_company = $dbo->fetchOne('SELECT * FROM an_anagrafiche WHERE idanagrafica='.p
 
 // Variabili da sostituire
 return [
-    'email' => $r['is_pec'] ? $r['pec'] : $r['email'],
+    'email' => $options['is_pec'] ? $r['pec'] : $r['email'],
     'id_anagrafica' => $r['idanagrafica'],
     'ragione_sociale' => $r['ragione_sociale'],
     'numero' => empty($r['numero_esterno']) ? $r['numero'] : $r['numero_esterno'],

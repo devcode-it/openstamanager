@@ -17,13 +17,17 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-$r = $dbo->fetchOne('SELECT *, or_ordini.idanagrafica,
-    IF( (an_referenti.email IS NOT NULL AND an_referenti.email!=""), an_referenti.email, an_anagrafiche.email) AS email
-FROM or_ordini INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica=or_ordini.idanagrafica LEFT OUTER JOIN an_referenti ON an_referenti.id=or_ordini.idreferente WHERE or_ordini.id='.prepare($id_record));
+$r = $dbo->fetchOne('SELECT or_ordini.*,
+    an_anagrafiche.pec,
+    IF((an_referenti.email IS NOT NULL AND an_referenti.email != ""), an_referenti.email, an_anagrafiche.email) AS email
+FROM or_ordini
+    INNER JOIN an_anagrafiche ON or_ordini.idanagrafica = an_anagrafiche.idanagrafica
+    LEFT OUTER JOIN an_referenti ON an_referenti.id = or_ordini.idreferente
+WHERE id='.prepare($id_record));
 
 // Variabili da sostituire
 return [
-    'email' => $r['email'],
+    'email' => $options['is_pec'] ? $r['pec'] : $r['email'],
     'id_anagrafica' => $r['idanagrafica'],
     'numero' => empty($r['numero_esterno']) ? $r['numero'] : $r['numero_esterno'],
     'note' => $r['note'],

@@ -49,27 +49,28 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione) ) {
          
         if ($diff == 0) {
             echo '
-        <div class="alert alert-warning">
-            <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento ha raggiunto il massimale previsto di _MONEY_: le nuove righe della fattura devono presentare IVA diversa da _IVA_", [
+        <div class="alert alert-info">
+            <i class="fa fa-info"></i> '.tr("La dichiarazione d'intento _PROTOCOLLO_ ha raggiunto il massimale previsto di _MONEY_.", [
                     '_MONEY_' => moneyFormat(abs($fattura->dichiarazione->massimale)),
-                    '_IVA_' => '"'.$iva->descrizione.'"',
+                    '_PROTOCOLLO_' => $fattura->dichiarazione->numero_protocollo,
                 ]).'.</b>
         </div>';
         } elseif ($diff < 0) {
             echo '
         <div class="alert alert-warning">
-            <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento ha superato il massimale previsto di _MONEY_: per rimuovere righe della fattura dalla dichiarazione è sufficiente modificare l'IVA in qualcosa di diverso da _IVA_", [
+            <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento _PROTOCOLLO_ ha superato il massimale previsto di _MONEY_.", [
                 '_MONEY_' => moneyFormat(abs($diff)),
-                    '_IVA_' => '"'.$iva->descrizione.'"',
+                '_PROTOCOLLO_' => $fattura->dichiarazione->numero_protocollo,
             ]).'.</b>
         </div>';
         }
         elseif ($diff_in_days < 0) {
             echo '
         <div class="alert alert-warning">
-            <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento ha come data fine validità _SCADENZA_ mentre la fattura ha data _DATA_", [
+            <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento _PROTOCOLLO_ ha come data fine validità _SCADENZA_ mentre la fattura ha data _DATA_", [
                 '_SCADENZA_' => dateFormat($fattura->dichiarazione->data_fine),
                 '_DATA_' => dateFormat($fattura->data),
+                '_PROTOCOLLO_' => $fattura->dichiarazione->numero_protocollo,
             ]).'.</b>
         </div>';
         }
@@ -288,9 +289,12 @@ elseif ($record['stato'] == 'Bozza') {
                         echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
                     }
                     echo '
-                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'} ]}
+                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|id_plugin='.Plugins::get('Referenti')['id'].'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
                 </div>';
 
+                echo '
+            </div>
+            <div class="row">';
                 // Conteggio numero articoli fatture
                 $articolo = $dbo->fetchArray('SELECT mg_articoli.id FROM ((mg_articoli INNER JOIN co_righe_documenti ON mg_articoli.id=co_righe_documenti.idarticolo) INNER JOIN co_documenti ON co_documenti.id=co_righe_documenti.iddocumento) WHERE co_documenti.id='.prepare($id_record));
                     $id_modulo_anagrafiche = Modules::get('Anagrafiche')['id'];
@@ -868,7 +872,9 @@ echo '
         updateSelectOption("idanagrafica", $(this).val());
         session_set("superselect,idanagrafica", $(this).val(), 0);
 
+        $("#idreferente").selectReset();
         $("#id_dichiarazione_intento").selectReset();';
+        
 
         if ($dir == 'entrata') {
             echo '$("#idsede_destinazione").selectReset();';

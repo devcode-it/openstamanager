@@ -159,7 +159,7 @@ class Mail extends Model
         if (isset($this->template)) {
             $module = $this->template->module;
 
-            $value = $module->replacePlaceholders($this->id_record, $value);
+            $value = $module->replacePlaceholders($this->id_record, $value, ['is_pec' => intval($this->account->pec)]);
         }
 
         $this->attributes['subject'] = $value;
@@ -170,7 +170,7 @@ class Mail extends Model
         if (isset($this->template)) {
             $module = $this->template->module;
 
-            $value = $module->replacePlaceholders($this->id_record, $value);
+            $value = $module->replacePlaceholders($this->id_record, $value, ['is_pec' => intval($this->account->pec)]);
         }
 
         $this->attributes['content'] = $value;

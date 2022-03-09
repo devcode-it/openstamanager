@@ -23,10 +23,10 @@ $block_edit = $record['flag_completato'];
 
 $module = Modules::get($id_module);
 
-if ($module['name'] == 'Ddt di vendita') {
-    $dir = 'entrata';
-} else {
+if ($module['name'] == 'Ddt di acquisto') {
     $dir = 'uscita';
+} else {
+    $dir = 'entrata';
 }
 
 $numero_previsto = verifica_numero_ddt($ddt);

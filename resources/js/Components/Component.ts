@@ -41,7 +41,7 @@ interface Attributes<T> extends Collection<T> {
  * @see https://js.org/components.html
  */
 
-export default class Component<A> implements m.Component<A>, ClassComponent<A> {
+export default abstract class Component<A = {}> implements ClassComponent<A> {
   /**
    * The root DOM element for the component.
    *

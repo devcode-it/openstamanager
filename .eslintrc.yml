@@ -3,3 +3,15 @@ extends:
   - '@maicol07'
 globals:
   __: true
+# Temporary fix for Lit imports
+rules:
+  'import/extensions':
+    - "error"
+    - js: "ignorePackages"
+      ts: "never"
+      jsx: "never"
+      tsx: "never"
+      json: "always"
+      png: "always"
+      css: "always"
+      scss: "always"

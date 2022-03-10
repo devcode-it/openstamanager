@@ -163,9 +163,14 @@ foreach ($righe as $riga) {
             </td>';
 
         // Prezzi unitari
+        if (empty($riga->prezzo_unitario_corrente) && $dir == 'entrata') {
+            $price_danger = 'text-danger';
+        } else {
+            $price_danger = '';
+        }
         echo '
             <td class="text-right">
-                '.moneyFormat($riga->prezzo_unitario_corrente);
+                <span class="'.$price_danger.'">'.moneyFormat($riga->prezzo_unitario_corrente).'</span>';
 
         if ($dir == 'entrata' && $riga->costo_unitario != 0) {
             echo '

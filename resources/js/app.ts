@@ -24,7 +24,7 @@ InertiaProgress.init();
 const importedModules: Record<string, OpenSTAManager.ImportedModule> = {};
 const moduleURL = `${window.location.origin}/modules/{{modulePath}}/index.js`;
 
-for (const [name, module] of Object.entries(modules)) {
+for (const [name, module] of Object.entries(app.modules)) {
   if (module.hasBootstrap) {
     const path = moduleURL.replace('{{modulePath}}', `${module.moduleVendor}/${name}`);
 

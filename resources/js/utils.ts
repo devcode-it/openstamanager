@@ -145,8 +145,8 @@ type ReplaceObject = Record<string, string | Vnode | number | boolean>;
 export function __(key: string, replace: ReplaceObject = {}): string {
   let translation = key;
 
-  if (translations && translations[key]) {
-    translation = translations[key];
+  if (app.translations && app.translations[key]) {
+    translation = app.translations[key];
   }
 
   for (const [parameter, replacement] of Object.entries(replace)) {

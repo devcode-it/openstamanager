@@ -39,12 +39,14 @@ import {
 declare global {
   const route: typeof router;
 
-  let translations: Record<string, string>;
-  let modules: OpenSTAManager.Modules;
-  let user: OpenSTAManager.User | null;
-  let theme: 'high-contrast' | 'light';
-  let VERSION: string;
-  let REVISION: string;
+  const app: {
+    translations: Record<string, string>,
+    modules: OpenSTAManager.Modules,
+    user: OpenSTAManager.User | null,
+    theme: 'high-contrast' | 'light',
+    VERSION: string,
+    REVISION: string,
+  };
 
   var $: typeof cash;
   var m: typeof Mithril;

@@ -90,8 +90,8 @@ export default class TopAppBar extends Component<TopAppBarAttributes> {
       ),
       userInfo: (
         <icon-button id="navbar-user-info" slot="actionItems" aria-label={__('Il tuo profilo')}>
-          {user && user.picture
-            ? <img src={user.picture} alt={user.username} style="border-radius: 50%;"/>
+          {app.user && app.user.picture
+            ? <img src={app.user.picture} alt={app.user.username} style="border-radius: 50%;"/>
             : <Mdi icon="account-outline"/>
           }
         </icon-button>
@@ -125,13 +125,13 @@ export default class TopAppBar extends Component<TopAppBarAttributes> {
       ),
       userInfo: (
         <mwc-menu corner="BOTTOM_LEFT" id="user-info" data-trigger="#navbar-user-info">
-          {user?.picture ? (
-            <img class="user-image mdc-elevation--z2" src={user.picture} alt={user.username}/>
+          {app.user?.picture ? (
+            <img class="user-image mdc-elevation--z2" src={app.user.picture} alt={user.username}/>
           ) : <Mdi icon="account-outline"/>}
           <br/>
-          <b style="margin-top: 16px;">{user?.username}</b>
+          <b style="margin-top: 16px;">{app.user?.username}</b>
           <br/>
-          <span>{user?.email}</span>
+          <span>{app.user?.email}</span>
           <br/>
           <InertiaLink href="">
             <mwc-button outlined label={__('Il tuo profilo')} className="mwc-button--rounded"

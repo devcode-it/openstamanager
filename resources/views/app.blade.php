@@ -34,13 +34,15 @@
 @inertia
 
 <script>
-    window.modules = @js($modules->pluck('modules')->collapse()->all());
-    window.translations = @js($translations);
-    window.user = @js(auth()->user());
-    window.VERSION = @js(trim(file_get_contents(base_path('VERSION'))));
-    window.REVISION = @js(trim(file_get_contents(base_path('REVISION'))));
-
-    window.theme = @js(session('high-contrast') ? 'high-contrast' : 'light');
+    app = {
+        modules: @js($modules->pluck('modules')->collapse()->all()),
+        translations: @js($translations),
+        locale: '{{app()->getLocale()}}',
+        user: @js(auth()->user()),
+        VERSION: @js(trim(file_get_contents(base_path('VERSION')))),
+        REVISION: @js(trim(file_get_contents(base_path('REVISION')))),
+        theme: @js(session('high-contrast') ? 'high-contrast' : 'light')
+    };
 </script>
 
 @routes

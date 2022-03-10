@@ -1,7 +1,7 @@
 import Page from '../Components/Page';
 
 export default class Dashboard extends Page {
-  view() {
+  contents() {
     return (
       <div>
         <h2>{__('Dashboard')}</h2>

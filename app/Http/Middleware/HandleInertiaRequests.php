@@ -28,16 +28,4 @@ class HandleInertiaRequests extends Middleware
             'locale' => fn () => app()->getLocale(),
         ]);
     }
-
-    final public function rootView(Request $request): string
-    {
-        /** @var array{external?: bool}|null $route_props */
-        $route_props = $request->route('props');
-
-        if (Arr::get($route_props, 'external', false)) {
-            return 'external';
-        }
-
-        return $this->rootView;
-    }
 }

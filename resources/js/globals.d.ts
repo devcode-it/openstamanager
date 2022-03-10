@@ -37,9 +37,14 @@ import {
 } from './WebComponents';
 
 declare global {
-  let translations: Record<string, string>;
-  let modules: Record<string, OpenSTAManager.Modules>;
   const route: typeof router;
+
+  let translations: Record<string, string>;
+  let modules: OpenSTAManager.Modules;
+  let user: OpenSTAManager.User | null;
+  let theme: 'high-contrast' | 'light';
+  let VERSION: string;
+  let REVISION: string;
 
   var $: typeof cash;
   var m: typeof Mithril;

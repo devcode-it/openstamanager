@@ -10,6 +10,15 @@ import {sync as render} from 'mithril-node-render';
 type GenericObject = object & {prototype: any};
 
 /**
+ * Check if user is on a mobile device.
+ *
+ * @source https://stackoverflow.com/a/71030087/7520280
+ */
+export function isMobile() {
+  return window.navigator.maxTouchPoints > 1;
+}
+
+/**
  * Check if class/object A is the same as or a subclass of class B.
  */
 export function subclassOf(A: GenericObject, B: any): boolean {

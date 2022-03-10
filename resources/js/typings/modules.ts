@@ -17,4 +17,10 @@ export declare namespace OpenSTAManager {
 
     [key: string]: ClassComponent | any;
   }
+
+  export interface User {
+    picture: string;
+    username: string;
+    email: string;
+  }
 }

@@ -126,7 +126,8 @@ export default class TopAppBar extends Component<TopAppBarAttributes> {
       userInfo: (
         <mwc-menu corner="BOTTOM_LEFT" id="user-info" data-trigger="#navbar-user-info">
           {app.user?.picture ? (
-            <img class="user-image mdc-elevation--z2" src={app.user.picture} alt={user.username}/>
+            <img class="user-image mdc-elevation--z2" src={app.user.picture}
+                 alt={app.user.username}/>
           ) : <Mdi icon="account-outline"/>}
           <br/>
           <b style="margin-top: 16px;">{app.user?.username}</b>

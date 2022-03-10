@@ -44,7 +44,6 @@ $sizes: ("tight": -1, "comfortable": -2, "dense": -3, "compact": -4);
     }
 }
 
-
 /* ---------------------------
     MWC Components
 --------------------------- */
@@ -52,7 +51,8 @@ mwc-button .mdi {
     font-size: 18px;
 }
 
-mwc-icon-button {
+mwc-icon-button,
+icon-button {
     .mdi {
         opacity: 0.54;
     }
@@ -81,10 +81,10 @@ mwc-list-item {
     }
 }
 
-//noinspection Stylelint
 material-drawer {
     --mdc-theme-primary: var(--mdc-theme-primary2, variables.$primary);
 
+    //noinspection Stylelint
     > mwc-list mwc-list-item {
         border-bottom-right-radius: 100px !important;
         border-top-right-radius: 100px !important;
@@ -189,6 +189,7 @@ top-app-bar mwc-fab.sticky {
     }
 
     mwc-icon-button,
+    icon-button,
     i.mdi:not(.light-bg) {
         color: var(--mdc-theme-text-icon-on-background, #000d);
     }

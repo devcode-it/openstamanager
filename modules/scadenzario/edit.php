@@ -86,7 +86,7 @@ if (!empty($documento)) {
                         </tr>
 
                         <tr>
-                            <th>'.tr('Distinta').':</th>
+                            <th>'.tr('Info distinta').' <span class="tip" title="'.tr("Informazioni/Note sulla distinta associata alla scadenza (es. numero)").'" ><i class="fa fa-question-circle-o" ></i></span>:</th>
                             <td>
                                 {[ "type": "text", "name": "distinta", "value": "'.$record['distinta'].'" ]}
                             </td>
@@ -118,7 +118,7 @@ if (!empty($documento)) {
 
     echo input([
         'type' => 'text',
-        'label' => tr('Distinta'),
+        'label' => tr('Info distinta'),
         'name' => 'distinta',
         'value' => $scadenza['distinta'],
     ]);

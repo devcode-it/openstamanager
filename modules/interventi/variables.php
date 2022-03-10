@@ -20,6 +20,7 @@
 $r = $dbo->fetchOne('SELECT *,
     an_anagrafiche.email,
     an_anagrafiche.pec,
+    in_interventi.codice AS codice,
     (SELECT MAX(orario_fine) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS data_fine,
     (SELECT descrizione FROM in_statiintervento WHERE idstatointervento=in_interventi.idstatointervento) AS stato
 FROM in_interventi
@@ -30,6 +31,7 @@ WHERE id='.prepare($id_record));
 return [
     'email' => $options['is_pec'] ? $r['pec'] : $r['email'],
     'numero' => $r['codice'],
+    'ragione_sociale' => $r['ragione_sociale'],
     'richiesta' => $r['richiesta'],
     'descrizione' => $r['descrizione'],
     'data' => Translator::dateToLocale($r['data_richiesta']),

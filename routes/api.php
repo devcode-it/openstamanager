@@ -26,3 +26,7 @@ JsonApiRoute::server('v1')
 
 Route::get('modules', [Controller::class, 'getModules'])
     ->name('modules');
+
+Route::get('refresh_csrf', static fn() => response()->json(csrf_token()))
+    ->middleware('web')
+    ->name('csrf.renew');

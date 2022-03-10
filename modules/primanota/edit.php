@@ -28,25 +28,41 @@ include_once __DIR__.'/../../core.php';
 
     <div class="row">
 	<?php
-
+    
+    //Controllo se alla prima nota solo collegate più fatture
     $rs_doc = $dbo->fetchArray('SELECT DISTINCT iddocumento, (SELECT IFNULL(numero_esterno, numero) FROM co_documenti WHERE id=co_movimenti.iddocumento) AS numero FROM co_movimenti WHERE idmastrino='.prepare($record['idmastrino']).' AND iddocumento!=0');
 
     if (sizeof($rs_doc) > 0) {
         if (sizeof($rs_doc) == 1) {
             $rs = $dbo->fetchArray('SELECT dir FROM co_tipidocumento INNER JOIN co_documenti ON co_tipidocumento.id=co_documenti.idtipodocumento WHERE co_documenti.id='.prepare($rs_doc[0]['iddocumento']));
             $modulo = ($rs[0]['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto'; ?>
-            <div class=" col-md-2">
+            
+            <div class="col-md-2">
                 <br>
-                <a href="<?php echo base_path(); ?>/editor.php?id_module=<?php echo Modules::get($modulo)['id']; ?>&id_record=<?php echo $rs_doc[0]['iddocumento']; ?>" class="btn btn-info"><i class="fa fa-chevron-left"></i> <?php echo tr('Vai alla fattura'); ?></a>
+                <div class="btn-group">
+                    <a href="<?php echo base_path(); ?>/editor.php?id_module=<?php echo Modules::get($modulo)['id']; ?>&id_record=<?php echo $rs_doc[0]['iddocumento']; ?>" class="btn btn-info"><i class="fa fa-chevron-left"></i> <?php echo tr('Vai alla fattura'); ?></a>
+                    <a type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="<?php echo base_path(); ?>/controller.php?id_module=<?php echo Modules::get($modulo)['id']; ?>" class="dropdown-item"><i class="fa fa-chevron-left"></i> <?php echo tr('Vai all\'elenco delle fatture'); ?></a></li>
+                    </ul>
+                </div>
             </div>
         <?php
         } else {
             ?>
-            <div class=" col-md-2">
+            <div class="col-md-2">
                 <br>
-                <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" style="width:100%;">Fatture collegate
-                    <span class="caret"></span></button>
+                <div class="btn-group">
+                    <span class="btn btn-info" style="cursor:default;" ><i class="fa fa-chevron-left"></i> <?php echo tr('Più fatture collegate'); ?></span>
+                 
+                    <a type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </a>
+
                     <ul class="dropdown-menu">
         <?php
             for ($i = 0; $i < sizeof($rs_doc); ++$i) {

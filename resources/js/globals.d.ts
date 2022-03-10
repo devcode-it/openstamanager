@@ -1,5 +1,5 @@
 /* eslint-disable no-var,vars-on-top */
-// noinspection ES6ConvertVarToLetConst
+// noinspection ES6ConvertVarToLetConst,JSUnusedGlobalSymbols
 
 import {MWCCard} from '@maicol07/mwc-card';
 import {
@@ -47,7 +47,6 @@ declare global {
   var __: typeof translator;
 
   namespace JSX {
-    // noinspection JSUnusedGlobalSymbols
     interface IntrinsicElements {
       'icon-button': JSXElement<IconButton>;
       'material-drawer': JSXElement<MaterialDrawer>;

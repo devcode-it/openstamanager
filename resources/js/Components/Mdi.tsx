@@ -5,14 +5,6 @@ type Attributes = {
   icon?: MaterialIcons
 };
 
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      Mdi: Mdi
-    }
-  }
-}
-
 export default class Mdi extends Component<Attributes> {
   view() {
     this.attrs.addClassNames('mdi', `mdi-${this.attrs.pull('icon') as string}`);

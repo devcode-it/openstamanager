@@ -2,6 +2,7 @@ import '@material/mwc-circular-progress';
 import '@material/mwc-button';
 
 import type {Button} from '@material/mwc-button';
+import type {CircularProgress} from '@material/mwc-circular-progress';
 import type CSS from 'csstype';
 import type {VnodeDOM} from 'mithril';
 
@@ -12,14 +13,6 @@ import Mdi from './Mdi';
 type Attributes = Partial<Button> & {
   icon?: string
 };
-
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      LoadingButton: LoadingButton
-    }
-  }
-}
 
 class LoadingButton extends Component<Attributes> {
   view() {
@@ -60,7 +53,8 @@ class LoadingButton extends Component<Attributes> {
 
   oncreate(vnode: VnodeDOM<Attributes>) {
     super.oncreate(vnode);
-    $(this.element).find('mwc-circular-progress').attr('density', String(-7));
+    this.element.querySelector<CircularProgress>('mwc-circular-progress')
+      ?.setAttribute('density', '-7');
   }
 }
 

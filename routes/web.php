@@ -3,7 +3,6 @@
 /** @noinspection UnusedFunctionResultInspection */
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\SetupController;
 use App\Http\Middleware\CheckConfigurationMiddleware;

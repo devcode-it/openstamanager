@@ -5,6 +5,7 @@ import type {Button} from '@material/mwc-button';
 import type CSS from 'csstype';
 import type {VnodeDOM} from 'mithril';
 
+import {MaterialIcons} from '../typings';
 import Component from './Component';
 import Mdi from './Mdi';
 
@@ -31,7 +32,7 @@ class LoadingButton extends Component<Attributes> {
             style={this.getCSSProperties()}
           />
           {this.attrs.has('icon') ? (
-            <Mdi icon={this.attrs.get('icon')} />
+            <Mdi icon={this.attrs.get('icon') as MaterialIcons}/>
           ) : (
             ''
           )}

@@ -61,6 +61,12 @@ export default class Component<A> implements m.Component<A>, ClassComponent<A> {
    */
   attrs: Attributes<string>;
 
+  /**
+   * The types of the attributes passed into the component. They are used by Typescript to
+   * correctly help typing them.
+   */
+  attrsTypes: A;
+
   constructor() {
     this.element = undefined as unknown as Element;
     this.attrs = undefined as unknown as Attributes<string>;

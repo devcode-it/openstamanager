@@ -71,5 +71,9 @@ declare global {
       'text-field': JSXElement<TextField>;
       'top-app-bar': JSXElement<TopAppBar>;
     }
+
+    interface ElementAttributesProperty {
+      attrsTypes?: any;
+    }
   }
 }

@@ -35,13 +35,14 @@
 
 <script>
     app = {
-        modules: @js($modules->pluck('modules')->collapse()->all()),
-        translations: @js($translations),
+        events: {},
         locale: '{{app()->getLocale()}}',
+        modules: @js($modules->pluck('modules')->collapse()->all()),
+        theme: @js(session('high-contrast') ? 'high-contrast' : 'light'),
+        translations: @js($translations),
         user: @js(auth()->user()),
         VERSION: @js(trim(file_get_contents(base_path('VERSION')))),
-        REVISION: @js(trim(file_get_contents(base_path('REVISION')))),
-        theme: @js(session('high-contrast') ? 'high-contrast' : 'light')
+        REVISION: @js(trim(file_get_contents(base_path('REVISION'))))
     };
 </script>
 

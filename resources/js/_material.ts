@@ -1,41 +1,78 @@
-import '@material/mwc-button';
 import '@material/mwc-list';
-import '@material/mwc-menu';
 import './WebComponents/IconButton';
 import './WebComponents/MaterialDrawer';
 import './WebComponents/TopAppBar';
 
+import {Button} from '@material/mwc-button';
 import type {Dialog as MWCDialog} from '@material/mwc-dialog';
-import $, {
-  type Cash
-} from 'cash-dom';
+import {Menu as MWCMenu} from '@material/mwc-menu';
+import $ from 'cash-dom';
 
-$(() => {
-  // Submit forms with enter key
-  $('mwc-button[type="submit"], mwc-icon-button[type="submit"]')
-    .closest('form')
-    .find('text-field, select, text-area')
-    .on('keydown', function (this: Cash, event: KeyboardEvent) {
-      if (event.key === 'Enter') {
-        event.preventDefault();
+import {IconButton} from './WebComponents';
+import {Inertia} from '@inertiajs/inertia';
 
-        $(this)
-          .closest('form')
-          .find('mwc-button[type=submit], mwc-icon-button[type="submit"]')
-          .trigger('click');
-      }
-    });
+/**
+ * Handles the click event of the trigger button of a MWC Dialog or Menu.
+ */
+function triggerClickHandler(element: MWCMenu | MWCDialog) {
+  if (element instanceof MWCMenu) {
+    if (element.open) {
+      element.close();
+    } else {
+      element.show();
+    }
+  } else {
+    element.show();
+  }
+}
 
-
-  $('mwc-dialog')
-    .each((index, dialog: HTMLElement & Partial<MWCDialog>) => {
-      const trigger = dialog.getAttribute('trigger');
-      const button = trigger ? $(`#${trigger}`) : $(dialog)
-        .prev('mwc-dialog-button');
+/**
+ * Loads MWCMenu and MWCDialog triggers
+ */
+function loadTriggers() {
+  for (const element of document.querySelectorAll<MWCMenu | MWCDialog>('mwc-menu, mwc-dialog')) {
+    const {trigger} = element.dataset;
+    if (trigger) {
+      const button = document.querySelector<HTMLButtonElement | Button | IconButton>(trigger);
       if (button) {
-        button.on('click', () => {
-          (dialog as MWCDialog).show();
-        });
+        button.addEventListener('click', () => triggerClickHandler(element));
+
+        if (element instanceof MWCMenu) {
+          element.anchor = button;
+        }
       }
+    }
+  }
+}
+
+/**
+ * Better forms accessibility
+ * @example https://codesandbox.io/s/test-mwc-button-form-submit-zqgo5i?file=/src/index.ts
+ */
+function betterFormsAccessibility() {
+  for (const button of document.querySelectorAll<Button>('mwc-button[type="submit"]')) {
+    let previous = button.previousElementSibling;
+    if (!previous || (previous && previous.getAttribute('type') !== 'submit')) {
+      const input = document.createElement('input');
+      input.setAttribute('type', 'submit');
+      input.toggleAttribute('hidden', true);
+      button.before(input);
+      previous = button.previousElementSibling;
+    }
+
+    button.addEventListener('click', () => {
+      button.closest('form')
+        ?.requestSubmit(previous as HTMLInputElement);
     });
+  }
+}
+
+Inertia.on('navigate', () => {
+  loadTriggers();
+  betterFormsAccessibility();
+
+  // Remove the ugly underline under mwc button text when inside <a> tags.
+  $('a')
+    .has('mwc-button')
+    .css('text-decoration', 'none');
 });

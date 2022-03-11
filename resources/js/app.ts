@@ -1,7 +1,5 @@
 import {InertiaProgress} from '@inertiajs/progress';
 import {createInertiaApp} from '@maicol07/inertia-mithril';
-import {Button} from '@material/mwc-button';
-import {Menu as MWCMenu} from '@material/mwc-menu';
 import cash from 'cash-dom';
 import Mithril, {ClassComponent} from 'mithril';
 import {registerSW} from 'virtual:pwa-register';
@@ -12,7 +10,6 @@ import {
   __ as translator,
   showSnackbar
 } from './utils';
-import {IconButton} from './WebComponents';
 
 // Variabili globali
 globalThis.$ = cash;
@@ -24,6 +21,7 @@ InertiaProgress.init();
 const importedModules: Record<string, OpenSTAManager.ImportedModule> = {};
 const moduleURL = `${window.location.origin}/modules/{{modulePath}}/index.js`;
 
+// Load modules bootstrap
 for (const [name, module] of Object.entries(app.modules)) {
   if (module.hasBootstrap) {
     const path = moduleURL.replace('{{modulePath}}', `${module.moduleVendor}/${name}`);
@@ -63,30 +61,10 @@ await createInertiaApp({
     m.mount(el, {
       view: () => m(App, props)
     });
-
-    // TODO: Usare un evento custom
-    // Inizializzazione componenti
-    for (const menu of document.querySelectorAll<MWCMenu>('mwc-menu')) {
-      const {trigger} = menu.dataset;
-      if (trigger) {
-        const button = document.querySelector<HTMLButtonElement | Button | IconButton>(trigger);
-        if (button) {
-          button.addEventListener('click', () => {
-            menu.open = !menu.open;
-          });
-          menu.anchor = button;
-        }
-      }
-    }
-
-    // Remove the ugly underline under mwc button text when inside <a> tags.
-    $('a')
-      .has('mwc-button')
-      .css('text-decoration', 'none');
   }
 });
 
-
+// PWA
 const updateSW = registerSW({
   async onNeedRefresh() {
     const action = await showSnackbar(__('Aggiornamento del frontend disponibile!'), false, __('Ricarica'), __('Annulla'));

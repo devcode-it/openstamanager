@@ -39,11 +39,13 @@ import {
 declare global {
   const route: typeof router;
 
-  const app: {
-    translations: Record<string, string>,
+  let app: {
+    events: Record<string, Event>,
+    locale: string,
     modules: OpenSTAManager.Modules,
-    user: OpenSTAManager.User | null,
     theme: 'high-contrast' | 'light',
+    translations: Record<string, string>,
+    user: OpenSTAManager.User | null,
     VERSION: string,
     REVISION: string,
   };

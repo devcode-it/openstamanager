@@ -229,4 +229,23 @@ switch (post('op')) {
             co_movimenti.data BETWEEN '.prepare($start).' AND '.prepare($end));
 
         break;
+
+    case 'search':
+        $text = post('text');
+        $id_conti2 = 0;
+        $id_conti3 = 0;
+
+        if (!empty($text)) {
+            $id_conti = $dbo->fetchArray('SELECT id AS idpianodeiconti2 FROM co_pianodeiconti2 WHERE descrizione LIKE '.prepare('%'.$text.'%'));
+            $id_conti2 = array_column($id_conti, 'idpianodeiconti2');
+
+            $id_conti = $dbo->fetchArray('SELECT id AS idpianodeiconti3, idpianodeiconti2 FROM co_pianodeiconti3 WHERE descrizione LIKE '.prepare('%'.$text.'%'));
+         
+            $id_conti3 = array_column($id_conti, 'idpianodeiconti3');
+            $id_conti2_3 = array_column($id_conti, 'idpianodeiconti2');
+        }
+
+        echo json_encode(['conti2' => $id_conti2, 'conti3' => $id_conti3, 'conti2_3' => $id_conti2_3]);
+
+        break;
 }

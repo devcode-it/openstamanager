@@ -32,8 +32,14 @@ if ($bilancio_gia_aperto) {
 
 echo '
 <div class="row">
-    <div class="col-md-offset-4 col-md-4">
+    <div class="col-md-offset-4 col-md-3">
             <input type="text" class="form-control input-lg text-center" id="input-cerca" placeholder="'.tr('Cerca').'...">
+    </div>
+
+    <div class="col-md-1">
+        <button type="button" class="btn btn-lg btn-primary" id="button-search">
+            <i class="fa fa-search"></i> '.tr('Cerca').'
+        </button>
     </div>
 
     <div class="col-md-4 text-right">
@@ -75,161 +81,31 @@ foreach ($primo_livello as $conto_primo) {
 
     foreach ($secondo_livello as $conto_secondo) {
         // Livello 2
+        $totale_conto2 = $dbo->fetchOne('SELECT SUM(-totale) AS totale FROM `co_movimenti` INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id WHERE idconto IN(SELECT id FROM co_pianodeiconti3 WHERE idpianodeiconti2='.prepare($conto_secondo['id']).') AND co_movimenti.data>='.prepare($_SESSION['period_start']).' AND co_movimenti.data<='.prepare($_SESSION['period_end']))['totale'];
+       
         echo '
-        <div class="conto2">
+        <div class="conto2" id="conto2-'.$conto_secondo['id'].'">
             <div class="pull-right">
+                <b>'.moneyFormat($totale_conto2, 2).'</b>&ensp;&ensp;
                 '.Prints::getLink('Mastrino', $conto_secondo['id'], 'btn-info btn-xs', '', null, 'lev=2').'
 
                 <button type="button" class="btn btn-warning btn-xs" onclick="modificaConto('.$conto_secondo['id'].', 2)">
                     <i class="fa fa-edit"></i>
                 </button>
-            </div>
 
-            <h5>
-                <b>'.$conto_secondo['numero'].' '.$conto_secondo['descrizione'].'</b>
                 <button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" title="'.tr('Aggiungi un nuovo conto...').'" onclick="aggiungiConto('.$conto_secondo['id'].')">
                 <i class="fa fa-plus-circle"></i>
                 </button>
-            </h5>
-
-            <div class="table-responsive">
-                <table class="table table-striped table-hover table-condensed">
-                    <thead>
-                        <tr>
-                            <th>'.tr('Descrizione').'</th>
-                            <th style="width: 10%" class="text-center">'.tr('Importo').'</th>';
-            if ($conto_primo['descrizione'] == 'Economico') {
-                echo '
-                                <th style="width: 10%" class="text-center">'.tr('Importo reddito').'</th>';
-            }
-            echo '
-                        </tr>
-                    </thead>
-
-                    <tbody>';
-
-            // Livello 3
-            $query3 = 'SELECT `co_pianodeiconti3`.*, movimenti.numero_movimenti, movimenti.totale, movimenti.totale_reddito, anagrafica.idanagrafica, anagrafica.deleted_at
-                FROM `co_pianodeiconti3`
-                    LEFT OUTER JOIN (
-                        SELECT idanagrafica,
-                            idconto_cliente,
-                            idconto_fornitore,
-                            deleted_at
-                        FROM an_anagrafiche
-                    ) AS anagrafica ON co_pianodeiconti3.id IN (anagrafica.idconto_cliente, anagrafica.idconto_fornitore)
-                    LEFT OUTER JOIN (
-                        SELECT COUNT(idconto) AS numero_movimenti,
-                        idconto,
-                        SUM(totale) AS totale,
-                        SUM(totale_reddito) AS totale_reddito
-                        FROM co_movimenti
-                        WHERE data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']).' GROUP BY idconto
-                    ) movimenti ON co_pianodeiconti3.id=movimenti.idconto
-                WHERE `idpianodeiconti2` = '.prepare($conto_secondo['id']).' ORDER BY numero ASC';
-            $terzo_livello = $dbo->fetchArray($query3);
-            foreach ($terzo_livello as $conto_terzo) {
-                // Se il conto non ha documenti collegati posso eliminarlo
-                $numero_movimenti = $conto_terzo['numero_movimenti'];
-
-                $totale_conto = $conto_terzo['totale'];
-                $totale_reddito = $conto_terzo['totale_reddito'];
-                if ($conto_primo['descrizione'] != 'Patrimoniale') {
-                    $totale_conto = -$totale_conto;
-                    $totale_reddito = -$totale_reddito;
-                }
-
-                $totale_conto2 += $totale_conto;
-                $totale_reddito2 += $totale_reddito;
-
-                echo '
-                    <tr class="conto3" style="'.(!empty($numero_movimenti) ? '' : 'opacity: 0.5;').'">
-                        <td>';
-
-                // Possibilità di esplodere i movimenti del conto
-                if (!empty($numero_movimenti)) {
-                    echo '
-                            <button type="button" id="movimenti-'.$conto_terzo['id'].'" class="btn btn-default btn-xs plus-btn"><i class="fa fa-plus"></i></button>';
-                }
-
-                // Span con i pulsanti
-                echo '
-                            <span class="hide tools pull-right">';
-
-                //  Possibilità di visionare l'anagrafica
-                $id_anagrafica = $conto_terzo['idanagrafica'];
-                $anagrafica_deleted = $conto_terzo['deleted_at'];
-                if (isset($id_anagrafica)) {
-                    echo Modules::link('Anagrafiche', $id_anagrafica, ' <i title="'.(isset($anagrafica_deleted) ? tr('Anagrafica eliminata') : tr('Visualizza anagrafica')).'" class="btn btn-'.(isset($anagrafica_deleted) ? 'danger' : 'primary').' btn-xs fa fa-user" ></i>');
-                }
-
-                // Stampa mastrino
-                if (!empty($numero_movimenti)) {
-                    echo '
-                                '.Prints::getLink('Mastrino', $conto_terzo['id'], 'btn-info btn-xs', '', null, 'lev=3');
-                }
-
-                // Pulsante per aggiornare il totale reddito del conto di livello 3
-                echo '
-                                <button type="button" class="btn btn-info btn-xs" onclick="aggiornaReddito('.$conto_terzo['id'].')">
-                                    <i class="fa fa-refresh"></i>
-                                </button>';
-
-                // Pulsante per modificare il nome del conto di livello 3
-                echo '
-                                <button type="button" class="btn btn-warning btn-xs" onclick="modificaConto('.$conto_terzo['id'].')">
-                                    <i class="fa fa-edit"></i>
-                                </button>';
-
-                // Possibilità di eliminare il conto se non ci sono movimenti collegati
-                if ($numero_movimenti <= 0) {
-                    echo '
-                                <a class="btn btn-danger btn-xs ask" data-toggle="tooltip" title="'.tr('Elimina').'" data-backto="record-list" data-op="del" data-idconto="'.$conto_terzo['id'].'">
-                                    <i class="fa fa-trash"></i>
-                                </a>';
-                }
-
-                echo '
-                            </span>';
-
-                // Span con info del conto
-                echo '
-                            <span class="clickable" id="movimenti-'.$conto_terzo['id'].'">
-                                &nbsp;'.$conto_secondo['numero'].'.'.$conto_terzo['numero'].' '.$conto_terzo['descrizione'].($conto_terzo['percentuale_deducibile'] < 100 ? ' <span class="text-muted">('.tr('deducibile al _PERC_%', ['_PERC_' => Translator::numberToLocale($conto_terzo['percentuale_deducibile'], 0)]).')</span>' : '').'
-                            </span>
-                            <div id="conto_'.$conto_terzo['id'].'" style="display:none;"></div>
-                        </td>
-
-                        <td class="text-right">
-                            '.moneyFormat($totale_conto, 2).'
-                        </td>';
-                if ($conto_primo['descrizione'] == 'Economico') {
-                    echo '
-                            <td class="text-right">
-                                '.moneyFormat($totale_reddito, 2).'
-                            </td>';
-                }
-                echo '
-                    </tr>';
-            }
-
-            echo '
-                    </tbody>
-
-                    <tfoot>
-                        <tr class="totali">
-                            <th class="text-right">'.tr('Totale').'</th>
-                            <th class="text-right">'.moneyFormat($totale_conto2).'</th>';
-            if ($conto_primo['descrizione'] == 'Economico') {
-                echo '<th class="text-right">'.moneyFormat($totale_reddito2).'</th>';
-            }
-            echo '
-                        </tr>
-                    </tfoot>
-                </table>
-
-                <br><br>
             </div>
+
+            <h5>
+                <button type="button" id="conto3-'.$conto_secondo['id'].'" class="btn btn-default btn-xs plus-btn search"><i class="fa fa-plus"></i></button>
+                <span class="clickable" id="conto3-'.$conto_secondo['id'].'">
+                    <b>'.$conto_secondo['numero'].' '.$conto_secondo['descrizione'].'</b>
+                </span>
+                <div id="conto2_'.$conto_secondo['id'].'" style="display:none;"></div>
+            </h5>
+           
         </div>';
         // Somma dei totali
         if ($conto_primo['descrizione'] == 'Patrimoniale') {
@@ -287,6 +163,7 @@ foreach ($primo_livello as $conto_primo) {
                 <td class="text-right" width="150">
                     <big>'.moneyFormat($passivita, 2).'</big>
                 </td>
+                <td width="100"></td>
             </tr>';
 
         // Perdita d'esercizio
@@ -299,6 +176,7 @@ foreach ($primo_livello as $conto_primo) {
                 <td class="text-right">
                     <big>'.moneyFormat(sum($utile_perdita), 2).'</big>
                 </td>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -315,6 +193,7 @@ foreach ($primo_livello as $conto_primo) {
                 <td class="text-right">
                     <big>'.moneyFormat(sum($utile_perdita), 2).'</big>
                 </td>
+                <td></td>
             </tr>';
         }
 
@@ -335,6 +214,7 @@ foreach ($primo_livello as $conto_primo) {
                 <td class="text-right" width="150">
                     <big>'.moneyFormat(sum($pareggio2), 2).'</big>
                 </td>
+                <td></td>
             </tr>';
     } else {
         echo '
@@ -345,6 +225,7 @@ foreach ($primo_livello as $conto_primo) {
                 <td class="text-right" width="150">
                     <big>'.moneyFormat(sum($totale_ricavi), 2).'</big>
                 </td>
+                <td width="100"></td>
             </tr>
 
             <tr>
@@ -354,6 +235,7 @@ foreach ($primo_livello as $conto_primo) {
                 <td class="text-right" width="150">
                     <big>'.moneyFormat(sum($totale_costi), 2).'</big>
                 </td>
+                <td></td>
             </tr>
 
             <tr class="totali">
@@ -363,6 +245,7 @@ foreach ($primo_livello as $conto_primo) {
                 <td class="text-right" width="150">
                     <big>'.moneyFormat(sum($totale_ricavi) - abs(sum($totale_costi)), 2).'</big>
                 </td>
+                <td></td>
             </tr>';
     }
 
@@ -395,47 +278,35 @@ echo '
 
 <script>
     $(document).ready(function() {
-        $("tr").each(function() {
-            $(this).on("mouseover", function() {
-                $(this).find(".tools").removeClass("hide");
-            });
+        $("button[id^=conto3-]").each(function() {
+            $(this).on("click", function() {
+                let conto3 = $(this).parent().find("div[id^=conto2_]");
 
-            $(this).on("mouseleave", function() {
-                $(this).find(".tools").addClass("hide");
+                if(!conto3.html()) {
+                    let id_conto = $(this).attr("id").split("-").pop();
+                    caricaConti3(conto3.attr("id"), id_conto);
+                } else {
+                    conto3.slideToggle();
+                }
+
+                $(this).parent().find(".plus-btn i").toggleClass("fa-plus").toggleClass("fa-minus");
             });
         });
 
-        $("span[id^=movimenti-]").each(function() {
+        $("span[id^=conto3-]").each(function() {
             $(this).on("click", function() {
-                let movimenti = $(this).parent().find("div[id^=conto_]");
+                let conto3 = $(this).parent().find("div[id^=conto2_]");
 
-                if(!movimenti.html()) {
+                if(!conto3.html()) {
                     let id_conto = $(this).attr("id").split("-").pop();
-
-                    caricaMovimenti(movimenti.attr("id"), id_conto);
+                    caricaConti3(conto3.attr("id"), id_conto);
                 } else {
-                    movimenti.slideToggle();
+                    conto3.slideToggle();
                 }
 
                 $(this).parent().find(".plus-btn i").toggleClass("fa-plus").toggleClass("fa-minus");
             });
-        })
-
-        $("button[id^=movimenti-]").each(function() {
-            $(this).on("click", function() {
-                let movimenti = $(this).parent().find("div[id^=conto_]");
-
-                if(!movimenti.html()) {
-                    let id_conto = $(this).attr("id").split("-").pop();
-
-                    caricaMovimenti(movimenti.attr("id"), id_conto);
-                } else {
-                    movimenti.slideToggle();
-                }
-
-                $(this).parent().find(".plus-btn i").toggleClass("fa-plus").toggleClass("fa-minus");
-            });
-        })
+        });
     });
 
     function aggiungiConto(id_conto, level = 3) {
@@ -446,11 +317,11 @@ echo '
         launch_modal("'.tr('Modifica conto').'", "'.$structure->fileurl('edit_conto.php').'?id=" + id_conto + "&lvl=" + level);
     }
 
-    function caricaMovimenti(selector, id_conto) {
+    function caricaConti3(selector, id_conto) {
         $("#main_loading").show();
 
         $.ajax({
-            url: "'.$structure->fileurl('dettagli_conto.php').'",
+            url: "'.$structure->fileurl('dettagli_conto2.php').'",
             type: "get",
             data: {
                 id_module: globals.id_module,
@@ -469,23 +340,57 @@ echo '
         openModal("'.tr('Ricalcola importo deducibile').'", "'.$structure->fileurl('aggiorna_reddito.php').'?id=" + id_conto)
     }
 
-    $("#input-cerca").keyup(function(){
-        var text = $(this).val();
+    $("#button-search").on("click", function(){
+        var text = $("#input-cerca").val();
+
+        $.ajax({
+            url: globals.rootdir + "/actions.php",
+            type: "POST",
+            dataType: "json",
+            data: {
+                id_module: globals.id_module,
+                text: text,
+                op: "search",
+            },
+            success: function (results) {
+                if (results.conti2 === 0 && results.conti3 === 0){
+                    $(".conto2").each(function() {
+                        if ($(this).find(".search > i").hasClass("fa-minus")) {
+                            $(this).find(".search").click();
+                        }
+                    });
+                    $(".conto3").show();
+                    $(".conto1").show();
+                    $(".conto2").show();
+                    $(".totali").show();
+                } else {
+                    $(".conto1").hide();
+                    $(".conto2").hide();
+                    $(".conto3").hide();
+                    $(".totali").hide();
+                    results.conti2.forEach(function(item) {
+                        $("#conto2-"+ item).parent().parent().show();
+                        $("#conto2-"+ item).show();
+                    });
+
+                    results.conti2_3.forEach(function(item) {
+                        $("#conto2-"+ item).parent().parent().show();
+                        $("#conto2-"+ item).show();
+                        if ($("#conto2-"+ item).find(".search > i").hasClass("fa-plus")) {
+                            $("#conto2-"+ item).find(".search").click();
+                        }
+                    });
+
+                    results.conti3.forEach(function(item) {
+                        $("#conto3-"+ item).show();
+                    });
+
+                    
+                }
+            }
+        });
+
         
-        if( text == "" ){
-            $(".conto1").show();
-            $(".conto2").show();
-            $(".conto3").show();
-            $(".totali").show();
-        } else {  
-            $(".conto1").hide();
-            $(".conto2").hide();
-            $(".conto3").hide();
-            $(".totali").hide();
-            $(".conto1:contains(" + text + ")").show();
-            $(".conto2:contains(" + text + ")").show();
-            $(".conto3:contains(" + text + ")").show();
-        }
     });
         
     $.expr[":"].contains = $.expr.createPseudo(function(arg) {

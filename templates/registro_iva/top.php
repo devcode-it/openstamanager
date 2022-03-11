@@ -48,7 +48,6 @@ echo '<h4><b>'.$titolo.'</b></h4>
 <table class="table table-condensed table-striped" border="0">
     <thead>
         <tr>
-            <th>'.tr('Movimento').'</th>
             <th>'.tr('N° Prot.').'</th>
             <th>'.tr('Data reg.').'</th>
             <th>'.tr('N<sup>o</sup>&nbsp;doc.').'</th>

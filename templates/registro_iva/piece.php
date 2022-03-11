@@ -19,17 +19,20 @@
 
 include_once __DIR__.'/../../core.php';
 
+if ($numero != $record['numero']) {
+    $different = 1;
+}
+
 echo '
 <tr>';
 
 echo '
-    <td>'.str_pad($record['idmovimenti'], 8, '0', STR_PAD_LEFT).'</td>
-    <td>'.$record['numero'].'</td>
-    <td>'.Translator::datetoLocale($record['data_registrazione']).'</td>
-    <td>'.$record['numero_esterno'].'</td>
-    <td>'.Translator::datetoLocale($record['data']).'</td>
-    <td>'.$record['codice_tipo_documento_fe'].'</td>
-    <td>'.$record['codice_anagrafica'].' / '.safe_truncate(mb_strtoupper(html_entity_decode($record['ragione_sociale']), 'UTF-8'), 50).'</td>
+    <td>'.($different ? $record['numero'] : '').'</td>
+    <td>'.($different ? Translator::datetoLocale($record['data_registrazione']) : '').'</td>
+    <td>'.($different ? $record['numero_esterno'] : '').'</td>
+    <td>'.($different ? Translator::datetoLocale($record['data']) : '').'</td>
+    <td>'.($different ? $record['codice_tipo_documento_fe'] : '').'</td>
+    <td>'.($different ? $record['codice_anagrafica'].' / '.safe_truncate(mb_strtoupper(html_entity_decode($record['ragione_sociale']), 'UTF-8'), 50) : '').'</td>
     <td class="text-right">'.moneyFormat($record['totale']).'</td>';
 
 echo '
@@ -41,3 +44,12 @@ echo '
 
 $iva[$record['desc_iva']][] = $record['iva'];
 $totale[$record['desc_iva']][] = $record['subtotale'];
+
+$numero = $record['numero'];
+$data_registrazione = $record['data_registrazione'];
+$numero_esterno = $record['numero'];
+$data = $record['data'];
+$codice_fe = $record['numero'];
+$codice_anagrafica = $record['numero'];
+
+$different = 0;

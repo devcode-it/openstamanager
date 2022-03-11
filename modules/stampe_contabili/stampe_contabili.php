@@ -32,7 +32,7 @@ $link = Prints::getHref($nome_stampa, $id_record);
 
 echo '
 <div class="alert alert-info hidden" id="period">
-    <i class="fa fa-exclamation-circle"></i> '.tr('Non è possibile creare la stampa definitiva nel periodo selezionato, è necessario prima impostare un trimestre!').'
+    <i class="fa fa-exclamation-circle"></i> '.tr('Non è possibile creare la stampa definitiva nel periodo selezionato, è necessario prima impostare un trimestre o un singolo mese!').'
 </div>
 
 <div class="alert alert-warning hidden" id="is_definitiva">
@@ -71,7 +71,7 @@ echo '
 	if ($nome_stampa != 'Liquidazione IVA') {
 		echo '
 		<div class="col-md-4">
-			{[ "type": "checkbox", "label": "'.tr('Definitiva').'", "disabled": "1", "name": "definitiva", "help": "'.tr('Per abilitare il pulsante è necessario impostare nei campi Data inizio e Data fine uno dei 4 trimestri e non deve essere già stata creata la stampa definitiva del periodo selezionato').'" ]}
+			{[ "type": "checkbox", "label": "'.tr('Definitiva').'", "disabled": "1", "name": "definitiva", "help": "'.tr('Per abilitare il pulsante è necessario impostare nei campi Data inizio e Data fine uno dei 4 trimestri o un singolo mese e non deve essere già stata creata la stampa definitiva del periodo selezionato').'" ]}
 		</div>';
 	}
 
@@ -153,7 +153,7 @@ if ($nome_stampa != 'Liquidazione IVA') {
 			controllaDate(date_start, date_end);
 		}
 
-		// Controllo se le date inserite corrispondono ad uno dei 4 trimestri
+		// Controllo se le date inserite corrispondono ad uno dei 4 trimestri o ad un mese
 		function controllaDate(date_start, date_end) {
 			let intervallo_corretto = 0;
 			let date = new Date(date_start);
@@ -173,6 +173,22 @@ if ($nome_stampa != 'Liquidazione IVA') {
 				}
 				m_start += 3;
 				m_end += 3;
+			}
+
+			m_start = 0;
+			m_end = 1;
+			for (i=0; i<=11; i++) {
+				let start = new Date(year, m_start, 1);
+				let end = new Date(year, m_end, 0);
+
+				int_start = start.getFullYear() +  "-" + ("0" + (start.getMonth() + 1)).slice(-2) + "-" + ("0" + start.getDate()).slice(-2);
+				int_end = end.getFullYear() +  "-" + ("0" + (end.getMonth() + 1)).slice(-2) + "-" + ("0" + end.getDate()).slice(-2);
+
+				if (date_start == int_start && date_end == int_end) {
+					intervallo_corretto = 1;	
+				}
+				m_start += 1;
+				m_end += 1;
 			}
 			$("#is_definitiva").addClass("hidden");
 

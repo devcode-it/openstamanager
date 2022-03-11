@@ -14,7 +14,7 @@ import redaxios from 'redaxios';
 
 import LoadingButton from '../Components/LoadingButton';
 import Mdi from '../Components/Mdi';
-import Page from '../Components/Page';
+import Page, {PageAttributes} from '../Components/Page';
 import {ErrorResponse} from '../typings';
 import {
   getFormData,
@@ -26,7 +26,7 @@ export default class LoginPage extends Page {
   loading: Cash;
   forgotPasswordLoading: Cash;
 
-  view(vnode: Vnode) {
+  view(vnode: Vnode<PageAttributes>) {
     return (
       <mwc-card outlined className="center ext-container ext-container-small">
         <img
@@ -79,7 +79,7 @@ export default class LoginPage extends Page {
     );
   }
 
-  oncreate(vnode: VnodeDOM) {
+  oncreate(vnode: VnodeDOM<PageAttributes>) {
     super.oncreate(vnode);
     this.loading = $(this.element)
       .find('#login-button mwc-circular-progress');

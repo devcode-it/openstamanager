@@ -174,16 +174,18 @@ foreach ($settings as $name => $values) {
 }
 
 // MySQL
-$db = [
+if ($database->isInstalled()){
+    $db = [
 
-    'mysql_version' => [
-        'type' => 'mysql',
-        'description' => '5.7.x - 8.0.x',
-        'minimum' => '5.7.0',
-        'maximum' => '8.0.99',
-    ],
+        'mysql_version' => [
+            'type' => 'mysql',
+            'description' => '5.7.x - 8.0.x',
+            'minimum' => '5.7.0',
+            'maximum' => '8.0.99',
+        ],
 
-];
+    ];
+}
 
 foreach ($db as $name => $values) {
     $description = $values['description'];
@@ -222,6 +224,7 @@ foreach ($dirs as $name => $description) {
     ];
 }
 
+
 $requirements = [
     tr('Apache') => $apache,
     tr('PHP (_VERSION_ _SUPPORTED_)', [
@@ -231,6 +234,10 @@ $requirements = [
     tr('MySQL') => $mysql,
     tr('Percorsi di servizio') => $directories,
 ];
+
+if (!$database->isInstalled() || empty($mysql)){
+    unset($requirements['MySQL']);
+}
 
 
 // Tabelle di riepilogo

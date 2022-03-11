@@ -39,7 +39,7 @@ switch (post('op')) {
         }
 
         if ($n_scadenze > 0) {
-            flash()->info(tr('Distinta aggiornata a _NUM_ scadenze!', [
+            flash()->info(tr('Info distinta aggiornata a _NUM_ scadenze!', [
                 '_NUM_' => $n_scadenze,
             ]));
         } else {
@@ -80,11 +80,11 @@ $operations['registrazione-contabile'] = [
 ];
 
 $operations['change_distinta'] = [
-    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna distinta'),
+    'text' => '<span><i class="fa fa-edit"></i> '.tr('Info distinta'),
     'data' => [
-        'title' => tr('Aggiornare la distinta per le scadenze selezionate?'),
-        'msg' => tr('Per ciascuna scadenza selezionata verrà aggiornata la distinta').'.<br>
-        <br>{[ "type": "text", "label": "'.tr('Distinta').'", "name": "distinta", "required": 1 ]}',
+        'title' => tr('Modificare le informazioni della distinta?'),
+        'msg' => tr('Per ciascuna scadenza selezionata verrà modificata l\'informazione della distinta associata').'.<br>
+        <br>{[ "type": "text", "label": "'.tr('Info distinta').'", "name": "distinta", "required": 1 ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

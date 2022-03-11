@@ -502,30 +502,32 @@ if (Auth::check()) {
                 </li>';
 
         // Tab dei plugin
-        $plugins = $dbo->fetchArray('SELECT id, title, options, options2 FROM zz_plugins WHERE idmodule_to='.prepare($id_module)." AND position='tab' AND enabled = 1 ORDER BY zz_plugins.order DESC");
-        foreach ($plugins as $plugin) {
+        if (!empty($id_record)) {
+            $plugins = $dbo->fetchArray('SELECT id, title, options, options2 FROM zz_plugins WHERE idmodule_to='.prepare($id_module)." AND position='tab' AND enabled = 1 ORDER BY zz_plugins.order DESC");
+            foreach ($plugins as $plugin) {
+                
             
-         
-            //Badge count per record plugin
-            $count = 0;
-            if (!empty($plugin['options2'])){
-                $opt = json_decode($plugin['options2'], true);
-            }else{
-                $opt = json_decode($plugin['options'], true);
-            }
+                //Badge count per record plugin
+                $count = 0;
+                if (!empty($plugin['options2'])){
+                    $opt = json_decode($plugin['options2'], true);
+                }else{
+                    $opt = json_decode($plugin['options'], true);
+                }
 
-            if (!empty($opt)){
-                $q = str_replace('|id_parent|', $id_record, $opt['main_query'][0]['query']);
-                $count = $dbo->fetchNum($q);
-            }
+                if (!empty($opt)){
+                    $q = str_replace('|id_parent|', $id_record, $opt['main_query'][0]['query']);
+                    $count = $dbo->fetchNum($q);
+                }
 
-            echo '
-                <li data-toggle="control-sidebar">
-                    <a data-toggle="tab" href="#tab_'.$plugin['id'].'" id="link-tab_'.$plugin['id'].'">
-                        '.$plugin['title'].'
-                        <span class="badge">'.($count>0 ? $count: '').'</span>
-                    </a>
-                </li>';
+                echo '
+                    <li data-toggle="control-sidebar">
+                        <a data-toggle="tab" href="#tab_'.$plugin['id'].'" id="link-tab_'.$plugin['id'].'">
+                            '.$plugin['title'].'
+                            <span class="badge pull-right">'.($count>0 ? $count: '').'</span>
+                        </a>
+                    </li>';
+            }
         }
 
         // Tab per le note interne
@@ -536,7 +538,7 @@ if (Auth::check()) {
                 <li data-toggle="control-sidebar" class="bg-info">
                     <a data-toggle="tab" href="#tab_note" id="link-tab_note">
                         '.tr('Note interne').'
-                        <span class="badge">'.($notes->count() ?: '').'</span>
+                        <span class="badge pull-right">'.($notes->count() ?: '').'</span>
                     </a>
                 </li>';
         }

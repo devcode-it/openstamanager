@@ -90,11 +90,11 @@ switch (post('op')) {
         } else {
             $print_name = 'Fattura elettronica di acquisto';
         }
-        $print = $dbo->SelectOne('zz_prints', 'id', ['name' => $print_name]);
+        $id_print = Prints::getPrints()[$print_name];
 
         if (!empty($id_records)) {
             foreach ($id_records as $id_record) {
-                Prints::render($print['id'], $id_record, $dir.'tmp/');
+                Prints::render( $id_print, $id_record, $dir.'tmp/', false, true);
             }
 
             // Creazione zip

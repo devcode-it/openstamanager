@@ -6,13 +6,13 @@ import Component from '../../Component';
 import InertiaLink from '../../InertiaLink';
 import Mdi from '../../Mdi';
 
-export interface DrawerAttributes {
+export interface DrawerEntryAttributes {
   route: string;
   icon: MaterialIcons;
 }
 
-export default class DrawerEntry extends Component<DrawerAttributes> {
-  view(vnode: Vnode<DrawerAttributes>) {
+export default class DrawerEntry extends Component<DrawerEntryAttributes> {
+  view(vnode: Vnode<DrawerEntryAttributes>) {
     return (
       <InertiaLink className="drawer-item" href={route(vnode.attrs.route)}
                    onclick={this.onclick.bind(this)}>

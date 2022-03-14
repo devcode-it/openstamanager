@@ -8,7 +8,7 @@
     "build:dev": "vite build --mode development",
     "build:watch": "vite build --watch",
     "dev": "php artisan osm:dev-server-fix && vite",
-    "generate-barrels": "barrelsby -c ./.barrelsby.config.json",
+    "generate-barrels": "barrelsby -c ./.barrelsby.config.json && php artisan osm:barrels-generation-fix && eslint --fix \"resources/js/**/index.ts\"",
     "serve": "php artisan serve",
     "serve-dev": "concurrently --raw pnpm:serve pnpm:dev",
     "serve-watch": "concurrently --raw pnpm:serve pnpm:watch",

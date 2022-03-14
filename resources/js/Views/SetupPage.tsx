@@ -17,8 +17,11 @@ import type {Vnode, VnodeDOM} from 'mithril';
 import redaxios, {Response} from 'redaxios';
 
 import Mdi from '../Components/Mdi';
-import Page from '../Components/Page';
-import {getFormData, showSnackbar} from '../utils';
+import Page, {PageAttributes} from '../Components/Page';
+import {
+  getFormData,
+  showSnackbar
+} from '../utils';
 
 function getFlag(language: string, slot: string = 'graphic', styles: CSS.Properties = {}) {
   if (!styles.display) {
@@ -38,14 +41,14 @@ function getFlag(language: string, slot: string = 'graphic', styles: CSS.Propert
   );
 }
 
-export default class SetupPage extends Page {
-  languages() {
+export class SetupPage extends Page {
+  languages(vnode: Vnode<PageAttributes>) {
     const listItems: Vnode[] = [];
 
-    for (const lang of this.page.props.languages) {
+    for (const lang of vnode.attrs.page.props.languages) {
       const language = lang as string;
       const attributes = {
-        selected: this.page.props.locale === lang
+        selected: vnode.attrs.page.props.locale === lang
       };
       const langCode = language.replace('_', '-');
       listItems.push(
@@ -69,7 +72,7 @@ export default class SetupPage extends Page {
     return listItems;
   }
 
-  view() {
+  view(vnode: Vnode<PageAttributes>) {
     const examplesTexts: Record<string, string> = {};
 
     for (const example of ['localhost', 'root', 'mysql', 'openstamanager']) {
@@ -233,7 +236,7 @@ export default class SetupPage extends Page {
               <mwc-layout-grid-cell>
                 <h4>{__('Lingua')}</h4>
                 <material-select id="language-select" name="locale">
-                  {this.languages()}
+                  {this.languages(vnode)}
                 </material-select>
                 <hr />
                 <h4>{__('Licenza')}</h4>
@@ -243,7 +246,7 @@ export default class SetupPage extends Page {
                   )}
                 </p>
                 <text-area
-                  value={this.page.props.license as string}
+                  value={vnode.attrs.page.props.license as string}
                   rows={15}
                   cols={40}
                   disabled
@@ -283,13 +286,18 @@ export default class SetupPage extends Page {
     );
   }
 
-  oncreate(vnode: VnodeDOM) {
+  oncreate(vnode: VnodeDOM<PageAttributes>) {
     super.oncreate(vnode);
-    $('mwc-fab#contrast-switcher').on('click', function (this: HTMLElement) {
-      $(this).toggleClass('contrast-light').toggleClass('contrast-dark');
-      $('body').toggleClass('mdc-high-contrast');
-    });
-    $('#language-select').on('action', (event: Event) => this.onLanguageSelected(event as Event & {detail: {index: number}}));
+    $('mwc-fab#contrast-switcher')
+      .on('click', function (this: HTMLElement) {
+        $(this)
+          .toggleClass('contrast-light')
+          .toggleClass('contrast-dark');
+        $('body')
+          .toggleClass('mdc-high-contrast');
+      });
+    $('#language-select')
+      .on('action', (event: Event) => this.onLanguageSelected(event as Event & {detail: {index: number}}));
   }
 
   async onTestButtonClicked() {

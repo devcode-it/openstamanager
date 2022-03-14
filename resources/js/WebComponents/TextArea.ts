@@ -2,7 +2,7 @@ import {TextArea as MWCTextArea} from '@material/mwc-textarea';
 import {customElement} from 'lit/decorators.js';
 
 @customElement('text-area')
-export default class TextArea extends MWCTextArea {
+export class TextArea extends MWCTextArea {
   private _initialValidationMessage: string | undefined;
 
   get nativeValidationMessage() {

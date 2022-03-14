@@ -3,3 +3,5 @@ extends:
   - '@maicol07'
 globals:
   __: true
+rules:
+  import/export: 'off'

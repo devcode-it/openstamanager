@@ -3,7 +3,7 @@ import {css} from 'lit';
 import {customElement} from 'lit/decorators.js';
 
 @customElement('material-drawer')
-export default class MaterialDrawer extends MWCDrawer {
+export class MaterialDrawer extends MWCDrawer {
   static styles = [
     ...MWCDrawer.styles,
     css`

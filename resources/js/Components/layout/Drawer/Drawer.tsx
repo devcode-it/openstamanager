@@ -4,9 +4,9 @@ import {
   Vnode
 } from 'mithril';
 
-import {isMobile} from '../../utils';
-import Component from '../Component';
-import DrawerEntry from './Drawer/DrawerEntry';
+import {isMobile} from '../../../utils';
+import Component from '../../Component';
+import DrawerEntry from './DrawerEntry';
 
 export interface DrawerAttributes {
   open: boolean;

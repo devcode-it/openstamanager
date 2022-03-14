@@ -1,6 +1,6 @@
 import Page from '../Components/Page';
 
-export default class Dashboard extends Page {
+export class Dashboard extends Page {
   contents() {
     return (
       <div>

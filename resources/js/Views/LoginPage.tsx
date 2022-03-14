@@ -22,7 +22,7 @@ import {
   showSnackbar
 } from '../utils';
 
-export default class LoginPage extends Page {
+export class LoginPage extends Page {
   loading: Cash;
   forgotPasswordLoading: Cash;
 

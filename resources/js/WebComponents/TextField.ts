@@ -8,7 +8,7 @@ import {
 import {customElement, property} from 'lit/decorators.js';
 
 @customElement('text-field')
-export default class TextField extends MWCTextField {
+export class TextField extends MWCTextField {
   static styles = [...MWCTextField.styles, css`${unsafeCSS(styles)}`];
 
   @property({type: Boolean}) declare comfortable: boolean;

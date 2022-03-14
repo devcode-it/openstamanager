@@ -9,7 +9,7 @@ import redaxios from 'redaxios';
 
 import LoadingButton from '../Components/LoadingButton';
 import Mdi from '../Components/Mdi';
-import Page from '../Components/Page';
+import Page, {PageAttributes} from '../Components/Page';
 import type {ErrorResponse} from '../typings';
 import {
   getFormData,
@@ -18,7 +18,7 @@ import {
   validatePassword
 } from '../utils';
 
-export default class AdminSetupPage extends Page {
+export class AdminSetupPage extends Page {
   loading: Cash;
 
   view() {
@@ -89,9 +89,10 @@ export default class AdminSetupPage extends Page {
     );
   }
 
-  oncreate(vnode: VnodeDOM) {
+  oncreate(vnode: VnodeDOM<PageAttributes>) {
     super.oncreate(vnode);
-    this.loading = $(this.element).find('#login-button mwc-circular-progress');
+    this.loading = $(this.element)
+      .find('#login-button mwc-circular-progress');
     $(this.element)
       .find('#create-account-button')
       .on('click', this.onCreateAccountButtonClicked.bind(this));

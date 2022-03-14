@@ -15,7 +15,7 @@ import {ifDefined} from 'lit/directives/if-defined.js';
 
 // noinspection HtmlUnknownAttribute
 @customElement('icon-button')
-export default class IconButton extends MWCIconButton {
+export class IconButton extends MWCIconButton {
   static styles = [...MWCIconButton.styles, css`${unsafeCSS(styles)}`];
 
   @property({type: Boolean}) declare tight: boolean;

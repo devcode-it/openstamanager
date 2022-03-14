@@ -5,7 +5,7 @@ import {css, html} from 'lit';
 import {customElement} from 'lit/decorators.js';
 
 @customElement('material-select')
-export default class Select extends MWCSelect {
+export class Select extends MWCSelect {
   static styles = [
     ...MWCSelect.styles,
     css`

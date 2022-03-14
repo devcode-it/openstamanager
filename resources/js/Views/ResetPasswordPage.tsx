@@ -14,7 +14,7 @@ import redaxios from 'redaxios';
 
 import LoadingButton from '../Components/LoadingButton';
 import Mdi from '../Components/Mdi';
-import Page from '../Components/Page';
+import Page, {PageAttributes} from '../Components/Page';
 import {ErrorResponse} from '../typings';
 import {
   getFormData,
@@ -23,11 +23,11 @@ import {
   validatePassword
 } from '../utils';
 
-export default class ResetPasswordPage extends Page {
+export class ResetPasswordPage extends Page {
   loading: Cash;
   parameters: URLSearchParams;
 
-  oninit(vnode: Vnode) {
+  oninit(vnode: Vnode<PageAttributes>) {
     super.oninit(vnode);
     this.parameters = new URLSearchParams(window.location.search);
   }
@@ -87,13 +87,13 @@ export default class ResetPasswordPage extends Page {
     );
   }
 
-  oncreate(vnode: VnodeDOM) {
+  oncreate(vnode: VnodeDOM<PageAttributes>) {
     super.oncreate(vnode);
     this.loading = $(this.element)
       .find('#reset-password mwc-circular-progress');
   }
 
-  async onResetPasswordButtonClicked(event: PointerEvent) {
+  async onResetPasswordButtonClicked(event: MouseEvent) {
     event.preventDefault();
     this.loading.show();
     const form = $(this.element)

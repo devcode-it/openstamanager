@@ -3,8 +3,13 @@
     "resources/js"
   ],
   "delete": true,
+  "exclude": [
+    "_material.ts",
+    "app.ts",
+    "styles.ts"
+  ],
   "include": [
-    ".(ts|tsx)$"
+    ".(?<!d\\.)(ts|tsx)$"
   ],
   "location": "all",
   "singleQuotes": true

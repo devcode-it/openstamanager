@@ -22,6 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\Fatture\Fattura;
 
 $module = Modules::get($id_module);
+$module_interventi = Modules::get('Interventi');
 
 if ($module['name'] == 'Fatture di vendita') {
     $dir = 'entrata';
@@ -73,13 +74,14 @@ foreach ($rs as $key => $value) {
 
     $rs[$key]['prezzo'] = Translator::numberToLocale($prezzo);
     $rs[$key]['descrizione_intervento'] = strip_tags($rs[$key]['descrizione_intervento']);
+    $rs[$key]['info'] = $module_interventi->replacePlaceholders($value['id'], setting('Descrizione personalizzata in fatturazione')) ?:  $rs[$key]['info'];
 }
 
 // Intervento
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Intervento').'", "name": "idintervento", "required": 1, "values": '.json_encode($rs).', "extra": "onchange=\"$data = $(this).selectData(); $(\'#descrizione\').val($data.info); if($(\'#copia_descrizione\').is(\':checked\')){  $(\'#descrizione\').val($data.info + $data.descrizione_intervento); }; $(\'#prezzo\').val($data.prezzo);\"" ]}
+            {[ "type": "select", "label": "'.tr('Intervento').'", "name": "idintervento", "required": 1, "values": '.json_encode($rs).', "extra": "onchange=\"$data = $(this).selectData(); if($data){  $(\'#descrizione\').val($data.info); $(\'#prezzo\').val($data.prezzo);};\"" ]}
         </div>
 
 		<div class="col-md-6">

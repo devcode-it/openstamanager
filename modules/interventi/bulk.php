@@ -116,10 +116,9 @@ switch (post('op')) {
                 }
             }
 
-            $descrizione = tr('Attività numero _NUM_ del _DATE_ [_STATE_]', [
+            $descrizione = $module->replacePlaceholders($intervento['id'], setting('Descrizione personalizzata in fatturazione')) ?: tr('Attività numero _NUM_ del _DATE_', [
                 '_NUM_' => $intervento['codice_intervento'],
                 '_DATE_' => Translator::dateToLocale($intervento['data']),
-                '_STATE_' => $intervento['stato'],
             ]);
 
             aggiungi_intervento_in_fattura($intervento['id'], $id_documento, $descrizione, $id_iva, $id_conto);

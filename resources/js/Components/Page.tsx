@@ -22,11 +22,11 @@ export interface PageAttributes {
  *
  * @abstract
  */
-export default abstract class Page extends Component<PageAttributes> {
+export default abstract class Page<A extends PageAttributes = PageAttributes> extends Component<A> {
   title?: string;
 
-  view(vnode: Vnode<PageAttributes>) {
-    let contents = this.contents();
+  view(vnode: Vnode<A>) {
+    let contents = this.contents(vnode);
     if (contents instanceof Collection) {
       contents = contents.toArray();
     }
@@ -38,7 +38,7 @@ export default abstract class Page extends Component<PageAttributes> {
     );
   }
 
-  contents(): Children | Collection<Children> {
+  contents(vnode: Vnode<A>): Children | Collection<Children> {
     return undefined;
   }
 }

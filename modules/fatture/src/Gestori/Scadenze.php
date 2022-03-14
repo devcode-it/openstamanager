@@ -157,7 +157,7 @@ class Scadenze
         $netto = $this->fattura->isNota() ? -$netto : $netto;
 
         // Calcolo delle rate
-        $rate = $this->fattura->pagamento->calcola($netto, $this->fattura->data);
+        $rate = $this->fattura->pagamento->calcola($netto, $this->fattura->data, $this->fattura->idanagrafica);
         $direzione = $this->fattura->tipo->dir;
 
         foreach ($rate as $rata) {

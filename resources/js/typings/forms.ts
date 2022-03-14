@@ -5,8 +5,8 @@ import {
   TextFieldType
 } from '@material/mwc-textfield';
 
-import {MaterialIcons} from './icons';
 import {Model} from '../Models';
+import {MaterialIcons} from './icons';
 
 export interface FieldT {
   id?: string

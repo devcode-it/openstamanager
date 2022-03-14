@@ -61,7 +61,7 @@ export default class TableColumn extends Component<Attributes> {
             <text-field
               outlined
               className="mdc-data-table__filter-textfield"
-              label={__('Filtro') as string}
+              label={__('Filtro')}
               compact
             />
           </div>

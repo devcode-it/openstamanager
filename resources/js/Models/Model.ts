@@ -1,7 +1,7 @@
 import {
+  type PluralResponse,
   Model as BaseModel,
-  PaginationStrategy,
-  type PluralResponse
+  PaginationStrategy
 } from 'coloquent';
 import {snakeCase} from 'lodash-es';
 

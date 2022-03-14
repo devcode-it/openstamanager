@@ -6593,4 +6593,4 @@ export type MaterialIcons =
   | 'zodiac-sagittarius'
   | 'zodiac-scorpio'
   | 'zodiac-taurus'
-  | 'zodiac-virgo'
+  | 'zodiac-virgo';

@@ -3,13 +3,13 @@ import './WebComponents/IconButton';
 import './WebComponents/MaterialDrawer';
 import './WebComponents/TopAppBar';
 
+import {Inertia} from '@inertiajs/inertia';
 import {Button} from '@material/mwc-button';
 import type {Dialog as MWCDialog} from '@material/mwc-dialog';
 import {Menu as MWCMenu} from '@material/mwc-menu';
 import $ from 'cash-dom';
 
 import {IconButton} from './WebComponents';
-import {Inertia} from '@inertiajs/inertia';
 
 /**
  * Handles the click event of the trigger button of a MWC Dialog or Menu.

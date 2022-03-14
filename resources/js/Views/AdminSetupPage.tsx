@@ -2,11 +2,10 @@ import '@maicol07/mwc-card';
 import '../WebComponents/TextField';
 
 import {Inertia} from '@inertiajs/inertia';
+import logoUrl from '@openstamanager/images/logo_completo.png';
 import type {Cash} from 'cash-dom';
 import type {VnodeDOM} from 'mithril';
 import redaxios from 'redaxios';
-
-import logoUrl from '@openstamanager/images/logo_completo.png';
 
 import LoadingButton from '../Components/LoadingButton';
 import Mdi from '../Components/Mdi';

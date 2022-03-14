@@ -12,7 +12,7 @@ export interface DrawerAttributes {
   open: boolean;
 }
 
-export default class Drawer extends Component<DrawerAttributes> {
+export class Drawer extends Component<DrawerAttributes> {
   view(vnode: Vnode<DrawerAttributes>): Children {
     return (
       <material-drawer type={isMobile() ? 'modal' : 'dismissible'} open={vnode.attrs.open}>

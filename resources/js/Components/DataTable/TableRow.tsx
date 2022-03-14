@@ -6,14 +6,6 @@ import type {Children, Vnode} from 'mithril';
 import Component from '../Component';
 import TableCell from './TableCell';
 
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'TableRow': TableRow;
-    }
-  }
-}
-
 export type TableRowAttributes = {checkable?: boolean};
 
 export default class TableRow extends Component<TableRowAttributes> {

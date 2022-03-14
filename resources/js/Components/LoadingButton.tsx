@@ -6,11 +6,14 @@ import type {CircularProgress} from '@material/mwc-circular-progress';
 import type CSS from 'csstype';
 import type {VnodeDOM} from 'mithril';
 
-import {MaterialIcons} from '../typings';
+import {
+  JSXElement,
+  MaterialIcons
+} from '../typings';
 import Component from './Component';
 import Mdi from './Mdi';
 
-type Attributes = Partial<Button> & {
+type Attributes = JSXElement<Button> & {
   icon?: string
 };
 

@@ -10,14 +10,6 @@ import type {
 import Component from '../Component';
 import Mdi from '../Mdi';
 
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      TableColumn: TableColumn;
-    }
-  }
-}
-
 type Attributes = {
   type?: 'numeric' | 'checkbox',
   id?: string,

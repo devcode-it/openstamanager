@@ -16,14 +16,6 @@ import TableColumn from './TableColumn';
 import TableFooter from './TableFooter';
 import TableRow, {type TableRowAttributes} from './TableRow';
 
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      DataTable: DataTable
-    }
-  }
-}
-
 type PaginationAction = 'first' | 'next' | 'previous' | 'last';
 
 export type Attributes = {

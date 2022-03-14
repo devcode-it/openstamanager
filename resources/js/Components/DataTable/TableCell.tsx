@@ -7,14 +7,6 @@ import type {
 
 import Component from '../Component';
 
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      TableCell: TableCell;
-    }
-  }
-}
-
 type Attributes = {type?: string};
 
 export default class TableCell extends Component<Attributes> {

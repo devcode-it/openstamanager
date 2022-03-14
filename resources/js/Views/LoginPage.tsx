@@ -63,7 +63,7 @@ export default class LoginPage extends Page {
             id="login-button"
             label={__('Accedi')}
             icon="login-variant"
-            style="float: right;"
+            style={{float: 'right'}}
             onclick={this.onLoginButtonClicked.bind(this)}
           />
           <LoadingButton
@@ -89,7 +89,7 @@ export default class LoginPage extends Page {
       );
   }
 
-  async onLoginButtonClicked(event: PointerEvent) {
+  async onLoginButtonClicked(event: MouseEvent) {
     event.preventDefault();
     this.loading.show();
     const form = $(this.element)

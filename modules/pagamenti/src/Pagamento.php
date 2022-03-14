@@ -39,7 +39,7 @@ class Pagamento extends Model
         return $this->hasMany(Pagamento::class, 'descrizione', 'descrizione');
     }
 
-    public function calcola($importo, $data)
+    public function calcola($importo, $data, $id_anagrafica)
     {
         $rate = $this->rate->sortBy('num_giorni');
         $number = count($rate);
@@ -99,7 +99,14 @@ class Pagamento extends Model
                 $date->setDate($date->format('Y'), $date->format('m'), $day);
             }
 
-            // Comversione della data in stringa standard
+            // Posticipo la scadenza in base alle regole pagamenti dell'anagrafica
+            $regola_pagamento = database()->selectOne('an_pagamenti_anagrafiche', '*', ['idanagrafica' => $id_anagrafica, 'mese' => $date->format('m')]);
+            if (!empty($regola_pagamento)) {
+                $date->modify('last day of this month');
+                $date->addDay( $regola_pagamento['giorno_fisso'] );
+            }
+
+            // Conversione della data in stringa standard
             $scadenza = $date->format('Y-m-d');
 
             // All'ultimo ciclo imposto come cifra da pagare il totale della fattura meno gli importi già inseriti in scadenziario per evitare di inserire cifre arrotondate "male"

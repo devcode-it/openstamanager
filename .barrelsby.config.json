@@ -1,0 +1,11 @@
+{
+  "directory": [
+    "resources/js"
+  ],
+  "delete": true,
+  "include": [
+    ".(ts|tsx)$"
+  ],
+  "location": "all",
+  "singleQuotes": true
+}

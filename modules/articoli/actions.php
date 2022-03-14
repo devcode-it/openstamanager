@@ -66,6 +66,7 @@ switch (post('op')) {
         }
         $articolo->idconto_vendita = post('idconto_vendita');
         $articolo->idconto_acquisto = post('idconto_acquisto');
+        $articolo->abilita_serial = post('abilita_serial');
         $articolo->save();
 
         // Aggiornamento delle varianti per i campi comuni

@@ -185,7 +185,7 @@ class FatturaElettronica
             $documento = $this->getDocumento();
             $database = database();
 
-            $ddt = $database->fetchArray('SELECT `dt_ddt`.`numero_esterno` AS id_documento, `co_righe_documenti`.`order` AS riferimento_linea, `dt_ddt`.`data` FROM `dt_ddt` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idddt` = `dt_ddt`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']));
+            $ddt = $database->fetchArray('SELECT `dt_ddt`.`numero_esterno` AS id_documento, `co_righe_documenti`.`order` AS riferimento_linea, `dt_ddt`.`data`, `dt_ddt`.`codice_cig`, `dt_ddt`.`codice_cup`, `dt_ddt`.`num_item`, `dt_ddt`.`id_documento_fe` FROM `dt_ddt` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idddt` = `dt_ddt`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']));
 
             $dati_aggiuntivi = $documento->dati_aggiuntivi_fe;
             $dati = $dati_aggiuntivi['dati_ddt'] ?: [];
@@ -1152,6 +1152,22 @@ class FatturaElettronica
 
             if (!empty($element['riferimento_linea'])) {
                 $dati['RiferimentoNumeroLinea'] = $element['riferimento_linea'];
+            }
+
+            if (!empty($element['id_documento_fe'])) {
+                $dati['IdDocumento'] = $element['id_documento_fe'];
+            }
+
+            if (!empty($element['num_item'])) {
+                $dati['NumItem'] = $element['num_item'];
+            }
+
+            if (!empty($element['codice_cup'])) {
+                $dati['CodiceCUP'] = $element['codice_cup'];
+            }
+
+            if (!empty($element['codice_cig'])) {
+                $dati['CodiceCIG'] = $element['codice_cig'];
             }
 
             $result[] = $dati;

@@ -138,6 +138,7 @@ class Prints
      * @param int        $id_record
      * @param string     $directory
      * @param bool       $return_string
+     * @param bool       $overwrite
      */
     public static function render($print, $id_record, $directory = null, $return_string = false, $overwrite = true)
     {

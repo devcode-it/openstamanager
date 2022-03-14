@@ -690,7 +690,7 @@ class FatturaElettronica
 
         // Partita IVA: se privato estero non va considerato il codice fiscale ma la partita iva con 9 zeri
         if ($is_privato_estero) {
-            $result['IdFiscaleIVA']['IdPaese'] = 'OO';
+            $result['IdFiscaleIVA']['IdPaese'] = $anagrafica->nazione->iso2;
             $result['IdFiscaleIVA']['IdCodice'] = '99999999999';
             unset($result['CodiceFiscale']);
         }

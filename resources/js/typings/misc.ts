@@ -1,3 +1,4 @@
+import type {Properties as CSSProperties} from 'csstype';
 import type {CommonAttributes} from 'mithril';
 import type {Response} from 'redaxios';
 
@@ -6,7 +7,7 @@ export type ErrorResponse = Response<{errors: Record<string, string>}>;
 export type JSXElement<T> = Omit<Partial<T>, 'children' | 'style'>
 & CommonAttributes<any, any>
 & {
-  style?: string | Partial<CSSStyleDeclaration>
+  style?: string | CSSProperties
 };
 
 export declare namespace JSONAPI {

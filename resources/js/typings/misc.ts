@@ -5,10 +5,12 @@ import type {Response} from 'redaxios';
 export type ErrorResponse = Response<{errors: Record<string, string>}>;
 
 export type JSXElement<T> = Omit<Partial<T>, 'children' | 'style'>
-& CommonAttributes<any, any>
-& {
+  & CommonAttributes<any, any>
+  & {
   style?: string | CSSProperties
 };
+
+export type ValueOf<T> = T[keyof T];
 
 export declare namespace JSONAPI {
 

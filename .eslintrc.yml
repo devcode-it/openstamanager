@@ -5,3 +5,4 @@ globals:
   __: true
 rules:
   import/export: 'off'
+  import/no-cycle: 'off'

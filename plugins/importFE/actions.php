@@ -285,11 +285,18 @@ switch (filter('op')) {
         $DatiOrdini = $fattura_pa->getBody()['DatiGenerali']['DatiOrdineAcquisto'];
         $DatiDDT = $fattura_pa->getBody()['DatiGenerali']['DatiDDT'];
 
+        $replaces = ['n ','N ','n. ','N. ','nr ','NR ','nr. ','NR. ','num ','NUM ','num. ','NUM. ','numero ','NUMERO '];
 
         // Riorganizzazione dati ordini per numero di riga
         $dati_ordini = [];
         foreach ($DatiOrdini as $dato) {
             foreach ($dato['RiferimentoNumeroLinea'] as $dati => $linea) {
+                foreach ($replaces as $replace) {
+                    if(string_starts_with($dato['IdDocumento'], $replace)) {
+                        $dato['IdDocumento'] = str_replace($replace, '', $dato['IdDocumento']);
+                        break;
+                    }
+                }
                 $dati_ordini[(int)$linea] = [
                     'numero' => $dato['IdDocumento'],
                     'anno' => ( new Carbon($dato['Data']) )->format('Y'),
@@ -301,6 +308,12 @@ switch (filter('op')) {
         $dati_ddt = [];
         foreach ($DatiDDT as $dato) {
             foreach ($dato['RiferimentoNumeroLinea'] as $dati => $linea) {
+                foreach ($replaces as $replace) {
+                    if(string_starts_with($dato['NumeroDDT'], $replace)) {
+                        $dato['NumeroDDT'] = str_replace($replace, '', $dato['NumeroDDT']);
+                        break;
+                    }
+                }
                 $dati_ddt[(int)$linea] = [
                     'numero' => $dato['NumeroDDT'],
                     'anno' => ( new Carbon($dato['DataDDT']) )->format('Y'),
@@ -370,7 +383,6 @@ switch (filter('op')) {
 
             // Ricerca di righe DDT per stessa descrizione
             if (empty($collegamento)) {
-                $match_documento_da_fe = false;
                 $query_descrizione = replace($query, [
                     '|where|' => 'dt_righe_ddt.descrizione = '.prepare($riga['Descrizione']),
                 ]);
@@ -388,9 +400,9 @@ switch (filter('op')) {
                 FROM or_righe_ordini
                     INNER JOIN or_ordini ON or_ordini.id = or_righe_ordini.idordine
                 WHERE
-                    or_ordini.numero_esterno = ".prepare($ddt['numero'])."
+                    or_ordini.numero_esterno = ".prepare($ordine['numero'])."
                     AND
-                    YEAR(or_ordini.data) = ".prepare($ddt['anno'])."
+                    YEAR(or_ordini.data) = ".prepare($ordine['anno'])."
                     AND
                     or_ordini.idanagrafica = ".prepare($anagrafica->id)."
                     AND

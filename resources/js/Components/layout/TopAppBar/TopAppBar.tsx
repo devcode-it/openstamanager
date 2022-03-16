@@ -5,22 +5,21 @@ import {
   Drawer,
   Footer,
   InertiaLink,
-  Mdi
+  Mdi,
+  TopAppBarAction
 } from '@osm/Components';
-import logo from '@osm-images/logo.png';
 import {
   isMobile,
   Request
 } from '@osm/utils';
 import {IconButton} from '@osm/WebComponents';
+import logo from '@osm-images/logo.png';
 import {collect} from 'collect.js';
 import {
   Vnode,
   VnodeDOM
 } from 'mithril';
 import prntr from 'prntr';
-
-import {TopAppBarAction} from './TopAppBar/TopAppBarAction';
 
 export interface TopAppBarAttributes {
 }

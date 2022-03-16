@@ -22,7 +22,7 @@ type Attributes = JSXElement<Button> & {
 export class LoadingButton extends Component<Attributes> {
   view() {
     return ( // @ts-ignore
-      <mwc-button {...this.attrs.all()}>
+      <mwc-button type="loading-button" {...this.attrs.all()}>
         <span slot="icon" style="display: inline;">
           <mwc-circular-progress
             indeterminate

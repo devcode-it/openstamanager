@@ -1,17 +1,18 @@
 import {ListItem as MWCListItem} from '@material/mwc-list/mwc-list-item';
+import {
+  Component,
+  InertiaLink,
+  Mdi
+} from '@osm/Components';
+import {MaterialIcons} from '@osm/typings';
 import {Vnode} from 'mithril';
-
-import {MaterialIcons} from '../../../typings';
-import Component from '../../Component';
-import InertiaLink from '../../InertiaLink';
-import Mdi from '../../Mdi';
 
 export interface DrawerEntryAttributes {
   route: string;
   icon: MaterialIcons;
 }
 
-export default class DrawerEntry extends Component<DrawerEntryAttributes> {
+export class DrawerEntry extends Component<DrawerEntryAttributes> {
   view(vnode: Vnode<DrawerEntryAttributes>) {
     return (
       <InertiaLink className="drawer-item" href={route(vnode.attrs.route)}

@@ -2,14 +2,17 @@ import '@maicol07/mwc-card';
 import '../WebComponents/TextField';
 
 import {Inertia} from '@inertiajs/inertia';
-import logoUrl from '@openstamanager/images/logo_completo.png';
+import {
+  LoadingButton,
+  Mdi,
+  Page,
+  PageAttributes
+} from '@osm/Components';
+import logoUrl from '@osm-images/logo_completo.png';
 import type {Cash} from 'cash-dom';
 import type {VnodeDOM} from 'mithril';
 import redaxios from 'redaxios';
 
-import LoadingButton from '../Components/LoadingButton';
-import Mdi from '../Components/Mdi';
-import Page, {PageAttributes} from '../Components/Page';
 import type {ErrorResponse} from '../typings';
 import {
   getFormData,

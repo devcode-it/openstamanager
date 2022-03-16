@@ -8,10 +8,12 @@ import m, {
 } from 'mithril';
 
 interface Attributes<T> extends Collection<T> {
-  addClassNames(...classNames: ClassNames[]): void
-  addStyles(...styles: string[]): void
+  addClassNames(...classNames: ClassNames[]): void;
+
+  addStyles(...styles: string[]): void;
 }
-// noinspection SpellCheckingInspection,JSUnusedGlobalSymbols
+
+// noinspection SpellCheckingInspection,JSUnusedGlobalSymbols,JSUnusedLocalSymbols
 
 /**
  * @abstract
@@ -41,7 +43,7 @@ interface Attributes<T> extends Collection<T> {
  * @see https://js.org/components.html
  */
 
-export default abstract class Component<A = {}> implements ClassComponent<A> {
+export abstract class Component<A = {}> implements ClassComponent<A> {
   /**
    * The root DOM element for the component.
    *

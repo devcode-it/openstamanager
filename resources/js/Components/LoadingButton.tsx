@@ -3,6 +3,10 @@ import '@material/mwc-button';
 
 import type {Button} from '@material/mwc-button';
 import type {CircularProgress} from '@material/mwc-circular-progress';
+import {
+  Component,
+  Mdi
+} from '@osm/Components';
 import type CSS from 'csstype';
 import type {VnodeDOM} from 'mithril';
 
@@ -10,14 +14,12 @@ import {
   JSXElement,
   MaterialIcons
 } from '../typings';
-import Component from './Component';
-import Mdi from './Mdi';
 
 type Attributes = JSXElement<Button> & {
   icon?: string
 };
 
-class LoadingButton extends Component<Attributes> {
+export class LoadingButton extends Component<Attributes> {
   view() {
     return ( // @ts-ignore
       <mwc-button {...this.attrs.all()}>
@@ -60,5 +62,3 @@ class LoadingButton extends Component<Attributes> {
       ?.setAttribute('density', '-7');
   }
 }
-
-export default LoadingButton;

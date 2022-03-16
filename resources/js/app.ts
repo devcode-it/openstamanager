@@ -39,9 +39,8 @@ await createInertiaApp({
 
     if (split.length === 1) {
       // Load bundled page
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const {default: page}: {default: Page} = await import(`./Views/${name}.tsx`);
-      return page;
+      const imported = await import(`./Views/${name}.tsx`) as Record<string, Page | any>;
+      return imported[name] as ClassComponent;
     }
 
     // Load page from module

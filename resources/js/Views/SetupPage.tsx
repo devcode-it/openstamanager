@@ -10,14 +10,20 @@ import '../WebComponents/TextArea';
 import '../WebComponents/TextField';
 import '../WebComponents/Select';
 
-import logoUrl from '@openstamanager/images/logo_completo.png';
+import {
+  Mdi,
+  Page,
+  PageAttributes
+} from '@osm/Components';
+import logoUrl from '@osm-images/logo_completo.png';
 import type CSS from 'csstype';
 import LocaleCode from 'locale-code';
-import type {Vnode, VnodeDOM} from 'mithril';
+import type {
+  Vnode,
+  VnodeDOM
+} from 'mithril';
 import redaxios, {Response} from 'redaxios';
 
-import Mdi from '../Components/Mdi';
-import Page, {PageAttributes} from '../Components/Page';
 import {
   getFormData,
   showSnackbar

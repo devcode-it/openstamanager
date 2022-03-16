@@ -1,20 +1,22 @@
 import '@material/mwc-linear-progress';
 import '@material/mwc-list/mwc-list-item.js';
-import '../../WebComponents/Select';
+import '@osm/WebComponents/Select';
 
 import type {LinearProgress as MWCLinearProgress} from '@material/mwc-linear-progress';
+import {
+  type TableRowAttributes,
+  Component,
+  Mdi,
+  TableColumn,
+  TableFooter,
+  TableRow
+} from '@osm/Components';
 import type {Cash} from 'cash-dom';
 import type {
   Children,
   Vnode,
   VnodeDOM
 } from 'mithril';
-
-import Component from '../Component';
-import Mdi from '../Mdi';
-import TableColumn from './TableColumn';
-import TableFooter from './TableFooter';
-import TableRow, {type TableRowAttributes} from './TableRow';
 
 type PaginationAction = 'first' | 'next' | 'previous' | 'last';
 
@@ -26,7 +28,7 @@ export type Attributes = {
   paginated?: boolean
 };
 
-export default class DataTable extends Component<Attributes> {
+export class DataTable extends Component<Attributes> {
   rows: Children[] = [];
   columns: Children[];
   footer: Children[];

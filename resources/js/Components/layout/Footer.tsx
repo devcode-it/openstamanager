@@ -1,6 +1,6 @@
-import Component from '../Component';
+import {Component} from '../Component';
 
-export default class Footer extends Component {
+export class Footer extends Component {
   view() {
     return (
       <footer className={app.theme === 'high-contrast' ? 'mdc-high-contrast' : undefined}>

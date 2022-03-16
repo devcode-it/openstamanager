@@ -1,11 +1,11 @@
 import {MaterialIcons} from '../typings';
-import Component from './Component';
+import {Component} from './Component';
 
 type Attributes = {
   icon?: MaterialIcons
 };
 
-export default class Mdi extends Component<Attributes> {
+export class Mdi extends Component<Attributes> {
   view() {
     this.attrs.addClassNames('mdi', `mdi-${this.attrs.pull('icon') as string}`);
     return <i {...this.attrs.all()} />;

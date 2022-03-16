@@ -6,6 +6,30 @@ import '@material/mwc-snackbar';
 
 import type {Button as MWCButton} from '@material/mwc-button';
 import type {Dialog as MWCDialog} from '@material/mwc-dialog';
+import {
+  DataTable,
+  LoadingButton,
+  Mdi,
+  PageAttributes,
+  TableCell,
+  TableColumn,
+  TableRow
+} from '@osm/Components';
+import {Model} from '@osm/Models';
+import type {
+  FieldT,
+  SelectOptionsT,
+  SelectT,
+  TextAreaT,
+  TextFieldT
+} from '@osm/typings';
+import {JSONAPI} from '@osm/typings';
+import {
+  getFormData,
+  isFormValid,
+  showSnackbar
+} from '@osm/utils';
+import type {Select} from '@osm/WebComponents';
 import type {Cash} from 'cash-dom';
 import collect, {type Collection} from 'collect.js';
 import {
@@ -20,32 +44,7 @@ import type {
 } from 'mithril';
 import {sync as render} from 'mithril-node-render';
 
-import {
-  IModel,
-  InstantiableModel,
-  Model
-} from '../../Models';
-import type {
-  FieldT,
-  SelectOptionsT,
-  SelectT,
-  TextAreaT,
-  TextFieldT
-} from '../../typings';
-import {JSONAPI} from '../../typings';
-import {
-  getFormData,
-  isFormValid,
-  showSnackbar
-} from '../../utils';
-import type {Select} from '../../WebComponents';
-import DataTable from '../DataTable/DataTable';
-import TableCell from '../DataTable/TableCell';
-import TableColumn from '../DataTable/TableColumn';
-import TableRow from '../DataTable/TableRow';
-import LoadingButton from '../LoadingButton';
-import Mdi from '../Mdi';
-import Page from '../Page';
+import {Page} from '../Page';
 
 export type ColumnT = {
   id?: string
@@ -327,7 +326,7 @@ export class RecordsPage extends Page {
     );
   }
 
-  oncreate(vnode: VnodeDOM) {
+  oncreate(vnode: VnodeDOM<PageAttributes>) {
     super.oncreate(vnode);
 
     const fab: Cash = $('mwc-fab#add-record');

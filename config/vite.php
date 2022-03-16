@@ -44,8 +44,9 @@ return [
     | https://laravel-vite.dev/configuration/laravel-package.html#aliases
     */
     'aliases' => [
-        '@openstamanager/images' => 'public/images',
-        '@openstamanager/scss' => 'resources/scss',
+        '@osm' => 'resources/js',
+        '@osm-images' => 'public/images',
+        '@osm-scss' => 'resources/scss',
     ],
 
     /*

@@ -1,12 +1,12 @@
+import {isMobile} from '@osm/utils';
 import {collect} from 'collect.js';
 import {
   Children,
   Vnode
 } from 'mithril';
 
-import {isMobile} from '../../../utils';
-import Component from '../../Component';
-import DrawerEntry from './DrawerEntry';
+import {Component} from '../../Component';
+import {DrawerEntry} from './DrawerEntry';
 
 export interface DrawerAttributes {
   open: boolean;

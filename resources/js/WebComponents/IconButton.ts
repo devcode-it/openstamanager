@@ -1,5 +1,5 @@
 import {IconButton as MWCIconButton} from '@material/mwc-icon-button';
-import styles from '@openstamanager/scss/material/icon-button.scss';
+import styles from '@osm-scss/material/icon-button.scss';
 import classnames from 'classnames';
 import {
   type TemplateResult,

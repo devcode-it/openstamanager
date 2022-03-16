@@ -1,14 +1,19 @@
 import '@material/mwc-checkbox';
 
 import {collect} from 'collect.js';
-import type {Children, Vnode} from 'mithril';
+import type {
+  Children,
+  Vnode
+} from 'mithril';
 
-import Component from '../Component';
-import TableCell from './TableCell';
+import {Component} from '../Component';
+import {TableCell} from './TableCell';
 
-export type TableRowAttributes = {checkable?: boolean};
+export interface TableRowAttributes {
+  checkable?: boolean;
+}
 
-export default class TableRow extends Component<TableRowAttributes> {
+export class TableRow extends Component<TableRowAttributes> {
   view(vnode: Vnode<TableRowAttributes>) {
     this.attrs.addClassNames('mdc-data-table__row');
     return (

@@ -255,7 +255,9 @@
     </inspection_tool>
     <inspection_tool class="EmptyTryBlockJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="EncryptionInitializationVectorRandomnessInspection" enabled="true" level="ERROR" enabled_by_default="true" />
-    <inspection_tool class="Eslint" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="Eslint" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <option name="useSeverityFromConfigFile" value="false" />
+    </inspection_tool>
     <inspection_tool class="ExceptionCaughtLocallyJS" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ExitUsageCorrectnessInspection" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="ExplodeLimitUsageInspection" enabled="true" level="WARNING" enabled_by_default="true" />

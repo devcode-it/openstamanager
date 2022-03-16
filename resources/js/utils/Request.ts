@@ -14,7 +14,7 @@ export interface RequestOptionsWithUrl extends RequestOptions {
   url: string;
 }
 
-export default class Request {
+export class Request {
   options: RequestOptionsWithUrl = {
     url: '',
     headers: {

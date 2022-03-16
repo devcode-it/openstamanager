@@ -5,11 +5,11 @@ import type {
   VnodeDOM
 } from 'mithril';
 
-import Component from '../Component';
+import {Component} from '../Component';
 
 type Attributes = {type?: string};
 
-export default class TableCell extends Component<Attributes> {
+export class TableCell extends Component<Attributes> {
   view(vnode: Vnode) {
     this.attrs.addClassNames('mdc-data-table__cell', {
       [`mdc-data-table__cell--${this.attrs.get('type') as string}`]: this.attrs.has(

@@ -21,10 +21,13 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@openstamanager/images/*": [
+      "@osm/*": [
+        "resources/js/*"
+      ],
+      "@osm-images/*": [
         "public/images/*"
       ],
-      "@openstamanager/scss/*": [
+      "@osm-scss/*": [
         "resources/scss/*"
       ]
     }

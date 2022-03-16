@@ -1,6 +1,18 @@
 import {Inertia} from '@inertiajs/inertia';
 import {Menu} from '@material/mwc-menu';
-import logo from '@openstamanager/images/logo.png';
+import {
+  Component,
+  Drawer,
+  Footer,
+  InertiaLink,
+  Mdi
+} from '@osm/Components';
+import logo from '@osm-images/logo.png';
+import {
+  isMobile,
+  Request
+} from '@osm/utils';
+import {IconButton} from '@osm/WebComponents';
 import {collect} from 'collect.js';
 import {
   Vnode,
@@ -8,20 +20,12 @@ import {
 } from 'mithril';
 import prntr from 'prntr';
 
-import {isMobile} from '../../utils';
-import Request from '../../utils/Request';
-import {IconButton} from '../../WebComponents';
-import Component from '../Component';
-import InertiaLink from '../InertiaLink';
-import Mdi from '../Mdi';
-import Drawer from './Drawer';
-import Footer from './Footer';
-import TopAppBarAction from './TopAppBar/TopAppBarAction';
+import {TopAppBarAction} from './TopAppBar/TopAppBarAction';
 
 export interface TopAppBarAttributes {
 }
 
-export default class TopAppBar extends Component<TopAppBarAttributes> {
+export class TopAppBar extends Component<TopAppBarAttributes> {
   open = !isMobile();
   actionItems: Record<string, HTMLElement | IconButton | null> = {};
   menuItems: Record<string, HTMLElement | Menu | null> = {};

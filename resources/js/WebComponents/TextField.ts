@@ -1,5 +1,5 @@
 import {TextField as MWCTextField} from '@material/mwc-textfield';
-import styles from '@openstamanager/scss/material/text-field.scss';
+import styles from '@osm-scss/material/text-field.scss';
 import {waitUntil} from 'async-wait-until';
 import classnames from 'classnames';
 import {

@@ -4,8 +4,8 @@ import {
   Vnode
 } from 'mithril';
 
-import Component from './Component';
-import TopAppBar from './layout/TopAppBar';
+import {Component} from './Component';
+import {TopAppBar} from './layout/TopAppBar';
 
 export interface PageAttributes {
   page: {
@@ -17,12 +17,13 @@ export interface PageAttributes {
   };
 }
 
+// noinspection JSUnusedLocalSymbols
 /**
  * The `Page` component
  *
  * @abstract
  */
-export default abstract class Page<A extends PageAttributes = PageAttributes> extends Component<A> {
+export abstract class Page<A extends PageAttributes = PageAttributes> extends Component<A> {
   title?: string;
 
   view(vnode: Vnode<A>) {

@@ -7,8 +7,8 @@ import type {
   VnodeDOM
 } from 'mithril';
 
-import Component from '../Component';
-import Mdi from '../Mdi';
+import {Component} from '../Component';
+import {Mdi} from '../Mdi';
 
 type Attributes = {
   type?: 'numeric' | 'checkbox',
@@ -17,7 +17,7 @@ type Attributes = {
   filterable?: boolean,
 };
 
-export default class TableColumn extends Component<Attributes> {
+export class TableColumn extends Component<Attributes> {
   view(vnode: Vnode) {
     this.attrs.addClassNames('mdc-data-table__header-cell', {
       [`mdc-data-table__header-cell--${this.attrs.get(

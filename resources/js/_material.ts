@@ -10,6 +10,11 @@ import {Menu as MWCMenu} from '@material/mwc-menu';
 import $ from 'cash-dom';
 
 import {IconButton} from './WebComponents';
+import {
+  CircularProgressManager,
+  DialogManager,
+  LoadingButtonManager
+} from '@osm/Components/Managers';
 
 /**
  * Handles the click event of the trigger button of a MWC Dialog or Menu.
@@ -45,6 +50,19 @@ function loadTriggers() {
   }
 }
 
+function loadManagers() {
+  const managers = [DialogManager, CircularProgressManager, LoadingButtonManager];
+
+  for (const Manager of managers) {
+    for (const element of document.querySelectorAll<HTMLElement>(Manager.selector)) {
+      // eslint-disable-next-line unicorn/no-array-callback-reference
+      if (Manager.filter(element)) {
+        app.components[element.id] = new Manager(element);
+      }
+    }
+  }
+}
+
 /**
  * Better forms accessibility
  * @example https://codesandbox.io/s/test-mwc-button-form-submit-zqgo5i?file=/src/index.ts
@@ -70,6 +88,7 @@ function betterFormsAccessibility() {
 Inertia.on('navigate', () => {
   loadTriggers();
   betterFormsAccessibility();
+  loadManagers();
 
   // Remove the ugly underline under mwc button text when inside <a> tags.
   $('a')

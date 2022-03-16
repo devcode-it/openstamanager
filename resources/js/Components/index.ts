@@ -8,6 +8,7 @@ export * from './extend';
 export * from './InertiaLink';
 export * from './layout';
 export * from './LoadingButton';
+export * from './Managers';
 export * from './Mdi';
 export * from './Page';
 export * from './Pages';

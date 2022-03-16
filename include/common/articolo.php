@@ -142,7 +142,6 @@ $("#idarticolo").on("change", function() {
         $("#prezzivendita").html("");
         $("#prezziacquisto").html("");
         $("#prezzo_unitario").val("");
-        $("#sconto").val("");
     }
 
     if (!$(this).val()) {

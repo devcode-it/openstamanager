@@ -1345,14 +1345,14 @@ class FatturaElettronica
 
             // 2.2.1.3
             if ($riga->isArticolo()) {
-                //$tipo_codice = $database->fetchOne('SELECT `mg_categorie`.`nome` FROM `mg_categorie` INNER JOIN `mg_articoli` ON `mg_categorie`.`id` = `mg_articoli`.`id_categoria` WHERE `mg_articoli`.`id` = '.prepare($riga['idarticolo']))['nome'];
+                if (!empty($riga->codice)) {
+                    $codice_articolo = [
+                        'CodiceTipo' => 'COD',
+                        'CodiceValore' => $riga->codice,
+                    ];
 
-                $codice_articolo = [
-                    'CodiceTipo' => 'COD',
-                    'CodiceValore' => $riga->codice,
-                ];
-
-                $dettaglio['CodiceArticolo'] = $codice_articolo;
+                    $dettaglio['CodiceArticolo'] = $codice_articolo;
+                }
             }
 
             // Non ammesso ’

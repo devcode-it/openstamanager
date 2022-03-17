@@ -246,6 +246,63 @@ switch (post('op')) {
         }
         break;
 
+    case 'export-ricevute-bulk':
+        $dir = base_dir().'/files/export_fatture/';
+        directory($dir.'tmp/');
+
+        $dir = slashes($dir);
+        $zip = slashes($dir.'ricevute_'.time().'.zip');
+
+        // Rimozione dei contenuti precedenti
+        $files = glob($dir.'/*.zip');
+        foreach ($files as $file) {
+            delete($file);
+        }
+
+        // Selezione delle fatture da esportare
+        $fatture = $dbo->fetchArray('SELECT co_documenti.id, numero_esterno, data, ragione_sociale, co_tipidocumento.descrizione, co_tipidocumento.dir FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id WHERE co_documenti.id IN('.implode(',', $id_records).')');
+
+        $failed = [];
+        $added = 0;
+        if (!empty($fatture)) {
+            foreach ($fatture as $r) {
+                $fattura = Fattura::find($r['id']);
+                $zz_file = $dbo->table('zz_files')->where('id_module', '=', $id_module)->where('id_record', '=', $fattura->id)->where('name', 'like', 'Ricevuta%')->first();
+                $src = basename($fattura->uploads()->where('id', $zz_file->id)->first()->filepath);
+                $dst = basename($fattura->uploads()->where('id', $zz_file->id)->first()->original_name);
+
+                $file = slashes($module->upload_directory.'/'.$src);
+                $dest = slashes($dir.'tmp/'.$dst);
+
+                $result = copy($file, $dest);
+
+                if ($result) {
+                    ++$added;
+                //operationLog('export-xml-bulk', ['id_record' => $r['id']]);
+                } else {
+                    $failed[] = $fattura->numero_esterno;
+                }
+            }
+
+            // Creazione zip
+            if (extension_loaded('zip') and !empty($added)) {
+                Zip::create($dir.'tmp/', $zip);
+
+                // Invio al browser il file zip
+                download($zip);
+
+                // Rimozione dei contenuti
+                delete($dir.'tmp/');
+            }
+
+            if (!empty($failed)) {
+                flash()->warning(tr('Le ricevute _LIST_ non sono state incluse poichè non ancora generate o non presenti sul server', [
+                    '_LIST_' => implode(', ', $failed),
+                ]));
+            }
+        }
+        break;
+
     case 'copy-bulk':
         $list = [];
         foreach ($id_records as $id) {
@@ -549,6 +606,17 @@ $operations['export-xml-bulk'] = [
     'data' => [
         'title' => '',
         'msg' => tr('Vuoi davvero esportare le fatture elettroniche selezionate in un archivio ZIP?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => true,
+    ],
+];
+
+$operations['export-ricevute-bulk'] = [
+    'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta ricevute').'</span>',
+    'data' => [
+        'title' => '',
+        'msg' => tr('Vuoi davvero esportare le ricevute selezionate in un archivio ZIP?'),
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => true,

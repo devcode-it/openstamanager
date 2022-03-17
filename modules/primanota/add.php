@@ -142,15 +142,11 @@ foreach ($id_documenti as $id_documento) {
     $conto_field = 'idconto_'.($dir == 'entrata' ? 'vendite' : 'acquisti');
     $id_conto_aziendale = $banca->id_pianodeiconti3 ?: ($fattura->pagamento[$conto_field] ?: setting('Conto aziendale predefinito'));
 
-    // Predisposizione conto crediti clienti
-    $conto_field = 'idconto_'.($dir == 'entrata' ? 'cliente' : 'fornitore');
-    $id_conto_controparte = $fattura->anagrafica[$conto_field];
-
     // Se sto registrando un insoluto, leggo l'ultima scadenza pagata altrimenti leggo la scadenza della fattura
     if ($is_insoluto) {
-        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare) AS rata, iddocumento FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) = ABS(pagato) ORDER BY updated_at DESC LIMIT 0, 1');
+        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare) AS rata, iddocumento, tipo FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) = ABS(pagato) ORDER BY updated_at DESC LIMIT 0, 1');
     } else {
-        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, iddocumento FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato)'.(!empty($id_scadenze) ? 'AND id IN('.implode(',', $id_scadenze).')' : '').' ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
+        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, iddocumento, tipo FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato)'.(!empty($id_scadenze) ? 'AND id IN('.implode(',', $id_scadenze).')' : '').' ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
     }
 
     // Selezione prima scadenza
@@ -162,6 +158,14 @@ foreach ($id_documenti as $id_documento) {
 
     // Riga controparte
     foreach ($scadenze as $scadenza) {
+        // Predisposizione conto
+        if ($scadenza['tipo'] == 'ritenutaacconto') {
+            $id_conto_controparte = setting("Conto per Erario c/ritenute d'acconto");
+        } else {
+            $conto_field = 'idconto_'.($dir == 'entrata' ? 'cliente' : 'fornitore');
+            $id_conto_controparte = $fattura->anagrafica[$conto_field];
+        }
+
         $righe_documento[] = [
             'iddocumento' => $scadenza['iddocumento'],
             'id_scadenza' => $scadenza['id'],

@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.31 (2022-03-18)](#2431-2022-03-18)
 - [2.4.30 (2022-02-04)](#2430-2022-02-05)
 - [2.4.29 (2022-01-28)](#2429-2022-01-28)
 - [2.4.28 (2021-12-13)](#2428-2021-12-13)
@@ -40,6 +41,85 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.3 (2018-02-16)](#23-2018-02-16)
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
+
+## 2.4.31 (2022-03-18)
+
+### Aggiunto (Added)
+ - Aggiunta possibilità di aggiungere **Impianti** dalla scheda attività
+ - Aggiunto controllo **MySQL** per i requisiti
+ - Aggiunta ricerca mail referente per sede in invio mail
+ - Aggiunta numerazione per **mese** per Contratti, Preventivi, Ordini
+ - Aggiunta **dicitura** fissa nei segmenti fiscali
+ - Aggiunta azione di gruppo unisci **rdo**
+ - Aggiunta colonna **Inviato** in Scadenzario
+ - Imposta data fine sessione in base al **tempo standard**
+ - Aggiunta azione di gruppo **Emetti fatture**
+ - Aggiunto campo **barcode** nel listino fornitori 
+ - Aggiunta importazione dettagli fornitore per gli articoli
+ - Aggiunta **ricerca** articolo per barcode fornitore
+ - Aggiunto creazione al volo referente e contratto in creazione attività 
+ - Aggiunta impostazione scelta colore sessioni dashboard
+ - Aggiunto **link** listino articolo in fase di aggiunta riga 
+ - Aggiunta impostazione per mantenere tutti i riferimenti nelle righe
+ - Aggiunta colonna **Codice** in Anagrafiche 
+ - Aggiunta informazione Esigibilità IVA in fase di creazione aliquota
+ - Aggiunte configurazioni per gestione **immagini** in fase di import articoli
+ - Aggiunta gestione righe dinamiche per i modelli prima nota 
+ - Seleziona tutte le righe in fase di importazione tra documenti
+ - Aggiunta opzione formattazione HTML in viste per campi ckeditor
+ - Aggiunta colonna **Servizio** per vista Articoli
+ - Aggiunti pagamenti **predefiniti** per importazione FE
+ - Gestione stampa definitiva registri iva
+ - Aggiunto **coefficiente** di vendita in articoli e azione di gruppo collegata
+ - Aggiunte colonne codice e barcode fornitore in listini
+ - Aggiunta campi in import anagrafiche 
+ - Creazione **attività** da Preventivo
+ - Aggiunta azione di gruppo per esportazione PDF prima nota
+ - Badge contatore numero record all'interno del plugin 
+ - Aggiunta possibilità di tornare all'elenco delle fatture da registrazione di prima nota
+ - Aggiunto plugin **Regole pagamenti** in Anagrafiche 
+ - Aggiunta impostazione per personalizzare **dicitura** riferimento attività
+ - Aggiunto abilita serial in fase di creazione articolo
+ - Aggiunto plugin **Registrazioni** in Fatture
+ - Aggiunta azione massiva export **ricevute** FE
+ 
+### Modificato (Changed)
+ - Aggiornato **README**
+ - Migliorie per dichiarazione d'intento
+ - Spostamento generazione xml nella classe Fattura 
+ - Verifica numerazione DDT 
+ - Ampliamento visualizzazione movimenti contabili
+ - Miglioramenti dati **trasporto** fattura accompagnatoria
+ - Miglioramento importazione FE sui riferimenti dei documenti
+ - Spostamento stampa riepilogo nelle azioni di gruppo
+ - Modifiche modulo **Piano dei conti**
+ - Modifiche stampe **registri iva**
+ - Predisposizione conti registrazione contabile ritenuta
+ 
+### Fixed
+ - Fix stampa consuntivo contratto/preventivo
+ - Fix messaggio firma mancante
+ - Fix creazione seriali
+ - Fix aggiunta referente
+ - Fix codice aliquota iva e validazione
+ - Fix nascondi prezzi al tecnico in fase di modifica sessione
+ - Fix prezzi al cambio della tipologia in modifica sessione tecnico
+ - Fix ricerca globale dal menù
+ - Fix prima nota scadenze generiche
+ - Fix generazione causale in fase di registrazione scadenze
+ - Fix calcolo e visualizzazione sconto in fattura
+ - Fix creazione nota di credito da ddt
+ - Fix chiusura bilancio
+ - Fix visualizzazione tipo documento in stampa Fattura di vendita
+ - Fix visualizzazione campi personalizzati
+ - Fix stampa fattura elettronica di acquisto
+ - Fix conteggio righe collegate ad unità di misura
+ - Fix per tipologia ritenuta acconto in FE
+ - Fix widget valore magazzino
+ - Fix destinatari in fase di invio mail
+ - Fix importazione FE con codice articolo vuoto
+ - Fix selezione seriali in fase di creazione documento 
+ - Fix PEC per variabili email
 
 ## 2.4.30 (2022-02-05)
 

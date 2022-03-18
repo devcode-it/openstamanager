@@ -349,10 +349,12 @@ HTMLBuilder\HTMLBuilder::setRecord($record);
 
 if ($structure->permission == 'rw') {
     // Esecuzione delle operazioni di gruppo
-    $id_records = post('id_records');
-    $id_records = is_array($id_records) ? $id_records : explode(';', $id_records);
-    $id_records = array_clean($id_records);
-    $id_records = array_unique($id_records);
+    if (!empty(post('id_records'))){
+        $id_records = post('id_records');
+        $id_records = is_array($id_records) ? $id_records : explode(';', $id_records);
+        $id_records = array_clean($id_records);
+        $id_records = array_unique($id_records);
+    }
 
     $bulk = $structure->filepath('bulk.php');
     $bulk = empty($bulk) ? [] : include $bulk;

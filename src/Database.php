@@ -386,7 +386,10 @@ class Database extends Util\Singleton
      */
     public function prepare($parameter)
     {
-        return $this->getPDO()->quote($parameter);
+        if (!empty($parameter))
+            return $this->getPDO()->quote($parameter);
+        else
+            return true;
     }
 
     /**

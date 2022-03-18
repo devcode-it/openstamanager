@@ -80,7 +80,9 @@ if (!empty($query)) {
     $align = [];
     $row = isset($rows[0]) ? $rows[0] : [];
     foreach ($row as $field => $value) {
-        $value = trim($value);
+        if (!empty($value)){
+            $value = trim($value);
+        }
 
         // Allineamento a destra se il valore della prima riga risulta numerica
         if (is_numeric($value) && formatter()->isStandardNumber($value)) {
@@ -119,7 +121,9 @@ if (!empty($query)) {
                 $column['class'] = $align[$field];
             }
 
-            $value = trim($r[$field]);
+            if (!empty($r[$field])){
+                $value = trim($r[$field]);
+            }
 
             // Formattazione HTML
             if (empty($total['html_format'][$pos]) && !empty($value)) {

@@ -25,7 +25,7 @@ $r = $dbo->fetchOne('SELECT *,
     (SELECT descrizione FROM in_statiintervento WHERE idstatointervento=in_interventi.idstatointervento) AS stato
 FROM in_interventi
     INNER JOIN an_anagrafiche ON in_interventi.idanagrafica = an_anagrafiche.idanagrafica
-WHERE id='.prepare($id_record));
+WHERE in_interventi.id='.prepare($id_record));
 
 // Variabili da sostituire
 return [

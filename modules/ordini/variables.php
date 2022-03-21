@@ -23,7 +23,7 @@ $r = $dbo->fetchOne('SELECT or_ordini.*,
 FROM or_ordini
     INNER JOIN an_anagrafiche ON or_ordini.idanagrafica = an_anagrafiche.idanagrafica
     LEFT OUTER JOIN an_referenti ON an_referenti.id = or_ordini.idreferente
-WHERE id='.prepare($id_record));
+WHERE or_ordini.id='.prepare($id_record));
 
 // Variabili da sostituire
 return [

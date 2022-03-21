@@ -495,7 +495,7 @@ if (Auth::check()) {
         <aside class="control-sidebar control-sidebar-light">
             <h4 class="text-center">'.tr('Plugin disponibili').'</h4>
             <ul class="nav nav-tabs nav-pills nav-stacked">
-                <li data-toggle="control-sidebar" class="active">
+                <li data-toggle="control-sidebar" class="active btn-default">
                     <a data-toggle="tab" href="#tab_0">
                         <i class="'.$structure['icon'].'"></i> '.$structure['title'].'
                     </a>
@@ -521,7 +521,7 @@ if (Auth::check()) {
                 }
 
                 echo '
-                    <li data-toggle="control-sidebar">
+                    <li data-toggle="control-sidebar" class="btn-default" >
                         <a data-toggle="tab" href="#tab_'.$plugin['id'].'" id="link-tab_'.$plugin['id'].'">
                             '.$plugin['title'].'
                             <span class="badge pull-right">'.($count>0 ? $count: '').'</span>
@@ -535,8 +535,8 @@ if (Auth::check()) {
             $notes = $structure->recordNotes($id_record);
 
             echo '
-                <li data-toggle="control-sidebar" class="bg-info">
-                    <a data-toggle="tab" href="#tab_note" id="link-tab_note">
+                <li data-toggle="control-sidebar" class="btn-default">
+                    <a class="bg-info" data-toggle="tab" href="#tab_note" id="link-tab_note">
                         '.tr('Note interne').'
                         <span class="badge pull-right">'.($notes->count() ?: '').'</span>
                     </a>
@@ -546,16 +546,16 @@ if (Auth::check()) {
         // Tab per le checklist
         if ($structure->permission != '-' && $structure->use_checklists) {
             echo '
-                <li data-toggle="control-sidebar" class="bg-success">
-                    <a data-toggle="tab" href="#tab_checks" id="link-tab_checks">'.tr('Checklist').'</a>
+                <li data-toggle="control-sidebar" class="btn-default">
+                    <a class="bg-info" data-toggle="tab" href="#tab_checks" id="link-tab_checks">'.tr('Checklist').'</a>
                 </li>';
         }
 
         // Tab per le informazioni sulle operazioni
         if (Auth::admin()) {
             echo '
-                <li data-toggle="control-sidebar" class="bg-warning">
-                    <a data-toggle="tab" href="#tab_info" id="link-tab_info">
+                <li data-toggle="control-sidebar" class="btn-default">
+                    <a class="bg-info" data-toggle="tab" href="#tab_info" id="link-tab_info">
                         '.tr('Info').'
                     </a>
                 </li>';

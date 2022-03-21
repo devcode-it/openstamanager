@@ -376,9 +376,15 @@ class Query
             $select[] = $view['query'].(!empty($view['name']) ? " AS '".$view['name']."'" : '');
 
             if (!empty($view['visible'])) {
-                $view['name'] = trim($view['name']);
-                $view['search_inside'] = trim($view['search_inside']);
-                $view['order_by'] = trim($view['order_by']);
+                if (!empty($view['name'])){
+                    $view['name'] = trim($view['name']);
+                }
+                if (!empty($view['search_inside'])){
+                    $view['search_inside'] = trim($view['search_inside']);
+                }
+                if (!empty($view['order_by'])){
+                    $view['order_by'] = trim($view['order_by']);
+                }
 
                 $fields[] = trim($view['name']);
 

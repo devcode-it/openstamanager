@@ -421,14 +421,18 @@ class Formatter
      */
     public function formatDate($value)
     {
-        $object = DateTime::createFromFormat(static::$standards['date'], $value);
+        if (!empty($value)){
+            $object = DateTime::createFromFormat(static::$standards['date'], $value);
 
-        // Fallback per la gestione dei timestamp
-        $object = !is_object($object) ? DateTime::createFromFormat(static::$standards['timestamp'], $value) : $object;
+            // Fallback per la gestione dei timestamp
+            $object = !is_object($object) ? DateTime::createFromFormat(static::$standards['timestamp'], $value) : $object;
 
-        $result = is_object($object) ? $object->format($this->getDatePattern()) : false;
+            $result = is_object($object) ? $object->format($this->getDatePattern()) : false;
 
-        return $result;
+            return $result;
+        }else{
+            return true;
+        }
     }
 
     /**

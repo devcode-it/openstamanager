@@ -511,7 +511,7 @@ if (Auth::check()) {
                 $count = 0;
                 if (!empty($plugin['options2'])){
                     $opt = json_decode($plugin['options2'], true);
-                }else{
+                }else if (!empty($plugin['options'])){
                     $opt = json_decode($plugin['options'], true);
                 }
 

@@ -40,20 +40,22 @@ if (!empty($id_record)) {
     Util\Query::setSegments(true);
 }
 // Rimozione della condizione deleted_at IS NULL per visualizzare anche i record eliminati
-if (preg_match('/[`]*([a-z0-9_]*)[`]*[\.]*([`]*deleted_at[`]* IS NULL)/i', $query, $m)) {
-    $conditions_to_remove = [];
+if (!empty($query)){
+    if (preg_match('/[`]*([a-z0-9_]*)[`]*[\.]*([`]*deleted_at[`]* IS NULL)/i', $query, $m)) {
+        $conditions_to_remove = [];
 
-    $condition = trim($m[0]);
+        $condition = trim($m[0]);
 
-    if (!empty($table_name)) {
-        $condition = $table_name.'.'.$condition;
+        if (!empty($table_name)) {
+            $condition = $table_name.'.'.$condition;
+        }
+
+        $conditions_to_remove[] = ' AND '.$condition;
+        $conditions_to_remove[] = $condition.' AND ';
+
+        $query = str_replace($conditions_to_remove, '', $query);
+        $query = str_replace($condition, '', $query);
     }
-
-    $conditions_to_remove[] = ' AND '.$condition;
-    $conditions_to_remove[] = $condition.' AND ';
-
-    $query = str_replace($conditions_to_remove, '', $query);
-    $query = str_replace($condition, '', $query);
 }
 
 $has_access = !empty($query) ? $dbo->fetchNum($query) !== 0 : true;

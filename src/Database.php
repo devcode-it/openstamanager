@@ -261,7 +261,7 @@ class Database extends Util\Singleton
 
             return $result;
         }catch (PDOException $e) {
-            $this->signal($e, $query, $options);
+            
         }
     }
 

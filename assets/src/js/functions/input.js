@@ -38,6 +38,11 @@ function input(name) {
         element = $(name);
     }
 
+    // Selezione tramite ID
+    else if (name.substr(0,1) == "#") {
+        element = $(name).last();
+    }
+
     // Selezione per nome
     else {
         element = $("[name='" + name + "']").last();

@@ -25,7 +25,7 @@
  * @param {string|jQuery|HTMLElement} name
  * @returns {Input|*}
  */
-function input(name) {
+function input(name, use_id) {
     let element;
 
     // Selezione tramite jQuery
@@ -36,6 +36,11 @@ function input(name) {
     // Selezione tramite JS diretto
     else if (isElement(name)) {
         element = $(name);
+    }
+
+    // Selezione tramite ID
+    else if (use_id !== undefined) {
+        element = $("#" + name ).last();
     }
 
     // Selezione per nome

@@ -107,7 +107,7 @@ if (!empty($results)) {
 
         if (array_key_exists('current', $errors) && $errors['current'] == null) {
             echo '
-<p>'.tr('Tabella assente').'</p>';
+<div class="alert alert-danger" ><i class="fa fa-times"></i> '.tr('Tabella assente').'</div>';
             continue;
         }
 
@@ -127,7 +127,7 @@ if (!empty($results)) {
     <tbody>';
 
             foreach ($errors as $name => $diff) {
-                if (count($diff) == 1 && array_key_exists('type', $diff) && str_contains($diff['type']['expected'], $diff['type']['current'])) {
+                if (count($diff) == 1 && array_key_exists('type', $diff) && Str::contains($diff['type']['expected'], $diff['type']['current'])) {
                     $class = 'info';
                 } else {
                     $class = 'warning';

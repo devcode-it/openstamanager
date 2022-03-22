@@ -46,7 +46,8 @@ function database()
  */
 function prepare($parameter)
 {
-    return database()->prepare($parameter);
+    if (!empty($parameter))
+        return database()->prepare($parameter);
 }
 
 /**

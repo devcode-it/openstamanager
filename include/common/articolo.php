@@ -169,7 +169,7 @@ $("#idarticolo").on("change", function() {
 
     if (direzione === "entrata") {
         if($data.idiva_vendita) {
-            $("#idiva").selectSetNew($data.idiva_vendita, $data.iva_vendita);
+            $("#idiva").selectSetNew($data.idiva_vendita, $data.iva_vendita, $data);
         }
     }
 

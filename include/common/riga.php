@@ -44,7 +44,8 @@ echo '
     </div>';
 
 echo '
-    <div class="row '.(!empty($options['nascondi_prezzi']) ? 'hidden' : '').'">';
+    <div class="row '.(!empty($options['nascondi_prezzi']) ? 'hidden' : '').'">
+    <input type="hidden" name="prezzi_ivati" value="'.setting('Utilizza prezzi di vendita comprensivi di IVA').'">';
 
 $width = $options['dir'] == 'entrata' ? 4 : 6;
 $label = $options['dir'] == 'entrata' ? tr('Prezzo unitario di vendita') : tr('Prezzo unitario');
@@ -60,8 +61,15 @@ if ($options['dir'] == 'entrata') {
     echo '
     <script>
         function aggiorna_guadagno() {
+            var prezzi_ivati = input("prezzi_ivati").get();
             var costo_unitario = $("#costo_unitario").val().toEnglish();
-            var prezzo = $("#prezzo_unitario").val().toEnglish();
+            var prezzo = 0;
+            if (prezzi_ivati!=0) {
+                percentuale_iva = input("idiva").getElement().selectData().percentuale;
+                prezzo = $("#prezzo_unitario").val().toEnglish() / (1 + percentuale_iva / 100);
+            } else {
+                prezzo = $("#prezzo_unitario").val().toEnglish();
+            }
             var sconto = $("#sconto").val().toEnglish();
             if ($("#modals select[id^=\'tipo_sconto\']").val() === "PRC") {
                 sconto = sconto / 100 * prezzo;

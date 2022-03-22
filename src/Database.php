@@ -251,14 +251,18 @@ class Database extends Util\Singleton
      */
     public function fetchArray($query, $parameters = [], $numeric = false)
     {
-        $mode = empty($numeric) ? PDO::FETCH_ASSOC : PDO::FETCH_NUM;
+        try {
+            $mode = empty($numeric) ? PDO::FETCH_ASSOC : PDO::FETCH_NUM;
 
-        $statement = $this->getPDO()->prepare($query);
-        $statement->execute($parameters);
+            $statement = $this->getPDO()->prepare($query);
+            $statement->execute($parameters);
 
-        $result = $statement->fetchAll($mode);
+            $result = $statement->fetchAll($mode);
 
-        return $result;
+            return $result;
+        }catch (PDOException $e) {
+            $this->signal($e, $query, $options);
+        }
     }
 
     /**
@@ -388,8 +392,7 @@ class Database extends Util\Singleton
     {
         if (!empty($parameter))
             return $this->getPDO()->quote($parameter);
-        else
-            return true;
+       
     }
 
     /**

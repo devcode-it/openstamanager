@@ -86,9 +86,9 @@ $(document).ready(function(){
             id_plugin: "'.$id_plugin.'",
         }).then(function(response) {
             // Selezione automatica nuovo valore per il select
-            var select = input("'.get('select').'");
+            var select = $("#'.get('select').'");
             if (select) {
-                select.getElement().selectSetNew(response.id, response.text, response.data);
+                select.selectSetNew(response.id, response.text, response.data);
                 //select.change();
             }
 

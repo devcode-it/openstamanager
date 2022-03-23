@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `mg_articolo_attributo` (
     FOREIGN KEY (`id_valore`) REFERENCES `mg_valori_attributi`(`id`)
 ) ENGINE=InnoDB;
 
-ALTER TABLE mg_articoli ADD `id_combinazione` int(11), ADD FOREIGN KEY (`id_combinazione`) REFERENCES `mg_combinazioni`(`id`);
+ALTER TABLE `mg_articoli` ADD `id_combinazione` int(11), ADD FOREIGN KEY (`id_combinazione`) REFERENCES `mg_combinazioni`(`id`);
 
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES
 (NULL, 'Attributi Combinazioni', 'Attributi Combinazioni', 'attributi_combinazioni', 'SELECT |select| FROM mg_attributi WHERE mg_attributi.deleted_at IS NULL AND 1=1 HAVING 2=2', NULL, 'fa fa-angle-right', '1.0', '2.*', '100', '20', '1', '1'),

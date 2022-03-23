@@ -121,9 +121,7 @@ if (!empty($query)) {
                 $column['class'] = $align[$field];
             }
 
-            if (!empty($r[$field])){
-                $value = trim($r[$field]);
-            }
+            $value = trim($r[$field]);
 
             // Formattazione HTML
             if (empty($total['html_format'][$pos]) && !empty($value)) {

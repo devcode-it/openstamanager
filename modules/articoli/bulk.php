@@ -134,7 +134,7 @@ switch (post('op')) {
         $_SESSION['superselect']['id_articolo_barcode'] = $id_records;
         $id_print = Prints::getPrints()['Barcode'];
 
-        redirect(base_path().'/pdfgen.php?id_print='.$id_print.'&id_record='.Articolo::where('barcode', '!=', '')->first()->id);
+        redirect(base_path().'/pdfgen.php?id_print='.$id_print.'&id_record='.Articolo::where('codice', '!=', '')->first()->id);
         exit();
 
         break;

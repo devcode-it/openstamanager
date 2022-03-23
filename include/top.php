@@ -509,6 +509,7 @@ if (Auth::check()) {
             
                 //Badge count per record plugin
                 $count = 0;
+                $opt = '';
                 if (!empty($plugin['options2'])){
                     $opt = json_decode($plugin['options2'], true);
                 }else if (!empty($plugin['options'])){

@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.32 (2022-03-24)](#2432-2022-03-24)
 - [2.4.31 (2022-03-18)](#2431-2022-03-18)
 - [2.4.30 (2022-02-04)](#2430-2022-02-05)
 - [2.4.29 (2022-01-28)](#2429-2022-01-28)
@@ -41,6 +42,26 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.3 (2018-02-16)](#23-2018-02-16)
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
+
+## 2.4.32 (2022-03-24)
+
+### Aggiunto (Added)
+ - Aggiunto try / catch per funzione fetchArray
+ - Aggiunta visualizzazione Agenda in Dashboard
+ - Aggiunta variabile impianti nei template Interventi
+ - Aggiunta colonna Impianti in Attività
+ 
+### Modificato (Changed)
+ - Gestione contratto predefinito e miglioramenti plugin Contratti del cliente
+ 
+### Fixed
+ - Fix aggiunta articolo importFE
+ - Fix stampa DDT
+ - Fix calcolo margine in base ai prezzi ivati
+ - Fix caricamento record via ajax
+ - Fix visualizzazione contatori badge plugin
+ - Fix stampa etichette
+ - Fix classe Database
 
 ## 2.4.31 (2022-03-18)
 

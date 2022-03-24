@@ -519,8 +519,10 @@ echo '
                 .selectSetNew(data.idtipointervento, data.idtipointervento_descrizione);
 
             // Impostazione del contratto predefinito da anagrafica
-            input("idcontratto").getElement()
-                .selectSetNew(data.id_contratto, data.descrizione_contratto);
+            if(data.id_contratto) {
+                input("idcontratto").getElement()
+                    .selectSetNew(data.id_contratto, data.descrizione_contratto);
+            }
 		}
 
         if (data !== undefined) {

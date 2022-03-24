@@ -278,12 +278,6 @@ echo '
             <h3 class="box-title">'.tr('Righe da importare').'</h3>
         </div>
 
-        <div class="row">
-            <div class="col-md-12">
-                {["type":"checkbox", "label":"'.tr('Seleziona/Deseleziona tutto').'", "name":"import_all", "value":"1"]}
-            </div>
-        </div>
-
         <table class="box-body table table-striped table-hover table-condensed">
             <thead>
                 <tr>
@@ -468,7 +462,12 @@ echo '
 
     <!-- PULSANTI -->
     <div class="row">
-        <div class="col-md-12 text-right">
+        <div class="col-md-3">
+            {["type":"checkbox", "label":"'.tr('Seleziona/Deseleziona tutto').'", "name":"import_all", "value":"1"]}
+        </div>
+
+        <div class="col-md-9 text-right">
+            <br>
             <button type="submit" id="submit_btn" class="btn btn-primary pull-right">
                 <i class="fa fa-plus"></i> '.$options['button'].'
             </button>

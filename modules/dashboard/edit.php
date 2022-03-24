@@ -328,8 +328,10 @@ if ($vista == 'mese') {
     $def = 'month';
 } elseif ($vista == 'giorno') {
     $def = 'agendaDay';
-} else {
+} elseif ($vista == 'settimana') {
     $def = 'agendaWeek';
+} else {
+    $def = 'listWeek';
 }
 
 $modulo_interventi = Modules::get('Interventi');
@@ -513,7 +515,7 @@ echo '
             header: {
                 left: "prev,next today",
                 center: "title",
-                right: "month,agendaWeek,agendaDay"
+                right: "month,agendaWeek,agendaDay,listWeek"
             },
             timeFormat: globals.dashboard.timeFormat,
             slotLabelFormat: globals.dashboard.timeFormat,
@@ -666,9 +668,9 @@ echo '
             eventAfterRender: function (event, element) {
                 // let event = info.event;
                 // let element = $(info.el);
-                element.find(".fc-title").html(event.title);
+                element.find(".fc-title, .fc-list-item-title").html(event.title);
                 let id_record = event.idintervento;
-
+                
                 if (globals.dashboard.tooltip == 1) {
                     element.tooltipster({
                         content: globals.translations.loading + "...",

@@ -1,9 +1,10 @@
+import {RequestHttpClient} from '@osm/Models/http/RequestHttpClient';
 import {
   Model as BaseModel,
   PaginationStrategy
 } from 'coloquent';
 
-import {ValueOf} from '../typings';
+import type {ValueOf} from '../typings';
 
 
 /**
@@ -17,6 +18,7 @@ export abstract class Model<A, R = {}> extends BaseModel {
   public static relationships: string[] = [];
   protected static paginationStrategy = PaginationStrategy.PageBased;
   protected static jsonApiBaseUrl = '/api/v1';
+  protected static httpClient = new RequestHttpClient();
 
   /**
    * Returns all the instances of the model.

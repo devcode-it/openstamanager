@@ -6,4 +6,5 @@ export * from './IconButton';
 export * from './MaterialDrawer';
 export * from './Select';
 export * from './TextArea';
+export * from './TextField';
 export * from './TopAppBar';

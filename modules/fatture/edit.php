@@ -659,11 +659,16 @@ echo '
 //Dich. intento collegata
 if ($dir == 'entrata' && !empty($fattura->dichiarazione)){
 
+    $ive_accettate = $dbo->table('co_iva')->where('codice_natura_fe','N3.5')->get();
+    foreach($ive_accettate as $iva_accettata){
+        $descrizione_iva_accettata .= '<li>'.$iva_accettata->descrizione.'</li>';
+    }
+    
     if ($fattura->stato->descrizione == 'Bozza'){
             
-            echo '
+        echo '
         <div class="alert alert-info">
-            <i class="fa fa-info"></i> '.tr("La fattura è collegata ad una dichiarazione d'intento con diponibilità residura pari a _MONEY_.", [  '_MONEY_' => moneyFormat(abs($diff)),]).'<br>'.tr("Per collegare una riga alla dichiarazione è sufficiente specificare come IVA _IVA_", ['_IVA_' => '"<b>'.$iva->codice.' - '.$iva->descrizione.'</b>"',]).'.</b>
+            <i class="fa fa-info"></i> '.tr("La fattura è collegata ad una dichiarazione d'intento con diponibilità residura pari a _MONEY_.", [  '_MONEY_' => moneyFormat(abs($diff)),]).'<br>'.tr("Per collegare una riga alla dichiarazione è sufficiente specificare come IVA <ul>_IVA_</ul>", ['_IVA_' => $descrizione_iva_accettata]).'</b>
         </div>';
 
     }

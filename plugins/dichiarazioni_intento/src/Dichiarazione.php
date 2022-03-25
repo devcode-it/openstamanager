@@ -74,17 +74,15 @@ class Dichiarazione extends Model
 
         $righe = collect();
         $fatture = $this->fatture;
+        $totale = 0;
         foreach ($fatture as $fattura) {
-            $righe = $righe->merge($fattura->getRighe());
+            foreach( $fattura->getRighe() as $riga){
+                if( $riga->aliquota->codice_natura_fe == 'N3.5' ){
+                    $totale += ($fattura->tipo->reversed ? -$riga->totale_imponibile : $riga->totale_imponibile);
+                }
+            }
         }
 
-        // Filtro delle righe per IVA
-        $id_iva = setting("Iva per lettere d'intento");
-        $righe_dichiarazione = $righe->filter(function ($item, $key) use ($id_iva) {
-            return $item->aliquota != null && $item->aliquota->id == $id_iva;
-        });
-
-        $totale = $righe_dichiarazione->sum('totale_imponibile') ?: 0;
         $this->totale = $totale;
     }
 

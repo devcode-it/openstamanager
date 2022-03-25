@@ -6,6 +6,11 @@
   <component name="ProjectResources">
     <resource url="https://cdn.jsdelivr.net/npm/@mdi/font@5.9.55/css/materialdesignicons.min.css" location="$PROJECT_DIR$" />
   </component>
+  <component name="SwUserDefinedSpecifications">
+    <option name="specTypeByUrl">
+      <map />
+    </option>
+  </component>
   <component name="net.techminded.npmania.NpmaniaSettingsState">
     <option name="actions">
       <map>

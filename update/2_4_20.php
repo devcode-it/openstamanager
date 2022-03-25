@@ -10,7 +10,13 @@ use Modules\Preventivi\Components\Articolo as ArticoloPreventivo;
 use Modules\Preventivi\Components\Riga as RigaPreventivo;
 
 // File e cartelle deprecate
-$files = [];
+$files = [
+    'modules/listini/src/',
+    'modules/listini/actions.php',
+    'modules/listini/add.php',
+    'modules/listini/edit.php',
+    'modules/listini/init.php',
+];
 
 foreach ($files as $key => $value) {
     $files[$key] = realpath(base_dir().'/'.$value);

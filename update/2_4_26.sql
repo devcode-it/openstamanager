@@ -62,8 +62,8 @@ CREATE TABLE IF NOT EXISTS `mg_articolo_attributo` (
 ALTER TABLE `mg_articoli` ADD `id_combinazione` int(11), ADD FOREIGN KEY (`id_combinazione`) REFERENCES `mg_combinazioni`(`id`);
 
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES
-(NULL, 'Attributi Combinazioni', 'Attributi Combinazioni', 'attributi_combinazioni', 'SELECT |select| FROM mg_attributi WHERE mg_attributi.deleted_at IS NULL AND 1=1 HAVING 2=2', NULL, 'fa fa-angle-right', '1.0', '2.*', '100', '20', '1', '1'),
-(NULL, 'Combinazioni', 'Combinazioni', 'combinazioni_articoli', 'SELECT |select| FROM mg_combinazioni WHERE mg_combinazioni.deleted_at IS NULL AND 1=1 HAVING 2=2', NULL, 'fa fa-angle-right', '1.0', '2.*', '100', '20', '1', '1');
+(NULL, 'Attributi Combinazioni', 'Attributi Combinazioni', 'attributi_combinazioni', 'SELECT |select| FROM mg_attributi WHERE mg_attributi.deleted_at IS NULL AND 1=1 HAVING 2=2', NULL, 'fa fa-angle-right', '1.0', '2.*', '100', (SELECT id FROM zz_modules t WHERE t.name = 'Magazzino'), '1', '1'),
+(NULL, 'Combinazioni', 'Combinazioni', 'combinazioni_articoli', 'SELECT |select| FROM mg_combinazioni WHERE mg_combinazioni.deleted_at IS NULL AND 1=1 HAVING 2=2', NULL, 'fa fa-angle-right', '1.0', '2.*', '100', (SELECT id FROM zz_modules t WHERE t.name = 'Magazzino'), '1', '1');
 
 INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `directory`, `options`) VALUES
 (NULL, 'Varianti Articolo', 'Varianti Articolo', (SELECT `id` FROM `zz_modules` WHERE `name`='Articoli'), (SELECT `id` FROM `zz_modules` WHERE `name`='Articoli'), 'tab', 'varianti_articolo', 'custom');

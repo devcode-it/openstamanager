@@ -46,7 +46,7 @@ function database()
  */
 function prepare($parameter)
 {
-    return database()->prepare($parameter);
+    return database()->prepare((string) $parameter);
 }
 
 /**

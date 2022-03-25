@@ -26,7 +26,6 @@ $files = [
     'templates\scadenzario\scadenzario.html',
     'templates\registro_iva\pdfgen.registro_iva.php',
     'templates\registro_iva\registroiva_body.html',
-    'templates\registro_iva\header.php',
     'templates\registro_iva\body.php',
     'templates\preventivi_cons\body.php',
     'templates\contratti_cons\body.php',

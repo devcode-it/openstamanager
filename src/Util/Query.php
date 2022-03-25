@@ -79,7 +79,7 @@ class Query
         $user = Auth::user();
 
         // Sostituzione periodi temporali
-        preg_match('|date_period\((.+?)\)|', $query, $matches);
+        preg_match('|date_period\((.+?)\)|', (string) $query, $matches);
         $date_query = $date_filter = null;
         if (!empty($matches)) {
             $dates = explode(',', $matches[1]);
@@ -102,7 +102,7 @@ class Query
         }
 
         // Sostituzione periodi temporali
-        preg_match('|segment\((.+?)\)|', $query, $matches);
+        preg_match('|segment\((.+?)\)|', (string) $query, $matches);
         $segment_name = !empty($matches[1]) ? $matches[1] : 'id_segment';
         $segment_filter = !empty($matches[0]) ? $matches[0] : 'segment';
 

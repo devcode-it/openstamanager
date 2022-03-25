@@ -185,7 +185,7 @@ if (!function_exists('replace')) {
      */
     function replace($string, $array)
     {
-        return str_replace(array_keys($array), array_values($array), $string);
+        return str_replace(array_keys($array), array_values($array), (string) $string);
     }
 }
 

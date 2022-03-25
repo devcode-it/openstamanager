@@ -146,7 +146,6 @@ $files = [
     'modules\anagrafiche\plugins\statistiche.php',
     'modules\interventi\src\TipoSessione.php',
     'templates\registro_iva\body.php',
-    'templates\registro_iva\header.php',
     'templates\scadenzario\scadenzario.html',
     'templates\scadenzario\scadenzario_body.html',
     'templates\scadenzario\pdfgen.scadenzario.php',

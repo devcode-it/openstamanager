@@ -97,7 +97,7 @@ UPDATE `co_righe_promemoria` SET `iva` = ABS(`iva`) * IF(`sconto` > 0, -1, 1) WH
 UPDATE `in_righe_interventi` SET `iva` = ABS(`iva`) * IF(`sconto` > 0, -1, 1) WHERE `is_sconto` = 1;
 
 -- Aumentato il campo descrizione in articoli da varchar a text
-ALTER TABLE `mg_articoli` CHANGE `descrizione` `descrizione` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;
+ALTER TABLE `mg_articoli` CHANGE `descrizione` `descrizione` TEXT NOT NULL;
 
 -- Set a NULL le date dei contratti vuote
 UPDATE `co_contratti` SET `data_bozza`=NULL WHERE `data_bozza`=0000-00-00;

@@ -5,7 +5,8 @@ import {Manager} from './Manager';
 export class DialogManager extends Manager {
   static selector = 'dialog';
 
-  constructor(private dialog: Dialog) {
+  constructor(protected dialog: Dialog) {
+    super(dialog);
   }
 
   public show(dialog: Dialog) {

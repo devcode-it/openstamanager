@@ -9,6 +9,7 @@ import type {Dialog as MWCDialog} from '@material/mwc-dialog';
 import {Menu as MWCMenu} from '@material/mwc-menu';
 import {
   CircularProgressManager,
+  ComponentManager,
   DialogManager,
   LoadingButtonManager
 } from '@osm/Components/Managers';
@@ -51,7 +52,11 @@ function loadTriggers() {
 }
 
 function loadManagers() {
-  const managers = [DialogManager, CircularProgressManager, LoadingButtonManager];
+  const managers: ComponentManager[] = [
+    DialogManager,
+    CircularProgressManager,
+    LoadingButtonManager
+  ];
 
   for (const Manager of managers) {
     for (const element of document.querySelectorAll<HTMLElement>(Manager.selector)) {

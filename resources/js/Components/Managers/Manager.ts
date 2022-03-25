@@ -1,4 +1,11 @@
+export type ComponentManager =
+  {new(element: any | HTMLElement): Manager}
+  & Omit<typeof Manager, 'new'>;
+
 export abstract class Manager {
-  abstract static selector: string;
-  static filter: (element: HTMLElement) => boolean = () => true;
+  static selector: string;
+  static filter: (element: any | HTMLElement) => boolean = () => true;
+
+  protected constructor(protected element: HTMLElement) {
+  }
 }

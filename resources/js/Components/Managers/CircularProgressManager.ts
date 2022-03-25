@@ -4,9 +4,10 @@ import {Manager} from './Manager';
 
 export class CircularProgressManager extends Manager {
   static selector = 'mwc-circular-progress';
-  static filter = (element: CircularProgress) => element.closest('mwc-button').type !== 'loading-button';
+  static filter = (element: CircularProgress) => element.closest('mwc-button')?.dataset.componentType !== 'loading-button';
 
-  constructor(private loading: CircularProgress) {
+  constructor(protected loading: CircularProgress) {
+    super(loading);
   }
 
   public show() {

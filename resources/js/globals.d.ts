@@ -18,11 +18,7 @@ import {LinearProgress as MWCLinearProgress} from '@material/mwc-linear-progress
 import {List as MWCList} from '@material/mwc-list';
 import {ListItem as MWCListItem} from '@material/mwc-list/mwc-list-item.js';
 import {Menu as MWCMenu} from '@material/mwc-menu';
-import {
-  CircularProgressManager,
-  DialogManager,
-  LoadingButtonManager
-} from '@osm/Components/Managers';
+import {Manager} from '@osm/Components/Managers';
 import type cash from 'cash-dom';
 import type Mithril from 'mithril';
 import type router from 'ziggy-js';
@@ -41,13 +37,11 @@ import {
   TopAppBar
 } from './WebComponents';
 
-type ComponentManager = CircularProgressManager | DialogManager | LoadingButtonManager;
-
 declare global {
   const route: typeof router;
 
   let app: {
-    components: Record<string, ComponentManager>
+    components: Record<string, Manager>
     events: Record<string, Event>,
     locale: string,
     modules: OpenSTAManager.Modules,

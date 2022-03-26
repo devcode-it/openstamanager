@@ -32,7 +32,6 @@ $files = [
     'templates\magazzino_inventario\pdfgen.magazzino_inventario.php',
     'templates\magazzino_inventario\magazzino_inventario_body.html',
     'templates\magazzino_inventario\magazzino_inventario.html',
-    'modules\contratti\modutil.php',
     'modules\contratti\plugins\contratti.ordiniservizio.interventi.php',
     'modules\contratti\plugins\contratti.ordiniservizio.php',
     'modules\interventi\src\TipoSessione.php',

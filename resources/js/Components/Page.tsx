@@ -32,14 +32,18 @@ export abstract class Page<A extends PageAttributes = PageAttributes> extends Co
       contents = contents.toArray();
     }
 
+    return this.wrapContents(vnode, contents);
+  }
+
+  contents(vnode: Vnode<A>): Children | Collection<Children> {
+    return undefined;
+  }
+
+  wrapContents(vnode: Vnode<A>, contents: Children): Children {
     return vnode.attrs.page.props.external ? contents : (
       <TopAppBar>
         {contents}
       </TopAppBar>
     );
-  }
-
-  contents(vnode: Vnode<A>): Children | Collection<Children> {
-    return undefined;
   }
 }

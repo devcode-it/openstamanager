@@ -29,7 +29,8 @@ export abstract class Page<A extends PageAttributes = PageAttributes> extends Co
   view(vnode: Vnode<A>) {
     let contents = this.contents(vnode);
     if (contents instanceof Collection) {
-      contents = contents.toArray();
+      contents = contents.flatten()
+        .toArray();
     }
 
     return this.wrapContents(vnode, contents);

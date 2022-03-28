@@ -74,18 +74,6 @@ echo '
 
 ';
 
-// Collegamenti diretti (numerici)
-$numero_documenti = $dbo->fetchNum('SELECT id FROM co_documenti WHERE id_dichiarazione_intento='.prepare($id_record));
-
-if (!empty($numero_documenti)) {
-    echo '
-<div class="alert alert-danger">
-    '.tr('Ci sono _NUM_ documenti collegati', [
-        '_NUM_' => $numero_documenti,
-    ]).'.
-</div>';
-}
-
 echo '
 
 	<!-- PULSANTI -->
@@ -101,3 +89,41 @@ echo '
 		</div>
 	</div>
 </form>';
+
+//Documenti collegati
+$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir`, NULL AS `deleted_at` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id_dichiarazione_intento` = '.prepare($record['id']));
+
+if (!empty($elementi)) {
+    echo '
+	<hr>
+	<div class="box box-warning collapsable collapsed-box">
+		<div class="box-header with-border">
+			<h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
+				'_NUM_' => count($elementi),
+			]).'</h3>
+			<div class="box-tools pull-right">
+				<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+			</div>
+		</div>
+		<div class="box-body">
+			<ul>';
+
+		foreach ($elementi as $elemento) {
+			$descrizione = tr('_DOC_  _NUM_ del _DATE_ _DELETED_AT_', [
+			'_DOC_' => $elemento['tipo_documento'],
+			'_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
+			'_DATE_' => Translator::dateToLocale($elemento['data']),
+			'_DELETED_AT_' => (!empty($elemento['deleted_at']) ? tr('Eliminato il:').' '.Translator::dateToLocale($elemento['deleted_at']) : ''),
+		]);
+			$modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
+			$id = $elemento['id'];
+
+			echo '
+				<li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+		}
+
+		echo '
+			</ul>
+		</div>
+	</div>';
+}

@@ -30,7 +30,7 @@ function renderRiga($id, $riga)
         <input type="hidden" name="id_scadenza['.$id.']" value="'.$riga['id_scadenza'].'">
 
         <td>
-            {[ "type": "select", "name": "idconto['.$id.']", "id": "conto'.$id.'", "value": "'.($riga['id_conto'] ?: '').'", "ajax-source": "conti" ]}
+            {[ "type": "select", "name": "idconto['.$id.']", "id": "conto'.$id.'", "value": "'.($riga['id_conto'] ?: '').'", "ajax-source": "conti", "icon-after": '.json_encode('<button type="button" onclick="visualizzaMovimenti(this)" class="btn btn-info '.($riga['id_conto'] ? '' : 'disabled').'"><i class="fa fa-eye"></i></button>').' ]}
         </td>';
 
     // Dare
@@ -299,13 +299,20 @@ $(document).ready(function() {
 });
 
 $(document).on("change", "select", function() {
-    let row = $(this).parent().parent();
+    let row = $(this).parent().parent().parent();
 
     if (row.find("input[disabled]").length > 1) {
         row.find("input").prop("disabled", !$(this).val());
     }
 
     controllaConti();
+
+    let button = $(this).parent().find("button");
+    if ($(this).val()) {
+        button.removeClass("disabled");
+    } else {
+        button.addClass("disabled");
+    }
 });
 
 $(document).on("keyup change", "input[id*=dare]", function() {
@@ -327,4 +334,9 @@ $(document).on("keyup change", "input[id*=avere]", function() {
         controllaConti();
     }
 });
+
+function visualizzaMovimenti(button) {
+    let id_conto = $(button).parent().parent().find("select").val();
+    openModal("'.tr('Ultimi 25 movimenti').'", "'.$module->fileurl('dettagli.php').'?id_module=" + globals.id_module + "&id_conto=" + id_conto);
+}
 </script>';

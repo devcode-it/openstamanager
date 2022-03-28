@@ -89,6 +89,22 @@ switch (post('op')) {
             flash()->warning(tr('Nessun listino creato!'));
         }
         break;
+
+    case 'change_prezzo':
+
+        foreach ($id_records as $id) {
+
+            $listino = $dbo->selectOne('mg_prezzi_articoli', '*', ['id' => $id]);
+
+            $prezzo_unitario_new = $listino['prezzo_unitario']+($listino['prezzo_unitario']*post('percentuale')/100);
+
+            $dbo->query("UPDATE mg_prezzi_articoli SET prezzo_unitario=".prepare($prezzo_unitario_new)." WHERE id=".prepare($id));
+
+        }
+
+        flash()->info(tr('Listini aggiornati!'));
+
+        break;
 }
 
 $segment = $dbo->selectOne('zz_segments', 'name', ['id' => $_SESSION['module_'.$id_module]['id_segment']])['name'];
@@ -115,6 +131,18 @@ if ($segment!='Tutti') {
         ],
     ];
 }
+
+$operations['change_prezzo'] = [
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna prezzo unitario').'</span>',
+    'data' => [
+        'title' => tr('Aggiornare il prezzo unitario per i listini selezionati?'),
+        'msg' => tr('Per indicare uno sconto inserire la percentuale con il segno meno, al contrario per un rincaro inserire la percentuale senza segno.').'<br><br>{[ "type": "number", "label": "'.tr('Percentuale sconto/magg.').'", "name": "percentuale", "required": 1, "icon-after": "%" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
+    ],
+];
+
 
 
 

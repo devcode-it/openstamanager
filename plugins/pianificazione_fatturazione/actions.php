@@ -130,9 +130,9 @@ switch ($operazione) {
                         $riga->save();
 
                         $qta_evasa += $qta_riga;
-                        $pianificata = $pianificazioni[$rata];
+                        $pianificata[] = $pianificazioni[$rata];
                     } else {
-                        $non_pianificata = $pianificazioni[$rata];
+                        $non_pianificata[] = $pianificazioni[$rata];
                     }
                 }
                 $r->delete();
@@ -147,7 +147,7 @@ switch ($operazione) {
 
     case 'reset':
         $dbo->query('DELETE FROM `co_fatturazione_contratti` WHERE `idcontratto`='.prepare($id_record));
-        $dbo->query('DELETE FROM `co_righe_contratti` WHERE `idpianificazione` IS NOT NULL AND `idcontratto`='.prepare($id_record));
+        $dbo->query('UPDATE `co_righe_contratti` SET `idpianificazione`=NULL WHERE `idpianificazione` IS NOT NULL AND `idcontratto`='.prepare($id_record));
         flash()->info(tr('Pianificazione rimossa'));
 
         break;

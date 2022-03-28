@@ -1,5 +1,17 @@
 <?php
 
+// File e cartelle deprecate
+$files = [
+    'modules/anagrafiche/plugins/contratti_cliente.php',
+];
+
+foreach ($files as $key => $value) {
+    $files[$key] = realpath(base_dir().'/'.$value);
+}
+
+delete($files);
+
+
 $fascie_orarie = $database->fetchArray('SELECT * FROM in_fasceorarie');
 $tipi_intervento = $database->fetchArray('SELECT * FROM in_tipiintervento');
 

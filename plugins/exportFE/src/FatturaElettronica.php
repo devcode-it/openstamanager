@@ -1446,7 +1446,7 @@ class FatturaElettronica
             //$id_iva_dichiarazione = setting("Iva per lettere d'intento");
             $dichiarazione = $documento->dichiarazione;
             $ive_accettate = [];
-            $rs = $dbo->table('co_iva')->where('codice_natura_fe','N3.5')->get();
+            $rs = $database->table('co_iva')->where('codice_natura_fe','N3.5')->get();
             foreach($rs as $r){
                 $ive_accettate[] = $r->id;
             }

@@ -205,9 +205,10 @@ class CSV extends CSVImporter
         $primary_key = $this->getPrimaryKey();
 
         // Count the numbers of rows in a CSV
-        $number = $this->csv->each(function ($row) {
-            return true;
-        });
+        $number = 0;
+        foreach ($this->csv as $row) {
+            $number++;
+        }
 
         $rows = $this->getRows(0, $number);
         $first_record = $this->getRecord($rows[1]);
@@ -319,6 +320,7 @@ class CSV extends CSVImporter
         $dettagli['codice_fornitore'] = $record['codice_fornitore'];
         $dettagli['barcode_fornitore'] = $record['barcode_fornitore'];
         $dettagli['descrizione_fornitore'] = $record['descrizione_fornitore'];
+        $dettagli['id_fornitore'] = $record['id_fornitore'];
         $this->aggiornaDettaglioPrezzi($articolo, $dettagli);
 
         //Gestione immagine
@@ -374,6 +376,7 @@ class CSV extends CSVImporter
         unset($record['codice_fornitore']);
         unset($record['barcode_fornitore']);
         unset($record['descrizione_fornitore']);
+        unset($record['id_fornitore']);
 
         // Salvataggio delle informazioni generali
         $articolo->fill($record);
@@ -438,6 +441,7 @@ class CSV extends CSVImporter
             $dettagli['dir'] = null;
         }
 
+        // Aggiungo Listino
         if (!empty($anagrafica) && !empty($dettagli['dir'])) {
             $dettaglio_predefinito = DettaglioPrezzo::build($articolo, $anagrafica, $dettagli['dir']);
             $dettaglio_predefinito->sconto_percentuale = $dettagli['sconto_listino'];
@@ -450,6 +454,7 @@ class CSV extends CSVImporter
 
             $dettaglio_predefinito->save();
 
+            // Aggiungo dettagli fornitore
             if ($dettagli['dir'] == 'uscita' && !empty($dettagli['codice_fornitore']) && !empty($dettagli['descrizione_fornitore'])) {
                 $fornitore = DettaglioFornitore::build($anagrafica, $articolo);
                 $fornitore->codice_fornitore = $dettagli['codice_fornitore'];
@@ -457,6 +462,15 @@ class CSV extends CSVImporter
                 $fornitore->descrizione = $dettagli['descrizione_fornitore'];
                 $fornitore->save();
             }
+        }
+
+        // Imposto fornitore e prezzo predefinito 
+        $listino_id_fornitore = DettaglioPrezzo::dettaglioPredefinito($articolo->id, $dettagli['id_fornitore'], 'uscita')->first();
+        if (!empty($listino_id_fornitore)) {
+            $prezzo_acquisto = $listino_id_fornitore->prezzo_unitario - ($listino_id_fornitore->prezzo_unitario*$listino_id_fornitore->sconto_percentuale) / 100;
+            $articolo->prezzo_acquisto = $prezzo_acquisto;
+            $articolo->id_fornitore = $dettagli['id_fornitore'];
+            $articolo->save();
         }
     }
 }

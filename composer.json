@@ -38,7 +38,7 @@
         "ifsnop/mysqldump-php": "^2.3",
         "illuminate/database": "^8.0",
         "intervention/image": "^2.3",
-        "league/csv": "9.5.0",
+        "league/csv": "9.7.0",
         "league/oauth2-client": "^2.6",
         "league/oauth2-google": "^3.0",
         "maximebf/debugbar": "^1.15",

@@ -15,7 +15,10 @@ INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `option
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `visible`, `format`, `default`) VALUES
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fasce orarie'), 'id', 'in_fasceorarie.id', 1, 1, 0, 1),
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fasce orarie'), 'Nome', 'in_fasceorarie.nome', 2, 1, 0, 1),
-(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fasce orarie'), 'Festività', 'IF(in_fasceorarie.include_bank_holidays, ''S&igrave;'', ''No'')', 3, 1, 0, 1);
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fasce orarie'), 'Giorni', 'IF(in_fasceorarie.giorni = ''1,2,3,4,5'', ''Lavorativi'',  IF(in_fasceorarie.giorni = ''6,7'', ''Fine settimana'', IF(in_fasceorarie.giorni = ''6'', ''Solo Sabato'', IF(in_fasceorarie.giorni = ''1,2,3,4,5,6,7'', ''Tutti i giorni'', ''Nessuno'' ))))', 3, 1, 0, 1),
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fasce orarie'), 'Ora inizio', 'in_fasceorarie.ora_inizio', 4, 1, 1, 1),
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fasce orarie'), 'Ora fine', 'in_fasceorarie.ora_fine', 5, 1, 1, 1),
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fasce orarie'), 'Festività', 'IF(in_fasceorarie.include_bank_holidays, ''S&igrave;'', ''No'')', 6, 1, 0, 1);
 
 
 
@@ -59,7 +62,9 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `visible`, 
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Eventi'), 'id', 'zz_events.id', 1, 0, 0, 1),
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Eventi'), 'Nome', 'zz_events.nome', 2, 1, 0, 1),
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Eventi'), 'Nazione', 'an_nazioni.nome', 3, 1, 0, 1),
-(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Eventi'), 'Data', 'zz_events.data', 4, 1, 1, 1);
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Eventi'), 'Data', 'zz_events.data', 4, 1, 1, 1),
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Eventi'), 'Ricorrente', 'IF(zz_events.is_recurring, ''S&igrave;'', ''No'')', 5, 1, 0, 1),
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Eventi'), 'Festività', 'IF(zz_events.is_bank_holiday, ''S&igrave;'', ''No'')', 6, 1, 0, 1);
 
 -- Natale
 INSERT INTO `zz_events` (`id`, `nome`, `data`, `id_nazione`, `id_regione`, `is_recurring`, `is_bank_holiday`) VALUES (NULL, 'Natale', '2022-12-25', (SELECT id FROM an_nazioni WHERE nome = 'Italia'), NULL, '1', '1'); 

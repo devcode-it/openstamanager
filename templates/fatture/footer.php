@@ -321,7 +321,7 @@ if ($has_split_payment) {
         </th>
 
         <th class="text-center small" colspan="'.$second_colspan.'">
-            '.(!$has_split_payment && !$has_sconto_finale ? $etichette['totale_finale'] : $etichette['totale_parziale']).'
+            '.(!$has_sconto_finale ? $etichette['totale_finale'] : $etichette['totale_parziale']).'
         </th>
     </tr>';
 

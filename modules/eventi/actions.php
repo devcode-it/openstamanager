@@ -26,7 +26,7 @@ switch (post('op')) {
         $id_nazione = post('id_nazione');
         $id_regione = post('id_regione');
         $is_recurring = post('is_recurring');
-        $is_bank_holiday = post('is_recurring');
+        $is_bank_holiday = post('is_bank_holiday');
        
         if ($dbo->fetchNum('SELECT * FROM `zz_events` WHERE `nome`='.prepare($nome).' AND `id`!='.prepare($id_record)) == 0) {
             

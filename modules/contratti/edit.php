@@ -288,15 +288,15 @@ if (!empty($rs)) {
                                 <td>'.$rs[$i]['descrizione'].'</td>
 
                                 <td>
-                                    {[ "type": "number", "name": "costo_ore['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_orario'].'" ]}
+                                    {[ "type": "number", "name": "costo_ore['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_orario'].'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
                                 </td>
 
                                 <td>
-                                    {[ "type": "number", "name": "costo_km['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_km'].'" ]}
+                                    {[ "type": "number", "name": "costo_km['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_km'].'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
                                 </td>
 
                                 <td>
-                                    {[ "type": "number", "name": "costo_dirittochiamata['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_diritto_chiamata'].'" ]}
+                                    {[ "type": "number", "name": "costo_dirittochiamata['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_diritto_chiamata'].'" , "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
                                 </td>
 
                                 <td>

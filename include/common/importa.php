@@ -281,6 +281,7 @@ echo '
         <table class="box-body table table-striped table-hover table-condensed">
             <thead>
                 <tr>
+                    <th width="2%"><input id="import_all" type="checkbox" checked/></th>
                     <th>'.tr('Descrizione').'</th>
                     <th width="10%" class="text-center">'.tr('Q.tà').'</th>
                     <th width="15%">'.tr('Q.tà da evadere').'</th>
@@ -314,16 +315,15 @@ foreach ($righe as $i => $riga) {
     echo '
                 <tr data-local_id="'.$i.'">
                     <td style="vertical-align:middle">
+                        <input class="check" type="checkbox" '.$attr.' id="checked_'.$i.'" name="evadere['.$riga['id'].']" value="on" onclick="ricalcolaTotaleRiga('.$i.');" />
+                    </td>
+                    <td style="vertical-align:middle">
                         <span class="hidden" id="id_articolo_'.$i.'">'.$riga['idarticolo'].'</span>
 
                         <input type="hidden" class="righe" name="righe" value="'.$i.'"/>
                         <input type="hidden" id="prezzo_unitario_'.$i.'" name="subtot['.$riga['id'].']" value="'.$riga['prezzo_unitario'].'" />
                         <input type="hidden" id="sconto_unitario_'.$i.'" name="sconto['.$riga['id'].']" value="'.$riga['sconto_unitario'].'" />
                         <input type="hidden" id="max_qta_'.$i.'" value="'.($options['superamento_soglia_qta'] ? '' : $riga['qta_rimanente']).'" />';
-
-    // Checkbox - da evadere?
-    echo '
-                        <input class="check" type="checkbox" '.$attr.' id="checked_'.$i.'" name="evadere['.$riga['id'].']" value="on" onclick="ricalcolaTotaleRiga('.$i.');" />';
 
     $descrizione = ($riga->isArticolo() ? $riga->articolo->codice.' - ' : '').$riga['descrizione'];
 
@@ -462,12 +462,7 @@ echo '
 
     <!-- PULSANTI -->
     <div class="row">
-        <div class="col-md-3">
-            {["type":"checkbox", "label":"'.tr('Seleziona/Deseleziona tutto').'", "name":"import_all", "value":"1"]}
-        </div>
-
-        <div class="col-md-9 text-right">
-            <br>
+        <div class="col-md-12 text-right">
             <button type="submit" id="submit_btn" class="btn btn-primary pull-right">
                 <i class="fa fa-plus"></i> '.$options['button'].'
             </button>

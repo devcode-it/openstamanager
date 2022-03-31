@@ -21,6 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Fatture\Components\Articolo AS RigaArticolo;
 use Modules\Fatture\Components\Riga;
+use Modules\Fatture\Components\Sconto;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Gestori\Movimenti as GestoreMovimenti;
 
@@ -31,10 +32,8 @@ switch ($operazione) {
         $conti = (array)post('idconto');
 
         foreach($conti as $id_riga => $conto){
-            $riga = RigaArticolo::find($id_riga);
-            if(empty($riga)){
-                $riga = Riga::find($id_riga);
-            }
+            $riga = RigaArticolo::find($id_riga) ?: Riga::find($id_riga);
+            $riga = $riga ?: Sconto::find($id_riga);
 
             // Modifica descrizione fornitore
             $riga->id_conto = $conto;

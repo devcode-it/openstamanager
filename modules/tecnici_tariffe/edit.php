@@ -77,27 +77,27 @@ echo '
             <td>'.$tipo_intervento['descrizione'].'</td>
 
             <td>
-                {[ "type": "number", "name": "costo_ore['.$tipo_intervento['id'].']", "required": 1, "value": "'.$tipo_intervento['costo_ore'].'" ]}
+                {[ "type": "number", "name": "costo_ore['.$tipo_intervento['id'].']", "required": 1, "value": "'.$tipo_intervento['costo_ore'].'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
             </td>
 
             <td>
-                {[ "type": "number", "name": "costo_km['.$tipo_intervento['id'].']", "required": 1, "value": "'.$tipo_intervento['costo_km'].'" ]}
+                {[ "type": "number", "name": "costo_km['.$tipo_intervento['id'].']", "required": 1, "value": "'.$tipo_intervento['costo_km'].'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
             </td>
 
             <td>
-                {[ "type": "number", "name": "costo_dirittochiamata['.$tipo_intervento['id'].']", "required": 1, "value": "'.$tipo_intervento['costo_dirittochiamata'].'" ]}
+                {[ "type": "number", "name": "costo_dirittochiamata['.$tipo_intervento['id'].']", "required": 1, "value": "'.$tipo_intervento['costo_dirittochiamata'].'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
             </td>
 
             <td>
-                {[ "type": "number", "name": "costo_ore_tecnico['.$tipo_intervento['id'].']", "required": 1, "value": "'.$tipo_intervento['costo_ore_tecnico'].'" ]}
+                {[ "type": "number", "name": "costo_ore_tecnico['.$tipo_intervento['id'].']", "required": 1, "value": "'.$tipo_intervento['costo_ore_tecnico'].'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
             </td>
 
             <td>
-                {[ "type": "number", "name": "costo_km_tecnico['.$tipo_intervento['id'].']", "required": 1, "value": "'.$tipo_intervento['costo_km_tecnico'].'" ]}
+                {[ "type": "number", "name": "costo_km_tecnico['.$tipo_intervento['id'].']", "required": 1, "value": "'.$tipo_intervento['costo_km_tecnico'].'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
             </td>
 
             <td>
-                {[ "type": "number", "name": "costo_dirittochiamata_tecnico['.$tipo_intervento['id'].']", "required": 1, "value": "'.$tipo_intervento['costo_dirittochiamata_tecnico'].'" ]}
+                {[ "type": "number", "name": "costo_dirittochiamata_tecnico['.$tipo_intervento['id'].']", "required": 1, "value": "'.$tipo_intervento['costo_dirittochiamata_tecnico'].'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
             </td>
 
             <td>

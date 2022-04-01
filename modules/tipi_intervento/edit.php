@@ -105,6 +105,22 @@ include_once __DIR__.'/../../core.php';
 			</div>
 		</div>
 	</div>
+
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<h3 class="panel-title"><?php echo tr('Addebiti e costi per fascie orarie'); ?></h3>
+		</div>
+
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-md-12" id="addebiti_costi">
+					<script>$('#addebiti_costi').load('<?php echo $module->fileurl('ajax_addebiti_costi.php');?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');</script>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
 </form>
 
 <?php

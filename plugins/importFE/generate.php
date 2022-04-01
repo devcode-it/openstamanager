@@ -40,7 +40,7 @@ if (empty($fattura_pa)) {
 ]).'.</p>';
     } elseif (!empty($imported)) {
         echo '
-<p>'.tr('La fattura elettrnica _NAME_ è già stata importata in passato', [
+<p>'.tr('La fattura elettronica _NAME_ è già stata importata in passato', [
     '_NAME_' => $record['name'],
 ]).'.</p>';
     }

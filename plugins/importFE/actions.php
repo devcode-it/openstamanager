@@ -260,10 +260,6 @@ switch (filter('op')) {
 
         echo json_encode([
             'id_tipo' => $id_tipo,
-            'pagamento' => [
-                'id' => $pagamento->id,
-                'descrizione' => $pagamento->descrizione,
-            ],
             'conto' => [
                 'id' => $conto['id'],
                 'descrizione' => $conto['descrizione'],

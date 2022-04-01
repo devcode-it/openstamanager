@@ -19,15 +19,23 @@
 
 include_once __DIR__.'/init.php';
 
-$show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
-
+$block_edit = $record['flag_completato'];
 $righe = $intervento->getRighe();
 
-    echo '
+$show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
+
+echo '
 <div class="table-responsive">
     <table class="table table-striped table-hover table-condensed table-bordered">
         <thead>
             <tr>
+                <th width="5" class="text-center">';
+                if (!$block_edit && sizeof($righe) > 0) {
+                    echo '
+                    <input id="check_all" type="checkbox"/>';
+                }
+                echo '
+                </th>
                 <th>'.tr('Descrizione').'</th>
                 <th class="text-center" width="80">'.tr('Q.tà').'</th>';
 
@@ -47,7 +55,7 @@ $righe = $intervento->getRighe();
             </tr>
         </thead>
 
-        <tbody class="sortable">';
+        <tbody class="sortable" id="righe">';
 
     foreach ($righe as $riga) {
         $extra = '';
@@ -59,6 +67,13 @@ $righe = $intervento->getRighe();
 
         echo '
             <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'" '.$extra.'>
+                <td class="text-center">';
+                if (!$block_edit) {
+                    echo '
+                    <input class="check" type="checkbox"/>';
+                }
+                echo '
+                </td>
                 <td>';
 
         // Informazioni aggiuntive sulla destra
@@ -155,7 +170,7 @@ $righe = $intervento->getRighe();
                         <i class="fa fa-edit"></i>
                     </a>
 
-                    <a class="btn btn-xs btn-danger" title="'.tr('Rimuovi riga').'" onclick="rimuoviRiga(this)">
+                    <a class="btn btn-xs btn-danger" title="'.tr('Rimuovi riga').'" onclick="rimuoviRiga([$(this).closest(\'tr\').data(\'id\')])">
                         <i class="fa fa-trash"></i>
                     </a>
 
@@ -179,7 +194,7 @@ $righe = $intervento->getRighe();
             // IMPONIBILE
             echo '
             <tr>
-                <td colspan="'.((!$record['flag_completato']) ? 5 : 4).'" class="text-right">
+                <td colspan="'.((!$record['flag_completato']) ? 6 : 5).'" class="text-right">
                     <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
                 </td>
                 <td class="text-right">
@@ -192,7 +207,7 @@ $righe = $intervento->getRighe();
         if (!empty($intervento->sconto)) {
             echo '
             <tr>
-                <td colspan="'.((!$record['flag_completato']) ? 5 : 4).'" class="text-right">
+                <td colspan="'.((!$record['flag_completato']) ? 6 : 5).'" class="text-right">
                     <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
                 </td>
                 <td class="text-right">
@@ -204,7 +219,7 @@ $righe = $intervento->getRighe();
             // Totale imponibile scontato
             echo '
             <tr>
-                <td colspan="'.((!$record['flag_completato']) ? 5 : 4).'" class="text-right">
+                <td colspan="'.((!$record['flag_completato']) ? 6 : 5).'" class="text-right">
                     <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
                 </td>
                 <td class="text-right">
@@ -217,10 +232,22 @@ $righe = $intervento->getRighe();
         }
 
     echo'
-    </table>
-</div>';
+    </table>';
+if (!$block_edit && sizeof($righe) > 0) {
+    echo '
+    <div class="btn-group">
+        <button type="button" class="btn btn-xs btn-default disabled" id="elimina_righe" onclick="duplicaRiga(getSelectData());">
+            <i class="fa fa-copy"></i>
+        </button>
 
+        <button type="button" class="btn btn-xs btn-default disabled" id="duplica_righe" onclick="rimuoviRiga(getSelectData());">
+            <i class="fa fa-trash"></i>
+        </button>
+    </div>';
+}
 echo '
+</div>
+    
 <script type="text/javascript">
 async function modificaRiga(button) {
     let riga = $(button).closest("tr");
@@ -238,18 +265,24 @@ async function modificaRiga(button) {
     openModal("'.tr('Modifica sessione').'", "'.$module->fileurl('row-edit.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&riga_id=" + id + "&riga_type=" + type);
 }
 
-function rimuoviRiga(button) {
+// Estraggo le righe spuntate
+function getSelectData() {
+    let data=new Array();
+    $(\'#righe\').find(\'.check:checked\').each(function (){ 
+        data.push($(this).closest(\'tr\').data(\'id\'));
+    });
+
+    return data;
+}
+
+function rimuoviRiga(id) {
     swal({
-        title: "'.tr('Rimuovere questa riga?').'",
-        html: "'.tr('Sei sicuro di volere rimuovere questa riga dal documento?').' '.tr("L'operazione è irreversibile").'.",
+        title: "'.tr('Rimuovere queste righe?').'",
+        html: "'.tr('Sei sicuro di volere rimuovere queste righe dal documento?').' '.tr("L'operazione è irreversibile").'.",
         type: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Sì').'"
     }).then(function () {
-        let riga = $(button).closest("tr");
-        let id = riga.data("id");
-        let type = riga.data("type");
-
         $.ajax({
             url: globals.rootdir + "/actions.php",
             type: "POST",
@@ -258,8 +291,35 @@ function rimuoviRiga(button) {
                 id_module: globals.id_module,
                 id_record: globals.id_record,
                 op: "delete_riga",
-                riga_type: type,
-                riga_id: id,
+                righe: id,
+            },
+            success: function (response) {
+                location.reload();
+            },
+            error: function() {
+                location.reload();
+            }
+        });
+    }).catch(swal.noop);
+}
+
+function duplicaRiga(id) {
+    swal({
+        title: "'.tr('Duplicare queste righe?').'",
+        html: "'.tr('Sei sicuro di volere queste righe del documento?').'",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "'.tr('Sì').'"
+    }).then(function () {
+        $.ajax({
+            url: globals.rootdir + "/actions.php",
+            type: "POST",
+            dataType: "json",
+            data: {
+                id_module: globals.id_module,
+                id_record: globals.id_record,
+                op: "copy_riga",
+                righe: id,
             },
             success: function (response) {
                 location.reload();
@@ -296,5 +356,38 @@ $(document).ready(function() {
             order: order.join(","),
         });
     });
+});
+
+$(".check").on("change", function() {
+    let checked = 0;
+    $(".check").each(function() {
+        if ($(this).is(":checked")) {
+            checked = 1;
+        }
+    });
+
+    if (checked) {
+        $("#elimina_righe").removeClass("disabled");
+        $("#duplica_righe").removeClass("disabled");
+    } else {
+        $("#elimina_righe").addClass("disabled");
+        $("#duplica_righe").addClass("disabled");
+    }
+});
+
+$("#check_all").click(function(){    
+    if( $(this).is(":checked") ){
+        $(".check").each(function(){
+            if( !$(this).is(":checked") ){
+                $(this).trigger("click");
+            }
+        });
+    }else{
+        $(".check").each(function(){
+            if( $(this).is(":checked") ){
+                $(this).trigger("click");
+            }
+        });
+    }
 });
 </script>';

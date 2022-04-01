@@ -631,22 +631,52 @@ switch (post('op')) {
 
     // Scollegamento riga generica da documento
     case 'delete_riga':
-        $id_riga = post('riga_id');
-        $type = post('riga_type');
-        $riga = $fattura->getRiga($type, $id_riga);
+        $id_righe = (array)post('righe');
+        
+        foreach ($id_righe as $id_riga) {
+            $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
+            $riga = $riga ?: Descrizione::find($id_riga);
+            $riga = $riga ?: Sconto::find($id_riga);
 
-        if (!empty($riga)) {
             try {
                 $riga->delete();
 
                 // Ricalcolo inps, ritenuta e bollo
                 ricalcola_costiagg_fattura($id_record);
-
-                flash()->info(tr('Riga rimossa!'));
             } catch (InvalidArgumentException $e) {
                 flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
             }
+
+            $riga = null;
         }
+
+        flash()->info(tr('Righe eliminate!'));
+
+        break;
+
+    // Duplicazione riga
+    case 'copy_riga':
+        $id_righe = (array)post('righe');
+        
+        foreach ($id_righe as $id_riga) {
+            $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
+            $riga = $riga ?: Descrizione::find($id_riga);
+            $riga = $riga ?: Sconto::find($id_riga);
+
+            $new_riga = $riga->replicate();
+            $new_riga->setDocument($fattura);
+            $new_riga->qta_evasa = 0;
+            $new_riga->save();
+
+            if ($new_riga->isArticolo()) {
+                $new_riga->movimenta($new_riga->qta);
+            }
+
+            $riga = null;
+        }
+
+        flash()->info(tr('Righe duplicate!'));
+
         break;
 
     case 'add_serial':

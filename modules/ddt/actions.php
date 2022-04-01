@@ -386,24 +386,50 @@ switch (filter('op')) {
 
         break;
 
-    // Scollegamento riga generica da ddt
+    // Eliminazione riga
     case 'delete_riga':
-        $id_riga = post('riga_id');
-        $type = post('riga_type');
-
-        $riga = $ddt->getRiga($type, $id_riga);
-
-        if (!empty($riga)) {
+        $id_righe = (array)post('righe');
+        
+        foreach ($id_righe as $id_riga) {
+            $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
+            $riga = $riga ?: Descrizione::find($id_riga);
+            $riga = $riga ?: Sconto::find($id_riga);
             try {
                 $riga->delete();
-
-                flash()->info(tr('Riga rimossa!'));
             } catch (InvalidArgumentException $e) {
                 flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
             }
+
+            $riga = null;
         }
 
         ricalcola_costiagg_ddt($id_record);
+        flash()->info(tr('Righe eliminate!'));
+
+        break;
+
+    // Duplicazione riga
+    case 'copy_riga':
+        $id_righe = (array)post('righe');
+        
+        foreach ($id_righe as $id_riga) {
+            $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
+            $riga = $riga ?: Descrizione::find($id_riga);
+            $riga = $riga ?: Sconto::find($id_riga);
+
+            $new_riga = $riga->replicate();
+            $new_riga->setDocument($ddt);
+            $new_riga->qta_evasa = 0;
+            $new_riga->save();
+
+            if ($new_riga->isArticolo()) {
+                $new_riga->movimenta($new_riga->qta);
+            }
+
+            $riga = null;
+        }
+
+        flash()->info(tr('Righe duplicate!'));
 
         break;
 
@@ -474,7 +500,9 @@ switch (filter('op')) {
             $copia_riga->save();
 
             // Movimentazione forzata in direzione del documento
-            $copia_riga->movimenta($riga->qta);
+            if ($copia_riga->isArticolo()) {
+                $copia_riga->movimenta($copia_riga->qta);
+            }
         }
 
         // Salvataggio riferimento

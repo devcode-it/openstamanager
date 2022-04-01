@@ -21,11 +21,21 @@ use Modules\Interventi\Intervento;
 
 include_once __DIR__.'/init.php';
 
+$block_edit = !empty($note_accredito) || in_array($record['stato'], ['Emessa', 'Pagato', 'Parzialmente pagato']) || !$abilita_genera;
+$righe = $fattura->getRighe();
+
 echo '
 <div class="table-responsive">
     <table class="table table-striped table-hover table-condensed table-bordered">
         <thead>
             <tr>
+                <th width="5" class="text-center">';
+                if (!$block_edit && sizeof($righe) > 0) {
+                    echo '
+                    <input id="check_all" type="checkbox"/>';
+                }
+                echo '
+                </th>
                 <th width="35" class="text-center" >'.tr('#').'</th>
                 <th>'.tr('Descrizione').'</th>
                 <th class="text-center" width="150">'.tr('Q.tà').'</th>
@@ -35,10 +45,9 @@ echo '
                 <th width="120"></th>
             </tr>
         </thead>
-        <tbody class="sortable">';
+        <tbody class="sortable" id="righe">';
 
 // Righe documento
-$righe = $fattura->getRighe();
 $num = 0;
 foreach ($righe as $riga) {
     ++$num;
@@ -90,6 +99,14 @@ foreach ($righe as $riga) {
 
     echo '
         <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'" '.$extra.'>
+            <td class="text-center">';
+            if (!$block_edit) {
+                echo '
+                <input class="check" type="checkbox"/>';
+            }
+            echo '
+            </td>
+            
             <td class="text-center">
                 '.$num.'
             </td>
@@ -227,7 +244,7 @@ foreach ($righe as $riga) {
                         <i class="fa fa-edit"></i>
                     </a>
 
-                    <a class="btn btn-xs btn-danger" title="'.tr('Rimuovi riga').'" onclick="rimuoviRiga(this)">
+                    <a class="btn btn-xs btn-danger" title="'.tr('Rimuovi riga').'" onclick="rimuoviRiga([$(this).closest(\'tr\').data(\'id\')])">
                         <i class="fa fa-trash"></i>
                     </a>
 
@@ -260,7 +277,7 @@ $ritenuta_contributi = $fattura->totale_ritenuta_contributi;
 // IMPONIBILE
 echo '
         <tr>
-            <td colspan="5" class="text-right">
+            <td colspan="6" class="text-right">
                 <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -273,7 +290,7 @@ echo '
 if (!empty($sconto)) {
     echo '
         <tr>
-            <td colspan="5" class="text-right">
+            <td colspan="6" class="text-right">
                 <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"><i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
             </td>
             <td class="text-right">
@@ -285,7 +302,7 @@ if (!empty($sconto)) {
     // TOTALE IMPONIBILE
     echo '
         <tr>
-            <td colspan="5" class="text-right">
+            <td colspan="6" class="text-right">
                 <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -299,7 +316,7 @@ if (!empty($sconto)) {
 if (!empty($rivalsa_inps)) {
     echo '
         <tr>
-            <td colspan="5" class="text-right">';
+            <td colspan="6" class="text-right">';
 
     if ($dir == 'entrata') {
         $descrizione_rivalsa = $database->fetchOne('SELECT CONCAT_WS(\' - \', codice, descrizione) AS descrizione FROM fe_tipo_cassa WHERE codice = '.prepare(setting('Tipo Cassa Previdenziale')));
@@ -323,7 +340,7 @@ if (!empty($rivalsa_inps)) {
 if (!empty($iva)) {
     echo '
         <tr>
-            <td colspan="5" class="text-right">';
+            <td colspan="6" class="text-right">';
 
     if ($records[0]['split_payment']) {
         echo '<b>'.tr('Iva a carico del destinatario', [], ['upper' => true]).':</b>';
@@ -342,7 +359,7 @@ if (!empty($iva)) {
 // TOTALE
 echo '
         <tr>
-            <td colspan="5" class="text-right">
+            <td colspan="6" class="text-right">
                 <b>'.tr('Totale', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -355,7 +372,7 @@ echo '
 if (!empty($ritenuta_acconto)) {
     echo '
         <tr>
-            <td colspan="5" class="text-right">
+            <td colspan="6" class="text-right">
                 <b>'.tr("Ritenuta d'acconto", [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -369,7 +386,7 @@ if (!empty($ritenuta_acconto)) {
 if (!empty($ritenuta_contributi)) {
     echo '
         <tr>
-            <td colspan="5" class="text-right">
+            <td colspan="6" class="text-right">
                 <b>'.tr('Ritenuta previdenziale', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -383,7 +400,7 @@ if (!empty($ritenuta_contributi)) {
 if (!empty($sconto_finale)) {
     echo '
         <tr>
-            <td colspan="5" class="text-right">
+            <td colspan="6" class="text-right">
                 <b>'.tr('Sconto in fattura', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -397,7 +414,7 @@ if (!empty($sconto_finale)) {
 if ($totale != $netto_a_pagare) {
     echo '
         <tr>
-            <td colspan="5" class="text-right">
+            <td colspan="6" class="text-right">
                 <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -408,10 +425,22 @@ if ($totale != $netto_a_pagare) {
 }
 
 echo '
-    </table>
-</div>';
+    </table>';
+if (!$block_edit && sizeof($righe) > 0) {
+    echo '
+    <div class="btn-group">
+        <button type="button" class="btn btn-xs btn-default disabled" id="elimina_righe" onclick="duplicaRiga(getSelectData());">
+            <i class="fa fa-copy"></i>
+        </button>
 
+        <button type="button" class="btn btn-xs btn-default disabled" id="duplica_righe" onclick="rimuoviRiga(getSelectData());">
+            <i class="fa fa-trash"></i>
+        </button>
+    </div>';
+}
 echo '
+</div>
+
 <script>
 async function modificaRiga(button) {
     let riga = $(button).closest("tr");
@@ -429,18 +458,24 @@ async function modificaRiga(button) {
     openModal("'.tr('Modifica riga').'", "'.$module->fileurl('row-edit.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&riga_id=" + id + "&riga_type=" + type);
 }
 
-function rimuoviRiga(button) {
+// Estraggo le righe spuntate
+function getSelectData() {
+    let data=new Array();
+    $(\'#righe\').find(\'.check:checked\').each(function (){ 
+        data.push($(this).closest(\'tr\').data(\'id\'));
+    });
+
+    return data;
+}
+
+function rimuoviRiga(id) {
     swal({
-        title: "'.tr('Rimuovere questa riga?').'",
-        html: "'.tr('Sei sicuro di volere rimuovere questa riga dal documento?').' '.tr("L'operazione è irreversibile").'.",
+        title: "'.tr('Rimuovere queste righe?').'",
+        html: "'.tr('Sei sicuro di volere rimuovere queste righe dal documento?').' '.tr("L'operazione è irreversibile").'.",
         type: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Sì').'"
     }).then(function () {
-        let riga = $(button).closest("tr");
-        let id = riga.data("id");
-        let type = riga.data("type");
-
         $.ajax({
             url: globals.rootdir + "/actions.php",
             type: "POST",
@@ -449,8 +484,35 @@ function rimuoviRiga(button) {
                 id_module: globals.id_module,
                 id_record: globals.id_record,
                 op: "delete_riga",
-                riga_type: type,
-                riga_id: id,
+                righe: id,
+            },
+            success: function (response) {
+                location.reload();
+            },
+            error: function() {
+                location.reload();
+            }
+        });
+    }).catch(swal.noop);
+}
+
+function duplicaRiga(id) {
+    swal({
+        title: "'.tr('Duplicare queste righe?').'",
+        html: "'.tr('Sei sicuro di volere queste righe del documento?').'",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "'.tr('Sì').'"
+    }).then(function () {
+        $.ajax({
+            url: globals.rootdir + "/actions.php",
+            type: "POST",
+            dataType: "json",
+            data: {
+                id_module: globals.id_module,
+                id_record: globals.id_record,
+                op: "copy_riga",
+                righe: id,
             },
             success: function (response) {
                 location.reload();
@@ -495,5 +557,38 @@ $(document).ready(function() {
             order: order.join(","),
         });
     });
+});
+
+$(".check").on("change", function() {
+    let checked = 0;
+    $(".check").each(function() {
+        if ($(this).is(":checked")) {
+            checked = 1;
+        }
+    });
+
+    if (checked) {
+        $("#elimina_righe").removeClass("disabled");
+        $("#duplica_righe").removeClass("disabled");
+    } else {
+        $("#elimina_righe").addClass("disabled");
+        $("#duplica_righe").addClass("disabled");
+    }
+});
+
+$("#check_all").click(function(){    
+    if( $(this).is(":checked") ){
+        $(".check").each(function(){
+            if( !$(this).is(":checked") ){
+                $(this).trigger("click");
+            }
+        });
+    }else{
+        $(".check").each(function(){
+            if( $(this).is(":checked") ){
+                $(this).trigger("click");
+            }
+        });
+    }
 });
 </script>';

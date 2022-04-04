@@ -62,8 +62,6 @@ function compile(btn) {
             if(!$("#id_tipo").val()) {
                 $("#id_tipo").selectSet(response.id_tipo);
             }
-            
-            $("#pagamento").selectSetNew(response.pagamento.id, response.pagamento.descrizione);
 
             $("select[name^=iva]").each(function(){
                 var aliquota = $(this).closest("tr").find("[id^=aliquota]").text();

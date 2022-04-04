@@ -493,3 +493,31 @@ if ($options['pricing']) {
 
 echo '
 </table>';
+
+if($options['checklist']){
+
+    $structure = Modules::get('Interventi');
+    $checks = $structure->mainChecks($id_record);
+
+    if(!empty($checks)){
+        echo '
+<pagebreak class="page-break-after" />
+<table class="table table-bordered vertical-middle">
+    <tr>
+        <th class="text-center" colspan="2" style="font-size:11pt;">
+            <b>CHECKLIST</b>
+        </th>
+    </tr>';
+
+        $structure = Modules::get('Interventi');
+        $checks = $structure->mainChecks($id_record);
+
+        foreach ($checks as $check) {
+            echo renderChecklistHtml($check);
+        }
+
+    echo '
+</table>';
+    }
+
+}

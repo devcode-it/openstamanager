@@ -60,7 +60,7 @@ class Lista extends Model
 
             // Ricerca nuovi record
             $number = $database->fetchNum($query);
-            $database->query('INSERT INTO em_list_receiver (id_list, record_id, record_type) '.str_replace_first('SELECT', 'SELECT '.prepare($this->id).',', $query));
+            $database->query('INSERT INTO em_list_receiver (id_list, record_id, record_type) '.preg_replace('/'.preg_quote('SELECT', '/').'/', 'SELECT '.prepare($this->id).',', $query, 1));
         }
 
         return $result;

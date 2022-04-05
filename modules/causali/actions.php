@@ -24,7 +24,7 @@ switch (filter('op')) {
         $descrizione = filter('descrizione');
 
         if (isset($descrizione)) {
-            if ($dbo->fetchNum('SELECT * FROM `dt_causalet` WHERE `descrizione`='.prepare($descrizione).' AND `id`!='.prepare($id_record)) == 0) {
+            if ($dbo->fetchNum('SELECT * FROM `dt_causalet` WHERE `deleted_at` IS NULL AND `descrizione`='.prepare($descrizione).' AND `id`!='.prepare($id_record)) == 0) {
                 $predefined = post('predefined');
                 if (!empty($predefined)) {
                     $dbo->query('UPDATE dt_causalet SET predefined = 0');
@@ -53,7 +53,7 @@ switch (filter('op')) {
         $descrizione = filter('descrizione');
 
         if (isset($descrizione)) {
-            if ($dbo->fetchNum('SELECT * FROM `dt_causalet` WHERE `descrizione`='.prepare($descrizione)) == 0) {
+            if ($dbo->fetchNum('SELECT * FROM `dt_causalet` WHERE `deleted_at` IS NULL AND `descrizione`='.prepare($descrizione)) == 0) {
                 $dbo->insert('dt_causalet', [
                     'descrizione' => $descrizione,
                     'is_importabile' => 1,

@@ -63,3 +63,28 @@ function renderChecklist($check, $level = 0)
 
     return $result;
 }
+
+function renderChecklistHtml($check, $level = 0)
+{
+    $user = auth()->getUser();
+    $enabled = $check->assignedUsers ? $check->assignedUsers->pluck('id')->search($user->id) !== false : true;
+
+    $width = 10+20*$level;
+
+    $result = '
+    <tr>
+        <td class="text-center" style="width:30px;">
+            '.(!empty($check->checked_at)?'<img src="'.ROOTDIR.'/templates/interventi/check.png" style="width:10px;">':'').'
+        </td>
+        <td style="padding-left:'.$width.'px;">
+            <span class="text">'.$check->content.'</span>
+        </td>
+    </tr>';
+
+    $children = $check->children;
+    foreach ($children as $child) {
+        $result .= renderChecklistHtml($child, $level + 1);
+    }
+
+    return $result;
+}

@@ -151,7 +151,7 @@ class Articolo extends Model
     {
         $this->attributes['prezzo_acquisto'] = $value;
 
-        if (!empty($this->coefficiente)) {
+        if ($this->coefficiente != 0) {
             $prezzo_vendita = $value * $this->coefficiente;
 
             $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');

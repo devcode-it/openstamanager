@@ -172,14 +172,16 @@ TXT;
      *
      * @return array
      */
-    public static function forceArray($array)
+    public static function forceArray($value)
     {
-        if (!array_key_exists(0, $array)) {
-            $result = $array;
-            $array = [];
-            $array[0] = $result;
+        if (is_array($value)) {
+            if (!array_key_exists(0, $value)) {
+                $result = $value;
+                $value = [];
+                $value[0] = $result;
+            }
         }
 
-        return $array;
+        return $value;
     }
 }

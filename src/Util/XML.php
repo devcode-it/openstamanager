@@ -164,4 +164,22 @@ TXT;
 
         return file_put_contents($file, $to);
     }
+
+    /**
+     * Interpreta i contenuti di un file XML.
+     *
+     * @param string $file
+     *
+     * @return array
+     */
+    public static function forceArray($array)
+    {
+        if (!array_key_exists(0, $array)) {
+            $result = $array;
+            $array = [];
+            $array[0] = $result;
+        }
+
+        return $array;
+    }
 }

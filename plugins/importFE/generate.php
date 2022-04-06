@@ -20,6 +20,7 @@
 use Carbon\Carbon;
 use Modules\Pagamenti\Pagamento;
 use Plugins\ImportFE\FatturaElettronica;
+use Util\XML;
 
 include_once __DIR__.'/../../core.php';
 
@@ -327,8 +328,8 @@ if (!empty($righe)) {
             <tbody>';
     
     // Dati ordini
-    $DatiOrdini = $fattura_pa->getBody()['DatiGenerali']['DatiOrdineAcquisto'];
-    $DatiDDT = $fattura_pa->getBody()['DatiGenerali']['DatiDDT'];
+    $DatiOrdini =  XML::forceArray($fattura_pa->getBody()['DatiGenerali']['DatiOrdineAcquisto']);
+    $DatiDDT =  XML::forceArray($fattura_pa->getBody()['DatiGenerali']['DatiDDT']);
 
 
     // Riorganizzazione dati ordini per numero di riga

@@ -25,6 +25,7 @@ use Modules\Ordini\Ordine;
 use Modules\Fatture\Fattura;
 use Plugins\ImportFE\FatturaElettronica;
 use Plugins\ImportFE\Interaction;
+use Util\XML;
 
 $file = null;
 switch (filter('op')) {
@@ -278,8 +279,8 @@ switch (filter('op')) {
         $results = [];
 
         // Dati ordini
-        $DatiOrdini = $fattura_pa->getBody()['DatiGenerali']['DatiOrdineAcquisto'];
-        $DatiDDT = $fattura_pa->getBody()['DatiGenerali']['DatiDDT'];
+        $DatiOrdini =  XML::forceArray($fattura_pa->getBody()['DatiGenerali']['DatiOrdineAcquisto']);
+        $DatiDDT =  XML::forceArray($fattura_pa->getBody()['DatiGenerali']['DatiDDT']);
 
         $replaces = ['n ','N ','n. ','N. ','nr ','NR ','nr. ','NR. ','num ','NUM ','num. ','NUM. ','numero ','NUMERO '];
 

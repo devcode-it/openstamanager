@@ -78,6 +78,7 @@ switch (post('op')) {
 
     case 'crea_fattura':
         $id_documento_cliente = [];
+        $fatturati = [];
         $n_interventi = 0;
 
         $data = date('Y-m-d');

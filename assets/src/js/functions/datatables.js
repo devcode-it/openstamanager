@@ -337,6 +337,26 @@ function initComplete(settings) {
     $('.deleteicon').on("click", function (e) {
         resetTableSearch($(this).parent().attr("id").replace("th_", ""));
     });
+
+    setTimeout(function () {
+        $('.select-checkbox').each(function(){
+            var row = $(this).parent();
+            var row_id = row.attr("id");
+
+            var table_selector = $(this).closest(".dataTable");
+            var wrapper = getTable(table_selector);
+
+            if(typeof row_id !== "undefined"){
+                if (row.hasClass("selected")) {
+                    //table.datatable.rows("#" + row_id).select();
+                    wrapper.addSelectedRows(row_id);
+                } else {
+                    //table.datatable.rows("#" + row_id).deselect();
+                    wrapper.removeSelectedRows(row_id);
+                }
+            }
+        });
+    }, 1000);
 }
 
 function drawCallback(settings) {

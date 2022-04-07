@@ -102,13 +102,7 @@ if (!empty($movimenti)) {
     }
 
     echo '
-</table>
-
-<script>
-function open_movimento(id_mastrino, id_module){
-    launch_modal("'.tr('Dettagli movimento').'", "'.$structure->fileurl('dettagli_movimento.php').'?id_mastrino=" + id_mastrino + "&id_module=" + id_module);
-}
-</script>';
+</table>';
 } else {
     echo '
 <span>'.tr('Nessun movimento presente').'</span>';

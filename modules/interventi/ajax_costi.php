@@ -123,7 +123,7 @@ if ($show_prezzi) {
     echo '
     <tr>
         <td colspan="3" class="text-right">
-            <b><i class="fa fa-question-circle-o tip" title="'.tr("Il valore dell'IVA totale è esclusivamente indicativo e basato sulle impostazioni dei default del gestionale").'. '.tr("In particolare, l'IVA delle sessioni di lavoro sarà personalizzabile durante la procedura di importazione dell'Attività in Fattura").'."></i> '.tr('IVA', [], ['upper' => true]).':</b>
+            <b><i class="fa fa-question-circle-o tip" title="'.tr("Il valore dell'IVA totale è esclusivamente indicativo e basato sulle impostazioni di default del gestionale se non è impostata l'iva predefinita nell'anagrafica").'."></i> '.tr('IVA', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
             '.moneyFormat($iva, 2).'

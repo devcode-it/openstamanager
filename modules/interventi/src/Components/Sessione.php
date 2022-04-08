@@ -426,7 +426,7 @@ class Sessione extends Model
     public function getAliquotaAttribute()
     {
         if (!isset($this->aliquota_iva)) {
-            $id_iva = setting('Iva predefinita');
+            $id_iva = $this->intervento->anagrafica->idiva_vendite ?: setting('Iva predefinita');
 
             $this->aliquota_iva = Aliquota::find($id_iva);
         }

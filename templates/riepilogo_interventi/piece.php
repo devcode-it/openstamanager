@@ -27,11 +27,11 @@ $sessioni = $intervento->sessioni;
 $iva_predefinita = floatval(Aliquota::find(setting('Iva predefinita'))->percentuale);
 
 $ore = $sessioni->sum('ore');
-$imponibile = $tipo=='cliente' ? $intervento->imponibile : $intervento->spesa;
-$sconto = $tipo=='cliente' ? $intervento->sconto : 0;
-$totale_imponibile = $tipo=='cliente' ? $intervento->totale_imponibile : $intervento->spesa;
-$iva = $tipo=='cliente' ? $intervento->iva : (($intervento->spesa * $iva_predefinita) / 100);
-$totale_ivato = $tipo=='cliente' ? $intervento->totale : ($intervento->spesa + $iva);
+$imponibile = $tipo=='interno' ? $intervento->spesa : $intervento->imponibile;
+$sconto = $tipo=='interno' ? 0 : $intervento->sconto;
+$totale_imponibile = $tipo=='interno' ? $intervento->spesa : $intervento->totale_imponibile;
+$iva = $tipo=='interno' ? (($intervento->spesa * $iva_predefinita) / 100) : $intervento->iva;
+$totale_ivato = $tipo=='interno' ? ($intervento->spesa + $iva) : $intervento->totale;
 
 $somma_ore[] = $ore;
 $somma_imponibile[] = $imponibile;
@@ -107,13 +107,13 @@ if (!$righe->isEmpty()) {
     <td style="border-top: 0; border-bottom: 0;"></td>
     <th style="background-color: #eee" colspan="2"><small>'.tr('Materiale utilizzato e spese aggiuntive').'</small></th>
     <th class="text-center" style="background-color: #eee"><small>'.tr('Qta').'</small></th>
-    <th class="text-center" style="background-color: #eee"><small>'.($tipo=='cliente' ? tr('Prezzo unitario') : tr('Costo unitario')).'</small></th>
-    <th class="text-center" style="background-color: #eee"><small>'.($tipo=='cliente' ? tr('Imponibile') : tr('Costo netto')).'</small></th>
+    <th class="text-center" style="background-color: #eee"><small>'.($tipo=='interno' ? tr('Costo unitario') : tr('Prezzo unitario')).'</small></th>
+    <th class="text-center" style="background-color: #eee"><small>'.($tipo=='interno' ? tr('Costo netto') : tr('Imponibile')).'</small></th>
 </tr>';
 
     foreach ($righe as $riga) {
-        $prezzo = $tipo=='cliente' ? $riga->prezzo_unitario : $riga->costo_unitario;
-        $totale = $tipo=='cliente' ? $riga->totale_imponibile : $riga->spesa;
+        $prezzo = $tipo=='interno' ? $riga->costo_unitario : $riga->prezzo_unitario;
+        $totale = $tipo=='interno' ? $riga->spesa : $riga->totale_imponibile;
 
         echo '
 <tr>

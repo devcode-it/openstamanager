@@ -43,9 +43,12 @@ echo '
         </div>
     </div>';
 
+$is_nota = $options['is_nota'] ?: 0;
 echo '
     <div class="row '.(!empty($options['nascondi_prezzi']) ? 'hidden' : '').'">
-    <input type="hidden" name="prezzi_ivati" value="'.setting('Utilizza prezzi di vendita comprensivi di IVA').'">';
+    <input type="hidden" name="prezzi_ivati" value="'.setting('Utilizza prezzi di vendita comprensivi di IVA').'">
+    <input type="hidden" name="is_nota" value="'.$is_nota.'">
+    <input type="hidden" name="dir" value="'.$options['dir'].'">';
 
 $width = $options['dir'] == 'entrata' ? 4 : 6;
 $label = $options['dir'] == 'entrata' ? tr('Prezzo unitario di vendita') : tr('Prezzo unitario');
@@ -220,5 +223,70 @@ if (in_array($module['name'], ['Ordini cliente', 'Ordini fornitore', 'Preventivi
                 input("ora_evasione").set();
             }
         });
+        </script>';
+}
+
+if (in_array($module['name'], ['Fatture di vendita', 'Fatture di acquisto'])) {
+    echo '
+    <script>
+        $(document).ready(function() {
+            if(input("data_evasione").get()){
+                input("ora_evasione").enable();
+            }
+
+            controlla_prezzo();
+            controlla_sconto();
+        });
+
+        $("#data_evasione").blur(function() {
+            if(input("data_evasione").get()){
+                input("ora_evasione").enable();
+            } else{
+                input("ora_evasione").disable();
+                input("ora_evasione").set();
+            }
+        });
+
+        $("#prezzo_unitario").on("keyup", function() {
+            controlla_prezzo();
+        });
+
+        $("#sconto").on("keyup", function() {
+            controlla_sconto();
+        });
+
+        function controlla_prezzo() {
+            let prezzo_unitario = $("#prezzo_unitario").val().toEnglish();
+            let div = $("#prezzo_unitario").closest("div").next("div[id*=errors]");
+            if (prezzo_unitario < 0) {
+                if (input("is_nota").get() == true) {
+                    if (input("dir").get() == "entrata") {
+                        div.html(`<small class="label label-warning"><i class="fa fa-exclamation-triangle"></i> '.tr('Importo a credito').'</small>`);
+                    } else {
+                        div.html(`<small class="label label-warning"><i class="fa fa-exclamation-triangle"></i> '.tr('Importo a debito').'</small>`);
+                    }
+                } else {
+                    if (input("dir").get() == "entrata") {
+                        div.html(`<small class="label label-warning"><i class="fa fa-exclamation-triangle"></i> '.tr('Importo a debito').'</small>`);
+                    } else {
+                        div.html(`<small class="label label-warning"><i class="fa fa-exclamation-triangle"></i> '.tr('Importo a credito').'</small>`);
+                    }
+                }
+            } else {
+                div.html("");
+            }
+        }
+
+        function controlla_sconto() {
+            let sconto = $("#sconto").val().toEnglish();
+            let div = $("#sconto").closest("div").next("div[id*=errors]");
+            if (sconto > 0) {
+                div.html(`<small class="label label-default" >'.tr('Sconto').'</small>`);
+            } else if (sconto < 0) {
+                div.html(`<small class="label label-default" >'.tr('Maggiorazione').'</small>`);
+            } else {
+                div.html("");
+            }
+        }
     </script>';
 }

@@ -824,7 +824,7 @@ if ($dir == 'entrata') {
 
 if ($fattura->isFE()) {
     echo '
-<div class="alert alert-info text-center" id="controlla_totali"><i class="fa fa-spinner fa-spin"></i> '.tr('Controllo sui totali del documento e della fattura elettronica in corso').'...</div>
+<div class="alert alert-info text-center" id="controlla_totali"></div>
 
 <script>
     $(document).ready(function() {
@@ -846,9 +846,7 @@ if ($fattura->isFE()) {
 
                 if (stored == null) {
                     div.addClass("alert-info").html("'.tr("Il file XML non contiene il nodo ''ImportoTotaleDocumento'': impossibile controllare corrispondenza dei totali").'.")
-                } else if (stored.toLocale() == calculated.toLocale()){
-                    div.addClass("alert-success").html("'.tr('Il totale del file XML corrisponde a quello calcolato dal gestionale').'.")
-                } else {
+                } else if (stored.toLocale() != calculated.toLocale()){
                     div.addClass("alert-warning").html("'.tr('Il totale del file XML non corrisponde a quello calcolato dal gestionale: previsto _XML_, calcolato _CALC_ (differenza _DIFF_)', [
                         '_XML_' => '" + stored.toLocale() + " " + globals.currency + "',
                         '_CALC_' => '" + calculated.toLocale() + " " + globals.currency + "',

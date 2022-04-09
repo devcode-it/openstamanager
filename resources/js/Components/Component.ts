@@ -61,7 +61,7 @@ export abstract class Component<A = {}> implements ClassComponent<A> {
    *
    * @protected
    */
-  attrs: Attributes<string>;
+  attrs: Attributes<A>;
 
   /**
    * The types of the attributes passed into the component. They are used by Typescript to
@@ -71,7 +71,7 @@ export abstract class Component<A = {}> implements ClassComponent<A> {
 
   constructor() {
     this.element = undefined as unknown as Element;
-    this.attrs = undefined as unknown as Attributes<string>;
+    this.attrs = undefined as unknown as Attributes<A>;
   }
 
   /**
@@ -124,7 +124,7 @@ export abstract class Component<A = {}> implements ClassComponent<A> {
    *
    * @private
    */
-  setAttrs(attributes: {} = {}): void {
+  setAttrs(attributes: A | {} = {}): void {
     this.initAttrs(attributes);
 
     if (attributes) {
@@ -143,7 +143,7 @@ export abstract class Component<A = {}> implements ClassComponent<A> {
       }
     }
 
-    const attributesCollection: Collection<string> = collect(attributes);
+    const attributesCollection = collect<A>(attributes);
     attributesCollection.macro('addClassNames', (...classNames: ClassNames[]) => {
       attributesCollection.put(
         'className',
@@ -151,16 +151,18 @@ export abstract class Component<A = {}> implements ClassComponent<A> {
       );
     });
     attributesCollection.macro('addStyles', (...styles: string[]) => {
-      let s: string = attributesCollection.get<string, string>('style', '' as unknown as () => string) as string; // Type conversions are required here because of the way the typescript compiler works.
+      // Type conversions are required here because of the way the typescript compiler works.
+      let s = attributesCollection.get('style', '') as unknown as string;
 
-      if (!s.trimEnd().endsWith(';')) {
+      if (!s.trimEnd()
+        .endsWith(';')) {
         s += '; ';
       }
 
       s += styles.join('; ');
       attributesCollection.put('style', s);
     });
-    this.attrs = attributesCollection as Attributes<string>;
+    this.attrs = attributesCollection as Attributes<A>;
   }
 
   // noinspection JSUnusedLocalSymbols

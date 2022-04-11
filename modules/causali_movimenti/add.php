@@ -29,7 +29,7 @@ include_once __DIR__.'/../../core.php';
         </div>
 
         <div class="col-md-3">
-            {[ "type": "checkbox", "label": "<?php echo tr('Movimento di carico'); ?>", "name": "movimento_carico" ]}
+        {[ "type": "select", "label": "<?php echo tr('Tipo movimento'); ?>", "name": "tipo_movimento", "values": "list=\"carico\":\"Carico\",\"scarico\":\"Scarico\",\"spostamento\":\"Spostamento\"", "required": 1 ]}
         </div>
 	</div>
 

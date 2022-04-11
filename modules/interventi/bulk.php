@@ -151,12 +151,10 @@ switch (post('op')) {
         foreach ($id_records as $id) {
             $intervento = Intervento::find($id);
 
-            if (!$intervento->stato->is_completato || ($intervento->stato->is_completato == $stato->is_completato)) {
-                $intervento->stato()->associate($stato);
-                $intervento->save();
+            $intervento->stato()->associate($stato);
+            $intervento->save();
 
-                ++$n_interventi;
-            }
+            ++$n_interventi;
         }
 
         if ($n_interventi > 0) {

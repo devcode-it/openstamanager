@@ -23,12 +23,11 @@ use Plugins\ListinoClienti\DettaglioPrezzo;
 
 include_once __DIR__.'/../../core.php';
 
-$prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
-
 // Informazioni di base
 $id_articolo = get('id_articolo');
 $id_anagrafica = get('id_anagrafica');
 $direzione = get('direzione') == 'uscita' ? 'uscita' : 'entrata';
+$prezzi_ivati = ($direzione == 'entrata' ? setting('Utilizza prezzi di vendita comprensivi di IVA') : 0);
 
 // Modelli di interesse
 $articolo = Articolo::find($id_articolo);

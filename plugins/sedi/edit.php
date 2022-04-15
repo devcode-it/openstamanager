@@ -153,19 +153,46 @@ if (!empty($google)) {
 }
 
 // Permetto eliminazione tipo sede solo se non è utilizzata da nessun'altra parte nel gestionale
-$elementi = $dbo->fetchArray('SELECT `zz_user_sedi`.`id_user` AS `id` FROM `zz_user_sedi` WHERE `zz_user_sedi`.`idsede` = '.prepare($id_record).'
+$elementi = $dbo->fetchArray('SELECT `zz_users`.`idgruppo` AS `id`, "Utente" AS tipo, NULL AS dir FROM `zz_user_sedi` INNER JOIN `zz_users` ON `zz_user_sedi`.`id_user`=`zz_users`.`id` WHERE `zz_user_sedi`.`idsede` = '.prepare($id_record).'
 UNION
-SELECT `an_referenti`.`id` AS `id` FROM `an_referenti` WHERE `an_referenti`.`idsede` = '.prepare($id_record).'
+SELECT `an_referenti`.`id` AS `id`, "Referente" AS tipo, NULL AS dir FROM `an_referenti` WHERE `an_referenti`.`idsede` = '.prepare($id_record).'
 UNION
-SELECT `co_documenti`.`id` AS `id` FROM `co_documenti` WHERE `co_documenti`.`idsede_destinazione` = '.prepare($id_record).'
+SELECT `co_documenti`.`id` AS `id`, "Fattura" AS tipo, `co_tipidocumento`.`dir` AS dir FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`idsede_destinazione` = '.prepare($id_record).'
 ORDER BY `id`');
 
 if (!empty($elementi)) {
     echo '
-    <div class="alert alert-danger">
-        '.tr('Ci sono _NUM_ documenti collegati', [
-            '_NUM_' => count($elementi),
-        ]).'.
+	<div class="box box-warning collapsable collapsed-box">
+		<div class="box-header with-border">
+			<h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Campi collegati: _NUM_', [
+				'_NUM_' => count($elementi),
+			]).'</h3>
+			<div class="box-tools pull-right">
+				<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+			</div>
+		</div>
+		<div class="box-body">
+			<ul>';
+
+		foreach ($elementi as $elemento) {
+			$descrizione = $elemento['tipo'];
+			$id = $elemento['id'];
+			if (in_array($elemento['tipo'], ['Fattura'])) {
+				$modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
+				$link = Modules::link($modulo, $id, $descrizione);
+			} elseif (in_array($elemento['tipo'], ['Referente'])) {
+				$link = Plugins::link('Referenti', $id, $descrizione);
+			} else {
+				$link = Modules::link('Utenti e permessi', $id, $descrizione);
+			}
+
+			echo '
+				<li>'.$link.'</li>';
+		}
+
+		echo '
+			</ul>
+		</div>
 	</div>';
 
     $disabled = 'disabled';

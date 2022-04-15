@@ -177,6 +177,6 @@ if (!empty($elementi)) {
 
 ?>
 
-<a class="btn btn-danger ask <?php echo (intval($record['can_delete']) ? 'disabled' : ''); ?>" data-backto="record-list">
+<a class="btn btn-danger ask <?php echo (intval($record['can_delete'])==0 ? 'disabled' : ''); ?>" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>

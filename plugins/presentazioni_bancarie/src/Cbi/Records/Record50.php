@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugins\PresentazioniBancarie\RiBa\Records;
+namespace Plugins\PresentazioniBancarie\Cbi\Records;
 
 /**
  * Classe dedicata alla gestione dei dati per il record 50 del formato CBI.

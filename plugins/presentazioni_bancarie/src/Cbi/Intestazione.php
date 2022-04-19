@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugins\PresentazioniBancarie\RiBa;
+namespace Plugins\PresentazioniBancarie\Cbi;
 
 /**
  * Classe per gestire l'intestazione del RiBa.

@@ -254,7 +254,7 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
         $db_name = $database->getDatabaseName();
 
         // Ottiene il valore successivo della colonna di tipo AUTO_INCREMENT
-        $database->query("ANALYZE TABLE in_interventi");
+        $database->query('ANALYZE TABLE '.prepare($table_name));
         $next_autoincrement = $database->fetchOne('SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '.prepare($table_name).' AND TABLE_SCHEMA = '.prepare($db_name))['AUTO_INCREMENT'];
 
         /*

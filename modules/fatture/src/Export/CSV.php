@@ -50,7 +50,7 @@ class CSV extends CSVExporter
                 'label' => 'Ragione sociale',
             ],
             [
-                'field' => 'totale',
+                'field' => 'totaleCSV',
                 'label' => 'Totale',
             ],
             [

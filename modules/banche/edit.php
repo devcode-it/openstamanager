@@ -50,7 +50,7 @@ include_once __DIR__.'/../../core.php';
                 </div>
 
 				<div class="col-md-6">
-					{[ "type": "select", "label": "<?php echo tr('Conto predefinito'); ?>", "name": "id_pianodeiconti3", "value": "$id_pianodeiconti3$", "ajax-source": "conti" ]}
+					{[ "type": "select", "label": "<?php echo tr('Conto predefinito'); ?>", "name": "id_pianodeiconti3", "value": "$id_pianodeiconti3$", "ajax-source": "conti", "help": "<?php echo tr('Impostando un conto predefinito verrà pre-selezionata questa banca durante la scelta del tipo di pagamento in fattura.').'<br>'.tr('Anche il tipo di pagamento dovrà avere configurato lo stesso conto.'); ?>" ]}
                 </div>
 			</div>
 

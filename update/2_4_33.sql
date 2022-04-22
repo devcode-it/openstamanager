@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS `in_fasceorarie` (
   `ora_inizio` time DEFAULT NULL,
   `ora_fine` time DEFAULT NULL,
   `can_delete` BOOLEAN NOT NULL DEFAULT TRUE,
+  `is_predefined` BOOLEAN NOT NULL DEFAULT FALSE,
   `include_bank_holidays` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
@@ -23,7 +24,7 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `visible`, 
 
 
 -- Fascia oraria "Ordinaria"
-INSERT INTO `in_fasceorarie` (`id`, `nome`, `giorni`, `ora_inizio`, `ora_fine`, `can_delete`) VALUES (NULL, 'Ordinario', '1,2,3,4,5,6,7', '00:00', '23:59', '0'); 
+INSERT INTO `in_fasceorarie` (`id`, `nome`, `giorni`, `ora_inizio`, `ora_fine`, `can_delete`, `is_predefined`) VALUES (NULL, 'Ordinario', '1,2,3,4,5,6,7', '00:00', '23:59', '0', '1'); 
 
 -- Relazione fasca oraria / tipo intervento
 CREATE TABLE IF NOT EXISTS `in_fasceorarie_tipiintervento` (
@@ -114,7 +115,7 @@ CREATE TABLE `an_regioni` (
   `iso2` varchar(2) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_nazione`) REFERENCES `an_nazioni`(`id`) ON DELETE CASCADE
+  FOREIGN KEY (`id_nazione`) REFERENCES `an_nazioni`(`id`)
 ) ENGINE=InnoDB;
 
 

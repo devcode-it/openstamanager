@@ -219,12 +219,15 @@ function verifica_numero_ddt(DDT $ddt)
 {
     global $dbo;
 
-    if (empty($ddt->numero_esterno)) {
-        return null;
-    }
-
     $data = $ddt->data;
     $tipo = $ddt->tipo;
+    $dir = $ddt->direzione;
+    $numero = ($dir == 'entrata' ? $ddt->numero_esterno : $ddt->numero);
+    $campo = ($dir == 'entrata' ? 'numero_esterno' : 'numero');
+
+    if (empty($numero)) {
+        return null;
+    }
 
     $documenti = DDT::where('idtipoddt', $tipo->id)
         ->where('data', $data)
@@ -233,7 +236,7 @@ function verifica_numero_ddt(DDT $ddt)
     // Recupero maschera per questo segmento
     $maschera = setting('Formato numero secondario ddt');
 
-    $ultimo = Generator::getPreviousFrom($maschera, 'dt_ddt', 'numero_esterno', [
+    $ultimo = Generator::getPreviousFrom($maschera, 'dt_ddt', $campo, [
         'data < '.prepare(date('Y-m-d', strtotime($data))),
         'YEAR(data) = '.prepare(date('Y', strtotime($data))),
         'idtipoddt = '.prepare($tipo->id),

@@ -1,16 +1,16 @@
 <?php
 
-namespace Plugins\PresentazioniBancarie\RiBa;
+namespace Plugins\PresentazioniBancarie\Cbi;
 
-use Plugins\PresentazioniBancarie\RiBa\Records\Record14;
-use Plugins\PresentazioniBancarie\RiBa\Records\Record20;
-use Plugins\PresentazioniBancarie\RiBa\Records\Record30;
-use Plugins\PresentazioniBancarie\RiBa\Records\Record40;
-use Plugins\PresentazioniBancarie\RiBa\Records\Record50;
-use Plugins\PresentazioniBancarie\RiBa\Records\Record51;
-use Plugins\PresentazioniBancarie\RiBa\Records\Record70;
-use Plugins\PresentazioniBancarie\RiBa\Records\RecordEF;
-use Plugins\PresentazioniBancarie\RiBa\Records\RecordIB;
+use Plugins\PresentazioniBancarie\Cbi\Records\Record14;
+use Plugins\PresentazioniBancarie\Cbi\Records\Record20;
+use Plugins\PresentazioniBancarie\Cbi\Records\Record30;
+use Plugins\PresentazioniBancarie\Cbi\Records\Record40;
+use Plugins\PresentazioniBancarie\Cbi\Records\Record50;
+use Plugins\PresentazioniBancarie\Cbi\Records\Record51;
+use Plugins\PresentazioniBancarie\Cbi\Records\Record70;
+use Plugins\PresentazioniBancarie\Cbi\Records\RecordEF;
+use Plugins\PresentazioniBancarie\Cbi\Records\RecordIB;
 use InvalidArgumentException;
 
 class RiBa
@@ -161,7 +161,7 @@ class RiBa
             $r51->numero_ricevuta = $ricevuta->numero_ricevuta;
             $r51->denominazione_creditore = $intestazione->ragione_soc1_creditore;
             $contenuto .= $r51->toCBI().$eol;
-
+            
             // Record 70
             $r70 = new Record70();
             $r70->numero_progressivo = $progressivo;
@@ -182,25 +182,5 @@ class RiBa
         $contenuto .= $ef->toCBI().$eol;
 
         return $contenuto;
-    }
-
-    public function asRibaAbiCbi()
-    {
-        $formato_intestazione = $this->intestazione->toCbiFormat();
-
-        // Trasformazione delle ricevute nel formato relativo
-        $formato_ricevute = [];
-        foreach ($this->ricevute as $ricevuta) {
-            $formato_ricevute[] = $ricevuta->toCbiFormat();
-        }
-
-        // Eccezione in caso di assenza di ricevute interne
-        if (empty($formato_ricevute)) {
-            throw new InvalidArgumentException();
-        }
-
-        $cbi = new RibaAbiCbi();
-
-        return $cbi->creaFile($formato_intestazione, $formato_ricevute);
     }
 }

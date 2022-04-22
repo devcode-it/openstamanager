@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugins\PresentazioniBancarie\RiBa;
+namespace Plugins\PresentazioniBancarie\Cbi;
 
 /**
  * Classe per gestire i dati della ricevuta bancaria del RiBa.

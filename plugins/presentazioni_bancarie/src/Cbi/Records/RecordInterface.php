@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugins\PresentazioniBancarie\RiBa\Records;
+namespace Plugins\PresentazioniBancarie\Cbi\Records;
 
 interface RecordInterface
 {

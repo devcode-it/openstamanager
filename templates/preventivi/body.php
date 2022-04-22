@@ -197,7 +197,7 @@ foreach ($righe as $riga) {
         if ($riga->isArticolo() && !empty($riga->articolo->image)) {
             echo '
             <td align="center">
-                <img src="'.$riga->articolo->image.'" style="max-height: 60px; max-width:80px">
+                <img src="'.DOCROOT."/".$riga->articolo->image.'" style="max-height: 60px; max-width:80px">
             </td>';
 
             $autofill->set(5);

@@ -4,9 +4,9 @@ namespace Plugins\PresentazioniBancarie;
 
 use Carbon\Carbon;
 use DateTime;
-use Plugins\PresentazioniBancarie\RiBa\Intestazione;
-use Plugins\PresentazioniBancarie\RiBa\RiBa;
-use Plugins\PresentazioniBancarie\RiBa\Ricevuta;
+use Plugins\PresentazioniBancarie\Cbi\Intestazione;
+use Plugins\PresentazioniBancarie\Cbi\RiBa;
+use Plugins\PresentazioniBancarie\Cbi\Ricevuta;
 use Digitick\Sepa\PaymentInformation;
 use Digitick\Sepa\TransferFile\Factory\TransferFileFacadeFactory;
 use Exception;

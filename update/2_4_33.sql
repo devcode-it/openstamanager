@@ -104,3 +104,39 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name`='Interventi'), 'Contratto', 'contratto.info', 21, 1, 0, 0, 0, '', '', 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name`='Interventi'), 'Preventivo', 'preventivo.info', 22, 1, 0, 0, 0, '', '', 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name`='Interventi'), 'Ordine', 'ordine.info', 23, 1, 0, 0, 0, '', '', 0, 0, 1);
+
+
+
+CREATE TABLE `an_regioni` (
+  `id` int NOT NULL,
+  `id_nazione` int NOT NULL,
+  `nome` varchar(255) NOT NULL,
+  `iso2` varchar(2) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`id_nazione`) REFERENCES `an_nazioni`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+
+
+INSERT INTO `an_regioni` (`id`, `nome`, `id_nazione`) VALUES
+(1, 'Abruzzo', (SELECT `id` FROM `an_nazioni` WHERE `iso2` = 'IT')),
+(2, 'Basilicata', (SELECT `id` FROM `an_nazioni` WHERE `iso2` = 'IT')),
+(3, 'Calabria', (SELECT `id` FROM `an_nazioni` WHERE `iso2` = 'IT')),
+(4, 'Campania', (SELECT `id` FROM `an_nazioni` WHERE `iso2` = 'IT')),
+(5, 'Emilia-Romagna', (SELECT `id` FROM `an_nazioni` WHERE `iso2` = 'IT')),
+(6, 'Friuli-Venezia Giulia', (SELECT `id` FROM `an_nazioni` WHERE `iso2` = 'IT')),
+(7, 'Lazio', (SELECT `id` FROM `an_nazioni` WHERE `iso2` = 'IT')),
+(8, 'Liguria', (SELECT `id` FROM `an_nazioni` WHERE `iso2` = 'IT')),
+(9, 'Lombardia', (SELECT `id` FROM `an_nazioni` WHERE `iso2` = 'IT')),
+(10, 'Marche', (SELECT `id` FROM `an_nazioni` WHERE `iso2` = 'IT')),
+(11, 'Molise', (SELECT `id` FROM `an_nazioni` WHERE `iso2` = 'IT')),
+(12, 'Piemonte', (SELECT `id` FROM `an_nazioni` WHERE `iso2` = 'IT')),
+(13, 'Puglia', (SELECT `id` FROM `an_nazioni` WHERE `iso2` = 'IT')),
+(14, 'Sardegna', (SELECT `id` FROM `an_nazioni` WHERE `iso2` = 'IT')),
+(15, 'Sicilia', (SELECT `id` FROM `an_nazioni` WHERE `iso2` = 'IT')),
+(16, 'Toscana', (SELECT `id` FROM `an_nazioni` WHERE `iso2` = 'IT')),
+(17, 'Trentino-Alto Adige', (SELECT `id` FROM `an_nazioni` WHERE `iso2` = 'IT')),
+(18, 'Umbria', (SELECT `id` FROM `an_nazioni` WHERE `iso2` = 'IT')),
+(19, 'Valle d''Aosta', (SELECT `id` FROM `an_nazioni` WHERE `iso2` = 'IT')),
+(20, 'Veneto', (SELECT `id` FROM `an_nazioni` WHERE `iso2` = 'IT'));

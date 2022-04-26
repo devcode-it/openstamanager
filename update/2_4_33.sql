@@ -141,3 +141,6 @@ INSERT INTO `an_regioni` (`id`, `nome`, `id_nazione`) VALUES
 (18, 'Umbria', (SELECT `id` FROM `an_nazioni` WHERE `iso2` = 'IT')),
 (19, 'Valle d''Aosta', (SELECT `id` FROM `an_nazioni` WHERE `iso2` = 'IT')),
 (20, 'Veneto', (SELECT `id` FROM `an_nazioni` WHERE `iso2` = 'IT'));
+
+-- Aggiunta sezionale per fatture non elettroniche
+INSERT INTO `zz_segments` (`id`, `id_module`, `name`, `clause`, `position`, `pattern`, `note`, `dicitura_fissa`, `predefined`, `predefined_accredito`, `predefined_addebito`, `created_at`, `updated_at`, `is_fiscale`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'Fatture non elettroniche', '1=1', 'WHR', '#', '', '', '0', '0', '0', NULL, NULL, '1');

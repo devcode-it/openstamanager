@@ -181,7 +181,7 @@ if (!empty($elementi)) {
 				$modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
 				$link = Modules::link($modulo, $id, $descrizione);
 			} elseif (in_array($elemento['tipo'], ['Referente'])) {
-				$link = Plugins::link('Referenti', $id, $descrizione);
+				$link = Plugins::link('Referenti', $id_parent, $descrizione);
 			} else {
 				$link = Modules::link('Utenti e permessi', $id, $descrizione);
 			}

@@ -162,31 +162,30 @@ $("#idarticolo").on("change", function() {
         } else {
             verificaScontoArticolo();
         }
-    });
 
-    $("#costo_unitario").val($data.prezzo_acquisto);
-    $("#descrizione_riga").val($data.descrizione);
+        $("#costo_unitario").val($data.prezzo_acquisto);
+        $("#descrizione_riga").val($data.descrizione);
 
-    if (direzione === "entrata") {
-        if($data.idiva_vendita) {
-            $("#idiva").selectSetNew($data.idiva_vendita, $data.iva_vendita, $data);
+        if (direzione === "entrata") {
+            if($data.idiva_vendita) {
+                $("#idiva").selectSetNew($data.idiva_vendita, $data.iva_vendita, {"percentuale": $data.percentuale});
+            }
         }
-    }
-
-    else {
-        $("#id_dettaglio_fornitore").val($data.id_dettaglio_fornitore);
-        $("#qta_minima").val($data.qta_minima);
-        aggiornaQtaMinima();
-    }
-
-    let id_conto = $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').';
-    let id_conto_title = $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').'_title;
-    if(id_conto) {
-        $("#idconto").selectSetNew(id_conto, id_conto_title);
-    }
-
-    $("#um").selectSetNew($data.um, $data.um);
-    // Aggiornamento automatico di guadagno e margine
+    
+        else {
+            $("#id_dettaglio_fornitore").val($data.id_dettaglio_fornitore);
+            $("#qta_minima").val($data.qta_minima);
+            aggiornaQtaMinima();
+        }
+    
+        let id_conto = $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').';
+        let id_conto_title = $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').'_title;
+        if(id_conto) {
+            $("#idconto").selectSetNew(id_conto, id_conto_title);
+        }
+    
+        $("#um").selectSetNew($data.um, $data.um);
+    });
 });
 
 $("#idsede").on("change", function() {

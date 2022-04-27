@@ -21,6 +21,7 @@ use Carbon\Carbon;
 use Modules\Articoli\Articolo;
 use Modules\Articoli\Categoria;
 use Modules\CombinazioniArticoli\Combinazione;
+use Modules\Iva\Aliquota;
 use Util\Ini;
 
 include_once __DIR__.'/../../core.php';
@@ -78,6 +79,7 @@ switch (post('op')) {
         }
 
         $id_record = $articolo->id;
+        $iva = post('idiva_vendita') ? Aliquota::find(post('idiva_vendita')) : null;
 
         if (isAjaxRequest()) {
             echo json_encode([
@@ -87,7 +89,8 @@ switch (post('op')) {
                     'descrizione' => post('descrizione'),
                     'prezzo_acquisto' => post('prezzo_acquisto'),
                     'prezzo_vendita' => post('prezzo_vendita'),
-                    'idiva_vendita' => post('idiva_vendita'),
+                    'idiva_vendita' => post('idiva_vendita') ?: null,
+                    'iva_vendita' => $iva ? $iva->descrizione : null,
                 ],
             ]);
         }

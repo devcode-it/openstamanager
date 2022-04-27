@@ -898,4 +898,14 @@ class Fattura extends Document
     {
         return $this->anagrafica->ragione_sociale;
     }
+
+    public function getTotaleCSVAttribute()
+    {
+        $totale = $this->totale_imponibile + $this->iva + $this->rivalsa_inps + $this->iva_rivalsa_inps;
+        if($this->isNota()){
+            return $totale*(-1);
+        }else{
+            return $totale;
+        }
+    }
 }

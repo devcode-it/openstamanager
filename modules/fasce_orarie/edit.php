@@ -46,20 +46,21 @@ include_once __DIR__.'/../../core.php';
 			</div>
 
             <div class="row">
-				<div class="col-md-4">
+				<div class="col-md-3">
 					{[ "type": "time", "label": "<?php echo tr('Ora inizio'); ?>", "name": "ora_inizio", "required": 1, "value": "$ora_inizio$"  ]}
 				</div>
 
-                <div class="col-md-4">
+                <div class="col-md-3">
 					{[ "type": "time", "label": "<?php echo tr('Ora fine'); ?>", "name": "ora_fine", "required": 1, "value": "$ora_fine$"  ]}
 				</div>
 
-                <div class="col-md-4">
+                <div class="col-md-3">
 					{[ "type": "checkbox", "label": "<?php echo tr('Includi festività'); ?>", "name": "include_bank_holidays", "required": 0, "value": "$include_bank_holidays$" ]}
 				</div>
 
-
-
+                <div class="col-md-3">
+					{[ "type": "checkbox", "label": "<?php echo tr('Predefinita'); ?>", "name": "is_predefined", "required": 0, "value": "$is_predefined$" ]}
+				</div>
             </div>
 		</div>
 	</div>

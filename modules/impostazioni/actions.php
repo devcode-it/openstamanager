@@ -24,7 +24,7 @@ include_once __DIR__.'/../../core.php';
 switch (filter('op')) {
     case 'salva':
         $id = filter('id');
-        $valore = filter('valore');
+        $valore = filter('valore', null, 1);
 
         $impostazione = Setting::find($id);
         if (!$impostazione->editable) {

@@ -26,19 +26,24 @@ switch (post('op')) {
         $ora_inizio = post('ora_inizio');
         $ora_fine = post('ora_fine');
         $include_bank_holidays = post('include_bank_holidays');
-       
+        $is_predefined = post('is_predefined');
+
         if ($dbo->fetchNum('SELECT * FROM `in_fasceorarie` WHERE `nome`='.prepare($nome).' AND `id`!='.prepare($id_record)) == 0) {
+
+            if (!empty($is_predefined)) {
+                $dbo->query('UPDATE in_fasceorarie SET is_predefined = 0');
+            }
             
             $dbo->update('in_fasceorarie', [
                 'nome' => $nome,
                 'giorni' => $giorni ? implode(',' , $giorni) : null,
-                'ora_inizio' =>$ora_inizio,
+                'ora_inizio' => $ora_inizio,
                 'ora_fine' => $ora_fine,
                 'include_bank_holidays' => $include_bank_holidays,
+                'is_predefined' => $is_predefined,
             ], [
                 'id' => $id_record,
             ]);
-
 
             flash()->info(tr('Salvataggio completato.'));
         } else {

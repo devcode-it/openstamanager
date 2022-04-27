@@ -341,6 +341,25 @@ switch ($resource) {
 
         break;
 
+    case 'regioni':
+        if (isset($superselect['id_nazione'])) {
+            $query = 'SELECT an_regioni.id AS id, an_regioni.iso2, CONCAT(CONCAT_WS(\' - \', an_regioni.iso2, an_regioni.nome), \' (\', an_nazioni.iso2, \')\') AS descrizione FROM an_regioni INNER JOIN an_nazioni ON an_regioni.id_nazione = an_nazioni.id |where| ORDER BY an_regioni.nome';
+
+            foreach ($elements as $element) {
+                $filter[] = 'an_regioni.id='.prepare($element);
+            }
+
+            $where[] = 'an_regioni.id_nazione='.prepare($superselect['id_nazione']);
+
+            if (!empty($search)) {
+                $search_fields[] = 'an_regioni.nome LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = 'an_regioni.iso2 LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = 'CONCAT_WS(\' - \', an_regioni.iso2, an_regioni.nome) LIKE '.prepare('%'.$search.'%');
+            }
+        }
+        break;
+    
+
     case 'relazioni':
         $query = 'SELECT id, descrizione, colore AS bgcolor FROM an_relazioni |where| ORDER BY descrizione';
 

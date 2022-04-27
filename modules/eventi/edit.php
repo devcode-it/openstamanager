@@ -51,7 +51,7 @@ include_once __DIR__.'/../../core.php';
                 </div>
 
                 <div class="col-md-6">
-                    {[ "type": "select", "label": "<?php echo tr('Regione'); ?>", "name": "id_regione", "value": "$id_regione$", "ajax-source": "regioni" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Regione'); ?>", "name": "id_regione", "value": "$id_regione$", "ajax-source": "regioni", "select-options": <?php echo json_encode(['id_nazione' => $record['id_nazione']]); ?> ]}
                 </div>
             </div>
 
@@ -72,3 +72,21 @@ include_once __DIR__.'/../../core.php';
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
+
+<script>
+    var nazione = input("id_nazione");
+    var regione = input("id_regione");
+
+    // Gestione della modifica della nazione
+	nazione.change(function() {
+
+        updateSelectOption("id_nazione", $(this).val());
+        session_set("superselect,id_nazione", $(this).val(), 0);
+
+        let value = !$(this).val();
+        let placeholder = value ? "<?php echo tr('Seleziona prima una nazione'); ?>" : "<?php echo tr("Seleziona un'opzione"); ?>";
+
+        regione.getElement()
+            .selectReset(placeholder);
+    });
+</script>

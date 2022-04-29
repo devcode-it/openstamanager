@@ -591,7 +591,7 @@ echo '
         let totale_qta = 0;
 
         $("input[id*=qta_]").each(function() {
-            let qta = ($(this).val()).toEnglish();
+            let qta = $(this).val().toEnglish();
             let r = $(this).attr("id").replace("qta_", "");
 
             if (!$("#checked_" + r).is(":checked") || isNaN(qta)) {
@@ -626,8 +626,6 @@ echo '
         controllaMagazzino();
     }
 
-    ricalcolaTotale();
-
     $(document).ready(function(){
         if(input("id_ritenuta_acconto").get()) {
             $("#calcolo_ritenuta_acconto").prop("required", true);
@@ -644,6 +642,7 @@ echo '
                 input("calcolo_ritenuta_acconto").set("");
             }
         });
+        ricalcolaTotale();
     });
 
     $("#import_all").click(function(){    

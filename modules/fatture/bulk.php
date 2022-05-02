@@ -28,6 +28,7 @@ use Plugins\ExportFE\Interaction;
 use Util\XML;
 use Util\Zip;
 use Modules\Fatture\Stato;
+use Plugins\ReceiptFE\Ricevuta;
 
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 $stato_emessa = $dbo->selectOne('co_statidocumento', 'id', ['descrizione' => 'Emessa'])['id'];
@@ -518,6 +519,23 @@ switch (post('op')) {
         }
 
         break;
+
+    case 'verify-notifiche':
+        foreach ($id_records as $id) {
+
+            $documento = Fattura::find($id);
+
+            if($documento->codice_stato_fe == 'GEN' || $documento->codice_stato_fe == 'WAIT'){
+
+                $result = Interaction::getInvoiceRecepits($id);
+                $last_recepit = $result['results'][0];
+                if (!empty($last_recepit)) {
+                    // Importazione ultima ricevuta individuata
+                    $fattura = Ricevuta::process($last_recepit);
+                }
+            }
+        }
+        break;
 }
 
 if (App::debug()) {
@@ -654,6 +672,17 @@ if (Interaction::isEnabled()) {
             'msg' => tr('Vuoi davvero aggiungere queste fatture alla coda di invio per le fatture elettroniche?'),
             'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',
+        ],
+    ];
+
+    $operations['verify-notifiche'] = [
+        'text' => '<i class="fa fa-question-circle"></i> '.tr('Verifica notifiche').'</span>',
+        'data' => [
+            'title' => '',
+            'msg' => tr('Vuoi verificare ed importare automaticamente le ricevute di queste fatture?'),
+            'button' => tr('Procedi'),
+            'class' => 'btn btn-lg btn-warning',
+            'blank' => true,
         ],
     ];
 }

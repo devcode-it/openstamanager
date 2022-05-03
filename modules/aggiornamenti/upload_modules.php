@@ -52,7 +52,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
         ->ignoreVCS(true)
         ->in($extraction_dir);
 
-    $files = $finder->name('MODULE')->name('PLUGIN');
+    $files = $finder->name('MODULE')->name('PLUGIN')->name('TEMPLATES');
 
     foreach ($files as $file) {
         // Informazioni dal file di configurazione
@@ -80,6 +80,18 @@ if (file_exists($extraction_dir.'/VERSION')) {
             $insert['idmodule_from'] = Modules::get($info['module_from'])['id'];
             $insert['idmodule_to'] = Modules::get($info['module_to'])['id'];
             $insert['position'] = $info['position'];
+        }
+
+        // Templates
+        elseif (basename($file->getRealPath()) == 'TEMPLATES') {
+            $directory = 'templates';
+            $table = 'zz_prints';
+
+            $installed = Prints::getPrints()[$info['name']];
+            $insert['id_module'] = Modules::get($info['module'])['id'];
+            $insert['is_record'] = $info['is_record'];
+            $insert['filename'] = $info['filename'];
+            $insert['icon'] = $info['icon'];
         }
 
         // Copia dei file nella cartella relativa

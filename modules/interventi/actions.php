@@ -707,10 +707,8 @@ switch (post('op')) {
 
         $idcontratto = $intervento['id_contratto'];
 
-        $ore = 1;
-
         $inizio = post('orario_inizio') ?: date('Y-m-d H:\0\0');
-        $fine = null;
+        $fine = post('orario_fine') ?: null;
 
         add_tecnico($id_record, $id_tecnico, $inizio, $fine, $idcontratto);
         break;

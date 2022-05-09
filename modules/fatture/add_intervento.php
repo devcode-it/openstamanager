@@ -74,7 +74,7 @@ foreach ($rs as $key => $value) {
 
     $rs[$key]['prezzo'] = Translator::numberToLocale($prezzo);
     $rs[$key]['descrizione_intervento'] = strip_tags($rs[$key]['descrizione_intervento']);
-    $rs[$key]['info'] = $module_interventi->replacePlaceholders($value['id'], setting('Descrizione personalizzata in fatturazione')) ?:  $rs[$key]['info'];
+    $rs[$key]['info'] = strip_tags($module_interventi->replacePlaceholders($value['id'], setting('Descrizione personalizzata in fatturazione'))) ?:  strip_tags($rs[$key]['info']);
 }
 
 // Intervento

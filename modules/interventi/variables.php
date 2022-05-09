@@ -23,7 +23,8 @@ $r = $dbo->fetchOne('SELECT *,
     in_interventi.codice AS codice,
     (SELECT MAX(orario_fine) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS data_fine,
     (SELECT descrizione FROM in_statiintervento WHERE idstatointervento=in_interventi.idstatointervento) AS stato,
-    impianti.descrizione AS impianti
+    impianti.descrizione AS impianti,
+    in_interventi.descrizione AS descrizione
 FROM in_interventi
     INNER JOIN an_anagrafiche ON in_interventi.idanagrafica = an_anagrafiche.idanagrafica
     LEFT JOIN (SELECT GROUP_CONCAT(CONCAT(matricola, IF(nome != "", CONCAT(" - ", nome), "")) SEPARATOR "<br>") AS descrizione, my_impianti_interventi.idintervento FROM my_impianti INNER JOIN my_impianti_interventi ON my_impianti.id = my_impianti_interventi.idimpianto GROUP BY my_impianti_interventi.idintervento) AS impianti ON impianti.idintervento = in_interventi.id

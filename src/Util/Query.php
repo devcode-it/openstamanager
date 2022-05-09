@@ -198,23 +198,26 @@ class Query
                     $more = string_starts_with($real_value, '>=') || string_starts_with($real_value, '> =') || string_starts_with($real_value, '>');
                     $minus = string_starts_with($real_value, '<=') || string_starts_with($real_value, '< =') || string_starts_with($real_value, '<');
                     $equal = string_starts_with($real_value, '=');
+                    $notequal = string_starts_with($real_value, '!=');
 
-                    if ($minus || $more || $equal) {
+                    if ($minus || $more || $equal || $notequal) {
                         $sign = string_contains($real_value, '=') ? '=' : '';
                         if ($more) {
                             $sign = '>'.$sign;
                         } elseif ($minus) {
                             $sign = '<'.$sign;
-                        } else {
+                        } elseif ($equal) {
                             $sign = '=';
+                        } else {
+                            $sign = '!=';
                         }
 
-                        $value = trim(str_replace(['&lt;', '=', '&gt;'], '', $value));
+                        $value = trim(str_replace(['&lt;', '=', '&gt;', '!'], '', $value));
 
                         if ($more || $minus) {
                             $search_filters[] = 'CAST('.$search_query.' AS UNSIGNED) '.$sign.' '.prepare($value);
                         } else {
-                            $search_filters[] = $search_query.' = '.prepare($value);
+                            $search_filters[] = $search_query.' '.$sign.' '.prepare($value);
                         }
                     } else {
                         $search_filters[] = $search_query.' LIKE '.prepare('%'.$value.'%');

@@ -62,7 +62,7 @@ echo '
             if (!$riga->isDescrizione()) {
 
                 echo '
-                <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'" '.$extra.'>
+                <tr>
                     <td class="text-center">
                         '.$num.'
                     </td>

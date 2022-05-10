@@ -186,10 +186,12 @@ class FatturaElettronica
             }
 
             $original = $allegato['NomeAttachment'].$extension;
-            Uploads::upload($content, array_merge($info, [
-                'name' => $allegato['NomeAttachment'],
-                'original_name' => $original,
-            ]));
+            try {
+                Uploads::upload($content, array_merge($info, [
+                    'name' => $allegato['NomeAttachment'],
+                    'original_name' => $original,
+                ]));
+            } catch(UnexpectedValueException $e) {}
         }
 
         // Registrazione XML come allegato

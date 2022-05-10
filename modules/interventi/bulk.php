@@ -117,7 +117,7 @@ switch (post('op')) {
                 }
             }
 
-            $descrizione = $module->replacePlaceholders($intervento['id'], setting('Descrizione personalizzata in fatturazione')) ?: tr('Attività numero _NUM_ del _DATE_', [
+            $descrizione = str_replace("'", " ", strip_tags($module->replacePlaceholders($intervento['id'], setting('Descrizione personalizzata in fatturazione')))) ?: tr('Attività numero _NUM_ del _DATE_', [
                 '_NUM_' => $intervento['codice_intervento'],
                 '_DATE_' => Translator::dateToLocale($intervento['data']),
             ]);

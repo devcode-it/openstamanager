@@ -77,7 +77,7 @@ class FatturaElettronica
             'data' => $data,
         ])->first();
 
-        if (!empty($fattura)) {
+        if (!empty($fattura) && $fattura->tipo->dir == 'uscita') {
             throw new UnexpectedValueException();
         }
     }

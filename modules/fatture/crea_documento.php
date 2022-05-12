@@ -23,11 +23,14 @@ use Modules\Fatture\Fattura;
 
 $documento = Fattura::find($id_record);
 $tipo_documento_finale = Fattura::class;
+$op = 'nota_credito';
+$reversed = true;
 
 $options = [
-    'type' => 'nota_credito',
-    'op' => 'nota_credito',
+    'type' => 'fattura',
+    'op' => $op,
     'serials' => true,
+    'reversed' => $reversed,
     'module' => 'Fatture di vendita',
     'documento' => $documento,
     'tipo_documento_finale' => $tipo_documento_finale,

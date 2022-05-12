@@ -113,7 +113,7 @@ switch ($operazione) {
                         $fine = date('Y-m-d', strtotime($inizio.' '.$timeing));
                         $fine = date('Y-m-d', strtotime($fine.' -1 days'));
 
-                        $prezzo_unitario = ($r->subtotale / $r->qta);
+                        $prezzo_unitario = setting('Utilizza prezzi di vendita comprensivi di IVA') ? (($r->subtotale + $r->iva) / $r->qta)  : ($r->subtotale / $r->qta);
 
                         if (!empty($r->idarticolo)) {
                             $articolo = ArticoloOriginale::find($r->idarticolo);

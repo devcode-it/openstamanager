@@ -23,6 +23,8 @@ use Carbon\Carbon;
 use Modules\DDT\DDT;
 use Modules\Ordini\Ordine;
 use Modules\Fatture\Fattura;
+use Modules\PrimaNota\Mastrino;
+use Modules\PrimaNota\Movimento;
 use Plugins\ImportFE\FatturaElettronica;
 use Plugins\ImportFE\Interaction;
 use Util\XML;
@@ -148,6 +150,15 @@ switch (filter('op')) {
             if (!empty($autofattura_collegata)) {
                 $fattura->registraScadenze(true);
                 $autofattura_collegata->registraScadenze(true);
+                $mastrino = Mastrino::build('Compensazione autofattura', $fattura->data, false, true);
+
+                $movimento1 = Movimento::build($mastrino, $fattura->anagrafica->idconto_cliente);
+                $movimento1->setTotale($fattura->totale, 0);
+                $movimento1->save();
+
+                $movimento2 = Movimento::build($mastrino, $fattura->anagrafica->idconto_fornitore);
+                $movimento2->setTotale(0, $fattura->totale);
+                $movimento2->save();
             }
         }
 

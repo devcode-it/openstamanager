@@ -1108,3 +1108,7 @@ div.tip {
 .table-extra-condensed > tfoot > tr > td {
     padding: 2px;
 }
+
+.alert-warning {
+    background-color: #ff851b !important;
+}

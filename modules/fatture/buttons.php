@@ -33,14 +33,15 @@ if ($module->name == 'Fatture di vendita') {
 </a>';
 }
 
-if ($dir == 'entrata') {
-    echo '
+if ($dir == 'entrata' || !empty($abilita_autofattura)) {
+echo '
 <div class="btn-group">
     <button type="button" class="btn btn-primary unblockable dropdown-toggle '.(((!empty($record['ref_documento']) || $record['stato'] != 'Bozza') and empty($record['is_reversed'])) ? '' : 'disabled').'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i class="fa fa-magic"></i> '.tr('Crea').'
         <span class="caret"></span>
-    </button>
-
+    </button>';
+    if ($dir == 'entrata') {
+    echo '
     <ul class="dropdown-menu dropdown-menu-right">
         <li><a href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=nota_addebito&backto=record-edit">
             '.tr('Nota di debito').'
@@ -49,7 +50,16 @@ if ($dir == 'entrata') {
         <li><a data-href="'.base_path().'/modules/fatture/crea_documento.php?id_module='.$id_module.'&id_record='.$id_record.'&iddocumento='.$id_record.'" data-title="Aggiungi nota di credito">
             '.tr('Nota di credito').'
         </a></li>
-    </ul>
+    </ul>';
+    } elseif (!empty($abilita_autofattura)) {
+    echo '
+    <ul class="dropdown-menu dropdown-menu-right">
+        <li><a data-href="'.base_path().'/modules/fatture/crea_autofattura.php?id_module='.$id_module.'&id_record='.$id_record.'&iddocumento='.$id_record.'" data-title="Aggiungi autofattura">
+            '.tr('Autofattura').'
+        </a></li>
+    </ul>';  
+    }
+echo '
 </div>';
 }
 

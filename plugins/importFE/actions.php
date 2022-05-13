@@ -143,6 +143,14 @@ switch (filter('op')) {
         $fattura_pa->delete();
         $fattura = Fattura::find($id_fattura);
 
+        if ($fattura->isAutofattura()) {
+            $autofattura_collegata = Fattura::where('progressivo_invio', '=', $fattura->progressivo_invio)->where('id', '!=', $fattura->id)->first();
+            if (!empty($autofattura_collegata)) {
+                $fattura->registraScadenze(true);
+                $autofattura_collegata->registraScadenze(true);
+            }
+        }
+
         // Aggiorno la tipologia di anagrafica fornitore
         $anagrafica = $database->fetchOne('SELECT idanagrafica FROM co_documenti WHERE co_documenti.id='.prepare($id_fattura));
         $rs_t = $database->fetchOne("SELECT * FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica=(SELECT an_tipianagrafiche.idtipoanagrafica FROM an_tipianagrafiche WHERE an_tipianagrafiche.descrizione='Fornitore') AND idanagrafica=".prepare($anagrafica['idanagrafica']));

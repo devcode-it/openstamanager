@@ -124,6 +124,11 @@ if (isset($fattura_body['DatiPagamento'])) {
     $pagamenti = isset($pagamenti[0]) ? $pagamenti : [$pagamenti];
 }
 
+$is_autofattura = false;
+if (in_array($dati_generali['TipoDocumento'], ['TD16', 'TD17', 'TD18', 'TD19', 'TD20'])) {
+    $is_autofattura = true;
+}
+
 // Individuazione metodo di pagamento di base
 $metodi = isset($pagamenti[0]['DettaglioPagamento']) ? $pagamenti[0]['DettaglioPagamento'] : [];
 $metodi = isset($metodi[0]) ? $metodi : [$metodi];
@@ -219,9 +224,11 @@ echo '
         </div>';
 
 // Sezionale
+$id_segment = $is_autofattura ? setting('Sezionale per autofatture di acquisto') : $_SESSION['module_'.$id_module]['id_segment'];
+
 echo '
         <div class="col-md-3">
-            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE is_fiscale = 1 AND id_module='.$id_module.' ORDER BY name", "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'" ]}
+            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE is_fiscale = 1 AND id_module='.$id_module.' ORDER BY name", "value": "'.$id_segment.'" ]}
         </div>';
 
 // Data di registrazione
@@ -400,6 +407,7 @@ if (!empty($righe)) {
             $idconto_acquisto = $database->fetchOne('SELECT idconto_acquisto FROM mg_articoli WHERE id = '.prepare($id_articolo))['idconto_acquisto'];
         }
 
+        $idconto_acquisto = $is_autofattura ? setting('Conto per autofattura') : $idconto_acquisto;
         $qta = $riga['Quantita'];
         $um = $riga['UnitaMisura'];
         $prezzo_unitario = $riga['PrezzoUnitario'] ?: $riga['Importo'];

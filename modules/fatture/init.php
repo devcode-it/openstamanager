@@ -63,4 +63,23 @@ if (isset($id_record)) {
     // Blocco gestito dallo stato della Fattura Elettronica
     $stato_fe = $database->fetchOne('SELECT * FROM fe_stati_documento WHERE codice = '.prepare($fattura->codice_stato_fe));
     $abilita_genera = empty($fattura->codice_stato_fe) || intval($stato_fe['is_generabile']);
+
+    // Controllo autofattura e gestione avvisi
+    $reverse_charge = null;
+    $abilita_autofattura = null;
+    $autofattura_vendita = null;
+    $fattura_acquisto_originale = null;
+
+    if (!empty($fattura)) {
+        $reverse_charge = $fattura->getRighe()->first(function ($item, $key) {
+            return $item->aliquota != null && substr($item->aliquota->codice_natura_fe, 0, 2) == 'N6';
+        })->id; 
+        $autofattura_vendita = Fattura::find($fattura->id_autofattura);
+        if (empty($autofattura_vendita) && !empty($fattura->progressivo_invio)) {
+            $autofattura_collegata = Fattura::where('progressivo_invio', '=', $fattura->progressivo_invio)->where('id', '!=', $fattura->id)->first();
+        }
+        $abilita_autofattura = ($fattura->anagrafica->nazione->iso2 != 'IT' || $reverse_charge) && $dir == 'uscita' && $fattura->id_autofattura == null && empty($autofattura_collegata);
+
+        $fattura_acquisto_originale = Fattura::where('id_autofattura', '=', $fattura->id)->first();
+    }
 }

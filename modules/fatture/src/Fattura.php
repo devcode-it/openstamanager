@@ -748,6 +748,17 @@ class Fattura extends Document
     }
 
     /**
+     * Controlla se la fattura è una nota di credito.
+     *
+     * @return bool
+     */
+    public function isAutofattura()
+    {
+        return in_array($this->tipo->codice_tipo_documento_fe, ['TD16','TD17','TD18','TD19',
+        'TD20']);
+    }
+
+    /**
      * Controlla se la fattura è fiscale.
      *
      * @return bool

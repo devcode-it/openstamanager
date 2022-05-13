@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Anagrafiche\Tipo as TipoAnagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Fatture\Components\Articolo;
 use Modules\Fatture\Components\Descrizione;
@@ -28,7 +29,7 @@ use Modules\Fatture\Components\Sconto;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
 use Modules\Fatture\Tipo;
-use Plugins\ExportFE\FatturaElettronica;
+use Modules\Iva\Aliquota;
 use Util\XML;
 
 $module = Modules::get($id_module);
@@ -817,10 +818,9 @@ switch (post('op')) {
                 $copia = $riga->copiaIn($nota, $qta);
                 $copia->ref_riga_documento = $riga->id;
 
-                // Aggiornamento seriali dalla riga dell'ordine
+                // Aggiornamento seriali dalla riga della fattura
                 if ($copia->isArticolo()) {
                     $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
-
                     $copia->serials = $serials;
                 }
 
@@ -830,6 +830,50 @@ switch (post('op')) {
 
         $id_record = $nota->id;
         aggiorna_sedi_movimenti('documenti', $id_record);
+
+        break;
+
+    // Autofattura
+    case 'autofattura':
+        $fattura = Fattura::find($id_record);
+
+        $id_segment = post('id_segment');
+        $data = date('Y-m-d');
+
+        $anagrafica = $fattura->anagrafica;
+        $tipo = Tipo::find(post('idtipodocumento'));
+        $iva = Aliquota::find(setting('Iva predefinita'));
+        $totale_imponibile = setting('Utilizza prezzi di vendita comprensivi di IVA') ? $fattura->totale_imponibile + ($fattura->totale_imponibile * $iva->percentuale / 100) : $fattura->totale_imponibile;
+
+        $autofattura = Fattura::build($anagrafica, $tipo, $data, $id_segment);
+        $autofattura->idconto = $fattura->idconto;
+        $autofattura->idpagamento = $fattura->idpagamento;
+        $autofattura->is_fattura_conto_terzi = 1;
+        $autofattura->save();
+
+        $riga = Riga::build($autofattura);
+        $riga->descrizione = $tipo->descrizione;
+        $riga->id_iva = $iva->id;
+        $riga->idconto = setting('Conto per autofattura') ?: setting('Conto predefinito fatture di vendita');
+        $riga->setPrezzoUnitario($totale_imponibile, $iva->id);
+        $riga->qta = 1;
+        $riga->save();
+
+        // Aggiunta tipologia cliente se necessario
+        if (!$anagrafica->isTipo('Cliente')) {
+            $tipo_cliente = TipoAnagrafica::where('descrizione', '=', 'Cliente')->first();
+            $tipi = $anagrafica->tipi->pluck('idtipoanagrafica')->toArray();
+            $tipi[] = $tipo_cliente->id;
+
+            $anagrafica->tipologie = $tipi;
+            $anagrafica->save();
+        }
+
+        $fattura->id_autofattura = $autofattura->id;
+        $fattura->save();
+
+        $id_module = Modules::get('Fatture di vendita')['id'];
+        $id_record = $autofattura->id;
 
         break;
 

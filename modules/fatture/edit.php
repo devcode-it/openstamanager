@@ -86,6 +86,45 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione) ) {
     }
 }
 
+// Autofattura
+if (!empty($fattura_acquisto_originale)) {
+    echo '
+    <div class="alert alert-info">
+        <i class="fa fa-info"></i> '.tr("Questa è un'autofattura generata da una fattura di acquisto").':
+        <b>'.Modules::link('Fatture di acquisto', $fattura_acquisto_originale->id, tr('Fattura num. _NUM_ del _DATE_', [
+            '_NUM_' => $fattura_acquisto_originale->numero_esterno,
+            '_DATE_' => dateFormat($fattura_acquisto_originale->data),
+        ])).'</b>
+    </div>';
+}
+
+if ($abilita_autofattura) {
+    echo '
+    <div class="alert alert-info">
+        <i class="fa fa-info-circle"></i> '.tr("Per questa fattura è prevista la generazione di un'autofattura tramite <b>Crea » Autofattura</b>").'.
+    </div>';
+} elseif ($fattura->id_autofattura != null) {
+    echo '
+    <div class="alert alert-info">
+        <i class="fa fa-info"></i> '.tr("È presente un'autofattura collegata").':
+        <b>'.Modules::link('Fatture di vendita', $fattura->id_autofattura, tr('Fattura num. _NUM_ del _DATE_', [
+            '_NUM_' => $autofattura_vendita->numero_esterno,
+            '_DATE_' => dateFormat($autofattura_vendita->data),
+        ])).'</b>
+    </div>';
+} elseif ($autofattura_collegata != null) {
+    $link_module = $fattura->direzione == 'entrata' ? 'Fatture di acquisto' : 'Fatture di vendita';
+    $link_desc = $fattura->direzione == 'entrata' ? tr("Questa autofattura è già stata importata come fattura di acquisto") : tr("È presente un'autofattura collegata");
+    echo '
+    <div class="alert alert-info">
+        <i class="fa fa-info"></i> '.$link_desc.':
+        <b>'.Modules::link($link_module, $autofattura_collegata->id, tr('Fattura num. _NUM_ del _DATE_', [
+            '_NUM_' => $autofattura_collegata->numero_esterno,
+            '_DATE_' => dateFormat($autofattura_collegata->data),
+        ])).'</b>
+    </div>';
+}
+
 // Ricordo che si sta emettendo una fattura conto terzi
 if ($dir == 'entrata' && $fattura->stato->descrizione == 'Bozza' ) {
     if ($fattura->is_fattura_conto_terzi){
@@ -96,7 +135,6 @@ if ($dir == 'entrata' && $fattura->stato->descrizione == 'Bozza' ) {
         </div>';
 
     }
-
 }
 // Verifica aggiuntive sulla sequenzialità dei numeri
 if ($dir == 'entrata') {

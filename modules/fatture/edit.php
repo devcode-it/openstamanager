@@ -668,7 +668,7 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione)){
             
         echo '
         <div class="alert alert-info">
-            <i class="fa fa-info"></i> '.tr("La fattura è collegata ad una dichiarazione d'intento con diponibilità residura pari a _MONEY_.", [  '_MONEY_' => moneyFormat(abs($diff)),]).'<br>'.tr("Per collegare una riga alla dichiarazione è sufficiente specificare come IVA <ul>_IVA_</ul>", ['_IVA_' => $descrizione_iva_accettata]).'</b>
+            <i class="fa fa-info"></i> '.tr("La fattura è collegata ad una dichiarazione d'intento con diponibilità residura pari a _MONEY_.", [  '_MONEY_' => moneyFormat($diff),]).'<br>'.tr("Per collegare una riga alla dichiarazione è sufficiente specificare come IVA <ul>_IVA_</ul>", ['_IVA_' => $descrizione_iva_accettata]).'</b>
         </div>';
 
     }

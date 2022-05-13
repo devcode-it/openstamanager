@@ -356,22 +356,18 @@ class Anagrafica extends Model
 
     protected static function creaConto(Anagrafica $anagrafica, $campo)
     {
+        $categoria_conto_id = null;
         if ($campo == 'idconto_cliente') {
-            $type = 'Crediti clienti e crediti diversi';
+            $categoria_conto_id = setting('Conto di secondo livello per i crediti clienti');
         } else {
-            $type = 'Debiti fornitori e debiti diversi';
+            $categoria_conto_id = setting('Conto di secondo livello per i debiti fornitori');
         }
 
         $database = database();
 
-        // Individuazione della categoria
-        $categoria_conto = $database->table('co_pianodeiconti2')
-            ->where('descrizione', '=', $type)
-            ->first();
-
         // Query di base
         $table = $database->table('co_pianodeiconti3')
-            ->where('idpianodeiconti2', '=', $categoria_conto->id);
+            ->where('idpianodeiconti2', '=', $categoria_conto_id);
 
         // Verifica su un possibile conto esistente ma non collegato
         $conto = (clone $table)
@@ -399,7 +395,7 @@ class Anagrafica extends Model
             ->insertGetId([
                 'numero' => $new_numero,
                 'descrizione' => $anagrafica->ragione_sociale,
-                'idpianodeiconti2' => $categoria_conto->id,
+                'idpianodeiconti2' => $categoria_conto_id,
             ]);
 
         return $id_conto;

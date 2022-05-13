@@ -62,14 +62,14 @@ echo '
                             }
 
                             if (empty(get('elenco_analitico'))) {
-                                if ($liv2_p['descrizione'] == 'Crediti clienti e crediti diversi') {
+                                if ($liv2_p['id'] == setting('Conto di secondo livello per i crediti clienti')) {
                                     echo '
                                         <tr>
                                             <td></td>
                                             <td>Clienti</td>
                                             <td class="text-right">'.numberFormat($crediti_clienti).'</td>
                                         </tr>';
-                                } elseif ($liv2_p['descrizione'] == 'Debiti fornitori e debiti diversi') {
+                                } elseif ($liv2_p['id'] == setting('Conto di secondo livello per i debiti fornitori')) {
                                     echo '
                                     <tr>
                                         <td></td>
@@ -140,14 +140,14 @@ echo '
                             }
 
                             if (empty(get('elenco_analitico'))) {
-                                if ($liv2_p['descrizione'] == 'Crediti clienti e crediti diversi') {
+                                if ($liv2_p['id'] == setting('Conto di secondo livello per i crediti clienti')) {
                                     echo '
                                         <tr>
                                             <td></td>
                                             <td>Clienti</td>
                                             <td class="text-right">'.numberFormat(abs($crediti_clienti)).'</td>
                                         </tr>';
-                                } elseif ($liv2_p['descrizione'] == 'Debiti fornitori e debiti diversi') {
+                                } elseif ($liv2_p['id'] == setting('Conto di secondo livello per i debiti fornitori')) {
                                     echo '
                                     <tr>
                                         <td></td>

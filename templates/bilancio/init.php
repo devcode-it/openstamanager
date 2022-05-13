@@ -48,7 +48,7 @@ FROM
     INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id
     INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id 
 WHERE 
-    co_pianodeiconti2.descrizione="Debiti fornitori e debiti diversi"
+    co_pianodeiconti2.descrizione='.prepare(setting('Conto di secondo livello per i debiti fornitori')).'
     AND co_pianodeiconti3.id IN (SELECT idconto_fornitore FROM an_anagrafiche) 
     AND co_movimenti.data>='.prepare($date_start).' 
     AND co_movimenti.data<='.prepare($date_end).' 
@@ -70,7 +70,7 @@ FROM
     INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id
     INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id 
 WHERE 
-    co_pianodeiconti2.descrizione="Crediti clienti e crediti diversi"
+    co_pianodeiconti2.id='.prepare(setting('Conto di secondo livello per i crediti clienti')).'
     AND co_pianodeiconti3.id IN (SELECT idconto_cliente FROM an_anagrafiche) 
     AND co_movimenti.data>='.prepare($date_start).' 
     AND co_movimenti.data<='.prepare($date_end).' 

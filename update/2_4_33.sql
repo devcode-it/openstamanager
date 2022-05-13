@@ -169,3 +169,6 @@ INSERT INTO `co_pianodeiconti3` (`numero`, `descrizione`, `idpianodeiconti2`, `d
 ('000010', 'Compensazione per autofattura', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`='Conti compensativi'), '', '100.00');
 
 ALTER TABLE `co_documenti` ADD `id_autofattura` INT NULL AFTER `id_ricevuta_principale`, ADD FOREIGN KEY (`id_autofattura`) REFERENCES `co_documenti`(`id`) ON DELETE SET NULL; 
+
+-- Fix widget Scadenze
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(co_documenti.id) AS dato FROM co_scadenziario INNER JOIN (((co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica) INNER JOIN co_pagamenti ON co_documenti.idpagamento=co_pagamenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id) ON co_scadenziario.iddocumento=co_documenti.id WHERE ABS(pagato) < ABS(da_pagare) AND scadenza >= \"|period_start|\" AND scadenza <= \"|period_end|\" ORDER BY scadenza ASC' WHERE `zz_widgets`.`name` = 'Scadenze'; 

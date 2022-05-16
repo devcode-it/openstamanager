@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.33 (2022-05-16)](#2433-2022-05-16)
 - [2.4.32 (2022-03-24)](#2432-2022-03-24)
 - [2.4.31 (2022-03-18)](#2431-2022-03-18)
 - [2.4.30 (2022-02-04)](#2430-2022-02-05)
@@ -42,6 +43,66 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.3 (2018-02-16)](#23-2018-02-16)
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
+
+## 2.4.33 (2022-05-16)
+
+### Aggiunto (Added)
+ - Introduzione modulo fasce orarie e modulo eventi 
+ - Aggiunto pulsante per visualizzare movimenti prima nota
+ - Cambio prezzo unitario listino da azioni di gruppo
+ - Introduzione fasce orarie per il tipo di attività
+ - Aggiunta selezione righe nei documenti per eliminazione e duplicazione
+ - Aggiunte colonne Contratto, Preventivo, Ordine in Attività
+ - Aggiunto controllo totale tra documento e FE per fatture di vendita
+ - Calcolo iva intervento in base all'iva predefinita dell'anagrafica 
+ - Aggiunti alert in fase di aggiunta riga per importi negativi e sconti
+ - Aggiunta visualizzazione campi collegati alla sede
+ - Aggiunto help su conto predefinito nelle banche
+ - Aggiunta tabella regioni
+ - Aggiunto sezionale fatture di acquisto non elettroniche 
+ - Aggiunta azione di gruppo per l'importazione delle ricevute 
+ - Aggiunta al volo Sede dal plugin Referenti
+ - Gestione installazione da zip per i templates di stampa
+ - Aggiunta ricerca datatables per i valori !=
+ - Gestione esclusione allegati import FE
+ - Aggiunto controllo su fattura già importata 
+ - Aggiunta gestione Autofattura
+ - Aggiunti controlli sulla stato documento delle fatture di vendita 
+ - Gestione conti predefiniti crediti e debiti tramite impostazione 
+ - Aggiunta possibilità di selezionare la creazione degli articoli in fase di importazione FE
+
+### Modificato (Changed)
+ - Spostamento pulsante seleziona/deseleziona in fase di import tra documenti
+ - Ordinamento vista N. Prot.
+ - Rimozione visualizzazione azioni di gruppo per utenti con permessi in sola lettura
+ 
+### Fixed
+ - Fix calcolo sconto finale
+ - Fix visualizzazione colonne Totali in fatture
+ - Fix controllo totale parziale in stampa fattura
+ - Fix plugin registrazioni per le righe di sconto
+ - Fix documenti collegati ai Preventivi
+ - Fix liste newsletter
+ - Fix set riferimento riga importFE
+ - Fix set banca predefinita in fattura
+ - Fix ricerca riferimenti FE
+ - Fix selezione spunte su datatables dopo azione di gruppo
+ - Fix visualizzazione totali Piano dei conti
+ - Fix gestione causali movimenti 
+ - Fix bulk cambio stato intervento
+ - Fix set prezzo listino fornitore
+ - Fix riapertura fatture pagate
+ - Fix aggiunta articolo in Attività da Barcode
+ - Fix esportazione csv fatture
+ - Fix visualizzazione immagine in stampa preventivi 
+ - Fix avviso aggiunta scadenza generica 
+ - Fix ricalcola totale in fase di importazione tra documenti
+ - Fix widget attività da programmare
+ - Fix visualizzazione ultimi prezzi
+ - Fix ordinamento righe in fattura
+ - Fix pianificazione fatturazione contratto
+ - Fix visualizzazione residuo dichiarazione d'intento 
+ - Fix widget Scadenze
 
 ## 2.4.32 (2022-03-24)
 

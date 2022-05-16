@@ -111,7 +111,7 @@ class FatturaOrdinaria extends FatturaElettronica
         return $this->forceArray($result);
     }
 
-    public function saveRighe($articoli, $iva, $conto, $movimentazione = true, $crea_articoli = false, $tipi_riferimenti = [], $id_riferimenti = [], $tipi_riferimenti_vendita = [], $id_riferimenti_vendita = [], $update_info = [])
+    public function saveRighe($articoli, $iva, $conto, $movimentazione = true, $crea_articoli = [], $tipi_riferimenti = [], $id_riferimenti = [], $tipi_riferimenti_vendita = [], $id_riferimenti_vendita = [], $update_info = [])
     {
         $info = $this->getRitenutaRivalsa();
 
@@ -143,7 +143,7 @@ class FatturaOrdinaria extends FatturaElettronica
             $codici = !empty($codici) && !isset($codici[0]) ? [$codici] : $codici;
 
             // Creazione articolo relativo
-            if (!empty($codici) && !empty($crea_articoli) && empty($articolo)) {
+            if (!empty($codici) && !empty($crea_articoli[$key]) && empty($articolo)) {
                 $codice = $codici[0]['CodiceValore'];
                 $articolo = ArticoloOriginale::where('codice', $codice)->first();
 

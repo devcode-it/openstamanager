@@ -289,7 +289,7 @@ echo '
         </div>
 
         <div class="col-md-3">
-            {[ "type": "checkbox", "label": "'.tr('Creazione automatica articoli').'", "name": "crea_articoli", "value": 0, "help": "'.tr("Nel caso di righe con tag CodiceArticolo, il gestionale procede alla creazione dell'articolo se la riga non risulta assegnata manualmente").'" ]}
+            {[ "type": "checkbox", "label": "'.tr('Creazione automatica articoli').'", "name": "flag_crea_articoli", "value": 0, "help": "'.tr("Nel caso di righe con tag CodiceArticolo, il gestionale procede alla creazione dell'articolo se la riga non risulta assegnata manualmente").'" ]}
         </div>';
 
         $ritenuta = $dati_generali['DatiRitenuta'];
@@ -427,7 +427,7 @@ if (!empty($righe)) {
         echo '
         <tr data-id="'.$key.'" data-qta="'.$qta.'" data-prezzo_unitario="'.$prezzo_unitario.'" data-iva_percentuale="'.$riga['AliquotaIVA'].'">
             <td>
-                '.(empty($codice_principale) ? '<span class="label label-warning pull-right text-muted articolo-warning hidden">'.tr('Creazione automatica articolo non disponibile').'</span>' : '').'
+                '.(empty($codice_principale) ? '<span class="label label-warning pull-right text-muted articolo-warning hidden">'.tr('Creazione automatica articolo non disponibile').'</span>' : '<span class="label label-success pull-right text-muted articolo-warning hidden"><input class="check" type="checkbox" name="crea_articoli['.$key.']"/> '.tr('Creazione automatica articolo').'</span>').'
                 <small class="pull-right text-muted" id="riferimento_'.$key.'"></small><br>
                 <small class="pull-right text-muted">'.$riferimento_fe.'</small>
 
@@ -603,11 +603,21 @@ echo '
 </form>
 
 <script>
-input("crea_articoli").on("change", function (){
-    if (input("crea_articoli").get()) {
+input("flag_crea_articoli").on("change", function (){
+    if (input("flag_crea_articoli").get()) {
         $(".articolo-warning").removeClass("hidden");
+        $(".check").each(function(){
+            if( !$(this).is(":checked") ){
+                $(this).trigger("click");
+            }
+        });
     } else {
         $(".articolo-warning").addClass("hidden");
+        $(".check").each(function(){
+            if( $(this).is(":checked") ){
+                $(this).trigger("click");
+            }
+        });
     }
 });
 

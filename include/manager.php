@@ -176,7 +176,7 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
 
         <div class="col-md-2 dropdown">';
 
-    if (!empty($bulk)) {
+    if (!empty($bulk) && $structure->permission == 'rw') {
         echo '
             <button class="btn btn-primary btn-block dropdown-toggle actions-container disabled" type="button" data-toggle="dropdown" disabled>'.tr('Azioni di gruppo').' <span class="caret"></span></button>
             <ul class="dropdown-menu" data-target="'.$table_id.'" role="menu">';

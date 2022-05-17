@@ -41,7 +41,7 @@ if ($module->name == 'Fatture di vendita') {
                 '_STATO_' => $stato_fe['descrizione'],
             ]));
         } elseif (in_array($documento->codice_stato_fe, $codici_invio)) {
-            if ($documento->data_stato_fe <= $data_limite_invio) {
+            if ($documento->data <= $data_limite_invio) {
                 $documenti_invio[] = Modules::link('Fatture di vendita', $documento->id, tr('_ICON_ Fattura numero _NUM_ del _DATE_ : <b>_STATO_</b>', [
                     '_ICON_' => '<i class="'.$stato_fe['icon'].'"></i>',
                     '_NUM_' => $documento->numero_esterno,

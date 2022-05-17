@@ -78,7 +78,7 @@ if (isset($id_record)) {
         if (empty($autofattura_vendita) && !empty($fattura->progressivo_invio)) {
             $autofattura_collegata = Fattura::where('progressivo_invio', '=', $fattura->progressivo_invio)->where('id', '!=', $fattura->id)->first();
         }
-        $abilita_autofattura = ($fattura->anagrafica->nazione->iso2 != 'IT' || $reverse_charge) && $dir == 'uscita' && $fattura->id_autofattura == null && empty($autofattura_collegata);
+        $abilita_autofattura = (($fattura->anagrafica->nazione->iso2 != 'IT' && !empty($fattura->anagrafica->nazione->iso2)) || $reverse_charge) && $dir == 'uscita' && $fattura->id_autofattura == null && empty($autofattura_collegata);
 
         $fattura_acquisto_originale = Fattura::where('id_autofattura', '=', $fattura->id)->first();
     }

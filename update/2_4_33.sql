@@ -160,7 +160,7 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Sezionale per autofatture di acquisto', (SELECT `id` FROM `zz_segments` WHERE `name`='Autofatture' AND `id_module`=(SELECT `id` FROM `zz_modules` WHERE name="Fatture di acquisto")), 'query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module=(SELECT id FROM zz_modules WHERE name=\"Fatture di acquisto\") ORDER BY name', '1', 'Fatturazione', NULL, NULL);
 
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Conto per autofattura', '', 'query=SELECT `id`, CONCAT_WS(\' - \', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', '1', 'Piano dei conti', NULL, NULL);
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Conto per autofattura', (SELECT id FROM `co_pianodeiconti3` WHERE `descrizione`="Compensazione per autofattura"), 'query=SELECT `id`, CONCAT_WS(\' - \', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', '1', 'Piano dei conti', NULL, NULL);
 
 INSERT INTO `co_pianodeiconti2` (`numero`, `descrizione`, `idpianodeiconti1`, `dir`) VALUES
 ('910', 'Conti compensativi', (SELECT `id` FROM `co_pianodeiconti1` WHERE `descrizione`='Patrimoniale'), 'entrata/uscita');

@@ -74,7 +74,18 @@ if ($module['name'] == 'Ordini cliente') {
                     }
                     ?>
 				</div>
-
+<?php
+            if ($dir == 'entrata') {
+echo '
+                <div class="col-md-3">';
+                if ($record['idagente'] != 0) {
+                    echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
+                }
+echo '
+                    {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
+                </div>';
+            }
+?>
 			</div>
 
 			<div class="row">

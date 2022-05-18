@@ -95,6 +95,7 @@ switch (filter('op')) {
             $ddt->idconto = post('idconto');
             $ddt->idanagrafica = $id_anagrafica;
             $ddt->idreferente = post('idreferente');
+            $ddt->idagente = post('idagente');
             $ddt->idspedizione = post('idspedizione');
             $ddt->idcausalet = post('idcausalet');
             $ddt->idsede_partenza = post('idsede_partenza');

@@ -316,7 +316,11 @@ elseif ($record['stato'] == 'Bozza') {
 
                 if ($dir == 'entrata') {
                     echo '
-				<div class="col-md-4">
+				<div class="col-md-4">';
+                    if ($record['idagente'] != 0) {
+                        echo Modules::link('Anagrafiche', $record['idagente_fattura'], null, null, 'class="pull-right"');
+                    }
+echo '
 					{[ "type": "select", "label": "'.tr('Agente di riferimento').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente_fattura$" ]}
 				</div>';
                 }

@@ -83,16 +83,14 @@ if (strtotime($record['data_conclusione']) < strtotime($record['data_accettazion
 				</div>
 
 				<div class="col-md-3">';
-
-                        if ($record['idagente'] != 0) {
-                            echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
-                        }
-                    ?>
-					{[ "type": "select", "label": "<?php echo tr('Agente'); ?>", "name": "idagente", "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Agente' AND deleted_at IS NULL ORDER BY ragione_sociale", "value": "$idagente$" ]}
+                    if ($record['idagente'] != 0) {
+                        echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
+                    }
+echo '
+					{[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
 				</div>
-
-			</div>
-
+			</div>';
+?>
             <div class="row">
                 <div class="col-md-6">
                     {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}

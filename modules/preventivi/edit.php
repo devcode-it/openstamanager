@@ -90,11 +90,11 @@ echo '
 				</div>
 
 				<div class="col-md-3">';
-                        if ($record['idagente'] != 0) {
-                            echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
-                        }
+                    if ($record['idagente'] != 0) {
+                        echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
+                    }
 echo '
-					{[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione=\'Agente\' AND deleted_at IS NULL ORDER BY ragione_sociale", "value": "$idagente$" ]}
+                    {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
 				</div>
 			</div>';
             ?>

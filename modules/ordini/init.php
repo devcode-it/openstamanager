@@ -28,6 +28,7 @@ if (isset($id_record)) {
         or_ordini.note,
         or_ordini.idpagamento,
         or_ordini.id AS idordine,
+        or_ordini.idagente AS idagente,
         or_statiordine.descrizione AS `stato`,
         or_tipiordine.descrizione AS `descrizione_tipodoc`,
         (SELECT tipo FROM an_anagrafiche WHERE idanagrafica = or_ordini.idanagrafica) AS tipo_anagrafica,

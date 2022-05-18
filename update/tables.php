@@ -6,6 +6,7 @@ return [
     'an_nazioni',
     'an_mansioni',
     'an_referenti',
+    'an_regioni',
     'an_relazioni',
     'an_sedi',
     'an_tipianagrafiche',

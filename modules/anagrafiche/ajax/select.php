@@ -131,10 +131,10 @@ switch ($resource) {
             $idagente_default = 0;
         }
 
-        $ids = array_column($results, 'idanagrafica');
+        $ids = array_column($results['results'], 'id');
         $pos = array_search($idagente_default, $ids);
         if ($pos !== false) {
-            $results[$pos]['_bgcolor_'] = '#ff0';
+            $results['results'][$pos]['_bgcolor_'] = '#ff0';
         }
         break;
 

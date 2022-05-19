@@ -62,6 +62,8 @@ abstract class Accounting extends Component
         'sconto_unitario' => 'float',
         'sconto_iva_unitario' => 'float',
         'sconto_unitario_ivato' => 'float',
+        'provvigione_percentuale' => 'float',
+        'provvigione_unitaria' => 'float',
         //'qta_evasa' => 'float',
     ];
 
@@ -72,6 +74,7 @@ abstract class Accounting extends Component
         'spesa',
         'imponibile',
         'sconto',
+        'provvigione',
         'totale_imponibile',
         'iva',
         'totale',
@@ -152,7 +155,7 @@ abstract class Accounting extends Component
      */
     public function getMargineAttribute()
     {
-        return $this->totale_imponibile - $this->spesa;
+        return $this->totale_imponibile - $this->spesa - $this->provvigione;
     }
 
     /**
@@ -270,6 +273,27 @@ abstract class Accounting extends Component
         }
     }
 
+    /**
+     * Imposta la provvigione secondo le informazioni indicate per valore e tipologia (UNT o PRC).
+     *
+     * @param $value
+     * @param $type
+     */
+    public function setProvvigione($value, $type)
+    {
+        $provvigione_unitaria = 0;
+
+        if ($type == 'PRC') {
+            $this->provvigione_percentuale = $value;
+            $provvigione_unitaria = ($this->prezzo_unitario - $this->sconto_unitario) / 100 * floatval($value);
+            $this->provvigione_unitaria = $provvigione_unitaria;
+        } else {
+            $this->provvigione_percentuale = 0;
+            $provvigione_unitaria = $value;
+            $this->provvigione_unitaria = $provvigione_unitaria;
+        }
+    }
+
     public function incorporaIVA()
     {
         return $this->getDocument()->direzione == 'entrata' && setting('Utilizza prezzi di vendita comprensivi di IVA');
@@ -300,6 +324,17 @@ abstract class Accounting extends Component
     }
 
     /**
+     * Restituisce la provvigione della riga corrente in euro.
+     *
+     * @return float
+     */
+    public function getProvvigioneAttribute()
+    {
+        return $this->qta * $this->provvigione_unitaria;
+    }
+
+
+    /**
      * Restituisce il prezzo unitario corrente (unitario oppure unitario ivato a seconda dell'impostazione 'Utilizza prezzi di vendita comprensivi di IVA') per la riga.
      *
      * @return float
@@ -321,7 +356,7 @@ abstract class Accounting extends Component
      */
     public function getMarginePercentualeAttribute()
     {
-        return $this->imponibile ? (($this->imponibile / $this->spesa) - 1) * 100 : 100;
+        return ($this->totale_imponibile && ($this->spesa || $this->provvigione)) ? (($this->totale_imponibile / ($this->spesa + $this->provvigione)) - 1) * 100 : 100;
     }
 
     /**
@@ -378,6 +413,7 @@ abstract class Accounting extends Component
         // Fix dei campi statici
         $this->fixSubtotale();
         $this->fixSconto();
+        $this->fixProvvigione();
 
         $this->fixIva();
 
@@ -422,6 +458,15 @@ abstract class Accounting extends Component
     {
         $this->attributes['sconto'] = $this->sconto;
         $this->attributes['tipo_sconto'] = $this->sconto_percentuale ? 'PRC' : 'UNT';
+    }
+
+    /**
+     * Effettua i conti per lo sconto totale.
+     */
+    protected function fixProvvigione()
+    {
+        $this->attributes['provvigione'] = $this->provvigione;
+        $this->attributes['tipo_provvigione'] = $this->provvigione_percentuale ? 'PRC' : 'UNT';
     }
 
     protected static function boot()

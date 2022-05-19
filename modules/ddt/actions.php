@@ -207,7 +207,10 @@ switch (filter('op')) {
         $articolo->costo_unitario = post('costo_unitario') ?: 0;
         $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $articolo->setSconto(post('sconto'), post('tipo_sconto'));
-
+        if ($dir == 'entrata') {
+            $articolo->setProvvigione(post('provvigione'), post('tipo_provvigione'));
+        }
+        
         try {
             $articolo->qta = post('qta');
         } catch (UnexpectedValueException $e) {
@@ -263,6 +266,9 @@ switch (filter('op')) {
         $riga->costo_unitario = post('costo_unitario') ?: 0;
         $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $riga->setSconto(post('sconto'), post('tipo_sconto'));
+        if ($dir == 'entrata') {
+            $riga->setProvvigione(post('provvigione'), post('tipo_provvigione'));
+        }
 
         $riga->qta = post('qta');
 
@@ -330,6 +336,7 @@ switch (filter('op')) {
 
             $ddt->idcausalet = post('id_causale_trasporto');
             $ddt->idreferente = $documento->idreferente;
+            $ddt->idagente = $documento->idagente;
 
             $ddt->save();
 

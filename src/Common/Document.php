@@ -170,6 +170,17 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
     }
 
     /**
+     * Calcola la provvigione totale del documento.
+     *
+     * @return float
+     */
+    public function getProvvigioneAttribute()
+    {
+        return $this->calcola('provvigione');
+    }
+
+
+    /**
      * Calcola il totale imponibile del documento.
      *
      * @return float
@@ -226,7 +237,7 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
      */
     public function getMarginePercentualeAttribute()
     {
-        return ($this->totale_imponibile && $this->spesa) ? (($this->totale_imponibile / $this->spesa) - 1) * 100 : 100;
+        return ($this->totale_imponibile && ($this->spesa || $this->provvigione)) ? (($this->totale_imponibile / ($this->spesa + $this->provvigione)) - 1) * 100 : 100;
     }
 
     public function delete()

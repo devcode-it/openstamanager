@@ -211,6 +211,7 @@ switch (post('op')) {
         $articolo->costo_unitario = post('costo_unitario') ?: 0;
         $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $articolo->setSconto(post('sconto'), post('tipo_sconto'));
+        $articolo->setProvvigione(post('provvigione'), post('tipo_provvigione'));
 
         try {
             $articolo->qta = $qta;
@@ -265,6 +266,7 @@ switch (post('op')) {
         $riga->costo_unitario = post('costo_unitario') ?: 0;
         $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $riga->setSconto(post('sconto'), post('tipo_sconto'));
+        $riga->setProvvigione(post('provvigione'), post('tipo_provvigione'));
 
         $riga->qta = $qta;
 
@@ -524,6 +526,7 @@ switch (post('op')) {
             $contratto->descrizione = $documento->descrizione;
             $contratto->esclusioni = $documento->esclusioni;
             $contratto->idreferente = $documento->idreferente;
+            $contratto->idagente = $documento->idagente;
 
             $contratto->save();
 

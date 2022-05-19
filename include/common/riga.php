@@ -77,11 +77,15 @@ if ($options['dir'] == 'entrata') {
             if ($("#modals select[id^=\'tipo_sconto\']").val() === "PRC") {
                 sconto = sconto / 100 * prezzo;
             }
+            var provvigione = $("#provvigione").val().toEnglish();
+            if ($("#modals select[id^=\'tipo_provvigione\']").val() === "PRC") {
+                provvigione = provvigione / 100 * (prezzo - sconto);
+            }
 
-            var guadagno = prezzo - sconto - costo_unitario;
-            var margine = (((prezzo - sconto) * 100) / costo_unitario) - 100;
+            var guadagno = prezzo - sconto - provvigione - costo_unitario;
+            var margine = (((prezzo - sconto) * 100) / (costo_unitario + provvigione)) - 100;
             var parent = $("#costo_unitario").closest("div").parent();
-            var div = parent.find("div[id*=\"errors\"]");
+            var div = $(".margine");
             var mediaponderata = 0;
 
             margine = isNaN(margine) || !isFinite(margine) ? 0: margine; // Fix per magine NaN
@@ -90,7 +94,7 @@ if ($options['dir'] == 'entrata') {
                 mediaponderata = parseFloat($("#idarticolo").selectData().media_ponderata);
             }
 
-            div.html("<table class=\"table table-extra-condensed\" style=\"margin-top:7px;\" >\
+            div.html("<table class=\"table table-extra-condensed table-margine\" style=\"margin-top:-13px;\" >\
                         <tr>\
                             <td>\
                                 <small>&nbsp;'.tr('Guadagno').':</small>\
@@ -128,10 +132,10 @@ if ($options['dir'] == 'entrata') {
                     
             if (guadagno < 0) {
                 parent.addClass("has-error");
-                div.addClass("label-danger").removeClass("label-success");
+                $(".table-margine").addClass("label-danger").removeClass("label-success");
             } else {
                 parent.removeClass("has-error");
-                div.removeClass("label-danger").addClass("label-success");
+                $(".table-margine").removeClass("label-danger").addClass("label-success");
             }
         }
 
@@ -143,6 +147,8 @@ if ($options['dir'] == 'entrata') {
         $("#costo_unitario").keyup(aggiorna_guadagno);
         $("#sconto").keyup(aggiorna_guadagno);
         $("#modals select[id^=\'tipo_sconto\']").change(aggiorna_guadagno);
+        $("#provvigione").keyup(aggiorna_guadagno);
+        $("#modals select[id^=\'tipo_provvigione\']").change(aggiorna_guadagno);
     </script>';
 }
 
@@ -158,6 +164,19 @@ echo '
             {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.($result['sconto_percentuale'] ?: $result['sconto_unitario_corrente']).'", "icon-after": "choice|untprc|'.$result['tipo_sconto'].'", "help": "'.tr('Il valore positivo indica uno sconto. Per applicare una maggiorazione inserire un valore negativo.').'" ]}
         </div>
     </div>';
+
+if ($options['dir'] == 'entrata') {
+    echo '
+    <div class="row">
+        <div class="col-md-4 margine"></div>';
+        
+        // Provvigione
+        echo '
+        <div class="col-md-offset-4 col-md-4">
+            {[ "type": "number", "label": "'.tr('Provvigione unitaria').'", "name": "provvigione", "value": "'.($result['provvigione_percentuale'] ?: ($result['provvigione_unitaria'] ?: $result['provvigione_default'])).'", "icon-after": "choice|untprc|'.($result['tipo_provvigione'] ?: $result['tipo_provvigione_default']).'", "help": "'.tr('Provvigione destinata all\'agente.').'", "min-value": "0" ]}
+        </div>
+    </div>';
+}
 
 // Data prevista evasione (per ordini)
 

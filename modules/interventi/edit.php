@@ -120,6 +120,14 @@ echo '
 
                             {[ "type": "select", "label": "'.tr('Ordine').'", "name": "idordine", "value": "'.$record['id_ordine'].'", "ajax-source": "ordini-cliente", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'" ]}
                         </div>
+
+                        <div class="col-md-6">';
+                        if ($record['idagente'] != 0) {
+                            echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
+                        }
+        echo '
+                            {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
+                        </div>
                     </div>
 
                 </div>

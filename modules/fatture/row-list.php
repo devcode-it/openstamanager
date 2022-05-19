@@ -424,6 +424,20 @@ if ($totale != $netto_a_pagare) {
         </tr>';
 }
 
+// Provvigione
+if(!empty($fattura->provvigione)) {
+    echo '
+        <tr>
+            <td colspan="6" class="text-right">
+                '.tr('Provvigioni').':
+            </td>
+            <td class="text-right">
+                '.moneyFormat($fattura->provvigione).'
+            </td>
+            <td></td>
+        </tr>';
+}
+
 echo '
     </table>';
 if (!$block_edit && sizeof($righe) > 0) {

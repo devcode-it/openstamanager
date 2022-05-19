@@ -55,6 +55,7 @@ switch (post('op')) {
         $intervento->idanagrafica = post('idanagrafica');
         $intervento->idclientefinale = post('idclientefinale');
         $intervento->idreferente = post('idreferente');
+        $intervento->idagente = post('idagente');
         $intervento->idtipointervento = post('idtipointervento');
 
         $intervento->idstatointervento = post('idstatointervento');
@@ -497,6 +498,7 @@ switch (post('op')) {
         $articolo->costo_unitario = post('costo_unitario') ?: 0;
         $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $articolo->setSconto(post('sconto'), post('tipo_sconto'));
+        $articolo->setProvvigione(post('provvigione'), post('tipo_provvigione'));
 
         try {
             $articolo->qta = $qta;
@@ -562,6 +564,7 @@ switch (post('op')) {
         $riga->costo_unitario = post('costo_unitario') ?: 0;
         $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $riga->setSconto(post('sconto'), post('tipo_sconto'));
+        $riga->setProvvigione(post('provvigione'), post('tipo_provvigione'));
 
         $riga->qta = $qta;
 
@@ -615,6 +618,7 @@ switch (post('op')) {
             $intervento->codice_cig = $documento->codice_cig;
             $intervento->num_item = $documento->num_item;
             $intervento->idreferente = $documento->idreferente;
+            $intervento->idagente = $documento->idagente;
 
             $intervento->save();
 

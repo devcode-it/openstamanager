@@ -66,7 +66,9 @@ if (empty($result['idarticolo'])) {
 }
 
 echo '
-    <input type="hidden" name="qta_minima" id="qta_minima" value="'.$qta_minima.'">';
+    <input type="hidden" name="qta_minima" id="qta_minima" value="'.$qta_minima.'">
+    <input type="hidden" name="provvigione_default" id="provvigione_default" value="'.$result['provvigione_default'].'">
+    <input type="hidden" name="tipo_provvigione_default" id="provvigione_default" value="'.$result['tipo_provvigione_default'].'">';
 
 // Selezione impianto per gli Interventi
 if ($module['name'] == 'Interventi') {
@@ -185,6 +187,14 @@ $("#idarticolo").on("change", function() {
         }
     
         $("#um").selectSetNew($data.um, $data.um);
+
+        if ($data.provvigione) {
+            input("provvigione").set($data.provvigione);
+            input("tipo_provvigione").set($data.tipo_provvigione);
+        } else {
+            input("provvigione").set(input("provvigione_default").get());
+            input("tipo_provvigione").set(input("tipo_provvigione_default").get());
+        }
     });
 });
 

@@ -25,6 +25,7 @@ include_once __DIR__.'/../../core.php';
 $is_fornitore = in_array($id_fornitore, $tipi_anagrafica);
 $is_cliente = in_array($id_cliente, $tipi_anagrafica);
 $is_tecnico = in_array($id_tecnico, $tipi_anagrafica);
+$is_agente = in_array($id_agente, $tipi_anagrafica);
 
 if (!$is_cliente && !$is_fornitore && $is_tecnico) {
     $ignore = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Sedi' OR name='Referenti' OR name='Dichiarazioni d\'intento'");
@@ -640,15 +641,15 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                     <div class="col-md-3">
                         {[ "type": "text", "label": "<?php echo tr('Riferimento Amministrazione'); ?>", "name": "riferimento_amministrazione", "value": "$riferimento_amministrazione$", "maxlength": "20" ]}
                     </div>
-
-                    <!-- campi già specificati in Codice R.E.A., da eliminare nelle prossime release -->
-                    <!--div class="col-md-3">
-						{[ "type": "text", "label": "<?php echo tr('Num. iscr. C.C.I.A.A.'); ?>", "name": "cciaa", "value": "$cciaa$" ]}
-					</div>
-
-					<div class="col-md-3">
-						{[ "type": "text", "label": "<?php echo tr('Città iscr. C.C.I.A.A.'); ?>", "name": "cciaa_citta", "value": "$cciaa_citta$" ]}
-                    </div-->
+<?php
+                if ($is_agente) {
+?>
+                    <div class="col-md-3">
+                        {[ "type": "number", "label": "<?php echo tr('Provvigione predefinita'); ?>", "name": "provvigione_default", "value": "$provvigione_default$", "icon-after": "%" ]}
+                    </div>
+<?php
+                }
+?>
 				</div>
 
 				<div class="row">

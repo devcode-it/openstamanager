@@ -229,6 +229,20 @@ echo '
             </tr>';
         }
 
+        // Provvigione
+        if(!empty($intervento->provvigione)) {
+            echo '
+            <tr>
+                <td colspan="'.((!$record['flag_completato']) ? 6 : 5).'" class="text-right">
+                    '.tr('Provvigioni').':
+                </td>
+                <td class="text-right">
+                    '.moneyFormat($intervento->provvigione).'
+                </td>
+                <td></td>
+            </tr>';
+        }
+
         }
 
     echo'

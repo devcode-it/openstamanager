@@ -313,8 +313,23 @@ echo '
                 '.moneyFormat($preventivo->spesa).'
             </td>
             <td></td>
-        </tr>
+        </tr>';
 
+// Provvigione
+if(!empty($preventivo->provvigione)) {
+echo '
+        <tr>
+            <td colspan="7" class="text-right">
+                '.tr('Provvigioni').':
+            </td>
+            <td class="text-right">
+                '.moneyFormat($preventivo->provvigione).'
+            </td>
+            <td></td>
+        </tr>';
+}
+
+echo '
         <tr>
             <td colspan="7" class="text-right">
                 '.tr('Margine (_PRC_%)', [

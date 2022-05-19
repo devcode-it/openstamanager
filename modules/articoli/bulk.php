@@ -352,6 +352,34 @@ switch (post('op')) {
         }
 
         break;
+
+    case 'set-provvigione':
+        $n_art = 0;
+        foreach ($id_records as $id) {
+            $exist = $dbo->selectOne('co_provvigioni', 'id', ['idarticolo' => $id, 'idagente' => post('idagente')]);
+
+            if ($exist) {
+                $dbo->update('co_provvigioni', [
+                    'idagente' => post('idagente'),
+                    'provvigione' => post('provvigione'),
+                    'tipo_provvigione' => post('tipo_provvigione'),
+                ], ['idarticolo' => $id, 'idagente' => post('idagente')]);
+            } else {
+                $dbo->insert('co_provvigioni', [
+                    'idarticolo' => $id,
+                    'idagente' => post('idagente'),
+                    'provvigione' => post('provvigione'),
+                    'tipo_provvigione' => post('tipo_provvigione'),
+                ]);
+            }
+            $n_art++;
+        }
+
+        flash()->info(tr('Provvigioni inserite correttamente!', [
+            '_NUM_' => $n_art,
+        ]));
+
+        break;
 }
 
 if (App::debug()) {
@@ -512,6 +540,18 @@ $operations['change-conto-vendita'] = [
         'title' => tr('Cambiare il conto predefinito di vendita?'),
         'msg' => tr('Per ciascun articolo selezionato, verrà modificato il conto predefinito di vendita').'
         <br><br>{[ "type": "select", "label": "'.tr('Conto vendita').'", "name": "conto_vendita", "required": 1, "ajax-source": "conti-vendite" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
+
+$operations['set-provvigione'] = [
+    'text' => '<span><i class="fa fa-percent"></i> '.tr('Imposta una provvigione').'</span>',
+    'data' => [
+        'title' => tr('Impostare una provvigione?'),
+        'msg' => tr('Selezionare un agente e la provvigione prevista:').'
+        <br><br>{[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "required": 1, "ajax-source": "agenti" ]}
+        <br>{[ "type": "number", "label": "'.tr('Provvigione').'", "name": "provvigione", "required": 1, "icon-after": "choice|untprc|" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
     ],

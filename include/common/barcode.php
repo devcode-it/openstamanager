@@ -43,7 +43,7 @@ echo '
         <table class="table table-stripped hide" id="articoli_barcode">
             <tr>
                 <th>'.tr('Articolo').'</th>
-                <th width="25%">'.$intestazione_prezzo.'</th>
+                <th width="25%" class="text-center">'.$intestazione_prezzo.'</th>
                 <th width="20%" class="text-center">'.tr('Sconto').'</th>
                 <th width="10%" class="text-center">'.tr('Q.tà').'</th>
                 <th width="5%" class="text-center">#</th>

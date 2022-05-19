@@ -33,6 +33,7 @@ switch ($resource) {
         $usare_dettaglio_fornitore = $superselect['dir'] == 'uscita';
         $usare_iva_anagrafica = $superselect['dir'] == 'entrata' && !empty($superselect['idanagrafica']);
         $solo_non_varianti = $superselect['solo_non_varianti'];
+        $idagente = $superselect['idagente'];
 
         $query = "SELECT
             IF(`categoria`.`nome` IS NOT NULL, CONCAT(`categoria`.`nome`, IF(`sottocategoria`.`nome` IS NOT NULL, CONCAT(' (', `sottocategoria`.`nome`, ')'), '-')), '<i>".tr('Nessuna categoria')."</i>') AS optgroup,
@@ -73,6 +74,12 @@ switch ($resource) {
             IFNULL(iva_articolo.percentuale, iva_predefinita.percentuale) AS percentuale,';
         }
 
+        if ($idagente) {
+            $query .= '
+            co_provvigioni.provvigione AS provvigione,
+            co_provvigioni.tipo_provvigione AS tipo_provvigione,';
+        }
+
         $query .= '
             round(mg_articoli.qta,'.setting('Cifre decimali per quantità').") AS qta,
             mg_articoli.um,
@@ -105,6 +112,11 @@ switch ($resource) {
         if ($usare_iva_anagrafica) {
             $query .= '
             LEFT JOIN co_iva AS iva_anagrafica ON iva_anagrafica.id = (SELECT idiva_vendite FROM an_anagrafiche WHERE idanagrafica = '.prepare($superselect['idanagrafica']).')';
+        }
+
+        if ($idagente) {
+            $query .= '
+            LEFT JOIN co_provvigioni ON co_provvigioni.idarticolo = mg_articoli.id AND co_provvigioni.idagente='.prepare($idagente);
         }
 
             $query .= '

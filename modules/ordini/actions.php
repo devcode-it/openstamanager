@@ -186,6 +186,9 @@ switch (post('op')) {
         $articolo->confermato = post('confermato') ?: 0;
         $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $articolo->setSconto(post('sconto'), post('tipo_sconto'));
+        if ($dir == 'entrata') {
+            $articolo->setProvvigione(post('provvigione'), post('tipo_provvigione'));
+        }
 
         try {
             $articolo->qta = post('qta');
@@ -265,6 +268,9 @@ switch (post('op')) {
         $riga->confermato = post('confermato') ?: 0;
         $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $riga->setSconto(post('sconto'), post('tipo_sconto'));
+        if ($dir == 'entrata') {
+            $riga->setProvvigione(post('provvigione'), post('tipo_provvigione'));
+        }
 
         $riga->qta = post('qta');
 
@@ -425,6 +431,7 @@ switch (post('op')) {
             $ordine->codice_cig = $documento->codice_cig;
             $ordine->num_item = $documento->num_item;
             $ordine->idreferente = $documento->idreferente;
+            $ordine->idagente = $documento->idagente;
 
             $ordine->save();
 

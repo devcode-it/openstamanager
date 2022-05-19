@@ -198,7 +198,7 @@ echo '
                     <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
                 </td>
                 <td class="text-right">
-                    '.moneyFormat($intervento->imponibile, 2).'
+                    '.moneyFormat($righe->sum('imponibile'), 2).'
                 </td>
                 <td></td>
             </tr>';
@@ -223,7 +223,7 @@ echo '
                     <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
                 </td>
                 <td class="text-right">
-                    '.moneyFormat($intervento->totale_imponibile, 2).'
+                    '.moneyFormat($righe->sum('totale_imponibile'), 2).'
                 </td>
                 <td></td>
             </tr>';

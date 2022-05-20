@@ -1344,11 +1344,11 @@ class FatturaElettronica
             }
 
             // 2.2.1.3
-            if ($riga->isArticolo()) {
-                if (!empty($riga->codice)) {
+            if (empty($riga->isDescrizione())) {
+                if (!empty($riga->codice) || (!empty($dati_aggiuntivi['codice_tipo']) && !empty($dati_aggiuntivi['codice_valore']))) {
                     $codice_articolo = [
-                        'CodiceTipo' => 'COD',
-                        'CodiceValore' => $riga->codice,
+                        'CodiceTipo' => $dati_aggiuntivi['codice_tipo'] ?: 'COD',
+                        'CodiceValore' => $dati_aggiuntivi['codice_valore'] ?: $riga->codice,
                     ];
 
                     $dettaglio['CodiceArticolo'] = $codice_articolo;

@@ -90,6 +90,34 @@ echo '
             </td>
         </tr>';
 
+if (empty($riga->isDescrizione())) {
+    $placeholder_tipo = $riga->isArticolo() && !empty($riga->codice) ? 'COD' : '';
+    $placeholder_valore = $riga->isArticolo() && !empty($riga->codice) ? $riga->codice : '';
+// Codice Articolo
+echo '
+        <tr class="fourth-level">
+            <th colspan="2" style="vertical-align: middle;">'.str_repeat($space, 3).'2.2.1.3 CodiceArticolo</th>
+        </tr>';
+
+// Codice tipo articolo
+echo '
+        <tr class="fifth-level">
+            <td style="vertical-align: middle;">'.str_repeat($space, 5).'2.2.1.3.1 CodiceTipo</td>
+            <td>
+                {[ "type": "text", "name": "codice_tipo", "value": "'.$result['codice_tipo'].'", "placeholder": "'.$placeholder_tipo.'" ]}
+            </td>
+        </tr>';
+
+// Codice valore articolo
+echo '
+        <tr class="fifth-level">
+            <td style="vertical-align: middle;">'.str_repeat($space, 5).'2.2.1.3.2 CodiceValore</td>
+            <td>
+                {[ "type": "text", "name": "codice_valore", "value": "'.$result['codice_valore'].'", "placeholder": "'.$placeholder_valore.'" ]}
+            </td>
+        </tr>';
+}
+
 // Data inizio periodo
 echo '
         <tr class="fourth-level">

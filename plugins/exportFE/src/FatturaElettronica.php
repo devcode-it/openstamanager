@@ -1408,9 +1408,7 @@ class FatturaElettronica
             $dettaglio['AliquotaIVA'] = $percentuale;
 
             if (!empty($riga['idritenutaacconto']) && empty($riga['is_descrizione'])) {
-                if ($riga['calcolo_ritenuta_acconto'] == 'IMP+RIV') {
-                    $dettaglio['Ritenuta'] = 'SI';
-                }
+                $dettaglio['Ritenuta'] = 'SI';
             }
 
             // Controllo aggiuntivo codice_natura_fe per evitare che venga riportato il tag vuoto

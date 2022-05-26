@@ -134,7 +134,7 @@ switch ($resource) {
         $ids = array_column($results['results'], 'id');
         $pos = array_search($idagente_default, $ids);
         if ($pos !== false) {
-            $results['results'][$pos]['_bgcolor_'] = '#ff0';
+            $results['results'][$pos]['_bgcolor_'] = '#ffff00';
         }
         break;
 

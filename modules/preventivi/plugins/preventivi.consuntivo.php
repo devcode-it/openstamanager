@@ -411,25 +411,27 @@ echo '
 </div>';
 
 // Aggiunta interventi se il preventivo é aperto o in attesa o pagato (non si possono inserire interventi collegati ad altri preventivi)
-if (in_array($record['stato'], ['Accettato', 'In lavorazione', 'Pagato'])) {
-    echo '
-<form action="" method="post">
+$query = 'SELECT id, CONCAT(\'Intervento \', codice, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta), \'%d/%m/%Y\')) AS descrizione FROM in_interventi WHERE id_preventivo IS NULL AND id_contratto IS NULL AND id_ordine IS NULL AND id NOT IN( SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND id NOT IN( SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL) AND idanagrafica='.prepare($record['idanagrafica']);
+
+$count = $dbo->fetchNum($query);
+
+    echo '<hr>
+<form action="" method="post" id="aggiungi-intervento">
     <input type="hidden" name="op" value="addintervento">
     <input type="hidden" name="backto" value="record-edit">
 
     <div class="row">
-        <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Aggiungi un altro intervento a questo preventivo').'", "name": "idintervento", "values": "query=SELECT id, CONCAT(\'Intervento \', codice, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta), \'%d/%m/%Y\')) AS descrizione FROM in_interventi WHERE id_preventivo IS NULL AND id NOT IN( SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND id NOT IN( SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL) AND idanagrafica='.prepare($record['idanagrafica']).'" ]}
+        <div class="col-md-8">
+            {[ "type": "select", "label": "'.tr('Aggiungi un intervento a questo preventivo').' ('.$count.')", "name": "idintervento", "values": "query='.$query.'", "required":"1" ]}
         </div>
-    </div>
 
     <!-- PULSANTI -->
-	<div class="row">
-		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary pull-right" onclick="if($(\'#idintervento\').val() && confirm(\'Aggiungere questo intervento al preventivo?\'){ $(this).parent().submit(); }">
+		<div class="col-md-4">
+            <p style="margin-top:-5px;" >&nbsp;</p>
+            <button type="button" class="btn btn-primary" onclick="if($(\'#aggiungi-intervento\').parsley().validate() && confirm(\''.tr('Aggiungere questo intervento al preventivo?').'\') ){ $(\'#aggiungi-intervento\').submit(); }" '.((($record['is_pianificabile']) && !$block_edit ) ? '' : 'disabled').'>
                 <i class="fa fa-plus"></i> '.tr('Aggiungi').'
             </button>
 		</div>
     </div>
 </form>';
-}
+

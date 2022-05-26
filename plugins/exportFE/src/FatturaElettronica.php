@@ -542,8 +542,6 @@ class FatturaElettronica
         } else {
             // se azienda chiedo partita iva
             $fields['piva'] = 'Partita IVA';
-            // se italiana e non ho impostato ne il codice destinatario ne indirizzo PEC chiedo la compilazione di almeno uno dei due
-            $fields['codice_destinatario'] = (empty($data['codice_destinatario']) and empty($data['pec']) && intval($data['nazione']->iso2 == 'IT')) ? 'Codice destinatario o indirizzo PEC' : '';
         }
 
         $missing = [];

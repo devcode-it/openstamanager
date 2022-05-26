@@ -42,7 +42,15 @@ switch (post('op')) {
         $tipo = TipoSessione::find($idtipointervento);
 
         $preventivo = Preventivo::build($anagrafica, $tipo, $nome, $data_bozza, $id_sede);
+      
+        $preventivo->idstato = post('idstato');
+        $preventivo->save();
+
         $id_record = $preventivo->id;
+
+        if (isAjaxRequest()) {
+            echo json_encode(['id' => $id_record, 'text' => 'Contratto '.$preventivo->numero.' del '.dateFormat($preventivo->data_bozza).' - '.$preventivo->nome]);
+        }
 
         flash()->info(tr('Aggiunto preventivo numero _NUM_!', [
             '_NUM_' => $preventivo['numero'],

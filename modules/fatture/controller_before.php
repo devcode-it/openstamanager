@@ -21,8 +21,11 @@ include_once __DIR__.'/../../core.php';
 
 use Carbon\Carbon;
 use Modules\Fatture\Fattura;
+use Plugins\ExportFE\Interaction;
 
-if ($module->name == 'Fatture di vendita') {
+$services_enable = Interaction::isEnabled();
+
+if ($module->name == 'Fatture di vendita' && $services_enable) {
     $documenti_scarto = [];
     $documenti_invio = [];
     $codici_scarto = ['EC02','ERR','ERVAL','NS'];

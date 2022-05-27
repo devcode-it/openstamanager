@@ -37,7 +37,7 @@ echo '
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "required": 1, "value": "'.$id_anagrafica.'", "ajax-source": "clienti", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica=Cliente&readonly_tipo=1" ]}
+			{[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "required": 1, "value": "'.$id_anagrafica.'", "ajax-source": "clienti", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica=Cliente&readonly_tipo=1", "readonly": "'.((empty($id_anagrafica)) ? 0 : 1).'" ]}
 		</div>
 	</div>
 

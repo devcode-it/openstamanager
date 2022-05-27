@@ -25,6 +25,7 @@ if (isset($id_record)) {
     $record = $dbo->fetchOne('SELECT co_preventivi.*,
         (SELECT tipo FROM an_anagrafiche WHERE idanagrafica = co_preventivi.idanagrafica) AS tipo_anagrafica,
         co_statipreventivi.is_fatturabile,
+        co_statipreventivi.is_pianificabile,
         co_statipreventivi.is_completato,
         co_statipreventivi.is_revisionabile,
         co_statipreventivi.descrizione AS stato

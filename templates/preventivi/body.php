@@ -258,7 +258,7 @@ foreach ($righe as $riga) {
             // Iva
             echo '
             <td class="text-center" style="vertical-align: middle">
-                '.Translator::numberToLocale($riga->aliquota->percentuale, 0).'
+                '.Translator::numberToLocale($riga->aliquota->percentuale, 2).'
             </td>';
         }
     } else {

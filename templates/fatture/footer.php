@@ -271,7 +271,7 @@ if ($has_ritenuta) {
         '_PRC_' => Translator::numberToLocale($documento->ritenutaContributi->percentuale, 2),
     ]);
     $acconto = tr('acconto: _PRC_%', [
-        '_PRC_' => Translator::numberToLocale($rs2[0]['percentuale'], 0),
+        '_PRC_' => Translator::numberToLocale($rs2[0]['percentuale'], 2),
     ]);
     $ritenuta_totale = abs($documento->ritenuta_acconto) + abs($documento->totale_ritenuta_contributi);
 

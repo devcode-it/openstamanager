@@ -153,6 +153,7 @@ switch (post('op')) {
             $originale = ArticoloOriginale::find($id_articolo);
             $articolo = Articolo::build($ordine, $originale);
             $articolo->id_dettaglio_fornitore = $id_dettaglio_fornitore ?: null;
+            $articolo->confermato = $dir == 'entrata' ? setting('Conferma automaticamente le quantità negli ordini cliente') : setting('Conferma automaticamente le quantità negli ordini fornitore');
 
             $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);
             if ($dir == 'entrata') {

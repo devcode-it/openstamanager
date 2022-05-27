@@ -198,6 +198,7 @@ switch (post('op')) {
             $originale = ArticoloOriginale::find($id_articolo);
             $articolo = Articolo::build($preventivo, $originale);
             $articolo->id_dettaglio_fornitore = $id_dettaglio_fornitore ?: null;
+            $articolo->confermato = setting('Conferma automaticamente le quantità nei preventivi');
 
             $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);
             if ($dir == 'entrata') {

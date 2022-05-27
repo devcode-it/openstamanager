@@ -52,9 +52,9 @@ if (file_exists($extraction_dir.'/VERSION')) {
         ->ignoreVCS(true)
         ->in($extraction_dir);
 
-    $files = $finder->name('MODULE')->name('PLUGIN')->name('TEMPLATES');
+    $files_module = $finder->name('MODULE');
 
-    foreach ($files as $file) {
+    foreach ($files_module as $file) {
         // Informazioni dal file di configurazione
         $info = Util\Ini::readFile($file->getRealPath());
 
@@ -71,8 +71,46 @@ if (file_exists($extraction_dir.'/VERSION')) {
             $insert['icon'] = $info['icon'];
         }
 
+        // Copia dei file nella cartella relativa
+        copyr(dirname($file->getRealPath()), base_dir().'/'.$directory.'/'.$info['directory']);
+
+        // Eventuale registrazione nel database
+        if (empty($installed)) {
+            $dbo->insert($table, array_merge($insert, [
+                'name' => $info['name'],
+                'title' => !empty($info['title']) ? $info['title'] : $info['name'],
+                'directory' => $info['directory'],
+                'options' => $info['options'],
+                'version' => $info['version'],
+                'compatibility' => $info['compatibility'],
+                'order' => 100,
+                'default' => 0,
+                'enabled' => 1,
+            ]));
+
+            flash()->error(tr('Installazione completata!'));
+        } else {
+            flash()->error(tr('Aggiornamento completato!'));
+        }
+    }
+
+    $finder = Symfony\Component\Finder\Finder::create()
+        ->files()
+        ->ignoreDotFiles(true)
+        ->ignoreVCS(true)
+        ->in($extraction_dir);
+
+    $files_plugin_template = $finder->name('PLUGIN')->name('TEMPLATES');
+
+    foreach ($files_plugin_template as $file) {
+        // Informazioni dal file di configurazione
+        $info = Util\Ini::readFile($file->getRealPath());
+
+        // Informazioni aggiuntive per il database
+        $insert = [];
+
         // Plugin
-        elseif (basename($file->getRealPath()) == 'PLUGIN') {
+        if (basename($file->getRealPath()) == 'PLUGIN') {
             $directory = 'plugins';
             $table = 'zz_plugins';
 

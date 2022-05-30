@@ -181,9 +181,7 @@ switch (post('op')) {
             $articolo->id_dettaglio_fornitore = $id_dettaglio_fornitore ?: null;
 
             $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);
-            if ($dir == 'entrata') {
-                $articolo->costo_unitario = $originale->prezzo_acquisto;
-            }
+            $articolo->costo_unitario = $originale->prezzo_acquisto;
             $articolo->setSconto($sconto, $tipo_sconto);
             $articolo->qta = $qta;
 

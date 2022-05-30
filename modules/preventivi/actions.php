@@ -201,9 +201,7 @@ switch (post('op')) {
             $articolo->confermato = setting('Conferma automaticamente le quantità nei preventivi');
 
             $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);
-            if ($dir == 'entrata') {
-                $articolo->costo_unitario = $originale->prezzo_acquisto;
-            }
+            $articolo->costo_unitario = $originale->prezzo_acquisto;
             $articolo->setSconto($sconto, $tipo_sconto);
             $articolo->qta = $qta;
 

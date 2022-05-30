@@ -127,7 +127,7 @@ if (!empty($results)) {
     <tbody>';
 
             foreach ($errors as $name => $diff) {
-                if (count($diff) == 1 && array_key_exists('type', $diff) && Str::contains($diff['type']['expected'], $diff['type']['current'])) {
+                if (count($diff) == 1 && array_key_exists('type', $diff) && string_contains($diff['type']['expected'], $diff['type']['current'])) {
                     $class = 'info';
                 } else {
                     $class = 'warning';

@@ -228,7 +228,7 @@ echo '
         <div class="box box-warning">
             <div class="box-header with-border">
                 <h3 class="box-title">
-                    '.tr("Verifica l'integrità dell'intallazione").' <span class="tip" title="'.tr("Verifica l'integrità della tua installazione attraverso un controllo sui checksum dei file e sulla struttura del database").'."><i class="fa fa-question-circle-o"></i></span>
+                    '.tr("Verifica l'integrità dell'installazione").' <span class="tip" title="'.tr("Verifica l'integrità della tua installazione attraverso un controllo sui checksum dei file e sulla struttura del database").'."><i class="fa fa-question-circle-o"></i></span>
                 </h3>
             </div>
             <div class="box-body">

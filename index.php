@@ -20,6 +20,8 @@
 $skip_permissions = true;
 include_once __DIR__.'/core.php';
 
+use Carbon\Carbon;
+
 $op = filter('op');
 
 // LOGIN
@@ -32,13 +34,13 @@ switch ($op) {
             $_SESSION['keep_alive'] = true;
 
             if (intval(setting('Inizio periodo calendario'))) {
-                $_SESSION['period_start'] = setting('Inizio periodo calendario');
+                $_SESSION['period_start'] = Carbon::createFromFormat('d/m/Y', setting('Inizio periodo calendario'))->format('Y-m-d');
             } else {
                 $_SESSION['period_start'] = date('Y').'-01-01';
             }
 
             if (intval(setting('Fine periodo calendario'))) {
-                $_SESSION['period_end'] = setting('Fine periodo calendario');
+                $_SESSION['period_end'] = Carbon::createFromFormat('d/m/Y', setting('Fine periodo calendario'))->format('Y-m-d');
             } else {
                 $_SESSION['period_end'] = date('Y').'-12-31';
             }

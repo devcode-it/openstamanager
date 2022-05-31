@@ -32,8 +32,10 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
     $codici_invio = ['GEN','QUEUE'];
     $data_limite = (new Carbon())->subMonths(6);
     $data_limite_invio = (new Carbon())->subDays(10);
+    $data_setting = Carbon::createFromFormat('d/m/Y', setting('Data inizio controlli su stati FE'))->format('Y-m-d');
 
-    $documenti = Fattura::where('data', '>', $data_limite)->whereIn('codice_stato_fe', ['EC02','ERR','ERVAL','NS','GEN','QUEUE'])->get();
+
+    $documenti = Fattura::where('data', '>', $data_limite)->where('data', '>', $data_setting)->whereIn('codice_stato_fe', ['EC02','ERR','ERVAL','NS','GEN','QUEUE'])->get();
     foreach ($documenti as $documento) {
         $stato_fe = $database->fetchOne('SELECT descrizione, icon FROM fe_stati_documento WHERE codice = '.prepare($documento->codice_stato_fe));
         if (in_array($documento->codice_stato_fe, $codici_scarto)) {

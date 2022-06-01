@@ -49,21 +49,21 @@ $fasce_orarie = $dbo->fetchArray("SELECT *, CONCAT (in_fasceorarie.nome, ' (', D
                 <td class="text-left">'.$descrizione.'</td>
                 
                 <td class="text-right">
-                    {[ "type": "number", "name": "costo_ore['.$fascia_oraria[$i]['idtipointervento'].']", "value": "'.number_format($fascia_oraria['costo_orario'], 2, ',', '.').'", "decimals": "2", "icon-after": "<i class=\'fa fa-euro\'></i>" ]} </td>
+                    {[ "type": "number", "name": "fascia_ore['.$fascia_oraria['idfasciaoraria'].']", "value": "'.number_format($fascia_oraria['costo_orario'], 2, ',', '.').'", "decimals": "2", "icon-after": "<i class=\'fa fa-euro\'></i>" ]} </td>
                 <td class="text-right">
-                    {[ "type": "number", "name": "costo_km['.$fascia_oraria[$i]['idtipointervento'].']", "value": "'.number_format($fascia_oraria['costo_km'], 2, ',', '.').'", "decimals": "2", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
+                    {[ "type": "number", "name": "fascia_km['.$fascia_oraria['idfasciaoraria'].']", "value": "'.number_format($fascia_oraria['costo_km'], 2, ',', '.').'", "decimals": "2", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
                 </td>
                 <td class="text-right">
-                  {[ "type": "number", "name": "costo_diritto_chiamata['.$fascia_oraria[$i]['idtipointervento'].']", "value": "'.number_format($fascia_oraria['costo_diritto_chiamata'], 2, ',', '.').'", "decimals": "2", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
+                  {[ "type": "number", "name": "fascia_diritto_chiamata['.$fascia_oraria['idfasciaoraria'].']", "value": "'.number_format($fascia_oraria['costo_diritto_chiamata'], 2, ',', '.').'", "decimals": "2", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
                 </td>
                 <td class="text-right">
-                    {[ "type": "number", "name": "costo_orario_tecnico['.$fascia_oraria[$i]['idtipointervento'].']", "value": "'.number_format($fascia_oraria['costo_orario_tecnico'], 2, ',', '.').'", "decimals": "2", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
+                    {[ "type": "number", "name": "fascia_orario_tecnico['.$fascia_oraria['idfasciaoraria'].']", "value": "'.number_format($fascia_oraria['costo_orario_tecnico'], 2, ',', '.').'", "decimals": "2", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
                 </td>
                 <td class="text-right">
-                    {[ "type": "number", "name": "costo_km_tecnico['.$fascia_oraria[$i]['idtipointervento'].']", "value": "'.number_format($fascia_oraria['costo_km_tecnico'], 2, ',', '.').'", "decimals": "2", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
+                    {[ "type": "number", "name": "fascia_km_tecnico['.$fascia_oraria['idfasciaoraria'].']", "value": "'.number_format($fascia_oraria['costo_km_tecnico'], 2, ',', '.').'", "decimals": "2", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
                 </td>
                 <td class="text-right">
-                    {[ "type": "number", "name": "costo_diritto_chiamata_tecnico['.$fascia_oraria[$i]['idtipointervento'].']", "value": "'.number_format($fascia_oraria['costo_diritto_chiamata_tecnico'], 2, ',', '.').'", "decimals": "2", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
+                    {[ "type": "number", "name": "fascia_diritto_chiamata_tecnico['.$fascia_oraria['idfasciaoraria'].']", "value": "'.number_format($fascia_oraria['costo_diritto_chiamata_tecnico'], 2, ',', '.').'", "decimals": "2", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
                 </td>
             </tr>';
 

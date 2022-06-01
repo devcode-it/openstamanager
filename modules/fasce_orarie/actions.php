@@ -56,14 +56,32 @@ switch (post('op')) {
 
     case 'add':
         $nome = post('nome');
+        $ora_inizio = post('ora_inizio');
+        $ora_fine = post('ora_fine');
 
         if ($dbo->fetchNum('SELECT * FROM `in_fasceorarie` WHERE `nome`='.prepare($nome)) == 0) {
            
             $dbo->insert('in_fasceorarie', [
                 'nome' => $nome,
+                'ora_inizio' => $ora_inizio,
+                'ora_fine' => $ora_fine,
             ]);
 
             $id_record = $dbo->lastInsertedID();
+
+            $tipi_intervento = $dbo->select('in_tipiintervento', '*');
+            foreach ($tipi_intervento as $tipo_intervento) {
+                $dbo->insert('in_fasceorarie_tipiintervento', [
+                    'idfasciaoraria' => $id_record,
+                    'idtipointervento' => $tipo_intervento['idtipointervento'],
+                    'costo_orario' => $tipo_intervento['costo_orario'],
+                    'costo_km' => $tipo_intervento['costo_km'],
+                    'costo_diritto_chiamata' => $tipo_intervento['costo_diritto_chiamata'],
+                    'costo_orario_tecnico' => $tipo_intervento['costo_orario_tecnico'],
+                    'costo_km_tecnico' => $tipo_intervento['costo_km_tecnico'],
+                    'costo_diritto_chiamata_tecnico' => $tipo_intervento['costo_km_tecnico'],
+                ]);
+            }
 
             if (isAjaxRequest()) {
                 echo json_encode(['id' => $id_record, 'text' => $nome]);
@@ -81,28 +99,15 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $tipi_interventi = $dbo->fetchNum('SELECT idtipointervento FROM in_fasceorarie_tipiintervento WHERE idfasciaoraria='.prepare($id_record));
+        $dbo->update('in_fasceorarie', [
+            'deleted_at' => date('Y-m-d H:i:s'),
+        ], ['id' => $id_record, 'can_delete' => 1]);
 
-        if (isset($id_record) && empty($tipi_interventi)) {
-            
-            $dbo->delete('in_fasceorarie', [
-                'id' => $id_record,
-                'can_delete' => 1,
-            ]);
+        $dbo->delete('in_fasceorarie_tipiintervento', ['idfasciaoraria' => $id_record]);
 
-            flash()->info(tr('_TYPE_ eliminata con successo.', [
-                '_TYPE_' => 'Fascia oraria',
-            ]));
-
-        } else {
-
-            flash()->error(tr('Sono presenti dei tipi interventi collegate a questa fascia oraria.'));
-            
-            # soft delete
-            /*$dbo->update('in_fasceorarie', [
-                'deleted_at' => date('Y-m-d H:i:s'),
-            ], ['id' => $id_record, 'can_delete' => 1]);*/
-        }
+        flash()->info(tr('_TYPE_ eliminata con successo.', [
+            '_TYPE_' => 'Fascia oraria',
+        ]));
 
         break;
 }

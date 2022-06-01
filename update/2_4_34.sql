@@ -38,4 +38,9 @@ ALTER TABLE `an_anagrafiche` ADD `provvigione_default` DECIMAL(12,6) NOT NULL AF
 ALTER TABLE `in_interventi` ADD `idagente` INT NOT NULL AFTER `idreferente`; 
 
 -- Impostazione per controlli su stati FE
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Data inizio controlli su stati FE', '01/01/2019', 'date', '1', 'Fatturazione elettronica', '23', NULL) 
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Data inizio controlli su stati FE', '01/01/2019', 'date', '1', 'Fatturazione elettronica', '23', NULL);
+
+-- Aggiunto campo deleted_at in in_fasceorarie
+ALTER TABLE `in_fasceorarie` ADD `deleted_at` TIMESTAMP NULL AFTER `include_bank_holidays`; 
+
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `in_fasceorarie` WHERE 1=1 AND deleted_at IS NULL HAVING 2=2' WHERE `zz_modules`.`name` = 'Fasce orarie'; 

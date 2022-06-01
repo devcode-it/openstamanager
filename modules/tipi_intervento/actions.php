@@ -26,15 +26,34 @@ switch (post('op')) {
         $tipo->descrizione = post('descrizione');
         $tipo->calcola_km = post('calcola_km');
         $tipo->tempo_standard = post('tempo_standard');
-
         $tipo->costo_orario = post('costo_orario');
         $tipo->costo_km = post('costo_km');
         $tipo->costo_diritto_chiamata = post('costo_diritto_chiamata');
         $tipo->costo_orario_tecnico = post('costo_orario_tecnico');
         $tipo->costo_km_tecnico = post('costo_km_tecnico');
         $tipo->costo_diritto_chiamata_tecnico = post('costo_diritto_chiamata_tecnico');
-
         $tipo->save();
+
+        $fasce_ore = (array)post('fascia_ore');
+        $fascia_km = (array)post('fascia_km');
+        $fascia_diritto_chiamata = (array)post('fascia_diritto_chiamata');
+        $fascia_orario_tecnico = (array)post('fascia_orario_tecnico');
+        $fascia_km_tecnico = (array)post('fascia_km_tecnico');
+        $fascia_diritto_chiamata_tecnico = (array)post('fascia_diritto_chiamata_tecnico');
+
+        foreach ($fasce_ore as $key => $fascia_ore) {
+            $dbo->update('in_fasceorarie_tipiintervento', [
+                'costo_orario' => $fascia_ore,
+                'costo_km' => $fascia_km[$key],
+                'costo_diritto_chiamata' => $fascia_diritto_chiamata[$key],
+                'costo_orario_tecnico' => $fascia_orario_tecnico[$key],
+                'costo_km_tecnico' => $fascia_km_tecnico[$key],
+                'costo_diritto_chiamata_tecnico' => $fascia_diritto_chiamata_tecnico[$key],
+            ], [
+                'idfasciaoraria' => $key, 'idtipointervento' => $id_record
+            ]);
+        }
+
 
         flash()->info(tr('Informazioni tipo intervento salvate correttamente!'));
 
@@ -54,13 +73,26 @@ switch (post('op')) {
         $tipo->costo_orario_tecnico = post('costo_orario_tecnico');
         $tipo->costo_km_tecnico = post('costo_km_tecnico');
         $tipo->costo_diritto_chiamata_tecnico = post('costo_diritto_chiamata_tecnico');
-
         $tipo->save();
 
         // Fix per impostare i valori inziali a tutti i tecnici
         $tipo->fixTecnici();
 
         $id_record = $tipo->id;
+
+        $fasce_orarie = $dbo->select('in_fasceorarie', '*', ['deleted_at' => null]);
+        foreach ($fasce_orarie as $fascia_oraria) {
+            $dbo->insert('in_fasceorarie_tipiintervento', [
+                'idfasciaoraria' => $fascia_oraria['id'],
+                'idtipointervento' => $id_record,
+                'costo_orario' => post('costo_orario'),
+                'costo_km' => post('costo_km'),
+                'costo_diritto_chiamata' => post('costo_diritto_chiamata'),
+                'costo_orario_tecnico' => post('costo_orario_tecnico'),
+                'costo_km_tecnico' => post('costo_km_tecnico'),
+                'costo_diritto_chiamata_tecnico' => post('costo_diritto_chiamata_tecnico'),
+            ]);
+        }
 
         flash()->info(tr('Nuovo tipo di intervento aggiunto!'));
 
@@ -88,6 +120,9 @@ switch (post('op')) {
 
             // Elimino anche le tariffe collegate ai contratti
             $query = 'DELETE FROM co_contratti_tipiintervento WHERE idtipointervento='.prepare($id_record);
+            $dbo->query($query);
+
+            $query = 'DELETE FROM in_fasceorarie_tipiintervento WHERE idtipointervento='.prepare($id_record);
             $dbo->query($query);
 
             $query = 'DELETE FROM in_tipiintervento WHERE idtipointervento='.prepare($id_record);

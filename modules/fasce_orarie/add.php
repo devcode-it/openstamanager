@@ -24,8 +24,16 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="backto" value="record-edit">
 
 	<div class="row">
-		<div class="col-md-12">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1 ]}
+		</div>
+		
+		<div class="col-md-3">
+			{[ "type": "time", "label": "<?php echo tr('Ora inizio'); ?>", "name": "ora_inizio", "required": 1  ]}
+		</div>
+
+		<div class="col-md-3">
+			{[ "type": "time", "label": "<?php echo tr('Ora fine'); ?>", "name": "ora_fine", "required": 1 ]}
 		</div>
 	</div>
 

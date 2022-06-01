@@ -38,4 +38,4 @@ ALTER TABLE `an_anagrafiche` ADD `provvigione_default` DECIMAL(12,6) NOT NULL AF
 ALTER TABLE `in_interventi` ADD `idagente` INT NOT NULL AFTER `idreferente`; 
 
 -- Impostazione per controlli su stati FE
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Data inizio controlli su stati FE', '2019-01-01', 'date', '1', 'Fatturazione elettronica', '23', NULL) 
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Data inizio controlli su stati FE', '01/01/2019', 'date', '1', 'Fatturazione elettronica', '23', NULL) 

@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
-    case 'fasce_orarie':
+    case 'eventi':
         $query = 'SELECT id, nome AS descrizione FROM zz_events |where| ORDER BY nome ASC';
 
         foreach ($elements as $element) {

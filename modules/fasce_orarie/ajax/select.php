@@ -26,6 +26,9 @@ switch ($resource) {
         foreach ($elements as $element) {
             $filter[] = 'id='.prepare($element);
         }
+        if (empty($filter)) {
+            $where[] = 'in_fasceorarie.deleted_at IS NULL';
+        }
 
         if (!empty($search)) {
             $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');

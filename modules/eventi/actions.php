@@ -53,11 +53,13 @@ switch (post('op')) {
 
     case 'add':
         $nome = post('nome');
+        $data = post('data');
         $id_nazione = post('id_nazione');
-        if ($dbo->fetchNum('SELECT * FROM `zz_events` WHERE `id_nazione` = '.prepare($id_nazione).' AND `nome`='.prepare($nome)) == 0) {
+        if ($dbo->fetchNum('SELECT * FROM `zz_events` WHERE `id_nazione` = '.prepare($id_nazione).' AND `nome`='.prepare($nome).' AND `data`='.prepare($data)) == 0) {
            
             $dbo->insert('zz_events', [
                 'nome' => $nome,
+                'data' => $data,
                 'id_nazione' => $id_nazione,
             ]);
 

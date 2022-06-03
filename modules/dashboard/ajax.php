@@ -21,6 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 $modulo_interventi = Modules::get('Interventi');
 $modulo_preventivi = Modules::get('Preventivi');
+$modulo_eventi = Modules::get('Eventi');
 
 if (!isset($user['idanagrafica'])) {
     $user['idanagrafica'] = '';
@@ -118,7 +119,7 @@ switch (filter('op')) {
         }
 
         if (setting('Visualizza informazioni aggiuntive sul calendario')) {
-            //# Box allDay
+            //# Box allDay preventivi
             $query = 'SELECT
                 co_preventivi.id,
                 co_preventivi.nome,
@@ -174,6 +175,34 @@ switch (filter('op')) {
                         'eventStartEditable' => false,
                     ];
                 }
+            }
+
+            //# Box allDay eventi
+            $query = 'SELECT
+                *
+            FROM 
+                zz_events
+            WHERE
+                data >= '.prepare($start).' AND data <= '.prepare($end);
+
+            $alldays = $dbo->fetchArray($query);
+
+            foreach ($alldays as $evento) {
+                $results[] = [
+                    'id' => $modulo_eventi->id.'_'.$evento['id'],
+                    'idintervento' => $evento['id'],
+                    'idtecnico' => '',
+                    'title' => '<b>'.tr('Evento').':</b> '.$evento['nome'].'<br>
+                    <b>'.tr('Festività').':</b> '.($evento['is_bank_holiday'] ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i>'),
+                    'start' => $evento['data'],
+                    'end' => $evento['data'],
+                    'url' => base_path().'/editor.php?id_module='.$modulo_eventi->id.'&id_record='.$evento['id'],
+                    'backgroundColor' => '#ffebcd',
+                    'textColor' => color_inverse('#ffebcd'),
+                    'borderColor' => '#ffebcd',
+                    'allDay' => true,
+                    'eventStartEditable' => false,
+                ];
             }
         }
 

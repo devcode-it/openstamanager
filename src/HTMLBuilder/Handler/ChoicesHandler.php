@@ -71,19 +71,17 @@ class ChoicesHandler implements HandlerInterface
         // Generazione del codice HTML
         // "+ this.checked" rende il valore booleano un numero
         $result = '
-        <div class="form-group checkbox-group">
-            <input type="hidden" name="|name|" value="|value|" class="openstamanager-input">
-            <input type="checkbox" id="|id|" value="|value|" class="hidden" |attr| onchange="$(this).parent().find(\'[type = hidden]\').val(+this.checked).trigger(\'change\')"/>
-            <div class="btn-group checkbox-buttons">
-                <label for="|id|" class="btn btn-default'.$class.'">
-                    <span class="fa fa-check text-success"></span>
-                    <span class="fa fa-close text-danger"></span>
-                </label>
-                <label for="|id|" class="btn btn-default active'.$class.'">
-                    <span class="text-success">'.tr('Attivato').'</span>
-                    <span class="text-danger">'.tr('Disattivato').'</span>
-                </label>
-            </div>
+        <input type="hidden" name="|name|" value="|value|" class="openstamanager-input">
+        <input type="checkbox" id="|id|" value="|value|" class="hidden" |attr| onchange="$(this).parent().find(\'[type = hidden]\').val(+this.checked).trigger(\'change\')"/>
+        <div class="btn-group checkbox-buttons">
+            <label for="|id|" class="btn btn-default'.$class.'">
+                <span class="fa fa-check text-success"></span>
+                <span class="fa fa-close text-danger"></span>
+            </label>
+            <label for="|id|" class="btn btn-default active'.$class.'">
+                <span class="text-success">'.tr('Attivato').'</span>
+                <span class="text-danger">'.tr('Disattivato').'</span>
+            </label>
         </div>';
 
         return $result;

@@ -30,6 +30,10 @@ class HTMLWrapper implements WrapperInterface
     {
         $result = '';
 
+        if( $values['type']=='checkbox' ){
+            $values['class'] = 'checkbox-group';
+        }
+
         // Valori particolari
         $values['icon-before'] = isset($values['icon-before']) ? $this->parser($values, $extras, $values['icon-before']) : null;
         $values['icon-after'] = isset($values['icon-after']) ? $this->parser($values, $extras, $values['icon-after']) : null;
@@ -37,7 +41,7 @@ class HTMLWrapper implements WrapperInterface
         // Generazione dell'etichetta
         if (!empty($values['label'])) {
             $result .= '
-<div class="form-group">
+<div class="form-group '.$values['class'].'">
     <label for="'.prepareToField($values['id']).'">'.(empty($values['help']) ? $values['label'] : '<span class="tip" title="'.prepareToField($values['help']).'">'.$values['label'].' <i class="fa fa-question-circle-o"></i></span>').'</label>';
         }
 

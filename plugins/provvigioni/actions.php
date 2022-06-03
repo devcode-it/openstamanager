@@ -46,7 +46,7 @@ switch ($operazione) {
 
         break;
 
-    case 'deletereferente':
+    case 'deleteprovvigione':
         $dbo->query('DELETE FROM `co_provvigioni` WHERE `id`='.prepare($id_record));
 
         flash()->info(tr('Provvigione eliminata!'));

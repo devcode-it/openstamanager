@@ -58,7 +58,7 @@
         "symfony/translation": "^3.3",
         "symfony/var-dumper": "^3.3",
         "thenetworg/oauth2-azure": "^2.0",
-        "willdurand/geocoder": "^3.3",
+        "willdurand/geocoder": "^4.2",
         "digitick/sepa-xml": "^1.6",
         "wdog/sdd_ita": "dev-master"
     },

@@ -23,22 +23,22 @@ exemptProjects: false
 exemptMilestones: false
 
 # Set to true to ignore issues with an assignee (defaults to false)
-exemptAssignees: false
+exemptAssignees: true
 
 # Label to use when marking as stale
 staleLabel: in chiusura
 
 # Comment to post when marking as stale. Set to `false` to disable
 markComment: >
-  Issue chiusa automaticamente in assenza di attività.
+  Issue in chiusura fra 7 giorni per mancanza di attività.
 
 # Comment to post when removing the stale label.
 # unmarkComment: >
 #   Your comment here.
 
 # Comment to post when closing a stale Issue or Pull Request.
-# closeComment: >
-#   Your comment here.
+closeComment: >
+  Issue chiusa per inattività.
 
 # Limit the number of actions per hour, from 1-30. Default is 30
 limitPerRun: 30

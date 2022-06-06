@@ -36,6 +36,16 @@ switch (post('op')) {
         download($file, 'impianti.csv');
 
         break;
+
+    // Rimuovo impianto e scollego tutti i suoi componenti
+    case 'delete-bulk':
+        foreach ($id_records as $id) {
+            $dbo->query('DELETE FROM my_impianti WHERE id='.prepare($id));
+        }
+
+        flash()->info(tr('Impianti e relativi componenti eliminati!'));
+
+        break;
 }
 
 $operations['export-csv'] = [
@@ -45,6 +55,15 @@ $operations['export-csv'] = [
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-success',
         'blank' => true,
+    ],
+];
+
+$operations['delete-bulk'] = [
+    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi davvero eliminare gli impianti selezionati?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-danger',
     ],
 ];
 

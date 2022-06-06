@@ -21,6 +21,8 @@ use Carbon\Carbon;
 
 include_once __DIR__.'/../../../core.php';
 
+$filter_agente = Auth::user()['gruppo'] == 'Agenti';
+
 switch ($resource) {
     case 'clienti':
         $query = "SELECT an_anagrafiche.idanagrafica AS id, is_bloccata, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')')), IF(deleted_at IS NULL, '', ' (".tr('eliminata').")'), IF(is_bloccata = 1, CONCAT(' (', an_relazioni.descrizione, ')'), '') ) AS descrizione, idtipointervento_default AS idtipointervento, in_tipiintervento.descrizione AS idtipointervento_descrizione, an_anagrafiche.idzona, contratto.id AS id_contratto, contratto.descrizione AS descrizione_contratto FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica LEFT JOIN in_tipiintervento ON an_anagrafiche.idtipointervento_default=in_tipiintervento.idtipointervento LEFT JOIN an_relazioni ON an_anagrafiche.idrelazione=an_relazioni.id LEFT JOIN (SELECT co_contratti.id, idanagrafica, CONCAT('Contratto ', numero, ' del ', DATE_FORMAT(data_bozza, '%d/%m/%Y'), ' - ', co_contratti.nome, ' [', `co_staticontratti`.`descrizione` , ']') AS descrizione FROM co_contratti LEFT JOIN co_staticontratti ON co_contratti.idstato=co_staticontratti.id WHERE co_contratti.predefined=1 AND is_pianificabile=1) AS contratto ON an_anagrafiche.idanagrafica=contratto.idanagrafica |where| ORDER BY ragione_sociale";
@@ -32,6 +34,10 @@ switch ($resource) {
         $where[] = "an_tipianagrafiche.descrizione='Cliente'";
         if (empty($filter)) {
             $where[] = 'deleted_at IS NULL';
+        }
+
+		if (empty(!$filter_agente)) {
+            $where[] = 'idagente = '.Auth::user()['idanagrafica'];
         }
 
         if (!empty($search)) {

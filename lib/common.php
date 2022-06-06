@@ -148,6 +148,28 @@ function discountInfo(Accounting $riga, $mostra_maggiorazione = true)
 }
 
 /**
+ * Visualizza le informazioni relative allo provvigione presente su una riga.
+ *
+ * @param bool $mostra_provigione
+ *
+ * @return string|null
+ */
+function provvigioneInfo(Accounting $riga, $mostra_provigione = true)
+{
+    if (empty($riga->provvigione_unitaria) || (!$mostra_provigione && $riga->provvigione_unitaria < 0)) {
+        return null;
+    }
+
+    $text = $riga->provvigione_unitaria > 0 ? tr('provvigione _TOT_ _TYPE_') : tr('provvigione _TOT__TYPE_');
+    $totale = !empty($riga->provvigione_percentuale) ? $riga->provvigione_percentuale : $riga->provvigione_unitaria;
+
+    return replace($text, [
+        '_TOT_' => Translator::numberToLocale(abs($totale)),
+        '_TYPE_' => !empty($riga->provvigione_percentuale) ? '%' : currency(),
+    ]);
+}
+
+/**
  * Genera i riferimenti ai documenti del gestionale, attraverso l'interfaccia Common\ReferenceInterface.
  *
  * @param $document

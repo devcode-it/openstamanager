@@ -167,8 +167,17 @@ foreach ($righe as $riga) {
         // Importo
         echo '
             <td class="text-right">
-                '.moneyFormat($riga->importo).'
-            </td>';
+                '.moneyFormat($riga->importo);
+		
+		//provvigione riga 
+			if (abs($riga->provvigione_unitaria) > 0) {
+				$text = provvigioneInfo($riga);
+
+				echo '
+						<br><small class="label label-warning">'.$text.'</small>';
+			}
+		
+        echo ' </td>';
     }
 
     // Possibilità di rimuovere una riga solo se il ddt non è evaso
@@ -330,6 +339,16 @@ if(!empty($ddt->provvigione)) {
             </td>
             <td></td>
         </tr>';
+    echo '
+            <tr>
+                <td colspan="6" class="text-right">
+                    '.tr('Netto da provvigioni').':
+                </td>
+                <td class="text-right">
+                    '.moneyFormat($ddt->totale_imponibile - $ddt->provvigione).'
+                </td>
+                <td></td>
+            </tr>';
 }
 
 echo '

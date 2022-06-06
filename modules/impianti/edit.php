@@ -133,10 +133,56 @@ if (!empty($record['immagine'])) {
 
 {( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
-<a class="btn btn-danger ask" data-backto="record-list">
-    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
-</a>
+<?php
+$elementi = $dbo->fetchArray('SELECT `in_interventi`.`id`, `codice` AS numero, `data_richiesta` AS data, "Intervento" AS tipo_documento FROM `in_interventi` INNER JOIN `my_impianti_interventi` ON `in_interventi`.`id`=`my_impianti_interventi`.`idintervento` WHERE `my_impianti_interventi`.`idimpianto` = '.prepare($id_record).'
+UNION 
+SELECT `co_contratti`.`id`, `numero` AS numero, `data_bozza` AS data, "Contratto" AS tipo_documento FROM `co_contratti` INNER JOIN `my_impianti_contratti` ON `co_contratti`.`id`=`my_impianti_contratti`.`idcontratto` WHERE `my_impianti_contratti`.`idimpianto` = '.prepare($id_record));
+$class = '';
 
+if (!empty($elementi)) {
+    echo '
+<div class="box box-warning collapsable collapsed-box">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
+            '_NUM_' => count($elementi),
+        ]).'</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+    <div class="box-body">
+        <ul>';
+
+    foreach ($elementi as $elemento) {
+        $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
+            '_DOC_' => $elemento['tipo_documento'],
+            '_NUM_' => $elemento['numero'],
+            '_DATE_' => Translator::dateToLocale($elemento['data']),
+        ]);
+
+		if ($elemento['tipo_documento'] == 'Intervento') {
+			$modulo = 'Interventi';
+		} else {
+			$modulo = 'Contratti';
+		}
+		$id = $elemento['id'];
+
+		echo '
+            <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+    }
+	$class = "disabled";
+
+    echo '
+        </ul>
+    </div>
+</div>';
+}
+
+echo '
+<a class="btn btn-danger ask '.$class.'" data-backto="record-list">
+    <i class="fa fa-trash"></i> '.tr('Elimina').'
+</a>';
+?>
 
 <script type="text/javascript">
 $(document).ready(function() {

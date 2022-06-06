@@ -132,7 +132,12 @@ switch (post('op')) {
 
     case 'stampa-etichette':
         $_SESSION['superselect']['id_articolo_barcode'] = $id_records;
-        $id_print = Prints::getPrints()['Barcode'];
+
+        if (post('tipologia') == 'singola') {
+            $id_print = Prints::getPrints()['Barcode'];
+        } else {
+            $id_print = Prints::getPrints()['Barcode bulk'];
+        }
 
         redirect(base_path().'/pdfgen.php?id_print='.$id_print.'&id_record='.Articolo::where('codice', '!=', '')->first()->id);
         exit();
@@ -444,7 +449,8 @@ $operations['stampa-etichette'] = [
     'text' => '<span><i class="fa fa-barcode"></i> '.tr('Stampa etichette').'</span>',
     'data' => [
         'title' => tr('Stampare le etichette?'),
-        'msg' => tr('Per ciascun articolo selezionato, se presente il barcode, verrà stampata un\'etichetta'),
+        'msg' => tr('Per ciascun articolo selezionato, se presente il barcode, verrà stampata un\'etichetta').'<br><br>
+        {[ "type": "select", "label": "'.tr('Tipologia stampa').'", "name": "tipologia", "required": 1, "values": "list=\"singola\":\"Singola\",\"a4\":\"Formato A4\"", "value": "singola" ]}<br>',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => true,

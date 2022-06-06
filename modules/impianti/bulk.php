@@ -39,11 +39,26 @@ switch (post('op')) {
 
     // Rimuovo impianto e scollego tutti i suoi componenti
     case 'delete-bulk':
+        $n_impianti = 0;
+
         foreach ($id_records as $id) {
-            $dbo->query('DELETE FROM my_impianti WHERE id='.prepare($id));
+            $elementi = $dbo->fetchArray('SELECT `idimpianto` FROM `my_impianti_interventi` WHERE `my_impianti_interventi`.`idimpianto` = '.prepare($id).'
+            UNION 
+            SELECT `idimpianto` FROM `my_impianti_contratti` WHERE `my_impianti_contratti`.`idimpianto` = '.prepare($id));
+
+            if (empty($elementi)) {
+                $dbo->query('DELETE FROM my_impianti WHERE id='.prepare($id));
+                $n_impianti++;
+            }
         }
 
-        flash()->info(tr('Impianti e relativi componenti eliminati!'));
+        if ($n_impianti == sizeof($id_records)) {
+            flash()->info(tr('Impianti e relativi componenti eliminati!'));
+        } else {
+            flash()->warning(tr('_NUM_ impianti non eliminati perchè collegati ad interventi o a contratti!', [
+                '_NUM_' => sizeof($id_records) - $n_impianti,
+            ]));
+        }
 
         break;
 }

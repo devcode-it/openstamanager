@@ -147,8 +147,18 @@ echo '
             // Prezzo di vendita
             echo '
                 <td class="text-right">
-                    '.moneyFormat($riga->importo).'
-                </td>';
+                    '.moneyFormat($riga->importo);
+			
+			
+			//provvigione riga 
+			if (abs($riga->provvigione_unitaria) > 0) {
+				$text = provvigioneInfo($riga);
+
+				echo '
+						<br><small class="label label-warning">'.$text.'</small>';
+			}
+			
+            echo '</td>';
         }
 
         // Pulsante per riportare nel magazzino centrale.

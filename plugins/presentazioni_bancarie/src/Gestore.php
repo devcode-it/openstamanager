@@ -321,7 +321,13 @@ class Gestore
     {
         $documento = $scadenza->documento;
 
-        return $documento->id_banca_azienda ? Banca::find($documento->id_banca_azienda) : self::getBancaPredefinitaAzienda();
+        $banca = $documento->id_banca_azienda ? Banca::find($documento->id_banca_azienda) : '';
+
+        if (empty($banca)) {
+            $banca = self::getBancaPredefinitaAzienda();
+        }
+
+        return $banca;
     }
 
     public static function getBancaPredefinitaAzienda(): Banca

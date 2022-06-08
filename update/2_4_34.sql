@@ -46,4 +46,4 @@ ALTER TABLE `in_fasceorarie` ADD `deleted_at` TIMESTAMP NULL AFTER `include_bank
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `in_fasceorarie` WHERE 1=1 AND deleted_at IS NULL HAVING 2=2' WHERE `zz_modules`.`name` = 'Fasce orarie'; 
 
 -- Stampa Barcode bulk
-INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`, `created_at`, `updated_at`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), '0', 'Barcode bulk', 'Barcode', 'Barcode', 'barcode_bulk', '', '', 'fa fa-print', '', '', '0', '1', '1', '1');
+INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), '0', 'Barcode bulk', 'Barcode', 'Barcode', 'barcode_bulk', '', '', 'fa fa-print', '', '', '0', '1', '1', '1');

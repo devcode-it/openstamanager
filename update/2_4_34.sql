@@ -49,3 +49,6 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `in_fasceorarie` WHERE
 
 -- Stampa Barcode bulk
 INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), '0', 'Barcode bulk', 'Barcode', 'Barcode', 'barcode_bulk', '', '', 'fa fa-print', '', '', '0', '1', '1', '1');
+
+-- Aggiunta scelta minuti di snap in dashboard
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Tempo predefinito di snap attività sul calendario', '00:15:00', 'string', '1', 'Dashboard', '5', 'Va utilizzato il formato di Fullcalendar: hh:mm:ss');

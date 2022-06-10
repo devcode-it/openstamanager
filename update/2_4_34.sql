@@ -56,3 +56,7 @@ INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filen
 
 -- Aggiunta scelta minuti di snap in dashboard
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Tempo predefinito di snap attività sul calendario', '00:15:00', 'string', '1', 'Dashboard', '5', 'Va utilizzato il formato di Fullcalendar: hh:mm:ss');
+
+-- Filtro per mostrare preventivi ai clienti
+INSERT INTO `zz_group_module` (`idgruppo`, `idmodule`, `name`, `clause`, `position`, `enabled`, `default`) VALUES
+((SELECT `id` FROM `zz_groups` WHERE `nome`='Clienti'), (SELECT `id` FROM `zz_modules` WHERE `name`='Preventivi'), 'Mostra preventivi ai clienti coinvolti', 'co_preventivi.idanagrafica=|id_anagrafica|', 'WHR', 1, 0);

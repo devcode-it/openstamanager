@@ -158,14 +158,7 @@ In questo modo è possibile ottenere un'ulteriore garanzia sul funzionamento del
 
 La community è una componente importante in un progetto open-source, perché mette in contatto utenti e programmatori tra di loro e permette pertanto l'individuazione di soluzioni innovative e migliori.
 
-Siamo presenti su [Facebook](https://www.facebook.com/openstamanager), e il nostro forum ufficiale è disponibile all'indirizzo <https://forum.openstamanager.com>, dove potete segnalare i vostri problemi e soddisfare le vostre curiosità nelle sezioni più adeguate:
-
-- [Idee, suggerimenti e consigli](https://forum.openstamanager.com/viewforum.php?f=1)
-- [Problemi con la prima installazione](https://forum.openstamanager.com/viewforum.php?f=2)
-- [Sicurezza](https://forum.openstamanager.com/viewforum.php?f=3)
-- [Altro tipo di assistenza](https://forum.openstamanager.com/viewforum.php?f=4)
-- [Tutorial](https://forum.openstamanager.com/viewforum.php?f=5)
-
+Siamo presenti su [Facebook](https://www.facebook.com/openstamanager), e il nostro forum ufficiale è disponibile all'indirizzo <https://forum.openstamanager.com>, dove potete segnalare i vostri problemi e soddisfare le vostre curiosità nelle sezioni più adeguate.
 **Attenzione**: vi ricordiamo che non vi è nessuna garanzia che qualcuno risponda in tempo alle vostre richieste o problemi.
 
 ## Contribuire

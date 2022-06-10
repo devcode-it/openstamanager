@@ -214,16 +214,7 @@ if ($totale_da_pagare != 0) {
 	</div>
 </form>
 
-<?php
-$id_scadenza = $id_record;
-
-// Forzatura per allegare file sempre al primo record
-if (!empty($documento)) {
-    $id_scadenza = $dbo->fetchOne('SELECT id FROM co_scadenziario WHERE iddocumento='.prepare($documento->id).' ORDER BY id')['id'];
-}
-?>
-
-{( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "<?php echo $id_scadenza; ?>" )}
+{( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "<?php echo $id_record; ?>" )}
 
 {( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
@@ -284,7 +275,8 @@ if (!empty($documento)) {
 
     if ($dir == 'uscita') {
         echo '
-        $("#email-button").remove();';
+        $("#email-button").remove();
+        $("#allega-fattura").remove();';
     }
     echo '
 	});

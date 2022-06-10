@@ -17,21 +17,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Modules\Fatture\Fattura;
-
 include_once __DIR__.'/../../core.php';
 
-if (isset($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM co_scadenziario WHERE id = '.prepare($id_record));
-    $documento = Fattura::find($record['iddocumento']);
-
-    // Scelgo la query in base alla scadenza
-    if (!empty($documento)) {
-        $id_record = $dbo->fetchOne('SELECT id FROM co_scadenziario WHERE iddocumento='.prepare($documento->id).' ORDER BY id')['id'];
-        $scadenze = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE iddocumento = '.prepare($documento->id).' ORDER BY scadenza ASC');
-        $totale_da_pagare = $documento->netto;
-    } else {
-        $scadenze = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE id = '.prepare($id_record).' ORDER BY scadenza ASC');
-        $totale_da_pagare = sum(array_column($scadenze, 'da_pagare'));
-    }
+if (!empty($record['iddocumento'])) {
+    $fattura_allegata = $dbo->selectOne('zz_files', 'id', ['id_module' => $id_module, 'id_record' => $id_record, 'original' => 'Fattura di vendita.pdf'])['id'];
+    echo '
+    <button type="button" class="btn btn-warning ask btn-warning '.(empty($fattura_allegata
+    ) ? '' : 'disabled').'" id="allega-fattura" data-msg="'.tr('Allegare la stampa della fattura?').'"  data-op="allega_fattura" data-iddocumento="'.$record['iddocumento'].'" data-button="'.tr('Allega').'" data-class="btn btn-lg btn-warning" data-backto="record-edit" >
+        <i class="fa fa-paperclip"></i> '.tr('Allega fattura').'
+    </button>';
 }

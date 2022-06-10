@@ -386,6 +386,20 @@ switch ($resource) {
 
         break;
 
+
+    case 'settori':
+        $query = 'SELECT id, descrizione FROM an_settori |where| ORDER BY descrizione';
+
+        foreach ($elements as $element) {
+            $filter[] = 'id='.prepare($element);
+        }
+
+        if (!empty($search)) {
+            $search_fields[] = 'descrizione LIKE '.prepare('%'.$search.'%');
+        }
+
+        break;
+
     /*
      * Opzioni utilizzate:
      * - idanagrafica

@@ -675,9 +675,9 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 				</div>
 
 				<div class="row">
-					<div class="col-md-3">
-						{[ "type": "text", "label": "<?php echo tr('Settore merceologico'); ?>", "name": "settore", "value": "$settore$" ]}
-					</div>
+                    <div class="col-md-3">
+                            {[ "type": "select", "label": "<?php echo tr('Settore merceologico'); ?>", "name": "id_settore", "ajax-source": "settori", "value": "$id_settore$", "icon-after": "add|<?php echo Modules::get('Settori')['id']; ?>" ]}
+                    </div>
 
 					<div class="col-md-3">
 						{[ "type": "text", "label": "<?php echo tr('Marche trattate'); ?>", "name": "marche", "value": "$marche$" ]}

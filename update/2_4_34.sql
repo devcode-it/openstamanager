@@ -77,10 +77,34 @@ INSERT INTO `an_provenienze` (`id`, `descrizione`, `colore`) VALUES
 -- Aggiunto id_provenienza per scheda anagrafica Cliente
 ALTER TABLE `an_anagrafiche` ADD `id_provenienza` AFTER `idrelazione`, INT DEFAULT NULL;
 
--- Nuovo modulo "Provenienze" 
-INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES (NULL, 'Provenienze', 'Provenienze', 'provenienze', 'SELECT |select| FROM `an_provenienze` WHERE 1=1 HAVING 2=2', '', 'fa fa-angle-right', '2.4.34', '2.4.34', '1', (SELECT id FROM zz_modules t WHERE t.name = 'Anagrafiche'), '1', '1', '0', '0'); 
+-- Nuovo modulo per gestire le "Provenienze" 
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES (NULL, 'Provenienze', 'Provenienze clienti', 'provenienze', 'SELECT |select| FROM `an_provenienze` WHERE 1=1 HAVING 2=2', '', 'fa fa-angle-right', '2.4.34', '2.4.34', '3', (SELECT id FROM zz_modules t WHERE t.name = 'Anagrafiche'), '1', '1', '0', '0'); 
 
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `visible`, `format`, `default`) VALUES
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Provenienze'), 'id', 'an_provenienze.id', 1, 1, 0, 1),
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Provenienze'), 'descrizione', 'an_provenienze.descrizione', 2, 1, 0, 1),
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Provenienze'), 'colore', 'an_provenienze.colore', 3, 1, 0, 1);
+
+
+-- Aggiunta tabella settore merceologico
+CREATE TABLE IF NOT EXISTS `an_settori` ( `id` INT NOT NULL AUTO_INCREMENT , `descrizione` VARCHAR(100) NOT NULL , PRIMARY KEY (`id`));
+
+INSERT INTO `an_settori`(
+    `descrizione`
+)(
+    SELECT DISTINCT `settore` FROM `an_anagrafiche`
+);
+
+ALTER TABLE `an_anagrafiche` ADD `id_settore` INT NOT NULL AFTER `settore`;
+
+UPDATE `an_anagrafiche`, `an_settori` SET `id_settore`=`an_settori`.`id` WHERE `an_settori`.`descrizione`=`an_anagrafiche`.`settore`;
+
+ALTER TABLE `an_anagrafiche` DROP `settore`;
+
+
+-- Nuovo modulo per gestire i "Settori merceologici" 
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES (NULL, 'Settori', 'Settori merceologici', 'settori_merceologici', 'SELECT |select| FROM `an_settori` WHERE 1=1 HAVING 2=2', '', 'fa fa-angle-right', '2.4.34', '2.4.34', '4', (SELECT id FROM zz_modules t WHERE t.name = 'Anagrafiche'), '1', '1', '0', '0'); 
+
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `visible`, `format`, `default`) VALUES
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Settori'), 'id', 'an_settori.id', 1, 1, 0, 1),
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Settori'), 'descrizione', 'an_settori.descrizione', 2, 1, 0, 1);

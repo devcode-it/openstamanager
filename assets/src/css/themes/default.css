@@ -24,6 +24,7 @@
 
 .skin-default.login-page .wrapper {
     background: #d2d6de;
+    display: block;
 }
 
 .skin-default .content-wrapper,

@@ -60,3 +60,27 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 -- Filtro per mostrare preventivi ai clienti
 INSERT INTO `zz_group_module` (`idgruppo`, `idmodule`, `name`, `clause`, `position`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_groups` WHERE `nome`='Clienti'), (SELECT `id` FROM `zz_modules` WHERE `name`='Preventivi'), 'Mostra preventivi ai clienti coinvolti', 'co_preventivi.idanagrafica=|id_anagrafica|', 'WHR', 1, 0);
+
+-- Nuova tabella per gestire le provenienze
+CREATE TABLE IF NOT EXISTS `an_provenienze` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `descrizione` varchar(100) NOT NULL,
+  `colore` varchar(7) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+
+INSERT INTO `an_provenienze` (`id`, `descrizione`, `colore`) VALUES
+(NULL, 'Sito web', '#caffb7'),
+(NULL, 'Passaparola', '#8fbafd');
+
+-- Aggiunto id_provenienza per scheda anagrafica Cliente
+ALTER TABLE `an_anagrafiche` ADD `id_provenienza` AFTER `idrelazione`, INT DEFAULT NULL;
+
+-- Nuovo modulo "Provenienze" 
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES (NULL, 'Provenienze', 'Provenienze', 'provenienze', 'SELECT |select| FROM `an_provenienze` WHERE 1=1 HAVING 2=2', '', 'fa fa-angle-right', '2.4.34', '2.4.34', '1', (SELECT id FROM zz_modules t WHERE t.name = 'Anagrafiche'), '1', '1', '0', '0'); 
+
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `visible`, `format`, `default`) VALUES
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Provenienze'), 'id', 'an_provenienze.id', 1, 1, 0, 1),
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Provenienze'), 'descrizione', 'an_provenienze.descrizione', 2, 1, 0, 1),
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Provenienze'), 'colore', 'an_provenienze.colore', 3, 1, 0, 1);

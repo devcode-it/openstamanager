@@ -85,6 +85,7 @@ switch (post('op')) {
         $anagrafica->dipendenti = post('dipendenti');
         $anagrafica->macchine = post('macchine');
         $anagrafica->idagente = post('idagente');
+        $anagrafica->id_provenienza = post('id_provenienza');
         $anagrafica->idrelazione = post('idrelazione');
         $anagrafica->sitoweb = post('sitoweb');
         $anagrafica->iscrizione_tribunale = post('iscrizione_tribunale');

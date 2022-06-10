@@ -20,6 +20,16 @@
     outline: none;
 }
 
+@font-face {
+    font-family: 'Source Sans Pro';
+    src: local('Source Sans Pro'), 
+    url('../fonts/sourcesanspro-regular-webfont.eot') format('embedded-opentype'),
+    url('../fonts/sourcesanspro-regular-webfont.woff') format('woff'),
+    url('../fonts/sourcesanspro-regular-webfont.woff2') format('woff2'),
+    url('../fonts/sourcesanspro-regular-webfont.ttf') format('truetype'),
+    url('../fonts/sourcesanspro-regular-webfont.svg') format('svg');
+}
+
 html,
 body {
     font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";

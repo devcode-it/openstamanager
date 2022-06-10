@@ -372,6 +372,19 @@ switch ($resource) {
         }
 
         break;
+    
+    case 'provenienze':
+        $query = 'SELECT id, descrizione, colore AS bgcolor FROM an_provenienze |where| ORDER BY descrizione';
+
+        foreach ($elements as $element) {
+            $filter[] = 'id='.prepare($element);
+        }
+
+        if (!empty($search)) {
+            $search_fields[] = 'descrizione LIKE '.prepare('%'.$search.'%');
+        }
+
+        break;
 
     /*
      * Opzioni utilizzate:

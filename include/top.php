@@ -400,8 +400,10 @@ if (Auth::check()) {
 
                             <li class="nav-button" >
                                 <p style="padding:10px 15px;">&nbsp;</p>
-                            </li>
+                            </li>';
 
+                        if ($user->gruppo == 'Amministratori') {
+                        echo '
                             <li class="dropdown notifications-menu nav-button">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                     <i class="fa fa-bell-o"></i>
@@ -426,8 +428,10 @@ if (Auth::check()) {
 
                             <li class="nav-button"><a href="'.base_path().'/log.php" class="tip nav-button" title="'.tr('Log accessi').'">
                                 <i class="fa fa-book"></i>
-                            </a></li>
+                            </a></li>';
+                        }
 
+                        echo '
                             <li class="nav-button"><a href="'.base_path().'/info.php" class="tip nav-button" title="'.tr('Informazioni').'">
                                 <i class="fa fa-info"></i>
                             </a></li>

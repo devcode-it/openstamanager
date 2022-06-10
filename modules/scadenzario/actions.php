@@ -119,4 +119,22 @@ switch (post('op')) {
         $dbo->query("DELETE FROM co_scadenziario WHERE id='".$id_record."'");
         flash()->info(tr('Scadenza eliminata!'));
         break;
+
+    case 'allega_fattura':
+        $id_documento = post('iddocumento');
+        $print_predefined = $dbo->selectOne('zz_prints', '*', ['predefined' => 1, 'id_module' => Modules::get('Fatture di vendita')['id']]);
+
+        $print = Prints::render($print_predefined['id'], $id_documento, null, true);
+        $name = 'Fattura di vendita';
+        $upload = Uploads::upload($print['pdf'], [
+            'name' => $name,
+            'original_name' => $name.'.pdf',
+            'category' => 'Generale',
+            'id_module' => $id_module,
+            'id_record' => $id_record,
+        ]);
+
+        flash()->info(tr('Stampa allegata correttamente!'));
+
+        break;
 }

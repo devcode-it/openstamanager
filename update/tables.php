@@ -8,6 +8,7 @@ return [
     'an_referenti',
     'an_regioni',
     'an_relazioni',
+    'an_provenienze',
     'an_sedi',
     'an_tipianagrafiche',
     'an_tipianagrafiche_anagrafiche',

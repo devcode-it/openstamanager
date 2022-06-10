@@ -554,12 +554,12 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 
     echo '
                             </div>
-                        </div>
+              
 
-                        <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Tipo attività predefinita').'", "name": "idtipointervento_default", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "$idtipointervento_default$" ]}
+                            <div class="col-md-6">
+                                    {[ "type": "select", "label": "'.tr('Tipo attività predefinita').'", "name": "idtipointervento_default", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "$idtipointervento_default$" ]}
+                            </div>
                         </div>
-
                     </div>';
 
     echo '

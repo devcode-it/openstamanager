@@ -19,12 +19,21 @@
 
 include_once __DIR__.'/../../core.php';
 
-echo '
-<h4><b>'.tr('Scadenze dal _START_ al _END_', [
-    '_START_' => Translator::dateToLocale($date_start),
-    '_END_' => Translator::dateToLocale($date_end),
-    ], ['upper' => true]).'</b></h4>
+if (isset($id_record)) {
+    echo '
+    <h4><b>'.tr('Scadenza _ANAG_', [
+        '_ANAG_' => $records[0]['Anagrafica'],
+    ], ['upper' => true]).'</b></h4>';
+} else {
+    echo '
+    <h4><b>'.tr('Scadenze dal _START_ al _END_', [
+        '_START_' => Translator::dateToLocale($date_start),
+        '_END_' => Translator::dateToLocale($date_end),
+        ], ['upper' => true]).'</b>
+    </h4>';
+}
 
+echo '
 <table class="table table-striped table-bordered" id="contents">
     <thead>
         <tr>

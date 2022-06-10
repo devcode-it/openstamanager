@@ -19,6 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Fatture\Fattura;
+
 $date_start = $_SESSION['period_start'];
 $date_end = $_SESSION['period_end'];
 
@@ -48,6 +50,17 @@ if (!empty($search_filters)) {
 }
 
 $module_query = str_replace('1=1', '1=1 AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`) ', $module_query);
+
+// Scelgo la query in base alla scadenza
+if (isset($id_record)) {
+    $record = $dbo->fetchOne('SELECT * FROM co_scadenziario WHERE id = '.prepare($id_record));
+    $documento = Fattura::find($record['iddocumento']);
+    if (!empty($documento)) {
+        $module_query = str_replace('1=1', '1=1 AND co_scadenziario.iddocumento='.prepare($documento->id), $module_query);
+    } else {
+        $module_query = str_replace('1=1', '1=1 AND co_scadenziario.id='.prepare($id_record), $module_query);
+    }
+}
 
 // Filtri derivanti dai permessi (eventuali)
 $module_query = Modules::replaceAdditionals($id_module, $module_query);

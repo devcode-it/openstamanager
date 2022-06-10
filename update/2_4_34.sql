@@ -47,3 +47,7 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `in_fasceorarie` WHERE
 
 -- Stampa Barcode bulk
 INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`, `created_at`, `updated_at`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), '0', 'Barcode bulk', 'Barcode', 'Barcode', 'barcode_bulk', '', '', 'fa fa-print', '', '', '0', '1', '1', '1');
+
+-- Stampa scadenza
+INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'), 1, 'Scadenza', 'Scadenza', 'Scadenza', 'scadenzario', '', '', 'fa fa-print', '', '', 0, 0, 1, 1);

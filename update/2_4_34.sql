@@ -101,10 +101,13 @@ UPDATE `an_anagrafiche`, `an_settori` SET `id_settore`=`an_settori`.`id` WHERE `
 
 ALTER TABLE `an_anagrafiche` DROP `settore`;
 
-
 -- Nuovo modulo per gestire i "Settori merceologici" 
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES (NULL, 'Settori', 'Settori merceologici', 'settori_merceologici', 'SELECT |select| FROM `an_settori` WHERE 1=1 HAVING 2=2', '', 'fa fa-angle-right', '2.4.34', '2.4.34', '4', (SELECT id FROM zz_modules t WHERE t.name = 'Anagrafiche'), '1', '1', '0', '0'); 
 
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `visible`, `format`, `default`) VALUES
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Settori'), 'id', 'an_settori.id', 1, 1, 0, 1),
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Settori'), 'descrizione', 'an_settori.descrizione', 2, 1, 0, 1);
+
+-- Fix eliminazione fattura collegata a Nota di credito
+ALTER TABLE `co_documenti` DROP FOREIGN KEY `co_documenti_ibfk_1`;
+ALTER TABLE `co_righe_documenti` DROP FOREIGN KEY `co_righe_documenti_ibfk_1`;

@@ -835,6 +835,10 @@ switch (post('op')) {
             }
         }
 
+        $stato = Stato::find(post('id_stato'));
+        $nota->stato()->associate($stato);
+        $nota->save();
+
         $id_record = $nota->id;
         aggiorna_sedi_movimenti('documenti', $id_record);
 

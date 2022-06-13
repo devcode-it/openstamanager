@@ -490,9 +490,8 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                     <div class="tab-pane '.(!$is_cliente ? 'hide' : 'active').'" id="cliente">
                         <div class="row">
                             <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Tipo attività predefinita').'", "name": "idtipointervento_default", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "$idtipointervento_default$" ]}
+                                    {[ "type": "select", "label": "'.tr('Provenienza cliente').'", "name": "id_provenienza", "ajax-source": "provenienze", "value": "$id_provenienza$", "icon-after": "add|'.Modules::get('Provenienze')['id'].'" ]}
                             </div>
-
                             <div class="col-md-6">
                                     {[ "type": "select", "label": "'.tr('Relazione con il cliente').'", "name": "idrelazione", "ajax-source": "relazioni", "value": "$idrelazione$", "icon-after": "add|'.Modules::get('Relazioni')['id'].'" ]}
                             </div>
@@ -554,6 +553,11 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
     }
 
     echo '
+                            </div>
+              
+
+                            <div class="col-md-6">
+                                    {[ "type": "select", "label": "'.tr('Tipo attività predefinita').'", "name": "idtipointervento_default", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "$idtipointervento_default$" ]}
                             </div>
                         </div>
                     </div>';
@@ -671,9 +675,9 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 				</div>
 
 				<div class="row">
-					<div class="col-md-3">
-						{[ "type": "text", "label": "<?php echo tr('Settore merceologico'); ?>", "name": "settore", "value": "$settore$" ]}
-					</div>
+                    <div class="col-md-3">
+                            {[ "type": "select", "label": "<?php echo tr('Settore merceologico'); ?>", "name": "id_settore", "ajax-source": "settori", "value": "$id_settore$", "icon-after": "add|<?php echo Modules::get('Settori')['id']; ?>" ]}
+                    </div>
 
 					<div class="col-md-3">
 						{[ "type": "text", "label": "<?php echo tr('Marche trattate'); ?>", "name": "marche", "value": "$marche$" ]}

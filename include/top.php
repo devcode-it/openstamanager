@@ -333,7 +333,6 @@ if (Auth::check()) {
 $settings_collapse = session_get('settings.sidebar-collapse') ? 1 : 0;
 $hide_sidebar = Auth::check() && (setting('Nascondere la barra sinistra di default') || $settings_collapse);
 echo '
-
     </head>
 
 	<body class="skin-'.$theme.(!empty($hide_sidebar) ? ' sidebar-collapse' : '').(!Auth::check() ? ' hold-transition login-page' : '').'">

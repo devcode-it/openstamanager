@@ -255,6 +255,11 @@ const fonts = gulp.parallel(() => {
         'bootstrap/dist/fonts/glyphicons-halflings-regular.ttf',
         'bootstrap/dist/fonts/glyphicons-halflings-regular.woff',
         'bootstrap/dist/fonts/glyphicons-halflings-regular.woff2',
+        '../assets/src/css/fonts/sourcesanspro-regular-webfont.eot',
+        '../assets/src/css/fonts/sourcesanspro-regular-webfont.svg',
+        '../assets/src/css/fonts/sourcesanspro-regular-webfont.ttf',
+        '../assets/src/css/fonts/sourcesanspro-regular-webfont.woff',
+        '../assets/src/css/fonts/sourcesanspro-regular-webfont.woff2',
     ];
 
     for (const i in vendor) {

@@ -42,7 +42,6 @@ $fields = [
     'Sito web' => 'sitoweb',
     'Note' => 'note',
     'Codice REA' => 'codicerea',
-    'Settore' => 'settore',
     'Marche' => 'marche',
     'CCIAA' => 'cciaa',
     'Numero di iscrizione albo artigiani' => 'n_alboartigiani',

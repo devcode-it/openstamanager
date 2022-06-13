@@ -80,11 +80,12 @@ switch (post('op')) {
         $anagrafica->idiva_vendite = post('idiva_vendite');
         $anagrafica->idbanca_acquisti = post('idbanca_acquisti');
         $anagrafica->idbanca_vendite = post('idbanca_vendite');
-        $anagrafica->settore = post('settore');
+        $anagrafica->id_settore = post('id_settore');
         $anagrafica->marche = post('marche');
         $anagrafica->dipendenti = post('dipendenti');
         $anagrafica->macchine = post('macchine');
         $anagrafica->idagente = post('idagente');
+        $anagrafica->id_provenienza = post('id_provenienza');
         $anagrafica->idrelazione = post('idrelazione');
         $anagrafica->sitoweb = post('sitoweb');
         $anagrafica->iscrizione_tribunale = post('iscrizione_tribunale');

@@ -171,9 +171,6 @@ ORDER BY `co_documenti`.`data` DESC, CAST(IF(`co_documenti`.`numero` = '''', `co
 
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Fatture di acquisto'), '_bg_', 'IF(`d`.`conteggio`>1, ''red'', '''')', '1', '0', '0', '0', '', '', '0', '0', '1');
 
-INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) (SELECT `zz_groups`.`id`, `zz_views`.`id` FROM `zz_groups`, `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = '_bg_');
-
-
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES (NULL, 'Descrizione fattura pianificata', 'Canone {rata} del contratto numero {numero}', 'text', '1', 'Fatturazione');
 
 ALTER TABLE `co_righe_contratti` ADD `idpianificazione` INT NULL DEFAULT NULL AFTER `idarticolo`;

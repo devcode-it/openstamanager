@@ -84,9 +84,7 @@ UPDATE `dt_statiddt` SET `is_fatturabile` = '1' WHERE `dt_statiddt`.`descrizione
 UPDATE `zz_views` SET `query` = 'mg_movimenti.qta' WHERE `zz_views`.`name` = 'Quantità';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE name='Movimenti'), 'Um', 'mg_articoli.um', 5, 1, 0, 0, '', '', 0, 0, 0);
-INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) (
-SELECT `zz_groups`.`id`, `zz_views`.`id` FROM `zz_groups`, `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` WHERE `zz_modules`.`name` = 'Movimenti' AND `zz_views`.`name` = 'Um'
-);
+
 -- Fix campo iva per Sconti di versioni precedenti
 UPDATE `co_righe_documenti` SET `iva` = ABS(`iva`) * IF(`sconto` > 0, -1, 1) WHERE `is_sconto` = 1;
 UPDATE `co_righe_preventivi` SET `iva` = ABS(`iva`) * IF(`sconto` > 0, -1, 1) WHERE `is_sconto` = 1;
@@ -138,14 +136,6 @@ INSERT INTO `zz_views` ( `id_module`, `name`, `query`, `order`, `search`, `slow`
 UPDATE `zz_modules` SET `options` = 'SELECT |select|\nFROM `or_ordini`\n     LEFT JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`\n     LEFT JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`\n     LEFT JOIN (\n         SELECT `idordine`,\n                SUM(`qta` - `qta_evasa`) AS `qta_da_evadere`,\n                SUM(`subtotale` - `sconto`) AS `totale_imponibile`,\n                SUM(`subtotale` - `sconto` + `iva`) AS `totale`\n         FROM `or_righe_ordini`\n         GROUP BY `idordine`\n     ) AS righe ON `or_ordini`.`id` = `righe`.`idordine`\n	LEFT JOIN (\n		SELECT `idordine`,\n        MIN(`data_evasione`) AS `data_evasione`\n        FROM `or_righe_ordini`\n        WHERE (`qta` - `qta_evasa`)>0\n        GROUP BY `idordine`\n    ) AS `righe_da_evadere` ON `righe`.`idordine`=`righe_da_evadere`.`idordine`\nWHERE 1=1 AND `dir` = \'entrata\' |date_period(`data`)|\nHAVING 2=2\nORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC' WHERE `zz_modules`.`name` = 'Ordini cliente';
 
 UPDATE `zz_modules` SET `options` = 'SELECT |select|\nFROM `or_ordini`\n     LEFT JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`\n     LEFT JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`\n     LEFT JOIN (\n         SELECT `idordine`,\n                SUM(`qta` - `qta_evasa`) AS `qta_da_evadere`,\n                SUM(`subtotale` - `sconto`) AS `totale_imponibile`,\n                SUM(`subtotale` - `sconto` + `iva`) AS `totale`\n         FROM `or_righe_ordini`\n         GROUP BY `idordine`\n     ) AS righe ON `or_ordini`.`id` = `righe`.`idordine`\n	LEFT JOIN (\n		SELECT `idordine`,\n        MIN(`data_evasione`) AS `data_evasione`\n        FROM `or_righe_ordini`\n        WHERE (`qta` - `qta_evasa`)>0\n        GROUP BY `idordine`\n    ) AS `righe_da_evadere` ON `righe`.`idordine`=`righe_da_evadere`.`idordine`\nWHERE 1=1 AND `dir` = \'uscita\' |date_period(`data`)|\nHAVING 2=2\nORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC' WHERE `zz_modules`.`name` = 'Ordini fornitore';
-
-INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) (
-SELECT `zz_groups`.`id`, `zz_views`.`id` FROM `zz_groups`, `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` WHERE `zz_modules`.`name`='Ordini fornitore' AND (`zz_views`.`name` = 'icon_title_Prev. evasione' OR `zz_views`.`name` = 'icon_Prev. evasione')
-);
-
-INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) (
-SELECT `zz_groups`.`id`, `zz_views`.`id` FROM `zz_groups`, `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` WHERE `zz_modules`.`name`='Ordini cliente' AND (`zz_views`.`name` = 'icon_title_Prev. evasione' OR `zz_views`.`name` = 'icon_Prev. evasione')
-);
 
 -- Aggiunto campo ora evasione in ordini
 ALTER TABLE `or_righe_ordini` ADD `ora_evasione` TIME NULL AFTER `data_evasione`;

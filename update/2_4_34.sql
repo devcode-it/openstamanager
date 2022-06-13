@@ -8,9 +8,6 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'Costi', 'IFNULL( SUM(prezzo_ore_consuntivo_tecnico+prezzo_km_consuntivo_tecnico+prezzo_dirittochiamata_tecnico), 0 ) + IFNULL( costo_righe, 0 )', 20, 1, 0, 1, 0, '', '', 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'Ore', 'SUM(in_interventi_tecnici.ore)', 28, 1, 0, 1, 0, '', '', 0, 1, 1);
 
--- Aggiunta permessi viste ai gruppi
-INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) ( SELECT `zz_groups`.`id`, `zz_views`.`id` FROM `zz_groups`, `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` WHERE `zz_modules`.`name` = 'Interventi' AND `zz_views`.`name` IN('Ore', 'Costi', 'Ricavi') );
-
 -- Nuovo plugin "Provvigioni"
 CREATE TABLE IF NOT EXISTS `co_provvigioni` (
   `id` int NOT NULL AUTO_INCREMENT,

@@ -156,13 +156,6 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Listini'), 'Sottocategoria', 'sottocategoria.nome', 5, 1, 0, 0, '', '', 1, 0, 0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Listini'), 'Categoria', 'categoria.nome', 4, 1, 0, 0, '', '', 1, 0, 0);
 
-INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) (
-SELECT `zz_groups`.`id`, `zz_views`.`id` FROM `zz_groups`, `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` WHERE `zz_modules`.`name` = 'Listini' AND `zz_views`.`name` = 'Categoria'
-);
-INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) (
-SELECT `zz_groups`.`id`, `zz_views`.`id` FROM `zz_groups`, `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` WHERE `zz_modules`.`name` = 'Listini' AND `zz_views`.`name` = 'Sottocategoria'
-);
-
 -- Aggiornamento natura iva per aliquote eliminate
 UPDATE `co_iva` SET `codice_natura_fe` = 'N2.2' WHERE `codice_natura_fe` = 'N2';
 UPDATE `co_iva` SET `codice_natura_fe` = 'N3.6' WHERE `codice_natura_fe` = 'N3';

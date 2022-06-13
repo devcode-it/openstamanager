@@ -108,10 +108,6 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `visible`, 
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Settori'), 'id', 'an_settori.id', 1, 1, 0, 1),
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Settori'), 'descrizione', 'an_settori.descrizione', 2, 1, 0, 1);
 
-INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) (
-SELECT `zz_groups`.`id`, `zz_views`.`id` FROM `zz_groups`, `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` WHERE `zz_modules`.`name` = 'Settori'
-);
-
 -- Fix eliminazione fattura collegata a Nota di credito
 ALTER TABLE `co_documenti` DROP FOREIGN KEY `co_documenti_ibfk_1`;
 ALTER TABLE `co_righe_documenti` DROP FOREIGN KEY `co_righe_documenti_ibfk_1`;

@@ -131,7 +131,9 @@ class Mastrino extends Model
                 $id_documento = $scadenza->documento->id;
 
                 if (!in_array($id_documento, $documenti) && !in_array($scadenza->id, $scadenze)) {
-                    $documenti[] = $id_documento;
+                    if (!empty($id_documento)) {
+                        $documenti[] = $id_documento;
+                    }
                     $scadenze[] = $scadenza->id;
 
                     $this->correggiScadenza($movimento, $scadenza);
@@ -214,7 +216,7 @@ class Mastrino extends Model
         // Gestione di una singola scadenza
         else {
             $scadenze = [$scadenza];
-            $dir = $movimento->totale < 0 ? 'entrata' : 'uscita';
+            $dir = $movimento->totale < 0 ? 'uscita' : 'entrata';
 
             $totale_da_distribuire = Movimento::where('id_scadenza', '=', $scadenza->id)
                 ->where('totale', '>', 0)

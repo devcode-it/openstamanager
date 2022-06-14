@@ -118,7 +118,7 @@ $movimenti = collect($movimenti);
 
 // Elenco per documenti
 $scadenze = $movimenti
-    ->where('iddocumento', '<>', '0')
+    ->where('iddocumento', '<>', '')
     ->groupBy('iddocumento');
 foreach ($scadenze as $id_documento => $righe) {
     $documento = Fattura::find($id_documento);
@@ -132,7 +132,7 @@ foreach ($scadenze as $id_documento => $righe) {
 
 // Elenco per scadenze
 $scadenze = $movimenti
-    ->where('iddocumento', '=', '0')
+    ->where('iddocumento', '=', '')
     ->where('id_scadenza', '<>', '')
     ->groupBy('id_scadenza');
 foreach ($scadenze as $id_scadenza => $righe) {

@@ -72,7 +72,7 @@ INSERT INTO `an_provenienze` (`id`, `descrizione`, `colore`) VALUES
 (NULL, 'Passaparola', '#8fbafd');
 
 -- Aggiunto id_provenienza per scheda anagrafica Cliente
-ALTER TABLE `an_anagrafiche` ADD `id_provenienza` AFTER `idrelazione`, INT DEFAULT NULL;
+ALTER TABLE `an_anagrafiche` ADD `id_provenienza` INT DEFAULT NULL AFTER `idrelazione`;
 
 -- Nuovo modulo per gestire le "Provenienze" 
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES (NULL, 'Provenienze', 'Provenienze clienti', 'provenienze', 'SELECT |select| FROM `an_provenienze` WHERE 1=1 HAVING 2=2', '', 'fa fa-angle-right', '2.4.34', '2.4.34', '3', (SELECT id FROM zz_modules t WHERE t.name = 'Anagrafiche'), '1', '1', '0', '0'); 

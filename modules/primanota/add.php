@@ -325,6 +325,16 @@ if (!empty($id_anagrafica)) {
 
 include $structure->filepath('movimenti.php');
 
+// Possibilità di forzare la chiusura della scadenza per le scadenze generiche
+if (empty($id_documenti) && !empty($id_scadenze)) {
+    echo '
+    <div class="row">
+		<div class="col-md-offset-9 col-md-3">
+            {[ "type": "checkbox", "label": "'.tr('Forza chiusura scadenza').'", "name": "chiudi_scadenza" ]}
+        </div>
+    </div>';
+}
+
 echo '
 	<!-- PULSANTI -->
 	<div class="row">

@@ -30,9 +30,11 @@ switch (post('op')) {
         $descrizione = post('descrizione');
         $is_insoluto = post('is_insoluto');
         $id_anagrafica = post('id_anagrafica');
+        $chiudi_scadenza = post('chiudi_scadenza');
         $mastrino = Mastrino::build($descrizione, $data, $is_insoluto, true, $id_anagrafica);
 
         $conti = post('idconto');
+        $scadenze = [];
         foreach ($conti as $i => $id_conto) {
             $id_scadenza = post('id_scadenza')[$i];
             $id_documento = post('id_documento')[$i];
@@ -44,9 +46,23 @@ switch (post('op')) {
             $movimento = Movimento::build($mastrino, $id_conto, $fattura, $scadenza);
             $movimento->setTotale($avere, $dare);
             $movimento->save();
+
+            if ($chiudi_scadenza) {
+                if (!in_array($id_scadenza, $scadenze)) {
+                    $scadenze[] = $id_scadenza;
+                }
+            }
         }
 
         $mastrino->aggiornaScadenzario();
+
+        if ($chiudi_scadenza) {
+            foreach ($scadenze as $id_scadenza) {
+                $scadenza = Scadenza::find($id_scadenza);
+                $scadenza->da_pagare = $scadenza->pagato;
+                $scadenza->save();
+            }
+        }
 
         $id_record = $mastrino->id;
 

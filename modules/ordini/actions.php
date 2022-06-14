@@ -64,9 +64,6 @@ switch (post('op')) {
             $totale_imponibile = get_imponibile_ordine($id_record);
             $totale_ordine = get_totale_ordine($id_record);
 
-            $tipo_sconto = post('tipo_sconto_generico');
-            $sconto = post('sconto_generico');
-
             if ($dir == 'uscita') {
                 $idrivalsainps = post('id_rivalsa_inps');
                 $idritenutaacconto = post('id_ritenuta_acconto');

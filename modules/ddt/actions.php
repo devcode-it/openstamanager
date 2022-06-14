@@ -77,9 +77,6 @@ switch (filter('op')) {
                 $bollo = 0;
             }
 
-            $tipo_sconto = post('tipo_sconto_generico');
-            $sconto = post('sconto_generico');
-
             // Leggo la descrizione del pagamento
             $query = 'SELECT descrizione FROM co_pagamenti WHERE id='.prepare($idpagamento);
             $rs = $dbo->fetchArray($query);

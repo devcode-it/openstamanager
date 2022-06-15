@@ -590,12 +590,14 @@ echo '
                 // let event = info.event;
 
                 if (event.allDay !== true) {
+                    let start = event.start;
+                    let end = (event.end!=null ? event.end : event.start);
                     $.post(globals.dashboard.load_url, {
                         op: "modifica_intervento",
                         id: event.id,
                         idintervento: event.idintervento,
-                        timeStart: moment(event.start).format("YYYY-MM-DD HH:mm"),
-                        timeEnd: moment(event.end).format("YYYY-MM-DD HH:mm")
+                        timeStart: moment(start).format("YYYY-MM-DD HH:mm"),
+                        timeEnd: moment(end).format("YYYY-MM-DD HH:mm")
                     }, function (data, responseType) {
                         data = $.trim(data);
 
@@ -616,13 +618,14 @@ echo '
             },
             eventResize: function (event, delta, revertFunc) { // info
                 // let event = info.event;
-
+                let start = event.start;
+                let end = (event.end!=null ? event.end : event.start);
                 $.post(globals.dashboard.load_url, {
                     op: "modifica_intervento",
                     id: event.id,
                     idintervento: event.idintervento,
-                    timeStart: moment(event.start).format("YYYY-MM-DD HH:mm"),
-                    timeEnd: moment(event.end).format("YYYY-MM-DD HH:mm")
+                    timeStart: moment(start).format("YYYY-MM-DD HH:mm"),
+                    timeEnd: moment(end).format("YYYY-MM-DD HH:mm")
                 }, function (data, responseType) {
                     data = $.trim(data);
 

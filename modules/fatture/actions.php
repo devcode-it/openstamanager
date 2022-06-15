@@ -275,7 +275,7 @@ switch (post('op')) {
     case 'fatture_scadute':
         $id_anagrafica = post('id_anagrafica');
         $stato1 = Stato::where('descrizione', 'Emessa')->first();
-        $stato2 = Stato::where('descrizione', 'Prazialmente pagato')->first();
+        $stato2 = Stato::where('descrizione', 'Parzialmente pagato')->first();
 
         $fatture = Fattura::vendita()
             ->select('*', 'co_documenti.id AS id', 'co_documenti.data AS data')

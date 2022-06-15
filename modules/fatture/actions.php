@@ -282,14 +282,14 @@ switch (post('op')) {
             ->where('idanagrafica', $id_anagrafica)
             ->whereIn('idstatodocumento', [$stato1->id, $stato2->id])
             ->join('co_scadenziario', 'co_documenti.id', '=', 'co_scadenziario.iddocumento')
-            ->where('co_scadenziario.da_pagare', '>', 'co_scadenziario.pagato')
+            ->whereRaw('co_scadenziario.da_pagare > co_scadenziario.pagato')
             ->whereRaw('co_scadenziario.scadenza < NOW()')
             ->groupBy('co_scadenziario.iddocumento')
             ->get();
 
         $results = [];
         foreach ($fatture as $result) {
-            $results[] = Modules::link('Fatture di vendita', $result->id, reference($result));
+            $results[] = Modules::link('Fatture di vendita', $result->id, $result->getReference());
         }
 
         echo json_encode($results);

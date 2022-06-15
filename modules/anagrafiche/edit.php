@@ -274,20 +274,30 @@ if (empty($google)) {
     // Modifica manuale delle informazioni
     echo '
                         <a class="btn btn-primary btn-block" onclick="modificaPosizione()">
-                            <i class="fa fa-map"></i> '.tr('Modifica posizione').'
+                            <i class="fa fa-map"></i> '.tr('Aggiorna posizione').'
                         </a>';
+}else{
+
+    // Definizione manuale delle informazioni
+    echo '
+                        <a class="btn btn-primary btn-block" onclick="modificaPosizione()">
+                            <i class="fa fa-map"></i> '.tr('Definisci posizione').'
+                        </a>';
+
 }
 
     // Navigazione diretta verso l'indirizzo
     echo '
                         <a class="btn btn-info btn-block" onclick="calcolaPercorso()">
                             <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
+                            '.((!empty($sede_cliente->lat) && !empty($sede_azienda->lat)) ? tr('(GPS)'): '' ).'
                         </a>';
 
     // Ricerca diretta su Google Maps
     echo '
                         <a class="btn btn-info btn-block" onclick="cercaGoogleMaps()">
                             <i class="fa fa-map-marker"></i> '.tr('Cerca su Google Maps').'
+                            '.((!empty($sede_cliente->lat)) ? tr(' (GPS)'): '' ).'
                         </a>';
 
 echo '

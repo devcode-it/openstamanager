@@ -20,5 +20,5 @@
 include_once __DIR__.'/../../core.php';
 
 if (isset($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM co_contratti WHERE id='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT *, (SELECT is_pianificabile FROM co_staticontratti WHERE id=idstato) AS is_pianificabile FROM co_contratti WHERE id='.prepare($id_record));
 }

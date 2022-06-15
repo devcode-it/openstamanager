@@ -255,24 +255,12 @@ echo '
                     <div class="panel-body">';
 
 $map_load_message = tr('Clicca per visualizzare');
+
 if (empty($google)) {
     echo '
                         <div class="alert alert-info">
                             '.Modules::link('Impostazioni', null, tr('Per abilitare la visualizzazione delle anagrafiche nella mappa, inserire la Google Maps API Key nella scheda Impostazioni'), true, null, true, null, '&search=Google Maps API key').'.
                         </div>';
-
-                        // Navigazione diretta verso l'indirizzo
-                        echo '
-                        <a class="btn btn-info btn-block" onclick="calcolaPercorso()">
-                            <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
-                        </a>';
-
-                        // Ricerca diretta su Google Maps
-                        echo '
-                        <a class="btn btn-info btn-block" onclick="cercaGoogleMaps()">
-                            <i class="fa fa-map-marker"></i> '.tr('Cerca su Google Maps').'
-                        </a>';
-
                         
 } elseif (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($sede_cliente->lng))) {
     echo '
@@ -288,18 +276,7 @@ if (empty($google)) {
                         <a class="btn btn-primary btn-block" onclick="modificaPosizione()">
                             <i class="fa fa-map"></i> '.tr('Modifica posizione').'
                         </a>';
-
-    // Navigazione diretta verso l'indirizzo
-    echo '
-                        <a class="btn btn-info btn-block" onclick="calcolaPercorso()">
-                            <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
-                        </a>';
-} else {
-    // Modifica manuale delle informazioni
-    echo '
-                        <a class="btn btn-primary btn-block" onclick="modificaPosizione()">
-                            <i class="fa fa-map"></i> '.tr('Modifica posizione').'
-                        </a>';
+}
 
     // Navigazione diretta verso l'indirizzo
     echo '
@@ -312,7 +289,6 @@ if (empty($google)) {
                         <a class="btn btn-info btn-block" onclick="cercaGoogleMaps()">
                             <i class="fa fa-map-marker"></i> '.tr('Cerca su Google Maps').'
                         </a>';
-}
 
 echo '
                     </div>

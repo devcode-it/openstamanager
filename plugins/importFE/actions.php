@@ -306,13 +306,12 @@ switch (filter('op')) {
         // Riorganizzazione dati ordini per numero di riga
         $dati_ordini = [];
         foreach ($DatiOrdini as $dato) {
-            foreach ($dato['RiferimentoNumeroLinea'] as $dati => $linea) {
+            $linea = $dato['RiferimentoNumeroLinea'];
                 foreach ($replaces as $replace) {
                     if(string_starts_with($dato['IdDocumento'], $replace)) {
                         $dato['IdDocumento'] = str_replace($replace, '', $dato['IdDocumento']);
                         break;
                     }
-                }
                 $dati_ordini[(int)$linea] = [
                     'numero' => $dato['IdDocumento'],
                     'anno' => ( new Carbon($dato['Data']) )->format('Y'),
@@ -320,16 +319,15 @@ switch (filter('op')) {
             }
         }
 
-        // Riorganizzazione dati ordini per numero di riga
+        // Riorganizzazione dati ddt per numero di riga
         $dati_ddt = [];
         foreach ($DatiDDT as $dato) {
-            foreach ($dato['RiferimentoNumeroLinea'] as $dati => $linea) {
+            $linea = $dato['RiferimentoNumeroLinea'];
                 foreach ($replaces as $replace) {
                     if(string_starts_with($dato['NumeroDDT'], $replace)) {
                         $dato['NumeroDDT'] = str_replace($replace, '', $dato['NumeroDDT']);
                         break;
                     }
-                }
                 $dati_ddt[(int)$linea] = [
                     'numero' => $dato['NumeroDDT'],
                     'anno' => ( new Carbon($dato['DataDDT']) )->format('Y'),

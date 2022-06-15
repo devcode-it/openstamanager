@@ -97,8 +97,8 @@ foreach ($stati_intervento as $stato) {
     echo '
             <li>
                 <input type="checkbox" id="stato_'.$stato['id'].'" class="dashboard_stato" value="'.$stato['id'].'" '.$attr.'>
-                <label for="stato_'.$stato['id'].'" class="badge" style="color:'.color_inverse($stato['colore']).'; background:'.$stato['colore'].';">
-                    '.$stato['descrizione'].'</span>
+                <label for="stato_'.$stato['id'].'">
+                    '.$stato['descrizione'].'<span style="position:relative;right:-7px;bottom:-3px;width:15px;height:15px;display:inline-block;border-radius:50%;background-color:'.$stato['colore'].';"></span>
                 </label>
             </li>';
 }
@@ -171,7 +171,7 @@ foreach ($tecnici_disponibili as $tecnico) {
             <li>
                 <input type="checkbox" id="tecnico_'.$tecnico['id'].'" class="dashboard_tecnico" value="'.$tecnico['id'].'" '.$attr.'>
                 <label for="tecnico_'.$tecnico['id'].'">
-                    '.$tecnico['ragione_sociale'].'
+                    '.$tecnico['ragione_sociale'].'<span style="position:relative;right:-7px;bottom:-3px;width:15px;height:15px;display:inline-block;border-radius:50%;background-color:'.$tecnico['colore'].';"></span>
                 </label>
             </li>';
 }

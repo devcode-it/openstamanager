@@ -255,11 +255,13 @@ echo '
                     <div class="panel-body">';
 
 $map_load_message = tr('Clicca per visualizzare');
+
 if (empty($google)) {
     echo '
                         <div class="alert alert-info">
                             '.Modules::link('Impostazioni', null, tr('Per abilitare la visualizzazione delle anagrafiche nella mappa, inserire la Google Maps API Key nella scheda Impostazioni'), true, null, true, null, '&search=Google Maps API key').'.
                         </div>';
+                        
 } elseif (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($sede_cliente->lng))) {
     echo '
                         <div id="map-edit" style="height: 200px;width: 100%;display: flex;align-items: center;justify-content: center;" onclick="caricaMappa()">
@@ -272,33 +274,31 @@ if (empty($google)) {
     // Modifica manuale delle informazioni
     echo '
                         <a class="btn btn-primary btn-block" onclick="modificaPosizione()">
-                            <i class="fa fa-map"></i> '.tr('Modifica posizione').'
+                            <i class="fa fa-map"></i> '.tr('Aggiorna posizione').'
                         </a>';
+}else{
 
-    // Navigazione diretta verso l'indirizzo
-    echo '
-                        <a class="btn btn-info btn-block" onclick="calcolaPercorso()">
-                            <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
-                        </a>';
-} else {
-    // Modifica manuale delle informazioni
+    // Definizione manuale delle informazioni
     echo '
                         <a class="btn btn-primary btn-block" onclick="modificaPosizione()">
-                            <i class="fa fa-map"></i> '.tr('Modifica posizione').'
+                            <i class="fa fa-map"></i> '.tr('Definisci posizione').'
                         </a>';
+
+}
 
     // Navigazione diretta verso l'indirizzo
     echo '
                         <a class="btn btn-info btn-block" onclick="calcolaPercorso()">
                             <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
+                            '.((!empty($sede_cliente->lat) && !empty($sede_azienda->lat)) ? tr('(GPS)'): '' ).'
                         </a>';
 
     // Ricerca diretta su Google Maps
     echo '
                         <a class="btn btn-info btn-block" onclick="cercaGoogleMaps()">
                             <i class="fa fa-map-marker"></i> '.tr('Cerca su Google Maps').'
+                            '.((!empty($sede_cliente->lat)) ? tr(' (GPS)'): '' ).'
                         </a>';
-}
 
 echo '
                     </div>

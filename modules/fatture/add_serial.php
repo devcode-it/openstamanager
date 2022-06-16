@@ -108,7 +108,7 @@ if ($dir == 'entrata') {
 
         echo '
         <div class="col-md-4">
-            {[ "type": "text", "name": "serial[]", "value": "'.$serials[$i].'"'.(!empty($res) ? ', "readonly": 1' : '').' ]}';
+            {[ "type": "text", "name": "serial[]", "class": "serial", "value": "'.$serials[$i].'"'.(!empty($res) ? ', "readonly": 1' : '').' ]}';
 
         if (!empty($res)) {
             if (!empty($res[0]['id_riga_intervento'])) {
@@ -143,6 +143,40 @@ if ($dir == 'entrata') {
         echo '
     </div>';
     }
+
+    $module_fatture = Modules::get('Fatture di acqusito')['id'];
+    echo '
+    <br>
+    <div class="alert alert-warning text-center has_serial hidden">
+        <i class="fa fa-warning"></i>
+        <b>'.tr('Attenzione!').'</b> '.tr('Il Serial su questo articolo è già stato utilizzato in un altro documento di acquisto').'.
+    </div>
+
+    <script>
+        $(".serial").on("keyup", function() {
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "post",
+                data: {
+                    id_module: "'.$module_fatture.'",
+                    id_record: globals.id_record,
+                    serial: $(this).val(),
+                    id_articolo: input("idarticolo").get(),
+                    op: "controlla_serial",
+                },
+                success: function(data){
+                    data = JSON.parse(data);
+                    if (data) {
+                        $(".has_serial").removeClass("hidden");
+                        $("#aggiorna").addClass("disabled");
+                    } else {
+                        $(".has_serial").addClass("hidden");
+                        $("#aggiorna").removeClass("disabled");
+                    }
+                }
+            });
+        });
+    </script>';
 }
 
 echo '
@@ -150,7 +184,7 @@ echo '
     <!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-barcode"></i> '.tr('Aggiorna').'</button>
+			<button type="submit" id="aggiorna" class="btn btn-primary pull-right"><i class="fa fa-barcode"></i> '.tr('Aggiorna').'</button>
 		</div>
     </div>
 </form>';

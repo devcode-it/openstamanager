@@ -896,6 +896,13 @@ switch (post('op')) {
         $fattura->save();
 
         break;
+
+    case 'controlla_serial': 
+        $has_serial = $dbo->fetchOne('SELECT id FROM mg_prodotti WHERE serial='.prepare(post('serial')).' AND dir="uscita" AND id_articolo='.prepare(post('id_articolo')).' AND (id_riga_documento IS NOT NULL OR id_riga_ordine IS NOT NULL OR id_riga_ddt IS NOT NULL)')['id'];
+        
+        echo json_encode($has_serial);
+        
+        break;
 }
 
 // Nota di debito

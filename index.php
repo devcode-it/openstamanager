@@ -147,7 +147,7 @@ if (!empty(flash()->getMessage('error'))) {
 echo '
 			<form action="?op=login" method="post" class="login-box box" autocomplete="off" >
 				<div class="box-header with-border text-center">
-					<img src="'.App::getPaths()['img'].'/logo_completo.png" class="img-responsive" alt="'.tr('OSM Logo').'">
+					<img src="'.App::getPaths()['img'].'/logo_completo.png" class="img-responsive" alt="'.tr('OpenSTAManager, il software gestionale open source per assistenza tecnica e fatturazione elettronica').'">
 				</div>
 
 				<div class="login-box-body box-body">

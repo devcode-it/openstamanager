@@ -211,7 +211,10 @@ class FatturaOrdinaria extends FatturaElettronica
                     $conto_arrotondamenti = $conto[$key];
                 }
 
-                $obj->id_rivalsa_inps = $id_rivalsa;
+                if ($riga['Ritenuta'] == 'SI') {
+                    $obj->id_rivalsa_inps = $id_rivalsa;
+                }
+                
                 $obj->ritenuta_contributi = $ritenuta_contributi;
 
                 // Inserisco la ritenuta se è specificata nella riga o se non è specificata nella riga ma è presente in Dati ritenuta (quindi comprende tutte le righe)
@@ -411,9 +414,12 @@ class FatturaOrdinaria extends FatturaElettronica
         // Rivalsa
         $casse = $dati_generali['DatiCassaPrevidenziale'];
         if (!empty($casse)) {
-            $totali = array_column($righe, 'PrezzoTotale');
-            $totale = sum($totali);
-
+            $totale = 0;
+            foreach ($righe as $riga) {
+                if ($riga['Ritenuta'] == 'SI') {
+                    $totale += $riga['PrezzoTotale'];
+                }
+            }
             $casse = isset($casse[0]) ? $casse : [$casse];
 
             $importi = [];

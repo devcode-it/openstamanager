@@ -36,6 +36,7 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
 
 
     $documenti = Fattura::where('data', '>', $data_limite)->where('data', '>', $data_setting)->whereIn('codice_stato_fe', ['EC02','ERR','ERVAL','NS','GEN','QUEUE'])->get();
+    
     foreach ($documenti as $documento) {
         $stato_fe = $database->fetchOne('SELECT descrizione, icon FROM fe_stati_documento WHERE codice = '.prepare($documento->codice_stato_fe));
         if (in_array($documento->codice_stato_fe, $codici_scarto)) {
@@ -56,11 +57,11 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
             }
         }
     }
-
+    //Controllo già presente sul plugin Ricevute FE
     if (sizeof($documenti_scarto) > 0) {
         echo '
         <div class="alert alert-danger">
-            <i class="fa fa-warning"></i> '.tr("<b>ATTENZIONE:</b> le seguenti fatture riscontrano i seguenti problemi").':<ul>';
+            <i class="fa fa-warning"></i> '.tr("<b>ATTENZIONE:</b> le seguenti fatture riscontrano problemi").':<ul>';
             foreach ($documenti_scarto as $documento) {
                 echo '
                 <li><b>'.$documento.'</b></li>';

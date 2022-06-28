@@ -49,6 +49,7 @@ if (!empty($fatture_generate_errore->count())) {
             <ul>';
 
     foreach ($fatture_generate_errore as $fattura_generata) {
+        // Codice stato fe
         $descrizione = $fattura_generata['codice_stato_fe'];
 
         $ricevuta_principale = $fattura_generata->getRicevutaPrincipale();

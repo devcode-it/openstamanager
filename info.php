@@ -48,7 +48,7 @@ if (file_exists(base_dir().'/assistenza.php')) {
             </div>
 
             <div class="col-md-4">
-                <p><b>'.tr('Sito web').':</b> <a href="https://www.openstamanager.com" target="_blank">www.openstamanager.com</a></p>
+                <p><b>'.tr('Sito web').':</b> <a href="https://www.openstamanager.com" target="_blank" title="'.tr('Software gestionale open source per assistenza tecnica e fatturazione').'" >www.openstamanager.com</a></p>
 
                 <p><b>'.tr('Versione').':</b> '.$version.' <small class="text-muted">('.(!empty($revision) ? 'R'.$revision : tr('In sviluppo')).')</small></p>
 
@@ -76,12 +76,38 @@ if (file_exists(base_dir().'/assistenza.php')) {
                             <li><a href="https://www.mysql.com" target="_blank"><i class="fa fa-circle-o-notch"></i> MySQL</a></li>
                             <li><a href="https://jquery.com" target="_blank"><i class="fa fa-circle-o-notch"></i> JQuery</a></li>
                             <li><a href="https://getbootstrap.com" target="_blank"><i class="fa fa-circle-o-notch"></i> Bootstrap</a></li>
-                            <li><a href="https://fortawesome.github.io/Font-Awesome" target="_blank"><i class="fa fa-circle-o-notch"></i> FontAwesome</a></li>
+                            <li><a href="https://fortawesome.com/" target="_blank"><i class="fa fa-circle-o-notch"></i> FontAwesome</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
 
+            <div class="col-md-6">
+                <div class="box box-warning">
+                    <div class="box-header">
+                        <h3 class="box-title text-uppercase"><i class="fa fa-download"></i> '.tr('Aggiornamenti e nuove versioni').'</h3>
+                    </div>
+
+                    <div class="box-body">
+                        <p>'.tr("Tutti gli aggiornamenti e le nuove versioni sono disponibili all'indirizzo").':</p>
+                        <a href="https://www.openstamanager.com/downloads/" target="_blank"><i class="fa fa-external-link"></i> www.openstamanager.com/downloads/</a>
+                    </div>
+                </div>
+
+                <div class="box box-default">
+                    <div class="box-header">
+                        <h3 class="box-title text-uppercase"><i class="fa fa-book"></i> '.tr('Guida e documentazione tecnica').'</h3>
+                    </div>
+
+                    <div class="box-body">
+                        <p>'.tr("La guida all'utilizzo di <strong>OpenSTAManager</strong> e la documentazione tecnica sono consultabili all'indirizzo").':</p>
+                        <a href="https://docs.openstamanager.com/" target="_blank"><i class="fa fa-external-link"></i> docs.openstamanager.com/</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
             <div class="col-md-6">
                 <div class="box box-danger">
                     <div class="box-header">
@@ -124,22 +150,6 @@ if (file_exists(base_dir().'/assistenza.php')) {
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6">
-                <div class="box box-warning">
-                    <div class="box-header">
-                        <h3 class="box-title text-uppercase"><i class="fa fa-download"></i> '.tr('Aggiornamenti e nuove versioni').'</h3>
-                    </div>
-
-                    <div class="box-body">
-                        <p>'.tr("Tutti gli aggiornamenti e le nuove versioni sono disponibili all'indirizzo").':</p>
-                        <a href="https://www.openstamanager.com/downloads/" target="_blank"><i class="fa fa-external-link"></i> www.openstamanager.com/downloads/</a>
-                    </div>
-                </div>
-            </div>
-
 
             <div class="col-md-6">
                 <div class="box box-success">
@@ -150,7 +160,7 @@ if (file_exists(base_dir().'/assistenza.php')) {
                     <div class="box-body">
                         <p>'.tr('Per le aziende che hanno necessità di essere seguite da <b>supporto professionale</b> è disponibile un servizio di assistenza e supporto a pagamento').'.</p>
 
-                        <p>'.tr("E' disponibile anche un <b>servizio cloud</b> su cui poter installare OpenSTAManager, in modo da non doverti più preoccupare di backup e gestione dei dati").'.</p>
+                        <p>'.tr("E' disponibile anche un <b>servizio cloud</b> su cui poter installare OpenSTAManager, in modo da non doverti più preoccupare di backup, aggiornamenti e gestione dei dati").'.</p>
 
                         <p><a href="https://www.openstamanager.com/per-le-aziende/" class="btn btn-lg btn-info btn-block" target="_blank"><i class="fa fa-briefcase"></i> '.tr('Ottieni supporto professionale').'</a></p>
                     </div>

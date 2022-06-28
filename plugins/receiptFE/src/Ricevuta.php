@@ -191,8 +191,31 @@ class Ricevuta
             return;
         }
 
+        $descrizione = null;
         // Processo la ricevuta e salvo data ricezione, codice e messaggio
-        $descrizione = $this->xml['Destinatario']['Descrizione'];
+        if ($codice == 'RC'){
+             // Consegnata
+            $descrizione = $this->xml['Destinatario']['Descrizione'];
+        }else if ($codice == 'AT'){
+            // Attestazione Trasmissione
+            $descrizione = $this->xml['Destinatario']['Descrizione'];
+        }else if ($codice == 'MC'){
+            // Mancata Consegna
+            $descrizione = $this->xml['Descrizione'];
+        }else if ($codice == 'EC01' || $codice == 'EC02'){
+            // Esito Committente
+            $descrizione = $this->xml['Descrizione'];
+        }else if ($codice == 'DT'){
+            // Decorrenza Termini
+            $descrizione = $this->xml['Descrizione'];
+        }else if ($codice == 'NE'){
+            // Notifica Esito
+            $descrizione = $this->xml['EsitoCommittente']['Descrizione'];
+        }else if ($codice == 'NS'){
+            // Scartata
+            $descrizione = $this->xml['ListaErrori']['Errore']['Descrizione'];
+        }
+
         $data = $this->xml['DataOraRicezione'];
 
         $fattura->data_stato_fe = $data ? date('Y-m-d H:i:s', strtotime($data)) : '';

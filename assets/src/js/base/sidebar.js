@@ -76,7 +76,7 @@ $(document).ready(function () {
 
     // Barra plugin laterale
     const pluginToggle = $(".control-sidebar-toggle");
-    const largeScreen = screen.width > 1200;
+    const largeScreen = screen.width > 1280;
 
     // Gestione click sul pulsante per il toggle
     pluginToggle.on("click", function () {

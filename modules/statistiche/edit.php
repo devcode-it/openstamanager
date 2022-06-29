@@ -469,7 +469,6 @@ $(document).ready(function() {
                     }
                 }]
             },
-
             tooltips: {
                 callbacks: {
                     label: function(tooltipItem, data) {
@@ -493,6 +492,120 @@ $(document).ready(function() {
                         return label;
                     }
                 }
+            },
+        }
+    });
+});
+</script>';
+
+
+$dataset = '';
+$clienti = $dbo->fetchArray('SELECT COUNT(*) AS result, GROUP_CONCAT(an_anagrafiche.ragione_sociale, "<br>") AS ragione_sociale, YEAR(an_anagrafiche.created_at) AS year, MONTH(an_anagrafiche.created_at) AS month FROM an_anagrafiche
+INNER JOIN co_documenti ON an_anagrafiche.idanagrafica = co_documenti.idanagrafica
+INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id
+INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica
+INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica
+WHERE an_tipianagrafiche.descrizione = "Cliente" AND co_tipidocumento.dir = "entrata" AND co_documenti.data <= '.prepare($end).' AND an_anagrafiche.created_at BETWEEN '.prepare($start).' AND '.prepare($end).' GROUP BY YEAR(an_anagrafiche.created_at), MONTH(an_anagrafiche.created_at) ORDER BY YEAR(an_anagrafiche.created_at) ASC, MONTH(an_anagrafiche.created_at) ASC');
+
+$clienti = Stats::monthly($clienti, $start, $end);
+
+//Random color
+$background = '#'.dechex(rand(256, 16777215));
+
+$dataset .= '{
+    label: "'.tr("Nuovi clienti per mese").'",   
+    backgroundColor: "'.$background.'",
+    data: [
+        '.implode(',', array_column($clienti, 'result')).'
+    ]
+},';
+
+
+echo '
+<div class="box box-info">
+    <div class="box-header with-border">
+        <h3 class="box-title">'.tr('Nuovi clienti per mese').'</h3>
+
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <canvas class="box-body collapse in" id="n_nuovi_clienti" height="100"></canvas>
+</div>';
+
+// Script per il grafico dei nuovi clienti per mese
+echo '
+<script>
+$(document).ready(function() {
+    new Chart(document.getElementById("n_nuovi_clienti").getContext("2d"), {
+        type: "line",
+        data: {
+            labels: months,
+            datasets: [
+                '.$dataset.'
+            ]
+        },
+        options: {
+            responsive: true,
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                        var dataset = data.datasets[tooltipItem.datasetIndex];
+                        var label = dataset.labels ? dataset.labels[tooltipItem.index] : "";
+    
+                        if (label) {
+                            label += ": ";
+                        }
+    
+                        label += tooltipItem.yLabel;
+    
+                        return label;
+                    }
+                }
+            },
+            elements: {
+                line: {
+                    tension: 0
+                }
+            },
+            annotation: {
+                annotations: [{
+                    type: "line",
+                    mode: "horizontal",
+                    scaleID: "y-axis-0",
+                    value: 0,
+                    label: {
+                        enabled: false,
+                    }
+                }]
+            },
+            hover: {
+                mode: "nearest",
+                intersect: false
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: "'.tr('Periodo').'"
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: "'.tr('Numero').'"
+                    },
+                    ticks: {
+                        // Include a dollar sign in the ticks
+                        callback: function(value, index, values) {
+                            return value;
+                        }
+                    }
+                }]
             },
         }
     });

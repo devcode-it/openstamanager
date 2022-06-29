@@ -44,7 +44,7 @@ class ColonneDuplicateViste extends Controllo
                 'id' => $colonna['name'],
                 'nome' => $modulo->title.': '.$colonna['name'],
                 'descrizione' => tr('La colonna _NAME_ del modulo _MODULE_ esiste più volte', [
-                    '_NAME_' => $modulo->title,
+                    '_NAME_' => $colonna['name'],
                     '_MODULE_' => $modulo->title,
                 ]),
             ]);

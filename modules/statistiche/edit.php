@@ -178,16 +178,16 @@ function init_calendar(calendar) {
 </script>';
 
 // Clienti top
-$clienti = $dbo->fetchArray('SELECT SUM(IF(reversed=1, -(co_righe_documenti.subtotale - co_righe_documenti.sconto), (co_righe_documenti.subtotale - co_righe_documenti.sconto))) AS totale, (SELECT COUNT(*) FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.idanagrafica =an_anagrafiche.idanagrafica AND co_documenti.data BETWEEN '.prepare($start).' AND '.prepare($end)." AND co_tipidocumento.dir='entrata') AS qta, an_anagrafiche.idanagrafica, an_anagrafiche.ragione_sociale FROM co_documenti INNER JOIN co_statidocumento ON co_statidocumento.id = co_documenti.idstatodocumento  INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica=co_documenti.idanagrafica WHERE co_tipidocumento.dir='entrata' AND (co_statidocumento.descrizione = 'Pagato' OR co_statidocumento.descrizione = 'Parzialmente pagato' OR co_statidocumento.descrizione = 'Emessa' ) AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY an_anagrafiche.idanagrafica ORDER BY totale DESC LIMIT 20');
+$clienti = $dbo->fetchArray('SELECT SUM(IF(reversed=1, -(co_righe_documenti.subtotale - co_righe_documenti.sconto), (co_righe_documenti.subtotale - co_righe_documenti.sconto))) AS totale, (SELECT COUNT(*) FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.idanagrafica = an_anagrafiche.idanagrafica AND co_documenti.data BETWEEN '.prepare($start).' AND '.prepare($end)." AND co_tipidocumento.dir='entrata') AS qta, an_anagrafiche.idanagrafica, an_anagrafiche.ragione_sociale FROM co_documenti INNER JOIN co_statidocumento ON co_statidocumento.id = co_documenti.idstatodocumento INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica=co_documenti.idanagrafica WHERE co_tipidocumento.dir='entrata' AND (co_statidocumento.descrizione = 'Pagato' OR co_statidocumento.descrizione = 'Parzialmente pagato' OR co_statidocumento.descrizione = 'Emessa') AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY an_anagrafiche.idanagrafica ORDER BY totale DESC LIMIT 20');
 
-$totale = $dbo->fetchArray("SELECT SUM(IF(reversed=1, -(co_righe_documenti.subtotale - co_righe_documenti.sconto), (co_righe_documenti.subtotale - co_righe_documenti.sconto))) AS totale FROM co_documenti INNER JOIN co_statidocumento ON co_statidocumento.id = co_documenti.idstatodocumento INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id WHERE (co_statidocumento.descrizione = 'Pagato' OR co_statidocumento.descrizione = 'Parzialmente pagato' OR co_statidocumento.descrizione = 'Emessa' ) AND co_tipidocumento.dir='entrata' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end));
+$totale = $dbo->fetchArray("SELECT SUM(IF(reversed=1, -(co_righe_documenti.subtotale - co_righe_documenti.sconto), (co_righe_documenti.subtotale - co_righe_documenti.sconto))) AS totale FROM co_documenti INNER JOIN co_statidocumento ON co_statidocumento.id = co_documenti.idstatodocumento INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id WHERE (co_statidocumento.descrizione = 'Pagato' OR co_statidocumento.descrizione = 'Parzialmente pagato' OR co_statidocumento.descrizione = 'Emessa') AND co_tipidocumento.dir='entrata' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end));
 
 echo '
 <div class="row">
     <div class="col-md-6">
         <div class="box box-warning">
             <div class="box-header with-border">
-                <h3 class="box-title">'.tr('I 20 clienti TOP').'</h3><span class="tip" title="'.tr('Valori iva esclusa').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span>
+                <h3 class="box-title">'.tr('I 20 clienti TOP per il periodo').': '.Translator::dateToLocale($start).' - '.Translator::dateToLocale($end).'</h3><span class="tip" title="'.tr('Valori iva esclusa').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span>
 
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse">
@@ -227,15 +227,15 @@ echo '
     </div>';
 
 // Articoli più venduti
-$articoli = $dbo->fetchArray("SELECT SUM(IF(reversed=1, -co_righe_documenti.qta, co_righe_documenti.qta)) AS qta,  SUM(IF(reversed=1, -(co_righe_documenti.subtotale - co_righe_documenti.sconto), (co_righe_documenti.subtotale - co_righe_documenti.sconto))) AS totale, mg_articoli.id, mg_articoli.codice, mg_articoli.descrizione, mg_articoli.um FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id INNER JOIN mg_articoli ON mg_articoli.id=co_righe_documenti.idarticolo WHERE co_tipidocumento.dir='entrata' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY co_righe_documenti.idarticolo ORDER BY qta DESC LIMIT 20');
+$articoli = $dbo->fetchArray("SELECT SUM(IF(reversed=1, -co_righe_documenti.qta, co_righe_documenti.qta)) AS qta,  SUM(IF(reversed=1, -(co_righe_documenti.subtotale - co_righe_documenti.sconto), (co_righe_documenti.subtotale - co_righe_documenti.sconto))) AS totale, mg_articoli.id, mg_articoli.codice, mg_articoli.descrizione, mg_articoli.um FROM co_documenti INNER JOIN co_statidocumento ON co_statidocumento.id = co_documenti.idstatodocumento INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id INNER JOIN mg_articoli ON mg_articoli.id=co_righe_documenti.idarticolo WHERE co_tipidocumento.dir='entrata' AND (co_statidocumento.descrizione = 'Pagato' OR co_statidocumento.descrizione = 'Parzialmente pagato' OR co_statidocumento.descrizione = 'Emessa') AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY co_righe_documenti.idarticolo ORDER BY qta DESC LIMIT 20');
 
-$totale = $dbo->fetchArray("SELECT SUM(IF(reversed=1, -co_righe_documenti.qta, co_righe_documenti.qta)) AS totale_qta, SUM(IF(reversed=1, -(co_righe_documenti.subtotale - co_righe_documenti.sconto), (co_righe_documenti.subtotale - co_righe_documenti.sconto))) AS totale FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id INNER JOIN mg_articoli ON mg_articoli.id=co_righe_documenti.idarticolo WHERE co_tipidocumento.dir='entrata' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end));
+$totale = $dbo->fetchArray("SELECT SUM(IF(reversed=1, -co_righe_documenti.qta, co_righe_documenti.qta)) AS totale_qta, SUM(IF(reversed=1, -(co_righe_documenti.subtotale - co_righe_documenti.sconto), (co_righe_documenti.subtotale - co_righe_documenti.sconto))) AS totale FROM co_documenti INNER JOIN co_statidocumento ON co_statidocumento.id = co_documenti.idstatodocumento INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id INNER JOIN mg_articoli ON mg_articoli.id=co_righe_documenti.idarticolo WHERE co_tipidocumento.dir='entrata' AND (co_statidocumento.descrizione = 'Pagato' OR co_statidocumento.descrizione = 'Parzialmente pagato' OR co_statidocumento.descrizione = 'Emessa') AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end));
 
 echo '
     <div class="col-md-6">
         <div class="box box-danger">
             <div class="box-header with-border">
-                <h3 class="box-title">'.tr('I 20 articoli più venduti').'</h3><span class="tip" title="'.tr('Valori iva esclusa').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span>
+                <h3 class="box-title">'.tr('I 20 articoli più venduti per il periodo').': '.Translator::dateToLocale($start).' - '.Translator::dateToLocale($end).'</h3><span class="tip" title="'.tr('Valori iva esclusa').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span>
 
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse">
@@ -249,8 +249,8 @@ if (!empty($articoli)) {
                 <table class="table table-striped">
                     <tr>
                         <th>'.tr('Articolo').'</th>
-                        <th class="text-right" width="120">'.tr('Q.tà').'</th>
-                        <th class="text-right" width="120">'.tr('Percentuale').'<span class="tip" title="'.tr('Incidenza sul numero di articoli venduti').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span></th>
+                        <th class="text-right" width="120">'.tr('Q.tà').'<span class="tip" title="'.tr('Numero di articoli venduti').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span></th>
+                        <th class="text-right" width="120">'.tr('Percentuale').'<span class="tip" title="'.tr('Incidenza sul numero di articoli').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span></th>
                         <th class="text-right" width="120">'.tr('Totale').'</th>
                     </tr>';
     foreach ($articoli as $articolo) {

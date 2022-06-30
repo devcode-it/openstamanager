@@ -187,7 +187,7 @@ echo '
     <div class="col-md-6">
         <div class="box box-warning">
             <div class="box-header with-border">
-                <h3 class="box-title">'.tr('I 20 clienti TOP per il periodo').': '.Translator::dateToLocale($start).' - '.Translator::dateToLocale($end).'</h3><span class="tip" title="'.tr('Valori iva esclusa').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span>
+                <h3 class="box-title">'.tr('I 20 clienti TOP per il periodo').': '.Translator::dateToLocale($start).' - '.Translator::dateToLocale($end).'</h3>
 
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse">
@@ -201,8 +201,8 @@ if (!empty($clienti)) {
                 <table class="table table-striped">
                     <tr>
                         <th>'.tr('Ragione sociale').'</th>
-                        <th class="text-center">'.tr('Num. fatture').'</th>
-                        <th class="text-right" width="120">'.tr('Totale').'</th>
+                        <th class="text-right" width="100">'.tr('N. fatture').'</th>
+                        <th class="text-right" width="120">'.tr('Totale').'<span class="tip" title="'.tr('Valori iva esclusa').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span></th>
                         <th class="text-right" width="120">'.tr('Percentuale').'<span class="tip" title="'.tr('Incidenza sul fatturato').'">&nbsp;<i class="fa fa-question-circle-o" aria-hidden="true"></i></span></th>
                     </tr>';
     foreach ($clienti as $cliente) {
@@ -235,7 +235,7 @@ echo '
     <div class="col-md-6">
         <div class="box box-danger">
             <div class="box-header with-border">
-                <h3 class="box-title">'.tr('I 20 articoli più venduti per il periodo').': '.Translator::dateToLocale($start).' - '.Translator::dateToLocale($end).'</h3><span class="tip" title="'.tr('Valori iva esclusa').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span>
+                <h3 class="box-title">'.tr('I 20 articoli più venduti per il periodo').': '.Translator::dateToLocale($start).' - '.Translator::dateToLocale($end).'</h3>
 
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse">
@@ -249,14 +249,14 @@ if (!empty($articoli)) {
                 <table class="table table-striped">
                     <tr>
                         <th>'.tr('Articolo').'</th>
-                        <th class="text-right" width="120">'.tr('Q.tà').'<span class="tip" title="'.tr('Numero di articoli venduti').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span></th>
+                        <th class="text-right" width="100">'.tr('N. articoli').'<span class="tip" title="'.tr('Numero di articoli venduti').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span></th>
                         <th class="text-right" width="120">'.tr('Percentuale').'<span class="tip" title="'.tr('Incidenza sul numero di articoli').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span></th>
-                        <th class="text-right" width="120">'.tr('Totale').'</th>
+                        <th class="text-right" width="120">'.tr('Totale').'<span class="tip" title="'.tr('Valori iva esclusa').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span></th>
                     </tr>';
     foreach ($articoli as $articolo) {
         echo '
                     <tr>
-                        <td>'.Modules::link('Articoli', $articolo['id'], $articolo['codice'].' - '.$articolo['descrizione']).'</td>
+                        <td><div class="shorten"> '.Modules::link('Articoli', $articolo['id'], $articolo['codice'].' - '.$articolo['descrizione']).'</div></td>
                         <td class="text-right">'.Translator::numberToLocale($articolo['qta'], 'qta').' '.$articolo['um'].'</td>
                         <td class="text-right">'.Translator::numberToLocale($articolo['qta'] * 100 / $totale[0]['totale_qta'], 2).' %</td>
                         <td class="text-right">'.moneyFormat($articolo['totale'], 2).'</td>
@@ -264,9 +264,11 @@ if (!empty($articoli)) {
     }
     echo '
                 </table>';
+                
+    echo "<br><p class='pull-right' >".Modules::link('Articoli', null, tr('Vedi tutto...'), null, null, false, 'tab_'.Plugins::get('Statistiche vendita')['id'])."</p>";
 } else {
     echo '
-                <p>'.tr('Nessun articolo è stato venduto').'...</p>';
+                <p>'.tr('Nessun articolo venduto').'...</p>';
 }
 echo '
 
@@ -609,5 +611,14 @@ $(document).ready(function() {
             },
         }
     });
+});
+</script>
+
+
+<script type="text/javascript">
+$(".shorten").shorten({
+    moreText: "'.tr('Mostra tutto').'",
+    lessText: "'.tr('Comprimi').'",
+    showChars : 70
 });
 </script>';

@@ -34,7 +34,7 @@ $is_completato = $rss[0]['flag_completato'];
 // Sessioni dell'intervento
 $query = 'SELECT in_interventi_tecnici.*, an_anagrafiche.ragione_sociale, an_anagrafiche.deleted_at AS anagrafica_deleted_at, in_tipiintervento.descrizione AS descrizione_tipo, in_interventi_tecnici.tipo_scontokm AS tipo_sconto_km, user.id AS id_user FROM in_interventi_tecnici
 INNER JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica
-LEFT JOIN (SELECT zz_users.id, zz_users.idanagrafica, zz_groups.nome FROM zz_users INNER JOIN zz_groups ON zz_groups.id = zz_users.idgruppo ORDER BY CASE WHEN zz_groups.nome = "Tecnici" THEN -1 ELSE zz_groups.nome END) AS user ON user.idanagrafica = an_anagrafiche.idanagrafica
+LEFT JOIN (SELECT zz_users.idanagrafica, zz_users.id FROM zz_users GROUP BY zz_users.idanagrafica) AS user ON user.idanagrafica = an_anagrafiche.idanagrafica
 INNER JOIN in_tipiintervento ON in_interventi_tecnici.idtipointervento = in_tipiintervento.idtipointervento
 WHERE in_interventi_tecnici.idintervento='.prepare($id_record).' ORDER BY ragione_sociale ASC, in_interventi_tecnici.orario_inizio ASC, in_interventi_tecnici.id ASC';
 $sessioni = $dbo->fetchArray($query);
@@ -53,7 +53,7 @@ if (!empty($sessioni)) {
 
 
         if ($sessione['id_user']) {
-            $user = User::find($sessione['id_user']);
+            $user = User::where('idanagrafica', $sessione['idtecnico'])->orderByRaw("CASE WHEN idgruppo = 2 THEN -1 ELSE idgruppo END")->first();
             echo '
                 <img class="attachment-img tip" src="'.$user->photo.'" title="'.$user->nome_completo.'">';
             } else {
@@ -125,7 +125,7 @@ if (!empty($sessioni)) {
 
         // ORE
         echo '
-            <td style="border-right:1px solid #aaa;">
+            <td style="border-right:1px solid #aaa;">'.($ore<=0 ? '<i class="fa fa-warning tip" title="'.tr("Questa sessione è vuota").'" ></i>': '' ).'
                 '.Translator::numberToLocale($ore).'
 
                 <div class="extra hide">

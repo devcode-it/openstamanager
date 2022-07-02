@@ -111,7 +111,7 @@ function buttonLoading(button) {
         $this.attr("class")
     ];
 
-    $this.html('<i class="fa fa-spinner fa-pulse fa-fw"></i> Attendere...');
+    $this.html('<i class="fa fa-spinner fa-pulse fa-fw"></i>');
     $this.addClass("btn-warning");
     $this.prop("disabled", true);
 

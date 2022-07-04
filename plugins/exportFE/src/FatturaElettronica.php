@@ -608,10 +608,15 @@ class FatturaElettronica
         }
 
         $documento = $fattura->getDocumento();
-        $cliente = $fattura->getCliente();
+        //Fattura per conto terzi, la mia Azienda (fornitore) diventa il cessionario al posto del cliente
+        if ($documento['is_fattura_conto_terzi']) {
+            $cliente = static::getAzienda();
+        } else {
+            $cliente = $fattura->getCliente();
+        }
 
         $sede = database()->fetchOne('SELECT `codice_destinatario` FROM `an_sedi` WHERE `id` = '.prepare($documento['idsede_destinazione']));
-        if (!empty($sede['codice_destinatario'])) {
+        if (!empty($sede['codice_destinatario']) && empty($documento['is_fattura_conto_terzi'])) {
             $codice_destinatario = $sede['codice_destinatario'];
         } else {
             $codice_destinatario = $cliente->codice_destinatario;

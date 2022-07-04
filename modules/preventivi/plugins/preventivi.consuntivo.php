@@ -54,7 +54,7 @@ if (!empty($interventi)) {
         </td>
 
         <td class="text-right">
-            '.numberFormat($intervento->ore_totali).'
+            '.($intervento->ore_totali<=0 ? '<i class="fa fa-warning tip" style="position:relative;margin-left:-16px;" title="'.tr("Questa sessione è vuota").'" ></i> ': '' ).numberFormat($intervento->ore_totali).'
         </td>
 
         <td class="text-right">

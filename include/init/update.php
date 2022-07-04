@@ -123,8 +123,8 @@ if (filter('action') == 'do_update') {
                 <h3 class="box-title">'.tr('Aggiornamento in corso!').'</h3>
             </div>
             <div class="box-body">
-                <p>'.tr("E' attualmente in corso la procedura di aggiornamento del software, e pertanto siete pregati di attendere fino alla sua conclusione").'.</p>
-                <p>'.tr("Nel caso il problema persista, rivolgersi all'amministratore o all'assistenza ufficiale").'.</p>
+                <p>'.tr("Il software si trova attualmente nella fase di aggiornamento, potrebbero volerci fino a 10 minuti, siete pregati di attendere sino alla sua conclusione").'.</p>
+                <p>'.tr("In caso di problemi rivolgersi all'amministratore di sistema o all'assistenza del gestionale").'.</p>
                 <a class="btn btn-info" href="'.base_path().'/index.php"><i class="fa fa-repeat"></i> '.tr('Riprova').'</a>
             </div>
         </div>';

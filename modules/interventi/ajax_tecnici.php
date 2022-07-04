@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\User;
 
 $show_costi = true;
 // Limitazione delle azioni dei tecnici
@@ -29,9 +30,11 @@ if ($user['gruppo'] == 'Tecnici') {
 $rss = $dbo->fetchArray('SELECT is_completato AS flag_completato FROM in_statiintervento WHERE idstatointervento = (SELECT idstatointervento FROM in_interventi WHERE id='.prepare($id_record).')');
 $is_completato = $rss[0]['flag_completato'];
 
+
 // Sessioni dell'intervento
-$query = 'SELECT in_interventi_tecnici.*, an_anagrafiche.ragione_sociale, an_anagrafiche.deleted_at AS anagrafica_deleted_at, in_tipiintervento.descrizione AS descrizione_tipo, in_interventi_tecnici.tipo_scontokm AS tipo_sconto_km FROM in_interventi_tecnici
+$query = 'SELECT in_interventi_tecnici.*, an_anagrafiche.ragione_sociale, an_anagrafiche.deleted_at AS anagrafica_deleted_at, in_tipiintervento.descrizione AS descrizione_tipo, in_interventi_tecnici.tipo_scontokm AS tipo_sconto_km, user.id AS id_user FROM in_interventi_tecnici
 INNER JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica
+LEFT JOIN (SELECT zz_users.idanagrafica, zz_users.id FROM zz_users GROUP BY zz_users.idanagrafica) AS user ON user.idanagrafica = an_anagrafiche.idanagrafica
 INNER JOIN in_tipiintervento ON in_interventi_tecnici.idtipointervento = in_tipiintervento.idtipointervento
 WHERE in_interventi_tecnici.idintervento='.prepare($id_record).' ORDER BY ragione_sociale ASC, in_interventi_tecnici.orario_inizio ASC, in_interventi_tecnici.id ASC';
 $sessioni = $dbo->fetchArray($query);
@@ -46,8 +49,21 @@ if (!empty($sessioni)) {
             echo '
 <div class="table-responsive">
     <table class="table table-striped table-hover table-condensed">
-        <tr>
-            <th><i class="fa fa-user"></i> '.$sessione['ragione_sociale'].' '.(($sessione['anagrafica_deleted_at']) ? '<small class="text-danger"><em>('.tr('Eliminato').')</em></small>' : '').'</th>
+        <tr><th>';
+
+
+        if ($sessione['id_user']) {
+            $user = User::where('idanagrafica', $sessione['idtecnico'])->orderByRaw("CASE WHEN idgruppo = 2 THEN -1 ELSE idgruppo END")->first();
+            echo '
+                <img class="attachment-img tip" src="'.$user->photo.'" title="'.$user->nome_completo.'">';
+            } else {
+            echo '
+                <i class="fa fa-user-circle-o attachment-img tip" title="'.$sessione['ragione_sociale'].'"></i>';
+            }
+
+
+        echo'
+             '.$sessione['ragione_sociale'].' '.(($sessione['anagrafica_deleted_at']) ? '<small class="text-danger"><em>('.tr('Eliminato').')</em></small>' : '').'</th>
             <th width="15%">'.tr('Orario inizio').'</th>
             <th width="15%">'.tr('Orario fine').'</th>
             <th width="12%">'.tr('Ore').'</th>
@@ -109,8 +125,7 @@ if (!empty($sessioni)) {
 
         // ORE
         echo '
-            <td style="border-right:1px solid #aaa;">
-                '.Translator::numberToLocale($ore).'
+            <td style="border-right:1px solid #aaa;">'.($ore<=0 ? '<i class="fa fa-warning tip" style="position:relative;margin-left:-16px;" title="'.tr("Questa sessione è vuota").'" ></i>': '' ).' '.Translator::numberToLocale($ore).'
 
                 <div class="extra hide">
                     <table class="table table-condensed table-bordered">

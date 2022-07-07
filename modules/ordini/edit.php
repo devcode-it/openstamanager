@@ -100,7 +100,7 @@ echo '
 					<?php
                     } else {
                         ?>
-						{[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Fornitore' AND deleted_at IS NULL ORDER BY ragione_sociale", "value": "$idanagrafica$" ]}
+						{[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "fornitori", "value": "$idanagrafica$" ]}
 					<?php
                     }
                 echo '
@@ -332,6 +332,16 @@ $("#idanagrafica").change(function() {
     session_set("superselect,idanagrafica", $(this).val(), 0);
 
 	$("#idsede").selectReset();
+    $("#idpagamento").selectReset();
+    
+    let data = $(this).selectData();
+	if (data) {
+        // Impostazione del tipo di pagamento da anagrafica
+        if (data.id_pagamento) {
+            input("idpagamento").getElement()
+                .selectSetNew(data.id_pagamento, data.desc_pagamento);
+        }
+    }
 });
 
 $(document).ready(function() {

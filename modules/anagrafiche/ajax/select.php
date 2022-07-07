@@ -23,7 +23,9 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'clienti':
-        $query = "SELECT an_anagrafiche.idanagrafica AS id, is_bloccata, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')')), IF(deleted_at IS NULL, '', ' (".tr('eliminata').")'), IF(is_bloccata = 1, CONCAT(' (', an_relazioni.descrizione, ')'), '') ) AS descrizione, idtipointervento_default AS idtipointervento, in_tipiintervento.descrizione AS idtipointervento_descrizione, an_anagrafiche.idzona, contratto.id AS id_contratto, contratto.descrizione AS descrizione_contratto FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica LEFT JOIN in_tipiintervento ON an_anagrafiche.idtipointervento_default=in_tipiintervento.idtipointervento LEFT JOIN an_relazioni ON an_anagrafiche.idrelazione=an_relazioni.id LEFT JOIN (SELECT co_contratti.id, idanagrafica, CONCAT('Contratto ', numero, ' del ', DATE_FORMAT(data_bozza, '%d/%m/%Y'), ' - ', co_contratti.nome, ' [', `co_staticontratti`.`descrizione` , ']') AS descrizione FROM co_contratti LEFT JOIN co_staticontratti ON co_contratti.idstato=co_staticontratti.id WHERE co_contratti.predefined=1 AND is_pianificabile=1) AS contratto ON an_anagrafiche.idanagrafica=contratto.idanagrafica |where| ORDER BY ragione_sociale";
+        $id_azienda = setting('Azienda predefinita');
+
+        $query = "SELECT an_anagrafiche.idanagrafica AS id, is_bloccata, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')')), IF(an_anagrafiche.deleted_at IS NULL, '', ' (".tr('eliminata').")'), IF(is_bloccata = 1, CONCAT(' (', an_relazioni.descrizione, ')'), '') ) AS descrizione, idtipointervento_default AS idtipointervento, in_tipiintervento.descrizione AS idtipointervento_descrizione, an_anagrafiche.idzona, contratto.id AS id_contratto, contratto.descrizione AS descrizione_contratto, co_pagamenti.id AS id_pagamento, co_pagamenti.descrizione AS desc_pagamento, banca_vendite.id AS id_banca_vendite, CONCAT(banca_vendite.nome, ' - ', banca_vendite.iban) AS descrizione_banca_vendite FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica LEFT JOIN in_tipiintervento ON an_anagrafiche.idtipointervento_default=in_tipiintervento.idtipointervento LEFT JOIN an_relazioni ON an_anagrafiche.idrelazione=an_relazioni.id LEFT JOIN (SELECT co_contratti.id, idanagrafica, CONCAT('Contratto ', numero, ' del ', DATE_FORMAT(data_bozza, '%d/%m/%Y'), ' - ', co_contratti.nome, ' [', `co_staticontratti`.`descrizione` , ']') AS descrizione FROM co_contratti LEFT JOIN co_staticontratti ON co_contratti.idstato=co_staticontratti.id WHERE co_contratti.predefined=1 AND is_pianificabile=1) AS contratto ON an_anagrafiche.idanagrafica=contratto.idanagrafica LEFT JOIN co_pagamenti ON an_anagrafiche.idpagamento_vendite=co_pagamenti.id LEFT JOIN co_banche banca_vendite ON co_pagamenti.idconto_vendite = banca_vendite.id_pianodeiconti3 AND banca_vendite.id_anagrafica = ".prepare($id_azienda)." AND banca_vendite.deleted_at IS NULL AND banca_vendite.predefined = 1 |where| ORDER BY ragione_sociale";
 
         foreach ($elements as $element) {
             $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
@@ -31,7 +33,7 @@ switch ($resource) {
 
         $where[] = "an_tipianagrafiche.descrizione='Cliente'";
         if (empty($filter)) {
-            $where[] = 'deleted_at IS NULL';
+            $where[] = 'an_anagrafiche.deleted_at IS NULL';
         }
 
         if (!empty($search)) {
@@ -60,15 +62,17 @@ switch ($resource) {
         break;
 
     case 'fornitori':
-        $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')')), IF(deleted_at IS NULL, '', ' (".tr('eliminata').")')) AS descrizione, idtipointervento_default AS idtipointervento FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
+        $id_azienda = setting('Azienda predefinita');
+
+        $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')')), IF(an_anagrafiche.deleted_at IS NULL, '', ' (".tr('eliminata').")')) AS descrizione, idtipointervento_default AS idtipointervento, co_pagamenti.id AS id_pagamento, co_pagamenti.descrizione AS desc_pagamento, banca_acquisti.id AS id_banca_acquisti, CONCAT(banca_acquisti.nome, ' - ', banca_acquisti.iban) AS descrizione_banca_acquisti FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica LEFT JOIN co_pagamenti ON an_anagrafiche.idpagamento_acquisti=co_pagamenti.id LEFT JOIN co_banche banca_acquisti ON co_pagamenti.idconto_acquisti = banca_acquisti.id_pianodeiconti3 AND banca_acquisti.id_anagrafica = ".prepare($id_azienda)." AND banca_acquisti.deleted_at IS NULL AND banca_acquisti.predefined = 1 |where| ORDER BY ragione_sociale";
 
         foreach ($elements as $element) {
             $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
         }
 
-        $where[] = "descrizione='Fornitore'";
+        $where[] = "an_tipianagrafiche.descrizione='Fornitore'";
         if (empty($filter)) {
-            $where[] = 'deleted_at IS NULL';
+            $where[] = 'an_anagrafiche.deleted_at IS NULL';
         }
 
         if (!empty($search)) {

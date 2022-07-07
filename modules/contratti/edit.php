@@ -441,6 +441,16 @@ $("#idanagrafica_c").change(function() {
 
     $("#idsede").selectReset();
     $("#matricolaimpianto").selectReset();
+    $("#idpagamento").selectReset();
+
+    let data = $(this).selectData();
+    if (data) {
+        // Impostazione del tipo di pagamento da anagrafica
+        if (data.id_pagamento) {
+            input("idpagamento").getElement()
+                .selectSetNew(data.id_pagamento, data.desc_pagamento);
+        }
+    }
 });
 
 $("#codice_cig, #codice_cup").bind("keyup change", function(e) {

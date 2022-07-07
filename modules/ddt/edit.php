@@ -502,6 +502,16 @@ $("#idanagrafica").change(function() {
     session_set("superselect,idanagrafica", $(this).val(), 0);
 
     $("#idsede_'.($dir == 'uscita' ? 'partenza' : 'destinazione').'").selectReset();
+    $("#idpagamento").selectReset();
+
+    let data = $(this).selectData();
+	if (data) {
+        // Impostazione del tipo di pagamento da anagrafica
+        if (data.id_pagamento) {
+            input("idpagamento").getElement()
+                .selectSetNew(data.id_pagamento, data.desc_pagamento);
+        }
+    }
 });
 </script>';
 

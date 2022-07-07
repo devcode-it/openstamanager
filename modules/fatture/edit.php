@@ -373,7 +373,7 @@ echo '
 				<div class="col-md-3">
                     <?php echo !empty($record['idpagamento']) ? Modules::link('Pagamenti', $record['idpagamento'], null, null, 'class="pull-right"') : ''; ?>
 
-					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "ajax-source": "pagamenti", "value": "$idpagamento$", "extra": "onchange=\"$('#id_banca_azienda').selectSetNew( $(this).selectData().id_banca_<?php echo $conto; ?>, $(this).selectData().descrizione_banca_<?php echo $conto; ?> ).change(); \" " ]}
+					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "ajax-source": "pagamenti", "value": "$idpagamento$", "extra": "onchange=\"if($(this).selectData()) {$('#id_banca_azienda').selectSetNew( $(this).selectData().id_banca_<?php echo $conto; ?>, $(this).selectData().descrizione_banca_<?php echo $conto; ?> ).change();} \" " ]}
 				</div>
 
 				<div class="col-md-3">
@@ -916,7 +916,19 @@ echo '
         session_set("superselect,idanagrafica", $(this).val(), 0);
 
         $("#idreferente").selectReset();
-        $("#id_dichiarazione_intento").selectReset();';
+        $("#id_dichiarazione_intento").selectReset();
+        $("#idpagamento").selectReset();
+        $("#id_banca_azienda").selectReset();
+
+        let data = $(this).selectData();
+        if (data) {
+            // Impostazione del tipo di pagamento da anagrafica
+            if (data.id_pagamento) { 
+                input("idpagamento").getElement()
+                    .selectSetNew(data.id_pagamento, data.desc_pagamento, {"id_banca_vendite": data.id_banca_vendite, "id_banca_acquisti": data.id_banca_acquisti, "descrizione_banca_vendite": data.descrizione_banca_vendite, "descrizione_banca_acquisti": data.descrizione_banca_acquisti});
+            }
+        }';
+        
         
 
         if ($dir == 'entrata') {

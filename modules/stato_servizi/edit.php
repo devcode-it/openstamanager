@@ -155,8 +155,8 @@ if (Services::isEnabled()) {
             echo '
                 <tr class="'.($scadenza->lessThan(Carbon::now()) ? 'danger' : ($scadenza->lessThan($limite_scadenze) ? 'warning' : '')).'">
                     <td>'.$servizio['name'].'</td>
-                    <td>'.(($servizio['credits'] < 100 && $servizio['credits'] !== null) ? '<b><i class="fa fa-icon fa-warning text-warning" ></i> ' : '').(($servizio['credits'] !== null) ? $servizio['credits'] : '-').(($servizio['credits'] < 100 && $servizio['credits'] !== null) ? '</b>' : '').'</td>
-                    <td>'.((Carbon::now()->diffInDays($scadenza, false) < $days && $scadenza) ? '<b><i class="fa fa-icon fa-warning text-warning" ></i> ' : '').dateFormat($scadenza).' ('.$scadenza->diffForHumans().')'.((Carbon::now()->diffInDays($scadenza, false) < $days && $scadenza) ? '</b>' : '').'</td>
+                    <td>'.(($servizio['credits'] < 100 && $servizio['credits'] !== null) ? '<b><i class="fa fa-warning text-warning" ></i> ' : '').(($servizio['credits'] !== null) ? $servizio['credits'] : '-').(($servizio['credits'] < 100 && $servizio['credits'] !== null) ? '</b>' : '').'</td>
+                    <td>'.((Carbon::now()->diffInDays($scadenza, false) < $days && $scadenza) ? '<b><i class="fa fa-warning text-warning" ></i> ' : '').dateFormat($scadenza).' ('.$scadenza->diffForHumans().')'.((Carbon::now()->diffInDays($scadenza, false) < $days && $scadenza) ? '</b>' : '').'</td>
                 </tr>';
         }
 

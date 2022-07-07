@@ -1582,8 +1582,13 @@ class FatturaElettronica
 
         $co_pagamenti = $database->fetchOne('SELECT * FROM `co_pagamenti` WHERE `id` = '.prepare($documento['idpagamento']));
 
+        /**
+         * TP01 - A Rate
+         * TP02 - Unica Soluzione
+         * TP03 - Anticipato
+        */
         $result = [
-            'CondizioniPagamento' => ($co_pagamenti['prc'] == 100) ? 'TP02' : 'TP01',
+            'CondizioniPagamento' => ($co_pagamenti['prc'] < 100) ? 'TP01' : 'TP02',
         ];
 
         $co_scadenziario = $database->fetchArray('SELECT * FROM `co_scadenziario` WHERE `iddocumento` = '.prepare($documento['id']));

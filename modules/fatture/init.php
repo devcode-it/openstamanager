@@ -75,11 +75,10 @@ if (isset($id_record)) {
             return $item->aliquota != null && substr($item->aliquota->codice_natura_fe, 0, 2) == 'N6';
         })->id; 
         $autofattura_vendita = Fattura::find($fattura->id_autofattura);
-        if (empty($autofattura_vendita) && !empty($fattura->progressivo_invio)) {
-            $autofattura_collegata = Fattura::where('progressivo_invio', '=', $fattura->progressivo_invio)->where('id', '!=', $fattura->id)->first();
-        }
-        $abilita_autofattura = (($fattura->anagrafica->nazione->iso2 != 'IT' && !empty($fattura->anagrafica->nazione->iso2)) || $reverse_charge) && $dir == 'uscita' && $fattura->id_autofattura == null && empty($autofattura_collegata);
+        
+        $abilita_autofattura = (($fattura->anagrafica->nazione->iso2 != 'IT' && !empty($fattura->anagrafica->nazione->iso2)) || $reverse_charge) && $dir == 'uscita' && $fattura->id_autofattura == null;
 
         $fattura_acquisto_originale = Fattura::where('id_autofattura', '=', $fattura->id)->first();
+        $autofattura_collegata = Fattura::where('id_autofattura', '=', $fattura->id)->where('id', '!=', $fattura_acquisto_originale->id)->orderBy('id', 'DESC')->first();
     }
 }

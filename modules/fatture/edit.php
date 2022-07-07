@@ -113,12 +113,10 @@ if ($abilita_autofattura) {
         ])).'</b>
     </div>';
 } elseif ($autofattura_collegata != null) {
-    $link_module = $fattura->direzione == 'entrata' ? 'Fatture di acquisto' : 'Fatture di vendita';
-    $link_desc = $fattura->direzione == 'entrata' ? tr("Questa autofattura è già stata importata come fattura di acquisto") : tr("È presente un'autofattura collegata");
     echo '
     <div class="alert alert-info">
-        <i class="fa fa-info"></i> '.$link_desc.':
-        <b>'.Modules::link($link_module, $autofattura_collegata->id, tr('Fattura num. _NUM_ del _DATE_', [
+        <i class="fa fa-info"></i> '.tr("Questa autofattura è già stata importata come fattura di acquisto").':
+        <b>'.Modules::link('Fatture di acquisto', $autofattura_collegata->id, tr('Fattura num. _NUM_ del _DATE_', [
             '_NUM_' => $autofattura_collegata->numero_esterno,
             '_DATE_' => dateFormat($autofattura_collegata->data),
         ])).'</b>

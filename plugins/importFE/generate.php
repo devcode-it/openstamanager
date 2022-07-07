@@ -18,6 +18,7 @@
  */
 
 use Carbon\Carbon;
+use Modules\Fatture\Fattura;
 use Modules\Pagamenti\Pagamento;
 use Plugins\ImportFE\FatturaElettronica;
 use Util\XML;
@@ -263,6 +264,25 @@ if (!empty($anagrafica)) {
         echo '
         <div class="col-md-3">
             {[ "type": "select", "label": "'.tr('Collega a fattura pro-forma').'", "name": "ref_fattura", "values": "query='.$query.'" ]}
+        </div>';
+    } elseif ($is_autofattura) {
+        $query = "SELECT
+            co_documenti.id,
+            CONCAT('Fattura num. ', co_documenti.numero_esterno, ' del ', DATE_FORMAT(co_documenti.data, '%d/%m/%Y')) AS descrizione
+        FROM co_documenti
+            INNER JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento
+        WHERE
+            co_tipidocumento.dir = 'entrata' AND
+            co_tipidocumento.codice_tipo_documento_fe IN('TD16', 'TD17', 'TD18', 'TD19', 'TD20') AND
+            (co_documenti.data BETWEEN NOW() - INTERVAL 1 YEAR AND NOW()) AND
+            co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE descrizione != 'Bozza') AND
+            co_documenti.idanagrafica = ".prepare($anagrafica->id);
+
+        $autofattura_collegata = Fattura::where('progressivo_invio', '=', $fattura_pa->getHeader()['DatiTrasmissione']['ProgressivoInvio'])->first();
+
+        echo '
+        <div class="col-md-3">
+            {[ "type": "select", "label": "'.tr('Autofattura collegata').'", "name": "autofattura", "values": "query='.$query.'", "value": "'.$autofattura_collegata->id.'" ]}
         </div>';
     }
 }

@@ -144,22 +144,24 @@ switch (filter('op')) {
         $id_fattura = $fattura_pa->save($info);
         $fattura_pa->delete();
         $fattura = Fattura::find($id_fattura);
+        $id_autofattura = post('autofattura');
 
-        if ($fattura->isAutofattura()) {
-            $autofattura_collegata = Fattura::where('progressivo_invio', '=', $fattura->progressivo_invio)->where('id', '!=', $fattura->id)->first();
-            if (!empty($autofattura_collegata)) {
-                $fattura->registraScadenze(true);
-                $autofattura_collegata->registraScadenze(true);
-                $mastrino = Mastrino::build('Compensazione autofattura', $fattura->data, false, true);
+        if ($fattura->isAutofattura() && !empty($id_autofattura)) {
+            $autofattura_collegata = Fattura::find($id_autofattura);
+            $fattura->registraScadenze(true);
+            $autofattura_collegata->registraScadenze(true);
+            $mastrino = Mastrino::build('Compensazione autofattura', $fattura->data, false, true);
 
-                $movimento1 = Movimento::build($mastrino, $fattura->anagrafica->idconto_cliente);
-                $movimento1->setTotale($fattura->totale, 0);
-                $movimento1->save();
+            $movimento1 = Movimento::build($mastrino, $fattura->anagrafica->idconto_cliente);
+            $movimento1->setTotale($fattura->totale, 0);
+            $movimento1->save();
 
-                $movimento2 = Movimento::build($mastrino, $fattura->anagrafica->idconto_fornitore);
-                $movimento2->setTotale(0, $fattura->totale);
-                $movimento2->save();
-            }
+            $movimento2 = Movimento::build($mastrino, $fattura->anagrafica->idconto_fornitore);
+            $movimento2->setTotale(0, $fattura->totale);
+            $movimento2->save();
+
+            $fattura->id_autofattura = $id_autofattura;
+            $fattura->save();
         }
 
         // Aggiorno la tipologia di anagrafica fornitore

@@ -875,7 +875,6 @@ class FatturaElettronica
     {
         $documento = $fattura->getDocumento();
         $azienda = static::getAzienda();
-        $cliente = $fattura->getCliente();
 
         $result = [
             'TipoDocumento' => $documento->tipo->codice_tipo_documento_fe,

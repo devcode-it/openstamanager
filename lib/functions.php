@@ -243,7 +243,7 @@ function translateTemplate()
 
     // Informazioni estese sulle azioni dell'utente
     $op = post('op');
-    if (!empty($op)) {
+    if (!empty($op) && $op != 'summable-results') {
         OperationLog::setInfo('id_module', $id_module);
         OperationLog::setInfo('id_plugin', $id_plugin);
         OperationLog::setInfo('id_record', $id_record);

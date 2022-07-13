@@ -76,7 +76,7 @@ if (Auth::check()) {
             clock();
 
             // Hooks
-            startHooks();
+            setTimeout("startHooks();", 1000);
 
             // Abilitazione del cron autonoma
             $.get(globals.rootdir + "/cron.php");

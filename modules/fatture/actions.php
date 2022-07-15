@@ -860,6 +860,7 @@ switch (post('op')) {
         $autofattura->idconto = $fattura->idconto;
         $autofattura->idpagamento = $fattura->idpagamento;
         $autofattura->is_fattura_conto_terzi = 1;
+        $autofattura->ref_documento = $fattura->id;
         $autofattura->save();
 
         $riga = Riga::build($autofattura);

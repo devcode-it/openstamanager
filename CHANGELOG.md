@@ -4,7 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.4.34]
+- [2.4.34 (2022-07-15)](#2434-2022-07-15)
 - [2.4.33 (2022-05-17)](#2433-2022-05-17)
 - [2.4.32 (2022-03-24)](#2432-2022-03-24)
 - [2.4.31 (2022-03-18)](#2431-2022-03-18)
@@ -46,14 +46,69 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
 
-## 2.4.34
+## 2.4.34 (2022-07-15)
 ### Aggiunto (Added)
-Aggiunta 3 nuove colonne nella vista attività, di default disattivate: ore, ricavi, costi
+- Aggiunta 3 nuove colonne nella vista attività, di default disattivate: ore, ricavi, costi
+- Gestione **provvigioni**
+- Gestione nodo CodiceArticolo da attributi avanzati
+- Aggiunta creazione al volo del preventivo dall'attività 
+- Gestione articolo confermato in fase di aggiunta articolo nei documenti tramite Barcode 
+- Aggiunta impostazione per controlli su stati FE 
+- Aggiunta visualizzazione **eventi** in dashboard
+- Aggiunta azione di gruppo per eliminazione impianti 
+- Aggiunta stampa **barcode** come azione di gruppo
+- Aggiunti controlli su eliminazione record
+- Aggiunta scelta minuti di snap in dashboard
+- Aggiunta stampa **scadenza** 
+- Aggiunto filtro per mostrare preventivi ai clienti
+- Aggiunto pulsante **allega fattura** in Scadenzario 
+- Aggiunto nuovo modulo **Provenienze**
+- Aggiunto nuovo modulo per gestire i **Settori merceologici**
+- Gestione chiusura scadenze in fase di registrazione contabile
+- Aggiunto controllo per seriali duplicati
+- Aggiunto link alla guida su pagina info
+- Aggiunto nuovo plugin **Statistiche vendita** in Articoli
+- Aggiunto grafico **Nuovi clienti** per mese in Statistiche 
+- Aggiunto avviso per sessioni di lavoro a zero
+- Aggiunto riferimento fattura di acquisto su autofattura
+- Aggiunto flag autofatture in segmenti per calcolo statistiche
+
+### Modificato (Changed)
+ - Controllo sfondo lista fatture in base al segmento
+ - Rimozione filtro obsoleto su ricerca tipo anagrafica
+ - Miglioramenti campo Agente nei documenti di vendita
+ - Visualizzazione avviso fatture solo se invio FE è attivato
+ - Miglioramenti modulo Fasce orarie
+ - Rimossa visualizzazione pulsanti nel top per utenti diversi da amministratori
+ - Modifica controlli fatture di vendita duplicate
+ - Rimozione replace caratteri in fase di export FE
+ 
+### Fixed
+ - Fix css personalizzato
+ - Fix controllo invio fatture in ritardo
+ - Fix colorazione agente di default
+ - Fix visualizzazione totale righe intervento
+ - Fix export righe con ritenuta 
+ - Fix set sezionale in fase di creazione fattura da bulk 
+ - Fix aggiunta intervento al preventivo 
+ - Fix ajax select fasce orarie 
+ - Fix invio allegati stampe mail
+ - Fix esportazioni bancarie
+ - Fix visualizzazione dati sede in attività
+ - Fix set stato in fase di creazione nota di credito
+ - Fix eliminazione fattura collegata a Nota di credito
+ - Fix visualizzazione fatture scadute in fase di aggiunta fattura 
+ - Fix modifica orario intervento in dashboard
+ - Fix calcolo colonna Netto a pagare in Fatture
+ - Fix visualizzazione scadenze in fatture
+ - Fix codice destinatario autofatture
+ - Fix logica Condizioni di pagamento
+ - Fix aggiunta listini per range
 
 ## 2.4.33 (2022-05-17)
 
 ### Aggiunto (Added)
- - Introduzione modulo fasce orarie e modulo eventi 
+ - Introduzione modulo **fasce orarie** e modulo **eventi** 
  - Aggiunto pulsante per visualizzare movimenti prima nota
  - Cambio prezzo unitario listino da azioni di gruppo
  - Introduzione fasce orarie per il tipo di attività
@@ -64,15 +119,15 @@ Aggiunta 3 nuove colonne nella vista attività, di default disattivate: ore, ric
  - Aggiunti alert in fase di aggiunta riga per importi negativi e sconti
  - Aggiunta visualizzazione campi collegati alla sede
  - Aggiunto help su conto predefinito nelle banche
- - Aggiunta tabella regioni
+ - Aggiunta tabella **regioni**
  - Aggiunto sezionale fatture di acquisto non elettroniche 
- - Aggiunta azione di gruppo per l'importazione delle ricevute 
+ - Aggiunta azione di gruppo per l'importazione delle **ricevute** 
  - Aggiunta al volo Sede dal plugin Referenti
  - Gestione installazione da zip per i templates di stampa
- - Aggiunta ricerca datatables per i valori !=
+ - Aggiunta **ricerca** datatables per i valori !=
  - Gestione esclusione allegati import FE
  - Aggiunto controllo su fattura già importata 
- - Aggiunta gestione Autofattura
+ - Aggiunta gestione **Autofattura**
  - Aggiunti controlli sulla stato documento delle fatture di vendita 
  - Gestione conti predefiniti crediti e debiti tramite impostazione 
  - Aggiunta possibilità di selezionare la creazione degli articoli in fase di importazione FE

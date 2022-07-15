@@ -317,7 +317,9 @@ function redirect(href, data, method, blank) {
         var text = '<form action="' + href + window.location.hash + '" method="post"' + (blank ? ' target="_blank"' : '') + '>';
 
         for (var name in data) {
-            text += '<input type="hidden" name="' + name + '" value="' + data[name] + '"/>';
+            if (name != 'msg') {
+                text += '<input type="hidden" name="' + name + '" value="' + data[name] + '"/>';
+            }
         }
 
         text += '</form>';

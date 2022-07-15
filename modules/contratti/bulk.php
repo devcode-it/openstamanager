@@ -141,7 +141,7 @@ switch (post('op')) {
 
                 $new_contratto = $contratto->replicate();
 
-                $new_contratto->numero = Contratto::getNextNumero();
+                $new_contratto->numero = Contratto::getNextNumero($contratto->data_conclusione->copy()->addDays(1));
 
                 $new_contratto->idcontratto_prev = $contratto->id;
                 $new_contratto->data_accettazione = $contratto->data_conclusione->copy()->addDays(1);
@@ -217,7 +217,7 @@ switch (post('op')) {
                 '_NUM_' => $numero_totale,
             ]));
         } else {
-            flash()->warning(tr('Nessun contratto fatturato!'));
+            flash()->warning(tr('Nessun contratto rinnovato!'));
         }
         break;
 }
@@ -239,7 +239,7 @@ $operations['renew_contratto'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Rinnova contratti').'</span>',
     'data' => [
         'title' => tr('Rinnovare i contratti selezionati?').'</span>',
-        'msg' => ''.tr('Il contratto è rinnovabile se sono definite le date di accettazione e conclusione e si trova in uno di questi stati: _STATE_LIST_', ['_STATE_LIST_' => $stati_pianificabili]),
+        'msg' => ''.tr('Un contratto è rinnovabile se presenta una data di accettazione e conclusione, se il rinnovo è abilitato dal plugin Rinnovi e se si trova in uno di questi stati: _STATE_LIST_', ['_STATE_LIST_' => $stati_completati]),
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

@@ -80,12 +80,14 @@ $ddt_uscita = DDT::whereBetween('data', [$start, $end])
 $totale_ddt_uscita = $ddt_uscita->sum('totale_imponibile');
 
 // Fatture di vendita
+$segmenti = $dbo->select('zz_segments', 'id', ['autofatture' => 0]);
 $fatture_vendita = Fattura::whereBetween('data', [$start, $end])
     ->where('idanagrafica', $id_record)
     ->whereHas('tipo', function ($query) {
         return $query->where('co_tipidocumento.dir', '=', 'entrata')
             ->where('co_tipidocumento.reversed', '=', 0);
     })
+    ->whereIn('id_segment', array_column($segmenti, 'id'))
     ->get();
 $note_credito = Fattura::whereBetween('data', [$start, $end])
     ->where('idanagrafica', $id_record)

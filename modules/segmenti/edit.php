@@ -118,12 +118,16 @@ if (string_contains($current_module['option'], '|segment')) {
             </div>
 
 			<div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     {[ "type": "checkbox", "label": "<?php echo tr('Predefinito note di credito'); ?>", "name": "predefined_accredito", "value": "$predefined_accredito$", "help": "<?php echo tr('Seleziona per rendere il sezionale predefinito per le note di credito'); ?>", "placeholder": "<?php echo tr('Sezionale predefinito per le note di credito'); ?>"  ]}
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-4">
                     {[ "type": "checkbox", "label": "<?php echo tr('Predefinito note di debito'); ?>", "name": "predefined_addebito", "value": "$predefined_addebito$", "help": "<?php echo tr('Seleziona per rendere il sezionale predefinito per le note di debito'); ?>", "placeholder": "<?php echo tr('Sezionale predefinito per le note di debito'); ?>"  ]}
+                </div>
+
+                <div class="col-md-4">
+                    {[ "type": "checkbox", "label": "<?php echo tr('Autofatture'); ?>", "name": "autofatture", "value": "$autofatture$" ]}
                 </div>
 			</div>
 

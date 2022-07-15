@@ -55,6 +55,7 @@ switch (post('op')) {
             'is_fiscale' => post('is_fiscale'),
             'predefined_accredito' => $predefined_accredito,
             'predefined_addebito' => $predefined_addebito,
+            'autofatture' => post('autofatture'),
         ], ['id' => $id_record]);
 
         flash()->info(tr('Modifiche salvate correttamente'));

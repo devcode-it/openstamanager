@@ -20,6 +20,7 @@
 use Carbon\Carbon;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Nazione;
+use Modules\Fatture\Fattura;
 use Modules\Fatture\Gestori\Bollo;
 use Modules\Interventi\Intervento;
 use Modules\Iva\Aliquota;
@@ -119,6 +120,38 @@ if ($abilita_autofattura) {
         <b>'.Modules::link('Fatture di acquisto', $autofattura_collegata->id, tr('Fattura num. _NUM_ del _DATE_', [
             '_NUM_' => $autofattura_collegata->numero_esterno,
             '_DATE_' => dateFormat($autofattura_collegata->data),
+        ])).'</b>
+    </div>';
+}
+
+// Note di credito collegate
+if (!empty($note_accredito)) {
+    echo '
+<div class="alert alert-info text-center">'.tr('Note di credito collegate').':';
+    foreach ($note_accredito as $nota) {
+        $text = tr('Rif. fattura _NUM_ del _DATE_', [
+            '_NUM_' => $nota['numero'],
+            '_DATE_' => Translator::dateToLocale($nota['data']),
+        ]);
+
+        echo '
+    <br>'.Modules::link('Fatture di vendita', $nota['id'], $text, $text);
+    }
+    echo '
+</div>';
+}
+
+// Fattura originale della Nota di credito
+if (!empty($fattura->ref_documento) && $fattura->isNota()) {
+    $nota = Fattura::find($fattura->ref_documento);
+    echo '
+    <div class="alert alert-info">
+        <i class="fa fa-info"></i> '.tr("Questa è una _TIPO_ generata dalla seguente fattura", [
+            '_TIPO_' => $fattura->tipo->descrizione,
+        ]).':
+        <b>'.Modules::link($module->name, $fattura->ref_documento, tr('Fattura num. _NUM_ del _DATE_', [
+            '_NUM_' => $nota->numero_esterno,
+            '_DATE_' => dateFormat($nota->data),
         ])).'</b>
     </div>';
 }
@@ -956,22 +989,6 @@ echo '
         })
     });
 </script>';
-
-if (!empty($note_accredito)) {
-    echo '
-<div class="alert alert-info text-center">'.tr('Note di credito collegate').':';
-    foreach ($note_accredito as $nota) {
-        $text = tr('Rif. fattura _NUM_ del _DATE_', [
-            '_NUM_' => $nota['numero'],
-            '_DATE_' => Translator::dateToLocale($nota['data']),
-        ]);
-
-        echo '
-    <br>'.Modules::link('Fatture di vendita', $nota['id'], $text, $text);
-    }
-    echo '
-</div>';
-}
 
 ?>
 

@@ -48,20 +48,20 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 
 ## 2.4.34 (2022-07-15)
 ### Aggiunto (Added)
-- Aggiunta 3 nuove colonne nella vista attività, di default disattivate: ore, ricavi, costi
+- Aggiunte 3 nuove colonne nella vista attività, di default disattivate: ore, ricavi, costi
 - Gestione **provvigioni**
 - Gestione nodo CodiceArticolo da attributi avanzati
 - Aggiunta creazione al volo del preventivo dall'attività 
-- Gestione articolo confermato in fase di aggiunta articolo nei documenti tramite Barcode 
-- Aggiunta impostazione per controlli su stati FE 
+- Gestione articolo confermato in fase di aggiunta articolo nei documenti tramite barcode 
+- Aggiunta impostazione per controlli su stati FE
 - Aggiunta visualizzazione **eventi** in dashboard
-- Aggiunta azione di gruppo per eliminazione impianti 
+- Aggiunta azione di gruppo per eliminazione **Impianti** 
 - Aggiunta stampa **barcode** come azione di gruppo
-- Aggiunti controlli su eliminazione record
-- Aggiunta scelta minuti di snap in dashboard
+- Aggiunti controlli su eliminazione **Impianti**
+- Aggiunta scelta minuti di snap in **Dashboard**
 - Aggiunta stampa **scadenza** 
-- Aggiunto filtro per mostrare preventivi ai clienti
-- Aggiunto pulsante **allega fattura** in Scadenzario 
+- Aggiunto filtro per mostrare **Preventivi** ai clienti
+- Aggiunto pulsante allega fattura in **Scadenzario** 
 - Aggiunto nuovo modulo **Provenienze**
 - Aggiunto nuovo modulo per gestire i **Settori merceologici**
 - Gestione chiusura scadenze in fase di registrazione contabile
@@ -69,9 +69,9 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Aggiunto link alla guida su pagina info
 - Aggiunto nuovo plugin **Statistiche vendita** in Articoli
 - Aggiunto grafico **Nuovi clienti** per mese in Statistiche 
-- Aggiunto avviso per sessioni di lavoro a zero
-- Aggiunto riferimento fattura di acquisto su autofattura
-- Aggiunto flag autofatture in segmenti per calcolo statistiche
+- Aggiunto avviso per **sessioni di lavoro** a zero
+- Aggiunto riferimento fattura di acquisto su **autofattura**
+- Aggiunto flag autofatture in **Segmenti** per calcolo statistiche
 
 ### Modificato (Changed)
  - Controllo sfondo lista fatture in base al segmento
@@ -98,12 +98,12 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Fix set stato in fase di creazione nota di credito
  - Fix eliminazione fattura collegata a Nota di credito
  - Fix visualizzazione fatture scadute in fase di aggiunta fattura 
- - Fix modifica orario intervento in dashboard
+ - Fix modifica orario intervento in Dashboard
  - Fix calcolo colonna Netto a pagare in Fatture
- - Fix visualizzazione scadenze in fatture
+ - Fix visualizzazione scadenze in Fatture
  - Fix codice destinatario autofatture
  - Fix logica Condizioni di pagamento
- - Fix aggiunta listini per range
+ - Fix aggiunta Listini per range
 
 ## 2.4.33 (2022-05-17)
 

@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://openstamanager.com">
-    <img src="https://www.openstamanager.com/wp-content/uploads/2015/04/logo_full-2.png">
+    <img src="https://shop.openstamanager.com/wp-content/uploads/2015/04/logo_full-2.png">
   </a>
 
   <p align="center">
@@ -89,14 +89,7 @@ Per ulteriori informazioni sui pacchetti che forniscono questi elementi di defau
 git clone https://github.com/devcode-it/openstamanager.git
 cd openstamanager
 
-# Installazione di composer (è consigliato utilizzare i comandi proposti su https://getcomposer.org/download/)
-php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-
-# Può essere saltato ma meglio scaricare dal sito ufficiale di composer
-php -r "if (hash_file('sha384', 'composer-setup.php') === '55ce33d7678c5a611085589f1f3ddf8b3c52d662cd01d4ba75c0ee0459970c2200a51f492d557530c71c15d8dba01eae') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
-
-php composer-setup.php
-php -r "unlink('composer-setup.php');"
+# Download di composer da https://getcomposer.org/download/
 
 yarn develop-OSM
 ```
@@ -158,12 +151,13 @@ In questo modo è possibile ottenere un'ulteriore garanzia sul funzionamento del
 
 La community è una componente importante in un progetto open-source, perché mette in contatto utenti e programmatori tra di loro e permette pertanto l'individuazione di soluzioni innovative e migliori.
 
-Siamo presenti su [Facebook](https://www.facebook.com/openstamanager), e il nostro forum ufficiale è disponibile all'indirizzo <https://forum.openstamanager.com>, dove potete segnalare i vostri problemi e soddisfare le vostre curiosità nelle sezioni più adeguate.
-**Attenzione**: vi ricordiamo che non vi è nessuna garanzia che qualcuno risponda in tempo alle vostre richieste o problemi.
+Siamo presenti su [Facebook](https://www.facebook.com/openstamanager), [Twitter](https://twitter.com/openstamanager/), [YouTube](https://www.youtube.com/channel/UCoToaK4dhDXmcQXi1AnqQ4Q) e il nostro forum ufficiale è disponibile all'indirizzo <https://forum.openstamanager.com>, dove potete segnalare i vostri problemi e soddisfare le vostre curiosità nelle sezioni più adeguate.
 
 ## Contribuire
 
 Per poter contribuire ed eseguire i test automatici, si consiglia di seguire le indicazioni descritte all'interno della [documentazione ufficiale](https://github.com/devcode-it/openstamanager/blob/master/.github/CONTRIBUTING.md).
+
+Se volete contribuire attivamente con semplici migliorie o correzioni potete cercare tra le [issue per i nuovi contributori](https://github.com/devcode-it/openstamanager/issues?q=is%3Aissue+is%3Aopen+label%3A%22nuovi+contributori%22).
 
 ## Licenza
 

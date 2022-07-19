@@ -71,26 +71,10 @@ Se sei in grado di risolvere uno dei bug segnalati oppure vuoi completare una nu
 
 ## Community
 
-Siamo presenti su [Facebook](https://www.facebook.com/openstamanager), e il nostro forum ufficiale è disponibile all'indirizzo <http://www.openstamanager.com/forum/>.
+Siamo presenti su [Facebook](https://www.facebook.com/openstamanager) e il nostro forum ufficiale è disponibile all'indirizzo <http://www.openstamanager.com/forum/>.
 
 Cerchiamo di essere disponibili quanto possibile, ma non sempre riusciamo a rispondere tempestivamente.
 
 ## Testing
 
-Il progetto presenta, a partire dalla versione 2.4.2, un insieme di test per facilitare il controllo sul corretto funzionamento del gestionale.
-
-E' innanzitutto necessario configurare correttamente l'ambiente locale per l'esecuzione dei test:
-- Impostare l'URL del web server locale nel file `codeception.yml` per Codeception
-```yml
-modules:
-    config:
-        WebDriver:
-            url: http://localhost/openstamanager
-```
-- Scaricare (ChromeDriver)[https://sites.google.com/a/chromium.org/chromedriver/getting-started], rendendolo eseguibile da riga di comando (su Windows, aggiungerlo al PATH)
-
-E' quindi possibile eseguire i tests avviando dapprima il server ChromeDriver e poi Codeception in shell differenti:
-```bash
-chromedriver --url-base=/wd/hub
-php codecept.phar run --steps
-```
+Abbiamo creato un **[repository per i tests automatici](https://github.com/devcode-it/openstamanager-tests)** apposito contenente scripts in Python per eseguire i test automatici.

@@ -151,7 +151,7 @@ In questo modo è possibile ottenere un'ulteriore garanzia sul funzionamento del
 
 La community è una componente importante in un progetto open-source, perché mette in contatto utenti e programmatori tra di loro e permette pertanto l'individuazione di soluzioni innovative e migliori.
 
-Siamo presenti su [Facebook](https://www.facebook.com/openstamanager), [Twitter](https://twitter.com/openstamanager/), [YouTube](https://www.youtube.com/channel/UCoToaK4dhDXmcQXi1AnqQ4Q) e il nostro forum ufficiale è disponibile all'indirizzo <https://forum.openstamanager.com>, dove potete segnalare i vostri problemi e soddisfare le vostre curiosità nelle sezioni più adeguate.
+Siamo presenti su [Facebook](https://www.facebook.com/openstamanager), [Twitter](https://twitter.com/openstamanager/), [YouTube](https://www.youtube.com/channel/UCoToaK4dhDXmcQXi1AnqQ4Q) e [Mastodon](https://mastodon.uno/@openstamanager) e il nostro forum ufficiale è disponibile all'indirizzo <https://forum.openstamanager.com>, dove potete segnalare i vostri problemi e soddisfare le vostre curiosità nelle sezioni più adeguate.
 
 ## Contribuire
 

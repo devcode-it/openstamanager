@@ -17,6 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Carbon\Carbon;
 include_once __DIR__.'/../../core.php';
 
 // Individuazione dati selezionabili
@@ -298,7 +299,7 @@ WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.id
 
     $mesi = collect($risultati_da_programmare)
         ->unique(function ($item) {
-            $data = new Carbon\Carbon($item['data']);
+            $data = Carbon::parse($item['data']);
 
             return $data->format('m-Y');
         })
@@ -308,12 +309,15 @@ WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.id
     <select class="superselect openstamanager-input select-input" id="mese-promemoria">';
 
     foreach ($mesi as $mese) {
-        $data = new Carbon\Carbon($mese['data']);
+        $data = Carbon::parse($mese['data']);
         $chiave = $data->format('mY');
         $testo = $data->formatLocalized('%B %Y');
 
+        
+        if (checkdate($data->format('m'), $data->format('d'), $data->format('Y'))){
         echo '
         <option value="'.$chiave.'">'.ucfirst($testo).'</option>';
+        }
     }
 
     echo '

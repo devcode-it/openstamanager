@@ -81,7 +81,12 @@ foreach ($righe as $riga) {
         $descrizione = Modules::link('Articoli', $riga->idarticolo, $riga->codice.' - '.$descrizione);
     }
     echo '
-                    '.$descrizione.'
+                    '.$descrizione;
+    if (!empty($riga->note)) {
+        echo '
+                    <br><small class="label label-default">'.nl2br($riga->note).'</small>';
+    }
+    echo '
                 </td>';
 
     // Data prevista evasione

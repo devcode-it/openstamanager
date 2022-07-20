@@ -199,6 +199,7 @@ switch (filter('op')) {
         }
 
         $articolo->descrizione = post('descrizione');
+        $articolo->note = post('note');
         $articolo->um = post('um') ?: null;
 
         $articolo->costo_unitario = post('costo_unitario') ?: 0;
@@ -235,6 +236,7 @@ switch (filter('op')) {
         }
 
         $sconto->descrizione = post('descrizione');
+        $sconto->note = post('note');
         $sconto->setScontoUnitario(post('sconto_unitario'), post('idiva'));
 
         $sconto->save();
@@ -258,6 +260,7 @@ switch (filter('op')) {
         }
 
         $riga->descrizione = post('descrizione');
+        $riga->note = post('note');
         $riga->um = post('um') ?: null;
 
         $riga->costo_unitario = post('costo_unitario') ?: 0;
@@ -290,7 +293,7 @@ switch (filter('op')) {
         }
 
         $riga->descrizione = post('descrizione');
-
+        $riga->note = post('note');
         $riga->save();
 
         if (post('idriga') != null) {

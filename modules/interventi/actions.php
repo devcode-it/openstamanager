@@ -492,6 +492,7 @@ switch (post('op')) {
 
         $articolo->idsede_partenza = post('idsede_partenza');
         $articolo->descrizione = post('descrizione');
+        $articolo->note = post('note');
         $articolo->um = post('um') ?: null;
         $articolo->idimpianto = post('id_impianto') ?: null;
 
@@ -538,7 +539,7 @@ switch (post('op')) {
 
         $sconto->descrizione = post('descrizione');
         $sconto->setScontoUnitario(post('sconto_unitario'), post('idiva'));
-
+        $sconto->note = post('note');
         $sconto->save();
 
         if (post('idriga') != null) {
@@ -559,6 +560,7 @@ switch (post('op')) {
         $qta = post('qta');
 
         $riga->descrizione = post('descrizione');
+        $riga->note = post('note');
         $riga->um = post('um') ?: null;
 
         $riga->costo_unitario = post('costo_unitario') ?: 0;

@@ -107,6 +107,10 @@ echo '
             }
         }
 
+        if (!empty($riga->note)) {
+                echo '
+                    <br><small class="label label-default">'.nl2br($riga->note).'</small>';
+        }
         echo '
                 </td>';
 

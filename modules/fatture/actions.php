@@ -487,6 +487,7 @@ switch (post('op')) {
         $qta = post('qta');
 
         $articolo->descrizione = post('descrizione');
+        $articolo->note = post('note');
         $articolo->um = post('um') ?: null;
 
         $articolo->id_iva = post('idiva');
@@ -538,6 +539,7 @@ switch (post('op')) {
         $sconto->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
 
         $sconto->descrizione = post('descrizione');
+        $sconto->note = post('note');
         $sconto->setScontoUnitario(post('sconto_unitario'), post('idiva'));
 
         $sconto->save();
@@ -563,6 +565,7 @@ switch (post('op')) {
         $qta = post('qta');
 
         $riga->descrizione = post('descrizione');
+        $riga->note = post('note');
         $riga->um = post('um') ?: null;
 
         $riga->id_iva = post('idiva');
@@ -603,7 +606,7 @@ switch (post('op')) {
         }
 
         $riga->descrizione = post('descrizione');
-
+        $riga->note = post('note');
         $riga->save();
 
         if (post('idriga') != null) {

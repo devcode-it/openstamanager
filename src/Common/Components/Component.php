@@ -238,6 +238,10 @@ abstract class Component extends Model
             }
         }
 
+        if (empty(setting('Aggiungi le note delle righe tra documenti'))) {
+            $attributes['note'] = null;
+        }
+
         // Impostazione del genitore
         $model->setDocument($document);
 

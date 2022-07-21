@@ -632,9 +632,9 @@ class Validator
             // Formattazione testo
             elseif ($info['type'] == 'string' || $info['type'] == 'normalizedString') {
                 
-                // Sostituzione tag e contenuti specifici per XML
+                // Sostituzione tag e contenuti specifici per XML (non sembra essere eseguita)
                 $output = htmlspecialchars($output, ENT_NOQUOTES | ENT_XML1 | ENT_SUBSTITUTE, 'UTF-8', false);
-
+                
                 // Sostituzione per caratteri personalizzati
                 $output = replace($output, [
                     '€' => 'euro',
@@ -648,7 +648,9 @@ class Validator
                     'ž' => 'z',
                 ]);
 
-                //$output = self::sanitizeXML($output);
+                $output = str_replace(array("\r", "\n"), '', $output);
+
+                //$output = self::sanitizeXML($output);  
             }
 
             // Riduzione delle dimensioni
@@ -689,6 +691,8 @@ class Validator
     /**
      * Removes invalid characters from a UTF-8 XML string
      *
+     * @deprecated 2.4.34
+     * 
      * @param string a XML string potentially containing invalid characters
      * @return string
      */

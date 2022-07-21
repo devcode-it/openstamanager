@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 echo '
-<button type="button" class="btn btn-primary" onclick="if( confirm(\'Duplicare questo preventivo?\') ){ $(\'#copia-preventivo\').submit(); }">
+<button type="button" class="btn btn-primary" onclick="copiaPreventivo();">
     <i class="fa fa-copy"></i> '.tr('Duplica preventivo').'
 </button>';
 
@@ -96,3 +96,22 @@ echo '
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="op" value="copy">
 </form>';
+
+echo '
+<script>
+function copiaPreventivo() {
+    swal({
+        title: "'.tr('Duplicare il preventivo?').'",
+        text: "'.tr('').'",
+        type: "info",
+        showCancelButton: true,
+        confirmButtonClass: "btn btn-lg btn-primary",
+        confirmButtonText: "'.tr('Duplica').'",
+    }).then(
+        function() {
+            $("#copia-preventivo").submit();
+        },
+        function() {}
+    );
+}
+</script>';

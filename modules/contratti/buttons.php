@@ -50,7 +50,7 @@ echo '
 
 // Duplica contratto
 echo '
-<button type="button" class="btn btn-primary" onclick="if( confirm(\''.tr('Duplicare questo contratto?').'\') ){ $(\'#copia-contratto\').submit(); }">
+<button type="button" class="btn btn-primary" onclick="copiaContratto();">
     <i class="fa fa-copy"></i> '.tr('Duplica contratto').'
 </button>';
 
@@ -59,3 +59,22 @@ echo '
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="op" value="copy">
 </form>';
+
+echo '
+<script>
+function copiaContratto() {
+    swal({
+        title: "'.tr('Duplicare il contratto?').'",
+        text: "'.tr('').'",
+        type: "info",
+        showCancelButton: true,
+        confirmButtonClass: "btn btn-lg btn-primary",
+        confirmButtonText: "'.tr('Duplica').'",
+    }).then(
+        function() {
+            $("#copia-contratto").submit();
+        },
+        function() {}
+    );
+}
+</script>';

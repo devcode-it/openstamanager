@@ -19,11 +19,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-echo '
-<button type="button" class="btn btn-primary ask btn-primary" '.(empty($record['is_reversed']) ? '' : 'disabled').' data-msg="'.tr('Duplicare questa fattura?').'"  data-op="copy" data-button="'.tr('Duplica').'" data-class="btn btn-lg btn-warning" data-backto="record-edit" >
-    <i class="fa fa-copy"></i> '.tr('Duplica fattura').'
-</button>';
-
 if ($module->name == 'Fatture di vendita') {
     $attributi_visibili = $record['dati_aggiuntivi_fe'] != null || $record['stato'] == 'Bozza';
 
@@ -119,3 +114,9 @@ if (!empty($record['is_fiscale'])) {
         </button>';
     }
 }
+
+// Duplica fattura
+echo '
+<button type="button" class="btn btn-primary ask" '.(empty($record['is_reversed']) ? '' : 'disabled').' data-title="'.tr('Duplicare questa fattura?').'" data-msg="'.tr('Clicca su tasto duplica per procedere.').'"  data-op="copy" data-button="'.tr('Duplica').'" data-class="btn btn-lg btn-primary" data-backto="record-edit" >
+    <i class="fa fa-copy"></i> '.tr('Duplica fattura').'
+</button>';

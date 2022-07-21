@@ -80,32 +80,7 @@ echo '
 
 // Duplica ddt
 echo '
-<button type="button" class="btn btn-primary" onclick="copiaDdt()">
+<button type="button" class="btn btn-primary ask" data-title="'.tr('Duplicare questo Ddt?').'" data-msg="'.tr('Clicca su tasto duplica per procedere.').'" data-op="copy" data-button="'.tr('Duplica').'" data-class="btn btn-lg btn-primary" data-backto="record-edit">
     <i class="fa fa-copy"></i> '.tr('Duplica ddt').'
 </button>';
 
-echo '
-<form action="" method="post" id="copia-ddt">
-    <input type="hidden" name="backto" value="record-edit">
-    <input type="hidden" name="op" value="copy">
-</form>';
-
-
-echo '
-<script>
-function copiaDdt() {
-    swal({
-        title: "'.tr('Duplicare il ddt?').'",
-        text: "'.tr('').'",
-        type: "info",
-        showCancelButton: true,
-        confirmButtonClass: "btn btn-lg btn-primary",
-        confirmButtonText: "'.tr('Duplica').'",
-    }).then(
-        function() {
-            $("#copia-ddt").submit();
-        },
-        function() {}
-    );
-}
-</script>';

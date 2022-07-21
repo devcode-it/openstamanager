@@ -50,31 +50,6 @@ echo '
 
 // Duplica contratto
 echo '
-<button type="button" class="btn btn-primary" onclick="copiaContratto();">
+<button type="button" class="btn btn-primary ask" data-title="'.tr('Duplicare questo contratto?').'" data-msg="'.tr('Clicca su tasto duplica per procedere.').'" data-op="copy" data-button="'.tr('Duplica').'" data-class="btn btn-lg btn-primary" data-backto="record-edit">
     <i class="fa fa-copy"></i> '.tr('Duplica contratto').'
 </button>';
-
-echo '
-<form action="" method="post" id="copia-contratto">
-    <input type="hidden" name="backto" value="record-edit">
-    <input type="hidden" name="op" value="copy">
-</form>';
-
-echo '
-<script>
-function copiaContratto() {
-    swal({
-        title: "'.tr('Duplicare il contratto?').'",
-        text: "'.tr('').'",
-        type: "info",
-        showCancelButton: true,
-        confirmButtonClass: "btn btn-lg btn-primary",
-        confirmButtonText: "'.tr('Duplica').'",
-    }).then(
-        function() {
-            $("#copia-contratto").submit();
-        },
-        function() {}
-    );
-}
-</script>';

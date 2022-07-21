@@ -19,11 +19,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-echo '
-<button type="button" class="btn btn-primary" onclick="copiaPreventivo();">
-    <i class="fa fa-copy"></i> '.tr('Duplica preventivo').'
-</button>';
-
 $stati_abilitati = $dbo->fetchOne('SELECT GROUP_CONCAT(`descrizione` SEPARATOR ", ") AS stati_abilitati FROM `co_statipreventivi` WHERE `is_revisionabile` = 1 ')['stati_abilitati'];
 
 // Crea revisione
@@ -92,26 +87,6 @@ echo '
 
 // Duplica preventivo
 echo '
-<form action="" method="post" id="copia-preventivo">
-    <input type="hidden" name="backto" value="record-edit">
-    <input type="hidden" name="op" value="copy">
-</form>';
-
-echo '
-<script>
-function copiaPreventivo() {
-    swal({
-        title: "'.tr('Duplicare il preventivo?').'",
-        text: "'.tr('').'",
-        type: "info",
-        showCancelButton: true,
-        confirmButtonClass: "btn btn-lg btn-primary",
-        confirmButtonText: "'.tr('Duplica').'",
-    }).then(
-        function() {
-            $("#copia-preventivo").submit();
-        },
-        function() {}
-    );
-}
-</script>';
+<button type="button" class="btn ask btn-primary" data-title="'.tr('Duplicare questo preventivo?').'" data-msg="'.tr('Clicca su tasto duplica per procedere.').'" data-op="copy" data-button="'.tr('Duplica').'" data-class="btn btn-lg btn-primary" data-backto="record-edit" >
+    <i class="fa fa-copy"></i> '.tr('Duplica preventivo').'
+</button>';

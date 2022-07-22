@@ -230,7 +230,8 @@ switch (filter('op')) {
 
         if (count($rs) > 0) {
             // Aggiornamento orario tecnico
-            $dbo->query('UPDATE in_interventi_tecnici SET orario_inizio = '.prepare($orario_inizio).', orario_fine = '.prepare($orario_fine).', ore='.prepare($ore).', prezzo_ore_consuntivo='.prepare($t * $prezzo_ore_unitario).' WHERE id='.prepare($sessione));
+            // FIXME: usare la classe e relativo metodo
+            $dbo->query('UPDATE in_interventi_tecnici SET orario_inizio = '.prepare($orario_inizio).', orario_fine = '.prepare($orario_fine).', ore='.prepare($ore).' WHERE id='.prepare($sessione));
             echo 'ok';
         } else {
             echo tr('Attività completata, non è possibile modificarla!');

@@ -315,8 +315,8 @@ WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.id
 
         
         if (checkdate($data->format('m'), $data->format('d'), $data->format('Y'))){
-        echo '
-        <option value="'.$chiave.'">'.ucfirst($testo).'</option>';
+    echo '
+            <option value="'.$chiave.'">'.ucfirst($testo).'</option>';
         }
     }
 

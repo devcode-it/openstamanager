@@ -104,12 +104,12 @@ elseif (filter('op') == 'download-allegato') {
 // Modifica dati di un allegato
 elseif (filter('op') == 'modifica-allegato') {
     $id_allegato = filter('id_allegato');
-    $allegato = Upload::find($id_allegato);
+    $upload = Upload::find($id_allegato);
 
-    $allegato->name = post('nome_allegato');
-    $allegato->category = post('categoria_allegato');
+    $upload->name = post('nome_allegato');
+    $upload->category = post('categoria_allegato');
 
-    $allegato->save();
+    $upload->save();
 }
 
 // Modifica nome della categoria degli allegati

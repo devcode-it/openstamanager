@@ -40,6 +40,7 @@ class DatiFattureElettroniche extends Controllo
             ->whereNotIn('codice_stato_fe', ['ERR', 'NS', 'EC02', 'ERVAL'])
             ->where('data', '>=', $_SESSION['period_start'])
             ->where('data', '<=', $_SESSION['period_end'])
+            ->where('is_fattura_conto_terzi', '=', 0)
             ->orderBy('data')
             ->get();
 

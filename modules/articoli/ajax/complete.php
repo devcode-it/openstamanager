@@ -25,6 +25,7 @@ $limit = get('limit');
 switch ($resource) {
     // Legge gli ultimi prezzi di vendita di un determinato cliente e un determinato articolo e li visualizza per suggerire il prezzo di vendita
     case 'getprezzi':
+        $ids = [];
         $idanagrafica = get('idanagrafica');
         $ids = ['""'];
 
@@ -46,7 +47,7 @@ switch ($resource) {
                     $link_id = Modules::get($documenti[$i]['modulo'])['id'];
                     echo "<tr><td class='first_cell text-left'><a href='".base_path().'/editor.php?id_module='.$link_id.'&id_record='.$documenti[$i]['id']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">".$documenti[$i]['tipo'].'. n. '.$n_documento.' del '.Translator::dateToLocale($documenti[$i]['data_documento'])." </a></td>\n";
                     echo "<td class='table_cell text-right'>".moneyFormat($documenti[$i]['costo_unitario'])."</td></tr>\n";
-                    array_push($ids, '"'.$documenti[$i]['id'].'"');
+                    $ids[] = '"'.$documenti[$i]['id'].'"';
                 }
                 echo "</table>\n";
             } else {
@@ -58,6 +59,7 @@ switch ($resource) {
 
     // Legge gli ultimi prezzi di vendita di un determinato articolo e li visualizza per suggerire il prezzo di vendita
     case 'getprezzivendita':
+        $ids = [];
         echo '<small>';
         // Ultime 5 vendite totali
         $documenti = $dbo->fetchArray('SELECT iddocumento AS id, "Fattura" AS tipo, "Fatture di vendita" AS modulo, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM co_documenti WHERE id=iddocumento) AS n_documento, (SELECT numero_esterno FROM co_documenti WHERE id=iddocumento) AS n2_documento, (SELECT data FROM co_documenti WHERE id=iddocumento) AS data_documento FROM co_righe_documenti WHERE idarticolo='.prepare($idarticolo).' AND iddocumento IN(SELECT id FROM co_documenti WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="entrata"))
@@ -75,7 +77,7 @@ switch ($resource) {
                 $link_id = Modules::get($documenti[$i]['modulo'])['id'];
                 echo "<tr><td class='first_cell text-left'><a href='".base_path().'/editor.php?id_module='.$link_id.'&id_record='.$documenti[$i]['id']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">".$documenti[$i]['tipo'].'. n. '.$n_documento.' del '.Translator::dateToLocale($documenti[$i]['data_documento'])." </a></td>\n";
                 echo "<td class='table_cell text-right'>".moneyFormat($documenti[$i]['costo_unitario'])."</td></tr>\n";
-                array_push($ids, '"'.$documenti[$i]['id'].'"');
+                $ids[] = '"'.$documenti[$i]['id'].'"';
             }
             echo "</table>\n";
         } else {
@@ -86,6 +88,7 @@ switch ($resource) {
 
     // Legge gli ultimi prezzi di acquisto di un determinato articolo e li visualizza per suggerire il prezzo di acquisto
     case 'getprezziacquisto':
+        $ids = [];
         echo '<small>';
         // Ultimi 5 acquisti totali
         $documenti = $dbo->fetchArray('SELECT iddocumento AS id, "Fattura" AS tipo, "Fatture di acquisto" AS modulo, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM co_documenti WHERE id=iddocumento) AS n_documento, (SELECT numero_esterno FROM co_documenti WHERE id=iddocumento) AS n2_documento, (SELECT data FROM co_documenti WHERE id=iddocumento) AS data_documento FROM co_righe_documenti WHERE idarticolo='.prepare($idarticolo).' AND iddocumento IN(SELECT id FROM co_documenti WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="uscita"))
@@ -103,7 +106,7 @@ switch ($resource) {
                 $link_id = Modules::get($documenti[$i]['modulo'])['id'];
                 echo "<tr><td class='first_cell text-left'><a href='".base_path().'/editor.php?id_module='.$link_id.'&id_record='.$documenti[$i]['id']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">".$documenti[$i]['tipo'].'. n. '.$n_documento.' del '.Translator::dateToLocale($documenti[$i]['data_documento'])." </a></td>\n";
                 echo "<td class='table_cell text-right'>".moneyFormat($documenti[$i]['costo_unitario'])."</td></tr>\n";
-                array_push($ids, '"'.$documenti[$i]['id'].'"');
+                $ids[] = '"'.$documenti[$i]['id'].'"';
             }
             echo "</table>\n";
         } else {

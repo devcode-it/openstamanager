@@ -68,6 +68,11 @@ switch (post('op')) {
         $articolo->idconto_vendita = post('idconto_vendita');
         $articolo->idconto_acquisto = post('idconto_acquisto');
         $articolo->abilita_serial = post('abilita_serial');
+
+        $articolo->um = post('um');
+        $articolo->um_secondaria = post('um_secondaria');
+        $articolo->fattore_um_secondaria = post('fattore_um_secondaria');
+        
         $articolo->save();
 
         // Aggiornamento delle varianti per i campi comuni
@@ -91,6 +96,8 @@ switch (post('op')) {
                     'prezzo_vendita' => post('prezzo_vendita'),
                     'idiva_vendita' => post('idiva_vendita') ?: null,
                     'iva_vendita' => $iva ? $iva->descrizione : null,
+                    'um_secondaria' => post('um_secondaria'),
+                    'um' => post('um'),
                 ],
             ]);
         }

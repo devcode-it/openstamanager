@@ -102,6 +102,19 @@ $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
             </div>
 
             <div class="row">
+                <div class="col-md-4">
+                    {[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "", "ajax-source": "misure", "icon-after": "add|<?php echo Modules::get('Unità di misura')['id']; ?>" ]}
+                </div>
+                <div class="col-md-4">
+                    {[ "type": "select", "label": "<?php echo tr('U.m. secondaria'); ?>", "name": "um_secondaria", "value": "", "ajax-source": "misure", "help": "<?php echo tr("Unità di misura da utilizzare nelle stampe di Ordini fornitori in relazione all'articolo"); ?>" ]}
+                </div>
+
+                <div class="col-md-4">
+                    {[ "type": "number", "label": "<?php echo tr('Fattore moltiplicativo'); ?>", "name": "fattore_um_secondaria", "value": "", "decimals": "qta", "help": "<?php echo tr("Fattore moltiplicativo per l'unità di misura da utilizzare nelle stampe di Ordini fornitori"); ?>" ]}
+                </div>
+            </div>
+
+            <div class="row">
                 <div class="col-md-6">
                     {[ "type": "select", "label": "<?php echo tr('Conto predefinito di acquisto'); ?>", "name": "idconto_acquisto", "ajax-source": "conti-acquisti" ]}
                 </div>

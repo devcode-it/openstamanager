@@ -104,4 +104,33 @@ echo '
             </div>
         </div>
     </div>
+
+    <div class="col-md-4">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">'.tr('Scadenzario').'</h3>
+            </div>
+
+            <div class="panel-body">';
+
+if (empty($dbo->fetchArray('SELECT * FROM co_scadenziario'))) {
+    $class = 'muted';
+    $disabled = 'disabled';
+} else {
+    $class = 'primary';
+    $disabled = '';
+}
+
+    echo '      <button type="button" '.$disabled.' class="btn btn-'.$class.' col-md-5" data-toggle="modal" data-title="'.tr('Stampa scadenzario').'" data-href="'.base_path().'/modules/stampe_contabili/stampa_scadenzario.php" >
+                    <i class="fa fa-print fa-2x"></i><br>'.tr('Stampa<br>scadenzario').'
+                </button>';
+
+echo '
+            </div>
+        </div>
+    </div>
 </div>';
+
+
+
+?>

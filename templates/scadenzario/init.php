@@ -21,9 +21,6 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Fatture\Fattura;
 
-$date_start = $_SESSION['period_start'];
-$date_end = $_SESSION['period_end'];
-
 $module = Modules::get('Scadenzario');
 $id_module = $module['id'];
 
@@ -32,24 +29,28 @@ $total = Util\Query::readQuery($module);
 // Lettura parametri modulo
 $module_query = $total['query'];
 
-$search_filters = [];
+if(!empty(get('data_inizio')) AND !empty(get('data_fine'))){
+    $module_query = str_replace('1=1', '1=1 AND `data` BETWEEN "'.get('data_inizio').'" AND "'.get('data_fine').'"', $module_query);
 
-if (is_array($_SESSION['module_'.$id_module])) {
-    foreach ($_SESSION['module_'.$id_module] as $field => $value) {
-        if (!empty($value) && string_starts_with($field, 'search_')) {
-            $field_name = str_replace('search_', '', $field);
-            $field_name = str_replace('__', ' ', $field_name);
-            $field_name = str_replace('-', ' ', $field_name);
-            array_push($search_filters, '`'.$field_name.'` LIKE "%'.$value.'%"');
-        }
-    }
+    $date_start = get('data_inizio');
+    $date_end = get('data_fine');
 }
 
-if (!empty($search_filters)) {
-    $module_query = str_replace('2=2', '2=2 AND ('.implode(' AND ', $search_filters).') ', $module_query);
+if(get('is_pagata')=='true'){
+    $module_query = str_replace('AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`) ', '', $module_query);
 }
 
-$module_query = str_replace('1=1', '1=1 AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`) ', $module_query);
+if(get('is_riba')=='true'){
+    $module_query = str_replace('1=1', '1=1 AND co_pagamenti.codice_modalita_pagamento_fe="MP12"', $module_query);
+}
+
+if(get('is_cliente')=='true'){
+    $module_query = str_replace('1=1', '1=1 AND co_tipidocumento.dir="entrata"', $module_query);
+}
+
+if(get('is_fornitore')=='true'){
+    $module_query = str_replace('1=1', '1=1 AND co_tipidocumento.dir="uscita"', $module_query);
+}
 
 // Scelgo la query in base alla scadenza
 if (isset($id_record)) {
@@ -61,9 +62,6 @@ if (isset($id_record)) {
         $module_query = str_replace('1=1', '1=1 AND co_scadenziario.id='.prepare($id_record), $module_query);
     }
 }
-
-// Filtri derivanti dai permessi (eventuali)
-$module_query = Modules::replaceAdditionals($id_module, $module_query);
 
 // Scadenze
 $records = $dbo->fetchArray($module_query);

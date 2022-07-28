@@ -405,6 +405,16 @@ class Sessione extends Model
      */
     public function getMarginePercentualeAttribute()
     {
+        return (1 - ($this->spesa / ($this->totale_imponibile))) * 100;
+    }
+
+    /**
+     * Restituisce il ricarico percentuale del documento.
+     *
+     * @return float
+     */
+    public function getRicaricoPercentualeAttribute()
+    {
         return $this->imponibile ? (($this->imponibile / $this->spesa) - 1) * 100 : 100;
     }
 

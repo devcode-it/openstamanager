@@ -17,6 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Plugins\DettagliArticolo\DettaglioFornitore;
+
 // Inizializzazione
 $documento = $options['documento'];
 $documento_finale = $options['documento_finale'];
@@ -328,6 +330,17 @@ foreach ($righe as $i => $riga) {
     $descrizione = ($riga->isArticolo() ? $riga->articolo->codice.' - ' : '').$riga['descrizione'];
 
     echo '&nbsp;'.nl2br($descrizione);
+
+    if( $riga->isArticolo() ){
+        $dettaglio_fornitore = DettaglioFornitore::where('id_articolo', $riga->idarticolo)
+            ->where('id_fornitore', $documento->idanagrafica)
+            ->first();
+
+        if( !empty($dettaglio_fornitore->codice_fornitore) ){
+            echo '
+            <br><small class="text-muted">'.tr('Codice fornitore ').': '.$dettaglio_fornitore->codice_fornitore.'</small>';
+        }
+    }
 
     if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
         $serials = $riga->serials;

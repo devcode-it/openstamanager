@@ -306,8 +306,12 @@ if ($totale != $netto_a_pagare) {
 
 // Margine
 $margine = $preventivo->margine;
-$margine_class = ($margine <= 0 and $preventivo->totale > 0) ? 'danger' : 'success';
-$margine_icon = ($margine <= 0 and $preventivo->totale > 0) ? 'warning' : 'check';
+$margine_class = ($margine <= 0 && $preventivo->totale > 0) ? 'danger' : 'success';
+$margine_icon = ($margine <= 0 && $preventivo->totale > 0) ? 'warning' : 'check';
+
+// Ricarico
+$ricarico_class = ($margine <= 0 && $preventivo->totale > 0) ? 'danger' : 'success';
+$ricarico_icon = ($margine <= 0 && $preventivo->totale > 0) ? 'warning' : 'check';
 
 echo '
         <tr>
@@ -343,6 +347,18 @@ echo '
             </td>
             <td class="text-right" class="'.$margine_class.'">
                 <i class="fa fa-'.$margine_icon.' text-'.$margine_class.'"></i> '.moneyFormat($preventivo->margine).'
+            </td>
+            <td></td>
+        </tr>
+        
+        <tr>
+            <td colspan="7" class="text-right">
+                '.tr('Ricarico (_PRC_%)', [
+                    '_PRC_' => numberFormat($preventivo->ricarico_percentuale),
+            ]).':
+            </td>
+            <td class="text-right" class="'.$ricarico_class.'">
+                <i class="fa fa-'.$ricarico_icon.' text-'.$ricarico_class.'"></i> '.moneyFormat($preventivo->margine).'
             </td>
             <td></td>
         </tr>';

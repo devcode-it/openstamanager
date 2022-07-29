@@ -230,12 +230,22 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
         return $this->calcola('margine');
     }
 
-    /**
+       /**
      * Restituisce il margine percentuale del documento.
      *
      * @return float
      */
     public function getMarginePercentualeAttribute()
+    {
+        return (1 - ($this->spesa / ($this->totale_imponibile))) * 100;
+    }
+
+    /**
+     * Restituisce il ricarico percentuale del documento.
+     *
+     * @return float
+     */
+    public function getRicaricoPercentualeAttribute()
     {
         return ($this->totale_imponibile && ($this->spesa || $this->provvigione)) ? (($this->totale_imponibile / ($this->spesa + $this->provvigione)) - 1) * 100 : 100;
     }

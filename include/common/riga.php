@@ -83,12 +83,13 @@ if ($options['dir'] == 'entrata') {
             }
 
             var guadagno = prezzo - sconto - provvigione - costo_unitario;
-            var margine = (((prezzo - sconto) * 100) / (costo_unitario + provvigione)) - 100;
-            var parent = $("#costo_unitario").closest("div").parent();
+            var ricarico = (((prezzo - sconto) / costo_unitario) - 1) * 100;
+            var margine = (1 - (costo_unitario / (prezzo - sconto))) * 100;            var parent = $("#costo_unitario").closest("div").parent();
             var div = $(".margine");
             var mediaponderata = 0;
 
             margine = isNaN(margine) || !isFinite(margine) ? 0: margine; // Fix per magine NaN
+            ricarico = isNaN(ricarico) || !isFinite(ricarico) ? 0: ricarico; // Fix per ricarico NaN
 
             if ($("#idarticolo").val()) {
                 mediaponderata = parseFloat($("#idarticolo").selectData().media_ponderata);
@@ -112,6 +113,17 @@ if ($options['dir'] == 'entrata') {
                             </td>\
                             <td align=\"right\">\
                                 <small>" + margine.toLocale() + "<small>\
+                            </td>\
+                            <td align=\"center\">\
+                                <small>&nbsp;%<small>\
+                            </td>\
+                        </tr>\
+                        <tr>\
+                            <td>\
+                                <small>&nbsp;'.tr('Ricarico').':</small>\
+                            </td>\
+                            <td align=\"right\">\
+                                <small>" + ricarico.toLocale() + "<small>\
                             </td>\
                             <td align=\"center\">\
                                 <small>&nbsp;%<small>\

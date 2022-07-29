@@ -23,8 +23,6 @@ include_once __DIR__.'/../../core.php';
 $link = Prints::getHref('Scadenzario', null);
 
 echo '
-<form action="" method="post" onsubmit="if($(this).parsley().validate()) { return avvia_stampa(); }" >
-
 	<div class="row">
         <div class="col-md-4">
 			{[ "type": "date", "label": "'.tr('Data inizio').'", "name": "data_inizio", "value": "" ]}
@@ -50,13 +48,11 @@ echo '
 
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary">
+			<button type="button" onclick="avvia_stampa();" class="btn btn-primary">
 				<i class="fa fa-print"></i> '.tr('Stampa scadenzario').'
 			</button>
 		</div>
 	</div>
-
-</form>
 
 <script>$(document).ready(init)</script>';
 
@@ -71,7 +67,6 @@ echo '
         var is_fornitore = $("#is_fornitore").is(":checked");
 
 		window.open("'.$link.'&data_inizio="+data_inizio+"&data_fine="+data_fine+"&is_pagata="+is_pagata+"&is_riba="+is_riba+"&is_cliente="+is_cliente+"&is_fornitore="+is_fornitore, "_blank");
-	    return false;
 	}
 
     $("#is_cliente").change(function() {

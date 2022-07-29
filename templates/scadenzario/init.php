@@ -29,15 +29,20 @@ $total = Util\Query::readQuery($module);
 // Lettura parametri modulo
 $module_query = $total['query'];
 
-if(!empty(get('data_inizio')) AND !empty(get('data_fine'))){
-    $module_query = str_replace('1=1', '1=1 AND `data` BETWEEN "'.get('data_inizio').'" AND "'.get('data_fine').'"', $module_query);
+if(!empty(get('data_inizio'))){
+    $module_query = str_replace('1=1', '1=1 AND DATE_FORMAT(`data`, "%Y%m%d") >= "'.date('Ymd', strtotime(get('data_inizio'))).'"', $module_query);
 
     $date_start = get('data_inizio');
-    $date_end = get('data_fine');
 }
 
-if(get('is_pagata')=='true'){
-    $module_query = str_replace('AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`) ', '', $module_query);
+if(!empty(get('data_fine'))){
+    $module_query = str_replace('1=1', '1=1 AND DATE_FORMAT(`data`, "%Y%m%d") <= "'.date('Ymd', strtotime(get('data_fine'))).'"', $module_query);
+
+    $date_start = get('data_inizio');
+}
+
+if(get('is_pagata')=='false'){
+    $module_query = str_replace('1=1', '1=1 AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`) ', $module_query);
 }
 
 if(get('is_riba')=='true'){

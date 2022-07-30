@@ -110,7 +110,7 @@ echo '
 
             <div class="row">
                 <div class="col-md-12">
-                    {[ "type": "ckeditor", "label": "<?php echo tr('Contenuto'); ?>", "name": "body", "value": "$body$" ]}
+                    {[ "type": "ckeditor", "use_full_ckeditor": 1, "label": "<?php echo tr('Contenuto'); ?>", "name": "body", "value": "$body$" ]}
                 </div>
             </div>
 

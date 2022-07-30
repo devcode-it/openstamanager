@@ -43,7 +43,7 @@ switch (post('op')) {
             'reply_to' => post('reply_to'),
             'cc' => post('cc'),
             'bcc' => post('bcc'),
-            'body' => $_POST['body'], // post('body'),
+            'body' => $_POST['body'], // post('body', true),
             'read_notify' => post('read_notify'),
             'note_aggiuntive' => post('note_aggiuntive'),
         ], ['id' => $id_record]);

@@ -39,10 +39,12 @@ class HTMLWrapper implements WrapperInterface
         $values['icon-before'] = isset($values['icon-before']) ? $this->parser($values, $extras, $values['icon-before']) : null;
         $values['icon-after'] = isset($values['icon-after']) ? $this->parser($values, $extras, $values['icon-after']) : null;
 
+        $result .= '
+<div class="form-group '.$extra_class.'">';
+
         // Generazione dell'etichetta
         if (!empty($values['label'])) {
             $result .= '
-<div class="form-group '.$extra_class.'">
     <label for="'.prepareToField($values['id']).'">'.(empty($values['help']) ? $values['label'] : '<span class="tip" title="'.prepareToField($values['help']).'">'.$values['label'].' <i class="fa fa-question-circle-o"></i></span>').'</label>';
         }
 

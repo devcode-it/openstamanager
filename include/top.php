@@ -18,7 +18,7 @@
  */
 
 use Util\FileSystem;
-$lang = '';
+
 include_once __DIR__.'/../core.php';
 
 $paths = App::getPaths();

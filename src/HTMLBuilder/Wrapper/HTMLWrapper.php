@@ -102,9 +102,9 @@ class HTMLWrapper implements WrapperInterface
         $result .= '
         <div id="'.$values['id'].$rand.'-errors"></div>';
 
+        $result .= '
+    </div>';
         if (!empty($values['label'])) {
-            $result .= '
-        </div>';
             unset($values['label']);
         }
 

@@ -53,6 +53,54 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
 
     // Gestione delle operazioni
     else {
+
+        //UPLOAD PER CKEDITOR
+        if (filter('op') == 'aggiungi-allegato' && !empty($_FILES) && !empty($_FILES['upload']['name'])) {
+
+            $CKEditor = $_GET['CKEditor'];
+            $funcNum = $_GET['CKEditorFuncNum'];
+
+            
+            $allowed_extension = array(
+                "png","jpg","jpeg"
+              );
+
+            // Get image file extension
+            $file_extension = pathinfo($_FILES["upload"]["name"], PATHINFO_EXTENSION);
+
+            if(in_array(strtolower($file_extension),$allowed_extension)){
+
+                $upload = Uploads::upload($_FILES['upload'], [
+                    'name' => filter('nome_allegato'),
+                    'category' => filter('categoria'),
+                    'id_module' => Modules::get('Gestione documentale')['id'],
+                    'id_record' => $id_record,
+                ]);
+
+                // Creazione file fisico
+                if (!empty($upload)) {
+                    flash()->info(tr('File caricato correttamente!'));
+
+                    $id_allegato = $dbo->lastInsertedID();
+                    $upload = Upload::find($id_allegato);
+
+                    echo '<script>window.parent.CKEDITOR.tools.callFunction('.$funcNum.', "'.$baseurl.'/'.$upload->filepath.'", "'.$message.'")</script>';
+
+                } else {
+                    flash()->error(tr('Errore durante il caricamento del file!'));
+                }
+
+            }else{
+                
+                //flash()->error(tr('Estensione non permessa!'));
+                //toastr["error"]("'.tr('Estensione non permessa').'");  
+                echo '<script> alert("'.tr('Estensione non permessa').'"); </script>';
+
+            }
+            
+            exit();
+        }
+
         // UPLOAD
         if (filter('op') == 'aggiungi-allegato' && !empty($_FILES) && !empty($_FILES['file']['name'])) {
             $upload = Uploads::upload($_FILES['file'], [

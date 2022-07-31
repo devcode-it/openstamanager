@@ -26,6 +26,8 @@ $user = Auth::user();
 
 $pageTitle = !empty($pageTitle) ? $pageTitle : $structure->title;
 
+$lang = (empty($lang) || $lang == '|lang|' ) ? 'it_IT' : $lang;
+
 $messages = flash()->getMessages();
 
 echo '<!DOCTYPE html>

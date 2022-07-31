@@ -294,12 +294,7 @@ function ckeditor() {
     ])
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/ckeditor/plugins'));
 
-    const extra = gulp.src([
-        config.nodeDirectory + '/ckeditor-image-to-base/**/*.{js,json,css,png,gif,html}',
-    ])
-        .pipe(gulp.dest(config.production + '/' + config.paths.js + '/ckeditor/plugins/ckeditor-image-to-base64'));
-
-    return merge(ckeditor, plugins, extra);
+    return merge(ckeditor, plugins);
 }
 
 function colorpicker() {

@@ -94,11 +94,14 @@ function initCKEditor(input) {
     // Avvio di CKEditor
     CKEDITOR.replace(name, {
         toolbar: (input.hasAttribute('use_full_ckeditor')) ? globals.ckeditorToolbar_Full : globals.ckeditorToolbar,
-        language: (globals.locale) ? globals.locale : 'it',
+        language: globals.locale,
         scayt_autoStartup: true,
-        scayt_sLang: (globals.full_locale) ? globals.full_locale : 'it_IT',
+        scayt_sLang: globals.full_locale,
         scayt_disableOptionsStorage: 'lang',
         disableNativeSpellChecker: false,
+        filebrowserUploadUrl: globals.rootdir+'/ckeditor_fileupload/ajaxfile.php?type=file',
+        filebrowserImageUploadUrl: globals.rootdir+"/actions.php?type=image&op=aggiungi-allegato&id_module="+globals.id_module+"&id_plugin="+globals.id_plugin+"&id_record="+globals.id_record,
+        filebrowserUploadMethod: 'form',
         fullPage: (input.hasAttribute('use_full_ckeditor')) ? true : false,
         allowedContent: (input.hasAttribute('use_full_ckeditor')) ? true : false,
         extraPlugins: 'scayt,textwatcher,autocomplete,textmatch,emoji',

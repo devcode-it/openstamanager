@@ -101,7 +101,7 @@ function initCKEditor(input) {
         disableNativeSpellChecker: false,
         fullPage: (input.hasAttribute('use_full_ckeditor')) ? true : false,
         allowedContent: (input.hasAttribute('use_full_ckeditor')) ? true : false,
-        extraPlugins: 'scayt,ckeditor-image-to-base64',
+        extraPlugins: 'scayt,textwatcher,autocomplete,textmatch,emoji',
         skin: 'moono-lisa',
     });
 

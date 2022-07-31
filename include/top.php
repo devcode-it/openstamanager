@@ -213,7 +213,7 @@ if (Auth::check()) {
                 collapse_plugin_sidebar: '.intval(setting('Nascondere la barra dei plugin di default')).',
 
                 ckeditorToolbar: [
-					["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","SpellChecker", "Scayt", "-","Link","Unlink","-","Bold","Italic","Underline","Superscript","SpecialChar","HorizontalRule","-","JustifyLeft","JustifyCenter","JustifyRight","JustifyBlock","-","NumberedList","BulletedList","Outdent","Indent","Blockquote","-","Styles","Format","Image","Table", "TextColor", "BGColor" ],
+					["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","SpellChecker", "Scayt", "-","Link","Unlink","-","Bold","Italic","Underline","Superscript","SpecialChar","HorizontalRule","-","JustifyLeft","JustifyCenter","JustifyRight","JustifyBlock","-","NumberedList","BulletedList","Outdent","Indent","Blockquote","-","Styles","Format","Image","Table", "TextColor", "BGColor", "EmojiPanel" ],
 				],
                 ckeditorToolbar_Full: [
                     { name: "document", items : [ "Source", "ExportPdf", "Preview", "Print", "-", "Templates" ] },
@@ -226,7 +226,7 @@ if (Auth::check()) {
                     { name: "paragraph", items : [ "NumberedList","BulletedList","-","Outdent","Indent","-","Blockquote","CreateDiv",
                         "-","JustifyLeft","JustifyCenter","JustifyRight","JustifyBlock","-","BidiLtr","BidiRtl","Language" ] },
                     { name: "links", items : [ "Link","Unlink","Anchor" ] },
-                    { name: "insert", items : [ "Image","Flash","Table","HorizontalRule","Smiley","SpecialChar","PageBreak","Iframe" ] },
+                    { name: "insert", items : [ "Image","Flash","Table","HorizontalRule","EmojiPanel","SpecialChar","PageBreak","Iframe" ] },
                     "/",
                     { name: "styles", items : [ "Styles","Format","Font","FontSize" ] },
                     { name: "colors", items : [ "TextColor","BGColor" ] },

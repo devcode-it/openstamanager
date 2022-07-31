@@ -281,11 +281,25 @@ function srcFonts() {
 }
 
 function ckeditor() {
-    return gulp.src([
+    
+    const ckeditor =  gulp.src([
         config.nodeDirectory + '/ckeditor4/{adapters,lang,skins,plugins,core}/**/*.{js,json,css,png,gif,html}',
         config.nodeDirectory + '/ckeditor4/*.{js,css}',
     ])
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/ckeditor'));
+
+    const plugins = gulp.src([
+        config.nodeDirectory + '/ckeditor/plugins/{emoji,autocomplete,textmatch,textwatcher}/**/*.{js,json,css,png,gif,html}',
+        config.nodeDirectory + '/ckeditor-image-to-base/*.{js,json,css,png,gif,html}',
+    ])
+        .pipe(gulp.dest(config.production + '/' + config.paths.js + '/ckeditor/plugins'));
+
+    const extra = gulp.src([
+        config.nodeDirectory + '/ckeditor-image-to-base/**/*.{js,json,css,png,gif,html}',
+    ])
+        .pipe(gulp.dest(config.production + '/' + config.paths.js + '/ckeditor/plugins/ckeditor-image-to-base64'));
+
+    return merge(ckeditor, plugins, extra);
 }
 
 function colorpicker() {

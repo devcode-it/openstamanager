@@ -31,12 +31,6 @@ if ($newsletter->state == 'DEV' && !empty($template)) {
 
 // Duplica newsletter
 echo '
-<button type="button" class="btn btn-primary" onclick="if( confirm(\''.tr('Duplicare questa newsletter?').'\') ){ $(\'#copia-newsletter\').submit(); }">
+<button type="button" class="btn btn-primary ask" data-title="'.tr('Duplicare questa newsletter?').'" data-msg="'.tr('Clicca su tasto duplica per procedere.').'" data-op="copy" data-button="'.tr('Duplica').'" data-class="btn btn-lg btn-primary" data-backto="record-edit">
     <i class="fa fa-copy"></i> '.tr('Duplica newsletter').'
 </button>';
-
-echo '
-<form action="" method="post" id="copia-newsletter">
-    <input type="hidden" name="backto" value="record-edit">
-    <input type="hidden" name="op" value="copy">
-</form>';

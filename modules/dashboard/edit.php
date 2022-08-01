@@ -524,7 +524,7 @@ echo '
             timeFormat: globals.dashboard.timeFormat,
             slotLabelFormat: globals.dashboard.timeFormat,
             slotDuration: "00:15:00",
-            snapDuration: "'.setting('Tempo predefinito di snap attività sul calendario').'",
+            snapDuration: globals.snapDuration,
             defaultView: globals.dashboard.style,
             minTime: globals.dashboard.start_time,
             maxTime: globals.dashboard.end_time,

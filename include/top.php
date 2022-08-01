@@ -239,6 +239,7 @@ if (Auth::check()) {
                 dataload_page_buffer: '.setting('Lunghezza in pagine del buffer Datatables').',
                 tempo_attesa_ricerche: '.setting('Tempo di attesa ricerche in secondi').',
                 restrict_summables_to_selected: '.setting('Totali delle tabelle ristretti alla selezione').',
+                snapDuration: "'.setting('Tempo predefinito di snap attività sul calendario').'"
             };
 		</script>';
 } else {

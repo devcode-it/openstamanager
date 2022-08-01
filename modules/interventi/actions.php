@@ -678,13 +678,15 @@ switch (post('op')) {
                     flash()->error(tr('Impossibile creare il file!'));
                 } elseif ($dbo->query('UPDATE in_interventi SET firma_file='.prepare($firma_file).', firma_data=NOW(), firma_nome = '.prepare($firma_nome).' WHERE id='.prepare($id_record))) {
                     flash()->info(tr('Firma salvata correttamente!'));
-                    flash()->info(tr('Attività completata!'));
 
                     $id_stato = setting("Stato dell'attività dopo la firma");
                     $stato = $dbo->selectOne('in_statiintervento', '*', ['idstatointervento' => $id_stato]);
                     $intervento = Intervento::find($id_record);
-                    $intervento->idstatointervento = $stato['idstatointervento'];
-                    $intervento->save();
+                    if (!empty($stato)) {
+                        $intervento = Intervento::find($id_record);
+                        $intervento->idstatointervento = $stato['idstatointervento'];
+                        $intervento->save();
+                    }
                     // Notifica chiusura intervento
                     if (!empty($stato['notifica']) && !empty($stato['destinatari'])) {
                         $template = Template::find($stato['id_email']);

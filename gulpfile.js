@@ -310,7 +310,7 @@ function password_strength() {
         config.nodeDirectory + '/pwstrength-bootstrap/dist/*.js',
     ])
         .pipe(concat('password.min.js'))
-        .pipe(minifyJS())
+        .pipe(gulpIf(!config.debug, minifyJS()))
         .pipe(gulp.dest(config.production + '/password-strength'));
 }
 

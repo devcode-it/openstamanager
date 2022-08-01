@@ -59,7 +59,7 @@ function initTimestampInput(input) {
         collapse: false,
         sideBySide: true,
         useCurrent: false,
-        stepping: 5,
+        stepping: 1,
         widgetPositioning: {
             horizontal: 'left',
             vertical: 'auto'

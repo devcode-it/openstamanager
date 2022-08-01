@@ -337,7 +337,8 @@ if (!empty($righe)) {
     echo '
     <h4>
         '.tr('Righe').'
-        <button type="button" class="btn btn-info btn-sm pull-right" onclick="copia()"><i class="fa fa-copy"></i> '.tr('Copia dati contabili dalla prima riga valorizzata').'</button>
+        <button type="button" class="btn btn-info btn-sm pull-right" onclick="copia()" style="margin-left:5px;"><i class="fa fa-copy"></i> '.tr('Copia dati contabili dalla prima riga valorizzata').'</button>
+        <button type="button" class="btn btn-info btn-sm pull-right" onclick="copy_rif()"><i class="fa fa-copy"></i> '.tr('Copia il riferimento vendita dalla prima riga valorizzata').'</button>
         <div class="clearfix"></div>
     </h4>
 
@@ -820,4 +821,36 @@ $("[id^=\'articoli\']").change(function() {
         $("#conto-"+$(this).data("id")).selectSetNew(data.idconto_acquisto, data.idconto_acquisto_title);
     }
 });
+
+function copy_rif() {
+    let rif_vendite = $("select[name^=selezione_riferimento_vendita");
+
+    // Individuazione della prima IVA selezionata
+    let iva_selezionata = null;
+    for (const rif_vendita of rif_vendite) {
+        const data = $(rif_vendita).selectData();
+        if (data && data.id) {
+            rif_vendita_selezionata = data;
+            break;
+        }
+    }
+
+    // Selezione generale per il conto
+    if (rif_vendita_selezionata) {
+        rif_vendite.each(function() {
+            $(this).selectSetNew(rif_vendita_selezionata.id, rif_vendita_selezionata.text, rif_vendita_selezionata);
+
+            id = $(this).attr("id").toString();
+            var matches = id.match(/(\d+)/);
+            id_riga = matches[0];
+
+            $("#tipo_riferimento_vendita_" + id_riga).val("ordine");
+            $("#id_riferimento_vendita_" + id_riga).val(rif_vendita_selezionata.id);
+            $("#id_riga_riferimento_vendita_" + id_riga).val("new-ordine-"+rif_vendita_selezionata.id);
+
+            $("#rimuovi_riferimento_vendita_" + id_riga).removeClass("disabled");
+            $(this).prop("disabled", true);
+        });
+    }
+}
 </script>';

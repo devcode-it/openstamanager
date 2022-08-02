@@ -144,10 +144,12 @@ switch (post('op')) {
                 }
             }
 
+            $tecnici_intervento = [];
             if (!empty($stato['notifica_tecnico_sessione'])) {
                 $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'idtecnico', ['idintervento' => $id_record]);
             }
 
+            $tecnici_assegnati = [];
             if (!empty($stato['notifica_tecnico_assegnato'])) {
                 $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS idtecnico', ['id_intervento' => $id_record]);
             }

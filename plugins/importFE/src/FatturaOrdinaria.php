@@ -239,6 +239,7 @@ class FatturaOrdinaria extends FatturaElettronica
                 // Sconti e maggiorazioni
                 $sconti = $riga['ScontoMaggiorazione'];
                 if (!empty($sconti)) {
+                    $tot_sconto_calcolato = 0;
                     $sconto_unitario = 0;
                     $sconti = $sconti[0] ? $sconti : [$sconti];
 
@@ -262,7 +263,7 @@ class FatturaOrdinaria extends FatturaElettronica
                         if ($tipo_sconto == 'PRC') {
                             $sconto_calcolato = calcola_sconto([
                                 'sconto' => $sconto_riga,
-                                'prezzo' => $sconto_unitario ? $obj->prezzo_unitario - ($sconto_calcolato / $obj->qta) : $obj->prezzo_unitario,
+                                'prezzo' => $sconto_unitario ? $obj->prezzo_unitario - ($tot_sconto_calcolato / $obj->qta) : $obj->prezzo_unitario,
                                 'tipo' => 'PRC',
                                 'qta' => $obj->qta,
                             ]);
@@ -276,6 +277,7 @@ class FatturaOrdinaria extends FatturaElettronica
                             $tot_sconto = $sconto_riga;
                         }
 
+                        $tot_sconto_calcolato += $sconto_calcolato; 
                         $sconto_unitario += $tot_sconto;
                     }
 

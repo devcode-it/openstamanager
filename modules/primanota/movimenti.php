@@ -299,15 +299,18 @@ $(document).ready(function() {
 });
 
 $(document).on("change", "select", function() {
-    let row = $(this).parent().parent().parent();
+    let row = $(this).parent().parent().parent().parent();
 
     if (row.find("input[disabled]").length > 1) {
         row.find("input").prop("disabled", !$(this).val());
     }
 
+    // Trigger dell\'evento keyup() per la prima volta, per eseguire i dovuti controlli nel caso siano predisposte delle righe in prima nota
+    $("input[id*=dare][value!=\'\'], input[id*=avere][value!=\'\']").keyup();
+
     controllaConti();
 
-    let button = $(this).parent().find("button");
+    let button = $(this).parent().parent().find("button");
     if ($(this).val()) {
         button.removeClass("disabled");
     } else {
@@ -316,7 +319,7 @@ $(document).on("change", "select", function() {
 });
 
 $(document).on("keyup change", "input[id*=dare]", function() {
-    let row = $(this).parent().parent();
+    let row = $(this).parent().parent().parent();
 
     if (!$(this).prop("disabled")) {
         row.find("input[id*=avere]").prop("disabled", $(this).val().toEnglish());
@@ -326,7 +329,7 @@ $(document).on("keyup change", "input[id*=dare]", function() {
 });
 
 $(document).on("keyup change", "input[id*=avere]", function() {
-    let row = $(this).parent().parent();
+    let row = $(this).parent().parent().parent();
 
     if (!$(this).prop("disabled")) {
         row.find("input[id*=dare]").prop("disabled", $(this).val().toEnglish());

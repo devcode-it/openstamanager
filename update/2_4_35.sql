@@ -17,3 +17,7 @@ UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_module
 UPDATE `zz_group_module` SET `name`='Mostra al tecnico solo le sue attività programmate e assegnate' WHERE `name`='Mostra interventi ai tecnici coinvolti';
 UPDATE `zz_group_module` SET `name`='Mostra al cliente solo le attività che ha richiesto' WHERE `name`='Mostra interventi ai clienti coinvolti';
 UPDATE `zz_group_module` SET `name`='Mostra al tecnico solo le attività a cui è stato assegnato' WHERE `name`='Mostra interventi ai tecnici assegnati';
+
+-- Fix segmenti scadenzario RiBa
+UPDATE `zz_segments` SET `clause` = 'co_pagamenti.codice_modalita_pagamento_fe= \'MP12\' AND co_tipidocumento.dir=\"uscita\" AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`)' WHERE `zz_segments`.`name` = 'Scadenzario Ri.Ba. Fornitori';
+UPDATE `zz_segments` SET `clause` = 'co_pagamenti.codice_modalita_pagamento_fe= \'MP12\' AND co_tipidocumento.dir=\"entrata\" AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`)' WHERE `zz_segments`.`name` = 'Scadenzario Ri.Ba. Clienti'; 

@@ -255,8 +255,10 @@ class Contratto extends Document
         $interventi = $this->interventi;
         $stato_intervento = \Modules\Interventi\Stato::where('codice', $codice_intervento)->first();
         foreach ($interventi as $intervento) {
-            $intervento->stato()->associate($stato_intervento);
-            $intervento->save();
+            if ($intervento->stato->is_completato==1) {
+                $intervento->stato()->associate($stato_intervento);
+                $intervento->save();
+            }
         }
     }
 

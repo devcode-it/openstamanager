@@ -207,7 +207,7 @@ function controllaConti() {
 
     // Blocco degli input con valore non impostato
     $("input[id*=dare], input[id*=avere]").each(function() {
-        let conto_relativo = $(this).parent().parent().find("select").val();
+        let conto_relativo = $(this).parent().parent().parent().find("select").val();
 
         if (!conto_relativo) {
             $(this).prop("disabled", true);

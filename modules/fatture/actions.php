@@ -244,20 +244,10 @@ switch (post('op')) {
             }
         } catch (Exception $e) {
         }
-        
-        $calculated = 0;
-
-        $fattura->scadenze()->each(function($scadenza) use (&$calculated) {
-            $calculated += abs($scadenza->da_pagare);
-        });
-
-        if(empty($calculated)){
-            $calculated = $fattura->netto;
-        }
 
         echo json_encode([
             'stored' => round($totale_documento,2),
-            'calculated' => round($calculated,2),
+            'calculated' => round($fattura->netto,2),
         ]);
         
         break;

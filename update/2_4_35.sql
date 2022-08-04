@@ -26,3 +26,7 @@ UPDATE `zz_segments` SET `clause` = 'co_pagamenti.codice_modalita_pagamento_fe= 
 -- Aggiunta filtri per agente in preventivi
 INSERT INTO `zz_group_module` (`idgruppo`, `idmodule`, `name`, `clause`, `position`, `enabled`, `default`) VALUES ((SELECT `id` FROM `zz_groups` WHERE `nome`='Agenti'), (SELECT `id` FROM `zz_modules` WHERE `name`='Preventivi'), 'Mostra agli agenti solo i preventivi dei clienti dei quali si è agenti', 'an_anagrafiche.idagente=|id_anagrafica|', 'WHR', 1, 0);
 INSERT INTO `zz_group_module` (`idgruppo`, `idmodule`, `name`, `clause`, `position`, `enabled`, `default`) VALUES ((SELECT `id` FROM `zz_groups` WHERE `nome`='Agenti'), (SELECT `id` FROM `zz_modules` WHERE `name`='Preventivi'), 'Mostra agli agenti solo i preventivi di cui sono agenti', 'co_preventivi.idagente=|id_anagrafica|', 'WHR', 1, 0);
+
+-- Aggiornamento title e icona per Causali (Causali trasporto) e Causali movimenti
+UPDATE `zz_modules` SET `title` = 'Causali trasporto', `icon` = 'fa fa-truck'  WHERE `zz_modules`.`name` = 'Causali'; 
+UPDATE `zz_modules` SET `icon` = 'fa fa-exchange'  WHERE `zz_modules`.`name` = 'Causali movimenti'; 

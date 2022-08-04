@@ -106,7 +106,7 @@ use Modules\Iva\Aliquota;
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-6">
-                    {[ "type": "number", "label": "<?php echo tr('Quantità'); ?>", "name": "qta", "required": 1, "value": "$qta$", "readonly": 1, "decimals": "qta", "min-value": "undefined" ]}
+                    {[ "type": "number", "label": "<?php echo tr('Quantità'); ?>", "name": "qta", "required": 1, "value": "$qta$", "readonly": 1, "decimals": "qta", "min-value": "undefined", "icon-after": "<?php echo (!empty($record['um']) ? $record['um']: ''); ?>" ]}
                     <input type="hidden" id="old_qta" value="<?php echo $record['qta']; ?>">
                 </div>
 
@@ -125,7 +125,9 @@ use Modules\Iva\Aliquota;
             </div>
 
             <div class="alert alert-info">
-                <p><?php echo tr('Le modifiche alle quantità in questa schermata prevedono la generazione di un movimento relativo per la Sede legale'); ?>. <?php echo tr('Per effettuare movimenti in altre Sedi, utilizzare il modulo Movimenti relativo'); ?>.</p>
+                <p><?php echo tr('Le modifiche alle quantità in questa schermata prevedono la generazione di un movimento relativo alla sede legale'); ?>. <?php echo tr('Se si desidera effettuare movimenti per altre sedi, utilizzare il modulo _MODULO_ ', [
+                    '_MODULO_' => Modules::link('Movimenti', null, tr('Movimenti'))
+                ]); ?>.</p>
             </div>
 
             <script type="text/javascript">

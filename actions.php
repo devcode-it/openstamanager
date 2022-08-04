@@ -57,18 +57,21 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
         //UPLOAD PER CKEDITOR
         if (filter('op') == 'aggiungi-allegato' && !empty($_FILES) && !empty($_FILES['upload']['name'])) {
 
-            $CKEditor = $_GET['CKEditor'];
-            $funcNum = $_GET['CKEditorFuncNum'];
+            $CKEditor = get('CKEditor');
+            $funcNum = get('CKEditorFuncNum');
 
             
             $allowed_extension = array(
                 "png","jpg","jpeg"
-              );
+            );
+
+            //Maximum file limit (unit: byte)
+            $max_size='2097152'; //2MB
 
             // Get image file extension
             $file_extension = pathinfo($_FILES["upload"]["name"], PATHINFO_EXTENSION);
 
-            if(in_array(strtolower($file_extension),$allowed_extension)){
+            if(in_array(strtolower($file_extension),$allowed_extension) && $_FILES["upload"]['size']<$max_size){
 
                 $upload = Uploads::upload($_FILES['upload'], [
                     'name' => filter('nome_allegato'),
@@ -77,24 +80,42 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
                     'id_record' => $id_record,
                 ]);
 
+                
+                echo '
+                <link rel="stylesheet" type="text/css" href="'.$baseurl.'/assets/dist/css/app.min.css" />';
+
+               
+                echo '
+                <script src="'.$baseurl.'/assets/dist/js/app.min.js"></script>';
+
+
                 // Creazione file fisico
                 if (!empty($upload)) {
-                    flash()->info(tr('File caricato correttamente!'));
+                    //flash()->info(tr('File caricato correttamente!'));
 
                     $id_allegato = $dbo->lastInsertedID();
                     $upload = Upload::find($id_allegato);
 
-                    echo '<script>window.parent.CKEDITOR.tools.callFunction('.$funcNum.', "'.$baseurl.'/'.$upload->filepath.'", "'.$message.'")</script>';
+                    echo '
+                    <script type="text/javascript">
+                        $(document).ready(function() {
+                            window.parent.toastr.success("'.tr('Caricamento riuscito').'");
+                            window.parent.CKEDITOR.tools.callFunction('.$funcNum.', "'.$baseurl.'/'.$upload->filepath.'");
+                        });
+                    </script>';
 
+                   
                 } else {
-                    flash()->error(tr('Errore durante il caricamento del file!'));
+
+                    //flash()->error(tr('Errore durante il caricamento del file!'));
+                    echo '<script type="text/javascript">  window.parent.toastr.error("'.tr('Errore durante il caricamento del file!').'"); </script>';
+                
                 }
 
             }else{
                 
                 //flash()->error(tr('Estensione non permessa!'));
-                //toastr["error"]("'.tr('Estensione non permessa').'");  
-                echo '<script> alert("'.tr('Estensione non permessa').'"); </script>';
+                echo '<script type="text/javascript">  window.parent.toastr.error("'.tr('Estensione non permessa').'"); </script>';
 
             }
             

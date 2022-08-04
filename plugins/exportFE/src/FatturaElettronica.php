@@ -25,6 +25,7 @@ use Modules;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Gestori\Bollo;
+use Modules\Iva\Aliquota;
 use Prints;
 use Translator;
 use UnexpectedValueException;
@@ -1403,6 +1404,11 @@ class FatturaElettronica
             }
 
             $aliquota = $riga->aliquota ?: $iva_descrizioni;
+            // Se sono presenti solo righe descrittive uso l'iva da impostazioni 
+            if (empty($aliquota)) {
+                $aliquota_predefinita = Aliquota::find(setting("Iva predefinita"));
+                $aliquota = $aliquota_predefinita;
+            }
             $percentuale = floatval($aliquota->percentuale);
 
             $prezzo_totale = $riga->totale_imponibile;
@@ -1557,6 +1563,22 @@ class FatturaElettronica
             if ($documento['split_payment']) {
                 $iva['EsigibilitaIVA'] = 'S';
             }
+
+            // 2.2.2
+            $result[] = [
+                'DatiRiepilogo' => $iva,
+            ];
+        }
+
+        // Se sono presenti solo righe descrittive uso l'iva da impostazioni e creo un riepilogo con gli importi a 0
+        if (empty($iva)) {
+            $iva = [
+                'AliquotaIVA' => $aliquota_predefinita->percentuale,
+                'ImponibileImporto' => 0,
+                'Imposta' => 0,
+                'EsigibilitaIVA' => $aliquota_predefinita->esigibilita,
+                'RiferimentoNormativo' => $aliquota_predefinita->descrizione,
+            ];
 
             // 2.2.2
             $result[] = [

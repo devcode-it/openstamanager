@@ -979,7 +979,7 @@ class FatturaElettronica
                 $sconto['Percentuale'] = $documento->dati_aggiuntivi_fe['sconto_maggiorazione_percentuale'];
             }
 
-            if (!empty($documento->dati_aggiuntivi_fe['sconto_maggiorazione_importo'])) {
+            else if (!empty($documento->dati_aggiuntivi_fe['sconto_maggiorazione_importo'])) {
                 $sconto['Importo'] = $documento->dati_aggiuntivi_fe['sconto_maggiorazione_importo'];
             }
 
@@ -987,7 +987,9 @@ class FatturaElettronica
         }
 
         if (!empty($sconti_maggiorazioni)) {
-            $result['ScontoMaggiorazione'] = $sconti_maggiorazioni;
+            foreach($sconti_maggiorazioni AS $sconto_maggiorazione){
+                $result[]['ScontoMaggiorazione'] = $sconto_maggiorazione;
+            }
         }
 
         // Importo Totale Documento (2.1.1.9)

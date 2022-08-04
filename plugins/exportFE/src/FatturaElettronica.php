@@ -1337,163 +1337,169 @@ class FatturaElettronica
         })->aliquota;
 
         foreach ($righe as $idx => $riga) {
-            $dati_aggiuntivi = $riga->dati_aggiuntivi_fe;
 
-            $dettaglio = [
-                'NumeroLinea' => $riga['order'],
-            ];
+            // Righe - Descrizione della causale del documento (2.2.1.4)
+            $descrizioni = self::chunkSplit($riga['descrizione'], 1000);
 
-            // 2.2.1.2
-            if (!empty($dati_aggiuntivi['tipo_cessione_prestazione'])) {
-                $dettaglio['TipoCessionePrestazione'] = $dati_aggiuntivi['tipo_cessione_prestazione'];
-            }
+            foreach ($descrizioni as $descrizione) {   
 
-            // 2.2.1.3
-            if (empty($riga->isDescrizione())) {
-                if (!empty($riga->codice) || (!empty($dati_aggiuntivi['codice_tipo']) && !empty($dati_aggiuntivi['codice_valore']))) {
-                    $codice_articolo = [
-                        'CodiceTipo' => $dati_aggiuntivi['codice_tipo'] ?: 'COD',
-                        'CodiceValore' => $dati_aggiuntivi['codice_valore'] ?: $riga->codice,
+                $dati_aggiuntivi = $riga->dati_aggiuntivi_fe;
+
+                $dettaglio = [
+                    'NumeroLinea' => $riga['order'],
+                ];
+
+                // 2.2.1.2
+                if (!empty($dati_aggiuntivi['tipo_cessione_prestazione'])) {
+                    $dettaglio['TipoCessionePrestazione'] = $dati_aggiuntivi['tipo_cessione_prestazione'];
+                }
+
+                // 2.2.1.3
+                if (empty($riga->isDescrizione())) {
+                    if (!empty($riga->codice) || (!empty($dati_aggiuntivi['codice_tipo']) && !empty($dati_aggiuntivi['codice_valore']))) {
+                        $codice_articolo = [
+                            'CodiceTipo' => $dati_aggiuntivi['codice_tipo'] ?: 'COD',
+                            'CodiceValore' => $dati_aggiuntivi['codice_valore'] ?: $riga->codice,
+                        ];
+
+                        $dettaglio['CodiceArticolo'] = $codice_articolo;
+                    }
+                }
+
+                //$descrizione = $riga['descrizione'];
+
+                // Aggiunta dei riferimenti ai documenti
+                if (setting('Riferimento dei documenti in Fattura Elettronica') && $riga->hasOriginalComponent()) {
+                    $descrizione .= "\n".$riga->getOriginalComponent()->getDocument()->getReference();
+                }
+
+                $dettaglio['Descrizione'] = $descrizione;
+
+                $qta = abs($riga->qta) ?: 1;
+                $dettaglio['Quantita'] = $qta;
+
+                if (!empty($riga['um'])) {
+                    $dettaglio['UnitaMisura'] = $riga['um'];
+                }
+
+                if (!empty($dati_aggiuntivi['data_inizio_periodo'])) {
+                    $dettaglio['DataInizioPeriodo'] = $dati_aggiuntivi['data_inizio_periodo'];
+                }
+                if (!empty($dati_aggiuntivi['data_fine_periodo'])) {
+                    $dettaglio['DataFinePeriodo'] = $dati_aggiuntivi['data_fine_periodo'];
+                }
+
+                $dettaglio['PrezzoUnitario'] = $riga->prezzo_unitario ?: 0;
+
+                // Sconto (2.2.1.10)
+                $sconto_unitario = (float) $riga->sconto_unitario;
+
+                if (!empty($sconto_unitario)) {
+                    $sconto = [
+                        'Tipo' => $sconto_unitario > 0 ? 'SC' : 'MG',
                     ];
 
-                    $dettaglio['CodiceArticolo'] = $codice_articolo;
-                }
-            }
+                    if ($riga['tipo_sconto'] == 'PRC') {
+                        $sconto['Percentuale'] = abs($riga->sconto_percentuale);
+                    } else {
+                        $sconto['Importo'] = abs($sconto_unitario);
+                    }
 
-            // Non ammesso ’
-            $descrizione = $riga['descrizione'];
-
-            // Aggiunta dei riferimenti ai documenti
-            if (setting('Riferimento dei documenti in Fattura Elettronica') && $riga->hasOriginalComponent()) {
-                $descrizione .= "\n".$riga->getOriginalComponent()->getDocument()->getReference();
-            }
-
-            $dettaglio['Descrizione'] = $descrizione;
-
-            $qta = abs($riga->qta) ?: 1;
-            $dettaglio['Quantita'] = $qta;
-
-            if (!empty($riga['um'])) {
-                $dettaglio['UnitaMisura'] = $riga['um'];
-            }
-
-            if (!empty($dati_aggiuntivi['data_inizio_periodo'])) {
-                $dettaglio['DataInizioPeriodo'] = $dati_aggiuntivi['data_inizio_periodo'];
-            }
-            if (!empty($dati_aggiuntivi['data_fine_periodo'])) {
-                $dettaglio['DataFinePeriodo'] = $dati_aggiuntivi['data_fine_periodo'];
-            }
-
-            $dettaglio['PrezzoUnitario'] = $riga->prezzo_unitario ?: 0;
-
-            // Sconto (2.2.1.10)
-            $sconto_unitario = (float) $riga->sconto_unitario;
-
-            if (!empty($sconto_unitario)) {
-                $sconto = [
-                    'Tipo' => $sconto_unitario > 0 ? 'SC' : 'MG',
-                ];
-
-                if ($riga['tipo_sconto'] == 'PRC') {
-                    $sconto['Percentuale'] = abs($riga->sconto_percentuale);
-                } else {
-                    $sconto['Importo'] = abs($sconto_unitario);
+                    $dettaglio['ScontoMaggiorazione'] = $sconto;
                 }
 
-                $dettaglio['ScontoMaggiorazione'] = $sconto;
-            }
-
-            $aliquota = $riga->aliquota ?: $iva_descrizioni;
-            // Se sono presenti solo righe descrittive uso l'iva da impostazioni 
-            if (empty($aliquota)) {
-                $aliquota_predefinita = Aliquota::find(setting("Iva predefinita"));
-                $aliquota = $aliquota_predefinita;
-            }
-            $percentuale = floatval($aliquota->percentuale);
-
-            $prezzo_totale = $riga->totale_imponibile;
-            $prezzo_totale = $prezzo_totale ?: 0;
-            $dettaglio['PrezzoTotale'] = $prezzo_totale;
-
-            $dettaglio['AliquotaIVA'] = $percentuale;
-
-            if (!empty($riga['idritenutaacconto']) && empty($riga['is_descrizione'])) {
-                $dettaglio['Ritenuta'] = 'SI';
-            }
-
-            // Controllo aggiuntivo codice_natura_fe per evitare che venga riportato il tag vuoto
-            if (empty($percentuale) && !empty($aliquota['codice_natura_fe'])) {
-                $dettaglio['Natura'] = $aliquota['codice_natura_fe'];
-            }
-
-            if (!empty($dati_aggiuntivi['riferimento_amministrazione'])) {
-                $dettaglio['RiferimentoAmministrazione'] = $dati_aggiuntivi['riferimento_amministrazione'];
-            }
-
-            // AltriDatiGestionali (2.2.1.16) - Ritenuta ENASARCO
-            // https://forum.italia.it/uploads/default/original/2X/d/d35d721c3a3a601d2300378724a270154e23af52.jpeg
-            if (!empty($riga['ritenuta_contributi'])) {
-                $dettaglio[]['AltriDatiGestionali'] = [
-                    'TipoDato' => 'CASSA-PREV',
-                    'RiferimentoTesto' => setting('Tipo Cassa Previdenziale').' - '.$ritenuta_contributi->descrizione.' ('.Translator::numberToLocale($ritenuta_contributi->percentuale).'%)',
-                    'RiferimentoNumero' => $riga->ritenuta_contributi,
-                ];
-            }
-
-            $rs_ritenuta = $database->fetchOne('SELECT percentuale_imponibile FROM co_ritenutaacconto WHERE id='.prepare($riga['idritenutaacconto']));
-            if (!empty($rs_ritenuta['percentuale_imponibile'])) {
-                $dettaglio[]['AltriDatiGestionali'] = [
-                    'TipoDato' => 'IMPON-RACC',
-                    'RiferimentoTesto' => 'Imponibile % ritenuta d\'acconto',
-                    'RiferimentoNumero' => $rs_ritenuta['percentuale_imponibile'],
-                ];
-            }
-
-            // Dichiarazione d'intento
-            //Il numero di protocollo della dichiarazione d’intento, rilevabile dalla ricevuta telematica rilasciata dall’Agenzia delle entrate, è composto da 2 parti 17+6 (protocollo di ricezione della dichiarazione d’intento e il suo progressivo)
-            //$id_iva_dichiarazione = setting("Iva per lettere d'intento");
-            $dichiarazione = $documento->dichiarazione;
-            $ive_accettate = [];
-            $rs = $database->table('co_iva')->where('codice_natura_fe','N3.5')->get();
-            foreach($rs as $r){
-                $ive_accettate[] = $r->id;
-            }
-            if (!empty($dichiarazione) && in_array($riga->aliquota->id, $ive_accettate) ) {
-                $dettaglio[]['AltriDatiGestionali'] = [
-                    'TipoDato' => 'INTENTO',
-                    'RiferimentoTesto' => $dichiarazione->numero_protocollo,
-                    'RiferimentoData' => $dichiarazione->data_protocollo,
-                ];
-            }
-
-            // Dati aggiuntivi dinamici
-            if (!empty($dati_aggiuntivi['altri_dati'])) {
-                foreach ($dati_aggiuntivi['altri_dati'] as $dato) {
-                    $altri_dati = [];
-
-                    if (!empty($dato['tipo_dato'])) {
-                        $altri_dati['TipoDato'] = $dato['tipo_dato'];
-                    }
-
-                    if (!empty($dato['riferimento_testo'])) {
-                        $altri_dati['RiferimentoTesto'] = $dato['riferimento_testo'];
-                    }
-
-                    if (!empty($dato['riferimento_numero'])) {
-                        $altri_dati['RiferimentoNumero'] = $dato['riferimento_numero'];
-                    }
-
-                    if (!empty($dato['riferimento_data'])) {
-                        $altri_dati['RiferimentoData'] = $dato['riferimento_data'];
-                    }
-
-                    $dettaglio[]['AltriDatiGestionali'] = $altri_dati;
+                $aliquota = $riga->aliquota ?: $iva_descrizioni;
+                // Se sono presenti solo righe descrittive uso l'iva da impostazioni 
+                if (empty($aliquota)) {
+                    $aliquota_predefinita = Aliquota::find(setting("Iva predefinita"));
+                    $aliquota = $aliquota_predefinita;
                 }
-            }
+                $percentuale = floatval($aliquota->percentuale);
 
-            $result[] = [
-                'DettaglioLinee' => $dettaglio,
-            ];
+                $prezzo_totale = $riga->totale_imponibile;
+                $prezzo_totale = $prezzo_totale ?: 0;
+                $dettaglio['PrezzoTotale'] = $prezzo_totale;
+
+                $dettaglio['AliquotaIVA'] = $percentuale;
+
+                if (!empty($riga['idritenutaacconto']) && empty($riga['is_descrizione'])) {
+                    $dettaglio['Ritenuta'] = 'SI';
+                }
+
+                // Controllo aggiuntivo codice_natura_fe per evitare che venga riportato il tag vuoto
+                if (empty($percentuale) && !empty($aliquota['codice_natura_fe'])) {
+                    $dettaglio['Natura'] = $aliquota['codice_natura_fe'];
+                }
+
+                if (!empty($dati_aggiuntivi['riferimento_amministrazione'])) {
+                    $dettaglio['RiferimentoAmministrazione'] = $dati_aggiuntivi['riferimento_amministrazione'];
+                }
+
+                // AltriDatiGestionali (2.2.1.16) - Ritenuta ENASARCO
+                // https://forum.italia.it/uploads/default/original/2X/d/d35d721c3a3a601d2300378724a270154e23af52.jpeg
+                if (!empty($riga['ritenuta_contributi'])) {
+                    $dettaglio[]['AltriDatiGestionali'] = [
+                        'TipoDato' => 'CASSA-PREV',
+                        'RiferimentoTesto' => setting('Tipo Cassa Previdenziale').' - '.$ritenuta_contributi->descrizione.' ('.Translator::numberToLocale($ritenuta_contributi->percentuale).'%)',
+                        'RiferimentoNumero' => $riga->ritenuta_contributi,
+                    ];
+                }
+
+                $rs_ritenuta = $database->fetchOne('SELECT percentuale_imponibile FROM co_ritenutaacconto WHERE id='.prepare($riga['idritenutaacconto']));
+                if (!empty($rs_ritenuta['percentuale_imponibile'])) {
+                    $dettaglio[]['AltriDatiGestionali'] = [
+                        'TipoDato' => 'IMPON-RACC',
+                        'RiferimentoTesto' => 'Imponibile % ritenuta d\'acconto',
+                        'RiferimentoNumero' => $rs_ritenuta['percentuale_imponibile'],
+                    ];
+                }
+
+                // Dichiarazione d'intento
+                //Il numero di protocollo della dichiarazione d’intento, rilevabile dalla ricevuta telematica rilasciata dall’Agenzia delle entrate, è composto da 2 parti 17+6 (protocollo di ricezione della dichiarazione d’intento e il suo progressivo)
+                //$id_iva_dichiarazione = setting("Iva per lettere d'intento");
+                $dichiarazione = $documento->dichiarazione;
+                $ive_accettate = [];
+                $rs = $database->table('co_iva')->where('codice_natura_fe','N3.5')->get();
+                foreach($rs as $r){
+                    $ive_accettate[] = $r->id;
+                }
+                if (!empty($dichiarazione) && in_array($riga->aliquota->id, $ive_accettate) ) {
+                    $dettaglio[]['AltriDatiGestionali'] = [
+                        'TipoDato' => 'INTENTO',
+                        'RiferimentoTesto' => $dichiarazione->numero_protocollo,
+                        'RiferimentoData' => $dichiarazione->data_protocollo,
+                    ];
+                }
+
+                // Dati aggiuntivi dinamici
+                if (!empty($dati_aggiuntivi['altri_dati'])) {
+                    foreach ($dati_aggiuntivi['altri_dati'] as $dato) {
+                        $altri_dati = [];
+
+                        if (!empty($dato['tipo_dato'])) {
+                            $altri_dati['TipoDato'] = $dato['tipo_dato'];
+                        }
+
+                        if (!empty($dato['riferimento_testo'])) {
+                            $altri_dati['RiferimentoTesto'] = $dato['riferimento_testo'];
+                        }
+
+                        if (!empty($dato['riferimento_numero'])) {
+                            $altri_dati['RiferimentoNumero'] = $dato['riferimento_numero'];
+                        }
+
+                        if (!empty($dato['riferimento_data'])) {
+                            $altri_dati['RiferimentoData'] = $dato['riferimento_data'];
+                        }
+
+                        $dettaglio[]['AltriDatiGestionali'] = $altri_dati;
+                    }
+                }
+
+                $result[] = [
+                    'DettaglioLinee' => $dettaglio,
+                ];
+            }
         }
 
         // Riepiloghi per IVA per percentuale

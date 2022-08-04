@@ -38,10 +38,14 @@ function initCharCounter(input) {
             postText: '',
             showMaxLength: true,
             placement: 'bottom-right-inside',
-            utf8: true,
+            utf8: false,
             appendToParent: true,
-            alwaysShow: false,
-            threshold: 150
+            alwaysShow: true,
+            //threshold: 150,
+            warningClass: "small form-text text-muted",
+            limitReachedClass: "small form-text text-warning",
+            limitExceededClass: "small form-text text-danger",
+            
         });
 
     } else {
@@ -52,11 +56,15 @@ function initCharCounter(input) {
             limitReachedClass: "help-block text-danger",
             showMaxLength: false,
             placement: 'bottom-right-inside',
-            utf8: true,
+            utf8: false,
             appendToParent: true,
             alwaysShow: true
         });
     }
+
+    $input.on('autosize:resized', function() {
+        $(this).trigger('maxlength.reposition');
+    });
 
     return true;
 }

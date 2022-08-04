@@ -17,15 +17,17 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Inerentemente al tracciato XML prodotto per la FE
+// la descrizione del bene o servizio valorizzata all'interno del nodo con ID 2.2.1.4 può avere una lunghezza che varia tra 1 - 1000 caratteri
 echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "id": "descrizione_riga", "value": '.json_encode($result['descrizione']).', "required": 1, "extra": "rows=\"4\"" ]}
+            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "id": "descrizione_riga", "value": '.json_encode($result['descrizione']).', "required": 1, "extra": "rows=\"4\"",  "charcounter": 1 ]}
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "note", "value": "'.$result['note'].'", "help": "'.tr('Queste note saranno utilizzate solo a scopo interno').'" ]}
+            {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "note", "value": "'.$result['note'].'", "help": "'.tr('Queste note saranno utilizzate solo a scopo interno').'", "extra": "rows=\"2\"" ]}
         </div>
     </div>';

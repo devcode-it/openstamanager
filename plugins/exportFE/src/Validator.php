@@ -636,6 +636,7 @@ class Validator
                 $output = htmlspecialchars($output, ENT_NOQUOTES | ENT_XML1 | ENT_SUBSTITUTE, 'UTF-8', false);
                 
                 // Gestione dei caratteri non supportati e sostituzione con alternativi
+                // Problemi noti: sostituendo 1 carattere con 2 o più potrebbero verificarsi problemi se, per il testo di quel nodo, si era raggiunta la lunghezza massima prevista dal tracciato
                 $output = replace($output, [
                     '€' => 'euro',
                     '—' => '-',

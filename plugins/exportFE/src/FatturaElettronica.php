@@ -1037,7 +1037,15 @@ class FatturaElettronica
             }
 
             if (!empty($causale)) {
-                $result['CausaleTrasporto'] = $causale;
+                
+                /**
+                 * Id SdI: 2.1.9.3
+                 * Caratteri min-max: 1 - 100 caretteri
+                 * Ripetibile: No
+                */
+
+                $result['CausaleTrasporto'] = safe_truncate(html_entity_decode($causale), 100, null);
+                
             }
 
             if (!empty($documento['n_colli'])) {

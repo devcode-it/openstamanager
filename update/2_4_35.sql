@@ -15,7 +15,7 @@ UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_module
 
 -- Modifica nomi filtri utenti
 UPDATE `zz_group_module` SET `name`='Mostra al tecnico solo le sue attività programmate e assegnate' WHERE `name`='Mostra interventi ai tecnici coinvolti';
-UPDATE `zz_group_module` SET `name`='Mostra al cliente solo le attività che ha richiesto' WHERE `name`='Mostra interventi ai clienti coinvolti';
+UPDATE `zz_group_module` SET `name`='Mostra al cliente solo le attività in cui è impostato come \'Cliente\'' WHERE `name`='Mostra interventi ai clienti coinvolti';
 UPDATE `zz_group_module` SET `name`='Mostra al tecnico solo le attività a cui è stato assegnato' WHERE `name`='Mostra interventi ai tecnici assegnati';
 UPDATE `zz_group_module` SET `name`='Mostra agli agenti solo le anagrafiche di cui sono agenti' WHERE `name`='Mostra preventivi ai clienti coinvolti'; 
 
@@ -23,9 +23,12 @@ UPDATE `zz_group_module` SET `name`='Mostra agli agenti solo le anagrafiche di c
 UPDATE `zz_segments` SET `clause` = 'co_pagamenti.codice_modalita_pagamento_fe= \'MP12\' AND co_tipidocumento.dir=\"uscita\" AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`)' WHERE `zz_segments`.`name` = 'Scadenzario Ri.Ba. Fornitori';
 UPDATE `zz_segments` SET `clause` = 'co_pagamenti.codice_modalita_pagamento_fe= \'MP12\' AND co_tipidocumento.dir=\"entrata\" AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`)' WHERE `zz_segments`.`name` = 'Scadenzario Ri.Ba. Clienti'; 
 
--- Aggiunta filtri per agente in preventivi
+-- Aggiunta filtri in viste
 INSERT INTO `zz_group_module` (`idgruppo`, `idmodule`, `name`, `clause`, `position`, `enabled`, `default`) VALUES ((SELECT `id` FROM `zz_groups` WHERE `nome`='Agenti'), (SELECT `id` FROM `zz_modules` WHERE `name`='Preventivi'), 'Mostra agli agenti solo i preventivi dei clienti dei quali si è agenti', 'an_anagrafiche.idagente=|id_anagrafica|', 'WHR', 1, 0);
 INSERT INTO `zz_group_module` (`idgruppo`, `idmodule`, `name`, `clause`, `position`, `enabled`, `default`) VALUES ((SELECT `id` FROM `zz_groups` WHERE `nome`='Agenti'), (SELECT `id` FROM `zz_modules` WHERE `name`='Preventivi'), 'Mostra agli agenti solo i preventivi di cui sono agenti', 'co_preventivi.idagente=|id_anagrafica|', 'WHR', 1, 0);
+
+INSERT INTO `zz_group_module` (`idgruppo`, `idmodule`, `name`, `clause`, `position`, `enabled`, `default`) VALUES ((SELECT `id` FROM `zz_groups` WHERE `nome`='Clienti'), (SELECT `id` FROM `zz_modules` WHERE `name`='Interventi'), 'Mostra al cliente solo le attività in cui è impostato come \'Per conto di\'', 'in_interventi.idclientefinale=|id_anagrafica|', 'WHR', '0', '1');
+INSERT INTO `zz_group_module` (`idgruppo`, `idmodule`, `name`, `clause`, `position`, `enabled`, `default`) VALUES ((SELECT `id` FROM `zz_groups` WHERE `nome`='Clienti'), (SELECT `id` FROM `zz_modules` WHERE `name`='Interventi'), 'Mostra al cliente tutte le attività in cui è coinvolto', '(in_interventi.idanagrafica=|id_anagrafica| OR in_interventi.idclientefinale=|id_anagrafica|)', 'WHR', '0', '1');
 
 -- Aggiornamento title e icona per Causali (Causali trasporto) e Causali movimenti
 UPDATE `zz_modules` SET `title` = 'Causali trasporto', `icon` = 'fa fa-truck'  WHERE `zz_modules`.`name` = 'Causali'; 

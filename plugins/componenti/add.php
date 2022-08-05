@@ -27,7 +27,7 @@ echo '
 
 	<div class="row">
 		<div class="col-md-12">
-            {["type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "ajax-source": "articoli", "value": "", "required": 1, "select-options": {"permetti_movimento_a_zero": 1} ]}
+            {["type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "ajax-source": "articoli", "value": "", "required": 1, "select-options": {"permetti_movimento_a_zero": 1, "ricerca_codici_fornitore": 1} ]}
 		</div>
 	</div>
 

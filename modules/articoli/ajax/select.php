@@ -31,6 +31,7 @@ switch ($resource) {
         $sedi_non_impostate = !isset($superselect['idsede_partenza']) && !isset($superselect['idsede_destinazione']);
         $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
         $usare_dettaglio_fornitore = $superselect['dir'] == 'uscita';
+        $ricerca_codici_fornitore = $superselect['ricerca_codici_fornitore'];
         $usare_iva_anagrafica = $superselect['dir'] == 'entrata' && !empty($superselect['idanagrafica']);
         $solo_non_varianti = $superselect['solo_non_varianti'];
         $idagente = $superselect['idagente'];
@@ -167,6 +168,12 @@ switch ($resource) {
                 $search_fields[] = 'mg_fornitore_articolo.descrizione LIKE '.prepare('%'.$search.'%');
                 $search_fields[] = 'mg_fornitore_articolo.codice_fornitore LIKE '.prepare('%'.$search.'%');
                 $search_fields[] = 'mg_fornitore_articolo.barcode_fornitore LIKE '.prepare('%'.$search.'%');
+            }
+
+            if ($ricerca_codici_fornitore) {
+                $search_fields[] = 'mg_articoli.id IN (SELECT mg_fornitore_articolo.id_articolo FROM mg_fornitore_articolo WHERE mg_fornitore_articolo.descrizione LIKE '.prepare('%'.$search.'%').')';
+                $search_fields[] = 'mg_articoli.id IN (SELECT mg_fornitore_articolo.id_articolo FROM mg_fornitore_articolo WHERE mg_fornitore_articolo.codice_fornitore LIKE '.prepare('%'.$search.'%').')';
+                $search_fields[] = 'mg_articoli.id IN (SELECT mg_fornitore_articolo.id_articolo FROM mg_fornitore_articolo WHERE mg_fornitore_articolo.barcode_fornitore LIKE '.prepare('%'.$search.'%').')';
             }
         }
 

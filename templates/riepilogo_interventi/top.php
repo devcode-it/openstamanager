@@ -22,10 +22,7 @@ include_once __DIR__.'/../../core.php';
 $tipo = get('tipo');
 
 echo '
-<h4><b>'.tr('Riepilogo attività dal _START_ al _END_', [
-    '_START_' => Translator::dateToLocale($date_start),
-    '_END_' => Translator::dateToLocale($date_end),
-    ], ['upper' => true]).'</b></h4>
+<h4><b>'.tr('Riepilogo attività selezionate', [], ['upper' => true]).'</b></h4>
 
 <table class="table table-bordered">
     <thead>

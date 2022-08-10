@@ -306,6 +306,14 @@ function initComplete(settings) {
                 }
 
                 function start_search(module_id, field, search_value) {
+                    // Rimozione righe selezionate per problemi di calcolo totale righe selezionate
+                    var table_selector = "#" + $this.attr('id');
+                    var wrapper = getTable(table_selector);
+                    var table = wrapper.datatable;
+                    var row_ids = wrapper.getSelectedRows();
+                    wrapper.removeSelectedRows(row_ids);
+                    table.clear().draw();
+
                     setTableSearch(module_id, field, search_value);
                     column.search(search_value).draw();
                 }

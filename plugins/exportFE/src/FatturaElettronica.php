@@ -1344,17 +1344,19 @@ class FatturaElettronica
             return $item->aliquota != null;
         })->aliquota;
 
+        $order = 1;
         foreach ($righe as $idx => $riga) {
 
             // Righe - Descrizione della causale del documento (2.2.1.4)
             $descrizioni = self::chunkSplit($riga['descrizione'], 1000);
 
-            foreach ($descrizioni as $descrizione) {   
+            foreach ($descrizioni as $i => $descrizione) {   
+                $first_riga = ($i == 0 ? true : false);
 
                 $dati_aggiuntivi = $riga->dati_aggiuntivi_fe;
 
                 $dettaglio = [
-                    'NumeroLinea' => $riga['order'],
+                    'NumeroLinea' => $order++,
                 ];
 
                 // 2.2.1.2
@@ -1383,7 +1385,7 @@ class FatturaElettronica
 
                 $dettaglio['Descrizione'] = $descrizione;
 
-                $qta = abs($riga->qta) ?: 1;
+                $qta = $riga->qta && $first_riga ? abs($riga->qta) : 1;
                 $dettaglio['Quantita'] = $qta;
 
                 if (!empty($riga['um'])) {
@@ -1397,12 +1399,12 @@ class FatturaElettronica
                     $dettaglio['DataFinePeriodo'] = $dati_aggiuntivi['data_fine_periodo'];
                 }
 
-                $dettaglio['PrezzoUnitario'] = $riga->prezzo_unitario ?: 0;
+                $dettaglio['PrezzoUnitario'] = $riga->prezzo_unitario && $first_riga ? $riga->prezzo_unitario : 0;
 
                 // Sconto (2.2.1.10)
                 $sconto_unitario = (float) $riga->sconto_unitario;
 
-                if (!empty($sconto_unitario)) {
+                if (!empty($sconto_unitario) && $first_riga) {
                     $sconto = [
                         'Tipo' => $sconto_unitario > 0 ? 'SC' : 'MG',
                     ];
@@ -1425,7 +1427,7 @@ class FatturaElettronica
                 $percentuale = floatval($aliquota->percentuale);
 
                 $prezzo_totale = $riga->totale_imponibile;
-                $prezzo_totale = $prezzo_totale ?: 0;
+                $prezzo_totale = $prezzo_totale && $first_riga ? $prezzo_totale : 0;
                 $dettaglio['PrezzoTotale'] = $prezzo_totale;
 
                 $dettaglio['AliquotaIVA'] = $percentuale;

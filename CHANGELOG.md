@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.35 (2022-08-12)](#2435-2022-08-12)
 - [2.4.34 (2022-07-15)](#2434-2022-07-15)
 - [2.4.33 (2022-05-17)](#2433-2022-05-17)
 - [2.4.32 (2022-03-24)](#2432-2022-03-24)
@@ -45,7 +46,32 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
+## 2.4.35 (2022-08-12)
 
+### Aggiunto (Added)
+- Aggiunta la possibilità di scrivere **note interne** per ogni riga dei documenti (fatture, preventivi, ecc)
+- Aggiunta unità di misura nella finestra di inserimento nuovo articolo 
+- Aggiunta distinzione fra margine e ricarico nelle finestre di inserimento righe dei documenti
+- Aggiunto in visualizzazione il codice fornitore nelle righe da importare fra documenti di acquisto
+- Nuovo pulsante **Copia riferimento vendita** in importazione fatture elettroniche passive
+- Aggiunta filtro per gli utenti del gruppo **Agenti** per visualizzare solo i propri preventivi
+- Ampliamento filtro di ricerca articoli anche per codice fornitore
+### Modificato (Changed)
+- Spostata stampa scadenzario nel modulo **Contabilità** -> **Stampe contabili**, con aggiunta di filtri
+- Rimozione limiti tag HTML nell'editor dei template email e aggiunta emoji e immagini
+### Fixed
+- Correzione caratteri speciali nelle fatture elettroniche
+- Correzione modulo **Statistiche** per escludere le autofatture
+- Correzione colonne **Costi e Ricavi** nelle attività
+- Correzione statistiche articolo per **PHP 8.0**
+- Correzione ordinamento fatture di acquisto per num. protocollo in stampa registri iva
+- Correzione ricerca iscritto newsletter per **PHP 8.0**
+- Correzione della selezione banca nelle fatture
+- Correzione cambio stato alla firma dell'attività 
+- Correzione calcolo sconto combinato in importazione fattura elettronica
+- Correzione sconti multipli in fattura
+- Correzioni minori in fattura elettronica
+- Correzione calcolo totali nelle tabelle principali
 ## 2.4.34 (2022-07-15)
 ### Aggiunto (Added)
 - Aggiunte 3 nuove colonne nella vista attività, di default disattivate: ore, ricavi, costi

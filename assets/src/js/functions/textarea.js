@@ -109,7 +109,7 @@ function initCKEditor(input) {
         scayt_sLang: globals.full_locale,
         scayt_disableOptionsStorage: 'lang',
         disableNativeSpellChecker: false,
-        filebrowserUploadUrl: globals.rootdir+'/ckeditor_fileupload/ajaxfile.php?type=file',
+        //filebrowserUploadUrl: globals.rootdir+'/ckeditor_fileupload/ajaxfile.php?type=file',
         filebrowserImageUploadUrl: globals.rootdir+"/actions.php?type=image&op=aggiungi-allegato&id_module="+globals.id_module+"&id_plugin="+globals.id_plugin+"&id_record="+globals.id_record,
         filebrowserUploadMethod: 'form',
         fullPage: (input.hasAttribute('use_full_ckeditor')) ? true : false,

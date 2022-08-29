@@ -467,13 +467,13 @@ span.form-control {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.02) inset;
 }
 
-.sidebar-menu li > a > .pull-right-container {
+/*.sidebar-menu li > a > .pull-right-container {
     position: absolute;
     padding: 12px;
     right: 10px;
     top: 50%;
     margin-top: -19px;
-}
+}*/
 
 .sidebar-form {
     border-radius: 3px;

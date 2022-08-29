@@ -213,7 +213,7 @@ echo '
 
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "ckeditor", "label": "'.tr('Richiesta').'", "name": "richiesta", "id": "richiesta_add", "required": 1, "value": "'.$richiesta.'", "extra": "style=\'max-height:80px;\'" ]}
+            {[ "type": "ckeditor", "label": "'.tr('Richiesta').'", "name": "richiesta", "id": "richiesta_add", "required": 1, "value": "'.htmlentities($richiesta).'", "extra": "style=\'max-height:80px;\'" ]}
         </div>
     </div>';
 

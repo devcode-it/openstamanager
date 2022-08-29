@@ -1119,3 +1119,22 @@ div.tip {
 .alert-warning {
     background-color: #ff851b !important;
 }
+
+
+/*
+* Component: Sidebar Mini
+*/
+
+@media (min-width: 768px) {
+
+    .sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > a > span:not(.pull-right),
+    .sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > .treeview-menu {
+        width: 220px;
+    }
+    .sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > a > .pull-right-container {
+        left: 220px !important;
+    }
+    html body.sidebar-mini.sidebar-mini.sidebar-collapse i.fa.fa-user-circle-o.fa-3x.pull-left{
+        font-size: 2.4em;
+    }
+}

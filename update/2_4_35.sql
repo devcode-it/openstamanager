@@ -33,3 +33,6 @@ INSERT INTO `zz_group_module` (`idgruppo`, `idmodule`, `name`, `clause`, `positi
 -- Aggiornamento title e icona per Causali (Causali trasporto) e Causali movimenti
 UPDATE `zz_modules` SET `title` = 'Causali trasporto', `icon` = 'fa fa-truck'  WHERE `zz_modules`.`name` = 'Causali'; 
 UPDATE `zz_modules` SET `icon` = 'fa fa-exchange'  WHERE `zz_modules`.`name` = 'Causali movimenti'; 
+
+-- Prima pagina per gruppo utenti 
+ALTER TABLE `zz_groups` ADD `id_module_start` INT NULL AFTER `editable`; 

@@ -29,7 +29,13 @@ echo '
             ]).'</h3>
 		</div>
 
-		<div class="panel-body">';
+		<div class="panel-body">
+            <div class="row">
+                <div class="col-md-3 pull-right">
+                    {["type":"select", "label":"", "name":"id_module_start", "ajax-source":"moduli_gruppo", "select-options": '.json_encode(['idgruppo' => $record['id']]).', "placeholder":"'.tr('Modulo iniziale').'", "value":"'.$record['id_module_start'].'" ]}
+                </div>
+            </div>
+            <br>';
 
 if (!empty($utenti)) {
     echo '
@@ -231,8 +237,29 @@ function update_permissions(id, value){
         function(data){
             if(data == "ok") {
                 toastr["success"]("'.tr('Permessi aggiornati!').'");
+                if( id==$("#id_module_start").val() && value=="-" ){
+                    $("#id_module_start").selectReset();
+                    update_user($("#id_module_start").val());
+                }
             } else {
                 swal("'.tr('Errore').'", "'.tr("Errore durante l'aggiornamento dei permessi!").'", "error");
+            }
+        }
+    );
+}
+
+$("#id_module_start").change(function(){
+    update_user($(this).val());
+});
+
+function update_user(value){
+    $.get(
+        globals.rootdir + "/actions.php?id_module='.$id_module.'&id_record='.$id_record.'&op=update&id_module_start=" + value,
+        function(data){
+            if(data == "ok") {
+                toastr["success"]("'.tr('Prima pagina aggiornata!').'");
+            } else {
+                swal("'.tr('Errore').'", "'.tr("Errore durante l'aggiornamento delle informazioni!").'", "error");
             }
         }
     );

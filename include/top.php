@@ -340,7 +340,7 @@ $hide_sidebar = Auth::check() && (setting('Nascondere la barra sinistra di defau
 echo '
     </head>
 
-	<body class="skin-'.$theme.(!empty($hide_sidebar) ? ' sidebar-collapse' : '').(!Auth::check() ? ' hold-transition login-page' : '').'">
+	<body class="sidebar-mini skin-'.$theme.(!empty($hide_sidebar) ? ' sidebar-collapse' : '').(!Auth::check() ? ' hold-transition login-page' : '').'">
 		<div class="'.(!Auth::check() ? '' : 'wrapper').'">';
 
 if (Auth::check()) {

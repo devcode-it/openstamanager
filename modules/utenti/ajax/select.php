@@ -111,4 +111,23 @@ switch ($resource) {
         }
 
         break;
+
+    case 'moduli_gruppo':
+    
+        $query = "SELECT zz_modules.id, zz_modules.title AS descrizione FROM zz_modules LEFT JOIN zz_permissions ON zz_permissions.idmodule=zz_modules.id |where| ORDER BY descrizione";
+
+        $where[] = 'zz_modules.enabled=1';
+
+        if( isset($superselect['idgruppo']) && $superselect['idgruppo']!=1 ){
+            $where[] = 'zz_permissions.idgruppo='.prepare($superselect['idgruppo']);
+        }
+        
+        foreach ($elements as $element) {
+            $filter[] = 'zz_modules.id='.prepare($element);
+        }
+        if (!empty($search)) {
+            $search_fields[] = 'descrizione LIKE '.prepare('%'.$search.'%');
+        }
+
+        break;
 }

@@ -467,13 +467,13 @@ span.form-control {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.02) inset;
 }
 
-.sidebar-menu li > a > .pull-right-container {
+/*.sidebar-menu li > a > .pull-right-container {
     position: absolute;
     padding: 12px;
     right: 10px;
     top: 50%;
     margin-top: -19px;
-}
+}*/
 
 .sidebar-form {
     border-radius: 3px;
@@ -1118,4 +1118,23 @@ div.tip {
 
 .alert-warning {
     background-color: #ff851b !important;
+}
+
+
+/*
+* Component: Sidebar Mini
+*/
+
+@media (min-width: 768px) {
+
+    .sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > a > span:not(.pull-right),
+    .sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > .treeview-menu {
+        width: 220px;
+    }
+    .sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > a > .pull-right-container {
+        left: 220px !important;
+    }
+    html body.sidebar-mini.sidebar-mini.sidebar-collapse i.fa.fa-user-circle-o.fa-3x.pull-left{
+        font-size: 2.4em;
+    }
 }

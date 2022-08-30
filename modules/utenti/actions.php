@@ -244,4 +244,15 @@ switch (filter('op')) {
         echo 'ok';
 
         break;
+
+    case 'update':
+
+        $dbo->update('zz_groups',[
+            'id_module_start' => filter('id_module_start'),
+        ],['id' => $id_record]);
+
+        ob_end_clean();
+        echo 'ok';
+
+        break;
 }

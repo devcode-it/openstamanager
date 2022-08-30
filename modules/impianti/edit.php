@@ -48,7 +48,7 @@ if (!empty($record['immagine'])) {
 				<div class="col-md-9">
 					<div class="row">
 						<div class="col-md-6">
-							{[ "type": "text", "label": "<?php echo tr('Matricola'); ?>", "name": "matricola", "required": 1, "class": "text-center", "maxlength": 25, "value": "$matricola$" ]}
+							{[ "type": "text", "label": "<?php echo tr('Matricola'); ?>", "name": "matricola", "required": 1, "class": "text-center", "maxlength": 25, "value": "$matricola$", "validation": "matricola" ]}
 						</div>
 
 						<div class="col-md-6">

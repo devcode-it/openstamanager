@@ -28,15 +28,19 @@ include_once __DIR__.'/../../core.php';
 
   <div class="row">
     <div class="col-md-4">
-    {[ "type": "select", "label": "<?php echo tr('Tipo'); ?>", "name": "tipo", "required": 1, "ajax-source": "tipi_scadenze", "icon-after": "add|<?php echo Modules::get('Tipi scadenze')['id']; ?>" ]}
+      {[ "type": "select", "label": "<?php echo tr('Anagrafica'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "anagrafiche" ]}
     </div>
 
     <div class="col-md-4">
-    {[ "type": "date", "label": "<?php echo tr('Data scadenza'); ?>", "name": "data", "required": 1, "value": "-now-" ]}
+      {[ "type": "select", "label": "<?php echo tr('Tipo'); ?>", "name": "tipo", "required": 1, "ajax-source": "tipi_scadenze", "icon-after": "add|<?php echo Modules::get('Tipi scadenze')['id']; ?>" ]}
     </div>
 
-    <div class="col-md-4">
-    {[ "type": "number", "label": "<?php echo tr('Importo'); ?>", "name": "da_pagare", "required": 1, "value": "", "help": "Le scadenze inserite con importo positivo indicano un credito da un cliente, le scadenze inserite con importo negativo indicano un debito verso un fornitore" ]}
+    <div class="col-md-2">
+      {[ "type": "date", "label": "<?php echo tr('Data scadenza'); ?>", "name": "data", "required": 1, "value": "-now-" ]}
+    </div>
+
+    <div class="col-md-2">
+      {[ "type": "number", "label": "<?php echo tr('Importo'); ?>", "name": "da_pagare", "required": 1, "value": "", "help": "Le scadenze inserite con importo positivo indicano un credito da un cliente, le scadenze inserite con importo negativo indicano un debito verso un fornitore" ]}
     </div>
   </div>
 

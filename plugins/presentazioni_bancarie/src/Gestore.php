@@ -128,17 +128,19 @@ class Gestore
     public function aggiungi(Scadenza $scadenza, int $identifier, string $descrizione, string $codice_sequenza = null)
     {
         $documento = $scadenza->documento;
-        $controparte = $documento->anagrafica;
+        $controparte = $scadenza->anagrafica;
         $banca_controparte = self::getBancaControparte($scadenza);
         if (empty($banca_controparte)) {
             return false;
         }
+        $ctgypurp = $this->getTipo($scadenza)['ctgypurp'] ?: 'SUPP';
 
         $pagamento = $documento->pagamento;
         $direzione = $documento->direzione;
+        $importo = $scadenza->da_pagare - $scadenza->pagato;
         $totale = (abs($scadenza->da_pagare) - abs($scadenza->pagato));
 
-        $is_credito_diretto = $direzione == 'uscita' && in_array($pagamento->codice_modalita_pagamento_fe, ['MP09', 'MP10', 'MP11', 'MP19', 'MP20', 'MP21']);
+        $is_credito_diretto = ($direzione == 'uscita' && in_array($pagamento->codice_modalita_pagamento_fe, ['MP05','MP09', 'MP10', 'MP11', 'MP19', 'MP20', 'MP21'])) || (empty($documento) && $importo < 0);
         $is_debito_diretto = $direzione == 'entrata' && in_array($pagamento->codice_modalita_pagamento_fe, ['MP09', 'MP10', 'MP11', 'MP19', 'MP20', 'MP21']) && !empty($this->banca_azienda->creditor_id); // Mandato SEPA disponibile
         $is_riba = $direzione == 'entrata' && in_array($pagamento->codice_modalita_pagamento_fe, ['MP12']) && !empty($this->banca_azienda->codice_sia);
 
@@ -149,7 +151,7 @@ class Gestore
         }
 
         if ($is_credito_diretto) {
-            return $this->aggiungiCreditoDiretto($identifier, $controparte, $banca_controparte, $descrizione, $totale, $scadenza->scadenza);
+            return $this->aggiungiCreditoDiretto($identifier, $controparte, $banca_controparte, $descrizione, $totale, $scadenza->scadenza, $ctgypurp);
         } elseif ($is_debito_diretto) {
             return $this->aggiungiDebitoDiretto($identifier, $controparte, $banca_controparte, $descrizione, $totale, $scadenza->scadenza, $method, $codice_sequenza);
         } elseif ($is_riba) {
@@ -213,26 +215,28 @@ class Gestore
         return true;
     }
 
-    public function aggiungiCreditoDiretto(int $identifier, Anagrafica $controparte, Banca $banca_controparte, string $descrizione, $totale, DateTime $data_prevista)
+    public function aggiungiCreditoDiretto(int $identifier, Anagrafica $controparte, Banca $banca_controparte, string $descrizione, $totale, DateTime $data_prevista, $ctgypurp)
     {
         $id = 'pagamento_'.$identifier;
 
         // Esportazione del pagamento
-        $this->credito_diretto->addPaymentInfo($id, [
+        $payment = $this->credito_diretto->addPaymentInfo($id, [
             'id' => $identifier,
-            'dueDate' => $data_prevista->format('dmy'),
+            'dueDate' => $data_prevista->format('Y-m-d'),
             'debtorName' => $this->azienda->ragione_sociale,
             'debtorAccountIBAN' => $this->banca_azienda->iban,
             'debtorAgentBIC' => $this->banca_azienda->bic,
         ]);
 
         $this->credito_diretto->addTransfer($id, [
-            'amount' => $totale,
+            'amount' => $totale*100,
             'creditorIban' => $banca_controparte->iban,
             'creditorBic' => $banca_controparte->bic,
             'creditorName' => $controparte->ragione_sociale,
             'remittanceInformation' => $descrizione,
         ]);
+
+        $payment->setCategoryPurposeCode($ctgypurp);
 
         return true;
     }
@@ -255,7 +259,7 @@ class Gestore
         // Add a Single Transaction to the named payment
         $mandato = $this->getMandato($banca_controparte);
         $this->debito_diretto->addTransfer($id, [
-            'amount' => $totale,
+            'amount' => $totale*100,
             'debtorName' => $controparte->ragione_sociale,
             'debtorIban' => $banca_controparte->iban,
             'debtorBic' => $banca_controparte->bic,
@@ -305,11 +309,10 @@ class Gestore
     public static function getBancaControparte(Scadenza $scadenza): ?Banca
     {
         $documento = $scadenza->documento;
-        $anagrafica = $documento->anagrafica;
 
         $banca_controparte = $documento->id_banca_controparte ? Banca::find($documento->id_banca_controparte) : null;
         if (empty($banca_controparte)) {
-            $banca_controparte = Banca::where('id_anagrafica', $anagrafica->id)
+            $banca_controparte = Banca::where('id_anagrafica', $scadenza->idanagrafica)
                 ->where('predefined', 1)
                 ->first();
         }
@@ -418,5 +421,10 @@ class Gestore
         } else{
             return [];
         }
+    }
+
+    protected function getTipo(Scadenza $scadenza)
+    {
+        return database()->fetchOne('SELECT * FROM co_tipi_scadenze WHERE nome = '.prepare($scadenza->tipo));
     }
 }

@@ -204,7 +204,7 @@ class Generator
         //Lunghezza maschera
         $mask_length = strlen($maschera);
 
-        $query = Manager::table($table)->select($field)->where($field, 'like', $maschera)->orderByRaw('LENGTH(numero_esterno) DESC')->orderByRaw($order);
+        $query = Manager::table($table)->select($field)->where($field, 'like', $maschera)->orderByRaw('LENGTH('.$field.') DESC')->orderByRaw($order);
 
         foreach ($where as $and) {
             $query->whereRaw($and);

@@ -101,8 +101,9 @@ class Scadenze
     {
         $numero = $fattura->numero_esterno ?: $fattura->numero;
         $descrizione = $fattura->tipo->descrizione.' numero '.$numero;
+        $idanagrafica = $fattura->idanagrafica;
 
-        $scadenza = Scadenza::build($descrizione, $importo, $data_scadenza, $type, $is_pagato);
+        $scadenza = Scadenza::build($idanagrafica, $descrizione, $importo, $data_scadenza, $type, $is_pagato);
 
         $scadenza->documento()->associate($fattura);
         $scadenza->data_emissione = $fattura->data;

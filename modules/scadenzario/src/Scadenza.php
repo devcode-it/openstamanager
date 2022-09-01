@@ -21,6 +21,7 @@ namespace Modules\Scadenzario;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
+use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Fattura;
 
 class Scadenza extends Model
@@ -34,10 +35,11 @@ class Scadenza extends Model
         'data_pagamento',
     ];
 
-    public static function build($descrizione, $importo, $data_scadenza, $type = 'fattura', $is_pagato = false)
+    public static function build($idanagrafica, $descrizione, $importo, $data_scadenza, $type = 'fattura', $is_pagato = false)
     {
         $model = new static();
 
+        $model->idanagrafica = $idanagrafica;
         $model->descrizione = $descrizione;
         $model->scadenza = $data_scadenza;
         $model->da_pagare = $importo;
@@ -54,5 +56,10 @@ class Scadenza extends Model
     public function documento()
     {
         return $this->belongsTo(Fattura::class, 'iddocumento');
+    }
+
+    public function anagrafica()
+    {
+        return $this->belongsTo(Anagrafica::class, 'idanagrafica');
     }
 }

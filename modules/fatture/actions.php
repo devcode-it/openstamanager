@@ -858,6 +858,7 @@ switch (post('op')) {
         $tipo = Tipo::find(post('idtipodocumento'));
         $iva = Aliquota::find(setting('Iva predefinita'));
         $totale_imponibile = setting('Utilizza prezzi di vendita comprensivi di IVA') ? $fattura->totale_imponibile + ($fattura->totale_imponibile * $iva->percentuale / 100) : $fattura->totale_imponibile;
+        $totale_imponibile = $fattura->tipo->reversed == 1 ? -$totale_imponibile : $totale_imponibile;
 
         $autofattura = Fattura::build($anagrafica, $tipo, $data, $id_segment);
         $autofattura->idconto = $fattura->idconto;

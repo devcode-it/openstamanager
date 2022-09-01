@@ -58,7 +58,7 @@ if (!$esporta_processati) {
 $scadenze = $scadenze->get();
 $id_scadenze = $scadenze->pluck('id');
 
-$raggruppamento = $scadenze->groupBy('documento.idanagrafica');
+$raggruppamento = $scadenze->groupBy('idanagrafica');
 if ($raggruppamento->isEmpty()) {
     echo '
 <p>'.tr('Nessun pagamento disponibile secondo la selezione effettuata').'.</p>';
@@ -67,7 +67,7 @@ if ($raggruppamento->isEmpty()) {
 }
 
 foreach ($raggruppamento as $id_anagrafica => $scadenze_anagrafica) {
-    $anagrafica = $scadenze_anagrafica->first()->documento->anagrafica;
+    $anagrafica = $scadenze_anagrafica->first()->anagrafica;
 
     echo '
 <h3>

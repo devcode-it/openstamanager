@@ -46,18 +46,16 @@ echo '
 			<div class="row">
 
 				<!-- Info scadenza -->
-				<div class="col-md-6">';
-
-if (!empty($documento)) {
-    echo '
+				<div class="col-md-6">
 					<table class="table table-striped table-hover table-condensed table-bordered">
                         <tr>
-                            <th width="120">'.($dir == 'entrata' ? tr('Cliente') : tr('Fornitore')).':</th>
+                            <th width="125">'.($dir == 'entrata' ? tr('Cliente') : ($dir == 'uscita' ? tr('Fornitore') : tr('Anagrafica'))).':</th>
                             <td>
-                                '.Modules::link('Anagrafiche', $documento->anagrafica->id, $documento->anagrafica->ragione_sociale).'
+                                '.Modules::link('Anagrafiche', $record['idanagrafica'], $record['ragione_sociale']).'
                             </td>
-                        </tr>
-
+                        </tr>';
+if (!empty($documento)) {
+    echo '
                         <tr>
                             <th>'.tr('Documento').':</th>
                             <td>'.$documento->tipo->descrizione.'</td>
@@ -76,8 +74,20 @@ if (!empty($documento)) {
                         <tr>
                             <th>'.tr('Netto a pagare').':</th>
                             <td>'.moneyFormat($documento->netto).'</td>
-                        </tr>
+                        </tr>';             
+} else {
+    
+    $scadenza = $dbo->fetchOne('SELECT * FROM co_scadenziario WHERE id = '.prepare($id_record));
+    echo '
+                        <tr>
+                            <th>'.tr('Descrizione').':</th>
+                            <td>
+                                {[ "type": "textarea", "name": "descrizione", "value": "'.$record['descrizione'].'" ]}
+                            </td>
+                        </tr>';
+}
 
+echo '
                         <tr>
                             <th>'.tr('Note').':</th>
                             <td>
@@ -99,31 +109,12 @@ if (!empty($documento)) {
                         }else{
                             $export_riba = '<i class="fa fa-clock-o text-warning"></i> '.tr('Non ancora esportata');
                         }
-
-    echo '
-
-                    </table>
-
-                    '.Modules::link($documento->module, $record['iddocumento'], '<i class="fa fa-folder-open"></i> '.tr('Apri documento'), null, 'class="btn btn-primary"');
-} else {
-    $scadenza = $dbo->fetchOne('SELECT * FROM co_scadenziario WHERE id = '.prepare($id_record));
-
-    echo input([
-        'type' => 'textarea',
-        'label' => tr('Descrizione'),
-        'name' => 'descrizione',
-        'required' => 1,
-        'value' => $scadenza['descrizione'],
-    ]);
-
-    echo input([
-        'type' => 'text',
-        'label' => tr('Info distinta'),
-        'name' => 'distinta',
-        'value' => $scadenza['distinta'],
-    ]);
-}
-
+echo '
+                    </table>';
+        
+            if (!empty($documento)) {
+                echo Modules::link($documento->module, $record['iddocumento'], '<i class="fa fa-folder-open"></i> '.tr('Apri documento'), null, 'class="btn btn-primary"');
+            }
 echo '
 				</div>
 

@@ -38,24 +38,22 @@ switch (filter('op')) {
 
         foreach ($scadenze as $key => $scadenza) {
             $documento = $scadenza->documento;
-            if (empty($documento)) {
-                continue;
-            }
+            $descrizione = $scadenza->descrizione;
+            if (!empty($documento)) {
+                // Individuazione altre scadenze del documento
+                $scadenze_documento = $documento->scadenze->sortBy('scadenza');
+                $pos = $scadenze_documento->search(function ($item, $key) use ($scadenza) {
+                    return $item->id == $scadenza->id;
+                });
 
-            // Individuazione altre scadenze del documento
-            $scadenze_documento = $documento->scadenze->sortBy('scadenza');
-            $pos = $scadenze_documento->search(function ($item, $key) use ($scadenza) {
-                return $item->id == $scadenza->id;
-            });
-
-            // Generazione della descrizione del pagamento
-            $descrizione = $documento->getReference();
-            if ($scadenze_documento->count() > 1) {
-                $descrizione .= tr('_DOC_, pagamento _NUM_/_TOT_', [
-                    '_DOC_' => $descrizione,
-                    '_NUM_' => $pos + 1,
-                    '_TOT_' => $scadenze_documento->count(),
-                ]);
+                // Generazione della descrizione del pagamento 
+                if ($scadenze_documento->count() > 1) {
+                    $descrizione .= tr('_DOC_, pagamento _NUM_/_TOT_', [
+                        '_DOC_' => $descrizione,
+                        '_NUM_' => $pos + 1,
+                        '_TOT_' => $scadenze_documento->count(),
+                    ]);
+                }
             }
 
             // Controllo sulla banca aziendale collegata alla scadenza

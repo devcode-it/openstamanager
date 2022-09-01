@@ -31,7 +31,7 @@ if ($module->name == 'Fatture di vendita') {
 if ($dir == 'entrata' || !empty($abilita_autofattura)) {
 echo '
 <div class="btn-group">
-    <button type="button" class="btn btn-primary unblockable dropdown-toggle '.(((!empty($record['ref_documento']) || $record['stato'] != 'Bozza') and empty($record['is_reversed'])) ? '' : 'disabled').'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <button type="button" class="btn btn-primary unblockable dropdown-toggle '.(((!empty($record['ref_documento']) || $record['stato'] != 'Bozza') and (empty($record['is_reversed']) || !empty($abilita_autofattura))) ? '' : 'disabled').'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i class="fa fa-magic"></i> '.tr('Crea').'
         <span class="caret"></span>
     </button>';

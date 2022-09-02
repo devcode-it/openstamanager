@@ -211,9 +211,7 @@ class FatturaOrdinaria extends FatturaElettronica
                     $conto_arrotondamenti = $conto[$key];
                 }
 
-                if ($riga['Ritenuta'] == 'SI') {
-                    $obj->id_rivalsa_inps = $id_rivalsa;
-                }
+                $obj->id_rivalsa_inps = $id_rivalsa;
                 
                 $obj->ritenuta_contributi = $ritenuta_contributi;
 
@@ -341,7 +339,7 @@ class FatturaOrdinaria extends FatturaElettronica
             $totale_righe = sum($totali_righe, null, 2);
         }
 
-        $diff = round(abs($totale_righe) - abs($fattura->totale_imponibile), 2);
+        $diff = round(abs($totale_righe) - abs($fattura->totale_imponibile + $fattura->rivalsa_inps), 2);
         if (!empty($diff)) {
             // Rimozione dell'IVA calcolata automaticamente dal gestionale
             $iva_arrotondamento = database()->fetchOne('SELECT * FROM co_iva WHERE percentuale=0 AND deleted_at IS NULL');
@@ -418,9 +416,7 @@ class FatturaOrdinaria extends FatturaElettronica
         if (!empty($casse)) {
             $totale = 0;
             foreach ($righe as $riga) {
-                if ($riga['Ritenuta'] == 'SI') {
-                    $totale += $riga['PrezzoTotale'];
-                }
+                $totale += $riga['PrezzoTotale'];
             }
             $casse = isset($casse[0]) ? $casse : [$casse];
 

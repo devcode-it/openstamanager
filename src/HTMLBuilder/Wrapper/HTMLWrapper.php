@@ -129,6 +129,11 @@ class HTMLWrapper implements WrapperInterface
             var message = container.find("span");
             var icon = container.find("i");
 
+            var id_record = "'.$id_record.'";
+            if ($(".modal-content").is(":visible")) {
+                var id_record = "";
+            }  
+
             icon.attr("class", "fa fa-spinner fa-spin");
 
             $.ajax({
@@ -136,7 +141,7 @@ class HTMLWrapper implements WrapperInterface
                 type: "post",
                 data: {
                     id_module: "'.$id_module.'",
-                    id_record: "'.$id_record.'",
+                    id_record: id_record,
                     name: "'.$name.'",
                     value: value,
                     op: "validate",

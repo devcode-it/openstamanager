@@ -19,6 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+$prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
+
 // Creazione righe fantasma
 $autofill = new \Util\Autofill($options['pricing'] ? 7 : 4);
 $rows_per_page = 16;
@@ -142,7 +144,7 @@ foreach ($righe as $riga) {
             // Prezzo unitario
             echo '
             <td class="text-right" nowrap="nowrap">
-				'.moneyFormat($riga->prezzo_unitario);
+				'.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario);
 
             if ($riga->sconto > 0) {
                 $text = discountInfo($riga, false);
@@ -159,7 +161,7 @@ foreach ($righe as $riga) {
             // Imponibile
             echo '
             <td class="text-right" nowrap="nowrap">
-				'.moneyFormat($riga->totale_imponibile).'
+				'.moneyFormat($prezzi_ivati ? $riga->totale : $riga->totale_imponibile).'
             </td>';
 
             // Iva

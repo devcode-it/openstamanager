@@ -19,6 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+$prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
+
 // Righe documento
 $righe = $documento->getRighe();
 
@@ -169,7 +171,7 @@ foreach ($righe as $riga) {
             // Prezzo unitario
             echo '
             <td class="text-right">
-                '.moneyFormat($riga->prezzo_unitario);
+                '.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario);
 
             if ($riga->sconto > 0) {
                 $text = discountInfo($riga, false);
@@ -186,7 +188,7 @@ foreach ($righe as $riga) {
             // Imponibile
             echo '
             <td class="text-right">
-				'.moneyFormat($riga->totale_imponibile).'
+				'.moneyFormat($prezzi_ivati ? $riga->totale : $riga->totale_imponibile).'
             </td>';
 
             // Iva

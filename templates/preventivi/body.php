@@ -27,6 +27,7 @@ include_once __DIR__.'/../../core.php';
 
 $anagrafica = Anagrafica::find($documento['idanagrafica']);
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
+$prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
 $pagamento = Pagamento::find($documento['idpagamento']);
 
@@ -235,7 +236,7 @@ foreach ($righe as $riga) {
             // Prezzo unitario
             echo '
             <td class="text-right" style="vertical-align: middle">
-				'.moneyFormat($riga->prezzo_unitario);
+				'.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario);
 
             if ($riga->sconto > 0) {
                 $text = discountInfo($riga, false);
@@ -252,7 +253,7 @@ foreach ($righe as $riga) {
             // Imponibile
             echo '
             <td class="text-right" style="vertical-align: middle" >
-                '.( $options['hide_total'] ? moneyFormat($riga->totale) : moneyFormat($riga->totale_imponibile) ).'
+                '.( ($options['hide_total'] || $prezzi_ivati) ? moneyFormat($riga->totale) : moneyFormat($riga->totale_imponibile) ).'
             </td>';
 
             // Iva

@@ -37,8 +37,8 @@ switch ($resource) {
         $idagente = $superselect['idagente'];
 
         $query = "SELECT
+            DISTINCT mg_articoli.id,
             IF(`categoria`.`nome` IS NOT NULL, CONCAT(`categoria`.`nome`, IF(`sottocategoria`.`nome` IS NOT NULL, CONCAT(' (', `sottocategoria`.`nome`, ')'), '-')), '<i>".tr('Nessuna categoria')."</i>') AS optgroup,
-            mg_articoli.id,
             mg_articoli.barcode,
 
             mg_articoli.".($prezzi_ivati ? 'prezzo_vendita_ivato' : 'prezzo_vendita').' AS prezzo_vendita,

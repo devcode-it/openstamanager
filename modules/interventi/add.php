@@ -47,8 +47,8 @@ if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
     $id_cliente = $user['idanagrafica'];
 }
 
-// Stato di default associato all'attivitò
-$stato = $dbo->fetchArray("SELECT * FROM in_statiintervento WHERE codice = 'WIP'");
+// Stato di default associato all'attività
+$stato = $dbo->fetchOne("SELECT * FROM in_statiintervento WHERE codice = 'WIP'");
 $id_stato = $stato['idstatointervento'];
 
 // Se è indicata un'anagrafica relativa, si carica il tipo di intervento di default impostato

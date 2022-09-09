@@ -23,6 +23,7 @@ use Carbon\Carbon;
 use Modules\DDT\DDT;
 use Modules\Ordini\Ordine;
 use Modules\Fatture\Fattura;
+use Modules\Fatture\Stato;
 use Modules\PrimaNota\Mastrino;
 use Modules\PrimaNota\Movimento;
 use Plugins\ImportFE\FatturaElettronica;
@@ -145,11 +146,16 @@ switch (filter('op')) {
         $fattura_pa->delete();
         $fattura = Fattura::find($id_fattura);
         $id_autofattura = post('autofattura');
+        $new_stato = Stato::where('descrizione', 'Pagato')->first();
 
         if ($fattura->isAutofattura() && !empty($id_autofattura)) {
             $autofattura_collegata = Fattura::find($id_autofattura);
             $fattura->registraScadenze(true);
             $autofattura_collegata->registraScadenze(true);
+            
+            $fattura->stato()->associate($new_stato);
+            $autofattura_collegata->stato()->associate($new_stato);
+        
             $mastrino = Mastrino::build('Compensazione autofattura', $fattura->data, false, true);
 
             $movimento1 = Movimento::build($mastrino, $fattura->anagrafica->idconto_cliente);
@@ -162,6 +168,7 @@ switch (filter('op')) {
 
             $fattura->id_autofattura = $id_autofattura;
             $fattura->save();
+            $autofattura_collegata->save();
         }
 
         // Aggiorno la tipologia di anagrafica fornitore

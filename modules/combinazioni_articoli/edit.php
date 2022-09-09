@@ -26,8 +26,12 @@ echo '
             </div>
 
             <div class="row">
-                <div class="col-md-6">
-                    '.Modules::link('Categorie articoli', $record['id_categoria'], null, null, 'class="pull-right"').'
+                <div class="col-md-6">';
+                if (!empty($record['id_categoria'])) {
+                    echo '
+                    '.Modules::link('Categorie articoli', $record['id_categoria'], null, null, 'class="pull-right"');
+                }
+                    echo '
                     {[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|'.Modules::get('Categorie articoli')['id'].'" ]}
                 </div>
 
@@ -127,4 +131,10 @@ function generaVarianti(button) {
        backto: "record-edit",
    });
 }
+
+$("#id_categoria").change(function() {
+    updateSelectOption("id_categoria", $(this).val());
+
+    $("#id_sottocategoria").val(null).trigger("change");
+});
 </script>';

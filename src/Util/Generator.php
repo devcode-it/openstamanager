@@ -201,9 +201,6 @@ class Generator
         $maschera = Generator::complete($maschera, [], $date);
         $maschera = str_replace('#', '%', $maschera);
 
-        //Lunghezza maschera
-        $mask_length = strlen($maschera);
-
         $query = Manager::table($table)->select($field)->where($field, 'like', $maschera)->orderByRaw('LENGTH('.$field.') DESC')->orderByRaw($order);
 
         foreach ($where as $and) {

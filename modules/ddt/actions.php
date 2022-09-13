@@ -351,12 +351,17 @@ switch (filter('op')) {
 
         $ddt->save();
 
+        $evadi_qta_parent = true;
+        if ($documento->tipo->descrizione=='Ddt in uscita' || $documento->tipo->descrizione=='Ddt in entrata') {
+            $evadi_qta_parent = false;
+        }
+
         $righe = $documento->getRighe();
         foreach ($righe as $riga) {
             if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
                 $qta = post('qta_da_evadere')[$riga->id];
 
-                $copia = $riga->copiaIn($ddt, $qta);
+                $copia = $riga->copiaIn($ddt, $qta, $evadi_qta_parent);
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {

@@ -464,7 +464,7 @@ switch (post('op')) {
             $fattura = Fattura::find($id);
             $stato_precedente = Stato::find($fattura->idstatodocumento);
 
-            if ($stato_precedente->descrizione == 'Bozza') {
+            if ($stato_precedente->descrizione == 'Bozza' && $fattura->isFiscale()) {
                 $fattura->stato()->associate($new_stato);
                 $results = $fattura->save();
                 $message = '';

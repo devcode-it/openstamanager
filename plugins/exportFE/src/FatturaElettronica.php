@@ -719,7 +719,11 @@ class FatturaElettronica
 
         // Informazioni specifiche azienda
         if ($azienda) {
-            $result['RegimeFiscale'] = setting('Regime Fiscale');
+            if ($anagrafica == static::getAzienda()) {
+                $result['RegimeFiscale'] = setting('Regime Fiscale');
+            } else {
+                $result['RegimeFiscale'] = 'RF18';
+            }
         }
 
         return $result;

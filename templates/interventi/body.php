@@ -411,24 +411,10 @@ $netto_a_pagare = abs($documento->netto);
 
 $show_sconto = $sconto > 0;
 
-$incorpora_iva = setting('Utilizza prezzi di vendita comprensivi di IVA');
-
 // TOTALE COSTI FINALI
 if ($options['pricing']) {
-    if ($incorpora_iva) {
-        // TOTALE INTERVENTO
-        echo '
-    <tr>
-    	<td colspan="4" class="text-right">
-            <b>'.tr('Totale intervento', [], ['upper' => true]).':</b>
-    	</td>
-    	<th class="text-center">
-    		<b>'.moneyFormat($totale, 2).'</b>
-    	</th>
-    </tr>';
-    } else {
-        // Totale imponibile
-        echo '
+    // Totale imponibile
+    echo '
     <tr>
         <td colspan="4" class="text-right">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
@@ -439,35 +425,35 @@ if ($options['pricing']) {
         </th>
     </tr>';
 
-        // Eventuale sconto totale
-        if ($show_sconto) {
-            echo '
-        <tr>
-            <td colspan="4" class="text-right">
-            <b>'.tr('Sconto', [], ['upper' => true]).':</b>
-            </td>
-
-            <th class="text-center">
-                <b>'.moneyFormat($sconto, 2).'</b>
-            </th>
-        </tr>';
-
-            // Totale imponibile
-            echo '
-        <tr>
-            <td colspan="4" class="text-right">
-                <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
-            </td>
-
-            <th class="text-center">
-                <b>'.moneyFormat($totale_imponibile, 2).'</b>
-            </th>
-        </tr>';
-        }
-
-        // IVA
-        // Totale intervento
+    // Eventuale sconto totale
+    if ($show_sconto) {
         echo '
+    <tr>
+        <td colspan="4" class="text-right">
+        <b>'.tr('Sconto', [], ['upper' => true]).':</b>
+        </td>
+
+        <th class="text-center">
+            <b>'.moneyFormat($sconto, 2).'</b>
+        </th>
+    </tr>';
+
+        // Totale imponibile
+        echo '
+    <tr>
+        <td colspan="4" class="text-right">
+            <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
+        </td>
+
+        <th class="text-center">
+            <b>'.moneyFormat($totale_imponibile, 2).'</b>
+        </th>
+    </tr>';
+    }
+
+    // IVA
+    // Totale intervento
+    echo '
     <tr>
         <td colspan="4" class="text-right">
             <b>'.tr('Iva', [], ['upper' => true]).':</b>
@@ -478,8 +464,8 @@ if ($options['pricing']) {
         </th>
     </tr>';
 
-        // TOTALE INTERVENTO
-        echo '
+    // TOTALE INTERVENTO
+    echo '
     <tr>
     	<td colspan="4" class="text-right">
             <b>'.tr('Totale intervento', [], ['upper' => true]).':</b>
@@ -488,7 +474,6 @@ if ($options['pricing']) {
     		<b>'.moneyFormat($totale, 2).'</b>
     	</th>
     </tr>';
-    }
 }
 
 echo '

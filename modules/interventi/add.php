@@ -462,8 +462,15 @@ echo '
 		let orario_inizio = input("orario_inizio").getElement();
 		let orario_fine = input("orario_fine").getElement();
         orario_inizio.on("dp.change", function (e) {
-            orario_fine.data("DateTimePicker").minDate(e.date);
-            orario_fine.change();
+            if(orario_fine.data("DateTimePicker").date() < e.date){
+                orario_fine.data("DateTimePicker").date(e.date);
+            }
+        });
+
+        orario_fine.on("dp.change", function (e) {
+            if(orario_inizio.data("DateTimePicker").date() > e.date){
+                orario_inizio.data("DateTimePicker").date(e.date);
+            }
         });
 
         // Refresh modulo dopo la chiusura di una pianificazione attività derivante dalle attività

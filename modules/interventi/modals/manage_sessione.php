@@ -123,8 +123,15 @@ echo '
 $(document).ready(function () {
     // Quando modifico orario inizio, allineo anche l\'orario fine
     $("#orario_inizio").on("dp.change", function (e) {
-        $("#orario_fine").data("DateTimePicker").minDate(e.date);
-        $("#orario_fine").change();
+        if($("#orario_fine").data("DateTimePicker").date() < e.date){
+            $("#orario_fine").data("DateTimePicker").date(e.date);
+        }
+    });
+
+    $("#orario_fine").on("dp.change", function (e) {
+        if($("#orario_inizio").data("DateTimePicker").date() > e.date){
+            $("#orario_inizio").data("DateTimePicker").date(e.date);
+        }
     });
 
     $("#idtipointerventot").change(function() {

@@ -560,7 +560,7 @@ switch (filter('op')) {
 
 // Aggiornamento stato degli ordini presenti in questa fattura in base alle quantità totali evase
 if (!empty($id_record) && setting('Cambia automaticamente stato ordini fatturati')) {
-    $rs = $dbo->fetchArray('SELECT idordine FROM dt_righe_ddt WHERE idddt='.prepare($id_record));
+    $rs = $dbo->fetchArray('SELECT idordine FROM dt_righe_ddt WHERE idddt='.prepare($id_record).' AND idordine!=0');
 
     for ($i = 0; $i < sizeof($rs); ++$i) {
         $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($rs[$i]['idordine']).'") WHERE id = '.prepare($rs[$i]['idordine']));

@@ -29,7 +29,7 @@ $mesi = [
 	'07' => 'Luglio',
 	'08' => 'Agosto',
 	'09' => 'Settembre',
-	'11' => 'Ottobre',
+	'10' => 'Ottobre',
 	'11' => 'Novembre',
 	'12' => 'Dicembre',
 ];

@@ -21,6 +21,7 @@ $r = $dbo->fetchOne('SELECT *,
     an_anagrafiche.pec,
     IF((an_referenti.email IS NOT NULL AND an_referenti.email != ""), an_referenti.email, an_anagrafiche.email) AS email,
     an_anagrafiche.idanagrafica,
+    an_referenti.nome,
     an_anagrafiche.ragione_sociale
 FROM co_contratti
     INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica
@@ -35,4 +36,5 @@ return [
     'descrizione' => $r['descrizione'],
     'data' => Translator::dateToLocale($r['data_bozza']),
     'id_anagrafica' => $r['idanagrafica'],
+    'nome_referente' => $r['nome'],
 ];

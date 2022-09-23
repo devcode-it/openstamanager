@@ -72,14 +72,18 @@ $(document).ready(function () {
     return;
 }
 
-$contents = file_get_contents(base_dir().'/database.json');
+$mysql_min_version = '5.7.0';
+$mysql_max_version = '5.7.99';
+
+$contents = ((version_compare($database->getMySQLVersion(), $mysql_min_version, ">=") && version_compare($database->getMySQLVersion(), $mysql_max_version, "<=")) ? $file_to_check_database = 'database_5_7.json' :  $file_to_check_database = 'database.json' );
+$contents = file_get_contents(base_dir().'/'.$file_to_check_database);
 $data = json_decode($contents, true);
 
 if (empty($data)) {
     echo '
 <div class="alert alert-warning">
     <i class="fa fa-warning"></i> '.tr('Impossibile effettuare controlli di integrità in assenza del file _FILE_', [
-            '_FILE_' => '<b>database.json</b>',
+            '_FILE_' => '<b>'.$file_to_check_database.'</b>',
         ]).'.
 </div>';
 
@@ -96,8 +100,9 @@ if (!empty($results)) {
 <p>'.tr("Segue l'elenco delle tabelle del database che presentano una struttura diversa rispetto a quella prevista nella versione ufficiale del gestionale").'.</p>
 <div class="alert alert-warning">
     <i class="fa fa-warning"></i>
-    '.tr('Attenzione: questa funzionalità può presentare dei risultati falsamente positivi, sulla base del contenuto del file _FILE_', [
-            '_FILE_' => '<b>database.json</b>',
+    '.tr('Attenzione: questa funzionalità può presentare dei risultati falsamente positivi, sulla base del contenuto del file _FILE_ e la versione di _MYSQL_VERSION_ di MySQL rilevata a sistema', [
+            '_FILE_' => '<b>'.$file_to_check_database.'</b>',
+            '_MYSQL_VERSION_' => '<b>'.$database->getMySQLVersion().'</b>',
         ]).'.
 </div>';
 

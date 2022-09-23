@@ -164,11 +164,15 @@ class Backup
         $ignores = [
             'files' => [
                 'config.inc.php',
+                '*.lock',
+                '*.phar',
+                '*.log',
             ],
             'dirs' => [
                 'node_modules',
                 'tests',
                 'tmp',
+                '.git',
             ],
         ];
 

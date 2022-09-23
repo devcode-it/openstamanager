@@ -92,7 +92,6 @@ if (!function_exists('base_dir')) {
 }
 
 // Aggiornamenti
-if (setting('Attiva aggiornamenti')) {
     $alerts = [];
 
     if (!extension_loaded('zip')) {
@@ -184,19 +183,22 @@ function search(button) {
 }
 </script>
 
-<div class="row">
+<div class="row">';
+
+
+echo'
     <div class="col-md-4">
         <div class="box box-success">
             <div class="box-header with-border">
                 <h3 class="box-title">
-                    '.tr('Carica un aggiornamento').' <span class="tip" title="'.tr('Form di caricamento aggiornamenti del gestionale e innesti di moduli e plugin').'."><i class="fa fa-question-circle-o"></i></span>
+                    '.tr('Carica aggiornamenti o nuovi moduli').' <span class="tip" title="'.tr('Form di caricamento aggiornamenti del gestionale e innesti di moduli e plugin').'."><i class="fa fa-question-circle-o"></i></span>
                 </h3>
             </div>
             <div class="box-body">
                 <form action="'.base_path().'/controller.php?id_module='.$id_module.'" method="post" enctype="multipart/form-data" id="update">
                     <input type="hidden" name="op" value="upload">
 
-			        {[ "type": "file", "name": "blob", "required": 1, "accept": ".zip" ]}
+			        {[ "type": "file", "name": "blob", "required": 1, "accept": ".zip", "disabled": '.(setting('Attiva aggiornamenti')? 0 : 1).' ]}
 
                     ';
 
@@ -218,12 +220,16 @@ echo '
 
                     <button type="button" class="btn btn-primary pull-right '.$disabled.'" id="aggiorna" onclick="update()">
                         <i class="fa fa-upload"></i> '.tr('Carica').'
-                    </button>
+                    </button>';
+
+echo '
                 </form>
             </div>
         </div>
-    </div>
+    </div>';
 
+
+echo '
     <div class="col-md-4">
         <div class="box box-warning">
             <div class="box-header with-border">
@@ -245,7 +251,9 @@ echo '
                 </button>
             </div>
         </div>
-    </div>
+    </div>';
+
+echo '
 
     <div class="col-md-4">
         <div class="box box-info">
@@ -265,11 +273,12 @@ echo '
                 </button>';
     }
 
-    echo '   </div>
+echo '   </div>
         </div>
-    </div>
+    </div>';
+
+echo '
 </div>';
-}
 
 // Requisiti
 echo '

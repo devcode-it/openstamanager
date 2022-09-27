@@ -407,6 +407,7 @@ function release(done) {
         '**/*',
         '!checksum.json',
         '!database.json',
+        '!database_5_7.json',
         '!.idea/**',
         '!.git/**',
         '!node_modules/**',

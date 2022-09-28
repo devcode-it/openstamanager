@@ -312,39 +312,65 @@ switch (filter('op')) {
 
         $replaces = ['n ','N ','n. ','N. ','nr ','NR ','nr. ','NR. ','num ','NUM ','num. ','NUM. ','numero ','NUMERO '];
 
-        // Riorganizzazione dati ordini per numero di riga
-        $dati_ordini = [];
-        foreach ($DatiOrdini as $dato) {
-            foreach ($dato['RiferimentoNumeroLinea'] as $dati => $linea) {
-                foreach ($replaces as $replace) {
-                    if(string_starts_with($dato['IdDocumento'], $replace)) {
-                        $dato['IdDocumento'] = str_replace($replace, '', $dato['IdDocumento']);
-                        break;
+                // Riorganizzazione dati ordini per numero di riga
+                $dati_ordini = [];
+                foreach ($DatiOrdini as $dato) {
+                    if (is_array($dato['RiferimentoNumeroLinea'])) {
+                        foreach ($dato['RiferimentoNumeroLinea'] as $dati => $linea) {
+                            foreach ($replaces as $replace) {
+                                if(string_starts_with($dato['IdDocumento'], $replace)) {
+                                    $dato['IdDocumento'] = str_replace($replace, '', $dato['IdDocumento']);
+                                    break;
+                                }
+                            }
+                            $dati_ordini[(int)$linea] = [
+                                'numero' => $dato['IdDocumento'],
+                                'anno' => ( new Carbon($dato['Data']) )->format('Y'),
+                            ];
+                        }
+                    } else {
+                        foreach ($replaces as $replace) {
+                            if(string_starts_with($dato['IdDocumento'], $replace)) {
+                                $dato['IdDocumento'] = str_replace($replace, '', $dato['IdDocumento']);
+                                break;
+                            }
+                        }
+                        $dati_ordini[(int)$dato['RiferimentoNumeroLinea']] = [
+                            'numero' => $dato['IdDocumento'],
+                            'anno' => ( new Carbon($dato['Data']) )->format('Y'),
+                        ];
                     }
                 }
-                $dati_ordini[(int)$linea] = [
-                    'numero' => $dato['IdDocumento'],
-                    'anno' => ( new Carbon($dato['Data']) )->format('Y'),
-                ];
-            }
-        }
-
-        // Riorganizzazione dati ordini per numero di riga
-        $dati_ddt = [];
-        foreach ($DatiDDT as $dato) {
-            foreach ($dato['RiferimentoNumeroLinea'] as $dati => $linea) {
-                foreach ($replaces as $replace) {
-                    if(string_starts_with($dato['NumeroDDT'], $replace)) {
-                        $dato['NumeroDDT'] = str_replace($replace, '', $dato['NumeroDDT']);
-                        break;
+        
+                // Riorganizzazione dati ordini per numero di riga
+                $dati_ddt = [];
+                foreach ($DatiDDT as $dato) {
+                    if (is_array($dato['RiferimentoNumeroLinea'])) {
+                        foreach ($dato['RiferimentoNumeroLinea'] as $dati => $linea) {
+                            foreach ($replaces as $replace) {
+                                if(string_starts_with($dato['NumeroDDT'], $replace)) {
+                                    $dato['NumeroDDT'] = str_replace($replace, '', $dato['NumeroDDT']);
+                                    break;
+                                }
+                            }
+                            $dati_ddt[(int)$linea] = [
+                                'numero' => $dato['NumeroDDT'],
+                                'anno' => ( new Carbon($dato['DataDDT']) )->format('Y'),
+                            ];
+                        }
+                    } else {
+                        foreach ($replaces as $replace) {
+                            if(string_starts_with($dato['NumeroDDT'], $replace)) {
+                                $dato['NumeroDDT'] = str_replace($replace, '', $dato['NumeroDDT']);
+                                break;
+                            }
+                        }
+                        $dati_ddt[(int)$dato['RiferimentoNumeroLinea']] = [
+                            'numero' => $dato['NumeroDDT'],
+                            'anno' => ( new Carbon($dato['DataDDT']) )->format('Y'),
+                        ];
                     }
                 }
-                $dati_ddt[(int)$linea] = [
-                    'numero' => $dato['NumeroDDT'],
-                    'anno' => ( new Carbon($dato['DataDDT']) )->format('Y'),
-                ];
-            }
-        }
 
         // Iterazione sulle singole righe
         $righe = $fattura_pa->getRighe();

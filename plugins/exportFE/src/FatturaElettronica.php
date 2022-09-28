@@ -164,7 +164,7 @@ class FatturaElettronica
             $documento = $this->getDocumento();
             $database = database();
 
-            $ordini = $database->fetchArray('SELECT `or_ordini`.`numero_cliente` AS id_documento, `or_ordini`.`num_item`, `or_ordini`.`codice_cig`, `or_ordini`.`codice_cup`, `or_ordini`.`codice_commessa`, `or_ordini`.`data_cliente`, `co_righe_documenti`.`order` AS riferimento_linea FROM `or_ordini` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idordine` = `or_ordini`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']));
+            $ordini = $database->fetchArray('SELECT `or_ordini`.`numero_cliente` AS id_documento, `or_ordini`.`num_item`, `or_ordini`.`codice_cig`, `or_ordini`.`codice_cup`, `or_ordini`.`codice_commessa`, `or_ordini`.`data_cliente` AS `data`, `co_righe_documenti`.`order` AS riferimento_linea FROM `or_ordini` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idordine` = `or_ordini`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']));
 
             $dati_aggiuntivi = $documento->dati_aggiuntivi_fe;
             $dati = $dati_aggiuntivi['dati_ordine'] ?: [];

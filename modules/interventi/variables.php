@@ -18,6 +18,7 @@
  */
 
 $r = $dbo->fetchOne('SELECT *,
+    an_anagrafiche.idanagrafica AS id_anagrafica,
     an_anagrafiche.email,
     an_anagrafiche.pec,
     an_referenti.nome,
@@ -42,7 +43,7 @@ return [
     'data' => Translator::dateToLocale($r['data_richiesta']),
     'data richiesta' => Translator::dateToLocale($r['data_richiesta']),
     'data fine intervento' => empty($r['data_fine']) ? Translator::dateToLocale($r['data_richiesta']) : Translator::dateToLocale($r['data_fine']),
-    'id_anagrafica' => $r['idanagrafica'],
+    'id_anagrafica' => $r['id_anagrafica'],
     'stato' => $r['stato'],
     'impianti' => $r['impianti'],
     'nome_referente' => $r['nome'],

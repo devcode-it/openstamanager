@@ -863,7 +863,7 @@ switch (post('op')) {
             }
         }
 
-        // Copia delle sessioni
+        // Copia degli impianti
         if (!empty($copia_impianti)) {
             $impianti = $dbo->select('my_impianti_interventi', '*', ['idintervento' => $intervento->id]);
             foreach ($impianti as $impianto) {

@@ -81,8 +81,8 @@ switch ($resource) {
              ];
          }
 
-        // Tutti gli agenti
-        $q = "SELECT DISTINCT(email), ragione_sociale, an_anagrafiche.idanagrafica FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE idtipoanagrafica = (SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Agente') AND email != '' ORDER BY idanagrafica";
+        // Tutti gli agenti del cliente
+        $q = "SELECT DISTINCT(email), ragione_sociale, idanagrafica FROM an_anagrafiche WHERE email != '' AND (idanagrafica=(SELECT idagente FROM an_anagrafiche AS agenti WHERE 1=1 ".$where.") OR idanagrafica IN (SELECT idagente FROM an_anagrafiche_agenti WHERE 1=1 ".$where."))";
 
         $rs = $dbo->fetchArray($q);
         foreach ($rs as $r) {
@@ -96,7 +96,7 @@ switch ($resource) {
         $query = "SELECT DISTINCT(email) AS email, ragione_sociale, idanagrafica FROM an_anagrafiche WHERE email != '' ".$where;
         // Se type pec, propongo anche la pec
         if (get('type') == 'pec') {
-            $query .= " UNION SELECT DISTINCT(pec), ragione_sociale, idanagrafica FROM an_anagrafiche WHERE email != '' ".$where;
+            $query .= " UNION SELECT DISTINCT(pec), ragione_sociale, idanagrafica FROM an_anagrafiche WHERE pec != '' ".$where;
         }
         $query .= ' ORDER BY idanagrafica';
 

@@ -802,6 +802,7 @@ switch (post('op')) {
         $data_richiesta = post('data_richiesta');
         $copia_sessioni = post('copia_sessioni');
         $copia_righe = post('copia_righe');
+        $copia_impianti = post('copia_impianti');
 
         $new = $intervento->replicate();
         $new->idstatointervento = $id_stato;
@@ -859,6 +860,25 @@ switch (post('op')) {
 
                 ++$numero_sessione;
                 $inizio_old = $sessione->orario_inizio;
+            }
+        }
+
+        // Copia delle sessioni
+        if (!empty($copia_impianti)) {
+            $impianti = $dbo->select('my_impianti_interventi', '*', ['idintervento' => $intervento->id]);
+            foreach ($impianti as $impianto) {
+                $dbo->insert('my_impianti_interventi', [
+                    'idintervento' => $id_record,
+                    'idimpianto' => $impianto['idimpianto']
+                ]);
+            }
+
+            $componenti = $dbo->select('my_componenti_interventi', '*', ['id_intervento' => $intervento->id]);
+            foreach ($componenti as $componente) {
+                $dbo->insert('my_componenti_interventi', [
+                    'id_intervento' => $id_record,
+                    'id_componente' => $componente['id_componente']
+                ]);
             }
         }
 

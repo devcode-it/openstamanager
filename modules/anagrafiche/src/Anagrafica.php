@@ -370,17 +370,19 @@ class Anagrafica extends Model
             ->where('idpianodeiconti2', '=', $categoria_conto_id);
 
         // Verifica su un possibile conto esistente ma non collegato
-        $conto = (clone $table)
-            ->where('descrizione', 'like', '%'.$anagrafica->ragione_sociale.'%')
-            ->first();
-        if (!empty($conto)) {
-            $anagrafiche_collegate = Anagrafica::where($campo, '=', $conto->id)->count();
-            $conto = $anagrafiche_collegate == 0 ? $conto : null;
-        }
+        if (!empty($anagrafica->ragione_sociale)) {
+            $conto = (clone $table)
+                ->where('descrizione', 'like', '%'.$anagrafica->ragione_sociale.'%')
+                ->first();
+            if (!empty($conto)) {
+                $anagrafiche_collegate = Anagrafica::where($campo, '=', $conto->id)->count();
+                $conto = $anagrafiche_collegate == 0 ? $conto : null;
+            }
 
-        // Collegamento a conto esistente
-        if (!empty($conto)) {
-            return $conto->id;
+            // Collegamento a conto esistente
+            if (!empty($conto)) {
+                return $conto->id;
+            }
         }
 
         // Calcolo prossimo numero cliente
@@ -394,7 +396,7 @@ class Anagrafica extends Model
         $id_conto = $database->table('co_pianodeiconti3')
             ->insertGetId([
                 'numero' => $new_numero,
-                'descrizione' => $anagrafica->ragione_sociale,
+                'descrizione' => $anagrafica->ragione_sociale ?: 'N.D.',
                 'idpianodeiconti2' => $categoria_conto_id,
             ]);
 

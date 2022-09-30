@@ -27,7 +27,7 @@ switch ($resource) {
     case 'ordini-cliente':
         if (isset($superselect['idanagrafica'])) {
             $query = 'SELECT or_ordini.id AS id,
-                CONCAT("Ordine ", numero, " del ", DATE_FORMAT(data, "%d/%m/%Y"), " [", (SELECT `descrizione` FROM `or_statiordine` WHERE `or_statiordine`.`id` = `idstatoordine`) , "]") AS descrizione
+                CONCAT("Ordine ", numero_esterno, " del ", DATE_FORMAT(data, "%d/%m/%Y"), " [", (SELECT `descrizione` FROM `or_statiordine` WHERE `or_statiordine`.`id` = `idstatoordine`) , "]") AS descrizione
             FROM or_ordini
                 INNER JOIN or_tipiordine ON or_ordini.idtipoordine = or_tipiordine.id
                 INNER JOIN an_anagrafiche ON or_ordini.idanagrafica = an_anagrafiche.idanagrafica

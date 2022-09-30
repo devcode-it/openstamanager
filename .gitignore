@@ -92,6 +92,7 @@ REVISION
 manifest.json
 checksum.json
 database.json
+database_5_7.json
 
 /tests/_log/*
 /tests/_temp/*

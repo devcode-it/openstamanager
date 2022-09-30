@@ -231,10 +231,12 @@ class CSV extends CSVImporter
                 continue;
             }
 
-            $database->query('DELETE FROM mg_prezzi_articoli WHERE id_articolo = '.prepare($articolo->id).' AND id_anagrafica = '.prepare($anagrafica->id));
+            if (!empty($record['prezzo_listino'])) {
+                $database->query('DELETE FROM mg_prezzi_articoli WHERE id_articolo = '.prepare($articolo->id).' AND id_anagrafica = '.prepare($anagrafica->id));
+            }
 
-            if (!empty($dettagli['codice_fornitore']) && !empty($dettagli['descrizione_fornitore'])) {
-                $database->query('DELETE FROM mg_fornitore_articolo WHERE id_articolo = '.prepare($articolo->id).' AND id_anagrafica = '.prepare($anagrafica->id));
+            if (!empty($record['codice_fornitore']) && !empty($record['descrizione_fornitore'])) {
+                $database->query('DELETE FROM mg_fornitore_articolo WHERE id_articolo = '.prepare($articolo->id).' AND id_fornitore = '.prepare($anagrafica->id));
             }
         }
     }
@@ -285,12 +287,6 @@ class CSV extends CSVImporter
             }
         }
 
-        // Individuazione dell'IVA di vendita tramite il relativo Codice
-        $aliquota = null;
-        if (!empty($record['codice_iva_vendita'])) {
-            $aliquota = Aliquota::where('codice', $record['codice_iva_vendita'])->first();
-        }
-
         // Individuazione articolo e generazione
         $articolo = null;
         // Ricerca sulla base della chiave primaria se presente
@@ -303,7 +299,13 @@ class CSV extends CSVImporter
             $articolo->restore();
         }
 
-        $articolo->idiva_vendita = $aliquota->id;
+        // Individuazione dell'IVA di vendita tramite il relativo Codice
+        $aliquota = null;
+        if (!empty($record['codice_iva_vendita'])) {
+            $aliquota = Aliquota::where('codice', $record['codice_iva_vendita'])->first();
+            $articolo->idiva_vendita = $aliquota->id;
+        }
+
         $articolo->attivo = 1;
 
         // Esportazione della quantità indicata
@@ -387,12 +389,13 @@ class CSV extends CSVImporter
         ]);
 
         // Prezzo di vendita
-        $articolo->setPrezzoVendita($record['prezzo_vendita'], $aliquota->id ? $aliquota->id : setting('Iva predefinita'));
+        if (!empty($record['prezzo_vendita'])) {
+            $articolo->setPrezzoVendita($record['prezzo_vendita'], $aliquota ? $aliquota->id : setting('Iva predefinita'));
+        }
 
         $articolo->save();
 
         // Movimentazione della quantità registrata
-        $giacenze = $articolo->getGiacenze();
         $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
         $id_sede = 0;
         if (!empty($nome_sede)) {
@@ -403,6 +406,7 @@ class CSV extends CSVImporter
         }
 
         if( isset($record['qta']) ) {
+            $giacenze = $articolo->getGiacenze();
             $qta_movimento = $qta_registrata - $giacenze[$id_sede][0];
 
             $articolo->movimenta($qta_movimento, tr('Movimento da importazione'), new Carbon(), false, [
@@ -442,7 +446,7 @@ class CSV extends CSVImporter
         }
 
         // Aggiungo Listino
-        if (!empty($anagrafica) && !empty($dettagli['dir'])) {
+        if (!empty($anagrafica) && !empty($dettagli['dir']) && $dettagli['prezzo_listino']) {
             $dettaglio_predefinito = DettaglioPrezzo::build($articolo, $anagrafica, $dettagli['dir']);
             $dettaglio_predefinito->sconto_percentuale = $dettagli['sconto_listino'];
             $dettaglio_predefinito->setPrezzoUnitario($dettagli['prezzo_listino']);
@@ -453,15 +457,15 @@ class CSV extends CSVImporter
             }
 
             $dettaglio_predefinito->save();
+        }
 
-            // Aggiungo dettagli fornitore
-            if ($dettagli['dir'] == 'uscita' && !empty($dettagli['codice_fornitore']) && !empty($dettagli['descrizione_fornitore'])) {
-                $fornitore = DettaglioFornitore::build($anagrafica, $articolo);
-                $fornitore->codice_fornitore = $dettagli['codice_fornitore'];
-                $fornitore->barcode_fornitore = $dettagli['barcode_fornitore'];
-                $fornitore->descrizione = $dettagli['descrizione_fornitore'];
-                $fornitore->save();
-            }
+        // Aggiungo dettagli fornitore
+        if (!empty($anagrafica) && $dettagli['dir'] == 'uscita' && !empty($dettagli['codice_fornitore']) && !empty($dettagli['descrizione_fornitore'])) {
+            $fornitore = DettaglioFornitore::build($anagrafica, $articolo);
+            $fornitore->codice_fornitore = $dettagli['codice_fornitore'];
+            $fornitore->barcode_fornitore = $dettagli['barcode_fornitore'];
+            $fornitore->descrizione = $dettagli['descrizione_fornitore'];
+            $fornitore->save();
         }
 
         // Imposto fornitore e prezzo predefinito 

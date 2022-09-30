@@ -30,8 +30,8 @@ switch (filter('op')) {
                 $dbo->query('UPDATE `an_relazioni` SET `descrizione`='.prepare($descrizione).', `colore`='.prepare($colore).', `is_bloccata`='.prepare($is_bloccata).' WHERE `id`='.prepare($id_record));
                 flash()->info(tr('Salvataggio completato.'));
             } else {
-                flash()->error(tr("E' già presente una relazione _NAME_.", [
-                    '_TYPE_' => $descrizione,
+                flash()->error(tr("E' già presente una relazione '_NAME_'.", [
+                    '_NAME_' => $descrizione,
                 ]));
             }
         } else {

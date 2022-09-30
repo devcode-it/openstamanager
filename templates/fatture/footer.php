@@ -38,7 +38,7 @@ $peso_lordo = $documento->peso ?: $documento->peso_calcolato;
 $width = round(100 / ($show_sconto ? 5 : 3), 2);
 
 $has_rivalsa = !empty($record['rivalsainps']);
-$has_ritenuta = !empty($record['ritenutaacconto']) || !empty($documento->totale_ritenuta_contributi) || !empty($record['spit_payment']);
+$has_ritenuta = !empty($record['ritenutaacconto']) || !empty($documento->totale_ritenuta_contributi) || !empty($record['split_payment']);
 $has_split_payment = !empty($record['split_payment']);
 $has_sconto_finale = !empty($sconto_finale);
 
@@ -267,22 +267,41 @@ if ($has_ritenuta) {
         --$second_colspan;
     }
 
-    $contributi = (!empty($record['ritenutaacconto']) ? ' - ' : '').tr('contributi: _PRC_%', [
+    $contributi = tr('_DESCRIZIONE_: _PRC_%', [
+        '_DESCRIZIONE_' => $documento->ritenutaContributi->descrizione,
         '_PRC_' => Translator::numberToLocale($documento->ritenutaContributi->percentuale, 2),
     ]);
+    $ritenuta_contributi_totale = abs($documento->totale_ritenuta_contributi);
     $acconto = tr('acconto: _PRC_%', [
         '_PRC_' => Translator::numberToLocale($rs2[0]['percentuale'], 2),
     ]);
-    $ritenuta_totale = abs($documento->ritenuta_acconto) + abs($documento->totale_ritenuta_contributi);
+    $ritenuta_acconto_totale = abs($documento->ritenuta_acconto);
 
+    if (!empty($ritenuta_acconto_totale) && !empty($ritenuta_contributi_totale)) {
+        --$first_colspan;
+    }
+
+    
     echo '
-    <tr>
+    <tr>';
+    if (!empty($ritenuta_acconto_totale)) {
+        echo '
         <th class="text-center small" colspan="'.$first_colspan.'">
-            '.tr('Ritenuta (_ACCONTO__CONTRIBUTI_)', [
+            '.tr('Ritenuta _ACCONTO_', [
+            '_ACCONTO_' => $acconto,
+            ], ['upper' => true]).'
+        </th>';
+    }
+
+    if (!empty($ritenuta_contributi_totale)) {
+        echo '
+        <th class="text-center small" colspan="'.$first_colspan.'">
+            '.tr('_CONTRIBUTI_', [
             '_ACCONTO_' => $acconto,
             '_CONTRIBUTI_' => empty($documento->ritenutaContributi) ? null : $contributi,
             ], ['upper' => true]).'
         </th>';
+    }
 
     echo '
         <th class="text-center small" colspan="'.$second_colspan.'">
@@ -292,12 +311,22 @@ if ($has_ritenuta) {
     echo '
 	</tr>
 
-    <tr>
+    <tr>';
+    if (!empty($ritenuta_acconto_totale)) {
+        echo '
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
-            '.moneyFormat($ritenuta_totale, 2).'
+            '.moneyFormat($ritenuta_acconto_totale, 2).'
         </td>';
+    }
 
-    $totale = $totale - $ritenuta_totale;
+    if (!empty($ritenuta_contributi_totale)) {
+        echo '
+        <td class="cell-padded text-center" colspan="'.$first_colspan.'">
+            '.moneyFormat($ritenuta_contributi_totale, 2).'
+        </td>';
+    }
+
+    $totale = $totale - ($ritenuta_acconto_totale + $ritenuta_contributi_totale);
     echo '
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">

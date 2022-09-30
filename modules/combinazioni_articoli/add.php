@@ -21,7 +21,6 @@ echo '
 
     <div class="row">
         <div class="col-md-6">
-            '.Modules::link('Categorie articoli', $record['id_categoria'], null, null, 'class="pull-right"').'
             {[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|'.Modules::get('Categorie articoli')['id'].'" ]}
         </div>
 
@@ -44,4 +43,12 @@ echo '
             </button>
         </div>
     </div>
-</form>';
+</form>
+
+<script>
+$("#id_categoria").change(function() {
+    updateSelectOption("id_categoria", $(this).val());
+
+    $("#id_sottocategoria").val(null).trigger("change");
+});
+</script>';

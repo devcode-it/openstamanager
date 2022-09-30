@@ -23,6 +23,7 @@ $r = $dbo->fetchOne('SELECT co_documenti.*,
     an_anagrafiche.idconto_cliente,
     an_anagrafiche.idconto_fornitore,
 	an_anagrafiche.ragione_sociale,
+    an_referenti.nome,
 	co_tipidocumento.descrizione AS tipo_documento,
     (SELECT pec FROM em_accounts WHERE em_accounts.id='.prepare($template['id_account']).') AS is_pec
 FROM co_documenti
@@ -38,17 +39,6 @@ if (!empty(setting('Logo stampe'))) {
     $logo_azienda = str_replace('\\', '/', $logo_azienda);
 }
 
-//cliente
-if ($r['idconto_cliente'] != '') {
-    $conto = $r['idconto_cliente'];
-    $conto_descrizione = $dbo->fetchOne('SELECT CONCAT ((SELECT numero FROM co_pianodeiconti2 WHERE id=co_pianodeiconti3.idpianodeiconti2), ".", numero, " ", descrizione) AS descrizione FROM co_pianodeiconti3 WHERE id='.prepare($conto))['descrizione'];
-}
-//Fornitore
-elseif ($r['idconto_fornitore'] != '') {
-    $conto = $r['idconto_fornitore'];
-    $conto_descrizione = $dbo->fetchOne('SELECT CONCAT ((SELECT numero FROM co_pianodeiconti2 WHERE id=co_pianodeiconti3.idpianodeiconti2), ".", numero, " ", descrizione) AS descrizione FROM co_pianodeiconti3 WHERE id='.prepare($conto))['descrizione'];
-}
-
 $r_user = $dbo->fetchOne('SELECT * FROM an_anagrafiche WHERE idanagrafica='.prepare(Auth::user()['idanagrafica']));
 $r_company = $dbo->fetchOne('SELECT * FROM an_anagrafiche WHERE idanagrafica='.prepare(setting('Azienda predefinita')));
 
@@ -62,9 +52,8 @@ return [
     'note' => $r['note'],
     'data' => Translator::dateToLocale($r['data']),
     'logo_azienda' => !empty($logo_azienda) ? '<img src="'.$logo_azienda.'" />' : '',
-    'conto' => $conto,
-    'conto_descrizione' => $conto_descrizione,
     'nome_utente' => $r_user['ragione_sociale'],
     'telefono_utente' => $r_user['cellulare'],
     'sito_web' => $r_company['sitoweb'],
+    'nome_referente' => $r['nome'],
 ];

@@ -39,12 +39,16 @@ echo '
             {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL ORDER BY descrizione", "value": "" ]}
         </div>
 
-        <div class="col-md-3">
-            {["type": "checkbox", "label": "'.tr('Duplica righe').'", "name": "copia_righe", "help": "'.tr('Selezione per riportare anche le righe nella nuova attività').'", "value": 1 ]}
+        <div class="col-md-2">
+            {["type": "checkbox", "label": "'.tr('Duplica righe').'", "name": "copia_righe", "help": "'.tr('Selezione per riportare anche le righe nella nuova attività').'" ]}
         </div>
 
-        <div class="col-md-3">
-            {["type": "checkbox", "label": "'.tr('Duplica sessioni').'", "name": "copia_sessioni", "help": "'.tr('Selezione per riportare anche le sessioni di lavoro nella nuova attività').'", "value": 1 ]}
+        <div class="col-md-2">
+            {["type": "checkbox", "label": "'.tr('Duplica sessioni').'", "name": "copia_sessioni", "help": "'.tr('Selezione per riportare anche le sessioni di lavoro nella nuova attività').'" ]}
+        </div>
+
+        <div class="col-md-2">
+            {["type": "checkbox", "label": "'.tr('Duplica impianti').'", "name": "copia_impianti", "help": "'.tr('Selezione per riportare anche gli impianti nella nuova attività').'" ]}
         </div>
     </div>
 

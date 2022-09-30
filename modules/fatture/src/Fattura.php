@@ -755,7 +755,7 @@ class Fattura extends Document
     public function isAutofattura()
     {
         return in_array($this->tipo->codice_tipo_documento_fe, ['TD16','TD17','TD18','TD19',
-        'TD20']);
+        'TD20', 'TD21']);
     }
 
     /**

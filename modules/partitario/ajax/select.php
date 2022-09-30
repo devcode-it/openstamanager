@@ -147,8 +147,8 @@ switch ($resource) {
                 $results[count($results) - 1]['children'][] = ['id' => $r2['id'], 'text' => $r['numero'].'.'.$r2['numero'].' '.$r2['descrizione']];
             }
 
-            $results[] = ['text' => 'Conto cliente/fornitore fattura', 'children' => []];
-            $results[count($results) - 1]['children'][] = ['id' => '-1', 'text' => '{Conto cliente/fornitore fattura}'];
+            $results[] = ['text' => 'Conto cliente/fornitore', 'children' => []];
+            $results[count($results) - 1]['children'][] = ['id' => '-1', 'text' => '{Conto cliente/fornitore}'];
         }
 
         break;

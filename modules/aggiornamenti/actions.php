@@ -44,7 +44,11 @@ switch (filter('op')) {
         break;
 
     case 'upload':
-        include base_dir().'/modules/aggiornamenti/upload_modules.php';
+        if (setting('Attiva aggiornamenti')){
+            include base_dir().'/modules/aggiornamenti/upload_modules.php';
+        }else{
+            flash()->error(tr('Non è permesso il caricamento di aggiornamenti o moduli!'));
+        }
 
         break;
 

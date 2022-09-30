@@ -21,12 +21,14 @@ $r = $dbo->fetchOne('SELECT co_scadenziario.*, co_documenti.*,
 	an_anagrafiche.email,
 	an_anagrafiche.pec,
 	an_anagrafiche.ragione_sociale,
+    an_referenti.nome,
     co_scadenziario.da_pagare - co_scadenziario.pagato AS totale,
 	(SELECT pec FROM em_accounts WHERE em_accounts.id='.prepare($template['id_account']).') AS is_pec,
 	(SELECT descrizione FROM co_pagamenti WHERE co_pagamenti.id = co_documenti.idpagamento) AS pagamento
 FROM co_scadenziario
     INNER JOIN co_documenti ON co_documenti.id = co_scadenziario.iddocumento
-    INNER JOIN an_anagrafiche ON co_documenti.idanagrafica = an_anagrafiche.idanagrafica
+    INNER JOIN an_anagrafiche ON co_documenti.idanagrafica = an_anagrafiche.idanagrafica 
+    LEFT JOIN an_referenti ON an_referenti.idanagrafica = an_anagrafiche.idanagrafica
 WHERE co_scadenziario.pagato != co_scadenziario.da_pagare AND co_scadenziario.iddocumento = (SELECT iddocumento FROM co_scadenziario s WHERE id='.prepare($id_record).')');
 
 $logo_azienda = str_replace(base_dir(), base_path(), App::filepath('templates/base|custom|/logo_azienda.jpg'));
@@ -43,4 +45,5 @@ return [
     'data_scadenza' => Translator::dateToLocale($r['scadenza']),
     'data' => Translator::dateToLocale($r['data']),
     'logo_azienda' => !empty($logo_azienda) ? '<img src="'.$logo_azienda.'" />' : '',
+    'nome_referente' => $r['nome'],
 ];

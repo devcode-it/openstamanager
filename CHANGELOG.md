@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.36 (2022-09-16)](#2436-2022-09-16)
 - [2.4.35 (2022-08-12)](#2435-2022-08-12)
 - [2.4.34 (2022-07-15)](#2434-2022-07-15)
 - [2.4.33 (2022-05-17)](#2433-2022-05-17)
@@ -46,6 +47,38 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
+
+
+## 2.4.36 (2022-09-16)
+
+### Aggiunto (Added)
+- Aggiunta selezione modulo iniziale per gruppo utenti
+- Aggiunta validazione matricola in impianti
+- Aggiunta anagrafica nelle scadenze
+- Aggiunta prezzi ivati nella stampa documenti
+### Modificato (Changed)
+- Miglioria barra dei menu in modalità compatta
+- Rimozione file deprecato controller_after.php
+- Miglioria creazione conto anagrafica in piano dei conti
+- Miglioria importazione articoli in CSV
+- Rimozione delle aliquote IVA non utilizzate
+- Miglioria riepilogo totali in stampa intervento
+- Miglioria gestione ritenuta previdenziale
+### Fixed
+- Correzione controllo dei totali in fattura elettronica
+- Correzione eliminazione attività collegate ai documenti
+- Correzione numerazione progressiva
+- Correzione creazione autofattura da nota di credito
+- Correzione creazione intervento da ordine fornitore
+- Correzione calcolo cassa previdenziale in importazione di fatture elettroniche
+- Correzione stato di default in creazione attività
+- Correzione selezione sottocategorie in Combinazioni
+- Correzione registrazione autofattura
+- Correzione aggiunta modelli prima nota
+- Correzione movimentazione articoli tra DDT
+- Correzione emissione fatture non fiscali da azioni di gruppo
+- Correzione regime fiscale per fatture conto terzi
+- Correzione date di inizio e fine attività
 ## 2.4.35 (2022-08-12)
 
 ### Aggiunto (Added)

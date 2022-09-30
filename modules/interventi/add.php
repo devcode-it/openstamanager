@@ -47,8 +47,8 @@ if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
     $id_cliente = $user['idanagrafica'];
 }
 
-// Stato di default associato all'attivitò
-$stato = $dbo->fetchArray("SELECT * FROM in_statiintervento WHERE codice = 'WIP'");
+// Stato di default associato all'attività
+$stato = $dbo->fetchOne("SELECT * FROM in_statiintervento WHERE codice = 'WIP'");
 $id_stato = $stato['idstatointervento'];
 
 // Se è indicata un'anagrafica relativa, si carica il tipo di intervento di default impostato
@@ -462,8 +462,15 @@ echo '
 		let orario_inizio = input("orario_inizio").getElement();
 		let orario_fine = input("orario_fine").getElement();
         orario_inizio.on("dp.change", function (e) {
-            orario_fine.data("DateTimePicker").minDate(e.date);
-            orario_fine.change();
+            if(orario_fine.data("DateTimePicker").date() < e.date){
+                orario_fine.data("DateTimePicker").date(e.date);
+            }
+        });
+
+        orario_fine.on("dp.change", function (e) {
+            if(orario_inizio.data("DateTimePicker").date() > e.date){
+                orario_inizio.data("DateTimePicker").date(e.date);
+            }
         });
 
         // Refresh modulo dopo la chiusura di una pianificazione attività derivante dalle attività

@@ -40,7 +40,6 @@ class DatiFattureElettroniche extends Controllo
             ->whereNotIn('codice_stato_fe', ['ERR', 'NS', 'EC02', 'ERVAL'])
             ->where('data', '>=', $_SESSION['period_start'])
             ->where('data', '<=', $_SESSION['period_end'])
-            ->where('is_fattura_conto_terzi', '=', 0)
             ->orderBy('data')
             ->get();
 
@@ -57,12 +56,13 @@ class DatiFattureElettroniche extends Controllo
 
             // Totale basato sul campo ImportoTotaleDocumento
             $dati_generali = $xml['FatturaElettronicaBody']['DatiGenerali']['DatiGeneraliDocumento'];
-            $dati_anagrafici = $xml['FatturaElettronicaHeader']['CessionarioCommittente']['DatiAnagrafici'];
+            $dati_anagrafici = $fattura_vendita->is_fattura_conto_terzi ? $xml['FatturaElettronicaHeader']['CedentePrestatore']['DatiAnagrafici'] : $xml['FatturaElettronicaHeader']['CessionarioCommittente']['DatiAnagrafici'];
+
             if (isset($dati_generali['ImportoTotaleDocumento'])) {
                 $totale_documento_indicato = abs(floatval($dati_generali['ImportoTotaleDocumento']));
 
                 // Calcolo del totale basato sui DatiRiepilogo
-                if (empty($totale_documento_xml) && empty($dati_generali['ScontoMaggiorazione'])) {
+                if (empty($totale_documento_indicato) && empty($dati_generali['ScontoMaggiorazione'])) {
                     $totale_documento_xml = 0;
 
                     $riepiloghi = $xml['FatturaElettronicaBody']['DatiBeniServizi']['DatiRiepilogo'];
@@ -81,7 +81,7 @@ class DatiFattureElettroniche extends Controllo
             }
 
             // Se riscontro un'anomalia
-            if ($fattura_vendita->anagrafica->piva != $dati_anagrafici['IdFiscaleIVA']['IdCodice'] || $fattura_vendita->anagrafica->codice_fiscale != $dati_anagrafici['CodiceFiscale'] || numberFormat($fattura_vendita->totale) != numberFormat($totale_documento_xml)) {
+            if ($fattura_vendita->anagrafica->piva != $dati_anagrafici['IdFiscaleIVA']['IdCodice'] || $fattura_vendita->anagrafica->codice_fiscale != $dati_anagrafici['CodiceFiscale'] || numberFormat(abs($fattura_vendita->totale)) != numberFormat($totale_documento_xml)) {
                 $anomalia = [
                     'fattura_vendita' => $fattura_vendita,
                     'codice_fiscale_xml' => !empty($dati_anagrafici['CodiceFiscale']) ? $dati_anagrafici['CodiceFiscale'] : null,
@@ -89,7 +89,7 @@ class DatiFattureElettroniche extends Controllo
                     'piva_xml' => !empty($dati_anagrafici['IdFiscaleIVA']['IdCodice']) ? $dati_anagrafici['IdFiscaleIVA']['IdCodice'] : null,
                     'piva' => $fattura_vendita->anagrafica->piva,
                     'totale_documento_xml' => moneyFormat($totale_documento_xml, 2),
-                    'totale_documento' => moneyFormat($fattura_vendita->totale, 2),
+                    'totale_documento' => moneyFormat(abs($fattura_vendita->totale), 2),
                 ];
 
                 $riepilogo_anomalie = '

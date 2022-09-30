@@ -28,8 +28,8 @@ switch (post('op')) {
         $exporter = new CSV($file);
 
         // Esportazione dei record selezionati
-        $fatture = Impianto::whereIn('id', $id_records)->get();
-        $exporter->setRecords($fatture);
+        $impianti = Impianto::whereIn('id', $id_records)->get();
+        $exporter->setRecords($impianti);
 
         $count = $exporter->exportRecords();
 

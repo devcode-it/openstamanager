@@ -18,8 +18,10 @@
  */
 
 $r = $dbo->fetchOne('SELECT *,
+    an_anagrafiche.idanagrafica AS id_anagrafica,
     an_anagrafiche.email,
     an_anagrafiche.pec,
+    an_referenti.nome,
     in_interventi.codice AS codice,
     (SELECT MAX(orario_fine) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS data_fine,
     (SELECT descrizione FROM in_statiintervento WHERE idstatointervento=in_interventi.idstatointervento) AS stato,
@@ -27,6 +29,7 @@ $r = $dbo->fetchOne('SELECT *,
     in_interventi.descrizione AS descrizione
 FROM in_interventi
     INNER JOIN an_anagrafiche ON in_interventi.idanagrafica = an_anagrafiche.idanagrafica
+    LEFT OUTER JOIN an_referenti ON an_referenti.id=in_interventi.idreferente
     LEFT JOIN (SELECT GROUP_CONCAT(CONCAT(matricola, IF(nome != "", CONCAT(" - ", nome), "")) SEPARATOR "<br>") AS descrizione, my_impianti_interventi.idintervento FROM my_impianti INNER JOIN my_impianti_interventi ON my_impianti.id = my_impianti_interventi.idimpianto GROUP BY my_impianti_interventi.idintervento) AS impianti ON impianti.idintervento = in_interventi.id
 WHERE in_interventi.id='.prepare($id_record));
 
@@ -40,7 +43,8 @@ return [
     'data' => Translator::dateToLocale($r['data_richiesta']),
     'data richiesta' => Translator::dateToLocale($r['data_richiesta']),
     'data fine intervento' => empty($r['data_fine']) ? Translator::dateToLocale($r['data_richiesta']) : Translator::dateToLocale($r['data_fine']),
-    'id_anagrafica' => $r['idanagrafica'],
+    'id_anagrafica' => $r['id_anagrafica'],
     'stato' => $r['stato'],
     'impianti' => $r['impianti'],
+    'nome_referente' => $r['nome'],
 ];

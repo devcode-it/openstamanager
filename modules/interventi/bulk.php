@@ -172,6 +172,7 @@ switch (post('op')) {
         $data_richiesta = post('data_richiesta');
         $copia_sessioni = post('sessioni');
         $copia_righe = post('righe');
+        $copia_impianti = post('impianti');
 
         foreach ($id_records as $idintervento) {
             $intervento = Intervento::find($idintervento);
@@ -224,6 +225,25 @@ switch (post('op')) {
                     ++$numero_sessione;
                     $inizio_old = $sessione->orario_inizio;
                 }
+            }
+        }
+
+        // Copia degli impianti
+        if (!empty($copia_impianti)) {
+            $impianti = $dbo->select('my_impianti_interventi', '*', ['idintervento' => $intervento->id]);
+            foreach ($impianti as $impianto) {
+                $dbo->insert('my_impianti_interventi', [
+                    'idintervento' => $id_record,
+                    'idimpianto' => $impianto['idimpianto']
+                ]);
+            }
+
+            $componenti = $dbo->select('my_componenti_interventi', '*', ['id_intervento' => $intervento->id]);
+            foreach ($componenti as $componente) {
+                $dbo->insert('my_componenti_interventi', [
+                    'id_intervento' => $id_record,
+                    'id_componente' => $componente['id_componente']
+                ]);
             }
         }
 
@@ -303,7 +323,8 @@ if (App::debug()) {
             'msg' => '<br>{[ "type": "timestamp", "label": "'.tr('Data/ora richiesta').'", "name": "data_richiesta", "required": 0, "value": "-now-", "required":1 ]}
             <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL ORDER BY descrizione", "value": "" ]}
             <br>{[ "type":"checkbox", "label":"'.tr('Duplica righe').'", "name":"righe", "value":"" ]}
-            <br>{[ "type":"checkbox", "label":"'.tr('Duplica sessioni').'", "name":"sessioni", "value":"" ]}',
+            <br>{[ "type":"checkbox", "label":"'.tr('Duplica sessioni').'", "name":"sessioni", "value":"" ]}
+            <br>{[ "type":"checkbox", "label":"'.tr('Duplica impianti').'", "name":"impianti", "value":"" ]}',
             'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',
             'blank' => false,

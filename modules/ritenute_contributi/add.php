@@ -31,6 +31,16 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="row">
 		<div class="col-md-6">
+			{[ "type": "select", "label": "<?php echo tr('Causale ritenuta'); ?>", "name": "causale", "values": "query=SELECT codice AS id, CONCAT_WS(' - ', codice, descrizione) AS descrizione FROM fe_causali_pagamento_ritenuta", "required": "1" ]}
+		</div>
+
+		<div class="col-md-6">
+			{[ "type": "select", "label": "<?php echo tr('Tipo ritenuta'); ?>", "name": "tipologia", "values": "query=SELECT codice AS id, CONCAT_WS(' - ', codice, descrizione) AS descrizione FROM fe_tipi_ritenuta", "required": "1" ]}
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-6">
 			{[ "type": "number", "label": "<?php echo tr('Percentuale'); ?>", "name": "percentuale", "min-value": "1", "max-value": "100","icon-after": "<i class=\"fa fa-percent\"></i>", "value": "100" ]}
 		</div>
 

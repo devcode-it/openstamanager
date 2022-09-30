@@ -260,8 +260,12 @@ if (!empty($id_records) && get('origine') == 'fatture' && !empty($counter)) {
 }
 if (!empty(get('id_anagrafica'))) {
     $id_anagrafica = get('id_anagrafica');
-} else {
-    $id_anagrafica = $dbo->fetchOne('SELECT idanagrafica FROM co_documenti WHERE id IN('.(get('id_documenti') ?: '0').')')['idanagrafica'];
+} 
+if (empty($id_anagrafica)) {
+    $id_anagrafica = $dbo->fetchOne('SELECT idanagrafica FROM co_documenti WHERE id IN('.($id_documenti ? implode(',',$id_documenti) : 0).')')['idanagrafica'];
+}
+if (empty($id_anagrafica)) {
+    $id_anagrafica = $dbo->fetchOne('SELECT idanagrafica FROM co_scadenziario WHERE id IN('.($id_scadenze ? implode(',',$id_scadenze) : 0).')')['idanagrafica'];
 }
 echo '
 <form action="'.base_path().'/controller.php?id_module='.$module->id.'" method="post" id="add-form">
@@ -358,7 +362,7 @@ $("#modals > div #add-form").on("submit", function(e) {
 </script>';
 
 if ($permetti_modelli) {
-    $variables = Modules::get('Fatture di vendita')->getPlaceholders($id_documenti[0]);
+    $variables = Modules::get('Anagrafiche')->getPlaceholders($id_anagrafica);
 
     echo '
 <script type="text/javascript">
@@ -427,9 +431,9 @@ if ($permetti_modelli) {
                 let totale = dati_conto[2];
 
                 // Sostituzione del conto dell\'Anagrafica
-                if (id_conto === -1 && globals.prima_nota.id_documento !== ""){
-                    id_conto = parseInt(globals.prima_nota.variables["conto"]);
-                    descrizione_conto = globals.prima_nota.variables["conto_descrizione"];
+                if (id_conto === -1){
+                    id_conto = parseInt(globals.prima_nota.variables["{conto}"]);
+                    descrizione_conto = globals.prima_nota.variables["{conto_descrizione}"];
                 }
 
                 // Selezione del conto

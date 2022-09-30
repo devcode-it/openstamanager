@@ -32,6 +32,7 @@ use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
 use Modules\TipiIntervento\Tipo as TipoSessione;
 use Plugins\ComponentiImpianti\Componente;
+use Plugins\ListinoClienti\DettaglioPrezzo;
 use Plugins\PianificazioneInterventi\Promemoria;
 
 switch (post('op')) {
@@ -629,18 +630,39 @@ switch (post('op')) {
             $id_record = $intervento->id;
         }
 
+        // Evado le righe solo se il documento originale non è un Ordine fornitore
+        $evadi_qta_parent = true;
+        if (post('op') == 'add_intervento') {
+            $evadi_qta_parent = false;
+        }
+
         $righe = $documento->getRighe();
         foreach ($righe as $riga) {
             if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
                 $qta = post('qta_da_evadere')[$riga->id];
 
-                $copia = $riga->copiaIn($intervento, $qta);
+                $copia = $riga->copiaIn($intervento, $qta, $evadi_qta_parent);
 
-                // Aggiornamento seriali
                 if ($copia->isArticolo()) {
+                    // Aggiornamento seriali
                     $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
-
                     $copia->serials = $serials;
+
+                    // Aggiornamento prezzi se il documento originale è un Ordine fornitore
+                    if (post('op') == 'add_intervento') {
+                        $articolo = $copia->articolo;
+
+                        $cliente = DettaglioPrezzo::dettagli($riga->idarticolo, $anagrafica->id, 'entrata', $qta)->first();
+                        if (empty($cliente)) {
+                            $cliente = DettaglioPrezzo::dettaglioPredefinito($riga->idarticolo, $anagrafica->id, 'entrata')->first();
+                        }
+
+                        $prezzo_unitario = $cliente->prezzo_unitario - ($cliente->prezzo_unitario * $cliente->percentuale / 100);
+
+                        $copia->setPrezzoUnitario($cliente ? $prezzo_unitario : $cliente->prezzo_vendita, $copia->aliquota->id);
+                        $copia->setSconto($cliente->sconto_percentuale ?: 0, 'PRC');
+                        $copia->costo_unitario = $riga->prezzo_unitario ?: 0;
+                    }
                 }
 
                 $copia->save();
@@ -780,6 +802,7 @@ switch (post('op')) {
         $data_richiesta = post('data_richiesta');
         $copia_sessioni = post('copia_sessioni');
         $copia_righe = post('copia_righe');
+        $copia_impianti = post('copia_impianti');
 
         $new = $intervento->replicate();
         $new->idstatointervento = $id_stato;
@@ -837,6 +860,25 @@ switch (post('op')) {
 
                 ++$numero_sessione;
                 $inizio_old = $sessione->orario_inizio;
+            }
+        }
+
+        // Copia degli impianti
+        if (!empty($copia_impianti)) {
+            $impianti = $dbo->select('my_impianti_interventi', '*', ['idintervento' => $intervento->id]);
+            foreach ($impianti as $impianto) {
+                $dbo->insert('my_impianti_interventi', [
+                    'idintervento' => $id_record,
+                    'idimpianto' => $impianto['idimpianto']
+                ]);
+            }
+
+            $componenti = $dbo->select('my_componenti_interventi', '*', ['id_intervento' => $intervento->id]);
+            foreach ($componenti as $componente) {
+                $dbo->insert('my_componenti_interventi', [
+                    'id_intervento' => $id_record,
+                    'id_componente' => $componente['id_componente']
+                ]);
             }
         }
 

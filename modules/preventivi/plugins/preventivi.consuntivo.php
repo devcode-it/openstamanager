@@ -258,7 +258,7 @@ $diff = sum($budget, -$totale);
 echo '
 <div class="well text-center">
     <br><span><big>
-        <b>'.tr('Rapporto budget/spesa').':<br>';
+        <b>'.tr('Budget rimanente').':<br>';
 if ($diff > 0) {
     echo '
         <span class="text-success"><big>+'.moneyFormat($diff).'</big></span>';
@@ -278,11 +278,11 @@ if ($diff > 0) {
             <table class="table text-left table-striped table-bordered">
                 <tr>
                     <th>'.tr('Tipologia').'</th>
-                    <th width="10%">'.tr('Ore').'</th>
-                    <th width="16%">'.tr('Costo').'</th>
-                    <th width="16%">'.tr('Ricavo').'</th>
-                    <th width="10%">'.tr('Margine').'</th>
-                    <th width="10%">'.tr('Ricarico').'</th>
+                    <th width="11%">'.tr('Ore').'</th>
+                    <th width="15%">'.tr('Costo').'</th>
+                    <th width="15%">'.tr('Ricavo').'</th>
+                    <th width="15%">'.tr('Margine').'</th>
+                    <th width="15%">'.tr('Ricarico').'</th>
                 </tr>';
             ksort($tipologie);
             foreach ($tipologie as $key => $tipologia){
@@ -307,12 +307,12 @@ if ($diff > 0) {
             <table class="table text-left table-striped table-bordered">
                 <tr>
                     <th>'.tr('Tecnici').'</th>
-                    <th width="7%">'.tr('km').'</th>
-                    <th width="10%">'.tr('Ore').'</th>
-                    <th width="16%">'.tr('Costo').'</th>
-                    <th width="16%">'.tr('Ricavo').'</th>
-                    <th width="10%">'.tr('Margine').'</th>
-                    <th width="10%">'.tr('Ricarico').'</th>
+                    <th width="11%">'.tr('Km').'</th>
+                    <th width="11%">'.tr('Ore').'</th>
+                    <th width="15%">'.tr('Costo').'</th>
+                    <th width="15%">'.tr('Ricavo').'</th>
+                    <th width="15%">'.tr('Margine').'</th>
+                    <th width="15%">'.tr('Ricarico').'</th>
                 </tr>';
             ksort($tecnici);
             foreach ($tecnici as $key => $tecnico){
@@ -322,8 +322,8 @@ if ($diff > 0) {
                 echo '
                 <tr>
                     <td>'.$key.'</td>
+                    <td class="text-right">'.Translator::numberToLocale($tecnico['km']).'</td>
                     <td class="text-right">'.Translator::numberToLocale($tecnico['ore']).'</td>
-                    <td class="text-right">'.(int)$tecnico['km'].'</td>
                     <td class="text-right">'.Translator::numberToLocale($tecnico['costo']).' €</td>
                     <td class="text-right">'.Translator::numberToLocale($tecnico['ricavo']).' €</td>
                     <td class="text-right '.($margine>0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$margine_prc.'%)</td>
@@ -340,11 +340,11 @@ if ($diff > 0) {
             <table class="table text-left table-striped table-bordered">
                 <tr>
                     <th>'.tr('Stato').'</th>
-                    <th width="10%">'.tr('Ore').'</th>
-                    <th width="16%">'.tr('Costo').'</th>
-                    <th width="16%">'.tr('Ricavo').'</th>
-                    <th width="10%">'.tr('Margine').'</th>
-                    <th width="10%">'.tr('Ricarico').'</th>
+                    <th width="11%">'.tr('Ore').'</th>
+                    <th width="15%">'.tr('Costo').'</th>
+                    <th width="15%">'.tr('Ricavo').'</th>
+                    <th width="15%">'.tr('Margine').'</th>
+                    <th width="15%">'.tr('Ricarico').'</th>
                 </tr>';
             ksort($stati_intervento);
             foreach ($stati_intervento as $key => $stato){
@@ -369,11 +369,11 @@ if ($diff > 0) {
             <table class="table text-left table-striped table-bordered">
                 <tr>
                     <th>'.tr('Materiale').'</th>
-                    <th width="8%">'.tr('Qtà').'</th>
-                    <th width="16%">'.tr('Costo').'</th>
-                    <th width="16%">'.tr('Ricavo').'</th>
-                    <th width="10%">'.tr('Margine').'</th>
-                    <th width="10%">'.tr('Ricarico').'</th>
+                    <th width="11%">'.tr('Qtà').'</th>
+                    <th width="15%">'.tr('Costo').'</th>
+                    <th width="15%">'.tr('Ricavo').'</th>
+                    <th width="15%">'.tr('Margine').'</th>
+                    <th width="15%">'.tr('Ricarico').'</th>
                 </tr>';
             ksort($materiali_art);
             foreach ($materiali_art as $key => $materiali_array1){

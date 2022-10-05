@@ -47,7 +47,7 @@ include_once __DIR__.'/../../core.php';
                         {[ "type": "checkbox", "label": "<?php echo tr('Importabile?'); ?>", "name": "is_importabile", "value": "$is_importabile$", "help": "<?php echo tr('I documenti associati a questa causale possono essere importati a livello contabile in altri documenti (per esempio, in Fatture)'); ?>", "placeholder": "<?php echo tr('Importabile'); ?>" ]}
                     </div>
                     <div class="col-md-4">
-                        {[ "type": "checkbox", "label": "<?php echo tr('Abilita storno'); ?>", "name": "reversed", "value": "$reversed$", "help": "<?php echo tr('I documenti associati a questa causale possono essere stornati come nota di credito'); ?>", "placeholder": "<?php echo tr('Abilita storno'); ?>" ]}
+                        {[ "type": "checkbox", "label": "<?php echo tr('Abilita solo note di credito'); ?>", "name": "reversed", "value": "$reversed$", "help": "<?php echo tr('I documenti associati a questa causale possono essere stornati come nota di credito'); ?>", "placeholder": "<?php echo tr('Abilita storno'); ?>" ]}
                     </div>
                 </div>
             </div>
@@ -74,3 +74,23 @@ if (!empty($numero_documenti)) {
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
+
+
+<script>
+    $(document).ready(function() {
+        check_reversed();
+    });
+
+    $("#is_importabile").change(function() {
+        check_reversed();
+    });
+
+    function check_reversed() {
+        if ($("#is_importabile").is(":checked")) {
+            input("reversed").enable();
+        } else {
+            input("reversed").disable();
+            $("#reversed").prop("checked", false);
+        }
+    }
+</script>

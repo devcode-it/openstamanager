@@ -175,11 +175,7 @@ abstract class Accounting extends Component
      */
     public function getTotaleImponibileAttribute()
     {
-        $result = $this->prezzo_unitario >= 0 ? $this->imponibile : -$this->imponibile;
-
-        $result -= $this->sconto;
-
-        return $this->prezzo_unitario >= 0 ? $result : -$result;
+        return $this->imponibile - $this->sconto;
     }
 
     /**

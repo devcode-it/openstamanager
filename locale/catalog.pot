@@ -9940,7 +9940,7 @@ msgid "Righe aggiuntive predefinite"
 msgstr ""
 
 #: modules/tipi_intervento/edit.php:111
-msgid "Addebiti e costi per fascie orarie"
+msgid "Addebiti e costi per fasce orarie"
 msgstr ""
 
 #: modules/tipi_scadenze/actions.php:50 modules/tipi_scadenze/actions.php:90

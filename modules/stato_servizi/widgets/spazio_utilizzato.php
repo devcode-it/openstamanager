@@ -72,7 +72,7 @@ function crea_grafico(values){
            if (element.count<element.dbCount){
                 var diff = (element.dbCount-element.count);
 
-                $("#message").append("<div class=\"label label-warning\" ><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i> "+diff+" files non trovati sul disco per allegati.</div><br>");
+                $("#message").append("<div class=\"label label-warning\" ><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i> "+diff+" files non trovati per allegati.</div><br>");
 
             }
         }

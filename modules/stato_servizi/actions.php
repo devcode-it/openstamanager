@@ -267,6 +267,48 @@ switch (filter('op')) {
 
         break;
 
+    case 'disabilita-hook':
+        $id = filter('id');
+
+        // Abilitazione del widget indicato
+        $database->table('zz_hooks')
+            ->where('id', '=', $id)
+            ->update(['enabled' => 0]);
+
+        // Messaggio informativo
+        $hook = $database->table('zz_hooks')
+            ->where('id', '=', $id)
+            ->first();
+        flash()->info(tr('Hook "_NAME_" disabilitato!', [
+            '_NAME_' => $hook->name,
+        ]));
+
+        echo json_encode([]);
+
+        break;
+    
+    case 'abilita-hook':
+        $id = filter('id');
+
+        // Abilitazione del widget indicato
+        $database->table('zz_hooks')
+            ->where('id', '=', $id)
+            ->update(['enabled' => 1]);
+
+        // Messaggio informativo
+        $hook = $database->table('zz_hooks')
+            ->where('id', '=', $id)
+            ->first();
+        flash()->info(tr('Hook "_NAME_" abilitato!', [
+            '_NAME_' => $hook->name,
+        ]));
+
+        echo json_encode([]);
+
+        break;
+
+            
+
     case 'sizes':
         $results = [];
 
@@ -279,13 +321,16 @@ switch (filter('op')) {
         ];
 
         foreach ($dirs as $dir => $description) {
-            $size = FileSystem::folderSize($dir, ['htaccess','gitkeep','ini','xml']);
+            $excluded_extensions = ['htaccess','gitkeep'];
+            $excluded_dir = [DOCROOT.'\files\impianti', DOCROOT.'\files\importFE', DOCROOT.'\files\importFE'];
+            
+            $size = FileSystem::folderSize($dir, array_merge($excluded_extensions,$excluded_dir));
 
             $results[] = [
                 'description' => $description,
                 'size' => $size,
                 'formattedSize' => FileSystem::formatBytes($size),
-                'count' => FileSystem::fileCount($dir, ['htaccess','gitkeep','ini','xml']) ?: 0,
+                'count' => FileSystem::fileCount($dir, array_merge($excluded_extensions,$excluded_dir)) ?: 0,
                 'dbSize' => ($description == 'Allegati') ? $dbo->fetchOne('SELECT SUM(`size`) AS dbsize FROM zz_files')['dbsize'] : 0,
                 'dbCount' => ($description == 'Allegati') ? $dbo->fetchOne('SELECT COUNT(`id`) AS dbcount FROM zz_files')['dbcount'] : 0,
                 'dbExtensions' => ($description == 'Allegati') ? $dbo->fetchArray("SELECT SUBSTRING_INDEX(filename, '.', -1) AS extension, COUNT(*) AS num FROM zz_files GROUP BY extension ORDER BY num DESC LIMIT 10") : 0,

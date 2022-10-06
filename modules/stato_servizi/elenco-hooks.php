@@ -24,8 +24,8 @@ echo '
     <thead>
         <tr>
             <th>'.tr('Nome').'</th>
-            <th>'.tr('Stato').'</th>
-            <th>'.tr('Ultima esecuzione').'</th>
+            <th class="text-center">'.tr('Ultima esecuzione').'</th>
+            <th class="text-center">'.tr('Stato').'</th>
         </tr>
     </thead>';
 
@@ -56,6 +56,11 @@ foreach ($gruppi as $modulo => $hooks) {
                     '.$hook['name'].(!empty($hook['help']) ? '
                     <i class="tip fa fa-question-circle-o" title="'.$hook['help'].'"</i>' : '').'
                 </td>
+             
+                <td class="text-center">
+                    '.Translator::timestampToLocale($hook['processing_at']).'
+                </td>
+
                 <td class="text-center">';
 
         // Possibilità di disabilitare o abilitare il hook
@@ -78,13 +83,6 @@ foreach ($gruppi as $modulo => $hooks) {
                     </button>
                 </div>';
         }
-
-        echo '
-            </td>
-
-            <td class="text-center">';
-
-            Translator::timestampToLocale($hook['processing_at']);
 
         echo '
             </td>

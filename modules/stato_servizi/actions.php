@@ -279,16 +279,16 @@ switch (filter('op')) {
         ];
 
         foreach ($dirs as $dir => $description) {
-            $size = FileSystem::folderSize($dir, ['htaccess']);
+            $size = FileSystem::folderSize($dir, ['htaccess','gitkeep','ini','xml']);
 
             $results[] = [
                 'description' => $description,
                 'size' => $size,
                 'formattedSize' => FileSystem::formatBytes($size),
-                'count' => FileSystem::fileCount($dir, ['htaccess']) ?: 0,
-                'dbSize' => ($description == 'Allegati') ? $dbo->fetchOne('SELECT SUM(`size`) AS dbsize FROM zz_files')['dbsize'] : '',
-                'dbCount' => ($description == 'Allegati') ? $dbo->fetchOne('SELECT COUNT(`id`) AS dbcount FROM zz_files')['dbcount'] : '',
-                'dbExtensions' => ($description == 'Allegati') ? $dbo->fetchArray("SELECT SUBSTRING_INDEX(filename, '.', -1) AS extension, COUNT(*) AS num FROM zz_files GROUP BY extension ORDER BY num DESC LIMIT 10") : '',
+                'count' => FileSystem::fileCount($dir, ['htaccess','gitkeep','ini','xml']) ?: 0,
+                'dbSize' => ($description == 'Allegati') ? $dbo->fetchOne('SELECT SUM(`size`) AS dbsize FROM zz_files')['dbsize'] : 0,
+                'dbCount' => ($description == 'Allegati') ? $dbo->fetchOne('SELECT COUNT(`id`) AS dbcount FROM zz_files')['dbcount'] : 0,
+                'dbExtensions' => ($description == 'Allegati') ? $dbo->fetchArray("SELECT SUBSTRING_INDEX(filename, '.', -1) AS extension, COUNT(*) AS num FROM zz_files GROUP BY extension ORDER BY num DESC LIMIT 10") : 0,
             ];
         }
 

@@ -803,6 +803,7 @@ switch (post('op')) {
         $copia_sessioni = post('copia_sessioni');
         $copia_righe = post('copia_righe');
         $copia_impianti = post('copia_impianti');
+        $copia_allegati = post('copia_allegati');
 
         $new = $intervento->replicate();
         $new->idstatointervento = $id_stato;
@@ -878,6 +879,17 @@ switch (post('op')) {
                 $dbo->insert('my_componenti_interventi', [
                     'id_intervento' => $id_record,
                     'id_componente' => $componente['id_componente']
+                ]);
+            }
+        }
+
+        //copia allegati
+        if (!empty($copia_allegati)) {
+            $allegati = $intervento->uploads();
+            foreach ($allegati as $allegato) {
+                $allegato->copia([
+                    'id_module' => $new->getModule()->id,
+                    'id_record' => $new->id,
                 ]);
             }
         }

@@ -51,38 +51,39 @@ function crea_grafico(values){
 
 	$data = [];
 	$labels = [];
+    
 	values.forEach(function(element) {
         $data.push(element.size);
 
         //Segnalazione se sul server sembrano mancare file rispetto a quanto previsto a DB
-        if (element.dbSize!==""){
+        if (element.dbSize>0 && element.description == "Allegati"){
            if (element.size<element.dbSize){
                 var diff = (element.dbSize-element.size);
 
                 if (diff>1000){
-                    $("#message").append("<div class=\"label label-warning\" ><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i> "+formatBytes(diff)+" di file mancanti per allegati.</div><br>");
+                    $("#message").append("<div class=\"label label-warning\" ><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i> "+formatBytes(diff)+" di files mancanti per allegati.</div><br>");
                 }
             }
         }
 
+
         //Segnalazione se sul server sembrano mancare file rispetto a quanto previsto a DB
-        if (element.dbCount!==""){
+        if (element.dbCount>0 && element.description == "Allegati" ){
            if (element.count<element.dbCount){
                 var diff = (element.dbCount-element.count);
 
-                $("#message").append("<div class=\"label label-warning\" ><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i> "+diff+" file non trovati sul disco.</div><br>");
+                $("#message").append("<div class=\"label label-warning\" ><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i> "+diff+" files non trovati sul disco per allegati.</div><br>");
 
             }
         }
-
-        //Numero di file in Allegati per estensione
+        
+        //Numero di file in Allegati suddivisi per estensione
         if (element.dbExtensions.length > 0){
 
             $("#message").append("<br><p><b>Top 10 allegati:</b></p>");
 
-            element.dbExtensions.forEach(function(extension) {
-
-                $("#message").append("<div class=\"label label-info\" ><i class=\"fa fa-file\" aria-hidden=\"true\"></i> <b>"+extension["NUM"]+"</b> file con estensione <b>"+extension["EXTENSION"]+"</b>.</div><br>");
+            element.dbExtensions.forEach(function(ext) {
+                $("#message").append("<div class=\"label label-info\" ><i class=\"fa fa-file\" aria-hidden=\"true\"></i> <b>"+ext["num"]+"</b> files con estensione <b>"+ext["extension"]+"</b>.</div><br>");
 
             });
 

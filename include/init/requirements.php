@@ -93,6 +93,10 @@ $settings = [
         'type' => 'ext',
         'description' => tr('Permette la creazione dell\'immagine della firma per il rapportino d\'intervento (facoltativo)'),
     ],
+    'fileinfo' => [
+        'type' => 'ext',
+        'description' => tr('Permette la creazione dell\'immagine della firma per il rapportino d\'intervento (facoltativo)'),
+    ],
 
     //'display_errors' => [
     //    'type' => 'value',

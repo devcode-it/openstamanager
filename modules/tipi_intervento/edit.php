@@ -108,7 +108,7 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Addebiti e costi per fascie orarie'); ?></h3>
+			<h3 class="panel-title"><?php echo tr('Addebiti e costi per fasce orarie'); ?></h3>
 		</div>
 
 		<div class="panel-body">

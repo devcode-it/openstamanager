@@ -322,7 +322,8 @@ switch (filter('op')) {
 
         foreach ($dirs as $dir => $description) {
             $excluded_extensions = ['htaccess','gitkeep'];
-            $excluded_dir = [DOCROOT.'\files\impianti', DOCROOT.'\files\importFE', DOCROOT.'\files\importFE'];
+            //Tutte le cartelle che non prevedono log in zz_files
+            $excluded_dir = [DOCROOT.'\files\impianti', DOCROOT.'\files\importFE', DOCROOT.'\files\exportFE', DOCROOT.'\files\receiptFE', DOCROOT.'\files\temp'];
             
             $size = FileSystem::folderSize($dir, array_merge($excluded_extensions,$excluded_dir));
 

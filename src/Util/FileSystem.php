@@ -71,7 +71,7 @@ class FileSystem
 
         if ($path !== false && $path != '' && file_exists($path)) {
             foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)) as $object) {
-                if (!in_array($object->getExtension(), $exclusions)) {
+                if (!in_array($object->getExtension(), $exclusions) && (!in_array($object->getPath(), $exclusions)) ) {
                     $total += $object->getSize();
                 }
             }
@@ -94,7 +94,8 @@ class FileSystem
 
         if ($path !== false && $path != '' && file_exists($path)) {
             foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)) as $object) {
-                if (!in_array($object->getExtension(), $exclusions)) {
+                if (!in_array($object->getExtension(), $exclusions) && (!in_array($object->getPath(), $exclusions)) ) {
+                    
                     ++$total;
                 }
             }

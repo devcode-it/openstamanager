@@ -264,7 +264,7 @@ echo '
         </div>
     </div>';
 
-// Widgets
+// Widgets + Hooks
 echo '
     <div class="col-md-12 col-lg-6">
         <div class="box box-info">
@@ -277,6 +277,18 @@ echo '
             <div class="box-body" id="widget">
             </div>
         </div>
+
+        <div class="box box-info">
+            <div class="box-header">
+                <h3 class="box-title">
+                    '.tr('Hooks disponibili').'
+                </h3>
+            </div>
+
+            <div class="box-body" id="hook">
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -422,9 +434,23 @@ function caricaElencoWidget() {
     });
 }
 
+function caricaElencoHooks() {
+    let container = $("#hook");
+
+    localLoading(container, true);
+    return $.get("'.$structure->fileurl('elenco-hooks.php').'?id_module='.$id_module.'", function(data) {
+        container.html(data);
+        localLoading(container, false);
+
+        init();
+    });
+}
+
+
 $(document).ready(function() {
     caricaElencoModuli();
     caricaElencoWidget();
+    caricaElencoHooks();
 
     init();
 });

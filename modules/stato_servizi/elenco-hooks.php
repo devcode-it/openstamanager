@@ -24,19 +24,18 @@ echo '
     <thead>
         <tr>
             <th>'.tr('Nome').'</th>
-            <th>'.tr('Ubicazione').'</th>
-            <th>'.tr('Stato').'</th>
-            <th>'.tr('Posizione').'</th>
+            <th class="text-center">'.tr('Ultima esecuzione').'</th>
+            <th class="text-center">'.tr('Stato').'</th>
         </tr>
     </thead>';
 
-$widgets = $dbo->fetchArray('SELECT zz_widgets.*, zz_modules.name AS modulo
-FROM zz_widgets
-    INNER JOIN zz_modules ON zz_widgets.id_module = zz_modules.id
-ORDER BY `id_module` ASC, `zz_widgets`.`order` ASC');
+$hooks = $dbo->fetchArray('SELECT zz_hooks.*, zz_modules.name AS modulo
+FROM zz_hooks
+    INNER JOIN zz_modules ON zz_hooks.id_module = zz_modules.id
+ORDER BY `id_module` ASC, `zz_hooks`.`id` ASC');
 
-$gruppi = collect($widgets)->groupBy('modulo');
-foreach ($gruppi as $modulo => $widgets) {
+$gruppi = collect($hooks)->groupBy('modulo');
+foreach ($gruppi as $modulo => $hooks) {
     echo '
     <thead>
         <tr>
@@ -46,30 +45,31 @@ foreach ($gruppi as $modulo => $widgets) {
 
     <tbody>';
 
-    foreach ($widgets as $widget) {
-        $class = $widget['enabled'] ? 'success' : 'warning';
-        $nome_tipo = 'widget';
+    foreach ($hooks as $hook) {
+
+        $class = $hook['enabled'] ? 'success' : 'warning';
+        $nome_tipo = 'hook';
 
         echo '
-            <tr class="'.$class.'" data-id="'.$widget['id'].'" data-nome='.json_encode($widget['name']).'>
+            <tr class="'.$class.'" data-id="'.$hook['id'].'" data-nome='.json_encode($hook['name']).'>
                 <td>
-                    '.$widget['name'].(!empty($widget['help']) ? '
-                    <i class="tip fa fa-question-circle-o" title="'.$widget['help'].'"</i>' : '').'
+                    '.$hook['name'].(!empty($hook['help']) ? '
+                    <i class="tip fa fa-question-circle-o" title="'.$hook['help'].'"</i>' : '').'
                 </td>
-                <td><small>'.(
-                    string_starts_with($widget['location'], 'controller') ?
-                        tr('Schermata modulo') :
-                        tr('Schermata dettagli')
-                ).'</small></td>
+             
+                <td class="text-center">
+                    '.Translator::timestampToLocale($hook['processing_at']).'
+                </td>
+
                 <td class="text-center">';
 
-        // Possibilità di disabilitare o abilitare il widget
-        if ($widget['enabled']) {
+        // Possibilità di disabilitare o abilitare il hook
+        if ($hook['enabled']) {
             echo '
                 <div class="tip" data-toggle="tooltip" title="'.tr('Questo _TYPE_ è abilitato: clicca qui per disabilitarlo', [
                         '_TYPE_' => $nome_tipo,
                     ]).'">
-                    <button type="button" class="btn btn-warning btn-xs" onclick="disabilitaWidget(this)">
+                    <button type="button" class="btn btn-warning btn-xs" onclick="disabilitaHook(this)">
                         <i class="fa fa-power-off" title="'.tr('Disabilita').'"></i>
                     </button>
                 </div>';
@@ -78,38 +78,9 @@ foreach ($gruppi as $modulo => $widgets) {
                 <div class="tip" data-toggle="tooltip" title="'.tr('Questo _TYPE_ è disabilitato: clicca qui per abilitarlo', [
                         '_TYPE_' => $nome_tipo,
                     ]).'">
-                    <button type="button" class="btn btn-success btn-xs" onclick="abilitaWidget(this)">
+                    <button type="button" class="btn btn-success btn-xs" onclick="abilitaHook(this)">
                         <i class="fa fa-plug" title="'.tr('Abilita').'"></i>
                     </button>
-                </div>';
-        }
-
-        echo '
-            </td>
-            <td class="text-center">';
-
-        // Possibilità di spostare il widget
-        if (string_ends_with($widget['location'], 'top')) {
-            echo '
-                <div class="tip" data-toggle="tooltip" title="'.tr('Questo widget è posizionato nella parte superiore della pagina').'">
-                    <i class="fa fa-arrow-up" title="'.tr('Parte superiore').'"></i>
-                </div>
-
-                <div class="tip" data-toggle="tooltip" title="'.tr('Clicca qui per spostare il widget nella parte laterale').'">
-                    <button type="button" class="btn btn-info btn-xs" onclick="spostaWidget(this)">
-                        <i class="fa fa-arrow-right" title="'.tr('Sposta').'"></i>
-                    </button>
-                </div>';
-        } else {
-            echo '
-                <div class="tip" data-toggle="tooltip" title="'.tr('Clicca qui per spostare il widget nella parte superiore').'">
-                    <button type="button" class="btn btn-info btn-xs" onclick="spostaWidget(this)">
-                        <i class="fa fa-arrow-up" title="'.tr('Sposta').'"></i>
-                    </button>
-                </div>
-
-                <div class="tip" data-toggle="tooltip" title="'.tr('Questo widget è posizionato nella parte laterale della pagina').'">
-                    <i class="fa fa-arrow-right" title="'.tr('Parte laterale').'"></i>
                 </div>';
         }
 
@@ -126,12 +97,12 @@ echo '
 </table>
 
 <script>
-function disabilitaWidget(button){
+function disabilitaHook(button){
     const riga = $(button).closest("tr");
     const id = riga.data("id");
 
     const nome = riga.data("nome");
-    const nome_tipo = "widget";
+    const nome_tipo = "hook";
 
     swal({
         title: "'.tr('Disabilitare il _TYPE_?', [
@@ -153,11 +124,11 @@ function disabilitaWidget(button){
             dataType: "JSON",
             data: {
                 id_module: globals.id_module,
-                op: "disabilita-widget",
+                op: "disabilita-hook",
                 id: id,
             },
             success: function (response) {
-                caricaElencoWidget();
+                caricaElencoHooks();
                 renderMessages();
             },
             error: function() {
@@ -173,12 +144,12 @@ function disabilitaWidget(button){
     })
 }
 
-function abilitaWidget(button) {
+function abilitaHook(button) {
     const riga = $(button).closest("tr");
     const id = riga.data("id");
 
     const nome = riga.data("nome");
-    const nome_tipo = "widget";
+    const nome_tipo = "hook";
 
     swal({
         title: "'.tr('Abilitare il _TYPE_?', [
@@ -200,11 +171,11 @@ function abilitaWidget(button) {
             dataType: "JSON",
             data: {
                 id_module: globals.id_module,
-                op: "abilita-widget",
+                op: "abilita-hook",
                 id: id,
             },
             success: function (response) {
-                caricaElencoWidget();
+                caricaElencoHooks();
                 renderMessages();
             },
             error: function() {
@@ -218,36 +189,5 @@ function abilitaWidget(button) {
             }
         });
     })
-}
-
-function spostaWidget(button) {
-    const riga = $(button).closest("tr");
-    const id = riga.data("id");
-
-    let restore = buttonLoading(button);
-
-    $.ajax({
-        url: globals.rootdir + "/actions.php",
-        type: "POST",
-        dataType: "JSON",
-        data: {
-            id_module: globals.id_module,
-            op: "sposta-widget",
-            id: id,
-        },
-        success: function (response) {
-            caricaElencoWidget();
-            renderMessages();
-        },
-        error: function() {
-            buttonRestore(button, restore);
-
-            swal({
-                type: "error",
-                title: globals.translations.ajax.error.title,
-                text: globals.translations.ajax.error.text,
-            });
-        }
-    });
 }
 </script>';

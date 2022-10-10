@@ -34,6 +34,7 @@ switch (post('op')) {
         break;
 
     case 'update':
+        $idanagrafica = post('idanagrafica');
         $tipo = post('tipo');
         $descrizione = post('descrizione');
         $iddocumento = post('iddocumento') ?: 0;
@@ -79,6 +80,7 @@ switch (post('op')) {
             $id_scadenza = post('id_scadenza')[$id];
             if (!empty($id_scadenza)) {
                 $database->update('co_scadenziario', [
+                    'idanagrafica' => $idanagrafica,
                     'descrizione' => $descrizione,
                     'da_pagare' => $da_pagare,
                     'pagato' => $pagato,

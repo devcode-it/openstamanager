@@ -138,7 +138,7 @@ function discountInfo(Accounting $riga, $mostra_maggiorazione = true)
         return null;
     }
 
-    $text = ($riga->prezzo_unitario > 0 && $riga->sconto_unitario > 0) || ($riga->prezzo_unitario < 0 && $riga->sconto_unitario < 0) ? tr('sconto _TOT_ _TYPE_') : tr('maggiorazione _TOT__TYPE_');
+    $text = ($riga->prezzo_unitario >= 0 && $riga->sconto_unitario > 0) || ($riga->prezzo_unitario < 0 && $riga->sconto_unitario < 0) ? tr('sconto _TOT_ _TYPE_') : tr('maggiorazione _TOT__TYPE_');
     $totale = !empty($riga->sconto_percentuale) ? $riga->sconto_percentuale : $riga->sconto_unitario_corrente;
 
     return replace($text, [

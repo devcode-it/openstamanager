@@ -41,6 +41,25 @@ WHERE idarticolo = '.prepare($articolo->id)."
 GROUP BY or_ordini.id
 HAVING qta_ordinata > 0";
 
+echo '
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">'.tr('Articolo').'</h3>
+    </div>
+
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-6">
+                <span><b>'.tr("Codice: ").'</b>'.$articolo->codice.'</span>
+            </div>
+
+            <div class="col-md-6">
+                <span><b>'.tr("Descrizione: ").'</b>'.$articolo->descrizione.'</span>
+            </div>
+        </div>
+    </div>
+</div>';
+
 /*
  ** Impegnato
  */
@@ -240,8 +259,9 @@ echo '
                 <table class="table table-striped table-condensed table-bordered">
                     <thead>
                         <tr>
-                            <th width="400">'.tr('Sede').'</th>
-                            <th width="200">'.tr('Q.tà').'</th>
+                            <th>'.tr('Sede').'</th>
+                            <th width="20%" class="text-center">'.tr('Q.tà').'</th>
+                            <th width="5%" class="text-center">#</th>
                         </tr>
                     </thead>
 
@@ -252,6 +272,11 @@ foreach ($sedi as $sede) {
                         <tr>
                             <td>'.$sede['nomesede'].'</td>
                             <td class="text-right">'.numberFormat($giacenze[$sede['id']][0]).' '.$articolo->um.'</td>
+                            <td class="text-center">
+                                <a class="btn btn-xs btn-info" title="Dettagli" onclick="getDettagli('.$sede['id'].');">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            </td>
                         </tr>';
 }
 
@@ -262,3 +287,13 @@ foreach ($sedi as $sede) {
         </div>
     </div>
 </div>';
+
+echo '
+<script>
+
+function getDettagli(idsede) {
+    // Apertura modal
+    openModal("'.tr('Dettagli').'", "'.$rootdir.'/modules/articoli/plugins/dettagli_giacenze.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&idsede=" + idsede );
+}
+
+</script>';

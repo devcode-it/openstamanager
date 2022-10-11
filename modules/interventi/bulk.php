@@ -324,7 +324,8 @@ if (App::debug()) {
             <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL ORDER BY descrizione", "value": "" ]}
             <br>{[ "type":"checkbox", "label":"'.tr('Duplica righe').'", "name":"righe", "value":"" ]}
             <br>{[ "type":"checkbox", "label":"'.tr('Duplica sessioni').'", "name":"sessioni", "value":"" ]}
-            <br>{[ "type":"checkbox", "label":"'.tr('Duplica impianti').'", "name":"impianti", "value":"" ]}',
+            <br>{[ "type":"checkbox", "label":"'.tr('Duplica impianti').'", "name":"impianti", "value":"" ]}
+            <style>.swal2-modal{ width:600px !important; }</style>',
             'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',
             'blank' => false,

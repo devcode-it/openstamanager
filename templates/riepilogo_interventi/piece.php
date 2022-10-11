@@ -68,9 +68,15 @@ echo '
     echo'
         <p><b>'.tr('Descrizione').':</b> '.$intervento->descrizione.'</small></p>';
     }
+
+    if (setting('Formato ore in stampa') == 'Sessantesimi') {
+        $ore = Translator::numberToHours($ore);
+    } else {
+        $ore = Translator::numberToLocale($ore, 2);
+    }
 echo '
     </td>
-    <td class="text-center">'.Translator::numberToLocale($ore).'</td>
+    <td class="text-center">'.($pricing ? $ore : '-').'</td>
     <td class="text-center">'.($pricing ? moneyFormat($imponibile, 2) : '-').'</td>
     <td class="text-center">'.($pricing && empty($options['dir']) ? moneyFormat($sconto, 2) : '-').'</td>
     <td class="text-center">'.($pricing ? moneyFormat($totale_imponibile, 2) : '-').'</td>

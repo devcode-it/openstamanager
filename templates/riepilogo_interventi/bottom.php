@@ -26,13 +26,19 @@ $somma_totale_imponibile = sum($somma_totale_imponibile);
 $somma_iva = sum($somma_iva);
 $somma_totale_ivato = sum($somma_totale_ivato);
 
+if (setting('Formato ore in stampa') == 'Sessantesimi') {
+    $somma_ore = Translator::numberToHours($somma_ore);
+} else {
+    $somma_ore = Translator::numberToLocale($somma_ore, 2);
+}
+
 echo '
         <tr>
             <th width="5%" style="border-right: 0"></th>
             <th class="text-right" style="border-left: 0;">
                 <b>'.tr('Totale', [], ['upper' => true]).':</b>
             </th>
-            <th class="text-center">'.($pricing ? numberFormat($somma_ore, 2) : '-').'</th>
+            <th class="text-center">'.($pricing ? $somma_ore : '-').'</th>
             <th class="text-center">'.($pricing ? moneyFormat($somma_imponibile, 2) : '-').'</th>
             <th class="text-center">'.($pricing ? moneyFormat($somma_sconto, 2) : '-').'</th>
             <th class="text-center">'.($pricing ? moneyFormat($somma_totale_imponibile, 2) : '-').'</th>

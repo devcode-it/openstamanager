@@ -31,6 +31,7 @@ echo '
 	<input type="hidden" name="tipo" value="'.$record['tipo'].'">
 	<input type="hidden" name="descrizione" value="'.$record['descrizione'].'">
 	<input type="hidden" name="iddocumento" value="'.$record['iddocumento'].'">
+    <input type="hidden" name="idanagrafica" value="'.$record['idanagrafica'].'">
 
 	<div class="panel panel-primary">
 		<div class="panel-heading">

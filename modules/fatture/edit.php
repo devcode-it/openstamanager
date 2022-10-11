@@ -135,7 +135,7 @@ if (!empty($note_accredito)) {
         ]);
 
         echo '
-    <br>'.Modules::link('Fatture di vendita', $nota['id'], $text, $text);
+    <br>'.Modules::link( ($dir == 'entrata' ? 'Fatture di vendita' : 'Fatture di acquisto' ), $nota['id'], $text, $text);
     }
     echo '
 </div>';

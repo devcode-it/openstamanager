@@ -27,6 +27,31 @@ class Referente extends Model
     use SimpleModelTrait;
 
     protected $table = 'an_referenti';
+    
+     /**
+     * Crea un nuovo referente.
+     *
+     * @param string $nome
+     *
+     * @return self
+     */
+    public static function build($idanagrafica, $nome, $idmansione, $idsede)
+    {
+        $model = new static();
+
+
+        $model->idanagrafica = $idanagrafica;
+
+        $model->nome = $nome;
+
+        $model->idmansione = $idmansione;
+        $model->idsede = $idsede;
+
+        $model->save();
+
+        return $model;
+    }
+
 
     /**
      * The attributes that aren't mass assignable.

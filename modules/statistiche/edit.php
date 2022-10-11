@@ -474,7 +474,7 @@ $(document).ready(function() {
         data: {
             labels: months,
             datasets: [
-                '.$dataset.'
+                '.($dataset? :'{ label: "", backgroundColor: "transparent", data: [ 0,0,0,0,0,0,0,0,0,0,0,0 ] }').'
             ]
         },
         options: {
@@ -549,7 +549,6 @@ INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipi
 INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica
 WHERE an_tipianagrafiche.descrizione = "Cliente" AND co_tipidocumento.dir = "entrata" AND an_anagrafiche.created_at BETWEEN '.prepare($start).' AND '.prepare($end).' GROUP BY YEAR(an_anagrafiche.created_at), MONTH(an_anagrafiche.created_at) ORDER BY YEAR(an_anagrafiche.created_at) ASC, MONTH(an_anagrafiche.created_at) ASC');
 
-$clienti = Stats::monthly($clienti, $start, $end);
 
 //Random color
 $background = '#'.dechex(rand(256, 16777215));

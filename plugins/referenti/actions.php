@@ -19,26 +19,30 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Anagrafiche\Referente;
+
 $operazione = filter('op');
 
 switch ($operazione) {
     case 'addreferente':
         if (!empty(post('nome'))) {
-            $opt_out_newsletter = post('disable_newsletter');
 
-            $dbo->insert('an_referenti', [
-                'idanagrafica' => $id_parent,
-                'nome' => post('nome'),
-                'idmansione' => post('idmansione'),
-                'telefono' => post('telefono'),
-                'email' => post('email'),
-                'idsede' => post('idsede'),
-                'enable_newsletter' => empty($opt_out_newsletter),
-            ]);
-            $id_record = $dbo->lastInsertedID();
+            $nome = post('nome');
+            $idmansione = post('idmansione');
+            $idsede = post('idsede');
+            $opt_out_newsletter = post('disable_newsletter');
+            
+            $referente = Referente::build($id_parent, $nome, $idmansione, $idsede);
+            $id_record = $referente->id;
+
+            $referente->telefono = post('telefono');
+            $referente->email = post('email');
+            $referente->enable_newsletter = empty($opt_out_newsletter);
+    
+            $referente->save();
 
             if (isAjaxRequest() && !empty($id_record)) {
-                echo json_encode(['id' => $id_record, 'text' => post('nome')]);
+                echo json_encode(['id' => $id_record, 'text' =>  $referente->nome]);
             }
 
             flash()->info(tr('Aggiunto nuovo referente!'));

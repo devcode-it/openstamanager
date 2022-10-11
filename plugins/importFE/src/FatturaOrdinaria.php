@@ -331,9 +331,14 @@ class FatturaOrdinaria extends FatturaElettronica
         $fattura->refresh();
 
         // Arrotondamenti differenti nella fattura XML
+        $totale_righe = 0;
         $dati_riepilogo = $this->getBody()['DatiBeniServizi']['DatiRiepilogo'];
         if (!empty($dati_riepilogo['ImponibileImporto'])) {
             $totale_righe = $dati_riepilogo['ImponibileImporto'];
+        } elseif (is_array($dati_riepilogo)) {
+            foreach ($dati_riepilogo as $dato) {
+                $totale_righe += $dato['ImponibileImporto'];
+            }   
         } else {
             $totali_righe = array_column($righe, 'PrezzoTotale');
             $totale_righe = sum($totali_righe, null, 2);

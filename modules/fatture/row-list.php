@@ -268,7 +268,7 @@ echo '
 
 // Individuazione dei totali
 $imponibile = $fattura->imponibile;
-$sconto = $fattura->sconto;
+$sconto = -$fattura->sconto;
 $totale_imponibile = $fattura->totale_imponibile;
 $iva = $fattura->iva;
 $totale = $fattura->totale;

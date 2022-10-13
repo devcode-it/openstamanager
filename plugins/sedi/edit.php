@@ -212,7 +212,29 @@ echo '
 </form>';
 
 echo '
+<script>$(document).ready(init)</script>
+
 <script>
+if(window.google){
+    initGeocomplete();
+} else {
+    $.getScript("//maps.googleapis.com/maps/api/js?libraries=places&key='.$google.'", function() {
+        initGeocomplete();
+    });
+}
+
+function initGeocomplete() {
+    $("#form_sedi #geocomplete input").geocomplete({
+        map: $("#form_sedi #map").length ? "#map" : false,
+        location: $("#form_sedi #gaddress").val() ? $("#form_sedi #gaddress").val() : [$("#form_sedi #lat_").val(), $("#form_sedi #lng_").val()],
+        details: ".details",
+        detailsAttribute: "data-geo"
+    }).bind("geocode:result", function (event, result) {
+        $("#form_sedi #lat_").val(result.geometry.location.lat());
+        $("#form_sedi #lng_").val(result.geometry.location.lng());
+    });
+}
+
 function rimuoviSede(button) {
     let hash = window.location.href.split("#")[1];
 
@@ -229,15 +251,4 @@ function rimuoviSede(button) {
     }).catch(swal.noop);
 }
 
-$(document).ready( function(){
-    $("#form_sedi #geocomplete input").geocomplete({
-        map: $("#form_sedi #map").length ? "#form_sedi #map" : false,
-        location: $("#form_sedi #gaddress").val() ? $("#form_sedi #gaddress").val() : [$("#form_sedi #lat_").val(), $("#form_sedi #lng_").val()],
-        details: "#form_sedi .details",
-        detailsAttribute: "data-geo"
-    }).bind("geocode:result", function (event, result) {
-        $("#form_sedi #lat_").val(result.geometry.location.lat());
-        $("#form_sedi #lng_").val(result.geometry.location.lng());
-    });
-});
 </script>';

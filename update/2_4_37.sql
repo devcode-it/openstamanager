@@ -12,3 +12,10 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 
 -- Aggiunto modulo Mappa
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `created_at`, `updated_at`, `use_notes`, `use_checklists`) VALUES (NULL, 'Mappa', 'Mappa', 'mappa', 'custom', '', 'fa fa-map', '2.4.36', '2.4.36', '10', NULL, '1', '1', '2022-10-12 17:22:11', '2022-10-12 17:23:52', '0', '0');
+
+-- Aggiunte colonne cellulare e indirizzo in Anagrafiche
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name`='Anagrafiche'), 'Indirizzo', 'an_anagrafiche.indirizzo', 13, 1, 0, 0, 0, '', '', 0, 0, 1);
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name`='Anagrafiche'), 'Cellulare', 'an_anagrafiche.cellulare', 14, 1, 0, 0, 0, '', '', 0, 0, 1);

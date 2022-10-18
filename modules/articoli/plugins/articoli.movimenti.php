@@ -19,12 +19,38 @@
 
 include_once __DIR__.'/../../../core.php';
 
+echo '
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">'.tr('Articolo').'</h3>
+    </div>
+
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-6">
+                <span><b>'.tr("Codice: ").'</b>'.$articolo->codice.'</span>
+            </div>
+
+            <div class="col-md-6">
+                <span><b>'.tr("Descrizione: ").'</b>'.$articolo->descrizione.'</span>
+            </div>
+        </div>
+    </div>
+</div>';
+
 // Movimentazione degli articoli
 echo '
 <div class="box">
     <div class="box-header with-border">
         <h3 class="box-title">'.tr('Movimenti').'</h3>
         <div class="pull-right">';
+
+echo '
+        <a class="btn btn-warning btn-xs" onclick="openModal(\''.tr('Movimenta articolo').'\', \''.base_path().'/modules/articoli/modals/add_movimento.php?id_module='.Modules::get('Movimenti')['id'].'&id_articolo='.$id_record.'\');">
+            <i class="fa fa-truck"></i>
+            '.tr('Movimenta articolo').'
+        </a>';
+
 if (empty($_GET['movimentazione_completa'])) {
     echo '
         <a class="btn btn-info btn-xs" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&movimentazione_completa=1#tab_'.$id_plugin.'">

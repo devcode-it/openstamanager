@@ -19,3 +19,12 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name`='Anagrafiche'), 'Cellulare', 'an_anagrafiche.cellulare', 14, 1, 0, 0, 0, '', '', 0, 0, 1);
+
+-- Aggiunto colore in Stati Preventivi
+ALTER TABLE `co_statipreventivi` ADD `colore` VARCHAR(7) NOT NULL AFTER `icona`; 
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name`='Preventivi'), '_bg_', 'co_statipreventivi.colore', 10, 0, 0, 0, 0, '', '', 0, 0, 1);
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name`='Stati dei preventivi'), 'color_Colore', 'colore', 7, 1, 0, 0, 0, '', '', 1, 0, 1);

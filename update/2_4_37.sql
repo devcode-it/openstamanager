@@ -29,7 +29,7 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name`='Stati dei preventivi'), 'color_Colore', 'colore', 7, 1, 0, 0, 0, '', '', 1, 0, 1);
 
---Allineamento decimali 
+-- Allineamento decimali 
 ALTER TABLE `an_anagrafiche` CHANGE `provvigione_default` `provvigione_default` DECIMAL(15,6) NOT NULL;
 ALTER TABLE `co_contratti` CHANGE `budget` `budget` DECIMAL(15,6) NOT NULL, CHANGE `costo_diritto_chiamata` `costo_diritto_chiamata` DECIMAL(15,6) NOT NULL, CHANGE `ore_lavoro` `ore_lavoro` DECIMAL(15,6) NOT NULL, CHANGE `costo_orario` `costo_orario` DECIMAL(15,6) NOT NULL, CHANGE `costo_km` `costo_km` DECIMAL(15,6) NOT NULL; 
 ALTER TABLE `co_contratti_tipiintervento` CHANGE `costo_ore` `costo_ore` DECIMAL(15,6) NOT NULL, CHANGE `costo_km` `costo_km` DECIMAL(15,6) NOT NULL, CHANGE `costo_dirittochiamata` `costo_dirittochiamata` DECIMAL(15,6) NOT NULL, CHANGE `costo_ore_tecnico` `costo_ore_tecnico` DECIMAL(15,6) NOT NULL, CHANGE `costo_km_tecnico` `costo_km_tecnico` DECIMAL(15,6) NOT NULL, CHANGE `costo_dirittochiamata_tecnico` `costo_dirittochiamata_tecnico` DECIMAL(15,6) NOT NULL; 

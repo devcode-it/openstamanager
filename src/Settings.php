@@ -176,18 +176,26 @@ class Settings
 
         // Lista multipla
         elseif (preg_match("/multiple\[(.+?)\]/", $setting->tipo, $m)) {
-            $values = explode(',', $m[1]);
 
-            $list = [];
-            foreach ($values as $value) {
-                $list[] = [
-                    'id' => $value,
-                    'text' => $value,
-                ];
+            //Gestisco il multiple da query
+            if (strstr($setting->tipo,'query=')) {
+                $value = str_replace(']', '', explode('[', $setting->tipo)[1]);
+                $select_values = '"'.str_replace('"', '\"', $value).'"';
+            }else{
+                $values = explode(',', $m[1]);
+
+                $list = [];
+                foreach ($values as $value) {
+                    $list[] = [
+                        'id' => $value,
+                        'text' => $value,
+                    ];
+                }
+                $select_values = json_encode($list);
             }
 
             $result = '
-    {[ "type": "select", "multiple": 1, "label": '.json_encode($setting->nome).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.'][]", "values": '.json_encode($list).', "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'" ]}';
+    {[ "type": "select", "multiple": 1, "label": '.json_encode($setting->nome).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.'][]", "values": '.$select_values.', "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'" ]}';
         }
 
         // Lista da query

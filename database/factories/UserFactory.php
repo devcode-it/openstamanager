@@ -21,6 +21,7 @@ class UserFactory extends Factory
      * Define the model's default state.
      *
      * @noinspection PhpUndefinedMethodInspection
+     * @return array{name: mixed, email: mixed, email_verified_at: \Illuminate\Support\Carbon, password: string, remember_token: string}
      */
     #[ArrayShape(['name' => 'string', 'email' => 'mixed', 'email_verified_at' => Carbon::class, 'password' => 'string', 'remember_token' => 'string'])]
      public function definition(): array
@@ -39,10 +40,8 @@ class UserFactory extends Factory
      */
     public function unverified(): Factory
     {
-        return $this->state(function () {
-            return [
-                'email_verified_at' => null,
-            ];
-        });
+        return $this->state(static fn() => [
+            'email_verified_at' => null,
+        ]);
     }
 }

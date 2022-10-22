@@ -45,12 +45,12 @@ class PublishModulesAssets extends Command
     {
         $modules = $this->controller->getModules()
             ->pluck('extra.osm-modules')
-            ->map(fn($item) => reset($item))
+            ->map(static fn($item) => reset($item))
             ->pluck('moduleName');
 
         $selected = $this->option('module');
         if ($selected) {
-            $modules = $modules->filter(fn(string $slug) => in_array($slug, $selected, true));
+            $modules = $modules->filter(static fn(string $slug) => in_array($slug, $selected, true));
             if ($modules->isEmpty()) {
                 $this->error('No modules found with the given slug');
 
@@ -90,16 +90,15 @@ class PublishModulesAssets extends Command
 
             $dirs = ServiceProvider::pathsToPublish(null, $tag);
             collect($dirs)
-                ->flatMap(fn($dir) => File::allFiles($dir))
-                ->filter(fn(SplFileInfo $file) => $file->getExtension() === 'js')
-                ->each(function (SplFileInfo $file) use ($replacement, $patch_failures) {
+                ->flatMap(static fn($dir) => File::allFiles($dir))
+                ->filter(static fn(SplFileInfo $file) => $file->getExtension() === 'js')
+                ->each(static function (SplFileInfo $file) use ($replacement, $patch_failures): void {
                     $content = str($file->getContents())
                         ->replaceMatches("/from [\"']openstamanager[\"']/", $replacement)
                         ->replaceMatches(
                             "/from [\"']@(?<vendor>[\w.-]+)\/(?<module>[\w.-]+)[\"']/",
                             "from '../../$1/$2/index.js'"
                         );
-
                     if (!File::put($file->getPathname(), $content)) {
                         $patch_failures->push($file->getPathname());
                     }

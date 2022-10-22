@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
     {
         cache()->rememberForever(
             'translations_' . app()->getLocale(),
-            fn() => Json::decode(file_get_contents(resource_path('lang/' . app()->getLocale() . '.json')))
+            static fn() => Json::decode(file_get_contents(resource_path('lang/' . app()->getLocale() . '.json')))
         );
 
         view()->share('modules', $controller->getModules(request()));

@@ -38,8 +38,6 @@ class Server extends BaseServer
     /**
      * @inheritdoc
      * TODO: Temporary: it must be added authentication to API routes
-     *
-     * @return bool
      */
     public function authorizable(): bool
     {

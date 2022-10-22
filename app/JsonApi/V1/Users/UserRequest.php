@@ -10,7 +10,7 @@ class UserRequest extends ResourceRequest
     /**
      * Get the validation rules for the resource.
      *
-     * @return array
+     * @return array{username: string[], email: string[]}
      */
     public function rules(): array
     {

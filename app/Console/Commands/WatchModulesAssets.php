@@ -15,7 +15,7 @@ class WatchModulesAssets extends Command
 
     protected $description = 'Watch module(s) assets and automatically publish and fix their paths';
 
-    public function __construct(private Controller $controller)
+    public function __construct(private readonly Controller $controller)
     {
         parent::__construct();
     }
@@ -24,7 +24,7 @@ class WatchModulesAssets extends Command
     {
         $modules = $this->controller->getModules()
             ->pluck('extra.osm-modules')
-            ->map(fn($item) => reset($item))
+            ->map(static fn($item) => reset($item))
             ->pluck('moduleName');
 
         $dev = $this->option('D');
@@ -33,7 +33,7 @@ class WatchModulesAssets extends Command
         $paths = [];
         $callbacks = [];
         foreach ($modules as $module) {
-            $module_assets = $publishes->filter(fn($item) => Str::startsWith($item[0], $module));
+            $module_assets = $publishes->filter(static fn($item) => Str::startsWith($item[0], $module));
             $paths[] = $module_assets->keys()->toArray();
 
             $callbacks[] = fn() => $this->call('osm:publish', [
@@ -45,12 +45,13 @@ class WatchModulesAssets extends Command
 
         $watch = Watch::paths(...Arr::flatten($paths));
         foreach ($callbacks as $callback) {
-            $watch->onAnyChange(function () use ($callback) {
+            $watch->onAnyChange(function () use ($callback): void {
                 $this->info('Change detected! Publishing assets...');
                 $callback();
                 $this->call('osm:dev-server-fix');
             });
         }
+
         $watch->start();
     }
 }

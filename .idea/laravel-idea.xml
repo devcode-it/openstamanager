@@ -8,21 +8,18 @@
     </option>
   </component>
   <component name="LaravelIdeaMainSettings">
+    <option name="codeGeneration">
+      <LaravelCodeGeneration>
+        <option name="generationStringSettings">
+          <map>
+            <entry key="createEloquentScope:namespace" value="Models\Scopes" />
+            <entry key="createModel:namespace" value="Models" />
+          </map>
+        </option>
+      </LaravelCodeGeneration>
+    </option>
     <option name="defaultLanguage" value="it" />
     <option name="frameworkFound" value="true" />
-    <option name="generationBooleanSettings">
-      <map>
-        <entry key="createBladeComponent:inTheNewMenu" value="true" />
-        <entry key="createConfigFile:inTheNewMenu" value="true" />
-        <entry key="createConsoleCommand:inTheNewMenu" value="true" />
-        <entry key="createDatabaseMigration:inTheNewMenu" value="true" />
-        <entry key="createEvent:inTheNewMenu" value="true" />
-        <entry key="createListener:inTheNewMenu" value="true" />
-        <entry key="createMailable:inTheNewMenu" value="true" />
-        <entry key="createMiddleware:inTheNewMenu" value="true" />
-        <entry key="createView:inTheNewMenu" value="true" />
-      </map>
-    </option>
     <option name="generationStringSettings">
       <map>
         <entry key="createEloquentScope:namespace" value="Models\Scopes" />

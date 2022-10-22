@@ -22,28 +22,24 @@ class Controller extends BaseController
     {
         $packages = collect(Json::decode(File::get(base_path('vendor/composer/installed.json')))->packages);
 
-        $modules = $packages->filter(fn($package) => $package->type === 'openstamanager-module');
+        $modules = $packages->filter(static fn($package) => $package->type === 'openstamanager-module');
 
-        $modules->transform(function ($module) {
+        $modules->transform(static function ($module) {
             $osm_modules = collect($module->extra->{'osm-modules'});
-
             $module->config = $osm_modules
                 ->mapWithKeys(
-                    fn($item, $name) => config($name) ?? include base_path("vendor/$module->name/config/$name.php")
+                    static fn($item, $name) => config($name) ?? include base_path("vendor/$module->name/config/$name.php")
                 )
                 ->reject(null)
                 ->all();
-
             // Modules
-            $module->modules = $osm_modules->map(function ($item, $key) use ($module) {
-                $split = explode('/', $module->name, 2);
+            $module->modules = $osm_modules->map(static function ($item, $key) use ($module) {
+                $split = explode('/', (string)$module->name, 2);
                 $item->moduleFullName = $module->name;
                 $item->moduleVendor = $split[0];
                 $item->moduleName = $key;
-
                 return $item;
             });
-
             return $module;
         });
 

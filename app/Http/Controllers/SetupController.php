@@ -66,7 +66,7 @@ class SetupController extends Controller
             $privileges = current($result);
 
             if (Str::contains($privileges, [" ON `$database_name`.*", ' ON *.*'])) {
-                $pieces = explode(', ', explode(' ON ', str_replace('GRANT ', '', $privileges), 2)[0]);
+                $pieces = explode(', ', explode(' ON ', str_replace('GRANT ', '', (string)$privileges), 2)[0]);
 
                 // Permessi generici sul database
                 if (in_array('ALL', $pieces) || in_array('ALL PRIVILEGES', $pieces)) {
@@ -83,7 +83,7 @@ class SetupController extends Controller
             }
         }
 
-        if (count($requirements) === 0) {
+        if ($requirements === []) {
             return response()->noContent();
         }
 
@@ -107,7 +107,7 @@ class SetupController extends Controller
             if ($result === false) {
                 return response()->json([
                     'error' => 'writing',
-                    'error_description' => __('Impossibile scrivere il file di configurazione. :action', ['action' => !$chmodded ? 'Controllare i permessi del file config/databasee.php' : '']),
+                    'error_description' => __('Impossibile scrivere il file di configurazione. :action', ['action' => $chmodded ? '' : 'Controllare i permessi del file config/databasee.php']),
                 ], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
         }
@@ -135,6 +135,7 @@ class SetupController extends Controller
         } catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors()], 422);
         }
+
         $user = new User();
         $user->username = $request->input('username');
         $user->email = $request->input('email');

@@ -36,11 +36,10 @@ class PasswordController extends Controller
 
         $response = Password::broker()->reset(
             $request->only(['email', 'password', 'password_confirmation', 'token']),
-            function (User $user, string $password) {
+            static function (User $user, string $password): void {
                 $user->password = Hash::make($password);
                 $user->setRememberToken(Str::random(60));
                 $user->save();
-
                 event(new PasswordReset($user));
             }
         );

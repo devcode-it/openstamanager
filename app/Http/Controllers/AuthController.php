@@ -57,6 +57,9 @@ class AuthController extends Controller
         return response()->noContent();
     }
 
+    /**
+     * @return array{username: string, password: string, remember: string}
+     */
     #[ArrayShape(['username' => 'string', 'password' => 'string', 'remember' => 'string'])]
     private function rules(Request $request): array
     {

@@ -5,6 +5,10 @@ use Illuminate\Database\Schema\Blueprint;
 
 class CreateSettingsTable extends Migration
 {
+    public mixed $table;
+    public mixed $key;
+    public mixed $value;
+
     /**
      * Set up the options.
      */
@@ -17,12 +21,10 @@ class CreateSettingsTable extends Migration
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create($this->table, function (Blueprint $table) {
+        Schema::create($this->table, function (Blueprint $table): void {
             $table->increments('id');
             $table->string($this->key)->index();
             $table->text($this->value);
@@ -31,10 +33,8 @@ class CreateSettingsTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::drop($this->table);
     }

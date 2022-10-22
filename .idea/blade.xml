@@ -20,6 +20,7 @@
       <data directive="@csrf" />
       <data directive="@dd" injection="true" prefix="&lt;?php dd(" suffix="); ?&gt;" />
       <data directive="@default" />
+      <data directive="@disabled" injection="true" prefix="&lt;?php if(" suffix=") {echo 'disabled';}?&gt;" />
       <data directive="@dump" injection="true" prefix="&lt;?php dump(" suffix="); ?&gt;" />
       <data directive="@each" injection="true" prefix="&lt;?php echo $__env-&gt;renderEach(" suffix="); ?&gt;" />
       <data directive="@else" />
@@ -75,7 +76,7 @@
       <data directive="@inertia" />
       <data directive="@inertiaHead" />
       <data directive="@isset" injection="true" prefix="&lt;?php if(isset(" suffix=")): ?&gt;" />
-      <data directive="@js" injection="true" prefix="&lt;?php echo \Illuminate\Support\Js::from(" suffix=")-&gt;toHtml() ?&gt;" />
+      <data directive="@js" injection="true" prefix="&lt;?php _bladeDirective(" suffix="); ?&gt;" />
       <data directive="@json" injection="true" prefix="&lt;?php echo json_encode(" suffix=") ?&gt;" />
       <data directive="@lang" injection="true" prefix="&lt;?php echo app('translator')-&gt;get(" suffix="); ?&gt;" />
       <data directive="@method" injection="true" prefix="&lt;?php echo method_field(" suffix="); ?&gt;" />

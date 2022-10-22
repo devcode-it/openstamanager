@@ -12,7 +12,7 @@ class RedirectIfAuthenticated
     /**
      * Handle an incoming request.
      */
-    public function handle(Request $request, Closure $next, string|null ...$guards): mixed
+    public function handle(Request $request, Closure $next, array $guards = []): mixed
     {
         /** @noinspection CallableParameterUseCaseInTypeContextInspection */
         $guards = empty($guards) ? [null] : $guards;

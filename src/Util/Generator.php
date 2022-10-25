@@ -201,7 +201,7 @@ class Generator
         $maschera = Generator::complete($maschera, [], $date);
         $maschera = str_replace('#', '%', $maschera);
 
-        $query = Manager::table($table)->select($field)->where($field, 'like', $maschera)->orderByRaw('LENGTH('.$field.') DESC')->orderByRaw($order);
+        $query = Manager::table($table)->select($field)->where($field, 'like', $maschera)->orderByRaw($order);
 
         foreach ($where as $and) {
             $query->whereRaw($and);

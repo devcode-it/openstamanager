@@ -78,6 +78,7 @@ if (!empty($query)) {
 
     // Allineamento delle righe
     $align = [];
+    $i = 0;
     $row = isset($rows[0]) ? $rows[0] : [];
     foreach ($row as $field => $value) {
         if (!empty($value)){
@@ -85,7 +86,7 @@ if (!empty($query)) {
         }
 
         // Allineamento a destra se il valore della prima riga risulta numerica
-        if (is_numeric($value) && formatter()->isStandardNumber($value)) {
+        if ((is_numeric($value) && formatter()->isStandardNumber($value)) || $total['format'][$i]) {
             $align[$field] = 'text-right';
         }
 
@@ -93,6 +94,7 @@ if (!empty($query)) {
         elseif (formatter()->isStandardDate($value) || preg_match('/^icon_(.+?)$/', $field)) {
             $align[$field] = 'text-center';
         }
+        $i++;
     }
 
     // Creazione della tabella

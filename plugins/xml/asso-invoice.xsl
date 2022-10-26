@@ -1879,6 +1879,9 @@
 						<xsl:when test="$TD='TD27'">
 							fattura per autoconsumo o per cessioni gratuite senza rivalsa
 						</xsl:when>
+            <xsl:when test="$TD='TD28'">
+							fattura per acquisti da San Marino
+						</xsl:when>
 						
                       <!--FPRS-->
                       <xsl:when test="$TD='TD07'">

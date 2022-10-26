@@ -61,3 +61,8 @@ ALTER TABLE `or_righe_ordini` CHANGE `iva` `iva` DECIMAL(15,6) NOT NULL, CHANGE 
 -- Aggiunta colonna Anagrafica in Movimenti
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name`='Movimenti'), 'Anagrafica', 'IF(`reference_type`=\"Modules\\\\Fatture\\\\Fattura\",(SELECT ragione_sociale FROM co_documenti LEFT JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica WHERE co_documenti.id=mg_movimenti.reference_id),IF(`reference_type`=\"Modules\\\\DDT\\\\DDT\",(SELECT ragione_sociale FROM dt_ddt LEFT JOIN an_anagrafiche ON dt_ddt.idanagrafica=an_anagrafiche.idanagrafica WHERE dt_ddt.id=mg_movimenti.reference_id),IF(`reference_type`=\"Modules\\\\Interventi\\\\Intervento\",(SELECT ragione_sociale FROM in_interventi LEFT JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE in_interventi.id=mg_movimenti.reference_id),"")))', 8, 1, 0, 0, 0, '', '', 1, 0, 1);
+
+-- Aggiunta tipologia fattura TD28 
+INSERT INTO `fe_tipi_documento` (`codice`, `descrizione`) VALUES ('TD28', 'Fattura per acquisti da San Marino');
+INSERT INTO `co_tipidocumento` (`id`, `descrizione`, `dir`, `reversed`, `codice_tipo_documento_fe`) VALUES (NULL, 'Fattura per acquisti da San Marino', 'entrata', '0', 'TD28');
+INSERT INTO `co_tipidocumento` (`id`, `descrizione`, `dir`, `reversed`, `codice_tipo_documento_fe`) VALUES (NULL, 'Fattura per acquisti da San Marino', 'uscita', '0', 'TD28');

@@ -19,6 +19,8 @@
 
 include_once __DIR__.'/init.php';
 
+use Modules\Articoli\Articolo;
+
 $block_edit = $record['flag_completato'];
 $righe = $ordine->getRighe();
 
@@ -102,7 +104,20 @@ foreach ($righe as $riga) {
     }
 
     if ($riga->isArticolo()) {
-        echo Modules::link('Articoli', $riga->idarticolo, $riga->codice.' - '.$riga->descrizione);
+        $articolo_riga = Articolo::find($riga->idarticolo);
+
+        echo Modules::link('Articoli', $riga->idarticolo, $articolo_riga->codice.' - '.$riga->descrizione);
+
+        if( $id_module==Modules::get('Ordini fornitore')['id'] ){
+            $codice_fornitore = $riga->articolo->dettaglioFornitore( $ordine->idanagrafica )->codice_fornitore;
+            if( !empty($codice_fornitore) ){
+                echo '
+                <br>
+                <small class="text-muted">'.tr('Codice fornitore: _COD_FOR_',[
+                    '_COD_FOR_' => $codice_fornitore,
+                ]).'</small>';
+            }
+        }   
     } else {
         echo nl2br($riga->descrizione);
     }

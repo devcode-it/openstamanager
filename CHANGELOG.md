@@ -66,6 +66,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Aggiunto il supporto ai valori multipli nelle impostazioni
 - Aggiunta colonna Anagrafica in Movimenti
 - Aggiunto codice fornitore in ordini cliente
+- Aggiunta selezione periodo nelle stampe contabili
 ### Modificato(Changed)
 - Miglioria per velocizzazione apertura DDT 
 - Migliorie modulo Causali

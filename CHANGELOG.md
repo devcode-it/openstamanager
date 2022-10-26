@@ -52,6 +52,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 ## 2.4.37 (2022-20-26)
 ### Aggiunto (Added)
 - Aggiunto modulo Mappa per geolocalizzare le attività
+- Aggiunta tipologia documento TD28
 - Aggiunta tipologia TD21 nei controlli per autofattura
 - Aggiunte cartelle e file da escludere dal backup
 - Aggiunto confronto con secondo checksum del database per la versione 5.7.x di MySQL
@@ -64,6 +65,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Aggiunta selezione colore in Stati dei preventivi
 - Aggiunto il supporto ai valori multipli nelle impostazioni
 - Aggiunta colonna Anagrafica in Movimenti
+- Aggiunto codice fornitore in ordini cliente
 ### Modificato(Changed)
 - Miglioria per velocizzazione apertura DDT 
 - Migliorie modulo Causali

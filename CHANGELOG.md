@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.37 (2022-10-26)](#2437-2022-10-26)
 - [2.4.36 (2022-09-16)](#2436-2022-09-16)
 - [2.4.35 (2022-08-12)](#2435-2022-08-12)
 - [2.4.34 (2022-07-15)](#2434-2022-07-15)
@@ -48,9 +49,51 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
 
+## 2.4.37 (2022-20-26)
+### Aggiunto (Added)
+- Aggiunto modulo Mappa per geolocalizzare le attività
+- Aggiunta tipologia TD21 nei controlli per autofattura
+- Aggiunte cartelle e file da escludere dal backup
+- Aggiunto confronto con secondo checksum del database per la versione 5.7.x di MySQL
+- Aggiunto flag impianti in fase di duplicazione attività
+- Aggiunta opzione per includere allegati nella duplicazione delle attività
+- Aggiunto elenco Hooks disponibili in stato dei servizi
+- Aggiunta colonna Pagamento in Fatture
+- Aggiunte colonne Cellulare e Indirizzo in Anagrafiche
+- Aggiunta creazione movimenti dalla scheda articolo
+- Aggiunta selezione colore in Stati dei preventivi
+- Aggiunto il supporto ai valori multipli nelle impostazioni
+- Aggiunta colonna Anagrafica in Movimenti
+### Modificato(Changed)
+- Miglioria per velocizzazione apertura DDT 
+- Migliorie modulo Causali
+- Miglioria cartelle escluse in fase di verifica numero file e spazio
+- Miglioria statistiche interventi in base alla data di inizio sessione
+- Miglioria plugin giacenze
+- Miglioria database con allineamento decimali
+- Miglioria visualizzazione colonne datatables
+### Fixed
+- Corretto controllo Attiva aggiornamenti
+- Corretta visualizzazione delle immagini in stampa Preventivo
+- Corretta ricerca di riferimenti automatici durante l'importazione di fatture elettroniche di acquisto
+- Corretta selezione della data del nodo DatiOrdine in fase di esportazione di fatture elettroniche
+- Corretto il salvataggio del corpo email delle newsletter
+- Corretto autocompletamento di indirizzi email
+- Corretto tooltip calendario
+- Corretto widget top 10 allegati
+- Corretto sconto su importi negativi
+- Corretto calcolo arrotondamento automatico in fattura elettronica
+- Corretta statistica Ore di lavoro per tecnico in caso di nessuna sessione inserita
+- Corretto link note di credito da fatture di acquisto
+- Corretto collegamento con anagrafiche in fase di aggiunta di una scadenza
+- Corretto popup data in fase di duplicazione attività dalle azioni di gruppo
+- Corretta visualizzazione sconti in fattura
+- Corretta stampa ore in sessantesimi
+- Corretto indirizzo google in modifica sede
+- Corretto calcolo numero maschera
+- Rimozione visualizzazione delle azioni di gruppo nei plugin
 
 ## 2.4.36 (2022-09-16)
-
 ### Aggiunto (Added)
 - Aggiunta selezione modulo iniziale per gruppo utenti
 - Aggiunta validazione matricola in impianti

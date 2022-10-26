@@ -126,7 +126,7 @@ if (isset($fattura_body['DatiPagamento'])) {
 }
 
 $is_autofattura = false;
-if (in_array($dati_generali['TipoDocumento'], ['TD16', 'TD17', 'TD18', 'TD19', 'TD20', 'TD21'])) {
+if (in_array($dati_generali['TipoDocumento'], ['TD16', 'TD17', 'TD18', 'TD19', 'TD20', 'TD21', 'TD28'])) {
     $is_autofattura = true;
 }
 
@@ -273,7 +273,7 @@ if (!empty($anagrafica)) {
             INNER JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento
         WHERE
             co_tipidocumento.dir = 'entrata' AND
-            co_tipidocumento.codice_tipo_documento_fe IN('TD16', 'TD17', 'TD18', 'TD19', 'TD20', 'TD21') AND
+            co_tipidocumento.codice_tipo_documento_fe IN('TD16', 'TD17', 'TD18', 'TD19', 'TD20', 'TD21', 'TD28') AND
             (co_documenti.data BETWEEN NOW() - INTERVAL 1 YEAR AND NOW()) AND
             co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE descrizione != 'Bozza') AND
             co_documenti.idanagrafica = ".prepare($anagrafica->id);

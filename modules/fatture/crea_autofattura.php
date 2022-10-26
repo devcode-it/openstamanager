@@ -29,7 +29,7 @@ echo '
 
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, CONCAT_WS(\" - \",codice_tipo_documento_fe, descrizione) AS descrizione FROM co_tipidocumento WHERE dir=\"entrata\" AND codice_tipo_documento_fe IN(\"TD16\", \"TD17\", \"TD18\", \"TD19\", \"TD20\", \"TD21\") ORDER BY codice_tipo_documento_fe" ]}
+            {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, CONCAT_WS(\" - \",codice_tipo_documento_fe, descrizione) AS descrizione FROM co_tipidocumento WHERE dir=\"entrata\" AND codice_tipo_documento_fe IN(\"TD16\", \"TD17\", \"TD18\", \"TD19\", \"TD20\", \"TD21\", \"TD28\") ORDER BY codice_tipo_documento_fe" ]}
         </div>
 
         <div class="col-md-6">

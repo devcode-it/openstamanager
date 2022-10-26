@@ -20,12 +20,43 @@
 include_once __DIR__.'/../../core.php';
 
 use Models\Module;
+use Carbon\Carbon;
 
 $id_record = filter('id_record');
 $dir = filter('dir');
 $nome_stampa = filter('nome_stampa');
 $id_print = $dbo->fetchOne('SELECT id FROM zz_prints WHERE name='.prepare($nome_stampa))['id'];
 $id_module = Module::pool('Stampe contabili')->id;
+
+$year = (new Carbon($_SESSION['period_end']))->format('Y');
+$periodi[] = [
+	'id' => 'manuale',
+	'text' => tr('Manuale'),
+];
+
+$month_start = 1;
+$month_end = 3;
+for ($i=1; $i<=4; $i++) {
+	$periodi[] = [
+		'id' => ''.$i.'_trimestre',
+		'text' => tr('_NUM_° Trimestre _YEAR_', ['_NUM_' => $i, '_YEAR_' => $year]),
+		'date_start' => $year.','.$month_start.',01',
+		'date_end' => $year.','.$month_end.','.(new Carbon($year.'-'.$month_end.'-01'))->endOfMonth()->format('d'),
+	];
+	$month_start += 3;
+	$month_end += 3;
+}
+
+for ($i=1; $i<=12; $i++) {
+	$month = (new Carbon($year.'-'.$i.'-01'))->locale('it')->getTranslatedMonthName('IT MMMM');
+	$periodi[] = [
+		'id' => ''.$i.'_mese',
+		'text' => tr('_MONTH_ _YEAR_', ['_MONTH_' => $month, '_YEAR_' => $year]),
+		'date_start' => $year.','.$i.',01',
+		'date_end' => $year.','.$i.','.(new Carbon($year.'-'.$i.'-01'))->endOfMonth()->format('d'),
+	];
+}
+
 
 // Trovo id_print della stampa
 $link = Prints::getHref($nome_stampa, $id_record);
@@ -41,12 +72,6 @@ echo '
 
 <form action="" method="post" id="form" >
 	<div class="row">';
-		if ($nome_stampa != 'Liquidazione IVA') {
-			echo '
-		<div class="col-md-4">
-			{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_sezionale", "required": "1", "values": "query=SELECT id AS id, name AS descrizione FROM zz_segments WHERE id_module = (SELECT id FROM zz_modules WHERE name = \''.(($dir == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto').'\') AND is_fiscale = 1 UNION SELECT  0 AS id, \'Tutti i sezionali\' AS descrizione" ]}
-		</div>';
-		}
 		echo '
 		<div class="col-md-4">
 			{[ "type": "date", "label": "'.tr('Data inizio').'", "required": "1", "name": "date_start", "value": "'.$_SESSION['period_start'].'" ]}
@@ -56,10 +81,20 @@ echo '
 			{[ "type": "date", "label": "'.tr('Data fine').'", "required": "1", "name": "date_end", "value": "'.$_SESSION['period_end'].'" ]}
 		</div>
 
+		<div class="col-md-4">
+			{[ "type": "select", "label": "'.tr('Periodo').'", "name": "periodo", "required": "1", "values": '.json_encode($periodi).', "value": "manuale" ]}
+		</div>
 	</div>';
 
 	echo '
-	<div class="row">
+	<div class="row">';
+		if ($nome_stampa != 'Liquidazione IVA') {
+			echo '
+		<div class="col-md-4">
+			{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_sezionale", "required": "1", "values": "query=SELECT id AS id, name AS descrizione FROM zz_segments WHERE id_module = (SELECT id FROM zz_modules WHERE name = \''.(($dir == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto').'\') AND is_fiscale = 1 UNION SELECT  0 AS id, \'Tutti i sezionali\' AS descrizione" ]}
+		</div>';
+		}
+		echo '
 		<div class="col-md-4">
 			{[ "type": "select", "label": "'.tr('Formato').'", "name": "format", "required": "1", "values": "list=\"A4\": \"'.tr('A4').'\", \"A3\": \"'.tr('A3').'\"", "value": "'.$_SESSION['stampe_contabili']['format'].'" ]}
 		</div>
@@ -132,24 +167,23 @@ if ($nome_stampa != 'Liquidazione IVA') {
 
 	echo '
 	<script>
-		$(document).ready(init);
-
 		$(document).ready(function () {
+			setTimeout(function () {
+				eseguiControlli();
+			}, 1000);
+		});
+
+		$("#date_start").on("blur", function(){
 			eseguiControlli();
 		});
 
-		$("#date_start").blur(function(){
-			eseguiControlli();
-		});
-
-		$("#date_end").blur(function(){
+		$("#date_end").on("blur", function(){
 			eseguiControlli();
 		});
 
 		function eseguiControlli() {
 			let date_start = $("#date_start").data("DateTimePicker").date().format("YYYY-MM-DD");
 			let date_end = $("#date_end").data("DateTimePicker").date().format("YYYY-MM-DD");
-
 			controllaDate(date_start, date_end);
 		}
 
@@ -222,6 +256,8 @@ if ($nome_stampa != 'Liquidazione IVA') {
 
 echo '
 <script>
+	$(document).ready(init);
+
 	function avvia_stampa (){
 		if ($("#definitiva").is(":checked")) {
 			let date_start = $("#date_start").data("DateTimePicker").date().format("YYYY-MM-DD");
@@ -257,5 +293,18 @@ echo '
 
 	$("#orientation").change(function() {
 		session_set("stampe_contabili,orientation", $(this).val(), 0, 0);
+	});
+
+	$("#periodo").change(function() {
+		if ($(this).val()=="manuale") {
+			input("date_start").enable();
+			input("date_end").enable();
+		} else {
+			$("#date_start").data("DateTimePicker").date(new Date(input("periodo").getData().date_start));
+			$("#date_end").data("DateTimePicker").date(new Date(input("periodo").getData().date_end));
+			input("date_start").disable();
+			input("date_end").disable();
+		}
+		eseguiControlli();
 	});
 </script>';

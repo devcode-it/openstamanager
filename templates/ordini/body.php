@@ -330,6 +330,10 @@ if ($options['pricing']) {
 echo '
 </table>';
 
+if (!empty($documento->condizioni_fornitura)) {
+    echo '<pagebreak>'.$documento->condizioni_fornitura;
+}
+
 if (!empty($documento['note'])) {
     echo '
 <br>

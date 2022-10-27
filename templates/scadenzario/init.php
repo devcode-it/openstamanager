@@ -29,16 +29,16 @@ $total = Util\Query::readQuery($module);
 // Lettura parametri modulo
 $module_query = $total['query'];
 
-if(!empty(get('data_inizio'))){
-    $module_query = str_replace('1=1', '1=1 AND DATE_FORMAT(`data`, "%Y%m%d") >= "'.date('Ymd', strtotime(get('data_inizio'))).'"', $module_query);
+if(!empty(get('date_start'))){
+    $module_query = str_replace('1=1', '1=1 AND DATE_FORMAT(`data`, "%Y%m%d") >= "'.date('Ymd', strtotime(get('date_start'))).'"', $module_query);
 
-    $date_start = get('data_inizio');
+    $date_start = get('date_start');
 }
 
-if(!empty(get('data_fine'))){
-    $module_query = str_replace('1=1', '1=1 AND DATE_FORMAT(`data`, "%Y%m%d") <= "'.date('Ymd', strtotime(get('data_fine'))).'"', $module_query);
+if(!empty(get('date_end'))){
+    $module_query = str_replace('1=1', '1=1 AND DATE_FORMAT(`data`, "%Y%m%d") <= "'.date('Ymd', strtotime(get('date_end'))).'"', $module_query);
 
-    $date_start = get('data_inizio');
+    $date_end = get('date_end');
 }
 
 if(get('is_pagata')=='false'){

@@ -107,6 +107,7 @@ switch (post('op')) {
             $ordine->codice_cup = post('codice_cup');
             $ordine->codice_cig = post('codice_cig');
             $ordine->num_item = post('num_item');
+            $ordine->condizioni_fornitura = post('condizioni_fornitura');
 
             $ordine->setScontoFinale(post('sconto_finale'), post('tipo_sconto_finale'));
 

@@ -4,7 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.4.37 (2022-10-26)](#2437-2022-10-26)
+- [2.4.37 (2022-10-27)](#2437-2022-10-27)
 - [2.4.36 (2022-09-16)](#2436-2022-09-16)
 - [2.4.35 (2022-08-12)](#2435-2022-08-12)
 - [2.4.34 (2022-07-15)](#2434-2022-07-15)
@@ -49,7 +49,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
 
-## 2.4.37 (2022-20-26)
+## 2.4.37 (2022-20-27)
 ### Aggiunto (Added)
 - Aggiunto modulo Mappa per geolocalizzare le attività
 - Aggiunta tipologia documento TD28
@@ -95,6 +95,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Corretto indirizzo google in modifica sede
 - Corretto calcolo numero maschera
 - Rimozione visualizzazione delle azioni di gruppo nei plugin
+- Corretta notifica di numerazione errata nei DDT in entrata
 
 ## 2.4.36 (2022-09-16)
 ### Aggiunto (Added)

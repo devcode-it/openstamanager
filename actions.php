@@ -80,6 +80,12 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
                     'id_record' => $id_record,
                 ]);
 
+                // Upload da form
+                if (!empty($funcNum) ){
+                    echo '
+                    <link rel="stylesheet" type="text/css" href="'.$baseurl.'/assets/dist/css/app.min.css" />
+                    <script src="'.$baseurl.'/assets/dist/js/app.min.js"></script>';
+                }
                 
                 // Creazione file fisico
                 if (!empty($upload)) {
@@ -93,8 +99,22 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
                         'uploaded' => 1,
                         'url' => $upload->filepath
                     ];
-    
-                    echo json_encode($response);
+
+                    // Upload da form
+                    if (!empty($funcNum) ){
+                        echo '
+                        <script type="text/javascript">
+                            $(document).ready(function() {
+                                window.parent.toastr.success("'.tr('Caricamento riuscito').'");
+                                window.parent.CKEDITOR.tools.callFunction('.$funcNum.', "'.$baseurl.'/'.$upload->filepath.'");
+                            });
+                        </script>';
+                    }
+                    
+                    // Copia-incolla
+                    else {
+                        echo json_encode($response);
+                    }
                    
                 } else {
 

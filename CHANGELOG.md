@@ -49,7 +49,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
 
-## 2.4.37 (2022-20-27)
+## 2.4.37 (2022-10-27)
 ### Aggiunto (Added)
 - Aggiunto modulo Mappa per geolocalizzare le attività
 - Aggiunta tipologia documento TD28

@@ -81,14 +81,6 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
                 ]);
 
                 
-                echo '
-                <link rel="stylesheet" type="text/css" href="'.$baseurl.'/assets/dist/css/app.min.css" />';
-
-               
-                echo '
-                <script src="'.$baseurl.'/assets/dist/js/app.min.js"></script>';
-
-
                 // Creazione file fisico
                 if (!empty($upload)) {
                     //flash()->info(tr('File caricato correttamente!'));
@@ -96,14 +88,13 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
                     $id_allegato = $dbo->lastInsertedID();
                     $upload = Upload::find($id_allegato);
 
-                    echo '
-                    <script type="text/javascript">
-                        $(document).ready(function() {
-                            window.parent.toastr.success("'.tr('Caricamento riuscito').'");
-                            window.parent.CKEDITOR.tools.callFunction('.$funcNum.', "'.$baseurl.'/'.$upload->filepath.'");
-                        });
-                    </script>';
-
+                    $response = [
+                        'fileName' => basename($upload->filepath),
+                        'uploaded' => 1,
+                        'url' => $upload->filepath
+                    ];
+    
+                    echo json_encode($response);
                    
                 } else {
 

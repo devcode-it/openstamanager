@@ -304,7 +304,10 @@ echo '
 			$("#date_end").data("DateTimePicker").date(new Date(input("periodo").getData().date_end));
 			input("date_start").disable();
 			input("date_end").disable();
+		}';
+		if ($nome_stampa != 'Liquidazione IVA') {
+		echo 'eseguiControlli();';
 		}
-		eseguiControlli();
+	echo '
 	});
 </script>';

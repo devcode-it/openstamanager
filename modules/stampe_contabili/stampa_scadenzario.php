@@ -127,6 +127,5 @@ echo '
 			input("date_start").disable();
 			input("date_end").disable();
 		}
-		eseguiControlli();
 	});
 </script>';

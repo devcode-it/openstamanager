@@ -20,6 +20,7 @@ import {ListItem as MWCListItem} from '@material/mwc-list/mwc-list-item.js';
 import {Menu as MWCMenu} from '@material/mwc-menu';
 import {Manager} from '@osm/Components/Managers';
 import type cash from 'cash-dom';
+import {Property} from 'csstype';
 import type Mithril from 'mithril';
 import type router from 'ziggy-js';
 
@@ -58,20 +59,20 @@ declare global {
   var __: typeof translator;
 
   namespace JSX {
-    interface IntrinsicElements {
+    interface IntrinsicElements extends IntrinsicElementMap {
       'icon-button': JSXElement<IconButton>;
       'material-drawer': JSXElement<MaterialDrawer>;
       'material-select': JSXElement<Select>;
       'mwc-button': JSXElement<MWCButton & {dialogAction?: string | 'ok' | 'discard' | 'close' | 'cancel' | 'accept' | 'decline'}>;
       'mwc-checkbox': JSXElement<MWCCheckbox>;
-      'mwc-card': JSXElement<MWCCard>;
+      // 'mwc-card': JSXElement<MWCCard>;
       'mwc-circular-progress': JSXElement<MWCCircularProgress>;
       'mwc-dialog': JSXElement<MWCDialog>;
       'mwc-fab': JSXElement<MWCFab>;
       'mwc-formfield': JSXElement<MWCFormfield>;
       'mwc-icon-button': JSXElement<MWCIconButton>;
       'mwc-icon-button-toggle': JSXElement<MWCIconButtonToggle>;
-      'mwc-layout-grid': JSXElement<MWCLayoutGrid>;
+      // 'mwc-layout-grid': JSXElement<MWCLayoutGrid>;
       'mwc-layout-grid-cell': JSXElement<MWCLayoutGridCell> & {'span-desktop'?: number, 'span-tablet'?: number, 'span-phone'?: number};
       'mwc-linear-progress': JSXElement<MWCLinearProgress>;
       'mwc-list': JSXElement<MWCList>;
@@ -81,6 +82,10 @@ declare global {
       'text-field': JSXElement<TextField>;
       'top-app-bar': JSXElement<TopAppBar>;
     }
+
+    type IntrinsicElementMap = {
+      [tag in keyof HTMLElementTagNameMap]: Partial<HTMLElementTagNameMap[tag]>;
+    };
 
     interface ElementAttributesProperty {
       attrsTypes?: any;

@@ -4,7 +4,7 @@ import cash from 'cash-dom';
 import Mithril, {ClassComponent} from 'mithril';
 import {registerSW} from 'virtual:pwa-register';
 
-import type Page from './Components/Page';
+import type {Page} from '@osm/Components';
 import {OpenSTAManager} from './typings';
 import {
   __ as translator,

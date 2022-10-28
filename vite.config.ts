@@ -4,44 +4,52 @@ import {defineConfig} from 'vite';
 import {laravel} from 'vite-plugin-laravel';
 import {VitePWA} from 'vite-plugin-pwa';
 
-export default defineConfig(osmConfig({
+export default defineConfig({
   build: {
-    minify: false
+    minify: false,
+    target: 'commonjs'
   },
-  optimizeDeps: {
-    exclude: [
-      '@maicol07/inertia-mithril',
-      '@maicol07/mwc-card',
-      '@maicol07/mwc-layout-grid',
-      '@material/mwc-button',
-      '@material/mwc-checkbox',
-      '@material/mwc-circular-progress',
-      '@material/mwc-dialog',
-      '@material/mwc-drawer',
-      '@material/mwc-fab',
-      '@material/mwc-formfield',
-      '@material/mwc-icon-button',
-      '@material/mwc-icon-button-toggle',
-      '@material/mwc-linear-progress',
-      '@material/mwc-list',
-      '@material/mwc-menu',
-      '@material/mwc-select',
-      '@material/mwc-snackbar',
-      '@material/mwc-textarea',
-      '@material/mwc-textfield',
-      '@material/mwc-top-app-bar',
-      'async-wait-until',
-      'lodash-es',
-      'lit',
-      'lit/decorators.js',
-      'cash-dom',
-      'redaxios'
-    ]
+  esbuild: {
+    jsx: 'transform',
+    jsxFactory: 'm',
+    jsxFragment: '\'[\'',
+    jsxInject: 'import m from \'mithril\''
   },
+  // optimizeDeps: {
+  //   exclude: [
+  //     '@maicol07/inertia-mithril',
+  //     '@maicol07/mwc-card',
+  //     '@maicol07/mwc-layout-grid',
+  //     '@material/mwc-button',
+  //     '@material/mwc-checkbox',
+  //     '@material/mwc-circular-progress',
+  //     '@material/mwc-dialog',
+  //     '@material/mwc-drawer',
+  //     '@material/mwc-fab',
+  //     '@material/mwc-formfield',
+  //     '@material/mwc-icon-button',
+  //     '@material/mwc-icon-button-toggle',
+  //     '@material/mwc-linear-progress',
+  //     '@material/mwc-list',
+  //     '@material/mwc-menu',
+  //     '@material/mwc-select',
+  //     '@material/mwc-snackbar',
+  //     '@material/mwc-textarea',
+  //     '@material/mwc-textfield',
+  //     '@material/mwc-top-app-bar',
+  //     'async-wait-until',
+  //     'lodash-es',
+  //     'lit',
+  //     'lit/decorators.js',
+  //     'cash-dom',
+  //     'redaxios'
+  //   ]
+  // },
   plugins: [
     laravel(),
     // eslint-disable-next-line new-cap
     VitePWA({
+      // TODO: Check options
       includeAssets: [
         'images/favicon/favicon.ico',
         '../robots.txt',
@@ -78,4 +86,4 @@ export default defineConfig(osmConfig({
       useCredentials: true
     })
   ]
-}));
+});

@@ -356,15 +356,13 @@ function initComplete(settings) {
 
             if(typeof row_id !== "undefined"){
                 if (row.hasClass("selected")) {
-                    //table.datatable.rows("#" + row_id).select();
                     wrapper.addSelectedRows(row_id);
-                } else {
-                    //table.datatable.rows("#" + row_id).deselect();
+                } else if (!row.hasClass("selected") && row.hasClass("clicked")) {
                     wrapper.removeSelectedRows(row_id);
                 }
             }
         });
-    }, 1000);
+    }, 100);
 }
 
 function drawCallback(settings) {
@@ -491,6 +489,9 @@ function getTable(selector) {
         addSelectedRows: function (row_ids) {
             row_ids = Array.isArray(row_ids) ? row_ids : [row_ids];
             row_ids.forEach(function (item, index) {
+                // Aggiungo una classe per definire che questo elemento è stato cliccato ora,
+                // per poterlo de-cliccare correttamente
+                $('tr[id='+item.toString()+']').addClass('clicked');
                 selected.set(item.toString(), true);
             });
 

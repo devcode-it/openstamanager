@@ -67,6 +67,8 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
                 '_DATE_' => dateFormat($documento->data),
                 '_STATO_' => $stato_fe['descrizione'],
             ]));
+
+            $show_avviso = $show_avviso ?: ($documento->data_stato_fe < (new Carbon())->subDays(4) ? 1 : 0);
             
 
         } elseif (in_array($documento->codice_stato_fe, $codici_invio)) {
@@ -90,7 +92,11 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
                 <li><b>'.$documento.'</b></li>';
             }
         echo '
-            </ul>
+            </ul>';
+            if ($show_avviso) {
+                echo tr('Cosa fare in caso di fattura elettronica scartata? Dovrai correggere la fattura e inviarla di nuovo al SdI <b>entro 5 giorni dalla data di notifica dello scarto</b>, mantenendo lo stesso numero e data del documento.');
+            }
+        echo '
         </div>';
     }
 

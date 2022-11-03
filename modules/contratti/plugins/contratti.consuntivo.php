@@ -377,8 +377,8 @@ if (empty($totale_ore_contratto)) {
                 echo '
                 <tr>
                     <td>'.$key.'</td>
-                    <td class="text-right">'.Translator::numberToLocale($tecnico['ore']).'</td>
                     <td class="text-right">'.(int)$tecnico['km'].'</td>
+                    <td class="text-right">'.Translator::numberToLocale($tecnico['ore']).'</td>
                     <td class="text-right">'.Translator::numberToLocale($tecnico['costo']).' €</td>
                     <td class="text-right">'.Translator::numberToLocale($tecnico['ricavo']).' €</td>
                     <td class="text-right '.($margine>0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$margine_prc.'%)</td>

@@ -44,7 +44,7 @@ if (isset($id_original)) {
         </div>
 
         <div class="col-md-4">
-            {[ "type": "text", "label": "<?php echo tr('Colore'); ?>", "name": "colore", "id": "colore_", "class": "colorpicker text-center", "value": "$colore$", "extra": "maxlength=\"7\"", "icon-after": "<div class=\"img-circle square\"></div>" ]}
+            {[ "type": "text", "label": "<?php echo tr('Colore'); ?>", "name": "colore", "id": "colore_", "class": "colorpicker text-center", "value": "$colore$", "extra": "maxlength=\"30\"", "icon-after": "<div class=\"img-circle square\"></div>" ]}
         </div>
     </div>
 

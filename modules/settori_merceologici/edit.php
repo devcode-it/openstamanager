@@ -61,12 +61,3 @@ if (!empty($righe)) {
 }
 ?>
 
-
-<script>
-	$(document).ready( function() {
-		$('.colorpicker').colorpicker().on('changeColor', function() {
-			$('#colore').parent().find('.square').css( 'background', $('#colore').val() );
-		});
-		$('#colore').parent().find('.square').css( 'background', $('#colore').val() );
-	});
-</script>

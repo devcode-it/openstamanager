@@ -612,7 +612,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                     <div class="tab-pane'.(!$is_cliente && !$is_fornitore && $is_tecnico ? ' active' : '').''.(!$is_tecnico ? ' hide' : '').'" id="tecnico">
                         <div class="row">
                             <div class="col-md-6">
-                                {[ "type": "text", "label": "'.tr('Colore').'", "name": "colore", "id": "colore_t", "class": "colorpicker text-center", "value": "$colore$", "maxlength": "7", "icon-after": "<div class=\'img-circle square\'></div>" ]}
+                                {[ "type": "text", "label": "'.tr('Colore').'", "name": "colore", "id": "colore_t", "class": "colorpicker text-center", "value": "$colore$", "maxlength": "30", "icon-after": "<div class=\'img-circle square\'></div>" ]}
                             </div>
                         </div>
                     </div>';

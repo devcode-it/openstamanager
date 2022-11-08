@@ -40,7 +40,7 @@ include_once __DIR__.'/../../core.php';
 				</div>
 				
 				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('Colore'); ?>", "name": "colore", "required": 1, "class": "colorpicker text-center", "value": "$colore$", "extra": "maxlength='7'", "icon-after": "<div class='img-circle square'></div>" ]}
+					{[ "type": "text", "label": "<?php echo tr('Colore'); ?>", "name": "colore", "required": 1, "class": "colorpicker text-center", "value": "$colore$", "extra": "maxlength='30'", "icon-after": "<div class='img-circle square'></div>" ]}
 				</div>
 
 			</div>

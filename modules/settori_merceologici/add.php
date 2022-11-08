@@ -36,12 +36,3 @@ include_once __DIR__.'/../../core.php';
 		</div>
 	</div>
 </form>
-
-<script>
-	$(document).ready( function() {
-		$('.colorpicker').colorpicker().on('changeColor', function() {
-			$('#colore').parent().find('.square').css( 'background', $('#colore').val() );
-		});
-		$('#colore').parent().find('.square').css( 'background', $('#colore').val() );
-	});
-</script>

@@ -86,7 +86,7 @@ if (!empty($record['can_delete'])) {
 
 <script>
 	$(document).ready( function() {
-		$('.colorpicker').colorpicker().on('changeColor', function() {
+		$('.colorpicker').colorpicker({ format: 'hex' }).on('changeColor', function() {
 			$('#colore').parent().find('.square').css( 'background', $('#colore').val() );
 		});
 		$('#colore').parent().find('.square').css( 'background', $('#colore').val() );

@@ -825,7 +825,7 @@ if (empty($record['deleted_at'])) {
 
 <script>
 	$(document).ready( function() {
-		$(".colorpicker").colorpicker().on("changeColor", function() {
+		$(".colorpicker").colorpicker({ format: 'hex' }).on("changeColor", function() {
 			$("#colore_t").parent().find(".square").css("background", $("#colore_t").val());
 		});
 

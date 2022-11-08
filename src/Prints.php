@@ -523,6 +523,8 @@ class Prints
 
             'default_font' => 'dejavusanscondensed',
 
+            'tempDir' => base_dir() . '/files/temp',
+
             // Abilitazione per lo standard PDF/A
             //'PDFA' => true,
             //'PDFAauto' => true,

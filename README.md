@@ -123,7 +123,7 @@ Per vedere tutte le versioni disponibili al download, visitare la [pagina relati
 Nel caso utilizziate il programma per uso commerciale, si consiglia di scaricare le release disponibili nel sito ufficiale del progetto (<https://www.openstamanager.com>), evitando di utilizzare direttamente il codice della repository.
 Se siete inoltre interessati a supporto e assistenza professionali, li potete richiedere nella [sezione dedicata](https://www.openstamanager.com/per-le-aziende/).
 
-### Come contribuire
+### Build
 
 Nel caso si stia utilizzando la versione direttamente ottenuta dalla repository di GitHub, è necessario eseguire i seguenti comandi da linea di comando per completare le dipendenze PHP (tramite [Composer](https://getcomposer.org)) e gli assets (tramite [Yarn](https://yarnpkg.com)) del progetto.
 

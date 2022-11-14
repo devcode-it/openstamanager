@@ -43,7 +43,8 @@ La documentazione ufficiale è disponibile all'indirizzo <https://docs.openstama
 - [Requisiti](#requisiti)
 - [Installazione](#installazione)
     - [Versioni](#versioni)
-    - [GitHub](#github)
+    - [Build](#build)
+    - [Strumenti di sviluppo e debug](#strumenti-di-sviluppo-e-debug)
 - [Perché software open-source](#perché-software-open-source)
 - [Community](#community)
 - [Contribuire](#contribuire)
@@ -122,7 +123,7 @@ Per vedere tutte le versioni disponibili al download, visitare la [pagina relati
 Nel caso utilizziate il programma per uso commerciale, si consiglia di scaricare le release disponibili nel sito ufficiale del progetto (<https://www.openstamanager.com>), evitando di utilizzare direttamente il codice della repository.
 Se siete inoltre interessati a supporto e assistenza professionali, li potete richiedere nella [sezione dedicata](https://www.openstamanager.com/per-le-aziende/).
 
-### GitHub
+### Come contribuire
 
 Nel caso si stia utilizzando la versione direttamente ottenuta dalla repository di GitHub, è necessario eseguire i seguenti comandi da linea di comando per completare le dipendenze PHP (tramite [Composer](https://getcomposer.org)) e gli assets (tramite [Yarn](https://yarnpkg.com)) del progetto.
 
@@ -140,6 +141,12 @@ yarn run develop-OSM
 ```
 
 Per ulteriori informazioni, visitare le sezioni [Assets](https://docs.openstamanager.com/docs/base/assets) e [Framework](https://docs.openstamanager.com/docs/base/framework) della documentazione.
+
+## Strumenti di sviluppo e debug
+
+Consigliamo di installare [psalm](https://github.com/vimeo/psalm) e configurarlo nel proprio IDE se supportato, in modo che vengano eseguiti ulteriori controlli automatici sul codice scritto.
+
+E' già configurato su **composer** l'inclusione di [PHP-CS-Fixer](https://github.com/PHP-CS-Fixer/PHP-CS-Fixer), uno strumento che permette di formattare in modo uniforme il codice scritto. Si può configurare nel proprio IDE se supportato. Il percorso dell'eseguibile è `vendor/bin/php-cs-fixer`.
 
 ## Perché software open-source
 

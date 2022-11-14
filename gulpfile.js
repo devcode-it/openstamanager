@@ -402,7 +402,7 @@ function release(done) {
 
     archive.pipe(output);
 
-    // Individuazione dei file da aggiungere
+    // Individuazione dei file da aggiungere e escludere
     glob([
         '**/*',
         '!checksum.json',
@@ -417,6 +417,7 @@ function release(done) {
         'files/temp/.gitkeep',
         '!logs/**',
         '!config.inc.php',
+        '!psalm.xml',
         '!update/structure.php',
         '!**/*.(lock|phar|log|zip|bak|jar|txt)',
         '!**/~*',

@@ -213,6 +213,7 @@ foreach ($db as $name => $values) {
 $dirs = [
     'backup' => tr('Necessario per il salvataggio dei backup'),
     'files' => tr('Necessario per il salvataggio di file inseriti dagli utenti'),
+    'files/temp' => tr('Necessario per la generazione delle stampe'),
     'logs' => tr('Necessario per la gestione dei file di log'),
 ];
 

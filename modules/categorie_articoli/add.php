@@ -74,13 +74,13 @@ if (isset($id_record)) {
 
 <script>
 		$(document).ready( function() {
-			$('#modals > div .colorpicker').colorpicker().on('changeColor', function() {
+			$('#modals > div .colorpicker').colorpicker({ format: 'hex' }).on('changeColor', function() {
 				$('#modals > div #colore_').parent().find('.square').css('background', $('#modals > div #colore_').val());
 			});
 
 			$('#modals > div #colore_').parent().find('.square').css('background', $('#modals > div #colore_').val());
 
-            $('#modals > div .colorpicker').colorpicker().on('changeColor', function() {
+            $('#modals > div .colorpicker').colorpicker({ format: 'hex' }).on('changeColor', function() {
 				$('#modals > div #colore_').parent().find('.square').css('background', $('#modals > div #colore_').val());
 			});
 

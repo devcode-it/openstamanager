@@ -68,6 +68,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Aggiunto codice fornitore in ordini cliente
 - Aggiunta selezione periodo nelle stampe contabili
 - Aggiunta condizione di fornitura in ordini
+- Aggiunto avviso per fatture scartate
 ### Modificato(Changed)
 - Miglioria per velocizzazione apertura DDT 
 - Migliorie modulo Causali

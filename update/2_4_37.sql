@@ -71,4 +71,4 @@ INSERT INTO `co_tipidocumento` (`id`, `descrizione`, `dir`, `reversed`, `codice_
 INSERT INTO `co_tipidocumento` (`id`, `descrizione`, `dir`, `reversed`, `codice_tipo_documento_fe`) VALUES (NULL, 'Fattura per acquisti da San Marino', 'uscita', '0', 'TD28');
 
 -- Fix vista Ddt in entrata
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`order_by` = 'CAST(IF(numero_esterno="", numero, numero_esterno) AS UNSIGNED)' WHERE `zz_modules`.`name` = 'Ddt di acquisto' AND `zz_views`.`name` = 'Numero'
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`order_by` = 'CAST(IF(numero_esterno="", numero, numero_esterno) AS UNSIGNED)' WHERE `zz_modules`.`name` = 'Ddt di acquisto' AND `zz_views`.`name` = 'Numero';

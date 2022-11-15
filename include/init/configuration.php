@@ -186,7 +186,7 @@ if (post('db_host') !== null) {
     "name" : "OpenSTAManager",
     "scope" : "'.base_path().'",
     "display" : "fullscreen",
-    "start_url" : "'.base_path().'",
+    "start_url" : "/",
     "short_name" : "OSM",
     "theme_color" : "transparent",
     "description" : "OpenSTAManager",

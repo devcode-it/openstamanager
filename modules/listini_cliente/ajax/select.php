@@ -17,12 +17,19 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-include_once __DIR__.'/../../core.php';
+include_once __DIR__.'/../../../core.php';
 
-use Modules\PianiSconto\PianoSconto;
+switch ($resource) {
+    case 'listini':
+        $query = 'SELECT id, nome AS descrizione FROM mg_listini |where| ORDER BY nome ASC';
 
-if (isset($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM mg_piani_sconto WHERE id='.prepare($id_record));
+        foreach ($elements as $element) {
+            $filter[] = 'id='.prepare($element);
+        }
 
-    $listino = PianoSconto::find($id_record);
+        if (!empty($search)) {
+            $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
+        }
+
+        break;
 }

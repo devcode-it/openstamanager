@@ -143,6 +143,27 @@ class Articolo extends Model
     }
 
     /**
+     * Imposta il prezzo di vendita sulla base dell'impstazione per l'utilizzo dei prezzi comprensivi di IVA.
+     *
+     * @param $prezzo_vendita
+     * @param $id_iva
+     */
+    public function setMinimoVendita($prezzo_minimo, $id_iva)
+    {
+        // Calcolo prezzo minimo di vendita ivato e non ivato
+        $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
+        $id_iva = $id_iva ?: setting('Iva predefinita');
+        $percentuale_aliquota = floatval(Aliquota::find($id_iva)->percentuale);
+        if ($prezzi_ivati) {
+            $this->minimo_vendita_ivato = $prezzo_minimo;
+            $this->minimo_vendita = $prezzo_minimo / (1 + $percentuale_aliquota / 100);
+        } else {
+            $this->minimo_vendita = $prezzo_minimo;
+            $this->minimo_vendita_ivato = $prezzo_minimo * (1 + $percentuale_aliquota / 100);
+        }
+    }
+
+    /**
      * Imposta il prezzo di acquisto e aggiorna il prezzo di vendita in base al coefficiente.
      *
      * @param $value

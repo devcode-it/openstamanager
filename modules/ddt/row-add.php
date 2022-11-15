@@ -75,7 +75,7 @@ if (get('is_descrizione') !== null) {
     $file = 'articolo';
 
     // Aggiunta sconto di default da listino per le vendite
-    $listino = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_listini ON an_anagrafiche.idlistino_vendite=mg_listini.id WHERE idanagrafica='.prepare($documento['idanagrafica']));
+    $listino = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE idanagrafica='.prepare($documento['idanagrafica']));
 
     if (!empty($listino['prc_guadagno'])) {
         $result['sconto_percentuale'] = $listino['prc_guadagno'];

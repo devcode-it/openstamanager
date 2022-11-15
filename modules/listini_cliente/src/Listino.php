@@ -17,12 +17,34 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-include_once __DIR__.'/../../core.php';
+namespace Modules\ListiniCliente;
 
-use Modules\PianiSconto\PianoSconto;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 
-if (isset($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM mg_piani_sconto WHERE id='.prepare($id_record));
+/*
+ * Classe per la gestione delle relazioni articolo-prezzo sulla base di un range di quantità e di una specifica anagrafica.
+ *
+ * @since 2.4.18
+ */
+class Listino extends Model
+{
+    use SimpleModelTrait;
 
-    $listino = PianoSconto::find($id_record);
+    protected $table = 'mg_listini';
+
+    /**
+     * Crea una nuova relazione tra Articolo e Anagrafica per la gestione dei prezzi.
+     *
+     * @return self
+     */
+    public static function build($nome)
+    {
+        $model = new static();
+        $model->nome = $nome;
+
+        $model->save();
+
+        return $model;
+    }
 }

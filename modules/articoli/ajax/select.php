@@ -35,14 +35,16 @@ switch ($resource) {
         $usare_iva_anagrafica = $superselect['dir'] == 'entrata' && !empty($superselect['idanagrafica']);
         $solo_non_varianti = $superselect['solo_non_varianti'];
         $idagente = $superselect['idagente'];
+        $id_listino = $superselect['id_listino'];
 
         $query = "SELECT
             DISTINCT mg_articoli.id,
             IF(`categoria`.`nome` IS NOT NULL, CONCAT(`categoria`.`nome`, IF(`sottocategoria`.`nome` IS NOT NULL, CONCAT(' (', `sottocategoria`.`nome`, ')'), '-')), '<i>".tr('Nessuna categoria')."</i>') AS optgroup,
             mg_articoli.barcode,
 
-            mg_articoli.".($prezzi_ivati ? 'prezzo_vendita_ivato' : 'prezzo_vendita').' AS prezzo_vendita,
-            mg_articoli.prezzo_vendita_ivato AS prezzo_vendita_ivato,';
+            mg_articoli.".($prezzi_ivati ? 'prezzo_vendita_ivato' : 'prezzo_vendita')." AS prezzo_vendita,
+            mg_articoli.prezzo_vendita_ivato AS prezzo_vendita_ivato,
+            mg_articoli.".($prezzi_ivati ? 'minimo_vendita_ivato' : 'minimo_vendita')." AS minimo_vendita,";
 
         // Informazioni relative al fornitore specificato dal documenti di acquisto
         if ($usare_dettaglio_fornitore) {
@@ -157,6 +159,10 @@ switch ($resource) {
 
         if ($solo_non_varianti) {
             $where[] = 'mg_articoli.id_combinazione IS NULL';
+        }
+
+        if ($id_listino) {
+            $where[] = 'mg_articoli.id NOT IN (SELECT id_articolo FROM mg_listini_articoli WHERE id_listino='.prepare($id_listino).')';
         }
 
         if (!empty($search)) {

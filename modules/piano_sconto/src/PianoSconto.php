@@ -26,7 +26,7 @@ class PianoSconto extends Model
 {
     use SimpleModelTrait;
 
-    protected $table = 'mg_listini';
+    protected $table = 'mg_piani_sconto';
 
     public static function build($nome, $percentuale)
     {

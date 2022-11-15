@@ -266,8 +266,12 @@ echo '
                     </div>
 
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             {[ "type": "select", "label": "<?php echo tr('Conto predefinito di vendita'); ?>", "name": "idconto_vendita", "value": "$idconto_vendita$", "ajax-source": "conti-vendite" ]}
+                        </div>
+
+                        <div class="col-md-6">
+                            {[ "type": "number", "label": "<?php echo tr('Minimo di vendita'); ?>", "name": "minimo_vendita", "value": "<?php echo ($prezzi_ivati ? $articolo->minimo_vendita_ivato : $articolo->minimo_vendita); ?>", "icon-after": "<?php echo currency(); ?>", "help": "<?php echo ($prezzi_ivati ? tr('Importo IVA inclusa') : ''); ?>" ]}
                         </div>
                     </div>
                 </div>

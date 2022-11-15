@@ -27,7 +27,7 @@ echo '
 
 		<div class="panel-body">';
 
-        $listini = $dbo->fetchArray('SELECT * FROM mg_listini ORDER BY id ASC');
+        $listini = $dbo->fetchArray('SELECT * FROM mg_piani_sconto ORDER BY id ASC');
 
         if (!empty($listini)) {
             echo '

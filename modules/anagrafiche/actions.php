@@ -74,8 +74,8 @@ switch (post('op')) {
         $anagrafica->diciturafissafattura = post('diciturafissafattura');
         $anagrafica->idpagamento_acquisti = post('idpagamento_acquisti');
         $anagrafica->idpagamento_vendite = post('idpagamento_vendite');
-        $anagrafica->idlistino_acquisti = post('idlistino_acquisti');
-        $anagrafica->idlistino_vendite = post('idlistino_vendite');
+        $anagrafica->id_piano_sconto_acquisti = post('id_piano_sconto_acquisti');
+        $anagrafica->id_piano_sconto_vendite = post('id_piano_sconto_vendite');
         $anagrafica->idiva_acquisti = post('idiva_acquisti');
         $anagrafica->idiva_vendite = post('idiva_vendite');
         $anagrafica->idbanca_acquisti = post('idbanca_acquisti');
@@ -100,6 +100,7 @@ switch (post('op')) {
         $anagrafica->id_ritenuta_acconto_acquisti = post('id_ritenuta_acconto_acquisti');
         $anagrafica->id_ritenuta_acconto_vendite = post('id_ritenuta_acconto_vendite');
         $anagrafica->split_payment = post('split_payment');
+        $anagrafica->id_listino = post('id_listino');
         $anagrafica->tipologie = (array) post('idtipoanagrafica');
 
         $anagrafica->codice_fiscale = strtoupper(post('codice_fiscale'));

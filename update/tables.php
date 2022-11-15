@@ -93,6 +93,8 @@ return [
     'mg_categorie',
     'mg_causali_movimenti',
     'mg_listini',
+    'mg_listini_articoli',
+    'mg_piani_sconto',
     'mg_prezzi_articoli',
     'mg_movimenti',
     'mg_prodotti',

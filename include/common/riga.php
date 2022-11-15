@@ -180,14 +180,26 @@ echo '
 if ($options['dir'] == 'entrata') {
     echo '
     <div class="row">
-        <div class="col-md-4 margine"></div>';
+        <div class="col-md-4 margine"></div>
+        <div class="col-md-4 prezzi"></div>';
         
         // Provvigione
         echo '
-        <div class="col-md-offset-4 col-md-4">
+        <div class="col-md-4">
+            <div class="sconto"></div>
             {[ "type": "number", "label": "'.tr('Provvigione unitaria').'", "name": "provvigione", "value": "'.($result['provvigione_percentuale'] ?: ($result['provvigione_unitaria'] ?: $result['provvigione_default'])).'", "icon-after": "choice|untprc|'.($result['tipo_provvigione'] ?: $result['tipo_provvigione_default']).'", "help": "'.tr('Provvigione destinata all\'agente.').'", "min-value": "0" ]}
         </div>
+    </div>
+    <div class="row">
+        <div class="col-md-offset-4 col-md-4 minimo_vendita text-center"></div>
     </div>';
+} else {
+    echo '
+    <div class="row">
+        <div class="col-md-6 prezzi"></div>
+        <div class="col-md-6 sconto"></div>
+    </div>
+    <br>';
 }
 
 // Data prevista evasione (per ordini)
@@ -311,11 +323,21 @@ if (in_array($module['name'], ['Fatture di vendita', 'Fatture di acquisto'])) {
         function controlla_sconto() {
             let sconto = $("#sconto").val().toEnglish();
             let div = $("#sconto").closest("div").next("div[id*=errors]");
+            let div_margine = $(".margine");
+            let div_prezzi = $(".prezzi");
+
+            div.css("margin-top", "-13px");
             if (sconto > 0) {
+                div_margine.css("margin-top", "-20px");
+                div_prezzi.css("margin-top", "-20px");
                 div.html(`<small class="label label-default" >'.tr('Sconto').'</small>`);
             } else if (sconto < 0) {
+                div_margine.css("margin-top", "-20px");
+                div_prezzi.css("margin-top", "-20px");
                 div.html(`<small class="label label-default" >'.tr('Maggiorazione').'</small>`);
             } else {
+                div_margine.css("margin-top", "0px");
+                div_prezzi.css("margin-top", "0px");
                 div.html("");
             }
         }

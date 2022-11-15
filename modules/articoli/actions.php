@@ -145,6 +145,7 @@ switch (post('op')) {
         $articolo->um_secondaria = post('um_secondaria');
         $articolo->fattore_um_secondaria = post('fattore_um_secondaria');
         $articolo->qta_multipla = post('qta_multipla');
+        $articolo->setMinimoVendita(post('minimo_vendita'), post('idiva_vendita'));
 
         if (empty(post('coefficiente'))) {
             $articolo->setPrezzoVendita(post('prezzo_vendita'), post('idiva_vendita'));

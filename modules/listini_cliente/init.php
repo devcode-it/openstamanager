@@ -19,10 +19,12 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\PianiSconto\PianoSconto;
+use Modules\ListiniCliente\Listino;
 
 if (isset($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM mg_piani_sconto WHERE id='.prepare($id_record));
+    $listino = Listino::find($id_record);
+    $record = $dbo->fetchOne('SELECT * FROM `mg_listini` WHERE id='.prepare($id_record));
 
-    $listino = PianoSconto::find($id_record);
+    $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
+    $articoli = $dbo->fetchArray('SELECT mg_listini_articoli.*, mg_articoli.codice, mg_articoli.descrizione,  mg_articoli.'.($prezzi_ivati ? 'minimo_vendita_ivato' : 'minimo_vendita').' AS minimo_vendita FROM mg_listini_articoli LEFT JOIN mg_articoli ON mg_listini_articoli.id_articolo=mg_articoli.id WHERE id_listino='.prepare($id_record));
 }

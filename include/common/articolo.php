@@ -70,7 +70,8 @@ if (empty($result['idarticolo'])) {
 echo '
     <input type="hidden" name="qta_minima" id="qta_minima" value="'.$qta_minima.'">
     <input type="hidden" name="provvigione_default" id="provvigione_default" value="'.$result['provvigione_default'].'">
-    <input type="hidden" name="tipo_provvigione_default" id="provvigione_default" value="'.$result['tipo_provvigione_default'].'">';
+    <input type="hidden" name="tipo_provvigione_default" id="provvigione_default" value="'.$result['tipo_provvigione_default'].'">
+    <input type="hidden" name="blocca_minimo_vendita" value="'.setting('Bloccare i prezzi inferiori al minimo di vendita').'">';
 
 // Selezione impianto per gli Interventi
 if ($module['name'] == 'Interventi') {
@@ -303,6 +304,30 @@ function getPrezzoUltimo() {
 }
 
 /**
+* Restituisce i prezzi dei listini sempre visibili registrati per l\'articolo.
+*/
+function getPrezziListinoVisibili(nome = "") {
+    const data = globals.aggiunta_articolo.dettagli;
+    if (!data) return null;
+
+    let dettaglio_prezzi_visibili = [];
+    for (const dettaglio of data) {
+        if (dettaglio.prezzo_unitario_listino_visibile != null) {
+            if (nome != "") {
+                if (dettaglio.nome == nome) {
+                    dettaglio_prezzi_visibili = parseFloat(dettaglio.prezzo_unitario_listino_visibile);
+                    continue;
+                }
+            } else {                
+                dettaglio_prezzi_visibili.push(dettaglio);
+            }
+        }
+    }
+
+    return dettaglio_prezzi_visibili;
+}
+
+/**
 * Restituisce lo sconto registrato del listino registrato per l\'articolo-anagrafica.
 */
 function getScontoListino() {
@@ -318,6 +343,24 @@ function getScontoListino() {
     }
 
     return dettaglio_listino ? parseFloat(dettaglio_listino.sconto_percentuale_listino) : 0;
+}
+
+/**
+* Restituisce lo sconto registrato del listino sempre visibile dell\'articolo.
+*/
+function getScontoListinoVisibile(nome) {
+    const data = globals.aggiunta_articolo.dettagli;
+    if (!data) return null;
+
+    let dettaglio_listino_visibile = null;
+    for (const dettaglio of data) {
+        if (dettaglio.nome == nome) {
+            dettaglio_listino_visibile = dettaglio;
+            continue;
+        }
+    }
+
+    return dettaglio_listino_visibile ? parseFloat(dettaglio_listino_visibile.sconto_percentuale_listino_visibile) : 0;
 }
 
 /**
@@ -357,8 +400,10 @@ function verificaPrezzoArticolo() {
     let prezzo_listino = getPrezzoListino();
     let prezzo_std = getPrezzoScheda();
     let prezzo_last = getPrezzoUltimo();
+    let prezzo_minimo = parseFloat($("#idarticolo").selectData().minimo_vendita);
+    let prezzi_visibili = getPrezziListinoVisibili();
 
-    if (prezzo_anagrafica || prezzo_listino || prezzo_std || prezzo_last) {
+    if (prezzo_anagrafica || prezzo_listino || prezzo_std || prezzo_last || prezzo_minimo || prezzi_visibili) {
         div.html(`<table class="table table-extra-condensed table-prezzi" style="background:#eee; margin-top:-13px;"><tbody>`);
     }
     let table = $(".table-prezzi");
@@ -409,8 +454,35 @@ function verificaPrezzoArticolo() {
         }
     }
 
+    if (prezzo_minimo) {
+        table.append(`<tr><td class="pr_minimo"><small>'.tr('Prezzo minimo').': '.Modules::link('Articoli', $result['idarticolo'], tr('Visualizza'), null, '').'</small></td><td align="right" class="pr_minimo"><small>` + prezzo_minimo.toLocale() + ` ` + globals.currency + `</small></td></tr>`);
 
-    if (prezzo_anagrafica || prezzo_listino || prezzo_std) {
+        let tr = $(".pr_minimo").parent();
+        if (prezzo_unitario == prezzo_minimo.toFixed(2)) {
+            tr.append(`<td><button type="button" class="btn btn-xs btn-info pull-right disabled" style="font-size:10px;"><i class="fa fa-check"></i> '.tr('Aggiorna').'</button></td>`);
+        } else{
+            tr.append(`<td><button type="button" class="btn btn-xs btn-info pull-right" onclick="aggiornaPrezzoArticolo(\'minimo\')" style="font-size:10px;"><i class="fa fa-refresh"></i> '.tr('Aggiorna').'</button></td>`);
+        }
+    }
+
+    if (prezzi_visibili) {
+        let i = 0;
+        for (const prezzo_visibile of prezzi_visibili) {
+            i++;
+            let prezzo_listino_visibile = parseFloat(prezzo_visibile.prezzo_unitario_listino_visibile);
+            table.append(`<tr><td class="pr_visibile_`+ i +`"><small>'.tr('Listino visibile ').'(` + prezzo_visibile.nome + `): </small></td><td align="right" class="pr_visibile_`+ i +`"><small>` + prezzo_listino_visibile.toLocale() + ` ` + globals.currency + `</small></td></tr>`);
+
+            let tr = $(".pr_visibile_"+ i).parent();
+            if (prezzo_unitario == prezzo_listino_visibile.toFixed(2)) {
+                tr.append(`<td><button type="button" class="btn btn-xs btn-info pull-right disabled" style="font-size:10px;"><i class="fa fa-check"></i> '.tr('Aggiorna').'</button></td>`);
+            } else{
+                tr.append(`<td><button type="button" class="btn btn-xs btn-info pull-right" onclick="aggiornaPrezzoArticolo(\'` + prezzo_visibile.nome + `\')" style="font-size:10px;"><i class="fa fa-refresh"></i> '.tr('Aggiorna').'</button></td>`);
+            }
+        }
+    }
+
+
+    if (prezzo_anagrafica || prezzo_listino || prezzo_std || prezzo_last || prezzo_minimo || prezzi_visibili) {
         table.append(`</tbody></table>`);
     }
 }
@@ -423,6 +495,7 @@ function verificaScontoArticolo() {
     let prezzo_unitario = prezzo_unitario_input.val().toEnglish();
     let prezzo_anagrafica = getPrezzoPerQuantita(qta);
     let prezzo_listino = getPrezzoListino();
+    let prezzi_visibili = getPrezziListinoVisibili();
     let sconto_previsto = 0;
 
 
@@ -431,6 +504,13 @@ function verificaScontoArticolo() {
         sconto_previsto = getScontoPerQuantita(qta);
     } else if (prezzo_unitario == prezzo_listino.toFixed(2)) {
         sconto_previsto = getScontoListino();
+    } else {
+        for (const prezzo_visibile of prezzi_visibili) {
+            let prezzo_listino_visibile = parseFloat(prezzo_visibile.prezzo_unitario_listino_visibile);
+            if (prezzo_unitario == prezzo_listino_visibile.toFixed(2)) {
+                sconto_previsto = getScontoListinoVisibile(prezzo_visibile.nome);
+            }
+        }
     }
 
     let sconto_input = $("#sconto");
@@ -462,6 +542,10 @@ function aggiornaPrezzoArticolo(aggiorna = "") {
         prezzo_previsto = getPrezzoScheda();
     } else if (aggiorna == "last") {
         prezzo_previsto = getPrezzoUltimo();
+    } else if (aggiorna == "minimo") {
+        prezzo_previsto = parseFloat($("#idarticolo").selectData().minimo_vendita);
+    } else if (aggiorna != "") {
+        prezzo_previsto = getPrezziListinoVisibili(aggiorna);
     } else {
         let qta = $("#qta").val().toEnglish();
         prezzo1 = getPrezzoPerQuantita(qta);
@@ -485,6 +569,7 @@ function aggiornaScontoArticolo() {
     let prezzo_unitario = prezzo_unitario_input.val().toEnglish();
     let prezzo_anagrafica = getPrezzoPerQuantita(qta);
     let prezzo_listino = getPrezzoListino();
+    let prezzi_visibili = getPrezziListinoVisibili();
     let sconto_previsto = 0;
 
 
@@ -493,6 +578,13 @@ function aggiornaScontoArticolo() {
         sconto_previsto = getScontoPerQuantita(qta);
     } else if (prezzo_unitario == prezzo_listino.toFixed(2)) {
         sconto_previsto = getScontoListino();
+    } else {
+        for (const prezzo_visibile of prezzi_visibili) {
+            let prezzo_listino_visibile = parseFloat(prezzo_visibile.prezzo_unitario_listino_visibile);
+            if (prezzo_unitario == prezzo_listino_visibile.toFixed(2)) {
+                sconto_previsto = getScontoListinoVisibile(prezzo_visibile.nome);
+            }
+        }
     }
 
     $("#sconto").val(sconto_previsto).trigger("change");
@@ -535,8 +627,16 @@ function verificaMinimoVendita() {
 
     let div = $(".minimo_vendita");
     div.css("margin-top", "-13px");
+    if (prezzo_unitario <= minimo_vendita) {
+        if (input("blocca_minimo_vendita").get() == "1") {
+            prezzo_unitario_input.val(minimo_vendita);
+            div.html(`<p class="label-warning">'.tr('Attenzione:<br>non è possibile inserire un prezzo inferiore al prezzo minimo di vendita ').'` + minimo_vendita.toLocale() + ` ` + globals.currency + `</p>`);
+        } 
+    }
     if (prezzo_unitario < minimo_vendita) {
-        div.html(`<p class="label-warning">'.tr('Attenzione:<br>valore inferiore al prezzo minimo di vendita ').'` + minimo_vendita.toLocale() + ` ` + globals.currency + `</p>`);
+        if (input("blocca_minimo_vendita").get() == "0") {
+            div.html(`<p class="label-warning">'.tr('Attenzione:<br>valore inferiore al prezzo minimo di vendita ').'` + minimo_vendita.toLocale() + ` ` + globals.currency + `</p>`);
+        }
     } else {
         div.html("");
     }

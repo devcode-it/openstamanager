@@ -317,3 +317,22 @@ WHERE
     1 = 1
 HAVING
     2 = 2" WHERE `name` = 'Campi personalizzati';
+
+
+-- Ottimizzazione query vista Segmenti
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_segments`.`id`' WHERE `zz_modules`.`name` = 'Segmenti' AND `zz_views`.`name` = 'id';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_segments`.`NAME`' WHERE `zz_modules`.`name` = 'Segmenti' AND `zz_views`.`name` = 'Nome';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_modules`.`NAME`' WHERE `zz_modules`.`name` = 'Segmenti' AND `zz_views`.`name` = 'Modulo';
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select|
+FROM
+    `zz_segments`
+    LEFT JOIN `zz_modules` ON `zz_modules`.`id` = `zz_segments`.`id_module`
+WHERE
+    1 = 1
+HAVING
+    2 = 2
+ORDER BY `zz_segments`.`NAME`,
+    `zz_segments`.`id_module`" WHERE `name` = 'Segmenti';
+
+    

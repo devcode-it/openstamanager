@@ -281,3 +281,23 @@ ORDER BY
     mg_movimenti.data DESC,
     mg_movimenti.created_at DESC" WHERE `name` = 'Movimenti';
 
+
+-- Ottimizzazione query vista Template email
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_templates`.`id`' WHERE `zz_modules`.`name` = 'Template email' AND `zz_views`.`name` = 'id';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_templates`.`id`' WHERE `zz_modules`.`name` = 'Template email' AND `zz_views`.`name` = '#';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_templates`.`NAME`' WHERE `zz_modules`.`name` = 'Template email' AND `zz_views`.`name` = 'Nome';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_templates`.`SUBJECT`' WHERE `zz_modules`.`name` = 'Template email' AND `zz_views`.`name` = 'Oggetto';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = ' `zz_modules`.`name`' WHERE `zz_modules`.`name` = 'Template email' AND `zz_views`.`name` = 'Modulo';
+
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select|
+FROM
+    `em_templates`
+    LEFT JOIN `zz_modules` on `zz_modules`.`id` = `em_templates`.`id_module`
+WHERE
+    1 = 1 AND `deleted_at` IS NULL
+HAVING
+    2 = 2
+ORDER BY
+    `zz_modules`.`name`" WHERE `name` = 'Template email';
+

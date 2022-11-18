@@ -301,3 +301,19 @@ HAVING
 ORDER BY
     `zz_modules`.`name`" WHERE `name` = 'Template email';
 
+
+-- Ottimizzazione query vista Campi personalizzati
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_fields`.`id`' WHERE `zz_modules`.`name` = 'Campi personalizzati' AND `zz_views`.`name` = 'id';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_modules`.`NAME`' WHERE `zz_modules`.`name` = 'Campi personalizzati' AND `zz_views`.`name` = 'Modulo';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_plugins`.`NAME`' WHERE `zz_modules`.`name` = 'Campi personalizzati' AND `zz_views`.`name` = 'Plugin';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_fields`.`NAME`' WHERE `zz_modules`.`name` = 'Campi personalizzati' AND `zz_views`.`name` = 'Nome';
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select|
+FROM
+    `zz_fields`
+    LEFT JOIN `zz_modules` ON `zz_modules`.`id` = `zz_fields`.`id_module`
+    LEFT JOIN `zz_plugins` ON `zz_plugins`.`id` = `zz_fields`.`id_module`
+WHERE
+    1 = 1
+HAVING
+    2 = 2" WHERE `name` = 'Campi personalizzati';

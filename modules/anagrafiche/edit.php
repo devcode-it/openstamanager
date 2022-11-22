@@ -733,7 +733,7 @@ if (setting('Azienda predefinita') == $id_record) {
 $elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir`, NULL AS `deleted_at` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`idanagrafica` = '.prepare($id_record).'
 
 UNION
-SELECT `zz_users`.`id`, `zz_users`.`created_at` AS data, `zz_users`.`username` AS numero, 0 AS `numero_esterno`, "Utente" AS tipo_documento, 0 AS `dir`, NULL AS `deleted_at` FROM `zz_users` WHERE `zz_users`.`idanagrafica` = '.prepare($id_record).'
+SELECT `zz_users`.`idgruppo` AS id, `zz_users`.`created_at` AS data, `zz_users`.`username` AS numero, 0 AS `numero_esterno`, "Utente" AS tipo_documento, 0 AS `dir`, NULL AS `deleted_at` FROM `zz_users` WHERE `zz_users`.`idanagrafica` = '.prepare($id_record).'
 
 UNION
 SELECT `or_ordini`.`id`, `or_ordini`.`data`, `or_ordini`.`numero`, `or_ordini`.`numero_esterno`, `or_tipiordine`.`descrizione` AS tipo_documento, `or_tipiordine`.`dir`, NULL AS `deleted_at` FROM `or_ordini` JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine` WHERE `or_ordini`.`idanagrafica` = '.prepare($id_record).'

@@ -262,17 +262,19 @@ ORDER BY
 
 -- Ottimizzazione query vista Movimenti
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'zz_modules.id' WHERE `zz_modules`.`name` = 'Movimenti' AND `zz_views`.`name` = '_link_module_';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'page.link' WHERE `zz_modules`.`name` = 'Movimenti' AND `zz_views`.`name` = '_link_hash_';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = "IF(`mg_movimenti`.`reference_type` = 'Modules\\\\Fatture\\\\Fattura', fattura.nomi, IF(`mg_movimenti`.`reference_type` = 'Modules\\\\DDT\\\\DDT', ddt.nomi, IF(`mg_movimenti`.`reference_type` = 'Modules\\\\Interventi\\\\Intervento', intervento.nomi, '')))" WHERE `zz_modules`.`name` = 'Movimenti' AND `zz_views`.`name` = 'Anagrafica';
 UPDATE `zz_modules` SET `options` = "SELECT
     |select| 
 FROM
-    `mg_movimenti`
-INNER JOIN `mg_articoli` ON `mg_articoli`.id = `mg_movimenti`.`idarticolo`
-LEFT JOIN `an_sedi` ON `mg_movimenti`.`idsede` = `an_sedi`.`id`
-LEFT JOIN `zz_modules` ON `zz_modules`.`name` = 'Articoli'
-LEFT JOIN (SELECT `an_anagrafiche`.`idanagrafica`, `co_documenti`.`id`, `ragione_sociale` AS nomi FROM `co_documenti` LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` GROUP BY `idanagrafica`, `co_documenti`.`id`) AS fattura ON `fattura`.`id`= `mg_movimenti`.`reference_id`
-LEFT JOIN (SELECT `an_anagrafiche`.`idanagrafica`, `dt_ddt`.`id`, `ragione_sociale` AS nomi FROM `dt_ddt` LEFT JOIN `an_anagrafiche` ON `dt_ddt`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` GROUP BY `idanagrafica`, `dt_ddt`.`id`) AS ddt ON `ddt`.`id`= `mg_movimenti`.`reference_id`
-LEFT JOIN (SELECT `an_anagrafiche`.`idanagrafica`, `in_interventi`.`id`, `ragione_sociale` AS nomi FROM `in_interventi` LEFT JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` GROUP BY `idanagrafica`, `in_interventi`.`id`) AS intervento ON `intervento`.`id`= `mg_movimenti`.`reference_id`
+     `mg_movimenti`
+	INNER JOIN `mg_articoli` ON `mg_articoli`.id = `mg_movimenti`.`idarticolo`
+	LEFT JOIN `an_sedi` ON `mg_movimenti`.`idsede` = `an_sedi`.`id`
+	LEFT JOIN `zz_modules` ON `zz_modules`.`name` = 'Articoli'
+	LEFT JOIN (SELECT `an_anagrafiche`.`idanagrafica`, `co_documenti`.`id`, `ragione_sociale` AS nomi FROM `co_documenti` LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` GROUP BY `idanagrafica`, `co_documenti`.`id`) AS fattura ON `fattura`.`id`= `mg_movimenti`.`reference_id`
+	LEFT JOIN (SELECT `an_anagrafiche`.`idanagrafica`, `dt_ddt`.`id`, `ragione_sociale` AS nomi FROM `dt_ddt` LEFT JOIN `an_anagrafiche` ON `dt_ddt`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` GROUP BY `idanagrafica`, `dt_ddt`.`id`) AS ddt ON `ddt`.`id`= `mg_movimenti`.`reference_id`
+	LEFT JOIN (SELECT `an_anagrafiche`.`idanagrafica`, `in_interventi`.`id`, `ragione_sociale` AS nomi FROM `in_interventi` LEFT JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` GROUP BY `idanagrafica`, `in_interventi`.`id`) AS intervento ON `intervento`.`id`= `mg_movimenti`.`reference_id`
+    LEFT JOIN (SELECT CONCAT('tab_',(SELECT `id` FROM `zz_plugins` WHERE `zz_plugins`.`name` = 'Movimenti' AND idmodule_to =(SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'))) AS link) AS page ON `mg_movimenti`.`id` != ''
 WHERE
     1=1 AND mg_articoli.deleted_at IS NULL
 HAVING
@@ -383,8 +385,8 @@ FROM
 	LEFT JOIN (SELECT `in_interventi_tecnici_assegnati`.`id_intervento`, GROUP_CONCAT( DISTINCT `ragione_sociale` SEPARATOR ', ') AS nomi FROM `an_anagrafiche` INNER JOIN `in_interventi_tecnici_assegnati` ON `in_interventi_tecnici_assegnati`.`id_tecnico` = `an_anagrafiche`.`idanagrafica` GROUP BY `id_intervento`) AS tecnici_assegnati ON `in_interventi`.`id` = `tecnici_assegnati`.`id_intervento` 
    	LEFT JOIN (SELECT `in_interventi_tecnici`.`idintervento`, GROUP_CONCAT( DISTINCT `ragione_sociale` SEPARATOR ', ') AS nomi FROM `an_anagrafiche` INNER JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idtecnico` = `an_anagrafiche`.`idanagrafica` GROUP BY `idintervento`) AS tecnici ON `in_interventi`.`id` = `tecnici`.`idintervento`
     LEFT JOIN (SELECT `zz_operations`.`id_email`, `zz_operations`.`id_record` FROM `zz_operations` INNER JOIN `em_emails` ON `zz_operations`.`id_email` = `em_emails`.`id` INNER JOIN `em_templates` ON `em_emails`.`id_template` = `em_templates`.`id` INNER JOIN `zz_modules` ON `zz_operations`.`id_module` = `zz_modules`.`id` WHERE `zz_modules`.`name` = 'Interventi' AND `zz_operations`.`op` = 'send-email' GROUP BY `zz_operations`.`id_record`) AS email ON email.id_record=in_interventi.id
-    LEFT JOIN ( SELECT GROUP_CONCAT(CONCAT(matricola, IF(nome != '', CONCAT(' - ', nome), '')) SEPARATOR '<br />') AS descrizione, my_impianti_interventi.idintervento FROM my_impianti INNER JOIN my_impianti_interventi ON my_impianti.id = my_impianti_interventi.idimpianto GROUP BY my_impianti_interventi.idintervento) AS impianti ON impianti.idintervento = in_interventi.id
-    LEFT JOIN ( SELECT co_contratti.id, CONCAT(co_contratti.numero, ' del ', DATE_FORMAT(data_bozza, '%d/%m/%Y')) AS info FROM co_contratti) AS contratto ON contratto.id = in_interventi.id_contratto
+    LEFT JOIN (SELECT GROUP_CONCAT(CONCAT(matricola, IF(nome != '', CONCAT(' - ', nome), '')) SEPARATOR '<br />') AS descrizione, my_impianti_interventi.idintervento FROM my_impianti INNER JOIN my_impianti_interventi ON my_impianti.id = my_impianti_interventi.idimpianto GROUP BY my_impianti_interventi.idintervento) AS impianti ON impianti.idintervento = in_interventi.id
+    LEFT JOIN (SELECT co_contratti.id, CONCAT(co_contratti.numero, ' del ', DATE_FORMAT(data_bozza, '%d/%m/%Y')) AS info FROM co_contratti) AS contratto ON contratto.id = in_interventi.id_contratto
     LEFT JOIN (SELECT co_preventivi.id, CONCAT(co_preventivi.numero, ' del ', DATE_FORMAT(data_bozza, '%d/%m/%Y')) AS info FROM co_preventivi) AS preventivo ON preventivo.id = in_interventi.id_preventivo
     LEFT JOIN (SELECT or_ordini.id, CONCAT(or_ordini.numero, ' del ', DATE_FORMAT(data, '%d/%m/%Y')) AS info FROM or_ordini) AS ordine ON ordine.id = in_interventi.id_ordine
     LEFT JOIN `in_tipiintervento` ON `in_interventi`.`idtipointervento` = `in_tipiintervento`.`idtipointervento`
@@ -396,3 +398,5 @@ HAVING
     2=2
 ORDER BY 
     IFNULL(`orario_fine`, `data_richiesta`) DESC" WHERE `name` = 'Interventi';
+
+

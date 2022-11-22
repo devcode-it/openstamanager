@@ -300,9 +300,9 @@ FROM
     `em_templates`
     LEFT JOIN `zz_modules` on `zz_modules`.`id` = `em_templates`.`id_module`
 WHERE
-    1 = 1 AND `deleted_at` IS NULL
+    1=1 AND `deleted_at` IS NULL
 HAVING
-    2 = 2
+    2=2
 ORDER BY
     `zz_modules`.`name`" WHERE `name` = 'Template email';
 
@@ -319,9 +319,9 @@ FROM
     LEFT JOIN `zz_modules` ON `zz_modules`.`id` = `zz_fields`.`id_module`
     LEFT JOIN `zz_plugins` ON `zz_plugins`.`id` = `zz_fields`.`id_module`
 WHERE
-    1 = 1
+    1=1
 HAVING
-    2 = 2" WHERE `name` = 'Campi personalizzati';
+    2=2" WHERE `name` = 'Campi personalizzati';
 
 
 -- Ottimizzazione query vista Segmenti
@@ -334,9 +334,9 @@ FROM
     `zz_segments`
     LEFT JOIN `zz_modules` ON `zz_modules`.`id` = `zz_segments`.`id_module`
 WHERE
-    1 = 1
+    1=1
 HAVING
-    2 = 2
+    2=2
 ORDER BY `zz_segments`.`NAME`,
     `zz_segments`.`id_module`" WHERE `name` = 'Segmenti';
 
@@ -411,11 +411,11 @@ FROM
     `co_pagamenti`
 	LEFT JOIN(SELECT `fe_modalita_pagamento`.`codice`, CONCAT(`fe_modalita_pagamento`.`codice`, ' - ', `fe_modalita_pagamento`.`descrizione`) AS tipo FROM `fe_modalita_pagamento`) AS pagamenti ON `pagamenti`.`codice` = `co_pagamenti`.`codice_modalita_pagamento_fe`   
 WHERE
-    1 = 1
+    1=1
 GROUP BY
     `descrizione`, `id`
 HAVING
-    2 = 2" WHERE `name` = 'Pagamenti';
+    2=2" WHERE `name` = 'Pagamenti';
 
 
 -- Ottimizzazione query vista Fatture di acquisto
@@ -496,6 +496,7 @@ FROM
     LEFT JOIN `zz_modules` ON `zz_checklists`.`id_module` = `zz_modules`.`id`
     LEFT JOIN `zz_plugins` ON `zz_checklists`.`id_plugin`=`zz_plugins`.`id`
 WHERE
-    1 = 1
+    1=1
 HAVING
-    2 = 2" WHERE `name` = 'Checklists';
+    2=2" WHERE `name` = 'Checklists';
+

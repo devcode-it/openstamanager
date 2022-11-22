@@ -483,3 +483,19 @@ HAVING
 ORDER BY 
     `co_documenti`.`data` DESC,
     CAST(IF(`co_documenti`.`numero` = '', `co_documenti`.`numero_esterno`, `co_documenti`.`numero`) AS UNSIGNED) DESC" WHERE `name` = 'Fatture di acquisto';
+
+-- Ottimizzazione query vista Checklists
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_checklists`.`id`' WHERE `zz_modules`.`name` = 'Checklists' AND `zz_views`.`name` = 'id';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_checklists`.`NAME`' WHERE `zz_modules`.`name` = 'Checklists' AND `zz_views`.`name` = 'Nome';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_modules`.`NAME`' WHERE `zz_modules`.`name` = 'Checklists' AND `zz_views`.`name` = 'Modulo';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_plugins`.`NAME`' WHERE `zz_modules`.`name` = 'Checklists' AND `zz_views`.`name` = 'Plugin';
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select|
+FROM
+    `zz_checklists`
+    LEFT JOIN `zz_modules` ON `zz_checklists`.`id_module` = `zz_modules`.`id`
+    LEFT JOIN `zz_plugins` ON `zz_checklists`.`id_plugin`=`zz_plugins`.`id`
+WHERE
+    1 = 1
+HAVING
+    2 = 2" WHERE `name` = 'Checklists';

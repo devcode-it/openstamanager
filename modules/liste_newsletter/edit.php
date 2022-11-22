@@ -125,6 +125,10 @@ echo '
                 </tr>
             </thead>
         </table>
+
+        <a class="btn btn-danger ask pull-right" data-backto="record-edit" data-op="remove_all_receivers">
+            <i class="fa fa-trash"></i> '.tr('Elimina tutti').'
+        </a>
     </div>
 </div>
 

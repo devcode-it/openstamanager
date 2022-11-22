@@ -105,4 +105,13 @@ switch (filter('op')) {
         flash()->info(tr('Destinatario rimosso dalla lista!'));
 
         break;
+
+    case 'remove_all_receivers':
+        $database->delete('em_list_receiver', [
+            'id_list' => $lista->id,
+        ]);
+
+        flash()->info(tr('Tutti i destinatari sono stati rimossi dalla lista newsletter!'));
+
+        break;
 }

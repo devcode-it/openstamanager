@@ -60,16 +60,19 @@ INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti
 (NULL, '000090', 'INPS c/Competenza', '8', '', '100.00'),
 (NULL, '000090', 'Erario c/Ritenute dipendenti', '5', '', '100.00'); 
 
+SELECT @idmastrino := MAX(idmastrino)+1 FROM co_movimenti_modelli;
 INSERT INTO `co_movimenti_modelli` (`id`, `idmastrino`, `nome`, `descrizione`, `idconto`, `totale`) VALUES
-(NULL, 3, 'Liquidazione salari e stipendi', 'Liquidazione retribuzione relativa al mese di ...', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'Costi salari e stipendi'), '0.0'),
-(NULL, 3, 'Liquidazione salari e stipendi', 'Liquidazione retribuzione relativa al mese di ...', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'INPS c/Competenza'), '0.0'),
-(NULL, 3, 'Liquidazione salari e stipendi', 'Liquidazione retribuzione relativa al mese di ...', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'Personale c/Retribuzioni'), '0.0');
+(NULL, @idmastrino, 'Liquidazione salari e stipendi', 'Liquidazione retribuzione relativa al mese di ...', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'Costi salari e stipendi' LIMIT 0,1), '0.0'),
+(NULL, @idmastrino, 'Liquidazione salari e stipendi', 'Liquidazione retribuzione relativa al mese di ...', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'INPS c/Competenza' LIMIT 0,1), '0.0'),
+(NULL, @idmastrino, 'Liquidazione salari e stipendi', 'Liquidazione retribuzione relativa al mese di ...', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'Personale c/Retribuzioni' LIMIT 0,1), '0.0');
 
+SELECT @idmastrino := MAX(idmastrino)+1 FROM co_movimenti_modelli;
 INSERT INTO `co_movimenti_modelli` (`id`, `idmastrino`, `nome`, `descrizione`, `idconto`, `totale`) VALUES
-(NULL, 4, 'Pagamento salari e stipendi', 'Pagamento ai dipendenti delle retribuzioni nette del mese di ...', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'Personale c/Retribuzioni'), '0.0'),
-(NULL, 4, 'Pagamento salari e stipendi', 'Pagamento ai dipendenti delle retribuzioni nette del mese di ...', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'INPS c/Competenza'), '0.0'),
-(NULL, 4, 'Pagamento salari e stipendi', 'Pagamento ai dipendenti delle retribuzioni nette del mese di ...', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'Erario c/Ritenute dipendenti'), '0.0'),
-(NULL, 4, 'Pagamento salari e stipendi', 'Pagamento ai dipendenti delle retribuzioni nette del mese di ...', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'Banca C/C'), '0.0');
+(NULL, @idmastrino, 'Pagamento salari e stipendi', 'Pagamento ai dipendenti delle retribuzioni nette del mese di ...', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'Personale c/Retribuzioni' LIMIT 0,1), '0.0'),
+(NULL, @idmastrino, 'Pagamento salari e stipendi', 'Pagamento ai dipendenti delle retribuzioni nette del mese di ...', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'INPS c/Competenza' LIMIT 0,1), '0.0'),
+(NULL, @idmastrino, 'Pagamento salari e stipendi', 'Pagamento ai dipendenti delle retribuzioni nette del mese di ...', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'Erario c/Ritenute dipendenti' LIMIT 0,1), '0.0'),
+(NULL, @idmastrino, 'Pagamento salari e stipendi', 'Pagamento ai dipendenti delle retribuzioni nette del mese di ...', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'Banca C/C' LIMIT 0,1), '0.0');
+
 
 -- Ottimizzazione query vista prima nota
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'co_documenti.numero_esterno' WHERE `zz_modules`.`name` = 'Prima nota' AND `zz_views`.`name` = 'Rif. fattura';
@@ -274,7 +277,7 @@ FROM
 	LEFT JOIN (SELECT `an_anagrafiche`.`idanagrafica`, `co_documenti`.`id`, `ragione_sociale` AS nomi FROM `co_documenti` LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` GROUP BY `idanagrafica`, `co_documenti`.`id`) AS fattura ON `fattura`.`id`= `mg_movimenti`.`reference_id`
 	LEFT JOIN (SELECT `an_anagrafiche`.`idanagrafica`, `dt_ddt`.`id`, `ragione_sociale` AS nomi FROM `dt_ddt` LEFT JOIN `an_anagrafiche` ON `dt_ddt`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` GROUP BY `idanagrafica`, `dt_ddt`.`id`) AS ddt ON `ddt`.`id`= `mg_movimenti`.`reference_id`
 	LEFT JOIN (SELECT `an_anagrafiche`.`idanagrafica`, `in_interventi`.`id`, `ragione_sociale` AS nomi FROM `in_interventi` LEFT JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` GROUP BY `idanagrafica`, `in_interventi`.`id`) AS intervento ON `intervento`.`id`= `mg_movimenti`.`reference_id`
-    LEFT JOIN (SELECT CONCAT('tab_',(SELECT `id` FROM `zz_plugins` WHERE `zz_plugins`.`name` = 'Movimenti' AND idmodule_to =(SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'))) AS link) AS page ON `mg_movimenti`.`id` != ''
+    LEFT JOIN (SELECT CONCAT('tab_', `zz_plugins`.`id`) AS link FROM `zz_plugins` INNER JOIN `zz_modules` ON `zz_plugins`.`idmodule_to` = `zz_modules`.`id` WHERE `zz_modules`.`name` = 'Articoli' AND `zz_plugins`.`name` = 'Movimenti') AS page ON `mg_movimenti`.`id` != ''
 WHERE
     1=1 AND mg_articoli.deleted_at IS NULL
 HAVING
@@ -400,3 +403,83 @@ ORDER BY
     IFNULL(`orario_fine`, `data_richiesta`) DESC" WHERE `name` = 'Interventi';
 
 
+-- Ottimizzazione query vista Pagamenti
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`pagamenti`.`tipo`' WHERE `zz_modules`.`name` = 'Pagamenti' AND `zz_views`.`name` = 'Codice pagamento';
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select|
+FROM
+    `co_pagamenti`
+	LEFT JOIN(SELECT `fe_modalita_pagamento`.`codice`, CONCAT(`fe_modalita_pagamento`.`codice`, ' - ', `fe_modalita_pagamento`.`descrizione`) AS tipo FROM `fe_modalita_pagamento`) AS pagamenti ON `pagamenti`.`codice` = `co_pagamenti`.`codice_modalita_pagamento_fe`   
+WHERE
+    1 = 1
+GROUP BY
+    `descrizione`, `id`
+HAVING
+    2 = 2" WHERE `name` = 'Pagamenti';
+
+
+-- Ottimizzazione query vista Fatture di acquisto
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'banche.descrizione' WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = 'Banca';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'conti.descrizione' WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = 'Conto';
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select|
+FROM
+    `co_documenti`
+LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
+LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
+LEFT JOIN `co_ritenuta_contributi` ON `co_documenti`.`id_ritenuta_contributi` = `co_ritenuta_contributi`.`id`
+LEFT JOIN `co_pagamenti` ON `co_documenti`.`idpagamento` = `co_pagamenti`.`id`
+LEFT JOIN (SELECT co_banche.id, CONCAT(`nome`, ' - ', `iban`) AS descrizione FROM `co_banche`) AS banche ON `banche`.`id` = `co_documenti`.`id_banca_azienda`
+LEFT JOIN (SELECT iddocumento, CONCAT(co_pianodeiconti3.descrizione) AS descrizione FROM co_righe_documenti INNER JOIN co_pianodeiconti3 ON co_pianodeiconti3.id = co_righe_documenti.idconto) AS conti ON conti.iddocumento = co_documenti.id
+LEFT JOIN(
+    SELECT `iddocumento`,
+        SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
+        SUM(`iva`) AS `iva`
+    FROM
+        `co_righe_documenti`
+    GROUP BY
+        `iddocumento`
+) AS righe
+ON
+    `co_documenti`.`id` = `righe`.`iddocumento`
+LEFT JOIN(
+    SELECT COUNT(`d`.`id`) AS `conteggio`,
+        IF(
+            `d`.`numero_esterno` = '',
+            `d`.`numero`,
+            `d`.`numero_esterno`
+        ) AS `numero_documento`,
+        `d`.`idanagrafica` AS `anagrafica`,
+        `id_segment`
+    FROM
+        `co_documenti` AS `d`
+    LEFT JOIN `co_tipidocumento` AS `d_tipo`
+    ON
+        `d`.`idtipodocumento` = `d_tipo`.`id`
+    WHERE
+        1 = 1 AND `d_tipo`.`dir` = 'uscita' AND(
+            '|period_start|' <= `d`.`data` AND '|period_end|' >= `d`.`data` OR '|period_start|' <= `d`.`data_competenza` AND '|period_end|' >= `d`.`data_competenza`
+        )
+    GROUP BY
+        `id_segment`,
+        `numero_documento`,
+        `d`.`idanagrafica`
+) AS `d`
+ON
+    (
+        `d`.`numero_documento` = IF(
+            `co_documenti`.`numero_esterno` = '',
+            `co_documenti`.`numero`,
+            `co_documenti`.`numero_esterno`
+        ) AND `d`.`anagrafica` = `co_documenti`.`idanagrafica` AND `d`.`id_segment` = `co_documenti`.`id_segment`
+    )
+WHERE 
+    1=1 
+AND 
+    `dir` = 'uscita' |segment(`co_documenti`.`id_segment`)||date_period(custom, '|period_start|' <= `co_documenti`.`data` AND '|period_end|' >= `co_documenti`.`data`, '|period_start|' <= `co_documenti`.`data_competenza` AND '|period_end|' >= `co_documenti`.`data_competenza` )|
+HAVING 
+    2=2
+ORDER BY 
+    `co_documenti`.`data` DESC,
+    CAST(IF(`co_documenti`.`numero` = '', `co_documenti`.`numero_esterno`, `co_documenti`.`numero`) AS UNSIGNED) DESC" WHERE `name` = 'Fatture di acquisto';

@@ -518,3 +518,22 @@ WHERE
     |date_period(custom,'|period_start|' >= `data_bozza` AND '|period_start|' <= `data_conclusione`,'|period_end|' >= `data_bozza` AND '|period_end|' <= `data_conclusione`,`data_bozza` >= '|period_start|' AND `data_bozza` <= '|period_end|',`data_conclusione` >= '|period_start|' AND `data_conclusione` <= '|period_end|',`data_bozza` >= '|period_start|' AND `data_conclusione` = '0000-00-00')|
 HAVING 
     2=2" WHERE `name` = 'Contratti';
+
+
+-- Ottimizzazione query vista Newsletter
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_newsletters`.`id`' WHERE `zz_modules`.`name` = 'Newsletter' AND `zz_views`.`name` = 'id';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_newsletters`.`NAME`' WHERE `zz_modules`.`name` = 'Newsletter' AND `zz_views`.`name` = 'Nome';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_templates`.`NAME`' WHERE `zz_modules`.`name` = 'Newsletter' AND `zz_views`.`name` = 'Template';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`totale`' WHERE `zz_modules`.`name` = 'Newsletter' AND `zz_views`.`name` = 'Destinatari';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = "IF(completed_at IS NULL OR em_newsletters.state='DEV', 'No', CONCAT('Sì ', '(', DATE_FORMAT(completed_at, '%d/%m/%Y %H:%i:%s'),')'))" WHERE `zz_modules`.`name` = 'Newsletter' AND `zz_views`.`name` = 'Completato';
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select|
+FROM 
+    `em_newsletters` 
+    LEFT JOIN `em_templates` ON `em_newsletters`.`id_template` = `em_templates`.`id`
+    LEFT JOIN (SELECT `id_newsletter`, COUNT(*) AS totale FROM `em_newsletter_receiver` GROUP BY  `id_newsletter`) AS riceventi ON `riceventi`.`id_newsletter` = `em_newsletters`.`id`
+WHERE 
+    1=1 AND `em_newsletters`.`deleted_at` IS NULL
+HAVING 
+    2=2" WHERE `name` = 'Newsletter';
+

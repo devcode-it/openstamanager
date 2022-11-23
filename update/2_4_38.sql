@@ -478,6 +478,8 @@ WHERE
     1=1 
 AND 
     `dir` = 'uscita' |segment(`co_documenti`.`id_segment`)||date_period(custom, '|period_start|' <= `co_documenti`.`data` AND '|period_end|' >= `co_documenti`.`data`, '|period_start|' <= `co_documenti`.`data_competenza` AND '|period_end|' >= `co_documenti`.`data_competenza` )|
+GROUP BY
+    co_documenti.id
 HAVING 
     2=2
 ORDER BY 

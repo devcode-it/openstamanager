@@ -588,3 +588,25 @@ HAVING
     2=2 AND `Q.tà` > 0
 ORDER BY
     `descrizione`" WHERE `name` = 'Giacenze sedi';
+
+
+-- Ottimizzazione query vista Listini
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'zz_modules.id' WHERE `zz_modules`.`name` = 'Listini' AND `zz_views`.`name` = '_link_module_';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'fornitore.codice' WHERE `zz_modules`.`name` = 'Listini' AND `zz_views`.`name` = 'Codice';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'fornitore.barcode' WHERE `zz_modules`.`name` = 'Listini' AND `zz_views`.`name` = 'Barcode';
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select|
+FROM
+    mg_prezzi_articoli
+    INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = mg_prezzi_articoli.id_anagrafica
+    INNER JOIN mg_articoli ON mg_articoli.id = mg_prezzi_articoli.id_articolo
+    LEFT JOIN mg_categorie AS categoria ON mg_articoli.id_categoria = categoria.id
+    LEFT JOIN mg_categorie AS sottocategoria ON mg_articoli.id_sottocategoria = sottocategoria.id
+    LEFT JOIN zz_modules ON zz_modules.NAME= 'Articoli'
+    LEFT JOIN (SELECT codice_fornitore AS codice, id_articolo, id_fornitore, barcode_fornitore AS barcode, deleted_at FROM mg_fornitore_articolo) AS fornitore ON mg_prezzi_articoli.id_articolo= fornitore.id_articolo AND mg_prezzi_articoli.id_anagrafica=fornitore.id_fornitore AND fornitore.deleted_at IS NULL
+WHERE
+    1=1 AND mg_articoli.deleted_at IS NULL AND an_anagrafiche.deleted_at IS NULL
+HAVING
+    2=2
+ORDER BY
+    an_anagrafiche.ragione_sociale" WHERE `name` = 'Listini';

@@ -690,3 +690,16 @@ WHERE
     1=1 
 HAVING 
     2=2" WHERE `name` = 'Listini cliente';
+
+
+-- Allineamento query vista Piani di sconto/maggiorazione
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select|
+FROM 
+    `mg_piani_sconto` 
+WHERE 
+    1=1
+HAVING 
+    2=2 
+ORDER BY 
+    `nome`" WHERE `name` = 'Piani di scondo/maggiorazione';

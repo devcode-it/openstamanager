@@ -653,3 +653,23 @@ HAVING
     2=2
 ORDER BY
     `mg_articoli`.`descrizione`" WHERE `name` = 'Articoli';
+
+
+-- Ottimizzazione query vista Utenti e permessi
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`nome`' WHERE `zz_modules`.`name` = 'Utenti e permessi' AND `zz_views`.`name` = 'Gruppo';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_groups`.`id`' WHERE `zz_modules`.`name` = 'Utenti e permessi' AND `zz_views`.`name` = 'id';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`utenti`.`num`' WHERE `zz_modules`.`name` = 'Utenti e permessi' AND `zz_views`.`name` = 'N. utenti';
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select|
+FROM 
+    `zz_groups` 
+    LEFT JOIN (SELECT `zz_users`.`id`, COUNT(`id`) AS num FROM `zz_users` GROUP BY `id`) AS utenti ON `zz_groups`.`id`=`utenti`.`id`
+WHERE 
+    1=1
+HAVING 
+    2=2 
+ORDER BY 
+    `id`, 
+    `nome` ASC" WHERE `name` = 'Utenti e permessi';
+
+

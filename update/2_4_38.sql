@@ -537,3 +537,30 @@ WHERE
 HAVING 
     2=2" WHERE `name` = 'Newsletter';
 
+
+-- Ottimizzazione query vista Coda di invio
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_emails`.`id`' WHERE `zz_modules`.`name` = 'Stato email' AND `zz_views`.`name` = 'id';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`destinatari`.`nomi`' WHERE `zz_modules`.`name` = 'Stato email' AND `zz_views`.`name` = 'Destinatari';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_emails`.`subject`' WHERE `zz_modules`.`name` = 'Stato email' AND `zz_views`.`name` = 'Oggetto';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_emails`.`content`' WHERE `zz_modules`.`name` = 'Stato email' AND `zz_views`.`name` = 'Contenuto';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_templates`.`name`' WHERE `zz_modules`.`name` = 'Stato email' AND `zz_views`.`name` = 'Template';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_modules`.`title`' WHERE `zz_modules`.`name` = 'Stato email' AND `zz_views`.`name` = 'Modulo';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_emails`.`sent_at`' WHERE `zz_modules`.`name` = 'Stato email' AND `zz_views`.`name` = 'Data invio';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_emails`.`failed_at`' WHERE `zz_modules`.`name` = 'Stato email' AND `zz_views`.`name` = 'Ultimo tentativo';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_users`.`username`' WHERE `zz_modules`.`name` = 'Stato email' AND `zz_views`.`name` = 'Utente';
+UPDATE `zz_modules` SET `options` = "SELECT 
+    |select|
+FROM 
+    `em_emails`
+    LEFT JOIN `em_templates` ON `em_templates`.`id` = `em_emails`.`id_template`
+    INNER JOIN `zz_users` ON `zz_users`.`id` = `em_emails`.`created_by`
+    LEFT JOIN (SELECT `id_email`, GROUP_CONCAT(`address` SEPARATOR '<br>') as `nomi` FROM `em_email_receiver` GROUP BY `id_email`)AS `destinatari` ON `destinatari`.`id_email` = `em_emails`.`id`
+    LEFT JOIN `zz_modules` ON `zz_modules`.`id` = `em_templates`.`id_module`
+WHERE 
+    1=1 
+AND 
+    (`em_emails`.`created_at` BETWEEN '|period_start|' AND '|period_end|' OR `em_emails`.`sent_at` IS NULL)
+HAVING 
+    2=2
+ORDER BY 
+    `em_emails`.`created_at` DESC" WHERE `name` = 'Stato email';

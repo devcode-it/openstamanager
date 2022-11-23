@@ -610,3 +610,6 @@ HAVING
     2=2
 ORDER BY
     an_anagrafiche.ragione_sociale" WHERE `name` = 'Listini';
+
+-- Aggiunta campi provvigione su righe promemoria
+ALTER TABLE `co_righe_promemoria` ADD `provvigione` DECIMAL(15,6) NOT NULL AFTER `prezzo_unitario_ivato`, ADD `provvigione_unitaria` DECIMAL(15,6) NOT NULL AFTER `provvigione`, ADD `provvigione_percentuale` DECIMAL(15,6) NOT NULL AFTER `provvigione_unitaria`, ADD `tipo_provvigione` ENUM('UNT','PRC') NOT NULL DEFAULT 'UNT' AFTER `provvigione_percentuale`; 

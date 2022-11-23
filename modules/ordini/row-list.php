@@ -135,6 +135,11 @@ foreach ($righe as $riga) {
         }
     }
 
+    if ($riga->isArticolo() && !empty($riga->articolo->barcode)) {
+        echo '
+        <br><small><i class="fa fa-barcode"></i> '.$riga->articolo->barcode.'</small>';
+    }  
+    
     if (!empty($riga->note)) {
             echo '
                 <br><small class="label label-default">'.nl2br($riga->note).'</small>';

@@ -80,6 +80,12 @@ if (!$righe->isEmpty()) {
                 <br>'.tr('SN').': '.implode(', ', $serials);
             }
         }
+        
+        if ($riga->isArticolo() && !empty($riga->articolo->barcode)) {
+            echo '
+            <br><small><i class="fa fa-barcode"></i> '.$riga->articolo->barcode.'</small>';
+        }  
+
 
         echo '
             </td>';

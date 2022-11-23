@@ -702,4 +702,4 @@ WHERE
 HAVING 
     2=2 
 ORDER BY 
-    `nome`" WHERE `name` = 'Piani di scondo/maggiorazione';
+    `nome`" WHERE `name` = 'Piani di sconto/maggiorazione';

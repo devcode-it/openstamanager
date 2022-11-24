@@ -130,9 +130,11 @@ class HTMLWrapper implements WrapperInterface
             var icon = container.find("i");
 
             var id_record = "'.$id_record.'";
-            if ($(".modal-content").is(":visible")) {
+
+            /*La validazione su finestra modali deve essere sempre permessa anche per record già esistenti*/
+            /*if ($(".modal-content").is(":visible")) {
                 var id_record = "";
-            }  
+            }*/ 
 
             icon.attr("class", "fa fa-spinner fa-spin");
 

@@ -25,7 +25,7 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="row">
 		<div class="col-md-12">
-			{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1 ]}
+			{[ "type": "text", "label": "<?php echo tr('Nome gruppo'); ?>", "name": "nome", "required": 1, "validation": "gruppo", "help": "<?php echo tr("Compilando questo campo verrà creato un nuovo gruppi di utenti."); ?>" ]}
 		</div>
 	</div>
 

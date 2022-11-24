@@ -86,65 +86,6 @@ echo
         </div>
     </div>';
 
-//gestione replace
-/*$descrizione = get_var('Descrizione fattura pianificata');
-$modules = MODULES::get('Contratti')['id'];
-$variables = include Modules::filepath($modules, 'variables.php');
-foreach ($variables as $variable => $value) {
-    $descrizione = str_replace('{'.$variable.'}', $value, $descrizione);
-}
-$descrizione = str_replace('{rata}', $numero_rata, $descrizione);
-$descrizione = str_replace('{zona}', $zona, $descrizione);
-
-echo '
-    <div class="row">
-        <div class="col-md-12">
-            {[ "type": "textarea", "label": "'.tr('Note della fattura').'", "name": "note", "value": "'.$descrizione.'" ]}
-        </div>
-    </div>';
-
-// Righe
-echo '
-    <div class="box box-info">
-        <div class="box-header with-border">
-            <h3 class="box-title">
-                '.tr('Righe previste').'
-            </h3>
-        </div>
-        <div class="box-body">
-            <table class="table table-bordered table-striped table-hover table-condensed">
-                <thead>
-                    <tr>
-                        <th width="40%">'.tr('Descrizione').'</th>
-                        <th class="text-center">'.tr('Q.tà').'</th>
-                        <th class="text-center">'.tr('Prezzo unitario').'</th>
-                        <th class="text-center">'.tr('IVA').'</th>
-                        <th class="text-center">'.tr('Totale imponbile').'</th>
-                    </tr>
-                </thead>
-                <tbody>';
-
-$righe = $pianificazione[0]->getRighe();
-foreach ($righe as $riga) {
-    echo '
-                    <tr>
-                        <td>'.$riga->descrizione.'</td>
-                        <td class="text-center">'.$riga->qta.'</td>
-                        <td class="text-right">'.moneyFormat($riga->prezzo_unitario).'</td>
-                        <td class="text-right">
-                            '.moneyFormat($riga->iva).'<br>
-                            <small class="help-block">'.$riga->aliquota->descrizione.'</small>
-                        </td>
-                        <td class="text-right">'.moneyFormat($riga->totale_imponibile).'</td>
-                    </tr>';
-}
-
-echo '
-                </tbody>
-            </table>
-        </div>
-    </div>';*/
-
 echo
     '<div class="row">
 		<div class="col-md-12 text-right">

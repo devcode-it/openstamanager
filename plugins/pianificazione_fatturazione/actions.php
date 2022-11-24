@@ -156,7 +156,6 @@ switch ($operazione) {
         $id_rata = post('rata');
         $accodare = post('accodare');
         $pianificazione = Pianificazione::find($id_rata);
-
         $contratto = $pianificazione->contratto;
 
         $data = post('data');
@@ -175,7 +174,6 @@ switch ($operazione) {
         } else {
             $fattura = Fattura::find($id_documento);
         }
-
         $fattura->note = post('note');
         $fattura->save();
 
@@ -183,7 +181,6 @@ switch ($operazione) {
 
         // Copia righe
         $righe = $pianificazione->getRighe();
-
         foreach ($righe as $riga) {
             $copia = $riga->copiaIn($fattura, $riga->qta);
             $copia->id_conto = $id_conto;
@@ -192,7 +189,6 @@ switch ($operazione) {
 
         // Salvataggio fattura nella pianificazione
         $pianificazione->fattura()->associate($fattura);
-
         $pianificazione->save();
 
         break;

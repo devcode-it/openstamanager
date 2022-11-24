@@ -256,6 +256,7 @@ function update_permissions(id, value, color){
         function(data){
             if(data == "ok") {
                 toastr["success"]("'.tr('Permessi aggiornati!').'");
+                content_was_modified = false;
 
                 $("#select2-permesso_"+id+"-container").removeClass("text-red");
                 $("#select2-permesso_"+id+"-container").removeClass("text-orange");
@@ -283,6 +284,7 @@ function update_user(value){
         function(data){
             if(data == "ok") {
                 toastr["success"]("'.tr('Informazioni aggiornate!').'");
+                content_was_modified = false;
             } else {
                 swal("'.tr('Errore').'", "'.tr("Errore durante l'aggiornamento delle informazioni!").'", "error");
             }

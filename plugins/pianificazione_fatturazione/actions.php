@@ -156,6 +156,7 @@ switch ($operazione) {
         $id_rata = post('rata');
         $accodare = post('accodare');
         $pianificazione = Pianificazione::find($id_rata);
+
         $contratto = $pianificazione->contratto;
 
         $data = post('data');
@@ -174,6 +175,7 @@ switch ($operazione) {
         } else {
             $fattura = Fattura::find($id_documento);
         }
+
         $fattura->note = post('note');
         $fattura->save();
 
@@ -181,6 +183,7 @@ switch ($operazione) {
 
         // Copia righe
         $righe = $pianificazione->getRighe();
+
         foreach ($righe as $riga) {
             $copia = $riga->copiaIn($fattura, $riga->qta);
             $copia->id_conto = $id_conto;
@@ -189,7 +192,59 @@ switch ($operazione) {
 
         // Salvataggio fattura nella pianificazione
         $pianificazione->fattura()->associate($fattura);
+
         $pianificazione->save();
 
+        break;
+
+    case 'add_fattura_multipla':
+        $rate = post('rata');
+
+        $data = post('data');
+        $accodare = post('accodare');
+        $id_segment = post('id_segment');
+        $id_tipodocumento = post('idtipodocumento');
+        $tipo = Tipo::find($id_tipodocumento);
+
+        foreach ($rate as $i => $rata) {
+            $id_rata = $rata;
+
+            $pianificazione = Pianificazione::find($id_rata);
+
+            $contratto = $pianificazione->contratto;
+            if (!empty($accodare)) {
+                $documento = $dbo->fetchOne(
+                    'SELECT co_documenti.id FROM co_documenti INNER JOIN co_statidocumento ON co_documenti.idstatodocumento = co_statidocumento.id
+                    WHERE co_statidocumento.descrizione = \'Bozza\' AND idanagrafica = '.prepare($contratto->idanagrafica)
+                );
+
+                $id_documento = $documento['id'];
+            }
+
+            // Creazione fattura
+            if (empty($id_documento)) {
+                $fattura = Fattura::build($contratto->anagrafica, $tipo, $data, $id_segment);
+            } else {
+                $fattura = Fattura::find($id_documento);
+            }
+
+            $fattura->note = "";
+            $fattura->save();
+
+            $id_conto = post('id_conto');
+
+            // Copia righe
+            $righe = $pianificazione->getRighe();
+
+            foreach ($righe as $riga) {
+                $copia = $riga->copiaIn($fattura, $riga->qta);
+                $copia->id_conto = $id_conto;
+                $copia->save();
+            }
+
+            // Salvataggio fattura nella pianificazione
+            $pianificazione->fattura()->associate($fattura);
+            $pianificazione->save();
+        }
         break;
 }

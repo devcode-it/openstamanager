@@ -18,74 +18,76 @@
  */
 
 use Plugins\PianificazioneFatturazione\Pianificazione;
-
 include_once __DIR__.'/../../core.php';
 
-$id_rata = get('rata');
-$pianificazione = Pianificazione::find($id_rata);
-$contratto = $pianificazione->contratto;
+$records = json_decode(get('records'), true);
+//print_r($records);
+//echo '<script>console.log('.$records.')</script>';
+foreach ($records as $j => $record) {
+    $id_rata[$j] = $record['rata'];
+    $pianificazione[$j] = Pianificazione::find($id_rata);
+    $contratto[$j] = $pianificazione->contratto;
+    $id_pianificazione[$j] = $pianificazione->id;
 
-$id_pianificazione = $pianificazione->id;
-
-foreach($contratto->pianificazioni as $i => $p){
-    if( $p->id == $id_pianificazione ){
-        $numero_rata = $i+1;
-        break;
+    foreach ($contratto[$j]->pianificazioni as $i => $p) {
+        if ($p->id == $id_pianificazione[$i]) {
+            $numero_rata[$i] = $i + 1;
+            break;
+        }
     }
 }
 
+
+
 $module_fattura = Modules::get('Fatture di vendita');
-
 $id_conto = setting('Conto predefinito fatture di vendita');
-$data = date('Y-m', strtotime($pianificazione->data_scadenza)).'-'.date('d', strtotime($contratto->data_accettazione));
 
-echo '
-<form action="" method="post">
-    <input type="hidden" name="op" value="add_fattura">
-    <input type="hidden" name="backto" value="record-edit">
-    <input type="hidden" name="rata" value="'.$id_rata.'">
+echo
+'<form action="" method="post">
+    <input type="hidden" name="op" value="add_fattura_multipla">
+    <input type="hidden" name="backto" value="record-list">
     <input type="hidden" name="id_module" value="'.$id_module.'">
-	<input type="hidden" name="id_plugin" value="'.$id_plugin.'">
-	<input type="hidden" name="id_record" value="'.$id_record.'">';
+    <input type="hidden" name="id_plugin" value="'.$id_plugin.'">';
 
-// Data
-echo '
+    foreach ($records as $j => $record) {
+        echo
+        '<input type="hidden" name="rata['.$j.']" value="' . $record['rata'] . '">';
+    }
+
+    // Data
+    echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "class": "text-center", "value": "'.$pianificazione->data_scadenza.'" ]}
+            {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "class": "text-center", "value": "'. date("Y-m-d") .'" ]}
         </div>';
 
-// Tipo di documento
-echo '
+    //Tipo di documento
+    echo '
         <div class="col-md-6">
             {[ "type": "select", "label": "'.tr('Tipo di fattura').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT * FROM co_tipidocumento WHERE dir=\'entrata\'" ]}
-        </div>
-    </div>';
+        </div>';
 
-// Sezionale
-echo '
-    <div class="row">
-        <div class="col-md-6">
+    // Sezionale
+    echo
+        '<div class="col-md-6">
             {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.$module_fattura['id'].' ORDER BY name", "value":"'.$_SESSION['module_'.$module_fattura['id']]['id_segment'].'" ]}
         </div>';
 
-// Conto
-echo '
+    // Conto
+    echo '
         <div class="col-md-6">
-                {[ "type": "select", "label": "'.tr('Conto').'", "name": "id_conto", "required": 1, "value": "'.$id_conto.'", "ajax-source": "conti-vendite" ]}
-        </div>
-    </div>';
+            {[ "type": "select", "label": "'.tr('Conto').'", "name": "id_conto", "required": 1, "value": "'.$id_conto.'", "ajax-source": "conti-vendite" ]}
+        </div>';
 
-//Accoda a fatture non emesse
-echo '
-    <div class="row">
-        <div class="col-md-6">
+    //Accoda a fatture non emesse
+    echo
+        '<div class="col-md-6">
             {[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle fatture di vendita non ancora emesse?').'</small>", "placeholder": "'.tr('Aggiungere alle fatture di vendita nello stato bozza?').'", "name": "accodare" ]}
         </div>
     </div>';
 
 //gestione replace
-$descrizione = get_var('Descrizione fattura pianificata');
+/*$descrizione = get_var('Descrizione fattura pianificata');
 $modules = MODULES::get('Contratti')['id'];
 $variables = include Modules::filepath($modules, 'variables.php');
 foreach ($variables as $variable => $value) {
@@ -122,7 +124,7 @@ echo '
                 </thead>
                 <tbody>';
 
-$righe = $pianificazione->getRighe();
+$righe = $pianificazione[0]->getRighe();
 foreach ($righe as $riga) {
     echo '
                     <tr>
@@ -141,11 +143,10 @@ echo '
                 </tbody>
             </table>
         </div>
-    </div>';
+    </div>';*/
 
-echo '
-    <!-- PULSANTI -->
-	<div class="row">
+echo
+    '<div class="row">
 		<div class="col-md-12 text-right">
 			<button type="submit" class="btn btn-primary pull-right">
                 <i class="fa fa-plus"></i> '.tr('Aggiungi').'
@@ -154,5 +155,7 @@ echo '
     </div>
 </form>';
 
-echo '
-<script>$(document).ready(init)</script>';
+echo
+'<script>
+    $(document).ready(init)
+</script>';

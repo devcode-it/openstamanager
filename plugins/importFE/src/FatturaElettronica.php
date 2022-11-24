@@ -213,12 +213,43 @@ class FatturaElettronica
 
         if (!empty($info['partita_iva']) && !empty($info['codice_fiscale'])) {
             $anagrafica->where('piva', $info['partita_iva'])
-                ->orWhere('codice_fiscale', $info['codice_fiscale']);
+                ->orWhere('codice_fiscale', $info['codice_fiscale'])
+                ->orWhere('piva', 'like', '__'.$info['partita_iva'])
+                ->orwhere('codice_fiscale', 'like', '__'.$info['codice_fiscale']);
         } elseif (!empty($info['codice_fiscale'])) {
-            $anagrafica->where('codice_fiscale', $info['codice_fiscale']);
+            $anagrafica->where('codice_fiscale', $info['codice_fiscale'])
+                ->orWhere('codice_fiscale', 'like', '__'.$info['codice_fiscale']);
         } elseif (!empty($info['partita_iva'])) {
-            $anagrafica->where('piva', $info['partita_iva']);
+            $anagrafica->where('piva', $info['partita_iva'])
+                ->orWhere('piva', 'like', '__'.$info['partita_iva']);
         }
+
+        //Se non trovo l'anagrafica tra i fornitori, provo a ricercarla anche tra i clienti
+        if (empty($anagrafica->first())){
+
+            $type = 'Cliente';
+
+            $tipologia = TipoAnagrafica::where('descrizione', $type)->first();
+
+            $anagrafica = Anagrafica::whereHas('tipi', function ($query) use ($tipologia) {
+                $query->where('an_tipianagrafiche.idtipoanagrafica', '=', $tipologia->id);
+            });
+    
+            if (!empty($info['partita_iva']) && !empty($info['codice_fiscale'])) {
+                $anagrafica->where('piva', $info['partita_iva'])
+                    ->orWhere('codice_fiscale', $info['codice_fiscale'])
+                    ->orWhere('piva', 'like', '__'.$info['partita_iva'])
+                    ->orwhere('codice_fiscale', 'like', '__'.$info['codice_fiscale']);
+            } elseif (!empty($info['codice_fiscale'])) {
+                $anagrafica->where('codice_fiscale', $info['codice_fiscale'])
+                    ->orWhere('codice_fiscale', 'like', '__'.$info['codice_fiscale']);
+            } elseif (!empty($info['partita_iva'])) {
+                $anagrafica->where('piva', $info['partita_iva'])
+                    ->orWhere('piva', 'like', '__'.$info['partita_iva']);
+            }
+
+        }
+
 
         return $anagrafica->first();
     }

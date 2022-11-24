@@ -130,11 +130,7 @@ class HTMLWrapper implements WrapperInterface
             var icon = container.find("i");
 
             var id_record = "'.$id_record.'";
-
-            /*La validazione su finestra modali deve essere sempre permessa anche per record già esistenti*/
-            /*if ($(".modal-content").is(":visible")) {
-                var id_record = "";
-            }*/ 
+            var id_module = "'.$id_module.'";
 
             icon.attr("class", "fa fa-spinner fa-spin");
 
@@ -142,7 +138,7 @@ class HTMLWrapper implements WrapperInterface
                 url: globals.rootdir + "/actions.php",
                 type: "post",
                 data: {
-                    id_module: "'.$id_module.'",
+                    id_module: id_module,
                     id_record: id_record,
                     name: "'.$name.'",
                     value: value,

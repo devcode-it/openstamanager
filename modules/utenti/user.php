@@ -114,8 +114,7 @@ function submitCheck() {
         $("#user_update").submit();
     }else{
         $("input[name=username]").focus();
-        swal("'.tr('Impossibile procedere').'", "'.tr('Nome utente già in uso').'", "error");
-        
+        swal("'.tr('Impossibile procedere').'", "'.tr('Username già esistente o troppo corto').'", "error");
     }
 }
 </script>

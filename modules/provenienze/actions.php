@@ -30,7 +30,7 @@ switch (filter('op')) {
                 flash()->info(tr('Salvataggio completato.'));
             } else {
                 flash()->error(tr("E' già presente una provenienza _NAME_.", [
-                    '_TYPE_' => $descrizione,
+                    '_NAME_' => $descrizione,
                 ]));
             }
         } else {

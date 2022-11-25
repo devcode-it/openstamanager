@@ -112,6 +112,10 @@ function submitCheck() {
 
     if(username) {
         $("#user_update").submit();
+    }else{
+        $("input[name=username]").focus();
+        swal("'.tr('Impossibile procedere').'", "'.tr('Nome utente già in uso').'", "error");
+        
     }
 }
 </script>

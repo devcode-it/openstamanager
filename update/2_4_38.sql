@@ -55,10 +55,17 @@ ORDER BY
     TRIM(`ragione_sociale`)" WHERE `name` = 'Anagrafiche';
 
 -- Creazione modelli prima nota per liquidazione salari e stipendi
+SELECT @numero := MAX(CAST(numero AS UNSIGNED))+10 FROM co_pianodeiconti3 WHERE idpianodeiconti2 = '8';
 INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti2`, `dir`, `percentuale_deducibile`) VALUES 
-(NULL, '000080', 'Personale c/Retribuzioni', '8', '', '100.00'),
-(NULL, '000090', 'INPS c/Competenza', '8', '', '100.00'),
-(NULL, '000090', 'Erario c/Ritenute dipendenti', '5', '', '100.00'); 
+(NULL, LPAD(@numero, 6, '0'), 'Personale c/Retribuzioni', '8', '', '100.00');
+
+SELECT @numero := MAX(CAST(numero AS UNSIGNED))+10 FROM co_pianodeiconti3 WHERE idpianodeiconti2 = '8';
+INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti2`, `dir`, `percentuale_deducibile`) VALUES 
+(NULL, LPAD(@numero, 6, '0'), 'INPS c/Competenza', '8', '', '100.00');
+
+SELECT @numero := MAX(CAST(numero AS UNSIGNED))+10 FROM co_pianodeiconti3 WHERE idpianodeiconti2 = '5';
+INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti2`, `dir`, `percentuale_deducibile`) VALUES 
+(NULL, LPAD(@numero, 6, '0'), 'Erario c/Ritenute dipendenti', '5', '', '100.00'); 
 
 SELECT @idmastrino := MAX(idmastrino)+1 FROM co_movimenti_modelli;
 INSERT INTO `co_movimenti_modelli` (`id`, `idmastrino`, `nome`, `descrizione`, `idconto`, `totale`) VALUES

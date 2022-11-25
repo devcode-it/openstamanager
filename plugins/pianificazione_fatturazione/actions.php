@@ -99,7 +99,9 @@ switch ($operazione) {
                 $inizio = $date_pianificazioni[0];
                 $fine = date('Y-m-d', strtotime($inizio.' '.$timeing));
                 $fine = date('Y-m-d', strtotime($fine.' -1 days'));
-
+                if( $cadenza_fatturazione=='Fine' ){
+                    $fine = Carbon\Carbon::parse($fine)->endOfMonth()->format("Y-m-d");
+                }  
                 for ($rata = 1; $rata <= $numero_fatture; ++$rata) {
                     if ($qta_evasa < $r->qta) {
                         $qta_riga = ($qta[$r->id] <= ($r->qta - $qta_evasa) ? $qta[$r->id] : ($r->qta - $qta_evasa));
@@ -112,7 +114,9 @@ switch ($operazione) {
 
                         $fine = date('Y-m-d', strtotime($inizio.' '.$timeing));
                         $fine = date('Y-m-d', strtotime($fine.' -1 days'));
-
+                        if( $cadenza_fatturazione=='Fine' ){
+                            $fine = Carbon\Carbon::parse($fine)->endOfMonth()->format("Y-m-d");
+                        }
                         $prezzo_unitario = setting('Utilizza prezzi di vendita comprensivi di IVA') ? (($r->subtotale + $r->iva) / $r->qta)  : ($r->subtotale / $r->qta);
 
                         if (!empty($r->idarticolo)) {

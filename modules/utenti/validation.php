@@ -19,6 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Models\Group;
 use Models\User;
 
 $name = filter('name');
@@ -31,7 +32,7 @@ switch ($name) {
             ['id', '<>', $id_record],
         ])->count() == 0;
 
-        $message = $disponibile ? tr("L'username è disponbile") : tr("L'username è già in uso");
+        $message = $disponibile ? tr("L'username è disponbile") : tr("L'username aa ".$id_record." è già in uso");
         $result = $disponibile;
 
         // Lunghezza minima del nome utente (username)
@@ -47,4 +48,22 @@ switch ($name) {
         ];
 
         break;
+
+
+        case 'gruppo':
+        $disponibile = Group::where([
+            ['nome', $value],
+            //['id', '<>', $id_record],
+        ])->count() == 0;
+
+        $message = $disponibile ? tr("Il nome del gruppo è disponbile") : tr("Il nome per questo gruppo è già in uso");
+        $result = $disponibile;
+
+        $response = [
+            'result' => $result,
+            'message' => $message,
+        ];
+
+        break;
+
 }

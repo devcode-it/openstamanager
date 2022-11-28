@@ -26,7 +26,7 @@ if (!empty(filter('idanagrafica'))) {
 echo '
 	<div class="row">
 		<div class="col-md-12">
-		{[ "type": "text", "label": "'.tr('Username').'", "name": "username", "required": 1, "value": "'.$utente['username'].'", "validation": "username||'.($utente['id'] ?: 0).'" ]}
+		{[ "type": "text", "label": "'.tr('Username').'", "name": "username", "required": 1, "value": "'.$utente['username'].'", "validation": "username|'.$id_module.'|'.($utente['id'] ?: 0).'" ]}
 		</div>
     </div>';
 

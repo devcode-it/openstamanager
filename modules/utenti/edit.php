@@ -24,7 +24,7 @@ $utenti = $dbo->fetchArray('SELECT *, (SELECT ragione_sociale FROM an_anagrafich
 echo '
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title">'.tr('Utenti _GROUP_', [
+			<h3 class="panel-title">'.tr('Utenti del gruppo: _GROUP_', [
                 '_GROUP_' => $record['nome'],
             ]).'</h3>
 		</div>
@@ -32,7 +32,7 @@ echo '
 		<div class="panel-body">
             <div class="row">
                 <div class="col-md-3 pull-right">
-                    {["type":"select", "label":"", "name":"id_module_start", "ajax-source":"moduli_gruppo", "select-options": '.json_encode(['idgruppo' => $record['id']]).', "placeholder":"'.tr('Modulo iniziale').'", "value":"'.$record['id_module_start'].'" ]}
+                    {["type":"select", "label":"'.tr('Modulo iniziale').'", "name":"id_module_start", "ajax-source":"moduli_gruppo", "select-options": '.json_encode(['idgruppo' => $record['id']]).', "placeholder":"'.tr('Modulo iniziale').'", "value":"'.$record['id_module_start'].'" ]}
                 </div>
             </div>
             <br>';
@@ -167,10 +167,9 @@ echo '
 echo '
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-            <h3 class="panel-title">'.tr('Permessi _GROUP_', [
+            <h3 class="panel-title">'.tr('Permessi del gruppo: _GROUP_', [
                 '_GROUP_' => $record['nome'],
-            ]).((empty($record['editable'])) ? '<a class=\'clickable btn-xs pull-right ask\'  data-msg="'.tr('Verranno reimpostati i permessi di default per il gruppo \''.$record['nome'].'\' ').'." data-class="btn btn-lg btn-warning" data-button="'.tr('Reimposta permessi').'" data-op="restore_permission"  >'.tr('Reimposta permessi').'</a>' : '').'</h3>
-
+            ]).((empty($record['editable']) && ($record['nome'] != 'Amministratori')) ? '<a class=\'clickable btn-xs pull-right ask\'  data-msg="'.tr('Verranno reimpostati i permessi di default per il gruppo \''.$record['nome'].'\' ').'." data-class="btn btn-lg btn-warning" data-button="'.tr('Reimposta permessi').'" data-op="restore_permission"  >'.tr('Reimposta permessi').'</a>' : '').'</h3>
 		</div>
 
 		<div class="panel-body">';
@@ -209,17 +208,16 @@ echo '
 	</div>';
 
 // Eliminazione gruppo (se non è tra quelli di default)
-if ($record['editable'] == 1) {
-    echo '
-    <!-- PULSANTI -->
-	<div class="row">
-		<div class="col-md-12 text-right">
-            <a class="btn btn-danger ask" data-backto="record-list" data-msg="'.tr('Eliminando questo gruppo verranno eliminati anche i permessi e gli utenti collegati').'" data-op="deletegroup">
-                <i class="fa fa-trash"></i> '.tr('Elimina').'
-            </a>
-		</div>
-	</div>';
-}
+
+echo '
+<!-- PULSANTI -->
+<div class="row">
+    <div class="col-md-12 text-right">
+        <a class="btn btn-danger ask '.(!$record['editable'] ? 'disabled' : '').'" '.(!$record['editable'] ? 'disabled' : '').' data-backto="record-list" data-msg="'.tr('Eliminando questo gruppo verranno eliminati anche i permessi e gli utenti collegati').'" data-op="deletegroup">
+            <i class="fa fa-trash"></i> '.tr('Elimina').'
+        </a>
+    </div>
+</div>';
 
 echo '
 <script>
@@ -227,16 +225,44 @@ $(document).ready(function() {
     $("#save-buttons").hide();
 
     $("#email-button").remove();
+
+    setTimeout(function() { colorize_select2(); }, 500);
+
 });
+
+function colorize_select2(){
+    $( ".select2-selection__rendered" ).each(function() {
+        if ($( this ).attr("title") == "Lettura e scrittura"){
+            $( this ).addClass( "text-green" );
+        }
+        else if ($( this ).attr("title") == "Sola lettura"){
+            $( this ).addClass( "text-orange" );
+        }
+        else if ($( this ).attr("title") == "Nessun permesso"){
+            $( this ).addClass( "text-red" );
+        }else{
+
+        }
+    });
+}
+
 
 $("li.active.header button.btn-primary").attr("data-href", $("a.pull-right").attr("data-href") );
 
-function update_permissions(id, value){
+function update_permissions(id, value, color){
+    
     $.get(
         globals.rootdir + "/actions.php?id_module='.$id_module.'&id_record='.$id_record.'&op=update_permission&idmodulo=" + id + "&permesso=" + value,
         function(data){
             if(data == "ok") {
                 toastr["success"]("'.tr('Permessi aggiornati!').'");
+                content_was_modified = false;
+
+                $("#select2-permesso_"+id+"-container").removeClass("text-red");
+                $("#select2-permesso_"+id+"-container").removeClass("text-orange");
+                $("#select2-permesso_"+id+"-container").removeClass("text-green");
+                $("#select2-permesso_"+id+"-container").addClass(color);
+
                 if( id==$("#id_module_start").val() && value=="-" ){
                     $("#id_module_start").selectReset();
                     update_user($("#id_module_start").val());
@@ -257,7 +283,8 @@ function update_user(value){
         globals.rootdir + "/actions.php?id_module='.$id_module.'&id_record='.$id_record.'&op=update&id_module_start=" + value,
         function(data){
             if(data == "ok") {
-                toastr["success"]("'.tr('Prima pagina aggiornata!').'");
+                toastr["success"]("'.tr('Informazioni aggiornate!').'");
+                content_was_modified = false;
             } else {
                 swal("'.tr('Errore').'", "'.tr("Errore durante l'aggiornamento delle informazioni!").'", "error");
             }

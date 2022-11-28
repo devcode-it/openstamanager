@@ -55,10 +55,17 @@ ORDER BY
     TRIM(`ragione_sociale`)" WHERE `name` = 'Anagrafiche';
 
 -- Creazione modelli prima nota per liquidazione salari e stipendi
+SELECT @numero := MAX(CAST(numero AS UNSIGNED))+10 FROM co_pianodeiconti3 WHERE idpianodeiconti2 = '8';
 INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti2`, `dir`, `percentuale_deducibile`) VALUES 
-(NULL, '000080', 'Personale c/Retribuzioni', '8', '', '100.00'),
-(NULL, '000090', 'INPS c/Competenza', '8', '', '100.00'),
-(NULL, '000090', 'Erario c/Ritenute dipendenti', '5', '', '100.00'); 
+(NULL, LPAD(@numero, 6, '0'), 'Personale c/Retribuzioni', '8', '', '100.00');
+
+SELECT @numero := MAX(CAST(numero AS UNSIGNED))+10 FROM co_pianodeiconti3 WHERE idpianodeiconti2 = '8';
+INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti2`, `dir`, `percentuale_deducibile`) VALUES 
+(NULL, LPAD(@numero, 6, '0'), 'INPS c/Competenza', '8', '', '100.00');
+
+SELECT @numero := MAX(CAST(numero AS UNSIGNED))+10 FROM co_pianodeiconti3 WHERE idpianodeiconti2 = '5';
+INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti2`, `dir`, `percentuale_deducibile`) VALUES 
+(NULL, LPAD(@numero, 6, '0'), 'Erario c/Ritenute dipendenti', '5', '', '100.00'); 
 
 SELECT @idmastrino := MAX(idmastrino)+1 FROM co_movimenti_modelli;
 INSERT INTO `co_movimenti_modelli` (`id`, `idmastrino`, `nome`, `descrizione`, `idconto`, `totale`) VALUES
@@ -478,6 +485,8 @@ WHERE
     1=1 
 AND 
     `dir` = 'uscita' |segment(`co_documenti`.`id_segment`)||date_period(custom, '|period_start|' <= `co_documenti`.`data` AND '|period_end|' >= `co_documenti`.`data`, '|period_start|' <= `co_documenti`.`data_competenza` AND '|period_end|' >= `co_documenti`.`data_competenza` )|
+GROUP BY
+    co_documenti.id
 HAVING 
     2=2
 ORDER BY 
@@ -677,3 +686,94 @@ DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Formato numero secondari
 DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Formato codice attività';
 DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Formato codice preventivi';
 DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Formato codice contratti';
+
+-- Aggiunta campi provvigione su righe promemoria
+ALTER TABLE `co_righe_promemoria` ADD `provvigione` DECIMAL(15,6) NOT NULL AFTER `prezzo_unitario_ivato`, ADD `provvigione_unitaria` DECIMAL(15,6) NOT NULL AFTER `provvigione`, ADD `provvigione_percentuale` DECIMAL(15,6) NOT NULL AFTER `provvigione_unitaria`, ADD `tipo_provvigione` ENUM('UNT','PRC') NOT NULL DEFAULT 'UNT' AFTER `provvigione_percentuale`; 
+
+-- Ottimizzazione query vista Stampe
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'zz_modules.NAME' WHERE `zz_modules`.`name` = 'Stampe' AND `zz_views`.`name` = 'Modulo';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'zz_prints.id' WHERE `zz_modules`.`name` = 'Stampe' AND `zz_views`.`name` = 'id';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'zz_prints.title' WHERE `zz_modules`.`name` = 'Stampe' AND `zz_views`.`name` = 'Titolo';
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select|
+ FROM 
+    `zz_prints`
+    LEFT JOIN zz_modules ON zz_modules.id = zz_prints.id_module
+WHERE 
+    1=1 
+AND 
+    zz_prints.enabled=1 
+HAVING 
+    2=2" WHERE `name` = 'Stampe';
+
+
+-- Ottimizzazione query vista Articoli
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF( co_iva.percentuale IS NOT NULL, (mg_articoli.prezzo_vendita + mg_articoli.prezzo_vendita * co_iva.percentuale / 100), mg_articoli.prezzo_vendita + mg_articoli.prezzo_vendita*iva.perc/100)' WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = 'Prezzo vendita ivato';
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select|
+FROM
+    `mg_articoli`
+    LEFT JOIN an_anagrafiche ON mg_articoli.id_fornitore = an_anagrafiche.idanagrafica
+    LEFT JOIN co_iva ON mg_articoli.idiva_vendita = co_iva.id
+    LEFT JOIN (SELECT SUM(or_righe_ordini.qta - or_righe_ordini.qta_evasa) AS qta_impegnata, or_righe_ordini.idarticolo FROM or_righe_ordini INNER JOIN or_ordini ON or_righe_ordini.idordine = or_ordini.id INNER JOIN or_tipiordine ON or_ordini.idtipoordine = or_tipiordine.id INNER JOIN or_statiordine ON or_ordini.idstatoordine = or_statiordine.id WHERE or_tipiordine.dir = 'entrata' AND or_righe_ordini.confermato = 1 AND or_statiordine.impegnato = 1 GROUP BY idarticolo) a ON a.idarticolo = mg_articoli.id
+    LEFT JOIN (SELECT SUM(or_righe_ordini.qta - or_righe_ordini.qta_evasa) AS qta_ordinata, or_righe_ordini.idarticolo FROM or_righe_ordini INNER JOIN or_ordini ON or_righe_ordini.idordine = or_ordini.id INNER JOIN or_tipiordine ON or_ordini.idtipoordine = or_tipiordine.id INNER JOIN or_statiordine ON or_ordini.idstatoordine = or_statiordine.id WHERE or_tipiordine.dir = 'uscita' AND or_righe_ordini.confermato = 1 AND or_statiordine.impegnato = 1
+    GROUP BY idarticolo) ordini_fornitore ON ordini_fornitore.idarticolo = mg_articoli.id
+    LEFT JOIN mg_categorie ON mg_articoli.id_categoria = mg_categorie.id
+    LEFT JOIN mg_categorie AS sottocategorie ON mg_articoli.id_sottocategoria = sottocategorie.id
+    LEFT JOIN (SELECT co_iva.percentuale AS perc, co_iva.id, zz_settings.nome FROM co_iva INNER JOIN zz_settings ON co_iva.id=zz_settings.valore)AS iva ON iva.nome= 'Iva predefinita' 
+WHERE
+    1=1 AND(`mg_articoli`.`deleted_at`) IS NULL
+HAVING
+    2=2
+ORDER BY
+    `mg_articoli`.`descrizione`" WHERE `name` = 'Articoli';
+
+
+-- Ottimizzazione query vista Utenti e permessi
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`nome`' WHERE `zz_modules`.`name` = 'Utenti e permessi' AND `zz_views`.`name` = 'Gruppo';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_groups`.`id`' WHERE `zz_modules`.`name` = 'Utenti e permessi' AND `zz_views`.`name` = 'id';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`utenti`.`num`' WHERE `zz_modules`.`name` = 'Utenti e permessi' AND `zz_views`.`name` = 'N. utenti';
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select|
+FROM 
+    `zz_groups` 
+    LEFT JOIN (SELECT `zz_users`.`id`, COUNT(`id`) AS num FROM `zz_users` GROUP BY `id`) AS utenti ON `zz_groups`.`id`=`utenti`.`id`
+WHERE 
+    1=1
+HAVING 
+    2=2 
+ORDER BY 
+    `id`, 
+    `nome` ASC" WHERE `name` = 'Utenti e permessi';
+
+
+-- Ottimizzazione query vista Listini cliente
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_listini`.`id`' WHERE `zz_modules`.`name` = 'Listini cliente' AND `zz_views`.`name` = 'id';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_listini`.`id`' WHERE `zz_modules`.`name` = 'Listini cliente' AND `zz_views`.`name` = 'id';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`articoli`.`num`' WHERE `zz_modules`.`name` = 'Listini cliente' AND `zz_views`.`name` = 'Articoli';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`anagrafiche`.`num`' WHERE `zz_modules`.`name` = 'Listini cliente' AND `zz_views`.`name` = 'Anagrafiche';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`utente`.`username`' WHERE `zz_modules`.`name` = 'Listini cliente' AND `zz_views`.`name` = 'Ultima modifica';
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select|
+FROM 
+    `mg_listini`
+    LEFT JOIN (SELECT `mg_listini_articoli`.`id_listino`, COUNT(`id_listino`) AS num FROM `mg_listini_articoli` GROUP BY `id_listino`) AS articoli ON `mg_listini`.`id`=`articoli`.`id_listino`
+    LEFT JOIN (SELECT `an_anagrafiche`.`id_listino`, COUNT(`id_listino`) AS num FROM `an_anagrafiche` GROUP BY `id_listino`) AS anagrafiche ON `mg_listini`.`id`=`anagrafiche`.`id_listino`
+    LEFT JOIN (SELECT `zz_users`.`id`, `zz_users`.`username` FROM `zz_users` INNER JOIN (SELECT `id_utente`, `id_record` FROM `zz_operations` INNER JOIN `zz_modules` ON `zz_modules`.`NAME` = 'Listini cliente' ORDER BY `id_utente` DESC LIMIT 0, 1) AS `id`) AS `utente` ON `utente`.`id` = `mg_listini`.`id`
+WHERE 
+    1=1 
+HAVING 
+    2=2" WHERE `name` = 'Listini cliente';
+
+
+-- Allineamento query vista Piani di sconto/maggiorazione
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select|
+FROM 
+    `mg_piani_sconto` 
+WHERE 
+    1=1
+HAVING 
+    2=2 
+ORDER BY 
+    `nome`" WHERE `name` = 'Piani di sconto/maggiorazione';

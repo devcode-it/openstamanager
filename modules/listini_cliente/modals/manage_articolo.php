@@ -71,4 +71,7 @@ echo '
 </form>';
 
 echo '
-<script>$(document).ready(init)</script>';
+<script>
+$(document).ready(init);
+content_was_modified = false;
+</script>';

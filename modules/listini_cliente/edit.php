@@ -31,7 +31,7 @@ echo '
 
 		<div class="panel-body">
 			<div class="row">
-				<div class="col-md-4">
+				<div class="col-md-6">
 					{[ "type":"text", "label":"'.tr('Nome').'", "name":"nome", "value":"$nome$", "required":"1" ]}
 				</div>
 
@@ -42,9 +42,15 @@ echo '
 				<div class="col-md-3">
 					{[ "type":"date", "label":"'.tr('Data scadenza default').'", "name":"data_scadenza_predefinita", "value":"$data_scadenza_predefinita$" ]}
 				</div>
+			</div>
+	
+			<div class="row">
+				<div class="col-md-6">
+					{[ "type":"checkbox", "label":"'.tr('Sempre visibile').'", "name":"is_sempre_visibile", "value":"$is_sempre_visibile$", "help": "'.tr('Se impostato il valore sarà sempre visibile sull\'articolo se il listino è attivo e la data di scadenza è ancora valida').'" ]}
+				</div>
 
-				<div class="col-md-2">
-					{[ "type":"checkbox", "label":"'.tr('Sempre visibile').'", "name":"is_sempre_visibile", "value":"$is_sempre_visibile$", "help": "'.tr('Se attivo il valore sarà visibile sull\'articolo').'" ]}
+				<div class="col-md-6">
+					{[ "type":"checkbox", "label":"'.tr('Attivo').'", "name":"attivo", "value": "$attivo$" ]}
 				</div>
 			</div>
 
@@ -69,21 +75,48 @@ echo '
 			</div>
 
 			<div style="max-height:400px; overflow:auto;">
-				<table class="table table-striped table-condensed table-bordered">
+				<table class="table table-striped table-condensed table-bordered" id="tablelistini">
 					<tr>
-						<th class="text-center" width="14%">'.tr('Codice').'</th>
-						<th class="text-center">'.tr('Descrizione').'</th>
-						<th class="text-center" width="10%">'.tr('Data scadenza').'</th>
-						<th class="text-center" width="10%">'.tr('Minimo').'</th>
-						<th class="text-center" width="10%">'.tr('Prezzo di listino').'</th>
-						<th class="text-center" width="10%">'.tr('Prezzo ivato').'</th>
-						<th class="text-center" width="10%">'.tr('Sconto').'</th>
-						<th class="text-center" width="7%">#</th>
+						<th width="5" class="text-center">
+							<br><input id="check_all" type="checkbox"/>
+						</th>
+						<th class="text-center" width="14%">
+							'.tr('Codice').'
+							<input type="text" class="form-control" id="search_codice" placeholder="'.tr('Filtra').'...">
+						</th>
+						<th class="text-center">
+							'.tr('Descrizione').'
+							<input type="text" class="form-control" id="search_descrizione" placeholder="'.tr('Filtra').'...">
+						</th>
+						<th class="text-center" width="10%">
+							'.tr('Data scadenza').'
+							<input type="text" class="form-control" id="search_data_scadenza" placeholder="'.tr('Filtra').'...">
+						</th>
+						<th class="text-center" width="10%">
+							'.tr('Minimo').'
+							<input type="text" class="form-control" id="search_minimo" placeholder="'.tr('Filtra').'...">
+						</th>
+						<th class="text-center" width="10%">
+							'.tr('Prezzo di listino').'
+							<input type="text" class="form-control" id="search_prezzo_listino" placeholder="'.tr('Filtra').'...">
+						</th>
+						<th class="text-center" width="10%">
+							'.tr('Prezzo ivato').'
+							<input type="text" class="form-control" id="search_prezzo_ivato" placeholder="'.tr('Filtra').'...">
+						</th>
+						<th class="text-center" width="10%">
+							'.tr('Sconto').'
+							<input type="text" class="form-control" id="search_sconto" placeholder="'.tr('Filtra').'...">
+						</th>
+						<th class="text-center" width="7%"><br>#</th>
 					</tr>';
 			
 				foreach ($articoli as $articolo) {
 				echo '
 					<tr data-id="'.$articolo['id'].'">
+						<td class="text-center">
+							<input class="check" type="checkbox"/>
+						</td>
 						<td class="text-center">
 							'.Modules::link('Articoli', $articolo['id_articolo'], $articolo['codice'], null, '').'
 						</td>
@@ -135,6 +168,12 @@ echo '
 
 				echo '
 				</table>
+
+				<div class="btn-group">
+					<button type="button" class="btn btn-xs btn-default disabled" id="elimina_righe" onclick="rimuoviArticolo(getSelectData());">
+						<i class="fa fa-trash"></i>
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -195,4 +234,77 @@ echo '
 			});
 		}).catch(swal.noop);
 	}
+
+	$(document).ready(function(){
+		$("input[id^=\'search_\']").keyup(function() {
+			$("#tablelistini tr").each(function(){
+				$(this).show();
+			});
+			$("input[id^=\'search_\']").each(function(){
+				var position = $(this).closest("th").index();
+				var filter = $(this).val().toUpperCase();
+	
+				var tr = $("#tablelistini tr");
+				if(filter!=""){
+					for (i = 0; i < tr.length; i++) {
+					  td = tr[i].getElementsByTagName("td")[position];
+					  if (td) {
+						if (td.innerText.toUpperCase().indexOf(filter) <= -1) {
+						  tr[i].style.display = "none";
+						}
+					  }
+					}
+				}
+			});
+			if ($("#check_all").is(":checked")) {
+				$("#check_all").trigger("click");
+				$(".check").each(function(){
+					if ($(this).is(":checked")) {
+						$(this).trigger("click");
+					}
+				});
+			}
+		});
+	});
+
+	// Estraggo le righe spuntate
+	function getSelectData() {
+		let data=new Array();
+		$(\'#tablelistini\').find(\'.check:checked\').each(function (){ 
+			data.push($(this).closest(\'tr\').data(\'id\'));
+		});
+
+		return data;
+	}
+
+	$(".check").on("change", function() {
+		let checked = 0;
+		$(".check").each(function() {
+			if ($(this).is(":checked")) {
+				checked = 1;
+			}
+		});
+	
+		if (checked) {
+			$("#elimina_righe").removeClass("disabled");
+		} else {
+			$("#elimina_righe").addClass("disabled");
+		}
+	});
+	
+	$("#check_all").click(function(){    
+		if( $(this).is(":checked") ){
+			$(".check").each(function(){
+				if( !$(this).is(":checked") ){
+					$(this).trigger("click");
+				}
+			});
+		}else{
+			$(".check").each(function(){
+				if( $(this).is(":checked") ){
+					$(this).trigger("click");
+				}
+			});
+		}
+	});
 </script>';

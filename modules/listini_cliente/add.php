@@ -25,7 +25,7 @@ echo '
 	<input type="hidden" name="backto" value="record-edit">
 
 	<div class="row">
-		<div class="col-md-4">
+		<div class="col-md-6">
 			{[ "type":"text", "label":"'.tr('Nome').'", "name":"nome", "required":"1" ]}
 		</div>
 
@@ -36,9 +36,15 @@ echo '
 		<div class="col-md-3">
 			{[ "type":"date", "label":"'.tr('Data scadenza default').'", "name":"data_scadenza_predefinita" ]}
 		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-6">
+			{[ "type":"checkbox", "label":"'.tr('Sempre visibile').'", "name":"is_sempre_visibile", "help": "'.tr('Se impostato il valore sarà sempre visibile sull\'articolo se il listino è attivo e la data di scadenza è ancora valida').'" ]}
+		</div>
 
-		<div class="col-md-2">
-			{[ "type":"checkbox", "label":"'.tr('Sempre visibile').'", "name":"is_sempre_visibile", "help": "'.tr('Se attivo il valore sarà visibile sull\'articolo').'" ]}
+		<div class="col-md-6">
+			{[ "type":"checkbox", "label":"'.tr('Attivo').'", "name":"attivo", "value": "1" ]}
 		</div>
 	</div>
 

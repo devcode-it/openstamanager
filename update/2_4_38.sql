@@ -4,7 +4,7 @@ ALTER TABLE `an_anagrafiche` CHANGE `idlistino_acquisti` `id_piano_sconto_acquis
 ALTER TABLE `an_anagrafiche` CHANGE `idlistino_vendite` `id_piano_sconto_vendite` INT(11) NULL DEFAULT NULL; 
 ALTER TABLE `an_anagrafiche` ADD `id_listino` INT NOT NULL AFTER `id_piano_sconto_acquisti`; 
 
-CREATE TABLE `mg_listini` ( `id` INT NOT NULL AUTO_INCREMENT , `nome` VARCHAR(255) NOT NULL , `data_attivazione` DATE NULL , `data_scadenza_predefinita` DATE NULL , `is_sempre_visibile` BOOLEAN NOT NULL , `note` TEXT NOT NULL , `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `updated_at` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)); 
+CREATE TABLE `mg_listini` ( `id` INT NOT NULL AUTO_INCREMENT , `nome` VARCHAR(255) NOT NULL , `data_attivazione` DATE NULL , `data_scadenza_predefinita` DATE NULL , `is_sempre_visibile` BOOLEAN NOT NULL , `attivo` BOOLEAN NOT NULL , `note` TEXT NOT NULL , `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `updated_at` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)); 
 
 CREATE TABLE `mg_listini_articoli` ( `id` INT NOT NULL AUTO_INCREMENT , `id_listino` INT NOT NULL, `id_articolo` INT NOT NULL , `data_scadenza` DATE NOT NULL , `prezzo_unitario` DECIMAL(15,6) NOT NULL , `prezzo_unitario_ivato` DECIMAL(15,6) NOT NULL , `sconto_percentuale` DECIMAL(15,6) NOT NULL , `dir` VARCHAR(20) NOT NULL , `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `updated_at` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)); 
 
@@ -17,7 +17,9 @@ INSERT INTO `zz_views` ( `id_module`, `name`, `query`, `order`, `search`, `slow`
 ((SELECT `id` FROM `zz_modules` WHERE name='Listini cliente'), 'Articoli', '(SELECT COUNT(id) FROM mg_listini_articoli WHERE id_listino=mg_listini.id)', 4, 1, 0, 0, 0, '', '', 1, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE name='Listini cliente'), 'Anagrafiche', '(SELECT COUNT(idanagrafica) FROM an_anagrafiche WHERE id_listino=mg_listini.id)', 5, 1, 0, 0, 0, '', '', 1, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE name='Listini cliente'), 'Ultima modifica', '(SELECT username FROM zz_users WHERE id=(SELECT id_utente FROM zz_operations WHERE id_module=(SELECT id FROM zz_modules WHERE name=\'Listini cliente\') AND id_record=mg_listini.id ORDER BY id DESC LIMIT 0,1))', 6, 1, 0, 0, 0, '', '', 1, 0, 1),
-((SELECT `id` FROM `zz_modules` WHERE name='Listini cliente'), 'Sempre visibile', 'IF(is_sempre_visibile=0,\'NO\',\'SÌ\')', 7, 1, 0, 0, 0, '', '', 1, 0, 1);
+((SELECT `id` FROM `zz_modules` WHERE name='Listini cliente'), 'Sempre visibile', 'IF(is_sempre_visibile=0,\'NO\',\'SÌ\')', 7, 1, 0, 0, 0, '', '', 1, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE name='Listini cliente'), 'Attivo', 'IF(attivo=0,\'NO\',\'SÌ\')', 7, 1, 0, 0, 0, '', '', 1, 0, 1);
+
 
 UPDATE `zz_plugins` SET `title` = 'Netto clienti', `name` = 'Netto Clienti' WHERE `zz_plugins`.`name` = 'Listino Clienti'; 
 
@@ -627,22 +629,22 @@ CREATE TABLE `zz_group_segment` ( `id_gruppo` INT NOT NULL , `id_segment` INT NO
 ALTER TABLE `zz_segments` ADD `is_sezionale` TINYINT(1) NOT NULL AFTER `autofatture`; 
 
 UPDATE `zz_segments` SET `predefined` = '0' WHERE `zz_segments`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE name='Preventivi'); 
-INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`, `note`, `dicitura_fissa`, `predefined`, `predefined_accredito`, `predefined_addebito`, `autofatture`, `is_sezionale`, `created_at`, `updated_at`, `is_fiscale`) VALUES ((SELECT `id` FROM `zz_modules` WHERE name='Preventivi'), 'Standard preventivi', '1=1', 'WHR', (SELECT `valore` FROM `zz_settings` WHERE `nome`='Formato codice preventivi'), '', '', '1', '0', '0', '0', '1', NULL, NULL, '0');
+INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`, `note`, `dicitura_fissa`, `predefined`, `predefined_accredito`, `predefined_addebito`, `autofatture`, `is_sezionale`, `is_fiscale`) VALUES ((SELECT `id` FROM `zz_modules` WHERE name='Preventivi'), 'Standard preventivi', '1=1', 'WHR', (SELECT `valore` FROM `zz_settings` WHERE `nome`='Formato codice preventivi'), '', '', '1', '0', '0', '0', '1', '0');
 
 UPDATE `zz_segments` SET `predefined` = '0' WHERE `zz_segments`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE name='Contratti'); 
-INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`, `note`, `dicitura_fissa`, `predefined`, `predefined_accredito`, `predefined_addebito`, `autofatture`, `is_sezionale`, `created_at`, `updated_at`, `is_fiscale`) VALUES ((SELECT `id` FROM `zz_modules` WHERE name='Contratti'), 'Standard contratti', '1=1', 'WHR', (SELECT `valore` FROM `zz_settings` WHERE `nome`='Formato codice contratti'), '', '', '1', '0', '0', '0', '1', NULL, NULL, '0');
+INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`, `note`, `dicitura_fissa`, `predefined`, `predefined_accredito`, `predefined_addebito`, `autofatture`, `is_sezionale`, `is_fiscale`) VALUES ((SELECT `id` FROM `zz_modules` WHERE name='Contratti'), 'Standard contratti', '1=1', 'WHR', (SELECT `valore` FROM `zz_settings` WHERE `nome`='Formato codice contratti'), '', '', '1', '0', '0', '0', '1', '0');
 
 UPDATE `zz_segments` SET `predefined` = '0' WHERE `zz_segments`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE name='Ddt di acquisto'); 
-INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`, `note`, `dicitura_fissa`, `predefined`, `predefined_accredito`, `predefined_addebito`, `autofatture`, `is_sezionale`, `created_at`, `updated_at`, `is_fiscale`) VALUES ((SELECT `id` FROM `zz_modules` WHERE name='Ddt di acquisto'), 'Standard ddt in entrata', '1=1', 'WHR', '#', '', '', '1', '0', '0', '0', '1', NULL, NULL, '0');
+INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`, `note`, `dicitura_fissa`, `predefined`, `predefined_accredito`, `predefined_addebito`, `autofatture`, `is_sezionale`, `is_fiscale`) VALUES ((SELECT `id` FROM `zz_modules` WHERE name='Ddt di acquisto'), 'Standard ddt in entrata', '1=1', 'WHR', '#', '', '', '1', '0', '0', '0', '1', '0');
 
 UPDATE `zz_segments` SET `predefined` = '0' WHERE `zz_segments`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE name='Ddt di vendita'); 
-INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`, `note`, `dicitura_fissa`, `predefined`, `predefined_accredito`, `predefined_addebito`, `autofatture`, `is_sezionale`, `created_at`, `updated_at`, `is_fiscale`) VALUES ((SELECT `id` FROM `zz_modules` WHERE name='Ddt di vendita'), 'Standard ddt in uscita', '1=1', 'WHR', (SELECT `valore` FROM `zz_settings` WHERE `nome`='Formato numero secondario ddt'), '', '', '1', '0', '0', '0', '1', NULL, NULL, '0');
+INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`, `note`, `dicitura_fissa`, `predefined`, `predefined_accredito`, `predefined_addebito`, `autofatture`, `is_sezionale`, `is_fiscale`) VALUES ((SELECT `id` FROM `zz_modules` WHERE name='Ddt di vendita'), 'Standard ddt in uscita', '1=1', 'WHR', (SELECT `valore` FROM `zz_settings` WHERE `nome`='Formato numero secondario ddt'), '', '', '1', '0', '0', '0', '1', '0');
 
 UPDATE `zz_segments` SET `predefined` = '0' WHERE `zz_segments`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE name='Ordini cliente'); 
-INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`, `note`, `dicitura_fissa`, `predefined`, `predefined_accredito`, `predefined_addebito`, `autofatture`, `is_sezionale`, `created_at`, `updated_at`, `is_fiscale`) VALUES ((SELECT `id` FROM `zz_modules` WHERE name='Ordini cliente'), 'Standard ordini cliente', '1=1', 'WHR', (SELECT `valore` FROM `zz_settings` WHERE `nome`='Formato numero secondario ordine'), '', '', '1', '0', '0', '0', '1', NULL, NULL, '0');
+INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`, `note`, `dicitura_fissa`, `predefined`, `predefined_accredito`, `predefined_addebito`, `autofatture`, `is_sezionale`, `is_fiscale`) VALUES ((SELECT `id` FROM `zz_modules` WHERE name='Ordini cliente'), 'Standard ordini cliente', '1=1', 'WHR', (SELECT `valore` FROM `zz_settings` WHERE `nome`='Formato numero secondario ordine'), '', '', '1', '0', '0', '0', '1', '0');
 
 UPDATE `zz_segments` SET `predefined` = '0' WHERE `zz_segments`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE name='Ordini fornitore'); 
-INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`, `note`, `dicitura_fissa`, `predefined`, `predefined_accredito`, `predefined_addebito`, `autofatture`, `is_sezionale`, `created_at`, `updated_at`, `is_fiscale`) VALUES ((SELECT `id` FROM `zz_modules` WHERE name='Ordini fornitore'), 'Standard ordini fornitore', '1=1', 'WHR', '#', '', '', '1', '0', '0', '0', '1', NULL, NULL, '0');
+INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`, `note`, `dicitura_fissa`, `predefined`, `predefined_accredito`, `predefined_addebito`, `autofatture`, `is_sezionale`, `is_fiscale`) VALUES ((SELECT `id` FROM `zz_modules` WHERE name='Ordini fornitore'), 'Standard ordini fornitore', '1=1', 'WHR', '#', '', '', '1', '0', '0', '0', '1', '0');
 
 UPDATE `zz_segments` SET `predefined` = '0' WHERE `zz_segments`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE name='Interventi'); 
 UPDATE `zz_segments` SET `predefined` = '1', `is_sezionale` = '1', `name` = 'Standard attività' WHERE `zz_segments`.`name` = 'Tutti' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE name='Interventi'); 
@@ -777,3 +779,8 @@ HAVING
     2=2 
 ORDER BY 
     `nome`" WHERE `name` = 'Piani di sconto/maggiorazione';
+
+-- Aggiunti widget listini clienti
+INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`, `query`, `bgcolor`, `icon`, `print_link`, `more_link`, `more_link_type`, `php_include`, `text`, `enabled`, `order`, `help`) VALUES (NULL, 'Listini attivi', 'stats', (SELECT `id` FROM `zz_modules` WHERE name='Listini cliente'), 'controller_top', 'col-md-6', 'SELECT COUNT(mg_listini.id) AS dato FROM mg_listini WHERE 1=1 AND attivo=1 HAVING 2=2', '#4ccc4c', 'fa fa-check', '', '', 'javascript', '', 'Listini attivi', '1', '1', NULL);
+
+INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`, `query`, `bgcolor`, `icon`, `print_link`, `more_link`, `more_link_type`, `php_include`, `text`, `enabled`, `order`, `help`) VALUES (NULL, 'Listini scaduti', 'stats', (SELECT `id` FROM `zz_modules` WHERE name='Listini cliente'), 'controller_top', 'col-md-6', 'SELECT COUNT(mg_listini.id) AS dato FROM mg_listini WHERE 1=1 AND attivo=0 HAVING 2=2', '#c62f2a', 'fa fa-times', '', '', 'javascript', '', 'Listini scaduti', '1', '2', NULL);

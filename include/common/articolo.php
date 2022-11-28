@@ -554,6 +554,7 @@ function aggiornaPrezzoArticolo(aggiorna = "") {
     } 
 
     $("#prezzo_unitario").val(prezzo_previsto).trigger("change");
+    $("#sconto").val(0).trigger("change");
 
     // Aggiornamento automatico di guadagno e margine
     if (direzione === "entrata") {

@@ -149,7 +149,7 @@ switch ($resource) {
         FROM mg_listini
         LEFT JOIN mg_listini_articoli ON mg_listini.id=mg_listini_articoli.id_listino
         LEFT JOIN an_anagrafiche ON mg_listini.id=an_anagrafiche.id_listino
-        WHERE mg_listini.data_attivazione<=NOW() AND mg_listini_articoli.data_scadenza>=NOW() AND id_articolo = '.prepare($id_articolo).' AND dir = '.prepare($direzione).' |where|';
+        WHERE mg_listini.data_attivazione<=NOW() AND mg_listini_articoli.data_scadenza>=NOW() AND mg_listini.attivo=1 AND id_articolo = '.prepare($id_articolo).' AND dir = '.prepare($direzione).' |where|';
         $query_anagrafica = replace($query, [
             '|where|' => ' AND idanagrafica = '.prepare($id_anagrafica),
         ]);
@@ -160,7 +160,7 @@ switch ($resource) {
             '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino_visibile
         FROM mg_listini
         LEFT JOIN mg_listini_articoli ON mg_listini.id=mg_listini_articoli.id_listino
-        WHERE mg_listini.is_sempre_visibile=1 AND id_articolo = '.prepare($id_articolo).' AND dir = '.prepare($direzione);
+        WHERE mg_listini.data_attivazione<=NOW() AND mg_listini_articoli.data_scadenza>=NOW() AND mg_listini.attivo=1 AND mg_listini.is_sempre_visibile=1 AND id_articolo = '.prepare($id_articolo).' AND dir = '.prepare($direzione);
         $listini_sempre_visibili = $database->fetchArray($query);
 
         // Prezzi scheda articolo

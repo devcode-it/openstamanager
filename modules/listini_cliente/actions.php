@@ -29,6 +29,7 @@ switch (filter('op')) {
         $listino->data_attivazione = post('data_attivazione') ?: null;
         $listino->data_scadenza_predefinita = post('data_scadenza_predefinita') ?: null;
         $listino->is_sempre_visibile = post('is_sempre_visibile');
+        $listino->attivo = post('attivo');
         $listino->note = post('note');
         $listino->save();
 
@@ -41,6 +42,7 @@ switch (filter('op')) {
         $listino->data_attivazione = post('data_attivazione') ?: null;
         $listino->data_scadenza_predefinita = post('data_scadenza_predefinita') ?: null;
         $listino->is_sempre_visibile = post('is_sempre_visibile');
+        $listino->attivo = post('attivo');
         $listino->note = post('note');
         $listino->save();
 
@@ -72,10 +74,14 @@ switch (filter('op')) {
         break;
 
     case 'delete_articolo':
-        $articolo_listino = Articolo::find(post('id'));
-        $articolo_listino->delete();
+        $id_righe = (array)post('id');
+        
+        foreach ($id_righe as $id_riga) {
+            $articolo_listino = Articolo::find($id_riga);
+            $articolo_listino->delete();
+        }
 
-        flash()->info(tr('Articolo del listino eliminato correttamente!'));
+        flash()->info(tr('Articoli del listino eliminati correttamente!'));
 
         break;
 

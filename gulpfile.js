@@ -124,7 +124,9 @@ const JS = gulp.parallel(() => {
         vendor[i] = config.nodeDirectory + '/' + vendor[i];
     }
 
-    return gulp.src(vendor)
+    return gulp.src(vendor, {
+        allowEmpty: true
+    })
         .pipe(babel(config.babelOptions))
         .pipe(concat('app.min.js'))
         .pipe(gulpIf(!config.debug, minifyJS()))
@@ -181,7 +183,9 @@ const CSS = gulp.parallel(() => {
         vendor[i] = config.nodeDirectory + '/' + vendor[i];
     }
 
-    return gulp.src(vendor)
+    return gulp.src(vendor, {
+        allowEmpty: true
+    })
         .pipe(gulpIf('*.scss', sass(), gulpIf('*.less', less(), gulpIf('*.styl', stylus()))))
         .pipe(autoprefixer())
         .pipe(minifyCSS({

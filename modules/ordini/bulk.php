@@ -36,6 +36,7 @@ if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
     $_SESSION['module_'.$id_fatture]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
 }
 $id_segment = $_SESSION['module_'.$id_fatture]['id_segment'];
+$id_segment_ordini = $_SESSION['module_'.$id_module]['id_segment'];
 $idconto = setting('Conto predefinito fatture di vendita');
 $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
     'predefined' => 1,
@@ -162,7 +163,7 @@ switch (post('op')) {
                     $new_ordine = Ordine::find($new_ordini[$ordine->idanagrafica]);
                 } else {
                     $anagrafica = Anagrafica::find($ordine->idanagrafica);
-                    $new_ordine = Ordine::build($anagrafica, $tipo, $data);
+                    $new_ordine = Ordine::build($anagrafica, $tipo, $data, post('id_segment'));
                     $new_ordine->idstatoordine = $id_stato;
                     $new_ordine->data = $data;
                     $new_ordine->save();
@@ -199,7 +200,7 @@ if ($module['name'] == 'Ordini cliente') {
         'data' => [
             'title' => tr('Fatturare i _TYPE_ selezionati?', ['_TYPE_' => strtolower($module['name'])]),
             'msg' => '{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle _TYPE_ non ancora emesse?', ['_TYPE_' => strtolower($module_fatture)]).'", "placeholder": "'.tr('Aggiungere alle _TYPE_ nello stato bozza?', ['_TYPE_' => strtolower($module_fatture)]).'</small>", "name": "accodare" ]}
-            <br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module=\''.$id_fatture.'\' ORDER BY name", "value": "'.$id_segment.'" ]}<br>
+            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(["id_module" => $id_fatture, 'is_sezionale' => 1]).', "value": "'.$id_segment.'" ]}
             {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, CONCAT(codice_tipo_documento_fe, \' - \', descrizione) AS descrizione FROM co_tipidocumento WHERE enabled = 1 AND dir =\'entrata\' ORDER BY codice_tipo_documento_fe", "value": "'.$idtipodocumento.'" ]}',
             'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',
@@ -212,9 +213,10 @@ if ($module['name'] == 'Ordini cliente') {
             'text' => '<span><i class="fa fa-refresh"></i> '.tr('Unisci rdo'),
             'data' => [
                 'title' => tr('Unire gli ordini selezionati?'),
-                'msg' => tr('Gli ordini saranno processati solo se in uno dei seguenti stati: Bozza, In attesa di conferma, Accettato.<br>Tutti gli ordini processati verranno eliminati e verrà creato un nuovo ordine unificato per fornitore.').'<br>
-                <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT id, descrizione FROM or_statiordine" ]}<br>
-                <br>{[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1]}',
+                'msg' => tr('Gli ordini saranno processati solo se in uno dei seguenti stati: Bozza, In attesa di conferma, Accettato.<br>Tutti gli ordini processati verranno eliminati e verrà creato un nuovo ordine unificato per fornitore.').'
+                {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(["id_module" => $id_module, 'is_sezionale' => 1]).', "value": "'.$id_segment_ordini.'" ]}
+                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT id, descrizione FROM or_statiordine" ]}
+                {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1]}',
                 'button' => tr('Procedi'),
                 'class' => 'btn btn-lg btn-warning',
                 'blank' => false,

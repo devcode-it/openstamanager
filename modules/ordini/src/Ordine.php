@@ -51,14 +51,14 @@ class Ordine extends Document
      *
      * @return self
      */
-    public static function build(Anagrafica $anagrafica, Tipo $tipo_documento, $data)
+    public static function build(Anagrafica $anagrafica, Tipo $tipo_documento, $data, $id_segment = null)
     {
         $model = new static();
 
         $stato_documento = Stato::where('descrizione', 'Bozza')->first();
 
-        $id_anagrafica = $anagrafica->id;
         $direzione = $tipo_documento->dir;
+        $id_segment = $id_segment ?: getSegmentPredefined($model->getModule()->id);
 
         $database = database();
 
@@ -81,6 +81,7 @@ class Ordine extends Document
         $model->anagrafica()->associate($anagrafica);
         $model->tipo()->associate($tipo_documento);
         $model->stato()->associate($stato_documento);
+        $model->id_segment = $id_segment;
 
         $model->save();
 
@@ -92,7 +93,7 @@ class Ordine extends Document
         }
 
         $model->numero = static::getNextNumero($data, $direzione);
-        $model->numero_esterno = static::getNextNumeroSecondario($data, $direzione);
+        $model->numero_esterno = static::getNextNumeroSecondario($data, $direzione, $id_segment);
 
         $model->save();
 
@@ -218,13 +219,13 @@ class Ordine extends Document
      *
      * @return string
      */
-    public static function getNextNumeroSecondario($data, $direzione)
+    public static function getNextNumeroSecondario($data, $direzione, $id_segment)
     {
         if ($direzione == 'uscita') {
             return '';
         }
 
-        $maschera = setting('Formato numero secondario ordine');
+        $maschera = Generator::getMaschera($id_segment);
 
         if (strpos($maschera, 'm') !== false) {
             $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero_esterno', [

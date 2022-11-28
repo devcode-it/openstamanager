@@ -34,9 +34,10 @@ switch (post('op')) {
     case 'add':
         $idanagrafica = post('idanagrafica');
         $anagrafica = Anagrafica::find($idanagrafica);
+        $id_segment = post('id_segment');
 
         // Generazione Contratto
-        $contratto = Contratto::build($anagrafica, post('nome'));
+        $contratto = Contratto::build($anagrafica, post('nome'), $id_segment);
 
         // Salvataggio informazioni sul rinnovo
         $contratto->idstato = post('idstato');
@@ -141,7 +142,7 @@ switch (post('op')) {
      // Duplica contratto
     case 'copy':
         $new = $contratto->replicate();
-        $new->numero = Contratto::getNextNumero($contratto->data_bozza);
+        $new->numero = Contratto::getNextNumero($contratto->data_bozza, $contratto->id_segment);
 
         $stato = Stato::where('descrizione', '=', 'Bozza')->first();
         $new->stato()->associate($stato);
@@ -395,7 +396,7 @@ switch (post('op')) {
         $new_contratto->data_accettazione = $contratto->data_conclusione->copy()->addDays(1);
         $new_contratto->data_conclusione = $new_contratto->data_accettazione->copy()->add($diff);
         $new_contratto->data_bozza = Carbon::now();
-        $new_contratto->numero = Contratto::getNextNumero($new_contratto->data_bozza);
+        $new_contratto->numero = Contratto::getNextNumero($new_contratto->data_bozza, $new_contratto->id_segment);
 
         $stato = Stato::where('descrizione', '=', 'Bozza')->first();
         $new_contratto->stato()->associate($stato);
@@ -514,7 +515,7 @@ switch (post('op')) {
 
         // Creazione del contratto al volo
         if (post('create_document') == 'on') {
-            $contratto = Contratto::build($documento->anagrafica, $documento->nome);
+            $contratto = Contratto::build($documento->anagrafica, $documento->nome, post('id_segment'));
 
             $contratto->idpagamento = $documento->idpagamento;
             $contratto->idsede = $id_sede;

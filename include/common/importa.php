@@ -32,6 +32,7 @@ $original_module = Modules::get($documento->module);
 
 $name = !empty($documento_finale) ? $documento_finale->module : $options['module'];
 $final_module = Modules::get($name);
+$id_segment = $_SESSION['module_'.$final_module['id']]['id_segment'];
 
 // IVA predefinita
 $id_iva = $id_iva ?: setting('Iva predefinita');
@@ -87,8 +88,6 @@ if (!empty($options['create_document'])) {
 
     // Opzioni aggiuntive per le Fatture
     if (in_array($final_module['name'], ['Fatture di vendita', 'Fatture di acquisto'])) {
-        $id_segment = $_SESSION['module_'.$final_module['id']]['id_segment'];
-
         $stato_predefinito = $database->fetchOne("SELECT id FROM co_statidocumento WHERE descrizione = 'Bozza'");
 
         if (!empty($options['reversed'])) {
@@ -113,15 +112,11 @@ if (!empty($options['create_document'])) {
                 {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT * FROM co_statidocumento WHERE descrizione IN (\'Emessa\', \'Bozza\')", "value": "'.$stato_predefinito['id'].'"]}
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-6">
                 {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, CONCAT(codice_tipo_documento_fe, \' - \', descrizione) AS descrizione FROM co_tipidocumento WHERE enabled = 1 AND dir = '.prepare($dir).' ORDER BY codice_tipo_documento_fe", "value": "'.$idtipodocumento.'" ]}
             </div>
-
-            <div class="col-md-4">
-                {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.prepare($final_module['id']).' ORDER BY name", "value": "'.$id_segment.'" ]}
-            </div>
             
-            <div class="col-md-4">
+            <div class="col-md-6">
                 {[ "type": "select", "label": "'.tr('Ritenuta previdenziale').'", "name": "id_ritenuta_contributi", "value": "$id_ritenuta_contributi$", "values": "query=SELECT * FROM co_ritenuta_contributi" ]}
             </div>';
     }
@@ -184,6 +179,9 @@ if (!empty($options['create_document'])) {
     }
 
     echo '
+                <div class="col-md-6">
+                    {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $final_module['id'], 'is_sezionale' => 1]).', "value": "'.$id_segment.'" ]}
+                </div>
             </div>
         </div>
     </div>';

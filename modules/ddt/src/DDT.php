@@ -55,7 +55,7 @@ class DDT extends Document
      *
      * @return self
      */
-    public static function build(Anagrafica $anagrafica, Tipo $tipo_documento, $data)
+    public static function build(Anagrafica $anagrafica, Tipo $tipo_documento, $data, $id_segment = null)
     {
         $model = new static();
 
@@ -65,6 +65,7 @@ class DDT extends Document
 
         $id_anagrafica = $anagrafica->id;
         $direzione = $tipo_documento->dir;
+        $id_segment = $id_segment ?: getSegmentPredefined($model->getModule()->id);
 
         $database = database();
 
@@ -87,6 +88,7 @@ class DDT extends Document
         $model->anagrafica()->associate($anagrafica);
         $model->tipo()->associate($tipo_documento);
         $model->stato()->associate($stato_documento);
+        $model->id_segment = $id_segment;
 
         $model->save();
 
@@ -98,7 +100,7 @@ class DDT extends Document
         }
 
         $model->numero = static::getNextNumero($data, $direzione);
-        $model->numero_esterno = static::getNextNumeroSecondario($data, $direzione);
+        $model->numero_esterno = static::getNextNumeroSecondario($data, $direzione, $id_segment);
 
         // Imposto, come sede aziendale, la prima sede disponibile come utente
         if ($direzione == 'entrata') {
@@ -282,13 +284,13 @@ class DDT extends Document
      *
      * @return string
      */
-    public static function getNextNumeroSecondario($data, $direzione)
+    public static function getNextNumeroSecondario($data, $direzione, $id_segment)
     {
         if ($direzione == 'uscita') {
             return '';
         }
 
-        $maschera = setting('Formato numero secondario ddt');
+        $maschera = Generator::getMaschera($id_segment);
 
         $ultimo = Generator::getPreviousFrom($maschera, 'dt_ddt', 'numero_esterno', [
             'YEAR(data) = '.prepare(date('Y', strtotime($data))),

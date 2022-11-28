@@ -23,6 +23,7 @@ $plugin = Plugins::get($id_plugin);
 
 $id_module = Modules::get('Contratti')['id'];
 $block_edit = filter('add') ? false : true;
+$module_interventi = Modules::get('Interventi');
 
 // Informazioni contratto
 $contratto = $dbo->fetchOne('SELECT * FROM `co_contratti` WHERE `id` = :id', [
@@ -95,13 +96,17 @@ echo '
         <div class="panel-body">
 
 			<div class="row">
-				<div class="col-md-6">
+				<div class="col-md-4">
 					{[ "type": "date",  "label": "'.tr('Data promemoria').'", "name": "data_richiesta", "required": 1, "value": "'.$data_accettazione.'", "readonly": '.intval($block_edit).', "min-date": "'.$data_accettazione.'", "max-date": "'.$data_conclusione.'" ]}
 				</div>
 
-				<div class="col-md-6">
+				<div class="col-md-4">
 					 {[ "type": "select", "label": "'.tr('Tipo intervento').'", "name": "idtipointervento", "required": 1, "id": "idtipointervento_", "value": "'.$record['idtipointervento'].'", "readonly": '.intval($block_edit).', "ajax-source": "tipiintervento", "value": "'.$idtipointervento.'"  ]}
 				</div>
+
+                <div class="col-md-4">
+                    {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $module_interventi['id'], 'is_sezionale' => 1]).', "value":"'.$_SESSION['module_'.$module_interventi['id']]['id_segment'].'" ]}
+                </div>
 			</div>
 
 			<div class="row">

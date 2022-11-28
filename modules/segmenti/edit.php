@@ -33,28 +33,35 @@ include_once __DIR__.'/../../core.php';
 		<div class="panel-body">
 			<div class="row">
 
-				<div class="col-md-4">
+				<div class="col-md-3">
 					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "required": 1, "value": "$name$" ]}
 				</div>
 
-				<div class="col-md-4">
+				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "module", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_modules WHERE ( enabled = 1 AND options != 'custom' ) OR id = <?php echo $record['id_module']; ?> ORDER BY name ASC", "value": "<?php echo $record['id_module']; ?>", "extra": "<?php echo ($record['predefined']) ? 'readonly' : ''; ?>" ]}
 				</div>
 
-				<div class="col-md-4">
+				<div class="col-md-2">
 					{[ "type": "checkbox", "label": "<?php echo tr('Predefinito'); ?>", "name": "predefined", "value": "$predefined$", "help": "<?php echo tr('Seleziona per rendere il segmento predefinito.'); ?>", "placeholder": "<?php echo tr('Segmento predefinito'); ?>", "extra": "<?php echo ($record['predefined']) ? 'readonly' : ''; ?>"  ]}
 				</div>
 
+                <div class="col-md-2">
+					{[ "type": "checkbox", "label": "<?php echo tr('Sezionale'); ?>", "help": "<?php echo tr('Se attivo verrà utilizzato il contatore'); ?>", "name": "is_sezionale", "value": "$is_sezionale$", "extra": "readonly" ]}
+				</div>
+
+                <div class="col-md-2">
+                    {[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "pattern", "value": "$pattern$", "maxlength": 25, "placeholder":"####/YYYY", "extra": "<?php echo ($tot > 0) ? 'readonly' : ''; ?>", "extra": "<?php echo (!$record['is_sezionale']) ? 'readonly' : ''; ?>" ]}
+				</div>
 			</div>
 
 			<div class="row">
 
 				<div class="col-md-8">
-					{[ "type": "textarea", "label": "<?php echo tr('Filtro'); ?>", "name": "clause", "required": 1, "value": "$clause$" ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Filtro'); ?>", "name": "clause", "required": 1, "value": "$clause$", "extra": "<?php echo ($record['is_sezionale']) ? 'readonly' : ''; ?>" ]}
 				</div>
 
 				<div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Posizione'); ?>", "name": "position", "required": 1, "values":"list=\"WHR\": \"WHERE\", \"HVN\": \"HAVING\"", "value": "$position$" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Posizione'); ?>", "name": "position", "required": 1, "values":"list=\"WHR\": \"WHERE\", \"HVN\": \"HAVING\"", "value": "$position$", "extra": "<?php echo ($record['is_sezionale']) ? 'readonly' : ''; ?>" ]}
 				</div>
 
 			</div>
@@ -92,13 +99,23 @@ $_SESSION['module_'.$record['id_module']]['id_segment'] = $previous_module;
 			</div>
 <?php
         }
+        echo '
+            <div class="row">
+				<div class="col-md-12">
+                    {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi[]", "multiple": "1", "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC", "value": "';
+                    $results = $dbo->fetchArray('SELECT GROUP_CONCAT(DISTINCT id_gruppo SEPARATOR \',\') AS gruppi FROM zz_group_segment WHERE id_segment='.prepare($id_record));
+
+                    echo $results[0]['gruppi'].'"';
+
+                    echo ', "help": "'.tr('Gruppi di utenti in grado di visualizzare questo segmento').'" ]}
+				</div>
+			</div>';
 ?>
 		</div>
 	</div>
 
 <?php
-
-if (string_contains($current_module['option'], '|segment')) {
+if ($record['is_sezionale']) {
     ?>
 	<!-- Campi extra -->
 	<div class="panel panel-primary">
@@ -108,26 +125,22 @@ if (string_contains($current_module['option'], '|segment')) {
 
 		<div class="panel-body">
 			<div class="row">
-				<div class="col-md-6">
-                    {[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "pattern", "value": "$pattern$", "maxlength": 25, "placeholder":"####/YYYY", "extra": "<?php echo ($tot > 0) ? 'readonly' : ''; ?>" ]}
-				</div>
-
                 <div class="col-md-6">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Sezionale fiscale'); ?>", "name": "is_fiscale", "value": "$is_fiscale$", "extra": "<?php echo ($tot > 0) ? 'readonly' : ''; ?>"  ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Sezionale fiscale'); ?>", "name": "is_fiscale", "value": "$is_fiscale$", "extra": "<?php echo ($tot > 0 || ($record['modulo']!='Fatture di vendita' && $record['modulo']!='Fatture di acquisto')) ? 'readonly' : ''; ?>"  ]}
 				</div>
             </div>
 
 			<div class="row">
                 <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Predefinito note di credito'); ?>", "name": "predefined_accredito", "value": "$predefined_accredito$", "help": "<?php echo tr('Seleziona per rendere il sezionale predefinito per le note di credito'); ?>", "placeholder": "<?php echo tr('Sezionale predefinito per le note di credito'); ?>"  ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Predefinito note di credito'); ?>", "name": "predefined_accredito", "value": "$predefined_accredito$", "help": "<?php echo tr('Seleziona per rendere il sezionale predefinito per le note di credito'); ?>", "placeholder": "<?php echo tr('Sezionale predefinito per le note di credito'); ?>", "extra": "<?php echo ($record['modulo']!='Fatture di vendita' && $record['modulo']!='Fatture di acquisto') ? 'readonly' : ''; ?>"  ]}
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Predefinito note di debito'); ?>", "name": "predefined_addebito", "value": "$predefined_addebito$", "help": "<?php echo tr('Seleziona per rendere il sezionale predefinito per le note di debito'); ?>", "placeholder": "<?php echo tr('Sezionale predefinito per le note di debito'); ?>"  ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Predefinito note di debito'); ?>", "name": "predefined_addebito", "value": "$predefined_addebito$", "help": "<?php echo tr('Seleziona per rendere il sezionale predefinito per le note di debito'); ?>", "placeholder": "<?php echo tr('Sezionale predefinito per le note di debito'); ?>", "extra": "<?php echo ($record['modulo']!='Fatture di vendita' && $record['modulo']!='Fatture di acquisto') ? 'readonly' : ''; ?>"  ]}
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Autofatture'); ?>", "name": "autofatture", "value": "$autofatture$" ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Autofatture'); ?>", "name": "autofatture", "value": "$autofatture$", "extra": "<?php echo ($record['modulo']!='Fatture di vendita' && $record['modulo']!='Fatture di acquisto') ? 'readonly' : ''; ?>" ]}
                 </div>
 			</div>
 

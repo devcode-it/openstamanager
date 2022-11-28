@@ -43,11 +43,12 @@ switch (filter('op')) {
         $idanagrafica = post('idanagrafica');
         $data = post('data');
         $id_tipo = post('idtipoddt');
+        $id_segment = post('id_segment');
 
         $anagrafica = Anagrafica::find($idanagrafica);
         $tipo = Tipo::find($id_tipo);
 
-        $ddt = DDT::build($anagrafica, $tipo, $data);
+        $ddt = DDT::build($anagrafica, $tipo, $data, $id_segment);
         $id_record = $ddt->id;
 
         $ddt->idcausalet = post('idcausalet');
@@ -325,7 +326,7 @@ switch (filter('op')) {
         if (post('create_document') == 'on') {
             $tipo = Tipo::where('dir', $documento->direzione)->first();
 
-            $ddt = DDT::build($documento->anagrafica, $tipo, post('data'));
+            $ddt = DDT::build($documento->anagrafica, $tipo, post('data'), post('id_segment'));
             $ddt->idpagamento = $documento->idpagamento;
 
             $ddt->id_documento_fe = $documento->id_documento_fe;
@@ -483,7 +484,7 @@ switch (filter('op')) {
         $stato = Stato::where('descrizione', '=', 'Evaso')->first();
 
         // Duplicazione DDT
-        $copia = DDT::build($ddt->anagrafica, $tipo, $ddt->data);
+        $copia = DDT::build($ddt->anagrafica, $tipo, $ddt->data, post('id_segment'));
         $copia->stato()->associate($stato);
         $copia->id_ddt_trasporto_interno = $ddt->id;
         $copia->idaspettobeni = $ddt->idaspettobeni;
@@ -531,7 +532,7 @@ switch (filter('op')) {
     case 'copy':
         $new = $ddt->replicate();
         $new->numero = DDT::getNextNumero($new->data, $dir);
-        $new->numero_esterno = DDT::getNextNumeroSecondario($new->data, $dir);
+        $new->numero_esterno = DDT::getNextNumeroSecondario($new->data, $dir, $new->id_segment);
 
         $stato = Stato::where('descrizione', '=', 'Bozza')->first();
         $new->stato()->associate($stato);

@@ -178,12 +178,13 @@ switch (post('op')) {
             $idstatointervento = post('idstatointervento');
             $data_richiesta = post('data_richiesta');
             $data_scadenza = post('data_scadenza') ?: null;
+            $id_segment = post('id_segment');
 
             $anagrafica = Anagrafica::find($idanagrafica);
             $tipo = TipoSessione::find($idtipointervento);
             $stato = Stato::find($idstatointervento);
 
-            $intervento = Intervento::build($anagrafica, $tipo, $stato, $data_richiesta);
+            $intervento = Intervento::build($anagrafica, $tipo, $stato, $data_richiesta, $id_segment);
             $id_record = $intervento->id;
 
             flash()->info(tr('Aggiunto nuovo intervento!'));
@@ -323,7 +324,7 @@ switch (post('op')) {
                 $intervento = Intervento::find($id_record);
                 $new = $intervento->replicate();
                 // Calcolo il nuovo codice
-                $new->codice = Intervento::getNextCodice($data_ricorrenza);
+                $new->codice = Intervento::getNextCodice($data_ricorrenza, $new->id_segment);
                 $new->data_richiesta = $data_ricorrenza;
                 $new->idstatointervento = $stato->idstatointervento;
                 $new->save();
@@ -615,7 +616,7 @@ switch (post('op')) {
 
             $anagrafica = post('idanagrafica') ? Anagrafica::find(post('idanagrafica')) : $documento->anagrafica;
 
-            $intervento = Intervento::build($anagrafica, $tipo, $stato, post('data'));
+            $intervento = Intervento::build($anagrafica, $tipo, $stato, post('data'), post('id_segment'));
             $intervento->idsede_destinazione = $id_sede;
 
             $intervento->id_documento_fe = $documento->id_documento_fe;
@@ -809,7 +810,7 @@ switch (post('op')) {
         $new->idstatointervento = $id_stato;
 
         // Calcolo del nuovo codice sulla base della data di richiesta
-        $new->codice = Intervento::getNextCodice($data_richiesta);
+        $new->codice = Intervento::getNextCodice($data_richiesta, $new->id_segment);
         $new->data_richiesta = $data_richiesta;
         $new->data_scadenza = post('data_scadenza');
         $new->firma_file = '';

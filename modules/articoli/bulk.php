@@ -28,6 +28,12 @@ use Plugins\ListinoClienti\DettaglioPrezzo;
 
 include_once __DIR__.'/../../core.php';
 
+$module_preventivi = 'Preventivi';
+
+// Segmenti
+$id_preventivi = Modules::get($module_preventivi)['id'];
+$id_segment = $_SESSION['module_'.$id_preventivi]['id_segment'];
+
 switch (post('op')) {
     case 'change-acquisto':
         foreach ($id_records as $id) {
@@ -183,7 +189,7 @@ switch (post('op')) {
         $tipo = TipoSessione::find($id_tipo);
         $n_articoli = 0;
 
-        $preventivo = Preventivo::build($anagrafica, $tipo, $nome, $data, 0);
+        $preventivo = Preventivo::build($anagrafica, $tipo, $nome, $data, 0, post('id_segment'));
         $id_preventivo = $preventivo->id;
 
         foreach ($id_records as $id) {
@@ -483,6 +489,7 @@ $operations['crea-preventivo'] = [
         'msg' => tr('Ogni articolo selezionato, verrà aggiunto al preventivo').'
         <br><br>{[ "type": "text", "label": "'.tr('Nome preventivo').'", "name": "nome", "required": 1 ]}
         {[ "type": "select", "label": "'.tr('Cliente').'", "name": "id_cliente", "ajax-source": "clienti", "required": 1 ]}
+        {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(["id_module" => $id_preventivi, 'is_sezionale' => 1]).', "value": "'.$id_segment.'" ]}
         {[ "type": "select", "label": "'.tr('Tipo di attività').'", "name": "id_tipo", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento", "required": 1 ]}
         {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "value": "-now-" ]}',
         'button' => tr('Procedi'),

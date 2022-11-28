@@ -63,7 +63,7 @@ class Contratto extends Document
      *
      * @return self
      */
-    public static function build(Anagrafica $anagrafica, $nome)
+    public static function build(Anagrafica $anagrafica, $nome, $id_segment = null)
     {
         $model = new static();
 
@@ -71,6 +71,7 @@ class Contratto extends Document
 
         $id_anagrafica = $anagrafica->id;
         $id_agente = $anagrafica->idagente;
+        $id_segment = $id_segment ?: getSegmentPredefined($model->getModule()->id);
 
         $id_pagamento = $anagrafica->idpagamento_vendite;
         if (empty($id_pagamento)) {
@@ -82,7 +83,8 @@ class Contratto extends Document
 
         $model->nome = $nome;
         $model->data_bozza = Carbon::now();
-        $model->numero = static::getNextNumero($model->data_bozza);
+        $model->numero = static::getNextNumero($model->data_bozza, $id_segment);
+        $model->id_segment = $id_segment;
 
         if (!empty($id_agente)) {
             $model->idagente = $id_agente;
@@ -269,9 +271,9 @@ class Contratto extends Document
      *
      * @return string
      */
-    public static function getNextNumero($data)
+    public static function getNextNumero($data, $id_segment)
     {
-        $maschera = setting('Formato codice contratti');
+        $maschera = Generator::getMaschera($id_segment);
 
         if (strpos($maschera, 'm') !== false) {
             $ultimo = Generator::getPreviousFrom($maschera, 'co_contratti', 'numero', [

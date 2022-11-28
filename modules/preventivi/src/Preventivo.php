@@ -64,18 +64,15 @@ class Preventivo extends Document
      *
      * @return self
      */
-    public static function build(Anagrafica $anagrafica, TipoSessione $tipo_sessione, $nome, $data_bozza, $id_sede)
+    public static function build(Anagrafica $anagrafica, TipoSessione $tipo_sessione, $nome, $data_bozza, $id_sede, $id_segment = null)
     {
         $model = new static();
 
         $stato_documento = Stato::where('descrizione', 'Bozza')->first();
 
-        $id_anagrafica = $anagrafica->id;
         $id_agente = $anagrafica->idagente;
         $id_pagamento = $anagrafica->idpagamento_vendite;
-
-        $costo_orario = $tipo_sessione['costo_orario'];
-        $costo_diritto_chiamata = $tipo_sessione['costo_diritto_chiamata'];
+        $id_segment = $id_segment ?: getSegmentPredefined($model->getModule()->id);
 
         $id_iva = setting('Iva predefinita');
         if (empty($id_pagamento)) {
@@ -86,7 +83,7 @@ class Preventivo extends Document
         $model->stato()->associate($stato_documento);
         $model->tipoSessione()->associate($tipo_sessione);
 
-        $model->numero = static::getNextNumero($data_bozza);
+        $model->numero = static::getNextNumero($data_bozza, $id_segment);
 
         // Salvataggio delle informazioni
         $model->nome = $nome;
@@ -111,6 +108,7 @@ class Preventivo extends Document
             $model->idpagamento = $id_pagamento;
         }
         $model->condizioni_fornitura = setting('Condizioni generali di fornitura preventivi');
+        $model->id_segment = $id_segment;
 
         $model->save();
 
@@ -298,9 +296,9 @@ class Preventivo extends Document
      *
      * @return string
      */
-    public static function getNextNumero($data)
+    public static function getNextNumero($data, $id_segment)
     {
-        $maschera = setting('Formato codice preventivi');
+        $maschera = Generator::getMaschera($id_segment);
 
         if (strpos($maschera, 'm') !== false) {
             $ultimo = Generator::getPreviousFrom($maschera, 'co_preventivi', 'numero', [

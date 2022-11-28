@@ -132,6 +132,7 @@ return [
     'zz_files',
     'zz_groups',
     'zz_group_module',
+    'zz_group_segment',
     'zz_group_view',
     'zz_hooks',
     'zz_imports',

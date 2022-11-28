@@ -142,9 +142,6 @@ $data_fine = $data_fine ?: $data;
 $inizio_sessione = $data.' '.$orario_inizio;
 $fine_sessione = $data_fine.' '.$orario_fine;
 
-// Calcolo del nuovo codice
-$new_codice = Intervento::getNextCodice($data);
-
 echo '
 <form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
@@ -195,6 +192,10 @@ echo '
         <div class="col-md-4">
             {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "ajax-source": "referenti", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica, 'idclientefinale' => $id_cliente_finale]).', "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|id_plugin='.Plugins::get('Referenti')['id'].'&id_parent='.$id_anagrafica.'" ]}
         </div>
+
+        <div class="col-md-4">
+			{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_sezionale' => 1]).', "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'" ]}
+		</div>
     </div>
 
     <div class="row">

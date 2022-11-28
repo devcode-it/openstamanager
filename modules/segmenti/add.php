@@ -28,8 +28,12 @@ include_once __DIR__.'/../../core.php';
             {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "required": 1, "value": "$name$" ]}
 		</div>
 
-		<div class="col-md-6">
+		<div class="col-md-3">
             {[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "pattern", "class": "alphanumeric-mask", "value": "$pattern$", "maxlength": 25, "placeholder":"####/YYYY" ]}
+		</div>
+
+		<div class="col-md-3">
+			{[ "type": "checkbox", "label": "<?php echo tr('Sezionale'); ?>", "help": "<?php echo tr('Se attivo verrà utilizzato il contatore'); ?>", "name": "is_sezionale", "value": "$is_sezionale$" ]}
 		</div>
 	</div>
 

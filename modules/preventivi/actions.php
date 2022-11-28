@@ -37,11 +37,12 @@ switch (post('op')) {
         $idtipointervento = post('idtipointervento');
         $data_bozza = post('data_bozza');
         $id_sede = post('idsede');
+        $id_segment = post('id_segment');
 
         $anagrafica = Anagrafica::find($idanagrafica);
         $tipo = TipoSessione::find($idtipointervento);
 
-        $preventivo = Preventivo::build($anagrafica, $tipo, $nome, $data_bozza, $id_sede);
+        $preventivo = Preventivo::build($anagrafica, $tipo, $nome, $data_bozza, $id_sede, $id_segment);
       
         $preventivo->idstato = post('idstato');
         $preventivo->save();
@@ -105,7 +106,7 @@ switch (post('op')) {
     case 'copy':
         // Copia del preventivo
         $new = $preventivo->replicate();
-        $new->numero = Preventivo::getNextNumero(Carbon::now());
+        $new->numero = Preventivo::getNextNumero(Carbon::now(), $new->id_segment);
         $new->data_bozza = Carbon::now();
 
         $stato_preventivo = Stato::where('descrizione', '=', 'Bozza')->first();

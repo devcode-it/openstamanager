@@ -302,6 +302,25 @@ class Update
                     }
                 }
 
+                // Permessi di default dei segmenti
+                if ($database->tableExists('zz_segments')) {
+                    $gruppi = $database->fetchArray('SELECT `id` FROM `zz_groups`');
+                    $segments = $database->fetchArray('SELECT `id` FROM `zz_segments` WHERE `id` NOT IN (SELECT `id_segment` FROM `zz_group_segment`)');
+
+                    $array = [];
+                    foreach ($segments as $segment) {
+                        foreach ($gruppi as $gruppo) {
+                            $array[] = [
+                                'id_gruppo' => $gruppo['id'],
+                                'id_segment' => $segment['id'],
+                            ];
+                        }
+                    }
+                    if (!empty($array)) {
+                        $database->insert('zz_group_segment', $array);
+                    }
+                }
+
                 // Normalizzazione di charset e collation
                 self::normalizeDatabase($database->getDatabaseName());
 

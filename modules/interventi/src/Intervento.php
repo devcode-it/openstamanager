@@ -52,16 +52,19 @@ class Intervento extends Document
      *
      * @return self
      */
-    public static function build(Anagrafica $anagrafica, TipoSessione $tipo_sessione, Stato $stato, $data_richiesta)
+    public static function build(Anagrafica $anagrafica, TipoSessione $tipo_sessione, Stato $stato, $data_richiesta, $id_segment = null)
     {
         $model = new static();
+
+        $id_segment = $id_segment ?: getSegmentPredefined($model->getModule()->id);
 
         $model->anagrafica()->associate($anagrafica);
         $model->stato()->associate($stato);
         $model->tipo()->associate($tipo_sessione);
 
-        $model->codice = static::getNextCodice($data_richiesta);
+        $model->codice = static::getNextCodice($data_richiesta, $id_segment);
         $model->data_richiesta = $data_richiesta;
+        $model->id_segment = $id_segment;
 
         $model->save();
 
@@ -207,9 +210,9 @@ class Intervento extends Document
      *
      * @return string
      */
-    public static function getNextCodice($data)
+    public static function getNextCodice($data, $id_segment)
     {
-        $maschera = setting('Formato codice attività');
+        $maschera = Generator::getMaschera($id_segment);
 
         //$ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice');
 

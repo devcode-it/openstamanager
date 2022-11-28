@@ -42,19 +42,25 @@ echo '
 	</div>
 
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-6">
             {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstato", "required": 1, "values": "query='.$stati.'" ]}
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-6">
+			{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_sezionale' => 1]).', "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'" ]}
+		</div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
             {[ "type": "date", "label": "'.tr('Data accettazione').'", "name": "data_accettazione" ]}
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
             {[ "type": "date", "label": "'.tr('Data conclusione').'", "name": "data_conclusione" ]}
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
             {[ "type": "number", "label": "'.tr('Validità contratto').'", "name": "validita", "decimals": "0", "icon-after": "choice|period|'.$record['tipo_validita'].'", "help": "'.tr('Il campo Validità contratto viene utilizzato per il calcolo della Data di conclusione del contratto').'" ]}
         </div>
     </div>

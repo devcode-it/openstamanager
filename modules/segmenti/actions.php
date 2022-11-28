@@ -58,6 +58,9 @@ switch (post('op')) {
             'autofatture' => post('autofatture'),
         ], ['id' => $id_record]);
 
+        // Aggiornamento dei permessi relativi
+        $dbo->sync('zz_group_segment', ['id_segment' => $id_record], ['id_gruppo' => (array) post('gruppi')]);
+
         flash()->info(tr('Modifiche salvate correttamente'));
 
         break;
@@ -82,9 +85,21 @@ switch (post('op')) {
             'pattern' => $pattern,
             'note' => post('note'),
             'predefined' => $predefined,
+		    'is_sezionale' => post('is_sezionale'),
         ]);
 
         $id_record = $dbo->lastInsertedID();
+
+        // Aggiunta permessi segmento
+        $gruppi = $dbo->fetchArray('SELECT `id` FROM `zz_groups`');
+        $array = [];
+        foreach ($gruppi as $gruppo) {
+            $array[] = [
+                'id_gruppo' => $gruppo['id'],
+                'id_segment' => $id_record,
+            ];
+        }
+        $dbo->insert('zz_group_segment', $array);
 
         flash()->info(tr('Nuovo segmento aggiunto'));
 

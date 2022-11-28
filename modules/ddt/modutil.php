@@ -42,8 +42,9 @@ function get_new_numeroddt($data)
 function get_new_numerosecondarioddt($data)
 {
     global $dir;
+    global $id_segment;
 
-    return DDT::getNextNumeroSecondario($data, $dir);
+    return DDT::getNextNumeroSecondario($data, $dir, $id_segment);
 }
 
 /**

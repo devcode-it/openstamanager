@@ -48,11 +48,11 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 	<input type="hidden" name="id_record" value="">
 
 	<div class="row">
-		<div class="col-md-4">
+		<div class="col-md-6">
 			 {[ "type": "date", "label": "<?php echo tr('Data'); ?>", "name": "data", "required": 1, "value": "-now-" ]}
 		</div>
 
-		<div class="col-md-4">
+		<div class="col-md-6">
 			{[ "type": "select", "label": "<?php echo $label; ?>", "name": "idanagrafica", "id": "idanagrafica_add", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "clienti_fornitori", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>&readonly_tipo=1" ]}
 		</div>
 
@@ -60,9 +60,15 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 		<div class="col-md-4 hide">
 			{[ "type": "select", "label": "<?php echo tr('Tipo ddt'); ?>", "name": "idtipoddt", "required": 1, "values": "query=SELECT id, descrizione FROM dt_tipiddt WHERE dir='<?php echo $dir; ?>'", "value": "<?php echo $id_tipoddt; ?>" ]}
 		</div>
+	</div>
 
-		<div class="col-md-4">
+	<div class="row">
+		<div class="col-md-6">
 			{[ "type": "select", "label": "<?php echo tr('Causale trasporto'); ?>", "name": "idcausalet", "required": 1, "value": "<?php echo $id_causalet; ?>", "ajax-source": "causali", "icon-after": "add|<?php echo Modules::get('Causali')['id']; ?>|||" ]}
+		</div>
+
+		<div class="col-md-6">
+			{[ "type": "select", "label": "<?php echo tr('Sezionale'); ?>", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": <?php echo json_encode(['id_module' => $id_module, 'is_sezionale' => 1]); ?>, "value": "<?php echo $_SESSION['module_'.$id_module]['id_segment']; ?>" ]}
 		</div>
 	</div>
 

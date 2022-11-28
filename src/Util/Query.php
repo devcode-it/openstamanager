@@ -75,6 +75,7 @@ class Query
 
         $id_module = Modules::getCurrent()['id'];
         $segment = !empty(self::$segments) ? $_SESSION['module_'.$id_module]['id_segment'] : null;
+        $is_sezionale = database()->fetchOne('SELECT `is_sezionale` FROM `zz_segments` WHERE `id` = '.prepare($segment))['is_sezionale'];
 
         $user = Auth::user();
 
@@ -121,7 +122,7 @@ class Query
             '|period_end|' => $_SESSION['period_end'].' 23:59:59',
 
             // Segmenti
-            '|'.$segment_filter.'|' => !empty($segment) ? ' AND '.$segment_name.' = '.prepare($segment) : '',
+            '|'.$segment_filter.'|' => !empty($segment) && $is_sezionale ? ' AND '.$segment_name.' = '.prepare($segment) : '',
 
             // Filtro dinamico per il modulo Giacenze sedi
             '|giacenze_sedi_idsede|' => prepare(isset($_SESSION['giacenze_sedi']) ? $_SESSION['giacenze_sedi']['idsede'] : null),

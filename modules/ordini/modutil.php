@@ -42,8 +42,9 @@ function get_new_numeroordine($data)
 function get_new_numerosecondarioordine($data)
 {
     global $dir;
+    global $id_segment;
 
-    return Ordine::getNextNumeroSecondario($data, $dir);
+    return Ordine::getNextNumeroSecondario($data, $dir, $id_segment);
 }
 
 /**

@@ -29,11 +29,12 @@
         "ext-xsl": "*",
         "ext-zip": "*",
         "aluguest/ical-easy-reader": "^1.5",
-        "voku/stringy": "~6.0",
         "davidepastore/codice-fiscale": "^0.6.0",
+        "digitick/sepa-xml": "^2.1",
         "dragonmantank/cron-expression": "^1.0",
         "ezyang/htmlpurifier": "^4.8",
         "filp/whoops": "^2.1",
+        "greenlion/php-sql-parser": "^4.5",
         "guzzlehttp/guzzle": "^7.0.1",
         "ifsnop/mysqldump-php": "^2.3",
         "illuminate/database": "^8.0",
@@ -58,9 +59,9 @@
         "symfony/translation": "^3.3",
         "symfony/var-dumper": "^3.3",
         "thenetworg/oauth2-azure": "^2.0",
-        "willdurand/geocoder": "^4.2",
-        "digitick/sepa-xml": "^2.1",
-        "wdog/sdd_ita": "dev-master"
+        "voku/stringy": "~6.0",
+        "wdog/sdd_ita": "dev-master",
+        "willdurand/geocoder": "^4.2"
     },
     "require-dev": {
         "codeception/codeception": "^4.0",

@@ -208,3 +208,19 @@ function parseScontoCombinato($combinato)
 
     return (1 - $result) * 100;
 }
+
+/**
+ * Funzione che gestisce il parsing di uno sconto combinato e la relativa trasformazione in sconto fisso.
+ * Esempio: (40 + 10) % = 44 %.
+ *
+ * @param $combinato
+ *
+ * @return float|int
+ */
+function getSegmentPredefined($id_module)
+{
+    $id_segment = database()->selectOne('zz_segments', 'id', ['id_module' => $id_module, 'predefined' => 1])['id'];
+
+    return $id_segment;
+}
+

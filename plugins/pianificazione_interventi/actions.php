@@ -150,7 +150,7 @@ switch ($operazione) {
                 // Creazione intervento collegato se non presente
                 if (post('pianifica_intervento') && empty($promemoria->intervento)) {
                     // Creazione intervento
-                    $intervento = Intervento::build($contratto->anagrafica, $promemoria_originale->tipo, $stato, $data_richiesta);
+                    $intervento = Intervento::build($contratto->anagrafica, $promemoria_originale->tipo, $stato, $data_richiesta, post('id_segment'));
                     $intervento->idsede_destinazione = $promemoria_corrente->idsede ?: 0;
                     $intervento->richiesta = $promemoria_corrente->richiesta;
                     $intervento->idclientefinale = post('idclientefinale') ?: 0;

@@ -179,11 +179,12 @@ class Modules
         }
 
         $module = self::get($module)['id'];
+        $user = Auth::user();
 
         if (!isset(self::$segments[$module])) {
             $database = database();
 
-            self::$segments[$module] = $database->fetchArray('SELECT * FROM `zz_segments` WHERE `id_module` = '.prepare($module).' ORDER BY `predefined` DESC, `id` ASC');
+            self::$segments[$module] = $database->fetchArray('SELECT * FROM `zz_segments` INNER JOIN `zz_group_segment` ON `zz_segments`.`id` = `zz_group_segment`.`id_segment` WHERE `id_gruppo` = '.prepare($user->idgruppo).' AND `id_module` = '.prepare($module).' ORDER BY `predefined` DESC, `id` ASC');
         }
 
         return (array) self::$segments[$module];

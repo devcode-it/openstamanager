@@ -181,26 +181,26 @@ if (post('db_host') !== null) {
         else {
             // Creazione manifest.json
             $manifest = '{
-    "dir" : "ltr",
-    "lang" : "it-IT",
-    "name" : "OpenSTAManager",
-    "scope" : "'.base_path().'",
-    "display" : "fullscreen",
-    "start_url" : "'.base_path().'",
-    "short_name" : "OSM",
-    "theme_color" : "transparent",
-    "description" : "OpenSTAManager",
-    "orientation" : "any",
-    "background_color" : "transparent",
-    "generated" : "true",
-    "icons" : [
-        {
-            "src": "assets/dist/img/logo_completo.png",
-            "type": "image/png",
-            "sizes": "489x91"
-        }
-    ]
-}';
+                "dir" : "ltr",
+                "lang" : "'.((empty($lang) || $lang == '|lang|') ? 'it-IT' : str_replace('_','-',$lang)).'",
+                "name" : "'.tr('OpenSTAManager').'",
+                "scope" : "'.((empty(base_path()) || base_path()=='/') ? '' : '.').'",
+                "display" : "fullscreen",
+                "start_url" : "'.((empty(base_path()) || base_path()=='/') ? '/' : './').'",
+                "short_name" : "OSM",
+                "theme_color" : "transparent",
+                "description" : "'.tr('OpenSTAManager').'",
+                "orientation" : "any",
+                "background_color" : "transparent",
+                "generated" : "true",
+                "icons" : [
+                    {
+                        "src": "assets/dist/img/logo_completo.png",
+                        "type": "image/png",
+                        "sizes": "489x91"
+                    }
+                ]
+            }';
             file_put_contents('manifest.json', $manifest);
 
             redirect(base_path().'/index.php');
@@ -208,6 +208,8 @@ if (post('db_host') !== null) {
         }
     }
 }
+
+
 
 // Controlla che i parametri di configurazione permettano l'accesso al database
 if ((file_exists('config.inc.php') || $valid_config) && !$dbo->isConnected()) {

@@ -359,7 +359,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                     </select>
 
                     <script>
-                    var flag_link = "https://lipis.github.io/flag-icon-css/flags/4x3/|flag|.svg";
+                    var flag_link = "'.$img.'/flags/|flag|.svg";
 
                     $(document).ready(function() {
                         $.ajax({

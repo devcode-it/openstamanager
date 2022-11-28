@@ -179,32 +179,13 @@ if (post('db_host') !== null) {
         }
         // Continua con l'esecuzione delle operazioni previste
         else {
-            // Creazione manifest.json
-            $manifest = '{
-                "dir" : "ltr",
-                "lang" : "'.((empty($lang) || $lang == '|lang|') ? 'it-IT' : str_replace('_','-',$lang)).'",
-                "name" : "'.tr('OpenSTAManager').'",
-                "scope" : "'.((empty(base_path()) || base_path()=='/') ? '' : '.').'",
-                "display" : "fullscreen",
-                "start_url" : "'.((empty(base_path()) || base_path()=='/') ? '/' : './').'",
-                "short_name" : "OSM",
-                "theme_color" : "transparent",
-                "description" : "'.tr('OpenSTAManager').'",
-                "orientation" : "any",
-                "background_color" : "transparent",
-                "generated" : "true",
-                "icons" : [
-                    {
-                        "src": "assets/dist/img/logo_completo.png",
-                        "type": "image/png",
-                        "sizes": "489x91"
-                    }
-                ]
-            }';
-            file_put_contents('manifest.json', $manifest);
 
+            // Creazione manifest.json
+            include_once App::filepath('include/init', 'manifest.php');
             redirect(base_path().'/index.php');
             exit();
+
+            
         }
     }
 }

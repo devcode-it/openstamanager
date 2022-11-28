@@ -368,11 +368,11 @@ echo '
 if (!$block_edit && sizeof($righe) > 0) {
     echo '
     <div class="btn-group">
-        <button type="button" class="btn btn-xs btn-default disabled" id="elimina_righe" onclick="duplicaRiga(getSelectData());">
+        <button type="button" class="btn btn-xs btn-default disabled" id="duplica_righe" onclick="duplicaRiga(getSelectData());">
             <i class="fa fa-copy"></i>
         </button>
 
-        <button type="button" class="btn btn-xs btn-default disabled" id="duplica_righe" onclick="rimuoviRiga(getSelectData());">
+        <button type="button" class="btn btn-xs btn-default disabled" id="elimina_righe" onclick="rimuoviRiga(getSelectData());">
             <i class="fa fa-trash"></i>
         </button>
     </div>';

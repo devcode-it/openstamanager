@@ -72,6 +72,8 @@ switch (post('op')) {
         break;
 
     case 'send-sollecito':
+        $template = Template::pool('Sollecito di pagamento');
+        
         $list = [];
         foreach ($id_records as $id) {
             $scadenza = Scadenza::find($id);
@@ -102,7 +104,6 @@ switch (post('op')) {
                 }
 
                 // Selezione destinatari e invio mail
-                $template = Template::pool('Sollecito di pagamento');
                 if (!empty($template)) {
                     $creata_mail = false;
                     $emails = [];

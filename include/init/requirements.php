@@ -210,7 +210,7 @@ foreach ($db as $name => $values) {
 
 
 // Percorsi di servizio
-$dirs = [
+$dirs_to_check = [
     'backup' => tr('Necessario per il salvataggio dei backup'),
     'files' => tr('Necessario per il salvataggio di file inseriti dagli utenti'),
     'files/temp' => tr('Necessario per la generazione delle stampe'),
@@ -218,7 +218,7 @@ $dirs = [
 ];
 
 $directories = [];
-foreach ($dirs as $name => $description) {
+foreach ($dirs_to_check as $name => $description) {
     $status = is_writable(base_dir().DIRECTORY_SEPARATOR.$name);
 
     $directories[] = [
@@ -230,6 +230,28 @@ foreach ($dirs as $name => $description) {
 }
 
 
+// File di servizio
+$files_to_check = [
+    'manifest.json' => tr('Necessario per aggiunta a schermata home da terminale'),
+    'database_5_7.json' => tr('Necessario per il controllo integrità con database MySQL 5.7.x'),
+    'database.json' => tr('Necessario per il controllo integrità con database MySQL 8.0.x'),
+    'checksum.json' => tr('Necessario per il controllo integrità dei files del gestionale'),
+];
+
+$files = [];
+foreach ($files_to_check as $name => $description) {
+    $status = is_writable(base_dir().DIRECTORY_SEPARATOR.$name);
+
+    $files[] = [
+        'name' => $name,
+        'description' => $description,
+        'status' => $status,
+        'type' => tr('File'),
+    ];
+}
+
+
+
 $requirements = [
     tr('Apache') => $apache,
     tr('PHP (_VERSION_ _SUPPORTED_)', [
@@ -238,6 +260,7 @@ $requirements = [
     ]) => $php,
     tr('MySQL') => $mysql,
     tr('Percorsi di servizio') => $directories,
+    tr('File di servizio') => $files,
 ];
 
 if (!$database->isInstalled() || empty($mysql)){
@@ -276,8 +299,8 @@ foreach ($requirements as $key => $values) {
         echo '
             <tr class="'.($value['status'] ? 'success' : 'danger').'">
                 <td style="width: 10px"><i class="fa fa-'.($value['status'] ? 'check' : 'times').'"></i></td>
-                <td>'.$value['type'].'</td>
-                <td>'.$value['name'].'</td>
+                <td style="width: 120px" >'.$value['type'].'</td>
+                <td style="width: 200px" >'.$value['name'].'</td>
                 <td>'.$value['description'].'</td>
             </tr>';
     }

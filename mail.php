@@ -50,6 +50,18 @@ foreach ($mansioni as $mansione) {
     }
 }
 
+
+// Aggiungo email tecnici assegnati quando sono sul template Notifica intervento
+if ($template->name  == 'Notifica intervento'){
+    $tecnici = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico', ['id_intervento' => $id_record]);
+    foreach ($tecnici as $tecnico) {
+        $anagrafica = $dbo->table('an_anagrafiche')->where('idanagrafica', $tecnico['id_tecnico'])->where('email', '!=', '')->first();
+        if (!in_array($anagrafica->email, $emails)) {
+            $emails[] = $anagrafica->email;
+        }   
+    }
+}
+
 // Campi mancanti
 $campi_mancanti = [];
 
@@ -187,10 +199,14 @@ echo '
     var id_anagrafica = "'.$id_anagrafica.'";
     var pec = "'.$smtp['pec'].'";
 
+    var id_record = "'.$id_record.'";
+    var id_module = "'.$id_module.'";
+    var id_template = "'.$template->id.'";
+
     $(document).ready(function() {
         // Auto-completamento destinatario
         if (id_anagrafica) {
-            $(document).load(globals.rootdir + "/ajax_complete.php?module=Anagrafiche&op=get_email&id_anagrafica=" + id_anagrafica + (pec ? "&type=pec" : ""), function(response) {
+            $(document).load(globals.rootdir + "/ajax_complete.php?module=Anagrafiche&op=get_email&id_anagrafica=" + id_anagrafica + "&id_record=" + id_record + "&id_module=" + id_module +  "&id_template=" + id_template + (pec ? "&type=pec" : ""), function(response) {
                 emails = JSON.parse(response);
                 let num = 0;
                 $(".destinatari").each(function(){

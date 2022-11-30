@@ -628,18 +628,18 @@ function verificaMinimoVendita() {
 
     let div = $(".minimo_vendita");
     div.css("margin-top", "-13px");
-    if (prezzo_unitario <= minimo_vendita) {
-        if (input("blocca_minimo_vendita").get() == "1") {
-            prezzo_unitario_input.val(minimo_vendita);
-            div.html(`<p class="label-warning">'.tr('Attenzione:<br>non è possibile inserire un prezzo inferiore al prezzo minimo di vendita ').'` + minimo_vendita.toLocale() + ` ` + globals.currency + `</p>`);
-        } 
-    }
     if (prezzo_unitario < minimo_vendita) {
         if (input("blocca_minimo_vendita").get() == "0") {
             div.html(`<p class="label-warning">'.tr('Attenzione:<br>valore inferiore al prezzo minimo di vendita ').'` + minimo_vendita.toLocale() + ` ` + globals.currency + `</p>`);
         }
     } else {
         div.html("");
+    }
+    if (prezzo_unitario <= minimo_vendita) {
+        if (input("blocca_minimo_vendita").get() == "1") {
+            prezzo_unitario_input.val(minimo_vendita);
+            div.html(`<p class="label-warning">'.tr('Attenzione:<br>non è possibile inserire un prezzo inferiore al prezzo minimo di vendita ').'` + minimo_vendita.toLocale() + ` ` + globals.currency + `</p>`);
+        } 
     }
 }
 </script>';

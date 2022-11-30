@@ -19,11 +19,14 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Models\OperationLog;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Tipo;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
+use Modules\Emails\Mail;
+use Modules\Emails\Template;
 use Util\Zip;
 
 // Segmenti
@@ -272,6 +275,63 @@ switch (post('op')) {
             exit();
 
             break;
+
+        case 'send-mail':
+            $template = Template::find(post('id_template'));
+
+            $list = [];
+            foreach ($id_records as $id) {
+                $intervento = Intervento::find($id);
+                $id_anagrafica = $intervento->idanagrafica;
+    
+                // Selezione destinatari e invio mail
+                if (!empty($template)) {
+                    $creata_mail = false;
+                    $emails = [];
+
+                    // Aggiungo email anagrafica
+                    if (!empty($intervento->anagrafica->email)) {
+                        $emails[] = $intervento->anagrafica->email;
+                        $mail = Mail::build(auth()->getUser(), $template, $id);
+                        $mail->addReceiver($intervento->anagrafica->email);
+                        $creata_mail = true;
+                    }
+
+                    // Aggiungo email referenti in base alla mansione impostata nel template
+                    $mansioni = $dbo->select('em_mansioni_template', 'idmansione', ['id_template' => $template->id]);
+                    foreach ($mansioni as $mansione) {
+                        $referenti = $dbo->table('an_referenti')->where('idmansione', $mansione['idmansione'])->where('idanagrafica', $id_anagrafica)->where('email', '!=', '')->get();
+                        if (!$referenti->isEmpty() && $creata_mail == false) {
+                            $mail = Mail::build(auth()->getUser(), $template, $id);
+                            $creata_mail = true;
+                        }
+                        
+                        foreach ($referenti as $referente) {
+                            if (!in_array($referente->email, $emails)) {
+                                $emails[] = $referente->email;
+                                $mail->addReceiver($referente->email);
+                            }   
+                        }
+                    }
+                    if ($creata_mail == true) {                        
+                        $mail->save();
+                        OperationLog::setInfo('id_email', $mail->id);
+                        OperationLog::setInfo('id_module', $id_module);
+                        OperationLog::setInfo('id_record', $id_record);
+                        OperationLog::build('send-email');
+
+                        array_push($list, $intervento->codice);
+                    }
+                }
+            }
+    
+            if ($list){
+                flash()->info(tr('Mail inviata per le attività _LIST_ !', [
+                    '_LIST_' => implode(',', $list),
+                ]));
+            }
+    
+            break;
 }
 
 if (App::debug()) {
@@ -340,6 +400,17 @@ if (App::debug()) {
             'button' => tr('Stampa'),
             'class' => 'btn btn-lg btn-warning',
             'blank' => true,
+        ],
+    ];
+
+    $operations['send-mail'] = [
+        'text' => '<span><i class="fa fa-envelope"></i> '.tr('Invia mail').'</span>',
+        'data' => [
+            'title' => tr('Inviare mail?'),
+            'msg' => tr('Per ciascuna attività selezionata, verrà inviata una mail').'<br><br>
+            {[ "type": "select", "label": "'.tr('Template').'", "name": "id_template", "required": "1", "values": "query=SELECT id, name AS descrizione FROM em_templates WHERE id_module='.prepare($id_module).' AND deleted_at IS NULL;" ]}',
+            'button' => tr('Invia'),
+            'class' => 'btn btn-lg btn-warning',
         ],
     ];
 

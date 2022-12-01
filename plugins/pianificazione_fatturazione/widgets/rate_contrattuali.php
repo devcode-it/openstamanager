@@ -37,7 +37,6 @@ $mesi = [
 ];
 
 $pianificazioni = Pianificazione::doesntHave('fattura')
-    ->orderBy('data_scadenza', 'asc')
     ->whereHas('contratto', function ($q) {
         $q->whereHas('stato', function ($q) {
             $q

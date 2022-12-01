@@ -138,9 +138,7 @@ switch (filter('op')) {
 
     case 'oauth2':
         $oauth2 = $account->oauth2;
-
-        $redirect = base_path().'/oauth2.php?id='.$oauth2->id;
-        redirect($redirect);
+        redirect(base_path().'/oauth2.php?id='.$oauth2->id);
 
         break;
 }

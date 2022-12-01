@@ -58,9 +58,7 @@ switch (post('op')) {
 
         $id_record = $fattura->id;
 
-        flash()->info(tr('Aggiunta fattura numero _NUM_!', [
-            '_NUM_' => $fattura->numero,
-        ]));
+        flash()->info(tr('Fattura aggiunta correttamente!'));
 
         break;
 

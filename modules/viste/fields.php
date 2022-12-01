@@ -67,7 +67,15 @@ foreach ($fields as $key => $field) {
 
                         <div class="row">
                             <div class="col-md-12">
-                                {[ "type": "textarea", "label": "'.tr('Query prevista').'", "name": "query['.$key.']", "value": "'.prepareToField($field['query']).'", "readonly": "'.(!$editable).'", "required": "1", "help": "'.tr('Nome effettivo del campo sulla tabella oppure subquery che permette di ottenere il valore del campo').'.<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!').'" ]}
+                                '.input([
+                                    'type' => 'textarea',
+                                    'label' => tr('Query prevista'),
+                                    'name' => 'query['.$key.']',
+                                    'required' => 1,
+                                    'readonly' => ''.(!$editable).'',
+                                    'value' => prepareToField($field['query']),
+                                    'help' => tr("Nome effettivo del campo sulla tabella oppure subquery che permette di ottenere il valore del campo').'.<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!"),
+                                ]).'
                             </div>
                         </div>
 

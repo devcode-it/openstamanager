@@ -44,10 +44,7 @@ $pianificazioni = Pianificazione::doesntHave('fattura')
             ->where('is_fatturabile', 1)
             ->where('descrizione', '<>', 'Concluso');
         });
-    })
-    ->whereYear('co_fatturazione_contratti.data_scadenza', date('Y'))
-    ->whereMonth('co_fatturazione_contratti.data_scadenza', date('m'))
-    ->get();
+    })->get();
 
 
     if ($pianificazioni->isEmpty()) {

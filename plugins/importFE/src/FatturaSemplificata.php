@@ -56,7 +56,7 @@ class FatturaSemplificata extends FatturaElettronica
             'nome' => $anagrafe['Nome'],
             'cognome' => $anagrafe['Cognome'],
             'rea' => [
-                'codice' => $rea['Ufficio'].'-'.$rea['NumeroREA'],
+                'codice' => (!empty($dati['IscrizioneREA']) ? $rea['Ufficio'].'-'.$rea['NumeroREA'] : ''),
                 'capitale_sociale' => $rea['CapitaleSociale'],
             ],
             'sede' => [

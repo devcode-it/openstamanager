@@ -778,7 +778,8 @@ class FatturaElettronica
         ];
 
         // IscrizioneREA
-        if (!empty($azienda['codicerea'])) {
+        // Controllo che i codice non sia vuoto e che i primi due caratteri siano lettere
+        if (!empty($azienda['codicerea']) && (ctype_alpha($azienda['codicerea'][0]) && ctype_alpha($azienda['codicerea'][1]))) {
             $codice = explode('-', clean($azienda['codicerea'], '\-'));
 
             if (!empty($codice[0]) && !empty($codice[1])) {

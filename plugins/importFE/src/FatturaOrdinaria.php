@@ -63,7 +63,7 @@ class FatturaOrdinaria extends FatturaElettronica
             'nome' => $anagrafe['Anagrafica']['Nome'],
             'cognome' => $anagrafe['Anagrafica']['Cognome'],
             'rea' => [
-                'codice' => $rea['Ufficio'].'-'.$rea['NumeroREA'],
+                'codice' => (!empty($dati['IscrizioneREA']) ? $rea['Ufficio'].'-'.$rea['NumeroREA'] : ''),
                 'capitale_sociale' => $rea['CapitaleSociale'],
             ],
             'sede' => [

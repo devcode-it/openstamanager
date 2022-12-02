@@ -109,7 +109,7 @@ if (!empty($record['is_fiscale'])) {
 
     if ($record['stato'] == 'Pagato') {
         echo '
-        <button type="button" class="btn btn-primary ask tip" data-msg="'.tr('Se riapri questo documento verrà azzerato lo scadenzario e la relativa prima nota. Continuare?').'" data-button="'.tr('Procedi').'" data-method="post" data-op="reopen" data-backto="record-edit" data-title="'.tr('Riaprire il documento?').'" title="'.tr('Riporta il documento in stato "Bozza" e ne elimina i movimenti contabili').'">
+        <button type="button" class="btn btn-primary ask tip" data-msg="'.tr('Se riapri questo documento verrà azzerato lo scadenzario e la relativa prima nota. Continuare?').'" data-button="'.tr('Procedi').'" data-method="post" data-op="reopen" data-backto="record-edit" data-title="'.tr('Riaprire il documento?').'" title="'.tr("Riporta il documento nello stato di 'Emessa' e ne elimina i movimenti contabili").'">
             <i class="fa fa-folder-open"></i> '.tr('Riapri documento').'...
         </button>';
     }

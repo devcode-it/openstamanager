@@ -350,7 +350,7 @@ switch (post('op')) {
 
     case 'reopen':
         if (!empty($id_record)) {
-            $stato = Stato::where('descrizione', 'Bozza')->first();
+            $stato = Stato::where('descrizione', 'Emessa')->first();
             $fattura->stato()->associate($stato);
             $fattura->save();
             flash()->info(tr('Fattura riaperta!'));

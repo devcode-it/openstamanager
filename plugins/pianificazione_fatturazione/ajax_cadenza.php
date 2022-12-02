@@ -68,7 +68,7 @@ echo '
         <div class="col-md-3">
             <label for="m_'.$count.'">
                 <input type="checkbox" onchange="controlloProcedi();" class="unblockable check_periodo" id="m_'.$count.'" name="selezione_periodo['.$count.']" '.$checked.' />
-                '.ucfirst($data_corrente->formatLocalized('%B %Y')).'
+                '.ucfirst($data_corrente->isoFormat('MMMM YY')).'
             </label>
             <input type="hidden" name="periodo['.$count.']" value="'.$data.'">
         </div>';

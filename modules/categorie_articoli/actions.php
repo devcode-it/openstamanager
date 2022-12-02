@@ -44,8 +44,7 @@ switch (filter('op')) {
         $database->commitTransaction();
         redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.($id_original ?: $id_record));
         exit();
-
-        break;
+      
 
     case 'add':
         $nome = filter('nome');

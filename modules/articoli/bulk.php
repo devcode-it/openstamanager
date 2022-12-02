@@ -109,7 +109,7 @@ switch (post('op')) {
             $coefficiente = post('coefficiente');
 
             $articolo->coefficiente = $coefficiente;
-            $articolo->prezzo_acquisto = $articolo->prezzo_acquisto;
+            $articolo->prezzo_vendita = $articolo->prezzo_acquisto*$coefficiente;
             $articolo->save();
         }
 
@@ -154,7 +154,6 @@ switch (post('op')) {
         redirect(base_path().'/pdfgen.php?id_print='.$id_print.'&id_record='.Articolo::where('codice', '!=', '')->first()->id);
         exit();
 
-        break;
 
     case 'change-qta':
         $descrizione = post('descrizione');
@@ -220,7 +219,6 @@ switch (post('op')) {
         redirect(base_path().'/editor.php?id_module='.Modules::get('Preventivi')['id'].'&id_record='.$id_preventivo);
         exit();
 
-        break;
 
     case 'export-csv':
         $file = temp_file();

@@ -200,7 +200,6 @@ switch ($operazione) {
         database()->commitTransaction();
         redirect(base_path().'/controller.php?id_module='.Modules::get('Fatture di vendita')['id'].'&id_record='.$fattura->id);
         exit();
-        break;
 
     case 'add_fattura_multipla':
         $rate = post('rata');
@@ -257,7 +256,6 @@ switch ($operazione) {
         database()->commitTransaction();
         redirect(base_path().'/controller.php?id_module='.Modules::get('Fatture di vendita')['id']);
         exit();
-        break;
         
 
 }

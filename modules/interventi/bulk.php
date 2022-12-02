@@ -274,7 +274,6 @@ switch (post('op')) {
             redirect(base_path().'/pdfgen.php?id_print='.$id_print.'&tipo='.post('tipo'));
             exit();
 
-            break;
 
         case 'send-mail':
             $template = Template::find(post('id_template'));

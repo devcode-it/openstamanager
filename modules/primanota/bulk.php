@@ -31,7 +31,6 @@ switch (post('op')) {
         header("location: ".$rootdir."/pdfgen.php?id_print=".$print['id']."&id_record=".$id_records[0]);
         exit;
 
-        break;
 }
 
 return [

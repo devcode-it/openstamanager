@@ -277,9 +277,10 @@ switch (post('op')) {
 
         $fatture = Fattura::vendita()
             ->select('*', 'co_documenti.id AS id', 'co_documenti.data AS data')
-            ->where('idanagrafica', $id_anagrafica)
+            ->where('co_documenti.idanagrafica', $id_anagrafica)
             ->whereIn('idstatodocumento', [$stato1->id, $stato2->id])
             ->join('co_scadenziario', 'co_documenti.id', '=', 'co_scadenziario.iddocumento')
+            ->join('co_tipidocumento', 'co_tipidocumento.id','=','co_documenti.idtipodocumento')
             ->whereRaw('co_scadenziario.da_pagare > co_scadenziario.pagato')
             ->whereRaw('co_scadenziario.scadenza < NOW()')
             ->groupBy('co_scadenziario.iddocumento')
@@ -287,7 +288,7 @@ switch (post('op')) {
 
         $results = [];
         foreach ($fatture as $result) {
-            $results[] = Modules::link('Fatture di vendita', $result->id, $result->getReference());
+            $results[] = Modules::link('Fatture di vendita', $result->id, reference($result));
         }
 
         echo json_encode($results);

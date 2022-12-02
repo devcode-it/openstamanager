@@ -1541,9 +1541,6 @@ class FatturaElettronica
             $totale = round($riepilogo->sum('totale_imponibile') + $riepilogo->sum('rivalsa_inps'), 2);
             $imposta = round($riepilogo->sum('iva') + $riepilogo->sum('iva_rivalsa_inps'), 2);
 
-            $totale = $totale;
-            $imposta = $imposta;
-
             $dati = $riepilogo->first()->aliquota;
 
             $iva = [
@@ -1580,8 +1577,6 @@ class FatturaElettronica
             $totale = round($riepilogo->sum('totale_imponibile') + $riepilogo->sum('rivalsa_inps'), 2);
             $imposta = round($riepilogo->sum('iva') + $riepilogo->sum('iva_rivalsa_inps'), 2);
 
-            $totale = $totale;
-            $imposta = $imposta;
 
             $dati = $riepilogo->first()->aliquota;
 

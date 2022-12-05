@@ -221,8 +221,19 @@ foreach ($db as $name => $values) {
 
     } else{
         $type =  tr('Impostazione');
-       
-        $inc = str_replace(['k', 'M'], ['000', '000000'], App::getConfig()['db_options'][$name]);
+        
+        //Vedo se riesco a recuperare l'impostazione dalle variabili di sessione o globali di mysql
+        $rs_session_variabile = $dbo->fetchArray('SHOW SESSION VARIABLES LIKE '.prepare($name));
+        $rs_global_variabile = $dbo->fetchArray('SHOW GLOBAL VARIABLES LIKE '.prepare($name));
+
+        if (!empty($rs_session_variabile[0]['Value']))
+            $inc = \Util\FileSystem::formatBytes($rs_session_variabile[0]['Value']);
+        else if (!empty($rs_global_variabile[0]['Value']))
+            $inc = \Util\FileSystem::formatBytes($rs_global_variabile[0]['Value']);
+        else
+            $inc = str_replace(['k', 'M'], ['000', '000000'], App::getConfig()['db_options'][$name]);
+        
+        
         $real = str_replace(['k', 'M'], ['000', '000000'], $description);
 
         if (string_starts_with($real, '>')) {
@@ -240,9 +251,9 @@ foreach ($db as $name => $values) {
         }
 
 
-        $description = tr('Valore consigliato: _VALUE_ (Valore attuale: _INI_)', [
+        $description = tr('Valore consigliato: _VALUE_ (Valore attuale: _INC_)', [
           '_VALUE_' => $description,
-          '_INI_' =>  App::getConfig()['db_options'][$name],
+          '_INC_' =>   $inc,
         ]);
 
     }

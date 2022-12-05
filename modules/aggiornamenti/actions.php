@@ -21,6 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 use Models\Cache;
 use Modules\Aggiornamenti\Controlli\ColonneDuplicateViste;
+use Modules\Aggiornamenti\Controlli\ReaValidi;
 use Modules\Aggiornamenti\Controlli\PluginDuplicati;
 use Modules\Aggiornamenti\Controlli\Controllo;
 use Modules\Aggiornamenti\Controlli\DatiFattureElettroniche;
@@ -59,6 +60,7 @@ switch (filter('op')) {
             DatiFattureElettroniche::class,
             ColonneDuplicateViste::class,
             PluginDuplicati::class,
+            ReaValidi::class,
         ];
 
         $results = [];

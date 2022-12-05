@@ -187,10 +187,16 @@ if ($database->isInstalled()){
             'minimum' => '5.7.0',
             'maximum' => '8.0.99',
         ],
+        
+        'sort_buffer_size' => [
+            'type' => 'value',
+            'description' => '>4M',
+        ],
+
 
     ];
 
-    foreach (App::getConfig()['db_options'] as $n => $v){
+    /*foreach (App::getConfig()['db_options'] as $n => $v){
        
         switch ($n){
             case 'sort_buffer_size':
@@ -201,7 +207,7 @@ if ($database->isInstalled()){
             break;
         }
         
-    }
+    }*/
 
 }
 

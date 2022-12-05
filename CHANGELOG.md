@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.38 (2022-12-05)](#2438-2022-12-05)
 - [2.4.37 (2022-11-02)](#2437-2022-11-04)
 - [2.4.36 (2022-09-16)](#2436-2022-09-16)
 - [2.4.35 (2022-08-12)](#2435-2022-08-12)
@@ -49,6 +50,81 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
 
+## 2.4.38 (2022-12-05)
+### Aggiunto (Added)
+- Aggiunto tempDir per mpdf
+- Aggiunto controllo cartella files/temp
+- Aggiunto invio delle mail con procedura in cron
+- Aggiunta psalm per migliorare lo sviluppo
+- Aggiunta strumenti di debug
+- Aggiunto modulo Listini clienti
+- Aggiunta gestione prezzo minimo e visulizzazione listini in fase di aggiunta riga
+- Aggiunti modelli di prima nota per pagamento di salari e stipendi
+- Aggiunta eliminazione massiva destinatari lista newsletter
+- Aggiunta campi provvigione su righe promemoria
+- Aggiunta fatturazione rate contratto con azione di gruppo da widget in dashboard
+- Aggiunto avviso gruppo o username già in uso in fase di creazione/modifica
+- Aggiunto colore per livello di permesso impostato
+- Aggiunta gestione permessi segmenti e numerazione documenti
+- Aggiunto controllo file di servizio
+- Aggiunta email tecnici assegnati nel template Notifica intervento
+- Aggiunta azione di gruppo invio mail da Attività
+### Modificato(Changed)
+- Miglioria gestione prezzi
+- Ottimizzata query vista Anagrafiche
+- Ottimizzata query vista Prima nota
+- Ottimizzata query vista Ordini cliente
+- Ottimizzata query vista Ordini fornitore
+- Ottimizzata query vista DDT uscita
+- Ottimizzata query vista DDT entrata
+- Ottimizzata query vista Impianti
+- Ottimizzata query vista Movimenti
+- Ottimizzata query vista Template email
+- Ottimizzata query vista Campi personalizzati
+- Ottimizzata query vista Segmenti
+- Ottimizzata query vista Fatture di vendita
+- Ottimizzata query vista Attività
+- Ottimizzata query vista Pagamenti
+- Ottimizzata query vista Fatture di acquisto
+- Ottimizzata query vista Checklists
+- Ottimizzata query vista Contratti
+- Ottimizzata query vista Newsletter
+- Ottimizzata query vista Coda di invio
+- Ottimizzata query vista Giacenze sedi
+- Ottimizzata query vista Listini
+- Ottimizzata query vista Stampe
+- Ottimizzata query vista Articoli
+- Ottimizzata query vista Utenti e permessi
+- Ottimizzata query vista Listini cliente
+- Miglioria ricerca di corrispondenza tra anagrafiche in fase di impostazione dei permessi
+- Sostituita funzione deprecata formatLocalized con isoFormat
+- Rimozione codice non raggiungibile
+### Fixed
+- Corretta la selezione dei colori
+- Corretta la visualizzazione delle colonne datatables
+- Corretta variabile referenti in template DDT
+- Corretta creazione del file manifest.json
+- Corretta l'importazione delle fatture con importi negativi
+- Corretta eliminazione di articoli da azioni di gruppo
+- Corretta visualizzazione utente collegato ad anagrafica
+- Corretto login tramite API
+- Corretta query vista Piani di scondo/maggiorazione
+- Corretta validazione username
+- Corretta importazione csv Anagrafiche con PHP8.0
+- Corretto messaggio di contenuto modificato all'uscita dalla pagina di impostazione dei permessi
+- Corretta descrizione periodi in pianificazione fatturazione contratti
+- Corretti avvisi settore merceologico e provenienza già presenti
+- Corretti id pulsanti in rowlist
+- Corretta icona bandiera select2
+- Corretta verifica prezzo minimo di vendita
+- Corretta notifica inserimento fattura
+- Corretto redirect da fatturazione rate contratto a Fatture di vendita
+- Corretta visualizzazione rate da fatturare 
+- Corretta visualizzazione query viste
+- Corretto calcolo prezzo di vendita da cambio coefficiente da azione di gruppo
+- Corretta query elenco di scadenze scadute per cliente in nuova fattura di vendita
+- Corretta logica riapertura fattura pagata
+- Corretta valorizzazione codice REA in fase di importazione fattura elettronica
 ## 2.4.37 (2022-11-04)
 ### Aggiunto (Added)
 - Aggiunto modulo Mappa per geolocalizzare le attività

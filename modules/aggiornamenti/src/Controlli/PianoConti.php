@@ -84,7 +84,7 @@ class PianoConti extends Controllo
             if (!empty($descrizione)) {
                 $this->addResult([
                     'id' => $anagrafica['id'],
-                    'nome' => $anagrafica['ragione_sociale'],
+                    'nome' => \Modules::link('Anagrafiche', $anagrafica['id'], $anagrafica['ragione_sociale']),
                     'descrizione' => $descrizione,
                 ]);
             }

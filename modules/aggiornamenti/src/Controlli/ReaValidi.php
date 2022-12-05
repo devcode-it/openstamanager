@@ -67,7 +67,7 @@ class ReaValidi extends Controllo
 
             $this->addResult([
                 'id' => $anagrafica['id'],
-                'nome' => $anagrafica['ragione_sociale'],
+                'nome' => \Modules::link('Anagrafiche', $anagrafica['id'], $anagrafica['ragione_sociale']),
                 'descrizione' => tr('Il codice REA "_REA_" non è valido', [
                     '_REA_' => $anagrafica['codicerea'],
                 ]),

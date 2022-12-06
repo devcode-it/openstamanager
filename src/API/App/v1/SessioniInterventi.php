@@ -34,7 +34,7 @@ class SessioniInterventi extends AppResource
         $mesi_precedenti = intval(setting('Mesi per lo storico delle Attività'));
         $today = new Carbon();
         $start = $today->copy()->subMonths($mesi_precedenti);
-        $end = $today->copy()->addMonth(1);
+        $end = $today->copy()->addMonth();
 
         // Informazioni sull'utente
         $user = Auth::user();
@@ -73,7 +73,7 @@ class SessioniInterventi extends AppResource
         $mesi_precedenti = intval(setting('Mesi per lo storico delle Attività'));
         $today = new Carbon();
         $start = $today->copy()->subMonths($mesi_precedenti);
-        $end = $today->copy()->addMonth(1);
+        $end = $today->copy()->addMonth();
 
         // Informazioni sull'utente
         $user = Auth::user();

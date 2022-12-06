@@ -69,6 +69,9 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Aggiunto controllo file di servizio
 - Aggiunta email tecnici assegnati nel template Notifica intervento
 - Aggiunta azione di gruppo invio mail da Attività
+- Aggiunte opzioni per connessione al Database
+- Aggiunto controllo plugin duplicati per i moduli
+- Aggiunto controllo per Anagrafiche con codici REA non validi
 ### Modificato(Changed)
 - Miglioria gestione prezzi
 - Ottimizzate query viste per aumentare la velocità di caricamento dei moduli principali

@@ -36,7 +36,7 @@ class Interventi extends AppResource
         $today = new Carbon();
         $mesi_precedenti = intval(setting('Mesi per lo storico delle Attività'));
         $start = $today->copy()->subMonths($mesi_precedenti);
-        $end = $today->copy()->addMonth(1);
+        $end = $today->copy()->addMonth();
 
         return [
             'today' => $today,

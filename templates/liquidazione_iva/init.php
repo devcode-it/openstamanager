@@ -28,11 +28,11 @@ $anno_precedente_end = (new Carbon($date_end))->subYears(1)->format('Y-m-d');
 
 $periodo = $dbo->fetchOne('SELECT valore FROM zz_settings WHERE nome="Liquidazione iva"');
 if ($periodo['valore'] == 'Mensile') {
-    $periodo_precedente_start = (new Carbon($date_start))->subMonth(1)->format('Y-m-d');
-    $periodo_precedente_end = (new Carbon($date_end))->subMonth(1)->format('Y-m-d');
+    $periodo_precedente_start = (new Carbon($date_start))->subMonth()->format('Y-m-d');
+    $periodo_precedente_end = (new Carbon($date_end))->subMonth()->format('Y-m-d');
 } else {
-    $periodo_precedente_start = (new Carbon($date_start))->subMonth(3)->format('Y-m-d');
-    $periodo_precedente_end = (new Carbon($date_end))->subMonth(3)->format('Y-m-d');
+    $periodo_precedente_start = (new Carbon($date_start))->subMonths(3)->format('Y-m-d');
+    $periodo_precedente_end = (new Carbon($date_end))->subMonths(3)->format('Y-m-d');
 }
 
 $maggiorazione = 0;

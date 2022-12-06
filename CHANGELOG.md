@@ -104,6 +104,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Corretta query elenco di scadenze scadute per cliente in nuova fattura di vendita
 - Corretta logica riapertura fattura pagata
 - Corretta valorizzazione codice REA in fase di importazione fattura elettronica
+- Corretta creazione fattura da azioni di gruppo in Attività se valorizzato 'Per conto di'
 ## 2.4.37 (2022-11-04)
 ### Aggiunto (Added)
 - Aggiunto modulo Mappa per geolocalizzare le attività

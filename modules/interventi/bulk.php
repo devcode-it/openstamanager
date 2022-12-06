@@ -97,7 +97,14 @@ switch (post('op')) {
 
         // Lettura righe selezionate
         foreach ($interventi as $intervento) {
-            $id_anagrafica = $intervento['idanagrafica'];
+
+            if (!empty($intervento['idclientefinale'])){
+                $id_anagrafica = $intervento['idclientefinale'];
+            }
+            else {
+                $id_anagrafica = $intervento['idanagrafica'];
+            }
+
             $id_documento = $id_documento_cliente[$id_anagrafica];
 
             $anagrafica = Anagrafica::find($id_anagrafica);

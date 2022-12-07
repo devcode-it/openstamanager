@@ -190,7 +190,7 @@ if ($database->isInstalled()){
         
         'sort_buffer_size' => [
             'type' => 'value',
-            'description' => '>4M',
+            'description' => '>2M',
         ],
 
 
@@ -202,7 +202,7 @@ if ($database->isInstalled()){
             case 'sort_buffer_size':
                 $db[$n] = [
                     'type' => 'value',
-                    'description' => '>4M',
+                    'description' => '>2M',
                 ];
             break;
         }
@@ -233,9 +233,9 @@ foreach ($db as $name => $values) {
         $rs_global_variabile = $dbo->fetchArray('SHOW GLOBAL VARIABLES LIKE '.prepare($name));
 
         if (!empty($rs_session_variabile[0]['Value']))
-            $inc = \Util\FileSystem::formatBytes($rs_session_variabile[0]['Value']);
+            $inc = $rs_session_variabile[0]['Value'];
         else if (!empty($rs_global_variabile[0]['Value']))
-            $inc = \Util\FileSystem::formatBytes($rs_global_variabile[0]['Value']);
+            $inc = $rs_global_variabile[0]['Value'];
         else
             $inc = str_replace(['k', 'M'], ['000', '000000'], App::getConfig()['db_options'][$name]);
         
@@ -259,7 +259,7 @@ foreach ($db as $name => $values) {
 
         $description = tr('Valore consigliato: _VALUE_ (Valore attuale: _INC_)', [
           '_VALUE_' => $description,
-          '_INC_' =>   $inc,
+          '_INC_' =>   \Util\FileSystem::formatBytes($inc),
         ]);
 
     }

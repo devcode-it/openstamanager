@@ -24,7 +24,7 @@ $db_password = '|password|';
 $db_name = '|database|';
 //$port = '|port|';
 $db_options = [
-    //'sort_buffer_size' => '4M',
+    //'sort_buffer_size' => '2M',
 ];
 
 

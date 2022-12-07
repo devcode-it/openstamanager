@@ -459,9 +459,13 @@ switch (post('op')) {
     case 'change-stato':
         $list = [];
         $new_stato = Stato::where('descrizione', 'Emessa')->first();
+        $fatture = Fattura::vendita()
+        ->whereIn('id', $id_records)
+        ->orderBy('data')
+        ->get();
 
-        foreach ($id_records as $id) {
-            $fattura = Fattura::find($id);
+        foreach ($fatture as $fattura) {
+            $fattura = Fattura::find($fattura['id']);
             $stato_precedente = Stato::find($fattura->idstatodocumento);
 
             if ($stato_precedente->descrizione == 'Bozza' && $fattura->isFiscale()) {

@@ -80,9 +80,11 @@ class Database extends Util\Singleton
                     'database' => $database_name,
                     'username' => $username,
                     'password' => $password,
-                    'charset' => 'utf8',
+                    'charset' => 'utf8mb4',
+                    'collation' => 'utf8mb4_general_ci',
                     'prefix' => '',
                     'port' => $port,
+                    'options' => App::getConfig()['db_options'],
                 ]);
 
                 $this->is_connected = !empty($this->getPDO());

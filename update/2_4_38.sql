@@ -441,48 +441,9 @@ LEFT JOIN `co_ritenuta_contributi` ON `co_documenti`.`id_ritenuta_contributi` = 
 LEFT JOIN `co_pagamenti` ON `co_documenti`.`idpagamento` = `co_pagamenti`.`id`
 LEFT JOIN (SELECT co_banche.id, CONCAT(`nome`, ' - ', `iban`) AS descrizione FROM `co_banche`) AS banche ON `banche`.`id` = `co_documenti`.`id_banca_azienda`
 LEFT JOIN (SELECT iddocumento, CONCAT(co_pianodeiconti3.descrizione) AS descrizione FROM co_righe_documenti INNER JOIN co_pianodeiconti3 ON co_pianodeiconti3.id = co_righe_documenti.idconto) AS conti ON conti.iddocumento = co_documenti.id
-LEFT JOIN(
-    SELECT `iddocumento`,
-        SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
-        SUM(`iva`) AS `iva`
-    FROM
-        `co_righe_documenti`
-    GROUP BY
-        `iddocumento`
-) AS righe
-ON
-    `co_documenti`.`id` = `righe`.`iddocumento`
-LEFT JOIN(
-    SELECT COUNT(`d`.`id`) AS `conteggio`,
-        IF(
-            `d`.`numero_esterno` = '',
-            `d`.`numero`,
-            `d`.`numero_esterno`
-        ) AS `numero_documento`,
-        `d`.`idanagrafica` AS `anagrafica`,
-        `id_segment`
-    FROM
-        `co_documenti` AS `d`
-    LEFT JOIN `co_tipidocumento` AS `d_tipo`
-    ON
-        `d`.`idtipodocumento` = `d_tipo`.`id`
-    WHERE
-        1 = 1 AND `d_tipo`.`dir` = 'uscita' AND(
-            '|period_start|' <= `d`.`data` AND '|period_end|' >= `d`.`data` OR '|period_start|' <= `d`.`data_competenza` AND '|period_end|' >= `d`.`data_competenza`
-        )
-    GROUP BY
-        `id_segment`,
-        `numero_documento`,
-        `d`.`idanagrafica`
-) AS `d`
-ON
-    (
-        `d`.`numero_documento` = IF(
-            `co_documenti`.`numero_esterno` = '',
-            `co_documenti`.`numero`,
-            `co_documenti`.`numero_esterno`
-        ) AND `d`.`anagrafica` = `co_documenti`.`idanagrafica` AND `d`.`id_segment` = `co_documenti`.`id_segment`
-    )
+LEFT JOIN (SELECT `iddocumento`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`iva`) AS `iva` FROM `co_righe_documenti` GROUP BY `iddocumento`) AS righe ON `co_documenti`.`id` = `righe`.`iddocumento`
+LEFT JOIN (SELECT COUNT(`d`.`id`) AS `conteggio`, IF(`d`.`numero_esterno` = '', `d`.`numero`, `d`.`numero_esterno`) AS `numero_documento`, `d`.`idanagrafica` AS `anagrafica`, `id_segment` FROM `co_documenti` AS `d`
+LEFT JOIN `co_tipidocumento` AS `d_tipo` ON `d`.`idtipodocumento` = `d_tipo`.`id` WHERE 1=1 AND `d_tipo`.`dir` = 'uscita' AND('|period_start|' <= `d`.`data` AND '|period_end|' >= `d`.`data` OR '|period_start|' <= `d`.`data_competenza` AND '|period_end|' >= `d`.`data_competenza`) GROUP BY `id_segment`, `numero_documento`, `d`.`idanagrafica`) AS `d` ON (`d`.`numero_documento` = IF(`co_documenti`.`numero_esterno` = '',`co_documenti`.`numero`,`co_documenti`.`numero_esterno`) AND `d`.`anagrafica` = `co_documenti`.`idanagrafica` AND `d`.`id_segment` = `co_documenti`.`id_segment`)
 WHERE 
     1=1 
 AND 

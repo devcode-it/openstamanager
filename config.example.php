@@ -23,6 +23,10 @@ $db_username = '|username|';
 $db_password = '|password|';
 $db_name = '|database|';
 //$port = '|port|';
+$db_options = [
+    //'sort_buffer_size' => '4M',
+];
+
 
 // Percorso della cartella di backup
 $backup_dir = __DIR__.'/backup/';

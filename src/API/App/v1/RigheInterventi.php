@@ -38,7 +38,7 @@ class RigheInterventi extends AppResource
         // Periodo per selezionare interventi
         $today = new Carbon();
         $start = $today->copy()->subMonths(2);
-        $end = $today->copy()->addMonth(1);
+        $end = $today->copy()->addMonth();
 
         // Informazioni sull'utente
         $user = Auth::user();
@@ -72,7 +72,7 @@ class RigheInterventi extends AppResource
         // Periodo per selezionare interventi
         $today = new Carbon();
         $start = $today->copy()->subMonths(2);
-        $end = $today->copy()->addMonth(1);
+        $end = $today->copy()->addMonth();
 
         // Informazioni sull'utente
         $user = Auth::user();

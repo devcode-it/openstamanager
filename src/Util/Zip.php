@@ -116,8 +116,9 @@ class Zip
      */
     public static function check($path)
     {
-        $errno = zip_open($path);
-        zip_close($errno);
+        $zip = new ZipArchive;
+        $errno = $zip->open($path);
+        $errno = $zip->close();
 
         if (!is_resource($errno)) {
             // using constant name as a string to make this function PHP4 compatible

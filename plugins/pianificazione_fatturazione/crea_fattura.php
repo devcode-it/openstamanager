@@ -85,7 +85,7 @@ echo '
     </div>';
 
 //gestione replace
-$descrizione = get_var('Descrizione fattura pianificata');
+$descrizione = setting('Descrizione fattura pianificata');
 $modules = MODULES::get('Contratti')['id'];
 $variables = include Modules::filepath($modules, 'variables.php');
 foreach ($variables as $variable => $value) {

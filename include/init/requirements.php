@@ -182,29 +182,93 @@ if ($database->isInstalled()){
     $db = [
 
         'mysql_version' => [
-            'type' => 'mysql',
+            'type' => 'version',
             'description' => '5.7.x - 8.0.x',
             'minimum' => '5.7.0',
             'maximum' => '8.0.99',
         ],
+        
+        'sort_buffer_size' => [
+            'type' => 'value',
+            'description' => '>4M',
+        ],
+
 
     ];
+
+    /*foreach (App::getConfig()['db_options'] as $n => $v){
+       
+        switch ($n){
+            case 'sort_buffer_size':
+                $db[$n] = [
+                    'type' => 'value',
+                    'description' => '>4M',
+                ];
+            break;
+        }
+        
+    }*/
+
 }
 
 foreach ($db as $name => $values) {
-    $description = $values['description'];
-    $description = tr('Valore consigliato: _VALUE_ (Valore attuale: _MYSQL_VERSION_)', [
-        '_VALUE_' => $description,
-        '_MYSQL_VERSION_' => $database->getMySQLVersion(),
-    ]);
 
-    $status = ((version_compare($database->getMySQLVersion(), $values['minimum'], ">=") && version_compare($database->getMySQLVersion(), $values['maximum'], "<=")) ? 1 : 0);
+    $description = $values['description'];
+
+    if ($values['type'] == 'version') {
+
+        $type =  tr('Versione');
+        $description = tr('Valore consigliato: _VALUE_ (Valore attuale: _MYSQL_VERSION_)', [
+            '_VALUE_' => $description,
+            '_MYSQL_VERSION_' => $database->getMySQLVersion(),
+        ]);
+
+        $status = ((version_compare($database->getMySQLVersion(), $values['minimum'], ">=") && version_compare($database->getMySQLVersion(), $values['maximum'], "<=")) ? 1 : 0);
+
+    } else{
+        $type =  tr('Impostazione');
+        
+        //Vedo se riesco a recuperare l'impostazione dalle variabili di sessione o globali di mysql
+        $rs_session_variabile = $dbo->fetchArray('SHOW SESSION VARIABLES LIKE '.prepare($name));
+        $rs_global_variabile = $dbo->fetchArray('SHOW GLOBAL VARIABLES LIKE '.prepare($name));
+
+        if (!empty($rs_session_variabile[0]['Value']))
+            $inc = \Util\FileSystem::formatBytes($rs_session_variabile[0]['Value']);
+        else if (!empty($rs_global_variabile[0]['Value']))
+            $inc = \Util\FileSystem::formatBytes($rs_global_variabile[0]['Value']);
+        else
+            $inc = str_replace(['k', 'M'], ['000', '000000'], App::getConfig()['db_options'][$name]);
+        
+        
+        $real = str_replace(['k', 'M'], ['000', '000000'], $description);
+
+        if (string_starts_with($real, '>')) {
+            $status = $inc >= substr($real, 1);
+        } elseif (string_starts_with($real, '<')) {
+            $status = $inc <= substr($real, 1);
+        } else {
+            $status = ($real == $inc);
+        }
+
+        if (is_bool($description)) {
+            $description = !empty($description) ? 'On' : 'Off';
+        } else {
+            $description = str_replace(['>', '<'], '', $description);
+        }
+
+
+        $description = tr('Valore consigliato: _VALUE_ (Valore attuale: _INC_)', [
+          '_VALUE_' => $description,
+          '_INC_' =>   $inc,
+        ]);
+
+    }
 
     $mysql[] = [
         'name' => $name,
         'description' => $description,
         'status' => $status,
-        'type' => tr('Versione'),
+        'type' => $type,
     ];
 }
 
@@ -232,7 +296,7 @@ foreach ($dirs_to_check as $name => $description) {
 
 // File di servizio
 $files_to_check = [
-    'manifest.json' => tr('Necessario per aggiunta a schermata home da terminale'),
+    'manifest.json' => tr('Necessario per l\'aggiunta a schermata home da terminale'),
     'database_5_7.json' => tr('Necessario per il controllo integrità con database MySQL 5.7.x'),
     'database.json' => tr('Necessario per il controllo integrità con database MySQL 8.0.x'),
     'checksum.json' => tr('Necessario per il controllo integrità dei files del gestionale'),

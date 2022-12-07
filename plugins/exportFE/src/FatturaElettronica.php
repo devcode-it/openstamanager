@@ -1015,7 +1015,7 @@ class FatturaElettronica
 
         // Importo Totale Documento (2.1.1.9)
         // Valorizzare l’importo complessivo lordo della fattura (onnicomprensivo di Iva, bollo, contributi previdenziali, ecc…)
-        $result['ImportoTotaleDocumento'] = abs($documento->totale);
+        $result['ImportoTotaleDocumento'] = $documento->totale;
 
         // Arrotondamento - Eventuale arrotondamento sul totale documento (ammette anche il segno negativo) (2.1.1.10)
 

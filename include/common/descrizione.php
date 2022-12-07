@@ -28,6 +28,6 @@ echo '
 
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "note", "value": "'.$result['note'].'", "help": "'.tr('Queste note saranno utilizzate solo a scopo interno').'", "extra": "rows=\"2\"" ]}
+            {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "note", "value": '.json_encode($result['note']).', "help": "'.tr('Queste note saranno utilizzate solo a scopo interno').'", "extra": "rows=\"2\"" ]}
         </div>
     </div>';

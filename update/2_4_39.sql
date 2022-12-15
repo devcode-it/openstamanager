@@ -55,4 +55,8 @@ ORDER BY
 
 
 -- Aumento dimensione massima codicerea
-ALTER TABLE `an_anagrafiche` CHANGE `codicerea` `codicerea` VARCHAR(23) NOT NULL; 
+ALTER TABLE `an_anagrafiche` CHANGE `codicerea` `codicerea` VARCHAR(23) DEFAULT NULL; 
+
+-- Pulizia campi inutilizzati
+ALTER TABLE `an_anagrafiche` DROP `cciaa`;
+ALTER TABLE `an_anagrafiche` DROP `cciaa_citta`;

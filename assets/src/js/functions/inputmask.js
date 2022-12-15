@@ -29,12 +29,13 @@ function initMaskInput(input) {
         });
     } else if ($input.hasClass('rea-mask')) {
         $input.inputmask({
-            mask: "AA-99999{1,23}",
+            regex: "([A-Za-z]{2})-([0-9]{20})",
             casing: "upper",
+            placeholder: "",
         });
     } else if ($input.hasClass('provincia-mask')) {
         $input.inputmask({
-            mask: "AA",
+            regex: "[A-Za-z]{2}",
             casing: "upper",
         });
     } else if ($input.hasClass('alphanumeric-mask')) {

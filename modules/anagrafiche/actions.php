@@ -66,7 +66,7 @@ switch (post('op')) {
         $anagrafica->idsede_fatturazione = post('idsede_fatturazione');
         $anagrafica->note = post('note');
         $anagrafica->codiceri = post('codiceri');
-        $anagrafica->codicerea = post('codicerea');
+        $anagrafica->codicerea = strtoupper(post('codicerea'));
         $anagrafica->appoggiobancario = post('appoggiobancario');
         $anagrafica->filiale = post('filiale');
         $anagrafica->codiceiban = post('codiceiban');
@@ -89,8 +89,6 @@ switch (post('op')) {
         $anagrafica->idrelazione = post('idrelazione');
         $anagrafica->sitoweb = post('sitoweb');
         $anagrafica->iscrizione_tribunale = post('iscrizione_tribunale');
-        $anagrafica->cciaa = post('cciaa');
-        $anagrafica->cciaa_citta = post('cciaa_citta');
         $anagrafica->n_alboartigiani = post('n_alboartigiani');
         $anagrafica->foro_competenza = post('foro_competenza');
         $anagrafica->riferimento_amministrazione = post('riferimento_amministrazione');

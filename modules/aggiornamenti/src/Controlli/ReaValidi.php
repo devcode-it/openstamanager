@@ -35,7 +35,14 @@ class ReaValidi extends Controllo
 
     public function getOptions($record)
     {
-        return [];
+        return [
+            [
+                'name' => tr('Rimuovi'),
+                'icon' => 'fa fa-trash',
+                'color' => 'danger',
+                'params' => [],
+            ],
+        ];
     }
 
     public function check()
@@ -68,7 +75,7 @@ class ReaValidi extends Controllo
             $this->addResult([
                 'id' => $anagrafica['id'],
                 'nome' => \Modules::link('Anagrafiche', $anagrafica['id'], $anagrafica['ragione_sociale']),
-                'descrizione' => tr('Il codice REA "_REA_" non è valido', [
+                'descrizione' => tr('Il codice REA "_REA_" non è valido.', [
                     '_REA_' => $anagrafica['codicerea'],
                 ]),
             ]);
@@ -78,6 +85,10 @@ class ReaValidi extends Controllo
 
     public function execute($record, $params = [])
     {
-        return false;
+        $anagrafica = Anagrafica::find($record['id']);
+        $anagrafica->codicerea = null;
+        $anagrafica->save();
+       
+        return true;
     }
 }

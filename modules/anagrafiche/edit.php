@@ -643,7 +643,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 
 					<div class="col-md-3">
 						{[ "type": "text", "label": "<?php echo tr('Codice R.E.A.').' <small>('.tr('provincia-C.C.I.A.A.').')</small>'; ?>", "name": "codicerea", "value": "$codicerea$", "class": "rea-mask", "help": "<?php echo tr('Formato: _PATTERN_', [
-                            '_PATTERN_' => 'RM-123456',
+                            '_PATTERN_' => 'RM-12345',
                         ]); ?>" ]}
                     </div>
 

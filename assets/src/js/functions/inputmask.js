@@ -29,7 +29,7 @@ function initMaskInput(input) {
         });
     } else if ($input.hasClass('rea-mask')) {
         $input.inputmask({
-            mask: "AA-999999{1,15}",
+            mask: "AA-99999{1,23}",
             casing: "upper",
         });
     } else if ($input.hasClass('provincia-mask')) {

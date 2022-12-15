@@ -52,3 +52,7 @@ HAVING
 ORDER BY 
     `id`, 
     `nome` ASC" WHERE `name` = 'Utenti e permessi';
+
+
+-- Aumento dimensione massima codicerea
+ALTER TABLE `an_anagrafiche` CHANGE `codicerea` `codicerea` VARCHAR(23) NOT NULL; 

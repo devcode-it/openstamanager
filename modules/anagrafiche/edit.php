@@ -192,7 +192,7 @@ if (sizeof($problemi_anagrafica) > 0) {
                             </div>
 
                             <div class="col-md-4">
-                                {[ "type": "text", "label": "<?php echo tr('Provincia'); ?>", "name": "provincia", "maxlength": 2, "class": "text-center provincia-mask text-uppercase", "value": "$provincia$", "extra": "onkeyup=\"this.value = this.value.toUpperCase();\"" ]}
+                                {[ "type": "text", "label": "<?php echo tr('Provincia'); ?>", "name": "provincia", "class": "text-center provincia-mask text-uppercase", "value": "$provincia$", "extra": "onkeyup=\"this.value = this.value.toUpperCase();\"" ]}
                             </div>
 
                             <div class="col-md-4">
@@ -642,7 +642,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                     </div>
 
 					<div class="col-md-3">
-						{[ "type": "text", "label": "<?php echo tr('Codice R.E.A.').' <small>('.tr('provincia-C.C.I.A.A.').')</small>'; ?>", "name": "codicerea", "value": "$codicerea$", "class": "rea-mask", "help": "<?php echo tr('Formato: _PATTERN_', [
+						{[ "type": "text", "label": "<?php echo tr('Codice R.E.A.').' <small>('.tr('provincia-C.C.I.A.A.').')</small>'; ?>", "name": "codicerea", "value": "$codicerea$", "class": "rea-mask text-uppercase", "help": "<?php echo tr('Esempio: _PATTERN_', [
                             '_PATTERN_' => 'RM-123456',
                         ]); ?>" ]}
                     </div>

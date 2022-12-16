@@ -25,7 +25,7 @@ class ReaValidi extends Controllo
 {
     public function getName()
     {
-        return tr('Anagrafiche con codici REA non validi');
+        return tr('Anagrafiche con codici R.E.A. non validi');
     }
 
     public function getType($record)
@@ -35,7 +35,14 @@ class ReaValidi extends Controllo
 
     public function getOptions($record)
     {
-        return [];
+        return [
+            [
+                'name' => tr('Rimuovi'),
+                'icon' => 'fa fa-trash',
+                'color' => 'danger',
+                'params' => [],
+            ],
+        ];
     }
 
     public function check()
@@ -43,7 +50,7 @@ class ReaValidi extends Controllo
         $database = database();
 
         /**
-         * Verifico se i rea inseriti per le anagrafiche hanno una struttura valida.
+         * Verifico se i R.E.A. inseriti per le anagrafiche hanno una struttura valida.
          */
         $anagrafiche_interessate = $database->fetchArray('SELECT
             an_anagrafiche.idanagrafica AS id,
@@ -54,7 +61,7 @@ class ReaValidi extends Controllo
            INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.idanagrafica = an_anagrafiche.idanagrafica
            INNER JOIN an_tipianagrafiche ON an_tipianagrafiche.idtipoanagrafica = an_tipianagrafiche_anagrafiche.idtipoanagrafica
         WHERE
-            codicerea NOT REGEXP "^..-......$" AND codicerea != ""
+            codicerea NOT REGEXP "([A-Za-z]{2})-([0-9]{1,20})" AND codicerea != ""
         AND
             deleted_at IS NULL
         GROUP BY an_anagrafiche.idanagrafica');
@@ -68,7 +75,7 @@ class ReaValidi extends Controllo
             $this->addResult([
                 'id' => $anagrafica['id'],
                 'nome' => \Modules::link('Anagrafiche', $anagrafica['id'], $anagrafica['ragione_sociale']),
-                'descrizione' => tr('Il codice REA "_REA_" non è valido', [
+                'descrizione' => tr('Il codice REA "_REA_" non è valido.', [
                     '_REA_' => $anagrafica['codicerea'],
                 ]),
             ]);
@@ -78,6 +85,10 @@ class ReaValidi extends Controllo
 
     public function execute($record, $params = [])
     {
-        return false;
+        $anagrafica = Anagrafica::find($record['id']);
+        $anagrafica->codicerea = null;
+        $anagrafica->save();
+       
+        return true;
     }
 }

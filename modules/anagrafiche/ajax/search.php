@@ -43,7 +43,6 @@ $fields = [
     'Note' => 'note',
     'Codice REA' => 'codicerea',
     'Marche' => 'marche',
-    'CCIAA' => 'cciaa',
     'Numero di iscrizione albo artigiani' => 'n_alboartigiani',
 ];
 

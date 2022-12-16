@@ -233,7 +233,7 @@ foreach ($righe as $riga) {
     echo '
             <td class="text-center">';
 
-    if ($record['stato'] != 'Pagato' && $record['stato'] != 'Emessa' && $riga->id != $fattura->rigaBollo->id) {
+    if ($record['stato'] != 'Pagato' && $record['stato'] != 'Emessa') {
         echo '
                 <div class="input-group-btn">';
 
@@ -244,6 +244,7 @@ foreach ($righe as $riga) {
                     </a>';
         }
 
+        if ($riga->id != $fattura->rigaBollo->id) {
         echo '
                     <a class="btn btn-xs btn-info" title="'.tr('Aggiungi informazioni FE per questa riga').'" onclick="apriInformazioniFE(this)">
                         <i class="fa fa-file-code-o"></i>
@@ -255,8 +256,10 @@ foreach ($righe as $riga) {
 
                     <a class="btn btn-xs btn-danger" title="'.tr('Rimuovi riga').'" onclick="rimuoviRiga([$(this).closest(\'tr\').data(\'id\')])">
                         <i class="fa fa-trash"></i>
-                    </a>
+                    </a>';
+        }
 
+        echo '
                     <a class="btn btn-xs btn-default handle" title="'.tr('Modifica ordine delle righe').'">
                         <i class="fa fa-sort"></i>
                     </a>

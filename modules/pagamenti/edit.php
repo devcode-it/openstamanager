@@ -104,15 +104,37 @@ foreach ($results as $result) {
         $giorno_pagamento = ($result['giorno'] < -1) ? -$result['giorno'] - 1 : $result['giorno'];
     }
 
+// Collegamenti diretti
+$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir`, NULL AS `deleted_at` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`idpagamento` = '.prepare($id_record).'
+
+UNION
+SELECT `or_ordini`.`id`, `or_ordini`.`data`, `or_ordini`.`numero`, `or_ordini`.`numero_esterno`, `or_tipiordine`.`descrizione` AS tipo_documento, `or_tipiordine`.`dir`, NULL AS `deleted_at` FROM `or_ordini` JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine` WHERE `or_ordini`.`idpagamento` = '.prepare($id_record).'
+
+UNION
+SELECT `dt_ddt`.`id`, `dt_ddt`.`data`, `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`, `dt_tipiddt`.`descrizione` AS tipo_documento, `dt_tipiddt`.`dir`, NULL AS `deleted_at` FROM `dt_ddt` JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` WHERE `dt_ddt`.`idpagamento` = '.prepare($id_record).'
+
+UNION
+SELECT `co_contratti`.`id`, `co_contratti`.`data_bozza`, `co_contratti`.`numero`, 0 AS numero_esterno , "Contratto" AS tipo_documento, 0 AS dir, NULL AS `deleted_at` FROM `co_contratti` WHERE `co_contratti`.`idpagamento` = '.prepare($id_record).'
+
+UNION
+SELECT `co_preventivi`.`id`, `co_preventivi`.`data_bozza`, `co_preventivi`.`numero`, 0 AS numero_esterno , "Preventivo" AS tipo_documento, 0 AS dir, NULL AS `deleted_at` FROM `co_preventivi` WHERE `co_preventivi`.`idpagamento` = '.prepare($id_record).'
+
+ORDER BY `data`');
+
+
     echo '
 				<div class="box box-success">
 					<div class="box-header with-border">
 						<h3 class="box-title">'.tr('Rata _NUMBER_', [
                             '_NUMBER_' => $numero_rata,
-                        ]).'</h3>
-						<button type="button" class="btn btn-danger pull-right" onclick="rimuoviRata('.$result['id'].')">
-						    <i class="fa fa-trash"></i> '.tr('Elimina').'
-						</button>
+                        ]).'</h3>';
+                        if (empty($elementi)) {
+        echo '
+						<button type="button" class="btn btn-danger pull-right" onclick="rimuoviRata(' . $result['id'] . ')">
+						    <i class="fa fa-trash"></i> ' . tr('Elimina') . '
+						</button>';
+                        }
+                        echo '
 					</div>
 					<div class="box-body">
 						<input type="hidden" value="'.$result['id'].'" name="id['.$numero_rata.']">
@@ -171,9 +193,7 @@ foreach ($results as $result) {
 	</div>
 </div>
 
-<a class="btn btn-danger ask" data-backto="record-list">
-    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
-</a>
+
 <?php
 echo '
 <form class="hide" id="template">
@@ -207,6 +227,71 @@ echo '
     </div>
 </form>';
 
+
+
+
+if (!empty($elementi)) {
+    echo '
+<div class="box box-warning collapsable collapsed-box">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
+            '_NUM_' => count($elementi),
+        ]).'</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+    <div class="box-body">
+        <ul>';
+
+    foreach ($elementi as $elemento) {
+        $descrizione = tr('_DOC_  _NUM_ del _DATE_ _DELETED_AT_', [
+        '_DOC_' => $elemento['tipo_documento'],
+        '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
+        '_DATE_' => Translator::dateToLocale($elemento['data']),
+        '_DELETED_AT_' => (!empty($elemento['deleted_at']) ? tr('Eliminato il:').' '.Translator::dateToLocale($elemento['deleted_at']) : ''),
+    ]);
+
+        //se non è un preventivo è un ddt o una fattura
+        //se non è un ddt è una fattura.
+        if (in_array($elemento['tipo_documento'], ['Preventivo'])) {
+            $modulo = 'Preventivi';
+        } elseif (in_array($elemento['tipo_documento'], ['Contratto'])) {
+            $modulo = 'Contratti';
+        } elseif (in_array($elemento['tipo_documento'], ['Ordine cliente', 'Ordine fornitore'])) {
+            $modulo = ($elemento['dir'] == 'entrata') ? 'Ordini cliente' : 'Ordini fornitore';
+        } elseif (in_array($elemento['tipo_documento'], ['Ddt in uscita', 'Ddt in entrata'])) {
+            $modulo = ($elemento['dir'] == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
+        } else {
+            $modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
+        }
+
+        $id = $elemento['id'];
+
+        echo '
+            <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+    }
+
+echo '
+        </ul>
+    </div>
+</div>';
+}
+
+if (!empty($elementi)) {
+    echo '
+<div class="alert alert-error">
+    ' . tr('Eliminando questo documento si potrebbero verificare problemi nelle altre sezioni del gestionale') . '.
+</div>
+<a class="btn btn-danger ask disabled" data-backto="record-list">
+    <i class="fa fa-trash"></i> '.tr('Elimina').'
+</a>';
+} else {
+        echo '
+<a class="btn btn-danger ask" data-backto="record-list">
+    <i class="fa fa-trash"></i> '.tr('Elimina').'
+</a>';
+}
 ?>
 
 <script>

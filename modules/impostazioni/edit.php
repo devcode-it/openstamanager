@@ -31,7 +31,11 @@ echo '
 <div class="row">
     <div class="col-md-6 col-md-offset-3">
         <div class="input-group">
-            <input type="text" class="form-control" placeholder="'.tr('Ricerca rapida').'" id="ricerca_impostazioni" value="'.$ricerca.'"/>
+            '.input([
+                'type' => 'text',
+                'name' => 'ricerca_impostazioni',
+                'value' => $ricerca
+            ]).'
             <div class="input-group-btn">
                 <button class="btn btn-primary" type="button">
                     <span class="fa fa-search"></span>

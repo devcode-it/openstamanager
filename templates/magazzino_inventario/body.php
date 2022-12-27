@@ -106,7 +106,7 @@ foreach ($data['results'] as $r) {
             <td class="text-right">'.moneyFormat($valore_magazzino).'</td>
         </tr>';
 
-    $totale_qta += $r['qta_totale'];
+    $totale_qta += $r['Q.tà'];
     $totali[] = $valore_magazzino;
 }
 

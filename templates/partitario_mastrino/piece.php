@@ -26,6 +26,19 @@ if ($record['titolo'] != $prev_titolo && get('lev') == 1) {
     </tr>';
 }
 
+if (!empty($saldo_iniziale) && $i == 0) {
+    echo '
+    <tr>
+        <td>'.Translator::dateToLocale($data_saldo_iniziale).'</td>
+        <td>'.tr('Saldo iniziale').'</td>
+        <td></td>
+        <td></td>
+        <td class="text-right">
+            '.moneyFormat($saldo_iniziale, 2).'
+        </td>
+    </tr>';
+}
+
 echo '
     <tr>
         <td>'.Translator::dateToLocale($record['data']).'</td>
@@ -47,3 +60,4 @@ echo '
         </td>';
 echo '</tr>';
 $prev_titolo = $record['titolo'];
+$i++;

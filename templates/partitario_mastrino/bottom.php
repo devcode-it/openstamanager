@@ -22,6 +22,7 @@ include_once __DIR__.'/../../core.php';
 if (get('lev') == '2' || get('lev') == '3') {
     $dare = 0;
     $avere = 0;
+    $scalare += $saldo_iniziale;
     for ($i = 0; $i < sizeof($records); ++$i) {
         if ($records[$i]['totale'] >= 0) {
             $dare += $records[$i]['totale'];

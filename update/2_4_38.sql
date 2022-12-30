@@ -608,7 +608,7 @@ UPDATE `zz_segments` SET `predefined` = '0' WHERE `zz_segments`.`id_module` = (S
 INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`, `note`, `dicitura_fissa`, `predefined`, `predefined_accredito`, `predefined_addebito`, `autofatture`, `is_sezionale`, `is_fiscale`) VALUES ((SELECT `id` FROM `zz_modules` WHERE name='Ordini fornitore'), 'Standard ordini fornitore', '1=1', 'WHR', '#', '', '', '1', '0', '0', '0', '1', '0');
 
 UPDATE `zz_segments` SET `predefined` = '0' WHERE `zz_segments`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE name='Interventi'); 
-UPDATE `zz_segments` SET `predefined` = '1', `is_sezionale` = '1', `name` = 'Standard attività' WHERE `zz_segments`.`name` = 'Tutti' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE name='Interventi'); 
+UPDATE `zz_segments` SET `predefined` = '1', `is_sezionale` = '1', `name` = 'Standard attività', `pattern` = (SELECT `valore` FROM `zz_settings` WHERE `nome`='Formato codice attività') WHERE `zz_segments`.`name` = 'Tutti' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE name='Interventi'); 
 
 UPDATE `zz_segments` SET `is_sezionale` = '1' WHERE `zz_segments`.`id_module` IN(SELECT `id` FROM `zz_modules` WHERE `name` IN('Fatture di vendita', 'Fatture di acquisto')); 
 

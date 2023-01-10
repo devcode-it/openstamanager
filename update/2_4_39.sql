@@ -82,3 +82,6 @@ HAVING
     2=2 AND `Q.tà` > 0
 ORDER BY
     `descrizione`" WHERE `name` = 'Giacenze sedi';
+
+-- Impostazione per visualizzare i promemoria su app
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Visualizza promemoria', '1', 'boolean', '1', 'Applicazione', '5', '');

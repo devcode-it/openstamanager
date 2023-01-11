@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.39 (2023-01-13)](#2439-2023-01-13)
 - [2.4.38 (2022-12-07)](#2438-2022-12-07)
 - [2.4.37 (2022-11-02)](#2437-2022-11-04)
 - [2.4.36 (2022-09-16)](#2436-2022-09-16)
@@ -49,7 +50,30 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
-
+## 2.4.39 (2023-01-13)
+### Aggiunto (Added)
+- Aggiunto controllo eliminazione metodo di pagamento
+- Aggiunte nazioni
+- Aggiunta visualizzazione mappa all'aggiunta attività
+- Aggiunta possibilità di creare campi aggiuntivi con testo libero
+- Aggiunta impostazione per nascondere i promemoria su app
+- Aggiunta ID utente nei movimenti articolo
+### Modificato (Changed)
+- Miglioria gestione codice REA e provincia
+- Miglioria stampa mastrino saldo iniziale
+### Fixed
+- Corretta query vista contratti
+- Corretta stampa inventario in Articoli
+- Corretta query vista fatture di vendita
+- Corretta query vista utenti e permessi
+- Corretta lunghezza campo codice REA
+- Corretto il calcolo del guadagno in aggiunta riga
+- Corretto ordinamento riga bollo in fattura
+- Corretta vulnerabilità XSS
+- Corretto set pattern segmento attività
+- Corretta query vista giacenze sedi
+- Corretta visualizzazione rate contrattuali da plugin per anno precedente
+- Corretta selezione conti e IVA durante importazione Fattura elettronica di acquisto
 ## 2.4.38 (2022-12-07)
 ### Aggiunto (Added)
 - Aggiunto tempDir per mpdf
@@ -78,6 +102,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Miglioria ricerca di corrispondenza tra anagrafiche in fase di impostazione dei permessi
 - Sostituita funzione deprecata formatLocalized con isoFormat
 - Rimozione codice non raggiungibile
+- Ridotte restrizioni cookie per problemi con app esterne
 ### Fixed
 - Corretta la selezione dei colori
 - Corretta la visualizzazione delle colonne datatables
@@ -105,6 +130,11 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Corretta logica riapertura fattura pagata
 - Corretta valorizzazione codice REA in fase di importazione fattura elettronica
 - Corretta creazione fattura da azioni di gruppo in Attività se valorizzato 'Per conto di'
+- Corrette note interne riga documento
+- Corretto invio notifica chiusura intervento
+- Corretta emissione fatture da azioni di gruppo
+- Corretta generazione fatture con totale negativo
+- Corretto controllo sort-buffer-size
 ## 2.4.37 (2022-11-04)
 ### Aggiunto (Added)
 - Aggiunto modulo Mappa per geolocalizzare le attività

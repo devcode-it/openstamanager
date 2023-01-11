@@ -29,7 +29,7 @@ switch (post('op')) {
             'id_plugin' => $plugin,
             'name' => post('name'),
             'html_name' => post('html_name'),
-            'content' => post('content'),
+            'content' => $_POST['content'],
             'on_add' => post('on_add'),
             'top' => post('top'),
         ], ['id' => $id_record]);
@@ -46,7 +46,7 @@ switch (post('op')) {
             'id_module' => $module,
             'id_plugin' => $plugin,
             'name' => post('name'),
-            'content' => post('content'),
+            'content' => $_POST['content'],
             'html_name' => secure_random_string(8),
         ]);
         $id_record = $dbo->lastInsertedID();

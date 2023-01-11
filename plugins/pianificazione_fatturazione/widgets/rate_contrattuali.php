@@ -76,8 +76,8 @@ echo
         <div class="col-md-2 col-md-offset-9">
             <select class="form-control select-input openstamanager-input superselect select-year">';
 
-            for ($i=intval(date('Y')); $i<=intval(date('Y')) + 10; $i++) {
-                $selectType = ($i == date('m'))? "selected" : "";
+            for ($i=intval(date('Y')) -1; $i<=intval(date('Y')) + 10; $i++) {
+                $selectType = ($i == date('Y'))? "selected" : "";
                 echo
                 '<option value="' . $i . '" ' . $selectType . '>' . $i . '</option>';
             }

@@ -42,6 +42,10 @@ $query = Query::getQuery($structure, $where, 0, []);
 
 $query = Modules::replaceAdditionals($id_module, $query);
 
+// Modifiche alla query principale
+$query = preg_replace('/FROM[\s\t\n]+`mg_articoli`/s', 'FROM mg_articoli LEFT JOIN (SELECT idarticolo, SUM(qta) AS qta_totale FROM mg_movimenti WHERE data <='.prepare($period_end).' GROUP BY idarticolo) movimenti ON movimenti.idarticolo=mg_articoli.id ', $query);
+$query = preg_replace('/^SELECT/', 'SELECT movimenti.qta_totale, ', $query);
+
 if (post('acquisto') == 'standard') {
     $query = preg_replace('/^SELECT/', 'SELECT mg_articoli.prezzo_acquisto AS acquisto, ', $query);
     $text = "al prezzo presente nella scheda articolo";
@@ -57,7 +61,7 @@ if (post('acquisto') == 'standard') {
 }
 
 if (post('tipo') == 'nozero') {
-    $query = str_replace('2=2', '2=2 AND qta > 0', $query);
+    $query = str_replace('2=2', '2=2 AND qta_totale > 0', $query);
 }
 
 $data = Query::executeAndCount($query);
@@ -93,7 +97,7 @@ $totale_qta = 0;
 $totali = [];
 
 foreach ($data['results'] as $r) {
-    $valore_magazzino = $r['Prezzo di acquisto'] * $r['Q.tà'];
+    $valore_magazzino = $r['Prezzo di acquisto'] * $r['qta_totale'];
 
     echo '
         <tr>
@@ -101,7 +105,7 @@ foreach ($data['results'] as $r) {
             <td>'.$r['Categoria'].'</td>
             <td>'.$r['Descrizione'].'</td>
             <td class="text-right">'.moneyFormat($r['Prezzo di vendita']).'</td>
-            <td class="text-right">'.Translator::numberToLocale($r['Q.tà disponibile']).' '.$r['um'].'</td>
+            <td class="text-right">'.Translator::numberToLocale($r['qta_totale']).' '.$r['um'].'</td>
             <td class="text-right">'.moneyFormat($r['Prezzo di acquisto']).'</td>
             <td class="text-right">'.moneyFormat($valore_magazzino).'</td>
         </tr>';

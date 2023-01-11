@@ -155,7 +155,7 @@ class IBAN
         'IE' => [
             'length' => 22,
             'pattern' => '4c 14n',
-            'structure' => 'IEkk aaaa bbbb bbcc cccc cc',
+            'structure' => 'IEkk ssss bbbb bbcc cccc cc',
         ],
         'IL' => [
             'length' => 23,

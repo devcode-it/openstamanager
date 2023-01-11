@@ -129,7 +129,7 @@ echo '
 
 <script>
 function copy() {
-    let conti = $("select[name^=idconto");
+    let conti = $("select[name^=idconto]");
 
     // Individuazione del primo conto selezionato
     let conto_selezionato = null;

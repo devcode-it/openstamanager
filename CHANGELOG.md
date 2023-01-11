@@ -57,6 +57,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Aggiunta visualizzazione mappa all'aggiunta attività
 - Aggiunta possibilità di creare campi aggiuntivi con testo libero
 - Aggiunta impostazione per nascondere i promemoria su app
+- Aggiunta ID utente nei movimenti articolo
 ### Modificato (Changed)
 - Miglioria gestione codice REA e provincia
 - Miglioria stampa mastrino saldo iniziale

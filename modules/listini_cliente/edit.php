@@ -17,6 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+ use Models\Module;
+
 include_once __DIR__.'/../../core.php';
 
 echo '
@@ -74,106 +76,49 @@ echo '
 				</div>
 			</div>
 
-			<div style="max-height:400px; overflow:auto;">
-				<table class="table table-striped table-condensed table-bordered" id="tablelistini">
+			<table class="table table-hover table-condensed table-bordered" id="tablelistini">
+				<thead>
 					<tr>
-						<th width="5" class="text-center">
+						<th class="text-center">
 							<br><input id="check_all" type="checkbox"/>
 						</th>
-						<th class="text-center" width="14%">
-							'.tr('Codice').'
-							<input type="text" class="form-control" id="search_codice" placeholder="'.tr('Filtra').'...">
+						<th class="text-center">
+							'.tr('Codice').'<br>
+							{[ "type": "text", "size": "10", "name": "search_sconto", "placeholder": "'.tr('Filtra').'..." ]}
 						</th>
 						<th class="text-center">
-							'.tr('Descrizione').'
-							<input type="text" class="form-control" id="search_descrizione" placeholder="'.tr('Filtra').'...">
+							'.tr('Descrizione').'<br>
+							{[ "type": "text", "size": "30", "name": "search_sconto", "placeholder": "'.tr('Filtra').'..." ]}
 						</th>
-						<th class="text-center" width="10%">
-							'.tr('Data scadenza').'
-							<input type="text" class="form-control" id="search_data_scadenza" placeholder="'.tr('Filtra').'...">
+						<th class="text-center">
+							'.tr('Data scadenza').'<br>
+							{[ "type": "text", "size": "3", "name": "search_sconto", "placeholder": "'.tr('Filtra').'..." ]}
 						</th>
-						<th class="text-center" width="10%">
-							'.tr('Minimo').'
-							<input type="text" class="form-control" id="search_minimo" placeholder="'.tr('Filtra').'...">
+						<th class="text-center">
+							'.tr('Minimo').'<br>
+							{[ "type": "text", "size": "3", "name": "search_sconto", "placeholder": "'.tr('Filtra').'..." ]}
 						</th>
-						<th class="text-center" width="10%">
-							'.tr('Prezzo di listino').'
-							<input type="text" class="form-control" id="search_prezzo_listino" placeholder="'.tr('Filtra').'...">
+						<th class="text-center">
+							'.tr('Prezzo di listino').'<br>
+							{[ "type": "text", "size": "3", "name": "search_sconto", "placeholder": "'.tr('Filtra').'..." ]}
 						</th>
-						<th class="text-center" width="10%">
-							'.tr('Prezzo ivato').'
-							<input type="text" class="form-control" id="search_prezzo_ivato" placeholder="'.tr('Filtra').'...">
+						<th class="text-center">
+							'.tr('Prezzo ivato').'<br>
+							{[ "type": "text", "size": "3", "name": "search_sconto", "placeholder": "'.tr('Filtra').'..." ]}
 						</th>
-						<th class="text-center" width="10%">
-							'.tr('Sconto').'
-							<input type="text" class="form-control" id="search_sconto" placeholder="'.tr('Filtra').'...">
+						<th class="text-center">
+							'.tr('Sconto').'<br>
+							{[ "type": "text", "size": "3", "name": "search_sconto", "placeholder": "'.tr('Filtra').'..." ]}
 						</th>
-						<th class="text-center" width="7%"><br>#</th>
-					</tr>';
-			
-				foreach ($articoli as $articolo) {
-				echo '
-					<tr data-id="'.$articolo['id'].'">
-						<td class="text-center">
-							<input class="check" type="checkbox"/>
-						</td>
-						<td class="text-center">
-							'.Modules::link('Articoli', $articolo['id_articolo'], $articolo['codice'], null, '').'
-						</td>
+						<th class="text-center"></th>
+					</tr>
+				</thead>
+			</table>
 
-						<td>
-							'.$articolo['descrizione'].'
-						</td>
-
-						<td class="text-center">
-							'.dateFormat($articolo['data_scadenza']).'
-						</td>
-
-						<td class="text-center">
-							'.moneyFormat($articolo['minimo_vendita']).'
-						</td>
-
-						<td class="text-center">
-							'.moneyFormat($articolo['prezzo_unitario']).'
-						</td>
-
-						<td class="text-center">
-							'.moneyFormat($articolo['prezzo_unitario_ivato']).'
-						</td>
-
-						<td class="text-center">
-							'.numberFormat($articolo['sconto_percentuale']).' %
-						</td>
-
-						<td class="text-center">
-							<a class="btn btn-xs btn-warning" title="'.tr('Modifica articolo').'" onclick="modificaArticolo(this)">
-								<i class="fa fa-edit"></i>
-							</a>
-
-							<a class="btn btn-xs btn-danger" title="'.tr('Rimuovi articolo').'" onclick="rimuoviArticolo($(this).closest(\'tr\').data(\'id\'))">
-								<i class="fa fa-trash"></i>
-							</a>
-						</td>
-					</tr>';
-				}
-
-				if (empty($articoli)) {
-					echo '
-					<tr data-id="'.$articolo['id'].'">
-						<td colspan="7" class="text-center">
-							'.tr('Nessun articolo presente').'
-						</td>
-					</tr>';
-				}
-
-				echo '
-				</table>
-
-				<div class="btn-group">
-					<button type="button" class="btn btn-xs btn-default disabled" id="elimina_righe" onclick="rimuoviArticolo(getSelectData());">
-						<i class="fa fa-trash"></i>
-					</button>
-				</div>
+			<div class="btn-group">
+				<button type="button" class="btn btn-xs btn-default disabled" id="elimina_righe" onclick="rimuoviArticolo(getSelectData());">
+					<i class="fa fa-trash"></i>
+				</button>
 			</div>
 		</div>
 	</div>
@@ -195,9 +140,8 @@ echo '
 		}
 	}
 
-	async function modificaArticolo(button) {
+	async function modificaArticolo(button, id) {
 		let riga = $(button).closest("tr");
-		let id = riga.data("id");
 	
 		// Chiusura tooltip
 		if ($(button).hasClass("tooltipstered"))
@@ -236,6 +180,33 @@ echo '
 	}
 
 	$(document).ready(function(){
+		const table = $("#tablelistini").DataTable({
+			language: globals.translations.datatables,
+			retrieve: true,
+			ordering: false,
+			searching: false,
+			paging: true,
+			order: [],
+			lengthChange: false,
+			processing: true,
+			serverSide: true,
+			ajax: {
+				url: "'.Module::pool('Listini cliente')->fileurl('ajax/table.php').'?id_listino='.$id_record.'",
+				type: "GET",
+				dataSrc: "data",
+			},
+			searchDelay: 500,
+			pageLength: 15,
+		});
+	
+		table.on("processing.dt", function (e, settings, processing) {
+			if (processing) {
+				$("#mini-loader").show();
+			} else {
+				$("#mini-loader").hide();
+			}
+		});
+
 		$("input[id^=\'search_\']").keyup(function() {
 			$("#tablelistini tr").each(function(){
 				$(this).show();
@@ -271,26 +242,28 @@ echo '
 	function getSelectData() {
 		let data=new Array();
 		$(\'#tablelistini\').find(\'.check:checked\').each(function (){ 
-			data.push($(this).closest(\'tr\').data(\'id\'));
+			data.push($(this).attr(\'id\'));
 		});
 
 		return data;
 	}
 
-	$(".check").on("change", function() {
-		let checked = 0;
-		$(".check").each(function() {
-			if ($(this).is(":checked")) {
-				checked = 1;
+	setTimeout(function () {
+		$(".check").on("change", function() {
+			let checked = 0;
+			$(".check").each(function() {
+				if ($(this).is(":checked")) {
+					checked = 1;
+				}
+			});
+		
+			if (checked) {
+				$("#elimina_righe").removeClass("disabled");
+			} else {
+				$("#elimina_righe").addClass("disabled");
 			}
 		});
-	
-		if (checked) {
-			$("#elimina_righe").removeClass("disabled");
-		} else {
-			$("#elimina_righe").addClass("disabled");
-		}
-	});
+	}, 1000);
 	
 	$("#check_all").click(function(){    
 		if( $(this).is(":checked") ){

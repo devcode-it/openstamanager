@@ -143,9 +143,12 @@ if (!empty($movimenti)) {
                 </td>';
 
         // Data
+        $utente = $dbo->table('zz_users')->where('id',$movimento->idutente)->first();
+        $data = ($movimento->data ? $movimento->data : $movimento->data_movimento);
         echo '
-                <td class="text-center">'.dateFormat($movimento->data).' <span  class="tip" title="'.tr('Creazione movimento: _DATE_', [
+                <td class="text-center">'.dateFormat($data).' <span  class="tip" title="'.tr('Creazione movimento: _DATE_ <br>Creatore movimento: _USER_', [
                '_DATE_' => timestampFormat($movimento->data_movimento),
+               '_USER_' => $utente->username,
             ]).'"><i class="fa fa-question-circle-o"></i></span> </td>';
 
         // Operazioni

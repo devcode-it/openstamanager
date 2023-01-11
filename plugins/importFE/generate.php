@@ -566,8 +566,8 @@ if (!empty($righe)) {
     echo '
     <script>
     function copia() {
-        let aliquote = $("select[name^=iva");
-        let conti = $("select[name^=conto");
+        let aliquote = $("select[name^=iva]");
+        let conti = $("select[name^=conto]");
 
         // Individuazione della prima IVA selezionata
         let iva_selezionata = null;
@@ -642,7 +642,7 @@ input("flag_crea_articoli").on("change", function (){
     }
 });
 
-$("select[name^=selezione_riferimento").change(function() {
+$("select[name^=selezione_riferimento]").change(function() {
     if (!$(this).hasClass("already-loaded")) {
         let $this = $(this);
         let data = $this.selectData();
@@ -823,7 +823,7 @@ $("[id^=\'articoli\']").change(function() {
 });
 
 function copy_rif() {
-    let rif_vendite = $("select[name^=selezione_riferimento_vendita");
+    let rif_vendite = $("select[name^=selezione_riferimento_vendita]");
 
     // Individuazione della prima IVA selezionata
     let iva_selezionata = null;

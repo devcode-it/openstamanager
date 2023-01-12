@@ -32,4 +32,31 @@ switch ($resource) {
         }
 
         break;
+
+    case 'articoli_listino':
+        // Gestione campi di ricerca
+        if (!empty($search)) {
+            $search_fields[] = '|table_listini|.data_scadenza LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '|table_listini|.prezzo_unitario LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '|table_listini|.prezzo_unitario_ivato LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '|table_listini|.sconto_percentuale LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '|table_articoli|.codice LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '|table_articoli|.descrizione LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = ($prezzi_ivati ? '|table_articoli|.minimo_vendita_ivato' : '|table_articoli|.minimo_vendita').' LIKE '.prepare('%'.$search.'%');
+            
+        }
+
+        // Aggiunta filtri di ricerca
+        $where = empty($search_fields) ? '1=1' : '('.implode(' OR ', $search_fields).')';
+
+        $query = 'SELECT mg_listini_articoli.*, mg_articoli.codice, mg_articoli.descrizione,  mg_articoli.'.($prezzi_ivati ? 'minimo_vendita_ivato' : 'minimo_vendita').' AS minimo_vendita FROM mg_listini_articoli LEFT JOIN mg_articoli ON mg_listini_articoli.id_articolo=mg_articoli.id WHERE id_listino='.prepare($id_listino).' AND 1=1  LIMIT '.$start.', '.$length;
+
+        $query = str_replace('1=1', !empty($where) ? replace($where, [
+            '|table_listini|' => 'mg_listini_articoli',
+            '|table_articoli|' => 'mg_articoli',
+        ]) : '', $query);
+        $articoli = $database->fetchArray($query);
+        $results = $articoli;
+
+        break;
 }

@@ -63,11 +63,11 @@ echo '
 			</div>
 			<hr>
 			<div class="row">
-				<div class="col-md-offset-7 col-md-3">
+				<div class="col-md-5">
 					{[ "type":"select", "label":"'.tr('Articolo').'", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero": 1, "id_listino": '.$id_record.'}  ]}
 				</div>
 
-				<div class="col-md-2">
+				<div class="col-md-1">
 					<div class="btn-group btn-group-flex">
 						<button type="button" class="btn btn-primary" style="margin-top:25px;" onclick="aggiungiArticolo(this, true)">
 							<i class="fa fa-plus"></i> '.tr('Aggiungi').'
@@ -82,35 +82,14 @@ echo '
 						<th class="text-center">
 							<br><input id="check_all" type="checkbox"/>
 						</th>
-						<th class="text-center">
-							'.tr('Codice').'<br>
-							{[ "type": "text", "size": "10", "name": "search_sconto", "placeholder": "'.tr('Filtra').'..." ]}
-						</th>
-						<th class="text-center">
-							'.tr('Descrizione').'<br>
-							{[ "type": "text", "size": "30", "name": "search_sconto", "placeholder": "'.tr('Filtra').'..." ]}
-						</th>
-						<th class="text-center">
-							'.tr('Data scadenza').'<br>
-							{[ "type": "text", "size": "3", "name": "search_sconto", "placeholder": "'.tr('Filtra').'..." ]}
-						</th>
-						<th class="text-center">
-							'.tr('Minimo').'<br>
-							{[ "type": "text", "size": "3", "name": "search_sconto", "placeholder": "'.tr('Filtra').'..." ]}
-						</th>
-						<th class="text-center">
-							'.tr('Prezzo di listino').'<br>
-							{[ "type": "text", "size": "3", "name": "search_sconto", "placeholder": "'.tr('Filtra').'..." ]}
-						</th>
-						<th class="text-center">
-							'.tr('Prezzo ivato').'<br>
-							{[ "type": "text", "size": "3", "name": "search_sconto", "placeholder": "'.tr('Filtra').'..." ]}
-						</th>
-						<th class="text-center">
-							'.tr('Sconto').'<br>
-							{[ "type": "text", "size": "3", "name": "search_sconto", "placeholder": "'.tr('Filtra').'..." ]}
-						</th>
-						<th class="text-center"></th>
+						<th class="text-center" width="200">'.tr('Codice').'</th>
+						<th class="text-center" width="350">'.tr('Descrizione').'</th>
+						<th class="text-center" width="95">'.tr('Data scadenza').'</th>
+						<th class="text-center">'.tr('Minimo').'</th>
+						<th class="text-center">'.tr('Prezzo di listino').'</th>
+						<th class="text-center">'.tr('Prezzo ivato').'</th>
+						<th class="text-center">'.tr('Sconto').'</th>
+						<th class="text-center" width="40"></th>
 					</tr>
 				</thead>
 			</table>
@@ -184,7 +163,7 @@ echo '
 			language: globals.translations.datatables,
 			retrieve: true,
 			ordering: false,
-			searching: false,
+			searching: true,
 			paging: true,
 			order: [],
 			lengthChange: false,
@@ -204,36 +183,6 @@ echo '
 				$("#mini-loader").show();
 			} else {
 				$("#mini-loader").hide();
-			}
-		});
-
-		$("input[id^=\'search_\']").keyup(function() {
-			$("#tablelistini tr").each(function(){
-				$(this).show();
-			});
-			$("input[id^=\'search_\']").each(function(){
-				var position = $(this).closest("th").index();
-				var filter = $(this).val().toUpperCase();
-	
-				var tr = $("#tablelistini tr");
-				if(filter!=""){
-					for (i = 0; i < tr.length; i++) {
-					  td = tr[i].getElementsByTagName("td")[position];
-					  if (td) {
-						if (td.innerText.toUpperCase().indexOf(filter) <= -1) {
-						  tr[i].style.display = "none";
-						}
-					  }
-					}
-				}
-			});
-			if ($("#check_all").is(":checked")) {
-				$("#check_all").trigger("click");
-				$(".check").each(function(){
-					if ($(this).is(":checked")) {
-						$(this).trigger("click");
-					}
-				});
 			}
 		});
 	});

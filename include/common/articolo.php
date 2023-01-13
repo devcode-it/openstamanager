@@ -547,10 +547,13 @@ function aggiornaPrezzoArticolo(aggiorna = "") {
     } else if (aggiorna != "") {
         prezzo_previsto = getPrezziListinoVisibili(aggiorna);
     } else {
+        // Inserisco il prezzo più basso tra listino e netto cliente, se mancanti imposto il prezzo della scheda articolo
         let qta = $("#qta").val().toEnglish();
         prezzo1 = getPrezzoPerQuantita(qta);
         prezzo2 = getPrezzoListino();
+        prezzo3 = getPrezzoScheda();
         prezzo_previsto = (!prezzo1 ? prezzo2 : (!prezzo2 ? prezzo1 : (prezzo1 > prezzo2 ? prezzo2 : prezzo1)));
+        prezzo_previsto = (prezzo_previsto ? prezzo_previsto : prezzo3);
     } 
 
     $("#prezzo_unitario").val(prezzo_previsto).trigger("change");

@@ -77,6 +77,19 @@ switch (post('op')) {
 
         download($file, 'anagrafiche.csv');
         break;
+
+    case 'cambia-relazione':
+        $idrelazione = post('idrelazione');
+
+        foreach ($id_records as $id) {
+            $anagrafica = Anagrafica::find($id);
+
+            $anagrafica->idrelazione = $idrelazione;
+
+            $anagrafica->save();
+    
+        }
+        break;
 }
 
 $operations = [];
@@ -112,5 +125,14 @@ if (App::debug() && $google) {
         ],
     ];
 }
+
+$operations['cambia-relazione'] = [
+    'text' => '<span><i class="fa fa-copy"></i> '.tr('Cambia relazione').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi davvero cambiare la relazione delle anagrafiche selezionate?').'<br><br>{[ "type": "select", "label": "'.tr('Relazione con il cliente').'", "name": "idrelazione", "required": 1, "ajax-source": "relazioni"]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
 
 return $operations;

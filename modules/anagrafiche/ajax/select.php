@@ -376,6 +376,10 @@ switch ($resource) {
                 $where[] = 'idanagrafica='.prepare($superselect['idanagrafica']);
             }
 
+            if (isset($superselect['idsede_destinazione'])) {
+                $where[] = 'idsede='.prepare($superselect['idsede_destinazione']);
+            }
+
             if (!empty($search)) {
                 $search_fields[] = 'an_referenti.nome LIKE '.prepare('%'.$search.'%');
             }

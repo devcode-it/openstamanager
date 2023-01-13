@@ -362,7 +362,7 @@ echo '
                         echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
                     }
                     echo '
-                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|id_plugin='.Plugins::get('Referenti')['id'].'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
+                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.$record['idsede_destinazione'].'}, "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|id_plugin='.Plugins::get('Referenti')['id'].'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
                 </div>';
 
                 echo '
@@ -1068,6 +1068,11 @@ $(document).ready(function () {
         if(data_competenza.data("DateTimePicker").date() < e.date){
             data_competenza.data("DateTimePicker").date(e.date);
         }
+    });
+
+    $("#idsede_destinazione").change(function(){
+        updateSelectOption("idsede_destinazione", $(this).val());
+        $("#idreferente").selectReset();
     });
 });
 

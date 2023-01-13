@@ -86,7 +86,7 @@ echo '
                         echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
                     }
                     echo '
-					{[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'} ]}
+					{[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].',"idsede_destinazione": '.$record['idsede'].'} ]}
 				</div>
 
 				<div class="col-md-3">';
@@ -437,3 +437,12 @@ if (!empty($elementi)) {
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
+
+<script>
+
+    $("#idsede").change(function(){
+        updateSelectOption("idsede_destinazione", $(this).val());
+        $("#idreferente").selectReset();
+    });
+
+</script>

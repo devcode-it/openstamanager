@@ -147,7 +147,7 @@ echo '
                         echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
                     }
                     echo '
-                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'} ]}
+                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.$record['idsede_destinazione'].'} ]}
                 </div>';
 
                 // Conteggio numero articoli ddt in uscita
@@ -574,3 +574,13 @@ if (in_array($record[$field_name], $user->sedi)) {
     </a>
 <?php
 }
+
+echo '
+<script>
+
+    $("#idsede_destinazione").change(function(){
+        updateSelectOption("idsede_destinazione", $(this).val());
+        $("#idreferente").selectReset();
+    });
+
+</script>';

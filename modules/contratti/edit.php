@@ -79,7 +79,7 @@ if (strtotime($record['data_conclusione']) < strtotime($record['data_accettazion
 
 				<div class="col-md-3">
 				    '.Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"').'
-					{[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'} ]}
+					{[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].',"idsede_destinazione": '.$record['idsede'].'} ]}
 				</div>
 
 				<div class="col-md-3">';
@@ -529,6 +529,11 @@ $(document).ready(function() {
         if(data_accettazione.data("DateTimePicker").date() > e.date){
             data_accettazione.data("DateTimePicker").date(e.date);
         }
+    });
+
+    $("#idsede").change(function(){
+        updateSelectOption("idsede_destinazione", $(this).val());
+        $("#idreferente").selectReset();
     });
 });
 </script>';

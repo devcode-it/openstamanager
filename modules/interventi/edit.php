@@ -76,7 +76,7 @@ echo '
                         </div>
 
                         <div class="col-md-6">
-                            {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica'], 'idclientefinale' => $record['idclientefinale']]).', "readonly": "'.intval($record['flag_completato']).'" ]}
+                            {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica'], 'idclientefinale' => $record['idclientefinale'], 'idsede_destinazione' => $record['idsede_destinazione']]).', "readonly": "'.intval($record['flag_completato']).'" ]}
                         </div>
                     </div>
 
@@ -690,7 +690,8 @@ $(document).ready(function() {
         updateSelectOption("idsede_destinazione", $(this).val());
 		session_set("superselect,idsede_destinazione", $(this).val(), 0);
         input("idimpianti").getElement().selectReset();
-
+        input("idreferente").getElement().selectReset();
+        
         let data = sede.getData();
 		if (data) {
 		    input("idzona").set(data.idzona ? data.idzona : "");

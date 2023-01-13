@@ -88,3 +88,6 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 
 -- Aggiunta del riferimento utente nei movimenti
 ALTER TABLE `mg_movimenti` ADD `idutente` INT NULL DEFAULT NULL;
+
+-- Aggiunta valori buffer Datatables
+UPDATE `zz_settings` SET `tipo` = 'list[5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,250,500,1000]' WHERE `zz_settings`.`nome` = 'Lunghezza in pagine del buffer Datatables';

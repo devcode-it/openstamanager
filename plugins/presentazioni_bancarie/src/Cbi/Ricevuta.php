@@ -90,7 +90,7 @@ class Ricevuta extends Elemento
      */
     protected $descrizione_origine;
 
-    public function toCbiFormat()
+    public function toRibaAbiCbiFormat()
     {
         return [
             $this->numero_ricevuta,

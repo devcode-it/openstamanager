@@ -6,15 +6,16 @@ namespace Plugins\PresentazioniBancarie\Cbi;
  * Classe per gestire l'intestazione del RiBa.
  *
  * @property int    $abi
+ * @property int    $soggetto_veicolatore
  * @property int    $cab
  * @property string $conto
  * @property string $data_creazione
  * @property string $nome_supporto
  * @property string $codice_divisa
- * @property string $ragione_soc1_creditore
- * @property string $ragione_soc2_creditore
+ * @property string $ragione_sociale_creditore
  * @property string $indirizzo_creditore
- * @property string $cap_citta_prov_creditore
+ * @property string $citta_creditore
+ * @property string $partita_iva_o_codice_fiscale_creditore
  * @property string $identificativo_creditore
  * @property string $codice_sia
  * @property bool   $eol
@@ -27,6 +28,13 @@ class Intestazione extends Elemento
      * @var int Valore numerico di 5 cifre
      */
     protected $abi;
+	
+	/**
+     * Codice ABI del soggetto veicolatore.
+     *
+     * @var int Valore numerico di 5 cifre
+     */
+    protected $soggetto_veicolatore;
     /**
      * Codice CAB della banca del creditore.
      *
@@ -54,11 +62,7 @@ class Intestazione extends Elemento
     /**
      * @var string Valore alfanumerico di 24 cifre
      */
-    protected $ragione_soc1_creditore;
-    /**
-     * @var string Valore alfanumerico di 24 cifre
-     */
-    protected $ragione_soc2_creditore;
+    protected $ragione_sociale_creditore;
     /**
      * @var string Valore alfanumerico di 24 cifre
      */
@@ -66,7 +70,11 @@ class Intestazione extends Elemento
     /**
      * @var string Valore alfanumerico di 24 cifre
      */
-    protected $cap_citta_prov_creditore;
+    protected $citta_creditore;
+    /**
+     * @var string Valore alfanumerico di 24 cifre
+     */
+    protected $partita_iva_o_codice_fiscale_creditore;
     /**
      * @var string Valore alfanumerico di 16 cifre, opzionale (default "")
      */
@@ -80,7 +88,7 @@ class Intestazione extends Elemento
      */
     protected $eol = true;
 
-    public function toCbiFormat()
+    public function toRibaAbiCbiFormat()
     {
         return [
             $this->abi,
@@ -89,12 +97,13 @@ class Intestazione extends Elemento
             $this->data_creazione,
             $this->nome_supporto,
             $this->codice_divisa,
-            $this->ragione_soc1_creditore,
-            $this->ragione_soc2_creditore,
+            $this->ragione_sociale_creditore,
             $this->indirizzo_creditore,
-            $this->cap_citta_prov_creditore,
+            $this->citta_creditore,
+            $this->partita_iva_o_codice_fiscale_creditore,
             $this->identificativo_creditore,
             $this->codice_sia,
+            $this->soggetto_veicolatore,
             $this->eol,
         ];
     }

@@ -87,10 +87,10 @@ class Gestore
         $intestazione->cab = $cab_assuntrice;
         $intestazione->data_creazione = $data->format('dmy');
         $intestazione->nome_supporto = $supporto;
-        $intestazione->cap_citta_prov_creditore = strtoupper($this->azienda['cap'].' '.$this->azienda['citta'].' '.$this->azienda['provincia']);
-        $intestazione->ragione_soc1_creditore = strtoupper($this->azienda->ragione_sociale);
+        $intestazione->citta_creditore = strtoupper($this->azienda['cap'].' '.$this->azienda['citta'].' '.$this->azienda['provincia']);
+        $intestazione->ragione_sociale_creditore = strtoupper($this->azienda->ragione_sociale);
         $intestazione->indirizzo_creditore = strtoupper($this->azienda['indirizzo']);
-        $intestazione->identificativo_creditore = !empty($this->azienda->partita_iva) ? $this->azienda->partita_iva : $this->azienda->codice_fiscale;
+        $intestazione->partita_iva_o_codice_fiscale_creditore = !empty($this->azienda->partita_iva) ? $this->azienda->partita_iva : $this->azienda->codice_fiscale;
 
         $this->riba = new RiBa($intestazione);
     }

@@ -279,15 +279,15 @@ echo '
                 break;
                 case "f8": 
                     event.preventDefault();
-                    input("causale").set("1");
+                    input("causale").set("1").trigger("change");
                 break;
                 case "f9": 
                     event.preventDefault();
-                    input("causale").set("2");
+                    input("causale").set("2").trigger("change");
                 break;
                 case "f10": 
                     event.preventDefault();
-                    input("causale").set("3");
+                    input("causale").set("3").trigger("change");
                 break;
                 default: alert(event);
             }

@@ -201,12 +201,10 @@ class Fattura extends Document
             $model->dichiarazione()->associate($dichiarazione);
 
             // Registrazione dell'operazione nelle note
-            $notes[] = tr("Operazione non imponibile come da vostra dichiarazione d'intento nr _PROT_ del _PROT_DATE_ emessa in data _RELEASE_DATE_, da noi registrata al nr _ID_ del _DATE_", [
+            $notes[] = tr("Operazione non imponibile come da vostra dichiarazione d'intento nr _PROT_ del _PROT_DATE_ emessa in data _RELEASE_DATE_", [
                     '_PROT_' => $dichiarazione->numero_protocollo,
                     '_PROT_DATE_' => Translator::dateToLocale($dichiarazione->data_protocollo),
                     '_RELEASE_DATE_' => Translator::dateToLocale($dichiarazione->data_emissione),
-                    '_ID_' => $dichiarazione->id,
-                    '_DATE_' => Translator::dateToLocale($dichiarazione->data),
                 ]).'.';
         }
 

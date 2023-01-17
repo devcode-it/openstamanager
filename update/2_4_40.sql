@@ -52,4 +52,5 @@ ORDER BY
     TRIM(`ragione_sociale`)" WHERE `name` = 'Anagrafiche';
 
 -- Aggiunta descrizione codice natura N7
-INSERT INTO `co_iva` (`id`, `descrizione`, `percentuale`, `indetraibile`, `esente`, `dicitura`, `codice_natura_fe`, `deleted_at`, `codice`, `esigibilita`, `default`) VALUES (NULL, 'Regime OSS e D.Lgs.\r\n83/2021', '0.00', '0.00', '1', NULL, 'N7', NULL, NULL, 'I', '1'); 
+SELECT @codice := MAX(CAST(codice AS UNSIGNED))+1 FROM co_iva WHERE deleted_at IS NULL;
+INSERT INTO `co_iva` (`id`, `descrizione`, `percentuale`, `indetraibile`, `esente`, `dicitura`, `codice_natura_fe`, `deleted_at`, `codice`, `esigibilita`, `default`) VALUES (NULL, 'Regime OSS, D.Lgs. 83/2021', '0.00', '0.00', '1', NULL, 'N7', NULL, @codice, 'I', '1'); 

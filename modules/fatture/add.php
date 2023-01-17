@@ -110,6 +110,22 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
         </div>
     </div>
 
+    <!-- DETTAGLI CLIENTE -->
+    <div class="box box-info collapsable collapsed-box">
+        <div class="box-header with-border">
+			<h3 class="box-title"><?php echo tr('Dettagli cliente'); ?></h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
+		</div>
+
+        <div class="box-body" id="dettagli_cliente">
+            <?php echo tr('Seleziona prima un cliente'); ?>...
+        </div>
+    </div>
+
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
@@ -124,6 +140,13 @@ if ($dir == 'entrata') {
     echo '
 <script>
 $(document).ready(function () {
+    if($("#idanagrafica_add").val()){
+        // Carico nel panel i dettagli del cliente
+        $.get("'.base_path().'/ajax_complete.php?module=Interventi&op=dettagli&id_anagrafica=" + $("#idanagrafica_add").val(), function(data){
+            $("#dettagli_cliente").html(data);
+        });
+    }
+    
     $("#idanagrafica_add").change(function () {
         let data = $(this).selectData();
 
@@ -191,8 +214,12 @@ $(document).ready(function () {
                 }
             });
 
-
+            // Carico nel panel i dettagli del cliente
+            $.get("'.base_path().'/ajax_complete.php?module=Interventi&op=dettagli&id_anagrafica=" + data.id, function(data){
+                $("#dettagli_cliente").html(data);
+            });
         }else{
+            $("#dettagli_cliente").html("'.tr('Seleziona prima un cliente').'...");
 
             $("#info").addClass("hidden");
             return;

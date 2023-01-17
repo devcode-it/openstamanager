@@ -482,6 +482,11 @@ echo '
            let value = anagrafica.get();
            updateSelectOption("idanagrafica", value);
            session_set("superselect,idanagrafica",value, 0);
+
+            // Carico nel panel i dettagli del cliente
+            $.get("'.base_path().'/ajax_complete.php?module=Interventi&op=dettagli&id_anagrafica=" + value, function(data){
+                $("#dettagli_cliente").html(data);
+            });
         }
 
 		// Quando modifico orario inizio, allineo anche l\'orario fine

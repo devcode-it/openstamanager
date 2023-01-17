@@ -20,17 +20,6 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
 ('2', 'Pagamento fornitore', '`pagacquisto`.`nome`', '16', '1', '0', '0', '0', NULL, NULL, '0', '0', '0');
 
-
-INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) VALUES
-('1', (SELECT zz_views.id FROM zz_views INNER JOIN zz_modules ON zz_modules.id = zz_views.id_module WHERE zz_views.name = 'Pagamento cliente' AND zz_modules.name='Anagrafiche')),
-('2', (SELECT zz_views.id FROM zz_views INNER JOIN zz_modules ON zz_modules.id = zz_views.id_module WHERE zz_views.name = 'Pagamento cliente' AND zz_modules.name='Anagrafiche')),
-('3', (SELECT zz_views.id FROM zz_views INNER JOIN zz_modules ON zz_modules.id = zz_views.id_module WHERE zz_views.name = 'Pagamento cliente' AND zz_modules.name='Anagrafiche')),
-('4', (SELECT zz_views.id FROM zz_views INNER JOIN zz_modules ON zz_modules.id = zz_views.id_module WHERE zz_views.name = 'Pagamento cliente' AND zz_modules.name='Anagrafiche')),
-('1', (SELECT zz_views.id FROM zz_views INNER JOIN zz_modules ON zz_modules.id = zz_views.id_module WHERE zz_views.name = 'Pagamento fornitore' AND zz_modules.name='Anagrafiche')),
-('2', (SELECT zz_views.id FROM zz_views INNER JOIN zz_modules ON zz_modules.id = zz_views.id_module WHERE zz_views.name = 'Pagamento fornitore' AND zz_modules.name='Anagrafiche')),
-('3', (SELECT zz_views.id FROM zz_views INNER JOIN zz_modules ON zz_modules.id = zz_views.id_module WHERE zz_views.name = 'Pagamento fornitore' AND zz_modules.name='Anagrafiche')),
-('4', (SELECT zz_views.id FROM zz_views INNER JOIN zz_modules ON zz_modules.id = zz_views.id_module WHERE zz_views.name = 'Pagamento fornitore' AND zz_modules.name='Anagrafiche'));
-
 UPDATE `zz_modules` SET `options` = "SELECT 
 |select|
 FROM

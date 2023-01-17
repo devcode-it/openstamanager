@@ -29,7 +29,7 @@ abstract class Elemento
     /**
      * @return array
      */
-    abstract public function toCbiFormat();
+    abstract public function toRibaAbiCbiFormat();
 
     /**
      * @param string $string

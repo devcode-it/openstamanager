@@ -62,7 +62,7 @@ ALTER TABLE `an_anagrafiche` DROP `cciaa`;
 ALTER TABLE `an_anagrafiche` DROP `cciaa_citta`;
 
 -- Aggiunta nazioni
-INSERT INTO `an_nazioni` (`id`, `nome`, `iso2`, `created_at`, `name`) VALUES (NULL, 'Palestina', 'PS', NULL, 'Palestine');
+INSERT INTO `an_nazioni` (`id`, `nome`, `iso2`, `name`) VALUES (NULL, 'Palestina', 'PS', 'Palestine');
 
 -- Fix query viste Giacenze sedi
 UPDATE `zz_modules` SET `options` = "SELECT

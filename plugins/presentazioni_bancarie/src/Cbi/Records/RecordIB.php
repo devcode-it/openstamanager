@@ -12,7 +12,7 @@ namespace Plugins\PresentazioniBancarie\Cbi\Records;
  * @property string campo_a_disposizione Campo a disposizione dell'Azienda codice_sia_mittente.
  * @property string tipo_flusso Assume il valore: "1" = operazioni generate nell’ambito di attività Market Place.
  * @property string qualificatore_flusso Assume il valore fisso "$".
- * @property string soggetto_veicolare Se i due campi tipo_flusso e qualificatore_flusso sono valorizzati con i valori previsti, deve essere indicato il codice ABI della Banca Gateway MP.
+ * @property string soggetto_veicolatore Se i due campi tipo_flusso e qualificatore_flusso sono valorizzati con i valori previsti, deve essere indicato il codice ABI della Banca Gateway MP.
  * @property string codice_divisa Assume il valore fisso "E" (Euro).
  * @property string centro_applicativo Questo campo è di interesse soltanto della tratta tra Centri Applicativi. Codice ABI del Centro Applicativo destinatario del supporto.
  */
@@ -52,10 +52,9 @@ class RecordIB extends BaseRecord
         'qualificatore_flusso' => [
             'inizio' => 106,
             'dimensione' => 1,
-            'tipo' => 'constant',
-            'valore' => '$',
+            'tipo' => 'string',
         ],
-        'soggetto_veicolare' => [
+        'soggetto_veicolatore' => [
             'inizio' => 107,
             'dimensione' => 5,
             'tipo' => 'string',

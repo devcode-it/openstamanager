@@ -58,9 +58,13 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Aggiunta possibilità di creare campi aggiuntivi con testo libero
 - Aggiunta impostazione per nascondere i promemoria su app
 - Aggiunta ID utente nei movimenti articolo
+- Aggiunta valori buffer Datatables
+- Aggiunto filtro referenti per sede in interventi
 ### Modificato (Changed)
 - Miglioria gestione codice REA e provincia
 - Miglioria stampa mastrino saldo iniziale
+- Miglioria visualizzazione tabella listini clienti
+- Migliorata l'impostazione del prezzo di vendita in fase di aggiunta articolo
 ### Fixed
 - Corretta query vista contratti
 - Corretta stampa inventario in Articoli

@@ -57,7 +57,14 @@ include_once __DIR__.'/../../core.php';
 
     <div class="row">
 		<div class="col-md-12">
-			{[ "type": "textarea", "label": "<?php echo tr('Contenuto'); ?>", "name": "content", "required": 1, "value": "$content$" ]}
+			<?php
+			echo input([
+				'type' => 'textarea',
+				'label' => tr('Contenuto'),
+				'name' => 'content',
+				'value' => $record['content'],
+			]);
+			?>
 		</div>
 	</div>
 </form>

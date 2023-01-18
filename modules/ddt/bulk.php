@@ -95,6 +95,9 @@ switch (post('op')) {
                         $documenti->push($fattura);
                     }
 
+                    $fattura->idsede_destinazione = $documento_import->idsede_destinazione;
+                    $fattura->save();
+
                     // Inserimento righe
                     foreach ($righe as $riga) {
                         $qta = $riga->qta_rimanente;

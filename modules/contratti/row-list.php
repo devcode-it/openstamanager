@@ -139,8 +139,16 @@ foreach ($righe as $riga) {
         // Importo
         echo '
                 <td class="text-right">
-                    '.moneyFormat($riga->importo).'
-                </td>';
+                '.moneyFormat($riga->importo);
+
+                //provvigione riga 
+                if (abs($riga->provvigione_unitaria) > 0) {
+                    $text = provvigioneInfo($riga);
+        
+                    echo '
+                            <br><small class="label label-info">'.$text.'</small>';
+                }       
+                echo '</td>';
     }
 
     // Possibilità di rimuovere una riga solo se il preventivo non è stato pagato
@@ -276,13 +284,24 @@ if(!empty($contratto->provvigione)) {
     echo '
         <tr>
             <td colspan="6" class="text-right">
-                '.tr('Provvigioni').':
+            '.tr('Provvigioni', [], ['upper' => false]).':
             </td>
             <td class="text-right">
                 '.moneyFormat($contratto->provvigione).'
             </td>
             <td></td>
         </tr>';
+
+    echo '
+    <tr>
+        <td colspan="6" class="text-right">
+           '.tr('Netto da provvigioni', [], ['upper' => false]).':
+        </td>
+        <td class="text-right">
+            '.moneyFormat($netto_a_pagare - $contratto->provvigione, 2).'
+        </td>
+        <td></td>
+    </tr>';	
 }
 
 echo '

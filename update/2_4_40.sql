@@ -98,3 +98,11 @@ ORDER BY
     `data` DESC,
     CAST(`numero_esterno` AS UNSIGNED) DESC,
     `dt_ddt`.created_at DESC" WHERE `name` = 'Ddt di vendita';
+
+
+-- Fix problemi integrità db se si aggiorna (o si è aggiornato in passato) da una versione precedente alla 2.4.28
+ALTER TABLE `an_mansioni` CHANGE `created_at` `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE `an_mansioni` CHANGE `updated_at` `updated_at` TIMESTAMP on update CURRENT_TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE `em_mansioni_template` CHANGE `created_at` `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE `em_mansioni_template` CHANGE `updated_at` `updated_at` TIMESTAMP on update CURRENT_TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP;

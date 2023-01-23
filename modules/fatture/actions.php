@@ -732,7 +732,10 @@ switch (post('op')) {
                 $fattura->idpagamento = setting('Tipo di pagamento predefinito');
             }
 
-            $fattura->idsede_destinazione = $documento->idsede;
+
+            $idsede = ($documento->idsede_destinazione ? $documento->idsede_destinazione : $documento->idsede);
+
+            $fattura->idsede_destinazione = $idsede;
             $fattura->id_ritenuta_contributi = post('id_ritenuta_contributi') ?: null;
             $fattura->idreferente = $documento->idreferente;
             $fattura->idagente = $documento->idagente;

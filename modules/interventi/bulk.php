@@ -323,7 +323,7 @@ switch (post('op')) {
                         $mail->save();
                         OperationLog::setInfo('id_email', $mail->id);
                         OperationLog::setInfo('id_module', $id_module);
-                        OperationLog::setInfo('id_record', $id_record);
+                        OperationLog::setInfo('id_record', $mail->id_record);
                         OperationLog::build('send-email');
 
                         array_push($list, $intervento->codice);

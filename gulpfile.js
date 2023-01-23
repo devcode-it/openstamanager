@@ -53,7 +53,7 @@ const inquirer = require('inquirer');
 const config = {
     production: 'assets/dist', // Cartella di destinazione
     development: 'assets/src', // Cartella dei file di personalizzazione
-    debug: false,
+    debug: true,
     nodeDirectory: './node_modules', // Percorso per node_modules
     paths: {
         js: 'js',
@@ -62,7 +62,7 @@ const config = {
         fonts: 'fonts'
     },
     babelOptions: {
-        compact: true,
+        compact: false,
         presets: [
             ['@babel/env', {
                 modules: false
@@ -98,7 +98,9 @@ const JS = gulp.parallel(() => {
         'dropzone/dist/dropzone.js',
         'autonumeric/dist/autoNumeric.min.js',
         'eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
-        'fullcalendar/dist/fullcalendar.js',
+        'fullcalendar-scheduler/index.global.js',
+        '@fullcalendar/moment/index.global.js',
+        '@fullcalendar/core/locales/it.global.js',
         'geocomplete/jquery.geocomplete.js',
         'inputmask/dist/min/jquery.inputmask.bundle.min.js',
         'jquery-form/src/jquery.form.js',
@@ -161,7 +163,6 @@ const CSS = gulp.parallel(() => {
         'dropzone/dist/dropzone.css',
         'eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
         'font-awesome/css/font-awesome.min.css',
-        'fullcalendar/dist/fullcalendar.css',
         'parsleyjs/src/parsley.css',
         'select2/dist/css/select2.min.css',
         'sweetalert2/dist/sweetalert2.css',
@@ -208,7 +209,6 @@ function srcCSS() {
 
     const print = gulp.src([
         config.development + '/' + config.paths.css + '/print/*.{css,scss,less,styl}',
-        config.nodeDirectory + '/fullcalendar/fullcalendar.print.css',
     ], {
         allowEmpty: true
     })

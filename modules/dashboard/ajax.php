@@ -439,7 +439,7 @@ switch (filter('op')) {
                     }
 
                     echo '
-                    <div class="fc-event fc-event-'.$class.'" data-id="'.$sessione['id'].'" data-idcontratto="'.$sessione['idcontratto'].'" data-ref="'.$sessione['ref'].'" data-id_tecnico="'.$sessione['id_tecnico'].'">'.($sessione['ref'] == 'intervento' ? Modules::link($modulo_riferimento, $id_riferimento, '<i class="fa fa-wrench"></i>', null, 'title="'.tr('Visualizza scheda').'" class="btn btn-'.$class.' btn-xs pull-right"') : Modules::link($modulo_riferimento, $id_riferimento, '<i class="fa fa-file-text-o"></i>', null, 'title="'.tr('Visualizza scheda').'" class="btn btn-'.$class.' btn-xs pull-right"')).'
+                    <div id="id-'.$sessione['id'].'" class="fc-event fc-event-'.$class.'" data-id="'.$sessione['id'].'" data-idcontratto="'.$sessione['idcontratto'].'" data-ref="'.$sessione['ref'].'" data-id_tecnico="'.$sessione['id_tecnico'].'">'.($sessione['ref'] == 'intervento' ? Modules::link($modulo_riferimento, $id_riferimento, '<i class="fa fa-wrench"></i>', null, 'title="'.tr('Visualizza scheda').'" class="btn btn-'.$class.' btn-xs pull-right"') : Modules::link($modulo_riferimento, $id_riferimento, '<i class="fa fa-file-text-o"></i>', null, 'title="'.tr('Visualizza scheda').'" class="btn btn-'.$class.' btn-xs pull-right"')).'
                         <b>'.$sessione['ragione_sociale'].'</b>
                         <br>'.dateFormat($sessione['data_richiesta']).' ('.$sessione['tipo_intervento'].')
                         <div class="request">'.(!empty($sessione['richiesta']) ? ' - '.$sessione['richiesta'] : '').'</div>

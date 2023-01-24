@@ -342,6 +342,7 @@ $modulo_interventi = Modules::get('Interventi');
 
 echo '
 <script type="text/javascript">    
+var Draggable = FullCalendar.Draggable;
 globals.dashboard = {
         load_url: "'.$structure->fileurl('ajax.php').'?id_module='.$id_module.'",
         style: "'.$def.'",
@@ -414,7 +415,7 @@ globals.dashboard = {
             $("#elenco-promemoria").html(data);
 
             $("#external-events .fc-event").each(function () {
-                $(this).draggable({
+                new Draggable( document.getElementById( $(this).attr("id") ), {
                     zIndex: 999,
                     revert: true,
                     revertDuration: 0,
@@ -422,7 +423,7 @@ globals.dashboard = {
                         title: $.trim($(this).text()),
                         stick: false
                     }
-                });
+                } );
             });
         });
     }
@@ -537,21 +538,21 @@ globals.dashboard = {
             },
 
             droppable: globals.dashboard.write_permission,
-            drop: function (date) { // info
-                // let date = info.date;
+            drop: function (info) {
+                let date = info.date;
 
                 let data = moment(date).format("YYYY-MM-DD");
                 let ora_dal = moment(date).format("HH:mm");
                 let ora_al = moment(date).add(1, "hours").format("HH:mm");
 
-                let ref = $(this).data("ref");
+                let ref = info.draggedEl.dataset.ref;
                 let name;
                 if (ref === "promemoria") {
                     name = "idcontratto_riga";
                 } else {
                     name = "id_intervento";
                 }
-                openModal(globals.dashboard.drop.title, globals.dashboard.drop.url + "&data=" + data + "&orario_inizio=" + ora_dal + "&orario_fine=" + ora_al + "&ref=dashboard&idcontratto=" + $(this).data("idcontratto") + "&" + name + "=" + $(this).data("id") + "&id_tecnico=" + $(this).data("id_tecnico"));
+                openModal(globals.dashboard.drop.title, globals.dashboard.drop.url + "&data=" + data + "&orario_inizio=" + ora_dal + "&orario_fine=" + ora_al + "&ref=dashboard&idcontratto=" + info.draggedEl.dataset.idcontratto + "&" + name + "=" + info.draggedEl.dataset.id + "&id_tecnico=" + info.draggedEl.dataset.id_tecnico);
 
                 // Ricaricamento dei dati alla chiusura del modal
                 $(this).remove();

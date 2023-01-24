@@ -162,8 +162,10 @@ switch (post('op')) {
         Combinazione::sincronizzaVarianti($articolo);
 
         // Leggo la quantità attuale per capire se l'ho modificata
-        $old_qta = $record['qta'];
-        $movimento = $qta - $old_qta;
+        // TODO: gestire la movimentazione manuale per sede
+        $id_sede = 0;
+        $old_qta = $articolo->getGiacenze(post('data_movimento'));
+        $movimento = $qta - $old_qta[$id_sede][0];
 
         $qta_manuale = post('qta_manuale');
         if (!empty($qta_manuale)) {

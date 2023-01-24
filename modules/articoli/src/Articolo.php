@@ -285,20 +285,29 @@ class Articolo extends Model
     /**
      * Restituisce le giacenze per sede dell'articolo.
      *
+     * @param $data Indica la data fino alla quale calcolare le giacenze totali. Di default tutte
+     *
      * @return array
      */
-    public function getGiacenze()
+    public function getGiacenze($data = null)
     {
-        return $this->movimenti()
+        $movimenti = $this->movimenti()
             ->select(
                 'idsede',
                 database()->raw('SUM(qta) AS qta')
-            )->groupBy(['idsede'])
-            ->get()
+            )->groupBy(['idsede']);
+        
+        if (!empty($data)) {
+            $movimenti = $movimenti->where('data', '<=', \Carbon\Carbon::parse($data)->format('Y-m-d'));
+        }
+
+        $movimenti = $movimenti->get()
             ->mapToGroups(function ($item, $key) {
                 return [$item->idsede => (float) $item->attributes['qta']];
             })
             ->toArray();
+        
+        return $movimenti;
     }
 
     /**

@@ -68,6 +68,10 @@ class CSV extends CSVImporter
                 'label' => 'Quantità',
             ],
             [
+                'field' => 'data_qta',
+                'label' => 'Data inventario',
+            ],
+            [
                 'field' => 'um',
                 'label' => 'Unit&agrave; di misura',
                 'names' => [
@@ -309,7 +313,7 @@ class CSV extends CSVImporter
         $articolo->attivo = 1;
 
         // Esportazione della quantità indicata
-        $qta_registrata = (float) ($record['qta']);
+        $nuova_qta = (float) ($record['qta']);
         $nome_sede = $record['nome_sede'];
 
         // Aggiornamento dettaglio prezzi
@@ -406,10 +410,10 @@ class CSV extends CSVImporter
         }
 
         if( isset($record['qta']) ) {
-            $giacenze = $articolo->getGiacenze();
-            $qta_movimento = $qta_registrata - $giacenze[$id_sede][0];
+            $giacenze = $articolo->getGiacenze($record['data_qta']);
+            $qta_movimento = $nuova_qta - $giacenze[$id_sede][0];
 
-            $articolo->movimenta($qta_movimento, tr('Movimento da importazione'), new Carbon(), false, [
+            $articolo->movimenta($qta_movimento, tr('Movimento da importazione'), new Carbon($record['data_qta']), true, [
                 'idsede' => $id_sede,
             ]);
         }

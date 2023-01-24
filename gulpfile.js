@@ -53,7 +53,7 @@ const inquirer = require('inquirer');
 const config = {
     production: 'assets/dist', // Cartella di destinazione
     development: 'assets/src', // Cartella dei file di personalizzazione
-    debug: true,
+    debug: false,
     nodeDirectory: './node_modules', // Percorso per node_modules
     paths: {
         js: 'js',
@@ -62,7 +62,7 @@ const config = {
         fonts: 'fonts'
     },
     babelOptions: {
-        compact: false,
+        compact: true,
         presets: [
             ['@babel/env', {
                 modules: false

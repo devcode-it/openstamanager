@@ -517,6 +517,7 @@ globals.dashboard = {
                 center: "title",
                 right: "dayGridMonth,timeGridWeek,listWeek"
             },
+            eventDisplay: "block",
             timeFormat: globals.dashboard.timeFormat,
             slotLabelFormat: globals.dashboard.timeFormat,
             slotDuration: "00:15:00",
@@ -669,7 +670,7 @@ if(isMobile() && setting('Utilizzare i tooltip sul calendario')){
 
 echo '
             eventContent: function (info) {
-                return { html: "<div style=\"width:100%; background:" + info.event.backgroundColor + ";\">" + info.event.title + "</div>" };
+                return { html: info.event.title };
             },
 
             eventDidMount: function(info){

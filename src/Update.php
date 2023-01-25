@@ -226,7 +226,7 @@ class Update
     }
 
     /**
-     * Esegue una precisa sezione dell'aggiornamento fa fare, partendo dalle query e passando poi allo script relativo.
+     * Esegue una precisa sezione dell'aggiornamento da fare, partendo dalle query e passando poi allo script relativo.
      * Prima dell'esecuzione dello script viene inoltre eseguita un'operazione di normalizzazione dei campi delle tabelle del database finalizzata a generalizzare la gestione delle informazioni per l'API: vengono quindi aggiunti i campi <b>created_at</b> e, se permesso dalla versione di MySQL, <b>updated_at</b> ad ogni tabella registrata del software.
      *
      * @param int $rate Numero di singole query da eseguire dell'aggiornamento corrente

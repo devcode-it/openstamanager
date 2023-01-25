@@ -329,11 +329,11 @@ WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.id
 
 $vista = setting('Vista dashboard');
 if ($vista == 'mese') {
-    $def = 'month';
+    $def = 'dayGridMonth';
 } elseif ($vista == 'giorno') {
-    $def = 'agendaDay';
+    $def = 'timeGridWeek';
 } elseif ($vista == 'settimana') {
-    $def = 'agendaWeek';
+    $def = 'listWeek';
 } else {
     $def = 'listWeek';
 }
@@ -341,8 +341,9 @@ if ($vista == 'mese') {
 $modulo_interventi = Modules::get('Interventi');
 
 echo '
-<script type="text/javascript">
-    globals.dashboard = {
+<script type="text/javascript">    
+var Draggable = FullCalendar.Draggable;
+globals.dashboard = {
         load_url: "'.$structure->fileurl('ajax.php').'?id_module='.$id_module.'",
         style: "'.$def.'",
         show_sunday: '.intval(setting('Visualizzare la domenica sul calendario')).',
@@ -351,11 +352,6 @@ echo '
         write_permission: '.intval($modulo_interventi->permission == 'rw').',
         tooltip: '.intval(setting('Utilizzare i tooltip sul calendario')).',
         calendar: null,
-        /* timeFormat: {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false
-        }, */
         timeFormat: "H:mm",
         select: {
             title: "'.tr('Aggiungi intervento').'",
@@ -419,7 +415,7 @@ echo '
             $("#elenco-promemoria").html(data);
 
             $("#external-events .fc-event").each(function () {
-                $(this).draggable({
+                new Draggable( document.getElementById( $(this).attr("id") ), {
                     zIndex: 999,
                     revert: true,
                     revertDuration: 0,
@@ -427,7 +423,7 @@ echo '
                         title: $.trim($(this).text()),
                         stick: false
                     }
-                });
+                } );
             });
         });
     }
@@ -445,7 +441,7 @@ echo '
 
             session_set_array("dashboard,idstatiintervento", id).then(function () {
                 aggiorna_contatore("#dashboard_stati");
-                globals.dashboard.calendar.fullCalendar("refetchEvents"); //.refetchEvents()
+                globals.dashboard.calendar.refetchEvents();
             });
         });
 
@@ -455,7 +451,7 @@ echo '
 
             session_set_array("dashboard,idtipiintervento", id).then(function () {
                 aggiorna_contatore("#dashboard_tipi");
-                globals.dashboard.calendar.fullCalendar("refetchEvents"); //.refetchEvents()
+                globals.dashboard.calendar.refetchEvents();
             });
         });
 
@@ -465,7 +461,7 @@ echo '
 
             session_set_array("dashboard,idtecnici", id).then(function () {
                 aggiorna_contatore("#dashboard_tecnici");
-                globals.dashboard.calendar.fullCalendar("refetchEvents"); //.refetchEvents()
+                globals.dashboard.calendar.refetchEvents();
             });
         });
 
@@ -475,7 +471,7 @@ echo '
 
             session_set_array("dashboard,idzone", id).then(function () {
                 aggiorna_contatore("#dashboard_zone");
-                globals.dashboard.calendar.fullCalendar("refetchEvents"); //.refetchEvents()
+                globals.dashboard.calendar.refetchEvents();
             });
         });
 
@@ -509,23 +505,23 @@ echo '
         var calendarElement = document.getElementById("calendar");
         var clickCnt = 0;
 
-        var calendar = $(calendarElement).fullCalendar({
-            /* plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin], */
+        var calendar = new FullCalendar.Calendar(calendarElement, {
+            //plugins: [adaptivePlugin, momentPlugin, dayGridPlugin, timeGridPlugin],
             /* locales: allLocales, */
             locale: globals.locale,
             slotEventOverlap: false,
             schedulerLicenseKey: "GPL-My-Project-Is-Open-Source",
             hiddenDays: globals.dashboard.show_sunday ? [] : [0],
-            header: {
+            headerToolbar: {
                 left: "prev,next today",
                 center: "title",
-                right: "month,agendaWeek,agendaDay,listWeek"
+                right: "dayGridMonth,timeGridWeek,listWeek"
             },
             timeFormat: globals.dashboard.timeFormat,
             slotLabelFormat: globals.dashboard.timeFormat,
             slotDuration: "00:15:00",
             snapDuration: globals.snapDuration,
-            defaultView: globals.dashboard.style,
+            initialView: "dayGridMonth",
             minTime: globals.dashboard.start_time,
             maxTime: globals.dashboard.end_time,
             lazyFetching: true,
@@ -542,26 +538,26 @@ echo '
             },
 
             droppable: globals.dashboard.write_permission,
-            drop: function (date) { // info
-                // let date = info.date;
+            drop: function (info) {
+                let date = info.date;
 
                 let data = moment(date).format("YYYY-MM-DD");
                 let ora_dal = moment(date).format("HH:mm");
                 let ora_al = moment(date).add(1, "hours").format("HH:mm");
 
-                let ref = $(this).data("ref");
+                let ref = info.draggedEl.dataset.ref;
                 let name;
                 if (ref === "promemoria") {
                     name = "idcontratto_riga";
                 } else {
                     name = "id_intervento";
                 }
-                openModal(globals.dashboard.drop.title, globals.dashboard.drop.url + "&data=" + data + "&orario_inizio=" + ora_dal + "&orario_fine=" + ora_al + "&ref=dashboard&idcontratto=" + $(this).data("idcontratto") + "&" + name + "=" + $(this).data("id") + "&id_tecnico=" + $(this).data("id_tecnico"));
+                openModal(globals.dashboard.drop.title, globals.dashboard.drop.url + "&data=" + data + "&orario_inizio=" + ora_dal + "&orario_fine=" + ora_al + "&ref=dashboard&idcontratto=" + info.draggedEl.dataset.idcontratto + "&" + name + "=" + info.draggedEl.dataset.id + "&id_tecnico=" + info.draggedEl.dataset.id_tecnico);
 
                 // Ricaricamento dei dati alla chiusura del modal
                 $(this).remove();
                 $("#modals > div").on("hidden.bs.modal", function () {
-                    globals.dashboard.calendar.fullCalendar("refetchEvents"); //.refetchEvents()
+                    globals.dashboard.calendar.refetchEvents();
 
                     let mese = $("#mese-promemoria").val();
                     carica_interventi_da_pianificare(mese);
@@ -569,11 +565,11 @@ echo '
             },
 
             selectable: globals.dashboard.write_permission,
-            select: function (start, end, allDay) { // info
-                // let start = info.start;
-                // let end = info.end;
+            select: function (info) { // info
+                let start = info.start;
+                let end = info.end;
 
-                let intero_giorno = !start.hasTime() && !end.hasTime();
+                let intero_giorno = !start.hasTime && !end.hasTime;
                 if (intero_giorno !== true || globals.dashboard.informazioni_aggiuntive==0) {
                     let data = moment(start).format("YYYY-MM-DD");
                     let data_fine = moment(end).format("YYYY-MM-DD");
@@ -581,7 +577,7 @@ echo '
                     let orario_fine = moment(end).format("HH:mm");
 
                     // Fix selezione di un giorno avanti per vista mensile
-                    if (globals.dashboard.calendar.fullCalendar("getView").name == "month") {
+                    if (globals.dashboard.calendar.view == "dayGridMonth") {
                         data_fine = moment(end).subtract(1, "days").format("YYYY-MM-DD");
                     }
 
@@ -590,8 +586,8 @@ echo '
             },
 
             editable: globals.dashboard.write_permission,
-            eventDrop: function (event, delta, revertFunc) {// info
-                // let event = info.event;
+            eventDrop: function (info) {// info
+                let event = info.event;
 
                 if (event.allDay !== true) {
                     let start = event.start;
@@ -599,7 +595,7 @@ echo '
                     $.post(globals.dashboard.load_url, {
                         op: "modifica_intervento",
                         id: event.id,
-                        idintervento: event.idintervento,
+                        idintervento: event.extendedProps.idintervento,
                         timeStart: moment(start).format("YYYY-MM-DD HH:mm"),
                         timeEnd: moment(end).format("YYYY-MM-DD HH:mm")
                     }, function (data, responseType) {
@@ -612,22 +608,22 @@ echo '
                         }
 
                         if (data !== "ok") {
-                            revertFunc(); // info.revert();
+                            info.revert();
                         }
 
                     });
                 } else {
-                    revertFunc();
+                    info.revert();
                 }
             },
-            eventResize: function (event, delta, revertFunc) { // info
-                // let event = info.event;
+            eventResize: function (info) {
+                let event = info.event;
                 let start = event.start;
                 let end = (event.end!=null ? event.end : event.start);
                 $.post(globals.dashboard.load_url, {
                     op: "modifica_intervento",
                     id: event.id,
-                    idintervento: event.idintervento,
+                    idintervento: event.extendedProps.idintervento,
                     timeStart: moment(start).format("YYYY-MM-DD HH:mm"),
                     timeEnd: moment(end).format("YYYY-MM-DD HH:mm")
                 }, function (data, responseType) {
@@ -640,7 +636,7 @@ echo '
                     }
 
                     if (data !== "ok") {
-                        revertFunc(); // info.revert();
+                        info.revert();
                     }
 
                 });
@@ -649,9 +645,9 @@ echo '
 if(isMobile() && setting('Utilizzare i tooltip sul calendario')){
     echo '
             eventClick: function(info) {
-                let link = info.link;
+                let link = info.event.extendedProps.link;
                 let element = $(this);
-                clickCnt++;         
+                clickCnt++;
                 if (clickCnt === 1) {
                     oneClickTimer = setTimeout(function() {
                         clickCnt = 0;
@@ -666,18 +662,20 @@ if(isMobile() && setting('Utilizzare i tooltip sul calendario')){
 }else{
     echo '
             eventClick: function(info) {
-                let link = info.link;
-                location.href = link;       
+                info.jsEvent.preventDefault();
+                location.href = info.event.extendedProps.link;
             },';
 }
 
 echo '
-            // eventPositioned: function (info) {
-            eventAfterRender: function (event, element) {
-                // let event = info.event;
-                // let element = $(info.el);
-                element.find(".fc-title, .fc-list-item-title").html(event.title);
-                let id_record = event.idintervento;
+            eventContent: function (info) {
+                return { html: "<div style=\"width:100%; background:" + info.event.backgroundColor + ";\">" + info.event.title + "</div>" };
+            },
+
+            eventDidMount: function(info){
+                let element = $(info.el);
+
+                let id_record = info.event.extendedProps.idintervento;
                 
                 if (globals.dashboard.tooltip == 1) {
                     element.tooltipster({
@@ -700,7 +698,7 @@ echo '
                                 $.post(globals.dashboard.load_url, {
                                     op: "tooltip_info",
                                     id_record: id_record,
-                                    allDay: event.allDay,
+                                    allDay: info.event.allDay,
                                 }, function (data, response) {
                                     instance.content(data);
 
@@ -711,6 +709,7 @@ echo '
                     });
                 }
             },
+
             events: {
                 url: globals.dashboard.load_url + "&op=interventi_periodo",
                 type: "GET",
@@ -720,7 +719,7 @@ echo '
             }
         });
 
-        //calendar.render();
+        calendar.render();
 
         globals.dashboard.calendar = calendar;
     }

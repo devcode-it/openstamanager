@@ -2,6 +2,7 @@
     "private": true,
     "main": "gulpfile.js",
     "dependencies": {
+        "@fullcalendar/moment": "^6.0.3",
         "admin-lte": "^2.4.18",
         "autocompleter": "^6.1.1",
         "autonumeric": "^4.6.0",
@@ -20,7 +21,7 @@
         "dropzone": "^5.7.2",
         "eonasdan-bootstrap-datetimepicker": "^4.17.49",
         "font-awesome": "^4.7.0",
-        "fullcalendar": "^3.10.5",
+        "fullcalendar-scheduler": "^6.0.3",
         "geocomplete": "^1.7.0",
         "hotkeys-js": "^3.8.5",
         "html5sortable": "^0.13.2",

@@ -522,8 +522,8 @@ globals.dashboard = {
             slotDuration: "00:15:00",
             snapDuration: globals.snapDuration,
             initialView: "dayGridMonth",
-            minTime: globals.dashboard.start_time,
-            maxTime: globals.dashboard.end_time,
+            slotMinTime: globals.dashboard.start_time,
+            slotMaxTime: globals.dashboard.end_time,
             lazyFetching: true,
             selectMirror: true,
             eventLimit: false, // allow "more" link when too many events

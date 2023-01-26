@@ -415,10 +415,9 @@ globals.dashboard = {
             $("#elenco-promemoria").html(data);
 
             $("#external-events .fc-event").each(function () {
-                new Draggable( document.getElementById( $(this).attr("id") ), {
-                    zIndex: 999,
+                new Draggable( this, {
+                    create: false,
                     revert: true,
-                    revertDuration: 0,
                     eventData: {
                         title: $.trim($(this).text()),
                         stick: false
@@ -556,13 +555,15 @@ globals.dashboard = {
                 openModal(globals.dashboard.drop.title, globals.dashboard.drop.url + "&data=" + data + "&orario_inizio=" + ora_dal + "&orario_fine=" + ora_al + "&ref=dashboard&idcontratto=" + info.draggedEl.dataset.idcontratto + "&" + name + "=" + info.draggedEl.dataset.id + "&id_tecnico=" + info.draggedEl.dataset.id_tecnico);
 
                 // Ricaricamento dei dati alla chiusura del modal
-                $(this).remove();
                 $("#modals > div").on("hidden.bs.modal", function () {
                     globals.dashboard.calendar.refetchEvents();
 
                     let mese = $("#mese-promemoria").val();
                     carica_interventi_da_pianificare(mese);
                 });
+            },
+            eventReceive: function(info){
+                info.revert();
             },
 
             selectable: globals.dashboard.write_permission,

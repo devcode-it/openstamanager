@@ -106,3 +106,17 @@ ALTER TABLE `an_mansioni` CHANGE `updated_at` `updated_at` TIMESTAMP on update C
 
 ALTER TABLE `em_mansioni_template` CHANGE `created_at` `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP;
 ALTER TABLE `em_mansioni_template` CHANGE `updated_at` `updated_at` TIMESTAMP on update CURRENT_TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP;
+
+-- Fix query vista Pagamenti
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`pagamenti`.`tipo`' WHERE `zz_modules`.`name` = 'Pagamenti' AND `zz_views`.`name` = 'Codice pagamento';
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select|
+FROM
+    `co_pagamenti`
+	LEFT JOIN(SELECT `fe_modalita_pagamento`.`codice`, CONCAT(`fe_modalita_pagamento`.`codice`, ' - ', `fe_modalita_pagamento`.`descrizione`) AS tipo FROM `fe_modalita_pagamento`) AS pagamenti ON `pagamenti`.`codice` = `co_pagamenti`.`codice_modalita_pagamento_fe`
+WHERE
+    1=1
+GROUP BY
+    `descrizione`
+HAVING
+    2=2" WHERE `name` = 'Pagamenti';

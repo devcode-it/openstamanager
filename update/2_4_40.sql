@@ -120,3 +120,11 @@ GROUP BY
     `descrizione`
 HAVING
     2=2" WHERE `name` = 'Pagamenti';
+
+-- Aggiunta impostazione Numero massimo widget per colonna
+INSERT INTO zz_settings(nome, valore, tipo, editable, sezione) VALUES ('Numero massimo Widget per riga','6','list[1,2,3,4,6]','1','Generali');
+
+-- Modifica widget Magazzino
+UPDATE `zz_widgets` SET `query` = 'SELECT REPLACE(REPLACE(REPLACE(FORMAT(SUM(qta),2), ",", "#"), ".", ","), "#", ".") AS dato FROM mg_articoli WHERE qta>0 AND deleted_at IS NULL AND servizio=0 AND 1=1' WHERE `zz_widgets`.`name` = 'Articoli in magazzino';
+UPDATE `zz_widgets` SET `text` = 'Unità' WHERE `zz_widgets`.`name` = 'Articoli in magazzino';
+UPDATE `zz_widgets` SET `text` = 'Valore' WHERE `zz_widgets`.`name` = 'Valore magazzino';

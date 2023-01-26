@@ -322,6 +322,7 @@ span.form-control {
 .widget li {
     margin-left: 0;
     list-style-type: none;
+    height: 106px;
 }
 
 .widget {

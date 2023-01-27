@@ -21,6 +21,8 @@ use Carbon\Carbon;
 
 include_once __DIR__.'/../../../core.php';
 
+$filter_agente = Auth::user()['gruppo'] == 'Agenti';
+
 switch ($resource) {
     case 'clienti':
         $id_azienda = setting('Azienda predefinita');
@@ -69,6 +71,10 @@ switch ($resource) {
         $where[] = "an_tipianagrafiche.descrizione='Cliente'";
         if (empty($filter)) {
             $where[] = 'an_anagrafiche.deleted_at IS NULL';
+        }
+
+		if (empty(!$filter_agente)) {
+            $where[] = 'idagente = '.Auth::user()['idanagrafica'];
         }
 
         if (!empty($search)) {

@@ -105,12 +105,14 @@ switch (filter('op')) {
 
             $results[] = [
                 'id' => $sessione['id'],
-                'idintervento' => $sessione['idintervento'],
-                'idtecnico' => $sessione['idtecnico'],
                 'title' => (($sessione['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '').' '.(($sessione['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').($sessione['is_completato'] || $sessione['have_attachments'] ? '<br>' : '').'<b>Int. '.$sessione['codice'].'</b> '.$sessione['cliente'].'<br><b>'.tr('Tecnici').':</b> '.$sessione['nome_tecnico'],
                 'start' => $sessione['orario_inizio'],
                 'end' => $sessione['orario_fine'],
-                'link' => base_path().'/editor.php?id_module='.$modulo_interventi->id.'&id_record='.$sessione['idintervento'],
+                'extendedProps' => [
+                    'link' => base_path().'/editor.php?id_module='.$modulo_interventi->id.'&id_record='.$sessione['idintervento'],
+                    'idintervento' => $sessione['idintervento'],
+                    'idtecnico' => $sessione['idtecnico'],
+                ],
                 'backgroundColor' => $backgroundcolor,
                 'textColor' => color_inverse($backgroundcolor),
                 'borderColor' => empty($bordercolor) ? '#FFFFFF' : $bordercolor,
@@ -190,13 +192,15 @@ switch (filter('op')) {
             foreach ($alldays as $evento) {
                 $results[] = [
                     'id' => $modulo_eventi->id.'_'.$evento['id'],
-                    'idintervento' => $evento['id'],
-                    'idtecnico' => '',
                     'title' => '<b>'.tr('Evento').':</b> '.$evento['nome'].'<br>
                     <b>'.tr('Festività').':</b> '.($evento['is_bank_holiday'] ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i>'),
                     'start' => $evento['data'],
                     'end' => $evento['data'],
-                    'url' => base_path().'/editor.php?id_module='.$modulo_eventi->id.'&id_record='.$evento['id'],
+                    'extendedProps' => [
+                        'link' => base_path().'/editor.php?id_module='.$modulo_eventi->id.'&id_record='.$evento['id'],
+                        'idintervento' => $evento['id'],
+                        'idtecnico' => '',
+                    ],
                     'backgroundColor' => '#ffebcd',
                     'textColor' => color_inverse('#ffebcd'),
                     'borderColor' => '#ffebcd',
@@ -435,7 +439,7 @@ switch (filter('op')) {
                     }
 
                     echo '
-                    <div class="fc-event fc-event-'.$class.'" data-id="'.$sessione['id'].'" data-idcontratto="'.$sessione['idcontratto'].'" data-ref="'.$sessione['ref'].'" data-id_tecnico="'.$sessione['id_tecnico'].'">'.($sessione['ref'] == 'intervento' ? Modules::link($modulo_riferimento, $id_riferimento, '<i class="fa fa-wrench"></i>', null, 'title="'.tr('Visualizza scheda').'" class="btn btn-'.$class.' btn-xs pull-right"') : Modules::link($modulo_riferimento, $id_riferimento, '<i class="fa fa-file-text-o"></i>', null, 'title="'.tr('Visualizza scheda').'" class="btn btn-'.$class.' btn-xs pull-right"')).'
+                    <div id="id-'.$sessione['id'].'" class="fc-event fc-event-'.$class.'" data-id="'.$sessione['id'].'" data-idcontratto="'.$sessione['idcontratto'].'" data-ref="'.$sessione['ref'].'" data-id_tecnico="'.$sessione['id_tecnico'].'">'.($sessione['ref'] == 'intervento' ? Modules::link($modulo_riferimento, $id_riferimento, '<i class="fa fa-wrench"></i>', null, 'title="'.tr('Visualizza scheda').'" class="btn btn-'.$class.' btn-xs pull-right"') : Modules::link($modulo_riferimento, $id_riferimento, '<i class="fa fa-file-text-o"></i>', null, 'title="'.tr('Visualizza scheda').'" class="btn btn-'.$class.' btn-xs pull-right"')).'
                         <b>'.$sessione['ragione_sociale'].'</b>
                         <br>'.dateFormat($sessione['data_richiesta']).' ('.$sessione['tipo_intervento'].')
                         <div class="request">'.(!empty($sessione['richiesta']) ? ' - '.$sessione['richiesta'] : '').'</div>

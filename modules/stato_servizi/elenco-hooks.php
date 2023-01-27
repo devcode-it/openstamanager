@@ -89,14 +89,57 @@ foreach ($gruppi as $modulo => $hooks) {
         </tr>';
     }
 
-    echo '
-    </tbody>';
+  
+
 }
+
+
+echo '<tr><td colspan="3"><p>&nbsp;</p><button type="button" class="btn btn-danger btn-xs pull-right" onclick="svuotaCacheHooks(this)">
+    <i class="fa fa-trash" title="'.tr('Svuota cache degli hooks').'"></i> '.tr('Svuota cache').'</button>
+    </td></tr>';
+
+echo '
+</tbody>';
+
 
 echo '
 </table>
 
 <script>
+
+function svuotaCacheHooks(button){
+    swal({
+        title: "'.tr('Svuota la cache degli hooks', []).'",
+        html: "'.tr('Sei sicuro di voler svuotare la cache degli hooks?', []).'",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "'.tr('Continua').'"
+    }).then(function (result) {
+        let restore = buttonLoading(button);
+
+        $.ajax({
+            url: globals.rootdir + "/actions.php",
+            type: "POST",
+            dataType: "JSON",
+            data: {
+                id_module: globals.id_module,
+                op: "svuota-cache-hooks",
+            },
+            success: function (response) {
+                buttonRestore(button, restore);
+                renderMessages();
+            },
+            error: function() {
+                buttonRestore(button, restore);
+                swal({
+                    type: "error",
+                    title: globals.translations.ajax.error.title,
+                    text: globals.translations.ajax.error.text,
+                });
+            }
+        });
+    })
+}
 function disabilitaHook(button){
     const riga = $(button).closest("tr");
     const id = riga.data("id");
@@ -105,10 +148,10 @@ function disabilitaHook(button){
     const nome_tipo = "hook";
 
     swal({
-        title: "'.tr('Disabilitare il _TYPE_?', [
+        title: "'.tr('Disabilita _TYPE_', [
             '_TYPE_' => '" + nome_tipo + "',
         ]).'",
-        html: "'.tr('Sei sicuro di voler disabilitare il _TYPE_ _NAME_?', [
+        html: "'.tr('Sei sicuro di voler disabilitare l\'_TYPE_ _NAME_?', [
             '_TYPE_' => '" + nome_tipo + "',
             '_NAME_' => '" + nome + "',
         ]).'",
@@ -152,10 +195,10 @@ function abilitaHook(button) {
     const nome_tipo = "hook";
 
     swal({
-        title: "'.tr('Abilitare il _TYPE_?', [
+        title: "'.tr('Abilita _TYPE_', [
             '_TYPE_' => '" + nome_tipo + "',
         ]).'",
-        html: "'.tr('Sei sicuro di voler abilitare il _TYPE_ _NAME_?', [
+        html: "'.tr('Sei sicuro di voler abilitare l\'_TYPE_ _NAME_?', [
             '_TYPE_' => '" + nome_tipo + "',
             '_NAME_' => '" + nome + "',
         ]).'",

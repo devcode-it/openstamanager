@@ -24,6 +24,7 @@ use Models\Cache;
 use Models\Module;
 use Models\Plugin;
 use Util\FileSystem;
+use Carbon\Carbon;
 
 $id = post('id');
 
@@ -267,6 +268,20 @@ switch (filter('op')) {
 
         break;
 
+    case 'svuota-cache-hooks':
+
+        // Svuota cache hooks
+        $database->table('zz_cache')
+        ->update(['expire_at' => Carbon::now()->subMinutes(1)]);
+
+        // Messaggio informativo
+        flash()->info(tr('Cache hooks svuotata!', []));
+
+
+        echo json_encode([]);
+        break;
+    
+    
     case 'disabilita-hook':
         $id = filter('id');
 

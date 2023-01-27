@@ -434,6 +434,53 @@ if (!empty($righe)) {
         $prezzo_unitario = $riga['PrezzoUnitario'] ?: $riga['Importo'];
         $is_descrizione = empty((float)$riga['Quantita']) && empty((float)$prezzo_unitario);
 
+        $sconto_unitario = 0;
+        $sconti = $riga['ScontoMaggiorazione'] ?: 0;
+        if (!empty($sconti)) {
+            $tot_sconto_calcolato = 0;
+            $sconto_unitario = 0;
+            $sconti = $sconti[0] ? $sconti : [$sconti];
+
+            // Determina il tipo di sconto in caso di sconti misti UNT e PRC
+            foreach ($sconti as $sconto) {
+                $tipo_sconto = !empty($sconto['Importo']) ? '€' : '%';
+                if (!empty($tipo) && $tipo_sconto != $tipo) {
+                    $tipo = '€';
+                } else {
+                    $tipo = $tipo_sconto;
+                }
+            }
+
+            foreach ($sconti as $sconto) {
+                $unitario = $sconto['Importo'] ?: $sconto['Percentuale'];
+
+                // Sconto o Maggiorazione
+                $sconto_riga = ($sconto['Tipo'] == 'SC') ? $unitario : -$unitario;
+
+                $tipo_sconto = !empty($sconto['Importo']) ? '€' : '%';
+                if ($tipo_sconto == '%') {
+                    $sconto_calcolato = calcola_sconto([
+                        'sconto' => $sconto_riga,
+                        'prezzo' => $sconto_unitario ? $obj->prezzo_unitario - ($tot_sconto_calcolato / $obj->qta) : $obj->prezzo_unitario,
+                        'tipo' => 'PRC',
+                        'qta' => $obj->qta,
+                    ]);
+
+                    if ($tipo == '%') {
+                        $tot_sconto = $sconto_calcolato * 100 / $obj->imponibile;
+                    } else {
+                        $tot_sconto = $sconto_calcolato;
+                    }
+                } else {
+                    $tot_sconto = $sconto_riga;
+                }
+
+                $tot_sconto_calcolato += $sconto_calcolato; 
+                $sconto_unitario += $tot_sconto;
+            }
+        }
+
+
         $riferimento_fe = '';
 
         if ($dati_ddt[(int)$riga['NumeroLinea']]) {
@@ -466,7 +513,13 @@ if (!empty($righe)) {
             </td>
 
             <td class="text-right">
-                '.moneyFormat($prezzo_unitario).'
+                '.moneyFormat($prezzo_unitario);
+                if (abs($sconto_unitario) > 0) {
+                    $text = ($prezzo_unitario >= 0 && $sconto_unitario > 0) || ($prezzo_unitario < 0 && $sconto_unitario < 0) ? tr('sconto _TOT_ _TYPE_', ['_TOT_' => Translator::numberToLocale(abs($sconto_unitario)), '_TYPE_' => $tipo]) : tr('maggiorazione _TOT__TYPE_', ['_TOT_' => Translator::numberToLocale(abs($sconto_unitario)), '_TYPE_' => $tipo]);
+                    echo '
+                        <br><small class="label label-danger">'.$text.'</small>';
+                }
+                echo '
                 <span id="riferimento_'.$key.'_prezzo"></span>
             </td>
 

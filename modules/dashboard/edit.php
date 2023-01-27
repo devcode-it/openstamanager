@@ -331,9 +331,9 @@ $vista = setting('Vista dashboard');
 if ($vista == 'mese') {
     $def = 'dayGridMonth';
 } elseif ($vista == 'giorno') {
-    $def = 'timeGridWeek';
+    $def = 'resourceTimeGridDay';
 } elseif ($vista == 'settimana') {
-    $def = 'listWeek';
+    $def = 'timeGridWeek';
 } else {
     $def = 'listWeek';
 }
@@ -415,10 +415,9 @@ globals.dashboard = {
             $("#elenco-promemoria").html(data);
 
             $("#external-events .fc-event").each(function () {
-                new Draggable( document.getElementById( $(this).attr("id") ), {
-                    zIndex: 999,
+                new Draggable( this, {
+                    create: false,
                     revert: true,
-                    revertDuration: 0,
                     eventData: {
                         title: $.trim($(this).text()),
                         stick: false
@@ -515,15 +514,16 @@ globals.dashboard = {
             headerToolbar: {
                 left: "prev,next today",
                 center: "title",
-                right: "dayGridMonth,timeGridWeek,listWeek"
+                right: "dayGridMonth,timeGridWeek,resourceTimeGridDay,listWeek"
             },
+            eventDisplay: "block",
             timeFormat: globals.dashboard.timeFormat,
             slotLabelFormat: globals.dashboard.timeFormat,
             slotDuration: "00:15:00",
             snapDuration: globals.snapDuration,
-            initialView: "dayGridMonth",
-            minTime: globals.dashboard.start_time,
-            maxTime: globals.dashboard.end_time,
+            initialView: globals.dashboard.style,
+            slotMinTime: globals.dashboard.start_time,
+            slotMaxTime: globals.dashboard.end_time,
             lazyFetching: true,
             selectMirror: true,
             eventLimit: false, // allow "more" link when too many events
@@ -531,7 +531,7 @@ globals.dashboard = {
 
             loading: function (isLoading, view) {
                 if (isLoading) {
-                    $("#tiny-loader").fadeIn();
+                    $("#tiny-loader").show();
                 } else {
                     $("#tiny-loader").hide();
                 }
@@ -555,13 +555,15 @@ globals.dashboard = {
                 openModal(globals.dashboard.drop.title, globals.dashboard.drop.url + "&data=" + data + "&orario_inizio=" + ora_dal + "&orario_fine=" + ora_al + "&ref=dashboard&idcontratto=" + info.draggedEl.dataset.idcontratto + "&" + name + "=" + info.draggedEl.dataset.id + "&id_tecnico=" + info.draggedEl.dataset.id_tecnico);
 
                 // Ricaricamento dei dati alla chiusura del modal
-                $(this).remove();
                 $("#modals > div").on("hidden.bs.modal", function () {
                     globals.dashboard.calendar.refetchEvents();
 
                     let mese = $("#mese-promemoria").val();
                     carica_interventi_da_pianificare(mese);
                 });
+            },
+            eventReceive: function(info){
+                info.revert();
             },
 
             selectable: globals.dashboard.write_permission,
@@ -669,7 +671,7 @@ if(isMobile() && setting('Utilizzare i tooltip sul calendario')){
 
 echo '
             eventContent: function (info) {
-                return { html: "<div style=\"width:100%; background:" + info.event.backgroundColor + ";\">" + info.event.title + "</div>" };
+                return { html: info.event.title };
             },
 
             eventDidMount: function(info){

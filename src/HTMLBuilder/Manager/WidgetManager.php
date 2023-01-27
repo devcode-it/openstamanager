@@ -245,11 +245,11 @@ class WidgetManager implements ManagerInterface
 
         // Generazione del codice HTML
         if (!empty($widgets)) {
-            $row_max = count($widgets);
-            if ($row_max > 4) {
-                $row_max = 4;
-            } elseif ($row_max < 2) {
-                $row_max = 2;
+            $row_max = setting('Numero massimo Widget per riga');
+            if ($row_max > 6) {
+                $row_max = 6;
+            } elseif ($row_max < 1) {
+                $row_max = 1;
             }
 
             $result = '

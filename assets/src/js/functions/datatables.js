@@ -260,6 +260,7 @@ function getDatatablesButtons(table) {
         // Pulsante di esportazione in formato PDF
         {
             extend: 'pdf',
+            orientation: 'landscape',
             footer: true,
             exportOptions: {
                 modifier: {

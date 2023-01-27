@@ -690,8 +690,7 @@ echo '
             $("#modals > div").modal("hide");
 
             // Aggiornamento elenco interventi da pianificare
-            $("#calendar").fullCalendar("refetchEvents");
-            $("#calendar").fullCalendar("render");
+            globals.dashboard.calendar.refetchEvents();
         }
 
         // Se l\'aggiunta intervento proviene dai contratti, faccio il submit via ajax e ricarico la tabella dei contratti

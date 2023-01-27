@@ -531,7 +531,7 @@ globals.dashboard = {
 
             loading: function (isLoading, view) {
                 if (isLoading) {
-                    $("#tiny-loader").fadeIn();
+                    $("#tiny-loader").show();
                 } else {
                     $("#tiny-loader").hide();
                 }

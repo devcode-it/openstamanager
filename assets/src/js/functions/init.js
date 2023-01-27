@@ -53,7 +53,7 @@ function init() {
                 return false;
             });
 
-            $(this).find('[type=submit]').prop("disabled", true).addClass("disabled");
+            //$(this).find('[type=submit]').prop("disabled", true).addClass("disabled");
 
             prepareForm(this);
 

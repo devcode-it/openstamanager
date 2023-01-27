@@ -331,9 +331,9 @@ $vista = setting('Vista dashboard');
 if ($vista == 'mese') {
     $def = 'dayGridMonth';
 } elseif ($vista == 'giorno') {
-    $def = 'timeGridWeek';
+    $def = 'resourceTimeGridDay';
 } elseif ($vista == 'settimana') {
-    $def = 'listWeek';
+    $def = 'timeGridWeek';
 } else {
     $def = 'listWeek';
 }
@@ -514,14 +514,14 @@ globals.dashboard = {
             headerToolbar: {
                 left: "prev,next today",
                 center: "title",
-                right: "dayGridMonth,timeGridWeek,listWeek"
+                right: "dayGridMonth,timeGridWeek,resourceTimeGridDay,listWeek"
             },
             eventDisplay: "block",
             timeFormat: globals.dashboard.timeFormat,
             slotLabelFormat: globals.dashboard.timeFormat,
             slotDuration: "00:15:00",
             snapDuration: globals.snapDuration,
-            initialView: "dayGridMonth",
+            initialView: globals.dashboard.style,
             slotMinTime: globals.dashboard.start_time,
             slotMaxTime: globals.dashboard.end_time,
             lazyFetching: true,

@@ -114,9 +114,12 @@ elseif (!empty($id_intervento)) {
 
     $rs = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_interventi WHERE idintervento = '.prepare($id_intervento));
     $impianti_collegati = implode(',', array_column($rs, 'idimpianto'));
+
+    $rs = $dbo->fetchArray('SELECT id_tecnico FROM in_interventi_tecnici_assegnati WHERE id_intervento = '.prepare($id_intervento));
+    $tecnici_assegnati = implode(',', array_column($rs, 'id_tecnico'));
 }
 
-// Selezione dei tecnici assegnati agli impianti selezionati
+// Selezione dei tecnici predefiniti per gli impianti selezionati
 if (!empty($impianti_collegati)) {
     $tecnici_impianti = $dbo->fetchArray('SELECT idtecnico FROM my_impianti WHERE id IN ('.prepare($impianti_collegati).')');
     $id_tecnico = array_unique(array_column($tecnici_impianti, 'idtecnico'));
@@ -272,7 +275,7 @@ echo '
 		</div>
 	</div>';
 
-if (empty($id_intervento)) {
+//if (empty($id_intervento)) {
     echo '
 	<!-- ASSEGNAZIONE TECNICI -->
     <div class="box box-info collapsable collapsed-box">
@@ -288,15 +291,15 @@ if (empty($id_intervento)) {
 		<div class="box-body">
 	        <div class="row">
                 <div class="col-md-12">
-                    {[ "type": "select", "label": "'.tr('Tecnici assegnati').'", "multiple": "1", "name": "tecnici_assegnati[]", "ajax-source": "tecnici", "value": "", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Tecnico&readonly_tipo=1" ]}
+                    {[ "type": "select", "label": "'.tr('Tecnici assegnati').'", "multiple": "1", "name": "tecnici_assegnati[]", "ajax-source": "tecnici", "value": "'.$tecnici_assegnati.'", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Tecnico&readonly_tipo=1", "readonly": '.intval($id_intervento).'  ]}
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-xs btn-primary" onclick="assegnaTuttiTecnici()">
+                            <div class="btn-group" >
+                                <button type="button" class="btn btn-xs btn-primary '.(intval($id_intervento)? 'disabled' : '').'" onclick="assegnaTuttiTecnici()">
                                     '.tr('Tutti').'
                                 </button>
 
-                                <button type="button" class="btn btn-xs btn-danger" onclick="deassegnaTuttiTecnici()">
+                                <button type="button" class="btn btn-xs btn-danger '.(intval($id_intervento)? 'disabled' : '').'" onclick="deassegnaTuttiTecnici()">
                                 <i class="fa fa-times"></i>
                                 </button>
                             </div>
@@ -306,7 +309,7 @@ if (empty($id_intervento)) {
 			</div>
         </div>
     </div>';
-}
+//}
 
 echo '
 	<!-- ORE LAVORO -->

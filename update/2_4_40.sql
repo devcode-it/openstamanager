@@ -152,4 +152,4 @@ ORDER BY
     `scadenza` ASC" WHERE `name` = 'Scadenzario';
 
 -- Aggiunta impostazione Movimentazione articoli da fatture di acquisto
-INSERT INTO zz_settings(nome, valore, tipo, editable, sezione) VALUES ('Movimenta magazzino da fatture di acquisto','1','boolean','1','Magazzino');
+INSERT INTO zz_settings(nome, valore, tipo, editable, sezione) VALUES ('Movimenta magazzino da fatture di acquisto','1','boolean','1','Fatturazione Elettronica');

@@ -133,9 +133,9 @@ if (file_exists(base_dir().'/assistenza.php')) {
                                     </a>
                                 </div>
                                 <div class="col-xs-3 text-center">
-                                    <a href="https://eepurl.com/8MFgH" target="_blank">
-                                        <i class="fa fa-2x fa-envelope"></i><br>
-                                        '.tr('Newsletter').'
+                                    <a href="https://github.com/devcode-it/openstamanager/graphs/contributors" target="_blank">
+                                        <i class="fa fa-2x fa-code"></i><br>
+                                        '.tr('Contributori').'
                                     </a>
                                 </div>
                                 <div class="col-xs-3 text-center">

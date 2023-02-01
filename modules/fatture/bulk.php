@@ -308,7 +308,6 @@ switch (post('op')) {
         $list = [];
         foreach ($id_records as $id) {
             $fattura = Fattura::find($id);
-            array_push($list, $fattura->numero_esterno);
 
             $id_segment = (post('id_segment') ? post('id_segment') : $fattura->id_segment);
             $dir = $dbo->fetchOne('SELECT dir FROM co_tipidocumento WHERE id='.prepare($fattura->idtipodocumento))['dir'];
@@ -332,9 +331,10 @@ switch (post('op')) {
             if (post('skip_time') == 'Anno') {
                 $data = date('Y-m-d', strtotime('+1 year', strtotime($fattura->data)));
             }
-
+            
+           
             $new = $fattura->replicate();
-
+           
             $new->data = $data;
             $new->id_segment = $id_segment;
             $new->numero = Fattura::getNextNumero($data, $dir, $id_segment);
@@ -359,6 +359,10 @@ switch (post('op')) {
                 if ($new_riga->isArticolo()) {
                     $new_riga->movimenta($new_riga->qta);
                 }
+            }
+
+            if (!empty($fattura->numero_esterno)){
+                array_push($list, $fattura->numero_esterno);
             }
         }
 

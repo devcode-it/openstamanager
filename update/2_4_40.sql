@@ -153,3 +153,6 @@ ORDER BY
 
 -- Aggiunta impostazione Movimentazione articoli da fatture di acquisto
 INSERT INTO zz_settings(nome, valore, tipo, editable, sezione) VALUES ('Movimenta magazzino da fatture di acquisto','1','boolean','1','Fatturazione Elettronica');
+
+-- Permetto valore null per numero_esterno di co_documenti
+ALTER TABLE `co_documenti` CHANGE `numero_esterno` `numero_esterno` VARCHAR(100) NULL DEFAULT NULL; 

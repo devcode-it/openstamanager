@@ -274,7 +274,7 @@ function currency()
  */
 function moneyFormat($number, $decimals = null)
 {
-    return tr('_TOTAL_ _CURRENCY_', [
+    return tr('_CURRENCY_ _TOTAL_', [
         '_TOTAL_' => numberFormat($number, $decimals),
         '_CURRENCY_' => currency(),
     ]);

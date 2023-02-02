@@ -159,3 +159,6 @@ INSERT INTO zz_settings(nome, valore, tipo, editable, sezione) VALUES ('Moviment
 
 -- Permetto valore null per numero_esterno di co_documenti
 ALTER TABLE `co_documenti` CHANGE `numero_esterno` `numero_esterno` VARCHAR(100) NULL DEFAULT NULL; 
+
+-- Aggiunta impostazione Posizione della valuta
+INSERT INTO zz_settings(nome, valore, tipo, editable, sezione) VALUES ('Posizione del simbolo valuta','Dopo','list[Prima,Dopo]','1','Generali');

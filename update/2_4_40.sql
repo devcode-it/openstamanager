@@ -150,3 +150,6 @@ HAVING
     2=2
 ORDER BY 
     `scadenza` ASC" WHERE `name` = 'Scadenzario';
+
+-- Aggiunta dichiarazione d'intento predefinita
+ALTER TABLE `an_anagrafiche` ADD `id_dichiarazione_intento_default` INT NULL AFTER `idtipointervento_default`, ADD FOREIGN KEY (`id_dichiarazione_intento_default`) REFERENCES `co_dichiarazioni_intento`(`id`);

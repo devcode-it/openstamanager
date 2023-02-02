@@ -17,6 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Carbon\Carbon;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Banche\Banca;
 
@@ -529,6 +530,10 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                         <div class="row">
                             <div class="col-md-6">
                                 {[ "type": "select", "label": "'.tr('Tipo attività predefinita').'", "name": "idtipointervento_default", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "$idtipointervento_default$" ]}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento_default", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$id_record.', "data": "'.Carbon::now().'"},"value": "$id_dichiarazione_intento_default$" ]}
                             </div>';
 
     // Collegamento con il conto

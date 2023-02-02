@@ -188,9 +188,15 @@ class Fattura extends Document
             $model->split_payment = $split_payment;
         }
 
-        // Gestione della Dichiarazione d'Intento associata all'anargafica Controparte
+        // Gestione della Dichiarazione d'Intento associata all'anagrafica Controparte
         $now = new Carbon();
         $dichiarazione = $anagrafica->dichiarazioni()
+            ->where('massimale', '>', 'totale')
+            ->where('data_inizio', '<', $now)
+            ->where('data_fine', '>', $now)
+            ->where('id', $anagrafica->id_dichiarazione_intento_default)
+            ->first();
+        $dichiarazione = $dichiarazione ?: $anagrafica->dichiarazioni()
             ->where('massimale', '>', 'totale')
             ->where('data_inizio', '<', $now)
             ->where('data_fine', '>', $now)

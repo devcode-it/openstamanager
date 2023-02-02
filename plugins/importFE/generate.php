@@ -305,7 +305,7 @@ echo '
 // Movimentazioni
 echo '
         <div class="col-md-3">
-            {[ "type": "checkbox", "label": "'.tr('Movimenta gli articoli').'", "name": "movimentazione", "value": 1 ]}
+            {[ "type": "checkbox", "label": "'.tr('Movimenta gli articoli').'", "name": "movimentazione", "value":'.setting('Movimenta magazzino da fatture di acquisto').']}
         </div>
 
         <div class="col-md-3">

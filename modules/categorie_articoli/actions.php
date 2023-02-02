@@ -41,9 +41,13 @@ switch (filter('op')) {
         }
 
         // Redirect alla categoria se si sta modificando una sottocategoria
-        $database->commitTransaction();
-        redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.($id_original ?: $id_record));
-        exit();
+        if($id_original != null) {
+            $database->commitTransaction();
+            redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.($id_original ?: $id_record));
+            exit();
+        }
+
+        break;
       
 
     case 'add':

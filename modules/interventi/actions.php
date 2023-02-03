@@ -19,6 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Carbon\CarbonPeriod;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Emails\Mail;
@@ -769,6 +770,34 @@ switch (post('op')) {
         $fine = post('orario_fine') ?: null;
 
         add_tecnico($id_record, $id_tecnico, $inizio, $fine, $idcontratto);
+        break;
+
+    // OPERAZIONI PER AGGIUNTA SESSIONi DI LAVORO MULTIPLE
+    case 'add_sessioni':
+        $idcontratto = $intervento['id_contratto'];
+        $orario_inizio = post('orario_inizio');
+        $orario_fine = post('orario_fine');
+        $data_inizio = post('data_inizio');
+        $data_fine = post('data_fine');
+        $giorni = (array)post('giorni');
+        $id_tecnici = (array)post('id_tecnici');
+
+        $period = CarbonPeriod::create($data_inizio, $data_fine);
+
+        // Iterate over the period
+        foreach ($period as $date) {
+            $data = $date->format('Y-m-d');
+            $giorno = $date->locale('IT')->dayName;
+            if (in_array($giorno, $giorni)) {
+                $inizio = $data.' '.$orario_inizio;
+                $fine = $data.' '.$orario_fine;
+                
+                foreach ($id_tecnici as $id_tecnico) {
+                    add_tecnico($id_record, $id_tecnico, $inizio, $fine, $idcontratto);
+                }
+            }
+        }
+
         break;
 
     // RIMOZIONE SESSIONE DI LAVORO

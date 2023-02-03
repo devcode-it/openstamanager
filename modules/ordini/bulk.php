@@ -107,6 +107,7 @@ switch (post('op')) {
                             if ($copia->isArticolo()) {
                                 $copia->serials = $riga->serials;
                             }
+                            $copia->save();
                         }
                     }
                 }

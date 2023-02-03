@@ -188,9 +188,15 @@ class Fattura extends Document
             $model->split_payment = $split_payment;
         }
 
-        // Gestione della Dichiarazione d'Intento associata all'anargafica Controparte
+        // Gestione della Dichiarazione d'Intento associata all'anagrafica Controparte
         $now = new Carbon();
         $dichiarazione = $anagrafica->dichiarazioni()
+            ->where('massimale', '>', 'totale')
+            ->where('data_inizio', '<', $now)
+            ->where('data_fine', '>', $now)
+            ->where('id', $anagrafica->id_dichiarazione_intento_default)
+            ->first();
+        $dichiarazione = $dichiarazione ?: $anagrafica->dichiarazioni()
             ->where('massimale', '>', 'totale')
             ->where('data_inizio', '<', $now)
             ->where('data_fine', '>', $now)
@@ -694,7 +700,7 @@ class Fattura extends Document
 
         // In fase di duplicazione di una fattura non deve essere calcolato il numero progressivo ma questo deve
         // essere generato in fase di emissione della stessa.
-        $new->numero_esterno = '';
+        $new->numero_esterno = null;
         $new->numero = Fattura::getNextNumero($now, $new->direzione, $new->id_segment);
 
         // Rimozione informazioni di Fattura Elettronica

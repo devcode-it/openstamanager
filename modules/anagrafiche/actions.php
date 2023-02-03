@@ -94,6 +94,7 @@ switch (post('op')) {
         $anagrafica->riferimento_amministrazione = post('riferimento_amministrazione');
         $anagrafica->colore = post('colore');
         $anagrafica->idtipointervento_default = post('idtipointervento_default') ?: null;
+        $anagrafica->id_dichiarazione_intento_default = post('id_dichiarazione_intento_default') ?: null;
         $anagrafica->provvigione_default = post('provvigione_default');
         $anagrafica->id_ritenuta_acconto_acquisti = post('id_ritenuta_acconto_acquisti');
         $anagrafica->id_ritenuta_acconto_vendite = post('id_ritenuta_acconto_vendite');

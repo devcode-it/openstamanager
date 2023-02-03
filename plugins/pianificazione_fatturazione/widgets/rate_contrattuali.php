@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Plugins\PianificazioneFatturazione\Pianificazione;
+
 
 include_once __DIR__.'/../../../core.php';
 
@@ -35,40 +35,6 @@ $mesi = [
     11 => 'Novembre',
     12 => 'Dicembre',
 ];
-
-$pianificazioni = Pianificazione::doesntHave('fattura')
-    ->whereHas('contratto', function ($q) {
-        $q->whereHas('stato', function ($q) {
-            $q
-            ->where('is_fatturabile', 1)
-            ->where('descrizione', '<>', 'Concluso');
-        });
-    })->get();
-
-
-    if ($pianificazioni->isEmpty()) {
-        echo '<p>'.tr('Non ci sono fatture da emettere').'.</p>';
-        return;
-    }
-    
-    $conteggio = Pianificazione::doesntHave('fattura')
-        ->selectRaw('month(co_fatturazione_contratti.data_scadenza) mese, count(*) conto')
-        ->whereHas('contratto', function ($q) {
-            $q->whereHas('stato', function ($q) {
-                $q
-                    ->where('is_fatturabile', 1)
-                    ->where('descrizione', '<>', 'Concluso');
-            });
-        })
-        ->whereYear('co_fatturazione_contratti.data_scadenza', date('Y'))
-        ->groupBy('mese')
-        ->get();
-    
-    $raggruppamenti = $pianificazioni->groupBy(function ($item) {
-        return ucfirst($item->data_scadenza->formatLocalized('%B %Y'));
-    });
-    
-    
 
 echo
 '<div class="container"

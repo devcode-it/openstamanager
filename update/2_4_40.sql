@@ -167,3 +167,6 @@ INSERT INTO zz_settings(nome, valore, tipo, editable, sezione) VALUES ('Posizion
 UPDATE `zz_segments` SET `name` = 'Scadenzario completo' WHERE `zz_segments`.`name` = 'Scadenziaro completo'; 
 UPDATE `zz_segments` SET `clause` = '(`co_scadenziario`.`scadenza` BETWEEN \'|period_start|\' AND \'|period_end|\' AND idtipodocumento < 14)' WHERE `zz_segments`.`name` = 'Scadenzario completo'; 
 INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`,`note`, `dicitura_fissa`,`predefined`, `predefined_accredito`, `predefined_addebito`, `autofatture`, `is_sezionale`) VALUES ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'), 'Scadenzario autofatture', '(idtipodocumento >= 14)', 'WHR', '####', '', '', 0, 0, 0, 0, 0); 
+
+-- Impostazione per fatturare attività collegati ad altri documenti
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Permetti fatturazione delle attività collegate a contratti, ordini e preventivi', '0', 'boolean', '1', 'Fatturazione', NULL, NULL) 

@@ -763,14 +763,20 @@ echo '
 if (!$block_edit) {
     if (empty($record['ref_documento'])) {
         if ($dir == 'entrata') {
-            // Lettura interventi non rifiutati, non fatturati e non collegati a preventivi o contratti
-            $int_query = 'SELECT COUNT(*) AS tot FROM in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento WHERE idanagrafica='.prepare($record['idanagrafica']).' AND in_statiintervento.is_completato=1 AND in_statiintervento.is_fatturabile=1 AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND in_interventi.id_preventivo IS NULL AND in_interventi.id NOT IN (SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL)';
+            $where = '';
+            // Lettura interventi non collegati a preventivi, ordini e contratti
+            if (!setting('Permetti fatturazione delle attività collegate a contratti, ordini e preventivi')) {
+                $where = 'AND in_interventi.id_preventivo IS NULL AND in_interventi.id_contratto IS NULL AND in_interventi.id_ordine IS NULL';
+            }
+
+            // Lettura interventi non rifiutati, non fatturati
+            $int_query = 'SELECT COUNT(*) AS tot FROM in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento WHERE idanagrafica='.prepare($record['idanagrafica']).' AND in_statiintervento.is_completato=1 AND in_statiintervento.is_fatturabile=1 AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND in_interventi.id NOT IN (SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL) '.$where;
             $interventi = $dbo->fetchArray($int_query)[0]['tot'];
 
             // Se non trovo niente provo a vedere se ce ne sono per clienti terzi
             if (empty($interventi)) {
-                // Lettura interventi non rifiutati, non fatturati e non collegati a preventivi o contratti (clienti terzi)
-                $int_query = 'SELECT COUNT(*) AS tot FROM in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento WHERE idclientefinale='.prepare($record['idanagrafica']).' AND in_statiintervento.is_completato=1 AND in_statiintervento.is_fatturabile=1 AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND in_interventi.id_preventivo IS NULL AND in_interventi.id NOT IN (SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL)';
+                // Lettura interventi non rifiutati, non fatturati
+                $int_query = 'SELECT COUNT(*) AS tot FROM in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento WHERE idclientefinale='.prepare($record['idanagrafica']).' AND in_statiintervento.is_completato=1 AND in_statiintervento.is_fatturabile=1 AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND in_interventi.id NOT IN (SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL) '.$where;
                 $interventi = $dbo->fetchArray($int_query)[0]['tot'];
             }
 

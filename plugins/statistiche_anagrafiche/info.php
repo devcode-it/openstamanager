@@ -163,8 +163,15 @@ echo '
                 <div class="info-box">
                     <span class="info-box-icon bg-'.($interventi->count() == 0 ? 'gray' : 'red').'"><i class="fa fa-cog"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-text pull-left">'.tr('Attività').'</span>
-                        '.($interventi->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.Modules::get('Interventi')['id'].'&search_Ragione-sociale='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'
+                        <span class="info-box-text pull-left">'.tr('Attività').'</span>';
+                        if ($anagrafica->isTipo('Cliente')){
+                            echo'
+                            '.($interventi->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.Modules::get('Interventi')['id'].'&search_Ragione-sociale='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
+                        } else {
+                        echo '
+                            '.($interventi->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.Modules::get('Interventi')['id'].'&search_Tecnici='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
+                        }
+                        echo'                     
                         <br class="clearfix">
                         <span class="info-box-number">
                             <big>'.$interventi->count().'</big><br>

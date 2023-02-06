@@ -274,10 +274,17 @@ function currency()
  */
 function moneyFormat($number, $decimals = null)
 {
-    return tr('_TOTAL_ _CURRENCY_', [
-        '_TOTAL_' => numberFormat($number, $decimals),
-        '_CURRENCY_' => currency(),
-    ]);
+    if (setting('Posizione del simbolo valuta') == 'Prima'){
+        return tr('_CURRENCY_ _TOTAL_', [
+            '_CURRENCY_' => currency(),
+            '_TOTAL_' => numberFormat($number, $decimals),
+        ]);
+    } else {
+        return tr('_TOTAL_ _CURRENCY_', [
+            '_TOTAL_' => numberFormat($number, $decimals),
+            '_CURRENCY_' => currency(),
+        ]);
+    }
 }
 
 /**

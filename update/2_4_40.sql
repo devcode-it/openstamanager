@@ -159,3 +159,11 @@ INSERT INTO zz_settings(nome, valore, tipo, editable, sezione) VALUES ('Moviment
 
 -- Permetto valore null per numero_esterno di co_documenti
 ALTER TABLE `co_documenti` CHANGE `numero_esterno` `numero_esterno` VARCHAR(100) NULL DEFAULT NULL; 
+
+-- Aggiunta impostazione Posizione della valuta
+INSERT INTO zz_settings(nome, valore, tipo, editable, sezione) VALUES ('Posizione del simbolo valuta','Dopo','list[Prima,Dopo]','1','Generali');
+
+-- Miglioria segmenti scadenzario
+UPDATE `zz_segments` SET `name` = 'Scadenzario completo' WHERE `zz_segments`.`name` = 'Scadenziaro completo'; 
+UPDATE `zz_segments` SET `clause` = '(`co_scadenziario`.`scadenza` BETWEEN \'|period_start|\' AND \'|period_end|\' AND idtipodocumento < 14)' WHERE `zz_segments`.`name` = 'Scadenzario completo'; 
+INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`,`note`, `dicitura_fissa`,`predefined`, `predefined_accredito`, `predefined_addebito`, `autofatture`, `is_sezionale`) VALUES ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'), 'Scadenzario autofatture', '(idtipodocumento >= 14)', 'WHR', '####', '', '', 0, 0, 0, 0, 0); 

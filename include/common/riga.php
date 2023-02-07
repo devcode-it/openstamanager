@@ -70,7 +70,7 @@ if ($options['dir'] == 'entrata') {
             var sconto = $("#sconto").val().toEnglish();
 
             if ($("#modals select[id^=\'tipo_sconto\']").val() === "PRC") {
-                sconto = sconto / 100 * prezzo;
+                sconto = sconto / 100 * $("#prezzo_unitario").val().toEnglish();
             }
             if (prezzi_ivati!=0) {
                 percentuale_iva = input("idiva").getElement().selectData().percentuale;
@@ -86,7 +86,8 @@ if ($options['dir'] == 'entrata') {
 
             var guadagno = prezzo - provvigione - costo_unitario;
             var ricarico = ((prezzo / costo_unitario) - 1) * 100;
-            var margine = (1 - (costo_unitario / prezzo)) * 100;            var parent = $("#costo_unitario").closest("div").parent();
+            var margine = (1 - (costo_unitario / prezzo)) * 100;            
+            var parent = $("#costo_unitario").closest("div").parent();
             var div = $(".margine");
             var mediaponderata = 0;
 

@@ -54,7 +54,7 @@ echo '
 
     // Righe documento
     if (!empty($fattura)) {
-        $optionsConti = AJAX::select($conti, [], null, 0, 10000, null);
+        $optionsConti = AJAX::select($conti);
         $righe = $fattura->getRighe();
         $num = 0;
         foreach ($righe as $riga) {

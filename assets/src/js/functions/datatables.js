@@ -275,6 +275,7 @@ function initComplete(settings) {
     const api = this.api();
     const $this = $(this);
     const search = getTableSearch();
+    var forceSearch = false;
 
     api.columns('.search').every(function () {
         const column = this;
@@ -285,6 +286,10 @@ function initComplete(settings) {
         const name = header.attr('id').replace('th_', '');
 
         const value = search['search_' + name] ? search['search_' + name] : '';
+
+        if (value !== '') {
+            forceSearch = true;
+        }
 
         $('<br><input type="text" style="width:100%" class="form-control' + (value ? ' input-searching' : '') + '" placeholder="' + globals.translations.filter + '..." value="' + value.replace(/"/g, '&quot;') + '"><i class="deleteicon fa fa-times fa-2x' + (value ? '' : ' hide') + '"></i>')
             .appendTo(column.header())
@@ -332,6 +337,10 @@ function initComplete(settings) {
                 }
             });
     });
+
+    if (forceSearch) {
+        $('table.main-records:visible .search > input:not(:emptyVal)').first().trigger('keyup');
+    }
 
     // Disabilito l'ordinamento alla pressione del tasto invio sull'<input>
     $("thead input, .search").on('keypress', function (e) {
@@ -549,3 +558,7 @@ function getTable(selector) {
         },
     };
 }
+
+$.expr[':'].emptyVal = function(obj){
+    return obj.value === '';
+};

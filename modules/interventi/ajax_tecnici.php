@@ -265,7 +265,14 @@ if (!$is_completato) {
     echo '
 <!-- AGGIUNTA TECNICO -->
 <div class="row">
-    <div class="col-md-offset-6 col-md-4">
+    <div class="col-md-2">
+        <label>&nbsp;</label>
+        <button type="button" class="btn btn-default btn-block" onclick="add_sessioni($(this))">
+            <i class="fa fa-users"></i> '.tr('Inserimento massivo').'
+        </button>
+    </div>
+
+    <div class="col-md-offset-4 col-md-4">
         {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "nuovo_tecnico", "placeholder": "'.tr('Seleziona un tecnico').'", "ajax-source": "tecnici", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica=Tecnico&readonly_tipo=1" ]}
     </div>
 
@@ -356,6 +363,21 @@ function add_tecnici(id_tecnico) {
             calcolaConflittiTecnici();
         }
     });
+}
+
+/*
+* Aggiunge sessioni massivamente
+*/
+async function add_sessioni(button) {
+    // Salvataggio via AJAX
+    await salvaForm("#edit-form", {}, button);
+
+    // Chiusura tooltip
+    if ($(button).hasClass("tooltipstered"))
+        $(button).tooltipster("close");
+
+    // Apertura modal
+    openModal("'.tr('Aggiungi sessioni').'", "'.$module->fileurl('modals/add_sessioni.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record);
 }
 
 /*

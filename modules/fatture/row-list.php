@@ -354,6 +354,15 @@ if (!empty($rivalsa_inps)) {
                 '.moneyFormat($rivalsa_inps, 2).'
             </td>
             <td></td>
+        </tr>
+        <tr>
+            <td colspan="6" class="text-right">
+                <b>'.tr('Totale imponibile', [], ['upper' => true]).' :</b>
+            </td>
+            <td class="text-right">
+                '.moneyFormat($totale_imponibile + $rivalsa_inps, 2).'
+            </td>
+            <td></td>
         </tr>';
 }
 

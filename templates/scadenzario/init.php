@@ -30,13 +30,13 @@ $total = Util\Query::readQuery($module);
 $module_query = $total['query'];
 
 if(!empty(get('date_start'))){
-    $module_query = str_replace('1=1', '1=1 AND DATE_FORMAT(`data`, "%Y%m%d") >= "'.date('Ymd', strtotime(get('date_start'))).'"', $module_query);
+    $module_query = str_replace('1=1', '1=1 AND DATE_FORMAT(`scadenza`, "%Y%m%d") >= "'.date('Ymd', strtotime(get('date_start'))).'"', $module_query);
 
     $date_start = get('date_start');
 }
 
 if(!empty(get('date_end'))){
-    $module_query = str_replace('1=1', '1=1 AND DATE_FORMAT(`data`, "%Y%m%d") <= "'.date('Ymd', strtotime(get('date_end'))).'"', $module_query);
+    $module_query = str_replace('1=1', '1=1 AND DATE_FORMAT(`scadenza`, "%Y%m%d") <= "'.date('Ymd', strtotime(get('date_end'))).'"', $module_query);
 
     $date_end = get('date_end');
 }

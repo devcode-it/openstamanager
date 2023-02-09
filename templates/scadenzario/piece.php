@@ -22,8 +22,7 @@ include_once __DIR__.'/../../core.php';
 echo '
     <tr>
         <td>
-            '.$record['Rif. Fattura'].'<br>
-            <small>'.Translator::dateToLocale($record['Data emissione']).'</small>
+            '.(!empty($record['Rif. Fattura']) ? $record['Rif. Fattura'].'<br><small>'.Translator::dateToLocale($record['Data emissione']).'</small>' : $record['Descrizione scadenza']).'            
         </td>
         <td>'.$record['Anagrafica'].'</td>
         <td>'.$record['Tipo di pagamento'].'</td>

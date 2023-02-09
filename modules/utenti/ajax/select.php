@@ -114,7 +114,7 @@ switch ($resource) {
 
     case 'moduli_gruppo':
     
-        $query = "SELECT zz_modules.id, zz_modules.title AS descrizione FROM zz_modules LEFT JOIN zz_permissions ON zz_permissions.idmodule=zz_modules.id |where| ORDER BY descrizione";
+        $query = "SELECT zz_modules.id, zz_modules.title AS descrizione FROM zz_modules LEFT JOIN zz_permissions ON zz_permissions.idmodule=zz_modules.id |where| GROUP BY id ORDER BY descrizione";
 
         $where[] = 'zz_modules.enabled=1';
 
@@ -126,7 +126,7 @@ switch ($resource) {
             $filter[] = 'zz_modules.id='.prepare($element);
         }
         if (!empty($search)) {
-            $search_fields[] = 'descrizione LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'zz_modules.title LIKE '.prepare('%'.$search.'%');
         }
 
         break;

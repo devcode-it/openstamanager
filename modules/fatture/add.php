@@ -29,7 +29,7 @@ if ($module['name'] == 'Fatture di vendita') {
     $tipo_anagrafica = tr('Fornitore');
 }
 
-$id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : $user['idanagrafica'];
+$id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : get('');
 
 $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
     'predefined' => 1,

@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : get('');
+$id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 
 $stati = get('pianificabile') ? 'SELECT id, descrizione FROM co_staticontratti WHERE is_pianificabile=1' : 'SELECT id, descrizione FROM co_staticontratti';
 

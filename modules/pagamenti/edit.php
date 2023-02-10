@@ -127,14 +127,10 @@ ORDER BY `data`');
 					<div class="box-header with-border">
 						<h3 class="box-title">'.tr('Rata _NUMBER_', [
                             '_NUMBER_' => $numero_rata,
-                        ]).'</h3>';
-                        if (empty($elementi)) {
-        echo '
+                        ]).'</h3>      
 						<button type="button" class="btn btn-danger pull-right" onclick="rimuoviRata(' . $result['id'] . ')">
 						    <i class="fa fa-trash"></i> ' . tr('Elimina') . '
-						</button>';
-                        }
-                        echo '
+						</button>
 					</div>
 					<div class="box-body">
 						<input type="hidden" value="'.$result['id'].'" name="id['.$numero_rata.']">
@@ -166,8 +162,6 @@ ORDER BY `data`');
 				</div>';
     ++$numero_rata;
 }
-
-if (empty($elementi)) {
 ?>
 			</div>
 
@@ -229,12 +223,11 @@ echo '
     </div>
 </form>';
 
-} else {
-    echo'
-            </div>
-        </div>
-	</div>
-</form>
+
+
+
+if (!empty($elementi)) {
+    echo '
 <div class="box box-warning collapsable collapsed-box">
     <div class="box-header with-border">
         <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [

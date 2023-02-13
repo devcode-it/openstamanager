@@ -176,4 +176,4 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, "Stato predefinito dell\'attività", (SELECT idstatointervento FROM in_statiintervento WHERE descrizione = "Da programmare"), 'query=SELECT idstatointervento AS id, descrizione AS text FROM in_statiintervento', '1', 'Attività', NULL, NULL);
 
 -- Aggiunta colonna KM in vista Attività
-INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES ((SELECT id from zz_modules WHERE title = "Attività"), 'KM', 'sum(in_interventi_tecnici.km)', '29', '1', '0', '1', '0', NULL, NULL, '1', '1', '0'); 
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES ((SELECT id from zz_modules WHERE title = "Attività"), 'KM', 'sum(in_interventi_tecnici.km)', '29', '1', '0', '1', '0', NULL, NULL, '0', '1', '0'); 

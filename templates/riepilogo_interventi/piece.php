@@ -34,6 +34,7 @@ $totale_imponibile = $tipo=='interno' ? $intervento->spesa : $intervento->totale
 $iva = $tipo=='interno' ? (($intervento->spesa * $iva_predefinita) / 100) : $intervento->iva;
 $totale_ivato = $tipo=='interno' ? ($intervento->spesa + $iva) : $intervento->totale;
 
+$somma_km[] = $km;
 $somma_ore[] = $ore;
 $somma_imponibile[] = $imponibile;
 $somma_sconto[] = $sconto;

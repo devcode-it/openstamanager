@@ -461,13 +461,13 @@ if (!empty($righe)) {
                 if ($tipo_sconto == '%') {
                     $sconto_calcolato = calcola_sconto([
                         'sconto' => $sconto_riga,
-                        'prezzo' => $sconto_unitario ? $obj->prezzo_unitario - ($tot_sconto_calcolato / $obj->qta) : $obj->prezzo_unitario,
+                        'prezzo' => $sconto_unitario ? $prezzo_unitario - ($tot_sconto_calcolato / $qta) : $prezzo_unitario,
                         'tipo' => 'PRC',
-                        'qta' => $obj->qta,
+                        'qta' => $qta,
                     ]);
 
                     if ($tipo == '%') {
-                        $tot_sconto = $sconto_calcolato * 100 / $obj->imponibile;
+                        $tot_sconto = $sconto_calcolato * 100 / ($prezzo_unitario * $qta);
                     } else {
                         $tot_sconto = $sconto_calcolato;
                     }
@@ -479,7 +479,6 @@ if (!empty($righe)) {
                 $sconto_unitario += $tot_sconto;
             }
         }
-
 
         $riferimento_fe = '';
 

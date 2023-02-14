@@ -29,6 +29,7 @@ use Util\XML;
 use Util\Zip;
 use Modules\Fatture\Stato;
 use Plugins\ReceiptFE\Ricevuta;
+use Carbon\Carbon;
 
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 $stato_emessa = $dbo->selectOne('co_statidocumento', 'id', ['descrizione' => 'Emessa'])['id'];
@@ -469,8 +470,32 @@ switch (post('op')) {
         ->get();
 
         foreach ($fatture as $fattura) {
+            $data = $fattura->data;
+
             $fattura = Fattura::find($fattura['id']);
             $stato_precedente = Stato::find($fattura->idstatodocumento);
+
+            $data_fattura_precedente = $dbo->fetchOne('
+            SELECT
+                MAX(DATA) AS datamax
+            FROM
+                co_documenti
+            INNER JOIN co_statidocumento ON co_statidocumento.id = co_documenti.idstatodocumento
+            INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id
+            INNER JOIN zz_segments ON zz_segments.id = co_documenti.id_segment
+            WHERE
+                co_statidocumento.descrizione = "Emessa" AND co_tipidocumento.dir="entrata" AND co_documenti.id_segment='.$fattura->id_segment);
+
+            if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && (Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax']))) && (!empty($data_fattura_precedente['datamax']))){
+                $fattura->data = $data_fattura_precedente['datamax'];
+                $fattura->data_competenza = $data_fattura_precedente['datamax'];
+            }
+
+            if ($dir == 'entrata') {
+                $fattura->data_registrazione = post('data');
+            } else {
+                $fattura->data_registrazione = post('data_registrazione');
+            }
 
             if ($stato_precedente->descrizione == 'Bozza' && $fattura->isFiscale()) {
                 $fattura->stato()->associate($new_stato);

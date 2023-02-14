@@ -65,19 +65,33 @@ switch (post('op')) {
     case 'update':
         $stato = Stato::find(post('idstatodocumento'));
         $fattura->stato()->associate($stato);
+        $data = post('data');
 
         $tipo = Tipo::find(post('idtipodocumento'));
         $fattura->tipo()->associate($tipo);
 
+        
+        if (setting('Imposta data emissione in base alla prima data disponibile') == 1) {
+
+            $data_fattura_precedente = $dbo->fetchOne('SELECT max(data)as datamax FROM co_documenti WHERE idstatodocumento=3');
+
+            if ($stato->id == '3'){
+                if ($data < $data_fattura_precedente['datamax']) {
+                    $fattura->data = $data_fattura_precedente['datamax'];
+                    $fattura->data_competenza = $data_fattura_precedente['datamax'];
+                }
+            }
+        } else {
+            
         $fattura->data = post('data');
+        $fattura->data_competenza = post('data_competenza');
+        }
 
         if ($dir == 'entrata') {
             $fattura->data_registrazione = post('data');
         } else {
             $fattura->data_registrazione = post('data_registrazione');
         }
-
-        $fattura->data_competenza = post('data_competenza');
 
         $fattura->numero_esterno = post('numero_esterno');
         $fattura->note = post('note');

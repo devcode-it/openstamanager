@@ -72,13 +72,13 @@ switch (post('op')) {
 
         
         if (setting('Imposta data emissione in base alla prima data disponibile') == 1) {
-
-            $data_fattura_precedente = $dbo->fetchOne('SELECT max(data)as datamax FROM co_documenti WHERE idstatodocumento=3');
-
-            if ($stato->id == '3'){
-                if ($data < $data_fattura_precedente['datamax']) {
-                    $fattura->data = $data_fattura_precedente['datamax'];
-                    $fattura->data_competenza = $data_fattura_precedente['datamax'];
+            if ($dir == 'entrata') {
+                if ($stato->id == '3'){
+                    $data_fattura_precedente = $dbo->fetchOne('SELECT max(data)as datamax FROM co_documenti WHERE idstatodocumento=3');
+                    if ($data < $data_fattura_precedente['datamax']) {
+                        $fattura->data = $data_fattura_precedente['datamax'];
+                        $fattura->data_competenza = $data_fattura_precedente['datamax'];
+                    }
                 }
             }
         } else {

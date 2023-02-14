@@ -19,6 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Carbon\Carbon;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Tipo as TipoAnagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
@@ -73,18 +74,25 @@ switch (post('op')) {
         
         if (setting('Imposta data emissione in base alla prima data disponibile') == 1) {
             if ($dir == 'entrata') {
-                if ($stato->id == '3'){
-                    $data_fattura_precedente = $dbo->fetchOne('SELECT max(data)as datamax FROM co_documenti WHERE idstatodocumento=3');
-                    if ($data < $data_fattura_precedente['datamax']) {
+                if ($stato->descrizione == 'Emessa'){
+                    $data_fattura_precedente = $dbo->fetchOne('
+                    SELECT
+                        MAX(DATA) AS datamax
+                    FROM
+                        co_documenti
+                    INNER JOIN co_statidocumento ON co_statidocumento.id = co_documenti.idstatodocumento
+                    INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id
+                    WHERE
+                        co_statidocumento.descrizione = "Emessa" AND co_tipidocumento.dir="entrata"');
+                    if (Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax']))) {
                         $fattura->data = $data_fattura_precedente['datamax'];
                         $fattura->data_competenza = $data_fattura_precedente['datamax'];
                     }
                 }
             }
         } else {
-            
-        $fattura->data = post('data');
-        $fattura->data_competenza = post('data_competenza');
+            $fattura->data = post('data');
+            $fattura->data_competenza = post('data_competenza');
         }
 
         if ($dir == 'entrata') {

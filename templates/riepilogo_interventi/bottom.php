@@ -25,6 +25,7 @@ $somma_sconto = sum($somma_sconto);
 $somma_totale_imponibile = sum($somma_totale_imponibile);
 $somma_iva = sum($somma_iva);
 $somma_totale_ivato = sum($somma_totale_ivato);
+$somma_km = sum($somma_km);
 
 if (setting('Formato ore in stampa') == 'Sessantesimi') {
     $somma_ore = Translator::numberToHours($somma_ore);
@@ -38,6 +39,7 @@ echo '
             <th class="text-right" style="border-left: 0;">
                 <b>'.tr('Totale', [], ['upper' => true]).':</b>
             </th>
+            <th class="text-center">'.($somma_km).'</td>
             <th class="text-center">'.($pricing ? $somma_ore : '-').'</th>
             <th class="text-center">'.($pricing ? moneyFormat($somma_imponibile, 2) : '-').'</th>
             <th class="text-center">'.($pricing ? moneyFormat($somma_sconto, 2) : '-').'</th>
@@ -49,7 +51,7 @@ echo '
             <th class="text-right" style="border-left: 0;">
                 <b>'.tr('Iva', [], ['upper' => true]).':</b>
             </th>
-            <th colspan="3"></th>
+            <th colspan="4"></th>
             <th class="text-center">'.($pricing ? moneyFormat($somma_iva, 2) : '-').'</th>
         </tr>
 
@@ -58,7 +60,7 @@ echo '
             <th class="text-right" style="border-left: 0;">
                 <b>'.tr('Totale Ivato', [], ['upper' => true]).':</b>
             </th>
-            <th colspan="3"></th>
+            <th colspan="4"></th>
             <th class="text-center">'.($pricing ? moneyFormat($somma_totale_ivato, 2) : '-').'</th>
         </tr>
     </tbody>

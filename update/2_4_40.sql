@@ -180,3 +180,6 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 
 -- Aggiunta impostazione data emissione automatica
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, "Data emissione fattura automatica", '0', 'boolean', '1', 'Fatturazione', NULL, "Impedisce l'emissione di fatture di vendita con data precedente alla data dell'ultima fattura emessa");
+
+-- Fix name file Fatture Elettroniche in zz_files se si aggiorna da una versione precedente alla 2.4.4
+UPDATE `zz_files` SET `name` = 'Fattura Elettronica' WHERE `name` = 'Fattura Elettronica (XML)'; 

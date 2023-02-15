@@ -365,6 +365,7 @@ function i18n() {
     return gulp.src([
         config.nodeDirectory + '/**/{i18n,lang,locale,locales}/*.{js,json}',
         config.development + '/' + config.paths.js + '/i18n/**/*.{js,json}',
+        config.nodeDirectory + '/moment/min/locales.js',
         '!' + config.nodeDirectory + '/**/{src,plugins}/**',
         '!' + config.nodeDirectory + '/ckeditor4/**',
         '!' + config.nodeDirectory + '/summernote/**',

@@ -19,6 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Carbon\Carbon;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Tipo as TipoAnagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
@@ -65,19 +66,35 @@ switch (post('op')) {
     case 'update':
         $stato = Stato::find(post('idstatodocumento'));
         $fattura->stato()->associate($stato);
+        $data = post('data');
 
         $tipo = Tipo::find(post('idtipodocumento'));
         $fattura->tipo()->associate($tipo);
 
-        $fattura->data = post('data');
+        $data_fattura_precedente = $dbo->fetchOne('
+            SELECT
+                MAX(DATA) AS datamax
+            FROM
+                co_documenti
+            INNER JOIN co_statidocumento ON co_statidocumento.id = co_documenti.idstatodocumento
+            INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id
+            INNER JOIN zz_segments ON zz_segments.id = co_documenti.id_segment
+            WHERE
+                co_statidocumento.descrizione = "Emessa" AND co_tipidocumento.dir="entrata" AND co_documenti.id_segment='.$fattura->id_segment);
+
+        if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && ($stato->descrizione == 'Emessa') && (Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax']))) && (!empty($data_fattura_precedente['datamax']))){
+            $fattura->data = $data_fattura_precedente['datamax'];
+            $fattura->data_competenza = $data_fattura_precedente['datamax'];
+        } else {
+            $fattura->data = post('data');
+            $fattura->data_competenza = post('data_competenza');
+        }
 
         if ($dir == 'entrata') {
             $fattura->data_registrazione = post('data');
         } else {
             $fattura->data_registrazione = post('data_registrazione');
         }
-
-        $fattura->data_competenza = post('data_competenza');
 
         $fattura->numero_esterno = post('numero_esterno');
         $fattura->note = post('note');

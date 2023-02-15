@@ -177,3 +177,6 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 
 -- Aggiunta colonna KM in vista Attività
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES ((SELECT id from zz_modules WHERE title = "Attività"), 'KM', 'sum(in_interventi_tecnici.km)', '29', '1', '0', '1', '0', NULL, NULL, '0', '1', '0'); 
+
+-- Aggiunta impostazione data emissione automatica
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, "Data emissione fattura automatica", '0', 'boolean', '1', 'Fatturazione', NULL, "Impedisce l'emissione di fatture di vendita con data precedente alla data dell'ultima fattura emessa");

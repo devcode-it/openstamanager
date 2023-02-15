@@ -119,7 +119,7 @@ switch (post('op')) {
             // Se non c'è già una fattura appena creata per questo cliente, creo una fattura nuova
             if (empty($id_documento)) {
                 if (!empty($accodare)) {
-                    $documento = $dbo->fetchOne('SELECT co_documenti.id FROM co_documenti INNER JOIN co_statidocumento ON co_documenti.idstatodocumento = co_statidocumento.id WHERE co_statidocumento.descrizione = \'Bozza\' AND idanagrafica = '.prepare($id_anagrafica));
+                    $documento = $dbo->fetchOne('SELECT co_documenti.id FROM co_documenti INNER JOIN co_statidocumento ON co_documenti.idstatodocumento = co_statidocumento.id INNER JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento INNER JOIN zz_segments ON zz_segments.id = co_documenti.id_segment WHERE co_statidocumento.descrizione = "Bozza"  AND co_documenti.idanagrafica = '.$id_anagrafica.' AND co_tipidocumento.id='.$tipo_documento['id'].' AND co_documenti.id_segment = '.$id_segment);
 
                     $id_documento = $documento['id'];
                     $id_documento_cliente[$id_anagrafica] = $id_documento;

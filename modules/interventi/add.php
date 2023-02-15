@@ -97,7 +97,7 @@ elseif (!empty($id_intervento)) {
     $data_richiesta = $intervento['data_richiesta'];
     $data_scadenza = $intervento['data_scadenza'];
     $richiesta = $intervento['richiesta'];
-    $id_sede = $intervento['idsede'];
+    $id_sede = $intervento['idsede_destinazione'];
     $id_anagrafica = $intervento['idanagrafica'];
     $id_cliente_finale = $intervento['idclientefinale'];
     $id_contratto = $intervento['idcontratto'];

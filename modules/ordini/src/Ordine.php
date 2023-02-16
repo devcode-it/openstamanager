@@ -224,10 +224,6 @@ class Ordine extends Document
             }
         }
         
-        $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero', [
-            'YEAR(data) = '.prepare(date('Y', strtotime($data))),
-            'idtipoordine IN (SELECT id FROM or_tipiordine WHERE dir = '.prepare($direzione).')',
-        ]);
         $numero = Generator::generate($maschera, $ultimo);
 
         return $numero;

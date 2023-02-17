@@ -91,7 +91,7 @@ FROM
     LEFT JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`
     LEFT JOIN (SELECT `zz_operations`.`id_email`, `zz_operations`.`id_record` FROM `zz_operations` INNER JOIN `em_emails` ON `zz_operations`.`id_email` = `em_emails`.`id` INNER JOIN `em_templates` ON `em_emails`.`id_template` = `em_templates`.`id` INNER JOIN `zz_modules` ON `zz_operations`.`id_module` = `zz_modules`.`id` WHERE `zz_modules`.`name` = 'Ddt di vendita' AND `zz_operations`.`op` = 'send-email' GROUP BY `zz_operations`.`id_record`) AS `email` ON `email`.`id_record` = `dt_ddt`.`id`
 WHERE
-    1=1 AND `dir` = 'entrata' AND (`data` BETWEEN '2023-01-01' AND '2023-12-31 23:59:59')
+    1=1 AND `dir` = 'entrata' |date_period(`data`)|
 HAVING
     2=2
 ORDER BY
@@ -180,3 +180,8 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 
 -- Aggiunta impostazione data emissione automatica
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, "Data emissione fattura automatica", '0', 'boolean', '1', 'Fatturazione', NULL, "Impedisce l'emissione di fatture di vendita con data precedente alla data dell'ultima fattura emessa");
+
+-- Fix name file Fatture Elettroniche in zz_files se si aggiorna da una versione precedente alla 2.4.4
+UPDATE `zz_files` SET `name` = 'Fattura Elettronica' WHERE `name` = 'Fattura Elettronica (XML)'; 
+
+ALTER TABLE `dt_ddt` CHANGE `numero` `numero` VARCHAR(100) NOT NULL; 

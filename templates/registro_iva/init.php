@@ -33,7 +33,7 @@ $vendita_banco = $dbo->fetchNum("SELECT * FROM zz_modules WHERE name='Vendita al
 $v_iva = [];
 $v_totale = [];
 
-if ((!empty($vendita_banco)) && (empty($id_sezionale)) && ($tipo == 'vendite')){
+if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')){
     $query = '
     SELECT
         data_registrazione,
@@ -74,7 +74,7 @@ if ((!empty($vendita_banco)) && (empty($id_sezionale)) && ($tipo == 'vendite')){
         INNER JOIN co_movimenti ON co_movimenti.iddocumento = co_documenti.id
         INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = co_documenti.idanagrafica
     WHERE 
-        dir = '.prepare($dir).' AND idstatodocumento NOT IN (SELECT id FROM co_statidocumento WHERE descrizione="Bozza" OR descrizione="Annullata") AND is_descrizione = 0 AND co_documenti.data_competenza >= '.prepare($date_start).' AND co_documenti.data_competenza <= '.prepare($date_end).' AND '.((!empty($id_sezionale)) ? 'co_documenti.id_segment = '.prepare($id_sezionale).'' : '1=1').'
+        dir = '.prepare($dir).' AND idstatodocumento NOT IN (SELECT id FROM co_statidocumento WHERE descrizione="Bozza" OR descrizione="Annullata") AND is_descrizione = 0 AND co_documenti.data_competenza >= '.prepare($date_start).' AND co_documenti.data_competenza <= '.prepare($date_end).' AND '.(($id_sezionale != -1) ? 'co_documenti.id_segment = '.prepare($id_sezionale) : '1=1').'
     GROUP BY 
         co_iva.id, id
     UNION
@@ -134,7 +134,7 @@ FROM
     INNER JOIN co_movimenti ON co_movimenti.iddocumento = co_documenti.id
     INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = co_documenti.idanagrafica
 WHERE 
-    dir = '.prepare($dir).' AND idstatodocumento NOT IN (SELECT id FROM co_statidocumento WHERE descrizione="Bozza" OR descrizione="Annullata") AND is_descrizione = 0 AND co_documenti.data_competenza >= '.prepare($date_start).' AND co_documenti.data_competenza <= '.prepare($date_end).' AND '.((!empty($id_sezionale)) ? 'co_documenti.id_segment = '.prepare($id_sezionale).'' : '1=1').'
+    dir = '.prepare($dir).' AND idstatodocumento NOT IN (SELECT id FROM co_statidocumento WHERE descrizione="Bozza" OR descrizione="Annullata") AND is_descrizione = 0 AND co_documenti.data_competenza >= '.prepare($date_start).' AND co_documenti.data_competenza <= '.prepare($date_end).' AND '.(($id_sezionale != -1) ? 'co_documenti.id_segment = '.prepare($id_sezionale).'' : '1=1').'
 GROUP BY 
     co_documenti.id, co_righe_documenti.idiva
 ORDER BY 

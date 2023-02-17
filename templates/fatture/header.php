@@ -93,8 +93,12 @@ echo '
                 <td colspan=2 class="border-full"'.(!$fattura_accompagnatoria ? ' style="height:20mm;"' : '').'>
                     <p class="small-bold">'.tr('Spett.le', [], ['upper' => true]).'</p>
                     <p>$c_ragionesociale$</p>
-					<p>'.(!empty($c_indirizzo) ? $c_indirizzo : '').(!empty($c_citta_full) ? '<br>'.$c_citta_full : '').'</p>
-					<small>'.(!empty($c_codice_destinatario) ? tr('Cod.Fatturazione').': '.$c_codice_destinatario : '').'</small>
+					<p>'.(!empty($c_indirizzo) ? $c_indirizzo : '').(!empty($c_citta_full) ? '<br>'.$c_citta_full : '').'</p>';
+                    if (empty($destinazione)) {
+                        echo '                
+					<small>'.(!empty($c_codice_destinatario) ? tr('Cod.Fatturazione').': '.$c_codice_destinatario : '').'</small>';
+                    }
+                    echo '
                 </td>
             </tr>
 
@@ -121,7 +125,8 @@ if (!empty($destinazione)) {
             <tr>
                 <td colspan=2 class="border-full" style="height:16mm;">
                     <p class="small-bold">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
-                    <small>$c_destinazione$</small>
+                    <p><small>$c_destinazione$</small></p>
+                    <p><small>'.(!empty($c_codice_destinatario) ? tr('Cod.Fatturazione').': '.$c_codice_destinatario : '').'</small></p>
                 </td>
             </tr>';
 }

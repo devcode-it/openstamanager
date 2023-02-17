@@ -132,7 +132,7 @@ switch (post('op')) {
                             }   
                         }
                     }
-                    if ($creata_mail == true) {
+                    if (!empty($emails)) {
                         if (!empty($fattura_allegata)) {
                             $mail->addUpload($fattura_allegata);
                         }

@@ -23,9 +23,10 @@ use Modules\Articoli\Articolo;
 
 $block_edit = $record['flag_completato'];
 $righe = $ordine->getRighe();
+$colspan = ($block_edit ? '6' : '7');
 
 echo '
-<div class="table-responsive">
+<div class="table-responsive row-list">
     <table class="table table-striped table-hover table-condensed table-bordered">
         <thead>
             <tr>
@@ -38,15 +39,17 @@ echo '
                 </th>
                 <th width="35" class="text-center" >'.tr('#').'</th>
                 <th>'.tr('Descrizione').'</th>
-                <th width="120">'.tr('Prev. evasione').'</th>
-                <th class="text-center tip" width="150" title="'.tr('da evadere').' / '.tr('totale').'">'.tr('Q.tà').' <i class="fa fa-question-circle-o"></i></th>
-                <th class="text-center" width="150">'.tr('Prezzo unitario').'</th>
-                <th class="text-center" width="150">'.tr('Iva unitaria').'</th>
-                <th class="text-center" width="150">'.tr('Importo').'</th>
-                <th width="60">&nbsp;</th>
+                <th width="105">'.tr('Prev. evasione').'</th>
+                <th class="text-center tip" width="190">'.tr('Q.tà').'</th>
+                <th class="text-center" width="140">'.tr('Prezzo unitario').'</th>';
+            if (!$block_edit) {
+                echo '<th class="text-center" width="150">'.tr('Sconto unitario').'</th>';
+            }
+            echo '
+                <th class="text-center" width="140">'.tr('Importo').'</th>
+                <th width="80"></th>
             </tr>
         </thead>
-
         <tbody class="sortable" id="righe">';
 
 // Righe documento
@@ -72,20 +75,20 @@ foreach ($righe as $riga) {
     }
 
     echo '
-        <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'" '.$extra.'>
-            <td class="text-center">';
-            if (!$block_edit) {
+            <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'">
+                <td class="text-center">';
+                if (!$block_edit) {
+                    echo '
+                    <input class="check" type="checkbox"/>';
+                }
                 echo '
-                <input class="check" type="checkbox"/>';
-            }
-            echo '
-            </td>
+                </td>
 
-            <td class="text-center">
-                '.$num.'
-            </td>
+                <td class="text-center">
+                    '.$num.'
+                </td>
 
-            <td>';
+                <td>';
 
     $numero_riferimenti_riga = $riga->referenceTargets()->count();
     $numero_riferimenti_collegati = $riga->referenceSources()->count();
@@ -100,7 +103,7 @@ foreach ($righe as $riga) {
     // Aggiunta dei riferimenti ai documenti
     if ($riga->hasOriginalComponent()) {
         echo '
-                <small class="pull-right text-right text-muted">'.reference($riga->getOriginalComponent()->getDocument(), tr('Origine')).'</small>';
+                    <small class="pull-right text-right text-muted">'.reference($riga->getOriginalComponent()->getDocument(), tr('Origine')).'</small>';
     }
 
     if ($riga->isArticolo()) {
@@ -111,11 +114,11 @@ foreach ($righe as $riga) {
         if( $id_module==Modules::get('Ordini fornitore')['id'] ){
             $codice_fornitore = $riga->articolo->dettaglioFornitore( $ordine->idanagrafica )->codice_fornitore;
             if( !empty($codice_fornitore) ){
-                echo '
-                <br>
-                <small class="text-muted">'.tr('Codice fornitore: _COD_FOR_',[
-                    '_COD_FOR_' => $codice_fornitore,
-                ]).'</small>';
+                    echo '
+                    <br>
+                    <small class="text-muted">'.tr('Codice fornitore: _COD_FOR_',[
+                        '_COD_FOR_' => $codice_fornitore,
+                    ]).'</small>';
             }
         }   
     } else {
@@ -124,28 +127,28 @@ foreach ($righe as $riga) {
 
     if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
         if (!empty($mancanti)) {
-            echo '
-                <br><b><small class="text-danger">'.tr('_NUM_ serial mancanti', [
-                    '_NUM_' => $mancanti,
-                ]).'</small></b>';
+                echo '
+                    <br><b><small class="text-danger">'.tr('_NUM_ serial mancanti', [
+                        '_NUM_' => $mancanti,
+                    ]).'</small></b>';
         }
         if (!empty($serials)) {
-            echo '
-                <br>'.tr('SN').': '.implode(', ', $serials);
+                echo '
+                    <br>'.tr('SN').': '.implode(', ', $serials);
         }
     }
 
     if ($riga->isArticolo() && !empty($riga->articolo->barcode)) {
-        echo '
-        <br><small><i class="fa fa-barcode"></i> '.$riga->articolo->barcode.'</small>';
-    }  
-    
+                    echo '
+                    <br><small><i class="fa fa-barcode"></i> '.$riga->articolo->barcode.'</small>';
+    }
+
     if (!empty($riga->note)) {
-            echo '
-                <br><small class="label label-default">'.nl2br($riga->note).'</small>';
+        echo '
+                    <br><small class="label label-default">'.nl2br($riga->note).'</small>';
     }
     echo '
-            </td>';
+                </td>';
 
     // Data prevista evasione
     $info_evasione = '';
@@ -191,89 +194,88 @@ foreach ($righe as $riga) {
                 <td></td>
                 <td></td>';
     } else {
-        // Quantità e unità di misura
-        echo '
-            <td class="text-center">
-                <i class="'.($riga->confermato ? 'fa fa-check text-success' : 'fa fa-clock-o text-warning').'"></i>
-                '.numberFormat($riga->qta_rimanente, 'qta').' / '.numberFormat($riga->qta, 'qta').' '.$riga->um.'
-            </td>';
+                // Quantità e unità di misura
+                $progress_perc = $riga->qta_evasa * 100 / $riga->qta;
+                echo '
+                <td class="text-center">
+                    {[ "type": "number", "name": "qta_'.$riga->id.'", "value": "'.$riga->qta.'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-before": "<i class=\''.($riga->confermato ? 'fa fa-check text-success' : 'fa fa-clock-o text-warning').'\'></i>", "icon-after": "<span class=\'tip\' title=\''.tr('Quantità evasa: _QTA_', ['_QTA_' => numberFormat($riga->qta_evasa, 'qta')]).'\'>'.($riga->um ?: '&nbsp;').'</span>", "disabled": "'.($riga->isSconto() ? 1 : 0).'", "disabled": "'.$block_edit.'" ]}
+                    <div class="progress" style="height:4px;">
+                        <div class="progress-bar progress-bar-primary" style="width:'.$progress_perc.'%"></div>
+                    </div>
+                </td>';
 
         // Prezzi unitari
         echo '
-            <td class="text-right">
-                '.moneyFormat($riga->prezzo_unitario_corrente);
-
-        if ($dir == 'entrata' && $riga->costo_unitario != 0) {
-            echo '
-                <br><small class="text-muted">
-                    '.tr('Acquisto').': '.moneyFormat($riga->costo_unitario).'
-                </small>';
-        }
+                <td class="text-right">';
+                // Provvigione riga 
+                if (abs($riga->provvigione_unitaria) > 0) {
+                    $text = provvigioneInfo($riga);
+                    echo '<span class="pull-left text-info" title="'.$text.'"><i class="fa fa-handshake-o"></i></span>';
+                } 
+                echo moneyFormat($riga->prezzo_unitario_corrente);
 
         if (abs($riga->sconto_unitario) > 0) {
             $text = discountInfo($riga);
 
             echo '
-                <br><small class="label label-danger">'.$text.'</small>';
+                    <br><small class="label label-danger">'.$text.'</small>';
         }
 
         echo '
-            </td>';
+                </td>';
 
-        // Iva
-        echo '
-            <td class="text-right">
-                '.moneyFormat($riga->iva_unitaria_scontata).'
-                <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' text-muted">'.$riga->aliquota->descrizione.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
-            </td>';
+        // Sconto unitario
+        if (!$block_edit) {
+            echo '
+                <td class="text-center">
+                    {[ "type": "number", "name": "sconto_'.$riga->id.'", "value": "'.($riga->sconto_percentuale ?: $riga->sconto_unitario_corrente).'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "choice|untprc|'.$riga->tipo_sconto.'" ]}
+                </td>';
+        }
 
         // Importo
         echo '
-            <td class="text-right">
-            '.moneyFormat($riga->importo);
-            //provvigione riga 
-            if (abs($riga->provvigione_unitaria) > 0) {
-                $text = provvigioneInfo($riga);
-    
-                echo '
-                        <br><small class="label label-info">'.$text.'</small>';
-            }
-            echo '</td>';
+                <td class="text-right">
+                    '.moneyFormat($riga->importo);
+
+                    // Iva
+                    echo '
+                    <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' text-muted">'.$riga->aliquota->descrizione.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
+                </td>';
     }
 
-    // Possibilità di rimuovere una riga solo se l'ordine non è evaso
-    echo '
-            <td class="text-center">';
-
-    if ($record['flag_completato'] == 0) {
+        // Possibilità di rimuovere una riga solo se l'ordine non è evaso
         echo '
-                <div class="input-group-btn">';
+                <td class="text-center">';
 
-        if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
+        if ($record['flag_completato'] == 0) {
             echo '
-                    <a class="btn btn-primary btn-xs" title="'.tr('Modifica seriali della riga').'" onclick="modificaSeriali(this)">
-                        <i class="fa fa-barcode"></i>
-                    </a>';
+                    <div class="input-group-btn">';
+
+            if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
+                echo '
+                        <a class="btn btn-primary btn-xs" title="'.tr('Modifica seriali della riga').'" onclick="modificaSeriali(this)">
+                            <i class="fa fa-barcode"></i>
+                        </a>';
+            }
+
+            echo '
+                        <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga').'" onclick="modificaRiga(this)">
+                            <i class="fa fa-edit"></i>
+                        </a>
+
+                        <a class="btn btn-xs btn-danger" title="'.tr('Rimuovi riga').'" onclick="rimuoviRiga([$(this).closest(\'tr\').data(\'id\')])">
+                            <i class="fa fa-trash"></i>
+                        </a>
+
+                        <a class="btn btn-xs btn-default handle" title="'.tr('Modifica ordine delle righe').'">
+                            <i class="fa fa-sort"></i>
+                        </a>
+                    </div>';
         }
 
         echo '
-                    <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga').'" onclick="modificaRiga(this)">
-                        <i class="fa fa-edit"></i>
-                    </a>
-
-                    <a class="btn btn-xs btn-danger" title="'.tr('Rimuovi riga').'" onclick="rimuoviRiga([$(this).closest(\'tr\').data(\'id\')])">
-                        <i class="fa fa-trash"></i>
-                    </a>
-
-                    <a class="btn btn-xs btn-default handle" title="'.tr('Modifica ordine delle righe').'">
-                        <i class="fa fa-sort"></i>
-                    </a>
-                </div>';
-    }
-
-    echo '
-            </td>
-        </tr>';
+                </td>
+            </tr>';
 }
 
 echo '
@@ -288,10 +290,10 @@ $totale = abs($ordine->totale);
 $sconto_finale = $ordine->getScontoFinale();
 $netto_a_pagare = $ordine->netto;
 
-// IMPONIBILE
+// Totale imponibile scontato
 echo '
         <tr>
-            <td colspan="7" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -304,7 +306,7 @@ echo '
 if (!empty($sconto)) {
     echo '
         <tr>
-            <td colspan="7" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
             </td>
             <td class="text-right">
@@ -313,10 +315,10 @@ if (!empty($sconto)) {
             <td></td>
         </tr>';
 
-    // TOTALE IMPONIBILE
+    // Totale imponibile scontato
     echo '
         <tr>
-            <td colspan="7" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -326,10 +328,10 @@ if (!empty($sconto)) {
         </tr>';
 }
 
-// IVA
+// Totale iva
 echo '
         <tr>
-            <td colspan="7" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 <b>'.tr('Iva', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -338,10 +340,10 @@ echo '
             <td></td>
         </tr>';
 
-// TOTALE
+// Totale
 echo '
         <tr>
-            <td colspan="7" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 <b>'.tr('Totale', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -354,7 +356,7 @@ echo '
 if (!empty($sconto_finale)) {
     echo '
         <tr>
-            <td colspan="7" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 <b>'.tr('Sconto in fattura', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -368,7 +370,7 @@ if (!empty($sconto_finale)) {
 if ($totale != $netto_a_pagare) {
     echo '
         <tr>
-            <td colspan="7" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -382,7 +384,7 @@ if ($totale != $netto_a_pagare) {
 if(!empty($ordine->provvigione)) {
     echo '
         <tr>
-            <td colspan="7" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 '.tr('Provvigioni').':
             </td>
             <td class="text-right">
@@ -391,9 +393,9 @@ if(!empty($ordine->provvigione)) {
             <td></td>
         </tr>';
 
-        echo '
+    echo '
         <tr>
-            <td colspan="7" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 '.tr('Netto da provvigioni').':
             </td>
             <td class="text-right">
@@ -419,7 +421,7 @@ if (!$block_edit && sizeof($righe) > 0) {
 }
 echo '
 </div>
-    
+
 <script>
 async function modificaRiga(button) {
     let riga = $(button).closest("tr");
@@ -520,7 +522,7 @@ function apriRiferimenti(button) {
 }
 
 $(document).ready(function() {
-    sortable(".sortable", {
+	sortable(".sortable", {
         axis: "y",
         handle: ".handle",
         cursor: "move",
@@ -570,4 +572,37 @@ $("#check_all").click(function(){
         });
     }
 });
+
+$(".tipo_icon_after").on("change", function() {
+    aggiornaInline($(this).closest("tr").data("id"));
+});
+
+function aggiornaInline(id) {
+    content_was_modified = false;
+    var qta = input("qta_"+ id).get();
+    var sconto = input("sconto_"+ id).get();
+    var tipo_sconto = input("tipo_sconto_"+ id).get();
+
+    $.ajax({
+        url: globals.rootdir + "/actions.php",
+        type: "POST",
+        data: {
+            id_module: globals.id_module,
+            id_record: globals.id_record,
+            op: "update_inline",
+            riga_id: id,
+            qta: qta,
+            sconto: sconto,
+            tipo_sconto: tipo_sconto,
+        },
+        success: function (response) {
+            caricaRighe(id);
+            renderMessages();
+        },
+        error: function() {
+            caricaRighe(null);
+        }
+    });
+}
+init();
 </script>';

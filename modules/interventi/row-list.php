@@ -21,11 +21,12 @@ include_once __DIR__.'/init.php';
 
 $block_edit = $record['flag_completato'];
 $righe = $intervento->getRighe();
+$colspan = ($block_edit ? '5' : '6');
 
 $show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
 echo '
-<div class="table-responsive">
+<div class="table-responsive row-list">
     <table class="table table-striped table-hover table-condensed table-bordered">
         <thead>
             <tr>
@@ -37,14 +38,17 @@ echo '
                 echo '
                 </th>
                 <th>'.tr('Descrizione').'</th>
-                <th class="text-center" width="80">'.tr('Q.tà').'</th>';
+                <th class="text-center" width="150">'.tr('Q.tà').'</th>';
 
     if ($show_prezzi) {
         echo '
-                <th class="text-center" width="150">'.tr('Prezzo di acquisto').'</th>
-                <th class="text-center" width="150">'.tr('Prezzo di vendita').'</th>
-                <th class="text-center" width="150">'.tr('Iva unitaria').'</th>
-                <th class="text-center" width="150">'.tr('Importo').'</th>';
+                <th class="text-center" width="140">'.tr('Prezzo di acquisto').'</th>
+                <th class="text-center" width="140">'.tr('Prezzo di vendita').'</th>';
+            if (!$block_edit) {
+                echo '<th class="text-center" width="150">'.tr('Sconto unitario').'</th>';
+            }
+            echo '
+                <th class="text-center" width="140">'.tr('Importo').'</th>';
     }
 
     if (!$record['flag_completato']) {
@@ -119,10 +123,10 @@ echo '
         echo '
                 </td>';
 
-        // Quantità
-        echo '
-                <td class="text-right">
-                    '.Translator::numberToLocale($riga->qta, 'qta').' '.$riga->um.'
+            // Quantità e unità di misura
+            echo '
+                <td class="text-center">
+                    {[ "type": "number", "name": "qta_'.$riga->id.'", "value": "'.$riga->qta.'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "'.($riga->um ?: '&nbsp;').'", "disabled": "'.($riga->isSconto() ? 1 : 0).'", "disabled": "'.$block_edit.'" ]}
                 </td>';
 
         if ($show_prezzi) {
@@ -134,8 +138,13 @@ echo '
 
             // Prezzo unitario
             echo '
-                <td class="text-right">
-                    '.moneyFormat($riga->prezzo_unitario);
+                <td class="text-right">';
+                    // Provvigione riga 
+                    if (abs($riga->provvigione_unitaria) > 0) {
+                        $text = provvigioneInfo($riga);
+                        echo '<span class="pull-left text-info" title="'.$text.'"><i class="fa fa-handshake-o"></i></span>';
+                    } 
+                    echo moneyFormat($riga->prezzo_unitario);
 
             if (abs($riga->sconto_unitario) > 0) {
                 $text = discountInfo($riga);
@@ -147,27 +156,23 @@ echo '
             echo '
                 </td>';
 
+           // Sconto unitario
+        if (!$block_edit) {
             echo '
-                <td class="text-right">
-                    '.moneyFormat($riga->iva_unitaria_scontata).'
-                    <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' text-muted">'.$riga->aliquota->descrizione.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
+                <td class="text-center">
+                    {[ "type": "number", "name": "sconto_'.$riga->id.'", "value": "'.($riga->sconto_percentuale ?: $riga->sconto_unitario_corrente).'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "choice|untprc|'.$riga->tipo_sconto.'" ]}
                 </td>';
+        }
 
             // Prezzo di vendita
             echo '
                 <td class="text-right">
-                '.moneyFormat($riga->importo);
+                    '.moneyFormat($riga->importo);
 
-
-                //provvigione riga 
-                if (abs($riga->provvigione_unitaria) > 0) {
-                    $text = provvigioneInfo($riga);
-    
+                    // Iva
                     echo '
-                            <br><small class="label label-info">'.$text.'</small>';
-                }
-    
-                echo '</td>';
+                    <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' text-muted">'.$riga->aliquota->descrizione.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
+                </td>';
         }
 
         // Pulsante per riportare nel magazzino centrale.
@@ -213,7 +218,7 @@ echo '
             // IMPONIBILE
             echo '
             <tr>
-                <td colspan="'.((!$record['flag_completato']) ? 6 : 5).'" class="text-right">
+                <td colspan="'.$colspan.'" class="text-right">
                     <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
                 </td>
                 <td class="text-right">
@@ -226,7 +231,7 @@ echo '
         if (!empty($intervento->sconto)) {
             echo '
             <tr>
-                <td colspan="'.((!$record['flag_completato']) ? 6 : 5).'" class="text-right">
+                <td colspan="'.$colspan.'" class="text-right">
                     <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
                 </td>
                 <td class="text-right">
@@ -238,7 +243,7 @@ echo '
             // Totale imponibile scontato
             echo '
             <tr>
-                <td colspan="'.((!$record['flag_completato']) ? 6 : 5).'" class="text-right">
+                <td colspan="'.$colspan.'" class="text-right">
                     <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
                 </td>
                 <td class="text-right">
@@ -252,7 +257,7 @@ echo '
         if(!empty($intervento->provvigione)) {
             echo '
             <tr>
-                <td colspan="'.((!$record['flag_completato']) ? 6 : 5).'" class="text-right">
+                <td colspan="'.$colspan.'" class="text-right">
                     '.tr('Provvigioni').':
                 </td>
                 <td class="text-right">
@@ -423,4 +428,37 @@ $("#check_all").click(function(){
         });
     }
 });
+
+$(".tipo_icon_after").on("change", function() {
+    aggiornaInline($(this).closest("tr").data("id"));
+});
+
+function aggiornaInline(id) {
+    content_was_modified = false;
+    var qta = input("qta_"+ id).get();
+    var sconto = input("sconto_"+ id).get();
+    var tipo_sconto = input("tipo_sconto_"+ id).get();
+
+    $.ajax({
+        url: globals.rootdir + "/actions.php",
+        type: "POST",
+        data: {
+            id_module: globals.id_module,
+            id_record: globals.id_record,
+            op: "update_inline",
+            riga_id: id,
+            qta: qta,
+            sconto: sconto,
+            tipo_sconto: tipo_sconto,
+        },
+        success: function (response) {
+            caricaRighe(id);
+            renderMessages();
+        },
+        error: function() {
+            caricaRighe(null);
+        }
+    });
+}
+init();
 </script>';

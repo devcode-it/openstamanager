@@ -1133,6 +1133,10 @@ div.tip {
     background-color: #ff851b !important;
 }
 
+.row-list .form-group {
+    margin-bottom: 0px;
+}
+
 
 /*
 * Component: Sidebar Mini

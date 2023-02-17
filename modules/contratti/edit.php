@@ -327,30 +327,52 @@ if (!empty($rs)) {
     <div class="panel-body">';
 
 if (!$block_edit) {
+    // Form di inserimento riga documento
     echo '
-            <button type="button" class="btn btn-sm btn-primary tip" title="'.tr('Aggiungi articolo').'" onclick="gestioneArticolo(this)">
-                <i class="fa fa-plus"></i> '.tr('Articolo').'
-            </button>';
+        <form id="link_form" action="" method="post">
+            <input type="hidden" name="op" value="add_articolo">
+            <input type="hidden" name="backto" value="record-edit">
 
-    echo '
-            <button type="button" class="btn btn-sm btn-primary tip" title="'.tr('Aggiungi articoli tramite barcode').'" onclick="gestioneBarcode(this)">
-                <i class="fa fa-plus"></i> '.tr('Barcode').'
-            </button>';
+            <div class="row">
+                <div class="col-md-4">
+                    {[ "type": "text", "label": "'.tr('Aggiungi un articolo tramite barcode').'", "name": "barcode", "extra": "autocomplete=\"off\"", "icon-before": "<i class=\"fa fa-barcode\"></i>", "required": 0 ]}
+                </div>
 
-    echo '
-            <button type="button" class="btn btn-sm btn-primary tip" title="'.tr('Aggiungi riga').'" onclick="gestioneRiga(this)">
-                <i class="fa fa-plus"></i> '.tr('Riga').'
-            </button>';
+                <div class="col-md-4">
+                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "icon-after": "add|'.Modules::get('Articoli')['id'].'" ]}
+                </div>
 
-    echo '
-            <button type="button" class="btn btn-sm btn-primary tip" title="'.tr('Aggiungi descrizione').'" onclick="gestioneDescrizione(this)">
-                <i class="fa fa-plus"></i> '.tr('Descrizione').'
-            </button>';
+                <div class="col-md-4" style="margin-top: 25px">
+                    <button title="'.tr('Aggiungi articolo alla vendita').'" class="btn btn-primary tip" type="button" onclick="salvaArticolo()">
+                        <i class="fa fa-plus"></i> '.tr('Aggiungi').'
+                    </button>
+                    
+                    <a class="btn btn-primary" onclick="gestioneRiga(this)" data-title="'.tr('Aggiungi riga').'">
+                        <i class="fa fa-plus"></i> '.tr('Riga').'
+                    </a>
+                    
+                    <div class="btn-group tip" data-toggle="tooltip">
+                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            <i class="fa fa-list"></i> '.tr('Altro').'
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li>
+                                <a style="cursor:pointer" onclick="gestioneDescrizione(this)" data-title="'.tr('Aggiungi descrizione').'">
+                                    <i class="fa fa-plus"></i> '.tr('Descrizione').'
+                                </a>
+                            </li>
 
-    echo '
-            <button type="button" class="btn btn-sm btn-primary tip" title="'.tr('Aggiungi sconto/maggiorazione').'" onclick="gestioneSconto(this)">
-                <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
-            </button>';
+                            <li>
+                                <a style="cursor:pointer" onclick="gestioneSconto(this)" data-title="'.tr('Aggiungi sconto/maggiorazione').'">
+                                    <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </form>';
 }
 
 echo '
@@ -389,8 +411,7 @@ async function gestioneRiga(button, options) {
     await salvaForm("#edit-form", {}, button);
 
     // Lettura titolo e chiusura tooltip
-    let title = $(button).tooltipster("content");
-    $(button).tooltipster("close")
+    let title = $(button).attr("data-title");
 
     // Apertura modal
     options = options ? options : "is_riga";
@@ -400,21 +421,22 @@ async function gestioneRiga(button, options) {
 /**
  * Funzione dedicata al caricamento dinamico via AJAX delle righe del documento.
  */
-function caricaRighe() {
+function caricaRighe(id_riga) {
     let container = $("#righe");
 
     localLoading(container, true);
     return $.get("'.$structure->fileurl('row-list.php').'?id_module='.$id_module.'&id_record='.$id_record.'", function(data) {
         container.html(data);
         localLoading(container, false);
+        if (id_riga != null) {
+            $("tr[data-id="+ id_riga +"]").effect("highlight",1000);
+        }
     });
 }
 
 $(document).ready(function() {
-    caricaRighe();
-});
-
-$(document).ready(function() {
+    caricaRighe(null);
+    
     $("#data_accettazione").on("dp.change", function() {
         if($(this).val()){
             $("#data_rifiuto").attr("disabled", true);
@@ -433,6 +455,28 @@ $(document).ready(function() {
 
     $("#data_accettazione").trigger("dp.change");
     $("#data_rifiuto").trigger("dp.change");
+
+    $("#id_articolo").on("change", function(e) {
+        if ($(this).val()) {
+            var data = $(this).selectData();
+
+            if (data.barcode) {
+                $("#barcode").val(data.barcode);
+            } else {
+                $("#barcode").val("");
+            }
+        }
+
+        e.preventDefault();
+
+        setTimeout(function(){
+            $("#barcode").focus();
+        }, 100);
+    });
+
+    $("#barcode").focus();
+
+    caricaRighe(null);
 });
 
 $("#idanagrafica_c").change(function() {
@@ -459,6 +503,45 @@ $("#codice_cig, #codice_cup").bind("keyup change", function(e) {
         $("#id_documento_fe").prop("required", false);
     }else{
         $("#id_documento_fe").prop("required", true);
+    }
+});
+
+
+function salvaArticolo() {
+    $("#link_form").ajaxSubmit({
+        url: globals.rootdir + "/actions.php",
+        data: {
+            id_module: globals.id_module,
+            id_record: globals.id_record,
+            ajax: true,
+        },
+        type: "post",
+        beforeSubmit: function(arr, $form, options) {
+            return $form.parsley().validate();
+        },
+        success: function(response){
+            renderMessages();
+            if(response.length > 0){
+                response = JSON.parse(response);
+                swal({
+                    type: "error",
+                    title: "'.tr('Errore').'",
+                    text: response.error,
+                });
+            }
+
+            $("#barcode").val("");
+            $("#id_articolo").selectReset();
+            caricaRighe(null);
+        }
+    });
+}
+
+$("form").bind("keypress", function(e) {
+    if (e.keyCode == 13) {
+        e.preventDefault();
+        salvaArticolo();
+        return false;
     }
 });
 </script>';

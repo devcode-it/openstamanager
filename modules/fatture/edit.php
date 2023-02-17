@@ -757,8 +757,7 @@ echo '
 
 	<div class="panel-body">
 		<div class="row">
-			<div class="col-md-12">
-				<div class="pull-left">';
+			<div class="col-md-12">';
 
 if (!$block_edit) {
     if (empty($record['ref_documento'])) {
@@ -780,32 +779,13 @@ if (!$block_edit) {
                 $interventi = $dbo->fetchArray($int_query)[0]['tot'];
             }
 
-            echo '
-                    <div class="tip" data-toggle="tooltip" title="'.tr('Attività completate non collegate a preventivi o contratti e che non siano già state fatturate.').'">
-                        <a class="btn btn-sm btn-primary '.(!empty($interventi) ? '' : ' disabled').'" data-href="'.$structure->fileurl('add_intervento.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-title="'.tr('Aggiungi attività').'">
-                            <i class="fa fa-plus"></i> '.tr('Attività').'
-                        </a>
-                    </div>';
-
             // Lettura preventivi accettati, in attesa di conferma o in lavorazione
             $prev_query = 'SELECT COUNT(*) AS tot FROM co_preventivi WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstato IN(SELECT id FROM co_statipreventivi WHERE is_fatturabile = 1) AND default_revision=1 AND co_preventivi.id IN (SELECT idpreventivo FROM co_righe_preventivi WHERE co_righe_preventivi.idpreventivo = co_preventivi.id AND (qta - qta_evasa) > 0)';
             $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
-            echo '
-                    <div class="tip">
-                        <a class="btn btn-sm btn-primary '.(!empty($preventivi) ? '' : ' disabled').'" data-href="'.$structure->fileurl('add_preventivo.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-title="'.tr('Aggiungi preventivo').'" data-toggle="tooltip">
-                            <i class="fa fa-plus"></i> '.tr('Preventivo').'
-                        </a>
-                    </div>';
 
             // Lettura contratti accettati, in attesa di conferma o in lavorazione
             $contr_query = 'SELECT COUNT(*) AS tot FROM co_contratti WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstato IN( SELECT id FROM co_staticontratti WHERE is_fatturabile = 1) AND co_contratti.id IN (SELECT idcontratto FROM co_righe_contratti WHERE co_righe_contratti.idcontratto = co_contratti.id AND (qta - qta_evasa) > 0)';
             $contratti = $dbo->fetchArray($contr_query)[0]['tot'];
-            echo '
-                    <div class="tip">
-                        <a class="btn btn-sm btn-primary '.(!empty($contratti) ? '' : ' disabled').'"  data-href="'.$structure->fileurl('add_contratto.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-title="'.tr('Aggiungi contratto').'">
-                            <i class="fa fa-plus"></i> '.tr('Contratto').'
-                        </a>
-                    </div>';
         }
 
         // Lettura ddt (entrata o uscita)
@@ -819,75 +799,95 @@ if (!$block_edit) {
                 AND `dt_causalet`.`is_importabile` = 1
                 AND dt_ddt.id IN (SELECT idddt FROM dt_righe_ddt WHERE dt_righe_ddt.idddt = dt_ddt.id AND (qta - qta_evasa) > 0)';
         $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
-        echo '
-                    <div class="tip">
-                        <a class="btn btn-sm btn-primary'.(!empty($ddt) ? '' : ' disabled').'" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="'.tr('Aggiungi ddt').'">
-                            <i class="fa fa-plus"></i> '.tr('Ddt').'
-                        </a>
-					</div>';
 
         // Lettura ordini (cliente o fornitore)
         $ordini_query = 'SELECT COUNT(*) AS tot FROM or_ordini WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstatoordine IN (SELECT id FROM or_statiordine WHERE descrizione IN(\'Accettato\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoordine=(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') AND or_ordini.id IN (SELECT idordine FROM or_righe_ordini WHERE or_righe_ordini.idordine = or_ordini.id AND (qta - qta_evasa) > 0)';
         $ordini = $dbo->fetchArray($ordini_query)[0]['tot'];
-        echo '
-                        <div class="tip">
-                            <a class="btn btn-sm btn-primary'.(!empty($ordini) ? '' : ' disabled').'" data-href="'.$structure->fileurl('add_ordine.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="'.tr('Aggiungi ordine').'">
-                                <i class="fa fa-plus"></i> '.tr('Ordine').'
+    }
+
+                // Form di inserimento riga documento
+                echo '
+                <form id="link_form" action="" method="post">
+                    <input type="hidden" name="op" value="add_articolo">
+                    <input type="hidden" name="backto" value="record-edit">
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            {[ "type": "text", "label": "'.tr('Aggiungi un articolo tramite barcode').'", "name": "barcode", "extra": "autocomplete=\"off\"", "icon-before": "<i class=\"fa fa-barcode\"></i>", "required": 0 ]}
+                        </div>
+
+                        <div class="col-md-4">
+                            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "icon-after": "add|'.Modules::get('Articoli')['id'].'" ]}
+                        </div>
+
+                        <div class="col-md-4" style="margin-top: 25px">
+                            <button title="'.tr('Aggiungi articolo alla vendita').'" class="btn btn-primary tip" type="button" onclick="salvaArticolo()">
+                                <i class="fa fa-plus"></i> '.tr('Aggiungi').'
+                            </button>
+                            
+                            <a class="btn btn-primary" onclick="gestioneRiga(this)" data-title="'.tr('Aggiungi riga').'">
+                                <i class="fa fa-plus"></i> '.tr('Riga').'
                             </a>
-                        </div>';
-    }
+                            
+                            <div class="btn-group tip" data-toggle="tooltip">
+                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    <i class="fa fa-list"></i> '.tr('Altro').'
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                    <li>
+                                        <a style="cursor:pointer" onclick="gestioneDescrizione(this)" data-title="'.tr('Aggiungi descrizione').'">
+                                            <i class="fa fa-plus"></i> '.tr('Descrizione').'
+                                        </a>
+                                    </li>
 
-    // Lettura articoli
-    $art_query = 'SELECT id FROM mg_articoli WHERE attivo = 1 AND deleted_at IS NULL';
-    if ($dir == 'entrata' && !setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita')) {
-        $art_query .= ' AND (qta > 0 OR servizio = 1)';
-    } else {
-        //Gli articoli possono essere creati al volo direttamente dal modale di aggiunta articolo
-        $art_query .= ' OR 1=1';
-    }
+                                    <li>
+                                        <a style="cursor:pointer" onclick="gestioneSconto(this)" data-title="'.tr('Aggiungi sconto/maggiorazione').'">
+                                            <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
+                                        </a>
+                                    </li>';
+                            if (empty($record['ref_documento'])) {
+                                if ($dir == 'entrata') {
+                                    echo '
+                                    <li>
+                                        <a class="'.(!empty($interventi) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_intervento.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Attività').'">
+                                            <i class="fa fa-plus"></i> '.tr('Attività').'
+                                        </a>
+                                    </li>
 
-    $articoli = $dbo->fetchNum($art_query);
-    echo '
-                    <button class="btn btn-sm btn-primary tip'.(!empty($articoli) ? '' : ' disabled').'" title="'.tr('Aggiungi articolo').'" onclick="gestioneArticolo(this)">
-                        <i class="fa fa-plus"></i> '.tr('Articolo').'
-                    </button>';
+                                    <li>
+                                        <a class="'.(!empty($preventivi) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_preventivo.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Preventivo').'">
+                                            <i class="fa fa-plus"></i> '.tr('Preventivo').'
+                                        </a>
+                                    </li>
 
-    echo '
-                    <button type="button" class="btn btn-sm btn-primary tip" title="'.tr('Aggiungi articoli tramite barcode').'" onclick="gestioneBarcode(this)">
-                        <i class="fa fa-plus"></i> '.tr('Barcode').'
-                    </button>';
+                                    <li>
+                                        <a class="'.(!empty($contratti) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_contratto.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Contratto').'">
+                                            <i class="fa fa-plus"></i> '.tr('Contratto').'
+                                        </a>
+                                    </li>';
+                                }
+                                echo '
+                                    <li>
+                                        <a class="'.(!empty($ddt) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Ddt').'">
+                                            <i class="fa fa-plus"></i> '.tr('Ddt').'
+                                        </a>
+                                    </li>
 
-    echo '
-                    <button type="button" class="btn btn-sm btn-primary tip" title="'.tr('Aggiungi riga').'" onclick="gestioneRiga(this)">
-                        <i class="fa fa-plus"></i> '.tr('Riga').'
-                    </button>';
-
-    echo '
-                    <button type="button" class="btn btn-sm btn-primary tip" title="'.tr('Aggiungi descrizione').'" onclick="gestioneDescrizione(this)">
-                        <i class="fa fa-plus"></i> '.tr('Descrizione').'
-                    </button>';
-
-    echo '
-                    <button type="button" class="btn btn-sm btn-primary tip" title="'.tr('Aggiungi sconto/maggiorazione').'" onclick="gestioneSconto(this)">
-                        <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
-                    </button>';
+                                    <li>
+                                        <a class="'.(!empty($ordini) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ordine.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Ordine').'">
+                                            <i class="fa fa-plus"></i> '.tr('Ordine').'
+                                        </a>
+                                    </li>';
+                            }
+                            echo '
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </form>';
 }
 ?>
-				</div>
-
-				<div class="pull-right">
-					<!-- Stampe -->
-<?php
-//stampa solo per fatture di vendita
-if ($dir == 'entrata') {
-    if (sizeof($campi_mancanti) > 0) {
-        //echo '{( "name": "button", "type": "print", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "class": "btn-info disabled" )}';
-    } else {
-        //echo '{( "name": "button", "type": "print", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'" )}';
-    }
-}
-?>
-				</div>
 			</div>
 		</div>
 		<div class="clearfix"></div>
@@ -1035,8 +1035,7 @@ async function gestioneRiga(button, options) {
     await salvaForm("#edit-form", {}, button);
 
     // Lettura titolo e chiusura tooltip
-    let title = $(button).tooltipster("content");
-    $(button).tooltipster("close")
+    let title = $(button).attr("data-title");
 
     // Apertura modal
     options = options ? options : "is_riga";
@@ -1046,7 +1045,7 @@ async function gestioneRiga(button, options) {
 /**
  * Funzione dedicata al caricamento dinamico via AJAX delle righe del documento.
  */
-function caricaRighe() {
+function caricaRighe(id_riga) {
     let container = $("#righe");
 
     localLoading(container, true);
@@ -1057,7 +1056,7 @@ function caricaRighe() {
 }
 
 $(document).ready(function () {
-    caricaRighe();
+    caricaRighe(null);
 
     $("#data_registrazione").on("dp.change", function (e) {
         let data_competenza = $("#data_competenza");
@@ -1080,6 +1079,26 @@ $(document).ready(function () {
         updateSelectOption("idsede_destinazione", $(this).val());
         $("#idreferente").selectReset();
     });
+
+    $("#id_articolo").on("change", function(e) {
+        if ($(this).val()) {
+            var data = $(this).selectData();
+
+            if (data.barcode) {
+                $("#barcode").val(data.barcode);
+            } else {
+                $("#barcode").val("");
+            }
+        }
+
+        e.preventDefault();
+
+        setTimeout(function(){
+            $("#barcode").focus();
+        }, 100);
+    });
+
+    $("#barcode").focus();
 });
 
 function cambiaStato() {
@@ -1137,5 +1156,43 @@ if ($dir == 'entrata') {
         bolloAutomatico();
     });';
 }
+
 echo '
+function salvaArticolo() {
+    $("#link_form").ajaxSubmit({
+        url: globals.rootdir + "/actions.php",
+        data: {
+            id_module: globals.id_module,
+            id_record: globals.id_record,
+            ajax: true,
+        },
+        type: "post",
+        beforeSubmit: function(arr, $form, options) {
+            return $form.parsley().validate();
+        },
+        success: function(response){
+            renderMessages();
+            if(response.length > 0){
+                response = JSON.parse(response);
+                swal({
+                    type: "error",
+                    title: "'.tr('Errore').'",
+                    text: response.error,
+                });
+            }
+
+            $("#barcode").val("");
+            $("#id_articolo").selectReset();
+            caricaRighe(null);
+        }
+    });
+}
+
+$("form").bind("keypress", function(e) {
+    if (e.keyCode == 13) {
+        e.preventDefault();
+        salvaArticolo();
+        return false;
+    }
+});
 </script>';

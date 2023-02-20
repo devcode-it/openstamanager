@@ -172,8 +172,8 @@ INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`,
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Permetti fatturazione delle attività collegate a contratti, ordini e preventivi', '0', 'boolean', '1', 'Fatturazione', NULL, NULL);
 
 -- Aggiunta impostazione stato predefinito attività
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, "Stato predefinito dell\'attività da Dashboard", (SELECT idstatointervento FROM in_statiintervento WHERE codice = "WIP"), 'query=SELECT idstatointervento AS id, descrizione AS text FROM in_statiintervento', '1', 'Attività', NULL, NULL);
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, "Stato predefinito dell\'attività", (SELECT idstatointervento FROM in_statiintervento WHERE codice = "TODO"), 'query=SELECT idstatointervento AS id, descrizione AS text FROM in_statiintervento', '1', 'Attività', NULL, NULL);
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, "Stato predefinito dell\'attività da Dashboard", IFNULL ((SELECT idstatointervento FROM in_statiintervento WHERE codice = "WIP"), 0), 'query=SELECT idstatointervento AS id, descrizione AS text FROM in_statiintervento', '1', 'Attività', NULL, NULL);
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, "Stato predefinito dell\'attività", IFNULL((SELECT idstatointervento FROM in_statiintervento WHERE codice = "TODO"), 0), 'query=SELECT idstatointervento AS id, descrizione AS text FROM in_statiintervento', '1', 'Attività', NULL, NULL);
 
 -- Aggiunta colonna KM in vista Attività
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES ((SELECT id from zz_modules WHERE title = "Attività"), 'KM', 'sum(in_interventi_tecnici.km)', '29', '1', '0', '1', '0', NULL, NULL, '0', '1', '0'); 

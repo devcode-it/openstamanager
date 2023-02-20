@@ -259,11 +259,15 @@ elseif (filter('op') == 'copia-checklist') {
     $content = post('content');
     $checklist_id = post('checklist');
 
-    $users = post('assigned_users');
-    $users = array_clean($users);
+    if (!empty(post('assigned_users'))){
+        $users = post('assigned_users');
+        $users = array_clean($users);
+    }
 
-    $group_id = post('group_id');
-
+    if (!empty(post('group_id'))){
+        $group_id = post('group_id');
+    }
+    
     $checklist = Checklist::find($checklist_id);
     $checklist->copia($user, $id_record, $users, $group_id);
 }
@@ -273,10 +277,14 @@ elseif (filter('op') == 'aggiungi-check') {
     $content = post('content');
     $parent_id = post('parent') ?: null;
 
-    $users = post('assigned_users');
-    $users = array_clean($users);
+    if (!empty(post('assigned_users'))){
+        $users = post('assigned_users');
+        $users = array_clean($users);
+    }
 
-    $group_id = post('group_id');
+    if (!empty(post('group_id'))){
+        $group_id = post('group_id');
+    }
 
     $check = Check::build($user, $structure, $id_record, $content, $parent_id);
     $check->setAccess($users, $group_id);

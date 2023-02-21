@@ -331,7 +331,7 @@ $vista = setting('Vista dashboard');
 if ($vista == 'mese') {
     $def = 'dayGridMonth';
 } elseif ($vista == 'giorno') {
-    $def = 'resourceTimeGridDay';
+    $def = 'timeGridDay';
 } elseif ($vista == 'settimana') {
     $def = 'timeGridWeek';
 } else {

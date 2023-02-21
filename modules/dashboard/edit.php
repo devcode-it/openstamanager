@@ -514,7 +514,7 @@ globals.dashboard = {
             headerToolbar: {
                 left: "prev,next today",
                 center: "title",
-                right: "dayGridMonth,timeGridWeek,resourceTimeGridDay,listWeek"
+                right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek"
             },
             eventDisplay: "block",
             timeFormat: globals.dashboard.timeFormat,

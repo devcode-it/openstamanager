@@ -130,7 +130,7 @@ if (Auth::check()) {
     echo '
                 allegati: {
                     messaggio: "'.tr('Clicca o trascina qui per caricare uno o più file').'",
-                    maxFilesize: "'.tr('Max upload: _SIZE_ MB').'",
+                    maxFilesize: "'.tr('Dimensione massima: _SIZE_ MB').'",
                     errore: "'.tr('Errore').'",
                     modifica: "'.tr('Modifica allegato').'",
                     elimina: "'.tr('Vuoi eliminare questo file?').'",

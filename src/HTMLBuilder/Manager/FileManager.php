@@ -48,7 +48,14 @@ class FileManager implements ManagerInterface
         // ID del form
         $attachment_id = 'attachments_'.$options['id_module'].'_'.$options['id_plugin'];
 
-        $upload_max_filesize = ini_get('upload_max_filesize');
+        if (ini_get('upload_max_filesize') < ini_get('post_max_size')){
+            $upload_max_filesize = ini_get('upload_max_filesize');
+        }else if (ini_get('upload_max_filesize') > ini_get('post_max_size')){
+            $upload_max_filesize = ini_get('post_max_size');
+        }else{
+            $upload_max_filesize = ini_get('upload_max_filesize');
+        }
+
         $upload_max_filesize = substr($upload_max_filesize, 0, -1);
 
         $dbo = database();

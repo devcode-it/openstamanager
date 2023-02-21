@@ -31,7 +31,7 @@ function renderChecklist($check, $level = 0)
     if (intval($check->assignedUsers->pluck('id')->toArray())>0){
         $result .= '<span class="label label-default">'. implode(',', $check->assignedUsers->pluck('username')->toArray()).'</span>';
     }else{
-        $result .= '<span class="label label-danger">'. tr('Nessun utente asseganto').'</span>';
+        $result .= '<span class="label label-danger">'. tr('Nessun utente assegnato').'</span>';
     }
 
     if (empty($check->user) || $check->user->id == $user->id) {

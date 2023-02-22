@@ -1,11 +1,11 @@
--- Correzione vista Scadenzario
+-- Ottimizzazione query vista Scadenzario
 UPDATE `zz_modules` SET `options` = "
 SELECT
     |select| 
 FROM 
     `co_scadenziario`
     LEFT JOIN `co_documenti` ON `co_scadenziario`.`iddocumento` = `co_documenti`.`id`
-    LEFT JOIN (SELECT `co_banche`.`nome`AS nome, `co_banche`.`id` FROM `co_banche` INNER JOIN `co_documenti` ON `co_documenti`.`id_banca_azienda` = `co_banche`.`id`)AS banca ON `co_scadenziario`.`iddocumento` = `co_documenti`.`id`
+    LEFT JOIN (SELECT `co_banche`.`nome`AS nome, `co_banche`.`id` FROM `co_banche` INNER JOIN `co_documenti` ON `co_documenti`.`id_banca_azienda` = `co_banche`.`id` GROUP BY id)AS banca ON `co_scadenziario`.`iddocumento` = `co_documenti`.`id`
     LEFT JOIN `an_anagrafiche` ON `co_scadenziario`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
     LEFT JOIN `co_pagamenti` ON `co_documenti`.`idpagamento` = `co_pagamenti`.`id`
     LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`

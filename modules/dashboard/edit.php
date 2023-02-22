@@ -331,7 +331,7 @@ $vista = setting('Vista dashboard');
 if ($vista == 'mese') {
     $def = 'dayGridMonth';
 } elseif ($vista == 'giorno') {
-    $def = 'resourceTimeGridDay';
+    $def = 'timeGridDay';
 } elseif ($vista == 'settimana') {
     $def = 'timeGridWeek';
 } else {
@@ -514,7 +514,7 @@ globals.dashboard = {
             headerToolbar: {
                 left: "prev,next today",
                 center: "title",
-                right: "dayGridMonth,timeGridWeek,resourceTimeGridDay,listWeek"
+                right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek"
             },
             eventDisplay: "block",
             timeFormat: globals.dashboard.timeFormat,

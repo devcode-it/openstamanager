@@ -34,7 +34,7 @@ echo '
 <form action="" method="post" id="check-form">
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "select", "label": "'.tr('Checklist').'", "name": "checklist", "values": '.json_encode($list).' ]}
+            {[ "type": "select", "label": "'.tr('Checklist').'", "name": "checklist", "values": '.json_encode($list).', "required": 1 ]}
         </div>
     </div>
 

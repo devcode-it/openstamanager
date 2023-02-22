@@ -130,7 +130,7 @@ UPDATE `zz_widgets` SET `text` = 'Unità' WHERE `zz_widgets`.`name` = 'Articoli 
 UPDATE `zz_widgets` SET `text` = 'Valore' WHERE `zz_widgets`.`name` = 'Valore magazzino';
 
 -- Aggiunta colonna Banca azienda in Scadenzario
-INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES ('18', 'Banca azienda', '`banca`.`nome`', '18', '1', '0', '0', '0', NULL, NULL, '0', '0', '0'); 
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES ((SELECT `id` FROM `zz_modules` WHERE name='Scadenzario'), 'Banca azienda', '`banca`.`nome`', '18', '1', '0', '0', '0', NULL, NULL, '0', '0', '0'); 
 
 UPDATE `zz_modules` SET `options` = "
 SELECT

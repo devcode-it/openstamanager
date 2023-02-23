@@ -216,9 +216,9 @@ class Fattura extends Document
 
         $dicitura_fissa = database()->selectOne('zz_segments', 'dicitura_fissa', ['id' => $id_segment])['dicitura_fissa'];
         if ($dicitura_fissa) {
-           $notes[] = $dicitura_fissa; 
+           $notes[] = $dicitura_fissa;
         }
-        
+
         $model->note = implode("\n", $notes);
 
         if ($tipo_documento->descrizione == 'Fattura accompagnatoria di vendita') {
@@ -604,14 +604,16 @@ class Fattura extends Document
         // Bozza o Annullato -> Stato diverso da Bozza o Annullato
         if (
             (in_array($stato_precedente->descrizione, ['Bozza', 'Annullata'])
-            && !in_array($this->stato['descrizione'], ['Bozza', 'Annullata'])) 
+            && !in_array($this->stato['descrizione'], ['Bozza', 'Annullata']))
             || $options[0] == 'forza_emissione'
         ) {
             // Registrazione scadenze
             $this->registraScadenze($this->stato['descrizione'] == 'Pagato');
 
-            // Registrazione movimenti
-            $this->gestoreMovimenti->registra();
+            // Registrazione movimenti. Non per le fatture pro forma
+            if ($this->id_segment !== 3) {
+                $this->gestoreMovimenti->registra();
+            }
         } // Stato qualunque -> Bozza o Annullato
         elseif (in_array($this->stato['descrizione'], ['Bozza', 'Annullata'])) {
             // Rimozione delle scadenza

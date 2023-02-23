@@ -403,10 +403,23 @@ class Anagrafica extends Model
         return $id_conto;
     }
 
+    protected function aggiornaConto()
+    {
+        $database = database();
+
+        if ($this->isTipo('Cliente')) {
+            $database->update('co_pianodeiconti3', ['descrizione' => $this->ragione_sociale], ['id' => $this->idconto_cliente]);
+        } 
+        
+        if ($this->isTipo('Fornitore')) {
+            $database->update('co_pianodeiconti3', ['descrizione' => $this->ragione_sociale], ['id' => $this->idconto_fornitore]);
+        }
+    }
     protected function fixRagioneSociale()
     {
         if (!empty($this->cognome) || !empty($this->nome)) {
             $this->ragione_sociale = $this->cognome.' '.$this->nome;
         }
+        $this->aggiornaConto();
     }
 }

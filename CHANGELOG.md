@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.41 (2023-02-24)](#2441-2023-02-24)
 - [2.4.40 (2023-02-17)](#2440-2023-02-17)
 - [2.4.39 (2023-01-13)](#2439-2023-01-13)
 - [2.4.38 (2022-12-07)](#2438-2022-12-07)
@@ -51,7 +52,21 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
-
+## 2.4.41 (2023-02-24)
+### Aggiunto (Added)
+- Aggiunta la modifica automatica del piano dei conti per clienti e fornitori
+- Aggiunto l'inserimento di email multiple per notifica di interventi
+### Modificato (Changed)
+- Aggiornata la versione di fullcalendar
+- Rimozione dei clienti eliminati dalla sincronizzazione dell'app
+### Fixed
+- Corretta impostazione stato predefinito attività da impostazioni
+- Corretto l'inserimento di checklist non associate ad utenti o gruppi
+- Corretto avviso utenti abilitati per la check
+- Corretta la query vista fatture di vendita
+- Corretta la creazione di eventi su calendario con vista del Giorno
+- Corretta la vista giornaliera in dashboard da impostazioni
+- Correzione query vista scadenzario
 ## 2.4.40 (2023-02-17)
 ### Aggiunto (Added)
 - Aggiunto box dettagli cliente in fase di creazione fattura

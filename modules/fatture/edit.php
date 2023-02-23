@@ -47,7 +47,7 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione) ) {
     $iva = Aliquota::find($id_iva);
 
     if (!empty($iva)) {
-         
+
         if ($diff == 0) {
             echo '
         <div class="alert alert-info">
@@ -285,7 +285,10 @@ if ($dir == 'entrata') {
 
 $query = 'SELECT * FROM co_statidocumento';
 if (empty($record['is_fiscale'])) {
-    $query .= " WHERE descrizione = 'Bozza'";
+    // Solo le pro-forma possono avere tutti gli stati.
+    if ($record['id_segment'] !== 3) {
+        $query .= " WHERE descrizione = 'Bozza'";
+    }
 
     $plugin = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Fatturazione Elettronica' AND idmodule_to = ".prepare($id_module));
     echo '<script>$("#link-tab_'.$plugin[0]['id'].'").addClass("disabled");</script>';
@@ -471,7 +474,7 @@ echo '
                 }
                 ?>
 			</div>
-            
+
             <!-- Split payment + Fattura per conto terzi (solo uscita) + Sconto in fattura (solo uscita) -->
             <div class="row">
 
@@ -736,16 +739,16 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione)){
     foreach($ive_accettate as $iva_accettata){
         $descrizione_iva_accettata .= '<li>'.$iva_accettata->descrizione.'</li>';
     }
-    
+
     if ($fattura->stato->descrizione == 'Bozza'){
-            
+
         echo '
         <div class="alert alert-info">
             <i class="fa fa-info"></i> '.tr("La fattura è collegata ad una dichiarazione d'intento con diponibilità residura pari a _MONEY_.", [  '_MONEY_' => moneyFormat($diff),]).'<br>'.tr("Per collegare una riga alla dichiarazione è sufficiente specificare come IVA <ul>_IVA_</ul>", ['_IVA_' => $descrizione_iva_accettata]).'</b>
         </div>';
 
     }
-   
+
 }
 
 echo '
@@ -962,13 +965,13 @@ echo '
         let data = $(this).selectData();
         if (data) {
             // Impostazione del tipo di pagamento da anagrafica
-            if (data.id_pagamento) { 
+            if (data.id_pagamento) {
                 input("idpagamento").getElement()
                     .selectSetNew(data.id_pagamento, data.desc_pagamento, {"id_banca_vendite": data.id_banca_vendite, "id_banca_acquisti": data.id_banca_acquisti, "descrizione_banca_vendite": data.descrizione_banca_vendite, "descrizione_banca_acquisti": data.descrizione_banca_acquisti});
             }
         }';
-        
-        
+
+
 
         if ($dir == 'entrata') {
             echo '$("#idsede_destinazione").selectReset();';

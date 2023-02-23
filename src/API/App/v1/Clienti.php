@@ -38,7 +38,7 @@ class Clienti extends AppResource
         FROM an_anagrafiche
             INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.idanagrafica = an_anagrafiche.idanagrafica
             INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica = an_tipianagrafiche.idtipoanagrafica
-        WHERE an_tipianagrafiche.descrizione = 'Cliente' AND an_anagrafiche.deleted_at IS NULL";
+        WHERE an_tipianagrafiche.descrizione = 'Cliente' AND (an_anagrafiche.deleted_at IS NULL OR an_anagrafiche.idanagrafica IN(SELECT in_interventi.idanagrafica FROM in_interventi))";
 
         // Sincronizzazione limitata ai Clienti con Interventi di interesse per il Tecnico corrente
         $sincronizza_lavorati = setting('Sincronizza solo i Clienti per cui il Tecnico ha lavorato in passato');
@@ -95,6 +95,7 @@ class Clienti extends AppResource
             an_anagrafiche.sitoweb AS sito_web,
             an_anagrafiche.note,
             an_anagrafiche.deleted_at,
+            IF(an_anagrafiche.deleted_at IS NULL, 0, 1) AS deleted,
             an_anagrafiche.idtipointervento_default AS id_tipo_intervento_default
         FROM an_anagrafiche
             LEFT OUTER JOIN an_nazioni ON an_anagrafiche.id_nazione = an_nazioni.id

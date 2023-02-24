@@ -171,9 +171,18 @@ echo '
 echo '
 
     <div class="row">
-        <div class="col-md-12">
-            {[ "type": "ckeditor", "use_full_ckeditor": 1, "label": "'.tr('Contenuto').'", "name": "body", "id": "body_'.rand(0, 999).'", "value": '.json_encode($body).' ]}
-        </div>
+        <div class="col-md-12">';
+            echo input([
+                'type' => 'ckeditor',
+                'use_full_ckeditor' => 1,
+                'label' => tr('Contenuto'),
+                'name' => 'body',
+                'id' => 'body_'.rand(0, 999),
+                'value' => json_encode($body),
+            ]);
+					
+            echo'
+            </div>
     </div>';
 
 echo '

@@ -571,8 +571,7 @@ globals.dashboard = {
                 let start = info.start;
                 let end = info.end;
 
-                let intero_giorno = !start.hasTime && !end.hasTime;
-                if (intero_giorno !== true || globals.dashboard.informazioni_aggiuntive==0) {
+                if (!info.allDay) {
                     let data = moment(start).format("YYYY-MM-DD");
                     let data_fine = moment(end).format("YYYY-MM-DD");
                     let orario_inizio = moment(start).format("HH:mm");

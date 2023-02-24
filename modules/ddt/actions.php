@@ -563,7 +563,6 @@ switch (filter('op')) {
         $id_articolo = post('id_articolo');
         $barcode = post('barcode');
 
-
         if (!empty($barcode)) {
             $id_articolo = $dbo->selectOne('mg_articoli', 'id',  ['deleted_at' => null, 'barcode' => $barcode])['id'];
         }

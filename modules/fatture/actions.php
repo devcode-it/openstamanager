@@ -935,7 +935,6 @@ switch (post('op')) {
         $id_articolo = post('id_articolo');
         $barcode = post('barcode');
 
-
         if (!empty($barcode)) {
             $id_articolo = $dbo->selectOne('mg_articoli', 'id',  ['deleted_at' => null, 'barcode' => $barcode])['id'];
         }
@@ -958,10 +957,10 @@ switch (post('op')) {
                 $articolo->qta = 1;
                 $articolo->costo_unitario = $originale->prezzo_acquisto;
 
-                $id_conto = ($fattura->direzione == 'entrata') ? setting('Conto predefinito fatture di vendita') : setting('Conto predefinito fatture di acquisto');
-                if ($fattura->direzione == 'entrata' && !empty($originale->idconto_vendita)) {
+                $id_conto = ($dir == 'entrata') ? setting('Conto predefinito fatture di vendita') : setting('Conto predefinito fatture di acquisto');
+                if ($dir == 'entrata' && !empty($originale->idconto_vendita)) {
                     $id_conto = $originale->idconto_vendita;
-                } elseif ($fattura->direzione == 'uscita' && !empty($originale->idconto_acquisto)) {
+                } elseif ($dir == 'uscita' && !empty($originale->idconto_acquisto)) {
                     $id_conto = $originale->idconto_acquisto;
                 }
                 $articolo->idconto = $id_conto;

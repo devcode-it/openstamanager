@@ -22,39 +22,20 @@ $qta_minima = 0;
 $id_listino = $dbo->selectOne('an_anagrafiche', 'id_listino', ['idanagrafica' => $options['idanagrafica']])['id_listino'];
 
 // Articolo
-if (empty($result['idarticolo'])) {
-    // Sede partenza
-    if ($module['name'] == 'Interventi') {
-        echo '
-    <div class="row">
-        <div class="col-md-4">
-        {[ "type": "select", "label": "'.tr('Partenza merce').'", "required": "1", "id":"idsede", "name": "idsede_partenza",  "ajax-source": "sedi_azienda", "value": "'.($result['idsede_partenza'] ?: $options['idsede_partenza']).'" ]}
-        </div>
-    </div>';
-    }
-    echo '
-    <div class="row">
-        <div class="col-md-12">
-            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$result['idarticolo'].'", "ajax-source": "articoli", "select-options": '.json_encode($options['select-options']['articoli']).', "icon-after": "add|'.Modules::get('Articoli')['id'].'" ]}
-        </div>
-    </div>
+$database = database();
+$articolo = $database->fetchOne('SELECT mg_articoli.id,
+    mg_fornitore_articolo.id AS id_dettaglio_fornitore,
+    IFNULL(mg_fornitore_articolo.codice_fornitore, mg_articoli.codice) AS codice,
+    IFNULL(mg_fornitore_articolo.descrizione, mg_articoli.descrizione) AS descrizione,
+    IFNULL(mg_fornitore_articolo.qta_minima, 0) AS qta_minima
+FROM mg_articoli
+    LEFT JOIN mg_fornitore_articolo ON mg_fornitore_articolo.id_articolo = mg_articoli.id AND mg_fornitore_articolo.id = '.prepare($result['id_dettaglio_fornitore']).'
+WHERE mg_articoli.id = '.prepare($result['idarticolo']));
 
-    <input type="hidden" name="id_dettaglio_fornitore" id="id_dettaglio_fornitore" value="">';
-} else {
-    $database = database();
-    $articolo = $database->fetchOne('SELECT mg_articoli.id,
-        mg_fornitore_articolo.id AS id_dettaglio_fornitore,
-        IFNULL(mg_fornitore_articolo.codice_fornitore, mg_articoli.codice) AS codice,
-        IFNULL(mg_fornitore_articolo.descrizione, mg_articoli.descrizione) AS descrizione,
-        IFNULL(mg_fornitore_articolo.qta_minima, 0) AS qta_minima
-    FROM mg_articoli
-        LEFT JOIN mg_fornitore_articolo ON mg_fornitore_articolo.id_articolo = mg_articoli.id AND mg_fornitore_articolo.id = '.prepare($result['id_dettaglio_fornitore']).'
-    WHERE mg_articoli.id = '.prepare($result['idarticolo']));
-
-    $qta_minima = $articolo['qta_minima'];
+$qta_minima = $articolo['qta_minima'];
 
     echo '
-    {[ "type": "select", "disabled":"1", "label": "'.tr('Articolo').'", "name": "idarticolo", "value": "'.$result['idarticolo'].'", "ajax-source": "articoli", "select-options": '.json_encode($options['select-options']['articoli']).', "icon-after": "add|'.Modules::get('Articoli')['id'].'" ]}
+    {[ "type": "select", "disabled":"1", "label": "'.tr('Articolo').'", "name": "idarticolo", "value": "'.$result['idarticolo'].'", "ajax-source": "articoli", "select-options": '.json_encode($options['select-options']['articoli']).' ]}
 
     <script>
         $(document).ready(function (){
@@ -64,10 +45,8 @@ if (empty($result['idarticolo'])) {
                 verificaMinimoVendita();
             });
         });
-    </script>';
-}
+    </script>
 
-echo '
     <input type="hidden" name="qta_minima" id="qta_minima" value="'.$qta_minima.'">
     <input type="hidden" name="provvigione_default" id="provvigione_default" value="'.$result['provvigione_default'].'">
     <input type="hidden" name="tipo_provvigione_default" id="provvigione_default" value="'.$result['tipo_provvigione_default'].'">

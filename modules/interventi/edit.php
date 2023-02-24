@@ -322,11 +322,31 @@ echo '
             <!-- RIGA 5 -->
             <div class="row">
                 <div class="col-md-12">
-                    {[ "type": "ckeditor", "label": "<?php echo tr('Richiesta'); ?>", "name": "richiesta", "required": 1, "class": "autosize", "value": "$richiesta$", "extra": "rows='5'", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+                <?php
+                echo input([
+                    'type' => 'ckeditor',
+                    'label' => tr('Richiesta'),
+                    'name' => 'richiesta',
+                    'required' => 1,
+                    'readonly' => $record['flag_completato'],
+                    'extra' => 'rows="5"',
+                    'value' => $record['richiesta'],
+                ]);
+                ?>
                 </div>
 
                 <div class="col-md-12">
-                    {[ "type": "ckeditor", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "class": "autosize", "value": "$descrizione$", "extra": "rows='10'", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+                    <?php
+                    echo input([
+                        'type' => 'ckeditor',
+                        'label' => tr('Descrizione'),
+                        'name' => 'descrizione',
+                        'required' => 1,
+                        'readonly' => $record['flag_completato'],
+                        'extra' => 'rows="10"',
+                        'value' => $record['descrizione'],
+                    ]);
+                    ?>
                 </div>
 <?php
                 // Nascondo le note interne ai clienti

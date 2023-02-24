@@ -135,7 +135,15 @@ echo '
 
             <div class="row">
 				<div class="col-md-12">
-					{[ "type": "ckeditor", "use_full_ckeditor": 0, "label": "<?php echo tr('Condizioni generali di fornitura'); ?>", "name": "condizioni_fornitura", "class": "autosize", "value": "$condizioni_fornitura$" ]}
+                    <?php    
+                    echo input([
+                        'type' => 'ckeditor',
+                        'use_full_ckeditor' => 0,
+                        'label' => tr('Condizioni generali di fornitura'),
+                        'name' => 'condizioni_fornitura',
+                        'value' => $record['condizioni_fornitura'],
+                    ]);
+					?>
 				</div>
 			</div>
 

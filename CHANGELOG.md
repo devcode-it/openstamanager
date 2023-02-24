@@ -67,6 +67,10 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Corretta la creazione di eventi su calendario con vista del Giorno
 - Corretta la vista giornaliera in dashboard da impostazioni
 - Correzione query vista scadenzario
+- Corretto l'editor nei moduli
+- Corretta l'eliminazione di prima nota in riapertura di documenti
+- Corretto l'inserimento di articoli in DDT e fatture di acquisto
+- Corretta la visualizzazione del widget in Stato dei servizi
 ## 2.4.40 (2023-02-17)
 ### Aggiunto (Added)
 - Aggiunto box dettagli cliente in fase di creazione fattura

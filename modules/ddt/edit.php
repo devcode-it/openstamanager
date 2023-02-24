@@ -366,10 +366,10 @@ if ($dir == 'entrata') {
 if (!$block_edit) {
     // Lettura ordini (cliente o fornitore)
     $ordini_query = 'SELECT COUNT(*) AS tot FROM or_ordini WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstatoordine IN (SELECT id FROM or_statiordine WHERE descrizione IN(\'Accettato\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoordine=(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') AND or_ordini.id IN (SELECT idordine FROM or_righe_ordini WHERE or_righe_ordini.idordine = or_ordini.id AND (qta - qta_evasa) > 0)';
-    $ordini = $dbo->fetchArray($ordini_query)[0]['tot'];
+    $tot_ordini = $dbo->fetchArray($ordini_query)[0]['tot'];
 
     $ddt_query = 'SELECT COUNT(*) AS tot FROM dt_ddt WHERE idstatoddt IN (SELECT id FROM dt_statiddt WHERE descrizione IN(\'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoddt=(SELECT id FROM or_tipiordine WHERE dir="'.($dir == 'entrata' ? 'uscita' : 'entrata').'") AND dt_ddt.id IN (SELECT idddt FROM dt_righe_ddt WHERE dt_righe_ddt.idddt = dt_ddt.id AND (qta - qta_evasa) > 0)';
-    $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
+    $tot_ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
 
     // Form di inserimento riga documento
     echo '
@@ -383,7 +383,7 @@ if (!$block_edit) {
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli",  "select-options": {"permetti_movimento_a_zero": '.($dir == 'entrata' ? 0 : 1).'}, "icon-after": "add|'.Modules::get('Articoli')['id'].'" ]}
+                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli",  "select-options": {"permetti_movimento_a_zero": '.($dir == 'entrata' ? 0 : 1).', "idsede_partenza": '.intval($ddt->idsede_partenza).', "idsede_destinazione": '.intval($ddt->idsede_destinazione).', "idanagrafica": '.$ddt->idanagrafica.', "dir": "'.$dir.'", "idagente": '.$ddt->idagente.'}, "icon-after": "add|'.Modules::get('Articoli')['id'].'" ]}
                 </div>
 
                 <div class="col-md-4" style="margin-top: 25px">
@@ -414,13 +414,13 @@ if (!$block_edit) {
                             </li>
 
                             <li>
-                                <a class="'.(!empty($ddt) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Ddt').'">
+                                <a class="'.(!empty($tot_ddt) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Ddt').'">
                                     <i class="fa fa-plus"></i> '.tr('Ddt').'
                                 </a>
                             </li>
 
                             <li>
-                                <a class="'.(!empty($ordini) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ordine.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Ordine').'">
+                                <a class="'.(!empty($tot_ordini) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ordine.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Ordine').'">
                                     <i class="fa fa-plus"></i> '.tr('Ordine').'
                                 </a>
                             </li>

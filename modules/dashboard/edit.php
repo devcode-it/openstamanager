@@ -509,6 +509,9 @@ globals.dashboard = {
             /* locales: allLocales, */
             locale: globals.locale,
             slotEventOverlap: false,
+            weekNumbers: true,
+            weekText: "W",
+            nowIndicator: true,
             schedulerLicenseKey: "GPL-My-Project-Is-Open-Source",
             hiddenDays: globals.dashboard.show_sunday ? [] : [0],
             headerToolbar: {

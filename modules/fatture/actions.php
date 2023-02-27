@@ -19,6 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Carbon\Carbon;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Tipo as TipoAnagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
@@ -65,19 +66,35 @@ switch (post('op')) {
     case 'update':
         $stato = Stato::find(post('idstatodocumento'));
         $fattura->stato()->associate($stato);
+        $data = post('data');
 
         $tipo = Tipo::find(post('idtipodocumento'));
         $fattura->tipo()->associate($tipo);
 
-        $fattura->data = post('data');
+        $data_fattura_precedente = $dbo->fetchOne('
+            SELECT
+                MAX(DATA) AS datamax
+            FROM
+                co_documenti
+            INNER JOIN co_statidocumento ON co_statidocumento.id = co_documenti.idstatodocumento
+            INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id
+            INNER JOIN zz_segments ON zz_segments.id = co_documenti.id_segment
+            WHERE
+                co_statidocumento.descrizione = "Emessa" AND co_tipidocumento.dir="entrata" AND co_documenti.id_segment='.$fattura->id_segment);
+
+        if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && ($stato->descrizione == 'Emessa') && (Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax']))) && (!empty($data_fattura_precedente['datamax']))){
+            $fattura->data = $data_fattura_precedente['datamax'];
+            $fattura->data_competenza = $data_fattura_precedente['datamax'];
+        } else {
+            $fattura->data = post('data');
+            $fattura->data_competenza = post('data_competenza');
+        }
 
         if ($dir == 'entrata') {
             $fattura->data_registrazione = post('data');
         } else {
             $fattura->data_registrazione = post('data_registrazione');
         }
-
-        $fattura->data_competenza = post('data_competenza');
 
         $fattura->numero_esterno = post('numero_esterno');
         $fattura->note = post('note');
@@ -350,6 +367,9 @@ switch (post('op')) {
 
     case 'reopen':
         if (!empty($id_record)) {
+            $stato = Stato::where('descrizione', 'Bozza')->first();
+            $fattura->stato()->associate($stato);
+            $fattura->save();
             $stato = Stato::where('descrizione', 'Emessa')->first();
             $fattura->stato()->associate($stato);
             $fattura->save();
@@ -909,6 +929,100 @@ switch (post('op')) {
         
         echo json_encode($has_serial);
         
+        break;
+
+    case 'add_articolo':
+        $id_articolo = post('id_articolo');
+        $barcode = post('barcode');
+
+        if (!empty($barcode)) {
+            $id_articolo = $dbo->selectOne('mg_articoli', 'id',  ['deleted_at' => null, 'barcode' => $barcode])['id'];
+        }
+
+        if (!empty($id_articolo)) {
+            $permetti_movimenti_sotto_zero = setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita');
+            $qta_articolo = $dbo->selectOne('mg_articoli', 'qta', ['id' => $id_articolo])['qta'];
+
+            $originale = ArticoloOriginale::find($id_articolo);
+
+            if ($qta_articolo <= 0 && !$permetti_movimenti_sotto_zero && !$originale->servizio && $dir == 'entrata') {
+                $response['error'] = tr('Quantità a magazzino non sufficiente');
+                echo json_encode($response);
+            } else {
+                $articolo = Articolo::build($fattura, $originale);
+                $qta = 1;
+
+                $articolo->descrizione = $originale->descrizione;
+                $articolo->um = $originale->um;
+                $articolo->qta = 1;
+                $articolo->costo_unitario = $originale->prezzo_acquisto;
+
+                $id_conto = ($dir == 'entrata') ? setting('Conto predefinito fatture di vendita') : setting('Conto predefinito fatture di acquisto');
+                if ($dir == 'entrata' && !empty($originale->idconto_vendita)) {
+                    $id_conto = $originale->idconto_vendita;
+                } elseif ($dir == 'uscita' && !empty($originale->idconto_acquisto)) {
+                    $id_conto = $originale->idconto_acquisto;
+                }
+                $articolo->idconto = $id_conto;
+                
+                if ($dir == 'entrata') {
+                    if ($fattura->anagrafica['idiva_vendite'] ? $id_iva = $fattura->anagrafica['idiva_vendite'] : $id_iva = $originale->idiva_vendita ?: setting('Iva predefinita'));
+                } else {
+                    if ($fattura->anagrafica['idiva_acquisti'] ? $id_iva = $fattura->anagrafica['idiva_acquisti'] : $id_iva = $originale->idiva_acquisti ?: setting('Iva predefinita'));
+                }
+                $id_anagrafica = $fattura->idanagrafica;
+                $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
+        
+                // CALCOLO PREZZO UNITARIO
+                $prezzo_unitario = 0;
+                $sconto = 0;
+                // Prezzi netti clienti / listino fornitore
+                $prezzi = $dbo->fetchArray('SELECT minimo, massimo, sconto_percentuale, '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario
+                FROM mg_prezzi_articoli
+                WHERE id_articolo = '.prepare($id_articolo).' AND dir = '.prepare($dir).' AND id_anagrafica = '.prepare($id_anagrafica));
+
+                if ($prezzi) {
+                    foreach ($prezzi as $prezzo) {
+                        if ($qta >= $prezzo['minimo'] && $qta <= $prezzo['massimo']) {
+                            $prezzo_unitario = $prezzo['prezzo_unitario'];
+                            $sconto = $prezzo['sconto_percentuale'];
+                            continue;
+                        }
+
+                        if ($prezzo['minimo'] == null && $prezzo['massimo'] == null && $prezzo['prezzo_unitario'] != null) {
+                            $prezzo_unitario = $prezzo['prezzo_unitario'];
+                            $sconto = $prezzo['sconto_percentuale'];
+                            continue;
+                        }
+                    }
+                } 
+                if (empty($prezzo_unitario)) {
+                    // Prezzi listini clienti
+                    $listino = $dbo->fetchOne('SELECT sconto_percentuale AS sconto_percentuale_listino, '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino
+                    FROM mg_listini
+                    LEFT JOIN mg_listini_articoli ON mg_listini.id=mg_listini_articoli.id_listino
+                    LEFT JOIN an_anagrafiche ON mg_listini.id=an_anagrafiche.id_listino
+                    WHERE mg_listini.data_attivazione<=NOW() AND mg_listini_articoli.data_scadenza>=NOW() AND mg_listini.attivo=1 AND id_articolo = '.prepare($id_articolo).' AND dir = '.prepare($dir).' AND idanagrafica = '.prepare($id_anagrafica));
+
+                    if ($listino) {
+                        $prezzo_unitario = $listino['prezzo_unitario_listino'];
+                        $sconto = $listino['sconto_percentuale_listino'];
+                    }
+                }
+                $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $originale->prezzo_vendita_ivato : $originale->prezzo_vendita);
+
+                $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);
+                $articolo->setSconto($sconto, 'PRC');
+                $articolo->save();
+
+                
+                flash()->info(tr('Nuovo articolo aggiunto!'));
+            }
+        } else {
+            $response['error'] = tr('Nessun articolo corrispondente a magazzino');
+            echo json_encode($response);
+        }
+
         break;
 }
 

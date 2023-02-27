@@ -1103,9 +1103,9 @@ div.tip {
 }
 
 /* Stile Fullcalendar per weekend */
-.fc-sat,
-.fc-sun {
-    background-color: rgba(255, 99, 71, 0.6) !important;
+.fc-day-sat,
+.fc-day-sun {
+    background-color: rgba(255,49,21,.3) !important;
 }
 
 .login-box .img-responsive {
@@ -1131,6 +1131,10 @@ div.tip {
 
 .alert-warning {
     background-color: #ff851b !important;
+}
+
+.row-list .form-group {
+    margin-bottom: 0px;
 }
 
 

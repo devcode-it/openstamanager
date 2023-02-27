@@ -82,8 +82,16 @@ use Models\PrintTemplate;
 			<div class="row">
 
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Opzioni'); ?>", "name": "options", "value": "$options$", "help": "<?php echo tr('Impostazioni personalizzabili della stampa, in formato JSON'); ?>" ]}
-				</div>
+                    <?php
+                    echo input([
+                        'type' => 'textarea',
+                        'label' => tr('Opzioni'),
+                        'name' => 'options',
+                        'value' => $record['options'],
+                        'help' => tr('Impostazioni personalizzabili della stampa, in formato JSON'),
+                    ]);
+                    ?>
+                </div>
             </div>
         </div>
     </div>

@@ -198,7 +198,7 @@ switch (filter('op')) {
             redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_fattura);
         } elseif (!empty($file)) {
             redirect(base_path().'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&sequence=1');
-            flash()->warning(tr('È stata appena creata la fattura numero _NUM_ del _DATA_ (_ANAGRAFICA_)', [
+            flash()->info(tr('La fattura numero _NUM_ del _DATA_ (_ANAGRAFICA_) è stata importata correttamente', [
                 '_NUM_' => $fattura->numero,
                 '_DATA_' => dateFormat($fattura->data),
                 '_ANAGRAFICA_' => $fattura->anagrafica->ragione_sociale,

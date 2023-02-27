@@ -220,8 +220,21 @@ class Settings
     {[ "type": "checkbox", "label": '.json_encode($setting->nome).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "placeholder": "'.tr('Attivo').'", "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'"  ]}';
         }
 
+        // Editor
+        elseif ($setting->tipo == 'ckeditor') {
+            $result = input([
+                'type' => 'ckeditor',
+                'label' => json_encode($setting->nome),
+                'readonly' => !$setting->editable,
+                'name' => 'setting['.$setting->id.']',
+                'value' => $setting->valore,
+                'required' => intval($required),
+                'help' => $setting->help,
+            ]);
+        }
+
         // Campi di default
-        elseif (in_array($setting->tipo, ['textarea', 'ckeditor', 'timestamp', 'date', 'time'])) {
+        elseif (in_array($setting->tipo, ['textarea', 'timestamp', 'date', 'time'])) {
             $result = '
     {[ "type": "'.$setting->tipo.'", "label": '.json_encode($setting->nome).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "value": '.json_encode($setting->valore).', "required": "'.intval($required).'", "help": "'.$setting->help.'"  ]}';
         }

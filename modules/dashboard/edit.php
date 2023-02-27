@@ -331,7 +331,7 @@ $vista = setting('Vista dashboard');
 if ($vista == 'mese') {
     $def = 'dayGridMonth';
 } elseif ($vista == 'giorno') {
-    $def = 'resourceTimeGridDay';
+    $def = 'timeGridDay';
 } elseif ($vista == 'settimana') {
     $def = 'timeGridWeek';
 } else {
@@ -509,12 +509,15 @@ globals.dashboard = {
             /* locales: allLocales, */
             locale: globals.locale,
             slotEventOverlap: false,
+            weekNumbers: true,
+            weekText: "W",
+            nowIndicator: true,
             schedulerLicenseKey: "GPL-My-Project-Is-Open-Source",
             hiddenDays: globals.dashboard.show_sunday ? [] : [0],
             headerToolbar: {
                 left: "prev,next today",
                 center: "title",
-                right: "dayGridMonth,timeGridWeek,resourceTimeGridDay,listWeek"
+                right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek"
             },
             eventDisplay: "block",
             timeFormat: globals.dashboard.timeFormat,
@@ -571,8 +574,7 @@ globals.dashboard = {
                 let start = info.start;
                 let end = info.end;
 
-                let intero_giorno = !start.hasTime && !end.hasTime;
-                if (intero_giorno !== true || globals.dashboard.informazioni_aggiuntive==0) {
+                if (!info.allDay) {
                     let data = moment(start).format("YYYY-MM-DD");
                     let data_fine = moment(end).format("YYYY-MM-DD");
                     let orario_inizio = moment(start).format("HH:mm");

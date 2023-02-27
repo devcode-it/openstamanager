@@ -47,9 +47,7 @@ if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
     $id_cliente = $user['idanagrafica'];
 }
 
-// Stato di default associato all'attività
-$stato = $dbo->fetchOne("SELECT * FROM in_statiintervento WHERE codice = 'WIP'");
-$id_stato = $stato['idstatointervento'];
+
 
 // Se è indicata un'anagrafica relativa, si carica il tipo di intervento di default impostato
 if (!empty($id_anagrafica)) {
@@ -99,10 +97,9 @@ elseif (!empty($id_intervento)) {
     $data_richiesta = $intervento['data_richiesta'];
     $data_scadenza = $intervento['data_scadenza'];
     $richiesta = $intervento['richiesta'];
-    $id_sede = $intervento['idsede'];
+    $id_sede = $intervento['idsede_destinazione'];
     $id_anagrafica = $intervento['idanagrafica'];
     $id_cliente_finale = $intervento['idclientefinale'];
-    $id_stato = $intervento['idstatointervento'];
     $id_contratto = $intervento['idcontratto'];
     $id_preventivo = $intervento['idpreventivo'];
     $id_zona = $intervento['idzona'];
@@ -211,14 +208,23 @@ echo '
         </div>
 
          <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL ORDER BY descrizione", "value": "'.$id_stato.'" ]}
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL ORDER BY descrizione", "value": "'.($origine_dashboard ? setting('Stato predefinito dell\'attività da Dashboard') : setting('Stato predefinito dell\'attività')).'" ]}
         </div>
     </div>
 
     <div class="row">
-        <div class="col-md-12">
-            {[ "type": "ckeditor", "label": "'.tr('Richiesta').'", "name": "richiesta", "id": "richiesta_add", "required": 1, "value": "'.htmlentities($richiesta).'", "extra": "style=\'max-height:80px;\'" ]}
-        </div>
+        <div class="col-md-12">';
+            echo input([
+                'type' => 'ckeditor',
+                'label' => tr('Richiesta'),
+                'name' => 'richiesta',
+                'id' => 'richiesta_add',
+                'required' => 1,
+                'value' => htmlentities($record['richiesta']),
+                'extra' => 'style=\'max-height:80px;\'',
+            ]);
+            echo '
+            </div>
     </div>';
 
 

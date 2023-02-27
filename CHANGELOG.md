@@ -4,6 +4,8 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.41 (2023-02-27)](#2441-2023-02-27)
+- [2.4.40 (2023-02-17)](#2440-2023-02-17)
 - [2.4.39 (2023-01-13)](#2439-2023-01-13)
 - [2.4.38 (2022-12-07)](#2438-2022-12-07)
 - [2.4.37 (2022-11-02)](#2437-2022-11-04)
@@ -50,6 +52,89 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
+## 2.4.41 (2023-02-27)
+### Aggiunto (Added)
+- Aggiunta la modifica automatica del piano dei conti per clienti e fornitori
+- Aggiunto l'inserimento di email multiple per notifica di interventi
+- Aggiunta la possibilità di aggiornare l'ordine dei sottolivelli e di modificare la descrizione delle righe nelle checklist
+### Modificato (Changed)
+- Aggiornata la versione di fullcalendar
+- Rimozione dei clienti eliminati dalla sincronizzazione dell'app
+### Fixed
+- Corretta impostazione stato predefinito attività da impostazioni
+- Corretto l'inserimento di checklist non associate ad utenti o gruppi
+- Corretto avviso utenti abilitati per la check
+- Corretta la query vista fatture di vendita
+- Corretta la creazione di eventi su calendario con vista del Giorno
+- Corretta la vista giornaliera in dashboard da impostazioni
+- Correzione query vista scadenzario
+- Corretto l'editor nei moduli
+- Corretta l'eliminazione di prima nota in riapertura di documenti
+- Corretto l'inserimento di articoli in DDT e fatture di acquisto
+- Corretta la visualizzazione del widget in Stato dei servizi
+- Corretta la creazione evento con impostazione AllDay attiva
+## 2.4.40 (2023-02-17)
+### Aggiunto (Added)
+- Aggiunto box dettagli cliente in fase di creazione fattura
+- Aggiunta colonna modalità di pagamento in anagrafiche
+- Aggiunti riferimenti a natura IVA N7
+- Aggiunta colonna **Agente** in preventivi
+- Aggiunta colonna **Inviato** in DDT in uscita
+- Aggiunta scelta relazione anche su Fornitori
+- Aggiunta visualizzazione sconto in fase di importazione di una fattura elettronica
+- Aggiunta la possibilità di far scadere la cache degli hooks
+- Aggiunta impostazione per quantità di widget per riga
+- Aggiunta colonna **Banca** in scadenzario
+- Aggiunto filtro per codice nei menu a tendina delle anagrafiche
+- Aggiunta impostazione predefinita per movimentare o meno il magazzino in importazione fatture elettroniche di acquisto
+- Aggiunta gestione dichiarazione d'intento predefinita
+- Aggiunta impostazione posizione simbolo valuta
+- Aggiunta scadenzario autofatture
+- Aggiunto inserimento massivo sessioni di lavoro nelle attività
+- Aggiunta impostazione per fatturare attività anche se collegate a documenti (ordini, preventivi, contratti)
+- Aggiunto **Totale imponibile** in riepilogo fattura con cassa previdenziale
+- Aggiunte informazioni in stampa scadenzario
+- Aggiunte impostazioni per preimpostare lo stato attività in fase di creazione attività (da modulo **Attività** o da **Dashboard**)
+- Aggiunta colonna **KM** in **Attività** e nelle stampe riepilogo
+- Aggiunta impostazione per aggiornamento data emissione fattura di vendita in base alla prima data disponibile
+- Aggiunta la possibilità di importare articoli da CSV specificando la sede su cui caricare le quantità
+### Modificato (Changed)
+- Miglioria sulle date dei movimenti di magazzino
+- Miglioria su gestione campi personalizzati per pieno supporto html e js
+- Miglioria provvigioni in Attività
+- Aggiornamento a Fullcalendar 6
+- Disattivata la modalità debug in fase di compilazione assets
+- Ottimizzazioni grafiche Fullcalendar 6
+- Rimosso controllo su tasto submit
+- Ottimizzata velocità di caricamento widget rate contrattuali
+- Disabilitato il tasto aggiunti in rate modalità di pagamento già utilizzate
+- Ottimizzata la gestione del cambio di stato Attività
+- Ottimizzata la gestione di aggiunta righe nei documenti
+### Fixed
+- Corretta query vista Utenti e permessi
+- Corretta dicitura dichiarazione d'intento
+- Corretta query riferimento ordini fornitore da ordini cliente
+- Corretta selezione causali movimenti con hotkeys
+- Corretta sede fatturazione
+- Corretto invio rapportini da azioni di gruppo
+- Corretti problemi di integrità database all'aggiornamento da una versione precedente alla 2.4.28
+- Corretta query vista Pagamenti
+- Corretto orario di inizio e di fine calendario
+- Corretta selezione tecnici assegnati in fase di pianificazione promemoria
+- Corretto sconto in pianificazione fatturazione
+- Corretta duplicazione fatture attraverso sezionali diversi
+- Corretto salvataggio conto Ordini da azioni di gruppo
+- Corretta impostazione di filtri da statistiche in anagrafica
+- Corretta visualizzazione margine in aggiunta riga
+- Corretta selezione del modulo iniziale in Utenti e permessi
+- Corretta stampa etichette con prezzo ivato
+- Corretta impostazione ragione sociale in creazione documento
+- Corretta visualizzazione sconto in fase di importazione fattura elettronica
+- Corretta movimentazione magazzino in fase di importazione fattura elettronica
+- Corretta selezione del sezionale e del tipo documento in fatturazione interventi da azioni di gruppo
+- Corretta selezione sezionale in stampa registri IVA
+- Corretto nome file Fatture elettroniche se si aggiorna da una versione precedente alla 2.4.4
+- Corretta la generazione del numero progressivo ordini fornitore
 ## 2.4.39 (2023-01-13)
 ### Aggiunto (Added)
 - Aggiunto controllo eliminazione metodo di pagamento
@@ -60,6 +145,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Aggiunta ID utente nei movimenti articolo
 - Aggiunta valori buffer Datatables
 - Aggiunto filtro referenti per sede in interventi
+- Aggiunta azione di gruppo per cambio relazione anagrafiche
 ### Modificato (Changed)
 - Miglioria gestione codice REA e provincia
 - Miglioria stampa mastrino saldo iniziale

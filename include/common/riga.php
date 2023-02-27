@@ -333,10 +333,12 @@ if (in_array($module['name'], ['Fatture di vendita', 'Fatture di acquisto'])) {
             if (sconto > 0) {
                 div_margine.css("margin-top", "-20px");
                 div_prezzi.css("margin-top", "-20px");
+                div_prezzi.css("margin-bottom", "20px");
                 div.html(`<small class="label label-default" >'.tr('Sconto').'</small>`);
             } else if (sconto < 0) {
                 div_margine.css("margin-top", "-20px");
                 div_prezzi.css("margin-top", "-20px");
+                div_prezzi.css("margin-bottom", "20px");
                 div.html(`<small class="label label-default" >'.tr('Maggiorazione').'</small>`);
             } else {
                 div_margine.css("margin-top", "0px");

@@ -62,7 +62,7 @@ if ($record['can_delete']) {
 				</div>
 
 				<div class="col-md-6">
-					{[ "type": "email", "label": "<?php echo tr('Destinatario aggiuntivo'); ?>", "name": "destinatari", "value": "$destinatari$", "icon-before": "<i class='fa fa-envelope'></i>", "disabled": <?php echo intval(empty($record['notifica'])); ?>, "class": "email-mask" ]}
+					{[ "type": "text", "label": "<?php echo tr('Destinatario aggiuntivo'); ?>", "name": "destinatari", "value": "$destinatari$", "icon-before": "<i class='fa fa-envelope'></i>", "disabled": <?php echo intval(empty($record['notifica'])); ?> ]}
 				</div>
 
 			</div>

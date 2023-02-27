@@ -42,13 +42,14 @@ if (!empty($_SESSION['superselect']['id_articolo_barcode'])) {
 
 $pages = count($articoli);
 $page = 0;
+$prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
 foreach ($articoli as $articolo) {
     echo '
     <div class="barcode-cell">
         <p style="font-size:11pt;"><b>'.$articolo->codice.'</b></p>
         <p style="font-size:10pt;">'.$articolo->descrizione.'</p><br>
-        <p style="font-size:15pt;"><b>'.moneyFormat($articolo->prezzo_vendita).'</b></p>
+        <p style="font-size:15pt;"><b>'.moneyFormat($prezzi_ivati ? $articolo->prezzo_vendita_ivato : $articolo->prezzo_vendita).'</b></p>
         <barcode code="'.$articolo->barcode.'" type="C39" height="2" size="0.65" class="barcode" />
         <p><b>'.$articolo->barcode.'</b></p>
     </div>';

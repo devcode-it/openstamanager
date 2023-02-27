@@ -99,7 +99,7 @@ class DDT extends Document
             $model->idpagamento = $id_pagamento;
         }
 
-        $model->numero = static::getNextNumero($data, $direzione);
+        $model->numero = static::getNextNumero($data, $direzione, $id_segment);
         $model->numero_esterno = static::getNextNumeroSecondario($data, $direzione, $id_segment);
 
         // Imposto, come sede aziendale, la prima sede disponibile come utente
@@ -263,15 +263,19 @@ class DDT extends Document
      *
      * @return string
      */
-    public static function getNextNumero($data, $direzione)
+    public static function getNextNumero($data, $direzione, $id_segment)
     {
-        $maschera = '#';
+        if ($direzione == 'entrata') {
+            return '';
+        }
+
+        $maschera = Generator::getMaschera($id_segment);
 
         $ultimo = Generator::getPreviousFrom($maschera, 'dt_ddt', 'numero', [
             'YEAR(data) = '.prepare(date('Y', strtotime($data))),
             'idtipoddt IN (SELECT id FROM dt_tipiddt WHERE dir = '.prepare($direzione).')',
         ]);
-        $numero = Generator::generate($maschera, $ultimo);
+        $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
 
         return $numero;
     }

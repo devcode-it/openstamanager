@@ -33,7 +33,7 @@ if ($module['name'] == 'Ordini cliente') {
     $ajax = 'fornitori';
 }
 
-$id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : $user['idanagrafica'];
+$id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 
 ?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">

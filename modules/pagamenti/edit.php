@@ -126,13 +126,13 @@ ORDER BY `data`');
 				<div class="box box-success">
 					<div class="box-header with-border">
 						<h3 class="box-title">'.tr('Rata _NUMBER_', [
-                            '_NUMBER_' => $numero_rata,
+                            '_NUMBER_' => $numero_rata,  
                         ]).'</h3>';
                         if (empty($elementi)) {
-        echo '
+        echo '   
 						<button type="button" class="btn btn-danger pull-right" onclick="rimuoviRata(' . $result['id'] . ')">
 						    <i class="fa fa-trash"></i> ' . tr('Elimina') . '
-						</button>';
+                            </button>';
                         }
                         echo '
 					</div>
@@ -166,6 +166,8 @@ ORDER BY `data`');
 				</div>';
     ++$numero_rata;
 }
+
+if (empty($elementi)) {
 ?>
 			</div>
 
@@ -227,11 +229,12 @@ echo '
     </div>
 </form>';
 
-
-
-
-if (!empty($elementi)) {
-    echo '
+} else {
+    echo'
+            </div>
+        </div>
+	</div>
+</form>
 <div class="box box-warning collapsable collapsed-box">
     <div class="box-header with-border">
         <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
@@ -281,7 +284,7 @@ echo '
 if (!empty($elementi)) {
     echo '
 <div class="alert alert-error">
-    ' . tr('Eliminando questo documento si potrebbero verificare problemi nelle altre sezioni del gestionale') . '.
+    ' . tr('Eliminando questo metodo di pagamento si potrebbero verificare problemi nelle altre sezioni del gestionale') . '.
 </div>
 <a class="btn btn-danger ask disabled" data-backto="record-list">
     <i class="fa fa-trash"></i> '.tr('Elimina').'

@@ -32,18 +32,18 @@ echo '
     <td>'.($different ? $record['numero_esterno'] : '').'</td>
     <td>'.($different ? Translator::datetoLocale($record['data']) : '').'</td>
     <td>'.($different ? $record['codice_tipo_documento_fe'] : '').'</td>
-    <td>'.($different ? $record['codice_anagrafica'].' / '.safe_truncate(mb_strtoupper(html_entity_decode($record['ragione_sociale']), 'UTF-8'), 50) : '').'</td>
+    <td>'.($different ? $record['codice_anagrafica'].' '.safe_truncate(mb_strtoupper(html_entity_decode($record['ragione_sociale']), 'UTF-8'), 50) : '').'</td>
     <td class="text-right">'.moneyFormat($record['totale']).'</td>';
 
 echo '
     <td class="text-right">'.moneyFormat($record['subtotale']).'</td>
     <td class="text-left">'.Translator::numberToLocale($record['percentuale'], 0).'</td>
-    <td class="text-left">'.$record['desc_iva'].'</td>
+    <td class="text-left">'.$record['descrizione'].'</td>
     <td class="text-right">'.moneyFormat($record['iva']).'</td>
     </tr>';
 
-$iva[$record['desc_iva']][] = $record['iva'];
-$totale[$record['desc_iva']][] = $record['subtotale'];
+$iva[$record['descrizione']][] = $record['iva'];
+$totale[$record['descrizione']][] = $record['subtotale'];
 
 $numero = $record['numero'];
 $data_registrazione = $record['data_registrazione'];

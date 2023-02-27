@@ -258,12 +258,12 @@ elseif (filter('op') == 'rimuovi-nota') {
 elseif (filter('op') == 'copia-checklist') {
     $content = post('content');
     $checklist_id = post('checklist');
-
+    
     $users = post('assigned_users');
     $users = array_clean($users);
-
+   
     $group_id = post('group_id');
-
+    
     $checklist = Checklist::find($checklist_id);
     $checklist->copia($user, $id_record, $users, $group_id);
 }
@@ -275,7 +275,7 @@ elseif (filter('op') == 'aggiungi-check') {
 
     $users = post('assigned_users');
     $users = array_clean($users);
-
+   
     $group_id = post('group_id');
 
     $check = Check::build($user, $structure, $id_record, $content, $parent_id);

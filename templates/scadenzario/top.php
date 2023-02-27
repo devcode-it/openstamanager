@@ -19,6 +19,23 @@
 
 include_once __DIR__.'/../../core.php';
 
+
+$text = [];
+
+if(get('is_pagata')=='true'){
+    $text[] = "Scadenze pagate";
+}
+if(get('is_riba')=='true'){
+    $text[] = "Ri.Ba";
+}
+if(get('is_cliente')=='true'){
+    $text[] = "Solo scadenze clienti";
+}
+if(get('is_fornitore')=='true'){
+    $text[] = "Solo scadenze fornitori";
+}
+
+
 if (isset($id_record)) {
     echo '
     <h4><b>'.tr('Scadenza _ANAG_', [
@@ -30,7 +47,14 @@ if (isset($id_record)) {
         '_START_' => Translator::dateToLocale($date_start),
         '_END_' => Translator::dateToLocale($date_end),
         ], ['upper' => true]).'</b>
-    </h4>';
+    </h4>
+    <p style="color:#aaa; font-size:10px;" class="text-right">
+    '.tr("_TEXT_",
+    [
+        "_TEXT_" => (!empty($text) ? 'Include: '.implode(', ', $text) : ''),
+    ]).'
+</p>';
+
 }else{
     echo '
     <h4><b>'.tr('Scadenze').'</b>

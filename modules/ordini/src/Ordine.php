@@ -92,7 +92,7 @@ class Ordine extends Document
             $model->idpagamento = $id_pagamento;
         }
 
-        $model->numero = static::getNextNumero($data, $direzione);
+        $model->numero = static::getNextNumero($data, $direzione, $id_segment);
         $model->numero_esterno = static::getNextNumeroSecondario($data, $direzione, $id_segment);
 
         $model->save();
@@ -198,14 +198,32 @@ class Ordine extends Document
      *
      * @return string
      */
-    public static function getNextNumero($data, $direzione)
+    public static function getNextNumero($data, $direzione, $id_segment)
     {
-        $maschera = '#';
+        if ($direzione == 'entrata') { 
+            $maschera = '#';
+        } else {
+            $maschera = Generator::getMaschera($id_segment);
 
-        $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero', [
-            'YEAR(data) = '.prepare(date('Y', strtotime($data))),
-            'idtipoordine IN (SELECT id FROM or_tipiordine WHERE dir = '.prepare($direzione).')',
-        ]);
+            if (strpos($maschera, 'm') !== false) {
+                $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero', [
+                    'YEAR(data) = '.prepare(date('Y', strtotime($data))),
+                    'MONTH(data) = '.prepare(date('m', strtotime($data))),
+                    'idtipoordine IN (SELECT id FROM or_tipiordine WHERE dir = '.prepare($direzione).')',
+                ]);
+            } elseif ((strpos($maschera, 'YYYY') !== false) or (strpos($maschera, 'yy') !== false)) {
+                $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero', [
+                    'YEAR(data) = '.prepare(date('Y', strtotime($data))),
+                    'idtipoordine IN (SELECT id FROM or_tipiordine WHERE dir = '.prepare($direzione).')',
+                ]);
+            } else {
+                $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero', [
+                    'YEAR(data) = '.prepare(date('Y', strtotime($data))),
+                    'idtipoordine IN (SELECT id FROM or_tipiordine WHERE dir = '.prepare($direzione).')',
+                ]);
+            }
+        }
+        
         $numero = Generator::generate($maschera, $ultimo);
 
         return $numero;

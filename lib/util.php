@@ -56,9 +56,11 @@ if (!function_exists('array_clean')) {
      */
     function array_clean($array)
     {
-        return array_unique(array_values(array_filter($array, function ($value) {
-            return !empty($value);
-        })));
+        if (!empty($array)){
+            return array_unique(array_values(array_filter($array, function ($value) {
+                return !empty($value);
+            })));
+        }
     }
 }
 

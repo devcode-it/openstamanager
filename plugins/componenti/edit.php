@@ -166,8 +166,16 @@ foreach ($elenchi as $elenco) {
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-12">
-                                            {[ "type": "ckeditor", "label": "'.tr('Note').'", "name": "note", "id": "note_'.$componente->id.'", "value": "'.$componente['note'].'" ]}
+                                        <div class="col-md-12">';
+
+                                            echo input([
+                                                'type' => 'ckeditor',
+                                                'label' => tr('Note'),
+                                                'name' => 'note',
+                                                'id' => 'note_'.$componente->id,
+                                                'value' => $componente['note'],
+                                            ]);
+                                            echo'
                                         </div>
                                     </div>
 

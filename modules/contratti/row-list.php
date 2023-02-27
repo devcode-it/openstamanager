@@ -21,9 +21,10 @@ include_once __DIR__.'/init.php';
 
 $block_edit = $record['is_completato'];
 $righe = $contratto->getRighe();
+$colspan = ($block_edit ? '5' : '6');
 
 echo '
-<div class="table-responsive">
+<div class="table-responsive row-list">
     <table class="table table-striped table-hover table-condensed table-bordered">
         <thead>
             <tr>
@@ -34,13 +35,16 @@ echo '
                 }
                 echo '
                 </th>
-                <th width="35" class="text-center" >'.tr('#').'</th>
+                <th width="35" class="text-center">'.tr('#').'</th>
                 <th>'.tr('Descrizione').'</th>
-                <th class="text-center tip" width="150" title="'.tr('da evadere').' / '.tr('totale').'">'.tr('Q.tà').' <i class="fa fa-question-circle-o"></i></th>
-                <th class="text-center" width="150">'.tr('Prezzo unitario').'</th>
-                <th class="text-center" width="150">'.tr('Iva unitaria').'</th>
-                <th class="text-center" width="150">'.tr('Importo').'</th>
-                <th width="100"></th>
+                <th class="text-center tip" width="150">'.tr('Q.tà').'</th>
+                <th class="text-center" width="140">'.tr('Prezzo unitario').'</th>';
+            if (!$block_edit) {
+                echo '<th class="text-center" width="150">'.tr('Sconto unitario').'</th>';
+            }
+            echo '
+                <th class="text-center" width="140">'.tr('Importo').'</th>
+                <th width="80"></th>
             </tr>
         </thead>
 
@@ -101,16 +105,25 @@ foreach ($righe as $riga) {
                 <td></td>
                 <td></td>';
     } else {
-        // Quantità e unità di misura
-        echo '
+                // Quantità e unità di misura
+                $progress_perc = $riga->qta_evasa * 100 / $riga->qta;
+                echo '
                 <td class="text-center">
-                    '.numberFormat($riga->qta_rimanente, 'qta').' / '.numberFormat($riga->qta, 'qta').' '.$riga->um.'
+                    {[ "type": "number", "name": "qta_'.$riga->id.'", "value": "'.$riga->qta.'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "<span class=\'tip\' title=\''.tr('Quantità evasa: _QTA_', ['_QTA_' => numberFormat($riga->qta_evasa, 'qta')]).'\'>'.($riga->um ?: '&nbsp;').'</span>", "disabled": "'.($riga->isSconto() ? 1 : 0).'", "disabled": "'.$block_edit.'" ]}
+                    <div class="progress" style="height:4px;">
+                        <div class="progress-bar progress-bar-primary" style="width:'.$progress_perc.'%"></div>
+                    </div>
                 </td>';
 
         // Prezzi unitari
         echo '
-                <td class="text-right">
-                    '.moneyFormat($riga->prezzo_unitario_corrente);
+                <td class="text-right">';
+                    // Provvigione riga 
+                    if (abs($riga->provvigione_unitaria) > 0) {
+                        $text = provvigioneInfo($riga);
+                        echo '<span class="pull-left text-info" title="'.$text.'"><i class="fa fa-handshake-o"></i></span>';
+                    } 
+                    echo moneyFormat($riga->prezzo_unitario_corrente);
 
         if ($dir == 'entrata' && $riga->costo_unitario != 0) {
             echo '
@@ -128,27 +141,24 @@ foreach ($righe as $riga) {
 
         echo '
                 </td>';
-
-        // Iva
-        echo '
-                <td class="text-right">
-                    '.moneyFormat($riga->iva_unitaria_scontata).'
-                    <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' text-muted">'.$riga->aliquota->descrizione.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
+                
+        // Sconto unitario
+        if (!$block_edit) {
+            echo '
+                <td class="text-center">
+                    {[ "type": "number", "name": "sconto_'.$riga->id.'", "value": "'.($riga->sconto_percentuale ?: $riga->sconto_unitario_corrente).'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "choice|untprc|'.$riga->tipo_sconto.'" ]}
                 </td>';
+        }
 
         // Importo
         echo '
                 <td class="text-right">
-                '.moneyFormat($riga->importo);
+                    '.moneyFormat($riga->importo);
 
-                //provvigione riga 
-                if (abs($riga->provvigione_unitaria) > 0) {
-                    $text = provvigioneInfo($riga);
-        
+                    // Iva
                     echo '
-                            <br><small class="label label-info">'.$text.'</small>';
-                }       
-                echo '</td>';
+                    <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' text-muted">'.$riga->aliquota->descrizione.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
+               </td>';
     }
 
     // Possibilità di rimuovere una riga solo se il preventivo non è stato pagato
@@ -192,7 +202,7 @@ $netto_a_pagare = $contratto->netto;
 // Totale totale imponibile
 echo '
         <tr>
-            <td colspan="6" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -205,7 +215,7 @@ echo '
 if (!empty($sconto)) {
     echo '
         <tr>
-            <td colspan="6" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
             </td>
             <td class="text-right">
@@ -217,7 +227,7 @@ if (!empty($sconto)) {
     // Totale totale imponibile
     echo '
         <tr>
-            <td colspan="6" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -230,7 +240,7 @@ if (!empty($sconto)) {
 // Totale iva
 echo '
         <tr>
-            <td colspan="6" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 <b>'.tr('Iva', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -242,7 +252,7 @@ echo '
 // Totale contratto
 echo '
         <tr>
-            <td colspan="6" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 <b>'.tr('Totale', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -255,7 +265,7 @@ echo '
 if (!empty($sconto_finale)) {
     echo '
         <tr>
-            <td colspan="6" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 <b>'.tr('Sconto in fattura', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -269,7 +279,7 @@ if (!empty($sconto_finale)) {
 if ($totale != $netto_a_pagare) {
     echo '
         <tr>
-            <td colspan="6" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -283,7 +293,7 @@ if ($totale != $netto_a_pagare) {
 if(!empty($contratto->provvigione)) {
     echo '
         <tr>
-            <td colspan="6" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
             '.tr('Provvigioni', [], ['upper' => false]).':
             </td>
             <td class="text-right">
@@ -294,7 +304,7 @@ if(!empty($contratto->provvigione)) {
 
     echo '
     <tr>
-        <td colspan="6" class="text-right">
+        <td colspan="'.$colspan.'" class="text-right">
            '.tr('Netto da provvigioni', [], ['upper' => false]).':
         </td>
         <td class="text-right">
@@ -455,4 +465,37 @@ $("#check_all").click(function(){
         });
     }
 });
+
+$(".tipo_icon_after").on("change", function() {
+    aggiornaInline($(this).closest("tr").data("id"));
+});
+
+function aggiornaInline(id) {
+    content_was_modified = false;
+    var qta = input("qta_"+ id).get();
+    var sconto = input("sconto_"+ id).get();
+    var tipo_sconto = input("tipo_sconto_"+ id).get();
+
+    $.ajax({
+        url: globals.rootdir + "/actions.php",
+        type: "POST",
+        data: {
+            id_module: globals.id_module,
+            id_record: globals.id_record,
+            op: "update_inline",
+            riga_id: id,
+            qta: qta,
+            sconto: sconto,
+            tipo_sconto: tipo_sconto,
+        },
+        success: function (response) {
+            caricaRighe(id);
+            renderMessages();
+        },
+        error: function() {
+            caricaRighe(null);
+        }
+    });
+}
+init();
 </script>';

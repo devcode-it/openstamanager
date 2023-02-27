@@ -512,9 +512,11 @@ switch (post('op')) {
                     }
                 }
                 $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $originale->prezzo_vendita_ivato : $originale->prezzo_vendita);
+                $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['idanagrafica' => $preventivo->idagente])['provvigione_default'];
 
                 $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);
                 $articolo->setSconto($sconto, 'PRC');
+                $articolo->setProvvigione($provvigione ?: 0, 'PRC');
                 $articolo->save();
 
                 

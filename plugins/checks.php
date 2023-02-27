@@ -57,15 +57,15 @@ if ($structure->permission == 'rw') {
 
 $checks = $structure->mainChecks($id_record);
 
-echo '
-            <ul class="todo-list checklist">';
-
-    foreach ($checks as $check) {
-        echo renderChecklist($check);
-    }
+echo "      <table class='table'>
+                <tbody class='sort' data-sonof='0'>";
+foreach ($checks as $check) {
+    echo renderChecklist($check);
+}
+echo "          </tbody>
+            </table>";
 
     echo '
-            </ul>
         </div>
     </div>
 </div>';
@@ -73,62 +73,95 @@ echo '
 echo '
 <script>$(document).ready(init)</script>
 
-<script type="module">
-import Checklist from "./modules/checklists/js/checklist.js";
+<script>
 
-var checklists = checklists ? checklists : {};
-$(document).ready(function() {
-    checklists["'.$checks_id.'"] = new Checklist({
-        id_module: "'.$id_module.'",
-        id_plugin: "'.$id_plugin.'",
-        id_record: "'.$id_record.'",
-    }, "'.$checks_id.'");
+$(document).ready(function(){
+    $("[data-toggle=\'tooltip\']").tooltip();
+  });
 
-    sortable(".checklist", {
-        placeholder: "sort-highlight",
-        handle: ".handle",
-        forcePlaceholderSize: true,
-        zIndex: 999999,
-    })[0].addEventListener("sortupdate", function(e) {
-        let order = $(".checklist > li[data-id]").toArray().map(a => $(a).data("id"))
+sortable("#tab_checks .sort", {
+    axis: "y",
+    handle: ".handle",
+    cursor: "move",
+    dropOnEmpty: true,
+    scroll: true,
+});
 
-        $.post(globals.rootdir + "/actions.php", {
-            id_module: globals.id_module,
-            id_plugin: "'.$id_plugin.'",
-            id_record: globals.id_record,
-                op: "ordina-checks",
+sortable_table = sortable("#tab_checks .sort").length;
+
+for(i=0; i<sortable_table; i++){
+    sortable("#tab_checks .sort")[i].addEventListener("sortupdate", function(e) {
+
+        var sonof = $(this).data("sonof");
+
+        let order = $(this).find(".sonof_"+sonof+"[data-id]").toArray().map(a => $(a).data("id"))
+    
+        $.post("'.$checklist_module->fileurl('ajax.php').'", {
+            op: "update_position",
             order: order.join(","),
         });
     });
+}
 
-    $(".checklist").todoList({
-        onCheck: function () {
-            var id = $(this).parent().data("id");
-
-            checklists["'.$checks_id.'"].toggleCheck(id);
-        },
-        onUnCheck: function () {
-            var id = $(this).parent().data("id");
-
-            checklists["'.$checks_id.'"].toggleCheck(id);
-        }
-    });
-
-    $(".check-delete").click(function(event){
-        var li = $(this).closest("li");
-        var id = li.data("id");
-
-        swal({
-            title: "'.tr("Rimuovere l'elemento della checklist?").'",
-            html: "'.tr('Tutti gli elementi figli saranno rimossi di conseguenza. Continuare?').'",
-            showCancelButton: true,
-            confirmButtonText: "'.tr('Procedi').'",
-            type: "error",
-        }).then(function (result) {
-            checklists["'.$checks_id.'"].deleteCheck(id);
-        });
-
-        event.stopPropagation();
+$("input[name^=\'value\']").keyup(function(){
+    $.post("'.$checklist_module->fileurl('ajax.php').'", {
+        op: "save_value",
+        value: $(this).val(),
+        id: $(this).attr("data-id"),
     });
 });
+
+$("textarea[name=\'note_checklist\']").keyup(function(){
+    $.post("'.$checklist_module->fileurl('ajax.php').'", {
+        op: "save_note",
+        value: $(this).val(),
+        id: $(this).attr("data-id"),
+    });
+});
+
+$(".checkbox").click(function(){
+    if($(this).is(":checked")){
+        $.post("'.$checklist_module->fileurl('ajax.php').'", {
+            op: "save_checkbox",
+            id: $(this).attr("data-id"),
+        });
+
+        parent = $(this).attr("data-id");
+        $("tr.sonof_"+parent).find("input[type=checkbox]").each(function(){
+            if(!$(this).is(":checked")){
+                $(this).click();
+            }
+        });
+    }else{
+        $.post("'.$checklist_module->fileurl('ajax.php').'", {
+            op: "remove_checkbox",
+            id: $(this).attr("data-id"),
+        });
+
+        parent = $(this).attr("data-id");
+        $("tr.sonof_"+parent).find("input[type=checkbox]").each(function(){
+            if($(this).is(":checked")){
+                $(this).click();
+            }
+        });
+    }
+})
+
+function delete_check(id){
+    if(confirm("Eliminare questa checklist?")){
+        $.post("'.$checklist_module->fileurl('ajax.php').'", {
+            op: "delete_check",
+            id: id,
+        }, function(){
+            location.reload();
+        });
+    }
+}
+
+function edit_check(id){
+    launch_modal("Modifica checklist", "'.$checklist_module->fileurl('components/edit-check.php').'?id_record="+id, 1);
+}
+
 </script>';
+
+?>

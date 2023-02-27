@@ -833,7 +833,7 @@ $(document).ready(function() {
         });
     }
     
-    $("form").bind("keypress", function(e) {
+    $("#link_form").bind("keypress", function(e) {
         if (e.keyCode == 13) {
             e.preventDefault();
             salvaArticolo();

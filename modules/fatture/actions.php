@@ -964,8 +964,8 @@ switch (post('op')) {
                     $id_conto = $originale->idconto_acquisto;
                 }
                 $articolo->idconto = $id_conto;
-
-                $id_iva = $originale->idiva_vendita ?: setting('Iva predefinita');
+                
+                if ($fattura->anagrafica['idiva_vendite'] ? $id_iva = $fattura->anagrafica['idiva_vendite'] : $id_iva = $originale->idiva_vendita ?: setting('Iva predefinita'));
                 $id_anagrafica = $fattura->idanagrafica;
                 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
         

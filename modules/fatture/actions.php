@@ -965,7 +965,11 @@ switch (post('op')) {
                 }
                 $articolo->idconto = $id_conto;
                 
-                if ($fattura->anagrafica['idiva_vendite'] ? $id_iva = $fattura->anagrafica['idiva_vendite'] : $id_iva = $originale->idiva_vendita ?: setting('Iva predefinita'));
+                if ($dir == 'entrata') {
+                    if ($fattura->anagrafica['idiva_vendite'] ? $id_iva = $fattura->anagrafica['idiva_vendite'] : $id_iva = $originale->idiva_vendita ?: setting('Iva predefinita'));
+                } else {
+                    if ($fattura->anagrafica['idiva_acquisti'] ? $id_iva = $fattura->anagrafica['idiva_acquisti'] : $id_iva = $originale->idiva_acquisti ?: setting('Iva predefinita'));
+                }
                 $id_anagrafica = $fattura->idanagrafica;
                 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
         

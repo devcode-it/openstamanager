@@ -38,7 +38,7 @@ switch ($operazione) {
                 'telefono' => post('telefono'),
                 'email' => post('email'),
                 'id_nazione' => !empty(post('id_nazione')) ? post('id_nazione') : null,
-                'idzona' => !empty(post('id_zona')) ? post('id_zona') : 0,
+                'idzona' => !empty(post('idzona')) ? post('idzona') : 0,
                 'enable_newsletter' => empty($opt_out_newsletter),
             ]);
              $id_record = $dbo->lastInsertedID();

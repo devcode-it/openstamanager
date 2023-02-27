@@ -470,6 +470,7 @@ function verificaPrezzoArticolo() {
 * Funzione per verificare se lo sconto unitario corrisponde a quello registrato per l\'articolo, e proporre in automatico una correzione.
 */
 function verificaScontoArticolo() {
+    let qta = $("#qta").val().toEnglish();
     let prezzo_unitario_input = $("#prezzo_unitario");
     let prezzo_unitario = prezzo_unitario_input.val().toEnglish();
     let prezzo_anagrafica = getPrezzoPerQuantita(qta);
@@ -479,7 +480,6 @@ function verificaScontoArticolo() {
 
 
     if (prezzo_unitario == prezzo_anagrafica.toFixed(2)) {
-        let qta = $("#qta").val().toEnglish();
         sconto_previsto = getScontoPerQuantita(qta);
     } else if (prezzo_unitario == prezzo_listino.toFixed(2)) {
         sconto_previsto = getScontoListino();
@@ -548,6 +548,7 @@ function aggiornaPrezzoArticolo(aggiorna = "") {
 * Funzione per aggiornare lo sconto unitario sulla base dei valori automatici.
 */
 function aggiornaScontoArticolo() {
+    let qta = $("#qta").val().toEnglish();
     let prezzo_unitario_input = $("#prezzo_unitario");
     let prezzo_unitario = prezzo_unitario_input.val().toEnglish();
     let prezzo_anagrafica = getPrezzoPerQuantita(qta);
@@ -557,7 +558,6 @@ function aggiornaScontoArticolo() {
 
 
     if (prezzo_unitario == prezzo_anagrafica.toFixed(2)) {
-        let qta = $("#qta").val().toEnglish();
         sconto_previsto = getScontoPerQuantita(qta);
     } else if (prezzo_unitario == prezzo_listino.toFixed(2)) {
         sconto_previsto = getScontoListino();

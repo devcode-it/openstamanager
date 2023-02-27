@@ -157,7 +157,7 @@ foreach ($dettagli as $key => $dettaglio) {
                            {[ "type": "number", "name": "prezzo_unitario['.$key.']", "icon-after": "'.currency().'", "value": "'.($prezzi_ivati ? $dettaglio->prezzo_unitario_ivato : $dettaglio->prezzo_unitario).'" ]}
                         </td>
                         <td>
-                           {[ "type": "number", "name": "sconto['.$key.']", "min-value": 0, "value": "'.$dettaglio->sconto.'", "icon-after":"%" ]}
+                           {[ "type": "number", "name": "sconto['.$key.']", "min-value": 0, "value": "'.$dettaglio->sconto_percentuale.'", "icon-after":"%" ]}
                         <td>
                             <button type="button" class="btn btn-xs btn-danger" onclick="rimuoviPrezzo(this)">
                                 <i class="fa fa-trash"></i>

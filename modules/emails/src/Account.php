@@ -38,12 +38,12 @@ class Account extends Model
         'microsoft' => [
             'name' => 'Microsoft',
             'class' => Microsoft::class,
-            'help' => 'https://docs.openstamanager.com/v/2.4.40/configurazioni/configurazione-oauth2#microsoft',
+            'help' => 'https://docs.openstamanager.com/v/2.4.41/configurazioni/configurazione-oauth2#microsoft',
         ],
         'google' => [
             'name' => 'Google',
             'class' => Google::class,
-            'help' => 'https://docs.openstamanager.com/v/2.4.40/configurazioni/configurazione-oauth2#google',
+            'help' => 'https://docs.openstamanager.com/v/2.4.41/configurazioni/configurazione-oauth2#google',
         ],
     ];
 

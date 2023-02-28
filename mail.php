@@ -178,7 +178,7 @@ echo '
                 'label' => tr('Contenuto'),
                 'name' => 'body',
                 'id' => 'body_'.rand(0, 999),
-                'value' => json_encode($body),
+                'value' => $body,
             ]);
 					
             echo'

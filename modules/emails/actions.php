@@ -69,7 +69,7 @@ switch (post('op')) {
         $id_record = $dbo->lastInsertedID();
         $dbo->query('DROP TEMPORARY TABLE tmp');
 
-        $dbo->query('UPDATE em_templates SET name = CONCAT (name, " (copia)") WHERE id = '.prepare($id_record));
+        $dbo->query('UPDATE em_templates SET name = CONCAT (name, " (copia)"), predefined=0 WHERE id = '.prepare($id_record));
 
         flash()->info(tr('Template duplicato correttamente!'));
 

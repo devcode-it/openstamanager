@@ -487,7 +487,7 @@ $operations['crea-preventivo'] = [
         'msg' => tr('Ogni articolo selezionato, verrà aggiunto al preventivo').'
         <br><br>{[ "type": "text", "label": "'.tr('Nome preventivo').'", "name": "nome", "required": 1 ]}
         {[ "type": "select", "label": "'.tr('Cliente').'", "name": "id_cliente", "ajax-source": "clienti", "required": 1 ]}
-        {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(["id_module" => $id_preventivi, 'is_sezionale' => 1]).', "value": "'.$id_segment.'" ]}
+        {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(["id_module" => $id_preventivi, 'is_sezionale' => 1]).', "value": "'.$id_segment.'", "select-options-escape": true ]}
         {[ "type": "select", "label": "'.tr('Tipo di attività').'", "name": "id_tipo", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento", "required": 1 ]}
         {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "value": "-now-" ]}',
         'button' => tr('Procedi'),
@@ -501,7 +501,7 @@ $operations['change-categoria'] = [
         'title' => tr('Cambiare la categoria e la sottocategoria?'),
         'msg' => tr('Per ciascun articolo selezionato, verrà modificata la categoria e la sottocategoria').'
         <br><br>{[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 1, "ajax-source": "categorie", "extra": "onchange=\"$(\'#subcategoria\').enable();updateSelectOption(\'id_categoria\', $(\'#id_categoria\').val());session_set(\'superselect,id_categoria\', $(\'#id_categoria\').val(), 0);$(\'#subcategoria\').val(null).trigger(\'change\');\"" ]}<br>
-        {[ "type": "select", "label": "'.tr('Sottocategoria').'", "name": "subcategoria", "ajax-source": "sottocategorie", "select-options": "{\'id_categoria\': 0}", "disabled": "1" ]}',
+        {[ "type": "select", "label": "'.tr('Sottocategoria').'", "name": "subcategoria", "ajax-source": "sottocategorie", "select-options": "{\'id_categoria\': 0}", "disabled": "1", "select-options-escape": true ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
     ],

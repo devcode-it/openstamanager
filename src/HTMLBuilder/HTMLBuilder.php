@@ -487,6 +487,9 @@ class HTMLBuilder
             // Fix per la presenza di apici doppi
             if (!empty($value)){
                 $value = prepareToField(is_array($value) ? implode(' ', $value) : $value);
+                if ($key == 'data-select-options' && $values['select-options-escape']) {
+                    $value = htmlentities($value, ENT_COMPAT);
+                }
             }
             if (string_contains($result, '|'.$key.'|')) {
                 $result = str_replace('|'.$key.'|', $value, $result);

@@ -121,7 +121,7 @@ switch (post('op')) {
         } else {
             flash()->warning(tr('Nessun ordine fatturato!'));
         }
-    break;
+        break;
 
     case 'cambia_stato':
         $id_stato = post('id_stato');
@@ -144,7 +144,7 @@ switch (post('op')) {
             flash()->warning(tr('Nessun ordine modificato!'));
         }
 
-    break;
+        break;
 
     case 'unisci_rdo':
         $id_stato = post('id_stato');
@@ -193,7 +193,7 @@ switch (post('op')) {
             flash()->warning(tr('Nessun ordine creato!'));
         }
 
-    break;
+        break;
 }
 if ($module['name'] == 'Ordini cliente') {
     $operations['crea_fattura'] = [
@@ -201,7 +201,7 @@ if ($module['name'] == 'Ordini cliente') {
         'data' => [
             'title' => tr('Fatturare i _TYPE_ selezionati?', ['_TYPE_' => strtolower($module['name'])]),
             'msg' => '{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle _TYPE_ non ancora emesse?', ['_TYPE_' => strtolower($module_fatture)]).'", "placeholder": "'.tr('Aggiungere alle _TYPE_ nello stato bozza?', ['_TYPE_' => strtolower($module_fatture)]).'</small>", "name": "accodare" ]}
-            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(["id_module" => $id_fatture, 'is_sezionale' => 1]).', "value": "'.$id_segment.'" ]}
+            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(["id_module" => $id_fatture, 'is_sezionale' => 1]).', "value": "'.$id_segment.'", "select-options-escape": true ]}
             {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, CONCAT(codice_tipo_documento_fe, \' - \', descrizione) AS descrizione FROM co_tipidocumento WHERE enabled = 1 AND dir =\'entrata\' ORDER BY codice_tipo_documento_fe", "value": "'.$idtipodocumento.'" ]}',
             'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',
@@ -215,7 +215,7 @@ if ($module['name'] == 'Ordini cliente') {
             'data' => [
                 'title' => tr('Unire gli ordini selezionati?'),
                 'msg' => tr('Gli ordini saranno processati solo se in uno dei seguenti stati: Bozza, In attesa di conferma, Accettato.<br>Tutti gli ordini processati verranno eliminati e verrà creato un nuovo ordine unificato per fornitore.').'
-                {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(["id_module" => $id_module, 'is_sezionale' => 1]).', "value": "'.$id_segment_ordini.'" ]}
+                {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(["id_module" => $id_module, 'is_sezionale' => 1]).', "value": "'.$id_segment_ordini.'", "select-options-escape": true ]}
                 {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT id, descrizione FROM or_statiordine" ]}
                 {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1]}',
                 'button' => tr('Procedi'),

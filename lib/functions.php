@@ -341,10 +341,7 @@ function redirectOperation($id_module, $id_record)
  */
 function prepareToField($string)
 {
-    $string = str_replace('&quot;', '&amp;quot;', $string);
-    $string = str_replace('"', '&quot;', $string);
-
-    return $string;
+    return str_replace('"', '&quot;', $string);
 }
 
 /**

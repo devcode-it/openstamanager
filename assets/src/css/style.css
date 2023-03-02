@@ -741,6 +741,9 @@ input.small-width {
     border: 1px solid #dd4b46;
 }
 
+.fc-event .fc-event-main {
+    overflow: hidden;
+}
 
 /* Fix per tabs editor */
 

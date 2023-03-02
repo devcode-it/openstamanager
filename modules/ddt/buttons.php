@@ -21,10 +21,10 @@ use Models\Module;
 
 include_once __DIR__.'/../../core.php';
 
+$id_module_collegamento = $ddt->direzione == 'entrata' ? Module::pool('Ddt di acquisto')->id : Module::pool('Ddt di vendita')->id;
+
 // Informazioni sui movimenti interni
 if (!empty($ddt->id_ddt_trasporto_interno)) {
-    $id_module_collegamento = $ddt->direzione == 'entrata' ? Module::pool('Ddt di acquisto')->id : Module::pool('Ddt di vendita')->id;
-
     echo '
 <div class="tip" data-toggle="tooltip" title="'.tr("Questo ddt è impostato sull'anagrafica Azienda, e pertanto rappresenta un trasporto interno di merce: il movimento tra sedi distinte è necessario completato tramite un DDT in direzione opposta").'.">
     <a class="btn btn-info" href="'.base_url().'/editor.php?id_module='.$id_module_collegamento.'&id_record='.$ddt->id_ddt_trasporto_interno.'">
@@ -43,16 +43,17 @@ if (!empty($ddt->id_ddt_trasporto_interno)) {
 function completaTrasporto() {
     swal({
         title: "'.tr('Completare il trasporto?').'",
-        text: "'.tr('Sei sicuro di voler completare il trasporto interno tramite un DDT in direzione opposta?').'",
+        html: "'.tr('Sei sicuro di voler completare il trasporto interno tramite un DDT in direzione opposta?').'" + `<br><br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(["id_module" => $id_module_collegamento, 'is_sezionale' => 1]).', "value": "'.$_SESSION['module_'.$id_module_collegamento]['id_segment'].'" ]}`,
         type: "warning",
         showCancelButton: true,
         confirmButtonClass: "btn btn-lg btn-success",
         confirmButtonText: "'.tr('Completa').'",
     }).then(
         function() {
-            location.href = globals.rootdir + "/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=completa_trasporto&backto=record-edit";
+            location.href = globals.rootdir + "/editor.php?id_module='.$id_module.'&id_segment=" + $("select[name=id_segment]").val() + "&id_record='.$id_record.'&op=completa_trasporto&backto=record-edit";
         },
-        function() {}
+        function() {},
+        start_superselect(),
     );
 }
 </script>';

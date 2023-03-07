@@ -111,6 +111,19 @@ switch ($resource) {
         }
 
         break;
+    
+    case 'gruppi':
+    
+        $query = "SELECT zz_groups.id, zz_groups.nome AS descrizione FROM zz_groups |where| ORDER BY descrizione";
+
+        foreach ($elements as $element) {
+            $filter[] = 'zz_groups.id='.prepare($element);
+        }
+        if (!empty($search)) {
+            $search_fields[] = 'zz_groups.nome LIKE '.prepare('%'.$search.'%');
+        }
+
+        break;
 
     case 'moduli_gruppo':
     

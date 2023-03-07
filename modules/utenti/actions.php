@@ -86,6 +86,10 @@ switch (filter('op')) {
             $id_anagrafica = filter('idanag');
             $utente->id_anagrafica = $id_anagrafica;
 
+            // Gruppo
+            $id_gruppo = filter('idgruppo');
+            $utente->idgruppo = $id_gruppo;
+
             $utente->save();
 
             $dbo->query('DELETE FROM zz_user_sedi WHERE id_user = '.prepare($id_utente));

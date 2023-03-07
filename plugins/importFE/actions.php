@@ -549,6 +549,10 @@ switch (filter('op')) {
                 $riga = $documento->getRiga($namespace.$type, $collegamento['id']);
                 $riga_origine = $riga->getOriginalComponent();
 
+                if (!empty($riga->idarticolo)) {
+                    $desc_conto = $dbo->fetchOne('SELECT CONCAT( co_pianodeiconti2.numero, ".", co_pianodeiconti3.numero, " ", co_pianodeiconti3.descrizione ) AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($riga->articolo->idconto_acquisto))['descrizione'];
+                }
+
                 // Compilazione dei dati
                 $results[$key] = [
                     'documento' => [
@@ -567,6 +571,10 @@ switch (filter('op')) {
                         'prezzo_unitario' => $riga->prezzo_unitario ?: $riga_origine->prezzo_unitario,
                         'id_iva' => $riga->id_iva,
                         'iva_percentuale' => $riga->aliquota->percentuale,
+                        'id_articolo' => $riga->idarticolo,
+                        'desc_articolo' => str_replace(' ', '_', $riga->articolo->codice.' - '.$riga->articolo->descrizione),
+                        'id_conto' => $riga->articolo->idconto_acquisto,
+                        'desc_conto' => str_replace(' ', '_', $desc_conto),
                     ],
                 ];
             }

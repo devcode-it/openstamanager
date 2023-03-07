@@ -816,6 +816,13 @@ function impostaRiferimento(id_riga, documento, riga) {
     } else {
         riga_fe.removeClass("success").addClass("warning");
     }
+
+    if (riga.id_articolo) {
+        input("articoli["+id_riga+"]").getElement().selectSetNew(riga.id_articolo, riga.desc_articolo.replace(/_/g, " ").replace(/\n/g, "<br>"));
+        if (riga.id_conto) {
+            input("conto["+id_riga+"]").getElement().selectSetNew(riga.id_conto, riga.desc_conto.replace(/_/g, " ").replace(/\n/g, "<br>"));
+        }
+    }
 }
 
 // Informazioni visibili sull\'aliquota IVA

@@ -512,6 +512,10 @@ globals.dashboard = {
             weekNumbers: true,
             weekText: "W",
             nowIndicator: true,
+            //height: "auto",
+            //aspectRatio: 1.8,
+            stickyHeaderDates: true,
+            expandRows: true,
             schedulerLicenseKey: "GPL-My-Project-Is-Open-Source",
             hiddenDays: globals.dashboard.show_sunday ? [] : [0],
             headerToolbar: {

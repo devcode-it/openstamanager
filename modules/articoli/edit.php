@@ -197,7 +197,7 @@ use Modules\Iva\Aliquota;
                         </div>
 
                         <div class="col-md-4">
-                            {[ "type": "number", "label": "<?php echo tr('Fattore moltiplicativo'); ?>", "name": "fattore_um_secondaria", "value": "$fattore_um_secondaria$", "decimals": "qta", "help": "<?php echo tr("Fattore moltiplicativo per l'unità di misura da utilizzare nelle stampe di Ordini fornitori"); ?>" ]}
+                            {[ "type": "number", "label": "<?php echo tr('Fattore moltiplicativo'); ?>", "name": "fattore_um_secondaria", "value": "$fattore_um_secondaria$", "decimals": "10", "help": "<?php echo tr("Fattore moltiplicativo per l'unità di misura da utilizzare nelle stampe di Ordini fornitori"); ?>" ]}
                         </div>
 
                         <div class="col-md-4">

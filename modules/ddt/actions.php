@@ -450,6 +450,18 @@ switch (filter('op')) {
     // eliminazione ddt
     case 'delete':
         try {
+            // Se il ddt è collegato ad un ddt di trasporto interno, devo annullare il movimento del magazzino
+            if ($ddt->id_ddt_trasporto_interno !== null) {
+                $ddt_trasporto = DDT::find($ddt->id_ddt_trasporto_interno);
+                // prendo le righe del ddt di trasporto
+                $righe_trasporto = $ddt_trasporto->getRighe();
+
+                // per ogni riga del ddt di trasporto movimento il magazzino con la quantità negativa
+                foreach ($righe_trasporto as $riga_trasporto) {
+                    $riga_trasporto->movimenta(-$riga_trasporto->qta);
+                }
+            }
+            
             $ddt->delete();
 
             flash()->info(tr('Ddt eliminato!'));
@@ -483,8 +495,13 @@ switch (filter('op')) {
         $tipo = Tipo::where('dir', '!=', $ddt->direzione)->first();
         $stato = Stato::where('descrizione', '=', 'Evaso')->first();
 
-        // Duplicazione DDT
-        $copia = DDT::build($ddt->anagrafica, $tipo, $ddt->data, post('id_segment'));
+       // Duplicazione DDT
+        $id_segment = post('id_segment');
+        if (get('id_segment')) {
+            $id_segment = get('id_segment');
+        }
+
+        $copia = DDT::build($ddt->anagrafica, $tipo, $ddt->data, $id_segment);
         $copia->stato()->associate($stato);
         $copia->id_ddt_trasporto_interno = $ddt->id;
         $copia->idaspettobeni = $ddt->idaspettobeni;

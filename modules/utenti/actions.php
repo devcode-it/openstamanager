@@ -100,8 +100,17 @@ switch (filter('op')) {
             foreach ($sedi as $id_sede) {
                 $dbo->query('INSERT INTO `zz_user_sedi` (`id_user`,`idsede`) VALUES ('.prepare($id_utente).', '.prepare($id_sede).')');
             }
+
+            flash()->info(tr("Informazioni per l'utente _USERNAME_ salvate correttamente!", [
+                '_USERNAME_' => $utente->username,
+            ]));
+
         } else {
-            flash()->error(tr('Utente già esistente!'));
+
+            flash()->error(tr("Utente _USERNAME_ già esistente!", [
+                '_USERNAME_' => $username,
+            ]));
+
         }
 
         break;

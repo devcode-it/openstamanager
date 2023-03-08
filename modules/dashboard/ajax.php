@@ -249,7 +249,7 @@ switch (filter('op')) {
         $timeStart = filter('timeStart');
         $timeEnd = filter('timeEnd');
 
-        if (empty($allday)) {
+        if ($allDay == 'false') {
             // Lettura dati intervento di riferimento
             $query = 'SELECT in_interventi_tecnici.idintervento, in_interventi.id, idtecnico, orario_inizio, orario_fine, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS nome_tecnico, (SELECT colore FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS colore FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE in_interventi.id='.prepare($id).' '.Modules::getAdditionalsQuery('Interventi', null, false);
             $rs = $dbo->fetchArray($query);

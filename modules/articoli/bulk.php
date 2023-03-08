@@ -97,9 +97,11 @@ switch (post('op')) {
         }
 
         flash()->info(tr('Prezzi di vendita aggiornati!'));
-        flash()->warning(tr('_NUM_ prezzi di vendita non aggiornati per coefficiente impostato!', [
-            '_NUM_' => $articoli_coeff,
-        ]));
+        if ($articoli_coeff > 0) {
+            flash()->warning(tr('_NUM_ prezzi di vendita non aggiornati per coefficiente impostato!', [
+                '_NUM_' => $articoli_coeff,
+            ]));
+        }
 
         break;
 

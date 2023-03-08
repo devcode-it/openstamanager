@@ -101,10 +101,30 @@ class DefaultHandler implements HandlerInterface
      */
     protected function password(&$values, &$extras)
     {
-        $values['icon-after'] = '<i onclick="togglePassword_'.$values['id'].'()" class="clickable fa" id="'.$values['id'].'_toggle"></i>';
+        $values['icon-after'] = '<i onclick="generatePassword_'.$values['id'].'()" class="clickable fa fa-cog"  id="'.$values['id'].'_generate"></i> | <i onclick="togglePassword_'.$values['id'].'()" class="clickable fa" id="'.$values['id'].'_toggle"></i>';
 
         $result = '
     <script>
+
+       
+        const characters ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        function generateString(length) {
+            let result = " ";
+            const charactersLength = characters.length;
+            for ( let i = 0; i < length; i++ ) {
+                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            return result;
+        }
+
+        function generatePassword_'.$values['id'].'() {
+            var button = $("#'.$values['id'].'_generate");
+            button.attr("title", "'.tr('Genera password').'");
+
+            $("#'.$values['id'].'").val(generateString(10));
+        }
+
         function togglePassword_'.$values['id'].'() {
             var button = $("#'.$values['id'].'_toggle");
 

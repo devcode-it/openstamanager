@@ -144,7 +144,7 @@ if ($dir == 'entrata') {
     </div>';
     }
 
-    $module_fatture = Modules::get('Fatture di acqusito')['id'];
+    $module_fatture = Modules::get('Fatture di acquisto')['id'];
     echo '
     <br>
     <div class="alert alert-warning text-center has_serial hidden">

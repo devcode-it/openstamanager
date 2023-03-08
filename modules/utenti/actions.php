@@ -86,6 +86,10 @@ switch (filter('op')) {
             $id_anagrafica = filter('idanag');
             $utente->id_anagrafica = $id_anagrafica;
 
+            // Gruppo
+            $id_gruppo = filter('idgruppo');
+            $utente->idgruppo = $id_gruppo;
+
             $utente->save();
 
             $dbo->query('DELETE FROM zz_user_sedi WHERE id_user = '.prepare($id_utente));
@@ -96,8 +100,17 @@ switch (filter('op')) {
             foreach ($sedi as $id_sede) {
                 $dbo->query('INSERT INTO `zz_user_sedi` (`id_user`,`idsede`) VALUES ('.prepare($id_utente).', '.prepare($id_sede).')');
             }
+
+            flash()->info(tr("Informazioni per l'utente _USERNAME_ salvate correttamente!", [
+                '_USERNAME_' => $utente->username,
+            ]));
+
         } else {
-            flash()->error(tr('Utente già esistente!'));
+
+            flash()->error(tr("Utente _USERNAME_ già esistente!", [
+                '_USERNAME_' => $username,
+            ]));
+
         }
 
         break;

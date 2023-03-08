@@ -242,9 +242,20 @@ foreach ($righe as $riga) {
     echo '
             <td class="text-center">';
 
-    if ($record['stato'] != 'Pagato' && $record['stato'] != 'Emessa') {
+    if ($dir == 'uscita'){
         echo '
-                <div class="input-group-btn">';
+        <div class="input-group-btn">';
+
+            if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
+                echo '
+                        <a class="btn btn-primary btn-xs" title="'.tr('Modifica seriali della riga').'" onclick="modificaSeriali(this)">
+                            <i class="fa fa-barcode"></i>
+                        </a>';
+            }
+    } else if ($record['stato'] != 'Pagato' && $record['stato'] != 'Emessa') {
+       
+        echo '
+        <div class="input-group-btn">';
 
         if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
             echo '
@@ -252,7 +263,10 @@ foreach ($righe as $riga) {
                         <i class="fa fa-barcode"></i>
                     </a>';
         }
+    }
 
+    if ($record['stato'] != 'Pagato' && $record['stato'] != 'Emessa') {
+     
         if ($riga->id != $fattura->rigaBollo->id) {
         echo '
                     <a class="btn btn-xs btn-info" title="'.tr('Aggiungi informazioni FE per questa riga').'" onclick="apriInformazioniFE(this)">

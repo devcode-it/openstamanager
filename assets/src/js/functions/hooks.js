@@ -56,35 +56,33 @@ function startHooks() {
  * @param hook
  */
 function startHook(hook, init) {
-    if (document.hasFocus()) {
-        $.ajax({
-            url: globals.rootdir + "/ajax.php",
-            type: "get",
-            data: {
-                op: "hook-lock",
-                id: hook.id,
-            },
-            success: function (data) {
-                var token = JSON.parse(data);
+    $.ajax({
+        url: globals.rootdir + "/ajax.php",
+        type: "get",
+        data: {
+            op: "hook-lock",
+            id: hook.id,
+        },
+        success: function (data) {
+            var token = JSON.parse(data);
 
-                if (init) {
-                    hookCount("#hooks-counter");
+            if (init) {
+                hookCount("#hooks-counter");
 
-                    updateHook(hook);
-                }
+                updateHook(hook);
+            }
 
-                if (token) {
-                    executeHook(hook, token);
-                } else {
-                    var timeout = 10;
+            if (token) {
+                executeHook(hook, token);
+            } else {
+                var timeout = 10;
 
-                    setTimeout(function () {
-                        startHook(hook);
-                    }, timeout * 1000);
-                }
-            },
-        });
-    }
+                setTimeout(function () {
+                    startHook(hook);
+                }, timeout * 1000);
+            }
+        },
+    });
 }
 
 /**

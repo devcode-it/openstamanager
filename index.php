@@ -158,7 +158,7 @@ if (isset($username)) {
 echo ' required>
 					</div>
 
-					{[ "type": "password", "name": "password", "autocomplete": "current-password", "placeholder": "'.tr('Password').'", "icon-before": "<i class=\"fa fa-lock\"></i>" ]}
+					{[ "type": "password", "name": "password", "autocomplete": "current-password", "placeholder": "'.tr('Password').'", "icon-before": "<i class=\"fa fa-lock\"></i>", "extra": "no-generate-pwd" ]}
 
                     <div class="text-right">
                         <small><a href="'.base_path().'/reset.php">'.tr('Password dimenticata?').'</a></small>

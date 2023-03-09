@@ -58,7 +58,7 @@ foreach ($gruppi as $modulo => $widgets) {
                     <i class="tip fa fa-question-circle-o" title="'.$widget['help'].'"</i>' : '').'
                 </td>
                 <td>
-                {[ "type": "select", "name": "dimensione[]", "class": "widgets", "value": "'.$widget['class'].'", "values": "list=\"0\": \"'.tr('Da impostazioni').'\", \"3\": \"'.tr('Piccolo').'\", \"4\": \"'.tr('Medio').'\", \"6\": \"'.tr('Grande').'\", \"12\": \"'.tr('Molto grande').'\"", "extra": "data-id=\"'.$widget['id'].'\"" ]}
+                {[ "type": "select", "name": "dimensione[]", "class": "widgets", "value": "'.$widget['class'].'", "values": "list=\"0\": \"'.tr('Da impostazioni').'\", \"col-md-3\": \"'.tr('Piccolo').'\", \"col-md-4\": \"'.tr('Medio').'\", \"col-md-6\": \"'.tr('Grande').'\", \"col-md-12\": \"'.tr('Molto grande').'\"", "extra": "data-id=\"'.$widget['id'].'\"" ]}
                 </td>
                 <td><small>'.(
                     string_starts_with($widget['location'], 'controller') ?

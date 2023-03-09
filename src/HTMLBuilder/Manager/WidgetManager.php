@@ -245,25 +245,17 @@ class WidgetManager implements ManagerInterface
 
         // Generazione del codice HTML
         if (!empty($widgets)) {
-            foreach ($widgets as $widget) {
-                $row_max = empty($widget['class'])? setting('Numero massimo Widget per riga') : $widget['class'];
-            }
-        
-
             $result = '
 <ul class="row widget" id="widget-'.$options['position'].'" data-class="">';
 
             // Aggiungo ad uno ad uno tutti i widget
             foreach ($widgets as $widget) {
-                if ($widgets[0]['id_module'] == $database->fetchOne('SELECT id FROM zz_modules WHERE title = "Stato dei servizi"')['id']) {
+                if ($widget['id_module'] == $database->fetchOne('SELECT id FROM zz_modules WHERE title = "Stato dei servizi"')['id']) {
                     $result .= '
-                    <li class="col-sm-6 col-md-4 col-lg-'.$widget['class'].' li-widget" id="widget_'.$widget['id'].'" style="height:100% !important;" data-id="'.$widget['id'].'">';
-                } else if (empty($widget['class'])) {
-                    $result .= '
-                    <li class="col-sm-6 col-md-4 col-lg-'.intval(12 / $row_max).' li-widget" id="widget_'.$widget['id'].'" data-id="'.$widget['id'].'">';
+                    <li class="col-sm-6 col-md-4 li-widget" id="widget_'.$widget['id'].'" style="height:100% !important;" data-id="'.$widget['id'].'">';
                 } else {
                     $result .= '
-                    <li class= "col-sm-6 col-md-4 col-lg-'.$widget['class'].' li-widget" id="widget_'.$widget['id'].'" data-id="'.$widget['id'].'">';
+                    <li class= "col-sm-6 '.($widget['class']?: setting('Dimensione widget predefinita')).' li-widget" id="widget_'.$widget['id'].'" data-id="'.$widget['id'].'">';
                 }
                 $info = array_merge($options, [
                     'id' => $widget['id'],

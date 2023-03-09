@@ -24,6 +24,7 @@ echo '
     <thead>
         <tr>
             <th>'.tr('Nome').'</th>
+            <th>'.tr('Dimensione').'</th>
             <th>'.tr('Ubicazione').'</th>
             <th>'.tr('Stato').'</th>
             <th>'.tr('Posizione').'</th>
@@ -55,6 +56,9 @@ foreach ($gruppi as $modulo => $widgets) {
                 <td>
                     '.$widget['name'].(!empty($widget['help']) ? '
                     <i class="tip fa fa-question-circle-o" title="'.$widget['help'].'"</i>' : '').'
+                </td>
+                <td>
+                {[ "type": "select", "name": "dimensione[]", "class": "widgets", "value": "'.$widget['class'].'", "values": "list=\"0\": \"'.tr('Da impostazioni').'\", \"3\": \"'.tr('Piccolo').'\", \"4\": \"'.tr('Medio').'\", \"6\": \"'.tr('Grande').'\", \"12\": \"'.tr('Molto grande').'\"", "extra": "data-id=\"'.$widget['id'].'\"" ]}
                 </td>
                 <td><small>'.(
                     string_starts_with($widget['location'], 'controller') ?
@@ -250,4 +254,26 @@ function spostaWidget(button) {
         }
     });
 }
+
+$(".widgets").on("change", function() {
+    $.ajax({
+        url: globals.rootdir + "/actions.php",
+        cache: false,
+        type: "POST",
+        dataType: "JSON",
+        data: {
+            op: "cambia-dimensione",
+            id_module: globals.id_module,
+            id: $(this).data("id"),
+            valore: $(this).val()
+        },
+        success: function(data) {
+            renderMessages();
+        },
+        error: function(data) {
+            swal("'.tr('Errore').'", "'.tr('Errore durante il salvataggio dei dati').'", "error");
+        }
+    });
+});
+
 </script>';

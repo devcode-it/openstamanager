@@ -214,7 +214,7 @@ class WidgetManager implements ManagerInterface
 
     protected function group($options)
     {
-        $query = 'SELECT id, id_module FROM zz_widgets WHERE id_module = '.prepare($options['id_module']).' AND (|position|) AND enabled = 1 ORDER BY `order` ASC';
+        $query = 'SELECT id, id_module, class FROM zz_widgets WHERE id_module = '.prepare($options['id_module']).' AND (|position|) AND enabled = 1 ORDER BY `order` ASC';
 
         // Mobile (tutti i widget a destra)
         if (isMobile()) {
@@ -245,12 +245,10 @@ class WidgetManager implements ManagerInterface
 
         // Generazione del codice HTML
         if (!empty($widgets)) {
-            $row_max = setting('Numero massimo Widget per riga');
-            if ($row_max > 6) {
-                $row_max = 6;
-            } elseif ($row_max < 1) {
-                $row_max = 1;
+            foreach ($widgets as $widget) {
+                $row_max = empty($widget['class'])? setting('Numero massimo Widget per riga') : $widget['class'];
             }
+        
 
             $result = '
 <ul class="row widget" id="widget-'.$options['position'].'" data-class="">';
@@ -258,11 +256,14 @@ class WidgetManager implements ManagerInterface
             // Aggiungo ad uno ad uno tutti i widget
             foreach ($widgets as $widget) {
                 if ($widgets[0]['id_module'] == $database->fetchOne('SELECT id FROM zz_modules WHERE title = "Stato dei servizi"')['id']) {
-                $result .= '
-    <li class="col-sm-6 col-md-4 col-lg-5 li-widget" id="widget_'.$widget['id'].'" style="height:100% !important;" data-id="'.$widget['id'].'">';
+                    $result .= '
+                    <li class="col-sm-6 col-md-4 col-lg-'.$widget['class'].' li-widget" id="widget_'.$widget['id'].'" style="height:100% !important;" data-id="'.$widget['id'].'">';
+                } else if (empty($widget['class'])) {
+                    $result .= '
+                    <li class="col-sm-6 col-md-4 col-lg-'.intval(12 / $row_max).' li-widget" id="widget_'.$widget['id'].'" data-id="'.$widget['id'].'">';
                 } else {
-                $result .= '
-    <li class="col-sm-6 col-md-4 col-lg-'.intval(12 / $row_max).' li-widget" id="widget_'.$widget['id'].'" data-id="'.$widget['id'].'">';
+                    $result .= '
+                    <li class= "col-sm-6 col-md-4 col-lg-'.$widget['class'].' li-widget" id="widget_'.$widget['id'].'" data-id="'.$widget['id'].'">';
                 }
                 $info = array_merge($options, [
                     'id' => $widget['id'],

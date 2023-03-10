@@ -1160,3 +1160,10 @@ div.tip {
         font-size: 2.4em;
     }
 }
+
+/*
+* Colore help icon
+*/
+.tip.tooltipstered>.fa-question-circle-o {
+    color: dodgerblue;
+}

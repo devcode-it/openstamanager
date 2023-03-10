@@ -457,7 +457,7 @@ class HTMLBuilder
             // Gestione grafica dell'attributo required
             if (in_array('required', $extras)) {
                 if (!empty($values['label'])) {
-                    $values['label'] .= '*';
+                    $values['label'] .= '<span class="text-red" >*</span>';
                 } elseif (!empty($values['placeholder'])) {
                     $values['placeholder'] .= '*';
                 }

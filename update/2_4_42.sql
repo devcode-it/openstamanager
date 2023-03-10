@@ -23,3 +23,6 @@ ORDER BY
 
 -- Correzione dimensione widget
 UPDATE `zz_settings` SET `valore` = 'col-md-6', `tipo` = 'list[col-md-1,col-md-2,col-md-3,col-md-4,col-md-6]', `nome` = 'Dimensione widget predefinita' WHERE `nome` = 'Numero massimo Widget per riga';
+
+-- Reset class widget
+UPDATE `zz_widgets` SET `class` = NULL;

@@ -85,7 +85,7 @@ class HTMLBuilder
     /** @var array Generatore del contenitore per i campi HTML */
     protected static $wrapper = [
         'class' => Wrapper\HTMLWrapper::class,
-        'istance' => null,
+        'instance' => null,
     ];
 
     /** @var array Elenco dei gestori delle strutture HTML */
@@ -201,7 +201,7 @@ class HTMLBuilder
     }
 
     /**
-     * Restituisce il nome della classe resposabile per la gestione di una determinata tipologia di tag di input.
+     * Restituisce il nome della classe responsabile per la gestione di una determinata tipologia di tag di input.
      *
      * @param string $input
      *
@@ -215,7 +215,7 @@ class HTMLBuilder
     }
 
     /**
-     * Restituisce l'istanza della classe resposabile per la gestione di una determinata tipologia di tag di input.
+     * Restituisce l'istanza della classe responsabile per la gestione di una determinata tipologia di tag di input.
      *
      * @param string $input
      *
@@ -232,7 +232,7 @@ class HTMLBuilder
     }
 
     /**
-     * Imposta una determinata classe come resposabile per la gestione di una determinata tipologia di tag di input.
+     * Imposta una determinata classe come responsabile per la gestione di una determinata tipologia di tag di input.
      *
      * @param string       $input
      * @param string|mixed $class
@@ -457,7 +457,7 @@ class HTMLBuilder
             // Gestione grafica dell'attributo required
             if (in_array('required', $extras)) {
                 if (!empty($values['label'])) {
-                    $values['label'] .= '*';
+                    $values['label'] .= '<span class="text-red" >*</span>';
                 } elseif (!empty($values['placeholder'])) {
                     $values['placeholder'] .= '*';
                 }

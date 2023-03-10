@@ -157,6 +157,10 @@ a:focus {
     padding: 0 0px;
 }
 
+.no-padding-left {
+    padding-left: 0px !important;
+}
+
 .box-center {
     width: 600px;
     margin: 7% auto
@@ -297,6 +301,10 @@ span.form-control {
     width: 91.5%;
     left: 15px;
     padding: 5px;
+}
+
+.input-group .input-group-addon {
+    background-color: transparent;
 }
 
 .input-group-addon {
@@ -1163,4 +1171,29 @@ div.tip {
     html body.sidebar-mini.sidebar-mini.sidebar-collapse i.fa.fa-user-circle-o.fa-3x.pull-left {
         font-size: 2.4em;
     }
+}
+
+/*
+* Colore help icon
+*/
+.tip.tooltipstered>.fa-question-circle-o {
+    color: dodgerblue;
+}
+
+/*
+* Colore testo btn-box-tool
+*/
+.btn-box-tool {
+    color: #2e2e2e;
+    padding-left: 100px;
+}
+
+.btn-box-tool:hover {
+    color: #000000;
+}
+
+.select2-container--bootstrap .select2-selection--multiple .select2-search--inline .select2-search__field {
+    height: 23px;
+    padding: 3px 12px;
+    margin-top: 4px;
 }

@@ -101,7 +101,8 @@ class DefaultHandler implements HandlerInterface
      */
     protected function password(&$values, &$extras)
     {
-        $values['icon-after'] = '<i onclick="generatePassword_'.$values['id'].'()" class="clickable fa fa-cog"  id="'.$values['id'].'_generate"></i> | <i onclick="togglePassword_'.$values['id'].'()" class="clickable fa" id="'.$values['id'].'_toggle"></i>';
+
+        $values['icon-after'] = '<i onclick="togglePassword_'.$values['id'].'()" class="clickable fa" id="'.$values['id'].'_toggle"></i>';
 
         $result = '
     <script>
@@ -146,6 +147,11 @@ class DefaultHandler implements HandlerInterface
     </script>';
 
         if (!empty($values['strength'])) {
+
+
+            $values['icon-after'] .= ' | <i onclick="generatePassword_'.$values['id'].'()" class="clickable fa fa-cog"  id="'.$values['id'].'_generate"></i>';
+   
+
             $result .= '
     <div id="'.$values['id'].'_viewport_progress"></div>
 

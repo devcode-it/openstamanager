@@ -29,6 +29,26 @@ use Carbon\Carbon;
 $id = post('id');
 
 switch (filter('op')) {
+    
+    case 'cambia-dimensione':
+        $result = $dbo->update('zz_widgets', [
+            'class' => post('valore')
+        ], [
+            'id' => post('id')
+        ]);
+        
+        echo json_encode([
+            'result' => $result,
+        ]);
+
+        if ($result) {
+            flash()->info('Impostazione modificata con successo!');
+        } else {
+            flash()->error('Errore durante il salvataggio!');
+        }
+
+        break;
+
     case 'rimuovi-modulo':
         $id = filter('id');
         $is_plugin = filter('tipo') == 'plugin';

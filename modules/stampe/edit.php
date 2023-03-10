@@ -98,6 +98,42 @@ use Models\PrintTemplate;
 </form>
 
 <?php
+
+// Opzioni utilizzabili
+// Lettura delle opzioni per il template di stampa
+
+echo '
+<!-- Istruzioni per il contenuto -->
+<div class="box box-info">
+    <div class="box-header">
+        <h3 class="box-title">'.tr('Opzioni').'</h3>
+    </div>
+
+    <div class="box-body">';
+
+if (!empty($record['available_options'])) {
+    $available_options = json_decode($record['available_options']);
+    echo '
+        <p>'.tr('Puoi utilizzare le seguenti opzioni per generare la stampa').':</p>
+        <ul>';
+
+    foreach ($available_options as $option => $value) {
+        echo '
+            <li><code>'.$option.'</code>'.((!empty($value)) ? ' <span class="label label-default" >'.$value.'</span>' : '').'</li>';
+    }
+
+    echo '
+        </ul>';
+} else {
+    echo '
+        <p><i class="fa fa-warning"></i> '.tr('Non sono state definite opzioni da utilizzare per la stampa').'.</p>';
+}
+
+echo '
+    </div>
+</div>';
+
+
 // Variabili utilizzabili
 $module = Modules::get($record['id_module']);
 $variables = $module->getPlaceholders($id_record);

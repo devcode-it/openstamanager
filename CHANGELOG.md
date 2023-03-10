@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.42 (2023-03-10)](#2442-2023-03-10)
 - [2.4.41 (2023-02-27)](#2441-2023-02-27)
 - [2.4.40 (2023-02-17)](#2440-2023-02-17)
 - [2.4.39 (2023-01-13)](#2439-2023-01-13)
@@ -52,6 +53,31 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
+
+## 2.4.42 (2023-03-10)
+### Aggiunto (Added)
+- Aggiunta la gestione della provvigione in fase di aggiunta riga
+- Aggiunta la selezione del sezionale in ddt trasferimento fra sedi
+- Aggiunta impostazione di articolo e conto in fase di import FE
+- Aggiunta possibilità di cambiare gruppo agli utenti
+- Aggiunto messaggio aggiornamento utente
+- Aggiunta possibilità di generare password casuali
+- Aggiunta inserimento seriale in fatture di acquisto emesse 
+- Aggiunta impostazione per forzare la dimensione dei widget in Dashboard
+### Modificato (Changed)
+- Migliorata la visualizzazione delle attività in Dashboard
+- Migliorata la gestione del fattore moltiplicativo
+- Migliorati i riferimenti in fase di importazione fatture elettroniche
+### Fixed
+- Corretto il suggerimento dello sconto articolo
+- Corretta la visualizzazione dello sconto per range nei listini
+- Corretta l'impostazione della zona in fase di aggiunta sede
+- Corretta la duplicazione di un template email
+- Corretto l'inserimento di articoli con quantità negativa in ordini clienti e preventivi
+- Corretto l'inserimento di apici in select-options
+- Corretto l'ordinamento delle checklist
+- Corretta la visualizzazione tooltip eventi AllDay
+- Corretti i prezzi nei documenti di acquisto
 ## 2.4.41 (2023-02-27)
 ### Aggiunto (Added)
 - Aggiunta la modifica automatica del piano dei conti per clienti e fornitori

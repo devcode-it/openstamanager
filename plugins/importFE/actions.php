@@ -375,6 +375,11 @@ switch (filter('op')) {
         // Iterazione sulle singole righe
         $righe = $fattura_pa->getRighe();
         foreach ($righe as $key => $riga) {
+            // Se la riga è descrittiva non la collego a documenti
+            if ($riga['PrezzoTotale'] == 0) {
+                continue;
+            }
+
             $collegamento = null;
             $match_documento_da_fe = true;
 
@@ -421,6 +426,8 @@ switch (filter('op')) {
                 AND
                 dt_ddt.idanagrafica = ".prepare($anagrafica->id)."
                 AND
+                dt_righe_ddt.qta > dt_righe_ddt.qta_evasa
+                AND
                 |where|";
 
             // Ricerca di righe DDT con stesso Articolo
@@ -457,6 +464,8 @@ switch (filter('op')) {
                     AND
                     or_ordini.idanagrafica = ".prepare($anagrafica->id)."
                     AND
+                    or_righe_ordini.qta > or_righe_ordini.qta_evasa
+                    AND
                     |where|";
 
                 // Ricerca di righe Ordine con stesso Articolo
@@ -490,13 +499,13 @@ switch (filter('op')) {
                 CONCAT('DDT num. ', IF(numero_esterno != '', numero_esterno, numero), ' del ', DATE_FORMAT(data, '%d/%m/%Y'), ' [', (SELECT descrizione FROM dt_statiddt WHERE id = idstatoddt)  , ']') AS opzione
             FROM dt_righe_ddt
                 INNER JOIN dt_ddt ON dt_ddt.id = dt_righe_ddt.idddt
-            WHERE dt_ddt.idanagrafica = ".prepare($anagrafica->id)." AND |where_ddt|
+            WHERE dt_ddt.idanagrafica = ".prepare($anagrafica->id)." AND |where_ddt| AND dt_righe_ddt.qta > dt_righe_ddt.qta_evasa
 
             UNION SELECT or_righe_ordini.id, or_righe_ordini.idordine AS id_documento, or_righe_ordini.is_descrizione, or_righe_ordini.idarticolo, or_righe_ordini.is_sconto, 'ordine' AS ref,
                 CONCAT('Ordine num. ', IF(numero_esterno != '', numero_esterno, numero), ' del ', DATE_FORMAT(data, '%d/%m/%Y'), ' [', (SELECT descrizione FROM or_statiordine WHERE id = idstatoordine)  , ']') AS opzione
             FROM or_righe_ordini
                 INNER JOIN or_ordini ON or_ordini.id = or_righe_ordini.idordine
-            WHERE or_ordini.idanagrafica = ".prepare($anagrafica->id).' AND |where_ordini|';
+            WHERE or_ordini.idanagrafica = ".prepare($anagrafica->id).' AND |where_ordini| AND or_righe_ordini.qta > or_righe_ordini.qta_evasa';
 
                 // Ricerca di righe DDT/Ordine con stesso Articolo
                 if (!empty($id_articolo)) {

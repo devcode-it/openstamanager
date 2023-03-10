@@ -502,14 +502,14 @@ if ($read_only || !empty($block_edit)) {
 			});
 
 			// questo controllo blocca il modulo vendita al banco, dopo la lettura con barcode, appare il messaggio di conferma
-            window.onbeforeunload = function(e) {
+            window.addEventListener("beforeunload", function(e) {
                 if(content_was_modified) {
 					var dialogText = "Uscire senza salvare?";
 					e.returnValue = dialogText;
 					$("#main_loading").fadeOut();
 					return dialogText;
                 }
-            };
+            });
 
 			 window.addEventListener("unload", function(e) {
 				$("#main_loading").show();

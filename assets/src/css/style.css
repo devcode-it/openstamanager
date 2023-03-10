@@ -299,6 +299,10 @@ span.form-control {
     padding: 5px;
 }
 
+.input-group .input-group-addon {
+    background-color: transparent;
+}
+
 .input-group-addon {
     padding: 0px 12px;
 }
@@ -1166,4 +1170,15 @@ div.tip {
 */
 .tip.tooltipstered>.fa-question-circle-o {
     color: dodgerblue;
+}
+
+/*
+* Colore testo btn-box-tool
+*/
+.btn-box-tool {
+    color: #2e2e2e;
+}
+
+.btn-box-tool:hover {
+    color: #000000;
 }

@@ -54,7 +54,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
 
-## 2.4.41 (2023-02-27)
+## 2.4.42 (2023-03-10)
 ### Aggiunto (Added)
 - Aggiunta la gestione della provvigione in fase di aggiunta riga
 - Aggiunta la selezione del sezionale in ddt trasferimento fra sedi

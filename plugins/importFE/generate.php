@@ -566,7 +566,7 @@ if (!empty($righe)) {
 
                             <div class="col-md-1 box-tools">
                                 <br>
-                                <button type="button" class="btn btn-box-tool" data-widget="collapse" onclick="$(this).find(\'i\').toggleClass(\'fa-plus\').toggleClass(\'fa-minus\');">
+                                <button type="button" class="btn btn-box-tool no-padding-left" data-widget="collapse" onclick="$(this).find(\'i\').toggleClass(\'fa-plus\').toggleClass(\'fa-minus\');">
                                 <i class="fa fa-plus"></i> '.tr('Altro').'
                                 </button>
                             </div>

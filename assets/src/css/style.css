@@ -157,6 +157,10 @@ a:focus {
     padding: 0 0px;
 }
 
+.no-padding-left {
+    padding-left: 0px !important;
+}
+
 .box-center {
     width: 600px;
     margin: 7% auto
@@ -1177,8 +1181,15 @@ div.tip {
 */
 .btn-box-tool {
     color: #2e2e2e;
+    padding-left: 100px;
 }
 
 .btn-box-tool:hover {
     color: #000000;
+}
+
+.select2-container--bootstrap .select2-selection--multiple .select2-search--inline .select2-search__field {
+    height: 23px;
+    padding: 3px 12px;
+    margin-top: 4px;
 }

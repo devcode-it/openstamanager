@@ -1035,6 +1035,7 @@ switch (post('op')) {
                 $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);
                 $articolo->setSconto($sconto, 'PRC');
                 $articolo->setProvvigione($provvigione ?: 0, 'PRC');
+                $articolo->idsede_partenza = $intervento->idsede_partenza;
                 $articolo->save();
 
                 

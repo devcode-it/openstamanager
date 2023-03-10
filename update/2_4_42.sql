@@ -26,3 +26,7 @@ UPDATE `zz_settings` SET `valore` = 'col-md-3', `tipo` = 'list[col-md-1,col-md-2
 
 -- Reset class widget
 UPDATE `zz_widgets` SET `class` = NULL;
+
+-- Aggiunto available_options per zz_prints
+ALTER TABLE `zz_prints` ADD `available_options` VARCHAR(255) NULL AFTER `enabled`;
+UPDATE `zz_prints` SET `available_options` = '{"pricing":"Visualizza prezzi sulla stampa", "last-page-footer": "Visualizza footer ultima pagina", "hide-item-number": "Nasconde codici degli articoli"}' WHERE `zz_prints`.`name` = 'Preventivo'; 

@@ -128,7 +128,7 @@ foreach ($righe as $riga) {
                 '.nl2br($r['descrizione']);
 
     if ($riga->isArticolo()) {
-        if ($documento->direzione == 'entrata' && !$options['hide_codice']) {
+        if ($documento->direzione == 'entrata' && !$options['hide-item-number']) {
             // Codice articolo
             $text = tr('COD. _COD_', [
                 '_COD_' => $riga->codice,

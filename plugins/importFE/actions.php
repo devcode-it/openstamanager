@@ -353,10 +353,13 @@ switch (filter('op')) {
                                     break;
                                 }
                             }
-                            $dati_ddt[(int)$linea] = [
-                                'numero' => $dato['NumeroDDT'],
-                                'anno' => ( new Carbon($dato['DataDDT']) )->format('Y'),
-                            ];
+
+                            if (!empty($dato['DataDDT'])) {
+                            	$dati_ddt[(int)$linea] = [
+		                        'numero' => $dato['NumeroDDT'],
+		                        'anno' => ( new Carbon($dato['DataDDT']) )->format('Y'),
+	                            ];
+                            }
                         }
                     } else {
                         foreach ($replaces as $replace) {
@@ -365,10 +368,12 @@ switch (filter('op')) {
                                 break;
                             }
                         }
-                        $dati_ddt[(int)$dato['RiferimentoNumeroLinea']] = [
-                            'numero' => $dato['NumeroDDT'],
-                            'anno' => ( new Carbon($dato['DataDDT']) )->format('Y'),
-                        ];
+			            if (!empty($dato['DataDDT'])) {
+                            $dati_ddt[(int)$dato['RiferimentoNumeroLinea']] = [
+                                'numero' => $dato['NumeroDDT'],
+                                'anno' => ( new Carbon($dato['DataDDT']) )->format('Y'),
+                            ];
+			            }
                     }
                 }
 

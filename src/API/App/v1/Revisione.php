@@ -24,7 +24,7 @@ use API\Resource;
 
 class Revisione extends Resource implements RetrieveInterface
 {
-    const REVISION = '5';
+    const REVISION = '6';
 
     public function retrieve($request)
     {

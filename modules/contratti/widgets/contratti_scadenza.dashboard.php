@@ -30,7 +30,7 @@ FROM co_contratti WHERE
         rinnovabile = 1 AND
         YEAR(data_conclusione) > 1970 AND
         co_contratti.id NOT IN (SELECT idcontratto_prev FROM co_contratti contratti)
-HAVING (ore_rimanenti < ore_preavviso_rinnovo OR DATEDIFF(data_conclusione, NOW()) < ABS(giorni_preavviso_rinnovo))
+HAVING (ore_rimanenti <= ore_preavviso_rinnovo OR DATEDIFF(data_conclusione, NOW()) <= ABS(giorni_preavviso_rinnovo))
 ORDER BY giorni_rimanenti ASC, ore_rimanenti ASC');
 
 if (!empty($rs)) {
@@ -40,7 +40,7 @@ if (!empty($rs)) {
         <th width="50%">'.tr('Contratto').'</th>
         <th width="15%" class="text-center">'.tr('Data inizio').'</th>
         <th width="15%" class="text-center">'.tr('Data conclusione').'</th>
-        <th width="20%">'.tr('Rinnovo').'</th>
+        <th width="20%">'.tr('Scadenza').'</th>
     </tr>';
 
     foreach ($rs as $r) {
@@ -61,7 +61,16 @@ if (!empty($rs)) {
             $ore_rimanenti = str_replace('_NUM_', abs($r['ore_rimanenti']), $ore_rimanenti);
         }
 
-        $scadenza = ($r['giorni_rimanenti'] > 0) ? tr('scade tra _DAYS_ giorni') : tr('scaduto da _DAYS_ giorni');
+        if ($r['giorni_rimanenti'] > 0) {
+            if ($r['giorni_rimanenti'] > 1) {
+                $scadenza = tr('tra _DAYS_ giorni');
+            } else {
+                $scadenza = tr('tra _DAYS_ giorno');
+            }
+        } else {
+            $scadenza = tr('scaduto da _DAYS_ giorni');
+        } 
+
         $scadenza = str_replace('_DAYS_', abs($r['giorni_rimanenti']), $scadenza);
 
         echo '

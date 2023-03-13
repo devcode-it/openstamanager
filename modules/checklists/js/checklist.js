@@ -56,36 +56,6 @@ class Checklist {
         });
     }
 
-    deleteCheck(id) {
-        this.request({
-            op: "rimuovi-check",
-            check_id: id,
-        });
-
-        return true;
-    }
-
-    toggleCheck(id) {
-        this.request({
-            op: "toggle-check",
-            check_id: id,
-        });
-
-        return true;
-    }
-
-    findCheck(id) {
-        var li = $("#check_" + id);
-
-        return {
-            item: li,
-            input: li.find("input"),
-            info: li.find(".badge"),
-            text: li.find(".text"),
-            children: li.find("ul"),
-        };
-    }
-
     showLoader() {
         $("#loading_" + this.id).removeClass("hide");
     }

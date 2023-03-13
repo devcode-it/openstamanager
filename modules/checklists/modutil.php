@@ -55,7 +55,6 @@ function renderChecklist($check, $level = 1, $parent = 0) {
                         ]) : '').'
                         </span>';
     }
-
     $result .= '
                     </td>'; 
 
@@ -94,7 +93,72 @@ function renderChecklist($check, $level = 1, $parent = 0) {
         </td>
 
         <td style="width:40px;text-align:center;border-top:0px;">
-            <button class="btn btn-xs btn-default handle '.(!$enabled ? 'disabled' : '').'" title="Modifica ordine delle righe" draggable="true">
+            <button class="btn btn-xs btn-default handle" title="Modifica ordine delle righe" draggable="true">
+                <i class="fa fa-sort"></i>
+            </button>
+        </td>
+
+    </tr>';
+
+    return $result;
+}
+
+function renderChecklistInserimento($check, $level = 1, $parent = 0)
+{
+
+    global $record;
+    
+    $margin = ($level*20);
+
+    $result = '
+    <tr id="check_'.$check->id.'" data-id="'.$check->id.'" class="sortablerow sonof_'.$parent.'" >
+        <td style="padding-top:0px;padding-bottom:0px;border-top:0px;">
+            <table class="table" style="margin-bottom:0px;">
+                <tr>';
+
+    $result .= '
+                    <td style="width:40px;border-top:0px;border-left:3px solid #eaeaea;">';
+    $result .= '
+                        <span class="text">'.$check->content.'</span>';
+    $result .= '
+                    </td>'; 
+
+    $result .= '
+                    <td style="width:40px;text-align:right;border-top:0px;">
+                        <div class="input-group-btn">
+                            <button class="btn btn-warning btn-xs" onclick="edit_check(\''.$check->id.'\')"><i class="fa fa-edit"></i></button>
+                            <button class="btn btn-danger btn-xs" onclick="delete_check(\''.$check->id.'\')"><i class="fa fa-trash"></i></button>
+                        </div>
+                    </td>';
+
+
+
+    $result .= '
+                </tr>';
+
+    if(sizeof($check->children)>0){
+        $result .= '
+                <tr>
+                    <td colspan="4" style="padding-left:'.$margin.'px;padding-right:0px;padding-top:0px;padding-bottom:0px;border-top:0px;">
+                        <table class="table" style="margin-bottom:0px;">
+                            <tbody class="sort" data-sonof="'.$check->id.'">';
+            $children = $record->checks()->where('id_parent', $check->id)->orderBy('order')->get();
+            foreach ($children as $child) {
+                $result .= renderChecklistInserimento($child, $level + 1, $check->id);
+            }
+        $result .= '
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>';
+    }
+
+    $result .= '
+            </table>
+        </td>
+
+        <td style="width:40px;text-align:center;border-top:0px;">
+            <button class="btn btn-xs btn-default handle" title="Modifica ordine delle righe" draggable="true">
                 <i class="fa fa-sort"></i>
             </button>
         </td>

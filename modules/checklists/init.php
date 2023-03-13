@@ -21,6 +21,8 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Checklists\Checklist;
 
+$checklist_module = Modules::get('Checklists');
+
 if (isset($id_record)) {
     $record = Checklist::find($id_record);
 }

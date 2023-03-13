@@ -18,16 +18,23 @@
  */
 
 include_once __DIR__.'/../../../core.php';
+use Modules\Checklists\ChecklistItem;
 use Modules\Checklists\Check;
 
 $id_record = get("id_record");
-$record = Check::find($id_record);
+$main_check = get("main_check");
+
+if($main_check){
+    $record = ChecklistItem::find($id_record);
+}else{
+    $record = Check::find($id_record);
+}
 
 ?>
 
 <div class="row">
     <div class="col-md-6">
-        {[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "content", "required": 1, "value": "<?=$record->content?>" ]}
+        {[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "content_edit", "required": 1, "value": "<?=$record->content?>" ]}
     </div>
 </div>
 
@@ -45,7 +52,8 @@ $record = Check::find($id_record);
         $.post('<?php echo $rootdir; ?>/modules/checklists/ajax.php', {
             op: "edit_check",
             id_record: "<?=$id_record?>",
-            content: $('#content').val()
+            content: $('#content_edit').val(),
+            main_check: "<?=$main_check?>",
         }, function(){
             location.reload();
         });

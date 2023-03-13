@@ -19,24 +19,37 @@
 
 include_once __DIR__.'/../../core.php';
 use Modules\Checklists\Check;
+use Modules\Checklists\ChecklistItem;
 
 switch(post('op')){
 
     case "delete_check":
         $id = post('id');
+        $main_check = post('main_check');
 
-        $record = Check::find($id);
+        if($main_check){
+            $record = ChecklistItem::find($id);
+        }else{
+            $record = Check::find($id);
+        }
+
         $record->delete();
 
         break;
 
     case "update_position":
 
+        $main_check = post('main_check');
         $order = explode(',', post('order', true));
 
-        foreach($order as $i => $id){
-            $dbo->query("UPDATE zz_checks SET `order`=".prepare($i)." WHERE id=".prepare($id));
-            echo "UPDATE zz_checks SET `order`=".prepare($i)." WHERE id=".prepare($id);
+        if($main_check){
+            foreach($order as $i => $id){
+                $dbo->query("UPDATE zz_checklist_items SET `order`=".prepare($i)." WHERE id=".prepare($id));
+            }
+        }else{
+            foreach($order as $i => $id){
+                $dbo->query("UPDATE zz_checks SET `order`=".prepare($i)." WHERE id=".prepare($id));
+            }
         }
 
         break;
@@ -65,8 +78,14 @@ switch(post('op')){
 
     case "edit_check":
         $id_record = post('id_record');
+        $main_check = post('main_check');
 
-        $record = Check::find($id_record);
+        if($main_check){
+            $record = ChecklistItem::find($id_record);
+        }else{
+            $record = Check::find($id_record);
+        }
+
         $record->content = post('content');
         $record->save();
 

@@ -68,7 +68,7 @@ $(document).ready(function() {
 });
 </script>';
 
-$checks = $record->checks;
+$checks = $record->mainChecks();
 
 $list = [];
 foreach ($checks as $check) {
@@ -108,12 +108,15 @@ echo '
 
         <ul class="todo-list checklist">';
 
-    $checks = $record->mainChecks();
-    foreach ($checks as $check) {
-        echo renderChecklist($check);
-    }
+echo "      <table class='table'>
+                <tbody class='sort' data-sonof='0'>";
+foreach ($checks as $check) {
+    echo renderChecklistInserimento($check);
+}
+echo "          </tbody>
+            </table>";
 
-    echo '
+echo '
         </ul>
     </div>
 </div>';
@@ -167,4 +170,49 @@ $(document).ready(function() {
 echo '
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> '.tr('Elimina').'
-</a>';
+</a>
+
+<script>
+
+sortable(".sort", {
+    axis: "y",
+    handle: ".handle",
+    cursor: "move",
+    dropOnEmpty: true,
+    scroll: true,
+});
+
+sortable_table = sortable(".sort").length;
+
+for(i=0; i<sortable_table; i++){
+    sortable(".sort")[i].addEventListener("sortupdate", function(e) {
+
+        var sonof = $(this).data("sonof");
+
+        let order = $(this).find(".sonof_"+sonof+"[data-id]").toArray().map(a => $(a).data("id"))
+    
+        $.post("'.$checklist_module->fileurl('ajax.php').'", {
+            op: "update_position",
+            order: order.join(","),
+            main_check: 1,
+        });
+    });
+}
+
+function delete_check(id){
+    if(confirm("Eliminare questa checklist?")){
+        $.post("'.$checklist_module->fileurl('ajax.php').'", {
+            op: "delete_check",
+            id: id,
+            main_check: 1,
+        }, function(){
+            location.reload();
+        });
+    }
+}
+
+function edit_check(id){
+    launch_modal("Modifica checklist", "'.$checklist_module->fileurl('components/edit-check.php').'?id_record="+id+"&main_check=1", 1);
+}
+
+</script>';

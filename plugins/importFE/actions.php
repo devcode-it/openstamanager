@@ -323,10 +323,17 @@ switch (filter('op')) {
                                     break;
                                 }
                             }
-                            $dati_ordini[(int)$linea] = [
-                                'numero' => $dato['IdDocumento'],
-                                'anno' => ( new Carbon($dato['Data']) )->format('Y'),
-                            ];
+
+                            try{
+                                $dati_ordini[(int)$linea] = [
+                                    'numero' => $dato['IdDocumento'],
+                                    'anno' => ( new Carbon($dato['Data']) )->format('Y'),
+                                ];
+                            } catch (Exception $e) {
+                                $dati_ordini[(int)$linea] = [
+                                    'numero' => $dato['IdDocumento'],
+                                ];
+                            }
                         }
                     } else {
                         foreach ($replaces as $replace) {
@@ -335,10 +342,17 @@ switch (filter('op')) {
                                 break;
                             }
                         }
-                        $dati_ordini[(int)$dato['RiferimentoNumeroLinea']] = [
-                            'numero' => $dato['IdDocumento'],
-                            'anno' => ( new Carbon($dato['Data']) )->format('Y'),
-                        ];
+
+                        try{
+                            $dati_ordini[(int)$dato['RiferimentoNumeroLinea']] = [
+                                'numero' => $dato['IdDocumento'],
+                                'anno' => ( new Carbon($dato['Data']) )->format('Y'),
+                            ];
+                        } catch (\Exception $e) {
+                            $dati_ordini[(int)$dato['RiferimentoNumeroLinea']] = [
+                                'numero' => $dato['IdDocumento'],
+                            ];
+                        }
                     }
                 }
         
@@ -354,11 +368,15 @@ switch (filter('op')) {
                                 }
                             }
 
-                            if (!empty($dato['DataDDT'])) {
+                            try{
                             	$dati_ddt[(int)$linea] = [
-		                        'numero' => $dato['NumeroDDT'],
-		                        'anno' => ( new Carbon($dato['DataDDT']) )->format('Y'),
+                                    'numero' => $dato['NumeroDDT'],
+                                    'anno' => ( new Carbon($dato['DataDDT']) )->format('Y'),
 	                            ];
+                            } catch (Exception $e) {
+                                $dati_ddt[(int)$linea] = [
+                                    'numero' => $dato['NumeroDDT'],
+                                ];
                             }
                         }
                     } else {
@@ -368,12 +386,16 @@ switch (filter('op')) {
                                 break;
                             }
                         }
-			            if (!empty($dato['DataDDT'])) {
+			            try{
                             $dati_ddt[(int)$dato['RiferimentoNumeroLinea']] = [
                                 'numero' => $dato['NumeroDDT'],
                                 'anno' => ( new Carbon($dato['DataDDT']) )->format('Y'),
                             ];
-			            }
+                        } catch (Exception $e) {
+                            $dati_ddt[(int)$dato['RiferimentoNumeroLinea']] = [
+                                'numero' => $dato['NumeroDDT'],
+                            ];
+                        }
                     }
                 }
 

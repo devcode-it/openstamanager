@@ -746,11 +746,13 @@ input.small-width {
 .fc-event-primary {
     background-color: #3a87ad;
     border: 1px solid #3a87ad;
+    color:white;
 }
 
 .fc-event-danger {
     background-color: #dd4b46;
     border: 1px solid #dd4b46;
+    color: white;
 }
 
 .fc-event .fc-event-main {

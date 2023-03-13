@@ -334,9 +334,14 @@ switch (filter('op')) {
 
                 $rs = $dbo->fetchArray($query);
 
-                $tooltip = '<b>Prev. '.$rs[0]['numero'].'</b> '.$rs[0]['nome'].''.(($rs[0]['have_attachments']) ? ' <i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'<br><b>'.tr('Cliente').':</b> '.$rs[0]['cliente'];
+                if (!empty($rs[0]['cliente'])){
+                    $tooltip = '<b>Prev. '.$rs[0]['numero'].'</b> '.$rs[0]['nome'].''.(($rs[0]['have_attachments']) ? ' <i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'<br><b>'.tr('Cliente').':</b> '.$rs[0]['cliente'];
+                }else{
+                     $tooltip = tr('Rilascia per aggiungere l\'attività...');
+                }
             }
 
+          
             $tooltip .= '
             <script type="text/javascript">
                 $(".shorten").shorten({
@@ -345,8 +350,10 @@ switch (filter('op')) {
                     showChars : 200
                 });
             </script>';
-
+            
+        
             echo $tooltip;
+          
         }
         break;
 

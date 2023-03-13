@@ -1,3 +1,4 @@
+
 <?php
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
@@ -516,6 +517,10 @@ globals.dashboard = {
             //aspectRatio: 1.8,
             stickyHeaderDates: true,
             expandRows: true,
+            //themeSystem: "bootstrap5",
+            showNonCurrentDates: false,
+            dayMaxEvents: false,
+            eventMaxStack: 4,
             schedulerLicenseKey: "GPL-My-Project-Is-Open-Source",
             hiddenDays: globals.dashboard.show_sunday ? [] : [0],
             headerToolbar: {

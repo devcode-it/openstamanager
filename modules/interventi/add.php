@@ -220,7 +220,7 @@ echo '
                 'name' => 'richiesta',
                 'id' => 'richiesta_add',
                 'required' => 1,
-                'value' => htmlentities($record['richiesta']),
+                'value' => htmlentities($richiesta),
                 'extra' => 'style=\'max-height:80px;\'',
             ]);
             echo '

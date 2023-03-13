@@ -153,7 +153,7 @@ class RiBa
             // Record 50
             $r50 = new Record50();
             $r50->numero_progressivo = $progressivo;
-            $r50->codice_fiscale_creditore = $intestazione->identificativo_creditore;
+            $r50->partita_iva_o_codice_fiscale_creditore = $intestazione->partita_iva_o_codice_fiscale_creditore;
             $r50->riferimento_debito_1 = $ricevuta->descrizione;
             $r50->riferimento_debito_2 = $ricevuta->descrizione_origine;
             $contenuto .= $r50->toCBI().$eol;

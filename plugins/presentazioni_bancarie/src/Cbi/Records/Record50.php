@@ -8,7 +8,7 @@ namespace Plugins\PresentazioniBancarie\Cbi\Records;
  * @property string numero_progressivo Numero progressivo della ricevuta, uguale a quello indicato per il record 14 della disposizione.
  * @property string riferimento_debito_1 Riferimenti al debito.
  * @property string riferimento_debito_2 Riferimenti al debito.
- * @property string codice_fiscale_creditore Codice fiscale/Partita IVA del creditore. Se il campo è valorizzato, il controllo è di validità pertanto va verificata la presenza del CIN e la sua correttezza. L’obbligatorietà viene meno nel caso in cui il campo 82 del tipo record 70 delle “Riba presentate da clientela non residente” sia valorizzato a 1.
+ * @property string partita_iva_o_codice_fiscale_creditore Codice fiscale/Partita IVA del creditore. Se il campo è valorizzato, il controllo è di validità pertanto va verificata la presenza del CIN e la sua correttezza. L’obbligatorietà viene meno nel caso in cui il campo 82 del tipo record 70 delle “Riba presentate da clientela non residente” sia valorizzato a 1.
  */
 class Record50 extends BaseRecord
 {
@@ -28,10 +28,11 @@ class Record50 extends BaseRecord
             'dimensione' => 40,
             'tipo' => 'string',
         ],
-        'codice_fiscale_creditore' => [
+        'partita_iva_o_codice_fiscale_creditore' => [
             'inizio' => 101,
             'dimensione' => 16,
             'tipo' => 'string',
+            'forzaPadding' => STR_PAD_LEFT
         ],
     ];
 

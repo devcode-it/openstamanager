@@ -99,7 +99,7 @@ abstract class BaseRecord implements RecordInterface
 
         // Pad automatico sulla base del tipo
         if ($record['tipo'] == 'string') {
-            $value = $this->padString($value, $record['dimensione']);
+            $value = $this->padString($value, $record['dimensione'], isset($record['forzaPadding']) ? $record['forzaPadding'] : "" );
         } elseif ($record['tipo'] == 'numeric') {
             $value = $this->padNumber($value, $record['dimensione']);
         } elseif ($record['tipo'] == 'constant') {
@@ -112,7 +112,7 @@ abstract class BaseRecord implements RecordInterface
     /**
      * @return string
      */
-    protected function padString(?string $string, int $length)
+    protected function padString(?string $string, int $length, $pad = STR_PAD_RIGHT)
     {
         // Sostituzione di alcuni simboli noti
         $replaces = [
@@ -124,7 +124,11 @@ abstract class BaseRecord implements RecordInterface
 
         $string = substr($string, 0, $length);
 
-        return str_pad($string, $length);
+        if ( $pad == STR_PAD_LEFT || $pad == STR_PAD_RIGHT ) {
+			return str_pad($string, $length, " ", $pad);
+		}
+
+		return str_pad($string, $length, " ");
     }
 
     /**

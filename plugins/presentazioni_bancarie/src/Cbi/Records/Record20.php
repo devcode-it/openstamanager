@@ -35,9 +35,10 @@ class Record20 extends BaseRecord
             'tipo' => 'string',
         ],
         'descrizione_creditore_4' => [
-            'inizio' => 91,
+            'inizio' => 83,
             'dimensione' => 24,
             'tipo' => 'string',
+            'forzaPadding' => STR_PAD_LEFT
         ],
     ];
 

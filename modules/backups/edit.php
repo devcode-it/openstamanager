@@ -53,7 +53,9 @@ echo '<p>'.tr('Il backup è molto importante perché permette di creare una copi
 if (string_starts_with($backup_dir, base_dir())) {
     echo '
     <div class="alert alert-warning">
-        <i class="fa fa-warning"></i> '.tr('Per motivi di sicurezza si consiglia di modificare il percorso della cartella di backup al di fuori della cartella di OSM, possibilmente in una unità esterna').'.
+        <i class="fa fa-warning"></i> '.tr('Per motivi di sicurezza si consiglia di modificare il percorso della cartella di backup al di fuori della cartella di OSM, possibilmente in una unità esterna. Puoi modificare il percorso di backup dal tuo file _FILE_', [
+            '_FILE_' => '<b>config.inc.php</b>',
+        ]).'.
     </div>';
 }
 
@@ -138,17 +140,14 @@ function loadSize(number, id){
 echo '
 <div class="row">
     <div class="col-md-8">
-        <div class="callout callout-success">
-            <p>'.$message.'</p>
-			<p><small>'.tr('Spazio totale occupato dai backup: _SPAZIO_', [
+        <div class="alert bg-light-blue-active">
+            <p>'.$message.'</p><br>
+			<p>'.tr('Spazio totale occupato dai backup: _SPAZIO_', [
                 '_SPAZIO_' => '<i id="total_size"></i>',
-            ]).'</small></p>
-			<p><small>'.tr('Numero di backup: _NUM_', [
+            ]).'</p>
+			<p>'.tr('Numero di backup: _NUM_', [
                 '_NUM_' => count($backups),
-            ]).'</small></p>
-            <p><small>'.tr('Puoi modificare il percorso di backup dal tuo file _FILE_', [
-                '_FILE_' => '<b>config.inc.php</b>',
-            ]).'</small></p>
+            ]).'</p>
         </div>
     </div>
 
@@ -249,8 +248,8 @@ if (file_exists($backup_dir)) {
             }
         } else {
             echo '
-        <div class="alert alert-warning">
-            <i class="fa fa-warning"></i> '.tr('Non è stato trovato alcun backup di questa tipologia!').'
+        <div class="alert alert-info">
+            <i class="fa fa-info-circle"></i> '.tr('Non è stato trovato alcun backup di questa tipologia.').'
         </div>';
         }
 
@@ -299,8 +298,8 @@ if (file_exists($backup_dir)) {
             }
         } else {
             echo '
-        <div class="alert alert-warning">
-            <i class="fa fa-warning"></i> '.tr('Non è stato trovato alcun backup di questa tipologia!').'
+        <div class="alert alert-info">
+            <i class="fa fa-info-circle"></i> '.tr('Non è stato trovato alcun backup di questa tipologia.').'
         </div>';
         }
 

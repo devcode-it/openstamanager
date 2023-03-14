@@ -37,11 +37,11 @@ echo '
                 echo '
                 </th>
                 <th width="35" class="text-center" >'.tr('#').'</th>
-                <th>'.tr('Descrizione').'</th>
-                <th class="text-center" width="150">'.tr('Q.tà').'</th>
-                <th class="text-center" width="150">'.tr('Prezzo unitario').'</th>
-                <th class="text-center" width="150">'.tr('Iva unitaria').'</th>
-                <th class="text-center" width="150">'.tr('Importo').'</th>
+                <th class="text-left" width="400">'.tr('Descrizione').'</th>
+                <th class="text-center" width="80">'.tr('Q.tà').'</th>
+                <th class="text-center" width="80">'.tr('Prezzo unitario').'</th>
+                <th class="text-center" width="80">'.tr('Iva unitaria').'</th>
+                <th class="text-center" width="80">'.tr('Importo').'</th>
                 <th width="120"></th>
             </tr>
         </thead>

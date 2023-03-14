@@ -829,6 +829,7 @@ $(document).ready(function() {
                 $("#barcode").val("");
                 $("#id_articolo").selectReset();
                 caricaRighe(null);
+                caricaCosti();
             }
         });
     }

@@ -4,9 +4,9 @@ ALTER TABLE `an_anagrafiche` CHANGE `idlistino_acquisti` `id_piano_sconto_acquis
 ALTER TABLE `an_anagrafiche` CHANGE `idlistino_vendite` `id_piano_sconto_vendite` INT(11) NULL DEFAULT NULL; 
 ALTER TABLE `an_anagrafiche` ADD `id_listino` INT NOT NULL AFTER `id_piano_sconto_acquisti`; 
 
-CREATE TABLE `mg_listini` ( `id` INT NOT NULL AUTO_INCREMENT , `nome` VARCHAR(255) NOT NULL , `data_attivazione` DATE NULL , `data_scadenza_predefinita` DATE NULL , `is_sempre_visibile` BOOLEAN NOT NULL , `attivo` BOOLEAN NOT NULL , `note` TEXT NOT NULL , `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `updated_at` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)); 
+CREATE TABLE `mg_listini` ( `id` INT NOT NULL AUTO_INCREMENT , `nome` VARCHAR(255) NOT NULL , `data_attivazione` DATE NULL , `data_scadenza_predefinita` DATE NULL , `is_sempre_visibile` BOOLEAN NOT NULL , `attivo` BOOLEAN NOT NULL , `note` TEXT NOT NULL , PRIMARY KEY (`id`)); 
 
-CREATE TABLE `mg_listini_articoli` ( `id` INT NOT NULL AUTO_INCREMENT , `id_listino` INT NOT NULL, `id_articolo` INT NOT NULL , `data_scadenza` DATE NOT NULL , `prezzo_unitario` DECIMAL(15,6) NOT NULL , `prezzo_unitario_ivato` DECIMAL(15,6) NOT NULL , `sconto_percentuale` DECIMAL(15,6) NOT NULL , `dir` VARCHAR(20) NOT NULL , `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `updated_at` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)); 
+CREATE TABLE `mg_listini_articoli` ( `id` INT NOT NULL AUTO_INCREMENT , `id_listino` INT NOT NULL, `id_articolo` INT NOT NULL , `data_scadenza` DATE NOT NULL , `prezzo_unitario` DECIMAL(15,6) NOT NULL , `prezzo_unitario_ivato` DECIMAL(15,6) NOT NULL , `sconto_percentuale` DECIMAL(15,6) NOT NULL , `dir` VARCHAR(20) NOT NULL , PRIMARY KEY (`id`)); 
 
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES (NULL, 'Listini cliente', 'Listini cliente', 'listini_cliente', 'SELECT |select| FROM `mg_listini` WHERE 1=1 HAVING 2=2', '', 'fa fa-angle-right', '2.*', '2.*', '2', (SELECT `id` FROM `zz_modules` AS `t` WHERE `t`.`name`='Magazzino'), '1', '1', '0', '0');
 
@@ -584,7 +584,7 @@ ORDER BY
     an_anagrafiche.ragione_sociale" WHERE `name` = 'Listini';
 
 -- Aggiunta tabella permessi segmenti
-CREATE TABLE `zz_group_segment` ( `id_gruppo` INT NOT NULL , `id_segment` INT NOT NULL , `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP , `updated_at` TIMESTAMP on update CURRENT_TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ); 
+CREATE TABLE `zz_group_segment` ( `id_gruppo` INT NOT NULL , `id_segment` INT NOT NULL ); 
 
 -- Aggiunti segmenti nei documenti
 ALTER TABLE `zz_segments` ADD `is_sezionale` TINYINT(1) NOT NULL AFTER `autofatture`; 
@@ -613,11 +613,11 @@ UPDATE `zz_segments` SET `predefined` = '1', `is_sezionale` = '1', `name` = 'Sta
 UPDATE `zz_segments` SET `is_sezionale` = '1' WHERE `zz_segments`.`id_module` IN(SELECT `id` FROM `zz_modules` WHERE `name` IN('Fatture di vendita', 'Fatture di acquisto')); 
 
 -- Aggiunto campo id_segment nei documenti
-ALTER TABLE `co_contratti` ADD `id_segment` INT NOT NULL AFTER `updated_at`; 
-ALTER TABLE `dt_ddt` ADD `id_segment` INT NOT NULL AFTER `updated_at`; 
-ALTER TABLE `co_preventivi` ADD `id_segment` INT NOT NULL AFTER `updated_at`; 
-ALTER TABLE `or_ordini` ADD `id_segment` INT NOT NULL AFTER `updated_at`; 
-ALTER TABLE `in_interventi` ADD `id_segment` INT NOT NULL AFTER `updated_at`;
+ALTER TABLE `co_contratti` ADD `id_segment` INT NOT NULL; 
+ALTER TABLE `dt_ddt` ADD `id_segment` INT NOT NULL; 
+ALTER TABLE `co_preventivi` ADD `id_segment` INT NOT NULL; 
+ALTER TABLE `or_ordini` ADD `id_segment` INT NOT NULL AFTER; 
+ALTER TABLE `in_interventi` ADD `id_segment` INT NOT NULL AFTER;
 
 -- Allineamento id_segment nei record già creati
 UPDATE `co_contratti` SET `id_segment` = (SELECT `id` FROM `zz_segments` WHERE `name` = "Standard contratti"); 

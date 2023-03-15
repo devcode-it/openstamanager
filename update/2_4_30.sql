@@ -11,9 +11,7 @@ CREATE TABLE IF NOT EXISTS `in_righe_tipiinterventi` (
   `prezzo_acquisto` decimal(12,4) NOT NULL,
   `prezzo_vendita` decimal(12,4) NOT NULL,
   `idiva` int NOT NULL,
-  `subtotale` decimal(12,4) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP ,
+  `subtotale` decimal(12,4) NOT NULL
 PRIMARY KEY (`id`));
 
 -- Aggiunto flag is_bloccata per relazioni

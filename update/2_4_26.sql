@@ -94,7 +94,7 @@ UPDATE `zz_plugins` SET `default` = 1, `version` = '' WHERE `zz_plugins`.`name` 
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_movimenti` JOIN `mg_articoli` ON `mg_articoli`.id = `mg_movimenti`.`idarticolo` LEFT JOIN `an_sedi` ON `mg_movimenti`.`idsede` = `an_sedi`.`id` WHERE 1=1 AND mg_articoli.deleted_at IS NULL HAVING 2=2 ORDER BY mg_movimenti.data DESC, mg_movimenti.created_at DESC' WHERE `zz_modules`.`name` = 'Movimenti';
 
 -- Aggiunta eliminazione causale DDT
-ALTER TABLE `dt_causalet` ADD `deleted_at` TIMESTAMP NULL AFTER `updated_at`;
+ALTER TABLE `dt_causalet` ADD `deleted_at` TIMESTAMP NULL;
 
 -- Modifico il filtro del modulo
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `dt_causalet` WHERE 1=1 AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_modules`.`name` = 'Causali';

@@ -33,13 +33,13 @@ echo '
     <td>'.($different ? Translator::datetoLocale($record['data']) : '').'</td>
     <td>'.($different ? $record['codice_tipo_documento_fe'] : '').'</td>
     <td>'.($different ? $record['codice_anagrafica'].' '.safe_truncate(mb_strtoupper(html_entity_decode($record['ragione_sociale']), 'UTF-8'), 50) : '').'</td>
-    <td class="text-right">'.moneyFormat($record['totale']).'</td>';
+    <td class="text-right">'.moneyFormat($record['totale'], 2).'</td>';
 
 echo '
-    <td class="text-right">'.moneyFormat($record['subtotale']).'</td>
+    <td class="text-right">'.moneyFormat($record['subtotale'], 2).'</td>
     <td class="text-left">'.Translator::numberToLocale($record['percentuale'], 0).'</td>
     <td class="text-left">'.$record['descrizione'].'</td>
-    <td class="text-right">'.moneyFormat($record['iva']).'</td>
+    <td class="text-right">'.moneyFormat($record['iva'], 2).'</td>
     </tr>';
 
 $iva[$record['descrizione']][] = $record['iva'];

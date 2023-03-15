@@ -67,9 +67,9 @@ foreach ($raggruppamenti as $raggruppamento) {
     echo '
         <tr>
             <td>'.$mese.'</td>
-            <td class="text-right">'.moneyFormat($imponibile).'</td>
-            <td class="text-right">'.moneyFormat($iva).'</td>
-            <td class="text-right">'.moneyFormat($totale).'</td>
+            <td class="text-right">'.moneyFormat($imponibile, 2).'</td>
+            <td class="text-right">'.moneyFormat($iva, 2).'</td>
+            <td class="text-right">'.moneyFormat($totale, 2).'</td>
         </tr>';
 
     $totale_imponibile += $imponibile;
@@ -80,9 +80,9 @@ foreach ($raggruppamenti as $raggruppamento) {
 echo '
         <tr>
             <td class="text-right text-bold">'.tr('Totale', [], ['upper' => true]).':</td>
-            <td class="text-right text-bold">'.moneyFormat($totale_imponibile).'</td>
-            <td class="text-right text-bold">'.moneyFormat($totale_iva).'</td>
-            <td class="text-right text-bold">'.moneyFormat($totale_finale).'</td>
+            <td class="text-right text-bold">'.moneyFormat($totale_imponibile, 2).'</td>
+            <td class="text-right text-bold">'.moneyFormat($totale_iva, 2).'</td>
+            <td class="text-right text-bold">'.moneyFormat($totale_finale, 2).'</td>
         </tr>
     </tbody>
 </table>';

@@ -52,11 +52,11 @@ foreach ($iva as $descrizione => $tot_iva) {
             </td>
 
             <td class="text-right">
-                '.moneyFormat($somma_totale).'
+                '.moneyFormat($somma_totale, 2).'
             </td>
 
             <td class="text-right">
-                '.moneyFormat($somma_iva).'
+                '.moneyFormat($somma_iva, 2).'
             </td>
         </tr>';
     }
@@ -68,8 +68,8 @@ echo '
             <td class="text-right">
                 <b>'.tr('Totale', [], ['upper' => true]).':</b>
             </td>
-            <td class="text-right">'.moneyFormat($totale_subtotale).'</td>
-            <td class="text-right">'.moneyFormat($totale_iva).'</td>
+            <td class="text-right">'.moneyFormat($totale_subtotale, 2).'</td>
+            <td class="text-right">'.moneyFormat($totale_iva, 2).'</td>
         </tr>
     </tbody>
 </table>';

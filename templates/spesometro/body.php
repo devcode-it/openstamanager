@@ -107,19 +107,19 @@ foreach ($anagrafiche as $i => $anagrafica) {
                 // Imponible
                 echo '
             <td class="text-center">
-                '.moneyFormat($riga['imponibile']).'
+                '.moneyFormat($riga['imponibile'], 2).'
             </td>';
 
                 // IVA
                 echo '
             <td class="text-center">
-                '.moneyFormat($riga['iva']).'
+                '.moneyFormat($riga['iva'], 2).'
             </td>';
 
                 // Totale
                 echo '
             <td class="text-center">
-                '.moneyFormat($riga['totale']).'
+                '.moneyFormat($riga['totale'], 2).'
             </td>
         </tr>';
 
@@ -146,7 +146,7 @@ echo '
         </td>
 
         <th colspan="3" class="text-center">
-            <b>'.moneyFormat(sum($imponibile)).'</b>
+            <b>'.moneyFormat(sum($imponibile), 2).'</b>
         </th>
     </tr>';
 
@@ -162,7 +162,7 @@ foreach ($iva as $desc => $values) {
     </td>
 
     <th colspan="3" class="text-center">
-        <b>'.moneyFormat($sum).'</b>
+        <b>'.moneyFormat($sum, 2).'</b>
     </th>
 </tr>';
 
@@ -177,7 +177,7 @@ echo '
         </td>
 
         <th colspan="3" class="text-center">
-            <b>'.moneyFormat($totale_iva).'</b>
+            <b>'.moneyFormat($totale_iva, 2).'</b>
         </th>
     </tr>';
 
@@ -188,7 +188,7 @@ echo '
             <b>'.tr('Totale', [], ['upper' => true]).':</b>
     	</td>
     	<th colspan="3" class="text-center">
-    		<b>'.moneyFormat(sum($totale)).'</b>
+    		<b>'.moneyFormat(sum($totale), 2).'</b>
     	</th>
     </tr>';
 

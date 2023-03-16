@@ -616,8 +616,8 @@ UPDATE `zz_segments` SET `is_sezionale` = '1' WHERE `zz_segments`.`id_module` IN
 ALTER TABLE `co_contratti` ADD `id_segment` INT NOT NULL; 
 ALTER TABLE `dt_ddt` ADD `id_segment` INT NOT NULL; 
 ALTER TABLE `co_preventivi` ADD `id_segment` INT NOT NULL; 
-ALTER TABLE `or_ordini` ADD `id_segment` INT NOT NULL AFTER; 
-ALTER TABLE `in_interventi` ADD `id_segment` INT NOT NULL AFTER;
+ALTER TABLE `or_ordini` ADD `id_segment` INT NOT NULL; 
+ALTER TABLE `in_interventi` ADD `id_segment` INT NOT NULL;
 
 -- Allineamento id_segment nei record già creati
 UPDATE `co_contratti` SET `id_segment` = (SELECT `id` FROM `zz_segments` WHERE `name` = "Standard contratti"); 

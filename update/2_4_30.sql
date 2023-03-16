@@ -11,8 +11,9 @@ CREATE TABLE IF NOT EXISTS `in_righe_tipiinterventi` (
   `prezzo_acquisto` decimal(12,4) NOT NULL,
   `prezzo_vendita` decimal(12,4) NOT NULL,
   `idiva` int NOT NULL,
-  `subtotale` decimal(12,4) NOT NULL
-PRIMARY KEY (`id`));
+  `subtotale` decimal(12,4) NOT NULL,
+  PRIMARY KEY (`id`)
+);
 
 -- Aggiunto flag is_bloccata per relazioni
 ALTER TABLE `an_relazioni` ADD `is_bloccata` tinyint DEFAULT NULL AFTER `colore`;

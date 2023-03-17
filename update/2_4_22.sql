@@ -182,7 +182,7 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 (NULL, 'Numero massimo di tentativi', '10', 'integer', 1, 'Newsletter', 1, 'Numero massimo di tentativi da effettuare per cercare di inviare una mail');
 
 -- Aggiunta colonna codice commessa convenzione
-ALTER TABLE `or_ordini` ADD `codice_commessa` VARCHAR(100) NULL AFTER `updated_at`;
+ALTER TABLE `or_ordini` ADD `codice_commessa` VARCHAR(100) NULL;
 
 -- Copiato in or_ordini id_documento_fe in numero_cliente dove è presente
 UPDATE `or_ordini` SET `numero_cliente`= `id_documento_fe` WHERE `id_documento_fe`!='' AND `id_documento_fe` IS NOT NULL;

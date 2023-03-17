@@ -22,6 +22,7 @@ include_once __DIR__.'/../../core.php';
 $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 
 $stati = get('pianificabile') ? 'SELECT id, descrizione FROM co_staticontratti WHERE is_pianificabile=1' : 'SELECT id, descrizione FROM co_staticontratti';
+$stato = $database->query('SELECT id, descrizione FROM co_staticontratti WHERE descrizione = "Bozza"');
 
 echo '
 <form action="" method="post" id="add-form">
@@ -43,7 +44,7 @@ echo '
 
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstato", "required": 1, "values": "query='.$stati.'" ]}
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstato", "required": 1, "value": "'.$stato.'", "values": "query='.$stati.'" ]}
         </div>
 
         <div class="col-md-6">

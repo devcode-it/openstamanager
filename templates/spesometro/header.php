@@ -28,7 +28,4 @@ echo '
         <p>'.(!empty($f_capsoc) ? tr('Cap.Soc.').': ' : '').'$f_capsoc$</p>
         <p>'.(!empty($f_telefono) ? tr('Tel').': ' : '').'$f_telefono$</p>
     </div>
-    <div class="col-xs-6 text-right">
-        <img src="$logo$" alt="Logo" border="0"/>
-    </div>
 </div>';

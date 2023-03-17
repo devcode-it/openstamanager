@@ -581,7 +581,7 @@ switch (filter('op')) {
         $barcode = post('barcode');
 
         if (!empty($barcode)) {
-            $id_articolo = $dbo->selectOne('mg_articoli', 'id',  ['deleted_at' => null, 'barcode' => $barcode])['id'];
+            $id_articolo = $dbo->selectOne('mg_articoli', 'id',  ['deleted_at' => null, 'attivo' => 1, 'barcode' => $barcode])['id'];
         }
 
         if (!empty($id_articolo)) {

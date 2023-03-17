@@ -178,7 +178,7 @@ function renderChecklistHtml($check, $level = 0)
     $result = '
     <tr>
         <td class="text-center" style="width:30px;">
-            '.(!empty($check->checked_at)?'<img src="'.ROOTDIR.'/templates/interventi/custom/check.png" style="width:10px;">':'').'
+            '.(!empty($check->checked_at)?'<img src="'.ROOTDIR.'/templates/interventi/check.png" style="width:10px;">':'').'
         </td>
         <td style="padding-left:'.$width.'px;">
             <span class="text"><b>'.$check->content.'</b>'.(!empty($check->value)?': '.$check->value:'').'</span>

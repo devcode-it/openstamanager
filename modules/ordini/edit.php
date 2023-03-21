@@ -144,7 +144,7 @@ echo '
 
             <div class="row">
 				<div class="col-md-12">
-                    <?php    
+                    <?php
                     echo input([
                         'type' => 'ckeditor',
                         'use_full_ckeditor' => 0,
@@ -155,7 +155,7 @@ echo '
 					?>
                 </div>
 			</div>
-            
+
 			<div class="row">
 				<div class="col-md-12">
 					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$" ]}
@@ -252,7 +252,7 @@ if (!$block_edit) {
                     <button title="'.tr('Aggiungi articolo alla vendita').'" class="btn btn-primary tip" type="button" onclick="salvaArticolo()">
                         <i class="fa fa-plus"></i> '.tr('Aggiungi').'
                     </button>
-                    
+
                     <a class="btn btn-primary" onclick="gestioneRiga(this)" data-title="'.tr('Aggiungi riga').'">
                         <i class="fa fa-plus"></i> '.tr('Riga').'
                     </a>
@@ -311,6 +311,22 @@ echo '
 {( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <script>
+function creaFatturaAnticipo(button) {
+    // Salvataggio via AJAX
+    salvaForm("#edit-form", {}, button);
+
+    // Lettura titolo e chiusura tooltip
+    let title = $(button).tooltipster("content");
+    $(button).tooltipster("close")
+
+    // Apertura modal
+    importo = $(button).closest("tr").find(".importo").text();
+    importo = importo.replace(" €", "");
+
+    id_acconto = $(button).closest("tr").find(".id-acconto").text();
+    openModal(title, "'.$structure->fileurl('fattura_anticipo.php').'?id_module='.$id_module.'&id_record='.$id_record.'&value=" + importo + "&id_acconto=" + id_acconto);
+}
+
 function gestioneArticolo(button) {
     gestioneRiga(button, "is_articolo");
 }
@@ -366,7 +382,7 @@ $("#idanagrafica").change(function() {
 
 	$("#idsede").selectReset();
     $("#idpagamento").selectReset();
-    
+
     let data = $(this).selectData();
 	if (data) {
         // Impostazione del tipo di pagamento da anagrafica

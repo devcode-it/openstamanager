@@ -149,6 +149,7 @@ if (!empty($numero_documenti)) {
     var check_digits = input("check_digits");
     var national_check_digits = input("national_check_digits");
     var id_nazione = input("id_nazione");
+    var bic = input("bic");
 
     var components = [branch_code, bank_code, account_number, check_digits, national_check_digits, id_nazione];
 
@@ -190,6 +191,12 @@ if (!empty($numero_documenti)) {
             dataType: "json",
             success: function (response) {
                 compilaCampi(response);
+
+                if (response.id_nazione.text === "Italia"){
+                    bic.setRequired(false);
+                } else {
+                    bic.setRequired(true);
+                }
             },
             error: function() {
                 toastr["error"]("<?php echo tr('Formato IBAN non valido'); ?>");

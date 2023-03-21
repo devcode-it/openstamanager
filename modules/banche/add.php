@@ -76,6 +76,7 @@ echo '
     var branch_code = input("branch_code");
     var bank_code = input("bank_code");
     var id_nazione = input("id_nazione");
+    var bic = input("bic");
 
     var components = [branch_code, bank_code, id_nazione];
 
@@ -117,6 +118,12 @@ echo '
             dataType: "json",
             success: function (response) {
                 compilaCampi(response);
+
+                if (response.id_nazione.text === "Italia"){
+                    bic.setRequired(false);
+                } else {
+                    bic.setRequired(true);
+                }
             },
             error: function() {
                 toastr["error"]("<?php echo tr('Formato IBAN non valido'); ?>");

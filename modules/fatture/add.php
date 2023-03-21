@@ -77,54 +77,59 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
 			{[ "type": "select", "label": "<?php echo tr('Sezionale'); ?>", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": <?php echo json_encode(['id_module' => $id_module, 'is_sezionale' => 1]); ?>, "value": "<?php echo $_SESSION['module_'.$id_module]['id_segment']; ?>" ]}
 		</div>
 	</div>
-    
-    <div id="info" class="hidden">
-        <div  class="row">
-            <div class="col-md-6 ">
-                <div id="info-title-bozza" class="box">
-            
-                    <div class="box-header with-border">
-                        <h3 class="box-title"><?php echo tr('Fatture in stato Bozza del cliente'); ?></h3>
-                        <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                                <i class="fa fa-minus"></i>
-                            </button>
+
+    <?php
+        if ($dir == 'entrata') {
+            echo '
+            <div id="info" class="hidden">
+                <div  class="row">
+                    <div class="col-md-6 ">
+                        <div id="info-title-bozza" class="box">
+                    
+                            <div class="box-header with-border">
+                                <h3 class="box-title">'.tr("Fatture in stato Bozza del cliente").'</h3>
+                                <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                        <i class="fa fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="box-body" id="info-content-bozza"></div>
                         </div>
                     </div>
-                    <div class="box-body" id="info-content-bozza"></div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div id="info-title-scadute" class="box">
-                    <div class="box-header with-border">
-                        <h3 class="box-title"><?php echo tr('Fatture con termini di pagamento trascorsi'); ?></h3>
-                        <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                                <i class="fa fa-minus"></i>
-                            </button>
+                    <div class="col-md-6">
+                        <div id="info-title-scadute" class="box">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">'.tr("Fatture con termini di pagamento trascorsi").'</h3>
+                                <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                        <i class="fa fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="box-body" id="info-content-scadute"></div>
                         </div>
                     </div>
-                    <div class="box-body" id="info-content-scadute"></div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- DETTAGLI CLIENTE -->
-    <div class="box box-info collapsable collapsed-box">
-        <div class="box-header with-border">
-			<h3 class="box-title"><?php echo tr('Dettagli cliente'); ?></h3>
-            <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                    <i class="fa fa-plus"></i>
-                </button>
-            </div>
-		</div>
+            <!-- DETTAGLI CLIENTE -->
+            <div class="box box-info collapsable collapsed-box">
+                <div class="box-header with-border">
+                    <h3 class="box-title">'.tr("Dettagli cliente").'</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
 
-        <div class="box-body" id="dettagli_cliente">
-            <?php echo tr('Seleziona prima un cliente'); ?>...
-        </div>
-    </div>
+                <div class="box-body" id="dettagli_cliente">
+                    '.tr("Seleziona prima un cliente").'...
+                </div>
+            </div>';
+        }
+    ?>
 
 	<!-- PULSANTI -->
 	<div class="row">

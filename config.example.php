@@ -65,3 +65,12 @@ $assets = [
     'print' => [],
     'js' => [],
 ];
+
+// Indica se i messaggi di posta elettronica devono essere inviati con
+// l'istruzione reply_to impostata con l'indirizzo email dell'utente collegato
+$force_reply_to_sender = false;
+
+// Indica se i messaggi di posta elettronica devono essere inviati con l'account di posta elettronica
+// corrispondente all'indirizzo email dell'utente collegato. Se non c'è un account con questo indirizzo
+// email, verrà utilizzato l'account di default.
+$force_mail_from_sender = false;

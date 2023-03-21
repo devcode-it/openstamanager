@@ -89,7 +89,7 @@ $iva = $dbo->fetchOne(
 <!-- Righe del documento -->
 <div class="box box-success">
     <div class="box-header with-border">
-        <h3 class="box-title"><?php echo tr('Righe prviste'); ?></h3>
+        <h3 class="box-title"><?php echo tr('Righe previste'); ?></h3>
     </div>
 
     <table class="box-body table table-striped table-hover table-condensed">

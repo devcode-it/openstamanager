@@ -40,19 +40,15 @@ echo '
                 <tbody>';
                     // Mostra le righe delle attività
                     foreach ($liv2_patrimoniale as $liv2_p) {
-                        if ($liv2_p['totale'] > 0) {
-                            $totale_attivita += $liv2_p['totale'];
-                            echo '
-                            <tr>
-                                <td><b>'.$liv2_p['numero'].'</b></td>
-                                <td><b>'.$liv2_p['descrizione'].'</b></td>
-                                <td class="text-right"><b>'.numberFormat($liv2_p['totale'], 2).'</b></td>
-                            </tr>';
-
-                            foreach ($liv3_patrimoniale as $liv3_p) {
+                        $livello3 = '';
+                        $totale_livello3 = 0;
+                        foreach ($liv3_patrimoniale as $liv3_p) {
+                            if ($liv3_p['totale'] > 0) {
                                 // Visualizzo solo i conti di livello 3 relativi al conto di livello 2
                                 if ($liv2_p['id'] == $liv3_p['idpianodeiconti2'] && $liv3_p['totale'] != 0) {
-                                    echo '
+                                    $totale_attivita += $liv3_p['totale'];
+                                    $totale_livello3 += $liv3_p['totale'];
+                                    $livello3 .= '
                                     <tr>
                                         <td>'.$liv3_p['numero'].'</td>
                                         <td>'.$liv3_p['descrizione'].'</td>
@@ -60,24 +56,38 @@ echo '
                                     </tr>';
                                 }
                             }
+                        }
 
-                            if (empty(get('elenco_analitico'))) {
-                                if ($liv2_p['id'] == setting('Conto di secondo livello per i crediti clienti')) {
-                                    echo '
-                                        <tr>
-                                            <td></td>
-                                            <td>Clienti</td>
-                                            <td class="text-right">'.numberFormat($crediti_clienti, 2).'</td>
-                                        </tr>';
-                                } elseif ($liv2_p['id'] == setting('Conto di secondo livello per i debiti fornitori')) {
-                                    echo '
+                        if (empty(get('elenco_analitico'))) {
+                            if ($liv2_p['id'] == setting('Conto di secondo livello per i crediti clienti') && $crediti_clienti > 0) {
+                                $totale_attivita += $crediti_clienti;
+                                $totale_livello3 += $crediti_clienti;
+                                $livello3 .= '
                                     <tr>
                                         <td></td>
-                                        <td>Fornitori</td>
-                                        <td class="text-right">'.numberFormat($debiti_fornitori, 2).'</td>
+                                        <td>Clienti</td>
+                                        <td class="text-right">'.numberFormat($crediti_clienti, 2).'</td>
                                     </tr>';
-                                }
+                            } elseif ($liv2_p['id'] == setting('Conto di secondo livello per i debiti fornitori') && $debiti_fornitori > 0) {
+                                $totale_attivita += $debiti_fornitori;
+                                $totale_livello3 += $debiti_fornitori;
+                                $livello3 .= '
+                                <tr>
+                                    <td></td>
+                                    <td>Fornitori</td>
+                                    <td class="text-right">'.numberFormat($debiti_fornitori, 2).'</td>
+                                </tr>';
                             }
+                        }
+
+                        if ($totale_livello3 != 0) {
+                            echo '
+                            <tr>
+                                <td><b>'.$liv2_p['numero'].'</b></td>
+                                <td><b>'.$liv2_p['descrizione'].'</b></td>
+                                <td class="text-right"><b>'.numberFormat($totale_livello3, 2).'</b></td>
+                            </tr>';
+                            echo $livello3;
                         }
                     }
                 echo '
@@ -119,43 +129,54 @@ echo '
                     $i = 0;
                     // Mostra le righe delle passività
                     foreach ($liv2_patrimoniale as $liv2_p) {
-                        if ($liv2_p['totale'] < 0) {
-                            $totale_passivita += $liv2_p['totale'];
+                        $livello3 = '';
+                        $totale_livello3 = 0;
+                        foreach ($liv3_patrimoniale as $liv3_p) {
+                            if ($liv3_p['totale'] < 0) {
+                                // Visualizzo solo i conti di livello 3 relativi al conto di livello 2
+                                if ($liv2_p['id'] == $liv3_p['idpianodeiconti2'] && $liv3_p['totale'] != 0) {
+                                    $totale_passivita += $liv3_p['totale'];
+                                    $totale_livello3 += $liv3_p['totale'];
+                                    $livello3 .= '
+                                    <tr>
+                                        <td>'.$liv3_p['numero'].'</td>
+                                        <td>'.$liv3_p['descrizione'].'</td>
+                                        <td class="text-right">'.numberFormat(abs($liv3_p['totale']), 2).'</td>
+                                    </tr>';
+                                }
+                            }
+                        }
+
+                        if (empty(get('elenco_analitico'))) {
+                            if ($liv2_p['id'] == setting('Conto di secondo livello per i crediti clienti') && $crediti_clienti < 0) {
+                                $totale_passivita += $crediti_clienti;
+                                $totale_livello3 += $crediti_clienti;
+                                $livello3 .= '
+                                    <tr>
+                                        <td></td>
+                                        <td>Clienti</td>
+                                        <td class="text-right">'.numberFormat(abs($crediti_clienti), 2).'</td>
+                                    </tr>';
+                            } elseif ($liv2_p['id'] == setting('Conto di secondo livello per i debiti fornitori') && $debiti_fornitori < 0) {
+                                $totale_passivita += $debiti_fornitori;
+                                $totale_livello3 += $debiti_fornitori;
+                                $livello3 .= '
+                                <tr>
+                                    <td></td>
+                                    <td>Fornitori</td>
+                                    <td class="text-right">'.numberFormat(abs($debiti_fornitori), 2).'</td>
+                                </tr>';
+                            }
+                        }
+
+                        if ($totale_livello3 != 0) {
                             echo '
                             <tr>
                                 <td><b>'.$liv2_p['numero'].'</b></td>
                                 <td><b>'.$liv2_p['descrizione'].'</b></td>
-                                <td class="text-right"><b>'.numberFormat(abs($liv2_p['totale']), 2).'</b></td>
+                                <td class="text-right"><b>'.numberFormat(abs($totale_livello3), 2).'</b></td>
                             </tr>';
-
-                            foreach ($liv3_patrimoniale as $liv3_p) {
-                                if ($liv2_p['id'] == $liv3_p['idpianodeiconti2'] && $liv3_p['totale'] != 0) {
-                                    echo '
-                                    <tr>
-                                        <td>'.$liv3_p['numero'].'</td>
-                                        <td>'.$liv3_p['descrizione'].'</td>
-                                        <td class="text-right">'.numberFormat(-$liv3_p['totale'], 2).'</td>
-                                    </tr>';
-                                }
-                            }
-
-                            if (empty(get('elenco_analitico'))) {
-                                if ($liv2_p['id'] == setting('Conto di secondo livello per i crediti clienti')) {
-                                    echo '
-                                        <tr>
-                                            <td></td>
-                                            <td>Clienti</td>
-                                            <td class="text-right">'.numberFormat(abs($crediti_clienti), 2).'</td>
-                                        </tr>';
-                                } elseif ($liv2_p['id'] == setting('Conto di secondo livello per i debiti fornitori')) {
-                                    echo '
-                                    <tr>
-                                        <td></td>
-                                        <td>Fornitori</td>
-                                        <td class="text-right">'.numberFormat(abs($debiti_fornitori), 2).'</td>
-                                    </tr>';
-                                }
-                            }
+                            echo $livello3;
                         }
                     }
                 echo '
@@ -205,29 +226,39 @@ echo '
                 <tbody>';
                     // Mostra le righe dei costi
                     foreach ($liv2_economico as $liv2_e) {
-                        if ($liv2_e['totale'] > 0) {
-                            $totale_costi += $liv2_e['totale'];
-                            echo '
-                            <tr>
-                                <td><b>'.$liv2_e['numero'].'</b></td>
-                                <td><b>'.$liv2_e['descrizione'].'</b></td>
-                                <td class="text-right"><b>'.numberFormat($liv2_e['totale'], 2).'</b></td>
-                                <td class="text-right"><b>'.numberFormat($liv2_e['totale_reddito'], 2).'</b></td>
-                            </tr>';
-
-                            foreach ($liv3_economico as $liv3_e) {
+                        $livello3 = '';
+                        $totale_livello3 = 0;
+                        $totale_reddito_livello3 = 0;
+                        foreach ($liv3_economico as $liv3_e) {
+                            if ($liv3_e['totale'] > 0) {
+                                // Visualizzo solo i conti di livello 3 relativi al conto di livello 2
                                 if ($liv2_e['id'] == $liv3_e['idpianodeiconti2'] && $liv3_e['totale'] != 0) {
-                                    echo '
+                                    $totale_costi += $liv3_e['totale'];
+                                    $totale_livello3 += $liv3_e['totale'];
+                                    $totale_reddito_livello3 += $liv3_e['totale_reddito'];
+                                    $livello3 .= '
                                     <tr>
                                         <td>'.$liv3_e['numero'].'</td>
                                         <td>'.$liv3_e['descrizione'].'</td>
-                                        <td class="text-right">'.numberFormat($liv3_e['totale'], 2).'</td>
-                                        <td class="text-right">'.numberFormat($liv3_e['totale_reddito'], 2).'</td>
+                                        <td class="text-right">'.numberFormat(abs($liv3_e['totale']), 2).'</td>
+                                        <td class="text-right">'.numberFormat(abs($liv3_e['totale_reddito']), 2).'</td>
                                     </tr>';
                                 }
                             }
                         }
+
+                        if ($totale_livello3 != 0) {
+                            echo '
+                            <tr>
+                                <td><b>'.$liv2_e['numero'].'</b></td>
+                                <td><b>'.$liv2_e['descrizione'].'</b></td>
+                                <td class="text-right"><b>'.numberFormat(abs($totale_livello3), 2).'</b></td>
+                                <td class="text-right"><b>'.numberFormat(abs($totale_reddito_livello3), 2).'</b></td>
+                            </tr>';
+                            echo $livello3;
+                        }
                     }
+
                 echo '
                     <tr>
                         <td colspan="2"><h6><b>Totale costi</b></h6></td>
@@ -269,19 +300,17 @@ echo '
                 <tbody>';
                 // Mostra le righe dei ricavi
                 foreach ($liv2_economico as $liv2_e) {
-                    if ($liv2_e['totale'] < 0) {
-                        $totale_ricavi += $liv2_e['totale'];
-                        echo '
-                        <tr>
-                            <td><b>'.$liv2_e['numero'].'</b></td>
-                            <td><b>'.$liv2_e['descrizione'].'</b></td>
-                            <td class="text-right"><b>'.numberFormat(abs($liv2_e['totale']), 2).'</b></td>
-                            <td class="text-right"><b>'.numberFormat(abs($liv2_e['totale_reddito']), 2).'</b></td>
-                        </tr>';
-
-                        foreach ($liv3_economico as $liv3_e) {
+                    $livello3 = '';
+                    $totale_livello3 = 0;
+                    $totale_reddito_livello3 = 0;
+                    foreach ($liv3_economico as $liv3_e) {
+                        if ($liv3_e['totale'] < 0) {
+                            // Visualizzo solo i conti di livello 3 relativi al conto di livello 2
                             if ($liv2_e['id'] == $liv3_e['idpianodeiconti2'] && $liv3_e['totale'] != 0) {
-                                echo '
+                                $totale_ricavi += $liv3_e['totale'];
+                                $totale_livello3 += $liv3_e['totale'];
+                                $totale_reddito_livello3 += $liv3_e['totale_reddito'];
+                                $livello3 .= '
                                 <tr>
                                     <td>'.$liv3_e['numero'].'</td>
                                     <td>'.$liv3_e['descrizione'].'</td>
@@ -290,6 +319,17 @@ echo '
                                 </tr>';
                             }
                         }
+                    }
+
+                    if ($totale_livello3 != 0) {
+                        echo '
+                        <tr>
+                            <td><b>'.$liv2_e['numero'].'</b></td>
+                            <td><b>'.$liv2_e['descrizione'].'</b></td>
+                            <td class="text-right"><b>'.numberFormat(abs($totale_livello3), 2).'</b></td>
+                            <td class="text-right"><b>'.numberFormat(abs($totale_reddito_livello3), 2).'</b></td>
+                        </tr>';
+                        echo $livello3;
                     }
                 }
                 echo '

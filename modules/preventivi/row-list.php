@@ -385,6 +385,10 @@ if (!$block_edit && sizeof($righe) > 0) {
         <button type="button" class="btn btn-xs btn-default disabled" id="elimina_righe" onclick="rimuoviRiga(getSelectData());">
             <i class="fa fa-trash"></i>
         </button>
+
+        <button type="button" class="btn btn-xs btn-default disabled" id="subtotale_righe" onclick="calcolaSubtotale(\'preventivi\');">
+            <i class="fa fa-calculator"></i> Subtotale
+        </button>
     </div>';
 }
 echo '
@@ -503,9 +507,11 @@ $(".check").on("change", function() {
     if (checked) {
         $("#elimina_righe").removeClass("disabled");
         $("#duplica_righe").removeClass("disabled");
+        $("#subtotale_righe").removeClass("disabled");
     } else {
         $("#elimina_righe").addClass("disabled");
         $("#duplica_righe").addClass("disabled");
+        $("#subtotale_righe").addClass("disabled");
     }
 });
 

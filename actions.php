@@ -223,6 +223,30 @@ elseif (filter('op') == 'validate') {
     return;
 }
 
+elseif (filter('op') == 'manage_subtotale') {
+    if (post('tipo') === 'fatture') {
+        $fattura = Modules\Fatture\Fattura::find($id_record);
+        $riga = Modules\Fatture\Components\Descrizione::build($fattura);
+    } else if (post('tipo') === 'ddt') {
+        $ddt = Modules\DDT\DDT::find($id_record);
+        $riga = Modules\DDT\Components\Descrizione::build($ddt);
+    } else if (post('tipo') === 'preventivi') {
+        $preventivo = Modules\Preventivi\Preventivo::find($id_record);
+        $riga = Modules\Preventivi\Components\Descrizione::build($preventivo);
+    } else if (post('tipo') === 'ordini') {
+        $ordine = Modules\Ordini\Ordine::find($id_record);
+        $riga = Modules\Ordini\Components\Descrizione::build($ordine);
+    } else {
+        echo "Operazione non valida";
+        return;
+    }
+
+    $riga->descrizione = post('descrizione');
+    $riga->save();
+
+    echo json_encode($riga);
+}
+
 // Aggiunta nota interna
 elseif (filter('op') == 'aggiungi-nota') {
     $contenuto = post('contenuto');

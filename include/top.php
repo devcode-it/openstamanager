@@ -39,7 +39,7 @@ echo '<!DOCTYPE html>
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
         <meta name="robots" content="noindex,nofollow">
-        <meta name="description" content="OpenSTAManager, il software gestionale open source per assistenza tecnica e fatturazione elettronica.">
+        <meta name="description" content="'.tr('OpenSTAManager, il software gestionale open source per assistenza tecnica e fatturazione elettronica').'">
         <meta name="author" content="DevCode s.r.l.">
 
 		<link href="'.$paths['img'].'/favicon.png" rel="icon" type="image/x-icon" />';
@@ -424,7 +424,7 @@ if (Auth::check()) {
                                     </ul></li>
                                 </ul>
                             </li>
-                            
+
                             <li class="nav-button"><a href="#" onclick="window.print()" class="tip nav-button" title="'.tr('Stampa').'">
                                 <i class="fa fa-print"></i>
                             </a></li>
@@ -513,8 +513,8 @@ if (Auth::check()) {
         if (!empty($id_record)) {
             $plugins = $dbo->fetchArray('SELECT id, title, options, options2 FROM zz_plugins WHERE idmodule_to='.prepare($id_module)." AND position='tab' AND enabled = 1 ORDER BY zz_plugins.order DESC");
             foreach ($plugins as $plugin) {
-                
-            
+
+
                 //Badge count per record plugin
                 $count = 0;
                 $opt = '';

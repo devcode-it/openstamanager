@@ -264,7 +264,7 @@ switch (post('op')) {
             'stored' => round($totale_documento,2),
             'calculated' => round($fattura->totale,2),
         ]);
-        
+
         break;
 
     // Elenco fatture in stato Bozza per il cliente
@@ -501,6 +501,25 @@ switch (post('op')) {
             $originale = ArticoloOriginale::find(post('idarticolo'));
             $articolo = Articolo::build($fattura, $originale);
             $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
+
+            //check if the item have linked items
+            $concatenati = $dbo->fetchArray('SELECT * FROM mg_articoli_concatenati WHERE id_articolo='.prepare($articolo->idarticolo));
+
+            foreach ($concatenati as $concatenato) {
+                $concatenato_originale = ArticoloOriginale::find($concatenato['id_articolo_concatenato']);
+                $riga_concatenato = Articolo::build($fattura, $concatenato_originale);
+
+                try {
+                    $riga_concatenato->qta = post('qta');
+                } catch (UnexpectedValueException $e) {
+                    flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
+                }
+
+                $riga_concatenato->idconto = $concatenato_originale->idconto_vendita;
+                $riga_concatenato->setPrezzoUnitario($concatenato['prezzo'], $concatenato['idiva']);
+
+                $riga_concatenato->save();
+            }
         }
 
         $qta = post('qta');

@@ -72,7 +72,7 @@ switch (post('op')) {
         $articolo->um = post('um');
         $articolo->um_secondaria = post('um_secondaria');
         $articolo->fattore_um_secondaria = post('fattore_um_secondaria');
-        
+
         $articolo->save();
 
         // Aggiornamento delle varianti per i campi comuni
@@ -244,7 +244,7 @@ switch (post('op')) {
     // Duplica articolo
     case 'copy':
         $new = $articolo->replicate();
-        
+
         //Se non specifico il codice articolo lo imposto uguale all'id della riga
         if (empty(post('codice'))) {
             $codice = $dbo->fetchOne('SELECT MAX(id) as codice FROM mg_articoli')['codice'] + 1;
@@ -406,6 +406,48 @@ switch (post('op')) {
                 'idsede' => $idsede_partenza,
             ]);
         }
+
+        break;
+
+    case 'add_concatenato':
+        $id_articolo = post('id_articolo');
+        $id_articolo_concatenato = post('id_articolo_concatenato');
+
+        $articolo = $dbo->fetchOne('SELECT prezzo_vendita, idiva_vendita FROM mg_articoli WHERE id='.prepare($id_articolo_concatenato));
+        $prezzo = floatval($articolo['prezzo_vendita']);
+
+        $iva = $dbo->fetchOne('SELECT percentuale FROM co_iva WHERE id='.prepare($articolo['idiva_vendita']))['percentuale'];
+        $iva = ($iva) ? $iva : 0;
+
+        $dbo->insert('mg_articoli_concatenati', [
+            'id_articolo' => $id_articolo,
+            'id_articolo_concatenato' => $id_articolo_concatenato,
+            'prezzo' => $prezzo,
+            'iva' => $iva,
+            'prezzo_ivato' => $prezzo + ($prezzo / 100 * $iva),
+        ]);
+
+        break;
+
+    case 'update_concatenato':
+        $id = post('id');
+        $iva = post('iva');
+        $prezzo = post('prezzo');
+
+        $dbo->update('mg_articoli_concatenati', [
+            'prezzo' => $prezzo,
+            'iva' => $iva,
+            'prezzo_ivato' => $prezzo + ($prezzo / 100 * $iva),
+        ], [
+            'id' => $id,
+        ]);
+
+        break;
+
+    case 'remove_concatenato':
+        $id = post('id');
+
+        $dbo->query('DELETE FROM mg_articoli_concatenati WHERE id='.prepare($id));
 
         break;
 }

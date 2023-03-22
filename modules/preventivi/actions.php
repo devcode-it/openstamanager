@@ -43,7 +43,7 @@ switch (post('op')) {
         $tipo = TipoSessione::find($idtipointervento);
 
         $preventivo = Preventivo::build($anagrafica, $tipo, $nome, $data_bozza, $id_sede, $id_segment);
-      
+
         $preventivo->idstato = post('idstato');
         $preventivo->save();
 
@@ -220,6 +220,25 @@ switch (post('op')) {
             $originale = ArticoloOriginale::find(post('idarticolo'));
             $articolo = Articolo::build($preventivo, $originale);
             $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
+
+            //check if the item have linked items
+            $concatenati = $dbo->fetchArray('SELECT * FROM mg_articoli_concatenati WHERE id_articolo='.prepare($articolo->idarticolo));
+
+            foreach ($concatenati as $concatenato) {
+                $concatenato_originale = ArticoloOriginale::find($concatenato['id_articolo_concatenato']);
+                $riga_concatenato = Articolo::build($preventivo, $concatenato_originale);
+
+                try {
+                    $riga_concatenato->qta = post('qta');
+                } catch (UnexpectedValueException $e) {
+                    flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
+                }
+
+                $riga_concatenato->confermato = 1;
+                $riga_concatenato->setPrezzoUnitario($concatenato['prezzo'], $concatenato['idiva']);
+
+                $riga_concatenato->save();
+            }
         }
 
         $qta = post('qta');
@@ -368,7 +387,7 @@ switch (post('op')) {
     // Eliminazione riga
     case 'delete_riga':
         $id_righe = (array)post('righe');
-        
+
         foreach ($id_righe as $id_riga) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Descrizione::find($id_riga);
@@ -385,7 +404,7 @@ switch (post('op')) {
     // Duplicazione riga
     case 'copy_riga':
         $id_righe = (array)post('righe');
-        
+
         foreach ($id_righe as $id_riga) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Descrizione::find($id_riga);

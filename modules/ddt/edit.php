@@ -157,7 +157,7 @@ echo '
                 if ($dir == 'entrata') {
                     echo '
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "readonly": "'.(sizeof($articolo) ? 1 : 0).'", "help": "'.tr("Sedi di partenza dell'azienda").'" ]}
+                    {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "help": "'.tr("Sedi di partenza dell'azienda").'" ]}
                 </div>
 
                 <div class="col-md-3">
@@ -321,7 +321,7 @@ if ($dir == 'entrata') {
     <div class="box box-primary collapsable  <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?> <?php echo $collapsed; ?>">
         <div class=" box-header">
             <h4 class=" box-title">
-                
+
                 <?php echo tr('Dati appalto'); ?></h4>
 
                 <div class="box-tools pull-right">
@@ -329,7 +329,7 @@ if ($dir == 'entrata') {
                     <i class="fa fa-plus"></i>
                     </button>
                 </div>
-            
+
         </div>
         <div class="box-body">
             <div class="row">
@@ -390,11 +390,11 @@ if (!$block_edit) {
                     <button title="'.tr('Aggiungi articolo alla vendita').'" class="btn btn-primary tip" type="button" onclick="salvaArticolo()">
                         <i class="fa fa-plus"></i> '.tr('Aggiungi').'
                     </button>
-                    
+
                     <a class="btn btn-primary" onclick="gestioneRiga(this)" data-title="'.tr('Aggiungi riga').'">
                         <i class="fa fa-plus"></i> '.tr('Riga').'
                     </a>
-                    
+
                     <div class="btn-group tip" data-toggle="tooltip">
                         <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             <i class="fa fa-list"></i> '.tr('Altro').'

@@ -87,137 +87,145 @@ if ($options['pricing']) {
     <tbody>';
 
 $num = 0;
+$riga_spesa_trasporto = null;
+$riga_spesa_incasso = null;
 foreach ($righe as $riga) {
-    ++$num;
-    $r = $riga->toArray();
+    if ($riga->is_spesa_trasporto == 1) {
+        $riga_spesa_trasporto = $riga;
+    } else if ($riga->is_spesa_incasso) {
+        $riga_spesa_incasso = $riga;
+    } else {
+        ++$num;
+        $r = $riga->toArray();
 
-    $autofill->count($r['descrizione']);
-
-    echo '
-        <tr>
-            <td class="text-center" style="vertical-align: middle">
-                '.$num.'
-            </td>';
-
-    if ($has_image) {
-        if ($riga->isArticolo() && !empty($riga->articolo->image)) {
-            echo '
-            <td align="center">
-                <img src="'.$riga->articolo->image.'" style="max-height: 80px; max-width:120px">
-            </td>';
-
-            $autofill->set(5);
-        } else {
-            echo '
-            <td></td>';
-        }
-    }
-
-    if ($documento->direzione == 'uscita') {
-        echo '
-            <td class="text-center" style="vertical-align: middle">
-                '.$riga->articolo->codice.'
-            </td>
-            <td class="text-center" style="vertical-align: middle">
-                '.($riga->articolo ? $riga->articolo->dettaglioFornitore($documento->idanagrafica)->codice_fornitore : '').'
-            </td>';
-    }
-
-    echo '
-            <td>
-                '.nl2br($r['descrizione']);
-
-    if ($riga->isArticolo()) {
-        if ($documento->direzione == 'entrata' && !$options['hide-item-number']) {
-            // Codice articolo
-            $text = tr('COD. _COD_', [
-                '_COD_' => $riga->codice,
-            ]);
-            echo '
-                    <br><small>'.$text.'</small>';
-
-            $autofill->count($text, true);
-        }
-
-        // Seriali
-        $seriali = $riga->serials;
-        if (!empty($seriali)) {
-            $text = tr('SN').': '.implode(', ', $seriali);
-            echo '
-                    <br><small>'.$text.'</small>';
-
-            $autofill->count($text, true);
-        }
-    }
-
-    echo '
-            </td>';
-
-    if (!$riga->isDescrizione()) {
-        $qta = $riga->qta;
-        $um = $r['um'];
-
-        if ($riga->isArticolo() && $documento->direzione == 'uscita' && !empty($riga->articolo->um_secondaria)) {
-            $um = $riga->articolo->um_secondaria;
-            $qta *= $riga->articolo->fattore_um_secondaria;
-        }
+        $autofill->count($r['descrizione']);
 
         echo '
-            <td class="text-center">
-                '.Translator::numberToLocale(abs($qta), 'qta').' '.$um.'
-            </td>';
+            <tr>
+                <td class="text-center" style="vertical-align: middle">
+                    '.$num.'
+                </td>';
 
-        if ($options['pricing']) {
-            // Prezzo unitario
-            echo '
-            <td class="text-right">
-                '.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario);
-
-            if ($riga->sconto > 0) {
-                $text = discountInfo($riga, false);
-
+        if ($has_image) {
+            if ($riga->isArticolo() && !empty($riga->articolo->image)) {
                 echo '
-                <br><small class="text-muted">'.$text.'</small>';
+                <td align="center">
+                    <img src="'.$riga->articolo->image.'" style="max-height: 80px; max-width:120px">
+                </td>';
+
+                $autofill->set(5);
+            } else {
+                echo '
+                <td></td>';
+            }
+        }
+
+        if ($documento->direzione == 'uscita') {
+            echo '
+                <td class="text-center" style="vertical-align: middle">
+                    '.$riga->articolo->codice.'
+                </td>
+                <td class="text-center" style="vertical-align: middle">
+                    '.($riga->articolo ? $riga->articolo->dettaglioFornitore($documento->idanagrafica)->codice_fornitore : '').'
+                </td>';
+        }
+
+        echo '
+                <td>
+                    '.nl2br($r['descrizione']);
+
+        if ($riga->isArticolo()) {
+            if ($documento->direzione == 'entrata' && !$options['hide_codice']) {
+                // Codice articolo
+                $text = tr('COD. _COD_', [
+                    '_COD_' => $riga->codice,
+                ]);
+                echo '
+                        <br><small>'.$text.'</small>';
 
                 $autofill->count($text, true);
             }
 
-            echo '
-            </td>';
+            // Seriali
+            $seriali = $riga->serials;
+            if (!empty($seriali)) {
+                $text = tr('SN').': '.implode(', ', $seriali);
+                echo '
+                        <br><small>'.$text.'</small>';
 
-            // Imponibile
-            echo '
-            <td class="text-right">
-				'.moneyFormat($prezzi_ivati ? $riga->totale : $riga->totale_imponibile).'
-            </td>';
+                $autofill->count($text, true);
+            }
+        }
 
-            // Iva
+        echo '
+                </td>';
+
+        if (!$riga->isDescrizione()) {
+            $qta = $riga->qta;
+            $um = $r['um'];
+
+            if ($riga->isArticolo() && $documento->direzione == 'uscita' && !empty($riga->articolo->um_secondaria)) {
+                $um = $riga->articolo->um_secondaria;
+                $qta *= $riga->articolo->fattore_um_secondaria;
+            }
+
+            echo '
+                <td class="text-center">
+                    '.Translator::numberToLocale(abs($qta), 'qta').' '.$um.'
+                </td>';
+
+            if ($options['pricing']) {
+                // Prezzo unitario
+                echo '
+                <td class="text-right">
+                    '.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario);
+
+                if ($riga->sconto > 0) {
+                    $text = discountInfo($riga, false);
+
+                    echo '
+                    <br><small class="text-muted">'.$text.'</small>';
+
+                    $autofill->count($text, true);
+                }
+
+                echo '
+                </td>';
+
+                // Imponibile
+                echo '
+                <td class="text-right">
+                    '.moneyFormat($prezzi_ivati ? $riga->totale : $riga->totale_imponibile).'
+                </td>';
+
+                // Iva
+                echo '
+                <td class="text-center">
+                    '.Translator::numberToLocale($riga->aliquota->percentuale, 2).'
+                </td>';
+            }
+
             echo '
             <td class="text-center">
-                '.Translator::numberToLocale($riga->aliquota->percentuale, 2).'
+                '.Translator::dateToLocale($riga->data_evasione).($riga->ora_evasione ? '<br>'.Translator::timeToLocale($riga->ora_evasione).'' : '').'
             </td>';
-        }
-
-        echo '
-        <td class="text-center">
-            '.Translator::dateToLocale($riga->data_evasione).($riga->ora_evasione ? '<br>'.Translator::timeToLocale($riga->ora_evasione).'' : '').'
-        </td>';
-    } else {
-        echo '
-            <td></td>';
-
-        if ($options['pricing']) {
+        } else {
             echo '
-            <td></td>
-            <td></td>
-            <td></td>';
+                <td></td>';
+
+            if ($options['pricing']) {
+                echo '
+                <td></td>
+                <td></td>
+                <td></td>';
+            }
         }
+
+        echo '
+            </tr>';
+
+        $autofill->next();
     }
-
-    echo '
-        </tr>';
-
-    $autofill->next();
 }
 
 echo '
@@ -238,6 +246,29 @@ $show_sconto = $sconto > 0;
 $colspan = 5;
 ($documento->direzione == 'uscita' ? $colspan += 2 : $colspan);
 ($has_image ? $colspan++ : $colspan);
+
+echo '
+    <tr>
+        <td colspan="'.$colspan.'" class="text-right border-top">
+            <b>'.tr('Spesa di trasporto', [], ['upper' => true]).':</b>
+        </td>
+
+        <th colspan="2" class="text-right">
+            <b>'.moneyFormat($riga_spesa_trasporto->subtotale, 2).'</b>
+        </th>
+    </tr>';
+
+echo '
+    <tr>
+        <td colspan="'.$colspan.'" class="text-right border-top">
+            <b>'.tr('Spesa di incasso', [], ['upper' => true]).':</b>
+        </td>
+
+        <th colspan="2" class="text-right">
+            <b>'.moneyFormat($riga_spesa_incasso->subtotale, 2).'</b>
+        </th>
+    </tr>';
+
 
 // TOTALE COSTI FINALI
 if ($options['pricing']) {

@@ -55,137 +55,145 @@ if ($options['pricing']) {
 // Righe documento
 $righe = $documento->getRighe();
 $num = 0;
+$riga_spesa_trasporto = null;
+$riga_spesa_incasso = null;
 foreach ($righe as $riga) {
-    ++$num;
-    $r = $riga->toArray();
-
-    $autofill->count($r['descrizione']);
-
-    echo '
-    <tr>
-        <td class="text-center" style="vertical-align: middle">
-            '.$num.'
-        </td>
-
-        <td class="text-center" nowrap="nowrap" style="vertical-align: middle">';
-
-    $source_type = get_class($riga);
-    if ($riga->isArticolo()) {
-        echo $riga->codice;
+    if ($riga->is_spesa_trasporto == 1) {
+        $riga_spesa_trasporto = $riga;
+    } else if ($riga->is_spesa_incasso) {
+        $riga_spesa_incasso = $riga;
     } else {
-        echo '-';
-    }
+        ++$num;
+        $r = $riga->toArray();
 
-    echo '
-        </td>
+        $autofill->count($r['descrizione']);
 
-        <td>
-            '.nl2br($r['descrizione']);
-
-    //Riferimenti odrini/ddt righe
-    if ($riga->referenceTargets()->count()) {
-        $source = $source_type::find($riga->id);
-        $riferimenti = $source->referenceTargets;
-
-        foreach ($riferimenti as $riferimento) {
-            $documento_riferimento = $riferimento->target->getDocument();
-            echo '
-            <br><small>'.$riferimento->target->descrizione.'<br>'.tr('Rif. _DOCUMENT_', [
-                '_DOCUMENT_' => strtolower($documento_riferimento->getReference()),
-            ]).'</small>';
-        }
-    }
-
-    if ($riga->isArticolo()) {
-        // Codice articolo
-        $text = tr('COD. _COD_', [
-            '_COD_' => $riga->codice,
-        ]);
         echo '
-                <br><small>'.$text.'</small>';
+        <tr>
+            <td class="text-center" style="vertical-align: middle">
+                '.$num.'
+            </td>
 
-        $autofill->count($text, true);
+            <td class="text-center" nowrap="nowrap" style="vertical-align: middle">';
 
-        // Seriali
-        $seriali = $riga->serials;
-        if (!empty($seriali)) {
-            $text = tr('SN').': '.implode(', ', $seriali);
+        $source_type = get_class($riga);
+        if ($riga->isArticolo()) {
+            echo $riga->codice;
+        } else {
+            echo '-';
+        }
+
+        echo '
+            </td>
+
+            <td>
+                '.nl2br($r['descrizione']);
+
+        //Riferimenti odrini/ddt righe
+        if ($riga->referenceTargets()->count()) {
+            $source = $source_type::find($riga->id);
+            $riferimenti = $source->referenceTargets;
+
+            foreach ($riferimenti as $riferimento) {
+                $documento_riferimento = $riferimento->target->getDocument();
+                echo '
+                <br><small>'.$riferimento->target->descrizione.'<br>'.tr('Rif. _DOCUMENT_', [
+                    '_DOCUMENT_' => strtolower($documento_riferimento->getReference()),
+                ]).'</small>';
+            }
+        }
+
+        if ($riga->isArticolo()) {
+            // Codice articolo
+            $text = tr('COD. _COD_', [
+                '_COD_' => $riga->codice,
+            ]);
             echo '
                     <br><small>'.$text.'</small>';
 
             $autofill->count($text, true);
-        }
-    }
 
-    // Aggiunta dei riferimenti ai documenti
-    /*
-    if (setting('Riferimento dei documenti nelle stampe') && $riga->hasOriginal()) {
-        $ref = $riga->getOriginal()->getDocument()->getReference();
-
-        if (!empty($ref)) {
-            echo '
-                <br><small>'.$ref.'</small>';
-
-            $autofill->count($ref, true);
-        }
-    }
-    */
-
-    echo '
-        </td>';
-
-    if (!$riga->isDescrizione()) {
-        echo '
-            <td class="text-center" nowrap="nowrap">
-                '.Translator::numberToLocale(abs($riga->qta), 'qta').' '.$r['um'].'
-            </td>';
-
-        if ($options['pricing']) {
-            // Prezzo unitario
-            echo '
-            <td class="text-right" nowrap="nowrap">
-				'.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario);
-
-            if ($riga->sconto > 0) {
-                $text = discountInfo($riga, false);
-
+            // Seriali
+            $seriali = $riga->serials;
+            if (!empty($seriali)) {
+                $text = tr('SN').': '.implode(', ', $seriali);
                 echo '
-                <br><small class="text-muted">'.$text.'</small>';
+                        <br><small>'.$text.'</small>';
 
                 $autofill->count($text, true);
             }
-
-            echo '
-            </td>';
-
-            // Imponibile
-            echo '
-            <td class="text-right" nowrap="nowrap">
-				'.moneyFormat($prezzi_ivati ? $riga->totale : $riga->totale_imponibile).'
-            </td>';
-
-            // Iva
-            echo '
-            <td class="text-center" nowrap="nowrap">
-                '.Translator::numberToLocale($riga->aliquota->percentuale, 2).'
-            </td>';
         }
-    } else {
+
+        // Aggiunta dei riferimenti ai documenti
+        /*
+        if (setting('Riferimento dei documenti nelle stampe') && $riga->hasOriginal()) {
+            $ref = $riga->getOriginal()->getDocument()->getReference();
+
+            if (!empty($ref)) {
+                echo '
+                    <br><small>'.$ref.'</small>';
+
+                $autofill->count($ref, true);
+            }
+        }
+        */
+
         echo '
-            <td></td>';
+            </td>';
 
-        if ($options['pricing']) {
+        if (!$riga->isDescrizione()) {
             echo '
-            <td></td>
-            <td></td>
-            <td></td>';
+                <td class="text-center" nowrap="nowrap">
+                    '.Translator::numberToLocale(abs($riga->qta), 'qta').' '.$r['um'].'
+                </td>';
+
+            if ($options['pricing']) {
+                // Prezzo unitario
+                echo '
+                <td class="text-right" nowrap="nowrap">
+                    '.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario);
+
+                if ($riga->sconto > 0) {
+                    $text = discountInfo($riga, false);
+
+                    echo '
+                    <br><small class="text-muted">'.$text.'</small>';
+
+                    $autofill->count($text, true);
+                }
+
+                echo '
+                </td>';
+
+                // Imponibile
+                echo '
+                <td class="text-right" nowrap="nowrap">
+                    '.moneyFormat($prezzi_ivati ? $riga->totale : $riga->totale_imponibile).'
+                </td>';
+
+                // Iva
+                echo '
+                <td class="text-center" nowrap="nowrap">
+                    '.Translator::numberToLocale($riga->aliquota->percentuale, 2).'
+                </td>';
+            }
+        } else {
+            echo '
+                <td></td>';
+
+            if ($options['pricing']) {
+                echo '
+                <td></td>
+                <td></td>
+                <td></td>';
+            }
         }
+
+        echo '
+            </tr>';
+
+        $autofill->next();
     }
-
-    echo '
-        </tr>';
-
-    $autofill->next();
 }
 
 echo '

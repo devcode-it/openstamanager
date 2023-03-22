@@ -54,6 +54,33 @@ switch (filter('op')) {
         $ddt->idcausalet = post('idcausalet');
         $ddt->save();
 
+        $iva_predefinita = setting('Iva predefinita');
+
+        $prc = $database->fetchOne('SELECT * FROM co_pagamenti WHERE id = '.$ddt->idpagamento)['prc'];
+
+        $importo_spese_di_trasporto = ($anagrafica->spese_di_trasporto) ? $anagrafica->importo_spese_di_trasporto : 0;
+        $riga = Riga::build($ddt);
+        $riga->descrizione = tr('Spesa di trasporto');
+        $riga->note = tr('Spesa di trasporto');
+        $riga->prezzo_unitario = $importo_spese_di_trasporto;
+        $riga->idiva = $iva_predefinita;
+        $riga->qta = intval(100 / $prc);
+        $riga->is_spesa_trasporto = 1;
+        $riga->setPrezzoUnitario($riga->prezzo_unitario, $riga->idiva);
+        $riga->save();
+
+        $importo_spese_di_incasso = ($anagrafica->spese_di_incasso) ? $anagrafica->importo_spese_di_incasso : 0;
+        $riga = Riga::build($ddt);
+        $riga->descrizione = tr('Spesa di incasso');
+        $riga->note = tr('Spesa di incasso');
+        $riga->prezzo_unitario = $importo_spese_di_incasso;
+        $riga->idiva = $iva_predefinita;
+        $riga->qta = intval(100 / $prc);
+        $riga->is_spesa_incasso = 1;
+        $riga->setPrezzoUnitario($riga->prezzo_unitario, $riga->idiva);
+        $riga->save();
+
+
         flash()->info(tr('Aggiunto ddt in _TYPE_ numero _NUM_!', [
             '_TYPE_' => $dir,
             '_NUM_' => $ddt->numero,
@@ -122,6 +149,64 @@ switch (filter('op')) {
             $ddt->setScontoFinale(post('sconto_finale'), post('tipo_sconto_finale'));
 
             $ddt->save();
+
+            $anagrafica = Anagrafica::find($id_anagrafica);
+            $iva_predefinita = setting('Iva predefinita');
+
+            //update spese incasso/trasporto in base a idpagamento
+            $righe = $ddt->getRighe();
+
+            $prc = $database->fetchOne('SELECT * FROM co_pagamenti WHERE id = '.$ddt->idpagamento)['prc'];
+
+            $riga_spese_incasso = $righe->where('is_spesa_incasso', 1)->first();
+            if (empty($riga_spese_incasso)) {
+                $importo_spese_di_incasso = ($anagrafica->spese_di_incasso) ? $anagrafica->importo_spese_di_incasso : 0;
+                $riga = Riga::build($ddt);
+                $riga->descrizione = tr('Spesa di incasso');
+                $riga->note = tr('Spesa di incasso');
+                $riga->prezzo_unitario = $importo_spese_di_incasso;
+                $riga->idiva = $iva_predefinita;
+                $riga->qta = intval(100 / $prc);
+                $riga->is_spesa_incasso = 1;
+                $riga->setPrezzoUnitario($riga->prezzo_unitario, $riga->idiva);
+                $riga->save();
+            } else {
+                $riga_spese_incasso->qta = intval(100 / $prc);
+                $riga_spese_incasso->setPrezzoUnitario($riga_spese_incasso->prezzo_unitario, $riga_spese_incasso->idiva);
+                $riga_spese_incasso->save();
+            }
+
+            $riga_spese_trasporto = $righe->where('is_spesa_trasporto', 1)->first();
+            if (empty($riga_spese_trasporto)) {
+                $importo_spese_di_trasporto = ($anagrafica->spese_di_trasporto) ? $anagrafica->importo_spese_di_trasporto : 0;
+                $riga = Riga::build($ddt);
+                $riga->descrizione = tr('Spesa di trasporto');
+                $riga->note = tr('Spesa di trasporto');
+                $riga->prezzo_unitario = $importo_spese_di_trasporto;
+                $riga->idiva = $iva_predefinita;
+                $riga->qta = intval(100 / $prc);
+                $riga->is_spesa_trasporto = 1;
+                $riga->setPrezzoUnitario($riga->prezzo_unitario, $riga->idiva);
+                $riga->save();
+            } else {
+                $riga_spese_trasporto->qta = intval(100 / $prc);
+                $riga_spese_trasporto->setPrezzoUnitario($riga_spese_trasporto->prezzo_unitario, $riga_spese_trasporto->idiva);
+                $riga_spese_trasporto->save();
+            }
+
+            $spedizione = $dbo->fetchOne('SELECT id, descrizione FROM dt_spedizione WHERE id = '.prepare($ddt->idspedizione));
+            if ($spedizione['descrizione'] == 'Ritiro in magazzino') {
+                $dbo->query(
+                    'UPDATE dt_righe_ddt
+                    SET
+                    iva = 0,
+                    subtotale = 0,
+                    prezzo_unitario = 0,
+                    iva_unitaria = 0,
+                    prezzo_unitario_ivato = 0
+                    WHERE idddt = '.prepare($id_record).' AND is_spesa_trasporto = 1'
+                );
+            }
 
             $query = 'SELECT descrizione FROM dt_statiddt WHERE id='.prepare($idstatoddt);
             $rs = $dbo->fetchArray($query);
@@ -209,7 +294,7 @@ switch (filter('op')) {
         if ($dir == 'entrata') {
             $articolo->setProvvigione(post('provvigione'), post('tipo_provvigione'));
         }
-        
+
         try {
             $articolo->qta = post('qta');
         } catch (UnexpectedValueException $e) {
@@ -359,24 +444,50 @@ switch (filter('op')) {
 
         $righe = $documento->getRighe();
         foreach ($righe as $riga) {
-            if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
+            if (
+                (post('manage-spese') && ($riga->is_spesa_trasporto || $riga->is_spesa_incasso)) ||
+                (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id]))
+            ) {
+                if (empty(post('create_document')) && (($riga->is_spesa_trasporto || $riga->is_spesa_incasso))) {
+                    if ($riga->is_spesa_trasporto) { //controllo se già esiste spesa trasposrto
+                        $riga_spesa_trasporto = $dbo->fetchArray(
+                            'SELECT * FROM `dt_righe_ddt` WHERE `idddt` = '.prepare($id_record).' AND `is_spesa_trasporto` = 1'
+                        );
+
+                        if ($riga_spesa_trasporto != null) {
+                            $riga_trasporto = Riga::find($riga_spesa_trasporto[0]['id']);
+                            $riga_trasporto->delete();
+                        }
+                    } else {
+                        $riga_spesa_incasso = $dbo->fetchArray(
+                            'SELECT * FROM `dt_righe_ddt` WHERE `idddt` = '.prepare($id_record).' AND `is_spesa_incasso` = 1'
+                        );
+
+                        if ($riga_spesa_incasso != null) {
+                            $riga_incasso = Riga::find($riga_spesa_incasso[0]['id']);
+                            $riga_incasso->delete();
+                        }
+                    }
+                }
                 $qta = post('qta_da_evadere')[$riga->id];
 
                 $copia = $riga->copiaIn($ddt, $qta, $evadi_qta_parent);
 
-                // Aggiornamento seriali dalla riga dell'ordine
-                if ($copia->isArticolo()) {
+                if ($riga->is_spesa_trasporto || $riga->is_spesa_incasso) {
+                    $prezzo = ($riga->is_spesa_trasporto) ? post('spese_di_trasporto') : post('spese_di_incasso');
+                    $id_iva = $originale->idiva_vendita ? $originale->idiva_vendita : setting('Iva predefinita');
+                    $copia->setPrezzoUnitario($prezzo, $id_iva);
+                } else if ($copia->isArticolo()) { // Aggiornamento seriali dalla riga dell'ordine
                     if ($documento->tipo->descrizione=='Ddt in uscita' || $documento->tipo->descrizione=='Ddt in entrata') {
                         // TODO: estrarre il listino corrispondente se presente
                         $originale = ArticoloOriginale::find($riga->idarticolo);
 
                         $prezzo = $documento->tipo->descrizione=='Ddt in entrata' ? $originale->prezzo_vendita : $originale->prezzo_acquisto;
                         $id_iva = $originale->idiva_vendita ? $originale->idiva_vendita : setting('Iva predefinita');
-
                         $copia->setPrezzoUnitario($prezzo, $id_iva);
                     }
-                    $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
 
+                    $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
                     $copia->serials = $serials;
                 }
 
@@ -403,7 +514,7 @@ switch (filter('op')) {
     // Eliminazione riga
     case 'delete_riga':
         $id_righe = (array)post('righe');
-        
+
         foreach ($id_righe as $id_riga) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Descrizione::find($id_riga);
@@ -425,7 +536,7 @@ switch (filter('op')) {
     // Duplicazione riga
     case 'copy_riga':
         $id_righe = (array)post('righe');
-        
+
         foreach ($id_righe as $id_riga) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Descrizione::find($id_riga);
@@ -461,7 +572,7 @@ switch (filter('op')) {
                     $riga_trasporto->movimenta(-$riga_trasporto->qta);
                 }
             }
-            
+
             $ddt->delete();
 
             flash()->info(tr('Ddt eliminato!'));

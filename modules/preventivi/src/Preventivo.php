@@ -253,6 +253,9 @@ class Preventivo extends Document
 
         $righe = $this->getRighe();
 
+        // escludi le righe con is_spesa_incasso = 1 o is_spesa_trasporto = 1
+        $righe = $righe->where('is_spesa_incasso', 0)->where('is_spesa_trasporto', 0);
+
         $qta_evasa = $righe->sum('qta_evasa');
         $qta = $righe->sum('qta');
         $parziale = $qta != $qta_evasa;

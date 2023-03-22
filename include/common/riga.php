@@ -23,6 +23,11 @@ echo App::internalLoad('descrizione.php', $result, $options);
 // Conti, rivalsa INPS e ritenuta d'acconto
 echo App::internalLoad('conti.php', $result, $options);
 
+$is_spesa = false;
+if ($result['is_spesa_incasso'] || $result['is_spesa_trasporto']) {
+    $is_spesa = true;
+}
+
 // Iva
 echo '
     <div class="row">
@@ -30,18 +35,29 @@ echo '
             {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$result['idiva'].'", "ajax-source": "iva", "select-options": '.json_encode($options['select-options']['iva']).' ]}
         </div>';
 
+    if ($is_spesa) {
+        echo '
+        <div class="col-md-4">
+            {[ "type": "number", "label": "'.tr('Prezzo unitario').'", "name": "prezzo_unitario", "value": "'.$result['prezzo_unitario_corrente'].'", "required": 1, "icon-after": "'.currency().'", "help": "'.($options['dir'] == 'entrata' && setting('Utilizza prezzi di vendita comprensivi di IVA') ? tr('Importo IVA inclusa') : '').'" ]}
+        </div>';
+    }
+
 // Quantità
 echo '
         <div class="col-md-4">
             {[ "type": "number", "label": "'.tr('Q.tà').'", "name": "qta", "required": 1, "value": "'.abs((float) $result['qta']).'", "decimals": "qta"'.(isset($result['max_qta']) ? ', "icon-after": "<span class=\"tip\" title=\"'.tr("L'elemento è collegato a un documento: la quantità massima ammessa è relativa allo stato di evasione dell'elemento nel documento di origine (quantità dell'elemento / quantità massima ammessa)").'\">/ '.numberFormat(abs((float) $result['max_qta']), 'qta').' <i class=\"fa fa-question-circle-o\"></i></span>"' : '').', "min-value": "'.abs((float)  $result['qta_evasa']).'" ]}
         </div>';
 
-// Unità di misura
-echo '
+    if (!$is_spesa) {
+        // Unità di misura
+        echo '
         <div class="col-md-4">
             {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::get('Unità di misura')['id'].'", "name": "um", "value": "'.$result['um'].'", "ajax-source": "misure" ]}
-        </div>
-    </div>';
+        </div>';
+    }
+
+    echo '
+        </div>';
 
 $is_nota = $options['is_nota'] ?: 0;
 echo '
@@ -55,10 +71,12 @@ $label = $options['dir'] == 'entrata' ? tr('Prezzo unitario di vendita') : tr('P
 
 if ($options['dir'] == 'entrata') {
     // Prezzo di acquisto unitario
-    echo '
+    if (!$is_spesa) {
+        echo '
         <div class="col-md-'.$width.'">
             {[ "type": "number", "label": "'.tr('Prezzo unitario di acquisto').'", "name": "costo_unitario", "value": "'.$result['costo_unitario'].'", "icon-after": "'.currency().'" ]}
         </div>';
+    }
 
     // Funzione per l'aggiornamento in tempo reale del guadagno
     echo '
@@ -78,7 +96,7 @@ if ($options['dir'] == 'entrata') {
             } else {
                 prezzo = $("#prezzo_unitario").val().toEnglish() - sconto;
             }
-            
+
             var provvigione = $("#provvigione").val().toEnglish();
             if ($("#modals select[id^=\'tipo_provvigione\']").val() === "PRC") {
                 provvigione = provvigione / 100 * prezzo;
@@ -86,7 +104,7 @@ if ($options['dir'] == 'entrata') {
 
             var guadagno = prezzo - provvigione - costo_unitario;
             var ricarico = ((prezzo / costo_unitario) - 1) * 100;
-            var margine = (1 - (costo_unitario / prezzo)) * 100;            
+            var margine = (1 - (costo_unitario / prezzo)) * 100;
             var parent = $("#costo_unitario").closest("div").parent();
             var div = $(".margine");
             var mediaponderata = 0;
@@ -144,7 +162,7 @@ if ($options['dir'] == 'entrata') {
                             </td>\
                         </tr>\
                     </table>");
-                    
+
             if (guadagno < 0) {
                 parent.addClass("has-error");
                 $(".table-margine").addClass("label-danger").removeClass("label-success");
@@ -167,184 +185,191 @@ if ($options['dir'] == 'entrata') {
     </script>';
 }
 
-// Prezzo di vendita unitario
-echo '
+if (!$is_spesa) {
+    // Prezzo di vendita unitario
+    echo '
         <div class="col-md-'.$width.'">
             {[ "type": "number", "label": "'.$label.'", "name": "prezzo_unitario", "value": "'.$result['prezzo_unitario_corrente'].'", "required": 1, "icon-after": "'.currency().'", "help": "'.($options['dir'] == 'entrata' && setting('Utilizza prezzi di vendita comprensivi di IVA') ? tr('Importo IVA inclusa') : '').'" ]}
         </div>';
 
-// Sconto unitario
-echo '
+    // Sconto unitario
+    echo '
         <div class="col-md-'.$width.'">
             {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.($result['sconto_percentuale'] ?: $result['sconto_unitario_corrente']).'", "icon-after": "choice|untprc|'.$result['tipo_sconto'].'", "help": "'.tr('Il valore positivo indica uno sconto. Per applicare una maggiorazione inserire un valore negativo.').'" ]}
-        </div>
-    </div>';
+        </div>';
+}
 
-if ($options['dir'] == 'entrata') {
-    echo '
-    <div class="row">
-        <div class="col-md-4 margine"></div>
-        <div class="col-md-4 prezzi"></div>';
-        
-        // Provvigione
+echo '
+</div>';
+
+if (!$is_spesa) {
+    if ($options['dir'] == 'entrata') {
         echo '
-        <div class="col-md-4">
-            <div class="sconto"></div>
-            {[ "type": "number", "label": "'.tr('Provvigione unitaria').'", "name": "provvigione", "value": "'.($result['provvigione_percentuale'] ?: ($result['provvigione_unitaria'] ?: $result['provvigione_default'])).'", "icon-after": "choice|untprc|'.($result['tipo_provvigione'] ?: $result['tipo_provvigione_default']).'", "help": "'.tr('Provvigione destinata all\'agente.').'", "min-value": "0" ]}
+        <div class="row">
+            <div class="col-md-4 margine"></div>
+            <div class="col-md-4 prezzi"></div>';
+
+            // Provvigione
+            echo '
+            <div class="col-md-4">
+                <div class="sconto"></div>
+                {[ "type": "number", "label": "'.tr('Provvigione unitaria').'", "name": "provvigione", "value": "'.($result['provvigione_percentuale'] ?: ($result['provvigione_unitaria'] ?: $result['provvigione_default'])).'", "icon-after": "choice|untprc|'.($result['tipo_provvigione'] ?: $result['tipo_provvigione_default']).'", "help": "'.tr('Provvigione destinata all\'agente.').'", "min-value": "0" ]}
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-offset-4 col-md-4 minimo_vendita text-center"></div>
-    </div>';
-} else {
-    echo '
-    <div class="row">
-        <div class="col-md-6 prezzi"></div>
-        <div class="col-md-6 sconto"></div>
-    </div>
-    <br>';
+        <div class="row">
+            <div class="col-md-offset-4 col-md-4 minimo_vendita text-center"></div>
+        </div>';
+    } else {
+        echo '
+        <div class="row">
+            <div class="col-md-6 prezzi"></div>
+            <div class="col-md-6 sconto"></div>
+        </div>
+        <br>';
+    }
 }
 
 // Data prevista evasione (per ordini)
-
-if (in_array($module['name'], ['Ordini cliente', 'Ordini fornitore', 'Preventivi'])) {
-    if ($options['action'] == 'add') {
-        if ($module['name'] == 'Ordini cliente') {
-            $confermato = setting('Conferma automaticamente le quantità negli ordini cliente');
-        } elseif ($module['name'] == 'Ordini fornitore') {
-            $confermato = setting('Conferma automaticamente le quantità negli ordini fornitore');
+if (!$is_spesa) {
+    if (in_array($module['name'], ['Ordini cliente', 'Ordini fornitore', 'Preventivi'])) {
+        if ($options['action'] == 'add') {
+            if ($module['name'] == 'Ordini cliente') {
+                $confermato = setting('Conferma automaticamente le quantità negli ordini cliente');
+            } elseif ($module['name'] == 'Ordini fornitore') {
+                $confermato = setting('Conferma automaticamente le quantità negli ordini fornitore');
+            } else {
+                $confermato = setting('Conferma automaticamente le quantità nei preventivi');
+            }
         } else {
-            $confermato = setting('Conferma automaticamente le quantità nei preventivi');
+            $confermato = $result['confermato'];
         }
-    } else {
-        $confermato = $result['confermato'];
+        echo '
+        <div class="box box-info collapsable collapsed-box">
+            <div class="box-header with-border">
+                <h3 class="box-title">'.tr('Informazioni aggiuntive').'</h3>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+                </div>
+            </div>
+
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        {[ "type": "date", "label": "'.tr('Data prevista evasione').'", "name": "data_evasione", "value": "'.$result['data_evasione'].'" ]}
+                    </div>
+                    <div class="col-md-4">
+                        {[ "type": "time", "label": "'.tr('Ora prevista evasione').'", "name": "ora_evasione", "value": "'.$result['ora_evasione'].'", "disabled": 1 ]}
+                    </div>
+                    <div class="col-md-4">
+                        {[ "type": "checkbox", "label": "'.tr('Cambia data a tutte le righe').'", "name": "data_evasione_all", "value": "" ]}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+
+                    </div>
+                    <div class="col-md-4">
+                        {[ "type": "checkbox", "label": "'.tr('Articolo confermato').'", "name": "confermato", "value": "'.$confermato.'" ]}
+                    </div>
+                    <div class="col-md-4">
+                        {[ "type": "checkbox", "label": "'.tr('Cambia stato a tutte le righe').'", "name": "confermato_all", "value": "" ]}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            $(document).ready(function() {
+                if(input("data_evasione").get()){
+                    input("ora_evasione").enable();
+                }
+            });
+
+            $("#data_evasione").blur(function() {
+                if(input("data_evasione").get()){
+                    input("ora_evasione").enable();
+                } else{
+                    input("ora_evasione").disable();
+                    input("ora_evasione").set();
+                }
+            });
+            </script>';
     }
-    echo '
-    <div class="box box-info collapsable collapsed-box">
-        <div class="box-header with-border">
-            <h3 class="box-title">'.tr('Informazioni aggiuntive').'</h3>
-            <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
-            </div>
-        </div>
 
-        <div class="box-body">
-            <div class="row">
-                <div class="col-md-4">
-                    {[ "type": "date", "label": "'.tr('Data prevista evasione').'", "name": "data_evasione", "value": "'.$result['data_evasione'].'" ]}
-                </div>
-                <div class="col-md-4">
-                    {[ "type": "time", "label": "'.tr('Ora prevista evasione').'", "name": "ora_evasione", "value": "'.$result['ora_evasione'].'", "disabled": 1 ]}
-                </div>
-                <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "'.tr('Cambia data a tutte le righe').'", "name": "data_evasione_all", "value": "" ]}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
+    if (in_array($module['name'], ['Fatture di vendita', 'Fatture di acquisto'])) {
+        echo '
+        <script>
+            $(document).ready(function() {
+                if(input("data_evasione").get()){
+                    input("ora_evasione").enable();
+                }
 
-                </div>
-                <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "'.tr('Articolo confermato').'", "name": "confermato", "value": "'.$confermato.'" ]}
-                </div>
-                <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "'.tr('Cambia stato a tutte le righe').'", "name": "confermato_all", "value": "" ]}
-                </div>
-            </div>
-        </div>
-    </div>
+                controlla_prezzo();
+                controlla_sconto();
+            });
 
-    <script>
-        $(document).ready(function() {
-            if(input("data_evasione").get()){
-                input("ora_evasione").enable();
-            }
-        });
+            $("#data_evasione").blur(function() {
+                if(input("data_evasione").get()){
+                    input("ora_evasione").enable();
+                } else{
+                    input("ora_evasione").disable();
+                    input("ora_evasione").set();
+                }
+            });
 
-        $("#data_evasione").blur(function() {
-            if(input("data_evasione").get()){
-                input("ora_evasione").enable();
-            } else{
-                input("ora_evasione").disable();
-                input("ora_evasione").set();
-            }
-        });
-        </script>';
-}
+            $("#prezzo_unitario").on("keyup", function() {
+                controlla_prezzo();
+            });
 
-if (in_array($module['name'], ['Fatture di vendita', 'Fatture di acquisto'])) {
-    echo '
-    <script>
-        $(document).ready(function() {
-            if(input("data_evasione").get()){
-                input("ora_evasione").enable();
-            }
+            $("#sconto").on("keyup", function() {
+                controlla_sconto();
+            });
 
-            controlla_prezzo();
-            controlla_sconto();
-        });
-
-        $("#data_evasione").blur(function() {
-            if(input("data_evasione").get()){
-                input("ora_evasione").enable();
-            } else{
-                input("ora_evasione").disable();
-                input("ora_evasione").set();
-            }
-        });
-
-        $("#prezzo_unitario").on("keyup", function() {
-            controlla_prezzo();
-        });
-
-        $("#sconto").on("keyup", function() {
-            controlla_sconto();
-        });
-
-        function controlla_prezzo() {
-            let prezzo_unitario = $("#prezzo_unitario").val().toEnglish();
-            let div = $("#prezzo_unitario").closest("div").next("div[id*=errors]");
-            if (prezzo_unitario < 0) {
-                if (input("is_nota").get() == true) {
-                    if (input("dir").get() == "entrata") {
-                        div.html(`<small class="label label-warning"><i class="fa fa-exclamation-triangle"></i> '.tr('Importo a credito').'</small>`);
+            function controlla_prezzo() {
+                let prezzo_unitario = $("#prezzo_unitario").val().toEnglish();
+                let div = $("#prezzo_unitario").closest("div").next("div[id*=errors]");
+                if (prezzo_unitario < 0) {
+                    if (input("is_nota").get() == true) {
+                        if (input("dir").get() == "entrata") {
+                            div.html(`<small class="label label-warning"><i class="fa fa-exclamation-triangle"></i> '.tr('Importo a credito').'</small>`);
+                        } else {
+                            div.html(`<small class="label label-warning"><i class="fa fa-exclamation-triangle"></i> '.tr('Importo a debito').'</small>`);
+                        }
                     } else {
-                        div.html(`<small class="label label-warning"><i class="fa fa-exclamation-triangle"></i> '.tr('Importo a debito').'</small>`);
+                        if (input("dir").get() == "entrata") {
+                            div.html(`<small class="label label-warning"><i class="fa fa-exclamation-triangle"></i> '.tr('Importo a debito').'</small>`);
+                        } else {
+                            div.html(`<small class="label label-warning"><i class="fa fa-exclamation-triangle"></i> '.tr('Importo a credito').'</small>`);
+                        }
                     }
                 } else {
-                    if (input("dir").get() == "entrata") {
-                        div.html(`<small class="label label-warning"><i class="fa fa-exclamation-triangle"></i> '.tr('Importo a debito').'</small>`);
-                    } else {
-                        div.html(`<small class="label label-warning"><i class="fa fa-exclamation-triangle"></i> '.tr('Importo a credito').'</small>`);
-                    }
+                    div.html("");
                 }
-            } else {
-                div.html("");
             }
-        }
 
-        function controlla_sconto() {
-            let sconto = $("#sconto").val().toEnglish();
-            let div = $("#sconto").closest("div").next("div[id*=errors]");
-            let div_margine = $(".margine");
-            let div_prezzi = $(".prezzi");
+            function controlla_sconto() {
+                let sconto = $("#sconto").val().toEnglish();
+                let div = $("#sconto").closest("div").next("div[id*=errors]");
+                let div_margine = $(".margine");
+                let div_prezzi = $(".prezzi");
 
-            div.css("margin-top", "-13px");
-            if (sconto > 0) {
-                div_margine.css("margin-top", "-20px");
-                div_prezzi.css("margin-top", "-20px");
-                div_prezzi.css("margin-bottom", "20px");
-                div.html(`<small class="label label-default" >'.tr('Sconto').'</small>`);
-            } else if (sconto < 0) {
-                div_margine.css("margin-top", "-20px");
-                div_prezzi.css("margin-top", "-20px");
-                div_prezzi.css("margin-bottom", "20px");
-                div.html(`<small class="label label-default" >'.tr('Maggiorazione').'</small>`);
-            } else {
-                div_margine.css("margin-top", "0px");
-                div_prezzi.css("margin-top", "0px");
-                div.html("");
+                div.css("margin-top", "-13px");
+                if (sconto > 0) {
+                    div_margine.css("margin-top", "-20px");
+                    div_prezzi.css("margin-top", "-20px");
+                    div_prezzi.css("margin-bottom", "20px");
+                    div.html(`<small class="label label-default" >'.tr('Sconto').'</small>`);
+                } else if (sconto < 0) {
+                    div_margine.css("margin-top", "-20px");
+                    div_prezzi.css("margin-top", "-20px");
+                    div_prezzi.css("margin-bottom", "20px");
+                    div.html(`<small class="label label-default" >'.tr('Maggiorazione').'</small>`);
+                } else {
+                    div_margine.css("margin-top", "0px");
+                    div_prezzi.css("margin-top", "0px");
+                    div.html("");
+                }
             }
-        }
-    </script>';
+        </script>';
+    }
 }

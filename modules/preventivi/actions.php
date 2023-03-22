@@ -43,12 +43,37 @@ switch (post('op')) {
         $tipo = TipoSessione::find($idtipointervento);
 
         $preventivo = Preventivo::build($anagrafica, $tipo, $nome, $data_bozza, $id_sede, $id_segment);
-      
+
         $preventivo->idstato = post('idstato');
         $preventivo->save();
 
         $id_record = $preventivo->id;
 
+        $iva_predefinita = setting('Iva predefinita');
+
+        $prc = $database->fetchOne('SELECT * FROM co_pagamenti WHERE id = '.$preventivo->idpagamento)['prc'];
+
+        $importo_spese_di_trasporto = ($anagrafica->spese_di_trasporto) ? $anagrafica->importo_spese_di_trasporto : 0;
+        $riga = Riga::build($preventivo);
+        $riga->descrizione = 'Spesa di trasporto';
+        $riga->note = 'Spesa di trasporto';
+        $riga->prezzo_unitario = $importo_spese_di_trasporto;
+        $riga->idiva = $iva_predefinita;
+        $riga->qta = intval(100 / $prc);
+        $riga->is_spesa_trasporto = 1;
+        $riga->setPrezzoUnitario($riga->prezzo_unitario, $riga->idiva);
+        $riga->save();
+
+        $importo_spese_di_incasso = ($anagrafica->spese_di_incasso) ? $anagrafica->importo_spese_di_incasso : 0;
+        $riga = Riga::build($preventivo);
+        $riga->descrizione = 'Spesa di incasso';
+        $riga->note = 'Spesa di incasso';
+        $riga->prezzo_unitario = $importo_spese_di_incasso;
+        $riga->idiva = $iva_predefinita;
+        $riga->qta = intval(100 / $prc);
+        $riga->is_spesa_incasso = 1;
+        $riga->setPrezzoUnitario($riga->prezzo_unitario, $riga->idiva);
+        $riga->save();
         if (isAjaxRequest()) {
             echo json_encode(['id' => $id_record, 'text' => 'Contratto '.$preventivo->numero.' del '.dateFormat($preventivo->data_bozza).' - '.$preventivo->nome]);
         }
@@ -96,6 +121,53 @@ switch (post('op')) {
             $preventivo->setScontoFinale(post('sconto_finale'), post('tipo_sconto_finale'));
 
             $preventivo->save();
+
+            $anagrafica = Anagrafica::find($id_anagrafica);
+            $iva_predefinita = setting('Iva predefinita');
+
+            //update spese incasso/trasporto in base a idpagamento
+            $righe = $preventivo->getRighe();
+
+            $riga_spese_incasso = $righe->where('is_spesa_incasso', 1)->first();
+            $riga_spese_trasporto = $righe->where('is_spesa_trasporto', 1)->first();
+
+            $prc = $database->fetchOne('SELECT * FROM co_pagamenti WHERE id = '.$preventivo->idpagamento)['prc'];
+
+            $riga_spese_incasso = $righe->where('is_spesa_incasso', 1)->first();
+            if (empty($riga_spese_incasso)) {
+                $importo_spese_di_incasso = ($anagrafica->spese_di_incasso) ? $anagrafica->importo_spese_di_incasso : 0;
+                $riga = Riga::build($preventivo);
+                $riga->descrizione = 'Spesa di incasso';
+                $riga->note = 'Spesa di incasso';
+                $riga->prezzo_unitario = $importo_spese_di_incasso;
+                $riga->idiva = $iva_predefinita;
+                $riga->qta = intval(100 / $prc);
+                $riga->is_spesa_incasso = 1;
+                $riga->setPrezzoUnitario($riga->prezzo_unitario, $riga->idiva);
+                $riga->save();
+            } else {
+                $riga_spese_incasso->qta = intval(100 / $prc);
+                $riga_spese_incasso->setPrezzoUnitario($riga_spese_incasso->prezzo_unitario, $riga_spese_incasso->idiva);
+                $riga_spese_incasso->save();
+            }
+
+            $riga_spese_trasporto = $righe->where('is_spesa_trasporto', 1)->first();
+            if (empty($riga_spese_trasporto)) {
+                $importo_spese_di_trasporto = ($anagrafica->spese_di_trasporto) ? $anagrafica->importo_spese_di_trasporto : 0;
+                $riga = Riga::build($preventivo);
+                $riga->descrizione = 'Spesa di trasporto';
+                $riga->note = 'Spesa di trasporto';
+                $riga->prezzo_unitario = $importo_spese_di_trasporto;
+                $riga->idiva = $iva_predefinita;
+                $riga->qta = intval(100 / $prc);
+                $riga->is_spesa_trasporto = 1;
+                $riga->setPrezzoUnitario($riga->prezzo_unitario, $riga->idiva);
+                $riga->save();
+            } else {
+                $riga_spese_trasporto->qta = intval(100 / $prc);
+                $riga_spese_trasporto->setPrezzoUnitario($riga_spese_trasporto->prezzo_unitario, $riga_spese_trasporto->idiva);
+                $riga_spese_trasporto->save();
+            }
 
             flash()->info(tr('Preventivo modificato correttamente!'));
         }
@@ -368,7 +440,7 @@ switch (post('op')) {
     // Eliminazione riga
     case 'delete_riga':
         $id_righe = (array)post('righe');
-        
+
         foreach ($id_righe as $id_riga) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Descrizione::find($id_riga);
@@ -385,7 +457,7 @@ switch (post('op')) {
     // Duplicazione riga
     case 'copy_riga':
         $id_righe = (array)post('righe');
-        
+
         foreach ($id_righe as $id_riga) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Descrizione::find($id_riga);
@@ -469,7 +541,7 @@ switch (post('op')) {
             $id_iva = $originale->idiva_vendita ?: setting('Iva predefinita');
             $id_anagrafica = $preventivo->idanagrafica;
             $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
-    
+
             // CALCOLO PREZZO UNITARIO
             $prezzo_unitario = 0;
             $sconto = 0;
@@ -492,7 +564,7 @@ switch (post('op')) {
                         continue;
                     }
                 }
-            } 
+            }
             if (empty($prezzo_unitario)) {
                 // Prezzi listini clienti
                 $listino = $dbo->fetchOne('SELECT sconto_percentuale AS sconto_percentuale_listino, '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino
@@ -514,7 +586,7 @@ switch (post('op')) {
             $articolo->setProvvigione($provvigione ?: 0, 'PRC');
             $articolo->save();
 
-            
+
             flash()->info(tr('Nuovo articolo aggiunto!'));
         } else {
             $response['error'] = tr('Nessun articolo corrispondente a magazzino');

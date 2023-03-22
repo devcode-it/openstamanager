@@ -208,6 +208,27 @@ echo "
         </td>
     </tr>';
 
+echo '
+    <tr>
+        <th class="text-center small" colspan="1">
+            '.tr('Spesa di trasporto', [], ['upper' => true]).'
+        </th>
+
+        <th class="text-center small" colspan="2">
+            '.tr('Spesa di incasso', [], ['upper' => true]).'
+        </th>
+    </tr>
+
+    <tr>
+        <td class="cell-padded text-center" colspan="1">
+            '.moneyFormat($riga_spesa_trasporto->subtotale, 2).'
+        </td>
+
+        <td class="cell-padded text-center" colspan="2">
+            '.moneyFormat($riga_spesa_incasso->subtotale, 2).'
+        </td>
+    </tr>';
+
 /*
  * Riga di riepilogo della Rivalsa INPS.
  * Rivalsa INPS | Totale (+ Rivalsa INPS)
@@ -281,7 +302,7 @@ if ($has_ritenuta) {
         --$first_colspan;
     }
 
-    
+
     echo '
     <tr>';
     if (!empty($ritenuta_acconto_totale)) {

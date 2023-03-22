@@ -56,226 +56,234 @@ echo '
 $today = new Carbon\Carbon();
 $today = $today->startOfDay();
 $num = 0;
+$riga_spesa_trasporto = null;
+$riga_spesa_incasso = null;
 foreach ($righe as $riga) {
-    ++$num;
+    if ($riga->is_spesa_trasporto == 1) {
+        $riga_spesa_trasporto = $riga;
+    } else if ($riga->is_spesa_incasso) {
+        $riga_spesa_incasso = $riga;
+    } else {
+        ++$num;
 
-    $extra = '';
-    $mancanti = 0;
+        $extra = '';
+        $mancanti = 0;
 
-    // Individuazione dei seriali
-    if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
-        $serials = $riga->serials;
-        $mancanti = abs($riga->qta) - count($serials);
+        // Individuazione dei seriali
+        if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
+            $serials = $riga->serials;
+            $mancanti = abs($riga->qta) - count($serials);
 
-        if ($mancanti > 0) {
-            $extra = 'class="warning"';
-        } else {
-            $mancanti = 0;
+            if ($mancanti > 0) {
+                $extra = 'class="warning"';
+            } else {
+                $mancanti = 0;
+            }
         }
-    }
 
-    echo '
-            <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'">
-                <td class="text-center">';
-                if (!$block_edit) {
+        echo '
+                <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'">
+                    <td class="text-center">';
+                    if (!$block_edit) {
+                        echo '
+                        <input class="check" type="checkbox"/>';
+                    }
                     echo '
-                    <input class="check" type="checkbox"/>';
+                    </td>
+
+                    <td class="text-center">
+                        '.$num.'
+                    </td>
+
+                    <td>';
+
+        $numero_riferimenti_riga = $riga->referenceTargets()->count();
+        $numero_riferimenti_collegati = $riga->referenceSources()->count();
+        $riferimenti_presenti = $numero_riferimenti_riga;
+        $testo_aggiuntivo = $riferimenti_presenti ? $numero_riferimenti_riga : '';
+
+        echo '
+        <button type="button" class="btn btn-xs btn-'.($riferimenti_presenti ? 'primary' : 'info').' pull-right text-right" onclick="apriRiferimenti(this)">
+            <i class="fa fa-chevron-right"></i> '.tr('Riferimenti').' '.$testo_aggiuntivo.'
+        </button>';
+
+        // Aggiunta dei riferimenti ai documenti
+        if ($riga->hasOriginalComponent()) {
+            echo '
+                        <small class="pull-right text-right text-muted">'.reference($riga->getOriginalComponent()->getDocument(), tr('Origine')).'</small>';
+        }
+
+        if ($riga->isArticolo()) {
+            $articolo_riga = Articolo::find($riga->idarticolo);
+
+            echo Modules::link('Articoli', $riga->idarticolo, $articolo_riga->codice.' - '.$riga->descrizione);
+
+            if( $id_module==Modules::get('Ordini fornitore')['id'] ){
+                $codice_fornitore = $riga->articolo->dettaglioFornitore( $ordine->idanagrafica )->codice_fornitore;
+                if( !empty($codice_fornitore) ){
+                        echo '
+                        <br>
+                        <small class="text-muted">'.tr('Codice fornitore: _COD_FOR_',[
+                            '_COD_FOR_' => $codice_fornitore,
+                        ]).'</small>';
                 }
-                echo '
-                </td>
-
-                <td class="text-center">
-                    '.$num.'
-                </td>
-
-                <td>';
-
-    $numero_riferimenti_riga = $riga->referenceTargets()->count();
-    $numero_riferimenti_collegati = $riga->referenceSources()->count();
-    $riferimenti_presenti = $numero_riferimenti_riga;
-    $testo_aggiuntivo = $riferimenti_presenti ? $numero_riferimenti_riga : '';
-
-    echo '
-    <button type="button" class="btn btn-xs btn-'.($riferimenti_presenti ? 'primary' : 'info').' pull-right text-right" onclick="apriRiferimenti(this)">
-        <i class="fa fa-chevron-right"></i> '.tr('Riferimenti').' '.$testo_aggiuntivo.'
-    </button>';
-
-    // Aggiunta dei riferimenti ai documenti
-    if ($riga->hasOriginalComponent()) {
-        echo '
-                    <small class="pull-right text-right text-muted">'.reference($riga->getOriginalComponent()->getDocument(), tr('Origine')).'</small>';
-    }
-
-    if ($riga->isArticolo()) {
-        $articolo_riga = Articolo::find($riga->idarticolo);
-
-        echo Modules::link('Articoli', $riga->idarticolo, $articolo_riga->codice.' - '.$riga->descrizione);
-
-        if( $id_module==Modules::get('Ordini fornitore')['id'] ){
-            $codice_fornitore = $riga->articolo->dettaglioFornitore( $ordine->idanagrafica )->codice_fornitore;
-            if( !empty($codice_fornitore) ){
-                    echo '
-                    <br>
-                    <small class="text-muted">'.tr('Codice fornitore: _COD_FOR_',[
-                        '_COD_FOR_' => $codice_fornitore,
-                    ]).'</small>';
             }
-        }   
-    } else {
-        echo nl2br($riga->descrizione);
-    }
-
-    if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
-        if (!empty($mancanti)) {
-                echo '
-                    <br><b><small class="text-danger">'.tr('_NUM_ serial mancanti', [
-                        '_NUM_' => $mancanti,
-                    ]).'</small></b>';
-        }
-        if (!empty($serials)) {
-                echo '
-                    <br>'.tr('SN').': '.implode(', ', $serials);
-        }
-    }
-
-    if ($riga->isArticolo() && !empty($riga->articolo->barcode)) {
-                    echo '
-                    <br><small><i class="fa fa-barcode"></i> '.$riga->articolo->barcode.'</small>';
-    }
-
-    if (!empty($riga->note)) {
-        echo '
-                    <br><small class="label label-default">'.nl2br($riga->note).'</small>';
-    }
-    echo '
-                </td>';
-
-    // Data prevista evasione
-    $info_evasione = '';
-    if (!empty($riga->data_evasione)) {
-        $evasione = new Carbon\Carbon($riga->data_evasione);
-        if ($today->diffInDays($evasione, false) < 0 && $riga->qta_evasa < $riga->qta) {
-            $evasione_icon = 'fa fa-warning text-danger';
-            $evasione_help = tr('Da consegnare _NUM_ giorni fa',
-                [
-                    '_NUM_' => $today->diffInDays($evasione),
-                ]
-            );
-        } elseif ($today->diffInDays($evasione, false) == 0 && $riga->qta_evasa < $riga->qta) {
-            $evasione_icon = 'fa fa-clock-o text-warning';
-            $evasione_help = tr('Da consegnare oggi');
         } else {
-            $evasione_icon = 'fa fa-check text-success';
-            $evasione_help = tr('Da consegnare fra _NUM_ giorni',
-                [
-                    '_NUM_' => $today->diffInDays($evasione),
-                ]
-            );
+            echo nl2br($riga->descrizione);
         }
 
-        if (!empty($riga->ora_evasione)) {
-            $ora_evasione = '<br>'.Translator::timeToLocale($riga->ora_evasione).'';
-        } else {
-            $ora_evasione = '';
-        }
-
-        $info_evasione = '<span class="tip" title="'.$evasione_help.'"><i class="'.$evasione_icon.'"></i> '.Translator::dateToLocale($riga->data_evasione).$ora_evasione.'</span>';
-    }
-
-    echo '
-        <td class="text-center">
-            '.$info_evasione.'
-        </td>';
-
-    if ($riga->isDescrizione()) {
-        echo '
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>';
-    } else {
-                // Quantità e unità di misura
-                $progress_perc = $riga->qta_evasa * 100 / $riga->qta;
-                echo '
-                <td class="text-center">
-                    {[ "type": "number", "name": "qta_'.$riga->id.'", "value": "'.$riga->qta.'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-before": "<i class=\''.($riga->confermato ? 'fa fa-check text-success' : 'fa fa-clock-o text-warning').'\'></i>", "icon-after": "<span class=\'tip\' title=\''.tr('Quantità evasa: _QTA_', ['_QTA_' => numberFormat($riga->qta_evasa, 'qta')]).'\'>'.($riga->um ?: '&nbsp;').'</span>", "disabled": "'.($riga->isSconto() ? 1 : 0).'", "disabled": "'.$block_edit.'" ]}
-                    <div class="progress" style="height:4px;">
-                        <div class="progress-bar progress-bar-primary" style="width:'.$progress_perc.'%"></div>
-                    </div>
-                </td>';
-
-        // Prezzi unitari
-        echo '
-                <td class="text-right">';
-                // Provvigione riga 
-                if (abs($riga->provvigione_unitaria) > 0) {
-                    $text = provvigioneInfo($riga);
-                    echo '<span class="pull-left text-info" title="'.$text.'"><i class="fa fa-handshake-o"></i></span>';
-                } 
-                echo moneyFormat($riga->prezzo_unitario_corrente);
-
-        if (abs($riga->sconto_unitario) > 0) {
-            $text = discountInfo($riga);
-
-            echo '
-                    <br><small class="label label-danger">'.$text.'</small>';
-        }
-
-        echo '
-                </td>';
-
-        // Sconto unitario
-        if (!$block_edit) {
-            echo '
-                <td class="text-center">
-                    {[ "type": "number", "name": "sconto_'.$riga->id.'", "value": "'.($riga->sconto_percentuale ?: $riga->sconto_unitario_corrente).'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "choice|untprc|'.$riga->tipo_sconto.'" ]}
-                </td>';
-        }
-
-        // Importo
-        echo '
-                <td class="text-right">
-                    '.moneyFormat($riga->importo);
-
-                    // Iva
+        if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
+            if (!empty($mancanti)) {
                     echo '
-                    <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' text-muted">'.$riga->aliquota->descrizione.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
-                </td>';
-    }
+                        <br><b><small class="text-danger">'.tr('_NUM_ serial mancanti', [
+                            '_NUM_' => $mancanti,
+                        ]).'</small></b>';
+            }
+            if (!empty($serials)) {
+                    echo '
+                        <br>'.tr('SN').': '.implode(', ', $serials);
+            }
+        }
 
-        // Possibilità di rimuovere una riga solo se l'ordine non è evaso
-        echo '
-                <td class="text-center">';
+        if ($riga->isArticolo() && !empty($riga->articolo->barcode)) {
+                        echo '
+                        <br><small><i class="fa fa-barcode"></i> '.$riga->articolo->barcode.'</small>';
+        }
 
-        if ($record['flag_completato'] == 0) {
+        if (!empty($riga->note)) {
             echo '
-                    <div class="input-group-btn">';
+                        <br><small class="label label-default">'.nl2br($riga->note).'</small>';
+        }
+        echo '
+                    </td>';
 
-            if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
+        // Data prevista evasione
+        $info_evasione = '';
+        if (!empty($riga->data_evasione)) {
+            $evasione = new Carbon\Carbon($riga->data_evasione);
+            if ($today->diffInDays($evasione, false) < 0 && $riga->qta_evasa < $riga->qta) {
+                $evasione_icon = 'fa fa-warning text-danger';
+                $evasione_help = tr('Da consegnare _NUM_ giorni fa',
+                    [
+                        '_NUM_' => $today->diffInDays($evasione),
+                    ]
+                );
+            } elseif ($today->diffInDays($evasione, false) == 0 && $riga->qta_evasa < $riga->qta) {
+                $evasione_icon = 'fa fa-clock-o text-warning';
+                $evasione_help = tr('Da consegnare oggi');
+            } else {
+                $evasione_icon = 'fa fa-check text-success';
+                $evasione_help = tr('Da consegnare fra _NUM_ giorni',
+                    [
+                        '_NUM_' => $today->diffInDays($evasione),
+                    ]
+                );
+            }
+
+            if (!empty($riga->ora_evasione)) {
+                $ora_evasione = '<br>'.Translator::timeToLocale($riga->ora_evasione).'';
+            } else {
+                $ora_evasione = '';
+            }
+
+            $info_evasione = '<span class="tip" title="'.$evasione_help.'"><i class="'.$evasione_icon.'"></i> '.Translator::dateToLocale($riga->data_evasione).$ora_evasione.'</span>';
+        }
+
+        echo '
+            <td class="text-center">
+                '.$info_evasione.'
+            </td>';
+
+        if ($riga->isDescrizione()) {
+            echo '
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>';
+        } else {
+                    // Quantità e unità di misura
+                    $progress_perc = $riga->qta_evasa * 100 / $riga->qta;
+                    echo '
+                    <td class="text-center">
+                        {[ "type": "number", "name": "qta_'.$riga->id.'", "value": "'.$riga->qta.'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-before": "<i class=\''.($riga->confermato ? 'fa fa-check text-success' : 'fa fa-clock-o text-warning').'\'></i>", "icon-after": "<span class=\'tip\' title=\''.tr('Quantità evasa: _QTA_', ['_QTA_' => numberFormat($riga->qta_evasa, 'qta')]).'\'>'.($riga->um ?: '&nbsp;').'</span>", "disabled": "'.($riga->isSconto() ? 1 : 0).'", "disabled": "'.$block_edit.'" ]}
+                        <div class="progress" style="height:4px;">
+                            <div class="progress-bar progress-bar-primary" style="width:'.$progress_perc.'%"></div>
+                        </div>
+                    </td>';
+
+            // Prezzi unitari
+            echo '
+                    <td class="text-right">';
+                    // Provvigione riga
+                    if (abs($riga->provvigione_unitaria) > 0) {
+                        $text = provvigioneInfo($riga);
+                        echo '<span class="pull-left text-info" title="'.$text.'"><i class="fa fa-handshake-o"></i></span>';
+                    }
+                    echo moneyFormat($riga->prezzo_unitario_corrente);
+
+            if (abs($riga->sconto_unitario) > 0) {
+                $text = discountInfo($riga);
+
                 echo '
-                        <a class="btn btn-primary btn-xs" title="'.tr('Modifica seriali della riga').'" onclick="modificaSeriali(this)">
-                            <i class="fa fa-barcode"></i>
-                        </a>';
+                        <br><small class="label label-danger">'.$text.'</small>';
             }
 
             echo '
-                        <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga').'" onclick="modificaRiga(this)">
-                            <i class="fa fa-edit"></i>
-                        </a>
+                    </td>';
 
-                        <a class="btn btn-xs btn-danger" title="'.tr('Rimuovi riga').'" onclick="rimuoviRiga([$(this).closest(\'tr\').data(\'id\')])">
-                            <i class="fa fa-trash"></i>
-                        </a>
+            // Sconto unitario
+            if (!$block_edit) {
+                echo '
+                    <td class="text-center">
+                        {[ "type": "number", "name": "sconto_'.$riga->id.'", "value": "'.($riga->sconto_percentuale ?: $riga->sconto_unitario_corrente).'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "choice|untprc|'.$riga->tipo_sconto.'" ]}
+                    </td>';
+            }
 
-                        <a class="btn btn-xs btn-default handle" title="'.tr('Modifica ordine delle righe').'">
-                            <i class="fa fa-sort"></i>
-                        </a>
-                    </div>';
+            // Importo
+            echo '
+                    <td class="text-right">
+                        '.moneyFormat($riga->importo);
+
+                        // Iva
+                        echo '
+                        <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' text-muted">'.$riga->aliquota->descrizione.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
+                    </td>';
         }
 
-        echo '
-                </td>
-            </tr>';
+            // Possibilità di rimuovere una riga solo se l'ordine non è evaso
+            echo '
+                    <td class="text-center">';
+
+            if ($record['flag_completato'] == 0) {
+                echo '
+                        <div class="input-group-btn">';
+
+                if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
+                    echo '
+                            <a class="btn btn-primary btn-xs" title="'.tr('Modifica seriali della riga').'" onclick="modificaSeriali(this)">
+                                <i class="fa fa-barcode"></i>
+                            </a>';
+                }
+
+                echo '
+                            <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga').'" onclick="modificaRiga(this)">
+                                <i class="fa fa-edit"></i>
+                            </a>
+
+                            <a class="btn btn-xs btn-danger" title="'.tr('Rimuovi riga').'" onclick="rimuoviRiga([$(this).closest(\'tr\').data(\'id\')])">
+                                <i class="fa fa-trash"></i>
+                            </a>
+
+                            <a class="btn btn-xs btn-default handle" title="'.tr('Modifica ordine delle righe').'">
+                                <i class="fa fa-sort"></i>
+                            </a>
+                        </div>';
+            }
+
+            echo '
+                    </td>
+                </tr>';
+    }
 }
 
 echo '
@@ -289,6 +297,66 @@ $iva = abs($ordine->iva);
 $totale = abs($ordine->totale);
 $sconto_finale = $ordine->getScontoFinale();
 $netto_a_pagare = $ordine->netto;
+
+// SPESA TRASPORTO
+if (!empty($riga_spesa_trasporto)) {
+    echo '
+    <tr data-id="'.$riga_spesa_trasporto->id.'" data-type="'.get_class($riga_spesa_trasporto).'">
+        <td colspan="7" class="text-right">
+            <b>
+                <span class="tip" title="'.tr('Spesa di trasporto').'">
+                    '.tr('Spesa di trasporto', [], ['upper' => true]).':
+                </span>
+            </b>
+        </td>
+
+        <td class="text-right">
+            '.moneyFormat($riga_spesa_trasporto->subtotale, 2).'
+        </td>
+
+        <td class="text-center">';
+            if ($record['flag_completato'] == 0) {
+                echo '
+                <div class="input-group-btn">
+                    <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga').'" onclick="modificaRiga(this)">
+                        <i class="fa fa-edit"></i>
+                    </a>
+                </div>';
+            }
+            echo '
+        </td>
+    </tr>';
+}
+
+// SPESA INCASSO
+if (!empty($riga_spesa_incasso)) {
+    echo '
+    <tr data-id="'.$riga_spesa_incasso->id.'" data-type="'.get_class($riga_spesa_incasso).'">
+        <td colspan="7" class="text-right">
+            <b>
+                <span class="tip" title="'.tr('Spesa di incasso').'">
+                    '.tr('Spesa di incasso', [], ['upper' => true]).':
+                </span>
+            </b>
+        </td>
+
+        <td class="text-right">
+            '.moneyFormat($riga_spesa_incasso->subtotale, 2).'
+        </td>
+
+        <td class="text-center">';
+            if ($record['flag_completato'] == 0) {
+                echo '
+                <div class="input-group-btn">
+                    <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga').'" onclick="modificaRiga(this)">
+                        <i class="fa fa-edit"></i>
+                    </a>
+                </div>';
+            }
+        echo '
+        </td>
+    </tr>';
+}
 
 // Totale imponibile scontato
 echo '
@@ -442,7 +510,7 @@ async function modificaRiga(button) {
 // Estraggo le righe spuntate
 function getSelectData() {
     let data=new Array();
-    $(\'#righe\').find(\'.check:checked\').each(function (){ 
+    $(\'#righe\').find(\'.check:checked\').each(function (){
         data.push($(this).closest(\'tr\').data(\'id\'));
     });
 
@@ -557,7 +625,7 @@ $(".check").on("change", function() {
     }
 });
 
-$("#check_all").click(function(){    
+$("#check_all").click(function(){
     if( $(this).is(":checked") ){
         $(".check").each(function(){
             if( !$(this).is(":checked") ){

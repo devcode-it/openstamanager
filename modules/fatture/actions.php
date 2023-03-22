@@ -59,6 +59,32 @@ switch (post('op')) {
 
         $id_record = $fattura->id;
 
+        $iva_predefinita = setting('Iva predefinita');
+
+        $importo_spese_di_trasporto = ($anagrafica->spese_di_trasporto) ? $anagrafica->importo_spese_di_trasporto : 0;
+        $riga = Riga::build($fattura);
+        $riga->descrizione = 'Spesa di trasporto';
+        $riga->note = 'Spesa di trasporto';
+        $riga->prezzo_unitario = $importo_spese_di_trasporto;
+        $riga->idiva = $iva_predefinita;
+        $riga->qta = intval(100 / $prc);
+        $riga->idconto = setting('Piano dei conti associato spese di trasporto');
+        $riga->is_spesa_trasporto = 1;
+        $riga->setPrezzoUnitario($riga->prezzo_unitario, $riga->idiva);
+        $riga->save();
+
+        $importo_spese_di_incasso = ($anagrafica->spese_di_incasso) ? $anagrafica->importo_spese_di_incasso : 0;
+        $riga = Riga::build($fattura);
+        $riga->descrizione = 'Spesa di incasso';
+        $riga->note = 'Spesa di incasso';
+        $riga->prezzo_unitario = $importo_spese_di_incasso;
+        $riga->idiva = $iva_predefinita;
+        $riga->qta = intval(100 / $prc);
+        $riga->idconto = setting('Piano dei conti associato spese di incasso');
+        $riga->is_spesa_incasso = 1;
+        $riga->setPrezzoUnitario($riga->prezzo_unitario, $riga->idiva);
+        $riga->save();
+
         flash()->info(tr('Fattura aggiunta correttamente!'));
 
         break;
@@ -160,6 +186,53 @@ switch (post('op')) {
         $fattura->setScontoFinale(post('sconto_finale'), post('tipo_sconto_finale'));
 
         $results = $fattura->save();
+
+        $anagrafica = Anagrafica::find($id_anagrafica);
+        $iva_predefinita = setting('Iva predefinita');
+
+        //update spese incasso/trasporto in base a idpagamento
+        $righe = $fattura->getRighe();
+
+        $prc = $database->fetchOne('SELECT * FROM co_pagamenti WHERE id = '.$fattura->idpagamento)['prc'];
+
+        $riga_spese_incasso = $righe->where('is_spesa_incasso', 1)->first();
+        if (empty($riga_spese_incasso)) {
+            $importo_spese_di_incasso = ($anagrafica->spese_di_incasso) ? $anagrafica->importo_spese_di_incasso : 0;
+            $riga = Riga::build($fattura);
+            $riga->descrizione = 'Spesa di incasso';
+            $riga->note = 'Spesa di incasso';
+            $riga->prezzo_unitario = $importo_spese_di_incasso;
+            $riga->idiva = $iva_predefinita;
+            $riga->qta = intval(100 / $prc);
+            $riga->idconto = setting('Piano dei conti associato spese di incasso');
+            $riga->is_spesa_incasso = 1;
+            $riga->setPrezzoUnitario($riga->prezzo_unitario, $riga->idiva);
+            $riga->save();
+        } else {
+            $riga_spese_incasso->qta = intval(100 / $prc);
+            $riga_spese_incasso->setPrezzoUnitario($riga_spese_incasso->prezzo_unitario, $riga_spese_incasso->idiva);
+            $riga_spese_incasso->save();
+        }
+
+        $riga_spese_trasporto = $righe->where('is_spesa_trasporto', 1)->first();
+        if (empty($riga_spese_trasporto)) {
+            $importo_spese_di_trasporto = ($anagrafica->spese_di_trasporto) ? $anagrafica->importo_spese_di_trasporto : 0;
+            $riga = Riga::build($fattura);
+            $riga->descrizione = 'Spesa di trasporto';
+            $riga->note = 'Spesa di trasporto';
+            $riga->prezzo_unitario = $importo_spese_di_trasporto;
+            $riga->idiva = $iva_predefinita;
+            $riga->qta = intval(100 / $prc);
+            $riga->idconto = setting('Piano dei conti associato spese di trasporto');
+            $riga->is_spesa_trasporto = 1;
+            $riga->setPrezzoUnitario($riga->prezzo_unitario, $riga->idiva);
+            $riga->save();
+        } else {
+            $riga_spese_trasporto->qta = intval(100 / $prc);
+            $riga_spese_trasporto->setPrezzoUnitario($riga_spese_trasporto->prezzo_unitario, $riga_spese_trasporto->idiva);
+            $riga_spese_trasporto->save();
+        }
+
         $message = '';
 
         foreach ($results as $numero => $result) {
@@ -264,7 +337,7 @@ switch (post('op')) {
             'stored' => round($totale_documento,2),
             'calculated' => round($fattura->totale,2),
         ]);
-        
+
         break;
 
     // Elenco fatture in stato Bozza per il cliente
@@ -660,7 +733,7 @@ switch (post('op')) {
     // Scollegamento riga generica da documento
     case 'delete_riga':
         $id_righe = (array)post('righe');
-        
+
         foreach ($id_righe as $id_riga) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Descrizione::find($id_riga);
@@ -685,7 +758,7 @@ switch (post('op')) {
     // Duplicazione riga
     case 'copy_riga':
         $id_righe = (array)post('righe');
-        
+
         foreach ($id_righe as $id_riga) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Descrizione::find($id_riga);
@@ -781,17 +854,59 @@ switch (post('op')) {
 
         $righe = $documento->getRighe();
         foreach ($righe as $riga) {
-            if (post('evadere')[$riga->id] == 'on') {
+            (post('evadere')[$riga->id] == 'on'));
+            if (
+                (post('manage-spese') && ($riga->is_spesa_trasporto || $riga->is_spesa_incasso)) ||
+                (post('evadere')[$riga->id] == 'on')
+            ) {
+                if (empty(post('create_document')) && (($riga->is_spesa_trasporto || $riga->is_spesa_incasso))) {
+                    if ($riga->is_spesa_trasporto) { //controllo se già esiste spesa trasposrto
+                        $riga_spesa_trasporto = $dbo->fetchArray(
+                            'SELECT * FROM `co_righe_documenti` WHERE `iddocumento` = '.prepare($id_record).' AND `is_spesa_trasporto` = 1'
+                        );
+
+                        if ($riga_spesa_trasporto != null) {
+                            $riga_trasporto = Riga::find($riga_spesa_trasporto[0]['id']);
+
+                            //delete riga
+                            $riga_trasporto->delete();
+                        }
+                    } else {
+                        $riga_spesa_incasso = $dbo->fetchArray(
+                            'SELECT * FROM `co_righe_documenti` WHERE `iddocumento` = '.prepare($id_record).' AND `is_spesa_incasso` = 1'
+                        );
+
+                        if ($riga_spesa_incasso != null) {
+                            $riga_incasso = Riga::find($riga_spesa_incasso[0]['id']);
+
+                            $riga_incasso->delete();
+                        }
+                    }
+                }
                 $qta = post('qta_da_evadere')[$riga->id];
                 $articolo = ArticoloOriginale::find($riga->idarticolo);
 
                 $copia = $riga->copiaIn($fattura, $qta);
 
-                $copia->id_conto = ($documento->direzione == 'entrata' ? ($articolo->idconto_vendita ?: $id_conto) : ($articolo->idconto_acquisto ?: $id_conto));
-                $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
-                $copia->id_ritenuta_acconto = $id_ritenuta_acconto;
-                $copia->id_rivalsa_inps = $id_rivalsa_inps;
-                $copia->ritenuta_contributi = $ritenuta_contributi;
+                if ($riga->is_spesa_trasporto || $riga->is_spesa_incasso) {
+                    $prezzo = ($riga->is_spesa_trasporto) ? post('spese_di_trasporto') : post('spese_di_incasso');
+                    $id_iva = $originale->idiva_vendita ? $originale->idiva_vendita : setting('Iva predefinita');
+                    $copia->setPrezzoUnitario($prezzo, $id_iva);
+
+                    if ($copia->idconto == 0) {
+                        if ($riga->is_spesa_trasporto) {
+                            $copia->id_conto = setting('Piano dei conti associato spese di trasporto');
+                        } else {
+                            $copia->id_conto = setting('Piano dei conti associato spese di incasso');
+                        }
+                    }
+                } else {
+                    $copia->id_conto = ($documento->direzione == 'entrata' ? ($articolo->idconto_vendita ?: $id_conto) : ($articolo->idconto_acquisto ?: $id_conto));
+                    $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
+                    $copia->id_ritenuta_acconto = $id_ritenuta_acconto;
+                    $copia->id_rivalsa_inps = $id_rivalsa_inps;
+                    $copia->ritenuta_contributi = $ritenuta_contributi;
+                }
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
@@ -803,7 +918,6 @@ switch (post('op')) {
                 $copia->save();
             }
         }
-
         // Modifica finale dello stato
         if (post('create_document') == 'on') {
             $fattura->idstatodocumento = post('id_stato');

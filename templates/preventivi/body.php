@@ -182,108 +182,111 @@ echo '
     <tbody>';
 
 $num = 0;
+$riga_spesa_trasporto = null;
+$riga_spesa_incasso = null;
 foreach ($righe as $riga) {
-    ++$num;
-    $r = $riga->toArray();
+    if ($riga->is_spesa_trasporto == 1) {
+        $riga_spesa_trasporto = $riga;
+    } else if ($riga->is_spesa_incasso) {
+        $riga_spesa_incasso = $riga;
+    } else {
+        ++$num;
 
-    $autofill->count($r['descrizione']);
+        $r = $riga->toArray();
 
-    echo '
-        <tr>
-            <td class="text-center" style="vertical-align: middle" width="25">
-                '.$num.'
-            </td>';
+        $autofill->count($r['descrizione']);
 
-    if ($has_image) {
-        if ($riga->isArticolo() && !empty($riga->articolo->image)) {
-            echo '
-            <td align="center">
-                <img src="'.$riga->articolo->image.'" style="max-height: 60px; max-width:80px">
-            </td>';
+        echo '
+            <tr>
+                <td class="text-center" style="vertical-align: middle" width="25">
+                    '.$num.'
+                </td>';
 
-            $autofill->set(5);
-        } else {
-            echo '
-            <td></td>';
+        if ($has_image) {
+            if ($riga->isArticolo() && !empty($riga->articolo->image)) {
+                echo '
+                <td align="center">
+                    <img src="'.$riga->articolo->image.'" style="max-height: 60px; max-width:80px">
+                </td>';
+
+                $autofill->set(5);
+            } else {
+                echo '
+                <td></td>';
+            }
         }
-    }
 
-    echo '
-            <td style="vertical-align: middle">
-                '.nl2br($r['descrizione']);
+        echo '
+                <td style="vertical-align: middle">
+                    '.nl2br($r['descrizione']);
 
-    if ($riga->isArticolo()) {
-
-        if($options['hide-item-number']){
-            $text = '';
-        }else{
+        if ($riga->isArticolo()) {
             // Codice articolo
             $text = tr('COD. _COD_', [
                 '_COD_' => $riga->codice,
             ]);
+            echo '
+                    <br><small>'.$text.'</small>';
+
+            $autofill->count($text, true);
         }
 
         echo '
-                <br><small>'.$text.'</small>';
+                </td>';
 
-        $autofill->count($text, true);
-    }
-
-    echo '
-            </td>';
-
-    if (!$riga->isDescrizione()) {
-        echo '
-            <td class="text-center" style="vertical-align: middle" >
-                '.Translator::numberToLocale(abs($riga->qta), 'qta').' '.$r['um'].'
-            </td>';
-
-        if ($options['pricing']) {
-            // Prezzo unitario
+        if (!$riga->isDescrizione()) {
             echo '
-            <td class="text-right" style="vertical-align: middle">
-				'.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario);
+                <td class="text-center" style="vertical-align: middle" >
+                    '.Translator::numberToLocale(abs($riga->qta), 'qta').' '.$r['um'].'
+                </td>';
 
-            if ($riga->sconto > 0) {
-                $text = discountInfo($riga, false);
+            if ($options['pricing']) {
+                // Prezzo unitario
+                echo '
+                <td class="text-right" style="vertical-align: middle">
+                    '.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario);
+
+                if ($riga->sconto > 0) {
+                    $text = discountInfo($riga, false);
+
+                    echo '
+                    <br><small class="text-muted">'.$text.'</small>';
+
+                    $autofill->count($text, true);
+                }
 
                 echo '
-                <br><small class="text-muted">'.$text.'</small>';
+                </td>';
 
-                $autofill->count($text, true);
+                // Imponibile
+                echo '
+                <td class="text-right" style="vertical-align: middle" >
+                    '.( ($options['hide_total'] || $prezzi_ivati) ? moneyFormat($riga->totale) : moneyFormat($riga->totale_imponibile) ).'
+                </td>';
+
+                // Iva
+                echo '
+                <td class="text-center" style="vertical-align: middle">
+                    '.Translator::numberToLocale($riga->aliquota->percentuale, 2).'
+                </td>';
             }
-
+        } else {
             echo '
-            </td>';
+                <td></td>';
 
-            // Imponibile
-            echo '
-            <td class="text-right" style="vertical-align: middle" >
-                '.( ($options['hide-total'] || $prezzi_ivati) ? moneyFormat($riga->totale) : moneyFormat($riga->totale_imponibile) ).'
-            </td>';
-
-            // Iva
-            echo '
-            <td class="text-center" style="vertical-align: middle">
-                '.Translator::numberToLocale($riga->aliquota->percentuale, 2).'
-            </td>';
+            if ($options['pricing']) {
+                echo '
+                <td></td>
+                <td></td>
+                <td></td>';
+            }
         }
-    } else {
+
         echo '
-            <td></td>';
+            </tr>';
 
-        if ($options['pricing']) {
-            echo '
-            <td></td>
-            <td></td>
-            <td></td>';
-        }
+        $autofill->next();
     }
-
-    echo '
-        </tr>';
-
-    $autofill->next();
 }
 
 echo '
@@ -300,6 +303,28 @@ $sconto_finale = $documento->getScontoFinale();
 $netto_a_pagare = $documento->netto;
 
 $show_sconto = $sconto > 0;
+
+echo '
+<tr>
+    <td colspan="4" class="text-right border-top">
+        <b>'.tr('Spesa di trasporto', [], ['upper' => true]).':</b>
+    </td>
+
+    <th colspan="4" class="text-right">
+        <b>'.moneyFormat($riga_spesa_trasporto->subtotale, 2).'</b>
+    </th>
+</tr>';
+
+echo '
+<tr>
+    <td colspan="4" class="text-right border-top">
+        <b>'.tr('Spesa di incasso', [], ['upper' => true]).':</b>
+    </td>
+
+    <th colspan="4" class="text-right">
+        <b>'.moneyFormat($riga_spesa_incasso->subtotale, 2).'</b>
+    </th>
+</tr>';
 
 // TOTALE COSTI FINALI
 if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-only-total']) {

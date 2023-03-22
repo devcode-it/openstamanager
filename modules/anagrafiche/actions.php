@@ -105,6 +105,12 @@ switch (post('op')) {
         $anagrafica->codice_fiscale = strtoupper(post('codice_fiscale'));
         $anagrafica->partita_iva = strtoupper(post('piva'));
 
+        $anagrafica->spese_di_trasporto = post('spese_di_trasporto');
+        $anagrafica->importo_spese_di_trasporto = post('importo_spese_di_trasporto');
+
+        $anagrafica->spese_di_incasso = post('spese_di_incasso');
+        $anagrafica->importo_spese_di_incasso = post('importo_spese_di_incasso');
+
         $anagrafica->save();
 
         // Aggiorno gli agenti collegati
@@ -224,6 +230,12 @@ switch (post('op')) {
 
         $anagrafica->codice_fiscale = strtoupper(post('codice_fiscale'));
         $anagrafica->partita_iva = strtoupper(post('piva'));
+
+        $anagrafica->importo_spese_di_trasporto = setting('Spese di trasporto default');
+        $anagrafica->spese_di_trasporto = ($anagrafica->importo_spese_di_trasporto > 0) ? 1 : 0;
+
+        $anagrafica->importo_spese_di_incasso = setting('Spese di incasso default');
+        $anagrafica->spese_di_incasso = ($anagrafica->importo_spese_di_incasso > 0) ? 1 : 0;
 
         $anagrafica->save();
 

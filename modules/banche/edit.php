@@ -192,10 +192,12 @@ if (!empty($numero_documenti)) {
             success: function (response) {
                 compilaCampi(response);
 
-                if (response.id_nazione.text === "Italia"){
+                if (response.id_nazione.iso2 === "IT"){
                     bic.setRequired(false);
+                    $("label[for=bic]").html('<?php echo tr('BIC'); ?>');
                 } else {
                     bic.setRequired(true);
+                    $("label[for=bic]").html('<?php echo tr('BIC'); ?><span class="text-red">*</span>');
                 }
             },
             error: function() {

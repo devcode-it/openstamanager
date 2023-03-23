@@ -71,8 +71,8 @@ echo '
 </form>';
 ?>
 <script>
+    
     var iban = input("iban");
-
     var branch_code = input("branch_code");
     var bank_code = input("bank_code");
     var id_nazione = input("id_nazione");
@@ -121,10 +121,12 @@ echo '
 
                 if (response.id_nazione.iso2 === "IT"){
                     bic.setRequired(false);
-                    $("label[for=bic]").html('<?php echo tr('BIC'); ?>');
+                    var label_text = $('label[for=bic] span .text-red').text();
+                    $('label[for=bic] span .text-red').text(label_text.replace('*', ' '));
                 } else {
                     bic.setRequired(true);
-                    $("label[for=bic]").html('<?php echo tr('BIC'); ?><span class="text-red">*</span>');
+                    var label_text = $('label[for=bic] span .text-red').text();
+                    $('label[for=bic] span .text-red').text(label_text.replace(' ', '*'));
                 }
             },
             error: function() {
@@ -167,9 +169,9 @@ echo '
     function compilaCampi(values) {
         for([key, value] of Object.entries(values)) {
             if (typeof value === 'object' && value !== null) {
-                input(key).getElement().selectSetNew(value.id, value.text, value);
+                input('#modals > div #'+key).getElement().selectSetNew(value.id, value.text, value);
             } else {
-                input(key).set(value);
+                input('#modals > div #'+key).set(value);
             }
         }
     }

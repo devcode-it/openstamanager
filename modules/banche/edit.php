@@ -194,10 +194,12 @@ if (!empty($numero_documenti)) {
 
                 if (response.id_nazione.iso2 === "IT"){
                     bic.setRequired(false);
-                    $("label[for=bic]").html('<?php echo tr('BIC'); ?>');
+                    var label_text = $('label[for=bic] span .text-red').text();
+                    $('label[for=bic] span .text-red').text(label_text.replace('*', ' '));
                 } else {
                     bic.setRequired(true);
-                    $("label[for=bic]").html('<?php echo tr('BIC'); ?><span class="text-red">*</span>');
+                    var label_text = $('label[for=bic] span .text-red').text();
+                    $('label[for=bic] span .text-red').text(label_text.replace(' ', '*')); 
                 }
             },
             error: function() {

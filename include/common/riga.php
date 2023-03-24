@@ -67,27 +67,24 @@ if ($options['dir'] == 'entrata') {
             var prezzi_ivati = input("prezzi_ivati").get();
             var costo_unitario = $("#costo_unitario").val().toEnglish();
             var prezzo = 0;
-            var sconto = $("#sconto").val().toEnglish();
-
-            if ($("#modals select[id^=\'tipo_sconto\']").val() === "PRC") {
-                sconto = sconto / 100 * $("#prezzo_unitario").val().toEnglish();
-            }
             if (prezzi_ivati!=0) {
                 percentuale_iva = input("idiva").getElement().selectData().percentuale;
-                prezzo = ($("#prezzo_unitario").val().toEnglish() / (1 + percentuale_iva / 100)) - (sconto / (1 + percentuale_iva / 100));
+                prezzo = $("#prezzo_unitario").val().toEnglish() / (1 + percentuale_iva / 100);
             } else {
-                prezzo = $("#prezzo_unitario").val().toEnglish() - sconto;
+                prezzo = $("#prezzo_unitario").val().toEnglish();
             }
-            
+            var sconto = $("#sconto").val().toEnglish();
+            if ($("#modals select[id^=\'tipo_sconto\']").val() === "PRC") {
+                sconto = sconto / 100 * prezzo;
+            }
             var provvigione = $("#provvigione").val().toEnglish();
             if ($("#modals select[id^=\'tipo_provvigione\']").val() === "PRC") {
-                provvigione = provvigione / 100 * prezzo;
+                provvigione = provvigione / 100 * (prezzo - sconto);
             }
 
-            var guadagno = prezzo - provvigione - costo_unitario;
-            var ricarico = ((prezzo / costo_unitario) - 1) * 100;
-            var margine = (1 - (costo_unitario / prezzo)) * 100;            
-            var parent = $("#costo_unitario").closest("div").parent();
+            var guadagno = prezzo - sconto - provvigione - costo_unitario;
+            var ricarico = (((prezzo - sconto) / costo_unitario) - 1) * 100;
+            var margine = (1 - (costo_unitario / (prezzo - sconto))) * 100;            var parent = $("#costo_unitario").closest("div").parent();
             var div = $(".margine");
             var mediaponderata = 0;
 
@@ -144,7 +141,7 @@ if ($options['dir'] == 'entrata') {
                             </td>\
                         </tr>\
                     </table>");
-                    
+
             if (guadagno < 0) {
                 parent.addClass("has-error");
                 $(".table-margine").addClass("label-danger").removeClass("label-success");
@@ -185,7 +182,7 @@ if ($options['dir'] == 'entrata') {
     <div class="row">
         <div class="col-md-4 margine"></div>
         <div class="col-md-4 prezzi"></div>';
-        
+
         // Provvigione
         echo '
         <div class="col-md-4">
@@ -348,3 +345,38 @@ if (in_array($module['name'], ['Fatture di vendita', 'Fatture di acquisto'])) {
         }
     </script>';
 }
+
+if (in_array($module['name'], ['Ordini fornitore'])) {
+    echo '
+    <div class="box box-info collapsable collapsed-box">
+        <div class="box-header with-border">
+            <h3 class="box-title">'.tr('Dati di vendita').'</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+            </div>
+        </div>
+
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <table id="tbl_vendite" class="table table-striped table-condensed table-bordered">
+                        <thead>
+                            <tr>
+                                <th>'.tr('Mese').'</th>
+                                <th>'.tr('Q.tà').'</th>
+                                <th width="20%" class="text-center">'.tr('Totale').'</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <td colspan="3" class="text-center">' . tr('Nessuna Vendita') . '</td>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    </script>';
+}
+

@@ -96,6 +96,8 @@ switch (post('op')) {
             $fattura->data_registrazione = post('data_registrazione');
         }
 
+        $fattura->data_competenza = post('data_competenza');
+
         $fattura->numero_esterno = post('numero_esterno');
         $fattura->note = post('note');
         $fattura->note_aggiuntive = post('note_aggiuntive');
@@ -1032,6 +1034,19 @@ switch (post('op')) {
         }
 
         break;
+
+    case 'edit-price':
+        $righe = $post['righe'];
+
+        foreach ($righe as $riga) {
+            $dbo->query(
+                'UPDATE co_righe_documenti
+                SET prezzo_unitario = '.$riga['price'].'
+                WHERE id = '.$riga['id']
+            );
+        }
+
+        flash()->info(tr('Prezzi aggiornati!'));
 }
 
 // Nota di debito

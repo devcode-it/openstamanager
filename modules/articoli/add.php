@@ -24,6 +24,8 @@ use Modules\Iva\Aliquota;
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 $iva_predefinita = setting('Iva predefinita');
 $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
+$idconto_acquisto = $dbo->fetchOne('SELECT valore FROM zz_settings WHERE nome = "Conto predefinito di acquisto"')['valore'];
+$idconto_vendita = $dbo->fetchOne('SELECT valore FROM zz_settings WHERE nome = "Conto predefinito di vendita"')['valore'];
 
 ?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
@@ -82,7 +84,7 @@ $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
 
                     {[ "type": "number", "label": "<?php echo tr('Prezzo di vendita'); ?>", "name": "prezzo_vendita", "icon-after": "<?php echo currency(); ?>", "help": "<?php echo setting('Utilizza prezzi di vendita comprensivi di IVA') ? tr('Importo IVA inclusa') : ''; ?>" ]}
                 </div>
-                
+
             </div>
 
             <div class="row">
@@ -116,11 +118,11 @@ $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
 
             <div class="row">
                 <div class="col-md-6">
-                    {[ "type": "select", "label": "<?php echo tr('Conto predefinito di acquisto'); ?>", "name": "idconto_acquisto", "ajax-source": "conti-acquisti" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Conto predefinito di acquisto'); ?>", "name": "idconto_acquisto", "ajax-source": "conti-acquisti", "value": "<?php echo $idconto_acquisto; ?>" ]}
                 </div>
 
                 <div class="col-md-6">
-                    {[ "type": "select", "label": "<?php echo tr('Conto predefinito di vendita'); ?>", "name": "idconto_vendita", "ajax-source": "conti-vendite" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Conto predefinito di vendita'); ?>", "name": "idconto_vendita", "ajax-source": "conti-vendite", "value": "<?php echo $idconto_vendita; ?>" ]}
                 </div>
             </div>
 

@@ -82,6 +82,9 @@ class Ordine extends Document
         $model->tipo()->associate($tipo_documento);
         $model->stato()->associate($stato_documento);
         $model->id_segment = $id_segment;
+        $model->id_sede_partenza = $id_sede_partenza;
+        $model->idagente = $anagrafica->idagente;
+
 
         $model->save();
 
@@ -92,7 +95,7 @@ class Ordine extends Document
             $model->idpagamento = $id_pagamento;
         }
 
-        $model->numero = static::getNextNumero($data, $direzione, $id_segment);
+        $model->numero = static::getNextNumero($data, $direzione);
         $model->numero_esterno = static::getNextNumeroSecondario($data, $direzione, $id_segment);
 
         $model->save();

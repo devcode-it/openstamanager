@@ -310,6 +310,7 @@ switch (filter('op')) {
     case 'add_documento':
         $class = post('class');
         $id_documento = post('id_documento');
+        $informazioniaggiuntive = post('informazioniaggiuntive');
 
         // Individuazione del documento originale
         if (!is_subclass_of($class, \Common\Document::class)) {
@@ -339,6 +340,7 @@ switch (filter('op')) {
             $ddt->idreferente = $documento->idreferente;
             $ddt->idagente = $documento->idagente;
 
+            $ddt->note_aggiuntive = $informazioniaggiuntive;
             $ddt->save();
 
             $id_record = $ddt->id;
@@ -677,6 +679,19 @@ switch (filter('op')) {
         }
 
         break;
+
+    case 'edit-price':
+        $righe = $post['righe'];
+
+        foreach ($righe as $riga) {
+            $dbo->query(
+                'UPDATE dt_righe_ddt
+                SET prezzo_unitario = '.$riga['price'].'
+                WHERE id = '.$riga['id']
+            );
+        }
+
+        flash()->info(tr('Prezzi aggiornati!'));
 }
 
 // Aggiornamento stato degli ordini presenti in questa fattura in base alle quantità totali evase

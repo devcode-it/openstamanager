@@ -45,7 +45,7 @@ switch (post('op')) {
                 $rs = $dbo->fetchArray($query);
 
                 if (sizeof($rs) == 0) {
-                    $query = 'INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2, dir) VALUES('.prepare($numero).', '.prepare($descrizione).', '.prepare($id_conto).', (SELECT dir FROM co_pianodeiconti2 WHERE id='.prepare($id_conto).'))';
+                    $query = 'INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2, dir, percentuale_deducibile) VALUES('.prepare($numero).', '.prepare($descrizione).', '.prepare($id_conto).', (SELECT dir FROM co_pianodeiconti2 WHERE id='.prepare($id_conto).'), '.post('percentuale_deducibile').')';
                 }
             }
 
@@ -240,7 +240,7 @@ switch (post('op')) {
             $id_conti2 = array_column($id_conti, 'idpianodeiconti2');
 
             $id_conti = $dbo->fetchArray('SELECT id AS idpianodeiconti3, idpianodeiconti2 FROM co_pianodeiconti3 WHERE descrizione LIKE '.prepare('%'.$text.'%'));
-         
+
             $id_conti3 = array_column($id_conti, 'idpianodeiconti3');
             $id_conti2_3 = array_column($id_conti, 'idpianodeiconti2');
         }

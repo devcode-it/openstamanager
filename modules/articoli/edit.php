@@ -166,16 +166,46 @@ use Modules\Iva\Aliquota;
 
                 <div class="panel-body">
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             {[ "type": "number", "label": "<?php echo tr('Prezzo di acquisto'); ?>", "name": "prezzo_acquisto", "value": "$prezzo_acquisto$", "icon-after": "<?php echo currency(); ?>", "help": "<?php echo tr('Prezzo di acquisto previsto per i fornitori i cui dati non sono stati inseriti nel plugin Fornitori'); ?>." ]}
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             {[ "type": "number", "label": "<?php echo tr('Coefficiente di vendita'); ?>", "name": "coefficiente", "value": "$coefficiente$", "help": "<?php echo tr('Imposta un coefficiente per calcolare automaticamente il prezzo di vendita quando cambia il prezzo di acquisto'); ?>." ]}
                         </div>
 
-                        <div class="col-md-4">
+                        <!--<div class="col-md-4">
                             {[ "type": "number", "label": "<?php echo tr('Soglia minima quantità'); ?>", "name": "threshold_qta", "value": "$threshold_qta$", "decimals": "qta", "min-value": "undefined" ]}
+                        </div>-->
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="tbl_soglia_minima"><?php echo tr('Soglia minima per sede') ?></label>
+                            <table id="tbl_soglia_minima" class="table table-striped table-condensed table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th><?php echo tr('Sede') ?></th>
+                                        <th width="20%" class="text-center"><?php echo tr('Soglia minima') ?></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><?php echo $articoloSedeLegale['nomesede'] ?></td>
+                                        <td>
+                                            {[ "type": "number", "name": "threshold_qta_sedi[<?php echo $articoloSedeLegale['id_sede'] ?>]", "value": "<?php echo $articoloSedeLegale['threshold_qta'] ?? 0 ?>", "decimals": "qta", "min-value": "0" ]}
+                                        </td>
+                                    </tr>
+                                    <?php foreach ($articoloSedi as $articoloSede) { ?>
+                                    <tr>
+                                        <td><?php echo $articoloSede['nomesede'] ?></td>
+                                        <td>
+                                            {[ "type": "number", "name": "threshold_qta_sedi[<?php echo $articoloSede['id_sede'] ?>]", "value": "<?php echo $articoloSede['threshold_qta'] ?? 0 ?>", "decimals": "qta", "min-value": "0" ]}
+                                        </td>
+                                    </tr>
+                                    <?php } ?>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
 

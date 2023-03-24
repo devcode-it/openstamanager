@@ -66,9 +66,18 @@ class FileManager implements ManagerInterface
 
         if (!empty($options['showpanel'])) {
             $result .= '
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title">'.tr('Allegati').'</h3>
+        <div class="panel panel-primary">
+        <div class="panel-heading">';
+
+            if (!empty($options['title'])) {
+                $result .= '
+                <h3 class="panel-title">'.$options['title'].'</h3>';
+            } else {
+                $result .= '
+                <h3 class="panel-title">'.tr('Allegati').'</h3>';
+            }
+
+        $result .= '
         </div>
         <div class="panel-body">';
         }

@@ -310,7 +310,12 @@ echo '
 			<div class="col-md-12" id="righe"></div>
 		</div>
     </div>
-</div>
+</div>';
+
+$module_anagrafica_id = Modules::get('Anagrafiche')['id'];
+
+echo '
+{( "name": "filelist_and_upload", "id_module": "'.$module_anagrafica_id.'", "id_record": "'.$record['idanagrafica'].'", "readonly": "1", "title": "Allegati anagrafica")}
 
 {( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
 

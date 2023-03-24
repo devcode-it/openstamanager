@@ -43,11 +43,12 @@ switch (post('op')) {
         $idanagrafica = post('idanagrafica');
         $data = post('data');
         $id_segment = post('id_segment');
+        $id_sede_partenza = post('id_sede_partenza');
 
         $anagrafica = Anagrafica::find($idanagrafica);
         $tipo = Tipo::where('dir', $dir)->first();
 
-        $ordine = Ordine::build($anagrafica, $tipo, $data, $id_segment);
+        $ordine = Ordine::build($anagrafica, $tipo, $data, $id_segment, $id_sede_partenza);
         $id_record = $ordine->id;
 
         flash()->info(tr('Aggiunto ordine numero _NUM_!', [
@@ -61,6 +62,7 @@ switch (post('op')) {
             $idstatoordine = post('idstatoordine');
             $idpagamento = post('idpagamento');
             $idsede = post('idsede');
+            $id_sede_partenza = post('id_sede_partenza');
 
             $totale_imponibile = get_imponibile_ordine($id_record);
             $totale_ordine = get_totale_ordine($id_record);
@@ -92,6 +94,7 @@ switch (post('op')) {
             $ordine->idstatoordine = $idstatoordine;
             $ordine->idpagamento = $idpagamento;
             $ordine->idsede = $idsede;
+            $ordine->id_sede_partenza = $id_sede_partenza;
             $ordine->idconto = post('idconto');
             $ordine->idrivalsainps = $idrivalsainps;
             $ordine->idritenutaacconto = $idritenutaacconto;
@@ -332,7 +335,7 @@ switch (post('op')) {
     // Scollegamento riga generica da ordine
     case 'delete_riga':
         $id_righe = (array)post('righe');
-        
+
         foreach ($id_righe as $id_riga) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Descrizione::find($id_riga);
@@ -356,7 +359,7 @@ switch (post('op')) {
     // Duplicazione riga
     case 'copy_riga':
         $id_righe = (array)post('righe');
-        
+
         foreach ($id_righe as $id_riga) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Descrizione::find($id_riga);
@@ -424,7 +427,9 @@ switch (post('op')) {
         if (post('create_document') == 'on') {
             $tipo = Tipo::where('dir', $documento->direzione)->first();
 
-            $ordine = Ordine::build($documento->anagrafica, $tipo, post('data'), post('id_segment'));
+            $id_sede_partenza = post('id_sede_partenza');
+
+            $ordine = Ordine::build($documento->anagrafica, $tipo, post('data'), post('id_segment'), $id_sede_partenza);
             $ordine->idpagamento = $documento->idpagamento;
             $ordine->idsede = $id_sede;
 
@@ -483,8 +488,9 @@ switch (post('op')) {
         if (post('create_document') == 'on') {
             $anagrafica = Anagrafica::find(post('idanagrafica'));
             $tipo = Tipo::where('dir', $dir)->first();
+            $id_sede_partenza = post('id_sede_partenza');
 
-            $ordine = Ordine::build($anagrafica, $tipo, post('data'), post('id_segment'));
+            $ordine = Ordine::build($anagrafica, $tipo, post('data'), post('id_segment'), $id_sede_partenza);
             $ordine->save();
 
             $id_record = $ordine->id;
@@ -548,8 +554,9 @@ switch (post('op')) {
         if (post('create_document') == 'on') {
             $anagrafica = Anagrafica::find(post('idanagrafica'));
             $tipo = Tipo::where('dir', $dir)->first();
+            $id_sede_partenza = post('id_sede_partenza');
 
-            $ordine = Ordine::build($anagrafica, $tipo, post('data'), post('id_segment'));
+            $ordine = Ordine::build($anagrafica, $tipo, post('data'), post('id_segment'), $id_sede_partenza);
             $ordine->save();
 
             $id_record = $ordine->id;

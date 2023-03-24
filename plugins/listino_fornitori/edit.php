@@ -37,12 +37,8 @@ echo '
 
             <div class="col-md-3">
                 <div class="btn-group btn-group-flex">
-                    <button type="button" class="btn btn-info" style="margin-top:25px;" onclick="aggiungiPrezzi(this, true)">
-                        <i class="fa fa-money"></i> '.tr('Prezzi').'
-                    </button>
-
-                    <button type="button" class="btn btn-primary" style="margin-top:25px;" onclick="aggiungiFornitore()">
-                        <i class="fa fa-inbox"></i> '.tr('Dettagli').'
+                    <button type="button" class="btn btn-info" style="margin-top:25px;" onclick="aggiungiFornitorePrezzi(this)">
+                        <i class="fa fa-money"></i> '.tr('Aggiungi Prezzi e Fornitore').'
                     </button>
                 </div>
             </div>
@@ -222,6 +218,23 @@ function aggiungiFornitore() {
     let id_fornitore = $("#id_fornitore_informazioni").val();
     if (id_fornitore) {
         modificaFornitore("", id_fornitore);
+    } else {
+        swal("'.tr('Attenzione').'", "'.tr('Inserire un\'anagrafica').'", "warning");
+    }
+}
+
+function modificaFornitorePrezzi(id_anagrafica, direzione) {
+    openModal("'.tr('Gestisci prezzi specifici fornitore').'", "'.$structure->fileurl('dettaglio_prezzi_fornitore.php').'?id_plugin='.$id_plugin.'&id_module='.$id_module.'&id_parent='.$id_record.'&id_articolo='.$id_record.'&id_anagrafica=" + id_anagrafica + "&direzione=" + direzione);
+}
+
+function aggiungiFornitorePrezzi(button) {
+    let panel = $(button).closest(".box");
+
+    let direzione = "uscita"
+    let id_anagrafica = panel.find("select").val();
+
+    if (id_anagrafica) {
+        modificaFornitorePrezzi(id_anagrafica, direzione);
     } else {
         swal("'.tr('Attenzione').'", "'.tr('Inserire un\'anagrafica').'", "warning");
     }

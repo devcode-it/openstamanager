@@ -1199,3 +1199,27 @@ div.tip {
     padding: 3px 12px;
     margin-top: 4px;
 }
+
+/*
+* Spunta checkbox viste
+*/
+table.dataTable>tbody>tr.selected>td.select-checkbox::after,
+table.dataTable>tbody>tr.selected>th.select-checkbox::after {
+    margin-top: -25px;
+}
+
+
+input[type="checkbox"],
+input[type="radio"] {
+    margin: 4px;
+    line-height: normal;
+}
+
+.sidebar-menu>li {
+    padding: 1px;
+}
+
+.widget-user .widget-user-image>img {
+    -webkit-box-shadow: -10px 0px 13px -7px #000000, 10px 0px 13px -7px #000000, 5px 5px 15px 5px rgba(0, 0, 0, 0);
+    box-shadow: -10px 0px 13px -7px #000000, 10px 0px 13px -7px #000000, 5px 5px 15px 5px rgba(0, 0, 0, 0);
+}

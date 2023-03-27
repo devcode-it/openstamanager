@@ -55,7 +55,7 @@ if ($user_photo) {
         <img src="'.$user_photo.'" class="img-circle" alt="'.$user['username'].'" />';
 } else {
     echo '
-        <i class="fa fa-user-circle-o fa-4x pull-left" alt="'.tr('OpenSTAManager').'"></i>';
+        <i style="color:white;margin-left:5px;" class="fa fa-user-circle-o fa-5x" alt="'.tr('OpenSTAManager').'"></i>';
 }
 
 echo '

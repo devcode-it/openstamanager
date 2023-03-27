@@ -38,11 +38,9 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')){
     SELECT
         data_registrazione,
         numero_esterno,
-        data,
         codice_tipo_documento_fe,
         percentuale,
         descrizione,
-        idmovimenti,
         id,
         numero,
         SUM(subtotale) as subtotale,
@@ -51,46 +49,42 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')){
         ragione_sociale,
         codice_anagrafica
     FROM
-        (
-    SELECT 
+    (
+        SELECT 
         co_documenti.data_registrazione, 
         co_documenti.numero_esterno,
-        co_movimenti.data,
         co_tipidocumento.codice_tipo_documento_fe,
         co_iva.percentuale,
         co_iva.descrizione,
-        co_movimenti.id AS idmovimenti, 
         co_documenti.id AS id,
         IF(numero = "", numero_esterno, numero) AS numero,
-        ((subtotale-sconto)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS subtotale,
-        ((subtotale-sconto+iva+co_righe_documenti.rivalsainps-co_righe_documenti.ritenutaacconto)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS totale,
-        ((iva+iva_rivalsainps)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS iva,
+        SUM((subtotale-sconto)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS subtotale,
+        SUM((subtotale-sconto+iva+co_righe_documenti.rivalsainps-co_righe_documenti.ritenutaacconto)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS totale,
+        SUM((iva+iva_rivalsainps)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS iva,
         an_anagrafiche.ragione_sociale,
         an_anagrafiche.codice AS codice_anagrafica
-    FROM co_iva
+    FROM
+        co_iva
         INNER JOIN co_righe_documenti ON co_righe_documenti.idiva = co_iva.id
         INNER JOIN co_documenti ON co_documenti.id = co_righe_documenti.iddocumento
         INNER JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento
-        INNER JOIN co_movimenti ON co_movimenti.iddocumento = co_documenti.id
         INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = co_documenti.idanagrafica
     WHERE 
-        dir = '.prepare($dir).' AND idstatodocumento NOT IN (SELECT id FROM co_statidocumento WHERE descrizione="Bozza" OR descrizione="Annullata") AND is_descrizione = 0 AND co_documenti.data_competenza >= '.prepare($date_start).' AND co_documenti.data_competenza <= '.prepare($date_end).' AND '.(($id_sezionale != -1) ? 'co_documenti.id_segment = '.prepare($id_sezionale) : '1=1').'
+        dir = '.prepare($dir).' AND idstatodocumento NOT IN (SELECT id FROM co_statidocumento WHERE descrizione="Bozza" OR descrizione="Annullata") AND is_descrizione = 0 AND co_documenti.data_competenza >= '.prepare($date_start).' AND co_documenti.data_competenza <= '.prepare($date_end).' AND '.(($id_sezionale != -1) ? 'co_documenti.id_segment = '.prepare($id_sezionale).'' : '1=1').'
     GROUP BY 
-        co_iva.id, id
+        co_iva.id, co_documenti.id
     UNION
     SELECT 
         vb_venditabanco.data as data_registrazione, 
         vb_venditabanco.numero as numero_esterno,
-        vb_venditabanco.data as data,
         "Vendita al banco" as codice_tipo_documento_fe,
         co_iva.percentuale,
         co_iva.descrizione,
         vb_venditabanco.id AS id,
-        vb_venditabanco.id AS idmovimenti,
         vb_venditabanco.numero AS numero,
-        (vb_righe_venditabanco.subtotale) as subtotale,
-        (subtotale - sconto + iva) as totale,
-        (iva) as iva,
+        SUM(vb_righe_venditabanco.subtotale) as subtotale,
+        SUM(subtotale - sconto + iva) as totale,
+        SUM(iva) as iva,
         an_anagrafiche.ragione_sociale,
         an_anagrafiche.codice AS codice_anagrafica
     FROM co_iva
@@ -102,10 +96,10 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')){
     WHERE
         vb_venditabanco.data >= '.prepare($date_start).' AND vb_venditabanco.data <= '.prepare($date_end).' AND vb_stati_vendita.descrizione = "Pagato"
     GROUP BY
-        co_iva.id, id
+        co_iva.id, id, an_anagrafiche.idanagrafica
     ) AS tabella
     GROUP BY
-    iva, id
+    iva, id, data_registrazione, numero_esterno, codice_tipo_documento_fe, percentuale, descrizione, numero, ragione_sociale, codice_anagrafica
     ORDER BY CAST(numero_esterno AS UNSIGNED)';
 } 
 
@@ -114,16 +108,14 @@ else {
 SELECT 
     co_documenti.data_registrazione, 
     co_documenti.numero_esterno,
-    co_movimenti.data,
     co_tipidocumento.codice_tipo_documento_fe,
     co_iva.percentuale,
     co_iva.descrizione,
-    co_movimenti.id AS idmovimenti, 
     co_documenti.id AS id,
     IF(numero = "", numero_esterno, numero) AS numero,
-    ((subtotale-sconto)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS subtotale,
-    ((subtotale-sconto+iva+co_righe_documenti.rivalsainps-co_righe_documenti.ritenutaacconto)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS totale,
-    ((iva+iva_rivalsainps)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS iva,
+    SUM((subtotale-sconto)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS subtotale,
+    SUM((subtotale-sconto+iva+co_righe_documenti.rivalsainps-co_righe_documenti.ritenutaacconto)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS totale,
+    SUM((iva+iva_rivalsainps)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS iva,
     an_anagrafiche.ragione_sociale,
     an_anagrafiche.codice AS codice_anagrafica
 FROM
@@ -131,12 +123,11 @@ FROM
     INNER JOIN co_righe_documenti ON co_righe_documenti.idiva = co_iva.id
     INNER JOIN co_documenti ON co_documenti.id = co_righe_documenti.iddocumento
     INNER JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento
-    INNER JOIN co_movimenti ON co_movimenti.iddocumento = co_documenti.id
     INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = co_documenti.idanagrafica
 WHERE 
     dir = '.prepare($dir).' AND idstatodocumento NOT IN (SELECT id FROM co_statidocumento WHERE descrizione="Bozza" OR descrizione="Annullata") AND is_descrizione = 0 AND co_documenti.data_competenza >= '.prepare($date_start).' AND co_documenti.data_competenza <= '.prepare($date_end).' AND '.(($id_sezionale != -1) ? 'co_documenti.id_segment = '.prepare($id_sezionale).'' : '1=1').'
 GROUP BY 
-    co_documenti.id, co_righe_documenti.idiva
+    co_iva.id, co_documenti.id
 ORDER BY 
     CAST( IF(dir="entrata", co_documenti.numero_esterno, co_documenti.numero) AS UNSIGNED)';
 }

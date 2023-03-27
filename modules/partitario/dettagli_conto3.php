@@ -33,7 +33,7 @@ WHERE co_movimenti.idconto='.prepare($id_conto).' AND
     co_movimenti.data >= '.prepare($_SESSION['period_start']).' AND
     co_movimenti.data <= '.prepare($_SESSION['period_end']).'
 GROUP BY co_movimenti.idmastrino
-ORDER BY co_movimenti.data ASC, co_movimenti.descrizione';
+ORDER BY co_movimenti.data DESC, co_movimenti.id DESC';
 $movimenti = $dbo->fetchArray($query);
 
 if (!empty($movimenti)) {
@@ -47,7 +47,7 @@ if (!empty($movimenti)) {
         <th width="100">'.tr('Scalare').'</th>
     </tr>';
 
-    $scalare = 0;
+    $scalare = array_sum(array_column($movimenti, 'totale'));
 
     // Elenco righe del partitario
     foreach ($movimenti as $movimento) {
@@ -90,13 +90,13 @@ if (!empty($movimenti)) {
         </td>';
         }
 
-        $scalare += $movimento['totale'];
-
         echo '
         <td class="text-right">
             '.moneyFormat($scalare, 2).'
         </td>';
 
+        $scalare -= $movimento['totale'];
+        
         echo '
     </tr>';
     }

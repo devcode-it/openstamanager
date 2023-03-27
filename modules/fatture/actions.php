@@ -264,7 +264,7 @@ switch (post('op')) {
             'stored' => round($totale_documento,2),
             'calculated' => round($fattura->totale,2),
         ]);
-        
+
         break;
 
     // Elenco fatture in stato Bozza per il cliente
@@ -315,6 +315,8 @@ switch (post('op')) {
     // eliminazione documento
     case 'delete':
         try {
+            $dbo->query('DELETE FROM ac_acconti_righe WHERE idfattura='.prepare($id_record));
+
             $fattura->delete();
 
             $dbo->query('DELETE FROM co_scadenziario WHERE iddocumento='.prepare($id_record));
@@ -581,6 +583,33 @@ switch (post('op')) {
             $riga = Riga::build($fattura);
         }
 
+        $acconto_riga = $dbo->fetchOne(
+            'SELECT *
+            FROM ac_acconti_righe
+            WHERE idriga_fattura = '.prepare($riga->id).' AND idfattura = '.prepare($riga->iddocumento)
+        );
+
+        if (!empty($acconto_riga)) {
+            $disponibile = $dbo->fetchOne(
+                'SELECT idacconto, idfattura, sum(importo_fatturato) as da_stornare
+                FROM ac_acconti_righe
+                WHERE idacconto = '.prepare($acconto_riga['idacconto']).'
+                GROUP BY idacconto'
+            );
+
+            if (floatval($disponibile['da_stornare']) - floatval($acconto_riga['importo_fatturato']) >= -1 * floatval(post('prezzo_unitario'))) {
+                $dbo->query(
+                    'UPDATE ac_acconti_righe
+                    SET importo_fatturato = '.prepare(floatval(post('prezzo_unitario'))).',
+                        idiva = '.prepare(post('idiva')).'
+                    WHERE idriga_fattura = '.prepare(post('idriga')).' AND idfattura = '.prepare($id_record)
+                );
+            } else {
+                flash()->error(tr('Anticipo non applicabile, cifra troppo alta!'));
+                break;
+            }
+        }
+
         $qta = post('qta');
 
         $riga->descrizione = post('descrizione');
@@ -660,11 +689,17 @@ switch (post('op')) {
     // Scollegamento riga generica da documento
     case 'delete_riga':
         $id_righe = (array)post('righe');
-        
+
         foreach ($id_righe as $id_riga) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Descrizione::find($id_riga);
             $riga = $riga ?: Sconto::find($id_riga);
+
+            // se è un acconto lo cancella, altrimenti non fa nulla
+            $dbo->query(
+                'DELETE FROM ac_acconti_righe
+                WHERE idriga_fattura='.prepare($riga->id).' AND idfattura='.prepare($riga->iddocumento)
+            );
 
             try {
                 $riga->delete();
@@ -685,7 +720,7 @@ switch (post('op')) {
     // Duplicazione riga
     case 'copy_riga':
         $id_righe = (array)post('righe');
-        
+
         foreach ($id_righe as $id_riga) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Descrizione::find($id_riga);
@@ -780,8 +815,16 @@ switch (post('op')) {
         $id_conto = post('id_conto');
 
         $righe = $documento->getRighe();
+
+        $idOrdini = [];
+        $totale = 0;
+
         foreach ($righe as $riga) {
             if (post('evadere')[$riga->id] == 'on') {
+                if ($riga['idordine'] != 0) {
+                    $idOrdini[] = $riga->idordine;
+                }
+
                 $qta = post('qta_da_evadere')[$riga->id];
                 $articolo = ArticoloOriginale::find($riga->idarticolo);
 
@@ -801,6 +844,96 @@ switch (post('op')) {
                 }
 
                 $copia->save();
+
+                $totale += ($copia->prezzo_unitario * post('qta_da_evadere')[$riga->id]);
+            }
+        }
+
+        //row per gli anticipi
+        $acconti = $dbo->fetchArray(
+            'SELECT id, idanagrafica, importo
+            FROM ac_acconti
+            WHERE idordine IN ('.implode(',', $idOrdini).')'
+        );
+
+
+        if ($acconti != null) {
+            //foreach acconti
+            foreach ($acconti as $acconto) {
+                //iva acconto
+
+                $ivaAnticipo = $dbo->fetchOne(
+                    'SELECT idiva
+                    FROM ac_acconti_righe
+                    WHERE idacconto = '.prepare($acconto['id']).' AND tipologia = "Anticipo"'
+                )['idiva'];
+
+                if ($ivaAnticipo == null) {
+                    $ivaAnticipo = setting('Iva predefinita');
+                }
+
+                //get acconto_righe
+                $acconto_righe = $dbo->fetchOne(
+                    'SELECT idacconto, idfattura, sum(importo_fatturato) as da_stornare
+                    FROM ac_acconti_righe
+                    WHERE idacconto = '.prepare($acconto['id']).'
+                    GROUP BY idacconto'
+                );
+
+                if ($acconto_righe['da_stornare']) {
+                    $calcolo = $totale - floatval($acconto_righe['da_stornare']);
+
+                    if ($calcolo >= 0) {
+                        $totale -= floatval($acconto_righe['da_stornare']);
+                        $importo_fatturato = -1 * floatval($acconto_righe['da_stornare']);
+                    } else {
+                        $importo_fatturato = -1 * ($totale);
+                        $totale = 0;
+                    }
+
+                    $fatturaAcconto = Fattura::find($acconto_righe['idfattura']);
+                    $rigaAcconto = $dbo->fetchOne(
+                        'SELECT * FROM co_righe_documenti
+                        WHERE iddocumento = '.prepare($fatturaAcconto->id)
+                    );
+
+                    $iva_predefinita = setting('Iva predefinita');
+                    $iva = $dbo->fetchOne(
+                        'SELECT id, descrizione, percentuale
+                        FROM co_iva
+                        WHERE id = '.prepare($ivaAnticipo)
+                    );
+
+                    //aggiungo la riga fattura dell'acconto
+                    $riga = Riga::build($fattura);
+
+                    $riga->note = null;
+                    $riga->um = null;
+                    $riga->idarticolo = null;
+                    $riga->calcolo_ritenuta_acconto = null;
+
+                    $riga->descrizione = 'Storno acconto fattura '.$fattura->numero_esterno;
+
+                    $riga->idiva = $ivaAnticipo;
+                    $riga->desc_iva = $iva['descrizione'];
+
+                    $riga->idconto = $rigaAcconto['idconto'];
+
+                    $riga->costo_unitario = 0;
+                    $riga->subtotale = $importo_fatturato;
+                    $riga->prezzo_unitario = $importo_fatturato;
+                    $riga->prezzo_unitario_ivato = floatval($importo_fatturato) * (1 + (floatval($iva['percentuale']) / 100));
+
+                    $riga->idordine = $documento->id;
+                    $riga->qta = 1;
+
+                    $riga->save();
+
+                    $dbo->query(
+                        'INSERT INTO ac_acconti_righe (idacconto, idfattura, idriga_fattura, idiva, importo_fatturato, tipologia)
+                        VALUES ('.prepare($acconto_righe['idacconto']).', '.prepare($id_record).', '.prepare($riga->id).','.prepare($riga->idiva).','.prepare($importo_fatturato).', '.prepare(tr('Storno da acconto')).')'
+                    );
+                }
             }
         }
 
@@ -924,11 +1057,11 @@ switch (post('op')) {
 
         break;
 
-    case 'controlla_serial': 
+    case 'controlla_serial':
         $has_serial = $dbo->fetchOne('SELECT id FROM mg_prodotti WHERE serial='.prepare(post('serial')).' AND dir="uscita" AND id_articolo='.prepare(post('id_articolo')).' AND (id_riga_documento IS NOT NULL OR id_riga_ordine IS NOT NULL OR id_riga_ddt IS NOT NULL)')['id'];
-        
+
         echo json_encode($has_serial);
-        
+
         break;
 
     case 'add_articolo':
@@ -964,7 +1097,7 @@ switch (post('op')) {
                     $id_conto = $originale->idconto_acquisto;
                 }
                 $articolo->idconto = $id_conto;
-                
+
                 if ($dir == 'entrata') {
                     if ($fattura->anagrafica['idiva_vendite'] ? $id_iva = $fattura->anagrafica['idiva_vendite'] : $id_iva = $originale->idiva_vendita ?: setting('Iva predefinita'));
                 } else {
@@ -972,7 +1105,7 @@ switch (post('op')) {
                 }
                 $id_anagrafica = $fattura->idanagrafica;
                 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
-        
+
                 // CALCOLO PREZZO UNITARIO
                 $prezzo_unitario = 0;
                 $sconto = 0;
@@ -995,7 +1128,7 @@ switch (post('op')) {
                             continue;
                         }
                     }
-                } 
+                }
                 if (empty($prezzo_unitario)) {
                     // Prezzi listini clienti
                     $listino = $dbo->fetchOne('SELECT sconto_percentuale AS sconto_percentuale_listino, '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino
@@ -1023,7 +1156,7 @@ switch (post('op')) {
                 $articolo->setProvvigione($provvigione ?: 0, 'PRC');
                 $articolo->save();
 
-                
+
                 flash()->info(tr('Nuovo articolo aggiunto!'));
             }
         } else {

@@ -267,6 +267,7 @@ abstract class Accounting extends Component
         } else {
             $this->sconto_unitario = $sconto;
         }
+        $this->tipo_sconto = $type;
     }
 
     /**

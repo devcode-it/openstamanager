@@ -24,6 +24,7 @@ use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
 use Modules\Fatture\Tipo;
+use Modules\Fatture\Components\Riga;
 
 if ($module['name'] == 'Ddt di vendita') {
     $dir = 'entrata';
@@ -98,8 +99,14 @@ switch (post('op')) {
                     $fattura->idsede_destinazione = $documento_import->idsede_destinazione;
                     $fattura->save();
 
+                    $idOrdini = [];
+                    $totale = 0;
+
                     // Inserimento righe
                     foreach ($righe as $riga) {
+                        if ($riga['idordine'] != 0) {
+                            $idOrdini[] = $riga->idordine;
+                        }
                         $qta = $riga->qta_rimanente;
 
                         if ($qta > 0) {
@@ -115,6 +122,86 @@ switch (post('op')) {
                             }
 
                             $copia->save();
+
+                            $totale += ($copia->prezzo_unitario * $qta);
+                        }
+                    }
+
+                    //row per gli anticipi
+                    $acconti = $dbo->fetchArray(
+                        'SELECT id, idanagrafica, idordine, importo
+                        FROM ac_acconti
+                        WHERE idordine IN ('.implode(',', $idOrdini).')'
+                    );
+
+                    if ($acconti != null) {
+                        //foreach acconti
+                        foreach ($acconti as $acconto) {
+                            $acconto = $acconti[0];
+
+                            //get acconto_righe
+                            $acconto_righe = $dbo->fetchOne(
+                                'SELECT idacconto, idfattura, sum(importo_fatturato) as da_stornare
+                                FROM ac_acconti_righe
+                                WHERE idacconto = '.prepare($acconto['id']).'
+                                GROUP BY idacconto'
+                            );
+
+                            if ($acconto_righe['da_stornare']) {
+                                $importo_rimasto = 0;
+                                $calcolo = $totale - floatval($acconto_righe['da_stornare']);
+
+                                if ($calcolo >= 0) {
+                                    $totale -= floatval($acconto_righe['da_stornare']);
+                                    $importo_fatturato = -1 * floatval($acconto_righe['da_stornare']);
+                                } else {
+                                    $importo_fatturato = -1 * ($totale);
+                                    $totale = 0;
+                                }
+
+                                $fatturaAcconto = Fattura::find($acconto_righe['idfattura']);
+                                $rigaAcconto = $dbo->fetchOne(
+                                    'SELECT * FROM co_righe_documenti
+                                    WHERE iddocumento = '.prepare($fatturaAcconto->id)
+                                );
+
+                                $iva_predefinita = setting('Iva predefinita');
+                                $iva = $dbo->fetchOne(
+                                    'SELECT id, descrizione, percentuale
+                                    FROM co_iva
+                                    WHERE id = '.prepare($iva_predefinita)
+                                );
+
+                                //aggiungo la riga fattura dell'acconto
+                                $riga = Riga::build($fattura);
+
+                                $riga->note = null;
+                                $riga->um = null;
+                                $riga->idarticolo = null;
+                                $riga->calcolo_ritenuta_acconto = null;
+
+                                $riga->descrizione = 'Storno acconto fattura '.$fattura->numero_esterno;
+
+                                $riga->idiva = $iva['id'];
+                                $riga->desc_iva = $iva['descrizione'];
+
+                                $riga->idconto = $rigaAcconto['idconto'];
+
+                                $riga->costo_unitario = 0;
+                                $riga->subtotale = $importo_fatturato;
+                                $riga->prezzo_unitario = $importo_fatturato;
+                                $riga->prezzo_unitario_ivato = floatval($importo_fatturato) * (1 + (floatval($iva['percentuale']) / 100));
+
+                                $riga->idordine = $acconto['idordine'];
+                                $riga->qta = 1;
+
+                                $riga->save();
+
+                                $dbo->query(
+                                    'INSERT INTO ac_acconti_righe (idacconto, idfattura, idriga_fattura, idiva, importo_fatturato, tipologia)
+                                    VALUES ('.prepare($acconto_righe['idacconto']).', '.prepare($acconto_righe['idfattura']).', '.prepare($riga->id).','.prepare($riga->idiva).','.prepare($importo_fatturato).', '.prepare(tr('Storno da acconto')).')'
+                                );
+                            }
                         }
                     }
                 }

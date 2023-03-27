@@ -171,7 +171,7 @@ class RiBa
             $contenuto .= $r70->toCBI().$eol;
         }
 
-        // Record 70
+        // Record EF
         $ef = new RecordEF();
         $ef->codice_sia_mittente = $intestazione->codice_sia;
         $ef->abi_assuntrice = $intestazione->abi;

@@ -46,7 +46,7 @@ switch (filter('op')) {
                     return $item->id == $scadenza->id;
                 });
 
-                // Generazione della descrizione del pagamento 
+                // Generazione della descrizione del pagamento
                 if ($scadenze_documento->count() > 1) {
                     $descrizione .= tr('_DOC_, pagamento _NUM_/_TOT_', [
                         '_DOC_' => $descrizione,

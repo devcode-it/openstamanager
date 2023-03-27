@@ -6,8 +6,8 @@ namespace Plugins\PresentazioniBancarie\Cbi;
  * Classe per gestire l'intestazione del RiBa.
  *
  * @property int    $abi
- * @property int    $soggetto_veicolatore
  * @property int    $cab
+ * @property string $iban
  * @property string $conto
  * @property string $data_creazione
  * @property string $nome_supporto
@@ -18,7 +18,9 @@ namespace Plugins\PresentazioniBancarie\Cbi;
  * @property string $partita_iva_o_codice_fiscale_creditore
  * @property string $identificativo_creditore
  * @property string $codice_sia
+ * @property int    $soggetto_veicolatore
  * @property bool   $eol
+ * @property string $descrizione_banca
  */
 class Intestazione extends Elemento
 {
@@ -28,13 +30,6 @@ class Intestazione extends Elemento
      * @var int Valore numerico di 5 cifre
      */
     protected $abi;
-	
-	/**
-     * Codice ABI del soggetto veicolatore.
-     *
-     * @var int Valore numerico di 5 cifre
-     */
-    protected $soggetto_veicolatore;
     /**
      * Codice CAB della banca del creditore.
      *
@@ -43,6 +38,10 @@ class Intestazione extends Elemento
      * @property
      */
     protected $cab;
+    /**
+     * @var string Valore alfanumerico di 24 cifre
+     */
+    protected $iban;
     /**
      * @var string Valore alfanumerico di 12 cifre
      */
@@ -84,15 +83,26 @@ class Intestazione extends Elemento
      */
     protected $codice_sia;
     /**
+     * Codice ABI del soggetto veicolatore.
+     *
+     * @var int Valore numerico di 5 cifre
+     */
+    protected $soggetto_veicolatore;
+    /**
      * @var bool true per aggiungere i caratteri di fine rigo
      */
     protected $eol = true;
+    /**
+     * @var string Valore alfanumerico di 24 cifre
+     */
+    protected $descrizione_banca;
 
     public function toRibaAbiCbiFormat()
     {
         return [
             $this->abi,
             $this->cab,
+            $this->iban,
             $this->conto,
             $this->data_creazione,
             $this->nome_supporto,
@@ -105,6 +115,7 @@ class Intestazione extends Elemento
             $this->codice_sia,
             $this->soggetto_veicolatore,
             $this->eol,
+            $this->descrizione_banca,
         ];
     }
 }

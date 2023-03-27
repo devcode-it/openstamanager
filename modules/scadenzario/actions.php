@@ -95,6 +95,7 @@ switch (post('op')) {
                 }
             } else {
                 $database->insert('co_scadenziario', [
+                    'idanagrafica' => $idanagrafica,
                     'descrizione' => $descrizione,
                     'tipo' => $tipo,
                     'iddocumento' => $iddocumento,

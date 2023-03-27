@@ -299,8 +299,8 @@ ORDER BY
 -- Ottimizzazione query vista Template email
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_templates`.`id`' WHERE `zz_modules`.`name` = 'Template email' AND `zz_views`.`name` = 'id';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_templates`.`id`' WHERE `zz_modules`.`name` = 'Template email' AND `zz_views`.`name` = '#';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_templates`.`NAME`' WHERE `zz_modules`.`name` = 'Template email' AND `zz_views`.`name` = 'Nome';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_templates`.`SUBJECT`' WHERE `zz_modules`.`name` = 'Template email' AND `zz_views`.`name` = 'Oggetto';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_templates`.`name`' WHERE `zz_modules`.`name` = 'Template email' AND `zz_views`.`name` = 'Nome';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_templates`.`subject`' WHERE `zz_modules`.`name` = 'Template email' AND `zz_views`.`name` = 'Oggetto';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = ' `zz_modules`.`name`' WHERE `zz_modules`.`name` = 'Template email' AND `zz_views`.`name` = 'Modulo';
 
 UPDATE `zz_modules` SET `options` = "SELECT
@@ -318,9 +318,9 @@ ORDER BY
 
 -- Ottimizzazione query vista Campi personalizzati
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_fields`.`id`' WHERE `zz_modules`.`name` = 'Campi personalizzati' AND `zz_views`.`name` = 'id';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_modules`.`NAME`' WHERE `zz_modules`.`name` = 'Campi personalizzati' AND `zz_views`.`name` = 'Modulo';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_plugins`.`NAME`' WHERE `zz_modules`.`name` = 'Campi personalizzati' AND `zz_views`.`name` = 'Plugin';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_fields`.`NAME`' WHERE `zz_modules`.`name` = 'Campi personalizzati' AND `zz_views`.`name` = 'Nome';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_modules`.`name`' WHERE `zz_modules`.`name` = 'Campi personalizzati' AND `zz_views`.`name` = 'Modulo';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_plugins`.`name`' WHERE `zz_modules`.`name` = 'Campi personalizzati' AND `zz_views`.`name` = 'Plugin';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_fields`.`name`' WHERE `zz_modules`.`name` = 'Campi personalizzati' AND `zz_views`.`name` = 'Nome';
 UPDATE `zz_modules` SET `options` = "SELECT
     |select|
 FROM
@@ -335,8 +335,8 @@ HAVING
 
 -- Ottimizzazione query vista Segmenti
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_segments`.`id`' WHERE `zz_modules`.`name` = 'Segmenti' AND `zz_views`.`name` = 'id';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_segments`.`NAME`' WHERE `zz_modules`.`name` = 'Segmenti' AND `zz_views`.`name` = 'Nome';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_modules`.`NAME`' WHERE `zz_modules`.`name` = 'Segmenti' AND `zz_views`.`name` = 'Modulo';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_segments`.`name`' WHERE `zz_modules`.`name` = 'Segmenti' AND `zz_views`.`name` = 'Nome';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_modules`.`name`' WHERE `zz_modules`.`name` = 'Segmenti' AND `zz_views`.`name` = 'Modulo';
 UPDATE `zz_modules` SET `options` = "SELECT
     |select|
 FROM
@@ -346,7 +346,7 @@ WHERE
     1=1
 HAVING
     2=2
-ORDER BY `zz_segments`.`NAME`,
+ORDER BY `zz_segments`.`name`,
     `zz_segments`.`id_module`" WHERE `name` = 'Segmenti';
 
     
@@ -458,9 +458,9 @@ ORDER BY
 
 -- Ottimizzazione query vista Checklists
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_checklists`.`id`' WHERE `zz_modules`.`name` = 'Checklists' AND `zz_views`.`name` = 'id';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_checklists`.`NAME`' WHERE `zz_modules`.`name` = 'Checklists' AND `zz_views`.`name` = 'Nome';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_modules`.`NAME`' WHERE `zz_modules`.`name` = 'Checklists' AND `zz_views`.`name` = 'Modulo';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_plugins`.`NAME`' WHERE `zz_modules`.`name` = 'Checklists' AND `zz_views`.`name` = 'Plugin';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_checklists`.`name`' WHERE `zz_modules`.`name` = 'Checklists' AND `zz_views`.`name` = 'Nome';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_modules`.`name`' WHERE `zz_modules`.`name` = 'Checklists' AND `zz_views`.`name` = 'Modulo';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_plugins`.`name`' WHERE `zz_modules`.`name` = 'Checklists' AND `zz_views`.`name` = 'Plugin';
 UPDATE `zz_modules` SET `options` = "SELECT
     |select|
 FROM
@@ -494,8 +494,8 @@ HAVING
 
 -- Ottimizzazione query vista Newsletter
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_newsletters`.`id`' WHERE `zz_modules`.`name` = 'Newsletter' AND `zz_views`.`name` = 'id';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_newsletters`.`NAME`' WHERE `zz_modules`.`name` = 'Newsletter' AND `zz_views`.`name` = 'Nome';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_templates`.`NAME`' WHERE `zz_modules`.`name` = 'Newsletter' AND `zz_views`.`name` = 'Template';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_newsletters`.`name`' WHERE `zz_modules`.`name` = 'Newsletter' AND `zz_views`.`name` = 'Nome';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_templates`.`name`' WHERE `zz_modules`.`name` = 'Newsletter' AND `zz_views`.`name` = 'Template';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`totale`' WHERE `zz_modules`.`name` = 'Newsletter' AND `zz_views`.`name` = 'Destinatari';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = "IF(completed_at IS NULL OR em_newsletters.state='DEV', 'No', CONCAT('Sì ', '(', DATE_FORMAT(completed_at, '%d/%m/%Y %H:%i:%s'),')'))" WHERE `zz_modules`.`name` = 'Newsletter' AND `zz_views`.`name` = 'Completato';
 UPDATE `zz_modules` SET `options` = "SELECT
@@ -574,7 +574,7 @@ FROM
     INNER JOIN mg_articoli ON mg_articoli.id = mg_prezzi_articoli.id_articolo
     LEFT JOIN mg_categorie AS categoria ON mg_articoli.id_categoria = categoria.id
     LEFT JOIN mg_categorie AS sottocategoria ON mg_articoli.id_sottocategoria = sottocategoria.id
-    LEFT JOIN zz_modules ON zz_modules.NAME= 'Articoli'
+    LEFT JOIN zz_modules ON zz_modules.name= 'Articoli'
     LEFT JOIN (SELECT codice_fornitore AS codice, id_articolo, id_fornitore, barcode_fornitore AS barcode, deleted_at FROM mg_fornitore_articolo) AS fornitore ON mg_prezzi_articoli.id_articolo= fornitore.id_articolo AND mg_prezzi_articoli.id_anagrafica=fornitore.id_fornitore AND fornitore.deleted_at IS NULL
 WHERE
     1=1 AND mg_articoli.deleted_at IS NULL AND an_anagrafiche.deleted_at IS NULL
@@ -654,7 +654,7 @@ DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Formato codice contratti
 ALTER TABLE `co_righe_promemoria` ADD `provvigione` DECIMAL(15,6) NOT NULL AFTER `prezzo_unitario_ivato`, ADD `provvigione_unitaria` DECIMAL(15,6) NOT NULL AFTER `provvigione`, ADD `provvigione_percentuale` DECIMAL(15,6) NOT NULL AFTER `provvigione_unitaria`, ADD `tipo_provvigione` ENUM('UNT','PRC') NOT NULL DEFAULT 'UNT' AFTER `provvigione_percentuale`; 
 
 -- Ottimizzazione query vista Stampe
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'zz_modules.NAME' WHERE `zz_modules`.`name` = 'Stampe' AND `zz_views`.`name` = 'Modulo';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'zz_modules.name' WHERE `zz_modules`.`name` = 'Stampe' AND `zz_views`.`name` = 'Modulo';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'zz_prints.id' WHERE `zz_modules`.`name` = 'Stampe' AND `zz_views`.`name` = 'id';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'zz_prints.title' WHERE `zz_modules`.`name` = 'Stampe' AND `zz_views`.`name` = 'Titolo';
 UPDATE `zz_modules` SET `options` = "SELECT
@@ -722,7 +722,7 @@ FROM
     `mg_listini`
     LEFT JOIN (SELECT `mg_listini_articoli`.`id_listino`, COUNT(`id_listino`) AS num FROM `mg_listini_articoli` GROUP BY `id_listino`) AS articoli ON `mg_listini`.`id`=`articoli`.`id_listino`
     LEFT JOIN (SELECT `an_anagrafiche`.`id_listino`, COUNT(`id_listino`) AS num FROM `an_anagrafiche` GROUP BY `id_listino`) AS anagrafiche ON `mg_listini`.`id`=`anagrafiche`.`id_listino`
-    LEFT JOIN (SELECT `zz_users`.`id`, `zz_users`.`username` FROM `zz_users` INNER JOIN (SELECT `id_utente`, `id_record` FROM `zz_operations` INNER JOIN `zz_modules` ON `zz_modules`.`NAME` = 'Listini cliente' ORDER BY `id_utente` DESC LIMIT 0, 1) AS `id`) AS `utente` ON `utente`.`id` = `mg_listini`.`id`
+    LEFT JOIN (SELECT `zz_users`.`id`, `zz_users`.`username` FROM `zz_users` INNER JOIN (SELECT `id_utente`, `id_record` FROM `zz_operations` INNER JOIN `zz_modules` ON `zz_modules`.`name` = 'Listini cliente' ORDER BY `id_utente` DESC LIMIT 0, 1) AS `id`) AS `utente` ON `utente`.`id` = `mg_listini`.`id`
 WHERE 
     1=1 
 HAVING 

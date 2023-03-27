@@ -176,6 +176,20 @@ echo '
 
     <div class="row">
         <div class="col-md-4">
+            {[ "type": "select", "label": "'.tr('Impianto').'", "multiple": 1, "name": "idimpianti[]", "value": "'.$impianti_collegati.'", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.($id_anagrafica ?: '""').', "idsede_destinazione": '.($id_sede ?: '""').'}, "icon-after": "add|'.Modules::get('Impianti')['id'].'|id_anagrafica='.$id_anagrafica.'" ]}
+        </div>
+
+        <div class="col-md-4">
+            {[ "type": "select", "label": "'.tr('Componenti').'", "multiple": 1, "name": "componenti[]", "placeholder": "'.tr('Seleziona prima un impianto').'", "ajax-source": "componenti" ]}
+        </div>
+
+        <div class="col-md-4">
+			{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_sezionale' => 1]).', "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'" ]}
+		</div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
             {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "value": "'.$id_preventivo.'", "ajax-source": "preventivi", "readonly": "'.(empty($id_preventivo) ? 0 : 1).'", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica]).' ]}
         </div>
 
@@ -186,16 +200,6 @@ echo '
         <div class="col-md-4">
             {[ "type": "select", "label": "'.tr('Ordine').'", "name": "idordine", "ajax-source": "ordini-cliente", "value": "'.$id_ordine.'", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica]).' ]}
         </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "ajax-source": "referenti", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica, 'idclientefinale' => $id_cliente_finale]).', "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|id_plugin='.Plugins::get('Referenti')['id'].'&id_parent='.$id_anagrafica.'" ]}
-        </div>
-
-        <div class="col-md-4">
-			{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_sezionale' => 1]).', "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'" ]}
-		</div>
     </div>
 
     <div class="row">
@@ -271,12 +275,8 @@ echo '
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Impianto').'", "multiple": 1, "name": "idimpianti[]", "value": "'.$impianti_collegati.'", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.($id_anagrafica ?: '""').', "idsede_destinazione": '.($id_sede ?: '""').'}, "icon-after": "add|'.Modules::get('Impianti')['id'].'|id_anagrafica='.$id_anagrafica.'" ]}
+                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "ajax-source": "referenti", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica, 'idclientefinale' => $id_cliente_finale]).', "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|id_plugin='.Plugins::get('Referenti')['id'].'&id_parent='.$id_anagrafica.'" ]}
                 </div>
-
-                <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Componenti').'", "multiple": 1, "name": "componenti[]", "placeholder": "'.tr('Seleziona prima un impianto').'", "ajax-source": "componenti" ]}
-				</div>
 			</div>
 		</div>
 	</div>';
@@ -442,7 +442,6 @@ if (!empty($id_intervento)) {
        input("idcontratto").disable();
        input("idordine").disable();
        input("idreferente").disable();
-       input("idimpianti").disable();
        input("componenti").disable();
        input("idanagrafica").disable();
        input("idclientefinale").disable();
@@ -485,7 +484,6 @@ echo '
            contratto.disable();
            ordine.disable();
            referente.disable();
-           input("idimpianti").disable();
            input("componenti").disable();
         } else{
            let value = anagrafica.get();
@@ -539,7 +537,8 @@ echo '
         let selected = !$(this).val();
         let placeholder = selected ? "'.tr('Seleziona prima un cliente').'" : "'.tr("Seleziona un'opzione").'";
 
-        sede.setDisabled(selected)
+        let selected_sede = !$(this).val() || $(this).prop("disabled") ? 1 : 0;
+        sede.setDisabled(selected_sede)
             .getElement().selectReset(placeholder);
 
         preventivo.setDisabled(selected)
@@ -554,7 +553,6 @@ echo '
         referente.setDisabled(selected)
             .getElement().selectReset(placeholder);
 
-        input("idimpianti").setDisabled(selected);
 
         let data = anagrafica.getData();
 		if (data) {
@@ -609,7 +607,7 @@ echo '
 	sede.change(function() {
         updateSelectOption("idsede_destinazione", $(this).val());
 		session_set("superselect,idsede_destinazione", $(this).val(), 0);
-        input("idimpianti").getElement().selectReset();
+        
 
         let data = sede.getData();
 		if (data) {
@@ -656,6 +654,21 @@ echo '
 
         input("componenti").setDisabled(!$(this).val())
             .getElement().selectReset();
+        
+        // Selezione anagrafica in automatico in base impianto
+        if ($(this).val()[0]) {
+            input("idanagrafica").disable();
+            input("idsede_destinazione").disable();
+
+            let data = $(this).selectData()[0];
+            input("idanagrafica").getElement()
+            .selectSetNew(data.idanagrafica, data.ragione_sociale);
+            input("idsede_destinazione").getElement()
+            .selectSetNew(data.idsede, data.nomesede);
+        } else {
+            input("idanagrafica").enable();
+            input("idsede_destinazione").enable();
+        }
 	});
 
     // Automatismo del tempo standard

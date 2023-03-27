@@ -38,21 +38,22 @@ switch ($resource) {
      * - idanagrafica
      */
     case 'impianti-cliente':
-        if (isset($superselect['idanagrafica'])) {
-            $query = 'SELECT id, CONCAT(matricola, " - ", nome) AS descrizione FROM my_impianti |where| ORDER BY idsede';
+        $query = 'SELECT my_impianti.id, CONCAT(my_impianti.matricola, " - ", my_impianti.nome) AS descrizione, my_impianti.idanagrafica, an_anagrafiche.ragione_sociale, my_impianti.idsede, IFNULL(an_sedi.nomesede, "Sede legale") AS nomesede FROM my_impianti LEFT JOIN an_anagrafiche ON my_impianti.idanagrafica=an_anagrafiche.idanagrafica LEFT JOIN an_sedi ON my_impianti.idsede=an_sedi.id |where| ORDER BY idsede';
 
-            foreach ($elements as $element) {
-                $filter[] = 'id='.prepare($element);
-            }
-
-            $where[] = 'idanagrafica='.prepare($superselect['idanagrafica']);
-            $where[] = 'idsede='.prepare($superselect['idsede_destinazione'] ?: 0);
-
-            if (!empty($search)) {
-                $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
-                $search_fields[] = 'matricola LIKE '.prepare('%'.$search.'%');
-            }
+        foreach ($elements as $element) {
+            $filter[] = 'id='.prepare($element);
         }
+
+        if (!empty($superselect['idanagrafica'])) {
+            $where[] = 'my_impianti.idanagrafica='.prepare($superselect['idanagrafica']);
+            $where[] = 'my_impianti.idsede='.prepare($superselect['idsede_destinazione'] ?: 0);
+        }
+
+        if (!empty($search)) {
+            $search_fields[] = 'my_impianti.nome LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'my_impianti.matricola LIKE '.prepare('%'.$search.'%');
+        }
+
         break;
 
     /*

@@ -60,7 +60,7 @@ include_once __DIR__.'/../../core.php';
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "text", "label": "<?php echo tr('BIC'); ?>", "name": "bic", "required": "1", "class": "alphanumeric-mask", "minlength": 8, "maxlength": 11, "value": "$bic$", "help": "<?php echo $help_codice_bic; ?>" ]}
+                    {[ "type": "text", "label": "<?php echo tr('BIC'); ?>", "name": "bic", "class": "alphanumeric-mask", "minlength": 8, "maxlength": 11, "value": "$bic$", "help": "<?php echo $help_codice_bic; ?>" ]}
                 </div>
             </div>
 
@@ -149,6 +149,7 @@ if (!empty($numero_documenti)) {
     var check_digits = input("check_digits");
     var national_check_digits = input("national_check_digits");
     var id_nazione = input("id_nazione");
+    var bic = input("bic");
 
     var components = [branch_code, bank_code, account_number, check_digits, national_check_digits, id_nazione];
 
@@ -190,6 +191,16 @@ if (!empty($numero_documenti)) {
             dataType: "json",
             success: function (response) {
                 compilaCampi(response);
+
+                if (response.id_nazione.iso2 === "IT"){
+                    bic.setRequired(false);
+                    var label_text = $('label[for=bic] span .text-red').text();
+                    $('label[for=bic] span .text-red').text(label_text.replace('*', ' '));
+                } else {
+                    bic.setRequired(true);
+                    var label_text = $('label[for=bic] span .text-red').text();
+                    $('label[for=bic] span .text-red').text(label_text.replace(' ', '*')); 
+                }
             },
             error: function() {
                 toastr["error"]("<?php echo tr('Formato IBAN non valido'); ?>");

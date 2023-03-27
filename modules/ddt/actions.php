@@ -55,8 +55,8 @@ switch (filter('op')) {
         $ddt->save();
 
         flash()->info(tr('Aggiunto ddt in _TYPE_ numero _NUM_!', [
-            '_TYPE_' => $dir,
-            '_NUM_' => $ddt->numero,
+            '_TYPE_' => ($dir == 'entrata' ? 'uscita' : 'entrata'),
+            '_NUM_' => ($dir == 'entrata' ? $ddt->numero_esterno : $ddt->numero),
         ]));
 
         break;
@@ -581,7 +581,7 @@ switch (filter('op')) {
         $barcode = post('barcode');
 
         if (!empty($barcode)) {
-            $id_articolo = $dbo->selectOne('mg_articoli', 'id',  ['deleted_at' => null, 'barcode' => $barcode])['id'];
+            $id_articolo = $dbo->selectOne('mg_articoli', 'id',  ['deleted_at' => null, 'attivo' => 1, 'barcode' => $barcode])['id'];
         }
 
         if (!empty($id_articolo)) {

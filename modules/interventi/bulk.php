@@ -271,7 +271,26 @@ switch (post('op')) {
             foreach ($id_records as $id) {
                 $intervento = Intervento::find($id);
                 try {
-                    $intervento->delete();
+                    // Eliminazione associazioni tra interventi e contratti
+                $dbo->query('UPDATE co_promemoria SET idintervento = NULL WHERE idintervento='.prepare($id_record));
+
+                $intervento->delete();
+
+                // Elimino il collegamento al componente
+                $dbo->query('DELETE FROM my_componenti WHERE id_intervento='.prepare($id_record));
+
+                // Eliminazione associazione tecnici collegati all'intervento
+                $dbo->query('DELETE FROM in_interventi_tecnici WHERE idintervento='.prepare($id_record));
+
+                // Eliminazione associazione interventi e my_impianti
+                $dbo->query('DELETE FROM my_impianti_interventi WHERE idintervento='.prepare($id_record));
+
+                // Elimino anche eventuali file caricati
+                Uploads::deleteLinked([
+                    'id_module' => $id_module,
+                    'id_record' => $id_record,
+                ]);
+
                 } catch (InvalidArgumentException $e) {
                 }
             }
@@ -280,6 +299,7 @@ switch (post('op')) {
 
             break;
 
+            
         case 'stampa-riepilogo':
             $_SESSION['superselect']['interventi'] = $id_records;
             $id_print = Prints::getPrints()['Riepilogo interventi'];

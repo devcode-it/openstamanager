@@ -102,6 +102,7 @@ switch (filter('op')) {
         echo json_encode([
             'id_nazione' => [
                 'id' => $nazione->id,
+                'iso2' => $nazione->iso2,
                 'text' => $nazione->nome,
             ],
             'bank_code' => $iban->getBankCode(),

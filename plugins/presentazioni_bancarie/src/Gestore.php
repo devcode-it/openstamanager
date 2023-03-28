@@ -238,7 +238,7 @@ class Gestore
         $replaces = [
             '&#039;' => "'",
             '&quot;' => "'",
-            '&amp;' => '&',
+            '&amp;' => '',
         ];
         $ragione_sociale = str_replace(array_keys($replaces), array_values($replaces), $ragione_sociale);
 

@@ -1119,12 +1119,6 @@ div.tip {
     opacity: 0.5;
 }
 
-/* Stile Fullcalendar per weekend */
-.fc-day-sat,
-.fc-day-sun {
-    background-color: rgba(255,49,21,.3) !important;
-}
-
 .login-box .img-responsive {
     padding: 18px 0px 4px;
 }
@@ -1223,3 +1217,12 @@ input[type="radio"] {
     -webkit-box-shadow: -10px 0px 13px -7px #000000, 10px 0px 13px -7px #000000, 5px 5px 15px 5px rgba(0, 0, 0, 0);
     box-shadow: -10px 0px 13px -7px #000000, 10px 0px 13px -7px #000000, 5px 5px 15px 5px rgba(0, 0, 0, 0);
 }
+
+/*
+* Colore eventi fullcalendar
+*/
+.fc .fc-bg-event {
+    background: rgba(255, 49, 21, .5) !important;
+}
+
+

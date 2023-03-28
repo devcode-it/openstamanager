@@ -524,8 +524,8 @@ globals.dashboard = {
         var clickCnt = 0;
 
         var calendar = new FullCalendar.Calendar(calendarElement, {
-            //plugins: [adaptivePlugin, momentPlugin, dayGridPlugin, timeGridPlugin],
             /* locales: allLocales, */
+            timeZone: "Europe/Rome",
             locale: globals.locale,
             slotEventOverlap: false,
             weekNumbers: true,
@@ -742,7 +742,7 @@ echo '
                 }
             },
 
-            eventSources: [ 
+            eventSources: [
                 {
                     url: globals.dashboard.load_url,
                     type: "POST",
@@ -755,7 +755,6 @@ echo '
                     }
                 },
                 {
-
                     url: globals.dashboard.load_url,
                     method: "POST",
                     extraParams: {
@@ -765,10 +764,9 @@ echo '
                     failure: function () {
                         swal(globals.dashboard.genericError, globals.dashboard.error, "error");
                     }
-                            
-
                 }
-              ]
+                
+            ]
         });
 
         calendar.addEvent({

@@ -484,12 +484,7 @@ switch (filter('op')) {
                 'id' => $evento['id'],
                 'title' => $evento['nome'],
                 'start' => $evento['data'],
-                'end' => date('Y-m-d', strtotime($evento['data']. '+1 day')),
-
-                //'initialDate' => $evento['data'],
-                //'startRecur' => (($evento['is_recurring']) ? $evento['data'] : ''),
-                //'endRecur' => (($evento['is_recurring']) ? date('Y-m-d', strtotime($evento['data']. '+1 day')) : ''),
-                
+                //'end' => date('Y-m-d', strtotime($evento['data']. '+1 day')),
                 'display' => "background",
                 'allDay' => true,
                 'overlap' => true,
@@ -498,8 +493,5 @@ switch (filter('op')) {
 
             echo json_encode($results);
 
-
         break;
-
-
 }

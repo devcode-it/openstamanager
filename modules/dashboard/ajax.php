@@ -474,7 +474,15 @@ switch (filter('op')) {
             $start = filter('start');
             $end = filter('end');
 
-            $query = 'SELECT * FROM `zz_events` WHERE `zz_events`.`is_bank_holiday` = 1 AND `zz_events`.`data` >= '.prepare($start).' AND  `zz_events`.`data` <= '.prepare($end);
+            //TODO: Problema con anni bisestili Es. 2024-02-29 e 2023-03-01 sono entrambi il 60 esimo giorno dell'anno.
+            $query = 'SELECT * FROM `zz_events` 
+            WHERE `zz_events`.`is_bank_holiday` = 1 
+            AND 
+            (`zz_events`.`is_recurring` = 1 
+            AND  DAYOFYEAR(`zz_events`.`data`) BETWEEN
+            LEAST(DAYOFYEAR('.prepare($start).'), DAYOFYEAR('.prepare($end).')) AND GREATEST(DAYOFYEAR('.prepare($start).'), DAYOFYEAR('.prepare($end).')) )
+            OR 
+            (`zz_events`.`is_recurring` = 0 AND `zz_events`.`data` >= '.prepare($start).' AND  `zz_events`.`data` <= '.prepare($end).')';
 
             $eventi = $dbo->fetchArray($query);
 
@@ -483,7 +491,7 @@ switch (filter('op')) {
                 $results[] = [
                 'id' => $evento['id'],
                 'title' => $evento['nome'],
-                'start' => $evento['data'],
+                'start' => ($evento['is_recurring'] ? date('Y-', strtotime($start)).date('m-d', strtotime($evento['data'])): $evento['data']),
                 //'end' => date('Y-m-d', strtotime($evento['data']. '+1 day')),
                 'display' => "background",
                 'allDay' => true,

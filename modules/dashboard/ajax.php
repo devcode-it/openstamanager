@@ -475,17 +475,16 @@ switch (filter('op')) {
             $end = filter('end');
 
             //TODO: Problema con anni bisestili Es. 2024-02-29 e 2023-03-01 sono entrambi il 60 esimo giorno dell'anno.
-            $query = 'SELECT * FROM `zz_events` 
+            $query = 'SELECT *, DAYOFYEAR(`zz_events`.`data`) AS d, DAYOFYEAR('.prepare($start).') AS st, DAYOFYEAR('.prepare($end).') AS fi FROM `zz_events` 
             WHERE `zz_events`.`is_bank_holiday` = 1 
             AND 
             (`zz_events`.`is_recurring` = 1 
-            AND  DAYOFYEAR(`zz_events`.`data`) BETWEEN
-            LEAST(DAYOFYEAR('.prepare($start).'), DAYOFYEAR('.prepare($end).')) AND GREATEST(DAYOFYEAR('.prepare($start).'), DAYOFYEAR('.prepare($end).')) )
+            AND DAYOFYEAR(`zz_events`.`data`) BETWEEN DAYOFYEAR('.prepare($start).') AND IF(YEAR('.prepare($start).') = YEAR('.prepare($end).'), DAYOFYEAR('.prepare($end).'), DAYOFYEAR('.prepare(date('Y-m-d', strtotime($end. '-1 day'))).')) )
             OR 
             (`zz_events`.`is_recurring` = 0 AND `zz_events`.`data` >= '.prepare($start).' AND  `zz_events`.`data` <= '.prepare($end).')';
 
             $eventi = $dbo->fetchArray($query);
-
+           
             $results = [];
             foreach ($eventi as $evento) {
                 $results[] = [

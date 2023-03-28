@@ -38,6 +38,7 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')){
     SELECT
         data_registrazione,
         numero_esterno,
+        data,
         codice_tipo_documento_fe,
         percentuale,
         descrizione,
@@ -53,14 +54,15 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')){
         SELECT 
         co_documenti.data_registrazione, 
         co_documenti.numero_esterno,
+        co_documenti.data,
         co_tipidocumento.codice_tipo_documento_fe,
         co_iva.percentuale,
         co_iva.descrizione,
         co_documenti.id AS id,
         IF(numero = "", numero_esterno, numero) AS numero,
-        SUM((subtotale-sconto)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS subtotale,
-        SUM((subtotale-sconto+iva+co_righe_documenti.rivalsainps-co_righe_documenti.ritenutaacconto)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS totale,
-        SUM((iva+iva_rivalsainps)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS iva,
+        SUM((subtotale-sconto+co_righe_documenti.rivalsainps)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS subtotale,
+        SUM((subtotale-sconto+co_righe_documenti.rivalsainps+iva+co_righe_documenti.rivalsainps * percentuale/100)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS totale,
+        SUM((iva + co_righe_documenti.rivalsainps * percentuale/100)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS iva,
         an_anagrafiche.ragione_sociale,
         an_anagrafiche.codice AS codice_anagrafica
     FROM
@@ -77,6 +79,7 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')){
     SELECT 
         vb_venditabanco.data as data_registrazione, 
         vb_venditabanco.numero as numero_esterno,
+        vb_venditabanco.data as data,
         "Vendita al banco" as codice_tipo_documento_fe,
         co_iva.percentuale,
         co_iva.descrizione,
@@ -99,7 +102,7 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')){
         co_iva.id, id, an_anagrafiche.idanagrafica
     ) AS tabella
     GROUP BY
-    iva, id, data_registrazione, numero_esterno, codice_tipo_documento_fe, percentuale, descrizione, numero, ragione_sociale, codice_anagrafica
+    iva, id, data_registrazione, data, numero_esterno, codice_tipo_documento_fe, percentuale, descrizione, numero, ragione_sociale, codice_anagrafica
     ORDER BY CAST(numero_esterno AS UNSIGNED)';
 } 
 
@@ -108,14 +111,15 @@ else {
 SELECT 
     co_documenti.data_registrazione, 
     co_documenti.numero_esterno,
+    co_documenti.data,
     co_tipidocumento.codice_tipo_documento_fe,
     co_iva.percentuale,
     co_iva.descrizione,
     co_documenti.id AS id,
     IF(numero = "", numero_esterno, numero) AS numero,
-    SUM((subtotale-sconto)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS subtotale,
-    SUM((subtotale-sconto+iva+co_righe_documenti.rivalsainps-co_righe_documenti.ritenutaacconto)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS totale,
-    SUM((iva+iva_rivalsainps)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS iva,
+    SUM((subtotale-sconto+co_righe_documenti.rivalsainps)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS subtotale,
+    SUM((subtotale-sconto+co_righe_documenti.rivalsainps+iva+(co_righe_documenti.rivalsainps * percentuale/100))*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS totale,
+    SUM((iva + co_righe_documenti.rivalsainps * percentuale/100)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS iva,
     an_anagrafiche.ragione_sociale,
     an_anagrafiche.codice AS codice_anagrafica
 FROM

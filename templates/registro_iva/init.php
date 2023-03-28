@@ -62,7 +62,7 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')){
         IF(numero = "", numero_esterno, numero) AS numero,
         SUM((subtotale-sconto+co_righe_documenti.rivalsainps)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS subtotale,
         SUM((subtotale-sconto+co_righe_documenti.rivalsainps+iva+co_righe_documenti.rivalsainps * percentuale/100)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS totale,
-        SUM((iva + co_righe_documenti.rivalsainps * percentuale/100)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS iva,
+        SUM((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *(100-indetraibile)/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS iva,
         an_anagrafiche.ragione_sociale,
         an_anagrafiche.codice AS codice_anagrafica
     FROM
@@ -118,8 +118,8 @@ SELECT
     co_documenti.id AS id,
     IF(numero = "", numero_esterno, numero) AS numero,
     SUM((subtotale-sconto+co_righe_documenti.rivalsainps)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS subtotale,
-    SUM((subtotale-sconto+co_righe_documenti.rivalsainps+iva+(co_righe_documenti.rivalsainps * percentuale/100))*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS totale,
-    SUM((iva + co_righe_documenti.rivalsainps * percentuale/100)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS iva,
+    SUM((subtotale-sconto+co_righe_documenti.rivalsainps+iva+co_righe_documenti.rivalsainps * percentuale/100)*(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS totale,
+    SUM((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *(100-indetraibile)/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS iva,
     an_anagrafiche.ragione_sociale,
     an_anagrafiche.codice AS codice_anagrafica
 FROM

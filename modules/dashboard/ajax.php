@@ -468,4 +468,38 @@ switch (filter('op')) {
         }
 
         break;
+
+        case 'calendario_eventi':
+            
+            $start = filter('start');
+            $end = filter('end');
+
+            $query = 'SELECT * FROM `zz_events` WHERE `zz_events`.`is_bank_holiday` = 1 AND `zz_events`.`data` >= '.prepare($start).' AND  `zz_events`.`data` <= '.prepare($end);
+
+            $eventi = $dbo->fetchArray($query);
+
+            $results = [];
+            foreach ($eventi as $evento) {
+                $results[] = [
+                'id' => $evento['id'],
+                'title' => $evento['nome'],
+                'start' => $evento['data'],
+                'end' => date('Y-m-d', strtotime($evento['data']. '+1 day')),
+
+                //'initialDate' => $evento['data'],
+                //'startRecur' => (($evento['is_recurring']) ? $evento['data'] : ''),
+                //'endRecur' => (($evento['is_recurring']) ? date('Y-m-d', strtotime($evento['data']. '+1 day')) : ''),
+                
+                'display' => "background",
+                'allDay' => true,
+                'overlap' => true,
+                ];
+            }
+
+            echo json_encode($results);
+
+
+        break;
+
+
 }

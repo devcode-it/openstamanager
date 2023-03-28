@@ -363,7 +363,7 @@ echo '
 <script type="text/javascript">    
 var Draggable = FullCalendar.Draggable;
 globals.dashboard = {
-        load_url: "'.$structure->fileurl('ajax.php').'?id_module='.$id_module.'",
+        load_url: "'.$structure->fileurl('ajax.php').'",
         style: "'.$def.'",
         show_sunday: '.intval(setting('Visualizzare la domenica sul calendario')).',
         start_time: "'.setting('Ora inizio sul calendario').'",
@@ -742,13 +742,33 @@ echo '
                 }
             },
 
-            events: {
-                url: globals.dashboard.load_url + "&op=interventi_periodo",
-                type: "GET",
-                error: function () {
-                    swal(globals.dashboard.genericError, globals.dashboard.error, "error");
+            eventSources: [ 
+                {
+                    url: globals.dashboard.load_url,
+                    type: "POST",
+                    extraParams: {
+                        op: "interventi_periodo",
+                        id_module: "'.$id_module.'"
+                    },
+                    failure: function () {
+                        swal(globals.dashboard.genericError, globals.dashboard.error, "error");
+                    }
+                },
+                {
+
+                    url: globals.dashboard.load_url,
+                    method: "POST",
+                    extraParams: {
+                        op: "calendario_eventi",
+                        id_module: "'.$id_module.'"
+                    },
+                    failure: function () {
+                        swal(globals.dashboard.genericError, globals.dashboard.error, "error");
+                    }
+                            
+
                 }
-            }
+              ]
         });
 
         calendar.addEvent({

@@ -15,10 +15,10 @@ ORDER BY
 
 -- Aggiunta campo Pagamento predefinito in vista Anagrafiche
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
-('2', 'Pagamento cliente', '`pagvendita`.`nome`', '15', '1', '0', '0', '0', NULL, NULL, '0', '0', '0');
+((SELECT `id` FROM `zz_modules` WHERE name='Anagrafiche'), 'Pagamento cliente', '`pagvendita`.`nome`', '15', '1', '0', '0', '0', NULL, NULL, '0', '0', '0');
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
-('2', 'Pagamento fornitore', '`pagacquisto`.`nome`', '16', '1', '0', '0', '0', NULL, NULL, '0', '0', '0');
+((SELECT `id` FROM `zz_modules` WHERE name='Anagrafiche'), 'Pagamento fornitore', '`pagacquisto`.`nome`', '16', '1', '0', '0', '0', NULL, NULL, '0', '0', '0');
 
 UPDATE `zz_modules` SET `options` = "SELECT 
 |select|
@@ -46,7 +46,7 @@ INSERT INTO `co_iva` (`id`, `descrizione`, `percentuale`, `indetraibile`, `esent
 
 -- Aggiunta campo agente in Preventivi
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
-('13', 'Agente', '`agente`.`nome`', '11', '1', '0', '0', '0', NULL, NULL, '0', '0', '0');
+((SELECT `id` FROM `zz_modules` WHERE name='Preventivi'), 'Agente', '`agente`.`nome`', '11', '1', '0', '0', '0', NULL, NULL, '0', '0', '0');
 
 UPDATE `zz_modules` SET `options` = "SELECT 
 |select|
@@ -74,7 +74,7 @@ ORDER BY
 
 -- Aggiunta colonna Inviato in DDT in uscita
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
-('26', 'icon_Inviato', "IF(`email`.`id_email` IS NOT NULL, 'fa fa-envelope text-success', '')", '13', '1', '0', '0', '0', NULL, NULL, '0', '0', '0');
+((SELECT `id` FROM `zz_modules` WHERE name='Ddt di vendita'), 'icon_Inviato', "IF(`email`.`id_email` IS NOT NULL, 'fa fa-envelope text-success', '')", '13', '1', '0', '0', '0', NULL, NULL, '0', '0', '0');
 
 UPDATE `zz_modules` SET `options` = "SELECT
     |select|
@@ -176,7 +176,7 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, "Stato predefinito dell\'attività", IFNULL((SELECT idstatointervento FROM in_statiintervento WHERE codice = "TODO"), 0), 'query=SELECT idstatointervento AS id, descrizione AS text FROM in_statiintervento', '1', 'Attività', NULL, NULL);
 
 -- Aggiunta colonna KM in vista Attività
-INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES ((SELECT id from zz_modules WHERE title = "Attività"), 'KM', 'sum(in_interventi_tecnici.km)', '29', '1', '0', '1', '0', NULL, NULL, '0', '1', '0'); 
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'KM', 'sum(in_interventi_tecnici.km)', '29', '1', '0', '1', '0', NULL, NULL, '0', '1', '0'); 
 
 -- Aggiunta impostazione data emissione automatica
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, "Data emissione fattura automatica", '0', 'boolean', '1', 'Fatturazione', NULL, "Impedisce l'emissione di fatture di vendita con data precedente alla data dell'ultima fattura emessa");

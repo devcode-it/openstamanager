@@ -339,13 +339,31 @@ if ($vista == 'mese') {
     $def = 'listWeek';
 }
 
+$days = [
+  1 => 'Lunedì',
+  2 => 'Martedì',
+  3 => 'Mercoledì',
+  4 => 'Giovedì',
+  5 => 'Venerdì',
+  6 => 'Sabato',
+  0 => 'Domenica'
+];
+$working_days = explode(",",setting('Giorni lavorativi'));
+$non_working_days = [];
+
+foreach ($days as $key => $day) {
+    if (!in_array($day, $working_days)) {
+        array_push($non_working_days, $key);
+    }    
+}
+
 $modulo_interventi = Modules::get('Interventi');
 
 echo '
 <script type="text/javascript">    
 var Draggable = FullCalendar.Draggable;
 globals.dashboard = {
-        load_url: "'.$structure->fileurl('ajax.php').'?id_module='.$id_module.'",
+        load_url: "'.$structure->fileurl('ajax.php').'",
         style: "'.$def.'",
         show_sunday: '.intval(setting('Visualizzare la domenica sul calendario')).',
         start_time: "'.setting('Ora inizio sul calendario').'",
@@ -687,10 +705,10 @@ echo '
 
             eventDidMount: function(info){
                 let element = $(info.el);
-
+                
                 let id_record = info.event.extendedProps.idintervento;
                 
-                if (globals.dashboard.tooltip == 1) {
+                if (globals.dashboard.tooltip == 1 && element[0].childElementCount > 0 ) {
                     element.tooltipster({
                         content: globals.translations.loading + "...",
                         animation: "grow",
@@ -713,9 +731,10 @@ echo '
                                     id_record: id_record,
                                     allDay: info.event.allDay,
                                 }, function (data, response) {
-                                    instance.content(data);
-
-                                    $origin.data("loaded", true);
+                                    if (data !== "") {
+                                        instance.content(data);
+                                        $origin.data("loaded", true);
+                                     }
                                 });
                             }
                         }
@@ -723,13 +742,40 @@ echo '
                 }
             },
 
-            events: {
-                url: globals.dashboard.load_url + "&op=interventi_periodo",
-                type: "GET",
-                error: function () {
-                    swal(globals.dashboard.genericError, globals.dashboard.error, "error");
+            eventSources: [ 
+                {
+                    url: globals.dashboard.load_url,
+                    type: "POST",
+                    extraParams: {
+                        op: "interventi_periodo",
+                        id_module: "'.$id_module.'"
+                    },
+                    failure: function () {
+                        swal(globals.dashboard.genericError, globals.dashboard.error, "error");
+                    }
+                },
+                {
+
+                    url: globals.dashboard.load_url,
+                    method: "POST",
+                    extraParams: {
+                        op: "calendario_eventi",
+                        id_module: "'.$id_module.'"
+                    },
+                    failure: function () {
+                        swal(globals.dashboard.genericError, globals.dashboard.error, "error");
+                    }
+                            
+
                 }
-            }
+              ]
+        });
+
+        calendar.addEvent({
+            daysOfWeek: "'.implode(',', $non_working_days).'",
+            display: "background",
+            overlap: true,
+            allDay: true
         });
 
         calendar.render();

@@ -207,7 +207,7 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
      */
     public function getTotaleAttribute()
     {
-        return $this->calcola('totale_imponibile') + $this->calcola('iva') + $this->rivalsa_inps + $this->iva_rivalsa_inps;
+        return $this->calcola('totale_imponibile') + $this->iva + $this->calcola('rivalsa_inps');
     }
 
     /**

@@ -7,3 +7,25 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Template email invio sollecito', (SELECT `id` FROM `em_templates` WHERE `name`="Sollecito di pagamento"), 'query=SELECT id, name AS descrizione FROM em_templates WHERE deleted_at IS NULL ORDER BY descrizione', '1', 'Scadenzario', '2', NULL);
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, "Ritardo in giorni della scadenza della fattura per invio sollecito pagamento", '10', 'integer', '1', 'Scadenzario', '3', '');
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, "Ritardo in giorni dall'ultima email per invio sollecito pagamento", '10', 'integer', '1', 'Scadenzario', '4', '');
+
+
+-- Aggiunta colonna "Gruppi con accesso" in vista "Segmenti"
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select|
+FROM
+    `zz_segments`
+    LEFT JOIN `zz_modules` ON `zz_modules`.`id` = `zz_segments`.`id_module`
+    INNER JOIN (SELECT GROUP_CONCAT(`zz_groups`.`nome` ORDER BY `zz_groups`.`nome`  SEPARATOR ', ') AS `gruppi`, `zz_group_segment`.`id_segment` FROM `zz_group_segment` INNER JOIN `zz_groups` ON `zz_groups`.`id` = `zz_group_segment`.`id_gruppo` GROUP BY  `zz_group_segment`.`id_segment`) AS `t` ON `t`.`id_segment` = `zz_segments`.`id`
+WHERE
+    1=1
+HAVING
+    2=2
+ORDER BY `zz_segments`.`name`,
+    `zz_segments`.`id_module`" WHERE `name` = 'Segmenti';
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE name='Segmenti'), 'Gruppi con accesso', '`t`.`gruppi`', '6', '1', '0', '0', '0', NULL, NULL, '1', '0', '1');
+
+-- Set NULL campi vuoti search_inside e order_by
+UPDATE `zz_views` SET `search_inside` = NULL WHERE `search_inside` = '';
+UPDATE `zz_views` SET `order_by` = NULL WHERE `order_by` = '';

@@ -141,7 +141,7 @@ foreach ($raggruppamento as $id_anagrafica => $scadenze_anagrafica) {
                 echo '
                 <span class="label label-danger">'.tr('Id creditore mancante').'</span>';
             }
-        } else if($is_riba && empty($banca_azienda->codice_sia) || $is_bonifico && empty($banca_azienda->codice_sia)){
+        } else if(($is_riba && empty($banca_azienda->codice_sia)) || ($is_bonifico && empty($banca_azienda->codice_sia))){
             echo '
                 <span class="label label-danger">'.tr('Codice SIA banca emittente mancante').'</span>';
         } 

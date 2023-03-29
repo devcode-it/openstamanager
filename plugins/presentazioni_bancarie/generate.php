@@ -125,7 +125,8 @@ foreach ($raggruppamento as $id_anagrafica => $scadenze_anagrafica) {
         
         $is_rid = in_array($scadenza->documento->pagamento['codice_modalita_pagamento_fe'],["MP09", "MP10", "MP11"]);
         $is_riba = in_array($scadenza->documento->pagamento['codice_modalita_pagamento_fe'],["MP12"]);
-	$is_sepa = in_array($scadenza->documento->pagamento['codice_modalita_pagamento_fe'],["MP19", "MP20", "MP21"]);
+	    $is_sepa = in_array($scadenza->documento->pagamento['codice_modalita_pagamento_fe'],["MP19", "MP20", "MP21"]);
+        $is_bonifico = in_array($scadenza->documento->pagamento['codice_modalita_pagamento_fe'],["MP05"]);
 
         $documento = $scadenza->documento;
         $pagamento = $documento->pagamento;
@@ -140,12 +141,12 @@ foreach ($raggruppamento as $id_anagrafica => $scadenze_anagrafica) {
                 echo '
                 <span class="label label-danger">'.tr('Id creditore mancante').'</span>';
             }
-        } else if($is_riba && empty($banca_azienda->codice_sia)){
+        } else if($is_riba && empty($banca_azienda->codice_sia) || $is_bonifico && empty($banca_azienda->codice_sia)){
             echo '
                 <span class="label label-danger">'.tr('Codice SIA banca emittente mancante').'</span>';
-        }
+        } 
         
-	if ($is_sepa) {
+	    if ($is_sepa) {
 
             //Prima, successiva, singola
 

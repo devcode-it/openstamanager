@@ -141,23 +141,24 @@ switch (filter('op')) {
             AND
                 co_statipreventivi.is_pianificabile=1';
 
-            $alldays = $dbo->fetchArray($query);
+            $preventivi = $dbo->fetchArray($query);
 
-            foreach ($alldays as $preventivo) {
+            foreach ($preventivi as $preventivo) {
                 if (!empty($preventivo['data_accettazione']) && $preventivo['data_accettazione'] != '0000-00-00') {
                     $results[] = [
                         'id' => 'A_'.$modulo_preventivi->id.'_'.$preventivo['id'],
                         'idintervento' => $preventivo['id'],
                         'idtecnico' => '',
-                        'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div>'.'<b>Accettazione prev. '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
+                        'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div>'.'<b>'.tr('Accettazione prev.').' '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
                         'start' => $preventivo['data_accettazione'],
-                        'end' => $preventivo['data_accettazione'],
+                        //'end' => $preventivo['data_accettazione'],
                         'url' => base_path().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$preventivo['id'],
                         'backgroundColor' => '#ff7f50',
                         'textColor' => color_inverse('#ff7f50'),
                         'borderColor' => '#ff7f50',
                         'allDay' => true,
                         'eventStartEditable' => false,
+                        'editable' => false,
                     ];
                 }
 
@@ -166,36 +167,43 @@ switch (filter('op')) {
                         'id' => 'B_'.$modulo_preventivi->id.'_'.$preventivo['id'],
                         'idintervento' => $preventivo['id'],
                         'idtecnico' => '',
-                        'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div>'.'<b>Conclusione prev. '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
+                        'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div>'.'<b>'.tr('Conclusione prev.').' '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
                         'start' => $preventivo['data_conclusione'],
-                        'end' => $preventivo['data_conclusione'],
+                        //'end' => $preventivo['data_conclusione'],
                         'url' => base_path().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$preventivo['id'],
                         'backgroundColor' => '#ff7f50',
                         'textColor' => color_inverse('#ff7f50'),
                         'borderColor' => '#ff7f50',
                         'allDay' => true,
                         'eventStartEditable' => false,
+                        'editable' => false,
                     ];
                 }
             }
 
-            //# Box allDay eventi
+            //# Box allDay eventi (escluse festività)
             $query = 'SELECT
                 *
             FROM 
-                zz_events
+                `zz_events`
             WHERE
-                data >= '.prepare($start).' AND data <= '.prepare($end);
+                `zz_events`.`is_bank_holiday` = 0
+            AND (`zz_events`.`is_recurring` = 1 AND
+                DAYOFYEAR(`zz_events`.`data`) BETWEEN DAYOFYEAR('.prepare($start).') AND IF(YEAR('.prepare($start).') = YEAR('.prepare($end).'), DAYOFYEAR('.prepare($end).'), DAYOFYEAR('.prepare(date('Y-m-d', strtotime($end. '-1 day'))).')) 
+                )
+            OR 
+            (`zz_events`.`is_recurring` = 0 AND `zz_events`.`data` >= '.prepare($start).' AND  `zz_events`.`data` <= '.prepare($end).')';
+                
+            //echo $query;
 
-            $alldays = $dbo->fetchArray($query);
+            $eventi = $dbo->fetchArray($query);
 
-            foreach ($alldays as $evento) {
+            foreach ($eventi as $evento) {
                 $results[] = [
                     'id' => $modulo_eventi->id.'_'.$evento['id'],
-                    'title' => '<b>'.tr('Evento').':</b> '.$evento['nome'].'<br>
-                    <b>'.tr('Festività').':</b> '.($evento['is_bank_holiday'] ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i>'),
-                    'start' => $evento['data'],
-                    'end' => $evento['data'],
+                    'title' => '<b>'.tr('Evento').':</b> '.$evento['nome'].'</b>',
+                    'start' => ($evento['is_recurring'] ? date('Y-', strtotime($start)).date('m-d', strtotime($evento['data'])): $evento['data']),
+                    //'end' => $evento['data'],
                     'extendedProps' => [
                         'link' => base_path().'/editor.php?id_module='.$modulo_eventi->id.'&id_record='.$evento['id'],
                         'idintervento' => $evento['id'],
@@ -206,6 +214,7 @@ switch (filter('op')) {
                     'borderColor' => '#ffebcd',
                     'allDay' => true,
                     'eventStartEditable' => false,
+                    'editable' => false,
                 ];
             }
         }
@@ -417,9 +426,9 @@ switch (filter('op')) {
         INNER JOIN in_statiintervento ON in_interventi.idstatointervento = in_statiintervento.idstatointervento
         LEFT JOIN an_anagrafiche AS tecnico ON in_interventi_tecnici_assegnati.id_tecnico = tecnico.idanagrafica
         WHERE in_statiintervento.is_completato = 0
-    GROUP BY in_interventi.id, in_interventi_tecnici_assegnati.id_tecnico
-    HAVING COUNT(in_interventi_tecnici.id) = 0
-    ORDER BY data_richiesta ASC';
+        GROUP BY in_interventi.id, in_interventi_tecnici_assegnati.id_tecnico
+        HAVING COUNT(in_interventi_tecnici.id) = 0
+        ORDER BY data_richiesta ASC';
         $promemoria_interventi = $dbo->fetchArray($query_interventi);
 
         $promemoria = array_merge($promemoria_contratti, $promemoria_interventi);

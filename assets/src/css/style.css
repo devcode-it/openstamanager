@@ -1202,9 +1202,8 @@ table.dataTable>tbody>tr.selected>th.select-checkbox::after {
     margin-top: -25px;
 }
 
-
-.label > input[type="checkbox"]{
-    margin: 4px;
+.btn-group>.btn-xs>input[type="checkbox"], .label>input[type="checkbox"] {
+    margin: 2px 0px;
 }
 
 .widget-user .widget-user-image>img {

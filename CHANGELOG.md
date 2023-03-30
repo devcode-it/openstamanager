@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.43 (2023-03-31)](#2443-2023-03-31)
 - [2.4.42 (2023-03-10)](#2442-2023-03-10)
 - [2.4.41 (2023-02-27)](#2441-2023-02-27)
 - [2.4.40 (2023-02-17)](#2440-2023-02-17)
@@ -54,6 +55,42 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
 
+## 2.4.43 (2023-03-31)
+### Aggiunto (Added)
+- Aggiunto invio automatico di solleciti
+- Aggiunta selezione impianto prima del cliente in aggiunta intervento
+- Aggiunta l'esportazione dello scadenzario in XML
+- Aggiunta azione di gruppo per gestire accesso ai gruppi per i segmenti selezionati
+- Aggiunta colonna "Gruppi con accesso" in vista "Segmenti"
+- Aggiunto in Dashboard sfondo rosso per giorni non lavorativi
+- Aggiunti eventi in Dashboard
+
+### Modificato (Changed)
+- Miglioria logiche per stampe
+- Migliorati i riferimenti in importazione fatture elettroniche
+- Ottimizzati i controlli su importazione fatture elettroniche
+- Miglioria widget contratti in scadenza
+- Migliorato il calcolo dei costi intervento all'inserimento articolo
+- Rimossi i riferimenti a tabelle non presenti
+- Rimossa l'obbligatorietà del campo BIC in gestione banche
+- Modificato l'ordinamento dello scalare in piano dei conti
+
+### Fixed
+- Corretta la sede di partenza articoli in Attività
+- Corretta l'esportazione dello scadenzario Ri.Ba.
+- Corretto l'inserimento e modifica di nuove checklist
+- Corretto il campo richiesta in fase di aggiunta attività
+- Corretti gli arrotondamenti sulle stampe contabili
+- Corretto inserimento di articoli con quantità negativa in ordini e contratti
+- Corretto inserimento di articoli disattivati tramite barcode
+- Corretta eliminazione interventi da azioni di gruppo
+- Corretta schermata di inserimento fatture di acquisto
+- Corretta la stampa bilancio, liquidazione IVA e registro IVA
+- Corretta la prima pagina per gruppo
+- Corretto il salvataggio delle scadenze
+- Corretto il calcolo dell'IVA su rivalsa INPS
+- Corretta la gestione degli eventi ricorrenti su Dashboard
+- Correzione per inserimento sottocategorie con lo stesso nome delle categorie
 ## 2.4.42 (2023-03-10)
 ### Aggiunto (Added)
 - Aggiunta la gestione della provvigione in fase di aggiunta riga

@@ -191,17 +191,19 @@ function ricaricaAllegati(gestione) {
 /**
  * Funzione per l'apertura della pagina di gestione dei dati dell'allegato.
  * @param button
+ * @param id
+ * @param ids
  */
-function modificaAllegato(button) {
+function modificaAllegato(button, id, ids) {
     const gestione = $(button).closest(".gestione-allegati");
-    const allegato = $(button).closest("tr").data();
 
     let params = new URLSearchParams({
         op: "visualizza-modifica-allegato",
         id_module: gestione.data('id_module'),
         id_plugin: gestione.data('id_plugin'),
         id_record: gestione.data('id_record'),
-        id_allegato: allegato.id,
+        id_allegati: ids,
+        id_allegato: id,
     }).toString();
 
     openModal(globals.translations.allegati.modifica, globals.rootdir + "/actions.php?" + params);
@@ -222,6 +224,25 @@ function scaricaAllegato(button) {
         id_record: gestione.data('id_record'),
         id: allegato.id,
         filename: allegato.filename,
+    }).toString();
+
+    window.open(globals.rootdir + "/actions.php?" + params, "_blank")
+}
+
+/**
+ * Funzione per gestire il download zip di allegati.
+ * @param button
+ * @param ids
+ */
+function scaricaZipAllegati(button, ids) {
+    const gestione = $(button).closest(".gestione-allegati");
+
+    let params = new URLSearchParams({
+        op: "download-zip-allegati",
+        id_module: gestione.data('id_module'),
+        id_plugin: gestione.data('id_plugin'),
+        id_record: gestione.data('id_record'),
+        id: ids,
     }).toString();
 
     window.open(globals.rootdir + "/actions.php?" + params, "_blank")

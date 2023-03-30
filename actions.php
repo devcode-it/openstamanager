@@ -26,6 +26,7 @@ use Modules\Checklists\Check;
 use Modules\Checklists\Checklist;
 use Modules\Emails\Template;
 use Notifications\EmailNotification;
+use Util\Zip;
 
 if (empty($structure) || empty($structure['enabled'])) {
     exit(tr('Accesso negato'));
@@ -181,15 +182,62 @@ elseif (filter('op') == 'download-allegato') {
     include_once base_dir().'/include/modifica_allegato.php';
 }
 
+// Zip allegati
+elseif (filter('op') == 'download-zip-allegati') {
+    $rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($id_module).' AND id IN('.implode(',',json_decode(filter('id'))).')');
+
+    $dir = base_dir().'/'.$module->upload_directory;
+    directory($dir.'tmp/');
+
+    $dir = slashes($dir);
+    $zip = slashes($dir.'_'.time().'.zip');
+
+    // Rimozione dei contenuti precedenti
+    $files = glob($dir.'/*.zip');
+    foreach ($files as $file) {
+        delete($file);
+    }
+
+    foreach ($rs as $r) {
+        $allegato = Upload::find($r['id']);
+        $src = basename($allegato->filepath);
+        $dst = basename($allegato->original_name);
+
+        $file = slashes($module->upload_directory.'/'.$src);
+        $dest = slashes($dir.'tmp/'.$dst);
+
+        $result = copy($file, $dest);
+    }
+
+    // Creazione zip
+    if (extension_loaded('zip')) {
+        Zip::create($dir.'tmp/', $zip);
+
+        // Invio al browser il file zip
+        download($zip);
+
+        // Rimozione dei contenuti
+        delete($dir.'tmp/');
+    }
+}
+
 // Modifica dati di un allegato
 elseif (filter('op') == 'modifica-allegato') {
     $id_allegato = filter('id_allegato');
-    $upload = Upload::find($id_allegato);
-
-    $upload->name = post('nome_allegato');
-    $upload->category = post('categoria_allegato');
-
-    $upload->save();
+    $id_allegati = explode(';',filter('id_allegati'));
+    
+    if ($id_allegato) {
+        $upload = Upload::find($id_allegato);
+        $upload->name = post('nome_allegato');
+        $upload->category = post('categoria_allegato');
+        $upload->save();
+    } else {
+        foreach ($id_allegati as $id_allegato) {
+            $upload = Upload::find($id_allegato);
+            $upload->category = post('categoria_allegato');
+            $upload->save();
+        }
+    }
 }
 
 // Modifica nome della categoria degli allegati
@@ -258,12 +306,12 @@ elseif (filter('op') == 'rimuovi-nota') {
 elseif (filter('op') == 'copia-checklist') {
     $content = post('content');
     $checklist_id = post('checklist');
-    
+
     $users = post('assigned_users');
     $users = array_clean($users);
-   
+
     $group_id = post('group_id');
-    
+
     $checklist = Checklist::find($checklist_id);
     $checklist->copia($user, $id_record, $users, $group_id);
 }
@@ -275,7 +323,7 @@ elseif (filter('op') == 'aggiungi-check') {
 
     $users = post('assigned_users');
     $users = array_clean($users);
-   
+
     $group_id = post('group_id');
 
     $check = Check::build($user, $structure, $id_record, $content, $parent_id);

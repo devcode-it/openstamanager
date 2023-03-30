@@ -119,18 +119,26 @@ class FileManager implements ManagerInterface
     <table class="table table-striped table-condensed ">
 	  <thead>
         <tr>
+            <th scope="col" width="5%" class="text-center"></th>
             <th scope="col" >'.tr('Nome').'</th>
             <th scope="col" width="15%" >'.tr('Data').'</th>
             <th scope="col" width="10%" class="text-center">#</th>
         </tr>
 	  </thead>
-	  <tbody>';
+	  <tbody class="files">';
 
                 foreach ($rs as $r) {
                     $file = Upload::find($r['id']);
 
                     $result .= '
         <tr id="row_'.$file->id.'" data-id="'.$file->id.'" data-filename="'.$file->filename.'" data-nome="'.$file->name.'">
+            <td class="text-center">';
+            if (!$options['readonly']) {
+                $result .= '
+                <input class="check_files" type="checkbox"/>';
+            }
+            $result .= '
+            </td>
             <td align="left">';
 
                     if ($file->user && $file->user->photo) {
@@ -173,7 +181,7 @@ class FileManager implements ManagerInterface
 
                     if (!$options['readonly']) {
                         $result .= '
-                <button type="button" class="btn btn-xs btn-warning" onclick="modificaAllegato(this)">
+                <button type="button" class="btn btn-xs btn-warning" onclick="modificaAllegato(this,$(this).closest(\'tr\').data(\'id\'))">
                     <i class="fa fa-edit"></i>
                 </button>';
                         if (!$file->isFatturaElettronica() || $options['abilita_genera']) {
@@ -198,8 +206,27 @@ class FileManager implements ManagerInterface
 </div>
 
         <div class="clearfix"></div>
-        <br>';
+        ';
             }
+        }
+
+        if (!$options['readonly']) {
+            $result .= '
+    <div class="btn-group">';
+    if (!$options['readonly']) {
+        $result .= '
+        <button type="button" class="btn btn-xs btn-default">
+            <input class="pull-left" id="check_all_files" type="checkbox"/>
+        </button>';
+    }
+    $result .= '
+        <button type="button" class="btn btn-xs btn-default disabled" id="modifica_files" onclick="modificaAllegato(this,0,JSON.stringify(getSelectData()));">
+            <i class="fa fa-edit"></i>
+        </button>
+        <button type="button" class="btn btn-xs btn-default disabled" id="zip_files" onclick="scaricaZipAllegati(this,JSON.stringify(getSelectData()));">
+            <i class="fa fa-file-archive-o"></i>
+        </button>
+    </div>';
         }
 
         // Form per l'upload di un nuovo file
@@ -266,6 +293,49 @@ $("#'.$attachment_id.' #upload").click(function(){
     const container = $(this).closest(".gestione-allegati");
 
     aggiungiAllegato(container);
+});
+
+// Estraggo le righe spuntate
+function getSelectData() {
+    let data=new Array();
+    $(\'.files\').find(\'.check_files:checked\').each(function (){ 
+        data.push($(this).closest(\'tr\').data(\'id\'));
+    });
+
+    return data;
+}
+
+$(".check_files").on("change", function() {
+    let checked = 0;
+    $(".check_files").each(function() {
+        if ($(this).is(":checked")) {
+            checked = 1;
+        }
+    });
+
+    if (checked) {
+        $("#zip_files").removeClass("disabled");
+        $("#modifica_files").removeClass("disabled");
+    } else {
+        $("#zip_files").addClass("disabled");
+        $("#modifica_files").addClass("disabled");
+    }
+});
+
+$("#check_all_files").click(function(){    
+    if( $(this).is(":checked") ){
+        $(".check_files").each(function(){
+            if( !$(this).is(":checked") ){
+                $(this).trigger("click");
+            }
+        });
+    }else{
+        $(".check_files").each(function(){
+            if( $(this).is(":checked") ){
+                $(this).trigger("click");
+            }
+        });
+    }
 });
 </script>';
 

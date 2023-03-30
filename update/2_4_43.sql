@@ -29,3 +29,6 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 -- Set NULL campi vuoti search_inside e order_by
 UPDATE `zz_views` SET `search_inside` = NULL WHERE `search_inside` = '';
 UPDATE `zz_views` SET `order_by` = NULL WHERE `order_by` = '';
+
+-- Fix per anagrafiche senza ragione sociale
+UPDATE `an_anagrafiche` SET `ragione_sociale` = CONCAT(cognome, " ", nome) WHERE `an_anagrafiche`.`ragione_sociale` = ""; 

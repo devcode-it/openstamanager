@@ -62,6 +62,8 @@ switch (filter('op')) {
             ->where('nome', '=', $nome);
         if (!empty($id_original)) {
             $corrispondenze = $corrispondenze->where('parent', '=', $id_original);
+        } else {
+            $corrispondenze = $corrispondenze->whereNull('parent');
         }
         $corrispondenze = $corrispondenze->get();
 

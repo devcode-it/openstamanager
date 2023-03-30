@@ -317,14 +317,6 @@ echo '
 {( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <script type="text/javascript">
-function gestioneArticolo(button) {
-    gestioneRiga(button, "is_articolo");
-}
-
-function gestioneBarcode(button) {
-    gestioneRiga(button, "is_barcode");
-}
-
 function gestioneSconto(button) {
     gestioneRiga(button, "is_sconto");
 }
@@ -431,7 +423,10 @@ $(document).ready(function() {
     $("#barcode").focus();
 });
 
-function salvaArticolo() {
+async function salvaArticolo() {
+    // Salvataggio via AJAX
+    await salvaForm("#edit-form");
+
     $("#link_form").ajaxSubmit({
         url: globals.rootdir + "/actions.php",
         data: {

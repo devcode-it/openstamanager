@@ -850,32 +850,32 @@ if (!$block_edit) {
                                 if ($dir == 'entrata') {
                                     echo '
                                     <li>
-                                        <a class="'.(!empty($interventi) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_intervento.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Attività').'">
+                                        <a class="'.(!empty($interventi) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_intervento.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Attività').'" onclick="saveForm()">
                                             <i class="fa fa-plus"></i> '.tr('Attività').'
                                         </a>
                                     </li>
 
                                     <li>
-                                        <a class="'.(!empty($preventivi) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_preventivo.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Preventivo').'">
+                                        <a class="'.(!empty($preventivi) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_preventivo.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Preventivo').'" onclick="saveForm()">
                                             <i class="fa fa-plus"></i> '.tr('Preventivo').'
                                         </a>
                                     </li>
 
                                     <li>
-                                        <a class="'.(!empty($contratti) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_contratto.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Contratto').'">
+                                        <a class="'.(!empty($contratti) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_contratto.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Contratto').'" onclick="saveForm()">
                                             <i class="fa fa-plus"></i> '.tr('Contratto').'
                                         </a>
                                     </li>';
                                 }
                                 echo '
                                     <li>
-                                        <a class="'.(!empty($ddt) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Ddt').'">
+                                        <a class="'.(!empty($ddt) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Ddt').'" onclick="saveForm()">
                                             <i class="fa fa-plus"></i> '.tr('Ddt').'
                                         </a>
                                     </li>
 
                                     <li>
-                                        <a class="'.(!empty($ordini) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ordine.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Ordine').'">
+                                        <a class="'.(!empty($ordini) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ordine.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Ordine').'" onclick="saveForm()">
                                             <i class="fa fa-plus"></i> '.tr('Ordine').'
                                         </a>
                                     </li>';
@@ -1014,12 +1014,9 @@ if (in_array($record[$field_name], $user->sedi)) {
 
 echo '
 <script>
-function gestioneArticolo(button) {
-    gestioneRiga(button, "is_articolo");
-}
-
-function gestioneBarcode(button) {
-    gestioneRiga(button, "is_barcode");
+async function saveForm() {
+    // Salvataggio via AJAX
+    await salvaForm("#edit-form");
 }
 
 function gestioneSconto(button) {
@@ -1158,7 +1155,10 @@ if ($dir == 'entrata') {
 }
 
 echo '
-function salvaArticolo() {
+async function salvaArticolo() {
+    // Salvataggio via AJAX
+    await salvaForm("#edit-form");
+
     $("#link_form").ajaxSubmit({
         url: globals.rootdir + "/actions.php",
         data: {

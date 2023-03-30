@@ -277,7 +277,7 @@ if (!$block_edit) {
                         if ($dir == 'entrata') {
                             echo '
                             <li>
-                                <a class="'.(!empty($preventivi) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_preventivo.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Preventivo').'">
+                                <a class="'.(!empty($preventivi) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_preventivo.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Preventivo').'" onclick="saveForm()">
                                     <i class="fa fa-plus"></i> '.tr('Preventivo').'
                                 </a>
                             </li>';
@@ -288,7 +288,7 @@ if (!$block_edit) {
                 if ($dir == 'entrata') {
                     echo '
                     <div class="pull-right">
-                        <a class="btn btn-sm btn-info" data-href="'.$structure->fileurl('quantita_impegnate.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="'.tr('Controllo sulle quantità impegnate').'">
+                        <a class="btn btn-sm btn-info" data-href="'.$structure->fileurl('quantita_impegnate.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="'.tr('Controllo sulle quantità impegnate').'" onclick="saveForm()">
                             <i class="fa fa-question-circle"></i> '.tr('Verifica disponibilità').'
                         </a>
                     </div>';
@@ -311,12 +311,9 @@ echo '
 {( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <script>
-function gestioneArticolo(button) {
-    gestioneRiga(button, "is_articolo");
-}
-
-function gestioneBarcode(button) {
-    gestioneRiga(button, "is_barcode");
+async function saveForm() {
+    // Salvataggio via AJAX
+    await salvaForm("#edit-form");
 }
 
 function gestioneSconto(button) {
@@ -409,7 +406,10 @@ $(document).ready(function() {
     $("#barcode").focus();
 });
 
-function salvaArticolo() {
+async function salvaArticolo() {
+    // Salvataggio via AJAX
+    await salvaForm("#edit-form");
+    
     $("#link_form").ajaxSubmit({
         url: globals.rootdir + "/actions.php",
         data: {

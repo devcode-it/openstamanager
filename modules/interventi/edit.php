@@ -515,19 +515,19 @@ if (!$block_edit) {
                                     </li>
 
                                     <li title="'.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'.">
-                                        <a class="'.(!empty($preventivi) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_preventivo.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Preventivo').'">
+                                        <a class="'.(!empty($preventivi) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_preventivo.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Preventivo').'" onclick="saveForm()">
                                             <i class="fa fa-plus"></i> '.tr('Preventivo').'
                                         </a>
                                     </li>
 
                                     <li title="'.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'.">
-                                        <a class="'.(!empty($contratti) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_contratto.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Contratto').'">
+                                        <a class="'.(!empty($contratti) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_contratto.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Contratto').'" onclick="saveForm()">
                                             <i class="fa fa-plus"></i> '.tr('Contratto').'
                                         </a>
                                     </li>
                                     
                                     <li title="'.tr('DDT in uscita per il Cliente che si trovano nello stato di Evaso o Parzialmente Evaso con una Causale importabile').'. '.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'.">
-                                        <a class="'.(!empty($ddt) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Ddt').'">
+                                        <a class="'.(!empty($ddt) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Ddt').'" onclick="saveForm()">
                                             <i class="fa fa-plus"></i> '.tr('Ddt').'
                                         </a>
                                     </li>
@@ -587,12 +587,9 @@ if (!$block_edit) {
 {( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <script>
-function gestioneArticolo(button) {
-    gestioneRiga(button, "is_articolo");
-}
-
-function gestioneBarcode(button) {
-    gestioneRiga(button, "is_barcode");
+async function saveForm() {
+    // Salvataggio via AJAX
+    await salvaForm("#edit-form");
 }
 
 function gestioneSconto(button) {
@@ -803,7 +800,10 @@ $(document).ready(function() {
         }
     });
 
-    function salvaArticolo() {
+    async function salvaArticolo() {
+        // Salvataggio via AJAX
+        await salvaForm("#edit-form");
+        
         $("#link_form").ajaxSubmit({
             url: globals.rootdir + "/actions.php",
             data: {

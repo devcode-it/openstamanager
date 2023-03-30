@@ -414,13 +414,13 @@ if (!$block_edit) {
                             </li>
 
                             <li>
-                                <a class="'.(!empty($tot_ddt) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Ddt').'">
+                                <a class="'.(!empty($tot_ddt) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Ddt').'" onclick="saveForm()">
                                     <i class="fa fa-plus"></i> '.tr('Ddt').'
                                 </a>
                             </li>
 
                             <li>
-                                <a class="'.(!empty($tot_ordini) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ordine.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Ordine').'">
+                                <a class="'.(!empty($tot_ordini) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ordine.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Ordine').'" onclick="saveForm()">
                                     <i class="fa fa-plus"></i> '.tr('Ordine').'
                                 </a>
                             </li>
@@ -446,12 +446,9 @@ echo '
 {( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <script>
-function gestioneArticolo(button) {
-    gestioneRiga(button, "is_articolo");
-}
-
-function gestioneBarcode(button) {
-    gestioneRiga(button, "is_barcode");
+async function saveForm() {
+    // Salvataggio via AJAX
+    await salvaForm("#edit-form");
 }
 
 function gestioneSconto(button) {
@@ -551,7 +548,10 @@ $("#idanagrafica").change(function() {
     }
 });
 
-function salvaArticolo() {
+async function salvaArticolo() {
+    // Salvataggio via AJAX
+    await salvaForm("#edit-form");
+
     $("#link_form").ajaxSubmit({
         url: globals.rootdir + "/actions.php",
         data: {

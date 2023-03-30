@@ -256,7 +256,7 @@ class Gestore
         return true;
     }
 
-    public function aggiungiBonifico(int $identifier, Anagrafica $controparte, Banca $banca_controparte, string $descrizione, int $totale, DateTime $data_prevista, $ctgypurp)
+    public function aggiungiBonifico(int $identifier, Anagrafica $controparte, Banca $banca_controparte, string $descrizione, float $totale, DateTime $data_prevista, $ctgypurp)
     {
         $data_scadenza = $data_prevista->format('dmy');
 

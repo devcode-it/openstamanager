@@ -138,7 +138,7 @@ class CbiSepa
                     $el1->appendChild($el2);
                 $el->appendChild($el1);
                 $el1 = $domDoc->createElement("Amt", "");
-                    $el2 = $domDoc->createElement("InstdAmt", number_format(round($ricevuta->importo,2),2,'.',''));
+                    $el2 = $domDoc->createElement("InstdAmt", number_format($ricevuta->importo,2,'.',''));
                     $newel2 = $el1->appendChild($el2);
                     $newel2->setAttribute("Ccy", "EUR");
                 $el->appendChild($el1);

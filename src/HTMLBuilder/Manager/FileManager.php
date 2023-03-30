@@ -216,7 +216,7 @@ class FileManager implements ManagerInterface
     if (!$options['readonly']) {
         $result .= '
         <button type="button" class="btn btn-xs btn-default">
-            <input class="pull-left" id="check_all_files" type="checkbox"/>
+            <input class="pull-left" style="margin:2px 0px;"id="check_all_files" type="checkbox"/>
         </button>';
     }
     $result .= '

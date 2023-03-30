@@ -1203,14 +1203,8 @@ table.dataTable>tbody>tr.selected>th.select-checkbox::after {
 }
 
 
-input[type="checkbox"],
-input[type="radio"] {
+.label > input[type="checkbox"]{
     margin: 4px;
-    line-height: normal;
-}
-
-.sidebar-menu>li {
-    padding: 1px;
 }
 
 .widget-user .widget-user-image>img {

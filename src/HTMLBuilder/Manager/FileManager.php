@@ -132,12 +132,8 @@ class FileManager implements ManagerInterface
 
                     $result .= '
         <tr id="row_'.$file->id.'" data-id="'.$file->id.'" data-filename="'.$file->filename.'" data-nome="'.$file->name.'">
-            <td class="text-center">';
-            if (!$options['readonly']) {
-                $result .= '
-                <input class="check_files" type="checkbox"/>';
-            }
-            $result .= '
+            <td class="text-center">
+                <input class="check_files unblockable" type="checkbox"/>
             </td>
             <td align="left">';
 
@@ -210,19 +206,19 @@ class FileManager implements ManagerInterface
             }
         }
 
-        if (!$options['readonly']) {
+        if (!empty($file)) {
             $result .= '
-    <div class="btn-group">';
-    if (!$options['readonly']) {
-        $result .= '
+    <div class="btn-group">
         <button type="button" class="btn btn-xs btn-default">
-            <input class="pull-left" id="check_all_files" type="checkbox"/>
+            <input class="pull-left unblockable" id="check_all_files" type="checkbox"/>
         </button>';
-    }
-    $result .= '
+        if (!$options['readonly']) {
+        $result .= '
         <button type="button" class="btn btn-xs btn-default disabled" id="modifica_files" onclick="modificaAllegato(this,0,JSON.stringify(getSelectData()));">
             <i class="fa fa-edit"></i>
-        </button>
+        </button>';
+        }
+        $result .= '
         <button type="button" class="btn btn-xs btn-default disabled" id="zip_files" onclick="scaricaZipAllegati(this,JSON.stringify(getSelectData()));">
             <i class="fa fa-file-archive-o"></i>
         </button>

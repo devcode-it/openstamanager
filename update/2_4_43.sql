@@ -5,9 +5,8 @@ INSERT INTO `zz_tasks` (`name`, `class`, `expression`) VALUES
 ('Solleciti scadenze', 'Modules\\Scadenzario\\SollecitoTask', '0 8 * * *');
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Invio solleciti in automatico', '0', 'boolean', '1', 'Scadenzario', '1', 'Invia automaticamente delle mail di sollecito secondo le tempistiche definite nelle impostazioni');
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Template email invio sollecito', (SELECT `id` FROM `em_templates` WHERE `name`="Sollecito di pagamento"), 'query=SELECT id, name AS descrizione FROM em_templates WHERE deleted_at IS NULL ORDER BY descrizione', '1', 'Scadenzario', '2', NULL);
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, "Ritardo in giorni della scadenza della fattura per invio sollecito pagamento", '10', 'integer', '1', 'Scadenzario', '3', '');
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, "Ritardo in giorni della scadenza della fattura per invio sollecito pagamento", '12', 'integer', '1', 'Scadenzario', '3', '');
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, "Ritardo in giorni dall'ultima email per invio sollecito pagamento", '10', 'integer', '1', 'Scadenzario', '4', '');
-
 
 -- Aggiunta colonna "Gruppi con accesso" in vista "Segmenti"
 UPDATE `zz_modules` SET `options` = "SELECT
@@ -31,4 +30,4 @@ UPDATE `zz_views` SET `search_inside` = NULL WHERE `search_inside` = '';
 UPDATE `zz_views` SET `order_by` = NULL WHERE `order_by` = '';
 
 -- Fix per anagrafiche senza ragione sociale
-UPDATE `an_anagrafiche` SET `ragione_sociale` = CONCAT(cognome, " ", nome) WHERE `an_anagrafiche`.`ragione_sociale` = ""; 
+UPDATE `an_anagrafiche` SET `ragione_sociale` = CONCAT(cognome, " ", nome) WHERE `an_anagrafiche`.`ragione_sociale` = "";

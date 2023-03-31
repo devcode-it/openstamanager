@@ -206,6 +206,7 @@ switch (post('op')) {
             $intervento->id_ordine = post('idordine');
             $intervento->idreferente = post('idreferente');
             $intervento->richiesta = post('richiesta');
+            $intervento->descrizione = post('descrizione');
             $intervento->idsede_destinazione = $idsede_destinazione;
             $intervento->data_scadenza = $data_scadenza;
 
@@ -242,6 +243,7 @@ switch (post('op')) {
 
             $intervento = Intervento::find($id_record);
             $intervento->richiesta = post('richiesta');
+            $intervento->descrizione = post('descrizione');
             $intervento->save();
 
             $idcontratto = $dbo->fetchOne('SELECT idcontratto FROM co_promemoria WHERE idintervento = :id', [

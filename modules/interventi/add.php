@@ -25,6 +25,7 @@ include_once __DIR__.'/../../core.php';
 $id_anagrafica = filter('idanagrafica');
 $id_sede = filter('idsede');
 $richiesta = filter('richiesta');
+$descrizione = filter('descrizione');
 $id_tipo = filter('id_tipo');
 
 $origine_dashboard = get('ref') !== null;
@@ -73,6 +74,7 @@ if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
     $id_tipo = $promemoria['idtipointervento'];
     $data = (null !== filter('data')) ? filter('data') : $promemoria['data_richiesta'];
     $richiesta = $promemoria['richiesta'];
+    $descrizione = $promemoria['descrizione'];
     $id_sede = $promemoria['idsede'];
     $impianti_collegati = $promemoria['idimpianti'];
 
@@ -97,6 +99,7 @@ elseif (!empty($id_intervento)) {
     $data_richiesta = $intervento['data_richiesta'];
     $data_scadenza = $intervento['data_scadenza'];
     $richiesta = $intervento['richiesta'];
+    $descrizione = $intervento['descrizione'];
     $id_sede = $intervento['idsede_destinazione'];
     $id_anagrafica = $intervento['idanagrafica'];
     $id_cliente_finale = $intervento['idclientefinale'];
@@ -217,18 +220,30 @@ echo '
     </div>
 
     <div class="row">
-        <div class="col-md-12">';
+        <div class="col-md-6">';
             echo input([
                 'type' => 'ckeditor',
                 'label' => tr('Richiesta'),
                 'name' => 'richiesta',
                 'id' => 'richiesta_add',
-                'required' => 1,
+                'required' => '1',
                 'value' => htmlentities($richiesta),
                 'extra' => 'style=\'max-height:80px;\'',
             ]);
             echo '
-            </div>
+        </div>
+        <div class="col-md-6">';
+            echo input([
+                'type' => 'ckeditor',
+                'label' => tr('Descrizione'),
+                'name' => 'descrizione',
+                'id' => 'descrizione_add',
+                'required' => '1',
+                'value' => htmlentities($descrizione),
+                'extra' => 'style=\'max-height:80px;\'',
+            ]);
+            echo '
+        </div>
     </div>';
 
 

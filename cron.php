@@ -68,7 +68,7 @@ $in_esecuzione = Cache::pool('Cron in esecuzione');
 $cron_id = Cache::pool('ID del cron');
 
 $disattiva = Cache::pool('Disabilita cron');
-if (!empty($disattiva->content)) {
+if ($disattiva->content || (in_array($_SERVER['HTTP_HOST'],['localhost', '127.0.0.1']) && !$forza_cron_localhost)) {
     return;
 }
 

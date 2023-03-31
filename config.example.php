@@ -41,6 +41,9 @@ $disableCSRF = true; // Protezione contro CSRF
 // Impostazioni di debug
 $debug = false;
 
+// Permette di eseguire il cron anche se OSM è installato su localhost
+$forza_cron_localhost = false;
+
 // Personalizzazione dei gestori dei tag personalizzati
 $HTMLWrapper = null;
 $HTMLHandlers = [];

@@ -64,6 +64,9 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Aggiunta colonna "Gruppi con accesso" in vista "Segmenti"
 - Aggiunto in Dashboard sfondo rosso per giorni non lavorativi
 - Aggiunti eventi in Dashboard
+- Aggiunte azioni di gruppo per modifica categoria ed esportazione in ZIP degli allegati
+- Aggiunto il campo Descrizione in aggiunta Attività
+- Aggiunta opzione per immagini in stampa preventivi e ordini
 
 ### Modificato (Changed)
 - Miglioria logiche per stampe

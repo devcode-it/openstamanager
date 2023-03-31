@@ -267,103 +267,103 @@ switch (post('op')) {
 
         break;
 
-        case 'delete-bulk':
-            foreach ($id_records as $id) {
-                $intervento = Intervento::find($id);
-                try {
-                    // Eliminazione associazioni tra interventi e contratti
-                $dbo->query('UPDATE co_promemoria SET idintervento = NULL WHERE idintervento='.prepare($id_record));
+    case 'delete-bulk':
+        foreach ($id_records as $id) {
+            $intervento = Intervento::find($id);
+            try {
+                // Eliminazione associazioni tra interventi e contratti
+            $dbo->query('UPDATE co_promemoria SET idintervento = NULL WHERE idintervento='.prepare($id_record));
 
-                $intervento->delete();
+            $intervento->delete();
 
-                // Elimino il collegamento al componente
-                $dbo->query('DELETE FROM my_componenti WHERE id_intervento='.prepare($id_record));
+            // Elimino il collegamento al componente
+            $dbo->query('DELETE FROM my_componenti WHERE id_intervento='.prepare($id_record));
 
-                // Eliminazione associazione tecnici collegati all'intervento
-                $dbo->query('DELETE FROM in_interventi_tecnici WHERE idintervento='.prepare($id_record));
+            // Eliminazione associazione tecnici collegati all'intervento
+            $dbo->query('DELETE FROM in_interventi_tecnici WHERE idintervento='.prepare($id_record));
 
-                // Eliminazione associazione interventi e my_impianti
-                $dbo->query('DELETE FROM my_impianti_interventi WHERE idintervento='.prepare($id_record));
+            // Eliminazione associazione interventi e my_impianti
+            $dbo->query('DELETE FROM my_impianti_interventi WHERE idintervento='.prepare($id_record));
 
-                // Elimino anche eventuali file caricati
-                Uploads::deleteLinked([
-                    'id_module' => $id_module,
-                    'id_record' => $id_record,
-                ]);
+            // Elimino anche eventuali file caricati
+            Uploads::deleteLinked([
+                'id_module' => $id_module,
+                'id_record' => $id_record,
+            ]);
 
-                } catch (InvalidArgumentException $e) {
-                }
+            } catch (InvalidArgumentException $e) {
             }
+        }
 
-            flash()->info(tr('Interventi eliminati!'));
+        flash()->info(tr('Interventi eliminati!'));
 
-            break;
+        break;
 
-            
-        case 'stampa-riepilogo':
-            $_SESSION['superselect']['interventi'] = $id_records;
-            $id_print = Prints::getPrints()['Riepilogo interventi'];
+        
+    case 'stampa-riepilogo':
+        $_SESSION['superselect']['interventi'] = $id_records;
+        $id_print = Prints::getPrints()['Riepilogo interventi'];
 
-            redirect(base_path().'/pdfgen.php?id_print='.$id_print.'&tipo='.post('tipo'));
-            exit();
+        redirect(base_path().'/pdfgen.php?id_print='.$id_print.'&tipo='.post('tipo'));
+        exit();
 
 
-        case 'send-mail':
-            $template = Template::find(post('id_template'));
+    case 'send-mail':
+        $template = Template::find(post('id_template'));
 
-            $list = [];
-            foreach ($id_records as $id) {
-                $intervento = Intervento::find($id);
-                $id_anagrafica = $intervento->idanagrafica;
-    
-                // Selezione destinatari e invio mail
-                if (!empty($template)) {
-                    $creata_mail = false;
-                    $emails = [];
+        $list = [];
+        foreach ($id_records as $id) {
+            $intervento = Intervento::find($id);
+            $id_anagrafica = $intervento->idanagrafica;
 
-                    // Aggiungo email anagrafica
-                    if (!empty($intervento->anagrafica->email)) {
-                        $emails[] = $intervento->anagrafica->email;
+            // Selezione destinatari e invio mail
+            if (!empty($template)) {
+                $creata_mail = false;
+                $emails = [];
+
+                // Aggiungo email anagrafica
+                if (!empty($intervento->anagrafica->email)) {
+                    $emails[] = $intervento->anagrafica->email;
+                    $mail = Mail::build(auth()->getUser(), $template, $id);
+                    $mail->addReceiver($intervento->anagrafica->email);
+                    $creata_mail = true;
+                }
+
+                // Aggiungo email referenti in base alla mansione impostata nel template
+                $mansioni = $dbo->select('em_mansioni_template', 'idmansione', ['id_template' => $template->id]);
+                foreach ($mansioni as $mansione) {
+                    $referenti = $dbo->table('an_referenti')->where('idmansione', $mansione['idmansione'])->where('idanagrafica', $id_anagrafica)->where('email', '!=', '')->get();
+                    if (!$referenti->isEmpty() && $creata_mail == false) {
                         $mail = Mail::build(auth()->getUser(), $template, $id);
-                        $mail->addReceiver($intervento->anagrafica->email);
                         $creata_mail = true;
                     }
-
-                    // Aggiungo email referenti in base alla mansione impostata nel template
-                    $mansioni = $dbo->select('em_mansioni_template', 'idmansione', ['id_template' => $template->id]);
-                    foreach ($mansioni as $mansione) {
-                        $referenti = $dbo->table('an_referenti')->where('idmansione', $mansione['idmansione'])->where('idanagrafica', $id_anagrafica)->where('email', '!=', '')->get();
-                        if (!$referenti->isEmpty() && $creata_mail == false) {
-                            $mail = Mail::build(auth()->getUser(), $template, $id);
-                            $creata_mail = true;
-                        }
-                        
-                        foreach ($referenti as $referente) {
-                            if (!in_array($referente->email, $emails)) {
-                                $emails[] = $referente->email;
-                                $mail->addReceiver($referente->email);
-                            }   
-                        }
-                    }
-                    if ($creata_mail == true) {                        
-                        $mail->save();
-                        OperationLog::setInfo('id_email', $mail->id);
-                        OperationLog::setInfo('id_module', $id_module);
-                        OperationLog::setInfo('id_record', $mail->id_record);
-                        OperationLog::build('send-email');
-
-                        array_push($list, $intervento->codice);
+                    
+                    foreach ($referenti as $referente) {
+                        if (!in_array($referente->email, $emails)) {
+                            $emails[] = $referente->email;
+                            $mail->addReceiver($referente->email);
+                        }   
                     }
                 }
+                if ($creata_mail == true) {                        
+                    $mail->save();
+                    OperationLog::setInfo('id_email', $mail->id);
+                    OperationLog::setInfo('id_module', $id_module);
+                    OperationLog::setInfo('id_record', $mail->id_record);
+                    OperationLog::build('send-email');
+
+                    array_push($list, $intervento->codice);
+                }
             }
-    
-            if ($list){
-                flash()->info(tr('Mail inviata per le attività _LIST_ !', [
-                    '_LIST_' => implode(',', $list),
-                ]));
-            }
-    
-            break;
+        }
+
+        if ($list){
+            flash()->info(tr('Mail inviata per le attività _LIST_ !', [
+                '_LIST_' => implode(',', $list),
+            ]));
+        }
+
+        break;
 }
 
 if (App::debug()) {
@@ -443,6 +443,16 @@ if (App::debug()) {
             {[ "type": "select", "label": "'.tr('Template').'", "name": "id_template", "required": "1", "values": "query=SELECT id, name AS descrizione FROM em_templates WHERE id_module='.prepare($id_module).' AND deleted_at IS NULL;" ]}',
             'button' => tr('Invia'),
             'class' => 'btn btn-lg btn-warning',
+        ],
+    ];
+
+    $operations['firma-intervento'] = [
+        'text' => '<span><i class="fa fa-pencil"></i> '.tr('Firma interventi').'</span>',
+        'data' => [
+            'title' => tr('Firma'),
+            'type' => 'modal',
+            'origine' => 'interventi',
+            'url' => $module->fileurl('modals/firma.php'),
         ],
     ];
 

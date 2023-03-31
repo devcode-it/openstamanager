@@ -762,6 +762,99 @@ switch (post('op')) {
 
         break;
 
+        case 'firma_bulk':
+            if (directory(base_dir().'/files/interventi')) {
+                $firmati = 0;
+                $non_firmati = 0;
+                $id_records = filter('records') ? explode(';',filter('records')) : null;
+                
+                if (post('firma_base64') != '') {
+                    foreach ($id_records as $id_record) {
+                        // Salvataggio firma
+                        $firma_file = 'firma_'.time().'.jpg';
+                        $firma_nome = post('firma_nome');
+    
+                        $data = explode(',', post('firma_base64'));
+    
+                        $img = Intervention\Image\ImageManagerStatic::make(base64_decode($data[1]));
+                        $img->resize(680, 202, function ($constraint) {
+                            $constraint->aspectRatio();
+                        });
+    
+                        if (!$img->save(base_dir().'/files/interventi/'.$firma_file)) {
+                            flash()->error(tr('Impossibile creare il file!'));
+                        } elseif ($dbo->query('UPDATE in_interventi SET firma_file='.prepare($firma_file).', firma_data=NOW(), firma_nome = '.prepare($firma_nome).' WHERE id='.prepare($id_record))) {
+                            ++$firmati;
+    
+                            $id_stato = setting("Stato dell'attività dopo la firma");
+                            $stato = $dbo->selectOne('in_statiintervento', '*', ['idstatointervento' => $id_stato]);
+                            $intervento = Intervento::find($id_record);
+                            if (!empty($stato)) {
+                                $intervento = Intervento::find($id_record);
+                                $intervento->idstatointervento = $stato['idstatointervento'];
+                                $intervento->save();
+                            }
+    
+                            // Notifica chiusura intervento
+                            if (!empty($stato['notifica'])) {
+                                $template = Template::find($stato['id_email']);
+    
+                                if (!empty($stato['destinatari'])) {
+                                    $mail = Mail::build(auth()->getUser(), $template, $id_record);
+                                    $mail->addReceiver($stato['destinatari']);
+                                    $mail->save();
+                                }
+    
+                                if (!empty($stato['notifica_cliente'])) {
+                                    if (!empty($intervento->anagrafica->email)) {
+                                        $mail = Mail::build(auth()->getUser(), $template, $id_record);
+                                        $mail->addReceiver($intervento->anagrafica->email);
+                                        $mail->save();
+                                    }
+                                }
+    
+                                if (!empty($stato['notifica_tecnici'])) {
+                                    $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'idtecnico', ['idintervento' => $id_record]);
+                                    $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS idtecnico', ['id_intervento' => $id_record]);
+                                    $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
+    
+                                    foreach ($tecnici as $tecnico) {
+                                        $mail_tecnico = $dbo->selectOne('an_anagrafiche', '*', ['idanagrafica' => $tecnico]);
+                                        if (!empty($mail_tecnico['email'])) {
+                                            $mail = Mail::build(auth()->getUser(), $template, $id_record);
+                                            $mail->addReceiver($mail_tecnico['email']);
+                                            $mail->save();
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            ++$non_firmati;
+                        }
+                    }
+                } else {
+                    flash()->error(tr('Errore durante il salvataggio della firma!').tr('La firma risulta vuota').'...');
+                }
+            } else {
+                flash()->error(tr("Non è stato possibile creare la cartella _DIRECTORY_ per salvare l'immagine della firma!", [
+                    '_DIRECTORY_' => '<b>/files/interventi</b>',
+                ]));
+            }
+    
+            if (!empty($firmati)) {
+                flash()->info(tr('_NUM_ interventi firmati correttamente!', [
+                    '_NUM_' => $firmati,
+                ]));
+            }
+    
+            if (!empty($non_firmati)) {
+                flash()->info(tr('_NUM_ interventi non sono stati firmati correttamente!', [
+                    '_NUM_' => $non_firmati,
+                ]));
+            }
+    
+            break;
+    
     // OPERAZIONI PER AGGIUNTA NUOVA SESSIONE DI LAVORO
     case 'add_sessione':
         $id_tecnico = post('id_tecnico');

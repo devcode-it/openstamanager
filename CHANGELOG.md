@@ -77,6 +77,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Rimossi i riferimenti a tabelle non presenti
 - Rimossa l'obbligatorietà del campo BIC in gestione banche
 - Modificato l'ordinamento dello scalare in piano dei conti
+- Disattivati i processi in cron per installazioni in localhost con possibilità di forzatura
 
 ### Fixed
 - Corretta la sede di partenza articoli in Attività

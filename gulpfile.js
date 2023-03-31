@@ -416,6 +416,8 @@ function release(done) {
         '!database_5_7.json',
         '!.idea/**',
         '!.git/**',
+        '!.github/**',
+        '!.vscode/**',
         '!node_modules/**',
         '!include/custom/**',
         '!backup/**',

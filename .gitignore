@@ -98,3 +98,4 @@ database_5_7.json
 /tests/_temp/*
 codeception.yml
 !.gitkeep
+.vscode

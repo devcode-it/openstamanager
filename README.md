@@ -168,7 +168,7 @@ Se volete contribuire attivamente con semplici migliorie o correzioni potete cer
 
 ## Bounty Program
 
-Potresti trovare degli [issue contrassegnati con il label **bountysource**](https://github.com/devcode-it/openstamanager/issues?q=is%3Aopen+is%3Aissue+label%3A%22bountysource%22). Questo significa che è disponibile una ricompensa per chi risolverà l'issue secondo i criteri descritti all'interno. Devi creare innanzitutto un account su [BountySource.com](https://https://github.com/devcode-it/openstamanager/issues?q=is%3Aopen+is%3Aissue+label%3A%22bountysource%22bountysource.com). Successivamente, il funzionamento sarà il seguente:
+Potresti trovare degli [issue contrassegnati con il label **bountysource**](https://github.com/devcode-it/openstamanager/issues?q=is%3Aopen+is%3Aissue+label%3A%22bountysource%22). Questo significa che è disponibile una ricompensa per chi risolverà l'issue secondo i criteri descritti all'interno. Devi creare innanzitutto un account su [BountySource.com](https://bountysource.com). Successivamente, il funzionamento sarà il seguente:
 - esegui un fork del repository
 - risolvi l'issue
 - invia una pull request

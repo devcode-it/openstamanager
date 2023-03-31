@@ -693,8 +693,10 @@ if(isMobile() && setting('Utilizzare i tooltip sul calendario')){
 }else{
     echo '
             eventClick: function(info) {
-                info.jsEvent.preventDefault();
-                location.href = info.event.extendedProps.link;
+                if (info.event.extendedProps.link !== undefined) {
+                    info.jsEvent.preventDefault();
+                    location.href = info.event.extendedProps.link;
+                }
             },';
 }
 

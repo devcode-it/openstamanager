@@ -166,6 +166,15 @@ Per poter contribuire ed eseguire i test automatici, si consiglia di seguire le 
 
 Se volete contribuire attivamente con semplici migliorie o correzioni potete cercare tra le [issue per i nuovi contributori](https://github.com/devcode-it/openstamanager/issues?q=is%3Aissue+is%3Aopen+label%3A%22nuovi+contributori%22).
 
+## Bounty Programhttps://github.com/devcode-it/openstamanager/issues?q=is%3Aopen+is%3Aissue+label%3A%22bountysource%22
+
+Potresti trovare degli [issue contrassegnati con il label **bountysource**](https://github.com/devcode-it/openstamanager/issues?q=is%3Aopen+is%3Aissue+label%3A%22bountysource%22). Questo significa che è disponibile una ricompensa per chi risolverà l'issue secondo i criteri descritti all'interno. Devi creare innanzitutto un account su [BountySource.com](https://https://github.com/devcode-it/openstamanager/issues?q=is%3Aopen+is%3Aissue+label%3A%22bountysource%22bountysource.com). Successivamente, il funzionamento sarà il seguente:
+- esegui un fork del repository
+- risolvi l'issue
+- invia una pull request
+
+Verificheremo se la pull request soddisferà i requisiti e, una volta approvata, provvederemo ad accreditare la ricompensa nel tuo account di BountySource.
+
 ## Licenza
 
 Questo progetto è tutelato dalla licenza [**GPL 3**](https://github.com/devcode-it/openstamanager/blob/master/LICENSE).

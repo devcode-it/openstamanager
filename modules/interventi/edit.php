@@ -321,7 +321,7 @@ echo '
 
             <!-- RIGA 5 -->
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-6">
                 <?php
                 echo input([
                     'type' => 'ckeditor',
@@ -335,7 +335,7 @@ echo '
                 ?>
                 </div>
 
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <?php
                     echo input([
                         'type' => 'ckeditor',

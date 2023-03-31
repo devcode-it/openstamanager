@@ -31,3 +31,14 @@ UPDATE `zz_views` SET `order_by` = NULL WHERE `order_by` = '';
 
 -- Fix per anagrafiche senza ragione sociale
 UPDATE `an_anagrafiche` SET `ragione_sociale` = CONCAT(cognome, " ", nome) WHERE `an_anagrafiche`.`ragione_sociale` = "";
+
+-- Aggiunto options images su stampe preventivi e ordini per gestire la visualizzazione delle immagini
+UPDATE `zz_prints` SET `options` = '{\"pricing\": false, \"last-page-footer\": true, \"images\": true}' WHERE `zz_prints`.`name` = "Preventivo (senza costi)";
+UPDATE `zz_prints` SET `options` = '{\"pricing\": true, \"last-page-footer\": true, \"images\": true}' WHERE `zz_prints`.`name` = "Preventivo";  
+UPDATE `zz_prints` SET `options` = '{\"pricing\":true, \"hide_total\":true, \"images\": true}' WHERE `zz_prints`.`name` = "Preventivo (senza totali)"; 
+UPDATE `zz_prints` SET `options` = '{\"pricing\":false, \"show_only_total\":true, \"images\": true}' WHERE `zz_prints`.`name` = "Preventivo (solo totale)";
+UPDATE `zz_prints` SET `options` = '{\"pricing\": false, \"last-page-footer\": true, \"images\": true}' WHERE `zz_prints`.`name` = "Ordine cliente (senza costi)"; 
+UPDATE `zz_prints` SET `options` = '{\"pricing\": true, \"last-page-footer\": true, \"images\": true}' WHERE `zz_prints`.`name` = "Ordine cliente";
+UPDATE `zz_prints` SET `options` = '{\"pricing\": true, \"last-page-footer\": true, \"hide_codice\": true, \"images\": true}' WHERE `zz_prints`.`name` = "Ordine cliente (senza codici)";
+UPDATE `zz_prints` SET `options` = '{\"pricing\":false, \"images\": false}' WHERE `zz_prints`.`name` = "Ordine fornitore (senza costi)";
+UPDATE `zz_prints` SET `options` = '{\"pricing\":true, \"images\": false}' WHERE `zz_prints`.`name` = "Ordine fornitore";

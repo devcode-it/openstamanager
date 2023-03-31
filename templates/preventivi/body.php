@@ -56,7 +56,7 @@ $righe = $documento->getRighe();
 
 $has_image = $righe->search(function ($item) {
     return !empty($item->articolo->immagine);
-}) !== false;
+}) !== false && $options['images'] == true;
 
 $columns = 6;
 $columns = $options['pricing'] ? $columns : 3;

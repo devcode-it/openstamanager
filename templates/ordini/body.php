@@ -26,16 +26,14 @@ $righe = $documento->getRighe();
 
 $columns = 7;
 
-//Immagine solo per documenti di vendita
-if ($documento->direzione == 'entrata') {
-    $has_image = $righe->search(function ($item) {
-        return !empty($item->articolo->immagine);
-    }) !== false;
 
-    if ($has_image) {
-        ++$columns;
-        $char_number = $options['pricing'] ? 26 : 63;
-    }
+$has_image = $righe->search(function ($item) {
+    return !empty($item->articolo->immagine);
+}) !== false && $options['images'] == true;
+
+if ($has_image) {
+    ++$columns;
+    $char_number = $options['pricing'] ? 26 : 63;
 }
 
 if ($documento->direzione == 'uscita') {

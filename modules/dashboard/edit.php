@@ -525,7 +525,6 @@ globals.dashboard = {
 
         var calendar = new FullCalendar.Calendar(calendarElement, {
             /* locales: allLocales, */
-            timeZone: "Europe/Rome",
             locale: globals.locale,
             slotEventOverlap: false,
             weekNumbers: true,

@@ -100,7 +100,6 @@ const JS = gulp.parallel(() => {
         'eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
         'fullcalendar-scheduler/index.global.js',
         '@fullcalendar/moment/index.global.js',
-        '@fullcalendar/moment-timezone/index.global.js',
         '@fullcalendar/core/locales/it.global.js',
         'geocomplete/jquery.geocomplete.js',
         'inputmask/dist/min/jquery.inputmask.bundle.min.js',

@@ -356,7 +356,7 @@ switch (filter('op')) {
                     }
                 }
         
-                // Riorganizzazione dati ordini per numero di riga
+                // Riorganizzazione dati ddt per numero di riga
                 $dati_ddt = [];
                 foreach ($DatiDDT as $dato) {
                     if (is_array($dato['RiferimentoNumeroLinea'])) {

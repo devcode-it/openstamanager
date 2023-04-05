@@ -44,7 +44,7 @@ $totale_iva_periodo_precedente = $totale_iva_vendite_periodo_precedente - $total
 
 $totale_iva = $totale_iva_esigibile - $totale_iva_detraibile;
 
-if ($periodo == 'Trimestrale' && $totale_iva > 0) {
+if ($periodo['valore'] == 'Trimestrale' && $totale_iva > 0) {
     $maggiorazione = $totale_iva * 0.01;
     $totale_iva_maggiorata = $totale_iva + $maggiorazione;
 }

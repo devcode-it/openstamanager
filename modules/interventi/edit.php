@@ -93,7 +93,7 @@ echo '
 
                         <div class="col-md-6">';
 
-$idcontratto_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE idintervento='.prepare($id_record))['id'];
+                        $idpreventivo_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE idintervento='.prepare($id_record))['id'];
 
 if (!empty($record['idcontratto'])) {
     echo '
@@ -828,6 +828,7 @@ $(document).ready(function() {
     
                 $("#barcode").val("");
                 $("#id_articolo").selectReset();
+                content_was_modified = false;
                 caricaRighe(null);
                 caricaCosti();
             }

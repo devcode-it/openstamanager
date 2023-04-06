@@ -576,6 +576,7 @@ async function salvaArticolo() {
 
             $("#barcode").val("");
             $("#id_articolo").selectReset();
+            content_was_modified = false;
             caricaRighe(null);
         }
     });

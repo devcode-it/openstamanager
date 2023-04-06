@@ -525,6 +525,7 @@ async function modificaRiga(button) {
         $(button).tooltipster("close");
 
     // Apertura modal
+    content_was_modified = false;
     openModal("'.tr('Modifica riga').'", "'.$module->fileurl('row-edit.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&riga_id=" + id + "&riga_type=" + type);
 }
 
@@ -557,6 +558,7 @@ function rimuoviRiga(id) {
                 righe: id,
             },
             success: function (response) {
+                content_was_modified = false;
                 location.reload();
             },
             error: function() {

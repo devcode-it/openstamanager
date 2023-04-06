@@ -4,7 +4,7 @@ UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(dati.id) AS dato FROM(SELECT id,
 INSERT INTO `zz_tasks` (`name`, `class`, `expression`) VALUES
 ('Solleciti scadenze', 'Modules\\Scadenzario\\SollecitoTask', '0 8 * * *');
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Invio solleciti in automatico', '0', 'boolean', '1', 'Scadenzario', '1', 'Invia automaticamente delle mail di sollecito secondo le tempistiche definite nelle impostazioni');
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Template email invio sollecito', (SELECT `id` FROM `em_templates` WHERE `name`="Sollecito di pagamento"), 'query=SELECT id, name AS descrizione FROM em_templates WHERE deleted_at IS NULL ORDER BY descrizione', '1', 'Scadenzario', '2', NULL);
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Template email invio sollecito', (SELECT IFNULL(id,0) FROM em_templates WHERE name = 'Sollecito di pagamento'), 'query=SELECT id, name AS descrizione FROM em_templates WHERE deleted_at IS NULL ORDER BY descrizione', '1', 'Scadenzario', '2', NULL);
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, "Ritardo in giorni della scadenza della fattura per invio sollecito pagamento", '12', 'integer', '1', 'Scadenzario', '3', '');
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, "Ritardo in giorni dall'ultima email per invio sollecito pagamento", '10', 'integer', '1', 'Scadenzario', '4', '');
 

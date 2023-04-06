@@ -282,6 +282,12 @@ echo '
 
 <script>
     $(document).ready(function() {
+        $("#input-cerca").keyup(function(key) {
+            if (key.which == 13) {
+                $("#button-search").click();
+            }
+        });
+
         $("button[id^=conto3-]").each(function() {
             $(this).on("click", function() {
                 let conto3 = $(this).parent().find("div[id^=conto2_]");
@@ -335,6 +341,11 @@ echo '
                $("#" + selector).html(data)
                     .slideToggle();
 
+                if ($("#input-cerca").data("search-in-progress") == "1") {
+                    $("#button-search").trigger("click");
+                    $("#input-cerca").data("search-in-progress", "0");
+                }
+
                $("#main_loading").fadeOut();
             }
         });
@@ -346,7 +357,8 @@ echo '
 
     $("#button-search").on("click", function(){
         var text = $("#input-cerca").val();
-
+        if (text != "") $("#input-cerca").data("search-in-progress", "1");
+        
         $.ajax({
             url: globals.rootdir + "/actions.php",
             type: "POST",

@@ -50,7 +50,7 @@ switch (post('op')) {
         $id_record = $preventivo->id;
 
         if (isAjaxRequest()) {
-            echo json_encode(['id' => $id_record, 'text' => 'Contratto '.$preventivo->numero.' del '.dateFormat($preventivo->data_bozza).' - '.$preventivo->nome]);
+            echo json_encode(['id' => $id_record, 'text' => 'Preventivo '.$preventivo->numero.' del '.dateFormat($preventivo->data_bozza).' - '.$preventivo->nome]);
         }
 
         flash()->info(tr('Aggiunto preventivo numero _NUM_!', [

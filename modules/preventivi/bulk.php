@@ -21,9 +21,11 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Fatture\Fattura;
-use Modules\Fatture\Stato;
+use Modules\Fatture\Stato as StatoFattura;
 use Modules\Fatture\Tipo;
 use Modules\Preventivi\Preventivo;
+use Modules\Preventivi\Stato as StatoPreventivo;
+use Carbon\Carbon;
 
 $module_fatture = 'Fatture di vendita';
 
@@ -47,7 +49,7 @@ switch (post('op')) {
         // Informazioni della fattura
         $tipo_documento = Tipo::where('id', post('idtipodocumento'))->first();
 
-        $stato_documenti_accodabili = Stato::where('descrizione', 'Bozza')->first();
+        $stato_documenti_accodabili = StatoFattura::where('descrizione', 'Bozza')->first();
         $accodare = post('accodare');
 
         $data = date('Y-m-d');
@@ -122,6 +124,32 @@ switch (post('op')) {
             flash()->warning(tr('Nessun preventivi fatturato!'));
         }
         break;
+
+    case 'cambia_stato':
+        $id_stato = post('id_stato');
+
+        $n_preventivi = 0;
+        $stato = StatoPreventivo::find($id_stato);
+
+        // Lettura righe selezionate
+        foreach ($id_records as $id) {
+            $preventivo = Preventivo::find($id);
+
+            $preventivo->stato()->associate($stato);
+            $preventivo->save();
+
+            ++$n_preventivi;
+        }
+
+        if ($n_preventivi > 0) {
+            flash()->info(tr('Stato aggiornato a _NUM_ preventivi!', [
+                '_NUM_' => $n_preventivi,
+            ]));
+        } else {
+            flash()->warning(tr('Nessuno stato aggiornato!'));
+        }
+
+        break;
 }
 
 $operations['crea_fattura'] = [
@@ -130,6 +158,17 @@ $operations['crea_fattura'] = [
         'title' => tr('Fatturare i _TYPE_ selezionati?', ['_TYPE_' => strtolower($module['name'])]),
         'msg' => '{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle fatture di vendita non ancora emesse?').'</small>", "placeholder": "'.tr('Aggiungere alle fatture di vendita nello stato bozza?').'", "name": "accodare" ]}<br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module=\''.$id_fatture.'\' ORDER BY name", "value": "'.$id_segment.'" ]}<br>
         {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, CONCAT(codice_tipo_documento_fe, \' - \', descrizione) AS descrizione FROM co_tipidocumento WHERE enabled = 1 AND dir =\'entrata\' ORDER BY codice_tipo_documento_fe", "value": "'.$idtipodocumento.'" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
+    ],
+];
+
+$operations['cambia_stato'] = [
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia stato'),
+    'data' => [
+        'title' => tr('Vuoi davvero aggiornare lo stato di questi preventivi?'),
+        'msg' => '<br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT id, descrizione FROM co_statipreventivi ORDER BY descrizione" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

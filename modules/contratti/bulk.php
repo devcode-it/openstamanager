@@ -220,6 +220,32 @@ switch (post('op')) {
             flash()->warning(tr('Nessun contratto rinnovato!'));
         }
         break;
+
+        case 'cambia_stato':
+            $id_stato = post('id_stato');
+    
+            $n_contratti = 0;
+            $stato = StatoContratto::find($id_stato);
+    
+            // Lettura righe selezionate
+            foreach ($id_records as $id) {
+                $contratto = Contratto::find($id);
+    
+                $contratto->stato()->associate($stato);
+                $contratto->save();
+    
+                ++$n_contratti;
+            }
+    
+            if ($n_contratti > 0) {
+                flash()->info(tr('Stato aggiornato a _NUM_ contratti!', [
+                    '_NUM_' => $n_contratti,
+                ]));
+            } else {
+                flash()->warning(tr('Nessuno stato aggiornato!'));
+            }
+    
+            break;
 }
 
 $operations['crea_fattura'] = [
@@ -240,6 +266,17 @@ $operations['renew_contratto'] = [
     'data' => [
         'title' => tr('Rinnovare i contratti selezionati?').'</span>',
         'msg' => ''.tr('Un contratto è rinnovabile se presenta una data di accettazione e conclusione, se il rinnovo è abilitato dal plugin Rinnovi e se si trova in uno di questi stati: _STATE_LIST_', ['_STATE_LIST_' => $stati_completati]),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
+    ],
+];
+
+$operations['cambia_stato'] = [
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia stato'),
+    'data' => [
+        'title' => tr('Vuoi davvero aggiornare lo stato di questi contratti?'),
+        'msg' => '<br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT id, descrizione FROM co_staticontratti ORDER BY descrizione" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

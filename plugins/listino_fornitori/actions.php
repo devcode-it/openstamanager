@@ -64,4 +64,34 @@ switch (filter('op')) {
     case 'update_prezzi':
         require base_dir().'/plugins/listino_clienti/actions.php';
         break;
+
+    case 'update_prezzi':
+        require base_dir().'/plugins/listino_clienti/actions.php';
+
+        $id_articolo = filter('id_articolo');
+        $articolo = Articolo::find($id_articolo);
+
+        $id_anagrafica = filter('id_anagrafica');
+        $precedente = DettaglioFornitore::where('id_articolo', $id_record)
+            ->where('id_fornitore', $id_anagrafica)
+            ->first();
+
+        if (empty($precedente)) {
+            $anagrafica = Anagrafica::find($id_anagrafica);
+
+            $fornitore = DettaglioFornitore::build($anagrafica, $articolo);
+        } else {
+            $fornitore = $precedente;
+        }
+
+        $fornitore->codice_fornitore = post('codice_fornitore');
+        $fornitore->barcode_fornitore = post('barcode_fornitore');
+        $fornitore->descrizione = post('descrizione');
+        $fornitore->qta_minima = post('qta_minima');
+        $fornitore->giorni_consegna = post('giorni_consegna');
+
+        $fornitore->save();
+
+        flash()->info(tr('Informazioni salvate correttamente!'));
+        break;
 }

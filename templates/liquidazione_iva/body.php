@@ -261,7 +261,11 @@ echo '
         <td class=text-right>'.moneyFormat($totale_iva_detraibile, 2).'</td>
     </tr>
     <tr>
-        <td>VARIAZIONE DI IMPOSTA RELATIVE A PERIODI PRECEDENTI</td>
+        <td>VARIAZIONE DI IMPOSTA RELATIVE A PERIODI PRECEDENTI</td>';
+        if ($totale_iva < '25,82') {
+            echo ' <td class=text-right>'.moneyFormat(abs($totale_iva), 2).'</td>';
+        }
+        echo'
         <td class=text-right></td>
     </tr>
     <tr>
@@ -298,7 +302,7 @@ echo '
     </tr>
     <tr>
         <td>IMPORTO DA VERSARE</td>
-        <td class=text-right>'.moneyFormat($totale_iva_maggiorata, 2).'</td>
+        <td class=text-right>'.($periodo['valore'] == 'Mensile' ? moneyFormat($totale_iva, 2) : moneyFormat($totale_iva_maggiorata, 2)).'</td>
     </tr>
     <tr>
         <td>CREDITO INFRANNUALE DI IMPOSTA CHIESTO A RIMBORSO</td>

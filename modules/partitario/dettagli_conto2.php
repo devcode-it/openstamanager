@@ -128,7 +128,7 @@ if (!empty($terzo_livello)) {
         // Span con info del conto
         echo '
                         <span class="clickable" id="movimenti-'.$conto_terzo['id'].'">
-                            &nbsp;'.$conto_secondo['numero'].'.'.$conto_terzo['numero'].' '.$conto_terzo['descrizione'].' <span class="text-muted">('.tr('deducibile al _PERC_%', ['_PERC_' => Translator::numberToLocale($conto_terzo['percentuale_deducibile'], 0)]).')</span>' .'
+                            &nbsp;'.$conto_secondo['numero'].'.'.$conto_terzo['numero'].' '.$conto_terzo['descrizione'].' <span class="text-muted">'. ($conto_terzo['percentuale_deducibile'] != '100.00' ? tr('(deducibile al _PERC_%', ['_PERC_' => Translator::numberToLocale($conto_terzo['percentuale_deducibile'], 0)]).')':'').'</span>' .'
                         </span>
                         <div id="conto_'.$conto_terzo['id'].'" style="display:none;"></div>
                     </td>

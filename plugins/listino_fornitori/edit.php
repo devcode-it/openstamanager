@@ -38,7 +38,7 @@ echo '
             <div class="col-md-3">
                 <div class="btn-group btn-group-flex">
                     <button type="button" class="btn btn-info" style="margin-top:25px;" onclick="aggiungiFornitorePrezzi(this)">
-                        <i class="fa fa-money"></i> '.tr('Aggiungi Prezzi e Fornitore').'
+                        <i class="fa fa-money"></i> '.tr('Aggiungi prezzi e fornitore').'
                     </button>
                 </div>
             </div>

@@ -63,10 +63,6 @@ switch (filter('op')) {
 
     case 'update_prezzi':
         require base_dir().'/plugins/listino_clienti/actions.php';
-        break;
-
-    case 'update_prezzi':
-        require base_dir().'/plugins/listino_clienti/actions.php';
 
         $id_articolo = filter('id_articolo');
         $articolo = Articolo::find($id_articolo);

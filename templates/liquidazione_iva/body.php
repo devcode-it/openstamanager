@@ -261,8 +261,15 @@ echo '
         <td class=text-right>'.moneyFormat($totale_iva_detraibile, 2).'</td>
     </tr>
     <tr>
-        <td>VARIAZIONE DI IMPOSTA RELATIVE A PERIODI PRECEDENTI</td>
-        <td class=text-right></td>
+        <td>VARIAZIONE DI IMPOSTA RELATIVE A PERIODI PRECEDENTI</td>';
+        if ($totale_iva_periodo_precedente < '25.82' && $totale_iva_periodo_precedente > '0') {
+            echo'
+            <td class=text-right>'.moneyFormat(abs($totale_iva_periodo_precedente), 2).'</td>';
+        } else {
+            echo'
+            <td class=text-right></td>';
+        } 
+    echo'
     </tr>
     <tr>
         <td>DI CUI INTERESSI PER RAVVEDIMENTO</td>
@@ -272,7 +279,7 @@ echo '
         <td>DI CUI INTERESSI PER MAGGIORAZIONE TRIMESTRALI</td>
         <td class=text-right></td>
     </tr>
-        <tr>
+    <tr>
         <td>CREDITO IVA COMPENSABILE</td>
         <td class=text-right></td>
     </tr>
@@ -290,15 +297,29 @@ echo '
     </tr>
     <tr>
         <td>MAGGIORAZIONE 1,00%</td>
-        <td class=text-right>'.moneyFormat($maggiorazione, 2).'</td>
+        <td class=text-right>'.($periodo['valore'] == 'Trimestrale' ? moneyFormat($maggiorazione, 2) : '').'</td>
     </tr>
     <tr>
-        <td>IVA A DEBITO CON MAGGIORAZIONE</td>
-        <td class=text-right>'.moneyFormat($totale_iva_maggiorata, 2).'</td>
+        <td>IVA A DEBITO CON MAGGIORAZIONE</td>';
+        if ($totale_iva > '25.82' && $periodo['valore'] == 'Trimestrale') {
+            echo'
+            <td class=text-right>'.moneyFormat($totale_iva_maggiorata, 2).'</td>';
+        } else {
+            echo'
+            <td class=text-right></td>';
+        } 
+    echo'
     </tr>
     <tr>
-        <td>IMPORTO DA VERSARE</td>
-        <td class=text-right>'.moneyFormat($totale_iva_maggiorata, 2).'</td>
+        <td>IMPORTO DA VERSARE</td>';
+        if ($totale_iva > 25.82) {
+            echo'
+            <td class=text-right>'.($periodo['valore'] == 'Mensile' ? moneyFormat($totale_iva, 2) : moneyFormat($totale_iva_maggiorata, 2)).'</td>';
+        } else {
+            echo'
+            <td class=text-right></td>';
+        } 
+    echo'
     </tr>
     <tr>
         <td>CREDITO INFRANNUALE DI IMPOSTA CHIESTO A RIMBORSO</td>

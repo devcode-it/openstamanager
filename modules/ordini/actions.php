@@ -146,7 +146,11 @@ switch (post('op')) {
             $tipo_sconto = post('tipo_sconto')[$id_articolo];
             $prezzo_unitario = post('prezzo_unitario')[$id_articolo];
             $id_dettaglio_fornitore = post('id_dettaglio_fornitore')[$id_articolo];
-            $id_iva = $originale->idiva_vendita ? $originale->idiva_vendita : setting('Iva predefinita');
+            if ($dir == 'entrata') {
+                $id_iva = ($ordine->anagrafica->idiva_vendite ?: $originale->idiva_vendita) ?: setting('Iva predefinita');
+            } else {
+                $id_iva = ($ordine->anagrafica->idiva_acquisti ?: setting('Iva predefinita'));
+            }
 
             // Creazione articolo
             $originale = ArticoloOriginale::find($id_articolo);
@@ -630,7 +634,11 @@ switch (post('op')) {
             $articolo->qta = 1;
             $articolo->costo_unitario = $originale->prezzo_acquisto;
 
-            $id_iva = $originale->idiva_vendita ?: setting('Iva predefinita');
+            if ($dir == 'entrata') {
+                $id_iva = ($ordine->anagrafica->idiva_vendite ?: $originale->idiva_vendita) ?: setting('Iva predefinita');
+            } else {
+                $id_iva = ($ordine->anagrafica->idiva_acquisti ?: setting('Iva predefinita'));
+            }
             $id_anagrafica = $ordine->idanagrafica;
             $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
         

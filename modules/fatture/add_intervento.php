@@ -114,14 +114,14 @@ $options['id_ritenuta_acconto_predefined'] = $ritenuta_acconto['id_ritenuta_acco
 
 echo App::internalLoad('conti.php', [], $options);
 
-// Leggo l'iva predefinita dall'articolo e se non c'è leggo quella predefinita generica
+// Leggo l'iva predefinita dall'anagrafica e se non c'è leggo quella predefinita generica
 $idiva = $fattura->anagrafica->idiva_vendite ?: setting('Iva predefinita');
 
 // Iva
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$idiva.'", "ajax-source": "iva", "help": "'.tr("L'aliquota IVA selezionata sovrascrive il valore predditivo presentato in Attività, modificando di conseguenza le sessioni di lavoro dei tecnici").'. '.tr('Righe generiche, articoli e sconti non verranno influenzati').'."]}
+            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$id_iva.'", "ajax-source": "iva", "help": "'.tr("L'aliquota IVA selezionata sovrascrive il valore predditivo presentato in Attività, modificando di conseguenza le sessioni di lavoro dei tecnici").'. '.tr('Righe generiche, articoli e sconti non verranno influenzati').'."]}
         </div>';
 
 echo '

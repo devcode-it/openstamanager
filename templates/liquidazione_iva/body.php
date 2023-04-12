@@ -297,7 +297,7 @@ echo '
     </tr>
     <tr>
         <td>MAGGIORAZIONE 1,00%</td>
-        <td class=text-right>'.($periodo['valore'] == 'Trimestrale' ? moneyFormat($maggiorazione, 2) : '').'</td>
+        <td class=text-right>'.($periodo['valore'] == 'Trimestrale' && $totale_iva > 25.82 ? moneyFormat($maggiorazione, 2) : '').'</td>
     </tr>
     <tr>
         <td>IVA A DEBITO CON MAGGIORAZIONE</td>';

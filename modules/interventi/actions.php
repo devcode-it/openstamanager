@@ -466,7 +466,7 @@ switch (post('op')) {
             $tipo_sconto = post('tipo_sconto')[$id_articolo];
             $prezzo_unitario = post('prezzo_unitario')[$id_articolo];
             $id_dettaglio_fornitore = post('id_dettaglio_fornitore')[$id_articolo];
-            $id_iva = $originale->idiva_vendita ? $originale->idiva_vendita : setting('Iva predefinita');
+            $intervento->anagrafica['idiva_vendite'] ? $idiva = $intervento->anagrafica['idiva_vendite'] : $idiva = $originale->idiva_vendita ?: setting('Iva predefinita');
 
             // Creazione articolo
             $originale = ArticoloOriginale::find($id_articolo);

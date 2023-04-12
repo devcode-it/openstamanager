@@ -262,7 +262,7 @@ echo '
     </tr>
     <tr>
         <td>VARIAZIONE DI IMPOSTA RELATIVE A PERIODI PRECEDENTI</td>';
-        if ($totale_iva_periodo_precedente < '25.82' && $totale_iva_periodo_precedente > '0') {
+        if ($totale_iva_periodo_precedente < 25.82 && $totale_iva_periodo_precedente > 0) {
             echo'
             <td class=text-right>'.moneyFormat(abs($totale_iva_periodo_precedente), 2).'</td>';
         } else {

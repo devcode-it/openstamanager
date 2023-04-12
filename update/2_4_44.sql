@@ -51,7 +51,7 @@ ORDER BY
     `co_preventivi`.`id` DESC" WHERE `name` = 'Preventivi';
 
 -- Fix query Fatture di vendita
-INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `visible`, `default`) VALUES((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Prima nota', '`primanota`.`totale`', 15, 1, 0, 0, 1);
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `visible`, `default`) VALUES((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Prima nota', '`primanota`.`totale`', 15, 1, 0, 1, 0, 1);
 UPDATE `zz_modules` SET `options` = "
 SELECT
 	|select|

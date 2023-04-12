@@ -228,7 +228,7 @@ if (sizeof($problemi_anagrafica) > 0) {
                                 {[ "type": "number", "label": "<?php echo tr('Distanza'); ?>", "name": "km", "decimals":"1", "class": "text-center", "value": "$km$", "icon-after": "Km" ]}
                             </div>
                         </div>
-                   
+
                         <div class="row">
                             <div class="col-md-12">
                                 {[ "type": "checkbox", "label": "<?php echo tr('Opt-out per newsletter'); ?>", "name": "disable_newsletter", "value": "<?php echo empty($record['enable_newsletter']); ?>", "help": "<?php echo tr('Blocco per l\'invio delle email.'); ?>" ]}
@@ -262,7 +262,7 @@ if (empty($google)) {
                         <div class="alert alert-info">
                             '.Modules::link('Impostazioni', null, tr('Per abilitare la visualizzazione delle anagrafiche nella mappa, inserire la Google Maps API Key nella scheda Impostazioni'), true, null, true, null, '&search=Google Maps API key').'.
                         </div>';
-                        
+
 } elseif (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($sede_cliente->lng))) {
     echo '
                         <div id="map-edit" style="height: 200px;width: 100%;display: flex;align-items: center;justify-content: center;" onclick="caricaMappa()">
@@ -443,7 +443,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                         </div>
 
                         <div class="row">
-                            
+
                         </div>';
 
     $banche = Banca::where('id_anagrafica', $anagrafica->id)->get();
@@ -476,12 +476,40 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
     echo '
                     </div>
 
+                    <div class="hidden spese-trasporto-default">';
+                        echo setting('Spese di trasporto default');
+                    echo '
+                    </div>
+
+                    <div class="hidden spese-incasso-default">';
+                        echo setting('Spese di incasso default');
+                    echo '
+                    </div>
+
                     <div class="tab-pane '.(!$is_cliente ? 'hide' : 'active').'" id="cliente">
+                        <div class="row">
+                            <div class="col-md-6">
+                                {[ "type": "checkbox", "label": "'.tr('Spese di trasporto').'", "id": "spese-di-trasporto", "name": "spese_di_trasporto", "value": "'.$anagrafica['spese_di_trasporto'].'" ]}
+                            </div>
+                            <div class="col-md-6">
+                                {[ "type": "number", "label": "'.tr('Importo spese di trasporto').'", "id": "importo-spese-di-trasporto", "name": "importo_spese_di_trasporto", "value": "'.$anagrafica['importo_spese_di_trasporto'].'" , "icon-after": "'.currency().'" ]}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                {[ "type": "checkbox", "label": "'.tr('Spese di incasso').'", "id": "spese-di-incasso", "name": "spese_di_incasso", "value": "'.$anagrafica['spese_di_incasso'].'" ]}
+                            </div>
+                            <div class="col-md-6">
+                                {[ "type": "number", "label": "'.tr('Importo spese di incasso').'", "id": "importo-spese-di-incasso", "name": "importo_spese_di_incasso", "value": "'.$anagrafica['importo_spese_di_incasso'].'", "icon-after": "'.currency().'" ]}
+                            </div>
+                        </div>
+
                         <div class="row">
                             <div class="col-md-6">
                                     {[ "type": "select", "label": "'.tr('Provenienza cliente').'", "name": "id_provenienza", "ajax-source": "provenienze", "value": "$id_provenienza$", "icon-after": "add|'.Modules::get('Provenienze')['id'].'" ]}
                             </div>
-                        
+
                             <div class="col-md-6">
                                 {[ "type": "select", "label": "'.tr('Pagamento predefinito').'", "name": "idpagamento_vendite", "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento_vendite$" ]}
                             </div>
@@ -491,7 +519,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             <div class="col-md-6">
                                 {[ "type": "select", "label": "'.tr('Banca predefinita per accrediti').'", "name": "idbanca_vendite", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "$idbanca_vendite$", "help": "'.tr("Banca predefinita dell'Azienda su cui accreditare i pagamenti").'" ]}
                             </div>
-                        
+
                             <div class="col-md-6">
                                 {[ "type": "select", "label": "'.tr('Iva predefinita').'", "name": "idiva_vendite", "ajax-source": "iva", "value": "$idiva_vendite$" ]}
                             </div>
@@ -501,7 +529,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             <div class="col-md-6">
                                 {[ "type": "select", "label": "'.tr("Ritenuta d'acconto predefinita").'", "name": "id_ritenuta_acconto_vendite", "values": "query=SELECT id, descrizione FROM co_ritenutaacconto ORDER BY descrizione ASC", "value": "$id_ritenuta_acconto_vendite$" ]}
                             </div>
-                        
+
                             <div class="col-md-6">
                                 {[ "type": "select", "label": "'.tr('Piano di sconto/magg. su articoli').'", "name": "id_piano_sconto_vendite", "values": "query=SELECT id, nome AS descrizione FROM mg_piani_sconto ORDER BY nome ASC", "value": "$id_piano_sconto_vendite$" ]}
                             </div>
@@ -511,7 +539,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             <div class="col-md-6">
                                 {[ "type": "select", "label": "'.tr('Indirizzo di fatturazione').'", "name": "idsede_fatturazione", "values": "query=SELECT id, IF(citta = \'\', nomesede, CONCAT_WS(\', \', nomesede, citta)) AS descrizione FROM an_sedi WHERE idanagrafica='.prepare($id_record).' UNION SELECT \'0\' AS id, \'Sede legale\' AS descrizione ORDER BY descrizione", "value": "$idsede_fatturazione$"  ]}
                             </div>
-                        
+
                             <div class="col-md-6">
                                 {[ "type": "select", "label": "'.tr('Agente principale').'", "name": "idagente", "values": "query=SELECT an_anagrafiche.idanagrafica AS id, IF(deleted_at IS NOT NULL, CONCAT(ragione_sociale, \' (Eliminato)\'), ragione_sociale ) AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE (descrizione=\'Agente\' AND deleted_at IS NULL)'.(isset($record['idagente']) ? 'OR (an_anagrafiche.idanagrafica = '.prepare($record['idagente']).' AND deleted_at IS NOT NULL) ' : '').'ORDER BY ragione_sociale", "value": "$idagente$" ]}
                             </div>
@@ -521,17 +549,17 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             <div class="col-md-6">
                                 {[ "type": "select", "label": "'.tr('Agenti secondari').'", "multiple": "1", "name": "idagenti[]", "values": "query=SELECT an_anagrafiche.idanagrafica AS id, IF(deleted_at IS NOT NULL, CONCAT(ragione_sociale, \' (Eliminato)\'), ragione_sociale ) AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE (descrizione=\'Agente\' AND deleted_at IS NULL AND an_anagrafiche.idanagrafica NOT IN (SELECT idagente FROM an_anagrafiche WHERE  idanagrafica = '.prepare($record['idanagrafica']).')) OR (an_anagrafiche.idanagrafica IN (SELECT idagente FROM an_anagrafiche_agenti WHERE idanagrafica = '.prepare($record['idanagrafica']).') ) ORDER BY ragione_sociale", "value": "$idagenti$" ]}
                             </div>
-                        
+
                             <div class="col-md-6">
                                 {[ "type": "select", "label": "'.tr('Listino').'", "name": "id_listino", "ajax-source": "listini", "value": "$id_listino$" ]}
                             </div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-6">
                                 {[ "type": "select", "label": "'.tr('Tipo attività predefinita').'", "name": "idtipointervento_default", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "$idtipointervento_default$" ]}
                             </div>
-                            
+
                             <div class="col-md-6">
                                 {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento_default", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$id_record.', "data": "'.Carbon::now().'"},"value": "$id_dichiarazione_intento_default$" ]}
                             </div>';
@@ -818,6 +846,22 @@ if (empty($record['deleted_at'])) {
 
 <script>
 	$(document).ready( function() {
+        $('#spese-di-trasporto').change(function() {
+            if ($(this).is(':checked')) {
+                $('#importo-spese-di-trasporto').val($('.spese-trasporto-default').html());
+            } else {
+                $('#importo-spese-di-trasporto').val(0);
+            }
+        });
+
+        $('#spese-di-incasso').change(function() {
+            if ($(this).is(':checked')) {
+                $('#importo-spese-di-incasso').val($('.spese-incasso-default').html());
+            } else {
+                $('#importo-spese-di-incasso').val(0);
+            }
+        });
+
 		$(".colorpicker").colorpicker({ format: 'hex' }).on("changeColor", function() {
 			$("#colore_t").parent().find(".square").css("background", $("#colore_t").val());
 		});

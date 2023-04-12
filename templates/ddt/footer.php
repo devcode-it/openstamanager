@@ -133,28 +133,40 @@ echo '
 echo '
 <table class="table-bordered">
     <tr>
-        <th class="small" class style="width:25%;">
+        <th class="small">
+            '.tr('Spesa di trasporto', [], ['upper' => true]).'
+        </th>
+
+        <th class="small">
+            '.tr('Spesa di incasso', [], ['upper' => true]).'
+        </th>
+
+        <th class="small">
             '.tr('Aspetto beni', [], ['upper' => true]).'
         </th>
 
-        <th class="small" class style="width:20%">
+        <th class="small">
             '.tr('Num. colli', [], ['upper' => true]).'
         </th>
 
-        <th class="small" class style="width:20%">
+        <th class="small">
             '.tr('Data ora trasporto', [], ['upper' => true]).'
         </th>
 
-        <th class="small" style="width:30%">
+        <th class="small">
             '.tr('Causale trasporto', [], ['upper' => true]).'
-        </th>
-
-        <th class="small" style="width:25%">
-            '.tr('Porto', [], ['upper' => true]).'
         </th>
     </tr>
 
     <tr>
+        <td class="cell-padded">
+            '.moneyFormat($riga_spesa_trasporto->subtotale, 2).'
+        </td>
+
+        <td class="cell-padded">
+            '.moneyFormat($riga_spesa_incasso->subtotale, 2).'
+        </td>
+
         <td class="cell-padded">
             $aspettobeni$ &nbsp;
         </td>
@@ -170,13 +182,12 @@ echo '
         <td class="cell-padded">
             $causalet$ &nbsp;
         </td>
-
-        <td class="cell-padded">
-            $porto$ &nbsp;
-        </td>
     </tr>
 
     <tr>
+        <th class="small">
+            '.tr('Porto', [], ['upper' => true]).'
+        </th>
         <th class="small">
             '.tr('Peso lordo', [], ['upper' => true]).'
         </th>
@@ -195,6 +206,9 @@ echo '
     </tr>
 
     <tr>
+        <td class="cell-padded">
+            $porto$ &nbsp;
+        </td>
         <td class="cell-padded">
         '.(!empty($peso_lordo) ? Translator::numberToLocale($peso_lordo).'&nbsp;KG' : '').'
         </td>

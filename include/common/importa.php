@@ -26,6 +26,13 @@ if (empty($documento)) {
     return;
 }
 
+if (!empty($documento_finale)) {
+    $righe_totali_doc_finale = $documento_finale->getRighe();
+    $riga_spesa_incasso = $righe_totali_doc_finale->where('is_spesa_incasso', '=', 1)->first();
+    $riga_spesa_trasporto = $righe_totali_doc_finale->where('is_spesa_trasporto', '=', 1)->first();
+}
+
+
 // Informazioni utili
 $dir = $documento->direzione;
 $original_module = Modules::get($documento->module);
@@ -115,7 +122,7 @@ if (!empty($options['create_document'])) {
             <div class="col-md-6">
                 {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, CONCAT(codice_tipo_documento_fe, \' - \', descrizione) AS descrizione FROM co_tipidocumento WHERE enabled = 1 AND dir = '.prepare($dir).' ORDER BY codice_tipo_documento_fe", "value": "'.$idtipodocumento.'" ]}
             </div>
-            
+
             <div class="col-md-6">
                 {[ "type": "select", "label": "'.tr('Ritenuta previdenziale').'", "name": "id_ritenuta_contributi", "value": "$id_ritenuta_contributi$", "values": "query=SELECT * FROM co_ritenuta_contributi" ]}
             </div>';
@@ -258,6 +265,27 @@ if (in_array($final_module['name'], ['Fatture di vendita', 'Fatture di acquisto'
     </div>';
 }
 
+$riga_trasporto = $righe_totali->where('is_spesa_trasporto', 1)->first();
+$riga_incasso = $righe_totali->where('is_spesa_incasso', 1)->first();
+
+echo '
+<div class="box box-info">
+    <div class="box-header with-border">
+        <h3 class="box-title">'.tr('Spese').'</h3>
+    </div>
+    <div class="box-body">
+        <div class="row">
+            <div class="col-md-6">
+                {[ "type": "number", "label": "'.tr('Spese di traporto').'", "name": "spese_di_trasporto", "value": "'.$riga_trasporto['prezzo_unitario'].'", "icon-after": "'.currency().'"]}
+            </div>
+
+            <div class="col-md-6">
+                {[ "type": "number", "label": "'.tr('Spese di incasso').'", "name": "spese_di_incasso", "value": "'.$riga_incasso['prezzo_unitario'].'", "icon-after": "'.currency().'"]}
+            </div>
+        </div>
+    </div>
+</div>';
+
 $has_serial = 0;
 if (!empty($options['serials'])) {
     foreach ($righe as $riga) {
@@ -298,109 +326,111 @@ echo '
             <tbody id="righe_documento_importato">';
 
 foreach ($righe as $i => $riga) {
-    if ($final_module['name'] == 'Ordini fornitore') {
-        $qta_rimanente = $riga['qta'];
-    } else {
-        $qta_rimanente = $riga['qta_rimanente'];
-    }
-
-    $attr = 'checked="checked"';
-    if ($original_module['name'] == 'Preventivi') {
-        if (empty($riga['confermato']) && $riga['is_descrizione'] == 0) {
-            $attr = '';
+    if (!$riga->is_spesa_incasso && !$riga->is_spesa_trasporto) {
+        if ($final_module['name'] == 'Ordini fornitore') {
+            $qta_rimanente = $riga['qta'];
+        } else {
+            $qta_rimanente = $riga['qta_rimanente'];
         }
-    }
 
-    // Descrizione
-    echo '
-                <tr data-local_id="'.$i.'">
-                    <td style="vertical-align:middle">
-                        <input class="check" type="checkbox" '.$attr.' id="checked_'.$i.'" name="evadere['.$riga['id'].']" value="on" onclick="ricalcolaTotaleRiga('.$i.');" />
-                    </td>
-                    <td style="vertical-align:middle">
-                        <span class="hidden" id="id_articolo_'.$i.'">'.$riga['idarticolo'].'</span>
-
-                        <input type="hidden" class="righe" name="righe" value="'.$i.'"/>
-                        <input type="hidden" id="prezzo_unitario_'.$i.'" name="subtot['.$riga['id'].']" value="'.$riga['prezzo_unitario'].'" />
-                        <input type="hidden" id="sconto_unitario_'.$i.'" name="sconto['.$riga['id'].']" value="'.$riga['sconto_unitario'].'" />
-                        <input type="hidden" id="max_qta_'.$i.'" value="'.($options['superamento_soglia_qta'] ? '' : $riga['qta_rimanente']).'" />';
-
-    $descrizione = ($riga->isArticolo() ? $riga->articolo->codice.' - ' : '').$riga['descrizione'];
-
-    echo '&nbsp;'.nl2br($descrizione);
-
-    if( $riga->isArticolo() ){
-        $dettaglio_fornitore = DettaglioFornitore::where('id_articolo', $riga->idarticolo)
-            ->where('id_fornitore', $documento->idanagrafica)
-            ->first();
-
-        if( !empty($dettaglio_fornitore->codice_fornitore) ){
-            echo '
-            <br><small class="text-muted">'.tr('Codice fornitore ').': '.$dettaglio_fornitore->codice_fornitore.'</small>';
-        }
-    }
-
-    if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
-        $serials = $riga->serials;
-        $mancanti = abs($riga->qta) - count($serials);
-
-        if (!empty($mancanti)) {
-            echo '
-                <br><b><small class="text-danger">'.tr('_NUM_ serial mancanti', [
-                        '_NUM_' => $mancanti,
-                    ]).'</small></b>';
-        }
-    }
-
-
-    echo '
-                    </td>';
-
-    // Q.tà rimanente
-    echo '
-                    <td class="text-center" style="vertical-align:middle">
-                        '.numberFormat($qta_rimanente).'
-                    </td>';
-
-    // Q.tà da evadere
-    echo '
-                    <td style="vertical-align:middle">
-                        {[ "type": "number", "name": "qta_da_evadere['.$riga['id'].']", "id": "qta_'.$i.'", "required": 1, "value": "'.$qta_rimanente.'", "decimals": "qta", "min-value": "0", "extra": "'.(($riga['is_descrizione']) ? 'readonly' : '').' onkeyup=\"ricalcolaTotaleRiga('.$i.');\"" ]}
-                    </td>';
-
-    echo '
-                    <td style="vertical-align:middle" class="text-right">
-                        <span id="subtotale_'.$i.'"></span>
-                    </td>';
-
-    // Seriali
-    if (!empty($has_serial)) {
-        echo '
-                    <td style="vertical-align:middle">';
-
-        if (!empty($riga['abilita_serial'])) {
-            $serials = $riga->serials;
-
-            $list = [];
-            foreach ($serials as $serial) {
-                $list[] = [
-                    'id' => $serial,
-                    'text' => $serial,
-                ];
+        $attr = 'checked="checked"';
+        if ($original_module['name'] == 'Preventivi') {
+            if (empty($riga['confermato']) && $riga['is_descrizione'] == 0 && $riga['is_spesa_incasso'] == 0 && $riga['is_spesa_trasporto'] == 0) {
+                $attr = '';
             }
+        }
 
-            if (!empty($serials)) {
+        // Descrizione
+        echo '
+                    <tr data-local_id="'.$i.'" data-is-spesa-trasporto="'.$riga->is_spesa_trasporto.'" data-is-spesa-incasso="'.$riga->is_spesa_incasso.'">
+                        <td style="vertical-align:middle">
+                            <input class="check" type="checkbox" '.$attr.' id="checked_'.$i.'" name="evadere['.$riga['id'].']" value="on" onclick="ricalcolaTotaleRiga('.$i.');" />
+                        </td>
+                        <td style="vertical-align:middle">
+                            <span class="hidden" id="id_articolo_'.$i.'">'.$riga['idarticolo'].'</span>
+
+                            <input type="hidden" class="righe" name="righe" value="'.$i.'"/>
+                            <input type="hidden" id="prezzo_unitario_'.$i.'" name="subtot['.$riga['id'].']" value="'.$riga['prezzo_unitario'].'" />
+                            <input type="hidden" id="sconto_unitario_'.$i.'" name="sconto['.$riga['id'].']" value="'.$riga['sconto_unitario'].'" />
+                            <input type="hidden" id="max_qta_'.$i.'" value="'.($options['superamento_soglia_qta'] ? '' : $riga['qta_rimanente']).'" />';
+
+        $descrizione = ($riga->isArticolo() ? $riga->articolo->codice.' - ' : '').$riga['descrizione'];
+
+        echo '&nbsp;'.nl2br($descrizione);
+
+        if( $riga->isArticolo() ){
+            $dettaglio_fornitore = DettaglioFornitore::where('id_articolo', $riga->idarticolo)
+                ->where('id_fornitore', $documento->idanagrafica)
+                ->first();
+
+            if( !empty($dettaglio_fornitore->codice_fornitore) ){
                 echo '
-                        {[ "type": "select", "name": "serial['.$riga['id'].'][]", "id": "serial_'.$i.'", "multiple": 1, "values": '.json_encode($list).', "value": "'.implode(',', $serials).'", "extra": "data-maximum=\"'.intval($riga['qta_rimanente']).'\"" ]}';
+                <br><small class="text-muted">'.tr('Codice fornitore ').': '.$dettaglio_fornitore->codice_fornitore.'</small>';
             }
         }
 
-        echo '
-                    </td>';
-    }
+        if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
+            $serials = $riga->serials;
+            $mancanti = abs($riga->qta) - count($serials);
 
-    echo '
-             </tr>';
+            if (!empty($mancanti)) {
+                echo '
+                    <br><b><small class="text-danger">'.tr('_NUM_ serial mancanti', [
+                            '_NUM_' => $mancanti,
+                        ]).'</small></b>';
+            }
+        }
+
+
+        echo '
+                        </td>';
+
+        // Q.tà rimanente
+        echo '
+                        <td class="text-center" style="vertical-align:middle">
+                            '.numberFormat($qta_rimanente).'
+                        </td>';
+
+        // Q.tà da evadere
+        echo '
+                        <td style="vertical-align:middle">
+                            {[ "type": "number", "name": "qta_da_evadere['.$riga['id'].']", "id": "qta_'.$i.'", "required": 1, "value": "'.$qta_rimanente.'", "decimals": "qta", "min-value": "0", "extra": "'.(($riga['is_descrizione']) ? 'readonly' : '').' onkeyup=\"ricalcolaTotaleRiga('.$i.');\"" ]}
+                        </td>';
+
+        echo '
+                        <td style="vertical-align:middle" class="text-right">
+                            <span id="subtotale_'.$i.'"></span>
+                        </td>';
+
+        // Seriali
+        if (!empty($has_serial)) {
+            echo '
+                        <td style="vertical-align:middle">';
+
+            if (!empty($riga['abilita_serial'])) {
+                $serials = $riga->serials;
+
+                $list = [];
+                foreach ($serials as $serial) {
+                    $list[] = [
+                        'id' => $serial,
+                        'text' => $serial,
+                    ];
+                }
+
+                if (!empty($serials)) {
+                    echo '
+                            {[ "type": "select", "name": "serial['.$riga['id'].'][]", "id": "serial_'.$i.'", "multiple": 1, "values": '.json_encode($list).', "value": "'.implode(',', $serials).'", "extra": "data-maximum=\"'.intval($riga['qta_rimanente']).'\"" ]}';
+                }
+            }
+
+            echo '
+                        </td>';
+        }
+
+        echo '
+                </tr>';
+    }
 }
 
 // Totale
@@ -470,9 +500,15 @@ echo '
     </div>';
 
 echo '
+<input class="hide" id="name_module" value="'.$name.'"/>
+<input class="hide" id="manage_spese" name="manage-spese" value="1"/>
+<input class="hide" id="riga_spesa_trasporto" name="riga-spesa-trasporto" value="'.(!empty($riga_spesa_trasporto) ? $riga_spesa_trasporto->prezzo_unitario : -1).'"/>
+<input class="hide" id="riga_spesa_incasso" name="riga-spesa-incasso" value="'.(!empty($riga_spesa_incasso) ? $riga_spesa_incasso->prezzo_unitario : -1).'"/>';
 
-    <!-- PULSANTI -->
-    <div class="row">
+$flag = setting('Spese di trasporto default') && setting('Spese di incasso default');
+
+    echo '
+    <div class="row '.($flag ? 'hide' : '').' ">
         <div class="col-md-12 text-right">
             <button type="submit" id="submit_btn" class="btn btn-primary pull-right">
                 <i class="fa fa-plus"></i> '.$options['button'].'
@@ -481,8 +517,59 @@ echo '
     </div>
 </form>';
 
+if ($flag) {
+    echo '
+    <div class="row">
+        <div class="col-md-12 text-right">
+            <button id="" class="btn btn-primary pull-right btn-confirm">
+                <i class="fa fa-plus"></i> '.$options['button'].'
+            </button>
+        </div>
+    </div>';
+}
+
 echo '
-<script>$(document).ready(init)</script>';
+<script>
+    $(document).ready(function() {
+        $("body").on("click", ".btn-confirm", function(e) {
+            e.preventDefault();
+
+            spesa_di_trasporto = $("#riga_spesa_trasporto").val();
+            spesa_di_incasso = $("#riga_spesa_incasso").val();
+            name_module = $("#name_module").val();
+
+            if (name_module == "Ordini fornitore") {
+                $("#manage_spese").val(0);
+                $("#submit_btn").click();
+            } else {
+                msg = "";
+                if (spesa_di_trasporto == -1 && spesa_di_incasso == -1) {
+                    msg = "'.tr("Vuoi importare le spese di incasso e di trasporto?").'";
+                } else {
+                    msg = "'.tr("Spese di incasso e/o trasporto già presenti. Vuoi sovrascriverle?").'";
+                }
+
+                swal({
+                    title: "'.tr('Attenzione').'",
+                    text: msg,
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "'.tr('Sì').'",
+                    cancelButtonText: "'.tr('No').'",
+                }).then((result) => { //click su si
+                    $("#manage_spese").val(1);
+
+                    $("#submit_btn").closest("form").submit();
+                }).catch((err) => { //click su no
+                    $("#manage_spese").val(0);
+
+                    $("#submit_btn").closest("form").submit();
+                });
+            }
+        });
+    });
+</script>';
 
 // Individuazione scorte
 $articoli = $documento->articoli->groupBy('idarticolo');
@@ -656,7 +743,7 @@ echo '
         ricalcolaTotale();
     });
 
-    $("#import_all").click(function(){    
+    $("#import_all").click(function(){
         if( $(this).is(":checked") ){
             $(".check").each(function(){
                 if( !$(this).is(":checked") ){

@@ -47,7 +47,7 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione) ) {
     $iva = Aliquota::find($id_iva);
 
     if (!empty($iva)) {
-         
+
         if ($diff == 0) {
             echo '
         <div class="alert alert-info">
@@ -375,7 +375,7 @@ echo '
                     if ($dir == 'entrata') {
                         echo '
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "readonly": "'.(sizeof($articolo) ? 1 : 0).'", "help": "'.tr("Sedi di partenza dell'azienda").'" ]}
+                    {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "help": "'.tr("Sedi di partenza dell'azienda").'" ]}
                 </div>
 
                 <div class="col-md-3">
@@ -471,7 +471,7 @@ echo '
                 }
                 ?>
 			</div>
-            
+
             <!-- Split payment + Fattura per conto terzi (solo uscita) + Sconto in fattura (solo uscita) -->
             <div class="row">
 
@@ -736,16 +736,16 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione)){
     foreach($ive_accettate as $iva_accettata){
         $descrizione_iva_accettata .= '<li>'.$iva_accettata->descrizione.'</li>';
     }
-    
+
     if ($fattura->stato->descrizione == 'Bozza'){
-            
+
         echo '
         <div class="alert alert-info">
             <i class="fa fa-info"></i> '.tr("La fattura è collegata ad una dichiarazione d'intento con diponibilità residura pari a _MONEY_.", [  '_MONEY_' => moneyFormat($diff),]).'<br>'.tr("Per collegare una riga alla dichiarazione è sufficiente specificare come IVA <ul>_IVA_</ul>", ['_IVA_' => $descrizione_iva_accettata]).'</b>
         </div>';
 
     }
-   
+
 }
 
 echo '
@@ -824,11 +824,11 @@ if (!$block_edit) {
                             <button title="'.tr('Aggiungi articolo alla vendita').'" class="btn btn-primary tip" type="button" onclick="salvaArticolo()">
                                 <i class="fa fa-plus"></i> '.tr('Aggiungi').'
                             </button>
-                            
+
                             <a class="btn btn-primary" onclick="gestioneRiga(this)" data-title="'.tr('Aggiungi riga').'">
                                 <i class="fa fa-plus"></i> '.tr('Riga').'
                             </a>
-                            
+
                             <div class="btn-group tip" data-toggle="tooltip">
                                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                     <i class="fa fa-list"></i> '.tr('Altro').'
@@ -962,13 +962,13 @@ echo '
         let data = $(this).selectData();
         if (data) {
             // Impostazione del tipo di pagamento da anagrafica
-            if (data.id_pagamento) { 
+            if (data.id_pagamento) {
                 input("idpagamento").getElement()
                     .selectSetNew(data.id_pagamento, data.desc_pagamento, {"id_banca_vendite": data.id_banca_vendite, "id_banca_acquisti": data.id_banca_acquisti, "descrizione_banca_vendite": data.descrizione_banca_vendite, "descrizione_banca_acquisti": data.descrizione_banca_acquisti});
             }
         }';
-        
-        
+
+
 
         if ($dir == 'entrata') {
             echo '$("#idsede_destinazione").selectReset();';

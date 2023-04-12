@@ -53,170 +53,179 @@ echo "
 // Righe documento
 $righe = $documento->getRighe();
 $num = 0;
+$riga_spesa_trasporto = null;
+$riga_spesa_incasso = null;
 foreach ($righe as $riga) {
-    ++$num;
-    $r = $riga->toArray();
+    if ($riga->is_spesa_trasporto == 1) {
+        $riga_spesa_trasporto = $riga;
+    } else if ($riga->is_spesa_incasso) {
+        $riga_spesa_incasso = $riga;
+    } else {
+        ++$num;
 
-    $autofill->count($r['descrizione']);
+        $r = $riga->toArray();
 
-    $v_iva[$r['desc_iva']] = sum($v_iva[$r['desc_iva']], $riga->iva);
-    $v_totale[$r['desc_iva']] = sum($v_totale[$r['desc_iva']], $riga->totale_imponibile);
+        $autofill->count($r['descrizione']);
 
-    // Descrizione della riga
-    $descrizione = $riga->descrizione;
+        $v_iva[$r['desc_iva']] = sum($v_iva[$r['desc_iva']], $riga->iva);
+        $v_totale[$r['desc_iva']] = sum($v_totale[$r['desc_iva']], $riga->totale_imponibile);
 
-    // Aggiunta riferimento più profondo per DDT attraverso Interventi
-    if ($riga->hasOriginalComponent() && $riga->original_document_type == Intervento::class) {
-        $riga_origine = $riga->getOriginalComponent();
+        // Descrizione della riga
+        $descrizione = $riga->descrizione;
 
-        if ($riga_origine->hasOriginalComponent()) {
-            $riferimento = $riga_origine->getOriginalComponent()
-                ->getDocument()->getReference();
+        // Aggiunta riferimento più profondo per DDT attraverso Interventi
+        if ($riga->hasOriginalComponent() && $riga->original_document_type == Intervento::class) {
+            $riga_origine = $riga->getOriginalComponent();
 
-            $descrizione .= "\n".tr('Rif. _DOCUMENT_', [
-                '_DOCUMENT_' => strtolower($riferimento),
-            ]);
+            if ($riga_origine->hasOriginalComponent()) {
+                $riferimento = $riga_origine->getOriginalComponent()
+                    ->getDocument()->getReference();
+
+                $descrizione .= "\n".tr('Rif. _DOCUMENT_', [
+                    '_DOCUMENT_' => strtolower($riferimento),
+                ]);
+            }
         }
-    }
 
-    echo '
-        <tr>';
-
-    echo '
-        <td class="text-center" style="vertical-align: middle">
-            '.$num.'
-        </td>';
-
-    echo '
-            <td>
-                '.nl2br(strip_tags($descrizione));
-
-    if ($riga->isArticolo()) {
-        // Codice articolo
-        $text = tr('COD. _COD_', [
-            '_COD_' => $riga->codice,
-        ]);
         echo '
-                <br><small>'.$text.'</small>';
+            <tr>';
 
-        $autofill->count($text, true);
+        echo '
+            <td class="text-center" style="vertical-align: middle">
+                '.$num.'
+            </td>';
 
-        // Seriali
-        $seriali = $riga->serials;
-        if (!empty($seriali)) {
-            $text = tr('SN').': '.implode(', ', $seriali);
+        echo '
+                <td>
+                    '.nl2br(strip_tags($descrizione));
+
+        if ($riga->isArticolo()) {
+            // Codice articolo
+            $text = tr('COD. _COD_', [
+                '_COD_' => $riga->codice,
+            ]);
             echo '
                     <br><small>'.$text.'</small>';
 
             $autofill->count($text, true);
+
+            // Seriali
+            $seriali = $riga->serials;
+            if (!empty($seriali)) {
+                $text = tr('SN').': '.implode(', ', $seriali);
+                echo '
+                        <br><small>'.$text.'</small>';
+
+                $autofill->count($text, true);
+            }
         }
-    }
 
-    // Aggiunta dei riferimenti ai documenti
-    if (!empty($record['ref_documento'])) {
-        $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM co_documenti WHERE id = ".prepare($record['ref_documento']));
+        // Aggiunta dei riferimenti ai documenti
+        if (!empty($record['ref_documento'])) {
+            $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM co_documenti WHERE id = ".prepare($record['ref_documento']));
 
-        $text = tr('Rif. fattura _NUM_ del _DATE_', [
-            '_NUM_' => $data[0]['numero'],
-            '_DATE_' => Translator::dateToLocale($data[0]['data']),
-        ]);
-
-        echo '
-        <br><small>'.$text.'</small>';
-
-        $autofill->count($text, true);
-    }
-
-    // Aggiunta dei riferimenti ai documenti
-    /*
-    if (setting('Riferimento dei documenti nelle stampe') && $riga->hasOriginal()) {
-        $ref = $riga->getOriginal()->getDcocument()->getReference();
-        if (!empty($riga->getOriginal()->getDcocument()->numero_cliente)) {
-            $ref .= '<br>'.tr('_DOC_ num. _NUM_ del _DATE_', [
-                '_DOC_' => 'Rif. Vs. ordine cliente',
-                '_NUM_' => $riga->getOriginalComponent()->getDocument()->numero_cliente,
-                '_DATE_' => dateFormat($riga->getOriginalComponent()->getDocument()->data_cliente),
+            $text = tr('Rif. fattura _NUM_ del _DATE_', [
+                '_NUM_' => $data[0]['numero'],
+                '_DATE_' => Translator::dateToLocale($data[0]['data']),
             ]);
-        }
-        if (!empty($ref)) {
-            echo '
-                <br><small>'.$ref.'</small>';
-
-            $autofill->count($ref, true);
-        }
-    }*/
-
-    // Informazioni su CIG, CUP, ...
-    if ($riga->hasOriginalComponent()) {
-        $documento_originale = $riga->getOriginalComponent()->getDocument();
-
-        $num_item = $documento_originale['num_item'];
-        $codice_commessa = $documento_originale['codice_commessa'];
-        $codice_cig = $documento_originale['codice_cig'];
-        $codice_cup = $documento_originale['codice_cup'];
-        $id_documento_fe = $documento_originale['id_documento_fe'];
-
-        $extra_riga = replace('_ID_DOCUMENTO__NUMERO_RIGA__CODICE_COMMESSA__CODICE_CIG__CODICE_CUP_', [
-            '_ID_DOCUMENTO_' => $id_documento_fe ? 'DOC: '.$id_documento_fe : null,
-            '_NUMERO_RIGA_' => $num_item ? ', NRI: '.$num_item : null,
-            '_CODICE_COMMESSA_' => $codice_commessa ? ', COM: '.$codice_commessa : null,
-            '_CODICE_CIG_' => $codice_cig ? ', CIG: '.$codice_cig : null,
-            '_CODICE_CUP_' => $codice_cup ? ', CUP: '.$codice_cup : null,
-        ]);
-
-        echo '
-        <br><small>'.$extra_riga.'</small>';
-    }
-
-    echo '
-            </td>';
-
-    if (!$riga->isDescrizione()) {
-        echo '
-            <td class="text-center">
-                '.Translator::numberToLocale(abs($riga->qta), 'qta').' '.$r['um'].'
-            </td>';
-
-        // Prezzo unitario
-        echo '
-            <td class="text-right">
-				'.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario);
-
-        if ($riga->sconto > 0) {
-            $text = discountInfo($riga, false);
 
             echo '
-                <br><small class="text-muted">'.$text.'</small>';
+            <br><small>'.$text.'</small>';
 
             $autofill->count($text, true);
         }
 
-        echo '
-            </td>';
+        // Aggiunta dei riferimenti ai documenti
+        /*
+        if (setting('Riferimento dei documenti nelle stampe') && $riga->hasOriginal()) {
+            $ref = $riga->getOriginal()->getDcocument()->getReference();
+            if (!empty($riga->getOriginal()->getDcocument()->numero_cliente)) {
+                $ref .= '<br>'.tr('_DOC_ num. _NUM_ del _DATE_', [
+                    '_DOC_' => 'Rif. Vs. ordine cliente',
+                    '_NUM_' => $riga->getOriginalComponent()->getDocument()->numero_cliente,
+                    '_DATE_' => dateFormat($riga->getOriginalComponent()->getDocument()->data_cliente),
+                ]);
+            }
+            if (!empty($ref)) {
+                echo '
+                    <br><small>'.$ref.'</small>';
 
-        // Imponibile
-        echo '
-            <td class="text-right">
-				'.moneyFormat($prezzi_ivati ? ($riga->totale_imponibile + $riga->iva) : $riga->totale_imponibile).'
-            </td>';
+                $autofill->count($ref, true);
+            }
+        }*/
 
-        // Iva
+        // Informazioni su CIG, CUP, ...
+        if ($riga->hasOriginalComponent()) {
+            $documento_originale = $riga->getOriginalComponent()->getDocument();
+
+            $num_item = $documento_originale['num_item'];
+            $codice_commessa = $documento_originale['codice_commessa'];
+            $codice_cig = $documento_originale['codice_cig'];
+            $codice_cup = $documento_originale['codice_cup'];
+            $id_documento_fe = $documento_originale['id_documento_fe'];
+
+            $extra_riga = replace('_ID_DOCUMENTO__NUMERO_RIGA__CODICE_COMMESSA__CODICE_CIG__CODICE_CUP_', [
+                '_ID_DOCUMENTO_' => $id_documento_fe ? 'DOC: '.$id_documento_fe : null,
+                '_NUMERO_RIGA_' => $num_item ? ', NRI: '.$num_item : null,
+                '_CODICE_COMMESSA_' => $codice_commessa ? ', COM: '.$codice_commessa : null,
+                '_CODICE_CIG_' => $codice_cig ? ', CIG: '.$codice_cig : null,
+                '_CODICE_CUP_' => $codice_cup ? ', CUP: '.$codice_cup : null,
+            ]);
+
+            echo '
+            <br><small>'.$extra_riga.'</small>';
+        }
+
         echo '
-            <td class="text-center">
-                '.Translator::numberToLocale($riga->aliquota->percentuale, 2).'
-            </td>';
-    } else {
+                </td>';
+
+        if (!$riga->isDescrizione()) {
+            echo '
+                <td class="text-center">
+                    '.Translator::numberToLocale(abs($riga->qta), 'qta').' '.$r['um'].'
+                </td>';
+
+            // Prezzo unitario
+            echo '
+                <td class="text-right">
+                    '.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario);
+
+            if ($riga->sconto > 0) {
+                $text = discountInfo($riga, false);
+
+                echo '
+                    <br><small class="text-muted">'.$text.'</small>';
+
+                $autofill->count($text, true);
+            }
+
+            echo '
+                </td>';
+
+            // Imponibile
+            echo '
+                <td class="text-right">
+                    '.moneyFormat($prezzi_ivati ? ($riga->totale_imponibile + $riga->iva) : $riga->totale_imponibile).'
+                </td>';
+
+            // Iva
+            echo '
+                <td class="text-center">
+                    '.Translator::numberToLocale($riga->aliquota->percentuale, 2).'
+                </td>';
+        } else {
+            echo '
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>';
+        }
+
         echo '
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>';
+            </tr>';
+
+        $autofill->next();
     }
-
-    echo '
-        </tr>';
-
-    $autofill->next();
 }
 
 echo '

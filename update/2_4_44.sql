@@ -51,11 +51,13 @@ ORDER BY
     `co_preventivi`.`id` DESC" WHERE `name` = 'Preventivi';
 
 -- Fix query Fatture di vendita
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `visible`, `default`) VALUES((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Prima nota', '`primanota`.`totale`', 15, 1, 0, 0, 1);
 UPDATE `zz_modules` SET `options` = "
 SELECT
 	|select|
 FROM
     `co_documenti`
+    LEFT JOIN (SELECT SUM(`totale`) AS `totale`, `iddocumento` FROM `co_movimenti`  WHERE `totale` > 0 AND `primanota` = 1 GROUP BY `iddocumento`) AS `primanota` ON `primanota`.`iddocumento` = `co_documenti`.`id`
     LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
     LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
     LEFT JOIN (SELECT `iddocumento`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`iva`) AS `iva` FROM `co_righe_documenti` GROUP BY `iddocumento`) AS righe ON `co_documenti`.`id` = `righe`.`iddocumento`

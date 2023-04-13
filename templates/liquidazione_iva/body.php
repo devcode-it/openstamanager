@@ -260,10 +260,6 @@ echo '
         <td class=text-right>'.moneyFormat($totale_iva_nondetraibile, 2).'</td>
     </tr>
     <tr>
-        <td>TOTALE IVA DETRAIBILI</td>
-        <td class=text-right>'.(empty($totale_iva_nondetraibile) ? '' : moneyformat($totale_iva_detraibile - $totale_iva_nondetraibile, 2)).'</td>
-    </tr>
-    <tr>
         <td>VARIAZIONE DI IMPOSTA RELATIVE A PERIODI PRECEDENTI</td>';
         if ($totale_iva_periodo_precedente < 25.82 && $totale_iva_periodo_precedente > 0) {
             echo'

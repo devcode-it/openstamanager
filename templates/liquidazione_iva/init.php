@@ -312,7 +312,7 @@ $iva_vendite_nonesigibile = $dbo->fetchArray('
         co_iva.codice_natura_fe AS cod_iva,
         co_iva.percentuale AS aliquota,
         co_iva.descrizione AS descrizione,
-        SUM((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *indetraibile/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS iva,
+        SUM((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *(100-indetraibile)/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS iva,
         SUM((co_righe_documenti.subtotale - co_righe_documenti.sconto + co_righe_documenti.rivalsainps) *(IF(co_tipidocumento.reversed = 0,1,-1))) AS subtotale
     FROM 
         co_iva 

@@ -307,7 +307,8 @@ WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.id
         ->sortBy('data');
 
     echo '
-    <select class="superselect openstamanager-input select-input" id="mese-promemoria">';
+    <select class="superselect openstamanager-input select-input" id="mese-promemoria">
+        <option value="all">'.tr('Tutti').'</option>';
 
     foreach ($mesi as $mese) {
         $data = Carbon::parse($mese['data']);

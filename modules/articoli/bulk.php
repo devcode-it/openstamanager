@@ -196,14 +196,14 @@ switch (post('op')) {
         foreach ($id_records as $id) {
             $originale = Articolo::find($id);
             $articolo = ArticoloPreventivo::build($preventivo, $originale);
-            $idiva = $originale->idiva_vendita ?: setting('Iva predefinita');
+            $id_iva = $originale->idiva_vendita ?: setting('Iva predefinita');
             $articolo->qta = 1;
             $articolo->descrizione = $originale->descrizione;
             $articolo->um = $originale->um ?: null;
             $articolo->costo_unitario = $originale->prezzo_acquisto;
             $articolo->prezzo_unitario = $originale->prezzo_vendita;
-            $articolo->idiva = $idiva;
-            $articolo->setPrezzoUnitario($originale->prezzo_vendita, $idiva);
+            $articolo->idiva = $id_iva;
+            $articolo->setPrezzoUnitario($originale->prezzo_vendita, $id_iva);
             $articolo->save();
 
             ++$n_articoli;

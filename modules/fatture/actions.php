@@ -465,7 +465,11 @@ switch (post('op')) {
             $tipo_sconto = post('tipo_sconto')[$id_articolo];
             $prezzo_unitario = post('prezzo_unitario')[$id_articolo];
             $id_dettaglio_fornitore = post('id_dettaglio_fornitore')[$id_articolo];
-            $id_iva = $originale->idiva_vendita ? $originale->idiva_vendita : setting('Iva predefinita');
+            if ($dir == 'entrata') {
+                $id_iva = ($fattura->anagrafica->idiva_vendite ?: $originale->idiva_vendita) ?: setting('Iva predefinita');
+            } else {
+                $id_iva = ($fattura->anagrafica->idiva_acquisti ?: setting('Iva predefinita'));
+            }
 
             $id_conto = ($fattura->direzione == 'entrata') ? setting('Conto predefinito fatture di vendita') : setting('Conto predefinito fatture di acquisto');
             if ($fattura->direzione == 'entrata' && !empty($originale->idconto_vendita)) {
@@ -966,9 +970,9 @@ switch (post('op')) {
                 $articolo->idconto = $id_conto;
                 
                 if ($dir == 'entrata') {
-                    if ($fattura->anagrafica['idiva_vendite'] ? $id_iva = $fattura->anagrafica['idiva_vendite'] : $id_iva = $originale->idiva_vendita ?: setting('Iva predefinita'));
+                    $id_iva = ($fattura->anagrafica->idiva_vendite ?: $originale->idiva_vendita) ?: setting('Iva predefinita');
                 } else {
-                    if ($fattura->anagrafica['idiva_acquisti'] ? $id_iva = $fattura->anagrafica['idiva_acquisti'] : $id_iva = $originale->idiva_acquisti ?: setting('Iva predefinita'));
+                    $id_iva = ($fattura->anagrafica->idiva_acquisti ?: setting('Iva predefinita'));
                 }
                 $id_anagrafica = $fattura->idanagrafica;
                 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');

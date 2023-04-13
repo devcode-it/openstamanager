@@ -438,7 +438,7 @@ switch (filter('op')) {
 
             // Elenco interventi da pianificare
             foreach ($promemoria as $sessione) {
-                if ($sessione['mese'] == $mese) {
+                if ($sessione['mese'] == $mese || $mese == 'all') {
                     if (date('Ymd', strtotime($sessione['data_scadenza'])) < date('Ymd') and !empty($sessione['data_scadenza'])) {
                         $class = 'danger';
                     } else {

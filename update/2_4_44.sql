@@ -1,3 +1,27 @@
+-- Fix query vista Segmenti
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select|
+FROM
+    `zz_segments`
+    INNER JOIN `zz_modules` ON `zz_modules`.`id` = `zz_segments`.`id_module`
+    LEFT JOIN (SELECT GROUP_CONCAT(`zz_groups`.`nome` ORDER BY `zz_groups`.`nome`  SEPARATOR ', ') AS `gruppi`, `zz_group_segment`.`id_segment` FROM `zz_group_segment` INNER JOIN `zz_groups` ON `zz_groups`.`id` = `zz_group_segment`.`id_gruppo` GROUP BY  `zz_group_segment`.`id_segment`) AS `t` ON `t`.`id_segment` = `zz_segments`.`id`
+WHERE
+    1=1
+HAVING
+    2=2
+ORDER BY `zz_segments`.`name`,
+    `zz_segments`.`id_module`" WHERE `name` = 'Segmenti';
+
+
+-- Aggiunta segmento Articoli disponibili
+INSERT INTO `zz_segments` (`id`, `id_module`, `name`, `clause`, `position`, `pattern`, `note`, `dicitura_fissa`, `predefined`, `predefined_accredito`, `predefined_addebito`, `autofatture`, `is_sezionale`, `is_fiscale`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = "Articoli"), 'Disponibili', 'qta-IFNULL(a.qta_impegnata,0)', 'WHR', '####', '', '', '0', '0', '0', '0', '0', '0'); 
+
+-- Aggiunta colonna stampa in vista moduli
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `visible`, `default`) VALUES((SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), '_print_', '''Preventivo''', 12, 0, 0, 0, 1);
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `visible`, `default`) VALUES((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente'), '_print_', '''Ordine cliente''', 13, 0, 0, 0, 1);
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `visible`, `default`) VALUES((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'), '_print_', '''Ddt di vendita''', 14, 0, 0, 0, 1);
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `visible`, `default`) VALUES((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), '_print_', '''Fattura di vendita''', 14, 0, 0, 0, 1);
+
 
 -- Fix query Attività
 UPDATE `zz_modules` SET `options` = "
@@ -51,7 +75,7 @@ ORDER BY
     `co_preventivi`.`id` DESC" WHERE `name` = 'Preventivi';
 
 -- Fix query Fatture di vendita
-INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `visible`, `default`) VALUES((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Prima nota', '`primanota`.`totale`', 15, 1, 0, 0, 1);
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `visible`, `default`) VALUES((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Prima nota', '`primanota`.`totale`', 15, 1, 0, 1, 0, 1);
 UPDATE `zz_modules` SET `options` = "
 SELECT
 	|select|
@@ -252,3 +276,7 @@ GROUP BY
 HAVING
     2=2" WHERE `name` = 'Pagamenti';
 
+-- Fix vista Stampe
+UPDATE `zz_prints` SET `options` = '{\"pricing\": true, \"last-page-footer\": true, \"hide-codice\": true, \"images\": true}' WHERE `zz_prints`.`name` = "Ordine cliente (senza codici)";
+UPDATE `zz_prints` SET `options` = '{\"pricing\":true, \"hide-total\":true, \"images\": true}' WHERE `zz_prints`.`name` = "Preventivo (senza totali)"; 
+UPDATE `zz_prints` SET `options` = '{\"pricing\":false, \"show-only-total\":true, \"images\": true}' WHERE `zz_prints`.`name` = "Preventivo (solo totale)";

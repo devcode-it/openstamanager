@@ -169,7 +169,11 @@ switch (filter('op')) {
             $tipo_sconto = post('tipo_sconto')[$id_articolo];
             $prezzo_unitario = post('prezzo_unitario')[$id_articolo];
             $id_dettaglio_fornitore = post('id_dettaglio_fornitore')[$id_articolo];
-            $id_iva = $originale->idiva_vendita ? $originale->idiva_vendita : setting('Iva predefinita');
+            if ($dir == 'entrata') {
+                $id_iva = ($ddt->anagrafica->idiva_vendite ?: $originale->idiva_vendita) ?: setting('Iva predefinita');
+            } else {
+                $id_iva = ($ddt->anagrafica->idiva_acquisti ?: setting('Iva predefinita'));
+            }
 
             // Creazione articolo
             $originale = ArticoloOriginale::find($id_articolo);
@@ -371,7 +375,11 @@ switch (filter('op')) {
                         $originale = ArticoloOriginale::find($riga->idarticolo);
 
                         $prezzo = $documento->tipo->descrizione=='Ddt in entrata' ? $originale->prezzo_vendita : $originale->prezzo_acquisto;
-                        $id_iva = $originale->idiva_vendita ? $originale->idiva_vendita : setting('Iva predefinita');
+                        if ($dir == 'entrata') {
+                            $id_iva = ($ddt->anagrafica->idiva_vendite ?: setting('Iva predefinita'));
+                        } else {
+                            $id_iva = ($ddt->anagrafica->idiva_acquisti ?: setting('Iva predefinita'));
+                        }
 
                         $copia->setPrezzoUnitario($prezzo, $id_iva);
                     }
@@ -602,7 +610,11 @@ switch (filter('op')) {
                 $articolo->qta = 1;
                 $articolo->costo_unitario = $originale->prezzo_acquisto;
 
-                $id_iva = $originale->idiva_vendita ?: setting('Iva predefinita');
+                if ($dir == 'entrata') {
+                    $id_iva = ($ddt->anagrafica->idiva_vendite ?: $originale->idiva_vendita) ?: setting('Iva predefinita');
+                } else {
+                    $id_iva = ($ddt->anagrafica->idiva_acquisti ?: setting('Iva predefinita'));
+                }
                 $id_anagrafica = $ddt->idanagrafica;
                 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
         

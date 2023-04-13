@@ -151,7 +151,7 @@ switch (post('op')) {
 
     case 'addriga':
 
-        $idiva = post('idiva');
+        $id_iva = post('idiva');
         $descrizione = post('descrizione');
         $qta = post('qta');
         $um = post('um');
@@ -160,7 +160,7 @@ switch (post('op')) {
         $prezzo_vendita = post('prezzo_vendita');
         $subtotale = $qta * $prezzo_vendita;
 
-        $query = 'INSERT INTO in_righe_tipiinterventi(id_tipointervento, prezzo_acquisto, prezzo_vendita, descrizione, qta, um, subtotale, idiva) VALUES ('.prepare($id_tipointervento).', '.prepare($prezzo_acquisto).', '.prepare($prezzo_vendita).', '.prepare($descrizione).', '.prepare($qta).', '.prepare($um).', '.prepare($subtotale).', '.prepare($idiva).')';
+        $query = 'INSERT INTO in_righe_tipiinterventi(id_tipointervento, prezzo_acquisto, prezzo_vendita, descrizione, qta, um, subtotale, idiva) VALUES ('.prepare($id_tipointervento).', '.prepare($prezzo_acquisto).', '.prepare($prezzo_vendita).', '.prepare($descrizione).', '.prepare($qta).', '.prepare($um).', '.prepare($subtotale).', '.prepare($id_iva).')';
         $dbo->query($query);
 
         flash()->info(tr('Riga aggiunta!'));
@@ -169,7 +169,7 @@ switch (post('op')) {
 
     case 'editriga':
 
-        $idiva = post('idiva');
+        $id_iva = post('idiva');
         $descrizione = post('descrizione');
         $qta = post('qta');
         $um = post('um');
@@ -182,7 +182,7 @@ switch (post('op')) {
         $query = 'UPDATE in_righe_tipiinterventi SET'.
             ' descrizione='.prepare($descrizione).','.
             ' qta='.prepare($qta).','.
-            ' idiva='.prepare($idiva).','.
+            ' idiva='.prepare($id_iva).','.
             ' um='.prepare($um).','.
             ' id_tipointervento='.prepare($id_tipointervento).','.
             ' prezzo_acquisto='.prepare($prezzo_acquisto).','.

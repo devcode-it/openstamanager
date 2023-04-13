@@ -157,13 +157,10 @@ echo '
 			</div>
             
 			<div class="row">
-				<div class="col-md-12">
+				<div class="col-md-6">
 					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$" ]}
 				</div>
-			</div>
-
-            <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-6">
 					{[ "type": "textarea", "label": "<?php echo tr('Note interne'); ?>", "name": "note_aggiuntive", "value": "$note_aggiuntive$" ]}
 				</div>
 			</div>

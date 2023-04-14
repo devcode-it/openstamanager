@@ -51,7 +51,7 @@ class Ordine extends Document
      *
      * @return self
      */
-    public static function build(Anagrafica $anagrafica, Tipo $tipo_documento, $data, $id_segment = null)
+    public static function build(Anagrafica $anagrafica, Tipo $tipo_documento, $data, $id_segment = null, $id_sede_partenza = 0)
     {
         $model = new static();
 
@@ -82,6 +82,7 @@ class Ordine extends Document
         $model->tipo()->associate($tipo_documento);
         $model->stato()->associate($stato_documento);
         $model->id_segment = $id_segment;
+        $model->id_sede_partenza = $id_sede_partenza;
 
         $model->save();
 
@@ -92,7 +93,7 @@ class Ordine extends Document
             $model->idpagamento = $id_pagamento;
         }
 
-        $model->numero = static::getNextNumero($data, $direzione, $id_segment);
+        $model->numero = static::getNextNumero($data, $direzione);
         $model->numero_esterno = static::getNextNumeroSecondario($data, $direzione, $id_segment);
 
         $model->save();

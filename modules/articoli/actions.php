@@ -72,7 +72,7 @@ switch (post('op')) {
         $articolo->um = post('um');
         $articolo->um_secondaria = post('um_secondaria');
         $articolo->fattore_um_secondaria = post('fattore_um_secondaria');
-        
+
         $articolo->save();
 
         // Aggiornamento delle varianti per i campi comuni
@@ -109,6 +109,7 @@ switch (post('op')) {
     // Modifica articolo
     case 'update':
         $qta = post('qta');
+        $tresholdSedi = post('threshold_qta_sedi');
 
         // Inserisco l'articolo e avviso se esiste un altro articolo con stesso codice.
         $numero_codice = Articolo::where([
@@ -130,7 +131,7 @@ switch (post('op')) {
         $articolo->id_sottocategoria = post('subcategoria');
         $articolo->abilita_serial = post('abilita_serial');
         $articolo->ubicazione = post('ubicazione');
-        $articolo->threshold_qta = post('threshold_qta');
+        $articolo->threshold_qta = $tresholdSedi[0];
         $articolo->coefficiente = post('coefficiente');
         $articolo->idiva_vendita = post('idiva_vendita');
         $articolo->prezzo_acquisto = post('prezzo_acquisto');
@@ -158,14 +159,35 @@ switch (post('op')) {
 
         $articolo->save();
 
+        // Aggiorno le soglie minime per le sedi
+        $gestisciMagazzini = $dbo->fetchOne('SELECT * FROM zz_settings WHERE nome = "Gestisci soglia minima per magazzino"');
+
+        if ($gestisciMagazzini['valore'] == '1') {
+            foreach ($tresholdSedi as $id_sede => $treshold) {
+                $item = $dbo->fetchOne(
+                    'SELECT * FROM mg_articoli_sedi WHERE id_articolo = ' . prepare($id_record) . ' AND id_sede = ' . prepare($id_sede)
+                );
+
+                if (empty($item)) {
+                    $dbo->query(
+                        'INSERT INTO mg_articoli_sedi(id_articolo, id_sede, threshold_qta)
+                        VALUES(' . prepare($id_record) . ', ' . prepare($id_sede) . ', ' . prepare($treshold) . ')'
+                    );
+                } else {
+                    $dbo->query(
+                        'UPDATE mg_articoli_sedi SET threshold_qta = '. prepare($treshold) . '
+                        WHERE id_articolo = ' . prepare($id_record) . ' AND id_sede = ' . prepare($id_sede)
+                    );
+                }
+            }
+        }
+
         // Aggiornamento delle varianti per i campi comuni
         Combinazione::sincronizzaVarianti($articolo);
 
         // Leggo la quantità attuale per capire se l'ho modificata
-        // TODO: gestire la movimentazione manuale per sede
-        $id_sede = 0;
-        $old_qta = $articolo->getGiacenze(post('data_movimento'));
-        $movimento = $qta - $old_qta[$id_sede][0];
+        $old_qta = $record['qta'];
+        $movimento = $qta - $old_qta;
 
         $qta_manuale = post('qta_manuale');
         if (!empty($qta_manuale)) {
@@ -244,7 +266,7 @@ switch (post('op')) {
     // Duplica articolo
     case 'copy':
         $new = $articolo->replicate();
-        
+
         //Se non specifico il codice articolo lo imposto uguale all'id della riga
         if (empty(post('codice'))) {
             $codice = $dbo->fetchOne('SELECT MAX(id) as codice FROM mg_articoli')['codice'] + 1;

@@ -19,6 +19,8 @@
 
 include_once __DIR__.'/../../../core.php';
 
+use Modules\Articoli\Articolo;
+
 $idarticolo = get('idarticolo');
 $limit = get('limit');
 
@@ -144,7 +146,7 @@ switch ($resource) {
         $prezzi = $database->fetchArray($query_anagrafica);
 
         // Prezzi listini clienti
-        $query = 'SELECT sconto_percentuale AS sconto_percentuale_listino,
+        $query = 'SELECT sconto_percentuale AS sconto_percentuale_listino, mg_listini.nome,
             '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino
         FROM mg_listini
         LEFT JOIN mg_listini_articoli ON mg_listini.id=mg_listini_articoli.id_listino
@@ -174,6 +176,139 @@ switch ($resource) {
         $ultimo_prezzo = $dbo->fetchArray('SELECT '.($prezzi_ivati ? '(prezzo_unitario_ivato-sconto_unitario_ivato)' : '(prezzo_unitario-sconto_unitario)').' AS prezzo_ultimo FROM co_righe_documenti LEFT JOIN co_documenti ON co_documenti.id=co_righe_documenti.iddocumento WHERE idarticolo='.prepare($id_articolo).' AND idanagrafica='.prepare($id_anagrafica).' AND idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir='.prepare($direzione).') ORDER BY data DESC LIMIT 0,1');
 
         $results = array_merge($prezzi, $listino, $listini_sempre_visibili, $prezzo_articolo, $ultimo_prezzo);
+
+        echo json_encode($results);
+
+        break;
+
+    case 'getGiacenze':
+        $id_articolo = get('id_articolo');
+        $id_anagrafica = get('id_anagrafica');
+        $direzione = get('dir') == 'uscita' ? 'uscita' : 'entrata';
+
+        if (empty($id_articolo) || empty($id_anagrafica)) {
+            return;
+        }
+
+        $articolo = Articolo::find($id_articolo);
+        $giacenze = $articolo->getGiacenze();
+        $sedi = $dbo->fetchArray('(SELECT "0" AS id, IF(indirizzo!=\'\', CONCAT_WS(" - ", "'.tr('Sede legale').'", CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", "'.tr('Sede legale').'", citta)) AS nomesede FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')).') UNION (SELECT id, IF(indirizzo!=\'\',CONCAT_WS(" - ", nomesede, CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", nomesede, citta )) AS nomesede FROM an_sedi WHERE idanagrafica='.prepare(setting('Azienda predefinita')).')');
+
+        $results = [
+            'articolo' => $articolo,
+            'giacenze' => $giacenze,
+            'sedi' => $sedi,
+        ];
+
+        echo json_encode($results);
+
+        break;
+
+    case 'getDatiVendita':
+        $id_articolo = get('id_articolo');
+        $id_anagrafica = get('id_anagrafica');
+        $direzione = get('dir') == 'uscita' ? 'uscita' : 'entrata';
+
+        if (empty($id_articolo) || empty($id_anagrafica)) {
+            return;
+        }
+
+        //get current date
+        $current_month = date('m');
+        $current_year = date('Y');
+
+        for ($i = 0; $i < 12; ++$i) {
+            $month = $current_month;
+            $year = $current_year;
+
+            $datiVendita[] = [
+                'mese' => $month,
+                'anno' => $year,
+                'data' => $dbo->fetchArray(
+                    'SELECT SUM(IF(reversed=1, -co_righe_documenti.qta, co_righe_documenti.qta)) AS qta,
+                    SUM(
+                        IF(reversed=1, -(co_righe_documenti.subtotale - co_righe_documenti.sconto), (co_righe_documenti.subtotale - co_righe_documenti.sconto))
+                    ) AS totale,
+                    mg_articoli.id, mg_articoli.codice, mg_articoli.descrizione, mg_articoli.um
+                    FROM co_documenti
+                    INNER JOIN co_statidocumento ON co_statidocumento.id = co_documenti.idstatodocumento
+                    INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id
+                    INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id
+                    INNER JOIN mg_articoli ON mg_articoli.id=co_righe_documenti.idarticolo
+                    INNER JOIN zz_segments ON co_documenti.id_segment=zz_segments.id
+                    WHERE co_tipidocumento.dir = "entrata"
+                    AND
+                        (co_statidocumento.descrizione = "Pagato"
+                        OR co_statidocumento.descrizione = "Parzialmente pagato"
+                        OR co_statidocumento.descrizione = "Emessa"
+                    )
+                    AND MONTH(co_documenti.data) = ' . $month . '
+                    AND YEAR(co_documenti.data) = ' . $year . '
+                    AND mg_articoli.id = ' . $id_articolo . '
+                    AND zz_segments.autofatture=0
+                    GROUP BY co_righe_documenti.idarticolo'
+                ),
+            ];
+
+            if ($current_month == 1) {
+                $current_month = 12;
+                $current_year--;
+            } else {
+                $current_month--;
+            }
+
+        }
+
+        $results = [
+            'datiVendita' => $datiVendita,
+        ];
+
+        echo json_encode($results);
+
+        break;
+
+    case 'articoli_barcode_file':
+        $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
+        $id_anagrafica = get('id_anagrafica'); // ID passato via URL in modo fisso
+        $barcodes = json_decode(get('barcodes'), true);
+        $barcodeTrovati = [];
+
+        foreach ($barcodes as $barcode => $qta) {
+            //select barcode
+            $rs = $dbo->fetchOne(
+                'SELECT mg_articoli.*,
+                IFNULL(mg_fornitore_articolo.codice_fornitore, mg_articoli.codice) AS codice,
+                IFNULL(mg_fornitore_articolo.descrizione, mg_articoli.descrizione) AS descrizione,
+                IFNULL(mg_fornitore_articolo.prezzo_acquisto, mg_articoli.prezzo_acquisto) AS prezzo_acquisto,
+                mg_articoli.'.($prezzi_ivati ? 'prezzo_vendita_ivato' : 'prezzo_vendita').' AS prezzo_vendita,
+                mg_articoli.prezzo_vendita_ivato AS prezzo_vendita_ivato,
+                IFNULL(mg_fornitore_articolo.qta_minima, 0) AS qta_minima,
+                mg_fornitore_articolo.id AS id_dettaglio_fornitore
+                FROM mg_articoli
+                LEFT JOIN mg_fornitore_articolo
+                    ON mg_fornitore_articolo.id_articolo = mg_articoli.id
+                    AND mg_fornitore_articolo.deleted_at IS NULL
+                    AND mg_fornitore_articolo.id_fornitore = '.prepare($id_anagrafica).'
+                WHERE mg_articoli.attivo = 1 AND mg_articoli.deleted_at IS NULL AND REPLACE(mg_articoli.barcode, "/", "-") = ' . prepare($barcode)
+            );
+
+            if (!empty($rs)) {
+                $barcodeTrovati[] = [
+                    'dettaglio' => $rs,
+                    'qta' => $qta,
+                ];
+            } else {
+                $barcodeTrovati[] = [
+                    'dettaglio' => null,
+                    'barcode' => $barcode,
+                    'qta' => $qta,
+                ];
+            }
+        }
+
+        $results = [
+            'barcodeTrovati' => $barcodeTrovati,
+        ];
 
         echo json_encode($results);
 

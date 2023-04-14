@@ -70,6 +70,10 @@ echo '
     <input type="hidden" name="class" value="'.get_class($documento).'">
     <input type="hidden" name="is_evasione" value="1">';
 
+    if ($options['type'] == 'ordine') {
+        echo '<input type="hidden" name="id_sede_partenza" value="'.$options['documento']['id_sede_partenza'].'">';
+    }
+
 // Creazione fattura dal documento
 if (!empty($options['create_document'])) {
     echo '
@@ -115,7 +119,7 @@ if (!empty($options['create_document'])) {
             <div class="col-md-6">
                 {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, CONCAT(codice_tipo_documento_fe, \' - \', descrizione) AS descrizione FROM co_tipidocumento WHERE enabled = 1 AND dir = '.prepare($dir).' ORDER BY codice_tipo_documento_fe", "value": "'.$idtipodocumento.'" ]}
             </div>
-            
+
             <div class="col-md-6">
                 {[ "type": "select", "label": "'.tr('Ritenuta previdenziale').'", "name": "id_ritenuta_contributi", "value": "$id_ritenuta_contributi$", "values": "query=SELECT * FROM co_ritenuta_contributi" ]}
             </div>';
@@ -175,6 +179,13 @@ if (!empty($options['create_document'])) {
         echo '
             <div class="col-md-6">
                 {[ "type": "select", "label": "'.$tipo_anagrafica.'", "name": "idanagrafica", "required": 1, "ajax-source": "'.$ajax.'", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica='.$tipo_anagrafica.'" ]}
+            </div>';
+    }
+
+    if ($options['type'] == 'preventivo' && ($options['op'] == 'add_ordine_cliente' || $options['op'] == 'add_ordine_fornitore' || $options['op'] == 'add_preventivo')) {
+        echo '
+            <div class="col-md-6">
+			    {[ "type": "select", "label": "'.tr('Sede di partenza').'", "name": "id_sede_partenza", "required": 1, "ajax-source": "sedi-partenza", "select-options": '.json_encode(['id_module' => $id_module, 'is_sezionale' => 1]).', "value": "0" ]}
             </div>';
     }
 
@@ -656,7 +667,7 @@ echo '
         ricalcolaTotale();
     });
 
-    $("#import_all").click(function(){    
+    $("#import_all").click(function(){
         if( $(this).is(":checked") ){
             $(".check").each(function(){
                 if( !$(this).is(":checked") ){

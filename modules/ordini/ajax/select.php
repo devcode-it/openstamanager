@@ -48,4 +48,39 @@ switch ($resource) {
         }
 
         break;
+
+    case 'sedi-partenza':
+        $gestisciMagazzini = $dbo->fetchOne('SELECT * FROM zz_settings WHERE nome = "Gestisci soglia minima per magazzino"');
+
+        if ($gestisciMagazzini['valore'] == '1') {
+            $query = '(
+                    SELECT "0" AS id,
+                    IF(
+                        indirizzo != "",
+                        CONCAT_WS(" - ", "Sede legale", CONCAT(citta, " (", indirizzo, ")")),
+                        CONCAT_WS(" - ", "Sede legale", citta)
+                    ) AS descrizione
+                    FROM an_anagrafiche WHERE idanagrafica = "1"
+                ) UNION (
+                    SELECT id,
+                    IF(
+                        indirizzo != "",
+                        CONCAT_WS(" - ", nomesede, CONCAT(citta, " (", indirizzo, ")")),
+                        CONCAT_WS(" - ", nomesede, citta )
+                    ) AS descrizione
+                    FROM an_sedi WHERE idanagrafica="1"
+                )';
+            } else {
+                $query = '(
+                    SELECT "0" AS id,
+                    IF(
+                        indirizzo != "",
+                        CONCAT_WS(" - ", "Sede legale", CONCAT(citta, " (", indirizzo, ")")),
+                        CONCAT_WS(" - ", "Sede legale", citta)
+                    ) AS descrizione
+                    FROM an_anagrafiche WHERE idanagrafica = "1"
+                )';
+            }
+
+        break;
 }

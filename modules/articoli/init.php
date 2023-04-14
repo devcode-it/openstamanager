@@ -25,5 +25,35 @@ if (isset($id_record)) {
     $articolo = Articolo::withTrashed()->find($id_record);
     $articolo->nome_variante;
 
+    $gestisciMagazzini = $dbo->fetchOne('SELECT * FROM zz_settings WHERE nome = "Gestisci soglia minima per magazzino"');
+
+    if ($gestisciMagazzini['valore'] == '1') {
+        $articoloSedeLegale = $dbo->fetchOne(
+            'SELECT "0" as id_sede , CONCAT("Sede legale - ", citta) as nomesede, mgas.id_articolo, mgas.threshold_qta
+            FROM an_anagrafiche ana
+            LEFT JOIN mg_articoli_sedi mgas
+            ON mgas.id_sede = " "  AND mgas.id_articolo = ' . prepare($id_record) . '
+            WHERE ana.idanagrafica = 1'
+        );
+
+        $articoloSedi = $dbo->fetchArray(
+            'SELECT ans.id as id_sede, ans.nomesede, mgas.id_articolo, mgas.threshold_qta
+            FROM an_sedi ans
+            LEFT JOIN mg_articoli_sedi mgas
+            ON ans.id = mgas.id_sede AND mgas.id_articolo = ' . prepare($id_record) . '
+            WHERE ans.idanagrafica = 1'
+        );
+    } else {
+        $articoloSedeLegale = $dbo->fetchOne(
+            'SELECT "0" as id_sede , CONCAT("Sede legale - ", citta) as nomesede, mga.id as id_articolo, mga.threshold_qta
+            FROM an_anagrafiche ana
+            LEFT JOIN mg_articoli mga
+            ON ana.idanagrafica = 1
+            WHERE mga.id = ' . prepare($id_record) . ''
+        );
+
+        $articoloSedi = [];
+    }
+
     $record = $dbo->fetchOne('SELECT *, (SELECT COUNT(id) FROM mg_prodotti WHERE id_articolo = mg_articoli.id) AS serial FROM mg_articoli WHERE id='.prepare($id_record));
 }

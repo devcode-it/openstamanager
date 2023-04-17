@@ -19,20 +19,18 @@
 
 use Models\Upload;
 
-$id_allegati = json_decode(filter('id_allegati'));
-$id_allegato = json_decode(filter('id_allegato'));
+$id_allegati = (array)json_decode(filter('id_allegati'));
 
 // Form di inserimento riga documento
 echo '
 <form action="" method="post" id="modifica-allegato">
     <input type="hidden" name="id_allegati" value="'.implode(';',$id_allegati).'">
-    <input type="hidden" name="id_allegato" value="'.$id_allegato.'">
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="op" value="modifica-allegato">
 
     <div class="row">';
-    if ($id_allegato) {
-        $allegato = Upload::find($id_allegato);
+    if (sizeof($id_allegati) == 1) {
+        $allegato = Upload::find($id_allegati[0]);
         echo '
 		<div class="col-md-6">
             {[ "type": "text", "label": "'.tr('Nome').'", "name": "nome_allegato", "value": "'.$allegato->name.'" ]}

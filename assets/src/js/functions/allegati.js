@@ -194,7 +194,7 @@ function ricaricaAllegati(gestione) {
  * @param id
  * @param ids
  */
-function modificaAllegato(button, id, ids) {
+function modificaAllegato(button, ids) {
     const gestione = $(button).closest(".gestione-allegati");
 
     let params = new URLSearchParams({
@@ -203,7 +203,6 @@ function modificaAllegato(button, id, ids) {
         id_plugin: gestione.data('id_plugin'),
         id_record: gestione.data('id_record'),
         id_allegati: ids,
-        id_allegato: id,
     }).toString();
 
     openModal(globals.translations.allegati.modifica, globals.rootdir + "/actions.php?" + params);

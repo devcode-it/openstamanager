@@ -237,7 +237,7 @@ switch (post('op')) {
             // Totale basato sul campo ImportoTotaleDocumento
             $dati_generali = $xml['FatturaElettronicaBody']['DatiGenerali']['DatiGeneraliDocumento'];
             if (isset($dati_generali['ImportoTotaleDocumento'])) {
-                $totale_documento_indicato = abs(floatval($dati_generali['ImportoTotaleDocumento']));
+                $totale_documento_indicato = floatval($dati_generali['ImportoTotaleDocumento']);
 
                 // Calcolo del totale basato sui DatiRiepilogo
                 if (empty($totale_documento_indicato) && empty($dati_generali['ScontoMaggiorazione'])) {

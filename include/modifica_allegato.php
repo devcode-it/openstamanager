@@ -25,7 +25,7 @@ $id_allegato = json_decode(filter('id_allegato'));
 // Form di inserimento riga documento
 echo '
 <form action="" method="post" id="modifica-allegato">
-    <input type="hidden" name="id_allegati" value="'.implode(';',$id_allegati).'">
+    <input type="hidden" name="id_allegati" value="'.implode(';',(array) $id_allegati).'">
     <input type="hidden" name="id_allegato" value="'.$id_allegato.'">
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="op" value="modifica-allegato">

@@ -656,8 +656,6 @@ switch (filter('op')) {
                 }
                 if ($dir == 'entrata') {
                     $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $originale->prezzo_vendita_ivato : $originale->prezzo_vendita);
-                } else {
-                    $prezzo_unitario = $originale->prezzo_acquisto;
                 }
                 
 

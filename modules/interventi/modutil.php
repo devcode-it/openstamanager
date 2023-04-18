@@ -201,7 +201,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $riga->id_rivalsa_inps = $id_rivalsa_inps;
 
             $riga->prezzo_unitario = $sessione->prezzo_orario;
-
+            $riga->costo_unitario = $sessione->prezzo_ore_unitario_tecnico;
             //Calcolo lo sconto unitario della sessione in base all'impostazione sui prezzi ivati
             $iva = $dbo->table('co_iva')->where('id', $id_iva)->first();
             if ($sessione->tipo_sconto == 'UNT' && setting('Utilizza prezzi di vendita comprensivi di IVA')) {
@@ -245,7 +245,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $riga->id_rivalsa_inps = $id_rivalsa_inps;
 
             $riga->prezzo_unitario = $diritto_chiamata->prezzo_diritto_chiamata;
-
+            $riga->costo_unitario = $sessione->prezzo_dirittochiamata_tecnico;
             $riga->qta = $gruppo->count();
 
             // Riferimento al documento di origine
@@ -283,6 +283,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $riga->id_rivalsa_inps = $id_rivalsa_inps;
 
             $riga->prezzo_unitario = $viaggio->prezzo_km_unitario;
+            $riga->costo_unitario = $sessione->prezzo_km_unitario_tecnico;
             $riga->setSconto($viaggio->scontokm_unitario, $viaggio->tipo_scontokm);
 
             // Riferimento al documento di origine

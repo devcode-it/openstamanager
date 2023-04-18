@@ -145,7 +145,7 @@ if (!empty($sessioni)) {
 
         // ORE
         echo '
-            <td style="border-right:1px solid #aaa;">'.($ore<=0 ? '<i class="fa fa-warning tip" style="position:relative;margin-left:-16px;" title="'.tr("Questa sessione è vuota").'" ></i>': '' ).' '.Translator::numberToLocale($ore).'
+            <td style="border-right:1px solid #aaa;">'.($ore<=0 ? '<i class="fa fa-warning tip" style="position:relative;margin-left:-16px;" title="'.tr("Questa sessione è vuota").'" ></i>': '' ).' '.numberFormat($ore,'qta').'
 
                 <div class="extra hide">
                     <table class="table table-condensed table-bordered">
@@ -174,7 +174,7 @@ if (!empty($sessioni)) {
         // KM
         echo '
             <td style="border-right:1px solid #aaa;">
-                '.Translator::numberToLocale($km).'
+                '.numberFormat($km, 'qta').'
 
                 <div class="extra hide">
                     <table class="table table-condensed table-bordered">

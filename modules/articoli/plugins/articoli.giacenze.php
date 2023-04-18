@@ -103,7 +103,7 @@ if (!empty($ordini)) {
                             </small>
                         </td>
                         <td class="text-right">
-                            <small>'.numberFormat($qta).'</small>
+                            <small>'.numberFormat($qta, 'qta').'</small>
                         </td>
                     </tr>';
     }
@@ -114,7 +114,7 @@ if (!empty($ordini)) {
                             <small><b>'.tr('Totale').'</b></small>
                         </td>
                         <td class="text-right">
-                            <small>'.numberFormat($impegnato).'</small>
+                            <small>'.numberFormat($impegnato, 'qta').'</small>
                         </td>
                     </tr>
 
@@ -170,7 +170,7 @@ if (!empty($ordini)) {
                                 </small>
                         </td>
                         <td class="text-right">
-                            <small>'.numberFormat($qta).'</small>
+                            <small>'.numberFormat($qta, 'qta').'</small>
                         </td>
                     </tr>';
     }
@@ -181,7 +181,7 @@ if (!empty($ordini)) {
                             <small><b>'.tr('Totale').'</b></small>
                         </td>
                         <td class="text-right">
-                            <small>'.numberFormat($ordinato).'</small>
+                            <small>'.numberFormat($ordinato, 'qta').'</small>
                         </td>
                     </tr>
 
@@ -213,7 +213,7 @@ echo '
 			<div class="panel-body">
               <div class="row">
                  <div class="col-md-12 text-center" style="font-size:35pt;">
-                       '.numberFormat($da_ordinare).' '.$articolo->um.'
+                       '.numberFormat($da_ordinare, 'qta').' '.$articolo->um.'
 			       </div>
 			   </div>
 			</div>
@@ -235,7 +235,7 @@ echo '
 
               <div class="row">
                  <div class="col-md-12 text-center" style="font-size:35pt;">
-                       '.numberFormat($disponibile).' '.$articolo->um.'
+                       '.numberFormat($disponibile, 'qta').' '.$articolo->um.'
 			       </div>
 			   </div>
 
@@ -271,7 +271,7 @@ foreach ($sedi as $sede) {
     echo '
                         <tr>
                             <td>'.$sede['nomesede'].'</td>
-                            <td class="text-right">'.numberFormat($giacenze[$sede['id']][0]).' '.$articolo->um.'</td>
+                            <td class="text-right">'.numberFormat($giacenze[$sede['id']][0], 'qta').' '.$articolo->um.'</td>
                             <td class="text-center">
                                 <a class="btn btn-xs btn-info" title="Dettagli" onclick="getDettagli('.$sede['id'].');">
                                     <i class="fa fa-eye"></i>

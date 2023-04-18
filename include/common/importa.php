@@ -129,7 +129,7 @@ if (!empty($options['create_document'])) {
             </div>
 
             <div class="col-md-6">
-                {[ "type": "select", "label": "'.tr('Tipo').'", "name": "id_tipo_intervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento" ]}
+                {[ "type": "select", "label": "'.tr('Tipo').'", "name": "id_tipo_intervento", "required": 1, "ajax-source": "tipiintervento" ]}
             </div>';
     }
 

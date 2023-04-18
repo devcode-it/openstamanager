@@ -490,7 +490,7 @@ $operations['crea-preventivo'] = [
         <br><br>{[ "type": "text", "label": "'.tr('Nome preventivo').'", "name": "nome", "required": 1 ]}
         {[ "type": "select", "label": "'.tr('Cliente').'", "name": "id_cliente", "ajax-source": "clienti", "required": 1 ]}
         {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(["id_module" => $id_preventivi, 'is_sezionale' => 1]).', "value": "'.$id_segment.'", "select-options-escape": true ]}
-        {[ "type": "select", "label": "'.tr('Tipo di attività').'", "name": "id_tipo", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento", "required": 1 ]}
+        {[ "type": "select", "label": "'.tr('Tipo di attività').'", "name": "id_tipo", "ajax-source": "tipiintervento", "required": 1 ]}
         {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "value": "-now-" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',

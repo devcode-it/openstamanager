@@ -54,22 +54,17 @@ $righe = $dbo->fetchNum('SELECT idanagrafica FROM an_anagrafiche WHERE idrelazio
 
 if (!empty($righe)) {
     echo '
-<div class="alert alert-danger">
+<div class="alert alert-warning">
     '.tr('Ci sono _NUM_ anagrafiche collegate', [
         '_NUM_' => $righe,
     ]).'.
 </div>';
-} else {
-    ?>
+}
+?>
 
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
-
-<?php
-}
-?>
-
 
 <script>
 	$(document).ready( function() {

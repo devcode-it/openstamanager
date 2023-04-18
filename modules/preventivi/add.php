@@ -57,7 +57,7 @@ $stato = $database->query('SELECT id, descrizione FROM co_statipreventivi WHERE 
 	</div>
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Tipo di Attività'); ?>", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento" ]}
+			{[ "type": "select", "label": "<?php echo tr('Tipo di Attività'); ?>", "name": "idtipointervento", "required": 1, "ajax-source": "tipiintervento" ]}
 		</div>
 
 		<div class="col-md-6">

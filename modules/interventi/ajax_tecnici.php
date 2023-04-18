@@ -40,6 +40,7 @@ $query = 'SELECT
     (in_interventi_tecnici.prezzo_km_unitario_tecnico * in_interventi_tecnici.km) AS prezzo_km_consuntivo,
     an_anagrafiche.ragione_sociale,
     an_anagrafiche.deleted_at AS anagrafica_deleted_at,
+    in_tipiintervento.deleted_at AS tipo_deleted_at,
     in_tipiintervento.descrizione AS descrizione_tipo,
     in_interventi_tecnici.tipo_scontokm AS tipo_sconto_km,
     user.id AS id_user
@@ -127,7 +128,7 @@ if (!empty($sessioni)) {
         echo '
         <tr data-id="'.$sessione['id'].'">
             <td>
-                '.$sessione['descrizione_tipo'].'
+                '.$sessione['descrizione_tipo'].' '.(($sessione['tipo_deleted_at']) ? '<small class="text-danger"><em>('.tr('Eliminato').')</em></small>' : '').'
             </td>';
 
         // Orario di inizio

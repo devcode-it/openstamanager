@@ -903,7 +903,7 @@ switch (post('op')) {
 
         // Aggiunta tipologia cliente se necessario
         if (!$anagrafica->isTipo('Cliente')) {
-            $tipo_cliente = TipoAnagrafica::where('descrizione', '=', 'Cliente')->first();
+            $tipo_cliente = TipoAnagrafica::where('descrizione', 'Cliente')->first();
             $tipi = $anagrafica->tipi->pluck('idtipoanagrafica')->toArray();
             $tipi[] = $tipo_cliente->id;
 
@@ -1034,6 +1034,33 @@ switch (post('op')) {
             $response['error'] = tr('Nessun articolo corrispondente a magazzino');
             echo json_encode($response);
         }
+
+        break;
+
+    // Controllo se impostare anagrafica azienda in base a tipologia documento 
+    case 'check_tipodocumento':
+        $idtipodocumento = post('idtipodocumento');
+        $tipologie = Tipo::wherein('codice_tipo_documento_fe', ['TD21','TD27'])->where('dir', 'entrata')->get()->pluck('id')->toArray();
+        $azienda = Anagrafica::find(setting('Azienda predefinita'));
+
+        $result = false;
+        if (in_array($idtipodocumento, $tipologie)) {
+            // Aggiunta tipologia cliente se necessario
+            if (!$azienda->isTipo('Cliente')) {
+                $tipo_cliente = TipoAnagrafica::where('descrizione', 'Cliente')->first();
+                $tipi = $azienda->tipi->pluck('idtipoanagrafica')->toArray();
+                $tipi[] = $tipo_cliente->id;
+
+                $azienda->tipologie = $tipi;
+                $azienda->save();
+            }
+            $result = [
+                'id' => $azienda->id,
+                'ragione_sociale' => $azienda->ragione_sociale
+            ];
+        }
+
+        echo json_encode($result);
 
         break;
 }

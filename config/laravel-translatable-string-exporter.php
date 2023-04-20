@@ -4,7 +4,7 @@ return [
     // Directories to search in.
     'directories' => [
         'app',
-        'resources/js',
+        'resources/ts',
         'resources/views',
     ],
 
@@ -22,7 +22,8 @@ return [
     // If your function name contains $ escape it using \$ .
     'functions' => [
         '__',
-        '_t',
+        '_s',
+        '_v',
         '@lang',
     ],
 

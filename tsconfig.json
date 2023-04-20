@@ -5,11 +5,11 @@
     "module": "esnext",
     "moduleResolution": "node",
     "strict": true,
-    "strictPropertyInitialization": false,
     "isolatedModules": true,
     "useDefineForClassFields": false,
     "jsx": "react",
     "jsxFactory": "m",
+    "jsxFragmentFactory": "m.Fragment",
     "sourceMap": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
@@ -20,18 +20,13 @@
     ],
     "types": [
       "vite/client",
-      "vite-plugin-pwa/client"
+      "vite-plugin-pwa/client",
+      "mithril-utilities"
     ],
     "baseUrl": ".",
     "paths": {
-      "@osm/*": [
-        "resources/js/*"
-      ],
-      "@osm-images/*": [
-        "public/images/*"
-      ],
-      "@osm-scss/*": [
-        "resources/scss/*"
+      "~/*": [
+        "resources/ts/*"
       ]
     }
   },
@@ -40,7 +35,7 @@
     "**/.*/"
   ],
   "include": [
-    "resources/js/**/*",
+    "resources/ts/**/*",
     "vite.config.ts"
   ]
 }

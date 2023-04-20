@@ -1,62 +1,80 @@
 @use "variables";
-@use "material/material";
+@use "material";
+@use "modern-normalize/modern-normalize.css";
+@use "include-media/dist/include-media" as media;
 
-@import "modern-normalize/modern-normalize.css";
+@import "theme/theme";
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    color: var(--mdc-theme-text-primary-on-background, black);
-    font-family: #{variables.$headings_font};
+main {
+    flex: 1 0;
 }
 
-p,
-small {
-    color: var(--mdc-theme-text-primary-on-background, black);
-    font-family: #{variables.$body_font};
+top-app-bar main {
+    margin-right: 16px;
 }
 
 body {
-    background-color: var(--mdc-theme-background, #fff);
+    margin: 0 !important;
 }
 
-hr {
-    border-color: rgb(0 0 0 / 12%);
-    margin: 16px 0;
+#app {
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: 1fr auto;
 }
 
-main {
-    margin-left: 16px;
-}
-
-.mdi {
-    font-size: 24px;
-    line-height: 1;
-}
-
-.center {
+.center-block {
     display: block;
-    margin-right: auto;
-    margin-left: auto;
+    margin: 0 auto;
 }
 
-.vcenter {
-    position: absolute;
-    top: 50%;
-    margin: 0;
-    transform: translateY(-50%);
+.center-logo {
+    @extend .center-block;
+
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto;
 }
 
 .ext-container {
-    width: 95%;
-    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 16px;
+    box-sizing: border-box;
 }
 
-.ext-container-small {
-    width: 50%;
+.ext-card {
+    --md-card-padding: 16px;
+    margin-top: 48px;
+
+    @include media.media(">desktop") {
+        max-width: 55vw;
+    }
+}
+
+.setup-buttons, .login-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin: 16px 0;
+
+    @include media.media("<=tablet") {
+        &:has(:nth-child(3)) {
+            flex-direction: column;
+            flex-wrap: wrap;
+            gap: 16px;
+
+            & > * {
+                flex-grow: 1;
+            }
+        }
+    }
+}
+
+.flag {
+    width: 32px;
 }
 
 .stretch {
@@ -77,39 +95,12 @@ main {
     --mdc-layout-grid-margin-desktop: 0;
 }
 
-#user-info {
-    text-align: center;
+.user-image {
+    width: 150px;
+    border-radius: 50%;
 
-    --mdc-menu-min-width: 25em;
-
-    .mdi {
-        vertical-align: text-bottom;
-    }
-
-    .user-image {
-        &img {
-            width: 150px;
-            border-radius: 50%;
-        }
-
-        &.mdi {
-            font-size: 50px;
-        }
-    }
-}
-
-/* ----------------------------
-    MWC styles
- ------------------------------ */
-mwc-fab#contrast-switcher {
-    &.contrast-light {
-        --mdc-theme-secondary: black;
-        --mdc-theme-on-secondary: white;
-    }
-
-    &.contrast-dark {
-        --mdc-theme-secondary: white;
-        --mdc-theme-on-secondary: black;
+    &md-icon {
+        --_icon-size: 100px;
     }
 }
 
@@ -117,33 +108,22 @@ mwc-fab#contrast-switcher {
     Footer
 --------------------------- */
 footer {
-    position: fixed;
-    z-index: 6;
-    bottom: 0;
     display: flex;
     width: 100%;
     padding-top: 10px;
     padding-bottom: 10px;
-    border-top: var(--mdc-theme-outline-color) solid 1px;
-    background-color: var(--mdc-theme-background, white);
-    color: var(--mdc-theme-text-primary-on-background, #000);
+    background-color: var(--md-sys-color-surface, white);
+    color: var(--md-sys-color-on-surface, #000);
 
-    --mdc-theme-primary: #{variables.$primary};
-}
-
-.left-footer {
-    display: flex;
-    flex: 1;
-    align-items: center;
-    padding-left: 16px;
-
-    * {
-        display: inline;
-        vertical-align: middle;
+    > :first-child {
+        flex: 1;
+        padding-left: 16px;
     }
-}
 
-.right-footer {
-    position: relative;
-    padding-right: 16px;
+    > :last-child {
+        padding-right: 16px;
+        text-align: right;
+    }
+
+    //--mdc-theme-primary: #{variables.$primary};
 }

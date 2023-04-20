@@ -2,10 +2,8 @@
 
 /** @noinspection UnusedFunctionResultInspection */
 
-use App\Http\Controllers\Controller;
-use LaravelJsonApi\Laravel\Facades\JsonApiRoute;
-use LaravelJsonApi\Laravel\Http\Controllers\JsonApiController;
-use LaravelJsonApi\Laravel\Routing\ResourceRegistrar;
+use App\Http\Controllers\Api\SetupController;
+use App\Http\Middleware\CheckConfigurationMiddleware;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,15 +16,12 @@ use LaravelJsonApi\Laravel\Routing\ResourceRegistrar;
 |
 */
 
-JsonApiRoute::server('v1')
-    ->prefix('v1')
-    ->resources(function (ResourceRegistrar $server) {
-        $server->resource('users', JsonApiController::class);
-    });
+Route::name('setup.')->middleware(CheckConfigurationMiddleware::class)->group(static function () {
+    Route::post('setup/test', [SetupController::class, 'testDatabase'])
+        ->name('test');
 
-Route::get('modules', [Controller::class, 'getModules'])
-    ->name('modules');
+    Route::put('setup/save', [SetupController::class, 'save'])
+        ->name('save');
+});
 
-Route::get('refresh_csrf', static fn() => response()->json(csrf_token()))
-    ->middleware('web')
-    ->name('csrf.renew');
+Route::restifyAuth();

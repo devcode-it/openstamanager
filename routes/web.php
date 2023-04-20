@@ -2,9 +2,7 @@
 
 /** @noinspection UnusedFunctionResultInspection */
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\PasswordController;
-use App\Http\Controllers\SetupController;
+use App\Http\Controllers\Controller;
 use App\Http\Middleware\CheckConfigurationMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -19,67 +17,49 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', static fn () => redirect()->route('auth.login'))
+Route::get('/', static fn () => redirect()->route('login'))
     ->middleware(CheckConfigurationMiddleware::class);
 
-Route::name('auth.')
-    ->middleware('guest')
-    ->group(static function () {
-        Route::inertia('login', 'LoginPage', ['external' => true])
-            ->name('login');
+Route::middleware('guest')->group(static function () {
+    Route::inertia('login', 'LoginPage', ['external' => true])
+        ->middleware('guest')
+        ->name('login');
 
-        Route::post('login', [AuthController::class, 'login'])
-            ->name('authenticate');
+    Route::inertia('reset', 'ResetPasswordPage', ['external' => true])
+        ->middleware('guest')
+        ->name('password.reset');
 
-        Route::post('logout', [AuthController::class, 'logout'])
-            ->withoutMiddleware('guest')
-            ->middleware('auth')
-            ->name('logout');
-    });
-
-Route::name('password.')
-    ->middleware('guest')
-    ->group(static function () {
-        Route::post('forgot', [PasswordController::class, 'forgotPassword'])
-            ->name('forgot');
-
-        Route::inertia('reset', 'ResetPasswordPage', ['external' => true])
-            ->name('reset');
-
-        Route::post('reset', [PasswordController::class, 'resetPassword'])
-            ->name('resetPassword');
-    });
-
-Route::name('setup.')->middleware(CheckConfigurationMiddleware::class)->group(static function () {
-    Route::inertia('setup', 'SetupPage', [
-        'languages' => cache()->rememberForever('app.languages', fn() => array_map(
-            static fn($file) => basename($file, '.json'),
-            glob(resource_path('lang') . '/*.json', GLOB_NOSORT)
+    Route::inertia('setup', 'Setup/SetupPage', [
+        'languages' => cache()->rememberForever('app.languages', fn () => array_map(
+            static fn ($file) => basename($file, '.json'),
+            glob(lang_path('/*.json'), GLOB_NOSORT)
         )),
-        'license' => cache()->rememberForever('app.license', fn() => file_get_contents(base_path('LICENSE'))),
+        'license' => cache()->rememberForever('app.license', fn () => file_get_contents(base_path('LICENSE'))),
         'external' => true,
     ])
-        ->name('index');
-
-    Route::inertia('setup/admin', 'AdminSetupPage', ['external' => true])
-        ->name('admin');
-
-    Route::options('setup/test', [SetupController::class, 'testDatabase'])
-        ->name('test');
-
-    Route::put('setup/save', [SetupController::class, 'save'])
-        ->name('save');
-
-    Route::put('setup/admin', [SetupController::class, 'saveAdmin'])
-        ->name('admin.save');
+        ->middleware('guest', CheckConfigurationMiddleware::class)
+        ->name('setup.index');
 });
 
-Route::get('lang/{language}', static function ($language) {
-    app()->setLocale($language);
+Route::patch('lang', [Controller::class, 'setLanguage'])->name('app.language');
 
-    return redirect()->back();
-})->name('app.language');
+Route::middleware('auth')->group(static function () {
+    Route::inertia('dashboard', 'Dashboard')
+        ->middleware('auth')
+        ->name('dashboard');
 
-Route::inertia('dashboard', 'Dashboard')
-    ->middleware('auth')
-    ->name('dashboard');
+    Route::inertia('users', 'Users/UsersRecords')
+        ->middleware('auth')
+        ->name('users.index');
+
+    Route::inertia('users/{id}', 'Users/UserRecord')
+        ->middleware('auth')
+        ->name('users.show');
+});
+
+Route::get('refresh_csrf', static fn () => function () {
+    session()->regenerate();
+
+    return response()->json(['token' => csrf_token()]);
+})
+    ->name('csrf.renew');

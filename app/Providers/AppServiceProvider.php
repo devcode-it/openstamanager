@@ -4,8 +4,8 @@ namespace App\Providers;
 
 use App\Http\Controllers\Controller;
 use Exception;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
-use Nette\Utils\Json;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -18,15 +18,15 @@ class AppServiceProvider extends ServiceProvider
 
     /**
      * Bootstrap any application services.
+     *
      * @throws Exception
+     *
+     * @noinspection StaticClosureCanBeUsedInspection — Throws Cannot bind an instance to a static closure
+     * @noinspection AnonymousFunctionStaticInspection — Throws Cannot bind an instance to a static closure
      */
     public function boot(Controller $controller): void
     {
-        cache()->rememberForever(
-            'translations_' . app()->getLocale(),
-            static fn() => Json::decode(file_get_contents(resource_path('lang/' . app()->getLocale() . '.json')))
-        );
-
-        view()->share('modules', $controller->getModules(request()));
+        view()->share('modules', $controller->getModules());
+        Vite::macro('image', fn ($asset) => Vite::asset("resources/images/$asset"));
     }
 }

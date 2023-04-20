@@ -1,13 +1,33 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import osmConfig from '@openstamanager/vite-config';
-import {defineConfig} from 'vite';
-import {laravel} from 'vite-plugin-laravel';
-import {VitePWA} from 'vite-plugin-pwa';
+import * as path from 'node:path';
 
+import Inertia from 'inertia-plugin/vite';
+import laravel from 'laravel-vite-plugin';
+import {defineConfig} from 'vite';
+import laravelTranslations from 'vite-plugin-laravel-translations';
+import progress from 'vite-plugin-progress';
+import {VitePWA} from 'vite-plugin-pwa';
+import installedPackages from './vendor/composer/installed.json';
+
+const modules = installedPackages.packages.filter((packageInfo) => packageInfo.type === 'openstamanager-module');
+// const indexFiles = [];
+// for (const module of modules) {
+//   indexFiles.push(`vendor/bin/${module.name}/index.ts`);
+// }
+
+
+// noinspection JSUnusedGlobalSymbols
 export default defineConfig({
+  assetsInclude: '**/*.xml',
   build: {
     minify: false,
-    target: 'commonjs'
+    target: 'esnext'
+  },
+  resolve: {
+    alias: {
+      '~': '/resources/ts',
+      '@osm': '/resources/ts'
+    }
   },
   esbuild: {
     jsx: 'transform',
@@ -15,46 +35,40 @@ export default defineConfig({
     jsxFragment: '\'[\'',
     jsxInject: 'import m from \'mithril\''
   },
-  // optimizeDeps: {
-  //   exclude: [
-  //     '@maicol07/inertia-mithril',
-  //     '@maicol07/mwc-card',
-  //     '@maicol07/mwc-layout-grid',
-  //     '@material/mwc-button',
-  //     '@material/mwc-checkbox',
-  //     '@material/mwc-circular-progress',
-  //     '@material/mwc-dialog',
-  //     '@material/mwc-drawer',
-  //     '@material/mwc-fab',
-  //     '@material/mwc-formfield',
-  //     '@material/mwc-icon-button',
-  //     '@material/mwc-icon-button-toggle',
-  //     '@material/mwc-linear-progress',
-  //     '@material/mwc-list',
-  //     '@material/mwc-menu',
-  //     '@material/mwc-select',
-  //     '@material/mwc-snackbar',
-  //     '@material/mwc-textarea',
-  //     '@material/mwc-textfield',
-  //     '@material/mwc-top-app-bar',
-  //     'async-wait-until',
-  //     'lodash-es',
-  //     'lit',
-  //     'lit/decorators.js',
-  //     'cash-dom',
-  //     'redaxios'
-  //   ]
-  // },
   plugins: [
-    laravel(),
+    laravel({
+      input: [
+        'resources/ts/app.ts'
+      ],
+      refresh: true
+    }),
+    laravelTranslations({
+      namespace: 'osm',
+      includeJson: true
+    }),
+    // eslint-disable-next-line new-cap
+    Inertia({
+      namespaces: ({npm, composer}) => {
+        const namespaces = [];
+        for (const module of modules) {
+          // @ts-ignore
+          namespaces.push(composer(module.name));
+        }
+        return namespaces;
+      }
+    }),
+    progress({
+      // eslint-disable-next-line unicorn/prefer-module
+      srcDir: path.resolve(__dirname, 'resources/ts')
+    }),
     // eslint-disable-next-line new-cap
     VitePWA({
       // TODO: Check options
       includeAssets: [
-        'images/favicon/favicon.ico',
+        'resources/images/favicon/favicon.ico',
         '../robots.txt',
-        'images/favicon/apple-touch-icon.png',
-        'images/*.png'
+        'resources/images/favicon/apple-touch-icon.png',
+        'resources/images/*.png'
       ],
       manifest: {
         name: 'OpenSTAManager',

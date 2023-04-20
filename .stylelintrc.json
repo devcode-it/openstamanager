@@ -1,13 +1,14 @@
 {
-    "extends": [
-        "stylelint-config-standard",
-        "stylelint-config-recommended-scss",
-        "stylelint-config-idiomatic-order",
-        "stylelint-config-html"
-    ],
-    "rules": {
-        "indentation": 4,
-        "selector-type-no-unknown": null,
-        "no-eol-whitespace": null
-    }
+  "extends": [
+    "stylelint-config-standard-scss",
+    "stylelint-config-clean-order",
+    "stylelint-config-html"
+  ],
+  "rules": {
+    "indentation": 4,
+    "selector-type-no-unknown": null,
+    "no-eol-whitespace": null,
+    "scss/at-extend-no-missing-placeholder": null,
+    "custom-property-pattern": "^_?([a-z][a-z0-9]*)(-[a-z0-9]+)*$"
+  }
 }

@@ -10,10 +10,37 @@
   <component name="LaravelIdeaMainSettings">
     <option name="codeGeneration">
       <LaravelCodeGeneration>
+        <option name="generationBooleanSettings">
+          <map>
+            <entry key="createConfigFile:inModules" value="true" />
+            <entry key="createConsoleCommand:inModules" value="true" />
+            <entry key="createDatabaseMigration:inModules" value="true" />
+            <entry key="createEvent:inModules" value="true" />
+            <entry key="createListener:inModules" value="true" />
+            <entry key="createMailable:inModules" value="true" />
+            <entry key="createMiddleware:inModules" value="true" />
+            <entry key="createNotification:inModules" value="true" />
+          </map>
+        </option>
         <option name="generationStringSettings">
           <map>
+            <entry key="createBladeComponent:classSuffix" value="" />
+            <entry key="createChannel:classSuffix" value="Channel" />
+            <entry key="createConsoleCommand:classSuffix" value="Command" />
+            <entry key="createController:classSuffix" value="Controller" />
+            <entry key="createDatabaseClassFactory:classSuffix" value="Factory" />
             <entry key="createEloquentScope:namespace" value="Models\Scopes" />
+            <entry key="createEvent:classSuffix" value="Event" />
+            <entry key="createFormRequest:classSuffix" value="Request" />
+            <entry key="createJob:classSuffix" value="Job" />
+            <entry key="createListener:classSuffix" value="Listener" />
+            <entry key="createMailable:classSuffix" value="Mail" />
+            <entry key="createMiddleware:classSuffix" value="Middleware" />
+            <entry key="createModel:classSuffix" value="" />
             <entry key="createModel:namespace" value="Models" />
+            <entry key="createNotification:classSuffix" value="Notification" />
+            <entry key="createResourceController:classSuffix" value="Controller" />
+            <entry key="createServiceProvider:classSuffix" value="ServiceProvider" />
           </map>
         </option>
       </LaravelCodeGeneration>
@@ -25,6 +52,11 @@
         <entry key="createEloquentScope:namespace" value="Models\Scopes" />
         <entry key="createModel:namespace" value="Models" />
       </map>
+    </option>
+    <option name="translation">
+      <LaravelTranslation>
+        <option name="defaultPath" value="lang" />
+      </LaravelTranslation>
     </option>
     <option name="userClassName" value="App\Models\User" />
   </component>

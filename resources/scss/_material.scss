@@ -1,0 +1,75 @@
+@use "sass:color";
+@use "variables";
+@use "@material/elevation/mdc-elevation";
+@use "include-media/dist/include-media";
+
+md-icon svg {
+    width: var(--_with-icon-icon-size, var(--_icon-size, var(--_size)));
+    height: var(--_with-icon-icon-size, var(--_icon-size, var(--_size)));
+    line-height: 0;
+}
+
+:is(md-list-item, md-list-item-link) md-icon {
+    padding-left: 16px;
+    --md-icon-color: var(--_list-item-leading-icon-color);
+
+    // TODO: MD Tokens sets the icon size to 18px, but the list item icon is 24px per the specs.
+    //svg {
+    //width: var(--_list-item-leading-icon-size, var(--_with-icon-icon-size, var(--_icon-size, var(--_size))));
+    //height: var(--_list-item-leading-icon-size, var(--_with-icon-icon-size, var(--_icon-size, var(--_size))));
+    //    line-height: 0;
+    //}
+}
+
+label:has(> md-checkbox) {
+    display: flex;
+    align-items: center;
+}
+
+md-filled-text-field, md-outlined-text-field {
+    text-align: initial;
+}
+
+md-navigation-drawer, md-navigation-drawer-modal {
+    //--mdc-theme-surface: var(--md-sys-color-background, #fff);
+    //--mdc-theme-primary: var(--mdc-theme-primary2, variables.$primary);
+
+    //noinspection Stylelint
+    > md-list md-list-item-link {
+        display: block;
+        width: 85%;
+        --md-list-list-item-container-shape: 100px;
+        --md-ripple-shape: 100px;
+        //--md-focus-ring-shape-start-start: 100px;
+        //--md-focus-ring-shape-start-end: 100px;
+        //--md-focus-ring-shape-end-start: 100px;
+        //--md-focus-ring-shape-end-end: 100px;
+
+        &[active] {
+            --md-list-list-item-container-color: var(--md-sys-color-secondary-container, #3f51b5);
+        }
+    }
+}
+
+top-app-bar {
+    width: 100%;
+
+    [slot="navigationIcon"], [slot="title"] {
+        --md-icon-color: var(--md-sys-color-on-surface, #5f6368);
+    }
+
+    [slot="actionItems"] {
+        --md-icon-color: var(--md-sys-color-on-surface-variant, #5f6368);
+    }
+
+    --mdc-theme-primary: var(--md-sys-color-surface, #fff);
+    --mdc-theme-on-primary: var(--md-sys-color-on-surface, #5f6368);
+}
+
+md-fab, md-fab-extended {
+    &.sticky {
+        position: fixed;
+        right: 16px;
+        bottom: 50px;
+    }
+}

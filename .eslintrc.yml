@@ -2,5 +2,8 @@ root: true
 extends:
   - '@maicol07'
 rules:
-  import/export: 'off'
-  import/no-cycle: 'off'
+  import/prefer-default-export: 'warn'
+  max-len:
+    - "error"
+    - "code": 200
+  consistent-return: 'off'

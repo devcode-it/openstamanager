@@ -1,0 +1,60 @@
+@import "tokens";
+@import "colors";
+@import "typography";
+@import "theme.light";
+@import "theme.dark";
+
+body {
+    @extend .body-large;
+
+    background-color: var(--md-sys-color-background, #fff);
+    color: var(--md-sys-color-on-background);
+}
+
+small {
+    @extend .body-small;
+}
+
+$headings: (
+    h1: "display-medium",
+    h2: "display-small",
+    h3: "headline-large",
+    h4: "headline-medium",
+    h5: "headline-small",
+    h6: "title-medium"
+);
+
+@each $selector, $class in $headings {
+    #{$selector} {
+        color: var(--md-sys-color-on-surface);
+
+        @extend .#{$class};
+    }
+}
+
+a {
+    border-radius: 4px;
+    color: var(--md-sys-color-primary);
+    text-decoration: underline;
+
+    &:hover {
+        color: var(--md-sys-color-on-primary-container);
+    }
+
+    &:focus {
+        border: 1px solid var(--md-sys-color-primary);
+        margin: -1px;
+        box-shadow: inset 0 0 0 1px var(--md-sys-color-surface);
+        outline: 0;
+    }
+
+    &:hover:focus {
+        border: 1px solid var(--md-sys-color-on-primary-container);
+        color: var(--md-sys-color-on-primary-container);
+        outline: 0;
+    }
+}
+
+top-app-bar [slot="title"] {
+    @extend .title-large;
+}

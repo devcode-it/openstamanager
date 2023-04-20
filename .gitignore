@@ -4,6 +4,7 @@ composer.lock
 composer.local.json
 public/build
 public/modules
+public/vendor
 .idea/inertia.xml
 .idea/git_toolbox_prj.xml
 .php-cs-fixer.cache
@@ -17,6 +18,7 @@ _ide_helper_models.php
 .idea/sshConfigs.xml
 .idea/watcherTasks.xml
 .idea/webServers.xml
+storage/dotenv-editor/backups
 
 # Created by https://www.toptal.com/developers/gitignore/api/laravel,composer,phpstorm,phpstorm+iml
 # Edit at https://www.toptal.com/developers/gitignore?templates=laravel,composer,phpstorm,phpstorm+iml

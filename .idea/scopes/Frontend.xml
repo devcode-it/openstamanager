@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Frontend" pattern="file[osm3]:resources/js/*.ts||file[osm3]:resources/js/*.tsx" />
+</component>

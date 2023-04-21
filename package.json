@@ -1,6 +1,6 @@
 {
   "name": "openstamanager",
-  "version": "0.0.0.0",
+  "version": "0.0.0",
   "private": true,
   "packageManager": "pnpm@8.2.0",
   "files": [

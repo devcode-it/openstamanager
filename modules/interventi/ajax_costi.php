@@ -80,7 +80,7 @@ if ($show_prezzi) {
 
     // Calcoli
     $imponibile = abs($intervento->imponibile);
-    $sconto = $intervento->sconto;
+    $sconto = -$intervento->sconto;
     $totale_imponibile = abs($intervento->totale_imponibile);
     $iva = abs($intervento->iva);
     $totale = abs($intervento->totale);

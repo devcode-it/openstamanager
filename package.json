@@ -3,7 +3,9 @@
   "version": "0.0.0.0",
   "private": true,
   "packageManager": "pnpm@8.2.0",
-  "files": [],
+  "files": [
+    "resources/ts/**/*"
+  ],
   "scripts": {
     "build": "vite build",
     "build:dev": "vite build --mode development",

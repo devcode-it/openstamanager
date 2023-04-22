@@ -80,7 +80,7 @@ devDependencies:
     version: 2.2.4
   '@openstamanager/vite-config':
     specifier: github:devcode-it/openstamanager-vite-config
-    version: github.com/devcode-it/openstamanager-vite-config/819ac61e3ad6ef6e22d5b09b411c6f935fa3b1a1(@types/node@18.15.12)(sass@1.62.0)
+    version: github.com/devcode-it/openstamanager-vite-config/819ac61e3ad6ef6e22d5b09b411c6f935fa3b1a1(@types/node@18.15.13)(sass@1.62.0)
   '@types/lodash-es':
     specifier: ^4.17.7
     version: 4.17.7
@@ -88,8 +88,8 @@ devDependencies:
     specifier: ^2.0.12
     version: 2.0.12
   '@types/node':
-    specifier: ^18.15.12
-    version: 18.15.12
+    specifier: ^18.15.13
+    version: 18.15.13
   '@types/ziggy-js':
     specifier: ^1.3.2
     version: 1.3.2
@@ -104,7 +104,7 @@ devDependencies:
     version: 0.6.0
   laravel-vite-plugin:
     specifier: ^0.7.4
-    version: 0.7.4(vite@4.3.0)
+    version: 0.7.4(vite@4.3.1)
   postcss:
     specifier: ^8.4.23
     version: 8.4.23
@@ -142,17 +142,17 @@ devDependencies:
     specifier: ^5.0.4
     version: 5.0.4
   vite:
-    specifier: ^4.3.0
-    version: 4.3.0(@types/node@18.15.12)(sass@1.62.0)
+    specifier: ^4.3.1
+    version: 4.3.1(@types/node@18.15.13)(sass@1.62.0)
   vite-plugin-laravel-translations:
     specifier: ^0.1.4
-    version: 0.1.4(vite@4.3.0)
+    version: 0.1.4(vite@4.3.1)
   vite-plugin-progress:
     specifier: ^0.0.7
-    version: 0.0.7(vite@4.3.0)
+    version: 0.0.7(vite@4.3.1)
   vite-plugin-pwa:
     specifier: ^0.14.7
-    version: 0.14.7(vite@4.3.0)(workbox-build@6.5.4)(workbox-window@6.5.4)
+    version: 0.14.7(vite@4.3.1)(workbox-build@6.5.4)(workbox-window@6.5.4)
 
 packages:
 
@@ -2472,8 +2472,8 @@ packages:
     resolution: { integrity: sha512-F0KIgDJfy2nA3zMLmWGKxcH2ZVEtCZXHHdOQs2gSaQ27+lNeEfGxzkIw90aXswATX7AZ33tahPbzy6KAfUreVw== }
     dev: true
 
-  /@types/node@18.15.12:
-    resolution: { integrity: sha512-Wha1UwsB3CYdqUm2PPzh/1gujGCNtWVUYF0mB00fJFoR4gTyWTDPjSm+zBF787Ahw8vSGgBja90MkgFwvB86Dg== }
+  /@types/node@18.15.13:
+    resolution: { integrity: sha512-N+0kuo9KgrUQ1Sn/ifDXsvg0TTleP7rIy4zOBGECxAljqvqfqpTfzx0Q1NUedOixRMBfe2Whhb056a42cWs26Q== }
     dev: true
 
   /@types/normalize-package-data@2.4.1:
@@ -2483,7 +2483,7 @@ packages:
   /@types/resolve@1.17.1:
     resolution: { integrity: sha512-yy7HuzQhj0dhGpD8RLXSZWEkLsV9ibvxvi6EiJ3bkqLAO1RGo0WbkWQiwpRlSFymTJRz0d3k5LM3kkx8ArDbLw== }
     dependencies:
-      '@types/node': 18.15.12
+      '@types/node': 18.15.13
     dev: true
 
   /@types/semver@7.3.13:
@@ -2776,7 +2776,7 @@ packages:
       postcss: ^8.1.0
     dependencies:
       browserslist: 4.21.5
-      caniuse-lite: 1.0.30001480
+      caniuse-lite: 1.0.30001481
       fraction.js: 4.2.0
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -2875,8 +2875,8 @@ packages:
     engines: { node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7 }
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001480
-      electron-to-chromium: 1.4.368
+      caniuse-lite: 1.0.30001481
+      electron-to-chromium: 1.4.369
       node-releases: 2.0.10
       update-browserslist-db: 1.0.11(browserslist@4.21.5)
     dev: true
@@ -2932,8 +2932,8 @@ packages:
     engines: { node: '>=6' }
     dev: true
 
-  /caniuse-lite@1.0.30001480:
-    resolution: { integrity: sha512-q7cpoPPvZYgtyC4VaBSN0Bt+PJ4c4EYRf0DrduInOz2SkFpHD5p3LnvEpqBp7UnJn+8x1Ogl1s38saUxe+ihQQ== }
+  /caniuse-lite@1.0.30001481:
+    resolution: { integrity: sha512-KCqHwRnaa1InZBtqXzP98LPg0ajCVujMKjqKDhZEthIpAsJl/YEIa3YvXjGXPVqzZVguccuu7ga9KOE1J9rKPQ== }
     dev: true
 
   /capital-case@1.0.4:
@@ -3309,8 +3309,8 @@ packages:
       jake: 10.8.5
     dev: true
 
-  /electron-to-chromium@1.4.368:
-    resolution: { integrity: sha512-e2aeCAixCj9M7nJxdB/wDjO6mbYX+lJJxSJCXDzlr5YPGYVofuJwGN9nKg2o6wWInjX6XmxRinn3AeJMK81ltw== }
+  /electron-to-chromium@1.4.369:
+    resolution: { integrity: sha512-LfxbHXdA/S+qyoTEA4EbhxGjrxx7WK2h6yb5K2v0UCOufUKX+VZaHbl3svlzZfv9sGseym/g3Ne4DpsgRULmqg== }
     dev: true
 
   /emoji-regex@8.0.0:
@@ -4654,7 +4654,7 @@ packages:
     resolution: { integrity: sha512-KWYVV1c4i+jbMpaBC+U++4Va0cp8OisU185o73T1vo99hqi7w8tSJfUXYswwqqrjzwxa6KpRK54WhPvwf5w6PQ== }
     engines: { node: '>= 10.13.0' }
     dependencies:
-      '@types/node': 18.15.12
+      '@types/node': 18.15.13
       merge-stream: 2.0.0
       supports-color: 7.2.0
     dev: true
@@ -4777,15 +4777,15 @@ packages:
     resolution: { integrity: sha512-uMCj6+hZYDoffuvAJjFAPz56E9uoowFHmTkqRtRq5WyC5Q6Cu/fTZKNQpX/RbzChBYLLl3lo8CjFZBAZXq9qFg== }
     dev: true
 
-  /laravel-vite-plugin@0.7.4(vite@4.3.0):
+  /laravel-vite-plugin@0.7.4(vite@4.3.1):
     resolution: { integrity: sha512-NlIuXbeuI+4NZzRpWNpGHRVTwuFWessvD7QoD+o2MlyAi7qyUS4J8r4/yTlu1dl9lxcR7iKoYUmHQqZDcrw2KA== }
     engines: { node: '>=14' }
     peerDependencies:
       vite: ^3.0.0 || ^4.0.0
     dependencies:
       picocolors: 1.0.0
-      vite: 4.3.0(@types/node@18.15.12)(sass@1.62.0)
-      vite-plugin-full-reload: 1.0.5(vite@4.3.0)
+      vite: 4.3.1(@types/node@18.15.13)(sass@1.62.0)
+      vite-plugin-full-reload: 1.0.5(vite@4.3.1)
     dev: true
 
   /leven@3.1.0:
@@ -5674,8 +5674,8 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /rollup@3.20.6:
-    resolution: { integrity: sha512-2yEB3nQXp/tBQDN0hJScJQheXdvU2wFhh6ld7K/aiZ1vYcak6N/BKjY1QrU6BvO2JWYS8bEs14FRaxXosxy2zw== }
+  /rollup@3.20.7:
+    resolution: { integrity: sha512-P7E2zezKSLhWnTz46XxjSmInrbOCiul1yf+kJccMxT56vxjHwCbDfoLbiqFgu+WQoo9ij2PkraYaBstgB2prBA== }
     engines: { node: '>=14.18.0', npm: '>=8.0.0' }
     hasBin: true
     optionalDependencies:
@@ -6452,17 +6452,17 @@ packages:
       spdx-expression-parse: 3.0.1
     dev: true
 
-  /vite-plugin-full-reload@1.0.5(vite@4.3.0):
+  /vite-plugin-full-reload@1.0.5(vite@4.3.1):
     resolution: { integrity: sha512-kVZFDFWr0DxiHn6MuDVTQf7gnWIdETGlZh0hvTiMXzRN80vgF4PKbONSq8U1d0WtHsKaFODTQgJeakLacoPZEQ== }
     peerDependencies:
       vite: ^2 || ^3 || ^4
     dependencies:
       picocolors: 1.0.0
       picomatch: 2.3.1
-      vite: 4.3.0(@types/node@18.15.12)(sass@1.62.0)
+      vite: 4.3.1(@types/node@18.15.13)(sass@1.62.0)
     dev: true
 
-  /vite-plugin-laravel-translations@0.1.4(vite@4.3.0):
+  /vite-plugin-laravel-translations@0.1.4(vite@4.3.1):
     resolution: { integrity: sha512-3NT2ZbWZFppyRAKXvitkJriwxNsB8GA06U/jVJmUqtleNcuD24zJF6bqjMfGfnZN4s1zoAnR9P3OWrKIruRuHw== }
     engines: { node: '>= 12.0.0', pnpm: '>= 7.0.0' }
     peerDependencies:
@@ -6470,10 +6470,10 @@ packages:
     dependencies:
       glob: 10.2.1
       php-array-reader: 1.3.5
-      vite: 4.3.0(@types/node@18.15.12)(sass@1.62.0)
+      vite: 4.3.1(@types/node@18.15.13)(sass@1.62.0)
     dev: true
 
-  /vite-plugin-progress@0.0.7(vite@4.3.0):
+  /vite-plugin-progress@0.0.7(vite@4.3.1):
     resolution: { integrity: sha512-zyvKdcc/X+6hnw3J1HVV1TKrlFKC4Rh8GnDnWG/2qhRXjqytTcM++xZ+SAPnoDsSyWl8O93ymK0wZRgHAoglEQ== }
     engines: { node: '>=14', pnpm: '>=7.0.0' }
     peerDependencies:
@@ -6482,10 +6482,10 @@ packages:
       picocolors: 1.0.0
       progress: 2.0.3
       rd: 2.0.1
-      vite: 4.3.0(@types/node@18.15.12)(sass@1.62.0)
+      vite: 4.3.1(@types/node@18.15.13)(sass@1.62.0)
     dev: true
 
-  /vite-plugin-pwa@0.14.7(vite@4.3.0)(workbox-build@6.5.4)(workbox-window@6.5.4):
+  /vite-plugin-pwa@0.14.7(vite@4.3.1)(workbox-build@6.5.4)(workbox-window@6.5.4):
     resolution: { integrity: sha512-dNJaf0fYOWncmjxv9HiSa2xrSjipjff7IkYE5oIUJ2x5HKu3cXgA8LRgzOwTc5MhwyFYRSU0xyN0Phbx3NsQYw== }
     peerDependencies:
       vite: ^3.1.0 || ^4.0.0
@@ -6497,15 +6497,15 @@ packages:
       fast-glob: 3.2.12
       pretty-bytes: 6.1.0
       rollup: 3.20.2
-      vite: 4.3.0(@types/node@18.15.12)(sass@1.62.0)
+      vite: 4.3.1(@types/node@18.15.13)(sass@1.62.0)
       workbox-build: 6.5.4
       workbox-window: 6.5.4
     transitivePeerDependencies:
       - supports-color
     dev: true
 
-  /vite@4.3.0(@types/node@18.15.12)(sass@1.62.0):
-    resolution: { integrity: sha512-JTGFgDh3dVxeGBpuQX04Up+JZmuG6wu9414Ei36vQzaEruY/M4K0AgwtuB2b4HaBgB7R8l+LHxjB0jcgz4d2qQ== }
+  /vite@4.3.1(@types/node@18.15.13)(sass@1.62.0):
+    resolution: { integrity: sha512-EPmfPLAI79Z/RofuMvkIS0Yr091T2ReUoXQqc5ppBX/sjFRhHKiPPF/R46cTdoci/XgeQpB23diiJxq5w30vdg== }
     engines: { node: ^14.18.0 || >=16.0.0 }
     hasBin: true
     peerDependencies:
@@ -6529,10 +6529,10 @@ packages:
       terser:
         optional: true
     dependencies:
-      '@types/node': 18.15.12
+      '@types/node': 18.15.13
       esbuild: 0.17.17
       postcss: 8.4.23
-      rollup: 3.20.6
+      rollup: 3.20.7
       sass: 1.62.0
     optionalDependencies:
       fsevents: 2.3.2
@@ -6808,7 +6808,7 @@ packages:
     engines: { node: '>=10' }
     dev: true
 
-  github.com/devcode-it/openstamanager-vite-config/819ac61e3ad6ef6e22d5b09b411c6f935fa3b1a1(@types/node@18.15.12)(sass@1.62.0):
+  github.com/devcode-it/openstamanager-vite-config/819ac61e3ad6ef6e22d5b09b411c6f935fa3b1a1(@types/node@18.15.13)(sass@1.62.0):
     resolution: { tarball: https://codeload.github.com/devcode-it/openstamanager-vite-config/tar.gz/819ac61e3ad6ef6e22d5b09b411c6f935fa3b1a1 }
     id: github.com/devcode-it/openstamanager-vite-config/819ac61e3ad6ef6e22d5b09b411c6f935fa3b1a1
     name: '@openstamanager/vite-config'
@@ -6817,7 +6817,7 @@ packages:
       autoprefixer: 10.4.14(postcss@8.4.23)
       deepmerge-ts: 4.3.0
       postcss: 8.4.23
-      vite: 4.3.0(@types/node@18.15.12)(sass@1.62.0)
+      vite: 4.3.1(@types/node@18.15.13)(sass@1.62.0)
     transitivePeerDependencies:
       - '@types/node'
       - less

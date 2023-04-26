@@ -4,10 +4,10 @@ namespace App;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\ServiceProvider;
 use ReflectionClass;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-abstract class ModuleServiceProvider extends PackageServiceProvider
+abstract class ModuleServiceProvider extends ServiceProvider
 {
     public static string $name = '';
 

@@ -45,8 +45,7 @@
     "rawilk/laravel-settings": "^2",
     "spatie/file-system-watcher": "^1",
     "tightenco/ziggy": "^1",
-    "wikimedia/composer-merge-plugin": "^2",
-    "spatie/laravel-package-tools": "^1"
+    "wikimedia/composer-merge-plugin": "^2"
   },
   "require-dev": {
     "barryvdh/laravel-debugbar": "^3",

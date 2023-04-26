@@ -1,0 +1,2 @@
+-- Aggiunto import Preventivi
+INSERT INTO `zz_imports` (`id`, `id_module`, `name`, `class`, `created_at`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name`='Preventivi'), 'Preventivi', 'Modules\\Preventivi\\Import\\CSV', NULL);

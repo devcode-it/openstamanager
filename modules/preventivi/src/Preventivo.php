@@ -109,6 +109,7 @@ class Preventivo extends Document
         }
         $model->condizioni_fornitura = setting('Condizioni generali di fornitura preventivi');
         $model->id_segment = $id_segment;
+        $model->informazioniaggiuntive = $anagrafica->note;
 
         $model->save();
 

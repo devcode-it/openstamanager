@@ -447,6 +447,7 @@ switch (post('op')) {
     case 'add_articolo':
         $id_articolo = post('id_articolo');
         $barcode = post('barcode');
+        $dir = 'entrata';
 
         if (!empty($barcode)) {
             $id_articolo = $dbo->selectOne('mg_articoli', 'id',  ['deleted_at' => null, 'attivo' => 1, 'barcode' => $barcode])['id'];

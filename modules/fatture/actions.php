@@ -1063,6 +1063,20 @@ switch (post('op')) {
         echo json_encode($result);
 
         break;
+
+    case 'edit-price':
+        $righe = $post['righe'];
+
+        foreach ($righe as $riga) {
+            $dbo->query(
+                'UPDATE co_righe_documenti
+                SET prezzo_unitario = '.$riga['price'].'
+                WHERE id = '.$riga['id']
+            );
+        }
+
+        flash()->info(tr('Prezzi aggiornati!'));
+        break;
 }
 
 // Nota di debito

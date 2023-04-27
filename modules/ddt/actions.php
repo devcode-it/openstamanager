@@ -689,6 +689,20 @@ switch (filter('op')) {
         }
 
         break;
+
+    case 'edit-price':
+        $righe = $post['righe'];
+
+        foreach ($righe as $riga) {
+            $dbo->query(
+                'UPDATE dt_righe_ddt
+                SET prezzo_unitario = '.$riga['price'].'
+                WHERE id = '.$riga['id']
+            );
+        }
+
+        flash()->info(tr('Prezzi aggiornati!'));
+        break;
 }
 
 // Aggiornamento stato degli ordini presenti in questa fattura in base alle quantità totali evase

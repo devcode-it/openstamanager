@@ -252,7 +252,7 @@ if (!empty($sconto)) {
                 <b><span class="tip" title="'.tr('Un importo negativo indica uno sconto, mentre uno positivo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
             </td>
             <td class="text-right">
-                '.moneyFormat($preventivo->sconto, 2).'
+                '.moneyFormat($sconto, 2).'
             </td>
             <td></td>
         </tr>';

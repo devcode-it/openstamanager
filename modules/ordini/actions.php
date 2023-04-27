@@ -244,6 +244,7 @@ switch (post('op')) {
         $sconto->descrizione = post('descrizione');
         $sconto->note = post('note');
         $sconto->setScontoUnitario(post('sconto_unitario'), post('idiva'));
+        $sconto->confermato = ($dir = 'entrata' ? setting('Conferma automaticamente le quantità negli ordini cliente') : setting('Conferma automaticamente le quantità negli ordini fornitore'));
 
         $sconto->save();
 
@@ -685,7 +686,8 @@ switch (post('op')) {
             }
             
             $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['idanagrafica' => $ordine->idagente])['provvigione_default'];
-
+            
+            $articolo->confermato = ($dir = 'entrata' ? setting('Conferma automaticamente le quantità negli ordini cliente') : setting('Conferma automaticamente le quantità negli ordini fornitore'));
             $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);
             $articolo->setSconto($sconto, 'PRC');
             $articolo->setProvvigione($provvigione ?: 0, 'PRC');

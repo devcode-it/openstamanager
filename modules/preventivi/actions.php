@@ -282,7 +282,7 @@ switch (post('op')) {
         $sconto->descrizione = post('descrizione');
         $sconto->note = post('note');
         $sconto->setScontoUnitario(post('sconto_unitario'), post('idiva'));
-
+        $sconto->confermato = setting('Conferma automaticamente le quantità nei preventivi');
         $sconto->save();
 
         if (post('idriga') != null) {
@@ -466,6 +466,7 @@ switch (post('op')) {
             $articolo->um = $originale->um;
             $articolo->qta = 1;
             $articolo->costo_unitario = $originale->prezzo_acquisto;
+            $articolo->confermato = setting('Conferma automaticamente le quantità nei preventivi');
 
             $id_iva = ($preventivo->anagrafica->idiva_vendite ?: $originale->idiva_vendita) ?: setting('Iva predefinita');
             $id_anagrafica = $preventivo->idanagrafica;

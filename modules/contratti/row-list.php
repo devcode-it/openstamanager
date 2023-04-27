@@ -253,7 +253,7 @@ echo '
 echo '
         <tr>
             <td colspan="'.$colspan.'" class="text-right">
-                <b>'.tr('Totale', [], ['upper' => true]).':</b>
+                <b>'.tr('Totale documento', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
                 '.moneyFormat($contratto->totale, 2).'

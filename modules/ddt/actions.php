@@ -696,7 +696,7 @@ switch (filter('op')) {
         foreach ($righe as $riga) {
             $dbo->query(
                 'UPDATE dt_righe_ddt
-                SET subtotale = '.$riga['price'].' AND prezzo_unitario = '.$riga['price'].'
+                SET prezzo_unitario = '.$riga['price'].'
                 WHERE id = '.$riga['id']
             );
         }

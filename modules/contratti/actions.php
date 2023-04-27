@@ -671,7 +671,7 @@ switch (post('op')) {
         foreach ($righe as $riga) {
             $dbo->query(
                 'UPDATE co_righe_contratti
-                SET subtotale = '.$riga['price'].' AND prezzo_unitario = '.$riga['price'].'
+                SET prezzo_unitario = '.$riga['price'].'
                 WHERE id = '.$riga['id']
             );
         }

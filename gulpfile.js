@@ -349,13 +349,13 @@ function pdfjs() {
         '!' + config.nodeDirectory + '/pdf.js/assets/web/*.map',
         '!' + config.nodeDirectory + '/pdf.js/assets/web/*.pdf',
     ])
-        .pipe(gulp.dest(config.production + '/pdfjs/assets/web'));
+        .pipe(gulp.dest(config.production + '/pdfjs/web'));
 
     const build = gulp.src([
         config.nodeDirectory + '/pdf.js/assets/build/*',
         '!' + config.nodeDirectory + '/pdf.js/assets/build/*.map',
     ])
-        .pipe(gulp.dest(config.production + '/pdfjs/assets/build'));
+        .pipe(gulp.dest(config.production + '/pdfjs/build'));
 
     return merge(web, build);
 }

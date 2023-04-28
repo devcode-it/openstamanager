@@ -34,18 +34,23 @@ md-navigation-drawer, md-navigation-drawer-modal {
     //--mdc-theme-primary: var(--mdc-theme-primary2, variables.$primary);
 
     //noinspection Stylelint
-    > md-list md-list-item-link {
-        display: block;
-        width: 85%;
-        --md-list-list-item-container-shape: 100px;
-        --md-ripple-shape: 100px;
-        //--md-focus-ring-shape-start-start: 100px;
-        //--md-focus-ring-shape-start-end: 100px;
-        //--md-focus-ring-shape-end-start: 100px;
-        //--md-focus-ring-shape-end-end: 100px;
+    > md-list {
+        display: flex;
+        justify-content: center;
 
-        &[active] {
-            --md-list-list-item-container-color: var(--md-sys-color-secondary-container, #3f51b5);
+        md-list-item-link {
+            display: block;
+            width: 85%;
+            --md-list-item-list-item-container-shape: 100px;
+            --md-ripple-shape: 100px;
+            //--md-focus-ring-shape-start-start: 100px;
+            //--md-focus-ring-shape-start-end: 100px;
+            //--md-focus-ring-shape-end-start: 100px;
+            //--md-focus-ring-shape-end-end: 100px;
+
+            &[active] {
+                --md-list-item-list-item-container-color: var(--md-sys-color-secondary-container, #3f51b5);
+            }
         }
     }
 }
@@ -65,7 +70,7 @@ top-app-bar {
     --mdc-theme-on-primary: var(--md-sys-color-on-surface, #5f6368);
 }
 
-md-fab, md-fab-extended {
+md-fab, md-branded-fab {
     &.sticky {
         position: fixed;
         right: 16px;

@@ -689,6 +689,26 @@ switch (filter('op')) {
         }
 
         break;
+
+    case 'edit-price':
+        $righe = $post['righe'];
+
+        foreach ($righe as $riga) {
+            if (($riga['id']) != null) {
+                $articolo = Articolo::find($riga['id']);
+            } else {
+                $originale = ArticoloOriginale::find(post('idarticolo'));
+                $articolo = Articolo::build($fattura, $originale);
+                $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
+            }
+    
+            $articolo->setPrezzoUnitario($riga['price'], $articolo->idiva);
+            $articolo->save();
+
+            flash()->info(tr('Prezzi aggiornati!'));
+
+        }
+        break;
 }
 
 // Aggiornamento stato degli ordini presenti in questa fattura in base alle quantità totali evase

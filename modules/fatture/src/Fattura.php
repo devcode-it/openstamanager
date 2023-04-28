@@ -127,6 +127,7 @@ class Fattura extends Document
         if ($numero_esterno) {
             $model->numero_esterno = $numero_esterno;
         }
+        $model->idagente = $anagrafica->idagente;
 
         // Sede aziendale scelta tra le sedi disponibili per l'utente
         $id_sede = $user->sedi[0];

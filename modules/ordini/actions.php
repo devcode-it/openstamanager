@@ -244,6 +244,7 @@ switch (post('op')) {
         $sconto->descrizione = post('descrizione');
         $sconto->note = post('note');
         $sconto->setScontoUnitario(post('sconto_unitario'), post('idiva'));
+        $sconto->confermato = ($dir = 'entrata' ? setting('Conferma automaticamente le quantità negli ordini cliente') : setting('Conferma automaticamente le quantità negli ordini fornitore'));
 
         $sconto->save();
 
@@ -626,73 +627,79 @@ switch (post('op')) {
 
             $originale = ArticoloOriginale::find($id_articolo);
 
-            $articolo = Articolo::build($ordine, $originale);
-            $qta = 1;
+            if ($qta_articolo <= 0 && !$permetti_movimenti_sotto_zero && !$originale->servizio && $dir == 'entrata') {
+                $response['error'] = tr('Quantità a magazzino non sufficiente');
+                echo json_encode($response);
+            } else {      
+                $articolo = Articolo::build($ordine, $originale);
+                $qta = 1;
 
-            $articolo->descrizione = $originale->descrizione;
-            $articolo->um = $originale->um;
-            $articolo->qta = 1;
-            $articolo->costo_unitario = $originale->prezzo_acquisto;
+                $articolo->descrizione = $originale->descrizione;
+                $articolo->um = $originale->um;
+                $articolo->qta = 1;
+                $articolo->costo_unitario = $originale->prezzo_acquisto;
 
-            if ($dir == 'entrata') {
-                $id_iva = ($ordine->anagrafica->idiva_vendite ?: $originale->idiva_vendita) ?: setting('Iva predefinita');
-            } else {
-                $id_iva = ($ordine->anagrafica->idiva_acquisti ?: setting('Iva predefinita'));
-            }
-            $id_anagrafica = $ordine->idanagrafica;
-            $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
-        
-            // CALCOLO PREZZO UNITARIO
-            $prezzo_unitario = 0;
-            $sconto = 0;
-            // Prezzi netti clienti / listino fornitore
-            $prezzi = $dbo->fetchArray('SELECT minimo, massimo, sconto_percentuale, '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario
-            FROM mg_prezzi_articoli
-            WHERE id_articolo = '.prepare($id_articolo).' AND dir = '.prepare($dir).' AND id_anagrafica = '.prepare($id_anagrafica));
+                if ($dir == 'entrata') {
+                    $id_iva = ($ordine->anagrafica->idiva_vendite ?: $originale->idiva_vendita) ?: setting('Iva predefinita');
+                } else {
+                    $id_iva = ($ordine->anagrafica->idiva_acquisti ?: setting('Iva predefinita'));
+                }
+                $id_anagrafica = $ordine->idanagrafica;
+                $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
+            
+                // CALCOLO PREZZO UNITARIO
+                $prezzo_unitario = 0;
+                $sconto = 0;
+                // Prezzi netti clienti / listino fornitore
+                $prezzi = $dbo->fetchArray('SELECT minimo, massimo, sconto_percentuale, '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario
+                FROM mg_prezzi_articoli
+                WHERE id_articolo = '.prepare($id_articolo).' AND dir = '.prepare($dir).' AND id_anagrafica = '.prepare($id_anagrafica));
 
-            if ($prezzi) {
-                foreach ($prezzi as $prezzo) {
-                    if ($qta >= $prezzo['minimo'] && $qta <= $prezzo['massimo']) {
-                        $prezzo_unitario = $prezzo['prezzo_unitario'];
-                        $sconto = $prezzo['sconto_percentuale'];
-                        continue;
+                if ($prezzi) {
+                    foreach ($prezzi as $prezzo) {
+                        if ($qta >= $prezzo['minimo'] && $qta <= $prezzo['massimo']) {
+                            $prezzo_unitario = $prezzo['prezzo_unitario'];
+                            $sconto = $prezzo['sconto_percentuale'];
+                            continue;
+                        }
+
+                        if ($prezzo['minimo'] == null && $prezzo['massimo'] == null && $prezzo['prezzo_unitario'] != null) {
+                            $prezzo_unitario = $prezzo['prezzo_unitario'];
+                            $sconto = $prezzo['sconto_percentuale'];
+                            continue;
+                        }
                     }
+                } 
+                if (empty($prezzo_unitario)) {
+                    // Prezzi listini clienti
+                    $listino = $dbo->fetchOne('SELECT sconto_percentuale AS sconto_percentuale_listino, '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino
+                    FROM mg_listini
+                    LEFT JOIN mg_listini_articoli ON mg_listini.id=mg_listini_articoli.id_listino
+                    LEFT JOIN an_anagrafiche ON mg_listini.id=an_anagrafiche.id_listino
+                    WHERE mg_listini.data_attivazione<=NOW() AND mg_listini_articoli.data_scadenza>=NOW() AND mg_listini.attivo=1 AND id_articolo = '.prepare($id_articolo).' AND dir = '.prepare($dir).' AND idanagrafica = '.prepare($id_anagrafica));
 
-                    if ($prezzo['minimo'] == null && $prezzo['massimo'] == null && $prezzo['prezzo_unitario'] != null) {
-                        $prezzo_unitario = $prezzo['prezzo_unitario'];
-                        $sconto = $prezzo['sconto_percentuale'];
-                        continue;
+                    if ($listino) {
+                        $prezzo_unitario = $listino['prezzo_unitario_listino'];
+                        $sconto = $listino['sconto_percentuale_listino'];
                     }
                 }
-            } 
-            if (empty($prezzo_unitario)) {
-                // Prezzi listini clienti
-                $listino = $dbo->fetchOne('SELECT sconto_percentuale AS sconto_percentuale_listino, '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino
-                FROM mg_listini
-                LEFT JOIN mg_listini_articoli ON mg_listini.id=mg_listini_articoli.id_listino
-                LEFT JOIN an_anagrafiche ON mg_listini.id=an_anagrafiche.id_listino
-                WHERE mg_listini.data_attivazione<=NOW() AND mg_listini_articoli.data_scadenza>=NOW() AND mg_listini.attivo=1 AND id_articolo = '.prepare($id_articolo).' AND dir = '.prepare($dir).' AND idanagrafica = '.prepare($id_anagrafica));
-
-                if ($listino) {
-                    $prezzo_unitario = $listino['prezzo_unitario_listino'];
-                    $sconto = $listino['sconto_percentuale_listino'];
+                if ($dir == 'entrata') {
+                    $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $originale->prezzo_vendita_ivato : $originale->prezzo_vendita);
+                } else {
+                    $prezzo_unitario = $prezzo_unitario ?: $originale->prezzo_acquisto;
                 }
-            }
-            if ($dir == 'entrata') {
-                $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $originale->prezzo_vendita_ivato : $originale->prezzo_vendita);
-            } else {
-                $prezzo_unitario = $prezzo_unitario ?: $originale->prezzo_acquisto;
-            }
-            
-            $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['idanagrafica' => $ordine->idagente])['provvigione_default'];
+                
+                $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['idanagrafica' => $ordine->idagente])['provvigione_default'];
+                
+                $articolo->confermato = ($dir = 'entrata' ? setting('Conferma automaticamente le quantità negli ordini cliente') : setting('Conferma automaticamente le quantità negli ordini fornitore'));
+                $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);
+                $articolo->setSconto($sconto, 'PRC');
+                $articolo->setProvvigione($provvigione ?: 0, 'PRC');
+                $articolo->save();
 
-            $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);
-            $articolo->setSconto($sconto, 'PRC');
-            $articolo->setProvvigione($provvigione ?: 0, 'PRC');
-            $articolo->save();
-
-            
-            flash()->info(tr('Nuovo articolo aggiunto!'));
+                
+                flash()->info(tr('Nuovo articolo aggiunto!'));
+            }
         } else {
             $response['error'] = tr('Nessun articolo corrispondente a magazzino');
             echo json_encode($response);
@@ -713,5 +720,25 @@ switch (post('op')) {
             flash()->info(tr('Quantità aggiornata!'));
         }
 
+        break;
+
+    case 'edit-price':
+        $righe = $post['righe'];
+
+        foreach ($righe as $riga) {
+            if (($riga['id']) != null) {
+                $articolo = Articolo::find($riga['id']);
+            } else {
+                $originale = ArticoloOriginale::find(post('idarticolo'));
+                $articolo = Articolo::build($fattura, $originale);
+                $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
+            }
+    
+            $articolo->setPrezzoUnitario($riga['price'], $articolo->idiva);
+            $articolo->save();
+
+            flash()->info(tr('Prezzi aggiornati!'));
+
+        }
         break;
 }

@@ -1157,4 +1157,24 @@ switch (post('op')) {
         }
 
         break;
+
+    case 'edit-price':
+        $righe = $post['righe'];
+
+        foreach ($righe as $riga) {
+            if (($riga['id']) != null) {
+                $articolo = Articolo::find($riga['id']);
+            } else {
+                $originale = ArticoloOriginale::find(post('idarticolo'));
+                $articolo = Articolo::build($fattura, $originale);
+                $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
+            }
+    
+            $articolo->setPrezzoUnitario($riga['price'], $articolo->idiva);
+            $articolo->save();
+
+            flash()->info(tr('Prezzi aggiornati!'));
+
+        }
+        break;
 }

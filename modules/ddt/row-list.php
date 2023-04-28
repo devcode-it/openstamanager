@@ -299,7 +299,7 @@ echo '
 echo '
         <tr>
             <td colspan="'.$colspan.'" class="text-right">
-                <b>'.tr('Totale', [], ['upper' => true]).':</b>
+                <b>'.tr('Totale documento', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
                 '.moneyFormat($totale, 2).'
@@ -372,6 +372,10 @@ if (!$block_edit && sizeof($righe) > 0) {
         <button type="button" class="btn btn-xs btn-default disabled" id="elimina_righe" onclick="rimuoviRiga(getSelectData());">
             <i class="fa fa-trash"></i>
         </button>
+
+        <button type="button" class="btn btn-xs btn-default disabled" id="confronta_righe" onclick="confrontaRighe(getSelectData());">
+            Confronta prezzi
+        </button>
     </div>';
 }
 echo '
@@ -403,6 +407,10 @@ function getSelectData() {
     });
 
     return data;
+}
+
+function confrontaRighe(id) {
+    openModal("'.tr('Confronta prezzi').'", "'.$module->fileurl('modals/confronta_righe.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&righe=" + id + "&id_anagrafica='.$ordine->idanagrafica.'&direzione='.$dir.'");
 }
 
 function rimuoviRiga(id) {
@@ -508,9 +516,11 @@ $(".check").on("change", function() {
     if (checked) {
         $("#elimina_righe").removeClass("disabled");
         $("#duplica_righe").removeClass("disabled");
+        $("#confronta_righe").removeClass("disabled");
     } else {
         $("#elimina_righe").addClass("disabled");
         $("#duplica_righe").addClass("disabled");
+        $("#confronta_righe").addClass("disabled");
     }
 });
 

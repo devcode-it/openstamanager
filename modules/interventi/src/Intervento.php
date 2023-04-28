@@ -65,7 +65,8 @@ class Intervento extends Document
         $model->codice = static::getNextCodice($data_richiesta, $id_segment);
         $model->data_richiesta = $data_richiesta;
         $model->id_segment = $id_segment;
-
+        $model->idagente = $anagrafica->idagente;
+        
         $model->save();
 
         return $model;

@@ -282,7 +282,7 @@ switch (post('op')) {
         $sconto->descrizione = post('descrizione');
         $sconto->note = post('note');
         $sconto->setScontoUnitario(post('sconto_unitario'), post('idiva'));
-
+        $sconto->confermato = setting('Conferma automaticamente le quantità nei preventivi');
         $sconto->save();
 
         if (post('idriga') != null) {
@@ -466,6 +466,7 @@ switch (post('op')) {
             $articolo->um = $originale->um;
             $articolo->qta = 1;
             $articolo->costo_unitario = $originale->prezzo_acquisto;
+            $articolo->confermato = setting('Conferma automaticamente le quantità nei preventivi');
 
             $id_iva = ($preventivo->anagrafica->idiva_vendite ?: $originale->idiva_vendita) ?: setting('Iva predefinita');
             $id_anagrafica = $preventivo->idanagrafica;
@@ -538,4 +539,25 @@ switch (post('op')) {
         }
 
         break;
+
+    case 'edit-price':
+        $righe = $post['righe'];
+
+        foreach ($righe as $riga) {
+            if (($riga['id']) != null) {
+                $articolo = Articolo::find($riga['id']);
+            } else {
+                $originale = ArticoloOriginale::find(post('idarticolo'));
+                $articolo = Articolo::build($fattura, $originale);
+                $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
+            }
+    
+            $articolo->setPrezzoUnitario($riga['price'], $articolo->idiva);
+            $articolo->save();
+
+            flash()->info(tr('Prezzi aggiornati!'));
+
+        }
+        break;
+
 }

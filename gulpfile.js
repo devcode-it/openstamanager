@@ -344,18 +344,18 @@ function csrf() {
 
 function pdfjs() {
     const web = gulp.src([
-        config.nodeDirectory + '/pdf.js/web/**/*',
-        '!' + config.nodeDirectory + '/pdf.js/web/cmaps/*',
-        '!' + config.nodeDirectory + '/pdf.js/web/*.map',
-        '!' + config.nodeDirectory + '/pdf.js/web/*.pdf',
+        config.nodeDirectory + '/pdf.js/assets/web/**/*',
+        '!' + config.nodeDirectory + '/pdf.js/assets/web/cmaps/*',
+        '!' + config.nodeDirectory + '/pdf.js/assets/web/*.map',
+        '!' + config.nodeDirectory + '/pdf.js/assets/web/*.pdf',
     ])
-        .pipe(gulp.dest(config.production + '/pdfjs/web'));
+        .pipe(gulp.dest(config.production + '/pdfjs/assets/web'));
 
     const build = gulp.src([
-        config.nodeDirectory + '/pdf.js/build/*',
-        '!' + config.nodeDirectory + '/pdf.js/build/*.map',
+        config.nodeDirectory + '/pdf.js/assets/build/*',
+        '!' + config.nodeDirectory + '/pdf.js/assets/build/*.map',
     ])
-        .pipe(gulp.dest(config.production + '/pdfjs/build'));
+        .pipe(gulp.dest(config.production + '/pdfjs/assets/build'));
 
     return merge(web, build);
 }

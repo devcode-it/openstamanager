@@ -669,14 +669,19 @@ switch (post('op')) {
         $righe = $post['righe'];
 
         foreach ($righe as $riga) {
-            $dbo->query(
-                'UPDATE co_righe_contratti
-                SET prezzo_unitario = '.$riga['price'].'
-                WHERE id = '.$riga['id']
-            );
+            if (($riga['id']) != null) {
+                $articolo = Articolo::find($riga['id']);
+            } else {
+                $originale = ArticoloOriginale::find(post('idarticolo'));
+                $articolo = Articolo::build($fattura, $originale);
+                $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
+            }
+    
+            $articolo->setPrezzoUnitario($riga['price'], $articolo->idiva);
+            $articolo->save();
+
+            flash()->info(tr('Prezzi aggiornati!'));
+
         }
-
-        flash()->info(tr('Prezzi aggiornati!'));
-
         break;
 }

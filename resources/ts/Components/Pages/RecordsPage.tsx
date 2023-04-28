@@ -1,14 +1,13 @@
 /* eslint-disable sonarjs/no-duplicate-string */
-import '@maicol07/material-web-additions/layout-grid/layout-grid.js';
-import '@material/web/dialog/dialog.js';
-import '@material/web/fab/fab-extended.js';
-import '@material/web/iconbutton/standard-icon-button.js';
-
 import {router} from '@maicol07/inertia-mithril';
 import {
   FilterTextFieldInputEventDetail,
   SortButtonClickedEventDetail
 } from '@maicol07/material-web-additions/data-table/lib/data-table-column.js';
+import '@maicol07/material-web-additions/layout-grid/layout-grid.js';
+import '@material/web/dialog/dialog.js';
+import '@material/web/fab/branded-fab.js';
+import '@material/web/iconbutton/standard-icon-button.js';
 import {mdiPlus} from '@mdi/js';
 import collect, {type Collection} from 'collect.js';
 import {SortDirection} from 'coloquent';
@@ -119,9 +118,9 @@ export default abstract class RecordsPage<M extends Model<any, any>, D extends A
 
   fab(): Children {
     return (
-      <md-fab-extended id="add-record" label={__('Aggiungi')} className="sticky" onclick={this.onAddNewRecordButtonClicked.bind(this)}>
+      <md-branded-fab id="add-record" label={__('Aggiungi')} className="sticky" onclick={this.onAddNewRecordButtonClicked.bind(this)}>
         <MdIcon icon={mdiPlus} slot="icon"/>
-      </md-fab-extended>
+      </md-branded-fab>
     );
   }
 

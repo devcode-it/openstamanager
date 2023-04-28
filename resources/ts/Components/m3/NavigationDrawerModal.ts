@@ -1,5 +1,5 @@
-import {NavigationDrawerModal as MDNavigationDrawerModal} from '@material/web/navigationdrawer/lib/navigation-drawer-modal.js';
 import {styles} from '@material/web/navigationdrawer/lib/navigation-drawer-modal-styles.css.js';
+import {NavigationDrawerModal as MDNavigationDrawerModal} from '@material/web/navigationdrawer/lib/navigation-drawer-modal.js';
 import {styles as sharedStyles} from '@material/web/navigationdrawer/lib/shared-styles.css.js';
 import {css} from 'lit';
 import {customElement} from 'lit/decorators.js';
@@ -15,13 +15,4 @@ export default class MdNavigationDrawer extends MDNavigationDrawerModal {
       padding-top: 64px;
     }*/
   `];
-
-  // @ts-expect-error - Workaround for https://github.com/material-components/material-web/issues/3804
-  // eslint-disable-next-line unicorn/no-null
-  override ariaModal: 'true' | 'false' | null = null;
-
-  connectedCallback() {
-    super.connectedCallback();
-    this.ariaModal = 'false';
-  }
 }

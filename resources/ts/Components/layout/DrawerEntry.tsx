@@ -1,10 +1,10 @@
-import '../m3/ListItemLink';
-import '@material/web/icon/icon.js';
-
 import {router} from '@maicol07/inertia-mithril';
+import '@material/web/icon/icon.js';
 import {ListItemLink} from '@material/web/list/lib/listitemlink/list-item-link';
-import MaterialIcons from '@mdi/js';
+import '@material/web/list/list-item-link.js';
+import type * as MaterialIcons from '@mdi/js';
 import {Vnode} from 'mithril';
+import {ValueOf} from 'type-fest';
 
 import {
   Attributes,
@@ -12,9 +12,11 @@ import {
 } from '~/Components/Component';
 import MdIcon from '~/Components/MdIcon';
 
+type Icons = ValueOf<typeof MaterialIcons>;
+
 export interface DrawerEntryAttributes extends Attributes {
   route: string;
-  icon: typeof MaterialIcons;
+  icon: Icons;
 }
 
 export class DrawerEntry<A extends DrawerEntryAttributes = DrawerEntryAttributes> extends Component<A> {

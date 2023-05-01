@@ -35,7 +35,7 @@ abstract class ModuleServiceProvider extends ServiceProvider
     {
         $slug = static::$slug;
         if (empty($slug)) {
-            $cachedPackages = require app()->getCachedServicesPath();
+            $cachedPackages = require app()->getCachedPackagesPath();
             $slug = array_key_first(Arr::where($cachedPackages, static fn (array $package) => in_array(static::class, $package['providers'], true)));
             static::$slug = $slug;
         }

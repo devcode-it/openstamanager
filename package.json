@@ -6,6 +6,7 @@
   "files": [
     "resources/ts/**/*"
   ],
+  "types": "resources/ts/types/index.d.ts",
   "scripts": {
     "build": "vite build",
     "build:dev": "vite build --mode development",

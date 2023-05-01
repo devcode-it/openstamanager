@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 // noinspection JSFileReferences,JSUnusedGlobalSymbols,LocalVariableNamingConventionJS
 
-/// <reference types="inertia-plugin/client" />
-
 import type Mithril from 'mithril';
 import type router from 'ziggy-js';
 

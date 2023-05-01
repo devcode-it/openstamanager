@@ -21,7 +21,7 @@
     "types": [
       "vite/client",
       "vite-plugin-pwa/client",
-      "mithril-utilities/typings"
+      "inertia-plugin/client"
     ],
     "baseUrl": ".",
     "paths": {

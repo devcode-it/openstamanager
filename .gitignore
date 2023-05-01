@@ -1,7 +1,6 @@
 # Custom rules
 /.vscode
 composer.lock
-composer.local.json
 public/build
 public/modules
 public/vendor

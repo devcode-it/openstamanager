@@ -44,8 +44,7 @@
     "outhebox/blade-flags": "^1",
     "rawilk/laravel-settings": "^2",
     "spatie/file-system-watcher": "^1",
-    "tightenco/ziggy": "^1",
-    "wikimedia/composer-merge-plugin": "^2"
+    "tightenco/ziggy": "^1"
   },
   "require-dev": {
     "barryvdh/laravel-debugbar": "^3",
@@ -87,17 +86,7 @@
   "config": {
     "optimize-autoloader": true,
     "preferred-install": "dist",
-    "sort-packages": true,
-    "allow-plugins": {
-      "wikimedia/composer-merge-plugin": true
-    }
-  },
-  "extra": {
-    "merge-plugin": {
-      "include": [
-      ],
-      "replace": true
-    }
+    "sort-packages": true
   },
   "minimum-stability": "dev",
   "prefer-stable": true

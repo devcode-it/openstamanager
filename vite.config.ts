@@ -1,8 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import * as path from 'node:path';
-
 import Inertia from 'inertia-plugin/vite';
 import laravel from 'laravel-vite-plugin';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import {defineConfig} from 'vite';
 import laravelTranslations from 'vite-plugin-laravel-translations';
 import progress from 'vite-plugin-progress';
@@ -10,10 +10,15 @@ import {VitePWA} from 'vite-plugin-pwa';
 import installedPackages from './vendor/composer/installed.json';
 
 const modules = installedPackages.packages.filter((packageInfo) => packageInfo.type === 'openstamanager-module');
-// const indexFiles = [];
-// for (const module of modules) {
-//   indexFiles.push(`vendor/bin/${module.name}/index.ts`);
-// }
+const bootstrapFiles = [];
+for (const module of modules) {
+  const basePath = `./vendor/${module.name}/resources/ts/bootstrap`;
+  if (fs.existsSync(`${basePath}.ts`)) {
+    bootstrapFiles.push(`${basePath}.ts`);
+  } else if (fs.existsSync(`${basePath}.tsx`)) {
+    bootstrapFiles.push(`${basePath}.tsx`);
+  }
+}
 
 
 // noinspection JSUnusedGlobalSymbols
@@ -38,7 +43,8 @@ export default defineConfig({
   plugins: [
     laravel({
       input: [
-        'resources/ts/app.ts'
+        'resources/ts/app.ts',
+        ...bootstrapFiles
       ],
       refresh: true
     }),

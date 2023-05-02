@@ -17,6 +17,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+$articolo = $database->selectOne('mg_articoli', '*', ['id' => $result['idarticolo']]);
+$width = $options['dir'] == 'uscita' && $articolo['fattore_um_secondaria'] ? 3 : 4;
+
 // Descrizione
 echo App::internalLoad('descrizione.php', $result, $options);
 
@@ -26,21 +29,49 @@ echo App::internalLoad('conti.php', $result, $options);
 // Iva
 echo '
     <div class="row">
-        <div class="col-md-4 '.(!empty($options['nascondi_prezzi']) ? 'hidden' : '').'">
+        <div class="col-md-'.$width.' '.(!empty($options['nascondi_prezzi']) ? 'hidden' : '').'">
             {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$result['idiva'].'", "ajax-source": "iva", "select-options": '.json_encode($options['select-options']['iva']).' ]}
         </div>';
 
 // Quantità
 echo '
-        <div class="col-md-4">
+        <div class="col-md-'.$width.'">
             {[ "type": "number", "label": "'.tr('Q.tà').'", "name": "qta", "required": 1, "value": "'.abs((float) $result['qta']).'", "decimals": "qta"'.(isset($result['max_qta']) ? ', "icon-after": "<span class=\"tip\" title=\"'.tr("L'elemento è collegato a un documento: la quantità massima ammessa è relativa allo stato di evasione dell'elemento nel documento di origine (quantità dell'elemento / quantità massima ammessa)").'\">/ '.numberFormat(abs((float) $result['max_qta']), 'qta').' <i class=\"fa fa-question-circle-o\"></i></span>"' : '').', "min-value": "'.abs((float)  $result['qta_evasa']).'" ]}
         </div>';
 
 // Unità di misura
 echo '
-        <div class="col-md-4">
+        <div class="col-md-'.$width.'">
             {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::get('Unità di misura')['id'].'", "name": "um", "value": "'.$result['um'].'", "ajax-source": "misure" ]}
+        </div>';
+
+// Unità di misura
+if ($options['dir'] == 'uscita' && $articolo['fattore_um_secondaria']) {
+echo '
+        <div class="col-md-3">
+            {[ "type": "number", "label": "'.tr('Q.tà secondaria').'", "name": "fattore_um_secondaria", "value": "'.abs((float)$articolo['fattore_um_secondaria'] * $result['qta']).'", "icon-after": "'.$articolo['um_secondaria'].'" ]}
         </div>
+        
+        <script>
+            input("fattore_um_secondaria").on("change", function() {
+                let articolo = input("idarticolo").getData();
+                let qta = input(this).get() / articolo.fattore_um_secondaria;
+
+                if (input("qta").get() != qta) {
+                    input("qta").set(qta);
+                }
+            });
+            input("qta").on("change", function() {
+                let articolo = input("idarticolo").getData();
+                let fattore_um_secondaria = input(this).get() * articolo.fattore_um_secondaria;
+
+                if (input("fattore_um_secondaria").get() != fattore_um_secondaria) {
+                    input("fattore_um_secondaria").set(fattore_um_secondaria);
+                }
+            });
+        </script>';
+}
+echo '
     </div>';
 
 $is_nota = $options['is_nota'] ?: 0;

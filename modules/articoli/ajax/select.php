@@ -86,6 +86,7 @@ switch ($resource) {
         $query .= '
             round(mg_articoli.qta,'.setting('Cifre decimali per quantità').") AS qta,
             mg_articoli.um,
+            mg_articoli.fattore_um_secondaria,
             mg_articoli.servizio,
 
             mg_articoli.idconto_vendita,

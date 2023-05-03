@@ -12,6 +12,8 @@ abstract class Repository extends RestifyRepository
 {
     public static array $sort = ['id'];
 
+    public static array $match = ['id'];
+
     /**
      * Build a "show" and "index" query for the given repository.
      *

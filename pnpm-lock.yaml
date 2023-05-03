@@ -99,6 +99,9 @@ devDependencies:
   csstype:
     specifier: ^3.1.2
     version: 3.1.2
+  fast-glob:
+    specifier: ^3.2.12
+    version: 3.2.12
   inertia-plugin:
     specifier: ^0.6.0
     version: 0.6.0

@@ -201,25 +201,28 @@ class Query
                     $equal = string_starts_with($real_value, '=');
                     $notequal = string_starts_with($real_value, '!=');
 
-                    if ($minus || $more || $equal || $notequal) {
+                    if ($minus || $more) {
                         $sign = string_contains($real_value, '=') ? '=' : '';
                         if ($more) {
                             $sign = '>'.$sign;
                         } elseif ($minus) {
                             $sign = '<'.$sign;
-                        } elseif ($equal) {
-                            $sign = '=';
-                        } else {
-                            $sign = '!=';
                         }
 
-                        $value = trim(str_replace(['&lt;', '=', '&gt;', '!'], '', $value));
+                        $value = trim(str_replace(['&lt;', '&gt;'], '', $value));
 
                         if ($more || $minus) {
                             $search_filters[] = 'CAST('.$search_query.' AS UNSIGNED) '.$sign.' '.prepare($value);
                         } else {
                             $search_filters[] = $search_query.' '.$sign.' '.prepare($value);
                         }
+                
+                    } else if ($equal){
+                        $value = trim(str_replace(['='], '', $value));
+                        $search_filters[] = ($search_query.' = '.prepare($value). ' OR '.$search_query.' LIKE '.prepare('% '.$value) . ' OR '.$search_query.' LIKE '.prepare($value.' %').' OR '.$search_query.' LIKE '.prepare('% '.$value.' %'));
+                    } else if ($notequal) {
+                        $value = trim(str_replace(['!='], '', $value));
+                        $search_filters[] = ($search_query.' != '.prepare($value). ' AND '.$search_query.' NOT LIKE '.prepare('% '.$value) . ' AND '.$search_query.' NOT LIKE '.prepare($value.' %').' AND '.$search_query.' NOT LIKE '.prepare('% '.$value.' %'));
                     } else {
                         $search_filters[] = $search_query.' LIKE '.prepare('%'.$value.'%');
                     }

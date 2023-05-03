@@ -237,8 +237,14 @@ class FatturaOrdinaria extends FatturaElettronica
 
                 // Nel caso il prezzo sia negativo viene gestito attraverso l'inversione della quantità (come per le note di credito)
                 // TODO: per migliorare la visualizzazione, sarebbe da lasciare negativo il prezzo e invertire gli sconti.
-                $prezzo = $totale_righe > 0 ? $riga['PrezzoUnitario'] : -$riga['PrezzoUnitario'];
-                $qta = (!empty($articolo->um) && !empty($articolo->fattore_um_secondaria) && $riga['UnitaMisura'] == $articolo->um_secondaria) ? $riga['Quantita'] / $articolo->fattore_um_secondaria : ($riga['Quantita'] ?: 1);
+                if (!empty($articolo->um) && !empty($articolo->fattore_um_secondaria) && $riga['UnitaMisura'] == $articolo->um_secondaria) {
+                    $qta = (($riga['Quantita'] ?: 1) / $articolo->fattore_um_secondaria);
+                    $prezzo = $totale_righe > 0 ? $totale_righe/$qta : -($totale_righe/$qta);
+                } else {
+                    $qta = ($riga['Quantita'] ?: 1);
+                    $prezzo = $totale_righe > 0 ? $riga['PrezzoUnitario'] : -$riga['PrezzoUnitario'];
+                }
+                
 
                 // Prezzo e quantità
                 $obj->prezzo_unitario = $prezzo;

@@ -1,7 +1,7 @@
-import '@maicol07/material-web-additions/data-table/data-table-row.js';
 import '@maicol07/material-web-additions/data-table/data-table-cell.js';
 import '@maicol07/material-web-additions/data-table/data-table-column.js';
 import '@maicol07/material-web-additions/data-table/data-table-footer.js';
+import '@maicol07/material-web-additions/data-table/data-table-row.js';
 
 import {
   DataTable as MdDataTable,
@@ -122,7 +122,7 @@ export default class RecordsTable<M extends Model<any, any>, A extends RecordsTa
   }
 
   noRecordsContent(vnode: Vnode<A>): Children {
-    const colspan = vnode.attrs.cols.count() + (vnode.attrs.readonly ? 0 : 1);
+    const colspan = vnode.attrs.cols.count() + (vnode.attrs.selectable ? 1 : 0) + (vnode.attrs.readonly ? 0 : 1);
     return (
       <md-data-table-row>
         <td colspan={colspan} style={{textAlign: 'center'}}>{__('Nessun record trovato')}</td>

@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
 use ReflectionClass;
 
@@ -67,11 +66,11 @@ abstract class ModuleServiceProvider extends ServiceProvider
 
     public static function modulePath(): string
     {
-        return dirname((new ReflectionClass(static::class))->getFileName());
+        return dirname((new ReflectionClass(static::class))->getFileName(), 2);
     }
 
-    public static function hasBootstrap(): bool
+    public static function namespace(): string
     {
-        return File::exists(static::modulePath().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'ts'.DIRECTORY_SEPARATOR.'bootstrap.tsx');
+        return (new ReflectionClass(static::class))->getNamespaceName();
     }
 }

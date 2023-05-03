@@ -17,9 +17,7 @@ class RestifyServiceProvider extends RestifyApplicationServiceProvider
     protected function gate(): void
     {
         Gate::define('viewRestify', function ($user) {
-            return in_array($user->email, [
-
-            ]);
+            return true;
         });
     }
 
@@ -30,7 +28,7 @@ class RestifyServiceProvider extends RestifyApplicationServiceProvider
         // Register repositories from modules
         $modules = app(Controller::class)->getModules();
         foreach ($modules as $module) {
-            Restify::repositoriesFrom($module['module_path'].DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'Api', app()->getNamespace());
+            Restify::repositoriesFrom($module['modulePath'].DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'Api', $module['namespace'].'\Api\\');
         }
     }
 }

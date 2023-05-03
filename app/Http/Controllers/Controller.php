@@ -66,7 +66,8 @@ class Controller extends BaseController
      *     author: string,
      *     version: string,
      *     url: string,
-     *     module_path: string
+     *     modulePath: string,
+     *     namespace: string
      * }>
      */
     public function getModules(): Collection
@@ -82,8 +83,8 @@ class Controller extends BaseController
                 'author' => $provider::author(),
                 'version' => $provider::version(),
                 'url' => $provider::url(),
-                'module_path' => $provider::modulePath(),
-                'has_bootstrap' => $provider::hasBootstrap(),
+                'modulePath' => $provider::modulePath(),
+                'namespace' => $provider::namespace(),
             ]]);
     }
 }

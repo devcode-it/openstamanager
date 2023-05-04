@@ -542,7 +542,8 @@ switch (post('op')) {
 
     case 'edit-price':
         $righe = $post['righe'];
-
+        $numero_totale = 0;
+        
         foreach ($righe as $riga) {
             if (($riga['id']) != null) {
                 $articolo = Articolo::find($riga['id']);
@@ -551,12 +552,25 @@ switch (post('op')) {
                 $articolo = Articolo::build($fattura, $originale);
                 $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
             }
-    
-            $articolo->setPrezzoUnitario($riga['price'], $articolo->idiva);
-            $articolo->save();
+
+            if ($articolo['prezzo_unitario'] != $riga['price']) {
+                $articolo->setPrezzoUnitario($riga['price'], $articolo->idiva);
+                $articolo->save();
+                ++$numero_totale;
+            }
         }
 
-        flash()->info(tr('Prezzi aggiornati!'));
-        break;
+        if ($numero_totale > 1) {
+            flash()->info(tr('_NUM_ prezzi modificati!', [
+                '_NUM_' => $numero_totale,
+            ]));
+        } else if ($numero_totale == 1) {
+            flash()->info(tr('_NUM_ prezzo modificato!', [
+                '_NUM_' => $numero_totale,
+            ]));
+        } else {
+            flash()->warning(tr('Nessun prezzo modificato!'));
+        }
 
+        break;
 }

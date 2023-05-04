@@ -13,11 +13,14 @@ import {
   Children,
   Vnode
 } from 'mithril';
-
-import Form from 'mithril-utilities';
-import Request, {RequestError} from 'mithril-utilities';
+import {
+  Form,
+  Request,
+  RequestError
+} from 'mithril-utilities';
 import Stream from 'mithril/stream';
 import '~/Components/m3/FilledTextField';
+
 import MdIcon from '~/Components/MdIcon';
 import {VnodeCollectionItem} from '~/typings/jsx';
 import {showSnackbar} from '~/utils/misc';
@@ -115,7 +118,7 @@ export default class DatabaseStep extends SetupStep {
     } catch (error: any) {
       if (!silentError) {
         void showSnackbar(__('Si è verificato un errore durante la connessione al database: :error', {
-          error: (error as RequestError).response.message
+          error: (error as RequestError<{message: string}>).response.message
         }));
       }
 

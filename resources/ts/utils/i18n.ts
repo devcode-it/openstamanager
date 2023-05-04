@@ -3,7 +3,7 @@
 import {Vnode} from 'mithril';
 
 export type ReplaceObject = Record<string, string | Vnode | number | boolean>;
-export type I18n<B> = (B extends true ? string : Vnode<any, any>);
+export type Localized<B> = (B extends true ? string : Vnode<any, any>);
 
 /**
  * @member {string} key String to translate.
@@ -26,9 +26,9 @@ export interface TranslationParameters<B extends boolean | undefined> {
  */
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export function tr<B extends boolean | undefined>(key: string, {
-  replace,
+  replace = {},
   forceString
-}: TranslationParameters<B> = {replace: {}}): I18n<B> {
+}: TranslationParameters<B>): Localized<B> {
   let translation = key;
   const translations = app.translations[app.locale];
 
@@ -49,7 +49,7 @@ export function tr<B extends boolean | undefined>(key: string, {
     translation = translation.replace(`:${parameter}`, replacement as string);
   }
 
-  return (forceString ? translation : m.trust(translation)) as I18n<B>;
+  return (forceString ? translation : m.trust(translation)) as Localized<B>;
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -68,12 +68,10 @@ export function _v(key: string, replace?: ReplaceObject): Vnode<any, any> {
  * @param locale The locale code to get the display name of. If not provided, the current locale will be used.
  */
 export function getLocaleDisplayName(locale?: string) {
-  if (!locale) {
-    locale = app.locale;
-  }
+  const lang = locale ?? app.locale;
 
-  const intl = new Intl.DisplayNames([app.locale], {type: 'language'});
-  return intl.of(locale);
+  const intl = new Intl.DisplayNames([lang], {type: 'language'});
+  return intl.of(lang);
 }
 
 export function getFlag(language: string, slot: string = 'start') {

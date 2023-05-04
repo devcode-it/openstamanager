@@ -17,7 +17,6 @@ import type {
   Vnode,
   VnodeDOM
 } from 'mithril';
-
 import {
   Form,
   FormSubmitEvent,
@@ -26,6 +25,7 @@ import {
 } from 'mithril-utilities';
 import Stream from 'mithril/stream';
 import '~/Components/m3/FilledTextField';
+
 import MdIcon from '~/Components/MdIcon';
 import Page, {PageAttributes} from '~/Components/Page';
 import {VnodeCollectionItem} from '~/typings/jsx';
@@ -124,8 +124,8 @@ export default class LoginPage extends Page {
       await Request.get(route('sanctum.csrf-cookie'));
       await Request.post('/login', event.data);
     } catch (error: any) {
-      // this.loading.hide();
-      void showSnackbar((error as RequestError).response.message, false);
+      // This.loading.hide();
+      void showSnackbar((error as RequestError<{message: string}>).response.message, false);
       return;
     }
 
@@ -144,7 +144,7 @@ export default class LoginPage extends Page {
     try {
       await Request.post(route('password.email'), event.data);
     } catch (error: any) {
-      void showSnackbar((error as RequestError).response.message, false);
+      void showSnackbar((error as RequestError<{message: string}>).response.message, false);
       return;
     }
 

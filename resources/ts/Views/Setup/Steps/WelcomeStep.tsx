@@ -88,8 +88,8 @@ export default class WelcomeStep extends SetupStep<WelcomeStepAttributes> {
             ${WelcomeStep.languages(vnode).join('')}
             ${getFlag(app.locale, 'leadingicon')}
           </md-filled-autocomplete>`;
-      // const languageSelect = this.element.querySelector<Autocomplete>('#language-select');
-      // languageSelect?.addEventListener('autocomplete-value-changed', (event: Event) => {
+      // Const languageSelect = this.element.querySelector<Autocomplete>('#language-select');
+      // LanguageSelect?.addEventListener('autocomplete-value-changed', (event: Event) => {
       //   WelcomeStep.onLanguageSelected(event as CustomEvent<{value: string}>);
       // });
     }
@@ -117,28 +117,28 @@ export default class WelcomeStep extends SetupStep<WelcomeStepAttributes> {
     return listItems;
   }
 
-  // static async onLanguageSelected(event: CustomEvent<{value: string}>) {
-  //   const {detail: {value}, target: autocomplete} = event;
-  //   const field = autocomplete as Autocomplete;
-  //   console.log(value, field);
+  // Static async onLanguageSelected(event: CustomEvent<{value: string}>) {
+  //   Const {detail: {value}, target: autocomplete} = event;
+  //   Const field = autocomplete as Autocomplete;
+  //   Console.log(value, field);
   //
-  //   const selectedItem = field.querySelector<AutocompleteItem>(`md-autocomplete-item[headline="${value}"]`);
-  //   const selectedLangcode = selectedItem?.dataset.value;
+  //   Const selectedItem = field.querySelector<AutocompleteItem>(`md-autocomplete-item[headline="${value}"]`);
+  //   Const selectedLangcode = selectedItem?.dataset.value;
   //
-  //   if (selectedLangcode && selectedLangcode !== app.locale) {
-  //     const selectedFlag = selectedItem?.querySelector('img');
-  //     const fieldFlag: HTMLImageElement | null = field.querySelector<HTMLImageElement>(':scope > img[slot="leadingicon"]');
+  //   If (selectedLangcode && selectedLangcode !== app.locale) {
+  //     Const selectedFlag = selectedItem?.querySelector('img');
+  //     Const fieldFlag: HTMLImageElement | null = field.querySelector<HTMLImageElement>(':scope > img[slot="leadingicon"]');
   //
-  //     if (selectedFlag && fieldFlag) {
-  //       fieldFlag.src = selectedFlag.src;
-  //       fieldFlag.alt = selectedFlag.alt;
+  //     If (selectedFlag && fieldFlag) {
+  //       FieldFlag.src = selectedFlag.src;
+  //       FieldFlag.alt = selectedFlag.alt;
   //     }
   //
-  //     try {
-  //       const response = await Request.patch<{locale: string}>(route('app.language'), {locale: selectedLangcode});
-  //       app.locale = response.locale;
+  //     Try {
+  //       Const response = await Request.patch<{locale: string}>(route('app.language'), {locale: selectedLangcode});
+  //       App.locale = response.locale;
   //     } catch (error: any) {
-  //       await showSnackbar(__('Si è verificato un errore durante il salvataggio della lingua: :error', {error: (error as RequestError).message}));
+  //       Await showSnackbar(__('Si è verificato un errore durante il salvataggio della lingua: :error', {error: (error as RequestError).message}));
   //     }
   //   }
   // }

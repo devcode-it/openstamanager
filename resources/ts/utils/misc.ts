@@ -1,7 +1,7 @@
 // noinspection JSUnusedGlobalSymbols
 
-import '@material/web/button/text-button.js';
 import '@material/mwc-snackbar';
+import '@material/web/button/text-button.js';
 
 import {
   Vnode,
@@ -49,7 +49,7 @@ export function subclassOf(object_: GenericObject, parentObject: any): boolean {
  * Check if a string contains HTML code/tags
  */
 export function containsHTML(string_: string): boolean {
-  return /<[a-z][\S\s]*>/i.test(string_);
+  return /<([A-Za-z][\dA-Za-z]*)\b[^>]*>(?:.|\n)*?<\/\1>/.test(string_);
 }
 
 /**

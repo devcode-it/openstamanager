@@ -1,11 +1,11 @@
 import '@material/web/icon/icon.js';
 
 import type MaterialIcons from '@mdi/js';
-
 import {Component} from 'mithril-utilities';
 
-export interface Attributes extends Partial<SVGElement> {
+export interface Attributes extends Omit<Partial<SVGElement>, 'className'> {
   icon: typeof MaterialIcons | string;
+  className?: string;
 }
 
 export default class MdIcon extends Component<Attributes> {

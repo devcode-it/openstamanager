@@ -11,7 +11,7 @@ import {
   Component
 } from 'mithril-utilities';
 
-import {Footer} from '~/Components/layout/Footer';
+import Footer from '~/Components/layout/Footer';
 
 import logoUrl from '../../images/logo_completo.png';
 import TopAppBar from './layout/TopAppBar';

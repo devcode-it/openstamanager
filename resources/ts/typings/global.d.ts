@@ -15,11 +15,8 @@ declare global {
   const route: typeof router;
 
   let app: {
-    // components: Record<string, Manager>
-    events: Record<string, Event>,
     locale: string,
-    modules: OpenSTAManager.Modules,
-    theme: 'high-contrast' | 'light',
+    theme: 'high-contrast' | 'light', // TODO: Da implementare
     translations: Record<string, Record<string, string>>,
     user: OpenSTAManager.User | null,
     VERSION: string,

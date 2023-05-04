@@ -59,7 +59,7 @@ export default class DeleteRecordDialog<M extends Model<any, any>, A extends Del
       this.close('deleted');
       m.redraw();
     } catch (error) {
-      void showSnackbar(__('Errore durante l\'eliminazione del record! :error', {error: (error as RequestError).response.message}), false);
+      void showSnackbar(__('Errore durante l\'eliminazione del record! :error', {error: (error as RequestError<{message: string}>).response.message}), false);
     }
   }
 }

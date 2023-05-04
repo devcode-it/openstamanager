@@ -5,10 +5,10 @@ import {
   Vnode,
   VnodeDOM
 } from 'mithril';
-
 import {Form} from 'mithril-utilities';
 import Stream from 'mithril/stream';
 import {Class} from 'type-fest';
+
 import RecordDialog, {RecordDialogAttributes} from '~/Components/Dialogs/RecordDialog';
 import MdIcon from '~/Components/MdIcon';
 import Model from '~/Models/Model';

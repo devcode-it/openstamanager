@@ -2,8 +2,8 @@ import {
   Children,
   Vnode
 } from 'mithril';
-
 import {Component} from 'mithril-utilities';
+
 import MdIcon, {Attributes as MdIconAttributes} from '~/Components/MdIcon';
 
 export default abstract class TopAppBarAction extends Component {

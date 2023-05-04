@@ -5,9 +5,9 @@ import {
 } from '@mdi/js';
 import collect from 'collect.js';
 import dayjs from 'dayjs';
-
 import {Form} from 'mithril-utilities';
 import Stream from 'mithril/stream';
+
 import MdIcon from '~/Components/MdIcon';
 import {VnodeCollectionItem} from '~/typings/jsx';
 

@@ -10,12 +10,12 @@ import {
   Children,
   Vnode
 } from 'mithril';
-
 import {
   Attributes,
   Component
 } from 'mithril-utilities';
 import Stream from 'mithril/stream';
+
 import MdIcon from '~/Components/MdIcon';
 import {VnodeCollectionItem} from '~/typings/jsx';
 import {isMobile} from '~/utils/misc';
@@ -37,6 +37,7 @@ export default class Drawer<A extends DrawerAttributes = DrawerAttributes> exten
   }
 
   view(vnode: Vnode<A>): Children {
+    // noinspection LocalVariableNamingConventionJS
     const DrawerTag = isMobile() ? 'md-navigation-drawer-modal' : 'md-navigation-drawer';
     return (
       <DrawerTag opened={this.open()}>

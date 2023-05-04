@@ -68,8 +68,8 @@ export default abstract class Model<A extends ModelAttributes, R extends ModelRe
   }
 
   setAttribute<AN extends keyof A = keyof A>(attributeName: AN, value: ValueOf<A, AN>) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    // @ts-expect-error
+    // @ts-expect-error — This is needed to parse the dates correctly.
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
     this.attributes.set(attributeName as string, value);
   }
 

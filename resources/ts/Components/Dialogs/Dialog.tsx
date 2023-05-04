@@ -1,3 +1,5 @@
+// noinspection IncorrectFormatting
+
 import '@material/web/dialog/dialog.js';
 
 import {Dialog as MDDialog} from '@material/web/dialog/lib/dialog';
@@ -6,7 +8,6 @@ import {
   Vnode,
   VnodeDOM
 } from 'mithril';
-
 import {
   Attributes,
   Component

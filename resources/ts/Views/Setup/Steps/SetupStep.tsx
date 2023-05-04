@@ -8,11 +8,11 @@ import {
   Children,
   Vnode
 } from 'mithril';
-
 import {
   Attributes,
   Component
 } from 'mithril-utilities';
+
 import MdIcon from '~/Components/MdIcon';
 
 
@@ -64,8 +64,7 @@ export abstract class SetupStep<A extends SetupStepAttributes = SetupStepAttribu
     }
   }
 
-  middleButton(vnode: Vnode<A, this>): Children | void {
-  }
+  middleButton(vnode: Vnode<A, this>): Children | void {}
 
   nextButton(vnode: Vnode<A, this>): Children {
     return (

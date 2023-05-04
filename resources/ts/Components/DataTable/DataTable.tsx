@@ -10,11 +10,11 @@ import {
   Children,
   Vnode
 } from 'mithril';
-
 import {
   Attributes,
   Component
 } from 'mithril-utilities';
+
 import MdIcon from '~/Components/MdIcon';
 
 export interface DataTableAttributes extends Attributes {

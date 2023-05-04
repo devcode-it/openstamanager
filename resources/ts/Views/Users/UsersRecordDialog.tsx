@@ -1,5 +1,3 @@
-import '~/Components/m3/FilledTextField';
-
 import {
   mdiAccountOutline,
   mdiEmailOutline
@@ -8,8 +6,9 @@ import collect, {Collection} from 'collect.js';
 import {Children} from 'mithril';
 import Stream from 'mithril/stream';
 
-import MdIcon from '~/Components/MdIcon';
 import AddEditRecordDialog from '~/Components/Dialogs/AddEditRecordDialog';
+import '~/Components/m3/FilledTextField';
+import MdIcon from '~/Components/MdIcon';
 import User, {UserAttributes} from '~/Models/User';
 import {JSONAPI} from '~/typings/request';
 import {showSnackbar} from '~/utils/misc';

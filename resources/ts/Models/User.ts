@@ -9,8 +9,7 @@ export interface UserAttributes extends ModelAttributes {
 }
 
 export interface UserRelations extends ModelRelations {
-  // notifications: DatabaseNotifications
+  // Notifications: DatabaseNotifications
 }
 
-export default class User extends Model<UserAttributes, UserRelations> {
-}
+export default class User extends Model<UserAttributes, UserRelations> {}

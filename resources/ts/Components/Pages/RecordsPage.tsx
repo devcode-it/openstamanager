@@ -41,7 +41,7 @@ export default abstract class RecordsPage<M extends Model<any, any>, D extends A
   recordDialogType?: Class<D>;
   deleteRecordDialogType?: Class<DRD>;
 
-  protected add_record_dialog_slug: string = '__add_record_dialog__';
+  protected addRecordDialogSlug: string = '__add_record_dialog__' as const;
 
   protected records = new Map<string, M>();
   protected isTableLoading = true;
@@ -165,6 +165,7 @@ export default abstract class RecordsPage<M extends Model<any, any>, D extends A
     const collection = collect<RecordDialogVnode<M, D>>({});
 
     for (const [key, state] of this.recordDialogsStates) {
+      // noinspection LocalVariableNamingConventionJS
       const RD = this.recordDialogType!;
       const record = key instanceof Model ? key : this.records.get(key);
       const vnodeKey = record?.getId() ?? (key as string);
@@ -178,6 +179,7 @@ export default abstract class RecordsPage<M extends Model<any, any>, D extends A
     const collection = collect<DeleteRecordDialogVnode<M, DRD>>({});
 
     for (const [key, state] of this.deleteRecordsDialogStates) {
+      // noinspection LocalVariableNamingConventionJS
       const RD = this.deleteRecordDialogType ?? DeleteRecordDialog;
       const keyArray = key.split(',');
       const records = keyArray.map((recordId) => this.records.get(recordId)!);
@@ -253,7 +255,7 @@ export default abstract class RecordsPage<M extends Model<any, any>, D extends A
   }
 
   openNewRecordDialog() {
-    const state = this.getRecordDialogState(undefined, this.add_record_dialog_slug);
+    const state = this.getRecordDialogState(undefined, this.addRecordDialogSlug);
     state(true);
   }
 

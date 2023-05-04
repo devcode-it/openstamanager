@@ -42,7 +42,7 @@
     "typescript-cookie": "^1.0.6"
   },
   "devDependencies": {
-    "@maicol07/eslint-config": "^2.2.4",
+    "@maicol07/eslint-config": "^2.3.0",
     "@openstamanager/vite-config": "github:devcode-it/openstamanager-vite-config",
     "@types/lodash-es": "^4.17.7",
     "@types/mithril": "^2.0.12",

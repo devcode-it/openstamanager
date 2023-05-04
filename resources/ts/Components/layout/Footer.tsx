@@ -1,6 +1,7 @@
 import {Component} from 'mithril-utilities';
 
-export class Footer extends Component {
+export default class Footer extends Component {
+  // noinspection JSMethodCanBeStatic
   view() {
     return (
       <footer>

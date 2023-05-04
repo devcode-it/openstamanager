@@ -1,5 +1,4 @@
 import '@material/web/button/outlined-button.js';
-import {router} from '@maicol07/inertia-mithril';
 
 import {mdiChevronLeft} from '@mdi/js';
 import {

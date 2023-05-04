@@ -97,7 +97,7 @@ export default class RecordsTable<M extends Model<any, any>, A extends RecordsTa
       let attributes: DataTableColumnAttributes = {};
       let children: Children | RecordsTableColumnAttributes = column;
 
-      if (this.isRecordTableColumnAttributes(column)) {
+      if (RecordsTable.isRecordTableColumnAttributes(column)) {
         children = column.label ?? attribute;
         attributes = column;
       }
@@ -261,7 +261,7 @@ export default class RecordsTable<M extends Model<any, any>, A extends RecordsTa
     }
   }
 
-  private isRecordTableColumnAttributes(column: Children | RecordsTableColumnAttributes): column is RecordsTableColumnAttributes {
+  private static isRecordTableColumnAttributes(column: Children | RecordsTableColumnAttributes): column is RecordsTableColumnAttributes {
     return typeof column === 'object' && 'label' in (column ?? {});
   }
 }

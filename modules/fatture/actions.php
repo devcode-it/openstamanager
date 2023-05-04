@@ -1078,10 +1078,9 @@ switch (post('op')) {
     
             $articolo->setPrezzoUnitario($riga['price'], $articolo->idiva);
             $articolo->save();
-
-            flash()->info(tr('Prezzi aggiornati!'));
-
         }
+
+        flash()->info(tr('Prezzi aggiornati!'));
         break;
 }
 

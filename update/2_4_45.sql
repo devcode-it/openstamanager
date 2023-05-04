@@ -97,3 +97,6 @@ HAVING
 ORDER BY 
 	`data` DESC, 
     CAST(`numero_esterno` AS UNSIGNED) DESC" WHERE `name` = 'Ordini fornitore';
+
+-- Aggiornamento data ultima sessione in rapportino intervento
+UPDATE `em_templates` SET `body` = '<p>Gentile Cliente,</p>\n<p>inviamo in allegato il rapportino numero {numero} del {data fine intervento}.</p>\n<p>Distinti saluti</p>', `subject` = 'Invio rapportino numero {numero} del {data fine intervento}' WHERE `em_templates`.`name` = "Rapportino intervento"; 

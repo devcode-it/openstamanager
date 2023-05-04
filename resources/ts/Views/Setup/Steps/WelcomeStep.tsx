@@ -1,7 +1,6 @@
+import type {MdCheckbox} from '@material/web/checkbox/checkbox';
 import '@material/web/checkbox/checkbox.js';
 import '@material/web/field/outlined-field.js';
-
-import type {MdCheckbox} from '@material/web/checkbox/checkbox';
 import {mdiLicense} from '@mdi/js';
 import {
   Vnode,
@@ -14,13 +13,7 @@ import {
   getFlag,
   getLocaleDisplayName
 } from '~/utils/i18n';
-import {
-  capitalize,
-  showSnackbar
-} from '~/utils/misc';
-import Request, {
-  RequestError
-} from '~/utils/Request';
+import {capitalize} from '~/utils/misc';
 
 import {
   SetupStep,

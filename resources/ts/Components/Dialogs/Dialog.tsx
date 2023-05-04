@@ -6,12 +6,12 @@ import {
   Vnode,
   VnodeDOM
 } from 'mithril';
-import Stream from 'mithril/stream';
 
 import {
   Attributes,
   Component
-} from '../Component';
+} from 'mithril-utilities';
+import Stream from 'mithril/stream';
 
 export interface DialogAttributes extends Attributes, Partial<Pick<MDDialog,
   'fullscreen' | 'fullscreenBreakpoint' | 'footerHidden' | 'stacked' | 'defaultAction' |

@@ -10,12 +10,12 @@ import {
   Children,
   Vnode
 } from 'mithril';
-import Stream from 'mithril/stream';
 
 import {
   Attributes,
   Component
-} from '~/Components/Component';
+} from 'mithril-utilities';
+import Stream from 'mithril/stream';
 import MdIcon from '~/Components/MdIcon';
 import {VnodeCollectionItem} from '~/typings/jsx';
 import {isMobile} from '~/utils/misc';

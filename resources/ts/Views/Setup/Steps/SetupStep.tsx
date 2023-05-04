@@ -12,7 +12,7 @@ import {
 import {
   Attributes,
   Component
-} from '~/Components/Component';
+} from 'mithril-utilities';
 import MdIcon from '~/Components/MdIcon';
 
 

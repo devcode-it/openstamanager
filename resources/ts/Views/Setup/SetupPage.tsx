@@ -1,18 +1,14 @@
-import '@maicol07/material-web-additions/card/elevated-card.js';
-
 import {router} from '@maicol07/inertia-mithril';
-import type {
-  Vnode
-} from 'mithril';
+import '@maicol07/material-web-additions/card/elevated-card.js';
+import type {Vnode} from 'mithril';
+import {
+  Request,
+  RequestError
+} from 'mithril-utilities';
 import Stream from 'mithril/stream';
 
-import Page, {
-  PageAttributes
-} from '~/Components/Page';
+import Page, {PageAttributes} from '~/Components/Page';
 import {showSnackbar} from '~/utils/misc';
-import Request, {
-  RequestError
-} from '~/utils/Request';
 import AdminUserStep from '~/Views/Setup/Steps/AdminUserStep';
 import DatabaseStep from '~/Views/Setup/Steps/DatabaseStep';
 import RegionalSettings from '~/Views/Setup/Steps/RegionalSettings';

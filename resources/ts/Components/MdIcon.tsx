@@ -2,7 +2,7 @@ import '@material/web/icon/icon.js';
 
 import type MaterialIcons from '@mdi/js';
 
-import {Component} from './Component';
+import {Component} from 'mithril-utilities';
 
 export interface Attributes extends Partial<SVGElement> {
   icon: typeof MaterialIcons | string;

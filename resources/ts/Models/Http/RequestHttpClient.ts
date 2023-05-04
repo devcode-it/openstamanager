@@ -1,9 +1,10 @@
-import RequestHttpClientPromise from './RequestHttpClientPromise';
-import Request from '~/utils/Request';
 import type {
   HttpClient,
   HttpClientPromise
 } from 'coloquent';
+import {Request} from 'mithril-utilities';
+
+import RequestHttpClientPromise from './RequestHttpClientPromise';
 
 /**
  * @class RequestHttpClient

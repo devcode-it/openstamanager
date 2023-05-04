@@ -9,9 +9,12 @@ import {
 } from '@mdi/js';
 import collect from 'collect.js';
 import {Vnode} from 'mithril';
-import Stream from 'mithril/stream';
 
-import Form, {FormSubmitEvent} from '~/Components/Form';
+import {
+  Form,
+  FormSubmitEvent
+} from 'mithril-utilities';
+import Stream from 'mithril/stream';
 import MdIcon from '~/Components/MdIcon';
 import {VnodeCollectionItem} from '~/typings/jsx';
 import {

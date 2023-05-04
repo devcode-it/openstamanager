@@ -10,7 +10,7 @@ import {Vnode} from 'mithril';
 import {
   Attributes,
   Component
-} from '~/Components/Component';
+} from 'mithril-utilities';
 import MdIcon from '~/Components/MdIcon';
 
 export interface DataTableColumnAttributes extends Attributes, Partial<JSX.IntrinsicElements['md-data-table-column']> {

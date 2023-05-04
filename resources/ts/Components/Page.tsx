@@ -6,14 +6,14 @@ import {
   Vnode,
   VnodeDOM
 } from 'mithril';
+import {
+  Attributes,
+  Component
+} from 'mithril-utilities';
 
 import {Footer} from '~/Components/layout/Footer';
 
 import logoUrl from '../../images/logo_completo.png';
-import {
-  Attributes,
-  Component
-} from './Component';
 import TopAppBar from './layout/TopAppBar';
 
 export interface PageAttributes<A extends Record<string, any> & {external?: boolean} = Record<string, any>> extends Attributes, Required<ComponentAttributes<A>> {

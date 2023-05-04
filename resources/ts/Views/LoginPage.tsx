@@ -3,7 +3,6 @@ import '@material/web/button/filled-button.js';
 import '@material/web/button/text-button.js';
 import '@material/web/checkbox/checkbox.js';
 import '@material/web/dialog/dialog.js';
-import '~/Components/m3/FilledTextField';
 
 import {Dialog} from '@material/web/dialog/lib/dialog';
 import {
@@ -18,18 +17,19 @@ import type {
   Vnode,
   VnodeDOM
 } from 'mithril';
-import Stream from 'mithril/stream';
 
-import Form, {FormSubmitEvent} from '~/Components/Form';
+import {
+  Form,
+  FormSubmitEvent,
+  Request,
+  RequestError
+} from 'mithril-utilities';
+import Stream from 'mithril/stream';
+import '~/Components/m3/FilledTextField';
 import MdIcon from '~/Components/MdIcon';
-import Page, {
-  PageAttributes
-} from '~/Components/Page';
+import Page, {PageAttributes} from '~/Components/Page';
 import {VnodeCollectionItem} from '~/typings/jsx';
 import {showSnackbar} from '~/utils/misc';
-import Request, {
-  RequestError
-} from '~/utils/Request';
 
 export default class LoginPage extends Page {
   form = {

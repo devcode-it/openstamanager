@@ -1,8 +1,4 @@
 import '@material/web/iconbutton/standard-icon-button.js';
-import '~/WebComponents/TopAppBar';
-
-import {IconButton} from '@material/web/iconbutton/lib/icon-button';
-import {Menu} from '@material/web/menu/lib/menu';
 import {
   mdiMenu,
   mdiMenuOpen
@@ -12,13 +8,13 @@ import {
   Vnode,
   VnodeDOM
 } from 'mithril';
-import Stream from 'mithril/stream';
-
-import logo from '~/../images/logo.png';
 import {
   Attributes,
   Component
-} from '~/Components/Component';
+} from 'mithril-utilities';
+import Stream from 'mithril/stream';
+
+import logo from '~/../images/logo.png';
 import Drawer from '~/Components/layout/Drawer';
 import NotificationsAction from '~/Components/layout/topappbar_actions/NotificationsAction';
 import PeriodSwitcherAction from '~/Components/layout/topappbar_actions/PeriodSwitcherAction';
@@ -30,6 +26,7 @@ import {
   isMobile,
   mobileMediaQuery
 } from '~/utils/misc';
+import '~/WebComponents/TopAppBar';
 
 export default class TopAppBar extends Component {
   drawerOpenState = Stream(!isMobile());

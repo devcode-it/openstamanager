@@ -2,10 +2,10 @@ import {
   Children,
   Vnode
 } from 'mithril';
+import {RequestError} from 'mithril-utilities';
 
 import Model from '~/Models/Model';
 import {showSnackbar} from '~/utils/misc';
-import {RequestError} from '~/utils/Request';
 
 import RecordDialog, {RecordDialogAttributes} from './RecordDialog';
 

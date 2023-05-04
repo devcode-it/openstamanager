@@ -1,4 +1,4 @@
-import {Component} from '../Component';
+import {Component} from 'mithril-utilities';
 
 export class Footer extends Component {
   view() {

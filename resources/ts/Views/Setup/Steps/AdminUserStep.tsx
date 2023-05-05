@@ -1,5 +1,4 @@
 import '@material/web/button/filled-button.js';
-import '@material/web/textfield/filled-text-field.js';
 
 import {
   mdiAccountOutline,
@@ -15,6 +14,7 @@ import {
   FormSubmitEvent
 } from 'mithril-utilities';
 import Stream from 'mithril/stream';
+import '~/Components/m3/FilledTextField';
 
 import MdIcon from '~/Components/MdIcon';
 import {VnodeCollectionItem} from '~/typings/jsx';

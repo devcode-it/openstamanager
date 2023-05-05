@@ -1,4 +1,4 @@
-// noinspection JSUnusedGlobalSymbols
+// noinspection JSUnusedGlobalSymbols,OverlyComplexBooleanExpressionJS
 
 import '@material/mwc-snackbar';
 import '@material/web/button/text-button.js';
@@ -24,7 +24,6 @@ export function isMobile() {
 }
 
 export function isVnode<A = any, S = undefined>(object_: any): object_ is Vnode<A, S> {
-  // noinspection OverlyComplexBooleanExpressionJS
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   return (object_ && !Array.isArray(object_) && object_.tag && object_.attrs) as boolean;
 }
@@ -49,7 +48,7 @@ export function subclassOf(object_: GenericObject, parentObject: any): boolean {
  * Check if a string contains HTML code/tags
  */
 export function containsHTML(string_: string): boolean {
-  return /<([A-Za-z][\dA-Za-z]*)\b[^>]*>(?:.|\n)*?<\/\1>/.test(string_);
+  return /<(?<tag>[A-Za-z][\dA-Za-z]*)\b[^>]*>(?:.|\n)*?<\/\k<tag>>/.test(string_);
 }
 
 /**

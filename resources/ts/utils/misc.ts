@@ -88,15 +88,15 @@ export async function showSnackbar(
 
     if (actionText) {
       const button = document.createElement('md-text-button');
-      button.label = actionText;
       button.slot = 'action';
+      button.textContent = actionText;
       snackbar.append(button);
     }
 
     if (cancelText) {
       const button = document.createElement('md-text-button');
-      button.label = cancelText;
       button.slot = 'cancel';
+      button.textContent = cancelText;
       snackbar.append(button);
     }
     document.body.append(snackbar);

@@ -70,8 +70,8 @@ export default class WelcomeStep<A extends WelcomeStepAttributes = WelcomeStepAt
             <md-checkbox name="license_agreement" ariaRequired="true" checked={this.licenseAgreement()} onchange={this.onLicenseAgreementChange.bind(this)}/>
             {__('Ho visionato e accetto la licenza')}
           </label>
-          <md-text-button href="https://www.gnu.org/licenses/translations.en.html#GPL"
-                          target="_blank" label={__('Versioni tradotte')}>
+          <md-text-button href="https://www.gnu.org/licenses/translations.en.html#GPL" target="_blank">
+            {__('Versioni tradotte')}
             <MdIcon icon={mdiLicense} slot="icon"/>
           </md-text-button>
         </div>

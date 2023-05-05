@@ -86,7 +86,8 @@ export default class AdminUserStep extends SetupStep<AdminUserStepAttributes> {
 
   nextButton() {
     return (
-      <md-filled-button onclick={() => this.element.querySelector('form')?.requestSubmit()} label={__('Salva e installa')} disabled={!this.isNextButtonEnabled()} trailingIcon>
+      <md-filled-button onclick={() => this.element.querySelector('form')?.requestSubmit()} disabled={!this.isNextButtonEnabled()} trailingIcon>
+        {__('Salva e installa')}
         <MdIcon icon={mdiChevronRight} slot="icon"/>
       </md-filled-button>
     );

@@ -68,7 +68,8 @@ export default class ResetPasswordPage extends Page {
   buttons() {
     return collect<VnodeCollectionItem>({
       login: (
-        <md-filled-button type="submit" onclick={this.onResetPasswordButtonClicked.bind(this)} label={__('Reimposta password')}>
+        <md-filled-button type="submit" onclick={this.onResetPasswordButtonClicked.bind(this)}>
+          {__('Reimposta password')}
           <MdIcon icon={mdiAccountOutline} slot="leadingicon"/>
         </md-filled-button>
       )

@@ -48,7 +48,8 @@ export abstract class SetupStep<A extends SetupStepAttributes = SetupStepAttribu
 
   previousButton(vnode: Vnode<A, this>): Children {
     return (
-      <md-outlined-button onclick={this.onPreviousButtonClicked.bind(this, vnode)} label={__('Precedente')} disabled={!this.isPreviousButtonEnabled(vnode)}>
+      <md-outlined-button onclick={this.onPreviousButtonClicked.bind(this, vnode)} disabled={!this.isPreviousButtonEnabled(vnode)}>
+        {__('Precedente')}
         <MdIcon icon={mdiChevronLeft} slot="icon"/>
       </md-outlined-button>
     );
@@ -68,7 +69,8 @@ export abstract class SetupStep<A extends SetupStepAttributes = SetupStepAttribu
 
   nextButton(vnode: Vnode<A, this>): Children {
     return (
-      <md-outlined-button onclick={this.onNextButtonClicked.bind(this, vnode)} label={__('Prossimo')} disabled={!this.isNextButtonEnabled(vnode)} trailingIcon={true}>
+      <md-outlined-button onclick={this.onNextButtonClicked.bind(this, vnode)} disabled={!this.isNextButtonEnabled(vnode)} trailingIcon={true}>
+        {__('Prossimo')}
         <MdIcon icon={mdiChevronRight} slot="icon"/>
       </md-outlined-button>
     );

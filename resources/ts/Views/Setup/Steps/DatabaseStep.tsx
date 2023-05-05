@@ -97,12 +97,8 @@ export default class DatabaseStep extends SetupStep {
 
   middleButton(vnode: Vnode<SetupStepAttributes, this>): Children {
     return (
-      <md-outlined-button
-        id="test-db"
-        label={__('Testa il database')}
-        onclick={this.onTestButtonClicked.bind(this)}
-        grid-span={4}
-      >
+      <md-outlined-button id="test-db" onclick={this.onTestButtonClicked.bind(this)} grid-span={4}>
+        {__('Testa il database')}
         <MdIcon icon={mdiTestTube} slot="icon"/>
       </md-outlined-button>
     );

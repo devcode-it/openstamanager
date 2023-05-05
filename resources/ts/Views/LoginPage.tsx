@@ -62,7 +62,9 @@ export default class LoginPage extends Page {
           </div>
         </Form>
         <md-text-button dialogAction="cancel" slot="footer" label={__('Annulla')}></md-text-button>
-        <md-filled-button slot="footer" label={__('Invia')} onclick={this.onForgotPasswordDialogSubmitButtonClicked.bind(this)}></md-filled-button>
+        <md-filled-button slot="footer" onclick={this.onForgotPasswordDialogSubmitButtonClicked.bind(this)}>
+          {__('Invia')}
+        </md-filled-button>
       </md-dialog>
     </>;
   }
@@ -101,12 +103,14 @@ export default class LoginPage extends Page {
   buttons() {
     return collect<VnodeCollectionItem>({
       forgotPassword: (
-        <md-text-button id="forgot-password-button" label={__('Password dimenticata')} onclick={this.onForgotPasswordButtonClicked.bind(this)}>
+        <md-text-button id="forgot-password-button" onclick={this.onForgotPasswordButtonClicked.bind(this)}>
+          {__('Password dimenticata')}
           <MdIcon icon={mdiLockQuestion} slot="icon"/>
         </md-text-button>
       ),
       login: (
-        <md-filled-button type="submit" id="login-button" label={__('Accedi')} style={{float: 'right'}}>
+        <md-filled-button type="submit" id="login-button" style={{float: 'right'}}>
+          {__('Accedi')}
           <MdIcon icon={mdiLoginVariant} slot="icon"/>
         </md-filled-button>
       )

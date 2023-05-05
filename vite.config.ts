@@ -42,7 +42,7 @@ export default defineConfig(async () => {
         refresh: true
       }),
       laravelTranslations({
-        namespace: 'osm',
+        namespace: false,
         includeJson: true
       }),
       Inertia({

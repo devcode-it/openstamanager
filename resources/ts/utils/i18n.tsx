@@ -31,7 +31,7 @@ export function tr<B extends boolean | undefined>(key: string, {
   forceString
 }: TranslationParameters<B>): Localized<B> {
   let translation = key;
-  const translations = app.translations[app.locale];
+  const translations = LARAVEL_TRANSLATIONS[app.locale];
 
   if (translations && translations[key]) {
     translation = translations[key];

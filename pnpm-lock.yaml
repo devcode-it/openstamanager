@@ -10,21 +10,12 @@ dependencies:
   '@maicol07/material-web-additions':
     specifier: ^1.2.12
     version: 1.2.12(@material/web@1.0.0-pre.7)
-  '@material/mwc-linear-progress':
-    specifier: ^0.27.0
-    version: 0.27.0
   '@material/mwc-snackbar':
     specifier: ^0.27.0
     version: 0.27.0
   '@material/mwc-top-app-bar':
     specifier: ^0.27.0
     version: 0.27.0
-  '@material/textfield':
-    specifier: ^14.0.0
-    version: 14.0.0
-  '@material/theme':
-    specifier: ^14.0.0
-    version: 14.0.0
   '@material/web':
     specifier: 1.0.0-pre.7
     version: 1.0.0-pre.7
@@ -148,8 +139,8 @@ devDependencies:
     specifier: ^4.3.4
     version: 4.3.4(@types/node@18.16.3)(sass@1.62.1)
   vite-plugin-laravel-translations:
-    specifier: ^0.1.4
-    version: 0.1.4(vite@4.3.4)
+    specifier: github:maicol07/vite-plugin-laravel-translations#patch-1
+    version: github.com/maicol07/vite-plugin-laravel-translations/7f85c14e2f3d9f5d2aa860c720547dfb1a945e90(vite@4.3.4)
   vite-plugin-progress:
     specifier: ^0.0.7
     version: 0.0.7(vite@4.3.4)
@@ -1991,19 +1982,6 @@ packages:
       tslib: 2.5.0
     dev: false
 
-  /@material/linear-progress@14.0.0-canary.53b3cad2f.0:
-    resolution: { integrity: sha512-QqkDBcqX7TMt3zQn51LgS7K0y13rJ4ppMQL1f2uYBhDOov8nqndlaXw456KYE9RhU39JrLzVQlaAbU3eecVb/Q== }
-    dependencies:
-      '@material/animation': 14.0.0-canary.53b3cad2f.0
-      '@material/base': 14.0.0-canary.53b3cad2f.0
-      '@material/dom': 14.0.0-canary.53b3cad2f.0
-      '@material/feature-targeting': 14.0.0-canary.53b3cad2f.0
-      '@material/progress-indicator': 14.0.0-canary.53b3cad2f.0
-      '@material/rtl': 14.0.0-canary.53b3cad2f.0
-      '@material/theme': 14.0.0-canary.53b3cad2f.0
-      tslib: 2.5.0
-    dev: false
-
   /@material/list@14.0.0:
     resolution: { integrity: sha512-AFaBGV9vQyfnG8BT2R3UGVdF5w2SigQqBH+qbOSxQhk4BgVvhDfJUIKT415poLNMdnaDtcuYz+ZWvVNoRDaL7w== }
     dependencies:
@@ -2056,16 +2034,6 @@ packages:
       tslib: 2.5.0
     dev: false
 
-  /@material/mwc-linear-progress@0.27.0:
-    resolution: { integrity: sha512-kpWVLHPb7RzHU70Dq9bl1lBv05S49rQkyfFoL3PU5tEZHozT8IPQjdBLqAqd7H10cfLVjO7oIB+mVmvnFV+UsQ== }
-    dependencies:
-      '@material/linear-progress': 14.0.0-canary.53b3cad2f.0
-      '@material/mwc-base': 0.27.0
-      '@material/theme': 14.0.0-canary.53b3cad2f.0
-      lit: 2.7.4
-      tslib: 2.5.0
-    dev: false
-
   /@material/mwc-snackbar@0.27.0:
     resolution: { integrity: sha512-D9xhae4MiUwhHJxXaNzucmOutXVS/02CVnuCpzV2uDCLnY4oTaiZNDa+YBxheZnNKTTSm5yrshOnsRIQO6hgPw== }
     dependencies:
@@ -2098,12 +2066,6 @@ packages:
 
   /@material/progress-indicator@14.0.0:
     resolution: { integrity: sha512-09JRTuIySxs670Tcy4jVlqCUbyrO+Ad6z3nHnAi8pYl74duco4n/9jTROV0mlFdr9NIFifnd08lKbiFLDmfJGQ== }
-    dependencies:
-      tslib: 2.5.0
-    dev: false
-
-  /@material/progress-indicator@14.0.0-canary.53b3cad2f.0:
-    resolution: { integrity: sha512-vW0oZK70QOpAarip95ueCQ/I3kBClcWjxsc0F0QjkqT76DOVXpjnZ4XoRRyq9eMpwLqlKLTecrsSNpmqwwF1Dg== }
     dependencies:
       tslib: 2.5.0
     dev: false
@@ -2203,26 +2165,6 @@ packages:
       '@material/shape': 14.0.0-canary.53b3cad2f.0
       '@material/theme': 14.0.0-canary.53b3cad2f.0
       '@material/typography': 14.0.0-canary.53b3cad2f.0
-      tslib: 2.5.0
-    dev: false
-
-  /@material/textfield@14.0.0:
-    resolution: { integrity: sha512-HGbtAlvlIB2vWBq85yw5wQeeP3Kndl6Z0TJzQ6piVtcfdl2mPyWhuuVHQRRAOis3rCIaAAaxCQYYTJh8wIi0XQ== }
-    dependencies:
-      '@material/animation': 14.0.0
-      '@material/base': 14.0.0
-      '@material/density': 14.0.0
-      '@material/dom': 14.0.0
-      '@material/feature-targeting': 14.0.0
-      '@material/floating-label': 14.0.0
-      '@material/line-ripple': 14.0.0
-      '@material/notched-outline': 14.0.0
-      '@material/ripple': 14.0.0
-      '@material/rtl': 14.0.0
-      '@material/shape': 14.0.0
-      '@material/theme': 14.0.0
-      '@material/tokens': 14.0.0
-      '@material/typography': 14.0.0
       tslib: 2.5.0
     dev: false
 
@@ -6425,17 +6367,6 @@ packages:
       vite: 4.3.4(@types/node@18.16.3)(sass@1.62.1)
     dev: true
 
-  /vite-plugin-laravel-translations@0.1.4(vite@4.3.4):
-    resolution: { integrity: sha512-3NT2ZbWZFppyRAKXvitkJriwxNsB8GA06U/jVJmUqtleNcuD24zJF6bqjMfGfnZN4s1zoAnR9P3OWrKIruRuHw== }
-    engines: { node: '>= 12.0.0', pnpm: '>= 7.0.0' }
-    peerDependencies:
-      vite: ^4.0.0
-    dependencies:
-      glob: 10.2.1
-      php-array-reader: 1.3.5
-      vite: 4.3.4(@types/node@18.16.3)(sass@1.62.1)
-    dev: true
-
   /vite-plugin-progress@0.0.7(vite@4.3.4):
     resolution: { integrity: sha512-zyvKdcc/X+6hnw3J1HVV1TKrlFKC4Rh8GnDnWG/2qhRXjqytTcM++xZ+SAPnoDsSyWl8O93ymK0wZRgHAoglEQ== }
     engines: { node: '>=14', pnpm: '>=7.0.0' }
@@ -6787,4 +6718,18 @@ packages:
       - stylus
       - sugarss
       - terser
+    dev: true
+
+  github.com/maicol07/vite-plugin-laravel-translations/7f85c14e2f3d9f5d2aa860c720547dfb1a945e90(vite@4.3.4):
+    resolution: { tarball: https://codeload.github.com/maicol07/vite-plugin-laravel-translations/tar.gz/7f85c14e2f3d9f5d2aa860c720547dfb1a945e90 }
+    id: github.com/maicol07/vite-plugin-laravel-translations/7f85c14e2f3d9f5d2aa860c720547dfb1a945e90
+    name: vite-plugin-laravel-translations
+    version: 0.1.4
+    engines: { node: '>= 12.0.0', pnpm: '>= 7.0.0' }
+    peerDependencies:
+      vite: ^4.0.0
+    dependencies:
+      glob: 10.2.1
+      php-array-reader: 1.3.5
+      vite: 4.3.4(@types/node@18.16.3)(sass@1.62.1)
     dev: true

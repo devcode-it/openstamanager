@@ -63,7 +63,7 @@
     "typed-scss-modules": "^7.1.0",
     "typescript": "^5.0.4",
     "vite": "^4.3.4",
-    "vite-plugin-laravel-translations": "^0.1.4",
+    "vite-plugin-laravel-translations": "github:maicol07/vite-plugin-laravel-translations#patch-1",
     "vite-plugin-progress": "^0.0.7",
     "vite-plugin-pwa": "^0.14.7"
   },

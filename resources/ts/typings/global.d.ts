@@ -17,11 +17,12 @@ declare global {
   let app: {
     locale: string,
     theme: 'high-contrast' | 'light', // TODO: Da implementare
-    translations: Record<string, Record<string, string>>,
     user: OpenSTAManager.User | null,
     VERSION: string,
     REVISION: string,
   };
+
+  const LARAVEL_TRANSLATIONS: Record<string, Record<string, string>>;
 
   interface Window {
     m: typeof Mithril;

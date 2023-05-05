@@ -6,13 +6,15 @@ use Translator\Framework\LaravelConfigLoader;
 use Translator\Infra\LaravelJsonTranslationRepository;
 
 return [
-    'languages' => ['pt-br', 'es'],
+    'languages' => ['en'],
     'directories' => [
         app_path(),
+        resource_path('ts'),
         resource_path('views'),
     ],
-    'output' => resource_path('lang'),
-    'extensions' => ['php'],
+    'output' => lang_path(),
+    'extensions' => ['php', 'ts', 'tsx'],
+    'functions' => ['__', '_s', '_v', '@lang'],
     'container' => [
         'config_loader' => LaravelConfigLoader::class,
         'translation_repository' => LaravelJsonTranslationRepository::class,

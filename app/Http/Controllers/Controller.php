@@ -13,8 +13,6 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
-use Nette\Utils\Json;
-use Nette\Utils\JsonException;
 use ReflectionClass;
 
 class Controller extends BaseController
@@ -28,8 +26,9 @@ class Controller extends BaseController
         $locale = $request->input('locale');
         $languages = self::getLanguages();
         if ($languages->contains($locale)) {
-            session()->put('locale', $locale);
-            session()->save();
+            $request->session()->put('locale', $locale);
+            $request->session()->save();
+            $request->user()?->settings()->set('locale', $locale);
             app()->setLocale($locale);
 
             return response()->json(['locale' => app()->getLocale()]);
@@ -44,18 +43,8 @@ class Controller extends BaseController
     public static function getLanguages(): Collection
     {
         return collect(File::glob(lang_path('*.json')))
+            ->merge(File::directories(lang_path()))
             ->map(static fn (string $file) => File::name($file));
-    }
-
-    /**
-     * @return Collection<string>
-     *
-     * @throws JsonException
-     */
-    public static function getTranslations(): Collection
-    {
-        return self::getLanguages()
-            ->mapWithKeys(fn (string $locale) => [$locale => Json::decode(File::get(lang_path("$locale.json")))]);
     }
 
     /**

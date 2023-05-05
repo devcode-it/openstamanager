@@ -43,7 +43,7 @@ export default class WelcomeStep<A extends WelcomeStepAttributes = WelcomeStepAt
       <div style={{textAlign: 'center'}}>
         <h3>{__('Benvenuto!')}</h3>
         <p>
-          {__('Puoi procedere alla configurazione tecnica del software attraverso i seguenti parametri, che potranno essere corretti secondo necessità tramite il file  .env.')}
+          {__('Puoi procedere alla configurazione tecnica del software attraverso i seguenti parametri, che potranno essere corretti secondo necessità tramite il file .env.')}
           <br/>
           {_v('Se necessiti supporto puoi contattarci tramite l\':contactLink o tramite il nostro :forumLink.', {
             contactLink: <a href="https://www.openstamanager.com/contattaci/?subject=Assistenza%20installazione%20OSM">{__('assistenza ufficiale')}</a>,
@@ -96,7 +96,7 @@ export default class WelcomeStep<A extends WelcomeStepAttributes = WelcomeStepAt
         const response = await Request.patch<{locale: string}>(route('app.language'), {locale});
         app.locale = response.locale;
       } catch (error: any) {
-        void showSnackbar(__('Si è verificato un errore durante il salvataggio della lingua: :error', {error: (error as RequestError).message}));
+        void showSnackbar(__('Si è verificato un errore durante il salvataggio della lingua: :error', {error: (error as RequestError<{message: string}>).response.message}));
       }
       m.redraw();
     }

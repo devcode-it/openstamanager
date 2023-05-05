@@ -32,10 +32,6 @@
   app = @js([
     'locale' => app()->getLocale(),
     'modules' => $modules,
-    'translations' => cache()->rememberForever(
-        'translations',
-        static fn () => \App\Http\Controllers\Controller::getTranslations()->toArray()
-    ),
     'user' => auth()->user(),
     'VERSION' => trim(file_get_contents(base_path('VERSION'))),
     'REVISION' => trim(file_get_contents(base_path('REVISION'))),

@@ -1,5 +1,6 @@
 // noinspection FunctionNamingConventionJS
 
+import type {Properties} from 'csstype';
 import {Vnode} from 'mithril';
 
 export type ReplaceObject = Record<string, string | Vnode | number | boolean>;
@@ -74,7 +75,14 @@ export function getLocaleDisplayName(locale?: string) {
   return intl.of(lang);
 }
 
-export function getFlag(language: string, slot: string = 'start') {
-  // TODO: Wait https://github.com/material-components/material-web/issues/3933 to be fixed.
-  return `<img class="flag" src="/vendor/blade-flags/language-${language}.svg" alt="${__('Bandiera della lingua :language', {language: getLocaleDisplayName(language) as string})}" slot="${slot}" style="margin-left: 16px;"/>`;
+export function getFlag(language: string, slot: string = 'start', style: Properties = {}) {
+  return (
+    <img
+      className="flag"
+      src={`/vendor/blade-flags/language-${language}.svg`}
+      alt={__('Bandiera della lingua :language', {language: getLocaleDisplayName(language) as string})}
+      slot={slot}
+      style={style}
+    />
+  );
 }

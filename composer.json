@@ -59,6 +59,8 @@
     "laravel/pint": "^1",
     "nunomaduro/collision": "^7",
     "nunomaduro/larastan": "^2",
+    "vimeo/psalm": "^5",
+    "psalm/plugin-laravel": "^2",
     "rector/rector": "^0",
     "roave/security-advisories": "dev-latest",
     "spatie/laravel-ignition": "^2",

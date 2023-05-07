@@ -43,7 +43,6 @@
     "opcodesio/log-viewer": "^2",
     "outhebox/blade-flags": "^1",
     "rawilk/laravel-settings": "^2",
-    "spatie/file-system-watcher": "^1",
     "tightenco/ziggy": "^1"
   },
   "require-dev": {

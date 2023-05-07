@@ -5,22 +5,21 @@ import '@material/web/select/filled-select.js';
 import {Select} from '@material/web/select/lib/select';
 import '@material/web/select/select-option.js';
 import {mdiLicense} from '@mdi/js';
+import MdIcon from '@osm/Components/MdIcon';
+import {
+  getFlag,
+  getLocaleDisplayName
+} from '@osm/utils/i18n';
+import {
+  capitalize,
+  showSnackbar
+} from '@osm/utils/misc';
 import {Vnode} from 'mithril';
 import {
   Request,
   RequestError
 } from 'mithril-utilities';
 import Stream from 'mithril/stream';
-
-import MdIcon from '~/Components/MdIcon';
-import {
-  getFlag,
-  getLocaleDisplayName
-} from '~/utils/i18n';
-import {
-  capitalize,
-  showSnackbar
-} from '~/utils/misc';
 
 import {
   SetupStep,

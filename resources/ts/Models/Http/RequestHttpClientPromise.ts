@@ -1,10 +1,9 @@
+import RequestHttpClientResponse from '@osm/Models/Http/RequestHttpClientResponse';
 import type {
   HttpClientPromise,
   HttpClientResponse
 } from 'coloquent';
 import type {Thenable} from 'coloquent/dist/httpclient/Types';
-
-import RequestHttpClientResponse from '~/Models/Http/RequestHttpClientResponse';
 
 export default class RequestHttpClientPromise implements HttpClientPromise {
   constructor(private response: Promise<any>) {}

@@ -63,7 +63,8 @@
     "rector/rector": "^0",
     "roave/security-advisories": "dev-latest",
     "spatie/laravel-ignition": "^2",
-    "thiagocordeiro/laravel-translator": "^1"
+    "thiagocordeiro/laravel-translator": "^1",
+    "openstamanager/attivita.tipi": "dev-main"
   },
   "autoload": {
     "psr-4": {
@@ -82,6 +83,15 @@
     "post-create-project-cmd": [
       "@php artisan key:generate --ansi"
     ]
+  },
+  "repositories": {
+    "attivita.tipi": {
+      "type": "path",
+      "url": "../osm_module_attivita_tipi",
+      "options": {
+        "symlink": false
+      }
+    }
   },
   "config": {
     "optimize-autoloader": true,

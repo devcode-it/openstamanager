@@ -1,7 +1,7 @@
 import Model, {
   ModelAttributes,
   ModelRelations
-} from '~/Models/Model';
+} from '@osm/Models/Model';
 
 export interface UserAttributes extends ModelAttributes {
   username: string;

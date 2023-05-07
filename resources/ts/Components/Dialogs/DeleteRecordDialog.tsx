@@ -1,11 +1,10 @@
+import Model from '@osm/Models/Model';
+import {showSnackbar} from '@osm/utils/misc';
 import {
   Children,
   Vnode
 } from 'mithril';
 import {RequestError} from 'mithril-utilities';
-
-import Model from '~/Models/Model';
-import {showSnackbar} from '~/utils/misc';
 
 import RecordDialog, {RecordDialogAttributes} from './RecordDialog';
 

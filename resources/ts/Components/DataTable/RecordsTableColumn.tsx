@@ -1,6 +1,5 @@
+import DataTableColumn, {DataTableColumnAttributes} from '@osm/Components/DataTable/DataTableColumn';
 import {Vnode} from 'mithril';
-
-import DataTableColumn, {DataTableColumnAttributes} from '~/Components/DataTable/DataTableColumn';
 
 export interface RecordsTableColumnAttributes extends DataTableColumnAttributes {
 }

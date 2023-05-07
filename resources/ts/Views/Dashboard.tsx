@@ -1,4 +1,4 @@
-import Page from '~/Components/Page';
+import Page from '@osm/Components/Page';
 
 export default class Dashboard extends Page {
   title = __('Dashboard');

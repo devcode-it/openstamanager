@@ -6,6 +6,12 @@ import {
   mdiLockCheckOutline,
   mdiLockOutline
 } from '@mdi/js';
+import '@osm/Components/m3/FilledTextField';
+
+import MdIcon from '@osm/Components/MdIcon';
+import Page, {PageAttributes} from '@osm/Components/Page';
+import {VnodeCollectionItem} from '@osm/typings/jsx';
+import {showSnackbar} from '@osm/utils/misc';
 import collect from 'collect.js';
 import type {Vnode} from 'mithril';
 import {
@@ -15,12 +21,6 @@ import {
   RequestError
 } from 'mithril-utilities';
 import Stream from 'mithril/stream';
-import '~/Components/m3/FilledTextField';
-
-import MdIcon from '~/Components/MdIcon';
-import Page, {PageAttributes} from '~/Components/Page';
-import {VnodeCollectionItem} from '~/typings/jsx';
-import {showSnackbar} from '~/utils/misc';
 
 export default class ResetPasswordPage extends Page {
   form = {

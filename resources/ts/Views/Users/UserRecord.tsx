@@ -1,10 +1,9 @@
+import RecordPage, {RecordPageAttributes} from '@osm/Components/Pages/RecordPage';
+import User from '@osm/Models/User';
 import {
   Children,
   Vnode
 } from 'mithril';
-
-import RecordPage, {RecordPageAttributes} from '~/Components/Pages/RecordPage';
-import User from '~/Models/User';
 
 export default class UserRecord extends RecordPage<User> {
   recordType = User;

@@ -6,12 +6,12 @@ import {
   mdiAccountOutline,
   mdiLogoutVariant
 } from '@mdi/js';
+
+import Dialog from '@osm/Components/Dialogs/Dialog';
+import MdIcon from '@osm/Components/MdIcon';
 import {Vnode} from 'mithril';
 import {Request} from 'mithril-utilities';
 import Stream from 'mithril/stream';
-
-import Dialog from '~/Components/Dialogs/Dialog';
-import MdIcon from '~/Components/MdIcon';
 
 import TopAppBarAction from './TopAppBarAction';
 

@@ -1,8 +1,7 @@
+import {extend} from '@osm/Components/extend/extend';
+import Drawer, {DrawerAttributes} from '@osm/Components/layout/Drawer';
+import {VnodeCollectionItem} from '@osm/typings/jsx';
 import {Collection} from 'collect.js';
-
-import {extend} from '~/Components/extend/extend';
-import Drawer, {DrawerAttributes} from '~/Components/layout/Drawer';
-import {VnodeCollectionItem} from '~/typings/jsx';
 
 // eslint-disable-next-line import/prefer-default-export
 export function manageDrawerEntries(callback: (this: Drawer, value: Collection<VnodeCollectionItem>) => Collection<VnodeCollectionItem>): void {

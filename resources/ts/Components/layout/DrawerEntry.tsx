@@ -3,14 +3,14 @@ import '@material/web/icon/icon.js';
 import {ListItemLink} from '@material/web/list/lib/listitemlink/list-item-link';
 import '@material/web/list/list-item-link.js';
 import type * as MaterialIcons from '@mdi/js';
+
+import MdIcon from '@osm/Components/MdIcon';
 import {Vnode} from 'mithril';
 import {
   Attributes,
   Component
 } from 'mithril-utilities';
 import {ValueOf} from 'type-fest';
-
-import MdIcon from '~/Components/MdIcon';
 
 type Icons = ValueOf<typeof MaterialIcons>;
 

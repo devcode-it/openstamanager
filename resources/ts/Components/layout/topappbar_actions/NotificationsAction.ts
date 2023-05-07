@@ -1,6 +1,6 @@
 import {mdiBellOutline} from '@mdi/js';
 
-import TopAppBarAction from '~/Components/layout/topappbar_actions/TopAppBarAction';
+import TopAppBarAction from '@osm/Components/layout/topappbar_actions/TopAppBarAction';
 
 export default class NotificationsAction extends TopAppBarAction {
   ariaLabel = __('Notifiche');

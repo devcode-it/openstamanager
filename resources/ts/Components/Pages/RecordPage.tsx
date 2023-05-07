@@ -1,16 +1,16 @@
 import '@material/web/button/outlined-button.js';
 
 import {mdiChevronLeft} from '@mdi/js';
+
+import MdIcon from '@osm/Components/MdIcon';
+import Page, {PageAttributes} from '@osm/Components/Page';
+import Model from '@osm/Models/Model';
 import {
   Children,
   Vnode,
   VnodeDOM
 } from 'mithril';
 import {Class} from 'type-fest';
-
-import MdIcon from '~/Components/MdIcon';
-import Page, {PageAttributes} from '~/Components/Page';
-import Model from '~/Models/Model';
 
 export interface RecordPageAttributes<M extends Model<any, any>> extends PageAttributes {
   record: M;

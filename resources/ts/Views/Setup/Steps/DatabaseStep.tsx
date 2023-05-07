@@ -8,6 +8,11 @@ import {
   mdiServerNetwork,
   mdiTestTube
 } from '@mdi/js';
+import '@osm/Components/m3/FilledTextField';
+
+import MdIcon from '@osm/Components/MdIcon';
+import {VnodeCollectionItem} from '@osm/typings/jsx';
+import {showSnackbar} from '@osm/utils/misc';
 import collect from 'collect.js';
 import {
   Children,
@@ -19,11 +24,6 @@ import {
   RequestError
 } from 'mithril-utilities';
 import Stream from 'mithril/stream';
-import '~/Components/m3/FilledTextField';
-
-import MdIcon from '~/Components/MdIcon';
-import {VnodeCollectionItem} from '~/typings/jsx';
-import {showSnackbar} from '~/utils/misc';
 
 import {
   SetupStep,

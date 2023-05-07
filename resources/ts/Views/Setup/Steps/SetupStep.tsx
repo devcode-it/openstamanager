@@ -4,6 +4,8 @@ import {
   mdiChevronLeft,
   mdiChevronRight
 } from '@mdi/js';
+
+import MdIcon from '@osm/Components/MdIcon';
 import {
   Children,
   Vnode
@@ -12,8 +14,6 @@ import {
   Attributes,
   Component
 } from 'mithril-utilities';
-
-import MdIcon from '~/Components/MdIcon';
 
 
 export enum SetupSteps {

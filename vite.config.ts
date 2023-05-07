@@ -22,7 +22,6 @@ export default defineConfig(async () => {
     },
     resolve: {
       alias: {
-        '~': '/resources/ts',
         '@osm': '/resources/ts'
       }
     },

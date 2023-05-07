@@ -7,6 +7,15 @@ import {
   mdiLockCheckOutline,
   mdiLockOutline
 } from '@mdi/js';
+import '@osm/Components/m3/FilledTextField';
+
+import MdIcon from '@osm/Components/MdIcon';
+import {VnodeCollectionItem} from '@osm/typings/jsx';
+import {
+  SetupStep,
+  SetupStepAttributes,
+  SetupSteps
+} from '@osm/Views/Setup/Steps/SetupStep';
 import collect from 'collect.js';
 import {Vnode} from 'mithril';
 import {
@@ -14,15 +23,6 @@ import {
   FormSubmitEvent
 } from 'mithril-utilities';
 import Stream from 'mithril/stream';
-import '~/Components/m3/FilledTextField';
-
-import MdIcon from '~/Components/MdIcon';
-import {VnodeCollectionItem} from '~/typings/jsx';
-import {
-  SetupStep,
-  SetupStepAttributes,
-  SetupSteps
-} from '~/Views/Setup/Steps/SetupStep';
 
 interface AdminUserStepAttributes extends SetupStepAttributes {
   onSaveInstall: (event: FormSubmitEvent) => void;

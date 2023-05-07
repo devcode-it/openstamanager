@@ -1,11 +1,10 @@
+import RequestHttpClient from '@osm/Models/Http/RequestHttpClient';
 import {
   Model as BaseModel,
   PaginationStrategy,
   PluralResponse
 } from 'coloquent';
 import type {ValueOf} from 'type-fest';
-
-import RequestHttpClient from '~/Models/Http/RequestHttpClient';
 
 export interface ModelAttributes {
   id: number;

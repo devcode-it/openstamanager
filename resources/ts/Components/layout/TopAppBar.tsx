@@ -4,6 +4,20 @@ import {
   mdiMenu,
   mdiMenuOpen
 } from '@mdi/js';
+
+import logo from '@osm/../images/logo.png';
+import Drawer from '@osm/Components/layout/Drawer';
+import NotificationsAction from '@osm/Components/layout/topappbar_actions/NotificationsAction';
+import PeriodSwitcherAction from '@osm/Components/layout/topappbar_actions/PeriodSwitcherAction';
+import PrintAction from '@osm/Components/layout/topappbar_actions/PrintAction';
+import UserInfoAction from '@osm/Components/layout/topappbar_actions/UserInfoAction';
+import MdIcon from '@osm/Components/MdIcon';
+import {VnodeCollectionItem} from '@osm/typings/jsx';
+import {
+  isMobile,
+  mobileMediaQuery
+} from '@osm/utils/misc';
+import '@osm/WebComponents/TopAppBar';
 import {collect} from 'collect.js';
 import {
   Vnode,
@@ -14,20 +28,6 @@ import {
   Component
 } from 'mithril-utilities';
 import Stream from 'mithril/stream';
-
-import logo from '~/../images/logo.png';
-import Drawer from '~/Components/layout/Drawer';
-import NotificationsAction from '~/Components/layout/topappbar_actions/NotificationsAction';
-import PeriodSwitcherAction from '~/Components/layout/topappbar_actions/PeriodSwitcherAction';
-import PrintAction from '~/Components/layout/topappbar_actions/PrintAction';
-import UserInfoAction from '~/Components/layout/topappbar_actions/UserInfoAction';
-import MdIcon from '~/Components/MdIcon';
-import {VnodeCollectionItem} from '~/typings/jsx';
-import {
-  isMobile,
-  mobileMediaQuery
-} from '~/utils/misc';
-import '~/WebComponents/TopAppBar';
 
 export default class TopAppBar extends Component {
   drawerOpenState = Stream(!isMobile());

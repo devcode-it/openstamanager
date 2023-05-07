@@ -1,5 +1,7 @@
 import autoAnimate from '@formkit/auto-animate';
 import {ComponentAttributes} from '@maicol07/inertia-mithril';
+
+import Footer from '@osm/Components/layout/Footer';
 import {Collection} from 'collect.js';
 import {
   Children,
@@ -10,8 +12,6 @@ import {
   Attributes,
   Component
 } from 'mithril-utilities';
-
-import Footer from '~/Components/layout/Footer';
 
 import logoUrl from '../../images/logo_completo.png';
 import TopAppBar from './layout/TopAppBar';

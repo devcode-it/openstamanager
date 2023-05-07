@@ -1,4 +1,13 @@
 import {mdiFloppy} from '@mdi/js';
+
+import RecordDialog, {RecordDialogAttributes} from '@osm/Components/Dialogs/RecordDialog';
+import MdIcon from '@osm/Components/MdIcon';
+import Model from '@osm/Models/Model';
+import {
+  VnodeCollection,
+  VnodeCollectionItem
+} from '@osm/typings/jsx';
+import {isFormValid} from '@osm/utils/misc';
 import collect, {Collection} from 'collect.js';
 import {
   Children,
@@ -8,15 +17,6 @@ import {
 import {Form} from 'mithril-utilities';
 import Stream from 'mithril/stream';
 import {Class} from 'type-fest';
-
-import RecordDialog, {RecordDialogAttributes} from '~/Components/Dialogs/RecordDialog';
-import MdIcon from '~/Components/MdIcon';
-import Model from '~/Models/Model';
-import {
-  VnodeCollection,
-  VnodeCollectionItem
-} from '~/typings/jsx';
-import {isFormValid} from '~/utils/misc';
 
 export default abstract class AddEditRecordDialog<M extends Model<any, any>> extends RecordDialog<M> {
   // eslint-disable-next-line unicorn/no-null

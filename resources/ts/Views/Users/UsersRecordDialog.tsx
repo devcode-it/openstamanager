@@ -2,16 +2,16 @@ import {
   mdiAccountOutline,
   mdiEmailOutline
 } from '@mdi/js';
+
+import AddEditRecordDialog from '@osm/Components/Dialogs/AddEditRecordDialog';
+import '@osm/Components/m3/FilledTextField';
+import MdIcon from '@osm/Components/MdIcon';
+import User, {UserAttributes} from '@osm/Models/User';
+import {JSONAPI} from '@osm/typings/request';
+import {showSnackbar} from '@osm/utils/misc';
 import collect, {Collection} from 'collect.js';
 import {Children} from 'mithril';
 import Stream from 'mithril/stream';
-
-import AddEditRecordDialog from '~/Components/Dialogs/AddEditRecordDialog';
-import '~/Components/m3/FilledTextField';
-import MdIcon from '~/Components/MdIcon';
-import User, {UserAttributes} from '~/Models/User';
-import {JSONAPI} from '~/typings/request';
-import {showSnackbar} from '~/utils/misc';
 
 export default class UsersRecordDialog extends AddEditRecordDialog<User> {
   modelType = User;

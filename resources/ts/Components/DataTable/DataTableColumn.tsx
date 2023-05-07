@@ -5,13 +5,13 @@ import {
   mdiArrowDown,
   mdiArrowUp
 } from '@mdi/js';
+
+import MdIcon from '@osm/Components/MdIcon';
 import {Vnode} from 'mithril';
 import {
   Attributes,
   Component
 } from 'mithril-utilities';
-
-import MdIcon from '~/Components/MdIcon';
 
 export interface DataTableColumnAttributes extends Attributes, Partial<JSX.IntrinsicElements['md-data-table-column']> {
 }

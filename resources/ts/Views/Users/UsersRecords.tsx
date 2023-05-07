@@ -1,10 +1,9 @@
+import RecordsTableColumn from '@osm/Components/DataTable/RecordsTableColumn';
+import RecordsPage from '@osm/Components/Pages/RecordsPage';
+import User from '@osm/Models/User';
+import UsersRecordDialog from '@osm/Views/Users/UsersRecordDialog';
 import collect from 'collect.js';
 import {Children} from 'mithril';
-
-import RecordsTableColumn from '~/Components/DataTable/RecordsTableColumn';
-import RecordsPage from '~/Components/Pages/RecordsPage';
-import User from '~/Models/User';
-import UsersRecordDialog from '~/Views/Users/UsersRecordDialog';
 
 export default class UsersRecords extends RecordsPage<User, any> {
   modelType = User;

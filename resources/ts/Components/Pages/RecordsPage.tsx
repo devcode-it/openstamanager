@@ -9,6 +9,14 @@ import '@material/web/dialog/dialog.js';
 import '@material/web/fab/branded-fab.js';
 import '@material/web/iconbutton/standard-icon-button.js';
 import {mdiPlus} from '@mdi/js';
+
+import RecordsTable, {RecordsTableColumnAttributes} from '@osm/Components/DataTable/RecordsTable';
+import AddEditRecordDialog from '@osm/Components/Dialogs/AddEditRecordDialog';
+import DeleteRecordDialog, {DeleteRecordDialogAttributes} from '@osm/Components/Dialogs/DeleteRecordDialog';
+import RecordDialog, {RecordDialogAttributes} from '@osm/Components/Dialogs/RecordDialog';
+import MdIcon from '@osm/Components/MdIcon';
+import Page, {PageAttributes} from '@osm/Components/Page';
+import Model from '@osm/Models/Model';
 import collect, {type Collection} from 'collect.js';
 import {SortDirection} from 'coloquent';
 import dayjs from 'dayjs';
@@ -20,14 +28,6 @@ import type {
 import Stream from 'mithril/stream';
 import {match} from 'ts-pattern';
 import type {Class} from 'type-fest';
-
-import RecordsTable, {RecordsTableColumnAttributes} from '~/Components/DataTable/RecordsTable';
-import AddEditRecordDialog from '~/Components/Dialogs/AddEditRecordDialog';
-import DeleteRecordDialog, {DeleteRecordDialogAttributes} from '~/Components/Dialogs/DeleteRecordDialog';
-import RecordDialog, {RecordDialogAttributes} from '~/Components/Dialogs/RecordDialog';
-import MdIcon from '~/Components/MdIcon';
-import Page, {PageAttributes} from '~/Components/Page';
-import Model from '~/Models/Model';
 
 type RecordDialogVnode<M extends Model<any, any>, D extends RecordDialog<M>> = Vnode<RecordDialogAttributes<M>, D>;
 type DeleteRecordDialogVnode<M extends Model<any, any>, D extends DeleteRecordDialog<M>> = Vnode<DeleteRecordDialogAttributes<M>, D>;

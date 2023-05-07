@@ -3,13 +3,13 @@ import {
   mdiCalendarMonthOutline,
   mdiClockOutline
 } from '@mdi/js';
+
+import MdIcon from '@osm/Components/MdIcon';
+import {VnodeCollectionItem} from '@osm/typings/jsx';
 import collect from 'collect.js';
 import dayjs from 'dayjs';
 import {Form} from 'mithril-utilities';
 import Stream from 'mithril/stream';
-
-import MdIcon from '~/Components/MdIcon';
-import {VnodeCollectionItem} from '~/typings/jsx';
 
 import {
   SetupStep,

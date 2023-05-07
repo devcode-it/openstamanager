@@ -9,6 +9,13 @@ import {
 } from '@maicol07/material-web-additions/data-table/lib/data-table';
 import {DataTableCell} from '@maicol07/material-web-additions/data-table/lib/data-table-cell';
 import {mdiDeleteOutline} from '@mdi/js';
+
+import DataTable, {DataTableAttributes} from '@osm/Components/DataTable/DataTable';
+import DataTableColumn, {DataTableColumnAttributes} from '@osm/Components/DataTable/DataTableColumn';
+import RecordsTableColumn from '@osm/Components/DataTable/RecordsTableColumn';
+import MdIcon from '@osm/Components/MdIcon';
+import Model from '@osm/Models/Model';
+import {isVnode} from '@osm/utils/misc';
 import collect, {Collection} from 'collect.js';
 import {
   ToManyRelation,
@@ -20,13 +27,6 @@ import {
   VnodeDOM
 } from 'mithril';
 import {Class} from 'type-fest';
-
-import DataTable, {DataTableAttributes} from '~/Components/DataTable/DataTable';
-import DataTableColumn, {DataTableColumnAttributes} from '~/Components/DataTable/DataTableColumn';
-import RecordsTableColumn from '~/Components/DataTable/RecordsTableColumn';
-import MdIcon from '~/Components/MdIcon';
-import Model from '~/Models/Model';
-import {isVnode} from '~/utils/misc';
 
 export interface RecordsTableColumnAttributes extends DataTableColumnAttributes {
   label?: string;

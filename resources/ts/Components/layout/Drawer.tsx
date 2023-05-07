@@ -5,6 +5,10 @@ import {
   mdiMenuOpen,
   mdiViewDashboardOutline
 } from '@mdi/js';
+
+import MdIcon from '@osm/Components/MdIcon';
+import {VnodeCollectionItem} from '@osm/typings/jsx';
+import {isMobile} from '@osm/utils/misc';
 import {collect} from 'collect.js';
 import {
   Children,
@@ -15,10 +19,6 @@ import {
   Component
 } from 'mithril-utilities';
 import Stream from 'mithril/stream';
-
-import MdIcon from '~/Components/MdIcon';
-import {VnodeCollectionItem} from '~/typings/jsx';
-import {isMobile} from '~/utils/misc';
 import '../m3/NavigationDrawer';
 import '../m3/NavigationDrawerModal';
 

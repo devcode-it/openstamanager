@@ -1,7 +1,5 @@
 <?php
 
-/** @noinspection UnusedFunctionResultInspection */
-
 use App\Http\Controllers\Api\SetupController;
 use App\Http\Middleware\CheckConfigurationMiddleware;
 
@@ -11,7 +9,7 @@ use App\Http\Middleware\CheckConfigurationMiddleware;
 |--------------------------------------------------------------------------
 |
 | Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
+| routes are loaded by the RouteServiceProvider within a group, which
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */

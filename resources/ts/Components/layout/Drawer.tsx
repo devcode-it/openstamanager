@@ -1,11 +1,12 @@
 import '@material/web/list/list.js';
+import '../m3/NavigationDrawer';
+import '../m3/NavigationDrawerModal';
 
 import {
   mdiAccountGroupOutline,
   mdiMenuOpen,
   mdiViewDashboardOutline
 } from '@mdi/js';
-
 import MdIcon from '@osm/Components/MdIcon';
 import {VnodeCollectionItem} from '@osm/typings/jsx';
 import {isMobile} from '@osm/utils/misc';
@@ -14,13 +15,11 @@ import {
   Children,
   Vnode
 } from 'mithril';
+import Stream from 'mithril/stream';
 import {
   Attributes,
   Component
 } from 'mithril-utilities';
-import Stream from 'mithril/stream';
-import '../m3/NavigationDrawer';
-import '../m3/NavigationDrawerModal';
 
 import {DrawerEntry} from './DrawerEntry';
 

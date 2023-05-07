@@ -18,19 +18,13 @@ body {
 }
 
 #app {
-    min-height: 100vh;
     display: grid;
     grid-template-rows: 1fr auto;
-}
-
-.center-block {
-    display: block;
-    margin: 0 auto;
+    min-height: 100vh;
 }
 
 .center-logo {
-    @extend .center-block;
-
+    display: block;
     width: fit-content;
     max-width: 100%;
     margin: 0 auto;
@@ -41,29 +35,27 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
+    box-sizing: border-box;
     height: 100%;
     padding: 16px;
-    box-sizing: border-box;
 }
 
 .ext-card {
     --md-card-padding: 16px;
-    margin-top: 48px;
 
     @include media.media(">desktop") {
         max-width: 55vw;
     }
+
+    margin-top: 48px;
 }
 
 .setup-buttons, .login-buttons {
-    display: flex;
-    justify-content: space-around;
-    margin: 16px 0;
 
     @include media.media("<=tablet") {
         &:has(:nth-child(3)) {
-            flex-direction: column;
-            flex-wrap: wrap;
+            flex-flow: column wrap;
             gap: 16px;
 
             & > * {
@@ -71,28 +63,14 @@ body {
             }
         }
     }
+
+    display: flex;
+    justify-content: space-around;
+    margin: 16px 0;
 }
 
 .flag {
     width: 32px;
-}
-
-.stretch {
-    //noinspection CssInvalidPropertyValue
-    width: stretch;
-}
-
-.logo-bg-sticky {
-    position: fixed;
-    z-index: 1;
-    top: 60%;
-    right: -15%;
-    width: 500px;
-    opacity: 0.1;
-}
-
-.record-dialog {
-    --mdc-layout-grid-margin-desktop: 0;
 }
 
 .user-image {
@@ -109,11 +87,14 @@ body {
 --------------------------- */
 footer {
     display: flex;
+
     width: 100%;
     padding-top: 10px;
     padding-bottom: 10px;
-    background-color: var(--md-sys-color-surface, white);
+
     color: var(--md-sys-color-on-surface, #000);
+
+    background-color: var(--md-sys-color-surface, white);
 
     > :first-child {
         flex: 1;
@@ -124,6 +105,4 @@ footer {
         padding-right: 16px;
         text-align: right;
     }
-
-    //--mdc-theme-primary: #{variables.$primary};
 }

@@ -1,17 +1,17 @@
-import {router} from '@maicol07/inertia-mithril';
 import '@maicol07/material-web-additions/card/elevated-card.js';
 
+import {router} from '@maicol07/inertia-mithril';
 import Page, {PageAttributes} from '@osm/Components/Page';
 import {showSnackbar} from '@osm/utils/misc';
 import AdminUserStep from '@osm/Views/Setup/Steps/AdminUserStep';
 import DatabaseStep from '@osm/Views/Setup/Steps/DatabaseStep';
 import RegionalSettings from '@osm/Views/Setup/Steps/RegionalSettings';
 import type {Vnode} from 'mithril';
+import Stream from 'mithril/stream';
 import {
   Request,
   RequestError
 } from 'mithril-utilities';
-import Stream from 'mithril/stream';
 
 import {
   SetupStep,

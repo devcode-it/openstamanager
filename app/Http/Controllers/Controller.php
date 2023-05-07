@@ -13,7 +13,9 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\ServiceProvider;
 use ReflectionClass;
+use ReflectionException;
 
 class Controller extends BaseController
 {
@@ -38,7 +40,7 @@ class Controller extends BaseController
     }
 
     /**
-     * @return Collection<string>
+     * @return Collection<int, string>
      */
     public static function getLanguages(): Collection
     {
@@ -48,7 +50,7 @@ class Controller extends BaseController
     }
 
     /**
-     * @return Collection<array{
+     * @return Collection<string, array{
      *     name: string,
      *     description: string,
      *     slug: string,
@@ -63,9 +65,15 @@ class Controller extends BaseController
     {
         return collect(app()->getLoadedProviders())
             ->keys()
-            ->filter(static fn (string $provider) => (new ReflectionClass($provider))->isSubclassOf(ModuleServiceProvider::class))
+            ->filter(
+                /**
+                 * @param class-string $provider
+                 *
+                 * @throws ReflectionException
+                 */
+                static fn (string $provider) => (new ReflectionClass($provider))->isSubclassOf(ModuleServiceProvider::class))
             ->map(static fn (string $provider) => app()->getProvider($provider))
-            ->mapWithKeys(static fn (ModuleServiceProvider $provider) => [$provider::slug() => [
+            ->mapWithKeys(static fn (?ServiceProvider $provider) => $provider instanceof ModuleServiceProvider ? [$provider::slug() => [
                 'name' => $provider::name(),
                 'description' => $provider::description(),
                 'slug' => $provider::slug(),
@@ -74,6 +82,6 @@ class Controller extends BaseController
                 'url' => $provider::url(),
                 'modulePath' => $provider::modulePath(),
                 'namespace' => $provider::namespace(),
-            ]]);
+            ]] : []);
     }
 }

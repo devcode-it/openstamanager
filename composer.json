@@ -53,6 +53,7 @@
     "friendsofphp/php-cs-fixer": "^3",
     "fumeapp/modeltyper": "^2.1",
     "glhd/laravel-dumper": "^1",
+    "jetbrains/phpstorm-attributes": "@dev",
     "laravel-lang/attributes": "^2",
     "laravel-lang/lang": "^12",
     "laravel-lang/publisher": "^14",

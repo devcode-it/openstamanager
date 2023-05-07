@@ -1,7 +1,6 @@
 import '@material/web/button/outlined-button.js';
 
 import {mdiChevronLeft} from '@mdi/js';
-
 import MdIcon from '@osm/Components/MdIcon';
 import Page, {PageAttributes} from '@osm/Components/Page';
 import Model from '@osm/Models/Model';

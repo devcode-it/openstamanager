@@ -1,5 +1,4 @@
 import {mdiBellOutline} from '@mdi/js';
-
 import TopAppBarAction from '@osm/Components/layout/topappbar_actions/TopAppBarAction';
 
 export default class NotificationsAction extends TopAppBarAction {

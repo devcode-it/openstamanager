@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="App" pattern="file[osm3]:app//*||file[osm3]:resources//*||file[osm3]:routes//*||file[osm3]:config//*||file[osm3]:database//*" />
+</component>

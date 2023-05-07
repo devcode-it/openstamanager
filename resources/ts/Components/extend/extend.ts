@@ -4,7 +4,7 @@
 
 /**
  * Type that returns an array of all keys of a provided object that are of
- * of the provided type, or a subtype of the type.
+ * the provided type, or a subtype of the type.
  */
 declare type KeysOfType<Type extends object, Match> = {
   [Key in keyof Type]-?: Type[Key] extends Match ? Key : never;
@@ -39,7 +39,7 @@ declare type KeyOfType<Type extends object, Match> = KeysOfType<Type, Match>[key
  *
  * @param object The object that owns the method
  * @param methods The name or names of the method(s) to extend
- * @param callback A callback which mutates the method's output
+ * @param callback A callback, which mutates the method's output.
  */
 export function extend<T extends Record<string, any>, K extends KeyOfType<T, Function>>(
   object: T,
@@ -89,7 +89,7 @@ export function extend<T extends Record<string, any>, K extends KeyOfType<T, Fun
  *
  * @param object The object that owns the method
  * @param methods The name or names of the method(s) to override
- * @param newMethod The method to replace it with
+ * @param newMethod The method to replace it with.
  */
 export function override<T extends Record<any, any>, K extends KeyOfType<T, Function>>(
   object: T,

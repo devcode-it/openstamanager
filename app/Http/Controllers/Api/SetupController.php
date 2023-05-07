@@ -14,15 +14,14 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-
-use function in_array;
-
+use Jackiedo\DotenvEditor\DotenvEditor;
 use PDOException;
 use RuntimeException;
+use function in_array;
 
 class SetupController extends Controller
 {
-    public function __construct(private \Jackiedo\DotenvEditor\DotenvEditor $dotenvEditor)
+    public function __construct(private readonly DotenvEditor $dotenvEditor)
     {
     }
 
@@ -74,6 +73,13 @@ class SetupController extends Controller
 
         // Identifying permissions granted to the user
         $database_name = Str::replace('_', '\_', $database_name);
+        /**
+         * @psalm-suppress InvalidArgument
+         *
+         * @noinspection PhpParamsInspection
+         *
+         * @phpstan-ignore-next-line
+         */
         $grants = $connection->select($connection->raw('SHOW GRANTS FOR CURRENT_USER'));
 
         $requirements = [

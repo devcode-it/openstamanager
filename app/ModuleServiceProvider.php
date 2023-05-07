@@ -5,6 +5,8 @@ namespace App;
 use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
 use ReflectionClass;
+use function dirname;
+use function in_array;
 
 abstract class ModuleServiceProvider extends ServiceProvider
 {
@@ -30,15 +32,29 @@ abstract class ModuleServiceProvider extends ServiceProvider
         return static::$description;
     }
 
+    /**
+     * @psalm-suppress InvalidNullableReturnType
+     */
     public static function slug(): string
     {
         $slug = static::$slug;
         if (empty($slug)) {
-            $cachedPackages = require app()->getCachedPackagesPath();
-            $slug = array_key_first(Arr::where($cachedPackages, static fn (array $package) => in_array(static::class, $package['providers'], true)));
+            /**
+             * @psalm-suppress UnresolvableInclude
+             */
+            $cached_packages = require app()->getCachedPackagesPath();
+            $slug = array_key_first(
+                Arr::where(
+                    $cached_packages,
+                    static fn (array $package) => in_array(static::class, $package['providers'], true)
+                )
+            );
             static::$slug = $slug;
         }
 
+        /**
+         * @psalm-suppress NullableReturnStatement
+         */
         return $slug;
     }
 

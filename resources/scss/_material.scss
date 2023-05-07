@@ -9,15 +9,14 @@ md-icon svg {
 }
 
 :is(md-list-item, md-list-item-link) md-icon {
-    padding-left: 16px;
     --md-icon-color: var(--_list-item-leading-icon-color);
 
-    // TODO: MD Tokens sets the icon size to 18px, but the list item icon is 24px per the specs.
-    //svg {
-    //width: var(--_list-item-leading-icon-size, var(--_with-icon-icon-size, var(--_icon-size, var(--_size))));
-    //height: var(--_list-item-leading-icon-size, var(--_with-icon-icon-size, var(--_icon-size, var(--_size))));
-    //    line-height: 0;
-    //}
+    padding-left: 16px;
+
+    svg {
+        width: var(--_list-item-leading-icon-size, var(--_with-icon-icon-size, var(--_icon-size, var(--_size))));
+        height: var(--_list-item-leading-icon-size, var(--_with-icon-icon-size, var(--_icon-size, var(--_size))));
+    }
 }
 
 label:has(> md-checkbox) {
@@ -30,32 +29,35 @@ md-filled-text-field, md-outlined-text-field {
 }
 
 md-navigation-drawer, md-navigation-drawer-modal {
-    //--mdc-theme-surface: var(--md-sys-color-background, #fff);
-    //--mdc-theme-primary: var(--mdc-theme-primary2, variables.$primary);
-
-    //noinspection Stylelint
     > md-list {
         display: flex;
         justify-content: center;
 
         md-list-item-link {
-            display: block;
-            width: 85%;
             --md-list-item-list-item-container-shape: 100px;
             --md-ripple-shape: 100px;
-            //--md-focus-ring-shape-start-start: 100px;
-            //--md-focus-ring-shape-start-end: 100px;
-            //--md-focus-ring-shape-end-start: 100px;
-            //--md-focus-ring-shape-end-end: 100px;
+
+            display: block;
+            width: 85%;
 
             &[active] {
                 --md-list-item-list-item-container-color: var(--md-sys-color-secondary-container, #3f51b5);
+            }
+
+            md-icon[slot="start"] svg {
+                // TODO: Waiting for token implementation in Material Web
+                //  (see https://m3.material.io/components/navigation-drawer/specs#ce8bfbcf-3dec-45d2-9d8b-5e10af1cf87d)
+                width: 24px;
+                height: 24px;
             }
         }
     }
 }
 
 top-app-bar {
+    --mdc-theme-primary: var(--md-sys-color-surface, #fff);
+    --mdc-theme-on-primary: var(--md-sys-color-on-surface, #5f6368);
+
     width: 100%;
 
     [slot="navigationIcon"], [slot="title"] {
@@ -65,9 +67,6 @@ top-app-bar {
     [slot="actionItems"] {
         --md-icon-color: var(--md-sys-color-on-surface-variant, #5f6368);
     }
-
-    --mdc-theme-primary: var(--md-sys-color-surface, #fff);
-    --mdc-theme-on-primary: var(--md-sys-color-on-surface, #5f6368);
 }
 
 md-fab, md-branded-fab {

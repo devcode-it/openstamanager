@@ -1,17 +1,17 @@
-import {router} from '@maicol07/inertia-mithril';
 import '@material/web/button/outlined-button.js';
 import '@material/web/button/text-button.js';
+
+import {router} from '@maicol07/inertia-mithril';
 import {
   mdiAccountCircleOutline,
   mdiAccountOutline,
   mdiLogoutVariant
 } from '@mdi/js';
-
 import Dialog from '@osm/Components/Dialogs/Dialog';
 import MdIcon from '@osm/Components/MdIcon';
 import {Vnode} from 'mithril';
-import {Request} from 'mithril-utilities';
 import Stream from 'mithril/stream';
+import {Request} from 'mithril-utilities';
 
 import TopAppBarAction from './TopAppBarAction';
 

@@ -1,4 +1,5 @@
 import '@maicol07/material-web-additions/layout-grid/layout-grid.js';
+import '@osm/Components/m3/FilledTextField';
 
 import {
   mdiAccountOutline,
@@ -8,8 +9,6 @@ import {
   mdiServerNetwork,
   mdiTestTube
 } from '@mdi/js';
-import '@osm/Components/m3/FilledTextField';
-
 import MdIcon from '@osm/Components/MdIcon';
 import {VnodeCollectionItem} from '@osm/typings/jsx';
 import {showSnackbar} from '@osm/utils/misc';
@@ -18,12 +17,12 @@ import {
   Children,
   Vnode
 } from 'mithril';
+import Stream from 'mithril/stream';
 import {
   Form,
   Request,
   RequestError
 } from 'mithril-utilities';
-import Stream from 'mithril/stream';
 
 import {
   SetupStep,

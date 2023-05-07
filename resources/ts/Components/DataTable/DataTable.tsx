@@ -6,7 +6,6 @@ import {
   mdiPageFirst,
   mdiPageLast
 } from '@mdi/js';
-
 import MdIcon from '@osm/Components/MdIcon';
 import {
   Children,

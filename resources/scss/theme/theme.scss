@@ -7,8 +7,8 @@
 body {
     @extend .body-large;
 
-    background-color: var(--md-sys-color-background, #fff);
     color: var(--md-sys-color-on-background);
+    background-color: var(--md-sys-color-background, #fff);
 }
 
 small {
@@ -26,31 +26,31 @@ $headings: (
 
 @each $selector, $class in $headings {
     #{$selector} {
-        color: var(--md-sys-color-on-surface);
-
         @extend .#{$class};
+
+        color: var(--md-sys-color-on-surface);
     }
 }
 
 a {
-    border-radius: 4px;
     color: var(--md-sys-color-primary);
     text-decoration: underline;
+    border-radius: 4px;
 
     &:hover {
         color: var(--md-sys-color-on-primary-container);
     }
 
     &:focus {
-        border: 1px solid var(--md-sys-color-primary);
         margin: -1px;
-        box-shadow: inset 0 0 0 1px var(--md-sys-color-surface);
+        border: 1px solid var(--md-sys-color-primary);
         outline: 0;
+        box-shadow: inset 0 0 0 1px var(--md-sys-color-surface);
     }
 
     &:hover:focus {
-        border: 1px solid var(--md-sys-color-on-primary-container);
         color: var(--md-sys-color-on-primary-container);
+        border: 1px solid var(--md-sys-color-on-primary-container);
         outline: 0;
     }
 }

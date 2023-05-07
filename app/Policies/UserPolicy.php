@@ -1,5 +1,7 @@
 <?php
 
+/** @noinspection PhpUnusedParameterInspection */
+
 namespace App\Policies;
 
 use App\Models\User;
@@ -9,12 +11,12 @@ class UserPolicy
 {
     use HandlesAuthorization;
 
-    public function allowRestify(User $user = null): bool
+    public function allowRestify(?User $user = null): bool
     {
         return true;
     }
 
-    public function show(User $user = null, User $model): bool
+    public function show(?User $user, User $model): bool
     {
         return true;
     }

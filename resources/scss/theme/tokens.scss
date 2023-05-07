@@ -1,4 +1,7 @@
 :root {
+    $headlines-font-family: 'Plus Jakarta Sans';
+    $body-font-family: 'Kantumruy Pro';
+
     --md-source: #e8a80f;
 
     /* primary */
@@ -173,9 +176,7 @@
     --md-sys-color-outline-variant-dark: #4e4639;
     --md-sys-color-scrim-dark: #000;
 
-    $headlines-font-family: 'Plus Jakarta Sans';
-    $body-font-family: 'Kantumruy Pro';
-
+    /* typography */
     --md-ref-typeface-brand: #{$headlines-font-family};
     --md-ref-typeface-plain: #{$body-font-family};
 

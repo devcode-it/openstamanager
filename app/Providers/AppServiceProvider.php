@@ -27,6 +27,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(Controller $controller): void
     {
         view()->share('modules', $controller->getModules());
-        Vite::macro('image', fn ($asset) => Vite::asset("resources/images/$asset"));
+        Vite::macro('image', fn (string $asset) => Vite::asset("resources/images/$asset"));
     }
 }

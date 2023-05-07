@@ -9,7 +9,6 @@ import {
 } from '@maicol07/material-web-additions/data-table/lib/data-table';
 import {DataTableCell} from '@maicol07/material-web-additions/data-table/lib/data-table-cell';
 import {mdiDeleteOutline} from '@mdi/js';
-
 import DataTable, {DataTableAttributes} from '@osm/Components/DataTable/DataTable';
 import DataTableColumn, {DataTableColumnAttributes} from '@osm/Components/DataTable/DataTableColumn';
 import RecordsTableColumn from '@osm/Components/DataTable/RecordsTableColumn';
@@ -86,9 +85,14 @@ export default class RecordsTable<M extends Model<any, any>, A extends RecordsTa
       columns.put('checkbox', <md-data-table-column key="checkbox" type="checkbox"></md-data-table-column>);
     }
 
+    // noinspection NestedFunctionJS
+    function isDataTableColumn(column: Vnode<Record<string, any>>): boolean {
+      return (typeof column.tag !== 'string' && (column.tag as Class<any>).prototype instanceof DataTableColumn);
+    }
+
     columns = columns.merge(vnode.attrs.cols.map<Children>((column: Children | RecordsTableColumnAttributes, attribute: string) => {
       // If the column is a vnode, and it is a DataTableColumn or a string that matches the tag name of a DataTableColumn, then use it as is.
-      if (isVnode<Record<string, any>>(column) && (column.tag === 'md-data-table-column' || (typeof column.tag !== 'string' && (column.tag as Class<any>).prototype instanceof DataTableColumn))) {
+      if (isVnode<Record<string, any>>(column) && (column.tag === 'md-data-table-column' || isDataTableColumn(column))) {
         column.key ??= attribute;
         column.attrs['data-model-attribute'] ??= attribute;
         return column;
@@ -123,6 +127,7 @@ export default class RecordsTable<M extends Model<any, any>, A extends RecordsTa
 
   noRecordsContent(vnode: Vnode<A>): Children {
     const colspan = vnode.attrs.cols.count() + (vnode.attrs.selectable ? 1 : 0) + (vnode.attrs.readonly ? 0 : 1);
+    // noinspection JSXDomNesting
     return (
       <md-data-table-row>
         <td colspan={colspan} style={{textAlign: 'center'}}>{__('Nessun record trovato')}</td>

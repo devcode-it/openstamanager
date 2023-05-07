@@ -1,9 +1,10 @@
-import type {MdCheckbox} from '@material/web/checkbox/checkbox';
 import '@material/web/checkbox/checkbox.js';
 import '@material/web/field/outlined-field.js';
 import '@material/web/select/filled-select.js';
-import {Select} from '@material/web/select/lib/select';
 import '@material/web/select/select-option.js';
+
+import type {MdCheckbox} from '@material/web/checkbox/checkbox';
+import {Select} from '@material/web/select/lib/select';
 import {mdiLicense} from '@mdi/js';
 import MdIcon from '@osm/Components/MdIcon';
 import {
@@ -15,11 +16,11 @@ import {
   showSnackbar
 } from '@osm/utils/misc';
 import {Vnode} from 'mithril';
+import Stream from 'mithril/stream';
 import {
   Request,
   RequestError
 } from 'mithril-utilities';
-import Stream from 'mithril/stream';
 
 import {
   SetupStep,

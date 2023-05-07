@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
+use PDO;
 use PDOException;
 
 class CheckConfigurationMiddleware
@@ -18,8 +19,8 @@ class CheckConfigurationMiddleware
     public function handle(Request $request, Closure $next): Response|RedirectResponse|JsonResponse
     {
         $checks = [
-            'database' => fn () => !empty(DB::connection()->getDatabaseName()) && DB::connection()->getPdo(),
-            'admin_user' => fn () => !empty(User::exists()),
+            'database' => static fn (): bool => !empty(DB::connection()->getDatabaseName()) && DB::connection()->getPdo() instanceof PDO,
+            'admin_user' => static fn (): bool => !empty(User::exists()),
         ];
 
         foreach ($checks as $check) {
@@ -34,13 +35,16 @@ class CheckConfigurationMiddleware
             }
 
             if (!$check) {
-                if (str_starts_with($request->route()?->getName(), 'setup.')) {
+                $route = $request->route();
+                if ($route && str_starts_with($route->getName(), 'setup.')) {
                     return $next($request);
                 }
 
-                return $request->wantsJson()
-                    ? \response()->json(['message' => __('Configurazione del database richiesta')], Response::HTTP_SERVICE_UNAVAILABLE)
-                    : redirect()->route('setup.index');
+                if ($request->wantsJson()) {
+                    return \response()->json(['message' => __('Configurazione del database richiesta')], Response::HTTP_SERVICE_UNAVAILABLE);
+                }
+
+                return redirect()->route('setup.index');
             }
         }
 

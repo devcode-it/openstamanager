@@ -5,7 +5,6 @@ import {
   mdiArrowDown,
   mdiArrowUp
 } from '@mdi/js';
-
 import MdIcon from '@osm/Components/MdIcon';
 import {Vnode} from 'mithril';
 import {

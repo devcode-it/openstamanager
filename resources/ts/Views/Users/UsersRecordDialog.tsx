@@ -1,10 +1,10 @@
+import '@osm/Components/m3/FilledTextField';
+
 import {
   mdiAccountOutline,
   mdiEmailOutline
 } from '@mdi/js';
-
 import AddEditRecordDialog from '@osm/Components/Dialogs/AddEditRecordDialog';
-import '@osm/Components/m3/FilledTextField';
 import MdIcon from '@osm/Components/MdIcon';
 import User, {UserAttributes} from '@osm/Models/User';
 import {JSONAPI} from '@osm/typings/request';

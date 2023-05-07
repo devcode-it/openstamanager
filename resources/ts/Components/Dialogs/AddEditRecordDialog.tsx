@@ -1,5 +1,4 @@
 import {mdiFloppy} from '@mdi/js';
-
 import RecordDialog, {RecordDialogAttributes} from '@osm/Components/Dialogs/RecordDialog';
 import MdIcon from '@osm/Components/MdIcon';
 import Model from '@osm/Models/Model';
@@ -14,8 +13,8 @@ import {
   Vnode,
   VnodeDOM
 } from 'mithril';
-import {Form} from 'mithril-utilities';
 import Stream from 'mithril/stream';
+import {Form} from 'mithril-utilities';
 import {Class} from 'type-fest';
 
 export default abstract class AddEditRecordDialog<M extends Model<any, any>> extends RecordDialog<M> {

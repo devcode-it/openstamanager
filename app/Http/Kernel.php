@@ -1,5 +1,9 @@
 <?php
 
+/** @noinspection PhpPropertyNamingConventionInspection */
+
+/** @noinspection EfferentObjectCouplingInspection */
+
 namespace App\Http;
 
 use App\Http\Middleware\Authenticate;
@@ -36,7 +40,7 @@ class Kernel extends HttpKernel
      *
      * These middlewares are run during every request to your application.
      *
-     * @var array
+     * @var array<int, string>
      */
     protected $middleware = [
         // \App\Http\Middleware\TrustHosts::class,
@@ -51,7 +55,7 @@ class Kernel extends HttpKernel
     /**
      * The application's route middleware groups.
      *
-     * @var array
+     * @var array<string, array<int, string>>
      */
     protected $middlewareGroups = [
         'web' => [
@@ -79,9 +83,9 @@ class Kernel extends HttpKernel
      *
      * These middlewares may be assigned to a group or used individually.
      *
-     * @var array
+     * @var array<string, string>
      */
-    protected $routeMiddleware = [
+    protected $middlewareAliases = [
         'auth' => Authenticate::class,
         'auth.basic' => AuthenticateWithBasicAuth::class,
         'cache.headers' => SetCacheHeaders::class,

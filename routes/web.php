@@ -1,7 +1,5 @@
 <?php
 
-/** @noinspection UnusedFunctionResultInspection */
-
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\CheckConfigurationMiddleware;
 use Illuminate\Support\Facades\Route;
@@ -30,11 +28,8 @@ Route::middleware('guest')->group(static function () {
         ->name('password.reset');
 
     Route::inertia('setup', 'Setup/SetupPage', [
-        'languages' => cache()->rememberForever('app.languages', fn () => array_map(
-            static fn ($file) => basename($file, '.json'),
-            glob(lang_path('/*.json'), GLOB_NOSORT)
-        )),
-        'license' => cache()->rememberForever('app.license', fn () => file_get_contents(base_path('LICENSE'))),
+        'languages' => app(Controller::class)->getLanguages(),
+        'license' => cache()->rememberForever('app.license', static fn () => file_get_contents(base_path('LICENSE'))),
         'external' => true,
     ])
         ->middleware('guest', CheckConfigurationMiddleware::class)
@@ -57,7 +52,7 @@ Route::middleware('auth')->group(static function () {
         ->name('users.show');
 });
 
-Route::get('refresh_csrf', static fn () => function () {
+Route::get('refresh_csrf', static fn () => static function () {
     session()->regenerate();
 
     return response()->json(['token' => csrf_token()]);

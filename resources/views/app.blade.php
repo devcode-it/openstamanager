@@ -3,7 +3,6 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    {{--    <meta name="csrf-token" content="{{csrf_token()}}">--}}
     <title>@lang('OpenSTAManager')</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,16 +40,6 @@
         'time_format' => settings('time_format'),
 ]
 ]);
-    {{--{--}}
-    {{--  events: {},--}}
-    {{--  locale: '{{app()->getLocale()}}',--}}
-    {{--  modules: @js($modules->pluck('modules')->collapse()->all()),--}}
-    {{--  theme: @js(session('high-contrast') ? 'high-contrast' : 'light'),--}}
-    {{--  translations: @js(cache()->rememberForever('translations', static fn () => Controller::getTranslations()->toArray())),--}}
-    {{--  user: @js(auth()->user()),--}}
-    {{--  VERSION: @js(trim(file_get_contents(base_path('VERSION')))),--}}
-    {{--  REVISION: @js(trim(file_get_contents(base_path('REVISION'))))--}}
-    {{--};--}}
 </script>
 
 @routes

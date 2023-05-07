@@ -1,26 +1,26 @@
-import {router} from '@maicol07/inertia-mithril';
 import '@maicol07/material-web-additions/card/elevated-card.js';
 import '@material/web/button/filled-button.js';
+import '@osm/Components/m3/FilledTextField';
+
+import {router} from '@maicol07/inertia-mithril';
 import {
   mdiAccountOutline,
   mdiLockCheckOutline,
   mdiLockOutline
 } from '@mdi/js';
-import '@osm/Components/m3/FilledTextField';
-
 import MdIcon from '@osm/Components/MdIcon';
 import Page, {PageAttributes} from '@osm/Components/Page';
 import {VnodeCollectionItem} from '@osm/typings/jsx';
 import {showSnackbar} from '@osm/utils/misc';
 import collect from 'collect.js';
 import type {Vnode} from 'mithril';
+import Stream from 'mithril/stream';
 import {
   Form,
   FormSubmitEvent,
   Request,
   RequestError
 } from 'mithril-utilities';
-import Stream from 'mithril/stream';
 
 export default class ResetPasswordPage extends Page {
   form = {

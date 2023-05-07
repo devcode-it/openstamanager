@@ -8,16 +8,16 @@ import {
   Vnode,
   VnodeDOM
 } from 'mithril';
+import Stream from 'mithril/stream';
 import {
   Attributes,
   Component
 } from 'mithril-utilities';
-import Stream from 'mithril/stream';
 
 export interface DialogAttributes extends Attributes, Partial<Pick<MDDialog,
-  'fullscreen' | 'fullscreenBreakpoint' | 'footerHidden' | 'stacked' | 'defaultAction' |
-  'actionAttribute' | 'focusAttribute' | 'scrimClickAction' | 'escapeKeyAction' | 'modeless' |
-  'draggable' | 'transition'
+'fullscreen' | 'fullscreenBreakpoint' | 'footerHidden' | 'stacked' | 'defaultAction' |
+'actionAttribute' | 'focusAttribute' | 'scrimClickAction' | 'escapeKeyAction' | 'modeless' |
+'draggable' | 'transition'
 >> {
   open?: Stream<boolean>;
   onOpen?: () => void;

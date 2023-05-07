@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 // noinspection JSFileReferences,JSUnusedGlobalSymbols,LocalVariableNamingConventionJS
 import 'inertia-plugin/client';
-
-import type Mithril from 'mithril';
 import 'vite-plugin-pwa/client.d';
 import 'vite/client';
+
+import type Mithril from 'mithril';
 import type router from 'ziggy-js';
 
 import type {
@@ -25,6 +25,7 @@ declare global {
     REVISION: string,
   };
 
+  // noinspection LocalVariableNamingConventionJS
   const LARAVEL_TRANSLATIONS: Record<string, Record<string, string>>;
 
   interface Window {
@@ -36,6 +37,8 @@ declare global {
 
   const m: typeof Mithril;
   const tr: typeof translator;
+  // noinspection LocalVariableNamingConventionJS
   const _v: typeof vnodeTranslator;
+  // noinspection LocalVariableNamingConventionJS
   const __: typeof stringTranslator;
 }

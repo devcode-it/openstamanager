@@ -20,9 +20,9 @@ class UserRepository extends Repository
     {
         return [
             field('username')->rules('required'),
-            field('email')->storingRules('required', 'unique:users')->updatingRules('unique:users'),
-            field('created_at')->label('createdAt')->readOnly(),
-            field('updated_at')->label('updatedAt')->readOnly(),
+            field('email')->storingRules(['required', 'unique:users'])->updatingRules('unique:users'),
+            field('created_at')->label('createdAt')->readonly(),
+            field('updated_at')->label('updatedAt')->readonly(),
         ];
     }
 }

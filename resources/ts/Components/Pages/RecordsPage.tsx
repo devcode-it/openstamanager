@@ -1,15 +1,15 @@
 /* eslint-disable sonarjs/no-duplicate-string */
+import '@maicol07/material-web-additions/layout-grid/layout-grid.js';
+import '@material/web/dialog/dialog.js';
+import '@material/web/fab/branded-fab.js';
+import '@material/web/iconbutton/standard-icon-button.js';
+
 import {router} from '@maicol07/inertia-mithril';
 import {
   FilterTextFieldInputEventDetail,
   SortButtonClickedEventDetail
 } from '@maicol07/material-web-additions/data-table/lib/data-table-column.js';
-import '@maicol07/material-web-additions/layout-grid/layout-grid.js';
-import '@material/web/dialog/dialog.js';
-import '@material/web/fab/branded-fab.js';
-import '@material/web/iconbutton/standard-icon-button.js';
 import {mdiPlus} from '@mdi/js';
-
 import RecordsTable, {RecordsTableColumnAttributes} from '@osm/Components/DataTable/RecordsTable';
 import AddEditRecordDialog from '@osm/Components/Dialogs/AddEditRecordDialog';
 import DeleteRecordDialog, {DeleteRecordDialogAttributes} from '@osm/Components/Dialogs/DeleteRecordDialog';

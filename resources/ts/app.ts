@@ -1,5 +1,6 @@
-import {createInertiaApp} from '@maicol07/inertia-mithril';
 import '@osm/../scss/app.scss';
+
+import {createInertiaApp} from '@maicol07/inertia-mithril';
 import {showSnackbar} from '@osm/utils/misc';
 import Mithril from 'mithril';
 import {registerSW} from 'virtual:pwa-register';
@@ -25,14 +26,14 @@ window.tr = translator;
 window._v = vnodeTranslator;
 window.__ = stringTranslator;
 
-// Load modules bootstrap
+// Load modules bootstrap file
 import.meta.glob('../../vendor/**/**/resources/{js,ts}/bootstrap.{tsx,ts,js,jsx}', {eager: true});
 
 await createInertiaApp({
   title: ((title) => `${title} - OpenSTAManager`),
   // This rule is disabled to avoid a bug in Inertia plugin
   // eslint-disable-next-line arrow-body-style
-  resolve: resolvePage((page) => {
+  resolve: resolvePage(() => {
     return import.meta.glob<OpenSTAManager.ImportedModule>('./Views/**/*.tsx');
   }),
   setup({el, App, props}) {
@@ -41,7 +42,7 @@ await createInertiaApp({
     }
 
     m.mount(el, {
-      view: (vnode) => m(App, props)
+      view: () => m(App, props)
     });
   }
 });

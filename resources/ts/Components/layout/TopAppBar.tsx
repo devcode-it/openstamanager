@@ -1,10 +1,10 @@
 import '@material/web/iconbutton/standard-icon-button.js';
+import '@osm/WebComponents/TopAppBar';
 
 import {
   mdiMenu,
   mdiMenuOpen
 } from '@mdi/js';
-
 import logo from '@osm/../images/logo.png';
 import Drawer from '@osm/Components/layout/Drawer';
 import NotificationsAction from '@osm/Components/layout/topappbar_actions/NotificationsAction';
@@ -17,17 +17,16 @@ import {
   isMobile,
   mobileMediaQuery
 } from '@osm/utils/misc';
-import '@osm/WebComponents/TopAppBar';
 import {collect} from 'collect.js';
 import {
   Vnode,
   VnodeDOM
 } from 'mithril';
+import Stream from 'mithril/stream';
 import {
   Attributes,
   Component
 } from 'mithril-utilities';
-import Stream from 'mithril/stream';
 
 export default class TopAppBar extends Component {
   drawerOpenState = Stream(!isMobile());

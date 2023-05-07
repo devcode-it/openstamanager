@@ -3,6 +3,7 @@ import '@material/web/button/filled-button.js';
 import '@material/web/button/text-button.js';
 import '@material/web/checkbox/checkbox.js';
 import '@material/web/dialog/dialog.js';
+import '@osm/Components/m3/FilledTextField';
 
 import {Dialog} from '@material/web/dialog/lib/dialog';
 import {
@@ -12,8 +13,6 @@ import {
   mdiLockQuestion,
   mdiLoginVariant
 } from '@mdi/js';
-import '@osm/Components/m3/FilledTextField';
-
 import MdIcon from '@osm/Components/MdIcon';
 import Page, {PageAttributes} from '@osm/Components/Page';
 import {VnodeCollectionItem} from '@osm/typings/jsx';
@@ -23,13 +22,13 @@ import type {
   Vnode,
   VnodeDOM
 } from 'mithril';
+import Stream from 'mithril/stream';
 import {
   Form,
   FormSubmitEvent,
   Request,
   RequestError
 } from 'mithril-utilities';
-import Stream from 'mithril/stream';
 
 export default class LoginPage extends Page {
   form = {

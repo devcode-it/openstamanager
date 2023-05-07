@@ -2,7 +2,7 @@
   "name": "openstamanager",
   "version": "0.0.0",
   "private": true,
-  "packageManager": "pnpm@8.3.1",
+  "packageManager": "pnpm@8.4.0",
   "files": [
     "resources/ts/**/*"
   ],
@@ -18,7 +18,7 @@
   "dependencies": {
     "@formkit/auto-animate": "1.0.0-beta.6",
     "@maicol07/inertia-mithril": "^1.0.3",
-    "@maicol07/material-web-additions": "^1.2.12",
+    "@maicol07/material-web-additions": "^1.2.13",
     "@material/mwc-snackbar": "^0.27.0",
     "@material/mwc-top-app-bar": "^0.27.0",
     "@material/web": "1.0.0-pre.7",
@@ -35,7 +35,7 @@
     "postcss-scss": "^4.0.6",
     "prntr": "^2.0.18",
     "readable-http-codes": "^1.1.1",
-    "ts-pattern": "^4.2.2",
+    "ts-pattern": "^4.2.3",
     "typescript-cookie": "^1.0.6"
   },
   "devDependencies": {
@@ -43,7 +43,7 @@
     "@openstamanager/vite-config": "github:devcode-it/openstamanager-vite-config",
     "@types/lodash-es": "^4.17.7",
     "@types/mithril": "^2.0.12",
-    "@types/node": "^18.16.3",
+    "@types/node": "^20.1.0",
     "@types/ziggy-js": "^1.3.2",
     "chokidar": "^3.5.3",
     "csstype": "^3.1.2",
@@ -62,7 +62,7 @@
     "type-fest": "^3.10.0",
     "typed-scss-modules": "^7.1.0",
     "typescript": "^5.0.4",
-    "vite": "^4.3.4",
+    "vite": "^4.3.5",
     "vite-plugin-laravel-translations": "github:maicol07/vite-plugin-laravel-translations#patch-1",
     "vite-plugin-progress": "^0.0.7",
     "vite-plugin-pwa": "^0.14.7"

@@ -1,12 +1,9 @@
 import {createInertiaApp} from '@maicol07/inertia-mithril';
 import '@osm/../scss/app.scss';
-
 import {showSnackbar} from '@osm/utils/misc';
-import 'inertia-plugin/client';
 import Mithril from 'mithril';
 import {registerSW} from 'virtual:pwa-register';
-import 'vite-plugin-pwa/client';
-import 'vite/client';
+
 import {resolvePage} from '~inertia';
 
 import {OpenSTAManager} from './typings/modules';

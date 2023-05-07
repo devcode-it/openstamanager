@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 // noinspection JSFileReferences,JSUnusedGlobalSymbols,LocalVariableNamingConventionJS
+import 'inertia-plugin/client';
 
 import type Mithril from 'mithril';
+import 'vite-plugin-pwa/client.d';
+import 'vite/client';
 import type router from 'ziggy-js';
 
 import type {

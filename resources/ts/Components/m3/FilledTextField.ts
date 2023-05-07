@@ -6,6 +6,11 @@ import {PropertyValues} from 'lit';
 import {customElement} from 'lit/decorators.js';
 import {literal} from 'lit/static-html.js';
 
+declare global {
+  interface HTMLElementTagNameMap {
+    'md-filled-text-field': FilledTextField;
+  }
+}
 
 @customElement('md-filled-text-field')
 export default class FilledTextField extends MdFilledTextField {

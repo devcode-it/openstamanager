@@ -1,3 +1,4 @@
+import {LayoutGridAttributes} from '@maicol07/material-web-additions/layout-grid/lib/layout-grid';
 import {Collection} from 'collect.js';
 import Mithril from 'mithril';
 import 'mithril-utilities/typings';

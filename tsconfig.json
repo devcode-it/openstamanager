@@ -18,22 +18,14 @@
       "dom",
       "dom.iterable"
     ],
-    "types": [
-      "vite/client",
-      "vite-plugin-pwa/client",
-      "inertia-plugin/client"
-    ],
     "baseUrl": ".",
     "paths": {
       "~/*": [
         "resources/ts/*"
       ]
-    }
+    },
+    "skipLibCheck": true
   },
-  "exclude": [
-    "**/node_modules",
-    "**/.*/"
-  ],
   "include": [
     "resources/ts/**/*",
     "vite.config.ts"

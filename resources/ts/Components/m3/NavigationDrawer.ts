@@ -4,6 +4,12 @@ import {styles as sharedStyles} from '@material/web/navigationdrawer/lib/shared-
 import {css} from 'lit';
 import {customElement} from 'lit/decorators.js';
 
+declare global {
+  interface HTMLElementTagNameMap {
+    'md-navigation-drawer': MdNavigationDrawer;
+  }
+}
+
 @customElement('md-navigation-drawer')
 export default class MdNavigationDrawer extends MDNavigationDrawer {
   static override readonly styles = [sharedStyles, styles, css`

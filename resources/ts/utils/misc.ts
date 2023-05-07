@@ -23,7 +23,7 @@ export function isMobile() {
   return mobileMediaQuery().matches;
 }
 
-export function isVnode<A = any, S = undefined>(object_: any): object_ is Vnode<A, S> {
+export function isVnode<A = {}, S = {}>(object_: any): object_ is Vnode<A, S> {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   return (object_ && !Array.isArray(object_) && object_.tag && object_.attrs) as boolean;
 }

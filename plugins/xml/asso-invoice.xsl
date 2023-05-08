@@ -877,10 +877,19 @@
 
                                     Identificativo fiscale ai fini IVA:
                                     <span>
-                                      <xsl:value-of select="IdFiscaleIVA/IdPaese" />
-                                      <xsl:value-of select="IdFiscaleIVA/IdCodice" />
+                                      <xsl:choose>
+                                        <xsl:when test="string(number(substring(IdFiscaleIVA/IdCodice[1],1,1)))='NaN' and string(number(substring(IdFiscaleIVA/IdCodice[2],1,1)))='NaN'">
+                                          <xsl:if test="IdFiscaleIVA/IdPaese = 'FR' or (substring(IdFiscaleIVA/IdCodice[1],1,1)='G' and substring(IdFiscaleIVA/IdCodice[2],1,1)='D') or (substring(IdFiscaleIVA/IdCodice[1],1,1)='H' and substring(IdFiscaleIVA/IdCodice[2],1,1)='A')">
+                                            <xsl:value-of select="IdFiscaleIVA/IdPaese" />  
+                                          </xsl:if>
+                                          <xsl:value-of select="IdFiscaleIVA/IdCodice" />
+                                        </xsl:when>
+                                        <xsl:otherwise>  
+                                          <xsl:value-of select="IdFiscaleIVA/IdPaese" />
+                                          <xsl:value-of select="IdFiscaleIVA/IdCodice" />
+                                        </xsl:otherwise>
+                                      </xsl:choose>   
                                     </span>
-
                                   </xsl:if>
                                 </div>
 
@@ -1135,10 +1144,20 @@
                                 <xsl:if test="IdFiscaleIVA">
 
                                   Identificativo fiscale ai fini IVA:
-                                  <span>
-                                    <xsl:value-of select="IdFiscaleIVA/IdPaese" />
-                                    <xsl:value-of select="IdFiscaleIVA/IdCodice" />
-                                  </span>
+                                    <span>
+                                      <xsl:choose>
+                                        <xsl:when test="string(number(substring(IdFiscaleIVA/IdCodice[1],1,1)))='NaN' and string(number(substring(IdFiscaleIVA/IdCodice[2],1,1)))='NaN'">
+                                          <xsl:if test="IdFiscaleIVA/IdPaese = 'FR' or (substring(IdFiscaleIVA/IdCodice[1],1,1)='G' and substring(IdFiscaleIVA/IdCodice[2],1,1)='D') or (substring(IdFiscaleIVA/IdCodice[1],1,1)='H' and substring(IdFiscaleIVA/IdCodice[2],1,1)='A')">
+                                            <xsl:value-of select="IdFiscaleIVA/IdPaese" />  
+                                          </xsl:if>
+                                          <xsl:value-of select="IdFiscaleIVA/IdCodice" />
+                                        </xsl:when>
+                                        <xsl:otherwise>  
+                                          <xsl:value-of select="IdFiscaleIVA/IdPaese" />
+                                          <xsl:value-of select="IdFiscaleIVA/IdCodice" />
+                                        </xsl:otherwise>
+                                      </xsl:choose>   
+                                    </span>
 
                                 </xsl:if>
                               </div>
@@ -1360,10 +1379,20 @@
                               <xsl:if test="IdFiscaleIVA">
 
                                 Identificativo fiscale ai fini IVA:
-                                <span>
-                                  <xsl:value-of select="IdFiscaleIVA/IdPaese" />
-                                  <xsl:value-of select="IdFiscaleIVA/IdCodice" />
-                                </span>
+                                    <span>
+                                      <xsl:choose>
+                                        <xsl:when test="string(number(substring(IdFiscaleIVA/IdCodice[1],1,1)))='NaN' and string(number(substring(IdFiscaleIVA/IdCodice[2],1,1)))='NaN'">
+                                          <xsl:if test="IdFiscaleIVA/IdPaese = 'FR' or (substring(IdFiscaleIVA/IdCodice[1],1,1)='G' and substring(IdFiscaleIVA/IdCodice[2],1,1)='D') or (substring(IdFiscaleIVA/IdCodice[1],1,1)='H' and substring(IdFiscaleIVA/IdCodice[2],1,1)='A')">
+                                            <xsl:value-of select="IdFiscaleIVA/IdPaese" />  
+                                          </xsl:if>
+                                          <xsl:value-of select="IdFiscaleIVA/IdCodice" />
+                                        </xsl:when>
+                                        <xsl:otherwise>  
+                                          <xsl:value-of select="IdFiscaleIVA/IdPaese" />
+                                          <xsl:value-of select="IdFiscaleIVA/IdCodice" />
+                                        </xsl:otherwise>
+                                      </xsl:choose>   
+                                    </span>
 
                               </xsl:if>
                             </div>
@@ -1455,8 +1484,18 @@
 
                                     Identificativo fiscale ai fini IVA:
                                     <span>
-                                      <xsl:value-of select="IdFiscaleIVA/IdPaese" />
-                                      <xsl:value-of select="IdFiscaleIVA/IdCodice" />
+                                      <xsl:choose>
+                                        <xsl:when test="string(number(substring(IdFiscaleIVA/IdCodice[1],1,1)))='NaN' and string(number(substring(IdFiscaleIVA/IdCodice[2],1,1)))='NaN'">
+                                          <xsl:if test="IdFiscaleIVA/IdPaese = 'FR' or (substring(IdFiscaleIVA/IdCodice[1],1,1)='G' and substring(IdFiscaleIVA/IdCodice[2],1,1)='D') or (substring(IdFiscaleIVA/IdCodice[1],1,1)='H' and substring(IdFiscaleIVA/IdCodice[2],1,1)='A')">
+                                            <xsl:value-of select="IdFiscaleIVA/IdPaese" />  
+                                          </xsl:if>
+                                          <xsl:value-of select="IdFiscaleIVA/IdCodice" />
+                                        </xsl:when>
+                                        <xsl:otherwise>  
+                                          <xsl:value-of select="IdFiscaleIVA/IdPaese" />
+                                          <xsl:value-of select="IdFiscaleIVA/IdCodice" />
+                                        </xsl:otherwise>
+                                      </xsl:choose>   
                                     </span>
 
                                   </xsl:if>
@@ -1602,8 +1641,18 @@
 
                                     Identificativo fiscale ai fini IVA:
                                     <span>
-                                      <xsl:value-of select="IdFiscaleIVA/IdPaese" />
-                                      <xsl:value-of select="IdFiscaleIVA/IdCodice" />
+                                      <xsl:choose>
+                                        <xsl:when test="string(number(substring(IdFiscaleIVA/IdCodice[1],1,1)))='NaN' and string(number(substring(IdFiscaleIVA/IdCodice[2],1,1)))='NaN'">
+                                          <xsl:if test="IdFiscaleIVA/IdPaese = 'FR' or (substring(IdFiscaleIVA/IdCodice[1],1,1)='G' and substring(IdFiscaleIVA/IdCodice[2],1,1)='D') or (substring(IdFiscaleIVA/IdCodice[1],1,1)='H' and substring(IdFiscaleIVA/IdCodice[2],1,1)='A')">
+                                            <xsl:value-of select="IdFiscaleIVA/IdPaese" />  
+                                          </xsl:if>
+                                          <xsl:value-of select="IdFiscaleIVA/IdCodice" />
+                                        </xsl:when>
+                                        <xsl:otherwise>  
+                                          <xsl:value-of select="IdFiscaleIVA/IdPaese" />
+                                          <xsl:value-of select="IdFiscaleIVA/IdCodice" />
+                                        </xsl:otherwise>
+                                      </xsl:choose>   
                                     </span>
 
                                   </xsl:if>

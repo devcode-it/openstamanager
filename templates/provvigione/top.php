@@ -24,6 +24,13 @@ $agente = Anagrafica::where([
     ['idanagrafica', '=', $id_record],
 ])->first();
 
+if(get('is_parz_pagata')=='true'){
+    $text[] = "'Parzialmente pagato'";
+}
+if(get('is_emessa')=='true'){
+    $text[] = "'Emessa'";
+}
+
 echo '
 <h4><b>'.tr('Liquidazione provvigioni agente _ANAG_', [
     '_ANAG_' => $agente->ragione_sociale,
@@ -43,6 +50,12 @@ if(!empty($date_start) AND !empty($date_end)) {
 }
 
 echo '
+    <p style="color:#aaa; font-size:10px;" class="text-right">
+        '.tr("_TEXT_",
+        [
+            "_TEXT_" => (empty($text) ? 'Solo fatture con stato \'Pagato\'' : 'Include fatture con stato \'Pagato\', '.implode(', ', $text)),
+        ]).'
+    </p>
 <table class="table table-striped table-bordered" id="contents">
     <thead>
         <tr>

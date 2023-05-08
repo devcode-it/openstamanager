@@ -38,7 +38,7 @@ FROM
 	LEFT JOIN an_anagrafiche as agenti ON agenti.idanagrafica = co_documenti.idagente
     LEFT JOIN co_righe_documenti ON co_righe_documenti.iddocumento = co_documenti.id
 WHERE
-    1=1
+    1=1 AND provvigione > 0
 GROUP BY
     co_documenti.id
 HAVING

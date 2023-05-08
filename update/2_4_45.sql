@@ -100,3 +100,7 @@ ORDER BY
 
 -- Aggiornamento data ultima sessione in rapportino intervento
 UPDATE `em_templates` SET `body` = '<p>Gentile Cliente,</p>\n<p>inviamo in allegato il rapportino numero {numero} del {data fine intervento}.</p>\n<p>Distinti saluti</p>', `subject` = 'Invio rapportino numero {numero} del {data fine intervento}' WHERE `em_templates`.`name` = "Rapportino intervento"; 
+
+-- Aggiunta stampa liquidazione provvigioni
+INSERT INTO `zz_prints` (`id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`, `available_options`) VALUES
+((SELECT id FROM zz_modules WHERE `name` = 'Anagrafiche'), 1, 'Provvigioni', 'Provvigioni', 'Provvigioni {ragione_sociale}', 'provvigione', 'idanagrafica', '', 'fa fa-print', '', '', 0, 0, 0, 1, NULL);

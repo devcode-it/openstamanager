@@ -275,38 +275,50 @@ class Gestore
             $descrizione .= ' CUP:'.$controparte['cup'];
         }
 
-        // Salvataggio della singola ricevuta nel RiBa
-        $ricevuta = new Ricevuta();
-        $ricevuta->numero_ricevuta = $identifier;
-        $ricevuta->scadenza = $data_scadenza;
-        $ricevuta->importo = $totale;
-        $ricevuta->abi_banca = $abi_cliente;
-        $ricevuta->cab_banca = $cab_cliente;
-        $ricevuta->iban = $banca_controparte['iban'];
-        $ricevuta->codice_cliente = $controparte['codice'];
-        $ricevuta->ctgypurp = $ctgypurp;
-        
-        //controlli sulla ragione sociale
-        $ragione_sociale = utf8_decode($controparte['ragione_sociale']);
+        // Unifico ricevute per anagrafica
+        $identificativo_debitore = !empty($controparte->partita_iva) ? $controparte->partita_iva : $controparte->codice_fiscale;
+        $ricevute = $this->bonifico->getRicevute();
+        foreach ($ricevute as $ric) {
+            if ($ric->identificativo_debitore == $identificativo_debitore) {
+                $ricevuta = $ric;
+            }
+        } 
 
-        // Sostituzione di alcuni simboli noti
-        $replaces = [
-            '&#039;' => "'",
-            '&quot;' => "'",
-            '&amp;' => '&',
-        ];
-        $ragione_sociale = str_replace(array_keys($replaces), array_values($replaces), $ragione_sociale);
-
-        $ricevuta->nome_debitore = strtoupper($ragione_sociale);
-        $ricevuta->identificativo_debitore = !empty($controparte->partita_iva) ? $controparte->partita_iva : $controparte->codice_fiscale;
-        $ricevuta->indirizzo_debitore = strtoupper($controparte['indirizzo']);
-        $ricevuta->cap_debitore = $controparte['cap'];
-        $ricevuta->comune_debitore = strtoupper($controparte['citta']);
-        $ricevuta->provincia_debitore = $controparte['provincia'];
-        $ricevuta->descrizione_banca = $descrizione_banca;
-        $ricevuta->descrizione = strtoupper($descrizione);
-
-        $this->bonifico->addRicevuta($ricevuta);
+        if (empty($ricevuta)) {
+            $ricevuta = new Ricevuta();
+            $ricevuta->numero_ricevuta = $identifier;
+            $ricevuta->scadenza = $data_scadenza;
+            $ricevuta->importo = $totale;
+            $ricevuta->abi_banca = $abi_cliente;
+            $ricevuta->cab_banca = $cab_cliente;
+            $ricevuta->iban = $banca_controparte['iban'];
+            $ricevuta->codice_cliente = $controparte['codice'];
+            $ricevuta->ctgypurp = $ctgypurp;
+            
+            //controlli sulla ragione sociale
+            $ragione_sociale = utf8_decode($controparte['ragione_sociale']);
+    
+            // Sostituzione di alcuni simboli noti
+            $replaces = [
+                '&#039;' => "'",
+                '&quot;' => "'",
+            ];
+            $ragione_sociale = str_replace(array_keys($replaces), array_values($replaces), $ragione_sociale);
+    
+            $ricevuta->nome_debitore = strtoupper($ragione_sociale);
+            $ricevuta->identificativo_debitore = $identificativo_debitore;
+            $ricevuta->indirizzo_debitore = strtoupper($controparte['indirizzo']);
+            $ricevuta->cap_debitore = $controparte['cap'];
+            $ricevuta->comune_debitore = strtoupper($controparte['citta']);
+            $ricevuta->provincia_debitore = $controparte['provincia'];
+            $ricevuta->descrizione_banca = $descrizione_banca;
+            $ricevuta->descrizione = strtoupper($descrizione);
+    
+            $this->bonifico->addRicevuta($ricevuta);
+        } else {
+            $ricevuta->importo += $totale;
+            $ricevuta->descrizione .= ' - '.strtoupper($descrizione);
+        }
 
         return true;
     }

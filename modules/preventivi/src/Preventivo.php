@@ -73,7 +73,6 @@ class Preventivo extends Document
         $id_agente = $anagrafica->idagente;
         $id_pagamento = $anagrafica->idpagamento_vendite;
         $id_segment = $id_segment ?: getSegmentPredefined($model->getModule()->id);
-        $id_agente = $anagrafica->idagente;
 
         $id_iva = setting('Iva predefinita');
         if (empty($id_pagamento)) {

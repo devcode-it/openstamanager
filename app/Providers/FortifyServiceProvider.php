@@ -26,8 +26,8 @@ class FortifyServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Fortify::authenticateUsing(static function (Request $request) {
-            $user = User::where('email', $request->input('username')
-                ->orWhere('username', $request->input('username')))
+            $user = User::where('email', $request->input('username'))
+                ->orWhere('username', $request->input('username'))
                 ->first();
 
             if ($user && Hash::check($request->input('password'), $user->password)) {

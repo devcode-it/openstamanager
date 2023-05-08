@@ -26,7 +26,7 @@ $module_query = '
 SELECT
     numero_esterno,
     an_anagrafiche.ragione_sociale,
-    prezzo_unitario,
+    SUM(prezzo_unitario*qta) as \'Totale\',
     provvigione_percentuale,
     provvigione
 FROM
@@ -40,7 +40,7 @@ FROM
 WHERE
     1=1
 GROUP BY
-    co_documenti.id, co_righe_documenti.id
+    co_documenti.id
 HAVING
     2=2
 ORDER BY

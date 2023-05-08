@@ -23,7 +23,7 @@ echo '
     <tr>
         <td> Fattura n. '.$record['numero_esterno'].'</td>
         <td>'.$record['ragione_sociale'].'</td>
-        <td class="text-center">'.moneyFormat($record['prezzo_unitario'], 2).'</td>
+        <td class="text-center">'.moneyFormat($record['Totale'], 2).'</td>
         <td class="text-center">'.numberFormat($record['provvigione_percentuale'], 0).' % </td>
         <td class="text-center">'.moneyFormat($record['provvigione'], 2).'</td>
     </tr>';

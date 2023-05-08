@@ -6,7 +6,10 @@ import {
   VnodeCollection,
   VnodeCollectionItem
 } from '@osm/typings/jsx';
-import {isFormValid} from '@osm/utils/misc';
+import {
+  isFormValid,
+  isVnode
+} from '@osm/utils/misc';
 import collect, {Collection} from 'collect.js';
 import {
   Children,
@@ -69,15 +72,21 @@ export default abstract class AddEditRecordDialog<M extends Model<any, any>> ext
   formContents(): Children {
     return (
       <md-layout-grid>
-        {...this.fields().map((item, key: string) => {
-          // TODO: Remove this cast when new collection library is done
-          const field = item as Vnode<{name?: string, 'grid-span'?: number}>;
-          field.attrs.name ??= key;
-          field.attrs['grid-span'] ??= Math.floor(12 / this.numberOfColumns);
-          return item;
-        }).values().all()}
+        {...this.formFields().values().all()}
       </md-layout-grid>
     );
+  }
+
+  protected formFields(): Collection<Children> {
+    return this.fields().map((field, key: string) => {
+      // TODO: Remove this cast when new collection library is done
+      if (isVnode<{name?: string, 'grid-span'?: number}>(field)) {
+        field.attrs.name ??= key;
+        field.attrs['grid-span'] ??= Math.floor(12 / this.numberOfColumns);
+        field.key = key;
+      }
+      return field;
+    });
   }
 
   abstract fields(): Collection<Children>;

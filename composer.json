@@ -43,7 +43,8 @@
     "opcodesio/log-viewer": "^2",
     "outhebox/blade-flags": "^1",
     "rawilk/laravel-settings": "^2",
-    "tightenco/ziggy": "^1"
+    "tightenco/ziggy": "^1",
+    "openstamanager/attivita.tipi": "dev-main"
   },
   "require-dev": {
     "barryvdh/laravel-debugbar": "^3",
@@ -65,8 +66,7 @@
     "rector/rector": "^0",
     "roave/security-advisories": "dev-latest",
     "spatie/laravel-ignition": "^2",
-    "thiagocordeiro/laravel-translator": "^1",
-    "openstamanager/attivita.tipi": "dev-main"
+    "thiagocordeiro/laravel-translator": "^1"
   },
   "autoload": {
     "psr-4": {

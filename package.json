@@ -41,6 +41,7 @@
   "devDependencies": {
     "@maicol07/eslint-config": "^2.3.0",
     "@openstamanager/vite-config": "github:devcode-it/openstamanager-vite-config",
+    "@types/fs-extra": "^11.0.1",
     "@types/lodash-es": "^4.17.7",
     "@types/mithril": "^2.0.12",
     "@types/node": "^20.1.0",
@@ -48,6 +49,7 @@
     "chokidar": "^3.5.3",
     "csstype": "^3.1.2",
     "fast-glob": "^3.2.12",
+    "fs-extra": "^11.1.1",
     "inertia-plugin": "^0.6.0",
     "laravel-vite-plugin": "^0.7.4",
     "postcss": "^8.4.23",

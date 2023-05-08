@@ -1,8 +1,15 @@
 /* eslint-disable import/no-extraneous-dependencies,new-cap */
+import {resolve} from 'node:path';
+
 import FastGlob from 'fast-glob';
+import {readJSON} from 'fs-extra';
 import Inertia from 'inertia-plugin/vite';
 import laravel from 'laravel-vite-plugin';
-import {defineConfig} from 'vite';
+import type {TsConfigJson} from 'type-fest';
+import {
+  AliasOptions,
+  defineConfig
+} from 'vite';
 import laravelTranslations from 'vite-plugin-laravel-translations';
 // import progress from 'vite-plugin-progress';
 import {VitePWA} from 'vite-plugin-pwa';
@@ -14,6 +21,30 @@ const modules = installedPackages.packages.filter((packageInfo) => packageInfo.t
 // noinspection JSUnusedGlobalSymbols
 export default defineConfig(async () => {
   const bootstrapFiles = await FastGlob('./vendor/*/*/resources/ts/bootstrap.{tsx,ts,jsx,js}');
+
+  // Load module aliases from tsconfig.json
+  const aliases: AliasOptions = {
+    '@osm': '/resources/ts'
+  };
+
+  const mods = modules.map(async (module) => {
+    const modulePath = `./vendor/composer/${module['install-path']!}`;
+    return {
+      modulePath,
+      tsconfig: await readJSON(`${modulePath}/tsconfig.json`, 'utf8') as TsConfigJson
+    };
+  });
+  for await (const module of mods) {
+    const paths = module.tsconfig.compilerOptions?.paths;
+    if (paths) {
+      for (const [alias, path] of Object.entries(paths)) {
+        if (alias !== '@osm/*') {
+          aliases[alias.replace('/*', '')] = resolve(`${module.modulePath}/${path[0]}`);
+        }
+      }
+    }
+  }
+
   return {
     assetsInclude: '**/*.xml',
     build: {
@@ -21,9 +52,7 @@ export default defineConfig(async () => {
       target: 'esnext'
     },
     resolve: {
-      alias: {
-        '@osm': '/resources/ts'
-      }
+      alias: aliases
     },
     esbuild: {
       jsx: 'transform',

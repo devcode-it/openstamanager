@@ -124,7 +124,11 @@ $(".checkbox").click(function(){
         $.post("'.$checklist_module->fileurl('ajax.php').'", {
             op: "save_checkbox",
             id: $(this).attr("data-id"),
+        },function(result){
+            reload();
         });
+
+        $(this).parent().parent().find(".text").css("text-decoration", "line-through");
 
         parent = $(this).attr("data-id");
         $("tr.sonof_"+parent).find("input[type=checkbox]").each(function(){
@@ -136,7 +140,11 @@ $(".checkbox").click(function(){
         $.post("'.$checklist_module->fileurl('ajax.php').'", {
             op: "remove_checkbox",
             id: $(this).attr("data-id"),
+        },function(result){
+            reload();
         });
+
+        $(this).parent().parent().find(".text").css("text-decoration", "none");
 
         parent = $(this).attr("data-id");
         $("tr.sonof_"+parent).find("input[type=checkbox]").each(function(){
@@ -160,6 +168,15 @@ function delete_check(id){
 
 function edit_check(id){
     launch_modal("Modifica checklist", "'.$checklist_module->fileurl('components/edit-check.php').'?id_record="+id, 1);
+}
+
+function reload(){
+    $("#loading_'.$checks_id.'").removeClass("hide");
+    $("#loading_'.$checks_id.'").addClass("show");
+    $("#'.$checks_id.'").load(globals.rootdir + "/ajax.php?op=checklists&id_module='.$id_module.'&id_record='.$id_record.'&id_plugin='.$id_plugin.'", function() {
+        $("#loading_'.$checks_id.'").removeClass("show");
+        $("#loading_'.$checks_id.'").addClass("hide");
+    });
 }
 
 </script>';

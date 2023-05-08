@@ -21,6 +21,7 @@ include_once __DIR__.'/init.php';
 
 $block_edit = $record['is_completato'];
 $righe = $contratto->getRighe();
+$direzione = $contratto->direzione;
 $colspan = ($block_edit ? '5' : '6');
 
 echo '
@@ -325,11 +326,13 @@ if (!$block_edit && sizeof($righe) > 0) {
 
         <button type="button" class="btn btn-xs btn-default disabled" id="elimina_righe" onclick="rimuoviRiga(getSelectData());">
             <i class="fa fa-trash"></i>
-        </button>
-
-        <button type="button" class="btn btn-xs btn-default disabled" id="confronta_righe" onclick="confrontaRighe(getSelectData());">
-            Confronta prezzi
-        </button>
+        </button>';
+        if ($direzione == 'entrata') {
+            echo'
+            <button type="button" class="btn btn-xs btn-default disabled" id="confronta_righe" onclick="confrontaRighe(getSelectData());">
+                Confronta prezzi
+            </button>';
+        } echo'
     </div>';
 }
 echo '

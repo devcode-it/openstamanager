@@ -22,6 +22,7 @@ include_once __DIR__.'/init.php';
 $block_edit = $record['flag_completato'];
 $righe = $ddt->getRighe();
 $colspan = ($block_edit ? '5' : '6');
+$direzione = $ddt->direzione;
 
 echo '
 <div class="table-responsive row-list">
@@ -371,11 +372,13 @@ if (!$block_edit && sizeof($righe) > 0) {
 
         <button type="button" class="btn btn-xs btn-default disabled" id="elimina_righe" onclick="rimuoviRiga(getSelectData());">
             <i class="fa fa-trash"></i>
-        </button>
-
-        <button type="button" class="btn btn-xs btn-default disabled" id="confronta_righe" onclick="confrontaRighe(getSelectData());">
-            Confronta prezzi
-        </button>
+        </button>';
+        if ($dir == 'entrata') {
+            echo'
+            <button type="button" class="btn btn-xs btn-default disabled" id="confronta_righe" onclick="confrontaRighe(getSelectData());">
+                Confronta prezzi
+            </button>';
+        } echo'
     </div>';
 }
 echo '

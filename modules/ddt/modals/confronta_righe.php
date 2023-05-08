@@ -43,7 +43,7 @@ $righe = $dbo->fetchArray(
                 <th><?php echo tr('Descrizione'); ?></th>
                 <th class="text-center" width="150"><?php echo tr('Prezzo corrente'); ?></th>
                 <th class="text-center" width="150"><?php echo tr('Ultimo preventivo'); ?></th>
-                <th class="text-center" width="150"><?php echo tr('Ultima vendita'); ?></th>
+                <th class="text-center" width="150"><?php echo tr('Ultima fattura'); ?></th>
             </tr>
         </thead>
         <tbody>

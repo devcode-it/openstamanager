@@ -29,31 +29,31 @@ $total = Util\Query::readQuery($module);
 // Lettura parametri modulo
 $module_query = $total['query'];
 
-if(!empty(get('date_start'))){
+if (!empty(get('date_start'))) {
     $module_query = str_replace('1=1', '1=1 AND DATE_FORMAT(`scadenza`, "%Y%m%d") >= "'.date('Ymd', strtotime(get('date_start'))).'"', $module_query);
 
     $date_start = get('date_start');
 }
 
-if(!empty(get('date_end'))){
+if (!empty(get('date_end'))) {
     $module_query = str_replace('1=1', '1=1 AND DATE_FORMAT(`scadenza`, "%Y%m%d") <= "'.date('Ymd', strtotime(get('date_end'))).'"', $module_query);
 
     $date_end = get('date_end');
 }
 
-if(get('is_pagata')=='false'){
+if (get('is_pagata')=='false') {
     $module_query = str_replace('1=1', '1=1 AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`) ', $module_query);
 }
 
-if(get('is_riba')=='true'){
+if (get('is_riba')=='true') {
     $module_query = str_replace('1=1', '1=1 AND co_pagamenti.codice_modalita_pagamento_fe="MP12"', $module_query);
 }
 
-if(get('is_cliente')=='true'){
+if (get('is_cliente')=='true') {
     $module_query = str_replace('1=1', '1=1 AND co_tipidocumento.dir="entrata"', $module_query);
 }
 
-if(get('is_fornitore')=='true'){
+if (get('is_fornitore')=='true') {
     $module_query = str_replace('1=1', '1=1 AND co_tipidocumento.dir="uscita"', $module_query);
 }
 

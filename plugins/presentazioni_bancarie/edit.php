@@ -49,8 +49,8 @@ echo '
 
 <div class="row">
     <div class="col-md-12 text-right">
-        <button type="button" class="btn btn-primary '.(!empty($banca_azienda) ? '' : 'disabled').'" onclick="esporta(this)">
-            <i class="fa fa-download"></i> '.tr('Esporta').'
+        <button type="button" class="btn btn-primary '.(!empty($banca_azienda) ? '' : 'disabled'). '" onclick="esporta(this)">
+            <i class="fa fa-arrow-right"></i> '.tr('Continua').'...
         </button>
     </div>
 </div>

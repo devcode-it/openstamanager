@@ -6,11 +6,14 @@ import {
   VnodeCollection,
   VnodeCollectionItem
 } from '@osm/typings/jsx';
+import {JSONAPI} from '@osm/typings/request';
 import {
   isFormValid,
-  isVnode
+  isVnode,
+  showSnackbar
 } from '@osm/utils/misc';
 import collect, {Collection} from 'collect.js';
+import {SaveResponse} from 'coloquent';
 import {
   Children,
   Vnode,
@@ -101,8 +104,6 @@ export default abstract class AddEditRecordDialog<M extends Model<any, any>> ext
     }
   }
 
-  abstract save(): boolean | Promise<boolean>;
-
   afterForm(): VnodeCollection {
     return collect<VnodeCollectionItem>({
       cancelButton: (
@@ -123,11 +124,36 @@ export default abstract class AddEditRecordDialog<M extends Model<any, any>> ext
     this.formElement?.requestSubmit();
   }
 
+  async save(): Promise<boolean> {
+    this.record.setAttributes(this.modelAttributesFromFormState);
+    try {
+      const response = await this.record.save();
+      this.afterSave(response);
+      return response.getModelId() !== undefined;
+    } catch (error) {
+      this.onSaveError(error as JSONAPI.RequestError);
+      return false;
+    }
+  }
+
+  afterSave(response: SaveResponse<M>): void {
+    const responseModel = response.getModel() as M;
+    if (responseModel !== undefined) {
+      this.record = responseModel;
+      void showSnackbar(__('Record salvato con successo'));
+    }
+  }
+
+  onSaveError(error: JSONAPI.RequestError): void {
+    const message = error.response.errors.map((error_) => error_.detail).join('; ');
+    void showSnackbar(message, false);
+  }
+
   protected static createFormState(entries: Record<string, Stream<any>>): Map<string, Stream<unknown>> {
     return new Map(Object.entries(entries));
   }
 
-  get formStateRecord(): Record<string, unknown> {
+  get modelAttributesFromFormState(): Record<string, unknown> {
     const state: Record<string, unknown> = {};
     for (const [key, value] of this.formState) {
       state[key] = value();

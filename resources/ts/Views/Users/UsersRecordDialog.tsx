@@ -6,9 +6,7 @@ import {
 } from '@mdi/js';
 import AddEditRecordDialog from '@osm/Components/Dialogs/AddEditRecordDialog';
 import MdIcon from '@osm/Components/MdIcon';
-import User, {UserAttributes} from '@osm/Models/User';
-import {JSONAPI} from '@osm/typings/request';
-import {showSnackbar} from '@osm/utils/misc';
+import User from '@osm/Models/User';
 import collect, {Collection} from 'collect.js';
 import {Children} from 'mithril';
 import Stream from 'mithril/stream';
@@ -40,20 +38,6 @@ export default class UsersRecordDialog extends AddEditRecordDialog<User> {
     if (this.record.isNew()) {
       this.record.setAttribute('password', 'default');
     }
-
-    this.record.setAttributes(this.formStateRecord as UserAttributes);
-    try {
-      const response = await this.record.save();
-      const responseModel = response.getModel() as User;
-      if (responseModel !== undefined) {
-        this.record = responseModel;
-        void showSnackbar(__('Record salvato con successo'));
-      }
-      return response.getModelId() !== undefined;
-    } catch (error) {
-      const message = (error as JSONAPI.RequestError).response.errors.map((error_) => error_.detail).join('; ');
-      void showSnackbar(message, false);
-      return false;
-    }
+    return super.save();
   }
 }

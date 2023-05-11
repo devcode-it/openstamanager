@@ -8,8 +8,8 @@ dependencies:
     specifier: ^1.0.3
     version: 1.0.3(mithril@2.2.2)
   '@maicol07/material-web-additions':
-    specifier: ^1.2.13
-    version: 1.2.13(@material/web@1.0.0-pre.7)
+    specifier: ^1.2.14
+    version: 1.2.14(@material/web@1.0.0-pre.8)
   '@material/mwc-snackbar':
     specifier: ^0.27.0
     version: 0.27.0
@@ -17,8 +17,8 @@ dependencies:
     specifier: ^0.27.0
     version: 0.27.0
   '@material/web':
-    specifier: 1.0.0-pre.7
-    version: 1.0.0-pre.7
+    specifier: 1.0.0-pre.8
+    version: 1.0.0-pre.8
   '@mdi/js':
     specifier: ^7.2.96
     version: 7.2.96
@@ -44,8 +44,8 @@ dependencies:
     specifier: ^2.2.2
     version: 2.2.2
   mithril-utilities:
-    specifier: ^1.1.2
-    version: 1.1.2(mithril@2.2.2)
+    specifier: ^1.1.3
+    version: 1.1.3(mithril@2.2.2)
   modern-normalize:
     specifier: ^1.1.0
     version: 1.1.0
@@ -59,8 +59,8 @@ dependencies:
     specifier: ^1.1.1
     version: 1.1.1
   ts-pattern:
-    specifier: ^4.2.3
-    version: 4.2.3
+    specifier: ^4.3.0
+    version: 4.3.0
   typescript-cookie:
     specifier: ^1.0.6
     version: 1.0.6
@@ -71,7 +71,7 @@ devDependencies:
     version: 2.3.0
   '@openstamanager/vite-config':
     specifier: github:devcode-it/openstamanager-vite-config
-    version: github.com/devcode-it/openstamanager-vite-config/819ac61e3ad6ef6e22d5b09b411c6f935fa3b1a1(@types/node@20.1.0)(sass@1.62.1)
+    version: github.com/devcode-it/openstamanager-vite-config/819ac61e3ad6ef6e22d5b09b411c6f935fa3b1a1(@types/node@20.1.2)(sass@1.62.1)
   '@types/fs-extra':
     specifier: ^11.0.1
     version: 11.0.1
@@ -82,8 +82,8 @@ devDependencies:
     specifier: ^2.0.12
     version: 2.0.12
   '@types/node':
-    specifier: ^20.1.0
-    version: 20.1.0
+    specifier: ^20.1.2
+    version: 20.1.2
   '@types/ziggy-js':
     specifier: ^1.3.2
     version: 1.3.2
@@ -103,8 +103,8 @@ devDependencies:
     specifier: ^0.6.0
     version: 0.6.0
   laravel-vite-plugin:
-    specifier: ^0.7.4
-    version: 0.7.4(vite@4.3.5)
+    specifier: ^0.7.6
+    version: 0.7.6(vite@4.3.5)
   postcss:
     specifier: ^8.4.23
     version: 8.4.23
@@ -143,7 +143,7 @@ devDependencies:
     version: 5.0.4
   vite:
     specifier: ^4.3.5
-    version: 4.3.5(@types/node@20.1.0)(sass@1.62.1)
+    version: 4.3.5(@types/node@20.1.2)(sass@1.62.1)
   vite-plugin-laravel-translations:
     specifier: github:maicol07/vite-plugin-laravel-translations#patch-1
     version: github.com/maicol07/vite-plugin-laravel-translations/7f85c14e2f3d9f5d2aa860c720547dfb1a945e90(vite@4.3.5)
@@ -1742,8 +1742,8 @@ packages:
       - debug
     dev: false
 
-  /@maicol07/material-web-additions@1.2.13(@material/web@1.0.0-pre.7):
-    resolution: {integrity: sha512-9XWWZW7KFKF3/RZ/tbKIa3LI64V7jj+ps7les9S65r6fPnfNlOzznAZoxAtzWEDhrRqMqCmHK6a/ZYBVl+TRcA==}
+  /@maicol07/material-web-additions@1.2.14(@material/web@1.0.0-pre.8):
+    resolution: {integrity: sha512-BPEhHMTJFLZNKSLsgk3QShQ96NVbQZFKGw56Yy5tK1ztNlGr9//TcEJTNUFTQqNM3ZHeLgGZMTFGKoj0us8wnA==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       '@material/web': ^1.0.0-pre.7
@@ -1752,7 +1752,7 @@ packages:
       '@material/data-table': 14.0.0
       '@material/layout-grid': 14.0.0
       '@material/mwc-base': 0.27.0
-      '@material/web': 1.0.0-pre.7
+      '@material/web': 1.0.0-pre.8
       lit: 2.7.4
       tslib: 2.5.0
     dev: false
@@ -2260,8 +2260,8 @@ packages:
       tslib: 2.5.0
     dev: false
 
-  /@material/web@1.0.0-pre.7:
-    resolution: {integrity: sha512-/gHoUq+7Iose64BGyBurSXkAwVv4PNdAawX4SJkeDUObUPgvLH5vZBD8/fVGWu7TEq0xSgh10uqwV81P5r5BAw==}
+  /@material/web@1.0.0-pre.8:
+    resolution: {integrity: sha512-CafOQw/C23SP1DlJVYDbs2Cm9Ct4QV7RxjxMBiWhaqlhqfDyXVpnZnKlTVzD5dVDKZyUu3vHsWK7Y/N8P66DYQ==}
     dependencies:
       lit: 2.7.4
       safevalues: 0.4.3
@@ -2404,7 +2404,7 @@ packages:
     resolution: {integrity: sha512-MxObHvNl4A69ofaTRU8DFqvgzzv8s9yRtaPPm5gud9HDNvpB3GPQFvNuTWAI59B9huVGV5jXYJwbCsmBsOGYWA==}
     dependencies:
       '@types/jsonfile': 6.1.1
-      '@types/node': 20.1.0
+      '@types/node': 20.1.2
     dev: true
 
   /@types/history@4.7.11:
@@ -2422,7 +2422,7 @@ packages:
   /@types/jsonfile@6.1.1:
     resolution: {integrity: sha512-GSgiRCVeapDN+3pqA35IkQwasaCh/0YFH5dEF6S88iDvEn901DjOeH3/QPY+XYP1DFzDZPvIvfeEgk+7br5png==}
     dependencies:
-      '@types/node': 20.1.0
+      '@types/node': 20.1.2
     dev: true
 
   /@types/lodash-es@4.17.7:
@@ -2447,8 +2447,8 @@ packages:
     resolution: {integrity: sha512-F0KIgDJfy2nA3zMLmWGKxcH2ZVEtCZXHHdOQs2gSaQ27+lNeEfGxzkIw90aXswATX7AZ33tahPbzy6KAfUreVw==}
     dev: true
 
-  /@types/node@20.1.0:
-    resolution: {integrity: sha512-O+z53uwx64xY7D6roOi4+jApDGFg0qn6WHcxe5QeqjMaTezBO/mxdfFXIVAVVyNWKx84OmPB3L8kbVYOTeN34A==}
+  /@types/node@20.1.2:
+    resolution: {integrity: sha512-CTO/wa8x+rZU626cL2BlbCDzydgnFNgc19h4YvizpTO88MFQxab8wqisxaofQJ/9bLGugRdWIuX/TbIs6VVF6g==}
     dev: true
 
   /@types/normalize-package-data@2.4.1:
@@ -2458,7 +2458,7 @@ packages:
   /@types/resolve@1.17.1:
     resolution: {integrity: sha512-yy7HuzQhj0dhGpD8RLXSZWEkLsV9ibvxvi6EiJ3bkqLAO1RGo0WbkWQiwpRlSFymTJRz0d3k5LM3kkx8ArDbLw==}
     dependencies:
-      '@types/node': 20.1.0
+      '@types/node': 20.1.2
     dev: true
 
   /@types/semver@7.3.13:
@@ -2761,7 +2761,7 @@ packages:
       postcss: ^8.1.0
     dependencies:
       browserslist: 4.21.5
-      caniuse-lite: 1.0.30001485
+      caniuse-lite: 1.0.30001486
       fraction.js: 4.2.0
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -2921,8 +2921,8 @@ packages:
     resolution: {integrity: sha512-F1ZInsg53cegyjroxLNW9DmrEQ1SuGRTO1QlpA0o2/6OpQ0gFeDRoq1yFmnr8Sakn9qwwt9DmbxHB6w167OSuQ==}
     dev: true
 
-  /caniuse-lite@1.0.30001485:
-    resolution: {integrity: sha512-8aUpZ7sjhlOyiNsg+pgcrTTPUXKh+rg544QYHSvQErljVEKJzvkYkCR/hUFeeVoEfTToUtY9cUKNRC7+c45YkA==}
+  /caniuse-lite@1.0.30001486:
+    resolution: {integrity: sha512-uv7/gXuHi10Whlj0pp5q/tsK/32J2QSqVRKQhs2j8VsDCjgyruAh/eEXHF822VqO9yT6iZKw3nRwZRSPBE9OQg==}
     dev: true
 
   /capital-case@1.0.4:
@@ -4072,7 +4072,7 @@ packages:
     engines: {node: '>=14'}
     dependencies:
       cross-spawn: 7.0.3
-      signal-exit: 4.0.1
+      signal-exit: 4.0.2
     dev: true
 
   /form-data@4.0.0:
@@ -4178,8 +4178,8 @@ packages:
       is-glob: 4.0.3
     dev: true
 
-  /glob@10.2.2:
-    resolution: {integrity: sha512-Xsa0BcxIC6th9UwNjZkhrMtNo/MnyRL8jGCP+uEwhA5oFOCY1f2s1/oNKY47xQ0Bg5nkjsfAEIej1VeH62bDDQ==}
+  /glob@10.2.3:
+    resolution: {integrity: sha512-Kb4rfmBVE3eQTAimgmeqc2LwSnN0wIOkkUL6HmxEFxNJ4fHghYHVbFba/HcGcRjE6s9KoMNK3rSOwkL4PioZjg==}
     engines: {node: '>=16 || 14 >=14.17'}
     hasBin: true
     dependencies:
@@ -4187,7 +4187,7 @@ packages:
       jackspeak: 2.2.0
       minimatch: 9.0.0
       minipass: 5.0.0
-      path-scurry: 1.7.0
+      path-scurry: 1.8.0
     dev: true
 
   /glob@7.2.3:
@@ -4641,7 +4641,7 @@ packages:
     resolution: {integrity: sha512-KWYVV1c4i+jbMpaBC+U++4Va0cp8OisU185o73T1vo99hqi7w8tSJfUXYswwqqrjzwxa6KpRK54WhPvwf5w6PQ==}
     engines: {node: '>= 10.13.0'}
     dependencies:
-      '@types/node': 20.1.0
+      '@types/node': 20.1.2
       merge-stream: 2.0.0
       supports-color: 7.2.0
     dev: true
@@ -4764,14 +4764,14 @@ packages:
     resolution: {integrity: sha512-uMCj6+hZYDoffuvAJjFAPz56E9uoowFHmTkqRtRq5WyC5Q6Cu/fTZKNQpX/RbzChBYLLl3lo8CjFZBAZXq9qFg==}
     dev: true
 
-  /laravel-vite-plugin@0.7.4(vite@4.3.5):
-    resolution: {integrity: sha512-NlIuXbeuI+4NZzRpWNpGHRVTwuFWessvD7QoD+o2MlyAi7qyUS4J8r4/yTlu1dl9lxcR7iKoYUmHQqZDcrw2KA==}
+  /laravel-vite-plugin@0.7.6(vite@4.3.5):
+    resolution: {integrity: sha512-WJ1WRqR/ZDbJD+qEEPM+biG0ZPSub0n3DywEi21+YO1jZA8amMoJGu76HiAFM16eWz5cBcCeRM/gseVXfGV4Mw==}
     engines: {node: '>=14'}
     peerDependencies:
       vite: ^3.0.0 || ^4.0.0
     dependencies:
       picocolors: 1.0.0
-      vite: 4.3.5(@types/node@20.1.0)(sass@1.62.1)
+      vite: 4.3.5(@types/node@20.1.2)(sass@1.62.1)
       vite-plugin-full-reload: 1.0.5(vite@4.3.5)
     dev: true
 
@@ -4997,8 +4997,8 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /mithril-utilities@1.1.2(mithril@2.2.2):
-    resolution: {integrity: sha512-dHLyjWe1W4Ixu0+AVpGIBeBFycRFF2RGIFZ9ihrweRrUXoxETXjCmuSx8YSGv+OZ53Abbmy7USDNPw5mjoyd7A==}
+  /mithril-utilities@1.1.3(mithril@2.2.2):
+    resolution: {integrity: sha512-dPmfGHpV3NCsVi8xkRamkwAMjoDgov3Xh1pUFP8sLbo6KVh9HuFAiX5CXayo7Z6iBMSq/gYP5nM0iJFeQyKFHQ==}
     peerDependencies:
       mithril: ^2.0.4
     dependencies:
@@ -5245,8 +5245,8 @@ packages:
     resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
     dev: true
 
-  /path-scurry@1.7.0:
-    resolution: {integrity: sha512-UkZUeDjczjYRE495+9thsgcVgsaCPkaw80slmfVFgllxY+IO8ubTsOpFVjDPROBqJdHfVPUFRHPBV/WciOVfWg==}
+  /path-scurry@1.8.0:
+    resolution: {integrity: sha512-IjTrKseM404/UAWA8bBbL3Qp6O2wXkanuIE3seCxBH7ctRuvH1QRawy1N3nVDHGkdeZsjOsSe/8AQBL/VQCy2g==}
     engines: {node: '>=16 || 14 >=14.17'}
     dependencies:
       lru-cache: 9.1.1
@@ -5752,6 +5752,11 @@ packages:
     engines: {node: '>=14'}
     dev: true
 
+  /signal-exit@4.0.2:
+    resolution: {integrity: sha512-MY2/qGx4enyjprQnFaZsHib3Yadh3IXyV2C321GY0pjGfVBu4un0uDJkwgdxqO+Rdx8JMT8IfJIRwbYVz3Ob3Q==}
+    engines: {node: '>=14'}
+    dev: true
+
   /slash@3.0.0:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
     engines: {node: '>=8'}
@@ -6204,8 +6209,8 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /ts-pattern@4.2.3:
-    resolution: {integrity: sha512-tPg2/owaVtWiimsmXpFEzI5IcfPU2BEwzFbviuSmqqaKIGyy6hyvBF4kxcuhy8UJz+6nEKUOEeaHc43drIuvpQ==}
+  /ts-pattern@4.3.0:
+    resolution: {integrity: sha512-pefrkcd4lmIVR0LA49Imjf9DYLK8vtWhqBPA3Ya1ir8xCW0O2yjL9dsCVvI7pCodLC5q7smNpEtDR2yVulQxOg==}
     dev: false
 
   /tsconfig-paths@3.14.2:
@@ -6429,7 +6434,7 @@ packages:
     dependencies:
       picocolors: 1.0.0
       picomatch: 2.3.1
-      vite: 4.3.5(@types/node@20.1.0)(sass@1.62.1)
+      vite: 4.3.5(@types/node@20.1.2)(sass@1.62.1)
     dev: true
 
   /vite-plugin-progress@0.0.7(vite@4.3.5):
@@ -6441,7 +6446,7 @@ packages:
       picocolors: 1.0.0
       progress: 2.0.3
       rd: 2.0.1
-      vite: 4.3.5(@types/node@20.1.0)(sass@1.62.1)
+      vite: 4.3.5(@types/node@20.1.2)(sass@1.62.1)
     dev: true
 
   /vite-plugin-pwa@0.14.7(vite@4.3.5):
@@ -6454,7 +6459,7 @@ packages:
       fast-glob: 3.2.12
       pretty-bytes: 6.1.0
       rollup: 3.20.2
-      vite: 4.3.5(@types/node@20.1.0)(sass@1.62.1)
+      vite: 4.3.5(@types/node@20.1.2)(sass@1.62.1)
       workbox-build: 6.5.4
       workbox-window: 6.5.4
     transitivePeerDependencies:
@@ -6462,7 +6467,7 @@ packages:
       - supports-color
     dev: true
 
-  /vite@4.3.5(@types/node@20.1.0)(sass@1.62.1):
+  /vite@4.3.5(@types/node@20.1.2)(sass@1.62.1):
     resolution: {integrity: sha512-0gEnL9wiRFxgz40o/i/eTBwm+NEbpUeTWhzKrZDSdKm6nplj+z4lKz8ANDgildxHm47Vg8EUia0aicKbawUVVA==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
@@ -6487,7 +6492,7 @@ packages:
       terser:
         optional: true
     dependencies:
-      '@types/node': 20.1.0
+      '@types/node': 20.1.2
       esbuild: 0.17.18
       postcss: 8.4.23
       rollup: 3.21.5
@@ -6775,7 +6780,7 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  github.com/devcode-it/openstamanager-vite-config/819ac61e3ad6ef6e22d5b09b411c6f935fa3b1a1(@types/node@20.1.0)(sass@1.62.1):
+  github.com/devcode-it/openstamanager-vite-config/819ac61e3ad6ef6e22d5b09b411c6f935fa3b1a1(@types/node@20.1.2)(sass@1.62.1):
     resolution: {tarball: https://codeload.github.com/devcode-it/openstamanager-vite-config/tar.gz/819ac61e3ad6ef6e22d5b09b411c6f935fa3b1a1}
     id: github.com/devcode-it/openstamanager-vite-config/819ac61e3ad6ef6e22d5b09b411c6f935fa3b1a1
     name: '@openstamanager/vite-config'
@@ -6784,7 +6789,7 @@ packages:
       autoprefixer: 10.4.14(postcss@8.4.23)
       deepmerge-ts: 4.3.0
       postcss: 8.4.23
-      vite: 4.3.5(@types/node@20.1.0)(sass@1.62.1)
+      vite: 4.3.5(@types/node@20.1.2)(sass@1.62.1)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -6803,7 +6808,7 @@ packages:
     peerDependencies:
       vite: ^4.0.0
     dependencies:
-      glob: 10.2.2
+      glob: 10.2.3
       php-array-reader: 1.3.5
-      vite: 4.3.5(@types/node@20.1.0)(sass@1.62.1)
+      vite: 4.3.5(@types/node@20.1.2)(sass@1.62.1)
     dev: true

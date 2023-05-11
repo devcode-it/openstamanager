@@ -30,7 +30,7 @@ if (!empty($record['failed_at'])) {
 
     echo '
         <a class="btn btn-info ask" data-backto="record-edit" data-msg="'.tr("Inviare immediatamente l'email?").'" data-op="send" data-button="'.tr('Invia').'" data-class="btn btn-lg btn-info" >
-            <i class="fa fa-envelope"></i> '.tr('Invia immeditamente').'
+            <i class="fa fa-envelope"></i> '.tr('Invia immediatamente').'
         </a>';
 } elseif (!empty($record['sent_at'])) {
     echo '

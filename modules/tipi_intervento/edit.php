@@ -137,7 +137,6 @@ SELECT `co_preventivi`.`idtipointervento`, id, numero, data_bozza AS data, "Prev
 UNION
 SELECT `co_promemoria`.`idtipointervento`, idcontratto AS id, numero, data_richiesta AS data, "Promemoria contratto" AS tipo_documento FROM `co_promemoria` LEFT JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id WHERE `co_promemoria`.`idtipointervento` = '.prepare($id_record).'
 ORDER BY `idtipointervento`');
-$class = '';
 
 if (!empty($elementi)) {
     echo '
@@ -180,7 +179,6 @@ if (!empty($elementi)) {
         echo '
             <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
     }
-	$class = "disabled";
 
     echo '
         </ul>
@@ -189,6 +187,6 @@ if (!empty($elementi)) {
 }
 
 echo '
-<a class="btn btn-danger ask '.$class.'" data-backto="record-list">
+<a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> '.tr('Elimina').'
 </a>';

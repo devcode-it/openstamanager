@@ -244,6 +244,7 @@ switch (post('op')) {
         $sconto->descrizione = post('descrizione');
         $sconto->note = post('note');
         $sconto->setScontoUnitario(post('sconto_unitario'), post('idiva'));
+        $sconto->confermato = ($dir = 'entrata' ? setting('Conferma automaticamente le quantità negli ordini cliente') : setting('Conferma automaticamente le quantità negli ordini fornitore'));
 
         $sconto->save();
 
@@ -625,7 +626,7 @@ switch (post('op')) {
             $qta_articolo = $dbo->selectOne('mg_articoli', 'qta', ['id' => $id_articolo])['qta'];
 
             $originale = ArticoloOriginale::find($id_articolo);
-
+ 
             $articolo = Articolo::build($ordine, $originale);
             $qta = 1;
 
@@ -649,6 +650,12 @@ switch (post('op')) {
             $prezzi = $dbo->fetchArray('SELECT minimo, massimo, sconto_percentuale, '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario
             FROM mg_prezzi_articoli
             WHERE id_articolo = '.prepare($id_articolo).' AND dir = '.prepare($dir).' AND id_anagrafica = '.prepare($id_anagrafica));
+
+            // Per gli ordini fornitore imposta la quantità minima richiesta dal fornitore invece di 1
+            if ($dir == 'uscita') {
+                $qta_minima_fornitore = $dbo->fetchOne('SELECT qta_minima FROM mg_fornitore_articolo WHERE id_articolo = '.prepare($id_articolo).' AND id_fornitore = '.prepare($id_anagrafica))['qta_minima'];
+                $articolo->qta = ($qta_minima_fornitore ?: 1);
+            }
 
             if ($prezzi) {
                 foreach ($prezzi as $prezzo) {
@@ -681,11 +688,12 @@ switch (post('op')) {
             if ($dir == 'entrata') {
                 $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $originale->prezzo_vendita_ivato : $originale->prezzo_vendita);
             } else {
-                $prezzo_unitario = $originale->prezzo_acquisto;
+                $prezzo_unitario = $prezzo_unitario ?: $originale->prezzo_acquisto;
             }
-
+            
             $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['idanagrafica' => $ordine->idagente])['provvigione_default'];
-
+            
+            $articolo->confermato = ($dir = 'entrata' ? setting('Conferma automaticamente le quantità negli ordini cliente') : setting('Conferma automaticamente le quantità negli ordini fornitore'));
             $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);
             $articolo->setSconto($sconto, 'PRC');
             $articolo->setProvvigione($provvigione ?: 0, 'PRC');
@@ -693,6 +701,7 @@ switch (post('op')) {
 
             
             flash()->info(tr('Nuovo articolo aggiunto!'));
+            
         } else {
             $response['error'] = tr('Nessun articolo corrispondente a magazzino');
             echo json_encode($response);
@@ -711,6 +720,40 @@ switch (post('op')) {
             $riga->save();
 
             flash()->info(tr('Quantità aggiornata!'));
+        }
+
+        break;
+
+    case 'edit-price':
+        $righe = $post['righe'];
+        $numero_totale = 0;
+        
+        foreach ($righe as $riga) {
+            if (($riga['id']) != null) {
+                $articolo = Articolo::find($riga['id']);
+            } else {
+                $originale = ArticoloOriginale::find(post('idarticolo'));
+                $articolo = Articolo::build($fattura, $originale);
+                $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
+            }
+    
+            if ($articolo['prezzo_unitario'] != $riga['price']) {
+                $articolo->setPrezzoUnitario($riga['price'], $articolo->idiva);
+                $articolo->save();
+                ++$numero_totale;
+            }
+        }
+
+        if ($numero_totale > 1) {
+            flash()->info(tr('_NUM_ prezzi modificati!', [
+                '_NUM_' => $numero_totale,
+            ]));
+        } else if ($numero_totale == 1) {
+            flash()->info(tr('_NUM_ prezzo modificato!', [
+                '_NUM_' => $numero_totale,
+            ]));
+        } else {
+            flash()->warning(tr('Nessun prezzo modificato!'));
         }
 
         break;

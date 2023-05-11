@@ -98,25 +98,58 @@ class Interventi extends AppResource
 
         // Informazioni sull'utente
         $id_tecnico = Auth::user()->id_anagrafica;
+        
+        if (setting('Visualizza solo promemoria assegnati') == 1) {
 
-        $query = 'SELECT
-            in_interventi.id,
-            in_interventi.updated_at
-        FROM in_interventi WHERE
-            deleted_at IS NULL AND (
+            $query = '
+            SELECT
+                in_interventi.id,
+                in_interventi.updated_at
+            FROM 
+                in_interventi 
+            WHERE
+                deleted_at IS NULL AND (
                 in_interventi.id IN (
                     SELECT idintervento FROM in_interventi_tecnici
                     WHERE in_interventi_tecnici.idintervento = in_interventi.id
                         AND in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
-                        AND in_interventi_tecnici.idtecnico = :id_tecnico
+                        AND in_interventi_tecnici.idtecnico = :id_tecnico_q1
                 )
                 OR (
                     in_interventi.id NOT IN (
                         SELECT idintervento FROM in_interventi_tecnici
                     )
-                    AND in_interventi.idstatointervento IN (SELECT idstatointervento FROM in_statiintervento WHERE is_completato = 0)
+                    AND in_interventi.idstatointervento IN (SELECT idstatointervento FROM in_statiintervento WHERE is_completato = 0 AND in_interventi.id IN (
+                        SELECT id_intervento FROM in_interventi_tecnici_assegnati WHERE in_interventi_tecnici_assegnati.id_tecnico = :id_tecnico_q2)
+                    )
                 )
             )';
+
+        } else {
+            
+            $query = '
+            SELECT
+                in_interventi.id,
+                in_interventi.updated_at
+            FROM 
+                in_interventi 
+            WHERE
+                deleted_at IS NULL AND (
+                    in_interventi.id IN (
+                        SELECT idintervento FROM in_interventi_tecnici
+                        WHERE in_interventi_tecnici.idintervento = in_interventi.id
+                            AND in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
+                            AND in_interventi_tecnici.idtecnico = :id_tecnico_q1
+                    )
+                    OR (
+                        in_interventi.id NOT IN (
+                            SELECT idintervento FROM in_interventi_tecnici
+                        )
+                        AND in_interventi.idstatointervento IN (SELECT idstatointervento FROM in_statiintervento WHERE is_completato = 0)
+                    )
+                )';
+                            
+        }    
 
         // Filtro per data
         // Gestione di tecnici assegnati o impianti modificati
@@ -131,13 +164,23 @@ class Interventi extends AppResource
             )';
         }
 
-        $records = database()->fetchArray($query, [
-            ':period_start' => $start,
-            ':period_end' => $end,
-            ':id_tecnico' => $id_tecnico,
-        ]);
+        if (setting('Visualizza solo promemoria assegnati') == 1) {
+            $records = database()->fetchArray($query, [
+                ':period_start' => $start,
+                ':period_end' => $end,
+                ':id_tecnico_q1' => $id_tecnico,
+                ':id_tecnico_q2' => $id_tecnico,
+            ]);
+        } else {
+            $records = database()->fetchArray($query, [
+                ':period_start' => $start,
+                ':period_end' => $end,
+                ':id_tecnico_q1' => $id_tecnico,
+            ]);
+        }
 
         return $this->mapModifiedRecords($records);
+        
     }
 
     public function retrieveRecord($id)

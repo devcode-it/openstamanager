@@ -24,6 +24,7 @@ use Modules\Articoli\Articolo;
 $block_edit = $record['flag_completato'];
 $righe = $ordine->getRighe();
 $colspan = ($block_edit ? '6' : '7');
+$direzione = $ordine->direzione;
 
 echo '
 <div class="table-responsive row-list">
@@ -283,7 +284,7 @@ echo '
 
 // Calcoli
 $imponibile = abs($ordine->imponibile);
-$sconto = $ordine->sconto;
+$sconto = -$ordine->sconto;
 $totale_imponibile = abs($ordine->totale_imponibile);
 $iva = abs($ordine->iva);
 $totale = abs($ordine->totale);
@@ -307,7 +308,7 @@ if (!empty($sconto)) {
     echo '
         <tr>
             <td colspan="'.$colspan.'" class="text-right">
-                <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
+                <b><span class="tip" title="'.tr('Un importo negativo indica uno sconto, mentre uno positivo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
             </td>
             <td class="text-right">
                 '.moneyFormat($sconto, 2).'
@@ -344,7 +345,7 @@ echo '
 echo '
         <tr>
             <td colspan="'.$colspan.'" class="text-right">
-                <b>'.tr('Totale', [], ['upper' => true]).':</b>
+                <b>'.tr('Totale documento', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
                 '.moneyFormat($totale, 2).'
@@ -416,7 +417,13 @@ if (!$block_edit && sizeof($righe) > 0) {
 
         <button type="button" class="btn btn-xs btn-default disabled" id="elimina_righe" onclick="rimuoviRiga(getSelectData());">
             <i class="fa fa-trash"></i>
-        </button>
+        </button>';
+        if ($direzione == 'entrata') {
+            echo'
+            <button type="button" class="btn btn-xs btn-default disabled" id="confronta_righe" onclick="confrontaRighe(getSelectData());">
+                Confronta prezzi
+            </button>';
+        } echo'
     </div>';
 }
 echo '
@@ -448,6 +455,10 @@ function getSelectData() {
     });
 
     return data;
+}
+
+function confrontaRighe(id) {
+    openModal("'.tr('Confronta prezzi').'", "'.$module->fileurl('modals/confronta_righe.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&righe=" + id + "&id_anagrafica='.$ordine->idanagrafica.'&direzione='.$dir.'");
 }
 
 function rimuoviRiga(id) {
@@ -553,9 +564,11 @@ $(".check").on("change", function() {
     if (checked) {
         $("#elimina_righe").removeClass("disabled");
         $("#duplica_righe").removeClass("disabled");
+        $("#confronta_righe").removeClass("disabled");
     } else {
         $("#elimina_righe").addClass("disabled");
         $("#duplica_righe").addClass("disabled");
+        $("#confronta_righe").addClass("disabled");
     }
 });
 

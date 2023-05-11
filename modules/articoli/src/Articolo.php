@@ -186,7 +186,7 @@ class Articolo extends Model
                 $prezzo_vendita = $prezzo_vendita * (1 + $percentuale_aliquota / 100);
             }
 
-            $this->setPrezzoVendita($prezzo_vendita, $this->idiva_vendita);
+            $this->setPrezzoVendita(round($prezzo_vendita,2), $this->idiva_vendita);
         }
     }
 

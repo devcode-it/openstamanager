@@ -546,13 +546,10 @@ echo '
         }
 ?>
 			<div class="row">
-				<div class="col-md-12">
+				<div class="col-md-6">
 					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "help": "<?php echo tr('Note visibili anche in fattura.'); ?>", "value": "$note$", "charcounter": 1 ]}
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-md-12">
+                </div>
+				<div class="col-md-6">
 					{[ "type": "textarea", "label": "<?php echo tr('Note interne'); ?>", "name": "note_aggiuntive", "help": "<?php echo tr('Note interne.'); ?>", "value": "$note_aggiuntive$", "class": "unblockable" ]}
 				</div>
 			</div>

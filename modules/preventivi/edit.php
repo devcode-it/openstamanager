@@ -126,7 +126,7 @@ echo '
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Tipo di attività'); ?>", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione", "value": "$idtipointervento$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tipo di attività'); ?>", "name": "idtipointervento", "required": 1, "ajax-source": "tipiintervento", "value": "$idtipointervento$" ]}
 				</div>
 
 				<!--div class="col-md-3">
@@ -145,13 +145,10 @@ echo '
 			</div>
 
 			<div class="row">
-				<div class="col-md-12">
+				<div class="col-md-6">
 					{[ "type": "textarea", "label": "<?php echo tr('Esclusioni'); ?>", "name": "esclusioni", "class": "autosize", "value": "$esclusioni$" ]}
 				</div>
-			</div>
-
-            <div class="row">
-				<div class="col-md-12">
+				<div class="col-md-6">
 					{[ "type": "textarea", "label": "<?php echo tr('Garanzia'); ?>", "name": "garanzia", "class": "autosize", "value": "$garanzia$" ]}
 				</div>
 			</div>

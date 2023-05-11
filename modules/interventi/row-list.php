@@ -22,6 +22,7 @@ include_once __DIR__.'/init.php';
 $block_edit = $record['flag_completato'];
 $righe = $intervento->getRighe();
 $colspan = ($block_edit ? '5' : '6');
+$direzione = $intervento->direzione;
 
 $show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
@@ -228,14 +229,14 @@ echo '
             </tr>';
 
         // SCONTO
-        if (!empty($intervento->sconto)) {
+        if (!empty($righe->sum('sconto'))) {
             echo '
             <tr>
                 <td colspan="'.$colspan.'" class="text-right">
-                    <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
+                    <b><span class="tip" title="'.tr('Un importo negativo indica uno sconto, mentre uno positivo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
                 </td>
                 <td class="text-right">
-                    '.moneyFormat($intervento->sconto, 2).'
+                    '.moneyFormat(-$righe->sum('sconto'), 2).'
                 </td>
                 <td></td>
             </tr>';
@@ -280,7 +281,13 @@ if (!$block_edit && sizeof($righe) > 0) {
 
         <button type="button" class="btn btn-xs btn-default disabled" id="elimina_righe" onclick="rimuoviRiga(getSelectData());">
             <i class="fa fa-trash"></i>
-        </button>
+        </button>';
+        if ($direzione == 'entrata') {
+            echo'
+            <button type="button" class="btn btn-xs btn-default disabled" id="confronta_righe" onclick="confrontaRighe(getSelectData());">
+                Confronta prezzi
+            </button>';
+        } echo'
     </div>';
 }
 echo '
@@ -312,6 +319,10 @@ function getSelectData() {
     });
 
     return data;
+}
+
+function confrontaRighe(id) {
+    openModal("'.tr('Confronta prezzi').'", "'.$module->fileurl('modals/confronta_righe.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&righe=" + id + "&id_anagrafica='.$ordine->idanagrafica.'&direzione='.$dir.'");
 }
 
 function rimuoviRiga(id) {
@@ -409,9 +420,11 @@ $(".check").on("change", function() {
     if (checked) {
         $("#elimina_righe").removeClass("disabled");
         $("#duplica_righe").removeClass("disabled");
+        $("#confronta_righe").removeClass("disabled");
     } else {
         $("#elimina_righe").addClass("disabled");
         $("#duplica_righe").addClass("disabled");
+        $("#confronta_righe").addClass("disabled");
     }
 });
 

@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.44 (2023-04-21)](#2444-2023-04-21)
 - [2.4.43 (2023-03-31)](#2443-2023-03-31)
 - [2.4.42 (2023-03-10)](#2442-2023-03-10)
 - [2.4.41 (2023-02-27)](#2441-2023-02-27)
@@ -55,6 +56,34 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
 
+## 2.4.44 (2023-04-21)
+### Aggiunto (Added)
+- Aggiunto il cambio di stato dei preventivi da azioni di gruppo
+- Aggiunto il cambio di stato dei contratti da azioni di gruppo
+- Aggiunta visualizzazione deducibilità conto nel conto economico
+- Aggiunta colonna Prima nota in vista Fatture di vendita
+- Aggiunto il filtro Tutti sui promemoria in Dashboard
+- Aggiunto automatismo per fatture TD21 e TD27
+
+### Modificato (Changed)
+- Rimosso moment-timezone per fullcalendar
+- Ottimizzata la ricerca nel piano dei conti
+- Miglioria plugin listino fornitore: unificato prezzo e dettaglio
+- Ottimizzata l'apertura di fatture con molte righe
+- Allineamento dello sconto con segno negativo nei documenti
+### Fixed
+- Corretta maggiorazione IVA per liquidazione trimestrale
+- Corretta la stampa liquidazione IVA
+- Corretto doppio avviso in modifica righe
+- Corretta la selezione dei segmenti nelle query delle viste
+- Corretta impostazione IVA da anagrafica nei documenti
+- Corretti i riferimenti automatici in fase di importazione di Fatture elettroniche
+- Corretto il controllo dei totali delle fatture
+- Corretta l'impostazione del prezzo di acquisto nei documenti di acquisto
+- Corretta la modifica degli allegati
+- Corretta la visualizzazione del colore delle relazioni
+- Corretta l'impostazione dei decimali per quantità in Articoli e Attività
+- Corretto il calcolo dello sconto totale delle righe
 ## 2.4.43 (2023-03-31)
 ### Aggiunto (Added)
 - Aggiunto invio automatico di solleciti
@@ -67,6 +96,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Aggiunte azioni di gruppo per modifica categoria ed esportazione in ZIP degli allegati
 - Aggiunto il campo Descrizione in aggiunta Attività
 - Aggiunta opzione per immagini in stampa preventivi e ordini
+- Aggiunta azione di gruppo per firma interventi
 
 ### Modificato (Changed)
 - Miglioria logiche per stampe
@@ -78,6 +108,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Rimossa l'obbligatorietà del campo BIC in gestione banche
 - Modificato l'ordinamento dello scalare in piano dei conti
 - Disattivati i processi in cron per installazioni in localhost con possibilità di forzatura
+
 
 ### Fixed
 - Corretta la sede di partenza articoli in Attività
@@ -95,6 +126,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Corretto il calcolo dell'IVA su rivalsa INPS
 - Corretta la gestione degli eventi ricorrenti su Dashboard
 - Correzione per inserimento sottocategorie con lo stesso nome delle categorie
+- Corretto link a preventivi da Dashboard non funzionante
 ## 2.4.42 (2023-03-10)
 ### Aggiunto (Added)
 - Aggiunta la gestione della provvigione in fase di aggiunta riga

@@ -529,7 +529,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                         
                         <div class="row">
                             <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Tipo attività predefinita').'", "name": "idtipointervento_default", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "$idtipointervento_default$" ]}
+                                {[ "type": "select", "label": "'.tr('Tipo attività predefinita').'", "name": "idtipointervento_default", "ajax-source": "tipiintervento", "value": "$idtipointervento_default$" ]}
                             </div>
                             
                             <div class="col-md-6">

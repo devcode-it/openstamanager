@@ -229,7 +229,28 @@ $(document).ready(function () {
             $("#info").addClass("hidden");
             return;
         }
-    })
+    });
+
+    input("idtipodocumento").change(function () {
+        $.ajax({
+            url: globals.rootdir + "/actions.php",
+            type: "POST",
+            dataType: "json",
+            data: {
+                id_module: globals.id_module,
+                idtipodocumento:input(this).get(),
+                op: "check_tipodocumento",
+            },
+            success: function (result) {
+                if (result){
+                    input("idanagrafica").getElement().selectSetNew(result.id, result.ragione_sociale);
+                    input("idanagrafica").disable();
+                } else {
+                    input("idanagrafica").enable();
+                }
+            }
+        });
+    });
 })
 </script>';
 }

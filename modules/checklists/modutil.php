@@ -39,7 +39,7 @@ function renderChecklist($check, $level = 1, $parent = 0) {
 
     $result .= '
                     <td style="border-top:0px;">
-                        <span class="text">'.$check->content.' </span>';
+                        <span class="text" style="'.(!empty($check->checked_at)?'text-decoration:line-through;':'').'">'.$check->content.' </span>';
 
     if (intval($check->assignedUsers->pluck('id')->toArray())>0){
         $result .= '    <span class="label label-info pull-right" style="padding:6px 8px;" data-toggle="tooltip" title="Assegnato a '. implode(', ', $check->assignedUsers->pluck('username')->toArray()).'"><i class="fa fa-user"></i></span>';

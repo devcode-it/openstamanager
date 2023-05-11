@@ -80,7 +80,7 @@ if ($show_prezzi) {
 
     // Calcoli
     $imponibile = abs($intervento->imponibile);
-    $sconto = $intervento->sconto;
+    $sconto = -$intervento->sconto;
     $totale_imponibile = abs($intervento->totale_imponibile);
     $iva = abs($intervento->iva);
     $totale = abs($intervento->totale);
@@ -134,7 +134,7 @@ if ($show_prezzi) {
     echo '
     <tr>
         <td colspan="3" class="text-right">
-            <b>'.tr('Totale', [], ['upper' => true]).':</b>
+            <b>'.tr('Totale documento', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
             '.moneyFormat($totale, 2).'

@@ -26,7 +26,7 @@ include_once __DIR__.'/../../core.php';
 $stati_intervento = $dbo->fetchArray('SELECT idstatointervento AS id, descrizione, colore FROM in_statiintervento WHERE deleted_at IS NULL ORDER BY descrizione ASC');
 
 // Tipi intervento
-$tipi_intervento = $dbo->fetchArray('SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC');
+$tipi_intervento = $dbo->fetchArray('SELECT idtipointervento AS id, descrizione FROM in_tipiintervento WHERE deleted_at IS NULL ORDER BY descrizione ASC');
 
 // Tecnici disponibili
 $tecnici_disponibili = $dbo->fetchArray("SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale, colore FROM an_anagrafiche

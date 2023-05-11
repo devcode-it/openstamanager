@@ -127,7 +127,7 @@ switch ($resource) {
         break;
 
     case 'vettori':
-        $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')')), IF(deleted_at IS NULL, '', ' (".tr('eliminata').")'),' - ', an_anagrafiche.codice) AS descrizione, idtipointervento_default AS idtipointervento FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
+        $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')')), IF(an_anagrafiche.deleted_at IS NULL, '', ' (".tr('eliminata').")'),' - ', an_anagrafiche.codice) AS descrizione, idtipointervento_default AS idtipointervento FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
 
         foreach ($elements as $element) {
             $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
@@ -135,7 +135,7 @@ switch ($resource) {
 
         $where[] = "descrizione='Vettore'";
         if (empty($filter)) {
-            $where[] = 'deleted_at IS NULL';
+            $where[] = 'an_anagrafiche.deleted_at IS NULL';
         }
 
         if (!empty($search)) {
@@ -152,7 +152,7 @@ switch ($resource) {
      * - idanagrafica
      */
     case 'agenti':
-        $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')')), IF(deleted_at IS NULL, '', ' (".tr('eliminata').")'),' - ', an_anagrafiche.codice) AS descrizione, idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
+        $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')')), IF(an_anagrafiche.deleted_at IS NULL, '', ' (".tr('eliminata').")'),' - ', an_anagrafiche.codice) AS descrizione, idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
 
         foreach ($elements as $element) {
             $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
@@ -160,7 +160,7 @@ switch ($resource) {
 
         $where[] = "descrizione='Agente'";
         if (empty($filter)) {
-            $where[] = 'deleted_at IS NULL';
+            $where[] = 'an_anagrafiche.deleted_at IS NULL';
         }
 
         if (!empty($search)) {
@@ -188,7 +188,7 @@ switch ($resource) {
         break;
 
     case 'tecnici':
-        $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')')), IF(deleted_at IS NULL, '', ' (".tr('eliminata').")'),' - ', an_anagrafiche.codice) AS descrizione, idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
+        $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')')), IF(an_anagrafiche.deleted_at IS NULL, '', ' (".tr('eliminata').")'),' - ', an_anagrafiche.codice) AS descrizione, idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
 
         foreach ($elements as $element) {
             $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
@@ -196,7 +196,7 @@ switch ($resource) {
 
         $where[] = "descrizione='Tecnico'";
         if (empty($filter)) {
-            $where[] = 'deleted_at IS NULL';
+            $where[] = 'an_anagrafiche.deleted_at IS NULL';
 
             if (setting('Permetti inserimento sessioni degli altri tecnici')) {
             } else {
@@ -218,7 +218,7 @@ switch ($resource) {
         break;
 
     case 'clienti_fornitori':
-        $query = "SELECT `an_anagrafiche`.`idanagrafica` AS id, CONCAT_WS('', ragione_sociale, IF(citta !='' OR provincia != '', CONCAT(' (', citta, IF(provincia!='', CONCAT(' ', provincia), ''), ')'), ''), IF(deleted_at IS NULL, '', ' (".tr('eliminata').")'),' - ', an_anagrafiche.codice) AS descrizione, `an_tipianagrafiche`.`descrizione` AS optgroup, idtipointervento_default, an_tipianagrafiche.idtipoanagrafica FROM `an_tipianagrafiche` INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` |where| ORDER BY `optgroup` ASC, ragione_sociale ASC";
+        $query = "SELECT `an_anagrafiche`.`idanagrafica` AS id, CONCAT_WS('', ragione_sociale, IF(citta !='' OR provincia != '', CONCAT(' (', citta, IF(provincia!='', CONCAT(' ', provincia), ''), ')'), ''), IF(an_anagrafiche.deleted_at IS NULL, '', ' (".tr('eliminata').")'),' - ', an_anagrafiche.codice) AS descrizione, `an_tipianagrafiche`.`descrizione` AS optgroup, idtipointervento_default, an_tipianagrafiche.idtipoanagrafica FROM `an_tipianagrafiche` INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` |where| ORDER BY `optgroup` ASC, ragione_sociale ASC";
 
         foreach ($elements as $element) {
             $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
@@ -226,7 +226,7 @@ switch ($resource) {
 
         $where = [];
         if (empty($filter)) {
-            $where[] = 'deleted_at IS NULL';
+            $where[] = 'an_anagrafiche.deleted_at IS NULL';
             $where[] = "an_tipianagrafiche_anagrafiche.idtipoanagrafica IN (SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione = 'Cliente' OR descrizione = 'Fornitore' OR descrizione = 'Azienda')";
         }
 
@@ -266,14 +266,14 @@ switch ($resource) {
 
     // Nota Bene: nel campo id viene specificato idtipoanagrafica-idanagrafica -> modulo Utenti e permessi, creazione nuovo utente
     case 'anagrafiche':
-        $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT_WS('', ragione_sociale, IF(citta !='' OR provincia != '', CONCAT(' (', citta, IF(provincia!='', CONCAT(' ', provincia), ''), ')'), ''), IF(deleted_at IS NULL, '', ' (".tr('eliminata').")'),' - ', an_anagrafiche.codice) AS descrizione, `an_tipianagrafiche`.`descrizione` AS optgroup FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY `optgroup` ASC, ragione_sociale ASC";
+        $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT_WS('', ragione_sociale, IF(citta !='' OR provincia != '', CONCAT(' (', citta, IF(provincia!='', CONCAT(' ', provincia), ''), ')'), ''), IF(an_anagrafiche.deleted_at IS NULL, '', ' (".tr('eliminata').")'),' - ', an_anagrafiche.codice) AS descrizione, `an_tipianagrafiche`.`descrizione` AS optgroup FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY `optgroup` ASC, ragione_sociale ASC";
 
         foreach ($elements as $element) {
             $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
         }
 
         if (empty($filter)) {
-            $where[] = 'deleted_at IS NULL';
+            $where[] = 'an_anagrafiche.deleted_at IS NULL';
         }
 
         if (!empty($search)) {
@@ -434,10 +434,14 @@ switch ($resource) {
     
 
     case 'relazioni':
-        $query = 'SELECT id, descrizione, colore AS bgcolor FROM an_relazioni |where| ORDER BY descrizione';
+        $query = "SELECT id, CONCAT(descrizione, IF(an_relazioni.deleted_at IS NULL, '', ' (".tr('eliminata').")')) AS descrizione, colore AS _bgcolor_ FROM an_relazioni |where| ORDER BY descrizione";
 
         foreach ($elements as $element) {
             $filter[] = 'id='.prepare($element);
+        }
+
+        if (empty($filter)) {
+            $where[] = 'an_relazioni.deleted_at IS NULL';
         }
 
         if (!empty($search)) {
@@ -498,7 +502,7 @@ switch ($resource) {
             //$where[] = 'data_fine > NOW()';
 
             if (empty($filter)) {
-                $where[] = 'deleted_at IS NULL';
+                $where[] = 'co_dichiarazioni_intento.deleted_at IS NULL';
             }
 
             $where[] = 'id_anagrafica='.prepare($superselect['idanagrafica']);

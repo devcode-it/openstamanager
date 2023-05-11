@@ -223,11 +223,10 @@ elseif (filter('op') == 'download-zip-allegati') {
 
 // Modifica dati di un allegato
 elseif (filter('op') == 'modifica-allegato') {
-    $id_allegato = filter('id_allegato');
     $id_allegati = explode(';',filter('id_allegati'));
     
-    if ($id_allegato) {
-        $upload = Upload::find($id_allegato);
+    if (sizeof($id_allegati) == 1) {
+        $upload = Upload::find($id_allegati[0]);
         $upload->name = post('nome_allegato');
         $upload->category = post('categoria_allegato');
         $upload->save();

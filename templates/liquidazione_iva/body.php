@@ -44,7 +44,10 @@ $totale_iva_periodo_precedente = $totale_iva_vendite_periodo_precedente - $total
 
 $totale_iva = $totale_iva_esigibile - $totale_iva_detraibile;
 
-if ($periodo['valore'] == 'Trimestrale' && $totale_iva > 0) {
+if ($periodo['valore'] == 'Trimestrale' && $totale_iva > 25.82) {
+    if ($totale_iva_periodo_precedente < 25.82 && $totale_iva_periodo_precedente > 0) {
+        $totale_iva += $totale_iva_periodo_precedente;
+    }
     $maggiorazione = $totale_iva * 0.01;
     $totale_iva_maggiorata = $totale_iva + $maggiorazione;
 }
@@ -257,10 +260,6 @@ echo '
         <td class=text-right>'.moneyFormat($totale_iva_nondetraibile, 2).'</td>
     </tr>
     <tr>
-        <td>TOTALE IVA DETRAIBILI</td>
-        <td class=text-right>'.moneyFormat($totale_iva_detraibile, 2).'</td>
-    </tr>
-    <tr>
         <td>VARIAZIONE DI IMPOSTA RELATIVE A PERIODI PRECEDENTI</td>';
         if ($totale_iva_periodo_precedente < 25.82 && $totale_iva_periodo_precedente > 0) {
             echo'
@@ -301,7 +300,7 @@ echo '
     </tr>
     <tr>
         <td>IVA A DEBITO CON MAGGIORAZIONE</td>';
-        if ($totale_iva > '25.82' && $periodo['valore'] == 'Trimestrale') {
+        if ($totale_iva > 25.82 && $periodo['valore'] == 'Trimestrale') {
             echo'
             <td class=text-right>'.moneyFormat($totale_iva_maggiorata, 2).'</td>';
         } else {
@@ -313,8 +312,13 @@ echo '
     <tr>
         <td>IMPORTO DA VERSARE</td>';
         if ($totale_iva > 25.82) {
-            echo'
-            <td class=text-right>'.($periodo['valore'] == 'Mensile' ? moneyFormat($totale_iva, 2) : moneyFormat($totale_iva_maggiorata, 2)).'</td>';
+            if ($periodo['valore'] == 'Mensile') {
+                echo'
+                <td class=text-right>'.moneyFormat($totale_iva, 2).'</td>';
+            } else {
+                echo'
+                <td class=text-right>'.moneyFormat($totale_iva_maggiorata, 2).'</td>';
+            }
         } else {
             echo'
             <td class=text-right></td>';

@@ -344,16 +344,16 @@ function csrf() {
 
 function pdfjs() {
     const web = gulp.src([
-        config.nodeDirectory + '/pdf.js/web/**/*',
-        '!' + config.nodeDirectory + '/pdf.js/web/cmaps/*',
-        '!' + config.nodeDirectory + '/pdf.js/web/*.map',
-        '!' + config.nodeDirectory + '/pdf.js/web/*.pdf',
+        config.nodeDirectory + '/pdf.js/demo/vue/public/pdfjs-prebuilt/web/**/*',
+        '!' + config.nodeDirectory + '/pdf.js/demo/vue/public/pdfjs-prebuilt/web/cmaps/*',
+        '!' + config.nodeDirectory + '/pdf.js/demo/vue/public/pdfjs-prebuilt/web/*.map',
+        '!' + config.nodeDirectory + '/pdf.js/demo/vue/public/pdfjs-prebuilt/web/*.pdf',
     ])
         .pipe(gulp.dest(config.production + '/pdfjs/web'));
 
     const build = gulp.src([
-        config.nodeDirectory + '/pdf.js/build/*',
-        '!' + config.nodeDirectory + '/pdf.js/build/*.map',
+        config.nodeDirectory + '/pdf.js/demo/vue/public/pdfjs-prebuilt/build/*',
+        '!' + config.nodeDirectory + '/pdf.js/demo/vue/public/pdfjs-prebuilt/build/*.map',
     ])
         .pipe(gulp.dest(config.production + '/pdfjs/build'));
 

@@ -237,7 +237,7 @@ switch (post('op')) {
             // Totale basato sul campo ImportoTotaleDocumento
             $dati_generali = $xml['FatturaElettronicaBody']['DatiGenerali']['DatiGeneraliDocumento'];
             if (isset($dati_generali['ImportoTotaleDocumento'])) {
-                $totale_documento_indicato = abs(floatval($dati_generali['ImportoTotaleDocumento']));
+                $totale_documento_indicato = floatval($dati_generali['ImportoTotaleDocumento']);
 
                 // Calcolo del totale basato sui DatiRiepilogo
                 if (empty($totale_documento_indicato) && empty($dati_generali['ScontoMaggiorazione'])) {
@@ -903,7 +903,7 @@ switch (post('op')) {
 
         // Aggiunta tipologia cliente se necessario
         if (!$anagrafica->isTipo('Cliente')) {
-            $tipo_cliente = TipoAnagrafica::where('descrizione', '=', 'Cliente')->first();
+            $tipo_cliente = TipoAnagrafica::where('descrizione', 'Cliente')->first();
             $tipi = $anagrafica->tipi->pluck('idtipoanagrafica')->toArray();
             $tipi[] = $tipo_cliente->id;
 
@@ -1017,7 +1017,7 @@ switch (post('op')) {
                 if ($dir == 'entrata') {
                     $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $originale->prezzo_vendita_ivato : $originale->prezzo_vendita);
                 } else {
-                    $prezzo_unitario = $originale->prezzo_acquisto;
+                    $prezzo_unitario = $prezzo_unitario ?: $originale->prezzo_acquisto;
                 }
 
                 $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['idanagrafica' => $fattura->idagente])['provvigione_default'];
@@ -1033,6 +1033,67 @@ switch (post('op')) {
         } else {
             $response['error'] = tr('Nessun articolo corrispondente a magazzino');
             echo json_encode($response);
+        }
+
+        break;
+
+    // Controllo se impostare anagrafica azienda in base a tipologia documento 
+    case 'check_tipodocumento':
+        $idtipodocumento = post('idtipodocumento');
+        $tipologie = Tipo::wherein('codice_tipo_documento_fe', ['TD21','TD27'])->where('dir', 'entrata')->get()->pluck('id')->toArray();
+        $azienda = Anagrafica::find(setting('Azienda predefinita'));
+
+        $result = false;
+        if (in_array($idtipodocumento, $tipologie)) {
+            // Aggiunta tipologia cliente se necessario
+            if (!$azienda->isTipo('Cliente')) {
+                $tipo_cliente = TipoAnagrafica::where('descrizione', 'Cliente')->first();
+                $tipi = $azienda->tipi->pluck('idtipoanagrafica')->toArray();
+                $tipi[] = $tipo_cliente->id;
+
+                $azienda->tipologie = $tipi;
+                $azienda->save();
+            }
+            $result = [
+                'id' => $azienda->id,
+                'ragione_sociale' => $azienda->ragione_sociale
+            ];
+        }
+
+        echo json_encode($result);
+
+        break;
+
+    case 'edit-price':
+        $righe = $post['righe'];
+        $numero_totale = 0;
+
+        foreach ($righe as $riga) {
+            if (($riga['id']) != null) {
+                $articolo = Articolo::find($riga['id']);
+            } else {
+                $originale = ArticoloOriginale::find(post('idarticolo'));
+                $articolo = Articolo::build($fattura, $originale);
+                $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
+            }
+    
+            if ($articolo['prezzo_unitario'] != $riga['price']) {
+                $articolo->setPrezzoUnitario($riga['price'], $articolo->idiva);
+                $articolo->save();
+                ++$numero_totale;
+            }
+        }
+
+        if ($numero_totale > 1) {
+            flash()->info(tr('_NUM_ prezzi modificati!', [
+                '_NUM_' => $numero_totale,
+            ]));
+        } else if ($numero_totale == 1) {
+            flash()->info(tr('_NUM_ prezzo modificato!', [
+                '_NUM_' => $numero_totale,
+            ]));
+        } else {
+            flash()->warning(tr('Nessun prezzo modificato!'));
         }
 
         break;

@@ -524,15 +524,15 @@ switch (filter('op')) {
                 $match_documento_da_fe = false;
                 $query = "SELECT dt_righe_ddt.id, dt_righe_ddt.idddt AS id_documento, dt_righe_ddt.is_descrizione, dt_righe_ddt.idarticolo, dt_righe_ddt.is_sconto, 'ddt' AS ref,
                 CONCAT('DDT num. ', IF(numero_esterno != '', numero_esterno, numero), ' del ', DATE_FORMAT(data, '%d/%m/%Y'), ' [', (SELECT descrizione FROM dt_statiddt WHERE id = idstatoddt)  , ']') AS opzione
-            FROM dt_righe_ddt
-                INNER JOIN dt_ddt ON dt_ddt.id = dt_righe_ddt.idddt
-            WHERE dt_ddt.idanagrafica = ".prepare($anagrafica->id)." AND |where_ddt| AND dt_righe_ddt.qta > dt_righe_ddt.qta_evasa
+                FROM dt_righe_ddt
+                    INNER JOIN dt_ddt ON dt_ddt.id = dt_righe_ddt.idddt
+                WHERE dt_ddt.idanagrafica = ".prepare($anagrafica->id)." AND |where_ddt| AND dt_righe_ddt.qta > dt_righe_ddt.qta_evasa AND dt_ddt.idstatoddt IN (SELECT id FROM dt_statiddt WHERE descrizione != 'Fatturato') AND idtipoddt IN (SELECT id FROM dt_tipiddt WHERE dir='uscita')
 
-            UNION SELECT or_righe_ordini.id, or_righe_ordini.idordine AS id_documento, or_righe_ordini.is_descrizione, or_righe_ordini.idarticolo, or_righe_ordini.is_sconto, 'ordine' AS ref,
-                CONCAT('Ordine num. ', IF(numero_esterno != '', numero_esterno, numero), ' del ', DATE_FORMAT(data, '%d/%m/%Y'), ' [', (SELECT descrizione FROM or_statiordine WHERE id = idstatoordine)  , ']') AS opzione
-            FROM or_righe_ordini
-                INNER JOIN or_ordini ON or_ordini.id = or_righe_ordini.idordine
-            WHERE or_ordini.idanagrafica = ".prepare($anagrafica->id).' AND |where_ordini| AND or_righe_ordini.qta > or_righe_ordini.qta_evasa';
+                UNION SELECT or_righe_ordini.id, or_righe_ordini.idordine AS id_documento, or_righe_ordini.is_descrizione, or_righe_ordini.idarticolo, or_righe_ordini.is_sconto, 'ordine' AS ref,
+                    CONCAT('Ordine num. ', IF(numero_esterno != '', numero_esterno, numero), ' del ', DATE_FORMAT(data, '%d/%m/%Y'), ' [', (SELECT descrizione FROM or_statiordine WHERE id = idstatoordine)  , ']') AS opzione
+                FROM or_righe_ordini
+                    INNER JOIN or_ordini ON or_ordini.id = or_righe_ordini.idordine
+                WHERE or_ordini.idanagrafica = ".prepare($anagrafica->id)." AND |where_ordini| AND or_righe_ordini.qta > or_righe_ordini.qta_evasa AND or_ordini.idstatoordine IN (SELECT id FROM or_statiordine WHERE descrizione != 'Fatturato') AND idtipoordine IN (SELECT id FROM or_tipiordine WHERE dir ='uscita')";
 
                 // Ricerca di righe DDT/Ordine con stesso Articolo
                 if (!empty($id_articolo)) {

@@ -177,7 +177,7 @@ class FileManager implements ManagerInterface
 
                     if (!$options['readonly']) {
                         $result .= '
-                <button type="button" class="btn btn-xs btn-warning" onclick="modificaAllegato(this,$(this).closest(\'tr\').data(\'id\'))">
+                <button type="button" class="btn btn-xs btn-warning" onclick="modificaAllegato(this,[$(this).closest(\'tr\').data(\'id\')])">
                     <i class="fa fa-edit"></i>
                 </button>';
                         if (!$file->isFatturaElettronica() || $options['abilita_genera']) {
@@ -214,12 +214,12 @@ class FileManager implements ManagerInterface
         </button>';
         if (!$options['readonly']) {
         $result .= '
-        <button type="button" class="btn btn-xs btn-default disabled" id="modifica_files" onclick="modificaAllegato(this,0,JSON.stringify(getSelectData()));">
+        <button type="button" class="btn btn-xs btn-default disabled" id="modifica_files" onclick="modificaAllegato(this,JSON.stringify(getSelectFiles()));">
             <i class="fa fa-edit"></i>
         </button>';
         }
         $result .= '
-        <button type="button" class="btn btn-xs btn-default disabled" id="zip_files" onclick="scaricaZipAllegati(this,JSON.stringify(getSelectData()));">
+        <button type="button" class="btn btn-xs btn-default disabled" id="zip_files" onclick="scaricaZipAllegati(this,JSON.stringify(getSelectFiles()));">
             <i class="fa fa-file-archive-o"></i>
         </button>
     </div>';
@@ -292,10 +292,10 @@ $("#'.$attachment_id.' #upload").click(function(){
 });
 
 // Estraggo le righe spuntate
-function getSelectData() {
+function getSelectFiles() {
     let data=new Array();
-    $(\'.files\').find(\'.check_files:checked\').each(function (){ 
-        data.push($(this).closest(\'tr\').data(\'id\'));
+    $(".files").find(".check_files:checked").each(function (){ 
+        data.push($(this).closest("tr").data("id"));
     });
 
     return data;

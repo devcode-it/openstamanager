@@ -190,7 +190,7 @@ foreach ($righe as $riga) {
 
     echo '
         <tr>
-            <td class="text-center" style="vertical-align: middle" width="25">
+            <td class="text-center" nowrap="nowrap" style="vertical-align: middle" width="25">
                 '.$num.'
             </td>';
 

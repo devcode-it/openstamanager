@@ -70,16 +70,10 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        $righe = $dbo->fetchNum('SELECT idanagrafica FROM an_anagrafiche WHERE idrelazione='.prepare($id_record));
-
-        if (isset($id_record) && empty($righe)) {
-            $dbo->query('DELETE FROM `an_relazioni` WHERE `id`='.prepare($id_record));
-            flash()->info(tr('Relazione _NAME_ eliminata con successo!', [
-                '_NAME_' => $descrizione,
-            ]));
-        } else {
-            flash()->error(tr('Sono presenti '.count($righe).' anagrafiche collegate a questa relazione.'));
-        }
+        $dbo->query('UPDATE `an_relazioni` SET deleted_at=NOW() WHERE `id`='.prepare($id_record));
+        flash()->info(tr('Relazione _NAME_ eliminata con successo!', [
+            '_NAME_' => $descrizione,
+        ]));
 
         break;
 }

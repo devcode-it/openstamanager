@@ -89,7 +89,8 @@ class DDT extends Document
         $model->tipo()->associate($tipo_documento);
         $model->stato()->associate($stato_documento);
         $model->id_segment = $id_segment;
-
+        $model->idagente = $anagrafica->idagente;
+        
         $model->save();
 
         // Salvataggio delle informazioni

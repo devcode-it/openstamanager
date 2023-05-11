@@ -21,6 +21,7 @@ include_once __DIR__.'/init.php';
 
 $block_edit = $record['is_completato'];
 $righe = $contratto->getRighe();
+$direzione = $contratto->direzione;
 $colspan = ($block_edit ? '5' : '6');
 
 echo '
@@ -192,7 +193,7 @@ echo '
 
 // Calcoli
 $imponibile = abs($contratto->imponibile);
-$sconto = $contratto->sconto;
+$sconto = -$contratto->sconto;
 $totale_imponibile = abs($contratto->totale_imponibile);
 $iva = abs($contratto->iva);
 $totale = abs($contratto->totale);
@@ -216,10 +217,10 @@ if (!empty($sconto)) {
     echo '
         <tr>
             <td colspan="'.$colspan.'" class="text-right">
-                <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
+                <b><span class="tip" title="'.tr('Un importo negativo indica uno sconto, mentre uno positivo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
             </td>
             <td class="text-right">
-                '.moneyFormat($contratto->sconto, 2).'
+                '.moneyFormat($sconto, 2).'
             </td>
             <td></td>
         </tr>';
@@ -253,7 +254,7 @@ echo '
 echo '
         <tr>
             <td colspan="'.$colspan.'" class="text-right">
-                <b>'.tr('Totale', [], ['upper' => true]).':</b>
+                <b>'.tr('Totale documento', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
                 '.moneyFormat($contratto->totale, 2).'
@@ -325,7 +326,13 @@ if (!$block_edit && sizeof($righe) > 0) {
 
         <button type="button" class="btn btn-xs btn-default disabled" id="elimina_righe" onclick="rimuoviRiga(getSelectData());">
             <i class="fa fa-trash"></i>
-        </button>
+        </button>';
+        if ($direzione == 'entrata') {
+            echo'
+            <button type="button" class="btn btn-xs btn-default disabled" id="confronta_righe" onclick="confrontaRighe(getSelectData());">
+                Confronta prezzi
+            </button>';
+        } echo'
     </div>';
 }
 echo '
@@ -358,6 +365,11 @@ function getSelectData() {
 
     return data;
 }
+
+function confrontaRighe(id) {
+    openModal("'.tr('Confronta prezzi').'", "'.$module->fileurl('modals/confronta_righe.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&righe=" + id + "&id_anagrafica='.$ordine->idanagrafica.'&direzione='.$dir.'");
+}
+
 
 function rimuoviRiga(id) {
     swal({
@@ -446,9 +458,11 @@ $(".check").on("change", function() {
     if (checked) {
         $("#elimina_righe").removeClass("disabled");
         $("#duplica_righe").removeClass("disabled");
+        $("#confronta_righe").removeClass("disabled");
     } else {
         $("#elimina_righe").addClass("disabled");
         $("#duplica_righe").addClass("disabled");
+        $("#confronta_righe").addClass("disabled");
     }
 });
 

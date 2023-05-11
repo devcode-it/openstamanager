@@ -282,7 +282,7 @@ switch (post('op')) {
         $sconto->descrizione = post('descrizione');
         $sconto->note = post('note');
         $sconto->setScontoUnitario(post('sconto_unitario'), post('idiva'));
-
+        $sconto->confermato = setting('Conferma automaticamente le quantità nei preventivi');
         $sconto->save();
 
         if (post('idriga') != null) {
@@ -447,6 +447,7 @@ switch (post('op')) {
     case 'add_articolo':
         $id_articolo = post('id_articolo');
         $barcode = post('barcode');
+        $dir = 'entrata';
 
         if (!empty($barcode)) {
             $id_articolo = $dbo->selectOne('mg_articoli', 'id',  ['deleted_at' => null, 'attivo' => 1, 'barcode' => $barcode])['id'];
@@ -465,6 +466,7 @@ switch (post('op')) {
             $articolo->um = $originale->um;
             $articolo->qta = 1;
             $articolo->costo_unitario = $originale->prezzo_acquisto;
+            $articolo->confermato = setting('Conferma automaticamente le quantità nei preventivi');
 
             $id_iva = ($preventivo->anagrafica->idiva_vendite ?: $originale->idiva_vendita) ?: setting('Iva predefinita');
             $id_anagrafica = $preventivo->idanagrafica;
@@ -534,6 +536,40 @@ switch (post('op')) {
             $riga->save();
 
             flash()->info(tr('Quantità aggiornata!'));
+        }
+
+        break;
+
+    case 'edit-price':
+        $righe = $post['righe'];
+        $numero_totale = 0;
+        
+        foreach ($righe as $riga) {
+            if (($riga['id']) != null) {
+                $articolo = Articolo::find($riga['id']);
+            } else {
+                $originale = ArticoloOriginale::find(post('idarticolo'));
+                $articolo = Articolo::build($fattura, $originale);
+                $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
+            }
+
+            if ($articolo['prezzo_unitario'] != $riga['price']) {
+                $articolo->setPrezzoUnitario($riga['price'], $articolo->idiva);
+                $articolo->save();
+                ++$numero_totale;
+            }
+        }
+
+        if ($numero_totale > 1) {
+            flash()->info(tr('_NUM_ prezzi modificati!', [
+                '_NUM_' => $numero_totale,
+            ]));
+        } else if ($numero_totale == 1) {
+            flash()->info(tr('_NUM_ prezzo modificato!', [
+                '_NUM_' => $numero_totale,
+            ]));
+        } else {
+            flash()->warning(tr('Nessun prezzo modificato!'));
         }
 
         break;

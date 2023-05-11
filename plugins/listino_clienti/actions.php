@@ -75,7 +75,9 @@ switch (filter('op')) {
             // Rimozione dei prezzi cancellati
             $registrati = filter('dettaglio');
             if (!empty($registrati)) {
-                $dettagli = $dettagli->whereNotIn('id', $registrati)->delete();
+                $dettagli->whereNotIn('id', $registrati)->delete();
+            } else {
+                $dettagli->delete();
             }
 
             // Aggiornamento e creazione dei prezzi registrati

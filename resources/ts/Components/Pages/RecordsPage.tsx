@@ -2,6 +2,7 @@
 import '@maicol07/material-web-additions/layout-grid/layout-grid.js';
 import '@material/web/dialog/dialog.js';
 import '@material/web/fab/branded-fab.js';
+import '@material/web/fab/fab.js';
 import '@material/web/iconbutton/standard-icon-button.js';
 
 import {router} from '@maicol07/inertia-mithril';
@@ -9,7 +10,10 @@ import {
   FilterTextFieldInputEventDetail,
   SortButtonClickedEventDetail
 } from '@maicol07/material-web-additions/data-table/lib/data-table-column.js';
-import {mdiPlus} from '@mdi/js';
+import {
+  mdiPlus,
+  mdiRefresh
+} from '@mdi/js';
 import RecordsTable, {RecordsTableColumnAttributes} from '@osm/Components/DataTable/RecordsTable';
 import AddEditRecordDialog from '@osm/Components/Dialogs/AddEditRecordDialog';
 import DeleteRecordDialog, {DeleteRecordDialogAttributes} from '@osm/Components/Dialogs/DeleteRecordDialog';
@@ -107,7 +111,11 @@ export default abstract class RecordsPage<M extends Model<any, any>, D extends A
       <>
         <h2>{this.title}</h2>
         {this.table()}
-        {this.recordDialogType && !this.readonlyRecords && this.fab()}
+        {this.recordDialogType && !this.readonlyRecords && (
+          <div className="sticky-bottom" style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
+            {this.fab().values().all()}
+          </div>
+        )}
         <>
           {...this.recordDialogs().values<Children>().all()}
           {...this.deleteRecordDialogs().values<Children>().all()}
@@ -116,12 +124,19 @@ export default abstract class RecordsPage<M extends Model<any, any>, D extends A
     );
   }
 
-  fab(): Children {
-    return (
-      <md-branded-fab id="add-record" label={__('Aggiungi')} className="sticky" onclick={this.onAddNewRecordButtonClicked.bind(this)}>
-        <MdIcon icon={mdiPlus} slot="icon"/>
-      </md-branded-fab>
-    );
+  fab(): Collection<Vnode> {
+    return collect({
+      refresh: (
+        <md-fab id="refresh-records" ariaLabel={__('Aggiorna')} onclick={this.onRefreshRecordsButtonClicked.bind(this)}>
+          <MdIcon icon={mdiRefresh} slot="icon"/>
+        </md-fab>
+      ),
+      add: (
+        <md-fab id="add-record" ariaLabel={__('Aggiungi')} onclick={this.onAddNewRecordButtonClicked.bind(this)}>
+          <MdIcon icon={mdiPlus} slot="icon"/>
+        </md-fab>
+      )
+    });
   }
 
   table(): Children {
@@ -191,6 +206,10 @@ export default abstract class RecordsPage<M extends Model<any, any>, D extends A
 
   onAddNewRecordButtonClicked() {
     this.openNewRecordDialog();
+  }
+
+  onRefreshRecordsButtonClicked() {
+    this.refreshRecords = true;
   }
 
   onDeleteRecordButtonClicked(recordId: string, event: MouseEvent) {

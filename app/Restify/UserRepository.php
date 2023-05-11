@@ -4,6 +4,7 @@ namespace App\Restify;
 
 use App\Models\User;
 use Binaryk\LaravelRestify\Http\Requests\RestifyRequest;
+use Illuminate\Support\Facades\Hash;
 
 class UserRepository extends Repository
 {
@@ -23,6 +24,16 @@ class UserRepository extends Repository
             field('email')->storingRules(['required', 'unique:users'])->updatingRules('unique:users'),
             field('created_at')->label('createdAt')->readonly(),
             field('updated_at')->label('updatedAt')->readonly(),
+        ];
+    }
+
+    public function fieldsForStore(RestifyRequest $request): array
+    {
+        return [
+            ...$this->fields($request),
+            field('password')
+                ->rules('required')
+                ->storeCallback(static fn (string $value) => Hash::make($value)),
         ];
     }
 }

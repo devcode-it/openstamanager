@@ -29,7 +29,7 @@ const minifyCSS = require('gulp-clean-css');
 const minifyJSON = require('gulp-json-minify');
 
 // Interpretatori CSS
-const sass = require('gulp-sass');
+const sass = require('gulp-sass')(require('sass'));
 const less = require('gulp-less');
 const stylus = require('gulp-stylus');
 const autoprefixer = require('gulp-autoprefixer');

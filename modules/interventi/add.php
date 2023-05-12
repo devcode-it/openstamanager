@@ -238,7 +238,6 @@ echo '
                 'label' => tr('Descrizione'),
                 'name' => 'descrizione',
                 'id' => 'descrizione_add',
-                'required' => '1',
                 'value' => htmlentities($descrizione),
                 'extra' => 'style=\'max-height:80px;\'',
             ]);

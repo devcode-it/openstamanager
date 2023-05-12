@@ -1,0 +1,569 @@
+{
+  "$id": "https://laravel-ide.com/schema/laravel-ide-v2.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Laravel IDE configuration",
+  "description": "Laravel IDE configuration",
+  "type": "object",
+  "properties": {
+    "auth": {
+      "type": "object",
+      "properties": {
+        "additionalGates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "completions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/completionModel"
+      }
+    },
+    "codeGenerations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/codeGenerationModel"
+      }
+    },
+    "view": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "paths": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/viewPath"
+          }
+        }
+      }
+    },
+    "blade": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "components": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "viewPaths": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/bladeComponentViewPath"
+              }
+            },
+            "fromConfig": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/bladeComponentFromConfig"
+              }
+            },
+            "ignoreViewPaths": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "directives": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/bladeDirective"
+          }
+        },
+        "ifDirectives": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/bladeIfDirective"
+          }
+        }
+      }
+    },
+    "routing": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "routeFacadeMethods": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/routeFacadeMethod"
+          }
+        }
+      }
+    },
+    "database": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "columnMigrationMethods": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/columnMigrationMethod"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "completionModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "complete": {
+          "type": "string",
+          "enum": [
+            "routeName",
+            "routeAction",
+            "routeMiddleware",
+            "configKey",
+            "viewName",
+            "translationKey",
+            "validationRule",
+            "validationRules",
+            "staticStrings",
+            "inertiaPage",
+            "assetPath",
+            "gate",
+            "policy",
+            "authRule",
+            "moduleName",
+            "livewireComponent",
+            "directoryFiles",
+            "cssClassName",
+            "cssClassNames",
+            "artisanCommandName",
+            "artisanCommandParameter",
+            "environmentVariable",
+            "classFields"
+          ]
+        },
+        "condition": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/completionCondition"
+          }
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "prefix": {
+              "type": "string",
+              "description": "Optional. Available for configKey and directoryFiles completions."
+            },
+            "directory": {
+              "type": "string",
+              "description": "Available for directoryFiles completion."
+            },
+            "suffixToClear": {
+              "type": "string",
+              "description": "Optional. Available for directoryFiles completion."
+            },
+            "strings": {
+              "type": "array",
+              "description": "Values for staticStrings completion.",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true,
+              "minItems": 1
+            },
+            "fieldsFilter": {
+              "type": "object",
+              "$ref": "#/definitions/classFieldsFilter",
+              "description": "Available for classFields completion."
+            }
+          }
+        }
+      }
+    },
+    "completionCondition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "place": {
+          "type": "string",
+          "enum": [
+            "parameter",
+            "arrayKey",
+            "arrayOnlyKey",
+            "arrayValue",
+            "arrayValueWithKey",
+            "arrayValueWithKeyArray",
+            "arrayInArrayKey",
+            "arrayInArrayOnlyKey",
+            "arrayInArrayValue"
+          ]
+        },
+        "keys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "functionNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "methodNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "classNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "classFqn": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "classParentFqn": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "newClassNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "newClassFqn": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "newClassParentFqn": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "codeGenerationModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "classSuffix": {
+          "type": "string"
+        },
+        "inputFilter": {
+          "type": "string"
+        },
+        "regex": {
+          "type": "string"
+        },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/codeGenerationParameter"
+          }
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/codeGenerationFile"
+          }
+        }
+      }
+    },
+    "codeGenerationParameter": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "type",
+        "variable"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "variable": {
+          "type": "string"
+        },
+        "optional": {
+          "type": "boolean"
+        },
+        "defaultValue": {
+          "type": "string"
+        }
+      }
+    },
+    "codeGenerationFile": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "appNamespace": {
+          "type": "string"
+        },
+        "directory": {
+          "type": "string"
+        },
+        "baseClass": {
+          "type": "string"
+        },
+        "fallbackBaseClass": {
+          "type": "string"
+        },
+        "template": {
+          "type": "object",
+          "$ref": "#/definitions/codeGenerationTemplate"
+        }
+      }
+    },
+    "codeGenerationTemplate": {
+      "type": "object",
+      "required": [
+        "path"
+      ],
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "fallbackPath": {
+          "type": "string"
+        },
+        "parameters": {
+          "type": "object"
+        }
+      }
+    },
+    "viewPath": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        }
+      }
+    },
+    "bladeComponentViewPath": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string"
+        },
+        "viewNamespace": {
+          "type": "string"
+        }
+      }
+    },
+    "bladeComponentFromConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "configFileName",
+        "componentsKey"
+      ],
+      "properties": {
+        "configFileName": {
+          "type": "string"
+        },
+        "prefixKey": {
+          "type": "string"
+        },
+        "namespaceKey": {
+          "type": "string"
+        },
+        "componentsKey": {
+          "type": "string"
+        },
+        "classFetch": {
+          "$ref": "#/definitions/bladeComponentFromConfigFetch"
+        },
+        "viewFetch": {
+          "$ref": "#/definitions/bladeComponentFromConfigFetch"
+        },
+        "aliasKey": {
+          "type": "string"
+        }
+      }
+    },
+    "bladeComponentFromConfigFetch": {
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "string",
+            "arrayKey",
+            "empty"
+          ]
+        },
+        "key": {
+          "type": "string"
+        }
+      }
+    },
+    "bladeDirective": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string"
+        },
+        "suffix": {
+          "type": "string"
+        }
+      }
+    },
+    "bladeIfDirective": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "prefix",
+        "suffix"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string"
+        },
+        "suffix": {
+          "type": "string"
+        }
+      }
+    },
+    "routeFacadeMethod": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "urlIndex": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "controllerIndex": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "columnMigrationMethod": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "type",
+        "defaultName"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "string",
+            "integer",
+            "float",
+            "boolean",
+            "array",
+            "timestamp",
+            "other"
+          ]
+        },
+        "nameParameterIndex": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "defaultName": {
+          "type": "string"
+        }
+      }
+    },
+    "classFieldsFilter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fetch": {
+          "type": "string",
+          "enum": [
+            "all",
+            "own"
+          ],
+          "description": "Fetch only own fields or from all hierarchy. Default is 'own'."
+        },
+        "modifier": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "public",
+              "protected",
+              "private"
+            ]
+          },
+          "description": "Filter by field access modifier. Default is 'public'."
+        }
+      }
+    }
+  }
+}

@@ -17,6 +17,7 @@
       <option name="WRAP_ON_TYPING" value="1" />
     </MarkdownNavigatorCodeStyleSettings>
     <PHPCodeStyleSettings>
+      <option name="CONCAT_SPACES" value="false" />
       <option name="VARIABLE_NAMING_STYLE" value="SNAKE_CASE" />
       <option name="SPACE_BEFORE_SHORT_CLOSURE_LEFT_PARENTHESIS" value="true" />
     </PHPCodeStyleSettings>

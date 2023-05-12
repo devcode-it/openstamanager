@@ -267,6 +267,13 @@ export default abstract class RecordsPage<M extends Model<any, any>, D extends A
 
     if (!state) {
       state = Stream<boolean>();
+      state.map((open) => {
+        if (!open) {
+          this.refreshRecords = true;
+          m.redraw();
+        }
+        return open;
+      });
       this.deleteRecordsDialogStates.set(key, state);
     }
 

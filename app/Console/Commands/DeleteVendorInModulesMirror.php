@@ -30,14 +30,14 @@ class DeleteVendorInModulesMirror extends Command
         $modules = app(Controller::class)->getModules();
 
         foreach ($modules as $module) {
-            $this->info("Deleting vendor in {$module['name']}...");
+            $this->info("Deleting {$module['slug']} vendor directory...");
             $result = File::deleteDirectory($module['modulePath'].'/vendor');
             if ($result) {
-                $this->info("Deleted vendor in {$module['name']}");
+                $this->info("Deleted {$module['slug']} vendor directory.");
             } elseif (File::exists($module['modulePath'].'/vendor')) {
-                $this->error("Failed to delete vendor in {$module['name']}");
+                $this->error("Failed to delete {$module['slug']} vendor directory.");
             } else {
-                $this->info("Vendor already deleted in {$module['name']}");
+                $this->info("{$module['slug']} vendor directory already deleted.");
             }
         }
 

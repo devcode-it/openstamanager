@@ -44,7 +44,7 @@
     "outhebox/blade-flags": "^1",
     "rawilk/laravel-settings": "^2",
     "tightenco/ziggy": "^1",
-    "openstamanager/attivita.tipi": "dev-main"
+    "wikimedia/composer-merge-plugin": "^2.1"
   },
   "require-dev": {
     "barryvdh/laravel-debugbar": "^3",
@@ -87,19 +87,18 @@
       "@php artisan key:generate --ansi"
     ]
   },
-  "repositories": {
-    "attivita.tipi": {
-      "type": "path",
-      "url": "../osm_module_attivita_tipi",
-      "options": {
-        "symlink": false
-      }
-    }
-  },
   "config": {
     "optimize-autoloader": true,
     "preferred-install": "dist",
-    "sort-packages": true
+    "sort-packages": true,
+    "allow-plugins": {
+      "wikimedia/composer-merge-plugin": true
+    },
+    "merge-plugin": {
+      "include": [
+        "composer.local.json"
+      ]
+    }
   },
   "minimum-stability": "dev",
   "prefer-stable": true

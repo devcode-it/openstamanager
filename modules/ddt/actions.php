@@ -145,6 +145,7 @@ switch (filter('op')) {
                 $count = DDT::where('numero_esterno', $numero_esterno)
                     ->where('id', '!=', $id_record)
                     ->where('idanagrafica', '=', $id_anagrafica)
+                    ->whereRaw('DATE_FORMAT(data, "%Y")='.date('Y'))
                     ->whereHas('tipo', function ($query) use ($direzione) {
                         $query->where('dir', '=', $direzione);
                     })->count();

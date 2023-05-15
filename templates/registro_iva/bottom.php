@@ -19,8 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-$totale_iva = sum(array_column($records, 'iva'));
-$totale_subtotale = sum(array_column($records, 'subtotale'));
+$totale_iva = sum(array_column($records, 'iva'), null, 2);
+$totale_subtotale = sum(array_column($records, 'subtotale'), null, 2);
 
 echo '
     </tbody>
@@ -42,8 +42,8 @@ echo '
 
 foreach ($iva as $descrizione => $tot_iva) {
     if (!empty($descrizione)) {
-        $somma_iva = sum($iva[$descrizione]);
-        $somma_totale = sum($totale[$descrizione]);
+        $somma_iva = sum($iva[$descrizione], null, 2);
+        $somma_totale = sum($totale[$descrizione], null, 2);
 
         echo '
         <tr>

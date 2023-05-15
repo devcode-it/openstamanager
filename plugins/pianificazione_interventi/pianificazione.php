@@ -120,9 +120,18 @@ echo '
 			</div>
 
 			<div class="row">
-				<div class="col-md-12">
-					 {[ "type": "textarea", "label": "'.tr('Descrizione').'",  "name": "richiesta", "id": "richiesta_", "readonly": '.intval($block_edit).', "value": "'.$record['richiesta'].'" ]}
-				</div>
+                <div class="col-md-12">';
+                echo input([
+                    'type' => 'ckeditor',
+                    'label' => tr('Richiesta'),
+                    'name' => 'richiesta',
+                    'required' => 1,
+                    'readonly' => $record['flag_completato'],
+                    'extra' => 'rows="5"',
+                    'value' => $record['richiesta'],
+                ]);
+                echo '
+                </div>
             </div>
         </div>
     </div>';

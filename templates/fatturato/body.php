@@ -62,7 +62,7 @@ foreach ($raggruppamenti as $raggruppamento) {
 
     $imponibile = $raggruppamento['imponibile'];
     $iva = $raggruppamento['iva'];
-    $totale = $raggruppamento['totale'];
+    $totale = $imponibile + $iva;
 
     echo '
         <tr>

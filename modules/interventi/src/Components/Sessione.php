@@ -129,7 +129,7 @@ class Sessione extends Model
         }
     }
 
-    public function getOreAttribute()
+    public function getOreCalcolateAttribute()
     {
         $inizio = new DateTime($this->orario_inizio);
         $diff = $inizio->diff(new DateTime($this->orario_fine));
@@ -146,7 +146,7 @@ class Sessione extends Model
      */
     public function save(array $options = [])
     {
-        $this->attributes['ore'] = $this->ore;
+        $this->attributes['ore'] = $this->ore_calcolate;
 
         $this->attributes['prezzo_ore_consuntivo'] = $this->prezzo_manodopera + $this->prezzo_diritto_chiamata;
         $this->attributes['prezzo_km_consuntivo'] = $this->prezzo_viaggio;

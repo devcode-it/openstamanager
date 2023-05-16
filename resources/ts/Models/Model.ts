@@ -46,7 +46,7 @@ export default abstract class Model<A extends ModelAttributes, R extends ModelRe
   /**
    * Set multiple attributes on the model.
    */
-  setAttributes(attributes: A | Map<keyof A, ValueOf<A>>) {
+  setAttributes(attributes: Partial<A> | Map<keyof A, ValueOf<A>>) {
     // Record to map
     if (!(attributes instanceof Map)) {
       // eslint-disable-next-line no-param-reassign

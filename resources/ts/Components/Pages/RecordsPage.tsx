@@ -40,7 +40,11 @@ type DeleteRecordDialogVnode<M extends Model<any, any>, D extends DeleteRecordDi
 /**
  * @abstract
  */
-export default abstract class RecordsPage<M extends Model<any, any>, D extends AddEditRecordDialog<M>, DRD extends DeleteRecordDialog<M> = DeleteRecordDialog<M>> extends Page {
+export default abstract class RecordsPage<
+  M extends Model<any, any>,
+  D extends AddEditRecordDialog<M> = AddEditRecordDialog<M>,
+  DRD extends DeleteRecordDialog<M> = DeleteRecordDialog<M>
+> extends Page {
   abstract modelType: Class<M> & typeof Model<any, any>;
   recordDialogType?: Class<D>;
   deleteRecordDialogType?: Class<DRD>;

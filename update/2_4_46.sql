@@ -20,3 +20,6 @@ HAVING
     2=2
 ORDER BY 
     `scadenza` ASC" WHERE `name` = 'Scadenzario';
+
+-- Rimozione stampa spesometro
+DELETE FROM `zz_prints` WHERE `name` = 'Spesometro';

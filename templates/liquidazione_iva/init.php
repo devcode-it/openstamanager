@@ -46,7 +46,7 @@ $iva_vendite_esigibile = $dbo->fetchArray('
         cod_iva,
         aliquota,
         descrizione,
-        SUM(round(iva, 2)) AS iva,
+        SUM(iva) AS iva,
         SUM(subtotale) AS subtotale
     FROM
         (
@@ -95,7 +95,7 @@ $iva_vendite = $dbo->fetchArray('
         cod_iva,
         aliquota,
         descrizione,
-        SUM(round(iva, 2)) AS iva,
+        SUM(iva) AS iva,
         SUM(subtotale) AS subtotale
     FROM
         (
@@ -143,7 +143,7 @@ $iva_vendite_anno_precedente = $dbo->fetchArray('
         cod_iva,
         aliquota,
         descrizione,
-        SUM(round(iva, 2)) AS iva,
+        SUM(iva) AS iva,
         SUM(subtotale) AS subtotale
     FROM
         (
@@ -191,7 +191,7 @@ $iva_vendite_periodo_precedente = $dbo->fetchArray('
         cod_iva,
         aliquota,
         descrizione,
-        SUM(round(iva, 2)) AS iva,
+        SUM(iva) AS iva,
         SUM(subtotale) AS subtotale
     FROM
         (
@@ -243,7 +243,7 @@ $iva_vendite_esigibile = $dbo->fetchArray('
         co_iva.codice_natura_fe AS cod_iva,
         co_iva.percentuale AS aliquota,
         co_iva.descrizione AS descrizione,
-        SUM(round((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *(100-indetraibile)/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 )), 2)) AS iva,
+        SUM((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *(100-indetraibile)/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS iva,
         SUM((co_righe_documenti.subtotale - co_righe_documenti.sconto + co_righe_documenti.rivalsainps) *(IF(co_tipidocumento.reversed = 0,1,-1))) AS subtotale
     FROM 
         co_iva 
@@ -260,7 +260,7 @@ $iva_vendite = $dbo->fetchArray('
         co_iva.codice_natura_fe AS cod_iva,
         co_iva.percentuale AS aliquota,
         co_iva.descrizione AS descrizione,
-        SUM(round((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *(100-indetraibile)/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 )), 2)) AS iva,
+        SUM((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *(100-indetraibile)/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS iva,
         SUM((co_righe_documenti.subtotale - co_righe_documenti.sconto + co_righe_documenti.rivalsainps) *(IF(co_tipidocumento.reversed = 0,1,-1))) AS subtotale
     FROM 
         co_iva 
@@ -277,7 +277,7 @@ $iva_vendite_anno_precedente = $dbo->fetchArray('
         co_iva.codice_natura_fe AS cod_iva,
         co_iva.percentuale AS aliquota,
         co_iva.descrizione AS descrizione,
-        SUM(round((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *(100-indetraibile)/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 )), 2)) AS iva,
+        SUM((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *(100-indetraibile)/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS iva,
         SUM((co_righe_documenti.subtotale - co_righe_documenti.sconto + co_righe_documenti.rivalsainps) *(IF(co_tipidocumento.reversed = 0,1,-1))) AS subtotale
     FROM 
         co_iva 
@@ -294,7 +294,7 @@ $iva_vendite_periodo_precedente = $dbo->fetchArray('
         co_iva.codice_natura_fe AS cod_iva,
         co_iva.percentuale AS aliquota,
         co_iva.descrizione AS descrizione,
-        SUM(round((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *(100-indetraibile)/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 )), 2)) AS iva,
+        SUM((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *(100-indetraibile)/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS iva,
         SUM((co_righe_documenti.subtotale - co_righe_documenti.sconto + co_righe_documenti.rivalsainps) *(IF(co_tipidocumento.reversed = 0,1,-1))) AS subtotale
     FROM 
         co_iva 
@@ -312,7 +312,7 @@ $iva_vendite_nonesigibile = $dbo->fetchArray('
         co_iva.codice_natura_fe AS cod_iva,
         co_iva.percentuale AS aliquota,
         co_iva.descrizione AS descrizione,
-        SUM(round((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *(100-indetraibile)/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 )), 2)) AS iva,
+        SUM((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *(100-indetraibile)/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS iva,
         SUM((co_righe_documenti.subtotale - co_righe_documenti.sconto + co_righe_documenti.rivalsainps) *(IF(co_tipidocumento.reversed = 0,1,-1))) AS subtotale
     FROM 
         co_iva 
@@ -329,7 +329,7 @@ $iva_acquisti_detraibile = $dbo->fetchArray('
         co_iva.codice_natura_fe AS cod_iva,
         co_iva.percentuale AS aliquota,
         co_iva.descrizione AS descrizione,
-        SUM(round((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *(100-indetraibile)/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 )), 2)) AS iva,
+        SUM((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *(100-indetraibile)/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS iva,
         SUM((co_righe_documenti.subtotale - co_righe_documenti.sconto + co_righe_documenti.rivalsainps) *(IF(co_tipidocumento.reversed = 0,1,-1))) AS subtotale
     FROM 
         co_iva 
@@ -346,7 +346,7 @@ $iva_acquisti_nondetraibile = $dbo->fetchArray('
         co_iva.codice_natura_fe AS cod_iva,
         co_iva.percentuale AS aliquota,
         co_iva.descrizione AS descrizione,
-        SUM(round((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *indetraibile/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 )), 2)) AS iva,
+        SUM((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *indetraibile/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS iva,
         SUM((co_righe_documenti.subtotale - co_righe_documenti.sconto + co_righe_documenti.rivalsainps) *(IF(co_tipidocumento.reversed = 0,1,-1))) AS subtotale
     FROM 
         co_iva 
@@ -363,7 +363,7 @@ $iva_acquisti = $dbo->fetchArray('
         co_iva.codice_natura_fe AS cod_iva,
         co_iva.percentuale AS aliquota,
         co_iva.descrizione AS descrizione,
-        SUM(round((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *(100-indetraibile)/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 )), 2)) AS iva,
+        SUM((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *(100-indetraibile)/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS iva,
         SUM((co_righe_documenti.subtotale - co_righe_documenti.sconto + co_righe_documenti.rivalsainps) *(IF(co_tipidocumento.reversed = 0,1,-1))) AS subtotale
     FROM 
         co_iva 
@@ -380,7 +380,7 @@ $iva_acquisti_anno_precedente = $dbo->fetchArray('
         co_iva.codice_natura_fe AS cod_iva,
         co_iva.percentuale AS aliquota,
         co_iva.descrizione AS descrizione,
-        SUM(round((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *(100-indetraibile)/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 )), 2)) AS iva,
+        SUM((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *(100-indetraibile)/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS iva,
         SUM((co_righe_documenti.subtotale - co_righe_documenti.sconto + co_righe_documenti.rivalsainps) *(IF(co_tipidocumento.reversed = 0,1,-1))) AS subtotale
     FROM 
         co_iva 
@@ -397,7 +397,7 @@ $iva_acquisti_periodo_precedente = $dbo->fetchArray('
         co_iva.codice_natura_fe AS cod_iva,
         co_iva.percentuale AS aliquota,
         co_iva.descrizione AS descrizione,
-        SUM(round((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *(100-indetraibile)/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 )), 2)) AS iva,
+        SUM((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *(100-indetraibile)/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS iva,
         SUM((co_righe_documenti.subtotale - co_righe_documenti.sconto + co_righe_documenti.rivalsainps) *(IF(co_tipidocumento.reversed = 0,1,-1))) AS subtotale
     FROM 
         co_iva 

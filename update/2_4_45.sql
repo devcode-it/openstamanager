@@ -103,6 +103,9 @@ UPDATE `em_templates` SET `body` = '<p>Gentile Cliente,</p>\n<p>inviamo in alleg
 
 -- Aggiunta stampa liquidazione provvigioni
 INSERT INTO `zz_prints` (`id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`, `available_options`) VALUES
-((SELECT id FROM zz_modules WHERE `name` = 'Anagrafiche'), 1, 'Provvigioni', 'Provvigioni', 'Provvigioni {ragione_sociale}', 'provvigione', 'idanagrafica', '', 'fa fa-print', '', '', 0, 0, 0, 1, NULL);
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche'), 1, 'Provvigioni', 'Provvigioni', 'Provvigioni {ragione_sociale}', 'provvigione', 'idanagrafica', '', 'fa fa-print', '', '', 0, 0, 0, 1, NULL);
 
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES ( "Visualizza solo promemoria assegnati", '0', 'boolean', '1', 'Applicazione', '7', 'Se abilitata permetti ai tecnici la visualizzazione dei soli promemoria in cui risultano come assegnati');
+
+-- Aggiunta stampa ddt in entrata
+INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto'), '1', 'Ddt di acquisto', 'Ddt in entrata', 'DDT num. {numero} del {data}', 'ddt', 'idddt', '{\"pricing\":true}', 'fa fa-print', '', '', '0', '1', '1', '1');

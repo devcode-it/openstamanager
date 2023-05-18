@@ -36,7 +36,7 @@ $vettore = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idan
 
 $tipo_doc = $documento->tipo->descrizione;
 if (empty($documento['numero_esterno'])) {
-    $numero = 'pro-forma '.$numero;
+    $numero = 'pro-forma '.$documento['numero'];
     $tipo_doc = tr('DDT pro-forma', [], ['upper' => true]);
 } else {
     $numero = !empty($documento['numero_esterno']) ? $documento['numero_esterno'] : $documento['numero'];

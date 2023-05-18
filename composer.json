@@ -93,7 +93,9 @@
     "sort-packages": true,
     "allow-plugins": {
       "wikimedia/composer-merge-plugin": true
-    },
+    }
+  },
+  "extra": {
     "merge-plugin": {
       "include": [
         "composer.local.json"

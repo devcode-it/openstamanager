@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.45 (2023-05-12)](#2445-2023-05-12)
 - [2.4.44 (2023-04-21)](#2444-2023-04-21)
 - [2.4.43 (2023-03-31)](#2443-2023-03-31)
 - [2.4.42 (2023-03-10)](#2442-2023-03-10)
@@ -55,7 +56,29 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
-
+## 2.4.45 (2023-05-12)
+### Aggiunto (Added)
+- Aggiunta l'importazione dei preventivi da CSV
+- Aggiunta Confronta prezzo da azioni di gruppo sulle righe dei documenti
+- Aggiunta stampa liquidazione provvigioni
+- Aggiunta impostazione Visualizza solo promemoria assegnati
+### Modificato (Changed)
+- Allineati i nomi delle colonne dei totali nei documenti
+- Migliorata la gestione dell'unità di misura secondaria degli articoli
+- Migliorati i filtri = e != nelle tabelle
+- Ripristinato l'aggiornamento ajax delle checklist dopo la spunta
+- Corretta l'impostazione della partita IVA nella generazione degli XML
+- Corretta la gestione delle quantità nelle righe degli ordini fornitori in base alla quantità minima da listino
+### Fixed
+- Corretta l'impostazione del prezzo articolo da listino in Contratti e Preventivi
+- Corretta l'eliminazione dei range nei listini
+- Corretta la conferma delle righe dei documenti
+- Corretta l'impostazione dell'agente nella creazione di documenti
+- Corretto il riferimento fattura nei Preventivi e Ordini
+- Corrette le viste Attività e Fatture d'acquisto
+- Corretta la visualizzazione della data registrazione nella lista di importazione fatture elettroniche
+- Corretta l'esportazione delle scadenze dei bonifici
+- Corretta l'impostazione degli sconti in pianificazione fatturazione da contratti
 ## 2.4.44 (2023-04-21)
 ### Aggiunto (Added)
 - Aggiunto il cambio di stato dei preventivi da azioni di gruppo

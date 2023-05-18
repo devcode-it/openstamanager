@@ -167,7 +167,7 @@ echo '
     });
 
     id_nazione.change(function() {
-		if (id_nazione.getData().descrizione === 'IT - Italia'){
+		if ((id_nazione.getData().descrizione === 'IT - Italia') || (id_nazione.getData().descrizione === 'SM - San Marino')) {
 			input("codice_destinatario").enable();
 		}else{
 			input("codice_destinatario").disable();

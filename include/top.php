@@ -666,7 +666,7 @@ if ($free_space < ($space_limit * (1024 ** 3))) {
          <p>'.tr('Lo spazio a disposizione del gestionale è in esaurimento: sono al momento disponibili _TOT_', [
             '_TOT_' => FileSystem::formatBytes($free_space),
         ]).'.</p>
-         <p>'.tr('Questo può risultare un serio problema per la continuità di funzionamento del software, poichè le operazioni più espansive riguardanti lo spazio di archiviazione possono provocare malfunzionamento imprevedibili').'. '.tr('Operazioni di backup, caricamento di allegati o anche il semplice utilizzo del gestionale possono rendere i dati inaffidabili, provocando pertanto una perdita irreversibile delle informazioni salvate').'.</p>
-        <p>'.tr("Contatta gli amministratori di sistema oppure l'assistenza tecnica per risolvere al più presto il problema").'.</p>
+         <p>'.tr('Questo può risultare un serio problema per la continuità di funzionamento del software, poiché le operazioni più espansive che richiedono spazio di archiviazione possono causare malfunzionamenti imprevisti').'. '.tr('Ad esempio, le attività di backup, caricamento di allegati o anche l\'utilizzo normale del gestionale potrebbero rendere i dati inaffidabili, provocando pertanto una perdita delle informazioni salvate').'.</p>
+        <p>'.tr("Contatta gli amministratori di sistema per risolvere al più presto il problema").'.</p>
     </div>';
 }

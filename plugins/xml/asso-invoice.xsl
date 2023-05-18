@@ -1944,9 +1944,6 @@
                       </xsl:when>
                       <xsl:when test="$TD=''">
                       </xsl:when>
-                      <xsl:otherwise>
-                        <span>(!!! codice non previsto !!!)</span>
-                      </xsl:otherwise>
                     </xsl:choose>
 
                   </xsl:if>

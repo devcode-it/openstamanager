@@ -651,6 +651,12 @@ switch (post('op')) {
             FROM mg_prezzi_articoli
             WHERE id_articolo = '.prepare($id_articolo).' AND dir = '.prepare($dir).' AND id_anagrafica = '.prepare($id_anagrafica));
 
+            // Per gli ordini fornitore imposta la quantità minima richiesta dal fornitore invece di 1
+            if ($dir == 'uscita') {
+                $qta_minima_fornitore = $dbo->fetchOne('SELECT qta_minima FROM mg_fornitore_articolo WHERE id_articolo = '.prepare($id_articolo).' AND id_fornitore = '.prepare($id_anagrafica))['qta_minima'];
+                $articolo->qta = ($qta_minima_fornitore ?: 1);
+            }
+
             if ($prezzi) {
                 foreach ($prezzi as $prezzo) {
                     if ($qta >= $prezzo['minimo'] && $qta <= $prezzo['massimo']) {

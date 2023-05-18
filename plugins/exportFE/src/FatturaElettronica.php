@@ -625,8 +625,11 @@ class FatturaElettronica
 
         // Se sto fatturando ad un ente pubblico il codice destinatario di default è 99999 (sei nove), in alternativa uso 0000000 (sette zeri)
         $default_code = ($cliente['tipo'] == 'Ente pubblico') ? '999999' : '0000000';
-        // Se il mio cliente non ha sede in Italia il codice destinatario di default diventa (XXXXXXX) (sette X)
-        $default_code = !(($cliente->nazione->iso2 === 'IT') || ($cliente->nazione->iso2 === 'SM')) ? 'XXXXXXX' : $default_code;
+        // Se il mio cliente non ha sede in Italia, il codice destinatario di default diventa (XXXXXXX) (sette X)
+        $default_code = ($cliente->nazione->iso2 != 'IT') ? 'XXXXXXX' : $default_code;
+        // Se il cliente ha sede a San Marino non ha nessun codice destinatario imposto quello dell'Ufficio tributario di San Marino
+        $default_code = (($cliente->nazione->iso2 == 'SM') && ($default_code == 'XXXXXXX')) ? '2R4GT08' : $default_code;
+
 
         // Generazione dell'header
         // Se all'Anagrafe Tributaria il trasmittente è censito con il codice fiscale, es. ditte individuali

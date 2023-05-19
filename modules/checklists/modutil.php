@@ -39,7 +39,16 @@ function renderChecklist($check, $level = 1, $parent = 0) {
 
     $result .= '
                     <td style="border-top:0px;">
-                        <span class="text" style="'.(!empty($check->checked_at)?'text-decoration:line-through;':'').'">'.$check->content.' </span>';
+                        <span class="text" style="'.(!empty($check->checked_at)?'text-decoration:line-through;':'').'">'.$check->content.' </span>
+                    </td>';
+
+    $result .= '
+                    <td style="width:500px;border-top:0px;"> 
+                        {[ "type": "textarea", "name": "note_checklist", "id": "'.$check->id.'", "value": "'.$check->note.'" ]}
+                    </td>';
+
+    $result .= '
+                    <td style="width:250px;border-top:0px;">';
 
     if (intval($check->assignedUsers->pluck('id')->toArray())>0){
         $result .= '    <span class="label label-info pull-right" style="padding:6px 8px;" data-toggle="tooltip" title="Assegnato a '. implode(', ', $check->assignedUsers->pluck('username')->toArray()).'"><i class="fa fa-user"></i></span>';
@@ -59,10 +68,11 @@ function renderChecklist($check, $level = 1, $parent = 0) {
                     </td>'; 
 
     $result .= '
-                    <td style="width:40px;text-align:center;border-top:0px;">
+                    <td style="width:10px;text-align:center;border-top:0px;">
                         <div class="input-group-btn">
                             <button class="btn btn-warning btn-xs '.(!$enabled ? 'disabled' : '').'" onclick="edit_check(\''.$check->id.'\')"><i class="fa fa-edit"></i></button>
                             <button class="btn btn-danger btn-xs '.(!$enabled ? 'disabled' : '').'" onclick="delete_check(\''.$check->id.'\')"><i class="fa fa-trash"></i></button>
+                            <button class="btn btn-xs btn-default handle" title="Modifica ordine delle righe" draggable="true"><i class="fa fa-sort"></i></button>
                         </div>
                     </td>';
 
@@ -74,7 +84,7 @@ function renderChecklist($check, $level = 1, $parent = 0) {
     if(sizeof($check->children)>0){
         $result .= '
                 <tr>
-                    <td colspan="4" style="padding-left:'.$margin.'px;padding-right:0px;padding-top:0px;padding-bottom:0px;border-top:0px;">
+                    <td colspan="5" style="padding-left:'.$margin.'px;padding-right:10px;padding-top:0px;padding-bottom:0px;border-top:0px;">
                         <table class="table" style="margin-bottom:0px;">
                             <tbody class="sort" data-sonof="'.$check->id.'">';
             $children = $structure->checks()->where('id_parent', $check->id)->orderBy('order')->get();
@@ -91,13 +101,6 @@ function renderChecklist($check, $level = 1, $parent = 0) {
     $result .= '
             </table>
         </td>
-
-        <td style="width:40px;text-align:center;border-top:0px;">
-            <button class="btn btn-xs btn-default handle" title="Modifica ordine delle righe" draggable="true">
-                <i class="fa fa-sort"></i>
-            </button>
-        </td>
-
     </tr>';
 
     return $result;

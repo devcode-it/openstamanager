@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
+
 use Modules\Checklists\Check;
 use Modules\Checklists\ChecklistItem;
 
@@ -62,6 +63,18 @@ switch(post('op')){
         $record->checked_by = $user->id;
         $record->checked_at = date('Y-m-d H:i:s');
         $record->save();
+
+        break;
+
+    case "save_note":
+        $note = post('note');
+        $id = post('id');
+
+        $record = Check::find($id);
+        $record->note = $note;
+        $record->save();
+
+        flash()->info(tr('Nota salvata correttamente!'));
 
         break;
 

@@ -23,3 +23,6 @@ ORDER BY
 
 -- Rimozione stampa spesometro
 DELETE FROM `zz_prints` WHERE `name` = 'Spesometro';
+
+-- Aggiunta stampa ddt in entrata
+INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto'), '1', 'Ddt di acquisto', 'Ddt in entrata', 'DDT num. {numero} del {data}', 'ddt', 'idddt', '{\"pricing\":true}', 'fa fa-print', '', '', '0', '1', '1', '1');

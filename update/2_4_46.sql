@@ -28,4 +28,11 @@ DELETE FROM `zz_prints` WHERE `name` = 'Spesometro';
 INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto'), '1', 'Ddt di acquisto', 'Ddt in entrata', 'DDT num. {numero} del {data}', 'ddt', 'idddt', '{\"pricing\":true}', 'fa fa-print', '', '', '0', '1', '1', '1');
 
 -- Aggiunte note checklist
-ALTER TABLE `zz_checks` ADD `note` TEXT NOT NULL AFTER `content`; 
+ALTER TABLE `zz_checks` ADD `note` TEXT NOT NULL AFTER `content`;
+
+-- Aggiunto widget per la stampa settimanale del calendario
+INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`, `query`, `bgcolor`, `icon`, `print_link`, `more_link`, `more_link_type`, `php_include`, `text`, `enabled`, `order`, `help`) VALUES
+(NULL, 'Stampa calendario settimanale', 'print', (SELECT id FROM zz_modules WHERE name = 'Dashboard'), 'controller_top', NULL, NULL, '#4ccc4c', 'fa fa-print', '', './modules/dashboard/widgets/stampa_calendario_settimanale.dashboard.php', 'popup', '', 'Stampa calendario settimanale', 1, 7, NULL);
+
+INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`, `available_options`) VALUES
+(NULL, (SELECT id FROM zz_modules WHERE name = 'Dashboard'), 1, 'Stampa calendario settimanale', 'Stampa calendario settimanale', 'Calendario settimanale', 'dashboard_settimanale', '', '', 'fa fa-print', '', '', 0, 1, 1, 1, NULL);

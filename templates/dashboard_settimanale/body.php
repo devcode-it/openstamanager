@@ -21,6 +21,34 @@ include_once __DIR__.'/../../core.php';
 
 use Carbon\Carbon;
 
+?>
+<style type="text/css">
+    .divTable
+    {
+        display:  table;
+        width:auto;
+        background-color:#eee;
+        border:1px solid  #666666;
+        border-spacing:5px;/*cellspacing:poor IE support for  this*/
+       /* border-collapse:separate;*/
+    }
+
+    .divRow
+    {
+       display:table-row;
+       width:auto;
+    }
+
+    .divCell
+    {
+        float:left;/*fix for  buggy browsers*/
+        display:table-column;
+        width:147px;
+        background-color:#ccc;
+    }
+</style>
+<?php
+
 $calendar = $_SESSION['dashboard'];
 
 $date_start = $calendar['date_week_start'];
@@ -30,8 +58,6 @@ $title = date('d/m/Y', strtotime($date_start))." - ".date('d/m/Y', strtotime($da
 
 $min_date = new Carbon($date_start);
 $max_date = new Carbon($date_end);
-
-$height = '480';
 
 $stati = (array) $calendar['idstatiintervento'];
 $tipi = (array) $calendar['idtipiintervento'];
@@ -82,25 +108,25 @@ while ($current_day->lessThan($max_date)) {
 
 // Stampa della tabella
 echo '
-<table class="table table-bordered">';
+<div class="divTable">';
 
 $count = count($list);
 for ($i = 0; $i < $count; $i = $i + 7) {
     echo '
-    <tr>';
+    <div class="divRow">';
 
     for ($c = 0; $c < 7; ++$c) {
         $element = $list[$i + $c];
 
         echo '
-        <th>'.ucfirst($element['date']->formatLocalized('%A %d/%m')).'</th>';
+        <div class="divCell" align="center">'.ucfirst($element['date']->formatLocalized('%A %d/%m')).'</div>';
     }
 
     echo '
-    </tr>';
+    </div>';
 
     echo '
-    <tr>';
+    <div class="divRow">';
 
     for ($c = 0; $c < 7; ++$c) {
         $element = $list[$i + $c];
@@ -118,12 +144,12 @@ for ($i = 0; $i < $count; $i = $i + 7) {
         }
 
         echo '
-        <td style="height:'.$height.'px;background:'.$background.'">'.$clienti.'</td>';
+        <div class="divCell" style="background:'.$background.'">'.(!empty($clienti)?$clienti:'&nbsp;').'</div>';
     }
 
     echo '
-    </tr>';
+    </div>';
 }
 
 echo '
-</table>';
+</div>';

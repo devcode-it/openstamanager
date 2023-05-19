@@ -34,10 +34,10 @@ function start_local_datatables() {
 }
 
 // Datatable
-function start_datatables() {
+function start_datatables( $elements ) {
     start_local_datatables();
 
-    $('.main-records').each(function () {
+    $elements.each(function () {
         const $this = $(this);
 
         // Controlla che la tabella non sia già inizializzata
@@ -451,7 +451,7 @@ function getTable(selector) {
             if (table.hasClass('datatables')) {
                 start_local_datatables();
             } else {
-                start_datatables();
+                start_datatables( $('.main-records') );
             }
         },
         datatable: table.DataTable(),

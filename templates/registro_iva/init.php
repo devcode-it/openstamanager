@@ -33,7 +33,7 @@ $vendita_banco = $dbo->fetchNum("SELECT * FROM zz_modules WHERE name='Vendita al
 $v_iva = [];
 $v_totale = [];
 
-if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')){
+if ((!empty($vendita_banco)) && ($tipo == 'vendite')){
     $query = '
     SELECT
         data_registrazione,

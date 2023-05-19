@@ -43,6 +43,7 @@ if (!empty($vendita_banco)){
 
 $iva_vendite_esigibile = $dbo->fetchArray('
     SELECT
+        id,
         cod_iva,
         aliquota,
         descrizione,
@@ -51,6 +52,7 @@ $iva_vendite_esigibile = $dbo->fetchArray('
     FROM
         (
         SELECT 
+            co_documenti.id AS id,
             co_iva.codice_natura_fe AS cod_iva,
             co_iva.percentuale AS aliquota,
             co_iva.descrizione AS descrizione,
@@ -64,9 +66,10 @@ $iva_vendite_esigibile = $dbo->fetchArray('
         WHERE 
             co_tipidocumento.dir = "entrata" AND co_righe_documenti.is_descrizione = 0 AND co_documenti.split_payment = 0 AND idstatodocumento NOT IN(SELECT id FROM co_statidocumento WHERE descrizione = "Bozza" OR descrizione = "Annullata") AND co_documenti.data_competenza >= '.prepare($date_start).' AND co_documenti.data_competenza <= '.prepare($date_end).'
         GROUP BY
-            cod_iva, aliquota, descrizione
+            cod_iva, aliquota, descrizione, co_documenti.id
     UNION
         SELECT
+            vb_venditabanco.id AS id,
             co_iva.codice_natura_fe AS cod_iva,
             co_iva.percentuale AS aliquota,
             co_iva.descrizione AS descrizione,
@@ -82,16 +85,18 @@ $iva_vendite_esigibile = $dbo->fetchArray('
         WHERE
             vb_venditabanco.data >= '.prepare($date_start).' AND vb_venditabanco.data <= '.prepare($date_end).' AND vb_righe_venditabanco.is_descrizione = 0 AND vb_stati_vendita.descrizione = "Pagato"
         GROUP BY 
-            cod_iva, aliquota, descrizione
+            cod_iva, aliquota, descrizione, vb_venditabanco.id
         ) AS tabella
     GROUP BY
         cod_iva,
         aliquota,
-        descrizione;');
+        descrizione,
+        id');
  
 
 $iva_vendite = $dbo->fetchArray('
     SELECT
+        id, 
         cod_iva,
         aliquota,
         descrizione,
@@ -100,6 +105,7 @@ $iva_vendite = $dbo->fetchArray('
     FROM
         (
         SELECT 
+            co_documenti.id AS id,
             co_iva.codice_natura_fe AS cod_iva,
             co_iva.percentuale AS aliquota,
             co_iva.descrizione AS descrizione,
@@ -113,9 +119,10 @@ $iva_vendite = $dbo->fetchArray('
         WHERE 
             co_tipidocumento.dir = "entrata" AND co_righe_documenti.is_descrizione = 0 AND idstatodocumento NOT IN(SELECT id FROM co_statidocumento WHERE descrizione = "Bozza" OR descrizione = "Annullata") AND co_documenti.data_competenza >= '.prepare($date_start).' AND co_documenti.data_competenza <= '.prepare($date_end).'
         GROUP BY 
-            cod_iva, aliquota, descrizione
+            cod_iva, aliquota, descrizione, co_documenti.id
     UNION
         SELECT
+            vb_venditabanco.id AS id,
             co_iva.codice_natura_fe AS cod_iva,
             co_iva.percentuale AS aliquota,
             co_iva.descrizione AS descrizione,
@@ -131,15 +138,17 @@ $iva_vendite = $dbo->fetchArray('
         WHERE
             vb_venditabanco.data >= '.prepare($date_start).' AND vb_venditabanco.data <= '.prepare($date_end).' AND vb_righe_venditabanco.is_descrizione = 0 AND vb_stati_vendita.descrizione = "Pagato"
         GROUP BY 
-            cod_iva, aliquota, descrizione
+            cod_iva, aliquota, descrizione, vb_venditabanco.id
         ) AS tabella
     GROUP BY
         cod_iva,
         aliquota,
-        descrizione;');
+        descrizione,
+        id');
     
 $iva_vendite_anno_precedente = $dbo->fetchArray('
     SELECT
+        id,
         cod_iva,
         aliquota,
         descrizione,
@@ -148,6 +157,7 @@ $iva_vendite_anno_precedente = $dbo->fetchArray('
     FROM
         (
         SELECT 
+            co_documenti.id AS id,
             co_iva.codice_natura_fe AS cod_iva,
             co_iva.percentuale AS aliquota,
             co_iva.descrizione AS descrizione,
@@ -161,9 +171,10 @@ $iva_vendite_anno_precedente = $dbo->fetchArray('
         WHERE 
             co_tipidocumento.dir = "entrata" AND co_righe_documenti.is_descrizione = 0 AND idstatodocumento NOT IN(SELECT id FROM co_statidocumento WHERE descrizione = "Bozza" OR descrizione = "Annullata") AND co_documenti.data_competenza >= '.prepare($anno_precedente_start).' AND co_documenti.data_competenza <= '.prepare($anno_precedente_end).'
         GROUP BY 
-            cod_iva, aliquota, descrizione
+            cod_iva, aliquota, descrizione, co_documenti.id
     UNION
         SELECT
+            vb_venditabanco.id AS id,
             co_iva.codice_natura_fe AS cod_iva,
             co_iva.percentuale AS aliquota,
             co_iva.descrizione AS descrizione,
@@ -179,15 +190,17 @@ $iva_vendite_anno_precedente = $dbo->fetchArray('
         WHERE
             vb_venditabanco.data >= '.prepare($anno_precedente_start).' AND vb_venditabanco.data <= '.prepare($anno_precedente_end).' AND vb_righe_venditabanco.is_descrizione = 0 AND vb_stati_vendita.descrizione = "Pagato"
         GROUP BY 
-            cod_iva, aliquota, descrizione
+            cod_iva, aliquota, descrizione, vb_venditabanco.id
         ) AS tabella
     GROUP BY
         cod_iva,
         aliquota,
-        descrizione;');
+        descrizione,
+        id');
         
 $iva_vendite_periodo_precedente = $dbo->fetchArray('
     SELECT
+        id,
         cod_iva,
         aliquota,
         descrizione,
@@ -196,6 +209,7 @@ $iva_vendite_periodo_precedente = $dbo->fetchArray('
     FROM
         (
         SELECT 
+            co_documenti.id AS id,
             co_iva.codice_natura_fe AS cod_iva,
             co_iva.percentuale AS aliquota,
             co_iva.descrizione AS descrizione,
@@ -209,9 +223,10 @@ $iva_vendite_periodo_precedente = $dbo->fetchArray('
         WHERE 
             co_tipidocumento.dir = "entrata" AND co_righe_documenti.is_descrizione = 0 AND idstatodocumento NOT IN(SELECT id FROM co_statidocumento WHERE descrizione = "Bozza" OR descrizione = "Annullata") AND co_documenti.data_competenza >= '.prepare($periodo_precedente_start).' AND co_documenti.data_competenza <= '.prepare($periodo_precedente_end).'
         GROUP BY 
-            cod_iva, aliquota, descrizione
+            cod_iva, aliquota, descrizione, co_documenti.id
     UNION
         SELECT
+            vb_venditabanco.id AS id,
             co_iva.codice_natura_fe AS cod_iva,
             co_iva.percentuale AS aliquota,
             co_iva.descrizione AS descrizione,
@@ -227,12 +242,13 @@ $iva_vendite_periodo_precedente = $dbo->fetchArray('
         WHERE
             vb_venditabanco.data >= '.prepare($periodo_precedente_start).' AND vb_venditabanco.data <= '.prepare($periodo_precedente_end).' AND vb_righe_venditabanco.is_descrizione = 0 AND vb_stati_vendita.descrizione = "Pagato"
         GROUP BY 
-            cod_iva, aliquota, descrizione
+            cod_iva, aliquota, descrizione, vb_venditabanco.id
         ) AS tabella
     GROUP BY
         cod_iva,
         aliquota,
-        descrizione;');
+        descrizione,
+        id');
 
 } 
 
@@ -253,7 +269,7 @@ $iva_vendite_esigibile = $dbo->fetchArray('
     WHERE 
         co_tipidocumento.dir = "entrata" AND co_righe_documenti.is_descrizione = 0 AND co_documenti.split_payment = 0 AND idstatodocumento NOT IN(SELECT id FROM co_statidocumento WHERE descrizione = "Bozza" OR descrizione = "Annullata") AND co_documenti.data_competenza >= '.prepare($date_start).' AND co_documenti.data_competenza <= '.prepare($date_end).'
     GROUP BY
-        co_iva.id;');
+        co_iva.id, co_documenti.id');
 
 $iva_vendite = $dbo->fetchArray('
     SELECT 
@@ -270,7 +286,7 @@ $iva_vendite = $dbo->fetchArray('
     WHERE 
         co_tipidocumento.dir = "entrata" AND co_righe_documenti.is_descrizione = 0 AND idstatodocumento NOT IN(SELECT id FROM co_statidocumento WHERE descrizione = "Bozza" OR descrizione = "Annullata") AND co_documenti.data_competenza >= '.prepare($date_start).' AND co_documenti.data_competenza <= '.prepare($date_end).'
     GROUP BY
-        co_iva.id;');
+        co_iva.id, co_documenti.id');
 
 $iva_vendite_anno_precedente = $dbo->fetchArray('
     SELECT 
@@ -287,7 +303,7 @@ $iva_vendite_anno_precedente = $dbo->fetchArray('
     WHERE 
         co_tipidocumento.dir = "entrata" AND co_righe_documenti.is_descrizione = 0 AND idstatodocumento NOT IN(SELECT id FROM co_statidocumento WHERE descrizione = "Bozza" OR descrizione = "Annullata") AND co_documenti.data_competenza >= '.prepare($anno_precedente_start).' AND co_documenti.data_competenza <= '.prepare($anno_precedente_end).'
     GROUP BY
-        co_iva.id;');
+        co_iva.id, co_documenti.id');
 
 $iva_vendite_periodo_precedente = $dbo->fetchArray('
     SELECT 
@@ -304,7 +320,7 @@ $iva_vendite_periodo_precedente = $dbo->fetchArray('
     WHERE 
         co_tipidocumento.dir = "entrata" AND co_righe_documenti.is_descrizione = 0 AND idstatodocumento NOT IN(SELECT id FROM co_statidocumento WHERE descrizione = "Bozza" OR descrizione = "Annullata") AND co_documenti.data_competenza >= '.prepare($periodo_precedente_start).' AND co_documenti.data_competenza <= '.prepare($periodo_precedente_end).'
     GROUP BY
-        co_iva.id;');
+        co_iva.id, co_documenti.id');
 }
 
 $iva_vendite_nonesigibile = $dbo->fetchArray('
@@ -322,7 +338,7 @@ $iva_vendite_nonesigibile = $dbo->fetchArray('
     WHERE 
         co_tipidocumento.dir = "entrata" AND co_righe_documenti.is_descrizione = 0 AND co_documenti.split_payment = 1 AND idstatodocumento NOT IN(SELECT id FROM co_statidocumento WHERE descrizione = "Bozza" OR descrizione = "Annullata") AND co_documenti.data_competenza >= '.prepare($date_start).' AND co_documenti.data_competenza <= '.prepare($date_end).'
     GROUP BY
-        co_iva.id;');
+        co_iva.id, co_documenti.id');
 
 $iva_acquisti_detraibile = $dbo->fetchArray('
     SELECT 
@@ -339,7 +355,7 @@ $iva_acquisti_detraibile = $dbo->fetchArray('
     WHERE 
         co_tipidocumento.dir = "uscita" AND co_righe_documenti.is_descrizione = 0 AND co_documenti.split_payment = 0 AND idstatodocumento NOT IN(SELECT id FROM co_statidocumento WHERE descrizione = "Bozza" OR descrizione = "Annullata") AND co_documenti.data_competenza >= '.prepare($date_start).' AND co_documenti.data_competenza <= '.prepare($date_end).' AND co_iva.indetraibile != 100
     GROUP BY
-        co_iva.id;');
+        co_iva.id, co_documenti.id');
 
 $iva_acquisti_nondetraibile = $dbo->fetchArray('
     SELECT 
@@ -356,7 +372,7 @@ $iva_acquisti_nondetraibile = $dbo->fetchArray('
     WHERE 
         co_tipidocumento.dir = "uscita" AND co_righe_documenti.is_descrizione = 0 AND idstatodocumento NOT IN(SELECT id FROM co_statidocumento WHERE descrizione = "Bozza" OR descrizione = "Annullata") AND co_documenti.data_competenza >= ' . prepare($date_start) . ' AND co_documenti.data_competenza <= ' . prepare($date_end) . ' AND co_iva.indetraibile != 0
     GROUP BY
-        co_iva.id;');
+        co_iva.id, co_documenti.id');
 
 $iva_acquisti = $dbo->fetchArray('
     SELECT 
@@ -373,7 +389,7 @@ $iva_acquisti = $dbo->fetchArray('
     WHERE 
         co_tipidocumento.dir = "uscita" AND co_righe_documenti.is_descrizione = 0 AND idstatodocumento NOT IN(SELECT id FROM co_statidocumento WHERE descrizione = "Bozza" OR descrizione = "Annullata") AND co_documenti.data_competenza >= '.prepare($date_start).' AND co_documenti.data_competenza <= '.prepare($date_end).'
     GROUP BY
-        co_iva.id;');
+        co_iva.id, co_documenti.id');
     
 $iva_acquisti_anno_precedente = $dbo->fetchArray('
     SELECT 
@@ -390,7 +406,7 @@ $iva_acquisti_anno_precedente = $dbo->fetchArray('
     WHERE 
         co_tipidocumento.dir = "uscita" AND co_righe_documenti.is_descrizione = 0 AND idstatodocumento NOT IN(SELECT id FROM co_statidocumento WHERE descrizione = "Bozza" OR descrizione = "Annullata") AND co_documenti.data_competenza >= '.prepare($anno_precedente_start).' AND co_documenti.data_competenza <= '.prepare($anno_precedente_end).'
     GROUP BY
-        co_iva.id;');
+        co_iva.id, co_documenti.id');
     
 $iva_acquisti_periodo_precedente = $dbo->fetchArray('
     SELECT 
@@ -407,4 +423,4 @@ $iva_acquisti_periodo_precedente = $dbo->fetchArray('
     WHERE 
         co_tipidocumento.dir = "uscita" AND co_righe_documenti.is_descrizione = 0 AND idstatodocumento NOT IN(SELECT id FROM co_statidocumento WHERE descrizione = "Bozza" OR descrizione = "Annullata") AND co_documenti.data_competenza >= '.prepare($periodo_precedente_start).' AND co_documenti.data_competenza <= '.prepare($periodo_precedente_end).'
     GROUP BY
-        co_iva.id;');
+        co_iva.id, co_documenti.id');

@@ -221,11 +221,15 @@ function controllaConti() {
     if (continuare) {
         $("#add-submit").prop("disabled", false);
         $("#modello-button").prop("disabled", false);
-        $("#save, #save-close").removeAttr("disabled").removeClass("disabled");
+        if (!$("#modals > div").get().length) {
+            $("#save, #save-close").removeAttr("disabled").removeClass("disabled");
+        }
     } else {
         $("#add-submit").prop("disabled", true);
         $("#modello-button").prop("disabled", true);
-        $("#save, #save-close").attr("disabled", "true").addClass("disabled");
+        if (!$("#modals > div").get().length) {
+            $("#save, #save-close").attr("disabled", "true").addClass("disabled");
+        }
     }
 
     return continuare;

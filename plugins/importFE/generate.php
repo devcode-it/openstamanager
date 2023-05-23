@@ -467,7 +467,7 @@ if (!empty($righe)) {
                     ]);
 
                     if ($tipo == '%') {
-                        $tot_sconto = $sconto_calcolato * 100 / ($prezzo_unitario * $qta);
+                        $tot_sconto = ($prezzo_unitario * $qta != 0 ? $sconto_calcolato * 100 / ($prezzo_unitario * $qta) : 0);
                     } else {
                         $tot_sconto = $sconto_calcolato;
                     }

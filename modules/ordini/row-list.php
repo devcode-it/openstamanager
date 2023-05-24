@@ -22,7 +22,8 @@ include_once __DIR__.'/init.php';
 use Modules\Articoli\Articolo;
 
 $block_edit = $record['flag_completato'];
-$righe = $ordine->getRighe();
+$order_row_desc = $_SESSION['module_'.$id_module]['order_row_desc'];
+$righe = $order_row_desc ? $ordine->getRighe()->sortByDesc('created_at') : $ordine->getRighe();
 $colspan = ($block_edit ? '6' : '7');
 $direzione = $ordine->direzione;
 
@@ -268,7 +269,7 @@ foreach ($righe as $riga) {
                             <i class="fa fa-trash"></i>
                         </a>
 
-                        <a class="btn btn-xs btn-default handle" title="'.tr('Modifica ordine delle righe').'">
+                        <a class="btn btn-xs btn-default handle '.($order_row_desc ? 'disabled' : '').'" title="'.tr('Modifica ordine delle righe').'">
                             <i class="fa fa-sort"></i>
                         </a>
                     </div>';

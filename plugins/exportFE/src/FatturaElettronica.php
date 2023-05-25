@@ -1123,9 +1123,12 @@ class FatturaElettronica
         $lista = isset($lista) ? $lista : $fattura->getOrdiniAcquisto();
 
         $result = [];
+        $id_documenti = [];
         foreach ($lista as $element) {
-            if (empty($element['id_documento'])) {
+            if (empty($element['id_documento']) || in_array($element['id_documento'], $id_documenti)) {
                 continue;
+            } else {
+                $id_documenti[] = $element['id_documento']; 
             }
 
             $dati = [];

@@ -40,8 +40,14 @@ $idconto = ($dir == 'entrata') ? setting('Conto predefinito fatture di vendita')
 
 $where = '';
 // Lettura interventi non collegati a preventivi, ordini e contratti
-if (!setting('Permetti fatturazione delle attività collegate a contratti, ordini e preventivi')) {
-    $where = 'AND in_interventi.id_preventivo IS NULL AND in_interventi.id_contratto IS NULL AND in_interventi.id_ordine IS NULL';
+if (!setting('Permetti fatturazione delle attività collegate a contratti')) {
+    $where = ' AND in_interventi.id_contratto IS NULL';
+}
+if (!setting('Permetti fatturazione delle attività collegate a ordini')) {
+    $where .= ' AND in_interventi.id_ordine IS NULL';
+}
+if (!setting('Permetti fatturazione delle attività collegate a preventivi')) {
+    $where .= ' AND in_interventi.id_preventivo IS NULL';
 }
 
 /*

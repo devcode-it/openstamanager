@@ -761,8 +761,14 @@ if (!$block_edit) {
         if ($dir == 'entrata') {
             $where = '';
             // Lettura interventi non collegati a preventivi, ordini e contratti
-            if (!setting('Permetti fatturazione delle attività collegate a contratti, ordini e preventivi')) {
-                $where = 'AND in_interventi.id_preventivo IS NULL AND in_interventi.id_contratto IS NULL AND in_interventi.id_ordine IS NULL';
+            if (!setting('Permetti fatturazione delle attività collegate a contratti')) {
+                $where = ' AND in_interventi.id_contratto IS NULL';
+            }
+            if (!setting('Permetti fatturazione delle attività collegate a ordini')) {
+                $where .= ' AND in_interventi.id_ordine IS NULL';
+            }
+            if (!setting('Permetti fatturazione delle attività collegate a preventivi')) {
+                $where .= ' AND in_interventi.id_preventivo IS NULL';
             }
 
             // Lettura interventi non rifiutati, non fatturati
@@ -809,7 +815,7 @@ if (!$block_edit) {
                     <input type="hidden" name="backto" value="record-edit">
 
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             {[ "type": "text", "label": "'.tr('Aggiungi un articolo tramite barcode').'", "name": "barcode", "extra": "autocomplete=\"off\"", "icon-before": "<i class=\"fa fa-barcode\"></i>", "required": 0 ]}
                         </div>
 
@@ -817,7 +823,7 @@ if (!$block_edit) {
                             {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli",  "select-options": {"permetti_movimento_a_zero": '.($dir == 'entrata' ? 0 : 1).', "idsede_partenza": '.intval($fattura->idsede_partenza).', "idsede_destinazione": '.intval($fattura->idsede_destinazione).', "idanagrafica": '.$fattura->idanagrafica.', "dir": "'.$dir.'", "idagente": '.$fattura->idagente.'}, "icon-after": "add|'.Modules::get('Articoli')['id'].'" ]}
                         </div>
 
-                        <div class="col-md-4" style="margin-top: 25px">
+                        <div class="col-md-3" style="margin-top: 25px">
                             <button title="'.tr('Aggiungi articolo alla vendita').'" class="btn btn-primary tip" type="button" onclick="salvaArticolo()">
                                 <i class="fa fa-plus"></i> '.tr('Aggiungi').'
                             </button>
@@ -880,6 +886,10 @@ if (!$block_edit) {
                             echo '
                                 </ul>
                             </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            {[ "type": "select", "label": "'.tr('Ordinamento').'", "name": "ordinamento", "class": "no-search", "value": "'.($_SESSION['module_'.$id_module]['order_row_desc'] ? 'desc' : 'manuale').'", "values": "list=\"desc\": \"'.tr('Ultima riga inserita').'\", \"manuale\": \"'.tr('Manuale').'\"" ]}
                         </div>
                     </div>
                 </form>';
@@ -1191,6 +1201,18 @@ $("#link_form").bind("keypress", function(e) {
         e.preventDefault();
         salvaArticolo();
         return false;
+    }
+});
+
+input("ordinamento").on("change", function(){
+    if (input(this).get() == "desc") {
+        session_set("module_'.$id_module.',order_row_desc", 1, "").then(function () {
+            caricaRighe(null);
+        });
+    } else {
+        session_set("module_'.$id_module.',order_row_desc").then(function () {
+            caricaRighe(null);
+        });
     }
 });
 </script>';

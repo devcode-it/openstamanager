@@ -20,7 +20,8 @@
 include_once __DIR__.'/init.php';
 
 $block_edit = $record['is_completato'];
-$righe = $contratto->getRighe();
+$order_row_desc = $_SESSION['module_'.$id_module]['order_row_desc'];
+$righe = $order_row_desc ? $contratto->getRighe()->sortByDesc('created_at') : $contratto->getRighe();
 $direzione = $contratto->direzione;
 $colspan = ($block_edit ? '5' : '6');
 
@@ -177,7 +178,7 @@ foreach ($righe as $riga) {
                             <i class="fa fa-trash"></i>
                         </a>
 
-                        <a class="btn btn-xs btn-default handle" title="'.tr('Modifica ordine delle righe').'">
+                        <a class="btn btn-xs btn-default handle '.($order_row_desc ? 'disabled' : '').'" title="'.tr('Modifica ordine delle righe').'">
                             <i class="fa fa-sort"></i>
                         </a>
                     </div>';

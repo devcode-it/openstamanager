@@ -74,7 +74,13 @@ $(document).ready(function () {
     numeral.defaultFormat('0,0.' + ('0').repeat(globals.cifre_decimali));
 
     // Richiamo alla generazione di Datatables
-    start_datatables();
+    start_datatables( $('.main-records') );
+
+    // Avvio datatables dei plugin solo al primo click
+    $('.nav-tabs li').not('.clicked').on('click', function(){
+        $(this).addClass('clicked');
+        start_datatables( $(".tab-pane.active .main-records-plugins") );
+    });
 
     // Calendario principale
     start_complete_calendar("#daterange", function (start, end) {

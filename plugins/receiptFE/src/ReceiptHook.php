@@ -37,6 +37,10 @@ class ReceiptHook extends Manager
 
     public function needsExecution()
     {
+        if (!Interaction::isEnabled()) {
+            return false;
+        }
+
         // Lettura cache
         $todo_cache = Cache::pool('Ricevute Elettroniche');
 

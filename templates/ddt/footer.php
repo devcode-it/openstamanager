@@ -214,28 +214,30 @@ echo '
 </table>';
 
 // Firme
-echo '
-<table class="table-bordered">
-    <tr>
-        <th class="small" style="width:33%">
-            '.tr('Firma conducente', [], ['upper' => true]).'
-        </th>
+if ($documento->direzione == 'entrata') {
+    echo '
+    <table class="table-bordered">
+        <tr>
+            <th class="small" style="width:33%">
+                '.tr('Firma conducente', [], ['upper' => true]).'
+            </th>
 
-        <th class="small" style="width:33%">
-            '.tr('Firma vettore', [], ['upper' => true]).'
-        </th>
+            <th class="small" style="width:33%">
+                '.tr('Firma vettore', [], ['upper' => true]).'
+            </th>
 
-        <th class="small" style="width:33%">
-            '.tr('Firma destinatario', [], ['upper' => true]).'
-        </th>
-    </tr>
+            <th class="small" style="width:33%">
+                '.tr('Firma destinatario', [], ['upper' => true]).'
+            </th>
+        </tr>
 
-    <tr>
-        <td style="height: 10mm"></td>
-        <td style="height: 10mm"></td>
-        <td style="height: 10mm"></td>
-    </tr>
-</table>';
+        <tr>
+            <td style="height: 10mm"></td>
+            <td style="height: 10mm"></td>
+            <td style="height: 10mm"></td>
+        </tr>
+    </table>';
+}
 
 if (empty($options['last-page-footer'])) {
     echo '$default_footer$';

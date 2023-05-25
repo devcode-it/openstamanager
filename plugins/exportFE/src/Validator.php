@@ -667,6 +667,7 @@ class Validator
                     '˜' => ' ',
                     '™' => 'TM',
                     'Ÿ' => 'Y',
+                    'č' => 'c',
                 ]);                
 
                 $output = str_replace(array("\r", "\n"), '', $output);
@@ -773,6 +774,7 @@ class Validator
             'Ǉ' => 'LJ',
             'ǈ' => 'Lj',
             'ǉ' => 'lj',
+            'č' => 'c',
             'Ǌ' => 'NJ',
             'ǋ' => 'Nj',
             'ǌ' => 'nj',

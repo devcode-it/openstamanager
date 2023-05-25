@@ -99,7 +99,7 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
 
     $table_id = 'main_'.rand(0, 99);
     echo '
-    <table data-idmodule="'.$id_module.'" data-idplugin="'.$id_plugin.'" data-idparent="'.$id_record.'" data-selected="'.implode(';', $selezione).'" id="'.$table_id.'" width="100%" class="main-records table table-condensed table-bordered">
+    <table data-idmodule="'.$id_module.'" data-idplugin="'.$id_plugin.'" data-idparent="'.$id_record.'" data-selected="'.implode(';', $selezione).'" id="'.$table_id.'" width="100%" class="main-records'.(!empty($id_plugin) ? '-plugins' : '').' table table-condensed table-bordered">
         <thead>
             <tr>
                 <th id="th_selector"></th>';

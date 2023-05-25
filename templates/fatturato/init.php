@@ -27,9 +27,9 @@ $date_end = $_SESSION['period_end'];
 
 $raggruppamenti = $dbo->fetchArray('
     SELECT 
-        data,
+        data_competenza, 
         DATE_FORMAT(data_competenza, \'%m-%Y\') AS periodo,
-        SUM(round((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *(100-indetraibile)/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 )), 2)) AS iva,
+        SUM((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *(100-indetraibile)/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS iva,
         SUM((co_righe_documenti.subtotale - co_righe_documenti.sconto + co_righe_documenti.rivalsainps) *(IF(co_tipidocumento.reversed = 0,1,-1))) AS imponibile
     FROM 
         co_iva 
@@ -39,6 +39,6 @@ $raggruppamenti = $dbo->fetchArray('
     WHERE 
         co_tipidocumento.dir = '.prepare($dir).' AND co_righe_documenti.is_descrizione = 0 AND idstatodocumento NOT IN(SELECT id FROM co_statidocumento WHERE descrizione = "Bozza" OR descrizione = "Annullata") AND co_documenti.data_competenza >= '.prepare($date_start).' AND co_documenti.data_competenza <= '.prepare($date_end).'
     GROUP BY 
-        data, periodo
-    ORDER BY 
-        data ASC');
+        periodo
+    ORDER BY
+        periodo ASC');

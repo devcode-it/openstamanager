@@ -103,19 +103,13 @@ for(i=0; i<sortable_table; i++){
     });
 }
 
-$("input[name^=\'value\']").keyup(function(){
-    $.post("'.$checklist_module->fileurl('ajax.php').'", {
-        op: "save_value",
-        value: $(this).val(),
-        id: $(this).attr("data-id"),
-    });
-});
-
 $("textarea[name=\'note_checklist\']").keyup(function(){
     $.post("'.$checklist_module->fileurl('ajax.php').'", {
         op: "save_note",
-        value: $(this).val(),
-        id: $(this).attr("data-id"),
+        note: $(this).val(),
+        id: $(this).attr("id"),
+    }, function() {
+        alertPush();
     });
 });
 

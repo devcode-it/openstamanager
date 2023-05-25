@@ -145,7 +145,7 @@ abstract class Accounting extends Component
      */
     public function getTipoScontoAttribute()
     {
-        return $this->sconto_percentuale ? 'PRC' : 'UNT';
+        return $this->sconto_percentuale ? 'PRC' : ($this->sconto ? 'UNT' : 'PRC');
     }
 
     /**
@@ -463,7 +463,7 @@ abstract class Accounting extends Component
     protected function fixSconto()
     {
         $this->attributes['sconto'] = $this->sconto;
-        $this->attributes['tipo_sconto'] = $this->sconto_percentuale ? 'PRC' : 'UNT';
+        $this->attributes['tipo_sconto'] = $this->sconto_percentuale ? 'PRC' : ($this->sconto ? 'UNT' : 'PRC');
     }
 
     /**

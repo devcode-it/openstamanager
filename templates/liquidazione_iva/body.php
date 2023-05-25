@@ -19,27 +19,27 @@
 
 include_once __DIR__.'/../../core.php';
 
-$totale_iva_vendite = sum(array_column($iva_vendite, 'iva'));
-$totale_subtotale_vendite = sum(array_column($iva_vendite, 'subtotale'));
-$totale_iva_acquisti = sum(array_column($iva_acquisti, 'iva'));
-$totale_subtotale_acquisti = sum(array_column($iva_acquisti, 'subtotale'));
+$totale_iva_vendite = sum(array_column($iva_vendite, 'iva'), null, 2);
+$totale_subtotale_vendite = sum(array_column($iva_vendite, 'subtotale'), null, 2);
+$totale_iva_acquisti = sum(array_column($iva_acquisti, 'iva'), null, 2);
+$totale_subtotale_acquisti = sum(array_column($iva_acquisti, 'subtotale'), null, 2);
 
-$totale_iva_esigibile = sum(array_column($iva_vendite_esigibile, 'iva'));
-$totale_iva_nonesigibile = sum(array_column($iva_vendite_nonesigibile, 'iva'));
-$subtotale_iva_esigibile = sum(array_column($iva_vendite_esigibile, 'subtotale'));
-$subtotale_iva_nonesigibile = sum(array_column($iva_vendite_nonesigibile, 'subtotale'));
+$totale_iva_esigibile = sum(array_column($iva_vendite_esigibile, 'iva'), null, 2);
+$totale_iva_nonesigibile = sum(array_column($iva_vendite_nonesigibile, 'iva'), null, 2);
+$subtotale_iva_esigibile = sum(array_column($iva_vendite_esigibile, 'subtotale'), null, 2);
+$subtotale_iva_nonesigibile = sum(array_column($iva_vendite_nonesigibile, 'subtotale'), null, 2);
 
-$totale_iva_detraibile = sum(array_column($iva_acquisti_detraibile, 'iva'));
-$totale_iva_nondetraibile = sum(array_column($iva_acquisti_nondetraibile, 'iva'));
-$subtotale_iva_detraibile = sum(array_column($iva_acquisti_detraibile, 'subtotale'));
-$subtotale_iva_nondetraibile = sum(array_column($iva_acquisti_nondetraibile, 'subtotale'));
+$totale_iva_detraibile = sum(array_column($iva_acquisti_detraibile, 'iva'), null, 2);
+$totale_iva_nondetraibile = sum(array_column($iva_acquisti_nondetraibile, 'iva'), null, 2);
+$subtotale_iva_detraibile = sum(array_column($iva_acquisti_detraibile, 'subtotale'), null, 2);
+$subtotale_iva_nondetraibile = sum(array_column($iva_acquisti_nondetraibile, 'subtotale'), null, 2);
 
-$totale_iva_vendite_anno_precedente = sum(array_column($iva_vendite_anno_precedente, 'iva'));
-$totale_iva_acquisti_anno_precedente = sum(array_column($iva_acquisti_anno_precedente, 'iva'));
+$totale_iva_vendite_anno_precedente = sum(array_column($iva_vendite_anno_precedente, 'iva'), null, 2);
+$totale_iva_acquisti_anno_precedente = sum(array_column($iva_acquisti_anno_precedente, 'iva'), null, 2);
 $totale_iva_anno_precedente = $totale_iva_vendite_anno_precedente - $totale_iva_acquisti_anno_precedente;
 
-$totale_iva_vendite_periodo_precedente = sum(array_column($iva_vendite_periodo_precedente, 'iva'));
-$totale_iva_acquisti_periodo_precedente = sum(array_column($iva_acquisti_periodo_precedente, 'iva'));
+$totale_iva_vendite_periodo_precedente = sum(array_column($iva_vendite_periodo_precedente, 'iva'), null, 2);
+$totale_iva_acquisti_periodo_precedente = sum(array_column($iva_acquisti_periodo_precedente, 'iva'), null, 2);
 $totale_iva_periodo_precedente = $totale_iva_vendite_periodo_precedente - $totale_iva_acquisti_periodo_precedente;
 
 $totale_iva = $totale_iva_esigibile - $totale_iva_detraibile;
@@ -69,7 +69,18 @@ echo '
         <th class="text-center" colspan="5">IVA ESIGIBILE DEL PERIODO</th>
     </tr>';
 
+// Somma importi arrotondati per fattura
+$aliquote=[];
+
 foreach ($iva_vendite_esigibile as $record) {
+    $aliquote[$record['cod_iva']]['aliquota'] = $record['aliquota'];
+    $aliquote[$record['cod_iva']]['cod_iva'] = $record['cod_iva'];
+    $aliquote[$record['cod_iva']]['descrizione'] = $record['descrizione'];
+    $aliquote[$record['cod_iva']]['subtotale'] += sum($record['subtotale'], null, 2);
+    $aliquote[$record['cod_iva']]['iva'] += sum($record['iva'], null, 2);
+}
+
+foreach ($aliquote as $aliquota=>$record) {
     echo '
     <tr>
         <td>'.round($record['aliquota']).'%</td>
@@ -91,7 +102,18 @@ echo '
     <th class="text-center" colspan="5">IVA NON ESIGIBILE DEL PERIODO</th>
 </tr>';
 
+// Somma importi arrotondati per fattura
+$aliquote=[];
+
 foreach ($iva_vendite_nonesigibile as $record) {
+    $aliquote[$record['cod_iva']]['aliquota'] = $record['aliquota'];
+    $aliquote[$record['cod_iva']]['cod_iva'] = $record['cod_iva'];
+    $aliquote[$record['cod_iva']]['descrizione'] = $record['descrizione'];
+    $aliquote[$record['cod_iva']]['subtotale'] += sum($record['subtotale'], null, 2);
+    $aliquote[$record['cod_iva']]['iva'] += sum($record['iva'], null, 2);
+}
+
+foreach ($aliquote as $aliquota=>$record) {
     echo '
     <tr>
         <td>'.round($record['aliquota']).'%</td>
@@ -112,7 +134,19 @@ echo '
 <tr>
     <th class="text-center" colspan="5">RIEPILOGO GENERALE IVA VENDITE</th>
 </tr>';
+
+// Somma importi arrotondati per fattura
+$aliquote=[];
+
 foreach ($iva_vendite as $record) {
+    $aliquote[$record['cod_iva']]['aliquota'] = $record['aliquota'];
+    $aliquote[$record['cod_iva']]['cod_iva'] = $record['cod_iva'];
+    $aliquote[$record['cod_iva']]['descrizione'] = $record['descrizione'];
+    $aliquote[$record['cod_iva']]['subtotale'] += sum($record['subtotale'], null, 2);
+    $aliquote[$record['cod_iva']]['iva'] += sum($record['iva'], null, 2);
+}
+
+foreach ($aliquote as $aliquota=>$record) {
     echo '
     <tr>
         <td>'.round($record['aliquota']).'%</td>
@@ -149,7 +183,18 @@ echo '
         <th class="text-center" colspan="5">IVA DETRAIBILE DEL PERIODO</th>
     </tr>';
 
+// Somma importi arrotondati per fattura
+$aliquote=[];
+
 foreach ($iva_acquisti_detraibile as $record) {
+    $aliquote[$record['cod_iva']]['aliquota'] = $record['aliquota'];
+    $aliquote[$record['cod_iva']]['cod_iva'] = $record['cod_iva'];
+    $aliquote[$record['cod_iva']]['descrizione'] = $record['descrizione'];
+    $aliquote[$record['cod_iva']]['subtotale'] += sum($record['subtotale'], null, 2);
+    $aliquote[$record['cod_iva']]['iva'] += sum($record['iva'], null, 2);
+}
+
+foreach ($aliquote as $aliquota=>$record) {
     echo '
     <tr>
         <td>'.round($record['aliquota']).'%</td>
@@ -172,7 +217,18 @@ echo '
     <th class="text-center" colspan="5">IVA NON DETRAIBILE DEL PERIODO</th>
 </tr>';
 
+// Somma importi arrotondati per fattura
+$aliquote=[];
+
 foreach ($iva_acquisti_nondetraibile as $record) {
+    $aliquote[$record['cod_iva']]['aliquota'] = $record['aliquota'];
+    $aliquote[$record['cod_iva']]['cod_iva'] = $record['cod_iva'];
+    $aliquote[$record['cod_iva']]['descrizione'] = $record['descrizione'];
+    $aliquote[$record['cod_iva']]['subtotale'] += sum($record['subtotale'], null, 2);
+    $aliquote[$record['cod_iva']]['iva'] += sum($record['iva'], null, 2);
+}
+
+foreach ($aliquote as $aliquota=>$record) {
     echo '
     <tr>
         <td>'.round($record['aliquota']).'%</td>
@@ -194,7 +250,19 @@ echo '
 <tr>
     <th class="text-center" colspan="5">RIEPILOGO GENERALE IVA ACQUISTI</th>
 </tr>';
+
+// Somma importi arrotondati per fattura
+$aliquote=[];
+
 foreach ($iva_acquisti as $record) {
+    $aliquote[$record['cod_iva']]['aliquota'] = $record['aliquota'];
+    $aliquote[$record['cod_iva']]['cod_iva'] = $record['cod_iva'];
+    $aliquote[$record['cod_iva']]['descrizione'] = $record['descrizione'];
+    $aliquote[$record['cod_iva']]['subtotale'] += sum($record['subtotale'], null, 2);
+    $aliquote[$record['cod_iva']]['iva'] += sum($record['iva'], null, 2);
+}
+
+foreach ($aliquote as $aliquota=>$record) {
     echo '
     <tr>
         <td>'.round($record['aliquota']).'%</td>
@@ -220,7 +288,7 @@ echo '
 <table class="table table-condensed table-striped table-bordered">
 <thead>
     <tr>
-        <th class="text-center" colspan="2">PROSPETTO RIEPILOGATIVO DI LIQUIDAZIONE I.V.A.</th>
+        <th class="text-center" colspan="2">PROSPETTO RIEPILOGATIVO DI LIQUIDAZIONE IVA</th>
     <tr>
         <th width="70%">DESCRIZIONE</th>
         <th class="text-right" width="30%">IMPORTO</th>

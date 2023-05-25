@@ -41,7 +41,7 @@ $default_header$
                 </td>
 
                 <td class="border-right border-bottom border-top text-center">
-                    <p class="small-bold">'.tr('Cliente', [], ['upper' => true]).'</p>
+                    <p class="small-bold">'.tr('_TYPE_', ['_TYPE_' => $documento->direzione == 'uscita' ? 'Fornitore' : 'Cliente'], ['upper' => true]).'</p>
                     <p>$c_codice$</p>
                 </td>
 

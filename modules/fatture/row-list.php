@@ -23,7 +23,8 @@ include_once __DIR__.'/init.php';
 
 $direzione = $fattura->direzione;
 $block_edit = !empty($note_accredito) || in_array($record['stato'], ['Emessa', 'Pagato', 'Parzialmente pagato']) || !$abilita_genera;
-$righe = $fattura->getRighe();
+$order_row_desc = $_SESSION['module_'.$id_module]['order_row_desc'];
+$righe = $order_row_desc ? $fattura->getRighe()->sortByDesc('created_at') : $fattura->getRighe();
 
 echo '
 <div class="table-responsive">
@@ -284,7 +285,7 @@ foreach ($righe as $riga) {
         }
 
         echo '
-                    <a class="btn btn-xs btn-default handle" title="'.tr('Modifica ordine delle righe').'">
+                    <a class="btn btn-xs btn-default handle '.($order_row_desc ? 'disabled' : '').'" title="'.tr('Modifica ordine delle righe').'">
                         <i class="fa fa-sort"></i>
                     </a>
                 </div>';

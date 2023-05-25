@@ -45,6 +45,9 @@ function renderRiga($id, $riga)
             {[ "type": "number", "name": "avere['.$id.']", "id": "avere'.$id.'", "value": "'.($riga['avere'] ?: 0).'" ]}
         </td>
     </tr>';
+
+    $_SESSION['totale_dare'] += ($riga['dare'] ? $riga['dare'] : 0);
+    $_SESSION['totale_avere'] += ($riga['avere'] ? $riga['avere'] : 0);
 }
 
 function renderTabella($nome, $righe)
@@ -115,6 +118,8 @@ function renderTabella($nome, $righe)
 
 $counter = 0;
 $movimenti = collect($movimenti);
+$_SESSION['totale_dare'] = 0;
+$_SESSION['totale_avere'] = 0;
 
 // Elenco per documenti
 $scadenze = $movimenti
@@ -168,6 +173,19 @@ renderRiga('-id-', [
 echo '
     </tbody>
 </table>';
+
+// Nuova riga
+echo '
+<table class="table table-bordered">
+    <tr>
+        <th class="text-right">'.tr('Totale').'</th>
+        <th class="text-right" width="20%">'.moneyFormat($_SESSION['totale_dare']).'</th>
+        <th class="text-right" width="20%">'.moneyFormat($_SESSION['totale_avere']).'</th>
+    </tr>
+</table>';
+
+unset($_SESSION['totale_dare']);
+unset($_SESSION['totale_avere']);
 
 echo '
 <script>

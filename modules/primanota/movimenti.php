@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Fatture\Fattura;
 
-function renderRiga($id, $riga)
+function renderRiga($id, $riga, &$totale_dare, &$totale_avere)
 {
     // Conto
     echo '
@@ -46,11 +46,11 @@ function renderRiga($id, $riga)
         </td>
     </tr>';
 
-    $_SESSION['totale_dare'] += ($riga['dare'] ? $riga['dare'] : 0);
-    $_SESSION['totale_avere'] += ($riga['avere'] ? $riga['avere'] : 0);
+    $totale_dare += ($riga['dare'] ? $riga['dare'] : 0);
+    $totale_avere += ($riga['avere'] ? $riga['avere'] : 0);
 }
 
-function renderTabella($nome, $righe)
+function renderTabella($nome, $righe, &$totale_dare, &$totale_avere)
 {
     global $counter;
 
@@ -78,7 +78,7 @@ function renderTabella($nome, $righe)
         <tbody>';
 
     foreach ($righe as $riga) {
-        renderRiga($counter++, $riga);
+        renderRiga($counter++, $riga, $totale_dare, $totale_avere);
     }
 
     // Totale per controllare sbilancio
@@ -118,8 +118,8 @@ function renderTabella($nome, $righe)
 
 $counter = 0;
 $movimenti = collect($movimenti);
-$_SESSION['totale_dare'] = 0;
-$_SESSION['totale_avere'] = 0;
+$totale_dare = 0;
+$totale_avere = 0;
 
 // Elenco per documenti
 $scadenze = $movimenti
@@ -132,7 +132,7 @@ foreach ($scadenze as $id_documento => $righe) {
         '_NUM_' => $documento['numero_esterno'] ?: $documento['numero'],
     ]);
 
-    renderTabella($nome, $righe);
+    renderTabella($nome, $righe, $totale_dare, $totale_avere);
 }
 
 // Elenco per scadenze
@@ -145,7 +145,7 @@ foreach ($scadenze as $id_scadenza => $righe) {
         '_ID_' => $id_scadenza,
     ]);
 
-    renderTabella($nome, $righe);
+    renderTabella($nome, $righe, $totale_dare, $totale_avere);
 }
 
 // Elenco generale
@@ -158,17 +158,21 @@ if ($movimenti_generali->isEmpty()) {
 }
 $nome = tr('Generale');
 
-renderTabella($nome, $movimenti_generali);
+renderTabella($nome, $movimenti_generali, $totale_dare, $totale_avere);
 
 // Nuova riga
 echo '
 <table class="hide">
     <tbody id="template">';
 
-renderRiga('-id-', [
-    'iddocumento' => '-id_documento-',
-    'id_scadenza' => '-id_scadenza-',
-]);
+renderRiga('-id-', 
+    [
+        'iddocumento' => '-id_documento-',
+        'id_scadenza' => '-id_scadenza-',
+    ],
+    $totale_dare, 
+    $totale_avere
+);
 
 echo '
     </tbody>
@@ -179,13 +183,10 @@ echo '
 <table class="table table-bordered">
     <tr>
         <th class="text-right">'.tr('Totale').'</th>
-        <th class="text-right" width="20%">'.moneyFormat($_SESSION['totale_dare']).'</th>
-        <th class="text-right" width="20%">'.moneyFormat($_SESSION['totale_avere']).'</th>
+        <th class="text-right" width="20%">'.moneyFormat($totale_dare).'</th>
+        <th class="text-right" width="20%">'.moneyFormat($totale_avere).'</th>
     </tr>
 </table>';
-
-unset($_SESSION['totale_dare']);
-unset($_SESSION['totale_avere']);
 
 echo '
 <script>

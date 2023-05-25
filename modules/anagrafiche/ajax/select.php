@@ -71,11 +71,13 @@ switch ($resource) {
         $where[] = "an_tipianagrafiche.descrizione='Cliente'";
         if (empty($filter)) {
             $where[] = 'an_anagrafiche.deleted_at IS NULL';
+
+            if (!empty($filter_agente)) {
+                $where[] = 'idagente = '.Auth::user()['idanagrafica'];
+            }
         }
 
-		if (empty(!$filter_agente)) {
-            $where[] = 'idagente = '.Auth::user()['idanagrafica'];
-        }
+
 
         if (!empty($search)) {
             $search_fields[] = 'ragione_sociale LIKE '.prepare('%'.$search.'%');

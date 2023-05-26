@@ -82,7 +82,7 @@ foreach ($righe as $riga) {
         <td>
             '.nl2br($r['descrizione']);
 
-    //Riferimenti odrini/ddt righe
+    //Riferimenti ordini/ddt righe
     if ($riga->referenceTargets()->count()) {
         $source = $source_type::find($riga->id);
         $riferimenti = $source->referenceTargets;

@@ -129,6 +129,10 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
             $field = str_replace('icon_', '', $field);
         }
 
+        if (isMobile()) {
+            $attr_td .= " style='min-width:100px;'";
+        }
+
         echo '
                 <th'.$attr_td.' id="th_'.searchFieldName($name).'"';
         if ($total['search'][$key] == 1) {

@@ -276,7 +276,7 @@ class Gestore
         }
 
         // Unifico ricevute per anagrafica
-        $identificativo_debitore = !empty($controparte->partita_iva) ? $controparte->partita_iva : !empty($controparte->codice_fiscale) ? $controparte->codice_fiscale : $controparte->codice;
+        $identificativo_debitore = (!empty($controparte->partita_iva) ? $controparte->partita_iva : (!empty($controparte->codice_fiscale) ? $controparte->codice_fiscale : $controparte->codice));
         $ricevute = $this->bonifico->getRicevute();
         foreach ($ricevute as $ric) {
             if ($ric->identificativo_debitore == $identificativo_debitore) {

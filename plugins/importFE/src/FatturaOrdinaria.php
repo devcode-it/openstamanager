@@ -471,7 +471,13 @@ class FatturaOrdinaria extends FatturaElettronica
                     $ritenuta_norighe = false;
                 }
             }
-            $totale = sum($totali);
+            
+            // Calcolo la ritenuta su tutte le righe se non è specificata su nessuna riga
+            if (empty($totali)) {
+                $totale = array_sum(array_column($righe, 'PrezzoTotale'));
+            } else {
+                $totale = sum($totali);
+            }
 
             $percentuale = floatval($ritenuta['AliquotaRitenuta']);
             $importo = floatval($ritenuta['ImportoRitenuta']);

@@ -34,17 +34,17 @@ function renderChecklist($check, $level = 1, $parent = 0) {
 
     $result .= '
                     <td style="width:40px;text-align:center;border-top:0px;border-left:3px solid #eaeaea;">
-                        <input type="checkbox" class="checkbox" data-id="'.$check->id.'" value="'.(!empty($check->checked_at) ? '1' : '0').'" '.(!empty($check->checked_at) ? 'checked' : '').' '.(!$enabled ? 'disabled' : '').'>
+                        <input type="checkbox" class="checkbox unblockable" data-id="'.$check->id.'" value="'.(!empty($check->checked_at) ? '1' : '0').'" '.(!empty($check->checked_at) ? 'checked' : '').' '.(!$enabled ? 'disabled' : '').'>
                     </td>'; 
 
     $result .= '
                     <td style="border-top:0px;">
-                        <span class="text" style="'.(!empty($check->checked_at)?'text-decoration:line-through;':'').'">'.$check->content.' </span>
+                        <span class="text unblockable" style="'.(!empty($check->checked_at)?'text-decoration:line-through;':'').'">'.$check->content.' </span>
                     </td>';
 
     $result .= '
                     <td style="width:500px;border-top:0px;"> 
-                        {[ "type": "textarea", "name": "note_checklist", "id": "'.$check->id.'", "value": "'.$check->note.'" ]}
+                        {[ "type": "textarea", "class": "unblockable", "name": "note_checklist", "placeholder": "'.tr('Note').'...", "id": "'.$check->id.'", "value": "'.$check->note.'" ]}
                     </td>';
 
     $result .= '

@@ -151,7 +151,7 @@ $replaces = array_merge($replaces, [
     'base_link()' => base_path(),
     'directory' => Prints::get($id_print)['full_directory'],
     'footer' => !empty($footer) ? $footer : '',
-    'dicitura_fissa_fattura' => setting('Dicitura fissa fattura').((setting('Regime Fiscale') != 'RF02' && setting('Regime Fiscale') != 'RF19' && setting('Regime Fiscale') != 'RF18' && $tipo_cliente != 'Privato') ? tr('Documento privo di valenza fiscale (art 21 dpr 633/72).') : ''),
+    'dicitura_fissa_fattura' => setting('Dicitura fissa fattura').((setting('Regime Fiscale') != 'RF02' && setting('Regime Fiscale') != 'RF19' && setting('Regime Fiscale') != 'RF18') ? ($tipo_cliente != 'Privato' ? tr('Documento privo di valenza fiscale ai sensi dell’art. 21 Dpr 633/72. L’originale è disponibile all’indirizzo telematico da Lei fornito oppure nella Sua area riservata dell’Agenzia delle Entrate') : tr('Copia della fattura elettronica disponibile nella Sua area riservata dell’Agenzia delle Entrate')) : ''),
 ]);
 
 unset($replace);

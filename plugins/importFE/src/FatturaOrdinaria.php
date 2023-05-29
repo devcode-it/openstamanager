@@ -119,7 +119,6 @@ class FatturaOrdinaria extends FatturaElettronica
         $fattura = $this->getFattura();
         $anagrafica = Anagrafica::find($fattura->idanagrafica);
         $direzione = 'uscita';
-
         $id_ritenuta_acconto = $info['id_ritenuta_acconto'];
         $id_rivalsa = $info['id_rivalsa'];
         $calcolo_ritenuta_acconto = $info['rivalsa_in_ritenuta'] ? 'IMP+RIV' : 'IMP';
@@ -157,6 +156,7 @@ class FatturaOrdinaria extends FatturaElettronica
                     $articolo = ArticoloOriginale::build($codice, $riga['Descrizione'], $categoria);
                     $articolo->um = $riga['UnitaMisura'];
                     $articolo->idconto_acquisto = $conto[$key];
+                    $articolo->abilita_serial = setting('Serial number abilitato di default');
                     $articolo->save();
                 }
             }

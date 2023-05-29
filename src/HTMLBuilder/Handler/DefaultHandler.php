@@ -108,10 +108,10 @@ class DefaultHandler implements HandlerInterface
     <script>
 
        
-        const characters ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        const characters ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!$£%-()*[]";
 
         function generateString(length) {
-            let result = " ";
+            let result = "";
             const charactersLength = characters.length;
             for ( let i = 0; i < length; i++ ) {
                 result += characters.charAt(Math.floor(Math.random() * charactersLength));
@@ -124,6 +124,7 @@ class DefaultHandler implements HandlerInterface
             button.attr("title", "'.tr('Genera password').'");
 
             $("#'.$values['id'].'").val(generateString(10));
+            $("'.$values['strength'].'").attr("disabled", false).removeClass("disabled");
         }
 
         function togglePassword_'.$values['id'].'() {
@@ -185,11 +186,11 @@ class DefaultHandler implements HandlerInterface
                     }
                 },
                 common: {
-                    minChar: 6,
+                    minChar: 8,
                     onKeyUp: function(event, data) {
                         var len = $("#'.$values['id'].'").val().length;
 
-                        if(len < 6) {
+                        if(len < 8) {
                             $("'.$values['strength'].'").attr("disabled", true).addClass("disabled");
                         } else {
                             $("'.$values['strength'].'").attr("disabled", false).removeClass("disabled");

@@ -43,6 +43,8 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Permetti fatturazione delle attività collegate a preventivi', (SELECT `valore` FROM `zz_settings` AS `a` WHERE `nome` = 'Permetti fatturazione delle attività collegate a contratti'), 'boolean', '1', 'Fatturazione', NULL, NULL);
 
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Serial number abilitato di default', '0', 'boolean', '1', 'Magazzino', NULL, "Abilita automaticamente il serial number al momento della creazione di un articolo dal Magazzino o dall'importazione di una fattura di acquisto.");
+
 -- Fix visualizzazione stampa ordine senza codici
 UPDATE `zz_prints` SET `options` = '{\"pricing\": true, \"last-page-footer\": true, \"hide-item-number\": true, \"images\": true}' WHERE `zz_prints`.`name` = "Ordine cliente (senza codici)";
 

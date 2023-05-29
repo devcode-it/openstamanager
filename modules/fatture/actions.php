@@ -339,6 +339,7 @@ switch (post('op')) {
     // Duplicazione fattura
     case 'copy':
         $new = $fattura->replicate();
+        $new->id_autofattura = null;
         $new->save();
 
         $id_record = $new->id;

@@ -554,9 +554,14 @@ if (Auth::check()) {
 
         // Tab per le checklist
         if ($structure->permission != '-' && $structure->use_checklists) {
+            $checklists = $structure->checks()->where('checked_at', null)->get();
+
             echo '
                 <li data-toggle="control-sidebar" class="btn-default">
-                    <a class="bg-info" data-toggle="tab" href="#tab_checks" id="link-tab_checks">'.tr('Checklist').'</a>
+                    <a class="bg-info" data-toggle="tab" href="#tab_checks" id="link-tab_checks">
+                        '.tr('Checklist').'
+                        <span class="badge pull-right">'.($checklists->count() ?: '').'</span>
+                    </a>
                 </li>';
         }
 

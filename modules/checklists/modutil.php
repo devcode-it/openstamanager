@@ -22,7 +22,7 @@ function renderChecklist($check, $level = 1, $parent = 0) {
     global $structure;
 
     $user = auth()->getUser();
-    $enabled = $check->assignedUsers ? $check->assignedUsers->pluck('id')->search($user->id) !== false : true;
+    $enabled = $check->assignedUsers ? ($check->assignedUsers->pluck('id')->search($user->id) !== false || ($user->idgruppo) == 1): true;
 
     $margin = ($level*20);
 

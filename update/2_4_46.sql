@@ -50,3 +50,9 @@ UPDATE `zz_prints` SET `options` = '{\"pricing\": true, \"last-page-footer\": tr
 
 -- Aggiunta stampa preventivo senza codici
 INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`, `available_options`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE name = 'Preventivi'), '1', 'Preventivo (senza codici)', 'Preventivo (senza codici)', 'Preventivo num. {numero} del {data} rev {revisione}', 'preventivi', 'idpreventivo', '{\"pricing\": true, \"last-page-footer\": true, \"images\": true, \"hide-item-number\": true}', 'fa fa-print', '', '', '0', '0', '1', '1', '{\"pricing\":\"Visualizzare i prezzi\", \"hide-total\": \"Nascondere i totali delle righe\", \"show-only-total\": \"Visualizzare solo i totali del documento\", \"hide-header\": \"Nascondere intestazione\", \"hide-footer\": \"Nascondere footer\", \"last-page-footer\": \"Visualizzare footer solo su ultima pagina\", \"hide-item-number\": \"Nascondere i codici degli articoli\"}');
+
+-- Aggiunte api app per checklists
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES (NULL, 'app-v1', 'retrieve', 'checklist', 'API\\App\\v1\\Checklists', '1');
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES (NULL, 'app-v1', 'retrieve', 'checklists', 'API\\App\\v1\\Checklists', '1');
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES (NULL, 'app-v1', 'update', 'checklist', 'API\\App\\v1\\Checklists', '1');
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES (NULL, 'app-v1', 'retrieve', 'checklists-cleanup', 'API\\App\\v1\\Checklists', '1');

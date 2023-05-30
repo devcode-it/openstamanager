@@ -75,10 +75,6 @@ class SessioniInterventi extends AppResource
         $start = $today->copy()->subMonths($mesi_precedenti);
         $end = $today->copy()->addMonth();
 
-        // Informazioni sull'utente
-        $user = Auth::user();
-        $id_tecnico = $user->id_anagrafica;
-
         // Elenco di interventi di interesse
         $risorsa_interventi = $this->getRisorsaInterventi();
         $interventi = $risorsa_interventi->getModifiedRecords(null);

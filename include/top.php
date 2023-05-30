@@ -552,18 +552,18 @@ if (Auth::check()) {
                 </li>';
         }
 
+
         // Tab per le checklist
         if ($structure->permission != '-' && $structure->use_checklists) {
-            $checklists_unchecked = $structure->checks()->where('checked_at', null)->get();
-            $checklists_total = $structure->checks()->get();
+            $checklists_unchecked = $structure->recordChecks($id_record)->where('checked_at', null);
+            $checklists_total = $structure->recordChecks($id_record);
 
             echo '
                 <li data-toggle="control-sidebar" class="btn-default">
                     <a class="bg-info" data-toggle="tab" href="#tab_checks" id="link-tab_checks">
                         '.tr('Checklist').'
-                        <span class="badge pull-right">'.($checklists_total->count() ?: '').'</span>
-                        <span class="pull-right">'.tr(' / ').'</span>
-                        <span class="badge pull-right">'.($checklists_unchecked->count() ?: '').'</span>
+                        '.(($checklists_total->count() > 0) ? 
+                        '<span class="badge pull-right">'.$checklists_unchecked->count().tr(' / ').($checklists_total->count()).'</span>' : '').'                                         
                     </a>
                 </li>';
         }

@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.46 (2023-05-12)](#2445-2023-06-01)
 - [2.4.45 (2023-05-12)](#2445-2023-05-12)
 - [2.4.44 (2023-04-21)](#2444-2023-04-21)
 - [2.4.43 (2023-03-31)](#2443-2023-03-31)
@@ -56,6 +57,44 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
+
+## 2.4.46 (2023-06-01)
+
+### Aggiunto (Added)
+- Aggiunta codice destinatario per anagrafiche con nazione San Marino
+- Aggiunta stampa DDT in entrata
+- Aggiunto widget per stampa settimanale calendario
+- Aggiunte note nelle checklist
+- Aggiunto sconto percentuale di default nei documenti
+- Aggiunto menù a tendina di ordinamento in row-list
+- Aggiunto il totale scadenze nei movimenti in prima nota
+- Aggiunta impostazione per abilitare di default i seriali negli articoli
+- Aggiunto badge di notifica presenza checklist
+- Aggiunta stampa preventivo senza codici
+- Aggiunte API checklist per app
+### Modificato (Changed)
+- Ottimizzate le query per le viste con invio email
+- Ottimizzato metodo di aggiornamento ore lavoro
+- Rimossa la stampa ex-spesometro
+- Ottimizzata l'inizializzazione di datatables all'apertura plugins
+- Miglioria gestione generazione password
+- Miglioria widget notifiche interne
+### Fixed
+- Corrette le stampe liquidazione, registri IVA e fatturato
+- Corretta la vista Scadenze
+- Corretto il controllo sulla numerazione secondaria nei DDT
+- Corretti problemi di raggruppamento anagrafiche in bonifici SEPA
+- Corretto il calcolo dello sconto in fase di importazione fatture elettroniche
+- Corretta la gestione della fatturazione interventi collegati a documenti
+- Corretta l'aggiunta di movimenti in prima nota da modal
+- Corretta la conversione unità di misura secondaria
+- Corretta la selezione anagrafica per agente
+- Corretto il controllo per esecuzione hook
+- Corretta la ripetizione riferimento ordine in fattura elettronica
+- Corretta la visualizzazione del plugin Allegati in Anagrafiche
+- Corretta l'importazione di fatture di acquisto con ritenuta non specificata sulle righe
+- Corretta la visualizzazione di datatables da mobile
+- 
 ## 2.4.45 (2023-05-12)
 ### Aggiunto (Added)
 - Aggiunta l'importazione dei preventivi da CSV

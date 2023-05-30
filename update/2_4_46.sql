@@ -56,3 +56,7 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES (NULL, 'app-v1', 'retrieve', 'checklists', 'API\\App\\v1\\Checklists', '1');
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES (NULL, 'app-v1', 'update', 'checklist', 'API\\App\\v1\\Checklists', '1');
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES (NULL, 'app-v1', 'retrieve', 'checklists-cleanup', 'API\\App\\v1\\Checklists', '1');
+
+-- Rimozione id_module in zz_imports
+ALTER TABLE `zz_imports` DROP FOREIGN KEY `zz_imports_ibfk_1`;
+ALTER TABLE `zz_imports` DROP `id_module`;

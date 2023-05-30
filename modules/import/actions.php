@@ -21,6 +21,8 @@ use Modules\Importazione\Import;
 
 include_once __DIR__.'/../../core.php';
 
+$modulo_import = Modules::get($id_module);
+
 switch (filter('op')) {
     case 'add':
         $id_import = filter('id_import');
@@ -29,7 +31,7 @@ switch (filter('op')) {
         $id_record = $import->id;
 
         Uploads::upload($_FILES['file'], [
-            'id_module' => $import->getModule()->id,
+            'id_module' => $id_module,
             'id_record' => $id_record,
         ]);
         break;
@@ -40,10 +42,9 @@ switch (filter('op')) {
         $import = Import::find($id_import);
         $import_manager = $import->class;
 
-        $modulo_collegato = $import->moduloCollegato;
         if (!empty($import_manager)) {
             // Generazione percorso
-            $file = $modulo_collegato->upload_directory.'/example-'.strtolower($modulo_collegato->title).'.csv';
+            $file = $modulo_import->upload_directory.'/example-'.strtolower($import->name).'.csv';
             $filepath = base_dir().'/'.$file;
 
             // Generazione del file

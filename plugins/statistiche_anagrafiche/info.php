@@ -23,6 +23,7 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Contratti\Contratto;
 use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
+use Modules\Interventi\Components\Sessione;
 use Modules\Interventi\Intervento;
 use Modules\Ordini\Ordine;
 use Modules\Preventivi\Preventivo;
@@ -55,20 +56,26 @@ $ordini_cliente = Ordine::whereBetween('data', [$start, $end])
     ->get();
 $totale_ordini_cliente = $ordini_cliente->sum('totale_imponibile');
 
-// Interventi
+// Interventi e Ore lavorate
 $interventi = [];
 // Clienti
 if ($anagrafica->isTipo('Cliente')) {
     $interventi = $dbo->fetchArray('SELECT in_interventi.id FROM in_interventi WHERE in_interventi.idanagrafica='.prepare($id_record).' AND data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end));
+    $sessioni = $dbo->fetchArray('SELECT in_interventi_tecnici.id FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi.id = in_interventi_tecnici.idintervento WHERE in_interventi.idanagrafica='.prepare($id_record).' AND in_interventi_tecnici.orario_inizio BETWEEN '.prepare($start).' AND '.prepare($end));
 }
 
 // Tecnici
 elseif ($anagrafica->isTipo('Tecnico')) {
     $interventi = $dbo->fetchArray('SELECT in_interventi.id FROM in_interventi INNER JOIN in_interventi_tecnici ON in_interventi.id = in_interventi_tecnici.idintervento WHERE in_interventi_tecnici.idtecnico='.prepare($id_record).' AND data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end));
+
+    $sessioni = $dbo->fetchArray('SELECT in_interventi_tecnici.id FROM in_interventi_tecnici WHERE in_interventi_tecnici.idtecnico='.prepare($id_record).' AND in_interventi_tecnici.orario_inizio BETWEEN '.prepare($start).' AND '.prepare($end));
 }
 
 $interventi = Intervento::whereIn('id', array_column($interventi, 'id'))->get();
 $totale_interventi = $interventi->sum('totale_imponibile');
+
+$sessioni = Sessione::whereIn('id', array_column($sessioni, 'id'))->get();
+$totale_ore_lavorate = $sessioni->sum('ore');
 
 // Ddt in uscita
 $ddt_uscita = DDT::whereBetween('data', [$start, $end])
@@ -212,5 +219,27 @@ echo '
             </div>
         </div>
 
+        <div class="row">
+            <div class="col-md-4">
+                <div class="info-box">
+                    <span class="info-box-icon bg-'.($sessioni->count() == 0 ? 'gray' : 'yellow').'"><i class="fa fa-wrench"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text pull-left">'.tr('Ore lavorate').'</span>';
+                        if ($anagrafica->isTipo('Cliente')){
+                            echo'
+                            '.($sessioni->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.Modules::get('Interventi')['id'].'&search_Ragione-sociale='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
+                        } else {
+                        echo '
+                            '.($sessioni->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.Modules::get('Interventi')['id'].'&search_Tecnici='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
+                        }
+                        echo'                     
+                        <br class="clearfix">
+                        <span class="info-box-number">
+                            <big>'.numberFormat($totale_ore_lavorate, 0).'</big>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>';

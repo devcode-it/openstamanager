@@ -429,8 +429,9 @@ GROUP BY an_anagrafiche.idanagrafica
 ORDER BY ragione_sociale ASC");
 
 $dataset = '';
+$where = implode(",",json_decode($_SESSION['superselect']['idtipiintervento'])) != '' ? 'in_interventi_tecnici.idtipointervento IN('.implode(",",json_decode($_SESSION['superselect']['idtipiintervento'])).')' : '1=1';
 foreach ($tecnici as $tecnico) {
-    $sessioni = $dbo->fetchArray('SELECT SUM(in_interventi_tecnici.ore) AS result, CONCAT(CAST(SUM(in_interventi_tecnici.ore) AS char(20)),\' ore\') AS ore_lavorate, YEAR(in_interventi_tecnici.orario_inizio) AS year, MONTH(in_interventi_tecnici.orario_inizio) AS month FROM in_interventi_tecnici  INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`idstatointervento` WHERE in_interventi_tecnici.idtecnico = '.prepare($tecnico['id']).' AND in_interventi_tecnici.orario_inizio BETWEEN '.prepare($start).' AND '.prepare($end).' AND `in_statiintervento`.`is_completato` = 1 GROUP BY YEAR(in_interventi_tecnici.orario_inizio), MONTH(in_interventi_tecnici.orario_inizio) ORDER BY YEAR(in_interventi_tecnici.orario_inizio) ASC, MONTH(in_interventi_tecnici.orario_inizio) ASC');
+    $sessioni = $dbo->fetchArray('SELECT SUM(in_interventi_tecnici.ore) AS result, CONCAT(CAST(SUM(in_interventi_tecnici.ore) AS char(20)),\' ore\') AS ore_lavorate, YEAR(in_interventi_tecnici.orario_inizio) AS year, MONTH(in_interventi_tecnici.orario_inizio) AS month FROM in_interventi_tecnici  INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`idstatointervento` WHERE in_interventi_tecnici.idtecnico = '.prepare($tecnico['id']).' AND in_interventi_tecnici.orario_inizio BETWEEN '.prepare($start).' AND '.prepare($end).' AND `in_statiintervento`.`is_completato` AND '.$where.' GROUP BY YEAR(in_interventi_tecnici.orario_inizio), MONTH(in_interventi_tecnici.orario_inizio) ORDER BY YEAR(in_interventi_tecnici.orario_inizio) ASC, MONTH(in_interventi_tecnici.orario_inizio) ASC');
 
     $sessioni = Stats::monthly($sessioni, $start, $end);
 
@@ -455,6 +456,12 @@ echo '
 <div class="box box-info">
     <div class="box-header with-border">
         <h3 class="box-title">'.tr('Ore di lavoro per tecnico').'</h3>
+
+        <div class="row">
+            <div class="col-md-3 pull-right">
+                {["type": "select", "multiple": "1", "label": "'.tr('Tipi attività').'", "name": "idtipiintervento[]", "ajax-source": "tipiintervento", "value": "'.implode(",",json_decode($_SESSION['superselect']['idtipiintervento'])).'", "placeholder": "Tutti" ]}
+            </div>
+        </div>
 
         <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse">
@@ -663,5 +670,11 @@ $(".shorten").shorten({
     moreText: "'.tr('Mostra tutto').'",
     lessText: "'.tr('Comprimi').'",
     showChars : 70
+});
+
+$("#idtipiintervento").change(function(){
+    let idtipi = JSON.stringify($(this).val());
+    session_set("superselect,idtipiintervento",idtipi,0);
+    location.reload();
 });
 </script>';

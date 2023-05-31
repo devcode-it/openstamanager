@@ -97,6 +97,7 @@ class LineChart extends Stat {
         var color = null;
         if (dataset_index != undefined) {
             color = chart.data.datasets[dataset_index].backgroundColor;
+            color = color.substr(0, 7);
 
             chart.data.datasets.splice(dataset_index, 1);
             chart.data.labels.splice(dataset_index, 1);

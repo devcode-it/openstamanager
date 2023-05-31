@@ -448,21 +448,25 @@ if (!function_exists('color_inverse')) {
      */
     function color_inverse($start_colour)
     {
-        $R1 = hexdec(substr($start_colour, 1, 2));
-        $G1 = hexdec(substr($start_colour, 3, 2));
-        $B1 = hexdec(substr($start_colour, 5, 2));
-        $R2 = 255;
-        $G2 = 255;
-        $B2 = 255;
-        $L1 = 0.2126 * pow($R1 / 255, 2.2) + 0.7152 * pow($G1 / 255, 2.2) + 0.0722 * pow($B1 / 255, 2.2);
-        $L2 = 0.2126 * pow($R2 / 255, 2.2) + 0.7152 * pow($G2 / 255, 2.2) + 0.0722 * pow($B2 / 255, 2.2);
-        if ($L1 > $L2) {
-            $lum = ($L1 + 0.05) / ($L2 + 0.05);
-        } else {
-            $lum = ($L2 + 0.05) / ($L1 + 0.05);
-        }
-        if ($lum >= 2.5) {
-            return '#fff';
+        if (preg_match('/^#[a-f0-9]{6}$/i', $start_colour)) { //hex color is valid
+            $R1 = hexdec(substr($start_colour, 1, 2));
+            $G1 = hexdec(substr($start_colour, 3, 2));
+            $B1 = hexdec(substr($start_colour, 5, 2));
+            $R2 = 255;
+            $G2 = 255;
+            $B2 = 255;
+            $L1 = 0.2126 * pow($R1 / 255, 2.2) + 0.7152 * pow($G1 / 255, 2.2) + 0.0722 * pow($B1 / 255, 2.2);
+            $L2 = 0.2126 * pow($R2 / 255, 2.2) + 0.7152 * pow($G2 / 255, 2.2) + 0.0722 * pow($B2 / 255, 2.2);
+            if ($L1 > $L2) {
+                $lum = ($L1 + 0.05) / ($L2 + 0.05);
+            } else {
+                $lum = ($L2 + 0.05) / ($L1 + 0.05);
+            }
+            if ($lum >= 2.5) {
+                return '#fff';
+            } else {
+                return '#000';
+            }
         } else {
             return '#000';
         }

@@ -72,16 +72,21 @@ class Controller extends BaseController
                  * @throws ReflectionException
                  */
                 static fn (string $provider) => (new ReflectionClass($provider))->isSubclassOf(ModuleServiceProvider::class))
-            ->map(static fn (string $provider) => app()->getProvider($provider))
-            ->mapWithKeys(static fn (?ServiceProvider $provider) => $provider instanceof ModuleServiceProvider ? [$provider::slug() => [
-                'name' => $provider::name(),
-                'description' => $provider::description(),
-                'slug' => $provider::slug(),
-                'author' => $provider::author(),
-                'version' => $provider::version(),
-                'url' => $provider::url(),
-                'modulePath' => $provider::modulePath(),
-                'namespace' => $provider::namespace(),
-            ]] : []);
+            ->map(static fn (string $provider): ?ServiceProvider => app()->getProvider($provider))
+            ->mapWithKeys(static function (?ServiceProvider $provider) {
+                if ($provider instanceof ModuleServiceProvider) {
+                    return [$provider->slug() => [
+                        'name' => $provider->name(),
+                        'description' => $provider->description(),
+                        'slug' => $provider->slug(),
+                        'author' => $provider->author(),
+                        'version' => $provider->version(),
+                        'url' => $provider->url(),
+                        'modulePath' => $provider::modulePath(),
+                        'namespace' => $provider::namespace(),
+                    ]];
+                }
+                return [];
+            });
     }
 }

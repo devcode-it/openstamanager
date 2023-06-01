@@ -2,42 +2,45 @@
 
 namespace App;
 
+use function dirname;
+
 use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
-use ReflectionClass;
-use function dirname;
+
 use function in_array;
+
+use ReflectionClass;
 
 abstract class ModuleServiceProvider extends ServiceProvider
 {
-    public static string $name = '';
+    protected string $name = '';
 
-    public static string $slug = '';
+    protected string $slug = '';
 
-    public static string $author = '';
+    protected string $author = '';
 
-    public static string $description = '';
+    protected string $description = '';
 
-    public static string $version = '';
+    protected string $version = '';
 
-    public static string $url = '';
+    protected string $url = '';
 
-    public static function name(): string
+    public function name(): string
     {
-        return static::$name;
+        return $this->name;
     }
 
-    public static function description(): string
+    public function description(): string
     {
-        return static::$description;
+        return $this->description;
     }
 
     /**
      * @psalm-suppress InvalidNullableReturnType
      */
-    public static function slug(): string
+    public function slug(): string
     {
-        $slug = static::$slug;
+        $slug = $this->slug;
         if (empty($slug)) {
             /**
              * @psalm-suppress UnresolvableInclude
@@ -46,10 +49,10 @@ abstract class ModuleServiceProvider extends ServiceProvider
             $slug = array_key_first(
                 Arr::where(
                     $cached_packages,
-                    static fn (array $package) => in_array(static::class, $package['providers'], true)
+                    fn (array $package) => in_array($this::class, $package['providers'], true)
                 )
             );
-            static::$slug = $slug;
+            $this->slug = $slug;
         }
 
         /**
@@ -58,26 +61,26 @@ abstract class ModuleServiceProvider extends ServiceProvider
         return $slug;
     }
 
-    public static function author(): string
+    public function author(): string
     {
-        $author = static::$author;
+        $author = $this->author;
         if (empty($author)) {
-            $slug = static::slug();
+            $slug = $this->slug();
             $author = explode('/', $slug)[0] ?? '';
-            static::$author = $author;
+            $this->author = $author;
         }
 
         return $author;
     }
 
-    public static function version(): string
+    public function version(): string
     {
-        return static::$version;
+        return $this->version;
     }
 
-    public static function url(): string
+    public function url(): string
     {
-        return static::$url;
+        return $this->url;
     }
 
     public static function modulePath(): string

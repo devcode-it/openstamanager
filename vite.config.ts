@@ -39,11 +39,12 @@ export default defineConfig(async () => {
     if (paths) {
       for (const [alias, path] of Object.entries(paths)) {
         if (alias !== '@osm/*') {
-          aliases[alias.replace('/*', '')] = resolve(`${module.modulePath}/${path[0]}`);
+          aliases[alias.replace('/*', '')] = resolve(`${module.modulePath}/${path[0].replace('/*', '')}`);
         }
       }
     }
   }
+  console.log('Found modules aliases: ', aliases);
 
   return {
     assetsInclude: '**/*.xml',

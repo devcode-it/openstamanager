@@ -20,7 +20,7 @@ const modules = installedPackages.packages.filter((packageInfo) => packageInfo.t
 
 // noinspection JSUnusedGlobalSymbols
 export default defineConfig(async () => {
-  const bootstrapFiles = await FastGlob('./vendor/*/*/resources/ts/bootstrap.{tsx,ts,jsx,js}');
+  const bootstrapFiles = await FastGlob('./vendor/*/*/resources/{js,ts}/bootstrap.{tsx,ts,jsx,js}');
 
   // Load module aliases from tsconfig.json
   const aliases: AliasOptions = {

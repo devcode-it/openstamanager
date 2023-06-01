@@ -48,8 +48,8 @@ export default class Drawer<A extends DrawerAttributes = DrawerAttributes> exten
 
   entries() {
     return collect<VnodeCollectionItem>({
-      dashboard: <DrawerEntry route="dashboard" icon={mdiViewDashboardOutline}>{__('Dashboard')}</DrawerEntry>,
-      users: <DrawerEntry route="users.index" icon={mdiAccountGroupOutline}>{__('Utenti')}</DrawerEntry>
+      dashboard: <DrawerEntry href={route('dashboard')} icon={mdiViewDashboardOutline}>{__('Dashboard')}</DrawerEntry>,
+      users: <DrawerEntry href={route('users.index')} icon={mdiAccountGroupOutline}>{__('Utenti')}</DrawerEntry>
     });
   }
 

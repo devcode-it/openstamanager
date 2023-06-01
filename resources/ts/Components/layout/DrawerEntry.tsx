@@ -14,7 +14,8 @@ import {ValueOf} from 'type-fest';
 
 type Icons = ValueOf<typeof MaterialIcons>;
 
-export interface DrawerEntryAttributes extends Attributes, ListItemLink {
+export interface DrawerEntryAttributes extends Attributes, Partial<ListItemLink> {
+  href: ListItemLink['href'];
   icon: Icons;
 }
 

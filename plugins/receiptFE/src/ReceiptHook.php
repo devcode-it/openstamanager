@@ -71,7 +71,8 @@ class ReceiptHook extends Manager
 
         // Caricamento elenco di ricevute imporate
         $completed = $completed_cache->content;
-        $count = count($todo);
+        $count = (is_array($todo) ? count($todo) : 0);
+        
 
         // Esecuzione di 10 imporazioni
         for ($i = 0; $i < 10 && $i < $count; ++$i) {
@@ -98,8 +99,8 @@ class ReceiptHook extends Manager
         $todo_cache = Cache::pool('Ricevute Elettroniche');
         $completed_cache = Cache::pool('Ricevute Elettroniche importate');
 
-        $completed_number = count($completed_cache->content);
-        $total_number = $completed_number + count($todo_cache->content);
+        $completed_number = (is_array($completed_cache->content) ? count($completed_cache->content) : 0 );
+        $total_number = $completed_number + (is_array($todo_cache->content) ? count($todo_cache->content) : 0);
 
         // Messaggio di importazione
         $message = tr('Sono state importate _NUM_ ricevute su _TOT_', [

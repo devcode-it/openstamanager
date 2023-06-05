@@ -31,6 +31,7 @@ import type {
 } from 'mithril';
 import Stream from 'mithril/stream';
 import {match} from 'ts-pattern';
+import {Match} from 'ts-pattern/dist/types/Match';
 import type {Class} from 'type-fest';
 
 type RecordDialogVnode<M extends Model<any, any>, D extends RecordDialog<M>> = Vnode<RecordDialogAttributes<M>, D>;
@@ -157,7 +158,8 @@ export default abstract class RecordsPage<
         onDeleteRecordButtonClick={this.onDeleteRecordButtonClicked.bind(this)}
         onDeleteSelectedRecordsButtonClick={this.onDeleteSelectedRecordsButtonClicked.bind(this)}
         readonly={this.readonlyRecords}
-        valueModifier={this.recordValueModifier.bind(this)}/>
+        valueModifier={(value, attribute: string, record: M) => this.cellValueModifier(value, attribute, record)
+          .otherwise(() => value)}/>
     );
   }
 
@@ -310,9 +312,8 @@ export default abstract class RecordsPage<
     return this.recordDialogsStates.get(key)!;
   }
 
-  protected recordValueModifier(value: any, attribute: string, record: M): unknown {
+  protected cellValueModifier(value: any, attribute: string, record: M): Match<string, unknown> {
     return match(attribute)
-      .with('createdAt', 'updatedAt', () => dayjs(value as Date).format('DD/MM/YYYY HH:mm'))
-      .otherwise((): any => value);
+      .with('createdAt', 'updatedAt', () => dayjs(value as Date).format('DD/MM/YYYY HH:mm'));
   }
 }

@@ -87,16 +87,7 @@ export default abstract class RecordsPage<
   async loadRecords() {
     this.isTableLoading = true;
 
-    let query = this.modelType.query<M>();
-
-    for (const [attribute, value] of this.filters) {
-      query = query.where(attribute, value);
-    }
-    for (const [attribute, value] of this.sort) {
-      query = query.orderBy(attribute, value);
-    }
-
-    const response = await query.get();
+    const response = await this.modelQuery().get();
     const data = response.getData();
 
     this.records.clear();
@@ -109,6 +100,19 @@ export default abstract class RecordsPage<
 
     this.isTableLoading = false;
     m.redraw();
+  }
+
+  modelQuery() {
+    let query = this.modelType.query<M>();
+
+    for (const [attribute, value] of this.filters) {
+      query = query.where(attribute, value);
+    }
+    for (const [attribute, value] of this.sort) {
+      query = query.orderBy(attribute, value);
+    }
+
+    return query;
   }
 
   contents(vnode: Vnode<PageAttributes, this>) {

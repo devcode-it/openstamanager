@@ -19,6 +19,18 @@
 
 include_once __DIR__.'/../../core.php';
 
+// Duplica ordine
+echo '
+<button type="button" class="btn btn-primary " onclick="duplicaOrdine()">
+    <i class="fa fa-copy"></i> '.tr('Duplica ordine').'
+</button>
+
+<script>
+function duplicaOrdine() {
+    openModal("'.tr('Duplica ordine').'", "'.$module->fileurl('modals/duplicazione.php').'?id_module='.$id_module.'&id_record='.$id_record.'");
+}
+</script>';
+
 $stati = $dbo->fetchArray('SELECT descrizione FROM `or_statiordine` WHERE `is_fatturabile` = 1');
 foreach ($stati as $stato) {
     $stati_importabili[] = $stato['descrizione'];

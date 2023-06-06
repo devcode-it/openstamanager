@@ -40,6 +40,7 @@ switch (filter('op')) {
             $documento = $scadenza->documento;
             $descrizione = $scadenza->descrizione;
             if (!empty($documento)) {
+                $descrizione = 'Fattura num. '.$documento->numero_esterno ?: $documento->numero;
                 // Individuazione altre scadenze del documento
                 $scadenze_documento = $documento->scadenze->sortBy('scadenza');
                 $pos = $scadenze_documento->search(function ($item, $key) use ($scadenza) {
@@ -47,12 +48,10 @@ switch (filter('op')) {
                 });
 
                 // Generazione della descrizione del pagamento
-                if ($scadenze_documento->count() > 1) {
-                    $descrizione .= tr(', pagamento _NUM_/_TOT_', [
-                        '_NUM_' => $pos + 1,
-                        '_TOT_' => $scadenze_documento->count(),
-                    ]);
-                }
+                $descrizione .= tr(' pag _NUM_/_TOT_', [
+                    '_NUM_' => $pos + 1,
+                    '_TOT_' => $scadenze_documento->count(),
+                ]);
             }
 
             // Controllo sulla banca aziendale collegata alla scadenza

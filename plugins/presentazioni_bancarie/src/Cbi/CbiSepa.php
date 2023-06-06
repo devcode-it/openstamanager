@@ -153,7 +153,7 @@ class CbiSepa
                     $el1->appendChild($el2);
                 $el->appendChild($el1);
                 $el1 = $domDoc->createElement("RmtInf", "");
-                    $el2 = $domDoc->createElement("Ustrd", $ricevuta->descrizione);
+                    $el2 = $domDoc->createElement("Ustrd", substr($ricevuta->descrizione,0,135));
                     $el1->appendChild($el2);
                 $el->appendChild($el1);
             $PmtInf->appendChild($el);

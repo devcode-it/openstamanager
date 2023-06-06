@@ -62,9 +62,39 @@ switch ($resource) {
         $ids = [];
         echo '<small>';
         // Ultime 5 vendite totali
-        $documenti = $dbo->fetchArray('SELECT iddocumento AS id, "Fattura" AS tipo, "Fatture di vendita" AS modulo, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM co_documenti WHERE id=iddocumento) AS n_documento, (SELECT numero_esterno FROM co_documenti WHERE id=iddocumento) AS n2_documento, (SELECT data FROM co_documenti WHERE id=iddocumento) AS data_documento FROM co_righe_documenti WHERE idarticolo='.prepare($idarticolo).' AND iddocumento IN(SELECT id FROM co_documenti WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="entrata"))
+        $documenti = $dbo->fetchArray('
+        SELECT
+            iddocumento AS id,
+            co_tipidocumento.descrizione AS tipo,
+            "Fatture di vendita" AS modulo,
+            ((subtotale - sconto) / qta * IF(co_tipidocumento.reversed, -1, 1)) AS costo_unitario,
+            co_documenti.numero AS n_documento,
+            co_documenti.numero_esterno AS n2_documento,
+            co_documenti.data AS data_documento
+        FROM
+            co_righe_documenti
+            INNER JOIN co_documenti ON co_documenti.id = co_righe_documenti.iddocumento
+            INNER JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento
+        WHERE
+            idarticolo = '.prepare($idarticolo).' AND dir = "entrata"
         UNION
-        SELECT idddt AS id, "Ddt" AS tipo, "Ddt di vendita" AS modulo, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM dt_ddt WHERE id=idddt) AS n_documento, (SELECT numero_esterno FROM dt_ddt WHERE id=idddt) AS n2_documento, (SELECT data FROM dt_ddt WHERE id=idddt) AS data_documento FROM dt_righe_ddt WHERE idarticolo='.prepare($idarticolo).' AND idddt IN(SELECT id FROM dt_ddt WHERE idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir="entrata")) ORDER BY id DESC LIMIT 0,'.$limit.'');
+        SELECT
+            idddt AS id,
+            dt_tipiddt.descrizione AS tipo,
+            "Ddt di vendita" AS modulo,
+            (subtotale - sconto) / qta AS costo_unitario,
+            dt_ddt.numero AS n_documento,
+            dt_ddt.numero_esterno AS n2_documento,
+            dt_ddt.data AS data_documento
+        FROM
+            dt_righe_ddt
+            INNER JOIN dt_ddt ON dt_ddt.id = dt_righe_ddt.idddt
+            INNER JOIN dt_tipiddt ON dt_tipiddt.id = dt_ddt.idtipoddt
+        WHERE
+            idarticolo = '.prepare($idarticolo).' AND dir = "entrata"
+        ORDER BY
+            id
+        DESC');
 
         if (sizeof($documenti) > 0) {
             echo "<table class='table table-striped table-bordered table-extra-condensed' >\n";
@@ -75,7 +105,7 @@ switch ($resource) {
                 ($documenti[$i]['n2_documento'] != '') ? $n_documento = $documenti[$i]['n2_documento'] : $n_documento = $documenti[$i]['n_documento'];
 
                 $link_id = Modules::get($documenti[$i]['modulo'])['id'];
-                echo "<tr><td class='first_cell text-left'><a href='".base_path().'/editor.php?id_module='.$link_id.'&id_record='.$documenti[$i]['id']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">".$documenti[$i]['tipo'].'. n. '.$n_documento.' del '.Translator::dateToLocale($documenti[$i]['data_documento'])." </a></td>\n";
+                echo "<tr><td class='first_cell text-left'><a href='".base_path().'/editor.php?id_module='.$link_id.'&id_record='.$documenti[$i]['id']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">".$documenti[$i]['tipo'].' n. '.$n_documento.' del '.Translator::dateToLocale($documenti[$i]['data_documento'])." </a></td>\n";
                 echo "<td class='table_cell text-right'>".moneyFormat($documenti[$i]['costo_unitario'])."</td></tr>\n";
                 $ids[] = '"'.$documenti[$i]['id'].'"';
             }
@@ -91,9 +121,39 @@ switch ($resource) {
         $ids = [];
         echo '<small>';
         // Ultimi 5 acquisti totali
-        $documenti = $dbo->fetchArray('SELECT iddocumento AS id, "Fattura" AS tipo, "Fatture di acquisto" AS modulo, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM co_documenti WHERE id=iddocumento) AS n_documento, (SELECT numero_esterno FROM co_documenti WHERE id=iddocumento) AS n2_documento, (SELECT data FROM co_documenti WHERE id=iddocumento) AS data_documento FROM co_righe_documenti WHERE idarticolo='.prepare($idarticolo).' AND iddocumento IN(SELECT id FROM co_documenti WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="uscita"))
+        $documenti = $dbo->fetchArray('
+        SELECT
+            iddocumento AS id,
+            co_tipidocumento.descrizione AS tipo,
+            "Fatture di acquisto" AS modulo,
+            ((subtotale - sconto) / qta * IF(co_tipidocumento.reversed, -1, 1)) AS costo_unitario,
+            co_documenti.numero AS n_documento,
+            co_documenti.numero_esterno AS n2_documento,
+            co_documenti.data AS data_documento
+        FROM
+            co_righe_documenti
+            INNER JOIN co_documenti ON co_documenti.id = co_righe_documenti.iddocumento
+            INNER JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento
+        WHERE
+            idarticolo = '.prepare($idarticolo).' AND dir = "uscita"
         UNION
-        SELECT idddt AS id, "Ddt" AS tipo, "Ddt di acquisto" AS modulo, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM dt_ddt WHERE id=idddt) AS n_documento, (SELECT numero_esterno FROM dt_ddt WHERE id=idddt) AS n2_documento, (SELECT data FROM dt_ddt WHERE id=idddt) AS data_documento FROM dt_righe_ddt WHERE idarticolo='.prepare($idarticolo).' AND idddt IN(SELECT id FROM dt_ddt WHERE idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir="uscita")) ORDER BY id DESC LIMIT 0,'.$limit.'');
+        SELECT
+            idddt AS id,
+            dt_tipiddt.descrizione AS tipo,
+            "Ddt di acquisto" AS modulo,
+            (subtotale - sconto) / qta AS costo_unitario,
+            dt_ddt.numero AS n_documento,
+            dt_ddt.numero_esterno AS n2_documento,
+            dt_ddt.data AS data_documento
+        FROM
+            dt_righe_ddt
+            INNER JOIN dt_ddt ON dt_ddt.id = dt_righe_ddt.idddt
+            INNER JOIN dt_tipiddt ON dt_tipiddt.id = dt_ddt.idtipoddt
+        WHERE
+            idarticolo = '.prepare($idarticolo).' AND dir = "uscita"
+        ORDER BY
+            id
+        DESC');
 
         if (sizeof($documenti) > 0) {
             echo "<table class='table table-striped table-bordered table-extra-condensed' >\n";
@@ -104,7 +164,7 @@ switch ($resource) {
                 ($documenti[$i]['n2_documento'] != '') ? $n_documento = $documenti[$i]['n2_documento'] : $n_documento = $documenti[$i]['n_documento'];
 
                 $link_id = Modules::get($documenti[$i]['modulo'])['id'];
-                echo "<tr><td class='first_cell text-left'><a href='".base_path().'/editor.php?id_module='.$link_id.'&id_record='.$documenti[$i]['id']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">".$documenti[$i]['tipo'].'. n. '.$n_documento.' del '.Translator::dateToLocale($documenti[$i]['data_documento'])." </a></td>\n";
+                echo "<tr><td class='first_cell text-left'><a href='".base_path().'/editor.php?id_module='.$link_id.'&id_record='.$documenti[$i]['id']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">".$documenti[$i]['tipo'].' n. '.$n_documento.' del '.Translator::dateToLocale($documenti[$i]['data_documento'])." </a></td>\n";
                 echo "<td class='table_cell text-right'>".moneyFormat($documenti[$i]['costo_unitario'])."</td></tr>\n";
                 $ids[] = '"'.$documenti[$i]['id'].'"';
             }

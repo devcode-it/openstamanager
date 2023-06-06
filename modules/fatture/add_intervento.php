@@ -121,7 +121,7 @@ $options['id_ritenuta_acconto_predefined'] = $ritenuta_acconto['id_ritenuta_acco
 echo App::internalLoad('conti.php', [], $options);
 
 // Leggo l'iva predefinita dall'anagrafica e se non c'è leggo quella predefinita generica
-$idiva = $fattura->anagrafica->idiva_vendite ?: setting('Iva predefinita');
+$id_iva = $fattura->anagrafica->idiva_vendite ?: setting('Iva predefinita');
 
 // Iva
 echo '

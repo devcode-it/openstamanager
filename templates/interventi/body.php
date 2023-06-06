@@ -363,7 +363,7 @@ echo '
             '.$firma.'<br>';
 
 if (empty($documento['firma_file'])) {
-    echo '      <i>('.tr('Timbro e firma leggibile').'.)</i>';
+    echo '      <i>('.tr('Timbro e firma leggibile').')</i>';
 } else {
     echo '      <i>'.$documento['firma_nome'].'</i>';
 }

@@ -757,4 +757,44 @@ switch (post('op')) {
         }
 
         break;
+
+    // Duplica ordine
+    case 'copy':
+
+        $new = $ordine->replicate();
+        $new->numero = Ordine::getNextNumero(post('data'), $ordine->tipo->dir, $ordine->id_segment);
+        $new->numero_esterno = Ordine::getNextNumeroSecondario(post('data'), $ordine->tipo->dir, $ordine->id_segment);
+        $new->idstatoordine = post('idstatoordine');
+        $new->data = post('data');
+        $new->save();
+
+        $id_record = $new->id;
+
+        if( !empty(post('copia_righe')) ){
+            $righe = $ordine->getRighe();
+            foreach ($righe as $riga) {
+                $new_riga = $riga->replicate();
+                $new_riga->setDocument($new);
+
+                $new_riga->qta_evasa = 0;
+                $new_riga->save();
+            }
+        }
+
+        //copia allegati
+        if (!empty(post('copia_allegati'))) {
+            $allegati = $ordine->uploads();
+            foreach ($allegati as $allegato) {
+                $allegato->copia([
+                    'id_module' => $new->getModule()->id,
+                    'id_record' => $new->id,
+                ]);
+            }
+        }
+
+        flash()->info(tr('Aggiunto ordine numero _NUM_!', [
+            '_NUM_' => $new->numero,
+        ]));
+
+        break;
 }

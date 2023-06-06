@@ -24,7 +24,9 @@ use Auth;
 use Carbon\Carbon;
 use Modules\Checklists\Checklist;
 use Modules\Checklists\ChecklistItem;
+use Modules\Checklists\Check;
 use Modules\Interventi\Intervento;
+use Models\User;
 
 class Checklists extends AppResource
 {
@@ -52,14 +54,18 @@ class Checklists extends AppResource
             INNER JOIN in_interventi ON zz_checks.id_record = in_interventi.id
             INNER JOIN in_interventi_tecnici ON in_interventi_tecnici.idintervento = in_interventi.id
             INNER JOIN zz_modules ON zz_checks.id_module = zz_modules.id
+            INNER JOIN zz_check_user ON zz_checks.id = zz_check_user.id_check
         WHERE
             zz_modules.name="Interventi"
+            AND
+            zz_check_user.id_utente = :id_tecnico
             AND
             in_interventi.id IN ('.implode(',', $interventi).')
             OR (orario_fine NOT BETWEEN :period_start AND :period_end)';
             $records = database()->fetchArray($query, [
                 ':period_end' => $end,
                 ':period_start' => $start,
+                ':id_tecnico' => $user->id
             ]);
             $da_interventi = array_column($records, 'id');
         }
@@ -86,14 +92,19 @@ class Checklists extends AppResource
             return [];
         }
 
+        $user = Auth::user();
+        $id_tecnico = $user->id_anagrafica;
+
         $id_interventi = array_keys($interventi);
         $query = 'SELECT zz_checks.id
         FROM zz_checks
             INNER JOIN in_interventi ON zz_checks.id_record = in_interventi.id
             INNER JOIN in_interventi_tecnici ON in_interventi_tecnici.idintervento = in_interventi.id
             INNER JOIN zz_modules ON zz_checks.id_module = zz_modules.id
+            INNER JOIN zz_check_user ON zz_checks.id = zz_check_user.id_check
         WHERE
             zz_modules.name="Interventi"
+            AND zz_check_user.id_utente = :id_tecnico
             AND in_interventi.id IN ('.implode(',', $id_interventi).')
             AND (orario_fine BETWEEN :period_start AND :period_end)';
 
@@ -104,6 +115,7 @@ class Checklists extends AppResource
         $records = database()->fetchArray($query, [
             ':period_start' => $start,
             ':period_end' => $end,
+            ':id_tecnico' => $user->id
         ]);
 
         return $this->mapModifiedRecords($records);
@@ -117,8 +129,9 @@ class Checklists extends AppResource
             zz_checks.checked_at,
             zz_checks.content,
             zz_checks.note,
-            zz_checks.id_parent,
-            zz_checks.checked_by
+            IF(zz_checks.id_parent IS NULL, 0, zz_checks.id_parent) AS id_parent,
+            zz_checks.checked_by,
+            zz_checks.order AS ordine
         FROM zz_checks
         WHERE zz_checks.id = ".prepare($id);
 
@@ -129,9 +142,16 @@ class Checklists extends AppResource
 
     public function updateRecord($data)
     {
-        $check = ChecklistItem::find($data['id']);
+        $check = Check::find($data['id']);
 
-        $this->aggiornaCheck($check, $data);
+        $check->checked_at = (!empty($data['checked_at']) ? $data['checked_at'] : NULL);
+        $check->content = $data['content'];
+        $check->note = $data['note'];
+        $user = User::where('idanagrafica', $data['checked_by'])->first();
+        if(!empty($user)){
+            $check->checked_by = $user->id;
+        }
+
         $check->save();
 
         return [];
@@ -140,24 +160,5 @@ class Checklists extends AppResource
     protected function getRisorsaInterventi()
     {
         return new Interventi();
-    }
-
-    /**
-     * Aggiorna i dati della check sulla base dei dati caricati dall'applicazione.
-     *
-     * @param $check
-     * @param $data
-     *
-     * @return array
-     */
-    protected function aggiornaCheck($check, $data)
-    {
-        // Campi di base
-        $check->checked_at = $data['checked_at'];
-        $check->content = $data['content'];
-        $check->note = $data['note'];
-        $check->checked_by = $data['checked_by'];
-
-        return [];
     }
 }

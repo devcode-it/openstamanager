@@ -120,11 +120,9 @@ export default abstract class RecordsPage<
       <>
         <h2>{this.title}</h2>
         {this.table()}
-        {this.recordDialogType && !this.readonlyRecords && (
-          <div className="sticky-bottom" style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
-            {this.fab().values().all()}
-          </div>
-        )}
+        <div className="sticky-bottom" style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
+          {this.fab().values().all()}
+        </div>
         <>
           {...this.recordDialogs().values<Children>().all()}
           {...this.deleteRecordDialogs().values<Children>().all()}
@@ -134,18 +132,23 @@ export default abstract class RecordsPage<
   }
 
   fab(): Collection<Vnode> {
-    return collect({
+    const fabs = collect<Vnode>({
       refresh: (
         <md-fab id="refresh-records" ariaLabel={__('Aggiorna')} onclick={this.onRefreshRecordsButtonClicked.bind(this)}>
           <MdIcon icon={mdiRefresh} slot="icon"/>
         </md-fab>
-      ),
-      add: (
+      )
+    });
+
+    if ((this.recordDialogType || this.recordPageRouteName) && !this.readonlyRecords) {
+      fabs.put(
+        'add',
         <md-fab id="add-record" ariaLabel={__('Aggiungi')} onclick={this.onAddNewRecordButtonClicked.bind(this)}>
           <MdIcon icon={mdiPlus} slot="icon"/>
         </md-fab>
-      )
-    });
+      );
+    }
+    return fabs;
   }
 
   table(): Children {

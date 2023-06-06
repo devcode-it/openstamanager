@@ -50,7 +50,11 @@ function completaTrasporto() {
         confirmButtonText: "'.tr('Completa').'",
     }).then(
         function() {
-            location.href = globals.rootdir + "/editor.php?id_module='.$id_module.'&id_segment=" + $("select[name=id_segment]").val() + "&id_record='.$id_record.'&op=completa_trasporto&backto=record-edit";
+            if ($("select[name=id_segment]").val() == null) {
+                swal( "'.tr('Attenzione').'", "'.tr('Devi prima selezionare un segmento').'...", "warning");
+            } else {
+                location.href = globals.rootdir + "/editor.php?id_module='.$id_module.'&id_segment=" + $("select[name=id_segment]").val() + "&id_record='.$id_record.'&op=completa_trasporto&backto=record-edit";
+            }
         },
         function() {},
         start_superselect(),

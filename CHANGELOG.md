@@ -4,7 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.4.46 (2023-05-12)](#2445-2023-06-01)
+- [2.4.46 (2023-06-01)](#2446-2023-06-01)
 - [2.4.45 (2023-05-12)](#2445-2023-05-12)
 - [2.4.44 (2023-04-21)](#2444-2023-04-21)
 - [2.4.43 (2023-03-31)](#2443-2023-03-31)
@@ -59,7 +59,6 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 
 
 ## 2.4.46 (2023-06-01)
-
 ### Aggiunto (Added)
 - Aggiunta codice destinatario per anagrafiche con nazione San Marino
 - Aggiunta stampa DDT in entrata

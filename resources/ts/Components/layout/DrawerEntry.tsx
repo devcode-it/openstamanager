@@ -29,7 +29,7 @@ export class DrawerEntry<A extends DrawerEntryAttributes = DrawerEntryAttributes
   }
 
   isRouteActive(href: string) {
-    return route(route().current()!) === href;
+    return route(route().current()!, route().params) === href;
   }
 
   navigateToRoute(event: Event) {

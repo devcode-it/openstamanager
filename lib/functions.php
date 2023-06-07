@@ -221,7 +221,7 @@ function get_client_ip()
  */
 function translateTemplate()
 {
-    $id_record = filter('id_record');
+    $id_record = filter('id_record') ?: get('id_record');
     $id_parent = filter('id_parent');
 
     $module = Modules::getCurrent();

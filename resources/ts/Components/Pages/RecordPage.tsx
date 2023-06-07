@@ -4,6 +4,7 @@ import {mdiChevronLeft} from '@mdi/js';
 import MdIcon from '@osm/Components/MdIcon';
 import Page, {PageAttributes} from '@osm/Components/Page';
 import Model from '@osm/Models/Model';
+import {Builder} from 'coloquent';
 import {
   Children,
   Vnode,
@@ -35,7 +36,7 @@ export default abstract class RecordPage<M extends Model<any, any>, A extends Re
 
   async loadRecord(recordId?: number | string) {
     if (recordId) {
-      const response = await this.recordType.find(recordId);
+      const response = await this.modelQuery().find(recordId);
       this.record = response.getData() || undefined;
     }
 
@@ -45,6 +46,10 @@ export default abstract class RecordPage<M extends Model<any, any>, A extends Re
       this.record = new this.recordType();
     }
     m.redraw();
+  }
+
+  modelQuery(): Builder<M> {
+    return this.recordType.query();
   }
 
   contents(vnode: Vnode<A>): Children {

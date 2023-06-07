@@ -3,7 +3,7 @@ import '@material/web/button/filled-button.js';
 import '@material/web/button/text-button.js';
 import '@material/web/checkbox/checkbox.js';
 import '@material/web/dialog/dialog.js';
-import '@osm/Components/m3/FilledTextField';
+import '@material/web/textfield/filled-text-field.js';
 
 import {Dialog} from '@material/web/dialog/lib/dialog';
 import {

@@ -1,6 +1,6 @@
-import {NavigationDrawerModal as MDNavigationDrawerModal} from '@material/web/navigationdrawer/lib/navigation-drawer-modal.js';
-import {styles} from '@material/web/navigationdrawer/lib/navigation-drawer-modal-styles.css.js';
-import {styles as sharedStyles} from '@material/web/navigationdrawer/lib/shared-styles.css.js';
+import {NavigationDrawerModal as MDNavigationDrawerModal} from '@material/web/labs/navigationdrawer/lib/navigation-drawer-modal.js';
+import {styles} from '@material/web/labs/navigationdrawer/lib/navigation-drawer-modal-styles.css.js';
+import {styles as sharedStyles} from '@material/web/labs/navigationdrawer/lib/shared-styles.css.js';
 import {css} from 'lit';
 import {customElement} from 'lit/decorators.js';
 

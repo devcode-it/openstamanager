@@ -1,4 +1,4 @@
-import '@osm/Components/m3/FilledTextField';
+import '@material/web/textfield/filled-text-field.js';
 
 import {
   mdiAccountOutline,

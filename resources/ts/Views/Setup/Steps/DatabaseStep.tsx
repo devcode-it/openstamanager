@@ -1,5 +1,5 @@
 import '@maicol07/material-web-additions/layout-grid/layout-grid.js';
-import '@osm/Components/m3/FilledTextField';
+import '@material/web/textfield/filled-text-field.js';
 
 import {
   mdiAccountOutline,

@@ -72,7 +72,8 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
             
 
         } elseif (in_array($documento->codice_stato_fe, $codici_invio)) {
-
+            $is_estera = false;
+            
             if (setting('Rimuovi avviso fatture estere')) {
                 $is_estera = $database->fetchOne('SELECT idanagrafica FROM an_anagrafiche INNER JOIN an_nazioni ON an_anagrafiche.id_nazione = an_nazioni.id WHERE an_nazioni.nome != "Italia" AND an_anagrafiche.idanagrafica = '.prepare($documento->idanagrafica));
             }

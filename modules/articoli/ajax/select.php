@@ -170,6 +170,8 @@ switch ($resource) {
             $search_fields[] = 'mg_articoli.descrizione LIKE '.prepare('%'.$search.'%');
             $search_fields[] = 'mg_articoli.codice LIKE '.prepare('%'.$search.'%');
             $search_fields[] = 'mg_articoli.barcode LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'categoria.nome LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'sottocategoria.nome LIKE '.prepare('%'.$search.'%');
 
             if ($usare_dettaglio_fornitore) {
                 $search_fields[] = 'mg_fornitore_articolo.descrizione LIKE '.prepare('%'.$search.'%');

@@ -31,7 +31,7 @@
   "require": {
     "php": ">=8.1",
     "ext-pdo": "*",
-    "binaryk/laravel-restify": "dev-fix-rules",
+    "binaryk/laravel-restify": "dev-8.x-fixes",
     "guzzlehttp/guzzle": "^7",
     "inertiajs/inertia-laravel": "^0",
     "jackiedo/dotenv-editor": "^2",

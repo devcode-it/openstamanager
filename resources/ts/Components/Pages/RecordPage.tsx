@@ -35,9 +35,13 @@ export default abstract class RecordPage<M extends Model<any, any>, A extends Re
   }
 
   async loadRecord(recordId?: number | string) {
-    if (recordId) {
-      const response = await this.modelQuery().find(recordId);
-      this.record = response.getData() || undefined;
+    if (recordId && recordId !== 'new' && !this.record) {
+      try {
+        const response = await this.modelQuery().find(recordId);
+        this.record = response.getData() || undefined;
+      } catch {
+        // Do nothing
+      }
     }
 
     if (!this.record) {

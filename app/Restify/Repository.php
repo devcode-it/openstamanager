@@ -2,6 +2,7 @@
 
 namespace App\Restify;
 
+use Openstamanager\Anagrafiche\Api\AnagraficaRepository;
 use function assert;
 
 use Binaryk\LaravelRestify\Fields\BelongsTo;
@@ -117,12 +118,16 @@ abstract class Repository extends RestifyRepository
         $response = parent::show($request, $repositoryId);
         $data = $response->getData(true);
 
-        $included = Arr::pluck($data['data']['relationships'], 'included');
+        $rel = Arr::get($data, 'data.relationships');
 
-        /**
-         * @return array|RestifyRepository|Collection|null
-         */
-        $data['included'] = array_filter($included);
+        if ($rel) {
+            $included = Arr::pluck($rel, 'included');
+
+            /**
+             * @return array|RestifyRepository|Collection|null
+             */
+            $data['included'] = array_filter($included);
+        }
 
         return $response->setData($data);
     }

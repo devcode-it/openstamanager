@@ -113,7 +113,7 @@ export async function showSnackbar(
 export function isFormValid(form: HTMLFormElement): boolean {
   let isValid = true;
   for (const element of form.elements) {
-    if (!(element as HTMLInputElement).reportValidity()) {
+    if (typeof (element as HTMLInputElement).reportValidity === 'function' && !(element as HTMLInputElement).reportValidity()) {
       isValid = false;
     }
   }

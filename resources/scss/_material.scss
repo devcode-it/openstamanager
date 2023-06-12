@@ -32,6 +32,7 @@ md-navigation-drawer, md-navigation-drawer-modal {
     > md-list {
         display: flex;
         justify-content: center;
+        min-width: 300px;
 
         md-list-item-link {
             --md-list-item-list-item-container-shape: 100px;

@@ -218,7 +218,11 @@ export default abstract class RecordsPage<
   }
 
   onAddNewRecordButtonClicked() {
-    this.openNewRecordDialog();
+    if (this.recordDialogType) {
+      this.openNewRecordDialog();
+    } else if (this.recordPageRouteName) {
+      router.visit(route(this.recordPageRouteName, {id: 'new'}));
+    }
   }
 
   onRefreshRecordsButtonClicked() {

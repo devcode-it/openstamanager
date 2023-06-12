@@ -229,7 +229,7 @@ echo '
 </div>
 <br>';
 
-$solo_promemoria_assegnati = setting('Mostra promemoria attività ai soli Tecnici assegnati');
+$solo_promemoria_assegnati = setting('Visualizza solo promemoria assegnati');
 $id_tecnico = null;
 if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
     $id_tecnico = $user['idanagrafica'];

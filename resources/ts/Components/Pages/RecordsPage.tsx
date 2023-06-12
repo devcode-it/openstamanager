@@ -165,7 +165,7 @@ export default abstract class RecordsPage<
         onDeleteRecordButtonClick={this.onDeleteRecordButtonClicked.bind(this)}
         onDeleteSelectedRecordsButtonClick={this.onDeleteSelectedRecordsButtonClicked.bind(this)}
         readonly={this.readonlyRecords}
-        valueModifier={(value, attribute: string, record: M) => this.cellValueModifier(value, attribute, record)
+        valueModifier={(value: unknown, attribute: string, record: M) => this.cellValueModifier(value, attribute, record)
           .otherwise(() => value)}/>
     );
   }
@@ -323,7 +323,7 @@ export default abstract class RecordsPage<
     return this.recordDialogsStates.get(key)!;
   }
 
-  protected cellValueModifier(value: any, attribute: string, record: M): Match<string, unknown> {
+  protected cellValueModifier(value: unknown, attribute: string, record: M): Match<string, unknown> {
     return match(attribute)
       .with('createdAt', 'updatedAt', () => dayjs(value as Date).format('DD/MM/YYYY HH:mm'));
   }

@@ -31,7 +31,7 @@
   "require": {
     "php": ">=8.1",
     "ext-pdo": "*",
-    "binaryk/laravel-restify": "^8",
+    "binaryk/laravel-restify": "dev-fix-rules",
     "guzzlehttp/guzzle": "^7",
     "inertiajs/inertia-laravel": "^0",
     "jackiedo/dotenv-editor": "^2",
@@ -93,6 +93,12 @@
     "sort-packages": true,
     "allow-plugins": {
       "wikimedia/composer-merge-plugin": true
+    }
+  },
+  "repositories": {
+    "restify": {
+      "type": "github",
+      "url": "https://github.com/maicol07/laravel-restify.git"
     }
   },
   "extra": {

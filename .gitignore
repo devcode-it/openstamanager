@@ -19,6 +19,8 @@ _ide_helper_models.php
 .idea/watcherTasks.xml
 .idea/webServers.xml
 storage/dotenv-editor/backups
+pnpm-workspace.yaml
+pnpm-lock.yaml
 
 # Created by https://www.toptal.com/developers/gitignore/api/laravel,composer,phpstorm,phpstorm+iml
 # Edit at https://www.toptal.com/developers/gitignore?templates=laravel,composer,phpstorm,phpstorm+iml

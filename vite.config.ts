@@ -2,7 +2,10 @@
 import {resolve} from 'node:path';
 
 import FastGlob from 'fast-glob';
-import {readJSON} from 'fs-extra';
+import {
+  readJSON,
+  realpath
+} from 'fs-extra';
 import Inertia from 'inertia-plugin/vite';
 import laravel from 'laravel-vite-plugin';
 import type {TsConfigJson} from 'type-fest';
@@ -20,7 +23,7 @@ const modules = installedPackages.packages.filter((packageInfo) => packageInfo.t
 
 // noinspection JSUnusedGlobalSymbols
 export default defineConfig(async () => {
-  const bootstrapFiles = await FastGlob('./vendor/*/*/resources/{js,ts}/bootstrap.{tsx,ts,jsx,js}');
+  const bootstrapFiles = [];
 
   // Load module aliases from tsconfig.json
   const aliases: AliasOptions = {
@@ -28,23 +31,29 @@ export default defineConfig(async () => {
   };
 
   const mods = modules.map(async (module) => {
-    const modulePath = `./vendor/composer/${module['install-path']!}`;
+    const modulePath = resolve(`./vendor/composer/${module['install-path']!}`);
     return {
+      name: module.name,
       modulePath,
-      tsconfig: await readJSON(`${modulePath}/tsconfig.json`, 'utf8') as TsConfigJson
+      tsconfig: await readJSON(`${modulePath}/tsconfig.json`, 'utf8') as TsConfigJson,
     };
   });
   for await (const module of mods) {
+    // Add bootstrap files (realpath from symlink)
+    bootstrapFiles.push(...(await Promise.all(FastGlob.sync(`${module.modulePath}/resources/{js,ts}/bootstrap.{tsx,ts,jsx,js}`, {absolute: true}).map((file) => realpath(file)))));
     const paths = module.tsconfig.compilerOptions?.paths;
-    if (paths) {
+    if (paths && Object.keys(paths).length > 0) {
       for (const [alias, path] of Object.entries(paths)) {
         if (alias !== '@osm/*') {
-          aliases[alias.replace('/*', '')] = resolve(`${module.modulePath}/${path[0].replace('/*', '')}`);
+          // eslint-disable-next-line no-await-in-loop
+          aliases[alias.replace('/*', '')] = await realpath(`${module.modulePath}/${path[0].replace('/*', '')}`);
         }
       }
     }
   }
-  console.log('Found modules aliases: ', aliases);
+
+  console.log('Found bootstrap files:', bootstrapFiles);
+  console.log('Found modules aliases:', aliases);
 
   return {
     assetsInclude: '**/*.xml',

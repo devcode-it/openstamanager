@@ -369,7 +369,7 @@ switch (filter('op')) {
     case 'carica_interventi':
         $mese = filter('mese');
 
-        $solo_promemoria_assegnati = setting('Visualizza solo promemoria assegnati');
+        $solo_promemoria_assegnati = setting('Mostra promemoria attività ai soli Tecnici assegnati');
         $id_tecnico = null;
         if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
             $id_tecnico = $user['idanagrafica'];

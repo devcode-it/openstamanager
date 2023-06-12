@@ -38,7 +38,6 @@ $settings = [
     "Causale ritenuta d'acconto" => false,
     'Valuta' => true,
     'Utilizza prezzi di vendita comprensivi di IVA' => false,
-    'Soft quota' => false,
 ];
 
 if (!empty(setting("Ritenuta d'acconto predefinita"))) {

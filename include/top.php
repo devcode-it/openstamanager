@@ -439,6 +439,10 @@ if (Auth::check()) {
                                 <i class="fa fa-info"></i>
                             </a></li>
 
+                            <li class="nav-button"><a href="'.base_path().'/shortcuts.php" class="tip nav-button" title="'.tr('Scorciatoie').'">
+                                <i class="fa fa-lightbulb-o"></i>
+                            </a></li>
+
                             <li class="nav-button"><a href="'.base_path().'/index.php?op=logout" onclick="sessionStorage.clear()" class="bg-red tip" title="'.tr('Esci').'">
                                 <i class="fa fa-power-off"></i>
                             </a></li>

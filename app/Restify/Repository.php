@@ -21,6 +21,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
+use function in_array;
 use function is_array;
 
 use Nette\Utils\Json;
@@ -105,7 +106,7 @@ abstract class Repository extends RestifyRepository
                         'id' => $repository->getId($request),
                         'type' => $repository->getType($request),
                     ]),
-                    'included' => $repository
+                    'included' => $repository,
                 ];
             }
 
@@ -119,9 +120,27 @@ abstract class Repository extends RestifyRepository
         $data = $response->getData(true);
 
         $included = Arr::collapse(Arr::pluck($data['data'], 'relationships.*.included'));
-
         $included = array_filter($included);
-        $data['included'] = Arr::collapse($included);
+
+        // Merge all included
+        foreach ($included as $key => $value) {
+            if (is_array($value[0] ?? null)) {
+                unset($included[$key]);
+                $included = [...$included, ...$value];
+            }
+        }
+
+        // Remove duplicates with same id (nested array)
+        $ids = [];
+        foreach ($included as $key => $value) {
+            if (in_array($value['id'], $ids[$value['type']] ?? [], true)) {
+                unset($included[$key]);
+            } else {
+                $ids[$value['type']][] = $value['id'];
+            }
+        }
+
+        $data['included'] = $included;
 
         // Remove included from relationships (we already have them in included)
         foreach ($data['data'] as &$item) {

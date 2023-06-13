@@ -2,7 +2,6 @@
 
 namespace App\Restify;
 
-use Openstamanager\Anagrafiche\Api\AnagraficaRepository;
 use function assert;
 
 use Binaryk\LaravelRestify\Fields\BelongsTo;
@@ -89,13 +88,29 @@ abstract class Repository extends RestifyRepository
      */
     public function resolveRelationships($request): array
     {
-        return Arr::whereNotNull(Arr::map(parent::resolveRelationships($request), static fn (?self $repository) => $repository ? [
-            'data' => [
-                'id' => $repository->getId($request),
-                'type' => $repository->getType($request),
-            ],
-            'included' => $repository,
-        ] : null));
+        return Arr::whereNotNull(Arr::map(parent::resolveRelationships($request), static function (self|Collection|null $repository) use ($request) {
+            if ($repository instanceof self) {
+                return [
+                    'data' => [
+                        'id' => $repository->getId($request),
+                        'type' => $repository->getType($request),
+                    ],
+                    'included' => $repository,
+                ];
+            }
+
+            if ($repository instanceof Collection && $repository->isNotEmpty()) {
+                return [
+                    'data' => $repository->map(static fn (self $repository) => [
+                        'id' => $repository->getId($request),
+                        'type' => $repository->getType($request),
+                    ]),
+                    'included' => $repository
+                ];
+            }
+
+            return null;
+        }));
     }
 
     public function index(RestifyRequest $request): JsonResponse
@@ -103,12 +118,19 @@ abstract class Repository extends RestifyRepository
         $response = parent::index($request);
         $data = $response->getData(true);
 
-        $included = Arr::flatten(Arr::pluck($data['data'], 'relationships.*.included'), 1);
+        $included = Arr::collapse(Arr::pluck($data['data'], 'relationships.*.included'));
 
-        /**
-         * @return array|RestifyRepository|Collection|null
-         */
-        $data['included'] = array_filter($included);
+        $included = array_filter($included);
+        $data['included'] = Arr::collapse($included);
+
+        // Remove included from relationships (we already have them in included)
+        foreach ($data['data'] as &$item) {
+            if (isset($item['relationships'])) {
+                foreach ($item['relationships'] as &$relationship) {
+                    Arr::forget($relationship, 'included');
+                }
+            }
+        }
 
         return $response->setData($data);
     }
@@ -127,6 +149,11 @@ abstract class Repository extends RestifyRepository
              * @return array|RestifyRepository|Collection|null
              */
             $data['included'] = array_filter($included);
+        }
+
+        // Remove included from relationships (we already have them in included)
+        foreach ($data['data']['relationships'] as &$relationship) {
+            Arr::forget($relationship, 'included');
         }
 
         return $response->setData($data);

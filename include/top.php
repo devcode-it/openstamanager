@@ -435,12 +435,12 @@ if (Auth::check()) {
                         }
 
                         echo '
-                            <li class="nav-button"><a href="'.base_path().'/info.php" class="tip nav-button" title="'.tr('Informazioni').'">
-                                <i class="fa fa-info"></i>
+                            <li class="nav-button"><a data-href="'.base_path().'/shortcuts.php" data-title="'.tr('Scorciatorie da tastiera').'" class="tip nav-button" title="'.tr('Scorciatoie').'">
+                                <i class="fa fa-keyboard-o"></i>
                             </a></li>
 
-                            <li class="nav-button"><a href="'.base_path().'/shortcuts.php" class="tip nav-button" title="'.tr('Scorciatoie').'">
-                                <i class="fa fa-lightbulb-o"></i>
+                            <li class="nav-button"><a href="'.base_path().'/info.php" class="tip nav-button" title="'.tr('Informazioni').'">
+                                <i class="fa fa-info"></i>
                             </a></li>
 
                             <li class="nav-button"><a href="'.base_path().'/index.php?op=logout" onclick="sessionStorage.clear()" class="bg-red tip" title="'.tr('Esci').'">

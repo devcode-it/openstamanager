@@ -19,59 +19,20 @@
 
 include_once __DIR__.'/core.php';
 
-$pageTitle = tr('Scorciatoie da tastiera');
-
-$paths = App::getPaths();
-
-include_once App::filepath('include|custom|', 'top.php');
-
 echo '
-<div class="box">
-    <div class="box-header">
-        <div class="box-title">
-            <i class="fa fa-lightbulb-o"></i> '.tr('Scorciatoie da tastiera').'
-        </div>
-    </div>
+<p>'.tr('Scorciatoie utilizzabili dalla schermata di modifica record').':</p>
+<ul>
+    <li><kbd>F1</kbd> '.tr('nuova finestra per l\'inserimento di un nuovo record').'.</li>
+    <li><kbd>F2</kbd> '.tr('salvataggio del record corrente').'.</li>
+    <li><kbd>F3</kbd> '.tr('generazione della stampa predefinita del record corrente, se presente').'.</li>
+    <li><kbd>F4</kbd> '.tr('apertura finestra predefinita di invio email, se presente').'.</li>
+</ul><br>';
 
-    <div class="box-body">
-        <p>Scorciatoie raggiungibili dall\'interno dei singoli record:</p>
-        <ul>
-            <li><b>F1:</b> Viene aperto il modal di inserimento di un nuovo record corrispondendo al modulo in cui ci si trova.</li>
-            <li><b>F2:</b> Viene effettuato un salvataggio del record corrente.</li>
-            <li><b>F3:</b> Viene lanciata la stampa impostata come predefinita del record corrente, ove presente.</li>
-            <li><b>F4:</b> Viene aperto il modal di invio email, corrispondente al templato impostato come predefinito, ove presente.</li>
-        </ul>
-    </div>
-
-    <div class="box-body">
-        <p>Scorciatoie raggiungibili in fase di aggiunta movimenti:</p>
-        <ul>
-            <li><b>F7:</b> Sposta il focus sul campo Barcode</li>
-            <li><b>F8:</b> Viene selezionata come causale "Carico"</li>
-            <li><b>F9:</b> Viene selezionata come causale "Scarico"</li>
-            <li><b>F10:</b> Viene selezionata come causale "Spostamento"</li>
-        </ul>
-	</div>
-</div>
-<div class="box">
-    <div class="box-header">
-        <div class="box-title">
-            <i class="fa fa-info"></i> '.tr('Verifica impostazione').'
-        </div>
-    </div>
-    <div class="box-body">
-        <div class="box-title">
-            <div class="col-md-12">';
-                if (setting('Attiva scorciatoie da tastiera')) {
-                    echo '<p>Le scorciatoie da tastiera sono attive.</p>';
-                } else {
-                    echo '<p>Scorciatoie da tastiera non attivate, verificare in '.Modules::link('Impostazioni', null, tr('Strumenti/Impostazioni/Generali/<b>Abilita scorciatoie da tastiera</b>')).'.</p>';
-                }
-            echo'
-            </div>
-        </div>
-    </div>
-</div>
-';
-
-include_once App::filepath('include|custom|', 'bottom.php');
+if (setting('Attiva scorciatoie da tastiera')) {
+    echo '<p class="text-muted"><i class="fa fa-check text-success"></i> '.tr('Le scorciatoie da tastiera sono attive').'.</p>';
+} else {
+    echo '<p class="text-muted"><i class="fa fa-warning text-orange"></i> '.tr('Scorciatoie da tastiera non attivate. Attivale in _LINK_IMPOSTAZIONI_',
+        [
+            '_LINK_IMPOSTAZIONI_' => Modules::link('Impostazioni', null, tr('Strumenti » Impostazioni » Generali » <b>Abilita scorciatoie da tastiera</b>'))
+        ]).'.</p>';
+}

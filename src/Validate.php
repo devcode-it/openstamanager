@@ -98,7 +98,51 @@ class Validate
         } */
 
         // Controllo attraverso apilayer
-        if (Services::verificaRisorsaAttiva('Verifica Partita IVA')) {
+        $access_key = setting('apilayer API key for VAT number');
+        if (!empty($access_key)) {
+            if (!extension_loaded('curl')) {
+                App::flash()->warning(tr('Estensione cURL non installata'));
+
+                return true;
+            }
+
+            $ch = curl_init();
+
+            $qs = '&vat_number='.urlencode(strtoupper($vat_number));
+
+            $url = "http://apilayer.net/api/validate?access_key=$access_key".$qs;
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_HEADER, 0);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+            $data = json_decode(curl_exec($ch));
+            curl_close($ch);
+
+            /*se la riposta è null imposto la relativa proprietà dell'oggetto a 0*/
+            if ($data->valid == null) {
+                $data->valid = 0;
+            }
+
+            $fields = [];
+            // Ragione sociale
+            $fields['ragione_sociale'] = $data->company_name;
+
+            // Indirizzo
+            $address = $data->company_address;
+            $info = explode(PHP_EOL, $address);
+            $fields['indirizzo'] = $info[0];
+
+            $info = explode(' ', $info[1]);
+
+            $fields['cap'] = $info[0];
+            $fields['provincia'] = end($info);
+
+            $citta = array_slice($info, 1, -1);
+            $fields['citta'] = implode(' ', $citta);
+
+            $result['fields'] = $fields;
+
+        } else if (Services::verificaRisorsaAttiva('Verifica Partita IVA')) {
             $response = Services::request('post', 'check_iva', [
                 'partita_iva' => $vat_number,
             ]);
@@ -151,7 +195,60 @@ class Validate
         }
 
         // Controllo attraverso apilayer
-        if (Services::verificaRisorsaAttiva('Verifica Email')) {
+        $access_key = setting('apilayer API key for Email');
+        $smtp = 0;
+        if (!empty($access_key)) {
+            if (!extension_loaded('curl')) {
+                App::flash()->warning(tr('Estensione cURL non installata'));
+
+                return true;
+            }
+
+            $qs = '&email='.urlencode($email);
+            $qs .= "&smtp=$smtp";
+            $qs .= '&format=1';
+            $qs .= '&resource=check_email';
+
+            $url = "https://services.osmcloud.it/api/?token=$access_key".$qs;
+
+            $curl_options = [
+                CURLOPT_URL => $url,
+                CURLOPT_HEADER => 0,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_SSL_VERIFYPEER => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_ENCODING => 'gzip,deflate',
+            ];
+
+            $ch = curl_init();
+            curl_setopt_array($ch, $curl_options);
+            $output = curl_exec($ch);
+            curl_close($ch);
+
+            $data = json_decode($output, false);
+
+            /*se la riposta è null verficando il formato, il record mx o il server smtp imposto la relativa proprietà dell'oggetto a 0*/
+            if ($data->format_valid == null) {
+                $data->format_valid = 0;
+            }
+
+            if ($data->mx_found == null && $smtp) {
+                $data->mx_found = 0;
+            }
+
+            if ($data->smtp_check == null && $smtp) {
+                $data->smtp_check = 0;
+            }
+
+            $data->smtp = $smtp;
+
+            $data->json_last_error = json_last_error();
+            $data->json_last_error_msg = json_last_error_msg();
+
+            return empty($data->format_valid) ? false : $data;
+
+        } else if (Services::verificaRisorsaAttiva('Verifica Email')) {
             $response = Services::request('post', 'check_email', [
                 'email' => $email,
             ]);

@@ -253,7 +253,7 @@ if (!empty($interventi)) {
 
 // Bilancio del preventivo
 $budget = $preventivo->totale_imponibile;
-$diff = sum($budget, -$totale);
+$diff = sum($budget, -$totale) - $preventivo->provvigione;
 
 echo '
 <div class="well text-center">
@@ -287,7 +287,7 @@ if ($diff > 0) {
             ksort($tipologie);
             foreach ($tipologie as $key => $tipologia){
                 $margine = $tipologia['ricavo'] - $tipologia['costo'];
-                $margine_prc = (int)(1 - ($tipologia['costo'] / $tipologia['ricavo'])) * 100;
+                $margine_prc = ($tipologia['ricavo'] && $tipologia['costo']) ? (int)(1 - ($tipologia['costo'] / $tipologia['ricavo'])) * 100 : 100;
                 $ricarico_prc = ($tipologia['ricavo'] && $tipologia['costo']) ? (int)((($tipologia['ricavo'] / $tipologia['costo']) - 1) * 100) : 100;
                 echo '
                 <tr>
@@ -317,7 +317,7 @@ if ($diff > 0) {
             ksort($tecnici);
             foreach ($tecnici as $key => $tecnico){
                 $margine = $tecnico['ricavo'] - $tecnico['costo'];
-                $margine_prc = (int)(1 - ($tecnico['costo'] / $tecnico['ricavo'])) * 100;
+                $margine_prc = ($tecnico['ricavo'] && $tecnico['costo']) ? (int)(1 - ($tecnico['costo'] / $tecnico['ricavo'])) * 100 : 100;
                 $ricarico_prc = ($tecnico['ricavo'] && $tecnico['costo']) ? (int)((($tecnico['ricavo'] / $tecnico['costo']) - 1) * 100) : 100;
                 echo '
                 <tr>
@@ -349,7 +349,7 @@ if ($diff > 0) {
             ksort($stati_intervento);
             foreach ($stati_intervento as $key => $stato){
                 $margine = $stato['ricavo'] - $stato['costo'];
-                $margine_prc = (int)(1 - ($stato['costo'] / $stato['ricavo'])) * 100;
+                $margine_prc = ($stato['ricavo'] && $stato['costo']) ? (int)(1 - ($stato['costo'] / $stato['ricavo'])) * 100 : 100;
                 $ricarico_prc = ($stato['ricavo'] && $stato['costo']) ? (int)((($stato['ricavo'] / $stato['costo']) - 1) * 100) : 100;
                 echo '
                 <tr>
@@ -380,7 +380,7 @@ if ($diff > 0) {
                 foreach ($materiali_array1 as $materiali_array2){
                     foreach ($materiali_array2 as $materiale){
                         $margine = $materiale['ricavo'] - $materiale['costo'];
-                        $margine_prc = (int)(1 - ($materiale['costo'] / $materiale['ricavo'])) * 100;
+                        $margine_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int)(1 - ($materiale['costo'] / $materiale['ricavo'])) * 100 : 100;
                         $ricarico_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int)((($materiale['ricavo'] / $materiale['costo']) - 1) * 100) : 100;
                 echo '
                 <tr>

@@ -254,7 +254,7 @@ if (!empty($interventi)) {
 
 // Bilancio del preventivo
 $budget = $ordine->totale_imponibile;
-$diff = sum($budget, -$totale);
+$diff = sum($budget, -$totale) - $ordine->provvigione;
 
 echo '
 <div class="well text-center">

@@ -21,7 +21,7 @@ include_once __DIR__.'/../riepilogo_interventi/bottom.php';
 
 $budget = get_imponibile_contratto($id_record);
 $somma_totale_imponibile = get_totale_interventi_contratto($id_record);
-$rapporto = floatval($budget) - floatval($somma_totale_imponibile);
+$rapporto = floatval($budget) - floatval($somma_totale_imponibile) - $documento->provvigione;
 
 $rs = $dbo->fetchArray("SELECT SUM(qta) AS totale_ore FROM `co_righe_contratti` WHERE um='ore' AND idcontratto = ".prepare($id_record));
 $totale_ore = $rs[0]['totale_ore'];

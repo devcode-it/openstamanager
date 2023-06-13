@@ -99,7 +99,7 @@ class Interventi extends AppResource
         // Informazioni sull'utente
         $id_tecnico = Auth::user()->id_anagrafica;
         
-        if (setting('Mostra promemoria attività ai soli Tecnici assegnati') == 1) {
+        if (setting('Visualizza solo promemoria assegnati') == 1) {
 
             $query = '
             SELECT

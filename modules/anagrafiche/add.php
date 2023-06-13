@@ -17,7 +17,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\Anagrafiche\Nazione;
+
 include_once __DIR__.'/../../core.php';
+
+$id_nazione_italia = Nazione::where('nome', 'Italia')->first()->id;
 
 if (get('tipoanagrafica') != '') {
     $rs = $dbo->fetchArray('SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='.prepare(get('tipoanagrafica')));
@@ -62,7 +66,7 @@ echo '
 	    <div class="box-body">
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "text", "label": "'.tr('Partita IVA').'", "maxlength": 16, "name": "piva", "class": "text-center alphanumeric-mask", "validation": "partita_iva"]}
+					{[ "type": "text", "label": "'.tr('Partita IVA').'", "maxlength": 16, "name": "piva", "id": "piva_add", "class": "text-center alphanumeric-mask", "validation": "partita_iva"]}
 				</div>
 
 				<div class="col-md-4">
@@ -95,7 +99,7 @@ echo '
 			<div class="row">
 
 				<div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Nazione').'", "name": "id_nazione", "id": "id_nazione_add", "values": "query=SELECT id AS id, CONCAT_WS(\' - \', iso2, nome) AS descrizione FROM an_nazioni ORDER BY CASE WHEN iso2=\'IT\' THEN -1 ELSE iso2 END" ]}
+                    {[ "type": "select", "label": "'.tr('Nazione').'", "name": "id_nazione", "id": "id_nazione_add", "values": "query=SELECT id AS id, CONCAT_WS(\' - \', iso2, nome) AS descrizione, iso2 FROM an_nazioni ORDER BY CASE WHEN iso2=\'IT\' THEN -1 ELSE iso2 END", "value": "'.$id_nazione_italia.'" ]}
                 </div>
 
 				<div class="col-md-4">
@@ -167,10 +171,19 @@ echo '
     });
 
     id_nazione.change(function() {
-		if ((id_nazione.getData().descrizione === 'IT - Italia') || (id_nazione.getData().descrizione === 'SM - San Marino')) {
-			input("codice_destinatario").enable();
-		}else{
-			input("codice_destinatario").disable();
+		if (id_nazione.get() !== null) {
+			if ((id_nazione.getData().iso2 === 'IT') || (id_nazione.getData().iso2 === 'SM')) {
+				input("codice_destinatario").enable();
+			}else{
+				input("codice_destinatario").disable();
+			}
+
+			// Aggiunta nazione come parametro aggiuntivo per la validazione partita iva
+			$("#piva_add").data("additional", $(this).selectData().iso2);
 		}
+	});
+
+	$(document).ready( function(){
+		id_nazione.trigger('change');
 	});
 </script>

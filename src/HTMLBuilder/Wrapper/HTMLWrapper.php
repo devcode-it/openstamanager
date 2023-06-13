@@ -143,6 +143,7 @@ class HTMLWrapper implements WrapperInterface
                     name: "'.$name.'",
                     value: value,
                     op: "validate",
+                    additional_param: input.data("additional")
                 },
                 success: function(data) {
                     data = JSON.parse(data);

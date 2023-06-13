@@ -92,6 +92,10 @@ switch ($name) {
 
         $partita_iva = !empty($anagrafica) && is_numeric($value) ? $anagrafica->nazione->iso2.$value : $value;
 
+        if (post('additional_param')) {
+            $partita_iva = post('additional_param').$partita_iva;
+        }
+
         $result = $disponibile;
         $check = Validate::isValidVatNumber($partita_iva);
         if (empty($check['valid-format'])) {

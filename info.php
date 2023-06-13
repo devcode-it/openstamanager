@@ -120,30 +120,42 @@ if (file_exists(base_dir().'/assistenza.php')) {
                         <p>'.tr('Con OpenSTAManager siamo presenti su').':</p>
                         <div class="well">
                             <div class="row">
-                                <div class="col-xs-3 text-center">
+                                <div class="col-xs-2 text-center">
                                     <a href="https://github.com/devcode-it/openstamanager" target="_blank">
                                         <i class="fa fa-2x fa-github"></i><br>
                                         '.tr('GitHub').'
                                     </a>
                                 </div>
-                                <div class="col-xs-3 text-center">
+                                <div class="col-xs-2 text-center">
                                     <a href="https://forum.openstamanager.com/" target="_blank">
                                         <i class="fa fa-2x fa-edit"></i><br>
                                         '.tr('Forum').'
                                     </a>
                                 </div>
-                                <div class="col-xs-3 text-center">
-                                    <a href="https://github.com/devcode-it/openstamanager/graphs/contributors" target="_blank">
-                                        <i class="fa fa-2x fa-code"></i><br>
-                                        '.tr('Contributori').'
+                                <div class="col-xs-2 text-center">
+                                    <a href="https://mastodon.uno/@openstamanager" target="_blank">
+                                        <i class="fa fa-2x fa-maxcdn"></i><br>
+                                        '.tr('Mastodon').'
                                     </a>
                                 </div>
-                                <div class="col-xs-3 text-center">
+                                <div class="col-xs-2 text-center">
                                     <a href="https://www.facebook.com/openstamanager" target="_blank">
                                         <i class="fa fa-2x fa-facebook-square"></i><br>
                                         '.tr('Facebook').'
                                     </a>
                                 </div>
+                                <div class="col-xs-2 text-center">
+                                    <a href="https://t.me/openstamanager_official" target="_blank">
+                                        <i class="fa fa-2x fa-telegram"></i><br>
+                                        '.tr('Telegram').'
+                                    </a>
+                                </div>
+                                <div class="col-xs-2 text-center">
+                                <a href="https://www.twitter.com/openstamanager" target="_blank">
+                                    <i class="fa fa-2x fa-twitter"></i><br>
+                                    '.tr('Twitter').'
+                                </a>
+                            </div>
                             </div>
                         </div>
 

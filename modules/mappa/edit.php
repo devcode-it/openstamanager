@@ -88,7 +88,7 @@ include_once __DIR__.'/../../core.php';
             gestureHandling: true
         });
 
-        L.tileLayer("<?php echo setting("Tile layer OpenStreetMap"); ?>", {
+        L.tileLayer("<?php echo setting("Tile server OpenStreetMap"); ?>", {
             maxZoom: 17,
             attribution: "© OpenStreetMap"
         }).addTo(map); 

@@ -120,6 +120,8 @@ const JS = gulp.parallel(() => {
         'datatables.net-buttons-bs/js/buttons.bootstrap.js',
         'smartwizard/dist/js/jquery.smartWizard.min.js',
         'bootstrap-maxlength/dist/bootstrap-maxlength.js',
+        'leaflet/dist/leaflet.js',
+        'leaflet-gesture-handling/dist/leaflet-gesture-handling.min.js',
     ];
 
     for (const i in vendor) {
@@ -178,6 +180,8 @@ const CSS = gulp.parallel(() => {
         'select2-bootstrap-theme/dist/select2-bootstrap.css',
         'smartwizard/dist/css/smart_wizard.min.css',
         'smartwizard/dist/css/smart_wizard_theme_arrows.min.css',
+        'leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css',
+        'leaflet/dist/leaflet.css',
     ];
 
     for (const i in vendor) {
@@ -243,6 +247,15 @@ function srcImages() {
     ])
         .pipe(gulp.dest(config.production + '/' + config.paths.images));
 }
+
+function leaflet() {
+    return gulp.src([
+        config.nodeDirectory + '/leaflet/dist/images/*.{jpg,png,jpeg}',
+    ])
+        .pipe(flatten())
+        .pipe(gulp.dest(config.production + '/' + config.paths.images + '/leaflet'));
+}
+
 
 
 // Elaborazione dei fonts
@@ -516,7 +529,7 @@ function clean() {
 }
 
 // Operazioni di default per la generazione degli assets
-const bower = gulp.series(clean, gulp.parallel(JS, CSS, images, fonts, phpDebugBar, ckeditor, colorpicker, i18n, pdfjs, hotkeys, chartjs, password_strength, csrf));
+const bower = gulp.series(clean, gulp.parallel(JS, CSS, images, fonts, phpDebugBar, ckeditor, colorpicker, i18n, pdfjs, hotkeys, chartjs, password_strength, csrf, leaflet));
 
 // Debug su CSS e JS
 exports.srcJS = srcJS;

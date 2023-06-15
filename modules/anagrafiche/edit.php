@@ -245,8 +245,6 @@ $sede_cliente = $anagrafica->sedeLegale;
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 $sede_azienda = $anagrafica_azienda->sedeLegale;
 
-$google = setting('Google Maps API key');
-
 echo '
             <div class="col-md-4">
                 <div class="panel panel-primary">
@@ -257,13 +255,7 @@ echo '
 
 $map_load_message = tr('Clicca per visualizzare');
 
-if (empty($google)) {
-    echo '
-                        <div class="alert alert-info">
-                            '.Modules::link('Impostazioni', null, tr('Per abilitare la visualizzazione delle anagrafiche nella mappa, inserire la Google Maps API Key nella scheda Impostazioni'), true, null, true, null, '&search=Google Maps API key').'.
-                        </div>';
-                        
-} elseif (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($sede_cliente->lng))) {
+if (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($sede_cliente->lng))) {
     echo '
                         <div id="map-edit" style="height: 200px;width: 100%;display: flex;align-items: center;justify-content: center;" onclick="caricaMappa()">
                             <p class="clickable badge">'.$map_load_message.'</p>
@@ -294,10 +286,10 @@ if (empty($google)) {
                             '.((!empty($sede_cliente->lat) && !empty($sede_azienda->lat)) ? tr('(GPS)'): '' ).'
                         </a>';
 
-    // Ricerca diretta su Google Maps
+    // Ricerca diretta su Mappa
     echo '
-                        <a class="btn btn-info btn-block" onclick="cercaGoogleMaps()">
-                            <i class="fa fa-map-marker"></i> '.tr('Cerca su Google Maps').'
+                        <a class="btn btn-info btn-block" onclick="cercaOpenStreetMap()">
+                            <i class="fa fa-map-marker"></i> '.tr('Cerca su Mappa').'
                             '.((!empty($sede_cliente->lat)) ? tr(' (GPS)'): '' ).'
                         </a>';
 
@@ -312,15 +304,19 @@ echo '
                 openModal("'.tr('Modifica posizione').'", "'.$module->fileurl('modals/posizione.php').'?id_module='.$id_module.'&id_record='.$id_record.'");
             }
 
-            function cercaGoogleMaps() {
+            function cercaOpenStreetMap() {
                 const indirizzo = getIndirizzoAnagrafica();
-                window.open("https://maps.google.com/maps/search/" + indirizzo);
+                if (indirizzo[0] && indirizzo[1]) {
+                    window.open("https://www.openstreetmap.org/?mlat=" + indirizzo[0] + "&mlon=" + indirizzo[1] + "#map=12/" + indirizzo[0] + "/" + indirizzo[1]);
+                } else {
+                    window.open("https://www.openstreetmap.org/search?query=" + indirizzo[2]);
+                }
             }
 
             function calcolaPercorso() {
                 const indirizzo_partenza = getIndirizzoAzienda();
                 const indirizzo_destinazione = getIndirizzoAnagrafica();
-                window.open("https://www.google.com/maps/dir/?api=1&origin=" + indirizzo_partenza + "&destination=" + indirizzo_destinazione);
+                window.open("https://www.openstreetmap.org/directions?engine=fossgis_osrm_car&route=" + indirizzo_partenza + ";" + indirizzo_destinazione[0] + "," + indirizzo_destinazione[1]);
             }
 
             function getIndirizzoAzienda() {
@@ -329,9 +325,6 @@ echo '
 
                 const lat = parseFloat("'.$sede_azienda->lat.'");
                 const lng = parseFloat("'.$sede_azienda->lng.'");
-
-                const indirizzo_default = encodeURI(indirizzo) + "," + encodeURI(citta);
-                if (!lat || !lng) return indirizzo_default;
 
                 return lat + "," + lng;
             }
@@ -344,9 +337,8 @@ echo '
                 const lng = parseFloat("'.$sede_cliente->lng.'");
 
                 const indirizzo_default = encodeURI(indirizzo) + "," + encodeURI(citta);
-                if (!lat || !lng) return indirizzo_default;
 
-                return lat + "," + lng;
+                return [lat, lng, indirizzo_default];
             }
 
             function caricaMappa() {
@@ -355,32 +347,32 @@ echo '
                     return;
                 }
 
-                $.getScript("//maps.googleapis.com/maps/api/js?libraries=places&key='.$google.'", function() {
-                    const map_element = map_div[0];
-                    const lat = parseFloat("'.$sede_cliente->lat.'");
-                    const lng = parseFloat("'.$sede_cliente->lng.'");
+                const lat = parseFloat("'.$sede_cliente->lat.'");
+                const lng = parseFloat("'.$sede_cliente->lng.'");
 
-                    if (!lat || !lng) return;
-                    const position = new google.maps.LatLng(lat, lng);
+                var map = L.map("map-edit", {
+                    center: [lat, lng],
+                    zoom: 10,
+                    gestureHandling: true
+                });
 
-                    // Create a Google Maps native view under the map_canvas div.
-                    const map = new google.maps.Map(map_element, {
-                        zoom: 14,
-                        scrollwheel: false,
-                        mapTypeControl: true,
-                        mapTypeId: "roadmap",
-                        mapTypeControlOptions: {
-                            style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
-                            mapTypeIds: ["roadmap", "terrain"],
-                        }
-                    });
+                var icon = new L.Icon({
+                    iconUrl: globals.rootdir + "/assets/dist/img/marker-icon.png",
+                    shadowUrl:globals.rootdir + "/assets/dist/img/leaflet/marker-shadow.png",
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                });
 
-                    map.setCenter(position);
-                    const marker = new google.maps.Marker({
-                        position: position,
-                        map: map,
-                    });
-               });
+                L.tileLayer("'.setting("Tile layer OpenStreetMap").'", {
+                    maxZoom: 17,
+                    attribution: "© OpenStreetMap"
+                }).addTo(map); 
+              
+                var marker = L.marker([lat, lng], {
+                    icon: icon
+                }).addTo(map);
             }
 
             function risolviConto(tipo){

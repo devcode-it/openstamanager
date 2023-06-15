@@ -20,8 +20,6 @@
 include_once __DIR__.'/../../../core.php';
 include_once __DIR__.'/../init.php';
 
-$google = setting('Google Maps API key');
-
 echo '
 <form action="" method="post" id="form-posizione">
     <input type="hidden" name="backto" value="record-edit">
@@ -29,15 +27,19 @@ echo '
 
     <div class="row">
         <div class="col-md-4" id="geocomplete">
-            {[ "type": "text", "label": "'.tr('Indirizzo Google').'", "name": "gaddress", "value": "'.$record['gaddress'].'", "extra": "data-geo=\'formatted_address\'" ]}
+            {[ "type": "text", "label": "'.tr('Indirizzo').'", "name": "gaddress", "value": "'.$record['gaddress'].'", "extra": "data-geo=\'formatted_address\'" ]}
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
             {[ "type": "text", "label": "'.tr('Latitudine').'", "name": "lat", "value": "'.$record['lat'].'", "extra": "data-geo=\'lat\'", "class": "text-right" ]}
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
             {[ "type": "text", "label": "'.tr('Longitudine').'", "name": "lng", "value": "'.$record['lng'].'", "extra": "data-geo=\'lng\'", "class": "text-right" ]}
+        </div>
+
+        <div class="col-md-2">
+            <br><button type="button" class="btn btn-lg btn-default pull-right" onclick="initGeocomplete();"><i class="fa fa-search"></i> '.tr('Cerca').'</button>
         </div>
     </div>
 
@@ -61,24 +63,60 @@ echo '
 <script>$(document).ready(init)</script>
 
 <script>
-if(window.google){
-    initGeocomplete();
-} else {
-    $.getScript("//maps.googleapis.com/maps/api/js?libraries=places&key='.$google.'", function() {
-        initGeocomplete();
+$(document).ready(function(){
+    if (input("lat").get() && input("lng").get()) {
+        setTimeout(function () {
+            caricaMappa();
+        }, 1000);
+    }
+});
+
+function initGeocomplete() {
+    $.ajax({
+        url: "https://nominatim.openstreetmap.org/search.php?q=" + encodeURI(input("gaddress").get()) + "&format=jsonv2",
+        type : "GET",
+        dataType: "JSON",
+        success: function(data){
+            input("lat").set(data[0].lat);
+            input("lng").set(data[0].lon);
+            input("gaddress").set(data[0].display_name);
+            caricaMappa();
+        }
     });
 }
 
-function initGeocomplete() {
-    $("#geocomplete input").geocomplete({
-        map: $("#map").length ? "#map" : false,
-        location: $("#gaddress").val() ? $("#gaddress").val() : [$("#lat").val(), $("#lng").val()],
-        details: ".details",
-        detailsAttribute: "data-geo"
-    }).bind("geocode:result", function (event, result) {
-        $("#lat").val(result.geometry.location.lat());
-        $("#lng").val(result.geometry.location.lng());
+function caricaMappa() {
+    const lat = parseFloat(input("lat").get());
+    const lng = parseFloat(input("lng").get());
+
+    var container = L.DomUtil.get("map"); 
+    if(container != null){ 
+        container._leaflet_id = null; 
+    }
+
+    var map = L.map("map", {
+        center: [lat, lng],
+        zoom: 10,
+        gestureHandling: true
     });
+    
+    var icon = new L.Icon({
+        iconUrl: globals.rootdir + "/assets/dist/img/marker-icon.png",
+        shadowUrl:globals.rootdir + "/assets/dist/img/leaflet/marker-shadow.png",
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    });
+
+    L.tileLayer("'.setting("Tile layer OpenStreetMap").'", {
+        maxZoom: 17,
+        attribution: "© OpenStreetMap"
+    }).addTo(map); 
+    
+    var marker = L.marker([lat, lng], {
+        icon: icon
+    }).addTo(map);
 }
 
 // Ricaricamento della pagina alla chiusura

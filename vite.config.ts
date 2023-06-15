@@ -45,8 +45,14 @@ export default defineConfig(async () => {
     if (paths && Object.keys(paths).length > 0) {
       for (const [alias, path] of Object.entries(paths)) {
         if (alias !== '@osm/*') {
+          let p = path[0].replace('/*', '');
+          if (p.startsWith('./vendor') || p.startsWith('vendor')) {
+            p = resolve(`./${p}`);
+          } else {
+            p = resolve(`${module.modulePath}/${p}`);
+          }
           // eslint-disable-next-line no-await-in-loop
-          aliases[alias.replace('/*', '')] = await realpath(`${module.modulePath}/${path[0].replace('/*', '')}`);
+          aliases[alias.replace('/*', '')] = await realpath(p);
         }
       }
     }

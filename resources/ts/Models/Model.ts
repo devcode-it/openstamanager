@@ -26,7 +26,7 @@ export default abstract class Model<A extends ModelAttributes, R extends ModelRe
   protected static jsonApiBaseUrl = '/api/restify';
   protected static httpClient = new RequestHttpClient();
 
-  static dates = {
+  static dates: Record<string, string> = {
     createdAt: 'YYYY-MM-DDTHH:mm:ss.ssssssZ',
     updatedAt: 'YYYY-MM-DDTHH:mm:ss.ssssssZ'
   };
@@ -60,6 +60,11 @@ export default abstract class Model<A extends ModelAttributes, R extends ModelRe
 
   getAttribute<AN extends keyof A = keyof A>(attributeName: AN) {
     return super.getAttribute(attributeName as string) as ValueOf<A, AN>;
+  }
+
+  isDateAttribute(attributeName: string) {
+    // @ts-ignore
+    return super.isDateAttribute(attributeName) && this.attributes.get(attributeName) !== null;
   }
 
   getAttributes() {

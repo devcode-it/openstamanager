@@ -108,10 +108,8 @@ echo '
 		<div class="col-md-12">
 			{[ "type": "textarea", "label": "'.tr('Note').'", "name": "note", "value": "$note$" ]}
 		</div>
-	</div>';
+	</div>
 
-if (!empty($google)) {
-    echo '
 	<div class="row">
 		<div class="col-md-6" id="geocomplete">
 			{[ "type": "text", "label": "'.tr('Indirizzo Google').'", "name": "gaddress", "value": "$gaddress$", "extra": "data-geo=\'formatted_address\'" ]}
@@ -125,31 +123,24 @@ if (!empty($google)) {
 			{[ "type": "text", "label": "'.tr('Longitudine').'", "name": "lng", "id": "lng_", "value": "$lng$", "extra": "data-geo=\'lng\'", "class": "text-right" ]}
 		</div>';
 
-    // Vedi su google maps
-    if (!empty($record['indirizzo']) || (empty($record['citta']))) {
-        echo '
-			<div  class="btn-group col-md-2"  >
-				<label>&nbsp;</label><br>
-				<a class="btn btn-info" title="'.tr('Mostra la sede su Google Maps').'" onclick="window.open(\'https://maps.google.com/maps/search/\'+encodeURI( $(\'#indirizzo_\').val() )+\', \'+encodeURI( $(\'#citta_\').val() ) );">&nbsp;<i class="fa fa-map-marker">&nbsp;</i></a>
-			';
+if (!empty($record['indirizzo']) || (empty($record['citta']))) {
+	echo '
+		<div  class="btn-group col-md-2"  >
+			<label>&nbsp;</label><br>
+			<a class="btn btn-info" title="'.tr('Mostra la sede su Openstreetmap').'" onclick="window.open(\'https://maps.google.com/maps/search/\'+encodeURI( $(\'#indirizzo_\').val() )+\', \'+encodeURI( $(\'#citta_\').val() ) );">&nbsp;<i class="fa fa-map-marker">&nbsp;</i></a>
+		';
 
-        echo '
-				<a title="'.tr('Calcola percoso da sede legale a questa sede').'" class="btn btn-primary btn-secondary" onclick="window.open(\'https://maps.google.com/maps/dir/\'+encodeURI( $(\'#indirizzo_\').val() )+\', \'+encodeURI( $(\'#citta_\').val() )+\'/\'+encodeURI( $(\'#indirizzo\').val() )+\',\'+encodeURI( $(\'#citta\').val() )+\',8z\');"><i class="fa fa-car"></i></a>
-			</div>';
-    }
+	echo '
+			<a title="'.tr('Calcola percoso da sede legale a questa sede').'" class="btn btn-primary btn-secondary" onclick="window.open(\'https://maps.google.com/maps/dir/\'+encodeURI( $(\'#indirizzo_\').val() )+\', \'+encodeURI( $(\'#citta_\').val() )+\'/\'+encodeURI( $(\'#indirizzo\').val() )+\',\'+encodeURI( $(\'#citta\').val() )+\',8z\');"><i class="fa fa-car"></i></a>
+		</div>';
+}
 
-    echo '
-    </div>';
+echo '
+</div>';
 
-    if (!empty($record['gaddress']) || (!empty($record['lat']) && !empty($record['lng']))) {
-        echo '
-    <div id="map" style="height:400px; width:100%"></div><br>';
-    }
-} else {
-    echo '
-    <div class="alert alert-info">
-        '.Modules::link('Impostazioni', null, tr('Per abilitare la visualizzazione delle anagrafiche nella mappa, inserire la Google Maps API Key nella scheda Impostazioni'), true, null, true, null, '&search=Google Maps API key').'.
-    </div>';
+if (!empty($record['gaddress']) || (!empty($record['lat']) && !empty($record['lng']))) {
+	echo '
+<div id="map" style="height:400px; width:100%"></div><br>';
 }
 
 // Permetto eliminazione tipo sede solo se non è utilizzata da nessun'altra parte nel gestionale

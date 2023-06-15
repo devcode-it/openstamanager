@@ -23,10 +23,6 @@ include_once __DIR__.'/../../core.php';
 
 <link rel="stylesheet" href="<?=$rootdir?>/modules/mappa/css/app.css">
 
-<?php
-if(!empty(setting('Google Maps API key'))){
-?>
-
 <!-- Mappa -->
 <div id="mappa"></div>
 
@@ -48,7 +44,7 @@ if(!empty(setting('Google Maps API key'))){
 
         <div class="row">
             <div class="col-md-12">
-                {[ "type": "select", "name": "idanagrafica", "id": "idanagrafica", "required": 1, "ajax-source": "clienti_fornitori" ]}
+                {[ "type": "select", "name": "idanagrafica", "id": "idanagrafica", "required": 1, "ajax-source": "clienti" ]}
             </div>
         </div>
 
@@ -82,19 +78,21 @@ if(!empty(setting('Google Maps API key'))){
 <script>
     var ROOTDIR = '<?=$rootdir?>';
 
-    function calcolaPercorso(indirizzo) {
-        window.open("https://www.google.com/maps/dir/?api=1&destination=" + indirizzo);
+    function caricaMappa() {
+        const lat = "41.706";
+        const lng = "13.228";
+
+        map = L.map("mappa", {
+            center: [lat, lng],
+            zoom: 6,
+            gestureHandling: true
+        });
+
+        L.tileLayer("<?php echo setting("Tile layer OpenStreetMap"); ?>", {
+            maxZoom: 17,
+            attribution: "© OpenStreetMap"
+        }).addTo(map); 
     }
 </script>
 
 <script type="text/javascript" src="<?=$rootdir?>/modules/mappa/js/app.js"></script>
-<script src="https://maps.googleapis.com/maps/api/js?callback=initialize&key=<?=setting('Google Maps API key')?>&libraries=&v=weekly" async></script>
-
-<?php
-}else{
-    echo '
-    <div class="alert alert-info">
-        '.Modules::link('Impostazioni', null, tr('Per abilitare la visualizzazione della mappa, inserire la Google Maps API Key nella scheda Impostazioni'), true, null, true, null, '&search=Google Maps API key').'.
-    </div>';
-}
-?>

@@ -8,7 +8,7 @@
     height:700px;
     position:fixed;
     top:100px;
-    
+    z-index: 10000;
 }
 
 .open-menu{
@@ -101,4 +101,8 @@ a:active, a:hover, a:focus {
     outline: 0;
     text-decoration: none;
     outline: 0 !important;
+}
+
+.select2-container {
+    z-index: 10000;
 }

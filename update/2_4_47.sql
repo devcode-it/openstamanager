@@ -11,3 +11,8 @@ UPDATE `zz_settings` SET `help` = "Se abilitato viene effettuato un backup compl
 
 UPDATE `zz_settings` SET `editable` = 1 WHERE `zz_settings`.`nome` = 'Soft quota';
 UPDATE `zz_settings` SET `help` = "Valore espresso in Giga superato il quale viene visualizzato un avviso di spazio in esaurimento." WHERE `zz_settings`.`nome` = 'Soft quota';
+
+-- Rimozione google maps
+DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Google Maps API key';
+
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `order`, `help`) VALUES (NULL, 'Tile layer OpenStreetMap', 'https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png', 'string', '1', 'Generali', NULL, NULL, '') 

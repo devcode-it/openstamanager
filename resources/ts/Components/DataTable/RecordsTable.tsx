@@ -239,31 +239,12 @@ export default class RecordsTable<M extends Model<any, any>, A extends RecordsTa
 
   protected getModelValue(record: M, attribute: string, vnode: Vnode<A>): unknown {
     // Check if is a relation
-    let value: unknown = this.getModelRelationValue(record, attribute);
-
-    if (!value) {
-      value = record.getAttribute(attribute);
-    }
+    let value: unknown = record.getAttribute(attribute);
     if (attribute === 'id') {
-      value = record.getId()!;
+      value = record.getId();
     }
 
-    let fallback = value;
-    if (value instanceof ToOneRelation || value instanceof ToManyRelation) {
-      fallback = value.getReferringObject().getApiId();
-    }
-
-    return vnode.attrs.valueModifier?.(value, attribute, record) ?? fallback;
-  }
-
-  protected getModelRelationValue(record: M, attribute: string) {
-    const relation = Reflect.get(record, attribute) as unknown;
-    if (relation && typeof relation === 'function') {
-      const relationship = relation() as unknown;
-      if (relationship instanceof ToOneRelation || relationship instanceof ToManyRelation) {
-        return relationship;
-      }
-    }
+    return vnode.attrs.valueModifier?.(value, attribute, record) ?? value;
   }
 
   private static isRecordTableColumnAttributes(column: Children | RecordsTableColumnAttributes): column is RecordsTableColumnAttributes {

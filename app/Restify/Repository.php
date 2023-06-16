@@ -171,7 +171,7 @@ abstract class Repository extends RestifyRepository
         }
 
         // Remove included from relationships (we already have them in included)
-        foreach ($data['data']['relationships'] as &$relationship) {
+        foreach (($data['data']['relationships'] ?? []) as &$relationship) {
             Arr::forget($relationship, 'included');
         }
 
@@ -275,27 +275,5 @@ abstract class Repository extends RestifyRepository
             ...$attributes,
             ...$relationships,
         ]);
-    }
-
-    /**
-     * Relations mapper
-     */
-    private function mapRelations(RestifyRepository|Collection|array|null $repository, RestifyRequest $request, array &$included): array|Collection|null
-    {
-        if ($repository instanceof Collection) {
-            return $repository->map(fn (self $repository) => $this->mapRelations($repository, $request, $included));
-        }
-
-        if ($repository instanceof self) {
-            $included[] = $repository;
-            $this->mapRelations($repository->resolveRelationships($request), $request, $included);
-
-            return [
-                'type' => $repository->getType($request),
-                'id' => $repository->getId($request),
-            ];
-        }
-
-        return $repository;
     }
 }

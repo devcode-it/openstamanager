@@ -254,7 +254,7 @@ echo '
                     shadowSize: [41, 41]
                 });
 
-                L.tileLayer("https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png", {
+                L.tileLayer("'.setting("Tile server OpenStreetMap").'", {
                     maxZoom: 17,
                     attribution: "© OpenStreetMap"
                 }).addTo(map); 

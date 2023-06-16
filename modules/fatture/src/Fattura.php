@@ -358,12 +358,12 @@ class Fattura extends Document
      */
     public function getRitenutaAccontoAttribute()
     {
-        return $this->calcola('ritenuta_acconto');
+        return $this->getRigheContabili()->sum('ritenuta_acconto');
     }
 
     public function getTotaleRitenutaContributiAttribute()
     {
-        return $this->calcola('ritenuta_contributi');
+        return $this->getRigheContabili()->sum('ritenuta_contributi');
     }
 
     /**

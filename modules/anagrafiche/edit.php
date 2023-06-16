@@ -365,7 +365,7 @@ echo '
                     shadowSize: [41, 41]
                 });
 
-                L.tileLayer("'.setting("Tile layer OpenStreetMap").'", {
+                L.tileLayer("'.setting("Tile server OpenStreetMap").'", {
                     maxZoom: 17,
                     attribution: "© OpenStreetMap"
                 }).addTo(map); 

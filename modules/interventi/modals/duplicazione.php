@@ -25,20 +25,34 @@ echo '
     <input type="hidden" name="op" value="copy">
 
     <div class="row">
-        <div class="col-md-6">
-            {[ "type": "timestamp", "label": "'.tr('Data/ora richiesta').'", "name": "data_richiesta", "value": "-now-", "required":1 ]}
+        <div class="col-md-3">
+            {[ "type": "date", "label": "'.tr('Data inizio').'", "name": "data_inizio", "value": "-now-", "required":1 ]}
         </div>
 
-        <div class="col-md-6">
-            {[ "type": "timestamp", "label": "'.tr('Data/ora scadenza').'", "name": "data_scadenza" ]}
+        <div class="col-md-3">
+            {[ "type": "date", "label": "'.tr('Data fine').'", "name": "data_fine", "value": "-now-", "required":1 ]}
+        </div>
+
+        <div class="col-md-3">
+            {[ "type": "time", "label": "'.tr('Ora richiesta').'", "name": "ora_richiesta", "value": "-now-", "required":1 ]}
+        </div>
+
+        <div class="col-md-3">
+            {[ "type": "time", "label": "'.tr('Ora scadenza').'", "name": "ora_scadenza" ]}
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL ORDER BY descrizione", "value": "" ]}
+            {[ "type": "select", "multiple":"1", "label": "'.tr('Giorni').'", "name": "giorni[]", "required": 0, "value": "'.strtolower(setting('Giorni lavorativi')).'", "values": "list=\"lunedì\":\"'.tr('Lunedì').'\", \"martedì\":\"'.tr('Martedì').'\", \"mercoledì\":\"'.tr('Mercoledì').'\", \"giovedì\":\"'.tr('Giovedì').'\", \"venerdì\":\"'.tr('Venerdì').'\", \"sabato\":\"'.tr('Sabato').'\", \"domenica\":\"'.tr('Domenica').'\"", "required":1 ]}
         </div>
 
+        <div class="col-md-6">
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL ORDER BY descrizione", "value": "" ]}
+        </div>
+    </div>
+
+    <div class="row">
         <div class="col-md-3">
             {["type": "checkbox", "label": "'.tr('Duplica righe').'", "name": "copia_righe", "help": "'.tr('Selezione per riportare anche le righe nella nuova attività').'" ]}
         </div>
@@ -54,7 +68,6 @@ echo '
         <div class="col-md-3">
             {["type": "checkbox", "label": "'.tr('Duplica allegati').'", "name": "copia_allegati", "help": "'.tr('Selezione per riportare anche gli allegati nella nuova attività').'", "value": 1 ]}
         </div>
-
     </div>
 
     <!-- PULSANTI -->

@@ -35,7 +35,7 @@
     "postcss-scss": "^4.0.6",
     "prntr": "^2.0.18",
     "readable-http-codes": "^1.1.1",
-    "ts-pattern": "^4.3.0",
+    "ts-pattern": "^5.0.1",
     "typescript-cookie": "^1.0.6"
   },
   "devDependencies": {
@@ -44,7 +44,7 @@
     "@types/fs-extra": "^11.0.1",
     "@types/lodash-es": "^4.17.7",
     "@types/mithril": "^2.0.12",
-    "@types/node": "^20.2.5",
+    "@types/node": "^20.3.1",
     "@types/ziggy-js": "^1.3.2",
     "chokidar": "^3.5.3",
     "csstype": "^3.1.2",
@@ -54,20 +54,20 @@
     "laravel-vite-plugin": "^0.7.8",
     "postcss": "^8.4.24",
     "postcss-html": "^1.5.0",
-    "sass": "^1.62.1",
+    "sass": "^1.63.4",
     "stylelint": "^15.7.0",
     "stylelint-config-clean-order": "^5.0.1",
     "stylelint-config-html": "^1.1.0",
     "stylelint-config-standard": "^33.0.0",
     "stylelint-config-standard-scss": "^9.0.0",
-    "stylelint-scss": "^5.0.0",
-    "type-fest": "^3.11.1",
+    "stylelint-scss": "^5.0.1",
+    "type-fest": "^3.12.0",
     "typed-scss-modules": "^7.1.0",
     "typescript": "^5.1.3",
     "vite": "^4.3.9",
     "vite-plugin-laravel-translations": "github:maicol07/vite-plugin-laravel-translations#patch-1",
     "vite-plugin-progress": "^0.0.7",
-    "vite-plugin-pwa": "^0.16.3"
+    "vite-plugin-pwa": "^0.16.4"
   },
   "peerDependencies": {
     "@formkit/auto-animate": "1.0.0-beta.6",

@@ -64,7 +64,7 @@ export default abstract class Model<A extends ModelAttributes, R extends ModelRe
 
   isDateAttribute(attributeName: string) {
     // @ts-ignore
-    return super.isDateAttribute(attributeName) && this.attributes.get(attributeName) !== null;
+    return super.isDateAttribute(attributeName) && this.attributes.get(attributeName);
   }
 
   getAttributes() {

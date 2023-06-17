@@ -136,7 +136,9 @@ export default abstract class AddEditRecordDialog<M extends Model<any, any>> ext
     }
   }
 
+  // @ts-expect-error - Temporary
   afterSave(response: SaveResponse<M>): void {
+    // @ts-expect-error - Temporary
     const responseModel = response.getModel() as M;
     if (responseModel !== undefined) {
       this.record = responseModel;
@@ -149,8 +151,8 @@ export default abstract class AddEditRecordDialog<M extends Model<any, any>> ext
     void showSnackbar(message, false);
   }
 
-  protected static createFormState(entries: Record<string, Stream<any>>): Map<string, Stream<unknown>> {
-    return new Map(Object.entries(entries));
+  protected static createFormState<EK extends string, EV extends Stream<unknown>>(entries: Record<EK, EV>): Map<EK, EV> {
+    return new Map<EK, EV>(Object.entries(entries) as [EK, EV][]);
   }
 
   get modelAttributesFromFormState(): Record<string, unknown> {

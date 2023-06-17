@@ -55,7 +55,10 @@ export default abstract class Dialog<A extends DialogAttributes = DialogAttribut
 
   public view(vnode: Vnode<A, this>): Children {
     return (
-      <md-dialog {...vnode.attrs} open={this.open()}>
+      <md-dialog style={{
+        '--md-dialog-container-max-block-size': 'calc(100% - 48px)',
+        '--md-dialog-container-max-inline-size': 'calc(100% - 48px)'
+      }} {...vnode.attrs} open={this.open()}>
         {this.contents(vnode) ?? vnode.children}
       </md-dialog>
     );

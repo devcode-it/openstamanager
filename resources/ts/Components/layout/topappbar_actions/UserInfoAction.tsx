@@ -18,7 +18,7 @@ import TopAppBarAction from './TopAppBarAction';
 export default class UserInfoAction extends TopAppBarAction {
   ariaLabel = __('Il tuo profilo');
   icon = mdiAccountOutline;
-  id = 'navbar-notifications';
+  id = 'navbar-userinfo';
   dialogState = Stream(false);
 
   view(vnode: Vnode) {

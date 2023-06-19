@@ -55,7 +55,7 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
         $result .= "PRODID:-// OpenSTAManager\n";
 
         foreach ($rs as $r) {
-            $richiesta = str_replace("\r\n", "\n", $r['richiesta']);
+            $richiesta = str_replace("\r\n", "\n", strip_tags($r['richiesta']));
             $richiesta = str_replace("\r", "\n", $richiesta);
             $richiesta = str_replace("\n", '\\n', $richiesta);
 

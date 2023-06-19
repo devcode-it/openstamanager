@@ -26,7 +26,7 @@ import {Class} from 'type-fest';
 export default abstract class AddEditRecordDialog<M extends Model<any, any>> extends RecordDialog<M> {
   // eslint-disable-next-line unicorn/no-null
   protected formElement: HTMLFormElement | null = null;
-  protected abstract formState: Map<string, Stream<unknown>>;
+  protected abstract formState: Map<string, Stream<any>>;
   protected abstract modelType: Class<M>;
   // Recommended: <= 3
   protected numberOfColumns: number = 3;
@@ -151,7 +151,7 @@ export default abstract class AddEditRecordDialog<M extends Model<any, any>> ext
     void showSnackbar(message, false);
   }
 
-  protected static createFormState<EK extends string, EV extends Stream<unknown>>(entries: Record<EK, EV>): Map<EK, EV> {
+  protected static createFormState<EK extends string, EV extends Stream<any>>(entries: Record<EK, EV>): Map<EK, EV> {
     return new Map<EK, EV>(Object.entries(entries) as [EK, EV][]);
   }
 

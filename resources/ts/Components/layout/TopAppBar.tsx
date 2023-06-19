@@ -62,7 +62,7 @@ export default class TopAppBar extends Component {
 
   branding(vnode: Vnode) {
     return (
-      <div style={{display: 'flex', alignItems: 'center'}}>
+      <div slot="title" style={{display: 'flex', alignItems: 'center'}}>
         {this.logo(vnode)}
         {this.title(vnode)}
       </div>

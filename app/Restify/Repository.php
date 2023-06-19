@@ -15,14 +15,17 @@ use Binaryk\LaravelRestify\Http\Requests\RepositoryAttachRequest;
 use Binaryk\LaravelRestify\Http\Requests\RepositorySyncRequest;
 use Binaryk\LaravelRestify\Http\Requests\RestifyRequest;
 use Binaryk\LaravelRestify\Repositories\Repository as RestifyRepository;
+use Carbon\Exceptions\InvalidFormatException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
 use function in_array;
 use function is_array;
+use function is_string;
 
 use Nette\Utils\Json;
 
@@ -270,6 +273,22 @@ abstract class Repository extends RestifyRepository
                 }
             }
         }
+
+        // Fix dates (JSONAPI uses ISO 8601, Restify uses Y-m-d H:i:s)
+        $attributes = array_map(
+            static function ($value) {
+                if (is_string($value)) {
+                    try {
+                        return Carbon::parse($value)->format('Y-m-d H:i:s');
+                    } catch (InvalidFormatException) {
+                        return $value;
+                    }
+                }
+
+                return $value;
+            },
+            $attributes
+        );
 
         $request->replace([
             ...$attributes,

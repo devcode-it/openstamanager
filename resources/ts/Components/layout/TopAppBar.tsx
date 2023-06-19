@@ -35,9 +35,7 @@ export default class TopAppBar extends Component {
     return (
       <>
         <top-app-bar>
-          <md-standard-icon-button slot="navigationIcon">
-            <MdIcon icon={this.drawerOpenState() ? mdiMenuOpen : mdiMenu}/>
-          </md-standard-icon-button>
+          {this.navigationIcon(vnode)}
 
           <div style={{display: 'flex'}}>
             <Drawer open={this.drawerOpenState}/>
@@ -46,15 +44,37 @@ export default class TopAppBar extends Component {
             </main>
           </div>
 
-          <div slot="title" style={{display: 'flex', alignItems: 'center'}}>
-            <img src={logo} alt={__('OpenSTAManager')} style={{height: '50px', marginRight: '8px'}}/>
-            <span>{__('OpenSTAManager')}</span>
-          </div>
+          {this.branding(vnode)}
 
           {this.actions().toArray()}
         </top-app-bar>
       </>
     );
+  }
+
+  navigationIcon(vnode: Vnode) {
+    return (
+      <md-standard-icon-button slot="navigationIcon" onclick={() => this.drawerOpenState(!this.drawerOpenState())}>
+        <MdIcon icon={this.drawerOpenState() ? mdiMenuOpen : mdiMenu}/>
+      </md-standard-icon-button>
+    );
+  }
+
+  branding(vnode: Vnode) {
+    return (
+      <div style={{display: 'flex', alignItems: 'center'}}>
+        {this.logo(vnode)}
+        {this.title(vnode)}
+      </div>
+    );
+  }
+
+  logo(vnode: Vnode) {
+    return <img src={logo} alt={__('OpenSTAManager')} style={{height: '50px', marginRight: '8px'}}/>;
+  }
+
+  title(vnode: Vnode) {
+    return <span>{__('OpenSTAManager')}</span>;
   }
 
   oncreate(vnode: VnodeDOM<Attributes, this>) {

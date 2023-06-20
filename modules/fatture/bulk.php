@@ -33,6 +33,7 @@ use Carbon\Carbon;
 
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 $stato_emessa = $dbo->selectOne('co_statidocumento', 'id', ['descrizione' => 'Emessa'])['id'];
+$is_fiscale = $dbo->selectOne('zz_segments', 'is_fiscale', ['id' => $_SESSION['module_'.$id_module]])['is_fiscale'];
 
 switch (post('op')) {
     case 'export-bulk':
@@ -569,6 +570,35 @@ switch (post('op')) {
             }
         }
         break;
+
+    case 'cambia-sezionale':
+        $count = 0;
+        $n_doc = 0;
+
+        foreach ($id_records as $id) {
+            $documento = Fattura::find($id);
+            ++ $count;
+
+            if($documento->stato->descrizione == 'Bozza') {
+                $documento->id_segment = post('id_segment');
+                $documento->save();
+                ++ $n_doc;
+            }
+        }
+
+        if ($n_doc > 0) {
+            flash()->info(tr('_NUM_ fatture spostate', [
+                '_NUM_' => $n_doc,
+            ]));
+        }
+
+        if (($count - $n_doc) > 0) {
+            flash()->warning(tr('_NUM_ fatture non sono state spostate perchè non sono in stato "Bozza".', [
+                '_NUM_' => $count - $n_doc,
+            ]));
+        }
+        
+        break;
 }
 
 if (App::debug()) {
@@ -696,6 +726,19 @@ if ($dir == 'entrata') {
         ],
     ];
 }
+
+$operations['cambia-sezionale'] = [
+    'text' => '<span><i class="fa fa-hand-stop-o"></i> '.tr('Cambia sezionale'),
+    'data' => [
+       'title' => tr('Cambia sezionale'),
+        'msg' => tr('Scegli il sezionale _TIPOLOGIA_ in cui spostare le fatture selezionate', [
+            '_TIPOLOGIA_' => $is_fiscale ? tr('fiscale') : tr('non fiscale'),
+        ]).':<br><br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(["id_module" => $id_module, 'is_sezionale' => 1, 'is_fiscale' => $is_fiscale, 'escludi_id' => $_SESSION['module_'.$id_module]['id_segment']]).', "select-options-escape": true ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
+    ],
+];
 
 if (Interaction::isEnabled()) {
     $operations['hook-send'] = [

@@ -263,7 +263,7 @@ $budget = $rs[0]['budget'];
 $rs = $dbo->fetchArray("SELECT SUM(qta) AS totale_ore FROM `co_righe_contratti` WHERE um='ore' AND idcontratto=".prepare($id_record));
 $totale_ore_contratto = $rs[0]['totale_ore'];
 
-$diff = sum($budget, -$totale);
+$diff = sum($budget, -$totale) - $contratto->provvigione;
 
 if ($diff > 0) {
     $bilancio = '<span class="text-success"><big>'.moneyFormat($diff).'</big></span>';

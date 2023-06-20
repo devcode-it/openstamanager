@@ -15,4 +15,4 @@ UPDATE `zz_settings` SET `help` = "Valore espresso in Giga superato il quale vie
 -- Rimozione google maps
 DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Google Maps API key';
 
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `order`, `help`) VALUES (NULL, 'Tile server OpenStreetMap', 'https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png', 'string', '1', 'Generali', NULL, NULL, '') 
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Tile server OpenStreetMap', 'https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png', 'string', '1', 'Generali', NULL, NULL); 

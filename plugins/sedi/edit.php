@@ -21,13 +21,6 @@ include_once __DIR__.'/../../core.php';
 
 $google = setting('Google Maps API key');
 
-/*
-if (!empty($google)) {
-    echo '
-<script src="//maps.googleapis.com/maps/api/js?libraries=places&key='.$google.'"></script>';
-}
-*/
-
 echo '
 <form action="" method="post" role="form" id="form_sedi">
     <input type="hidden" name="id_plugin" value="'.$id_plugin.'">

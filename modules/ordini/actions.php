@@ -19,6 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Carbon\Carbon;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Ordini\Components\Articolo;
@@ -109,6 +110,32 @@ switch (post('op')) {
             $ordine->codice_cig = post('codice_cig');
             $ordine->num_item = post('num_item');
             $ordine->condizioni_fornitura = post('condizioni_fornitura');
+
+            // Verifica la presenza di ordini con lo stesso numero
+            $ordini = $dbo->fetchArray("SELECT * FROM or_ordini WHERE numero_cliente=".prepare(post('numero_cliente'))." AND id!=".prepare($id_record)." AND idanagrafica=".prepare(post('idanagrafica'))." AND DATE_FORMAT(or_ordini.data, '%Y')=".prepare(Carbon::parse(post('data'))->copy()->format("Y")));
+
+           if (!empty($ordini)) {
+                
+                $ordine->numero_esterno = null;
+        
+                $documento = '';
+                foreach($ordini as $rs){
+                    $descrizione = tr('Ordine cliente num. _NUM_ del _DATE_', [
+                        '_NUM_' => !empty($rs['numero_esterno']) ? $rs['numero_esterno'] : $rs['numero'],
+                        '_DATE_' => Translator::dateToLocale($rs['data']),
+                    ]);
+        
+                    $documenti .= '<li>'.Modules::link('Ordini cliente', $rs['id'], $descrizione).'</li>';
+                }
+
+                flash()->error(tr('E\' già presente un ordine con numero _NUM_ <ul>_ORDINI_</ul>', [
+                    '_NUM_' => post('numero_cliente'),
+                    '_ORDINI_' => $documenti,
+                ]));
+    
+                $ordine->numero_cliente = null;
+                $ordine->id_documento_fe = null;
+            }
 
             $ordine->setScontoFinale(post('sconto_finale'), post('tipo_sconto_finale'));
 

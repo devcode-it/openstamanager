@@ -728,10 +728,10 @@ if ($dir == 'entrata') {
 }
 
 $operations['cambia-sezionale'] = [
-    'text' => '<span><i class="fa fa-hand-stop-o"></i> '.tr('Cambia sezionale'),
+    'text' => '<span><i class="fa fa-tags"></i> '.tr('Cambia sezionale'),
     'data' => [
        'title' => tr('Cambia sezionale'),
-        'msg' => tr('Scegli il sezionale _TIPOLOGIA_ in cui spostare le fatture selezionate', [
+        'msg' => tr('Scegli il sezionale _TIPOLOGIA_ in cui spostare le fatture in stato "Bozza" selezionate', [
             '_TIPOLOGIA_' => $is_fiscale ? tr('fiscale') : tr('non fiscale'),
         ]).':<br><br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(["id_module" => $id_module, 'is_sezionale' => 1, 'is_fiscale' => $is_fiscale, 'escludi_id' => $_SESSION['module_'.$id_module]['id_segment']]).', "select-options-escape": true ]}',
         'button' => tr('Procedi'),

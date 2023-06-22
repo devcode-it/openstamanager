@@ -185,8 +185,23 @@ echo '
                 if(data.results.length === 1) {
                     let record = data.results[0];
                     $("#idarticolo").selectSetNew(record.id, record.text, record);
-
-                    salva($("#aggiungi"));
+                    qta = record.qta-parseFloat($("#qta").val());';
+                    if( !setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita') ){
+                        echo '
+                        if( qta<=0 && $("#causale option:selected").text()!="Carico"  ){
+                            if( record.qta>0 ){
+                                $("#qta").val(record.qta).trigger("change");
+                            }else{
+                                $("#qta").val(0).trigger("change");
+                            }
+                        }';
+                    }
+                    
+                echo '
+                        setTimeout(function(){
+                            salva($("#aggiungi"));
+                        },300);
+                    }
                 }
 
                 // Articolo non trovato

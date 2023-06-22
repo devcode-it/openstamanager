@@ -183,7 +183,7 @@ use Modules\Iva\Aliquota;
                     <div class="row">				    
                         <div class="col-md-12">
                             <?php echo ((!empty($record['id_fornitore'])) ?
-                            Plugins::link('Listino Fornitori', $id_record, null, null, 'class="pull-right"'): ''); ?>
+                            Plugins::link('Listino Fornitori', $id_record, null, null, 'class="pull-right" onclick="modificaFornitore('.$id_record.','.$record['id_fornitore'].')"', null): ''); ?>
                             {[ "type": "select", "label": "<?php echo tr('Fornitore predefinito'); ?>", "name": "id_fornitore", "ajax-source": "fornitori-articolo", "select-options": <?php echo json_encode(['id_articolo' => $id_record]); ?>, "value":"$id_fornitore$", "help": "<?php echo tr('Fornitore predefinito selezionabile tra i fornitori presenti nel plugin \"Listino fornitori\"'); ?>." ]}
                         </div>
                     </div>

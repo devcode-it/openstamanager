@@ -16,3 +16,7 @@ UPDATE `zz_settings` SET `help` = "Valore espresso in Giga superato il quale vie
 DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Google Maps API key';
 
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Tile server OpenStreetMap', 'https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png', 'string', '1', 'Generali', NULL, NULL); 
+
+-- Nuova colonna Giorni scadenza in Scadenzario
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE name='Scadenzario'), 'Scadenza giorni', 'DATEDIFF(co_scadenziario.scadenza,NOW())', 19, 1, 0, 0, 0, '', '', 1, 0, 0);

@@ -25,7 +25,8 @@ switch ($resource) {
         $id_module = $superselect['id_module'];
         $is_fiscale = $superselect['is_fiscale'];
         $is_sezionale = $superselect['is_sezionale'];
-        
+        $escludi_id = $superselect['escludi_id'];
+
         if (isset($id_module)) {
             $query = 'SELECT `id`, `name` AS descrizione FROM zz_segments INNER JOIN `zz_group_segment` ON `zz_segments`.`id` = `zz_group_segment`.`id_segment` |where| ORDER BY `name` ASC';
 
@@ -38,6 +39,10 @@ switch ($resource) {
 
             if ($is_sezionale != null) {
                 $where[] = 'zz_segments.is_sezionale = '.prepare($is_sezionale);
+            }
+
+            if ($escludi_id != null) {
+                $where[] = 'zz_segments.id != '.prepare($escludi_id);
             }
 
             foreach ($elements as $element) {

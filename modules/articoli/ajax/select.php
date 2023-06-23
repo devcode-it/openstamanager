@@ -244,7 +244,7 @@ switch ($resource) {
                 $filter[] = '`id`='.prepare($element);
             }
 
-            $where[] = '`parent`='.prepare($superselect['`id_categoria`']);
+            $where[] = '`parent`='.prepare($superselect['id_categoria']);
 
             if (!empty($search)) {
                 $search_fields[] = '`nome` LIKE '.prepare('%'.$search.'%');

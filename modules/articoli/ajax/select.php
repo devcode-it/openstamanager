@@ -49,9 +49,9 @@ switch ($resource) {
         // Informazioni relative al fornitore specificato dal documenti di acquisto
         if ($usare_dettaglio_fornitore) {
             $query .= '
-            IFNULL(`mg_fornitore_articolo`.`codice_fornitore`, `mg_articoli.codice`) AS codice,
-            IFNULL(`mg_fornitore_articolo`.`descrizione`, `mg_articoli.descrizione`) AS descrizione,
-            IFNULL(`mg_fornitore_articolo`.`prezzo_acquisto`, `mg_articoli.prezzo_acquisto`) AS prezzo_acquisto,
+            IFNULL(`mg_fornitore_articolo`.`codice_fornitore`, `mg_articoli`.`codice`) AS codice,
+            IFNULL(`mg_fornitore_articolo`.`descrizione`, `mg_articoli`.`descrizione`) AS descrizione,
+            IFNULL(`mg_fornitore_articolo`.`prezzo_acquisto`, `mg_articoli`.`prezzo_acquisto`) AS prezzo_acquisto,
             IFNULL(`mg_fornitore_articolo`.`qta_minima`, 0) AS qta_minima,
             `mg_fornitore_articolo`.`id` AS id_dettaglio_fornitore,';
         }

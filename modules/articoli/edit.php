@@ -50,7 +50,8 @@ use Modules\Iva\Aliquota;
 
                     <div class="row">
                         <div class="col-md-6">
-                            <?php echo Modules::link('Categorie articoli', $record['id_categoria'], null, null, 'class="pull-right"'); ?>
+                            <?php echo ((!empty($record['id_categoria'])) ?
+                                Modules::link('Categorie articoli', $record['id_categoria'], null, null, 'class="pull-right"') : '') ?>
                             {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|<?php echo Modules::get('Categorie articoli')['id']; ?>" ]}
                         </div>
 
@@ -179,8 +180,10 @@ use Modules\Iva\Aliquota;
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="row">				    
                         <div class="col-md-12">
+                            <?php echo ((!empty($record['id_fornitore'])) ?
+                            Plugins::link('Listino Fornitori', $id_record, null, null, 'class="pull-right" onclick="modificaFornitore('.$id_record.','.$record['id_fornitore'].')"', null): ''); ?>
                             {[ "type": "select", "label": "<?php echo tr('Fornitore predefinito'); ?>", "name": "id_fornitore", "ajax-source": "fornitori-articolo", "select-options": <?php echo json_encode(['id_articolo' => $id_record]); ?>, "value":"$id_fornitore$", "help": "<?php echo tr('Fornitore predefinito selezionabile tra i fornitori presenti nel plugin \"Listino fornitori\"'); ?>." ]}
                         </div>
                     </div>

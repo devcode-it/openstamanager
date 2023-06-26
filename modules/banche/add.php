@@ -107,32 +107,35 @@ echo '
     }
 
     function scomponiIban() {
-        $.ajax({
-            url: globals.rootdir + '/actions.php',
-            data: {
-                id_module: globals.id_module,
-                op: "decompose",
-                iban: iban.get(),
-            },
-            type: 'GET',
-            dataType: "json",
-            success: function (response) {
-                compilaCampi(response);
+        let value = iban.get();
+        if (value.length > 25) {
+            $.ajax({
+                url: globals.rootdir + '/actions.php',
+                data: {
+                    id_module: globals.id_module,
+                    op: "decompose",
+                    iban: iban.get(),
+                },
+                type: 'GET',
+                dataType: "json",
+                success: function (response) {
+                    compilaCampi(response);
 
-                if (response.id_nazione.iso2 === "IT"){
-                    bic.setRequired(false);
-                    var label_text = $('label[for=bic] span .text-red').text();
-                    $('label[for=bic] span .text-red').text(label_text.replace('*', ' '));
-                } else {
-                    bic.setRequired(true);
-                    var label_text = $('label[for=bic] span .text-red').text();
-                    $('label[for=bic] span .text-red').text(label_text.replace(' ', '*'));
+                    if (response.id_nazione.iso2 === "IT"){
+                        bic.setRequired(false);
+                        var label_text = $('label[for=bic] span .text-red').text();
+                        $('label[for=bic] span .text-red').text(label_text.replace('*', ' '));
+                    } else {
+                        bic.setRequired(true);
+                        var label_text = $('label[for=bic] span .text-red').text();
+                        $('label[for=bic] span .text-red').text(label_text.replace(' ', '*'));
+                    }
+                },
+                error: function() {
+                    toastr["error"]("<?php echo tr('Formato IBAN non valido'); ?>");
                 }
-            },
-            error: function() {
-                toastr["error"]("<?php echo tr('Formato IBAN non valido'); ?>");
-            }
-        });
+            });
+        }
     }
 
     function componiIban() {

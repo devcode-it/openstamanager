@@ -19,6 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\DDT\DDT;
+
 $module = Modules::get($id_module);
 
 // Controllo sulla direzione monetaria
@@ -58,6 +60,8 @@ if (in_array($module['name'], ['Fatture di vendita', 'Fatture di acquisto'])) {
     $modulo = 'fat';
 } elseif (in_array($module['name'], ['Ddt di vendita', 'Ddt di acquisto'])) {
     $modulo = 'ddt';
+    $ddt = DDT::find($id_record);
+    $is_rientrabile = $database->fetchOne('SELECT * FROM `dt_causalet` WHERE `id` = '.prepare($ddt->idcausalet))['is_rientrabile'];
 } elseif (in_array($module['name'], ['Ordini cliente', 'Ordini fornitore'])) {
     $modulo = 'ord';
 } else {
@@ -107,8 +111,8 @@ if ($dir == 'entrata') {
         }
 
         echo '
-        <div class="col-md-4">
-            {[ "type": "text", "name": "serial[]", "class": "serial", "value": "'.$serials[$i].'"'.(!empty($res) ? ', "readonly": 1' : '').' ]}';
+        <div class="col-md-6">
+            {[ "type": "text", "name": "serial[]", "class": "serial", "id": "serial_'.$i.'", "value": "'.$serials[$i].'"'.(!empty($res) ? ', "readonly": 1' : '').' ]}';
 
         if (!empty($res)) {
             if (!empty($res[0]['id_riga_intervento'])) {
@@ -133,6 +137,13 @@ if ($dir == 'entrata') {
         echo '
         </div>';
 
+        if ($is_rientrabile) {
+            echo '
+            <div class="col-md-6">
+                {[ "type": "select", "name": "select_serial_'.$i.'", "value": "'.implode(',', $serials).'", "values": "query=SELECT serial AS id, serial AS descrizione FROM mg_prodotti WHERE id_articolo = '.prepare($rs[0]['idarticolo']).' AND mg_prodotti.dir=\'entrata\' AND id=(SELECT MAX(id) FROM mg_prodotti AS prodotti WHERE prodotti.id_articolo=mg_prodotti.id_articolo AND prodotti.serial=mg_prodotti.serial)", "onchange": "aggiornaSerial('.$i.');"'.(!empty($res) ? ', "readonly": 1' : '').' ]}
+            </div>';
+        }
+
         if (($i + 1) % 3 == 0) {
             echo '
     </div>
@@ -154,13 +165,18 @@ if ($dir == 'entrata') {
 
     <script>
         $(".serial").on("keyup", function() {
+            controllaSerial($(this).val());
+        });
+
+        function controllaSerial(value) {
             $.ajax({
                 url: globals.rootdir + "/actions.php",
                 type: "post",
                 data: {
                     id_module: "'.$module_fatture.'",
                     id_record: globals.id_record,
-                    serial: $(this).val(),
+                    serial: value,
+                    is_rientrabile: '.$is_rientrabile.',
                     id_articolo: input("idarticolo").get(),
                     op: "controlla_serial",
                 },
@@ -175,7 +191,16 @@ if ($dir == 'entrata') {
                     }
                 }
             });
-        });
+        }
+
+        function aggiornaSerial(i) {
+            let select_serial = $("#select_serial_"+i);
+            if (select_serial.val()) {
+                $("#serial_"+i).val(select_serial.val());
+                controllaSerial(select_serial.val());
+                select_serial.selectClear();
+            }
+        }
     </script>';
 }
 

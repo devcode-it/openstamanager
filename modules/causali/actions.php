@@ -35,6 +35,7 @@ switch (filter('op')) {
                     'is_importabile' => filter('is_importabile'),
                     'reversed' => filter('reversed'),
                     'predefined' => $predefined,
+                    'is_rientrabile' => filter('is_rientrabile'),
                 ], ['id' => $id_record]);
 
                 flash()->info(tr('Salvataggio completato!'));

@@ -930,7 +930,14 @@ switch (post('op')) {
         break;
 
     case 'controlla_serial': 
-        $has_serial = $dbo->fetchOne('SELECT id FROM mg_prodotti WHERE serial='.prepare(post('serial')).' AND dir="uscita" AND id_articolo='.prepare(post('id_articolo')).' AND (id_riga_documento IS NOT NULL OR id_riga_ordine IS NOT NULL OR id_riga_ddt IS NOT NULL)')['id'];
+        if (post('is_rientrabile')) {
+            // Controllo che i serial entrati e usciti siano uguali in modo da poterli registrare nuovamente.
+            $serial_uscita = $dbo->fetchOne('SELECT COUNT(id) AS `tot` FROM mg_prodotti WHERE serial='.prepare(post('serial')).' AND dir="uscita" AND id_articolo='.prepare(post('id_articolo')))['tot'];
+            $serial_entrata = $dbo->fetchOne('SELECT COUNT(id) AS `tot` FROM mg_prodotti WHERE serial='.prepare(post('serial')).' AND dir="entrata" AND id_articolo='.prepare(post('id_articolo')))['tot'];
+            $has_serial = $serial_entrata != $serial_uscita;
+        } else {
+            $has_serial = $dbo->fetchOne('SELECT id FROM mg_prodotti WHERE serial='.prepare(post('serial')).' AND dir="uscita" AND id_articolo='.prepare(post('id_articolo')).' AND (id_riga_documento IS NOT NULL OR id_riga_ordine IS NOT NULL OR id_riga_ddt IS NOT NULL)')['id'];
+        }
         
         echo json_encode($has_serial);
         

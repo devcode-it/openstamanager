@@ -40,14 +40,17 @@ include_once __DIR__.'/../../core.php';
                     <h3 class="panel-title"><?php echo tr('Flags'); ?></h3>
                 </div>
                 <div class="panel-body">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         {[ "type": "checkbox", "label": "<?php echo tr('Causale predefinita'); ?>", "name": "predefined", "value": "$predefined$", "help":"<?php echo tr('Impostare questa causale di trasporto come predefinita per i ddt'); ?>." ]}
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         {[ "type": "checkbox", "label": "<?php echo tr('Importabile?'); ?>", "name": "is_importabile", "value": "$is_importabile$", "help": "<?php echo tr('I documenti associati a questa causale possono essere importati a livello contabile in altri documenti (per esempio, in Fatture)'); ?>", "placeholder": "<?php echo tr('Importabile'); ?>" ]}
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         {[ "type": "checkbox", "label": "<?php echo tr('Abilita solo note di credito'); ?>", "name": "reversed", "value": "$reversed$", "help": "<?php echo tr('I documenti associati a questa causale possono essere stornati come nota di credito'); ?>", "placeholder": "<?php echo tr('Abilita storno'); ?>" ]}
+                    </div>
+                    <div class="col-md-3">
+                        {[ "type": "checkbox", "label": "<?php echo tr('Rientrabile?'); ?>", "name": "is_rientrabile", "value": "$is_rientrabile$", "help": "<?php echo tr('I documenti associati a questa causale possono registrare i serial degli articoli anche se già utilizzati'); ?>", "placeholder": "<?php echo tr('Rientrabile'); ?>" ]}
                     </div>
                 </div>
             </div>

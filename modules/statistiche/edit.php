@@ -429,7 +429,7 @@ GROUP BY an_anagrafiche.idanagrafica
 ORDER BY ragione_sociale ASC");
 
 $dataset = '';
-$where = implode(",",json_decode($_SESSION['superselect']['idtipiintervento'])) != '' ? 'in_interventi_tecnici.idtipointervento IN('.implode(",",json_decode($_SESSION['superselect']['idtipiintervento'])).')' : '1=1';
+$where = implode(",", (array)json_decode($_SESSION['superselect']['idtipiintervento'])) != '' ? 'in_interventi_tecnici.idtipointervento IN('.implode(",", (array)json_decode($_SESSION['superselect']['idtipiintervento'])).')' : '1=1';
 foreach ($tecnici as $tecnico) {
     $sessioni = $dbo->fetchArray('SELECT SUM(in_interventi_tecnici.ore) AS result, CONCAT(CAST(SUM(in_interventi_tecnici.ore) AS char(20)),\' ore\') AS ore_lavorate, YEAR(in_interventi_tecnici.orario_inizio) AS year, MONTH(in_interventi_tecnici.orario_inizio) AS month FROM in_interventi_tecnici  INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`idstatointervento` WHERE in_interventi_tecnici.idtecnico = '.prepare($tecnico['id']).' AND in_interventi_tecnici.orario_inizio BETWEEN '.prepare($start).' AND '.prepare($end).' AND `in_statiintervento`.`is_completato` AND '.$where.' GROUP BY YEAR(in_interventi_tecnici.orario_inizio), MONTH(in_interventi_tecnici.orario_inizio) ORDER BY YEAR(in_interventi_tecnici.orario_inizio) ASC, MONTH(in_interventi_tecnici.orario_inizio) ASC');
 
@@ -459,7 +459,7 @@ echo '
 
         <div class="row">
             <div class="col-md-3 pull-right">
-                {["type": "select", "multiple": "1", "label": "'.tr('Tipi attività').'", "name": "idtipiintervento[]", "ajax-source": "tipiintervento", "value": "'.implode(",",json_decode($_SESSION['superselect']['idtipiintervento'])).'", "placeholder": "Tutti" ]}
+                {["type": "select", "multiple": "1", "label": "'.tr('Tipi attività').'", "name": "idtipiintervento[]", "ajax-source": "tipiintervento", "value": "'.implode(",", (array)json_decode($_SESSION['superselect']['idtipiintervento'])).'", "placeholder": "Tutti" ]}
             </div>
         </div>
 

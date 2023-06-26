@@ -167,6 +167,8 @@ switch (post('op')) {
             }
         }
 
+        aggiorna_sedi_movimenti('interventi', $id_record);
+
         flash()->info(tr('Attività modificata correttamente!'));
 
         break;

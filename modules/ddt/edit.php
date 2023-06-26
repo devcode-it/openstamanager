@@ -157,7 +157,7 @@ echo '
                 if ($dir == 'entrata') {
                     echo '
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "readonly": "'.(sizeof($articolo) ? 1 : 0).'", "help": "'.tr("Sedi di partenza dell'azienda").'" ]}
+                    {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "help": "'.tr("Sedi di partenza dell'azienda").'" ]}
                 </div>
 
                 <div class="col-md-3">

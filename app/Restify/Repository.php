@@ -129,8 +129,13 @@ abstract class Repository extends RestifyRepository
         foreach ($included as $value) {
             // Extract included from relationships and sub relationships)
             do {
-                $value = Arr::collapse(Arr::pluck($value, '*.included'));
+                $original = $value;
+                $value = Arr::collapse(Arr::pluck($value, 'relationships.*.included'));
                 $value = array_filter($value);
+                if (empty($value)) {
+                    $value = Arr::collapse(Arr::pluck($original, '*.included'));
+                    $value = array_filter($value);
+                }
                 $included = [...$included, ...$value];
             } while ($value);
         }

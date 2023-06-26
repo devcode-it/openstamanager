@@ -5,18 +5,17 @@ namespace App\Http\Middleware;
 use App\Models\User;
 use Closure;
 use Illuminate\Database\QueryException;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use PDO;
 use PDOException;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class CheckConfigurationMiddleware
 {
-    public function handle(Request $request, Closure $next): Response|RedirectResponse|JsonResponse
+    public function handle(Request $request, Closure $next): Response|SymfonyResponse
     {
         $checks = [
             'database' => static fn (): bool => !empty(DB::connection()->getDatabaseName()) && DB::connection()->getPdo() instanceof PDO,

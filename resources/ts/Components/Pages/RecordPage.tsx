@@ -4,6 +4,7 @@ import {mdiChevronLeft} from '@mdi/js';
 import MdIcon from '@osm/Components/MdIcon';
 import Page, {PageAttributes} from '@osm/Components/Page';
 import Model from '@osm/Models/Model';
+import {showSnackbar} from '@osm/utils/misc';
 import {Builder} from 'coloquent';
 import {
   Children,
@@ -20,14 +21,8 @@ export default abstract class RecordPage<M extends Model<any, any>, A extends Re
   abstract recordType: Class<M> & typeof Model<any, any>;
   record?: M;
 
-  public oninit(vnode: Vnode<A, this>): void {
+  async oninit(vnode: Vnode<A, this>) {
     super.oninit(vnode);
-    m.redraw();
-  }
-
-  async onbeforeupdate(vnode: VnodeDOM<A, this>) {
-    super.onbeforeupdate(vnode);
-
     const {id: recordId} = route().params as {id: number | string};
     if (recordId !== this.record?.getId()) {
       await this.loadRecord(recordId);
@@ -39,7 +34,9 @@ export default abstract class RecordPage<M extends Model<any, any>, A extends Re
       try {
         const response = await this.modelQuery().find(recordId);
         this.record = response.getData() || undefined;
-      } catch {
+      } catch (e) {
+        console.error(e);
+        void showSnackbar(__('Errore durante il caricamento del record'));
         // Do nothing
       }
     }

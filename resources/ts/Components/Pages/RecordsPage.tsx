@@ -103,6 +103,7 @@ export default abstract class RecordsPage<
   }
 
   modelQuery() {
+    // @ts-ignore
     let query = this.modelType.query<M>();
 
     for (const [attribute, value] of this.filters) {
@@ -323,8 +324,9 @@ export default abstract class RecordsPage<
     return this.recordDialogsStates.get(key)!;
   }
 
-  protected cellValueModifier(value: unknown, attribute: string, record: M): Match<string, unknown> {
+  protected cellValueModifier(value: unknown, attribute: string, record: M): Match<string, unknown, string[], string> {
     return match(attribute)
+      .returnType()
       .with('createdAt', 'updatedAt', () => dayjs(value as Date).format('DD/MM/YYYY HH:mm'));
   }
 }

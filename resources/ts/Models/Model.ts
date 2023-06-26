@@ -4,6 +4,7 @@ import {
   PaginationStrategy,
   PluralResponse
 } from 'coloquent';
+import dayjs from 'dayjs';
 import type {ValueOf} from 'type-fest';
 
 export interface ModelAttributes {
@@ -62,16 +63,17 @@ export default abstract class Model<A extends ModelAttributes, R extends ModelRe
     return super.getAttribute(attributeName as string) as ValueOf<A, AN>;
   }
 
-  isDateAttribute(attributeName: string) {
-    // @ts-ignore
-    return super.isDateAttribute(attributeName) && this.attributes.get(attributeName);
-  }
-
   getAttributes() {
     return super.getAttributes() as ModelAttributes;
   }
 
   setAttribute<AN extends keyof A = keyof A>(attributeName: AN, value: ValueOf<A, AN>) {
+    const date = dayjs(value as string | Date | undefined);
+    // @ts-expect-error
+    if (this.isDateAttribute(attributeName) && date.isValid()) {
+      // @ts-expect-error
+      value = date.format((this as Model<any>).constructor.dates[attributeName]);
+    }
     // @ts-expect-error — This is needed to parse the dates correctly.
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
     this.attributes.set(attributeName as string, value);

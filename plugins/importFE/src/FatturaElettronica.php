@@ -354,6 +354,17 @@ class FatturaElettronica
         $fattura->idpagamento = $id_pagamento;
         $fattura->is_ritenuta_pagata = $is_ritenuta_pagata;
 
+        // Salvataggio banca fornitore se specificata nel file XML
+        $info_pagamento = $this->getBody()['DatiPagamento']['DettaglioPagamento'];
+        if ($info_pagamento['IBAN']) {
+            $banca_fornitore = Banca::where('iban', $info_pagamento['IBAN'])->first();
+            if (empty($banca_fornitore)) {
+                $anagrafica = $fattura->anagrafica;
+                $nome = $info_pagamento['IstitutoFinanziario'] ?: 'Banca di '.$anagrafica->ragione_sociale;
+                $banca_fornitore = Banca::build($anagrafica, $nome, $info_pagamento['IBAN'], $info_pagamento['BIC'] ?: '');
+            }
+        }
+
         // Banca addebito del cliente o banca collegata al pagamento
         if (!empty($fattura->anagrafica->idbanca_acquisti)) {
             $banca = $fattura->anagrafica->idbanca_acquisti;

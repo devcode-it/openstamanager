@@ -23,5 +23,6 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 
 -- Flag rientrabile
 ALTER TABLE `dt_causalet` ADD `is_rientrabile` INT NOT NULL AFTER `is_importabile`;
+
 -- Allegati stampe standard
 CREATE TABLE `zz_files_print` ( `id` INT NOT NULL AUTO_INCREMENT , `id_print` INT NOT NULL , `id_file` INT NOT NULL , PRIMARY KEY (`id`));

@@ -93,13 +93,12 @@ switch (post('op')) {
     case 'change_prezzo':
 
         foreach ($id_records as $id) {
+            $listino = DettaglioPrezzo::find($id);
 
-            $listino = $dbo->selectOne('mg_prezzi_articoli', '*', ['id' => $id]);
+            $prezzo_unitario_new = $listino->prezzo_unitario + ($listino->prezzo_unitario * post('percentuale') / 100);
 
-            $prezzo_unitario_new = $listino['prezzo_unitario']+($listino['prezzo_unitario']*post('percentuale')/100);
-
-            $dbo->query("UPDATE mg_prezzi_articoli SET prezzo_unitario=".prepare($prezzo_unitario_new)." WHERE id=".prepare($id));
-
+            $listino->setPrezzoUnitario($prezzo_unitario_new);
+            $listino->save();
         }
 
         flash()->info(tr('Listini aggiornati!'));

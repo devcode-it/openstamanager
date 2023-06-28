@@ -112,12 +112,9 @@ switch (post('op')) {
             $ordine->condizioni_fornitura = post('condizioni_fornitura');
 
             // Verifica la presenza di ordini con lo stesso numero
-            $ordini = $dbo->fetchArray("SELECT * FROM or_ordini WHERE numero_cliente=".prepare(post('numero_cliente'))." AND id!=".prepare($id_record)." AND idanagrafica=".prepare(post('idanagrafica'))." AND DATE_FORMAT(or_ordini.data, '%Y')=".prepare(Carbon::parse(post('data'))->copy()->format("Y")));
+            $ordini = $dbo->fetchArray("SELECT * FROM or_ordini WHERE numero_cliente=".prepare(post('numero_cliente'))."AND numero_cliente IS NOT NULL AND numero_cliente != '' AND id!=".prepare($id_record)." AND idanagrafica=".prepare(post('idanagrafica'))." AND DATE_FORMAT(or_ordini.data, '%Y')=".prepare(Carbon::parse(post('data'))->copy()->format("Y")));
 
            if (!empty($ordini)) {
-                
-                $ordine->numero_esterno = null;
-        
                 $documento = '';
                 foreach($ordini as $rs){
                     $descrizione = tr('Ordine cliente num. _NUM_ del _DATE_', [

@@ -19,10 +19,13 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 
 -- Nuova colonna Giorni scadenza in Scadenzario
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE name='Scadenzario'), 'Scadenza giorni', 'DATEDIFF(co_scadenziario.scadenza,NOW())', 19, 1, 0, 0, 0, '', '', 1, 0, 0);
+((SELECT `id` FROM `zz_modules` WHERE name='Scadenzario'), 'Scadenza giorni', 'DATEDIFF(co_scadenziario.scadenza,NOW())', 19, 1, 0, 0, 0, '', '', 1, 0, 1);
 
 -- Flag rientrabile
 ALTER TABLE `dt_causalet` ADD `is_rientrabile` INT NOT NULL AFTER `is_importabile`;
 
 -- Allegati stampe standard
 CREATE TABLE `zz_files_print` ( `id` INT NOT NULL AUTO_INCREMENT , `id_print` INT NOT NULL , `id_file` INT NOT NULL , PRIMARY KEY (`id`));
+
+-- Modifica vista inviato Scadenzario
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF(emails IS NOT NULL, \'SÌ\', \'NO\')' WHERE `zz_modules`.`name` = 'Scadenzario' AND `zz_views`.`name` = 'icon_title_Inviato';

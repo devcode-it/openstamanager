@@ -243,30 +243,23 @@ echo '
             ]);
             echo '
         </div>
+    </div>
+
+    <!-- POSIZIONE -->
+    <div class="box box-info collapsable collapsed-box">
+        <div class="box-header with-border">
+            <h3 class="box-title">'.tr('Posizione').'</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse" onclick="autoload_mappa=true; caricaMappa();">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="box-body">
+            <div id="map-add" style="height: 300px;width: 100%;display: flex;align-items: center;justify-content: center;"></div>
+        </div>
     </div>';
-
-
-$api_key = setting('Google Maps API key');
-$map_load_message = tr('Clicca per visualizzare');
-
-if (!empty($api_key)) {
-    echo '
-        <!-- POSIZIONE -->
-        <div class="box box-info collapsable collapsed-box">
-            <div class="box-header with-border">
-                <h3 class="box-title">'.tr('Posizione').'</h3>
-                <div class="box-tools pull-right">
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse" onclick="autoload_mappa=true; caricaMappa(current_lat, current_lng);">
-                        <i class="fa fa-plus"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="box-body">
-                <div id="map-edit" style="height: 300px;width: 100%;display: flex;align-items: center;justify-content: center;"></div>
-            </div>
-        </div>';
-}
 
 
 $espandi_dettagli = setting('Espandi automaticamente la sezione "Dettagli aggiuntivi"');
@@ -797,53 +790,45 @@ echo '
         }
     });
 
-    var marker = null;
-    var position = null;
     var map = null;
-    var current_lat = null;
-    var current_lng = null;
-
     function caricaMappa(lat, lng) {
-        current_lat = lat;
-        current_lng = lng;
-
         if (!autoload_mappa){
             return false;
         }
-
-        const map_div = $("#map-edit");
-
+        
         if (input("idanagrafica").getData("select-options")) {
-            if (map === null) {
-                if (lat || lng) {
-                    $.getScript("//maps.googleapis.com/maps/api/js?libraries=places&key='.$api_key.'", function() {
-                        const map_element = map_div[0];
-                        position = new google.maps.LatLng(lat, lng);
-
-                        // Create a Google Maps native view under the map_canvas div.
-                        map = new google.maps.Map(map_element, {
-                            zoom: 14,
-                            scrollwheel: false,
-                            mapTypeControl: true,
-                            mapTypeId: "roadmap",
-                            mapTypeControlOptions: {
-                                style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
-                                mapTypeIds: ["roadmap", "terrain"],
-                            }
-                        });
-
-                        map.setCenter(position);
-                        marker = new google.maps.Marker({
-                            position: position,
-                            map: map,
-                        });
-                    });
-                }
+            var container = L.DomUtil.get("map-add");
+            if(container._leaflet_id != null){ 
+                map.eachLayer(function (layer) {
+                    if(layer instanceof L.Marker) {
+                        map.removeLayer(layer);
+                    }
+                });
             } else {
-                position = new google.maps.LatLng(lat, lng);
-                marker.setPosition(position);
-                map.setCenter(position);
+                map = L.map("map-add", {
+                    gestureHandling: true
+                });
+        
+                L.tileLayer("'.setting("Tile server OpenStreetMap").'", {
+                    maxZoom: 17,
+                    attribution: "© OpenStreetMap"
+                }).addTo(map); 
             }
+        
+            var icon = new L.Icon({
+                iconUrl: globals.rootdir + "/assets/dist/img/marker-icon.png",
+                shadowUrl:globals.rootdir + "/assets/dist/img/leaflet/marker-shadow.png",
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
+            
+            var marker = L.marker([lat, lng], {
+                icon: icon
+            }).addTo(map);
+            
+            map.setView([lat, lng], 14);
         }
     }
 </script>';

@@ -19,8 +19,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-$google = setting('Google Maps API key');
-
 echo '
 <form action="" method="post" role="form" id="form_sedi">
     <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
@@ -104,8 +102,8 @@ echo '
 	</div>
 
 	<div class="row">
-		<div class="col-md-6" id="geocomplete">
-			{[ "type": "text", "label": "'.tr('Indirizzo Google').'", "name": "gaddress", "value": "$gaddress$", "extra": "data-geo=\'formatted_address\'" ]}
+		<div class="col-md-4" id="geocomplete">
+			{[ "type": "text", "label": "'.tr('Indirizzo Mappa').'", "name": "gaddress", "value": "$gaddress$", "extra": "data-geo=\'formatted_address\'" ]}
 		</div>
 
 		<div class="col-md-2">
@@ -114,17 +112,21 @@ echo '
 
 		<div class="col-md-2">
 			{[ "type": "text", "label": "'.tr('Longitudine').'", "name": "lng", "id": "lng_", "value": "$lng$", "extra": "data-geo=\'lng\'", "class": "text-right" ]}
-		</div>';
+		</div>
+		
+		<div class="col-md-2">
+            <br><button type="button" class="btn btn-lg btn-default pull-right" onclick="initGeocomplete();"><i class="fa fa-search"></i> '.tr('Cerca').'</button>
+        </div>';
 
 if (!empty($record['indirizzo']) || (empty($record['citta']))) {
 	echo '
 		<div  class="btn-group col-md-2"  >
 			<label>&nbsp;</label><br>
-			<a class="btn btn-info" title="'.tr('Mostra la sede su Openstreetmap').'" onclick="window.open(\'https://maps.google.com/maps/search/\'+encodeURI( $(\'#indirizzo_\').val() )+\', \'+encodeURI( $(\'#citta_\').val() ) );">&nbsp;<i class="fa fa-map-marker">&nbsp;</i></a>
+			<a class="btn btn-info" title="'.tr('Mostra la sede su Mappa').'" onclick="cercaOpenStreetMap();">&nbsp;<i class="fa fa-map-marker">&nbsp;</i></a>
 		';
 
 	echo '
-			<a title="'.tr('Calcola percoso da sede legale a questa sede').'" class="btn btn-primary btn-secondary" onclick="window.open(\'https://maps.google.com/maps/dir/\'+encodeURI( $(\'#indirizzo_\').val() )+\', \'+encodeURI( $(\'#citta_\').val() )+\'/\'+encodeURI( $(\'#indirizzo\').val() )+\',\'+encodeURI( $(\'#citta\').val() )+\',8z\');"><i class="fa fa-car"></i></a>
+			<a title="'.tr('Calcola percoso da sede legale a questa sede').'" class="btn btn-primary btn-secondary" onclick="calcolaPercorso();"><i class="fa fa-car"></i></a>
 		</div>';
 }
 
@@ -199,24 +201,63 @@ echo '
 <script>$(document).ready(init)</script>
 
 <script>
-if(window.google){
-    initGeocomplete();
-} else {
-    $.getScript("//maps.googleapis.com/maps/api/js?libraries=places&key='.$google.'", function() {
-        initGeocomplete();
+$("#modals > div").on("shown.bs.modal", function () {
+    if (input("lat").get() && input("lng").get()) {
+        caricaMappaSede();
+    }
+});
+
+function initGeocomplete() {
+    $.ajax({
+        url: "https://nominatim.openstreetmap.org/search.php?q=" + encodeURI(input("gaddress").get()) + "&format=jsonv2",
+        type : "GET",
+        dataType: "JSON",
+        success: function(data){
+            input("lat").set(data[0].lat);
+            input("lng").set(data[0].lon);
+            input("gaddress").set(data[0].display_name);
+            caricaMappaSede();
+        }
     });
 }
 
-function initGeocomplete() {
-    $("#form_sedi #geocomplete input").geocomplete({
-        map: $("#form_sedi #map").length ? "#map" : false,
-        location: $("#form_sedi #gaddress").val() ? $("#form_sedi #gaddress").val() : [$("#form_sedi #lat_").val(), $("#form_sedi #lng_").val()],
-        details: ".details",
-        detailsAttribute: "data-geo"
-    }).bind("geocode:result", function (event, result) {
-        $("#form_sedi #lat_").val(result.geometry.location.lat());
-        $("#form_sedi #lng_").val(result.geometry.location.lng());
-    });
+var map = null;
+function caricaMappaSede() {
+    const lat = parseFloat(input("lat").get());
+    const lng = parseFloat(input("lng").get());
+
+    var container = L.DomUtil.get("map"); 
+    if(container._leaflet_id != null){ 
+        map.eachLayer(function (layer) {
+			if(layer instanceof L.Marker) {
+				map.removeLayer(layer);
+			}
+		});
+	} else {
+		map = L.map("map", {
+			gestureHandling: true
+		});
+
+		L.tileLayer("'.setting("Tile server OpenStreetMap").'", {
+			maxZoom: 17,
+			attribution: "© OpenStreetMap"
+		}).addTo(map); 
+	}
+
+	var icon = new L.Icon({
+		iconUrl: globals.rootdir + "/assets/dist/img/marker-icon.png",
+		shadowUrl:globals.rootdir + "/assets/dist/img/leaflet/marker-shadow.png",
+		iconSize: [25, 41],
+		iconAnchor: [12, 41],
+		popupAnchor: [1, -34],
+		shadowSize: [41, 41]
+	});
+    
+    var marker = L.marker([lat, lng], {
+        icon: icon
+    }).addTo(map);
+
+	map.setView([lat, lng], 10);
 }
 
 function rimuoviSede(button) {

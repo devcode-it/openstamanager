@@ -253,20 +253,22 @@ echo '
                     </div>
                     <div class="panel-body">';
 
-$map_load_message = tr('Clicca per visualizzare');
-
 if (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($sede_cliente->lng))) {
     echo '
-                        <div id="map-edit" style="height: 200px;width: 100%;display: flex;align-items: center;justify-content: center;" onclick="caricaMappa()">
-                            <p class="clickable badge">'.$map_load_message.'</p>
-                        </div>
+                        <div id="map-edit" style="width: 100%;"></div>
 
                         <div class="clearfix"></div>
                         <br>';
 
+    // Navigazione diretta verso l'indirizzo
+    echo '
+                        <a class="btn btn-info btn-block" onclick="$(\'#map-edit\').height(235); caricaMappa(); $(this).hide();">
+                            '.tr('Carica mappa').'
+                        </a>';
+
     // Modifica manuale delle informazioni
     echo '
-                        <a class="btn btn-primary btn-block" onclick="modificaPosizione()">
+                        <a class="btn btn-info btn-block" onclick="modificaPosizione()">
                             <i class="fa fa-map"></i> '.tr('Aggiorna posizione').'
                         </a>';
 }else{
@@ -341,21 +343,29 @@ echo '
                 return [lat, lng, indirizzo_default];
             }
 
+            var map = null;
             function caricaMappa() {
-                const map_div = $("#map-edit");
-                if (map_div.text().trim() !== "'.$map_load_message.'"){
-                    return;
-                }
-
                 const lat = parseFloat("'.$sede_cliente->lat.'");
                 const lng = parseFloat("'.$sede_cliente->lng.'");
-
-                var map = L.map("map-edit", {
-                    center: [lat, lng],
-                    zoom: 10,
-                    gestureHandling: true
-                });
-
+            
+                var container = L.DomUtil.get("map-edit"); 
+                if(container._leaflet_id != null){ 
+                    map.eachLayer(function (layer) {
+                        if(layer instanceof L.Marker) {
+                            map.removeLayer(layer);
+                        }
+                    });
+                } else {
+                    map = L.map("map-edit", {
+                        gestureHandling: true
+                    });
+            
+                    L.tileLayer("'.setting("Tile server OpenStreetMap").'", {
+                        maxZoom: 17,
+                        attribution: "© OpenStreetMap"
+                    }).addTo(map); 
+                }
+            
                 var icon = new L.Icon({
                     iconUrl: globals.rootdir + "/assets/dist/img/marker-icon.png",
                     shadowUrl:globals.rootdir + "/assets/dist/img/leaflet/marker-shadow.png",
@@ -365,14 +375,11 @@ echo '
                     shadowSize: [41, 41]
                 });
 
-                L.tileLayer("'.setting("Tile server OpenStreetMap").'", {
-                    maxZoom: 17,
-                    attribution: "© OpenStreetMap"
-                }).addTo(map); 
-              
                 var marker = L.marker([lat, lng], {
                     icon: icon
                 }).addTo(map);
+            
+                map.setView([lat, lng], 10);
             }
 
             function risolviConto(tipo){

@@ -63,11 +63,9 @@ echo '
 <script>$(document).ready(init)</script>
 
 <script>
-$(document).ready(function(){
+$("#modals > div").on("shown.bs.modal", function () {
     if (input("lat").get() && input("lng").get()) {
-        setTimeout(function () {
-            caricaMappa();
-        }, 1000);
+        caricaMappa();
     }
 });
 
@@ -85,38 +83,43 @@ function initGeocomplete() {
     });
 }
 
+var map = null;
 function caricaMappa() {
     const lat = parseFloat(input("lat").get());
     const lng = parseFloat(input("lng").get());
 
     var container = L.DomUtil.get("map"); 
-    if(container != null){ 
-        container._leaflet_id = null; 
-    }
+    if(container._leaflet_id != null){ 
+        map.eachLayer(function (layer) {
+			if(layer instanceof L.Marker) {
+				map.removeLayer(layer);
+			}
+		});
+	} else {
+		map = L.map("map", {
+			gestureHandling: true
+		});
 
-    var map = L.map("map", {
-        center: [lat, lng],
-        zoom: 10,
-        gestureHandling: true
-    });
-    
-    var icon = new L.Icon({
-        iconUrl: globals.rootdir + "/assets/dist/img/marker-icon.png",
-        shadowUrl:globals.rootdir + "/assets/dist/img/leaflet/marker-shadow.png",
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41]
-    });
+		L.tileLayer("'.setting("Tile server OpenStreetMap").'", {
+			maxZoom: 17,
+			attribution: "© OpenStreetMap"
+		}).addTo(map); 
+	}
 
-    L.tileLayer("'.setting("Tile server OpenStreetMap").'", {
-        maxZoom: 17,
-        attribution: "© OpenStreetMap"
-    }).addTo(map); 
-    
+	var icon = new L.Icon({
+		iconUrl: globals.rootdir + "/assets/dist/img/marker-icon.png",
+		shadowUrl:globals.rootdir + "/assets/dist/img/leaflet/marker-shadow.png",
+		iconSize: [25, 41],
+		iconAnchor: [12, 41],
+		popupAnchor: [1, -34],
+		shadowSize: [41, 41]
+	});
+
     var marker = L.marker([lat, lng], {
         icon: icon
     }).addTo(map);
+
+	map.setView([lat, lng], 10);
 }
 
 // Ricaricamento della pagina alla chiusura

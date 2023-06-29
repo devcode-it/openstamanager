@@ -22,7 +22,7 @@ echo '
 <div class="box box-info">
     <div class="box-header">
         <h3 class="box-title">'.tr('Istruzioni per il campo _FIELD_', [
-            '_FIELD_' => tr('Contenuto'),
+            '_FIELD_' => tr('Codice'),
         ]).'</h3>
     </div>
 

@@ -44,10 +44,10 @@ include_once __DIR__.'/../../core.php';
 			<?php
 			echo input([
                 'type' => 'textarea',
-                'label' => tr('Contenuto'),
+                'label' => tr('Codice'),
                 'name' => 'content',
 				'required' => 1,
-                'value' => $record['content'],
+                'value' => '{[ "type": "text", "label": "|label|", "name": "|name|", "value": "|value|" ]}',
             ]);
 			?>
 		</div>

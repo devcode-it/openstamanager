@@ -47,11 +47,11 @@ include_once __DIR__.'/../../core.php';
 
     <div class="row">
 		<div class="col-md-6">
-			{[ "type": "checkbox", "label": "<?php echo tr('Mostra alla creazione record'); ?>", "name": "on_add","value": "$on_add$" ]}
+			{[ "type": "checkbox", "label": "<?php echo tr('Visualizza in fase di creazione record'); ?>", "name": "on_add","value": "$on_add$" ]}
 		</div>
 
         <div class="col-md-6">
-			{[ "type": "checkbox", "label": "<?php echo tr('Mostra di sopra'); ?>", "name": "top", "value": "$top$" ]}
+			{[ "type": "checkbox", "label": "<?php echo tr('Visualizza prima di tutti i campi compilabili'); ?>", "name": "top", "value": "$top$" ]}
 		</div>
 	</div>
 
@@ -60,7 +60,7 @@ include_once __DIR__.'/../../core.php';
 			<?php
 			echo input([
 				'type' => 'textarea',
-				'label' => tr('Contenuto'),
+				'label' => tr('Codice'),
 				'name' => 'content',
 				'value' => $record['content'],
 			]);

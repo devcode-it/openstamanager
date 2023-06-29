@@ -69,7 +69,7 @@ class FieldManager implements ManagerInterface
             $result .= '
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <h3 class="panel-title">'.tr('Campi aggiuntivi').'</h3>
+        <h3 class="panel-title">'.tr('Campi personalizzati').'</h3>
     </div>
     <div class="panel-body">';
 

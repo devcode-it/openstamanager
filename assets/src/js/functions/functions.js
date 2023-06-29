@@ -581,7 +581,7 @@ function aggiungiContenuto(endpoint_selector, template_selector, replaces = {}, 
     if (prepend) {
         endpoint.prepend(element);
     } else {
-        endpoint.append(element);
+        endpoint.after(element);
     }
 
     // Rigenerazione degli input interni

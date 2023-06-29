@@ -21,6 +21,8 @@ include_once __DIR__.'/../../core.php';
 
 use Models\PrintTemplate;
 
+$id_files = $dbo->select('zz_files_print', 'id_file', ['id_print' => $id_record]);
+
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
@@ -43,21 +45,27 @@ use Models\PrintTemplate;
                     {[ "type": "text", "label": "<?php echo tr('Nome del file'); ?>", "name": "filename", "required": 1, "value": "$filename$" ]}
 				</div>
 
-
-
 			</div>
 
             <div class="row">
 
-                <div class="col-md-3">
+                <div class="col-md-6">
 					{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "module", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_modules WHERE ( enabled = 1 AND options != 'custom' ) OR id = <?php echo $record['id_module']; ?> ORDER BY name ASC", "value": "<?php echo $record['id_module']; ?>", "disabled": "1" ]}
 				</div>
 
-                <div class="col-md-3">
+                <div class="col-md-6">
+					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('File da accodare'); ?>", "name": "id_files[]", "value": "<?php echo implode(',', array_column($id_files, 'id_file')); ?>", "ajax-source": "allegati", "select-options": <?php echo json_encode(['id_module' => $id_module, 'id_record' => $id_record]); ?> ]}
+				</div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-4">
                     {[ "type": "checkbox", "label": "<?php echo tr('Attiva'); ?>", "name": "enabled", "value": "$enabled$", "disabled": "1" ]}
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-4">
 					{[ "type": "number", "label": "<?php echo tr('Ordine'); ?>", "name": "order", "required": 0, "value": "$order$", "decimals":0 ]}
 				</div>
 
@@ -73,7 +81,7 @@ use Models\PrintTemplate;
                     }
                 ?>
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     {[ "type": "checkbox", "label": "<?php echo tr('Predefinita'); ?>", "help" : "<?php echo tr('Attiva per impostare questa stampa come predefinita. Attualmente la stampa predefinita per questo modulo è: '.$nome_stampa_predefinita); ?>", "name": "predefined", "value": "$predefined$", "disabled": "<?php echo intval($record['predefined']); ?>" ]}
                 </div>
 
@@ -133,7 +141,6 @@ echo '
     </div>
 </div>';
 
-
 // Variabili utilizzabili
 $module = Modules::get($record['id_module']);
 $variables = $module->getPlaceholders($id_record);
@@ -168,6 +175,7 @@ echo '
     </div>
 </div>
 
-<hr>';
+<hr>
 
+{( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}';
 ?>

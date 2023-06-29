@@ -17,6 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Jurosh\PDFMerge\PDFMerger;
 use Mpdf\Mpdf;
 use Util\Query;
 
@@ -694,8 +695,37 @@ class Prints
                 $mpdf->WriteHTML('<div style="position:absolute; bottom: 13mm; margin-right: '.($settings['margins']['right']).'mm">'.$foot.'</div>');
             }
 
+            $id_files = $dbo->select('zz_files_print', 'id_file', ['id_print' => $id_print]);
+            $has_pdf = false;
+            foreach ($id_files as $id_file) {
+                $fil = Models\Upload::find($id_file)->first();
+                    
+                if ($fil->isImage()) {
+                    $link = base_path().'/'.$fil->filepath;
+                    $mpdf->WriteHTML('<pagebreak />');
+                    $mpdf->WriteHTML('<img src="'.$link.'"></img>');
+                } elseif ($fil->isPdf()) {
+                    $has_pdf = true;
+                }
+            }
+
             // Creazione effettiva del PDF
-            $pdf = $mpdf->Output($path, $mode);
+            if ($has_pdf) {
+                $pdf_merger = new PDFMerger;
+                $mpdf->Output(base_dir().'/files/'.$infos['directory'].'/'.basename($path), 'F');
+                $pdf_merger->addPDF(base_dir().'/files/'.$infos['directory'].'/'.basename($path));
+                foreach ($id_files as $id_file) {
+                    $fil = Models\Upload::find($id_file)->first();
+                    $pdf_merger->addPDF( base_dir().'/'.$fil->file_path, 'all');	
+                }
+                $mode_merger = ($mode == 'F' ? 'file' : ($mode == 'D' ? 'download' : ($mode == 'S' ? 'string' : 'I')));
+                $path_merger = $mode == 'F' ? base_dir().'/files/'.$infos['directory'].'/'.basename($path) : $path;
+
+                $pdf = $pdf_merger->merge($mode_merger, $path_merger);
+            } else {
+                $pdf = $mpdf->Output($path, $mode);
+            }
+
             $file['pdf'] = $pdf;
         }else{
             $file = self::getFile($infos, $id_record, $directory, $replaces);

@@ -92,12 +92,13 @@ class Uploads
         if (!empty($filename)) {
             $database = database();
 
-            $name = $database->selectOne('zz_files', ['name'], [
+            $file = $database->selectOne('zz_files', '*', [
                 'filename' => $filename,
                 'id_module' => !empty($data['id_module']) && empty($data['id_plugin']) ? $data['id_module'] : null,
                 'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
                 'id_record' => $data['id_record'],
-            ])['name'];
+            ]);
+            $name = $file['name'];
 
             $fileinfo = self::fileInfo($filename);
             $directory = base_dir().'/'.self::getDirectory($data['id_module'], $data['id_plugin']);
@@ -116,6 +117,12 @@ class Uploads
                     'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
                     'id_record' => $data['id_record'],
                 ]);
+
+                if (Modules::get('Stampe')['id'] == $data['id_module']) {
+                    $database->delete('zz_files_print', [
+                        'id_file' => $file['id'],
+                    ]);
+                }
 
                 return $name;
             }

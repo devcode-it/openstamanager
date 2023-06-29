@@ -276,7 +276,7 @@ if (in_array($module['name'], ['Ordini cliente', 'Ordini fornitore', 'Preventivi
 
                 </div>
                 <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "'.tr('Articolo confermato').'", "name": "confermato", "value": "'.$confermato.'" ]}
+                    {[ "type": "checkbox", "label": "'.tr('Articolo confermato').'", "name": "confermato", "value": "'.$confermato.'", "help": "'.tr('Articolo confermato dal _ANA_ e che è possibile evadere', ['_ANA_' => $module['name'] == 'Ordini fornitore' ? tr('fornitore') : tr('cliente')]).'" ]}
                 </div>
                 <div class="col-md-4">
                     {[ "type": "checkbox", "label": "'.tr('Cambia stato a tutte le righe').'", "name": "confermato_all", "value": "" ]}

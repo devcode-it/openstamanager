@@ -87,15 +87,18 @@ class FatturaOrdinaria extends FatturaElettronica
     {
         $result = $this->getBody()['DatiBeniServizi']['DettaglioLinee'];
         $result = $this->forceArray($result);
+        $ritenuta = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento']['DatiRitenuta'];
+        $result = $this->forceArray($result);
+
         foreach ($result as $res){
-            $totale_imposta += $res['PrezzoTotale']*$res['AliquotaIVA']/100;
+            $totale_imposta += ($res['PrezzoTotale']+ ($ritenuta['ImportoRitenuta']*$ritenuta['ImportoRitenuta']/100))*$res['AliquotaIVA']/100;
         }
         // Aggiunta degli arrotondamenti IVA come righe indipendenti
         $riepiloghi = $this->getBody()['DatiBeniServizi']['DatiRiepilogo'];
         $riepiloghi = $this->forceArray($riepiloghi);
 
         foreach ($riepiloghi as $riepilogo) {
-            $valore = (isset($riepilogo['Arrotondamento']) && (string)round($totale_imposta, 2) != $riepilogo['Imposta']) ? $riepilogo['Arrotondamento'] : 0;
+            $valore = ((isset($riepilogo['Arrotondamento']) && $riepilogo['Arrotondamento'] != 0) && (string)round($totale_imposta, 2) != $riepilogo['Imposta']) ? $riepilogo['Arrotondamento'] : 0;
             if (!empty($valore)) {
                 $descrizione = tr('Arrotondamento IVA _VALUE_', [
                     '_VALUE_' => empty($riepilogo['Natura']) ? numberFormat($riepilogo['AliquotaIVA']).'%' : $riepilogo['Natura'],
@@ -357,8 +360,8 @@ class FatturaOrdinaria extends FatturaElettronica
         $fattura->refresh();
 
         // Arrotondamenti differenti nella fattura XML
-        $diff = round(abs($totale_righe) - abs($fattura->totale_imponibile + $fattura->rivalsa_inps), 2);
-        if (!empty($diff) && $diff != abs($dati_riepilogo['Arrotondamento']) || (empty($dati_riepilogo['Arrotondamento']) && abs($dati_riepilogo['ImponibileImporto']) != abs($totale_righe))) {
+        $diff = round(abs($totale_righe) - abs($fattura->totale_imponibile), 2);
+        if (!empty($diff) && $diff != abs($dati_riepilogo['Arrotondamento']) || (empty($dati_riepilogo['Arrotondamento']) && abs($dati_riepilogo['ImponibileImporto']) != abs($totale_righe + $fattura->rivalsa_inps))) {
             if (empty($dati_riepilogo['Arrotondamento'])){
                 $diff = abs($dati_riepilogo['ImponibileImporto']) - abs($totale_righe);
             }

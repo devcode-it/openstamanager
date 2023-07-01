@@ -127,6 +127,7 @@ return [
     'zz_field_record',
     'zz_fields',
     'zz_files',
+    'zz_files_print',
     'zz_groups',
     'zz_group_module',
     'zz_group_segment',

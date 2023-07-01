@@ -10,7 +10,7 @@ DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = "Fine orario lavorativo";
 UPDATE `zz_settings` SET `help` = "Se abilitato viene effettuato un backup completo del gestionale secondo le impostazioni definite a database in zz_tasks (di default ogni giorno all'1)" WHERE `zz_settings`.`nome` = 'Backup automatico';
 
 UPDATE `zz_settings` SET `editable` = 1 WHERE `zz_settings`.`nome` = 'Soft quota';
-UPDATE `zz_settings` SET `help` = "Valore espresso in Giga superato il quale viene visualizzato un avviso di spazio in esaurimento." WHERE `zz_settings`.`nome` = 'Soft quota';
+UPDATE `zz_settings` SET `help` = "Valore espresso in Gigabyte superato il quale verrà visualizzato un avviso di spazio in esaurimento." WHERE `zz_settings`.`nome` = 'Soft quota';
 
 -- Rimozione google maps
 DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Google Maps API key';

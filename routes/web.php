@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\CheckConfigurationMiddleware;
+use App\Http\Middleware\LocaleMiddleware;
+use App\Http\Middleware\RedirectIfAuthenticated;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,7 +18,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', static fn () => redirect()->route('login'))
-    ->middleware(CheckConfigurationMiddleware::class);
+    ->middleware(CheckConfigurationMiddleware::class)
+    /** @psalm-suppress PossiblyInvalidMethodCall */
+    ->withoutMiddleware([LocaleMiddleware::class, RedirectIfAuthenticated::class]);
 
 Route::middleware('guest')->group(static function () {
     Route::inertia('login', 'LoginPage', ['external' => true])
@@ -32,7 +36,8 @@ Route::middleware('guest')->group(static function () {
         'license' => cache()->rememberForever('app.license', static fn () => file_get_contents(base_path('LICENSE'))),
         'external' => true,
     ])
-        ->middleware('guest', CheckConfigurationMiddleware::class)
+        ->middleware(CheckConfigurationMiddleware::class)
+        ->withoutMiddleware([LocaleMiddleware::class, RedirectIfAuthenticated::class])
         ->name('setup.index');
 });
 

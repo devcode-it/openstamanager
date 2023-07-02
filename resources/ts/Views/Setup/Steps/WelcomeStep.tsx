@@ -1,6 +1,6 @@
 import '@material/web/checkbox/checkbox.js';
 import '@material/web/field/outlined-field.js';
-import '@material/web/select/filled-select.js';
+import '@osm/Components/m3/FilledSelect';
 import '@material/web/select/select-option.js';
 
 import type {MdCheckbox} from '@material/web/checkbox/checkbox';
@@ -60,7 +60,7 @@ export default class WelcomeStep<A extends WelcomeStepAttributes = WelcomeStepAt
         </md-filled-select>
         <h4>{__('Licenza')}</h4>
         <p>{__('OpenSTAManager è tutelato dalla licenza GPL 3.0, da accettare obbligatoriamente per poter utilizzare il gestionale.')}</p>
-        <md-outlined-field populated style={{marginBottom: '8px'}}>
+        <md-outlined-field populated style={{marginBottom: '8px', '--md-outlined-field-container-padding-vertical': '0'}}>
           <p style={{
             overflow: 'auto', resize: 'both', height: '250px', fontFamily: 'monospace'
           }}>{this.attrs.get('license')}</p>

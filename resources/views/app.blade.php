@@ -27,18 +27,19 @@
 @endphp
 
 @inertia
+
 <script>
   app = @js([
     'locale' => app()->getLocale(),
     'modules' => $modules,
-    'user' => auth()->user(),
+    'user' => Route::currentRouteName() !== 'setup.index' && auth()->user(),
     'VERSION' => trim(file_get_contents(base_path('VERSION'))),
     'REVISION' => trim(file_get_contents(base_path('REVISION'))),
     'settings' => [
         'date_format' => settings('date_format_long'),
         'date_format_short' => settings('date_format_short'),
         'time_format' => settings('time_format'),
-]
+    ]
 ]);
 </script>
 

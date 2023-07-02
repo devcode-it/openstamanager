@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\SetupController;
 use App\Http\Middleware\CheckConfigurationMiddleware;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,12 +15,15 @@ use App\Http\Middleware\CheckConfigurationMiddleware;
 |
 */
 
-Route::name('setup.')->middleware(CheckConfigurationMiddleware::class)->group(static function () {
-    Route::post('setup/test', [SetupController::class, 'testDatabase'])
-        ->name('test');
+Route::name('setup.')
+    ->middleware(CheckConfigurationMiddleware::class)
+    ->withoutMiddleware([EnsureFrontendRequestsAreStateful::class])
+    ->group(static function () {
+        Route::post('setup/test', [SetupController::class, 'testDatabase'])
+            ->name('test');
 
-    Route::put('setup/save', [SetupController::class, 'save'])
-        ->name('save');
-});
+        Route::put('setup/save', [SetupController::class, 'save'])
+            ->name('save');
+    });
 
 Route::restifyAuth();

@@ -55,12 +55,12 @@ export default class SetupPage extends Page<SetupPageAttributes> {
 
     try {
       await Request.put(route('setup.save'), data);
+      void showSnackbar(__('Impostazioni salvate correttamente'));
+      router.visit(route('login'));
     } catch (error: any) {
+      // eslint-disable-next-line no-console
+      console.error(error);
       void showSnackbar((error as RequestError<{message: string}>).response.message);
-      return;
     }
-
-    void showSnackbar(__('Impostazioni salvate correttamente'));
-    router.visit(route('login'));
   }
 }

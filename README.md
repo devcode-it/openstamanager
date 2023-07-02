@@ -49,15 +49,15 @@ all'indirizzo [https://docs.openstamanager.com/](https://docs.openstamanager.com
 
 L'installazione del gestionale richiede un server web con le seguenti tecnologie disponibili:
 
-- [PHP](https://php.net) 8.0+
+- [PHP](https://php.net) 8.1+
 - Un database a scelta tra:
     - [MySQL](https://www.mysql.com) 5.7+ (consigliato) / [MariaDB](https://mariadb.org/) 10.3+
-    - [PostgreSQL](https://www.postgresql.org) 9.6+
+    - [PostgreSQL](https://www.postgresql.org) 10.0+
     - [SQLite](https://www.sqlite.org) 3.8.8+ (non consigliato, in quanto viene salvato "in chiaro" sul filesystem del
       server)
     - [SQL Server](https://www.microsoft.com/it-it/sql-server) 2017+
-- Accesso SSH (**facoltativo**)
-- [Composer](https://getcomposer.org/) installato e disponibile da linea di comando (**facoltativo**)
+- Accesso SSH (**facoltativo, ma fortemente consigliato**)
+- [Composer](https://getcomposer.org/) installato e disponibile da linea di comando (**facoltativo, ma fortemente consigliato**)
 
 e un dispositivo (client) con le seguenti tecnologie disponibili:
 
@@ -87,7 +87,7 @@ Per installare le dipendenze del gestionale sono necessari i seguenti strumenti 
 preparazione del progetto):
 
 - [Composer](https://getcomposer.org/)
-- [Node.js](https://nodejs.org/) 19+
+- [Node.js](https://nodejs.org/) 18+
 - [Git](https://git-scm.com/) (facoltativo, ma consigliato)
 
 ## Installazione
@@ -131,15 +131,25 @@ Nel caso si stia utilizzando la versione direttamente ottenuta dalla repository 
 seguenti comandi da linea di comando per completare le dipendenze PHP (tramite [Composer](https://getcomposer.org)) e
 gli assets (tramite [PNPM](https://pnpm.io/it)) del progetto.
 
+#### Installazione delle dipendenze
 ```bash
 composer install --no-dev
 pnpm install --prod
 pnpm build
-
-php artisan key:generate
-php artisan migrate
-php artisan vendor:publish
 ```
+
+Da qui si possono scegliere due strade:
+
+#### Installazione da linea di comando
+```bash
+php artisan migrate
+# TODO: Add a command to create the admin user
+```
+
+#### Installazione da interfaccia web
+1. Avviare il server web o utilizzare il comando `php artisan serve` per avviare il server web integrato.
+2. Accedere a [http://localhost/openstamanager](http://localhost/openstamanager) dal vostro browser.
+3. Seguire la procedura guidata per l'installazione.
 
 Per ulteriori informazioni, visitare le sezioni [Assets](https://docs.openstamanager.com/docs/base/assets)
 e [Framework](https://docs.openstamanager.com/docs/base/framework) della documentazione.

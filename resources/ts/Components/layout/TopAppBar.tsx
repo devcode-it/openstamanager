@@ -54,7 +54,7 @@ export default class TopAppBar extends Component {
 
   navigationIcon(vnode: Vnode) {
     return (
-      <md-standard-icon-button slot="navigationIcon" onclick={() => this.drawerOpenState(!this.drawerOpenState())}>
+      <md-standard-icon-button slot="navigationIcon" onclick={this.onNavigationIconClick.bind(this)}>
         <MdIcon icon={this.drawerOpenState() ? mdiMenuOpen : mdiMenu}/>
       </md-standard-icon-button>
     );
@@ -80,17 +80,9 @@ export default class TopAppBar extends Component {
   oncreate(vnode: VnodeDOM<Attributes, this>) {
     super.oncreate(vnode);
 
-    this.element.addEventListener('MDCTopAppBar:nav', () => {
-      this.drawerOpenState(!this.drawerOpenState());
-    });
-
     mobileMediaQuery().addEventListener('change', (event) => {
       this.drawerOpenState(event.matches || this.drawerOpenState());
-    });
-
-    this.drawerOpenState.map((value) => {
       m.redraw();
-      return value;
     });
   }
 
@@ -101,5 +93,9 @@ export default class TopAppBar extends Component {
       periodSwitcher: <PeriodSwitcherAction/>,
       userInfo: <UserInfoAction/>
     });
+  }
+
+  onNavigationIconClick() {
+    this.drawerOpenState(!this.drawerOpenState());
   }
 }

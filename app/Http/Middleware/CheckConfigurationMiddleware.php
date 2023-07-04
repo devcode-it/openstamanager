@@ -7,6 +7,7 @@ use Closure;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use PDO;
@@ -45,6 +46,12 @@ class CheckConfigurationMiddleware
 
                 return redirect()->route('setup.index');
             }
+        }
+
+        // Redirect to login if we are in setup route
+        $route = $request->route();
+        if ($route instanceof Route && str_starts_with($route->getName(), 'setup.')) {
+            return redirect()->route('login');
         }
 
         return $next($request);

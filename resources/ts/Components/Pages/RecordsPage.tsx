@@ -107,7 +107,8 @@ export default abstract class RecordsPage<
     let query = this.modelType.query<M>();
 
     for (const [attribute, value] of this.filters) {
-      query = query.where(attribute, value);
+      // query = query.where(attribute, value); TODO: Revert when Restify uses JSONAPI syntax
+      query = query.option(attribute, value);
     }
     for (const [attribute, value] of this.sort) {
       query = query.orderBy(attribute, value);

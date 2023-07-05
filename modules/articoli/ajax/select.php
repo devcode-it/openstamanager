@@ -315,4 +315,11 @@ switch ($resource) {
             $search_fields[] = '`an_anagrafiche`.`ragione_sociale` LIKE '.prepare('%'.$search.'%');
         }
         break;
+
+    case 'serial-articolo':
+        $query = 'SELECT serial AS id, serial AS descrizione FROM mg_prodotti |where| AND mg_prodotti.dir=\'uscita\' AND id=(SELECT MAX(id) FROM mg_prodotti AS prodotti WHERE prodotti.id_articolo=mg_prodotti.id_articolo AND prodotti.serial=mg_prodotti.serial)';
+
+        $where[] = 'id_articolo='.prepare($superselect['idarticolo']);
+
+        break;
 }

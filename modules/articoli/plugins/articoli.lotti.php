@@ -44,6 +44,8 @@ echo '
         <form action="" method="post" role="form" class="tab-pane active" id="generazione">
             <input type="hidden" name="backto" value="record-edit">
             <input type="hidden" name="op" value="generate_serials">
+            <input type="hidden" name="id_module" value="'.$id_module.'">
+            <input type="hidden" name="id_record" value="'.$id_record.'">
 
             <div class="row">
                 <div class="col-md-5">
@@ -73,6 +75,8 @@ echo '
         <form action="" method="post" role="form" class="tab-pane" id="inserimento">
             <input type="hidden" name="backto" value="record-edit">
             <input type="hidden" name="op" value="add_serials">
+            <input type="hidden" name="id_module" value="'.$id_module.'">
+            <input type="hidden" name="id_record" value="'.$id_record.'">
 
             <div class="row">
                 <div class="col-md-12">
@@ -94,6 +98,7 @@ echo '
 </div>';
 
 // Elenco
+if (empty(get('modal'))) {
 echo '
 <div class="box">
     <div class="box-header with-border">
@@ -337,6 +342,7 @@ echo '
         </table>
     </div>
 </div>';
+}
 
 echo '
 <script type="text/javascript">
@@ -365,7 +371,14 @@ function addSerial(form_id, numero) {
             showCancelButton: true,
             confirmButtonText: "'.tr('Continua').'"
         }).then(function (result) {
-            $(form_id).submit();
+            if ($("div[id^=bs-popup").is(":visible")) { 
+                salvaForm($(form_id), {
+                }).then(function(response) {
+                    $(form_id).closest("div[id^=bs-popup").modal("hide");
+                });
+            } else {
+                $(form_id).submit();
+            }
         })
     } else {
         swal("'.tr('Errore').'", "'.tr('Nessun seriale inserito').'", "error");

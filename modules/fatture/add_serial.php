@@ -22,6 +22,8 @@ include_once __DIR__.'/../../core.php';
 use Modules\DDT\DDT;
 
 $module = Modules::get($id_module);
+$module_articoli = Modules::get('Articoli');
+$plugin_serial = Plugins::get('Serial');
 
 // Controllo sulla direzione monetaria
 $uscite = [
@@ -77,7 +79,7 @@ $idriga = get('idriga') ?: get('riga_id');
 $rs = $dbo->fetchArray('SELECT mg_articoli.id AS idarticolo, mg_articoli.codice, mg_articoli.descrizione, '.$table.'.qta FROM '.$table.' INNER JOIN mg_articoli ON '.$table.'.idarticolo=mg_articoli.id WHERE '.$table.'.'.$id.'='.prepare($id_record).' AND '.$table.'.id='.prepare($idriga));
 
 echo '
-<p>'.tr('Articolo').': '.$rs[0]['codice'].' - '.$rs[0]['descrizione'].'</p>
+<h4 class="text-center">'.tr('Articolo').': '.$rs[0]['codice'].' - '.$rs[0]['descrizione'].'</h4>
 
 <form action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post">
     <input type="hidden" name="op" value="add_serial">
@@ -93,12 +95,32 @@ if ($dir == 'entrata') {
     echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "select", "label": "'.tr('Serial').'", "name": "serial[]", "multiple": 1, "value": "'.implode(',', $serials).'", "values": "query=SELECT serial AS id, serial AS descrizione FROM mg_prodotti WHERE id_articolo = '.prepare($rs[0]['idarticolo']).' AND mg_prodotti.dir=\'uscita\' AND id=(SELECT MAX(id) FROM mg_prodotti AS prodotti WHERE prodotti.id_articolo=mg_prodotti.id_articolo AND prodotti.serial=mg_prodotti.serial)", "extra": "data-maximum=\"'.intval($rs[0]['qta']).'\"" ]}
+            {[ "type": "select", "label": "'.tr('Serial').'", "name": "serial[]", "multiple": 1, "value": "'.implode(',', $serials).'", "ajax-source": "serial-articolo", "select-options": '.json_encode(['idarticolo' => $rs[0]['idarticolo']]).', "extra": "data-maximum=\"'.intval($rs[0]['qta']).'\"" ]}
         </div>
     </div>';
 } else {
     echo '
-    <p>'.tr('Inserisci i numeri seriali degli articoli aggiunti:').'</p>';
+    <div class="row">
+        <div class="col-md-5">
+            {[ "type": "text", "label": "'.tr('Inizio').'", "name": "serial_start" ]}
+        </div>
+
+        <div class="col-md-2 text-center" style="padding-top: 20px;">
+            <i class="fa fa-arrow-circle-right fa-2x"></i>
+        </div>
+
+        <div class="col-md-5">
+            {[ "type": "text", "label": "'.tr('Fine').'", "name": "serial_end" ]}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <button type="button" class="btn btn-info" onclick="generaSerial();"><i class="fa fa-magic"></i> '.tr('Genera').'</button>
+        </div>
+    </div>
+    <hr>
+    <h5>'.tr('Inserisci i numeri seriali degli articoli aggiunti:').'</h5>';
     for ($i = 0; $i < $rs[0]['qta']; ++$i) {
         if ($i % 3 == 0) {
             echo '
@@ -164,7 +186,7 @@ if ($dir == 'entrata') {
     </div>
 
     <script>
-        $(".serial").on("keyup", function() {
+        $(".serial").on("keyup change", function() {
             controllaSerial($(this).val());
         });
 
@@ -176,9 +198,9 @@ if ($dir == 'entrata') {
                     id_module: "'.$module_fatture.'",
                     id_record: globals.id_record,
                     serial: value,
-                    is_rientrabile: '.$is_rientrabile.',
+                    is_rientrabile: "'.$is_rientrabile.'",
                     id_articolo: input("idarticolo").get(),
-                    op: "controlla_serial",
+                    op: "controlla_serial"
                 },
                 success: function(data){
                     data = JSON.parse(data);
@@ -201,6 +223,30 @@ if ($dir == 'entrata') {
                 select_serial.selectClear();
             }
         }
+
+        function generaSerial() {
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    id_module: "'.$module_articoli->id.'",
+                    id_record: "'.$rs[0]['idarticolo'].'",
+                    serial_start: input("serial_start").get(),
+                    serial_end: input("serial_end").get(),
+                    check: 1,
+                    op: "generate_serials"
+                },
+                success: function (response) {
+                    let i = 0;
+                    $(".serial").each(function() {
+                        $(this).val(response[i]);
+                        controllaSerial(response[i]);
+                        i++;
+                    });
+                }
+            });
+        }
     </script>';
 }
 
@@ -208,7 +254,11 @@ echo '
 
     <!-- PULSANTI -->
 	<div class="row">
-		<div class="col-md-12 text-right">
+        <div class="col-md-2">
+            <button type="button" class="btn btn-info '.($dir == 'uscita' ? 'hidden' : '').'" data-toggle="modal" data-title="'.tr('Aggiungi serial').'" data-href="'.base_path().'/modules/articoli/plugins/articoli.lotti.php?id_module='.$module_articoli->id.'&id_record='.$rs[0]['idarticolo'].'&modal=1"><i class="fa fa-magic"></i> '.tr('Crea').'</button>
+        </div>
+
+		<div class="col-md-10 text-right">
 			<button type="submit" id="aggiorna" class="btn btn-primary pull-right"><i class="fa fa-barcode"></i> '.tr('Aggiorna').'</button>
 		</div>
     </div>

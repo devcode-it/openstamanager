@@ -302,6 +302,11 @@ switch (post('op')) {
             $serials[] = $serial;
         }
 
+        if (post('check')) {
+            echo json_encode($serials);
+            break;
+        }
+
         // no break
     case 'add_serials':
         $serials = $serials ?: filter('serials');

@@ -214,8 +214,10 @@ class Query
                         $value = trim(str_replace(['&lt;', '&gt;'], '', $value));
 
                         if ($more || $minus) {
-                            if( date("Y-d-m",strtotime($value))!='1970-01-01' ){
-                                $search_filters[] = $search_query.' '.$sign.' \''.date("Y-d-m",strtotime($value)).'\'';
+                            list($giorno, $mese, $anno)=explode('/', $value);
+                            $data="'".$anno."-".$mese."-".$giorno."'";
+                            if( $data!="'1970-01-01'" ){
+                                $search_filters[] = $search_query.' '.$sign.' '.$data.'';
                             }else{
                                 $search_filters[] = 'CAST('.$search_query.' AS UNSIGNED) '.$sign.' '.prepare($value);
                             }

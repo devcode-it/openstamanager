@@ -12,6 +12,7 @@ import {
   Request,
   RequestError
 } from 'mithril-utilities';
+import {match} from 'ts-pattern';
 
 import {
   SetupStep,
@@ -33,6 +34,20 @@ export default class SetupPage extends Page<SetupPageAttributes> {
     [SetupSteps.Database]: new DatabaseStep(),
     [SetupSteps.AdminUser]: new AdminUserStep()
   };
+
+  oninit(vnode: Vnode<SetupPageAttributes, this>) {
+    super.oninit(vnode);
+    // @ts-expect-error
+    const {step} = route().params;
+    if (step) {
+      const setupStep = match(step)
+        .with('regional_settings', () => SetupSteps.RegionalSettings)
+        .with('database', () => SetupSteps.Database)
+        .with('admin_user', () => SetupSteps.AdminUser)
+        .otherwise(() => SetupSteps.Welcome);
+      this.currentStep(setupStep);
+    }
+  }
 
   contents(vnode: Vnode<SetupPageAttributes>) {
     return <>

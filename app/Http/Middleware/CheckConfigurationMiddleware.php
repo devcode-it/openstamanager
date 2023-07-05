@@ -23,7 +23,7 @@ class CheckConfigurationMiddleware
             'admin_user' => static fn (): bool => !empty(User::exists()),
         ];
 
-        foreach ($checks as $check) {
+        foreach ($checks as $name => $check) {
             try {
                 $check = $check();
             } catch (QueryException|InvalidArgumentException|PDOException $exception) {
@@ -44,7 +44,7 @@ class CheckConfigurationMiddleware
                     return \response()->json(['message' => __('Configurazione del database richiesta')], Response::HTTP_SERVICE_UNAVAILABLE);
                 }
 
-                return redirect()->route('setup.index');
+                return redirect()->route('setup.index', ['step' => $name]);
             }
         }
 

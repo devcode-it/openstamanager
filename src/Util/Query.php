@@ -200,6 +200,8 @@ class Query
                     $minus = string_starts_with($real_value, '<=') || string_starts_with($real_value, '< =') || string_starts_with($real_value, '<');
                     $equal = string_starts_with($real_value, '=');
                     $notequal = string_starts_with($real_value, '!=');
+                    $start_with = string_starts_with($real_value, '^');
+                    $end_with = string_ends_with($real_value, '$');
 
                     if ($minus || $more) {
                         $sign = string_contains($real_value, '=') ? '=' : '';
@@ -212,7 +214,11 @@ class Query
                         $value = trim(str_replace(['&lt;', '&gt;'], '', $value));
 
                         if ($more || $minus) {
-                            $search_filters[] = 'CAST('.$search_query.' AS UNSIGNED) '.$sign.' '.prepare($value);
+                            if( date_parse($value) ){
+                                $search_filters[] = 'DATE_FORMAT('.$search_query.', "%Y-%m-%d") '.$sign.' '.prepare(date("Y-m-d",strtotime($value)));
+                            }else{
+                                $search_filters[] = 'CAST('.$search_query.' AS UNSIGNED) '.$sign.' '.prepare($value);
+                            }
                         } else {
                             $search_filters[] = $search_query.' '.$sign.' '.prepare($value);
                         }
@@ -223,6 +229,12 @@ class Query
                     } else if ($notequal) {
                         $value = trim(str_replace(['!='], '', $value));
                         $search_filters[] = ($search_query.' != '.prepare($value). ' AND '.$search_query.' NOT LIKE '.prepare('% '.$value) . ' AND '.$search_query.' NOT LIKE '.prepare($value.' %').' AND '.$search_query.' NOT LIKE '.prepare('% '.$value.' %'));
+                    }  else if ($start_with) {
+                        $value = trim(str_replace(['^'], '', $value));
+                        $search_filters[] = ($search_query.' LIKE '.prepare($value.'%'));
+                    } else if ($end_with) {
+                        $value = trim(str_replace(['$'], '', $value));
+                        $search_filters[] = ($search_query.' LIKE '.prepare('%'.$value));
                     } else {
                         $search_filters[] = $search_query.' LIKE '.prepare('%'.$value.'%');
                     }

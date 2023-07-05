@@ -28,15 +28,33 @@ use function is_array;
 
 use Nette\Utils\Json;
 
+/**
+ * @phpstan-type MatchType 'text'|'string'|'bool'|'int'|'integer'|'datetime'|'between'|'array'
+ *
+ * @psalm-suppress NonInvariantDocblockPropertyType
+ */
 abstract class Repository extends RestifyRepository
 {
+    /**
+     * @var string[] The list of fields to be sortable
+     *
+     * @psalm-suppress NonInvariantDocblockPropertyType
+     */
     public static array $sort = ['id'];
 
-    public static array $match = ['id'];
+    /** @var array<string, MatchType> The list of fields to be partially matchable */
+    public static array $match = [];
+
+    /** @var array<string, MatchType> The list of fields to be matchable */
+    public static array $fullMatch = ['id' => 'int'];
 
     public static function matches(): array
     {
-        return array_map(static fn (string $type): Filter => MatchFilter::make()->setType($type)->partial(), static::$match);
+        $matches = static::$fullMatch;
+        foreach (static::$match as $field => $type) {
+            $matches[$field] = MatchFilter::make()->setType($type)->partial();
+        }
+        return $matches;
     }
 
     /**

@@ -103,11 +103,11 @@ footer {
     background-color: var(--md-sys-color-surface, white);
 
     > :first-child {
-        flex: 1;
         padding-left: 16px;
     }
 
     > :last-child {
+        flex: 1;
         padding-right: 16px;
         text-align: right;
     }

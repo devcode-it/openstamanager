@@ -225,8 +225,18 @@ class Mail extends Model
         $this->subject = $template->subject;
 
         // Reply To
-        if (!empty($template['reply_to'])) {
-            $this->options['reply_to'] = $template['reply_to'];
+        if (!empty($template['tipo_reply_to'])) {
+            $reply_to = '';
+            if ($template['tipo_reply_to'] == 'email_fissa') {
+                $reply_to = $template['reply_to'];
+            } else {
+                $user = \Auth::user();
+                $reply_to = $user->email;
+            }
+
+            if (!empty($reply_to)) {
+                $this->options['reply_to'] = $reply_to;
+            }
         }
 
         // CC

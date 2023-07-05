@@ -59,13 +59,8 @@ if (!$record['predefined']) {
             </div>
 
             <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-12">
                     {[ "type": "text", "label": "<?php echo tr('Oggetto'); ?>", "name": "subject", "value": "$subject$" ]}
-                </div>
-
-                <div class="col-md-4">
-					<?php $records[0]['icon'] = (empty($records[0]['icon'])) ? 'fa fa-envelope' : $records[0]['icon']; ?>
-                    {[ "type": "text", "label": "<?php echo tr('Icona'); ?>", "name": "icon", "value": "<?php echo $records[0]['icon']; ?>" ,"help":"<?php echo tr('Es. \'fa fa-envelope\''); ?>" ]}
                 </div>
             </div>
 
@@ -79,7 +74,18 @@ if (!$record['predefined']) {
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "email", "label": "<?php echo tr('Rispondi a'); ?>", "name": "reply_to", "value": "$reply_to$", "help": "<?php echo 'Rispondi a questo indirizzo e-mail.'; ?>" ]}
+					<?php $records[0]['icon'] = (empty($records[0]['icon'])) ? 'fa fa-envelope' : $records[0]['icon']; ?>
+                    {[ "type": "text", "label": "<?php echo tr('Icona'); ?>", "name": "icon", "value": "<?php echo $records[0]['icon']; ?>" ,"help":"<?php echo tr('Es. \'fa fa-envelope\''); ?>" ]}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    {[ "type": "select", "label": "<?php echo tr('Rispondi a'); ?>", "name": "tipo_reply_to", "values": "list=\"0\":\"Mittente (predefinito)\", \"email_user\":\"Email dell'utente che esegue l'invio\", \"email_fissa\":\"Destinatario fisso\"", "value": "$tipo_reply_to$", "help": "<?php echo 'Indirizzo email a cui rispondere'; ?>" ]}
+                </div>
+
+                <div class="col-md-6">
+                    {[ "type": "email", "label": "<?php echo tr('Destinatario fisso'); ?>", "name": "reply_to", "value": "$reply_to$", "help": "<?php echo 'Rispondi a questo indirizzo e-mail.'; ?>" ]}
                 </div>
             </div>
 
@@ -96,7 +102,7 @@ echo '
 
             <div class="row">
                 <div class="col-md-12">
-                    {[ "type": "select", "multiple": "1", "label": "'.tr('Stampe').'", "name": "prints[]", "value": "'.implode(',', $selected_prints).'", "values": "query=SELECT id, title AS text FROM zz_prints WHERE id_module = '.prepare($record['id_module']).' AND enabled=1" ]}
+                    {[ "type": "select", "multiple": "1", "label": "'.tr('Stampe').'", "name": "prints[]", "value": "'.implode(',', $selected_prints).'", "values": "query=SELECT id, title AS text FROM zz_prints WHERE id_module = '.prepare($record['id_module']).' AND enabled=1 AND is_record=1" ]}
                 </div>
             </div>
 
@@ -196,3 +202,21 @@ if (!empty($newsletters[0])) {
 <?php
 }
 ?>
+
+<script>
+    $(document).ready(function () {
+        if ($("#tipo_reply_to").val() != 'email_fissa') {
+            $("#reply_to").val("");
+            $("#reply_to").attr("readonly", true)
+        }
+    });
+
+    $("#tipo_reply_to").on("change", function () {
+        if ($(this).val() == 'email_fissa') {
+            $("#reply_to").attr("readonly", false)
+        } else {
+            $("#reply_to").val("");
+            $("#reply_to").attr("readonly", true)
+        }
+    });
+</script>

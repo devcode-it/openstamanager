@@ -40,6 +40,7 @@ switch (post('op')) {
             'id_account' => post('smtp'),
             'icon' => post('icon'),
             'subject' => post('subject'),
+            'tipo_reply_to' => post('tipo_reply_to'),
             'reply_to' => post('reply_to'),
             'cc' => post('cc'),
             'bcc' => post('bcc'),

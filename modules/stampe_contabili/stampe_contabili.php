@@ -172,10 +172,8 @@ if ($nome_stampa != 'Liquidazione IVA') {
 
 	echo '
 	<script>
-		$(document).ready(function () {
-			setTimeout(function () {
-				eseguiControlli();
-			}, 1000);
+		$("#modals > div").on("shown.bs.modal", function () {
+			eseguiControlli();
 		});
 
 		$("#date_start").on("blur", function(){

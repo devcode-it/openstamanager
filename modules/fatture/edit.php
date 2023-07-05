@@ -216,45 +216,6 @@ if ($dir == 'entrata') {
 		</div>
 
 		<div class="panel-body">
-
-			<?php
-
-                if ($dir == 'entrata') {
-                    $rs2 = $dbo->fetchArray('SELECT piva, codice_fiscale, citta, indirizzo, cap, id_nazione, tipo FROM an_anagrafiche WHERE idanagrafica='.prepare($record['idanagrafica']));
-                    $campi_mancanti = [];
-
-                    //di default è un azienda e chiedo la partita iva
-                    if (empty($rs2[0]['piva']) and empty($rs2[0]['codice_fiscale']) and (empty($rs2[0]['tipo']) or $rs2[0]['tipo'] == 'Azienda')) {
-                        array_push($campi_mancanti, 'Partita IVA');
-                        array_push($campi_mancanti, 'Codice fiscale');
-                    }
-
-                    $nazione = Nazione::find($rs2[0]['id_nazione']);
-                    //se è un privato o un ente pubblico controllo il codice fiscale
-                    if ((($rs2[0]['tipo'] == 'Privato' && $nazione->iso2 == 'IT') or $rs2[0]['tipo'] == 'Ente pubblico') and empty($rs2[0]['codice_fiscale'])) {
-                        array_push($campi_mancanti, 'Codice fiscale');
-                    }
-
-                    if ($rs2[0]['citta'] == '') {
-                        array_push($campi_mancanti, 'Città');
-                    }
-                    if ($rs2[0]['indirizzo'] == '') {
-                        array_push($campi_mancanti, 'Indirizzo');
-                    }
-                    if ($rs2[0]['cap'] == '') {
-                        array_push($campi_mancanti, 'C.A.P.');
-                    }
-                    if (empty($rs2[0]['id_nazione'])) {
-                        array_push($campi_mancanti, 'Nazione');
-                    }
-
-                    if (sizeof($campi_mancanti) > 0) {
-                        echo "<div class='alert alert-warning'><i class='fa fa-warning'></i> Prima di procedere alla stampa completa i seguenti campi dell'anagrafica Cliente: <b>".implode(', ', $campi_mancanti).'</b><br/>
-						'.Modules::link('Anagrafiche', $record['idanagrafica'], tr('Vai alla scheda anagrafica'), null).'</div>';
-                    }
-                }
-            ?>
-
 			<div class="row">
                 <?php
                 if ($dir == 'uscita') {
@@ -1011,7 +972,7 @@ echo '
 // Eliminazione ddt solo se ho accesso alla sede aziendale
 $field_name = ($dir == 'entrata') ? 'idsede_partenza' : 'idsede_destinazione';
 if (in_array($record[$field_name], $user->sedi)) {
-    $disabilita_eliminazione = in_array($fattura->codice_stato_fe, ['RC', 'MC', 'EC01']);
+    $disabilita_eliminazione = in_array($fattura->codice_stato_fe, ['RC', 'MC', 'EC01', 'WAIT']);
 
     echo '
     <a class="btn btn-danger ask '.($disabilita_eliminazione ? 'disabled' : '').'" data-backto="record-list" '.($disabilita_eliminazione ? 'disabled' : '').'>

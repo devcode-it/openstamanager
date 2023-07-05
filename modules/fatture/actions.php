@@ -85,6 +85,7 @@ switch (post('op')) {
         if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && ($stato->descrizione == 'Emessa') && (Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax']))) && (!empty($data_fattura_precedente['datamax']))){
             $fattura->data = $data_fattura_precedente['datamax'];
             $fattura->data_competenza = $data_fattura_precedente['datamax'];
+            flash()->info(tr('Data di emissione aggiornata, come da impostazione!'));
         } else {
             $fattura->data = post('data');
             $fattura->data_competenza = post('data_competenza');
@@ -214,6 +215,21 @@ switch (post('op')) {
                 })->count();
             if (!empty($count)) {
                 flash()->warning(tr('Esiste già una fattura con lo stesso numero secondario e la stessa anagrafica collegata!'));
+            }
+        }
+
+        // Controllo sulla presenza di fattura di vendita con lo stesso numero nello stesso periodo
+        if ($direzione == 'entrata') {
+            $count = Fattura::where('numero_esterno', $fattura->numero_esterno)
+                ->where('id', '!=', $id_record)
+                ->where('data', '>=', $_SESSION['period_start'])
+                ->where('data', '<=', $_SESSION['period_end'])
+                ->where('numero_esterno', '!=', NULL)
+                ->whereHas('tipo', function ($query) use ($direzione) {
+                    $query->where('dir', '=', $direzione);
+                })->count();
+            if (!empty($count)) {
+                flash()->warning(tr('Esiste già una fattura con lo stesso numero!'));
             }
         }
 

@@ -5,12 +5,26 @@ export default class Footer extends Component {
   view() {
     return (
       <footer>
-        <a href="https://openstamanager.com">{__('OpenSTAManager')}</a>
+        {this.leftFooter()}
         <div class="right-footer">
-          <strong>{__('Versione')}</strong> {app.VERSION}&nbsp;
-          <small>(<code>{app.REVISION}</code>)</small>
+          {this.rightFooter()}
         </div>
       </footer>
+    );
+  }
+
+  leftFooter() {
+    return (
+      <a href="https://openstamanager.com">{__('OpenSTAManager')}</a>
+    );
+  }
+
+  rightFooter() {
+    return (
+      <>
+        <strong>{__('Versione')}</strong> {app.VERSION}&nbsp;
+        <small>(<code>{app.REVISION}</code>)</small>
+      </>
     );
   }
 }

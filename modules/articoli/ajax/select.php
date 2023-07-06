@@ -80,7 +80,7 @@ switch ($resource) {
 
         if ($idagente) {
             $query .= '
-            `co_provvigioni`.`pr`ovvigione` AS provvigione,
+            `co_provvigioni`.`provvigione` AS provvigione,
             `co_provvigioni`.`tipo_provvigione` AS tipo_provvigione,';
         }
 

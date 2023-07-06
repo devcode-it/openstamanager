@@ -17,10 +17,6 @@ import Model from '@osm/Models/Model';
 import {isVnode} from '@osm/utils/misc';
 import collect, {Collection} from 'collect.js';
 import {
-  ToManyRelation,
-  ToOneRelation
-} from 'coloquent';
-import {
   Children,
   Vnode,
   VnodeDOM

@@ -61,11 +61,12 @@ export default abstract class RecordsPage<
   protected readonlyRecords = false;
   protected refreshRecords = true;
 
-  protected currentPageSize = 10;
+  protected currentPageSize = 50;
   protected pageSizes = [10, 25, 50, 100];
 
   protected filters: Map<string, string> = new Map();
   protected sort: Map<string, SortDirection> = new Map([['id', SortDirection.ASC]]);
+  protected relatedFilters: Map<string, string> = new Map();
   private listenedFilterColumns: string[] = [];
   private listenedSortedColumns: string[] = [];
 
@@ -87,7 +88,12 @@ export default abstract class RecordsPage<
   async loadRecords() {
     this.isTableLoading = true;
 
-    const response = await this.modelQuery().get();
+    let query = this.modelQuery();
+
+    // Fix Restify when filtering relations
+    query = query.option('related', query.getQuery().getInclude().join(','));
+
+    const response = await query.get();
     const data = response.getData();
 
     this.records.clear();
@@ -102,16 +108,38 @@ export default abstract class RecordsPage<
     m.redraw();
   }
 
+  /**
+   * Temporary
+   *
+   * @source https://stackoverflow.com/a/65003355/7520280
+   */
+  private static convertToSnakeCase(string_: string, trim = false, removeSpecials = false, underscoredNumbers = false) {
+    return string_.replace(removeSpecials ? /[^\w ]/g : '', '')
+      .replace(/([ _]+)/g, '_')
+      .replace(trim ? /(^_|_$)/gm : '', '')
+      .replace(underscoredNumbers ? /([^\dA-Z_])([^_a-z])/g : /([^\dA-Z_])([^\d_a-z])/g, (m, preUpper, upper) => `${preUpper}_${upper}`)
+      .replace(underscoredNumbers ? /([^\d_]\d|\d[^\d_])/g : '', (m, index) => (index ? index.split('').join('_') : ''))
+      .replace(/([A-Z])([A-Z])([^\dA-Z_])/g, (m, previousUpper, upper, lower) => `${previousUpper}_${upper}${lower}`)
+      .replaceAll('_.', '.') // remove redundant underscores
+      .toLowerCase();
+  }
+
   modelQuery() {
     // @ts-ignore
     let query = this.modelType.query<M>();
 
     for (const [attribute, value] of this.filters) {
-      // query = query.where(attribute, value); TODO: Revert when Restify uses JSONAPI syntax
-      query = query.option(attribute, value);
+      // Query = query.where(attribute, value); TODO: Revert when Restify uses JSONAPI syntax
+      query = query.option(RecordsPage.convertToSnakeCase(attribute), value);
     }
+
+    for (const [relation, value] of this.relatedFilters) {
+      query = query.option('related', relation)
+        .option('search', value);
+    }
+
     for (const [attribute, value] of this.sort) {
-      query = query.orderBy(attribute, value);
+      query = query.orderBy(RecordsPage.convertToSnakeCase(attribute), value);
     }
 
     return query;
@@ -258,14 +286,17 @@ export default abstract class RecordsPage<
   }
 
   protected onFilter(event: Event) {
-    // TODO: Check if it's possible to use caseSensitiveness when filtering (currently enforces case sensitive)
+    // TODO: Check if it's possible to use caseSensitiveness when filtering (currently enforces case insensitive)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const {text, column, caseSensitive} = (event as CustomEvent<FilterTextFieldInputEventDetail>).detail;
-    const modelAttribute = column.dataset.modelAttribute!;
+    const modelAttribute = (column.dataset.filterRelated === '' ? undefined : column.dataset.filterRelated) ?? column.dataset.filterAttribute ?? column.dataset.modelAttribute!;
     if (text === '') {
       this.filters.delete(modelAttribute);
-    } else {
+      this.relatedFilters.delete(modelAttribute);
+    } else if (column.dataset.filterRelated === undefined) {
       this.filters.set(modelAttribute, text);
+    } else {
+      this.relatedFilters.set(modelAttribute, text);
     }
     this.refreshRecords = true;
     m.redraw();
@@ -273,7 +304,7 @@ export default abstract class RecordsPage<
 
   protected onColumnSort(event: Event) {
     const {column, isDescending} = (event as CustomEvent<SortButtonClickedEventDetail>).detail;
-    const modelAttribute = column.dataset.modelAttribute!;
+    const modelAttribute = column.dataset.sortAttribute ?? column.dataset.modelAttribute!;
     this.sort.clear();
     this.sort.set(modelAttribute, isDescending ? SortDirection.DESC : SortDirection.ASC);
     this.refreshRecords = true;

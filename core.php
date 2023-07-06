@@ -96,8 +96,8 @@ if (!API\Response::isAPIRequest()) {
 
     // File di log ordinati in base alla data
     if (App::debug()) {
-        $handlers[] = new RotatingFileHandler(base_dir().'/logs/error.log', 0, Monolog\Logger::ERROR);
-        $handlers[] = new RotatingFileHandler(base_dir().'/logs/setup.log', 0, Monolog\Logger::EMERGENCY);
+        $handlers[] = new RotatingFileHandler(base_dir().'/logs/error.log', 30, Monolog\Logger::ERROR);
+        $handlers[] = new RotatingFileHandler(base_dir().'/logs/setup.log', 30, Monolog\Logger::EMERGENCY);
     }
 
     // Inizializzazione Whoops

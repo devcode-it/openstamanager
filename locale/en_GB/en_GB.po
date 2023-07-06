@@ -844,7 +844,7 @@ msgid "Impossibile connettersi al database"
 msgstr "Impossible connect to database"
 
 #: include/init/configuration.php:220
-msgid "Si è verificato un'errore durante la connessione al database"
+msgid "Si è verificato un errore durante la connessione al database"
 msgstr "An error occurred while connecting to database"
 
 #: include/init/configuration.php:221
@@ -11200,7 +11200,7 @@ msgid "Impossibile ottenere l'ultimo identificativo creato"
 msgstr "Impossible obtain the last identifier created"
 
 #: src/Extensions/MessageHandler.php:37
-msgid "Si è verificato un'errore"
+msgid "Si è verificato un errore"
 msgstr "An error has occurred"
 
 #: src/Extensions/MessageHandler.php:41

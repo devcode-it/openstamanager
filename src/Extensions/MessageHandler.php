@@ -34,7 +34,7 @@ class MessageHandler extends AbstractProcessingHandler
             return;
         }
 
-        $message = tr("Si è verificato un'errore").' <i>[uid: '.$record['extra']['uid'].']</i>.';
+        $message = tr("Si è verificato un errore").' <i>[uid: '.$record['extra']['uid'].']</i>.';
 
         if (auth()->check()) {
             $message .= '

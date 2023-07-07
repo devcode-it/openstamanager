@@ -86,7 +86,7 @@ switch (post('op')) {
                 $id_documento = $documento->id;
                 $id_anagrafica = $documento->idanagrafica;
 
-                $fattura_allegata = $dbo->selectOne('zz_files', 'id', ['id_module' => $id_module, 'id_record' => $scadenza->id, 'original' => 'Fattura di vendita.pdf'])['id'];
+                $fattura_allegata = $dbo->selectOne('zz_files', 'id', ['id_module' => $id_module, 'id_record' => $scadenza->id, 'original' => $scadenza->descrizione.'.pdf'])['id'];
 
                 // Allego stampa della fattura se non presente
                 if (empty($fattura_allegata) ) {

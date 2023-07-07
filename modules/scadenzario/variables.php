@@ -24,7 +24,8 @@ $r = $dbo->fetchOne('SELECT co_scadenziario.*, co_documenti.*,
     an_referenti.nome,
     co_scadenziario.da_pagare - co_scadenziario.pagato AS totale,
 	(SELECT pec FROM em_accounts WHERE em_accounts.id='.prepare($template['id_account']).') AS is_pec,
-	(SELECT descrizione FROM co_pagamenti WHERE co_pagamenti.id = co_documenti.idpagamento) AS pagamento
+	(SELECT descrizione FROM co_pagamenti WHERE co_pagamenti.id = co_documenti.idpagamento) AS pagamento,
+    (SELECT GROUP_CONCAT(CONCAT("<li>",DATE_FORMAT(scadenza,"%d/%m/%Y")," - ",FORMAT(da_pagare,2),"€ - ",descrizione,"</li>") SEPARATOR "<br>") FROM co_scadenziario WHERE scadenza < NOW() AND iddocumento!=0 AND da_pagare>0 AND idanagrafica=co_documenti.idanagrafica ORDER BY scadenza) AS scadenze_fatture_scadute
 FROM co_scadenziario
     INNER JOIN co_documenti ON co_documenti.id = co_scadenziario.iddocumento
     INNER JOIN an_anagrafiche ON co_documenti.idanagrafica = an_anagrafiche.idanagrafica 
@@ -46,4 +47,5 @@ return [
     'data' => Translator::dateToLocale($r['data']),
     'logo_azienda' => !empty($logo_azienda) ? '<img src="'.$logo_azienda.'" />' : '',
     'nome_referente' => $r['nome'],
+    'scadenze_fatture_scadute' => $r['scadenze_fatture_scadute'],
 ];

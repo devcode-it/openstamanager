@@ -134,7 +134,7 @@ switch (post('op')) {
         $print = Prints::render($print_predefined['id'], $id_documento, null, true);
         $upload = Uploads::upload($print['pdf'], [
             'name' => $scadenza->descrizione,
-            'original_name' => 'Fattura di vendita.pdf',
+            'original_name' => $scadenza->descrizione.'.pdf',
             'category' => 'Generale',
             'id_module' => $id_module,
             'id_record' => $id_record,

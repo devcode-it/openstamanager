@@ -59,7 +59,7 @@ function initTimestampInput(input) {
         collapse: false,
         sideBySide: true,
         useCurrent: false,
-        stepping: 1,
+        stepping: globals.minute_stepping,
         widgetPositioning: {
             horizontal: 'left',
             vertical: 'auto'
@@ -90,7 +90,7 @@ function initTimeInput(input) {
         locale: globals.locale,
         icons: calendar_icons,
         useCurrent: false,
-        stepping: 5,
+        stepping: globals.minute_stepping,
         minDate: moment($input.attr('min-date')).isValid() ? $input.attr('min-date') : false,
         maxDate: moment($input.attr('max-date')).isValid() ? $input.attr('max-date') : false,
     });

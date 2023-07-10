@@ -211,6 +211,7 @@ if (Auth::check()) {
                 start_date_formatted: "'.Translator::dateToLocale($_SESSION['period_start']).'",
                 end_date: "'.$_SESSION['period_end'].'",
                 end_date_formatted: "'.Translator::dateToLocale($_SESSION['period_end']).'",
+                minute_stepping: '.setting('Numero di minuti di avanzamento delle sessioni delle attività').',
 
                 collapse_plugin_sidebar: '.intval(setting('Nascondere la barra dei plugin di default')).',
 

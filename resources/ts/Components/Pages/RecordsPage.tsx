@@ -303,7 +303,7 @@ export default abstract class RecordsPage<
   onTablePageChange(event: CustomEvent<PaginateDetail>) {
     const {pageSize, action} = event.detail;
     this.currentPageSize = pageSize;
-    const currentPage = this.currentPage;
+    const {currentPage} = this;
     match(action)
       .with('first', () => (this.currentPage = 1))
       .with('previous', () => (this.currentPage--))
@@ -311,7 +311,6 @@ export default abstract class RecordsPage<
       .with('last', () => (this.currentPage = this.lastPage))
       .with('current', () => {})
       .run();
-    console.log('onTablePageChange', event.detail);
     if (currentPage !== this.currentPage) {
       this.refreshRecords = true;
       m.redraw();

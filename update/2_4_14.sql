@@ -201,61 +201,11 @@ UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM in_interventi W
 ALTER TABLE `mg_articoli` CHANGE `id_categoria` `id_categoria` INT(11) NULL;
 
 -- Correzione totali per le Viste
-
--- Fatture di vendita
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti`
-    LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
-    LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
-    LEFT JOIN `fe_stati_documento` ON `co_documenti`.`codice_stato_fe` = `fe_stati_documento`.`codice`
-    LEFT JOIN (
-        SELECT `iddocumento`,
-            SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
-            SUM(`subtotale` - `sconto` + `iva`) AS `totale`
-        FROM `co_righe_documenti`
-        GROUP BY `iddocumento`
-    ) AS righe ON `co_documenti`.`id` = `righe`.`iddocumento`
-    LEFT JOIN (
-        SELECT `numero_esterno`, `id_segment`
-        FROM `co_documenti`
-        WHERE `co_documenti`.`idtipodocumento` IN(SELECT `id` FROM `co_tipidocumento` WHERE `dir` = ''entrata'') |date_period(`co_documenti`.`data`)| AND `numero_esterno` != ''''
-        GROUP BY `id_segment`, `numero_esterno`
-        HAVING COUNT(`numero_esterno`) > 1
-    ) dup ON `co_documenti`.`numero_esterno` = `dup`.`numero_esterno` AND `dup`.`id_segment` = `co_documenti`.`id_segment`
-    LEFT JOIN (
-        SELECT `zz_operations`.`id_email`, `zz_operations`.`id_record`
-        FROM `zz_operations`
-            INNER JOIN `em_emails` ON `zz_operations`.`id_email` = `em_emails`.`id`
-            INNER JOIN `em_templates` ON `em_emails`.`id_template` = `em_templates`.`id`
-            INNER JOIN `zz_modules` ON `zz_operations`.`id_module` = `zz_modules`.`id`
-        WHERE `zz_modules`.`name` = ''Fatture di vendita'' AND `zz_operations`.`op` = ''send-email''
-        GROUP BY `zz_operations`.`id_record`
-    ) AS `email` ON `email`.`id_record` = `co_documenti`.`id`
-WHERE 1=1 AND `dir` = ''entrata'' |segment(`co_documenti`.`id_segment`)| |date_period(`co_documenti`.`data`)|
-HAVING 2=2
-ORDER BY `co_documenti`.`data` DESC, CAST(`co_documenti`.`numero_esterno` AS UNSIGNED) DESC' WHERE `name` = 'Fatture di vendita';
-
 UPDATE `zz_views` SET `query` = 'righe.totale_imponibile' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = 'Totale';
 DELETE FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = 'Imponibile';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Totale ivato', 'righe.totale', 9, 1, 1, 1, 0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Netto a pagare', 'righe.totale + rivalsainps + iva_rivalsainps - ritenutaacconto', 10, 1, 1, 1, 1);
-
--- Fatture di acquisto
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti`
-    LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
-    LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
-    LEFT JOIN (
-        SELECT `iddocumento`,
-            SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
-            SUM(`subtotale` - `sconto` + `iva`) AS `totale`
-        FROM `co_righe_documenti`
-        GROUP BY `iddocumento`
-    ) AS righe ON `co_documenti`.`id` = `righe`.`iddocumento`
-WHERE 1=1 AND `dir` = ''uscita'' |segment(`co_documenti`.`id_segment`)| |date_period(`co_documenti`.`data`)|
-HAVING 2=2
-ORDER BY `co_documenti`.`data` DESC, CAST(IF(`co_documenti`.`numero_esterno` = '''', `co_documenti`.`numero`, `co_documenti`.`numero_esterno`) AS UNSIGNED) DESC' WHERE `name` = 'Fatture di acquisto';
 
 UPDATE `zz_views` SET `query` = 'righe.totale_imponibile' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') AND `name` = 'Totale';
 DELETE FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') AND `name` = 'Imponibile';
@@ -263,136 +213,25 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'Totale ivato', 'righe.totale', 6, 1, 1, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'Netto a pagare', 'righe.totale + rivalsainps + iva_rivalsainps - ritenutaacconto', 7, 1, 1, 1, 1);
 
--- Contratti
-UPDATE `zz_modules` SET `options` = 'SELECT |select|
-FROM `co_contratti`
-    LEFT JOIN `an_anagrafiche` ON `co_contratti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    LEFT JOIN `co_staticontratti` ON `co_contratti`.`idstato` = `co_staticontratti`.`id`
-    LEFT JOIN (
-        SELECT `idcontratto`,
-            SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
-            SUM(`subtotale` - `sconto` + `iva`) AS `totale`
-        FROM `co_righe_contratti`
-        GROUP BY `idcontratto`
-    ) AS righe ON `co_contratti`.`id` = `righe`.`idcontratto`
-    LEFT JOIN (
-        SELECT GROUP_CONCAT(CONCAT(matricola, IF(nome != '''', CONCAT('' - '', nome), '''')) SEPARATOR ''<br>'') AS descrizione, my_impianti_contratti.idcontratto
-        FROM my_impianti
-            INNER JOIN my_impianti_contratti ON my_impianti.id = my_impianti_contratti.idimpianto
-        GROUP BY my_impianti_contratti.idcontratto
-    ) AS impianti ON impianti.idcontratto = co_contratti.id
-WHERE 1=1 |date_period(custom,''|period_start|'' >= `data_bozza` AND ''|period_start|'' <= `data_conclusione`,''|period_end|'' >= `data_bozza` AND ''|period_end|'' <= `data_conclusione`,`data_bozza` >= ''|period_start|'' AND `data_bozza` <= ''|period_end|'',`data_conclusione` >= ''|period_start|'' AND `data_conclusione` <= ''|period_end|'',`data_bozza` >= ''|period_start|'' AND `data_conclusione` = ''0000-00-00'')|
-HAVING 2=2
-ORDER BY `co_contratti`.`id` DESC' WHERE `name` = 'Contratti';
-
 UPDATE `zz_views` SET `query` = 'righe.totale_imponibile' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti') AND `name` = 'Totale';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'Totale ivato', 'righe.totale', 5, 1, 1, 1, 0);
-
--- Preventivi
-UPDATE `zz_modules` SET `options` = 'SELECT |select|
-FROM `co_preventivi`
-    LEFT JOIN `an_anagrafiche` ON `co_preventivi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
-    LEFT JOIN (
-        SELECT `idpreventivo`,
-            SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
-            SUM(`subtotale` - `sconto` + `iva`) AS `totale`
-        FROM `co_righe_preventivi`
-        GROUP BY `idpreventivo`
-    ) AS righe ON `co_preventivi`.`id` = `righe`.`idpreventivo`
-WHERE 1=1 |date_period(custom,''|period_start|'' >= `data_bozza` AND ''|period_start|'' <= `data_conclusione`,''|period_end|'' >= `data_bozza` AND ''|period_end|'' <= `data_conclusione`,`data_bozza` >= ''|period_start|'' AND `data_bozza` <= ''|period_end|'',`data_conclusione` >= ''|period_start|'' AND `data_conclusione` <= ''|period_end|'',`data_bozza` >= ''|period_start|'' AND `data_conclusione` = ''0000-00-00'')| AND default_revision = 1
-HAVING 2=2
-ORDER BY `co_preventivi`.`id` DESC' WHERE `name` = 'Preventivi';
 
 UPDATE `zz_views` SET `query` = 'righe.totale_imponibile' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi') AND `name` = 'Totale';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), 'Totale ivato', 'righe.totale', 5, 1, 1, 1, 0);
 
--- Ddt di acquisto
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `dt_ddt`
-    LEFT JOIN `an_anagrafiche` ON `dt_ddt`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    LEFT JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
-    LEFT JOIN `dt_causalet` ON `dt_ddt`.`idcausalet` = `dt_causalet`.`id`
-    LEFT JOIN `dt_spedizione` ON `dt_ddt`.`idspedizione` = `dt_spedizione`.`id`
-    LEFT JOIN `an_anagrafiche` `vettori` ON `dt_ddt`.`idvettore` = `vettori`.`idanagrafica`
-    LEFT JOIN `an_sedi` AS sedi ON `dt_ddt`.`idsede_partenza` = sedi.`id`
-    LEFT JOIN `an_sedi` AS `sedi_destinazione` ON `dt_ddt`.`idsede_destinazione` = `sedi_destinazione`.`id`
-    LEFT JOIN (
-        SELECT `idddt`,
-            SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
-            SUM(`subtotale` - `sconto` + `iva`) AS `totale`
-        FROM `dt_righe_ddt`
-        GROUP BY `idddt`
-    ) AS righe ON `dt_ddt`.`id` = `righe`.`idddt`
-WHERE 1=1 AND `dir` = ''uscita'' |date_period(`data`)|
-HAVING 2=2
-ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC,`dt_ddt`.created_at DESC' WHERE `name` = 'Ddt di acquisto';
-
 UPDATE `zz_views` SET `query` = 'righe.totale_imponibile' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto') AND `name` = 'Totale';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto'), 'Totale ivato', 'righe.totale', 9, 1, 1, 1, 0);
-
--- Ddt di vendita
-UPDATE `zz_modules` SET `options` = 'SELECT |select|
-FROM `dt_ddt`
-    LEFT JOIN `an_anagrafiche` ON `dt_ddt`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    LEFT JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
-    LEFT JOIN `dt_causalet` ON `dt_ddt`.`idcausalet` = `dt_causalet`.`id`
-    LEFT JOIN `dt_spedizione` ON `dt_ddt`.`idspedizione` = `dt_spedizione`.`id`
-    LEFT JOIN `an_anagrafiche` `vettori` ON `dt_ddt`.`idvettore` = `vettori`.`idanagrafica`
-    LEFT JOIN `an_sedi` AS sedi ON `dt_ddt`.`idsede_partenza` = sedi.`id`
-    LEFT JOIN `an_sedi` AS `sedi_destinazione` ON `dt_ddt`.`idsede_destinazione` = `sedi_destinazione`.`id`
-    LEFT JOIN (
-        SELECT `idddt`,
-            SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
-            SUM(`subtotale` - `sconto` + `iva`) AS `totale`
-        FROM `dt_righe_ddt`
-        GROUP BY `idddt`
-    ) AS righe ON `dt_ddt`.`id` = `righe`.`idddt`
-WHERE 1=1 AND `dir` = ''entrata'' |date_period(`data`)|
-HAVING 2=2
-ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC,`dt_ddt`.created_at DESC' WHERE `name` = 'Ddt di vendita';
 
 UPDATE `zz_views` SET `query` = 'righe.totale_imponibile' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita') AND `name` = 'Totale';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'), 'Totale ivato', 'righe.totale', 9, 1, 1, 1, 0);
 
--- Ordini cliente
-UPDATE `zz_modules` SET `options` = 'SELECT |select|
-FROM `or_ordini`
-    LEFT JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    LEFT JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
-    LEFT JOIN (
-        SELECT `idordine`,
-            SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
-            SUM(`subtotale` - `sconto` + `iva`) AS `totale`
-        FROM `or_righe_ordini`
-        GROUP BY `idordine`
-    ) AS righe ON `or_ordini`.`id` = `righe`.`idordine`
-WHERE 1=1 AND `dir` = ''entrata'' |date_period(`data`)|
-HAVING 2=2
-ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC' WHERE `name` = 'Ordini cliente';
-
 UPDATE `zz_views` SET `query` = 'righe.totale_imponibile' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente') AND `name` = 'Totale';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente'), 'Totale ivato', 'righe.totale', 5, 1, 1, 1, 0);
-
--- Ordini fornitore
-UPDATE `zz_modules` SET `options` = 'SELECT |select|
-FROM `or_ordini`
-    LEFT JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    LEFT JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
-    LEFT JOIN (
-        SELECT `idordine`,
-            SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
-            SUM(`subtotale` - `sconto` + `iva`) AS `totale`
-        FROM `or_righe_ordini`
-        GROUP BY `idordine`
-    ) AS righe ON `or_ordini`.`id` = `righe`.`idordine`
-WHERE 1=1 AND `dir` = ''uscita'' |date_period(`data`)|
-HAVING 2=2
-ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC' WHERE `name` = 'Ordini fornitore';
 
 UPDATE `zz_views` SET `query` = 'righe.totale_imponibile' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore') AND `name` = 'Totale';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
@@ -514,9 +353,6 @@ UPDATE `zz_views` SET `order` = '11' WHERE `zz_views`.`name` = 'icon_Stato' AND 
 -- Aggiornamento stampa inventario
 UPDATE `zz_widgets` SET `more_link` = './modules/articoli/widgets/stampa_inventario.php', `more_link_type` = 'popup' WHERE `zz_widgets`.`name` = 'Stampa inventario';
 
--- Ottimizzazione query articoli
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_articoli` LEFT OUTER JOIN an_anagrafiche ON mg_articoli.id_fornitore=an_anagrafiche.idanagrafica LEFT OUTER JOIN co_iva ON mg_articoli.idiva_vendita=co_iva.id LEFT OUTER JOIN (SELECT SUM(qta-qta_evasa) AS qta_impegnata, idarticolo FROM or_righe_ordini INNER JOIN or_ordini ON or_righe_ordini.idordine=or_ordini.id WHERE idstatoordine IN(SELECT id FROM or_statiordine WHERE completato=0) GROUP BY idarticolo) a ON a.idarticolo=mg_articoli.id LEFT JOIN mg_categorie ON mg_articoli.id_categoria=mg_categorie.id LEFT JOIN mg_categorie AS sottocategorie ON mg_articoli.id_sottocategoria=sottocategorie.id WHERE 1=1 AND (`mg_articoli`.`deleted_at`) IS NULL HAVING 2=2 ORDER BY `descrizione`' WHERE `zz_modules`.`name` = 'Articoli';
-
 UPDATE `zz_views` SET `query` = 'mg_categorie.nome' WHERE `zz_views`.`name` = 'Categoria' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
 UPDATE `zz_views` SET `query` = 'sottocategorie.nome' WHERE `zz_views`.`name` = 'Sottocategoria' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
 UPDATE `zz_views` SET `query` = 'an_anagrafiche.ragione_sociale' WHERE `zz_views`.`name` = 'Fornitore' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
@@ -526,9 +362,6 @@ UPDATE `zz_views` SET `query` = 'mg_articoli.id' WHERE `query` = 'id' AND `id_mo
 UPDATE `zz_views` SET `query` = 'mg_articoli.codice' WHERE `query` = 'codice' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
 UPDATE `zz_views` SET `query` = 'mg_articoli.descrizione' WHERE `query` = 'descrizione' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
 UPDATE `zz_views` SET `query` = 'mg_articoli.note' WHERE `query` = 'note' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
-
--- Ottimizzazione query attività
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM (`in_interventi` INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`) LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`idstatointervento` LEFT JOIN (SELECT an_sedi.id, CONCAT(an_sedi.nomesede,\'<br>\',an_sedi.telefono,\'<br>\',an_sedi.cellulare,\'<br>\',an_sedi.citta,\' - \', an_sedi.indirizzo) AS info FROM an_sedi) AS sede_destinazione ON sede_destinazione.id = in_interventi.idsede_destinazione WHERE 1=1 |date_period(`orario_inizio`,`data_richiesta`)| GROUP BY `in_interventi`.`id` HAVING 2=2 ORDER BY IFNULL(`orario_fine`, `data_richiesta`) DESC' WHERE `name` = 'Interventi';
 
 UPDATE `zz_views` SET `query` = 'in_statiintervento.descrizione' WHERE `zz_views`.`name` = 'Stato' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
 UPDATE `zz_views` SET `query` = 'in_interventi.descrizione' WHERE `zz_views`.`name` = 'Descrizione' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');

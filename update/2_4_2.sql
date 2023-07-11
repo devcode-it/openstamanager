@@ -171,8 +171,6 @@ INSERT INTO `fe_natura` (`codice`, `descrizione`) VALUES
 ALTER TABLE `co_iva` ADD `codice_natura_fe` varchar(4), ADD `deleted_at` timestamp NULL DEFAULT NULL, ADD `codice` int(11), ADD `esigibilita` enum('I', 'D', 'S') NOT NULL DEFAULT 'I', ADD `default` boolean NOT NULL DEFAULT 0, ADD FOREIGN KEY (`codice_natura_fe`) REFERENCES `fe_natura`(`codice`) ON DELETE CASCADE;
 UPDATE `co_iva` SET `deleted_at` = NOW();
 
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_iva` WHERE 1=1 AND deleted_at IS NULL HAVING 2=2' WHERE `name` = 'IVA';
-
 INSERT INTO `co_iva` (`descrizione`, `percentuale`, `indetraibile`, `esente`, `codice_natura_fe`, `codice`, `default`) VALUES
 ("Fuori campo IVA", 0, 0, 1, "N2", 300, 1),
 ("Es.art27DL98/11", 0, 0, 1, "N2", 301, 1),
@@ -519,7 +517,6 @@ INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Fatture pro-forma', '1=1', 'WHR', 'PRO-###', '', 0, 0);
 
 -- Fix campi di ricerca
-UPDATE `zz_modules` SET `options` = "SELECT |select| FROM `zz_segments` WHERE 1=1 HAVING 2=2 ORDER BY name, id_module" WHERE `name` = 'Segmenti';
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `visible`, `summable`, `default`) VALUES
 (NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Segmenti'), 'id', 'id', 0, 0, 0, 0, 0, 0, 1),
 (NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Segmenti'), 'Nome', 'name', 1, 1, 0, 0, 1, 0, 1),
@@ -552,9 +549,6 @@ ALTER TABLE `co_preventivi`  ADD `master_revision` INT NOT NULL  AFTER `tipo_sco
 
 -- Plugin revisioni
 INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES (NULL, 'Revisioni', 'Revisioni', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), 'tab', '', 1, 0, 0, '', '', NULL, 'custom', 'revisioni', '');
-
--- Modifica modulo preventivi per revisioni
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_preventivi` WHERE 1=1 AND default_revision=1 HAVING 2=2 AND ((\'|period_start|\' >= `data_bozza` AND \'|period_start|\' <= `data_conclusione`) OR (\'|period_end|\' >= `data_bozza` AND \'|period_end|\' <= `data_conclusione`) OR (`data_bozza` >= \'|period_start|\' AND `data_bozza` <= \'|period_end|\') OR (`data_conclusione` >= \'|period_start|\' AND `data_conclusione` <= \'|period_end|\') OR (`data_bozza` >= \'|period_start|\' AND `data_conclusione` = \'0000-00-00\')) ORDER BY `id` DESC' WHERE `zz_modules`.`name` = 'Preventivi';
 
 -- Mi assicuro che non ci siano righe del preventivo collegate a preventivi non più esistenti
 DELETE FROM co_righe_preventivi  WHERE  idpreventivo NOT IN (SELECT id FROM co_preventivi);

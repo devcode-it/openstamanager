@@ -51,16 +51,6 @@ ALTER TABLE `zz_widgets` CHANGE `text` `text` TEXT NULL;
 
 ALTER TABLE `zz_views` CHANGE `format` `format` TINYINT(1) NOT NULL DEFAULT '0';
 
-
--- Aggiunto HAVING 2=2 nel modulo listini
-UPDATE `zz_modules` SET `options` = 'SELECT |select|
-FROM mg_prezzi_articoli
-    INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = mg_prezzi_articoli.id_anagrafica
-    INNER JOIN mg_articoli ON mg_articoli.id = mg_prezzi_articoli.id_articolo
-WHERE 1=1 AND mg_articoli.deleted_at IS NULL AND an_anagrafiche.deleted_at IS NULL
-HAVING 2=2
-ORDER BY an_anagrafiche.ragione_sociale' WHERE `zz_modules`.`name` = 'Listini';
-
 -- Aggiunti segmenti nel modulo listini
 INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`, `note`, `predefined`, `predefined_accredito`, `predefined_addebito`, `is_fiscale`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Listini'), 'Tutti', '1=1', 'WHR', '####', '', 1, 0, 0, 0),
@@ -96,22 +86,6 @@ INSERT INTO `zz_cache` (`id`, `name`, `content`, `valid_time`, `expire_at`) VALU
 (NULL, 'Informazioni su Services', '', '7 days', NOW()),
 (NULL, 'Informazioni su spazio FE', '', '7 days', NOW());
 
--- Aggiunta colonna Tecnici assegnati in Attività
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `in_interventi`
-INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
-LEFT JOIN `in_interventi_tecnici_assegnati` ON `in_interventi_tecnici_assegnati`.`id_intervento` = `in_interventi`.`id`
-LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`idstatointervento`
-LEFT JOIN (
-    SELECT an_sedi.id, CONCAT(an_sedi.nomesede, ''<br>'',an_sedi.telefono, ''<br>'',an_sedi.cellulare,''<br>'',an_sedi.citta, '' - '', an_sedi.indirizzo) AS info FROM an_sedi
-) AS sede_destinazione ON sede_destinazione.id = in_interventi.idsede_destinazione
-LEFT JOIN (
-    SELECT co_righe_documenti.idintervento, CONCAT(''Fatt. '', co_documenti.numero_esterno, '' del '', DATE_FORMAT(co_documenti.data, ''%d/%m/%Y'')) AS info FROM co_documenti INNER JOIN co_righe_documenti ON co_documenti.id = co_righe_documenti.iddocumento
-) AS fattura ON fattura.idintervento = in_interventi.id
-WHERE 1=1 |date_period(`orario_inizio`,`data_richiesta`)|
-GROUP BY `in_interventi`.`id`
-HAVING 2=2
-ORDER BY IFNULL(`orario_fine`, `data_richiesta`) DESC' WHERE `name` = 'Interventi';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'Tecnici assegnati', 'GROUP_CONCAT((SELECT DISTINCT(ragione_sociale) FROM an_anagrafiche WHERE idanagrafica = in_interventi_tecnici_assegnati.id_tecnico) SEPARATOR '', '')', 14, 1, 0, 1, 1);
 
@@ -141,16 +115,6 @@ UPDATE `zz_views` SET `summable` = 1 WHERE `name` IN ('Dare', 'Avere') AND `id_m
 
 -- Fix query dichiarazione d'intento
 UPDATE `zz_plugins` SET `options` = '{ \"main_query\": [	{	\"type\": \"table\", \"fields\": \"Protocollo, Progressivo, Massimale, Totale, Data inizio, Data fine\", \"query\": \"SELECT id, numero_protocollo AS Protocollo, numero_progressivo AS Progressivo, DATE_FORMAT(data_inizio,\'%d/%m/%Y\') AS \'Data inizio\', DATE_FORMAT(data_fine,\'%d/%m/%Y\') AS \'Data fine\', ROUND(massimale, 2) AS Massimale, ROUND(totale, 2) AS Totale FROM co_dichiarazioni_intento WHERE 1=1 AND deleted_at IS NULL AND id_anagrafica = |id_parent| HAVING 2=2 ORDER BY co_dichiarazioni_intento.id DESC\"}	]}' WHERE `zz_plugins`.`name` = "Dichiarazioni d\'Intento";
-
--- Aggiunto colonne categoria e sottocategoria su listini
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM mg_prezzi_articoli
-    INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = mg_prezzi_articoli.id_anagrafica
-    INNER JOIN mg_articoli ON mg_articoli.id = mg_prezzi_articoli.id_articolo
-    INNER JOIN 	mg_categorie AS categoria ON mg_articoli.id_categoria=categoria.id
-    INNER JOIN 	mg_categorie AS sottocategoria ON mg_articoli.id_sottocategoria=sottocategoria.id
-WHERE 1=1 AND mg_articoli.deleted_at IS NULL AND an_anagrafiche.deleted_at IS NULL
-HAVING 2=2
-ORDER BY an_anagrafiche.ragione_sociale' WHERE `name` = 'Listini';
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Listini'), 'Sottocategoria', 'sottocategoria.nome', 5, 1, 0, 0, '', '', 1, 0, 0),

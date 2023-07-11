@@ -7,3 +7,7 @@ rules:
     - "error"
     - "code": 200
   consistent-return: 'off'
+  no-return-assign:
+    - error
+    - except-parens
+  no-plusplus: off

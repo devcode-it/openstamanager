@@ -101,6 +101,10 @@ export default defineConfig(async () => {
       //   srcDir: path.resolve(__dirname, 'resources/ts'),
       // }),
       VitePWA({
+        registerType: 'autoUpdate',
+        outDir: 'public',
+        buildBase: '/',
+        scope: '/',
         // TODO: Check options
         includeAssets: [
           'resources/images/favicon/favicon.ico',

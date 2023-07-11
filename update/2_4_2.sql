@@ -431,17 +431,14 @@ ALTER TABLE `zz_files` CHANGE `nome` `name` varchar(255) NOT NULL;
 UPDATE `zz_files` SET `id_module` = NULL WHERE `id_plugin` IS NOT NULL;
 
 -- Adeguamento variabili di filtraggio
-UPDATE `zz_modules` SET `options` = REPLACE(`options`, '|idanagrafica|', '|id_anagrafica|'), `options2` = REPLACE(`options2`, '|idanagrafica|', '|id_anagrafica|');
 UPDATE `zz_plugins` SET `options` = REPLACE(`options`, '|idanagrafica|', '|id_anagrafica|'), `options2` = REPLACE(`options2`, '|idanagrafica|', '|id_anagrafica|');
 UPDATE `zz_widgets` SET `query` = REPLACE(`query`, '|idanagrafica|', '|id_anagrafica|');
 UPDATE `zz_group_module` SET `clause` = REPLACE(`clause`, '|idanagrafica|', '|id_anagrafica|');
 
-UPDATE `zz_modules` SET `options` = REPLACE(`options`, '|idtecnico|', '|id_anagrafica|'), `options2` = REPLACE(`options2`, '|idtecnico|', '|id_anagrafica|');
 UPDATE `zz_plugins` SET `options` = REPLACE(`options`, '|idtecnico|', '|id_anagrafica|'), `options2` = REPLACE(`options2`, '|idtecnico|', '|id_anagrafica|');
 UPDATE `zz_widgets` SET `query` = REPLACE(`query`, '|idtecnico|', '|id_anagrafica|');
 UPDATE `zz_group_module` SET `clause` = REPLACE(`clause`, '|idtecnico|', '|id_anagrafica|');
 
-UPDATE `zz_modules` SET `options` = REPLACE(`options`, '|idagente|', '|id_anagrafica|'), `options2` = REPLACE(`options2`, '|idagente|', '|id_anagrafica|');
 UPDATE `zz_plugins` SET `options` = REPLACE(`options`, '|idagente|', '|id_anagrafica|'), `options2` = REPLACE(`options2`, '|idagente|', '|id_anagrafica|');
 UPDATE `zz_widgets` SET `query` = REPLACE(`query`, '|idagente|', '|id_anagrafica|');
 UPDATE `zz_group_module` SET `clause` = REPLACE(`clause`, '|idagente|', '|id_anagrafica|');

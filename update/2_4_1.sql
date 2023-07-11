@@ -401,15 +401,6 @@ UPDATE `zz_widgets` SET `query` = REPLACE(
         REPLACE(`query`, 'deleted=0', '`deleted_at` IS NULL')
     , 'deleted = 0', '`deleted_at` IS NULL')
 , '`deleted` = 0', '`deleted_at` IS NULL');
-UPDATE `zz_modules` SET `options` = REPLACE(
-    REPLACE(
-        REPLACE(`options`, 'deleted=0', '`deleted_at` IS NULL')
-    , 'deleted = 0', '`deleted_at` IS NULL')
-, '`deleted` = 0', '`deleted_at` IS NULL'), `options2` = REPLACE(
-    REPLACE(
-        REPLACE(`options2`, 'deleted=0', '`deleted_at` IS NULL')
-    , 'deleted = 0', '`deleted_at` IS NULL')
-, '`deleted` = 0', '`deleted_at` IS NULL');
 UPDATE `zz_group_module` SET `clause` = REPLACE(
     REPLACE(
         REPLACE(`clause`, 'deleted=0', '`deleted_at` IS NULL')
@@ -429,15 +420,6 @@ UPDATE `zz_settings` SET `tipo` = REPLACE(
 UPDATE `zz_widgets` SET `query` = REPLACE(
     REPLACE(
         REPLACE(`query`, 'deleted=1', '`deleted_at` IS NOT NULL')
-    , 'deleted = 1', '`deleted_at` IS NOT NULL')
-, '`deleted` = 1', '`deleted_at` IS NOT NULL');
-UPDATE `zz_modules` SET `options` = REPLACE(
-    REPLACE(
-        REPLACE(`options`, 'deleted=1', '`deleted_at` IS NOT NULL')
-    , 'deleted = 1', '`deleted_at` IS NOT NULL')
-, '`deleted` = 1', '`deleted_at` IS NOT NULL'), `options2` = REPLACE(
-    REPLACE(
-        REPLACE(`options2`, 'deleted=1', '`deleted_at` IS NOT NULL')
     , 'deleted = 1', '`deleted_at` IS NOT NULL')
 , '`deleted` = 1', '`deleted_at` IS NOT NULL');
 UPDATE `zz_group_module` SET `clause` = REPLACE(

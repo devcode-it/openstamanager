@@ -37,7 +37,7 @@ ALTER TABLE `co_righe_documenti` ADD `idrivalsainps` INT NOT NULL AFTER `ritenut
 
 
 -- Aggiornamento modulo scadenzario
-UPDATE `zz_modules` SET `module_dir` = 'scadenzario', `options` = '{	"main_query": [	{	"type": "table", "fields": "Documento, Cliente, Tipo di pagamento, Data emissione, Data scadenza, Importo, Pagato", "query": "SELECT co_scadenziario.id AS id, ragione_sociale AS `Cliente`, co_pagamenti.descrizione AS `Tipo di pagamento`, CONCAT(co_tipidocumento.descrizione, CONCAT('' numero '', IF(numero_esterno<>'''', numero_esterno, numero))) AS `Documento`, DATE_FORMAT(data_emissione, ''%d/%m/%Y'') AS `Data emissione`, DATE_FORMAT(scadenza, ''%d/%m/%Y'') AS `Data scadenza`, REPLACE(REPLACE(REPLACE(FORMAT(da_pagare, 2), '','', ''#''), ''.'', '',''), ''#'', ''.'') AS `Importo`, REPLACE(REPLACE(REPLACE(FORMAT(pagato, 2), '','', ''#''), ''.'', '',''), ''#'', ''.'') AS `Pagato`, IF(scadenza<NOW(), ''#ff7777'', '''') AS _bg_ FROM co_scadenziario INNER JOIN (((co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica) INNER JOIN co_pagamenti ON co_documenti.idpagamento=co_pagamenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id) ON co_scadenziario.iddocumento=co_documenti.id WHERE ABS(pagato) < ABS(da_pagare) ORDER BY scadenza ASC"}	]}' WHERE `name` = 'Scadenzario';
+UPDATE `zz_modules` SET `module_dir` = 'scadenzario' WHERE `name` = 'Scadenzario';
 
 -- Aggiunta collegamento conto partitario a cliente/fornitore
 ALTER TABLE `an_anagrafiche` ADD `idconto_cliente` INT NOT NULL AFTER `idsede_fatturazione`, ADD `idconto_fornitore` INT NOT NULL AFTER `idconto_cliente`;

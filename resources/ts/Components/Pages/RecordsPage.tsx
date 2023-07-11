@@ -6,6 +6,7 @@ import '@material/web/fab/fab.js';
 import '@material/web/iconbutton/standard-icon-button.js';
 
 import {router} from '@maicol07/inertia-mithril';
+import {PaginateDetail} from '@maicol07/material-web-additions/data-table/lib/data-table';
 import {
   FilterTextFieldInputEventDetail,
   SortButtonClickedEventDetail
@@ -33,6 +34,21 @@ import Stream from 'mithril/stream';
 import {match} from 'ts-pattern';
 import {Match} from 'ts-pattern/dist/types/Match';
 import type {Class} from 'type-fest';
+
+export interface Meta {
+  current_page: number;
+  from: number;
+  last_page: number;
+  path: string;
+  per_page: number;
+  to: number;
+  total: number;
+}
+
+export interface JSONAPIResponse {
+  meta: Meta;
+}
+
 
 type RecordDialogVnode<M extends Model<any, any>, D extends RecordDialog<M>> = Vnode<RecordDialogAttributes<M>, D>;
 type DeleteRecordDialogVnode<M extends Model<any, any>, D extends DeleteRecordDialog<M>> = Vnode<DeleteRecordDialogAttributes<M>, D>;
@@ -63,6 +79,11 @@ export default abstract class RecordsPage<
 
   protected currentPageSize = 50;
   protected pageSizes = [10, 25, 50, 100];
+  protected currentPage = 1;
+  protected lastPage = 1;
+  protected firstRowOfPage = 1;
+  protected totalRecords = 0;
+  protected lastRowOfPage = this.totalRecords;
 
   protected filters: Map<string, string> = new Map();
   protected sort: Map<string, SortDirection> = new Map([['id', SortDirection.ASC]]);
@@ -72,6 +93,8 @@ export default abstract class RecordsPage<
 
   oninit(vnode: Vnode<PageAttributes, this>) {
     super.oninit(vnode);
+    // @ts-ignore
+    this.modelType.pageSize = this.currentPageSize;
     // Redraw on a first load to call onbeforeupdate
     m.redraw();
   }
@@ -93,7 +116,13 @@ export default abstract class RecordsPage<
     // Fix Restify when filtering relations
     query = query.option('related', query.getQuery().getInclude().join(','));
 
-    const response = await query.get();
+    const response = await query.get(this.currentPage);
+    const rawResponse = response.getHttpClientResponse().getData() as JSONAPIResponse;
+    this.lastPage = rawResponse.meta.last_page;
+    this.firstRowOfPage = rawResponse.meta.from;
+    this.lastRowOfPage = rawResponse.meta.to;
+    this.currentPageSize = rawResponse.meta.per_page;
+    this.totalRecords = rawResponse.meta.total;
     const data = response.getData();
 
     this.records.clear();
@@ -187,14 +216,18 @@ export default abstract class RecordsPage<
         records={this.records}
         paginated
         selectable
-        currentPageSize={this.currentPageSize}
-        pageSizes={JSON.stringify(this.pageSizes)}
         cols={this.tableColumns()}
-        inProgress={this.isTableLoading}
+        in-progress={this.isTableLoading}
+        readonly={this.readonlyRecords}
+        current-first-row={this.firstRowOfPage}
+        current-last-row={this.lastRowOfPage}
+        current-page-size={this.currentPageSize}
+        page-sizes={JSON.stringify(this.pageSizes)}
+        total-rows={this.totalRecords}
         onTableRowClick={this.onTableRowClick.bind(this)}
         onDeleteRecordButtonClick={this.onDeleteRecordButtonClicked.bind(this)}
         onDeleteSelectedRecordsButtonClick={this.onDeleteSelectedRecordsButtonClicked.bind(this)}
-        readonly={this.readonlyRecords}
+        onPageChange={this.onTablePageChange.bind(this)}
         valueModifier={(value: unknown, attribute: string, record: M) => this.cellValueModifier(value, attribute, record)
           .otherwise(() => value)}/>
     );
@@ -265,6 +298,24 @@ export default abstract class RecordsPage<
 
   onDeleteSelectedRecordsButtonClicked(recordsIds: string[], event: MouseEvent) {
     this.openDeleteRecordsDialog(recordsIds.map((recordId) => this.records.get(recordId)!));
+  }
+
+  onTablePageChange(event: CustomEvent<PaginateDetail>) {
+    const {pageSize, action} = event.detail;
+    this.currentPageSize = pageSize;
+    const currentPage = this.currentPage;
+    match(action)
+      .with('first', () => (this.currentPage = 1))
+      .with('previous', () => (this.currentPage--))
+      .with('next', () => (this.currentPage++))
+      .with('last', () => (this.currentPage = this.lastPage))
+      .with('current', () => {})
+      .run();
+    console.log('onTablePageChange', event.detail);
+    if (currentPage !== this.currentPage) {
+      this.refreshRecords = true;
+      m.redraw();
+    }
   }
 
   onupdate(vnode: VnodeDOM<PageAttributes, this>) {

@@ -1,5 +1,6 @@
 import '@maicol07/material-web-additions/data-table/data-table.js';
 
+import {DataTable as MdDataTable} from '@maicol07/material-web-additions/data-table/lib/data-table';
 import {
   mdiChevronLeft,
   mdiChevronRight,
@@ -15,19 +16,19 @@ import {
   Attributes,
   Component
 } from 'mithril-utilities';
+import {KebabCase} from 'type-fest';
 
-export interface DataTableAttributes extends Attributes {
-  inProgress?: boolean;
-  paginated?: boolean;
-  currentPageSize?: number;
-  pageSizesLabel?: string;
-  paginationTotalLabel?: string;
+type MdDataTableAttributes = {
+  [K in keyof MdDataTable as KebabCase<K>]: MdDataTable[K];
+};
+
+export interface DataTableAttributes extends Attributes, Partial<MdDataTableAttributes> {
 }
 
 export default class DataTable<A extends DataTableAttributes = DataTableAttributes> extends Component<A> {
   view(vnode: Vnode<A>) {
     return (
-      <md-data-table pageSizesLabel={__('Righe per pagina:')} paginationTotalLabel={__(':firstRow-:lastRow di :totalRows')} {...vnode.attrs}>
+      <md-data-table page-sizes-label={__('Righe per pagina:')} pagination-total-label={__(':firstRow-:lastRow di :totalRows')} {...vnode.attrs}>
         {this.contents(vnode)}
         <MdIcon icon={mdiPageFirst} slot="pagination-first-button-icon"/>
         <MdIcon icon={mdiChevronLeft} slot="pagination-previous-button-icon"/>

@@ -5,6 +5,7 @@ import '@maicol07/material-web-additions/data-table/data-table-row.js';
 
 import {
   DataTable as MdDataTable,
+  PaginateDetail,
   RowSelectionChangedDetail
 } from '@maicol07/material-web-additions/data-table/lib/data-table';
 import {DataTableCell} from '@maicol07/material-web-additions/data-table/lib/data-table-cell';
@@ -31,18 +32,14 @@ export interface RecordsTableAttributes<M extends Model<any, any>> extends DataT
   cols: Collection<Children> | Collection<RecordsTableColumnAttributes> | Collection<Children | RecordsTableColumnAttributes>;
   records: Map<string, M>;
   readonly?: boolean;
+  selectable?: boolean;
 
   onTableRowClick?(recordId: string, event: MouseEvent): void;
-
   onDeleteRecordButtonClick?(recordId: string, event: MouseEvent): void;
-
   onDeleteSelectedRecordsButtonClick?(recordsIds: string[], event: MouseEvent): void;
-
   onRowSelectionChanged?(selectedRecordsIds: string[], event: CustomEventInit<RowSelectionChangedDetail>): void;
-
+  onPageChange?(event: CustomEventInit<PaginateDetail>): void;
   valueModifier?(value: any, attribute: string, record: M): any;
-
-  selectable?: boolean;
 }
 
 export default class RecordsTable<M extends Model<any, any>, A extends RecordsTableAttributes<M> = RecordsTableAttributes<M>> extends DataTable<A> {
@@ -51,9 +48,12 @@ export default class RecordsTable<M extends Model<any, any>, A extends RecordsTa
 
   oninit(vnode: Vnode<A, this>) {
     super.oninit(vnode);
+    this.setDefaultAttributes(vnode);
+  }
 
-    vnode.attrs.paginated ??= true;
-    vnode.attrs.currentPageSize ??= 10;
+  onbeforeupdate(vnode: VnodeDOM<A, this>) {
+    super.onbeforeupdate(vnode);
+    this.setDefaultAttributes(vnode);
   }
 
   onupdate(vnode: VnodeDOM<A, this>) {
@@ -65,6 +65,12 @@ export default class RecordsTable<M extends Model<any, any>, A extends RecordsTa
         this.selectedRecordsIds.splice(this.selectedRecordsIds.indexOf(id), 1);
       }
     }
+  }
+
+  setDefaultAttributes(vnode: Vnode<A, this>) {
+    vnode.attrs.paginated ??= true;
+    vnode.attrs['current-page-size'] ??= 10;
+    vnode.attrs['custom-pagination'] ??= true;
   }
 
   contents(vnode: Vnode<A>) {
@@ -199,7 +205,8 @@ export default class RecordsTable<M extends Model<any, any>, A extends RecordsTa
   oncreate(vnode: VnodeDOM<A, this>) {
     super.oncreate(vnode);
 
-    this.element.addEventListener('rowSelectionChanged', this.onRowSelectionChanged.bind(this, vnode));
+    this.element.addEventListener('row-selection-changed', this.onRowSelectionChanged.bind(this, vnode));
+    this.element.addEventListener('paginate', this.onTablePaginate.bind(this, vnode));
   }
 
   protected onRowSelectionChanged(vnode: Vnode<A>, event: CustomEventInit<RowSelectionChangedDetail>) {
@@ -222,6 +229,10 @@ export default class RecordsTable<M extends Model<any, any>, A extends RecordsTa
       return;
     }
     vnode.attrs.onTableRowClick?.(recordId, event);
+  }
+
+  protected onTablePaginate(vnode: Vnode<A>, event: CustomEventInit<PaginateDetail>) {
+    vnode.attrs.onPageChange?.(event);
   }
 
   protected onDeleteRecordButtonClicked(vnode: Vnode<A>, record: M, event: MouseEvent) {

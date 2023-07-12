@@ -68,8 +68,7 @@ UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato, co_contratti.id, DA
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_ordiniservizio WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1)) AND idintervento IS NULL' WHERE `zz_widgets`.`name` = 'Ordini di servizio da impostare';
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_promemoria WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN (SELECT id FROM co_staticontratti WHERE is_pianificabile = 1)) AND idintervento IS NULL' WHERE `zz_widgets`.`name` = 'Interventi da pianificare';
 
-UPDATE `zz_views` SET `query` = 'co_movimenti.idmastrino' WHERE `name` = 'id' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota');
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'co_movimenti.idmastrino' WHERE `zz_modules`.`name` = 'Prima nota' AND `zz_views`.`name` = 'id';
 -- Stato FE (Attestazione di avvenuta trasmissione della fattura con impossibilità di recapito, estensione ricevuta .zip)
 INSERT INTO `fe_stati_documento` (`codice`, `descrizione`, `icon`) VALUES ('AT', 'Attestazione trasmissione', 'fa fa-check text-warning');
 
@@ -150,9 +149,8 @@ INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti
 -- Aggiunta colonna nome per i modelli primanota
 ALTER TABLE `co_movimenti_modelli` ADD `nome` VARCHAR(255) NOT NULL AFTER `idmastrino`;
 
-UPDATE `zz_views` SET `name` = 'Nome', `query` = 'co_movimenti_modelli.nome' WHERE `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE name='Modelli prima nota') AND `zz_views`.`name`='Causale predefinita';
-UPDATE `zz_views` SET `query` = 'co_movimenti_modelli.idmastrino' WHERE `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE name='Modelli prima nota') AND `zz_views`.`name`='id';
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'co_movimenti_modelli.nome', `zz_views`.`name` = 'Nome' WHERE `zz_modules`.`name` = 'Modelli prima nota' AND `zz_views`.`name` = 'Causale predefinita';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'co_movimenti_modelli.idmastrino' WHERE `zz_modules`.`name` = 'Modelli prima nota' AND `zz_views`.`name` = 'id';
 -- Modelli primanota default
 INSERT INTO `co_movimenti_modelli` (`id`, `idmastrino`, `nome`, `descrizione`, `idconto`) VALUES
 (NULL, 1, 'Anticipo fattura', 'Anticipo fattura num. {numero} del {data}', -1),
@@ -214,8 +212,7 @@ UPDATE `zz_settings` SET `nome` = 'Tipo Cassa Previdenziale' WHERE `zz_settings`
 -- Aggiunta campo "Rif. fattura" nello scadenzario
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT id FROM zz_modules WHERE name='Scadenzario'), 'Rif. Fattura', 'IF( numero_esterno!="", numero_esterno, numero )', '2', '1', '0', '0', NULL, NULL, '1', '0', '1');
 
-UPDATE `zz_views` SET `order`=`order`+1 WHERE `id_module`=(SELECT `id` FROM `zz_modules` WHERE `name`='Scadenzario') AND `order` > 1 AND `name` != 'Rif. Fattura';
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`order` = `zz_views`.`order`+1 WHERE `zz_modules`.`name` = 'Scadenzario' AND `zz_views`.`name` != 'Rif. Fattura' AND `zz_views`.`order` > 1;
 -- Aggiornamento widget "Crediti da clienti"
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare-pagato))), 2), '','', ''#''), ''.'', '',''),''#'', ''.''), ''&euro;'') AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=''entrata'' AND co_documenti.idstatodocumento!=1 |segment| AND 1=1' WHERE `zz_widgets`.`name` = 'Crediti da clienti';
 
@@ -262,9 +259,6 @@ UPDATE `zz_segments` SET `clause` = '((SELECT dir FROM co_tipidocumento WHERE co
 UPDATE `zz_segments` SET `clause` = '((SELECT dir FROM co_tipidocumento WHERE co_tipidocumento.id=co_documenti.idtipodocumento)=''uscita'') AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`)' WHERE `zz_segments`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `zz_segments`.`name` = 'Scadenzario fornitori';
 UPDATE `zz_segments` SET `clause` = 'ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`)' WHERE `zz_segments`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `zz_segments`.`name` = 'Scadenzario totale';
 
--- Aggiornamento cambio colore scadenze
-UPDATE `zz_views` SET `query` = 'IF( pagato=da_pagare, ''#38CD4E'', IF(scadenza < NOW(), ''#cc4d37'', '''') )' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `name` = '_bg_';
-
 -- Aggiunta campo con totale da pagare
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT id FROM zz_modules WHERE `name`='Scadenzario'), 'Saldo', 'da_pagare-pagato', 13, 1, 1, 1, '', '', 1, 1, 1);
 
@@ -297,14 +291,11 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente'), 'Totale', 'SUM(`subtotale` - `sconto`)', '5', '1', '0', '1', '', '', '1', '1', '0');
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore'), 'Totale', 'SUM(`subtotale` - `sconto`)', '5', '1', '0', '1', '', '', '1', '1', '0');
 
-UPDATE `zz_views` SET `query` = '`an_anagrafiche`.`ragione_sociale`' WHERE `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` IN('Ordini cliente', 'Ordini fornitore')) AND `name` = 'Ragione sociale';
-
 -- Riordinamento campi degli ordini cliente e fornitore
-UPDATE `zz_views` SET `order` = 3 WHERE `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` IN('Ordini cliente', 'Ordini fornitore')) AND `name` = 'Data';
-UPDATE `zz_views` SET `order` = 4 WHERE `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` IN('Ordini cliente', 'Ordini fornitore')) AND `name` = 'Ragione sociale';
-UPDATE `zz_views` SET `order` = 6 WHERE `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` IN('Ordini cliente', 'Ordini fornitore')) AND `name` = 'icon_Stato';
-UPDATE `zz_views` SET `order` = 7 WHERE `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` IN('Ordini cliente', 'Ordini fornitore')) AND `name` = 'icon_title_Stato';
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`order` = 3 WHERE `zz_modules`.`name` IN('Ordini cliente', 'Ordini fornitore') AND `zz_views`.`name` = 'Data';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`order` = 4 WHERE `zz_modules`.`name` IN('Ordini cliente', 'Ordini fornitore') AND `zz_views`.`name` = 'Ragione sociale';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`order` = 6 WHERE `zz_modules`.`name` IN('Ordini cliente', 'Ordini fornitore') AND `zz_views`.`name` = 'icon_Stato';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`order` = 7 WHERE `zz_modules`.`name` IN('Ordini cliente', 'Ordini fornitore') AND `zz_views`.`name` = 'icon_title_Stato';
 -- Aggiunta visualizzazione nuovi campi utili nei ddt
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'), 'Sede', 'IF(`dt_ddt`.`idsede`=0, \'Sede legale\', `an_sedi`.`nomesede`)', '5', '1', '0', '1', '', '', '1', '0', '0');
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'), 'Causale', '`dt_causalet`.`descrizione`', '6', '1', '0', '1', '', '', '1', '0', '0');
@@ -317,14 +308,12 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto'), 'Tipo spedizione', '`dt_spedizione`.`descrizione`', '7', '1', '0', '1', '', '', '1', '0', '0');
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto'), 'Vettore', '`vettori`.`ragione_sociale`', '8', '1', '0', '1', '', '', '1', '0', '0');
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto'), 'Totale', 'SUM(`subtotale` - `sconto`)', '9', '1', '0', '1', '', '', '1', '1', '0');
-
-UPDATE `zz_views` SET `query` = '`destinatari`.`ragione_sociale`' WHERE `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` IN('Ddt di vendita', 'Ddt di acquisto')) AND `name` = 'Ragione sociale';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = '`destinatari`.`ragione_sociale`' WHERE `zz_modules`.`name` IN ('Ddt di vendita', 'Ddt di acquisto') AND `zz_views`.`name` = 'Ragione';
 
 -- Riordinamento campi dei ddt in ingresso e uscita
-UPDATE `zz_views` SET `order` = 10 WHERE `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` IN('Ddt di vendita', 'Ddt di acquisto')) AND `name` = 'icon_Stato';
-UPDATE `zz_views` SET `order` = 11 WHERE `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` IN('Ddt di vendita', 'Ddt di acquisto')) AND `name` = 'icon_title_Stato';
-UPDATE `zz_views` SET `order` = 12 WHERE `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` IN('Ddt di vendita', 'Ddt di acquisto')) AND `name` = 'dir';
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`order` = 10 WHERE `zz_modules`.`name` IN ('Ddt di vendita', 'Ddt di acquisto') AND `zz_views`.`name` = 'icon_Stato';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`order` = 11 WHERE `zz_modules`.`name` IN ('Ddt di vendita', 'Ddt di acquisto') AND `zz_views`.`name` = 'icon_title_Stato';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`order` = 12 WHERE `zz_modules`.`name` IN ('Ddt di vendita', 'Ddt di acquisto') AND `zz_views`.`name` = 'dir';
 -- Aggiornamento widget "Fatturato" (iva esclusa)
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT((SELECT SUM(subtotale-sconto-co_righe_documenti.ritenutaacconto)), 2), '','', ''#''), ''.'', '',''), ''#'', ''.''), ''&euro;'') AS dato FROM (co_righe_documenti INNER JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=''entrata'' |segment| AND data >= ''|period_start|'' AND data <= ''|period_end|'' AND 1=1', `help` = 'Fatturato IVA esclusa.' WHERE `zz_widgets`.`name` = 'Fatturato';
 

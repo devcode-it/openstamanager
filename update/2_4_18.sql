@@ -83,8 +83,7 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 (NULL, 'v1', 'create', 'cron-restart', 'API\\Common\\Task', '1');
 
 -- Fix visualizzazione modulo Causali movimenti
-UPDATE `zz_views` SET `query` = 'CONCAT(UCASE(LEFT(tipo_movimento, 1)), SUBSTRING(tipo_movimento, 2))', `name` = 'Tipo' WHERE `zz_views`.`name` = 'Movimento di carico' AND id_module = (SELECT id FROM zz_modules WHERE name = 'Causali movimenti');
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'CONCAT(UCASE(LEFT(tipo_movimento, 1)), SUBSTRING(tipo_movimento, 2))', `zz_views`.`name` = 'Tipo' WHERE `zz_modules`.`name` = 'Causali movimenti' AND `zz_views`.`name` = 'Movimento di carico';
 -- Aggiornamento versione API services
 UPDATE `zz_settings` SET `valore` = 'v3' WHERE `nome` = 'OSMCloud Services API Version';
 

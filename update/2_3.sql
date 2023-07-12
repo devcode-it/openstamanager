@@ -535,22 +535,14 @@ UPDATE `zz_plugins` SET `script` = 'referenti.php' WHERE `zz_plugins`.`name` = '
 UPDATE `zz_plugins` SET `script` = 'sedi.php' WHERE `zz_plugins`.`name` = 'Sedi';
 
 -- Aggiornamento dei vari campi per le Viste
-UPDATE `zz_views` SET `order_by` = 'data' WHERE
-(`name` = 'Data' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita')) OR
-(`name` = 'Data' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto')) OR
-(`name` = 'Data' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota')) OR
-(`name` = 'Data' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto')) OR
-(`name` = 'Data' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'MyImpianti')) OR
-(`name` = 'Data' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente')) OR
-(`name` = 'Data' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'));
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`order_by` = 'data' WHERE `zz_modules`.`name` IN ('Fatture di vendita', 'Fatture di acquisto', 'Prima nota', 'Ddt di acquisto', 'MyImpianti', 'Ordini cliente', 'Ddt di vendita') AND `zz_views`.`name` = 'Data';
 
-UPDATE `zz_views` SET `order_by` = 'scadenza' WHERE (`name` = 'Data scadenza' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'));
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`order_by` = 'scadenza' WHERE `zz_modules`.`name` = 'Scadenzario' AND `zz_views`.`name` = 'Data scadenza';
 
-UPDATE `zz_views` SET `order_by` = 'orario_fine' WHERE (`name` = 'Orario fine' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'));
-UPDATE `zz_views` SET `order_by` = 'orario_inizio' WHERE (`name` = 'Orario inizio' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'));
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`order_by` = 'orario_fine' WHERE `zz_modules`.`name` = 'Interventi' AND `zz_views`.`name` = 'Orario fine';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`order_by` = 'orario_inizio' WHERE `zz_modules`.`name` = 'Interventi' AND `zz_views`.`name` = 'Orario inizio';
 
-UPDATE `zz_views` SET `search_inside` = 'color_title_Rel' WHERE (`name` = 'color_Rel.' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche'));
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`search_inside` = 'color_title_Rel' WHERE `zz_modules`.`name` = 'Anagrafiche' AND `zz_views`.`name` = 'color_Rel.';
 UPDATE `zz_views` SET `search` = '0' WHERE `name` = '_print_';
 
 -- Aggiornamento icona di default per i moduli senza icona specifica
@@ -582,8 +574,7 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie'), 'Nome', 'nome', 2, 1, 0, 1, 0);
 
 -- Fix della ricerca per tipologia su anagrafiche
-UPDATE `zz_views` SET `search_inside` = 'idanagrafica IN(SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica IN (SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione LIKE |search|))' WHERE `zz_views`.`id` = 3;
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`search_inside` = 'idanagrafica IN(SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica IN (SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione LIKE |search|))' WHERE `zz_modules`.`name` = 'Anagrafiche' AND `zz_views`.`name` = 'Tipo';
 -- Aggiunta della descrizione negli Articoli
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `search_inside`, `order_by`, `enabled`, `summable`, `default`) VALUES ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Descrizione', 'descrizione', '1', '1', '0', '', '', '1', '0', '1');
 
@@ -858,31 +849,18 @@ UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_ordiniserviz
 
 -- Creazione del campo format per la tabella zz_views
 ALTER TABLE `zz_views` ADD `format` boolean NOT NULL DEFAULT 0 AFTER `slow`;
-UPDATE `zz_views` SET `format` = 1 WHERE
-(`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `name` = 'Importo')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `name` = 'Pagato')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') AND `name` = 'Totale')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = 'Totale')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento') AND `name` = 'Costo orario')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento') AND `name` = 'Costo al km')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento') AND `name` = 'Diritto di chiamata')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento') AND `name` = 'Costo orario tecnico')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento') AND `name` = 'Costo al km tecnico')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento') AND `name` = 'Diritto di chiamata tecnico')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi') AND `name` = 'Data inizio')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi') AND `name` = 'Data fine')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = 'Data')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') AND `name` = 'Data')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota') AND `name` = 'Data')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `name` = 'Data scadenza')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita') AND `name` = 'Data')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto') AND `name` = 'Data')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'MyImpianti') AND `name` = 'Data')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente') AND `name` = 'Data')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti') AND `name` = 'Data')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti') AND `name` = 'Quantità')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota') AND `name` = 'Dare')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota') AND `name` = 'Avere');
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`format` = 1 WHERE 
+(`zz_modules`.`name` = 'Scadenzario' AND `zz_views`.`name` IN('Importo', 'Pagato', 'Data scadenza')) OR 
+(`zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` IN ('Totale', 'Data')) OR
+(`zz_modules`.`name` = 'Fatture di vendita' AND `zz_views`.`name` IN ('Totale', 'Data')) OR
+(`zz_modules`.`name` = 'Tipi di intervento' AND `zz_views`.`name`  IN ('Costo orario', 'Costo al km', 'Diritto di chiamata',  'Costo orario tecnico','Costo al km tecnico', 'Diritto di chiamata tecnico')) OR
+(`zz_modules`.`name` = 'Interventi' AND `zz_views`.`name`  IN ('Data inizio', 'Data fine')) OR
+(`zz_modules`.`name` = 'Prima nota' AND `zz_views`.`name`  IN('Data', 'Dare', 'Avere')) OR 
+(`zz_modules`.`name` = 'Ddt di vendita' AND `zz_views`.`name` = 'Data' ) OR
+(`zz_modules`.`name` = 'Ddt di acquisto' AND `zz_views`.`name` = 'Data' ) OR
+(`zz_modules`.`name` = 'MyImpianti' AND `zz_views`.`name` = 'Data' ) OR
+(`zz_modules`.`name` = 'Ordini cliente' AND `zz_views`.`name` = 'Data' ) OR
+(`zz_modules`.`name` = 'Movimenti' AND `zz_views`.`name` IN ('Data', 'Quantità'));
 
 -- Disabilitazione dei plugin instabili
 UPDATE `zz_plugins` SET `enabled` = 0 WHERE `name` = 'Pianificazione fatturazione' OR `name` = 'Pianificazione ordini di servizio';

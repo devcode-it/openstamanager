@@ -1,7 +1,6 @@
 
 -- Fix query Scadenzario
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF(emails IS NOT NULL, \'fa fa-envelope text-success\', \'\')' WHERE `zz_modules`.`name` = 'Scadenzario' AND `zz_views`.`name` = 'icon_Inviato';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF(emails IS NOT NULL, \'Inviata via email\', \'\')' WHERE `zz_modules`.`name` = 'Scadenzario' AND `zz_views`.`name` = 'icon_title_Inviato';
 
 -- Rimozione stampa spesometro
 DELETE FROM `zz_prints` WHERE `name` = 'Spesometro';

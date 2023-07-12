@@ -101,7 +101,6 @@ UPDATE `zz_prints` SET `predefined` = '0' WHERE `zz_prints`.`id_module` = (SELEC
 -- Eliminata colonna idsede_controparte e rinominata idsede_azienda in idsede
 ALTER TABLE `mg_movimenti` CHANGE `idsede_azienda` `idsede` INT(11) NOT NULL;
 ALTER TABLE `mg_movimenti` DROP `idsede_controparte`;
-UPDATE `zz_views` SET `query` = 'IF( mg_movimenti.idsede=0, ''Sede legale'', an_sedi.nomesede )' WHERE `zz_views`.`name` = 'Sede' 'Movimenti' AND `zz_views`.`id_module`= (SELECT `id` FROM `zz_modules` WHERE `name`='Movimenti');
 
 -- Rimozione campo idsede_azienda
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF( mg_movimenti.idsede=0, ''Sede legale'', an_sedi.nomesede )' WHERE `zz_views`.`name` = 'Sede' AND `zz_modules`.`name` = 'Movimenti';
@@ -207,15 +206,8 @@ WHERE co_tipidocumento.dir=''uscita'' |segment| AND data >= ''|period_start|'' A
 
 
 -- Correzione campi del Totale per le tabelle principali di Fatture
-UPDATE `zz_views` SET `query` = 'righe.totale_imponibile * IF(co_tipidocumento.reversed, -1, 1)' WHERE `name` = 'Totale' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di vendita');
-UPDATE `zz_views` SET `query` = 'righe.totale_imponibile * IF(co_tipidocumento.reversed, -1, 1)' WHERE `name` = 'Totale' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di acquisto');
-
-UPDATE `zz_views` SET `query` = '(righe.totale + `co_documenti`.`rivalsainps` + `co_documenti`.`iva_rivalsainps`) * IF(co_tipidocumento.reversed, -1, 1)' WHERE `name` = 'Totale ivato' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di vendita');
-UPDATE `zz_views` SET `query` = '(righe.totale + `co_documenti`.`rivalsainps` + `co_documenti`.`iva_rivalsainps`) * IF(co_tipidocumento.reversed, -1, 1)' WHERE `name` = 'Totale ivato' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di acquisto');
-
-UPDATE `zz_views` SET `query` = '(righe.totale + `co_documenti`.`rivalsainps` + `co_documenti`.`iva_rivalsainps` - `co_documenti`.`ritenutaacconto`) * IF(co_tipidocumento.reversed, -1, 1)' WHERE `name` = 'Netto a pagare' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di vendita');
-UPDATE `zz_views` SET `query` = '(righe.totale + `co_documenti`.`rivalsainps` + `co_documenti`.`iva_rivalsainps` - `co_documenti`.`ritenutaacconto`) * IF(co_tipidocumento.reversed, -1, 1)' WHERE `name` = 'Netto a pagare' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di acquisto');
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'righe.totale_imponibile * IF(co_tipidocumento.reversed, -1, 1)' WHERE `zz_modules`.`name` = 'Fatture di vendita' AND `zz_views`.`name` = 'Totale';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'righe.totale_imponibile * IF(co_tipidocumento.reversed, -1, 1)' WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = 'Totale';
 -- Fix campi Conto dare e Conto avere del modulo Prima nota
 UPDATE `zz_views` SET `order` = 5, `name`='Conto avere_new' WHERE `name`='Conto dare';
 UPDATE `zz_views` SET `order` = 8, `name`='Conto dare' WHERE `name`='Conto avere';

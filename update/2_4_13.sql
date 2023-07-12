@@ -62,21 +62,18 @@ UPDATE `zz_settings` SET `help` = '<p>Impostare la maschera senza indicare l''an
 -- Fix nome hook Aggiornamenti
 UPDATE `zz_hooks` SET `name` = 'Aggiornamenti' WHERE `class` = 'Modules\\Aggiornamenti\\UpdateHook';
 
-UPDATE `zz_views` SET `query` = 'mg_articoli.codice' WHERE `zz_views`.`name` = 'Codice' AND `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE `name`='Articoli');
-UPDATE `zz_views` SET `query` = 'mg_articoli.id' WHERE `zz_views`.`name` = 'id' AND `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE `name`='Articoli');
-UPDATE `zz_views` SET `query` = 'mg_articoli.descrizione' WHERE `zz_views`.`name` = 'Descrizione' AND `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE `name`='Articoli');
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'mg_articoli.codice' WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = 'Codice';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'mg_articoli.id' WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = 'id';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'mg_articoli.descrizione' WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = 'Descrizione';
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
 (NULL, (SELECT id FROM zz_modules WHERE `name`='Articoli'), 'Prezzo vendita ivato', 'IF( co_iva.percentuale IS NOT NULL, (mg_articoli.prezzo_vendita + mg_articoli.prezzo_vendita * co_iva.percentuale / 100), mg_articoli.prezzo_vendita + mg_articoli.prezzo_vendita*(SELECT co_iva.percentuale FROM co_iva INNER JOIN zz_settings ON co_iva.id=zz_settings.valore AND nome=\'Iva predefinita\')/100 )', 8, 1, 0, 1, '', '', 0, 0, 1),
 (NULL, (SELECT id FROM zz_modules WHERE `name`='Articoli'), 'Q.tà impegnata', 'IFNULL(a.qta_impegnata, 0)', 10, 1, 0, 1, '', '', 0, 0, 1),
 (NULL, (SELECT id FROM zz_modules WHERE `name`='Articoli'), 'Q.tà disponibile', 'qta-IFNULL(a.qta_impegnata, 0)', 11, 1, 0, 1, '', '', 0, 0, 1);
 
-UPDATE `zz_views` SET `order` = '9' WHERE `zz_views`.`name` = 'Q.tà' AND `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE `name`='Articoli');
-
-UPDATE `zz_views` SET `visible` = '1' WHERE `zz_views`.`name` = 'Fornitore' AND `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE `name`='Articoli');
-UPDATE `zz_views` SET `visible` = '1' WHERE `zz_views`.`name` = 'Prezzo di acquisto' AND `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE `name`='Articoli');
-UPDATE `zz_views` SET `visible` = '1' WHERE `zz_views`.`name` = 'Prezzo di vendita' AND `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE `name`='Articoli');
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`order` = 9 WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = 'Q.tà';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`visible` = 1 WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = 'Fornitore';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`visible` = 1 WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = 'Prezzo di acquisto';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`visible` = 1 WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = 'Prezzo di vendita';
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT id FROM zz_modules WHERE `name`='Articoli'), 'Barcode', 'mg_articoli.barcode', '2', '1', '0', '0', '', '', '1', '0', '1');
 
 -- Aggiunto help per maschera codice attività
@@ -86,12 +83,10 @@ UPDATE `zz_settings` SET `help` = '<p>Impostare la maschera senza indicare l''an
 UPDATE `or_statiordine` SET `completato` = '0' WHERE `or_statiordine`.`descrizione` = 'Parzialmente evaso';
 
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT id FROM zz_modules WHERE `name`='Fatture di vendita'), 'Imponibile', 'righe.imponibile', '5', '1', '0', '1', '', '', '1', '1', '1');
-
-UPDATE `zz_views` SET `order` = '6' WHERE `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE `name`='Fatture di vendita') AND `zz_views`.`name` = 'Totale';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`order` = 6 WHERE `zz_modules`.`name` = 'Fatture di vendita' AND `zz_views`.`name` = 'Totale';
 
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT id FROM zz_modules WHERE `name`='Fatture di acquisto'), 'Imponibile', 'righe.imponibile', '5', '1', '0', '1', '', '', '1', '1', '1');
-
-UPDATE `zz_views` SET `order` = '6' WHERE `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE `name`='Fatture di acquisto') AND `zz_views`.`name` = 'Totale';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`order` = 6 WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = 'Totale';
 
 -- Widget Fatturato fatture di vendita
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT((SELECT SUM(subtotale-sconto)), 2), '','', ''#''), ''.'', '',''), ''#'', ''.''), ''&euro;'') AS dato FROM (co_righe_documenti INNER JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=''entrata'' |segment| AND data >= ''|period_start|'' AND data <= ''|period_end|'' AND 1=1' WHERE `zz_widgets`.`name` = 'Fatturato';

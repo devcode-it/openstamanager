@@ -522,13 +522,11 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 (NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Segmenti'), 'Note', 'note', 4, 1, 0, 0, 1, 0, 1),
 (NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Segmenti'), 'Predefinito', 'IF(predefined=1, ''Sì'', ''No'')', 5, 1, 0, 0, 1, 0, 1);
 
-UPDATE `zz_views` SET `search` = 1 WHERE `name` = 'Nome' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche');
-UPDATE `zz_views` SET `search` = 1 WHERE `name` = 'Filiale' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche');
-UPDATE `zz_views` SET `search` = 1 WHERE `name` = 'IBAN' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche');
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`search` = 1 WHERE `zz_modules`.`name` = 'Banche' AND `zz_views`.`name` = 'Nome';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`search` = 1 WHERE `zz_modules`.`name` = 'Banche' AND `zz_views`.`name` = 'Filiale';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`search` = 1 WHERE `zz_modules`.`name` = 'Banche' AND `zz_views`.`name` = 'IBAN';
 -- Fix Date emissione nello Scadenzario
-UPDATE `zz_views` SET `query` = 'data_emissione', `format` = '1' WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND name = 'Data emissione';
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'data_emissione', `zz_views`.`format` = 1 WHERE `zz_modules`.`name` = 'Scadenzario' AND `zz_views`.`name` = 'Data emissione';
 -- Normalizzazione default e predefined
 ALTER TABLE `zz_views` CHANGE `default` `default` boolean NOT NULL DEFAULT 0;
 ALTER TABLE `zz_prints` CHANGE `default` `default` boolean NOT NULL DEFAULT 0;
@@ -537,9 +535,6 @@ ALTER TABLE `an_zone` CHANGE `default` `default` boolean NOT NULL DEFAULT 0;
 ALTER TABLE `zz_modules` CHANGE `default` `default` boolean NOT NULL DEFAULT 0;
 
 ALTER TABLE `zz_segments` CHANGE `predefined` `predefined` boolean NOT NULL DEFAULT 0;
-
--- Fix colore per fatture senza numero esterno
-UPDATE `zz_views` SET `query` = 'IF((SELECT COUNT(t.numero_esterno) FROM co_documenti AS t WHERE t.numero_esterno = co_documenti.numero_esterno AND t.numero_esterno != '''' AND t.id_segment = co_documenti.id_segment AND idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir = ''entrata'') AND t.data >= ''|period_start|'' AND t.data <= ''|period_end|'') > 1, ''red'', '''')' WHERE  `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = '_bg_';
 
 -- Campi per la gestione revisioni
 ALTER TABLE `co_preventivi`  ADD `master_revision` INT NOT NULL  AFTER `tipo_sconto_globale`,  ADD `default_revision` TINYINT(1) NOT NULL  AFTER `master_revision`;

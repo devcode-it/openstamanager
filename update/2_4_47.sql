@@ -59,5 +59,5 @@ WHERE
 HAVING 
     2=2" WHERE `name` = 'Contratti';
 
-UPDATE `zz_views` SET `name` = 'Richiesta' WHERE `zz_views`.`query` = 'richiesta' AND `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'); 
-UPDATE `zz_views` SET `name` = 'Descrizione' WHERE `zz_views`.`query` = 'in_interventi.descrizione' AND `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'); 
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`name` = 'Richiesta' WHERE `zz_modules`.`name` = 'Interventi' AND `zz_views`.`query` = 'richiesta';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`name` = 'Descrizione' WHERE `zz_modules`.`name` = 'Interventi' AND `zz_views`.`query` = 'in_interventi.descrizione';

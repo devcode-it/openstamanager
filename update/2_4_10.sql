@@ -1,7 +1,3 @@
--- Fix colonna Totale per Fatture
-UPDATE `zz_views` SET `query` = '(SELECT SUM(subtotale - sconto + iva + rivalsainps - ritenutaacconto) FROM co_righe_documenti WHERE co_righe_documenti.iddocumento=co_documenti.id GROUP BY iddocumento) + iva_rivalsainps' WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND name = 'Totale';
-UPDATE `zz_views` SET `query` = '(SELECT SUM(subtotale - sconto + iva + rivalsainps - ritenutaacconto) FROM co_righe_documenti WHERE co_righe_documenti.iddocumento=co_documenti.id GROUP BY iddocumento) + iva_rivalsainps' WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') AND name = 'Totale';
-
 -- Fix widget Contratti in scadenza per mostrare i contratti con ore in esaurimento
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato,
        ((SELECT SUM(co_righe_contratti.qta) FROM co_righe_contratti WHERE co_righe_contratti.um=\'ore\' AND co_righe_contratti.idcontratto=co_contratti.id) - IFNULL( (SELECT SUM(in_interventi_tecnici.ore) FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE in_interventi.id_contratto=co_contratti.id AND in_interventi.idstatointervento IN (SELECT in_statiintervento.idstatointervento FROM in_statiintervento WHERE in_statiintervento.completato = 1)), 0) ) AS ore_rimanenti,
@@ -84,12 +80,6 @@ UPDATE `mg_movimenti` SET `idsede_azienda` = (SELECT `idsede_partenza` FROM `dt_
 UPDATE `mg_movimenti` SET `idsede_controparte` = (SELECT `idsede_destinazione` FROM `co_documenti` WHERE `co_documenti`.`id` = `mg_movimenti`.`iddocumento`) WHERE `iddocumento`!=0;
 UPDATE `mg_movimenti` SET `idsede_azienda` = (SELECT `idsede_destinazione` FROM `co_documenti` WHERE `co_documenti`.`id` = `mg_movimenti`.`iddocumento`) WHERE `iddocumento`!=0;
 
--- Sistemo vista per icon_Inviata modulo Fatture di vendita
-UPDATE `zz_views` SET `query` = 'IF(`email`.`name` IS NOT NULL, \'fa fa-envelope text-success\', \'\')' WHERE `zz_views`.`name` = 'icon_Inviata' AND `id_module` =  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') ;
-
--- Sistemo vista per icon_title_Inviata modulo Fatture di vendita
-UPDATE `zz_views` SET `query` = '`email`.`name`' WHERE `zz_views`.`name` = 'icon_title_Inviata' AND `id_module` =  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') ;
-
 -- Relazione fra utente e una o più sedi
 CREATE TABLE `zz_user_sedi` (
   `id_user` int(11) NOT NULL,
@@ -97,8 +87,7 @@ CREATE TABLE `zz_user_sedi` (
 ) ENGINE=InnoDB;
 
 -- Sistemo colonna Nome, Descrizione - Modelli prima nota
-UPDATE `zz_views` SET `query` = 'CONCAT_WS(co_movimenti_modelli.nome, co_movimenti_modelli.descrizione)' WHERE `zz_views`.`name` = 'Nome' AND `id_module` =  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Modelli prima nota');
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'CONCAT_WS(co_movimenti_modelli.nome, co_movimenti_modelli.descrizione)' WHERE `zz_modules`.`name` = 'Modelli prima nota' AND `zz_views`.`name` = 'Nome';
 UPDATE `co_movimenti_modelli` SET `nome` = `descrizione` WHERE `nome` = '';
 
 -- Rimuovo le interruzioni di riga per descrizioni vuote
@@ -124,9 +113,6 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi scadenze'), 'Descrizione', 'descrizione', 3, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi scadenze'), 'Nome', 'nome', 2, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi scadenze'), 'id', 'id', 1, 1, 0, 0, 0);
-
--- Aggiungo possibilità di vedere la descrizione per le scadenze generiche
-UPDATE `zz_views` SET `query` = 'IF(an_anagrafiche.ragione_sociale IS NULL, co_scadenziario.descrizione, an_anagrafiche.ragione_sociale)' WHERE `zz_views`.`name` = 'Anagrafica' AND `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario');
 
 -- Plugin rinnovi per Contratti
 INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES (NULL, 'Rinnovi', 'Rinnovi', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'tab', '', 1, 0, 0, '', '', NULL, 'custom', 'rinnovi_contratti', '');
@@ -183,17 +169,14 @@ UPDATE `in_tariffe` INNER JOIN `in_tipiintervento` ON `in_tariffe`.`idtipointerv
 DELETE FROM `in_tariffe` WHERE `idtipointervento` NOT IN (SELECT `idtipointervento` FROM `in_tipiintervento`);
 ALTER TABLE `in_tariffe` CHANGE `idtipointervento` `idtipointervento` INT(11) NOT NULL, ADD FOREIGN KEY (`idtipointervento`) REFERENCES `in_tipiintervento`(`idtipointervento`);
 
-UPDATE `zz_views` SET `query` = 'IF(`dup`.`numero_esterno` IS NULL, '''', ''red'')' WHERE `name` = '_bg_' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
-UPDATE `zz_views` SET `query` = 'an_anagrafiche.idanagrafica' WHERE `name` = 'idanagrafica' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
-UPDATE `zz_views` SET `query` = 'IF(co_documenti.numero_esterno='''', co_documenti.numero, co_documenti.numero_esterno)', `order_by` ='CAST(co_documenti.numero_esterno AS UNSIGNED)' WHERE `name` = 'Numero' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
-UPDATE `zz_views` SET `query` = 'co_documenti.data' WHERE `name` = 'Data' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
-UPDATE `zz_views` SET `query` = 'an_anagrafiche.ragione_sociale' WHERE `name` = 'Ragione sociale' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
-UPDATE `zz_views` SET `query` = '(SELECT SUM(subtotale - sconto + iva + rivalsainps - ritenutaacconto) FROM co_righe_documenti WHERE co_righe_documenti.iddocumento=co_documenti.id GROUP BY iddocumento) + co_documenti.iva_rivalsainps' WHERE `name` = 'Totale' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
-UPDATE `zz_views` SET `query` = 'co_statidocumento.icona' WHERE `name` = 'icon_Stato' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
-UPDATE `zz_views` SET `query` = 'co_statidocumento.descrizione' WHERE `name` = 'icon_title_Stato' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
-UPDATE `zz_views` SET `query` = '`fe_stati_documento`.`icon`' WHERE `name` = 'icon_FE' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
-UPDATE `zz_views` SET `query` = '`fe_stati_documento`.`descrizione`' WHERE `name` = 'icon_title_FE' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'IF(`dup`.`numero_esterno` IS NULL, '''', ''red'')' WHERE `zz_modules`.`name` = 'Fatture di vendita' AND `zz_views`.`name` = '_bg_';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'an_anagrafiche.idanagrafica' WHERE `zz_modules`.`name` = 'Fatture di vendita' AND `zz_views`.`name` = 'idanagrafica';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'IF(co_documenti.numero_esterno='''', co_documenti.numero, co_documenti.numero_esterno)', `order_by` ='CAST(co_documenti.numero_esterno AS UNSIGNED)' WHERE `zz_modules`.`name` = 'Fatture di vendita' AND `zz_views`.`name` = 'Numero';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'co_documenti.data' WHERE `zz_modules`.`name` = 'Fatture di vendita' AND `zz_views`.`name` = 'Data';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'an_anagrafiche.ragione_sociale' WHERE `zz_modules`.`name` = 'Fatture di vendita' AND `zz_views`.`name` = 'Ragione sociale';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'co_statidocumento.descrizione' WHERE `zz_modules`.`name` = 'Fatture di vendita' AND `zz_views`.`name` = 'icon_title_Stato';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = '`fe_stati_documento`.`icon`' WHERE `zz_modules`.`name` = 'Fatture di vendita' AND `zz_views`.`name` = 'icon_FE';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = '`fe_stati_documento`.`descrizione`' WHERE `zz_modules`.`name` = 'Fatture di vendita' AND `zz_views`.`name` = 'icon_title_FE';
 -- Impostazione per la lunghezza delle pagine Datatables
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Lunghezza in pagine del buffer Datatables', '10', 'decimal', 0, 'Generali', 1);
 

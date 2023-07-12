@@ -177,8 +177,7 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 -- Data concordata per le scadenza
 ALTER TABLE `co_scadenziario` ADD `data_concordata` DATE;
 
-UPDATE `zz_views` SET `query` = 'IF(pagato = da_pagare, ''#38CD4E'', IF(data_concordata IS NOT NULL AND data_concordata > NOW(), '' #CC9837'', IF(scadenza < NOW(), ''#CC4D37'', '''')))' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `name` = '_bg_';
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'IF(pagato = da_pagare, ''#38CD4E'', IF(data_concordata IS NOT NULL AND data_concordata > NOW(), '' #CC9837'', IF(scadenza < NOW(), ''#CC4D37'', '''')))' WHERE `zz_modules`.`name` = 'Scadenzario' AND `zz_views`.`name` = '_bg_';
 -- Sistema di note interne
 CREATE TABLE IF NOT EXISTS `zz_notes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -429,44 +428,32 @@ INSERT INTO `fe_stati_documento` (`codice`, `descrizione`, `icon`) VALUES
 ('ERR', 'Trasmissione non riuscita', 'fa fa-close'),
 ('QUEUE', 'In coda di elaborazione', 'fa fa-spinner');
 
-UPDATE `zz_views` SET `query` = 'righe.totale' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = 'Totale';
-UPDATE `zz_views` SET `query` = 'IF(`email`.`id_email` IS NOT NULL, ''fa fa-envelope text-success'', '''')' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = 'icon_Inviata';
-UPDATE `zz_views` SET `query` = 'IF(`email`.`id_email` IS NOT NULL, ''Inviata via email'', '''')' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = 'icon_title_Inviata';
 
-UPDATE `zz_views` SET `query` = 'righe.totale' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') AND `name` = 'Totale';
-UPDATE `zz_views` SET `query` = 'an_anagrafiche.ragione_sociale ' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') AND `name` = 'Ragione sociale';
-UPDATE `zz_views` SET `query` = 'co_statidocumento.icona' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') AND `name` = 'icon_Stato';
-UPDATE `zz_views` SET `query` = 'co_statidocumento.descrizione' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') AND `name` = 'icon_title_Stato';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'an_anagrafiche.ragione_sociale' WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = 'Ragione sociale';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'co_statidocumento.icona' WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = 'icon_Stato';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'co_statidocumento.descrizione' WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = 'icon_title_Stato';
+
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'Totale', 'righe.totale', 5, 1, 1, 1, 1);
-UPDATE `zz_views` SET `query` = 'an_anagrafiche.ragione_sociale ' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti') AND `name` = 'Cliente';
-UPDATE `zz_views` SET `query` = 'co_staticontratti.icona' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti') AND `name` = 'icon_Stato';
-UPDATE `zz_views` SET `query` = 'co_staticontratti.descrizione' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti') AND `name` = 'icon_title_Stato';
-UPDATE `zz_views` SET `query` = '`co_contratti`.`id`' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti') AND `name` = 'id';
-UPDATE `zz_views` SET `query` = '`co_contratti`.`nome`' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti') AND `name` = 'Nome';
-UPDATE `zz_views` SET `query` = 'impianti.descrizione' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti') AND `name` = 'Impianti';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'an_anagrafiche.ragione_sociale' WHERE `zz_modules`.`name` = 'Contratti' AND `zz_views`.`name` = 'Cliente';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'co_staticontratti.icona' WHERE `zz_modules`.`name` = 'Contratti' AND `zz_views`.`name` = 'icon_Stato';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'co_staticontratti.descrizione' WHERE `zz_modules`.`name` = 'Contratti' AND `zz_views`.`name` = 'icon_title_Stato';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = '`co_contratti`.`id`' WHERE `zz_modules`.`name` = 'Contratti' AND `zz_views`.`name` = 'id';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = '`co_contratti`.`nome`' WHERE `zz_modules`.`name` = 'Contratti' AND `zz_views`.`name` = 'Nome';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'impianti.descrizione' WHERE `zz_modules`.`name` = 'Contratti' AND `zz_views`.`name` = 'Impianti';
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), 'Totale', 'righe.totale', 5, 1, 1, 1, 1);
-UPDATE `zz_views` SET `query` = 'an_anagrafiche.ragione_sociale ' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi') AND `name` = 'Cliente';
-UPDATE `zz_views` SET `query` = 'co_statipreventivi.icona' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi') AND `name` = 'icon_Stato';
-UPDATE `zz_views` SET `query` = 'co_statipreventivi.descrizione' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi') AND `name` = 'icon_title_Stato';
-UPDATE `zz_views` SET `query` = '`co_preventivi`.`id`' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi') AND `name` = 'id';
-UPDATE `zz_views` SET `query` = '`co_preventivi`.`nome`' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi') AND `name` = 'Nome';
-
-UPDATE `zz_views` SET `query` = 'righe.totale' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto') AND `name` = 'Totale';
-UPDATE `zz_views` SET `query` = 'an_anagrafiche.ragione_sociale ' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto') AND `name` = 'Ragione sociale';
-
-UPDATE `zz_views` SET `query` = 'righe.totale' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita') AND `name` = 'Totale';
-UPDATE `zz_views` SET `query` = 'an_anagrafiche.ragione_sociale ' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita') AND `name` = 'Ragione sociale';
-
-UPDATE `zz_views` SET `query` = 'righe.totale' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente') AND `name` = 'Totale';
-UPDATE `zz_views` SET `query` = 'an_anagrafiche.ragione_sociale ' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente') AND `name` = 'Ragione sociale';
-
-UPDATE `zz_views` SET `query` = 'righe.totale' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore') AND `name` = 'Totale';
-UPDATE `zz_views` SET `query` = 'an_anagrafiche.ragione_sociale ' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore') AND `name` = 'Ragione sociale';
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'an_anagrafiche.ragione_sociale' WHERE `zz_modules`.`name` = 'Preventivi' AND `zz_views`.`name` = 'Cliente';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'co_statipreventivi.icona' WHERE `zz_modules`.`name` = 'Preventivi' AND `zz_views`.`name` = 'icon_Stato';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'co_statipreventivi.descrizione' WHERE `zz_modules`.`name` = 'Preventivi' AND `zz_views`.`name` = 'icon_title_Stato';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = '`co_preventivi`.`id`' WHERE `zz_modules`.`name` = 'Preventivi' AND `zz_views`.`name` = 'id';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = '`co_preventivi`.`nome`' WHERE `zz_modules`.`name` = 'Preventivi' AND `zz_views`.`name` = 'Nome';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'an_anagrafiche.ragione_sociale' WHERE `zz_modules`.`name` = 'Ddt di acquisto' AND `zz_views`.`name` = 'Ragione sociale';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'an_anagrafiche.ragione_sociale' WHERE `zz_modules`.`name` = 'Ddt di vendita' AND `zz_views`.`name` = 'Ragione sociale';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'an_anagrafiche.ragione_sociale' WHERE `zz_modules`.`name` = 'Ordini cliente' AND `zz_views`.`name` = 'Ragione sociale';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'an_anagrafiche.ragione_sociale' WHERE `zz_modules`.`name` = 'Ordini fornitore' AND `zz_views`.`name` = 'Ragione sociale';
 -- Correzioni per gli ordini
 INSERT INTO `or_statiordine` (`id`, `descrizione`, `annullato`, `icona`, `completato`) VALUES
 (NULL, 'In attesa di conferma', '0', 'fa fa-clock-o text-warning', '0'),
@@ -740,8 +727,8 @@ UPDATE `co_staticontratti` SET `can_delete` = '0' WHERE `co_staticontratti`.`des
 
 ALTER TABLE `an_sedi` ADD `note` TEXT NULL DEFAULT NULL AFTER `idzona`;
 
-UPDATE `zz_views` SET `query` = 'codice' WHERE `zz_views`.`name` = 'Codice' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati di intervento');
-UPDATE `zz_views` SET `query` = 'codice' WHERE `zz_views`.`name` = 'Codice' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento');
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'codice' WHERE `zz_modules`.`name` = 'Stati di intervento' AND `zz_views`.`name` = 'Codice';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'codice' WHERE `zz_modules`.`name` = 'Tipi di intervento' AND `zz_views`.`name` = 'Codice';
 UPDATE `zz_modules` SET `icon` = 'fa fa-angle-right' WHERE `zz_modules`.`name` = 'Categorie documenti';
 
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM(prezzo_acquisto*qta),2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM mg_articoli WHERE qta>0 AND deleted_at IS NULL' WHERE `zz_widgets`.`name` = 'Valore magazzino';

@@ -124,10 +124,8 @@ UPDATE `in_interventi_tecnici` SET `summary` = NULL WHERE `summary` = '';
 ALTER TABLE `in_interventi_tecnici` CHANGE `uid` `uid` int(11);
 
 -- Aggiorno campo 'Data' in 'Data movimento'
-UPDATE `zz_views` SET `name` = 'Data movimento', `order` = '6' WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti') AND name = 'Data';
-
-UPDATE `zz_views` SET  `query` = 'CONCAT(mg_movimenti.qta,'' '', (SELECT um FROM mg_articoli WHERE id = mg_movimenti.idarticolo) )'  WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti') AND name = 'Quantità';
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`name` = 'Data movimento', `zz_views`.`order` = 6 WHERE `zz_modules`.`name` = 'Movimenti' AND `zz_views`.`name` = 'Data';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'CONCAT(mg_movimenti.qta,'' '', (SELECT um FROM mg_articoli WHERE id = mg_movimenti.idarticolo) )' WHERE `zz_modules`.`name` = 'Movimenti' AND `zz_views`.`name` = 'Quantità';
 -- Allineo anche il modulo movimenti con il nuovo campo data
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti'), 'Data', 'mg_movimenti.data', 5, 1, 0, 1, 1, 1);
@@ -186,9 +184,7 @@ ALTER TABLE `zz_files` CHANGE `id_module` `id_module` INT(11) NULL;
 UPDATE `zz_files` SET `id_module` = NULL WHERE `id_module` = 0;
 
 -- Totali fatture, sommabile
-UPDATE `zz_views` SET `summable` = '1' WHERE  `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND name = 'Totale';
-UPDATE `zz_views` SET `summable` = '1' WHERE  `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') AND name = 'Totale';
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`summable` = 1 WHERE `zz_modules`.`name` IN ('Fatture di acquisto', 'Fatture di vendita') AND `zz_views`.`name` = 'Totale';
 -- Fix serial, lotti, altro a 0 o null
 DELETE FROM `mg_prodotti` WHERE (`serial` IS NULL OR `serial`='0') AND (`lotto` IS NULL OR `lotto`='0') AND (`altro` IS NULL OR `altro`='0');
 
@@ -229,9 +225,7 @@ DELETE FROM `zz_settings` WHERE `nome` = 'Stampa i prezzi sui preventivi';
 UPDATE `in_statiintervento` SET `can_delete` = '0' WHERE `in_statiintervento`.`idstatointervento` = 'WIP';
 
 -- Campi Importo e Pagato dello Scadenzario sommabili
-UPDATE `zz_views` SET `summable` = '1' WHERE  `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND name = 'Importo';
-UPDATE `zz_views` SET `summable` = '1' WHERE  `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND name = 'Pagato';
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`summable` = 1 WHERE `zz_modules`.`name` = 'Scadenzario' AND `zz_views`.`name` IN ('Importo', 'Pagato');
 -- Collego il preventivo alla riga dell'ordine
 ALTER TABLE `or_righe_ordini` ADD `idpreventivo` INT(11) NOT NULL AFTER `idarticolo`;
 
@@ -406,11 +400,6 @@ UPDATE `zz_group_module` SET `clause` = REPLACE(
         REPLACE(`clause`, 'deleted=0', '`deleted_at` IS NULL')
     , 'deleted = 0', '`deleted_at` IS NULL')
 , '`deleted` = 0', '`deleted_at` IS NULL');
-UPDATE `zz_views` SET `query` = REPLACE(
-    REPLACE(
-        REPLACE(`query`, 'deleted=0', '`deleted_at` IS NULL')
-    , 'deleted = 0', '`deleted_at` IS NULL')
-, '`deleted` = 0', '`deleted_at` IS NULL');
 UPDATE `zz_settings` SET `tipo` = REPLACE(
     REPLACE(
         REPLACE(`tipo`, 'deleted=0', '`deleted_at` IS NULL')
@@ -427,11 +416,6 @@ UPDATE `zz_group_module` SET `clause` = REPLACE(
         REPLACE(`clause`, 'deleted=1', '`deleted_at` IS NOT NULL')
     , 'deleted = 1', '`deleted_at` IS NOT NULL')
 , '`deleted` = 1', '`deleted_at` IS NOT NULL');
-UPDATE `zz_views` SET `query` = REPLACE(
-    REPLACE(
-        REPLACE(`query`, 'deleted=1', '`deleted_at` IS NOT NULL')
-    , 'deleted = 1', '`deleted_at` IS NOT NULL')
-, '`deleted` = 1', '`deleted_at` IS NOT NULL');
 UPDATE `zz_settings` SET `tipo` = REPLACE(
     REPLACE(
         REPLACE(`tipo`, 'deleted=1', '`deleted_at` IS NOT NULL')
@@ -439,8 +423,7 @@ UPDATE `zz_settings` SET `tipo` = REPLACE(
 , '`deleted` = 1', '`deleted_at` IS NOT NULL');
 
 -- Fix id delle Banche
-UPDATE `zz_views` SET `enabled` = 0 WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche') AND `name` = 'id';
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`enabled` = 0 WHERE `zz_modules`.`name` = 'Banche' AND `zz_views`.`name` = 'id';
 -- Aggiunta campi per specificare se la riga importata è un import unico di pù righe
 ALTER TABLE `co_righe_documenti` ADD `is_preventivo` TINYINT(1) NOT NULL AFTER `is_descrizione`, ADD `is_contratto` TINYINT(1) NOT NULL AFTER `is_preventivo`;
 
@@ -456,8 +439,7 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 UPDATE `zz_prints` SET `enabled` = 0 WHERE `name` IN( 'Ordine di servizio', 'Ordine di servizio (senza costi)' );
 
 -- Fix colonna delle stampe
-UPDATE `zz_views` SET `query` = '\'Intervento\'' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi') AND `name` = '_print_';
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = '\'Intervento\'' WHERE `zz_modules`.`name` = 'Interventi' AND `zz_views`.`name` = '_print_';
 -- Flag per definire i segmenti di note di accredito e di addebito
 ALTER TABLE `zz_segments` ADD `predefined_accredito` TINYINT(1) NOT NULL AFTER `predefined`, ADD `predefined_addebito` TINYINT(1) NOT NULL AFTER `predefined_accredito`;
 

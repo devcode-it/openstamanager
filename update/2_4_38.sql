@@ -209,8 +209,6 @@ UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_module
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'tecnici_assegnati.nomi' WHERE `zz_modules`.`name` = 'Interventi' AND `zz_views`.`name` = 'Tecnici assegnati';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'tecnici.nomi' WHERE `zz_modules`.`name` = 'Interventi' AND `zz_views`.`name` = 'Tecnici';
 
--- Ottimizzazione query vista Pagamenti
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`pagamenti`.`tipo`' WHERE `zz_modules`.`name` = 'Pagamenti' AND `zz_views`.`name` = 'Codice pagamento';
 -- Ottimizzazione query vista Fatture di acquisto
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'banche.descrizione' WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = 'Banca';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'conti.descrizione' WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = 'Conto';
@@ -407,7 +405,6 @@ UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_module
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`zz_groups`.`id`' WHERE `zz_modules`.`name` = 'Utenti e permessi' AND `zz_views`.`name` = 'id';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`utenti`.`num`' WHERE `zz_modules`.`name` = 'Utenti e permessi' AND `zz_views`.`name` = 'N. utenti';
 -- Ottimizzazione query vista Listini cliente
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_listini`.`id`' WHERE `zz_modules`.`name` = 'Listini cliente' AND `zz_views`.`name` = 'id';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_listini`.`id`' WHERE `zz_modules`.`name` = 'Listini cliente' AND `zz_views`.`name` = 'id';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`articoli`.`num`' WHERE `zz_modules`.`name` = 'Listini cliente' AND `zz_views`.`name` = 'Articoli';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`anagrafiche`.`num`' WHERE `zz_modules`.`name` = 'Listini cliente' AND `zz_views`.`name` = 'Anagrafiche';

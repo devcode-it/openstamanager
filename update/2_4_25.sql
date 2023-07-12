@@ -21,8 +21,6 @@ SET `record_type` ='Modules\\Anagrafiche\\Anagrafica';
 ALTER TABLE `em_list_anagrafica` RENAME TO `em_list_receiver`;
 ALTER TABLE `em_newsletter_anagrafica` RENAME TO `em_newsletter_receiver`;
 
-UPDATE `zz_views` SET `query` = '(SELECT COUNT(*) FROM `em_newsletter_receiver` WHERE `em_newsletter_receiver`.`id_newsletter` = `em_newsletters`.`id`)' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE name='Newsletter') AND `name` = 'Destinatari';
-
 ALTER TABLE `em_newsletter_receiver` ADD `id` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT;
 ALTER TABLE `em_list_receiver` ADD `id` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT;
 

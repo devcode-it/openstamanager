@@ -89,8 +89,7 @@ INSERT INTO `zz_cache` (`id`, `name`, `content`, `valid_time`, `expire_at`) VALU
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'Tecnici assegnati', 'GROUP_CONCAT((SELECT DISTINCT(ragione_sociale) FROM an_anagrafiche WHERE idanagrafica = in_interventi_tecnici_assegnati.id_tecnico) SEPARATOR '', '')', 14, 1, 0, 1, 1);
 
-UPDATE `zz_views` SET `default` = 1 WHERE `zz_views`.`id_module` = (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Interventi') AND (`zz_views`.`name` = 'Tecnici' OR `zz_views`.`name` = 'Rif. fattura');
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`default` = 1 WHERE (`zz_views`.`name` = 'Tecnici' OR `zz_views`.`name` = 'Rif. fattura') AND `zz_modules`.`name` = 'Interventi';
 -- Modifica directory Piani di sconto/magg.
 UPDATE `zz_modules` SET `directory` = 'piano_sconto' WHERE `zz_modules`.`name` = 'Piani di sconto/magg.';
 
@@ -111,8 +110,7 @@ INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`,
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita', '0', 'boolean', '1', 'Generali',  '20', NULL);
 
 -- Correzione per visualizzazione campi 'Dare' e 'Avere'
-UPDATE `zz_views` SET `summable` = 1 WHERE `name` IN ('Dare', 'Avere') AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima Nota');
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`summable` = 1 WHERE `zz_views`.`name` IN ('Dare', 'Avere') AND `zz_modules`.`name` = 'Prima nota';
 -- Fix query dichiarazione d'intento
 UPDATE `zz_plugins` SET `options` = '{ \"main_query\": [	{	\"type\": \"table\", \"fields\": \"Protocollo, Progressivo, Massimale, Totale, Data inizio, Data fine\", \"query\": \"SELECT id, numero_protocollo AS Protocollo, numero_progressivo AS Progressivo, DATE_FORMAT(data_inizio,\'%d/%m/%Y\') AS \'Data inizio\', DATE_FORMAT(data_fine,\'%d/%m/%Y\') AS \'Data fine\', ROUND(massimale, 2) AS Massimale, ROUND(totale, 2) AS Totale FROM co_dichiarazioni_intento WHERE 1=1 AND deleted_at IS NULL AND id_anagrafica = |id_parent| HAVING 2=2 ORDER BY co_dichiarazioni_intento.id DESC\"}	]}' WHERE `zz_plugins`.`name` = "Dichiarazioni d\'Intento";
 

@@ -31,8 +31,6 @@ UPDATE `zz_views` SET `html_format` = '0';
 -- Correzione widget valore magazzino
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(\" \", REPLACE(REPLACE(REPLACE(FORMAT(SUM(prezzo_acquisto*qta),2), \",\", \"#\"), \".\", \",\"), \"#\", \".\"), \"&euro;\") AS dato FROM mg_articoli WHERE qta>0 AND deleted_at IS NULL AND servizio=0 AND 1=1', `help` = 'Articoli a magazzino (tutti o solo attivi secondo il segmento)' WHERE `zz_widgets`.`name` = 'Valore magazzino';
 
-UPDATE `zz_views` SET `query` = 'IF(in_interventi.idsede_destinazione > 0, sede_destinazione.info, CONCAT(\'Sede legale<br>\',IF(an_anagrafiche.telefono!=\'\',CONCAT(an_anagrafiche.telefono,\'<br />\'),\'\'),IF(an_anagrafiche.cellulare!=\'\',CONCAT(an_anagrafiche.cellulare,\'<br />\'),\'\'),IF(an_anagrafiche.citta!=\'\',an_anagrafiche.citta,\'\'),IF(an_anagrafiche.indirizzo!=\'\',CONCAT(\' - \',an_anagrafiche.indirizzo),\'\')))' WHERE `zz_views`.`name` = 'Sede' AND `id_module`=(SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
-
 -- Aggiunto pagamenti predefiniti per importazione FE
 ALTER TABLE `co_pagamenti` ADD `predefined` TINYINT NOT NULL AFTER `idconto_acquisti`; 
 INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `idconto_vendite`, `idconto_acquisti`, `predefined`, `codice_modalita_pagamento_fe`) VALUES (NULL, 'Ri.Ba.', '0', '0', '100.00', '2', '2', '1', 'MP12');
@@ -72,7 +70,7 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `visible`, 
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Servizio', 'IF(mg_articoli.servizio, ''Sì'', ''No'')', 13, 1, 0, 1);
 
 -- Summable per Q.tà, Q.tà disponibile, Q.tà impegnata e Q.tà ordinata
-UPDATE `zz_views` SET `summable` = '1' WHERE (`zz_views`.`name` = 'Q.tà ordinata' OR  `zz_views`.`name` = 'Q.tà' OR  `zz_views`.`name` = 'Q.tà disponibile' OR  `zz_views`.`name` = 'Q.tà impegnata') AND `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'); 
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`summable` = '1' WHERE `zz_modules`.`name` = 'Articoli' AND (`zz_views`.`name` = 'Q.tà ordinata' OR `zz_views`.`name` = 'Q.tà' OR `zz_views`.`name` = 'Q.tà disponibile' OR `zz_views`.`name` = 'Q.tà impegnata');
 
 -- Stampe definitive registri iva
 CREATE TABLE `co_stampecontabili` ( `id` INT NOT NULL AUTO_INCREMENT , `id_print` INT NOT NULL , `date_start` DATE NOT NULL , `date_end` DATE NOT NULL , `first_page` INT NOT NULL , `last_page` INT NOT NULL , `dir` VARCHAR(255) NOT NULL , PRIMARY KEY (`id`));

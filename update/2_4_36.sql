@@ -16,7 +16,6 @@ UPDATE `co_tipi_scadenze` SET `ctgypurp` = 'TAXS' WHERE `co_tipi_scadenze`.`nome
 UPDATE `co_tipi_scadenze` SET `ctgypurp` = 'SUPP' WHERE `co_tipi_scadenze`.`nome` = 'generico'; 
 INSERT INTO `co_tipi_scadenze` (`id`, `nome`, `descrizione`, `ctgypurp`, `can_delete`) VALUES (NULL, 'stipendio', 'Stipendi', 'SALA', '1');
 
-UPDATE `zz_views` SET `query` = 'an_anagrafiche.ragione_sociale' WHERE `zz_views`.`name` = 'Anagrafica' AND `id_module`=(SELECT `id` FROM `zz_modules` WHERE `name`='Scadenzario'); 
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'an_anagrafiche.ragione_sociale' WHERE `zz_modules`.`name` = 'Scadenzario' AND `zz_views`.`name` = 'Anagrafica';
 -- Aggiunta causale e tipologia in ritenute contributi
 ALTER TABLE `co_ritenuta_contributi` ADD `tipologia` VARCHAR(100) NOT NULL AFTER `descrizione`, ADD `causale` VARCHAR(100) NOT NULL AFTER `tipologia`; 

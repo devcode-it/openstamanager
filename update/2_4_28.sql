@@ -94,7 +94,7 @@ INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`,
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'Tentativi', '`em_emails`.`attempt`', 7, 1, 0, 0, '', '', 1, 0, 0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'Data creazione', '`em_emails`.`created_at`', 9, 1, 0, 1, '', '', 1, 0, 0);
-UPDATE `zz_views` SET `format` = '0' WHERE `zz_views`.`name` = 'Utente' AND id_module=(SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'); 
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`format` = 0 WHERE `zz_modules`.`name` = 'Stato email' AND `zz_views`.`name` = 'Utente';
 
 -- Aggiunto plugin Movimenti in fatture di acquisto, vendita e anagrafiche
 INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES (NULL, 'Movimenti contabili', 'Movimenti contabili', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'tab', '', '1', '1', '0', '', '', NULL, 'custom', 'movimenti_contabili', '');

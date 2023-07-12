@@ -74,14 +74,10 @@ INSERT INTO `zz_events` (`id`, `nome`, `data`, `id_nazione`, `id_regione`, `is_r
 UPDATE `zz_views` SET `order` = '8' WHERE `zz_views`.`name` = 'Conto dare';
 UPDATE `zz_views` SET `order` = '9' WHERE `zz_views`.`name` = 'Conto avere';
 UPDATE `zz_views` SET `order` = '20' WHERE `zz_views`.`name` = '_print_';
+ 
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '(righe.totale_imponibile + righe.iva + `co_documenti`.`rivalsainps` + `co_documenti`.`iva_rivalsainps`) * IF(co_tipidocumento.reversed, -1, 1)' WHERE `zz_modules`.`name` = 'Fatture di vendita' AND `zz_views`.`name` = 'Totale ivato';
 
-UPDATE `zz_views` SET `query` = '(righe.totale_imponibile + righe.iva + `co_documenti`.`rivalsainps` + `co_documenti`.`iva_rivalsainps`) * IF(co_tipidocumento.reversed, -1, 1)' WHERE `zz_views`.`name` = 'Totale ivato' AND `zz_views`.`id_module`=(SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'); 
-
-UPDATE `zz_views` SET `query` = '(righe.totale_imponibile + IF(righe.split_payment=0, righe.iva, 0) + `co_documenti`.`rivalsainps` + `co_documenti`.`iva_rivalsainps` - `co_documenti`.`ritenutaacconto` - `co_documenti`.`sconto_finale`) * (1 - `co_documenti`.`sconto_finale_percentuale` / 100) * IF(co_tipidocumento.reversed, -1, 1)' WHERE `zz_views`.`name` = 'Netto a pagare' AND `zz_views`.`id_module`=(SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'); 
-
-UPDATE `zz_views` SET `query` = '(righe.totale_imponibile + righe.iva + `co_documenti`.`rivalsainps` + `co_documenti`.`iva_rivalsainps`) * IF(co_tipidocumento.reversed, -1, 1)' WHERE `zz_views`.`name` = 'Totale ivato' AND `zz_views`.`id_module`=(SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'); 
-
-UPDATE `zz_views` SET `query` = '(righe.totale_imponibile + IF(righe.split_payment=0, righe.iva, 0) + `co_documenti`.`rivalsainps` + `co_documenti`.`iva_rivalsainps` - `co_documenti`.`ritenutaacconto` - `co_documenti`.`sconto_finale`) * (1 - `co_documenti`.`sconto_finale_percentuale` / 100) * IF(co_tipidocumento.reversed, -1, 1)' WHERE `zz_views`.`name` = 'Netto a pagare' AND `zz_views`.`id_module`=(SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'); 
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '(righe.totale_imponibile + righe.iva + `co_documenti`.`rivalsainps` + `co_documenti`.`iva_rivalsainps`) * IF(co_tipidocumento.reversed, -1, 1)' WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = 'Totale ivato';
 
 INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES
 (NULL, (SELECT id FROM zz_modules WHERE `name`='Interventi'), 1, 'Intervento & checklist', 'Intervento & checklist', 'Intervento num {numero} del {data}', 'interventi', 'idintervento', '{\"pricing\":true, \"checklist\": true}', 'fa fa-print', '', '', 0, 1, 1, 1),

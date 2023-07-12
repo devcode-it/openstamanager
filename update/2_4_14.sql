@@ -182,9 +182,9 @@ UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(\" \", REPLACE(REPLACE(REPLA
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(\" \", REPLACE(REPLACE(REPLACE(FORMAT(SUM(qta),2), \",\", \"#\"), \".\", \",\"), \"#\", \".\"), \"unit&agrave;\") AS dato FROM mg_articoli WHERE qta>0 AND deleted_at IS NULL AND servizio=0 AND attivo=1' WHERE `zz_widgets`.`name` = 'Articoli in magazzino';
 
 -- Disattivazione totali prezzi articoli
-UPDATE `zz_views` SET `summable` = '0' WHERE `zz_views`.`id_module` = (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Articoli') AND `zz_views`.`name`='Prezzo di acquisto';
-UPDATE `zz_views` SET `summable` = '0' WHERE `zz_views`.`id_module` = (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Articoli') AND `zz_views`.`name`='Prezzo di vendita';
-UPDATE `zz_views` SET `summable` = '0' WHERE `zz_views`.`id_module` = (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Articoli') AND `zz_views`.`name`='Prezzo vendita ivato';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`summable` = 0 WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = 'Prezzo di acquisto';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`summable` = 0 WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = 'Prezzo di vendita';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`summable` = 0 WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = 'Prezzo vendita ivato';
 
 -- Introduzione modulo Stampe
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Stampe', 'Stampe', 'stampe', 'SELECT |select| FROM `zz_prints` WHERE 1=1 HAVING 2=2', '', 'fa fa-print', '2.4.14', '2.4.14', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Strumenti'), '1', '0');
@@ -201,39 +201,37 @@ UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM in_interventi W
 ALTER TABLE `mg_articoli` CHANGE `id_categoria` `id_categoria` INT(11) NULL;
 
 -- Correzione totali per le Viste
-UPDATE `zz_views` SET `query` = 'righe.totale_imponibile' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = 'Totale';
 DELETE FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = 'Imponibile';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Totale ivato', 'righe.totale', 9, 1, 1, 1, 0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Netto a pagare', 'righe.totale + rivalsainps + iva_rivalsainps - ritenutaacconto', 10, 1, 1, 1, 1);
 
-UPDATE `zz_views` SET `query` = 'righe.totale_imponibile' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') AND `name` = 'Totale';
 DELETE FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') AND `name` = 'Imponibile';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'Totale ivato', 'righe.totale', 6, 1, 1, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'Netto a pagare', 'righe.totale + rivalsainps + iva_rivalsainps - ritenutaacconto', 7, 1, 1, 1, 1);
 
-UPDATE `zz_views` SET `query` = 'righe.totale_imponibile' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti') AND `name` = 'Totale';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'righe.totale_imponibile' WHERE `zz_modules`.`name` = 'Contratti' AND `zz_views`.`name` = 'Totale';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'Totale ivato', 'righe.totale', 5, 1, 1, 1, 0);
 
-UPDATE `zz_views` SET `query` = 'righe.totale_imponibile' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi') AND `name` = 'Totale';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'righe.totale_imponibile' WHERE `zz_modules`.`name` = 'Preventivi' AND `zz_views`.`name` = 'Totale';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), 'Totale ivato', 'righe.totale', 5, 1, 1, 1, 0);
 
-UPDATE `zz_views` SET `query` = 'righe.totale_imponibile' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto') AND `name` = 'Totale';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'righe.totale_imponibile' WHERE `zz_modules`.`name` = 'Ddt di acquisto' AND `zz_views`.`name` = 'Totale';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto'), 'Totale ivato', 'righe.totale', 9, 1, 1, 1, 0);
 
-UPDATE `zz_views` SET `query` = 'righe.totale_imponibile' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita') AND `name` = 'Totale';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'righe.totale_imponibile' WHERE `zz_modules`.`name` = 'Ddt di vendita' AND `zz_views`.`name` = 'Totale';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'), 'Totale ivato', 'righe.totale', 9, 1, 1, 1, 0);
 
-UPDATE `zz_views` SET `query` = 'righe.totale_imponibile' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente') AND `name` = 'Totale';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'righe.totale_imponibile' WHERE `zz_modules`.`name` = 'Ordini cliente' AND `zz_views`.`name` = 'Totale';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente'), 'Totale ivato', 'righe.totale', 5, 1, 1, 1, 0);
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'righe.totale_imponibile' WHERE `zz_modules`.`name` = 'Ordini fornitore' AND `zz_views`.`name` = 'Totale';
 
-UPDATE `zz_views` SET `query` = 'righe.totale_imponibile' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore') AND `name` = 'Totale';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore'), 'Totale ivato', 'righe.totale', 5, 1, 1, 1, 0);
 
@@ -320,8 +318,7 @@ UPDATE `zz_widgets` SET `more_link` = './modules/interventi/widgets/interventi_d
 UPDATE `zz_widgets` SET `more_link` = './modules/interventi/widgets/interventi_da_pianificare.php' WHERE `name` = 'Attività da pianificare';
 
 -- Cambio formato quantità in vista, per migliorare l'eventuale esportazione csv
-UPDATE `zz_views` SET `query` = 'qta', `format` = 1 WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli') AND `name` = 'Q.tà';
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'qta', `format` = 1 WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = 'Q.tà';
 -- Aggiornamento API
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES
 (NULL, 'v1', 'retrieve', 'impianti', 'Modules\\Impianti\\API\\v1\\Impianti', '1'),
@@ -348,24 +345,20 @@ UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Stati d
 ALTER TABLE `co_preventivi` ADD `numero_revision` INT NOT NULL AFTER `default_revision`;
 
 -- Riordinamento campi Fatture di vendita
-UPDATE `zz_views` SET `order` = '11' WHERE `zz_views`.`name` = 'icon_Stato' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`order` = 11, `zz_views`.`query` = 'co_statidocumento.icona' WHERE `zz_modules`.`name` = 'Fatture di vendita' AND `zz_views`.`name` = 'icon_Stato';
 -- Aggiornamento stampa inventario
 UPDATE `zz_widgets` SET `more_link` = './modules/articoli/widgets/stampa_inventario.php', `more_link_type` = 'popup' WHERE `zz_widgets`.`name` = 'Stampa inventario';
 
-UPDATE `zz_views` SET `query` = 'mg_categorie.nome' WHERE `zz_views`.`name` = 'Categoria' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
-UPDATE `zz_views` SET `query` = 'sottocategorie.nome' WHERE `zz_views`.`name` = 'Sottocategoria' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
-UPDATE `zz_views` SET `query` = 'an_anagrafiche.ragione_sociale' WHERE `zz_views`.`name` = 'Fornitore' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'mg_categorie.nome' WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = 'Categoria';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'sottocategorie.nome' WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = 'Sottocategoria';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'an_anagrafiche.ragione_sociale' WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = 'Fornitore';
 -- Fix id ambigui modulo articoli
-UPDATE `zz_views` SET `query` = 'mg_articoli.id' WHERE `query` = 'id' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
-UPDATE `zz_views` SET `query` = 'mg_articoli.codice' WHERE `query` = 'codice' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
-UPDATE `zz_views` SET `query` = 'mg_articoli.descrizione' WHERE `query` = 'descrizione' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
-UPDATE `zz_views` SET `query` = 'mg_articoli.note' WHERE `query` = 'note' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
-
-UPDATE `zz_views` SET `query` = 'in_statiintervento.descrizione' WHERE `zz_views`.`name` = 'Stato' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
-UPDATE `zz_views` SET `query` = 'in_interventi.descrizione' WHERE `zz_views`.`name` = 'Descrizione' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'mg_articoli.id' WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`query` = 'id';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'mg_articoli.codice' WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`query` = 'codice';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'mg_articoli.descrizione' WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`query` = 'descrizione';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'mg_articoli.note' WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`query` = 'note';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'in_statiintervento.descrizione' WHERE `zz_modules`.`name` = 'Interventi' AND `zz_views`.`name` = 'Stato';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'in_interventi.descrizione' WHERE `zz_modules`.`name` = 'Interventi' AND `zz_views`.`name` = 'Descrizione';
 -- Aggiunta colonna Rif. sede per attività (se diversa dalla sede legale)
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'Sede', 'sede_destinazione.info', 4, 1, 0, 0, 1);

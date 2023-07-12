@@ -684,21 +684,6 @@ ALTER TABLE `mg_listini` ADD `prc_combinato` VARCHAR(255);
 -- Aggiunto supporto ai tentativi di invio email
 ALTER TABLE `em_emails` ADD `attempt` INT(11) NOT NULL DEFAULT 0;
 
--- Fix calcolo totale contratti in scadenza
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato,
-       DATEDIFF(data_conclusione, NOW()) AS giorni_rimanenti,
-       data_conclusione,
-       ore_preavviso_rinnovo,
-       giorni_preavviso_rinnovo,
-       (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=co_contratti.idanagrafica) AS ragione_sociale
-FROM co_contratti WHERE
-        idstato IN (SELECT id FROM co_staticontratti WHERE is_fatturabile = 1) AND
-        rinnovabile = 1 AND
-        YEAR(data_conclusione) > 1970 AND
-        (SELECT id FROM co_contratti contratti WHERE contratti.idcontratto_prev = co_contratti.id) IS NULL
-AND (IFNULL( ((SELECT SUM(co_righe_contratti.qta) FROM co_righe_contratti WHERE co_righe_contratti.um=\'ore\' AND co_righe_contratti.idcontratto=co_contratti.id) - IFNULL( (SELECT SUM(in_interventi_tecnici.ore) FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE in_interventi.id_contratto=co_contratti.id AND in_interventi.idstatointervento IN (SELECT in_statiintervento.idstatointervento FROM in_statiintervento WHERE in_statiintervento.completato = 1)), 0) ), 0 ) < ore_preavviso_rinnovo OR DATEDIFF(data_conclusione, NOW()) < ABS(giorni_preavviso_rinnovo))
-ORDER BY giorni_rimanenti ASC, IFNULL( ((SELECT SUM(co_righe_contratti.qta) FROM co_righe_contratti WHERE co_righe_contratti.um=\'ore\' AND co_righe_contratti.idcontratto=co_contratti.id) - IFNULL( (SELECT SUM(in_interventi_tecnici.ore) FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE in_interventi.id_contratto=co_contratti.id AND in_interventi.idstatointervento IN (SELECT in_statiintervento.idstatointervento FROM in_statiintervento WHERE in_statiintervento.completato = 1)), 0) ), 0 ) ASC' WHERE `zz_widgets`.`name` = 'Contratti in scadenza';
-
 -- Aggiunta campo barcode per gli articoli
 ALTER TABLE `mg_articoli` ADD `barcode` VARCHAR(255);
 
@@ -730,9 +715,6 @@ ALTER TABLE `an_sedi` ADD `note` TEXT NULL DEFAULT NULL AFTER `idzona`;
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'codice' WHERE `zz_modules`.`name` = 'Stati di intervento' AND `zz_views`.`name` = 'Codice';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'codice' WHERE `zz_modules`.`name` = 'Tipi di intervento' AND `zz_views`.`name` = 'Codice';
 UPDATE `zz_modules` SET `icon` = 'fa fa-angle-right' WHERE `zz_modules`.`name` = 'Categorie documenti';
-
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM(prezzo_acquisto*qta),2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM mg_articoli WHERE qta>0 AND deleted_at IS NULL' WHERE `zz_widgets`.`name` = 'Valore magazzino';
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM(qta),2), ",", "#"), ".", ","), "#", "."), "unit&agrave;") AS dato FROM mg_articoli WHERE qta>0 AND deleted_at IS NULL' WHERE `zz_widgets`.`name` = 'Articoli in magazzino';
 
 -- Fix accesso alla stampa dell'Inventario magazzino
 UPDATE `zz_prints` SET `is_record` = '0' WHERE `zz_prints`.`name` = 'Inventario magazzino';

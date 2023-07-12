@@ -154,14 +154,6 @@ ALTER TABLE `in_interventi_tecnici`
 UPDATE `zz_settings` SET `valore` = '' WHERE `zz_settings`.`nome` = "Percentuale ritenuta d'acconto";
 UPDATE `zz_settings` SET `valore` = '' WHERE `zz_settings`.`nome` = "Percentuale rivalsa INPS";
 
--- Aggiornamento widget credito clienti e debito fornitori leggendo da scadenzario per includere anche il parzialmente pagato
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare-pagato))), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE dir=''entrata'' AND data_emissione >= "|period_start|" AND data_emissione <= "|period_end|"' WHERE `zz_widgets`.`name` = 'Crediti da clienti';
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare-pagato))), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE dir=''uscita'' AND data_emissione >= "|period_start|" AND data_emissione <= "|period_end|"' WHERE `zz_widgets`.`name` = 'Debiti verso fornitori';
-
--- Aggiornamento widget fatturato e acquisti leggendo da scadenzario per includere solo le fatture emesse
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare))), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE dir=''entrata'' AND data_emissione >= "|period_start|" AND data_emissione <= "|period_end|"' WHERE `zz_widgets`.`name` = 'Fatturato';
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare))), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE dir=''uscita'' AND data_emissione >= "|period_start|" AND data_emissione <= "|period_end|"' WHERE `zz_widgets`.`name` = 'Acquisti';
-
 -- RELEASE 2.3 --
 -- Aggiunta tabelle nascoste per l'API
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES
@@ -397,14 +389,6 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `in_tipiintervento` WH
 UPDATE `zz_modules` SET `options` = '' WHERE `name` = 'Vendite';
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `in_vociservizio` WHERE 1=1 HAVING 2=2 ORDER BY `categoria`, `descrizione`' WHERE `name` = 'Voci di servizio';
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `an_zone` WHERE 1=1 HAVING 2=2 ORDER BY `id`' WHERE `name` = 'Zone';
-
--- Aggiunta di un reset nel caso di elemento già selezionato nei filtri di Anagrafiche
-UPDATE `zz_widgets` SET `more_link` = 'if($(''#th_Tipologia input'').val()!= ''Cliente''){ $(''#th_Tipologia input'').val(''Cliente'').trigger(''keyup'');} else reset(''Tipologia'');' WHERE `zz_widgets`.`name` = 'Numero di clienti';
-UPDATE `zz_widgets` SET `more_link` = 'if($(''#th_Tipologia input'').val()!= ''Tecnico''){ $(''#th_Tipologia input'').val(''Tecnico'').trigger(''keyup'');} else reset(''Tipologia'');' WHERE `zz_widgets`.`name` = 'Numero di tecnici';
-UPDATE `zz_widgets` SET `more_link` = 'if($(''#th_Tipologia input'').val()!= ''Fornitore''){ $(''#th_Tipologia input'').val(''Fornitore'').trigger(''keyup'');} else reset(''Tipologia'');' WHERE `zz_widgets`.`name` = 'Numero di fornitori';
-UPDATE `zz_widgets` SET `more_link` = 'if($(''#th_Tipologia input'').val()!= ''Agente''){$(''#th_Tipologia input'').val(''Agente'').trigger(''keyup'');} else reset(''Tipologia'');' WHERE `zz_widgets`.`name` = 'Numero di agenti';
-UPDATE `zz_widgets` SET `more_link` = 'if($(''#th_Tipologia input'').val()!= ''Vettore''){$(''#th_Tipologia input'').val(''Vettore'').trigger(''keyup'');} else reset(''Tipologia'');' WHERE `zz_widgets`.`name` = 'Numero di vettori';
-UPDATE `zz_widgets` SET `more_link` = 'reset(''Tipologia'');' WHERE `zz_widgets`.`name` = 'Tutte le anagrafiche';
 
 -- Aggiunta di campi per le sessioni avanzate e il timeout relativo in editor.php
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES ('Attiva notifica di presenza utenti sul record', '1', 'boolean', 1, 'Generali');
@@ -663,11 +647,6 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'idanagrafica', 'idanagrafica', 1, 0, 0, 0, 1);
 
--- filtri dei WHERE in base al modulo e all'utente loggato anche per i widget
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM((SELECT SUM(subtotale+iva-sconto) FROM co_righe_documenti WHERE iddocumento=co_documenti.id)+iva_rivalsainps+rivalsainps+bollo-ritenutaacconto), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM co_documenti WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="entrata") AND data >= "|period_start|" AND data <= "|period_end|" AND 1=1' WHERE `zz_widgets`.`name` = 'Fatturato';
-
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM((SELECT SUM(subtotale+iva-sconto) FROM co_righe_documenti WHERE iddocumento=co_documenti.id)+iva_rivalsainps+rivalsainps+bollo-ritenutaacconto), 2), ",", "#"), ".", ","), "#", "."), "€") AS dato FROM co_documenti WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="entrata") AND idstatodocumento = (SELECT id FROM co_statidocumento WHERE descrizione="Emessa") AND data >= "|period_start|" AND data <= "|period_end|" AND 1=1' WHERE `zz_widgets`.`name` = 'Crediti da clienti';
-
 -- Aggiunta del campo per permettere la modifica delle Viste di default
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES ('Modifica Viste di default', '0', 'boolean', 0, 'Generali');
 
@@ -762,9 +741,6 @@ UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_mod
 UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`directory` = `zz_files`.`module`) WHERE `id_module` = 0 OR `id_module` IS NULL;
 ALTER TABLE `zz_files` DROP `module`;
 
--- Fix del widget 'Tutte le anagrafiche'
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.idanagrafica) AS dato FROM an_anagrafiche WHERE deleted=0' WHERE `name` = 'Tutte le anagrafiche';
-
 -- Fix dei contenuti dei filtri per gruppi
 UPDATE `zz_group_module` SET `clause` = IF(SUBSTRING(TRIM(`clause`), 1, 4) = 'AND ', SUBSTRING(TRIM(`clause`), 4), TRIM(`clause`));
 
@@ -841,11 +817,6 @@ UPDATE `an_anagrafiche` SET `idiva_acquisti` = `idiva_vendite` WHERE `idiva_vend
 
 -- Rimozione data_sla e ora_sla
 ALTER TABLE `in_interventi` DROP `data_sla`, DROP `ora_sla`;
-
--- Fix dei widget
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_righe_contratti WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN (SELECT id FROM co_staticontratti WHERE pianificabile = 1)) AND idintervento IS NULL' WHERE `zz_widgets`.`name` = 'Interventi da pianificare';
-
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_ordiniservizio WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1)) AND idintervento IS NULL' WHERE `zz_widgets`.`name` = 'Ordini di servizio da impostare';
 
 -- Creazione del campo format per la tabella zz_views
 ALTER TABLE `zz_views` ADD `format` boolean NOT NULL DEFAULT 0 AFTER `slow`;
@@ -932,10 +903,6 @@ ALTER TABLE `co_scadenziario` CHANGE `data_emissione` `data_emissione` date, CHA
 ALTER TABLE `dt_automezzi_tecnici` CHANGE `data_inizio` `data_inizio` date, CHANGE `data_fine` `data_fine` date;
 ALTER TABLE `my_impianto_componenti` CHANGE `data` `data` date, CHANGE `data_sostituzione` `data_sostituzione` date;
 ALTER TABLE `or_righe_ordini` CHANGE `data_evasione` `data_evasione` date;
-
--- Fix di alcuni problemi con le query dei widget
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM(qta),2), ",", "#"), ".", ","), "#", "."), "unit&agrave;") AS dato FROM mg_articoli WHERE qta>0' WHERE `name` = 'Articoli in magazzino';
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM(prezzo_acquisto*qta),2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM mg_articoli WHERE qta>0' WHERE `name` = 'Valore magazzino';
 
 -- Fix per i serial number
 ALTER TABLE `mg_prodotti` ADD `id_riga_documento` int(11), ADD FOREIGN KEY (`id_riga_documento`) REFERENCES `co_righe_documenti`(`id`) ON DELETE CASCADE, ADD `id_riga_ordine` int(11), ADD FOREIGN KEY (`id_riga_ordine`) REFERENCES `or_righe_ordini`(`id`) ON DELETE CASCADE, ADD `id_riga_ddt` int(11), ADD FOREIGN KEY (`id_riga_ddt`) REFERENCES `dt_righe_ddt`(`id`) ON DELETE CASCADE, ADD `id_riga_intervento` int(11), ADD FOREIGN KEY (`id_riga_intervento`) REFERENCES `mg_articoli_interventi`(`id`) ON DELETE CASCADE, ADD `dir` enum('entrata', 'uscita') DEFAULT 'uscita', CHANGE `idarticolo` `id_articolo` int(11), ADD FOREIGN KEY (`id_articolo`) REFERENCES `mg_articoli`(`id`) ON DELETE SET NULL, CHANGE `serial` `serial` varchar(50), CHANGE `lotto` `lotto` varchar(50), CHANGE `altro` `altro` varchar(50);
@@ -1025,7 +992,7 @@ INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, 
 UPDATE `zz_widgets` SET `location` = 'controller_top' WHERE `zz_widgets`.`id_module` = (SELECT id FROM zz_modules WHERE name = 'Dashboard') OR `zz_widgets`.`id_module` = (SELECT id FROM zz_modules WHERE name = 'Articoli');
 
 -- Disabilito widgets 'Ordini di servizio da impostare' e 'Rate contrattuali'
-UPDATE `zz_widgets` SET `enabled` = '0' WHERE `zz_widgets`.`name` = 'Ordini di servizio da impostare' OR `zz_widgets`.`name` = 'Rate contrattuali';
+UPDATE `zz_widgets` SET `enabled` = '0' WHERE `zz_widgets`.`name` = 'Ordini di servizio da impostare';
 
 -- Aggiunta articolo su contratti
 ALTER TABLE `co_righe2_contratti` ADD `idarticolo` INT NOT NULL AFTER `idcontratto`;

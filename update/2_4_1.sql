@@ -105,9 +105,6 @@ CREATE TABLE IF NOT EXISTS `co_righe_contratti_articoli` (
   KEY `idimpianto` (`idimpianto`)
 );
 
--- Modifica query widget per mostrare solo quelli che non sono stati rinnovati
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato, co_contratti.id, DATEDIFF( data_conclusione, NOW() ) AS giorni_rimanenti FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND rinnovabile=1 AND NOW() > DATE_ADD( data_conclusione, INTERVAL - ABS(giorni_preavviso_rinnovo) DAY) AND YEAR(data_conclusione) > 1970 HAVING ISNULL((SELECT id FROM co_contratti contratti WHERE contratti.idcontratto_prev=co_contratti.id )) ORDER BY giorni_rimanenti ASC' WHERE `zz_widgets`.`name` = 'Contratti in scadenza';
-
 -- Aggiunto campo data su movimenti articoli
 ALTER TABLE `mg_movimenti` ADD `data` DATE NOT NULL AFTER `movimento`;
 
@@ -277,8 +274,6 @@ ALTER TABLE `co_contratti` DROP `idtipointervento`;
 -- Ridenominazione tabelle
 ALTER TABLE `co_righe_contratti` RENAME `co_contratti_promemoria`;
 ALTER TABLE `co_righe2_contratti` RENAME `co_righe_contratti`;
-UPDATE `zz_widgets` SET `query` = REPLACE(`query`, 'co_righe_contratti', 'co_contratti_promemoria');
-UPDATE `zz_widgets` SET `query` = REPLACE(`query`, 'co_righe2_contratti', 'co_righe_contratti');
 
 -- Ordine per le Impostazioni
 ALTER TABLE `zz_settings` ADD `order` int(11);
@@ -342,15 +337,6 @@ ALTER TABLE `my_impianti` CHANGE `immagine` `immagine` varchar(255);
 UPDATE `my_impianti` SET `immagine` = NULL WHERE `immagine` = '';
 INSERT INTO `zz_files` (`id_module`, `id_record`, `nome`, `filename`, `original`) SELECT (SELECT `id` FROM `zz_modules` WHERE `name` = 'MyImpianti'), `id`, 'Immagine', `immagine`, `immagine` FROM `my_impianti` WHERE `immagine` IS NOT NULL;
 
--- Fix widgets fatturato, prendo importi dallo scadenzario
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare))), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=''entrata'' |segment|  AND data_emissione >= "|period_start|" AND data_emissione <= "|period_end|" AND 1=1' WHERE `zz_widgets`.`name` = 'Fatturato';
-
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare))), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=''uscita'' |segment| AND data_emissione >= "|period_start|" AND data_emissione <= "|period_end|" AND 1=1', `help` = 'Fatturato IVA inclusa.'  WHERE `zz_widgets`.`name` = 'Acquisti';
-
--- Per i crediti / debiti considero o no il periodo temporale?
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare-pagato))), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=''entrata'' |segment|  AND 1=1', `help` = 'Crediti IVA inclusa.' WHERE `zz_widgets`.`name` = 'Crediti da clienti';
-
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare-pagato))), 2), '','', ''#''), ''.'', '',''),''#'', ''.''), ''&euro;'') AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=''uscita'' |segment| AND 1=1', `help` = 'Debiti IVA inclusa.' WHERE `zz_widgets`.`name` = 'Debiti verso fornitori';
 
 -- Introduzione del tipo documento nelle tabelle Fatture
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES

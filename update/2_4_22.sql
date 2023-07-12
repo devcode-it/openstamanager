@@ -181,30 +181,6 @@ UPDATE `co_righe_documenti` SET `qta` = ABS(`qta`), `qta_evasa` = ABS(`qta_evasa
 
 UPDATE `co_documenti` SET `ritenutaacconto` = ABS(`ritenutaacconto`), `rivalsainps` = ABS(`rivalsainps`), `ritenuta_contributi` = ABS(`ritenuta_contributi`);
 
--- Correzione widget con utilizzo interno delle quantità negative per Note
-UPDATE `zz_widgets` SET `query` = 'SELECT
-    CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT((
-        SELECT SUM(
-            (subtotale - sconto) * IF(co_tipidocumento.reversed, -1, 1)
-        )
-    ), 2), '','', ''#''), ''.'', '',''), ''#'', ''.''), ''&euro;'') AS dato
-FROM co_righe_documenti
-    INNER JOIN co_documenti ON co_righe_documenti.iddocumento = co_documenti.id
-    INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id
-WHERE co_tipidocumento.dir=''entrata'' |segment| AND data >= ''|period_start|'' AND data <= ''|period_end|'' AND 1=1' WHERE `zz_widgets`.`name`='Fatturato';
-
-UPDATE `zz_widgets` SET `query` = 'SELECT
-    CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT((
-        SELECT SUM(
-            (subtotale - sconto) * IF(co_tipidocumento.reversed, -1, 1)
-        )
-    ), 2), '','', ''#''), ''.'', '',''), ''#'', ''.''), ''&euro;'') AS dato
-FROM co_righe_documenti
-    INNER JOIN co_documenti ON co_righe_documenti.iddocumento = co_documenti.id
-    INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id
-WHERE co_tipidocumento.dir=''uscita'' |segment| AND data >= ''|period_start|'' AND data <= ''|period_end|'' AND 1=1' WHERE `zz_widgets`.`name`='Acquisti';
-
-
 -- Correzione campi del Totale per le tabelle principali di Fatture
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'righe.totale_imponibile * IF(co_tipidocumento.reversed, -1, 1)' WHERE `zz_modules`.`name` = 'Fatture di vendita' AND `zz_views`.`name` = 'Totale';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'righe.totale_imponibile * IF(co_tipidocumento.reversed, -1, 1)' WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = 'Totale';

@@ -1,19 +1,3 @@
--- Fix widget Contratti in scadenza per mostrare i contratti con ore in esaurimento
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato,
-       ((SELECT SUM(co_righe_contratti.qta) FROM co_righe_contratti WHERE co_righe_contratti.um=\'ore\' AND co_righe_contratti.idcontratto=co_contratti.id) - IFNULL( (SELECT SUM(in_interventi_tecnici.ore) FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE in_interventi.id_contratto=co_contratti.id AND in_interventi.idstatointervento IN (SELECT in_statiintervento.idstatointervento FROM in_statiintervento WHERE in_statiintervento.completato = 1)), 0) ) AS ore_rimanenti,
-       DATEDIFF(data_conclusione, NOW()) AS giorni_rimanenti,
-       data_conclusione,
-       ore_preavviso_rinnovo,
-       giorni_preavviso_rinnovo,
-       (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=co_contratti.idanagrafica) AS ragione_sociale
-FROM co_contratti WHERE
-        idstato IN (SELECT id FROM co_staticontratti WHERE is_fatturabile = 1) AND
-        rinnovabile = 1 AND
-        YEAR(data_conclusione) > 1970 AND
-        (SELECT id FROM co_contratti contratti WHERE contratti.idcontratto_prev = co_contratti.id) IS NULL
-HAVING (ore_rimanenti < ore_preavviso_rinnovo OR DATEDIFF(data_conclusione, NOW()) < ABS(giorni_preavviso_rinnovo))
-ORDER BY giorni_rimanenti ASC, ore_rimanenti ASC' WHERE `zz_widgets`.`name` = 'Contratti in scadenza';
-
 -- Miglioramento hooks
 ALTER TABLE `zz_hooks` ADD `enabled` boolean NOT NULL DEFAULT 1, ADD `id_module` int(11) NOT NULL;
 UPDATE `zz_hooks` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') WHERE `name` = 'Ricevute';
@@ -210,7 +194,6 @@ UPDATE `zz_prints` SET `filename` = 'Consuntivo contratto num. {numero} del {dat
 UPDATE `zz_prints` SET `filename` = 'Consuntivo contratto num. {numero} del {data}' WHERE `name` = 'Consuntivo contratto';
 UPDATE `zz_prints` SET `filename` = 'Consuntivo preventivo num. {numero} del {data}' WHERE `name` = 'Consuntivo preventivo (senza costi)';
 UPDATE `zz_prints` SET `filename` = 'Consuntivo preventivo num. {numero} del {data}' WHERE `name` = 'Consuntivo preventivo';
-UPDATE `zz_prints` SET `filename` = 'Stampa calendario {periodo}' WHERE `name` = 'Stampa calendario';
 
 -- Aggiornamento Statistiche delle Anagrafiche
 UPDATE `zz_plugins` SET `options` = 'custom', `directory` = 'statistiche_anagrafiche', `script` = '' WHERE `name` = 'Statistiche' AND `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche');

@@ -38,13 +38,6 @@ UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.idanagrafica) AS 
 
 -- Aggiungo 1=1 nel WHERE e 2=2 nel HAVING per il widget tutte le anagrafiche
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.idanagrafica) AS dato FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE 1=1 AND deleted=0 HAVING 2=2' WHERE `zz_widgets`.`name` = 'Tutte le anagrafiche';
-
--- Aggiornamento widget "Crediti da clienti" anche con totali parziali
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(da_pagare-pagato, 2), ",", "#"), ".", ","), "#", "."), "€") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=\'entrata\'' WHERE `zz_widgets`.`name` = 'Crediti da clienti';
-
--- Aggiornamento widget "Debiti verso fornitori" anche con totali parziali
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT( -(da_pagare-pagato), 2), ",", "#"), ".", ","), "#", "."), "€") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=\'uscita\'' WHERE `zz_widgets`.`name` = 'Debiti verso fornitori';
-
 -- Aggiungo flag deleted per gli stati intervento
 ALTER TABLE `in_statiintervento` ADD `deleted` BOOLEAN NOT NULL DEFAULT FALSE AFTER `completato`;
 

@@ -30,7 +30,7 @@ export default class DeleteRecordDialog<M extends Model<any, any>, A extends Del
         <h2 slot="headline">{__('Elimina record')}</h2>
         <p>{text}</p>
         <ul>{this.records.map((record) => <li key={record.getId()}>{this.recordSummary(record, vnode)}</li>)}</ul>
-        <md-text-button id="discard-button" slot="footer" dialogAction="cancel">
+        <md-text-button id="discard-button" slot="footer" dialog-action="cancel">
           {__('No')}
         </md-text-button>
         <md-text-button id="confirm-button" slot="footer" onclick={this.onConfirmButtonClicked.bind(this)}>

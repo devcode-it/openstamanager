@@ -3,6 +3,7 @@ import 'mithril-utilities/typings';
 import {LayoutGridAttributes} from '@maicol07/material-web-additions/layout-grid/lib/layout-grid';
 import {Collection} from 'collect.js';
 import Mithril from 'mithril';
+import {KebabCasedProperties} from 'type-fest';
 
 export type VnodeCollectionItem = Record<string, Mithril.Vnode>;
 export type VnodeCollection = Collection<VnodeCollectionItem>;
@@ -19,7 +20,19 @@ declare module 'csstype' {
 declare module 'mithril' {
   interface Attributes extends LayoutGridAttributes {
     // Needed for md-dialog
-    dialogAction?: string | 'ok' | 'discard' | 'close' | 'cancel' | 'accept' | 'decline',
-    autoAnimate?: boolean
+    'dialog-action'?: string | 'ok' | 'discard' | 'close' | 'cancel' | 'accept' | 'decline',
+    'auto-animate'?: boolean
+  }
+}
+
+declare global {
+  // Convert to kebab-case all attributes of HTMLElementTagNameMap
+  type HTMLElementTagNameMapKebab = {
+    [P in keyof HTMLElementTagNameMap]: KebabCasedProperties<HTMLElementTagNameMap[P]>
+  };
+  namespace JSX {
+    type IntrinsicElements = {
+      [tag in keyof HTMLElementTagNameMapKebab]: Omit<Partial<HTMLElementTagNameMapKebab[tag]>, 'style'> & Mithril.Attributes;
+    };
   }
 }

@@ -40,7 +40,7 @@ export default abstract class Page<A extends PageAttributes = PageAttributes> ex
   oncreate(vnode: VnodeDOM<A, this>) {
     super.oncreate(vnode);
 
-    for (const element of this.element.querySelectorAll<HTMLElement>('[autoanimate]')) {
+    for (const element of this.element.querySelectorAll<HTMLElement>('[auto-animate]')) {
       autoAnimate(element);
     }
 

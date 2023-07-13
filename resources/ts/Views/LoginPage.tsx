@@ -60,7 +60,7 @@ export default class LoginPage extends Page {
             {this.forgotPasswordFields().toArray()}
           </div>
         </Form>
-        <md-text-button dialogAction="cancel" slot="footer" label={__('Annulla')}></md-text-button>
+        <md-text-button dialog-action="cancel" slot="footer" label={__('Annulla')}></md-text-button>
         <md-filled-button slot="footer" onclick={this.onForgotPasswordDialogSubmitButtonClicked.bind(this)}>
           {__('Invia')}
         </md-filled-button>

@@ -68,7 +68,7 @@ export abstract class SetupStep<A extends SetupStepAttributes = SetupStepAttribu
 
   nextButton(vnode: Vnode<A, this>): Children {
     return (
-      <md-outlined-button onclick={this.onNextButtonClicked.bind(this, vnode)} disabled={!this.isNextButtonEnabled(vnode)} trailingIcon={true}>
+      <md-outlined-button onclick={this.onNextButtonClicked.bind(this, vnode)} disabled={!this.isNextButtonEnabled(vnode)} trailing-icon>
         {__('Prossimo')}
         <MdIcon icon={mdiChevronRight} slot="icon"/>
       </md-outlined-button>

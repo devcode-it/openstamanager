@@ -52,7 +52,7 @@ export default class SetupPage extends Page<SetupPageAttributes> {
   contents(vnode: Vnode<SetupPageAttributes>) {
     return <>
       <h1>{__('Configurazione iniziale')}</h1>
-      <div autoAnimate>
+      <div auto-animate>
         {m(this.steps[this.currentStep()], {
           ...vnode.attrs.page.props,
           onSaveInstall: this.onSaveInstall.bind(this),

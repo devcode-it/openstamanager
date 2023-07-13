@@ -13,12 +13,9 @@ import {
   Attributes,
   Component
 } from 'mithril-utilities';
+import {KebabCasedProperties} from 'type-fest';
 
-export interface DialogAttributes extends Attributes, Partial<Pick<MDDialog,
-'fullscreen' | 'fullscreenBreakpoint' | 'footerHidden' | 'stacked' | 'defaultAction' |
-'actionAttribute' | 'focusAttribute' | 'scrimClickAction' | 'escapeKeyAction' | 'modeless' |
-'draggable' | 'transition'
->> {
+export interface DialogAttributes extends Attributes, Partial<KebabCasedProperties<Omit<MDDialog, 'open' | 'style'>>> {
   open?: Stream<boolean>;
   onOpen?: () => void;
   onClose?: () => void;

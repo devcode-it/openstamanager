@@ -70,6 +70,7 @@ export default class RecordsTable<M extends Model<any, any>, A extends RecordsTa
   setDefaultAttributes(vnode: Vnode<A, this>) {
     vnode.attrs.paginated ??= true;
     vnode.attrs['current-page-size'] ??= 10;
+    // @ts-ignore - False positive
     vnode.attrs['custom-pagination'] ??= true;
   }
 

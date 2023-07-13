@@ -12,9 +12,9 @@
     "scss-types": "typed-scss-modules resources/scss -i node_modules"
   },
   "dependencies": {
-    "@formkit/auto-animate": "1.0.0-beta.6",
+    "@formkit/auto-animate": "0.7.0",
     "@maicol07/inertia-mithril": "^1.0.3",
-    "@maicol07/material-web-additions": "^1.3.4",
+    "@maicol07/material-web-additions": "^1.3.5",
     "@material/mwc-snackbar": "^0.27.0",
     "@material/mwc-top-app-bar": "^0.27.0",
     "@material/web": "1.0.0-pre.13",

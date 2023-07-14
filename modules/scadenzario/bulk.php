@@ -82,7 +82,7 @@ switch (post('op')) {
             $documento = $scadenza->documento;
 
             // Controllo se è una fattura di vendita
-            if ($documento->direzione == 'entrata' && $scadenza->scadenza <= date('Y-m-d')){
+            if ($documento->direzione == 'entrata' && $scadenza->scadenza <= date('Y-m-d')) {
                 $id_documento = $documento->id;
                 $id_anagrafica = $documento->idanagrafica;
 

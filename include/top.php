@@ -211,6 +211,7 @@ if (Auth::check()) {
                 start_date_formatted: "'.Translator::dateToLocale($_SESSION['period_start']).'",
                 end_date: "'.$_SESSION['period_end'].'",
                 end_date_formatted: "'.Translator::dateToLocale($_SESSION['period_end']).'",
+                minute_stepping: '.setting('Numero di minuti di avanzamento delle sessioni delle attività').',
 
                 collapse_plugin_sidebar: '.intval(setting('Nascondere la barra dei plugin di default')).',
 
@@ -435,7 +436,7 @@ if (Auth::check()) {
                         }
 
                         echo '
-                            <li class="nav-button"><a data-href="'.base_path().'/shortcuts.php" data-title="'.tr('Scorciatorie da tastiera').'" class="tip nav-button" title="'.tr('Scorciatoie').'">
+                            <li class="nav-button"><a data-href="'.base_path().'/shortcuts.php" data-title="'.tr('Scorciatoie da tastiera').'" class="tip nav-button" title="'.tr('Scorciatoie').'">
                                 <i class="fa fa-keyboard-o"></i>
                             </a></li>
 

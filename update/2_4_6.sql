@@ -5,9 +5,6 @@ ALTER TABLE `co_documenti` ADD `ritenuta_contributi` DECIMAL(12,4) NOT NULL AFTE
 -- Colonna tecnici per interventi
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'Tecnici', 'GROUP_CONCAT((SELECT DISTINCT(ragione_sociale) FROM an_anagrafiche WHERE idanagrafica = in_interventi_tecnici.idtecnico))', '14', '1', '0', '0', '', '', '1', '0', '0');
 
--- Aggiornamento query per la lettura dei contratti in scadenza
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato, co_contratti.id, DATEDIFF( data_conclusione, NOW() ) AS giorni_rimanenti FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND rinnovabile=1 AND NOW() > DATE_ADD( data_conclusione, INTERVAL - ABS(giorni_preavviso_rinnovo) DAY) AND YEAR(data_conclusione) > 1970 AND ISNULL((SELECT id FROM co_contratti contratti WHERE contratti.idcontratto_prev=co_contratti.id )) ORDER BY giorni_rimanenti ASC' WHERE `zz_widgets`.`name` = 'Contratti in scadenza';
-
 -- Fix per tipi di spedizione fuorvianti (esiste già il campo "Porto" per stabilire di chi è a carico la spedizione)
 UPDATE `dt_spedizione` SET `descrizione` = 'Ritiro in magazzino' WHERE `dt_spedizione`.`descrizione` = 'A carico del cliente';
 UPDATE `dt_spedizione` SET `descrizione` = 'Espressa' WHERE `dt_spedizione`.`descrizione` = 'A nostro carico';
@@ -71,14 +68,6 @@ CREATE TABLE IF NOT EXISTS `co_ritenuta_contributi` (
     PRIMARY KEY (`id`)
 );
 
--- Fix icon_Inviata Fatture di vendita per errore subquery
-UPDATE `zz_views` SET `query` = '(SELECT GROUP_CONCAT(DISTINCT `name` SEPARATOR \'\r\n \') FROM zz_operations INNER JOIN zz_emails ON zz_operations.id_email = zz_emails.id WHERE zz_operations.id_module = (SELECT id FROM zz_modules WHERE `name` = \'Fatture di vendita\') AND op = \'send-email\' AND id_record = co_documenti.id ORDER BY zz_operations.created_at DESC LIMIT 1)' WHERE `zz_views`.`name` = 'icon_title_Inviata' AND id_module = (SELECT id FROM zz_modules WHERE name = 'Fatture di vendita');
-
-UPDATE `zz_views` SET `query` = 'IF((SELECT GROUP_CONCAT(DISTINCT `name` SEPARATOR \'\r\n \') FROM zz_operations INNER JOIN zz_emails ON zz_operations.id_email = zz_emails.id WHERE zz_operations.id_module = (SELECT id FROM zz_modules WHERE `name` = \'Fatture di vendita\') AND op = \'send-email\' AND id_record = co_documenti.id ORDER BY zz_operations.created_at DESC LIMIT 1) IS NOT NULL, \'fa fa-envelope text-success\', \'\') ' WHERE `zz_views`.`name` = 'icon_Inviata' AND id_module = (SELECT id FROM zz_modules WHERE name = 'Fatture di vendita');
-
--- Limitato all'anno in corso il controllo per i numeri duplicati nelle fatture
-UPDATE `zz_views` SET `query` = 'IF((SELECT COUNT(t.numero_esterno) FROM co_documenti AS t WHERE t.numero_esterno = co_documenti.numero_esterno AND t.numero_esterno != '''' AND t.id_segment = co_documenti.id_segment AND idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir = ''entrata'') AND t.data >= ''|period_start|'' AND t.data <= ''|period_end|'' AND YEAR(t.data) = YEAR(co_documenti.data)  ) > 1, ''red'', '''') ' WHERE `zz_views`.`name` = '_bg_' AND id_module = (SELECT id FROM zz_modules WHERE name = 'Fatture di vendita');
-
 -- Fornitore terzo intermediario abilitato all'invio della fattura elettronica
 UPDATE `zz_settings` SET `help` = 'Fornitore, mio intermediario abilitato all\'invio della fattura elettronica (es. Aruba, Teamsystem ecc...)' WHERE `zz_settings`.`nome` = 'Terzo intermediario';
 
@@ -94,4 +83,4 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ritenute contributi'), 'Descrizione', 'descrizione', 2, 1, 0, 0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ritenute contributi'), 'id', 'id', 1, 1, 0, 0);
 
-UPDATE `zz_views` SET `query` = 'percentuale_imponibile', `name` = 'Percentuale imponibile' WHERE `zz_views`.`name` = 'Indetraibile' AND id_module = (SELECT id FROM zz_modules WHERE name = 'Ritenute acconto');
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'percentuale_imponibile', `zz_views`.`name` = 'Percentuale imponibile' WHERE `zz_modules`.`name` = 'Ritenute acconto' AND `zz_views`.`name` = 'Indetraibile';

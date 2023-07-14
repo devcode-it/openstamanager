@@ -1,38 +1,3 @@
--- Aggiornamento Netto a pagare per considerare lo Sconto finale
-UPDATE `zz_views` SET `query` = '(righe.totale + `co_documenti`.`rivalsainps` + `co_documenti`.`iva_rivalsainps` - `co_documenti`.`ritenutaacconto` - `co_documenti`.`sconto_finale`) * (1 - `co_documenti`.`sconto_finale_percentuale` / 100) * IF(co_tipidocumento.reversed, -1, 1)' WHERE `name` = 'Netto a pagare' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di vendita');
-UPDATE `zz_views` SET `query` = '(righe.totale + `co_documenti`.`rivalsainps` + `co_documenti`.`iva_rivalsainps` - `co_documenti`.`ritenutaacconto` - `co_documenti`.`sconto_finale`) * (1 - `co_documenti`.`sconto_finale_percentuale` / 100) * IF(co_tipidocumento.reversed, -1, 1)' WHERE `name` = 'Netto a pagare' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di acquisto');
-
--- Fix aggiornamento query Articoli per aggiunta quantità ordinata
-UPDATE `zz_modules` SET `options` = 'SELECT |select|
-FROM `mg_articoli`
-    LEFT JOIN an_anagrafiche ON mg_articoli.id_fornitore = an_anagrafiche.idanagrafica
-    LEFT JOIN co_iva ON mg_articoli.idiva_vendita = co_iva.id
-    LEFT JOIN (
-        SELECT SUM(or_righe_ordini.qta - or_righe_ordini.qta_evasa) AS qta_impegnata, or_righe_ordini.idarticolo
-        FROM or_righe_ordini
-            INNER JOIN or_ordini ON or_righe_ordini.idordine = or_ordini.id
-            INNER JOIN or_tipiordine ON or_ordini.idtipoordine = or_tipiordine.id
-        WHERE idstatoordine IN(SELECT id FROM or_statiordine WHERE completato = 1)
-            AND or_tipiordine.dir = ''entrata''
-            AND or_righe_ordini.confermato = 1
-        GROUP BY idarticolo
-    ) a ON a.idarticolo = mg_articoli.id
-    LEFT JOIN (
-        SELECT SUM(or_righe_ordini.qta) AS qta_ordinata, or_righe_ordini.idarticolo
-        FROM or_righe_ordini
-            INNER JOIN or_ordini ON or_righe_ordini.idordine = or_ordini.id
-            INNER JOIN or_tipiordine ON or_ordini.idtipoordine = or_tipiordine.id
-        WHERE idstatoordine IN(SELECT id FROM or_statiordine WHERE completato = 1)
-            AND or_tipiordine.dir = ''uscita''
-            AND or_righe_ordini.confermato = 1
-        GROUP BY idarticolo
-    ) ordini_fornitore ON ordini_fornitore.idarticolo = mg_articoli.id
-    LEFT JOIN mg_categorie ON mg_articoli.id_categoria = mg_categorie.id
-    LEFT JOIN mg_categorie AS sottocategorie ON mg_articoli.id_sottocategoria = sottocategorie.id
-WHERE 1=1 AND `mg_articoli`.`deleted_at` IS NULL
-HAVING 2=2
-ORDER BY `mg_articoli`.`descrizione`' WHERE `zz_modules`.`name`='Articoli';
-
 -- Rimozione flag inutilizzato
 ALTER TABLE `or_statiordine` DROP `annullato`;
 
@@ -40,11 +5,7 @@ ALTER TABLE `or_statiordine` DROP `annullato`;
 ALTER TABLE `or_statiordine` ADD `impegnato` BOOLEAN NOT NULL DEFAULT FALSE AFTER `icona`;
 UPDATE `or_statiordine` SET `impegnato` = 1 WHERE `descrizione` IN('Evaso', 'Parzialmente evaso', 'Accettato', 'Parzialmente fatturato', 'Fatturato');
 
--- Aggiornamento calcolo quantità impegnate ed evase
-UPDATE `zz_modules` SET `options` = 'SELECT |select|\nFROM `mg_articoli`\n    LEFT JOIN an_anagrafiche ON mg_articoli.id_fornitore = an_anagrafiche.idanagrafica\n    LEFT JOIN co_iva ON mg_articoli.idiva_vendita = co_iva.id\n    LEFT JOIN (\n        SELECT SUM(or_righe_ordini.qta - or_righe_ordini.qta_evasa) AS qta_impegnata, or_righe_ordini.idarticolo\n        FROM or_righe_ordini\n            INNER JOIN or_ordini ON or_righe_ordini.idordine = or_ordini.id\n            INNER JOIN or_tipiordine ON or_ordini.idtipoordine = or_tipiordine.id\n            INNER JOIN or_statiordine ON or_ordini.idstatoordine = or_statiordine.id\n        WHERE\n            or_tipiordine.dir = \'entrata\'\n            AND or_righe_ordini.confermato = 1\n            AND or_statiordine.impegnato = 1\n        GROUP BY idarticolo\n    ) a ON a.idarticolo = mg_articoli.id\n    LEFT JOIN (\n        SELECT SUM(or_righe_ordini.qta-or_righe_ordini.qta_evasa) AS qta_ordinata, or_righe_ordini.idarticolo\n        FROM or_righe_ordini\n            INNER JOIN or_ordini ON or_righe_ordini.idordine = or_ordini.id\n            INNER JOIN or_tipiordine ON or_ordini.idtipoordine = or_tipiordine.id\n            INNER JOIN or_statiordine ON or_ordini.idstatoordine = or_statiordine.id\n        WHERE\n            or_tipiordine.dir = \'uscita\'\n            AND or_righe_ordini.confermato = 1\n            AND or_statiordine.impegnato = 1\n        GROUP BY idarticolo\n    ) ordini_fornitore ON ordini_fornitore.idarticolo = mg_articoli.id\n    LEFT JOIN mg_categorie ON mg_articoli.id_categoria = mg_categorie.id\n    LEFT JOIN mg_categorie AS sottocategorie ON mg_articoli.id_sottocategoria = sottocategorie.id\nWHERE 1=1 AND (`mg_articoli`.`deleted_at`) IS NULL\nHAVING 2=2\nORDER BY `mg_articoli`.`descrizione`' WHERE `zz_modules`.`name` = 'Articoli';
-
 -- Fix query widgets Fatturato e Acquisti
-UPDATE `zz_widgets` SET `query` = 'SELECT\n CONCAT_WS(\' \', REPLACE(REPLACE(REPLACE(FORMAT((\n SELECT SUM(\n (co_righe_documenti.subtotale - co_righe_documenti.sconto) * IF(co_tipidocumento.reversed, -1, 1)\n )\n ), 2), \',\', \'#\'), \'.\', \',\'), \'#\', \'.\'), \'&euro;\') AS dato\nFROM co_righe_documenti\n INNER JOIN co_documenti ON co_righe_documenti.iddocumento = co_documenti.id\n INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id\nWHERE co_tipidocumento.dir=\'entrata\' |segment| AND data >= \'|period_start|\' AND data <= \'|period_end|\' AND 1=1' WHERE `zz_widgets`.`name` = 'Fatturato';
 UPDATE `zz_widgets` SET `query` = 'SELECT\n CONCAT_WS(\' \', REPLACE(REPLACE(REPLACE(FORMAT((\n SELECT SUM(\n (co_righe_documenti.subtotale - co_righe_documenti.sconto) * IF(co_tipidocumento.reversed, -1, 1)\n )\n ), 2), \',\', \'#\'), \'.\', \',\'), \'#\', \'.\'), \'&euro;\') AS dato\nFROM co_righe_documenti\n INNER JOIN co_documenti ON co_righe_documenti.iddocumento = co_documenti.id\n INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id\nWHERE co_tipidocumento.dir=\'uscita\' |segment| AND data >= \'|period_start|\' AND data <= \'|period_end|\' AND 1=1' WHERE `zz_widgets`.`name` = 'Acquisti';
 
 -- Aggiunta risorse API per creazione e modifica Articoli
@@ -61,9 +22,6 @@ ALTER TABLE `an_anagrafiche` CHANGE `note` `note` TEXT NOT NULL;
 -- Aggiunta risorsa APi per revisione applicazione
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES
 (NULL, 'app-v1', 'retrieve', 'revisione', 'API\\App\\v1\\Revisione', '1');
-
--- Fix query listini
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM mg_prezzi_articoli  INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = mg_prezzi_articoli.id_anagrafica  INNER JOIN mg_articoli ON mg_articoli.id = mg_prezzi_articoli.id_articolo  LEFT JOIN mg_categorie AS categoria ON mg_articoli.id_categoria=categoria.id  LEFT JOIN mg_categorie AS sottocategoria ON mg_articoli.id_sottocategoria=sottocategoria.id WHERE 1=1 AND mg_articoli.deleted_at IS NULL AND an_anagrafiche.deleted_at IS NULL HAVING 2=2 ORDER BY an_anagrafiche.ragione_sociale' WHERE `zz_modules`.`name` = 'Listini';
 
 -- Cambiato title al plugin prezzi specifici
 UPDATE `zz_plugins` SET `title` = 'Prezzi di listino' WHERE `zz_plugins`.`name` = 'Prezzi specifici articolo';
@@ -133,10 +91,6 @@ INSERT INTO `zz_views` ( `id_module`, `name`, `query`, `order`, `search`, `slow`
 ((SELECT `id` FROM `zz_modules` WHERE name='Ordini cliente'), 'icon_Prev. evasione', 'IF(righe.`qta_da_evadere` > 0,IF((righe_da_evadere.data_evasione>now() OR righe_da_evadere.data_evasione IS NULL), \'fa fa-clock-o text-info\', \'fa fa-warning text-danger\'), \'fa fa-check text-success\')', 8, 1, 0, 0, '', '', 0, 0, 0),
 ((SELECT `id` FROM `zz_modules` WHERE name='Ordini cliente'), 'icon_title_Prev. evasione', 'IF(righe.`qta_da_evadere` > 0,IF((righe_da_evadere.data_evasione>now() OR righe_da_evadere.data_evasione IS NULL), \'In orario\', \'In ritardo\'), \'Consegnato\')', 9, 1, 0, 0, '', '', 0, 0, 0);
 
-UPDATE `zz_modules` SET `options` = 'SELECT |select|\nFROM `or_ordini`\n     LEFT JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`\n     LEFT JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`\n     LEFT JOIN (\n         SELECT `idordine`,\n                SUM(`qta` - `qta_evasa`) AS `qta_da_evadere`,\n                SUM(`subtotale` - `sconto`) AS `totale_imponibile`,\n                SUM(`subtotale` - `sconto` + `iva`) AS `totale`\n         FROM `or_righe_ordini`\n         GROUP BY `idordine`\n     ) AS righe ON `or_ordini`.`id` = `righe`.`idordine`\n	LEFT JOIN (\n		SELECT `idordine`,\n        MIN(`data_evasione`) AS `data_evasione`\n        FROM `or_righe_ordini`\n        WHERE (`qta` - `qta_evasa`)>0\n        GROUP BY `idordine`\n    ) AS `righe_da_evadere` ON `righe`.`idordine`=`righe_da_evadere`.`idordine`\nWHERE 1=1 AND `dir` = \'entrata\' |date_period(`data`)|\nHAVING 2=2\nORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC' WHERE `zz_modules`.`name` = 'Ordini cliente';
-
-UPDATE `zz_modules` SET `options` = 'SELECT |select|\nFROM `or_ordini`\n     LEFT JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`\n     LEFT JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`\n     LEFT JOIN (\n         SELECT `idordine`,\n                SUM(`qta` - `qta_evasa`) AS `qta_da_evadere`,\n                SUM(`subtotale` - `sconto`) AS `totale_imponibile`,\n                SUM(`subtotale` - `sconto` + `iva`) AS `totale`\n         FROM `or_righe_ordini`\n         GROUP BY `idordine`\n     ) AS righe ON `or_ordini`.`id` = `righe`.`idordine`\n	LEFT JOIN (\n		SELECT `idordine`,\n        MIN(`data_evasione`) AS `data_evasione`\n        FROM `or_righe_ordini`\n        WHERE (`qta` - `qta_evasa`)>0\n        GROUP BY `idordine`\n    ) AS `righe_da_evadere` ON `righe`.`idordine`=`righe_da_evadere`.`idordine`\nWHERE 1=1 AND `dir` = \'uscita\' |date_period(`data`)|\nHAVING 2=2\nORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC' WHERE `zz_modules`.`name` = 'Ordini fornitore';
-
 -- Aggiunto campo ora evasione in ordini
 ALTER TABLE `or_righe_ordini` ADD `ora_evasione` TIME NULL AFTER `data_evasione`;
 
@@ -172,9 +126,6 @@ ALTER TABLE `co_banche` ADD `branch_code` VARCHAR(20) NULL,
     ADD `id_nazione` INT(11) NULL,
     ADD FOREIGN KEY (`id_nazione`) REFERENCES `an_nazioni`(`id`);
 
--- Fix gestione documentale
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `do_documenti`\r\nINNER JOIN `do_categorie` ON `do_categorie`.`id` = `do_documenti`.`idcategoria`\r\nWHERE 1=1 AND `deleted_at` IS NULL AND\r\n (SELECT `idgruppo` FROM `zz_users` WHERE `zz_users`.`id` = |id_utente|) IN (SELECT `id_gruppo` FROM `do_permessi` WHERE `id_categoria` = `do_documenti`.`idcategoria`)\r\n |date_period(`data`)| OR data IS NULL\r\nHAVING 2=2' WHERE `zz_modules`.`name` = 'Gestione documentale'; 
-
 -- Messaggio Verifica numero intervento
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES
 (NULL, 'Verifica numero intervento', '1', 'boolean', 1, 'Attività', 1, 'Visualizza il messaggio che verifica la continuità dei numeri per le attività');
@@ -184,9 +135,6 @@ UPDATE `fe_stati_documento` SET `icon` = 'fa fa-times text-danger' WHERE `fe_sta
 
 -- Impostata aliquota iva per dichiarazone d'intento se non presente
 UPDATE `zz_settings` SET `valore` = IF(`valore` ='', (SELECT `id` FROM `co_iva` WHERE `descrizione`='Non imp. art. 8 c.1 lett. c DPR 633/1972'), `valore`) WHERE `nome`="Iva per lettere d'intento";
-
--- Fix query Fatture di acquisto
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti`\nLEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`\nLEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`\nLEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`\nLEFT JOIN (\n    SELECT `iddocumento`,\n    SUM(`subtotale` - `sconto`) AS `totale_imponibile`,\n    SUM(`subtotale` - `sconto` + `iva`) AS `totale`\n    FROM `co_righe_documenti`\n    GROUP BY `iddocumento`\n) AS righe ON `co_documenti`.`id` = `righe`.`iddocumento`\nLEFT JOIN (\n    SELECT COUNT(`d`.`id`) AS `conteggio`,\n        IF(`d`.`numero_esterno`=\'\', `d`.`numero`, `d`.`numero_esterno`) AS `numero_documento`,\n        `d`.`idanagrafica` AS `anagrafica`\n    FROM `co_documenti` AS `d`\n    LEFT JOIN `co_tipidocumento` AS `d_tipo` ON `d`.`idtipodocumento` = `d_tipo`.`id`\n    WHERE 1=1\n        AND `d_tipo`.`dir` = \'uscita\'\n        AND (\'|period_start|\' <= `d`.`data` AND \'|period_end|\' >= `d`.`data` OR \'|period_start|\' <= `d`.`data_competenza` AND \'|period_end|\' >= `d`.`data_competenza`)\n        GROUP BY `numero_documento`, `d`.`idanagrafica`\n) AS `d` ON (`d`.`numero_documento` = IF(`co_documenti`.`numero_esterno`=\'\', `co_documenti`.`numero`, `co_documenti`.`numero_esterno`) AND `d`.`anagrafica`=`co_documenti`.`idanagrafica`)\nWHERE 1=1 AND `dir` = \'uscita\' |segment(`co_documenti`.`id_segment`)||date_period(custom, \'|period_start|\' <= `co_documenti`.`data` AND \'|period_end|\' >= `co_documenti`.`data`, \'|period_start|\' <= `co_documenti`.`data_competenza` AND \'|period_end|\' >= `co_documenti`.`data_competenza` )|\nHAVING 2=2\nORDER BY `co_documenti`.`data` DESC, CAST(IF(`co_documenti`.`numero` = \'\', `co_documenti`.`numero_esterno`, `co_documenti`.`numero`) AS UNSIGNED) DESC' WHERE `zz_modules`.`name` = 'Fatture di acquisto';
 
 -- Ripristino Fattura di vendita come stampa predefinita
 UPDATE `zz_prints` SET `predefined` = '0' WHERE `zz_prints`.`name` = 'Fattura elettronica di vendita'; 

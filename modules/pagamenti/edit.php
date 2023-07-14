@@ -323,7 +323,7 @@ $(document).ready(function() {
 });
 
 function aggiungiRata() {
-    aggiungiContenuto("#elenco-rate", "#template", {"-id-": indice_rata});
+    aggiungiContenuto("#elenco-rate>div:last-of-type", "#template", {"-id-": indice_rata});
     indice_rata++;
 }
 

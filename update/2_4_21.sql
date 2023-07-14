@@ -19,25 +19,12 @@ UPDATE `zz_settings` SET `editable` = '1', `tipo` = 'list[5,10,15,20,25,30,35,40
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`,  `order`, `help`) VALUES (NULL, 'Inizio periodo calendario', '', 'date', '1', 'Generali', '23', NULL); 
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`,  `order`, `help`) VALUES (NULL, 'Fine periodo calendario', '', 'date', '1', 'Generali', '23', NULL); 
 
--- Ottimizzazione calcolo quantità su modulo "Giacenze sedi"
-UPDATE `zz_modules` SET `options`='SELECT |select| FROM `mg_articoli`
-    LEFT OUTER JOIN an_anagrafiche ON mg_articoli.id_fornitore = an_anagrafiche.idanagrafica
-    LEFT OUTER JOIN co_iva ON mg_articoli.idiva_vendita = co_iva.id
-    LEFT OUTER JOIN (
-        SELECT SUM(qta - qta_evasa) AS qta_impegnata, idarticolo FROM or_righe_ordini
-            INNER JOIN or_ordini ON or_righe_ordini.idordine = or_ordini.id
-        WHERE idstatoordine IN (SELECT id FROM or_statiordine WHERE completato = 0)
-        GROUP BY idarticolo
-    ) ordini ON ordini.idarticolo = mg_articoli.id
-    LEFT OUTER JOIN (SELECT `idarticolo`, `idsede_azienda`, SUM(`qta`) AS `qta` FROM `mg_movimenti` WHERE `idsede_azienda` = |giacenze_sedi_idsede| GROUP BY `idarticolo`, `idsede_azienda`) movimenti ON `mg_articoli`.`id` = `movimenti`.`idarticolo`
-WHERE 1=1 AND `mg_articoli`.`deleted_at` IS NULL HAVING 2=2 AND `Q.tà` > 0 ORDER BY `descrizione`' WHERE `name` = 'Giacenze sedi';
-UPDATE `zz_views` SET `query`='movimenti.qta', `format`=1 WHERE `id_module`=(SELECT `id` FROM `zz_modules` WHERE `name`='Giacenze sedi') AND `name`='Q.tà';
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'movimenti.qta' WHERE `zz_views`.`name` = 'Q.tà' AND `zz_modules`.`name` = 'Giacenze sedi';
 -- Fix widget rate contrattuali
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_fatturazione_contratti WHERE idcontratto IN( SELECT id FROM co_contratti WHERE co_contratti.idstato IN (SELECT id FROM co_staticontratti WHERE is_fatturabile = 1)) AND co_fatturazione_contratti.iddocumento=0' WHERE `zz_widgets`.`name` = 'Rate contrattuali'; 
 
 -- Divisione delle colonne modulo modelli prima nota
-UPDATE `zz_views` SET `query` = 'co_movimenti_modelli.nome' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name`='Modelli prima nota') AND `name` LIKE 'Nome';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'co_movimenti_modelli.nome' WHERE `zz_views`.`name` = 'Nome' AND `zz_modules`.`name` = 'Modelli prima nota';
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name`='Modelli prima nota'), 'Causale', 'co_movimenti_modelli.descrizione', '2', '1', '0', '0', NULL, NULL, '1', '0', '1');
 
 -- Aggiunto flag peso e volume manuale in fatture e ddt

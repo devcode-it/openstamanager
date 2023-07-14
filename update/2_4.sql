@@ -198,22 +198,6 @@ UPDATE `co_documenti` SET `id_segment`='2' WHERE `idtipodocumento` IN (SELECT `i
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Segmenti', 'Segmenti', 'segmenti', '{	"main_query": [	{	"type": "table", "fields": "id, Nome, Modulo, Maschera, Note, Predefinito", "query": "SELECT `id`, (IF(predefined=1, ''Sì'', ''No'')) AS `Predefinito`, `name` AS `Nome`, (SELECT name FROM zz_modules WHERE id = zz_segments.id_module) AS Modulo, `pattern` AS `Maschera`, `note` AS `Note`  FROM `zz_segments` HAVING 2=2 ORDER BY name, id_module"}	]}', '', 'fa fa-database', '2.4', '2.4', 1, NULL, 1, 1);
 UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Segmenti' AND `t2`.`name` = 'Strumenti') SET `t1`.`parent` = `t2`.`id`;
 
--- Aggiorno widget Fatturato con i sezionali
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM((SELECT SUM(subtotale+iva-sconto) FROM co_righe_documenti WHERE iddocumento=co_documenti.id)+iva_rivalsainps+rivalsainps+bollo-ritenutaacconto), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM co_documenti WHERE idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir="entrata") |segment| AND data >= "|period_start|" AND data <= "|period_end|" AND 1=1' WHERE `zz_widgets`.`name` = 'Fatturato';
-
--- Aggiorno widget Acquisti con i sezionali
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare))), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE dir=''uscita'' |segment| AND data_emissione >= "|period_start|" AND data_emissione <= "|period_end|"' WHERE `zz_widgets`.`name` = 'Acquisti';
-
--- Aggiorno widget Crediti da clienti con i sezionali
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM((SELECT SUM(subtotale+iva-sconto) FROM co_righe_documenti WHERE iddocumento=co_documenti.id)+iva_rivalsainps+rivalsainps+bollo-ritenutaacconto), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM co_documenti WHERE idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir="entrata") AND idstatodocumento = (SELECT id FROM co_statidocumento WHERE descrizione="Emessa") |segment| AND data >= "|period_start|" AND data <= "|period_end|" AND 1=1' WHERE `zz_widgets`.`name` = 'Crediti da clienti' ;
-
--- Aggiorno widget Debiti verso fornitori con i sezionali
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare-pagato))), 2), '','', ''#''), ''.'', '',''),''#'', ''.''), ''&euro;'') AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=''uscita'' |segment| AND data_emissione >= "|period_start|" AND data_emissione <= "|period_end|"' WHERE `zz_widgets`.`name` = 'Debiti verso fornitori';
-
--- Aggiorno i moduli Fattura con i sezionali
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id` WHERE 1=1 AND `dir` = ''uscita'' |segment| AND `data` >= ''|period_start|'' AND `data` <= ''|period_end|'' HAVING 2=2 ORDER BY `data` DESC, CAST(IF(numero_esterno='''', numero, numero_esterno) AS UNSIGNED) DESC' WHERE `name` = 'Fatture di acquisto';
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id` WHERE 1=1 AND `dir` = ''entrata'' |segment| AND `data` >= ''|period_start|'' AND `data` <= ''|period_end|'' HAVING 2=2 ORDER BY `data` DESC, CAST(numero_esterno AS UNSIGNED) DESC' WHERE `name` = 'Fatture di vendita';
-
 -- Help text per widget Fatturato
 UPDATE `zz_widgets` SET `help` = 'Fatturato IVA inclusa.' WHERE `zz_widgets`.`name` = 'Fatturato';
 
@@ -286,9 +270,6 @@ INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable
 -- apilayer API key (per validazione piva)
 INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES (NULL, 'apilayer API key for VAT number', '', 'string', '1', 'Generali');
 
--- Aggiorno query modulo movimenti per ordinarli in funzione della data del movimento
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_movimenti` JOIN `mg_articoli` ON `mg_articoli`.id = `mg_movimenti`.`idarticolo` WHERE 1=1 HAVING 2=2 ORDER BY `Data` DESC' WHERE `zz_modules`.`name` = 'Movimenti';
-
 -- Rimozione impostazioni inutilizzate
 DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Indirizzo per le email in uscita';
 DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Destinatario';
@@ -338,6 +319,3 @@ INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable
 
 -- Fix doppio conto iva 'Esente art. 10' & 'Esente art.10'
 DELETE FROM `co_iva` WHERE `co_iva`.`descrizione` = 'Esente art. 10' AND `co_iva`.`id` NOT IN (SELECT `idiva` FROM co_righe_documenti UNION SELECT `idiva` FROM co_righe_preventivi UNION SELECT `idiva` FROM dt_righe_ddt UNION SELECT `idiva` FROM or_righe_ordini );
-
--- Allineamento query widget 'Contratti in scadenza'
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato, DATEDIFF( data_conclusione, NOW() ) AS giorni_rimanenti FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND NOT EXISTS (SELECT id FROM co_righe_documenti WHERE co_righe_documenti.idcontratto = co_contratti.id) AND rinnovabile=1 AND NOW() > DATE_ADD( data_conclusione, INTERVAL - ABS(giorni_preavviso_rinnovo) DAY) AND YEAR(data_conclusione) > 1970 ORDER BY giorni_rimanenti ASC' WHERE `zz_widgets`.`name` = 'Contratti in scadenza';

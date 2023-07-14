@@ -171,27 +171,13 @@ ALTER TABLE `dt_righe_ddt` ADD `prezzo_unitario_acquisto` DECIMAL(12,4) NOT NULL
 ALTER TABLE `or_righe_ordini` ADD `prezzo_unitario_acquisto` DECIMAL(12,4) NOT NULL AFTER `descrizione`;
 ALTER TABLE `co_righe_contratti` ADD `prezzo_unitario_acquisto` DECIMAL(12,4) NOT NULL AFTER `descrizione`;
 
--- Fix query Scadenzario
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_scadenziario`
-   LEFT JOIN `co_documenti`  ON `co_scadenziario`.`iddocumento` = `co_documenti`.`id`
-   LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-   LEFT JOIN `co_pagamenti` ON `co_documenti`.`idpagamento` = `co_pagamenti`.`id`
-   LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
-   LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
-WHERE 1=1 AND
-    (`co_scadenziario`.`scadenza` BETWEEN ''|period_start|'' AND ''|period_end|'' OR ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`)) AND
-    (`co_statidocumento`.`descrizione` IS NULL OR `co_statidocumento`.`descrizione` IN(''Emessa'',''Parzialmente pagato''))
-HAVING 2=2
-ORDER BY `scadenza` ASC' WHERE `name` = 'Scadenzario';
-
 -- Aggiunte impostazione Autocomple web form
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Autocompletamento form', 'off', 'list[on,off]', '1', 'Generali', '', NULL);
 
 -- Data concordata per le scadenza
 ALTER TABLE `co_scadenziario` ADD `data_concordata` DATE;
 
-UPDATE `zz_views` SET `query` = 'IF(pagato = da_pagare, ''#38CD4E'', IF(data_concordata IS NOT NULL AND data_concordata > NOW(), '' #CC9837'', IF(scadenza < NOW(), ''#CC4D37'', '''')))' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `name` = '_bg_';
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'IF(pagato = da_pagare, ''#38CD4E'', IF(data_concordata IS NOT NULL AND data_concordata > NOW(), '' #CC9837'', IF(scadenza < NOW(), ''#CC4D37'', '''')))' WHERE `zz_modules`.`name` = 'Scadenzario' AND `zz_views`.`name` = '_bg_';
 -- Sistema di note interne
 CREATE TABLE IF NOT EXISTS `zz_notes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -300,7 +286,6 @@ DELETE FROM `zz_plugins` WHERE `name` = 'Pianificazione fatturazione';
 
 -- Aggiunta deleted_at su mg_articoli
 ALTER TABLE `mg_articoli` ADD `deleted_at` timestamp NULL DEFAULT NULL;
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_articoli` WHERE 1=1 AND `deleted_at` IS NULL HAVING 2=2 ORDER BY `descrizione`' WHERE `name` = 'Articoli';
 
 -- Ampliamento hooks
 ALTER TABLE `zz_hooks` ADD `processing_at` TIMESTAMP NULL DEFAULT NULL, ADD `processing_token` varchar(255);
@@ -443,188 +428,32 @@ INSERT INTO `fe_stati_documento` (`codice`, `descrizione`, `icon`) VALUES
 ('ERR', 'Trasmissione non riuscita', 'fa fa-close'),
 ('QUEUE', 'In coda di elaborazione', 'fa fa-spinner');
 
--- Ottimizzazione Fatture di vendita
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti`
-    INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
-    INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
-    LEFT JOIN `fe_stati_documento` ON `co_documenti`.`codice_stato_fe` = `fe_stati_documento`.`codice`
-    LEFT OUTER JOIN (
-        SELECT `iddocumento`, SUM(`subtotale` - `sconto` + `iva` + `rivalsainps` - `ritenutaacconto`) AS `totale`
-        FROM `co_righe_documenti`
-        GROUP BY `iddocumento`
-    ) AS righe ON `co_documenti`.`id` = `righe`.`iddocumento`
-    LEFT JOIN (
-        SELECT `numero_esterno`, `id_segment`
-        FROM `co_documenti`
-        WHERE `co_documenti`.`idtipodocumento` IN(SELECT `id` FROM `co_tipidocumento` WHERE `dir` = ''entrata'') |date_period(`co_documenti`.`data`)| AND `numero_esterno` != ''''
-        GROUP BY `id_segment`, `numero_esterno`
-        HAVING COUNT(`numero_esterno`) > 1
-    ) dup ON `co_documenti`.`numero_esterno` = `dup`.`numero_esterno` AND `dup`.`id_segment` = `co_documenti`.`id_segment`
-    LEFT OUTER JOIN (
-        SELECT `zz_operations`.`id_email`, `zz_operations`.`id_record`
-        FROM `zz_operations`
-            INNER JOIN `em_emails` ON `zz_operations`.`id_email` = `em_emails`.`id`
-            INNER JOIN `em_templates` ON `em_emails`.`id_template` = `em_templates`.`id`
-            INNER JOIN `zz_modules` ON `zz_operations`.`id_module` = `zz_modules`.`id`
-        WHERE `zz_modules`.`name` = ''Fatture di vendita'' AND `zz_operations`.`op` = ''send-email''
-        GROUP BY `zz_operations`.`id_record`
-    ) AS `email` ON `email`.`id_record` = `co_documenti`.`id`
-WHERE 1=1 AND `dir` = ''entrata'' |segment(`co_documenti`.`id_segment`)| |date_period(`co_documenti`.`data`)|
-HAVING 2=2
-ORDER BY `co_documenti`.`data` DESC, CAST(`co_documenti`.`numero_esterno` AS UNSIGNED) DESC' WHERE `name` = 'Fatture di vendita';
 
-UPDATE `zz_views` SET `query` = 'righe.totale' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = 'Totale';
-UPDATE `zz_views` SET `query` = 'IF(`email`.`id_email` IS NOT NULL, ''fa fa-envelope text-success'', '''')' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = 'icon_Inviata';
-UPDATE `zz_views` SET `query` = 'IF(`email`.`id_email` IS NOT NULL, ''Inviata via email'', '''')' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = 'icon_title_Inviata';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'an_anagrafiche.ragione_sociale' WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = 'Ragione sociale';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'co_statidocumento.icona' WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = 'icon_Stato';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'co_statidocumento.descrizione' WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = 'icon_title_Stato';
 
--- Ottimizzazione Fatture di acquisto
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti`
-    INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
-    INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
-    LEFT OUTER JOIN (
-        SELECT `iddocumento`, SUM(`subtotale` - `sconto` + `iva` + `rivalsainps` - `ritenutaacconto`) AS `totale`
-        FROM `co_righe_documenti`
-        GROUP BY `iddocumento`
-    ) AS righe ON `co_documenti`.`id` = `righe`.`iddocumento`
-WHERE 1=1 AND `dir` = ''uscita'' |segment(`co_documenti`.`id_segment`)| |date_period(`co_documenti`.`data`)|
-HAVING 2=2
-ORDER BY `co_documenti`.`data` DESC, CAST(IF(`co_documenti`.`numero_esterno` = '''', `co_documenti`.`numero`, `co_documenti`.`numero_esterno`) AS UNSIGNED) DESC' WHERE `name` = 'Fatture di acquisto';
-
-UPDATE `zz_views` SET `query` = 'righe.totale' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') AND `name` = 'Totale';
-UPDATE `zz_views` SET `query` = 'an_anagrafiche.ragione_sociale ' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') AND `name` = 'Ragione sociale';
-UPDATE `zz_views` SET `query` = 'co_statidocumento.icona' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') AND `name` = 'icon_Stato';
-UPDATE `zz_views` SET `query` = 'co_statidocumento.descrizione' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') AND `name` = 'icon_title_Stato';
-
--- Ottimizzazione Contratti
-UPDATE `zz_modules` SET `options` = 'SELECT |select|
-FROM `co_contratti`
-    INNER JOIN `an_anagrafiche` ON `co_contratti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    INNER JOIN `co_staticontratti` ON `co_contratti`.`idstato` = `co_staticontratti`.`id`
-    LEFT OUTER JOIN (
-        SELECT `idcontratto`, SUM(`subtotale` - `sconto` + `iva`) AS `totale`
-        FROM `co_righe_contratti`
-        GROUP BY `idcontratto`
-    ) AS righe ON `co_contratti`.`id` = `righe`.`idcontratto`
-    LEFT OUTER JOIN (
-        SELECT GROUP_CONCAT(CONCAT(matricola, IF(nome != '''', CONCAT('' - '', nome), '''')) SEPARATOR ''<br>'') AS descrizione, my_impianti_contratti.idcontratto
-        FROM my_impianti
-            INNER JOIN my_impianti_contratti ON my_impianti.id = my_impianti_contratti.idimpianto
-        GROUP BY my_impianti_contratti.idcontratto
-    ) AS impianti ON impianti.idcontratto = co_contratti.id
-WHERE 1=1 |date_period(custom,''|period_start|'' >= `data_bozza` AND ''|period_start|'' <= `data_conclusione`,''|period_end|'' >= `data_bozza` AND ''|period_end|'' <= `data_conclusione`,`data_bozza` >= ''|period_start|'' AND `data_bozza` <= ''|period_end|'',`data_conclusione` >= ''|period_start|'' AND `data_conclusione` <= ''|period_end|'',`data_bozza` >= ''|period_start|'' AND `data_conclusione` = ''0000-00-00'')|
-HAVING 2=2
-ORDER BY `co_contratti`.`id` DESC' WHERE `name` = 'Contratti';
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'Totale', 'righe.totale', 5, 1, 1, 1, 1);
-UPDATE `zz_views` SET `query` = 'an_anagrafiche.ragione_sociale ' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti') AND `name` = 'Cliente';
-UPDATE `zz_views` SET `query` = 'co_staticontratti.icona' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti') AND `name` = 'icon_Stato';
-UPDATE `zz_views` SET `query` = 'co_staticontratti.descrizione' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti') AND `name` = 'icon_title_Stato';
-UPDATE `zz_views` SET `query` = '`co_contratti`.`id`' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti') AND `name` = 'id';
-UPDATE `zz_views` SET `query` = '`co_contratti`.`nome`' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti') AND `name` = 'Nome';
-UPDATE `zz_views` SET `query` = 'impianti.descrizione' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti') AND `name` = 'Impianti';
-
--- Ottimizzazione Preventivi
-UPDATE `zz_modules` SET `options` = 'SELECT |select|
-FROM `co_preventivi`
-    INNER JOIN `an_anagrafiche` ON `co_preventivi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    INNER JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
-    LEFT OUTER JOIN (
-        SELECT `idpreventivo`, SUM(`subtotale` - `sconto` + `iva`) AS `totale`
-        FROM `co_righe_preventivi`
-        GROUP BY `idpreventivo`
-    ) AS righe ON `co_preventivi`.`id` = `righe`.`idpreventivo`
-WHERE 1=1 |date_period(custom,''|period_start|'' >= `data_bozza` AND ''|period_start|'' <= `data_conclusione`,''|period_end|'' >= `data_bozza` AND ''|period_end|'' <= `data_conclusione`,`data_bozza` >= ''|period_start|'' AND `data_bozza` <= ''|period_end|'',`data_conclusione` >= ''|period_start|'' AND `data_conclusione` <= ''|period_end|'',`data_bozza` >= ''|period_start|'' AND `data_conclusione` = ''0000-00-00'')|
-HAVING 2=2
-ORDER BY `co_preventivi`.`id` DESC' WHERE `name` = 'Preventivi';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'an_anagrafiche.ragione_sociale' WHERE `zz_modules`.`name` = 'Contratti' AND `zz_views`.`name` = 'Cliente';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'co_staticontratti.icona' WHERE `zz_modules`.`name` = 'Contratti' AND `zz_views`.`name` = 'icon_Stato';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'co_staticontratti.descrizione' WHERE `zz_modules`.`name` = 'Contratti' AND `zz_views`.`name` = 'icon_title_Stato';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = '`co_contratti`.`id`' WHERE `zz_modules`.`name` = 'Contratti' AND `zz_views`.`name` = 'id';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = '`co_contratti`.`nome`' WHERE `zz_modules`.`name` = 'Contratti' AND `zz_views`.`name` = 'Nome';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'impianti.descrizione' WHERE `zz_modules`.`name` = 'Contratti' AND `zz_views`.`name` = 'Impianti';
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), 'Totale', 'righe.totale', 5, 1, 1, 1, 1);
-UPDATE `zz_views` SET `query` = 'an_anagrafiche.ragione_sociale ' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi') AND `name` = 'Cliente';
-UPDATE `zz_views` SET `query` = 'co_statipreventivi.icona' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi') AND `name` = 'icon_Stato';
-UPDATE `zz_views` SET `query` = 'co_statipreventivi.descrizione' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi') AND `name` = 'icon_title_Stato';
-UPDATE `zz_views` SET `query` = '`co_preventivi`.`id`' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi') AND `name` = 'id';
-UPDATE `zz_views` SET `query` = '`co_preventivi`.`nome`' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi') AND `name` = 'Nome';
-
--- Ottimizzazione Ddt di acquisto
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `dt_ddt`
-    INNER JOIN `an_anagrafiche` ON `dt_ddt`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
-    LEFT OUTER JOIN `dt_causalet` ON `dt_ddt`.`idcausalet` = `dt_causalet`.`id`
-    LEFT OUTER JOIN `dt_spedizione` ON `dt_ddt`.`idspedizione` = `dt_spedizione`.`id`
-    LEFT OUTER JOIN `an_anagrafiche` `vettori` ON `dt_ddt`.`idvettore` = `vettori`.`idanagrafica`
-    LEFT OUTER JOIN `an_sedi` AS sedi ON `dt_ddt`.`idsede_partenza` = sedi.`id`
-    LEFT OUTER JOIN `an_sedi` AS `sedi_destinazione` ON `dt_ddt`.`idsede_destinazione` = `sedi_destinazione`.`id`
-    LEFT OUTER JOIN (
-        SELECT `idddt`, SUM(`subtotale` - `sconto` + `iva`) AS `totale`
-        FROM `dt_righe_ddt`
-        GROUP BY `idddt`
-    ) AS righe ON `dt_ddt`.`id` = `righe`.`idddt`
-WHERE 1=1 AND `dir` = ''uscita'' |date_period(`data`)|
-HAVING 2=2
-ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC,`dt_ddt`.created_at DESC' WHERE `name` = 'Ddt di acquisto';
-
-UPDATE `zz_views` SET `query` = 'righe.totale' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto') AND `name` = 'Totale';
-UPDATE `zz_views` SET `query` = 'an_anagrafiche.ragione_sociale ' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto') AND `name` = 'Ragione sociale';
-
--- Ottimizzazione Ddt di vendita
-UPDATE `zz_modules` SET `options` = 'SELECT |select|
-FROM `dt_ddt`
-    INNER JOIN `an_anagrafiche` ON `dt_ddt`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
-    LEFT OUTER JOIN `dt_causalet` ON `dt_ddt`.`idcausalet` = `dt_causalet`.`id`
-    LEFT OUTER JOIN `dt_spedizione` ON `dt_ddt`.`idspedizione` = `dt_spedizione`.`id`
-    LEFT OUTER JOIN `an_anagrafiche` `vettori` ON `dt_ddt`.`idvettore` = `vettori`.`idanagrafica`
-    LEFT OUTER JOIN `an_sedi` AS sedi ON `dt_ddt`.`idsede_partenza` = sedi.`id`
-    LEFT OUTER JOIN `an_sedi` AS `sedi_destinazione` ON `dt_ddt`.`idsede_destinazione` = `sedi_destinazione`.`id`
-    LEFT OUTER JOIN (
-        SELECT `idddt`, SUM(`subtotale` - `sconto` + `iva`) AS `totale`
-        FROM `dt_righe_ddt`
-        GROUP BY `idddt`
-    ) AS righe ON `dt_ddt`.`id` = `righe`.`idddt`
-WHERE 1=1 AND `dir` = ''entrata'' |date_period(`data`)|
-HAVING 2=2
-ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC,`dt_ddt`.created_at DESC' WHERE `name` = 'Ddt di vendita';
-
-UPDATE `zz_views` SET `query` = 'righe.totale' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita') AND `name` = 'Totale';
-UPDATE `zz_views` SET `query` = 'an_anagrafiche.ragione_sociale ' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita') AND `name` = 'Ragione sociale';
-
--- Ottimizzazione Ordini cliente
-UPDATE `zz_modules` SET `options` = 'SELECT |select|
-FROM `or_ordini`
-    INNER JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
-    LEFT OUTER JOIN (
-        SELECT `idordine`, SUM(`subtotale` - `sconto` + `iva`) AS `totale`
-        FROM `or_righe_ordini`
-        GROUP BY `idordine`
-    ) AS righe ON `or_ordini`.`id` = `righe`.`idordine`
-WHERE 1=1 AND `dir` = ''entrata'' |date_period(`data`)|
-HAVING 2=2
-ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC' WHERE `name` = 'Ordini cliente';
-
-UPDATE `zz_views` SET `query` = 'righe.totale' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente') AND `name` = 'Totale';
-UPDATE `zz_views` SET `query` = 'an_anagrafiche.ragione_sociale ' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente') AND `name` = 'Ragione sociale';
-
--- Ottimizzazione Ordini fornitore
-UPDATE `zz_modules` SET `options` = 'SELECT |select|
-FROM `or_ordini`
-    INNER JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
-    LEFT OUTER JOIN (
-        SELECT `idordine`, SUM(`subtotale` - `sconto` + `iva`) AS `totale`
-        FROM `or_righe_ordini`
-        GROUP BY `idordine`
-    ) AS righe ON `or_ordini`.`id` = `righe`.`idordine`
-WHERE 1=1 AND `dir` = ''uscita'' |date_period(`data`)|
-HAVING 2=2
-ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC' WHERE `name` = 'Ordini fornitore';
-
-UPDATE `zz_views` SET `query` = 'righe.totale' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore') AND `name` = 'Totale';
-UPDATE `zz_views` SET `query` = 'an_anagrafiche.ragione_sociale ' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore') AND `name` = 'Ragione sociale';
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'an_anagrafiche.ragione_sociale' WHERE `zz_modules`.`name` = 'Preventivi' AND `zz_views`.`name` = 'Cliente';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'co_statipreventivi.icona' WHERE `zz_modules`.`name` = 'Preventivi' AND `zz_views`.`name` = 'icon_Stato';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'co_statipreventivi.descrizione' WHERE `zz_modules`.`name` = 'Preventivi' AND `zz_views`.`name` = 'icon_title_Stato';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = '`co_preventivi`.`id`' WHERE `zz_modules`.`name` = 'Preventivi' AND `zz_views`.`name` = 'id';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = '`co_preventivi`.`nome`' WHERE `zz_modules`.`name` = 'Preventivi' AND `zz_views`.`name` = 'Nome';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'an_anagrafiche.ragione_sociale' WHERE `zz_modules`.`name` = 'Ddt di acquisto' AND `zz_views`.`name` = 'Ragione sociale';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'an_anagrafiche.ragione_sociale' WHERE `zz_modules`.`name` = 'Ddt di vendita' AND `zz_views`.`name` = 'Ragione sociale';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'an_anagrafiche.ragione_sociale' WHERE `zz_modules`.`name` = 'Ordini cliente' AND `zz_views`.`name` = 'Ragione sociale';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'an_anagrafiche.ragione_sociale' WHERE `zz_modules`.`name` = 'Ordini fornitore' AND `zz_views`.`name` = 'Ragione sociale';
 -- Correzioni per gli ordini
 INSERT INTO `or_statiordine` (`id`, `descrizione`, `annullato`, `icona`, `completato`) VALUES
 (NULL, 'In attesa di conferma', '0', 'fa fa-clock-o text-warning', '0'),
@@ -707,12 +536,6 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie documenti'), 'id', 'id', 1, 0, 0, 1, 0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie documenti'), 'Descrizione', 'descrizione', 2, 0, 0, 1, 1);
 
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `do_documenti`
-INNER JOIN `do_categorie` ON `do_categorie`.`id` = `do_documenti`.`idcategoria`
-WHERE 1=1 AND `deleted_at` IS NULL AND
-    (SELECT `idgruppo` FROM `zz_users` WHERE `zz_users`.`id` = |id_utente|) IN (SELECT `id_gruppo` FROM `do_permessi` WHERE `id_categoria` = `do_documenti`.`idcategoria`)
-    |date_period(`data`)|
-HAVING 2=2' WHERE `name` = 'Gestione documentale';
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Gestione documentale'), 'id', '`do_documenti`.`id`', 1, 0, 0, 1, 0),
@@ -861,21 +684,6 @@ ALTER TABLE `mg_listini` ADD `prc_combinato` VARCHAR(255);
 -- Aggiunto supporto ai tentativi di invio email
 ALTER TABLE `em_emails` ADD `attempt` INT(11) NOT NULL DEFAULT 0;
 
--- Fix calcolo totale contratti in scadenza
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato,
-       DATEDIFF(data_conclusione, NOW()) AS giorni_rimanenti,
-       data_conclusione,
-       ore_preavviso_rinnovo,
-       giorni_preavviso_rinnovo,
-       (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=co_contratti.idanagrafica) AS ragione_sociale
-FROM co_contratti WHERE
-        idstato IN (SELECT id FROM co_staticontratti WHERE is_fatturabile = 1) AND
-        rinnovabile = 1 AND
-        YEAR(data_conclusione) > 1970 AND
-        (SELECT id FROM co_contratti contratti WHERE contratti.idcontratto_prev = co_contratti.id) IS NULL
-AND (IFNULL( ((SELECT SUM(co_righe_contratti.qta) FROM co_righe_contratti WHERE co_righe_contratti.um=\'ore\' AND co_righe_contratti.idcontratto=co_contratti.id) - IFNULL( (SELECT SUM(in_interventi_tecnici.ore) FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE in_interventi.id_contratto=co_contratti.id AND in_interventi.idstatointervento IN (SELECT in_statiintervento.idstatointervento FROM in_statiintervento WHERE in_statiintervento.completato = 1)), 0) ), 0 ) < ore_preavviso_rinnovo OR DATEDIFF(data_conclusione, NOW()) < ABS(giorni_preavviso_rinnovo))
-ORDER BY giorni_rimanenti ASC, IFNULL( ((SELECT SUM(co_righe_contratti.qta) FROM co_righe_contratti WHERE co_righe_contratti.um=\'ore\' AND co_righe_contratti.idcontratto=co_contratti.id) - IFNULL( (SELECT SUM(in_interventi_tecnici.ore) FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE in_interventi.id_contratto=co_contratti.id AND in_interventi.idstatointervento IN (SELECT in_statiintervento.idstatointervento FROM in_statiintervento WHERE in_statiintervento.completato = 1)), 0) ), 0 ) ASC' WHERE `zz_widgets`.`name` = 'Contratti in scadenza';
-
 -- Aggiunta campo barcode per gli articoli
 ALTER TABLE `mg_articoli` ADD `barcode` VARCHAR(255);
 
@@ -904,12 +712,9 @@ UPDATE `co_staticontratti` SET `can_delete` = '0' WHERE `co_staticontratti`.`des
 
 ALTER TABLE `an_sedi` ADD `note` TEXT NULL DEFAULT NULL AFTER `idzona`;
 
-UPDATE `zz_views` SET `query` = 'codice' WHERE `zz_views`.`name` = 'Codice' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati di intervento');
-UPDATE `zz_views` SET `query` = 'codice' WHERE `zz_views`.`name` = 'Codice' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento');
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'codice' WHERE `zz_modules`.`name` = 'Stati di intervento' AND `zz_views`.`name` = 'Codice';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'codice' WHERE `zz_modules`.`name` = 'Tipi di intervento' AND `zz_views`.`name` = 'Codice';
 UPDATE `zz_modules` SET `icon` = 'fa fa-angle-right' WHERE `zz_modules`.`name` = 'Categorie documenti';
-
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM(prezzo_acquisto*qta),2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM mg_articoli WHERE qta>0 AND deleted_at IS NULL' WHERE `zz_widgets`.`name` = 'Valore magazzino';
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM(qta),2), ",", "#"), ".", ","), "#", "."), "unit&agrave;") AS dato FROM mg_articoli WHERE qta>0 AND deleted_at IS NULL' WHERE `zz_widgets`.`name` = 'Articoli in magazzino';
 
 -- Fix accesso alla stampa dell'Inventario magazzino
 UPDATE `zz_prints` SET `is_record` = '0' WHERE `zz_prints`.`name` = 'Inventario magazzino';

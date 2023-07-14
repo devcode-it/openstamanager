@@ -154,14 +154,6 @@ ALTER TABLE `in_interventi_tecnici`
 UPDATE `zz_settings` SET `valore` = '' WHERE `zz_settings`.`nome` = "Percentuale ritenuta d'acconto";
 UPDATE `zz_settings` SET `valore` = '' WHERE `zz_settings`.`nome` = "Percentuale rivalsa INPS";
 
--- Aggiornamento widget credito clienti e debito fornitori leggendo da scadenzario per includere anche il parzialmente pagato
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare-pagato))), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE dir=''entrata'' AND data_emissione >= "|period_start|" AND data_emissione <= "|period_end|"' WHERE `zz_widgets`.`name` = 'Crediti da clienti';
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare-pagato))), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE dir=''uscita'' AND data_emissione >= "|period_start|" AND data_emissione <= "|period_end|"' WHERE `zz_widgets`.`name` = 'Debiti verso fornitori';
-
--- Aggiornamento widget fatturato e acquisti leggendo da scadenzario per includere solo le fatture emesse
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare))), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE dir=''entrata'' AND data_emissione >= "|period_start|" AND data_emissione <= "|period_end|"' WHERE `zz_widgets`.`name` = 'Fatturato';
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare))), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE dir=''uscita'' AND data_emissione >= "|period_start|" AND data_emissione <= "|period_end|"' WHERE `zz_widgets`.`name` = 'Acquisti';
-
 -- RELEASE 2.3 --
 -- Aggiunta tabelle nascoste per l'API
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES
@@ -386,43 +378,17 @@ CREATE TABLE IF NOT EXISTS `zz_group_view` (
 -- Aggiornamento delle query di default dei vari moduli predefiniti
 UPDATE `zz_modules` SET `options` = '' WHERE `name` = 'Acquisti';
 UPDATE `zz_modules` SET `options` = 'custom' WHERE `name` = 'Aggiornamenti';
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `an_anagrafiche` LEFT JOIN `an_relazioni` ON `an_anagrafiche`.`idrelazione` = `an_relazioni`.`id` LEFT JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idanagrafica`=`an_anagrafiche`.`idanagrafica` LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` WHERE 1=1 AND `deleted` = 0 GROUP BY `an_anagrafiche`.`idanagrafica` HAVING 2=2 ORDER BY TRIM(`ragione_sociale`)' WHERE `name` = 'Anagrafiche';
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_articoli` WHERE 1=1 HAVING 2=2 ORDER BY `descrizione`' WHERE `name` = 'Articoli';
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `dt_automezzi` WHERE 1=1 HAVING 2=2 ORDER BY `targa`' WHERE `name` = 'Automezzi';
 UPDATE `zz_modules` SET `options` = 'custom' WHERE `name` = 'Backup';
 UPDATE `zz_modules` SET `options` = '' WHERE `name` = 'Contabilità';
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_contratti` WHERE 1=1 HAVING 2=2 AND ((''|period_start|'' >= `data_bozza` AND ''|period_start|'' <= `data_conclusione`) OR (''|period_end|'' >= `data_bozza` AND ''|period_end|'' <= `data_conclusione`) OR (`data_bozza` >= ''|period_start|'' AND `data_bozza` <= ''|period_end|'') OR (`data_conclusione` >= ''|period_start|'' AND `data_conclusione` <= ''|period_end|'') OR (`data_bozza` >= ''|period_start|'' AND `data_conclusione` = ''0000-00-00'')) ORDER BY `id` DESC' WHERE `name` = 'Contratti';
 UPDATE `zz_modules` SET `options` = 'custom' WHERE `name` = 'Dashboard';
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id` WHERE 1=1 AND `dir` = ''uscita'' AND `data` >= ''|period_start|'' AND `data` <= ''|period_end|'' HAVING 2=2 ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC' WHERE `name` = 'Ddt di acquisto';
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id` WHERE 1=1 AND `dir` = ''entrata'' AND `data` >= ''|period_start|'' AND `data` <= ''|period_end|'' HAVING 2=2 ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC' WHERE `name` = 'Ddt di vendita';
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id` WHERE 1=1 AND `dir` = ''uscita'' AND `data` >= ''|period_start|'' AND `data` <= ''|period_end|'' HAVING 2=2 ORDER BY `data` DESC, CAST(IF(numero_esterno='''', numero, numero_esterno) AS UNSIGNED) DESC' WHERE `name` = 'Fatture di acquisto';
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id` WHERE 1=1 AND `dir` = ''entrata'' AND `data` >= ''|period_start|'' AND `data` <= ''|period_end|'' HAVING 2=2 ORDER BY `data` DESC, CAST(numero_esterno AS UNSIGNED) DESC' WHERE `name` = 'Fatture di vendita';
 UPDATE `zz_modules` SET `options` = 'custom' WHERE `name` = 'Gestione componenti';
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM (`in_interventi` INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`) LEFT OUTER JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` WHERE 1=1 GROUP BY `in_interventi`.`id` HAVING 2=2 AND ((`orario_inizio` >= ''|period_start|'' AND `orario_fine` <= ''|period_end|'') OR (`data_richiesta` >= ''|period_start|'' AND `data_richiesta` <= ''|period_end|'')) ORDER BY IFNULL(`orario_fine`, `data_richiesta`) DESC' WHERE `name` = 'Interventi';
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_listini` WHERE 1=1 HAVING 2=2 ORDER BY `nome`' WHERE `name` = 'Listini';
 UPDATE `zz_modules` SET `options` = '' WHERE `name` = 'Magazzino';
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `my_impianti` WHERE 1=1 HAVING 2=2 ORDER BY `matricola`' WHERE `name` = 'MyImpianti';
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `or_ordini` INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id` WHERE 1=1 AND `dir` = ''entrata'' AND `data` >= ''|period_start|'' AND `data` <= ''|period_end|'' HAVING 2=2 ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC' WHERE `name` = 'Ordini cliente';
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `or_ordini` INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id` WHERE 1=1 AND `dir` = ''uscita'' AND `data` >= ''|period_start|'' AND `data` <= ''|period_end|'' HAVING 2=2 ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC' WHERE `name` = 'Ordini fornitore';
 UPDATE `zz_modules` SET `options` = 'custom' WHERE `name` = 'Piano dei conti';
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_preventivi` WHERE 1=1 HAVING 2=2 AND ((''|period_start|'' >= `data_bozza` AND ''|period_start|'' <= `data_conclusione`) OR (''|period_end|'' >= `data_bozza` AND ''|period_end|'' <= `data_conclusione`) OR (`data_bozza` >= ''|period_start|'' AND `data_bozza` <= ''|period_end|'') OR (`data_conclusione` >= ''|period_start|'' AND `data_conclusione` <= ''|period_end|'') OR (`data_bozza` >= ''|period_start|'' AND `data_conclusione` = ''0000-00-00'')) ORDER BY `id` DESC' WHERE `name` = 'Preventivi';
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_movimenti` INNER JOIN `co_pianodeiconti3` ON `co_movimenti`.`idconto` = `co_pianodeiconti3`.`id` WHERE 1=1 GROUP BY `idmastrino`, `primanota`, `co_movimenti`.`data` HAVING 2=2 AND `primanota` = 1 AND `co_movimenti`.`data`>=''|period_start|'' AND `co_movimenti`.`data`<=''|period_end|'' ORDER BY `co_movimenti`.`data` DESC' WHERE `name` = 'Prima nota';
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM (`co_scadenziario` INNER JOIN (((`co_documenti` INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`) INNER JOIN `co_pagamenti` ON `co_documenti`.`idpagamento` = `co_pagamenti`.`id`) INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`) ON `co_scadenziario`.`iddocumento` = `co_documenti`.`id`) INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id` WHERE 1=1 HAVING 2=2 AND (ABS(`pagato_reale`) < ABS(`da_pagare`) AND `co_statidocumento`.`descrizione` IN(''Emessa'',''Parzialmente pagato'')) ORDER BY `scadenza` ASC' WHERE `name` = 'Scadenzario';
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `in_statiintervento` WHERE 1=1 HAVING 2=2' WHERE `name` = 'Stati di intervento';
-UPDATE `zz_modules` SET `options` = 'custom' WHERE `name` = 'Tecnici e tariffe';
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `an_tipianagrafiche` WHERE 1=1 HAVING 2=2' WHERE `name` = 'Tipi di anagrafiche';
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `in_tipiintervento` WHERE 1=1 HAVING 2=2' WHERE `name` = 'Tipi di intervento';
 UPDATE `zz_modules` SET `options` = '' WHERE `name` = 'Vendite';
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `in_vociservizio` WHERE 1=1 HAVING 2=2 ORDER BY `categoria`, `descrizione`' WHERE `name` = 'Voci di servizio';
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `an_zone` WHERE 1=1 HAVING 2=2 ORDER BY `id`' WHERE `name` = 'Zone';
-
--- Aggiunta di un reset nel caso di elemento già selezionato nei filtri di Anagrafiche
-UPDATE `zz_widgets` SET `more_link` = 'if($(''#th_Tipologia input'').val()!= ''Cliente''){ $(''#th_Tipologia input'').val(''Cliente'').trigger(''keyup'');} else reset(''Tipologia'');' WHERE `zz_widgets`.`name` = 'Numero di clienti';
-UPDATE `zz_widgets` SET `more_link` = 'if($(''#th_Tipologia input'').val()!= ''Tecnico''){ $(''#th_Tipologia input'').val(''Tecnico'').trigger(''keyup'');} else reset(''Tipologia'');' WHERE `zz_widgets`.`name` = 'Numero di tecnici';
-UPDATE `zz_widgets` SET `more_link` = 'if($(''#th_Tipologia input'').val()!= ''Fornitore''){ $(''#th_Tipologia input'').val(''Fornitore'').trigger(''keyup'');} else reset(''Tipologia'');' WHERE `zz_widgets`.`name` = 'Numero di fornitori';
-UPDATE `zz_widgets` SET `more_link` = 'if($(''#th_Tipologia input'').val()!= ''Agente''){$(''#th_Tipologia input'').val(''Agente'').trigger(''keyup'');} else reset(''Tipologia'');' WHERE `zz_widgets`.`name` = 'Numero di agenti';
-UPDATE `zz_widgets` SET `more_link` = 'if($(''#th_Tipologia input'').val()!= ''Vettore''){$(''#th_Tipologia input'').val(''Vettore'').trigger(''keyup'');} else reset(''Tipologia'');' WHERE `zz_widgets`.`name` = 'Numero di vettori';
-UPDATE `zz_widgets` SET `more_link` = 'reset(''Tipologia'');' WHERE `zz_widgets`.`name` = 'Tutte le anagrafiche';
 
 -- Aggiunta di campi per le sessioni avanzate e il timeout relativo in editor.php
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES ('Attiva notifica di presenza utenti sul record', '1', 'boolean', 1, 'Generali');
@@ -553,22 +519,14 @@ UPDATE `zz_plugins` SET `script` = 'referenti.php' WHERE `zz_plugins`.`name` = '
 UPDATE `zz_plugins` SET `script` = 'sedi.php' WHERE `zz_plugins`.`name` = 'Sedi';
 
 -- Aggiornamento dei vari campi per le Viste
-UPDATE `zz_views` SET `order_by` = 'data' WHERE
-(`name` = 'Data' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita')) OR
-(`name` = 'Data' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto')) OR
-(`name` = 'Data' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota')) OR
-(`name` = 'Data' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto')) OR
-(`name` = 'Data' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'MyImpianti')) OR
-(`name` = 'Data' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente')) OR
-(`name` = 'Data' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'));
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`order_by` = 'data' WHERE `zz_modules`.`name` IN ('Fatture di vendita', 'Fatture di acquisto', 'Prima nota', 'Ddt di acquisto', 'MyImpianti', 'Ordini cliente', 'Ddt di vendita') AND `zz_views`.`name` = 'Data';
 
-UPDATE `zz_views` SET `order_by` = 'scadenza' WHERE (`name` = 'Data scadenza' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'));
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`order_by` = 'scadenza' WHERE `zz_modules`.`name` = 'Scadenzario' AND `zz_views`.`name` = 'Data scadenza';
 
-UPDATE `zz_views` SET `order_by` = 'orario_fine' WHERE (`name` = 'Orario fine' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'));
-UPDATE `zz_views` SET `order_by` = 'orario_inizio' WHERE (`name` = 'Orario inizio' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'));
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`order_by` = 'orario_fine' WHERE `zz_modules`.`name` = 'Interventi' AND `zz_views`.`name` = 'Orario fine';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`order_by` = 'orario_inizio' WHERE `zz_modules`.`name` = 'Interventi' AND `zz_views`.`name` = 'Orario inizio';
 
-UPDATE `zz_views` SET `search_inside` = 'color_title_Rel' WHERE (`name` = 'color_Rel.' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche'));
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`search_inside` = 'color_title_Rel' WHERE `zz_modules`.`name` = 'Anagrafiche' AND `zz_views`.`name` = 'color_Rel.';
 UPDATE `zz_views` SET `search` = '0' WHERE `name` = '_print_';
 
 -- Aggiornamento icona di default per i moduli senza icona specifica
@@ -600,8 +558,7 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie'), 'Nome', 'nome', 2, 1, 0, 1, 0);
 
 -- Fix della ricerca per tipologia su anagrafiche
-UPDATE `zz_views` SET `search_inside` = 'idanagrafica IN(SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica IN (SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione LIKE |search|))' WHERE `zz_views`.`id` = 3;
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`search_inside` = 'idanagrafica IN(SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica IN (SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione LIKE |search|))' WHERE `zz_modules`.`name` = 'Anagrafiche' AND `zz_views`.`name` = 'Tipo';
 -- Aggiunta della descrizione negli Articoli
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `search_inside`, `order_by`, `enabled`, `summable`, `default`) VALUES ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Descrizione', 'descrizione', '1', '1', '0', '', '', '1', '0', '1');
 
@@ -689,11 +646,6 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 -- Query mancanti per viste su Fatture di vendita
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'idanagrafica', 'idanagrafica', 1, 0, 0, 0, 1);
-
--- filtri dei WHERE in base al modulo e all'utente loggato anche per i widget
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM((SELECT SUM(subtotale+iva-sconto) FROM co_righe_documenti WHERE iddocumento=co_documenti.id)+iva_rivalsainps+rivalsainps+bollo-ritenutaacconto), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM co_documenti WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="entrata") AND data >= "|period_start|" AND data <= "|period_end|" AND 1=1' WHERE `zz_widgets`.`name` = 'Fatturato';
-
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM((SELECT SUM(subtotale+iva-sconto) FROM co_righe_documenti WHERE iddocumento=co_documenti.id)+iva_rivalsainps+rivalsainps+bollo-ritenutaacconto), 2), ",", "#"), ".", ","), "#", "."), "€") AS dato FROM co_documenti WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="entrata") AND idstatodocumento = (SELECT id FROM co_statidocumento WHERE descrizione="Emessa") AND data >= "|period_start|" AND data <= "|period_end|" AND 1=1' WHERE `zz_widgets`.`name` = 'Crediti da clienti';
 
 -- Aggiunta del campo per permettere la modifica delle Viste di default
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES ('Modifica Viste di default', '0', 'boolean', 0, 'Generali');
@@ -789,9 +741,6 @@ UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_mod
 UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`directory` = `zz_files`.`module`) WHERE `id_module` = 0 OR `id_module` IS NULL;
 ALTER TABLE `zz_files` DROP `module`;
 
--- Fix del widget 'Tutte le anagrafiche'
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.idanagrafica) AS dato FROM an_anagrafiche WHERE deleted=0' WHERE `name` = 'Tutte le anagrafiche';
-
 -- Fix dei contenuti dei filtri per gruppi
 UPDATE `zz_group_module` SET `clause` = IF(SUBSTRING(TRIM(`clause`), 1, 4) = 'AND ', SUBSTRING(TRIM(`clause`), 4), TRIM(`clause`));
 
@@ -869,38 +818,20 @@ UPDATE `an_anagrafiche` SET `idiva_acquisti` = `idiva_vendite` WHERE `idiva_vend
 -- Rimozione data_sla e ora_sla
 ALTER TABLE `in_interventi` DROP `data_sla`, DROP `ora_sla`;
 
--- Fix dei widget
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_righe_contratti WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN (SELECT id FROM co_staticontratti WHERE pianificabile = 1)) AND idintervento IS NULL' WHERE `zz_widgets`.`name` = 'Interventi da pianificare';
-
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_ordiniservizio WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1)) AND idintervento IS NULL' WHERE `zz_widgets`.`name` = 'Ordini di servizio da impostare';
-
 -- Creazione del campo format per la tabella zz_views
 ALTER TABLE `zz_views` ADD `format` boolean NOT NULL DEFAULT 0 AFTER `slow`;
-UPDATE `zz_views` SET `format` = 1 WHERE
-(`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `name` = 'Importo')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `name` = 'Pagato')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') AND `name` = 'Totale')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = 'Totale')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento') AND `name` = 'Costo orario')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento') AND `name` = 'Costo al km')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento') AND `name` = 'Diritto di chiamata')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento') AND `name` = 'Costo orario tecnico')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento') AND `name` = 'Costo al km tecnico')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento') AND `name` = 'Diritto di chiamata tecnico')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi') AND `name` = 'Data inizio')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi') AND `name` = 'Data fine')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = 'Data')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') AND `name` = 'Data')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota') AND `name` = 'Data')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `name` = 'Data scadenza')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita') AND `name` = 'Data')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto') AND `name` = 'Data')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'MyImpianti') AND `name` = 'Data')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente') AND `name` = 'Data')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti') AND `name` = 'Data')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti') AND `name` = 'Quantità')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota') AND `name` = 'Dare')
-OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota') AND `name` = 'Avere');
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`format` = 1 WHERE 
+(`zz_modules`.`name` = 'Scadenzario' AND `zz_views`.`name` IN('Importo', 'Pagato', 'Data scadenza')) OR 
+(`zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` IN ('Totale', 'Data')) OR
+(`zz_modules`.`name` = 'Fatture di vendita' AND `zz_views`.`name` IN ('Totale', 'Data')) OR
+(`zz_modules`.`name` = 'Tipi di intervento' AND `zz_views`.`name`  IN ('Costo orario', 'Costo al km', 'Diritto di chiamata',  'Costo orario tecnico','Costo al km tecnico', 'Diritto di chiamata tecnico')) OR
+(`zz_modules`.`name` = 'Interventi' AND `zz_views`.`name`  IN ('Data inizio', 'Data fine')) OR
+(`zz_modules`.`name` = 'Prima nota' AND `zz_views`.`name`  IN('Data', 'Dare', 'Avere')) OR 
+(`zz_modules`.`name` = 'Ddt di vendita' AND `zz_views`.`name` = 'Data' ) OR
+(`zz_modules`.`name` = 'Ddt di acquisto' AND `zz_views`.`name` = 'Data' ) OR
+(`zz_modules`.`name` = 'MyImpianti' AND `zz_views`.`name` = 'Data' ) OR
+(`zz_modules`.`name` = 'Ordini cliente' AND `zz_views`.`name` = 'Data' ) OR
+(`zz_modules`.`name` = 'Movimenti' AND `zz_views`.`name` IN ('Data', 'Quantità'));
 
 -- Disabilitazione dei plugin instabili
 UPDATE `zz_plugins` SET `enabled` = 0 WHERE `name` = 'Pianificazione fatturazione' OR `name` = 'Pianificazione ordini di servizio';
@@ -972,10 +903,6 @@ ALTER TABLE `co_scadenziario` CHANGE `data_emissione` `data_emissione` date, CHA
 ALTER TABLE `dt_automezzi_tecnici` CHANGE `data_inizio` `data_inizio` date, CHANGE `data_fine` `data_fine` date;
 ALTER TABLE `my_impianto_componenti` CHANGE `data` `data` date, CHANGE `data_sostituzione` `data_sostituzione` date;
 ALTER TABLE `or_righe_ordini` CHANGE `data_evasione` `data_evasione` date;
-
--- Fix di alcuni problemi con le query dei widget
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM(qta),2), ",", "#"), ".", ","), "#", "."), "unit&agrave;") AS dato FROM mg_articoli WHERE qta>0' WHERE `name` = 'Articoli in magazzino';
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM(prezzo_acquisto*qta),2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM mg_articoli WHERE qta>0' WHERE `name` = 'Valore magazzino';
 
 -- Fix per i serial number
 ALTER TABLE `mg_prodotti` ADD `id_riga_documento` int(11), ADD FOREIGN KEY (`id_riga_documento`) REFERENCES `co_righe_documenti`(`id`) ON DELETE CASCADE, ADD `id_riga_ordine` int(11), ADD FOREIGN KEY (`id_riga_ordine`) REFERENCES `or_righe_ordini`(`id`) ON DELETE CASCADE, ADD `id_riga_ddt` int(11), ADD FOREIGN KEY (`id_riga_ddt`) REFERENCES `dt_righe_ddt`(`id`) ON DELETE CASCADE, ADD `id_riga_intervento` int(11), ADD FOREIGN KEY (`id_riga_intervento`) REFERENCES `mg_articoli_interventi`(`id`) ON DELETE CASCADE, ADD `dir` enum('entrata', 'uscita') DEFAULT 'uscita', CHANGE `idarticolo` `id_articolo` int(11), ADD FOREIGN KEY (`id_articolo`) REFERENCES `mg_articoli`(`id`) ON DELETE SET NULL, CHANGE `serial` `serial` varchar(50), CHANGE `lotto` `lotto` varchar(50), CHANGE `altro` `altro` varchar(50);
@@ -1065,7 +992,7 @@ INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, 
 UPDATE `zz_widgets` SET `location` = 'controller_top' WHERE `zz_widgets`.`id_module` = (SELECT id FROM zz_modules WHERE name = 'Dashboard') OR `zz_widgets`.`id_module` = (SELECT id FROM zz_modules WHERE name = 'Articoli');
 
 -- Disabilito widgets 'Ordini di servizio da impostare' e 'Rate contrattuali'
-UPDATE `zz_widgets` SET `enabled` = '0' WHERE `zz_widgets`.`name` = 'Ordini di servizio da impostare' OR `zz_widgets`.`name` = 'Rate contrattuali';
+UPDATE `zz_widgets` SET `enabled` = '0' WHERE `zz_widgets`.`name` = 'Ordini di servizio da impostare';
 
 -- Aggiunta articolo su contratti
 ALTER TABLE `co_righe2_contratti` ADD `idarticolo` INT NOT NULL AFTER `idcontratto`;

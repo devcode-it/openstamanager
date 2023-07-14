@@ -259,7 +259,7 @@ echo '
         const last = $("#lista-destinatari input").last();
 
         if (last.val()) {
-            const nuovaRiga = aggiungiContenuto("#lista-destinatari", "#template-destinatario", {"-id-": $("#lista-destinatari > div").length});
+            const nuovaRiga = aggiungiContenuto("#lista-destinatari > div:last-of-type", "#template-destinatario", {"-id-": $("#lista-destinatari > div").length});
 
             nuovaRiga.find(".destinatari").each(function(){
                 addAutoComplete(this);

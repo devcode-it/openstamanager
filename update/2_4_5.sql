@@ -51,14 +51,6 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 -- Aumento decimali percentuali delle rate pagamenti a 2
 ALTER TABLE `co_pagamenti` CHANGE `prc` `prc` DECIMAL(5,2) NOT NULL; 
 
--- Ordino gestione documentale per data, nome
-UPDATE `zz_modules` SET `options` = '{ "main_query": [ { "type": "table", "fields": "Categoria, Nome, Data", "query": "SELECT id,(SELECT descrizione FROM zz_documenti_categorie WHERE zz_documenti_categorie.id = idcategoria) AS Categoria, zz_documenti.nome AS Nome, DATE_FORMAT( zz_documenti.`data`, ''%d/%m/%Y'' ) AS `Data` FROM zz_documenti WHERE `data` >= ''|period_start|'' AND `data` <= ''|period_end|'' HAVING 1=1 ORDER BY data, nome"} ]}' WHERE `zz_modules`.`name` = 'Gestione documentale';
-
--- Ordino Ddt anche per created_at (nel caso di stessa data e che il cast del numero esterno non sia efficace)
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id` WHERE 1=1 AND `dir` = ''entrata'' AND `data` >= ''|period_start|'' AND `data` <= ''|period_end|'' HAVING 2=2 ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC,`dt_ddt`.created_at DESC' WHERE `zz_modules`.`name` = 'Ddt di vendita';
-
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id` WHERE 1=1 AND `dir` = ''uscita'' AND `data` >= ''|period_start|'' AND `data` <= ''|period_end|'' HAVING 2=2 ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC, `dt_ddt`.created_at DESC' WHERE `zz_modules`.`id` = 'Ddt di acquisto';
-
 -- Aggiunti pagamenti mancanti Assegno circolare,Contanti presso Tesoreria, Vaglia cambiario, Bollettino bancario,  RID, RID utenze, RID veloce, MAV, Quietanza erario, Giroconto su conti di contabilità speciale, Domiciliazione bancaria, Domiciliazione postale, Bollettino di c/c postale, SEPA Direct Debit, SEPA Direct Debit CORE, SEPA Direct Debit B2B, Trattenuta su somme già riscosse
 INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `codice_modalita_pagamento_fe`) VALUES
 (NULL, 'Assegno circolare', '0', '1', '100', 'MP03'),

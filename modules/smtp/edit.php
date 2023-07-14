@@ -206,7 +206,7 @@ provider.change(function() {
 
     // Impostazione dei dati aggiuntivi da configurare
     config.html("")
-    aggiungiContenuto(config, "#provider-" + data.short);
+    aggiungiContenuto(config, "#provider-" + data.short, {}, true);
 })
 
 $(document).ready(function() {

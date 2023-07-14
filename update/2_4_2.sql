@@ -171,8 +171,6 @@ INSERT INTO `fe_natura` (`codice`, `descrizione`) VALUES
 ALTER TABLE `co_iva` ADD `codice_natura_fe` varchar(4), ADD `deleted_at` timestamp NULL DEFAULT NULL, ADD `codice` int(11), ADD `esigibilita` enum('I', 'D', 'S') NOT NULL DEFAULT 'I', ADD `default` boolean NOT NULL DEFAULT 0, ADD FOREIGN KEY (`codice_natura_fe`) REFERENCES `fe_natura`(`codice`) ON DELETE CASCADE;
 UPDATE `co_iva` SET `deleted_at` = NOW();
 
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_iva` WHERE 1=1 AND deleted_at IS NULL HAVING 2=2' WHERE `name` = 'IVA';
-
 INSERT INTO `co_iva` (`descrizione`, `percentuale`, `indetraibile`, `esente`, `codice_natura_fe`, `codice`, `default`) VALUES
 ("Fuori campo IVA", 0, 0, 1, "N2", 300, 1),
 ("Es.art27DL98/11", 0, 0, 1, "N2", 301, 1),
@@ -426,26 +424,19 @@ ALTER TABLE `co_righe_contratti_materiali` RENAME `co_promemoria_righe`;
 ALTER TABLE `co_righe_contratti_articoli` RENAME `co_promemoria_articoli`;
 ALTER TABLE `co_promemoria_righe` CHANGE `id_riga_contratto` `id_promemoria` int(11) NOT NULL;
 ALTER TABLE `co_promemoria_articoli` CHANGE `id_riga_contratto` `id_promemoria` int(11) NOT NULL;
-UPDATE `zz_widgets` SET `query` = REPLACE(`query`, 'co_contratti_promemoria', 'co_promemoria');
 
 -- Fix nome in zz_files
 ALTER TABLE `zz_files` CHANGE `nome` `name` varchar(255) NOT NULL;
 UPDATE `zz_files` SET `id_module` = NULL WHERE `id_plugin` IS NOT NULL;
 
 -- Adeguamento variabili di filtraggio
-UPDATE `zz_modules` SET `options` = REPLACE(`options`, '|idanagrafica|', '|id_anagrafica|'), `options2` = REPLACE(`options2`, '|idanagrafica|', '|id_anagrafica|');
 UPDATE `zz_plugins` SET `options` = REPLACE(`options`, '|idanagrafica|', '|id_anagrafica|'), `options2` = REPLACE(`options2`, '|idanagrafica|', '|id_anagrafica|');
-UPDATE `zz_widgets` SET `query` = REPLACE(`query`, '|idanagrafica|', '|id_anagrafica|');
 UPDATE `zz_group_module` SET `clause` = REPLACE(`clause`, '|idanagrafica|', '|id_anagrafica|');
 
-UPDATE `zz_modules` SET `options` = REPLACE(`options`, '|idtecnico|', '|id_anagrafica|'), `options2` = REPLACE(`options2`, '|idtecnico|', '|id_anagrafica|');
 UPDATE `zz_plugins` SET `options` = REPLACE(`options`, '|idtecnico|', '|id_anagrafica|'), `options2` = REPLACE(`options2`, '|idtecnico|', '|id_anagrafica|');
-UPDATE `zz_widgets` SET `query` = REPLACE(`query`, '|idtecnico|', '|id_anagrafica|');
 UPDATE `zz_group_module` SET `clause` = REPLACE(`clause`, '|idtecnico|', '|id_anagrafica|');
 
-UPDATE `zz_modules` SET `options` = REPLACE(`options`, '|idagente|', '|id_anagrafica|'), `options2` = REPLACE(`options2`, '|idagente|', '|id_anagrafica|');
 UPDATE `zz_plugins` SET `options` = REPLACE(`options`, '|idagente|', '|id_anagrafica|'), `options2` = REPLACE(`options2`, '|idagente|', '|id_anagrafica|');
-UPDATE `zz_widgets` SET `query` = REPLACE(`query`, '|idagente|', '|id_anagrafica|');
 UPDATE `zz_group_module` SET `clause` = REPLACE(`clause`, '|idagente|', '|id_anagrafica|');
 
 -- Adeguamento variabili di filtraggio per i plugin Sedi e Referenti in Anagrafiche
@@ -519,7 +510,6 @@ INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Fatture pro-forma', '1=1', 'WHR', 'PRO-###', '', 0, 0);
 
 -- Fix campi di ricerca
-UPDATE `zz_modules` SET `options` = "SELECT |select| FROM `zz_segments` WHERE 1=1 HAVING 2=2 ORDER BY name, id_module" WHERE `name` = 'Segmenti';
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `visible`, `summable`, `default`) VALUES
 (NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Segmenti'), 'id', 'id', 0, 0, 0, 0, 0, 0, 1),
 (NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Segmenti'), 'Nome', 'name', 1, 1, 0, 0, 1, 0, 1),
@@ -528,13 +518,11 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 (NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Segmenti'), 'Note', 'note', 4, 1, 0, 0, 1, 0, 1),
 (NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Segmenti'), 'Predefinito', 'IF(predefined=1, ''Sì'', ''No'')', 5, 1, 0, 0, 1, 0, 1);
 
-UPDATE `zz_views` SET `search` = 1 WHERE `name` = 'Nome' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche');
-UPDATE `zz_views` SET `search` = 1 WHERE `name` = 'Filiale' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche');
-UPDATE `zz_views` SET `search` = 1 WHERE `name` = 'IBAN' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche');
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`search` = 1 WHERE `zz_modules`.`name` = 'Banche' AND `zz_views`.`name` = 'Nome';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`search` = 1 WHERE `zz_modules`.`name` = 'Banche' AND `zz_views`.`name` = 'Filiale';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`search` = 1 WHERE `zz_modules`.`name` = 'Banche' AND `zz_views`.`name` = 'IBAN';
 -- Fix Date emissione nello Scadenzario
-UPDATE `zz_views` SET `query` = 'data_emissione', `format` = '1' WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND name = 'Data emissione';
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'data_emissione', `zz_views`.`format` = 1 WHERE `zz_modules`.`name` = 'Scadenzario' AND `zz_views`.`name` = 'Data emissione';
 -- Normalizzazione default e predefined
 ALTER TABLE `zz_views` CHANGE `default` `default` boolean NOT NULL DEFAULT 0;
 ALTER TABLE `zz_prints` CHANGE `default` `default` boolean NOT NULL DEFAULT 0;
@@ -544,17 +532,11 @@ ALTER TABLE `zz_modules` CHANGE `default` `default` boolean NOT NULL DEFAULT 0;
 
 ALTER TABLE `zz_segments` CHANGE `predefined` `predefined` boolean NOT NULL DEFAULT 0;
 
--- Fix colore per fatture senza numero esterno
-UPDATE `zz_views` SET `query` = 'IF((SELECT COUNT(t.numero_esterno) FROM co_documenti AS t WHERE t.numero_esterno = co_documenti.numero_esterno AND t.numero_esterno != '''' AND t.id_segment = co_documenti.id_segment AND idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir = ''entrata'') AND t.data >= ''|period_start|'' AND t.data <= ''|period_end|'') > 1, ''red'', '''')' WHERE  `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = '_bg_';
-
 -- Campi per la gestione revisioni
 ALTER TABLE `co_preventivi`  ADD `master_revision` INT NOT NULL  AFTER `tipo_sconto_globale`,  ADD `default_revision` TINYINT(1) NOT NULL  AFTER `master_revision`;
 
 -- Plugin revisioni
 INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES (NULL, 'Revisioni', 'Revisioni', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), 'tab', '', 1, 0, 0, '', '', NULL, 'custom', 'revisioni', '');
-
--- Modifica modulo preventivi per revisioni
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_preventivi` WHERE 1=1 AND default_revision=1 HAVING 2=2 AND ((\'|period_start|\' >= `data_bozza` AND \'|period_start|\' <= `data_conclusione`) OR (\'|period_end|\' >= `data_bozza` AND \'|period_end|\' <= `data_conclusione`) OR (`data_bozza` >= \'|period_start|\' AND `data_bozza` <= \'|period_end|\') OR (`data_conclusione` >= \'|period_start|\' AND `data_conclusione` <= \'|period_end|\') OR (`data_bozza` >= \'|period_start|\' AND `data_conclusione` = \'0000-00-00\')) ORDER BY `id` DESC' WHERE `zz_modules`.`name` = 'Preventivi';
 
 -- Mi assicuro che non ci siano righe del preventivo collegate a preventivi non più esistenti
 DELETE FROM co_righe_preventivi  WHERE  idpreventivo NOT IN (SELECT id FROM co_preventivi);

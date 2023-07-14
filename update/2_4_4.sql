@@ -17,9 +17,6 @@ ALTER TABLE `co_documenti` ADD `codice_stato_fe` varchar(5), ADD FOREIGN KEY (`c
 UPDATE `co_documenti` SET `codice_stato_fe` = 'GEN' WHERE `xml_generated_at` IS NOT NULL;
 ALTER TABLE `co_documenti` DROP `xml_generated_at`;
 
-UPDATE `zz_views` SET `query` = '(SELECT `icon` FROM `fe_stati_documento` WHERE `codice` = `codice_stato_fe`)' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = 'icon_FE';
-UPDATE `zz_views` SET `query` = '(SELECT `descrizione` FROM `fe_stati_documento` WHERE `codice` = `codice_stato_fe`)' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = 'icon_title_FE';
-
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES
 (NULL, 'OSMCloud Services API Token', '', 'string', 1, 'Fatturazione Elettronica', 11);
 

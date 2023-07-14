@@ -3,8 +3,7 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE name='Fatture di acquisto'), 'N. Prot.', 'co_documenti.numero', 1, 1, 0, 0, '', '', 0, 0, 0);
 
 -- Formattazione colonna data modulo Ordini fornitore
-UPDATE `zz_views` SET `format`=1 WHERE `zz_views`.`name`='Data' AND `zz_views`.`id_module`=(SELECT `id` FROM `zz_modules` WHERE name='Ordini fornitore');
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`format` = 1 WHERE `zz_modules`.`name` = 'Ordini fornitore' AND `zz_views`.`name` = 'Data';
 -- Colonna stato per newsletter
 INSERT INTO `zz_views` ( `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE name='Newsletter'), 'Stato', 'IF(em_newsletters.state = ''DEV'', ''Bozza'', IF(em_newsletters.state = ''WAIT'', ''Invio in corso'', ''Completata''))', 4, 1, 0, 0, '', '', 1, 0, 0);
@@ -14,8 +13,7 @@ INSERT INTO `zz_views` ( `id_module`, `name`, `query`, `order`, `search`, `slow`
 ((SELECT `id` FROM `zz_modules` WHERE name='Newsletter'), 'Destinatari', '(SELECT COUNT(*) FROM `em_newsletter_anagrafica` WHERE `em_newsletter_anagrafica`.`id_newsletter` = `em_newsletters`.`id`)', 5, 1, 0, 0, '', '', 1, 0, 0);
 
 -- Aggiorno colonna completato per newsletter
-UPDATE `zz_views` SET `query` = 'IF(completed_at IS NULL, ''No'', CONCAT(''Sì '', ''('', DATE_FORMAT(completed_at, ''%d/%m/%Y %H:%i:%s'' ), '')''))', `order` = 6 WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE name='Newsletter') AND `name` = 'Completato';
-
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`order` = 6 WHERE `zz_modules`.`name` = 'Newsletter' AND `zz_views`.`name` = 'Completato';
 -- Visualizza informazioni aggiuntive sul calendario
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Visualizza informazioni aggiuntive sul calendario', '0', 'boolean', '1', 'Dashboard', '1', 'Visualizza sul calendario il box Tutto il giorno dove possono essere presenti informazioni aggiuntve');
 
@@ -70,58 +68,6 @@ INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `ord
 INSERT INTO `zz_views` ( `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE name='Ordini cliente'), 'Rif. fattura', 'fattura.info', 11, 1, 0, 0, '', '', 1, 0, 0),
 ((SELECT `id` FROM `zz_modules` WHERE name='Ordini fornitore'), 'Rif. fattura', 'fattura.info', 8, 1, 0, 0, '', '', 1, 0, 0);
-
-UPDATE `zz_modules` SET `options` = 'SELECT |select|
-FROM `or_ordini`
-     LEFT JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-     LEFT JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
-     LEFT JOIN (
-         SELECT `idordine`,
-                SUM(`qta` - `qta_evasa`) AS `qta_da_evadere`,
-                SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
-                SUM(`subtotale` - `sconto` + `iva`) AS `totale`
-         FROM `or_righe_ordini`
-         GROUP BY `idordine`
-     ) AS righe ON `or_ordini`.`id` = `righe`.`idordine`
-	LEFT JOIN (
-		SELECT `idordine`,
-        MIN(`data_evasione`) AS `data_evasione`
-        FROM `or_righe_ordini`
-        WHERE (`qta` - `qta_evasa`)>0
-        GROUP BY `idordine`
-    ) AS `righe_da_evadere` ON `righe`.`idordine`=`righe_da_evadere`.`idordine`
-    LEFT JOIN (
-    SELECT GROUP_CONCAT(DISTINCT co_documenti.numero_esterno SEPARATOR \", \") AS info, co_righe_documenti.idordine FROM    co_documenti INNER JOIN co_righe_documenti ON co_documenti.id = co_righe_documenti.iddocumento GROUP BY idordine
-) AS fattura ON fattura.idordine = or_ordini.id
-WHERE 1=1 AND `dir` = ''entrata'' |date_period(`data`)|
-HAVING 2=2
-ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC' WHERE `zz_modules`.`name` = 'Ordini cliente';
-
-UPDATE `zz_modules` SET `options` = 'SELECT |select|
-FROM `or_ordini`
-     LEFT JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-     LEFT JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
-     LEFT JOIN (
-         SELECT `idordine`,
-                SUM(`qta` - `qta_evasa`) AS `qta_da_evadere`,
-                SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
-                SUM(`subtotale` - `sconto` + `iva`) AS `totale`
-         FROM `or_righe_ordini`
-         GROUP BY `idordine`
-     ) AS righe ON `or_ordini`.`id` = `righe`.`idordine`
-	LEFT JOIN (
-		SELECT `idordine`,
-        MIN(`data_evasione`) AS `data_evasione`
-        FROM `or_righe_ordini`
-        WHERE (`qta` - `qta_evasa`)>0
-        GROUP BY `idordine`
-    ) AS `righe_da_evadere` ON `righe`.`idordine`=`righe_da_evadere`.`idordine`
-    LEFT JOIN (
-    SELECT GROUP_CONCAT(DISTINCT co_documenti.numero_esterno SEPARATOR \", \") AS info, co_righe_documenti.idordine FROM    co_documenti INNER JOIN co_righe_documenti ON co_documenti.id = co_righe_documenti.iddocumento GROUP BY idordine
-) AS fattura ON fattura.idordine = or_ordini.id
-WHERE 1=1 AND `dir` = ''uscita'' |date_period(`data`)|
-HAVING 2=2
-ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC' WHERE `zz_modules`.`name` = 'Ordini fornitore';
 
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES
 (NULL, 'app-v1', 'retrieve', 'sedi-azienda', 'API\\App\\v1\\SediAzienda', '1'),

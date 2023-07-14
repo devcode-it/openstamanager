@@ -12,7 +12,7 @@ import {
 } from 'mithril-utilities';
 import {KebabCasedProperties} from 'type-fest';
 
-export interface FilledDateTextFieldAttributes extends Attributes, Omit<KebabCasedProperties<FilledTextField>, 'style'> {}
+export interface FilledDateTextFieldAttributes extends Attributes, Partial<Omit<KebabCasedProperties<FilledTextField>, 'style'>> {}
 
 export default class FilledDateTextField<A extends FilledDateTextFieldAttributes> extends Component<A> {
   element!: FilledTextField;

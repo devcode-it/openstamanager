@@ -39,7 +39,10 @@ export default abstract class Model<A extends ModelAttributes, R extends ModelRe
   /**
    * Returns all the instances of the model. (Alias of {@link Model.get}).
    */
-  static all<M extends Model<any, any>>(): Promise<PluralResponse<M>> {
+  static all<M extends typeof Model<any, any> & {
+    new (): M;
+    // @ts-ignore
+  }>(this: M): Promise<PluralResponse<M>> {
     // @ts-expect-error
     return this.get();
   }

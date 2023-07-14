@@ -70,6 +70,15 @@ export default abstract class Model<A extends ModelAttributes, R extends ModelRe
     return super.getAttributes() as ModelAttributes;
   }
 
+  protected getAttributeAsDate(attributeName: string) {
+    // @ts-ignore
+    let attribute: string | Date = (this.attributes as Map<string, string | null>).get(attributeName);
+    if (attribute && dayjs(attribute).isValid()) {
+      attribute = super.getAttributeAsDate(attributeName) as Date;
+    }
+    return attribute;
+  }
+
   setAttribute<AN extends keyof A = keyof A>(attributeName: AN, value: ValueOf<A, AN>) {
     const date = dayjs(value as string | Date | undefined);
     // @ts-expect-error

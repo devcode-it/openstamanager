@@ -826,9 +826,18 @@ switch (post('op')) {
     case 'add_serial':
         $articolo = Articolo::find(post('idriga'));
 
+        // Controllo se la fattura è già stata inviata allo SDI
+        $stato_fe= $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = '.$fattura->id);
+
+        if ($dir == 'entrata' && $stato_fe['codice_stato_fe'] == 'WAIT') {
+            flash()->warning(tr('La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile effettuare modifiche!', [
+                '_NUM_' => $fattura->numero_esterno,
+            ]));
+        } else {
         $serials = (array) post('serial');
         $articolo->serials = $serials;
 
+        }
         break;
 
     case 'update_position':
@@ -944,44 +953,53 @@ switch (post('op')) {
         $id_segment = post('id_segment');
         $data = post('data');
 
-        $anagrafica = $fattura->anagrafica;
-        $tipo = Tipo::where('descrizione', 'Nota di credito')->where('dir', 'entrata')->first();
+        // Controllo se la fattura è già stata inviata allo SDI
+        $stato_fe= $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = '.$fattura->id);
 
-        $nota = Fattura::build($anagrafica, $tipo, $data, $id_segment);
-        $nota->ref_documento = $fattura->id;
-        $nota->idconto = $fattura->idconto;
-        $nota->idpagamento = $fattura->idpagamento;
-        $nota->id_banca_azienda = $fattura->id_banca_azienda;
-        $nota->id_banca_controparte = $fattura->id_banca_controparte;
-        $nota->idsede_partenza = $fattura->idsede_partenza;
-        $nota->idsede_destinazione = $fattura->idsede_destinazione;
-        $nota->split_payment = $fattura->split_payment;
-        $nota->save();
+        if ($dir == 'entrata' && $stato_fe['codice_stato_fe'] == 'WAIT') {
+            flash()->warning(tr('La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile effettuare modifiche!', [
+                '_NUM_' => $fattura->numero_esterno,
+            ]));
+        } else {
+            $anagrafica = $fattura->anagrafica;
+            $tipo = Tipo::where('descrizione', 'Nota di credito')->where('dir', 'entrata')->first();
 
-        $righe = $fattura->getRighe();
-        foreach ($righe as $riga) {
-            if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
-                $qta = post('qta_da_evadere')[$riga->id];
+            $nota = Fattura::build($anagrafica, $tipo, $data, $id_segment);
+            $nota->ref_documento = $fattura->id;
+            $nota->idconto = $fattura->idconto;
+            $nota->idpagamento = $fattura->idpagamento;
+            $nota->id_banca_azienda = $fattura->id_banca_azienda;
+            $nota->id_banca_controparte = $fattura->id_banca_controparte;
+            $nota->idsede_partenza = $fattura->idsede_partenza;
+            $nota->idsede_destinazione = $fattura->idsede_destinazione;
+            $nota->split_payment = $fattura->split_payment;
+            $nota->save();
 
-                $copia = $riga->copiaIn($nota, $qta);
-                $copia->ref_riga_documento = $riga->id;
+            $righe = $fattura->getRighe();
+            foreach ($righe as $riga) {
+                if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
+                    $qta = post('qta_da_evadere')[$riga->id];
 
-                // Aggiornamento seriali dalla riga della fattura
-                if ($copia->isArticolo()) {
-                    $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
-                    $copia->serials = $serials;
+                    $copia = $riga->copiaIn($nota, $qta);
+                    $copia->ref_riga_documento = $riga->id;
+
+                    // Aggiornamento seriali dalla riga della fattura
+                    if ($copia->isArticolo()) {
+                        $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
+                        $copia->serials = $serials;
+                    }
+
+                    $copia->save();
                 }
-
-                $copia->save();
             }
+
+            $stato = Stato::find(post('id_stato'));
+            $nota->stato()->associate($stato);
+            $nota->save();
+
+            $id_record = $nota->id;
+            aggiorna_sedi_movimenti('documenti', $id_record);
         }
-
-        $stato = Stato::find(post('id_stato'));
-        $nota->stato()->associate($stato);
-        $nota->save();
-
-        $id_record = $nota->id;
-        aggiorna_sedi_movimenti('documenti', $id_record);
 
         break;
 

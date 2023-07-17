@@ -102,6 +102,11 @@ $settings = [
     //    'type' => 'value',
     //    'description' => true,
     //],
+
+    'allow_url_fopen' => [
+        'type' => 'value',
+        'description' => 1,
+    ],
     
     'upload_max_filesize' => [
         'type' => 'value',
@@ -315,6 +320,65 @@ foreach ($files_to_check as $name => $description) {
 }
 
 
+// Configurazioni OSM
+$config_to_check = [
+    'lang' => [
+        'type' => 'value',
+        'operator' => 'strcmp',
+        'value_to_check' => '|lang|',
+        'suggested_value' => 'it_IT',
+        'section' => '',
+    ],
+    'timestamp' => [
+        'type' => 'value',
+        'operator' => 'strcmp',
+        'value_to_check' => '|timestamp|',
+        'suggested_value' => 'd/m/Y H:i',
+        'section' => 'formatter',
+    ],
+    'date' => [
+        'type' => 'value',
+        'operator' => 'strcmp',
+        'value_to_check' => '|date|',
+        'suggested_value' => 'd/m/Y',
+        'section' => 'formatter',
+    ],
+    'time' => [
+        'type' => 'value',
+        'operator' => 'strcmp',
+        'value_to_check' => '|time|',
+        'suggested_value' => 'H:i',
+        'section' => 'formatter',
+    ]
+
+];
+
+$config = [];
+
+foreach ($config_to_check as $name => $values) {       
+
+    $type = $values['type'];
+
+
+    if ($type == 'value') {
+        $description = tr('Valore consigliato: _SUGGESTED_ (Valore attuale: _ACTUAL_)', [
+            '_SUGGESTED_' => $values['suggested_value'],
+            '_ACTUAL_' => (!empty($values['section'])? ${$values['section']}[$name] : $$name),
+        ]);
+    }
+
+    $status = ($values['operator']((!empty($values['section']) ? ${$values['section']}[$name] : $$name), $values['value_to_check']) ? 1 : 0);
+    
+    $config[] = [
+        'name' => $name,
+        'description' => $description,
+        'status' => $status,
+        'type' => tr('Configurazione'),
+    ];
+
+      
+}
+
 
 $requirements = [
     tr('Apache') => $apache,
@@ -325,6 +389,7 @@ $requirements = [
     tr('MySQL') => $mysql,
     tr('Percorsi di servizio') => $directories,
     tr('File di servizio') => $files,
+    tr('Configurazioni') => $config,
 ];
 
 if (!$database->isInstalled() || empty($mysql)){

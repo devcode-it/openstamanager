@@ -34,14 +34,26 @@ use Modules\Iva\Aliquota;
 use Util\XML;
 
 $module = Modules::get($id_module);
-
+$op = post('op');
 if ($module['name'] == 'Fatture di vendita') {
     $dir = 'entrata';
 } else {
     $dir = 'uscita';
 }
 
-switch (post('op')) {
+// Controllo se la fattura è già stata inviata allo SDI
+$stato_fe= $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = '.$fattura->id);
+
+$ops = ['update', 'add_intervento', 'manage_documento_fe', 'manage_riga_fe', 'manage_articolo', 'manage_sconto', 'manage_riga', 'manage_descrizione', 'unlink_intervento', 'delete_riga', 'copy_riga', 'add_serial', 'add_articolo', 'edit-price'];
+
+if ($dir == 'entrata' && $stato_fe['codice_stato_fe'] == 'WAIT' && in_array($op, $ops)) {
+    flash()->warning(tr('La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile effettuare modifiche!', [
+        '_NUM_' => $fattura->numero_esterno,
+    ]));
+    $op = null;
+}
+
+switch ($op) {
     case 'add':
         $idanagrafica = post('idanagrafica');
         $data = post('data');
@@ -71,176 +83,167 @@ switch (post('op')) {
         $tipo = Tipo::find(post('idtipodocumento'));
         $fattura->tipo()->associate($tipo);
 
-        // Controllo se la fattura è già stata inviata allo SDI
-        $stato_fe= $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = '.$fattura->id);
+        $data_fattura_precedente = $dbo->fetchOne('
+            SELECT
+                MAX(DATA) AS datamax
+            FROM
+                co_documenti
+            INNER JOIN co_statidocumento ON co_statidocumento.id = co_documenti.idstatodocumento
+            INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id
+            INNER JOIN zz_segments ON zz_segments.id = co_documenti.id_segment
+            WHERE
+                co_statidocumento.descrizione = "Emessa" AND co_tipidocumento.dir="entrata" AND co_documenti.id_segment='.$fattura->id_segment);
 
-        if ($dir == 'entrata' && $stato_fe['codice_stato_fe'] == 'WAIT') {
-            flash()->warning(tr('La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile effettuare modifiche!', [
-                '_NUM_' => $fattura->numero_esterno,
-            ]));
+        if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && ($stato->descrizione == 'Emessa') && (Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax']))) && (!empty($data_fattura_precedente['datamax']))){
+            $fattura->data = $data_fattura_precedente['datamax'];
+            $fattura->data_competenza = $data_fattura_precedente['datamax'];
+            flash()->info(tr('Data di emissione aggiornata, come da impostazione!'));
         } else {
-            $data_fattura_precedente = $dbo->fetchOne('
-                SELECT
-                    MAX(DATA) AS datamax
-                FROM
-                    co_documenti
-                INNER JOIN co_statidocumento ON co_statidocumento.id = co_documenti.idstatodocumento
-                INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id
-                INNER JOIN zz_segments ON zz_segments.id = co_documenti.id_segment
-                WHERE
-                    co_statidocumento.descrizione = "Emessa" AND co_tipidocumento.dir="entrata" AND co_documenti.id_segment='.$fattura->id_segment);
+            $fattura->data = post('data');
+            $fattura->data_competenza = post('data_competenza');
+        }
 
-            if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && ($stato->descrizione == 'Emessa') && (Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax']))) && (!empty($data_fattura_precedente['datamax']))){
-                $fattura->data = $data_fattura_precedente['datamax'];
-                $fattura->data_competenza = $data_fattura_precedente['datamax'];
-                flash()->info(tr('Data di emissione aggiornata, come da impostazione!'));
-            } else {
-                $fattura->data = post('data');
-                $fattura->data_competenza = post('data_competenza');
-            }
+        if ($dir == 'entrata') {
+            $fattura->data_registrazione = post('data');
+        } else {
+            $fattura->data_registrazione = post('data_registrazione');
+        }
 
-            if ($dir == 'entrata') {
-                $fattura->data_registrazione = post('data');
-            } else {
-                $fattura->data_registrazione = post('data_registrazione');
-            }
+        $fattura->numero_esterno = post('numero_esterno');
+        $fattura->note = post('note');
+        $fattura->note_aggiuntive = post('note_aggiuntive');
 
+        $fattura->idanagrafica = post('idanagrafica');
+        $fattura->idagente = post('idagente');
+        $fattura->idreferente = post('idreferente');
+        $fattura->idpagamento = post('idpagamento');
+        $fattura->id_banca_azienda = post('id_banca_azienda');
+        $fattura->id_banca_controparte = post('id_banca_controparte');
+        $fattura->idcausalet = post('idcausalet');
+        $fattura->idspedizione = post('idspedizione');
+        $fattura->idporto = post('idporto');
+        $fattura->idaspettobeni = post('idaspettobeni');
+        $fattura->idvettore = post('idvettore');
+        $fattura->idsede_partenza = post('idsede_partenza');
+        $fattura->idsede_destinazione = post('idsede_destinazione');
+        $fattura->idconto = post('idconto');
+        $fattura->split_payment = post('split_payment') ?: 0;
+        $fattura->is_fattura_conto_terzi = post('is_fattura_conto_terzi') ?: 0;
+        $fattura->n_colli = post('n_colli');
+        $fattura->tipo_resa = post('tipo_resa');
+
+        $fattura->peso = post('peso');
+        $fattura->volume = post('volume');
+        $fattura->peso_manuale = post('peso_manuale');
+        $fattura->volume_manuale = post('volume_manuale');
+
+        $fattura->rivalsainps = 0;
+        $fattura->ritenutaacconto = 0;
+        $fattura->iva_rivalsainps = 0;
+        $fattura->id_ritenuta_contributi = post('id_ritenuta_contributi') ?: null;
+
+        $fattura->codice_stato_fe = post('codice_stato_fe') ?: null;
+
+        // Informazioni per le fatture di acquisto
+        if ($dir == 'uscita') {
+            $fattura->numero = post('numero');
             $fattura->numero_esterno = post('numero_esterno');
-            $fattura->note = post('note');
-            $fattura->note_aggiuntive = post('note_aggiuntive');
+            $fattura->idrivalsainps = post('id_rivalsa_inps');
+            $fattura->idritenutaacconto = post('id_ritenuta_acconto');
+        }
 
-            $fattura->idanagrafica = post('idanagrafica');
-            $fattura->idagente = post('idagente');
-            $fattura->idreferente = post('idreferente');
-            $fattura->idpagamento = post('idpagamento');
-            $fattura->id_banca_azienda = post('id_banca_azienda');
-            $fattura->id_banca_controparte = post('id_banca_controparte');
-            $fattura->idcausalet = post('idcausalet');
-            $fattura->idspedizione = post('idspedizione');
-            $fattura->idporto = post('idporto');
-            $fattura->idaspettobeni = post('idaspettobeni');
-            $fattura->idvettore = post('idvettore');
-            $fattura->idsede_partenza = post('idsede_partenza');
-            $fattura->idsede_destinazione = post('idsede_destinazione');
-            $fattura->idconto = post('idconto');
-            $fattura->split_payment = post('split_payment') ?: 0;
-            $fattura->is_fattura_conto_terzi = post('is_fattura_conto_terzi') ?: 0;
-            $fattura->n_colli = post('n_colli');
-            $fattura->tipo_resa = post('tipo_resa');
-
-            $fattura->peso = post('peso');
-            $fattura->volume = post('volume');
-            $fattura->peso_manuale = post('peso_manuale');
-            $fattura->volume_manuale = post('volume_manuale');
-
-            $fattura->rivalsainps = 0;
-            $fattura->ritenutaacconto = 0;
-            $fattura->iva_rivalsainps = 0;
-            $fattura->id_ritenuta_contributi = post('id_ritenuta_contributi') ?: null;
-
-            $fattura->codice_stato_fe = post('codice_stato_fe') ?: null;
-
-            // Informazioni per le fatture di acquisto
-            if ($dir == 'uscita') {
-                $fattura->numero = post('numero');
-                $fattura->numero_esterno = post('numero_esterno');
-                $fattura->idrivalsainps = post('id_rivalsa_inps');
-                $fattura->idritenutaacconto = post('id_ritenuta_acconto');
+        // Operazioni sul bollo
+        if ($dir == 'entrata') {
+            $fattura->addebita_bollo = post('addebita_bollo');
+            $bollo_automatico = post('bollo_automatico');
+            if (empty($bollo_automatico)) {
+                $fattura->bollo = post('bollo');
+            } else {
+                $fattura->bollo = null;
             }
+        }
 
-            // Operazioni sul bollo
-            if ($dir == 'entrata') {
-                $fattura->addebita_bollo = post('addebita_bollo');
-                $bollo_automatico = post('bollo_automatico');
-                if (empty($bollo_automatico)) {
-                    $fattura->bollo = post('bollo');
-                } else {
-                    $fattura->bollo = null;
-                }
-            }
+        // Operazioni sulla dichiarazione d'intento
+        $dichiarazione_precedente = $fattura->dichiarazione;
+        $fattura->id_dichiarazione_intento = post('id_dichiarazione_intento') ?: null;
 
-            // Operazioni sulla dichiarazione d'intento
-            $dichiarazione_precedente = $fattura->dichiarazione;
-            $fattura->id_dichiarazione_intento = post('id_dichiarazione_intento') ?: null;
+        // Flag pagamento ritenuta
+        $fattura->is_ritenuta_pagata = post('is_ritenuta_pagata') ?: 0;
 
-            // Flag pagamento ritenuta
-            $fattura->is_ritenuta_pagata = post('is_ritenuta_pagata') ?: 0;
+        $fattura->setScontoFinale(post('sconto_finale'), post('tipo_sconto_finale'));
+        $results = $fattura->save();
+        $message = '';
 
-            $fattura->setScontoFinale(post('sconto_finale'), post('tipo_sconto_finale'));
-            $results = $fattura->save();
-            $message = '';
+        foreach ($results as $numero => $result) {
+            foreach ($result as $title => $links) {
+                foreach ($links as $link => $errors) {
+                    if (empty($title)) {
+                        flash()->warning(tr('La fattura elettronica num. _NUM_ potrebbe avere delle irregolarità!', [
+                            '_NUM_' => $numero,
+                        ]).' '.tr('Controllare i seguenti campi: _LIST_', [
+                                '_LIST_' => implode(', ', $errors),
+                            ]).'.');
+                    } else {
+                        $message .= '
+                            <p><b>'.$title.' '.$link.'</b></p>
+                            <ul>';
 
-            foreach ($results as $numero => $result) {
-                foreach ($result as $title => $links) {
-                    foreach ($links as $link => $errors) {
-                        if (empty($title)) {
-                            flash()->warning(tr('La fattura elettronica num. _NUM_ potrebbe avere delle irregolarità!', [
-                                '_NUM_' => $numero,
-                            ]).' '.tr('Controllare i seguenti campi: _LIST_', [
-                                    '_LIST_' => implode(', ', $errors),
-                                ]).'.');
-                        } else {
-                            $message .= '
-                                <p><b>'.$title.' '.$link.'</b></p>
-                                <ul>';
-
-                            foreach ($errors as $error) {
-                                if (!empty($error)) {
-                                    $message .= '
-                                        <li>'.$error.'</li>';
-                                }
+                        foreach ($errors as $error) {
+                            if (!empty($error)) {
+                                $message .= '
+                                    <li>'.$error.'</li>';
                             }
-
-                            $message .= '
-                                </ul>';
                         }
+
+                        $message .= '
+                            </ul>';
                     }
                 }
             }
-
-            if ($message) {
-                // Messaggi informativi sulle problematiche
-                $message = tr('La fattura elettronica numero _NUM_ non è stata generata a causa di alcune informazioni mancanti', [
-                    '_NUM_' => $numero,
-                ]).':'.$message;
-
-                flash()->warning($message);
-            }
-
-            aggiorna_sedi_movimenti('documenti', $id_record);
-
-            // Controllo sulla presenza di fattura di acquisto con lo stesso numero secondario nello stesso periodo
-            $direzione = $fattura->direzione;
-            if ($direzione == 'uscita') {
-                $count = Fattura::where('numero_esterno', $fattura->numero_esterno)
-                    ->where('id', '!=', $id_record)
-                    ->where('idanagrafica', '=', $fattura->anagrafica->id)
-                    ->where('data', '>=', $_SESSION['period_start'])
-                    ->where('data', '<=', $_SESSION['period_end'])
-                    ->whereHas('tipo', function ($query) use ($direzione) {
-                        $query->where('dir', '=', $direzione);
-                    })->count();
-                if (!empty($count)) {
-                    flash()->warning(tr('Esiste già una fattura con lo stesso numero secondario e la stessa anagrafica collegata!'));
-                }
-            }
-
-            // Controllo sulla presenza di fattura di vendita con lo stesso numero nello stesso periodo
-            if ($direzione == 'entrata') {
-                $count = Fattura::where('numero_esterno', $fattura->numero_esterno)
-                    ->where('id', '!=', $id_record)
-                    ->where('data', '>=', $_SESSION['period_start'])
-                    ->where('data', '<=', $_SESSION['period_end'])
-                    ->where('numero_esterno', '!=', NULL)
-                    ->whereHas('tipo', function ($query) use ($direzione) {
-                        $query->where('dir', '=', $direzione);
-                    })->count();
-                if (!empty($count)) {
-                    flash()->warning(tr('Esiste già una fattura con lo stesso numero!'));
-                }
-            }
-            flash()->info(tr('Fattura modificata correttamente!'));
         }
+
+        if ($message) {
+            // Messaggi informativi sulle problematiche
+            $message = tr('La fattura elettronica numero _NUM_ non è stata generata a causa di alcune informazioni mancanti', [
+                '_NUM_' => $numero,
+            ]).':'.$message;
+
+            flash()->warning($message);
+        }
+
+        aggiorna_sedi_movimenti('documenti', $id_record);
+
+        // Controllo sulla presenza di fattura di acquisto con lo stesso numero secondario nello stesso periodo
+        $direzione = $fattura->direzione;
+        if ($direzione == 'uscita') {
+            $count = Fattura::where('numero_esterno', $fattura->numero_esterno)
+                ->where('id', '!=', $id_record)
+                ->where('idanagrafica', '=', $fattura->anagrafica->id)
+                ->where('data', '>=', $_SESSION['period_start'])
+                ->where('data', '<=', $_SESSION['period_end'])
+                ->whereHas('tipo', function ($query) use ($direzione) {
+                    $query->where('dir', '=', $direzione);
+                })->count();
+            if (!empty($count)) {
+                flash()->warning(tr('Esiste già una fattura con lo stesso numero secondario e la stessa anagrafica collegata!'));
+            }
+        }
+
+        // Controllo sulla presenza di fattura di vendita con lo stesso numero nello stesso periodo
+        if ($direzione == 'entrata') {
+            $count = Fattura::where('numero_esterno', $fattura->numero_esterno)
+                ->where('id', '!=', $id_record)
+                ->where('data', '>=', $_SESSION['period_start'])
+                ->where('data', '<=', $_SESSION['period_end'])
+                ->where('numero_esterno', '!=', NULL)
+                ->whereHas('tipo', function ($query) use ($direzione) {
+                    $query->where('dir', '=', $direzione);
+                })->count();
+            if (!empty($count)) {
+                flash()->warning(tr('Esiste già una fattura con lo stesso numero!'));
+            }
+        }
+        flash()->info(tr('Fattura modificata correttamente!'));
 
         break;
 
@@ -405,44 +408,58 @@ switch (post('op')) {
     case 'add_intervento':
         $id_intervento = post('idintervento');
 
-        // Controllo se la fattura è già stata inviata allo SDI
-        $stato_fe= $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = '.$fattura->id);
-
-        if ($dir == 'entrata' && $stato_fe['codice_stato_fe'] == 'WAIT') {
-            flash()->warning(tr('La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile effettuare modifiche!', [
-                '_NUM_' => $fattura->numero_esterno,
-            ]));
-        } else {
-            if (!empty($id_record) && $id_intervento !== null) {
-                $copia_descrizione = post('copia_descrizione');
-                $intervento = $dbo->fetchOne('SELECT descrizione FROM in_interventi WHERE id = '.prepare($id_intervento));
-                if (!empty($copia_descrizione) && !empty($intervento['descrizione'])) {
-                    $riga = Descrizione::build($fattura);
-                    $riga->descrizione = $intervento['descrizione'];
-                    $riga->idintervento = $id_intervento;
-                    $riga->save();
-                }
-            
-                aggiungi_intervento_in_fattura($id_intervento, $id_record, post('descrizione'), post('idiva'), post('idconto'), post('id_rivalsa_inps'), post('id_ritenuta_acconto'), post('calcolo_ritenuta_acconto'));
-
-                flash()->info(tr('Intervento _NUM_ aggiunto!', [
-                    '_NUM_' => $idintervento,
-                ]));
+        if (!empty($id_record) && $id_intervento !== null) {
+            $copia_descrizione = post('copia_descrizione');
+            $intervento = $dbo->fetchOne('SELECT descrizione FROM in_interventi WHERE id = '.prepare($id_intervento));
+            if (!empty($copia_descrizione) && !empty($intervento['descrizione'])) {
+                $riga = Descrizione::build($fattura);
+                $riga->descrizione = $intervento['descrizione'];
+                $riga->idintervento = $id_intervento;
+                $riga->save();
             }
+        
+            aggiungi_intervento_in_fattura($id_intervento, $id_record, post('descrizione'), post('idiva'), post('idconto'), post('id_rivalsa_inps'), post('id_ritenuta_acconto'), post('calcolo_ritenuta_acconto'));
+
+            flash()->info(tr('Intervento _NUM_ aggiunto!', [
+                '_NUM_' => $idintervento,
+            ]));
         }
         break;
 
     case 'manage_documento_fe':
         $data = Filter::getPOST();
 
-        // Controllo se la fattura è già stata inviata allo SDI
-        $stato_fe= $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = '.$fattura->id);
+        $ignore = [
+            'id_plugin',
+            'id_module',
+            'id_record',
+            'backto',
+            'hash',
+            'op',
+            'idriga',
+            'dir',
+        ];
+        foreach ($ignore as $name) {
+            unset($data[$name]);
+        }
 
-        if ($dir == 'entrata' && $stato_fe['codice_stato_fe'] == 'WAIT') {
-            flash()->warning(tr('La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile effettuare modifiche!', [
-                '_NUM_' => $fattura->numero_esterno,
-            ]));
-        } else {
+        $fattura->dati_aggiuntivi_fe = $data;
+        $fattura->save();
+
+        flash()->info(tr('Dati FE aggiornati correttamente!'));
+    
+        break;
+
+    case 'manage_riga_fe':
+        $id_riga = post('id_riga');
+
+        if ($id_riga != null) {
+            $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
+            $riga = $riga ?: Descrizione::find($id_riga);
+            $riga = $riga ?: Sconto::find($id_riga);
+
+            $data = Filter::getPOST();
+
             $ignore = [
                 'id_plugin',
                 'id_module',
@@ -457,96 +474,11 @@ switch (post('op')) {
                 unset($data[$name]);
             }
 
-            $fattura->dati_aggiuntivi_fe = $data;
-            $fattura->save();
+            $riga->dati_aggiuntivi_fe = $data;
+            $riga->save();
 
             flash()->info(tr('Dati FE aggiornati correttamente!'));
         }
-    
-        break;
-
-    case 'manage_riga_fe':
-        $id_riga = post('id_riga');
-
-        // Controllo se la fattura è già stata inviata allo SDI
-        $stato_fe= $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = '.$fattura->id);
-
-        if ($dir == 'entrata' && $stato_fe['codice_stato_fe'] == 'WAIT') {
-            flash()->warning(tr('La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile effettuare modifiche!', [
-                '_NUM_' => $fattura->numero_esterno,
-            ]));
-        } else {
-            if ($id_riga != null) {
-                $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
-                $riga = $riga ?: Descrizione::find($id_riga);
-                $riga = $riga ?: Sconto::find($id_riga);
-
-                $data = Filter::getPOST();
-
-                $ignore = [
-                    'id_plugin',
-                    'id_module',
-                    'id_record',
-                    'backto',
-                    'hash',
-                    'op',
-                    'idriga',
-                    'dir',
-                ];
-                foreach ($ignore as $name) {
-                    unset($data[$name]);
-                }
-
-                $riga->dati_aggiuntivi_fe = $data;
-                $riga->save();
-
-                flash()->info(tr('Dati FE aggiornati correttamente!'));
-            }
-        }
-
-        break;
-
-    case 'manage_barcode':
-        foreach (post('qta') as $id_articolo => $qta) {
-            if ($id_articolo == '-id-') {
-                continue;
-            }
-
-            // Dati di input
-            $sconto = post('sconto')[$id_articolo];
-            $tipo_sconto = post('tipo_sconto')[$id_articolo];
-            $prezzo_unitario = post('prezzo_unitario')[$id_articolo];
-            $id_dettaglio_fornitore = post('id_dettaglio_fornitore')[$id_articolo];
-            if ($dir == 'entrata') {
-                $id_iva = ($fattura->anagrafica->idiva_vendite ?: $originale->idiva_vendita) ?: setting('Iva predefinita');
-            } else {
-                $id_iva = ($fattura->anagrafica->idiva_acquisti ?: setting('Iva predefinita'));
-            }
-
-            $id_conto = ($fattura->direzione == 'entrata') ? setting('Conto predefinito fatture di vendita') : setting('Conto predefinito fatture di acquisto');
-            if ($fattura->direzione == 'entrata' && !empty($originale->idconto_vendita)) {
-                $id_conto = $originale->idconto_vendita;
-            } elseif ($fattura->direzione == 'uscita' && !empty($originale->idconto_acquisto)) {
-                $id_conto = $originale->idconto_acquisto;
-            }
-
-            // Creazione articolo
-            $originale = ArticoloOriginale::find($id_articolo);
-            $articolo = Articolo::build($fattura, $originale);
-            $articolo->id_dettaglio_fornitore = $id_dettaglio_fornitore ?: null;
-
-            $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);
-            if ($dir == 'entrata') {
-                $articolo->costo_unitario = $originale->prezzo_acquisto;
-            }
-            $articolo->setSconto($sconto, $tipo_sconto);
-            $articolo->qta = $qta;
-            $articolo->idconto = $id_conto;
-
-            $articolo->save();
-        }
-
-        flash()->info(tr('Articoli aggiunti!'));
 
         break;
 
@@ -559,52 +491,43 @@ switch (post('op')) {
             $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
         }
 
-        // Controllo se la fattura è già stata inviata allo SDI
-        $stato_fe= $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = '.$fattura->id);
+        $qta = post('qta');
 
-        if ($dir == 'entrata' && $stato_fe['codice_stato_fe'] == 'WAIT') {
-            flash()->warning(tr('La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile effettuare modifiche!', [
-                '_NUM_' => $fattura->numero_esterno,
-            ]));
-        } else {
-            $qta = post('qta');
+        $articolo->descrizione = post('descrizione');
+        $articolo->note = post('note');
+        $articolo->um = post('um') ?: null;
 
-            $articolo->descrizione = post('descrizione');
-            $articolo->note = post('note');
-            $articolo->um = post('um') ?: null;
+        $articolo->id_iva = post('idiva');
+        $articolo->idconto = post('idconto');
 
-            $articolo->id_iva = post('idiva');
-            $articolo->idconto = post('idconto');
+        $articolo->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
+        $articolo->id_ritenuta_acconto = post('id_ritenuta_acconto') ?: null;
+        $articolo->ritenuta_contributi = boolval(post('ritenuta_contributi'));
+        $articolo->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
 
-            $articolo->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
-            $articolo->id_ritenuta_acconto = post('id_ritenuta_acconto') ?: null;
-            $articolo->ritenuta_contributi = boolval(post('ritenuta_contributi'));
-            $articolo->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
-
-            $articolo->costo_unitario = post('costo_unitario') ?: 0;
-            $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
-            $articolo->setSconto(post('sconto'), post('tipo_sconto'));
-            if ($dir == 'entrata') {
-                $articolo->setProvvigione(post('provvigione'), post('tipo_provvigione'));
-            }
-
-            try {
-                $articolo->qta = $qta;
-            } catch (UnexpectedValueException $e) {
-                flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
-            }
-
-            $articolo->save();
-
-            if (post('idriga') != null) {
-                flash()->info(tr('Articolo modificato!'));
-            } else {
-                flash()->info(tr('Articolo aggiunto!'));
-            }
-        
-            // Ricalcolo inps, ritenuta e bollo
-            ricalcola_costiagg_fattura($id_record);
+        $articolo->costo_unitario = post('costo_unitario') ?: 0;
+        $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+        $articolo->setSconto(post('sconto'), post('tipo_sconto'));
+        if ($dir == 'entrata') {
+            $articolo->setProvvigione(post('provvigione'), post('tipo_provvigione'));
         }
+
+        try {
+            $articolo->qta = $qta;
+        } catch (UnexpectedValueException $e) {
+            flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
+        }
+
+        $articolo->save();
+
+        if (post('idriga') != null) {
+            flash()->info(tr('Articolo modificato!'));
+        } else {
+            flash()->info(tr('Articolo aggiunto!'));
+        }
+    
+        // Ricalcolo inps, ritenuta e bollo
+        ricalcola_costiagg_fattura($id_record);
 
         break;
 
@@ -614,36 +537,28 @@ switch (post('op')) {
         } else {
             $sconto = Sconto::build($fattura);
         }
+        
+        $sconto->idconto = post('idconto');
 
-        // Controllo se la fattura è già stata inviata allo SDI
-        $stato_fe= $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = '.$fattura->id);
+        $sconto->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
+        $sconto->id_ritenuta_acconto = post('id_ritenuta_acconto') ?: null;
+        $sconto->ritenuta_contributi = boolval(post('ritenuta_contributi'));
+        $sconto->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
 
-        if ($dir == 'entrata' && $stato_fe['codice_stato_fe'] == 'WAIT') {
-            flash()->warning(tr('La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile effettuare modifiche!', [
-                '_NUM_' => $fattura->numero_esterno,
-            ]));
+        $sconto->descrizione = post('descrizione');
+        $sconto->note = post('note');
+        $sconto->setScontoUnitario(post('sconto_unitario'), post('idiva'));
+        $sconto->save();
+
+        if (post('idriga') != null) {
+            flash()->info(tr('Sconto/maggiorazione modificato!'));
         } else {
-            $sconto->idconto = post('idconto');
-
-            $sconto->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
-            $sconto->id_ritenuta_acconto = post('id_ritenuta_acconto') ?: null;
-            $sconto->ritenuta_contributi = boolval(post('ritenuta_contributi'));
-            $sconto->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
-
-            $sconto->descrizione = post('descrizione');
-            $sconto->note = post('note');
-            $sconto->setScontoUnitario(post('sconto_unitario'), post('idiva'));
-            $sconto->save();
-
-            if (post('idriga') != null) {
-                flash()->info(tr('Sconto/maggiorazione modificato!'));
-            } else {
-                flash()->info(tr('Sconto/maggiorazione aggiunto!'));
-            }
-            
-            // Ricalcolo inps, ritenuta e bollo
-            ricalcola_costiagg_fattura($id_record);
+            flash()->info(tr('Sconto/maggiorazione aggiunto!'));
         }
+        
+        // Ricalcolo inps, ritenuta e bollo
+        ricalcola_costiagg_fattura($id_record);
+        
 
         break;
 
@@ -654,48 +569,40 @@ switch (post('op')) {
             $riga = Riga::build($fattura);
         }
 
-        // Controllo se la fattura è già stata inviata allo SDI
-        $stato_fe= $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = '.$fattura->id);
-
-        if ($dir == 'entrata' && $stato_fe['codice_stato_fe'] == 'WAIT') {
-            flash()->warning(tr('La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile effettuare modifiche!', [
-                '_NUM_' => $fattura->numero_esterno,
-            ]));
-        } else {
-            $qta = post('qta');
-
-            $riga->descrizione = post('descrizione');
-            $riga->note = post('note');
-            $riga->um = post('um') ?: null;
-
-            $riga->id_iva = post('idiva');
-            $riga->idconto = post('idconto');
-
-            $riga->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
-            $riga->id_ritenuta_acconto = post('id_ritenuta_acconto') ?: null;
-            $riga->ritenuta_contributi = boolval(post('ritenuta_contributi'));
-            $riga->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
-
-            $riga->costo_unitario = post('costo_unitario') ?: 0;
-            $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
-            $riga->setSconto(post('sconto'), post('tipo_sconto'));
-            if ($dir == 'entrata') {
-                $riga->setProvvigione(post('provvigione'), post('tipo_provvigione'));
-            }
-
-            $riga->qta = $qta;
-            $riga->save();
-
-            if (post('idriga') != null) {
-                flash()->info(tr('Riga modificata!'));
-            } else {
-                flash()->info(tr('Riga aggiunta!'));
-            }
         
-            // Ricalcolo inps, ritenuta e bollo
-            ricalcola_costiagg_fattura($id_record);
+        $qta = post('qta');
+
+        $riga->descrizione = post('descrizione');
+        $riga->note = post('note');
+        $riga->um = post('um') ?: null;
+
+        $riga->id_iva = post('idiva');
+        $riga->idconto = post('idconto');
+
+        $riga->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
+        $riga->id_ritenuta_acconto = post('id_ritenuta_acconto') ?: null;
+        $riga->ritenuta_contributi = boolval(post('ritenuta_contributi'));
+        $riga->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
+
+        $riga->costo_unitario = post('costo_unitario') ?: 0;
+        $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+        $riga->setSconto(post('sconto'), post('tipo_sconto'));
+        if ($dir == 'entrata') {
+            $riga->setProvvigione(post('provvigione'), post('tipo_provvigione'));
         }
 
+        $riga->qta = $qta;
+        $riga->save();
+
+        if (post('idriga') != null) {
+            flash()->info(tr('Riga modificata!'));
+        } else {
+            flash()->info(tr('Riga aggiunta!'));
+        }
+    
+        // Ricalcolo inps, ritenuta e bollo
+        ricalcola_costiagg_fattura($id_record);
+    
         break;
 
     case 'manage_descrizione':
@@ -708,136 +615,94 @@ switch (post('op')) {
         $riga->descrizione = post('descrizione');
         $riga->note = post('note');
 
-        // Controllo se la fattura è già stata inviata allo SDI
-        $stato_fe= $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = '.$fattura->id);
+    
+        $riga->save();
 
-        if ($dir == 'entrata' && $stato_fe['codice_stato_fe'] == 'WAIT') {
-            flash()->warning(tr('La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile effettuare modifiche!', [
-                '_NUM_' => $fattura->numero_esterno,
-            ]));
+        if (post('idriga') != null) {
+            flash()->info(tr('Riga descrittiva modificata!'));
         } else {
-            $riga->save();
-
-            if (post('idriga') != null) {
-                flash()->info(tr('Riga descrittiva modificata!'));
-            } else {
-                flash()->info(tr('Riga descrittiva aggiunta!'));
-            }
+            flash()->info(tr('Riga descrittiva aggiunta!'));
         }
+        
         break;
 
     // Scollegamento intervento da documento
     case 'unlink_intervento':
         if (!empty($id_record) && post('idriga') !== null) {
+            $id_riga = post('idriga');
+            $type = post('type');
+            $riga = $fattura->getRiga($type, $id_riga);
 
-            // Controllo se la fattura è già stata inviata allo SDI
-            $stato_fe= $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = '.$fattura->id);
+            if (!empty($riga)) {
+                try {
+                    $riga->delete();
 
-            if ($dir == 'entrata' && $stato_fe['codice_stato_fe'] == 'WAIT') {
-                flash()->warning(tr('La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile effettuare modifiche!', [
-                    '_NUM_' => $fattura->numero_esterno,
-                ]));
-            } else {
-                $id_riga = post('idriga');
-                $type = post('type');
-                $riga = $fattura->getRiga($type, $id_riga);
-
-                if (!empty($riga)) {
-                    try {
-                        $riga->delete();
-
-                        flash()->info(tr('Intervento _NUM_ rimosso!', [
-                            '_NUM_' => $idintervento,
-                        ]));
-                    } catch (InvalidArgumentException $e) {
-                        flash()->error(tr('Errore durante l\'eliminazione della riga!'));
-                    }
+                    flash()->info(tr('Intervento _NUM_ rimosso!', [
+                        '_NUM_' => $idintervento,
+                    ]));
+                } catch (InvalidArgumentException $e) {
+                    flash()->error(tr('Errore durante l\'eliminazione della riga!'));
                 }
             }
         }
+        
         break;
 
     // Scollegamento riga generica da documento
     case 'delete_riga':
         $id_righe = (array)post('righe');
         
-        // Controllo se la fattura è già stata inviata allo SDI
-        $stato_fe= $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = '.$fattura->id);
+        foreach ($id_righe as $id_riga) {
+            $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
+            $riga = $riga ?: Descrizione::find($id_riga);
+            $riga = $riga ?: Sconto::find($id_riga);
+        
+            try {
+                $riga->delete();
 
-        if ($dir == 'entrata' && $stato_fe['codice_stato_fe'] == 'WAIT') {
-            flash()->warning(tr('La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile effettuare modifiche!', [
-                '_NUM_' => $fattura->numero_esterno,
-            ]));
-        } else {
-            foreach ($id_righe as $id_riga) {
-                $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
-                $riga = $riga ?: Descrizione::find($id_riga);
-                $riga = $riga ?: Sconto::find($id_riga);
-            
-                try {
-                    $riga->delete();
-    
-                    // Ricalcolo inps, ritenuta e bollo
-                    ricalcola_costiagg_fattura($id_record);
-                } catch (InvalidArgumentException $e) {
-                    flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
-                }
-    
-                $riga = null;
-                flash()->info(tr('Righe eliminate!'));
+                // Ricalcolo inps, ritenuta e bollo
+                ricalcola_costiagg_fattura($id_record);
+            } catch (InvalidArgumentException $e) {
+                flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
             }
+
+            $riga = null;
+            flash()->info(tr('Righe eliminate!'));
         }
+        
         break;
 
     // Duplicazione riga
     case 'copy_riga':
         $id_righe = (array)post('righe');
         
-        // Controllo se la fattura è già stata inviata allo SDI
-        $stato_fe= $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = '.$fattura->id);
+        foreach ($id_righe as $id_riga) {
+            $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
+            $riga = $riga ?: Descrizione::find($id_riga);
+            $riga = $riga ?: Sconto::find($id_riga);
 
-        if ($dir == 'entrata' && $stato_fe['codice_stato_fe'] == 'WAIT') {
-            flash()->warning(tr('La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile effettuare modifiche!', [
-                '_NUM_' => $fattura->numero_esterno,
-            ]));
-        } else {
-            foreach ($id_righe as $id_riga) {
-                $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
-                $riga = $riga ?: Descrizione::find($id_riga);
-                $riga = $riga ?: Sconto::find($id_riga);
+            $new_riga = $riga->replicate();
+            $new_riga->setDocument($fattura);
+            $new_riga->qta_evasa = 0;
+            $new_riga->save();
 
-                $new_riga = $riga->replicate();
-                $new_riga->setDocument($fattura);
-                $new_riga->qta_evasa = 0;
-                $new_riga->save();
-
-                if ($new_riga->isArticolo()) {
-                    $new_riga->movimenta($new_riga->qta);
-                }
-
-                $riga = null;
+            if ($new_riga->isArticolo()) {
+                $new_riga->movimenta($new_riga->qta);
             }
 
-            flash()->info(tr('Righe duplicate!'));
+            $riga = null;
         }
+
+        flash()->info(tr('Righe duplicate!'));
 
         break;
 
     case 'add_serial':
         $articolo = Articolo::find(post('idriga'));
 
-        // Controllo se la fattura è già stata inviata allo SDI
-        $stato_fe= $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = '.$fattura->id);
-
-        if ($dir == 'entrata' && $stato_fe['codice_stato_fe'] == 'WAIT') {
-            flash()->warning(tr('La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile effettuare modifiche!', [
-                '_NUM_' => $fattura->numero_esterno,
-            ]));
-        } else {
         $serials = (array) post('serial');
         $articolo->serials = $serials;
 
-        }
         break;
 
     case 'update_position':
@@ -953,53 +818,45 @@ switch (post('op')) {
         $id_segment = post('id_segment');
         $data = post('data');
 
-        // Controllo se la fattura è già stata inviata allo SDI
-        $stato_fe= $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = '.$fattura->id);
+        $anagrafica = $fattura->anagrafica;
+        $tipo = Tipo::where('descrizione', 'Nota di credito')->where('dir', 'entrata')->first();
 
-        if ($dir == 'entrata' && $stato_fe['codice_stato_fe'] == 'WAIT') {
-            flash()->warning(tr('La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile effettuare modifiche!', [
-                '_NUM_' => $fattura->numero_esterno,
-            ]));
-        } else {
-            $anagrafica = $fattura->anagrafica;
-            $tipo = Tipo::where('descrizione', 'Nota di credito')->where('dir', 'entrata')->first();
+        $nota = Fattura::build($anagrafica, $tipo, $data, $id_segment);
+        $nota->ref_documento = $fattura->id;
+        $nota->idconto = $fattura->idconto;
+        $nota->idpagamento = $fattura->idpagamento;
+        $nota->id_banca_azienda = $fattura->id_banca_azienda;
+        $nota->id_banca_controparte = $fattura->id_banca_controparte;
+        $nota->idsede_partenza = $fattura->idsede_partenza;
+        $nota->idsede_destinazione = $fattura->idsede_destinazione;
+        $nota->split_payment = $fattura->split_payment;
+        $nota->save();
 
-            $nota = Fattura::build($anagrafica, $tipo, $data, $id_segment);
-            $nota->ref_documento = $fattura->id;
-            $nota->idconto = $fattura->idconto;
-            $nota->idpagamento = $fattura->idpagamento;
-            $nota->id_banca_azienda = $fattura->id_banca_azienda;
-            $nota->id_banca_controparte = $fattura->id_banca_controparte;
-            $nota->idsede_partenza = $fattura->idsede_partenza;
-            $nota->idsede_destinazione = $fattura->idsede_destinazione;
-            $nota->split_payment = $fattura->split_payment;
-            $nota->save();
+        $righe = $fattura->getRighe();
+        foreach ($righe as $riga) {
+            if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
+                $qta = post('qta_da_evadere')[$riga->id];
 
-            $righe = $fattura->getRighe();
-            foreach ($righe as $riga) {
-                if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
-                    $qta = post('qta_da_evadere')[$riga->id];
+                $copia = $riga->copiaIn($nota, $qta);
+                $copia->ref_riga_documento = $riga->id;
 
-                    $copia = $riga->copiaIn($nota, $qta);
-                    $copia->ref_riga_documento = $riga->id;
-
-                    // Aggiornamento seriali dalla riga della fattura
-                    if ($copia->isArticolo()) {
-                        $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
-                        $copia->serials = $serials;
-                    }
-
-                    $copia->save();
+                // Aggiornamento seriali dalla riga della fattura
+                if ($copia->isArticolo()) {
+                    $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
+                    $copia->serials = $serials;
                 }
+
+                $copia->save();
             }
-
-            $stato = Stato::find(post('id_stato'));
-            $nota->stato()->associate($stato);
-            $nota->save();
-
-            $id_record = $nota->id;
-            aggiorna_sedi_movimenti('documenti', $id_record);
         }
+
+        $stato = Stato::find(post('id_stato'));
+        $nota->stato()->associate($stato);
+        $nota->save();
+
+        $id_record = $nota->id;
+        aggiorna_sedi_movimenti('documenti', $id_record);
+        
 
         break;
 
@@ -1075,109 +932,101 @@ switch (post('op')) {
     case 'add_articolo':
         $id_articolo = post('id_articolo');
         $barcode = post('barcode');
-        // Controllo se la fattura è già stata inviata allo SDI
-        $stato_fe= $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = '.$fattura->id);
+        
+        if (!empty($barcode)) {
+            $id_articolo = $dbo->selectOne('mg_articoli', 'id',  ['deleted_at' => null, 'attivo' => 1, 'barcode' => $barcode])['id'];
+        }
 
-        if ($dir == 'entrata' && $stato_fe['codice_stato_fe'] == 'WAIT') {
-            flash()->warning(tr('La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile effettuare modifiche!', [
-                '_NUM_' => $fattura->numero_esterno,
-            ]));
-            } else {
-            if (!empty($barcode)) {
-                $id_articolo = $dbo->selectOne('mg_articoli', 'id',  ['deleted_at' => null, 'attivo' => 1, 'barcode' => $barcode])['id'];
-            }
+        if (!empty($id_articolo)) {
+            $permetti_movimenti_sotto_zero = setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita');
+            $qta_articolo = $dbo->selectOne('mg_articoli', 'qta', ['id' => $id_articolo])['qta'];
 
-            if (!empty($id_articolo)) {
-                $permetti_movimenti_sotto_zero = setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita');
-                $qta_articolo = $dbo->selectOne('mg_articoli', 'qta', ['id' => $id_articolo])['qta'];
+            $originale = ArticoloOriginale::find($id_articolo);
 
-                $originale = ArticoloOriginale::find($id_articolo);
-
-                if ($qta_articolo <= 0 && !$permetti_movimenti_sotto_zero && !$originale->servizio && $dir == 'entrata') {
-                    $response['error'] = tr('Quantità a magazzino non sufficiente');
-                    echo json_encode($response);
-                } else {
-                    $articolo = Articolo::build($fattura, $originale);
-                    $qta = 1;
-
-                    $articolo->descrizione = $originale->descrizione;
-                    $articolo->um = $originale->um;
-                    $articolo->qta = 1;
-                    $articolo->costo_unitario = $originale->prezzo_acquisto;
-
-                    $id_conto = ($dir == 'entrata') ? setting('Conto predefinito fatture di vendita') : setting('Conto predefinito fatture di acquisto');
-                    if ($dir == 'entrata' && !empty($originale->idconto_vendita)) {
-                        $id_conto = $originale->idconto_vendita;
-                    } elseif ($dir == 'uscita' && !empty($originale->idconto_acquisto)) {
-                        $id_conto = $originale->idconto_acquisto;
-                    }
-                    $articolo->idconto = $id_conto;
-                    
-                    if ($dir == 'entrata') {
-                        $id_iva = ($fattura->anagrafica->idiva_vendite ?: $originale->idiva_vendita) ?: setting('Iva predefinita');
-                    } else {
-                        $id_iva = ($fattura->anagrafica->idiva_acquisti ?: setting('Iva predefinita'));
-                    }
-                    $id_anagrafica = $fattura->idanagrafica;
-                    $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
-            
-                    // CALCOLO PREZZO UNITARIO
-                    $prezzo_unitario = 0;
-                    $sconto = 0;
-                    // Prezzi netti clienti / listino fornitore
-                    $prezzi = $dbo->fetchArray('SELECT minimo, massimo, sconto_percentuale, '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario
-                    FROM mg_prezzi_articoli
-                    WHERE id_articolo = '.prepare($id_articolo).' AND dir = '.prepare($dir).' AND id_anagrafica = '.prepare($id_anagrafica));
-
-                    if ($prezzi) {
-                        foreach ($prezzi as $prezzo) {
-                            if ($qta >= $prezzo['minimo'] && $qta <= $prezzo['massimo']) {
-                                $prezzo_unitario = $prezzo['prezzo_unitario'];
-                                $sconto = $prezzo['sconto_percentuale'];
-                                continue;
-                            }
-
-                            if ($prezzo['minimo'] == null && $prezzo['massimo'] == null && $prezzo['prezzo_unitario'] != null) {
-                                $prezzo_unitario = $prezzo['prezzo_unitario'];
-                                $sconto = $prezzo['sconto_percentuale'];
-                                continue;
-                            }
-                        }
-                    } 
-                    if (empty($prezzo_unitario)) {
-                        // Prezzi listini clienti
-                        $listino = $dbo->fetchOne('SELECT sconto_percentuale AS sconto_percentuale_listino, '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino
-                        FROM mg_listini
-                        LEFT JOIN mg_listini_articoli ON mg_listini.id=mg_listini_articoli.id_listino
-                        LEFT JOIN an_anagrafiche ON mg_listini.id=an_anagrafiche.id_listino
-                        WHERE mg_listini.data_attivazione<=NOW() AND mg_listini_articoli.data_scadenza>=NOW() AND mg_listini.attivo=1 AND id_articolo = '.prepare($id_articolo).' AND dir = '.prepare($dir).' AND idanagrafica = '.prepare($id_anagrafica));
-
-                        if ($listino) {
-                            $prezzo_unitario = $listino['prezzo_unitario_listino'];
-                            $sconto = $listino['sconto_percentuale_listino'];
-                        }
-                    }
-
-                    if ($dir == 'entrata') {
-                        $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $originale->prezzo_vendita_ivato : $originale->prezzo_vendita);
-                    } else {
-                        $prezzo_unitario = $prezzo_unitario ?: $originale->prezzo_acquisto;
-                    }
-
-                    $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['idanagrafica' => $fattura->idagente])['provvigione_default'];
-
-                    $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);
-                    $articolo->setSconto($sconto, 'PRC');
-                    $articolo->setProvvigione($provvigione ?: 0, 'PRC');
-                    $articolo->save();
-
-
-                    flash()->info(tr('Nuovo articolo aggiunto!'));
-                }
-            } else {
-                $response['error'] = tr('Nessun articolo corrispondente a magazzino');
+            if ($qta_articolo <= 0 && !$permetti_movimenti_sotto_zero && !$originale->servizio && $dir == 'entrata') {
+                $response['error'] = tr('Quantità a magazzino non sufficiente');
                 echo json_encode($response);
+            } else {
+                $articolo = Articolo::build($fattura, $originale);
+                $qta = 1;
+
+                $articolo->descrizione = $originale->descrizione;
+                $articolo->um = $originale->um;
+                $articolo->qta = 1;
+                $articolo->costo_unitario = $originale->prezzo_acquisto;
+
+                $id_conto = ($dir == 'entrata') ? setting('Conto predefinito fatture di vendita') : setting('Conto predefinito fatture di acquisto');
+                if ($dir == 'entrata' && !empty($originale->idconto_vendita)) {
+                    $id_conto = $originale->idconto_vendita;
+                } elseif ($dir == 'uscita' && !empty($originale->idconto_acquisto)) {
+                    $id_conto = $originale->idconto_acquisto;
+                }
+                $articolo->idconto = $id_conto;
+                
+                if ($dir == 'entrata') {
+                    $id_iva = ($fattura->anagrafica->idiva_vendite ?: $originale->idiva_vendita) ?: setting('Iva predefinita');
+                } else {
+                    $id_iva = ($fattura->anagrafica->idiva_acquisti ?: setting('Iva predefinita'));
+                }
+                $id_anagrafica = $fattura->idanagrafica;
+                $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
+        
+                // CALCOLO PREZZO UNITARIO
+                $prezzo_unitario = 0;
+                $sconto = 0;
+                // Prezzi netti clienti / listino fornitore
+                $prezzi = $dbo->fetchArray('SELECT minimo, massimo, sconto_percentuale, '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario
+                FROM mg_prezzi_articoli
+                WHERE id_articolo = '.prepare($id_articolo).' AND dir = '.prepare($dir).' AND id_anagrafica = '.prepare($id_anagrafica));
+
+                if ($prezzi) {
+                    foreach ($prezzi as $prezzo) {
+                        if ($qta >= $prezzo['minimo'] && $qta <= $prezzo['massimo']) {
+                            $prezzo_unitario = $prezzo['prezzo_unitario'];
+                            $sconto = $prezzo['sconto_percentuale'];
+                            continue;
+                        }
+
+                        if ($prezzo['minimo'] == null && $prezzo['massimo'] == null && $prezzo['prezzo_unitario'] != null) {
+                            $prezzo_unitario = $prezzo['prezzo_unitario'];
+                            $sconto = $prezzo['sconto_percentuale'];
+                            continue;
+                        }
+                    }
+                } 
+                if (empty($prezzo_unitario)) {
+                    // Prezzi listini clienti
+                    $listino = $dbo->fetchOne('SELECT sconto_percentuale AS sconto_percentuale_listino, '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino
+                    FROM mg_listini
+                    LEFT JOIN mg_listini_articoli ON mg_listini.id=mg_listini_articoli.id_listino
+                    LEFT JOIN an_anagrafiche ON mg_listini.id=an_anagrafiche.id_listino
+                    WHERE mg_listini.data_attivazione<=NOW() AND mg_listini_articoli.data_scadenza>=NOW() AND mg_listini.attivo=1 AND id_articolo = '.prepare($id_articolo).' AND dir = '.prepare($dir).' AND idanagrafica = '.prepare($id_anagrafica));
+
+                    if ($listino) {
+                        $prezzo_unitario = $listino['prezzo_unitario_listino'];
+                        $sconto = $listino['sconto_percentuale_listino'];
+                    }
+                }
+
+                if ($dir == 'entrata') {
+                    $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $originale->prezzo_vendita_ivato : $originale->prezzo_vendita);
+                } else {
+                    $prezzo_unitario = $prezzo_unitario ?: $originale->prezzo_acquisto;
+                }
+
+                $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['idanagrafica' => $fattura->idagente])['provvigione_default'];
+
+                $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);
+                $articolo->setSconto($sconto, 'PRC');
+                $articolo->setProvvigione($provvigione ?: 0, 'PRC');
+                $articolo->save();
+
+
+                flash()->info(tr('Nuovo articolo aggiunto!'));
             }
+        } else {
+            $response['error'] = tr('Nessun articolo corrispondente a magazzino');
+            echo json_encode($response);
         }
         break;
 
@@ -1212,42 +1061,34 @@ switch (post('op')) {
         $righe = $post['righe'];
         $numero_totale = 0;
 
-        // Controllo se la fattura è già stata inviata allo SDI
-        $stato_fe= $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = '.$fattura->id);
-
-        if ($dir == 'entrata' && $stato_fe['codice_stato_fe'] == 'WAIT') {
-            flash()->warning(tr('La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile effettuare modifiche!', [
-                '_NUM_' => $fattura->numero_esterno,
-            ]));
-        } else {
-            foreach ($righe as $riga) {
-                if (($riga['id']) != null) {
-                    $articolo = Articolo::find($riga['id']);
-                } else {
-                    $originale = ArticoloOriginale::find(post('idarticolo'));
-                    $articolo = Articolo::build($fattura, $originale);
-                    $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
-                }
-        
-                if ($articolo['prezzo_unitario'] != $riga['price']) {
-                    $articolo->setPrezzoUnitario($riga['price'], $articolo->idiva);
-                    $articolo->save();
-                    ++$numero_totale;
-                }
-            }
-
-            if ($numero_totale > 1) {
-                flash()->info(tr('_NUM_ prezzi modificati!', [
-                    '_NUM_' => $numero_totale,
-                ]));
-            } else if ($numero_totale == 1) {
-                flash()->info(tr('_NUM_ prezzo modificato!', [
-                    '_NUM_' => $numero_totale,
-                ]));
+        foreach ($righe as $riga) {
+            if (($riga['id']) != null) {
+                $articolo = Articolo::find($riga['id']);
             } else {
-                flash()->warning(tr('Nessun prezzo modificato!'));
+                $originale = ArticoloOriginale::find(post('idarticolo'));
+                $articolo = Articolo::build($fattura, $originale);
+                $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
+            }
+    
+            if ($articolo['prezzo_unitario'] != $riga['price']) {
+                $articolo->setPrezzoUnitario($riga['price'], $articolo->idiva);
+                $articolo->save();
+                ++$numero_totale;
             }
         }
+
+        if ($numero_totale > 1) {
+            flash()->info(tr('_NUM_ prezzi modificati!', [
+                '_NUM_' => $numero_totale,
+            ]));
+        } else if ($numero_totale == 1) {
+            flash()->info(tr('_NUM_ prezzo modificato!', [
+                '_NUM_' => $numero_totale,
+            ]));
+        } else {
+            flash()->warning(tr('Nessun prezzo modificato!'));
+        }
+
 
         break;
 }

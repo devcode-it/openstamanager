@@ -19,8 +19,8 @@ class CheckConfigurationMiddleware
     public function handle(Request $request, Closure $next): Response|SymfonyResponse
     {
         $checks = [
-            'database' => static fn (): bool => !empty(DB::connection()->getDatabaseName()) && DB::connection()->getPdo() instanceof PDO,
-            'admin_user' => static fn (): bool => !empty(User::exists()),
+            'database' => static fn (): bool => ! empty(DB::connection()->getDatabaseName()) && DB::connection()->getPdo() instanceof PDO,
+            'admin_user' => static fn (): bool => ! empty(User::exists()),
         ];
 
         foreach ($checks as $name => $check) {
@@ -34,7 +34,7 @@ class CheckConfigurationMiddleware
                 );
             }
 
-            if (!$check) {
+            if (! $check) {
                 $route = $request->route();
                 if ($route && str_starts_with($route->getName(), 'setup.')) {
                     return $next($request);

@@ -182,37 +182,6 @@ switch (post('op')) {
 
         break;
 
-    case 'manage_barcode':
-        foreach (post('qta') as $id_articolo => $qta) {
-            if ($id_articolo == '-id-') {
-                continue;
-            }
-
-            // Dati di input
-            $sconto = post('sconto')[$id_articolo];
-            $tipo_sconto = post('tipo_sconto')[$id_articolo];
-            $prezzo_unitario = post('prezzo_unitario')[$id_articolo];
-            $id_dettaglio_fornitore = post('id_dettaglio_fornitore')[$id_articolo];
-            $id_iva = ($preventivo->anagrafica->idiva_vendite ?: $originale->idiva_vendita) ?: setting('Iva predefinita');
-
-            // Creazione articolo
-            $originale = ArticoloOriginale::find($id_articolo);
-            $articolo = Articolo::build($preventivo, $originale);
-            $articolo->id_dettaglio_fornitore = $id_dettaglio_fornitore ?: null;
-            $articolo->confermato = setting('Conferma automaticamente le quantità nei preventivi');
-
-            $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);
-            $articolo->costo_unitario = $originale->prezzo_acquisto;
-            $articolo->setSconto($sconto, $tipo_sconto);
-            $articolo->qta = $qta;
-
-            $articolo->save();
-        }
-
-        flash()->info(tr('Articoli aggiunti!'));
-
-        break;
-
     case 'manage_articolo':
         if (post('idriga') != null) {
             $articolo = Articolo::find(post('idriga'));

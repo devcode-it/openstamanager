@@ -21,6 +21,10 @@ include_once __DIR__.'/../../../core.php';
 
 $link_id = Modules::get('Articoli')['id'];
 
+$prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
+
+$show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
+
 $fields = [
     'Codice' => 'codice',
     'Barcode' => 'barcode',
@@ -50,7 +54,11 @@ foreach ($rs as $r) {
     $result = [];
 
     $result['link'] = base_path().'/editor.php?id_module='.$link_id.'&id_record='.$r['id'];
-    $result['title'] = $r['codice'].' - '.$r['descrizione'];
+    $result['title'] = $r['codice'].' - '.$r['descrizione'].'<br>
+        <small>'.
+            ( $show_prezzi ? '<strong>'.tr('Prezzo di vendita').':</strong> '.moneyFormat( $prezzi_ivati ? $r['prezzo_vendita_ivato'] : $r['prezzo_vendita']).'<br>' : '' ).'
+            <strong>'.tr('Q.tà').':</strong> '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'].'
+        </small>';
     $result['category'] = 'Articoli';
 
     // Campi da evidenziare

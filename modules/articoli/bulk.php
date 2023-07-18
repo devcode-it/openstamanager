@@ -503,7 +503,7 @@ $operations['change-categoria'] = [
         'title' => tr('Cambiare la categoria e la sottocategoria?'),
         'msg' => tr('Per ciascun articolo selezionato, verrà modificata la categoria e la sottocategoria').'
         <br><br>{[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 1, "ajax-source": "categorie", "extra": "onchange=\"$(\'#subcategoria\').enable();updateSelectOption(\'id_categoria\', $(\'#id_categoria\').val());session_set(\'superselect,id_categoria\', $(\'#id_categoria\').val(), 0);$(\'#subcategoria\').val(null).trigger(\'change\');\"" ]}<br>
-        {[ "type": "select", "label": "'.tr('Sottocategoria').'", "name": "subcategoria", "ajax-source": "sottocategorie", "select-options": "{\'id_categoria\': 0}", "disabled": "1", "select-options-escape": true ]}',
+        {[ "type": "select", "label": "'.tr('Sottocategoria').'", "name": "subcategoria", "ajax-source": "sottocategorie", "disabled": "1", "select-options-escape": true ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
     ],

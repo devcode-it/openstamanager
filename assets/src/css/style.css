@@ -1197,10 +1197,10 @@ div.tip {
 /*
 * Spunta checkbox viste
 */
-table.dataTable>tbody>tr.selected>td.select-checkbox::after,
+/*table.dataTable>tbody>tr.selected>td.select-checkbox::after,
 table.dataTable>tbody>tr.selected>th.select-checkbox::after {
     margin-top: -25px;
-}
+}*/
 
 .btn-group>.btn-xs>input[type="checkbox"], .label>input[type="checkbox"] {
     margin: 2px 0px;

@@ -34,14 +34,26 @@ use Modules\Iva\Aliquota;
 use Util\XML;
 
 $module = Modules::get($id_module);
-
+$op = post('op');
 if ($module['name'] == 'Fatture di vendita') {
     $dir = 'entrata';
 } else {
     $dir = 'uscita';
 }
 
-switch (post('op')) {
+// Controllo se la fattura è già stata inviata allo SDI
+$stato_fe= $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = '.$fattura->id);
+
+$ops = ['update', 'add_intervento', 'manage_documento_fe', 'manage_riga_fe', 'manage_articolo', 'manage_sconto', 'manage_riga', 'manage_descrizione', 'unlink_intervento', 'delete_riga', 'copy_riga', 'add_serial', 'add_articolo', 'edit-price'];
+
+if ($dir == 'entrata' && $stato_fe['codice_stato_fe'] == 'WAIT' && in_array($op, $ops)) {
+    flash()->warning(tr('La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile effettuare modifiche!', [
+        '_NUM_' => $fattura->numero_esterno,
+    ]));
+    $op = null;
+}
+
+switch ($op) {
     case 'add':
         $idanagrafica = post('idanagrafica');
         $data = post('data');
@@ -159,7 +171,6 @@ switch (post('op')) {
         $fattura->is_ritenuta_pagata = post('is_ritenuta_pagata') ?: 0;
 
         $fattura->setScontoFinale(post('sconto_finale'), post('tipo_sconto_finale'));
-
         $results = $fattura->save();
         $message = '';
 
@@ -232,7 +243,6 @@ switch (post('op')) {
                 flash()->warning(tr('Esiste già una fattura con lo stesso numero!'));
             }
         }
-
         flash()->info(tr('Fattura modificata correttamente!'));
 
         break;
@@ -407,7 +417,7 @@ switch (post('op')) {
                 $riga->idintervento = $id_intervento;
                 $riga->save();
             }
-
+        
             aggiungi_intervento_in_fattura($id_intervento, $id_record, post('descrizione'), post('idiva'), post('idconto'), post('id_rivalsa_inps'), post('id_ritenuta_acconto'), post('calcolo_ritenuta_acconto'));
 
             flash()->info(tr('Intervento _NUM_ aggiunto!', [
@@ -437,11 +447,12 @@ switch (post('op')) {
         $fattura->save();
 
         flash()->info(tr('Dati FE aggiornati correttamente!'));
-
+    
         break;
 
     case 'manage_riga_fe':
         $id_riga = post('id_riga');
+
         if ($id_riga != null) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Descrizione::find($id_riga);
@@ -468,50 +479,6 @@ switch (post('op')) {
 
             flash()->info(tr('Dati FE aggiornati correttamente!'));
         }
-
-        break;
-
-    case 'manage_barcode':
-        foreach (post('qta') as $id_articolo => $qta) {
-            if ($id_articolo == '-id-') {
-                continue;
-            }
-
-            // Dati di input
-            $sconto = post('sconto')[$id_articolo];
-            $tipo_sconto = post('tipo_sconto')[$id_articolo];
-            $prezzo_unitario = post('prezzo_unitario')[$id_articolo];
-            $id_dettaglio_fornitore = post('id_dettaglio_fornitore')[$id_articolo];
-            if ($dir == 'entrata') {
-                $id_iva = ($fattura->anagrafica->idiva_vendite ?: $originale->idiva_vendita) ?: setting('Iva predefinita');
-            } else {
-                $id_iva = ($fattura->anagrafica->idiva_acquisti ?: setting('Iva predefinita'));
-            }
-
-            $id_conto = ($fattura->direzione == 'entrata') ? setting('Conto predefinito fatture di vendita') : setting('Conto predefinito fatture di acquisto');
-            if ($fattura->direzione == 'entrata' && !empty($originale->idconto_vendita)) {
-                $id_conto = $originale->idconto_vendita;
-            } elseif ($fattura->direzione == 'uscita' && !empty($originale->idconto_acquisto)) {
-                $id_conto = $originale->idconto_acquisto;
-            }
-
-            // Creazione articolo
-            $originale = ArticoloOriginale::find($id_articolo);
-            $articolo = Articolo::build($fattura, $originale);
-            $articolo->id_dettaglio_fornitore = $id_dettaglio_fornitore ?: null;
-
-            $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);
-            if ($dir == 'entrata') {
-                $articolo->costo_unitario = $originale->prezzo_acquisto;
-            }
-            $articolo->setSconto($sconto, $tipo_sconto);
-            $articolo->qta = $qta;
-            $articolo->idconto = $id_conto;
-
-            $articolo->save();
-        }
-
-        flash()->info(tr('Articoli aggiunti!'));
 
         break;
 
@@ -558,7 +525,7 @@ switch (post('op')) {
         } else {
             flash()->info(tr('Articolo aggiunto!'));
         }
-
+    
         // Ricalcolo inps, ritenuta e bollo
         ricalcola_costiagg_fattura($id_record);
 
@@ -570,7 +537,7 @@ switch (post('op')) {
         } else {
             $sconto = Sconto::build($fattura);
         }
-
+        
         $sconto->idconto = post('idconto');
 
         $sconto->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
@@ -581,7 +548,6 @@ switch (post('op')) {
         $sconto->descrizione = post('descrizione');
         $sconto->note = post('note');
         $sconto->setScontoUnitario(post('sconto_unitario'), post('idiva'));
-
         $sconto->save();
 
         if (post('idriga') != null) {
@@ -589,9 +555,10 @@ switch (post('op')) {
         } else {
             flash()->info(tr('Sconto/maggiorazione aggiunto!'));
         }
-
+        
         // Ricalcolo inps, ritenuta e bollo
         ricalcola_costiagg_fattura($id_record);
+        
 
         break;
 
@@ -602,6 +569,7 @@ switch (post('op')) {
             $riga = Riga::build($fattura);
         }
 
+        
         $qta = post('qta');
 
         $riga->descrizione = post('descrizione');
@@ -624,7 +592,6 @@ switch (post('op')) {
         }
 
         $riga->qta = $qta;
-
         $riga->save();
 
         if (post('idriga') != null) {
@@ -632,10 +599,10 @@ switch (post('op')) {
         } else {
             flash()->info(tr('Riga aggiunta!'));
         }
-
+    
         // Ricalcolo inps, ritenuta e bollo
         ricalcola_costiagg_fattura($id_record);
-
+    
         break;
 
     case 'manage_descrizione':
@@ -647,6 +614,8 @@ switch (post('op')) {
 
         $riga->descrizione = post('descrizione');
         $riga->note = post('note');
+
+    
         $riga->save();
 
         if (post('idriga') != null) {
@@ -654,7 +623,7 @@ switch (post('op')) {
         } else {
             flash()->info(tr('Riga descrittiva aggiunta!'));
         }
-
+        
         break;
 
     // Scollegamento intervento da documento
@@ -676,6 +645,7 @@ switch (post('op')) {
                 }
             }
         }
+        
         break;
 
     // Scollegamento riga generica da documento
@@ -686,7 +656,7 @@ switch (post('op')) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Descrizione::find($id_riga);
             $riga = $riga ?: Sconto::find($id_riga);
-
+        
             try {
                 $riga->delete();
 
@@ -697,10 +667,9 @@ switch (post('op')) {
             }
 
             $riga = null;
+            flash()->info(tr('Righe eliminate!'));
         }
-
-        flash()->info(tr('Righe eliminate!'));
-
+        
         break;
 
     // Duplicazione riga
@@ -887,6 +856,7 @@ switch (post('op')) {
 
         $id_record = $nota->id;
         aggiorna_sedi_movimenti('documenti', $id_record);
+        
 
         break;
 
@@ -962,7 +932,7 @@ switch (post('op')) {
     case 'add_articolo':
         $id_articolo = post('id_articolo');
         $barcode = post('barcode');
-
+        
         if (!empty($barcode)) {
             $id_articolo = $dbo->selectOne('mg_articoli', 'id',  ['deleted_at' => null, 'attivo' => 1, 'barcode' => $barcode])['id'];
         }
@@ -1051,14 +1021,13 @@ switch (post('op')) {
                 $articolo->setProvvigione($provvigione ?: 0, 'PRC');
                 $articolo->save();
 
-                
+
                 flash()->info(tr('Nuovo articolo aggiunto!'));
             }
         } else {
             $response['error'] = tr('Nessun articolo corrispondente a magazzino');
             echo json_encode($response);
         }
-
         break;
 
     // Controllo se impostare anagrafica azienda in base a tipologia documento 
@@ -1119,6 +1088,7 @@ switch (post('op')) {
         } else {
             flash()->warning(tr('Nessun prezzo modificato!'));
         }
+
 
         break;
 }

@@ -33,14 +33,14 @@ if($main_check){
 ?>
 
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
         {[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "content_edit", "required": 1, "value": "<?=$record->content?>" ]}
     </div>
 </div>
 
 <div class="row">
     <div class="col-md-12 text-right">
-        <button type="button" class="btn btn-success" id="save-btn"><i class='fa fa-save'></i> <?php echo tr('Salva'); ?></button>
+        <button type="button" class="btn btn-success" id="save-btn"><i class='fa fa-check'></i> <?php echo tr('Salva'); ?></button>
     </div>
 </div>
 

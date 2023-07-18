@@ -31,41 +31,48 @@ function renderChecklist($check, $level = 1, $parent = 0) {
         <td style="padding-top:0px;padding-bottom:0px;border-top:0px;">
             <table class="table" style="margin-bottom:0px;">
                 <tr>';
-
-    $result .= '
+    if (sizeof($check->children)>0 && setting('Utilizzare checklist genitore come titolo')) {
+        $result .= '
+                    <td style="width:40px;"></td>
+                    <td colspan="3" style="border-top:0px;">
+                        <span class="text unblockable"><big>'.$check->content.'</big></span>
+                    </td>';
+    } else {
+        $result .= '
                     <td style="width:40px;text-align:center;border-top:0px;border-left:3px solid #eaeaea;">
                         <input type="checkbox" class="checkbox unblockable" data-id="'.$check->id.'" value="'.(!empty($check->checked_at) ? '1' : '0').'" '.(!empty($check->checked_at) ? 'checked' : '').' '.(!$enabled ? 'disabled' : '').'>
                     </td>'; 
 
-    $result .= '
+        $result .= '
                     <td style="border-top:0px;">
                         <span class="text unblockable" style="'.(!empty($check->checked_at)?'text-decoration:line-through;':'').'">'.$check->content.' </span>
                     </td>';
 
-    $result .= '
+        $result .= '
                     <td style="width:500px;border-top:0px;"> 
                         {[ "type": "textarea", "class": "unblockable", "name": "note_checklist", "placeholder": "'.tr('Note').'...", "id": "'.$check->id.'", "value": "'.$check->note.'" ]}
                     </td>';
 
-    $result .= '
+        $result .= '
                     <td style="width:250px;border-top:0px;">';
 
-    if (intval($check->assignedUsers->pluck('id')->toArray())>0){
-        $result .= '    <span class="label label-info pull-right" style="padding:6px 8px;" data-toggle="tooltip" title="Assegnato a '. implode(', ', $check->assignedUsers->pluck('username')->toArray()).'"><i class="fa fa-user"></i></span>';
-    }else{
-        $result .= '    <span class="label label-danger pull-right"  style="padding:6px 8px;">'. tr('Nessun utente assegnato').'</span>';
-    }
+        if (intval($check->assignedUsers->pluck('id')->toArray())>0) {
+            $result .= '    <span class="label label-info pull-right" style="padding:6px 8px;" data-toggle="tooltip" title="Assegnato a '. implode(', ', $check->assignedUsers->pluck('username')->toArray()).'"><i class="fa fa-user"></i></span>';
+        } else {
+            $result .= '    <span class="label label-danger pull-right"  style="padding:6px 8px;">'. tr('Nessun utente assegnato').'</span>';
+        }
 
-    if(!empty($check->checked_at)){
-    $result .= '
+        if (!empty($check->checked_at)) {
+        $result .= '
                         <span class="label label-default pull-right" style="margin-right:5px;padding:6px 8px;">'.(!empty($check->checked_at) ? tr('Verificato da _NAME_ il _DATE_', [
                             '_NAME_' => $check->checkUser->username,
                             '_DATE_' => timestampFormat($check->checked_at),
                         ]) : '').'
                         </span>';
-    }
-    $result .= '
-                    </td>'; 
+        }
+        $result .= '
+                    </td>';
+    } 
 
     $result .= '
                     <td style="width:10px;text-align:center;border-top:0px;">
@@ -75,8 +82,6 @@ function renderChecklist($check, $level = 1, $parent = 0) {
                             <button class="btn btn-xs btn-default handle" title="Modifica ordine delle righe" draggable="true"><i class="fa fa-sort"></i></button>
                         </div>
                     </td>';
-
-
 
     $result .= '
                 </tr>';

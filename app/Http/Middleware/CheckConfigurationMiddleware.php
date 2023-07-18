@@ -44,7 +44,7 @@ class CheckConfigurationMiddleware
                     return \response()->json(['message' => __('Configurazione del database richiesta')], Response::HTTP_SERVICE_UNAVAILABLE);
                 }
 
-                return redirect()->route('setup.index', ['step' => $name]);
+                return redirect()->route('setup.index', ['step' => $name !== 'database' ? $name : null]);
             }
         }
 

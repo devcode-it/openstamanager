@@ -32,6 +32,7 @@ include_once __DIR__.'/../../core.php';
 		<div class="panel-body">
 			<div class="row">
                 <div class="col-md-3">
+                    <?php echo Modules::link('Anagrafiche', $record['id_anagrafica'], null, null, 'class="pull-right"'); ?>
                     {[ "type": "select", "label": "<?php echo tr('Anagrafica'); ?>", "name": "id_anagrafica", "required": "1", "value": "$id_anagrafica$", "ajax-source": "anagrafiche", "disabled": 1 ]}
                 </div>
 

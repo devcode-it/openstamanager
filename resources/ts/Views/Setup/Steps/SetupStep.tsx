@@ -24,6 +24,7 @@ export enum SetupSteps {
 
 export interface SetupStepAttributes extends Attributes {
   onStepChange: (step: SetupSteps) => void;
+  disablePreviousButton?: boolean;
 }
 
 export abstract class SetupStep<A extends SetupStepAttributes = SetupStepAttributes> extends Component<A> {
@@ -55,7 +56,7 @@ export abstract class SetupStep<A extends SetupStepAttributes = SetupStepAttribu
   }
 
   isPreviousButtonEnabled(vnode: Vnode<A, this>): boolean {
-    return Boolean(this.previousStep);
+    return Boolean(this.previousStep) && !vnode.attrs.disablePreviousButton;
   }
 
   onPreviousButtonClicked(vnode: Vnode<A, this>): void {

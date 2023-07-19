@@ -13,6 +13,7 @@ import {
   RequestError
 } from 'mithril-utilities';
 import {match} from 'ts-pattern';
+import {Class} from 'type-fest';
 
 import {
   SetupStep,
@@ -27,6 +28,7 @@ export interface SetupPageAttributes extends PageAttributes<{
 }
 
 export default class SetupPage extends Page<SetupPageAttributes> {
+  initialStep = SetupSteps.Welcome;
   currentStep = Stream<SetupSteps>(SetupSteps.Welcome);
   steps: Record<SetupSteps, SetupStep<any>> = {
     [SetupSteps.Welcome]: new WelcomeStep(),
@@ -46,18 +48,20 @@ export default class SetupPage extends Page<SetupPageAttributes> {
         .with('admin_user', () => SetupSteps.AdminUser)
         .otherwise(() => SetupSteps.Welcome);
       this.currentStep(setupStep);
+      this.initialStep = setupStep;
     }
   }
 
   contents(vnode: Vnode<SetupPageAttributes>) {
+    // noinspection LocalVariableNamingConventionJS - Capitalized name is needed for JSX. Cast to unknown to avoid TS error about JSX element type
+    const Step = this.steps[this.currentStep()] as unknown as Class<SetupStep>;
     return <>
       <h1>{__('Configurazione iniziale')}</h1>
       <div auto-animate>
-        {m(this.steps[this.currentStep()], {
-          ...vnode.attrs.page.props,
-          onSaveInstall: this.onSaveInstall.bind(this),
-          onStepChange: (step: SetupSteps) => this.currentStep(step)
-        })}
+        <Step {...vnode.attrs.page.props}
+              disablePreviousButton={this.currentStep() === this.initialStep}
+              onSaveInstall={this.onSaveInstall.bind(this)}
+              onStepChange={this.currentStep.bind(this)}/>
       </div>
     </>;
   }

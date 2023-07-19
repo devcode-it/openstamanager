@@ -43,6 +43,23 @@ function init() {
 
     if ($('form').length) {
         $('form').not('.no-check').parsley();
+        
+        CKEDITOR.on('instanceReady', function () {
+            $('form textarea').each(function () {
+              if ($(this).attr('obbligatorio') === "1") {
+                $(this).attr('required', '');
+              }
+            });
+          
+            $.each(CKEDITOR.instances, function (instance) {
+              CKEDITOR.instances[instance].on("change", function (e) {
+                for (instance in CKEDITOR.instances) {
+                  CKEDITOR.instances[instance].updateElement();
+                  $('form').parsley().validate();
+                }
+              });
+            });
+          });
     }
 
     // Aggiunta nell'URL del nome tab su cui tornare dopo il submit

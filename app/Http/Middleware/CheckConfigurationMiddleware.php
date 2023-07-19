@@ -18,6 +18,10 @@ class CheckConfigurationMiddleware
 {
     public function handle(Request $request, Closure $next): Response|SymfonyResponse
     {
+        // Skip log viewer routes
+        if (str_starts_with($request->route()->getName(), 'log-viewer.')) {
+            return $next($request);
+        }
         $checks = [
             'database' => static fn (): bool => ! empty(DB::connection()->getDatabaseName()) && DB::connection()->getPdo() instanceof PDO,
             'admin_user' => static fn (): bool => ! empty(User::exists()),

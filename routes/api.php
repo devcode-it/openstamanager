@@ -16,8 +16,7 @@ use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 */
 
 Route::name('setup.')
-    ->middleware(CheckConfigurationMiddleware::class)
-    ->withoutMiddleware([EnsureFrontendRequestsAreStateful::class])
+    ->withoutMiddleware([EnsureFrontendRequestsAreStateful::class, CheckConfigurationMiddleware::class]) // TODO: Add configuration check middleware when setup is done
     ->group(static function () {
         Route::post('setup/test', [SetupController::class, 'testDatabase'])
             ->name('test');

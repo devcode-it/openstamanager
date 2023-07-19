@@ -35,7 +35,7 @@
     'user' => Route::currentRouteName() !== 'setup.index' && auth()->user(),
     'VERSION' => trim(file_get_contents(base_path('VERSION'))),
     'REVISION' => trim(file_get_contents(base_path('REVISION'))),
-    'settings' => (!empty(DB::connection()->getDatabaseName()) && DB::connection()->getPdo() instanceof PDO) ? [
+    'settings' => !str_starts_with(Route::getCurrentRoute()?->getName() ?? '', 'setup.') ? [
         'date_format' => settings('date_format_long'),
         'date_format_short' => settings('date_format_short'),
         'time_format' => settings('time_format'),

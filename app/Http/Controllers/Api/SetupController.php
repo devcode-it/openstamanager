@@ -14,10 +14,10 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use function in_array;
 use Jackiedo\DotenvEditor\DotenvEditor;
 use PDOException;
 use RuntimeException;
-use function in_array;
 
 class SetupController extends Controller
 {
@@ -30,31 +30,24 @@ class SetupController extends Controller
      */
     final public function testDatabase(Request $request): Response|JsonResponse
     {
-        try {
-            $request->validate([
-                'database_driver' => 'required|string',
-                'database_host' => 'required|string',
-                'database_username' => 'required|string',
-                'database_password' => 'nullable|string',
-                'database_name' => 'required|string',
-                'database_port' => 'required|integer',
-            ]);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'message' => $e->getMessage(),
-                'errors' => $e->errors(),
-            ], Response::HTTP_BAD_REQUEST);
-        }
-        $database_name = $request->input('database_name');
+        $validated = $request->validate([
+            'database_driver' => 'required|string',
+            'database_host' => 'required|string',
+            'database_username' => 'required|string',
+            'database_password' => 'nullable|string',
+            'database_name' => 'required|string',
+            'database_port' => 'required|integer',
+        ]);
+        $database_name = $validated['database_name'];
 
         // Configure test connection
         config(['database.connections.testing' => [
-            'driver' => $request->input('database_driver', 'mysql'),
-            'host' => $request->input('database_host'),
-            'port' => $request->input('database_port', '3306'),
-            'password' => $request->input('database_password'),
+            'driver' => $validated['database_driver'],
+            'host' => $validated['database_host'],
+            'port' => $validated['database_port'],
+            'password' => $validated['database_password'],
             'database' => $database_name,
-            'username' => $request->input('database_username'),
+            'username' => $validated['database_username'],
         ]]);
 
         $connection = DB::connection('testing');
@@ -124,7 +117,9 @@ class SetupController extends Controller
         // Check if the database connection is valid
         try {
             DB::connection()->getPdo();
+            $db_from_env = true;
         } catch (PDOException) {
+            $db_from_env = false;
             $response = $this->testDatabase($request);
             if ($response->getStatusCode() !== Response::HTTP_NO_CONTENT) {
                 return $response;
@@ -132,70 +127,61 @@ class SetupController extends Controller
         }
 
         $chmod_result = File::chmod(base_path('.env'), 0644);
-        try {
-            $this->dotenvEditor->setKeys([
-                'DB_CONNECTION' => $request->input('database_driver', 'mysql'),
-                'DB_HOST' => $request->input('database_host'),
-                'DB_PORT' => $request->input('database_port'),
-                'DB_DATABASE' => $request->input('database_name'),
-                'DB_USERNAME' => $request->input('database_username'),
-                'DB_PASSWORD' => $request->input('database_password'),
-            ])->save();
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => __('Impossibile scrivere il file di configurazione. :action', [
-                    'action' => $chmod_result ? $e->getMessage() : 'Controllare i permessi del file .env',
-                ]),
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+
+        if (! $db_from_env) {
+            try {
+                $this->dotenvEditor->setKeys([
+                    'DB_CONNECTION' => $request->input('database_driver', 'mysql'),
+                    'DB_HOST' => $request->input('database_host'),
+                    'DB_PORT' => $request->input('database_port'),
+                    'DB_DATABASE' => $request->input('database_name'),
+                    'DB_USERNAME' => $request->input('database_username'),
+                    'DB_PASSWORD' => $request->input('database_password'),
+                ])->save();
+            } catch (Exception $e) {
+                return response()->json([
+                    'message' => __('Impossibile scrivere il file di configurazione. :action', [
+                        'action' => $chmod_result ? $e->getMessage() : 'Controllare i permessi del file .env',
+                    ]),
+                ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
         }
 
         // Cache config
         Artisan::call('cache:clear');
-        Artisan::call('config:cache');
+        if (app()->environment('production')) {
+            Artisan::call('config:cache');
+        }
 
         // Run migrations
         Artisan::call('migrate', ['--force' => true]);
 
-        try {
-            $request->validate([
-                'date_format_short' => 'required|string',
-                'date_format_long' => 'required|string',
-                'time_format' => 'required|string',
-                'locale' => 'sometimes|string',
-            ]);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'message' => $e->getMessage(),
-                'errors' => $e->errors(),
-            ], Response::HTTP_BAD_REQUEST);
-        }
+        $validated = $request->validate([
+            'date_format_short' => 'required|string',
+            'date_format_long' => 'required|string',
+            'time_format' => 'required|string',
+            'locale' => 'sometimes|string',
+        ]);
+        $validated['locale'] ??= app()->getLocale();
 
-        settings($request->only(['date_format_short', 'date_format_long', 'time_format']));
-        settings('locale', $request->input('locale', app()->getLocale()));
+        settings($validated);
 
         return $this->saveAdmin($request);
     }
 
     public function saveAdmin(Request $request): Response|JsonResponse
     {
-        try {
-            $request->validate([
-                'admin_username' => 'required|string|min:3|max:255|unique:users,username',
-                'admin_password' => 'required|string|min:8|max:255',
-                'admin_password_confirmation' => 'required|string|min:8|max:255|same:admin_password',
-                'admin_email' => 'required|string|email|max:255|unique:users,email',
-            ]);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'message' => $e->getMessage(),
-                'errors' => $e->errors(),
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
+        $validated = $request->validate([
+            'admin_username' => 'required|string|min:3|max:255|unique:users,username',
+            'admin_password' => 'required|string|min:8|max:255',
+            'admin_password_confirmation' => 'required|string|min:8|max:255|same:admin_password',
+            'admin_email' => 'required|string|email|max:255|unique:users,email',
+        ]);
 
         $user = new User();
-        $user->username = $request->input('username');
-        $user->email = $request->input('email');
-        $user->password = Hash::make($request->input('password'));
+        $user->username = $validated['admin_username'];
+        $user->email = $validated['admin_email'];
+        $user->password = Hash::make($validated['admin_password']);
         $user->save();
 
         return response()->noContent();

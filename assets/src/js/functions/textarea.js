@@ -95,6 +95,11 @@ function initCKEditor(input) {
     let $input = $(input);
     let name = input.getAttribute("id");
 
+
+    if($input.prop('required')){
+        $input.data('mandatory', '1');
+    }
+
     // Controllo su istanza già esistente
     let instance = CKEDITOR.instances[name];
     if (instance) {

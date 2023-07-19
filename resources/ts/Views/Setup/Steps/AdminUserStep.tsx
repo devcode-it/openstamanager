@@ -44,7 +44,7 @@ export default class AdminUserStep extends SetupStep<AdminUserStepAttributes> {
         <p>
           {__('Inserisci le informazioni richieste per creare un utente amministratore per accedere a OpenSTAManager.')}
         </p>
-        <Form onsubmit={vnode.attrs.onSaveInstall}>
+        <Form state={this.adminUser} onsubmit={vnode.attrs.onSaveInstall}>
           <md-layout-grid>
             {this.fields().toArray()}
           </md-layout-grid>
@@ -57,22 +57,22 @@ export default class AdminUserStep extends SetupStep<AdminUserStepAttributes> {
   fields() {
     return collect<VnodeCollectionItem>({
       email: (
-        <md-filled-text-field name="email" label={__('Email')} required state={this.adminUser.email} grid-span={6}>
+        <md-filled-text-field name="email" label={__('Email')} required grid-span={6}>
           <MdIcon icon={mdiEmailOutline} slot="leadingicon"/>
         </md-filled-text-field>
       ),
       username: (
-        <md-filled-text-field name="username" label={__('Nome utente')} required state={this.adminUser.username} grid-span={6}>
+        <md-filled-text-field name="username" label={__('Nome utente')} required grid-span={6}>
           <MdIcon icon={mdiAccountOutline} slot="leadingicon"/>
         </md-filled-text-field>
       ),
       password: (
-        <md-filled-text-field name="password" label={__('Password')} required type="password" state={this.adminUser.password} minLength={8} grid-span={6}>
+        <md-filled-text-field name="password" label={__('Password')} required type="password" minLength={8} grid-span={6}>
           <MdIcon icon={mdiLockOutline} slot="leadingicon"/>
         </md-filled-text-field>
       ),
       password_confirmation: (
-        <md-filled-text-field name="password_confirmation" label={__('Conferma password')} required type="password" state={this.adminUser.passwordConfirmation} minLength={8} grid-span={6}>
+        <md-filled-text-field name="passwordConfirmation" label={__('Conferma password')} required type="password" minLength={8} grid-span={6}>
           <MdIcon icon={mdiLockCheckOutline} slot="leadingicon"/>
         </md-filled-text-field>
       )

@@ -48,7 +48,7 @@ export default class DatabaseStep extends SetupStep {
       <div>
         <h4>{__('Database')}</h4>
         <p>{__('Inserisci le informazioni per connetterti al database MySQL. I campi sono già compilati con un esempio. Se non sai come procedere, contatta il tuo fornitore di hosting.')}</p>
-        <Form>
+        <Form state={this.database}>
           <md-layout-grid>
             {this.fields().toArray()}
           </md-layout-grid>
@@ -62,32 +62,32 @@ export default class DatabaseStep extends SetupStep {
     return collect<VnodeCollectionItem>({
       // TODO: Autocomplete/Select with possible drivers
       driver: (
-        <md-filled-text-field name="driver" label={__('Driver')} required state={this.database.driver} grid-span={4}>
+        <md-filled-text-field name="driver" label={__('Driver')} required grid-span={4}>
           <MdIcon icon={mdiPowerPlugOutline} slot="leadingicon"/>
         </md-filled-text-field>
       ),
       host: (
-        <md-filled-text-field name="host" label={__('Host')} required state={this.database.host} grid-span={4} placeholder="localhost">
+        <md-filled-text-field name="host" label={__('Host')} required grid-span={4} placeholder="localhost">
           <MdIcon icon={mdiServerNetwork} slot="leadingicon"/>
         </md-filled-text-field>
       ),
       username: (
-        <md-filled-text-field name="username" label={__('Nome utente')} required state={this.database.username} grid-span={4} placeholder="root">
+        <md-filled-text-field name="username" label={__('Nome utente')} required grid-span={4} placeholder="root">
           <MdIcon icon={mdiAccountOutline} slot="leadingicon"/>
         </md-filled-text-field>
       ),
       password: (
-        <md-filled-text-field type="password" name="password" label={__('Password')} state={this.database.password} grid-span={4}>
+        <md-filled-text-field type="password" name="password" label={__('Password')} grid-span={4}>
           <MdIcon icon={mdiFormTextboxPassword} slot="leadingicon"/>
         </md-filled-text-field>
       ),
       database_name: (
-        <md-filled-text-field name="database_name" label={__('Nome database')} required state={this.database.database_name} grid-span={4} placeholder="openstamanager">
+        <md-filled-text-field name="database_name" label={__('Nome database')} required grid-span={4} placeholder="openstamanager">
           <MdIcon icon={mdiDatabaseOutline} slot="leadingicon"/>
         </md-filled-text-field>
       ),
       port: (
-        <md-filled-text-field name="port" label={__('Porta')} required state={this.database.port} grid-span={4} placeholder="3306">
+        <md-filled-text-field name="port" label={__('Porta')} required grid-span={4} placeholder="3306">
           <MdIcon icon={mdiServerNetwork} slot="leadingicon"/>
         </md-filled-text-field>
       )

@@ -35,7 +35,7 @@ export default class RegionalSettings extends SetupStep {
             dayjs_link: <a href="https://day.js.org/docs/en/display/format">DayJS</a>
           })}
         </p>
-        <Form>
+        <Form state={this.dateFormats}>
           <md-layout-grid style={{'--mdc-layout-grid-margin-desktop': 0}}>
             {this.fields().toArray()}
           </md-layout-grid>
@@ -57,21 +57,21 @@ export default class RegionalSettings extends SetupStep {
     return collect<VnodeCollectionItem>({
       long_date_format: (
         // eslint-disable-next-line sonarjs/no-duplicate-string
-        <md-filled-text-field name="long_date_format" label={__('Formato data lunga')} required state={this.dateFormats.long} supporting-text={__('Anteprima: :date', {
+        <md-filled-text-field name="long" label={__('Formato data lunga')} required supporting-text={__('Anteprima: :date', {
           date: dayjs().format(this.dateFormats.long())
         })}>
           <MdIcon icon={mdiCalendarClockOutline} slot="leadingicon"/>
         </md-filled-text-field>
       ),
       short_date_format: (
-        <md-filled-text-field name="short_date_format" label={__('Formato data corta')} required state={this.dateFormats.short} supporting-text={__('Anteprima: :date', {
+        <md-filled-text-field name="short" label={__('Formato data corta')} required supporting-text={__('Anteprima: :date', {
           date: dayjs().format(this.dateFormats.short())
         })}>
           <MdIcon icon={mdiCalendarMonthOutline} slot="leadingicon"/>
         </md-filled-text-field>
       ),
       time_format: (
-        <md-filled-text-field name="time_format" label={__('Formato orario')} required state={this.dateFormats.time} supporting-text={__('Anteprima: :date', {
+        <md-filled-text-field name="time" label={__('Formato orario')} required supporting-text={__('Anteprima: :date', {
           date: dayjs().format(this.dateFormats.time())
         })}
         >

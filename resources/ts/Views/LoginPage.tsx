@@ -46,7 +46,7 @@ export default class LoginPage extends Page {
   contents(vnode: Vnode<PageAttributes>) {
     return <>
       <h1>{__('Accedi')}</h1>
-      <Form id="login" style={{display: 'flex', flexDirection: 'column', gap: '16px'}} onsubmit={this.onLoginFormSubmit.bind(this)}>
+      <Form id="login" style={{display: 'flex', flexDirection: 'column', gap: '16px'}} state={this.form} onsubmit={this.onLoginFormSubmit.bind(this)}>
         {this.fields().toArray()}
         <div className="login-buttons" style={{gap: '16px'}}>
           {this.buttons().toArray()}
@@ -71,18 +71,18 @@ export default class LoginPage extends Page {
   fields() {
     return collect<VnodeCollectionItem>({
       username: (
-        <md-filled-text-field name="username" required label={__('Nome utente/email')} state={this.form.username}>
+        <md-filled-text-field name="username" required label={__('Nome utente/email')}>
           <MdIcon icon={mdiAccountOutline} slot="leadingicon"/>
         </md-filled-text-field>
       ),
       password: (
-        <md-filled-text-field name="password" required label={__('Password')} type="password" state={this.form.password}>
+        <md-filled-text-field name="password" required label={__('Password')} type="password">
           <MdIcon icon={mdiLockOutline} slot="leadingicon"/>
         </md-filled-text-field>
       ),
       remember: (
         <label>
-          <md-checkbox name="remember" state={this.form.remember}/>
+          <md-checkbox name="remember"/>
           <span>{__('Ricordami')}</span>
         </label>
       )
@@ -92,7 +92,7 @@ export default class LoginPage extends Page {
   forgotPasswordFields() {
     return collect<VnodeCollectionItem>({
       email: (
-        <md-filled-text-field name="email" required label={__('Email')} type="email" state={this.forgotPasswordForm.email}>
+        <md-filled-text-field name="email" required label={__('Email')} type="email">
           <MdIcon icon={mdiEmailOutline} slot="leadingicon"/>
         </md-filled-text-field>
       )

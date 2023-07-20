@@ -171,8 +171,16 @@ switch ($op) {
         $fattura->is_ritenuta_pagata = post('is_ritenuta_pagata') ?: 0;
 
         $fattura->setScontoFinale(post('sconto_finale'), post('tipo_sconto_finale'));
-        $results = $fattura->save();
-        $message = '';
+
+        $anagrafica = Anagrafica::find($fattura->idanagrafica);
+        if ($anagrafica->tipo === "Privato" && $fattura->is_fattura_conto_terzi) {
+            flash()->warning(tr('L\'anagrafica selezionata è del tipo "Privato", correggere la tipologia dalla scheda anagrafica!'));
+        } else {
+            $results = $fattura->save();
+            $message = '';
+            flash()->info(tr('Fattura modificata correttamente!'));
+        }
+
 
         foreach ($results as $numero => $result) {
             foreach ($result as $title => $links) {
@@ -243,7 +251,6 @@ switch ($op) {
                 flash()->warning(tr('Esiste già una fattura con lo stesso numero!'));
             }
         }
-        flash()->info(tr('Fattura modificata correttamente!'));
 
         break;
 

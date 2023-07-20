@@ -226,7 +226,6 @@ echo '
                 'label' => tr('Richiesta'),
                 'name' => 'richiesta',
                 'id' => 'richiesta_add',
-                'obbligatorio' => 1,
                 'required' => 1,
                 'value' => htmlentities($richiesta),
                 'extra' => 'style=\'max-height:80px;\'',

@@ -25,7 +25,6 @@ use Modules\Preventivi\Preventivo;
 $preventivo = Preventivo::find($id_record);
 
 $id_anagrafica = $preventivo->idanagrafica;
-$direzione = $preventivo->direzione;
 $righe = $_GET['righe'];
 
 $righe = $dbo->fetchArray(

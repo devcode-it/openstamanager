@@ -25,7 +25,6 @@ use Modules\Contratti\Contratto;
 $contratto = Contratto::find($id_record);
 
 $id_anagrafica = $contratto->idanagrafica;
-$direzione = $contratto->direzione;
 $righe = $_GET['righe'];
 
 $righe = $dbo->fetchArray(

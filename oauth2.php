@@ -58,7 +58,7 @@ if (empty($_GET['error'])) {
     redirect($redirect);
     exit();
 } else {
-    echo $_GET['error'].'<br>'.$_GET['error_description'].'
+    echo strip_tags($_GET['error']).'<br>'.strip_tags($_GET['error_description']).'
 <br><br>
 <a href="'.$redirect.'">'.tr('Riprova').'</a>';
 }

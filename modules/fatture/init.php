@@ -46,6 +46,7 @@ if (isset($id_record)) {
 		co_documenti.split_payment AS split_payment,
         co_statidocumento.descrizione AS `stato`,
         co_tipidocumento.descrizione AS `descrizione_tipo`,
+        co_tipidocumento.id AS `idtipodocumento`,
         (SELECT is_fiscale FROM zz_segments WHERE id = id_segment) AS is_fiscale,
         (SELECT descrizione FROM co_ritenutaacconto WHERE id=idritenutaacconto) AS ritenutaacconto_desc,
         (SELECT descrizione FROM co_rivalse WHERE id=idrivalsainps) AS rivalsainps_desc,
@@ -81,4 +82,6 @@ if (isset($id_record)) {
         $fattura_acquisto_originale = Fattura::where('id_autofattura', '=', $fattura->id)->first();
         $autofattura_collegata = Fattura::where('id_autofattura', '=', $fattura->id)->where('id', '!=', $fattura_acquisto_originale->id)->orderBy('id', 'DESC')->first();
     }
+
+    $superselect['idtipodocumento'] = $record['idtipodocumento'] ;
 }

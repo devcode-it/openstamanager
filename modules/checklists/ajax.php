@@ -100,6 +100,7 @@ switch(post('op')){
         }
 
         $record->content = post('content');
+        $record->is_titolo = post('is_titolo');
         $record->save();
 
         flash()->info(tr('Informazioni salvate correttamente!'));

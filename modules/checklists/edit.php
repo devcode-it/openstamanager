@@ -90,16 +90,22 @@ echo '
             <input type="hidden" name="op" value="add_item">
             <input type="hidden" name="backto" value="record-edit">
 
-            <div class="col-md-6">
-                {[ "type": "text", "placeholder": "'.tr('Contenuto').'", "name": "content", "class": "unblockable", "required": 1 ]}
+            <div class="col-md-7">
+                '.input([
+                    'type' => 'ckeditor',
+                    'label' => tr('Contenuto'),
+                    'name' => 'content',
+                    'required' => 1,
+                    'value' => ''
+                ]).'
             </div>
 
-            <div class="col-md-4">
-                {[ "type": "select", "placeholder": "'.tr('Genitore').'", "name": "parent", "class": "unblockable", "values": '.json_encode($list).' ]}
-            </div>
-
-            <div class="col-md-1 text-right">
-                <button type="submit" class="btn btn-success">
+            <div class="col-md-5 text-center">
+                {[ "type": "select", "label": "'.tr('Genitore').'", "name": "parent", "class": "unblockable", "values": '.json_encode($list).' ]}
+                <br>
+                {[ "type": "checkbox", "label": "'.tr('Utilizza come titolo').'", "name": "is_titolo" ]}
+                <br><br>
+                <button type="submit" class="btn btn-lg btn-success">
                     <i class="fa fa-upload"></i> '.tr('Crea').'
                 </button>
             </div>

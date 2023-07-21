@@ -15,4 +15,5 @@ INSERT INTO `em_templates` (`id`, `id_module`, `name`, `icon`, `subject`, `tipo_
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES ('Numero di minuti di avanzamento delle sessioni delle attività', '1', 'string', '1', 'Attività', NULL, 'Specifica di quanti minuti aumentare o diminuire le sessioni di lavoro delle attività'); 
 
 -- Aggiunta impostazione titolo checklist
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `order`, `help`) VALUES (NULL, 'Utilizzare checklist genitore come titolo', '0', 'boolean', '1', 'Generali', NULL, NULL, 'Attivando questa impostazione non sarà possibile spuntare le checklist genitore ma verranno utilizzate come titolo');
+ALTER TABLE `zz_checks` ADD `is_titolo` BOOLEAN NOT NULL AFTER `id_parent`;
+ALTER TABLE `zz_checklist_items` ADD `is_titolo` BOOLEAN NOT NULL AFTER `id_parent`;

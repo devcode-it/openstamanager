@@ -57,7 +57,8 @@ switch (post('op')) {
     case 'add_item':
         $content = post('content');
         $parent_id = post('parent') ?: null;
-        $item = ChecklistItem::build($record, $content, $parent_id);
+        $is_titolo = post('is_titolo');
+        $item = ChecklistItem::build($record, $content, $parent_id, $is_titolo);
 
         flash()->info(tr('Nuova riga della checklist creata!'));
 

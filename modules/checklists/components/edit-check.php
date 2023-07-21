@@ -34,17 +34,30 @@ if($main_check){
 
 <div class="row">
     <div class="col-md-12">
-        {[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "content_edit", "required": 1, "value": "<?=$record->content?>" ]}
+    <?php
+        echo input([
+            'type' => 'ckeditor',
+            'label' => tr('Descrizione'),
+            'name' => 'content_edit',
+            'required' => 1,
+            'value' => htmlentities($record->content)
+        ]);
+    ?>
     </div>
 </div>
 
 <div class="row">
-    <div class="col-md-12 text-right">
-        <button type="button" class="btn btn-success" id="save-btn"><i class='fa fa-check'></i> <?php echo tr('Salva'); ?></button>
+    <div class="col-md-4">
+        {[ "type": "checkbox", "label": "<?php echo tr('Utilizza come titolo'); ?>", "name": "is_titolo", "value": "<?php echo $record->is_titolo ?>" ]}
+    </div>
+
+    <div class="col-md-8 text-right">
+        <br><br><button type="button" class="btn btn-success" id="save-btn"><i class='fa fa-check'></i> <?php echo tr('Salva'); ?></button>
     </div>
 </div>
 
 <script>
+    init();
     $('#save-btn').click(function() {
         $('#save-btn').attr('disabled', true);
         $('#save-btn').html('<i class="fa fa-spinner fa-spin"></i> <?php echo tr('Salvataggio in corso...'); ?>');
@@ -52,7 +65,8 @@ if($main_check){
         $.post('<?php echo $rootdir; ?>/modules/checklists/ajax.php', {
             op: "edit_check",
             id_record: "<?=$id_record?>",
-            content: $('#content_edit').val(),
+            content: input('content_edit').get(),
+            is_titolo: input('is_titolo').get(),
             main_check: "<?=$main_check?>",
         }, function(){
             location.reload();

@@ -39,13 +39,14 @@ class ChecklistItem extends Model
      *
      * @return self
      */
-    public static function build(Checklist $checklist, $contenuto, $id_parent = null)
+    public static function build(Checklist $checklist, $contenuto, $id_parent = null, $is_titolo = 0)
     {
         $model = new static();
 
         $model->checklist()->associate($checklist);
         $model->id_parent = $id_parent;
         $model->content = $contenuto;
+        $model->is_titolo = $is_titolo;
 
         $model->findOrder();
 

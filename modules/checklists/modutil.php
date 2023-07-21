@@ -31,7 +31,7 @@ function renderChecklist($check, $level = 1, $parent = 0) {
         <td style="padding-top:0px;padding-bottom:0px;border-top:0px;">
             <table class="table" style="margin-bottom:0px;">
                 <tr>';
-    if (sizeof($check->children)>0 && setting('Utilizzare checklist genitore come titolo')) {
+    if ($check->is_titolo) {
         $result .= '
                     <td style="width:40px;"></td>
                     <td colspan="3" style="border-top:0px;">

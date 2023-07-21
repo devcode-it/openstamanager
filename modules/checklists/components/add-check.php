@@ -33,29 +33,41 @@ foreach ($checks as $check) {
 echo '
 <form action="" method="post" id="check-form">
     <div class="row">
-        <div class="col-md-9">
-            {[ "type": "text", "label": "'.tr('Contenuto').'", "name": "content", "required": 1 ]}
+        <div class="col-md-12">
+            '.input([
+                'type' => 'ckeditor',
+                'label' => tr('Contenuto'),
+                'name' => 'content',
+                'required' => 1,
+                'value' => ''
+            ]).'
+        </div> 
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            {[ "type": "select", "label": "'.tr('Collega a').'", "name": "parent", "values": '.json_encode($list).' ]}
         </div>
 
-        <div class="col-md-3">
-            {[ "type": "select", "label": "'.tr('Collega a').'", "name": "parent", "values": '.json_encode($list).' ]}
+        <div class="col-md-6">
+            {[ "type": "checkbox", "label": "'.tr('Utilizza come titolo').'", "name": "is_titolo" ]}
         </div>
     </div>
 
     <div class="row">
-         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Utente assegnato').'", "name": "assigned_users", "ajax-source": "utenti", "multiple": 1 ]}
+        <div class="col-md-6">
+            {[ "type": "select", "label": "'.tr('Gruppo assegnato').'", "name": "group_id", "values": "query=SELECT id, nome AS text FROM zz_groups" ]}
         </div>
 
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Gruppo assegnato').'", "name": "group_id", "values": "query=SELECT id, nome AS text FROM zz_groups" ]}
+            {[ "type": "select", "label": "'.tr('Utente assegnato').'", "name": "assigned_users", "ajax-source": "utenti", "multiple": 1 ]}
         </div>
     </div>
 
     <!-- PULSANTI -->
 	<div class="row">
         <div class="col-md-12 text-right">
-            <button type="button" class="btn btn-primary" id="check-add">
+            <br><br><button type="button" class="btn btn-primary" id="check-add">
                 <i class="fa fa-plus"></i> '.tr('Aggiungi').'
             </button>
         </div>
@@ -128,7 +140,8 @@ function addCheck(btn) {
     }, "'.$manager_id.'");
 
     checklist.addCheck({
-        content: $form.find("#content").val(),
+        content: input("content").get(),
+        is_titolo: input("is_titolo").get(),
         parent: $form.find("#parent").val(),
         assigned_users: $form.find("#assigned_users").val(),
         group_id: $form.find("#group_id").val(),

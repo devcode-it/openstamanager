@@ -319,13 +319,14 @@ elseif (filter('op') == 'copia-checklist') {
 elseif (filter('op') == 'aggiungi-check') {
     $content = post('content');
     $parent_id = post('parent') ?: null;
+    $is_titolo = post('is_titolo');
 
     $users = post('assigned_users');
     $users = array_clean($users);
 
     $group_id = post('group_id');
 
-    $check = Check::build($user, $structure, $id_record, $content, $parent_id);
+    $check = Check::build($user, $structure, $id_record, $content, $parent_id, $is_titolo);
     $check->setAccess($users, $group_id);
 }
 

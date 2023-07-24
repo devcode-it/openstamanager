@@ -110,6 +110,7 @@ echo '
         }
 echo '  
         $("#barcode").focus();
+        $("#causale").trigger("change");
     });
     
     $(document).on("keyup", function (event) {

@@ -228,9 +228,10 @@ class FatturaOrdinaria extends FatturaElettronica
                 }
 
                 // Totale documento
+                $totale_righe = 0;
                 $dati_riepilogo = $this->getBody()['DatiBeniServizi']['DatiRiepilogo'];
                 if (!empty($dati_riepilogo['ImponibileImporto'])) {
-                    $totale_righe += $riga['PrezzoTotale'];
+                    $totale_righe = $dati_riepilogo['ImponibileImporto'];
                 } elseif (is_array($dati_riepilogo)) {
                     foreach ($dati_riepilogo as $dato) {
                         $totale_righe += $dato['ImponibileImporto'];
@@ -361,10 +362,7 @@ class FatturaOrdinaria extends FatturaElettronica
 
         // Arrotondamenti differenti nella fattura XML
         $diff = round(abs($totale_righe) - abs($fattura->totale_imponibile), 2);
-        if (!empty($diff) && $diff != abs($dati_riepilogo['Arrotondamento']) || (empty($dati_riepilogo['Arrotondamento']) && abs($dati_riepilogo['ImponibileImporto']) != abs($totale_righe + $fattura->rivalsa_inps))) {
-            if (empty($dati_riepilogo['Arrotondamento'])){
-                $diff = abs($dati_riepilogo['ImponibileImporto']) - abs($totale_righe);
-            }
+        if (!empty($diff)) {
             // Rimozione dell'IVA calcolata automaticamente dal gestionale
             $iva_arrotondamento = database()->fetchOne('SELECT * FROM co_iva WHERE percentuale=0 AND deleted_at IS NULL');
             $diff = $diff * 100 / (100 + $iva_arrotondamento['percentuale']);

@@ -33,16 +33,12 @@ if ($record['can_delete']) {
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 
 	<div class="row">
-		<div class="col-md-4">
+		<div class="col-md-5">
 			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$", "extra": "<?php echo $attr; ?>" ]}
 		</div>
 
-        <div class="col-md-3">
+		<div class="col-md-4">
 			{[ "type": "text", "label": "<?php echo tr('Icona'); ?>", "name": "icona", "required": 1, "class": "text-center", "value": "$icona$", "extra": "", "icon-after": "<?php echo (!empty($record['icona'])) ? '<i class=\"'.$record['icona'].'\"></i>' : ''; ?>"  ]}
-		</div>
-
-		<div class="col-md-2">
-			{[ "type": "text", "label": "<?php echo tr('Colore'); ?>", "name": "colore", "required": 1, "class": "colorpicker text-center", "value": "$colore$", "extra": "maxlength='7'", "icon-after": "<div class='img-circle square'></div>" ]}
 		</div>
 
 		<div class="col-md-3">
@@ -52,26 +48,24 @@ if ($record['can_delete']) {
 				</div>
 
 				<div class="panel-body">
-					{[ "type": "checkbox", "label": "<?php echo tr('Pianificabile?'); ?>", "name": "is_pianificabile", "value": "$is_pianificabile$", "help": "<?php echo tr('I preventivi che si trovano in questo stato verranno considerati come pianificabili'); ?>", "placeholder": "<?php echo tr('Pianificabile'); ?>", "extra": "" ]}
-					{[ "type": "checkbox", "label": "<?php echo tr('Fatturabile?'); ?>", "name": "is_fatturabile", "value": "$is_fatturabile$", "help": "<?php echo tr('I preventivi che si trovano in questo stato verranno considerati come fatturabili'); ?>", "placeholder": "<?php echo tr('Fatturabile'); ?>", "extra": "" ]}
-					{[ "type": "checkbox", "label": "<?php echo tr('Completato?'); ?>", "name": "is_completato", "value": "$is_completato$", "help": "<?php echo tr('I preventivi che si trovano in questo stato verranno considerati come completati'); ?>", "placeholder": "<?php echo tr('Completato'); ?>", "extra": "" ]}
-					{[ "type": "checkbox", "label": "<?php echo tr('Revisionabile?'); ?>", "name": "is_revisionabile", "value": "$is_revisionabile$", "help": "<?php echo tr('Per i preventivi che si trovano in questo stato si potrà creare una nuova revisione'); ?>", "placeholder": "<?php echo tr('Revisionabile'); ?>", "extra": "" ]}
+		            {[ "type": "checkbox", "label": "<?php echo tr('Completato?'); ?>", "name": "completato", "value": "$completato$", "help": "<?php echo tr('Gli ordini che si trovano in questo stato verranno considerati come completati'); ?>", "placeholder": "<?php echo tr('Completato'); ?>", "extra": "" ]}
+		            {[ "type": "checkbox", "label": "<?php echo tr('Impegnato?'); ?>", "name": "impegnato", "value": "$impegnato$", "help": "<?php echo tr('Gli ordini che si trovano in questo stato verranno considerati come impegnati'); ?>", "placeholder": "<?php echo tr('Impegnato'); ?>", "extra": "" ]}
+		            {[ "type": "checkbox", "label": "<?php echo tr('Fatturabile?'); ?>", "name": "is_fatturabile", "value": "$is_fatturabile$", "help": "<?php echo tr('Gli ordini che si trovano in questo stato verranno considerati come fatturabili'); ?>", "placeholder": "<?php echo tr('Fatturabile'); ?>", "extra": "" ]}
 				</div>
 			</div>
 		</div>
 	</div>
-
 </form>
 
 
 <?php
-$preventivi = $dbo->fetchNum('SELECT id FROM co_preventivi WHERE idstato='.prepare($id_record));
+$ordini = $dbo->fetchNum('SELECT id FROM or_ordini WHERE idstatoordine='.prepare($id_record));
 
-if (!empty($preventivi)) {
+if (!empty($ordini)) {
     echo '
 <div class="alert alert-danger">
-    '.tr('Ci sono _NUM_ preventivi collegati', [
-        '_NUM_' => $preventivi,
+    '.tr('Ci sono _NUM_ ordini collegati', [
+        '_NUM_' => $ordini,
     ]).'.
 </div>';
 }
@@ -79,19 +73,8 @@ if (!empty($preventivi)) {
 if (!empty($record['can_delete'])) {
     echo '
 <a class="btn btn-danger ask" data-backto="record-list">
-	<i class="fa fa-trash"></i>'.tr('Elimina').'
+	<i class="fa fa-trash"></i> '.tr('Elimina').'
 </a>';
 }
 
 ?>
-
-<script>
-	$(document).ready( function() {
-		$('.colorpicker').colorpicker({ format: 'hex' }).on('changeColor', function() {
-			$('#colore').parent().find('.square').css( 'background', $('#colore').val() );
-		});
-		$('#colore').parent().find('.square').css( 'background', $('#colore').val() );
-
-		notifica();
-	});
-</script>

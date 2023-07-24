@@ -59,6 +59,7 @@ if ($record['can_delete']) {
 
 
 <?php
+$contratti = $dbo->fetchNum('SELECT id FROM co_contratti WHERE idstato='.prepare($id_record));
 
 if (!empty($contratti)) {
     echo '

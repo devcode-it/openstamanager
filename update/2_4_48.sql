@@ -17,3 +17,23 @@ INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `ord
 -- Aggiunta impostazione titolo checklist
 ALTER TABLE `zz_checks` ADD `is_titolo` BOOLEAN NOT NULL AFTER `id_parent`;
 ALTER TABLE `zz_checklist_items` ADD `is_titolo` BOOLEAN NOT NULL AFTER `id_parent`;
+
+-- Aggiunto modulo Stati ordini
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Stati degli ordini', 'Stati degli ordini','stati_ordine', 'SELECT |select| FROM `or_statiordine` WHERE 1=1 AND deleted_at IS NULL HAVING 2=2', '', 'fa fa-angle-right', '2.4.48', '2.4.48', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Tabelle'), '1', '1');
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati degli ordini'), 'Fatturabile', 'IF(is_fatturabile, ''S&igrave;'', ''No'')', 6, 1, 0, 0 ,1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati degli ordini'), 'Completato', 'IF(completato, ''S&igrave;'', ''No'')', 5, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati degli ordini'), 'Impegnato', 'IF(impegnato, ''S&igrave;'', ''No'')', 4, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati degli ordini'), 'Icona', 'icona', 3, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati degli ordini'), 'Descrizione', 'descrizione', 2, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati degli ordini'), 'id', 'id', 1, 0, 0, 1, 0);
+
+-- Aggiunto flag can_delete in stati ordini
+ALTER TABLE `or_statiordine` ADD `deleted_at` DATETIME NULL;
+ALTER TABLE `or_statiordine` ADD `can_delete` BOOLEAN NOT NULL DEFAULT TRUE;
+UPDATE `or_statiordine` SET `can_delete` = '0';
+
+-- Aggiunta risorsa api stati ordine
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES
+(NULL, 'v1', 'retrieve', 'stati_ordine', 'Modules\\StatiOrdine\\API\\v1\\StatiOrdini', '1');

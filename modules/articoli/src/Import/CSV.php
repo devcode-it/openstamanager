@@ -218,11 +218,15 @@ class CSV extends CSVImporter
             $number++;
         }
 
-        $rows = $this->getRows(0, $number);
+        // Lettura primo record: se non c'è la pulizia listini da fare, esco, altrimenti
+        // si rischia una lettura di troppi dati insieme
+        $rows = $this->getRows(0, 2);
         $first_record = $this->getRecord($rows[1]);
         if (!isset($first_record['anagrafica_listino']) || empty($this->getPrimaryKey())) {
             return;
         }
+
+        $rows = $this->getRows(0, $number);
 
         foreach ($rows as $row) {
             // Interpretazione secondo la selezione

@@ -4,7 +4,6 @@ import '@material/web/iconbutton/standard-icon-button.js';
 import {FilledTextField} from '@material/web/textfield/lib/filled-text-field';
 import {mdiCalendarMonthOutline} from '@mdi/js';
 import MdIcon from '@osm/Components/MdIcon';
-import {Property} from 'csstype';
 import {Vnode} from 'mithril';
 import {
   Attributes,

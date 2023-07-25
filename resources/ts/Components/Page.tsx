@@ -45,8 +45,12 @@ export default abstract class Page<A extends PageAttributes = PageAttributes> ex
     }
 
     if (this.title) {
-      document.title = `${this.title} - OpenSTAManager`;
+      document.title = this.pageTitle();
     }
+  }
+
+  pageTitle(): string {
+    return this.title ? `${this.title} - OpenSTAManager` : 'OpenSTAManager';
   }
 
   contents(vnode: Vnode<A>): Children | Collection<Children> {

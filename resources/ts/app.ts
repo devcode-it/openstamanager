@@ -3,6 +3,7 @@ import '@osm/../scss/app.scss';
 import {createInertiaApp} from '@maicol07/inertia-mithril';
 import {showSnackbar} from '@osm/utils/misc';
 import Mithril from 'mithril';
+import Stream from 'mithril/stream';
 import {registerSW} from 'virtual:pwa-register';
 
 import {resolvePage} from '~inertia';
@@ -29,8 +30,11 @@ window.__ = stringTranslator;
 // Load modules bootstrap file
 import.meta.glob('../../vendor/**/**/resources/{js,ts}/bootstrap.{tsx,ts,js,jsx}', {eager: true});
 
+// eslint-disable-next-line import/no-mutable-exports,import/prefer-default-export,prefer-const
+export const titleCallback = Stream((title: string) => `${title} - OpenSTAManager`);
+
 await createInertiaApp({
-  title: ((title) => `${title} - OpenSTAManager`),
+  title: (title) => titleCallback()(title),
   // This rule is disabled to avoid a bug in Inertia plugin
   // eslint-disable-next-line arrow-body-style
   resolve: resolvePage(() => {

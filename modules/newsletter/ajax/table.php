@@ -95,18 +95,17 @@ foreach ($destinatari_filtrati as $destinatario) {
 
     // Informazioni di invio
     if (empty($lista)) {
-        $mail_id = $origine->pivot->id_email;
-        $mail = Mail::find($mail_id);
-        if (!empty($mail) && !empty($mail->sent_at)) {
+        $mail = $dbo->fetchOne('SELECT * FROM em_emails WHERE id_newsletter='.prepare($id_newsletter).' AND id_record='.prepare($origine->idanagrafica));
+        if (!empty($mail['sent_at'])) {
             $info_invio = '
-<span class="text-success">
-    <i class="fa fa-paper-plane"></i> '.timestampFormat($mail->sent_at).'
-</span>';
+            <span class="text-success">
+                <i class="fa fa-paper-plane"></i> '.timestampFormat($mail['sent_at']).'
+            </span>';
         } else {
             $info_invio = '
-<span class="text-info">
-    <i class="fa fa-clock-o"></i> '.tr('Non ancora inviata').'
-</span>';
+            <span class="text-info">
+                <i class="fa fa-clock-o"></i> '.tr('Non ancora inviata').'
+            </span>';
         }
 
         $riga[] = '<div class="text-center">'.$info_invio.'</div>';

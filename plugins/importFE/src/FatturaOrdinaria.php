@@ -229,16 +229,20 @@ class FatturaOrdinaria extends FatturaElettronica
 
                 // Totale documento
                 $totale_righe = 0;
+                $totale_arrotondamento = 0;
                 $dati_riepilogo = $this->getBody()['DatiBeniServizi']['DatiRiepilogo'];
                 if (!empty($dati_riepilogo['ImponibileImporto'])) {
                     $totale_righe = $dati_riepilogo['ImponibileImporto'];
+                    $totale_arrotondamento = $dati_riepilogo['Arrotondamento'];
                 } elseif (is_array($dati_riepilogo)) {
                     foreach ($dati_riepilogo as $dato) {
                         $totale_righe += $dato['ImponibileImporto'];
+                        $totale_arrotondamento += $dati_riepilogo['Arrotondamento'];
                     }   
                 } else {
                     $totali_righe = array_column($righe, 'PrezzoTotale');
                     $totale_righe = sum($totali_righe, null, 2);
+                    $totale_arrotondamento = $dati_riepilogo['Arrotondamento'];
                 }
 
                 // Nel caso il prezzo sia negativo viene gestito attraverso l'inversione della quantità (come per le note di credito)
@@ -361,7 +365,7 @@ class FatturaOrdinaria extends FatturaElettronica
         $fattura->refresh();
 
         // Arrotondamenti differenti nella fattura XML
-        $diff = round(abs($totale_righe) - abs($fattura->totale_imponibile), 2);
+        $diff = round(abs($totale_righe) - $totale_arrotondamento - abs($fattura->totale_imponibile) - $fattura->rivalsa_inps, 2);
         if (!empty($diff)) {
             // Rimozione dell'IVA calcolata automaticamente dal gestionale
             $iva_arrotondamento = database()->fetchOne('SELECT * FROM co_iva WHERE percentuale=0 AND deleted_at IS NULL');

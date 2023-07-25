@@ -23,6 +23,7 @@ use Illuminate\Support\Str;
 use function in_array;
 use function is_array;
 use Nette\Utils\Json;
+use function is_string;
 
 /**
  * @phpstan-type MatchType 'text'|'string'|'bool'|'int'|'integer'|'datetime'|'between'|'array'
@@ -356,7 +357,7 @@ abstract class Repository extends RestifyRepository
         // Fix dates (JSONAPI uses ISO 8601, DB uses Y-m-d H:i:s)
         $attributes = array_map(
             static function ($value) {
-                if (is_string($value) && Carbon::hasFormat($value, 'Y-m-d\TH:i:sP')) {
+                if (is_string($value) && (Carbon::hasFormat($value, 'Y-m-d\TH:i:sP') || Carbon::hasFormat($value, 'Y-m-d\TH:i:s.v\Z'))) {
                     try {
                         return Carbon::parse($value)->format('Y-m-d H:i:s');
                     } catch (InvalidFormatException) {

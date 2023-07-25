@@ -82,9 +82,11 @@ export default abstract class Model<A extends ModelAttributes, R extends ModelRe
   setAttribute<AN extends keyof A = keyof A>(attributeName: AN, value: ValueOf<A, AN>) {
     const date = dayjs(value as string | Date | undefined);
     // @ts-expect-error
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     if (this.isDateAttribute(attributeName) && date.isValid()) {
-      // @ts-expect-error
-      value = date.format((this as Model<any>).constructor.dates[attributeName]);
+      const format = this.constructor.dates[attributeName as string];
+      // eslint-disable-next-line no-param-reassign
+      value = (format === 'YYYY-MM-DDTHH:mm:ss.ssssssZ' ? date.toISOString() : date.format(format)) as ValueOf<A, AN>;
     }
     // @ts-expect-error — This is needed to parse the dates correctly.
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access

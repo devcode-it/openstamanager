@@ -359,7 +359,7 @@ abstract class Repository extends RestifyRepository
             static function ($value) {
                 if (is_string($value) && (Carbon::hasFormat($value, 'Y-m-d\TH:i:sP') || Carbon::hasFormat($value, 'Y-m-d\TH:i:s.v\Z'))) {
                     try {
-                        return Carbon::parse($value)->format('Y-m-d H:i:s');
+                        return Carbon::parse($value, 'UTC')->setTimezone(config('app.timezone'))->format('Y-m-d H:i:s');
                     } catch (InvalidFormatException) {
                         return $value;
                     }

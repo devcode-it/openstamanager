@@ -237,12 +237,11 @@ class FatturaOrdinaria extends FatturaElettronica
                 } elseif (is_array($dati_riepilogo)) {
                     foreach ($dati_riepilogo as $dato) {
                         $totale_righe += $dato['ImponibileImporto'];
-                        $totale_arrotondamento += $dati_riepilogo['Arrotondamento'];
+                        $totale_arrotondamento += $dato['Arrotondamento'];
                     }   
                 } else {
                     $totali_righe = array_column($righe, 'PrezzoTotale');
                     $totale_righe = sum($totali_righe, null, 2);
-                    $totale_arrotondamento = $dati_riepilogo['Arrotondamento'];
                 }
 
                 // Nel caso il prezzo sia negativo viene gestito attraverso l'inversione della quantità (come per le note di credito)

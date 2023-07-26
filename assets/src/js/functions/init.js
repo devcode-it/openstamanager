@@ -56,7 +56,11 @@ function init() {
             CKEDITOR.instances[instance].on("change", function (e) {
               for (instance in CKEDITOR.instances) {
                 CKEDITOR.instances[instance].updateElement();
-                $('form').parsley().validate();
+                $('form').each(function () {
+                  if ($(this).attr('novalidate') == undefined) {
+                    $(this).parsley().validate();
+                  }
+                });
               }
             });
           });

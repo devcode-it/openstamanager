@@ -65,7 +65,12 @@ export default defineConfig(async () => {
     assetsInclude: '**/*.xml',
     build: {
       sourcemap: true,
-      target: 'esnext'
+      target: 'esnext',
+      rollupOptions: {
+        output: {
+          assetFileNames: '[name].[ext]'
+        }
+      }
     },
     resolve: {
       alias: aliases
@@ -102,15 +107,11 @@ export default defineConfig(async () => {
       // }),
       VitePWA({
         registerType: 'autoUpdate',
-        outDir: 'public',
-        buildBase: '/',
-        scope: '/',
-        // TODO: Check options
+        buildBase: '/build/',
         includeAssets: [
-          'resources/images/favicon/favicon.ico',
-          '../robots.txt',
-          'resources/images/favicon/apple-touch-icon.png',
-          'resources/images/*.png'
+          'build/assets/*.ico',
+          'robots.txt',
+          'build/assets/*.png'
         ],
         manifest: {
           name: 'OpenSTAManager',
@@ -119,7 +120,6 @@ export default defineConfig(async () => {
           categories: ['business', 'productivity'],
           display: 'minimal-ui',
           theme_color: '#3f3f3f',
-          background_color: '#fffff',
           icons: [
             {
               src: 'android-chrome-192x192.png',
@@ -134,8 +134,7 @@ export default defineConfig(async () => {
             {
               src: 'android-chrome-512x512.png',
               sizes: '512x512',
-              type: 'image/png',
-              purpose: 'any maskable'
+              type: 'image/png'
             }
           ]
         },

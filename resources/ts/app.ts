@@ -4,6 +4,7 @@ import {createInertiaApp} from '@maicol07/inertia-mithril';
 import {showSnackbar} from '@osm/utils/misc';
 import Mithril from 'mithril';
 import Stream from 'mithril/stream';
+import {pwaInfo} from 'virtual:pwa-info';
 import {registerSW} from 'virtual:pwa-register';
 
 import {resolvePage} from '~inertia';
@@ -63,3 +64,15 @@ const updateSW = registerSW({
     void showSnackbar(__('È ora possibile lavorare offline!'), false);
   }
 }) as (reloadPage?: boolean) => Promise<void>;
+
+if (pwaInfo) {
+  const {href, useCredentials} = pwaInfo.webManifest;
+  /* Add link to head: href is the link */
+  const linkElement = document.createElement('link');
+  linkElement.setAttribute('rel', 'manifest');
+  linkElement.setAttribute('href', href);
+  if (useCredentials) {
+    linkElement.setAttribute('crossorigin', 'use-credentials');
+  }
+  document.head.append(linkElement);
+}

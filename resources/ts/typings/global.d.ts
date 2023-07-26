@@ -2,6 +2,7 @@
 // noinspection JSFileReferences,JSUnusedGlobalSymbols,LocalVariableNamingConventionJS
 import 'inertia-plugin/client';
 import 'vite-plugin-pwa/client.d';
+import 'vite-plugin-pwa/info.d';
 import 'vite/client';
 
 import type Mithril from 'mithril';

@@ -343,7 +343,6 @@ echo '
                         'type' => 'ckeditor',
                         'label' => tr('Descrizione'),
                         'name' => 'descrizione',
-                        'required' => 1,
                         'readonly' => $record['flag_completato'],
                         'extra' => 'rows="10"',
                         'value' => $record['descrizione'],

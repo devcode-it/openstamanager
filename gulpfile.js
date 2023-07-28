@@ -256,7 +256,46 @@ function leaflet() {
         .pipe(gulp.dest(config.production + '/' + config.paths.images + '/leaflet'));
 }
 
+function wacom(){
+    const vendor = [
+        'modules/clipper-lib/clipper.js',
+        'modules/js-md5/build/md5.min.js',
+        'modules/poly2tri/dist/poly2tri.min.js',
+        'modules/protobufjs/dist/protobuf.min.js',
+        'modules/jszip/dist/jszip.min.js',
+        'modules/gl-matrix/gl-matrix-min.js',
+        'modules/rbush/rbush.min.js',
+        'modules/js-ext/js-ext-min.js',
+        'modules/digital-ink/digital-ink-min.js',
+        'common/will/tools.js',	
+        'modules/sjcl/sjcl.js',
+        'sigCaptDialog/libs/stu_capture/stu-sdk.min.js',
+        'sigCaptDialog/libs/stu_capture/stu_capture_encryption.js',    
+        'common/libs/signature_sdk.js',
+        'common/libs/signature_sdk_helper.js',      
+        'modules/node-forge/dist/forge.min.js',					        
+        'sigCaptDialog/sigCaptDialog.js',
+        'sigCaptDialog/stuCaptDialog.js'
+    ];
 
+    for (const i in vendor) {
+        vendor[i] = config.development + '/' + config.paths.js + '/wacom/' + vendor[i];
+    }
+
+    gulp.src([
+        'assets/src/js/wacom/common/libs/signature_sdk.wasm'
+    ])
+        .pipe(gulp.dest(config.production + '/' + config.paths.js + '/wacom/'));
+
+    return gulp.src(vendor, {
+        allowEmpty: true
+    })
+        .pipe(babel(config.babelOptions))
+        .pipe(concat('wacom.min.js'))
+        .pipe(gulpIf(!config.debug, minifyJS()))
+        .pipe(gulp.dest(config.production + '/' + config.paths.js));
+        
+}
 
 // Elaborazione dei fonts
 const fonts = gulp.parallel(() => {
@@ -529,7 +568,7 @@ function clean() {
 }
 
 // Operazioni di default per la generazione degli assets
-const bower = gulp.series(clean, gulp.parallel(JS, CSS, images, fonts, phpDebugBar, ckeditor, colorpicker, i18n, pdfjs, hotkeys, chartjs, password_strength, csrf, leaflet));
+const bower = gulp.series(clean, gulp.parallel(JS, CSS, images, fonts, phpDebugBar, ckeditor, colorpicker, i18n, pdfjs, hotkeys, chartjs, password_strength, csrf, leaflet, wacom));
 
 // Debug su CSS e JS
 exports.srcJS = srcJS;

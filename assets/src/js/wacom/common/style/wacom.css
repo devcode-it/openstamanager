@@ -1,0 +1,119 @@
+html, body {
+	font:Helvetica, Arial, sans-serif;
+	text-align:left;
+	background-color:#fff;
+	color:#000;
+	margin-top:0px;
+	margin-left:0px;
+	margin-right:0px;	
+	height:100%;
+}
+
+.wrapper {
+    height:auto !important;
+    min-height:100%;
+}
+
+h1 {
+	color:#000;
+	font-size:100%;
+	font-weight:normal;
+	margin-left:10px;
+	clear:left;
+}
+
+h1 {
+	font-size:160%;
+	font-weight:bold;
+}
+
+img {
+	margin-top:10px;
+	margin-right:10px;
+	border:none;
+}
+
+
+.float-left {
+	float:left;
+}
+
+.float-right {
+	float:right;
+}
+
+#header_container {
+	height:125px;
+	left:0;
+	width:100%;
+	top:0;
+}
+
+#header {
+	background-color:#0097d4;
+	height:85px;
+	padding-left:10px;
+}
+
+#content_container {
+	margin:10px;
+	overflow:auto;
+	padding:0px 0px 20px;
+	
+}
+
+
+#footer_container {
+	bottom:0;
+	height:25px;
+	left:0;
+	width:100%;
+	
+    position: relative;
+    margin-top: -25px;
+}
+
+#footer {
+	height:25px;
+	background-color:#0097d4;
+	color:#fff;
+	font-size:80%;
+	padding:6px 10px;
+	margin-left:0px;
+}
+
+input[type=text], input[type=password] { width: 200px; padding: 2px; }
+
+
+/* Style the tab */
+.tab {
+  height:43px;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+}

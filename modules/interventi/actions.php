@@ -673,6 +673,11 @@ switch (post('op')) {
                     $constraint->aspectRatio();
                 });
 
+                if(setting('Sistema di firma')=='Tavoletta Wacom'){
+                    $img->brightness(setting('Luminosità firma Wacom'));
+                    $img->contrast(setting('Contrasto firma Wacom'));
+                }
+
                 if (!$img->save(base_dir().'/files/interventi/'.$firma_file)) {
                     flash()->error(tr('Impossibile creare il file!'));
                 } elseif ($dbo->query('UPDATE in_interventi SET firma_file='.prepare($firma_file).', firma_data=NOW(), firma_nome = '.prepare($firma_nome).' WHERE id='.prepare($id_record))) {

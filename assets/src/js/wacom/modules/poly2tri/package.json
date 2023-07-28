@@ -1,0 +1,83 @@
+{
+    "name": "poly2tri",
+    "version": "1.5.0",
+    "description": "A 2D constrained Delaunay triangulation library",
+    "main": "src/poly2tri.js",
+    "types": "src/poly2tri.d.ts",
+    "files": [
+        "src/",
+        "dist/"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/r3mi/poly2tri.js.git"
+    },
+    "directories": {
+        "test": "tests"
+    },
+    "scripts": {
+        "prepublish": "npm run build",
+        "test": "npm run build && npm run test.node && npm run test.phantom && npm run test.types",
+        "test.node": "jasmine tests/spec/*.js",
+        "test.phantom": "karma start tests/karma.phantom.js",
+        "test.browsers": "karma start tests/karma.browsers.js",
+        "test.types": "ts-node ./node_modules/.bin/jasmine 'tests/**/*[sS]pec.ts'",
+        "check": "npm run jshint && npm run tslint",
+        "jshint": "jshint *.js src/*.js tests/*.js tests/spec/*.js",
+        "tslint": "tslint src/*.ts tests/*/*.ts",
+        "build": "npm run check && npm run build.nocheck",
+        "build.nocheck": "mkdir -p dist && node ./build.js",
+        "bench": "node ./tests/benchmark.js"
+    },
+    "keywords": [
+        "2D",
+        "constrained",
+        "Delaunay",
+        "triangulation",
+        "geometry",
+        "polygon",
+        "point",
+        "triangle",
+        "tessellation",
+        "Steiner"
+    ],
+    "homepage": "https://github.com/r3mi/poly2tri.js",
+    "author": "Rémi Turboult <r3mi@users.sf.net>",
+    "contributors": [
+        "Poly2Tri Contributors",
+        "Mason Green <mason.green@gmail.com>",
+        "Thomas Åhlén <thahlen@gmail.com>",
+        "Laszlo Kustra <kl223hun@gmail.com>",
+        "Rémi Turboult <r3mi@users.sf.net>",
+        "Elemar Junior <elemarjr@gmail.com>"
+    ],
+    "license": "BSD-3-Clause",
+    "bugs": "https://github.com/r3mi/poly2tri.js/issues",
+    "devDependencies": {
+        "@types/jasmine": "^2.5.47",
+        "benchmark": "^1.0.0",
+        "browserify": "^14.1.0",
+        "jasmine": "^2.5.3",
+        "jshint": "^2.5.0",
+        "jstrace-bars": "^1.2.3",
+        "karma": "^1.5.0",
+        "karma-browserify": "^5.1.1",
+        "karma-chrome-launcher": "^2.0.0",
+        "karma-detect-browsers": "^2.2.4",
+        "karma-firefox-launcher": "^1.0.1",
+        "karma-ie-launcher": "^1.0.0",
+        "karma-jasmine": "^1.1.0",
+        "karma-opera-launcher": "^1.0.0",
+        "karma-phantomjs-launcher": "^1.0.4",
+        "karma-safari-launcher": "^1.0.0",
+        "linespin": "^0.0.4",
+        "load": "^1.0.0",
+        "mersennetwister": "^0.1.1",
+        "ts-node": "^3.0.2",
+        "tslint": "^4.5.1",
+        "typescript": "^2.2.1",
+        "uglify-js": "^2.8.14",
+        "watchify": "^3.9.0",
+        "xhr": "^1.5.0"
+    }
+}

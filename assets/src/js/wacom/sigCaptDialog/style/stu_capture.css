@@ -1,0 +1,74 @@
+.button {
+  position:absolute;
+}
+
+#signatureBox {
+  display: none;
+}
+#modal-background {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    opacity: .50;
+    -webkit-opacity: .5;
+    -moz-opacity: .5;
+    filter: alpha(opacity=50);
+    z-index: 1000;	
+}
+
+#signatureWindow {
+	position: absolute;
+	z-index: 1001;
+}
+
+#modal-background.active, #signatureWindow.active {
+    display: block;
+}
+
+#myCanvas {
+  width:100%;
+  height:100%;
+}
+*
+#modal-background.active, #myCanvas.active {
+    display: block;
+}
+/*
+#myCanvas canvas {
+  width:100%;
+  height:100%;
+}*/
+
+#signatureDiv {
+  float:left;
+  margin-right:15px;
+}
+
+#signatureImage {
+  width:300px;
+  height:200px;
+  border:1px solid black;
+  display:block;
+}
+
+#loadingDiv {
+	position: absolute;
+    top: 50%;
+    left: 50%;
+    -moz-transform: translateX(-50%) translateY(-50%);
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);	
+}
+
+#titleBar {
+	font-size: 12pt;
+	color: #ffffff;
+	padding-left: 5px;
+	padding-top: 5px;
+	cursor:move;
+}
+

@@ -1,0 +1,64 @@
+{
+  "name": "digital-ink",
+  "version": "1.5.0",
+  "productName": "WILL SDK for ink",
+  "productVersion": "3.0.5",
+  "description": "WILL™ SDK for ink supports a variety of input technologies and generates the highest quality, most attractive digital ink outputs via these modules: Path generation and smoothing, Rasterizer, Manipulation and Serialization",
+  "main": "digital-ink-min.cjs",
+  "module": "./digital-ink-min.js",
+  "exports": {
+    ".": {
+      "node": {
+        "import": "./digital-ink-min.cjs.mjs",
+        "require": "./digital-ink-min.cjs"
+      },
+      "browser": {
+        "import": "./digital-ink-min.mjs"
+      },
+      "default": "./digital-ink-min.js"
+    },
+    "./web-integrator": {
+      "node": {
+        "import": "./web-integrator/web-integrator.mjs",
+        "require": "./web-integrator/web-integrator.cjs"
+      },
+      "default": "./web-integrator/web-integrator.js"
+    }
+  },
+  "dependencies": {
+    "canvas": "^2.9.1",
+    "clipper-lib": "^6.4.2",
+    "gl": "^5.0.0",
+    "gl-matrix": "^3.4.3",
+    "js-ext": "../../wacom/js-ext",
+    "js-md5": "^0.7.3",
+    "jszip": "^3.9.1",
+    "long": "^5.2.0",
+    "poly2tri": "^1.5.0",
+    "protobufjs": "^6.11.2",
+    "rbush": "^3.0.1",
+    "systeminformation": "^5.11.9"
+  },
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "files": [
+    "*.*",
+    "web-integrator/**",
+    "workers/**"
+  ],
+  "keywords": [
+    "wacom",
+    "ink",
+    "canvas",
+    "rasterization",
+    "universal-ink-model"
+  ],
+  "repository": "https://github.com/orgs/Wacom-Developer",
+  "author": "Wacom Co., Ltd",
+  "homepage": "https://developer.wacom.com",
+  "bugs": {
+    "url": "https://developer.wacom.com/developer-dashboard/support"
+  },
+  "license": "Wacom INK SDK Evaluation Agreement"
+}

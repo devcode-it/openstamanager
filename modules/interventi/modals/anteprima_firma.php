@@ -47,86 +47,110 @@ if (get('anteprima') !== null) {
 </div>';
 }
 
+if(setting('Sistema di firma')=='Base'){
 ?>
-<form action="<?php echo base_path(); ?>/editor.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>" method="post" id="form-firma" class="hide">
-    <input type="hidden" name="op" value="firma">
-    <input type="hidden" name="backto" value="record-edit">
+    <form action="<?php echo base_path(); ?>/editor.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>" method="post" id="form-firma" class="hide">
+        <input type="hidden" name="op" value="firma">
+        <input type="hidden" name="backto" value="record-edit">
 
-    <div class="row">
-        <div class="col-md-12">
-            {[ "type": "text", "label": "<?php echo tr('Nome e cognome'); ?>", "name": "firma_nome", "required": 1 ]}
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div id="signature-pad" class="signature-pad">
-                <canvas id="canvas" onselectstart="return false"></canvas>
-                <input type="hidden" name="firma_base64" id="firma_base64" value="">
+        <div class="row">
+            <div class="col-md-12">
+                {[ "type": "text", "label": "<?php echo tr('Nome e cognome'); ?>", "name": "firma_nome", "required": 1 ]}
             </div>
         </div>
-    </div>
-    <br>
-    <div class="row">
-        <div class="col-md-6">
-            <button type="button" class="btn btn-danger" data-action="clear">
-                <i class="fa fa-eraser"></i> <?php echo tr('Cancella firma'); ?>
-            </button>
+        <div class="row">
+            <div class="col-md-12">
+                <div id="signature-pad" class="signature-pad">
+                    <canvas id="canvas" onselectstart="return false"></canvas>
+                    <input type="hidden" name="firma_base64" id="firma_base64" value="">
+                </div>
+            </div>
         </div>
-        <div class="col-md-6">
-            <button type="submit" class="btn btn-success pull-right" data-action="save">
-                <i class="fa fa-check"></i> <?php echo tr('Salva firma'); ?>
-            </button>
+        <br>
+        <div class="row">
+            <div class="col-md-6">
+                <button type="button" class="btn btn-danger" data-action="clear">
+                    <i class="fa fa-eraser"></i> <?php echo tr('Cancella firma'); ?>
+                </button>
+            </div>
+            <div class="col-md-6">
+                <button type="submit" class="btn btn-success pull-right" data-action="save">
+                    <i class="fa fa-check"></i> <?php echo tr('Salva firma'); ?>
+                </button>
+            </div>
         </div>
-    </div>
 
-</form>
-<div class="clearfix"></div>
+    </form>
+    <div class="clearfix"></div>
 
-<script type="text/javascript">
-    $(document).ready( function() {
-        $('#firma').on('click', function() {
-            $('#preview').addClass('hide');
+    <script type="text/javascript">
+        $(document).ready( function() {
+            $('#firma').on('click', function() {
+                $('#preview').addClass('hide');
 
-            $('#form-firma').removeClass('hide');
-        })
+                $('#form-firma').removeClass('hide');
+            })
 
-        var wrapper = document.getElementById("signature-pad"),
-            clearButton = document.querySelector("[data-action=clear]"),
-            saveButton = document.querySelector("[data-action=save]"),
-            canvas = document.getElementById("canvas");
+            var wrapper = document.getElementById("signature-pad"),
+                clearButton = document.querySelector("[data-action=clear]"),
+                saveButton = document.querySelector("[data-action=save]"),
+                canvas = document.getElementById("canvas");
 
-        var signaturePad = new SignaturePad(canvas, {
-            backgroundColor: 'rgb(255,255,255)'
-        });
+            var signaturePad = new SignaturePad(canvas, {
+                backgroundColor: 'rgb(255,255,255)'
+            });
 
-        function resizeCanvas() {
-            image_data = signaturePad.toDataURL();
+            function resizeCanvas() {
+                image_data = signaturePad.toDataURL();
 
-            var ratio =  Math.max(window.devicePixelRatio || 1, 1);
-            canvas.width = canvas.offsetWidth * ratio;
-            canvas.height = canvas.offsetHeight * ratio;
-            canvas.getContext("2d").scale(ratio, ratio);
-            signaturePad.clear();
+                var ratio =  Math.max(window.devicePixelRatio || 1, 1);
+                canvas.width = canvas.offsetWidth * ratio;
+                canvas.height = canvas.offsetHeight * ratio;
+                canvas.getContext("2d").scale(ratio, ratio);
+                signaturePad.clear();
 
-            signaturePad.fromDataURL(image_data);
-        }
-
-        window.addEventListener("resize", resizeCanvas);
-        $('#firma').click(resizeCanvas);
-
-        clearButton.addEventListener("click", function (event) {
-            signaturePad.clear();
-        });
-
-        saveButton.addEventListener("click", function (event) {
-            if (signaturePad.isEmpty()) {
-                alert(globals.translations.signatureMissing);
-                event.preventDefault();
-                return;
-            } else {
-                image_data = signaturePad.toDataURL("image/jpeg", 100);
-                $('#firma_base64').val(image_data);
+                signaturePad.fromDataURL(image_data);
             }
+
+            window.addEventListener("resize", resizeCanvas);
+            $('#firma').click(resizeCanvas);
+
+            clearButton.addEventListener("click", function (event) {
+                signaturePad.clear();
+            });
+
+            saveButton.addEventListener("click", function (event) {
+                if (signaturePad.isEmpty()) {
+                    alert(globals.translations.signatureMissing);
+                    event.preventDefault();
+                    return;
+                } else {
+                    image_data = signaturePad.toDataURL("image/jpeg", 100);
+                    $('#firma_base64').val(image_data);
+                }
+            });
         });
-    });
-</script>
+    </script>
+<?php
+}elseif(setting('Sistema di firma')=='Tavoletta Wacom'){
+    echo '
+    <div id="firma-div"></div>
+
+    <script type="text/javascript">
+        $(document).ready( function() {
+            $("#firma").on("click", function() {
+                $("#preview").addClass("hide");
+                caricaTavoletta()
+            });
+        });
+
+        function caricaTavoletta(){
+            let container = $("#firma-div");
+            localLoading(container, true);
+            return $.get("'.$structure->fileurl('modals/firma_tavoletta.php').'?id_module='.$id_module.'&id_record='.$id_record.'", function(data) {
+                container.html(data);
+                localLoading(container, false);
+            });
+        }
+    </script>';
+}

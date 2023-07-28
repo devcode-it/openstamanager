@@ -147,13 +147,14 @@ if(setting('Sistema di firma')=='Base'){
                             caricaTavoletta()
                     } else {
                         // Handle the case when navigator.hid is undefined
-                        alert("navigator.hid '.tr("non è supportato da questo browser.").'");
+                        swal("' . tr('Errore') . '", "' . tr("navigator.hid non è supportato da questo browser!") . '", "error");
+                        $("#modals > div").modal("hide");
                     }
                 } catch (error) {
                     // Handle any other errors that may occur
                     console.error("An error occurred:", error);
                 }
-             });
+            });
         });
 
         function caricaTavoletta(){

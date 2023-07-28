@@ -141,7 +141,7 @@ switch (post('op')) {
 
      // Duplica contratto
     case 'copy':
-        $new = $contratto->replicate();
+        $new = $contratto->replicate(['idcontratto_prev']);
         $new->numero = Contratto::getNextNumero($contratto->data_bozza, $contratto->id_segment);
 
         $stato = Stato::where('descrizione', '=', 'Bozza')->first();

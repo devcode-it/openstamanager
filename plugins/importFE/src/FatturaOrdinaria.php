@@ -232,17 +232,15 @@ class FatturaOrdinaria extends FatturaElettronica
                 $totale_arrotondamento = 0;
                 $dati_riepilogo = $this->getBody()['DatiBeniServizi']['DatiRiepilogo'];
                 if (!empty($dati_riepilogo['ImponibileImporto'])) {
-                    $totale_righe = $dati_riepilogo['ImponibileImporto'];
                     $totale_arrotondamento = $dati_riepilogo['Arrotondamento'];
                 } elseif (is_array($dati_riepilogo)) {
                     foreach ($dati_riepilogo as $dato) {
-                        $totale_righe += $dato['ImponibileImporto'];
                         $totale_arrotondamento += $dato['Arrotondamento'];
                     }   
-                } else {
-                    $totali_righe = array_column($righe, 'PrezzoTotale');
-                    $totale_righe = sum($totali_righe, null, 2);
-                }
+                } 
+
+                $totali_righe = array_column($righe, 'PrezzoTotale');
+                $totale_righe = sum($totali_righe, null, 2);
 
                 // Nel caso il prezzo sia negativo viene gestito attraverso l'inversione della quantità (come per le note di credito)
                 // TODO: per migliorare la visualizzazione, sarebbe da lasciare negativo il prezzo e invertire gli sconti.
@@ -364,8 +362,9 @@ class FatturaOrdinaria extends FatturaElettronica
         $fattura->refresh();
 
         // Arrotondamenti differenti nella fattura XML
-        $diff = round(abs($totale_righe) - $totale_arrotondamento - abs($fattura->totale_imponibile) - $fattura->rivalsa_inps, 2);
-        if (!empty($diff)) {
+        $diff = round(abs($totale_righe) + $totale_arrotondamento - abs($fattura->totale_imponibile), 2);
+        // Aggiunta della riga di arrotondamento nel caso in cui ci sia una differenza tra i totali, questa diferenza sia diversa dal totale arrotondamento o nell'xml non sia specificato un'arrotondamento ma sia presente nei totali
+        if (!empty($diff) && ($diff != $totale_arrotondamento || empty($totale_arrotondamento))) {
             // Rimozione dell'IVA calcolata automaticamente dal gestionale
             $iva_arrotondamento = database()->fetchOne('SELECT * FROM co_iva WHERE percentuale=0 AND deleted_at IS NULL');
             $diff = $diff * 100 / (100 + $iva_arrotondamento['percentuale']);

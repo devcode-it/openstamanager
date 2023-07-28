@@ -40,11 +40,27 @@ class EmailNotification extends PHPMailer implements NotificationInterface
         parent::__construct($exceptions);
 
         $this->CharSet = 'UTF-8';
+        $config = \App::getConfig();
 
         // Configurazione di base
         $account = $account instanceof Account ? $account : Account::find($account);
         if (empty($account)) {
             $account = Account::where('predefined', true)->first();
+        }
+
+        if (isset($config['force_reply_to_sender']) && $config['force_reply_to_sender'] === true) {
+            $user = \Auth::user();
+            $account['from_name'] = $user->username;
+            $this->AddReplyTo($user->email, $user->nome);
+        }
+
+        if (isset($config['force_mail_from_sender']) && $config['force_mail_from_sender'] === true) {
+            $user = \Auth::user();
+            $email = $user->email;
+            $account_data = Account::where('username', $email)->first();
+            if (!empty($account_data)) {
+                $account = $account_data;
+            }
         }
 
         // Preparazione email

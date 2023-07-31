@@ -83,6 +83,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Migliorato l'invio di solleciti da azioni di gruppo raggruppando per cliente
 - Ottimizzata la query di aggiornamento
 - Ottimizzata l'importazione di articoli in CSV
+- Ripristinati gli automatismi dei piani di sconto
 ### Fixed
 - Corretta l'importazione di **Fatture di acquisto** con ritenuta
 - Corretta l'aggiunta di contenuti dinamici

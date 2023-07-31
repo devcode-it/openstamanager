@@ -621,6 +621,7 @@ switch (post('op')) {
             $articolo->um = $originale->um;
             $articolo->qta = 1;
             $articolo->costo_unitario = $originale->prezzo_acquisto;
+            $articolo->confermato = ($dir = 'entrata' ? setting('Conferma automaticamente le quantità negli ordini cliente') : setting('Conferma automaticamente le quantità negli ordini fornitore'));
 
             if ($dir == 'entrata') {
                 $id_iva = ($ordine->anagrafica->idiva_vendite ?: $originale->idiva_vendita) ?: setting('Iva predefinita');

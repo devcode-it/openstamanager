@@ -269,27 +269,19 @@ switch ($op) {
 
             // Totale basato sul campo ImportoTotaleDocumento
             $dati_generali = $xml['FatturaElettronicaBody']['DatiGenerali']['DatiGeneraliDocumento'];
-            if (isset($dati_generali['ImportoTotaleDocumento'])) {
-                $totale_documento_indicato = floatval($dati_generali['ImportoTotaleDocumento']);
+            $totale_documento = 0;
 
-                // Calcolo del totale basato sui DatiRiepilogo
-                if (empty($totale_documento_indicato) && empty($dati_generali['ScontoMaggiorazione'])) {
-                    $totale_documento = 0;
-
-                    $riepiloghi = $xml['FatturaElettronicaBody']['DatiBeniServizi']['DatiRiepilogo'];
-                    if (!empty($riepiloghi) && !isset($riepiloghi[0])) {
-                        $riepiloghi = [$riepiloghi];
-                    }
-
-                    foreach ($riepiloghi as $riepilogo) {
-                        $totale_documento = sum([$totale_documento, $riepilogo['ImponibileImporto'], $riepilogo['Imposta'], -$riepilogo['Arrotondamento']]);
-                    }
-
-                    $totale_documento = abs($totale_documento);
-                } else {
-                    $totale_documento = $totale_documento_indicato;
-                }
+            $riepiloghi = $xml['FatturaElettronicaBody']['DatiBeniServizi']['DatiRiepilogo'];
+            if (!empty($riepiloghi) && !isset($riepiloghi[0])) {
+                $riepiloghi = [$riepiloghi];
             }
+
+            foreach ($riepiloghi as $riepilogo) {
+                $totale_documento = sum([$totale_documento, $riepilogo['ImponibileImporto'], $riepilogo['Imposta']]);
+            }
+
+            $totale_documento = abs($totale_documento);
+            
         } catch (Exception $e) {
         }
 

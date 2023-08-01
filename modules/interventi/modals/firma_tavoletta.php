@@ -19,6 +19,8 @@
 
 include_once __DIR__.'/../../../core.php';
 
+$intervento = Modules\Interventi\Intervento::find($id_record);
+
 echo '
 <script src="'.$rootdir.'/assets/dist/js/wacom.min.js"></script>';
 
@@ -84,7 +86,7 @@ echo '
         stuCapDialog.addEventListener("ok", function() {
             renderSignature();
         });				
-        stuCapDialog.open(mSigObj, "", "'.tr('Firma').'", [], Module.KeyType.SHA512, documentHash);				
+        stuCapDialog.open(mSigObj, "'.$intervento->anagrafica->ragione_sociale.'", "'.tr('Firma').'", [], Module.KeyType.SHA512, documentHash);				
     }
 
     function generateConfig() {

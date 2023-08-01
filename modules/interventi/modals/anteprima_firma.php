@@ -137,10 +137,23 @@ if(setting('Sistema di firma')=='Base'){
     <div id="firma-div"></div>
 
     <script type="text/javascript">
-        $(document).ready( function() {
+
+       $(document).ready( function() {
             $("#firma").on("click", function() {
                 $("#preview").addClass("hide");
-                caricaTavoletta()
+                try {
+                    // Check if navigator.hid is available
+                    if (navigator.hid) {
+                            caricaTavoletta()
+                    } else {
+                        // Handle the case when navigator.hid is undefined
+                        swal("' . tr('Errore') . '", "' . tr("navigator.hid non è supportato da questo browser!") . '", "error");
+                        $("#modals > div").modal("hide");
+                    }
+                } catch (error) {
+                    // Handle any other errors that may occur
+                    console.error("An error occurred:", error);
+                }
             });
         });
 

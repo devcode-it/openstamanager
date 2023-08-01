@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.48 (2023-07-31)](#2448-2023-07-31)
 - [2.4.47 (2023-06-30)](#2447-2023-06-30)
 - [2.4.46 (2023-06-01)](#2446-2023-06-01)
 - [2.4.45 (2023-05-12)](#2445-2023-05-12)
@@ -58,6 +59,42 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
+## 2.4.48 (2023-07-31)
+### Aggiunto (Added)
+- Aggiunta colonna **Agente** in vista **Contratti**
+- Aggiunto controllo sulla presenza di fatture di vendita con lo stesso numero e periodo
+- Aggiunto blocco eliminazione fattura in attesa di ricevuta
+- Aggiunta la gestione della risposta a indirizzo predefinito
+- Aggiunta limitazione log di errore a 30 file
+- Aggiunta impostazione avanzamento minuti attività
+- Aggiunta controllo stato fattura elettronica
+- Aggiunto controllo per configurazione
+- Aggiunta anteprima prezzo e quantità articoli trovati dalla ricerca globale
+- Aggiunta impostazione per gestire **Checklist** genitore come titolo
+- Aggiunto blocco selezione modalità di pagamento Ri.Ba se non è definita nessuna banca predefinita cliente
+- Aggiunto controllo sulla tipologia di anagrafica in salvataggio autofattura
+- Aggiunta la gestione dei colori della barra di avanzamento per quantità evase nelle righe
+- Aggiunto modulo **Stato degli ordini**
+- Aggiunta la gestione della firma con tavoletta grafica Wacom
+- Aggiunto avviso navigator.hid non supportato
+### Modificato (Changed)
+- Migliorata la gestione dell'aggiunta dei seriali nei documenti
+- Migliorati i filtri per data delle tabelle
+- Migliorato l'invio di solleciti da azioni di gruppo raggruppando per cliente
+- Ottimizzata la query di aggiornamento
+- Ottimizzata l'importazione di articoli in CSV
+- Ripristinati gli automatismi dei piani di sconto
+### Fixed
+- Corretta l'importazione di **Fatture di acquisto** con ritenuta
+- Corretta l'aggiunta di contenuti dinamici
+- Corretta la visualizzazione della spunta di selezione sulle righe delle tabelle
+- Corretta l'impostazione di categoria e sottocategoria articoli da azioni di gruppo
+- Corretta l'inizializzazione di ckeditor che non considerava i campi obbligatori
+- Corretta potenziale vulnerabilità XSS
+- Corretti gli arrotondamenti in fase di importazione fatture elettroniche
+- Corretto il selettore causale movimenti all'apertura
+- Corretta la visualizzazione data di invio newsletter
+- Corretta l'associazione dei riferimenti in fase di duplicazione contratti
 ## 2.4.47 (2023-06-30)
 ### Aggiunto (Added)
 - Aggiunto widget Ore lavorate nel plugin Statistiche

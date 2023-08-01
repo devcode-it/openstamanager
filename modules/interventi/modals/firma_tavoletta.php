@@ -86,7 +86,7 @@ echo '
         stuCapDialog.addEventListener("ok", function() {
             renderSignature();
         });				
-        stuCapDialog.open(mSigObj, "'.$intervento->anagrafica->ragione_sociale.'", "'.tr('Firma').'", [], Module.KeyType.SHA512, documentHash);				
+        stuCapDialog.open(mSigObj, '.prepare($intervento->anagrafica->ragione_sociale).', "'.tr('Firma').'", [], Module.KeyType.SHA512, documentHash);				
     }
 
     function generateConfig() {

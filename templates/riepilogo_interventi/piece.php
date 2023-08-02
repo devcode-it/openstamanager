@@ -77,8 +77,12 @@ echo '
         $ore = Translator::numberToLocale($ore, 2);
     }
 echo '
-    </td>
-    <td class="text-center">'.($km).'</td>
+    </td>';
+    if( get('id_print')!=24 ){
+        echo '
+        <td class="text-center">'.($km).'</td>';
+    }
+echo '
     <td class="text-center">'.($pricing ? $ore : '-').'</td>
     <td class="text-center">'.($pricing ? moneyFormat($imponibile, 2) : '-').'</td>
     <td class="text-center">'.($pricing && empty($options['dir']) ? moneyFormat($sconto, 2) : '-').'</td>
@@ -90,7 +94,7 @@ if (count($sessioni) > 0) {
     echo '
 <tr>
     <td style="border-top: 0; border-bottom: 0;"></td>
-    <th style="background-color: #eee" colspan="3"><small>'.tr('Sessioni').'</small></th>
+    <th style="background-color: #eee" colspan="'.( get('id_print')!=24 ? 3 : 2).'"><small>'.tr('Sessioni').'</small></th>
     <th class="text-center" style="background-color: #eee"><small>'.tr('Data').'</small></th>
     <th class="text-center" style="background-color: #eee"><small>'.tr('Inizio').'</small></th>
     <th class="text-center" style="background-color: #eee"><small>'.tr('Fine').'</small></th>
@@ -100,7 +104,7 @@ if (count($sessioni) > 0) {
         echo '
 <tr>
     <td style="border-top: 0; border-bottom: 0;"></td>
-    <td colspan="3"><small>'.$sessione->anagrafica->ragione_sociale.' <small>('.$sessione->tipo->descrizione.')</small></td>
+    <td colspan="'.( get('id_print')!=24 ? 3 : 2).'"><small>'.$sessione->anagrafica->ragione_sociale.' <small>('.$sessione->tipo->descrizione.')</small></td>
     <td class="text-center"><small>'.dateFormat($sessione->orario_inizio).'</small></td>
     <td class="text-center"><small>'.timeFormat($sessione->orario_inizio).'</small></td>
     <td class="text-center"><small>'.timeFormat($sessione->orario_fine).'</small></td>
@@ -114,7 +118,7 @@ if (!$righe->isEmpty()) {
     echo '
 <tr>
     <td style="border-top: 0; border-bottom: 0;"></td>
-    <th style="background-color: #eee" colspan="3"><small>'.tr('Materiale utilizzato e spese aggiuntive').'</small></th>
+    <th style="background-color: #eee" colspan="'.( get('id_print')!=24 ? 3 : 2).'"><small>'.tr('Materiale utilizzato e spese aggiuntive').'</small></th>
     <th class="text-center" style="background-color: #eee"><small>'.tr('Qta').'</small></th>
     <th class="text-center" style="background-color: #eee"><small>'.($tipo=='interno' ? tr('Costo unitario') : tr('Prezzo unitario')).'</small></th>
     <th class="text-center" style="background-color: #eee"><small>'.($tipo=='interno' ? tr('Costo netto') : tr('Imponibile')).'</small></th>
@@ -127,7 +131,7 @@ if (!$righe->isEmpty()) {
         echo '
 <tr>
     <td style="border-top: 0; border-bottom: 0;"></td>
-    <td colspan="3"><small>'.$riga->descrizione.'</small></td>
+    <td colspan="'.( get('id_print')!=24 ? 3 : 2).'"><small>'.$riga->descrizione.'</small></td>
     <td class="text-center"><small>'.$riga->qta.' '.$riga->um.'</small></td>
     <td class="text-center"><small>'.($pricing ? moneyFormat($prezzo) : '-').'</small></td>
     <td class="text-center"><small>'.($pricing ? moneyFormat($totale) : '-').'</small></td>

@@ -71,11 +71,12 @@ if (empty($record['is_fiscale'])) {
 $modulo_prima_nota = Modules::get('Prima nota');
 $totale_scadenze = $dbo->fetchOne('SELECT SUM(da_pagare - pagato) AS differenza, SUM(da_pagare) AS da_pagare FROM co_scadenziario WHERE iddocumento = '.prepare($id_record));
 if (!empty($record['is_fiscale'])) {
+    $differenza = isset($totale_scadenze) ? $totale_scadenze['differenza'] : 0;
     // Aggiunta insoluto
     $registrazione_insoluto = 0;
     $pagamento = $fattura->pagamento;
     if (!empty($pagamento)) {
-        if ($pagamento->isRiBa() && $dir == 'entrata' && in_array($record['stato'], ['Emessa', 'Parzialmente pagato', 'Pagato'])) {
+        if ($pagamento->isRiBa() && $dir == 'entrata' && in_array($record['stato'], ['Emessa', 'Parzialmente pagato', 'Pagato']) && $differenza == 0) {
             $registrazione_insoluto = 1;
         }
     }
@@ -92,7 +93,7 @@ if (!empty($record['is_fiscale'])) {
     // Aggiunta prima nota solo se non c'è già, se non si è in bozza o se il pagamento non è completo
     $prima_nota_presente = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE iddocumento = '.prepare($id_record).' AND primanota = 1');
 
-    $differenza = isset($totale_scadenze) ? $totale_scadenze['differenza'] : 0;
+
     $registrazione_contabile = 0;
     if ($differenza != 0 || (!$prima_nota_presente && $record['stato'] == 'Emessa')) {
         $registrazione_contabile = 1;

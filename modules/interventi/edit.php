@@ -577,7 +577,7 @@ if (!$block_edit) {
 	   	<div class="col-md-6 col-md-offset-3 alert alert-success"><i class="fa fa-check"></i> '.tr('Firmato il _DATE_ alle _TIME_ da _PERSON_', [
             '_DATE_' => Translator::dateToLocale($record['firma_data']),
             '_TIME_' => Translator::timeToLocale($record['firma_data']),
-            '_PERSON_' => '<b>'.$record['firma_nome'].'</b>',
+            '_PERSON_' => (!empty($record['firma_nome'])? $record['firma_nome'] : $intervento->anagrafica->ragione_sociale),
         ]).'</div>';
         }
 

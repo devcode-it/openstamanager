@@ -4,7 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.4.48 (2023-07-31)](#2448-2023-07-31)
+- [2.4.48 (2023-08-01)](#2448-2023-08-01)
 - [2.4.47 (2023-06-30)](#2447-2023-06-30)
 - [2.4.46 (2023-06-01)](#2446-2023-06-01)
 - [2.4.45 (2023-05-12)](#2445-2023-05-12)
@@ -59,7 +59,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
-## 2.4.48 (2023-07-31)
+## 2.4.48 (2023-08-01)
 ### Aggiunto (Added)
 - Aggiunta colonna **Agente** in vista **Contratti**
 - Aggiunto controllo sulla presenza di fatture di vendita con lo stesso numero e periodo

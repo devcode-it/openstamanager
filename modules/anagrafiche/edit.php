@@ -249,7 +249,7 @@ echo '
             <div class="col-md-4">
                 <div class="panel panel-primary">
                     <div class="panel-heading">
-                        <h3 class="panel-title"><i class="fa fa-map"></i> '.tr('Geolocalizzazione').'</h3>
+                        <h3 class="panel-title"> '.tr('Geolocalizzazione').'</h3>
                     </div>
                     <div class="panel-body">';
 
@@ -263,7 +263,7 @@ if (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($se
     // Navigazione diretta verso l'indirizzo
     echo '
                         <a class="btn btn-info btn-block" onclick="$(\'#map-edit\').height(235); caricaMappa(); $(this).hide();">
-                            '.tr('Carica mappa').'
+                            <i class="fa fa-compass"></i> '.tr('Carica mappa').'
                         </a>';
 
     // Modifica manuale delle informazioni
@@ -346,8 +346,13 @@ echo '
             var map = null;
             function caricaMappa() {
                 const lat = parseFloat("'.$sede_cliente->lat.'");
-                const lng = parseFloat("'.$sede_cliente->lng.'");
-            
+                const lng = parseFloat("'.$sede_cliente->lng. '");
+
+                if (typeof lat === "undefined" || typeof lng === "undefined"){
+                    swal("' . tr('Errore') . '", "' . tr("La posizione non è stata definita. Impossibile caricare la mappa.") . '", "error");
+                    return false;
+                }
+                    
                 var container = L.DomUtil.get("map-edit"); 
                 if(container._leaflet_id != null){ 
                     map.eachLayer(function (layer) {

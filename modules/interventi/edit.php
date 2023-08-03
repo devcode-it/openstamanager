@@ -161,7 +161,7 @@ if (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($se
     // Navigazione diretta verso l'indirizzo
     echo '
                         <a class="btn btn-info btn-block" onclick="$(\'#map-edit\').height(235); caricaMappa(); $(this).hide();">
-                            '.tr('Carica mappa').'
+                            <i class="fa fa-compass"></i> '.tr('Carica mappa').'
                         </a>';
 
     // Navigazione diretta verso l'indirizzo

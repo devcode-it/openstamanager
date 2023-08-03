@@ -734,7 +734,7 @@ echo '
     function calcolaConflittiTecnici() {
         let tecnici = input("idtecnico").get();
 
-        return $("#info-conflitti-add").load("'.$module->fileurl('occupazione_tecnici.php').'", {
+        return $("#info-conflitti-add").load("'.$module->fileurl('occupazione_tecnici.php'). '", {
             "id_module": globals.id_module,
             "tecnici[]": tecnici,
             "inizio": input("orario_inizio").get(),
@@ -793,6 +793,12 @@ echo '
     var map = null;
     function caricaMappa(lat, lng) {
         if (!autoload_mappa){
+            return false;
+        }
+
+        //console.log(lat, lng);
+        if (typeof lat === "undefined" || typeof lng === "undefined"){
+            swal("' . tr('Errore') . '", "' . tr("La posizione non è stata definita. Impossibile caricare la mappa.") . '", "error");
             return false;
         }
         

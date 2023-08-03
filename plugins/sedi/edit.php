@@ -102,32 +102,33 @@ echo '
 	</div>
 
 	<div class="row">
-		<div class="col-md-4" id="geocomplete">
+		<div class="col-md-6" id="geocomplete">
 			{[ "type": "text", "label": "'.tr('Indirizzo Mappa').'", "name": "gaddress", "value": "$gaddress$", "extra": "data-geo=\'formatted_address\'" ]}
-		</div>
-
-		<div class="col-md-2">
-			{[ "type": "text", "label": "'.tr('Latitudine').'", "name": "lat", "id": "lat_", "value": "$lat$", "extra": "data-geo=\'lat\'", "class": "text-right" ]}
-		</div>
-
-		<div class="col-md-2">
-			{[ "type": "text", "label": "'.tr('Longitudine').'", "name": "lng", "id": "lng_", "value": "$lng$", "extra": "data-geo=\'lng\'", "class": "text-right" ]}
 		</div>
 		
 		<div class="col-md-2">
-            <br><button type="button" class="btn btn-lg btn-default pull-right" onclick="initGeocomplete();"><i class="fa fa-search"></i> '.tr('Cerca').'</button>
-        </div>';
+			<label>&nbsp;</label>
+            <br><button type="button" class="btn btn-primary" onclick="initGeocomplete();"><i class="fa fa-search"></i> '.tr('Cerca').'</button>
+        </div>
+		
+		<div class="col-md-2">
+			{[ "type": "text", "label": "'.tr('Latitudine'). '", "name": "lat", "id": "lat_", "value": "$lat$", "extra": "data-geo=\'lat\'", "class": "text-right", "readonly": true ]}
+		</div>
+
+		<div class="col-md-2">
+			{[ "type": "text", "label": "'.tr('Longitudine'). '", "name": "lng", "id": "lng_", "value": "$lng$", "extra": "data-geo=\'lng\'", "class": "text-right", "readonly": true ]}
+		</div>';
 
 if (!empty($record['indirizzo']) || (empty($record['citta']))) {
 	echo '
-		<div  class="btn-group col-md-2"  >
+		<div  class="col-md-2"  >
 			<label>&nbsp;</label><br>
 			<a class="btn btn-info" title="'.tr('Mostra la sede su Mappa').'" onclick="cercaOpenStreetMap();">&nbsp;<i class="fa fa-map-marker">&nbsp;</i></a>
 		';
 
 	echo '
-			<a title="'.tr('Calcola percoso da sede legale a questa sede').'" class="btn btn-primary btn-secondary" onclick="calcolaPercorso();"><i class="fa fa-car"></i></a>
-		</div>';
+			<a title="'.tr('Calcola percorso da sede legale a questa sede'). '" class="btn btn-primary" onclick="calcolaPercorso();"><i class="fa fa-car"></i></a>
+		</div> <div class="clearfix"></div><br>';
 }
 
 echo '

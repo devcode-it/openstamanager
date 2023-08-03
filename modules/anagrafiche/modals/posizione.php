@@ -26,21 +26,23 @@ echo '
     <input type="hidden" name="op" value="posizione">
 
     <div class="row">
-        <div class="col-md-4" id="geocomplete">
+        <div class="col-md-6" id="geocomplete">
             {[ "type": "text", "label": "'.tr('Indirizzo').'", "name": "gaddress", "value": "'.$record['gaddress'].'", "extra": "data-geo=\'formatted_address\'" ]}
         </div>
 
-        <div class="col-md-3">
-            {[ "type": "text", "label": "'.tr('Latitudine').'", "name": "lat", "value": "'.$record['lat'].'", "extra": "data-geo=\'lat\'", "class": "text-right" ]}
-        </div>
-
-        <div class="col-md-3">
-            {[ "type": "text", "label": "'.tr('Longitudine').'", "name": "lng", "value": "'.$record['lng'].'", "extra": "data-geo=\'lng\'", "class": "text-right" ]}
+        <div class="col-md-2">
+            <label>&nbsp;</label>
+            <br><button type="button" class="btn btn-primary" onclick="initGeocomplete();"><i class="fa fa-search"></i> '.tr('Cerca'). '</button>
         </div>
 
         <div class="col-md-2">
-            <br><button type="button" class="btn btn-lg btn-default pull-right" onclick="initGeocomplete();"><i class="fa fa-search"></i> '.tr('Cerca').'</button>
+            {[ "type": "text", "label": "' . tr('Latitudine') . '", "name": "lat", "value": "' . $record['lat'] . '", "extra": "data-geo=\'lat\'", "class": "text-right", "readonly": true ]}
         </div>
+
+        <div class="col-md-2">
+            {[ "type": "text", "label": "' . tr('Longitudine') . '", "name": "lng", "value": "' . $record['lng'] . '", "extra": "data-geo=\'lng\'", "class": "text-right", "readonly": true ]}
+        </div>
+
     </div>
 
     <div class="row">

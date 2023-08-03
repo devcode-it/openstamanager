@@ -168,7 +168,7 @@ if (sizeof($problemi_anagrafica) > 0) {
             <div class="col-md-8">
                 <div class="panel panel-primary">
                     <div class="panel-heading">
-                        <h3 class="panel-title"><i class="fa fa-building"></i> <?php echo tr('Sede legale'); ?></h3>
+                        <h3 class="panel-title"> <?php echo tr('Sede legale'); ?></h3>
                     </div>
                     <div class="panel-body">
 
@@ -252,38 +252,42 @@ echo '
                         <h3 class="panel-title"> '.tr('Geolocalizzazione').'</h3>
                     </div>
                     <div class="panel-body">';
-
-if (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($sede_cliente->lng))) {
-    echo '
+                    
+// Area caricamento mappa
+echo '
                         <div id="map-edit" style="width: 100%;"></div>
 
                         <div class="clearfix"></div>
                         <br>';
 
-    // Navigazione diretta verso l'indirizzo
-    echo '
-                        <a class="btn btn-info btn-block" onclick="$(\'#map-edit\').height(235); caricaMappa(); $(this).hide();">
-                            <i class="fa fa-compass"></i> '.tr('Carica mappa').'
-                        </a>';
-
+if (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($sede_cliente->lng))) {
+    
     // Modifica manuale delle informazioni
     echo '
                         <a class="btn btn-info btn-block" onclick="modificaPosizione()">
-                            <i class="fa fa-map"></i> '.tr('Aggiorna posizione').'
+                            <i class="fa fa-map"></i> ' . tr('Aggiorna posizione') . '
                         </a>';
-}else{
+} else {
 
     // Definizione manuale delle informazioni
     echo '
                         <a class="btn btn-primary btn-block" onclick="modificaPosizione()">
-                            <i class="fa fa-map"></i> '.tr('Definisci posizione').'
+                            <i class="fa fa-map"></i> ' . tr('Definisci posizione') . '
+                        </a>';
+}
+
+// Navigazione diretta verso l'indirizzo
+echo '
+                        <a class="btn btn-info btn-block '.((empty($sede_cliente->lat) && empty($sede_cliente->lng))? "disabled" : "").'" onclick="$(\'#map-edit\').height(235); caricaMappa(); $(this).hide();">
+                            <i class="fa fa-compass"></i> ' . tr('Carica mappa') . '
                         </a>';
 
-}
+
+
 
     // Navigazione diretta verso l'indirizzo
     echo '
-                        <a class="btn btn-info btn-block" onclick="calcolaPercorso()">
+                        <a class="btn btn-info btn-block '.(($anagrafica->isAzienda() || (empty($sede_cliente->lat) || empty($sede_cliente->lng))|| (empty($sede_azienda->lat) || empty($sede_azienda->lng)) ) ? "disabled": "").'" onclick="calcolaPercorso()">
                             <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
                             '.((!empty($sede_cliente->lat) && !empty($sede_azienda->lat)) ? tr('(GPS)'): '' ).'
                         </a>';

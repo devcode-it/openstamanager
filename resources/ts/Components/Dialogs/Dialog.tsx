@@ -2,7 +2,7 @@
 
 import '@material/web/dialog/dialog.js';
 
-import {Dialog as MDDialog} from '@material/web/dialog/lib/dialog';
+import {Dialog as MDDialog} from '@material/web/dialog/internal/dialog';
 import {
   Children,
   Vnode,

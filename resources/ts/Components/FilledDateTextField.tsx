@@ -30,7 +30,7 @@ export default class FilledDateTextField<A extends FilledDateTextFieldAttributes
 
   openDatePicker(event: MouseEvent & {redraw?: boolean}) {
     event.redraw = false;
-    // @ts-expect-error - Input is private
-    (this.element.input as HTMLInputElement).showPicker();
+    // @ts-expect-error - getInput() is private
+    (this.element.getInput() as HTMLInputElement).showPicker();
   }
 }

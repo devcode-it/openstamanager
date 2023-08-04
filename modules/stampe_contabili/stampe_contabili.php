@@ -19,8 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Models\Module;
 use Carbon\Carbon;
+use Models\Module;
 
 $id_record = filter('id_record');
 $dir = filter('dir');
@@ -30,38 +30,37 @@ $id_module = Module::pool('Stampe contabili')->id;
 
 $year = (new Carbon($_SESSION['period_end']))->format('Y');
 $periodi[] = [
-	'id' => 'manuale',
-	'text' => tr('Manuale'),
+    'id' => 'manuale',
+    'text' => tr('Manuale'),
 ];
 
 $month_start = 1;
 $month_end = 3;
 
 if (setting('Liquidazione iva') == 'Trimestrale') {
-	for ($i=1; $i<=4; $i++) {
-		$periodi[] = [
-			'id' => ''.$i.'_trimestre',
-			'text' => tr('_NUM_° Trimestre _YEAR_', ['_NUM_' => $i, '_YEAR_' => $year]),
-			'date_start' => $year.','.$month_start.',01',
-			'date_end' => $year.','.$month_end.','.(new Carbon($year.'-'.$month_end.'-01'))->endOfMonth()->format('d'),
-		];
-		$month_start += 3;
-		$month_end += 3;
-	}
+    for ($i = 1; $i <= 4; ++$i) {
+        $periodi[] = [
+            'id' => ''.$i.'_trimestre',
+            'text' => tr('_NUM_° Trimestre _YEAR_', ['_NUM_' => $i, '_YEAR_' => $year]),
+            'date_start' => $year.','.$month_start.',01',
+            'date_end' => $year.','.$month_end.','.(new Carbon($year.'-'.$month_end.'-01'))->endOfMonth()->format('d'),
+        ];
+        $month_start += 3;
+        $month_end += 3;
+    }
 }
 
 if (setting('Liquidazione iva') == 'Mensile') {
-	for ($i=1; $i<=12; $i++) {
-		$month = (new Carbon($year.'-'.$i.'-01'))->locale('it')->getTranslatedMonthName('IT MMMM');
-		$periodi[] = [
-			'id' => ''.$i.'_mese',
-			'text' => tr('_MONTH_ _YEAR_', ['_MONTH_' => $month, '_YEAR_' => $year]),
-			'date_start' => $year.','.$i.',01',
-			'date_end' => $year.','.$i.','.(new Carbon($year.'-'.$i.'-01'))->endOfMonth()->format('d'),
-		];
-	}
+    for ($i = 1; $i <= 12; ++$i) {
+        $month = (new Carbon($year.'-'.$i.'-01'))->locale('it')->getTranslatedMonthName('IT MMMM');
+        $periodi[] = [
+            'id' => ''.$i.'_mese',
+            'text' => tr('_MONTH_ _YEAR_', ['_MONTH_' => $month, '_YEAR_' => $year]),
+            'date_start' => $year.','.$i.',01',
+            'date_end' => $year.','.$i.','.(new Carbon($year.'-'.$i.'-01'))->endOfMonth()->format('d'),
+        ];
+    }
 }
-
 
 // Trovo id_print della stampa
 $link = Prints::getHref($nome_stampa, $id_record);
@@ -77,7 +76,7 @@ echo '
 
 <form action="" method="post" id="form" >
 	<div class="row">';
-		echo '
+        echo '
 		<div class="col-md-4">
 			{[ "type": "select", "label": "'.tr('Periodo').'", "name": "periodo", "required": "1", "values": '.json_encode($periodi).', "value": "manuale" ]}
 		</div>
@@ -91,15 +90,15 @@ echo '
 		</div>
 	</div>';
 
-	echo '
+    echo '
 	<div class="row">';
-		if ($nome_stampa != 'Liquidazione IVA') {
-			echo '
+        if ($nome_stampa != 'Liquidazione IVA') {
+            echo '
 		<div class="col-md-4">
 			{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_sezionale", "required": "1", "values": "query=SELECT id AS id, name AS descrizione FROM zz_segments WHERE id_module = (SELECT id FROM zz_modules WHERE name = \''.(($dir == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto').'\') AND is_fiscale = 1 UNION SELECT  -1 AS id, \'Tutti i sezionali\' AS descrizione" ]}
 		</div>';
-		}
-		echo '
+        }
+        echo '
 		<div class="col-md-4">
 			{[ "type": "select", "label": "'.tr('Formato').'", "name": "format", "required": "1", "values": "list=\"A4\": \"'.tr('A4').'\", \"A3\": \"'.tr('A3').'\"", "value": "'.$_SESSION['stampe_contabili']['format'].'" ]}
 		</div>
@@ -108,14 +107,14 @@ echo '
 			{[ "type": "select", "label": "'.tr('Orientamento').'", "name": "orientation", "required": "1", "values": "list=\"L\": \"'.tr('Orizzontale').'\", \"P\": \"'.tr('Verticale').'\"", "value": "'.$_SESSION['stampe_contabili']['orientation'].'" ]}
 		</div>';
 
-	if ($nome_stampa != 'Liquidazione IVA') {
-		echo '
+    if ($nome_stampa != 'Liquidazione IVA') {
+        echo '
 		<div class="col-md-4">
 			{[ "type": "checkbox", "label": "'.tr('Definitiva').'", "disabled": "1", "name": "definitiva", "help": "'.tr('Per abilitare il pulsante è necessario impostare nei campi Data inizio e Data fine uno dei 4 trimestri o un singolo mese e non deve essere già stata creata la stampa definitiva del periodo selezionato').'" ]}
 		</div>';
-	}
+    }
 
-	echo '
+    echo '
 		<div class="col-md-4 pull-right">
 			<p style="line-height:14px;">&nbsp;</p>
 			<button type="button" class="btn btn-primary btn-block" onclick="if($(\'#form\').parsley().validate()) { return avvia_stampa(); }">
@@ -127,15 +126,15 @@ echo '
 <br>';
 
 if ($nome_stampa != 'Liquidazione IVA') {
-	$elementi = $dbo->fetchArray('SELECT * FROM co_stampecontabili WHERE date_end BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']).' AND id_print='.prepare($id_print).' AND dir='.prepare($dir));
-	echo '
+    $elementi = $dbo->fetchArray('SELECT * FROM co_stampecontabili WHERE date_end BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']).' AND id_print='.prepare($id_print).' AND dir='.prepare($dir));
+    echo '
 	<div class="box box-primary collapsable collapsed-box">
 		<div class="box-header with-border">
 			<h3 class="box-title"><i class="fa fa-print"></i> '.tr('Stampe definitive registro iva _DIR_ dal _START_ al _END_', [
-				'_DIR_' => $dir == 'entrata' ? 'vendite' : 'acquisti',
-				'_START_' => dateFormat($_SESSION['period_start']),
-				'_END_' => dateFormat($_SESSION['period_end']),
-			]).'</h3>
+                '_DIR_' => $dir == 'entrata' ? 'vendite' : 'acquisti',
+                '_START_' => dateFormat($_SESSION['period_start']),
+                '_END_' => dateFormat($_SESSION['period_end']),
+            ]).'</h3>
 			<div class="box-tools pull-right">
 				<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
 			</div>
@@ -143,34 +142,34 @@ if ($nome_stampa != 'Liquidazione IVA') {
 		<div class="box-body">
 			<ul>';
 
-		foreach ($elementi as $elemento) {
-			$descrizione = tr('Stampa definitiva dal _START_ al _END_ (_FIRST_-_LAST_)', [
-				'_START_' => dateFormat($elemento['date_start']),
-				'_END_' => dateFormat($elemento['date_end']),
-				'_FIRST_' => $elemento['first_page'],
-				'_LAST_' => $elemento['last_page'],
-			]);		
+    foreach ($elementi as $elemento) {
+        $descrizione = tr('Stampa definitiva dal _START_ al _END_ (_FIRST_-_LAST_)', [
+                '_START_' => dateFormat($elemento['date_start']),
+                '_END_' => dateFormat($elemento['date_end']),
+                '_FIRST_' => $elemento['first_page'],
+                '_LAST_' => $elemento['last_page'],
+            ]);
 
-			$file = $dbo->selectOne('zz_files', '*', ['id_module' => $id_module, 'id_record' => $elemento['id']]);
+        $file = $dbo->selectOne('zz_files', '*', ['id_module' => $id_module, 'id_record' => $elemento['id']]);
 
-			echo '
+        echo '
 				<li>
 					<a class="btn btn-xs btn-primary" href="'.base_path().'/actions.php?id_module='.$id_module.'&op=download-allegato&id='.$file['id'].'&filename='.$file['filename'].'" target="_blank"><i class="fa fa-download"></i>
 					</a>
 					'.$descrizione.'
 				</li>';
-		}
+    }
 
-		if (empty($elementi)) {
-			echo '<p class="text-center">'.tr('Nessuna stampa presente').'</p>';
-		}
+    if (empty($elementi)) {
+        echo '<p class="text-center">'.tr('Nessuna stampa presente').'</p>';
+    }
 
-		echo '
+    echo '
 			</ul>
 		</div>
 	</div>';
 
-	echo '
+    echo '
 	<script>
 		$("#modals > div").on("shown.bs.modal", function () {
 			eseguiControlli();
@@ -308,9 +307,9 @@ echo '
 			input("date_start").disable();
 			input("date_end").disable();
 		}';
-		if ($nome_stampa != 'Liquidazione IVA') {
-		echo 'eseguiControlli();';
-		}
-	echo '
+        if ($nome_stampa != 'Liquidazione IVA') {
+            echo 'eseguiControlli();';
+        }
+    echo '
 	});
 </script>';

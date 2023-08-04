@@ -255,7 +255,7 @@ class WidgetManager implements ManagerInterface
                     <li class="col-sm-6 col-md-4 li-widget" id="widget_'.$widget['id'].'" style="height:100% !important;" data-id="'.$widget['id'].'">';
                 } else {
                     $result .= '
-                    <li class= "col-sm-6 '.($widget['class']?: setting('Dimensione widget predefinita')).' li-widget" id="widget_'.$widget['id'].'" data-id="'.$widget['id'].'">';
+                    <li class= "col-sm-6 '.($widget['class'] ?: setting('Dimensione widget predefinita')).' li-widget" id="widget_'.$widget['id'].'" data-id="'.$widget['id'].'">';
                 }
                 $info = array_merge($options, [
                     'id' => $widget['id'],

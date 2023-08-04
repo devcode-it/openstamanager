@@ -26,7 +26,7 @@ $user = Auth::user();
 
 $pageTitle = !empty($pageTitle) ? $pageTitle : $structure->title;
 
-$lang = (empty($lang) || $lang == '|lang|' ) ? 'it_IT' : $lang;
+$lang = (empty($lang) || $lang == '|lang|') ? 'it_IT' : $lang;
 
 $messages = flash()->getMessages();
 
@@ -406,8 +406,8 @@ if (Auth::check()) {
                                 <p style="padding:10px 15px;">&nbsp;</p>
                             </li>';
 
-                        if ($user->gruppo == 'Amministratori') {
-                        echo '
+    if ($user->gruppo == 'Amministratori') {
+        echo '
                             <li class="dropdown notifications-menu nav-button">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                     <i class="fa fa-bell-o"></i>
@@ -433,9 +433,9 @@ if (Auth::check()) {
                             <li class="nav-button"><a href="'.base_path().'/log.php" class="tip nav-button" title="'.tr('Log accessi').'">
                                 <i class="fa fa-book"></i>
                             </a></li>';
-                        }
+    }
 
-                        echo '
+    echo '
                             <li class="nav-button"><a data-href="'.base_path().'/shortcuts.php" data-title="'.tr('Scorciatoie da tastiera').'" class="tip nav-button" title="'.tr('Scorciatoie').'">
                                 <i class="fa fa-keyboard-o"></i>
                             </a></li>
@@ -518,18 +518,16 @@ if (Auth::check()) {
         if (!empty($id_record)) {
             $plugins = $dbo->fetchArray('SELECT id, title, options, options2 FROM zz_plugins WHERE idmodule_to='.prepare($id_module)." AND position='tab' AND enabled = 1 ORDER BY zz_plugins.order DESC");
             foreach ($plugins as $plugin) {
-
-
                 //Badge count per record plugin
                 $count = 0;
                 $opt = '';
-                if (!empty($plugin['options2'])){
+                if (!empty($plugin['options2'])) {
                     $opt = json_decode($plugin['options2'], true);
-                }else if (!empty($plugin['options'])){
+                } elseif (!empty($plugin['options'])) {
                     $opt = json_decode($plugin['options'], true);
                 }
 
-                if (!empty($opt)){
+                if (!empty($opt)) {
                     $q = str_replace('|id_parent|', $id_record, $opt['main_query'][0]['query']);
                     $count = $dbo->fetchNum($q);
                 }
@@ -538,7 +536,7 @@ if (Auth::check()) {
                     <li data-toggle="control-sidebar" class="btn-default" >
                         <a data-toggle="tab" href="#tab_'.$plugin['id'].'" id="link-tab_'.$plugin['id'].'">
                             '.$plugin['title'].'
-                            <span class="badge pull-right">'.($count>0 ? $count: '').'</span>
+                            <span class="badge pull-right">'.($count > 0 ? $count : '').'</span>
                         </a>
                     </li>';
             }
@@ -557,7 +555,6 @@ if (Auth::check()) {
                 </li>';
         }
 
-
         // Tab per le checklist
         if ($structure->permission != '-' && $structure->use_checklists) {
             $checklists_unchecked = $structure->recordChecks($id_record)->where('checked_at', null);
@@ -567,7 +564,7 @@ if (Auth::check()) {
                 <li data-toggle="control-sidebar" class="btn-default">
                     <a class="bg-info" data-toggle="tab" href="#tab_checks" id="link-tab_checks">
                         '.tr('Checklist').'
-                        '.(($checklists_total->count() > 0) ? 
+                        '.(($checklists_total->count() > 0) ?
                         '<span class="badge pull-right">'.$checklists_unchecked->count().tr(' / ').($checklists_total->count()).'</span>' : '').'                                         
                     </a>
                 </li>';
@@ -680,6 +677,6 @@ if ($free_space < ($space_limit * (1024 ** 3))) {
             '_TOT_' => FileSystem::formatBytes($free_space),
         ]).'.</p>
          <p>'.tr('Questo può risultare un serio problema per la continuità di funzionamento del software, poiché le operazioni più espansive che richiedono spazio di archiviazione possono causare malfunzionamenti imprevisti').'. '.tr('Ad esempio, le attività di backup, caricamento di allegati o anche l\'utilizzo normale del gestionale potrebbero rendere i dati inaffidabili, provocando pertanto una perdita delle informazioni salvate').'.</p>
-        <p>'.tr("Contatta gli amministratori di sistema per risolvere al più presto il problema").'.</p>
+        <p>'.tr('Contatta gli amministratori di sistema per risolvere al più presto il problema').'.</p>
     </div>';
 }

@@ -104,8 +104,8 @@ foreach ($results as $result) {
         $giorno_pagamento = ($result['giorno'] < -1) ? -$result['giorno'] - 1 : $result['giorno'];
     }
 
-// Collegamenti diretti
-$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir`, NULL AS `deleted_at` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`idpagamento` = '.prepare($id_record).'
+    // Collegamenti diretti
+    $elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir`, NULL AS `deleted_at` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`idpagamento` = '.prepare($id_record).'
 
 UNION
 SELECT `or_ordini`.`id`, `or_ordini`.`data`, `or_ordini`.`numero`, `or_ordini`.`numero_esterno`, `or_tipiordine`.`descrizione` AS tipo_documento, `or_tipiordine`.`dir`, NULL AS `deleted_at` FROM `or_ordini` JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine` WHERE `or_ordini`.`idpagamento` = '.prepare($id_record).'
@@ -121,20 +121,19 @@ SELECT `co_preventivi`.`id`, `co_preventivi`.`data_bozza`, `co_preventivi`.`nume
 
 ORDER BY `data`');
 
-
     echo '
 				<div class="box box-success">
 					<div class="box-header with-border">
 						<h3 class="box-title">'.tr('Rata _NUMBER_', [
-                            '_NUMBER_' => $numero_rata,  
+                            '_NUMBER_' => $numero_rata,
                         ]).'</h3>';
-                        if (empty($elementi)) {
+    if (empty($elementi)) {
         echo '   
-						<button type="button" class="btn btn-danger pull-right" onclick="rimuoviRata(' . $result['id'] . ')">
-						    <i class="fa fa-trash"></i> ' . tr('Elimina') . '
+						<button type="button" class="btn btn-danger pull-right" onclick="rimuoviRata('.$result['id'].')">
+						    <i class="fa fa-trash"></i> '.tr('Elimina').'
                             </button>';
-                        }
-                        echo '
+    }
+    echo '
 					</div>
 					<div class="box-body">
 						<input type="hidden" value="'.$result['id'].'" name="id['.$numero_rata.']">
@@ -168,7 +167,7 @@ ORDER BY `data`');
 }
 
 if (empty($elementi)) {
-?>
+    ?>
 			</div>
 
 			<div class="pull-right">
@@ -228,9 +227,8 @@ echo '
         </div>
     </div>
 </form>';
-
 } else {
-    echo'
+    echo '
             </div>
         </div>
 	</div>
@@ -275,7 +273,7 @@ echo '
             <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
     }
 
-echo '
+    echo '
         </ul>
     </div>
 </div>';
@@ -284,13 +282,13 @@ echo '
 if (!empty($elementi)) {
     echo '
 <div class="alert alert-error">
-    ' . tr('Eliminando questo metodo di pagamento si potrebbero verificare problemi nelle altre sezioni del gestionale') . '.
+    '.tr('Eliminando questo metodo di pagamento si potrebbero verificare problemi nelle altre sezioni del gestionale').'.
 </div>
 <a class="btn btn-danger ask disabled" data-backto="record-list">
     <i class="fa fa-trash"></i> '.tr('Elimina').'
 </a>';
 } else {
-        echo '
+    echo '
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> '.tr('Elimina').'
 </a>';

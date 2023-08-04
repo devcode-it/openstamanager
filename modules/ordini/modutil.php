@@ -19,8 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Ordini\Ordine;
 use Modules\Interventi\Intervento;
+use Modules\Ordini\Ordine;
 
 /**
  * Funzione per generare un nuovo numero per l'ordine.
@@ -245,7 +245,6 @@ function get_stato_ordine($idordine)
 
 function get_totale_interventi_ordine($idordine)
 {
-  
     $interventi = Intervento::where('id_ordine', $idordine)->get();
     $array_interventi = $interventi->toArray();
 

@@ -99,7 +99,7 @@ class Services
     {
         return self::getServiziAttivi()
             ->flatten(1)
-            ->filter(function ($item) use ($limite_scadenze) {
+            ->filter(function ($item) {
                 return isset($item['data_conclusione']) && Carbon::parse($item['data_conclusione'])->lessThan(Carbon::now());
             });
     }
@@ -142,8 +142,7 @@ class Services
             });
     }
 
-
-     /**
+    /**
      * Restituisce le risorse scadute per assenza di crediti oppure per data di fine prossima.
      *
      * @return \Illuminate\Support\Collection
@@ -151,12 +150,11 @@ class Services
     public static function getRisorseScadute()
     {
         return self::getRisorseAttive()
-            ->filter(function ($item) use ($limite_scadenze) {
+            ->filter(function ($item) {
                 return (isset($item['expiration_at']) && Carbon::parse($item['expiration_at'])->lessThan(Carbon::now()))
                     || (isset($item['credits']) && $item['credits'] < 0);
             });
     }
-
 
     /**
      * Effettua una richiesta a Services.

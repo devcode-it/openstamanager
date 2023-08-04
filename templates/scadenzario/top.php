@@ -19,29 +19,27 @@
 
 include_once __DIR__.'/../../core.php';
 
-
 $text = [];
 
-if(get('is_pagata')=='true'){
-    $text[] = "Scadenze pagate";
+if (get('is_pagata') == 'true') {
+    $text[] = 'Scadenze pagate';
 }
-if(get('is_riba')=='true'){
-    $text[] = "Ri.Ba";
+if (get('is_riba') == 'true') {
+    $text[] = 'Ri.Ba';
 }
-if(get('is_cliente')=='true'){
-    $text[] = "Solo scadenze clienti";
+if (get('is_cliente') == 'true') {
+    $text[] = 'Solo scadenze clienti';
 }
-if(get('is_fornitore')=='true'){
-    $text[] = "Solo scadenze fornitori";
+if (get('is_fornitore') == 'true') {
+    $text[] = 'Solo scadenze fornitori';
 }
-
 
 if (isset($id_record)) {
     echo '
     <h4><b>'.tr('Scadenza _ANAG_', [
         '_ANAG_' => $records[0]['Anagrafica'],
     ], ['upper' => true]).'</b></h4>';
-} else if(!empty($date_start) AND !empty($date_end)) {
+} elseif (!empty($date_start) and !empty($date_end)) {
     echo '
     <h4><b>'.tr('Scadenze dal _START_ al _END_', [
         '_START_' => Translator::dateToLocale($date_start),
@@ -49,13 +47,12 @@ if (isset($id_record)) {
         ], ['upper' => true]).'</b>
     </h4>
     <p style="color:#aaa; font-size:10px;" class="text-right">
-    '.tr("_TEXT_",
+    '.tr('_TEXT_',
     [
-        "_TEXT_" => (!empty($text) ? 'Include: '.implode(', ', $text) : ''),
+        '_TEXT_' => (!empty($text) ? 'Include: '.implode(', ', $text) : ''),
     ]).'
 </p>';
-
-}else{
+} else {
     echo '
     <h4><b>'.tr('Scadenze').'</b>
     </h4>';

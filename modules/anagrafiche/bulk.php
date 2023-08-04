@@ -87,7 +87,6 @@ switch (post('op')) {
             $anagrafica->idrelazione = $idrelazione;
 
             $anagrafica->save();
-    
         }
         break;
 }

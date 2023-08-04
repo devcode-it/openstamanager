@@ -36,7 +36,7 @@ $esigibilita = [
 
 use Modules\Iva\Aliquota;
 
-$codice = Aliquota::max('codice')+1;
+$codice = Aliquota::max('codice') + 1;
 
 ?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">

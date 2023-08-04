@@ -87,7 +87,7 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
                         <div id="info-title-bozza" class="box">
                     
                             <div class="box-header with-border">
-                                <h3 class="box-title">'.tr("Fatture in stato Bozza del cliente").'</h3>
+                                <h3 class="box-title">'.tr('Fatture in stato Bozza del cliente').'</h3>
                                 <div class="box-tools pull-right">
                                     <button type="button" class="btn btn-box-tool" data-widget="collapse">
                                         <i class="fa fa-minus"></i>
@@ -100,7 +100,7 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
                     <div class="col-md-6">
                         <div id="info-title-scadute" class="box">
                             <div class="box-header with-border">
-                                <h3 class="box-title">'.tr("Fatture con termini di pagamento trascorsi").'</h3>
+                                <h3 class="box-title">'.tr('Fatture con termini di pagamento trascorsi').'</h3>
                                 <div class="box-tools pull-right">
                                     <button type="button" class="btn btn-box-tool" data-widget="collapse">
                                         <i class="fa fa-minus"></i>
@@ -116,7 +116,7 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
             <!-- DETTAGLI CLIENTE -->
             <div class="box box-info collapsable collapsed-box">
                 <div class="box-header with-border">
-                    <h3 class="box-title">'.tr("Dettagli cliente").'</h3>
+                    <h3 class="box-title">'.tr('Dettagli cliente').'</h3>
                     <div class="box-tools pull-right">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse">
                             <i class="fa fa-plus"></i>
@@ -125,7 +125,7 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
                 </div>
 
                 <div class="box-body" id="dettagli_cliente">
-                    '.tr("Seleziona prima un cliente").'...
+                    '.tr('Seleziona prima un cliente').'...
                 </div>
             </div>';
         }

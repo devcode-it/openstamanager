@@ -329,7 +329,6 @@ abstract class Accounting extends Component
         return $this->qta * $this->provvigione_unitaria;
     }
 
-
     /**
      * Restituisce il prezzo unitario corrente (unitario oppure unitario ivato a seconda dell'impostazione 'Utilizza prezzi di vendita comprensivi di IVA') per la riga.
      *

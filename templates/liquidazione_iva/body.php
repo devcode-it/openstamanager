@@ -70,7 +70,7 @@ echo '
     </tr>';
 
 // Somma importi arrotondati per fattura
-$aliquote=[];
+$aliquote = [];
 
 foreach ($iva_vendite_esigibile as $record) {
     $aliquote[$record['cod_iva']]['aliquota'] = $record['aliquota'];
@@ -80,7 +80,7 @@ foreach ($iva_vendite_esigibile as $record) {
     $aliquote[$record['cod_iva']]['iva'] += sum($record['iva'], null, 2);
 }
 
-foreach ($aliquote as $aliquota=>$record) {
+foreach ($aliquote as $aliquota => $record) {
     echo '
     <tr>
         <td>'.round($record['aliquota']).'%</td>
@@ -103,7 +103,7 @@ echo '
 </tr>';
 
 // Somma importi arrotondati per fattura
-$aliquote=[];
+$aliquote = [];
 
 foreach ($iva_vendite_nonesigibile as $record) {
     $aliquote[$record['cod_iva']]['aliquota'] = $record['aliquota'];
@@ -113,7 +113,7 @@ foreach ($iva_vendite_nonesigibile as $record) {
     $aliquote[$record['cod_iva']]['iva'] += sum($record['iva'], null, 2);
 }
 
-foreach ($aliquote as $aliquota=>$record) {
+foreach ($aliquote as $aliquota => $record) {
     echo '
     <tr>
         <td>'.round($record['aliquota']).'%</td>
@@ -136,7 +136,7 @@ echo '
 </tr>';
 
 // Somma importi arrotondati per fattura
-$aliquote=[];
+$aliquote = [];
 
 foreach ($iva_vendite as $record) {
     $aliquote[$record['cod_iva']]['aliquota'] = $record['aliquota'];
@@ -146,7 +146,7 @@ foreach ($iva_vendite as $record) {
     $aliquote[$record['cod_iva']]['iva'] += sum($record['iva'], null, 2);
 }
 
-foreach ($aliquote as $aliquota=>$record) {
+foreach ($aliquote as $aliquota => $record) {
     echo '
     <tr>
         <td>'.round($record['aliquota']).'%</td>
@@ -184,7 +184,7 @@ echo '
     </tr>';
 
 // Somma importi arrotondati per fattura
-$aliquote=[];
+$aliquote = [];
 
 foreach ($iva_acquisti_detraibile as $record) {
     $aliquote[$record['cod_iva']]['aliquota'] = $record['aliquota'];
@@ -194,7 +194,7 @@ foreach ($iva_acquisti_detraibile as $record) {
     $aliquote[$record['cod_iva']]['iva'] += sum($record['iva'], null, 2);
 }
 
-foreach ($aliquote as $aliquota=>$record) {
+foreach ($aliquote as $aliquota => $record) {
     echo '
     <tr>
         <td>'.round($record['aliquota']).'%</td>
@@ -218,7 +218,7 @@ echo '
 </tr>';
 
 // Somma importi arrotondati per fattura
-$aliquote=[];
+$aliquote = [];
 
 foreach ($iva_acquisti_nondetraibile as $record) {
     $aliquote[$record['cod_iva']]['aliquota'] = $record['aliquota'];
@@ -228,7 +228,7 @@ foreach ($iva_acquisti_nondetraibile as $record) {
     $aliquote[$record['cod_iva']]['iva'] += sum($record['iva'], null, 2);
 }
 
-foreach ($aliquote as $aliquota=>$record) {
+foreach ($aliquote as $aliquota => $record) {
     echo '
     <tr>
         <td>'.round($record['aliquota']).'%</td>
@@ -252,7 +252,7 @@ echo '
 </tr>';
 
 // Somma importi arrotondati per fattura
-$aliquote=[];
+$aliquote = [];
 
 foreach ($iva_acquisti as $record) {
     $aliquote[$record['cod_iva']]['aliquota'] = $record['aliquota'];
@@ -262,7 +262,7 @@ foreach ($iva_acquisti as $record) {
     $aliquote[$record['cod_iva']]['iva'] += sum($record['iva'], null, 2);
 }
 
-foreach ($aliquote as $aliquota=>$record) {
+foreach ($aliquote as $aliquota => $record) {
     echo '
     <tr>
         <td>'.round($record['aliquota']).'%</td>
@@ -330,13 +330,13 @@ echo '
     <tr>
         <td>VARIAZIONE DI IMPOSTA RELATIVE A PERIODI PRECEDENTI</td>';
         if ($totale_iva_periodo_precedente < 25.82 && $totale_iva_periodo_precedente > 0) {
-            echo'
+            echo '
             <td class=text-right>'.moneyFormat(abs($totale_iva_periodo_precedente), 2).'</td>';
         } else {
-            echo'
+            echo '
             <td class=text-right></td>';
-        } 
-    echo'
+        }
+    echo '
     </tr>
     <tr>
         <td>DI CUI INTERESSI PER RAVVEDIMENTO</td>
@@ -369,29 +369,29 @@ echo '
     <tr>
         <td>IVA A DEBITO CON MAGGIORAZIONE</td>';
         if ($totale_iva > 25.82 && $periodo['valore'] == 'Trimestrale') {
-            echo'
+            echo '
             <td class=text-right>'.moneyFormat($totale_iva_maggiorata, 2).'</td>';
         } else {
-            echo'
+            echo '
             <td class=text-right></td>';
-        } 
-    echo'
+        }
+    echo '
     </tr>
     <tr>
         <td>IMPORTO DA VERSARE</td>';
         if ($totale_iva > 25.82) {
             if ($periodo['valore'] == 'Mensile') {
-                echo'
+                echo '
                 <td class=text-right>'.moneyFormat($totale_iva, 2).'</td>';
             } else {
-                echo'
+                echo '
                 <td class=text-right>'.moneyFormat($totale_iva_maggiorata, 2).'</td>';
             }
         } else {
-            echo'
+            echo '
             <td class=text-right></td>';
-        } 
-    echo'
+        }
+    echo '
     </tr>
     <tr>
         <td>CREDITO INFRANNUALE DI IMPOSTA CHIESTO A RIMBORSO</td>

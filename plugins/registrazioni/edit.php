@@ -17,11 +17,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Modules\Interventi\Intervento;
-
-if ( $id_module == Modules::get('Fatture di acquisto')['id'] ){
+if ($id_module == Modules::get('Fatture di acquisto')['id']) {
     $conti = 'conti-acquisti';
-} else{
+} else {
     $conti = 'conti-vendite';
 }
 
@@ -61,7 +59,6 @@ echo '
             ++$num;
 
             if (!$riga->isDescrizione()) {
-
                 echo '
                 <tr>
                     <td class="text-center">
@@ -90,25 +87,25 @@ echo '
                     <td class="text-right">
                         '.moneyFormat($riga->prezzo_unitario_corrente);
 
-                    if ($dir == 'entrata' && $riga->costo_unitario != 0) {
-                        echo '
+                if ($dir == 'entrata' && $riga->costo_unitario != 0) {
+                    echo '
                         <br><small class="text-muted">
                             '.tr('Acquisto').': '.moneyFormat($riga->costo_unitario).'
                         </small>';
-                    }
+                }
 
-                    if (abs($riga->sconto_unitario) > 0) {
-                        $text = discountInfo($riga);
-
-                        echo '
-                        <br><small class="label label-danger">'.$text.'</small>';
-                    }
+                if (abs($riga->sconto_unitario) > 0) {
+                    $text = discountInfo($riga);
 
                     echo '
+                        <br><small class="label label-danger">'.$text.'</small>';
+                }
+
+                echo '
                     </td>
 
                     <td>
-                        {[ "type": "select", "name": "idconto['.$riga['id'].']", "required": 1, "value": "'.$riga->id_conto.'", "values": ' . json_encode($optionsConti['results']) . ', "class": "unblockable" ]}
+                        {[ "type": "select", "name": "idconto['.$riga['id'].']", "required": 1, "value": "'.$riga->id_conto.'", "values": '.json_encode($optionsConti['results']).', "class": "unblockable" ]}
                     </td>
                 </tr>';
             }

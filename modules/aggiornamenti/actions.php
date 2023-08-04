@@ -21,11 +21,11 @@ include_once __DIR__.'/../../core.php';
 
 use Models\Cache;
 use Modules\Aggiornamenti\Controlli\ColonneDuplicateViste;
-use Modules\Aggiornamenti\Controlli\ReaValidi;
-use Modules\Aggiornamenti\Controlli\PluginDuplicati;
 use Modules\Aggiornamenti\Controlli\Controllo;
 use Modules\Aggiornamenti\Controlli\DatiFattureElettroniche;
 use Modules\Aggiornamenti\Controlli\PianoConti;
+use Modules\Aggiornamenti\Controlli\PluginDuplicati;
+use Modules\Aggiornamenti\Controlli\ReaValidi;
 use Modules\Aggiornamenti\UpdateHook;
 
 $id = post('id');
@@ -46,9 +46,9 @@ switch (filter('op')) {
         break;
 
     case 'upload':
-        if (setting('Attiva aggiornamenti')){
+        if (setting('Attiva aggiornamenti')) {
             include base_dir().'/modules/aggiornamenti/upload_modules.php';
-        }else{
+        } else {
             flash()->error(tr('Non è permesso il caricamento di aggiornamenti o moduli!'));
         }
 

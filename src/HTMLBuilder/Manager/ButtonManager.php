@@ -19,8 +19,8 @@
 
 namespace HTMLBuilder\Manager;
 
-use Modules\Emails\Template AS TemplateEmail;
-use Modules\SMS\Template AS TemplateSMS;
+use Modules\Emails\Template as TemplateEmail;
+use Modules\SMS\Template as TemplateSMS;
 
 /**
  * @since 2.4

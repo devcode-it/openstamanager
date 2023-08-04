@@ -24,10 +24,10 @@ $agente = Anagrafica::where([
     ['idanagrafica', '=', $id_record],
 ])->first();
 
-if(get('is_parz_pagata')=='true'){
+if (get('is_parz_pagata') == 'true') {
     $text[] = "'Parzialmente pagato'";
 }
-if(get('is_emessa')=='true'){
+if (get('is_emessa') == 'true') {
     $text[] = "'Emessa'";
 }
 
@@ -36,14 +36,14 @@ echo '
     '_ANAG_' => $agente->ragione_sociale,
 ], ['upper' => true]).'</b></h4>';
 
-if(!empty($date_start) AND !empty($date_end)) {
+if (!empty($date_start) and !empty($date_end)) {
     echo '
     <h4><b>'.tr('Provvigioni dal _START_ al _END_', [
         '_START_' => Translator::dateToLocale($date_start),
         '_END_' => Translator::dateToLocale($date_end),
         ], ['upper' => true]).'</b>
     </h4>';
-}else{
+} else {
     echo '
     <h5><b>'.tr('Provvigioni').'</b>
     </h5>';
@@ -51,9 +51,9 @@ if(!empty($date_start) AND !empty($date_end)) {
 
 echo '
     <p style="color:#aaa; font-size:10px;" class="text-right">
-        '.tr("_TEXT_",
+        '.tr('_TEXT_',
         [
-            "_TEXT_" => (empty($text) ? 'Solo fatture con stato \'Pagato\'' : 'Include fatture con stato \'Pagato\', '.implode(', ', $text)),
+            '_TEXT_' => (empty($text) ? 'Solo fatture con stato \'Pagato\'' : 'Include fatture con stato \'Pagato\', '.implode(', ', $text)),
         ]).'
     </p>
 <table class="table table-striped table-bordered" id="contents">
@@ -68,4 +68,3 @@ echo '
     </thead>
 
     <tbody>';
-

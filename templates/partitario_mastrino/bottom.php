@@ -34,9 +34,9 @@ if (get('lev') == '2' || get('lev') == '3') {
     <tr>
         <th></th>
         <th>SALDO FINALE</th>
-        <th class="text-right">'.moneyFormat(abs($dare),2).'</th>
-        <th class="text-right">'.moneyFormat(abs($avere),2).'</th>
-        <th class="text-right">'.moneyFormat(abs($scalare),2).'</th>
+        <th class="text-right">'.moneyFormat(abs($dare), 2).'</th>
+        <th class="text-right">'.moneyFormat(abs($avere), 2).'</th>
+        <th class="text-right">'.moneyFormat(abs($scalare), 2).'</th>
     </tr>';
 } elseif (get('lev') == '1') {
     $totale_attivo = 0;
@@ -52,9 +52,9 @@ if (get('lev') == '2' || get('lev') == '3') {
     <table class="table table-striped table-bordered">
     <tr>
         <th width="25%">TOTALE ATTIVITÀ</th>
-        <th width="25%" class="text-right">'.moneyFormat(abs($totale_attivo),2).'</th>
+        <th width="25%" class="text-right">'.moneyFormat(abs($totale_attivo), 2).'</th>
         <th width="25%">PASSIVITÀ</th>
-        <th width="25%" class="text-right">'.moneyFormat(abs($totale_passivo),2).'</th>
+        <th width="25%" class="text-right">'.moneyFormat(abs($totale_passivo), 2).'</th>
     </tr>
     <tr>';
 
@@ -63,13 +63,13 @@ if (get('lev') == '2' || get('lev') == '3') {
             <th></th>
             <th></th>
             <th>UTILE</th>
-            <th class="text-right">'.moneyFormat(abs($utile_perdita['totale']),2).'</th>
+            <th class="text-right">'.moneyFormat(abs($utile_perdita['totale']), 2).'</th>
         </tr>';
         $totale_passivo = abs($totale_passivo + $utile_perdita['totale']);
     } else {
         echo '  
             <th>PERDITA</th>
-            <th class="text-right">'.moneyFormat(abs($utile_perdita['totale']),2).'</th>
+            <th class="text-right">'.moneyFormat(abs($utile_perdita['totale']), 2).'</th>
             <th></th>
             <th></th>
         </tr>';
@@ -79,9 +79,9 @@ if (get('lev') == '2' || get('lev') == '3') {
     echo '
     <tr>
         <th>TOTALE A PAREGGIO</th>
-        <th class="text-right">'.moneyFormat(abs($totale_attivo),2).'</th>
+        <th class="text-right">'.moneyFormat(abs($totale_attivo), 2).'</th>
         <th>TOTALE A PAREGGIO</th>
-        <th class="text-right">'.moneyFormat(abs($totale_passivo),2).'</th>
+        <th class="text-right">'.moneyFormat(abs($totale_passivo), 2).'</th>
     </tr>
     </table>';
 }

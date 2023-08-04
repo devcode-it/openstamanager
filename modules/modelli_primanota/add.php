@@ -86,11 +86,11 @@ echo '
 			<th width="20%">'.tr('Avere').'</th>
         </tr>';
 
-	$counter = 0;
+    $counter = 0;
 
-	foreach ($rs as $r) {
-		renderRiga($counter++, $r);
-	}
+    foreach ($rs as $r) {
+        renderRiga($counter++, $r);
+    }
 
     echo '
         </table>';

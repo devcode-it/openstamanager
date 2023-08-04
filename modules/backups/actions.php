@@ -99,8 +99,7 @@ if (filter('op') == 'restore') {
         $backups = Backup::getList();
         $path = $backups[$number];
     }
-    
+
     Backup::restore($path, is_file($path));
     $database->beginTransaction();
-
 }

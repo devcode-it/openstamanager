@@ -19,8 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Models\Module;
 use Carbon\Carbon;
+use Models\Module;
 
 $id_record = filter('id_record');
 $dir = filter('dir');
@@ -40,7 +40,7 @@ echo '
 
 <form action="" method="post" id="form" >
 	<div class="row">';
-		echo '
+        echo '
 		<div class="col-md-4">
 			{[ "type": "date", "label": "'.tr('Data inizio').'", "required": "1", "name": "date_start", "value": "'.$_SESSION['period_start'].'" ]}
 		</div>
@@ -67,7 +67,7 @@ echo '
 		</div>
 ';
 
-	echo '
+    echo '
 		<div class="col-md-4 pull-right">
 			<p style="line-height:14px;">&nbsp;</p>
 			<button type="button" class="btn btn-primary btn-block" onclick="if($(\'#form\').parsley().validate()) { return avvia_stampa(); }">
@@ -108,9 +108,9 @@ echo '
 			input("date_start").disable();
 			input("date_end").disable();
 		}';
-		if ($nome_stampa != 'Liquidazione IVA') {
-		echo 'eseguiControlli();';
-		}
-	echo '
+        if ($nome_stampa != 'Liquidazione IVA') {
+            echo 'eseguiControlli();';
+        }
+    echo '
 	});
 </script>';

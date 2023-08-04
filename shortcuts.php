@@ -33,6 +33,6 @@ if (setting('Attiva scorciatoie da tastiera')) {
 } else {
     echo '<p class="text-muted"><i class="fa fa-warning text-orange"></i> '.tr('Scorciatoie da tastiera non attivate. Attivale in _LINK_IMPOSTAZIONI_',
         [
-            '_LINK_IMPOSTAZIONI_' => Modules::link('Impostazioni', null, tr('Strumenti » Impostazioni » Generali » <b>Abilita scorciatoie da tastiera</b>'))
+            '_LINK_IMPOSTAZIONI_' => Modules::link('Impostazioni', null, tr('Strumenti » Impostazioni » Generali » <b>Abilita scorciatoie da tastiera</b>')),
         ]).'.</p>';
 }

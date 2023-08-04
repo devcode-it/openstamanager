@@ -26,31 +26,31 @@ $link = Prints::getHref('Scadenzario', null);
 
 $year = (new Carbon($_SESSION['period_end']))->format('Y');
 $periodi[] = [
-	'id' => 'manuale',
-	'text' => tr('Manuale'),
+    'id' => 'manuale',
+    'text' => tr('Manuale'),
 ];
 
 $month_start = 1;
 $month_end = 3;
-for ($i=1; $i<=4; $i++) {
-	$periodi[] = [
-		'id' => ''.$i.'_trimestre',
-		'text' => tr('_NUM_° Trimestre _YEAR_', ['_NUM_' => $i, '_YEAR_' => $year]),
-		'date_start' => $year.','.$month_start.',01',
-		'date_end' => $year.','.$month_end.','.(new Carbon($year.'-'.$month_end.'-01'))->endOfMonth()->format('d'),
-	];
-	$month_start += 3;
-	$month_end += 3;
+for ($i = 1; $i <= 4; ++$i) {
+    $periodi[] = [
+        'id' => ''.$i.'_trimestre',
+        'text' => tr('_NUM_° Trimestre _YEAR_', ['_NUM_' => $i, '_YEAR_' => $year]),
+        'date_start' => $year.','.$month_start.',01',
+        'date_end' => $year.','.$month_end.','.(new Carbon($year.'-'.$month_end.'-01'))->endOfMonth()->format('d'),
+    ];
+    $month_start += 3;
+    $month_end += 3;
 }
 
-for ($i=1; $i<=12; $i++) {
-	$month = (new Carbon($year.'-'.$i.'-01'))->locale('it')->getTranslatedMonthName('IT MMMM');
-	$periodi[] = [
-		'id' => ''.$i.'_mese',
-		'text' => tr('_MONTH_ _YEAR_', ['_MONTH_' => $month, '_YEAR_' => $year]),
-		'date_start' => $year.','.$i.',01',
-		'date_end' => $year.','.$i.','.(new Carbon($year.'-'.$i.'-01'))->endOfMonth()->format('d'),
-	];
+for ($i = 1; $i <= 12; ++$i) {
+    $month = (new Carbon($year.'-'.$i.'-01'))->locale('it')->getTranslatedMonthName('IT MMMM');
+    $periodi[] = [
+        'id' => ''.$i.'_mese',
+        'text' => tr('_MONTH_ _YEAR_', ['_MONTH_' => $month, '_YEAR_' => $year]),
+        'date_start' => $year.','.$i.',01',
+        'date_end' => $year.','.$i.','.(new Carbon($year.'-'.$i.'-01'))->endOfMonth()->format('d'),
+    ];
 }
 
 echo '

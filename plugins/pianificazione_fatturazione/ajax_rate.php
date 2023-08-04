@@ -18,16 +18,15 @@
  */
 
 use Plugins\PianificazioneFatturazione\Pianificazione;
-use Illuminate\Support\Facades\DB;
 
 include_once __DIR__.'/../../core.php';
 
-$action = post("action");
-$ret = "";
+$action = post('action');
+$ret = '';
 switch ($action) {
-    case "update_table":
-        $month = post("currentMonth");
-        $year = post("currentYear");
+    case 'update_table':
+        $month = post('currentMonth');
+        $year = post('currentYear');
 
         $pianificazioni = Pianificazione::doesntHave('fattura')
             ->whereHas('contratto', function ($q) {
@@ -49,13 +48,13 @@ switch ($action) {
             $numero_pianificazioni = $contratto->pianificazioni()->count();
 
             $ret[] = [
-                "idPianificazione" => $pianificazione->id,
-                "idContratto" => $pianificazione->idcontratto,
-                "dataScadenza" => dateFormat($pianificazione->data_scadenza),
-                "contratto" => reference($contratto),
-                "ragioneSociale" => Modules::link('Anagrafiche', $anagrafica->id, nl2br($anagrafica->ragione_sociale)),
-                "totale" => moneyFormat($pianificazione->totale),
-                "importo" => tr('Rata _IND_/_NUM_ (totale: _TOT_)', [
+                'idPianificazione' => $pianificazione->id,
+                'idContratto' => $pianificazione->idcontratto,
+                'dataScadenza' => dateFormat($pianificazione->data_scadenza),
+                'contratto' => reference($contratto),
+                'ragioneSociale' => Modules::link('Anagrafiche', $anagrafica->id, nl2br($anagrafica->ragione_sociale)),
+                'totale' => moneyFormat($pianificazione->totale),
+                'importo' => tr('Rata _IND_/_NUM_ (totale: _TOT_)', [
                     '_IND_' => numberFormat($pianificazione->getNumeroPianificazione(), 0),
                     '_NUM_' => numberFormat($numero_pianificazioni, 0),
                     '_TOT_' => moneyFormat($contratto->totale),
@@ -65,8 +64,8 @@ switch ($action) {
 
         break;
 
-    case "update_month":
-        $year = post("currentYear");
+    case 'update_month':
+        $year = post('currentYear');
 
         $pianificazioni = Pianificazione::doesntHave('fattura')
             ->whereHas('contratto', function ($q) {
@@ -89,9 +88,6 @@ switch ($action) {
         }
 
         break;
-        
 }
 
-
 echo json_encode($ret);
-

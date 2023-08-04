@@ -19,8 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-
-if ($record['data']!=$last_data && !empty($last_data)) {
+if ($record['data'] != $last_data && !empty($last_data)) {
     echo '
     <tr>
         <td colspan="4" class="text-right"><b>TOTALE GIORNO</b></td>
@@ -50,11 +49,10 @@ echo '
         $avere_giorno += $record['totale'];
     }
 
-
 echo '
 </tr>';
 
-if (end($records)==$record) {
+if (end($records) == $record) {
     echo '
     <tr>
         <td colspan="4" class="text-right"><b>TOTALE GIORNO</b></td>
@@ -68,5 +66,3 @@ if (end($records)==$record) {
 }
 
 $last_data = $record['data'];
-
-    

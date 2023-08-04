@@ -32,15 +32,15 @@ echo '
 
         <div class="col-md-2">
             <label>&nbsp;</label>
-            <br><button type="button" class="btn btn-primary" onclick="initGeocomplete();"><i class="fa fa-search"></i> '.tr('Cerca'). '</button>
+            <br><button type="button" class="btn btn-primary" onclick="initGeocomplete();"><i class="fa fa-search"></i> '.tr('Cerca').'</button>
         </div>
 
         <div class="col-md-2">
-            {[ "type": "text", "label": "' . tr('Latitudine') . '", "name": "lat", "value": "' . $record['lat'] . '", "extra": "data-geo=\'lat\'", "class": "text-right", "readonly": true ]}
+            {[ "type": "text", "label": "'.tr('Latitudine').'", "name": "lat", "value": "'.$record['lat'].'", "extra": "data-geo=\'lat\'", "class": "text-right", "readonly": true ]}
         </div>
 
         <div class="col-md-2">
-            {[ "type": "text", "label": "' . tr('Longitudine') . '", "name": "lng", "value": "' . $record['lng'] . '", "extra": "data-geo=\'lng\'", "class": "text-right", "readonly": true ]}
+            {[ "type": "text", "label": "'.tr('Longitudine').'", "name": "lng", "value": "'.$record['lng'].'", "extra": "data-geo=\'lng\'", "class": "text-right", "readonly": true ]}
         </div>
 
     </div>
@@ -102,7 +102,7 @@ function caricaMappa() {
 			gestureHandling: true
 		});
 
-		L.tileLayer("'.setting("Tile server OpenStreetMap").'", {
+		L.tileLayer("'.setting('Tile server OpenStreetMap').'", {
 			maxZoom: 17,
 			attribution: "© OpenStreetMap"
 		}).addTo(map); 

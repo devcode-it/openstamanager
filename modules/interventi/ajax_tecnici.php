@@ -30,7 +30,6 @@ if ($user['gruppo'] == 'Tecnici') {
 $rss = $dbo->fetchArray('SELECT is_completato AS flag_completato FROM in_statiintervento WHERE idstatointervento = (SELECT idstatointervento FROM in_interventi WHERE id='.prepare($id_record).')');
 $is_completato = $rss[0]['flag_completato'];
 
-
 // Sessioni dell'intervento
 $query = 'SELECT
     in_interventi_tecnici.*,
@@ -71,18 +70,16 @@ if (!empty($sessioni)) {
     <table class="table table-striped table-hover table-condensed">
         <tr><th>';
 
-
-        if ($sessione['id_user']) {
-            $user = User::where('idanagrafica', $sessione['idtecnico'])->orderByRaw("CASE WHEN idgruppo = 2 THEN -1 ELSE idgruppo END")->first();
-            echo '
+            if ($sessione['id_user']) {
+                $user = User::where('idanagrafica', $sessione['idtecnico'])->orderByRaw('CASE WHEN idgruppo = 2 THEN -1 ELSE idgruppo END')->first();
+                echo '
                 <img class="attachment-img tip" src="'.$user->photo.'" title="'.$user->nome_completo.'">';
             } else {
-            echo '
+                echo '
                 <i class="fa fa-user-circle-o attachment-img tip" title="'.$sessione['ragione_sociale'].'"></i>';
             }
 
-
-        echo'
+            echo '
              '.$sessione['ragione_sociale'].' '.(($sessione['anagrafica_deleted_at']) ? '<small class="text-danger"><em>('.tr('Eliminato').')</em></small>' : '').'</th>
             <th width="15%">'.tr('Orario inizio').'</th>
             <th width="15%">'.tr('Orario fine').'</th>
@@ -145,7 +142,7 @@ if (!empty($sessioni)) {
 
         // ORE
         echo '
-            <td style="border-right:1px solid #aaa;">'.($ore<=0 ? '<i class="fa fa-warning tip" style="position:relative;margin-left:-16px;" title="'.tr("Questa sessione è vuota").'" ></i>': '' ).' '.numberFormat($ore,'qta').'
+            <td style="border-right:1px solid #aaa;">'.($ore <= 0 ? '<i class="fa fa-warning tip" style="position:relative;margin-left:-16px;" title="'.tr('Questa sessione è vuota').'" ></i>' : '').' '.numberFormat($ore, 'qta').'
 
                 <div class="extra hide">
                     <table class="table table-condensed table-bordered">

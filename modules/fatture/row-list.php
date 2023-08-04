@@ -102,11 +102,11 @@ foreach ($righe as $riga) {
     echo '
         <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'" '.$extra.'>
             <td class="text-center">';
-            if (!$block_edit) {
-                echo '
+    if (!$block_edit) {
+        echo '
                 <input class="check" type="checkbox"/>';
-            }
-            echo '
+    }
+    echo '
             </td>
             
             <td class="text-center">
@@ -169,9 +169,9 @@ foreach ($righe as $riga) {
         echo '
         <br><small><i class="fa fa-barcode"></i> '.$riga->articolo->barcode.'</small>';
     }
-    
+
     if (!empty($riga->note)) {
-            echo '
+        echo '
                 <br><small class="label label-default">'.nl2br($riga->note).'</small>';
     }
     echo '
@@ -229,33 +229,32 @@ foreach ($righe as $riga) {
             <td class="text-right">
             '.moneyFormat($riga->importo);
 
-            //provvigione riga 
-                if (abs($riga->provvigione_unitaria) > 0) {
-                    $text = provvigioneInfo($riga);
-    
-                    echo '
+        //provvigione riga
+        if (abs($riga->provvigione_unitaria) > 0) {
+            $text = provvigioneInfo($riga);
+
+            echo '
                             <br><small class="label label-info">'.$text.'</small>';
-                }
-    
-            echo '</td>';
+        }
+
+        echo '</td>';
     }
 
     // Possibilità di rimuovere una riga solo se la fattura non è pagata
     echo '
             <td class="text-center">';
 
-    if ($dir == 'uscita'){
+    if ($dir == 'uscita') {
         echo '
         <div class="input-group-btn">';
 
-            if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
-                echo '
+        if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
+            echo '
                         <a class="btn btn-primary btn-xs" title="'.tr('Modifica seriali della riga').'" onclick="modificaSeriali(this)">
                             <i class="fa fa-barcode"></i>
                         </a>';
-            }
-    } else if ($record['stato'] != 'Pagato' && $record['stato'] != 'Emessa') {
-       
+        }
+    } elseif ($record['stato'] != 'Pagato' && $record['stato'] != 'Emessa') {
         echo '
         <div class="input-group-btn">';
 
@@ -268,9 +267,8 @@ foreach ($righe as $riga) {
     }
 
     if ($record['stato'] != 'Pagato' && $record['stato'] != 'Emessa') {
-     
         if ($riga->id != $fattura->rigaBollo->id) {
-        echo '
+            echo '
                     <a class="btn btn-xs btn-info" title="'.tr('Aggiungi informazioni FE per questa riga').'" onclick="apriInformazioniFE(this)">
                         <i class="fa fa-file-code-o"></i>
                     </a>
@@ -471,7 +469,7 @@ if ($totale != $netto_a_pagare) {
 }
 
 // Provvigione
-if(!empty($fattura->provvigione)) {
+if (!empty($fattura->provvigione)) {
     echo '
         <tr>
             <td colspan="6" class="text-right">
@@ -483,7 +481,6 @@ if(!empty($fattura->provvigione)) {
             <td></td>
         </tr>';
 
-
     echo '
         <tr>
             <td colspan="6" class="text-right">
@@ -493,7 +490,7 @@ if(!empty($fattura->provvigione)) {
                 '.moneyFormat($fattura->totale_imponibile - $fattura->provvigione).'
             </td>
             <td></td>
-        </tr>';	
+        </tr>';
 }
 
 echo '
@@ -508,12 +505,13 @@ if (!$block_edit && sizeof($righe) > 0) {
         <button type="button" class="btn btn-xs btn-default disabled" id="elimina_righe" onclick="rimuoviRiga(getSelectData());">
             <i class="fa fa-trash"></i>
         </button>';
-        if ($direzione == 'entrata') {
-            echo'
+    if ($direzione == 'entrata') {
+        echo '
             <button type="button" class="btn btn-xs btn-default disabled" id="confronta_righe" onclick="confrontaRighe(getSelectData());">
                 Confronta prezzi
             </button>';
-        } echo'
+    }
+    echo '
     </div>';
 }
 echo '

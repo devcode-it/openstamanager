@@ -191,7 +191,8 @@ class FatturaElettronica
                     'name' => $allegato['NomeAttachment'],
                     'original_name' => $original,
                 ]));
-            } catch(UnexpectedValueException $e) {}
+            } catch (UnexpectedValueException $e) {
+            }
         }
 
         // Registrazione XML come allegato
@@ -225,8 +226,7 @@ class FatturaElettronica
         }
 
         //Se non trovo l'anagrafica tra i fornitori, provo a ricercarla anche tra i clienti
-        if (empty($anagrafica->first())){
-
+        if (empty($anagrafica->first())) {
             $type = 'Cliente';
 
             $tipologia = TipoAnagrafica::where('descrizione', $type)->first();
@@ -234,7 +234,7 @@ class FatturaElettronica
             $anagrafica = Anagrafica::whereHas('tipi', function ($query) use ($tipologia) {
                 $query->where('an_tipianagrafiche.idtipoanagrafica', '=', $tipologia->id);
             });
-    
+
             if (!empty($info['partita_iva']) && !empty($info['codice_fiscale'])) {
                 $anagrafica->where('piva', $info['partita_iva'])
                     ->orWhere('codice_fiscale', $info['codice_fiscale'])
@@ -247,9 +247,7 @@ class FatturaElettronica
                 $anagrafica->where('piva', $info['partita_iva'])
                     ->orWhere('piva', 'like', '__'.$info['partita_iva']);
             }
-
         }
-
 
         return $anagrafica->first();
     }

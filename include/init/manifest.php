@@ -20,15 +20,14 @@
 $creation = file_put_contents('manifest.json', '');
 
 if (!$creation) {
-
     $manifest = '{
 
         "dir" : "ltr",
-        "lang" : "'.((empty($lang) || $lang == '|lang|') ? 'it-IT' : str_replace('_','-',$lang)).'",
+        "lang" : "'.((empty($lang) || $lang == '|lang|') ? 'it-IT' : str_replace('_', '-', $lang)).'",
         "name" : "'.tr('OpenSTAManager').'",
-        "scope" : "'.((empty(base_path()) || base_path()=='/') ? '' : '.').'",
+        "scope" : "'.((empty(base_path()) || base_path() == '/') ? '' : '.').'",
         "display" : "fullscreen",
-        "start_url" : "'.((empty(base_path()) || base_path()=='/') ? '/' : './').'",
+        "start_url" : "'.((empty(base_path()) || base_path() == '/') ? '/' : './').'",
         "short_name" : "OSM",
         "theme_color" : "transparent",
         "description" : "'.tr('OpenSTAManager').'",
@@ -44,11 +43,8 @@ if (!$creation) {
         ]
 }';
 
-    
     file_put_contents('manifest.json', $manifest);
-
-}else{
-
+} else {
     echo '
     <div class="box box-center box-danger box-solid text-center">
 			<div class="box-header with-border">
@@ -61,5 +57,3 @@ if (!$creation) {
             </div>
     </div>';
 }
-
-

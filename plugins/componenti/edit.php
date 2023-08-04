@@ -168,14 +168,14 @@ foreach ($elenchi as $elenco) {
                                     <div class="row">
                                         <div class="col-md-12">';
 
-                                            echo input([
+        echo input([
                                                 'type' => 'ckeditor',
                                                 'label' => tr('Note'),
                                                 'name' => 'note',
                                                 'id' => 'note_'.$componente->id,
                                                 'value' => $componente['note'],
                                             ]);
-                                            echo'
+        echo '
                                         </div>
                                     </div>
 

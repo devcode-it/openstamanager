@@ -28,26 +28,26 @@ class EliminaMailTask extends Manager
 {
     public function needsExecution()
     {
-        if(setting('Numero di giorni mantenimento coda di invio')>0){
-            $rs = database()->fetchArray("SELECT * FROM em_emails WHERE sent_at<DATE_SUB(NOW(), INTERVAL ".setting('Numero di giorni mantenimento coda di invio')." DAY) AND id_newsletter IS NOT NULL");
+        if (setting('Numero di giorni mantenimento coda di invio') > 0) {
+            $rs = database()->fetchArray('SELECT * FROM em_emails WHERE sent_at<DATE_SUB(NOW(), INTERVAL '.setting('Numero di giorni mantenimento coda di invio').' DAY) AND id_newsletter IS NOT NULL');
 
-            if(sizeof($rs)>0){
+            if (sizeof($rs) > 0) {
                 return true;
-            }else{
+            } else {
                 return false;
             }
-        }else{
+        } else {
             return false;
         }
     }
 
     public function execute()
     {
-        if(setting('Numero di giorni mantenimento coda di invio')>0){
-            $rs = database()->fetchArray("SELECT * FROM em_emails WHERE sent_at<DATE_SUB(NOW(), INTERVAL ".setting('Numero di giorni mantenimento coda di invio')." DAY) AND id_newsletter IS NOT NULL");
+        if (setting('Numero di giorni mantenimento coda di invio') > 0) {
+            $rs = database()->fetchArray('SELECT * FROM em_emails WHERE sent_at<DATE_SUB(NOW(), INTERVAL '.setting('Numero di giorni mantenimento coda di invio').' DAY) AND id_newsletter IS NOT NULL');
 
-            foreach($rs AS $r){
-                database()->query("DELETE FROM em_emails WHERE id=".prepare($r['id']));
+            foreach ($rs as $r) {
+                database()->query('DELETE FROM em_emails WHERE id='.prepare($r['id']));
             }
         }
     }

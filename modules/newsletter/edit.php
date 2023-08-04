@@ -84,7 +84,7 @@ echo '
             </div>
 
             <div class="row">
-                <div class="col-md-12">';  
+                <div class="col-md-12">';
                     echo input([
                         'type' => 'ckeditor',
                         'use_full_ckeditor' => 1,
@@ -92,7 +92,7 @@ echo '
                         'name' => 'content',
                         'value' => $record['content'],
                     ]);
-                    echo'
+                    echo '
                     </div>
             </div>
 

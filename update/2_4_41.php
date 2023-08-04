@@ -10,4 +10,3 @@ foreach ($files as $key => $value) {
 }
 
 delete($files);
-?>

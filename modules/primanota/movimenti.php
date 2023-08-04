@@ -165,12 +165,12 @@ echo '
 <table class="hide">
     <tbody id="template">';
 
-renderRiga('-id-', 
+renderRiga('-id-',
     [
         'iddocumento' => '-id_documento-',
         'id_scadenza' => '-id_scadenza-',
     ],
-    $totale_dare, 
+    $totale_dare,
     $totale_avere
 );
 

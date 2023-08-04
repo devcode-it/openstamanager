@@ -20,23 +20,22 @@
 include_once __DIR__.'/../../core.php';
 
 use API\Services;
+use Carbon\Carbon;
 use Models\Cache;
 use Models\Module;
 use Models\Plugin;
 use Util\FileSystem;
-use Carbon\Carbon;
 
 $id = post('id');
 
 switch (filter('op')) {
-    
     case 'cambia-dimensione':
         $result = $dbo->update('zz_widgets', [
-            'class' => post('valore')
+            'class' => post('valore'),
         ], [
-            'id' => post('id')
+            'id' => post('id'),
         ]);
-        
+
         echo json_encode([
             'result' => $result,
         ]);
@@ -289,7 +288,6 @@ switch (filter('op')) {
         break;
 
     case 'svuota-cache-hooks':
-
         // Svuota cache hooks
         $database->table('zz_cache')
         ->update(['expire_at' => Carbon::now()->subMinutes(1)]);
@@ -297,11 +295,9 @@ switch (filter('op')) {
         // Messaggio informativo
         flash()->info(tr('Cache hooks svuotata!', []));
 
-
         echo json_encode([]);
         break;
-    
-    
+
     case 'disabilita-hook':
         $id = filter('id');
 
@@ -321,7 +317,7 @@ switch (filter('op')) {
         echo json_encode([]);
 
         break;
-    
+
     case 'abilita-hook':
         $id = filter('id');
 
@@ -342,8 +338,6 @@ switch (filter('op')) {
 
         break;
 
-            
-
     case 'sizes':
         $results = [];
 
@@ -356,17 +350,17 @@ switch (filter('op')) {
         ];
 
         foreach ($dirs as $dir => $description) {
-            $excluded_extensions = ['htaccess','gitkeep'];
+            $excluded_extensions = ['htaccess', 'gitkeep'];
             //Tutte le cartelle che non prevedono log in zz_files
             $excluded_dir = [DOCROOT.'\files\impianti', DOCROOT.'\files\importFE', DOCROOT.'\files\exportFE', DOCROOT.'\files\receiptFE', DOCROOT.'\files\temp'];
-            
-            $size = FileSystem::folderSize($dir, array_merge($excluded_extensions,$excluded_dir));
+
+            $size = FileSystem::folderSize($dir, array_merge($excluded_extensions, $excluded_dir));
 
             $results[] = [
                 'description' => $description,
                 'size' => $size,
                 'formattedSize' => FileSystem::formatBytes($size),
-                'count' => FileSystem::fileCount($dir, array_merge($excluded_extensions,$excluded_dir)) ?: 0,
+                'count' => FileSystem::fileCount($dir, array_merge($excluded_extensions, $excluded_dir)) ?: 0,
                 'dbSize' => ($description == 'Allegati') ? $dbo->fetchOne('SELECT SUM(`size`) AS dbsize FROM zz_files')['dbsize'] : 0,
                 'dbCount' => ($description == 'Allegati') ? $dbo->fetchOne('SELECT COUNT(`id`) AS dbcount FROM zz_files')['dbcount'] : 0,
                 'dbExtensions' => ($description == 'Allegati') ? $dbo->fetchArray("SELECT SUBSTRING_INDEX(filename, '.', -1) AS extension, COUNT(*) AS num FROM zz_files GROUP BY extension ORDER BY num DESC LIMIT 10") : 0,

@@ -2,8 +2,6 @@
 
 // File e cartelle deprecate
 
-use PhpParser\Node\Stmt\Foreach_;
-
 $files = [
     'modules/scadenzario/controller_after.php',
 ];
@@ -27,7 +25,7 @@ foreach ($scadenze as $scadenza) {
 $aliquote_eliminate = $dbo->fetchArray('SELECT * FROM co_iva WHERE deleted_at IS NOT NULL');
 foreach ($aliquote_eliminate as $aliquota) {
     $elimina_iva = true;
-    if(!empty($dbo->select('mg_articoli', 'id', ['idiva_vendita' => $aliquota['id']]))) {
+    if (!empty($dbo->select('mg_articoli', 'id', ['idiva_vendita' => $aliquota['id']]))) {
         $elimina_iva = false;
     } elseif (!empty($dbo->select('an_anagrafiche', 'idanagrafica', ['idiva_vendite' => $aliquota['id']]))) {
         $elimina_iva = false;
@@ -51,5 +49,3 @@ foreach ($aliquote_eliminate as $aliquota) {
         $dbo->query('DELETE FROM co_iva WHERE id='.prepare($aliquota['id']));
     }
 }
-
-?>

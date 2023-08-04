@@ -96,7 +96,7 @@ echo '
                     'label' => tr('Contenuto'),
                     'name' => 'content',
                     'required' => 1,
-                    'value' => ''
+                    'value' => '',
                 ]).'
             </div>
 
@@ -119,8 +119,8 @@ echo "      <table class='table'>
 foreach ($checks as $check) {
     echo renderChecklistInserimento($check);
 }
-echo "          </tbody>
-            </table>";
+echo '          </tbody>
+            </table>';
 
 echo '
         </ul>

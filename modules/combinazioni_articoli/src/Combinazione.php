@@ -45,7 +45,7 @@ class Combinazione extends Model
     public function delete()
     {
         $database = database();
-        
+
         // Rimozione articoli collegati
         $articoli = $this->articoli;
         foreach ($articoli as $articolo) {
@@ -116,7 +116,7 @@ class Combinazione extends Model
             $articolo->codice = $this->codice.'-'.implode('|', $variante);
             $articolo->save();
         }
-        
+
         // Uso di un articolo già esistente
         else {
             $articolo = Articolo::find($id_articolo);

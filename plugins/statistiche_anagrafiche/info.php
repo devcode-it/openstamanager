@@ -171,14 +171,14 @@ echo '
                     <span class="info-box-icon bg-'.($interventi->count() == 0 ? 'gray' : 'red').'"><i class="fa fa-cog"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text pull-left">'.tr('Attività').'</span>';
-                        if ($anagrafica->isTipo('Cliente')){
-                            echo'
+                        if ($anagrafica->isTipo('Cliente')) {
+                            echo '
                             '.($interventi->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.Modules::get('Interventi')['id'].'&search_Ragione-sociale='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
                         } else {
-                        echo '
+                            echo '
                             '.($interventi->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.Modules::get('Interventi')['id'].'&search_Tecnici='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
                         }
-                        echo'                     
+                        echo '                     
                         <br class="clearfix">
                         <span class="info-box-number">
                             <big>'.$interventi->count().'</big><br>
@@ -225,14 +225,14 @@ echo '
                     <span class="info-box-icon bg-'.($sessioni->count() == 0 ? 'gray' : 'yellow').'"><i class="fa fa-wrench"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text pull-left">'.tr('Ore lavorate').'</span>';
-                        if ($anagrafica->isTipo('Cliente')){
-                            echo'
+                        if ($anagrafica->isTipo('Cliente')) {
+                            echo '
                             '.($sessioni->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.Modules::get('Interventi')['id'].'&search_Ragione-sociale='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
                         } else {
-                        echo '
+                            echo '
                             '.($sessioni->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.Modules::get('Interventi')['id'].'&search_Tecnici='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
                         }
-                        echo'                     
+                        echo '                     
                         <br class="clearfix">
                         <span class="info-box-number">
                             <big>'.numberFormat($totale_ore_lavorate, 0).'</big>

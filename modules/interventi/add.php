@@ -48,8 +48,6 @@ if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
     $id_cliente = $user['idanagrafica'];
 }
 
-
-
 // Se è indicata un'anagrafica relativa, si carica il tipo di intervento di default impostato
 if (!empty($id_anagrafica)) {
     $anagrafica = $dbo->fetchOne('SELECT idtipointervento_default, idzona FROM an_anagrafiche WHERE idanagrafica='.prepare($id_anagrafica));
@@ -261,7 +259,6 @@ echo '
         </div>
     </div>';
 
-
 $espandi_dettagli = setting('Espandi automaticamente la sezione "Dettagli aggiuntivi"');
 echo '
     <!-- DATI AGGIUNTIVI -->
@@ -308,11 +305,11 @@ echo '
                     <div class="row">
                         <div class="col-md-12">
                             <div class="btn-group" >
-                                <button type="button" class="btn btn-xs btn-primary '.(intval($id_intervento)? 'disabled' : '').'" onclick="assegnaTuttiTecnici()">
+                                <button type="button" class="btn btn-xs btn-primary '.(intval($id_intervento) ? 'disabled' : '').'" onclick="assegnaTuttiTecnici()">
                                     '.tr('Tutti').'
                                 </button>
 
-                                <button type="button" class="btn btn-xs btn-danger '.(intval($id_intervento)? 'disabled' : '').'" onclick="deassegnaTuttiTecnici()">
+                                <button type="button" class="btn btn-xs btn-danger '.(intval($id_intervento) ? 'disabled' : '').'" onclick="deassegnaTuttiTecnici()">
                                 <i class="fa fa-times"></i>
                                 </button>
                             </div>
@@ -734,7 +731,7 @@ echo '
     function calcolaConflittiTecnici() {
         let tecnici = input("idtecnico").get();
 
-        return $("#info-conflitti-add").load("'.$module->fileurl('occupazione_tecnici.php'). '", {
+        return $("#info-conflitti-add").load("'.$module->fileurl('occupazione_tecnici.php').'", {
             "id_module": globals.id_module,
             "tecnici[]": tecnici,
             "inizio": input("orario_inizio").get(),
@@ -798,7 +795,7 @@ echo '
 
         //console.log(lat, lng);
         if (typeof lat === "undefined" || typeof lng === "undefined"){
-            swal("' . tr('Errore') . '", "' . tr("La posizione non è stata definita. Impossibile caricare la mappa.") . '", "error");
+            swal("'.tr('Errore').'", "'.tr('La posizione non è stata definita. Impossibile caricare la mappa.').'", "error");
             return false;
         }
         
@@ -815,7 +812,7 @@ echo '
                     gestureHandling: true
                 });
         
-                L.tileLayer("'.setting("Tile server OpenStreetMap").'", {
+                L.tileLayer("'.setting('Tile server OpenStreetMap').'", {
                     maxZoom: 17,
                     attribution: "© OpenStreetMap"
                 }).addTo(map); 

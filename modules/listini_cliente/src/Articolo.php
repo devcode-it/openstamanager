@@ -21,7 +21,7 @@ namespace Modules\ListiniCliente;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
-use Modules\Articoli\Articolo AS ArticoloOriginale;
+use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Iva\Aliquota;
 
 /*

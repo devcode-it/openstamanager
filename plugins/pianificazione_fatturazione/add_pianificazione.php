@@ -137,15 +137,12 @@ foreach ($righe as $riga) {
                     </div>
                 </div>';
 
-               
-
-echo '          <div class="label label-warning alert_rate hide">
+    echo '          <div class="label label-warning alert_rate hide">
                     <i class="fa fa-warning"></i> <span>'.tr('Attenzione, sono previste _RATE_ rate su _TOT_ quantità totali', [
                         '_RATE_' => '<span class="num_rate"></span>',
                         '_TOT_' => '<span class="qta_disponibili">'.Translator::numberToLocale(($riga->qta - $riga->qta_evasa)).'</span>',
                     ]).'</span>.
                 </div><hr>';
-
 }
 
 echo '

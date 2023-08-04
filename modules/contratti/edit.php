@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 $block_edit = $record['is_completato'];
 
-if (strtotime($record['data_conclusione']) < strtotime($record['data_accettazione']) && !empty(strtotime($record['data_accettazione']))  && !empty(strtotime($record['data_conclusione'])) ) {
+if (strtotime($record['data_conclusione']) < strtotime($record['data_accettazione']) && !empty(strtotime($record['data_accettazione'])) && !empty(strtotime($record['data_conclusione']))) {
     echo '
     <div class="alert alert-warning"><a class="clickable" onclick="$(\'.alert\').hide();"><i class="fa fa-times"></i></a> '.tr('Attenzione! La data di accettazione supera la data di conclusione del contratto. Verificare le informazioni inserite.').'</div>';
 }
@@ -135,15 +135,14 @@ echo '
 
             <div class="row">
 				<div class="col-md-12">
-                    <?php    
-                    echo input([
+                    <?php echo input([
                         'type' => 'ckeditor',
                         'use_full_ckeditor' => 0,
                         'label' => tr('Condizioni generali di fornitura'),
                         'name' => 'condizioni_fornitura',
                         'value' => $record['condizioni_fornitura'],
                     ]);
-					?>
+                    ?>
 				</div>
 			</div>
 

@@ -43,7 +43,6 @@ switch ($resource) {
             $search_fields[] = '|table_articoli|.codice LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '|table_articoli|.descrizione LIKE '.prepare('%'.$search.'%');
             $search_fields[] = ($prezzi_ivati ? '|table_articoli|.minimo_vendita_ivato' : '|table_articoli|.minimo_vendita').' LIKE '.prepare('%'.$search.'%');
-            
         }
 
         // Aggiunta filtri di ricerca

@@ -60,4 +60,4 @@ echo '
         </td>';
 echo '</tr>';
 $prev_titolo = $record['titolo'];
-$i++;
+++$i;

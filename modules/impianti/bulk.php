@@ -48,7 +48,7 @@ switch (post('op')) {
 
             if (empty($elementi)) {
                 $dbo->query('DELETE FROM my_impianti WHERE id='.prepare($id));
-                $n_impianti++;
+                ++$n_impianti;
             }
         }
 

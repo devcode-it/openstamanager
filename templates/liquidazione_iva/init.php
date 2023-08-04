@@ -39,9 +39,8 @@ $vendita_banco = $dbo->fetchNum("SELECT * FROM zz_modules WHERE name='Vendita al
 $maggiorazione = 0;
 
 // calcolo IVA su fatture + vendite al banco
-if (!empty($vendita_banco)){
-
-$iva_vendite_esigibile = $dbo->fetchArray('
+if (!empty($vendita_banco)) {
+    $iva_vendite_esigibile = $dbo->fetchArray('
     SELECT
         id,
         cod_iva,
@@ -92,9 +91,8 @@ $iva_vendite_esigibile = $dbo->fetchArray('
         aliquota,
         descrizione,
         id');
- 
 
-$iva_vendite = $dbo->fetchArray('
+    $iva_vendite = $dbo->fetchArray('
     SELECT
         id, 
         cod_iva,
@@ -145,8 +143,8 @@ $iva_vendite = $dbo->fetchArray('
         aliquota,
         descrizione,
         id');
-    
-$iva_vendite_anno_precedente = $dbo->fetchArray('
+
+    $iva_vendite_anno_precedente = $dbo->fetchArray('
     SELECT
         id,
         cod_iva,
@@ -197,8 +195,8 @@ $iva_vendite_anno_precedente = $dbo->fetchArray('
         aliquota,
         descrizione,
         id');
-        
-$iva_vendite_periodo_precedente = $dbo->fetchArray('
+
+    $iva_vendite_periodo_precedente = $dbo->fetchArray('
     SELECT
         id,
         cod_iva,
@@ -249,12 +247,11 @@ $iva_vendite_periodo_precedente = $dbo->fetchArray('
         aliquota,
         descrizione,
         id');
-
-} 
+}
 
 // calcolo IVA solo su fatture
 else {
-$iva_vendite_esigibile = $dbo->fetchArray('
+    $iva_vendite_esigibile = $dbo->fetchArray('
     SELECT 
         co_iva.codice_natura_fe AS cod_iva,
         co_iva.percentuale AS aliquota,
@@ -271,7 +268,7 @@ $iva_vendite_esigibile = $dbo->fetchArray('
     GROUP BY
         co_iva.id, co_documenti.id');
 
-$iva_vendite = $dbo->fetchArray('
+    $iva_vendite = $dbo->fetchArray('
     SELECT 
         co_iva.codice_natura_fe AS cod_iva,
         co_iva.percentuale AS aliquota,
@@ -288,7 +285,7 @@ $iva_vendite = $dbo->fetchArray('
     GROUP BY
         co_iva.id, co_documenti.id');
 
-$iva_vendite_anno_precedente = $dbo->fetchArray('
+    $iva_vendite_anno_precedente = $dbo->fetchArray('
     SELECT 
         co_iva.codice_natura_fe AS cod_iva,
         co_iva.percentuale AS aliquota,
@@ -305,7 +302,7 @@ $iva_vendite_anno_precedente = $dbo->fetchArray('
     GROUP BY
         co_iva.id, co_documenti.id');
 
-$iva_vendite_periodo_precedente = $dbo->fetchArray('
+    $iva_vendite_periodo_precedente = $dbo->fetchArray('
     SELECT 
         co_iva.codice_natura_fe AS cod_iva,
         co_iva.percentuale AS aliquota,
@@ -370,7 +367,7 @@ $iva_acquisti_nondetraibile = $dbo->fetchArray('
         INNER JOIN co_documenti ON co_documenti.id = co_righe_documenti.iddocumento 
         INNER JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento 
     WHERE 
-        co_tipidocumento.dir = "uscita" AND co_righe_documenti.is_descrizione = 0 AND idstatodocumento NOT IN(SELECT id FROM co_statidocumento WHERE descrizione = "Bozza" OR descrizione = "Annullata") AND co_documenti.data_competenza >= ' . prepare($date_start) . ' AND co_documenti.data_competenza <= ' . prepare($date_end) . ' AND co_iva.indetraibile != 0
+        co_tipidocumento.dir = "uscita" AND co_righe_documenti.is_descrizione = 0 AND idstatodocumento NOT IN(SELECT id FROM co_statidocumento WHERE descrizione = "Bozza" OR descrizione = "Annullata") AND co_documenti.data_competenza >= '.prepare($date_start).' AND co_documenti.data_competenza <= '.prepare($date_end).' AND co_iva.indetraibile != 0
     GROUP BY
         co_iva.id, co_documenti.id');
 
@@ -390,7 +387,7 @@ $iva_acquisti = $dbo->fetchArray('
         co_tipidocumento.dir = "uscita" AND co_righe_documenti.is_descrizione = 0 AND idstatodocumento NOT IN(SELECT id FROM co_statidocumento WHERE descrizione = "Bozza" OR descrizione = "Annullata") AND co_documenti.data_competenza >= '.prepare($date_start).' AND co_documenti.data_competenza <= '.prepare($date_end).'
     GROUP BY
         co_iva.id, co_documenti.id');
-    
+
 $iva_acquisti_anno_precedente = $dbo->fetchArray('
     SELECT 
         co_iva.codice_natura_fe AS cod_iva,
@@ -407,7 +404,7 @@ $iva_acquisti_anno_precedente = $dbo->fetchArray('
         co_tipidocumento.dir = "uscita" AND co_righe_documenti.is_descrizione = 0 AND idstatodocumento NOT IN(SELECT id FROM co_statidocumento WHERE descrizione = "Bozza" OR descrizione = "Annullata") AND co_documenti.data_competenza >= '.prepare($anno_precedente_start).' AND co_documenti.data_competenza <= '.prepare($anno_precedente_end).'
     GROUP BY
         co_iva.id, co_documenti.id');
-    
+
 $iva_acquisti_periodo_precedente = $dbo->fetchArray('
     SELECT 
         co_iva.codice_natura_fe AS cod_iva,

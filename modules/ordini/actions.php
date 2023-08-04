@@ -112,16 +112,16 @@ switch (post('op')) {
             $ordine->condizioni_fornitura = post('condizioni_fornitura');
 
             // Verifica la presenza di ordini con lo stesso numero
-            $ordini = $dbo->fetchArray("SELECT * FROM or_ordini WHERE numero_cliente=".prepare(post('numero_cliente'))."AND numero_cliente IS NOT NULL AND numero_cliente != '' AND id!=".prepare($id_record)." AND idanagrafica=".prepare(post('idanagrafica'))." AND DATE_FORMAT(or_ordini.data, '%Y')=".prepare(Carbon::parse(post('data'))->copy()->format("Y")));
+            $ordini = $dbo->fetchArray('SELECT * FROM or_ordini WHERE numero_cliente='.prepare(post('numero_cliente'))."AND numero_cliente IS NOT NULL AND numero_cliente != '' AND id!=".prepare($id_record).' AND idanagrafica='.prepare(post('idanagrafica'))." AND DATE_FORMAT(or_ordini.data, '%Y')=".prepare(Carbon::parse(post('data'))->copy()->format('Y')));
 
-           if (!empty($ordini)) {
+            if (!empty($ordini)) {
                 $documento = '';
-                foreach($ordini as $rs){
+                foreach ($ordini as $rs) {
                     $descrizione = tr('Ordine cliente num. _NUM_ del _DATE_', [
                         '_NUM_' => !empty($rs['numero_esterno']) ? $rs['numero_esterno'] : $rs['numero'],
                         '_DATE_' => Translator::dateToLocale($rs['data']),
                     ]);
-        
+
                     $documenti .= '<li>'.Modules::link('Ordini cliente', $rs['id'], $descrizione).'</li>';
                 }
 
@@ -129,7 +129,7 @@ switch (post('op')) {
                     '_NUM_' => post('numero_cliente'),
                     '_ORDINI_' => $documenti,
                 ]));
-    
+
                 $ordine->numero_cliente = null;
                 $ordine->id_documento_fe = null;
             }
@@ -323,8 +323,8 @@ switch (post('op')) {
 
     // Scollegamento riga generica da ordine
     case 'delete_riga':
-        $id_righe = (array)post('righe');
-        
+        $id_righe = (array) post('righe');
+
         foreach ($id_righe as $id_riga) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Descrizione::find($id_riga);
@@ -347,8 +347,8 @@ switch (post('op')) {
 
     // Duplicazione riga
     case 'copy_riga':
-        $id_righe = (array)post('righe');
-        
+        $id_righe = (array) post('righe');
+
         foreach ($id_righe as $id_riga) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Descrizione::find($id_riga);
@@ -605,7 +605,7 @@ switch (post('op')) {
         $barcode = post('barcode');
 
         if (!empty($barcode)) {
-            $id_articolo = $dbo->selectOne('mg_articoli', 'id',  ['deleted_at' => null, 'attivo' => 1, 'barcode' => $barcode])['id'];
+            $id_articolo = $dbo->selectOne('mg_articoli', 'id', ['deleted_at' => null, 'attivo' => 1, 'barcode' => $barcode])['id'];
         }
 
         if (!empty($id_articolo)) {
@@ -613,7 +613,7 @@ switch (post('op')) {
             $qta_articolo = $dbo->selectOne('mg_articoli', 'qta', ['id' => $id_articolo])['qta'];
 
             $originale = ArticoloOriginale::find($id_articolo);
- 
+
             $articolo = Articolo::build($ordine, $originale);
             $qta = 1;
 
@@ -630,7 +630,7 @@ switch (post('op')) {
             }
             $id_anagrafica = $ordine->idanagrafica;
             $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
-        
+
             // CALCOLO PREZZO UNITARIO
             $prezzo_unitario = 0;
             $sconto = 0;
@@ -659,7 +659,7 @@ switch (post('op')) {
                         continue;
                     }
                 }
-            } 
+            }
             if (empty($prezzo_unitario)) {
                 // Prezzi listini clienti
                 $listino = $dbo->fetchOne('SELECT sconto_percentuale AS sconto_percentuale_listino, '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino
@@ -686,15 +686,13 @@ switch (post('op')) {
             if (!empty($piano_sconto)) {
                 $sconto = parseScontoCombinato($piano_sconto['prc_guadagno'].'+'.$sconto);
             }
-            
+
             $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);
             $articolo->setSconto($sconto, 'PRC');
             $articolo->setProvvigione($provvigione ?: 0, 'PRC');
             $articolo->save();
 
-            
             flash()->info(tr('Nuovo articolo aggiunto!'));
-            
         } else {
             $response['error'] = tr('Nessun articolo corrispondente a magazzino');
             echo json_encode($response);
@@ -720,7 +718,7 @@ switch (post('op')) {
     case 'edit-price':
         $righe = $post['righe'];
         $numero_totale = 0;
-        
+
         foreach ($righe as $riga) {
             if (($riga['id']) != null) {
                 $articolo = Articolo::find($riga['id']);
@@ -729,7 +727,7 @@ switch (post('op')) {
                 $articolo = Articolo::build($fattura, $originale);
                 $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
             }
-    
+
             if ($articolo['prezzo_unitario'] != $riga['price']) {
                 $articolo->setPrezzoUnitario($riga['price'], $articolo->idiva);
                 $articolo->save();
@@ -741,7 +739,7 @@ switch (post('op')) {
             flash()->info(tr('_NUM_ prezzi modificati!', [
                 '_NUM_' => $numero_totale,
             ]));
-        } else if ($numero_totale == 1) {
+        } elseif ($numero_totale == 1) {
             flash()->info(tr('_NUM_ prezzo modificato!', [
                 '_NUM_' => $numero_totale,
             ]));
@@ -753,7 +751,6 @@ switch (post('op')) {
 
     // Duplica ordine
     case 'copy':
-
         $new = $ordine->replicate();
         $new->numero = Ordine::getNextNumero(post('data'), $ordine->tipo->dir, $ordine->id_segment);
         $new->numero_esterno = Ordine::getNextNumeroSecondario(post('data'), $ordine->tipo->dir, $ordine->id_segment);
@@ -763,7 +760,7 @@ switch (post('op')) {
 
         $id_record = $new->id;
 
-        if( !empty(post('copia_righe')) ){
+        if (!empty(post('copia_righe'))) {
             $righe = $ordine->getRighe();
             foreach ($righe as $riga) {
                 $new_riga = $riga->replicate();

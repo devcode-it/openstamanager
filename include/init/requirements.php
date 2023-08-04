@@ -45,7 +45,6 @@ foreach ($modules as $name => $values) {
 
 //PHP
 $settings = [
-
     'php_version' => [
         'type' => 'version',
         'description' => '7.3.x - 8.0.x, consigliato almeno 7.4.x',
@@ -107,7 +106,7 @@ $settings = [
         'type' => 'value',
         'description' => 1,
     ],
-    
+
     'upload_max_filesize' => [
         'type' => 'value',
         'description' => '>32M',
@@ -122,7 +121,6 @@ $settings = [
         'type' => 'value',
         'description' => '>5000',
     ],
-
 ];
 
 $php = [];
@@ -130,14 +128,12 @@ foreach ($settings as $name => $values) {
     $description = $values['description'];
 
     if ($values['type'] == 'version') {
-
         $description = tr('Valore consigliato: _VALUE_ (Valore attuale: _PHP_VERSION_)', [
             '_VALUE_' => $description,
             '_PHP_VERSION_' => phpversion(),
         ]);
 
-        $status = ((version_compare(phpversion(), $values['minimum'], ">=") && version_compare(phpversion(), $values['maximum'], "<=")) ? 1 : 0);
-
+        $status = ((version_compare(phpversion(), $values['minimum'], '>=') && version_compare(phpversion(), $values['maximum'], '<=')) ? 1 : 0);
     } elseif ($values['type'] == 'ext') {
         $status = extension_loaded($name);
     } else {
@@ -166,12 +162,12 @@ foreach ($settings as $name => $values) {
 
     $type = ($values['type'] == 'ext') ? tr('Estensione') : tr('Impostazione');
 
-    if ($values['type'] == 'ext'){
-        $type =  tr('Estensione');
-    }elseif ($values['type'] == 'version') {
-        $type =  tr('Versione');
-    }else{
-        $type =  tr('Impostazione');
+    if ($values['type'] == 'ext') {
+        $type = tr('Estensione');
+    } elseif ($values['type'] == 'version') {
+        $type = tr('Versione');
+    } else {
+        $type = tr('Impostazione');
     }
 
     $php[] = [
@@ -183,26 +179,23 @@ foreach ($settings as $name => $values) {
 }
 
 // MySQL
-if ($database->isInstalled()){
+if ($database->isInstalled()) {
     $db = [
-
         'mysql_version' => [
             'type' => 'version',
             'description' => '5.7.x - 8.0.x',
             'minimum' => '5.7.0',
             'maximum' => '8.0.99',
         ],
-        
+
         'sort_buffer_size' => [
             'type' => 'value',
             'description' => '>2M',
         ],
-
-
     ];
 
     /*foreach (App::getConfig()['db_options'] as $n => $v){
-       
+
         switch ($n){
             case 'sort_buffer_size':
                 $db[$n] = [
@@ -211,40 +204,36 @@ if ($database->isInstalled()){
                 ];
             break;
         }
-        
-    }*/
 
+    }*/
 }
 
 foreach ($db as $name => $values) {
-
     $description = $values['description'];
 
     if ($values['type'] == 'version') {
-
-        $type =  tr('Versione');
+        $type = tr('Versione');
         $description = tr('Valore consigliato: _VALUE_ (Valore attuale: _MYSQL_VERSION_)', [
             '_VALUE_' => $description,
             '_MYSQL_VERSION_' => $database->getMySQLVersion(),
         ]);
 
-        $status = ((version_compare($database->getMySQLVersion(), $values['minimum'], ">=") && version_compare($database->getMySQLVersion(), $values['maximum'], "<=")) ? 1 : 0);
+        $status = ((version_compare($database->getMySQLVersion(), $values['minimum'], '>=') && version_compare($database->getMySQLVersion(), $values['maximum'], '<=')) ? 1 : 0);
+    } else {
+        $type = tr('Impostazione');
 
-    } else{
-        $type =  tr('Impostazione');
-        
         //Vedo se riesco a recuperare l'impostazione dalle variabili di sessione o globali di mysql
         $rs_session_variabile = $dbo->fetchArray('SHOW SESSION VARIABLES LIKE '.prepare($name));
         $rs_global_variabile = $dbo->fetchArray('SHOW GLOBAL VARIABLES LIKE '.prepare($name));
 
-        if (!empty($rs_session_variabile[0]['Value']))
+        if (!empty($rs_session_variabile[0]['Value'])) {
             $inc = $rs_session_variabile[0]['Value'];
-        else if (!empty($rs_global_variabile[0]['Value']))
+        } elseif (!empty($rs_global_variabile[0]['Value'])) {
             $inc = $rs_global_variabile[0]['Value'];
-        else
+        } else {
             $inc = str_replace(['k', 'M'], ['000', '000000'], App::getConfig()['db_options'][$name]);
-        
-        
+        }
+
         $real = str_replace(['k', 'M'], ['000', '000000'], $description);
 
         if (string_starts_with($real, '>')) {
@@ -261,12 +250,10 @@ foreach ($db as $name => $values) {
             $description = str_replace(['>', '<'], '', $description);
         }
 
-
         $description = tr('Valore consigliato: _VALUE_ (Valore attuale: _INC_)', [
           '_VALUE_' => $description,
-          '_INC_' =>   \Util\FileSystem::formatBytes($inc),
+          '_INC_' => \Util\FileSystem::formatBytes($inc),
         ]);
-
     }
 
     $mysql[] = [
@@ -276,7 +263,6 @@ foreach ($db as $name => $values) {
         'type' => $type,
     ];
 }
-
 
 // Percorsi di servizio
 $dirs_to_check = [
@@ -298,7 +284,6 @@ foreach ($dirs_to_check as $name => $description) {
     ];
 }
 
-
 // File di servizio
 $files_to_check = [
     'manifest.json' => tr('Necessario per l\'aggiunta a schermata home da terminale (creato al termine della configurazione)'),
@@ -318,7 +303,6 @@ foreach ($files_to_check as $name => $description) {
         'type' => tr('File'),
     ];
 }
-
 
 // Configurazioni OSM
 $config_to_check = [
@@ -349,42 +333,36 @@ $config_to_check = [
         'value_to_check' => '|time|',
         'suggested_value' => 'H:i',
         'section' => 'formatter',
-    ]
-
+    ],
 ];
 
 $config = [];
 
-foreach ($config_to_check as $name => $values) {       
-
+foreach ($config_to_check as $name => $values) {
     $type = $values['type'];
-
 
     if ($type == 'value') {
         $description = tr('Valore consigliato: _SUGGESTED_ (Valore attuale: _ACTUAL_)', [
             '_SUGGESTED_' => $values['suggested_value'],
-            '_ACTUAL_' => (!empty($values['section'])? ${$values['section']}[$name] : $$name),
+            '_ACTUAL_' => (!empty($values['section']) ? ${$values['section']}[$name] : $$name),
         ]);
     }
 
     $status = ($values['operator']((!empty($values['section']) ? ${$values['section']}[$name] : $$name), $values['value_to_check']) ? 1 : 0);
-    
+
     $config[] = [
         'name' => $name,
         'description' => $description,
         'status' => $status,
         'type' => tr('Configurazione'),
     ];
-
-      
 }
-
 
 $requirements = [
     tr('Apache') => $apache,
     tr('PHP (_VERSION_ _SUPPORTED_)', [
         '_VERSION_' => phpversion(),
-        '_SUPPORTED_' =>  ( ( version_compare(phpversion(), $settings['php_version']['minimum'], ">=") && version_compare(phpversion(), $settings['php_version']['maximum'], "<=") ) ? '' : '<small><small class="label label-danger" ><i class="fa fa-warning"></i> '.tr('versioni supportate:').' '.$settings['php_version']['description'].'</small></small>')
+        '_SUPPORTED_' => ((version_compare(phpversion(), $settings['php_version']['minimum'], '>=') && version_compare(phpversion(), $settings['php_version']['maximum'], '<=')) ? '' : '<small><small class="label label-danger" ><i class="fa fa-warning"></i> '.tr('versioni supportate:').' '.$settings['php_version']['description'].'</small></small>'),
     ]) => $php,
     tr('MySQL') => $mysql,
     tr('Percorsi di servizio') => $directories,
@@ -392,10 +370,9 @@ $requirements = [
     tr('Configurazioni') => $config,
 ];
 
-if (!$database->isInstalled() || empty($mysql)){
+if (!$database->isInstalled() || empty($mysql)) {
     unset($requirements['MySQL']);
 }
-
 
 // Tabelle di riepilogo
 foreach ($requirements as $key => $values) {

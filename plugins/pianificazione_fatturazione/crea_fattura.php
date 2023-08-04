@@ -27,9 +27,9 @@ $contratto = $pianificazione->contratto;
 
 $id_pianificazione = $pianificazione->id;
 
-foreach($contratto->pianificazioni as $i => $p){
-    if( $p->id == $id_pianificazione ){
-        $numero_rata = $i+1;
+foreach ($contratto->pianificazioni as $i => $p) {
+    if ($p->id == $id_pianificazione) {
+        $numero_rata = $i + 1;
         break;
     }
 }

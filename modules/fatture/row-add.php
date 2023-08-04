@@ -72,7 +72,7 @@ $result = [
 ];
 
 // Leggo la provvigione predefinita per l'anagrafica
-$result['provvigione_default'] =  $dbo->fetchOne('SELECT provvigione_default FROM an_anagrafiche WHERE idanagrafica='.prepare($documento->idagente))['provvigione_default'];
+$result['provvigione_default'] = $dbo->fetchOne('SELECT provvigione_default FROM an_anagrafiche WHERE idanagrafica='.prepare($documento->idagente))['provvigione_default'];
 
 // Leggo l'iva predefinita per l'anagrafica e se non c'è leggo quella predefinita generica
 $iva = $dbo->fetchArray('SELECT idiva_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS idiva FROM an_anagrafiche WHERE idanagrafica='.prepare($documento['idanagrafica']));

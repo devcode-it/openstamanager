@@ -19,12 +19,12 @@
 
 use Models\Upload;
 
-$id_allegati = (array)json_decode(filter('id_allegati'));
+$id_allegati = (array) json_decode(filter('id_allegati'));
 
 // Form di inserimento riga documento
 echo '
 <form action="" method="post" id="modifica-allegato">
-    <input type="hidden" name="id_allegati" value="'.implode(';',$id_allegati).'">
+    <input type="hidden" name="id_allegati" value="'.implode(';', $id_allegati).'">
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="op" value="modifica-allegato">
 

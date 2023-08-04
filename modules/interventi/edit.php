@@ -180,7 +180,7 @@ if (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($se
     echo '
                         <a class="btn btn-info btn-block" onclick="cercaOpenStreetMap()">
                             <i class="fa fa-map-marker"></i> '.tr('Cerca su Mappa').'
-                            '.((!empty($sede_cliente->lat)) ? tr(' (GPS)'): '' ).'
+                            '.((!empty($sede_cliente->lat)) ? tr(' (GPS)') : '').'
                         </a>';
 }
 
@@ -249,7 +249,7 @@ echo '
                         gestureHandling: true
                     });
             
-                    L.tileLayer("'.setting("Tile server OpenStreetMap").'", {
+                    L.tileLayer("'.setting('Tile server OpenStreetMap').'", {
                         maxZoom: 17,
                         attribution: "© OpenStreetMap"
                     }).addTo(map); 
@@ -473,8 +473,8 @@ if (!$block_edit) {
                 AND dt_ddt.id IN (SELECT idddt FROM dt_righe_ddt WHERE dt_righe_ddt.idddt = dt_ddt.id AND (qta - qta_evasa) > 0)';
     $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
 
-                // Form di inserimento riga documento
-                echo '
+    // Form di inserimento riga documento
+    echo '
                 <form id="link_form" action="" method="post">
                     <input type="hidden" name="op" value="add_articolo">
                     <input type="hidden" name="backto" value="record-edit">
@@ -503,12 +503,12 @@ if (!$block_edit) {
                                     <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-right">';
-                                    /*<li>
-                                        <a style="cursor:pointer" onclick="gestioneDescrizione(this)" data-title="'.tr('Aggiungi descrizione').'">
-                                            <i class="fa fa-plus"></i> '.tr('Descrizione').'
-                                        </a>
-                                    </li>*/
-                                echo '
+    /*<li>
+        <a style="cursor:pointer" onclick="gestioneDescrizione(this)" data-title="'.tr('Aggiungi descrizione').'">
+            <i class="fa fa-plus"></i> '.tr('Descrizione').'
+        </a>
+    </li>*/
+    echo '
                                     <li>
                                         <a style="cursor:pointer" onclick="gestioneSconto(this)" data-title="'.tr('Aggiungi sconto/maggiorazione').'">
                                             <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
@@ -577,7 +577,7 @@ if (!$block_edit) {
 	   	<div class="col-md-6 col-md-offset-3 alert alert-success"><i class="fa fa-check"></i> '.tr('Firmato il _DATE_ alle _TIME_ da _PERSON_', [
             '_DATE_' => Translator::dateToLocale($record['firma_data']),
             '_TIME_' => Translator::timeToLocale($record['firma_data']),
-            '_PERSON_' => (!empty($record['firma_nome'])? $record['firma_nome'] : $intervento->anagrafica->ragione_sociale),
+            '_PERSON_' => (!empty($record['firma_nome']) ? $record['firma_nome'] : $intervento->anagrafica->ragione_sociale),
         ]).'</div>';
         }
 

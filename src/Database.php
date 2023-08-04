@@ -262,8 +262,7 @@ class Database extends Util\Singleton
             $result = $statement->fetchAll($mode);
 
             return $result;
-        }catch (PDOException $e) {
-            
+        } catch (PDOException $e) {
         }
     }
 

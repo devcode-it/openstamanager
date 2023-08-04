@@ -28,6 +28,7 @@ use Modules\Preventivi\Components\Articolo;
 use Modules\Preventivi\Preventivo;
 use Modules\Preventivi\Stato;
 use Modules\TipiIntervento\Tipo as TipoSessione;
+
 /**
  * Struttura per la gestione delle operazioni di importazione (da CSV) dei Preventivi.
  *
@@ -101,7 +102,6 @@ class CSV extends CSVImporter
             }
 
             $tipo = TipoSessione::find($record['idtipointervento']) ?: TipoSessione::where('codice', 'GEN')->first();
-
 
             $preventivo = Preventivo::build($anagrafica, $tipo, $record['nome'], new Carbon($record['data_bozza']), 0);
             $preventivo->numero = $record['numero'];

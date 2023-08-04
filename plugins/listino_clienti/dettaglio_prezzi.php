@@ -96,7 +96,7 @@ echo '
         <div class="info_prezzi">
             <div class="col-md-4">
                 {[ "type": "number", "label": "'.tr('Prezzo specifico').'", "name": "prezzo_unitario_fisso", "value": "'.($prezzi_ivati ? $dettaglio_predefinito->prezzo_unitario_ivato : $dettaglio_predefinito->prezzo_unitario).'", "icon-after": "'.currency().'", "help": "'.($prezzi_ivati ? tr('Importo IVA inclusa') : '').'" ]}
-                <button type="button" style="margin-top:-10px;" class="btn btn-xs btn-info pull-right '.($prezzo_predefinito>0 ? "" : "disabled").'" onclick="copiaPrezzoPredefinito()"><i class="fa fa-refresh"></i> '.tr('Importa').'</button>
+                <button type="button" style="margin-top:-10px;" class="btn btn-xs btn-info pull-right '.($prezzo_predefinito > 0 ? '' : 'disabled').'" onclick="copiaPrezzoPredefinito()"><i class="fa fa-refresh"></i> '.tr('Importa').'</button>
             </div>
 
             <div class="col-md-4">

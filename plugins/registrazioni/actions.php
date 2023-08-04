@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Fatture\Components\Articolo AS RigaArticolo;
+use Modules\Fatture\Components\Articolo as RigaArticolo;
 use Modules\Fatture\Components\Riga;
 use Modules\Fatture\Components\Sconto;
 use Modules\Fatture\Fattura;
@@ -29,9 +29,9 @@ $operazione = filter('op');
 
 switch ($operazione) {
     case 'change-conto':
-        $conti = (array)post('idconto');
+        $conti = (array) post('idconto');
 
-        foreach($conti as $id_riga => $conto){
+        foreach ($conti as $id_riga => $conto) {
             $riga = RigaArticolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Sconto::find($id_riga);
 
@@ -42,12 +42,12 @@ switch ($operazione) {
 
         $fattura = Fattura::find($id_record);
 
-        if ($fattura->stato->descrizione != 'Bozza') {       
+        if ($fattura->stato->descrizione != 'Bozza') {
             $fattura->gestoreMovimenti = new GestoreMovimenti($fattura);
             $fattura->gestoreMovimenti->registra();
         }
 
         flash()->info(tr('Salvataggio completato!'));
-        
+
         break;
 }

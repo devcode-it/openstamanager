@@ -33,7 +33,7 @@ echo '
             {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "$id$", "ajax-source": "contratti", "disabled": "1" ]}
         </div>
         <div class="col-md-6">
-            {[ "type": "checkbox", "label": "'.tr('Predefinito').'", "disabled": "'.(intval($record['is_pianificabile'])? '0':'1').'", "name": "predefined", "value" : "$predefined$", "help": "'.tr('Il contratto predefinito, se lavorabile, verrà selezionato automaticamente in fase di apertura attività per il cliente').'", "values": "'.tr('Contratto impostato come predefinito,Contratto non predefinito').'" ]}
+            {[ "type": "checkbox", "label": "'.tr('Predefinito').'", "disabled": "'.(intval($record['is_pianificabile']) ? '0' : '1').'", "name": "predefined", "value" : "$predefined$", "help": "'.tr('Il contratto predefinito, se lavorabile, verrà selezionato automaticamente in fase di apertura attività per il cliente').'", "values": "'.tr('Contratto impostato come predefinito,Contratto non predefinito').'" ]}
         </div>
     </div>
 
@@ -44,5 +44,3 @@ echo '
 		</div>
 	</div>
 </form>';
-
-

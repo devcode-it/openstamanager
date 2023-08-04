@@ -32,7 +32,7 @@ echo '<style>
     vertical-align: middle;
 }
 </style>';
-    
+
 $articoli = Articolo::whereIn('id', $_SESSION['superselect']['id_articolo_barcode'])->get();
 unset($_SESSION['superselect']['id_articolo_barcode']);
 
@@ -44,8 +44,8 @@ $i = 0;
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
 foreach ($articoli as $articolo) {
-    if($i%5==0){
-        echo "</tr><tr>";
+    if ($i % 5 == 0) {
+        echo '</tr><tr>';
     }
     echo '
     <td class="barcode-cell">
@@ -56,9 +56,9 @@ foreach ($articoli as $articolo) {
         <p><b>'.$articolo->barcode.'</b></p>
     </td><br><br>';
 
-    $i++;
+    ++$i;
 }
 
-echo "
+echo '
     </tr>
-</table>";
+</table>';

@@ -39,7 +39,7 @@ echo '
             <th class="text-right" style="border-left: 0;">
                 <b>'.tr('Totale', [], ['upper' => true]).':</b>
             </th>';
-            if( get('id_print')!=24 ){
+            if (get('id_print') != 24) {
                 echo '
                 <th class="text-center">'.($somma_km).'</td>';
             }
@@ -55,7 +55,7 @@ echo '
             <th class="text-right" style="border-left: 0;">
                 <b>'.tr('Iva', [], ['upper' => true]).':</b>
             </th>
-            <th colspan="'.( get('id_print')!=24 ? 4 : 3).'"></th>
+            <th colspan="'.(get('id_print') != 24 ? 4 : 3).'"></th>
             <th class="text-center">'.($pricing ? moneyFormat($somma_iva, 2) : '-').'</th>
         </tr>
 
@@ -64,7 +64,7 @@ echo '
             <th class="text-right" style="border-left: 0;">
                 <b>'.tr('Totale Ivato', [], ['upper' => true]).':</b>
             </th>
-            <th colspan="'.( get('id_print')!=24 ? 4 : 3).'"></th>
+            <th colspan="'.(get('id_print') != 24 ? 4 : 3).'"></th>
             <th class="text-center">'.($pricing ? moneyFormat($somma_totale_ivato, 2) : '-').'</th>
         </tr>
     </tbody>

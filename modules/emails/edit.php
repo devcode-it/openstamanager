@@ -116,15 +116,14 @@ echo '
 
             <div class="row">
                 <div class="col-md-12">
-                    <?php    
-                    echo input([
+                    <?php echo input([
                         'type' => 'ckeditor',
                         'use_full_ckeditor' => 1,
                         'label' => tr('Contenuto'),
                         'name' => 'body',
                         'value' => $record['body'],
                     ]);
-					?>
+                    ?>
                 </div>
             </div>
 

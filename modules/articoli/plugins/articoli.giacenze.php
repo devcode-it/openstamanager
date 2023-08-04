@@ -50,11 +50,11 @@ echo '
     <div class="panel-body">
         <div class="row">
             <div class="col-md-6">
-                <span><b>'.tr("Codice: ").'</b>'.$articolo->codice.'</span>
+                <span><b>'.tr('Codice: ').'</b>'.$articolo->codice.'</span>
             </div>
 
             <div class="col-md-6">
-                <span><b>'.tr("Descrizione: ").'</b>'.$articolo->descrizione.'</span>
+                <span><b>'.tr('Descrizione: ').'</b>'.$articolo->descrizione.'</span>
             </div>
         </div>
     </div>

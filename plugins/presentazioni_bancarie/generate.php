@@ -1,9 +1,9 @@
 <?php
 
-use Plugins\PresentazioniBancarie\Gestore;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Banche\Banca;
 use Modules\Scadenzario\Scadenza;
+use Plugins\PresentazioniBancarie\Gestore;
 
 include_once __DIR__.'/init.php';
 
@@ -119,51 +119,50 @@ foreach ($raggruppamento as $id_anagrafica => $scadenze_anagrafica) {
 
         if ($database->tableExists('co_mandati_sepa')) {
             $rs_mandato = $dbo->fetchArray('SELECT * FROM co_mandati_sepa WHERE id_banca = '.prepare($banca_controparte->id));
-        } else{
+        } else {
             $rs_mandato = false;
         }
-        
-        $is_rid = in_array($scadenza->documento->pagamento['codice_modalita_pagamento_fe'],["MP09", "MP10", "MP11"]);
-        $is_riba = in_array($scadenza->documento->pagamento['codice_modalita_pagamento_fe'],["MP12"]);
-	    $is_sepa = in_array($scadenza->documento->pagamento['codice_modalita_pagamento_fe'],["MP19", "MP20", "MP21"]);
-        $is_bonifico = in_array($scadenza->documento->pagamento['codice_modalita_pagamento_fe'],["MP05"]);
+
+        $is_rid = in_array($scadenza->documento->pagamento['codice_modalita_pagamento_fe'], ['MP09', 'MP10', 'MP11']);
+        $is_riba = in_array($scadenza->documento->pagamento['codice_modalita_pagamento_fe'], ['MP12']);
+        $is_sepa = in_array($scadenza->documento->pagamento['codice_modalita_pagamento_fe'], ['MP19', 'MP20', 'MP21']);
+        $is_bonifico = in_array($scadenza->documento->pagamento['codice_modalita_pagamento_fe'], ['MP05']);
 
         $documento = $scadenza->documento;
         $pagamento = $documento->pagamento;
 
         if ($is_rid) {
-            if(!$rs_mandato){
+            if (!$rs_mandato) {
                 echo '
                 <span class="label label-danger">'.tr('Id mandato mancante').'</span>';
             }
 
-            if(!$banca_azienda->creditor_id){
+            if (!$banca_azienda->creditor_id) {
                 echo '
                 <span class="label label-danger">'.tr('Id creditore mancante').'</span>';
             }
-        } else if(($is_riba && empty($banca_azienda->codice_sia)) || ($is_bonifico && empty($banca_azienda->codice_sia))){
+        } elseif (($is_riba && empty($banca_azienda->codice_sia)) || ($is_bonifico && empty($banca_azienda->codice_sia))) {
             echo '
                 <span class="label label-danger">'.tr('Codice SIA banca emittente mancante').'</span>';
-        } 
-        
-	    if ($is_sepa) {
+        }
 
+        if ($is_sepa) {
             //Prima, successiva, singola
 
-            $scadenze_antecedenti = $dbo->fetchArray("SELECT * FROM co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id INNER JOIN co_pagamenti ON co_documenti.idpagamento=co_pagamenti.id WHERE co_documenti.idanagrafica=".prepare($id_anagrafica)." AND codice_modalita_pagamento_fe IN('MP19','MP20','MP21') AND data_emissione<".prepare($scadenza->data_emissione));
+            $scadenze_antecedenti = $dbo->fetchArray('SELECT * FROM co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id INNER JOIN co_pagamenti ON co_documenti.idpagamento=co_pagamenti.id WHERE co_documenti.idanagrafica='.prepare($id_anagrafica)." AND codice_modalita_pagamento_fe IN('MP19','MP20','MP21') AND data_emissione<".prepare($scadenza->data_emissione));
 
             $check_successiva = '';
             $check_prima = '';
             $check_singola = '';
 
-            if(sizeof($scadenze_antecedenti)>0){
+            if (sizeof($scadenze_antecedenti) > 0) {
                 $check_successiva = 'selected';
-            }else{
+            } else {
                 $check_prima = 'selected';
             }
 
-            if (sizeof($rs_mandato)>0) {
-                if($rs_mandato[0]['singola_disposizione']=='1'){
+            if (sizeof($rs_mandato) > 0) {
+                if ($rs_mandato[0]['singola_disposizione'] == '1') {
                     $check_singola = 'selected';
 
                     $check_successiva = '';
@@ -181,7 +180,6 @@ foreach ($raggruppamento as $id_anagrafica => $scadenze_anagrafica) {
                         <option value="OOFF" '.$check_singola.'>Singola diposizione non ripetuta</option>
                     </select>
                 </span>';
-
         }
 
         echo '

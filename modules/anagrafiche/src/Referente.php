@@ -27,8 +27,15 @@ class Referente extends Model
     use SimpleModelTrait;
 
     protected $table = 'an_referenti';
-    
-     /**
+
+    /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = [];
+
+    /**
      * Crea un nuovo referente.
      *
      * @param string $nome
@@ -38,7 +45,6 @@ class Referente extends Model
     public static function build($idanagrafica, $nome, $idmansione, $idsede)
     {
         $model = new static();
-
 
         $model->idanagrafica = $idanagrafica;
 
@@ -51,14 +57,6 @@ class Referente extends Model
 
         return $model;
     }
-
-
-    /**
-     * The attributes that aren't mass assignable.
-     *
-     * @var array
-     */
-    protected $guarded = [];
 
     public function anagrafica()
     {

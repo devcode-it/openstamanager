@@ -178,7 +178,7 @@ switch (filter('op')) {
         if ($dir == 'entrata') {
             $articolo->setProvvigione(post('provvigione'), post('tipo_provvigione'));
         }
-        
+
         try {
             $articolo->qta = post('qta');
         } catch (UnexpectedValueException $e) {
@@ -322,7 +322,7 @@ switch (filter('op')) {
         $ddt->save();
 
         $evadi_qta_parent = true;
-        if ($documento->tipo->descrizione=='Ddt in uscita' || $documento->tipo->descrizione=='Ddt in entrata') {
+        if ($documento->tipo->descrizione == 'Ddt in uscita' || $documento->tipo->descrizione == 'Ddt in entrata') {
             $evadi_qta_parent = false;
         }
 
@@ -335,11 +335,11 @@ switch (filter('op')) {
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
-                    if ($documento->tipo->descrizione=='Ddt in uscita' || $documento->tipo->descrizione=='Ddt in entrata') {
+                    if ($documento->tipo->descrizione == 'Ddt in uscita' || $documento->tipo->descrizione == 'Ddt in entrata') {
                         // TODO: estrarre il listino corrispondente se presente
                         $originale = ArticoloOriginale::find($riga->idarticolo);
 
-                        $prezzo = $documento->tipo->descrizione=='Ddt in entrata' ? $originale->prezzo_vendita : $originale->prezzo_acquisto;
+                        $prezzo = $documento->tipo->descrizione == 'Ddt in entrata' ? $originale->prezzo_vendita : $originale->prezzo_acquisto;
                         if ($dir == 'entrata') {
                             $id_iva = ($ddt->anagrafica->idiva_vendite ?: setting('Iva predefinita'));
                         } else {
@@ -375,8 +375,8 @@ switch (filter('op')) {
 
     // Eliminazione riga
     case 'delete_riga':
-        $id_righe = (array)post('righe');
-        
+        $id_righe = (array) post('righe');
+
         foreach ($id_righe as $id_riga) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Descrizione::find($id_riga);
@@ -397,8 +397,8 @@ switch (filter('op')) {
 
     // Duplicazione riga
     case 'copy_riga':
-        $id_righe = (array)post('righe');
-        
+        $id_righe = (array) post('righe');
+
         foreach ($id_righe as $id_riga) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Descrizione::find($id_riga);
@@ -434,7 +434,7 @@ switch (filter('op')) {
                     $riga_trasporto->movimenta(-$riga_trasporto->qta);
                 }
             }
-            
+
             $ddt->delete();
 
             flash()->info(tr('Ddt eliminato!'));
@@ -554,7 +554,7 @@ switch (filter('op')) {
         $barcode = post('barcode');
 
         if (!empty($barcode)) {
-            $id_articolo = $dbo->selectOne('mg_articoli', 'id',  ['deleted_at' => null, 'attivo' => 1, 'barcode' => $barcode])['id'];
+            $id_articolo = $dbo->selectOne('mg_articoli', 'id', ['deleted_at' => null, 'attivo' => 1, 'barcode' => $barcode])['id'];
         }
 
         if (!empty($id_articolo)) {
@@ -582,7 +582,7 @@ switch (filter('op')) {
                 }
                 $id_anagrafica = $ddt->idanagrafica;
                 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
-        
+
                 // CALCOLO PREZZO UNITARIO
                 $prezzo_unitario = 0;
                 $sconto = 0;
@@ -605,7 +605,7 @@ switch (filter('op')) {
                             continue;
                         }
                     }
-                } 
+                }
                 if (empty($prezzo_unitario)) {
                     // Prezzi listini clienti
                     $listino = $dbo->fetchOne('SELECT sconto_percentuale AS sconto_percentuale_listino, '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino
@@ -624,7 +624,7 @@ switch (filter('op')) {
                 } else {
                     $prezzo_unitario = $prezzo_unitario ?: $originale->prezzo_acquisto;
                 }
-                
+
                 // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
                 $join = ($dir == 'entrata' ? 'id_piano_sconto_vendite' : 'id_piano_sconto_acquisti');
                 $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.'.$join.'=mg_piani_sconto.id WHERE idanagrafica='.prepare($id_anagrafica));
@@ -636,7 +636,6 @@ switch (filter('op')) {
                 $articolo->setSconto($sconto, 'PRC');
                 $articolo->save();
 
-                
                 flash()->info(tr('Nuovo articolo aggiunto!'));
             }
         } else {
@@ -673,7 +672,7 @@ switch (filter('op')) {
                 $articolo = Articolo::build($fattura, $originale);
                 $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
             }
-    
+
             if ($articolo['prezzo_unitario'] != $riga['price']) {
                 $articolo->setPrezzoUnitario($riga['price'], $articolo->idiva);
                 $articolo->save();
@@ -685,7 +684,7 @@ switch (filter('op')) {
             flash()->info(tr('_NUM_ prezzi modificati!', [
                 '_NUM_' => $numero_totale,
             ]));
-        } else if ($numero_totale == 1) {
+        } elseif ($numero_totale == 1) {
             flash()->info(tr('_NUM_ prezzo modificato!', [
                 '_NUM_' => $numero_totale,
             ]));
@@ -695,7 +694,6 @@ switch (filter('op')) {
 
         break;
 }
-
 
 // Aggiornamento stato degli ordini presenti in questa fattura in base alle quantità totali evase
 if (!empty($id_record) && setting('Cambia automaticamente stato ordini fatturati')) {

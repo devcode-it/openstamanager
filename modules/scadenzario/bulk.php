@@ -55,7 +55,7 @@ switch (post('op')) {
         $list = [];
         foreach ($id_records as $id) {
             $scadenza = Scadenza::find($id);
-            if ($scadenza->iddocumento){
+            if ($scadenza->iddocumento) {
                 $documento = Fattura::find($scadenza->iddocumento);
                 $documento->id_banca_azienda = post('id_banca');
                 $documento->save();
@@ -63,7 +63,7 @@ switch (post('op')) {
             }
         }
 
-        if ($list){
+        if ($list) {
             flash()->info(tr('Banca aggiornata per le Fatture _LIST_ !', [
                 '_LIST_' => implode(',', $list),
             ]));
@@ -73,7 +73,7 @@ switch (post('op')) {
 
     case 'send-sollecito':
         $template = Template::pool('Sollecito di pagamento raggruppato per anagrafica');
-        
+
         $list = [];
         $anagrafiche = [];
         $id_anagrafica = 0;
@@ -89,7 +89,7 @@ switch (post('op')) {
                 $fattura_allegata = $dbo->selectOne('zz_files', 'id', ['id_module' => $id_module, 'id_record' => $scadenza->id, 'original' => $scadenza->descrizione.'.pdf'])['id'];
 
                 // Allego stampa della fattura se non presente
-                if (empty($fattura_allegata) ) {
+                if (empty($fattura_allegata)) {
                     $print_predefined = $dbo->selectOne('zz_prints', '*', ['predefined' => 1, 'id_module' => Modules::get('Fatture di vendita')['id']]);
 
                     $print = Prints::render($print_predefined['id'], $id_documento, null, true);
@@ -127,12 +127,12 @@ switch (post('op')) {
                                 $mail = Mail::build(auth()->getUser(), $template, $id);
                                 $creata_mail = true;
                             }
-                            
+
                             foreach ($referenti as $referente) {
                                 if (!in_array($referente->email, $emails)) {
                                     $emails[] = $referente->email;
                                     $mail->addReceiver($referente->email);
-                                }   
+                                }
                             }
                         }
                     }
@@ -160,7 +160,7 @@ switch (post('op')) {
             }
         }
 
-        if ($list){
+        if ($list) {
             flash()->info(tr('Mail inviata per le Fatture _LIST_ !', [
                 '_LIST_' => implode(',', $list),
             ]));

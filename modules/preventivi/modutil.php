@@ -19,8 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Preventivi\Preventivo;
 use Modules\Interventi\Intervento;
+use Modules\Preventivi\Preventivo;
 
 function get_imponibile_preventivo($idpreventivo)
 {
@@ -49,10 +49,8 @@ function get_stato_preventivo($idpreventivo)
     }
 }
 
-
 function get_totale_interventi_preventivo($idpreventivo)
 {
-  
     $interventi = Intervento::where('id_preventivo', $idpreventivo)->get();
     $array_interventi = $interventi->toArray();
 
@@ -60,4 +58,3 @@ function get_totale_interventi_preventivo($idpreventivo)
 
     return $totale;
 }
-

@@ -67,7 +67,6 @@ class ReaValidi extends Controllo
         GROUP BY an_anagrafiche.idanagrafica');
 
         foreach ($anagrafiche_interessate as $anagrafica) {
-
             /*$tipi = explode(',', $anagrafica['tipi_anagrafica']);
             $cliente = in_array('Cliente', $tipi) && empty($anagrafica['idconto_cliente']);
             $fornitore = in_array('Fornitore', $tipi) && empty($anagrafica['idconto_fornitore']);*/
@@ -79,7 +78,6 @@ class ReaValidi extends Controllo
                     '_REA_' => $anagrafica['codicerea'],
                 ]),
             ]);
-          
         }
     }
 
@@ -88,7 +86,7 @@ class ReaValidi extends Controllo
         $anagrafica = Anagrafica::find($record['id']);
         $anagrafica->codicerea = null;
         $anagrafica->save();
-       
+
         return true;
     }
 }

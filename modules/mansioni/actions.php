@@ -38,7 +38,6 @@ switch (post('op')) {
         $nome = post('nome');
 
         if ($dbo->fetchNum('SELECT * FROM `an_mansioni` WHERE `nome`='.prepare($nome)) == 0) {
-           
             $dbo->insert('an_mansioni', [
                 'nome' => $nome,
             ]);

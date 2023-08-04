@@ -75,15 +75,14 @@ switch (post('op')) {
 
         $tecnici_assegnati = (array) post('tecnici_assegnati');
 
-        
         $tecnici_presenti_array = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico', ['id_intervento' => $intervento->id]);
 
-        foreach($tecnici_presenti_array as $tecnico_presente) {
+        foreach ($tecnici_presenti_array as $tecnico_presente) {
             $tecnici_presenti[] = $tecnico_presente['id_tecnico'];
 
             // Notifica rimozione tecnico assegnato
             if (setting('Notifica al tecnico la rimozione dell\'assegnazione dall\'attività')) {
-                if (!in_array($tecnico_presente['id_tecnico'], $tecnici_assegnati)){
+                if (!in_array($tecnico_presente['id_tecnico'], $tecnici_assegnati)) {
                     $tecnico = Anagrafica::find($tecnico_presente['id_tecnico']);
                     if (!empty($tecnico['email'])) {
                         $template = Template::pool('Notifica rimozione intervento');
@@ -98,11 +97,10 @@ switch (post('op')) {
             }
         }
 
-        foreach ($tecnici_assegnati as $tecnico_assegnato){
-
+        foreach ($tecnici_assegnati as $tecnico_assegnato) {
             // Notifica aggiunta tecnico assegnato
             if (setting('Notifica al tecnico l\'assegnazione all\'attività')) {
-                if (!in_array($tecnico_assegnato, $tecnici_presenti)){
+                if (!in_array($tecnico_assegnato, $tecnici_presenti)) {
                     $tecnico = Anagrafica::find($tecnico_assegnato);
 
                     if (!empty($tecnico['email'])) {
@@ -116,7 +114,6 @@ switch (post('op')) {
                     }
                 }
             }
-
         }
 
         // Assegnazione dei tecnici all'intervento
@@ -154,7 +151,7 @@ switch (post('op')) {
             if (!empty($stato['notifica_tecnico_assegnato'])) {
                 $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS idtecnico', ['id_intervento' => $id_record]);
             }
-                
+
             $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
 
             foreach ($tecnici as $tecnico) {
@@ -269,7 +266,7 @@ switch (post('op')) {
             'id_tecnico' => $tecnici_assegnati,
         ]);
 
-        foreach ($tecnici_assegnati as $tecnico_assegnato){
+        foreach ($tecnici_assegnati as $tecnico_assegnato) {
             $tecnico = Anagrafica::find($tecnico_assegnato);
 
             // Notifica al tecnico
@@ -415,8 +412,8 @@ switch (post('op')) {
         break;
 
     case 'delete_riga':
-        $id_righe = (array)post('righe');
-        
+        $id_righe = (array) post('righe');
+
         foreach ($id_righe as $id_riga) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Sconto::find($id_riga);
@@ -435,8 +432,8 @@ switch (post('op')) {
 
     // Duplicazione riga
     case 'copy_riga':
-        $id_righe = (array)post('righe');
-        
+        $id_righe = (array) post('righe');
+
         foreach ($id_righe as $id_riga) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Sconto::find($id_riga);
@@ -673,7 +670,7 @@ switch (post('op')) {
                     $constraint->aspectRatio();
                 });
 
-                if(setting('Sistema di firma')=='Tavoletta Wacom'){
+                if (setting('Sistema di firma') == 'Tavoletta Wacom') {
                     $img->brightness(setting('Luminosità firma Wacom'));
                     $img->contrast(setting('Contrasto firma Wacom'));
                 }
@@ -743,26 +740,26 @@ switch (post('op')) {
             if (directory(base_dir().'/files/interventi')) {
                 $firmati = 0;
                 $non_firmati = 0;
-                $id_records = filter('records') ? explode(';',filter('records')) : null;
-                
+                $id_records = filter('records') ? explode(';', filter('records')) : null;
+
                 if (post('firma_base64') != '') {
                     foreach ($id_records as $id_record) {
                         // Salvataggio firma
                         $firma_file = 'firma_'.time().'.jpg';
                         $firma_nome = post('firma_nome');
-    
+
                         $data = explode(',', post('firma_base64'));
-    
+
                         $img = Intervention\Image\ImageManagerStatic::make(base64_decode($data[1]));
                         $img->resize(680, 202, function ($constraint) {
                             $constraint->aspectRatio();
                         });
-    
+
                         if (!$img->save(base_dir().'/files/interventi/'.$firma_file)) {
                             flash()->error(tr('Impossibile creare il file!'));
                         } elseif ($dbo->query('UPDATE in_interventi SET firma_file='.prepare($firma_file).', firma_data=NOW(), firma_nome = '.prepare($firma_nome).' WHERE id='.prepare($id_record))) {
                             ++$firmati;
-    
+
                             $id_stato = setting("Stato dell'attività dopo la firma");
                             $stato = $dbo->selectOne('in_statiintervento', '*', ['idstatointervento' => $id_stato]);
                             $intervento = Intervento::find($id_record);
@@ -771,17 +768,17 @@ switch (post('op')) {
                                 $intervento->idstatointervento = $stato['idstatointervento'];
                                 $intervento->save();
                             }
-    
+
                             // Notifica chiusura intervento
                             if (!empty($stato['notifica'])) {
                                 $template = Template::find($stato['id_email']);
-    
+
                                 if (!empty($stato['destinatari'])) {
                                     $mail = Mail::build(auth()->getUser(), $template, $id_record);
                                     $mail->addReceiver($stato['destinatari']);
                                     $mail->save();
                                 }
-    
+
                                 if (!empty($stato['notifica_cliente'])) {
                                     if (!empty($intervento->anagrafica->email)) {
                                         $mail = Mail::build(auth()->getUser(), $template, $id_record);
@@ -789,12 +786,12 @@ switch (post('op')) {
                                         $mail->save();
                                     }
                                 }
-    
+
                                 if (!empty($stato['notifica_tecnici'])) {
                                     $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'idtecnico', ['idintervento' => $id_record]);
                                     $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS idtecnico', ['id_intervento' => $id_record]);
                                     $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
-    
+
                                     foreach ($tecnici as $tecnico) {
                                         $mail_tecnico = $dbo->selectOne('an_anagrafiche', '*', ['idanagrafica' => $tecnico]);
                                         if (!empty($mail_tecnico['email'])) {
@@ -817,21 +814,21 @@ switch (post('op')) {
                     '_DIRECTORY_' => '<b>/files/interventi</b>',
                 ]));
             }
-    
+
             if (!empty($firmati)) {
                 flash()->info(tr('_NUM_ interventi firmati correttamente!', [
                     '_NUM_' => $firmati,
                 ]));
             }
-    
+
             if (!empty($non_firmati)) {
                 flash()->info(tr('_NUM_ interventi non sono stati firmati correttamente!', [
                     '_NUM_' => $non_firmati,
                 ]));
             }
-    
+
             break;
-    
+
     // OPERAZIONI PER AGGIUNTA NUOVA SESSIONE DI LAVORO
     case 'add_sessione':
         $id_tecnico = post('id_tecnico');
@@ -851,8 +848,8 @@ switch (post('op')) {
         $orario_fine = post('orario_fine');
         $data_inizio = post('data_inizio');
         $data_fine = post('data_fine');
-        $giorni = (array)post('giorni');
-        $id_tecnici = (array)post('id_tecnici');
+        $giorni = (array) post('giorni');
+        $id_tecnici = (array) post('id_tecnici');
 
         $period = CarbonPeriod::create($data_inizio, $data_fine);
 
@@ -863,7 +860,7 @@ switch (post('op')) {
             if (in_array($giorno, $giorni)) {
                 $inizio = $data.' '.$orario_inizio;
                 $fine = $data.' '.$orario_fine;
-                
+
                 foreach ($id_tecnici as $id_tecnico) {
                     add_tecnico($id_record, $id_tecnico, $inizio, $fine, $idcontratto);
                 }
@@ -933,7 +930,7 @@ switch (post('op')) {
         $copia_allegati = post('copia_allegati');
         $data_inizio = post('data_inizio');
         $data_fine = post('data_fine');
-        $giorni = (array)post('giorni');
+        $giorni = (array) post('giorni');
 
         $period = CarbonPeriod::create($data_inizio, $data_fine);
 
@@ -1007,7 +1004,7 @@ switch (post('op')) {
                     foreach ($impianti as $impianto) {
                         $dbo->insert('my_impianti_interventi', [
                             'idintervento' => $id_record,
-                            'idimpianto' => $impianto['idimpianto']
+                            'idimpianto' => $impianto['idimpianto'],
                         ]);
                     }
 
@@ -1015,7 +1012,7 @@ switch (post('op')) {
                     foreach ($componenti as $componente) {
                         $dbo->insert('my_componenti_interventi', [
                             'id_intervento' => $id_record,
-                            'id_componente' => $componente['id_componente']
+                            'id_componente' => $componente['id_componente'],
                         ]);
                     }
                 }
@@ -1052,7 +1049,7 @@ switch (post('op')) {
         $dir = 'entrata';
 
         if (!empty($barcode)) {
-            $id_articolo = $dbo->selectOne('mg_articoli', 'id',  ['deleted_at' => null, 'attivo' => 1, 'barcode' => $barcode])['id'];
+            $id_articolo = $dbo->selectOne('mg_articoli', 'id', ['deleted_at' => null, 'attivo' => 1, 'barcode' => $barcode])['id'];
         }
 
         if (!empty($id_articolo)) {
@@ -1076,7 +1073,7 @@ switch (post('op')) {
                 $id_iva = ($intervento->anagrafica->idiva_vendite ?: $originale->idiva_vendita) ?: setting('Iva predefinita');
                 $id_anagrafica = $intervento->idanagrafica;
                 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
-        
+
                 // CALCOLO PREZZO UNITARIO
                 $prezzo_unitario = 0;
                 $sconto = 0;
@@ -1099,7 +1096,7 @@ switch (post('op')) {
                             continue;
                         }
                     }
-                } 
+                }
                 if (empty($prezzo_unitario)) {
                     // Prezzi listini clienti
                     $listino = $dbo->fetchOne('SELECT sconto_percentuale AS sconto_percentuale_listino, '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino
@@ -1128,7 +1125,6 @@ switch (post('op')) {
                 $articolo->idsede_partenza = $intervento->idsede_partenza;
                 $articolo->save();
 
-                
                 flash()->info(tr('Nuovo articolo aggiunto!'));
             }
         } else {
@@ -1165,7 +1161,7 @@ switch (post('op')) {
                 $articolo = Articolo::build($fattura, $originale);
                 $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
             }
-    
+
             if ($articolo['prezzo_unitario'] != $riga['price']) {
                 $articolo->setPrezzoUnitario($riga['price'], $articolo->idiva);
                 $articolo->save();
@@ -1177,7 +1173,7 @@ switch (post('op')) {
             flash()->info(tr('_NUM_ prezzi modificati!', [
                 '_NUM_' => $numero_totale,
             ]));
-        } else if ($numero_totale == 1) {
+        } elseif ($numero_totale == 1) {
             flash()->info(tr('_NUM_ prezzo modificato!', [
                 '_NUM_' => $numero_totale,
             ]));

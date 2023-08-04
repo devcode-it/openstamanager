@@ -19,8 +19,6 @@
 
 include_once __DIR__.'/../../../core.php';
 
-use Carbon\Carbon;
-
 // Trovo id_print della stampa
 $id_print = Prints::getPrints()['Stampa calendario settimanale'];
 

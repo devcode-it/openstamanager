@@ -19,6 +19,7 @@
  */
 
 use Carbon\Carbon;
+
 include_once __DIR__.'/../../core.php';
 
 // Individuazione dati selezionabili
@@ -47,7 +48,7 @@ if (!isset($_SESSION['dashboard']['idtecnici'])) {
     $_SESSION['dashboard']['idtecnici'] = ["'-1'"];
 
     foreach ($tecnici_disponibili as $tecnico) {
-        if(($user['gruppo']=='Tecnici' && $user['idanagrafica']==$tecnico['id']) || $user['gruppo']!='Tecnici'){
+        if (($user['gruppo'] == 'Tecnici' && $user['idanagrafica'] == $tecnico['id']) || $user['gruppo'] != 'Tecnici') {
             $_SESSION['dashboard']['idtecnici'][] = "'".$tecnico['id']."'";
         }
     }
@@ -315,9 +316,8 @@ WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.id
         $chiave = $data->format('mY');
         $testo = $data->formatLocalized('%B %Y');
 
-        
-        if (checkdate($data->format('m'), $data->format('d'), $data->format('Y'))){
-    echo '
+        if (checkdate($data->format('m'), $data->format('d'), $data->format('Y'))) {
+            echo '
             <option value="'.$chiave.'">'.ucfirst($testo).'</option>';
         }
     }
@@ -347,15 +347,15 @@ $days = [
   4 => 'Giovedì',
   5 => 'Venerdì',
   6 => 'Sabato',
-  0 => 'Domenica'
+  0 => 'Domenica',
 ];
-$working_days = explode(",",setting('Giorni lavorativi'));
+$working_days = explode(',', setting('Giorni lavorativi'));
 $non_working_days = [];
 
 foreach ($days as $key => $day) {
     if (!in_array($day, $working_days)) {
         array_push($non_working_days, $key);
-    }    
+    }
 }
 
 $modulo_interventi = Modules::get('Interventi');
@@ -671,7 +671,7 @@ globals.dashboard = {
                 });
             },';
 
-if(isMobile() && setting('Utilizzare i tooltip sul calendario')){
+if (isMobile() && setting('Utilizzare i tooltip sul calendario')) {
     echo '
             eventClick: function(info) {
                 let link = info.event.extendedProps.link;
@@ -688,7 +688,7 @@ if(isMobile() && setting('Utilizzare i tooltip sul calendario')){
                     location.href = link;
                 }          
             },';
-}else{
+} else {
     echo '
             eventClick: function(info) {
                 if (info.event.extendedProps.link !== undefined) {

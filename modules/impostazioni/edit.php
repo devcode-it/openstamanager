@@ -34,7 +34,7 @@ echo '
             '.input([
                 'type' => 'text',
                 'name' => 'ricerca_impostazioni',
-                'value' => $ricerca
+                'value' => $ricerca,
             ]).'
             <div class="input-group-btn">
                 <button class="btn btn-primary" type="button">

@@ -42,9 +42,9 @@ switch ($resource) {
             IF(`categoria`.`nome` IS NOT NULL, CONCAT(`categoria`.`nome`, IF(`sottocategoria`.`nome` IS NOT NULL, CONCAT(' (', `sottocategoria`.`nome`, ')'), '-')), '<i>".tr('Nessuna categoria')."</i>') AS optgroup,
             `mg_articoli`.`barcode`,
 
-            `mg_articoli`.".($prezzi_ivati ? '`prezzo_vendita_ivato`' : '`prezzo_vendita`')." AS prezzo_vendita,
+            `mg_articoli`.".($prezzi_ivati ? '`prezzo_vendita_ivato`' : '`prezzo_vendita`').' AS prezzo_vendita,
             `mg_articoli`.`prezzo_vendita_ivato` AS prezzo_vendita_ivato,
-            `mg_articoli`.".($prezzi_ivati ? '`minimo_vendita_ivato`' : '`minimo_vendita`')." AS minimo_vendita,";
+            `mg_articoli`.'.($prezzi_ivati ? '`minimo_vendita_ivato`' : '`minimo_vendita`').' AS minimo_vendita,';
 
         // Informazioni relative al fornitore specificato dal documenti di acquisto
         if ($usare_dettaglio_fornitore) {

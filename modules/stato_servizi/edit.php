@@ -63,17 +63,16 @@ if (Services::isEnabled()) {
                             <td>'.$servizio['sottocategoria'].'</td>
                             <td>'.dateFormat($scadenza).' ('.$scadenza->diffForHumans().')</td>
                             <td class="text-center" >
-                                <input type="checkbox" class="check_rinnova '.($scadenza->lessThan($limite_scadenze) ? "" : "hide").'" name="rinnova[]" value="'.$servizio['codice'].'">
+                                <input type="checkbox" class="check_rinnova '.($scadenza->lessThan($limite_scadenze) ? '' : 'hide').'" name="rinnova[]" value="'.$servizio['codice'].'">
                             </td>
                         </tr>';
         }
 
-        
         $servizi_in_scadenza = Services::getServiziInScadenza($limite_scadenze);
         $servizi_scaduti = Services::getServiziScaduti();
-        if (!$servizi_in_scadenza->isEmpty() || !$servizi_scaduti->isEmpty()){
-        //TODO: Il tasto deve preparare correttamente il carrello con servizi e le risorse in scadenza, considerando anche eventuali ampliamenti (es. spazio FE esaurito o in esaurimento)
-        echo '      </tbody>
+        if (!$servizi_in_scadenza->isEmpty() || !$servizi_scaduti->isEmpty()) {
+            //TODO: Il tasto deve preparare correttamente il carrello con servizi e le risorse in scadenza, considerando anche eventuali ampliamenti (es. spazio FE esaurito o in esaurimento)
+            echo '      </tbody>
                     <tfoot>
                         <tr>
                             <td colspan="4">
@@ -82,7 +81,7 @@ if (Services::isEnabled()) {
                         </tr>
                     </tfoot>';
         }
-                        
+
         echo '
                 </table>';
     } else {
@@ -114,23 +113,20 @@ if (Services::isEnabled()) {
         $risorse_in_scadenza = Services::getRisorseInScadenza($limite_scadenze);
         $risorse_scadute = Services::getRisorseScadute();
 
-        if (!$risorse_in_scadenza->isEmpty() || !$risorse_scadute->isEmpty() ) {
-            
-            if (!$risorse_scadute->isEmpty()){
+        if (!$risorse_in_scadenza->isEmpty() || !$risorse_scadute->isEmpty()) {
+            if (!$risorse_scadute->isEmpty()) {
                 echo '
                     <div class="alert alert-danger" role="alert"> <i class="fa fa-exclamation-triangle"></i> '.tr('Attenzione, alcune risorse sono scadute o hanno esaurito i crediti:', [
                         '_NUM_' => $risorse_scadute->count(),
                     ]).'</div>';
             }
 
-            if (!$risorse_in_scadenza->isEmpty()){
+            if (!$risorse_in_scadenza->isEmpty()) {
                 echo '
                     <div class="alert alert-warning" role="alert"> <i class="fa fa-clock-o"></i> '.tr('Attenzione, alcune risorse sono in scadenza o stanno per esaurire i crediti:', [
                         '_NUM_' => $risorse_in_scadenza->count(),
                     ]).'</div>';
-
             }
-        
         } else {
             /*echo '
             <div class="alert alert-success" role="alert"> <i class="fa fa-check-circle"></i> '.tr('Bene, tutte le risorse sono attive e non presentano avvisi:', [

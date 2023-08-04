@@ -171,7 +171,7 @@ echo "
 if ($options['pricing']) {
     echo "
             <th class='text-center' style='width:15%'>".tr('Prezzo unitario', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:15%'>".( $options['hide-total'] ? tr('Importo ivato', [], ['upper' => true ]) : tr( 'Importo', [], ['upper' => true]) )."</th>
+            <th class='text-center' style='width:15%'>".($options['hide-total'] ? tr('Importo ivato', [], ['upper' => true]) : tr('Importo', [], ['upper' => true]))."</th>
             <th class='text-center' style='width:10%'>".tr('IVA', [], ['upper' => true]).' (%)</th>';
 }
 
@@ -213,10 +213,9 @@ foreach ($righe as $riga) {
                 '.nl2br($r['descrizione']);
 
     if ($riga->isArticolo()) {
-
-        if($options['hide-item-number']){
+        if ($options['hide-item-number']) {
             $text = '';
-        }else{
+        } else {
             // Codice articolo
             $text = tr('COD. _COD_', [
                 '_COD_' => $riga->codice,
@@ -259,7 +258,7 @@ foreach ($righe as $riga) {
             // Imponibile
             echo '
             <td class="text-right" style="vertical-align: middle" >
-                '.( ($options['hide-total'] || $prezzi_ivati) ? moneyFormat($riga->totale) : moneyFormat($riga->totale_imponibile) ).'
+                '.(($options['hide-total'] || $prezzi_ivati) ? moneyFormat($riga->totale) : moneyFormat($riga->totale_imponibile)).'
             </td>';
 
             // Iva

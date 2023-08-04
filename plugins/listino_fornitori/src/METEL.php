@@ -26,7 +26,7 @@ namespace Plugins\ListinoFornitori;
  */
 class METEL
 {
-    const HEADER = [
+    public const HEADER = [
         1 => 'Identificazione tracciato',
         21 => 'Sigla Azienda',
         24 => 'Partita IVA',

@@ -242,7 +242,7 @@ function verifica_numero_ddt(DDT $ddt)
         'YEAR(data) = '.prepare(date('Y', strtotime($data))),
         'idtipoddt = '.prepare($tipo->id),
     ], $data);
-    
+
     do {
         $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
 

@@ -72,7 +72,7 @@ switch (post('op')) {
         $articolo->um = post('um');
         $articolo->um_secondaria = post('um_secondaria');
         $articolo->fattore_um_secondaria = post('fattore_um_secondaria');
-        
+
         $articolo->save();
 
         // Aggiornamento delle varianti per i campi comuni
@@ -244,7 +244,7 @@ switch (post('op')) {
     // Duplica articolo
     case 'copy':
         $new = $articolo->replicate();
-        
+
         //Se non specifico il codice articolo lo imposto uguale all'id della riga
         if (empty(post('codice'))) {
             $codice = $dbo->fetchOne('SELECT MAX(id) as codice FROM mg_articoli')['codice'] + 1;
@@ -374,7 +374,6 @@ switch (post('op')) {
         break;
 
     case 'add-movimento':
-
         $articolo = Articolo::find(post('idarticolo'));
         $tipo_movimento = post('tipo_movimento');
         $descrizione = post('movimento');
@@ -399,7 +398,6 @@ switch (post('op')) {
             $articolo->movimenta($qta, $descrizione, $data, 1, [
                 'idsede' => $id_sede_azienda,
             ]);
-
         } elseif ($tipo_movimento == 'spostamento') {
             // Registrazione del movimento verso la sede di destinazione
             $articolo->registra($qta, $descrizione, $data, 1, [

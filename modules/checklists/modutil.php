@@ -17,14 +17,14 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-function renderChecklist($check, $level = 1, $parent = 0) {
-
+function renderChecklist($check, $level = 1, $parent = 0)
+{
     global $structure;
 
     $user = auth()->getUser();
-    $enabled = $check->assignedUsers ? ($check->assignedUsers->pluck('id')->search($user->id) !== false || ($user->idgruppo) == 1): true;
+    $enabled = $check->assignedUsers ? ($check->assignedUsers->pluck('id')->search($user->id) !== false || ($user->idgruppo) == 1) : true;
 
-    $margin = ($level*20);
+    $margin = ($level * 20);
 
     $result = '
     <tr id="check_'.$check->id.'" data-id="'.$check->id.'" class="sortablerow sonof_'.$parent.'" >
@@ -41,11 +41,11 @@ function renderChecklist($check, $level = 1, $parent = 0) {
         $result .= '
                     <td style="width:40px;text-align:center;border-top:0px;border-left:3px solid #eaeaea;">
                         <input type="checkbox" class="checkbox unblockable" data-id="'.$check->id.'" value="'.(!empty($check->checked_at) ? '1' : '0').'" '.(!empty($check->checked_at) ? 'checked' : '').' '.(!$enabled ? 'disabled' : '').'>
-                    </td>'; 
+                    </td>';
 
         $result .= '
                     <td style="border-top:0px;">
-                        <span class="text unblockable" style="'.(!empty($check->checked_at)?'text-decoration:line-through;':'').'">'.$check->content.' </span>
+                        <span class="text unblockable" style="'.(!empty($check->checked_at) ? 'text-decoration:line-through;' : '').'">'.$check->content.' </span>
                     </td>';
 
         $result .= '
@@ -56,14 +56,14 @@ function renderChecklist($check, $level = 1, $parent = 0) {
         $result .= '
                     <td style="width:250px;border-top:0px;">';
 
-        if (intval($check->assignedUsers->pluck('id')->toArray())>0) {
-            $result .= '    <span class="label label-info pull-right" style="padding:6px 8px;" data-toggle="tooltip" title="Assegnato a '. implode(', ', $check->assignedUsers->pluck('username')->toArray()).'"><i class="fa fa-user"></i></span>';
+        if (intval($check->assignedUsers->pluck('id')->toArray()) > 0) {
+            $result .= '    <span class="label label-info pull-right" style="padding:6px 8px;" data-toggle="tooltip" title="Assegnato a '.implode(', ', $check->assignedUsers->pluck('username')->toArray()).'"><i class="fa fa-user"></i></span>';
         } else {
-            $result .= '    <span class="label label-danger pull-right"  style="padding:6px 8px;">'. tr('Nessun utente assegnato').'</span>';
+            $result .= '    <span class="label label-danger pull-right"  style="padding:6px 8px;">'.tr('Nessun utente assegnato').'</span>';
         }
 
         if (!empty($check->checked_at)) {
-        $result .= '
+            $result .= '
                         <span class="label label-default pull-right" style="margin-right:5px;padding:6px 8px;">'.(!empty($check->checked_at) ? tr('Verificato da _NAME_ il _DATE_', [
                             '_NAME_' => $check->checkUser->username,
                             '_DATE_' => timestampFormat($check->checked_at),
@@ -72,7 +72,7 @@ function renderChecklist($check, $level = 1, $parent = 0) {
         }
         $result .= '
                     </td>';
-    } 
+    }
 
     $result .= '
                     <td style="width:10px;text-align:center;border-top:0px;">
@@ -86,16 +86,16 @@ function renderChecklist($check, $level = 1, $parent = 0) {
     $result .= '
                 </tr>';
 
-    if(sizeof($check->children)>0){
+    if (sizeof($check->children) > 0) {
         $result .= '
                 <tr>
                     <td colspan="5" style="padding-left:'.$margin.'px;padding-right:10px;padding-top:0px;padding-bottom:0px;border-top:0px;">
                         <table class="table" style="margin-bottom:0px;">
                             <tbody class="sort" data-sonof="'.$check->id.'">';
-            $children = $structure->checks()->where('id_parent', $check->id)->orderBy('order')->get();
-            foreach ($children as $child) {
-                $result .= renderChecklist($child, $level + 1, $check->id);
-            }
+        $children = $structure->checks()->where('id_parent', $check->id)->orderBy('order')->get();
+        foreach ($children as $child) {
+            $result .= renderChecklist($child, $level + 1, $check->id);
+        }
         $result .= '
                             </tbody>
                         </table>
@@ -113,10 +113,9 @@ function renderChecklist($check, $level = 1, $parent = 0) {
 
 function renderChecklistInserimento($check, $level = 1, $parent = 0)
 {
-
     global $record;
-    
-    $margin = ($level*20);
+
+    $margin = ($level * 20);
 
     $result = '
     <tr id="check_'.$check->id.'" data-id="'.$check->id.'" class="sortablerow sonof_'.$parent.'" >
@@ -129,7 +128,7 @@ function renderChecklistInserimento($check, $level = 1, $parent = 0)
     $result .= '
                         <span class="text">'.$check->content.'</span>';
     $result .= '
-                    </td>'; 
+                    </td>';
 
     $result .= '
                     <td style="width:40px;text-align:right;border-top:0px;">
@@ -139,21 +138,19 @@ function renderChecklistInserimento($check, $level = 1, $parent = 0)
                         </div>
                     </td>';
 
-
-
     $result .= '
                 </tr>';
 
-    if(sizeof($check->children)>0){
+    if (sizeof($check->children) > 0) {
         $result .= '
                 <tr>
                     <td colspan="4" style="padding-left:'.$margin.'px;padding-right:0px;padding-top:0px;padding-bottom:0px;border-top:0px;">
                         <table class="table" style="margin-bottom:0px;">
                             <tbody class="sort" data-sonof="'.$check->id.'">';
-            $children = $record->checks()->where('id_parent', $check->id)->orderBy('order')->get();
-            foreach ($children as $child) {
-                $result .= renderChecklistInserimento($child, $level + 1, $check->id);
-            }
+        $children = $record->checks()->where('id_parent', $check->id)->orderBy('order')->get();
+        foreach ($children as $child) {
+            $result .= renderChecklistInserimento($child, $level + 1, $check->id);
+        }
         $result .= '
                             </tbody>
                         </table>
@@ -181,15 +178,15 @@ function renderChecklistHtml($check, $level = 0)
     $user = auth()->getUser();
     $enabled = $check->assignedUsers ? $check->assignedUsers->pluck('id')->search($user->id) !== false : true;
 
-    $width = 10+20*$level;
+    $width = 10 + 20 * $level;
 
     $result = '
     <tr>
         <td class="text-center" style="width:30px;">
-            '.(!empty($check->checked_at)?'<img src="'.ROOTDIR.'/templates/interventi/check.png" style="width:10px;">':'').'
+            '.(!empty($check->checked_at) ? '<img src="'.ROOTDIR.'/templates/interventi/check.png" style="width:10px;">' : '').'
         </td>
         <td style="padding-left:'.$width.'px;">
-            <span class="text"><b>'.$check->content.'</b>'.(!empty($check->value)?': '.$check->value:'').'</span>
+            <span class="text"><b>'.$check->content.'</b>'.(!empty($check->value) ? ': '.$check->value : '').'</span>
         </td>
     </tr>';
 

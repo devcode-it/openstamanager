@@ -48,11 +48,11 @@ $query = preg_replace('/^SELECT/', 'SELECT movimenti.qta_totale, ', $query);
 
 if (post('acquisto') == 'standard') {
     $query = preg_replace('/^SELECT/', 'SELECT mg_articoli.prezzo_acquisto AS acquisto, ', $query);
-    $text = "al prezzo presente nella scheda articolo";
-} elseif(post('acquisto') == 'first') {  
+    $text = 'al prezzo presente nella scheda articolo';
+} elseif (post('acquisto') == 'first') {
     $query = preg_replace('/^SELECT/', 'SELECT (SELECT (prezzo_unitario-sconto_unitario) AS acquisto FROM co_righe_documenti LEFT JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id WHERE co_documenti.idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="uscita") AND idarticolo=mg_articoli.id ORDER BY co_righe_documenti.id  ASC LIMIT 0,1) AS acquisto, ', $query);
-    $text = "al primo articolo acquistato";
-} elseif(post('acquisto') == 'last') {
+    $text = 'al primo articolo acquistato';
+} elseif (post('acquisto') == 'last') {
     $query = preg_replace('/^SELECT/', 'SELECT (SELECT (prezzo_unitario-sconto_unitario) AS acquisto FROM co_righe_documenti LEFT JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id WHERE co_documenti.idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="uscita") AND idarticolo=mg_articoli.id ORDER BY co_righe_documenti.id  DESC LIMIT 0,1) AS acquisto, ', $query);
     $text = "all'ultimo articolo acquistato";
 } else {
@@ -72,9 +72,9 @@ echo '
 ], ['upper' => true]).'</h3>
 
 <p style="color:#aaa; font-size:10px;" class="text-right">
-    '.tr("Prezzo di acquisto calcolato in base _TEXT_",
+    '.tr('Prezzo di acquisto calcolato in base _TEXT_',
         [
-            "_TEXT_" => $text,
+            '_TEXT_' => $text,
         ]).'
 </p>
 

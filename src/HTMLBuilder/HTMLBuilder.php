@@ -485,7 +485,7 @@ class HTMLBuilder
         $attributes = [];
         foreach ($values as $key => $value) {
             // Fix per la presenza di apici doppi
-            if (!empty($value)){
+            if (!empty($value)) {
                 $value = prepareToField(is_array($value) ? implode(' ', $value) : $value);
                 if ($key == 'data-select-options' && $values['select-options-escape']) {
                     $value = htmlentities($value, ENT_COMPAT);

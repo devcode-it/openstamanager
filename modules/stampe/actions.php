@@ -37,11 +37,11 @@ switch (post('op')) {
 
         // Gestione file allegati
         $dbo->delete('zz_files_print', ['id_print' => $id_record]);
-        $id_files = (array)post('id_files');
+        $id_files = (array) post('id_files');
         foreach ($id_files as $id_file) {
             $dbo->insert('zz_files_print', [
                 'id_print' => $id_record,
-                'id_file' => $id_file
+                'id_file' => $id_file,
             ]);
         }
 

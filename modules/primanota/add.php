@@ -260,12 +260,12 @@ if (!empty($id_records) && get('origine') == 'fatture' && !empty($counter)) {
 }
 if (!empty(get('id_anagrafica'))) {
     $id_anagrafica = get('id_anagrafica');
-} 
-if (empty($id_anagrafica)) {
-    $id_anagrafica = $dbo->fetchOne('SELECT idanagrafica FROM co_documenti WHERE id IN('.($id_documenti ? implode(',',$id_documenti) : 0).')')['idanagrafica'];
 }
 if (empty($id_anagrafica)) {
-    $id_anagrafica = $dbo->fetchOne('SELECT idanagrafica FROM co_scadenziario WHERE id IN('.($id_scadenze ? implode(',',$id_scadenze) : 0).')')['idanagrafica'];
+    $id_anagrafica = $dbo->fetchOne('SELECT idanagrafica FROM co_documenti WHERE id IN('.($id_documenti ? implode(',', $id_documenti) : 0).')')['idanagrafica'];
+}
+if (empty($id_anagrafica)) {
+    $id_anagrafica = $dbo->fetchOne('SELECT idanagrafica FROM co_scadenziario WHERE id IN('.($id_scadenze ? implode(',', $id_scadenze) : 0).')')['idanagrafica'];
 }
 echo '
 <form action="'.base_path().'/controller.php?id_module='.$module->id.'" method="post" id="add-form">

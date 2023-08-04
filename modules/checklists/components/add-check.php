@@ -39,7 +39,7 @@ echo '
                 'label' => tr('Contenuto'),
                 'name' => 'content',
                 'required' => 1,
-                'value' => ''
+                'value' => '',
             ]).'
         </div> 
     </div>

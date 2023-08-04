@@ -34,12 +34,12 @@ switch (post('op')) {
         $tipo->costo_diritto_chiamata_tecnico = post('costo_diritto_chiamata_tecnico');
         $tipo->save();
 
-        $fasce_ore = (array)post('fascia_ore');
-        $fascia_km = (array)post('fascia_km');
-        $fascia_diritto_chiamata = (array)post('fascia_diritto_chiamata');
-        $fascia_orario_tecnico = (array)post('fascia_orario_tecnico');
-        $fascia_km_tecnico = (array)post('fascia_km_tecnico');
-        $fascia_diritto_chiamata_tecnico = (array)post('fascia_diritto_chiamata_tecnico');
+        $fasce_ore = (array) post('fascia_ore');
+        $fascia_km = (array) post('fascia_km');
+        $fascia_diritto_chiamata = (array) post('fascia_diritto_chiamata');
+        $fascia_orario_tecnico = (array) post('fascia_orario_tecnico');
+        $fascia_km_tecnico = (array) post('fascia_km_tecnico');
+        $fascia_diritto_chiamata_tecnico = (array) post('fascia_diritto_chiamata_tecnico');
 
         foreach ($fasce_ore as $key => $fascia_ore) {
             $dbo->update('in_fasceorarie_tipiintervento', [
@@ -50,10 +50,9 @@ switch (post('op')) {
                 'costo_km_tecnico' => $fascia_km_tecnico[$key],
                 'costo_diritto_chiamata_tecnico' => $fascia_diritto_chiamata_tecnico[$key],
             ], [
-                'idfasciaoraria' => $key, 'idtipointervento' => $id_record
+                'idfasciaoraria' => $key, 'idtipointervento' => $id_record,
             ]);
         }
-
 
         flash()->info(tr('Informazioni tipo intervento salvate correttamente!'));
 
@@ -134,7 +133,6 @@ switch (post('op')) {
         break;
 
     case 'addriga':
-
         $id_iva = post('idiva');
         $descrizione = post('descrizione');
         $qta = post('qta');
@@ -152,7 +150,6 @@ switch (post('op')) {
         break;
 
     case 'editriga':
-
         $id_iva = post('idiva');
         $descrizione = post('descrizione');
         $qta = post('qta');
@@ -180,9 +177,8 @@ switch (post('op')) {
         break;
 
     case 'delriga':
-    
         $idriga = post('idriga');
-        $query = "DELETE FROM in_righe_tipiinterventi WHERE id=".prepare($idriga);
+        $query = 'DELETE FROM in_righe_tipiinterventi WHERE id='.prepare($idriga);
         $dbo->query($query);
 
         flash()->info(tr('Riga eliminata!'));

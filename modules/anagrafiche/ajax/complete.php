@@ -66,7 +66,7 @@ switch ($resource) {
         foreach ($rs as $r) {
             $results[] = [
                 'value' => $r['email'],
-                'label' => $r['ragione_sociale'].($r['sede']!=''?' ('.$r['sede'].')':'').' <'.$r['email'].'>',
+                'label' => $r['ragione_sociale'].($r['sede'] != '' ? ' ('.$r['sede'].')' : '').' <'.$r['email'].'>',
             ];
         }
 
@@ -82,7 +82,7 @@ switch ($resource) {
          }
 
         // Tutti gli agenti del cliente
-        $q = "SELECT DISTINCT(email), ragione_sociale, idanagrafica FROM an_anagrafiche WHERE email != '' AND (idanagrafica=(SELECT idagente FROM an_anagrafiche AS agenti WHERE 1=1 ".$where.") OR idanagrafica IN (SELECT idagente FROM an_anagrafiche_agenti WHERE 1=1 ".$where."))";
+        $q = "SELECT DISTINCT(email), ragione_sociale, idanagrafica FROM an_anagrafiche WHERE email != '' AND (idanagrafica=(SELECT idagente FROM an_anagrafiche AS agenti WHERE 1=1 ".$where.') OR idanagrafica IN (SELECT idagente FROM an_anagrafiche_agenti WHERE 1=1 '.$where.'))';
 
         $rs = $dbo->fetchArray($q);
         foreach ($rs as $r) {

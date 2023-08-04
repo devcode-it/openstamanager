@@ -47,8 +47,8 @@ if (get('anteprima') !== null) {
 </div>';
 }
 
-if(setting('Sistema di firma')=='Base'){
-?>
+if (setting('Sistema di firma') == 'Base') {
+    ?>
     <form action="<?php echo base_path(); ?>/editor.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>" method="post" id="form-firma" class="hide">
         <input type="hidden" name="op" value="firma">
         <input type="hidden" name="backto" value="record-edit">
@@ -132,8 +132,8 @@ if(setting('Sistema di firma')=='Base'){
         });
     </script>
 <?php
-}elseif(setting('Sistema di firma')=='Tavoletta Wacom'){
-    echo '
+} elseif (setting('Sistema di firma') == 'Tavoletta Wacom') {
+        echo '
     <div id="firma-div"></div>
 
     <script type="text/javascript">
@@ -147,7 +147,7 @@ if(setting('Sistema di firma')=='Base'){
                             caricaTavoletta()
                     } else {
                         // Handle the case when navigator.hid is undefined
-                        swal("' . tr('Errore') . '", "' . tr("navigator.hid non è supportato da questo browser!") . '", "error");
+                        swal("'.tr('Errore').'", "'.tr('navigator.hid non è supportato da questo browser!').'", "error");
                         $("#modals > div").modal("hide");
                     }
                 } catch (error) {
@@ -166,4 +166,4 @@ if(setting('Sistema di firma')=='Base'){
             });
         }
     </script>';
-}
+    }

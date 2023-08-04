@@ -11,14 +11,11 @@ foreach ($files as $key => $value) {
 
 delete($files);
 
-
 $fascie_orarie = $database->fetchArray('SELECT * FROM in_fasceorarie');
 $tipi_intervento = $database->fetchArray('SELECT * FROM in_tipiintervento');
 
 foreach ($fascie_orarie as $fascia_oraria) {
-
     foreach ($tipi_intervento as $tipo_intervento) {
-
         $database->insert('in_fasceorarie_tipiintervento', [
             'idfasciaoraria' => $fascia_oraria['id'],
             'idtipointervento' => $tipo_intervento['idtipointervento'],
@@ -29,9 +26,5 @@ foreach ($fascie_orarie as $fascia_oraria) {
             'costo_km_tecnico' => $tipo_intervento['costo_km_tecnico'],
             'costo_diritto_chiamata_tecnico' => $tipo_intervento['costo_km_tecnico'],
         ]);
-
     }
-
 }
-
-?>

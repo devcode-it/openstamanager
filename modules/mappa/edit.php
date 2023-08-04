@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 ?>
 
-<link rel="stylesheet" href="<?=$rootdir?>/modules/mappa/css/app.css">
+<link rel="stylesheet" href="<?php echo $rootdir; ?>/modules/mappa/css/app.css">
 
 <!-- Mappa -->
 <div id="mappa"></div>
@@ -57,15 +57,15 @@ include_once __DIR__.'/../../core.php';
 
         <div class="row">
 <?php
-    $rs_stati = $dbo->fetchArray("SELECT * FROM in_statiintervento");
+    $rs_stati = $dbo->fetchArray('SELECT * FROM in_statiintervento');
 
-    foreach($rs_stati AS $stato){
-?>
+    foreach ($rs_stati as $stato) {
+        ?>
             <div class="col-md-4">
-                <label><?=$stato['descrizione']?></label>
+                <label><?php echo $stato['descrizione']; ?></label>
                 <div class="material-switch">
-                    <input id="<?=$stato['descrizione']?>" name="<?=$stato['descrizione']?>" type="checkbox" checked/>
-                    <label for="<?=$stato['descrizione']?>" class="label-success"></label>
+                    <input id="<?php echo $stato['descrizione']; ?>" name="<?php echo $stato['descrizione']; ?>" type="checkbox" checked/>
+                    <label for="<?php echo $stato['descrizione']; ?>" class="label-success"></label>
                 </div>
 			</div>
 <?php
@@ -76,7 +76,7 @@ include_once __DIR__.'/../../core.php';
 </div>
 
 <script>
-    var ROOTDIR = '<?=$rootdir?>';
+    var ROOTDIR = '<?php echo $rootdir; ?>';
 
     function caricaMappa() {
         const lat = "41.706";
@@ -88,11 +88,11 @@ include_once __DIR__.'/../../core.php';
             gestureHandling: true
         });
 
-        L.tileLayer("<?php echo setting("Tile server OpenStreetMap"); ?>", {
+        L.tileLayer("<?php echo setting('Tile server OpenStreetMap'); ?>", {
             maxZoom: 17,
             attribution: "© OpenStreetMap"
         }).addTo(map); 
     }
 </script>
 
-<script type="text/javascript" src="<?=$rootdir?>/modules/mappa/js/app.js"></script>
+<script type="text/javascript" src="<?php echo $rootdir; ?>/modules/mappa/js/app.js"></script>

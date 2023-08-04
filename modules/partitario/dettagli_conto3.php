@@ -96,7 +96,7 @@ if (!empty($movimenti)) {
         </td>';
 
         $scalare -= $movimento['totale'];
-        
+
         echo '
     </tr>';
     }

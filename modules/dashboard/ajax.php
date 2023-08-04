@@ -189,11 +189,11 @@ switch (filter('op')) {
             WHERE
                 `zz_events`.`is_bank_holiday` = 0
             AND (`zz_events`.`is_recurring` = 1 AND
-                DAYOFYEAR(`zz_events`.`data`) BETWEEN DAYOFYEAR('.prepare($start).') AND IF(YEAR('.prepare($start).') = YEAR('.prepare($end).'), DAYOFYEAR('.prepare($end).'), DAYOFYEAR('.prepare(date('Y-m-d', strtotime($end. '-1 day'))).')) 
+                DAYOFYEAR(`zz_events`.`data`) BETWEEN DAYOFYEAR('.prepare($start).') AND IF(YEAR('.prepare($start).') = YEAR('.prepare($end).'), DAYOFYEAR('.prepare($end).'), DAYOFYEAR('.prepare(date('Y-m-d', strtotime($end.'-1 day'))).')) 
                 )
             OR 
             (`zz_events`.`is_recurring` = 0 AND `zz_events`.`data` >= '.prepare($start).' AND  `zz_events`.`data` <= '.prepare($end).')';
-                
+
             //echo $query;
 
             $eventi = $dbo->fetchArray($query);
@@ -202,7 +202,7 @@ switch (filter('op')) {
                 $results[] = [
                     'id' => $modulo_eventi->id.'_'.$evento['id'],
                     'title' => '<b>'.tr('Evento').':</b> '.$evento['nome'].'</b>',
-                    'start' => ($evento['is_recurring'] ? date('Y-', strtotime($start)).date('m-d', strtotime($evento['data'])): $evento['data']),
+                    'start' => ($evento['is_recurring'] ? date('Y-', strtotime($start)).date('m-d', strtotime($evento['data'])) : $evento['data']),
                     //'end' => $evento['data'],
                     'extendedProps' => [
                         'link' => base_path().'/editor.php?id_module='.$modulo_eventi->id.'&id_record='.$evento['id'],
@@ -343,14 +343,13 @@ switch (filter('op')) {
 
                 $rs = $dbo->fetchArray($query);
 
-                if (!empty($rs[0]['cliente'])){
+                if (!empty($rs[0]['cliente'])) {
                     $tooltip = '<b>Prev. '.$rs[0]['numero'].'</b> '.$rs[0]['nome'].''.(($rs[0]['have_attachments']) ? ' <i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'<br><b>'.tr('Cliente').':</b> '.$rs[0]['cliente'];
-                }else{
-                     $tooltip = tr('Rilascia per aggiungere l\'attività...');
+                } else {
+                    $tooltip = tr('Rilascia per aggiungere l\'attività...');
                 }
             }
 
-          
             $tooltip .= '
             <script type="text/javascript">
                 $(".shorten").shorten({
@@ -359,10 +358,8 @@ switch (filter('op')) {
                     showChars : 200
                 });
             </script>';
-            
-        
+
             echo $tooltip;
-          
         }
         break;
 
@@ -479,7 +476,6 @@ switch (filter('op')) {
         break;
 
         case 'calendario_eventi':
-            
             $start = filter('start');
             $end = filter('end');
 
@@ -488,20 +484,20 @@ switch (filter('op')) {
             WHERE `zz_events`.`is_bank_holiday` = 1 
             AND 
             (`zz_events`.`is_recurring` = 1 
-            AND DAYOFYEAR(`zz_events`.`data`) BETWEEN DAYOFYEAR('.prepare($start).') AND IF(YEAR('.prepare($start).') = YEAR('.prepare($end).'), DAYOFYEAR('.prepare($end).'), DAYOFYEAR('.prepare(date('Y-m-d', strtotime($end. '-1 day'))).')) )
+            AND DAYOFYEAR(`zz_events`.`data`) BETWEEN DAYOFYEAR('.prepare($start).') AND IF(YEAR('.prepare($start).') = YEAR('.prepare($end).'), DAYOFYEAR('.prepare($end).'), DAYOFYEAR('.prepare(date('Y-m-d', strtotime($end.'-1 day'))).')) )
             OR 
             (`zz_events`.`is_recurring` = 0 AND `zz_events`.`data` >= '.prepare($start).' AND  `zz_events`.`data` <= '.prepare($end).')';
 
             $eventi = $dbo->fetchArray($query);
-           
+
             $results = [];
             foreach ($eventi as $evento) {
                 $results[] = [
                 'id' => $evento['id'],
                 'title' => $evento['nome'],
-                'start' => ($evento['is_recurring'] ? date('Y-', strtotime($start)).date('m-d', strtotime($evento['data'])): $evento['data']),
+                'start' => ($evento['is_recurring'] ? date('Y-', strtotime($start)).date('m-d', strtotime($evento['data'])) : $evento['data']),
                 //'end' => date('Y-m-d', strtotime($evento['data']. '+1 day')),
-                'display' => "background",
+                'display' => 'background',
                 'allDay' => true,
                 'overlap' => true,
                 ];

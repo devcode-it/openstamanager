@@ -6,7 +6,7 @@ if (file_exists(__DIR__.'/../../../core.php')) {
     include_once __DIR__.'/../../core.php';
 }
 
-# Fasce orarie per il tipo di attività
+// Fasce orarie per il tipo di attività
 $fasce_orarie = $dbo->fetchArray("SELECT *, CONCAT (in_fasceorarie.nome, ' (', DATE_FORMAT(ora_inizio, '%H:%i'), '-', DATE_FORMAT(ora_fine, '%H:%i'), ')') AS descrizione FROM in_fasceorarie_tipiintervento INNER JOIN in_fasceorarie ON in_fasceorarie_tipiintervento.idfasciaoraria = in_fasceorarie.id   WHERE idtipointervento=".prepare($id_record));
 
     echo '
@@ -21,30 +21,27 @@ $fasce_orarie = $dbo->fetchArray("SELECT *, CONCAT (in_fasceorarie.nome, ' (', D
             <th width="12%">'.tr('Costo diritto ch.').'</th>
         </tr>';
     $i = 0;
-    foreach($fasce_orarie as $fascia_oraria){
-
+    foreach ($fasce_orarie as $fascia_oraria) {
         $descrizione = $fascia_oraria['descrizione'];
         $giorni = '';
 
-        if (!empty($fascia_oraria['giorni'])){
-
-            if ($fascia_oraria['giorni']=='1,2,3,4,5'){
+        if (!empty($fascia_oraria['giorni'])) {
+            if ($fascia_oraria['giorni'] == '1,2,3,4,5') {
                 $giorni .= 'Lun-Ven';
-            }else if ($fascia_oraria['giorni']=='6,7'){
+            } elseif ($fascia_oraria['giorni'] == '6,7') {
                 $giorni .= 'Sab-Dom';
-            }else if ($fascia_oraria['giorni']=='6'){
+            } elseif ($fascia_oraria['giorni'] == '6') {
                 $giorni .= 'Sab';
             }
-            
+
             $descrizione .= ' ('.$giorni.')';
         }
 
-        if (!empty($fascia_oraria['include_bank_holidays'])){
+        if (!empty($fascia_oraria['include_bank_holidays'])) {
             $descrizione .= ' (Festivi)';
         }
 
-
-        echo'
+        echo '
             <tr>
                 <td class="text-left">'.$descrizione.'</td>
                 
@@ -67,11 +64,8 @@ $fasce_orarie = $dbo->fetchArray("SELECT *, CONCAT (in_fasceorarie.nome, ' (', D
                 </td>
             </tr>';
 
-        $i++;
+        ++$i;
     }
 
-    echo'
+    echo '
     </table>';
-
-
-?>

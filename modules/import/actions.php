@@ -70,7 +70,7 @@ switch (filter('op')) {
         // Inizializzazione del lettore CSV
         $csv = new $import_manager($record->filepath);
         foreach ($fields as $key => $value) {
-            $csv->setColumnAssociation($key, (int)$value - 1);
+            $csv->setColumnAssociation($key, (int) $value - 1);
         }
 
         // Generazione offset sulla base della pagina

@@ -74,14 +74,14 @@ if (isset($id_record)) {
     if (!empty($fattura)) {
         $reverse_charge = $fattura->getRighe()->first(function ($item, $key) {
             return $item->aliquota != null && substr($item->aliquota->codice_natura_fe, 0, 2) == 'N6';
-        })->id; 
+        })->id;
         $autofattura_vendita = Fattura::find($fattura->id_autofattura);
-        
+
         $abilita_autofattura = (($fattura->anagrafica->nazione->iso2 != 'IT' && !empty($fattura->anagrafica->nazione->iso2)) || $reverse_charge) && $dir == 'uscita' && $fattura->id_autofattura == null;
 
         $fattura_acquisto_originale = Fattura::where('id_autofattura', '=', $fattura->id)->first();
         $autofattura_collegata = Fattura::where('id_autofattura', '=', $fattura->id)->where('id', '!=', $fattura_acquisto_originale->id)->orderBy('id', 'DESC')->first();
     }
 
-    $superselect['idtipodocumento'] = $record['idtipodocumento'] ;
+    $superselect['idtipodocumento'] = $record['idtipodocumento'];
 }

@@ -57,54 +57,54 @@ if (!empty($movimenti)) {
     // Elenco righe del partitario
     foreach ($movimenti as $movimento) {
         $scalare += $movimento['totale'];
-        $righe_movimenti++;
+        ++$righe_movimenti;
 
-        if (sizeof($movimenti) - $righe_movimenti < 25 ) {
-        echo '
+        if (sizeof($movimenti) - $righe_movimenti < 25) {
+            echo '
     <tr>
         <td>';
 
-        $modulo_fattura = ($movimento['dir'] == 'entrata') ? Modules::get('Fatture di vendita') : Modules::get('Fatture di acquisto');
+            $modulo_fattura = ($movimento['dir'] == 'entrata') ? Modules::get('Fatture di vendita') : Modules::get('Fatture di acquisto');
 
-        if (!empty($movimento['primanota'])) {
-            echo Modules::link($prima_nota->id, $movimento['idmastrino'], $movimento['descrizione']);
-        } else {
-            echo Modules::link($modulo_fattura->id, $movimento['iddocumento'], $movimento['descrizione']);
-        }
+            if (!empty($movimento['primanota'])) {
+                echo Modules::link($prima_nota->id, $movimento['idmastrino'], $movimento['descrizione']);
+            } else {
+                echo Modules::link($modulo_fattura->id, $movimento['iddocumento'], $movimento['descrizione']);
+            }
 
-        echo '
+            echo '
         </td>';
 
-        // Data
-        echo '
+            // Data
+            echo '
         <td>
             '.dateFormat($movimento['data']).'
         </td>';
 
-        // Dare
-        if ($movimento['totale'] > 0) {
-            echo '
+            // Dare
+            if ($movimento['totale'] > 0) {
+                echo '
         <td class="text-right">
             '.moneyFormat(abs($movimento['totale']), 2).'
         </td>
         <td></td>';
-        }
+            }
 
-        // Avere
-        else {
-            echo '
+            // Avere
+            else {
+                echo '
         <td></td>
         <td class="text-right">
             '.moneyFormat(abs($movimento['totale']), 2).'
         </td>';
-        }
+            }
 
-        echo '
+            echo '
         <td class="text-right">
             '.moneyFormat($scalare, 2).'
         </td>';
 
-        echo '
+            echo '
     </tr>';
         }
     }

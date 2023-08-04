@@ -20,8 +20,6 @@
 include_once __DIR__.'/../../../core.php';
 
 use API\Services;
-use Carbon\Carbon;
-use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Referente;
 use Modules\Anagrafiche\Sede;
@@ -47,7 +45,7 @@ if (!empty($is_number_request)) {
 }
 
 // Avviso di servizio non abilitato
-if (!$servizio_abilitato){
+if (!$servizio_abilitato) {
     echo '
 <div class="alert alert-info">
     <i class="fa fa-info-circle"></i> '.tr('Servizio non abilitato: contatta gli sviluppatori ufficiali per la gestione delle Newsletter tramite servizio esterno').'.
@@ -115,7 +113,7 @@ echo '
         <td>'.$descrizione.'</td>
         <td>'.$destinatario->email.'</td>
     </tr>';
-}
+    }
 
 echo '
 </table>';

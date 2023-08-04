@@ -274,7 +274,7 @@ function currency()
  */
 function moneyFormat($number, $decimals = null)
 {
-    if (setting('Posizione del simbolo valuta') == 'Prima'){
+    if (setting('Posizione del simbolo valuta') == 'Prima') {
         return tr('_CURRENCY_ _TOTAL_', [
             '_CURRENCY_' => currency(),
             '_TOTAL_' => numberFormat($number, $decimals),

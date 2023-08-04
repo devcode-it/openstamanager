@@ -130,13 +130,12 @@ switch (post('op')) {
     case 'renew_contratto':
         $numero_totale = 0;
 
-
         // Lettura righe selezionate
         foreach ($id_records as $id) {
             $contratto = Contratto::find($id);
             $rinnova = !empty($contratto->data_accettazione) && !empty($contratto->data_conclusione) && $contratto->data_accettazione != '0000-00-00' && $contratto->data_conclusione != '0000-00-00' && $contratto->stato->is_completato && $contratto->rinnovabile;
 
-            if($rinnova) {
+            if ($rinnova) {
                 $diff = $contratto->data_conclusione->diffAsCarbonInterval($contratto->data_accettazione);
 
                 $new_contratto = $contratto->replicate();
@@ -208,7 +207,7 @@ switch (post('op')) {
                 // Cambio stato precedente contratto in concluso (non più pianificabile)
                 $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `idstato`= (SELECT id FROM co_staticontratti WHERE descrizione = \'Concluso\')  WHERE `id` = '.prepare($contratto->id));
 
-                $numero_totale++;
+                ++$numero_totale;
             }
         }
 
@@ -223,20 +222,20 @@ switch (post('op')) {
 
         case 'cambia_stato':
             $id_stato = post('id_stato');
-    
+
             $n_contratti = 0;
             $stato = StatoContratto::find($id_stato);
-    
+
             // Lettura righe selezionate
             foreach ($id_records as $id) {
                 $contratto = Contratto::find($id);
-    
+
                 $contratto->stato()->associate($stato);
                 $contratto->save();
-    
+
                 ++$n_contratti;
             }
-    
+
             if ($n_contratti > 0) {
                 flash()->info(tr('Stato aggiornato a _NUM_ contratti!', [
                     '_NUM_' => $n_contratti,
@@ -244,7 +243,7 @@ switch (post('op')) {
             } else {
                 flash()->warning(tr('Nessuno stato aggiornato!'));
             }
-    
+
             break;
 }
 
@@ -253,7 +252,7 @@ $operations['crea_fattura'] = [
     'data' => [
         'title' => tr('Fatturare i _TYPE_ selezionati?', ['_TYPE_' => strtolower($module['name'])]),
         'msg' => '{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle fatture di vendita non ancora emesse?').'</small>", "placeholder": "'.tr('Aggiungere alle fatture esistenti non ancora emesse?').'", "name": "accodare" ]}<br>
-        {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(["id_module" => $id_fatture, 'is_sezionale' => 1]).', "value": "'.$id_segment.'", "select-options-escape": true ]}<br>
+        {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_fatture, 'is_sezionale' => 1]).', "value": "'.$id_segment.'", "select-options-escape": true ]}<br>
         {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, CONCAT(codice_tipo_documento_fe, \' - \', descrizione) AS descrizione FROM co_tipidocumento WHERE enabled = 1 AND dir =\'entrata\' ORDER BY codice_tipo_documento_fe", "value": "'.$idtipodocumento.'" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',

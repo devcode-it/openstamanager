@@ -69,7 +69,7 @@ if (!empty($rs)) {
             }
         } else {
             $scadenza = tr('scaduto da _DAYS_ giorni');
-        } 
+        }
 
         $scadenza = str_replace('_DAYS_', abs($r['giorni_rimanenti']), $scadenza);
 

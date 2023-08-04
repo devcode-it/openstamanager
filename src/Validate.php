@@ -141,8 +141,7 @@ class Validate
             $fields['citta'] = implode(' ', $citta);
 
             $result['fields'] = $fields;
-
-        } else if (Services::verificaRisorsaAttiva('Verifica Partita IVA')) {
+        } elseif (Services::verificaRisorsaAttiva('Verifica Partita IVA')) {
             $response = Services::request('post', 'check_iva', [
                 'partita_iva' => $vat_number,
             ]);
@@ -247,8 +246,7 @@ class Validate
             $data->json_last_error_msg = json_last_error_msg();
 
             return empty($data->format_valid) ? false : $data;
-
-        } else if (Services::verificaRisorsaAttiva('Verifica Email')) {
+        } elseif (Services::verificaRisorsaAttiva('Verifica Email')) {
             $response = Services::request('post', 'check_email', [
                 'email' => $email,
             ]);

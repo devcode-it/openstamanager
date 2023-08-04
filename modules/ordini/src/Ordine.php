@@ -200,7 +200,7 @@ class Ordine extends Document
      */
     public static function getNextNumero($data, $direzione, $id_segment)
     {
-        if ($direzione == 'entrata') { 
+        if ($direzione == 'entrata') {
             $maschera = '#';
         } else {
             $maschera = Generator::getMaschera($id_segment);
@@ -223,7 +223,7 @@ class Ordine extends Document
                 ]);
             }
         }
-        
+
         $numero = Generator::generate($maschera, $ultimo);
 
         return $numero;

@@ -245,4 +245,3 @@ function getSegmentPredefined($id_module)
 
     return $id_segment;
 }
-

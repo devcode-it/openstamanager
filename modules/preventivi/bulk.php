@@ -25,7 +25,6 @@ use Modules\Fatture\Stato as StatoFattura;
 use Modules\Fatture\Tipo;
 use Modules\Preventivi\Preventivo;
 use Modules\Preventivi\Stato as StatoPreventivo;
-use Carbon\Carbon;
 
 $module_fatture = 'Fatture di vendita';
 

@@ -35,7 +35,7 @@ $subject = $module->replacePlaceholders($id_record, $template['subject'], $place
 $emails = [];
 if ($module->replacePlaceholders($id_record, '{email}')) {
     $emails = explode(';', $module->replacePlaceholders($id_record, '{email}', $placeholder_options));
-} 
+}
 
 $id_anagrafica = $module->replacePlaceholders($id_record, '{id_anagrafica}', $placeholder_options);
 
@@ -50,15 +50,14 @@ foreach ($mansioni as $mansione) {
     }
 }
 
-
 // Aggiungo email tecnici assegnati quando sono sul template Notifica intervento
-if ($template->name  == 'Notifica intervento'){
+if ($template->name == 'Notifica intervento') {
     $tecnici = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico', ['id_intervento' => $id_record]);
     foreach ($tecnici as $tecnico) {
         $anagrafica = $dbo->table('an_anagrafiche')->where('idanagrafica', $tecnico['id_tecnico'])->where('email', '!=', '')->first();
         if (!in_array($anagrafica->email, $emails)) {
             $emails[] = $anagrafica->email;
-        }   
+        }
     }
 }
 
@@ -180,8 +179,8 @@ echo '
                 'id' => 'body_'.rand(0, 999),
                 'value' => $body,
             ]);
-					
-            echo'
+
+            echo '
             </div>
     </div>';
 

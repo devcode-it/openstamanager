@@ -76,7 +76,7 @@ if ($is_completato) {
 echo '
 <div class="box">
     <div class="box-header with-border">
-        <h3 class="box-title">'.tr("Impianti soggetti ad intervento").'</h3>
+        <h3 class="box-title">'.tr('Impianti soggetti ad intervento').'</h3>
     </div>
     <div class="box-body">';
 

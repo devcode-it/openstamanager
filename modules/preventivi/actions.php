@@ -43,7 +43,7 @@ switch (post('op')) {
         $tipo = TipoSessione::find($idtipointervento);
 
         $preventivo = Preventivo::build($anagrafica, $tipo, $nome, $data_bozza, $id_sede, $id_segment);
-      
+
         $preventivo->idstato = post('idstato');
         $preventivo->save();
 
@@ -336,8 +336,8 @@ switch (post('op')) {
 
     // Eliminazione riga
     case 'delete_riga':
-        $id_righe = (array)post('righe');
-        
+        $id_righe = (array) post('righe');
+
         foreach ($id_righe as $id_riga) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Descrizione::find($id_riga);
@@ -353,8 +353,8 @@ switch (post('op')) {
 
     // Duplicazione riga
     case 'copy_riga':
-        $id_righe = (array)post('righe');
-        
+        $id_righe = (array) post('righe');
+
         foreach ($id_righe as $id_riga) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Descrizione::find($id_riga);
@@ -419,7 +419,7 @@ switch (post('op')) {
         $dir = 'entrata';
 
         if (!empty($barcode)) {
-            $id_articolo = $dbo->selectOne('mg_articoli', 'id',  ['deleted_at' => null, 'attivo' => 1, 'barcode' => $barcode])['id'];
+            $id_articolo = $dbo->selectOne('mg_articoli', 'id', ['deleted_at' => null, 'attivo' => 1, 'barcode' => $barcode])['id'];
         }
 
         if (!empty($id_articolo)) {
@@ -440,7 +440,7 @@ switch (post('op')) {
             $id_iva = ($preventivo->anagrafica->idiva_vendite ?: $originale->idiva_vendita) ?: setting('Iva predefinita');
             $id_anagrafica = $preventivo->idanagrafica;
             $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
-    
+
             // CALCOLO PREZZO UNITARIO
             $prezzo_unitario = 0;
             $sconto = 0;
@@ -463,7 +463,7 @@ switch (post('op')) {
                         continue;
                     }
                 }
-            } 
+            }
             if (empty($prezzo_unitario)) {
                 // Prezzi listini clienti
                 $listino = $dbo->fetchOne('SELECT sconto_percentuale AS sconto_percentuale_listino, '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino
@@ -491,7 +491,6 @@ switch (post('op')) {
             $articolo->setProvvigione($provvigione ?: 0, 'PRC');
             $articolo->save();
 
-            
             flash()->info(tr('Nuovo articolo aggiunto!'));
         } else {
             $response['error'] = tr('Nessun articolo corrispondente a magazzino');
@@ -518,7 +517,7 @@ switch (post('op')) {
     case 'edit-price':
         $righe = $post['righe'];
         $numero_totale = 0;
-        
+
         foreach ($righe as $riga) {
             if (($riga['id']) != null) {
                 $articolo = Articolo::find($riga['id']);
@@ -539,7 +538,7 @@ switch (post('op')) {
             flash()->info(tr('_NUM_ prezzi modificati!', [
                 '_NUM_' => $numero_totale,
             ]));
-        } else if ($numero_totale == 1) {
+        } elseif ($numero_totale == 1) {
             flash()->info(tr('_NUM_ prezzo modificato!', [
                 '_NUM_' => $numero_totale,
             ]));

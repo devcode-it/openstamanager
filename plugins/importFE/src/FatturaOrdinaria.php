@@ -93,14 +93,14 @@ class FatturaOrdinaria extends FatturaElettronica
 
         $imponibile = [];
         $totale_imposta = [];
-        foreach ($linee as $linea){
-            $imponibile[$linea['AliquotaIVA']] += $linea['PrezzoTotale'];           
+        foreach ($linee as $linea) {
+            $imponibile[$linea['AliquotaIVA']] += $linea['PrezzoTotale'];
         }
 
         foreach ($imponibile as $aliquota_iva => $importo) {
-            $totale_imposta[$aliquota_iva] = $imponibile[$aliquota_iva] * $aliquota_iva/100;
-            if ($cassa_previdenziale['AliquotaIVA'] == $aliquota_iva) { 
-                $totale_imposta[$aliquota_iva] += $cassa_previdenziale['ImportoContributoCassa']*$cassa_previdenziale['AliquotaIVA']/100;
+            $totale_imposta[$aliquota_iva] = $imponibile[$aliquota_iva] * $aliquota_iva / 100;
+            if ($cassa_previdenziale['AliquotaIVA'] == $aliquota_iva) {
+                $totale_imposta[$aliquota_iva] += $cassa_previdenziale['ImportoContributoCassa'] * $cassa_previdenziale['AliquotaIVA'] / 100;
             }
         }
 
@@ -110,12 +110,12 @@ class FatturaOrdinaria extends FatturaElettronica
 
         foreach ($riepiloghi as $riepilogo) {
             $valore = 0;
-            if (isset($riepilogo['Arrotondamento']) && $riepilogo['Arrotondamento'] != 0 && round($totale_imposta[$riepilogo['AliquotaIVA']], 2) != (float)$riepilogo['Imposta']) {
+            if (isset($riepilogo['Arrotondamento']) && $riepilogo['Arrotondamento'] != 0 && round($totale_imposta[$riepilogo['AliquotaIVA']], 2) != (float) $riepilogo['Imposta']) {
                 $valore = $riepilogo['Arrotondamento'];
-            } else if(round($totale_imposta[$riepilogo['AliquotaIVA']], 2) != (float)$riepilogo['Imposta']) {
-                $valore = round($totale_imposta[$riepilogo['AliquotaIVA']], 2) - (float)$riepilogo['Imposta'];
+            } elseif (round($totale_imposta[$riepilogo['AliquotaIVA']], 2) != (float) $riepilogo['Imposta']) {
+                $valore = round($totale_imposta[$riepilogo['AliquotaIVA']], 2) - (float) $riepilogo['Imposta'];
             }
-            
+
             if ($valore != 0) {
                 $descrizione = tr('Arrotondamento IVA _VALUE_', [
                     '_VALUE_' => empty($riepilogo['Natura']) ? numberFormat($riepilogo['AliquotaIVA']).'%' : $riepilogo['Natura'],
@@ -193,7 +193,7 @@ class FatturaOrdinaria extends FatturaElettronica
                 $obj->movimentazione($movimentazione);
 
                 $target_type = Articolo::class;
-            } elseif($is_descrizione) {
+            } elseif ($is_descrizione) {
                 $obj = Descrizione::build($fattura);
 
                 $target_type = Descrizione::class;
@@ -230,16 +230,16 @@ class FatturaOrdinaria extends FatturaElettronica
                 $obj->id_iva = $iva[$key];
                 $obj->idconto = $conto[$key];
 
-                if (empty($conto_arrotondamenti) && !empty($conto[$key]) ){
+                if (empty($conto_arrotondamenti) && !empty($conto[$key])) {
                     $conto_arrotondamenti = $conto[$key];
                 }
 
                 $obj->id_rivalsa_inps = $id_rivalsa;
-                
+
                 $obj->ritenuta_contributi = $ritenuta_contributi;
 
                 // Inserisco la ritenuta se è specificata nella riga o se non è specificata nella riga ma è presente in Dati ritenuta (quindi comprende tutte le righe)
-                if (!empty($riga['Ritenuta']) || $info['ritenuta_norighe']==true) {
+                if (!empty($riga['Ritenuta']) || $info['ritenuta_norighe'] == true) {
                     $obj->id_ritenuta_acconto = $id_ritenuta_acconto;
                     $obj->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
                 }
@@ -256,28 +256,27 @@ class FatturaOrdinaria extends FatturaElettronica
                     foreach ($dati_riepilogo as $dato) {
                         $totale_arrotondamento += $dato['Arrotondamento'];
                         $totale_imp += $dato['ImponibileImporto'];
-                    }   
-                } 
+                    }
+                }
                 $totali_righe = array_column($righe, 'PrezzoTotale');
                 $totale_righe = sum($totali_righe, null, 2);
 
                 // Nel caso il prezzo sia negativo viene gestito attraverso l'inversione della quantità (come per le note di credito)
                 // TODO: per migliorare la visualizzazione, sarebbe da lasciare negativo il prezzo e invertire gli sconti.
-                if (!empty($articolo->um) && !empty($articolo->um_secondaria) && !empty((float)$articolo->fattore_um_secondaria) && $riga['UnitaMisura'] == $articolo->um_secondaria) {
+                if (!empty($articolo->um) && !empty($articolo->um_secondaria) && !empty((float) $articolo->fattore_um_secondaria) && $riga['UnitaMisura'] == $articolo->um_secondaria) {
                     $qta = (($riga['Quantita'] ?: 1) / $articolo->fattore_um_secondaria);
-                    $prezzo = $totale_righe > 0 ? $totale_righe/$qta : -($totale_righe/$qta);
+                    $prezzo = $totale_righe > 0 ? $totale_righe / $qta : -($totale_righe / $qta);
                 } else {
                     $qta = ($riga['Quantita'] ?: 1);
                     $prezzo = $totale_righe > 0 ? $riga['PrezzoUnitario'] : -$riga['PrezzoUnitario'];
                 }
-                
 
                 // Prezzo e quantità
                 $obj->prezzo_unitario = $prezzo;
                 $obj->qta = $qta;
 
                 if (!empty($riga['UnitaMisura'])) {
-                    if (!empty($articolo->um) && !empty($articolo->um_secondaria) && !empty((float)$articolo->fattore_um_secondaria) && $riga['UnitaMisura'] == $articolo->um_secondaria) {
+                    if (!empty($articolo->um) && !empty($articolo->um_secondaria) && !empty((float) $articolo->fattore_um_secondaria) && $riga['UnitaMisura'] == $articolo->um_secondaria) {
                         $obj->um = $articolo->um;
                     } else {
                         $obj->um = $riga['UnitaMisura'];
@@ -325,7 +324,7 @@ class FatturaOrdinaria extends FatturaElettronica
                             $tot_sconto = $sconto_riga;
                         }
 
-                        $tot_sconto_calcolato += $sconto_calcolato; 
+                        $tot_sconto_calcolato += $sconto_calcolato;
                         $sconto_unitario += $tot_sconto;
                     }
 
@@ -383,12 +382,12 @@ class FatturaOrdinaria extends FatturaElettronica
         // Arrotondamenti differenti nella fattura XML
         $diff = round(abs($totale_righe) + $totale_arrotondamento - abs($fattura->totale_imponibile), 2);
         // Aggiunta della riga di arrotondamento nel caso in cui ci sia una differenza tra i totali, o tra l'imponibile dell'XML e quello ricavato dalla somma delle righe
-        if (($diff != 0 && $diff != $totale_arrotondamento) || $fattura->totale_imponibile+$fattura->rivalsa_inps != $totale_imp) {
+        if (($diff != 0 && $diff != $totale_arrotondamento) || $fattura->totale_imponibile + $fattura->rivalsa_inps != $totale_imp) {
             // Rimozione dell'IVA calcolata automaticamente dal gestionale
             $iva_arrotondamento = database()->fetchOne('SELECT * FROM co_iva WHERE percentuale=0 AND deleted_at IS NULL');
             if ($diff != 0) {
                 $diff = $diff * 100 / (100 + $iva_arrotondamento['percentuale']);
-            } else if ($totale_arrotondamento != 0) {
+            } elseif ($totale_arrotondamento != 0) {
                 $diff = -($totale_arrotondamento) * 100 / (100 + $iva_arrotondamento['percentuale']);
             } else {
                 $diff = -($fattura->totale_imponibile - $totale_imp) * 100 / (100 + $iva_arrotondamento['percentuale']);
@@ -504,7 +503,7 @@ class FatturaOrdinaria extends FatturaElettronica
                     $ritenuta_norighe = false;
                 }
             }
-            
+
             // Calcolo la ritenuta su tutte le righe se non è specificata su nessuna riga
             if (empty($totali)) {
                 $totale = array_sum(array_column($righe, 'PrezzoTotale'));

@@ -25,7 +25,7 @@ switch (filter('op')) {
         $print = Prints::render(post('id_print'), null, null, true);
         $pages = count($print['pages']);
 
-        $first_page = $dbo->fetchOne('SELECT MAX(last_page) AS last_page FROM co_stampecontabili WHERE `id_print`='.prepare(post('id_print')).' AND YEAR(`date_end`)='.prepare($year).' AND `dir`='.prepare(post('dir')))['last_page']+1;
+        $first_page = $dbo->fetchOne('SELECT MAX(last_page) AS last_page FROM co_stampecontabili WHERE `id_print`='.prepare(post('id_print')).' AND YEAR(`date_end`)='.prepare($year).' AND `dir`='.prepare(post('dir')))['last_page'] + 1;
         $last_page = $first_page + $pages - 1;
 
         $result = $dbo->table('co_stampecontabili')->insertGetId([

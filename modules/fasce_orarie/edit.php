@@ -17,7 +17,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 include_once __DIR__.'/../../core.php';
 
 //$block_edit = $record['is_predefined'];
@@ -79,7 +78,6 @@ include_once __DIR__.'/../../core.php';
                 $results = $dbo->fetchArray('SELECT * FROM `co_pagamenti` WHERE descrizione='.prepare($record['descrizione']).' ORDER BY `num_giorni` ASC');
                 $numero_data = 1;
                 foreach ($results as $result) {
-
                 }
 
             ?>
@@ -162,12 +160,11 @@ if (!empty($elementi)) {
         '_TIPO_INTERVENTO_' => $elemento['codice'],
     ]);
 
-    $modulo = 'Tipi di intervento';
-    $id = $elemento['idtipointervento'];
+        $modulo = 'Tipi di intervento';
+        $id = $elemento['idtipointervento'];
 
         echo '
             <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
-    
     }
 
     echo '
@@ -178,6 +175,6 @@ if (!empty($elementi)) {
 
 ?>
 
-<a class="btn btn-danger ask <?php echo (intval($record['can_delete'])==0 ? 'disabled' : ''); ?>" data-backto="record-list">
+<a class="btn btn-danger ask <?php echo intval($record['can_delete']) == 0 ? 'disabled' : ''; ?>" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>

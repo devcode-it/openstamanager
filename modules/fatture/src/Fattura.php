@@ -217,9 +217,9 @@ class Fattura extends Document
 
         $dicitura_fissa = database()->selectOne('zz_segments', 'dicitura_fissa', ['id' => $id_segment])['dicitura_fissa'];
         if ($dicitura_fissa) {
-           $notes[] = $dicitura_fissa; 
+            $notes[] = $dicitura_fissa;
         }
-        
+
         $model->note = implode("\n", $notes);
 
         if ($tipo_documento->descrizione == 'Fattura accompagnatoria di vendita') {
@@ -605,7 +605,7 @@ class Fattura extends Document
         // Bozza o Annullato -> Stato diverso da Bozza o Annullato
         if (
             (in_array($stato_precedente->descrizione, ['Bozza', 'Annullata'])
-            && !in_array($this->stato['descrizione'], ['Bozza', 'Annullata'])) 
+            && !in_array($this->stato['descrizione'], ['Bozza', 'Annullata']))
             || $options[0] == 'forza_emissione'
         ) {
             // Registrazione scadenze
@@ -759,8 +759,8 @@ class Fattura extends Document
      */
     public function isAutofattura()
     {
-        return in_array($this->tipo->codice_tipo_documento_fe, ['TD16','TD17','TD18','TD19',
-        'TD20', 'TD21', 'TD28']);
+        return in_array($this->tipo->codice_tipo_documento_fe, ['TD16', 'TD17', 'TD18', 'TD19',
+        'TD20', 'TD21', 'TD28', ]);
     }
 
     /**
@@ -918,9 +918,9 @@ class Fattura extends Document
     public function getTotaleCSVAttribute()
     {
         $totale = $this->totale_imponibile + $this->iva + $this->rivalsa_inps + $this->iva_rivalsa_inps;
-        if($this->isNota()){
-            return $totale*(-1);
-        }else{
+        if ($this->isNota()) {
+            return $totale * (-1);
+        } else {
             return $totale;
         }
     }

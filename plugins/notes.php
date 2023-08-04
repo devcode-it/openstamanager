@@ -95,14 +95,14 @@ if ($structure->permission == 'rw') {
             <input type="hidden" name="backto" value="record-edit">
             <div class="row" >
                 <div class="col-md-12" >';
-                    echo input([
+    echo input([
                         'type' => 'ckeditor',
                         'label' => tr('Nuova nota'),
                         'name' => 'contenuto',
                         'required' => 1,
                         'class' => 'unblockable',
                     ]);
-					echo'
+    echo '
                 </div>
                 <div class="col-md-4" >
                     {[ "type": "date", "label": "'.tr('Data di notifica').'", "name": "data_notifica", "class": "unblockable", "help": "'.tr('Eventuale data di notifica di un promemoria di questa nota.').'" ]}

@@ -38,7 +38,7 @@ class Record20 extends BaseRecord
             'inizio' => 83,
             'dimensione' => 24,
             'tipo' => 'string',
-            'forzaPadding' => STR_PAD_LEFT
+            'forzaPadding' => STR_PAD_LEFT,
         ],
     ];
 

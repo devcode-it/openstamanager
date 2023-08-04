@@ -179,18 +179,13 @@ if (post('db_host') !== null) {
         }
         // Continua con l'esecuzione delle operazioni previste
         else {
-
             // Creazione manifest.json
             include_once App::filepath('include/init', 'manifest.php');
             redirect(base_path().'/index.php');
             exit();
-
-            
         }
     }
 }
-
-
 
 // Controlla che i parametri di configurazione permettano l'accesso al database
 if ((file_exists('config.inc.php') || $valid_config) && !$dbo->isConnected()) {
@@ -200,7 +195,7 @@ if ((file_exists('config.inc.php') || $valid_config) && !$dbo->isConnected()) {
             <h3 class="box-title">'.tr('Impossibile connettersi al database').'</h3>
         </div>
         <div class="box-body">
-            <p>'.tr("Si è verificato un errore durante la connessione al database").'.</p>
+            <p>'.tr('Si è verificato un errore durante la connessione al database').'.</p>
             <p>'.tr('Controllare di aver inserito correttamente i dati di accesso, e che il database atto ad ospitare i dati del gestionale sia esistente').'.</p>
             <a class="btn btn-info" href="'.base_path().'/index.php"><i class="fa fa-repeat"></i> '.tr('Riprova').'</a>
             </div>

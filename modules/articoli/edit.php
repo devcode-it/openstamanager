@@ -50,8 +50,8 @@ use Modules\Iva\Aliquota;
 
                     <div class="row">
                         <div class="col-md-6">
-                            <?php echo ((!empty($record['id_categoria'])) ?
-                                Modules::link('Categorie articoli', $record['id_categoria'], null, null, 'class="pull-right"') : '') ?>
+                            <?php echo (!empty($record['id_categoria'])) ?
+                                Modules::link('Categorie articoli', $record['id_categoria'], null, null, 'class="pull-right"') : ''; ?>
                             {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|<?php echo Modules::get('Categorie articoli')['id']; ?>" ]}
                         </div>
 
@@ -107,7 +107,7 @@ use Modules\Iva\Aliquota;
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-6">
-                    {[ "type": "number", "label": "<?php echo tr('Quantità'); ?>", "name": "qta", "required": 1, "value": "$qta$", "readonly": 1, "decimals": "qta", "min-value": "undefined", "icon-after": "<?php echo (!empty($record['um']) ? $record['um']: ''); ?>" ]}
+                    {[ "type": "number", "label": "<?php echo tr('Quantità'); ?>", "name": "qta", "required": 1, "value": "$qta$", "readonly": 1, "decimals": "qta", "min-value": "undefined", "icon-after": "<?php echo !empty($record['um']) ? $record['um'] : ''; ?>" ]}
                     <input type="hidden" id="old_qta" value="<?php echo $record['qta']; ?>">
                 </div>
 
@@ -127,7 +127,7 @@ use Modules\Iva\Aliquota;
 
             <div class="alert alert-info">
                 <p><?php echo tr('Le modifiche alle quantità in questa schermata prevedono la generazione di un movimento relativo alla sede legale'); ?>. <?php echo tr('Se si desidera effettuare movimenti per altre sedi, utilizzare il modulo _MODULO_ ', [
-                    '_MODULO_' => Modules::link('Movimenti', null, tr('Movimenti'))
+                    '_MODULO_' => Modules::link('Movimenti', null, tr('Movimenti')),
                 ]); ?>.</p>
             </div>
 
@@ -182,8 +182,8 @@ use Modules\Iva\Aliquota;
 
                     <div class="row">				    
                         <div class="col-md-12">
-                            <?php echo ((!empty($record['id_fornitore'])) ?
-                            Plugins::link('Listino Fornitori', $id_record, null, null, 'class="pull-right" onclick="modificaFornitore('.$id_record.','.$record['id_fornitore'].')"', null): ''); ?>
+                            <?php echo (!empty($record['id_fornitore'])) ?
+                            Plugins::link('Listino Fornitori', $id_record, null, null, 'class="pull-right" onclick="modificaFornitore('.$id_record.','.$record['id_fornitore'].')"', null) : ''; ?>
                             {[ "type": "select", "label": "<?php echo tr('Fornitore predefinito'); ?>", "name": "id_fornitore", "ajax-source": "fornitori-articolo", "select-options": <?php echo json_encode(['id_articolo' => $id_record]); ?>, "value":"$id_fornitore$", "help": "<?php echo tr('Fornitore predefinito selezionabile tra i fornitori presenti nel plugin \"Listino fornitori\"'); ?>." ]}
                         </div>
                     </div>
@@ -230,13 +230,13 @@ $iva_predefinita = setting('Iva predefinita');
 $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
 if (empty($prezzi_ivati)) {
     echo '
-                            <button type="button" class="btn btn-info btn-xs pull-right tip pull-right '.(!empty((int)$articolo->coefficiente) ? 'disabled' : '').'" title="'.tr('Scorpora l\'IVA dal prezzo di vendita.').'" id="scorporaIva">
+                            <button type="button" class="btn btn-info btn-xs pull-right tip pull-right '.(!empty((int) $articolo->coefficiente) ? 'disabled' : '').'" title="'.tr('Scorpora l\'IVA dal prezzo di vendita.').'" id="scorporaIva">
                                 <i class="fa fa-calculator"></i>
                             </button>';
 }
 
 echo '
-                            {[ "type": "number", "label": "'.tr('Prezzo di vendita').'", "name": "prezzo_vendita", "value": "'.($prezzi_ivati ? $articolo->prezzo_vendita_ivato : $articolo->prezzo_vendita).'", "icon-after": "'.currency().'", "help": "'.($prezzi_ivati ? tr('Importo IVA inclusa') : '').'", "disabled": "'.(!empty((int)$articolo->coefficiente) ? 1 : 0).'" ]}
+                            {[ "type": "number", "label": "'.tr('Prezzo di vendita').'", "name": "prezzo_vendita", "value": "'.($prezzi_ivati ? $articolo->prezzo_vendita_ivato : $articolo->prezzo_vendita).'", "icon-after": "'.currency().'", "help": "'.($prezzi_ivati ? tr('Importo IVA inclusa') : '').'", "disabled": "'.(!empty((int) $articolo->coefficiente) ? 1 : 0).'" ]}
                         </div>';
 
 ?>
@@ -274,7 +274,7 @@ echo '
                         </div>
 
                         <div class="col-md-6">
-                            {[ "type": "number", "label": "<?php echo tr('Minimo di vendita'); ?>", "name": "minimo_vendita", "value": "<?php echo ($prezzi_ivati ? $articolo->minimo_vendita_ivato : $articolo->minimo_vendita); ?>", "icon-after": "<?php echo currency(); ?>", "help": "<?php echo ($prezzi_ivati ? tr('Importo IVA inclusa') : ''); ?>" ]}
+                            {[ "type": "number", "label": "<?php echo tr('Minimo di vendita'); ?>", "name": "minimo_vendita", "value": "<?php echo $prezzi_ivati ? $articolo->minimo_vendita_ivato : $articolo->minimo_vendita; ?>", "icon-after": "<?php echo currency(); ?>", "help": "<?php echo $prezzi_ivati ? tr('Importo IVA inclusa') : ''; ?>" ]}
                         </div>
                     </div>
                 </div>

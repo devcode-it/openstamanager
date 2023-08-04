@@ -18,12 +18,14 @@
  */
 
 use Plugins\PianificazioneFatturazione\Pianificazione;
+
 include_once __DIR__.'/../../core.php';
 
 $records = json_decode(get('records'), true);
 
 if (empty($records)) {
     echo '<p>'.tr('Nessuna rata selezionata').'.</p>';
+
     return;
 }
 
@@ -43,29 +45,24 @@ foreach ($records as $j => $record) {
     }
 }
 
-
-
 $module_fattura = Modules::get('Fatture di vendita');
 $id_conto = setting('Conto predefinito fatture di vendita');
 
-echo
-'<form action="" method="post">
+echo '<form action="" method="post">
     <input type="hidden" name="op" value="add_fattura_multipla">
     <input type="hidden" name="backto" value="record-list">
     <input type="hidden" name="id_module" value="'.$id_module.'">
     <input type="hidden" name="id_plugin" value="'.$id_plugin.'">';
 
-    
     foreach ($records as $j => $record) {
-        echo
-        '<input type="hidden" name="rata['.$j.']" value="' . $record['rata'] . '">';
+        echo '<input type="hidden" name="rata['.$j.']" value="'.$record['rata'].'">';
     }
 
     // Data
     echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "class": "text-center", "value": "'. date("Y-m-d") .'" ]}
+            {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "class": "text-center", "value": "'.date('Y-m-d').'" ]}
         </div>';
 
     //Tipo di documento
@@ -75,8 +72,7 @@ echo
         </div>';
 
     // Sezionale
-    echo
-        '<div class="col-md-6">
+    echo '<div class="col-md-6">
             {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.$module_fattura['id'].' ORDER BY name", "value":"'.$_SESSION['module_'.$module_fattura['id']]['id_segment'].'" ]}
         </div>';
 
@@ -87,14 +83,12 @@ echo
         </div>';
 
     //Accoda a fatture non emesse
-    echo
-        '<div class="col-md-6">
+    echo '<div class="col-md-6">
             {[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle fatture di vendita non ancora emesse?').'</small>", "placeholder": "'.tr('Aggiungere alle fatture di vendita nello stato bozza?').'", "name": "accodare" ]}
         </div>
     </div>';
 
-echo
-    '<div class="row">
+echo '<div class="row">
 		<div class="col-md-12 text-right">
 			<button type="submit" class="btn btn-primary pull-right">
                 <i class="fa fa-plus"></i> '.tr('Aggiungi').'
@@ -102,7 +96,6 @@ echo
 		</div>
     </div>
 </form>';
-echo
-'<script>
+echo '<script>
     $(document).ready(init)
 </script>';

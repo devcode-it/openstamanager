@@ -59,11 +59,11 @@ foreach ($righe as $riga) {
     echo '
             <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'">
                 <td class="text-center">';
-                if (!$block_edit) {
-                    echo '
+    if (!$block_edit) {
+        echo '
                     <input class="check" type="checkbox"/>';
-                }
-                echo '
+    }
+    echo '
                 </td>
 
                 <td class="text-center">
@@ -90,13 +90,13 @@ foreach ($righe as $riga) {
     if ($riga->isArticolo() && !empty($riga->articolo->barcode)) {
         echo '
         <br><small><i class="fa fa-barcode"></i> '.$riga->articolo->barcode.'</small>';
-    }            
-          
+    }
+
     if (!empty($riga->note)) {
         echo '
                     <br><small class="label label-default">'.nl2br($riga->note).'</small>';
     }
-        echo '
+    echo '
                 </td>';
 
     if ($riga->isDescrizione()) {
@@ -106,38 +106,38 @@ foreach ($righe as $riga) {
                 <td></td>
                 <td></td>';
     } else {
-                // Quantità e unità di misura
-                echo '
+        // Quantità e unità di misura
+        echo '
                 <td class="text-center">
                     {[ "type": "number", "name": "qta_'.$riga->id.'", "value": "'.$riga->qta.'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "<span class=\'tip\' title=\''.tr('Quantità evasa').' / '.tr('totale').': '.tr('_QTA_ / _TOT_', ['_QTA_' => numberFormat($riga->qta_evasa, 'qta'), '_TOT_' => numberFormat($riga->qta, 'qta')]).'\'>'.$riga->um.' <small><i class=\'text-muted fa fa-info-circle\'></i></small></span>", "disabled": "'.($riga->isSconto() ? 1 : 0).'", "disabled": "'.$block_edit.'" ]}
                     <div class="progress" style="height:4px;">';
-                    // Visualizzazione evasione righe per documento
-                    $evasione_bar = [];
-                    $evasione_bar['dt_righe_ddt'] = 'info';
-                    $evasione_bar['co_righe_documenti'] = 'primary';
-                    $evasione_bar['in_righe_interventi'] = 'warning';
-                    $evasione_bar['or_righe_ordini'] = 'success';
-                    foreach ($evasione_bar as $table => $color) {
-                        $righe_ev = $dbo->table($table)->where('original_id', $riga->id)->where('original_type', get_class($riga))->get();
-                        $perc_ev = $righe_ev->sum('qta') * 100 / $riga->qta;
-                        if ($perc_ev > 0) {
-                            echo '
+        // Visualizzazione evasione righe per documento
+        $evasione_bar = [];
+        $evasione_bar['dt_righe_ddt'] = 'info';
+        $evasione_bar['co_righe_documenti'] = 'primary';
+        $evasione_bar['in_righe_interventi'] = 'warning';
+        $evasione_bar['or_righe_ordini'] = 'success';
+        foreach ($evasione_bar as $table => $color) {
+            $righe_ev = $dbo->table($table)->where('original_id', $riga->id)->where('original_type', get_class($riga))->get();
+            $perc_ev = $righe_ev->sum('qta') * 100 / $riga->qta;
+            if ($perc_ev > 0) {
+                echo '
                             <div class="progress-bar progress-bar-'.$color.'" style="width:'.$perc_ev.'%"></div>';
-                        }
-                    }
-                    echo '
+            }
+        }
+        echo '
                     </div>
                 </td>';
 
         // Prezzi unitari
         echo '
                 <td class="text-right">';
-                    // Provvigione riga 
-                    if (abs($riga->provvigione_unitaria) > 0) {
-                        $text = provvigioneInfo($riga);
-                        echo '<span class="pull-left text-info" title="'.$text.'"><i class="fa fa-handshake-o"></i></span>';
-                    } 
-                    echo moneyFormat($riga->prezzo_unitario_corrente);
+        // Provvigione riga
+        if (abs($riga->provvigione_unitaria) > 0) {
+            $text = provvigioneInfo($riga);
+            echo '<span class="pull-left text-info" title="'.$text.'"><i class="fa fa-handshake-o"></i></span>';
+        }
+        echo moneyFormat($riga->prezzo_unitario_corrente);
 
         if ($dir == 'entrata' && $riga->costo_unitario != 0) {
             echo '
@@ -155,7 +155,7 @@ foreach ($righe as $riga) {
 
         echo '
                 </td>';
-                
+
         // Sconto unitario
         if (!$block_edit) {
             echo '
@@ -169,8 +169,8 @@ foreach ($righe as $riga) {
                 <td class="text-right">
                     '.moneyFormat($riga->importo);
 
-                    // Iva
-                    echo '
+        // Iva
+        echo '
                     <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' text-muted">'.$riga->aliquota->descrizione.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
                </td>';
     }
@@ -304,7 +304,7 @@ if ($totale != $netto_a_pagare) {
 }
 
 // Provvigione
-if(!empty($contratto->provvigione)) {
+if (!empty($contratto->provvigione)) {
     echo '
         <tr>
             <td colspan="'.$colspan.'" class="text-right">
@@ -325,7 +325,7 @@ if(!empty($contratto->provvigione)) {
             '.moneyFormat($netto_a_pagare - $contratto->provvigione, 2).'
         </td>
         <td></td>
-    </tr>';	
+    </tr>';
 }
 
 echo '

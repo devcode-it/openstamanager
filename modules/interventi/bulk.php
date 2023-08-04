@@ -21,12 +21,12 @@ include_once __DIR__.'/../../core.php';
 
 use Models\OperationLog;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Emails\Mail;
+use Modules\Emails\Template;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Tipo;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
-use Modules\Emails\Mail;
-use Modules\Emails\Template;
 use Util\Zip;
 
 // Segmenti
@@ -109,11 +109,9 @@ switch (post('op')) {
 
         // Lettura righe selezionate
         foreach ($interventi as $intervento) {
-
-            if (!empty($intervento['idclientefinale'])){
+            if (!empty($intervento['idclientefinale'])) {
                 $id_anagrafica = $intervento['idclientefinale'];
-            }
-            else {
+            } else {
                 $id_anagrafica = $intervento['idanagrafica'];
             }
 
@@ -139,7 +137,7 @@ switch (post('op')) {
                 }
             }
 
-            $descrizione = str_replace("'", " ", strip_tags($module->replacePlaceholders($intervento['id'], setting('Descrizione personalizzata in fatturazione')))) ?: tr('Attività numero _NUM_ del _DATE_', [
+            $descrizione = str_replace("'", ' ', strip_tags($module->replacePlaceholders($intervento['id'], setting('Descrizione personalizzata in fatturazione')))) ?: tr('Attività numero _NUM_ del _DATE_', [
                 '_NUM_' => $intervento['codice_intervento'],
                 '_DATE_' => Translator::dateToLocale($intervento['data']),
             ]);
@@ -256,7 +254,7 @@ switch (post('op')) {
             foreach ($impianti as $impianto) {
                 $dbo->insert('my_impianti_interventi', [
                     'idintervento' => $id_record,
-                    'idimpianto' => $impianto['idimpianto']
+                    'idimpianto' => $impianto['idimpianto'],
                 ]);
             }
 
@@ -264,7 +262,7 @@ switch (post('op')) {
             foreach ($componenti as $componente) {
                 $dbo->insert('my_componenti_interventi', [
                     'id_intervento' => $id_record,
-                    'id_componente' => $componente['id_componente']
+                    'id_componente' => $componente['id_componente'],
                 ]);
             }
         }
@@ -278,25 +276,24 @@ switch (post('op')) {
             $intervento = Intervento::find($id);
             try {
                 // Eliminazione associazioni tra interventi e contratti
-            $dbo->query('UPDATE co_promemoria SET idintervento = NULL WHERE idintervento='.prepare($id_record));
+                $dbo->query('UPDATE co_promemoria SET idintervento = NULL WHERE idintervento='.prepare($id_record));
 
-            $intervento->delete();
+                $intervento->delete();
 
-            // Elimino il collegamento al componente
-            $dbo->query('DELETE FROM my_componenti WHERE id_intervento='.prepare($id_record));
+                // Elimino il collegamento al componente
+                $dbo->query('DELETE FROM my_componenti WHERE id_intervento='.prepare($id_record));
 
-            // Eliminazione associazione tecnici collegati all'intervento
-            $dbo->query('DELETE FROM in_interventi_tecnici WHERE idintervento='.prepare($id_record));
+                // Eliminazione associazione tecnici collegati all'intervento
+                $dbo->query('DELETE FROM in_interventi_tecnici WHERE idintervento='.prepare($id_record));
 
-            // Eliminazione associazione interventi e my_impianti
-            $dbo->query('DELETE FROM my_impianti_interventi WHERE idintervento='.prepare($id_record));
+                // Eliminazione associazione interventi e my_impianti
+                $dbo->query('DELETE FROM my_impianti_interventi WHERE idintervento='.prepare($id_record));
 
-            // Elimino anche eventuali file caricati
-            Uploads::deleteLinked([
+                // Elimino anche eventuali file caricati
+                Uploads::deleteLinked([
                 'id_module' => $id_module,
                 'id_record' => $id_record,
             ]);
-
             } catch (InvalidArgumentException $e) {
             }
         }
@@ -305,14 +302,12 @@ switch (post('op')) {
 
         break;
 
-        
     case 'stampa-riepilogo':
         $_SESSION['superselect']['interventi'] = $id_records;
         $id_print = Prints::getPrints()['Riepilogo interventi'];
 
         redirect(base_path().'/pdfgen.php?id_print='.$id_print.'&tipo='.post('tipo'));
         exit();
-
 
     case 'send-mail':
         $template = Template::find(post('id_template'));
@@ -343,15 +338,15 @@ switch (post('op')) {
                         $mail = Mail::build(auth()->getUser(), $template, $id);
                         $creata_mail = true;
                     }
-                    
+
                     foreach ($referenti as $referente) {
                         if (!in_array($referente->email, $emails)) {
                             $emails[] = $referente->email;
                             $mail->addReceiver($referente->email);
-                        }   
+                        }
                     }
                 }
-                if ($creata_mail == true) {                        
+                if ($creata_mail == true) {
                     $mail->save();
                     OperationLog::setInfo('id_email', $mail->id);
                     OperationLog::setInfo('id_module', $id_module);
@@ -363,7 +358,7 @@ switch (post('op')) {
             }
         }
 
-        if ($list){
+        if ($list) {
             flash()->info(tr('Mail inviata per le attività _LIST_ !', [
                 '_LIST_' => implode(',', $list),
             ]));
@@ -394,7 +389,7 @@ if (App::debug()) {
         'data' => [
            'title' => tr('Fatturare gli _TYPE_ selezionati?', ['_TYPE_' => strtolower($module['name'])]).' <small><i class="fa fa-question-circle-o tip" title="'.tr('Verranno fatturati solo gli interventi completati non collegati a contratti o preventivi').'."></i></small>',
             'msg' => '{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle fatture di vendita non ancora emesse?').'</small>", "placeholder": "'.tr('Aggiungere alle fatture di vendita nello stato bozza?').'", "name": "accodare" ]}<br>
-            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(["id_module" => $id_fatture, 'is_sezionale' => 1]).', "value": "'.$id_segment.'", "select-options-escape": true ]}<br>
+            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_fatture, 'is_sezionale' => 1]).', "value": "'.$id_segment.'", "select-options-escape": true ]}<br>
             {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, CONCAT(codice_tipo_documento_fe, \' - \', descrizione) AS descrizione FROM co_tipidocumento WHERE enabled = 1 AND dir =\'entrata\' ORDER BY codice_tipo_documento_fe", "value": "'.$idtipodocumento.'" ]}',
             'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',

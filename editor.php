@@ -40,7 +40,7 @@ if (!empty($id_record)) {
     Util\Query::setSegments(true);
 }
 // Rimozione della condizione deleted_at IS NULL per visualizzare anche i record eliminati
-if (!empty($query)){
+if (!empty($query)) {
     if (preg_match('/[`]*([a-z0-9_]*)[`]*[\.]*([`]*deleted_at[`]* IS NULL)/i', $query, $m)) {
         $conditions_to_remove = [];
 
@@ -170,12 +170,12 @@ if (empty($record) || !$has_access) {
 
                             {( "name": "button", "type": "email", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "id_record": "'.$id_record.'" )}';
 
-                        if (Modules::get('Account SMS')) {
-                            echo '
+    if (Modules::get('Account SMS')) {
+        echo '
                             {( "name": "button", "type": "sms", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "id_record": "'.$id_record.'" )}';
-                        }
+    }
 
-                            echo '
+    echo '
 
                             <div class="btn-group" id="save-buttons">
                                 <a class="btn btn-success" id="'.(!empty($record['deleted_at']) ? 'restore' : 'save').'">

@@ -31,7 +31,7 @@ class HTMLWrapper implements WrapperInterface
         $result = '';
         $extra_class = '';
 
-        if( $values['type']=='checkbox' ){
+        if ($values['type'] == 'checkbox') {
             $extra_class = 'checkbox-group';
         }
 

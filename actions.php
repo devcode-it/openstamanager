@@ -54,26 +54,22 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
 
     // Gestione delle operazioni
     else {
-
         //UPLOAD PER CKEDITOR
         if (filter('op') == 'aggiungi-allegato' && !empty($_FILES) && !empty($_FILES['upload']['name'])) {
-
             $CKEditor = get('CKEditor');
             $funcNum = get('CKEditorFuncNum');
 
-            
-            $allowed_extension = array(
-                "png","jpg","jpeg"
-            );
+            $allowed_extension = [
+                'png', 'jpg', 'jpeg',
+            ];
 
             //Maximum file limit (unit: byte)
-            $max_size='2097152'; //2MB
+            $max_size = '2097152'; //2MB
 
             // Get image file extension
-            $file_extension = pathinfo($_FILES["upload"]["name"], PATHINFO_EXTENSION);
+            $file_extension = pathinfo($_FILES['upload']['name'], PATHINFO_EXTENSION);
 
-            if(in_array(strtolower($file_extension),$allowed_extension) && $_FILES["upload"]['size']<$max_size){
-
+            if (in_array(strtolower($file_extension), $allowed_extension) && $_FILES['upload']['size'] < $max_size) {
                 $upload = Uploads::upload($_FILES['upload'], [
                     'name' => filter('nome_allegato'),
                     'category' => filter('categoria'),
@@ -82,12 +78,12 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
                 ]);
 
                 // Upload da form
-                if (!empty($funcNum) ){
+                if (!empty($funcNum)) {
                     echo '
                     <link rel="stylesheet" type="text/css" href="'.$baseurl.'/assets/dist/css/app.min.css" />
                     <script src="'.$baseurl.'/assets/dist/js/app.min.js"></script>';
                 }
-                
+
                 // Creazione file fisico
                 if (!empty($upload)) {
                     //flash()->info(tr('File caricato correttamente!'));
@@ -98,11 +94,11 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
                     $response = [
                         'fileName' => basename($upload->filepath),
                         'uploaded' => 1,
-                        'url' => $upload->filepath
+                        'url' => $upload->filepath,
                     ];
 
                     // Upload da form
-                    if (!empty($funcNum) ){
+                    if (!empty($funcNum)) {
                         echo '
                         <script type="text/javascript">
                             $(document).ready(function() {
@@ -111,26 +107,20 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
                             });
                         </script>';
                     }
-                    
+
                     // Copia-incolla
                     else {
                         echo json_encode($response);
                     }
-                   
                 } else {
-
                     //flash()->error(tr('Errore durante il caricamento del file!'));
                     echo '<script type="text/javascript">  window.parent.toastr.error("'.tr('Errore durante il caricamento del file!').'"); </script>';
-                
                 }
-
-            }else{
-                
+            } else {
                 //flash()->error(tr('Estensione non permessa!'));
                 echo '<script type="text/javascript">  window.parent.toastr.error("'.tr('Estensione non permessa').'"); </script>';
-
             }
-            
+
             exit();
         }
 
@@ -184,7 +174,7 @@ elseif (filter('op') == 'download-allegato') {
 
 // Zip allegati
 elseif (filter('op') == 'download-zip-allegati') {
-    $rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($id_module).' AND id IN('.implode(',',json_decode(filter('id'))).')');
+    $rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($id_module).' AND id IN('.implode(',', json_decode(filter('id'))).')');
 
     $dir = base_dir().'/'.$module->upload_directory;
     directory($dir.'tmp/');
@@ -223,8 +213,8 @@ elseif (filter('op') == 'download-zip-allegati') {
 
 // Modifica dati di un allegato
 elseif (filter('op') == 'modifica-allegato') {
-    $id_allegati = explode(';',filter('id_allegati'));
-    
+    $id_allegati = explode(';', filter('id_allegati'));
+
     if (sizeof($id_allegati) == 1) {
         $upload = Upload::find($id_allegati[0]);
         $upload->name = post('nome_allegato');
@@ -477,7 +467,7 @@ HTMLBuilder\HTMLBuilder::setRecord($record);
 
 if ($structure->permission == 'rw') {
     // Esecuzione delle operazioni di gruppo
-    if (!empty(post('id_records'))){
+    if (!empty(post('id_records'))) {
         $id_records = post('id_records');
         $id_records = is_array($id_records) ? $id_records : explode(';', $id_records);
         $id_records = array_clean($id_records);

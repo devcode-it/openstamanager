@@ -19,7 +19,6 @@
 
 namespace HTMLBuilder\Manager;
 
-use Models\Setting;
 use Models\Upload;
 use Util\FileSystem;
 
@@ -48,11 +47,11 @@ class FileManager implements ManagerInterface
         // ID del form
         $attachment_id = 'attachments_'.$options['id_module'].'_'.$options['id_plugin'];
 
-        if (ini_get('upload_max_filesize') < ini_get('post_max_size')){
+        if (ini_get('upload_max_filesize') < ini_get('post_max_size')) {
             $upload_max_filesize = ini_get('upload_max_filesize');
-        }else if (ini_get('upload_max_filesize') > ini_get('post_max_size')){
+        } elseif (ini_get('upload_max_filesize') > ini_get('post_max_size')) {
             $upload_max_filesize = ini_get('post_max_size');
-        }else{
+        } else {
             $upload_max_filesize = ini_get('upload_max_filesize');
         }
 
@@ -212,13 +211,13 @@ class FileManager implements ManagerInterface
         <button type="button" class="btn btn-xs btn-default">
             <input class="pull-left unblockable" id="check_all_files" type="checkbox"/>
         </button>';
-        if (!$options['readonly']) {
-        $result .= '
+            if (!$options['readonly']) {
+                $result .= '
         <button type="button" class="btn btn-xs btn-default disabled" id="modifica_files" onclick="modificaAllegato(this,JSON.stringify(getSelectFiles()));">
             <i class="fa fa-edit"></i>
         </button>';
-        }
-        $result .= '
+            }
+            $result .= '
         <button type="button" class="btn btn-xs btn-default disabled" id="zip_files" onclick="scaricaZipAllegati(this,JSON.stringify(getSelectFiles()));">
             <i class="fa fa-file-archive-o"></i>
         </button>

@@ -28,11 +28,11 @@ $iva_predefinita = floatval(Aliquota::find(setting('Iva predefinita'))->percentu
 
 $km = $sessioni->sum('km');
 $ore = $sessioni->sum('ore');
-$imponibile = $tipo=='interno' ? $intervento->spesa : $intervento->imponibile;
-$sconto = $tipo=='interno' ? 0 : $intervento->sconto;
-$totale_imponibile = $tipo=='interno' ? $intervento->spesa : $intervento->totale_imponibile;
-$iva = $tipo=='interno' ? (($intervento->spesa * $iva_predefinita) / 100) : $intervento->iva;
-$totale_ivato = $tipo=='interno' ? ($intervento->spesa + $iva) : $intervento->totale;
+$imponibile = $tipo == 'interno' ? $intervento->spesa : $intervento->imponibile;
+$sconto = $tipo == 'interno' ? 0 : $intervento->sconto;
+$totale_imponibile = $tipo == 'interno' ? $intervento->spesa : $intervento->totale_imponibile;
+$iva = $tipo == 'interno' ? (($intervento->spesa * $iva_predefinita) / 100) : $intervento->iva;
+$totale_ivato = $tipo == 'interno' ? ($intervento->spesa + $iva) : $intervento->totale;
 
 $somma_km[] = $km;
 $somma_ore[] = $ore;
@@ -67,7 +67,7 @@ echo '
         <p><small><b>'.tr('Data richiesta').':</b> '.dateFormat($intervento->data_richiesta).'</small></p>
         <p><small><b>'.tr('Richiesta').':</b> '.$intervento->richiesta.'</p>';
     if ($intervento->descrizione) {
-    echo'
+        echo '
         <p><b>'.tr('Descrizione').':</b> '.$intervento->descrizione.'</small></p>';
     }
 
@@ -78,7 +78,7 @@ echo '
     }
 echo '
     </td>';
-    if( get('id_print')!=24 ){
+    if (get('id_print') != 24) {
         echo '
         <td class="text-center">'.($km).'</td>';
     }
@@ -94,7 +94,7 @@ if (count($sessioni) > 0) {
     echo '
 <tr>
     <td style="border-top: 0; border-bottom: 0;"></td>
-    <th style="background-color: #eee" colspan="'.( get('id_print')!=24 ? 3 : 2).'"><small>'.tr('Sessioni').'</small></th>
+    <th style="background-color: #eee" colspan="'.(get('id_print') != 24 ? 3 : 2).'"><small>'.tr('Sessioni').'</small></th>
     <th class="text-center" style="background-color: #eee"><small>'.tr('Data').'</small></th>
     <th class="text-center" style="background-color: #eee"><small>'.tr('Inizio').'</small></th>
     <th class="text-center" style="background-color: #eee"><small>'.tr('Fine').'</small></th>
@@ -104,7 +104,7 @@ if (count($sessioni) > 0) {
         echo '
 <tr>
     <td style="border-top: 0; border-bottom: 0;"></td>
-    <td colspan="'.( get('id_print')!=24 ? 3 : 2).'"><small>'.$sessione->anagrafica->ragione_sociale.' <small>('.$sessione->tipo->descrizione.')</small></td>
+    <td colspan="'.(get('id_print') != 24 ? 3 : 2).'"><small>'.$sessione->anagrafica->ragione_sociale.' <small>('.$sessione->tipo->descrizione.')</small></td>
     <td class="text-center"><small>'.dateFormat($sessione->orario_inizio).'</small></td>
     <td class="text-center"><small>'.timeFormat($sessione->orario_inizio).'</small></td>
     <td class="text-center"><small>'.timeFormat($sessione->orario_fine).'</small></td>
@@ -118,20 +118,20 @@ if (!$righe->isEmpty()) {
     echo '
 <tr>
     <td style="border-top: 0; border-bottom: 0;"></td>
-    <th style="background-color: #eee" colspan="'.( get('id_print')!=24 ? 3 : 2).'"><small>'.tr('Materiale utilizzato e spese aggiuntive').'</small></th>
+    <th style="background-color: #eee" colspan="'.(get('id_print') != 24 ? 3 : 2).'"><small>'.tr('Materiale utilizzato e spese aggiuntive').'</small></th>
     <th class="text-center" style="background-color: #eee"><small>'.tr('Qta').'</small></th>
-    <th class="text-center" style="background-color: #eee"><small>'.($tipo=='interno' ? tr('Costo unitario') : tr('Prezzo unitario')).'</small></th>
-    <th class="text-center" style="background-color: #eee"><small>'.($tipo=='interno' ? tr('Costo netto') : tr('Imponibile')).'</small></th>
+    <th class="text-center" style="background-color: #eee"><small>'.($tipo == 'interno' ? tr('Costo unitario') : tr('Prezzo unitario')).'</small></th>
+    <th class="text-center" style="background-color: #eee"><small>'.($tipo == 'interno' ? tr('Costo netto') : tr('Imponibile')).'</small></th>
 </tr>';
 
     foreach ($righe as $riga) {
-        $prezzo = $tipo=='interno' ? $riga->costo_unitario : $riga->prezzo_unitario;
-        $totale = $tipo=='interno' ? $riga->spesa : $riga->totale_imponibile;
+        $prezzo = $tipo == 'interno' ? $riga->costo_unitario : $riga->prezzo_unitario;
+        $totale = $tipo == 'interno' ? $riga->spesa : $riga->totale_imponibile;
 
         echo '
 <tr>
     <td style="border-top: 0; border-bottom: 0;"></td>
-    <td colspan="'.( get('id_print')!=24 ? 3 : 2).'"><small>'.$riga->descrizione.'</small></td>
+    <td colspan="'.(get('id_print') != 24 ? 3 : 2).'"><small>'.$riga->descrizione.'</small></td>
     <td class="text-center"><small>'.$riga->qta.' '.$riga->um.'</small></td>
     <td class="text-center"><small>'.($pricing ? moneyFormat($prezzo) : '-').'</small></td>
     <td class="text-center"><small>'.($pricing ? moneyFormat($totale) : '-').'</small></td>

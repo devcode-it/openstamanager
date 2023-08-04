@@ -110,7 +110,7 @@ class Preventivo extends Document
         if (!empty($id_agente)) {
             $model->idagente = $id_agente;
         }
-        
+
         $model->condizioni_fornitura = setting('Condizioni generali di fornitura preventivi');
         $model->id_segment = $id_segment;
 
@@ -280,12 +280,12 @@ class Preventivo extends Document
         $this->save();
 
         //cambio stato agli interventi solo se sto fatturando il preventivo
-        if ($trigger->getDocument() instanceof Fattura){
+        if ($trigger->getDocument() instanceof Fattura) {
             // Trasferimento degli interventi collegati
             $interventi = $this->interventi;
             $stato_intervento = \Modules\Interventi\Stato::where('codice', $codice_intervento)->first();
             foreach ($interventi as $intervento) {
-                if ($intervento->stato->is_completato==1) {
+                if ($intervento->stato->is_completato == 1) {
                     $intervento->stato()->associate($stato_intervento);
                     $intervento->save();
                 }

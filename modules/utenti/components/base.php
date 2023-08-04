@@ -20,16 +20,16 @@
 include_once __DIR__.'/../../core.php';
 
 if (!empty(filter('idanagrafica'))) {
-	$utente['id_anagrafica'] = filter('idanagrafica');
-}else{
-	$current_idgruppo = $dbo->fetchOne('SELECT `id` FROM `zz_groups` WHERE `id` = '.prepare($id_record))['id'];
+    $utente['id_anagrafica'] = filter('idanagrafica');
+} else {
+    $current_idgruppo = $dbo->fetchOne('SELECT `id` FROM `zz_groups` WHERE `id` = '.prepare($id_record))['id'];
 }
 
 echo '
 
 	<div class="row">
 		<div class="col-md-12">
-		{[ "type": "select", "label": "'.tr('Gruppo di appartenenza').'", "name": "idgruppo", "required": 1, "ajax-source": "gruppi", "value": "'.(!empty($utente['idgruppo']) ? $utente['idgruppo'] : $current_idgruppo ).'", "icon-after": "add|'.Modules::get('Utenti e permessi')['id'].'", "readonly": "'.(($utente['id'] == '1') ? 1 : 0).'" ]}
+		{[ "type": "select", "label": "'.tr('Gruppo di appartenenza').'", "name": "idgruppo", "required": 1, "ajax-source": "gruppi", "value": "'.(!empty($utente['idgruppo']) ? $utente['idgruppo'] : $current_idgruppo).'", "icon-after": "add|'.Modules::get('Utenti e permessi')['id'].'", "readonly": "'.(($utente['id'] == '1') ? 1 : 0).'" ]}
 		</div>
 	</div>';
 

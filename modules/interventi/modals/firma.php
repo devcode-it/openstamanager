@@ -33,7 +33,7 @@ foreach ($id_records as $id) {
     $intervento = Intervento::find($id);
 
     if ($intervento->stato->is_completato) {
-        $interventi_completati[] = $id; 
+        $interventi_completati[] = $id;
     } elseif ($intervento->firma_file) {
         $interventi_firmati[] = $id;
         $records[] = $id;
@@ -61,9 +61,9 @@ echo '
                         </tr>
                     </thead>
                     <tbody>';
-                    foreach ($interventi_da_firmare as $id) {
-                        $intervento = Intervento::find($id);
-                        echo '
+                foreach ($interventi_da_firmare as $id) {
+                    $intervento = Intervento::find($id);
+                    echo '
                         <tr>
                             <td>
                                 '.Modules::link('Interventi', $intervento->id, tr('Intervento num. _NUM_ del _DATE_', [
@@ -75,8 +75,8 @@ echo '
                                 '.Prints::getLink($template, $id, 'btn btn-xs btn-primary', '', 'fa fa-print').'
                             </td>
                         <tr>';
-                    }
-                    echo '
+                }
+                echo '
                     </tbody>
                 </table>';
             } else {
@@ -103,9 +103,9 @@ echo '
                         </tr>
                     </thead>
                     <tbody>';
-                    foreach ($interventi_firmati as $id) {
-                        $intervento = Intervento::find($id);
-                        echo '
+                foreach ($interventi_firmati as $id) {
+                    $intervento = Intervento::find($id);
+                    echo '
                         <tr>
                             <td>
                                 '.Modules::link('Interventi', $intervento->id, tr('Intervento num. _NUM_ del _DATE_', [
@@ -117,8 +117,8 @@ echo '
                                 '.Prints::getLink($template, $id, 'btn btn-xs btn-primary', '', 'fa fa-print').'
                             </td>
                         <tr>';
-                    }
-                    echo '
+                }
+                echo '
                     </tbody>
                 </table>';
             } else {
@@ -145,9 +145,9 @@ echo '
                         </tr>
                     </thead>
                     <tbody>';
-                    foreach ($interventi_completati as $id) {
-                        $intervento = Intervento::find($id);
-                        echo '
+                foreach ($interventi_completati as $id) {
+                    $intervento = Intervento::find($id);
+                    echo '
                         <tr>
                             <td>
                                 '.Modules::link('Interventi', $intervento->id, tr('Intervento num. _NUM_ del _DATE_', [
@@ -159,13 +159,13 @@ echo '
                                 '.Prints::getLink($template, $id, 'btn btn-xs btn-primary', '', 'fa fa-print').'
                             </td>
                         <tr>';
-                    }
-                    echo '
+                }
+                echo '
                     </tbody>
                 </table>
                 <br>
                 <div class="alert alert-warning">
-                    <i class="fa fa-warning"></i> '.tr("Questi interventi non verranno firmati").'
+                    <i class="fa fa-warning"></i> '.tr('Questi interventi non verranno firmati').'
                 </div>';
             } else {
                 echo 'Nessun Intervento..';

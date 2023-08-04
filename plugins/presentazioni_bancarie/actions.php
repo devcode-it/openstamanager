@@ -1,19 +1,19 @@
 <?php
 
 use Carbon\Carbon;
-use Plugins\PresentazioniBancarie\Gestore;
 use Modules\Scadenzario\Scadenza;
+use Plugins\PresentazioniBancarie\Gestore;
 
 include_once __DIR__.'/init.php';
 
 switch (filter('op')) {
     case 'generate':
         $id_scadenze = filter('scadenze');
-        $sequenze = (array)filter('sequenze');
+        $sequenze = (array) filter('sequenze');
 
         $codice_sequenza = [];
 
-        foreach($sequenze AS $sequenza){
+        foreach ($sequenze as $sequenza) {
             $id_scadenza = explode('-', $sequenza)[0];
             $codice = explode('-', $sequenza)[1];
 

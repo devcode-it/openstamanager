@@ -28,11 +28,11 @@ echo '
     <div class="panel-body">
         <div class="row">
             <div class="col-md-6">
-                <span><b>'.tr("Codice: ").'</b>'.$articolo->codice.'</span>
+                <span><b>'.tr('Codice: ').'</b>'.$articolo->codice.'</span>
             </div>
 
             <div class="col-md-6">
-                <span><b>'.tr("Descrizione: ").'</b>'.$articolo->descrizione.'</span>
+                <span><b>'.tr('Descrizione: ').'</b>'.$articolo->descrizione.'</span>
             </div>
         </div>
     </div>
@@ -143,7 +143,7 @@ if (!empty($movimenti)) {
                 </td>';
 
         // Data
-        $utente = $dbo->table('zz_users')->where('id',$movimento->idutente)->first();
+        $utente = $dbo->table('zz_users')->where('id', $movimento->idutente)->first();
         $data = ($movimento->data ? $movimento->data : $movimento->data_movimento);
         echo '
                 <td class="text-center">'.dateFormat($data).' <span  class="tip" title="'.tr('Creazione movimento: _DATE_ <br>Creatore movimento: _USER_', [

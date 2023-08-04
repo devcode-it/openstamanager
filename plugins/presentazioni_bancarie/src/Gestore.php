@@ -4,16 +4,16 @@ namespace Plugins\PresentazioniBancarie;
 
 use Carbon\Carbon;
 use DateTime;
-use Plugins\PresentazioniBancarie\Cbi\Intestazione;
-use Plugins\PresentazioniBancarie\Cbi\RiBa;
-use Plugins\PresentazioniBancarie\Cbi\Ricevuta;
-use Plugins\PresentazioniBancarie\Cbi\CbiSepa;
 use Digitick\Sepa\PaymentInformation;
 use Digitick\Sepa\TransferFile\Factory\TransferFileFacadeFactory;
 use Exception;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Banche\Banca;
 use Modules\Scadenzario\Scadenza;
+use Plugins\PresentazioniBancarie\Cbi\CbiSepa;
+use Plugins\PresentazioniBancarie\Cbi\Intestazione;
+use Plugins\PresentazioniBancarie\Cbi\RiBa;
+use Plugins\PresentazioniBancarie\Cbi\Ricevuta;
 use Sdd\DirectDebit as DirectDebitCBI;
 use Sdd\DirectDebit\GroupHeader as HeaderCBI;
 use Sdd\DirectDebit\Payment as PaymentCBI;
@@ -178,14 +178,14 @@ class Gestore
         $importo = $scadenza->da_pagare - $scadenza->pagato;
         $totale = (abs($scadenza->da_pagare) - abs($scadenza->pagato));
 
-        $is_credito_diretto = ($direzione == 'uscita' && in_array($pagamento->codice_modalita_pagamento_fe, ['MP09', 'MP10', 'MP11', 'MP19', 'MP20', 'MP21'])) || (empty($documento) && $importo < 0 && $ctgypurp != "SALA");
+        $is_credito_diretto = ($direzione == 'uscita' && in_array($pagamento->codice_modalita_pagamento_fe, ['MP09', 'MP10', 'MP11', 'MP19', 'MP20', 'MP21'])) || (empty($documento) && $importo < 0 && $ctgypurp != 'SALA');
         $is_debito_diretto = $direzione == 'entrata' && in_array($pagamento->codice_modalita_pagamento_fe, ['MP09', 'MP10', 'MP11', 'MP19', 'MP20', 'MP21']) && !empty($this->banca_azienda->creditor_id); // Mandato SEPA disponibile
         $is_riba = $direzione == 'entrata' && in_array($pagamento->codice_modalita_pagamento_fe, ['MP12']) && !empty($this->banca_azienda->codice_sia);
-        $is_bonifico = $direzione == 'uscita' && in_array($pagamento->codice_modalita_pagamento_fe, ['MP05']) && !empty($this->banca_azienda->codice_sia) || (empty($documento) && $importo < 0 && $ctgypurp == "SALA");
+        $is_bonifico = $direzione == 'uscita' && in_array($pagamento->codice_modalita_pagamento_fe, ['MP05']) && !empty($this->banca_azienda->codice_sia) || (empty($documento) && $importo < 0 && $ctgypurp == 'SALA');
 
-        if(in_array($pagamento->codice_modalita_pagamento_fe, ['MP19', 'MP21'])){
+        if (in_array($pagamento->codice_modalita_pagamento_fe, ['MP19', 'MP21'])) {
             $method = 'B2B';
-        }else if(in_array($pagamento->codice_modalita_pagamento_fe, ['MP20'])){
+        } elseif (in_array($pagamento->codice_modalita_pagamento_fe, ['MP20'])) {
             $method = 'CORE';
         }
 
@@ -194,7 +194,8 @@ class Gestore
         } elseif ($is_debito_diretto) {
             return $this->aggiungiDebitoDiretto($identifier, $controparte, $banca_controparte, $descrizione, $totale, $scadenza->scadenza, $method, $codice_sequenza);
         } elseif ($is_riba) {
-            $totale = $totale*100;
+            $totale = $totale * 100;
+
             return $this->aggiungiRiBa($identifier, $controparte, $banca_controparte, $descrizione, $totale, $scadenza->scadenza);
         } elseif ($is_bonifico) {
             return $this->aggiungiBonifico($identifier, $controparte, $banca_controparte, $descrizione, $totale, $scadenza->scadenza, $ctgypurp);
@@ -230,7 +231,7 @@ class Gestore
         $ricevuta->abi_banca = $abi_cliente;
         $ricevuta->cab_banca = $cab_cliente;
         $ricevuta->codice_cliente = $controparte['codice'];
-        
+
         //controlli sulla ragione sociale
         $ragione_sociale = utf8_decode($controparte['ragione_sociale']);
 
@@ -282,7 +283,7 @@ class Gestore
             if ($ric->identificativo_debitore == $identificativo_debitore) {
                 $ricevuta = $ric;
             }
-        } 
+        }
 
         if (empty($ricevuta)) {
             $ricevuta = new Ricevuta();
@@ -294,17 +295,17 @@ class Gestore
             $ricevuta->iban = $banca_controparte['iban'];
             $ricevuta->codice_cliente = $controparte['codice'];
             $ricevuta->ctgypurp = $ctgypurp;
-            
+
             //controlli sulla ragione sociale
             $ragione_sociale = utf8_decode($controparte['ragione_sociale']);
-    
+
             // Sostituzione di alcuni simboli noti
             $replaces = [
                 '&#039;' => "'",
                 '&quot;' => "'",
             ];
             $ragione_sociale = str_replace(array_keys($replaces), array_values($replaces), $ragione_sociale);
-    
+
             $ricevuta->nome_debitore = strtoupper($ragione_sociale);
             $ricevuta->identificativo_debitore = $identificativo_debitore;
             $ricevuta->indirizzo_debitore = strtoupper($controparte['indirizzo']);
@@ -313,7 +314,7 @@ class Gestore
             $ricevuta->provincia_debitore = $controparte['provincia'];
             $ricevuta->descrizione_banca = $descrizione_banca;
             $ricevuta->descrizione = strtoupper($descrizione);
-    
+
             $this->bonifico->addRicevuta($ricevuta);
         } else {
             $ricevuta->importo += $totale;
@@ -337,7 +338,7 @@ class Gestore
         ]);
 
         $this->credito_diretto->addTransfer($id, [
-            'amount' => $totale*100,
+            'amount' => $totale * 100,
             'creditorIban' => $banca_controparte->iban,
             'creditorBic' => $banca_controparte->bic,
             'creditorName' => $controparte->ragione_sociale,
@@ -367,7 +368,7 @@ class Gestore
         // Add a Single Transaction to the named payment
         $mandato = $this->getMandato($banca_controparte);
         $this->debito_diretto->addTransfer($id, [
-            'amount' => $totale*100,
+            'amount' => $totale * 100,
             'debtorName' => $controparte->ragione_sociale,
             'debtorIban' => $banca_controparte->iban,
             'debtorBic' => $banca_controparte->bic,
@@ -390,7 +391,7 @@ class Gestore
             ->setRequestedExecutionDate($data_prevista->format('Y-m-d'))
             ->setLocalMethod($method)
             ->setServiceLevel('SEPA')
-            ->setSeqType(($codice_sequenza!=''?$codice_sequenza:'RCUR'));
+            ->setSeqType(($codice_sequenza != '' ? $codice_sequenza : 'RCUR'));
 
         $mandato = $this->getMandato($banca_controparte);
         $payment = new PaymentCBI();
@@ -540,7 +541,7 @@ class Gestore
     {
         if (database()->tableExists('co_mandati_sepa')) {
             return database()->fetchOne('SELECT * FROM co_mandati_sepa WHERE id_banca = '.prepare($banca->id));
-        } else{
+        } else {
             return [];
         }
     }

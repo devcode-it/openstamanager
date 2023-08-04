@@ -160,17 +160,17 @@ if (!empty($elementi)) {
             '_DATE_' => Translator::dateToLocale($elemento['data']),
         ]);
 
-		if ($elemento['tipo_documento'] == 'Intervento') {
-			$modulo = 'Interventi';
-		} else {
-			$modulo = 'Contratti';
-		}
-		$id = $elemento['id'];
+        if ($elemento['tipo_documento'] == 'Intervento') {
+            $modulo = 'Interventi';
+        } else {
+            $modulo = 'Contratti';
+        }
+        $id = $elemento['id'];
 
-		echo '
+        echo '
             <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
     }
-	$class = "disabled";
+    $class = 'disabled';
 
     echo '
         </ul>

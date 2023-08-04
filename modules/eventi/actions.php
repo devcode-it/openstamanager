@@ -27,20 +27,18 @@ switch (post('op')) {
         $id_regione = post('id_regione');
         $is_recurring = post('is_recurring');
         $is_bank_holiday = post('is_bank_holiday');
-       
+
         if ($dbo->fetchNum('SELECT * FROM `zz_events` WHERE `nome`='.prepare($nome).' AND `id`!='.prepare($id_record)) == 0) {
-            
             $dbo->update('zz_events', [
                 'nome' => $nome,
                 'data' => $data,
-                'id_nazione' =>$id_nazione,
+                'id_nazione' => $id_nazione,
                 'id_regione' => $id_regione,
                 'is_recurring' => $is_recurring,
                 'is_bank_holiday' => $is_bank_holiday,
             ], [
                 'id' => $id_record,
             ]);
-
 
             flash()->info(tr('Salvataggio completato.'));
         } else {
@@ -56,7 +54,6 @@ switch (post('op')) {
         $data = post('data');
         $id_nazione = post('id_nazione');
         if ($dbo->fetchNum('SELECT * FROM `zz_events` WHERE `id_nazione` = '.prepare($id_nazione).' AND `nome`='.prepare($nome).' AND `data`='.prepare($data)) == 0) {
-           
             $dbo->insert('zz_events', [
                 'nome' => $nome,
                 'data' => $data,
@@ -81,7 +78,6 @@ switch (post('op')) {
         break;
 
     case 'delete':
-       
         $dbo->delete('zz_events', [
             'id' => $id_record,
         ]);

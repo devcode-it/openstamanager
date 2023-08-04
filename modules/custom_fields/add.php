@@ -42,14 +42,14 @@ include_once __DIR__.'/../../core.php';
     <div class="row">
 		<div class="col-md-12">
 			<?php
-			echo input([
+            echo input([
                 'type' => 'textarea',
                 'label' => tr('Codice'),
                 'name' => 'content',
-				'required' => 1,
+                'required' => 1,
                 'value' => '{[ "type": "text", "label": "|label|", "name": "|name|", "value": "|value|" ]}',
             ]);
-			?>
+            ?>
 		</div>
 	</div>
 

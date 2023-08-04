@@ -18,7 +18,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
- 
+
 $tipo = get('tipo');
 
 echo '
@@ -30,9 +30,9 @@ echo '
             <th colspan="2"><small>'.tr('Documento', [], ['upper' => true]).'</small></th>
             <th class="text-center" style="width:8%"><small>'.tr('KM', [], ['upper' => true]).'</small></th>
             <th class="text-center" style="width:8%"><small>'.tr('Ore', [], ['upper' => true]).'</small></th>
-            <th class="text-center" style="width:15%"><small>'.($tipo=='interno' ? tr('Costo totale', [], ['upper' => true]) : tr('Imponibile', [], ['upper' => true])).'</th>
+            <th class="text-center" style="width:15%"><small>'.($tipo == 'interno' ? tr('Costo totale', [], ['upper' => true]) : tr('Imponibile', [], ['upper' => true])).'</th>
             <th class="text-center" style="width:15%"><small>'.tr('Sconto', [], ['upper' => true]).'</small></th>
-            <th class="text-center" style="width:15%"><small>'.($tipo=='interno' ? tr('Costo netto', [], ['upper' => true]) : tr('Totale imponibile', [], ['upper' => true])).'</small></th>
+            <th class="text-center" style="width:15%"><small>'.($tipo == 'interno' ? tr('Costo netto', [], ['upper' => true]) : tr('Totale imponibile', [], ['upper' => true])).'</small></th>
         </tr>
     </thead>
 

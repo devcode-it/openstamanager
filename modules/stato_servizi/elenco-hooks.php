@@ -46,7 +46,6 @@ foreach ($gruppi as $modulo => $hooks) {
     <tbody>';
 
     foreach ($hooks as $hook) {
-
         $class = $hook['enabled'] ? 'success' : 'warning';
         $nome_tipo = 'hook';
 
@@ -88,11 +87,7 @@ foreach ($gruppi as $modulo => $hooks) {
             </td>
         </tr>';
     }
-
-  
-
 }
-
 
 echo '<tr><td colspan="3"><p>&nbsp;</p><button type="button" class="btn btn-danger btn-xs pull-right" onclick="svuotaCacheHooks(this)">
     <i class="fa fa-trash" title="'.tr('Svuota cache degli hooks').'"></i> '.tr('Svuota cache').'</button>
@@ -100,7 +95,6 @@ echo '<tr><td colspan="3"><p>&nbsp;</p><button type="button" class="btn btn-dang
 
 echo '
 </tbody>';
-
 
 echo '
 </table>

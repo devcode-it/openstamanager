@@ -116,7 +116,7 @@ class Zip
      */
     public static function check($path)
     {
-        $zip = new ZipArchive;
+        $zip = new ZipArchive();
         $errno = $zip->open($path);
         $errno = $zip->close();
 

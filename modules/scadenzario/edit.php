@@ -75,9 +75,8 @@ if (!empty($documento)) {
                         <tr>
                             <th>'.tr('Netto a pagare').':</th>
                             <td>'.moneyFormat($documento->netto).'</td>
-                        </tr>';             
+                        </tr>';
 } else {
-    
     $scadenza = $dbo->fetchOne('SELECT * FROM co_scadenziario WHERE id = '.prepare($id_record));
     echo '
                         <tr>
@@ -97,22 +96,22 @@ echo '
                         </tr>
 
                         <tr>
-                            <th>'.tr('Info distinta').' <span class="tip" title="'.tr("Informazioni/Note sulla distinta associata alla scadenza (es. numero)").'" ><i class="fa fa-question-circle-o" ></i></span>:</th>
+                            <th>'.tr('Info distinta').' <span class="tip" title="'.tr('Informazioni/Note sulla distinta associata alla scadenza (es. numero)').'" ><i class="fa fa-question-circle-o" ></i></span>:</th>
                             <td>
                                 {[ "type": "text", "name": "distinta", "value": "'.$record['distinta'].'" ]}
                             </td>
                         </tr>';
 
-                        if( !empty($record['presentazioni_exported_at']) ){
-                            $export_riba = '<i class="fa fa-check text-success"></i> '.tr('Esportata il _DATA_',[
+                        if (!empty($record['presentazioni_exported_at'])) {
+                            $export_riba = '<i class="fa fa-check text-success"></i> '.tr('Esportata il _DATA_', [
                                 '_DATA_' => Translator::timestampToLocale($record['presentazioni_exported_at']),
                             ]).'';
-                        }else{
+                        } else {
                             $export_riba = '<i class="fa fa-clock-o text-warning"></i> '.tr('Non ancora esportata');
                         }
 echo '
                     </table>';
-        
+
             if (!empty($documento)) {
                 echo Modules::link($documento->module, $record['iddocumento'], '<i class="fa fa-folder-open"></i> '.tr('Apri documento'), null, 'class="btn btn-primary"');
             }
@@ -212,11 +211,11 @@ if ($totale_da_pagare != 0) {
 
 <?php
 if (empty($documento)) {
-    echo '
+                            echo '
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> '.tr('Elimina').'
 </a>';
-}
+                        }
 
 echo '
 <table class="hide">

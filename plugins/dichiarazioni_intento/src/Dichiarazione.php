@@ -76,8 +76,8 @@ class Dichiarazione extends Model
         $fatture = $this->fatture;
         $totale = 0;
         foreach ($fatture as $fattura) {
-            foreach( $fattura->getRighe() as $riga){
-                if( $riga->aliquota->codice_natura_fe == 'N3.5' ){
+            foreach ($fattura->getRighe() as $riga) {
+                if ($riga->aliquota->codice_natura_fe == 'N3.5') {
                     $totale += ($fattura->tipo->reversed ? -$riga->totale_imponibile : $riga->totale_imponibile);
                 }
             }

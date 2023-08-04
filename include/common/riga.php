@@ -36,7 +36,7 @@ echo '
 // Quantità
 echo '
         <div class="col-md-'.$width.'">
-            {[ "type": "number", "label": "'.tr('Q.tà').'", "name": "qta", "required": 1, "value": "'.abs((float) $result['qta']).'", "decimals": "qta"'.(isset($result['max_qta']) ? ', "icon-after": "<span class=\"tip\" title=\"'.tr("L'elemento è collegato a un documento: la quantità massima ammessa è relativa allo stato di evasione dell'elemento nel documento di origine (quantità dell'elemento / quantità massima ammessa)").'\">/ '.numberFormat(abs((float) $result['max_qta']), 'qta').' <i class=\"fa fa-question-circle-o\"></i></span>"' : '').', "min-value": "'.abs((float)  $result['qta_evasa']).'" ]}
+            {[ "type": "number", "label": "'.tr('Q.tà').'", "name": "qta", "required": 1, "value": "'.abs((float) $result['qta']).'", "decimals": "qta"'.(isset($result['max_qta']) ? ', "icon-after": "<span class=\"tip\" title=\"'.tr("L'elemento è collegato a un documento: la quantità massima ammessa è relativa allo stato di evasione dell'elemento nel documento di origine (quantità dell'elemento / quantità massima ammessa)").'\">/ '.numberFormat(abs((float) $result['max_qta']), 'qta').' <i class=\"fa fa-question-circle-o\"></i></span>"' : '').', "min-value": "'.abs((float) $result['qta_evasa']).'" ]}
         </div>';
 
 // Unità di misura
@@ -47,9 +47,9 @@ echo '
 
 // Unità di misura
 if ($options['dir'] == 'uscita' && $articolo['fattore_um_secondaria']) {
-echo '
+    echo '
         <div class="col-md-3">
-            {[ "type": "number", "label": "'.tr('Q.tà secondaria').'", "name": "fattore_um_secondaria", "value": "'.abs((float)$articolo['fattore_um_secondaria'] * $result['qta']).'", "icon-after": "'.$articolo['um_secondaria'].'" ]}
+            {[ "type": "number", "label": "'.tr('Q.tà secondaria').'", "name": "fattore_um_secondaria", "value": "'.abs((float) $articolo['fattore_um_secondaria'] * $result['qta']).'", "icon-after": "'.$articolo['um_secondaria'].'" ]}
         </div>
         
         <script>
@@ -216,9 +216,9 @@ if ($options['dir'] == 'entrata') {
     <div class="row">
         <div class="col-md-4 margine"></div>
         <div class="col-md-4 prezzi"></div>';
-        
-        // Provvigione
-        echo '
+
+    // Provvigione
+    echo '
         <div class="col-md-4">
             <div class="sconto"></div>
             {[ "type": "number", "label": "'.tr('Provvigione unitaria').'", "name": "provvigione", "value": "'.($result['provvigione_percentuale'] ?: ($result['provvigione_unitaria'] ?: $result['provvigione_default'])).'", "icon-after": "choice|untprc|'.($result['tipo_provvigione'] ?: $result['tipo_provvigione_default']).'", "help": "'.tr('Provvigione destinata all\'agente.').'", "min-value": "0" ]}

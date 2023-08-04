@@ -409,12 +409,13 @@ class Anagrafica extends Model
 
         if ($this->isTipo('Cliente')) {
             $database->update('co_pianodeiconti3', ['descrizione' => $this->ragione_sociale], ['id' => $this->idconto_cliente]);
-        } 
-        
+        }
+
         if ($this->isTipo('Fornitore')) {
             $database->update('co_pianodeiconti3', ['descrizione' => $this->ragione_sociale], ['id' => $this->idconto_fornitore]);
         }
     }
+
     protected function fixRagioneSociale()
     {
         if (!empty($this->cognome) || !empty($this->nome)) {

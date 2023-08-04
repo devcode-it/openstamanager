@@ -21,7 +21,7 @@ include_once __DIR__.'/../riepilogo_interventi/bottom.php';
 
 $budget = get_imponibile_ordine($id_record);
 $somma_totale_imponibile = get_totale_interventi_ordine($id_record);
-$rapporto = floatval($budget) - floatval($somma_totale_imponibile) - $documento->provvigione;;
+$rapporto = floatval($budget) - floatval($somma_totale_imponibile) - $documento->provvigione;
 
 if ($pricing && empty($options['dir'])) {
     // Totale imponibile

@@ -39,7 +39,7 @@ echo '
 		</div>
 
 		<div class="col-md-2">
-			{[ "type": "text", "label": "'.tr('Progressivo int.').'", "name": "numero_progressivo", "required": 1, "help": "'.tr("Progressivo ad uso interno").'" ]}
+			{[ "type": "text", "label": "'.tr('Progressivo int.').'", "name": "numero_progressivo", "required": 1, "help": "'.tr('Progressivo ad uso interno').'" ]}
 		</div>
 
 		<div class="col-md-3">

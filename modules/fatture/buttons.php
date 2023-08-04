@@ -29,14 +29,14 @@ if ($module->name == 'Fatture di vendita') {
 }
 
 if ($dir == 'entrata' || !empty($abilita_autofattura)) {
-echo '
+    echo '
 <div class="btn-group">
     <button type="button" class="btn btn-primary unblockable dropdown-toggle '.(((!empty($record['ref_documento']) || $record['stato'] != 'Bozza') and (empty($record['is_reversed']) || !empty($abilita_autofattura))) ? '' : 'disabled').'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i class="fa fa-magic"></i> '.tr('Crea').'
         <span class="caret"></span>
     </button>';
     if ($dir == 'entrata') {
-    echo '
+        echo '
     <ul class="dropdown-menu dropdown-menu-right">
         <li><a href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=nota_addebito&backto=record-edit">
             '.tr('Nota di debito').'
@@ -47,19 +47,19 @@ echo '
         </a></li>
     </ul>';
     } elseif (!empty($abilita_autofattura)) {
-    echo '
+        echo '
     <ul class="dropdown-menu dropdown-menu-right">
         <li><a data-href="'.base_path().'/modules/fatture/crea_autofattura.php?id_module='.$id_module.'&id_record='.$id_record.'&iddocumento='.$id_record.'" data-title="Aggiungi autofattura">
             '.tr('Autofattura').'
         </a></li>
-    </ul>';  
+    </ul>';
     }
-echo '
+    echo '
 </div>';
 }
 
 if (empty($record['is_fiscale'])) {
-    $msg = '<br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(["id_module" => $id_module, 'is_sezionale' => 1, 'is_fiscale' => 1]).', "select-options-escape": true ]}
+    $msg = '<br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_sezionale' => 1, 'is_fiscale' => 1]).', "select-options-escape": true ]}
     {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "value": "-now-" ]}';
 
     echo '
@@ -92,7 +92,6 @@ if (!empty($record['is_fiscale'])) {
 
     // Aggiunta prima nota solo se non c'è già, se non si è in bozza o se il pagamento non è completo
     $prima_nota_presente = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE iddocumento = '.prepare($id_record).' AND primanota = 1');
-
 
     $registrazione_contabile = 0;
     if ($differenza != 0 || (!$prima_nota_presente && $record['stato'] == 'Emessa')) {

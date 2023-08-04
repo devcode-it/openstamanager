@@ -21,21 +21,17 @@ include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'set_groups':
-
-        $id_gruppi = explode(",",post('gruppi', true)[0]);
+        $id_gruppi = explode(',', post('gruppi', true)[0]);
 
         foreach ($id_records as $id) {
-
             // Aggiornamento dei permessi relativi
-            $dbo->sync('zz_group_segment', ['id_segment' => $id],  ['id_gruppo' => (array) $id_gruppi]);
-                
+            $dbo->sync('zz_group_segment', ['id_segment' => $id], ['id_gruppo' => (array) $id_gruppi]);
         }
 
         flash()->info(tr('Gruppi con accesso ai segmenti aggiornati!'));
-        
+
         break;
 }
-
 
 $operations['set_groups'] = [
     'text' => '<span><i class="fa fa-users"></i> '.tr('Imposta l\'accesso ai segmenti').'</span>',
@@ -47,6 +43,5 @@ $operations['set_groups'] = [
         'blank' => false,
     ],
 ];
-
 
 return $operations;

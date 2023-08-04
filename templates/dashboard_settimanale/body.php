@@ -54,7 +54,7 @@ $calendar = $_SESSION['dashboard'];
 $date_start = $calendar['date_week_start'];
 $date_end = date('Y-m-d', strtotime('+1 day', strtotime($calendar['date_week_end'])));
 
-$title = date('d/m/Y', strtotime($date_start))." - ".date('d/m/Y', strtotime($date_end));
+$title = date('d/m/Y', strtotime($date_start)).' - '.date('d/m/Y', strtotime($date_end));
 
 $min_date = new Carbon($date_start);
 $max_date = new Carbon($date_end);
@@ -144,7 +144,7 @@ for ($i = 0; $i < $count; $i = $i + 7) {
         }
 
         echo '
-        <div class="divCell" style="background:'.$background.'">'.(!empty($clienti)?$clienti:'&nbsp;').'</div>';
+        <div class="divCell" style="background:'.$background.'">'.(!empty($clienti) ? $clienti : '&nbsp;').'</div>';
     }
 
     echo '

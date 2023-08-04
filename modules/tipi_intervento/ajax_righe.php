@@ -6,7 +6,7 @@ if (file_exists(__DIR__.'/../../../core.php')) {
     include_once __DIR__.'/../../core.php';
 }
 
-$righe = $dbo->fetchArray("SELECT * FROM in_righe_tipiinterventi WHERE id_tipointervento=".prepare($id_record));
+$righe = $dbo->fetchArray('SELECT * FROM in_righe_tipiinterventi WHERE id_tipointervento='.prepare($id_record));
 
     echo '
     <table class="table table-striped table-condensed table-hover table-bordered">
@@ -20,11 +20,11 @@ $righe = $dbo->fetchArray("SELECT * FROM in_righe_tipiinterventi WHERE id_tipoin
             <th class="text-center" width="8%">'.tr('#').'</th>
         </tr>';
 
-    foreach($righe as $riga){
-        $rs = $dbo->fetchArray("SELECT percentuale FROM co_iva WHERE id=".$riga['idiva']);
-        $iva = ($riga['subtotale'] * $rs[0]['percentuale'])/100;
+    foreach ($righe as $riga) {
+        $rs = $dbo->fetchArray('SELECT percentuale FROM co_iva WHERE id='.$riga['idiva']);
+        $iva = ($riga['subtotale'] * $rs[0]['percentuale']) / 100;
 
-        echo'
+        echo '
             <tr>
                 <td class="text-left">'.$riga['descrizione'].'</td>
                 <td class="text-right">'.number_format($riga['qta'], 2, ',', '.').' '.$riga['um'].'</td>
@@ -36,18 +36,17 @@ $righe = $dbo->fetchArray("SELECT * FROM in_righe_tipiinterventi WHERE id_tipoin
             </tr>';
     }
 
-    echo'
+    echo '
     </table>';
-
 
 ?>
 
 <script type="text/javascript">
     function elimina_riga( id ){
-        $.post('<?php echo $module->fileurl('actions.php');?>', { op: 'delriga', idriga: id }, function(data, result){
+        $.post('<?php echo $module->fileurl('actions.php'); ?>', { op: 'delriga', idriga: id }, function(data, result){
             if( result=='success' ){
                 //ricarico l'elenco delle righe
-                $('#righe').load( '<?php echo $module->fileurl('ajax_righe.php');?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
+                $('#righe').load( '<?php echo $module->fileurl('ajax_righe.php'); ?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
             }
         });
     }

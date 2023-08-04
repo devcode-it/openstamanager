@@ -80,7 +80,7 @@ if (!empty($query)) {
     $align = [];
     $row = isset($rows[0]) ? $rows[0] : [];
     foreach ($row as $field => $value) {
-        if (!empty($value)){
+        if (!empty($value)) {
             $value = trim($value);
         }
 

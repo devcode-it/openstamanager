@@ -186,7 +186,7 @@ class Articolo extends Model
                 $prezzo_vendita = $prezzo_vendita * (1 + $percentuale_aliquota / 100);
             }
 
-            $this->setPrezzoVendita(round($prezzo_vendita,2), $this->idiva_vendita);
+            $this->setPrezzoVendita(round($prezzo_vendita, 2), $this->idiva_vendita);
         }
     }
 
@@ -296,7 +296,7 @@ class Articolo extends Model
                 'idsede',
                 database()->raw('SUM(qta) AS qta')
             )->groupBy(['idsede']);
-        
+
         if (!empty($data)) {
             $movimenti = $movimenti->where('data', '<=', \Carbon\Carbon::parse($data)->format('Y-m-d'));
         }
@@ -306,7 +306,7 @@ class Articolo extends Model
                 return [$item->idsede => (float) $item->attributes['qta']];
             })
             ->toArray();
-        
+
         return $movimenti;
     }
 

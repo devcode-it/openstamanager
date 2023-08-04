@@ -281,7 +281,6 @@ if ($has_ritenuta) {
         --$first_colspan;
     }
 
-    
     echo '
     <tr>';
     if (!empty($ritenuta_acconto_totale)) {

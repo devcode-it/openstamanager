@@ -22,11 +22,8 @@ namespace API\App\v1;
 use API\App\AppResource;
 use Auth;
 use Carbon\Carbon;
-use Modules\Checklists\Checklist;
-use Modules\Checklists\ChecklistItem;
-use Modules\Checklists\Check;
-use Modules\Interventi\Intervento;
 use Models\User;
+use Modules\Checklists\Check;
 
 class Checklists extends AppResource
 {
@@ -65,7 +62,7 @@ class Checklists extends AppResource
             $records = database()->fetchArray($query, [
                 ':period_end' => $end,
                 ':period_start' => $start,
-                ':id_tecnico' => $user->id
+                ':id_tecnico' => $user->id,
             ]);
             $da_interventi = array_column($records, 'id');
         }
@@ -115,7 +112,7 @@ class Checklists extends AppResource
         $records = database()->fetchArray($query, [
             ':period_start' => $start,
             ':period_end' => $end,
-            ':id_tecnico' => $user->id
+            ':id_tecnico' => $user->id,
         ]);
 
         return $this->mapModifiedRecords($records);
@@ -124,7 +121,7 @@ class Checklists extends AppResource
     public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
-        $query = "SELECT zz_checks.id,
+        $query = 'SELECT zz_checks.id,
             zz_checks.id_record AS id_intervento,
             zz_checks.checked_at,
             zz_checks.content,
@@ -133,7 +130,7 @@ class Checklists extends AppResource
             zz_checks.checked_by,
             zz_checks.order AS ordine
         FROM zz_checks
-        WHERE zz_checks.id = ".prepare($id);
+        WHERE zz_checks.id = '.prepare($id);
 
         $record = database()->fetchOne($query);
 
@@ -144,11 +141,11 @@ class Checklists extends AppResource
     {
         $check = Check::find($data['id']);
 
-        $check->checked_at = (!empty($data['checked_at']) ? $data['checked_at'] : NULL);
+        $check->checked_at = (!empty($data['checked_at']) ? $data['checked_at'] : null);
         $check->content = $data['content'];
         $check->note = $data['note'];
         $user = User::where('idanagrafica', $data['checked_by'])->first();
-        if(!empty($user)){
+        if (!empty($user)) {
             $check->checked_by = $user->id;
         }
 

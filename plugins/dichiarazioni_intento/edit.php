@@ -38,7 +38,7 @@ echo '
 		</div>
 
 		<div class="col-md-2">
-			{[ "type": "text", "label": "'.tr('Progressivo int.').'", "name": "numero_progressivo", "required": 1, "value": "'.$record['numero_progressivo'].'", "help": "'.tr("Progressivo ad uso interno").'" ]}
+			{[ "type": "text", "label": "'.tr('Progressivo int.').'", "name": "numero_progressivo", "required": 1, "value": "'.$record['numero_progressivo'].'", "help": "'.tr('Progressivo ad uso interno').'" ]}
 		</div>	
 
 		<div class="col-md-3">
@@ -99,8 +99,8 @@ if (!empty($elementi)) {
 	<div class="box box-warning collapsable collapsed-box">
 		<div class="box-header with-border">
 			<h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
-				'_NUM_' => count($elementi),
-			]).'</h3>
+                '_NUM_' => count($elementi),
+            ]).'</h3>
 			<div class="box-tools pull-right">
 				<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
 			</div>
@@ -108,21 +108,21 @@ if (!empty($elementi)) {
 		<div class="box-body">
 			<ul>';
 
-		foreach ($elementi as $elemento) {
-			$descrizione = tr('_DOC_  _NUM_ del _DATE_ _DELETED_AT_', [
-			'_DOC_' => $elemento['tipo_documento'],
-			'_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
-			'_DATE_' => Translator::dateToLocale($elemento['data']),
-			'_DELETED_AT_' => (!empty($elemento['deleted_at']) ? tr('Eliminato il:').' '.Translator::dateToLocale($elemento['deleted_at']) : ''),
-		]);
-			$modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
-			$id = $elemento['id'];
+    foreach ($elementi as $elemento) {
+        $descrizione = tr('_DOC_  _NUM_ del _DATE_ _DELETED_AT_', [
+            '_DOC_' => $elemento['tipo_documento'],
+            '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
+            '_DATE_' => Translator::dateToLocale($elemento['data']),
+            '_DELETED_AT_' => (!empty($elemento['deleted_at']) ? tr('Eliminato il:').' '.Translator::dateToLocale($elemento['deleted_at']) : ''),
+        ]);
+        $modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
+        $id = $elemento['id'];
 
-			echo '
+        echo '
 				<li>'.Modules::link($modulo, $id, $descrizione).'</li>';
-		}
+    }
 
-		echo '
+    echo '
 			</ul>
 		</div>
 	</div>';

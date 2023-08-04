@@ -62,8 +62,8 @@ echo "      <table class='table'>
 foreach ($checks as $check) {
     echo renderChecklist($check);
 }
-echo "          </tbody>
-            </table>";
+echo '          </tbody>
+            </table>';
 
     echo '
         </div>
@@ -174,5 +174,3 @@ function reload(){
 }
 
 </script>';
-
-?>

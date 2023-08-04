@@ -215,7 +215,7 @@ class CSV extends CSVImporter
         // Count the numbers of rows in a CSV
         $number = 0;
         foreach ($this->csv as $row) {
-            $number++;
+            ++$number;
         }
 
         // Lettura primo record: se non c'è la pulizia listini da fare, esco, altrimenti
@@ -417,7 +417,7 @@ class CSV extends CSVImporter
             $id_sede = $sede->id ?: 0;
         }
 
-        if( isset($record['qta']) ) {
+        if (isset($record['qta'])) {
             $giacenze = $articolo->getGiacenze($record['data_qta']);
             $qta_movimento = $nuova_qta - $giacenze[$id_sede][0];
 
@@ -480,10 +480,10 @@ class CSV extends CSVImporter
             $fornitore->save();
         }
 
-        // Imposto fornitore e prezzo predefinito 
+        // Imposto fornitore e prezzo predefinito
         $listino_id_fornitore = DettaglioPrezzo::dettaglioPredefinito($articolo->id, $dettagli['id_fornitore'], 'uscita')->first();
         if (!empty($listino_id_fornitore)) {
-            $prezzo_acquisto = $listino_id_fornitore->prezzo_unitario - ($listino_id_fornitore->prezzo_unitario*$listino_id_fornitore->sconto_percentuale) / 100;
+            $prezzo_acquisto = $listino_id_fornitore->prezzo_unitario - ($listino_id_fornitore->prezzo_unitario * $listino_id_fornitore->sconto_percentuale) / 100;
             $articolo->prezzo_acquisto = $prezzo_acquisto;
             $articolo->id_fornitore = $dettagli['id_fornitore'];
             $articolo->save();

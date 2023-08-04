@@ -66,7 +66,7 @@ switch (post('op')) {
         foreach ($id_records as $id) {
             $articolo = Articolo::find($id);
 
-            if (empty((int)$articolo->coefficiente)) {
+            if (empty((int) $articolo->coefficiente)) {
                 $prezzo_partenza = post('prezzo_partenza') == 'vendita' ? $articolo->prezzo_vendita : $articolo->prezzo_acquisto;
                 $aliquota_iva = floatval(Aliquota::find($articolo->idiva_vendita)->percentuale);
 
@@ -92,7 +92,7 @@ switch (post('op')) {
                 $articolo->setPrezzoVendita($new_prezzo_vendita, $articolo->idiva_vendita);
                 $articolo->save();
             } else {
-                $articoli_coeff++;
+                ++$articoli_coeff;
             }
         }
 
@@ -111,7 +111,7 @@ switch (post('op')) {
             $coefficiente = post('coefficiente');
 
             $articolo->coefficiente = $coefficiente;
-            $articolo->prezzo_vendita = $articolo->prezzo_acquisto*$coefficiente;
+            $articolo->prezzo_vendita = $articolo->prezzo_acquisto * $coefficiente;
             $articolo->save();
         }
 
@@ -155,7 +155,6 @@ switch (post('op')) {
 
         redirect(base_path().'/pdfgen.php?id_print='.$id_print.'&id_record='.Articolo::where('codice', '!=', '')->first()->id);
         exit();
-
 
     case 'change-qta':
         $descrizione = post('descrizione');
@@ -221,7 +220,6 @@ switch (post('op')) {
         redirect(base_path().'/editor.php?id_module='.Modules::get('Preventivi')['id'].'&id_record='.$id_preventivo);
         exit();
 
-
     case 'export-csv':
         $file = temp_file();
         $exporter = new CSV($file);
@@ -286,14 +284,14 @@ switch (post('op')) {
         foreach ($id_records as $id) {
             $articolo = Articolo::find($id);
 
-            if ($articolo->prezzo_acquisto==0 && empty($articolo->idfornitore)) {
+            if ($articolo->prezzo_acquisto == 0 && empty($articolo->idfornitore)) {
                 $new_prezzo_acquisto = $dbo->fetchOne('SELECT (prezzo_unitario-sconto_unitario) AS prezzo_acquisto FROM co_righe_documenti LEFT JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id LEFT JOIN co_tipidocumento ON co_tipidocumento.id=co_documenti.idtipodocumento WHERE idarticolo='.prepare($id).' AND dir="uscita" ORDER BY co_documenti.data DESC, co_righe_documenti.id DESC LIMIT 0,1')['prezzo_acquisto'];
 
                 $articolo->prezzo_acquisto = $new_prezzo_acquisto;
                 $articolo->save();
 
-                if ($new_prezzo_acquisto!=0) {
-                    $n_art++;
+                if ($new_prezzo_acquisto != 0) {
+                    ++$n_art;
                 }
             }
         }
@@ -389,7 +387,7 @@ switch (post('op')) {
                     'tipo_provvigione' => post('tipo_provvigione'),
                 ]);
             }
-            $n_art++;
+            ++$n_art;
         }
 
         flash()->info(tr('Provvigioni inserite correttamente!', [
@@ -489,7 +487,7 @@ $operations['crea-preventivo'] = [
         'msg' => tr('Ogni articolo selezionato, verrà aggiunto al preventivo').'
         <br><br>{[ "type": "text", "label": "'.tr('Nome preventivo').'", "name": "nome", "required": 1 ]}
         {[ "type": "select", "label": "'.tr('Cliente').'", "name": "id_cliente", "ajax-source": "clienti", "required": 1 ]}
-        {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(["id_module" => $id_preventivi, 'is_sezionale' => 1]).', "value": "'.$id_segment.'", "select-options-escape": true ]}
+        {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_preventivi, 'is_sezionale' => 1]).', "value": "'.$id_segment.'", "select-options-escape": true ]}
         {[ "type": "select", "label": "'.tr('Tipo di attività').'", "name": "id_tipo", "ajax-source": "tipiintervento", "required": 1 ]}
         {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "value": "-now-" ]}',
         'button' => tr('Procedi'),

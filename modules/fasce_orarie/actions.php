@@ -29,14 +29,13 @@ switch (post('op')) {
         $is_predefined = post('is_predefined');
 
         if ($dbo->fetchNum('SELECT * FROM `in_fasceorarie` WHERE `nome`='.prepare($nome).' AND `id`!='.prepare($id_record)) == 0) {
-
             if (!empty($is_predefined)) {
                 $dbo->query('UPDATE in_fasceorarie SET is_predefined = 0');
             }
-            
+
             $dbo->update('in_fasceorarie', [
                 'nome' => $nome,
-                'giorni' => $giorni ? implode(',' , $giorni) : null,
+                'giorni' => $giorni ? implode(',', $giorni) : null,
                 'ora_inizio' => $ora_inizio,
                 'ora_fine' => $ora_fine,
                 'include_bank_holidays' => $include_bank_holidays,
@@ -60,7 +59,6 @@ switch (post('op')) {
         $ora_fine = post('ora_fine');
 
         if ($dbo->fetchNum('SELECT * FROM `in_fasceorarie` WHERE `nome`='.prepare($nome)) == 0) {
-           
             $dbo->insert('in_fasceorarie', [
                 'nome' => $nome,
                 'ora_inizio' => $ora_inizio,

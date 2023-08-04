@@ -25,7 +25,7 @@ use Plugins\ListinoClienti\DettaglioPrezzo;
 
 switch (post('op')) {
     case 'copy_listino':
-        $id_anagrafiche = explode(",",post('idanagrafica', true)[0]);
+        $id_anagrafiche = explode(',', post('idanagrafica', true)[0]);
 
         // Lettura righe selezionate
         foreach ($id_records as $id) {
@@ -44,7 +44,7 @@ switch (post('op')) {
                 $anagrafica = Anagrafica::find($id_anagrafica);
 
                 if ($listino['id_anagrafica'] != $id_anagrafica) {
-                    if ($minimo==null && $massimo==null) {
+                    if ($minimo == null && $massimo == null) {
                         // Salvataggio del prezzo predefinito
                         $prezzo_unitario = $listino['prezzo_unitario'];
                         $sconto = $listino['sconto_percentuale'];
@@ -64,7 +64,7 @@ switch (post('op')) {
                                 $articolo->save();
                             }
 
-                            $numero_totale++;
+                            ++$numero_totale;
                         }
                     } else {
                         $dettaglio = DettaglioPrezzo::build($articolo, $anagrafica, $direzione);
@@ -75,7 +75,7 @@ switch (post('op')) {
                         $dettaglio->setPrezzoUnitario($prezzo_unitario);
                         $dettaglio->save();
 
-                        $numero_totale++;
+                        ++$numero_totale;
                     }
                 }
             }
@@ -91,7 +91,6 @@ switch (post('op')) {
         break;
 
     case 'change_prezzo':
-
         foreach ($id_records as $id) {
             $listino = DettaglioPrezzo::find($id);
 
@@ -108,7 +107,7 @@ switch (post('op')) {
 
 $segment = $dbo->selectOne('zz_segments', 'name', ['id' => $_SESSION['module_'.$id_module]['id_segment']])['name'];
 
-if ($segment!='Tutti') {
+if ($segment != 'Tutti') {
     $operations['copy_listino'] = [
         'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Copia _TYPE_', ['_TYPE_' => strtolower($module['name'])]),
         'data' => [
@@ -141,8 +140,5 @@ $operations['change_prezzo'] = [
         'blank' => false,
     ],
 ];
-
-
-
 
 return $operations;

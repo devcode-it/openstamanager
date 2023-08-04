@@ -23,9 +23,8 @@ use Modules\Contratti\Contratto;
 use Modules\Interventi\Intervento;
 
 /**
-* Calcolo imponibile contratto (totale_righe - sconto)
+ * Calcolo imponibile contratto (totale_righe - sconto).
  */
-
 function get_imponibile_contratto($idcontratto)
 {
     $contratto = Contratto::find($idcontratto);
@@ -33,10 +32,8 @@ function get_imponibile_contratto($idcontratto)
     return $contratto->totale_imponibile;
 }
 
-
 function get_totale_interventi_contratto($idcontratto)
 {
-  
     $interventi = Intervento::where('id_contratto', $idcontratto)->get();
     $array_interventi = $interventi->toArray();
 

@@ -19,18 +19,13 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\PrimaNota\Mastrino;
-use Util\Zip;
-
 switch (post('op')) {
     case 'export-bulk':
-
         $_SESSION['superselect']['mastrini'] = $id_records;
 
         $print = Prints::getModulePredefinedPrint($id_module);
-        header("location: ".$rootdir."/pdfgen.php?id_print=".$print['id']."&id_record=".$id_records[0]);
+        header('location: '.$rootdir.'/pdfgen.php?id_print='.$print['id'].'&id_record='.$id_records[0]);
         exit;
-
 }
 
 return [

@@ -214,27 +214,26 @@ class Query
                         $value = trim(str_replace(['&lt;', '&gt;'], '', $value));
 
                         if ($more || $minus) {
-                            list($giorno, $mese, $anno)=explode('/', $value);
-                            $data="'".$anno."-".$mese."-".$giorno."'";
-                            if( $data!="'1970-01-01'" ){
+                            list($giorno, $mese, $anno) = explode('/', $value);
+                            $data = "'".$anno.'-'.$mese.'-'.$giorno."'";
+                            if ($data != "'1970-01-01'") {
                                 $search_filters[] = $search_query.' '.$sign.' '.$data.'';
-                            }else{
+                            } else {
                                 $search_filters[] = 'CAST('.$search_query.' AS UNSIGNED) '.$sign.' '.prepare($value);
                             }
                         } else {
                             $search_filters[] = $search_query.' '.$sign.' '.prepare($value);
                         }
-                
-                    } else if ($equal){
+                    } elseif ($equal) {
                         $value = trim(str_replace(['='], '', $value));
-                        $search_filters[] = ($search_query.' = '.prepare($value). ' OR '.$search_query.' LIKE '.prepare('% '.$value) . ' OR '.$search_query.' LIKE '.prepare($value.' %').' OR '.$search_query.' LIKE '.prepare('% '.$value.' %'));
-                    } else if ($notequal) {
+                        $search_filters[] = ($search_query.' = '.prepare($value).' OR '.$search_query.' LIKE '.prepare('% '.$value).' OR '.$search_query.' LIKE '.prepare($value.' %').' OR '.$search_query.' LIKE '.prepare('% '.$value.' %'));
+                    } elseif ($notequal) {
                         $value = trim(str_replace(['!='], '', $value));
-                        $search_filters[] = ($search_query.' != '.prepare($value). ' AND '.$search_query.' NOT LIKE '.prepare('% '.$value) . ' AND '.$search_query.' NOT LIKE '.prepare($value.' %').' AND '.$search_query.' NOT LIKE '.prepare('% '.$value.' %'));
-                    }  else if ($start_with) {
+                        $search_filters[] = ($search_query.' != '.prepare($value).' AND '.$search_query.' NOT LIKE '.prepare('% '.$value).' AND '.$search_query.' NOT LIKE '.prepare($value.' %').' AND '.$search_query.' NOT LIKE '.prepare('% '.$value.' %'));
+                    } elseif ($start_with) {
                         $value = trim(str_replace(['^'], '', $value));
                         $search_filters[] = ($search_query.' LIKE '.prepare($value.'%'));
-                    } else if ($end_with) {
+                    } elseif ($end_with) {
                         $value = trim(str_replace(['$'], '', $value));
                         $search_filters[] = ($search_query.' LIKE '.prepare('%'.$value));
                     } else {
@@ -397,13 +396,13 @@ class Query
             $select[] = $view['query'].(!empty($view['name']) ? " AS '".$view['name']."'" : '');
 
             if (!empty($view['visible'])) {
-                if (!empty($view['name'])){
+                if (!empty($view['name'])) {
                     $view['name'] = trim($view['name']);
                 }
-                if (!empty($view['search_inside'])){
+                if (!empty($view['search_inside'])) {
                     $view['search_inside'] = trim($view['search_inside']);
                 }
-                if (!empty($view['order_by'])){
+                if (!empty($view['order_by'])) {
                     $view['order_by'] = trim($view['order_by']);
                 }
 

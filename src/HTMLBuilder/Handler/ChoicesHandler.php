@@ -69,10 +69,10 @@ class ChoicesHandler implements HandlerInterface
         $values['placeholder'] = isset($values['placeholder']) ? $values['placeholder'] : $values['label'];
 
         // Gestione valori custom
-        if ( !empty($values['values']) ){
-            $valori_custom = explode(",",$values['values']);
-            $options = '<span class="text-success">'.str_replace('"','',$valori_custom[0]).'</span>
-            <span class="text-danger">'.str_replace('"','',$valori_custom[1]).'</span>';
+        if (!empty($values['values'])) {
+            $valori_custom = explode(',', $values['values']);
+            $options = '<span class="text-success">'.str_replace('"', '', $valori_custom[0]).'</span>
+            <span class="text-danger">'.str_replace('"', '', $valori_custom[1]).'</span>';
         }
 
         // Generazione del codice HTML
@@ -86,13 +86,13 @@ class ChoicesHandler implements HandlerInterface
                 <span class="fa fa-close text-danger"></span>
             </label>
             <label for="|id|" class="btn btn-default active'.$class.'">';
-                if( !empty($options) ){
-                    $result .= $options;
-                }else{
-                    $result .= '
+        if (!empty($options)) {
+            $result .= $options;
+        } else {
+            $result .= '
                     <span class="text-success">'.tr('Attivato').'</span>
                     <span class="text-danger">'.tr('Disattivato').'</span>';
-                }
+        }
         $result .= '
             </label>
         </div>';

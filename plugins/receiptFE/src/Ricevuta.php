@@ -193,25 +193,25 @@ class Ricevuta
 
         $descrizione = null;
         // Processo la ricevuta e salvo data ricezione, codice e messaggio
-        if ($codice == 'RC'){
-             // Consegnata
+        if ($codice == 'RC') {
+            // Consegnata
             $descrizione = $this->xml['Destinatario']['Descrizione'];
-        }else if ($codice == 'AT'){
+        } elseif ($codice == 'AT') {
             // Attestazione Trasmissione
             $descrizione = $this->xml['Destinatario']['Descrizione'];
-        }else if ($codice == 'MC'){
+        } elseif ($codice == 'MC') {
             // Mancata Consegna
             $descrizione = $this->xml['Descrizione'];
-        }else if ($codice == 'EC01' || $codice == 'EC02'){
+        } elseif ($codice == 'EC01' || $codice == 'EC02') {
             // Esito Committente
             $descrizione = $this->xml['Descrizione'];
-        }else if ($codice == 'DT'){
+        } elseif ($codice == 'DT') {
             // Decorrenza Termini
             $descrizione = $this->xml['Descrizione'];
-        }else if ($codice == 'NE'){
+        } elseif ($codice == 'NE') {
             // Notifica Esito
             $descrizione = $this->xml['EsitoCommittente']['Descrizione'];
-        }else if ($codice == 'NS'){
+        } elseif ($codice == 'NS') {
             // Scartata
             $descrizione = $this->xml['ListaErrori']['Errore']['Descrizione'];
         }

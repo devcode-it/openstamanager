@@ -28,7 +28,7 @@ include_once __DIR__.'/../../core.php';
 
     <div class="row">
 	<?php
-    
+
     //Controllo se alla prima nota solo collegate più fatture
     $rs_doc = $dbo->fetchArray('SELECT DISTINCT iddocumento, (SELECT IFNULL(numero_esterno, numero) FROM co_documenti WHERE id=co_movimenti.iddocumento) AS numero FROM co_movimenti WHERE idmastrino='.prepare($record['idmastrino']).' AND iddocumento!=0');
 

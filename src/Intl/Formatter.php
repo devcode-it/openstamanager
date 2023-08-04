@@ -421,7 +421,6 @@ class Formatter
      */
     public function formatDate($value)
     {
-       
         $object = DateTime::createFromFormat(static::$standards['date'], (string) $value);
 
         // Fallback per la gestione dei timestamp
@@ -430,7 +429,6 @@ class Formatter
         $result = is_object($object) ? $object->format($this->getDatePattern()) : false;
 
         return $result;
-      
     }
 
     /**

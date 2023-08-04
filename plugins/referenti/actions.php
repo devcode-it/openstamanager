@@ -26,23 +26,22 @@ $operazione = filter('op');
 switch ($operazione) {
     case 'addreferente':
         if (!empty(post('nome'))) {
-
             $nome = post('nome');
             $idmansione = post('idmansione');
             $idsede = post('idsede');
             $opt_out_newsletter = post('disable_newsletter');
-            
+
             $referente = Referente::build($id_parent, $nome, $idmansione, $idsede);
             $id_record = $referente->id;
 
             $referente->telefono = post('telefono');
             $referente->email = post('email');
             $referente->enable_newsletter = empty($opt_out_newsletter);
-    
+
             $referente->save();
 
             if (isAjaxRequest() && !empty($id_record)) {
-                echo json_encode(['id' => $id_record, 'text' =>  $referente->nome]);
+                echo json_encode(['id' => $id_record, 'text' => $referente->nome]);
             }
 
             flash()->info(tr('Aggiunto nuovo referente!'));

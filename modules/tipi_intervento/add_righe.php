@@ -33,7 +33,6 @@ if (empty($idriga)) {
     $id_iva = $rsr[0]['idiva'];
     $prezzo_vendita = $rsr[0]['prezzo_vendita'];
     $prezzo_acquisto = $rsr[0]['prezzo_acquisto'];
-
 }
 
 /*
@@ -107,10 +106,10 @@ echo '
                 $('#modals > div').modal('hide');
 
                 // Ricarico le righe
-                $('#righe').load('<?php echo $module->fileurl('ajax_righe.php');?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
+                $('#righe').load('<?php echo $module->fileurl('ajax_righe.php'); ?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
 
                 // Ricarico la tabella dei costi
-                $('#costi').load('<?php echo $module->fileurl('ajax_righe.php');?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
+                $('#costi').load('<?php echo $module->fileurl('ajax_righe.php'); ?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
             }
         });
     });

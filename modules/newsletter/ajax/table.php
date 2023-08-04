@@ -4,7 +4,6 @@ use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Referente;
 use Modules\Anagrafiche\Sede;
-use Modules\Emails\Mail;
 use Modules\ListeNewsletter\Lista;
 use Modules\Newsletter\Newsletter;
 

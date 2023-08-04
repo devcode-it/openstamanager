@@ -179,7 +179,6 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
         return $this->calcola('provvigione');
     }
 
-
     /**
      * Calcola il totale imponibile del documento.
      *
@@ -230,7 +229,7 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
         return $this->calcola('margine');
     }
 
-       /**
+    /**
      * Restituisce il margine percentuale del documento.
      *
      * @return float

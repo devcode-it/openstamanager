@@ -18,15 +18,15 @@
  */
 
 include_once __DIR__.'/../../../core.php';
-use Modules\Checklists\ChecklistItem;
 use Modules\Checklists\Check;
+use Modules\Checklists\ChecklistItem;
 
-$id_record = get("id_record");
-$main_check = get("main_check");
+$id_record = get('id_record');
+$main_check = get('main_check');
 
-if($main_check){
+if ($main_check) {
     $record = ChecklistItem::find($id_record);
-}else{
+} else {
     $record = Check::find($id_record);
 }
 
@@ -40,7 +40,7 @@ if($main_check){
             'label' => tr('Descrizione'),
             'name' => 'content_edit',
             'required' => 1,
-            'value' => htmlentities($record->content)
+            'value' => htmlentities($record->content),
         ]);
     ?>
     </div>
@@ -48,7 +48,7 @@ if($main_check){
 
 <div class="row">
     <div class="col-md-4">
-        {[ "type": "checkbox", "label": "<?php echo tr('Utilizza come titolo'); ?>", "name": "is_titolo", "value": "<?php echo $record->is_titolo ?>" ]}
+        {[ "type": "checkbox", "label": "<?php echo tr('Utilizza come titolo'); ?>", "name": "is_titolo", "value": "<?php echo $record->is_titolo; ?>" ]}
     </div>
 
     <div class="col-md-8 text-right">
@@ -64,10 +64,10 @@ if($main_check){
 
         $.post('<?php echo $rootdir; ?>/modules/checklists/ajax.php', {
             op: "edit_check",
-            id_record: "<?=$id_record?>",
+            id_record: "<?php echo $id_record; ?>",
             content: input('content_edit').get(),
             is_titolo: input('is_titolo').get(),
-            main_check: "<?=$main_check?>",
+            main_check: "<?php echo $main_check; ?>",
         }, function(){
             location.reload();
         });

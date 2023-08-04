@@ -62,7 +62,7 @@ switch ($op) {
         Auth::logout();
 
         redirect(base_path().'/index.php');
-        exit();      
+        exit();
 }
 
 if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) {

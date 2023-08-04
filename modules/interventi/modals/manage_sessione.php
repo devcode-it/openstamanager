@@ -37,7 +37,7 @@ $intervento = Intervento::find($id_record);
 
 if (!empty($intervento->id_contratto)) {
     $query = 'SELECT in_tipiintervento.idtipointervento AS id, descrizione, co_contratti_tipiintervento.costo_ore AS prezzo_ore_unitario, co_contratti_tipiintervento.costo_km AS prezzo_km_unitario, co_contratti_tipiintervento.costo_dirittochiamata AS prezzo_dirittochiamata FROM in_tipiintervento JOIN co_contratti_tipiintervento ON in_tipiintervento.idtipointervento = co_contratti_tipiintervento.idtipointervento WHERE co_contratti_tipiintervento.idcontratto = '.prepare($intervento->id_contratto).' AND in_tipiintervento.deleted_at IS NULL ORDER BY descrizione';
-} else{
+} else {
     $query = 'SELECT in_tipiintervento.idtipointervento AS id, descrizione, in_tariffe.costo_ore AS prezzo_ore_unitario, in_tariffe.costo_km AS prezzo_km_unitario, in_tariffe.costo_dirittochiamata AS prezzo_dirittochiamata FROM in_tipiintervento JOIN in_tariffe ON in_tipiintervento.idtipointervento = in_tariffe.idtipointervento WHERE in_tariffe.idtecnico = '.prepare($sessione['idtecnico']).' AND in_tipiintervento.deleted_at IS NULL ORDER BY descrizione';
 }
 echo '

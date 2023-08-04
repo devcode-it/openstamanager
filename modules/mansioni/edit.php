@@ -65,9 +65,8 @@ if (!empty($elementi)) {
         '_ANAGRAFICA_' => $elemento['ragione_sociale'],
     ]);
 
-        
-    $plugin = 'Referenti';
-    $id = $elemento['idanagrafica'];
+        $plugin = 'Referenti';
+        $id = $elemento['idanagrafica'];
 
         echo '
             <li>'.Plugins::link($plugin, $id, $descrizione).'</li>';

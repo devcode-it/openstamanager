@@ -175,10 +175,9 @@ switch (filter('op')) {
         // Selezione da lista newsletter
         $id_list = post('id_list');
         if (!empty($id_list)) {
-
             //Aggiornamento della lista
             $lista = Lista::find($id_list);
-            $query =  $lista->query;
+            $query = $lista->query;
             if (check_query($query)) {
                 $lista->query = html_entity_decode($query);
             }

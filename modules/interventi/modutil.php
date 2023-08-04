@@ -26,9 +26,9 @@ use Modules\Emails\Template;
 use Modules\Fatture\Components\Descrizione;
 use Modules\Fatture\Components\Riga;
 use Modules\Fatture\Fattura;
+use Modules\Interventi\Components\Riga as RigaIntervento;
 use Modules\Interventi\Components\Sessione;
 use Modules\Interventi\Intervento;
-use Modules\Interventi\Components\Riga as RigaIntervento;
 use Util\Generator;
 use Util\Ini;
 
@@ -111,16 +111,16 @@ function add_tecnico($id_intervento, $idtecnico, $inizio, $fine, $idcontratto = 
     }
 
     //Inserisco le righe aggiuntive previste dal tipo di intervento
-    $righe_aggiuntive = database()->fetchArray("SELECT * FROM in_righe_tipiinterventi WHERE id_tipointervento=".prepare($sessione->idtipointervento));
+    $righe_aggiuntive = database()->fetchArray('SELECT * FROM in_righe_tipiinterventi WHERE id_tipointervento='.prepare($sessione->idtipointervento));
 
-    foreach($righe_aggiuntive as $riga_aggiuntiva){
+    foreach ($righe_aggiuntive as $riga_aggiuntiva) {
         $riga = RigaIntervento::build($intervento);
 
         $riga->descrizione = $riga_aggiuntiva['descrizione'];
         $riga->um = $riga_aggiuntiva['um'];
 
         $riga->costo_unitario = $riga_aggiuntiva['prezzo_acquisto'];
-        $riga->setPrezzoUnitario( $riga_aggiuntiva['prezzo_vendita'], $riga_aggiuntiva['idiva'] );
+        $riga->setPrezzoUnitario($riga_aggiuntiva['prezzo_vendita'], $riga_aggiuntiva['idiva']);
         $riga->qta = $riga_aggiuntiva['qta'];
 
         $riga->save();

@@ -76,12 +76,12 @@ if ($module['name'] == 'Ordini cliente') {
 				</div>
 <?php
             if ($dir == 'entrata') {
-echo '
+                echo '
                 <div class="col-md-3">';
                 if ($record['idagente'] != 0) {
                     echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
                 }
-echo '
+                echo '
                     {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
                 </div>';
             }
@@ -144,15 +144,14 @@ echo '
 
             <div class="row">
 				<div class="col-md-12">
-                    <?php    
-                    echo input([
+                    <?php echo input([
                         'type' => 'ckeditor',
                         'use_full_ckeditor' => 0,
                         'label' => tr('Condizioni generali di fornitura'),
                         'name' => 'condizioni_fornitura',
                         'value' => $record['condizioni_fornitura'],
                     ]);
-					?>
+                    ?>
                 </div>
 			</div>
             
@@ -225,13 +224,13 @@ echo '
 	<div class="panel-body">';
 
 if (!$block_edit) {
-        $prev_query = 'SELECT COUNT(*) AS tot FROM co_preventivi WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstato IN(SELECT id FROM co_statipreventivi WHERE is_fatturabile = 1) AND default_revision=1 AND co_preventivi.id IN (SELECT idpreventivo FROM co_righe_preventivi WHERE co_righe_preventivi.idpreventivo = co_preventivi.id AND (qta - qta_evasa) > 0)';
-        $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
-        echo '
+    $prev_query = 'SELECT COUNT(*) AS tot FROM co_preventivi WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstato IN(SELECT id FROM co_statipreventivi WHERE is_fatturabile = 1) AND default_revision=1 AND co_preventivi.id IN (SELECT idpreventivo FROM co_righe_preventivi WHERE co_righe_preventivi.idpreventivo = co_preventivi.id AND (qta - qta_evasa) > 0)';
+    $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
+    echo '
 		<div class="clearfix"></div>';
 
-        // Form di inserimento riga documento
-        echo '
+    // Form di inserimento riga documento
+    echo '
         <form id="link_form" action="" method="post">
             <input type="hidden" name="op" value="add_articolo">
             <input type="hidden" name="backto" value="record-edit">
@@ -271,26 +270,26 @@ if (!$block_edit) {
                                     <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
                                 </a>
                             </li>';
-                        if ($dir == 'entrata') {
-                            echo '
+    if ($dir == 'entrata') {
+        echo '
                             <li>
                                 <a class="'.(!empty($preventivi) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_preventivo.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Preventivo').'" onclick="saveForm()">
                                     <i class="fa fa-plus"></i> '.tr('Preventivo').'
                                 </a>
                             </li>';
-                        }
-                        echo '
+    }
+    echo '
                         </ul>
                     </div>';
-                if ($dir == 'entrata') {
-                    echo '
+    if ($dir == 'entrata') {
+        echo '
                     <div class="pull-right">
                         <a class="btn btn-sm btn-info" data-href="'.$structure->fileurl('quantita_impegnate.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="'.tr('Controllo sulle quantità impegnate').'" onclick="saveForm()">
                             <i class="fa fa-question-circle"></i> '.tr('Verifica disponibilità').'
                         </a>
                     </div>';
-                }
-                echo '
+    }
+    echo '
                 </div>
 
                 <div class="col-md-2">

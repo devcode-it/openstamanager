@@ -21,9 +21,9 @@ include_once __DIR__.'/../../core.php';
 
 use Carbon\Carbon;
 use Modules\DDT\DDT;
-use Modules\Ordini\Ordine;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
+use Modules\Ordini\Ordine;
 use Modules\PrimaNota\Mastrino;
 use Modules\PrimaNota\Movimento;
 use Plugins\ImportFE\FatturaElettronica;
@@ -152,10 +152,10 @@ switch (filter('op')) {
             $autofattura_collegata = Fattura::find($id_autofattura);
             $fattura->registraScadenze(true);
             $autofattura_collegata->registraScadenze(true);
-            
+
             $fattura->stato()->associate($new_stato);
             $autofattura_collegata->stato()->associate($new_stato);
-        
+
             $mastrino = Mastrino::build('Compensazione autofattura', $fattura->data, false, true);
 
             $movimento1 = Movimento::build($mastrino, $fattura->anagrafica->idconto_cliente);
@@ -307,10 +307,10 @@ switch (filter('op')) {
         $results = [];
 
         // Dati ordini
-        $DatiOrdini =  XML::forceArray($fattura_pa->getBody()['DatiGenerali']['DatiOrdineAcquisto']);
-        $DatiDDT =  XML::forceArray($fattura_pa->getBody()['DatiGenerali']['DatiDDT']);
+        $DatiOrdini = XML::forceArray($fattura_pa->getBody()['DatiGenerali']['DatiOrdineAcquisto']);
+        $DatiDDT = XML::forceArray($fattura_pa->getBody()['DatiGenerali']['DatiDDT']);
 
-        $replaces = ['n ','N ','n. ','N. ','nr ','NR ','nr. ','NR. ','num ','NUM ','num. ','NUM. ','numero ','NUMERO '];
+        $replaces = ['n ', 'N ', 'n. ', 'N. ', 'nr ', 'NR ', 'nr. ', 'NR. ', 'num ', 'NUM ', 'num. ', 'NUM. ', 'numero ', 'NUMERO '];
 
                 // Riorganizzazione dati ordini per numero di riga
                 $dati_ordini = [];
@@ -318,81 +318,81 @@ switch (filter('op')) {
                     if (is_array($dato['RiferimentoNumeroLinea'])) {
                         foreach ($dato['RiferimentoNumeroLinea'] as $dati => $linea) {
                             foreach ($replaces as $replace) {
-                                if(string_starts_with($dato['IdDocumento'], $replace)) {
+                                if (string_starts_with($dato['IdDocumento'], $replace)) {
                                     $dato['IdDocumento'] = str_replace($replace, '', $dato['IdDocumento']);
                                     break;
                                 }
                             }
 
-                            try{
-                                $dati_ordini[(int)$linea] = [
+                            try {
+                                $dati_ordini[(int) $linea] = [
                                     'numero' => $dato['IdDocumento'],
                                     'anno' => ( new Carbon($dato['Data']) )->format('Y'),
                                 ];
                             } catch (Exception $e) {
-                                $dati_ordini[(int)$linea] = [
+                                $dati_ordini[(int) $linea] = [
                                     'numero' => $dato['IdDocumento'],
                                 ];
                             }
                         }
                     } else {
                         foreach ($replaces as $replace) {
-                            if(string_starts_with($dato['IdDocumento'], $replace)) {
+                            if (string_starts_with($dato['IdDocumento'], $replace)) {
                                 $dato['IdDocumento'] = str_replace($replace, '', $dato['IdDocumento']);
                                 break;
                             }
                         }
 
-                        try{
-                            $dati_ordini[(int)$dato['RiferimentoNumeroLinea']] = [
+                        try {
+                            $dati_ordini[(int) $dato['RiferimentoNumeroLinea']] = [
                                 'numero' => $dato['IdDocumento'],
                                 'anno' => ( new Carbon($dato['Data']) )->format('Y'),
                             ];
                         } catch (\Exception $e) {
-                            $dati_ordini[(int)$dato['RiferimentoNumeroLinea']] = [
+                            $dati_ordini[(int) $dato['RiferimentoNumeroLinea']] = [
                                 'numero' => $dato['IdDocumento'],
                             ];
                         }
                     }
                 }
-        
+
                 // Riorganizzazione dati ddt per numero di riga
                 $dati_ddt = [];
                 foreach ($DatiDDT as $dato) {
                     if (is_array($dato['RiferimentoNumeroLinea'])) {
                         foreach ($dato['RiferimentoNumeroLinea'] as $dati => $linea) {
                             foreach ($replaces as $replace) {
-                                if(string_starts_with($dato['NumeroDDT'], $replace)) {
+                                if (string_starts_with($dato['NumeroDDT'], $replace)) {
                                     $dato['NumeroDDT'] = str_replace($replace, '', $dato['NumeroDDT']);
                                     break;
                                 }
                             }
 
-                            try{
-                            	$dati_ddt[(int)$linea] = [
+                            try {
+                                $dati_ddt[(int) $linea] = [
                                     'numero' => $dato['NumeroDDT'],
                                     'anno' => ( new Carbon($dato['DataDDT']) )->format('Y'),
-	                            ];
+                                ];
                             } catch (Exception $e) {
-                                $dati_ddt[(int)$linea] = [
+                                $dati_ddt[(int) $linea] = [
                                     'numero' => $dato['NumeroDDT'],
                                 ];
                             }
                         }
                     } else {
                         foreach ($replaces as $replace) {
-                            if(string_starts_with($dato['NumeroDDT'], $replace)) {
+                            if (string_starts_with($dato['NumeroDDT'], $replace)) {
                                 $dato['NumeroDDT'] = str_replace($replace, '', $dato['NumeroDDT']);
                                 break;
                             }
                         }
-			            try{
-                            $dati_ddt[(int)$dato['RiferimentoNumeroLinea']] = [
+                        try {
+                            $dati_ddt[(int) $dato['RiferimentoNumeroLinea']] = [
                                 'numero' => $dato['NumeroDDT'],
                                 'anno' => ( new Carbon($dato['DataDDT']) )->format('Y'),
                             ];
                         } catch (Exception $e) {
-                            $dati_ddt[(int)$dato['RiferimentoNumeroLinea']] = [
+                            $dati_ddt[(int) $dato['RiferimentoNumeroLinea']] = [
                                 'numero' => $dato['NumeroDDT'],
                             ];
                         }
@@ -410,7 +410,7 @@ switch (filter('op')) {
             $collegamento = null;
             $match_documento_da_fe = true;
 
-            $numero_linea = (int)$riga['NumeroLinea'];
+            $numero_linea = (int) $riga['NumeroLinea'];
 
             // Visualizzazione codici articoli
             $codici = $riga['CodiceArticolo'] ?: [];
@@ -447,15 +447,15 @@ switch (filter('op')) {
             FROM dt_righe_ddt
                 INNER JOIN dt_ddt ON dt_ddt.id = dt_righe_ddt.idddt
             WHERE
-                dt_ddt.numero_esterno = ".prepare($ddt['numero'])."
+                dt_ddt.numero_esterno = ".prepare($ddt['numero']).'
                 AND
-                YEAR(dt_ddt.data) = ".prepare($ddt['anno'])."
+                YEAR(dt_ddt.data) = '.prepare($ddt['anno']).'
                 AND
-                dt_ddt.idanagrafica = ".prepare($anagrafica->id)."
+                dt_ddt.idanagrafica = '.prepare($anagrafica->id).'
                 AND
                 dt_righe_ddt.qta > dt_righe_ddt.qta_evasa
                 AND
-                |where|";
+                |where|';
 
             // Ricerca di righe DDT con stesso Articolo
             if (!empty($id_articolo)) {
@@ -475,7 +475,6 @@ switch (filter('op')) {
                 $collegamento = $database->fetchOne($query_descrizione);
             }
 
-
             // Se nella fattura elettronica NON è indicato un DDT ed è indicato anche un ordine
             // cerco per quell'ordine
             if (empty($collegamento)) {
@@ -485,15 +484,15 @@ switch (filter('op')) {
                 FROM or_righe_ordini
                     INNER JOIN or_ordini ON or_ordini.id = or_righe_ordini.idordine
                 WHERE
-                    or_ordini.numero_esterno = ".prepare($ordine['numero'])."
+                    or_ordini.numero_esterno = ".prepare($ordine['numero']).'
                     AND
-                    YEAR(or_ordini.data) = ".prepare($ordine['anno'])."
+                    YEAR(or_ordini.data) = '.prepare($ordine['anno']).'
                     AND
-                    or_ordini.idanagrafica = ".prepare($anagrafica->id)."
+                    or_ordini.idanagrafica = '.prepare($anagrafica->id).'
                     AND
                     or_righe_ordini.qta > or_righe_ordini.qta_evasa
                     AND
-                    |where|";
+                    |where|';
 
                 // Ricerca di righe Ordine con stesso Articolo
                 if (!empty($id_articolo)) {
@@ -514,8 +513,7 @@ switch (filter('op')) {
                 }
             }
 
-
-            /**
+            /*
              * TENTATIVO 2: ricerca solo per articolo o descrizione su documenti
              * non referenziati nella fattura elettronica
              */

@@ -631,10 +631,9 @@ class Validator
 
             // Formattazione testo
             elseif ($info['type'] == 'string' || $info['type'] == 'normalizedString') {
-                
                 // Sostituzione tag e contenuti specifici per XML (non sembra essere eseguita)
                 $output = htmlspecialchars($output, ENT_NOQUOTES | ENT_XML1 | ENT_SUBSTITUTE, 'UTF-8', false);
-                
+
                 // Gestione dei caratteri non supportati e sostituzione con alternativi
                 // Problemi noti: sostituendo 1 carattere con 2 o più potrebbero verificarsi problemi se, per il testo di quel nodo, si era raggiunta la lunghezza massima prevista dal tracciato
                 $output = replace($output, [
@@ -668,11 +667,11 @@ class Validator
                     '™' => 'TM',
                     'Ÿ' => 'Y',
                     'č' => 'c',
-                ]);                
+                ]);
 
-                $output = str_replace(array("\r", "\n"), '', $output);
+                $output = str_replace(["\r", "\n"], '', $output);
 
-                //$output = self::sanitizeXML($output);  
+                //$output = self::sanitizeXML($output);
             }
 
             // Riduzione delle dimensioni
@@ -709,43 +708,42 @@ class Validator
         return $output;
     }
 
-
     /**
-     * Removes invalid characters from a UTF-8 XML string
+     * Removes invalid characters from a UTF-8 XML string.
      *
      * @deprecated 2.4.34
-     * 
+     *
      * @param string a XML string potentially containing invalid characters
+     *
      * @return string
      */
-    static function sanitizeXML($string)
+    public static function sanitizeXML($string)
     {
         $result = '';
         $current = '';
         $length = strlen($string);
 
-        for ($i=0; $i < $length; $i++) {
+        for ($i = 0; $i < $length; ++$i) {
             $current = ord($string[$i]);
 
             if ($current < 0x20 || $current > 0x7E) {
                 $result .= ' ';
-            }
-            else {
+            } else {
                 $result .= chr($current);
             }
         }
-        
+
         return $result;
     }
 
-     /**
-     * Manage and replace invalid characters from a UTF-8 XML string
+    /**
+     * Manage and replace invalid characters from a UTF-8 XML string.
      *
-     * 
      * @param string a XML string potentially containing invalid characters
+     *
      * @return string with entities fallback
      */
-    static function sanitizeXML2($string)
+    public static function sanitizeXML2($string)
     {
         $string = replace($string, [
             ' ' => ' ',
@@ -4444,5 +4442,4 @@ class Validator
 
         return $string;
     }
-       
 }

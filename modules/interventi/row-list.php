@@ -45,10 +45,10 @@ echo '
         echo '
                 <th class="text-center" width="140">'.tr('Prezzo di acquisto').'</th>
                 <th class="text-center" width="140">'.tr('Prezzo di vendita').'</th>';
-            if (!$block_edit) {
-                echo '<th class="text-center" width="150">'.tr('Sconto unitario').'</th>';
-            }
-            echo '
+        if (!$block_edit) {
+            echo '<th class="text-center" width="150">'.tr('Sconto unitario').'</th>';
+        }
+        echo '
                 <th class="text-center" width="140">'.tr('Importo').'</th>';
     }
 
@@ -73,11 +73,11 @@ echo '
         echo '
             <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'" '.$extra.'>
                 <td class="text-center">';
-                if (!$block_edit) {
-                    echo '
+        if (!$block_edit) {
+            echo '
                     <input class="check" type="checkbox"/>';
-                }
-                echo '
+        }
+        echo '
                 </td>
                 <td>';
 
@@ -116,16 +116,16 @@ echo '
             echo '
             <br><small><i class="fa fa-barcode"></i> '.$riga->articolo->barcode.'</small>';
         }
-        
+
         if (!empty($riga->note)) {
-                echo '
+            echo '
                     <br><small class="label label-default">'.nl2br($riga->note).'</small>';
         }
         echo '
                 </td>';
 
-            // Quantità e unità di misura
-            echo '
+        // Quantità e unità di misura
+        echo '
                 <td class="text-center">
                     {[ "type": "number", "name": "qta_'.$riga->id.'", "value": "'.$riga->qta.'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "'.($riga->um ?: '&nbsp;').'", "disabled": "'.($riga->isSconto() ? 1 : 0).'", "disabled": "'.$block_edit.'" ]}
                 </td>';
@@ -140,12 +140,12 @@ echo '
             // Prezzo unitario
             echo '
                 <td class="text-right">';
-                    // Provvigione riga 
-                    if (abs($riga->provvigione_unitaria) > 0) {
-                        $text = provvigioneInfo($riga);
-                        echo '<span class="pull-left text-info" title="'.$text.'"><i class="fa fa-handshake-o"></i></span>';
-                    } 
-                    echo moneyFormat($riga->prezzo_unitario);
+            // Provvigione riga
+            if (abs($riga->provvigione_unitaria) > 0) {
+                $text = provvigioneInfo($riga);
+                echo '<span class="pull-left text-info" title="'.$text.'"><i class="fa fa-handshake-o"></i></span>';
+            }
+            echo moneyFormat($riga->prezzo_unitario);
 
             if (abs($riga->sconto_unitario) > 0) {
                 $text = discountInfo($riga);
@@ -157,21 +157,21 @@ echo '
             echo '
                 </td>';
 
-           // Sconto unitario
-        if (!$block_edit) {
-            echo '
+            // Sconto unitario
+            if (!$block_edit) {
+                echo '
                 <td class="text-center">
                     {[ "type": "number", "name": "sconto_'.$riga->id.'", "value": "'.($riga->sconto_percentuale ?: $riga->sconto_unitario_corrente).'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "choice|untprc|'.$riga->tipo_sconto.'" ]}
                 </td>';
-        }
+            }
 
             // Prezzo di vendita
             echo '
                 <td class="text-right">
                     '.moneyFormat($riga->importo);
 
-                    // Iva
-                    echo '
+            // Iva
+            echo '
                     <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' text-muted">'.$riga->aliquota->descrizione.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
                 </td>';
         }
@@ -215,7 +215,6 @@ echo '
         </tbody>';
 
         if ($show_prezzi) {
-            
             // IMPONIBILE
             echo '
             <tr>
@@ -228,9 +227,9 @@ echo '
                 <td></td>
             </tr>';
 
-        // SCONTO
-        if (!empty($righe->sum('sconto'))) {
-            echo '
+            // SCONTO
+            if (!empty($righe->sum('sconto'))) {
+                echo '
             <tr>
                 <td colspan="'.$colspan.'" class="text-right">
                     <b><span class="tip" title="'.tr('Un importo negativo indica uno sconto, mentre uno positivo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
@@ -241,8 +240,8 @@ echo '
                 <td></td>
             </tr>';
 
-            // Totale imponibile scontato
-            echo '
+                // Totale imponibile scontato
+                echo '
             <tr>
                 <td colspan="'.$colspan.'" class="text-right">
                     <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
@@ -252,11 +251,11 @@ echo '
                 </td>
                 <td></td>
             </tr>';
-        }
+            }
 
-        // Provvigione
-        if(!empty($intervento->provvigione)) {
-            echo '
+            // Provvigione
+            if (!empty($intervento->provvigione)) {
+                echo '
             <tr>
                 <td colspan="'.$colspan.'" class="text-right">
                     '.tr('Provvigioni').':
@@ -266,11 +265,10 @@ echo '
                 </td>
                 <td></td>
             </tr>';
+            }
         }
 
-        }
-
-    echo'
+    echo '
     </table>';
 if (!$block_edit && sizeof($righe) > 0) {
     echo '
@@ -282,12 +280,13 @@ if (!$block_edit && sizeof($righe) > 0) {
         <button type="button" class="btn btn-xs btn-default disabled" id="elimina_righe" onclick="rimuoviRiga(getSelectData());">
             <i class="fa fa-trash"></i>
         </button>';
-        if ($direzione == 'entrata') {
-            echo'
+    if ($direzione == 'entrata') {
+        echo '
             <button type="button" class="btn btn-xs btn-default disabled" id="confronta_righe" onclick="confrontaRighe(getSelectData());">
                 Confronta prezzi
             </button>';
-        } echo'
+    }
+    echo '
     </div>';
 }
 echo '

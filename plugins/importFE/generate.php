@@ -354,17 +354,16 @@ if (!empty($righe)) {
             </thead>
 
             <tbody>';
-    
-    // Dati ordini
-    $DatiOrdini =  XML::forceArray($fattura_pa->getBody()['DatiGenerali']['DatiOrdineAcquisto']);
-    $DatiDDT =  XML::forceArray($fattura_pa->getBody()['DatiGenerali']['DatiDDT']);
 
+    // Dati ordini
+    $DatiOrdini = XML::forceArray($fattura_pa->getBody()['DatiGenerali']['DatiOrdineAcquisto']);
+    $DatiDDT = XML::forceArray($fattura_pa->getBody()['DatiGenerali']['DatiDDT']);
 
     // Riorganizzazione dati ordini per numero di riga
     $dati_ordini = [];
     foreach ($DatiOrdini as $dato) {
         foreach ($dato['RiferimentoNumeroLinea'] as $dati => $linea) {
-            $dati_ordini[(int)$linea] = [
+            $dati_ordini[(int) $linea] = [
                 'numero' => $dato['IdDocumento'],
                 'data' => ( new Carbon($dato['Data']) )->format('d/m/Y'),
             ];
@@ -375,13 +374,12 @@ if (!empty($righe)) {
     $dati_ddt = [];
     foreach ($DatiDDT as $dato) {
         foreach ($dato['RiferimentoNumeroLinea'] as $dati => $linea) {
-            $dati_ddt[(int)$linea] = [
+            $dati_ddt[(int) $linea] = [
                 'numero' => $dato['NumeroDDT'],
                 'data' => ( new Carbon($dato['DataDDT']) )->format('d/m/Y'),
             ];
         }
     }
-
 
     foreach ($righe as $key => $riga) {
         $query = "SELECT id, IF(codice IS NULL, descrizione, CONCAT(codice, ' - ', descrizione)) AS descrizione FROM co_iva WHERE deleted_at IS NULL AND percentuale = ".prepare($riga['AliquotaIVA']);
@@ -432,7 +430,7 @@ if (!empty($righe)) {
         $qta = $riga['Quantita'];
         $um = $riga['UnitaMisura'];
         $prezzo_unitario = $riga['PrezzoUnitario'] ?: $riga['Importo'];
-        $is_descrizione = empty((float)$riga['Quantita']) && empty((float)$prezzo_unitario);
+        $is_descrizione = empty((float) $riga['Quantita']) && empty((float) $prezzo_unitario);
 
         $sconto_unitario = 0;
         $sconti = $riga['ScontoMaggiorazione'] ?: 0;
@@ -475,21 +473,20 @@ if (!empty($righe)) {
                     $tot_sconto = $sconto_riga;
                 }
 
-                $tot_sconto_calcolato += $sconto_calcolato; 
+                $tot_sconto_calcolato += $sconto_calcolato;
                 $sconto_unitario += $tot_sconto;
             }
         }
 
         $riferimento_fe = '';
 
-        if ($dati_ddt[(int)$riga['NumeroLinea']]) {
+        if ($dati_ddt[(int) $riga['NumeroLinea']]) {
             $riferimento_fe = tr('DDT _NUMERO_ del _DATA_',
                 [
-                    '_NUMERO_' => $dati_ddt[(int)$riga['NumeroLinea']]['numero'],
-                    '_DATA_' => $dati_ddt[(int)$riga['NumeroLinea']]['data'],
+                    '_NUMERO_' => $dati_ddt[(int) $riga['NumeroLinea']]['numero'],
+                    '_DATA_' => $dati_ddt[(int) $riga['NumeroLinea']]['data'],
                 ]);
         }
-        
 
         echo '
         <tr data-id="'.$key.'" data-qta="'.$qta.'" data-prezzo_unitario="'.$prezzo_unitario.'" data-iva_percentuale="'.$riga['AliquotaIVA'].'">
@@ -513,12 +510,12 @@ if (!empty($righe)) {
 
             <td class="text-right">
                 '.moneyFormat($prezzo_unitario);
-                if (abs($sconto_unitario) > 0) {
-                    $text = ($prezzo_unitario >= 0 && $sconto_unitario > 0) || ($prezzo_unitario < 0 && $sconto_unitario < 0) ? tr('sconto _TOT_ _TYPE_', ['_TOT_' => Translator::numberToLocale(abs($sconto_unitario)), '_TYPE_' => $tipo]) : tr('maggiorazione _TOT__TYPE_', ['_TOT_' => Translator::numberToLocale(abs($sconto_unitario)), '_TYPE_' => $tipo]);
-                    echo '
+        if (abs($sconto_unitario) > 0) {
+            $text = ($prezzo_unitario >= 0 && $sconto_unitario > 0) || ($prezzo_unitario < 0 && $sconto_unitario < 0) ? tr('sconto _TOT_ _TYPE_', ['_TOT_' => Translator::numberToLocale(abs($sconto_unitario)), '_TYPE_' => $tipo]) : tr('maggiorazione _TOT__TYPE_', ['_TOT_' => Translator::numberToLocale(abs($sconto_unitario)), '_TYPE_' => $tipo]);
+            echo '
                         <br><small class="label label-danger">'.$text.'</small>';
-                }
-                echo '
+        }
+        echo '
                 <span id="riferimento_'.$key.'_prezzo"></span>
             </td>
 
@@ -531,7 +528,6 @@ if (!empty($righe)) {
             </td>
         </tr>';
 
-        
         if (!$is_descrizione) {
             echo '
         <tr id="dati_'.$key.'">

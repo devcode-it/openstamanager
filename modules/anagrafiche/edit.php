@@ -252,7 +252,7 @@ echo '
                         <h3 class="panel-title"> '.tr('Geolocalizzazione').'</h3>
                     </div>
                     <div class="panel-body">';
-                    
+
 // Area caricamento mappa
 echo '
                         <div id="map-edit" style="width: 100%;"></div>
@@ -261,42 +261,37 @@ echo '
                         <br>';
 
 if (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($sede_cliente->lng))) {
-    
     // Modifica manuale delle informazioni
     echo '
                         <a class="btn btn-info btn-block" onclick="modificaPosizione()">
-                            <i class="fa fa-map"></i> ' . tr('Aggiorna posizione') . '
+                            <i class="fa fa-map"></i> '.tr('Aggiorna posizione').'
                         </a>';
 } else {
-
     // Definizione manuale delle informazioni
     echo '
                         <a class="btn btn-primary btn-block" onclick="modificaPosizione()">
-                            <i class="fa fa-map"></i> ' . tr('Definisci posizione') . '
+                            <i class="fa fa-map"></i> '.tr('Definisci posizione').'
                         </a>';
 }
 
 // Navigazione diretta verso l'indirizzo
 echo '
-                        <a class="btn btn-info btn-block '.((empty($sede_cliente->lat) && empty($sede_cliente->lng))? "disabled" : "").'" onclick="$(\'#map-edit\').height(235); caricaMappa(); $(this).hide();">
-                            <i class="fa fa-compass"></i> ' . tr('Carica mappa') . '
+                        <a class="btn btn-info btn-block '.((empty($sede_cliente->lat) && empty($sede_cliente->lng)) ? 'disabled' : '').'" onclick="$(\'#map-edit\').height(235); caricaMappa(); $(this).hide();">
+                            <i class="fa fa-compass"></i> '.tr('Carica mappa').'
                         </a>';
-
-
-
 
     // Navigazione diretta verso l'indirizzo
     echo '
-                        <a class="btn btn-info btn-block '.(($anagrafica->isAzienda() || (empty($sede_cliente->lat) || empty($sede_cliente->lng))|| (empty($sede_azienda->lat) || empty($sede_azienda->lng)) ) ? "disabled": "").'" onclick="calcolaPercorso()">
+                        <a class="btn btn-info btn-block '.(($anagrafica->isAzienda() || (empty($sede_cliente->lat) || empty($sede_cliente->lng)) || (empty($sede_azienda->lat) || empty($sede_azienda->lng))) ? 'disabled' : '').'" onclick="calcolaPercorso()">
                             <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
-                            '.((!empty($sede_cliente->lat) && !empty($sede_azienda->lat)) ? tr('(GPS)'): '' ).'
+                            '.((!empty($sede_cliente->lat) && !empty($sede_azienda->lat)) ? tr('(GPS)') : '').'
                         </a>';
 
     // Ricerca diretta su Mappa
     echo '
                         <a class="btn btn-info btn-block" onclick="cercaOpenStreetMap()">
                             <i class="fa fa-map-marker"></i> '.tr('Cerca su Mappa').'
-                            '.((!empty($sede_cliente->lat)) ? tr(' (GPS)'): '' ).'
+                            '.((!empty($sede_cliente->lat)) ? tr(' (GPS)') : '').'
                         </a>';
 
 echo '
@@ -350,10 +345,10 @@ echo '
             var map = null;
             function caricaMappa() {
                 const lat = parseFloat("'.$sede_cliente->lat.'");
-                const lng = parseFloat("'.$sede_cliente->lng. '");
+                const lng = parseFloat("'.$sede_cliente->lng.'");
 
                 if (typeof lat === "undefined" || typeof lng === "undefined"){
-                    swal("' . tr('Errore') . '", "' . tr("La posizione non è stata definita. Impossibile caricare la mappa.") . '", "error");
+                    swal("'.tr('Errore').'", "'.tr('La posizione non è stata definita. Impossibile caricare la mappa.').'", "error");
                     return false;
                 }
                     
@@ -369,7 +364,7 @@ echo '
                         gestureHandling: true
                     });
             
-                    L.tileLayer("'.setting("Tile server OpenStreetMap").'", {
+                    L.tileLayer("'.setting('Tile server OpenStreetMap').'", {
                         maxZoom: 17,
                         attribution: "© OpenStreetMap"
                     }).addTo(map); 
@@ -648,7 +643,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                     </div>
 <?php
                 if ($is_agente) {
-?>
+                    ?>
                     <div class="col-md-3">
                         {[ "type": "number", "label": "<?php echo tr('Provvigione predefinita'); ?>", "name": "provvigione_default", "value": "$provvigione_default$", "icon-after": "%" ]}
                     </div>

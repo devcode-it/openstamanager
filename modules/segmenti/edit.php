@@ -91,7 +91,7 @@ $_SESSION['module_'.$record['id_module']]['id_segment'] = $previous_module;
 			</div>
 <?php
         if (!empty($record['is_fiscale'])) {
-?>
+            ?>
             <div class="row">
 				<div class="col-md-12">
 					{[ "type": "textarea", "label": "<?php echo tr('Dicitura fissa'); ?>", "name": "dicitura_fissa", "value": "$dicitura_fissa$" ]}
@@ -126,21 +126,21 @@ if ($record['is_sezionale']) {
 		<div class="panel-body">
 			<div class="row">
                 <div class="col-md-6">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Sezionale fiscale'); ?>", "name": "is_fiscale", "value": "$is_fiscale$", "extra": "<?php echo ($tot > 0 || ($record['modulo']!='Fatture di vendita' && $record['modulo']!='Fatture di acquisto')) ? 'readonly' : ''; ?>"  ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Sezionale fiscale'); ?>", "name": "is_fiscale", "value": "$is_fiscale$", "extra": "<?php echo ($tot > 0 || ($record['modulo'] != 'Fatture di vendita' && $record['modulo'] != 'Fatture di acquisto')) ? 'readonly' : ''; ?>"  ]}
 				</div>
             </div>
 
 			<div class="row">
                 <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Predefinito note di credito'); ?>", "name": "predefined_accredito", "value": "$predefined_accredito$", "help": "<?php echo tr('Seleziona per rendere il sezionale predefinito per le note di credito'); ?>", "placeholder": "<?php echo tr('Sezionale predefinito per le note di credito'); ?>", "extra": "<?php echo ($record['modulo']!='Fatture di vendita' && $record['modulo']!='Fatture di acquisto') ? 'readonly' : ''; ?>"  ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Predefinito note di credito'); ?>", "name": "predefined_accredito", "value": "$predefined_accredito$", "help": "<?php echo tr('Seleziona per rendere il sezionale predefinito per le note di credito'); ?>", "placeholder": "<?php echo tr('Sezionale predefinito per le note di credito'); ?>", "extra": "<?php echo ($record['modulo'] != 'Fatture di vendita' && $record['modulo'] != 'Fatture di acquisto') ? 'readonly' : ''; ?>"  ]}
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Predefinito note di debito'); ?>", "name": "predefined_addebito", "value": "$predefined_addebito$", "help": "<?php echo tr('Seleziona per rendere il sezionale predefinito per le note di debito'); ?>", "placeholder": "<?php echo tr('Sezionale predefinito per le note di debito'); ?>", "extra": "<?php echo ($record['modulo']!='Fatture di vendita' && $record['modulo']!='Fatture di acquisto') ? 'readonly' : ''; ?>"  ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Predefinito note di debito'); ?>", "name": "predefined_addebito", "value": "$predefined_addebito$", "help": "<?php echo tr('Seleziona per rendere il sezionale predefinito per le note di debito'); ?>", "placeholder": "<?php echo tr('Sezionale predefinito per le note di debito'); ?>", "extra": "<?php echo ($record['modulo'] != 'Fatture di vendita' && $record['modulo'] != 'Fatture di acquisto') ? 'readonly' : ''; ?>"  ]}
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Autofatture'); ?>", "name": "autofatture", "value": "$autofatture$", "extra": "<?php echo ($record['modulo']!='Fatture di vendita' && $record['modulo']!='Fatture di acquisto') ? 'readonly' : ''; ?>" ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Autofatture'); ?>", "name": "autofatture", "value": "$autofatture$", "extra": "<?php echo ($record['modulo'] != 'Fatture di vendita' && $record['modulo'] != 'Fatture di acquisto') ? 'readonly' : ''; ?>" ]}
                 </div>
 			</div>
 

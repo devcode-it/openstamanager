@@ -185,8 +185,7 @@ function search(button) {
 
 <div class="row">';
 
-
-echo'
+echo '
     <div class="col-md-4">
         <div class="box box-success">
             <div class="box-header with-border">
@@ -198,13 +197,13 @@ echo'
                 <form action="'.base_path().'/controller.php?id_module='.$id_module.'" method="post" enctype="multipart/form-data" id="update">
                     <input type="hidden" name="op" value="upload">
 
-			        {[ "type": "file", "name": "blob", "required": 1, "accept": ".zip", "disabled": '.(setting('Attiva aggiornamenti')? 0 : 1).' ]}
+			        {[ "type": "file", "name": "blob", "required": 1, "accept": ".zip", "disabled": '.(setting('Attiva aggiornamenti') ? 0 : 1).' ]}
 
                     ';
 
                     if (!empty($custom) || !empty($tables)) {
-                        $disabled = 'disabled'; 
-echo '                  <input type="checkbox" id="aggiorna_custom" class="pull-left" style="margin-top:10px;"  value="1" >&nbsp;
+                        $disabled = 'disabled';
+                        echo '                  <input type="checkbox" id="aggiorna_custom" class="pull-left" style="margin-top:10px;"  value="1" >&nbsp;
                         <label for="aggiorna_custom" style="margin-top:7px;" >'.tr("Desidero comunque procedere all'aggiornamento").'.</label>
                         <script>
                             $("#aggiorna_custom").change(function() {
@@ -227,7 +226,6 @@ echo '
             </div>
         </div>
     </div>';
-
 
 echo '
     <div class="col-md-4">

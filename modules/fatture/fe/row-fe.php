@@ -93,14 +93,14 @@ echo '
 if (empty($riga->isDescrizione())) {
     $placeholder_tipo = $riga->isArticolo() && !empty($riga->codice) ? 'COD' : '';
     $placeholder_valore = $riga->isArticolo() && !empty($riga->codice) ? $riga->codice : '';
-// Codice Articolo
-echo '
+    // Codice Articolo
+    echo '
         <tr class="fourth-level">
             <th colspan="2" style="vertical-align: middle;">'.str_repeat($space, 3).'2.2.1.3 CodiceArticolo</th>
         </tr>';
 
-// Codice tipo articolo
-echo '
+    // Codice tipo articolo
+    echo '
         <tr class="fifth-level">
             <td style="vertical-align: middle;">'.str_repeat($space, 5).'2.2.1.3.1 CodiceTipo</td>
             <td>
@@ -108,8 +108,8 @@ echo '
             </td>
         </tr>';
 
-// Codice valore articolo
-echo '
+    // Codice valore articolo
+    echo '
         <tr class="fifth-level">
             <td style="vertical-align: middle;">'.str_repeat($space, 5).'2.2.1.3.2 CodiceValore</td>
             <td>

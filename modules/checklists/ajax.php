@@ -22,15 +22,14 @@ include_once __DIR__.'/../../core.php';
 use Modules\Checklists\Check;
 use Modules\Checklists\ChecklistItem;
 
-switch(post('op')){
-
-    case "delete_check":
+switch (post('op')) {
+    case 'delete_check':
         $id = post('id');
         $main_check = post('main_check');
 
-        if($main_check){
+        if ($main_check) {
             $record = ChecklistItem::find($id);
-        }else{
+        } else {
             $record = Check::find($id);
         }
 
@@ -38,25 +37,23 @@ switch(post('op')){
 
         break;
 
-    case "update_position":
-
+    case 'update_position':
         $main_check = post('main_check');
         $order = explode(',', post('order', true));
 
-        if($main_check){
-            foreach($order as $i => $id){
-                $dbo->query("UPDATE zz_checklist_items SET `order`=".prepare($i)." WHERE id=".prepare($id));
+        if ($main_check) {
+            foreach ($order as $i => $id) {
+                $dbo->query('UPDATE zz_checklist_items SET `order`='.prepare($i).' WHERE id='.prepare($id));
             }
-        }else{
-            foreach($order as $i => $id){
-                $dbo->query("UPDATE zz_checks SET `order`=".prepare($i)." WHERE id=".prepare($id));
+        } else {
+            foreach ($order as $i => $id) {
+                $dbo->query('UPDATE zz_checks SET `order`='.prepare($i).' WHERE id='.prepare($id));
             }
         }
 
         break;
 
-    case "save_checkbox":
-
+    case 'save_checkbox':
         $id = post('id');
 
         $record = Check::find($id);
@@ -66,7 +63,7 @@ switch(post('op')){
 
         break;
 
-    case "save_note":
+    case 'save_note':
         $note = post('note');
         $id = post('id');
 
@@ -78,24 +75,23 @@ switch(post('op')){
 
         break;
 
-    case "remove_checkbox":
-
+    case 'remove_checkbox':
         $id = post('id');
 
         $record = Check::find($id);
-        $record->checked_by = NULL;
-        $record->checked_at = NULL;
+        $record->checked_by = null;
+        $record->checked_at = null;
         $record->save();
 
         break;
 
-    case "edit_check":
+    case 'edit_check':
         $id_record = post('id_record');
         $main_check = post('main_check');
 
-        if($main_check){
+        if ($main_check) {
             $record = ChecklistItem::find($id_record);
-        }else{
+        } else {
             $record = Check::find($id_record);
         }
 
@@ -107,5 +103,3 @@ switch(post('op')){
 
         break;
 }
-
-?>

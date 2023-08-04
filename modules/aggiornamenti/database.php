@@ -75,7 +75,7 @@ $(document).ready(function () {
 $mysql_min_version = '5.7.0';
 $mysql_max_version = '5.7.99';
 
-$contents = ((version_compare($database->getMySQLVersion(), $mysql_min_version, ">=") && version_compare($database->getMySQLVersion(), $mysql_max_version, "<=")) ? $file_to_check_database = 'database_5_7.json' :  $file_to_check_database = 'database.json' );
+$contents = ((version_compare($database->getMySQLVersion(), $mysql_min_version, '>=') && version_compare($database->getMySQLVersion(), $mysql_max_version, '<=')) ? $file_to_check_database = 'database_5_7.json' : $file_to_check_database = 'database.json');
 $contents = file_get_contents(base_dir().'/'.$file_to_check_database);
 $data = json_decode($contents, true);
 

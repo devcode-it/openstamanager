@@ -29,8 +29,8 @@ if (!function_exists('array_column')) {
     /**
      * Pluck an array of values from an array.
      *
-     * @param  $array - data
-     * @param  $key - value you want to pluck from array
+     * @param $array - data
+     * @param $key   - value you want to pluck from array
      *
      * @since 2.3
      *
@@ -48,7 +48,7 @@ if (!function_exists('array_clean')) {
     /**
      * Pulisce i contenuti vuoti di un array.
      *
-     * @param  $array
+     * @param $array
      *
      * @since 2.3.2
      *
@@ -56,7 +56,7 @@ if (!function_exists('array_clean')) {
      */
     function array_clean($array)
     {
-        if (!empty($array)){
+        if (!empty($array)) {
             return array_unique(array_values(array_filter($array, function ($value) {
                 return !empty($value);
             })));
@@ -68,7 +68,7 @@ if (!function_exists('array_deep_clean')) {
     /**
      * Pulisce i contenuti vuoti di un array.
      *
-     * @param  $array
+     * @param $array
      *
      * @since 2.4.11
      *

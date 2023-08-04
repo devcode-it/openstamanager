@@ -129,11 +129,11 @@ class Auth extends \Util\Singleton
 
             if (!empty($user['enabled'])) {
                 $this->identifyUser($user['id']);
-                $gruppo = $database->fetchOne("SELECT zz_groups.* FROM zz_groups INNER JOIN zz_users ON zz_users.idgruppo=zz_groups.id WHERE zz_users.id=".prepare($user['id']));
-                
+                $gruppo = $database->fetchOne('SELECT zz_groups.* FROM zz_groups INNER JOIN zz_users ON zz_users.idgruppo=zz_groups.id WHERE zz_users.id='.prepare($user['id']));
+
                 $module = $gruppo['id_module_start'];
                 $module = $this->getFirstModule($module);
-               
+
                 if (
                     $this->isAuthenticated() &&
                     $this->password_check($password, $user['password'], $user['id']) &&
@@ -267,8 +267,8 @@ class Auth extends \Util\Singleton
 
             if (!empty($results)) {
                 $module = null;
-                
-                if( empty($first) ){
+
+                if (empty($first)) {
                     $first = setting('Prima pagina');
                 }
                 if (!in_array($first, array_column($results, 'id'))) {

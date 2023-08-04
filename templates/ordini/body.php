@@ -26,7 +26,6 @@ $righe = $documento->getRighe();
 
 $columns = 7;
 
-
 $has_image = $righe->search(function ($item) {
     return !empty($item->articolo->immagine);
 }) !== false && $options['images'] == true;

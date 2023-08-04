@@ -17,8 +17,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-
-
 include_once __DIR__.'/../../../core.php';
 
 $mesi = [
@@ -36,38 +34,31 @@ $mesi = [
     12 => 'Dicembre',
 ];
 
-echo
-'<div class="container"
+echo '<div class="container"
     <div class="row">
         <div class="col-md-2 col-md-offset-9">
             <select class="form-control select-input openstamanager-input superselect select-year">';
 
-            for ($i=intval(date('Y')) -1; $i<=intval(date('Y')) + 10; $i++) {
-                $selectType = ($i == date('Y'))? "selected" : "";
-                echo
-                '<option value="' . $i . '" ' . $selectType . '>' . $i . '</option>';
+            for ($i = intval(date('Y')) - 1; $i <= intval(date('Y')) + 10; ++$i) {
+                $selectType = ($i == date('Y')) ? 'selected' : '';
+                echo '<option value="'.$i.'" '.$selectType.'>'.$i.'</option>';
             }
 
-            echo
-            '</select><br>
+            echo '</select><br>
         </div>
     </div>
     <div class="div-month">';
-            for ($i=1; $i<=12; $i++) {
-            
-            $btnType = ($i == date('m'))? "btn-primary":"";
-            echo
-            '<div class="col-md-1">
-                <a class="btn btn-month ' . $btnType . '" data-month="' . $i . '" style="cursor:pointer" onclick="month_click($(this))">' .
-                $mesi[$i] . ' </br>(' . $conteggio[$i-1]->conto . ')</a>
+            for ($i = 1; $i <= 12; ++$i) {
+                $btnType = ($i == date('m')) ? 'btn-primary' : '';
+                echo '<div class="col-md-1">
+                <a class="btn btn-month '.$btnType.'" data-month="'.$i.'" style="cursor:pointer" onclick="month_click($(this))">'.
+                $mesi[$i].' </br>('.$conteggio[$i - 1]->conto.')</a>
             </div>';
-        }
+            }
 
-    echo
-    '</div>';
+    echo '</div>';
 
-    echo
-    '<div style="display:none" class="template-month">
+    echo '<div style="display:none" class="template-month">
         <div class="col-md-1 " style="margin:10px 0px; padding:0px;">
             <a class="btn btn-month" onclick="month_click($(this))">
                 <div class="text"></div>
@@ -80,15 +71,14 @@ echo
     <div class="row">
         <div class="col-md-6">
             <br>
-            <input type="text" class="filter-input form-control" placeholder="<?= tr('Applica filtro...') ?>">
+            <input type="text" class="filter-input form-control" placeholder="<?php echo tr('Applica filtro...'); ?>">
             <br>
         </div>
     </div>
 
     <?php
 
-    echo
-    '<div>
+    echo '<div>
         <table id="tbl-rate" class="table-rate table table-hover table-striped">
             <thead>
                 <tr>
@@ -111,7 +101,7 @@ echo
                     <td>
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox"
-                            data-contrattoId="' . $contratto->id . '" data-pianificazioneId="' . $pianificazione->id . '">
+                            data-contrattoId="'.$contratto->id.'" data-pianificazioneId="'.$pianificazione->id.'">
                         </div>
                     </td>
                     <td>
@@ -131,18 +121,17 @@ echo
                         '</small>
                     </td>';
 
-                    // Pulsanti
-                    echo '
+                // Pulsanti
+                echo '
                     <td class="text-center">
                         <button type="button" class="btn btn-primary btn-sm" onclick="crea_fattura('.$contratto->id.', '.$pianificazione->id.')">
                             <i class="fa fa-euro"></i> '.tr('Crea fattura').'
                         </button>
                     </td>
                     </tr>';
-                    }
+            }
 
-                    echo
-                    '</tbody>
+                    echo '</tbody>
                     <tfoot style="display:none">
                     <tr>
 
@@ -176,11 +165,11 @@ echo
     ?>
     <div class="row">
         <div class="col-md-4">
-            <a class="btn btn-primary seleziona-tutti"><?= tr('Seleziona tutti') ?></a>
-            <a class="btn btn-default deseleziona-tutti"><?= tr('Deseleziona tutti') ?></a>
+            <a class="btn btn-primary seleziona-tutti"><?php echo tr('Seleziona tutti'); ?></a>
+            <a class="btn btn-default deseleziona-tutti"><?php echo tr('Deseleziona tutti'); ?></a>
         </div>
         <?php
-        echo'
+        echo '
     
         <div class="col-md-3 col-md-offset-5">
             <button type="button" class="btn btn-primary" onclick="crea_fattura_multipla($(this))">
@@ -192,7 +181,6 @@ echo
 
 $modulo_pianificazione = Modules::get('Contratti');
 $plugin_pianificazione = Plugins::get('Pianificazione fatturazione');
-
 
 echo '
 <script>
@@ -236,7 +224,7 @@ function month_click($this) {
 }
 function update_month(currentMonth, currentYear) {
     $.ajax({
-        url: "' . $plugin_pianificazione->fileurl('ajax_rate.php') . '",
+        url: "'.$plugin_pianificazione->fileurl('ajax_rate.php').'",
         type: "POST",
         data: {
             action: "update_month",
@@ -269,7 +257,7 @@ function update_month(currentMonth, currentYear) {
 }
 function update_table(currentMonth, currentYear) {
     $.ajax({
-        url: "' . $plugin_pianificazione->fileurl('ajax_rate.php') . '",
+        url: "'.$plugin_pianificazione->fileurl('ajax_rate.php').'",
         type: "POST",
         data: {
             action: "update_table",
@@ -322,8 +310,8 @@ function crea_fattura_multipla($this) {
     if (records.length > 0) {
         openModal(
             "Crea fattura multipla",
-            "' . $plugin_pianificazione->fileurl('crea_fattura_multipla.php') . '?id_module=' . $modulo_pianificazione->id .
-              '&id_plugin=' . $plugin_pianificazione->id . '&records=" + records
+            "'.$plugin_pianificazione->fileurl('crea_fattura_multipla.php').'?id_module='.$modulo_pianificazione->id.
+              '&id_plugin='.$plugin_pianificazione->id.'&records=" + records
         );
     }
 }

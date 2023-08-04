@@ -479,12 +479,11 @@ if ($options['pricing']) {
 echo '
 </table>';
 
-if($options['checklist']){
-
+if ($options['checklist']) {
     $structure = Modules::get('Interventi');
     $checks = $structure->mainChecks($id_record);
 
-    if(!empty($checks)){
+    if (!empty($checks)) {
         echo '
 <pagebreak class="page-break-after" />
 <table class="table table-bordered vertical-middle">
@@ -501,8 +500,7 @@ if($options['checklist']){
             echo renderChecklistHtml($check);
         }
 
-    echo '
+        echo '
 </table>';
     }
-
 }

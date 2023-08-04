@@ -17,8 +17,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Carbon\Carbon;
-
 include_once __DIR__.'/../../../core.php';
 
 $filter_agente = Auth::user()['gruppo'] == 'Agenti';
@@ -59,10 +57,10 @@ switch ($resource) {
                         ON an_anagrafiche.idpagamento_vendite=co_pagamenti.id
                 LEFT JOIN
                     co_banche banca_vendite
-                        ON co_pagamenti.idconto_vendite = banca_vendite.id_pianodeiconti3 AND banca_vendite.id_anagrafica = ".prepare($id_azienda)." AND banca_vendite.deleted_at IS NULL AND banca_vendite.predefined = 1
+                        ON co_pagamenti.idconto_vendite = banca_vendite.id_pianodeiconti3 AND banca_vendite.id_anagrafica = ".prepare($id_azienda).' AND banca_vendite.deleted_at IS NULL AND banca_vendite.predefined = 1
                 |where|
             ORDER BY
-                ragione_sociale";
+                ragione_sociale';
 
         foreach ($elements as $element) {
             $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
@@ -77,8 +75,6 @@ switch ($resource) {
             }
         }
 
-
-
         if (!empty($search)) {
             $search_fields[] = 'ragione_sociale LIKE '.prepare('%'.$search.'%');
             $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
@@ -92,12 +88,10 @@ switch ($resource) {
         $rs = $data['results'];
 
         foreach ($rs as $k => $r) {
-
             $rs[$k] = array_merge($r, [
                 'text' => $r['descrizione'],
                 'disabled' => $r['is_bloccata'],
             ]);
-
         }
 
         $results = [
@@ -110,7 +104,7 @@ switch ($resource) {
     case 'fornitori':
         $id_azienda = setting('Azienda predefinita');
 
-        $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')')), IF(an_anagrafiche.deleted_at IS NULL, '', ' (".tr('eliminata').")'),' - ', an_anagrafiche.codice) AS descrizione, idtipointervento_default AS idtipointervento, co_pagamenti.id AS id_pagamento, co_pagamenti.descrizione AS desc_pagamento, banca_acquisti.id AS id_banca_acquisti, CONCAT(banca_acquisti.nome, ' - ', banca_acquisti.iban) AS descrizione_banca_acquisti FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica LEFT JOIN co_pagamenti ON an_anagrafiche.idpagamento_acquisti=co_pagamenti.id LEFT JOIN co_banche banca_acquisti ON co_pagamenti.idconto_acquisti = banca_acquisti.id_pianodeiconti3 AND banca_acquisti.id_anagrafica = ".prepare($id_azienda)." AND banca_acquisti.deleted_at IS NULL AND banca_acquisti.predefined = 1 |where| ORDER BY ragione_sociale";
+        $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')')), IF(an_anagrafiche.deleted_at IS NULL, '', ' (".tr('eliminata').")'),' - ', an_anagrafiche.codice) AS descrizione, idtipointervento_default AS idtipointervento, co_pagamenti.id AS id_pagamento, co_pagamenti.descrizione AS desc_pagamento, banca_acquisti.id AS id_banca_acquisti, CONCAT(banca_acquisti.nome, ' - ', banca_acquisti.iban) AS descrizione_banca_acquisti FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica LEFT JOIN co_pagamenti ON an_anagrafiche.idpagamento_acquisti=co_pagamenti.id LEFT JOIN co_banche banca_acquisti ON co_pagamenti.idconto_acquisti = banca_acquisti.id_pianodeiconti3 AND banca_acquisti.id_anagrafica = ".prepare($id_azienda).' AND banca_acquisti.deleted_at IS NULL AND banca_acquisti.predefined = 1 |where| ORDER BY ragione_sociale';
 
         foreach ($elements as $element) {
             $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
@@ -447,7 +441,6 @@ switch ($resource) {
             }
         }
         break;
-    
 
     case 'relazioni':
         $query = "SELECT id, CONCAT(descrizione, IF(an_relazioni.deleted_at IS NULL, '', ' (".tr('eliminata').")')) AS descrizione, colore AS _bgcolor_ FROM an_relazioni |where| ORDER BY descrizione";
@@ -465,7 +458,7 @@ switch ($resource) {
         }
 
         break;
-    
+
     case 'provenienze':
         $query = 'SELECT id, descrizione, colore AS bgcolor FROM an_provenienze |where| ORDER BY descrizione';
 
@@ -478,7 +471,6 @@ switch ($resource) {
         }
 
         break;
-
 
     case 'settori':
         $query = 'SELECT id, descrizione FROM an_settori |where| ORDER BY descrizione';
@@ -497,20 +489,16 @@ switch ($resource) {
      * Opzioni utilizzate:
      * - idanagrafica
      */
-    
-    case 'dichiarazioni_intento':
 
+    case 'dichiarazioni_intento':
         if (isset($superselect['idanagrafica']) && isset($superselect['data'])) {
             //$query = "SELECT id, CONCAT('N. prot. ', numero_protocollo, ' (periodo dal ', DATE_FORMAT(data_inizio, '%d/%m/%Y'), ' al ' ,DATE_FORMAT(data_fine, '%d/%m/%Y'),') (utilizzati ',REPLACE(REPLACE(REPLACE(FORMAT(SUM(totale),2), ',', '#'), '.', ','), '#', '.'), ' su ' , REPLACE(REPLACE(REPLACE(FORMAT(SUM(massimale),2), ',', '#'), '.', ','), '#', '.'),  ' &euro;)' ) AS descrizione, data_inizio, data_fine FROM co_dichiarazioni_intento |where| ORDER BY `data`, `id`";
 
-            $query = "SELECT id, numero_protocollo, data_inizio, data_fine, massimale, totale FROM co_dichiarazioni_intento |where| ORDER BY data";
-
-
+            $query = 'SELECT id, numero_protocollo, data_inizio, data_fine, massimale, totale FROM co_dichiarazioni_intento |where| ORDER BY data';
 
             foreach ($elements as $element) {
                 $filter[] = 'id='.prepare($element);
             }
-            
 
             //$where[] = '( '.prepare($superselect['data']).' BETWEEN data_inizio AND data_fine)';
 
@@ -531,9 +519,8 @@ switch ($resource) {
             $data = AJAX::selectResults($query, $where, $filter, $search_fields, $limit, $custom);
             $rs = $data['results'];
 
-            foreach ($rs as $k => $r) {   
-                               
-                $currentDate = date('Y-m-d', strtotime($superselect['data']));   
+            foreach ($rs as $k => $r) {
+                $currentDate = date('Y-m-d', strtotime($superselect['data']));
                 $startDate = date('Y-m-d', strtotime($r['data_inizio']));
                 $endDate = date('Y-m-d', strtotime($r['data_fine']));
 

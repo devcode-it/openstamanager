@@ -98,9 +98,8 @@ class Interventi extends AppResource
 
         // Informazioni sull'utente
         $id_tecnico = Auth::user()->id_anagrafica;
-        
-        if (setting('Visualizza solo promemoria assegnati') == 1) {
 
+        if (setting('Visualizza solo promemoria assegnati') == 1) {
             $query = '
             SELECT
                 in_interventi.id,
@@ -124,9 +123,7 @@ class Interventi extends AppResource
                     )
                 )
             )';
-
         } else {
-            
             $query = '
             SELECT
                 in_interventi.id,
@@ -148,8 +145,7 @@ class Interventi extends AppResource
                         AND in_interventi.idstatointervento IN (SELECT idstatointervento FROM in_statiintervento WHERE is_completato = 0)
                     )
                 )';
-                            
-        }    
+        }
 
         // Filtro per data
         // Gestione di tecnici assegnati o impianti modificati
@@ -180,7 +176,6 @@ class Interventi extends AppResource
         }
 
         return $this->mapModifiedRecords($records);
-        
     }
 
     public function retrieveRecord($id)

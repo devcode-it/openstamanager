@@ -188,7 +188,7 @@ echo '
                     $("#idarticolo").selectSetNew(record.id, record.text, record);
                     let qta = record.qta-parseFloat($("#qta").val());';
 
-                    if( !setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita') ){
+                    if (!setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita')) {
                         echo '
                         if( qta<=0 && $("#causale option:selected").text()!="Carico"  ){
                             if( record.qta>0 ){
@@ -198,7 +198,7 @@ echo '
                             }
                         }';
                     }
-                    
+
                 echo '
                     setTimeout(function(){
                         salva($("#aggiungi"));

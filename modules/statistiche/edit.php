@@ -29,7 +29,6 @@ echo '
 <script src="'.$structure->fileurl('js/stat.js').'"></script>
 <script src="'.$structure->fileurl('js/stats/line_chart.js').'"></script>';
 
-
 $start = $_SESSION['period_start'];
 $end = $_SESSION['period_end'];
 
@@ -263,8 +262,8 @@ if (!empty($articoli)) {
     }
     echo '
                 </table>';
-                
-    echo "<br><p class='pull-right' >".Modules::link('Articoli', null, tr('Vedi tutto...'), null, null, false, 'tab_'.Plugins::get('Statistiche vendita')['id'])."</p>";
+
+    echo "<br><p class='pull-right' >".Modules::link('Articoli', null, tr('Vedi tutto...'), null, null, false, 'tab_'.Plugins::get('Statistiche vendita')['id']).'</p>';
 } else {
     echo '
                 <p>'.tr('Nessun articolo venduto').'...</p>';
@@ -360,7 +359,6 @@ $(document).ready(function() {
 });
 </script>';
 
-
 // Ore interventi per tipologia
 $dataset = '';
 foreach ($tipi as $tipo) {
@@ -429,7 +427,7 @@ GROUP BY an_anagrafiche.idanagrafica
 ORDER BY ragione_sociale ASC");
 
 $dataset = '';
-$where = implode(",", (array)json_decode($_SESSION['superselect']['idtipiintervento'])) != '' ? 'in_interventi_tecnici.idtipointervento IN('.implode(",", (array)json_decode($_SESSION['superselect']['idtipiintervento'])).')' : '1=1';
+$where = implode(',', (array) json_decode($_SESSION['superselect']['idtipiintervento'])) != '' ? 'in_interventi_tecnici.idtipointervento IN('.implode(',', (array) json_decode($_SESSION['superselect']['idtipiintervento'])).')' : '1=1';
 foreach ($tecnici as $tecnico) {
     $sessioni = $dbo->fetchArray('SELECT SUM(in_interventi_tecnici.ore) AS result, CONCAT(CAST(SUM(in_interventi_tecnici.ore) AS char(20)),\' ore\') AS ore_lavorate, YEAR(in_interventi_tecnici.orario_inizio) AS year, MONTH(in_interventi_tecnici.orario_inizio) AS month FROM in_interventi_tecnici  INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`idstatointervento` WHERE in_interventi_tecnici.idtecnico = '.prepare($tecnico['id']).' AND in_interventi_tecnici.orario_inizio BETWEEN '.prepare($start).' AND '.prepare($end).' AND `in_statiintervento`.`is_completato` AND '.$where.' GROUP BY YEAR(in_interventi_tecnici.orario_inizio), MONTH(in_interventi_tecnici.orario_inizio) ORDER BY YEAR(in_interventi_tecnici.orario_inizio) ASC, MONTH(in_interventi_tecnici.orario_inizio) ASC');
 
@@ -459,7 +457,7 @@ echo '
 
         <div class="row">
             <div class="col-md-3 pull-right">
-                {["type": "select", "multiple": "1", "label": "'.tr('Tipi attività').'", "name": "idtipiintervento[]", "ajax-source": "tipiintervento", "value": "'.implode(",", (array)json_decode($_SESSION['superselect']['idtipiintervento'])).'", "placeholder": "Tutti" ]}
+                {["type": "select", "multiple": "1", "label": "'.tr('Tipi attività').'", "name": "idtipiintervento[]", "ajax-source": "tipiintervento", "value": "'.implode(',', (array) json_decode($_SESSION['superselect']['idtipiintervento'])).'", "placeholder": "Tutti" ]}
             </div>
         </div>
 
@@ -481,7 +479,7 @@ $(document).ready(function() {
         data: {
             labels: months,
             datasets: [
-                '.($dataset? :'{ label: "", backgroundColor: "transparent", data: [ 0,0,0,0,0,0,0,0,0,0,0,0 ] }').'
+                '.($dataset ?: '{ label: "", backgroundColor: "transparent", data: [ 0,0,0,0,0,0,0,0,0,0,0,0 ] }').'
             ]
         },
         options: {
@@ -535,7 +533,6 @@ $(document).ready(function() {
 });
 </script>';
 
-
 $dataset = '';
 
 $nuovi_clienti = $dbo->fetchArray('SELECT COUNT(*) AS result, GROUP_CONCAT(an_anagrafiche.ragione_sociale, "<br>") AS ragioni_sociali, YEAR(an_anagrafiche.created_at) AS year, MONTH(an_anagrafiche.created_at) AS month FROM an_anagrafiche
@@ -556,12 +553,11 @@ INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipi
 INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica
 WHERE an_tipianagrafiche.descrizione = "Cliente" AND co_tipidocumento.dir = "entrata" AND an_anagrafiche.created_at BETWEEN '.prepare($start).' AND '.prepare($end).' GROUP BY YEAR(an_anagrafiche.created_at), MONTH(an_anagrafiche.created_at) ORDER BY YEAR(an_anagrafiche.created_at) ASC, MONTH(an_anagrafiche.created_at) ASC');
 
-
 //Random color
 $background = '#'.dechex(rand(256, 16777215));
 
 $dataset .= '{
-    label: "'.tr("Nuovi clienti").'",   
+    label: "'.tr('Nuovi clienti').'",   
     backgroundColor: "'.$background.'",
     data: [
         '.implode(',', array_column($nuovi_clienti, 'result')).'
@@ -572,7 +568,7 @@ $dataset .= '{
 $background = '#'.dechex(rand(256, 16777215));
 
 $dataset .= '{
-    label: "'.tr("Clienti acquisiti").'",   
+    label: "'.tr('Clienti acquisiti').'",   
     backgroundColor: "'.$background.'",
     data: [
         '.implode(',', array_column($clienti_acquisiti, 'result')).'
@@ -583,7 +579,7 @@ $dataset .= '{
 $background = '#'.dechex(rand(256, 16777215));
 
 $dataset .= '{
-    label: "'.tr("Nuovi fornitori").'",   
+    label: "'.tr('Nuovi fornitori').'",   
     backgroundColor: "'.$background.'",
     data: [
         '.implode(',', array_column($nuovi_fornitori, 'result')).'

@@ -30,7 +30,6 @@ use Prints;
 use Translator;
 use UnexpectedValueException;
 use Uploads;
-use Validate;
 
 /**
  * Classe per la gestione della fatturazione elettronica in XML.
@@ -630,7 +629,6 @@ class FatturaElettronica
         // Se il cliente ha sede a San Marino non ha nessun codice destinatario imposto quello dell'Ufficio tributario di San Marino
         $default_code = (($cliente->nazione->iso2 == 'SM') && ($default_code == 'XXXXXXX')) ? '2R4GT08' : $default_code;
 
-
         // Generazione dell'header
         // Se all'Anagrafe Tributaria il trasmittente è censito con il codice fiscale, es. ditte individuali
         $result = [
@@ -1001,9 +999,7 @@ class FatturaElettronica
 
             if (!empty($documento->dati_aggiuntivi_fe['sconto_maggiorazione_percentuale'])) {
                 $sconto['Percentuale'] = $documento->dati_aggiuntivi_fe['sconto_maggiorazione_percentuale'];
-            }
-
-            else if (!empty($documento->dati_aggiuntivi_fe['sconto_maggiorazione_importo'])) {
+            } elseif (!empty($documento->dati_aggiuntivi_fe['sconto_maggiorazione_importo'])) {
                 $sconto['Importo'] = $documento->dati_aggiuntivi_fe['sconto_maggiorazione_importo'];
             }
 
@@ -1011,7 +1007,7 @@ class FatturaElettronica
         }
 
         if (!empty($sconti_maggiorazioni)) {
-            foreach($sconti_maggiorazioni AS $sconto_maggiorazione){
+            foreach ($sconti_maggiorazioni as $sconto_maggiorazione) {
                 $result[]['ScontoMaggiorazione'] = $sconto_maggiorazione;
             }
         }
@@ -1060,15 +1056,13 @@ class FatturaElettronica
             }
 
             if (!empty($causale)) {
-                
-                /**
+                /*
                  * Id SdI: 2.1.9.3
                  * Caratteri min-max: 1 - 100 caretteri
                  * Ripetibile: No
                 */
 
                 $result['CausaleTrasporto'] = safe_truncate(html_entity_decode($causale), 100, null);
-                
             }
 
             if (!empty($documento['n_colli'])) {
@@ -1367,11 +1361,10 @@ class FatturaElettronica
 
         $order = 1;
         foreach ($righe as $idx => $riga) {
-
             // Righe - Descrizione della causale del documento (2.2.1.4)
             $descrizioni = self::chunkSplit($riga['descrizione'], 1000);
 
-            foreach ($descrizioni as $i => $descrizione) {   
+            foreach ($descrizioni as $i => $descrizione) {
                 $first_riga = ($i == 0 ? true : false);
 
                 $dati_aggiuntivi = $riga->dati_aggiuntivi_fe;
@@ -1440,9 +1433,9 @@ class FatturaElettronica
                 }
 
                 $aliquota = $riga->aliquota ?: $iva_descrizioni;
-                // Se sono presenti solo righe descrittive uso l'iva da impostazioni 
+                // Se sono presenti solo righe descrittive uso l'iva da impostazioni
                 if (empty($aliquota)) {
-                    $aliquota_predefinita = Aliquota::find(setting("Iva predefinita"));
+                    $aliquota_predefinita = Aliquota::find(setting('Iva predefinita'));
                     $aliquota = $aliquota_predefinita;
                 }
                 $percentuale = floatval($aliquota->percentuale);
@@ -1490,11 +1483,11 @@ class FatturaElettronica
                 //$id_iva_dichiarazione = setting("Iva per lettere d'intento");
                 $dichiarazione = $documento->dichiarazione;
                 $ive_accettate = [];
-                $rs = $database->table('co_iva')->where('codice_natura_fe','N3.5')->get();
-                foreach($rs as $r){
+                $rs = $database->table('co_iva')->where('codice_natura_fe', 'N3.5')->get();
+                foreach ($rs as $r) {
                     $ive_accettate[] = $r->id;
                 }
-                if (!empty($dichiarazione) && in_array($riga->aliquota->id, $ive_accettate) ) {
+                if (!empty($dichiarazione) && in_array($riga->aliquota->id, $ive_accettate)) {
                     $dettaglio[]['AltriDatiGestionali'] = [
                         'TipoDato' => 'INTENTO',
                         'RiferimentoTesto' => $dichiarazione->numero_protocollo,
@@ -1579,7 +1572,6 @@ class FatturaElettronica
             $totale = round($riepilogo->sum('totale_imponibile') + $riepilogo->sum('rivalsa_inps'), 2);
             $imposta = round($riepilogo->sum('iva') + $riepilogo->sum('iva_rivalsa_inps'), 2);
 
-
             $dati = $riepilogo->first()->aliquota;
 
             $iva = [
@@ -1640,8 +1632,8 @@ class FatturaElettronica
         /**
          * TP01 - A Rate
          * TP02 - Unica Soluzione
-         * TP03 - Anticipato
-        */
+         * TP03 - Anticipato.
+         */
         $result = [
             'CondizioniPagamento' => ($co_pagamenti['prc'] < 100) ? 'TP01' : 'TP02',
         ];

@@ -75,7 +75,7 @@ if (!empty($terzo_livello)) {
         $totale_conto2 += $totale_conto;
         $totale_reddito2 += $totale_reddito;
 
-            echo '
+        echo '
                 <tr class="conto3" id="conto3-'.$conto_terzo['id'].'" style="'.(!empty($numero_movimenti) ? '' : 'opacity: 0.5;').'">
                     <td>';
 
@@ -128,7 +128,7 @@ if (!empty($terzo_livello)) {
         // Span con info del conto
         echo '
                         <span class="clickable" id="movimenti-'.$conto_terzo['id'].'">
-                            &nbsp;'.$conto_secondo['numero'].'.'.$conto_terzo['numero'].' '.$conto_terzo['descrizione'].' <span class="text-muted">'. ($conto_terzo['percentuale_deducibile'] != '100.00' ? tr('(deducibile al _PERC_%', ['_PERC_' => Translator::numberToLocale($conto_terzo['percentuale_deducibile'], 0)]).')':'').'</span>' .'
+                            &nbsp;'.$conto_secondo['numero'].'.'.$conto_terzo['numero'].' '.$conto_terzo['descrizione'].' <span class="text-muted">'.($conto_terzo['percentuale_deducibile'] != '100.00' ? tr('(deducibile al _PERC_%', ['_PERC_' => Translator::numberToLocale($conto_terzo['percentuale_deducibile'], 0)]).')' : '').'</span>'.'
                         </span>
                         <div id="conto_'.$conto_terzo['id'].'" style="display:none;"></div>
                     </td>

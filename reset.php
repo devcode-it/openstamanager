@@ -77,7 +77,6 @@ switch (post('op')) {
 
         redirect(base_path().'/index.php');
         exit();
-
 }
 
 $pageTitle = tr('Reimpostazione password');

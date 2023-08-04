@@ -25,41 +25,35 @@ $fattura = Fattura::find($id_record);
 $file = $fattura->uploads()->where('name', 'Fattura Elettronica')->first();
 
 if (empty($file)) {
-    
     echo '<div class="text-center">'.tr('Questo documento non possiede una fattura elettronica associata').'</div>';
-
-}else{
-
+} else {
     if ($file->isFatturaElettronica()) {
-
         $content = file_get_contents(base_dir().'/'.$file->filepath);
-        
+
         // Individuazione stylesheet
         $default_stylesheet = 'asso-invoice';
-       
+
         $name = basename($file->original_name);
         $filename2 = explode('.', $name)[0];
         $pieces = explode('_', $filename2);
         $stylesheet = $pieces[2];
-        
+
         $stylesheet = base_dir().'/plugins/xml/'.$stylesheet.'.xsl';
         $stylesheet = file_exists($stylesheet) ? $stylesheet : base_dir().'/plugins/xml/'.$default_stylesheet.'.xsl';
 
         // XML
         $xml = new DOMDocument();
         $xml->loadXML($content);
-       
 
         // XSL
         $xsl = new DOMDocument();
         $xsl->load($stylesheet);
-       
 
         // XSLT
         $xslt = new XSLTProcessor();
         $xslt->importStylesheet($xsl);
         echo $xslt->transformToXML($xml);
-       
+
         echo '
     <style>
         #notifica {
@@ -69,8 +63,6 @@ if (empty($file)) {
             border-bottom: solid 1px #000000;
         }
     </style>';
-        
-        
     } else {
         echo '
     <style>
@@ -85,9 +77,9 @@ if (empty($file)) {
             min-height: 500px;
         }
     </style>';
-        
+
         $link = base_path().'/'.$file->filepath;
-        
+
         if ($file->isImage()) {
             echo '
         <img src="'.$link.'"></img>';

@@ -126,7 +126,7 @@ $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
 
             <div class="row">
                 <div class="col-md-6">
-					{[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial", "help": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>", "value": "<?php echo setting('Serial number abilitato di default') ?>","placeholder": "<?php echo tr('Serial number'); ?>" ]}
+					{[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial", "help": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>", "value": "<?php echo setting('Serial number abilitato di default'); ?>","placeholder": "<?php echo tr('Serial number'); ?>" ]}
                 </div>
             </div>
         </div>

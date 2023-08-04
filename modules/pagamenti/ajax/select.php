@@ -37,8 +37,8 @@ switch ($resource) {
            CONCAT(banca_acquisti.nome, ' - ', banca_acquisti.iban) AS descrizione_banca_acquisti,
            banca_cliente.id AS id_banca_cliente
         FROM co_pagamenti
-            LEFT JOIN co_banche banca_cliente ON banca_cliente.id_anagrafica = ".prepare($superselect['idanagrafica'])." AND banca_cliente.deleted_at IS NULL
-            LEFT JOIN co_banche banca_vendite ON co_pagamenti.idconto_vendite = banca_vendite.id_pianodeiconti3 AND banca_vendite.id_anagrafica = ".prepare($id_azienda).' AND banca_vendite.deleted_at IS NULL
+            LEFT JOIN co_banche banca_cliente ON banca_cliente.id_anagrafica = ".prepare($superselect['idanagrafica']).' AND banca_cliente.deleted_at IS NULL
+            LEFT JOIN co_banche banca_vendite ON co_pagamenti.idconto_vendite = banca_vendite.id_pianodeiconti3 AND banca_vendite.id_anagrafica = '.prepare($id_azienda).' AND banca_vendite.deleted_at IS NULL
             LEFT JOIN co_banche banca_acquisti ON co_pagamenti.idconto_acquisti = banca_acquisti.id_pianodeiconti3 AND banca_acquisti.id_anagrafica = '.prepare($id_azienda).' AND banca_acquisti.deleted_at IS NULL
         |where| GROUP BY co_pagamenti.descrizione ORDER BY co_pagamenti.descrizione ASC';
 
@@ -63,12 +63,11 @@ switch ($resource) {
         $rs = $data['results'];
 
         foreach ($rs as $k => $r) {
-           
             //Controllo metodi di pagamento con ri.ba. solo per i documenti con dir entrata
-            if ($dbo->fetchOne('SELECT `co_tipidocumento`.`dir` AS dir FROM `co_tipidocumento` WHERE `co_tipidocumento`.`id`=' . prepare($superselect['idtipodocumento']))['dir'] == 'entrata') {
+            if ($dbo->fetchOne('SELECT `co_tipidocumento`.`dir` AS dir FROM `co_tipidocumento` WHERE `co_tipidocumento`.`id`='.prepare($superselect['idtipodocumento']))['dir'] == 'entrata') {
                 $rs[$k] = array_merge($r, [
-                    'text' =>(($r['codice_modalita_pagamento_fe'] == 'MP12' && empty($r['id_banca_cliente']))? $r['descrizione'].' '.tr('(Informazioni bancarie mancanti)') : $r['descrizione']),
-                    'disabled' => (($r['codice_modalita_pagamento_fe'] == 'MP12' && empty($r['id_banca_cliente']))? 1 : 0),
+                    'text' => (($r['codice_modalita_pagamento_fe'] == 'MP12' && empty($r['id_banca_cliente'])) ? $r['descrizione'].' '.tr('(Informazioni bancarie mancanti)') : $r['descrizione']),
+                    'disabled' => (($r['codice_modalita_pagamento_fe'] == 'MP12' && empty($r['id_banca_cliente'])) ? 1 : 0),
                 ]);
             }
         }

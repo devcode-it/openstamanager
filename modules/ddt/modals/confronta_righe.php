@@ -89,8 +89,8 @@ $righe = $dbo->fetchArray(
                 ?>
 
                 <tr>
-                    <td><?= $riga['codice'] ?></td>
-                    <td><?= $riga['descrizione'] ?></td>
+                    <td><?php echo $riga['codice']; ?></td>
+                    <td><?php echo $riga['descrizione']; ?></td>
                     <td>
                         <div>
                             {[ "type": "number", "label": "", "data-id":"<?php echo $riga['id']; ?>","name": "nuovo_prezzo_unitario[]", "value": "<?php echo numberFormat($riga['prezzo_unitario'], 2); ?>"]}
@@ -98,14 +98,14 @@ $righe = $dbo->fetchArray(
                     </td>
                     <td class="text-center"><?php
                         if (isset($ultimo_prezzo_preventivo)) {
-                            echo moneyFormat($ultimo_prezzo_preventivo['prezzo_unitario'], 2) . (!empty($ultimo_prezzo_preventivo['updated_at']) ? ' <br><small class="help-block tip" title="'.dateFormat($ultimo_prezzo_preventivo['updated_at']).'">' . (new Carbon($ultimo_prezzo_preventivo['updated_at']))->diffForHumans().'</small>' :  '');
+                            echo moneyFormat($ultimo_prezzo_preventivo['prezzo_unitario'], 2).(!empty($ultimo_prezzo_preventivo['updated_at']) ? ' <br><small class="help-block tip" title="'.dateFormat($ultimo_prezzo_preventivo['updated_at']).'">'.(new Carbon($ultimo_prezzo_preventivo['updated_at']))->diffForHumans().'</small>' : '');
                         } else {
                             echo 'n.d.';
                         }
                     ?></td>
                     <td class="text-center"><?php
                         if (isset($ultimo_prezzo_vendita)) {
-                            echo moneyFormat($ultimo_prezzo_vendita['prezzo_unitario'], 2) . (!empty($ultimo_prezzo_vendita['updated_at']) ? ' <br><small class="help-block tip" title="'.dateFormat($ultimo_prezzo_vendita['updated_at']).'">' . (new Carbon($ultimo_prezzo_vendita['updated_at']))->diffForHumans().'</small>' :  '');
+                            echo moneyFormat($ultimo_prezzo_vendita['prezzo_unitario'], 2).(!empty($ultimo_prezzo_vendita['updated_at']) ? ' <br><small class="help-block tip" title="'.dateFormat($ultimo_prezzo_vendita['updated_at']).'">'.(new Carbon($ultimo_prezzo_vendita['updated_at']))->diffForHumans().'</small>' : '');
                         } else {
                             echo 'n.d.';
                         }

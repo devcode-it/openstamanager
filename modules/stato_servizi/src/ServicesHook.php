@@ -41,7 +41,6 @@ class ServicesHook extends Manager
                 ]).'</ul>';
             }
 
-
             // Elaborazione delle risorse Services scadute
             $risorse_scadute = Services::getRisorseScadute();
             if (!$risorse_scadute->isEmpty()) {
@@ -60,7 +59,6 @@ class ServicesHook extends Manager
                 ]).'</ul>';
             }
 
-
             // Elaborazione delle risorse Services in scadenza
             $risorse_in_scadenza = Services::getRisorseInScadenza($limite_scadenze);
             if (!$risorse_in_scadenza->isEmpty()) {
@@ -70,9 +68,7 @@ class ServicesHook extends Manager
                 ]).'</ul>';
             }
 
-
             $module = Module::pool('Stato dei servizi');
-
         }
 
         return [

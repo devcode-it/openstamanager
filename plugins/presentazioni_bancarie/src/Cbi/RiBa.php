@@ -2,6 +2,7 @@
 
 namespace Plugins\PresentazioniBancarie\Cbi;
 
+use InvalidArgumentException;
 use Plugins\PresentazioniBancarie\Cbi\Records\Record14;
 use Plugins\PresentazioniBancarie\Cbi\Records\Record20;
 use Plugins\PresentazioniBancarie\Cbi\Records\Record30;
@@ -11,7 +12,6 @@ use Plugins\PresentazioniBancarie\Cbi\Records\Record51;
 use Plugins\PresentazioniBancarie\Cbi\Records\Record70;
 use Plugins\PresentazioniBancarie\Cbi\Records\RecordEF;
 use Plugins\PresentazioniBancarie\Cbi\Records\RecordIB;
-use InvalidArgumentException;
 
 class RiBa
 {
@@ -93,10 +93,10 @@ class RiBa
         $ib->nome_supporto = $intestazione->nome_supporto;
         $ib->data_creazione = $intestazione->data_creazione;
 
-		if ( $intestazione->soggetto_veicolatore != "" ) {
-			$ib->tipo_flusso = 1;
-			$ib->qualificatore_flusso = '$';
-		}
+        if ($intestazione->soggetto_veicolatore != '') {
+            $ib->tipo_flusso = 1;
+            $ib->qualificatore_flusso = '$';
+        }
         $ib->soggetto_veicolatore = $intestazione->soggetto_veicolatore;
         $contenuto .= $ib->toCBI().$eol;
 

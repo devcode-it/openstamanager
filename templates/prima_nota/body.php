@@ -19,7 +19,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-
 echo '
 <div class="row">
     <div class="col-md-12 text-center">
@@ -31,8 +30,8 @@ echo '
 <table class="table table-bordered table-striped">
     <tr>
         <th>#</th>';
-    
-    foreach($campi as $campo){
+
+    foreach ($campi as $campo) {
         echo '
         <th>'.$campo.'</th>';
     }
@@ -41,21 +40,21 @@ echo '
     </tr>';
     $index = 0;
 
-    foreach($records['results'] as $record){
+    foreach ($records['results'] as $record) {
         $record['Data'] = Translator::dateToLocale($record['Data']);
-        $record['Dare'] = Translator::numberToLocale($record['Dare'],'qta');
-        $record['Avere'] = Translator::numberToLocale($record['Avere'],'qta');
+        $record['Dare'] = Translator::numberToLocale($record['Dare'], 'qta');
+        $record['Avere'] = Translator::numberToLocale($record['Avere'], 'qta');
         ++$index;
-        
+
         echo '
         <tr>
             <td>'.$index.'</td>';
 
-        foreach($campi as $campo){
+        foreach ($campi as $campo) {
             echo '
             <td>'.$record[$campo].'</td>';
         }
-    
+
         echo '
         </tr>';
     }

@@ -33,7 +33,7 @@ $vendita_banco = $dbo->fetchNum("SELECT * FROM zz_modules WHERE name='Vendita al
 $v_iva = [];
 $v_totale = [];
 
-if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')){
+if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')) {
     $query = '
     SELECT
         data_registrazione,
@@ -104,9 +104,7 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')){
     GROUP BY
     iva, id, data_registrazione, data, numero_esterno, codice_tipo_documento_fe, percentuale, descrizione, numero, ragione_sociale, codice_anagrafica
     ORDER BY CAST(numero_esterno AS UNSIGNED)';
-} 
-
-else {
+} else {
     $query = '
 SELECT 
     co_documenti.data_registrazione, 

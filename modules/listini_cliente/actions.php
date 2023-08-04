@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Articoli\Articolo AS ArticoloOriginale;
+use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\ListiniCliente\Articolo;
 use Modules\ListiniCliente\Listino;
 
@@ -49,7 +49,7 @@ switch (filter('op')) {
         $id_record = $listino->id;
 
         flash()->info(tr('Nuovo listino aggiunto!'));
-        
+
         break;
 
     case 'manage_articolo':
@@ -70,12 +70,12 @@ switch (filter('op')) {
         }
 
         flash()->info(tr('Nuovo articolo al listino aggiunto!'));
-        
+
         break;
 
     case 'delete_articolo':
-        $id_righe = (array)post('id');
-        
+        $id_righe = (array) post('id');
+
         foreach ($id_righe as $id_riga) {
             $articolo_listino = Articolo::find($id_riga);
             $articolo_listino->delete();

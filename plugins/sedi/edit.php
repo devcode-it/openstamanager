@@ -112,22 +112,22 @@ echo '
         </div>
 		
 		<div class="col-md-2">
-			{[ "type": "text", "label": "'.tr('Latitudine'). '", "name": "lat", "id": "lat_", "value": "$lat$", "extra": "data-geo=\'lat\'", "class": "text-right", "readonly": true ]}
+			{[ "type": "text", "label": "'.tr('Latitudine').'", "name": "lat", "id": "lat_", "value": "$lat$", "extra": "data-geo=\'lat\'", "class": "text-right", "readonly": true ]}
 		</div>
 
 		<div class="col-md-2">
-			{[ "type": "text", "label": "'.tr('Longitudine'). '", "name": "lng", "id": "lng_", "value": "$lng$", "extra": "data-geo=\'lng\'", "class": "text-right", "readonly": true ]}
+			{[ "type": "text", "label": "'.tr('Longitudine').'", "name": "lng", "id": "lng_", "value": "$lng$", "extra": "data-geo=\'lng\'", "class": "text-right", "readonly": true ]}
 		</div>';
 
 if (!empty($record['indirizzo']) || (empty($record['citta']))) {
-	echo '
+    echo '
 		<div  class="col-md-2"  >
 			<label>&nbsp;</label><br>
 			<a class="btn btn-info" title="'.tr('Mostra la sede su Mappa').'" onclick="cercaOpenStreetMap();">&nbsp;<i class="fa fa-map-marker">&nbsp;</i></a>
 		';
 
-	echo '
-			<a title="'.tr('Calcola percorso da sede legale a questa sede'). '" class="btn btn-primary" onclick="calcolaPercorso();"><i class="fa fa-car"></i></a>
+    echo '
+			<a title="'.tr('Calcola percorso da sede legale a questa sede').'" class="btn btn-primary" onclick="calcolaPercorso();"><i class="fa fa-car"></i></a>
 		</div> <div class="clearfix"></div><br>';
 }
 
@@ -135,7 +135,7 @@ echo '
 </div>';
 
 if (!empty($record['gaddress']) || (!empty($record['lat']) && !empty($record['lng']))) {
-	echo '
+    echo '
 <div id="map" style="height:400px; width:100%"></div><br>';
 }
 
@@ -152,8 +152,8 @@ if (!empty($elementi)) {
 	<div class="box box-warning collapsable collapsed-box">
 		<div class="box-header with-border">
 			<h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Campi collegati: _NUM_', [
-				'_NUM_' => count($elementi),
-			]).'</h3>
+                '_NUM_' => count($elementi),
+            ]).'</h3>
 			<div class="box-tools pull-right">
 				<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
 			</div>
@@ -161,23 +161,23 @@ if (!empty($elementi)) {
 		<div class="box-body">
 			<ul>';
 
-		foreach ($elementi as $elemento) {
-			$descrizione = $elemento['tipo'];
-			$id = $elemento['id'];
-			if (in_array($elemento['tipo'], ['Fattura'])) {
-				$modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
-				$link = Modules::link($modulo, $id, $descrizione);
-			} elseif (in_array($elemento['tipo'], ['Referente'])) {
-				$link = Plugins::link('Referenti', $id_parent, $descrizione);
-			} else {
-				$link = Modules::link('Utenti e permessi', $id, $descrizione);
-			}
+    foreach ($elementi as $elemento) {
+        $descrizione = $elemento['tipo'];
+        $id = $elemento['id'];
+        if (in_array($elemento['tipo'], ['Fattura'])) {
+            $modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
+            $link = Modules::link($modulo, $id, $descrizione);
+        } elseif (in_array($elemento['tipo'], ['Referente'])) {
+            $link = Plugins::link('Referenti', $id_parent, $descrizione);
+        } else {
+            $link = Modules::link('Utenti e permessi', $id, $descrizione);
+        }
 
-			echo '
+        echo '
 				<li>'.$link.'</li>';
-		}
+    }
 
-		echo '
+    echo '
 			</ul>
 		</div>
 	</div>';
@@ -239,7 +239,7 @@ function caricaMappaSede() {
 			gestureHandling: true
 		});
 
-		L.tileLayer("'.setting("Tile server OpenStreetMap").'", {
+		L.tileLayer("'.setting('Tile server OpenStreetMap').'", {
 			maxZoom: 17,
 			attribution: "© OpenStreetMap"
 		}).addTo(map); 

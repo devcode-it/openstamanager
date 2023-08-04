@@ -43,7 +43,7 @@ if (!empty($ddt->id_ddt_trasporto_interno)) {
 function completaTrasporto() {
     swal({
         title: "'.tr('Completare il trasporto?').'",
-        html: "'.tr('Sei sicuro di voler completare il trasporto interno tramite un DDT in direzione opposta?').'" + `<br><br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(["id_module" => $id_module_collegamento, 'is_sezionale' => 1]).', "value": "'.$_SESSION['module_'.$id_module_collegamento]['id_segment'].'" ]}`,
+        html: "'.tr('Sei sicuro di voler completare il trasporto interno tramite un DDT in direzione opposta?').'" + `<br><br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module_collegamento, 'is_sezionale' => 1]).', "value": "'.$_SESSION['module_'.$id_module_collegamento]['id_segment'].'" ]}`,
         type: "warning",
         showCancelButton: true,
         confirmButtonClass: "btn btn-lg btn-success",
@@ -88,4 +88,3 @@ echo '
 <button type="button" class="btn btn-primary ask" data-title="'.tr('Duplicare questo Ddt?').'" data-msg="'.tr('Clicca su tasto duplica per procedere.').'" data-op="copy" data-button="'.tr('Duplica').'" data-class="btn btn-lg btn-primary" data-backto="record-edit">
     <i class="fa fa-copy"></i> '.tr('Duplica ddt').'
 </button>';
-

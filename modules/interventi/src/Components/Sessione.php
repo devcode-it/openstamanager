@@ -66,7 +66,7 @@ class Sessione extends Model
         $model->tipo()->associate($tipo_sessione);
 
         if (empty($fine)) {
-            $fine = date_modify(date_create($inizio), '+'.($tipo_sessione->tempo_standard*60).' minutes')->format('Y-m-d H:i');
+            $fine = date_modify(date_create($inizio), '+'.($tipo_sessione->tempo_standard * 60).' minutes')->format('Y-m-d H:i');
         }
 
         $model->orario_inizio = $inizio;

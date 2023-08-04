@@ -28,14 +28,13 @@ function menuSelection($element, $group_id, $depth, $permessi_disponibili)
     $permesso_salvato = $dbo->fetchOne('SELECT permessi FROM zz_permissions WHERE idgruppo = '.prepare($group_id).' AND idmodule = '.prepare($element['id']));
 
     $permessi = $permesso_salvato ? $permesso_salvato['permessi'] : '-';
-   
+
     $result = '
                 <tr>
 					<td>'.str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', $depth).'<span>'.$element['title'].'</span></td>
                     <td>
 						<select name="permesso_'.$element['id'].'" id="permesso_'.$element['id'].'" class="form-control superselect openstamanager-input select-input" onchange="update_permissions('.$element['id'].', $(this).find(\'option:selected\').val(), $(this).find(\'option:selected\').data(\'color\'))">';
 
-    
     foreach ($permessi_disponibili as $id => $nome) {
         switch ($id) {
             case 'rw':
@@ -48,7 +47,6 @@ function menuSelection($element, $group_id, $depth, $permessi_disponibili)
                 $bgcolor = 'red';
             break;
             default:
-              
             break;
         }
         $attr = ($id == $permessi) ? ' selected="selected"' : '';

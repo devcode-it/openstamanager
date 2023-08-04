@@ -104,13 +104,10 @@ switch (filter('op')) {
             flash()->info(tr("Informazioni per l'utente _USERNAME_ salvate correttamente!", [
                 '_USERNAME_' => $utente->username,
             ]));
-
         } else {
-
-            flash()->error(tr("Utente _USERNAME_ già esistente!", [
+            flash()->error(tr('Utente _USERNAME_ già esistente!', [
                 '_USERNAME_' => $username,
             ]));
-
         }
 
         break;
@@ -259,10 +256,9 @@ switch (filter('op')) {
         break;
 
     case 'update':
-
-        $dbo->update('zz_groups',[
+        $dbo->update('zz_groups', [
             'id_module_start' => filter('id_module_start'),
-        ],['id' => $id_record]);
+        ], ['id' => $id_record]);
 
         ob_end_clean();
         echo 'ok';

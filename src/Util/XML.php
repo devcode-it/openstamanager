@@ -110,6 +110,26 @@ class XML
     }
 
     /**
+     * Interpreta i contenuti di un file XML.
+     *
+     * @param string $file
+     *
+     * @return array
+     */
+    public static function forceArray($value)
+    {
+        if (is_array($value)) {
+            if (!array_key_exists(0, $value)) {
+                $result = $value;
+                $value = [];
+                $value[0] = $result;
+            }
+        }
+
+        return $value;
+    }
+
+    /**
      * Decodifica il file utilizzando le funzioni native PHP.
      *
      * @param $file
@@ -163,25 +183,5 @@ TXT;
         $to .= chunk_split(base64_encode($from));
 
         return file_put_contents($file, $to);
-    }
-
-    /**
-     * Interpreta i contenuti di un file XML.
-     *
-     * @param string $file
-     *
-     * @return array
-     */
-    public static function forceArray($value)
-    {
-        if (is_array($value)) {
-            if (!array_key_exists(0, $value)) {
-                $result = $value;
-                $value = [];
-                $value[0] = $result;
-            }
-        }
-
-        return $value;
     }
 }

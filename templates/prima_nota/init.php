@@ -24,25 +24,25 @@ include_once __DIR__.'/../../core.php';
 $id_module = Modules::get('Prima nota')['id'];
 $structure = Modules::get($id_module);
 
-if( !empty($_SESSION['superselect']['mastrini']) ){
+if (!empty($_SESSION['superselect']['mastrini'])) {
     $id_record = $_SESSION['superselect']['mastrini'];
-    $where = "co_movimenti.idmastrino IN (".implode(",",$id_record).")";
+    $where = 'co_movimenti.idmastrino IN ('.implode(',', $id_record).')';
     $id_record = json_decode($righe);
     unset($_SESSION['superselect']['mastrini']);
-}else{
-    $where = "co_movimenti.idmastrino=".prepare($id_record);
+} else {
+    $where = 'co_movimenti.idmastrino='.prepare($id_record);
 }
 
 // RISULTATI VISIBILI
 Util\Query::setSegments(false);
 $query = Query::getQuery($structure, $where, 0, []);
 $query = Modules::replaceAdditionals($id_module, $query);
-$query = str_replace("1=1","1=1 AND ".$where,$query);
+$query = str_replace('1=1', '1=1 AND '.$where, $query);
 
 $records = Query::executeAndCount($query);
 
 $campi = [];
-foreach($records['results'][0] as $key=>$value){
+foreach ($records['results'][0] as $key => $value) {
     $campi[] = $key;
 }
 unset($campi[0]);

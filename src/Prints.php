@@ -388,7 +388,7 @@ class Prints
             include $infos['full_directory'].'/pdfgen.'.$infos['directory'].'.php';
         }
 
-        if(empty($filename)){
+        if (empty($filename)) {
             // Sostituzione di variabili generiche
             $report = str_replace('$body$', $body, $report);
             $report = str_replace('$footer$', $footer, $report);
@@ -433,7 +433,7 @@ class Prints
 
             $pdf = $html2pdf->output($path, $mode);
             $file['pdf'] = $pdf;
-        }else{
+        } else {
             $file = self::getFile($infos, $id_record, $directory, $replaces);
             $file['pdf'] = file_get_contents($filename);
         }
@@ -524,7 +524,7 @@ class Prints
 
             'default_font' => 'dejavusanscondensed',
 
-            'tempDir' => base_dir() . '/files/temp',
+            'tempDir' => base_dir().'/files/temp',
 
             // Abilitazione per lo standard PDF/A
             //'PDFA' => true,
@@ -576,7 +576,7 @@ class Prints
             }
         }
 
-        if(empty($filename)){
+        if (empty($filename)) {
             // Generazione dei contenuti dell'header
             ob_start();
             $print_header = self::filepath($id_print, 'header.php');
@@ -699,7 +699,7 @@ class Prints
             $has_pdf = false;
             foreach ($id_files as $id_file) {
                 $fil = Models\Upload::find($id_file)->first();
-                    
+
                 if ($fil->isImage()) {
                     $link = base_path().'/'.$fil->filepath;
                     $mpdf->WriteHTML('<pagebreak />');
@@ -711,12 +711,12 @@ class Prints
 
             // Creazione effettiva del PDF
             if ($has_pdf) {
-                $pdf_merger = new PDFMerger;
+                $pdf_merger = new PDFMerger();
                 $mpdf->Output(base_dir().'/files/'.$infos['directory'].'/'.basename($path), 'F');
                 $pdf_merger->addPDF(base_dir().'/files/'.$infos['directory'].'/'.basename($path));
                 foreach ($id_files as $id_file) {
                     $fil = Models\Upload::find($id_file)->first();
-                    $pdf_merger->addPDF( base_dir().'/'.$fil->file_path, 'all');	
+                    $pdf_merger->addPDF(base_dir().'/'.$fil->file_path, 'all');
                 }
                 $mode_merger = ($mode == 'F' ? 'file' : ($mode == 'D' ? 'download' : ($mode == 'S' ? 'string' : 'I')));
                 $path_merger = $mode == 'F' ? base_dir().'/files/'.$infos['directory'].'/'.basename($path) : $path;
@@ -727,13 +727,13 @@ class Prints
             }
 
             $file['pdf'] = $pdf;
-        }else{
+        } else {
             $file = self::getFile($infos, $id_record, $directory, $replaces);
             $file['pdf'] = file_get_contents($filename);
         }
 
         $file['pages'] = $mpdf->pages;
-        
+
         return $file;
     }
 

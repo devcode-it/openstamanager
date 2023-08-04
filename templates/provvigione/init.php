@@ -46,13 +46,13 @@ HAVING
 ORDER BY
     `co_documenti`.`data` DESC';
 
-if(!empty(get('date_start'))){
+if (!empty(get('date_start'))) {
     $module_query = str_replace('1=1', '1=1 AND DATE_FORMAT(`data`, "%Y%m%d") >= "'.date('Ymd', strtotime(get('date_start'))).'"', $module_query);
 
     $date_start = get('date_start');
 }
 
-if(!empty(get('date_end'))){
+if (!empty(get('date_end'))) {
     $module_query = str_replace('1=1', '1=1 AND DATE_FORMAT(`data`, "%Y%m%d") <= "'.date('Ymd', strtotime(get('date_end'))).'"', $module_query);
 
     $date_end = get('date_end');
@@ -60,11 +60,11 @@ if(!empty(get('date_end'))){
 
 $module_query = str_replace('1=1', '1=1 AND co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE descrizione = "Pagato")', $module_query);
 
-if(get('is_emessa')=='true' && get('is_parz_pagata')=='true'){
+if (get('is_emessa') == 'true' && get('is_parz_pagata') == 'true') {
     $module_query = str_replace('1=1 AND co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE descrizione = "Pagato")', '1=1 AND co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE descrizione = "Pagato" OR descrizione = "Emessa" OR descrizione = "Parzialmente pagato")', $module_query);
-} else if(get('is_emessa')=='true'){
+} elseif (get('is_emessa') == 'true') {
     $module_query = str_replace('1=1 AND co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE descrizione = "Pagato")', '1=1 AND co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE descrizione = "Pagato" OR descrizione = "Emessa")', $module_query);
-} else if(get('is_parz_pagata')=='true'){
+} elseif (get('is_parz_pagata') == 'true') {
     $module_query = str_replace('1=1 AND co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE descrizione = "Pagato")', '1=1 AND co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE descrizione = "Pagato" OR descrizione = "Parzialmente pagato")', $module_query);
 }
 

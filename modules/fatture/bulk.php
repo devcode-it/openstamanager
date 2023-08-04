@@ -19,17 +19,17 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Carbon\Carbon;
 use Modules\Aggiornamenti\Controlli\DatiFattureElettroniche;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Export\CSV;
 use Modules\Fatture\Fattura;
+use Modules\Fatture\Stato;
 use Plugins\ExportFE\FatturaElettronica;
 use Plugins\ExportFE\Interaction;
+use Plugins\ReceiptFE\Ricevuta;
 use Util\XML;
 use Util\Zip;
-use Modules\Fatture\Stato;
-use Plugins\ReceiptFE\Ricevuta;
-use Carbon\Carbon;
 
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 $stato_emessa = $dbo->selectOne('co_statidocumento', 'id', ['descrizione' => 'Emessa'])['id'];
@@ -97,7 +97,7 @@ switch (post('op')) {
 
         if (!empty($id_records)) {
             foreach ($id_records as $id_record) {
-                Prints::render( $id_print, $id_record, $dir.'tmp/', false, true);
+                Prints::render($id_print, $id_record, $dir.'tmp/', false, true);
             }
 
             // Creazione zip
@@ -333,10 +333,9 @@ switch (post('op')) {
             if (post('skip_time') == 'Anno') {
                 $data = date('Y-m-d', strtotime('+1 year', strtotime($fattura->data)));
             }
-            
-           
+
             $new = $fattura->replicate();
-           
+
             $new->data = $data;
             $new->id_segment = $id_segment;
             $new->numero = Fattura::getNextNumero($data, $dir, $id_segment);
@@ -363,7 +362,7 @@ switch (post('op')) {
                 }
             }
 
-            if (!empty($fattura->numero_esterno)){
+            if (!empty($fattura->numero_esterno)) {
                 array_push($list, $fattura->numero_esterno);
             }
         }
@@ -487,7 +486,7 @@ switch (post('op')) {
             WHERE
                 co_statidocumento.descrizione = "Emessa" AND co_tipidocumento.dir="entrata" AND co_documenti.id_segment='.$fattura->id_segment);
 
-            if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && (Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax']))) && (!empty($data_fattura_precedente['datamax']))){
+            if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && (Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax']))) && (!empty($data_fattura_precedente['datamax']))) {
                 $fattura->data = $data_fattura_precedente['datamax'];
                 $fattura->data_competenza = $data_fattura_precedente['datamax'];
             }
@@ -556,11 +555,9 @@ switch (post('op')) {
 
     case 'verify-notifiche':
         foreach ($id_records as $id) {
-
             $documento = Fattura::find($id);
 
-            if($documento->codice_stato_fe == 'GEN' || $documento->codice_stato_fe == 'WAIT'){
-
+            if ($documento->codice_stato_fe == 'GEN' || $documento->codice_stato_fe == 'WAIT') {
                 $result = Interaction::getInvoiceRecepits($id);
                 $last_recepit = $result['results'][0];
                 if (!empty($last_recepit)) {
@@ -577,12 +574,12 @@ switch (post('op')) {
 
         foreach ($id_records as $id) {
             $documento = Fattura::find($id);
-            ++ $count;
+            ++$count;
 
-            if($documento->stato->descrizione == 'Bozza') {
+            if ($documento->stato->descrizione == 'Bozza') {
                 $documento->id_segment = post('id_segment');
                 $documento->save();
-                ++ $n_doc;
+                ++$n_doc;
             }
         }
 
@@ -597,7 +594,7 @@ switch (post('op')) {
                 '_NUM_' => $count - $n_doc,
             ]));
         }
-        
+
         break;
 }
 
@@ -620,7 +617,7 @@ $operations['export-csv'] = [
 $operations['copy-bulk'] = [
     'text' => '<span><i class="fa fa-copy"></i> '.tr('Duplica selezionati').'</span>',
     'data' => [
-        'msg' => tr('Vuoi davvero duplicare le righe selezionate?').'<br><br>{[ "type": "select", "label": "'.tr('Fattura in avanti di').'", "name": "skip_time", "required": 1, "values": "list=\"Giorno\":\"'.tr('Un giorno').'\", \"Settimana\":\"'.tr('Una settimana').'\", \"Mese\":\"'.tr('Un mese').'\", \"Anno\":\"'.tr('Un anno').'\" ", "value": "Giorno" ]}<br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(["id_module" => $id_module, 'is_sezionale' => 1]).', "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'", "select-options-escape": true ]}<br>{[ "type": "checkbox", "label": "'.tr('Aggiungere i riferimenti ai documenti esterni?').'", "placeholder": "'.tr('Aggiungere i riferimenti ai documenti esterni?').'", "name": "riferimenti" ]}',
+        'msg' => tr('Vuoi davvero duplicare le righe selezionate?').'<br><br>{[ "type": "select", "label": "'.tr('Fattura in avanti di').'", "name": "skip_time", "required": 1, "values": "list=\"Giorno\":\"'.tr('Un giorno').'\", \"Settimana\":\"'.tr('Una settimana').'\", \"Mese\":\"'.tr('Un mese').'\", \"Anno\":\"'.tr('Un anno').'\" ", "value": "Giorno" ]}<br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_sezionale' => 1]).', "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'", "select-options-escape": true ]}<br>{[ "type": "checkbox", "label": "'.tr('Aggiungere i riferimenti ai documenti esterni?').'", "placeholder": "'.tr('Aggiungere i riferimenti ai documenti esterni?').'", "name": "riferimenti" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
     ],
@@ -733,7 +730,7 @@ $operations['cambia-sezionale'] = [
        'title' => tr('Cambia sezionale'),
         'msg' => tr('Scegli il sezionale _TIPOLOGIA_ in cui spostare le fatture in stato "Bozza" selezionate', [
             '_TIPOLOGIA_' => $is_fiscale ? tr('fiscale') : tr('non fiscale'),
-        ]).':<br><br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(["id_module" => $id_module, 'is_sezionale' => 1, 'is_fiscale' => $is_fiscale, 'escludi_id' => $_SESSION['module_'.$id_module]['id_segment']]).', "select-options-escape": true ]}',
+        ]).':<br><br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_sezionale' => 1, 'is_fiscale' => $is_fiscale, 'escludi_id' => $_SESSION['module_'.$id_module]['id_segment']]).', "select-options-escape": true ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

@@ -42,7 +42,7 @@ if ($module['name'] == 'Fatture di vendita') {
 }
 
 // Controllo se la fattura è già stata inviata allo SDI
-$stato_fe= $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = '.$fattura->id);
+$stato_fe = $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = '.$fattura->id);
 
 $ops = ['update', 'add_intervento', 'manage_documento_fe', 'manage_riga_fe', 'manage_articolo', 'manage_sconto', 'manage_riga', 'manage_descrizione', 'unlink_intervento', 'delete_riga', 'copy_riga', 'add_serial', 'add_articolo', 'edit-price'];
 
@@ -94,7 +94,7 @@ switch ($op) {
             WHERE
                 co_statidocumento.descrizione = "Emessa" AND co_tipidocumento.dir="entrata" AND co_documenti.id_segment='.$fattura->id_segment);
 
-        if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && ($stato->descrizione == 'Emessa') && (Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax']))) && (!empty($data_fattura_precedente['datamax']))){
+        if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && ($stato->descrizione == 'Emessa') && (Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax']))) && (!empty($data_fattura_precedente['datamax']))) {
             $fattura->data = $data_fattura_precedente['datamax'];
             $fattura->data_competenza = $data_fattura_precedente['datamax'];
             flash()->info(tr('Data di emissione aggiornata, come da impostazione!'));
@@ -173,14 +173,13 @@ switch ($op) {
         $fattura->setScontoFinale(post('sconto_finale'), post('tipo_sconto_finale'));
 
         $anagrafica = Anagrafica::find($fattura->idanagrafica);
-        if ($anagrafica->tipo === "Privato" && $fattura->is_fattura_conto_terzi) {
+        if ($anagrafica->tipo === 'Privato' && $fattura->is_fattura_conto_terzi) {
             flash()->warning(tr('L\'anagrafica selezionata è del tipo "Privato", correggere la tipologia dalla scheda anagrafica!'));
         } else {
             $results = $fattura->save();
             $message = '';
             flash()->info(tr('Fattura modificata correttamente!'));
         }
-
 
         foreach ($results as $numero => $result) {
             foreach ($result as $title => $links) {
@@ -243,7 +242,7 @@ switch ($op) {
                 ->where('id', '!=', $id_record)
                 ->where('data', '>=', $_SESSION['period_start'])
                 ->where('data', '<=', $_SESSION['period_end'])
-                ->where('numero_esterno', '!=', NULL)
+                ->where('numero_esterno', '!=', null)
                 ->whereHas('tipo', function ($query) use ($direzione) {
                     $query->where('dir', '=', $direzione);
                 })->count();
@@ -281,15 +280,14 @@ switch ($op) {
             }
 
             $totale_documento = abs($totale_documento);
-            
         } catch (Exception $e) {
         }
 
         echo json_encode([
-            'stored' => round($totale_documento,2),
-            'calculated' => round($fattura->totale,2),
+            'stored' => round($totale_documento, 2),
+            'calculated' => round($fattura->totale, 2),
         ]);
-        
+
         break;
 
     // Elenco fatture in stato Bozza per il cliente
@@ -322,7 +320,7 @@ switch ($op) {
             ->where('co_documenti.idanagrafica', $id_anagrafica)
             ->whereIn('idstatodocumento', [$stato1->id, $stato2->id])
             ->join('co_scadenziario', 'co_documenti.id', '=', 'co_scadenziario.iddocumento')
-            ->join('co_tipidocumento', 'co_tipidocumento.id','=','co_documenti.idtipodocumento')
+            ->join('co_tipidocumento', 'co_tipidocumento.id', '=', 'co_documenti.idtipodocumento')
             ->whereRaw('co_scadenziario.da_pagare > co_scadenziario.pagato')
             ->whereRaw('co_scadenziario.scadenza < NOW()')
             ->groupBy('co_scadenziario.iddocumento')
@@ -416,7 +414,7 @@ switch ($op) {
                 $riga->idintervento = $id_intervento;
                 $riga->save();
             }
-        
+
             aggiungi_intervento_in_fattura($id_intervento, $id_record, post('descrizione'), post('idiva'), post('idconto'), post('id_rivalsa_inps'), post('id_ritenuta_acconto'), post('calcolo_ritenuta_acconto'));
 
             flash()->info(tr('Intervento _NUM_ aggiunto!', [
@@ -446,7 +444,7 @@ switch ($op) {
         $fattura->save();
 
         flash()->info(tr('Dati FE aggiornati correttamente!'));
-    
+
         break;
 
     case 'manage_riga_fe':
@@ -524,7 +522,7 @@ switch ($op) {
         } else {
             flash()->info(tr('Articolo aggiunto!'));
         }
-    
+
         // Ricalcolo inps, ritenuta e bollo
         ricalcola_costiagg_fattura($id_record);
 
@@ -536,7 +534,7 @@ switch ($op) {
         } else {
             $sconto = Sconto::build($fattura);
         }
-        
+
         $sconto->idconto = post('idconto');
 
         $sconto->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
@@ -554,10 +552,9 @@ switch ($op) {
         } else {
             flash()->info(tr('Sconto/maggiorazione aggiunto!'));
         }
-        
+
         // Ricalcolo inps, ritenuta e bollo
         ricalcola_costiagg_fattura($id_record);
-        
 
         break;
 
@@ -568,7 +565,6 @@ switch ($op) {
             $riga = Riga::build($fattura);
         }
 
-        
         $qta = post('qta');
 
         $riga->descrizione = post('descrizione');
@@ -598,10 +594,10 @@ switch ($op) {
         } else {
             flash()->info(tr('Riga aggiunta!'));
         }
-    
+
         // Ricalcolo inps, ritenuta e bollo
         ricalcola_costiagg_fattura($id_record);
-    
+
         break;
 
     case 'manage_descrizione':
@@ -614,7 +610,6 @@ switch ($op) {
         $riga->descrizione = post('descrizione');
         $riga->note = post('note');
 
-    
         $riga->save();
 
         if (post('idriga') != null) {
@@ -622,7 +617,7 @@ switch ($op) {
         } else {
             flash()->info(tr('Riga descrittiva aggiunta!'));
         }
-        
+
         break;
 
     // Scollegamento intervento da documento
@@ -644,18 +639,18 @@ switch ($op) {
                 }
             }
         }
-        
+
         break;
 
     // Scollegamento riga generica da documento
     case 'delete_riga':
-        $id_righe = (array)post('righe');
-        
+        $id_righe = (array) post('righe');
+
         foreach ($id_righe as $id_riga) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Descrizione::find($id_riga);
             $riga = $riga ?: Sconto::find($id_riga);
-        
+
             try {
                 $riga->delete();
 
@@ -668,13 +663,13 @@ switch ($op) {
             $riga = null;
             flash()->info(tr('Righe eliminate!'));
         }
-        
+
         break;
 
     // Duplicazione riga
     case 'copy_riga':
-        $id_righe = (array)post('righe');
-        
+        $id_righe = (array) post('righe');
+
         foreach ($id_righe as $id_riga) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Descrizione::find($id_riga);
@@ -740,7 +735,6 @@ switch ($op) {
             } else {
                 $fattura->idpagamento = setting('Tipo di pagamento predefinito');
             }
-
 
             $idsede = ($documento->idsede_destinazione ? $documento->idsede_destinazione : $documento->idsede);
 
@@ -855,7 +849,6 @@ switch ($op) {
 
         $id_record = $nota->id;
         aggiorna_sedi_movimenti('documenti', $id_record);
-        
 
         break;
 
@@ -914,7 +907,7 @@ switch ($op) {
 
         break;
 
-    case 'controlla_serial': 
+    case 'controlla_serial':
         if (post('is_rientrabile')) {
             // Controllo che i serial entrati e usciti siano uguali in modo da poterli registrare nuovamente.
             $serial_uscita = $dbo->fetchOne('SELECT COUNT(id) AS `tot` FROM mg_prodotti WHERE serial='.prepare(post('serial')).' AND dir="uscita" AND id_articolo='.prepare(post('id_articolo')))['tot'];
@@ -923,17 +916,17 @@ switch ($op) {
         } else {
             $has_serial = $dbo->fetchOne('SELECT id FROM mg_prodotti WHERE serial='.prepare(post('serial')).' AND dir="uscita" AND id_articolo='.prepare(post('id_articolo')).' AND (id_riga_documento IS NOT NULL OR id_riga_ordine IS NOT NULL OR id_riga_ddt IS NOT NULL)')['id'];
         }
-        
+
         echo json_encode($has_serial);
-        
+
         break;
 
     case 'add_articolo':
         $id_articolo = post('id_articolo');
         $barcode = post('barcode');
-        
+
         if (!empty($barcode)) {
-            $id_articolo = $dbo->selectOne('mg_articoli', 'id',  ['deleted_at' => null, 'attivo' => 1, 'barcode' => $barcode])['id'];
+            $id_articolo = $dbo->selectOne('mg_articoli', 'id', ['deleted_at' => null, 'attivo' => 1, 'barcode' => $barcode])['id'];
         }
 
         if (!empty($id_articolo)) {
@@ -961,7 +954,7 @@ switch ($op) {
                     $id_conto = $originale->idconto_acquisto;
                 }
                 $articolo->idconto = $id_conto;
-                
+
                 if ($dir == 'entrata') {
                     $id_iva = ($fattura->anagrafica->idiva_vendite ?: $originale->idiva_vendita) ?: setting('Iva predefinita');
                 } else {
@@ -969,7 +962,7 @@ switch ($op) {
                 }
                 $id_anagrafica = $fattura->idanagrafica;
                 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
-        
+
                 // CALCOLO PREZZO UNITARIO
                 $prezzo_unitario = 0;
                 $sconto = 0;
@@ -992,7 +985,7 @@ switch ($op) {
                             continue;
                         }
                     }
-                } 
+                }
                 if (empty($prezzo_unitario)) {
                     // Prezzi listini clienti
                     $listino = $dbo->fetchOne('SELECT sconto_percentuale AS sconto_percentuale_listino, '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino
@@ -1020,7 +1013,6 @@ switch ($op) {
                 $articolo->setProvvigione($provvigione ?: 0, 'PRC');
                 $articolo->save();
 
-
                 flash()->info(tr('Nuovo articolo aggiunto!'));
             }
         } else {
@@ -1029,10 +1021,10 @@ switch ($op) {
         }
         break;
 
-    // Controllo se impostare anagrafica azienda in base a tipologia documento 
+    // Controllo se impostare anagrafica azienda in base a tipologia documento
     case 'check_tipodocumento':
         $idtipodocumento = post('idtipodocumento');
-        $tipologie = Tipo::wherein('codice_tipo_documento_fe', ['TD21','TD27'])->where('dir', 'entrata')->get()->pluck('id')->toArray();
+        $tipologie = Tipo::wherein('codice_tipo_documento_fe', ['TD21', 'TD27'])->where('dir', 'entrata')->get()->pluck('id')->toArray();
         $azienda = Anagrafica::find(setting('Azienda predefinita'));
 
         $result = false;
@@ -1048,7 +1040,7 @@ switch ($op) {
             }
             $result = [
                 'id' => $azienda->id,
-                'ragione_sociale' => $azienda->ragione_sociale
+                'ragione_sociale' => $azienda->ragione_sociale,
             ];
         }
 
@@ -1068,7 +1060,7 @@ switch ($op) {
                 $articolo = Articolo::build($fattura, $originale);
                 $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
             }
-    
+
             if ($articolo['prezzo_unitario'] != $riga['price']) {
                 $articolo->setPrezzoUnitario($riga['price'], $articolo->idiva);
                 $articolo->save();
@@ -1080,14 +1072,13 @@ switch ($op) {
             flash()->info(tr('_NUM_ prezzi modificati!', [
                 '_NUM_' => $numero_totale,
             ]));
-        } else if ($numero_totale == 1) {
+        } elseif ($numero_totale == 1) {
             flash()->info(tr('_NUM_ prezzo modificato!', [
                 '_NUM_' => $numero_totale,
             ]));
         } else {
             flash()->warning(tr('Nessun prezzo modificato!'));
         }
-
 
         break;
 }

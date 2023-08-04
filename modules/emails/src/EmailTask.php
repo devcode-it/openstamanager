@@ -19,17 +19,15 @@
 
 namespace Modules\Emails;
 
-use Carbon\Carbon;
 use Notifications\EmailNotification;
 use PHPMailer\PHPMailer\Exception;
 use Tasks\Manager;
 
 class EmailTask extends Manager
 {
-
     public function needsExecution()
     {
-        $lista = database()->fetchArray("SELECT * FROM em_emails WHERE (sent_at IS NULL OR failed_at IS NOT NULL) AND attempt<".prepare(setting('Numero massimo di tentativi'))." ORDER BY created_at");
+        $lista = database()->fetchArray('SELECT * FROM em_emails WHERE (sent_at IS NULL OR failed_at IS NOT NULL) AND attempt<'.prepare(setting('Numero massimo di tentativi')).' ORDER BY created_at');
         $remaining = sizeof($lista);
 
         return !empty($remaining);
@@ -37,10 +35,9 @@ class EmailTask extends Manager
 
     public function execute()
     {
-        $lista = database()->fetchArray("SELECT * FROM em_emails WHERE (sent_at IS NULL OR failed_at IS NOT NULL) AND attempt<".prepare(setting('Numero massimo di tentativi'))." ORDER BY created_at LIMIT 0,".setting('Numero email da inviare in contemporanea per account'));
+        $lista = database()->fetchArray('SELECT * FROM em_emails WHERE (sent_at IS NULL OR failed_at IS NOT NULL) AND attempt<'.prepare(setting('Numero massimo di tentativi')).' ORDER BY created_at LIMIT 0,'.setting('Numero email da inviare in contemporanea per account'));
 
         foreach ($lista as $mail) {
-
             $mail = Mail::find($mail['id']);
 
             try {

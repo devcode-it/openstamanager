@@ -25,7 +25,7 @@ $articolo = Articolo::find($id_record);
 
 $idsede = (empty(get('idsede')) ? 0 : get('idsede'));
 $movimenti = $articolo->movimentiComposti()
-    ->where('idsede',$idsede)
+    ->where('idsede', $idsede)
     ->orderBy('mg_movimenti.data', 'DESC')
     ->orderBy('mg_movimenti.id', 'DESC');
 
@@ -104,7 +104,7 @@ if (!empty($movimenti)) {
     <table class="table table-bordered">
         <tr>
             <th class="text-right">'.tr('Totale').'</th>
-            <th class="text-right" width="17.9%">'.Translator::numberToLocale($totale,'qta').' '.$articolo->um.'</th>
+            <th class="text-right" width="17.9%">'.Translator::numberToLocale($totale, 'qta').' '.$articolo->um.'</th>
         </tr>
     </table>';
 } else {

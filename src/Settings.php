@@ -179,21 +179,20 @@ class Settings
             $list = [];
 
             //Gestisco il multiple da query trasformando i risultati in formato List
-            if (strstr($setting->tipo,'query=')) {
+            if (strstr($setting->tipo, 'query=')) {
                 $database = database();
 
                 $value = str_replace(']', '', explode('[', $setting->tipo)[1]);
                 $query = str_replace('query=', '', $value);
                 $query = str_replace('"', '\"', $query);
                 $rs = $database->fetchArray($query);
-                foreach($rs as $r){
+                foreach ($rs as $r) {
                     $list[] = [
                         'id' => $r['id'],
                         'text' => $r['descrizione'],
                     ];
                 }
-
-            }else{
+            } else {
                 $values = explode(',', $m[1]);
 
                 foreach ($values as $value) {

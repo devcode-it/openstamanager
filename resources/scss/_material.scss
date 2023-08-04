@@ -19,6 +19,10 @@ md-icon svg {
     }
 }
 
+md-data-table md-icon[slot^="pagination"] {
+    --_color: inherit;
+}
+
 label:has(> md-checkbox) {
     display: flex;
     align-items: center;
@@ -26,6 +30,10 @@ label:has(> md-checkbox) {
 
 md-filled-text-field, md-outlined-text-field {
     text-align: initial;
+}
+
+md-filled-select::part(menu), md-outlined-select::part(menu) {
+    max-height: 300px;
 }
 
 md-navigation-drawer, md-navigation-drawer-modal {

@@ -5,6 +5,9 @@ namespace App\Console\Commands;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\password;
+use function Laravel\Prompts\text;
 
 class CreateAdminUserCommand extends Command
 {
@@ -14,25 +17,24 @@ class CreateAdminUserCommand extends Command
 
     public function handle(): void
     {
-        do {
-            $name = $this->ask('Name');
-        } while (empty($name));
+        $username = text('Username', required: true);
+        $email = text('Email', required: true);
+        $password = password('Password', required: true);
 
-        do {
-            $email = $this->ask('Email');
-        } while (empty($email));
+        $this->table(['Username', 'Email', 'Password'], [[$username, $email, '********']]);
 
-        do {
-            $password = $this->secret('Password');
-        } while (empty($password));
+        if (confirm('Are you sure you want to create this user?')) {
+            $user = new User();
+            $user->username = $username;
+            $user->email = $email;
+            $user->password = $password;
+            $user->email_verified_at = now();
+            $user->remember_token = Str::random(10);
+            $user->save();
 
-        $user = new User();
-        $user->email = $email;
-        $user->password = $password;
-        $user->email_verified_at = now();
-        $user->remember_token = Str::random(10);
-        $user->save();
-
-        $this->info('Admin user created successfully');
+            $this->info('Admin user created successfully');
+        } else {
+            $this->info('Admin user creation aborted');
+        }
     }
 }

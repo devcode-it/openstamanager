@@ -125,7 +125,7 @@ if (!empty($options['create_document'])) {
     elseif ($final_module['name'] == 'Interventi') {
         echo '
             <div class="col-md-6">
-                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato_intervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL ORDER BY descrizione" ]}
+                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato_intervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL AND is_completato = 0 ORDER BY descrizione" ]}
             </div>
 
             <div class="col-md-6">

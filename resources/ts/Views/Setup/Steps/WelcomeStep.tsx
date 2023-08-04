@@ -1,10 +1,10 @@
 import '@material/web/checkbox/checkbox.js';
 import '@material/web/field/outlined-field.js';
-import '@osm/Components/m3/FilledSelect';
+import '@material/web/select/filled-select.js';
 import '@material/web/select/select-option.js';
 
 import type {MdCheckbox} from '@material/web/checkbox/checkbox';
-import {Select} from '@material/web/select/lib/select';
+import {Select} from '@material/web/select/internal/select';
 import {mdiLicense} from '@mdi/js';
 import MdIcon from '@osm/Components/MdIcon';
 import {

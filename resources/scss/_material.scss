@@ -3,8 +3,8 @@
 @use "include-media/dist/include-media";
 
 md-icon svg {
-    width: var(--_with-icon-icon-size, var(--_icon-size, var(--_size)));
-    height: var(--_with-icon-icon-size, var(--_icon-size, var(--_size)));
+    width: var(--_icon-size, var(--_size));
+    height: var(--_icon-size, var(--_size));
     line-height: 0;
 }
 
@@ -14,8 +14,8 @@ md-icon svg {
     padding-left: 16px;
 
     svg {
-        width: var(--_list-item-leading-icon-size, var(--_with-icon-icon-size, var(--_icon-size, var(--_size))));
-        height: var(--_list-item-leading-icon-size, var(--_with-icon-icon-size, var(--_icon-size, var(--_size))));
+        width: var(--_list-item-leading-icon-size, var(--_icon-size, var(--_size)));
+        height: var(--_list-item-leading-icon-size, var(--_icon-size, var(--_size)));
     }
 }
 

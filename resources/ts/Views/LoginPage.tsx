@@ -5,7 +5,7 @@ import '@material/web/checkbox/checkbox.js';
 import '@material/web/dialog/dialog.js';
 import '@material/web/textfield/filled-text-field.js';
 
-import {Dialog} from '@material/web/dialog/lib/dialog';
+import {Dialog} from '@material/web/dialog/internal/dialog';
 import {
   mdiAccountOutline,
   mdiEmailOutline,

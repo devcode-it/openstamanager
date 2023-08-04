@@ -2,7 +2,7 @@ import '@material/web/icon/icon.js';
 import '@material/web/list/list-item-link.js';
 
 import {router} from '@maicol07/inertia-mithril';
-import {ListItemLink} from '@material/web/list/lib/listitemlink/list-item-link';
+import {ListItemLink} from '@material/web/list/internal/listitemlink/list-item-link';
 import type * as MaterialIcons from '@mdi/js';
 import MdIcon from '@osm/Components/MdIcon';
 import {Vnode} from 'mithril';

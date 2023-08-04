@@ -1,7 +1,7 @@
 import '@material/web/textfield/filled-text-field.js';
 import '@material/web/iconbutton/standard-icon-button.js';
 
-import {FilledTextField} from '@material/web/textfield/lib/filled-text-field';
+import {FilledTextField} from '@material/web/textfield/internal/filled-text-field';
 import {mdiCalendarMonthOutline} from '@mdi/js';
 import MdIcon from '@osm/Components/MdIcon';
 import {Vnode} from 'mithril';
@@ -19,6 +19,7 @@ export default class FilledDateTextField<A extends FilledDateTextFieldAttributes
     vnode.attrs.type ??= 'date';
     return (
       <md-filled-text-field {...vnode.attrs}>
+        {/* @ts-ignore */}
         {vnode.children}
         <md-standard-icon-button slot="trailingicon" onclick={this.openDatePicker.bind(this)}>
           <MdIcon icon={mdiCalendarMonthOutline}/>

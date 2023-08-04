@@ -58,3 +58,7 @@ a {
 top-app-bar [slot="title"] {
     @extend .title-large;
 }
+
+md-filled-select::part(menu), md-outlined-select::part(menu) {
+    max-height: 300px;
+}

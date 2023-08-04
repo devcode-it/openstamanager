@@ -8,8 +8,7 @@ import {showSnackbar} from '@osm/utils/misc';
 import {Builder} from 'coloquent';
 import {
   Children,
-  Vnode,
-  VnodeDOM
+  Vnode
 } from 'mithril';
 import {Class} from 'type-fest';
 

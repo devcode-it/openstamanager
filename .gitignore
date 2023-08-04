@@ -99,3 +99,4 @@ database_5_7.json
 codeception.yml
 !.gitkeep
 .vscode
+.php-cs-fixer.cache

@@ -53,12 +53,12 @@
         "servo/fluidxml": "^1.21",
         "slim/flash": "^0.4.0",
         "spipu/html2pdf": "^5.0",
-        "symfony/filesystem": "^3.3",
-        "symfony/finder": "^3.3",
+        "symfony/filesystem": "^4.0",
+        "symfony/finder": "^4.0",
         "symfony/polyfill-ctype": "^1.8",
         "symfony/polyfill-php70": "^1.8",
-        "symfony/translation": "^3.3",
-        "symfony/var-dumper": "^3.3",
+        "symfony/translation": "^4.0",
+        "symfony/var-dumper": "^4.0",
         "thenetworg/oauth2-azure": "^2.0",
         "voku/stringy": "~6.0",
         "wdog/sdd_ita": "dev-master",
@@ -66,7 +66,7 @@
     },
     "require-dev": {
         "codeception/codeception": "^4.0",
-        "friendsofphp/php-cs-fixer": "^2.10"
+        "friendsofphp/php-cs-fixer": "^3.00"
     },
     "autoload": {
         "psr-4": {

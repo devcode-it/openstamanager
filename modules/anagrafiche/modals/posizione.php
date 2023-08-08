@@ -89,8 +89,27 @@ var map = null;
 function caricaMappa() {
     const lat = parseFloat(input("lat").get());
     const lng = parseFloat(input("lng").get());
+   
+    var container = L.DomUtil.get("map");
 
-    var container = L.DomUtil.get("map"); 
+    if (!lat || !lng){
+     
+        var div = document.createElement("div");
+        div.innerHTML = "<div class=\'alert alert-info\'> <i class=\'fa fa-info\'></i> '.tr("La posizione non è stata definita"). '.</div>";
+        container.appendChild(div);
+         
+        indirizzo = $("#indirizzo").val();
+        citta = $("#citta").val();
+
+        if (indirizzo || citta) {
+            $("#gaddress").val(indirizzo + ", " + citta);
+            initGeocomplete();
+        }
+
+        return false;
+    }
+    
+
     if(container._leaflet_id != null){ 
         map.eachLayer(function (layer) {
 			if(layer instanceof L.Marker) {

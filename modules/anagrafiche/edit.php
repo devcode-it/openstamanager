@@ -347,7 +347,7 @@ echo '
                 const lat = parseFloat("'.$sede_cliente->lat.'");
                 const lng = parseFloat("'.$sede_cliente->lng.'");
 
-                if (typeof lat === "undefined" || typeof lng === "undefined"){
+                if (!lat || !lng){
                     swal("'.tr('Errore').'", "'.tr('La posizione non è stata definita. Impossibile caricare la mappa.').'", "error");
                     return false;
                 }

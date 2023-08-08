@@ -36,7 +36,7 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
         $query = $database->table('an_anagrafiche')
         ->leftJoin('an_nazioni', 'an_anagrafiche.id_nazione', '=', 'an_nazioni.id')
         ->select(
-    'an_anagrafiche.ragione_sociale',
+            'an_anagrafiche.ragione_sociale',
             'an_anagrafiche.piva',
             'an_anagrafiche.codice_fiscale',
             'an_anagrafiche.indirizzo',

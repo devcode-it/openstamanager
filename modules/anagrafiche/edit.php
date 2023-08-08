@@ -64,103 +64,103 @@ if ($is_fornitore && empty($record['idconto_fornitore'])) {
 
 if (sizeof($problemi_anagrafica) > 0) {
     echo '<div class="alert alert-warning"><i class="fa fa-warning"></i> '.tr('ATTENZIONE: <br>_CAMPI_', [
-    '_CAMPI_' => implode('', $problemi_anagrafica),
+        '_CAMPI_' => implode('', $problemi_anagrafica),
     ]).'</div>';
 }
 
 ?>
 
 <form action="" method="post" id="edit-form">
-	<fieldset>
-		<input type="hidden" name="backto" value="record-edit">
-		<input type="hidden" name="op" value="update">
+    <fieldset>
+        <input type="hidden" name="backto" value="record-edit">
+        <input type="hidden" name="op" value="update">
 
-		<!-- DATI ANAGRAFICI -->
-		<div class="panel panel-primary">
-			<div class="panel-heading">
-				<h3 class="panel-title"><?php echo tr('Dati anagrafici'); ?></h3>
-			</div>
+        <!-- DATI ANAGRAFICI -->
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title"><?php echo tr('Dati anagrafici'); ?></h3>
+            </div>
 
-			<div class="panel-body">
-				<div class="row">
-					<div class="col-md-6">
-						{[ "type": "text", "label": "<?php echo tr('Denominazione'); ?>", "name": "ragione_sociale", "required": 1, "value": "$ragione_sociale$", "extra": "" ]}
-					</div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        {[ "type": "text", "label": "<?php echo tr('Denominazione'); ?>", "name": "ragione_sociale", "required": 1, "value": "$ragione_sociale$", "extra": "" ]}
+                    </div>
 
-					<div class="col-md-3">
+                    <div class="col-md-3">
                         {[ "type": "text", "label": "<?php echo tr('Partita IVA'); ?>", "maxlength": 16, "name": "piva", "class": "text-center alphanumeric-mask text-uppercase", "value": "$piva$", "validation": "partita_iva" ]}
                     </div>
 
-					<div class="col-md-3">
-						{[ "type": "select", "label": "<?php echo tr('Tipologia'); ?>", "name": "tipo", "values": "list=\"\": \"<?php echo tr('Non specificato'); ?>\", \"Azienda\": \"<?php echo tr('Azienda'); ?>\", \"Privato\": \"<?php echo tr('Privato'); ?>\", \"Ente pubblico\": \"<?php echo tr('Ente pubblico'); ?>\"", "value": "$tipo$" ]}
-					</div>
-				</div>
+                    <div class="col-md-3">
+                        {[ "type": "select", "label": "<?php echo tr('Tipologia'); ?>", "name": "tipo", "values": "list=\"\": \"<?php echo tr('Non specificato'); ?>\", \"Azienda\": \"<?php echo tr('Azienda'); ?>\", \"Privato\": \"<?php echo tr('Privato'); ?>\", \"Ente pubblico\": \"<?php echo tr('Ente pubblico'); ?>\"", "value": "$tipo$" ]}
+                    </div>
+                </div>
 
-				<div class="row">
+                <div class="row">
 
-					<div class="col-md-4">
-							{[ "type": "text", "label": "<?php echo tr('Cognome'); ?>", "name": "cognome", "required": 0, "value": "$cognome$", "extra": "" ]}
-					</div>
+                    <div class="col-md-4">
+                        {[ "type": "text", "label": "<?php echo tr('Cognome'); ?>", "name": "cognome", "required": 0, "value": "$cognome$", "extra": "" ]}
+                    </div>
 
-					<div class="col-md-4">
-							{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 0, "value": "$nome$", "extra": "" ]}
-					</div>
+                    <div class="col-md-4">
+                        {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 0, "value": "$nome$", "extra": "" ]}
+                    </div>
 
-					<div class="col-md-4">
+                    <div class="col-md-4">
                         {[ "type": "text", "label": "<?php echo tr('Codice fiscale'); ?>", "maxlength": 16, "name": "codice_fiscale", "class": "text-center alphanumeric-mask text-uppercase", "value": "$codice_fiscale$", "validation": "codice_fiscale" ]}
                     </div>
 
-				</div>
+                </div>
 
-				<!-- RIGA PER LE ANAGRAFICHE CON TIPOLOGIA 'PRIVATO' -->
-				<?php if ($record['tipo'] == 'Privato') {
+                <!-- RIGA PER LE ANAGRAFICHE CON TIPOLOGIA 'PRIVATO' -->
+                <?php if ($record['tipo'] == 'Privato') {
     ?>
-				<div class="row">
-					<div class="col-md-4">
-						{[ "type": "text", "label": "<?php echo tr('Luogo di nascita'); ?>", "name": "luogo_nascita", "value": "$luogo_nascita$" ]}
-					</div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            {[ "type": "text", "label": "<?php echo tr('Luogo di nascita'); ?>", "name": "luogo_nascita", "value": "$luogo_nascita$" ]}
+                        </div>
 
-					<div class="col-md-4">
-						{[ "type": "date", "label": "<?php echo tr('Data di nascita'); ?>", "name": "data_nascita", "value": "$data_nascita$" ]}
-					</div>
+                        <div class="col-md-4">
+                            {[ "type": "date", "label": "<?php echo tr('Data di nascita'); ?>", "name": "data_nascita", "value": "$data_nascita$" ]}
+                        </div>
 
-					<div class="col-md-4">
-						{[ "type": "select", "label": "<?php echo tr('Sesso'); ?>", "name": "sesso", "values": "list=\"\": \"Non specificato\", \"M\": \"<?php echo tr('Uomo'); ?>\", \"F\": \"<?php echo tr('Donna'); ?>\"", "value": "$sesso$" ]}
-					</div>
-				</div>
-				<?php
+                        <div class="col-md-4">
+                            {[ "type": "select", "label": "<?php echo tr('Sesso'); ?>", "name": "sesso", "values": "list=\"\": \"Non specificato\", \"M\": \"<?php echo tr('Uomo'); ?>\", \"F\": \"<?php echo tr('Donna'); ?>\"", "value": "$sesso$" ]}
+                        </div>
+                    </div>
+                <?php
 } ?>
 
-				<div class="row">
-					<div class="col-md-2">
-						{[ "type": "text", "label": "<?php echo tr('Codice anagrafica'); ?>", "name": "codice", "required": 1, "class": "text-center alphanumeric-mask", "value": "$codice$", "maxlength": 20, "validation": "codice" ]}
-					</div>
+                <div class="row">
+                    <div class="col-md-2">
+                        {[ "type": "text", "label": "<?php echo tr('Codice anagrafica'); ?>", "name": "codice", "required": 1, "class": "text-center alphanumeric-mask", "value": "$codice$", "maxlength": 20, "validation": "codice" ]}
+                    </div>
 
-					<div class="col-md-2">
-						<?php
-                            $help_codice_destinatario = tr("Per impostare il codice specificare prima il campo '_NATION_' dell'anagrafica", [
-                                '_NATION_' => '<b>Nazione</b>',
-                            ]).':<br><br><ul>
+                    <div class="col-md-2">
+                        <?php
+                        $help_codice_destinatario = tr("Per impostare il codice specificare prima il campo '_NATION_' dell'anagrafica", [
+                            '_NATION_' => '<b>Nazione</b>',
+                        ]).':<br><br><ul>
                                 <li>'.tr('Ente pubblico (B2G/PA) - Codice Univoco Ufficio (www.indicepa.gov.it), 6 caratteri').'</li>
                                 <li>'.tr('Azienda (B2B) - Codice Destinatario, 7 caratteri').'</li>
                                 <li>'.tr('Privato (B2C) - viene utilizzato il Codice Fiscale').'</li></ul>
                             '.tr('Se non si conosce il codice destinatario lasciare vuoto il campo, e verrà applicato in automatico quello previsto di default dal sistema (\'0000000\', \'999999\', \'XXXXXXX\')').'.';
 
-                            if (in_array($id_azienda, $tipi_anagrafica)) {
-                                $help_codice_destinatario .= ' <b>'.tr("Non è necessario comunicare il proprio codice destinatario ai fornitori in quanto è sufficiente che questo sia registrato nel portale del Sistema Di Interscambio dell'Agenzia Entrate (SDI)").'.</b>';
-                            }
+                        if (in_array($id_azienda, $tipi_anagrafica)) {
+                            $help_codice_destinatario .= ' <b>'.tr("Non è necessario comunicare il proprio codice destinatario ai fornitori in quanto è sufficiente che questo sia registrato nel portale del Sistema Di Interscambio dell'Agenzia Entrate (SDI)").'.</b>';
+                        }
                         ?>
-                    {[ "type": "text", "label": "<?php echo ($record['tipo'] == 'Ente pubblico') ? tr('Codice unico ufficio') : tr('Codice destinatario'); ?>", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "value": "$codice_destinatario$", "maxlength": <?php echo ($record['tipo'] == 'Ente pubblico') ? '6' : '7'; ?>, "help": "<?php echo tr($help_codice_destinatario); ?>", "readonly": "<?php echo intval($nazione_anagrafica ? !(($nazione_anagrafica->iso2 === 'IT') || ($nazione_anagrafica->iso2 === 'SM')) : 0); ?>" ]}
-					</div>
+                        {[ "type": "text", "label": "<?php echo ($record['tipo'] == 'Ente pubblico') ? tr('Codice unico ufficio') : tr('Codice destinatario'); ?>", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "value": "$codice_destinatario$", "maxlength": <?php echo ($record['tipo'] == 'Ente pubblico') ? '6' : '7'; ?>, "help": "<?php echo tr($help_codice_destinatario); ?>", "readonly": "<?php echo intval($nazione_anagrafica ? !(($nazione_anagrafica->iso2 === 'IT') || ($nazione_anagrafica->iso2 === 'SM')) : 0); ?>" ]}
+                    </div>
 
                     <div class="col-md-4">
-						{[ "type": "text", "label": "<?php echo tr('PEC'); ?>", "name": "pec", "class": "email-mask", "placeholder":"pec@dominio.ext", "value": "$pec$", "icon-before": "<i class='fa fa-envelope-o'></i>", "validation": "email" ]}
-					</div>
+                        {[ "type": "text", "label": "<?php echo tr('PEC'); ?>", "name": "pec", "class": "email-mask", "placeholder":"pec@dominio.ext", "value": "$pec$", "icon-before": "<i class='fa fa-envelope-o'></i>", "validation": "email" ]}
+                    </div>
 
-					<div class="col-md-4">
-						{[ "type": "text", "label": "<?php echo tr('Sito web'); ?>", "name": "sitoweb", "placeholder":"www.dominio.ext", "value": "$sitoweb$", "icon-before": "<i class='fa fa-globe'></i>" ]}
-					</div>
-				</div>
+                    <div class="col-md-4">
+                        {[ "type": "text", "label": "<?php echo tr('Sito web'); ?>", "name": "sitoweb", "placeholder":"www.dominio.ext", "value": "$sitoweb$", "icon-before": "<i class='fa fa-globe'></i>" ]}
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -207,7 +207,7 @@ if (sizeof($problemi_anagrafica) > 0) {
                             </div>
 
                             <div class="col-md-4">
-                                {[ "type": "text", "label": "<?php echo tr('Cellulare'); ?>", "name": "cellulare", "class": "text-center", "value": "$cellulare$", "icon-before": "<i class='fa fa-mobile'></i>" ]}
+                                {[ "type": "text", "label": "<?php echo tr('Cellulare'); ?>", "name": "cellulare", "class": "text-center", "value": "$cellulare$", "icon-before": "<i class='fa fa-mobile'></i>", "icon-after": "<?php echo !empty($record['cellulare']) ? "<btn class='clickable' onclick=sendWhatsAppMessage(".prepare($record['cellulare']).") ><i class='fa fa-whatsapp'></i></btn>" : ''; ?>" ]}
                             </div>
 
                             <div class="col-md-4">
@@ -228,7 +228,7 @@ if (sizeof($problemi_anagrafica) > 0) {
                                 {[ "type": "number", "label": "<?php echo tr('Distanza'); ?>", "name": "km", "decimals":"1", "class": "text-center", "value": "$km$", "icon-after": "Km" ]}
                             </div>
                         </div>
-                   
+
                         <div class="row">
                             <div class="col-md-12">
                                 {[ "type": "checkbox", "label": "<?php echo tr('Opt-out per newsletter'); ?>", "name": "disable_newsletter", "value": "<?php echo empty($record['enable_newsletter']); ?>", "help": "<?php echo tr('Blocco per l\'invio delle email.'); ?>" ]}
@@ -239,13 +239,13 @@ if (sizeof($problemi_anagrafica) > 0) {
                 </div>
             </div>
 
-<?php
-$sede_cliente = $anagrafica->sedeLegale;
+            <?php
+            $sede_cliente = $anagrafica->sedeLegale;
 
-$anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
-$sede_azienda = $anagrafica_azienda->sedeLegale;
+            $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
+            $sede_azienda = $anagrafica_azienda->sedeLegale;
 
-echo '
+            echo '
             <div class="col-md-4">
                 <div class="panel panel-primary">
                     <div class="panel-heading">
@@ -253,48 +253,48 @@ echo '
                     </div>
                     <div class="panel-body">';
 
-// Area caricamento mappa
-echo '
+            // Area caricamento mappa
+            echo '
                         <div id="map-edit" style="width: 100%;"></div>
 
                         <div class="clearfix"></div>
                         <br>';
 
-if (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($sede_cliente->lng))) {
-    // Modifica manuale delle informazioni
-    echo '
+            if (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($sede_cliente->lng))) {
+                // Modifica manuale delle informazioni
+                echo '
                         <a class="btn btn-info btn-block" onclick="modificaPosizione()">
                             <i class="fa fa-map"></i> '.tr('Aggiorna posizione').'
                         </a>';
-} else {
-    // Definizione manuale delle informazioni
-    echo '
+            } else {
+                // Definizione manuale delle informazioni
+                echo '
                         <a class="btn btn-primary btn-block" onclick="modificaPosizione()">
                             <i class="fa fa-map"></i> '.tr('Definisci posizione').'
                         </a>';
-}
+            }
 
-// Navigazione diretta verso l'indirizzo
-echo '
+            // Navigazione diretta verso l'indirizzo
+            echo '
                         <a class="btn btn-info btn-block '.((empty($sede_cliente->lat) && empty($sede_cliente->lng)) ? 'disabled' : '').'" onclick="$(\'#map-edit\').height(235); caricaMappa(); $(this).hide();">
                             <i class="fa fa-compass"></i> '.tr('Carica mappa').'
                         </a>';
 
-    // Navigazione diretta verso l'indirizzo
-    echo '
+            // Navigazione diretta verso l'indirizzo
+            echo '
                         <a class="btn btn-info btn-block '.(($anagrafica->isAzienda() || (empty($sede_cliente->lat) || empty($sede_cliente->lng)) || (empty($sede_azienda->lat) || empty($sede_azienda->lng))) ? 'disabled' : '').'" onclick="calcolaPercorso()">
                             <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
                             '.((!empty($sede_cliente->lat) && !empty($sede_azienda->lat)) ? tr('(GPS)') : '').'
                         </a>';
 
-    // Ricerca diretta su Mappa
-    echo '
+            // Ricerca diretta su Mappa
+            echo '
                         <a class="btn btn-info btn-block" onclick="cercaOpenStreetMap()">
                             <i class="fa fa-map-marker"></i> '.tr('Cerca su Mappa').'
                             '.((!empty($sede_cliente->lat)) ? tr(' (GPS)') : '').'
                         </a>';
 
-echo '
+            echo '
                     </div>
                 </div>
             </div>
@@ -409,8 +409,8 @@ echo '
 
         </script>';
 
-if ($is_cliente or $is_fornitore or $is_tecnico) {
-    echo '
+            if ($is_cliente or $is_fornitore or $is_tecnico) {
+                echo '
 
     <div class="panel panel-primary">
         <div class="panel-heading">
@@ -449,13 +449,13 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             
                         </div>';
 
-    $banche = Banca::where('id_anagrafica', $anagrafica->id)->get();
-    $banca_predefinita = $banche->first(function ($item) {
-        return !empty($item['predefined']);
-    });
-    $modulo_banche = Modules::get('Banche');
-    if (!$banche->isEmpty()) {
-        echo '
+                $banche = Banca::where('id_anagrafica', $anagrafica->id)->get();
+                $banca_predefinita = $banche->first(function ($item) {
+                    return !empty($item['predefined']);
+                });
+                $modulo_banche = Modules::get('Banche');
+                if (!$banche->isEmpty()) {
+                    echo '
                         <div class="row">
                             <div class="col-md-6">
                                 <a href="'.base_path().'/editor.php?id_module='.$modulo_banche['id'].'&id_record='.$banca_predefinita->id.'">
@@ -469,14 +469,14 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                 </a>
                             </div>
                         </div>';
-    } else {
-        echo '
+                } else {
+                    echo '
                         <div class="alert alert-info">
                             '.tr('Non sono presenti banche per l\'anagrafica').'... '.Modules::link('Banche', null, tr('Creane una')).'
                         </div>';
-    }
+                }
 
-    echo '
+                echo '
                     </div>
 
                     <div class="tab-pane '.(!$is_cliente ? 'hide' : 'active').'" id="cliente">
@@ -539,26 +539,26 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                 {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento_default", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$id_record.', "data": "'.Carbon::now().'"},"value": "$id_dichiarazione_intento_default$" ]}
                             </div>';
 
-    // Collegamento con il conto
-    $conto = $dbo->fetchOne('SELECT co_pianodeiconti3.id, co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_cliente']));
+                // Collegamento con il conto
+                $conto = $dbo->fetchOne('SELECT co_pianodeiconti3.id, co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_cliente']));
 
-    echo '
+                echo '
                             <div class="col-md-6">
                                 <p><b>'.tr('Piano dei conti cliente').'</b></p>';
 
-    if (!empty($conto['numero_conto'])) {
-        $piano_dei_conti_cliente = $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'];
-        echo Modules::link('Piano dei conti', null, $piano_dei_conti_cliente, null, '', 1, 'movimenti-'.$conto['id']);
-    } else {
-        $piano_dei_conti_cliente = tr('Nessuno');
-    }
+                if (!empty($conto['numero_conto'])) {
+                    $piano_dei_conti_cliente = $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'];
+                    echo Modules::link('Piano dei conti', null, $piano_dei_conti_cliente, null, '', 1, 'movimenti-'.$conto['id']);
+                } else {
+                    $piano_dei_conti_cliente = tr('Nessuno');
+                }
 
-    echo '
+                echo '
                             </div>
                         </div>
                     </div>';
 
-    echo '
+                echo '
                     <div class="tab-pane '.(!$is_fornitore ? 'hide' : (!$is_cliente ? 'active' : '')).'" id="fornitore">
                         <div class="row">
                             <div class="col-md-6">
@@ -585,26 +585,26 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                 {[ "type": "select", "label": "'.tr('Piano di sconto/magg. su articoli').'", "name": "id_piano_sconto_acquisti", "values": "query=SELECT id, nome AS descrizione FROM mg_piani_sconto ORDER BY nome ASC", "value": "$id_piano_sconto_acquisti$" ]}
                             </div>';
 
-    // Collegamento con il conto
-    $conto = $dbo->fetchOne('SELECT co_pianodeiconti3.id, co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_fornitore']));
+                // Collegamento con il conto
+                $conto = $dbo->fetchOne('SELECT co_pianodeiconti3.id, co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_fornitore']));
 
-    echo '
+                echo '
                             <div class="col-md-6">
                                 <p><b>'.tr('Piano dei conti fornitore').'</b></p>';
 
-    if (!empty($conto['numero_conto'])) {
-        $piano_dei_conti_fornitore = $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'];
-        echo Modules::link('Piano dei conti', null, $piano_dei_conti_fornitore, null, '', 1, 'movimenti-'.$conto['id']);
-    } else {
-        $piano_dei_conti_fornitore = tr('Nessuno');
-    }
+                if (!empty($conto['numero_conto'])) {
+                    $piano_dei_conti_fornitore = $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'];
+                    echo Modules::link('Piano dei conti', null, $piano_dei_conti_fornitore, null, '', 1, 'movimenti-'.$conto['id']);
+                } else {
+                    $piano_dei_conti_fornitore = tr('Nessuno');
+                }
 
-    echo '
+                echo '
                             </div>
                         </div>
                     </div>';
 
-    echo '
+                echo '
                     <div class="tab-pane'.(!$is_cliente && !$is_fornitore && $is_tecnico ? ' active' : '').''.(!$is_tecnico ? ' hide' : '').'" id="tecnico">
                         <div class="row">
                             <div class="col-md-6">
@@ -613,101 +613,101 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                         </div>
                     </div>';
 
-    echo '
+                echo '
                 </div>
             </div>
         </div>
     </div>';
-}
-    ?>
+            }
+            ?>
 
-		<div class="panel panel-primary">
-			<div class="panel-heading">
-				<h3 class="panel-title"><?php echo tr('Informazioni aggiuntive'); ?></h3>
-			</div>
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><?php echo tr('Informazioni aggiuntive'); ?></h3>
+                </div>
 
-			<div class="panel-body">
-				<div class="row">
-                    <div class="col-md-3">
-						{[ "type": "text", "label": "<?php echo tr('Numero d\'iscrizione registro imprese'); ?>", "name": "codiceri", "value": "$codiceri$", "help": "<?php echo tr('Il numero registro imprese è il numero di iscrizione attribuito dal Registro Imprese della Camera di Commercio.'); ?>" ]}
-                    </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            {[ "type": "text", "label": "<?php echo tr('Numero d\'iscrizione registro imprese'); ?>", "name": "codiceri", "value": "$codiceri$", "help": "<?php echo tr('Il numero registro imprese è il numero di iscrizione attribuito dal Registro Imprese della Camera di Commercio.'); ?>" ]}
+                        </div>
 
-					<div class="col-md-3">
-						{[ "type": "text", "label": "<?php echo tr('Codice R.E.A.').' <small>('.tr('provincia-C.C.I.A.A.').')</small>'; ?>", "name": "codicerea", "value": "$codicerea$", "class": "rea-mask text-uppercase", "help": "<?php echo tr('Esempio: _PATTERN_', [
-                            '_PATTERN_' => 'RM-123456',
-                        ]); ?>" ]}
-                    </div>
+                        <div class="col-md-3">
+                            {[ "type": "text", "label": "<?php echo tr('Codice R.E.A.').' <small>('.tr('provincia-C.C.I.A.A.').')</small>'; ?>", "name": "codicerea", "value": "$codicerea$", "class": "rea-mask text-uppercase", "help": "<?php echo tr('Esempio: _PATTERN_', [
+                                                                                                                                                                                                                                                        '_PATTERN_' => 'RM-123456',
+                                                                                                                                                                                                                                                    ]); ?>" ]}
+                        </div>
 
-                    <div class="col-md-3">
-                        {[ "type": "text", "label": "<?php echo tr('Riferimento Amministrazione'); ?>", "name": "riferimento_amministrazione", "value": "$riferimento_amministrazione$", "maxlength": "20" ]}
-                    </div>
-<?php
-                if ($is_agente) {
-                    ?>
-                    <div class="col-md-3">
-                        {[ "type": "number", "label": "<?php echo tr('Provvigione predefinita'); ?>", "name": "provvigione_default", "value": "$provvigione_default$", "icon-after": "%" ]}
-                    </div>
-<?php
-                }
-?>
-				</div>
-
-				<div class="row">
-					<div class="col-md-3">
-						{[ "type": "text", "label": "<?php echo tr('Num. iscr. tribunale'); ?>", "name": "iscrizione_tribunale", "value": "$iscrizione_tribunale$" ]}
-					</div>
-
-					<div class="col-md-3">
-						{[ "type": "text", "label": "<?php echo tr('Num. iscr. albo artigiani'); ?>", "name": "n_alboartigiani", "value": "$n_alboartigiani$" ]}
-					</div>
-
-					<div class="col-md-3">
-						{[ "type": "text", "label": "<?php echo tr('Foro di competenza'); ?>", "name": "foro_competenza", "value": "$foro_competenza$" ]}
-					</div>
-
-					<div class="col-md-3">
-						{[ "type": "text", "label": "<?php echo tr('Capitale sociale'); ?>", "name": "capitale_sociale", "value": "$capitale_sociale$" ]}
-					</div>
-				</div>
-
-				<div class="row">
-                    <div class="col-md-3">
-                            {[ "type": "select", "label": "<?php echo tr('Settore merceologico'); ?>", "name": "id_settore", "ajax-source": "settori", "value": "$id_settore$", "icon-after": "add|<?php echo Modules::get('Settori')['id']; ?>" ]}
-                    </div>
-
-					<div class="col-md-3">
-						{[ "type": "text", "label": "<?php echo tr('Marche trattate'); ?>", "name": "marche", "value": "$marche$" ]}
-					</div>
-
-					<div class="col-md-3">
-						{[ "type": "number", "label": "<?php echo tr('Num. dipendenti'); ?>", "name": "dipendenti", "decimals": 0, "value": "$dipendenti$" ]}
-					</div>
-
-					<div class="col-md-3">
-						{[ "type": "number", "label": "<?php echo tr('Num. macchine'); ?>", "name": "macchine", "decimals": 0, "value": "$macchine$" ]}
-					</div>
-				</div>
-
-				<div class="row">
-					<div class="col-md-12">
-						{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Tipo di anagrafica'); ?>", "name": "idtipoanagrafica[]", "values": "query=SELECT idtipoanagrafica AS id, descrizione FROM an_tipianagrafiche WHERE idtipoanagrafica NOT IN (SELECT DISTINCT(x.idtipoanagrafica) FROM an_tipianagrafiche_anagrafiche x INNER JOIN an_tipianagrafiche t ON x.idtipoanagrafica = t.idtipoanagrafica INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = x.idanagrafica WHERE t.descrizione = 'Azienda' AND deleted_at IS NULL) ORDER BY descrizione", "value": "$idtipianagrafica$" ]}
-						<?php
-                        if (in_array($id_azienda, $tipi_anagrafica)) {
-                            echo '
-						<p class="badge badge-info">'.tr('Questa anagrafica è di tipo "Azienda"').'.</p>';
+                        <div class="col-md-3">
+                            {[ "type": "text", "label": "<?php echo tr('Riferimento Amministrazione'); ?>", "name": "riferimento_amministrazione", "value": "$riferimento_amministrazione$", "maxlength": "20" ]}
+                        </div>
+                        <?php
+                        if ($is_agente) {
+                            ?>
+                            <div class="col-md-3">
+                                {[ "type": "number", "label": "<?php echo tr('Provvigione predefinita'); ?>", "name": "provvigione_default", "value": "$provvigione_default$", "icon-after": "%" ]}
+                            </div>
+                        <?php
                         }
                         ?>
-					</div>
-				</div>
+                    </div>
 
-				<div class="row">
-					<div class="col-md-12">
-						{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$", "charcounter": 1 ]}
-					</div>
-				</div>
-			</div>
-		</div>
-	</fieldset>
+                    <div class="row">
+                        <div class="col-md-3">
+                            {[ "type": "text", "label": "<?php echo tr('Num. iscr. tribunale'); ?>", "name": "iscrizione_tribunale", "value": "$iscrizione_tribunale$" ]}
+                        </div>
+
+                        <div class="col-md-3">
+                            {[ "type": "text", "label": "<?php echo tr('Num. iscr. albo artigiani'); ?>", "name": "n_alboartigiani", "value": "$n_alboartigiani$" ]}
+                        </div>
+
+                        <div class="col-md-3">
+                            {[ "type": "text", "label": "<?php echo tr('Foro di competenza'); ?>", "name": "foro_competenza", "value": "$foro_competenza$" ]}
+                        </div>
+
+                        <div class="col-md-3">
+                            {[ "type": "text", "label": "<?php echo tr('Capitale sociale'); ?>", "name": "capitale_sociale", "value": "$capitale_sociale$" ]}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            {[ "type": "select", "label": "<?php echo tr('Settore merceologico'); ?>", "name": "id_settore", "ajax-source": "settori", "value": "$id_settore$", "icon-after": "add|<?php echo Modules::get('Settori')['id']; ?>" ]}
+                        </div>
+
+                        <div class="col-md-3">
+                            {[ "type": "text", "label": "<?php echo tr('Marche trattate'); ?>", "name": "marche", "value": "$marche$" ]}
+                        </div>
+
+                        <div class="col-md-3">
+                            {[ "type": "number", "label": "<?php echo tr('Num. dipendenti'); ?>", "name": "dipendenti", "decimals": 0, "value": "$dipendenti$" ]}
+                        </div>
+
+                        <div class="col-md-3">
+                            {[ "type": "number", "label": "<?php echo tr('Num. macchine'); ?>", "name": "macchine", "decimals": 0, "value": "$macchine$" ]}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            {[ "type": "select", "multiple": "1", "label": "<?php echo tr('Tipo di anagrafica'); ?>", "name": "idtipoanagrafica[]", "values": "query=SELECT idtipoanagrafica AS id, descrizione FROM an_tipianagrafiche WHERE idtipoanagrafica NOT IN (SELECT DISTINCT(x.idtipoanagrafica) FROM an_tipianagrafiche_anagrafiche x INNER JOIN an_tipianagrafiche t ON x.idtipoanagrafica = t.idtipoanagrafica INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = x.idanagrafica WHERE t.descrizione = 'Azienda' AND deleted_at IS NULL) ORDER BY descrizione", "value": "$idtipianagrafica$" ]}
+                            <?php
+                            if (in_array($id_azienda, $tipi_anagrafica)) {
+                                echo '
+						<p class="badge badge-info">'.tr('Questa anagrafica è di tipo "Azienda"').'.</p>';
+                            }
+                            ?>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            {[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$", "charcounter": 1 ]}
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </fieldset>
 </form>
 
 {( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
@@ -748,8 +748,8 @@ if (!empty($elementi)) {
 <div class="box box-warning collapsable collapsed-box">
     <div class="box-header with-border">
         <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
-            '_NUM_' => count($elementi),
-        ]).'</h3>
+        '_NUM_' => count($elementi),
+    ]).'</h3>
         <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
         </div>
@@ -759,11 +759,11 @@ if (!empty($elementi)) {
 
     foreach ($elementi as $elemento) {
         $descrizione = tr('_DOC_  _NUM_ del _DATE_ _DELETED_AT_', [
-        '_DOC_' => $elemento['tipo_documento'],
-        '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
-        '_DATE_' => Translator::dateToLocale($elemento['data']),
-        '_DELETED_AT_' => (!empty($elemento['deleted_at']) ? tr('Eliminato il:').' '.Translator::dateToLocale($elemento['deleted_at']) : ''),
-    ]);
+            '_DOC_' => $elemento['tipo_documento'],
+            '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
+            '_DATE_' => Translator::dateToLocale($elemento['data']),
+            '_DELETED_AT_' => (!empty($elemento['deleted_at']) ? tr('Eliminato il:').' '.Translator::dateToLocale($elemento['deleted_at']) : ''),
+        ]);
 
         //se non è un preventivo è un ddt o una fattura
         //se non è un ddt è una fattura.
@@ -820,38 +820,39 @@ if (empty($record['deleted_at'])) {
 ?>
 
 <script>
-	$(document).ready( function() {
-		$(".colorpicker").colorpicker({ format: 'hex' }).on("changeColor", function() {
-			$("#colore_t").parent().find(".square").css("background", $("#colore_t").val());
-		});
+    $(document).ready(function() {
+        $(".colorpicker").colorpicker({
+            format: 'hex'
+        }).on("changeColor", function() {
+            $("#colore_t").parent().find(".square").css("background", $("#colore_t").val());
+        });
 
-		$("#colore_t").parent().find(".square").css("background", $("#colore_t").val());
+        $("#colore_t").parent().find(".square").css("background", $("#colore_t").val());
 
-		// Abilito solo ragione sociale oppure solo cognome-nome in base a cosa compilo
-		$('#nome, #cognome').bind("keyup change", function(e) {
-			if ($('#nome').val() == '' && $('#cognome').val() == '' ){
+        // Abilito solo ragione sociale oppure solo cognome-nome in base a cosa compilo
+        $('#nome, #cognome').bind("keyup change", function(e) {
+            if ($('#nome').val() == '' && $('#cognome').val() == '') {
                 $('#nome, #cognome').prop('disabled', true).prop('required', false);
-				$('#ragione_sociale').prop('disabled', false).prop('required', true);
-				$('#ragione_sociale').focus();
-			}else{
-                $('#nome, #cognome').prop('disabled', false).prop('required', true);
-				$('#ragione_sociale').prop('disabled', true).prop('required', false);
-			}
-		});
-
-        $('#ragione_sociale').bind("keyup change", function(e) {
-			if ($('#ragione_sociale').val() == '' ){
+                $('#ragione_sociale').prop('disabled', false).prop('required', true);
+                $('#ragione_sociale').focus();
+            } else {
                 $('#nome, #cognome').prop('disabled', false).prop('required', true);
                 $('#ragione_sociale').prop('disabled', true).prop('required', false);
-				$('#cognome').focus();
-			}else{
+            }
+        });
+
+        $('#ragione_sociale').bind("keyup change", function(e) {
+            if ($('#ragione_sociale').val() == '') {
+                $('#nome, #cognome').prop('disabled', false).prop('required', true);
+                $('#ragione_sociale').prop('disabled', true).prop('required', false);
+                $('#cognome').focus();
+            } else {
                 $('#nome, #cognome').prop('disabled', true).prop('required', false);
-				$('#ragione_sociale').prop('disabled', false).prop('required', true);
-				$('#ragione_sociale').focus();
-			}
-		});
+                $('#ragione_sociale').prop('disabled', false).prop('required', true);
+                $('#ragione_sociale').focus();
+            }
+        });
 
         $('#ragione_sociale, #cognome').trigger('keyup');
-	});
+    });
 </script>
-

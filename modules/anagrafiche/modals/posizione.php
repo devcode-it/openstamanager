@@ -95,7 +95,7 @@ function caricaMappa() {
     if (!lat || !lng){
      
         var div = document.createElement("div");
-        div.innerHTML = "<div class=\'alert alert-info\'> <i class=\'fa fa-info\'></i> '.tr("La posizione non è stata definita"). '.</div>";
+        div.innerHTML = "<div class=\'alert alert-info\'> <i class=\'fa fa-info\'></i> '.tr('La posizione non è stata definita').'.</div>";
         container.appendChild(div);
          
         indirizzo = $("#indirizzo").val();

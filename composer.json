@@ -66,7 +66,7 @@
     },
     "require-dev": {
         "codeception/codeception": "^4.0",
-        "friendsofphp/php-cs-fixer": "^3.00"
+        "friendsofphp/php-cs-fixer": "^3.4"
     },
     "autoload": {
         "psr-4": {

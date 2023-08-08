@@ -114,3 +114,10 @@ $(document).ready(function () {
 $(document).on('select2:open', () => {
     document.querySelector('.select2-container--open .select2-search__field').focus();
 });
+
+//Send a WhatsApp message using JavaScript
+function sendWhatsAppMessage(phoneNumber, message) {
+    var text = message ? "&text=" + encodeURIComponent(message) : "";
+    var url = "https://api.whatsapp.com/send?phone=" + phoneNumber + text;
+    window.open(url);
+}

@@ -63,7 +63,7 @@ echo '
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "select", "label": "'.tr('Nazione').'", "name": "id_nazione", "value": "$id_nazione$", "ajax-source": "nazioni" ]}
+			{[ "type": "select", "label": "'.tr('Nazione').'", "name": "id_nazione", "value": "$id_nazione$", "ajax-source": "nazioni",  "required": 1 ]}
 		</div>
 
 		<div class="col-md-6">

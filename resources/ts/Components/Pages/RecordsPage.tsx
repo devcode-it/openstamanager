@@ -3,14 +3,14 @@ import '@maicol07/material-web-additions/layout-grid/layout-grid.js';
 import '@material/web/dialog/dialog.js';
 import '@material/web/fab/branded-fab.js';
 import '@material/web/fab/fab.js';
-import '@material/web/iconbutton/standard-icon-button.js';
+import '@material/web/iconbutton/icon-button.js';
 
 import {router} from '@maicol07/inertia-mithril';
-import {PaginateDetail} from '@maicol07/material-web-additions/data-table/lib/data-table';
+import {PaginateDetail} from '@maicol07/material-web-additions/data-table/internal/data-table';
 import {
   FilterTextFieldInputEventDetail,
   SortButtonClickedEventDetail
-} from '@maicol07/material-web-additions/data-table/lib/data-table-column.js';
+} from '@maicol07/material-web-additions/data-table/internal/data-table-column.js';
 import {
   mdiPlus,
   mdiRefresh

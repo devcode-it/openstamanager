@@ -8,10 +8,9 @@ md-icon svg {
     line-height: 0;
 }
 
-:is(md-list-item, md-list-item-link) md-icon {
-    --md-icon-color: var(--_list-item-leading-icon-color);
-
-    padding-left: 16px;
+md-list-item md-icon {
+    margin-left: 16px;
+    color: var(--_list-item-leading-icon-color);
 
     svg {
         width: var(--_list-item-leading-icon-size, var(--_icon-size, var(--_size)));
@@ -42,7 +41,7 @@ md-navigation-drawer, md-navigation-drawer-modal {
         justify-content: center;
         min-width: 300px;
 
-        md-list-item-link {
+        md-list-item {
             --md-list-item-list-item-container-shape: 100px;
             --md-ripple-shape: 100px;
 

@@ -7,8 +7,8 @@ import {
   DataTable as MdDataTable,
   PaginateDetail,
   RowSelectionChangedDetail
-} from '@maicol07/material-web-additions/data-table/lib/data-table';
-import {DataTableCell} from '@maicol07/material-web-additions/data-table/lib/data-table-cell';
+} from '@maicol07/material-web-additions/data-table/internal/data-table';
+import {DataTableCell} from '@maicol07/material-web-additions/data-table/internal/data-table-cell';
 import {mdiDeleteOutline} from '@mdi/js';
 import DataTable, {DataTableAttributes} from '@osm/Components/DataTable/DataTable';
 import DataTableColumn, {DataTableColumnAttributes} from '@osm/Components/DataTable/DataTableColumn';
@@ -171,9 +171,9 @@ export default class RecordsTable<M extends Model<any, any>, A extends RecordsTa
   protected tableRowActions(vnode: Vnode<A>, record: M) {
     return collect<Children>({
       delete: (
-        <md-standard-icon-button onclick={this.onDeleteRecordButtonClicked.bind(this, vnode, record)}>
+        <md-icon-button onclick={this.onDeleteRecordButtonClicked.bind(this, vnode, record)}>
           <MdIcon icon={mdiDeleteOutline}/>
-        </md-standard-icon-button>
+        </md-icon-button>
       )
     });
   }

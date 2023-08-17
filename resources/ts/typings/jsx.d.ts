@@ -19,8 +19,6 @@ declare module 'csstype' {
 
 declare module 'mithril' {
   interface Attributes extends LayoutGridAttributes {
-    // Needed for md-dialog
-    'dialog-action'?: string | 'ok' | 'discard' | 'close' | 'cancel' | 'accept' | 'decline',
     'auto-animate'?: boolean
   }
 }

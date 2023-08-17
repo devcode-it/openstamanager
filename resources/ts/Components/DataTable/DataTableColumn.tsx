@@ -1,6 +1,6 @@
 import '@maicol07/material-web-additions/data-table/data-table-column.js';
 
-import {DataTableColumn as MdDataTableColumn} from '@maicol07/material-web-additions/data-table/lib/data-table-column.js';
+import {DataTableColumn as MdDataTableColumn} from '@maicol07/material-web-additions/data-table/internal/data-table-column.js';
 import {
   mdiArrowDown,
   mdiArrowUp

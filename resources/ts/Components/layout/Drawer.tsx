@@ -40,7 +40,7 @@ export default class Drawer<A extends DrawerAttributes = DrawerAttributes> exten
     const DrawerTag = isMobile() ? 'md-navigation-drawer-modal' : 'md-navigation-drawer';
     return (
       <DrawerTag opened={this.open()}>
-        {DrawerTag === 'md-navigation-drawer-modal' && <md-standard-icon-button onclick={this.onMobileMenuButtonClick.bind(this)}><MdIcon icon={mdiMenuOpen}/></md-standard-icon-button>}
+        {DrawerTag === 'md-navigation-drawer-modal' && <md-icon-button onclick={this.onMobileMenuButtonClick.bind(this)}><MdIcon icon={mdiMenuOpen}/></md-icon-button>}
         <md-list>{this.entries().values<VnodeCollectionItem>().all()}</md-list>
       </DrawerTag>
     );

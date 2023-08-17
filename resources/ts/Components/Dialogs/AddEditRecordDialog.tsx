@@ -31,6 +31,7 @@ export default abstract class AddEditRecordDialog<M extends Model<any, any>> ext
   // Recommended: <= 3
   protected numberOfColumns: number = 3;
   protected record!: M;
+  protected formId?: string;
 
   oninit(vnode: Vnode<RecordDialogAttributes<M>, this>) {
     super.oninit(vnode);
@@ -57,16 +58,19 @@ export default abstract class AddEditRecordDialog<M extends Model<any, any>> ext
   contents(): Children {
     return (
       <>
-        <h2 slot="headline">{this.record.isNew() ? __('Nuovo record') : __('Modifica record')}</h2>
         {this.form()}
-        {this.afterForm().toArray()}
       </>
     );
   }
 
+  headline() {
+    return <span slot="headline">{this.record.isNew() ? __('Nuovo record') : __('Modifica record')}</span>;
+  }
+
   form(): Children {
+    this.formId ??= `form-${Date.now()}`;
     return (
-      <Form state={this.formState} onsubmit={this.onFormSubmit.bind(this)}>
+      <Form id={this.formId} state={this.formState} onsubmit={this.onFormSubmit.bind(this)}>
         {this.formContents()}
       </Form>
     );
@@ -95,33 +99,29 @@ export default abstract class AddEditRecordDialog<M extends Model<any, any>> ext
   abstract fields(): Collection<Children>;
 
   onCancelButtonClicked(): void {
-    this.close('cancel');
+    void this.close('cancel');
   }
 
   async onFormSubmit() {
     if (isFormValid(this.formElement!) && await this.save()) {
-      this.close();
+      void this.close();
     }
   }
 
-  afterForm(): VnodeCollection {
+  actions(): VnodeCollection {
     return collect<VnodeCollectionItem>({
       cancelButton: (
-        <md-text-button slot="footer" onclick={this.onCancelButtonClicked.bind(this)}>
+        <md-text-button onclick={this.onCancelButtonClicked.bind(this)}>
           {__('Annulla')}
         </md-text-button>
       ),
       saveButton: (
-        <md-text-button type="submit" slot="footer" onclick={this.onSaveButtonClicked.bind(this)}>
+        <md-text-button type="submit" form={this.formId}>
           {__('Salva')}
           <MdIcon icon={mdiFloppy} slot="icon"/>
         </md-text-button>
       )
     });
-  }
-
-  onSaveButtonClicked(): void {
-    this.formElement?.requestSubmit();
   }
 
   async save(): Promise<boolean> {
@@ -136,9 +136,7 @@ export default abstract class AddEditRecordDialog<M extends Model<any, any>> ext
     }
   }
 
-  // @ts-expect-error - Temporary
   afterSave(response: SaveResponse<M>): void {
-    // @ts-expect-error - Temporary
     const responseModel = response.getModel() as M;
     if (responseModel !== undefined) {
       this.record = responseModel;

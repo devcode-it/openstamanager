@@ -1,6 +1,6 @@
 import '@maicol07/material-web-additions/data-table/data-table.js';
 
-import {DataTable as MdDataTable} from '@maicol07/material-web-additions/data-table/lib/data-table';
+import {DataTable as MdDataTable} from '@maicol07/material-web-additions/data-table/internal/data-table';
 import {
   mdiChevronLeft,
   mdiChevronRight,

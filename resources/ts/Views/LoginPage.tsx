@@ -5,7 +5,6 @@ import '@material/web/checkbox/checkbox.js';
 import '@material/web/dialog/dialog.js';
 import '@material/web/textfield/filled-text-field.js';
 
-import {Dialog} from '@material/web/dialog/internal/dialog';
 import {
   mdiAccountOutline,
   mdiEmailOutline,
@@ -19,8 +18,7 @@ import {VnodeCollectionItem} from '@osm/typings/jsx';
 import {showSnackbar} from '@osm/utils/misc';
 import collect from 'collect.js';
 import type {
-  Vnode,
-  VnodeDOM
+  Vnode
 } from 'mithril';
 import Stream from 'mithril/stream';
 import {
@@ -41,7 +39,7 @@ export default class LoginPage extends Page {
     email: Stream('')
   };
 
-  forgotPasswordDialog!: Dialog;
+  forgotPasswordDialogOpen = false;
 
   contents(vnode: Vnode<PageAttributes>) {
     return <>
@@ -52,18 +50,25 @@ export default class LoginPage extends Page {
           {this.buttons().toArray()}
         </div>
       </Form>
-      <md-dialog id="forgot-password-dialog">
-        <h2 slot="headline">{__('Recupero password')}</h2>
-        <p>{__('Inserisci il tuo indirizzo email per ricevere le istruzioni per il recupero della password.')}</p>
-        <Form id="forgot-password" onsubmit={this.onForgotPasswordFormSubmit.bind(this)} state={this.forgotPasswordForm}>
-          <div style={{textAlign: 'center'}}>
-            {this.forgotPasswordFields().toArray()}
-          </div>
-        </Form>
-        <md-text-button dialog-action="cancel" slot="footer" label={__('Annulla')}></md-text-button>
-        <md-filled-button slot="footer" onclick={this.onForgotPasswordDialogSubmitButtonClicked.bind(this)}>
-          {__('Invia')}
-        </md-filled-button>
+      <md-dialog id="forgot-password-dialog" open={this.forgotPasswordDialogOpen} onclosed={this.closeForgotPasswordDialog.bind(this)}>
+        <div slot="icon">
+          <MdIcon icon={mdiLockQuestion}/>
+        </div>
+        <div slot="headline">
+          <span>{__('Recupero password')}</span>
+        </div>
+        <div slot="content">
+          <p>{__('Inserisci il tuo indirizzo email per ricevere le istruzioni per il recupero della password.')}</p>
+          <Form id="forgot-password" onsubmit={this.onForgotPasswordFormSubmit.bind(this)} state={this.forgotPasswordForm}>
+            <div style={{textAlign: 'center'}}>
+              {this.forgotPasswordFields().toArray()}
+            </div>
+          </Form>
+        </div>
+        <div slot="actions">
+          <md-text-button onclick={this.onForgotPasswordDialogCancelButtonClicked.bind(this)}>{__('Annulla')}</md-text-button>
+          <md-text-button form="forgot-password">{__('Invia')}</md-text-button>
+        </div>
       </md-dialog>
     </>;
   }
@@ -82,7 +87,7 @@ export default class LoginPage extends Page {
       ),
       remember: (
         <label>
-          <md-checkbox name="remember"/>
+          <md-checkbox name="remember" touch-target="wrapper"/>
           <span>{__('Ricordami')}</span>
         </label>
       )
@@ -102,7 +107,7 @@ export default class LoginPage extends Page {
   buttons() {
     return collect<VnodeCollectionItem>({
       forgotPassword: (
-        <md-text-button id="forgot-password-button" onclick={this.onForgotPasswordButtonClicked.bind(this)}>
+        <md-text-button type="button" id="forgot-password-button" onclick={this.onForgotPasswordButtonClicked.bind(this)}>
           {__('Password dimenticata')}
           <MdIcon icon={mdiLockQuestion} slot="icon"/>
         </md-text-button>
@@ -114,12 +119,6 @@ export default class LoginPage extends Page {
         </md-filled-button>
       )
     });
-  }
-
-  oncreate(vnode: VnodeDOM<PageAttributes, this>) {
-    super.oncreate(vnode);
-
-    this.forgotPasswordDialog = this.element.querySelector<Dialog>('md-dialog#forgot-password-dialog')!;
   }
 
   async onLoginFormSubmit(event: FormSubmitEvent) {
@@ -136,11 +135,19 @@ export default class LoginPage extends Page {
   }
 
   onForgotPasswordButtonClicked() {
-    this.forgotPasswordDialog.show();
+    this.openForgotPasswordDialog();
   }
 
-  onForgotPasswordDialogSubmitButtonClicked() {
-    this.forgotPasswordDialog.querySelector('form')?.requestSubmit();
+  onForgotPasswordDialogCancelButtonClicked() {
+    this.closeForgotPasswordDialog();
+  }
+
+  openForgotPasswordDialog() {
+    this.forgotPasswordDialogOpen = true;
+  }
+
+  closeForgotPasswordDialog() {
+    this.forgotPasswordDialogOpen = false;
   }
 
   async onForgotPasswordFormSubmit(event: FormSubmitEvent) {
@@ -152,6 +159,6 @@ export default class LoginPage extends Page {
     }
 
     void showSnackbar(__('La password è stata inviata alla tua email'));
-    this.forgotPasswordDialog.close();
+    this.closeForgotPasswordDialog();
   }
 }

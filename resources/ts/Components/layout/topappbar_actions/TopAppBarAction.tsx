@@ -12,9 +12,9 @@ export default abstract class TopAppBarAction extends Component {
 
   view(vnode: Vnode): Children {
     return (
-      <md-standard-icon-button id={this.id} slot="actionItems" ariaLabel={this.ariaLabel} onclick={this.callback.bind(this)}>
+      <md-icon-button id={this.id} slot="actionItems" ariaLabel={this.ariaLabel} onclick={this.callback.bind(this)}>
         <MdIcon icon={this.icon}/>
-      </md-standard-icon-button>
+      </md-icon-button>
     );
   }
 

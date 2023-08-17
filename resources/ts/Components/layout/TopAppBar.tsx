@@ -1,4 +1,4 @@
-import '@material/web/iconbutton/standard-icon-button.js';
+import '@material/web/iconbutton/icon-button.js';
 import '@osm/WebComponents/TopAppBar';
 
 import {
@@ -54,9 +54,9 @@ export default class TopAppBar extends Component {
 
   navigationIcon(vnode: Vnode) {
     return (
-      <md-standard-icon-button slot="navigationIcon" onclick={this.onNavigationIconClick.bind(this)}>
+      <md-icon-button slot="navigationIcon" onclick={this.onNavigationIconClick.bind(this)}>
         <MdIcon icon={this.drawerOpenState() ? mdiMenuOpen : mdiMenu}/>
-      </md-standard-icon-button>
+      </md-icon-button>
     );
   }
 

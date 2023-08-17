@@ -4,9 +4,13 @@ import '@material/web/dialog/dialog.js';
 
 import {Dialog as MDDialog} from '@material/web/dialog/internal/dialog';
 import {
+  VnodeCollection,
+  VnodeCollectionItem
+} from '@osm/typings/jsx';
+import collect from 'collect.js';
+import Mithril, {
   Children,
-  Vnode,
-  VnodeDOM
+  Vnode
 } from 'mithril';
 import Stream from 'mithril/stream';
 import {
@@ -36,40 +40,63 @@ export default abstract class Dialog<A extends DialogAttributes = DialogAttribut
     this.open = open;
   }
 
-  oncreate(vnode: VnodeDOM<A, this>) {
-    super.oncreate(vnode);
-
-    this.element.addEventListener('closed', () => {
-      vnode.attrs.onClose?.();
-      this.open(false);
-      m.redraw();
-    });
-
-    this.element.addEventListener('opened', () => {
-      vnode.attrs.onOpen?.();
-    });
-  }
-
   public view(vnode: Vnode<A, this>): Children {
+    let open = this.open();
+    // If dialog is open but element isn't created yet, don't open it (wait for oncreate, see below)
+    if (open && this.element === undefined) {
+      open = false;
+    }
+    const contents = this.contents(vnode) ?? vnode.children;
+    const actions = this.actions(vnode);
     return (
       <md-dialog style={{
-        '--md-dialog-container-max-block-size': 'calc(100% - 48px)',
-        '--md-dialog-container-max-inline-size': 'calc(100% - 48px)'
-      }} {...vnode.attrs} open={this.open()}>
-        {this.contents(vnode) ?? vnode.children}
+        maxWidth: 'calc(100% - 48px)',
+        maxHeight: 'calc(100% - 48px)'
+      }} {...vnode.attrs} open={open} onopened={vnode.attrs.onOpen} onclosed={this.onDialogClosed.bind(this, vnode)}>
+        {this.icon() && <div slot="icon">{this.icon()}</div>}
+        {this.headline() && <div slot="headline">{this.headline()}</div>}
+        {contents && <div slot="content">{contents}</div>}
+        {actions.isNotEmpty() && <div slot="actions">{actions.toArray()}</div>}
       </md-dialog>
     );
+  }
+
+  oncreate(vnode: Mithril.VnodeDOM<A, this>) {
+    super.oncreate(vnode);
+    // TODO: [BUG] Dialog not opening by default on creation. Wait for https://github.com/material-components/material-web/issues/4728
+    setTimeout(() => {
+      if (this.open()) {
+        void this.show();
+      }
+    }, 0);
+  }
+
+  onDialogClosed(vnode:Vnode<A, this>) {
+    vnode.attrs.onClose?.();
+    this.open(false);
+  }
+
+  icon(): Children {
+    return undefined;
+  }
+
+  headline(): Children {
+    return undefined;
   }
 
   contents(vnode: Vnode<A, this>): Children {
     return undefined;
   }
 
-  public show(): void {
-    this.element.show();
+  actions(vnode: Vnode<A, this>): VnodeCollection {
+    return collect<VnodeCollectionItem>();
   }
 
-  public close(action?: string): void {
-    this.element.close(action);
+  public async show() {
+    return this.element.show();
+  }
+
+  public async close(action?: string) {
+    return this.element.close(action);
   }
 }

@@ -12,7 +12,7 @@ declare global {
 export default class TopAppBar extends MWCTopAppBar {
   static styles = [...MWCTopAppBar.styles, css`
     header.mdc-top-app-bar {
-      z-index: 7;
+      z-index: 0;
     }
   `];
 }

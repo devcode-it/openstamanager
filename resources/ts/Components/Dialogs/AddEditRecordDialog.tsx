@@ -70,7 +70,7 @@ export default abstract class AddEditRecordDialog<M extends Model<any, any>> ext
   form(): Children {
     this.formId ??= `form-${Date.now()}`;
     return (
-      <Form id={this.formId} state={this.formState} onsubmit={this.onFormSubmit.bind(this)}>
+      <Form id={this.formId} state={this.formState} onsubmit={this.onFormSubmit.bind(this)} additionalElementsSelector="md-filled-select,md-outlined-select">
         {this.formContents()}
       </Form>
     );

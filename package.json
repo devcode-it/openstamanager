@@ -26,7 +26,7 @@
     "include-media": "^2.0.0",
     "lit": "^2.8.0",
     "mithril": "^2.2.2",
-    "mithril-utilities": "^1.2.5",
+    "mithril-utilities": "^1.2.6",
     "modern-normalize": "^2.0.0",
     "postcss-scss": "^4.0.7",
     "prntr": "^2.0.18",

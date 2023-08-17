@@ -1,5 +1,9 @@
+import {mdiDelete} from '@mdi/js';
+import MdIcon from '@osm/Components/MdIcon';
 import Model from '@osm/Models/Model';
+import {VnodeCollection} from '@osm/typings/jsx';
 import {showSnackbar} from '@osm/utils/misc';
+import collect from 'collect.js';
 import {
   Children,
   Vnode
@@ -27,17 +31,33 @@ export default class DeleteRecordDialog<M extends Model<any, any>, A extends Del
 
     return (
       <>
-        <h2 slot="headline">{__('Elimina record')}</h2>
         <p>{text}</p>
         <ul>{this.records.map((record) => <li key={record.getId()}>{this.recordSummary(record, vnode)}</li>)}</ul>
-        <md-text-button id="discard-button" slot="footer" dialog-action="cancel">
-          {__('No')}
-        </md-text-button>
-        <md-text-button id="confirm-button" slot="footer" onclick={this.onConfirmButtonClicked.bind(this)}>
-          {__('Sì')}
-        </md-text-button>
       </>
     );
+  }
+
+  headline(): Children {
+    return <span>{__('Elimina record')}</span>;
+  }
+
+  icon(): Children {
+    return <MdIcon icon={mdiDelete}/>;
+  }
+
+  actions(vnode: Vnode<A, this>): VnodeCollection {
+    return collect({
+      cancel: (
+        <md-text-button id="discard-button" onclick={this.onCancelButtonClicked.bind(this)}>
+          {__('No')}
+        </md-text-button>
+      ),
+      confirm: (
+        <md-text-button id="confirm-button" onclick={this.onConfirmButtonClicked.bind(this)}>
+          {__('Sì')}
+        </md-text-button>
+      )
+    });
   }
 
   recordSummary(record: M, vnode: Vnode<A, this>): Children {
@@ -46,6 +66,10 @@ export default class DeleteRecordDialog<M extends Model<any, any>, A extends Del
 
   async onConfirmButtonClicked() {
     await this.deleteRecord();
+  }
+
+  onCancelButtonClicked() {
+    void this.close('cancel');
   }
 
   async deleteRecord() {

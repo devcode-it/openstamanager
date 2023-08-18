@@ -1,39 +1,50 @@
+/**
+ * Generated on https://lit.dev/playground/#gist=abcc77f636c1b76506df860db6dc0faf&view-mode=preview
+ * Settings:
+ * Scheme: Dynamic
+ * Dark mode: true
+ * Primary color: #613d00 (97, 61, 0)
+ * Secondary color: #7c5800 (124, 88, 0)
+ * Tertiary color: #5a3114 (90, 49, 20)
+ * Neutral color: #000000 (0, 0, 0)
+ * Contrast: 0
+ */
+
 @media (prefers-color-scheme: dark) {
     :root {
-        --md-sys-color-background: #141316;
-        --md-sys-color-on-background: #e5e1e6;
-        --md-sys-color-surface: #141316;
-        --md-sys-color-surface-dim: #141316;
-        --md-sys-color-surface-bright: #3a383c;
-        --md-sys-color-surface-container-lowest: #0e0e11;
-        --md-sys-color-surface-container-low: #1c1b1f;
-        --md-sys-color-surface-container: #201f23;
-        --md-sys-color-surface-container-high: #2b292d;
-        --md-sys-color-surface-container-highest: #363438;
-        --md-sys-color-on-surface: #e5e1e6;
-        --md-sys-color-surface-variant: #4f4539;
-        --md-sys-color-on-surface-variant: #d3c4b4;
-        --md-sys-color-inverse-surface: #e5e1e6;
-        --md-sys-color-inverse-on-surface: #313033;
-        --md-sys-color-outline: #7f7365;
-        --md-sys-color-outline-variant: #4f4539;
+        --md-sys-color-background: #16130e;
+        --md-sys-color-on-background: #eae1d9;
+        --md-sys-color-surface: #16130e;
+        --md-sys-color-surface-dim: #16130e;
+        --md-sys-color-surface-bright: #3d3933;
+        --md-sys-color-surface-container-lowest: #110e09;
+        --md-sys-color-surface-container-low: #1f1b16;
+        --md-sys-color-surface-container: #231f1a;
+        --md-sys-color-surface-container-high: #2d2924;
+        --md-sys-color-surface-container-highest: #38342e;
+        --md-sys-color-on-surface: #eae1d9;
+        --md-sys-color-surface-variant: #4e4639;
+        --md-sys-color-on-surface-variant: #d1c5b4;
+        --md-sys-color-inverse-surface: #eae1d9;
+        --md-sys-color-inverse-on-surface: #34302a;
+        --md-sys-color-outline: #9a8f80;
+        --md-sys-color-outline-variant: #4e4639;
         --md-sys-color-shadow: #000000;
         --md-sys-color-scrim: #000000;
-        --md-sys-color-surface-tint: #ffb954;
-        --md-sys-color-primary: #ffb954;
-        --md-sys-color-on-primary: #452b00;
-        --md-sys-color-primary-container: #6f4700;
-        --md-sys-color-on-primary-container: #fdb449;
-        --md-sys-color-inverse-primary: #835500;
-        --md-sys-color-inverse-on-primary: #ffffff;
-        --md-sys-color-secondary: #ffc453;
-        --md-sys-color-on-secondary: #473100;
-        --md-sys-color-secondary-container: #d79a00;
-        --md-sys-color-on-secondary-container: #4f3600;
-        --md-sys-color-tertiary: #ffb781;
-        --md-sys-color-on-tertiary: #4e2600;
-        --md-sys-color-tertiary-container: #7d4000;
-        --md-sys-color-on-tertiary-container: #ffb276;
+        --md-sys-color-surface-tint: #febb2a;
+        --md-sys-color-primary: #ffcf79;
+        --md-sys-color-on-primary: #422d00;
+        --md-sys-color-primary-container: #e1a200;
+        --md-sys-color-on-primary-container: #2f1f00;
+        --md-sys-color-inverse-primary: #7c5800;
+        --md-sys-color-secondary: #f8bd49;
+        --md-sys-color-on-secondary: #422d00;
+        --md-sys-color-secondary-container: #996d00;
+        --md-sys-color-on-secondary-container: #ffffff;
+        --md-sys-color-tertiary: #ffcf79;
+        --md-sys-color-on-tertiary: #412d00;
+        --md-sys-color-tertiary-container: #dba431;
+        --md-sys-color-on-tertiary-container: #302000;
         --md-sys-color-error: #ffb4ab;
         --md-sys-color-on-error: #690005;
         --md-sys-color-error-container: #93000a;

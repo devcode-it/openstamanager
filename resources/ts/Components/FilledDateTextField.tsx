@@ -21,7 +21,7 @@ export default class FilledDateTextField<A extends FilledDateTextFieldAttributes
       <md-filled-text-field {...vnode.attrs}>
         {/* @ts-ignore */}
         {vnode.children}
-        <md-icon-button slot="trailingicon" onclick={this.openDatePicker.bind(this)}>
+        <md-icon-button type="button" slot="trailingicon" onclick={this.openDatePicker.bind(this)}>
           <MdIcon icon={mdiCalendarMonthOutline}/>
         </md-icon-button>
       </md-filled-text-field>

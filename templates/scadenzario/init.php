@@ -41,6 +41,11 @@ if (!empty(get('date_end'))) {
     $date_end = get('date_end');
 }
 
+if (get('id_anagrafica') != 'null') {
+    $module_query = str_replace('1=1', '1=1 AND co_scadenziario.idanagrafica="'.get('id_anagrafica').'"', $module_query);
+    $id_anagrafica = get('id_anagrafica');
+}
+
 if (get('is_pagata') == 'false') {
     $module_query = str_replace('1=1', '1=1 AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`) ', $module_query);
 }

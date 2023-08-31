@@ -25,7 +25,7 @@ export interface ModelRelations {
 export default abstract class Model<A extends ModelAttributes, R extends ModelRelations> extends BaseModel {
   protected static paginationStrategy = PaginationStrategy.PageBased;
   protected static jsonApiBaseUrl = '/api/restify';
-  protected static httpClient = new RequestHttpClient();
+  getHttpClient() { return new RequestHttpClient(); }
 
   static dates: Record<string, string> = {
     createdAt: 'YYYY-MM-DDTHH:mm:ss.ssssssZ',

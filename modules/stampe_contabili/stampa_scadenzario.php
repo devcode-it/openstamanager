@@ -55,15 +55,18 @@ for ($i = 1; $i <= 12; ++$i) {
 
 echo '
 	<div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
 			{[ "type": "date", "label": "'.tr('Data inizio').'", "name": "date_start", "value": "'.$_SESSION['period_start'].'" ]}
 		</div>
-        <div class="col-md-4">
+        <div class="col-md-3">
 			{[ "type": "date", "label": "'.tr('Data fine').'", "name": "date_end", "value": "'.$_SESSION['period_end'].'" ]}
 		</div>
-        <div class="col-md-4">
+        <div class="col-md-3">
 			{[ "type": "select", "label": "'.tr('Periodo').'", "name": "periodo", "required": "1", "values": '.json_encode($periodi).', "value": "manuale" ]}
 		</div>
+        <div class="col-md-3">
+        {[ "type": "select", "label": "'.tr('Anagrafica').'", "name": "id_anagrafica", "values": "'.$id_anagrafica.'", "ajax-source": "anagrafiche" ]}
+        </div>
     </div>
     <div class="row">
         <div class="col-md-3">
@@ -97,12 +100,13 @@ echo '
 	function avvia_stampa (){
         var date_start = $("#date_start").val();
         var date_end = $("#date_end").val();
+        var id_anagrafica = $("#id_anagrafica").val();
         var is_pagata = $("#is_pagata").is(":checked");
         var is_riba = $("#is_riba").is(":checked");
         var is_cliente = $("#is_cliente").is(":checked");
         var is_fornitore = $("#is_fornitore").is(":checked");
-
-		window.open("'.$link.'&date_start="+date_start+"&date_end="+date_end+"&is_pagata="+is_pagata+"&is_riba="+is_riba+"&is_cliente="+is_cliente+"&is_fornitore="+is_fornitore, "_blank");
+        
+        window.open("'.$link.'&date_start="+date_start+"&date_end="+date_end+"&is_pagata="+is_pagata+"&is_riba="+is_riba+"&is_cliente="+is_cliente+"&is_fornitore="+is_fornitore+"&id_anagrafica="+id_anagrafica, "_blank");
 	}
 
     $("#is_cliente").change(function() {

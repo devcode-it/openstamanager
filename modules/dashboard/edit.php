@@ -558,6 +558,7 @@ globals.dashboard = {
             selectMirror: true,
             eventLimit: false, // allow "more" link when too many events
             allDaySlot: globals.dashboard.informazioni_aggiuntive,
+            showNonCurrentDates: true,
 
             loading: function (isLoading, view) {
                 if (isLoading) {

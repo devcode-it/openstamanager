@@ -50,32 +50,6 @@ ORDER BY
     CAST(`numero_esterno` AS UNSIGNED) DESC,
     `dt_ddt`.created_at DESC" WHERE `name` = 'Ddt di vendita';
 
-
--- Fix query DDT in entrata
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select|
-FROM
-    `dt_ddt`
-    LEFT JOIN `an_anagrafiche` ON `dt_ddt`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    LEFT JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
-    LEFT JOIN `dt_causalet` ON `dt_ddt`.`idcausalet` = `dt_causalet`.`id`
-    LEFT JOIN `dt_spedizione` ON `dt_ddt`.`idspedizione` = `dt_spedizione`.`id`
-    LEFT JOIN `an_anagrafiche` `vettori` ON `dt_ddt`.`idvettore` = `vettori`.`idanagrafica`
-    LEFT JOIN `an_sedi` AS sedi ON `dt_ddt`.`idsede_partenza` = sedi.`id`
-    LEFT JOIN `an_sedi` AS `sedi_destinazione`ON `dt_ddt`.`idsede_destinazione` = `sedi_destinazione`.`id`
-    LEFT JOIN(SELECT `idddt`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`subtotale` - `sconto` + `iva`) AS `totale` FROM `dt_righe_ddt` GROUP BY `idddt`) AS righe ON `dt_ddt`.`id` = `righe`.`idddt` 
-    LEFT JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`    
-WHERE
-    1=1 |segment(`dt_ddt`.`id_segment`)| AND `dir` = 'uscita' |date_period(`data`)|
-HAVING
-    2=2
-ORDER BY
-    `data` DESC,
-    CAST(`numero_esterno` AS UNSIGNED) DESC,
-    `dt_ddt`.created_at DESC" WHERE `name` = 'Ddt di acquisto';
-
-
 -- Fix query Pagamenti
 UPDATE `zz_modules` SET `options` = "
 SELECT

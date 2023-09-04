@@ -43,6 +43,13 @@ $debug = false;
 // Permette di eseguire il cron anche se OSM è installato su localhost
 $forza_cron_localhost = false;
 
+// Permette di disabilitare i cron e gli hooks
+$disable_cron = false;
+$disable_hooks = false;
+
+// Permette di accedere solo con un ip (da utilizzare per manutenzione)
+$maintenance_ip = '';
+
 // Personalizzazione dei gestori dei tag personalizzati
 $HTMLWrapper = null;
 $HTMLHandlers = [];

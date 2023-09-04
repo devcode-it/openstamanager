@@ -169,7 +169,7 @@ $revision = Update::getRevision();
 
 /* ACCESSO E INSTALLAZIONE */
 // Controllo sulla presenza dei permessi di accesso basilari
-$continue = $dbo->isInstalled() && !Update::isUpdateAvailable() && (Auth::check() || API\Response::isAPIRequest());
+$continue = $dbo->isInstalled() && !Update::isUpdateAvailable() && (Auth::check() || API\Response::isAPIRequest()) && (empty($config['maintenance_ip']) || $config['maintenance_ip'] == $_SERVER['REMOTE_ADDR']);
 
 if (!empty($skip_permissions)) {
     Permissions::skip();

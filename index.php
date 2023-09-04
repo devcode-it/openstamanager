@@ -76,6 +76,11 @@ if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) 
     exit();
 }
 
+// Modalità manutenzione
+if (!empty($config['maintenance_ip'])) {
+    include_once base_dir().'/include/init/maintenance.php';
+}
+
 // Procedura di installazione
 include_once base_dir().'/include/init/configuration.php';
 

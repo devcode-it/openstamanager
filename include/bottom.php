@@ -65,22 +65,29 @@ if (Auth::check()) {
 		<style>'.$custom_css.'</style>';
     }
 
-    // Hooks
-    echo '
+        // Hooks
+        echo '
         <script>
-        $(document).ready(function() {
-            // Toast
-            alertPush();
+            $(document).ready(function() {
+                // Toast
+                alertPush();
 
-            // Orologio
-            clock();
+                // Orologio
+                clock();';
 
-            // Hooks
-            setTimeout("startHooks();", 1000);
+                // Hooks
+                if (!$config['disable_hooks']) {
+                    echo '
+                    setTimeout("startHooks();", 1000);';
+                }
 
-            // Abilitazione del cron autonoma
-            $.get(globals.rootdir + "/cron.php");
-        });
+                // Abilitazione del cron autonoma
+                if (!$config['disable_cron']) {
+                    echo '
+                    $.get(globals.rootdir + "/cron.php");';
+                }
+            echo '
+            });
         </script>';
 }
 

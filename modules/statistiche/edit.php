@@ -121,14 +121,14 @@ var chart_options = {
             intersect: false
         },
         scales: {
-            xAxes: [{
+            x: {
                 display: true,
                 scaleLabel: {
                     display: true,
                     labelString: "'.tr('Periodo').'"
                 }
-            }],
-            yAxes: [{
+            },
+            y: {
                 display: true,
                 scaleLabel: {
                     display: true,
@@ -140,7 +140,7 @@ var chart_options = {
                         return \''.html_entity_decode(currency()).' \' + value;
                     }
                 }
-            }]
+            }
         },
     }
 };
@@ -489,7 +489,7 @@ $(document).ready(function() {
                 position: "bottom",
             },
             scales: {
-                xAxes: [{
+                x: {
                     ticks: {
                         // Include a dollar sign in the ticks
                         callback: function(value, index, values) {
@@ -502,7 +502,7 @@ $(document).ready(function() {
                             return value + text;
                         }
                     }
-                }]
+                }
             },
             tooltips: {
                 callbacks: {
@@ -635,14 +635,14 @@ $(document).ready(function() {
                 intersect: false
             },
             scales: {
-                xAxes: [{
+                x: {
                     display: true,
                     scaleLabel: {
                         display: true,
                         labelString: "'.tr('Periodo').'"
                     }
-                }],
-                yAxes: [{
+                },
+                y: {
                     display: true,
                     scaleLabel: {
                         display: true,
@@ -653,7 +653,7 @@ $(document).ready(function() {
                             return value;
                         }
                     }
-                }]
+                }
             },
         }
     });

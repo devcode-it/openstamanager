@@ -82,14 +82,14 @@ echo '
 						<th class="text-center">
 							<br><input id="check_all" type="checkbox"/>
 						</th>
-						<th class="text-center" width="200">'.tr('Codice').'</th>
-						<th class="text-center" width="350">'.tr('Descrizione').'</th>
-						<th class="text-center" width="95">'.tr('Data scadenza').'</th>
+						<th class="text-center">'.tr('Codice').'</th>
+						<th class="text-center">'.tr('Descrizione').'</th>
+						<th class="text-center">'.tr('Data scadenza').'</th>
 						<th class="text-center">'.tr('Minimo').'</th>
 						<th class="text-center">'.tr('Prezzo di listino').'</th>
 						<th class="text-center">'.tr('Prezzo ivato').'</th>
 						<th class="text-center">'.tr('Sconto').'</th>
-						<th class="text-center" width="40"></th>
+						<th class="text-center"></th>
 					</tr>
 				</thead>
 			</table>

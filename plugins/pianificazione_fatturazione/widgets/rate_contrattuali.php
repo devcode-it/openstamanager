@@ -82,7 +82,7 @@ echo '<div class="container"
         <table id="tbl-rate" class="table-rate table table-hover table-striped">
             <thead>
                 <tr>
-                    <th width="4%">'.tr('').'</th>
+                    <th width="4%">'.tr(' ').'</th>
                     <th width="28%">'.tr('Scadenza').'</th>
                     <th width="32%">'.tr('Ragione sociale').'</th>
                     <th width="26%">'.tr('Importo').'</th>

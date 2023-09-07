@@ -55,4 +55,4 @@ ALTER TABLE `em_emails` ADD CONSTRAINT `em_emails_ibfk_5` FOREIGN KEY (`id_recor
 
 ALTER TABLE `zz_notes` ADD CONSTRAINT `zz_notes_ibfk_4` FOREIGN KEY (`id_record`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
-ALTER TABLE `zz_checks` ADD  CONSTRAINT `zz_checks_ibfk_5` FOREIGN KEY (`id_record`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
+ALTER TABLE `zz_checks` ADD  CONSTRAINT `zz_checks_ibfk_6` FOREIGN KEY (`id_record`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT;

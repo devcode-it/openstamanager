@@ -46,7 +46,7 @@ $stato_fe = $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = 
 
 $ops = ['update', 'add_intervento', 'manage_documento_fe', 'manage_riga_fe', 'manage_articolo', 'manage_sconto', 'manage_riga', 'manage_descrizione', 'unlink_intervento', 'delete_riga', 'copy_riga', 'add_serial', 'add_articolo', 'edit-price'];
 
-if ($dir == 'entrata' && $stato_fe['codice_stato_fe'] == 'WAIT' && in_array($op, $ops)) {
+if ($dir == 'entrata' && $stato_fe['codice_stato_fe'] == 'WAIT' && setting('OSMCloud Services API Token') != '' && in_array($op, $ops)) {
     flash()->warning(tr('La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile effettuare modifiche!', [
         '_NUM_' => $fattura->numero_esterno,
     ]));

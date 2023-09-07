@@ -29,7 +29,7 @@ if (get('tipoanagrafica') != '') {
 }
 
 echo '
-<form action="" method="post" id="add-form">
+<form action="" method="post" id="add-form" onsubmit="check();">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
 
@@ -186,4 +186,12 @@ echo '
 	$(document).ready( function(){
 		id_nazione.trigger('change');
 	});
+
+    function check(){
+
+		if( $('div.has-error').length > 0 )
+			return false;
+		else
+			return true;
+	}
 </script>

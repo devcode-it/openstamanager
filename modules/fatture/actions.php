@@ -1006,6 +1006,13 @@ switch ($op) {
                     $prezzo_unitario = $prezzo_unitario ?: $originale->prezzo_acquisto;
                 }
 
+                // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
+                $join = ($dir == 'entrata' ? 'id_piano_sconto_vendite' : 'id_piano_sconto_acquisti');
+                $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.'.$join.'=mg_piani_sconto.id WHERE idanagrafica='.prepare($id_anagrafica));
+                if (!empty($piano_sconto)) {
+                    $sconto = parseScontoCombinato($piano_sconto['prc_guadagno'].'+'.$sconto);
+                }
+            
                 $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['idanagrafica' => $fattura->idagente])['provvigione_default'];
 
                 $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);

@@ -254,8 +254,9 @@ function testInvio(button) {
     const email = $(button).data("email");
 
     swal({
-        title: "'.tr('Invio di test?').'",
-        html: `'.tr("Vuoi effettuare un invio di test all'indirizzo _EMAIL_?", ['_EMAIL_' => '${email}']).' '.tr("L'email non sarà registrata come inviata, e l'invio della newsletter non escluderà questo indirizzo").'.`,
+        title: "'.tr('Inviare la newsletter?').'",
+        html: `'.tr("Vuoi effettuare un invio all'indirizzo _EMAIL_?", ['_EMAIL_' => '${email}']).' '.tr("L'email non sarà registrata come inviata, e l'invio della newsletter non escluderà questo indirizzo se impostato come invio di test").'.<br><br>
+        {[ "type": "checkbox", "label": "'.tr('Invio di test').'", "name": "test" ]}`,
         type: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Invia').'",
@@ -269,9 +270,10 @@ function testInvio(button) {
             data: {
                 id_module: globals.id_module,
                 id_record: globals.id_record,
-                op: "test",
+                op: "send-line",
                 id: destinatario_id,
                 type: destinatario_type,
+                test: input("test").get(),
             },
             success: function (response) {
                 buttonRestore(button, restore);

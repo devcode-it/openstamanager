@@ -74,12 +74,15 @@ switch (filter('op')) {
         $count = $destinatari->count();
         for ($i = 0; $i < $count; ++$i) {
             $destinatario = $destinatari->skip($i)->first();
-            $mail = $newsletter->inviaDestinatario($destinatario);
 
-            // Aggiornamento riferimento per la newsletter
-            if (!empty($mail)) {
-                $destinatario->id_email = $mail->id;
-                $destinatario->save();
+            if (empty($destinatario->id_email)) {
+                $mail = $newsletter->inviaDestinatario($destinatario);
+
+                // Aggiornamento riferimento per la newsletter
+                if (!empty($mail)) {
+                    $destinatario->id_email = $mail->id;
+                    $destinatario->save();
+                }
             }
         }
 
@@ -91,9 +94,10 @@ switch (filter('op')) {
 
         break;
 
-    case 'test':
+    case 'send-line':
         $receiver_id = post('id');
         $receiver_type = post('type');
+        $test = post('test');
 
         // Individuazione destinatario interessato
         $newsletter = Newsletter::find($id_record);
@@ -105,15 +109,26 @@ switch (filter('op')) {
         // Generazione email e tentativo di invio
         $inviata = false;
         if (!empty($destinatario)) {
-            $mail = $newsletter->inviaDestinatario($destinatario, true);
+            if ($test) {
+                $mail = $newsletter->inviaDestinatario($destinatario, true);
 
-            try {
-                $email = EmailNotification::build($mail, true);
-                $email->send();
+                try {
+                    $email = EmailNotification::build($mail, true);
+                    $email->send();
 
-                $inviata = true;
-            } catch (Exception $e) {
-                // $mail->delete();
+                    $inviata = true;
+                } catch (Exception $e) {
+                    // $mail->delete();
+                }
+            } else {
+                $mail = $newsletter->inviaDestinatario($destinatario);
+
+                // Aggiornamento riferimento per la newsletter
+                if (!empty($mail)) {
+                    $destinatario->id_email = $mail->id;
+                    $destinatario->save();
+                    $inviata = true;
+                }
             }
         }
 

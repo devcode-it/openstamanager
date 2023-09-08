@@ -4,6 +4,7 @@ use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Referente;
 use Modules\Anagrafiche\Sede;
+use Modules\Emails\Mail;
 use Modules\ListeNewsletter\Lista;
 use Modules\Newsletter\Newsletter;
 
@@ -94,11 +95,12 @@ foreach ($destinatari_filtrati as $destinatario) {
 
     // Informazioni di invio
     if (empty($lista)) {
-        $mail = $dbo->fetchOne('SELECT * FROM em_emails WHERE id_newsletter='.prepare($id_newsletter).' AND id_record='.prepare($origine->idanagrafica));
-        if (!empty($mail['sent_at'])) {
+        $mail_id = $destinatario->id_email;
+        $mail = Mail::find($mail_id);
+        if (!empty($mail) && !empty($mail->sent_at)) {
             $info_invio = '
             <span class="text-success">
-                <i class="fa fa-paper-plane"></i> '.timestampFormat($mail['sent_at']).'
+                <i class="fa fa-paper-plane"></i> '.timestampFormat($mail->sent_at).'
             </span>';
         } else {
             $info_invio = '

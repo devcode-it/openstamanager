@@ -51,6 +51,4 @@ ORDER BY
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto'), 'Riferimenti', 'IF(fattura.info != "", fattura.info,"")', 15, 1, 0, 0 ,0);
 
-ALTER TABLE `em_emails` ADD CONSTRAINT `em_emails_ibfk_5` FOREIGN KEY (`id_record`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
-
-ALTER TABLE `zz_checks` ADD  CONSTRAINT `zz_checks_ibfk_6` FOREIGN KEY (`id_record`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
+UPDATE `zz_api_resources` SET `resource` = 'checklist-cleanup' WHERE `zz_api_resources`.`resource` = 'checklists-cleanup'; 

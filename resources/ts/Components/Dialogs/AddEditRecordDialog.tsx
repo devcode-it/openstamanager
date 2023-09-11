@@ -146,7 +146,7 @@ export default abstract class AddEditRecordDialog<M extends Model<any, any>> ext
   }
 
   onSaveError(error: JSONAPI.RequestError): void {
-    const message = error.response.errors.map((error_) => error_.detail).join('; ');
+    const message = error.response.data.message;
     void showSnackbar(message, false);
   }
 

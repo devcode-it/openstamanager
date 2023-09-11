@@ -24,7 +24,11 @@ export declare namespace JSONAPI {
 
   export interface RequestError {
     response: {
-      errors: JSONAPI.Error[]
+      // TODO: This is a temporary fix, new model library will be implemented later
+      data: {
+        errors: JSONAPI.Error[],
+        message: string
+      }
     };
   }
 }

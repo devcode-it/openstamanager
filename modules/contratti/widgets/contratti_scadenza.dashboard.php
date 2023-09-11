@@ -26,10 +26,12 @@ $rs = $dbo->fetchArray('SELECT *,
        ore_preavviso_rinnovo,
        giorni_preavviso_rinnovo,
        (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=co_contratti.idanagrafica) AS ragione_sociale
-FROM co_contratti WHERE
+FROM co_contratti INNER JOIN co_staticontratti ON co_contratti.idstato=co_staticontratti.id
+WHERE
         rinnovabile = 1 AND
         YEAR(data_conclusione) > 1970 AND
-        co_contratti.id NOT IN (SELECT idcontratto_prev FROM co_contratti contratti)
+        co_contratti.id NOT IN (SELECT idcontratto_prev FROM co_contratti contratti) AND
+        co_staticontratti.descrizione != "Concluso"
 HAVING (ore_rimanenti <= ore_preavviso_rinnovo OR DATEDIFF(data_conclusione, NOW()) <= ABS(giorni_preavviso_rinnovo))
 ORDER BY giorni_rimanenti ASC, ore_rimanenti ASC');
 

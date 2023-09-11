@@ -103,15 +103,22 @@ for(i=0; i<sortable_table; i++){
     });
 }
 
-$("textarea[name=\'note_checklist\']").keyup(function(){
+$("textarea[name=\'note_checklist\']").keyup(function() {
+    $(this).parent().parent().parent().find(".save-nota").removeClass("btn-default");
+    $(this).parent().parent().parent().find(".save-nota").addClass("btn-success");
+});
+
+function saveNota(id) {
     $.post("'.$checklist_module->fileurl('ajax.php').'", {
         op: "save_note",
-        note: $(this).val(),
-        id: $(this).attr("id"),
+        note: $("#note_" + id).val(),
+        id: id
     }, function() {
         alertPush();
+        $("#note_" + id).parent().parent().parent().find(".save-nota").removeClass("btn-success");
+        $("#note_" + id).parent().parent().parent().find(".save-nota").addClass("btn-default");
     });
-});
+}
 
 $(".checkbox").click(function(){
     if($(this).is(":checked")){

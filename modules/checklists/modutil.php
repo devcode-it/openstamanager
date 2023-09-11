@@ -50,11 +50,12 @@ function renderChecklist($check, $level = 1, $parent = 0)
 
         $result .= '
                     <td style="width:500px;border-top:0px;"> 
-                        {[ "type": "textarea", "class": "unblockable", "name": "note_checklist", "placeholder": "'.tr('Note').'...", "id": "'.$check->id.'", "value": "'.$check->note.'" ]}
+                        {[ "type": "textarea", "class": "unblockable", "name": "note_checklist", "placeholder": "'.tr('Note').'...", "id": "note_'.$check->id.'", "value": "'.$check->note.'" ]}
                     </td>';
 
         $result .= '
-                    <td style="width:250px;border-top:0px;">';
+                    <td style="width:250px;border-top:0px;">
+                        <button class="btn btn-default btn-xs '.(!$enabled ? 'disabled' : '').' save-nota" onclick="saveNota(\''.$check->id.'\')"><i class="fa fa-check"></i> '.tr('Salva nota').'</button>';
 
         if (intval($check->assignedUsers->pluck('id')->toArray()) > 0) {
             $result .= '    <span class="label label-info pull-right" style="padding:6px 8px;" data-toggle="tooltip" title="Assegnato a '.implode(', ', $check->assignedUsers->pluck('username')->toArray()).'"><i class="fa fa-user"></i></span>';

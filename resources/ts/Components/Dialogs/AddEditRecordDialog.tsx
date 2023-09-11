@@ -47,6 +47,7 @@ export default abstract class AddEditRecordDialog<M extends Model<any, any>> ext
     super.oncreate(vnode);
 
     this.formElement = this.element.querySelector('form');
+    this.element.querySelector(`#saveBtn${this.formId}`)?.setAttribute('form', this.formId!);
   }
 
   fillForm() {
@@ -116,7 +117,7 @@ export default abstract class AddEditRecordDialog<M extends Model<any, any>> ext
         </md-text-button>
       ),
       saveButton: (
-        <md-text-button type="submit" form={this.formId}>
+        <md-text-button id={`saveBtn${this.formId}`} type="submit">
           {__('Salva')}
           <MdIcon icon={mdiFloppy} slot="icon"/>
         </md-text-button>

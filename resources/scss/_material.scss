@@ -10,11 +10,11 @@ md-icon svg {
 
 md-list-item md-icon {
     margin-left: 16px;
-    color: var(--_list-item-leading-icon-color);
+    color: var(--_leading-icon-color);
 
     svg {
-        width: var(--_list-item-leading-icon-size, var(--_icon-size, var(--_size)));
-        height: var(--_list-item-leading-icon-size, var(--_icon-size, var(--_size)));
+        width: var(--_leading-icon-size, var(--_icon-size, var(--_size)));
+        height: var(--_leading-icon-size, var(--_icon-size, var(--_size)));
     }
 }
 
@@ -42,14 +42,14 @@ md-navigation-drawer, md-navigation-drawer-modal {
         min-width: 300px;
 
         md-list-item {
-            --md-list-item-list-item-container-shape: 100px;
+            --md-list-item-container-shape: 100px;
             --md-ripple-shape: 100px;
 
             display: block;
             width: 85%;
 
             &[active] {
-                --md-list-item-list-item-container-color: var(--md-sys-color-secondary-container, #3f51b5);
+                --md-list-item-container-color: var(--md-sys-color-secondary-container, #3f51b5);
             }
 
             md-icon[slot="start"] svg {

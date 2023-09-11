@@ -29,6 +29,7 @@
             <entry key="createConsoleCommand:classSuffix" value="Command" />
             <entry key="createController:classSuffix" value="Controller" />
             <entry key="createDatabaseClassFactory:classSuffix" value="Factory" />
+            <entry key="createEloquentScope:inModuleNamespace" value="Models\Scopes" />
             <entry key="createEloquentScope:namespace" value="Models\Scopes" />
             <entry key="createEvent:classSuffix" value="Event" />
             <entry key="createFormRequest:classSuffix" value="Request" />
@@ -37,6 +38,7 @@
             <entry key="createMailable:classSuffix" value="Mail" />
             <entry key="createMiddleware:classSuffix" value="Middleware" />
             <entry key="createModel:classSuffix" value="" />
+            <entry key="createModel:inModuleNamespace" value="Models" />
             <entry key="createModel:namespace" value="Models" />
             <entry key="createNotification:classSuffix" value="Notification" />
             <entry key="createResourceController:classSuffix" value="Controller" />
@@ -47,12 +49,6 @@
     </option>
     <option name="defaultLanguage" value="it" />
     <option name="frameworkFound" value="true" />
-    <option name="generationStringSettings">
-      <map>
-        <entry key="createEloquentScope:namespace" value="Models\Scopes" />
-        <entry key="createModel:namespace" value="Models" />
-      </map>
-    </option>
     <option name="translation">
       <LaravelTranslation>
         <option name="defaultPath" value="lang" />

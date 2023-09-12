@@ -18,7 +18,8 @@ import {VnodeCollectionItem} from '@osm/typings/jsx';
 import {showSnackbar} from '@osm/utils/misc';
 import collect from 'collect.js';
 import type {
-  Vnode
+  Vnode,
+  VnodeDOM
 } from 'mithril';
 import Stream from 'mithril/stream';
 import {
@@ -40,6 +41,11 @@ export default class LoginPage extends Page {
   };
 
   forgotPasswordDialogOpen = false;
+
+  oncreate(vnode: VnodeDOM<PageAttributes, this>) {
+    super.oncreate(vnode);
+    this.element.querySelector('#resetPasswordSubmitButton')?.setAttribute('form', 'forgot-password');
+  }
 
   contents(vnode: Vnode<PageAttributes>) {
     return <>
@@ -67,7 +73,7 @@ export default class LoginPage extends Page {
         </div>
         <div slot="actions">
           <md-text-button onclick={this.onForgotPasswordDialogCancelButtonClicked.bind(this)}>{__('Annulla')}</md-text-button>
-          <md-text-button form="forgot-password">{__('Invia')}</md-text-button>
+          <md-text-button id="resetPasswordSubmitButton">{__('Invia')}</md-text-button>
         </div>
       </md-dialog>
     </>;

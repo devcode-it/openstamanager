@@ -22,7 +22,7 @@ include_once __DIR__.'/core.php';
 use Util\Query;
 
 // Informazioni fondamentali
-$columns = (array) filter('columns');
+$columns = (array) filter('columns', null, true);
 $order = filter('order') ? filter('order')[0] : [];
 $draw_numer = intval(filter('draw'));
 

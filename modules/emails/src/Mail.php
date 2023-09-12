@@ -176,6 +176,25 @@ class Mail extends Model
         $this->attributes['content'] = $value;
     }
 
+    /**
+     * Rimuove tutte le mail di un determinato modulo/plugin e record.
+     *
+     * @param array $data
+     */
+    public static function deleteLinked($data)
+    {
+        $templates = database()->table('em_templates')->where('id_module', $data['id_module'])->get();
+
+        $id_templates = [];
+
+        foreach($templates as $template) {
+            $id_templates[] = $template->id;
+        }
+
+        database()->table('em_emails')->where('id_record', $data['id_record'])->whereIn('id_template', $id_templates)->delete();
+    }
+
+
     /* Relazioni Eloquent */
 
     public function account()

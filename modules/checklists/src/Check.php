@@ -127,6 +127,17 @@ class Check extends Model
     }
     */
 
+   
+    /**
+     * Rimuove tutte le check di un determinato modulo/plugin e record.
+     *
+     * @param array $data
+     */
+    public static function deleteLinked($data)
+    {
+        database()->delete('zz_checks', $data);
+    }
+    
     /* Relazioni Eloquent */
 
     public function user()

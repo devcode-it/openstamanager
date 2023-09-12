@@ -97,6 +97,10 @@ class Bollo
         $riga->id_iva = setting('Iva da applicare su marca da bollo');
         $riga->idconto = setting('Conto predefinito per la marca da bollo');
 
+        if ((setting('Regime Fiscale') == 'RF19') && (!empty(setting('Cassa previdenziale predefinita')))) {
+            $riga['id_rivalsa_inps'] = setting('Cassa previdenziale predefinita');
+        }
+
         $riga->save();
 
         return $riga->id;

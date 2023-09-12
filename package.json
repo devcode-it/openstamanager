@@ -80,6 +80,7 @@
         "assets-OSM": "yarn upgrade && yarn run build-OSM",
         "build-OSM": "gulp",
         "dump-OSM": "php composer.phar dump-autoload",
-        "windows-fix": "yarn global add windows-build-tools"
+        "windows-fix": "yarn global add windows-build-tools",
+        "php-cs-fix": "vendor/bin/php-cs-fixer fix"
     }
 }

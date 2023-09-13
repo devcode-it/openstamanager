@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../../core.php';
 
-$rs = $dbo->fetchArray('SELECT *,
+$rs = $dbo->fetchArray('SELECT co_contratti.id, co_contratti.nome, co_contratti.data_accettazione,
        ((SELECT SUM(co_righe_contratti.qta) FROM co_righe_contratti WHERE co_righe_contratti.um=\'ore\' AND co_righe_contratti.idcontratto=co_contratti.id) - IFNULL( (SELECT SUM(in_interventi_tecnici.ore) FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE in_interventi.id_contratto=co_contratti.id AND in_interventi.idstatointervento IN (SELECT in_statiintervento.idstatointervento FROM in_statiintervento WHERE in_statiintervento.is_completato = 1)), 0) ) AS ore_rimanenti,
        DATEDIFF(data_conclusione, NOW()) AS giorni_rimanenti,
        data_conclusione,
@@ -31,7 +31,7 @@ WHERE
         rinnovabile = 1 AND
         YEAR(data_conclusione) > 1970 AND
         co_contratti.id NOT IN (SELECT idcontratto_prev FROM co_contratti contratti) AND
-        co_staticontratti.descrizione != "Concluso"
+        co_staticontratti.descrizione NOT IN ("Concluso", "Rifiutato", "Bozza")
 HAVING (ore_rimanenti <= ore_preavviso_rinnovo OR DATEDIFF(data_conclusione, NOW()) <= ABS(giorni_preavviso_rinnovo))
 ORDER BY giorni_rimanenti ASC, ore_rimanenti ASC');
 

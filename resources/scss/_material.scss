@@ -22,9 +22,10 @@ md-data-table md-icon[slot^="pagination"] {
     --_color: inherit;
 }
 
-label:has(> md-checkbox) {
+label:has(> :is(md-checkbox, md-switch)) {
     display: flex;
     align-items: center;
+    gap: 8px;
 }
 
 md-filled-text-field, md-outlined-text-field {

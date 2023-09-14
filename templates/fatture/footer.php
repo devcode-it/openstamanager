@@ -64,7 +64,7 @@ echo "
                     <td style='width:45mm;'>
                         <table class='border-bottom'>
                             <tr>
-                                <td colspan='2'>
+                                <td colspan='3'>
                                     <p class='small-bold'>".tr('Scadenze pagamenti', [], ['upper' => true]).'</p>
                                 </td>
                             </tr>';
@@ -77,6 +77,9 @@ if (!empty($rs2)) {
                             <tr>
                                 <td style='width:50%;'>
                                     <small>".Translator::dateToLocale($rs2[$i]['scadenza'])."</small>
+                                </td>
+                                <td style='width:50%;' class='text-right'>
+                                    ".(($rs2[$i]['pagato'] == $rs2[$i]['da_pagare']) ? "<small>PAGATO</small>" : "")."
                                 </td>
                                 <td style='width:50%;' class='text-right'>
                                     <small>".moneyFormat($rs2[$i]['da_pagare'], 2).'</small>

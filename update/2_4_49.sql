@@ -61,3 +61,5 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Listini cliente'), 'Data scadenza', 'data_scadenza_predefinita', 3, 1, 0, 1, 1, 1);
 
 UPDATE `zz_widgets` SET `text` = 'Listini disattivati' WHERE `zz_widgets`.`name` = 'Listini scaduti'; 
+
+INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`, `query`, `bgcolor`, `icon`, `print_link`, `more_link`, `more_link_type`, `php_include`, `text`, `enabled`, `help`) VALUES (NULL, 'Preventivi da fatturare', 'stats', '1', 'controller_top', NULL, 'SELECT COUNT(id) AS dato FROM co_preventivi WHERE idstato IN (SELECT id FROM co_statipreventivi WHERE is_fatturabile=1) AND default_revision=1', '#44aae4', 'fa fa-file', '', './modules/preventivi/widgets/preventivi.fatturare.dashboard.php', 'popup', '', 'Preventivi da fatturare', 0, NULL);

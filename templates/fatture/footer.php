@@ -79,7 +79,7 @@ if (!empty($rs2)) {
                                     <small>".Translator::dateToLocale($rs2[$i]['scadenza'])."</small>
                                 </td>
                                 <td style='width:50%;' class='text-right'>
-                                    ".(($rs2[$i]['pagato'] == $rs2[$i]['da_pagare']) ? "<small>PAGATO</small>" : "")."
+                                    ".(($rs2[$i]['pagato'] == $rs2[$i]['da_pagare']) ? '<small>PAGATO</small>' : '')."
                                 </td>
                                 <td style='width:50%;' class='text-right'>
                                     <small>".moneyFormat($rs2[$i]['da_pagare'], 2).'</small>

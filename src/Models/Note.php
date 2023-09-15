@@ -60,6 +60,17 @@ class Note extends Model
         return $model;
     }
 
+    /**
+     * Rimuove tutte le note di un determinato modulo/plugin e record.
+     *
+     * @param array $data
+     */
+    public static function deleteLinked($data)
+    {
+        database()->delete('zz_notes', $data);
+    }
+
+
     /* Relazioni Eloquent */
 
     public function user()

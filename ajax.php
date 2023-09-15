@@ -55,7 +55,7 @@ switch (filter('op')) {
     // Imposta un valore ad una sessione
     case 'session_set':
         $array = explode(',', get('session'));
-        $value = get('value');
+        $value = get('value', true);
         $clear = get('clear');
 
         if ($clear == 1 || $value == '') {

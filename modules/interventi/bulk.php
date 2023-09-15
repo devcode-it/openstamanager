@@ -289,11 +289,6 @@ switch (post('op')) {
                 // Eliminazione associazione interventi e my_impianti
                 $dbo->query('DELETE FROM my_impianti_interventi WHERE idintervento='.prepare($id_record));
 
-                // Elimino anche eventuali file caricati
-                Uploads::deleteLinked([
-                'id_module' => $id_module,
-                'id_record' => $id_record,
-            ]);
             } catch (InvalidArgumentException $e) {
             }
         }

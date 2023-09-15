@@ -160,7 +160,7 @@ class Interventi extends AppResource
             )';
         }
 
-        if (setting('Mostra promemoria attività ai soli Tecnici assegnati') == 1) {
+        if (setting('Visualizza solo promemoria assegnati') == 1) {
             $records = database()->fetchArray($query, [
                 ':period_start' => $start,
                 ':period_end' => $end,

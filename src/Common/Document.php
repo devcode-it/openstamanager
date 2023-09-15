@@ -266,6 +266,40 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
             $riga->delete();
         }
 
+        // Elimino eventuali file caricati
+        \Uploads::deleteLinked([
+            'id_module' => $this->getModule()->id,
+            'id_record' => $this->id,
+        ]);
+
+        // Elimino eventuali note
+        \Models\Note::deleteLinked([
+            'id_module' => $this->getModule()->id,
+            'id_record' => $this->id,
+        ]);
+
+        // Elimino eventuali checklist
+        \Modules\Checklists\Check::deleteLinked([
+            'id_module' => $this->getModule()->id,
+            'id_record' => $this->id,
+        ]);
+
+        // Elimino eventuali email
+        \Modules\Emails\Mail::deleteLinked([
+            'id_module' => $this->getModule()->id,
+            'id_record' => $this->id,
+        ]);
+
+        // Elimino eventuali campi personalizzati
+        $fields = database()->table('zz_fields')->where('id_module', $this->getModule()->id)->get();
+
+        $id_fields = [];
+
+        foreach($fields as $field) {
+            $id_fields[] = $field->id;
+        }
+        database()->table('zz_field_record')->where('id_record', $this->id)->whereIn('id_field', $id_fields)->delete();
+
         return parent::delete();
     }
 

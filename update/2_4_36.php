@@ -25,23 +25,23 @@ foreach ($scadenze as $scadenza) {
 $aliquote_eliminate = $dbo->fetchArray('SELECT * FROM co_iva WHERE deleted_at IS NOT NULL');
 foreach ($aliquote_eliminate as $aliquota) {
     $elimina_iva = true;
-    if (!empty($dbo->select('mg_articoli', 'id', ['idiva_vendita' => $aliquota['id']]))) {
+    if (!empty($dbo->select('mg_articoli', 'id', [], ['idiva_vendita' => $aliquota['id']]))) {
         $elimina_iva = false;
-    } elseif (!empty($dbo->select('an_anagrafiche', 'idanagrafica', ['idiva_vendite' => $aliquota['id']]))) {
+    } elseif (!empty($dbo->select('an_anagrafiche', 'idanagrafica', [], ['idiva_vendite' => $aliquota['id']]))) {
         $elimina_iva = false;
-    } elseif (!empty($dbo->select('an_anagrafiche', 'idanagrafica', ['idiva_acquisti' => $aliquota['id']]))) {
+    } elseif (!empty($dbo->select('an_anagrafiche', 'idanagrafica', [], ['idiva_acquisti' => $aliquota['id']]))) {
         $elimina_iva = false;
-    } elseif (!empty($dbo->select('co_righe_contratti', 'id', ['idiva' => $aliquota['id']]))) {
+    } elseif (!empty($dbo->select('co_righe_contratti', 'id', [], ['idiva' => $aliquota['id']]))) {
         $elimina_iva = false;
-    } elseif (!empty($dbo->select('dt_righe_ddt', 'id', ['idiva' => $aliquota['id']]))) {
+    } elseif (!empty($dbo->select('dt_righe_ddt', 'id', [], ['idiva' => $aliquota['id']]))) {
         $elimina_iva = false;
-    } elseif (!empty($dbo->select('co_righe_documenti', 'id', ['idiva' => $aliquota['id']]))) {
+    } elseif (!empty($dbo->select('co_righe_documenti', 'id', [], ['idiva' => $aliquota['id']]))) {
         $elimina_iva = false;
-    } elseif (!empty($dbo->select('in_righe_interventi', 'id', ['idiva' => $aliquota['id']]))) {
+    } elseif (!empty($dbo->select('in_righe_interventi', 'id', [], ['idiva' => $aliquota['id']]))) {
         $elimina_iva = false;
-    } elseif (!empty($dbo->select('co_righe_preventivi', 'id', ['idiva' => $aliquota['id']]))) {
+    } elseif (!empty($dbo->select('co_righe_preventivi', 'id', [], ['idiva' => $aliquota['id']]))) {
         $elimina_iva = false;
-    } elseif (!empty($dbo->select('or_righe_ordini', 'id', ['idiva' => $aliquota['id']]))) {
+    } elseif (!empty($dbo->select('or_righe_ordini', 'id', [], ['idiva' => $aliquota['id']]))) {
         $elimina_iva = false;
     }
 

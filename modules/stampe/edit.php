@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 use Models\PrintTemplate;
 
-$id_files = $dbo->select('zz_files_print', 'id_file', ['id_print' => $id_record]);
+$id_files = $dbo->select('zz_files_print', 'id_file', [], ['id_print' => $id_record]);
 
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">

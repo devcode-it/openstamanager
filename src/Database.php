@@ -451,7 +451,7 @@ class Database extends Util\Singleton
      *
      * @return string|array
      */
-    public function select($table, $array = [], $conditions = [], $order = [], $limit = null, $return = false)
+    public function select($table, $array = [], $joins = [], $conditions = [], $order = [], $limit = null, $return = false)
     {
         if (
             !is_string($table) ||
@@ -468,7 +468,13 @@ class Database extends Util\Singleton
         }
         $select = !empty($select) ? $select : ['*'];
 
-        $statement = Capsule::table($table)->where($conditions)->select($select);
+        $statement = Capsule::table($table);
+        
+        foreach ($joins as $join) {
+            $statement = $statement->leftJoin($join[0], $join[1], $join[2]);
+        }
+        
+        $statement->where($conditions)->select($select);
 
         // Impostazioni di ordinamento
         if (!empty($order)) {
@@ -522,7 +528,7 @@ class Database extends Util\Singleton
     {
         $limit = 1;
 
-        $result = $this->select($table, $array, $conditions, $order, $limit, $return);
+        $result = $this->select($table, $array, [], $conditions, $order, $limit, $return);
 
         if (!is_string($result) && isset($result[0])) {
             return $result[0];
@@ -574,7 +580,7 @@ class Database extends Util\Singleton
         $sync = array_unique((array) current($list));
 
         if (!empty($field)) {
-            $results = array_column($this->select($table, $field, $conditions), $field);
+            $results = array_column($this->select($table, $field, [], $conditions), $field);
 
             $detachs = array_unique(array_diff($results, $sync));
             $this->detach($table, $conditions, [$field => $detachs]);
@@ -607,7 +613,7 @@ class Database extends Util\Singleton
         $inserts = [];
 
         if (!empty($field)) {
-            $results = array_column($this->select($table, $field, $conditions), $field);
+            $results = array_column($this->select($table, $field, [], $conditions), $field);
 
             $inserts = array_unique(array_diff($sync, $results));
             foreach ($inserts as $insert) {

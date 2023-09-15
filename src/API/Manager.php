@@ -76,24 +76,54 @@ class Manager
         $where = [];
         $order = [];
 
-        // Selezione personalizzata
+        // Selezione campi personalizzati
+        // Esempio:
+        // display=[id,ragione_sociale,telefono]
         $select = !empty($request['display']) ? explode(',', substr($request['display'], 1, -1)) : null;
 
-        // Ricerca personalizzata
+        // Filtri personalizzati
+        // Esempio:
+        // filter[ragione_sociale]=[Mario Rossi]&filter[telefono]=[0429%]
         $values = isset($request['filter']) ? (array) $request['filter'] : [];
         foreach ($values as $key => $value) {
-            // Rimozione delle parentesi
-            $value = substr($value, 1, -1);
-
             // Individuazione della tipologia (array o string)
-            $where[$key] = string_contains($value, ',') ? explode(',', $value) : $value;
+            $value = trim($value, '[');
+            $value = trim($value, ']');
+            $values = explode(',', $value);
+
+            foreach ($values as $value){
+                // Filtro per LIKE se il valore contiene %
+                if (string_contains($value, '%')) {
+                    $where[] = [
+                        $key,
+                        'LIKE',
+                        $value
+                    ];
+                }
+                
+                // Filtro preciso se il valore non contiene %
+                else {
+                    $where[] = [
+                        $key,
+                        '=',
+                        $value
+                    ];
+                }
+            }
         }
 
         // Ordinamento personalizzato
+        // Esempi:
+        // order=[ragione_sociale]
+        // order=[ragione_sociale|asc]
+        // order=[ragione_sociale|desc]
+        // order=[ragione_sociale]&order=[telefono]
         $values = isset($request['order']) ? (array) $request['order'] : [];
         foreach ($values as $value) {
+            $value = trim($value, '[');
+            $value = trim($value, ']');
             $pieces = explode('|', $value);
-            $order[] = empty($pieces[1]) ? $pieces[0] : [$pieces[0] => $pieces[1]];
+            $order = empty($pieces[1]) ? $pieces[0] : [$pieces[0] => $pieces[1]];
         }
 
         // Paginazione automatica dell'API
@@ -113,8 +143,13 @@ class Manager
         $parameters = $response['parameters'];
 
         $table = $response['table'];
-        $select = $response['select'] ?: $select;
-        $select = $select ?: '*';
+        $joins = $response['joins'];
+        $where = array_merge($where, $response['where']);
+
+        if (empty($select)) {
+            $select = $response['select'] ?: $select;
+            $select = $select ?: '*';
+        }
 
         $query = $response['query'];
 
@@ -132,18 +167,28 @@ class Manager
                 }
 
                 // Query per ottenere le informazioni
-                $query = $database->select($table, $select, $where, $order, [], true);
-
-                foreach ($where as $key => $value) {
-                    $parameters[] = $value;
+                $query = $database->table($table)->select($select);
+                
+                foreach ($joins as $join) {
+                    $query->leftJoin($join[0], $join[1], $join[2]);
                 }
-            }
 
-            if (!empty($query)) {
+                $query->where($where);
+                $count = $query->count();
+
+                // Composizione query finale
                 $response = [];
 
-                $response['records'] = $database->fetchArray($query.' LIMIT '.($page * $length).', '.$length, $parameters);
-                $count = $database->fetchNum($query, $parameters);
+                $response['records'] = $database->select($table, $select, $joins, $where, $order, [$page * $length, $length]);
+                $response['total-count'] = $count;
+            }
+
+            // Query diretta
+            elseif (!empty($query)) {
+                $response = [];
+
+                $response['records'] = $database->fetchArray($query.' LIMIT '.($page * $length).', '.$length, [$parameters]);
+                $count = $database->fetchNum($query);
 
                 $response['total-count'] = $count;
             }

@@ -187,7 +187,7 @@ switch (filter('op')) {
             ];
 
             // Aggiornamento destinatari
-            $registrato = $database->select('em_newsletter_receiver', '*', $data);
+            $registrato = $database->select('em_newsletter_receiver', '*', [], $data);
             if (empty($registrato)) {
                 $database->insert('em_newsletter_receiver', $data);
             }

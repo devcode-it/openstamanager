@@ -695,7 +695,7 @@ class Prints
                 $mpdf->WriteHTML('<div style="position:absolute; bottom: 13mm; margin-right: '.($settings['margins']['right']).'mm">'.$foot.'</div>');
             }
 
-            $id_files = $dbo->select('zz_files_print', 'id_file', ['id_print' => $id_print]);
+            $id_files = $dbo->select('zz_files_print', 'id_file', [], ['id_print' => $id_print]);
             $has_pdf = false;
             foreach ($id_files as $id_file) {
                 $fil = Models\Upload::find($id_file)->first();

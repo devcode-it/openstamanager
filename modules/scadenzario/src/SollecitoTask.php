@@ -109,7 +109,7 @@ class SollecitoTask extends Manager
                             }
 
                             // Aggiungo email referenti in base alla mansione impostata nel template
-                            $mansioni = database()->select('em_mansioni_template', 'idmansione', ['id_template' => $template->id]);
+                            $mansioni = database()->select('em_mansioni_template', 'idmansione', [], ['id_template' => $template->id]);
                             foreach ($mansioni as $mansione) {
                                 $referenti = database()->table('an_referenti')->where('idmansione', $mansione['idmansione'])->where('idanagrafica', $id_anagrafica)->where('email', '!=', '')->get();
                                 if (!$referenti->isEmpty() && $creata_mail == false) {

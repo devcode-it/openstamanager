@@ -92,7 +92,7 @@ foreach ($moduli as $module_id => $note) {
             $documento = $dbo->fetchOne("SELECT matricola AS numero, ragione_sociale FROM zz_notes INNER JOIN my_impianti ON (my_impianti.id = zz_notes.id_record AND zz_notes.id_module=(SELECT id FROM zz_modules WHERE title = 'Impianti')) INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = my_impianti.idanagrafica WHERE zz_notes.id = ".$nota->id);
         } else {
             $documento['numero'] = ' ';
-        };
+        }
 
         echo '
     <tr class="'.$class.'">

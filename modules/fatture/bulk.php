@@ -622,6 +622,18 @@ $operations['cambia-sezionale'] = [
     ],
 ];
 
+if (Interaction::isEnabled()) {
+    $operations['hook-send'] = [
+        'text' => '<span><i class="fa fa-paper-plane"></i> '.tr('Coda di invio FE').'</span>',
+        'data' => [
+            'title' => '',
+            'msg' => tr('Vuoi davvero aggiungere queste fatture alla coda di invio per le fatture elettroniche?'),
+            'button' => tr('Procedi'),
+            'class' => 'btn btn-lg btn-warning',
+        ],
+    ];
+}
+
 if ($module->name == 'Fatture di vendita') {
     $operations['check-bulk'] = [
         'text' => '<span><i class="fa fa-list-alt"></i> '.tr('Controlla fatture elettroniche').'</span>',
@@ -741,16 +753,6 @@ $operations['registrazione-contabile'] = [
 ];
 
 if (Interaction::isEnabled()) {
-    $operations['hook-send'] = [
-        'text' => '<span><i class="fa fa-paper-plane"></i> '.tr('Coda di invio FE').'</span>',
-        'data' => [
-            'title' => '',
-            'msg' => tr('Vuoi davvero aggiungere queste fatture alla coda di invio per le fatture elettroniche?'),
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-warning',
-        ],
-    ];
-
     $operations['verify-notifiche'] = [
         'text' => '<i class="fa fa-question-circle"></i> '.tr('Verifica notifiche').'</span>',
         'data' => [

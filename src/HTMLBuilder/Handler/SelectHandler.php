@@ -20,6 +20,7 @@
 namespace HTMLBuilder\Handler;
 
 use AJAX;
+use Prints;
 
 /**
  * Gestione dell'input di tipo "select".
@@ -71,7 +72,7 @@ class SelectHandler implements HandlerInterface
             unset($values['select-options']);
 
             if (!empty($values['value']) || is_numeric($values['value'])) {
-                $result .= $this->select2($source, $values['value'], $infos);
+                $result .= $this->select2($source, $values['value'], $infos, $values['link']);
             }
         } else {
             if (!in_array('multiple', $extras)) {
@@ -81,21 +82,21 @@ class SelectHandler implements HandlerInterface
 
             // Gestione del select dal formato JSON completo, convertito in array
             if (is_array($values['values'])) {
-                $result .= $this->selectArray($values['values'], $values['value']);
+                $result .= $this->selectArray($values['values'], $values['value'], $values['link']);
             }
 
             // Gestione del select da query specifica (se il campo "values" è impostato a "query=SQL")
             elseif (string_starts_with($values['values'], 'query=')) {
                 $query = substr($values['values'], strlen('query='));
 
-                $result .= $this->selectQuery($query, $values['value']);
+                $result .= $this->selectQuery($query, $values['value'], $values['link']);
             }
 
             // Gestione del select dal formato JSON parziale (valori singoli)
             elseif (string_starts_with($values['values'], 'list=')) {
                 $list = substr($values['values'], strlen('list='));
 
-                $result .= $this->selectList(json_decode('{'.$list.'}', true), $values);
+                $result .= $this->selectList(json_decode('{'.$list.'}', true), $values, $values['link']);
             }
         }
 
@@ -136,7 +137,7 @@ class SelectHandler implements HandlerInterface
      *
      * @return string
      */
-    protected function select2($op, $elements, $info)
+    protected function select2($op, $elements, $info, $link = null)
     {
         // Richiamo del file dedicato alle richieste AJAX per ottenere il valore iniziale del select
         $response = AJAX::select($op, $elements, null, 0, 100, $info);
@@ -152,6 +153,14 @@ class SelectHandler implements HandlerInterface
             $attributes = [];
             if (in_array($element['id'], $elements)) {
                 $attributes[] = 'selected';
+            }
+
+            if ($link == 'stampa') {
+                $element['title'] = ' ';
+                $element['text'] = '<a href="'.Prints::getHref($element['id'], get('id_record')).'" class="text-black" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
+            } elseif ($link == 'allegato') {
+                $element['title'] = ' ';
+                $element['text'] = '<a href="'.base_path().'/view.php?file_id='.$element['id'].'" class="text-black" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
             }
 
             if (!empty($element['_bgcolor_'])) {
@@ -178,7 +187,7 @@ class SelectHandler implements HandlerInterface
      *
      * @return string
      */
-    protected function selectArray($array, $values)
+    protected function selectArray($array, $values, $link = null)
     {
         $result = '';
 
@@ -193,6 +202,14 @@ class SelectHandler implements HandlerInterface
             }
 
             $element['text'] = empty($element['text']) ? $element['descrizione'] : $element['text'];
+
+            if ($link == 'stampa') {
+                $element['title'] = ' ';
+                $element['text'] = '<a href="'.Prints::getHref($element['id'], get('id_record')).'" class="text-black" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
+            } elseif ($link == 'allegato') {
+                $element['title'] = ' ';
+                $element['text'] = '<a href="'.base_path().'/view.php?file_id='.$element['id'].'" class="text-black" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
+            }
 
             $attributes = [];
             if (in_array($element['id'], $values)) {
@@ -225,13 +242,13 @@ class SelectHandler implements HandlerInterface
      *
      * @return string
      */
-    protected function selectQuery($query, $values)
+    protected function selectQuery($query, $values, $link = null)
     {
         $database = database();
 
         $array = $database->fetchArray($query);
 
-        return $this->selectArray($array, $values);
+        return $this->selectArray($array, $values, $link);
     }
 
     /**
@@ -243,7 +260,7 @@ class SelectHandler implements HandlerInterface
      *
      * @return string
      */
-    protected function selectList($datas, &$values)
+    protected function selectList($datas, &$values, $link = null)
     {
         $array = [];
 
@@ -255,6 +272,6 @@ class SelectHandler implements HandlerInterface
             }
         }
 
-        return $this->selectArray($array, $values['value']);
+        return $this->selectArray($array, $values['value'], $link);
     }
 }

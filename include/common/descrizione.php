@@ -31,3 +31,12 @@ echo '
             {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "note", "value": '.json_encode($result['note']).', "help": "'.tr('Queste note saranno utilizzate solo a scopo interno').'", "extra": "rows=\"2\"" ]}
         </div>
     </div>';
+
+if ($module['name'] == 'Preventivi' && $options['op'] == 'manage_descrizione') {
+    echo '
+    <div class="row">
+        <div class="col-md-6">
+            {[ "type": "checkbox", "label": "'.tr('Utilizza come titolo del gruppo').'", "name": "is_titolo", "value": '.json_encode($result['is_titolo']).', "help": "'.tr('').'" ]}
+        </div>
+    </div>';
+}

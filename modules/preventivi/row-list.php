@@ -55,11 +55,27 @@ echo '
 $today = new Carbon\Carbon();
 $today = $today->startOfDay();
 $num = 0;
-foreach ($righe as $riga) {
+$has_gruppo = false;
+$subtotale_gruppo = 0;
+$iva_gruppo = 0;
+$color_gruppo = '#BDDEE1;';
+foreach ($righe as $key => $riga) {
+    // Gestione gruppo
+    $style_titolo = '';
+    $colspan_titolo = '';
+    if ($riga->is_titolo) {
+        $subtotale_gruppo = 0;
+        $iva_gruppo = 0;
+        $has_gruppo = true;
+        $style_titolo = 'style="background-color:'.$color_gruppo.'"';
+        $colspan_titolo = 'colspan="6"';
+    }
+    $subtotale_gruppo += $riga->totale_imponibile;
+    $iva_gruppo += $riga->iva;
     ++$num;
 
     echo '
-            <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'">
+            <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'" '.$style_titolo.'>
                 <td class="text-center">';
     if (!$block_edit) {
         echo '
@@ -72,7 +88,7 @@ foreach ($righe as $riga) {
                     '.$num.'
                 </td>
 
-                <td>';
+                <td '.$colspan_titolo.'>';
 
     // Aggiunta dei riferimenti ai documenti
     if ($riga->hasOriginalComponent()) {
@@ -132,78 +148,82 @@ foreach ($righe as $riga) {
         $info_evasione = '<span class="tip" title="'.$evasione_help.'"><i class="'.$evasione_icon.'"></i> '.Translator::dateToLocale($riga->data_evasione).$ora_evasione.'</span>';
     }
 
-    echo '
-        <td class="text-center">
-            '.$info_evasione.'
-        </td>';
+    if (!$riga->is_titolo) {
+        if ($riga->isDescrizione()) {
+            echo '
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>';
+        } else {
+            // Info evasione
+            echo '
+            <td class="text-center">
+                '.$info_evasione.'
+            </td>';
 
-    if ($riga->isDescrizione()) {
-        echo '
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>';
-    } else {
-        // Quantità e unità di misura
-        echo '
-                <td class="text-center">
-                    {[ "type": "number", "name": "qta_'.$riga->id.'", "value": "'.$riga->qta.'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-before": "<span class=\'tip\' title=\''.($riga->confermato ? tr('Articolo confermato') : tr('Articolo non confermato')).'\'><i class=\''.($riga->confermato ? 'fa fa-check text-success' : 'fa fa-clock-o text-warning').'\'></i></span>", "icon-after": "<span class=\'tip\' title=\''.tr('Quantità evasa').' / '.tr('totale').': '.tr('_QTA_ / _TOT_', ['_QTA_' => numberFormat($riga->qta_evasa, 'qta'), '_TOT_' => numberFormat($riga->qta, 'qta')]).'\'>'.$riga->um.' <small><i class=\'text-muted fa fa-info-circle\'></i></small></span>", "disabled": "'.($riga->isSconto() ? 1 : 0).'", "disabled": "'.$block_edit.'" ]}
-                    <div class="progress" style="height:4px;">';
-        // Visualizzazione evasione righe per documento
-        $evasione_bar = [];
-        $evasione_bar['dt_righe_ddt'] = 'info';
-        $evasione_bar['co_righe_documenti'] = 'primary';
-        $evasione_bar['in_righe_interventi'] = 'warning';
-        $evasione_bar['or_righe_ordini'] = 'success';
-        foreach ($evasione_bar as $table => $color) {
-            $righe_ev = $dbo->table($table)->where('original_id', $riga->id)->where('original_type', get_class($riga))->get();
-            $perc_ev = $righe_ev->sum('qta') * 100 / $riga->qta;
-            if ($perc_ev > 0) {
-                echo '
-                            <div class="progress-bar progress-bar-'.$color.'" style="width:'.$perc_ev.'%"></div>';
+            // Quantità e unità di misura
+            echo '
+                    <td class="text-center">
+                        {[ "type": "number", "name": "qta_'.$riga->id.'", "value": "'.$riga->qta.'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-before": "<span class=\'tip\' title=\''.($riga->confermato ? tr('Articolo confermato') : tr('Articolo non confermato')).'\'><i class=\''.($riga->confermato ? 'fa fa-check text-success' : 'fa fa-clock-o text-warning').'\'></i></span>", "icon-after": "<span class=\'tip\' title=\''.tr('Quantità evasa').' / '.tr('totale').': '.tr('_QTA_ / _TOT_', ['_QTA_' => numberFormat($riga->qta_evasa, 'qta'), '_TOT_' => numberFormat($riga->qta, 'qta')]).'\'>'.$riga->um.' <small><i class=\'text-muted fa fa-info-circle\'></i></small></span>", "disabled": "'.($riga->isSconto() ? 1 : 0).'", "disabled": "'.$block_edit.'" ]}
+                        <div class="progress" style="height:4px;">';
+            // Visualizzazione evasione righe per documento
+            $evasione_bar = [];
+            $evasione_bar['dt_righe_ddt'] = 'info';
+            $evasione_bar['co_righe_documenti'] = 'primary';
+            $evasione_bar['in_righe_interventi'] = 'warning';
+            $evasione_bar['or_righe_ordini'] = 'success';
+            foreach ($evasione_bar as $table => $color) {
+                $righe_ev = $dbo->table($table)->where('original_id', $riga->id)->where('original_type', get_class($riga))->get();
+                $perc_ev = $righe_ev->sum('qta') * 100 / $riga->qta;
+                if ($perc_ev > 0) {
+                    echo '
+                                <div class="progress-bar progress-bar-'.$color.'" style="width:'.$perc_ev.'%"></div>';
+                }
             }
-        }
-        echo '
-                    </div>
-                </td>';
+            echo '
+                        </div>
+                    </td>';
 
-        // Prezzi unitari
-        echo '
-                <td class="text-right">';
-        // Provvigione riga
-        if (abs($riga->provvigione_unitaria) > 0) {
-            $text = provvigioneInfo($riga);
-            echo '<span class="pull-left text-info" title="'.$text.'"><i class="fa fa-handshake-o"></i></span>';
-        }
-        echo moneyFormat($riga->prezzo_unitario_corrente);
+            // Prezzi unitari
+            echo '
+                    <td class="text-right">';
+            // Provvigione riga
+            if (abs($riga->provvigione_unitaria) > 0) {
+                $text = provvigioneInfo($riga);
+                echo '<span class="pull-left text-info" title="'.$text.'"><i class="fa fa-handshake-o"></i></span>';
+            }
+            echo moneyFormat($riga->prezzo_unitario_corrente);
 
-        if (abs($riga->sconto_unitario) > 0) {
-            $text = discountInfo($riga);
+            if (abs($riga->sconto_unitario) > 0) {
+                $text = discountInfo($riga);
+
+                echo '
+                        <br><small class="label label-danger">'.$text.'</small>';
+            }
 
             echo '
-                    <br><small class="label label-danger">'.$text.'</small>';
-        }
+                    </td>';
 
-        echo '
-                </td>';
+            // Sconto unitario
+            if (!$block_edit) {
+                echo '
+                    <td class="text-center">
+                        {[ "type": "number", "name": "sconto_'.$riga->id.'", "value": "'.($riga->sconto_percentuale ?: $riga->sconto_unitario_corrente).'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "choice|untprc|'.$riga->tipo_sconto.'" ]}
+                    </td>';
+            }
 
-        // Sconto unitario
-        if (!$block_edit) {
+            // Importo
             echo '
-                <td class="text-center">
-                    {[ "type": "number", "name": "sconto_'.$riga->id.'", "value": "'.($riga->sconto_percentuale ?: $riga->sconto_unitario_corrente).'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "choice|untprc|'.$riga->tipo_sconto.'" ]}
-                </td>';
+                    <td class="text-right">
+                        '.moneyFormat($riga->importo);
+
+            // Iva
+            echo '
+                        <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' text-muted">'.$riga->aliquota->descrizione.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
+                    </td>';
         }
-
-        // Importo
-        echo '
-                <td class="text-right">
-                    '.moneyFormat($riga->importo);
-
-        // Iva
-        echo '
-                    <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' text-muted">'.$riga->aliquota->descrizione.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
-                </td>';
     }
 
     // Possibilità di rimuovere una riga solo se il preventivo non è stato pagato
@@ -230,6 +250,40 @@ foreach ($righe as $riga) {
     echo '
                 </td>
             </tr>';
+
+        $next = $righe->flatten()[$num];
+        if ($has_gruppo && ($next->is_titolo || $next == null)) {
+            echo '
+            <tr>
+                <td style="background-color:'.$color_gruppo.'" colspan="'.$colspan.'" class="text-right">
+                    <b>'.tr('Subtotale', [], ['upper' => true]).':</b>
+                </td>
+                <td style="background-color:'.$color_gruppo.'" class="text-right">
+                    '.moneyFormat($subtotale_gruppo, 2).'
+                </td>
+                <td style="background-color:'.$color_gruppo.'"></td>
+            </tr>
+
+            <tr>
+                <td style="background-color:'.$color_gruppo.'" colspan="'.$colspan.'" class="text-right">
+                    <b>'.tr('Iva', [], ['upper' => true]).':</b>
+                </td>
+                <td style="background-color:'.$color_gruppo.'" class="text-right">
+                    '.moneyFormat($iva_gruppo, 2).'
+                </td>
+                <td style="background-color:'.$color_gruppo.'"></td>
+            </tr>
+
+            <tr>
+                <td style="background-color:'.$color_gruppo.'" colspan="'.$colspan.'" class="text-right">
+                    <b>'.tr('Subtotale ivato', [], ['upper' => true]).':</b>
+                </td>
+                <td style="background-color:'.$color_gruppo.'" class="text-right">
+                    '.moneyFormat($subtotale_gruppo + $iva_gruppo, 2).'
+                </td>
+                <td style="background-color:'.$color_gruppo.'"></td>
+            </tr>';
+        }
 }
 
 echo '

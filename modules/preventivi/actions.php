@@ -324,6 +324,7 @@ switch (post('op')) {
 
         $riga->descrizione = post('descrizione');
         $riga->note = post('note');
+        $riga->is_titolo = post('is_titolo');
         $riga->save();
 
         if (post('idriga') != null) {

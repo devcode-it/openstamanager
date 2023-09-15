@@ -171,8 +171,8 @@ echo "
 if ($options['pricing']) {
     echo "
             <th class='text-center' style='width:15%'>".tr('Prezzo unitario', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:15%'>".($options['hide-total'] ? tr('Importo ivato', [], ['upper' => true]) : tr('Importo', [], ['upper' => true]))."</th>
-            <th class='text-center' style='width:10%'>".tr('IVA', [], ['upper' => true]).' (%)</th>';
+            <th class='text-center' style='width:10%'>".tr('IVA', [], ['upper' => true])." (%)</th>
+            <th class='text-center' style='width:15%'>".($options['hide-total'] ? tr('Importo ivato', [], ['upper' => true]) : tr('Importo', [], ['upper' => true]))."</th>";
 }
 
 echo '
@@ -182,9 +182,27 @@ echo '
     <tbody>';
 
 $num = 0;
-foreach ($righe as $riga) {
+$has_gruppo = false;
+$subtotale_gruppo = 0;
+$iva_gruppo = 0;
+foreach ($righe as $key => $riga) {
     ++$num;
     $r = $riga->toArray();
+
+    // Gestione gruppo
+    $style_titolo = '';
+    $colspan_titolo = '';
+    if ($riga->is_titolo) {
+        $subtotale_gruppo = 0;
+        $iva_gruppo = 0;
+        $has_gruppo = true;
+        $colspan_titolo = $options['pricing'] ? 'colspan="5"' : 'colspan="2"';
+        $descrizione = '<b>'.nl2br($r['descrizione']).'</b>';
+    } else {
+        $descrizione = nl2br($r['descrizione']);
+    }
+    $subtotale_gruppo += $riga->totale_imponibile;
+    $iva_gruppo += $riga->iva;
 
     $autofill->count($r['descrizione']);
 
@@ -209,8 +227,8 @@ foreach ($righe as $riga) {
     }
 
     echo '
-            <td style="vertical-align: middle">
-                '.nl2br($r['descrizione']);
+            <td style="vertical-align: middle" '.$colspan_titolo.'>
+                '.$descrizione;
 
     if ($riga->isArticolo()) {
         if ($options['hide-item-number']) {
@@ -231,51 +249,53 @@ foreach ($righe as $riga) {
     echo '
             </td>';
 
-    if (!$riga->isDescrizione()) {
-        echo '
-            <td class="text-center" style="vertical-align: middle" >
-                '.Translator::numberToLocale(abs($riga->qta), 'qta').' '.$r['um'].'
-            </td>';
-
-        if ($options['pricing']) {
-            // Prezzo unitario
+    if (!$riga->is_titolo) {
+        if (!$riga->isDescrizione()) {
             echo '
-            <td class="text-right" style="vertical-align: middle">
-				'.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario);
+                <td class="text-center" style="vertical-align: middle" >
+                    '.Translator::numberToLocale(abs($riga->qta), 'qta').' '.$r['um'].'
+                </td>';
 
-            if ($riga->sconto > 0) {
-                $text = discountInfo($riga, false);
+            if ($options['pricing']) {
+                // Prezzo unitario
+                echo '
+                <td class="text-right" style="vertical-align: middle">
+                    '.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario);
+
+                if ($riga->sconto > 0) {
+                    $text = discountInfo($riga, false);
+
+                    echo '
+                    <br><small class="text-muted">'.$text.'</small>';
+
+                    $autofill->count($text, true);
+                }
 
                 echo '
-                <br><small class="text-muted">'.$text.'</small>';
+                </td>';
 
-                $autofill->count($text, true);
+                // Iva
+                echo '
+                <td class="text-center" style="vertical-align: middle">
+                    '.Translator::numberToLocale($riga->aliquota->percentuale, 2).'
+                </td>';
+
+                 // Imponibile
+                 echo '
+                 <td class="text-right" style="vertical-align: middle" >
+                     '.(($options['hide-total'] || $prezzi_ivati) ? moneyFormat($riga->totale) : moneyFormat($riga->totale_imponibile)).'
+                 </td>';
             }
-
+        } else {
             echo '
-            </td>';
+                <td></td>';
 
-            // Imponibile
-            echo '
-            <td class="text-right" style="vertical-align: middle" >
-                '.(($options['hide-total'] || $prezzi_ivati) ? moneyFormat($riga->totale) : moneyFormat($riga->totale_imponibile)).'
-            </td>';
-
-            // Iva
-            echo '
-            <td class="text-center" style="vertical-align: middle">
-                '.Translator::numberToLocale($riga->aliquota->percentuale, 2).'
-            </td>';
-        }
-    } else {
-        echo '
-            <td></td>';
-
-        if ($options['pricing']) {
-            echo '
-            <td></td>
-            <td></td>
-            <td></td>';
+            if ($options['pricing']) {
+                echo '
+                <td></td>
+                <td></td>
+                <td></td>';
+            }
         }
     }
 
@@ -283,6 +303,41 @@ foreach ($righe as $riga) {
         </tr>';
 
     $autofill->next();
+
+    $next = $righe->flatten()[$num];
+    if ($has_gruppo && ($next->is_titolo || $next == null)) {
+        echo '
+        <tr>
+            <td colspan="'.($options['show-only-total'] ? 2 : 5).'" class="text-right">
+                <b>'.tr('Subtotale', [], ['upper' => true]).':</b>
+            </td>
+            <td colspan="'.($options['show-only-total'] ? (($has_image) ? 2 : 1) : (($has_image) ? 3 : 2)).'" class="text-right">
+                '.moneyFormat($subtotale_gruppo, 2).'
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="'.($options['show-only-total'] ? 2 : 5).'" class="text-right">
+                <b>'.tr('Iva', [], ['upper' => true]).':</b>
+            </td>
+            <td colspan="'.($options['show-only-total'] ? (($has_image) ? 2 : 1) : (($has_image) ? 3 : 2)).'" class="text-right">
+                '.moneyFormat($iva_gruppo, 2).'
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="'.($options['show-only-total'] ? 2 : 5).'" class="text-right">
+                <b>'.tr('Subtotale ivato', [], ['upper' => true]).':</b>
+            </td>
+            <td colspan="'.($options['show-only-total'] ? (($has_image) ? 2 : 1) : (($has_image) ? 3 : 2)).'" class="text-right">
+                '.moneyFormat($subtotale_gruppo + $iva_gruppo, 2).'
+            </td>
+        </tr>';
+
+        $autofill->next();
+        $autofill->next();
+        $autofill->next();
+    }
 }
 
 echo '

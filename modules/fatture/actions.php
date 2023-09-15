@@ -852,11 +852,16 @@ switch ($op) {
 
         $id_segment = post('id_segment');
         $data = date('Y-m-d');
-
         $anagrafica = $fattura->anagrafica;
         $tipo = Tipo::find(post('idtipodocumento'));
         $iva = Aliquota::find(setting('Iva predefinita'));
-        $totale_imponibile = setting('Utilizza prezzi di vendita comprensivi di IVA') ? $fattura->totale_imponibile + ($fattura->totale_imponibile * $iva->percentuale / 100) : $fattura->totale_imponibile;
+
+        $imponibile += Riga::join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.idiva')
+            ->where('co_iva.codice_natura_fe', 'LIKE', 'N3%')
+            ->where('co_righe_documenti.iddocumento', $fattura->id)
+            ->sum('subtotale');
+
+        $totale_imponibile = setting('Utilizza prezzi di vendita comprensivi di IVA') ? $imponibile + ($imponibile * $iva->percentuale / 100) : $imponibile;
         $totale_imponibile = $fattura->tipo->reversed == 1 ? -$totale_imponibile : $totale_imponibile;
 
         $autofattura = Fattura::build($anagrafica, $tipo, $data, $id_segment);

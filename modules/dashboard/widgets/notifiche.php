@@ -69,7 +69,7 @@ foreach ($moduli as $module_id => $note) {
 
         $documento = '';
         if ($modulo->title == 'Attività') {
-            $documento = $dbo->fetchOne("SELECT in_interventi.codice AS numero, ragione_sociale FROM zz_notes INNER JOIN in_interventi ON (in_interventi.id = zz_notes.id_record AND zz_notes.id_module=(SELECT id FROM zz_modules WHERE title = 'Attività')zz) INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = in_interventi.idanagrafica WHERE zz_notes.id = ".$nota->id);
+            $documento = $dbo->fetchOne("SELECT in_interventi.codice AS numero, ragione_sociale FROM zz_notes INNER JOIN in_interventi ON (in_interventi.id = zz_notes.id_record AND zz_notes.id_module=(SELECT id FROM zz_modules WHERE title = 'Attività')) INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = in_interventi.idanagrafica WHERE zz_notes.id = ".$nota->id);
         } elseif ($modulo->title == 'Fatture di vendita') {
             $documento = $dbo->fetchOne("SELECT numero_esterno AS numero, ragione_sociale FROM zz_notes INNER JOIN co_documenti ON (co_documenti.id = zz_notes.id_record AND zz_notes.id_module=(SELECT id FROM zz_modules WHERE title = 'Fatture di vendita')) INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = co_documenti.idanagrafica WHERE zz_notes.id = ".$nota->id);
         } elseif ($modulo->title == 'Fatture di acquisto') {

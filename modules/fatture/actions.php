@@ -242,7 +242,7 @@ switch ($op) {
                 ->where('id', '!=', $id_record)
                 ->where('data', '>=', $_SESSION['period_start'])
                 ->where('data', '<=', $_SESSION['period_end'])
-                ->where('numero_esterno', '!=', null)
+                ->where('numero_esterno', '!=', '')
                 ->whereHas('tipo', function ($query) use ($direzione) {
                     $query->where('dir', '=', $direzione);
                 })->count();

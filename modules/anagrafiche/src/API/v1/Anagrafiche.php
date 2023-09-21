@@ -24,7 +24,6 @@ use API\Interfaces\DeleteInterface;
 use API\Interfaces\RetrieveInterface;
 use API\Interfaces\UpdateInterface;
 use API\Resource;
-use Modules;
 use Modules\Anagrafiche\Anagrafica;
 
 class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface, UpdateInterface, DeleteInterface
@@ -35,13 +34,13 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
 
         $select = [
             'an_anagrafiche.*',
-            'an_nazioni.nome AS nazione'
+            'an_nazioni.nome AS nazione',
         ];
 
         $joins[] = [
             'an_nazioni',
             'an_anagrafiche.id_nazione',
-            'an_nazioni.id'
+            'an_nazioni.id',
         ];
 
         $where[] = ['an_anagrafiche.deleted_at', '=', null];
@@ -54,13 +53,13 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
             $joins[] = [
                 'an_tipianagrafiche_anagrafiche',
                 'an_anagrafiche.idanagrafica',
-                'an_tipianagrafiche_anagrafiche.idanagrafica'
+                'an_tipianagrafiche_anagrafiche.idanagrafica',
             ];
 
             $joins[] = [
                 'an_tipianagrafiche',
                 'an_tipianagrafiche_anagrafiche.idtipoanagrafica',
-                'an_tipianagrafiche.idtipoanagrafica'
+                'an_tipianagrafiche.idtipoanagrafica',
             ];
 
             $where[] = ['an_tipianagrafiche.descrizione', '=', $type];
@@ -71,9 +70,8 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
             'select' => $select,
             'joins' => $joins,
             'where' => $where,
-            'order' => $order
+            'order' => $order,
         ];
-
     }
 
     public function create($request)

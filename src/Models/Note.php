@@ -70,7 +70,6 @@ class Note extends Model
         database()->delete('zz_notes', $data);
     }
 
-
     /* Relazioni Eloquent */
 
     public function user()

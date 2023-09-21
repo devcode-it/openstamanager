@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 if ($config['maintenance_ip'] != $_SERVER['REMOTE_ADDR']) {
     include_once App::filepath('include|custom|', 'top.php');
     $img = App::getPaths()['img'];
-    
+
     echo '
     <div class="box box-center-large box-danger">
         <div class="box-header with-border text-center">

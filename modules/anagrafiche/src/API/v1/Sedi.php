@@ -29,7 +29,7 @@ class Sedi extends Resource implements RetrieveInterface
         $table = 'an_sedi';
 
         return [
-            'table' => $table
+            'table' => $table,
         ];
     }
 }

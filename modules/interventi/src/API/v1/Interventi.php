@@ -24,7 +24,6 @@ use API\Interfaces\RetrieveInterface;
 use API\Interfaces\UpdateInterface;
 use API\Resource;
 use Auth;
-use Modules;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
@@ -43,36 +42,36 @@ class Interventi extends Resource implements RetrieveInterface, CreateInterface,
             'in_interventi.*',
             'MAX(in_interventi_tecnici.orario_fine) as data',
             'GROUP_CONCAT(DISTINCT b.ragione_sociale SEPARATOR \', \') AS tecnici',
-            'in_statiintervento.descrizione AS stato'
+            'in_statiintervento.descrizione AS stato',
         ];
 
         $joins[] = [
             'in_statiintervento',
             'in_interventi.idstatointervento',
-            'in_statiintervento.idstatointervento'
+            'in_statiintervento.idstatointervento',
         ];
 
         $joins[] = [
             'an_anagrafiche',
             'in_interventi.idanagrafica',
-            'an_anagrafiche.idanagrafica'
+            'an_anagrafiche.idanagrafica',
         ];
 
         $joins[] = [
             'in_interventi_tecnici',
             'in_interventi_tecnici.idintervento',
-            'in_interventi.id'
+            'in_interventi.id',
         ];
 
         $joins[] = [
             'an_anagrafiche as b',
             'in_interventi_tecnici.idtecnico',
-            'b.ragione_sociale'
+            'b.ragione_sociale',
         ];
 
         $where = [];
 
-        if(!$user->is_admin){
+        if (!$user->is_admin) {
             $where[] = ['in_interventi_tecnici.idtecnico', '=', $user->idanagrafica];
         }
 

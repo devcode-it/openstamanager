@@ -31,7 +31,7 @@ class Impianti extends Resource implements RetrieveInterface, CreateInterface
 
         $select = [
             'idimpianto AS id_impianto',
-            'idintervento AS id_intervento'
+            'idintervento AS id_intervento',
         ];
 
         $where[] = ['my_impianti_interventi.idintervento', '=', $request['id_intervento']];
@@ -39,7 +39,7 @@ class Impianti extends Resource implements RetrieveInterface, CreateInterface
         return [
             'table' => $table,
             'select' => $select,
-            'where' => $where
+            'where' => $where,
         ];
     }
 

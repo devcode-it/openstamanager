@@ -33,7 +33,7 @@ class Impianti extends Resource implements RetrieveInterface
             'my_impianti.idanagrafica',
             'my_impianti.matricola',
             'my_impianti.nome',
-            'my_impianti.descrizione'
+            'my_impianti.descrizione',
         ];
 
         $where = [];
@@ -50,7 +50,7 @@ class Impianti extends Resource implements RetrieveInterface
             'where' => $where,
             'whereraw' => $whereraw,
             'order' => $order,
-            'group' => $group
+            'group' => $group,
         ];
     }
 }

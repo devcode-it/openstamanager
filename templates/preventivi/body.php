@@ -172,7 +172,7 @@ if ($options['pricing']) {
     echo "
             <th class='text-center' style='width:15%'>".tr('Prezzo unitario', [], ['upper' => true])."</th>
             <th class='text-center' style='width:10%'>".tr('IVA', [], ['upper' => true])." (%)</th>
-            <th class='text-center' style='width:15%'>".($options['hide-total'] ? tr('Importo ivato', [], ['upper' => true]) : tr('Importo', [], ['upper' => true]))."</th>";
+            <th class='text-center' style='width:15%'>".($options['hide-total'] ? tr('Importo ivato', [], ['upper' => true]) : tr('Importo', [], ['upper' => true])).'</th>';
 }
 
 echo '
@@ -280,8 +280,8 @@ foreach ($righe as $key => $riga) {
                     '.Translator::numberToLocale($riga->aliquota->percentuale, 2).'
                 </td>';
 
-                 // Imponibile
-                 echo '
+                // Imponibile
+                echo '
                  <td class="text-right" style="vertical-align: middle" >
                      '.(($options['hide-total'] || $prezzi_ivati) ? moneyFormat($riga->totale) : moneyFormat($riga->totale_imponibile)).'
                  </td>';

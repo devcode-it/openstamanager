@@ -469,7 +469,7 @@ class Database extends Util\Singleton
         $select = !empty($select) ? $select : ['*'];
 
         $statement = Capsule::table($table);
-        
+
         foreach ($joins as $join) {
             $statement = $statement->leftJoin($join[0], $join[1], $join[2]);
         }
@@ -479,7 +479,6 @@ class Database extends Util\Singleton
         }
 
         $statement->where($conditions);
-
 
         foreach ($select as $s) {
             $statement->selectRaw($s);

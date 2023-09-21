@@ -65,8 +65,8 @@ if (Auth::check()) {
 		<style>'.$custom_css.'</style>';
     }
 
-        // Hooks
-        echo '
+    // Hooks
+    echo '
         <script>
             $(document).ready(function() {
                 // Toast
@@ -75,18 +75,18 @@ if (Auth::check()) {
                 // Orologio
                 clock();';
 
-                // Hooks
-                if (!$config['disable_hooks']) {
-                    echo '
+    // Hooks
+    if (!$config['disable_hooks']) {
+        echo '
                     setTimeout("startHooks();", 1000);';
-                }
+    }
 
-                // Abilitazione del cron autonoma
-                if (!$config['disable_cron']) {
-                    echo '
+    // Abilitazione del cron autonoma
+    if (!$config['disable_cron']) {
+        echo '
                     $.get(globals.rootdir + "/cron.php");';
-                }
-            echo '
+    }
+    echo '
             });
         </script>';
 }

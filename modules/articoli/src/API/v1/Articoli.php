@@ -34,21 +34,21 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
         $select = [
             'mg_articoli.*',
             'categorie.nome AS categoria',
-            'sottocategorie.nome AS sottocategoria'
+            'sottocategorie.nome AS sottocategoria',
         ];
 
         $joins[] = [
             'mg_categorie AS categorie',
             'mg_articoli.id_categoria',
-            'categorie.id'
+            'categorie.id',
         ];
         $joins[] = [
             'mg_categorie AS sottocategorie',
             'mg_articoli.id_sottocategoria',
-            'sottocategorie.id'
+            'sottocategorie.id',
         ];
 
-        $where[] = ['mg_articoli.deleted_at', '=', NULL ];
+        $where[] = ['mg_articoli.deleted_at', '=', null];
 
         $whereraw = [];
 
@@ -60,7 +60,7 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
             'joins' => $joins,
             'where' => $where,
             'whereraw' => $whereraw,
-            'order' => $order
+            'order' => $order,
         ];
     }
 

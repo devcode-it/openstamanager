@@ -91,22 +91,22 @@ class Manager
             $value = trim($value, ']');
             $values = explode(',', $value);
 
-            foreach ($values as $value){
+            foreach ($values as $value) {
                 // Filtro per LIKE se il valore contiene %
                 if (string_contains($value, '%')) {
                     $where[] = [
                         $key,
                         'LIKE',
-                        $value
+                        $value,
                     ];
                 }
-                
+
                 // Filtro preciso se il valore non contiene %
                 else {
                     $where[] = [
                         $key,
                         '=',
-                        $value
+                        $value,
                     ];
                 }
             }
@@ -137,7 +137,7 @@ class Manager
             'order' => $order,
             'page' => $page,
             'length' => $length,
-            'whereraw' => $whereraw
+            'whereraw' => $whereraw,
         ]);
 
         $response = $this->getResponse($data);
@@ -147,10 +147,10 @@ class Manager
         $joins = $response['joins'];
         $group = $response['group'];
 
-        if(!empty($response['where'])){
+        if (!empty($response['where'])) {
             $where = array_merge($where, $response['where']);
         }
-        if(!empty($response['whereraw'])){
+        if (!empty($response['whereraw'])) {
             $whereraw = $response['whereraw'];
         }
 
@@ -180,7 +180,7 @@ class Manager
                 foreach ($select as $s) {
                     $query->selectRaw($s);
                 }
-                
+
                 foreach ($joins as $join) {
                     $query->leftJoin($join[0], $join[1], $join[2]);
                 }
@@ -196,7 +196,6 @@ class Manager
                 if (!empty($group)) {
                     $query->groupBy($group);
                 }
-
 
                 $count = $query->count();
 

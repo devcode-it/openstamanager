@@ -37,15 +37,15 @@ class Articoli extends Resource implements RetrieveInterface, CreateInterface
             'in_righe_interventi.idarticolo AS id_articolo',
             'in_righe_interventi.idintervento AS id_intervento',
             'in_righe_interventi.qta',
-            'in_righe_interventi.created_at as data'
+            'in_righe_interventi.created_at as data',
         ];
 
-        $where = [['in_righe_interventi.idarticolo', '!=', NULL ], ['in_righe_interventi.idintervento', '=', $request['id_intervento']]];
+        $where = [['in_righe_interventi.idarticolo', '!=', null], ['in_righe_interventi.idintervento', '=', $request['id_intervento']]];
 
         return [
             'table' => $table,
             'select' => $select,
-            'where' => $where
+            'where' => $where,
         ];
     }
 
@@ -66,4 +66,3 @@ class Articoli extends Resource implements RetrieveInterface, CreateInterface
         $articolo->save();
     }
 }
-

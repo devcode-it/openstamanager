@@ -295,7 +295,7 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
 
         $id_fields = [];
 
-        foreach($fields as $field) {
+        foreach ($fields as $field) {
             $id_fields[] = $field->id;
         }
         database()->table('zz_field_record')->where('id_record', $this->id)->whereIn('id_field', $id_fields)->delete();

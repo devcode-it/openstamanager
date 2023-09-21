@@ -49,6 +49,9 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
         ];
 
         $where[] = ['mg_articoli.deleted_at', '=', NULL ];
+
+        $whereraw = [];
+
         $order['mg_articoli.id'] = 'ASC';
 
         return [
@@ -56,6 +59,7 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
             'select' => $select,
             'joins' => $joins,
             'where' => $where,
+            'whereraw' => $whereraw,
             'order' => $order
         ];
     }

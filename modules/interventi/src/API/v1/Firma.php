@@ -25,6 +25,8 @@ use Models\Upload;
 
 class Firma extends Resource implements UpdateInterface
 {
+
+    // TODO: Da rivedere con upload in base64
     public function update($request)
     {
         $database = database();

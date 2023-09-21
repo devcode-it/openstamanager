@@ -451,7 +451,7 @@ class Database extends Util\Singleton
      *
      * @return string|array
      */
-    public function select($table, $array = [], $joins = [], $conditions = [], $order = [], $limit = null, $return = false)
+    public function select($table, $array = [], $joins = [], $conditions = [], $order = [], $limit = null, $return = false, $group = [], $whereraw = [])
     {
         if (
             !is_string($table) ||
@@ -473,8 +473,17 @@ class Database extends Util\Singleton
         foreach ($joins as $join) {
             $statement = $statement->leftJoin($join[0], $join[1], $join[2]);
         }
-        
-        $statement->where($conditions)->select($select);
+
+        foreach ($whereraw as $w) {
+            $statement->whereRaw($w);
+        }
+
+        $statement->where($conditions);
+
+
+        foreach ($select as $s) {
+            $statement->selectRaw($s);
+        }
 
         // Impostazioni di ordinamento
         if (!empty($order)) {
@@ -488,6 +497,11 @@ class Database extends Util\Singleton
                     $statement = $statement->orderBy($field, 'DESC');
                 }
             }
+        }
+
+        // Gruppo
+        if (!empty($group)) {
+            $statement = $statement->groupBy($group);
         }
 
         // Eventuali limiti

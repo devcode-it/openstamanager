@@ -75,7 +75,7 @@ class Manager
 
         $where = [];
         $order = [];
-
+        $whereraw = [];
         // Selezione campi personalizzati
         // Esempio:
         // display=[id,ragione_sociale,telefono]
@@ -137,6 +137,7 @@ class Manager
             'order' => $order,
             'page' => $page,
             'length' => $length,
+            'whereraw' => $whereraw
         ]);
 
         $response = $this->getResponse($data);
@@ -144,7 +145,14 @@ class Manager
 
         $table = $response['table'];
         $joins = $response['joins'];
-        $where = array_merge($where, $response['where']);
+        $group = $response['group'];
+
+        if(!empty($response['where'])){
+            $where = array_merge($where, $response['where']);
+        }
+        if(!empty($response['whereraw'])){
+            $whereraw = $response['whereraw'];
+        }
 
         if (empty($select)) {
             $select = $response['select'] ?: $select;
@@ -166,20 +174,36 @@ class Manager
                     $where['#created_at'] = 'created_at >= '.prepare($request['crd']);
                 }
 
+                $query = $database->table($table);
+
                 // Query per ottenere le informazioni
-                $query = $database->table($table)->select($select);
+                foreach ($select as $s) {
+                    $query->selectRaw($s);
+                }
                 
                 foreach ($joins as $join) {
                     $query->leftJoin($join[0], $join[1], $join[2]);
                 }
 
-                $query->where($where);
+                if (!empty($where)) {
+                    $query->where($where);
+                }
+
+                foreach ($whereraw as $w) {
+                    $query->whereRaw($w);
+                }
+
+                if (!empty($group)) {
+                    $query->groupBy($group);
+                }
+
+
                 $count = $query->count();
 
                 // Composizione query finale
                 $response = [];
 
-                $response['records'] = $database->select($table, $select, $joins, $where, $order, [$page * $length, $length]);
+                $response['records'] = $database->select($table, $select, $joins, $where, $order, [$page * $length, $length], null, $group, $whereraw);
                 $response['total-count'] = $count;
             }
 

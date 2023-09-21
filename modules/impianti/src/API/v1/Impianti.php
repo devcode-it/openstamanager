@@ -26,10 +26,31 @@ class Impianti extends Resource implements RetrieveInterface
 {
     public function retrieve($request)
     {
-        $query = 'SELECT id, idanagrafica, matricola, nome, descrizione FROM my_impianti';
+        $table = 'my_impianti';
+
+        $select = [
+            'my_impianti.id',
+            'my_impianti.idanagrafica',
+            'my_impianti.matricola',
+            'my_impianti.nome',
+            'my_impianti.descrizione'
+        ];
+
+        $where = [];
+
+        $whereraw = [];
+
+        $order = [];
+
+        $group = [];
 
         return [
-            'query' => $query,
+            'table' => $table,
+            'select' => $select,
+            'where' => $where,
+            'whereraw' => $whereraw,
+            'order' => $order,
+            'group' => $group
         ];
     }
 }

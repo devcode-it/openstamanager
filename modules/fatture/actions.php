@@ -1011,7 +1011,7 @@ switch ($op) {
                 if (!empty($piano_sconto)) {
                     $sconto = parseScontoCombinato($piano_sconto['prc_guadagno'].'+'.$sconto);
                 }
-            
+
                 $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['idanagrafica' => $fattura->idagente])['provvigione_default'];
 
                 $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);

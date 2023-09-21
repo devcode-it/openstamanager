@@ -398,7 +398,6 @@ switch (post('op')) {
             // Eliminazione associazione interventi e my_impianti
             $dbo->query('DELETE FROM my_impianti_interventi WHERE idintervento='.prepare($id_record));
 
-
             flash()->info(tr('Intervento eliminato!'));
         } catch (InvalidArgumentException $e) {
             flash()->error(tr('Sono stati utilizzati alcuni serial number nel documento: impossibile procedere!'));

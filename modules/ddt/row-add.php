@@ -52,7 +52,7 @@ $result = [
     'um' => '',
     'prezzo' => 0,
     'sconto_unitario' => 0,
-    'tipo_sconto' => '',
+    'tipo_sconto' => (setting('Tipo di sconto predefinito') == '%' ? 'PRC' : 'UNT'),
     'idiva' => '',
     'provvigione_default' => 0,
     'tipo_provvigione_default' => 'PRC',

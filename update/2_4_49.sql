@@ -71,3 +71,4 @@ ALTER TABLE `co_righe_preventivi` ADD `is_titolo` BOOLEAN NOT NULL AFTER `confer
 
 ALTER TABLE `co_documenti` CHANGE `numero_esterno` `numero_esterno` VARCHAR(100) NOT NULL; 
 
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES ('Tipo di sconto predefinito', '%', 'list[%,€]', '1', 'Generali', '1', NULL); 

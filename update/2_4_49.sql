@@ -64,7 +64,7 @@ UPDATE `zz_widgets` SET `text` = 'Listini disattivati' WHERE `zz_widgets`.`name`
 
 INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`, `query`, `bgcolor`, `icon`, `print_link`, `more_link`, `more_link_type`, `php_include`, `text`, `enabled`, `help`) VALUES (NULL, 'Preventivi da fatturare', 'stats', '1', 'controller_top', NULL, 'SELECT COUNT(id) AS dato FROM co_preventivi WHERE idstato IN (SELECT id FROM co_statipreventivi WHERE is_fatturabile=1) AND default_revision=1', '#44aae4', 'fa fa-file', '', './modules/preventivi/widgets/preventivi.fatturare.dashboard.php', 'popup', '', 'Preventivi da fatturare', 0, NULL);
 
-INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), '_bg_', 'IF(threshold_qta!=0, IF(mg_articoli.qta>threshold_qta, \'#CCFFCC\', \'#FFCCEB\'), \'\')', '14', '0', '0', '0', '0', '', '', '0', '0', '0');
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), '_bg_', 'IF(threshold_qta!=0, IF(mg_articoli.qta>=threshold_qta, \'#CCFFCC\', \'#FFCCEB\'), \'\')', '14', '0', '0', '0', '0', '', '', '0', '0', '0');
 
 -- Aggiunto titolo righe preventivi
 ALTER TABLE `co_righe_preventivi` ADD `is_titolo` BOOLEAN NOT NULL AFTER `confermato`; 

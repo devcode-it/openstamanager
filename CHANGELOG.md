@@ -77,6 +77,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Aggiunta la gestione dell'autofattura in caso di reverse charge misto
 - Aggiunto raggruppamento delle righe dei preventivi
 - Aggiunta l'impostazione **Tipo di sconto predefinito**
+- Aggiunto sezionale predefinito per tipo documento
 ### Modificato (Changed)
 - Migliorata la visualizzazione della tabella in **Listino clienti**
 - Migliorata la stampa fattura con pagamenti completati segnati come tali

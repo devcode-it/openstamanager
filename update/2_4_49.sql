@@ -72,3 +72,9 @@ ALTER TABLE `co_righe_preventivi` ADD `is_titolo` BOOLEAN NOT NULL AFTER `confer
 ALTER TABLE `co_documenti` CHANGE `numero_esterno` `numero_esterno` VARCHAR(100) NOT NULL; 
 
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES ('Tipo di sconto predefinito', '%', 'list[%,€]', '1', 'Generali', '1', NULL); 
+
+ALTER TABLE `co_tipidocumento` ADD `id_segment` INT NOT NULL AFTER `predefined`; 
+UPDATE `co_tipidocumento` SET `id_segment`= (SELECT `zz_segments`.`id` FROM `zz_segments` INNER JOIN `zz_modules` ON `zz_segments`.`id_module` = `zz_modules`.`id` WHERE `zz_modules`.`name` = 'Fatture di vendita' AND `zz_segments`.`predefined` = 1) WHERE `co_tipidocumento`.`dir` = 'entrata';
+UPDATE `co_tipidocumento` SET `id_segment`= (SELECT `zz_segments`.`id` FROM `zz_segments` INNER JOIN `zz_modules` ON `zz_segments`.`id_module` = `zz_modules`.`id` WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_segments`.`predefined` = 1) WHERE `co_tipidocumento`.`dir` = 'uscita';
+UPDATE `co_tipidocumento` SET `id_segment`=(SELECT `zz_segments`.`id` FROM `zz_segments` INNER JOIN `zz_modules` ON `zz_segments`.`id_module` = `zz_modules`.`id` WHERE `zz_segments`.`name` = 'Autofatture' AND `zz_modules`.`name` = 'Fatture di vendita') WHERE `co_tipidocumento`.`dir` = 'entrata' AND `co_tipidocumento`.`descrizione` LIKE "%autofattura%";
+UPDATE `co_tipidocumento` SET `id_segment`=(SELECT `zz_segments`.`id` FROM `zz_segments` INNER JOIN `zz_modules` ON `zz_segments`.`id_module` = `zz_modules`.`id` WHERE `zz_segments`.`name` = 'Autofatture' AND `zz_modules`.`name` = 'Fatture di acquisto') WHERE `co_tipidocumento`.`dir` = 'uscita' AND `co_tipidocumento`.`descrizione` LIKE "%autofattura%";

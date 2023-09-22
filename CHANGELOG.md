@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.49 (2023-09-22)](#2449-2023-09-22)
 - [2.4.48 (2023-08-01)](#2448-2023-08-01)
 - [2.4.47 (2023-06-30)](#2447-2023-06-30)
 - [2.4.46 (2023-06-01)](#2446-2023-06-01)
@@ -59,6 +60,37 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
+## 2.4.49 (2023-09-22)
+### Aggiunto (Added)
+- Aggiunto avviso in caso di impossibilità di caricare la mappa
+- Aggiunta l'obbligatorietà del campo nazione in Sede
+- Aggiunta colonna Riferimenti in **Ordini cliente** e in **DDT in entrata**
+- Aggiunto filtro per anagrafica in **Stampa scadenzario**
+- Aggiunta modalità manutenzione e blocco hooks e cron
+- Aggiunto il piano di sconto dell'anagrafica in fattura
+- Aggiunto pulsante salvataggio note checklist
+- Aggiunto script per php-cs-fix per la formattazione del codice
+- Aggiunta rivalsa inps su bollo per il regime forfettario
+- Aggiunta la colonna **Data scadenza** in **Listini clienti**
+- Aggiunto widget **Preventivi da fatturare**
+- Aggiunti i link ai file e alle stampa in fase di selezione upload e stampa
+- Aggiunta la gestione dell'autofattura in caso di reverse charge misto
+- Aggiunto raggruppamento delle righe dei preventivi
+- Aggiunta l'impostazione **Tipo di sconto predefinito**
+### Modificato (Changed)
+- Migliorata la visualizzazione della tabella in **Listino clienti**
+- Migliorata la stampa fattura con pagamenti completati segnati come tali
+- Migliorata la vista del modulo **Articoli**, mostra ora i record colorati in base alla disponibilità in rapporto alla soglia minima impostata
+- Migliorato l'elenco delle azioni di gruppo in fatture, è ora in ordine alfabetico.
+- Migliorata la struttura delle api
+### Fixed
+- Corretta la visualizzazione delle sessioni in dashboard
+- Corretti i riferimenti visualizzati nel widget **Notifiche interne**
+- Corretto il widget **Contratti in scadenza** per i contratti conclusi
+- Corrette le risorse api delle checklist
+- Corretti i filtri sulle ricerche numeriche
+- Corretta la rimozione dei record, evitando check, email, file, campi personalizzati e note interne orfani.
+- Corretto l'avviso di numero duplicato in fatture
 ## 2.4.48 (2023-08-01)
 ### Aggiunto (Added)
 - Aggiunta colonna **Agente** in vista **Contratti**

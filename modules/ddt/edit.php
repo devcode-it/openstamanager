@@ -17,6 +17,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\Anagrafiche\Anagrafica;
+use Modules\Anagrafiche\Sede;
+
 include_once __DIR__.'/../../core.php';
 
 $block_edit = $record['flag_completato'];
@@ -41,6 +44,28 @@ if ($dir == 'entrata') {
                 ]).'.</b>
         </div>';
     }
+
+    $rs2 = $dbo->fetchArray('SELECT piva, codice_fiscale, citta, indirizzo, cap, provincia FROM an_anagrafiche WHERE idanagrafica='.prepare($record['idanagrafica']));
+    $campi_mancanti = [];
+    if ($rs2[0]['piva'] == '') {
+        if ($rs2[0]['codice_fiscale'] == '') {
+            array_push($campi_mancanti, 'codice fiscale');
+        }
+    }
+    if ($rs2[0]['citta'] == '') {
+        array_push($campi_mancanti, 'citta');
+    }
+    if ($rs2[0]['indirizzo'] == '') {
+        array_push($campi_mancanti, 'indirizzo');
+    }
+    if ($rs2[0]['cap'] == '') {
+        array_push($campi_mancanti, 'C.A.P.');
+    }
+
+    if (sizeof($campi_mancanti) > 0) {
+        echo "<div class='alert alert-warning'><i class='fa fa-warning'></i> Prima di procedere alla stampa completa i seguenti campi dell'anagrafica:<br/><b>".implode(', ', $campi_mancanti).'</b><br/>
+        '.Modules::link('Anagrafiche', $record['idanagrafica'], tr('Vai alla scheda anagrafica'), null).'</div>';
+    }
 }
 
 ?>
@@ -49,134 +74,262 @@ if ($dir == 'entrata') {
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 
-	<!-- INTESTAZIONE -->
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Intestazione'); ?></h3>
-		</div>
+    <div class="row">
+        <div class="col-md-8">
+            <!-- INTESTAZIONE -->
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><?php echo tr('Intestazione'); ?></h3>
+                </div>
 
-		<div class="panel-body">
-			<?php
-                if ($dir == 'entrata') {
-                    $rs2 = $dbo->fetchArray('SELECT piva, codice_fiscale, citta, indirizzo, cap, provincia FROM an_anagrafiche WHERE idanagrafica='.prepare($record['idanagrafica']));
-                    $campi_mancanti = [];
-
-                    if ($rs2[0]['piva'] == '') {
-                        if ($rs2[0]['codice_fiscale'] == '') {
-                            array_push($campi_mancanti, 'codice fiscale');
-                        }
-                    }
-                    if ($rs2[0]['citta'] == '') {
-                        array_push($campi_mancanti, 'citta');
-                    }
-                    if ($rs2[0]['indirizzo'] == '') {
-                        array_push($campi_mancanti, 'indirizzo');
-                    }
-                    if ($rs2[0]['cap'] == '') {
-                        array_push($campi_mancanti, 'C.A.P.');
-                    }
-
-                    if (sizeof($campi_mancanti) > 0) {
-                        echo "<div class='alert alert-warning'><i class='fa fa-warning'></i> Prima di procedere alla stampa completa i seguenti campi dell'anagrafica:<br/><b>".implode(', ', $campi_mancanti).'</b><br/>
-						'.Modules::link('Anagrafiche', $record['idanagrafica'], tr('Vai alla scheda anagrafica'), null).'</div>';
-                    }
-                }
-            ?>
-
-
-			<div class="row">
-				<?php
-                    if ($dir == 'uscita') {
-                        echo '
-                <div class="col-md-3">
-                    {[ "type": "span", "label": "'.tr('Numero ddt').'", "class": "text-center", "value": "$numero$" ]}
-                </div>';
-                    }
-                ?>
-
-				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('Numero secondario'); ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}
-				</div>
-
-				<div class="col-md-3">
-					{[ "type": "date", "label": "<?php echo tr('Data'); ?>", "name": "data", "required": 1, "value": "$data$" ]}
-				</div>
-
-				<div class="col-md-3">
-                    <?php
-                    if (setting('Cambia automaticamente stato ddt fatturati')) {
-                        if ($record['stato'] == 'Fatturato' || $record['stato'] == 'Parzialmente fatturato') {
-                            ?>
-                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT * FROM dt_statiddt", "value": "$idstatoddt$", "extra": "readonly", "class": "unblockable" ]}
-                    <?php
-                        } else {
-                            ?>
-                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT * FROM dt_statiddt WHERE descrizione IN('Bozza', 'Evaso', 'Parzialmente evaso')", "value": "$idstatoddt$", "class": "unblockable" ]}
-                    <?php
-                        }
-                    } else {
+                <div class="panel-body">
+                    <div class="row">
+                        <?php
+                            if ($dir == 'uscita') {
+                                echo '
+                        <div class="col-md-6">
+                            {[ "type": "span", "label": "'.tr('Numero ddt').'", "class": "text-center", "value": "$numero$" ]}
+                        </div>';
+                            }
                         ?>
-                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT * FROM dt_statiddt", "value": "$idstatoddt$", "class": "unblockable" ]}
-                    <?php
+
+                        <div class="col-md-6">
+                            {[ "type": "text", "label": "<?php echo tr('Numero secondario'); ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}
+                        </div>
+
+                        <div class="col-md-6">
+                            {[ "type": "date", "label": "<?php echo tr('Data'); ?>", "name": "data", "required": 1, "value": "$data$" ]}
+                        </div>
+
+                        <div class="col-md-6">
+                            <?php
+                            if (setting('Cambia automaticamente stato ddt fatturati')) {
+                                if ($record['stato'] == 'Fatturato' || $record['stato'] == 'Parzialmente fatturato') {
+                                    ?>
+                                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT * FROM dt_statiddt", "value": "$idstatoddt$", "extra": "readonly", "class": "unblockable" ]}
+                            <?php
+                                } else {
+                                    ?>
+                                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT * FROM dt_statiddt WHERE descrizione IN('Bozza', 'Evaso', 'Parzialmente evaso')", "value": "$idstatoddt$", "class": "unblockable" ]}
+                            <?php
+                                }
+                            } else {
+                                ?>
+                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT * FROM dt_statiddt", "value": "$idstatoddt$", "class": "unblockable" ]}
+                            <?php
+                            }
+                            ?>
+                        </div>
+<?php
+                    if ($dir == 'entrata') {
+                        echo '
+                        <div class="col-md-6">';
+                        if ($record['idagente'] != 0) {
+                            echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
+                        }
+                        echo '
+                            {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
+                        </div>';
                     }
                     ?>
-				</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <?php echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"'); ?>
+                            {[ "type": "select", "label": "<?php echo ($dir == 'uscita') ? tr('Mittente') : tr('Destinatario'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti_fornitori" ]}
+                        </div>
 <?php
-            if ($dir == 'entrata') {
-                echo '
-                <div class="col-md-3">';
-                if ($record['idagente'] != 0) {
-                    echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
-                }
-                echo '
-                    {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
-                </div>';
+                        echo '
+                        <div class="col-md-6">';
+                            if (!empty($record['idreferente'])) {
+                                echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
+                            }
+                            echo '
+                            {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.$record['idsede_destinazione'].'} ]}
+                        </div>';
+
+                        // Conteggio numero articoli ddt in uscita
+                        $articolo = $dbo->fetchArray('SELECT mg_articoli.id FROM ((mg_articoli INNER JOIN dt_righe_ddt ON mg_articoli.id=dt_righe_ddt.idarticolo) INNER JOIN dt_ddt ON dt_ddt.id=dt_righe_ddt.idddt) WHERE dt_ddt.id='.prepare($id_record));
+                        $id_modulo_anagrafiche = Modules::get('Anagrafiche')['id'];
+                        $id_plugin_sedi = Plugins::get('Sedi')['id'];
+                        if ($dir == 'entrata') {
+                            echo '
+                        <div class="col-md-6">
+                            {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "help": "'.tr("Sedi di partenza dell'azienda").'" ]}
+                        </div>
+
+                        <div class="col-md-6">
+                            {[ "type": "select", "label": "'.tr('Destinazione merce').'", "name": "idsede_destinazione", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idsede_destinazione$", "help": "'.tr('Sedi del destinatario').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
+                        </div>';
+                        } else {
+                            echo '
+                        <div class="col-md-6">
+                            {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idsede_partenza$", "help": "'.tr('Sedi del mittente').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
+                        </div>
+
+                        <div class="col-md-6">
+                            {[ "type": "select", "label": "'.tr('Destinazione merce').'", "name": "idsede_destinazione", "ajax-source": "sedi_azienda", "value": "$idsede_destinazione$", "help": "'.tr("Sedi di arrivo dell'azienda").'" ]}
+                        </div>';
+                        }
+                        ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <?php
+            $sede_anagrafica =  $ddt->anagrafica->sedeLegale;
+            $id_sede_anagrafica = $dir == 'entrata' ? $ddt->idsede_destinazione : $ddt->idsede_partenza;
+            if (!empty($id_sede_anagrafica)) {
+                $sede_anagrafica = Sede::find($id_sede_anagrafica);
+            }
+
+            $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
+            $sede_azienda = $anagrafica_azienda->sedeLegale;
+            $id_sede_azienda = $dir == 'entrata' ? $ddt->idsede_partenza : $ddt->idsede_destinazione;
+            if (!empty($id_sede_azienda)) {
+                $sede_azienda = Sede::find($id_sede_azienda);
             }
             ?>
-			</div>
 
-            <div class="row">
-                <div class="col-md-3">
-                    <?php echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"'); ?>
-                    {[ "type": "select", "label": "<?php echo ($dir == 'uscita') ? tr('Mittente') : tr('Destinatario'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti_fornitori" ]}
+            <!-- GEOLOCALIZZAZIONE -->
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-map"></i> <?php echo tr('Geolocalizzazione'); ?></h3>
                 </div>
-<?php
-                echo '
-                <div class="col-md-3">';
-                    if (!empty($record['idreferente'])) {
-                        echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
-                    }
+                <div class="panel-body">
+                <?php
+                if (!empty($sede_anagrafica->gaddress) || (!empty($sede_anagrafica->lat) && !empty($sede_anagrafica->lng))) {
                     echo '
-                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.$record['idsede_destinazione'].'} ]}
-                </div>';
+                    <div id="map-edit" style="width: 100%;"></div>
 
-                // Conteggio numero articoli ddt in uscita
-                $articolo = $dbo->fetchArray('SELECT mg_articoli.id FROM ((mg_articoli INNER JOIN dt_righe_ddt ON mg_articoli.id=dt_righe_ddt.idarticolo) INNER JOIN dt_ddt ON dt_ddt.id=dt_righe_ddt.idddt) WHERE dt_ddt.id='.prepare($id_record));
-                $id_modulo_anagrafiche = Modules::get('Anagrafiche')['id'];
-                $id_plugin_sedi = Plugins::get('Sedi')['id'];
-                if ($dir == 'entrata') {
+                    <div class="clearfix"></div>
+                    <br>';
+
+                    // Navigazione diretta verso l'indirizzo
                     echo '
-                <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "help": "'.tr("Sedi di partenza dell'azienda").'" ]}
-                </div>
+                    <a class="btn btn-info btn-block" onclick="$(\'#map-edit\').height(235); caricaMappa(); $(this).hide();">
+                        <i class="fa fa-compass"></i> '.tr('Carica mappa').'
+                    </a>';
 
-                <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Destinazione merce').'", "name": "idsede_destinazione", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idsede_destinazione$", "help": "'.tr('Sedi del destinatario').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
-                </div>';
+                    // Navigazione diretta verso l'indirizzo
+                    echo '
+                    <a class="btn btn-info btn-block" onclick="calcolaPercorso()">
+                        <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
+                    </a>';
                 } else {
+                    // Navigazione diretta verso l'indirizzo
                     echo '
-                <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idsede_partenza$", "help": "'.tr('Sedi del mittente').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
-                </div>
+                    <a class="btn btn-info btn-block" onclick="calcolaPercorso()">
+                        <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
+                    </a>';
 
-                <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Destinazione merce').'", "name": "idsede_destinazione", "ajax-source": "sedi_azienda", "value": "$idsede_destinazione$", "help": "'.tr("Sedi di arrivo dell'azienda").'" ]}
-                </div>';
+                    // Ricerca diretta su Mappa
+                    echo '
+                    <a class="btn btn-info btn-block" onclick="cercaOpenStreetMap()">
+                        <i class="fa fa-map-marker"></i> '.tr('Cerca su Mappa').'
+                        '.((!empty($sede_anagrafica->lat)) ? tr(' (GPS)') : '').'
+                    </a>';
                 }
-                ?>
-            </div>
-            <hr>
 
+        echo '
+                </div>
+            </div>
+
+            <script>
+                function modificaPosizione() {
+                    openModal("'.tr('Modifica posizione').'", "'.$module->fileurl('modals/posizione.php').'?id_module='.$id_module.'&id_record='.$id_record.'");
+                }
+
+                function cercaOpenStreetMap() {
+                    const indirizzo = getIndirizzoAnagrafica();
+                    if (indirizzo[0] && indirizzo[1]) {
+                        window.open("https://www.openstreetmap.org/?mlat=" + indirizzo[0] + "&mlon=" + indirizzo[1] + "#map=12/" + indirizzo[0] + "/" + indirizzo[1]);
+                    } else {
+                        window.open("https://www.openstreetmap.org/search?query=" + indirizzo[2]);
+                    }
+                }
+
+                function calcolaPercorso() {
+                    const indirizzo_partenza = getIndirizzoAzienda();
+                    const indirizzo_destinazione = getIndirizzoAnagrafica();
+                    window.open("https://www.openstreetmap.org/directions?engine=fossgis_osrm_car&route=" + indirizzo_partenza + ";" + indirizzo_destinazione[0] + "," + indirizzo_destinazione[1]);
+                }
+
+                function getIndirizzoAzienda() {
+                    const indirizzo = "'.$sede_azienda->indirizzo.'";
+                    const citta = "'.$sede_azienda->citta.'";
+
+                    const lat = parseFloat("'.$sede_azienda->lat.'");
+                    const lng = parseFloat("'.$sede_azienda->lng.'");
+
+                    return lat + "," + lng;
+                }
+
+                function getIndirizzoAnagrafica() {
+                    const indirizzo = "'.$sede_anagrafica->indirizzo.'";
+                    const citta = "'.$sede_anagrafica->citta.'";
+
+                    const lat = parseFloat("'.$sede_anagrafica->lat.'");
+                    const lng = parseFloat("'.$sede_anagrafica->lng.'");
+
+                    const indirizzo_default = encodeURI(indirizzo) + "," + encodeURI(citta);
+
+                    return [lat, lng, indirizzo_default];
+                }
+
+                var map = null;
+                function caricaMappa() {
+                    const lat = parseFloat("'.$sede_anagrafica->lat.'");
+                    const lng = parseFloat("'.$sede_anagrafica->lng.'");
+                
+                    var container = L.DomUtil.get("map-edit"); 
+                    if(container._leaflet_id != null){ 
+                        map.eachLayer(function (layer) {
+                            if(layer instanceof L.Marker) {
+                                map.removeLayer(layer);
+                            }
+                        });
+                    } else {
+                        map = L.map("map-edit", {
+                            gestureHandling: true
+                        });
+                
+                        L.tileLayer("'.setting('Tile server OpenStreetMap').'", {
+                            maxZoom: 17,
+                            attribution: "© OpenStreetMap"
+                        }).addTo(map); 
+                    }
+                
+                    var icon = new L.Icon({
+                        iconUrl: globals.rootdir + "/assets/dist/img/marker-icon.png",
+                        shadowUrl:globals.rootdir + "/assets/dist/img/leaflet/marker-shadow.png",
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowSize: [41, 41]
+                    });
+
+                    var marker = L.marker([lat, lng], {
+                        icon: icon
+                    }).addTo(map);
+                
+                    map.setView([lat, lng], 10);
+                }
+            </script>';
+            ?>
+        </div>
+    </div>
+
+     <!-- DATI DDT -->
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title"><?php echo tr('Dati ddt'); ?></h3>
+        </div>
+
+        <div class="panel-body">
 			<div class="row">
 				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Aspetto beni'); ?>", "name": "idaspettobeni", "value": "$idaspettobeni$", "ajax-source": "aspetto-beni", "icon-after": "add|<?php echo Modules::get('Aspetto beni')['id']; ?>|||<?php echo $block_edit ? 'disabled' : ''; ?>" ]}
@@ -306,11 +459,11 @@ if ($dir == 'entrata') {
 	</div>
 
     <?php
-        if (!empty($record['id_documento_fe']) || !empty($record['num_item']) || !empty($record['codice_cig']) || !empty($record['codice_cup'])) {
-            $collapsed = '';
-        } else {
-            $collapsed = ' collapsed-box';
-        }
+    if (!empty($record['id_documento_fe']) || !empty($record['num_item']) || !empty($record['codice_cig']) || !empty($record['codice_cup'])) {
+        $collapsed = '';
+    } else {
+        $collapsed = ' collapsed-box';
+    }
     ?>
 
     <!-- Fatturazione Elettronica PA-->

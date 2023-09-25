@@ -23,7 +23,6 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Export\CSV;
 
 include_once __DIR__.'/../../core.php';
-$google = setting('Google Maps API key');
 
 switch (post('op')) {
     case 'delete-bulk':
@@ -44,21 +43,26 @@ switch (post('op')) {
         break;
 
     case 'ricerca-coordinate':
-        $curl = new CurlHttpAdapter();
-        $geocoder = new GoogleMaps($curl, null, null, true, $google);
-
         foreach ($id_records as $id) {
             $anagrafica = Anagrafica::find($id);
             if (empty($anagrafica->lat) && empty($anagrafica->lng) && !empty($anagrafica->sedeLegale->citta) && !empty($anagrafica->sedeLegale->cap)) {
-                $indirizzo = $anagrafica->sedeLegale->citta.' '.$anagrafica->sedeLegale->cap;
+                $indirizzo = urlencode($anagrafica->sedeLegale->citta.' '.$anagrafica->sedeLegale->cap);
 
-                // Ricerca indirizzo
-                $address = $geocoder->geocode($indirizzo)->first();
-                $coordinates = $address->getCoordinates();
+                // TODO: da riscrivere con Guzzle e spostare su hook
+                $ch = curl_init();
+                $url = "https://nominatim.openstreetmap.org/search.php?q=".$indirizzo."&format=jsonv2";
+                $user_agent = 'traccar';
+                curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
+                curl_setopt($ch, CURLOPT_URL, $url);
+                curl_setopt($ch, CURLOPT_HEADER, 0);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                $data = json_decode(curl_exec($ch));
+                curl_close($ch);
 
                 // Salvataggio informazioni
-                $anagrafica->lat = $coordinates->getLatitude();
-                $anagrafica->lng = $coordinates->getLongitude();
+                $anagrafica->gaddress = $data[0]->display_name;
+                $anagrafica->lat = $data[0]->lat;
+                $anagrafica->lng = $data[0]->lon;
                 $anagrafica->save();
             }
         }
@@ -114,7 +118,7 @@ $operations['export-csv'] = [
     ],
 ];
 
-if (App::debug() && $google) {
+if (App::debug()) {
     $operations['ricerca-coordinate'] = [
         'text' => '<span><i class="fa fa-map"></i> '.tr('Ricerca coordinate').'</span>',
         'data' => [

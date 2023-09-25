@@ -690,7 +690,7 @@ class Prints
 
             // Impostazione footer per l'ultima pagina
             if (!empty($options['last-page-footer'])) {
-                $mpdf->WriteHTML('<div class="fake-footer">'.$foot.'</div>');
+                $mpdf->WriteHTML('<div class="hidden">'.$foot.'</div>');
 
                 $mpdf->WriteHTML('<div style="position:absolute; bottom: 13mm; margin-right: '.($settings['margins']['right']).'mm">'.$foot.'</div>');
             }

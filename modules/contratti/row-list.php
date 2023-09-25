@@ -342,7 +342,11 @@ if (!$block_edit && sizeof($righe) > 0) {
         </button>
 
         <button type="button" class="btn btn-xs btn-default disabled" id="confronta_righe" onclick="confrontaRighe(getSelectData());">
-            Confronta prezzi
+            '.tr('Confronta prezzi').'
+        </button>
+
+        <button type="button" class="btn btn-xs btn-default disabled" id="aggiorna_righe" onclick="aggiornaRighe(getSelectData());">
+            '.tr('Aggiorna prezzi').'
         </button>
     </div>';
 }
@@ -381,6 +385,34 @@ function confrontaRighe(id) {
     openModal("'.tr('Confronta prezzi').'", "'.$module->fileurl('modals/confronta_righe.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&righe=" + id);
 }
 
+function aggiornaRighe(id) {
+    swal({
+        title: "'.tr('Aggiornare prezzi di queste righe?').'",
+        html: "'.tr('Confermando verranno aggiornati i prezzi delle righe secondo i listini ed i prezzi predefiniti collegati all\'articolo e ai piani sconto collegati all\'anagrafica.').'",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "'.tr('Sì').'"
+    }).then(function () {
+        $.ajax({
+            url: globals.rootdir + "/actions.php",
+            type: "POST",
+            data: {
+                id_module: globals.id_module,
+                id_record: globals.id_record,
+                op: "update-price",
+                righe: id,
+            },
+            success: function (response) {
+                renderMessages();
+                caricaRighe(null);
+            },
+            error: function() {
+                renderMessages();
+                caricaRighe(null);
+            }
+        });
+    }).catch(swal.noop);
+}
 
 function rimuoviRiga(id) {
     swal({
@@ -401,11 +433,12 @@ function rimuoviRiga(id) {
                 righe: id,
             },
             success: function (response) {
-                content_was_modified = false;
-                location.reload();
+                renderMessages();
+                caricaRighe(null);
             },
             error: function() {
-                location.reload();
+                renderMessages();
+                caricaRighe(null);
             }
         });
     }).catch(swal.noop);
@@ -430,10 +463,12 @@ function duplicaRiga(id) {
                 righe: id,
             },
             success: function (response) {
-                location.reload();
+                renderMessages();
+                caricaRighe(null);
             },
             error: function() {
-                location.reload();
+                renderMessages();
+                caricaRighe(null);
             }
         });
     }).catch(swal.noop);
@@ -470,10 +505,12 @@ $(".check").on("change", function() {
         $("#elimina_righe").removeClass("disabled");
         $("#duplica_righe").removeClass("disabled");
         $("#confronta_righe").removeClass("disabled");
+        $("#aggiorna_righe").removeClass("disabled");
     } else {
         $("#elimina_righe").addClass("disabled");
         $("#duplica_righe").addClass("disabled");
         $("#confronta_righe").addClass("disabled");
+        $("#aggiorna_righe").addClass("disabled");
     }
 });
 

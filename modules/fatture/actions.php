@@ -1055,23 +1055,100 @@ switch ($op) {
         break;
 
     case 'edit-price':
-        $righe = $post['righe'];
+        $righe = (array) post('righe');
         $numero_totale = 0;
 
         foreach ($righe as $riga) {
             if (($riga['id']) != null) {
                 $articolo = Articolo::find($riga['id']);
-            } else {
-                $originale = ArticoloOriginale::find(post('idarticolo'));
-                $articolo = Articolo::build($fattura, $originale);
-                $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
             }
 
-            if ($articolo['prezzo_unitario'] != $riga['price']) {
+            if ($articolo->prezzo_unitario != $riga['price']) {
                 $articolo->setPrezzoUnitario($riga['price'], $articolo->idiva);
                 $articolo->save();
                 ++$numero_totale;
             }
+        }
+
+        if ($numero_totale > 1) {
+            flash()->info(tr('_NUM_ prezzi modificati!', [
+                '_NUM_' => $numero_totale,
+            ]));
+        } elseif ($numero_totale == 1) {
+            flash()->info(tr('_NUM_ prezzo modificato!', [
+                '_NUM_' => $numero_totale,
+            ]));
+        } else {
+            flash()->warning(tr('Nessun prezzo modificato!'));
+        }
+
+        break;
+
+    case 'update-price':
+        $id_anagrafica = $fattura->idanagrafica;
+        $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
+        $numero_totale = 0;
+        $id_righe = (array) post('righe');
+
+        foreach ($id_righe as $id_riga) {
+            $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
+
+            // CALCOLO PREZZO UNITARIO
+            $prezzo_unitario = 0;
+            $sconto = 0;
+            if ($riga->isArticolo()) {
+                // Prezzi netti clienti / listino fornitore
+                $prezzi = $dbo->fetchArray('SELECT minimo, massimo, sconto_percentuale, '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario
+                FROM mg_prezzi_articoli
+                WHERE id_articolo = '.prepare($riga->idarticolo).' AND dir = '.prepare($dir).' AND id_anagrafica = '.prepare($id_anagrafica));
+
+                if ($prezzi) {
+                    foreach ($prezzi as $prezzo) {
+                        if ($riga->qta >= $prezzo['minimo'] && $riga->qta <= $prezzo['massimo']) {
+                            $prezzo_unitario = $prezzo['prezzo_unitario'];
+                            $sconto = $prezzo['sconto_percentuale'];
+                            continue;
+                        }
+
+                        if ($prezzo['minimo'] == null && $prezzo['massimo'] == null && $prezzo['prezzo_unitario'] != null) {
+                            $prezzo_unitario = $prezzo['prezzo_unitario'];
+                            $sconto = $prezzo['sconto_percentuale'];
+                            continue;
+                        }
+                    }
+                }
+                if (empty($prezzo_unitario)) {
+                    // Prezzi listini clienti
+                    $listino = $dbo->fetchOne('SELECT sconto_percentuale AS sconto_percentuale_listino, '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino
+                    FROM mg_listini
+                    LEFT JOIN mg_listini_articoli ON mg_listini.id=mg_listini_articoli.id_listino
+                    LEFT JOIN an_anagrafiche ON mg_listini.id=an_anagrafiche.id_listino
+                    WHERE mg_listini.data_attivazione<=NOW() AND mg_listini_articoli.data_scadenza>=NOW() AND mg_listini.attivo=1 AND id_articolo = '.prepare($riga->idarticolo).' AND dir = '.prepare($dir).' AND idanagrafica = '.prepare($id_anagrafica));
+
+                    if ($listino) {
+                        $prezzo_unitario = $listino['prezzo_unitario_listino'];
+                        $sconto = $listino['sconto_percentuale_listino'];
+                    }
+                }
+                if ($dir == 'entrata') {
+                    $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $riga->articolo->prezzo_vendita_ivato : $riga->articolo->prezzo_vendita);
+                    $riga->costo_unitario = $riga->articolo->prezzo_acquisto;
+                } else {
+                    $prezzo_unitario = $prezzo_unitario ?: $riga->articolo->prezzo_acquisto;
+                }
+                $riga->setPrezzoUnitario($prezzo_unitario, $riga->idiva);
+            }
+
+            // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
+            $join = ($dir == 'entrata' ? 'id_piano_sconto_vendite' : 'id_piano_sconto_acquisti');
+            $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.'.$join.'=mg_piani_sconto.id WHERE idanagrafica='.prepare($id_anagrafica));
+            if (!empty($piano_sconto)) {
+                $sconto = parseScontoCombinato($piano_sconto['prc_guadagno'].'+'.$sconto);
+            }
+
+            $riga->setSconto($sconto, 'PRC');
+            $riga->save();
+            ++$numero_totale;
         }
 
         if ($numero_totale > 1) {

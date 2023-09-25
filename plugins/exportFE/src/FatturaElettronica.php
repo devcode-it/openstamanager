@@ -849,6 +849,11 @@ class FatturaElettronica
             'Sede' => static::getSede($cliente),
         ];
 
+        // Riferimento Amministrazione
+        if (!empty($cliente->riferimento_amministrazione)) {
+            $result['RiferimentoAmministrazione'] = $cliente->riferimento_amministrazione;
+        }
+
         return $result;
     }
 

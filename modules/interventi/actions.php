@@ -75,7 +75,7 @@ switch (post('op')) {
 
         $tecnici_assegnati = (array) post('tecnici_assegnati');
 
-        $tecnici_presenti_array = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico', ['id_intervento' => $intervento->id]);
+        $tecnici_presenti_array = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico', [], ['id_intervento' => $intervento->id]);
 
         foreach ($tecnici_presenti_array as $tecnico_presente) {
             $tecnici_presenti[] = $tecnico_presente['id_tecnico'];
@@ -144,12 +144,12 @@ switch (post('op')) {
 
             $tecnici_intervento = [];
             if (!empty($stato['notifica_tecnico_sessione'])) {
-                $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'idtecnico', ['idintervento' => $id_record]);
+                $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'idtecnico', [], ['idintervento' => $id_record]);
             }
 
             $tecnici_assegnati = [];
             if (!empty($stato['notifica_tecnico_assegnato'])) {
-                $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS idtecnico', ['id_intervento' => $id_record]);
+                $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS idtecnico', [], ['id_intervento' => $id_record]);
             }
 
             $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
@@ -397,7 +397,6 @@ switch (post('op')) {
 
             // Eliminazione associazione interventi e my_impianti
             $dbo->query('DELETE FROM my_impianti_interventi WHERE idintervento='.prepare($id_record));
-
 
             flash()->info(tr('Intervento eliminato!'));
         } catch (InvalidArgumentException $e) {
@@ -703,8 +702,8 @@ switch (post('op')) {
                         }
 
                         if (!empty($stato['notifica_tecnici'])) {
-                            $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'idtecnico', ['idintervento' => $id_record]);
-                            $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS idtecnico', ['id_intervento' => $id_record]);
+                            $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'idtecnico', [], ['idintervento' => $id_record]);
+                            $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS idtecnico', [], ['id_intervento' => $id_record]);
                             $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
 
                             foreach ($tecnici as $tecnico) {
@@ -783,8 +782,8 @@ switch (post('op')) {
                                 }
 
                                 if (!empty($stato['notifica_tecnici'])) {
-                                    $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'idtecnico', ['idintervento' => $id_record]);
-                                    $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS idtecnico', ['id_intervento' => $id_record]);
+                                    $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'idtecnico', [], ['idintervento' => $id_record]);
+                                    $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS idtecnico', [], ['id_intervento' => $id_record]);
                                     $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
 
                                     foreach ($tecnici as $tecnico) {
@@ -995,7 +994,7 @@ switch (post('op')) {
 
                 // Copia degli impianti
                 if (!empty($copia_impianti)) {
-                    $impianti = $dbo->select('my_impianti_interventi', '*', ['idintervento' => $intervento->id]);
+                    $impianti = $dbo->select('my_impianti_interventi', '*', [], ['idintervento' => $intervento->id]);
                     foreach ($impianti as $impianto) {
                         $dbo->insert('my_impianti_interventi', [
                             'idintervento' => $id_record,
@@ -1003,7 +1002,7 @@ switch (post('op')) {
                         ]);
                     }
 
-                    $componenti = $dbo->select('my_componenti_interventi', '*', ['id_intervento' => $intervento->id]);
+                    $componenti = $dbo->select('my_componenti_interventi', '*', [], ['id_intervento' => $intervento->id]);
                     foreach ($componenti as $componente) {
                         $dbo->insert('my_componenti_interventi', [
                             'id_intervento' => $id_record,

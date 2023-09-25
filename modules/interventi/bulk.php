@@ -250,7 +250,7 @@ switch (post('op')) {
 
         // Copia degli impianti
         if (!empty($copia_impianti)) {
-            $impianti = $dbo->select('my_impianti_interventi', '*', ['idintervento' => $intervento->id]);
+            $impianti = $dbo->select('my_impianti_interventi', '*', [], ['idintervento' => $intervento->id]);
             foreach ($impianti as $impianto) {
                 $dbo->insert('my_impianti_interventi', [
                     'idintervento' => $id_record,
@@ -258,7 +258,7 @@ switch (post('op')) {
                 ]);
             }
 
-            $componenti = $dbo->select('my_componenti_interventi', '*', ['id_intervento' => $intervento->id]);
+            $componenti = $dbo->select('my_componenti_interventi', '*', [], ['id_intervento' => $intervento->id]);
             foreach ($componenti as $componente) {
                 $dbo->insert('my_componenti_interventi', [
                     'id_intervento' => $id_record,
@@ -288,7 +288,6 @@ switch (post('op')) {
 
                 // Eliminazione associazione interventi e my_impianti
                 $dbo->query('DELETE FROM my_impianti_interventi WHERE idintervento='.prepare($id_record));
-
             } catch (InvalidArgumentException $e) {
             }
         }
@@ -326,7 +325,7 @@ switch (post('op')) {
                 }
 
                 // Aggiungo email referenti in base alla mansione impostata nel template
-                $mansioni = $dbo->select('em_mansioni_template', 'idmansione', ['id_template' => $template->id]);
+                $mansioni = $dbo->select('em_mansioni_template', 'idmansione', [], ['id_template' => $template->id]);
                 foreach ($mansioni as $mansione) {
                     $referenti = $dbo->table('an_referenti')->where('idmansione', $mansione['idmansione'])->where('idanagrafica', $id_anagrafica)->where('email', '!=', '')->get();
                     if (!$referenti->isEmpty() && $creata_mail == false) {

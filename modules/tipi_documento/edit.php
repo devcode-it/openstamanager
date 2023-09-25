@@ -29,34 +29,43 @@ include_once __DIR__.'/../../core.php';
         </div>
 
         <div class="col-md-3">
-            {[ "type": "select", "label": "<?php echo tr('Direzione'); ?>", "name": "dir", "value": "$dir$", "values": "list=\"\": \"Non specificato\", \"entrata\": \"<?php echo tr('Entrata'); ?>\", \"uscita\": \"<?php echo tr('Uscita'); ?>\"", "required": 1 ]}
+            {[ "type": "select", "label": "<?php echo tr('Direzione'); ?>", "name": "dir", "value": "$dir$", "values": "list=\"\": \"Non specificato\", \"entrata\": \"<?php echo tr('Entrata'); ?>\", \"uscita\": \"<?php echo tr('Uscita'); ?>\"", "required": 1]}
         </div>
 
         <div class="col-md-3">
             {[ "type": "select", "label": "<?php echo tr('Codice tipo documento FE'); ?>", "name": "codice_tipo_documento_fe", "value": "$codice_tipo_documento_fe$", "values": "query=SELECT codice AS id, CONCAT_WS(' - ', codice, descrizione) AS descrizione FROM fe_tipi_documento", "required": 1 ]}
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
             {[ "type": "checkbox", "label": "<?php echo tr('Tipo documento predefinito'); ?>", "name": "predefined", "value": "<?php echo intval($record['predefined']); ?>", "help":"<?php echo tr('Impostare questo tipo di documento predefinto per le fatture di '); echo ($record['dir'] == 'entrata') ? tr('Vendita') : tr('Acquisto'); ?>." ]}
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
             {[ "type": "checkbox", "label": "<?php echo tr('Attivo'); ?>", "name": "enabled", "disabled": "<?php echo ($record['predefined'] && $record['enabled']) ? 1 : 0; ?>",  "value": "<?php echo intval($record['enabled']); ?>" ]}
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
             {[ "type": "checkbox", "label": "<?php echo tr('Reversed'); ?>", "name": "reversed", "value": "<?php echo intval($record['reversed']); ?>", "readonly": 1 ]}
         </div>
 
+        <?php
+        
+        $id_module_acquisti = database()->fetchOne('SELECT id FROM zz_modules WHERE title = "Fatture di acquisto"')['id'];
+        $id_module_vendite = database()->fetchOne('SELECT id FROM zz_modules WHERE title = "Fatture di vendita"')['id'];
+       
+        echo'
+		<div class="col-md-3">
+        
+			{[ "type": "select", "label": "'.tr('Sezionale predefinito').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $record['dir'] == 'entrata' ? $id_module_vendite : $id_module_acquisti, 'is_sezionale' => 1]).', "value": "$id_segment$" ]}
+		</div>
+
         <div class="col-md-12">
-            {[ "type": "text", "label": "<?php echo tr('Help'); ?>", "name": "help", "value": "$help$" ]}
+            {[ "type": "text", "label": "'.tr('Help').'", "name": "help", "value": "$help$" ]}
         </div>
 
     </div>
    
-</form>
-
-<?php
+</form>';
 // Collegamenti diretti (numerici)
 $numero_documenti = $dbo->fetchNum('SELECT id FROM co_documenti WHERE idtipodocumento='.prepare($id_record));
 
@@ -73,3 +82,4 @@ if (!empty($numero_documenti)) {
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
+

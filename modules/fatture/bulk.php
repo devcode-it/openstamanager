@@ -598,109 +598,6 @@ switch (post('op')) {
         break;
 }
 
-if (App::debug()) {
-    $operations['delete-bulk'] = [
-        'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span> <span class="label label-danger">beta</span>',
-    ];
-}
-
-$operations['export-csv'] = [
-    'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta selezionati').'</span>',
-    'data' => [
-        'msg' => tr('Vuoi esportare un CSV con le fatture selezionate?'),
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-success',
-        'blank' => true,
-    ],
-];
-
-$operations['copy-bulk'] = [
-    'text' => '<span><i class="fa fa-copy"></i> '.tr('Duplica selezionati').'</span>',
-    'data' => [
-        'msg' => tr('Vuoi davvero duplicare le righe selezionate?').'<br><br>{[ "type": "select", "label": "'.tr('Fattura in avanti di').'", "name": "skip_time", "required": 1, "values": "list=\"Giorno\":\"'.tr('Un giorno').'\", \"Settimana\":\"'.tr('Una settimana').'\", \"Mese\":\"'.tr('Un mese').'\", \"Anno\":\"'.tr('Un anno').'\" ", "value": "Giorno" ]}<br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_sezionale' => 1]).', "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'", "select-options-escape": true ]}<br>{[ "type": "checkbox", "label": "'.tr('Aggiungere i riferimenti ai documenti esterni?').'", "placeholder": "'.tr('Aggiungere i riferimenti ai documenti esterni?').'", "name": "riferimenti" ]}',
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-warning',
-    ],
-];
-
-$operations['registrazione-contabile'] = [
-    'text' => '<span><i class="fa fa-calculator"></i> '.tr('Registrazione contabile').'</span>',
-    'data' => [
-        'title' => tr('Registrazione contabile'),
-        'type' => 'modal',
-        'origine' => 'fatture',
-        'url' => base_path().'/add.php?id_module='.Modules::get('Prima nota')['id'],
-    ],
-];
-
-$operations['exportFE-bulk'] = [
-    'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta stampe FE').'</span>',
-    'data' => [
-        'title' => '',
-        'msg' => tr('Vuoi davvero esportare i PDF delle fatture elettroniche selezionate in un archivio ZIP?'),
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-warning',
-        'blank' => true,
-    ],
-];
-
-if ($module->name == 'Fatture di vendita') {
-    $operations['genera-xml'] = [
-        'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Genera fatture elettroniche').'</span>',
-        'data' => [
-            'title' => '',
-            'msg' => tr('Generare le fatture elettroniche per i documenti selezionati?<br><small>(le fatture dovranno trovarsi nello stato <i class="fa fa-clock-o text-info" title="Emessa"></i> <small>Emessa</small> e non essere mai state generate)</small>'),
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-warning',
-            'blank' => true,
-        ],
-    ];
-
-    $operations['export-bulk'] = [
-        'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta stampe').'</span>',
-        'data' => [
-            'title' => '',
-            'msg' => tr('Vuoi davvero esportare i PDF delle fatture selezionate in un archivio ZIP?'),
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-warning',
-            'blank' => true,
-        ],
-    ];
-
-    $operations['check-bulk'] = [
-        'text' => '<span><i class="fa fa-list-alt"></i> '.tr('Controlla fatture elettroniche').'</span>',
-        'data' => [
-            'title' => '',
-            'msg' => tr('Controllare corrispondenza tra XML e fattura di vendita?<br><small>(le fatture dovranno essere state generate)</small>'),
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-warning',
-            'blank' => true,
-        ],
-    ];
-}
-
-$operations['export-xml-bulk'] = [
-    'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta XML').'</span>',
-    'data' => [
-        'title' => '',
-        'msg' => tr('Vuoi davvero esportare le fatture elettroniche selezionate in un archivio ZIP?'),
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-warning',
-        'blank' => true,
-    ],
-];
-
-$operations['export-ricevute-bulk'] = [
-    'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta ricevute').'</span>',
-    'data' => [
-        'title' => '',
-        'msg' => tr('Vuoi davvero esportare le ricevute selezionate in un archivio ZIP?'),
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-warning',
-        'blank' => true,
-    ],
-];
-
 $operations['change-bank'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna banca').'</span>',
     'data' => [
@@ -711,18 +608,6 @@ $operations['change-bank'] = [
         'class' => 'btn btn-lg btn-warning',
     ],
 ];
-
-if ($dir == 'entrata') {
-    $operations['change-stato'] = [
-        'text' => '<span><i class="fa fa-refresh"></i> '.tr('Emetti fatture').'</span>',
-        'data' => [
-            'title' => tr('Emissione fatture'),
-            'msg' => tr('Vuoi emettere le fatture selezionate? Verranno emesse solo le fatture in Bozza'),
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-warning',
-        ],
-    ];
-}
 
 $operations['cambia-sezionale'] = [
     'text' => '<span><i class="fa fa-tags"></i> '.tr('Cambia sezionale'),
@@ -747,7 +632,127 @@ if (Interaction::isEnabled()) {
             'class' => 'btn btn-lg btn-warning',
         ],
     ];
+}
 
+if ($module->name == 'Fatture di vendita') {
+    $operations['check-bulk'] = [
+        'text' => '<span><i class="fa fa-list-alt"></i> '.tr('Controlla fatture elettroniche').'</span>',
+        'data' => [
+            'title' => '',
+            'msg' => tr('Controllare corrispondenza tra XML e fattura di vendita?<br><small>(le fatture dovranno essere state generate)</small>'),
+            'button' => tr('Procedi'),
+            'class' => 'btn btn-lg btn-warning',
+            'blank' => true,
+        ],
+    ];
+}
+
+$operations['copy-bulk'] = [
+    'text' => '<span><i class="fa fa-copy"></i> '.tr('Duplica selezionati').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi davvero duplicare le righe selezionate?').'<br><br>{[ "type": "select", "label": "'.tr('Fattura in avanti di').'", "name": "skip_time", "required": 1, "values": "list=\"Giorno\":\"'.tr('Un giorno').'\", \"Settimana\":\"'.tr('Una settimana').'\", \"Mese\":\"'.tr('Un mese').'\", \"Anno\":\"'.tr('Un anno').'\" ", "value": "Giorno" ]}<br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_sezionale' => 1]).', "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'", "select-options-escape": true ]}<br>{[ "type": "checkbox", "label": "'.tr('Aggiungere i riferimenti ai documenti esterni?').'", "placeholder": "'.tr('Aggiungere i riferimenti ai documenti esterni?').'", "name": "riferimenti" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
+
+if (App::debug()) {
+    $operations['delete-bulk'] = [
+        'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span> <span class="label label-danger">beta</span>',
+    ];
+}
+
+if ($dir == 'entrata') {
+    $operations['change-stato'] = [
+        'text' => '<span><i class="fa fa-refresh"></i> '.tr('Emetti fatture').'</span>',
+        'data' => [
+            'title' => tr('Emissione fatture'),
+            'msg' => tr('Vuoi emettere le fatture selezionate? Verranno emesse solo le fatture in Bozza'),
+            'button' => tr('Procedi'),
+            'class' => 'btn btn-lg btn-warning',
+        ],
+    ];
+}
+
+$operations['export-csv'] = [
+    'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta selezionati').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi esportare un CSV con le fatture selezionate?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-success',
+        'blank' => true,
+    ],
+];
+
+if ($module->name == 'Fatture di vendita') {
+    $operations['export-bulk'] = [
+        'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta stampe').'</span>',
+        'data' => [
+            'title' => '',
+            'msg' => tr('Vuoi davvero esportare i PDF delle fatture selezionate in un archivio ZIP?'),
+            'button' => tr('Procedi'),
+            'class' => 'btn btn-lg btn-warning',
+            'blank' => true,
+        ],
+    ];
+}
+$operations['exportFE-bulk'] = [
+    'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta stampe FE').'</span>',
+    'data' => [
+        'title' => '',
+        'msg' => tr('Vuoi davvero esportare i PDF delle fatture elettroniche selezionate in un archivio ZIP?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => true,
+    ],
+];
+
+$operations['export-ricevute-bulk'] = [
+    'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta ricevute').'</span>',
+    'data' => [
+        'title' => '',
+        'msg' => tr('Vuoi davvero esportare le ricevute selezionate in un archivio ZIP?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => true,
+    ],
+];
+
+$operations['export-xml-bulk'] = [
+    'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta XML').'</span>',
+    'data' => [
+        'title' => '',
+        'msg' => tr('Vuoi davvero esportare le fatture elettroniche selezionate in un archivio ZIP?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => true,
+    ],
+];
+
+if ($module->name == 'Fatture di vendita') {
+    $operations['genera-xml'] = [
+        'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Genera fatture elettroniche').'</span>',
+        'data' => [
+            'title' => '',
+            'msg' => tr('Generare le fatture elettroniche per i documenti selezionati?<br><small>(le fatture dovranno trovarsi nello stato <i class="fa fa-clock-o text-info" title="Emessa"></i> <small>Emessa</small> e non essere mai state generate)</small>'),
+            'button' => tr('Procedi'),
+            'class' => 'btn btn-lg btn-warning',
+            'blank' => true,
+        ],
+    ];
+}
+
+$operations['registrazione-contabile'] = [
+    'text' => '<span><i class="fa fa-calculator"></i> '.tr('Registrazione contabile').'</span>',
+    'data' => [
+        'title' => tr('Registrazione contabile'),
+        'type' => 'modal',
+        'origine' => 'fatture',
+        'url' => base_path().'/add.php?id_module='.Modules::get('Prima nota')['id'],
+    ],
+];
+
+if (Interaction::isEnabled()) {
     $operations['verify-notifiche'] = [
         'text' => '<i class="fa fa-question-circle"></i> '.tr('Verifica notifiche').'</span>',
         'data' => [

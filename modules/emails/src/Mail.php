@@ -187,13 +187,12 @@ class Mail extends Model
 
         $id_templates = [];
 
-        foreach($templates as $template) {
+        foreach ($templates as $template) {
             $id_templates[] = $template->id;
         }
 
         database()->table('em_emails')->where('id_record', $data['id_record'])->whereIn('id_template', $id_templates)->delete();
     }
-
 
     /* Relazioni Eloquent */
 

@@ -47,12 +47,12 @@ if (isset($id_record)) {
         co_statidocumento.descrizione AS `stato`,
         co_tipidocumento.descrizione AS `descrizione_tipo`,
         co_tipidocumento.id AS `idtipodocumento`,
-        (SELECT is_fiscale FROM zz_segments WHERE id = id_segment) AS is_fiscale,
+        (SELECT is_fiscale FROM zz_segments WHERE zz_segments.id = co_documenti.id_segment) AS is_fiscale,
         (SELECT descrizione FROM co_ritenutaacconto WHERE id=idritenutaacconto) AS ritenutaacconto_desc,
         (SELECT descrizione FROM co_rivalse WHERE id=idrivalsainps) AS rivalsainps_desc,
         (SELECT descrizione FROM dt_causalet WHERE id=idcausalet) AS causale_desc
     FROM co_documenti
-        LEFT OUTER JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id
+        LEFT JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id
         INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica
         INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id
         LEFT JOIN co_pagamenti ON co_documenti.idpagamento=co_pagamenti.id

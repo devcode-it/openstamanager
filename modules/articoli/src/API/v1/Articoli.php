@@ -30,13 +30,37 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
 {
     public function retrieve($request)
     {
-        $query = 'SELECT *,
-            (SELECT nome FROM mg_categorie WHERE id = mg_articoli.id_categoria) AS categoria,
-            (SELECT nome FROM mg_categorie WHERE id = mg_articoli.id_sottocategoria) AS sottocategoria
-        FROM mg_articoli WHERE attivo = 1 AND deleted_at IS NULL';
+        $table = 'mg_articoli';
+        $select = [
+            'mg_articoli.*',
+            'categorie.nome AS categoria',
+            'sottocategorie.nome AS sottocategoria',
+        ];
+
+        $joins[] = [
+            'mg_categorie AS categorie',
+            'mg_articoli.id_categoria',
+            'categorie.id',
+        ];
+        $joins[] = [
+            'mg_categorie AS sottocategorie',
+            'mg_articoli.id_sottocategoria',
+            'sottocategorie.id',
+        ];
+
+        $where[] = ['mg_articoli.deleted_at', '=', null];
+
+        $whereraw = [];
+
+        $order['mg_articoli.id'] = 'ASC';
 
         return [
-            'query' => $query,
+            'table' => $table,
+            'select' => $select,
+            'joins' => $joins,
+            'where' => $where,
+            'whereraw' => $whereraw,
+            'order' => $order,
         ];
     }
 

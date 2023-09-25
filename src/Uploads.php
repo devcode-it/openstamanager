@@ -37,7 +37,7 @@ class Uploads
     {
         $database = database();
 
-        $uploads = $database->select('zz_files', '*', [
+        $uploads = $database->select('zz_files', '*', [], [
             'id_module' => !empty($data['id_module']) && empty($data['id_plugin']) ? $data['id_module'] : null,
             'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
             'id_record' => $data['id_record'],

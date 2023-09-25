@@ -27,15 +27,19 @@ class Impianti extends Resource implements RetrieveInterface, CreateInterface
 {
     public function retrieve($request)
     {
-        $query = 'SELECT idimpianto AS id_impianto, idintervento AS id_intervento FROM my_impianti_interventi WHERE `idintervento` = :id_intervento';
+        $table = 'my_impianti_interventi';
 
-        $parameters = [
-            ':id_intervento' => $request['id_intervento'],
+        $select = [
+            'idimpianto AS id_impianto',
+            'idintervento AS id_intervento',
         ];
 
+        $where[] = ['my_impianti_interventi.idintervento', '=', $request['id_intervento']];
+
         return [
-            'query' => $query,
-            'parameters' => $parameters,
+            'table' => $table,
+            'select' => $select,
+            'where' => $where,
         ];
     }
 
@@ -44,14 +48,13 @@ class Impianti extends Resource implements RetrieveInterface, CreateInterface
         $data = $request['data'];
         $id_record = $data['id_intervento'];
 
-        $database = database();
-        $database->query('DELETE FROM my_impianti_interventi WHERE `idintervento` = :id_intervento', [
+        database()->query('DELETE FROM my_impianti_interventi WHERE `idintervento` = :id_intervento', [
             ':id_intervento' => $id_record,
         ]);
 
         $impianti = $data['impianti'];
         foreach ($impianti as $impianto) {
-            $database->insert('my_impianti_interventi', [
+            database()->insert('my_impianti_interventi', [
                 'idintervento' => $id_record,
                 'idimpianto' => $impianto,
             ]);

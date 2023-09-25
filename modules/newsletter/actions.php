@@ -52,10 +52,10 @@ switch (filter('op')) {
 
         flash()->info(tr('Campagna newsletter salvata!'));
 
-        if($newsletter->state = "OK") {
-            $newsletter->completed_at = $newsletter -> updated_at;
-        };
-        
+        if ($newsletter->state = 'OK') {
+            $newsletter->completed_at = $newsletter->updated_at;
+        }
+
         $newsletter->save();
 
         break;
@@ -187,7 +187,7 @@ switch (filter('op')) {
             ];
 
             // Aggiornamento destinatari
-            $registrato = $database->select('em_newsletter_receiver', '*', $data);
+            $registrato = $database->select('em_newsletter_receiver', '*', [], $data);
             if (empty($registrato)) {
                 $database->insert('em_newsletter_receiver', $data);
             }

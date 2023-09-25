@@ -153,6 +153,11 @@ foreach ($righe as $riga) {
                     <br><small class="label label-danger">'.$text.'</small>';
         }
 
+        $tiposconto = '';
+        if ($riga['sconto'] == 0) {
+            $tipo_sconto = (setting('Tipo di sconto predefinito') == '%' ? 'PRC' : 'UNT');
+        }
+
         echo '
                 </td>';
 
@@ -160,7 +165,7 @@ foreach ($righe as $riga) {
         if (!$block_edit) {
             echo '
                 <td class="text-center">
-                    {[ "type": "number", "name": "sconto_'.$riga->id.'", "value": "'.($riga->sconto_percentuale ?: $riga->sconto_unitario_corrente).'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "choice|untprc|'.$riga->tipo_sconto.'" ]}
+                    {[ "type": "number", "name": "sconto_'.$riga->id.'", "value": "'.($riga->sconto_percentuale ?: $riga->sconto_unitario_corrente).'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "choice|untprc|'.($tipo_sconto ?: $riga->tipo_sconto).'" ]}
                 </td>';
         }
 

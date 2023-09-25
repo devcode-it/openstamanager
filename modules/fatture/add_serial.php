@@ -151,7 +151,7 @@ if ($dir == 'entrata') {
                 $pos = 'ord';
             }
 
-            $r = $dbo->select($data[$pos]['table'], $data[$pos]['id'], ['id' => $res[0][str_replace('id', 'id_riga_', $data[$pos]['id'])]]);
+            $r = $dbo->select($data[$pos]['table'], $data[$pos]['id'], [], ['id' => $res[0][str_replace('id', 'id_riga_', $data[$pos]['id'])]]);
 
             echo '
         '.Modules::link($modulo, $r[0][$data[$pos]['id']], tr('Visualizza vendita'), null);

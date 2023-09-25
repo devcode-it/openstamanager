@@ -79,7 +79,7 @@ switch (post('op')) {
 
         $id_record = $tipo->id;
 
-        $fasce_orarie = $dbo->select('in_fasceorarie', '*', ['deleted_at' => null]);
+        $fasce_orarie = $dbo->select('in_fasceorarie', '*', [], ['deleted_at' => null]);
         foreach ($fasce_orarie as $fascia_oraria) {
             $dbo->insert('in_fasceorarie_tipiintervento', [
                 'idfasciaoraria' => $fascia_oraria['id'],

@@ -24,81 +24,53 @@ use API\Interfaces\DeleteInterface;
 use API\Interfaces\RetrieveInterface;
 use API\Interfaces\UpdateInterface;
 use API\Resource;
-use Modules;
 use Modules\Anagrafiche\Anagrafica;
 
 class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface, UpdateInterface, DeleteInterface
 {
     public function retrieve($request)
     {
-        $database = database();
+        $table = 'an_anagrafiche';
 
-        $query = $database->table('an_anagrafiche')
-        ->leftJoin('an_nazioni', 'an_anagrafiche.id_nazione', '=', 'an_nazioni.id')
-        ->select(
-            'an_anagrafiche.ragione_sociale',
-            'an_anagrafiche.piva',
-            'an_anagrafiche.codice_fiscale',
-            'an_anagrafiche.indirizzo',
-            'an_anagrafiche.indirizzo2',
-            'an_anagrafiche.citta',
-            'an_anagrafiche.cap',
-            'an_anagrafiche.provincia',
-            'an_anagrafiche.km',
-            $database->raw('IFNULL(an_anagrafiche.lat, 0.00) AS latitudine'),
-            $database->raw('IFNULL(an_anagrafiche.lng, 0.00) AS longitudine'),
-            $database->raw('an_nazioni.nome AS nazione'),
-            'an_anagrafiche.telefono',
-            'an_anagrafiche.fax',
-            'an_anagrafiche.cellulare',
-            'an_anagrafiche.email',
-            'an_anagrafiche.sitoweb',
-            'an_anagrafiche.note',
-            'an_anagrafiche.idzona',
-            'an_anagrafiche.deleted_at'
-        )->orderBy('an_anagrafiche.ragione_sociale');
+        $select = [
+            'an_anagrafiche.*',
+            'an_nazioni.nome AS nazione',
+        ];
+
+        $joins[] = [
+            'an_nazioni',
+            'an_anagrafiche.id_nazione',
+            'an_nazioni.id',
+        ];
+
+        $where[] = ['an_anagrafiche.deleted_at', '=', null];
+
+        $order['an_anagrafiche.ragione_sociale'] = 'ASC';
 
         if ($request['resource'] != 'anagrafiche') {
             $type = 'Cliente';
 
-            $query = $query->whereRaw('an_anagrafiche.idanagrafica IN (SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica = (SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione = ?))', [$type]);
+            $joins[] = [
+                'an_tipianagrafiche_anagrafiche',
+                'an_anagrafiche.idanagrafica',
+                'an_tipianagrafiche_anagrafiche.idanagrafica',
+            ];
+
+            $joins[] = [
+                'an_tipianagrafiche',
+                'an_tipianagrafiche_anagrafiche.idtipoanagrafica',
+                'an_tipianagrafiche.idtipoanagrafica',
+            ];
+
+            $where[] = ['an_tipianagrafiche.descrizione', '=', $type];
         }
-
-        // Filtri da richiesta API
-        $allow_list = [
-            'idanagrafica',
-            'ragione_sociale',
-        ];
-        $conditions = array_intersect_key((array) $request['where'], array_flip($allow_list));
-
-        // Filtro per ID
-        if (!empty($conditions['idanagrafica'])) {
-            $query = $query->whereIn('an_anagrafiche.idanagrafica', (array) $conditions['idanagrafica']);
-        }
-
-        // Filtro per Ragione sociale
-        if (!empty($conditions['ragione_sociale'])) {
-            $query = $query->where('an_anagrafiche.ragione_sociale', 'like', '%'.$conditions['ragione_sociale'].'%');
-        }
-
-        // Filtri aggiuntivi predefiniti
-        $module = Modules::get('Anagrafiche');
-        $additionals = Modules::getAdditionals($module->id, false);
-        foreach ($additionals['WHR'] as $where) {
-            $query = $query->whereRaw($where);
-        }
-
-        foreach ($additionals['HVN'] as $having) {
-            $query = $query->havingRaw($having);
-        }
-
-        $total_count = $query->count();
 
         return [
-            'results' => $query->skip($request['page'] * $request['length'])
-                ->limit($request['length'])
-                ->get()->toArray(),
-            'total-count' => $total_count,
+            'table' => $table,
+            'select' => $select,
+            'joins' => $joins,
+            'where' => $where,
+            'order' => $order,
         ];
     }
 
@@ -119,14 +91,14 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
     {
         $anagrafica = Anagrafica::find($request['id']);
 
-        $result = $anagrafica->delete();
+        $anagrafica->delete();
     }
 
     public function update($request)
     {
         $data = $request['data'];
 
-        $anagrafica = Anagrafica::find($request['id']);
+        $anagrafica = Anagrafica::find($data['id']);
 
         if (isset($data['ragione_sociale'])) {
             $anagrafica->ragione_sociale = $data['ragione_sociale'];

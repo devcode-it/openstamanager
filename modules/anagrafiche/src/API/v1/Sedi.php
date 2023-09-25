@@ -26,8 +26,10 @@ class Sedi extends Resource implements RetrieveInterface
 {
     public function retrieve($request)
     {
+        $table = 'an_sedi';
+
         return [
-            'table' => 'an_sedi',
+            'table' => $table,
         ];
     }
 }

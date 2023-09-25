@@ -70,11 +70,11 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Tipo documento'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, CONCAT(codice_tipo_documento_fe, ' - ', descrizione) AS descrizione FROM co_tipidocumento WHERE enabled = 1 AND dir = '<?php echo $dir; ?>' ORDER BY codice_tipo_documento_fe", "value": "<?php echo $idtipodocumento; ?>" ]}
+			{[ "type": "select", "label": "<?php echo tr('Tipo documento'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT co_tipidocumento.id, CONCAT(co_tipidocumento.codice_tipo_documento_fe, ' - ', co_tipidocumento.descrizione) AS descrizione, co_tipidocumento.id_segment, zz_segments.name as name_segment FROM co_tipidocumento INNER JOIN zz_segments ON zz_segments.id = co_tipidocumento.id_segment WHERE co_tipidocumento.enabled = 1 AND co_tipidocumento.dir = '<?php echo $dir; ?>' ORDER BY co_tipidocumento.codice_tipo_documento_fe", "value": "<?php echo $idtipodocumento; ?>" ]}
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Sezionale'); ?>", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": <?php echo json_encode(['id_module' => $id_module, 'is_sezionale' => 1]); ?>, "value": "<?php echo $_SESSION['module_'.$id_module]['id_segment']; ?>" ]}
+			{[ "type": "select", "label": "<?php echo tr('Sezionale'); ?>", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": <?php echo json_encode(['id_module' => $id_module, 'is_sezionale' => 1]); ?>, "value": "<?php echo $database->selectOne('co_tipidocumento', 'id_segment', ['id' => $idtipodocumento])['id_segment']; ?>" ]}
 		</div>
 	</div>
 
@@ -232,6 +232,8 @@ $(document).ready(function () {
     });
 
     input("idtipodocumento").change(function () {
+        $("#id_segment").selectSetNew($(this).selectData().id_segment, $(this).selectData().name_segment);
+
         $.ajax({
             url: globals.rootdir + "/actions.php",
             type: "POST",

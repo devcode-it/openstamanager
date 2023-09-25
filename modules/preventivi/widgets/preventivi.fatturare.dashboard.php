@@ -23,7 +23,7 @@ use Modules\Preventivi\Stato;
 
 $id_module = Modules::get('Preventivi')['id'];
 
-$rs = $dbo->fetchArray("SELECT *, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=co_preventivi.idanagrafica) AS ragione_sociale FROM co_preventivi WHERE idstato IN (SELECT id FROM co_statipreventivi WHERE is_fatturabile = 1) AND default_revision = 1 ORDER BY data_conclusione ASC");
+$rs = $dbo->fetchArray('SELECT *, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=co_preventivi.idanagrafica) AS ragione_sociale FROM co_preventivi WHERE idstato IN (SELECT id FROM co_statipreventivi WHERE is_fatturabile = 1) AND default_revision = 1 ORDER BY data_conclusione ASC');
 
 if (!empty($rs)) {
     echo "
@@ -39,7 +39,7 @@ if (!empty($rs)) {
         $data_accettazione = ($preventivo['data_accettazione'] != '0000-00-00') ? Translator::dateToLocale($preventivo['data_accettazione']) : '';
         $data_conclusione = ($preventivo['data_conclusione'] != '0000-00-00') ? Translator::dateToLocale($preventivo['data_conclusione']) : '';
         $stato_preventivo = Stato::find($preventivo['idstato'])->descrizione;
-        
+
         if (strtotime($preventivo['data_conclusione']) < strtotime(date('Y-m-d')) && $data_conclusione != '') {
             $attr = ' class="danger"';
         } else {

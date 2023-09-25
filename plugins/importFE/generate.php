@@ -211,21 +211,23 @@ echo '
 	</div>';
 
 // Tipo del documento
-$query = "SELECT id, CONCAT (descrizione, IF((codice_tipo_documento_fe IS NULL), '', CONCAT(' (', codice_tipo_documento_fe, ')' ) )) AS descrizione FROM co_tipidocumento WHERE dir = 'uscita'";
+$query = "SELECT id, CONCAT('(', codice_tipo_documento_fe, ') ', descrizione) AS descrizione FROM co_tipidocumento WHERE dir = 'uscita'";
 $query_tipo = $query.' AND codice_tipo_documento_fe = '.prepare($dati_generali['TipoDocumento']);
 $numero_tipo = $database->fetchNum($query_tipo);
 if (!empty($numero_tipo)) {
     $query = $query_tipo;
 }
 
+$id_tipodocumento = $database->fetchOne($query_tipo)['id'];
+
 echo '
     <div class="row">
         <div class="col-md-3">
-            {[ "type": "select", "label": "'.tr('Tipo fattura').'", "name": "id_tipo", "required": 1, "values": "query='.$query.'", "value": "'.($numero_tipo == 1 ? $database->fetchOne($query_tipo)['id'] : '').'" ]}
+            {[ "type": "select", "label": "'.tr('Tipo fattura').'", "name": "id_tipo", "required": 1, "values": "query='.$query.'", "value": "'.($numero_tipo == 1 ? $id_tipodocumento : '').'" ]}
         </div>';
 
 // Sezionale
-$id_segment = $is_autofattura ? setting('Sezionale per autofatture di acquisto') : $_SESSION['module_'.$id_module]['id_segment'];
+$id_segment = $database->table('co_tipidocumento')->where('id', '=', $id_tipodocumento)->value('id_segment');
 
 echo '
         <div class="col-md-3">

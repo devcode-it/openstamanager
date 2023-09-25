@@ -242,7 +242,7 @@ switch ($op) {
                 ->where('id', '!=', $id_record)
                 ->where('data', '>=', $_SESSION['period_start'])
                 ->where('data', '<=', $_SESSION['period_end'])
-                ->where('numero_esterno', '!=', null)
+                ->where('numero_esterno', '!=', '')
                 ->whereHas('tipo', function ($query) use ($direzione) {
                     $query->where('dir', '=', $direzione);
                 })->count();
@@ -1011,7 +1011,7 @@ switch ($op) {
                 if (!empty($piano_sconto)) {
                     $sconto = parseScontoCombinato($piano_sconto['prc_guadagno'].'+'.$sconto);
                 }
-            
+
                 $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['idanagrafica' => $fattura->idagente])['provvigione_default'];
 
                 $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);

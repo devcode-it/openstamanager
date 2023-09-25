@@ -54,7 +54,9 @@ $riga = $documento->getRiga($type, $id_riga);
 
 $result = $riga->toArray();
 $result['prezzo'] = $riga->prezzo_unitario;
-
+if ($result['sconto'] == 0) {
+    $result['tipo_sconto'] = (setting('Tipo di sconto predefinito') == '%' ? 'PRC' : 'UNT');
+}
 // Importazione della gestione dedicata
 $file = 'riga';
 if ($riga->isDescrizione()) {

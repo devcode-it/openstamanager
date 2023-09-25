@@ -127,7 +127,6 @@ class Check extends Model
     }
     */
 
-   
     /**
      * Rimuove tutte le check di un determinato modulo/plugin e record.
      *
@@ -137,7 +136,7 @@ class Check extends Model
     {
         database()->delete('zz_checks', $data);
     }
-    
+
     /* Relazioni Eloquent */
 
     public function user()

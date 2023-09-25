@@ -30,15 +30,22 @@ class Articoli extends Resource implements RetrieveInterface, CreateInterface
 {
     public function retrieve($request)
     {
-        $query = 'SELECT id, idarticolo AS id_articolo, idintervento AS id_intervento, qta, created_at as data FROM in_righe_interventi WHERE `idarticolo` IS NOT NULL AND `idintervento` = :id_intervento';
+        $table = 'in_righe_interventi';
 
-        $parameters = [
-            ':id_intervento' => $request['id_intervento'],
+        $select = [
+            'in_righe_interventi.id',
+            'in_righe_interventi.idarticolo AS id_articolo',
+            'in_righe_interventi.idintervento AS id_intervento',
+            'in_righe_interventi.qta',
+            'in_righe_interventi.created_at as data',
         ];
 
+        $where = [['in_righe_interventi.idarticolo', '!=', null], ['in_righe_interventi.idintervento', '=', $request['id_intervento']]];
+
         return [
-            'query' => $query,
-            'parameters' => $parameters,
+            'table' => $table,
+            'select' => $select,
+            'where' => $where,
         ];
     }
 
@@ -57,14 +64,5 @@ class Articoli extends Resource implements RetrieveInterface, CreateInterface
         $articolo->costo_unitario = $originale->prezzo_acquisto;
 
         $articolo->save();
-    }
-
-    public function delete($request)
-    {
-        $database = database();
-
-        $database->query('DELETE FROM `in_righe_interventi` WHERE `idarticolo` IS NOT NULL AND `idintervento` = :id_intervento', [
-            ':id_intervento' => $request['id_intervento'],
-        ]);
     }
 }

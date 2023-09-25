@@ -815,8 +815,14 @@ class FatturaElettronica
         }
 
         // Riferimento Amministrazione
-        if (!empty($azienda['riferimento_amministrazione'])) {
-            $result['RiferimentoAmministrazione'] = $azienda['riferimento_amministrazione'];
+        if ($fattura->getCliente()->tipo == "Ente pubblico") {
+            if (!empty($fattura->getCliente()->riferimento_amministrazione)) {
+                $result['RiferimentoAmministrazione'] = $fattura->getCliente()->riferimento_amministrazione;
+            }
+        } else {
+            if (!empty($azienda['riferimento_amministrazione'])) {
+                $result['RiferimentoAmministrazione'] = $azienda['riferimento_amministrazione'];
+            }
         }
 
         return $result;
@@ -842,6 +848,11 @@ class FatturaElettronica
             'DatiAnagrafici' => static::getDatiAnagrafici($cliente),
             'Sede' => static::getSede($cliente),
         ];
+
+        // Riferimento Amministrazione
+        if (!empty($cliente->riferimento_amministrazione)) {
+            $result['RiferimentoAmministrazione'] = $cliente->riferimento_amministrazione;
+        }
 
         return $result;
     }

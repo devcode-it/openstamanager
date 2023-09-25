@@ -82,7 +82,7 @@ switch (filter('op')) {
                 'id_list' => $lista->id,
             ]);
 
-            $registrato = $database->select('em_list_receiver', '*', $data);
+            $registrato = $database->select('em_list_receiver', '*', [], $data);
             if (empty($registrato)) {
                 $database->insert('em_list_receiver', $data);
             }

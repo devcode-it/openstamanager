@@ -28,9 +28,13 @@
   <xsl:template name="FormatIVA">
     <xsl:param name="Natura" />
     <xsl:param name="IVA" />
-    <xsl:choose>
+   
+	<xsl:choose>
       <xsl:when test="$Natura">
         <xsl:value-of select="$Natura" />
+		<xsl:if test="number($IVA)" >
+			<br/><xsl:value-of select="format-number($IVA,  '###.###.##0,00', 'euro')" />
+		</xsl:if>
       </xsl:when>
       <xsl:otherwise>
         <xsl:if test="$IVA">
@@ -493,7 +497,7 @@
 
           <td class="import" >
             <xsl:if test="PrezzoUnitario">
-              <xsl:if test="number(PrezzoTotale)">
+              <xsl:if test="number(PrezzoUnitario)">
 
                 <xsl:value-of select="format-number(PrezzoUnitario,  '###.###.##0,00######', 'euro')" />
               </xsl:if>
@@ -890,6 +894,7 @@
                                         </xsl:otherwise>
                                       </xsl:choose>   
                                     </span>
+
                                   </xsl:if>
                                 </div>
 
@@ -1848,14 +1853,7 @@
               <tr>
 
                 <th>Tipologia documento</th>
-				<xsl:if test="$IsFPRS='0'">
-					<th class="perc">Art. 73</th>
-				</xsl:if>
-				
-				<xsl:if test="$IsFPRS='1'">
-                  <th class="perc">Imposta bollo</th>
-                </xsl:if>
-				
+                <th class="perc">Art. 73</th>
                 <th >Numero documento</th>
                 <th class="data">Data documento</th>
                 <th >Codice destinatario</th>
@@ -1878,10 +1876,10 @@
                         fattura
                       </xsl:when>
                       <xsl:when test="$TD='TD02'">
-                        acconto/anticipo su fattura
+                        acconto / anticipo su fattura
                       </xsl:when>
                       <xsl:when test="$TD='TD03'">
-                        acconto/anticipo su parcella
+                        acconto / anticipo su parcella
                       </xsl:when>
                       <xsl:when test="$TD='TD04'">
                         nota di credito
@@ -1896,16 +1894,16 @@
 							integrazione fattura reverse charge interno
 						</xsl:when>
 						<xsl:when test="$TD='TD17'">
-							integrazione/autofattura per acquisto servizi da estero
+							integrazione/autofattura per acquisto servizi dall'estero
 						</xsl:when>
 						<xsl:when test="$TD='TD18'">
-							integrazione per acquisto beni intracomunitari
+							integrazione per acquisto di beni intracomunitari
 						</xsl:when>
 						<xsl:when test="$TD='TD19'">
-							integrazione/autofattura per acquisto beni ex art.17 c.2 DPR 633/72
+							integrazione/autofattura per acquisto di beni ex art.17 c.2 DPR 633/72
 						</xsl:when>
 						<xsl:when test="$TD='TD20'">
-							autofattura per regolarizzazione e integrazione delle fatture - art.6 c.8 d.lgs.471/97 o art.46 c.5 D.L.331/93
+							autofattura per regolarizzazione e integrazione delle fatture (ex art.6 c.8 e 9-bis d.lgs.471/97 o art.46 c.5 D.L. 331/93
 						</xsl:when>
 						<xsl:when test="$TD='TD21'">
 							autofattura per splafonamento
@@ -1914,22 +1912,22 @@
 							estrazione beni da Deposito IVA
 						</xsl:when>
 						<xsl:when test="$TD='TD23'">
-							estrazione beni da Deposito IVA con versamento IVA
+							estrazione beni da Deposito IVA con versamento dell'IVA
 						</xsl:when>
 						<xsl:when test="$TD='TD24'">
-							fattura differita - art.21 c.4 lett. a)
+							fattura differita di cui all'art.21, comma 4, terzo periodo lett. a) DPR 633/72
 						</xsl:when>
 						<xsl:when test="$TD='TD25'">
-							fattura differita - art.21 c.4 terzo periodo lett. b)
+							fattura differita di cui all'art.21, comma 4, terzo periodo lett. b) DPR 633/72
 						</xsl:when>
 						<xsl:when test="$TD='TD26'">
-							cessione di beni ammortizzabili e per passaggi interni - art.36 DPR 633/72
+							cessione di beni ammortizzabili e per passaggi interni (ex art.36 DPR 633/72)
 						</xsl:when>
 						<xsl:when test="$TD='TD27'">
 							fattura per autoconsumo o per cessioni gratuite senza rivalsa
 						</xsl:when>
-            <xsl:when test="$TD='TD28'">
-							fattura per acquisti da San Marino
+						<xsl:when test="$TD='TD28'">
+							acquisti da San Marino con IVA (fattura cartacea)
 						</xsl:when>
 						
                       <!--FPRS-->
@@ -1944,26 +1942,19 @@
                       </xsl:when>
                       <xsl:when test="$TD=''">
                       </xsl:when>
+                      <!--<xsl:otherwise>
+                        <span>(!!! codice non previsto !!!)</span>
+                      </xsl:otherwise>-->
                     </xsl:choose>
 
                   </xsl:if>
                 </td>
 
-				<xsl:if test="$IsFPRS='0'">
-					<td class="ritenuta"  >
-					  <xsl:if test="DatiGenerali/DatiGeneraliDocumento/Art73">
-						<xsl:value-of select="DatiGenerali/DatiGeneraliDocumento/Art73" />
-					  </xsl:if>
-					</td>
-				</xsl:if>
-				
-				 <xsl:if test="$IsFPRS='1'">
-                  <td class="textCenter">
-                    <xsl:if test="DatiGenerali/DatiGeneraliDocumento/BolloVirtuale">
-                      <xsl:value-of select="DatiGenerali/DatiGeneraliDocumento/BolloVirtuale" />
-                    </xsl:if>
-                  </td>
-                </xsl:if>
+                <td class="ritenuta"  >
+                  <xsl:if test="DatiGenerali/DatiGeneraliDocumento/Art73">
+                    <xsl:value-of select="DatiGenerali/DatiGeneraliDocumento/Art73" />
+                  </xsl:if>
+                </td>
 
                 <td class="textCenter" >
 
@@ -2018,8 +2009,7 @@
                     <xsl:if test="DatiGenerali/DatiGeneraliDocumento/Causale">
 
                       <xsl:for-each select="DatiGenerali/DatiGeneraliDocumento/Causale"  >
-                        <xsl:value-of select="." />
-						<br/>
+                        <xsl:value-of select="." /><br/>
                       </xsl:for-each>
 
                     </xsl:if>
@@ -2534,7 +2524,7 @@
                   <tr >
 
                     <th  colspan="2">
-                      Imposta bollo
+                      Importo bollo
                     </th>
                     <th  colspan="3">
                       Sconto/Maggiorazione

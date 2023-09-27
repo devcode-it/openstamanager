@@ -238,7 +238,7 @@ if ($dir == 'entrata') {
 
 <?php
 
-$query = 'SELECT * FROM co_statidocumento';
+$query = 'SELECT *, colore AS _bgcolor_ FROM co_statidocumento';
 if (empty($record['is_fiscale'])) {
     $query .= " WHERE descrizione = 'Bozza'";
 
@@ -249,6 +249,8 @@ if (empty($record['is_fiscale'])) {
 elseif ($record['stato'] == 'Bozza') {
     $query .= " WHERE descrizione IN ('Emessa', 'Bozza')";
 }
+
+$query .= ' ORDER BY descrizione';
 
 ?>
 				<?php if ($dir == 'entrata') {

@@ -736,7 +736,7 @@ switch (filter('op')) {
                         $sconto = $listino['sconto_percentuale_listino'];
                     }
                 }
-                
+
                 if ($dir == 'entrata') {
                     $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $riga->articolo->prezzo_vendita_ivato : $riga->articolo->prezzo_vendita);
                     $riga->costo_unitario = $riga->articolo->prezzo_acquisto;

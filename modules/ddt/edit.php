@@ -106,16 +106,16 @@ if ($dir == 'entrata') {
                             if (setting('Cambia automaticamente stato ddt fatturati')) {
                                 if ($record['stato'] == 'Fatturato' || $record['stato'] == 'Parzialmente fatturato') {
                                     ?>
-                                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT * FROM dt_statiddt", "value": "$idstatoddt$", "extra": "readonly", "class": "unblockable" ]}
+                                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT *, colore AS _bgcolor_ FROM dt_statiddt ORDER BY descrizione", "value": "$idstatoddt$", "extra": "readonly", "class": "unblockable" ]}
                             <?php
                                 } else {
                                     ?>
-                                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT * FROM dt_statiddt WHERE descrizione IN('Bozza', 'Evaso', 'Parzialmente evaso')", "value": "$idstatoddt$", "class": "unblockable" ]}
+                                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT *, colore AS _bgcolor_ FROM dt_statiddt WHERE descrizione IN('Bozza', 'Evaso', 'Parzialmente evaso') ORDER BY descrizione", "value": "$idstatoddt$", "class": "unblockable" ]}
                             <?php
                                 }
                             } else {
                                 ?>
-                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT * FROM dt_statiddt", "value": "$idstatoddt$", "class": "unblockable" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT *, colore AS _bgcolor_ FROM dt_statiddt ORDER BY descrizione", "value": "$idstatoddt$", "class": "unblockable" ]}
                             <?php
                             }
                             ?>
@@ -180,7 +180,7 @@ if ($dir == 'entrata') {
 
         <div class="col-md-4">
             <?php
-            $sede_anagrafica =  $ddt->anagrafica->sedeLegale;
+            $sede_anagrafica = $ddt->anagrafica->sedeLegale;
             $id_sede_anagrafica = $dir == 'entrata' ? $ddt->idsede_destinazione : $ddt->idsede_partenza;
             if (!empty($id_sede_anagrafica)) {
                 $sede_anagrafica = Sede::find($id_sede_anagrafica);

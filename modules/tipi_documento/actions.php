@@ -39,7 +39,7 @@ switch (filter('op')) {
                     'help' => filter('help'),
                     'predefined' => $predefined,
                     'enabled' => post('enabled'),
-                    'id_segment' => post('id_segment')
+                    'id_segment' => post('id_segment'),
                 ], ['id' => $id_record]);
 
                 flash()->info(tr('Salvataggio completato!'));

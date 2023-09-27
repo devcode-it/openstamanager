@@ -17,8 +17,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Geocoder\Provider\GoogleMaps;
-use Ivory\HttpAdapter\CurlHttpAdapter;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Export\CSV;
 
@@ -50,7 +48,7 @@ switch (post('op')) {
 
                 // TODO: da riscrivere con Guzzle e spostare su hook
                 $ch = curl_init();
-                $url = "https://nominatim.openstreetmap.org/search.php?q=".$indirizzo."&format=jsonv2";
+                $url = 'https://nominatim.openstreetmap.org/search.php?q='.$indirizzo.'&format=jsonv2';
                 $user_agent = 'traccar';
                 curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
                 curl_setopt($ch, CURLOPT_URL, $url);

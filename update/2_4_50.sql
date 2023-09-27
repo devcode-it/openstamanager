@@ -85,3 +85,4 @@ ORDER BY
     `co_documenti`.`data` DESC,
     CAST(`co_documenti`.`numero_esterno` AS UNSIGNED) DESC" WHERE `name` = 'Fatture di vendita';
 
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES ((SELECT id FROM zz_modules WHERE name = 'Tipi documento'), 'Sezionale', 'zz_segments.name', '8', '1', '0', '0', '0', '', '', '1', '0', '0'); 

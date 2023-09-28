@@ -411,7 +411,7 @@ class FatturaElettronica
     {
         $this->saveFattura($info['id_pagamento'], $info['id_segment'], $info['id_tipo'], $info['data_registrazione'], $info['ref_fattura'], $info['is_ritenuta_pagata']);
 
-        $this->saveRighe($info['articoli'], $info['iva'], $info['conto'], $info['movimentazione'], $info['crea_articoli'], $info['tipo_riga_riferimento'], $info['id_riga_riferimento'], $info['tipo_riga_riferimento_vendita'], $info['id_riga_riferimento_vendita'], $info['update_info']);
+        $this->saveRighe($info['articoli'], $info['iva'], $info['conto'], $info['movimentazione'], $info['crea_articoli'], $info['tipo_riga_riferimento'], $info['id_riga_riferimento'], $info['tipo_riga_riferimento_vendita'], $info['id_riga_riferimento_vendita'], $info['update_info'], $info['serial']);
 
         $this->saveAllegati();
 

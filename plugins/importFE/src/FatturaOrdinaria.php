@@ -134,7 +134,7 @@ class FatturaOrdinaria extends FatturaElettronica
         return $this->forceArray($linee);
     }
 
-    public function saveRighe($articoli, $iva, $conto, $movimentazione = true, $crea_articoli = [], $tipi_riferimenti = [], $id_riferimenti = [], $tipi_riferimenti_vendita = [], $id_riferimenti_vendita = [], $update_info = [])
+    public function saveRighe($articoli, $iva, $conto, $movimentazione = true, $crea_articoli = [], $tipi_riferimenti = [], $id_riferimenti = [], $tipi_riferimenti_vendita = [], $id_riferimenti_vendita = [], $update_info = [], $serials = [])
     {
         $info = $this->getRitenutaRivalsa();
 
@@ -363,6 +363,11 @@ class FatturaOrdinaria extends FatturaElettronica
                             $articolo->id_fornitore = $anagrafica->idanagrafica;
                             $articolo->save();
                         }
+                    }
+
+                    // Gestione seriali
+                    if ($serials[$key]) {
+                        $obj->serials = $serials[$key];
                     }
                 }
 

@@ -139,6 +139,7 @@ switch (filter('op')) {
             'crea_articoli' => post('crea_articoli'),
             'is_ritenuta_pagata' => post('is_ritenuta_pagata'),
             'update_info' => post('update_info'),
+            'serial' =>  post('flag_crea_seriali') ? post('serial') : [],
         ];
 
         $fattura_pa = FatturaElettronica::manage($filename);

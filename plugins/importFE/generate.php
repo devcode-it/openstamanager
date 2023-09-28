@@ -29,6 +29,17 @@ echo '
 <script>
 $(document).ready(function() {
     $("#save-buttons").hide();
+
+    // Visualizza input seriali se abilita serial dell\'articolo selezionato è attivo
+    let articoli = $("select[name^=articoli]");
+    articoli.each(function() {
+        verificaSerial($(this));
+    });
+
+    // Disabilita input seriali se flag crea seriali è disattivato
+    if (!$("#flag_crea_seriali").is(":checked")) {
+        $("[id^=\'serial\']").attr("disabled", true);
+    }
 });
 </script>';
 
@@ -312,6 +323,10 @@ echo '
 
         <div class="col-md-3">
             {[ "type": "checkbox", "label": "'.tr('Creazione automatica articoli').'", "name": "flag_crea_articoli", "value": 0, "help": "'.tr("Nel caso di righe con tag CodiceArticolo, il gestionale procede alla creazione dell'articolo se la riga non risulta assegnata manualmente").'" ]}
+        </div>
+        
+        <div class="col-md-3">
+            {[ "type": "checkbox", "label": "'.tr('Creazione seriali').'", "name": "flag_crea_seriali", "value": 0, "help": "'.tr("Nel caso di righe contenenti serial, il gestionale procede alla registrazione del serial").'" ]}
         </div>';
 
         $ritenuta = $dati_generali['DatiRitenuta'];
@@ -403,8 +418,12 @@ if (!empty($righe)) {
         $codici = !empty($codici) && !isset($codici[0]) ? [$codici] : $codici;
 
         $codici_articoli = [];
+        $serial = [];
         foreach ($codici as $codice) {
             $codici_articoli[] = $codice['CodiceValore'].' ('.$codice['CodiceTipo'].')';
+            if (str_contains($codice['CodiceTipo'], 'serial') || str_contains($codice['CodiceTipo'], 'Serial'))  {
+                $serial[] = $codice['CodiceValore'];
+            }
         }
 
         // Individuazione articolo con codice relativo
@@ -583,6 +602,16 @@ if (!empty($righe)) {
                             <div class="col-md-6">
                                 {[ "type": "select", "name": "update_info['.$key.']", "values": "list=\"update_not\":\"Non aggiornare\", \"update_price\":\"Aggiorna prezzo di listino\", \"update_all\":\"Aggiorna prezzo di acquisto + imposta fornitore predefinito\"", "label": "'.tr('Aggiorna info di acquisto').'", "value": "'.$update_info.'" ]}
                             </div>
+                        </div>
+
+                        <div class="row">';
+                        for ($i = 0; $i < $qta; $i++) {
+                            echo '
+                            <div class="col-md-3">
+                                {[ "type": "text", "label": "'.tr('Serial').'", "name": "serial['.$key.'][]", "value": "'.$serial[$i].'" ]}
+                            </div>';
+                        }
+                        echo '
                         </div>
                     </div> 
                 </div>
@@ -877,6 +906,8 @@ $("[id^=\'articoli\']").change(function() {
     if(data!==undefined){
         $("#conto-"+$(this).data("id")).selectSetNew(data.idconto_acquisto, data.idconto_acquisto_title);
     }
+
+    verificaSerial($(this));
 });
 
 function copy_rif() {
@@ -910,4 +941,27 @@ function copy_rif() {
         });
     }
 }
+
+// Visualizza input seriali se abilita serial dell\'articolo selezionato è attivo
+function verificaSerial(riga) {
+    if (riga.val()) {
+        let data = riga.selectData();
+        if (data.abilita_serial) {
+            $("#serial"+riga.data("id")).parent().parent().parent().removeClass("hidden");
+        } else {
+            $("#serial"+riga.data("id")).parent().parent().parent().addClass("hidden");
+        }
+    } else {
+        $("#serial"+riga.data("id")).parent().parent().parent().addClass("hidden");
+    }
+}
+
+// Disabilita input seriali se flag crea seriali è disattivato
+$("#flag_crea_seriali").on("change", function() {
+    if ($(this).is(":checked")) {
+        $("[id^=\'serial\']").attr("disabled", false);
+    } else {
+        $("[id^=\'serial\']").attr("disabled", true);
+    }
+});
 </script>';

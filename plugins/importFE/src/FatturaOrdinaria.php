@@ -87,9 +87,7 @@ class FatturaOrdinaria extends FatturaElettronica
     {
         $linee = $this->getBody()['DatiBeniServizi']['DettaglioLinee'];
         $linee = $this->forceArray($linee);
-        $ritenuta = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento']['DatiRitenuta'];
         $cassa_previdenziale = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento']['DatiCassaPrevidenziale'];
-        $linee = $this->forceArray($linee);
 
         $imponibile = [];
         $totale_imposta = [];
@@ -382,7 +380,8 @@ class FatturaOrdinaria extends FatturaElettronica
         // Arrotondamenti differenti nella fattura XML
         $diff = round(abs($totale_righe) + $totale_arrotondamento - abs($fattura->totale_imponibile), 2);
         // Aggiunta della riga di arrotondamento nel caso in cui ci sia una differenza tra i totali, o tra l'imponibile dell'XML e quello ricavato dalla somma delle righe
-        if (($diff != 0 && $diff != $totale_arrotondamento) || $fattura->totale_imponibile + $fattura->rivalsa_inps != $totale_imp) {
+        
+        if (($diff != 0 && $diff != $totale_arrotondamento) || (($fattura->totale_imponibile + $fattura->rivalsa_inps) != $totale_imp)) {
             // Rimozione dell'IVA calcolata automaticamente dal gestionale
             $iva_arrotondamento = database()->fetchOne('SELECT * FROM co_iva WHERE percentuale=0 AND deleted_at IS NULL');
             if ($diff != 0) {
@@ -501,6 +500,11 @@ class FatturaOrdinaria extends FatturaElettronica
                 if (!empty($riga['Ritenuta'])) {
                     $totali[] = $riga['PrezzoTotale'];
                     $ritenuta_norighe = false;
+                    $ritenuta = $this->forceArray($ritenuta);
+                    foreach ($ritenuta as $rit) {
+                        $percentuale += floatval($rit['AliquotaRitenuta']);
+                        $importo += floatval($rit['ImportoRitenuta']);
+                    }
                 }
             }
 
@@ -510,9 +514,6 @@ class FatturaOrdinaria extends FatturaElettronica
             } else {
                 $totale = sum($totali);
             }
-
-            $percentuale = floatval($ritenuta['AliquotaRitenuta']);
-            $importo = floatval($ritenuta['ImportoRitenuta']);
 
             $totale_previsto = round($importo / $percentuale * 100, 2);
             $percentuale_importo = round($totale_previsto / $totale * 100, 2);

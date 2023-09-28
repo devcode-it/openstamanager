@@ -516,6 +516,6 @@ if (!empty($elementi)) {
 ?>
 
 <a class="btn btn-danger ask" data-backto="record-list">
-    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
+    <i id ="elimina" class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
 

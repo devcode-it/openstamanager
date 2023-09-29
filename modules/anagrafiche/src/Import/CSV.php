@@ -201,7 +201,7 @@ class CSV extends CSVImporter
             ],
             [
                 'field' => 'idtipoanagrafica',
-                'label' => 'Tipo',
+                'label' => 'Tipo di anagrafica',
                 'names' => [
                     'Tipo',
                     'tipo',
@@ -210,7 +210,7 @@ class CSV extends CSVImporter
             ],
             [
                 'field' => 'tipo',
-                'label' => 'Tipologia',
+                'label' => 'Tipologia (Privato, Ente pubblico, Azienda)',
             ],
             [
                 'field' => 'codice_destinatario',
@@ -227,6 +227,15 @@ class CSV extends CSVImporter
                     'Split Payment',
                     'split payment',
                     'split_payment',
+                ],
+            ],
+            [
+                'field' => 'id_settore',
+                'label' => 'Settore merceologico',
+                'names' => [
+                    'settore',
+                    'settore merceologico',
+                    'proveninenza',
                 ],
             ],
         ];
@@ -253,6 +262,12 @@ class CSV extends CSVImporter
         }
         unset($record['idtipoanagrafica']);
 
+        $tipi_selezionati  = [];
+        if (!empty($record['tipo'])) {
+            $tipi_selezionati = explode(',', $record['tipo']);
+        }
+        unset($record['idtipoanagrafica']);
+
         // Fix per campi con contenuti derivati da query implicite
         if (!empty($record['id_nazione'])) {
             $record['id_nazione'] = $database->fetchOne('SELECT id FROM an_nazioni WHERE LOWER(nome) = LOWER('.prepare($record['id_nazione']).') OR LOWER(iso2) = LOWER('.prepare($record['id_nazione']).')')['id'];
@@ -262,9 +277,6 @@ class CSV extends CSVImporter
 
         // Separazione dei campi relativi alla sede legale
         $campi_sede = [
-            //'piva',
-            //'codice_fiscale',
-            //'codice_destinatario',
             'indirizzo',
             'indirizzo2',
             'citta',
@@ -284,9 +296,11 @@ class CSV extends CSVImporter
 
         $dati_sede = [];
         foreach ($campi_sede as $field) {
-            if (isset($record[$field])) {
-                $dati_sede[$field] = trim($record[$field]);
-                unset($record[$field]);
+            if ($primary_key != $field) {
+                if (isset($record[$field])) {
+                    $dati_sede[$field] = trim($record[$field]);
+                    unset($record[$field]);
+                }
             }
         }
 

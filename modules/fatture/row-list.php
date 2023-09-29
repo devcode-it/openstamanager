@@ -21,13 +21,13 @@ use Modules\Interventi\Intervento;
 
 include_once __DIR__.'/init.php';
 
-$direzione = $fattura->direzione;
 $block_edit = !empty($note_accredito) || in_array($record['stato'], ['Emessa', 'Pagato', 'Parzialmente pagato']) || !$abilita_genera;
 $order_row_desc = $_SESSION['module_'.$id_module]['order_row_desc'];
 $righe = $order_row_desc ? $fattura->getRighe()->sortByDesc('created_at') : $fattura->getRighe();
+$colspan = $dir == 'entrata' ? '8' : '7';
 
 echo '
-<div class="table-responsive">
+<div class="table-responsive row-list">
     <table class="table table-striped table-hover table-condensed table-bordered">
         <thead>
             <tr>
@@ -40,10 +40,15 @@ echo '
                 </th>
                 <th width="35" class="text-center" >'.tr('#').'</th>
                 <th class="text-left">'.tr('Descrizione').'</th>
-                <th class="text-center" width="120">'.tr('Q.tà').'</th>
-                <th class="text-center" width="140">'.tr('Prezzo unitario').'</th>
-                <th class="text-center" width="140">'.tr('Iva unitaria').'</th>
-                <th class="text-center" width="140">'.tr('Importo').'</th>
+                <th class="text-center" width="120">'.tr('Q.tà').'</th>';
+            if ($dir == 'entrata') {
+                echo '<th class="text-center" width="150">'.tr('Costo unitario').'</th>';
+            }
+            echo '
+                <th class="text-center" width="180">'.tr('Prezzo unitario').'</th>
+                <th class="text-center" width="140">'.tr('Sconto unitario').'</th>
+                <th class="text-center" width="120">'.tr('Iva unitaria').'</th>
+                <th class="text-center" width="120">'.tr('Importo').'</th>
                 <th width="120"></th>
             </tr>
         </thead>
@@ -179,6 +184,11 @@ foreach ($righe as $riga) {
 
     if ($riga->isDescrizione()) {
         echo '
+            <td></td>';
+        if ($dir == 'entrata') {
+            echo '<td></td>';
+        }
+            echo '
             <td></td>
             <td></td>
             <td></td>
@@ -186,35 +196,32 @@ foreach ($righe as $riga) {
     } else {
         // Quantità e unità di misura
         echo '
-            <td class="text-center">
-                '.numberFormat($riga->qta, 'qta').' '.$riga->um.'
+            <td>
+                {[ "type": "number", "name": "qta_'.$riga->id.'", "value": "'.$riga->qta.'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "disabled": "'.($riga->isSconto() ? 1 : 0).'", "disabled": "'.$block_edit.'" ]}
             </td>';
 
+        // Costi unitari
+        if ($dir == 'entrata') {
+        echo '
+            <td>
+                {[ "type": "number", "name": "costo_'.$riga->id.'", "value": "'.$riga->costo_unitario.'", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "'.currency().'", "disabled": "'.$block_edit.'" ]}
+            </td>';
+        }
+
         // Prezzi unitari
-        if (empty($riga->prezzo_unitario_corrente) && $dir == 'entrata') {
-            $price_danger = 'text-danger';
-        } else {
-            $price_danger = '';
+        echo '
+            <td>
+                {[ "type": "number", "name": "prezzo_'.$riga->id.'", "value": "'.$riga->prezzo_unitario_corrente.'", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-before": "'.(abs($riga->provvigione_unitaria) > 0 ? '<span class=\'tip text-info\' title=\''.provvigioneInfo($riga).'\'><small><i class=\'fa fa-handshake-o\'></i></small></span>' : '').'", "icon-after": "'.currency().'", "disabled": "'.$block_edit.'" ]}
+            </td>';
+
+        // Sconto unitario
+        $tipo_sconto = '';
+        if ($riga['sconto'] == 0) {
+            $tipo_sconto = (setting('Tipo di sconto predefinito') == '%' ? 'PRC' : 'UNT');
         }
         echo '
-            <td class="text-right">
-                <span class="'.$price_danger.'">'.moneyFormat($riga->prezzo_unitario_corrente).'</span>';
-
-        if ($dir == 'entrata' && $riga->costo_unitario != 0) {
-            echo '
-                <br><small class="text-muted">
-                    '.tr('Acquisto').': '.moneyFormat($riga->costo_unitario).'
-                </small>';
-        }
-
-        if (abs($riga->sconto_unitario) > 0) {
-            $text = discountInfo($riga);
-
-            echo '
-                <br><small class="label label-danger">'.$text.'</small>';
-        }
-
-        echo '
+            <td>
+                {[ "type": "number", "name": "sconto_'.$riga->id.'", "value": "'.($riga->sconto_percentuale ?: $riga->sconto_unitario_corrente).'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "choice|untprc|'.($tipo_sconto ?: $riga->tipo_sconto).'", "disabled": "'.$block_edit.'" ]}
             </td>';
 
         // Iva
@@ -227,17 +234,8 @@ foreach ($righe as $riga) {
         // Importo
         echo '
             <td class="text-right">
-            '.moneyFormat($riga->importo);
-
-        //provvigione riga
-        if (abs($riga->provvigione_unitaria) > 0) {
-            $text = provvigioneInfo($riga);
-
-            echo '
-                            <br><small class="label label-info">'.$text.'</small>';
-        }
-
-        echo '</td>';
+                '.moneyFormat($riga->importo).'
+            </td>';
     }
 
     // Possibilità di rimuovere una riga solo se la fattura non è pagata
@@ -312,7 +310,7 @@ $ritenuta_contributi = $fattura->totale_ritenuta_contributi;
 // IMPONIBILE
 echo '
         <tr>
-            <td colspan="6" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -325,7 +323,7 @@ echo '
 if (!empty($sconto)) {
     echo '
         <tr>
-            <td colspan="6" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 <b><span class="tip" title="'.tr('Un importo negativo indica uno sconto, mentre uno positivo indica una maggiorazione').'"><i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
             </td>
             <td class="text-right">
@@ -337,7 +335,7 @@ if (!empty($sconto)) {
     // TOTALE IMPONIBILE
     echo '
         <tr>
-            <td colspan="6" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -351,7 +349,7 @@ if (!empty($sconto)) {
 if (!empty($rivalsa_inps)) {
     echo '
         <tr>
-            <td colspan="6" class="text-right">';
+            <td colspan="'.$colspan.'" class="text-right">';
 
     if ($dir == 'entrata') {
         $descrizione_rivalsa = $database->fetchOne('SELECT CONCAT_WS(\' - \', codice, descrizione) AS descrizione FROM fe_tipo_cassa WHERE codice = '.prepare(setting('Tipo Cassa Previdenziale')));
@@ -370,7 +368,7 @@ if (!empty($rivalsa_inps)) {
             <td></td>
         </tr>
         <tr>
-            <td colspan="6" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 <b>'.tr('Totale imponibile', [], ['upper' => true]).' :</b>
             </td>
             <td class="text-right">
@@ -384,7 +382,7 @@ if (!empty($rivalsa_inps)) {
 if (!empty($iva)) {
     echo '
         <tr>
-            <td colspan="6" class="text-right">';
+            <td colspan="'.$colspan.'" class="text-right">';
 
     if ($records[0]['split_payment']) {
         echo '<b>'.tr('Iva a carico del destinatario', [], ['upper' => true]).':</b>';
@@ -403,7 +401,7 @@ if (!empty($iva)) {
 // TOTALE
 echo '
         <tr>
-            <td colspan="6" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 <b>'.tr('Totale documento', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -416,7 +414,7 @@ echo '
 if (!empty($ritenuta_acconto)) {
     echo '
         <tr>
-            <td colspan="6" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 <b>'.tr("Ritenuta d'acconto", [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -430,7 +428,7 @@ if (!empty($ritenuta_acconto)) {
 if (!empty($ritenuta_contributi)) {
     echo '
         <tr>
-            <td colspan="6" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 <b>'.tr('Ritenuta previdenziale', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -444,7 +442,7 @@ if (!empty($ritenuta_contributi)) {
 if (!empty($sconto_finale)) {
     echo '
         <tr>
-            <td colspan="6" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 <b>'.tr('Sconto in fattura', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -458,7 +456,7 @@ if (!empty($sconto_finale)) {
 if ($totale != $netto_a_pagare) {
     echo '
         <tr>
-            <td colspan="6" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -472,7 +470,7 @@ if ($totale != $netto_a_pagare) {
 if (!empty($fattura->provvigione)) {
     echo '
         <tr>
-            <td colspan="6" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 '.tr('Provvigioni').':
             </td>
             <td class="text-right">
@@ -483,7 +481,7 @@ if (!empty($fattura->provvigione)) {
 
     echo '
         <tr>
-            <td colspan="6" class="text-right">
+            <td colspan="'.$colspan.'" class="text-right">
                 '.tr('Netto da provvigioni').':
             </td>
             <td class="text-right">
@@ -505,7 +503,7 @@ if (!$block_edit && sizeof($righe) > 0) {
         <button type="button" class="btn btn-xs btn-default disabled" id="elimina_righe" onclick="rimuoviRiga(getSelectData());">
             <i class="fa fa-trash"></i>
         </button>';
-    if ($direzione == 'entrata') {
+    if ($dir == 'entrata') {
         echo '
         <button type="button" class="btn btn-xs btn-default disabled" id="confronta_righe" onclick="confrontaRighe(getSelectData());">
             '.tr('Confronta prezzi').'
@@ -712,4 +710,41 @@ $("#check_all").click(function(){
         });
     }
 });
+
+$(".tipo_icon_after").on("change", function() {
+    aggiornaInline($(this).closest("tr").data("id"));
+});
+
+function aggiornaInline(id) {
+    content_was_modified = false;
+    var qta = input("qta_"+ id).get();
+    var sconto = input("sconto_"+ id).get();
+    var tipo_sconto = input("tipo_sconto_"+ id).get();
+    var prezzo = input("prezzo_"+ id).get();
+    var costo = input("costo_"+ id).get();
+
+    $.ajax({
+        url: globals.rootdir + "/actions.php",
+        type: "POST",
+        data: {
+            id_module: globals.id_module,
+            id_record: globals.id_record,
+            op: "update_inline",
+            riga_id: id,
+            qta: qta,
+            sconto: sconto,
+            tipo_sconto: tipo_sconto,
+            prezzo: prezzo,
+            costo: costo
+        },
+        success: function (response) {
+            caricaRighe(id);
+            renderMessages();
+        },
+        error: function() {
+            caricaRighe(null);
+        }
+    });
+}
+init();
 </script>';

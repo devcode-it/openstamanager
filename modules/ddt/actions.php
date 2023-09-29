@@ -652,10 +652,12 @@ switch (filter('op')) {
 
         if (!empty($riga)) {
             $riga->qta = post('qta');
+            $riga->setPrezzoUnitario(post('prezzo'), $riga->idiva);
             $riga->setSconto(post('sconto'), post('tipo_sconto'));
+            $riga->costo_unitario = post('costo') ?: 0;
             $riga->save();
 
-            flash()->info(tr('Quantità aggiornata!'));
+            flash()->info(tr('Riga aggiornata!'));
         }
 
         break;

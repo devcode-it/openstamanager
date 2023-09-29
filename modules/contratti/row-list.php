@@ -22,7 +22,7 @@ include_once __DIR__.'/init.php';
 $block_edit = $record['is_completato'];
 $order_row_desc = $_SESSION['module_'.$id_module]['order_row_desc'];
 $righe = $order_row_desc ? $contratto->getRighe()->sortByDesc('created_at') : $contratto->getRighe();
-$colspan = ($block_edit ? '5' : '6');
+$colspan = '7';
 
 echo '
 <div class="table-responsive row-list">
@@ -39,12 +39,10 @@ echo '
                 <th width="35" class="text-center">'.tr('#').'</th>
                 <th>'.tr('Descrizione').'</th>
                 <th class="text-center tip" width="150">'.tr('Q.tà').'</th>
-                <th class="text-center" width="140">'.tr('Prezzo unitario').'</th>';
-            if (!$block_edit) {
-                echo '<th class="text-center" width="150">'.tr('Sconto unitario').'</th>';
-            }
-            echo '
-                <th class="text-center" width="140">'.tr('Importo').'</th>
+                <th class="text-center" width="150">'.tr('Costo unitario').'</th>
+                <th class="text-center" width="180">'.tr('Prezzo unitario').'</th>
+                <th class="text-center" width="140">'.tr('Sconto unitario').'</th>
+                <th class="text-center" width="130">'.tr('Importo').'</th>
                 <th width="80"></th>
             </tr>
         </thead>
@@ -104,11 +102,12 @@ foreach ($righe as $riga) {
                 <td></td>
                 <td></td>
                 <td></td>
+                <td></td>
                 <td></td>';
     } else {
         // Quantità e unità di misura
         echo '
-                <td class="text-center">
+                <td>
                     {[ "type": "number", "name": "qta_'.$riga->id.'", "value": "'.$riga->qta.'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "<span class=\'tip\' title=\''.tr('Quantità evasa').' / '.tr('totale').': '.tr('_QTA_ / _TOT_', ['_QTA_' => numberFormat($riga->qta_evasa, 'qta'), '_TOT_' => numberFormat($riga->qta, 'qta')]).'\'>'.$riga->um.' <small><i class=\'text-muted fa fa-info-circle\'></i></small></span>", "disabled": "'.($riga->isSconto() ? 1 : 0).'", "disabled": "'.$block_edit.'" ]}
                     <div class="progress" style="height:4px;">';
         // Visualizzazione evasione righe per documento
@@ -129,45 +128,27 @@ foreach ($righe as $riga) {
                     </div>
                 </td>';
 
+        // Costi unitari
+        echo '
+                <td>
+                    {[ "type": "number", "name": "costo_'.$riga->id.'", "value": "'.$riga->costo_unitario.'", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "'.currency().'", "disabled": "'.$block_edit.'" ]}
+                </td>';
+
         // Prezzi unitari
         echo '
-                <td class="text-right">';
-        // Provvigione riga
-        if (abs($riga->provvigione_unitaria) > 0) {
-            $text = provvigioneInfo($riga);
-            echo '<span class="pull-left text-info" title="'.$text.'"><i class="fa fa-handshake-o"></i></span>';
-        }
-        echo moneyFormat($riga->prezzo_unitario_corrente);
-
-        if ($dir == 'entrata' && $riga->costo_unitario != 0) {
-            echo '
-                    <br><small class="text-muted">
-                        '.tr('Acquisto').': '.moneyFormat($riga->costo_unitario).'
-                    </small>';
-        }
-
-        if (abs($riga->sconto_unitario) > 0) {
-            $text = discountInfo($riga);
-
-            echo '
-                    <br><small class="label label-danger">'.$text.'</small>';
-        }
-
-        $tiposconto = '';
-        if ($riga['sconto'] == 0) {
-            $tipo_sconto = (setting('Tipo di sconto predefinito') == '%' ? 'PRC' : 'UNT');
-        }
-
-        echo '
+                <td>
+                    {[ "type": "number", "name": "prezzo_'.$riga->id.'", "value": "'.$riga->prezzo_unitario_corrente.'", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-before": "'.(abs($riga->provvigione_unitaria) > 0 ? '<span class=\'tip text-info\' title=\''.provvigioneInfo($riga).'\'><small><i class=\'fa fa-handshake-o\'></i></small></span>' : '').'", "icon-after": "'.currency().'", "disabled": "'.$block_edit.'" ]}
                 </td>';
 
         // Sconto unitario
-        if (!$block_edit) {
-            echo '
-                <td class="text-center">
-                    {[ "type": "number", "name": "sconto_'.$riga->id.'", "value": "'.($riga->sconto_percentuale ?: $riga->sconto_unitario_corrente).'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "choice|untprc|'.($tipo_sconto ?: $riga->tipo_sconto).'" ]}
-                </td>';
+        $tipo_sconto = '';
+        if ($riga['sconto'] == 0) {
+            $tipo_sconto = (setting('Tipo di sconto predefinito') == '%' ? 'PRC' : 'UNT');
         }
+        echo '
+                <td>
+                    {[ "type": "number", "name": "sconto_'.$riga->id.'", "value": "'.($riga->sconto_percentuale ?: $riga->sconto_unitario_corrente).'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "choice|untprc|'.($tipo_sconto ?: $riga->tipo_sconto).'", "disabled": "'.$block_edit.'" ]}
+                </td>';
 
         // Importo
         echo '
@@ -544,6 +525,8 @@ function aggiornaInline(id) {
     var qta = input("qta_"+ id).get();
     var sconto = input("sconto_"+ id).get();
     var tipo_sconto = input("tipo_sconto_"+ id).get();
+    var prezzo = input("prezzo_"+ id).get();
+    var costo = input("costo_"+ id).get();
 
     $.ajax({
         url: globals.rootdir + "/actions.php",
@@ -556,6 +539,8 @@ function aggiornaInline(id) {
             qta: qta,
             sconto: sconto,
             tipo_sconto: tipo_sconto,
+            prezzo: prezzo,
+            costo: costo
         },
         success: function (response) {
             caricaRighe(id);

@@ -21,8 +21,7 @@ include_once __DIR__.'/init.php';
 
 $block_edit = $record['flag_completato'];
 $righe = $intervento->getRighe();
-$colspan = ($block_edit ? '5' : '6');
-$direzione = $intervento->direzione;
+$colspan = '6';
 
 $show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
@@ -43,13 +42,10 @@ echo '
 
     if ($show_prezzi) {
         echo '
-                <th class="text-center" width="140">'.tr('Prezzo di acquisto').'</th>
-                <th class="text-center" width="140">'.tr('Prezzo di vendita').'</th>';
-        if (!$block_edit) {
-            echo '<th class="text-center" width="150">'.tr('Sconto unitario').'</th>';
-        }
-        echo '
-                <th class="text-center" width="140">'.tr('Importo').'</th>';
+                <th class="text-center" width="140">'.tr('Costo unitario').'</th>
+                <th class="text-center" width="180">'.tr('Prezzo unitario').'</th>
+                <th class="text-center" width="140">'.tr('Sconto unitario').'</th>
+                <th class="text-center" width="130">'.tr('Importo').'</th>';
     }
 
     if (!$record['flag_completato']) {
@@ -126,49 +122,32 @@ echo '
 
         // Quantità e unità di misura
         echo '
-                <td class="text-center">
+                <td>
                     {[ "type": "number", "name": "qta_'.$riga->id.'", "value": "'.$riga->qta.'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "'.($riga->um ?: '&nbsp;').'", "disabled": "'.($riga->isSconto() ? 1 : 0).'", "disabled": "'.$block_edit.'" ]}
                 </td>';
 
         if ($show_prezzi) {
             // Costo unitario
             echo '
-                <td class="text-right">
-                    '.moneyFormat($riga->costo_unitario).'
+                <td>
+                    {[ "type": "number", "name": "costo_'.$riga->id.'", "value": "'.$riga->costo_unitario.'", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "'.currency().'", "disabled": "'.$block_edit.'" ]}
                 </td>';
 
             // Prezzo unitario
             echo '
-                <td class="text-right">';
-            // Provvigione riga
-            if (abs($riga->provvigione_unitaria) > 0) {
-                $text = provvigioneInfo($riga);
-                echo '<span class="pull-left text-info" title="'.$text.'"><i class="fa fa-handshake-o"></i></span>';
-            }
-            echo moneyFormat($riga->prezzo_unitario);
-
-            if (abs($riga->sconto_unitario) > 0) {
-                $text = discountInfo($riga);
-
-                echo '
-                    <br><small class="label label-danger">'.$text.'</small>';
-            }
-
-            echo '
+                <td>
+                    {[ "type": "number", "name": "prezzo_'.$riga->id.'", "value": "'.$riga->prezzo_unitario_corrente.'", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-before": "'.(abs($riga->provvigione_unitaria) > 0 ? '<span class=\'tip text-info\' title=\''.provvigioneInfo($riga).'\'><small><i class=\'fa fa-handshake-o\'></i></small></span>' : '').'", "icon-after": "'.currency().'", "disabled": "'.$block_edit.'" ]}
                 </td>';
 
-            $tiposconto = '';
+            // Sconto unitario
+            $tipo_sconto = '';
             if ($riga['sconto'] == 0) {
                 $tipo_sconto = (setting('Tipo di sconto predefinito') == '%' ? 'PRC' : 'UNT');
             }
-
-            // Sconto unitario
-            if (!$block_edit) {
-                echo '
-                <td class="text-center">
-                    {[ "type": "number", "name": "sconto_'.$riga->id.'", "value": "'.($riga->sconto_percentuale ?: $riga->sconto_unitario_corrente).'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "choice|untprc|'.($tipo_sconto ?: $riga->tipo_sconto).'" ]}
+            echo '
+                <td>
+                    {[ "type": "number", "name": "sconto_'.$riga->id.'", "value": "'.($riga->sconto_percentuale ?: $riga->sconto_unitario_corrente).'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "choice|untprc|'.($tipo_sconto ?: $riga->tipo_sconto).'", "disabled": "'.$block_edit.'" ]}
                 </td>';
-            }
 
             // Prezzo di vendita
             echo '
@@ -492,6 +471,8 @@ function aggiornaInline(id) {
     var qta = input("qta_"+ id).get();
     var sconto = input("sconto_"+ id).get();
     var tipo_sconto = input("tipo_sconto_"+ id).get();
+    var prezzo = input("prezzo_"+ id).get();
+    var costo = input("costo_"+ id).get();
 
     $.ajax({
         url: globals.rootdir + "/actions.php",
@@ -504,6 +485,8 @@ function aggiornaInline(id) {
             qta: qta,
             sconto: sconto,
             tipo_sconto: tipo_sconto,
+            prezzo: prezzo,
+            costo: costo
         },
         success: function (response) {
             caricaRighe(id);

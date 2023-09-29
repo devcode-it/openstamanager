@@ -1164,6 +1164,23 @@ switch ($op) {
         }
 
         break;
+
+    case 'update_inline':
+        $id_riga = post('riga_id');
+        $riga = $riga ?: Riga::find($id_riga);
+        $riga = $riga ?: Articolo::find($id_riga);
+
+        if (!empty($riga)) {
+            $riga->qta = post('qta');
+            $riga->setPrezzoUnitario(post('prezzo'), $riga->idiva);
+            $riga->setSconto(post('sconto'), post('tipo_sconto'));
+            $riga->costo_unitario = post('costo') ?: 0;
+            $riga->save();
+
+            flash()->info(tr('Riga aggiornata!'));
+        }
+
+        break;    
 }
 
 // Nota di debito

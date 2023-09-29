@@ -24,6 +24,7 @@ switch (post('op')) {
         $dbo->update('co_staticontratti', [
             'descrizione' => (count($dbo->fetchArray('SELECT descrizione FROM co_staticontratti WHERE descrizione = '.prepare(post('descrizione')))) > 0) ? $dbo->fetchOne('SELECT descrizione FROM co_staticontratti WHERE id ='.$id_record)['descrizione'] : post('descrizione'),
             'icona' => post('icona'),
+            'colore' => post('colore'),
             'is_completato' => post('is_completato') ?: null,
             'is_fatturabile' => post('is_fatturabile') ?: null,
             'is_pianificabile' => post('is_pianificabile') ?: null,
@@ -36,6 +37,7 @@ switch (post('op')) {
     case 'add':
         $descrizione = post('descrizione');
         $icona = post('icona');
+        $colore = post('colore');
         $is_completato = post('is_completato') ?: null;
         $is_fatturabile = post('is_fatturabile') ?: null;
         $is_pianificabile = post('is_pianificabile') ?: null;
@@ -44,7 +46,7 @@ switch (post('op')) {
         if (count($dbo->fetchArray('SELECT descrizione FROM co_staticontratti WHERE descrizione='.prepare($descrizione))) > 0) {
             flash()->error(tr('Stato di contratto già esistente.'));
         } else {
-            $query = 'INSERT INTO co_staticontratti(descrizione, icona, is_completato, is_fatturabile, is_pianificabile) VALUES ('.prepare($descrizione).', '.prepare($icona).', '.prepare($is_completato).', '.prepare($is_fatturabile).', '.prepare($is_pianificabile).' )';
+            $query = 'INSERT INTO co_staticontratti(descrizione, icona, colore, is_completato, is_fatturabile, is_pianificabile) VALUES ('.prepare($descrizione).', '.prepare($icona).', '.prepare($colore).', '.prepare($is_completato).', '.prepare($is_fatturabile).', '.prepare($is_pianificabile).' )';
             $dbo->query($query);
             $id_record = $dbo->lastInsertedID();
             flash()->info(tr('Nuovo stato contratto aggiunto.'));

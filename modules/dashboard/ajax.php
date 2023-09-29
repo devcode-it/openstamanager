@@ -128,56 +128,59 @@ switch (filter('op')) {
                 co_preventivi.numero,
                 co_preventivi.data_accettazione,
                 co_preventivi.data_conclusione,
+                co_statipreventivi.is_pianificabile,
+                co_statipreventivi.descrizione as stato,
+                co_statipreventivi.is_completato,
                 (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = co_preventivi.idanagrafica) AS cliente,
-                (SELECT id FROM zz_files WHERE id_record = co_preventivi.id AND id_module = '.prepare($modulo_preventivi->id).' LIMIT 1) AS have_attachments,
-                 \'1\' AS is_completato
+                (SELECT id FROM zz_files WHERE id_record = co_preventivi.id AND id_module = '.prepare($modulo_preventivi->id).' LIMIT 1) AS have_attachments
             FROM co_preventivi
                 LEFT JOIN co_statipreventivi ON co_preventivi.idstato = co_statipreventivi.id
             WHERE
             (
                 (co_preventivi.data_accettazione >= '.prepare($start).' AND co_preventivi.data_accettazione <= '.prepare($end).')
                 OR (co_preventivi.data_conclusione >= '.prepare($start).' AND co_preventivi.data_conclusione <= '.prepare($end).')
-            )
-            AND
-                co_statipreventivi.is_pianificabile=1';
+            )';
 
             $preventivi = $dbo->fetchArray($query);
-
+            
             foreach ($preventivi as $preventivo) {
-                if (!empty($preventivo['data_accettazione']) && $preventivo['data_accettazione'] != '0000-00-00') {
-                    $results[] = [
-                        'id' => 'A_'.$modulo_preventivi->id.'_'.$preventivo['id'],
-                        'idintervento' => $preventivo['id'],
-                        'idtecnico' => '',
-                        'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div>'.'<b>'.tr('Accettazione prev.').' '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
-                        'start' => $preventivo['data_accettazione'],
-                        //'end' => $preventivo['data_accettazione'],
-                        'url' => base_path().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$preventivo['id'],
-                        'backgroundColor' => '#ff7f50',
-                        'textColor' => color_inverse('#ff7f50'),
-                        'borderColor' => '#ff7f50',
-                        'allDay' => true,
-                        'eventStartEditable' => false,
-                        'editable' => false,
-                    ];
-                }
+                if ($preventivo['is_pianificabile'] == 1 || $preventivo['stato'] = 'In attesa di conferma') {
+                    if (!empty($preventivo['data_accettazione']) && $preventivo['data_accettazione'] != '0000-00-00') {
+                        $query."AND co_statipreventivi.is_pianificabile=1";
+                        $results[] = [
+                            'id' => 'A_'.$modulo_preventivi->id.'_'.$preventivo['id'],
+                            'idintervento' => $preventivo['id'],
+                            'idtecnico' => '',
+                            'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '<i class="fa fa-pencil" aria-hidden="true"></i>').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div>'.'<b>'.tr('Accettazione prev.').' '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
+                            'start' => $preventivo['data_accettazione'],
+                            //'end' => $preventivo['data_accettazione'],
+                            'url' => base_path().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$preventivo['id'],
+                            'backgroundColor' => '#ff7f50',
+                            'textColor' => color_inverse('#ff7f50'),
+                            'borderColor' => '#ff7f50',
+                            'allDay' => true,
+                            'eventStartEditable' => false,
+                            'editable' => false,
+                        ];
+                    }
 
-                if ($preventivo['data_accettazione'] != $preventivo['data_conclusione'] && $preventivo['data_conclusione'] != '0000-00-00' && !empty($preventivo['data_conclusione'])) {
-                    $results[] = [
-                        'id' => 'B_'.$modulo_preventivi->id.'_'.$preventivo['id'],
-                        'idintervento' => $preventivo['id'],
-                        'idtecnico' => '',
-                        'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div>'.'<b>'.tr('Conclusione prev.').' '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
-                        'start' => $preventivo['data_conclusione'],
-                        //'end' => $preventivo['data_conclusione'],
-                        'url' => base_path().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$preventivo['id'],
-                        'backgroundColor' => '#ff7f50',
-                        'textColor' => color_inverse('#ff7f50'),
-                        'borderColor' => '#ff7f50',
-                        'allDay' => true,
-                        'eventStartEditable' => false,
-                        'editable' => false,
-                    ];
+                    if ($preventivo['data_accettazione'] != $preventivo['data_conclusione'] && $preventivo['data_conclusione'] != '0000-00-00' && !empty($preventivo['data_conclusione'])) {
+                        $results[] = [
+                            'id' => 'B_'.$modulo_preventivi->id.'_'.$preventivo['id'],
+                            'idintervento' => $preventivo['id'],
+                            'idtecnico' => '',
+                            'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '<i class="fa fa-pencil" aria-hidden="true"></i>').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div>'.'<b>'.tr('Conclusione prev.').' '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
+                            'start' => $preventivo['data_conclusione'],
+                            //'end' => $preventivo['data_conclusione'],
+                            'url' => base_path().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$preventivo['id'],
+                            'backgroundColor' => '#ff7f50',
+                            'textColor' => color_inverse('#ff7f50'),
+                            'borderColor' => '#ff7f50',
+                            'allDay' => true,
+                            'eventStartEditable' => false,
+                            'editable' => false,
+                        ];
+                    }
                 }
             }
 

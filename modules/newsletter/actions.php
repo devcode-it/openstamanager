@@ -52,7 +52,7 @@ switch (filter('op')) {
 
         flash()->info(tr('Campagna newsletter salvata!'));
 
-        if ($newsletter->state = 'OK') {
+        if ($newsletter['state'] === 'OK') {
             $newsletter->completed_at = $newsletter->updated_at;
         }
 

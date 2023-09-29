@@ -201,7 +201,7 @@ class CSV extends CSVImporter
             ],
             [
                 'field' => 'idtipoanagrafica',
-                'label' => 'Tipo',
+                'label' => 'Tipo di anagrafica',
                 'names' => [
                     'Tipo',
                     'tipo',
@@ -210,7 +210,7 @@ class CSV extends CSVImporter
             ],
             [
                 'field' => 'tipo',
-                'label' => 'Tipologia',
+                'label' => 'Tipologia (Privato, Ente pubblico, Azienda)',
             ],
             [
                 'field' => 'codice_destinatario',
@@ -229,6 +229,14 @@ class CSV extends CSVImporter
                     'split_payment',
                 ],
             ],
+            [
+                'field' => 'id_settore',
+                'label' => 'Settore merceologico',
+                'names' => [
+                    'settore',
+                    'settore merceologico',
+                ],
+            ],
         ];
     }
 
@@ -244,14 +252,27 @@ class CSV extends CSVImporter
             $tipi_selezionati = explode(',', $record['idtipoanagrafica']);
 
             foreach ($tipi_selezionati as $tipo) {
-                $tipo_anagrafica = $database->fetchOne('SELECT idtipoanagrafica AS id FROM an_tipianagrafiche WHERE descrizione = '.prepare($tipo).' OR idtipoanagrafica = '.prepare($tipo));
+                $tipo_anagrafica = $database->fetchOne('SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE LOWER(descrizione) = LOWER('.prepare($tipo).') OR idtipoanagrafica = '.prepare($tipo))['idtipoanagrafica'];
 
-                if (!empty($tipo_anagrafica)) {
-                    $tipologie[] = $tipo_anagrafica['id'];
+                // Creo il tipo anagrafica se non esiste
+                if (empty($tipo_anagrafica)) {
+                    $database->insert('an_tipianagrafiche', [
+                        'descrizione' => $tipo,
+                    ])['idtipoanagrafica'];
+
+                    $tipo_anagrafica = $database->fetchOne('SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE lower(descrizione) = LOWER('.prepare($tipo).') OR idtipoanagrafica = '.prepare($tipo))['idtipoanagrafica'];
                 }
+                
+                $tipologie[] = $tipo_anagrafica;
             }
         }
         unset($record['idtipoanagrafica']);
+
+        $tipi_selezionati  = [];
+        if (!empty($record['tipo'])) {
+            $tipi_selezionati = explode(',', $record['tipo']);
+        }
+        unset($record['tipo']);
 
         // Fix per campi con contenuti derivati da query implicite
         if (!empty($record['id_nazione'])) {
@@ -260,11 +281,21 @@ class CSV extends CSVImporter
             unset($record['id_nazione']);
         }
 
+        // Creo il settore merceologico nel caso in cui non sia presente
+        $id_settore = '';
+        if (!empty($record['id_settore'])) {
+            $settore = $record['id_settore'];
+            $id_settore = $database->fetchOne('SELECT id FROM an_settori WHERE LOWER(descrizione) = LOWER('.prepare($settore).')')['id'];
+
+            if (empty($id_settore)) {
+                $id_settore = $database->insert('an_settori', [
+                    'descrizione' => $settore,
+                ])['id'];
+            }
+        }
+
         // Separazione dei campi relativi alla sede legale
         $campi_sede = [
-            //'piva',
-            //'codice_fiscale',
-            //'codice_destinatario',
             'indirizzo',
             'indirizzo2',
             'citta',
@@ -284,9 +315,11 @@ class CSV extends CSVImporter
 
         $dati_sede = [];
         foreach ($campi_sede as $field) {
-            if (isset($record[$field])) {
-                $dati_sede[$field] = trim($record[$field]);
-                unset($record[$field]);
+            if ($primary_key != $field) {
+                if (isset($record[$field])) {
+                    $dati_sede[$field] = trim($record[$field]);
+                    unset($record[$field]);
+                }
             }
         }
 
@@ -307,6 +340,8 @@ class CSV extends CSVImporter
 
         $anagrafica->fill($record);
         $anagrafica->tipologie = $tipologie;
+        $anagrafica->tipo = $tipi_selezionati;
+        $anagrafica->id_settore = $id_settore;
         $anagrafica->save();
 
         $sede = $anagrafica->sedeLegale;

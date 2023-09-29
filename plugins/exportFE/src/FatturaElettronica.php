@@ -815,7 +815,7 @@ class FatturaElettronica
         }
 
         // Riferimento Amministrazione
-        if ($fattura->getCliente()->tipo == "Ente pubblico") {
+        if ($fattura->getCliente()->tipo == 'Ente pubblico') {
             if (!empty($fattura->getCliente()->riferimento_amministrazione)) {
                 $result['RiferimentoAmministrazione'] = $fattura->getCliente()->riferimento_amministrazione;
             }
@@ -849,10 +849,6 @@ class FatturaElettronica
             'Sede' => static::getSede($cliente),
         ];
 
-        // Riferimento Amministrazione
-        if (!empty($cliente->riferimento_amministrazione)) {
-            $result['RiferimentoAmministrazione'] = $cliente->riferimento_amministrazione;
-        }
 
         return $result;
     }

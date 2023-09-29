@@ -238,7 +238,7 @@ if ($dir == 'entrata') {
 
 <?php
 
-$query = 'SELECT * FROM co_statidocumento';
+$query = 'SELECT *, colore AS _bgcolor_ FROM co_statidocumento';
 if (empty($record['is_fiscale'])) {
     $query .= " WHERE descrizione = 'Bozza'";
 
@@ -249,6 +249,8 @@ if (empty($record['is_fiscale'])) {
 elseif ($record['stato'] == 'Bozza') {
     $query .= " WHERE descrizione IN ('Emessa', 'Bozza')";
 }
+
+$query .= ' ORDER BY descrizione';
 
 ?>
 				<?php if ($dir == 'entrata') {
@@ -355,7 +357,7 @@ elseif ($record['stato'] == 'Bozza') {
 				<div class="col-md-3">
 					<!-- Nella realtà la fattura accompagnatoria non può esistere per la fatturazione elettronica, in quanto la risposta dal SDI potrebbe non essere immediata e le merci in viaggio. Dunque si può emettere una documento di viaggio valido per le merci ed eventualmente una fattura pro-forma per l'incasso della stessa, emettendo infine la fattura elettronica differita. -->
 
-					{[ "type": "select", "label": "<?php echo tr('Tipo documento'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, CONCAT_WS(\" - \",codice_tipo_documento_fe, descrizione) AS descrizione FROM co_tipidocumento WHERE dir='<?php echo $dir; ?>' AND (reversed = 0 OR id = <?php echo $record['idtipodocumento']; ?>) ORDER BY codice_tipo_documento_fe", "value": "$idtipodocumento$", "readonly": <?php echo intval($record['stato'] != 'Bozza' && $record['stato'] != 'Annullata'); ?>, "help": "<?php echo ($database->fetchOne('SELECT tipo FROM an_anagrafiche WHERE idanagrafica = '.prepare($record['idanagrafica']))['tipo'] == 'Ente pubblico') ? 'FPA12 - fattura verso PA (Ente pubblico)' : 'FPR12 - fattura verso soggetti privati (Azienda o Privato)'; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tipo documento'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, CONCAT_WS(\" - \",codice_tipo_documento_fe, descrizione) AS descrizione FROM co_tipidocumento WHERE dir='<?php echo $dir; ?>' AND ((reversed = 0 AND id_segment ='<?php echo $record['id_segment']; ?>') OR id = <?php echo $record['idtipodocumento']; ?>) ORDER BY codice_tipo_documento_fe", "value": "$idtipodocumento$", "readonly": <?php echo intval($record['stato'] != 'Bozza' && $record['stato'] != 'Annullata'); ?>, "help": "<?php echo ($database->fetchOne('SELECT tipo FROM an_anagrafiche WHERE idanagrafica = '.prepare($record['idanagrafica']))['tipo'] == 'Ente pubblico') ? 'FPA12 - fattura verso PA (Ente pubblico)' : 'FPR12 - fattura verso soggetti privati (Azienda o Privato)'; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -971,7 +973,7 @@ if (in_array($record[$field_name], $user->sedi)) {
     $disabilita_eliminazione = in_array($fattura->codice_stato_fe, ['RC', 'MC', 'EC01', 'WAIT']);
 
     echo '
-    <a class="btn btn-danger ask '.($disabilita_eliminazione ? 'disabled' : '').'" data-backto="record-list" '.($disabilita_eliminazione ? 'disabled' : '').'>
+    <a id ="elimina" class="btn btn-danger ask '.($disabilita_eliminazione ? 'disabled' : '').'" data-backto="record-list" '.($disabilita_eliminazione ? 'disabled' : '').'>
         <i class="fa fa-trash"></i> '.tr('Elimina').'
     </a>';
 }

@@ -33,12 +33,16 @@ if ($record['can_delete']) {
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 
 	<div class="row">
-		<div class="col-md-5">
+		<div class="col-md-4">
 			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$", "extra": "<?php echo $attr; ?>" ]}
 		</div>
 
-		<div class="col-md-4">
+		<div class="col-md-3">
 			{[ "type": "text", "label": "<?php echo tr('Icona'); ?>", "name": "icona", "required": 1, "class": "text-center", "value": "$icona$", "extra": "", "icon-after": "<?php echo (!empty($record['icona'])) ? '<i class=\"'.$record['icona'].'\"></i>' : ''; ?>"  ]}
+		</div>
+
+		<div class="col-md-2">
+			{[ "type": "text", "label": "<?php echo tr('Colore'); ?>", "name": "colore", "required": 1, "class": "colorpicker text-center", "value": "$colore$", "extra": "maxlength='7'", "icon-after": "<div class='img-circle square'></div>" ]}
 		</div>
 
 		<div class="col-md-3">
@@ -78,3 +82,14 @@ if (!empty($record['can_delete'])) {
 }
 
 ?>
+
+<script>
+	$(document).ready( function() {
+		$('.colorpicker').colorpicker({ format: 'hex' }).on('changeColor', function() {
+			$('#colore').parent().find('.square').css( 'background', $('#colore').val() );
+		});
+		$('#colore').parent().find('.square').css( 'background', $('#colore').val() );
+
+		notifica();
+	});
+</script>

@@ -701,7 +701,7 @@ class Fattura extends Document
 
         // In fase di duplicazione di una fattura non deve essere calcolato il numero progressivo ma questo deve
         // essere generato in fase di emissione della stessa.
-        $new->numero_esterno = null;
+        $new->numero_esterno = '';
         $new->numero = Fattura::getNextNumero($now, $new->direzione, $new->id_segment);
 
         // Rimozione informazioni di Fattura Elettronica

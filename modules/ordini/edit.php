@@ -60,16 +60,16 @@ if ($module['name'] == 'Ordini cliente') {
                     if (setting('Cambia automaticamente stato ordini fatturati')) {
                         if ($record['stato'] == 'Evaso' || $record['stato'] == 'Parzialmente evaso' || $record['stato'] == 'Fatturato' || $record['stato'] == 'Parzialmente fatturato') {
                             ?>
-                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT * FROM or_statiordine", "value": "$idstatoordine$", "extra": "readonly", "class": "unblockable" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT *, colore AS _bgcolor_ FROM or_statiordine ORDER BY descrizione", "value": "$idstatoordine$", "extra": "readonly", "class": "unblockable" ]}
                     <?php
                         } else {
                             ?>
-                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT * FROM or_statiordine WHERE descrizione IN('Bozza', 'Accettato', 'In attesa di conferma', 'Annullato')", "value": "$idstatoordine$", "class": "unblockable" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT *, colore AS _bgcolor_ FROM or_statiordine WHERE descrizione IN('Bozza', 'Accettato', 'In attesa di conferma', 'Annullato') ORDER BY descrizione", "value": "$idstatoordine$", "class": "unblockable" ]}
                     <?php
                         }
                     } else {
                         ?>
-                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT * FROM or_statiordine", "value": "$idstatoordine$", "class": "unblockable" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT *, colore AS _bgcolor_ FROM or_statiordine ORDER BY descrizione", "value": "$idstatoordine$", "class": "unblockable" ]}
                     <?php
                     }
                     ?>
@@ -516,6 +516,6 @@ if (!empty($elementi)) {
 ?>
 
 <a class="btn btn-danger ask" data-backto="record-list">
-    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
+    <i id ="elimina" class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
 

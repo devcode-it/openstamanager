@@ -49,11 +49,11 @@ include_once __DIR__.'/../../core.php';
         </div>
 
         <?php
-        
+
         $id_module_acquisti = database()->fetchOne('SELECT id FROM zz_modules WHERE title = "Fatture di acquisto"')['id'];
         $id_module_vendite = database()->fetchOne('SELECT id FROM zz_modules WHERE title = "Fatture di vendita"')['id'];
-       
-        echo'
+
+        echo '
 		<div class="col-md-3">
         
 			{[ "type": "select", "label": "'.tr('Sezionale predefinito').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $record['dir'] == 'entrata' ? $id_module_vendite : $id_module_acquisti, 'is_sezionale' => 1]).', "value": "$id_segment$" ]}

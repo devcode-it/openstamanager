@@ -115,7 +115,7 @@ echo '
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstato", "required": 1, "values": "query=SELECT id, descrizione FROM co_statipreventivi", "value": "$idstato$", "class": "unblockable" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstato", "required": 1, "values": "query=SELECT id, descrizione, colore AS _bgcolor_ FROM co_statipreventivi ORDER BY descrizione", "value": "$idstato$", "class": "unblockable" ]}
                 </div>
 
             </div>
@@ -518,7 +518,7 @@ if (!empty($elementi)) {
 ?>
 
 <a class="btn btn-danger ask" data-backto="record-list">
-    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
+    <i id="elimina" class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
 
 <script>

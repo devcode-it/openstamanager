@@ -24,6 +24,7 @@ switch (post('op')) {
         $dbo->update('or_statiordine', [
             'descrizione' => (count($dbo->fetchArray('SELECT descrizione FROM or_statiordine WHERE descrizione = '.prepare(post('descrizione')))) > 0) ? $dbo->fetchOne('SELECT descrizione FROM or_statiordine WHERE id ='.$id_record)['descrizione'] : post('descrizione'),
             'icona' => post('icona'),
+            'colore' => post('colore'),
             'completato' => post('completato') ?: null,
             'is_fatturabile' => post('is_fatturabile') ?: null,
             'impegnato' => post('impegnato') ?: null,
@@ -36,6 +37,7 @@ switch (post('op')) {
     case 'add':
         $descrizione = post('descrizione');
         $icona = post('icona');
+        $colore = post('colore');
         $completato = post('completato') ?: null;
         $is_fatturabile = post('is_fatturabile') ?: null;
         $impegnato = post('impegnato') ?: null;
@@ -44,7 +46,7 @@ switch (post('op')) {
         if (count($dbo->fetchArray('SELECT descrizione FROM or_statiordine WHERE descrizione='.prepare($descrizione))) > 0) {
             flash()->error(tr('Stato ordine già esistente.'));
         } else {
-            $query = 'INSERT INTO or_statiordine(descrizione, icona, completato, is_fatturabile, impegnato) VALUES ('.prepare($descrizione).', '.prepare($icona).', '.prepare($completato).', '.prepare($is_fatturabile).', '.prepare($impegnato).' )';
+            $query = 'INSERT INTO or_statiordine(descrizione, icona, colore, completato, is_fatturabile, impegnato) VALUES ('.prepare($descrizione).', '.prepare($icona).', '.prepare($colore).','.prepare($completato).', '.prepare($is_fatturabile).', '.prepare($impegnato).' )';
             $dbo->query($query);
             $id_record = $dbo->lastInsertedID();
             flash()->info(tr('Nuovo stato ordine aggiunto.'));
@@ -54,7 +56,7 @@ switch (post('op')) {
 
     case 'delete':
         //scelgo se settare come eliminato o cancellare direttamente la riga se non è stato utilizzato negli ordini
-        if (count($dbo->fetchArray('SELECT id FROM or_statiordine WHERE idstato='.prepare($id_record))) > 0) {
+        if (count($dbo->fetchArray('SELECT id FROM or_statiordine WHERE id='.prepare($id_record))) > 0) {
             $query = 'UPDATE or_statiordine SET deleted_at = NOW() WHERE can_delete = 1 AND id='.prepare($id_record);
         } else {
             $query = 'DELETE FROM or_statiordine WHERE can_delete = 1 AND id='.prepare($id_record);

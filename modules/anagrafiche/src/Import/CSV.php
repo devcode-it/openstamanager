@@ -235,7 +235,6 @@ class CSV extends CSVImporter
                 'names' => [
                     'settore',
                     'settore merceologico',
-                    'proveninenza',
                 ],
             ],
         ];

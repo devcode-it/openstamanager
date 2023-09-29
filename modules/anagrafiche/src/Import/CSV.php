@@ -252,7 +252,7 @@ class CSV extends CSVImporter
             $tipi_selezionati = explode(',', $record['idtipoanagrafica']);
 
             foreach ($tipi_selezionati as $tipo) {
-                $tipo_anagrafica = $database->fetchOne('SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione = '.prepare($tipo).' OR idtipoanagrafica = '.prepare($tipo))['idtipoanagrafica'];
+                $tipo_anagrafica = $database->fetchOne('SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE LOWER(descrizione) = LOWER('.prepare($tipo).') OR idtipoanagrafica = '.prepare($tipo))['idtipoanagrafica'];
 
                 // Creo il tipo anagrafica se non esiste
                 if (empty($tipo_anagrafica)) {
@@ -260,7 +260,7 @@ class CSV extends CSVImporter
                         'descrizione' => $tipo,
                     ])['idtipoanagrafica'];
 
-                    $tipo_anagrafica = $database->fetchOne('SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione = '.prepare($tipo).' OR idtipoanagrafica = '.prepare($tipo))['idtipoanagrafica'];
+                    $tipo_anagrafica = $database->fetchOne('SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE lower(descrizione) = LOWER('.prepare($tipo).') OR idtipoanagrafica = '.prepare($tipo))['idtipoanagrafica'];
                 }
                 
                 $tipologie[] = $tipo_anagrafica;
@@ -285,7 +285,7 @@ class CSV extends CSVImporter
         $id_settore = '';
         if (!empty($record['id_settore'])) {
             $settore = $record['id_settore'];
-            $id_settore = $database->fetchOne('SELECT id FROM an_settori WHERE descrizione = '.prepare($settore).'')['id'];
+            $id_settore = $database->fetchOne('SELECT id FROM an_settori WHERE LOWER(descrizione) = LOWER('.prepare($settore).')')['id'];
 
             if (empty($id_settore)) {
                 $id_settore = $database->insert('an_settori', [

@@ -157,7 +157,7 @@ echo "
 <table class='table table-striped table-bordered' id='contents'>
     <thead>
         <tr>
-            <th class='text-center'>#</th>";
+            <th class='text-center' width='35' >#</th>";
 
 if ($has_image) {
     echo "

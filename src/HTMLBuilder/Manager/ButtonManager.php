@@ -70,7 +70,7 @@ class ButtonManager implements ManagerInterface
             $result = [
                 'link' => base_path().'/modules/sms/sms.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id='.$options['id'].$options['parameters'],
                 'title' => tr('Invia').' '.((strtoupper($template_sms['name']) == $template_sms['name']) ? $template_sms['name'] : lcfirst($template_sms['name'])),
-                'icon' => $template_sms['icon'],
+                'icon' => 'fa fa-comment',
                 'type' => 'modal',
             ];
         }

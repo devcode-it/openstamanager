@@ -52,10 +52,10 @@ UPDATE `co_statipreventivi` SET `colore` = '#88de69' WHERE `co_statipreventivi`.
 UPDATE `co_statipreventivi` SET `colore` = '#98fb98' WHERE `co_statipreventivi`.`descrizione` = 'Fatturato'; 
 UPDATE `co_statipreventivi` SET `colore` = '#b4ff99' WHERE `co_statipreventivi`.`descrizione` = 'Parzialmente fatturato'; 
 
-UPDATE `in_statiintervento` SET `colore` = '#ffef99' WHERE `in_statiintervento`.`descrizione` = 'Da programmare'; 
-UPDATE `in_statiintervento` SET `colore` = '#98fb98' WHERE `in_statiintervento`.`descrizione` = 'Fatturato'; 
-UPDATE `in_statiintervento` SET `colore` = '#d8bfd8' WHERE `in_statiintervento`.`descrizione` = 'Completato';
-UPDATE `in_statiintervento` SET `colore` = '#99e6ff' WHERE `in_statiintervento`.`descrizione` = 'Programmato';
+UPDATE `in_statiintervento` SET `colore` = '#ffef99' WHERE `in_statiintervento`.`descrizione` = 'Da programmare' AND `colore` = '#2deded'; 
+UPDATE `in_statiintervento` SET `colore` = '#98fb98' WHERE `in_statiintervento`.`descrizione` = 'Fatturato' AND `colore` = '#55ff55'; 
+UPDATE `in_statiintervento` SET `colore` = '#d8bfd8' WHERE `in_statiintervento`.`descrizione` = 'Completato' AND `colore` = '#a3ff82';
+UPDATE `in_statiintervento` SET `colore` = '#99e6ff' WHERE `in_statiintervento`.`descrizione` = 'Programmato' AND `colore` = '#ffc400';
 
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF(`d`.`conteggio`>1, \'red\', co_statidocumento.colore)' WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = '_bg_'; 
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF(`dup`.`numero_esterno` IS NOT NULL, \'red\', co_statidocumento.colore)' WHERE `zz_modules`.`name` = 'Fatture di vendita' AND `zz_views`.`name` = '_bg_'; 

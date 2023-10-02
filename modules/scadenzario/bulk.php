@@ -77,7 +77,7 @@ switch (post('op')) {
         $list = [];
         $anagrafiche = [];
         $id_anagrafica = 0;
-        $scadenze = Scadenza::whereIn('id', $id_records)->orderBy('idanagrafica')->orderBy('iddocumento')->get();
+        $scadenze = Scadenza::whereIn('id', $id_records)->where('pagato', '>', 'da_pagare')->orderBy('idanagrafica')->orderBy('iddocumento')->get();
         foreach ($scadenze as $key => $scadenza) {
             $documento = $scadenza->documento;
 

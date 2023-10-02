@@ -211,6 +211,10 @@ if ($dir == 'entrata') {
 
 		<div class="panel-body">
 			<div class="row">
+                
+                <!-- id_segment -->
+				{[ "type": "hidden", "label": "Segmento", "name": "id_segment", "class": "text-center", "value": "$id_segment$" ]}
+
                 <?php
                 if ($dir == 'uscita') {
                     echo '
@@ -224,9 +228,6 @@ if ($dir == 'entrata') {
                     $size = 4;
                 }
                 ?>
-
-				<!-- id_segment -->
-				{[ "type": "hidden", "label": "Segmento", "name": "id_segment", "class": "text-center", "value": "$id_segment$" ]}
 
 				<div class="col-md-<?php echo $size; ?>">
 					{[ "type": "text", "label": "<?php echo $label; ?>", "required": "<?php echo ($dir == 'uscita') ? 1 : 0; ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$", "help": "<?php echo (empty($record['numero_esterno']) and $dir == 'entrata') ? tr('Il numero della fattura sarà generato automaticamente in fase di emissione.') : ''; ?>" ]}
@@ -280,7 +281,6 @@ $query .= ' ORDER BY descrizione';
 
                 echo '
                 <div class="col-md-'.($is_fiscale ? 2 : 6).'">
-                    <!-- TODO: Rimuovere possibilità di selezionare lo stato pagato obbligando l\'utente ad aggiungere il movimento in prima nota -->
                     {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatodocumento", "required": 1, "values": "query='.$query.'", "value": "$idstatodocumento$", "class": "'.(($record['stato'] != 'Bozza' && !$abilita_genera) ? '' : 'unblockable').'", "extra": "onchange=\"return cambiaStato()\"" ]}
                 </div>
 			</div>

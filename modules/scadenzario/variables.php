@@ -25,12 +25,12 @@ $r = $dbo->fetchOne('SELECT co_scadenziario.*, co_documenti.*,
     co_scadenziario.da_pagare - co_scadenziario.pagato AS totale,
 	(SELECT pec FROM em_accounts WHERE em_accounts.id='.prepare($template['id_account']).') AS is_pec,
 	(SELECT descrizione FROM co_pagamenti WHERE co_pagamenti.id = co_documenti.idpagamento) AS pagamento,
-    (SELECT GROUP_CONCAT(CONCAT("<li>",DATE_FORMAT(scadenza,"%d/%m/%Y")," - ",FORMAT(da_pagare,2),"€ - ",descrizione,"</li>") SEPARATOR "<br>") FROM co_scadenziario WHERE scadenza < NOW() AND iddocumento!=0 AND da_pagare>0 AND idanagrafica=co_documenti.idanagrafica ORDER BY scadenza) AS scadenze_fatture_scadute
+    (SELECT GROUP_CONCAT(CONCAT("<li>",DATE_FORMAT(scadenza,"%d/%m/%Y")," - ",FORMAT(da_pagare,2),"€ - ",descrizione,"</li>") SEPARATOR "<br>") FROM co_scadenziario WHERE scadenza < NOW() AND iddocumento!=0 AND da_pagare>pagato AND idanagrafica=co_documenti.idanagrafica ORDER BY scadenza) AS scadenze_fatture_scadute
 FROM co_scadenziario
     INNER JOIN co_documenti ON co_documenti.id = co_scadenziario.iddocumento
     INNER JOIN an_anagrafiche ON co_documenti.idanagrafica = an_anagrafiche.idanagrafica 
     LEFT JOIN an_referenti ON an_referenti.idanagrafica = an_anagrafiche.idanagrafica
-WHERE co_scadenziario.pagato != co_scadenziario.da_pagare AND co_scadenziario.iddocumento = (SELECT iddocumento FROM co_scadenziario s WHERE id='.prepare($id_record).')');
+WHERE co_scadenziario.da_pagare > co_scadenziario.pagato AND co_scadenziario.iddocumento = (SELECT iddocumento FROM co_scadenziario s WHERE id='.prepare($id_record).')');
 
 $logo_azienda = str_replace(base_dir(), base_path(), App::filepath('templates/base|custom|/logo_azienda.jpg'));
 

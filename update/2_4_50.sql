@@ -89,3 +89,4 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 
 UPDATE `zz_prints` SET `predefined` = '0' WHERE `zz_prints`.`name` IN ('Stampa calendario settimanale', "Intervento & checklist", "Intervento & checklist (senza costi)", "Barcode bulk");
 
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_tipidocumento` LEFT JOIN zz_segments ON co_tipidocumento.id_segment = zz_segments.id WHERE 1=1 AND deleted_at IS NULL HAVING 2=2' WHERE `zz_modules`.`name` = 'Tipi documento'; 

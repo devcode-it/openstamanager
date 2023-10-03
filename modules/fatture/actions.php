@@ -856,12 +856,19 @@ switch ($op) {
         $tipo = Tipo::find(post('idtipodocumento'));
         $iva = Aliquota::find(setting('Iva predefinita'));
 
-        $imponibile += Riga::join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.idiva')
+        $imponibile = $database->table('co_righe_documenti')
+            ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.idiva')
             ->where('co_iva.codice_natura_fe', 'LIKE', 'N3%')
             ->where('co_righe_documenti.iddocumento', $fattura->id)
             ->sum('subtotale');
 
-        $totale_imponibile = setting('Utilizza prezzi di vendita comprensivi di IVA') ? $imponibile + ($imponibile * $iva->percentuale / 100) : $imponibile;
+        $sconto = $database->table('co_righe_documenti')
+            ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.idiva')
+            ->where('co_iva.codice_natura_fe', 'LIKE', 'N3%')
+            ->where('co_righe_documenti.iddocumento', $fattura->id)
+            ->sum('sconto');
+
+        $totale_imponibile = setting('Utilizza prezzi di vendita comprensivi di IVA') ? ($imponibile-$sconto) + (($imponibile-$sconto) * $iva->percentuale / 100) : ($imponibile-$sconto);
         $totale_imponibile = $fattura->tipo->reversed == 1 ? -$totale_imponibile : $totale_imponibile;
 
         $autofattura = Fattura::build($anagrafica, $tipo, $data, $id_segment);

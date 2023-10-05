@@ -188,7 +188,7 @@ foreach ($righe as $riga) {
         if ($dir == 'entrata') {
             echo '<td></td>';
         }
-            echo '
+        echo '
             <td></td>
             <td></td>
             <td></td>
@@ -202,7 +202,7 @@ foreach ($righe as $riga) {
 
         // Costi unitari
         if ($dir == 'entrata') {
-        echo '
+            echo '
             <td>
                 {[ "type": "number", "name": "costo_'.$riga->id.'", "value": "'.$riga->costo_unitario.'", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "'.currency().'", "disabled": "'.$block_edit.'" ]}
             </td>';

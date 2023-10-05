@@ -142,11 +142,11 @@ switch (filter('op')) {
             )';
 
             $preventivi = $dbo->fetchArray($query);
-            
+
             foreach ($preventivi as $preventivo) {
                 if ($preventivo['is_pianificabile'] == 1 || $preventivo['stato'] = 'In attesa di conferma') {
                     if (!empty($preventivo['data_accettazione']) && $preventivo['data_accettazione'] != '0000-00-00') {
-                        $query."AND co_statipreventivi.is_pianificabile=1";
+                        $query.'AND co_statipreventivi.is_pianificabile=1';
                         $results[] = [
                             'id' => 'A_'.$modulo_preventivi->id.'_'.$preventivo['id'],
                             'idintervento' => $preventivo['id'],

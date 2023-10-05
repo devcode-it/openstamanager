@@ -849,7 +849,6 @@ class FatturaElettronica
             'Sede' => static::getSede($cliente),
         ];
 
-
         return $result;
     }
 

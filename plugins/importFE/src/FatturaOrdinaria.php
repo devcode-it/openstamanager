@@ -385,7 +385,7 @@ class FatturaOrdinaria extends FatturaElettronica
         // Arrotondamenti differenti nella fattura XML
         $diff = round(abs($totale_righe) + $totale_arrotondamento - abs($fattura->totale_imponibile), 2);
         // Aggiunta della riga di arrotondamento nel caso in cui ci sia una differenza tra i totali, o tra l'imponibile dell'XML e quello ricavato dalla somma delle righe
-        
+
         if (($diff != 0 && $diff != $totale_arrotondamento) || (($fattura->totale_imponibile + $fattura->rivalsa_inps) != $totale_imp)) {
             // Rimozione dell'IVA calcolata automaticamente dal gestionale
             $iva_arrotondamento = database()->fetchOne('SELECT * FROM co_iva WHERE percentuale=0 AND deleted_at IS NULL');

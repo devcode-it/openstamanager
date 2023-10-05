@@ -326,7 +326,7 @@ echo '
         </div>
         
         <div class="col-md-3">
-            {[ "type": "checkbox", "label": "'.tr('Creazione seriali').'", "name": "flag_crea_seriali", "value": 0, "help": "'.tr("Nel caso di righe contenenti serial, il gestionale procede alla registrazione del serial").'" ]}
+            {[ "type": "checkbox", "label": "'.tr('Creazione seriali').'", "name": "flag_crea_seriali", "value": 0, "help": "'.tr('Nel caso di righe contenenti serial, il gestionale procede alla registrazione del serial').'" ]}
         </div>';
 
         $ritenuta = $dati_generali['DatiRitenuta'];
@@ -421,7 +421,7 @@ if (!empty($righe)) {
         $serial = [];
         foreach ($codici as $codice) {
             $codici_articoli[] = $codice['CodiceValore'].' ('.$codice['CodiceTipo'].')';
-            if (str_contains($codice['CodiceTipo'], 'serial') || str_contains($codice['CodiceTipo'], 'Serial'))  {
+            if (str_contains($codice['CodiceTipo'], 'serial') || str_contains($codice['CodiceTipo'], 'Serial')) {
                 $serial[] = $codice['CodiceValore'];
             }
         }
@@ -605,13 +605,13 @@ if (!empty($righe)) {
                         </div>
 
                         <div class="row">';
-                        for ($i = 0; $i < $qta; $i++) {
-                            echo '
+            for ($i = 0; $i < $qta; ++$i) {
+                echo '
                             <div class="col-md-3">
                                 {[ "type": "text", "label": "'.tr('Serial').'", "name": "serial['.$key.'][]", "value": "'.$serial[$i].'" ]}
                             </div>';
-                        }
-                        echo '
+            }
+            echo '
                         </div>
                     </div> 
                 </div>

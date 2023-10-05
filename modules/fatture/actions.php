@@ -868,7 +868,7 @@ switch ($op) {
             ->where('co_righe_documenti.iddocumento', $fattura->id)
             ->sum('sconto');
 
-        $totale_imponibile = setting('Utilizza prezzi di vendita comprensivi di IVA') ? ($imponibile-$sconto) + (($imponibile-$sconto) * $iva->percentuale / 100) : ($imponibile-$sconto);
+        $totale_imponibile = setting('Utilizza prezzi di vendita comprensivi di IVA') ? ($imponibile - $sconto) + (($imponibile - $sconto) * $iva->percentuale / 100) : ($imponibile - $sconto);
         $totale_imponibile = $fattura->tipo->reversed == 1 ? -$totale_imponibile : $totale_imponibile;
 
         $autofattura = Fattura::build($anagrafica, $tipo, $data, $id_segment);
@@ -1187,7 +1187,7 @@ switch ($op) {
             flash()->info(tr('Riga aggiornata!'));
         }
 
-        break;    
+        break;
 }
 
 // Nota di debito

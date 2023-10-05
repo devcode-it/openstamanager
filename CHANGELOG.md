@@ -73,6 +73,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Aggiunta l'importazione dei seriali da fatture di acquisto
 - Aggiunta creazione del tipo di anagrafica se mancante in import anagrafiche
 - Aggiunta gestione inline dei campi Costo e Prezzo unitario nei documenti
+- Aggiunto il login amministratore da app
 ### Modificato (Changed)
 - Aggiornato il modello Asso Invoice
 - Eliminata la cartella tests
@@ -86,6 +87,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Corretta la visualizzazione del tasto sms
 - Corretta la generazione dell'autofattura in presenza di articoli
 - Corretto il campo RiferimentoNumeroLinea in fase di generazione XML
+- Corretta la duplicazione delle fatture
 ## 2.4.49 (2023-09-25)
 ### Aggiunto (Added)
 - Aggiunto avviso in caso di impossibilità di caricare la mappa

@@ -58,7 +58,31 @@ class Interventi extends AppResource
         // Informazioni sull'utente
         $id_tecnico = Auth::user()->id_anagrafica;
 
-        $query = 'SELECT in_interventi.id FROM in_interventi WHERE
+        if(Auth::user()->is_admin){
+            $query = 'SELECT in_interventi.id FROM in_interventi WHERE
+            deleted_at IS NOT NULL
+            OR (
+                in_interventi.id NOT IN (
+                    SELECT idintervento FROM in_interventi_tecnici
+                    WHERE in_interventi_tecnici.idintervento = in_interventi.id
+                        AND in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
+                )
+                AND in_interventi.id IN (
+                    SELECT idintervento FROM in_interventi_tecnici
+                    WHERE in_interventi_tecnici.idintervento = in_interventi.id
+                        AND in_interventi_tecnici.orario_fine BETWEEN :remove_period_start AND :remove_period_end
+                )
+            )';
+
+            $records = database()->fetchArray($query, [
+                ':period_end' => $end,
+                ':period_start' => $start,
+                ':remove_period_end' => $remove_end,
+                ':remove_period_start' => $remove_start,
+            ]);
+            
+        }else{
+            $query = 'SELECT in_interventi.id FROM in_interventi WHERE
             deleted_at IS NOT NULL
             OR (
                 in_interventi.id NOT IN (
@@ -74,15 +98,17 @@ class Interventi extends AppResource
                         AND in_interventi_tecnici.idtecnico = :id_tecnico_q2
                 )
             )';
-        $records = database()->fetchArray($query, [
+            
+            $records = database()->fetchArray($query, [
             ':period_end' => $end,
             ':period_start' => $start,
             ':remove_period_end' => $remove_end,
             ':remove_period_start' => $remove_start,
             ':id_tecnico_q1' => $id_tecnico,
             ':id_tecnico_q2' => $id_tecnico,
-        ]);
-
+            ]);
+        }
+        
         $interventi = array_column($records, 'id');
         $mancanti = $this->getMissingIDs('in_interventi', 'id', $last_sync_at);
 
@@ -100,52 +126,96 @@ class Interventi extends AppResource
         $id_tecnico = Auth::user()->id_anagrafica;
 
         if (setting('Visualizza solo promemoria assegnati') == 1) {
-            $query = '
-            SELECT
-                in_interventi.id,
-                in_interventi.updated_at
-            FROM 
-                in_interventi 
-            WHERE
-                deleted_at IS NULL AND (
-                in_interventi.id IN (
-                    SELECT idintervento FROM in_interventi_tecnici
-                    WHERE in_interventi_tecnici.idintervento = in_interventi.id
-                        AND in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
-                        AND in_interventi_tecnici.idtecnico = :id_tecnico_q1
-                )
-                OR (
-                    in_interventi.id NOT IN (
-                        SELECT idintervento FROM in_interventi_tecnici
-                    )
-                    AND in_interventi.idstatointervento IN (SELECT idstatointervento FROM in_statiintervento WHERE is_completato = 0 AND in_interventi.id IN (
-                        SELECT id_intervento FROM in_interventi_tecnici_assegnati WHERE in_interventi_tecnici_assegnati.id_tecnico = :id_tecnico_q2)
-                    )
-                )
-            )';
-        } else {
-            $query = '
-            SELECT
-                in_interventi.id,
-                in_interventi.updated_at
-            FROM 
-                in_interventi 
-            WHERE
-                deleted_at IS NULL AND (
-                    in_interventi.id IN (
-                        SELECT idintervento FROM in_interventi_tecnici
-                        WHERE in_interventi_tecnici.idintervento = in_interventi.id
-                            AND in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
-                            AND in_interventi_tecnici.idtecnico = :id_tecnico_q1
-                    )
-                    OR (
-                        in_interventi.id NOT IN (
-                            SELECT idintervento FROM in_interventi_tecnici
+            if(Auth::user()->is_admin){
+                $query = '
+                SELECT
+                    in_interventi.id,
+                    in_interventi.updated_at
+                FROM
+                    in_interventi
+                WHERE
+                    deleted_at IS NULL AND (in_interventi.id IN (
+                        SELECT idintervento FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id AND in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
                         )
-                        AND in_interventi.idstatointervento IN (SELECT idstatointervento FROM in_statiintervento WHERE is_completato = 0)
-                    )
-                )';
-        }
+                        OR (
+                            in_interventi.id NOT IN (                             SELECT idintervento FROM in_interventi_tecnici
+                            )
+                            AND in_interventi.idstatointervento IN (SELECT idstatointervento FROM in_statiintervento WHERE is_completato = 0)
+                            )
+                        )';
+                }else{
+                    $query = '
+                    SELECT
+                        in_interventi.id,
+                        in_interventi.updated_at
+                    FROM 
+                        in_interventi 
+                    WHERE
+                        deleted_at IS NULL AND (
+                        in_interventi.id IN (
+                            SELECT idintervento FROM in_interventi_tecnici
+                            WHERE in_interventi_tecnici.idintervento = in_interventi.id
+                                AND in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
+                                AND in_interventi_tecnici.idtecnico = :id_tecnico_q1
+                        )
+                        OR (
+                            in_interventi.id NOT IN (
+                                SELECT idintervento FROM in_interventi_tecnici
+                            )
+                            AND in_interventi.idstatointervento IN (SELECT idstatointervento FROM in_statiintervento WHERE is_completato = 0) AND in_interventi.id IN (
+                                SELECT id_intervento FROM in_interventi_tecnici_assegnati WHERE in_interventi_tecnici_assegnati.id_tecnico = :id_tecnico_q2
+                            )
+                        )
+                    )';
+                }
+    
+            } else {
+                if(Auth::user()->is_admin){
+                    $query = '
+                    SELECT
+                        in_interventi.id,
+                        in_interventi.updated_at
+                    FROM 
+                        in_interventi 
+                    WHERE
+                        deleted_at IS NULL AND (
+                            in_interventi.id IN (
+                                SELECT idintervento FROM in_interventi_tecnici
+                                WHERE in_interventi_tecnici.idintervento = in_interventi.id
+                                    AND in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
+                            )
+                            OR (
+                                in_interventi.id NOT IN (
+                                    SELECT idintervento FROM in_interventi_tecnici
+                                )
+                                AND in_interventi.idstatointervento IN (SELECT idstatointervento FROM in_statiintervento WHERE is_completato = 0)
+                            )
+                        )';
+                }else{
+                    $query = '
+                    SELECT
+                        in_interventi.id,
+                        in_interventi.updated_at
+                    FROM 
+                        in_interventi 
+                    WHERE
+                        deleted_at IS NULL AND (
+                            in_interventi.id IN (
+                                SELECT idintervento FROM in_interventi_tecnici
+                                WHERE in_interventi_tecnici.idintervento = in_interventi.id
+                                    AND in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
+                                    AND in_interventi_tecnici.idtecnico = :id_tecnico_q1
+                            )
+                            OR (
+                                in_interventi.id NOT IN (
+                                    SELECT idintervento FROM in_interventi_tecnici
+                                )
+                                AND in_interventi.idstatointervento IN (SELECT idstatointervento FROM in_statiintervento WHERE is_completato = 0)
+                            )
+                        )';
+                }
+                                
+            }    
 
         // Filtro per data
         // Gestione di tecnici assegnati o impianti modificati
@@ -161,18 +231,32 @@ class Interventi extends AppResource
         }
 
         if (setting('Visualizza solo promemoria assegnati') == 1) {
-            $records = database()->fetchArray($query, [
-                ':period_start' => $start,
-                ':period_end' => $end,
-                ':id_tecnico_q1' => $id_tecnico,
-                ':id_tecnico_q2' => $id_tecnico,
-            ]);
+            if(Auth::user()->is_admin){
+                $records = database()->fetchArray($query, [
+                    ':period_start' => $start,
+                    ':period_end' => $end,
+                ]);
+            } else {
+                $records = database()->fetchArray($query, [
+                    ':period_start' => $start,
+                    ':period_end' => $end,
+                    ':id_tecnico_q1' => $id_tecnico,
+                    ':id_tecnico_q2' => $id_tecnico,
+                ]);
+            }
         } else {
-            $records = database()->fetchArray($query, [
-                ':period_start' => $start,
-                ':period_end' => $end,
-                ':id_tecnico_q1' => $id_tecnico,
-            ]);
+            if(Auth::user()->is_admin){
+                $records = database()->fetchArray($query, [
+                    ':period_start' => $start,
+                    ':period_end' => $end,
+                ]);
+            } else  {
+                $records = database()->fetchArray($query, [
+                    ':period_start' => $start,
+                    ':period_end' => $end,
+                    ':id_tecnico_q1' => $id_tecnico,
+                ]);
+            }
         }
 
         return $this->mapModifiedRecords($records);
@@ -269,10 +353,12 @@ class Interventi extends AppResource
         // Aggiornamento degli impianti collegati
         $database->query('DELETE FROM my_impianti_interventi WHERE idintervento = '.prepare($record->id));
         foreach ($data['impianti'] as $id_impianto) {
-            $database->insert('my_impianti_interventi', [
-                'idimpianto' => $id_impianto,
-                'idintervento' => $record->id,
-            ]);
+            if(!empty($id_impianto)){
+                $database->insert('my_impianti_interventi', [
+                    'idimpianto' => $id_impianto,
+                    'idintervento' => $record->id,
+                ]);
+            }
         }
 
         // Aggiornamento dei tecnici assegnati
@@ -283,6 +369,10 @@ class Interventi extends AppResource
         ], [
             'id_tecnico' => $tecnici_assegnati,
         ]);
+
+        if(!empty($data['idrichiesta'])){
+            database()->query('UPDATE in_richieste SET idintervento = '.prepare($record->id).', updated_at=NOW() WHERE id = '.prepare($data['idrichiesta']));
+        }
     }
 
     protected function salvaFirma($firma_base64)

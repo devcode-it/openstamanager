@@ -22,8 +22,8 @@ namespace API\App\v1;
 use API\App\AppResource;
 use Auth;
 use Carbon\Carbon;
-use Models\User;
 use Modules\Checklists\Check;
+use Models\User;
 
 class Checklists extends AppResource
 {
@@ -37,7 +37,6 @@ class Checklists extends AppResource
 
         // Informazioni sull'utente
         $user = Auth::user();
-        $id_tecnico = $user->id_anagrafica;
 
         // Elenco di interventi di interesse
         $risorsa_interventi = $this->getRisorsaInterventi();
@@ -46,24 +45,46 @@ class Checklists extends AppResource
         // Elenco sessioni degli interventi da rimuovere
         $da_interventi = [];
         if (!empty($interventi)) {
-            $query = 'SELECT zz_checks.id
-        FROM zz_checks
-            INNER JOIN in_interventi ON zz_checks.id_record = in_interventi.id
-            INNER JOIN in_interventi_tecnici ON in_interventi_tecnici.idintervento = in_interventi.id
-            INNER JOIN zz_modules ON zz_checks.id_module = zz_modules.id
-            INNER JOIN zz_check_user ON zz_checks.id = zz_check_user.id_check
-        WHERE
-            zz_modules.name="Interventi"
-            AND
-            zz_check_user.id_utente = :id_tecnico
-            AND
-            in_interventi.id IN ('.implode(',', $interventi).')
-            OR (orario_fine NOT BETWEEN :period_start AND :period_end)';
-            $records = database()->fetchArray($query, [
-                ':period_end' => $end,
-                ':period_start' => $start,
-                ':id_tecnico' => $user->id,
-            ]);
+            if($user->is_admin){
+                $query = '  
+                SELECT zz_checks.id
+                FROM zz_checks
+                    INNER JOIN in_interventi ON zz_checks.id_record = in_interventi.id
+                    INNER JOIN in_interventi_tecnici ON in_interventi_tecnici.idintervento = in_interventi.id
+                    INNER JOIN zz_modules ON zz_checks.id_module = zz_modules.id
+                    INNER JOIN zz_check_user ON zz_checks.id = zz_check_user.id_check
+                WHERE
+                    zz_modules.name="Interventi"
+                    AND
+                    in_interventi.id IN ('.implode(',', $interventi).')
+                    OR (orario_fine NOT BETWEEN :period_start AND :period_end)';
+
+                $records = database()->fetchArray($query, [
+                    ':period_end' => $end,
+                    ':period_start' => $start,
+                ]);
+            }else{
+                $query = '  
+                SELECT zz_checks.id
+                FROM zz_checks
+                    INNER JOIN in_interventi ON zz_checks.id_record = in_interventi.id
+                    INNER JOIN in_interventi_tecnici ON in_interventi_tecnici.idintervento = in_interventi.id
+                    INNER JOIN zz_modules ON zz_checks.id_module = zz_modules.id
+                    INNER JOIN zz_check_user ON zz_checks.id = zz_check_user.id_check
+                WHERE
+                    zz_modules.name="Interventi"
+                    AND
+                    zz_check_user.id_utente = :id_tecnico
+                    AND
+                    in_interventi.id IN ('.implode(',', $interventi).')
+                    OR (orario_fine NOT BETWEEN :period_start AND :period_end)';
+
+                $records = database()->fetchArray($query, [
+                    ':period_end' => $end,
+                    ':period_start' => $start,
+                    ':id_tecnico' => $user->id
+                ]);
+            }
             $da_interventi = array_column($records, 'id');
         }
 
@@ -90,30 +111,47 @@ class Checklists extends AppResource
         }
 
         $user = Auth::user();
-        $id_tecnico = $user->id_anagrafica;
 
         $id_interventi = array_keys($interventi);
-        $query = 'SELECT zz_checks.id
-        FROM zz_checks
-            INNER JOIN in_interventi ON zz_checks.id_record = in_interventi.id
-            INNER JOIN in_interventi_tecnici ON in_interventi_tecnici.idintervento = in_interventi.id
-            INNER JOIN zz_modules ON zz_checks.id_module = zz_modules.id
-            INNER JOIN zz_check_user ON zz_checks.id = zz_check_user.id_check
-        WHERE
-            zz_modules.name="Interventi"
-            AND zz_check_user.id_utente = :id_tecnico
-            AND in_interventi.id IN ('.implode(',', $id_interventi).')
-            AND (orario_fine BETWEEN :period_start AND :period_end)';
+        if($user->is_admin){
+            $query = 'SELECT zz_checks.id
+            FROM zz_checks
+                INNER JOIN in_interventi ON zz_checks.id_record = in_interventi.id
+                INNER JOIN zz_modules ON zz_checks.id_module = zz_modules.id
+                INNER JOIN zz_check_user ON zz_checks.id = zz_check_user.id_check
+            WHERE
+                zz_modules.name="Interventi"
+                AND in_interventi.id IN ('.implode(',', $id_interventi).')';
 
-        // Filtro per data
-        if ($last_sync_at) {
-            $query .= ' AND zz_checks.updated_at > '.prepare($last_sync_at);
+            // Filtro per data
+            if ($last_sync_at) {
+                $query .= ' AND zz_checks.updated_at > '.prepare($last_sync_at);
+            }
+
+            $records = database()->fetchArray($query);
+        }else{
+            $query = 'SELECT zz_checks.id
+            FROM zz_checks
+                INNER JOIN in_interventi ON zz_checks.id_record = in_interventi.id
+                INNER JOIN in_interventi_tecnici ON in_interventi_tecnici.idintervento = in_interventi.id
+                INNER JOIN zz_modules ON zz_checks.id_module = zz_modules.id
+                INNER JOIN zz_check_user ON zz_checks.id = zz_check_user.id_check
+            WHERE
+                zz_modules.name="Interventi"
+                AND zz_check_user.id_utente = :id_tecnico
+                AND in_interventi.id IN ('.implode(',', $id_interventi).')
+                AND (orario_fine BETWEEN :period_start AND :period_end)';
+
+            // Filtro per data
+            if ($last_sync_at) {
+                $query .= ' AND zz_checks.updated_at > '.prepare($last_sync_at);
+            }
+            $records = database()->fetchArray($query, [
+                ':period_start' => $start,
+                ':period_end' => $end,
+                ':id_tecnico' => $user->id
+            ]);
         }
-        $records = database()->fetchArray($query, [
-            ':period_start' => $start,
-            ':period_end' => $end,
-            ':id_tecnico' => $user->id,
-        ]);
 
         return $this->mapModifiedRecords($records);
     }
@@ -121,17 +159,16 @@ class Checklists extends AppResource
     public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
-        $query = 'SELECT zz_checks.id,
+        $query = "SELECT zz_checks.id,
             zz_checks.id_record AS id_intervento,
             zz_checks.checked_at,
             zz_checks.content,
             zz_checks.note,
             IF(zz_checks.id_parent IS NULL, 0, zz_checks.id_parent) AS id_parent,
             zz_checks.checked_by,
-            zz_checks.order AS ordine,
-            zz_checks.is_titolo
+            zz_checks.order AS ordine
         FROM zz_checks
-        WHERE zz_checks.id = '.prepare($id);
+        WHERE zz_checks.id = ".prepare($id);
 
         $record = database()->fetchOne($query);
 
@@ -142,11 +179,11 @@ class Checklists extends AppResource
     {
         $check = Check::find($data['id']);
 
-        $check->checked_at = (!empty($data['checked_at']) ? $data['checked_at'] : null);
+        $check->checked_at = (!empty($data['checked_at']) ? $data['checked_at'] : NULL);
         $check->content = $data['content'];
         $check->note = $data['note'];
         $user = User::where('idanagrafica', $data['checked_by'])->first();
-        if (!empty($user)) {
+        if(!empty($user)){
             $check->checked_by = $user->id;
         }
 

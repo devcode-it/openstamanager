@@ -262,7 +262,7 @@ foreach ($righe as $key => $riga) {
                 <td class="text-right" style="vertical-align: middle">
                     '.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario);
 
-                if ($riga->sconto > 0) {
+                if ($riga->sconto != 0) {
                     $text = discountInfo($riga, false);
 
                     echo '

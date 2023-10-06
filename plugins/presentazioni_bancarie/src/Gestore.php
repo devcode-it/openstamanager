@@ -128,6 +128,7 @@ class Gestore
         $intestazione->ragione_sociale_creditore = strtoupper($this->azienda->ragione_sociale);
         $intestazione->indirizzo_creditore = strtoupper($this->azienda['indirizzo']);
         $intestazione->partita_iva_o_codice_fiscale_creditore = !empty($this->azienda->partita_iva) ? $this->azienda->partita_iva : $this->azienda->codice_fiscale;
+        $intestazione->identificativo_creditore = !empty($this->azienda->partita_iva) ? $this->azienda->partita_iva : $this->azienda->codice_fiscale;
         $intestazione->descrizione_banca = $descrizione_banca;
 
         $this->bonifico = new CbiSepa($intestazione);

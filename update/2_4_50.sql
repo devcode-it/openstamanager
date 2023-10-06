@@ -95,3 +95,5 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_tipidocumento` LEF
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES ("Permetti l\'accesso agli amministratori", '1', 'boolean', 1, 'Applicazione', 4, '');
 
 UPDATE `co_pianodeiconti2` SET `dir` = 'entrata/uscita' WHERE `co_pianodeiconti2`.`descrizione` = 'Immobilizzazioni'; 
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES ((SELECT id FROM zz_modules WHERE name = 'Scadenzario'), 'Esportazione distinta', 'presentazioni_exported_at', '20', '1', '0', '1', '0', '', '', '1', '0', '0'); 

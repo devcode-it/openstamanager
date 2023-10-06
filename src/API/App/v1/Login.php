@@ -35,18 +35,32 @@ class Login extends Resource implements CreateInterface
         if (auth()->attempt($request['username'], $request['password'])) {
             $user = $this->getUser();
             $token = auth()->getToken();
-
-            // Informazioni sull'utente, strettamente collegato ad una anagrafica di tipo Tecnico
-            $utente = $database->fetchOne("SELECT
-                `an_anagrafiche`.`idanagrafica` AS id_anagrafica,
-                `an_anagrafiche`.`ragione_sociale`
-            FROM `zz_users`
-                INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica`
-                INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.idanagrafica = an_anagrafiche.idanagrafica
-                INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica = an_tipianagrafiche.idtipoanagrafica
-            WHERE an_tipianagrafiche.descrizione = 'Tecnico' AND `an_anagrafiche`.`deleted_at` IS NULL AND `id` = :id", [
-                ':id' => $user['id'],
-            ]);
+            
+            if(setting("Permetti l'accesso agli amministratori")){
+                $utente = $database->fetchOne("SELECT
+                    `an_anagrafiche`.`idanagrafica` AS id_anagrafica,
+                    `an_anagrafiche`.`ragione_sociale`,
+                    zz_groups.nome AS gruppo
+                FROM `zz_users`
+                    INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica`
+                    INNER JOIN zz_groups ON zz_users.idgruppo=zz_groups.id
+                WHERE `an_anagrafiche`.`deleted_at` IS NULL AND `zz_users`.`id` = :id", [
+                    ':id' => $user['id'],
+                ]);
+            }else{
+                $utente = $database->fetchOne("SELECT
+                    `an_anagrafiche`.`idanagrafica` AS id_anagrafica,
+                    `an_anagrafiche`.`ragione_sociale`,
+                    zz_groups.nome AS gruppo
+                FROM `zz_users`
+                    INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica`
+                    INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.idanagrafica = an_anagrafiche.idanagrafica
+                    INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica = an_tipianagrafiche.idtipoanagrafica
+                    INNER JOIN zz_groups ON zz_users.idgruppo=zz_groups.id
+                WHERE an_tipianagrafiche.descrizione = 'Tecnico' AND `an_anagrafiche`.`deleted_at` IS NULL AND `id` = :id", [
+                    ':id' => $user['id'],
+                ]);
+            }
 
             if (!empty($utente)) {
                 // Informazioni da restituire tramite l'API
@@ -54,6 +68,7 @@ class Login extends Resource implements CreateInterface
                     'id_anagrafica' => (string) $utente['id_anagrafica'],
                     'ragione_sociale' => $utente['ragione_sociale'],
                     'token' => $token,
+                    'gruppo' => $utente['gruppo'],
                     'version' => Update::getVersion(),
                 ];
             } else {

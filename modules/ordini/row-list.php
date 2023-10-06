@@ -193,10 +193,10 @@ foreach ($righe as $riga) {
     if ($riga->isDescrizione()) {
         echo '
                 <td></td>';
-            if ($dir == 'entrata') {
-                echo '<td></td>';
-            }
-                echo '
+        if ($dir == 'entrata') {
+            echo '<td></td>';
+        }
+        echo '
                 <td></td>
                 <td></td>
                 <td></td>';

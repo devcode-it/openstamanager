@@ -262,13 +262,13 @@ class CSV extends CSVImporter
 
                     $tipo_anagrafica = $database->fetchOne('SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE lower(descrizione) = LOWER('.prepare($tipo).') OR idtipoanagrafica = '.prepare($tipo))['idtipoanagrafica'];
                 }
-                
+
                 $tipologie[] = $tipo_anagrafica;
             }
         }
         unset($record['idtipoanagrafica']);
 
-        $tipi_selezionati  = [];
+        $tipi_selezionati = [];
         if (!empty($record['tipo'])) {
             $tipi_selezionati = explode(',', $record['tipo']);
         }

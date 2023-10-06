@@ -188,7 +188,7 @@ foreach ($righe as $riga) {
         if ($dir == 'entrata') {
             echo '<td></td>';
         }
-            echo '
+        echo '
             <td></td>
             <td></td>
             <td></td>

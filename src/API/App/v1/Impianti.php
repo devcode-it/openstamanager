@@ -22,6 +22,7 @@ namespace API\App\v1;
 use API\App\AppResource;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Impianti\Impianto;
+use Auth;
 
 class Impianti extends AppResource
 {
@@ -32,10 +33,25 @@ class Impianti extends AppResource
 
     public function getModifiedRecords($last_sync_at)
     {
-        $statement = Impianto::select('id', 'updated_at')
+        $statement = Impianto::select('id', 'updated_at', 'idtecnico')
             ->whereHas('anagrafica.tipi', function (Builder $query) {
                 $query->where('descrizione', '=', 'Cliente');
             });
+
+        //Limite impianti visualizzabili dal tecnico
+        $limite_impianti = setting("Limita la visualizzazione degli impianti a quelli gestiti dal tecnico");
+
+        if($limite_impianti == 1 && !Auth::user()->is_admin){
+            $id_tecnico = Auth::user()->id_anagrafica;
+
+            // Elenco di interventi di interesse
+            $risorsa_interventi = $this->getRisorsaInterventi();
+            // Da applicazione, i Clienti sono sincronizzati prima degli Interventi: last_sync_at permette di identificare le stesse modifiche
+            $interventi = $risorsa_interventi->getModifiedRecords(null);
+            $id_interventi = array_keys($interventi);
+
+            $statement->where('idtecnico', $id_tecnico)->orWhere('id', 'IN', ('SELECT idimpianto FROM my_impianti_interventi WHERE idintervento IN ('.implode(',', $id_interventi).')'));
+        }
 
         // Filtro per data
         if ($last_sync_at) {
@@ -72,5 +88,9 @@ class Impianti extends AppResource
         $record = database()->fetchOne($query);
 
         return $record;
+    }
+    protected function getRisorsaInterventi()
+    {
+        return new Interventi();
     }
 }

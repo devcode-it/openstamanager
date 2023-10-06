@@ -305,7 +305,7 @@ foreach ($righe as $key => $riga) {
     $autofill->next();
 
     $next = $righe->flatten()[$num];
-    if ($has_gruppo && ($next->is_titolo || $next == null)) {
+    if ($has_gruppo && ($next->is_titolo || $next == null) && ($options['pricing'] || ($options['show-only-total']))) {
         echo '
         <tr>
             <td colspan="'.($options['show-only-total'] ? 2 : 5).'" class="text-right">

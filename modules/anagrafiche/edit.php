@@ -203,11 +203,11 @@ if (sizeof($problemi_anagrafica) > 0) {
 
                         <div class="row">
                             <div class="col-md-4">
-                                {[ "type": "text", "label": "<?php echo tr('Telefono'); ?>", "name": "telefono", "class": "text-center", "value": "$telefono$", "icon-before": "<i class='fa fa-phone'></i>" ]}
+                                {[ "type": "telefono", "label": "<?php echo tr('Telefono'); ?>", "name": "telefono", "class": "text-center", "value": "$telefono$" ]}
                             </div>
 
                             <div class="col-md-4">
-                                {[ "type": "text", "label": "<?php echo tr('Cellulare'); ?>", "name": "cellulare", "class": "text-center", "value": "$cellulare$", "icon-before": "<i class='fa fa-mobile'></i>", "icon-after": "<?php echo !empty($record['cellulare']) ? "<btn class='clickable' onclick=sendWhatsAppMessage(".prepare($record['cellulare']).") ><i class='fa fa-whatsapp'></i></btn>" : ''; ?>" ]}
+                                {[ "type": "telefono", "label": "<?php echo tr('Cellulare'); ?>", "name": "cellulare", "class": "text-center", "value": "$cellulare$", "icon-after": "<?php echo !empty($record['cellulare']) ? "<btn class='clickable' onclick=sendWhatsAppMessage(".prepare($record['cellulare']).") ><i class='fa fa-whatsapp'></i></btn>" : ''; ?>" ]}
                             </div>
 
                             <div class="col-md-4">

@@ -78,11 +78,11 @@ echo '
 
 	<div class="row">
 		<div class="col-md-4">
-			{[ "type": "text", "label": "'.tr('Cellulare').'", "name": "cellulare" ]}
+			{[ "type": "telefono", "label": "'.tr('Cellulare').'", "name": "cellulare" ]}
 		</div>
 
         <div class="col-md-4">
-			{[ "type": "text", "label": "'.tr('Telefono').'", "name": "telefono" ]}
+			{[ "type": "telefono", "label": "'.tr('Telefono').'", "name": "telefono" ]}
 		</div>
 
 		<div class="col-md-4">
@@ -96,6 +96,11 @@ echo '
 		</div>
 	</div>
 
+	<div class="row">
+		<div class="col-md-12">
+			{[ "type": "select", "multiple": "1", "label": "'.tr('Referenti').'", "name": "id_referenti[]", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$id_parent.'}, "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|id_plugin='.Plugins::get('Referenti')['id'].'&id_parent='.$id_parent.'" ]}
+		</div>
+	</div>
 
 	<!-- PULSANTI -->
 	<div class="row">

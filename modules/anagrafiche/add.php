@@ -103,10 +103,10 @@ echo '
                 </div>
 
 				<div class="col-md-4">
-					{[ "type": "text", "label": "'.tr('Telefono').'", "name": "telefono", "class": "text-center", "icon-before": "<i class=\"fa fa-phone\"></i>" ]}
+					{[ "type": "telefono", "label": "'.tr('Telefono').'", "name": "telefono", "class": "text-center" ]}
 				</div>
 				<div class="col-md-4">
-					{[ "type": "text", "label": "'.tr('Cellulare').'", "name": "cellulare", "class": "text-center", "icon-before": "<i class=\"fa fa-mobile\"></i>" ]}
+					{[ "type": "telefono", "label": "'.tr('Cellulare').'", "name": "cellulare", "class": "text-center" ]}
 				</div>
 
 			</div>

@@ -19,6 +19,9 @@
 
 include_once __DIR__.'/../../core.php';
 
+$referenti = $dbo->select('an_referenti', 'id', [], ['idsede' => $id_record, 'idanagrafica' => $id_parent]);
+$referenti = implode(',', array_column($referenti, 'id'));
+
 echo '
 <form action="" method="post" role="form" id="form_sedi">
     <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
@@ -67,7 +70,7 @@ echo '
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('Telefono').'", "name": "telefono", "value": "$telefono$" ]}
+			{[ "type": "telefono", "label": "'.tr('Telefono').'", "name": "telefono", "value": "$telefono$" ]}
 		</div>
 	</div>
 
@@ -77,7 +80,7 @@ echo '
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('Cellulare').'", "name": "cellulare", "value": "$cellulare$" ]}
+			{[ "type": "telefono", "label": "'.tr('Cellulare').'", "name": "cellulare", "value": "$cellulare$" ]}
 		</div>
 	</div>
 
@@ -97,16 +100,22 @@ echo '
 
 	<div class="row">
 		<div class="col-md-12">
+			{[ "type": "select", "multiple": "1", "label": "'.tr('Referenti').'", "name": "id_referenti[]", "value": "'.$referenti.'", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$id_parent.'}, "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|id_plugin='.Plugins::get('Referenti')['id'].'&id_parent='.$id_parent.'" ]}
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12">
 			{[ "type": "textarea", "label": "'.tr('Note').'", "name": "note", "value": "$note$" ]}
 		</div>
 	</div>
 
 	<div class="row">
-		<div class="col-md-6" id="geocomplete">
+		<div class="col-md-5" id="geocomplete">
 			{[ "type": "text", "label": "'.tr('Indirizzo Mappa').'", "name": "gaddress", "value": "$gaddress$", "extra": "data-geo=\'formatted_address\'" ]}
 		</div>
 		
-		<div class="col-md-2">
+		<div class="col-md-1">
 			<label>&nbsp;</label>
             <br><button type="button" class="btn btn-primary" onclick="initGeocomplete();"><i class="fa fa-search"></i> '.tr('Cerca').'</button>
         </div>
@@ -119,24 +128,23 @@ echo '
 			{[ "type": "text", "label": "'.tr('Longitudine').'", "name": "lng", "id": "lng_", "value": "$lng$", "extra": "data-geo=\'lng\'", "class": "text-right", "readonly": true ]}
 		</div>';
 
-if (!empty($record['indirizzo']) || (empty($record['citta']))) {
-    echo '
-		<div  class="col-md-2"  >
+	if (!empty($record['indirizzo']) || (empty($record['citta']))) {
+    	echo '
+		<div class="col-md-2">
 			<label>&nbsp;</label><br>
 			<a class="btn btn-info" title="'.tr('Mostra la sede su Mappa').'" onclick="cercaOpenStreetMap();">&nbsp;<i class="fa fa-map-marker">&nbsp;</i></a>
-		';
 
-    echo '
 			<a title="'.tr('Calcola percorso da sede legale a questa sede').'" class="btn btn-primary" onclick="calcolaPercorso();"><i class="fa fa-car"></i></a>
-		</div> <div class="clearfix"></div><br>';
-}
+		</div> 
+		<div class="clearfix"></div><br>';
+	}
 
 echo '
-</div>';
+	</div>';
 
 if (!empty($record['gaddress']) || (!empty($record['lat']) && !empty($record['lng']))) {
     echo '
-<div id="map" style="height:400px; width:100%"></div><br>';
+	<div id="map" style="height:400px; width:100%"></div><br>';
 }
 
 // Permetto eliminazione tipo sede solo se non è utilizzata da nessun'altra parte nel gestionale

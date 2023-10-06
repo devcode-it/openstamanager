@@ -20,7 +20,7 @@
 namespace HTMLBuilder\Handler;
 
 /**
- * Gestione dell'input di tipo "text", "file", "password", "email", "number", "textarea" e "hidden".
+ * Gestione dell'input di tipo "text", "file", "password", "telefono", "email", "number", "textarea" e "hidden".
  *
  * @since 2.3
  */
@@ -202,6 +202,25 @@ class DefaultHandler implements HandlerInterface
 
         // Delega al metodo "text", per la generazione del codice HTML
         $result .= $this->text($values, $extras);
+
+        return $result;
+    }
+
+    /**
+     * Gestione dell'input di tipo "telefono".
+     * Esempio: {[ "type": "telefono", "label": "Telefono", "name": "telefono" ]}.
+     *
+     * @param array $values
+     * @param array $extras
+     *
+     * @return string
+     */
+    protected function telefono(&$values, &$extras)
+    {
+        $values['icon-before'] = $values['value'] ? '<a href="tel:'.$values['value'].'" target="_blank"><i class="fa fa-phone"></i></a>' : '<i class="fa fa-phone"></i>';
+
+        // Delega al metodo "text", per la generazione del codice HTML
+        $result = $this->text($values, $extras);
 
         return $result;
     }

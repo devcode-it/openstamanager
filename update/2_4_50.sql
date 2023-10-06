@@ -172,5 +172,5 @@ ORDER BY
     `dt_ddt`.created_at DESC" WHERE `name` = 'Ddt di vendita';
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'), 'icon_Inviato', 'IF(emails IS NOT NULL, \'fa fa-envelope text-success\', \'\')', 15, 1, 0, 0 ,0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'), 'Riferimenti', 'IF(fattura.info != "", fattura.info,"")', 16, 1, 0, 0 ,0);
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF(emails IS NOT NULL, \'fa fa-envelope text-success\', \'\')' WHERE `zz_modules`.`name` = 'Ddt di vendita' AND `zz_views`.`name` = 'icon_Inviato';

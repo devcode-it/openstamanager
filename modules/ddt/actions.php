@@ -29,6 +29,7 @@ use Modules\DDT\Components\Sconto;
 use Modules\DDT\DDT;
 use Modules\DDT\Stato;
 use Modules\DDT\Tipo;
+use Modules\Iva\Aliquota;
 
 $module = Modules::get($id_module);
 
@@ -575,8 +576,12 @@ switch (filter('op')) {
                 $articolo->qta = 1;
                 $articolo->costo_unitario = $originale->prezzo_acquisto;
 
+                 // L'aliquota dell'articolo ha precedenza solo se ha aliquota a 0, altrimenti anagrafica -> articolo -> impostazione
                 if ($dir == 'entrata') {
-                    $id_iva = ($ddt->anagrafica->idiva_vendite ?: $originale->idiva_vendita) ?: setting('Iva predefinita');
+                    if ($originale->idiva_vendita) {
+                        $aliquota_articolo = floatval(Aliquota::find($originale->idiva_vendita)->percentuale);
+                    }
+                    $id_iva = ($ddt->anagrafica->idiva_vendite && (!$originale->idiva_vendita || $aliquota_articolo != 0) ? $ddt->anagrafica->idiva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
                 } else {
                     $id_iva = ($ddt->anagrafica->idiva_acquisti ?: setting('Iva predefinita'));
                 }

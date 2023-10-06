@@ -22,6 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Carbon\Carbon;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
+use Modules\Iva\Aliquota;
 use Modules\Ordini\Components\Articolo;
 use Modules\Ordini\Components\Descrizione;
 use Modules\Ordini\Components\Riga;
@@ -624,7 +625,11 @@ switch (post('op')) {
             $articolo->confermato = ($dir == 'entrata' ? setting('Conferma automaticamente le quantità negli ordini cliente') : setting('Conferma automaticamente le quantità negli ordini fornitore'));
 
             if ($dir == 'entrata') {
-                $id_iva = ($ordine->anagrafica->idiva_vendite ?: $originale->idiva_vendita) ?: setting('Iva predefinita');
+                // L'aliquota dell'articolo ha precedenza solo se ha aliquota a 0, altrimenti anagrafica -> articolo -> impostazione
+                if ($originale->idiva_vendita) {
+                    $aliquota_articolo = floatval(Aliquota::find($originale->idiva_vendita)->percentuale);
+                }
+                $id_iva = ($ordine->anagrafica->idiva_vendite && (!$originale->idiva_vendita || $aliquota_articolo != 0) ? $ordine->anagrafica->idiva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
             } else {
                 $id_iva = ($ordine->anagrafica->idiva_acquisti ?: setting('Iva predefinita'));
             }

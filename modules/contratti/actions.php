@@ -28,6 +28,7 @@ use Modules\Contratti\Components\Riga;
 use Modules\Contratti\Components\Sconto;
 use Modules\Contratti\Contratto;
 use Modules\Contratti\Stato;
+use Modules\Iva\Aliquota;
 use Plugins\PianificazioneInterventi\Promemoria;
 
 switch (post('op')) {
@@ -563,7 +564,11 @@ switch (post('op')) {
             $articolo->qta = 1;
             $articolo->costo_unitario = $originale->prezzo_acquisto;
 
-            $id_iva = ($contratto->anagrafica->idiva_vendite ?: $originale->idiva_vendita) ?: setting('Iva predefinita');
+            // L'aliquota dell'articolo ha precedenza solo se ha aliquota a 0, altrimenti anagrafica -> articolo -> impostazione
+            if ($originale->idiva_vendita) {
+                $aliquota_articolo = floatval(Aliquota::find($originale->idiva_vendita)->percentuale);
+            }
+            $id_iva = ($contratto->anagrafica->idiva_vendite && (!$originale->idiva_vendita || $aliquota_articolo != 0) ? $contratto->anagrafica->idiva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
             $id_anagrafica = $contratto->idanagrafica;
             $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 

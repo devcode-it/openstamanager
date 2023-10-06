@@ -22,6 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Carbon\Carbon;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
+use Modules\Iva\Aliquota;
 use Modules\Preventivi\Components\Articolo;
 use Modules\Preventivi\Components\Descrizione;
 use Modules\Preventivi\Components\Riga;
@@ -438,7 +439,11 @@ switch (post('op')) {
             $articolo->costo_unitario = $originale->prezzo_acquisto;
             $articolo->confermato = setting('Conferma automaticamente le quantità nei preventivi');
 
-            $id_iva = ($preventivo->anagrafica->idiva_vendite ?: $originale->idiva_vendita) ?: setting('Iva predefinita');
+            // L'aliquota dell'articolo ha precedenza solo se ha aliquota a 0, altrimenti anagrafica -> articolo -> impostazione
+            if ($originale->idiva_vendita) {
+                $aliquota_articolo = floatval(Aliquota::find($originale->idiva_vendita)->percentuale);
+            }
+            $id_iva = ($preventivo->anagrafica->idiva_vendite && (!$originale->idiva_vendita || $aliquota_articolo != 0) ? $preventivo->anagrafica->idiva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
             $id_anagrafica = $preventivo->idanagrafica;
             $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 

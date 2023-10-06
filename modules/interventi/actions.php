@@ -31,6 +31,7 @@ use Modules\Interventi\Components\Sconto;
 use Modules\Interventi\Components\Sessione;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
+use Modules\Iva\Aliquota;
 use Modules\TipiIntervento\Tipo as TipoSessione;
 use Plugins\ComponentiImpianti\Componente;
 use Plugins\ListinoClienti\DettaglioPrezzo;
@@ -1064,7 +1065,11 @@ switch (post('op')) {
                 $articolo->qta = 1;
                 $articolo->costo_unitario = $originale->prezzo_acquisto;
 
-                $id_iva = ($intervento->anagrafica->idiva_vendite ?: $originale->idiva_vendita) ?: setting('Iva predefinita');
+                // L'aliquota dell'articolo ha precedenza solo se ha aliquota a 0, altrimenti anagrafica -> articolo -> impostazione
+                if ($originale->idiva_vendita) {
+                    $aliquota_articolo = floatval(Aliquota::find($originale->idiva_vendita)->percentuale);
+                }
+                $id_iva = ($intervento->anagrafica->idiva_vendite && (!$originale->idiva_vendita || $aliquota_articolo != 0) ? $intervento->anagrafica->idiva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
                 $id_anagrafica = $intervento->idanagrafica;
                 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 

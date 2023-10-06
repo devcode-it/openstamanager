@@ -962,7 +962,11 @@ switch ($op) {
                 $articolo->idconto = $id_conto;
 
                 if ($dir == 'entrata') {
-                    $id_iva = ($fattura->anagrafica->idiva_vendite ?: $originale->idiva_vendita) ?: setting('Iva predefinita');
+                      // L'aliquota dell'articolo ha precedenza solo se ha aliquota a 0, altrimenti anagrafica -> articolo -> impostazione
+                    if ($originale->idiva_vendita) {
+                        $aliquota_articolo = floatval(Aliquota::find($originale->idiva_vendita)->percentuale);
+                    }
+                    $id_iva = ($fattura->anagrafica->idiva_vendite && (!$originale->idiva_vendita || $aliquota_articolo != 0) ? $fattura->anagrafica->idiva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
                 } else {
                     $id_iva = ($fattura->anagrafica->idiva_acquisti ?: setting('Iva predefinita'));
                 }

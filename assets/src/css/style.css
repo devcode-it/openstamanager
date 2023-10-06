@@ -1226,3 +1226,15 @@ kbd{
     display: inline-block;
     margin: 1px;
 }
+
+.read-more-target {
+    display: none;
+}
+  
+.read-more-trigger {
+    cursor: pointer;
+}
+    
+.read-more-target:target {
+    display: block;
+}

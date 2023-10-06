@@ -58,7 +58,6 @@ echo '
 $num = 0;
 foreach ($righe as $riga) {
     ++$num;
-
     $extra = '';
     $mancanti = 0;
     $delete = 'delete_riga';
@@ -176,8 +175,25 @@ foreach ($righe as $riga) {
     }
 
     if (!empty($riga->note)) {
-        echo '
-                <br><small class="label label-default">'.nl2br($riga->note).'</small>';
+
+        if(strlen($riga->note) > 50) {
+            $prima_parte = substr($riga->note, 0, ((strpos($riga->note, ' ', 50) < 60) && (strpos($riga->note, ' ', 50) != 0) ? strpos($riga->note, ' ', 50): 50));
+            $seconda_parte = substr($riga->note, ((strpos($riga->note, ' ', 50) < 60) && (strpos($riga->note, ' ', 50) != 0) ? strpos($riga->note, ' ', 50): 50));
+            $stringa_modificata = '<small class="label label-default">'.$prima_parte.'</small>
+                <span id="read-more-target-'.$riga->id.'" class="read-more-target"><small class="label label-default">' . $seconda_parte . '</small></span><a href="#read-more-target-'.$riga->id.'" class="read-more-trigger">...</a>';
+        } else {
+            $stringa_modificata = '<small class="label label-default">'.$riga->note.'</small>';
+        }
+        
+        echo'
+        <div class="block-item-text">
+            <input type="checkbox" hidden class="read-more-state" id="read-more">
+                <div class="read-more-wrap">
+                    '.nl2br($stringa_modificata).'
+                </div>
+            </div>
+        ';
+        
     }
     echo '
             </td>';

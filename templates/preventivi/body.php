@@ -330,7 +330,7 @@ foreach ($righe as $key => $riga) {
                 <b>'.tr('Subtotale ivato', [], ['upper' => true]).':</b>
             </td>
             <td colspan="'.($options['show-only-total'] ? (($has_image) ? 2 : 1) : (($has_image) ? 3 : 2)).'" class="text-right">
-                '.moneyFormat($subtotale_gruppo + $iva_gruppo, 2).'
+                <b>'.moneyFormat($subtotale_gruppo + $iva_gruppo, 2).'</b>
             </td>
         </tr>';
 

@@ -388,12 +388,14 @@ class Update
 
                 // Individuazione delle chiavi esterne della tabella
                 $fk_query = 'SELECT
-                    CONSTRAINT_NAME AS `name`,
-                    COLUMN_NAME AS `column`,
-                    REFERENCED_TABLE_NAME AS `referenced_table`,
-                    REFERENCED_COLUMN_NAME AS `referenced_column`
-                FROM information_schema.KEY_COLUMN_USAGE
-                WHERE TABLE_NAME = '.prepare($table).'
+                    KEY_COLUMN_USAGE.CONSTRAINT_NAME AS `name`,
+                    KEY_COLUMN_USAGE.COLUMN_NAME AS `column`,
+                    KEY_COLUMN_USAGE.REFERENCED_TABLE_NAME AS `referenced_table`,
+                    KEY_COLUMN_USAGE.REFERENCED_COLUMN_NAME AS `referenced_column`,
+                    DELETE_RULE AS `delete_rule`,
+                    UPDATE_RULE AS `update_rule`
+                FROM information_schema.KEY_COLUMN_USAGE INNER JOIN information_schema.REFERENTIAL_CONSTRAINTS ON (information_schema.KEY_COLUMN_USAGE.CONSTRAINT_NAME = information_schema.REFERENTIAL_CONSTRAINTS.CONSTRAINT_NAME AND information_schema.KEY_COLUMN_USAGE.CONSTRAINT_SCHEMA = information_schema.REFERENTIAL_CONSTRAINTS.CONSTRAINT_SCHEMA)
+                WHERE KEY_COLUMN_USAGE.TABLE_NAME = '.prepare($table).'
                     AND TABLE_SCHEMA = '.prepare($database_name).'
                     AND REFERENCED_TABLE_SCHEMA = '.prepare($database_name);
                 $fks_found = $database->fetchArray($fk_query);

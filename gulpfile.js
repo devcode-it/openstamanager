@@ -465,6 +465,7 @@ function release(done) {
         '!checksum.json',
         '!database.json',
         '!database_5_7.json',
+        '!manifest.json',
         '!.idea/**',
         '!.git/**',
         '!.github/**',

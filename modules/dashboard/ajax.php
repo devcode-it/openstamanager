@@ -332,26 +332,27 @@ switch (filter('op')) {
                 if (!empty($rs[0]['note_anagrafica'])) {
                     $tooltip .= '<b>'.tr('Note anagrafica').'</b>: '.nl2br($rs[0]['note_anagrafica']).'<br/>';
                 }
-            } else {
-                $query = 'SELECT
-                co_preventivi.nome,
-                co_preventivi.numero,
-                co_preventivi.data_accettazione,
-                co_preventivi.data_conclusione,
-                (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = co_preventivi.idanagrafica) AS cliente,
-                (SELECT id FROM zz_files WHERE id_record = '.prepare($id).' AND id_module = '.prepare($modulo_preventivi->id).' LIMIT 1) AS have_attachments
-                FROM co_preventivi
-                    LEFT JOIN co_statipreventivi ON co_preventivi.idstato = co_statipreventivi.id
-                WHERE co_preventivi.id='.prepare($id);
-
-                $rs = $dbo->fetchArray($query);
-
-                if (!empty($rs[0]['cliente'])) {
-                    $tooltip = '<b>Prev. '.$rs[0]['numero'].'</b> '.$rs[0]['nome'].''.(($rs[0]['have_attachments']) ? ' <i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'<br><b>'.tr('Cliente').':</b> '.$rs[0]['cliente'];
-                } else {
-                    $tooltip = tr('Rilascia per aggiungere l\'attività...');
-                }
             }
+        } else {
+            $query = 'SELECT
+            co_preventivi.nome,
+            co_preventivi.numero,
+            co_preventivi.data_accettazione,
+            co_preventivi.data_conclusione,
+            (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = co_preventivi.idanagrafica) AS cliente,
+            (SELECT id FROM zz_files WHERE id_record = '.prepare($id).' AND id_module = '.prepare($modulo_preventivi->id).' LIMIT 1) AS have_attachments
+            FROM co_preventivi
+                LEFT JOIN co_statipreventivi ON co_preventivi.idstato = co_statipreventivi.id
+            WHERE co_preventivi.id='.prepare($id);
+
+            $rs = $dbo->fetchArray($query);
+
+            if (!empty($rs[0]['cliente'])) {
+                $tooltip = '<b>Prev. '.$rs[0]['numero'].'</b> '.$rs[0]['nome'].''.(($rs[0]['have_attachments']) ? ' <i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'<br><b>'.tr('Cliente').':</b> '.$rs[0]['cliente'];
+            } else {
+                $tooltip = tr('Rilascia per aggiungere l\'attività...');
+            }
+        }
 
             $tooltip .= '
             <script type="text/javascript">
@@ -363,7 +364,7 @@ switch (filter('op')) {
             </script>';
 
             echo $tooltip;
-        }
+
         break;
 
     case 'carica_interventi':

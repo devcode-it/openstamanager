@@ -196,14 +196,16 @@ echo '
 
             function cercaOpenStreetMap() {
                 const indirizzo = getIndirizzoAnagrafica();
-                if (indirizzo[0] && indirizzo[1]) {
-                    if (isMobile.any) {
-                        window.open("geo:" + indirizzo[0] + "," + indirizzo[1] + "?z=16&q=" + indirizzo[0] + "," + indirizzo[1]);
-                    } else {
-                        window.open("https://www.openstreetmap.org/?mlat=" + indirizzo[0] + "&mlon=" + indirizzo[1] + "#map=12/" + indirizzo[0] + "/" + indirizzo[1]);
-                    }
+
+                const destinazione = (!isNaN(indirizzo[0]) && !isNaN(indirizzo[1])) ? indirizzo[0] + ","+ indirizzo[1] : indirizzo[2];
+                if (isMobile.any) {
+                    window.open("geo:" + destinazione + "?z=16&q=" + destinazione);
                 } else {
-                    window.open("https://www.openstreetmap.org/search?query=" + indirizzo[2]);
+                    if (!isNaN(indirizzo[0]) && !isNaN(indirizzo[1])) {
+                        window.open("https://www.openstreetmap.org/?mlat=" + indirizzo[0] + "&mlon=" + indirizzo[1] + "#map=12/" + destinazione + "/" + indirizzo[1]);
+                    } else {
+                        window.open("https://www.openstreetmap.org/search?query=" + indirizzo[2] + "#map=12");
+                    }
                 }
             }
 
@@ -211,10 +213,12 @@ echo '
                 const indirizzo_partenza = getIndirizzoAzienda();
                 const indirizzo_destinazione = getIndirizzoAnagrafica();
 
+                const destinazione = (!isNaN(indirizzo_destinazione[0]) && !isNaN(indirizzo_destinazione[1])) ? indirizzo_destinazione[0] + ","+ indirizzo_destinazione[1] : indirizzo_destinazione[2];
+
                 if (isMobile.any) {
-                    window.open("geo:" + indirizzo_destinazione[0] + "," + indirizzo_destinazione[1] + "?z=16&q=" + indirizzo_destinazione[0] + "," + indirizzo_destinazione[1]);
+                    window.open("geo:" + destinazione + "?z=16&q=" + destinazione);
                 } else {
-                    window.open("https://www.openstreetmap.org/directions?engine=fossgis_osrm_car&route=" + indirizzo_partenza + ";" + indirizzo_destinazione[0] + "," + indirizzo_destinazione[1]);
+                    window.open("https://www.openstreetmap.org/directions?engine=fossgis_osrm_car&route=" + indirizzo_partenza + ";" + destinazione);
                 }
             }
 

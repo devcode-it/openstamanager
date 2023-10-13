@@ -122,6 +122,7 @@ const JS = gulp.parallel(() => {
         'bootstrap-maxlength/dist/bootstrap-maxlength.js',
         'leaflet/dist/leaflet.js',
         'leaflet-gesture-handling/dist/leaflet-gesture-handling.min.js',
+        'ismobilejs/dist/isMobile.min.js'
     ];
 
     for (const i in vendor) {

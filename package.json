@@ -26,6 +26,7 @@
         "hotkeys-js": "^3.8.5",
         "html5sortable": "^0.13.2",
         "inputmask": "^3.3.9",
+        "ismobilejs": "^1.1.1",
         "jquery": "^3.5.1",
         "jquery-form": "^4.2.1",
         "jquery-ui-touch-punch": "^0.2.3",

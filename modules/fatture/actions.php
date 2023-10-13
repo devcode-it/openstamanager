@@ -859,12 +859,14 @@ switch ($op) {
         $imponibile = $database->table('co_righe_documenti')
             ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.idiva')
             ->where('co_iva.codice_natura_fe', 'LIKE', 'N3%')
+            ->orWhere('co_iva.codice_natura_fe', 'LIKE', 'N6%')
             ->where('co_righe_documenti.iddocumento', $fattura->id)
             ->sum('subtotale');
 
         $sconto = $database->table('co_righe_documenti')
             ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.idiva')
             ->where('co_iva.codice_natura_fe', 'LIKE', 'N3%')
+            ->orWhere('co_iva.codice_natura_fe', 'LIKE', 'N6%')
             ->where('co_righe_documenti.iddocumento', $fattura->id)
             ->sum('sconto');
 

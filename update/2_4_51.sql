@@ -6,3 +6,11 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati fatture'), 'Descrizione', 'descrizione', 2, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati fatture'), 'id', 'id', 1, 0, 0, 1, 0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati fatture'), 'color_Colore', 'colore', 1, 0, 0, 1, 0);
+
+-- Evita di caricare impostazioni doppie
+-- Non compatibile con versioni di MySQL < 5.7
+ALTER TABLE `zz_settings` ADD UNIQUE(`nome`);
+
+-- Evita di caricare username doppi
+-- Non compatibile con versioni di MySQL < 5.7
+ALTER TABLE `zz_users` ADD UNIQUE(`username`);

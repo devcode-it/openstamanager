@@ -248,4 +248,35 @@ switch (post('op')) {
         echo json_encode(['conti2' => $id_conti2, 'conti3' => $id_conti3, 'conti2_3' => $id_conti2_3]);
 
         break;
+
+    case 'manage_verifica':
+        $id_movimento = post('id_movimento');
+        $is_verificato = post('is_verificato');
+        $response = null;
+
+        try {
+            $movimento = Movimento::find($id_movimento);
+
+            if ($is_verificato) {
+                $movimento->verified_at = date('Y-m-d H:i:s');
+                $movimento->verified_by = $user->id;
+            } else {
+                $movimento->verified_at = null;
+                $movimento->verified_by = 0;
+            }
+            $movimento->save();
+
+            $response = [
+                'result' => true
+            ];
+        } catch (Error $e) {
+            $response = [
+                'result' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+
+        echo json_encode($response);
+
+        break;
 }

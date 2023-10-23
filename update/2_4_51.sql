@@ -9,3 +9,11 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 
 -- Flag verificato in Movimenti
 ALTER TABLE `co_movimenti` ADD `verified_at` TIMESTAMP NULL AFTER `totale_reddito`, ADD `verified_by` INT NOT NULL AFTER `verified_at`; 
+
+-- Evita di caricare impostazioni doppie
+-- Non compatibile con versioni di MySQL < 5.7
+ALTER TABLE `zz_settings` ADD UNIQUE(`nome`);
+
+-- Evita di caricare username doppi
+-- Non compatibile con versioni di MySQL < 5.7
+ALTER TABLE `zz_users` ADD UNIQUE(`username`);

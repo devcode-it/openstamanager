@@ -75,13 +75,13 @@ if (!empty($rs2)) {
     for ($i = 0; $i < sizeof($rs2); ++$i) {
         echo "
                             <tr>
-                                <td style='width:50%;'>
+                                <td>
                                     <small>".Translator::dateToLocale($rs2[$i]['scadenza'])."</small>
                                 </td>
-                                <td style='width:50%;' class='text-right'>
+                                <td style='width:25%;' class='text-right'>
                                     ".(($rs2[$i]['pagato'] == $rs2[$i]['da_pagare']) ? '<small>PAGATO</small>' : '')."
                                 </td>
-                                <td style='width:50%;' class='text-right'>
+                                <td style='width:35%;' class='text-right'>
                                     <small>".moneyFormat($rs2[$i]['da_pagare'], 2).'</small>
                                 </td>
                             </tr>';

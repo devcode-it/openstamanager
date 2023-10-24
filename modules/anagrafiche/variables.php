@@ -39,4 +39,6 @@ return [
     'id_anagrafica' => $anagrafica->idanagrafica,
     'conto' => $conto,
     'conto_descrizione' => $conto_descrizione,
+    'email' => $anagrafica->email,
+    'pec' => $anagrafica->pec,
 ];

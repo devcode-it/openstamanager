@@ -43,3 +43,5 @@ ORDER BY
     IFNULL(`orario_fine`, `data_richiesta`) DESC" WHERE `name` = 'Interventi';
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'Allegati', 'IF(zz_files.name != \'\', GROUP_CONCAT(\' \', zz_files.name), \'No\')', '30', '1', '0', '0', '0', '', '', '0', '0', '0');
+
+UPDATE `co_pagamenti` SET `descrizione` = 'Carta di credito' WHERE `descrizione` = 'VISA'

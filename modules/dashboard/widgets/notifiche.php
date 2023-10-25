@@ -54,11 +54,11 @@ foreach ($moduli as $module_id => $note) {
     $modulo = Module::pool($module_id);
 
     echo '
-<h4>'.$modulo->title.'</h4>
+<h4>'.($modulo->title == 'Anagrafiche' ? 'Note' : $modulo->title).'</h4>
 <table class="table table-hover">
     <tr>
-        <th width="15%" >'.tr('Riferimento').'</th>
-        <th width="20%" >'.(($modulo->title == 'Fatture di acquisto' || $modulo->title == 'Ordini fornitore' || $modulo->title == 'Ddt in entrata') ? tr('Fornitore') : tr('Cliente')).'</th>
+        <th width="15%" >'.(($modulo->title == 'Anagrafiche') ? '' : tr('Riferimento')).'</th>
+        <th width="20%" >'.($modulo->title == 'Anagrafiche' ? 'Tecnico' :(($modulo->title == 'Fatture di acquisto' || $modulo->title == 'Ordini fornitore' || $modulo->title == 'Ddt in entrata') ? tr('Fornitore') : tr('Cliente'))).'</th>
         <th>'.tr('Contenuto').'</th>
         <th width="20%" class="text-center">'.tr('Data di notifica').'</th>
         <th class="text-center">#</th>
@@ -90,6 +90,8 @@ foreach ($moduli as $module_id => $note) {
             $documento = $dbo->fetchOne("SELECT codice AS numero FROM zz_notes INNER JOIN mg_articoli ON (mg_articoli.id = zz_notes.id_record AND zz_notes.id_module=(SELECT id FROM zz_modules WHERE title = 'Articoli')) WHERE zz_notes.id = ".$nota->id);
         } elseif ($modulo->title == 'Impianti') {
             $documento = $dbo->fetchOne("SELECT matricola AS numero, ragione_sociale FROM zz_notes INNER JOIN my_impianti ON (my_impianti.id = zz_notes.id_record AND zz_notes.id_module=(SELECT id FROM zz_modules WHERE title = 'Impianti')) INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = my_impianti.idanagrafica WHERE zz_notes.id = ".$nota->id);
+        } elseif ($modulo->title == 'Anagrafiche') {
+            $documento = $dbo->fetchOne("SELECT ' ' AS numero, ragione_sociale FROM zz_notes INNER JOIN an_anagrafiche ON (an_anagrafiche.idanagrafica = zz_notes.id_record AND zz_notes.id_module=(SELECT id FROM zz_modules WHERE title = 'Anagrafiche')) WHERE zz_notes.id = ".$nota->id);
         } else {
             $documento['numero'] = ' ';
         }

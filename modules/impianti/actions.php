@@ -167,8 +167,12 @@ switch ($op) {
         break;
 
     case 'sync_checklist':
-        $checks_categoria = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($modulo_categorie_impianti['id']).' AND id_record = '.prepare(post('id_categoria')));
+        Check::deleteLinked([
+            'id_module' => $id_module,
+            'id_record' => $id_record,
+        ]);
 
+        $checks_categoria = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($modulo_categorie_impianti['id']).' AND id_record = '.prepare(post('id_categoria')));
         foreach ($checks_categoria as $check_categoria) {
             $check = Check::build($user, $structure, $id_record, $check_categoria['content'], null, $check_categoria['is_titolo'], $check_categoria['order']);
             $check->id_plugin = null;

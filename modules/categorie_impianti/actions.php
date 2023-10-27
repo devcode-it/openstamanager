@@ -84,6 +84,10 @@ switch (filter('op')) {
 
         $impianti = $dbo->select('my_impianti', '*', [], ['id_categoria' => $id_record]);
         foreach ($impianti as $impianto) {
+            Check::deleteLinked([
+                'id_module' => $modulo_impianti['id'],
+                'id_record' => $impianto['id'],
+            ]);
             foreach ($checks_categoria as $check_categoria) {
                 $check = Check::build($user, $structure, $impianto['id'], $check_categoria['content'], null, $check_categoria['is_titolo'], $check_categoria['order']);
                 $check->id_module = $modulo_impianti['id'];

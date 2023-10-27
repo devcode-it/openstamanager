@@ -148,8 +148,8 @@ echo '
                         $class = '';
                         $icon = 'plus';
                         $checks_not_verified = $checks->where('checked_at', null)->first();
-                        $type = sizeof($checks_not_verified) ? 'warning' : 'success';
-                        $icon2 = sizeof($checks_not_verified) ? 'clock-o' : 'check';
+                        $type = ($checks_not_verified) ? 'warning' : 'success';
+                        $icon2 = ($checks_not_verified) ? 'clock-o' : 'check';
                     }
                     echo '
                     <tr>

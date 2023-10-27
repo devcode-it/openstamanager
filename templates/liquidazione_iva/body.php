@@ -73,11 +73,11 @@ echo '
 $aliquote = [];
 
 foreach ($iva_vendite_esigibile as $record) {
-    $aliquote[$record['cod_iva']]['aliquota'] = $record['aliquota'];
-    $aliquote[$record['cod_iva']]['cod_iva'] = $record['cod_iva'];
-    $aliquote[$record['cod_iva']]['descrizione'] = $record['descrizione'];
-    $aliquote[$record['cod_iva']]['subtotale'] += sum($record['subtotale'], null, 2);
-    $aliquote[$record['cod_iva']]['iva'] += sum($record['iva'], null, 2);
+    $aliquote[$record['descrizione']]['aliquota'] = $record['aliquota'];
+    $aliquote[$record['descrizione']]['cod_iva'] = $record['cod_iva'];
+    $aliquote[$record['descrizione']]['descrizione'] = $record['descrizione'];
+    $aliquote[$record['descrizione']]['subtotale'] += sum($record['subtotale'], null, 2);
+    $aliquote[$record['descrizione']]['iva'] += sum($record['iva'], null, 2);
 }
 
 foreach ($aliquote as $aliquota => $record) {
@@ -106,11 +106,11 @@ echo '
 $aliquote = [];
 
 foreach ($iva_vendite_nonesigibile as $record) {
-    $aliquote[$record['cod_iva']]['aliquota'] = $record['aliquota'];
-    $aliquote[$record['cod_iva']]['cod_iva'] = $record['cod_iva'];
-    $aliquote[$record['cod_iva']]['descrizione'] = $record['descrizione'];
-    $aliquote[$record['cod_iva']]['subtotale'] += sum($record['subtotale'], null, 2);
-    $aliquote[$record['cod_iva']]['iva'] += sum($record['iva'], null, 2);
+    $aliquote[$record['descrizione']]['aliquota'] = $record['aliquota'];
+    $aliquote[$record['descrizione']]['cod_iva'] = $record['cod_iva'];
+    $aliquote[$record['descrizione']]['descrizione'] = $record['descrizione'];
+    $aliquote[$record['descrizione']]['subtotale'] += sum($record['subtotale'], null, 2);
+    $aliquote[$record['descrizione']]['iva'] += sum($record['iva'], null, 2);
 }
 
 foreach ($aliquote as $aliquota => $record) {
@@ -139,11 +139,11 @@ echo '
 $aliquote = [];
 
 foreach ($iva_vendite as $record) {
-    $aliquote[$record['cod_iva']]['aliquota'] = $record['aliquota'];
-    $aliquote[$record['cod_iva']]['cod_iva'] = $record['cod_iva'];
-    $aliquote[$record['cod_iva']]['descrizione'] = $record['descrizione'];
-    $aliquote[$record['cod_iva']]['subtotale'] += sum($record['subtotale'], null, 2);
-    $aliquote[$record['cod_iva']]['iva'] += sum($record['iva'], null, 2);
+    $aliquote[$record['descrizione']]['aliquota'] = $record['aliquota'];
+    $aliquote[$record['descrizione']]['cod_iva'] = $record['cod_iva'];
+    $aliquote[$record['descrizione']]['descrizione'] = $record['descrizione'];
+    $aliquote[$record['descrizione']]['subtotale'] += sum($record['subtotale'], null, 2);
+    $aliquote[$record['descrizione']]['iva'] += sum($record['iva'], null, 2);
 }
 
 foreach ($aliquote as $aliquota => $record) {
@@ -187,11 +187,11 @@ echo '
 $aliquote = [];
 
 foreach ($iva_acquisti_detraibile as $record) {
-    $aliquote[$record['cod_iva']]['aliquota'] = $record['aliquota'];
-    $aliquote[$record['cod_iva']]['cod_iva'] = $record['cod_iva'];
-    $aliquote[$record['cod_iva']]['descrizione'] = $record['descrizione'];
-    $aliquote[$record['cod_iva']]['subtotale'] += sum($record['subtotale'], null, 2);
-    $aliquote[$record['cod_iva']]['iva'] += sum($record['iva'], null, 2);
+    $aliquote[$record['descrizione']]['aliquota'] = $record['aliquota'];
+    $aliquote[$record['descrizione']]['cod_iva'] = $record['cod_iva'];
+    $aliquote[$record['descrizione']]['descrizione'] = $record['descrizione'];
+    $aliquote[$record['descrizione']]['subtotale'] += sum($record['subtotale'], null, 2);
+    $aliquote[$record['descrizione']]['iva'] += sum($record['iva'], null, 2);
 }
 
 foreach ($aliquote as $aliquota => $record) {
@@ -221,11 +221,11 @@ echo '
 $aliquote = [];
 
 foreach ($iva_acquisti_nondetraibile as $record) {
-    $aliquote[$record['cod_iva']]['aliquota'] = $record['aliquota'];
-    $aliquote[$record['cod_iva']]['cod_iva'] = $record['cod_iva'];
-    $aliquote[$record['cod_iva']]['descrizione'] = $record['descrizione'];
-    $aliquote[$record['cod_iva']]['subtotale'] += sum($record['subtotale'], null, 2);
-    $aliquote[$record['cod_iva']]['iva'] += sum($record['iva'], null, 2);
+    $aliquote[$record['descrizione']]['aliquota'] = $record['aliquota'];
+    $aliquote[$record['descrizione']]['cod_iva'] = $record['cod_iva'];
+    $aliquote[$record['descrizione']]['descrizione'] = $record['descrizione'];
+    $aliquote[$record['descrizione']]['subtotale'] += sum($record['subtotale'], null, 2);
+    $aliquote[$record['descrizione']]['iva'] += sum($record['iva'], null, 2);
 }
 
 foreach ($aliquote as $aliquota => $record) {
@@ -255,11 +255,11 @@ echo '
 $aliquote = [];
 
 foreach ($iva_acquisti as $record) {
-    $aliquote[$record['cod_iva']]['aliquota'] = $record['aliquota'];
-    $aliquote[$record['cod_iva']]['cod_iva'] = $record['cod_iva'];
-    $aliquote[$record['cod_iva']]['descrizione'] = $record['descrizione'];
-    $aliquote[$record['cod_iva']]['subtotale'] += sum($record['subtotale'], null, 2);
-    $aliquote[$record['cod_iva']]['iva'] += sum($record['iva'], null, 2);
+    $aliquote[$record['descrizione']]['aliquota'] = $record['aliquota'];
+    $aliquote[$record['descrizione']]['cod_iva'] = $record['cod_iva'];
+    $aliquote[$record['descrizione']]['descrizione'] = $record['descrizione'];
+    $aliquote[$record['descrizione']]['subtotale'] += sum($record['subtotale'], null, 2);
+    $aliquote[$record['descrizione']]['iva'] += sum($record['iva'], null, 2);
 }
 
 foreach ($aliquote as $aliquota => $record) {

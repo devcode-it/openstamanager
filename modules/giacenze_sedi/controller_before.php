@@ -33,9 +33,6 @@ echo '
 
 <script>
     $("#id_sede").change(function(){
-        session_set("giacenze_sedi,idsede", $(this).val(), 0);
-        setTimeout(function(){
-            location.reload();
-        }, 500);
+        session_set("giacenze_sedi,idsede", $(this).val(), 0).then(location.reload());
     });
 </script>';

@@ -130,7 +130,7 @@ echo '
                         <th class="text-center" width="1%"></th>
                         <th class="text-center" width="10%">'.tr('Matricola').'</th>
                         <th class="text-center" width="20%">'.tr('Nome').'</th>
-                        <th class="text-center" width="5%">'.tr('Data').'</th>
+                        <th class="text-center" width="8%">'.tr('Data').'</th>
                         <th class="text-center">'.tr('Descrizione').'</th>
                         <th class="text-center" width="25%">'.tr("Componenti soggetti all'intervento").'</th>
                         <th class="text-center" width="5%">Checklist</th>
@@ -147,9 +147,9 @@ echo '
                     if (sizeof($checks)) {
                         $class = '';
                         $icon = 'plus';
-                        $checks_not_verified = $checks->where('checked_at', null)->first();
-                        $type = sizeof($checks_not_verified) ? 'warning' : 'success';
-                        $icon2 = sizeof($checks_not_verified) ? 'clock-o' : 'check';
+                        $checks_not_verified = $checks->where('checked_at', null)->count();
+                        $type = $checks_not_verified ? 'warning' : 'success';
+                        $icon2 = $checks_not_verified ? 'clock-o' : 'check';
                     }
                     echo '
                     <tr>

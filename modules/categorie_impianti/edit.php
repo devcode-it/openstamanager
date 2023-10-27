@@ -62,12 +62,12 @@ include_once __DIR__.'/../../core.php';
 
 <?php
 
-$res = $dbo->fetchNum('SELECT * FROM `my_impianti` WHERE `id_categoria`='.prepare($id_record));
+$res = $dbo->fetchArray('SELECT * FROM `my_impianti` WHERE `id_categoria`='.prepare($id_record));
 
 if ($res) {
     echo '
     <div class="alert alert-danger">
-        <p>'.tr('Ci sono '.count($res).' impianti collegati a questa categoria. Non è possibile eliminarla.').'</p>
+        <p>'.tr('Ci sono '.sizeof($res).' impianti collegati a questa categoria. Non è possibile eliminarla.').'</p>
     </div>';
 } else {
     echo '

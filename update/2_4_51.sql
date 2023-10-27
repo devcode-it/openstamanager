@@ -53,7 +53,7 @@ INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `ord
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES ("Giorni di preavviso di default", '2', 'decimal', 1, 'Contratti', 3, 'Inserire il numero di giorni di preavviso da impostare automaticamente alla creazione di un contratto.');
 
 -- Aggiunto modulo Gestione task
-INSERT INTO `zz_modules` (`name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES ('Gestione task', 'Gestione task','gestione-task', 'SELECT |select| FROM `zz_tasks` WHERE 1=1 HAVING 2=2', '', 'fa fa-calendar', '2.4.51', '2.4.51', '5', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Strumenti'), '1', '1');
+INSERT INTO `zz_modules` (`name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES ('Gestione task', 'Gestione task','gestione_task', 'SELECT |select| FROM `zz_tasks` WHERE 1=1 HAVING 2=2', '', 'fa fa-calendar', '2.4.51', '2.4.51', '5', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Strumenti'), '1', '1');
 
 -- Aggiunta viste Gestione task
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`) VALUES

@@ -73,10 +73,10 @@ echo "
 $rs2 = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE iddocumento='.prepare($id_record).' ORDER BY `scadenza` ASC');
 if (!empty($rs2)) {
     for ($i = 0; $i < sizeof($rs2); ++$i) {
-        echo "
+        echo '
                             <tr>
                                 <td>
-                                    <small>".Translator::dateToLocale($rs2[$i]['scadenza'])."</small>
+                                    <small>'.Translator::dateToLocale($rs2[$i]['scadenza'])."</small>
                                 </td>
                                 <td style='width:25%;' class='text-right'>
                                     ".(($rs2[$i]['pagato'] == $rs2[$i]['da_pagare']) ? '<small>PAGATO</small>' : '')."

@@ -175,17 +175,16 @@ foreach ($righe as $riga) {
     }
 
     if (!empty($riga->note)) {
-
-        if(strlen($riga->note) > 50) {
-            $prima_parte = substr($riga->note, 0, ((strpos($riga->note, ' ', 50) < 60) && (strpos($riga->note, ' ', 50) != 0) ? strpos($riga->note, ' ', 50): 50));
-            $seconda_parte = substr($riga->note, ((strpos($riga->note, ' ', 50) < 60) && (strpos($riga->note, ' ', 50) != 0) ? strpos($riga->note, ' ', 50): 50));
+        if (strlen($riga->note) > 50) {
+            $prima_parte = substr($riga->note, 0, ((strpos($riga->note, ' ', 50) < 60) && (strpos($riga->note, ' ', 50) != 0) ? strpos($riga->note, ' ', 50) : 50));
+            $seconda_parte = substr($riga->note, ((strpos($riga->note, ' ', 50) < 60) && (strpos($riga->note, ' ', 50) != 0) ? strpos($riga->note, ' ', 50) : 50));
             $stringa_modificata = '<small class="label label-default">'.$prima_parte.'</small>
-                <span id="read-more-target-'.$riga->id.'" class="read-more-target"><small class="label label-default">' . $seconda_parte . '</small></span><a href="#read-more-target-'.$riga->id.'" class="read-more-trigger">...</a>';
+                <span id="read-more-target-'.$riga->id.'" class="read-more-target"><small class="label label-default">'.$seconda_parte.'</small></span><a href="#read-more-target-'.$riga->id.'" class="read-more-trigger">...</a>';
         } else {
             $stringa_modificata = '<small class="label label-default">'.$riga->note.'</small>';
         }
-        
-        echo'
+
+        echo '
         <div class="block-item-text">
             <input type="checkbox" hidden class="read-more-state" id="read-more">
                 <div class="read-more-wrap">
@@ -193,7 +192,6 @@ foreach ($righe as $riga) {
                 </div>
             </div>
         ';
-        
     }
     echo '
             </td>';
@@ -216,29 +214,29 @@ foreach ($righe as $riga) {
                 {[ "type": "number", "name": "qta_'.$riga->id.'", "value": "'.$riga->qta.'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "disabled": "'.($riga->isSconto() ? 1 : 0).'", "disabled": "'.($block_edit || $riga->isSconto()).'" ]}
             </td>';
 
-    // Costi unitari
-    if ($dir == 'entrata') {
-        if ($riga->isSconto()) {
-            echo '
+        // Costi unitari
+        if ($dir == 'entrata') {
+            if ($riga->isSconto()) {
+                echo '
             <td></td>';
-        } else {
+            } else {
                 echo '
             <td>
                 {[ "type": "number", "name": "costo_'.$riga->id.'", "value": "'.$riga->costo_unitario.'", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "'.currency().'", "disabled": "'.$block_edit.'" ]}
             </td>';
+            }
         }
-    }
 
-    // Prezzi unitari
-    if ($riga->isSconto()) {
-        echo '
+        // Prezzi unitari
+        if ($riga->isSconto()) {
+            echo '
             <td></td>';
-    } else {
-        echo '
+        } else {
+            echo '
             <td>
                 {[ "type": "number", "name": "prezzo_'.$riga->id.'", "value": "'.$riga->prezzo_unitario_corrente.'", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-before": "'.(abs($riga->provvigione_unitaria) > 0 ? '<span class=\'tip text-info\' title=\''.provvigioneInfo($riga).'\'><small><i class=\'fa fa-handshake-o\'></i></small></span>' : '').'", "icon-after": "'.currency().'", "disabled": "'.$block_edit.'" ]}
             </td>';
-    }
+        }
 
         // Sconto unitario
         $tipo_sconto = '';

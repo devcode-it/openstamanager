@@ -852,7 +852,7 @@ switch ($op) {
 
         $imponibile = 0;
         $sconto = 0;
-        
+
         $id_segment = post('id_segment');
         $data = date('Y-m-d');
         $anagrafica = $fattura->anagrafica;
@@ -965,7 +965,7 @@ switch ($op) {
                 $articolo->idconto = $id_conto;
 
                 if ($dir == 'entrata') {
-                      // L'aliquota dell'articolo ha precedenza solo se ha aliquota a 0, altrimenti anagrafica -> articolo -> impostazione
+                    // L'aliquota dell'articolo ha precedenza solo se ha aliquota a 0, altrimenti anagrafica -> articolo -> impostazione
                     if ($originale->idiva_vendita) {
                         $aliquota_articolo = floatval(Aliquota::find($originale->idiva_vendita)->percentuale);
                     }

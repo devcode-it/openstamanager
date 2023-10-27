@@ -267,7 +267,7 @@ switch (post('op')) {
             $movimento->save();
 
             $response = [
-                'result' => true
+                'result' => true,
             ];
         } catch (Error $e) {
             $response = [

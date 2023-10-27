@@ -41,22 +41,22 @@ switch ($operazione) {
                 'idzona' => !empty(post('idzona')) ? post('idzona') : 0,
                 'enable_newsletter' => empty($opt_out_newsletter),
             ]);
-            $id_record = $dbo->lastInsertedID();
+             $id_record = $dbo->lastInsertedID();
 
-            $id_referenti = (array)post('id_referenti');
-            foreach ($id_referenti as $id_referente) {
-                $dbo->update('an_referenti', [
-                    'idsede' => $id_record
+             $id_referenti = (array) post('id_referenti');
+             foreach ($id_referenti as $id_referente) {
+                 $dbo->update('an_referenti', [
+                    'idsede' => $id_record,
                 ], [
-                    'id' => $id_referente
+                    'id' => $id_referente,
                 ]);
-            }
+             }
 
-            if (isAjaxRequest() && !empty($id_record)) {
-                echo json_encode(['id' => $id_record, 'text' => post('nomesede').' - '.post('citta')]);
-            }
+             if (isAjaxRequest() && !empty($id_record)) {
+                 echo json_encode(['id' => $id_record, 'text' => post('nomesede').' - '.post('citta')]);
+             }
 
-            flash()->info(tr('Aggiunta una nuova sede!'));
+             flash()->info(tr('Aggiunta una nuova sede!'));
          } else {
              flash()->warning(tr('Errore durante aggiunta della sede'));
          }
@@ -90,12 +90,12 @@ switch ($operazione) {
             'enable_newsletter' => empty($opt_out_newsletter),
         ], ['id' => $id_record]);
 
-        $id_referenti = (array)post('id_referenti');
+        $id_referenti = (array) post('id_referenti');
         foreach ($id_referenti as $id_referente) {
             $dbo->update('an_referenti', [
-                'idsede' => $id_record
+                'idsede' => $id_record,
             ], [
-                'id' => $id_referente
+                'id' => $id_referente,
             ]);
         }
 

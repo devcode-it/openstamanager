@@ -30,5 +30,4 @@ switch (post('op')) {
         flash()->info(tr('Informazioni salvate correttamente.'));
 
         break;
-
     }

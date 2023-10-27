@@ -21,7 +21,6 @@ include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'update':
-
         $dbo->update('zz_tasks', [
             'name' => (count($dbo->fetchArray('SELECT `name` FROM `zz_tasks` WHERE `name` = '.prepare(post('name')))) > 0) ? $dbo->fetchOne('SELECT `name` FROM `zz_tasks` WHERE `id` ='.$id_record)['name'] : post('name'),
             'class' => post('class'),
@@ -31,7 +30,4 @@ switch (post('op')) {
         flash()->info(tr('Informazioni salvate correttamente.'));
 
         break;
-
     }
-
-    

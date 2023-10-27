@@ -237,8 +237,8 @@ foreach ($righe as $riga) {
             }
         }
 
-       // Prezzi unitari
-       if ($riga->isSconto()) {
+        // Prezzi unitari
+        if ($riga->isSconto()) {
             echo '
                 <td></td>';
         } else {

@@ -20,9 +20,9 @@
 namespace API\App\v1;
 
 use API\App\AppResource;
+use Auth;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Impianti\Impianto;
-use Auth;
 
 class Impianti extends AppResource
 {
@@ -39,9 +39,9 @@ class Impianti extends AppResource
             });
 
         //Limite impianti visualizzabili dal tecnico
-        $limite_impianti = setting("Limita la visualizzazione degli impianti a quelli gestiti dal tecnico");
+        $limite_impianti = setting('Limita la visualizzazione degli impianti a quelli gestiti dal tecnico');
 
-        if($limite_impianti == 1 && !Auth::user()->is_admin){
+        if ($limite_impianti == 1 && !Auth::user()->is_admin) {
             $id_tecnico = Auth::user()->id_anagrafica;
 
             // Elenco di interventi di interesse
@@ -89,6 +89,7 @@ class Impianti extends AppResource
 
         return $record;
     }
+
     protected function getRisorsaInterventi()
     {
         return new Interventi();

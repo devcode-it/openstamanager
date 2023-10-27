@@ -576,7 +576,7 @@ switch (filter('op')) {
                 $articolo->qta = 1;
                 $articolo->costo_unitario = $originale->prezzo_acquisto;
 
-                 // L'aliquota dell'articolo ha precedenza solo se ha aliquota a 0, altrimenti anagrafica -> articolo -> impostazione
+                // L'aliquota dell'articolo ha precedenza solo se ha aliquota a 0, altrimenti anagrafica -> articolo -> impostazione
                 if ($dir == 'entrata') {
                     if ($originale->idiva_vendita) {
                         $aliquota_articolo = floatval(Aliquota::find($originale->idiva_vendita)->percentuale);

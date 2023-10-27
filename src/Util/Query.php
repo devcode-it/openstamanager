@@ -225,19 +225,17 @@ class Query
                             $search_filters[] = $search_query.' '.$sign.' '.prepare($value);
                         }
                     } elseif ($equal) {
-                    $value = trim(str_replace(['='], '', $value));
-                    list($giorno, $mese, $anno) = explode('/', $value);
-                    $data = "'".$anno.'-'.$mese.'-'.$giorno."'";
+                        $value = trim(str_replace(['='], '', $value));
+                        list($giorno, $mese, $anno) = explode('/', $value);
+                        $data = "'".$anno.'-'.$mese.'-'.$giorno."'";
 
                         if ($anno != '' && $giorno != '' && $mese != '') {
-                            if  ($data != "'1970-01-01'") {
+                            if ($data != "'1970-01-01'") {
                                 $search_filters[] = $search_query.' = '.$data.'';
-                            } 
-                            
-                        } else {                   
+                            }
+                        } else {
                             $search_filters[] = ($search_query.' = '.prepare($value).' OR '.$search_query.' LIKE '.prepare('% '.$value).' OR '.$search_query.' LIKE '.prepare($value.' %').' OR '.$search_query.' LIKE '.prepare('% '.$value.' %'));
                         }
-   
                     } elseif ($notequal) {
                         $value = trim(str_replace(['!='], '', $value));
                         $search_filters[] = ($search_query.' != '.prepare($value).' AND '.$search_query.' NOT LIKE '.prepare('% '.$value).' AND '.$search_query.' NOT LIKE '.prepare($value.' %').' AND '.$search_query.' NOT LIKE '.prepare('% '.$value.' %'));

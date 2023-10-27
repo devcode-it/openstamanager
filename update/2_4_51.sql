@@ -55,3 +55,17 @@ INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `ord
 -- Checklist plugin Impianti
 ALTER TABLE `zz_checks` ADD `id_module_from` INT NOT NULL AFTER `id`, ADD `id_record_from` INT NOT NULL AFTER `id_module_from`; 
 UPDATE `zz_modules` SET `use_checklists` = '1' WHERE `zz_modules`.`name` = 'Categorie impianti'; 
+
+-- Aggiunto modulo Gestione task
+INSERT INTO `zz_modules` (`name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES ('Gestione task', 'Gestione task','gestione_task', 'SELECT |select| FROM `zz_tasks` WHERE 1=1 HAVING 2=2', '', 'fa fa-calendar', '2.4.51', '2.4.51', '5', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Strumenti'), '1', '1');
+
+-- Aggiunta viste Gestione task
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Gestione task'), 'id', 'id', 1, 0, 0, 1, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Gestione task'), 'Nome', 'name', 1, 1, 0, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Gestione task'), 'Expression', 'expression', 2, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Gestione task'), 'Prossima esecuzione', 'next_execution_at', 3, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Gestione task'), 'Precedente esecuzione', 'last_executed_at', 4, 1, 0, 0, 1);
+
+-- Fix che evita che venga allegato il riepilogo interventi con tutti gli interventi del tecnico
+DELETE FROM `em_print_template` WHERE `em_print_template`.`id_print` IN (SELECT `id` FROM `zz_prints` WHERE `zz_prints`.`is_record` = 0);

@@ -289,7 +289,7 @@ class Manager
         // Operazioni della risorsa
         $response = $object->{$method}($request);
 
-        try{
+        try {
             $database->commitTransaction();
         } catch (PDOException $e) {
         }

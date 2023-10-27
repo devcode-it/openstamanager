@@ -35,19 +35,19 @@ class Login extends Resource implements CreateInterface
         if (auth()->attempt($request['username'], $request['password'])) {
             $user = $this->getUser();
             $token = auth()->getToken();
-            
-            if(setting("Permetti l'accesso agli amministratori")){
-                $utente = $database->fetchOne("SELECT
+
+            if (setting("Permetti l'accesso agli amministratori")) {
+                $utente = $database->fetchOne('SELECT
                     `an_anagrafiche`.`idanagrafica` AS id_anagrafica,
                     `an_anagrafiche`.`ragione_sociale`,
                     zz_groups.nome AS gruppo
                 FROM `zz_users`
                     INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica`
                     INNER JOIN zz_groups ON zz_users.idgruppo=zz_groups.id
-                WHERE `an_anagrafiche`.`deleted_at` IS NULL AND `zz_users`.`id` = :id", [
+                WHERE `an_anagrafiche`.`deleted_at` IS NULL AND `zz_users`.`id` = :id', [
                     ':id' => $user['id'],
                 ]);
-            }else{
+            } else {
                 $utente = $database->fetchOne("SELECT
                     `an_anagrafiche`.`idanagrafica` AS id_anagrafica,
                     `an_anagrafiche`.`ragione_sociale`,

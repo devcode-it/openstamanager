@@ -58,7 +58,7 @@ class Interventi extends AppResource
         // Informazioni sull'utente
         $id_tecnico = Auth::user()->id_anagrafica;
 
-        if(Auth::user()->is_admin){
+        if (Auth::user()->is_admin) {
             $query = 'SELECT in_interventi.id FROM in_interventi WHERE
             deleted_at IS NOT NULL
             OR (
@@ -80,8 +80,7 @@ class Interventi extends AppResource
                 ':remove_period_end' => $remove_end,
                 ':remove_period_start' => $remove_start,
             ]);
-            
-        }else{
+        } else {
             $query = 'SELECT in_interventi.id FROM in_interventi WHERE
             deleted_at IS NOT NULL
             OR (
@@ -98,7 +97,7 @@ class Interventi extends AppResource
                         AND in_interventi_tecnici.idtecnico = :id_tecnico_q2
                 )
             )';
-            
+
             $records = database()->fetchArray($query, [
             ':period_end' => $end,
             ':period_start' => $start,
@@ -108,7 +107,7 @@ class Interventi extends AppResource
             ':id_tecnico_q2' => $id_tecnico,
             ]);
         }
-        
+
         $interventi = array_column($records, 'id');
         $mancanti = $this->getMissingIDs('in_interventi', 'id', $last_sync_at);
 
@@ -126,7 +125,7 @@ class Interventi extends AppResource
         $id_tecnico = Auth::user()->id_anagrafica;
 
         if (setting('Visualizza solo promemoria assegnati') == 1) {
-            if(Auth::user()->is_admin){
+            if (Auth::user()->is_admin) {
                 $query = '
                 SELECT
                     in_interventi.id,
@@ -143,8 +142,8 @@ class Interventi extends AppResource
                             AND in_interventi.idstatointervento IN (SELECT idstatointervento FROM in_statiintervento WHERE is_completato = 0)
                             )
                         )';
-                }else{
-                    $query = '
+            } else {
+                $query = '
                     SELECT
                         in_interventi.id,
                         in_interventi.updated_at
@@ -167,11 +166,10 @@ class Interventi extends AppResource
                             )
                         )
                     )';
-                }
-    
-            } else {
-                if(Auth::user()->is_admin){
-                    $query = '
+            }
+        } else {
+            if (Auth::user()->is_admin) {
+                $query = '
                     SELECT
                         in_interventi.id,
                         in_interventi.updated_at
@@ -191,8 +189,8 @@ class Interventi extends AppResource
                                 AND in_interventi.idstatointervento IN (SELECT idstatointervento FROM in_statiintervento WHERE is_completato = 0)
                             )
                         )';
-                }else{
-                    $query = '
+            } else {
+                $query = '
                     SELECT
                         in_interventi.id,
                         in_interventi.updated_at
@@ -213,9 +211,8 @@ class Interventi extends AppResource
                                 AND in_interventi.idstatointervento IN (SELECT idstatointervento FROM in_statiintervento WHERE is_completato = 0)
                             )
                         )';
-                }
-                                
-            }    
+            }
+        }
 
         // Filtro per data
         // Gestione di tecnici assegnati o impianti modificati
@@ -231,7 +228,7 @@ class Interventi extends AppResource
         }
 
         if (setting('Visualizza solo promemoria assegnati') == 1) {
-            if(Auth::user()->is_admin){
+            if (Auth::user()->is_admin) {
                 $records = database()->fetchArray($query, [
                     ':period_start' => $start,
                     ':period_end' => $end,
@@ -245,12 +242,12 @@ class Interventi extends AppResource
                 ]);
             }
         } else {
-            if(Auth::user()->is_admin){
+            if (Auth::user()->is_admin) {
                 $records = database()->fetchArray($query, [
                     ':period_start' => $start,
                     ':period_end' => $end,
                 ]);
-            } else  {
+            } else {
                 $records = database()->fetchArray($query, [
                     ':period_start' => $start,
                     ':period_end' => $end,
@@ -353,7 +350,7 @@ class Interventi extends AppResource
         // Aggiornamento degli impianti collegati
         $database->query('DELETE FROM my_impianti_interventi WHERE idintervento = '.prepare($record->id));
         foreach ($data['impianti'] as $id_impianto) {
-            if(!empty($id_impianto)){
+            if (!empty($id_impianto)) {
                 $database->insert('my_impianti_interventi', [
                     'idimpianto' => $id_impianto,
                     'idintervento' => $record->id,
@@ -370,7 +367,7 @@ class Interventi extends AppResource
             'id_tecnico' => $tecnici_assegnati,
         ]);
 
-        if(!empty($data['idrichiesta'])){
+        if (!empty($data['idrichiesta'])) {
             database()->query('UPDATE in_richieste SET idintervento = '.prepare($record->id).', updated_at=NOW() WHERE id = '.prepare($data['idrichiesta']));
         }
     }

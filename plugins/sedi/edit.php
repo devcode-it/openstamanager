@@ -128,8 +128,8 @@ echo '
 			{[ "type": "text", "label": "'.tr('Longitudine').'", "name": "lng", "id": "lng_", "value": "$lng$", "extra": "data-geo=\'lng\'", "class": "text-right", "readonly": true ]}
 		</div>';
 
-	if (!empty($record['indirizzo']) || (empty($record['citta']))) {
-    	echo '
+    if (!empty($record['indirizzo']) || (empty($record['citta']))) {
+        echo '
 		<div class="col-md-2">
 			<label>&nbsp;</label><br>
 			<a class="btn btn-info" title="'.tr('Mostra la sede su Mappa').'" onclick="cercaOpenStreetMap();">&nbsp;<i class="fa fa-map-marker">&nbsp;</i></a>
@@ -137,7 +137,7 @@ echo '
 			<a title="'.tr('Calcola percorso da sede legale a questa sede').'" class="btn btn-primary" onclick="calcolaPercorso();"><i class="fa fa-car"></i></a>
 		</div> 
 		<div class="clearfix"></div><br>';
-	}
+    }
 
 echo '
 	</div>';

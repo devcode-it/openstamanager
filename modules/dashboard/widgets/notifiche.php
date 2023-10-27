@@ -58,7 +58,7 @@ foreach ($moduli as $module_id => $note) {
 <table class="table table-hover">
     <tr>
         <th width="15%" >'.(($modulo->title == 'Anagrafiche') ? '' : tr('Riferimento')).'</th>
-        <th width="20%" >'.($modulo->title == 'Anagrafiche' ? 'Tecnico' :(($modulo->title == 'Fatture di acquisto' || $modulo->title == 'Ordini fornitore' || $modulo->title == 'Ddt in entrata') ? tr('Fornitore') : tr('Cliente'))).'</th>
+        <th width="20%" >'.($modulo->title == 'Anagrafiche' ? 'Tecnico' : (($modulo->title == 'Fatture di acquisto' || $modulo->title == 'Ordini fornitore' || $modulo->title == 'Ddt in entrata') ? tr('Fornitore') : tr('Cliente'))).'</th>
         <th>'.tr('Contenuto').'</th>
         <th width="20%" class="text-center">'.tr('Data di notifica').'</th>
         <th class="text-center">#</th>

@@ -80,7 +80,7 @@ echo '
         <div class="box-body">
             <div class="row">
                 <div class="col-md-6">
-                    {[ "type": "checkbox", "label": "'.tr('Rinnovabile').'", "name": "rinnovabile", "value": "'.setting("Crea contratto rinnovabile di default").'", "id": "rinnovabile_add", "help": "'.tr('Il contratto è rinnovabile?').'" ]}
+                    {[ "type": "checkbox", "label": "'.tr('Rinnovabile').'", "name": "rinnovabile", "value": "'.setting('Crea contratto rinnovabile di default').'", "id": "rinnovabile_add", "help": "'.tr('Il contratto è rinnovabile?').'" ]}
                 </div>
 
                 <div class="col-md-6">
@@ -88,7 +88,7 @@ echo '
                 </div>
 
                 <div class="col-md-6">
-                    {[ "type": "number", "label": "'.tr('Preavviso per rinnovo').'", "name": "giorni_preavviso_rinnovo", "id": "giorni_preavviso_rinnovo_add", "decimals": "2", "value": "'.setting("Giorni di preavviso di default").'", "icon-after": "giorni", "disabled": 1 ]}
+                    {[ "type": "number", "label": "'.tr('Preavviso per rinnovo').'", "name": "giorni_preavviso_rinnovo", "id": "giorni_preavviso_rinnovo_add", "decimals": "2", "value": "'.setting('Giorni di preavviso di default').'", "icon-after": "giorni", "disabled": 1 ]}
                 </div>
 
                 <div class="col-md-6">

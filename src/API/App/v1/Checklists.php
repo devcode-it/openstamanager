@@ -22,8 +22,8 @@ namespace API\App\v1;
 use API\App\AppResource;
 use Auth;
 use Carbon\Carbon;
-use Modules\Checklists\Check;
 use Models\User;
+use Modules\Checklists\Check;
 
 class Checklists extends AppResource
 {
@@ -45,7 +45,7 @@ class Checklists extends AppResource
         // Elenco sessioni degli interventi da rimuovere
         $da_interventi = [];
         if (!empty($interventi)) {
-            if($user->is_admin){
+            if ($user->is_admin) {
                 $query = '  
                 SELECT zz_checks.id
                 FROM zz_checks
@@ -63,7 +63,7 @@ class Checklists extends AppResource
                     ':period_end' => $end,
                     ':period_start' => $start,
                 ]);
-            }else{
+            } else {
                 $query = '  
                 SELECT zz_checks.id
                 FROM zz_checks
@@ -82,7 +82,7 @@ class Checklists extends AppResource
                 $records = database()->fetchArray($query, [
                     ':period_end' => $end,
                     ':period_start' => $start,
-                    ':id_tecnico' => $user->id
+                    ':id_tecnico' => $user->id,
                 ]);
             }
             $da_interventi = array_column($records, 'id');
@@ -113,7 +113,7 @@ class Checklists extends AppResource
         $user = Auth::user();
 
         $id_interventi = array_keys($interventi);
-        if($user->is_admin){
+        if ($user->is_admin) {
             $query = 'SELECT zz_checks.id
             FROM zz_checks
                 INNER JOIN in_interventi ON zz_checks.id_record = in_interventi.id
@@ -129,7 +129,7 @@ class Checklists extends AppResource
             }
 
             $records = database()->fetchArray($query);
-        }else{
+        } else {
             $query = 'SELECT zz_checks.id
             FROM zz_checks
                 INNER JOIN in_interventi ON zz_checks.id_record = in_interventi.id
@@ -149,7 +149,7 @@ class Checklists extends AppResource
             $records = database()->fetchArray($query, [
                 ':period_start' => $start,
                 ':period_end' => $end,
-                ':id_tecnico' => $user->id
+                ':id_tecnico' => $user->id,
             ]);
         }
 
@@ -159,7 +159,7 @@ class Checklists extends AppResource
     public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
-        $query = "SELECT zz_checks.id,
+        $query = 'SELECT zz_checks.id,
             zz_checks.id_record AS id_intervento,
             zz_checks.checked_at,
             zz_checks.content,
@@ -168,7 +168,7 @@ class Checklists extends AppResource
             zz_checks.checked_by,
             zz_checks.order AS ordine
         FROM zz_checks
-        WHERE zz_checks.id = ".prepare($id);
+        WHERE zz_checks.id = '.prepare($id);
 
         $record = database()->fetchOne($query);
 
@@ -179,11 +179,11 @@ class Checklists extends AppResource
     {
         $check = Check::find($data['id']);
 
-        $check->checked_at = (!empty($data['checked_at']) ? $data['checked_at'] : NULL);
+        $check->checked_at = (!empty($data['checked_at']) ? $data['checked_at'] : null);
         $check->content = $data['content'];
         $check->note = $data['note'];
         $user = User::where('idanagrafica', $data['checked_by'])->first();
-        if(!empty($user)){
+        if (!empty($user)) {
             $check->checked_by = $user->id;
         }
 

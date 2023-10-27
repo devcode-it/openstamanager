@@ -161,7 +161,7 @@ echo '
                         </td>
                         <td>'.$impianto['matricola'].'</td>
                         <td>'.Modules::link('Impianti', $impianto['id'], $impianto['nome']).'</td>
-                        <td class="text-center">'.dateFormat($impianto['data']).'</td>
+                        <td class="text-center">'.Translator::dateToLocale($impianto['data']).'</td>
                         <td>'.$impianto['descrizione'].'</td>
                         <td>
                             <form action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=link_componenti&matricola='.$impianto['id'].'" method="post">
@@ -175,7 +175,7 @@ echo '
                                 {[ "type": "select", "multiple": 1, "name": "componenti[]", "id": "componenti_'.$impianto['id'].'", "ajax-source": "componenti", "select-options": {"matricola": '.$impianto['id'].'}, "value": "'.implode(',', $ids).'", "readonly": "'.!empty($readonly).'", "disabled": "'.!empty($disabled).'", "icon-after": "<button type=\"submit\" class=\"btn btn-success\" '.$disabled.'> <i class=\"fa fa-check\"></i> '.tr('Salva').'</button>" ]}
                             </form>
                         </td>
-                        <td class="text-center"><br><i class="fa fa-'.$icon2.' fa-2x text-'.$type.'"></i></td>
+                        <td class="text-center"><i class="fa fa-'.$icon2.' fa-2x text-'.$type.'"></i></td>
                     </tr>
                     
                     <tr style="display: none">

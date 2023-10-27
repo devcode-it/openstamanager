@@ -39,7 +39,7 @@ switch ($op) {
                 'id_categoria' => post('id_categoria') ?: null,
                 'descrizione' => post('descrizione'),
                 'idsede' => post('idsede'),
-                'data' => post('data'),
+                'data' => post('data') ?: null,
                 'proprietario' => post('proprietario'),
                 'palazzo' => post('palazzo'),
                 'ubicazione' => post('ubicazione'),

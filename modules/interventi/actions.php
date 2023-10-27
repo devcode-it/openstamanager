@@ -22,6 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Carbon\CarbonPeriod;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
+use Modules\Checklists\Check;
 use Modules\Emails\Mail;
 use Modules\Emails\Template;
 use Modules\Impianti\Impianto;
@@ -36,6 +37,8 @@ use Modules\TipiIntervento\Tipo as TipoSessione;
 use Plugins\ComponentiImpianti\Componente;
 use Plugins\ListinoClienti\DettaglioPrezzo;
 use Plugins\PianificazioneInterventi\Promemoria;
+
+$modulo_impianti = Modules::get('Impianti');
 
 switch (post('op')) {
     case 'update':
@@ -227,6 +230,15 @@ switch (post('op')) {
                         'idintervento' => $id_record,
                         'idimpianto' => $impianto,
                     ]);
+
+                    $checks_impianti = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare( $modulo_impianti['id']).' AND id_record = '.prepare($impianto));
+                    foreach ($checks_impianti as $check_impianto) {
+                        $check = Check::build($user, $structure, $id_record, $check_impianto['content'], null, $check_impianto['is_titolo'], $check_impianto['order'], $modulo_impianti['id'], $impianto);
+                        $check->id_module = $id_module;
+                        $check->id_plugin = null;
+                        $check->note = $check_impianto['note'];
+                        $check->save();
+                    }
                 }
 
                 // Collegamenti intervento/componenti

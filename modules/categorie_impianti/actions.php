@@ -19,6 +19,10 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Checklists\Check;
+
+$modulo_impianti = Modules::get('Impianti');
+
 switch (filter('op')) {
     case 'update':
         $nome = filter('nome');
@@ -72,6 +76,23 @@ switch (filter('op')) {
         } else {
             flash()->error(tr('Esistono ancora alcuni articoli sotto questa categoria!'));
         }
+
+        break;
+
+    case 'sync_checklist':
+        $checks_categoria = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record));
+
+        $impianti = $dbo->select('my_impianti', '*', [], ['id_categoria' => $id_record]);
+        foreach ($impianti as $impianto) {
+            foreach ($checks_categoria as $check_categoria) {
+                $check = Check::build($user, $structure, $impianto['id'], $check_categoria['content'], null, $check_categoria['is_titolo'], $check_categoria['order']);
+                $check->id_module = $modulo_impianti['id'];
+                $check->id_plugin = null;
+                $check->note = $check_categoria['note'];
+                $check->save();
+            }
+        }
+        flash()->info(tr('Impianti sincronizzati correttamente!'));
 
         break;
 }

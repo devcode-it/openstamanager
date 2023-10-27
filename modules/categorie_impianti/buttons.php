@@ -17,30 +17,14 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace Modules\Checklists\Traits;
+include_once __DIR__.'/../../core.php';
 
-use Modules\Checklists\Check;
-use Modules\Checklists\Checklist;
+echo '
+<button type="button" class="btn btn-primary" onclick="if( confirm(\'Confermando, tutte le checklist degli impianti di questa categoria verranno aggiornate. Continuare?\') ){ $(\'#check-impianto\').submit(); }"> <i class="fa fa-refresh"></i> '.tr('Sincronizza checklist impianti').'</button>';
 
-trait ChecklistTrait
-{
-    public function checks()
-    {
-        return $this->hasMany(Check::class, $this->component_identifier);
-    }
-
-    public function recordChecks($id_record)
-    {
-        return $this->checks()->where('id_record', $id_record)->where('id_module_from', 0)->orderBy('order')->get();
-    }
-
-    public function mainChecks($id_record)
-    {
-        return $this->checks()->where('id_record', $id_record)->where('id_module_from', 0)->whereNull('id_parent')->orderBy('order')->get();
-    }
-
-    public function checklists()
-    {
-        return $this->hasMany(Checklist::class, $this->component_identifier);
-    }
-}
+// Sincronizza checklist impianti
+echo '
+<form action="" method="post" id="check-impianto">
+    <input type="hidden" name="backto" value="record-edit">
+    <input type="hidden" name="op" value="sync_checklist">
+</form>';

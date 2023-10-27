@@ -19,9 +19,12 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Checklists\Check;
+
 $op = post('op');
 
 $upload_dir = base_dir().'/files/'.Modules::get('Impianti')['directory'];
+$modulo_categorie_impianti = Modules::get('Categorie impianti');
 
 switch ($op) {
     // Aggiorno informazioni di base impianto
@@ -96,11 +99,20 @@ switch ($op) {
         $nome = post('nome');
         $idtecnico = post('idtecnico');
         $idsede = post('idsede');
+        $id_categoria = post('id_categoria');
 
         if (!empty($matricola)) {
-            $dbo->query('INSERT INTO my_impianti(matricola, idanagrafica, nome, data, idtecnico, idsede) VALUES ('.prepare($matricola).', '.prepare($idanagrafica).', '.prepare($nome).', NOW(), '.prepare($idtecnico).', '.prepare($idsede).')');
+            $dbo->query('INSERT INTO my_impianti(matricola, idanagrafica, nome, data, idtecnico, idsede, id_categoria) VALUES ('.prepare($matricola).', '.prepare($idanagrafica).', '.prepare($nome).', NOW(), '.prepare($idtecnico).', '.prepare($idsede).', '.prepare($id_categoria).')');
 
             $id_record = $dbo->lastInsertedID();
+
+            $checks_categoria = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($modulo_categorie_impianti['id']).' AND id_record = '.prepare($id_categoria));
+            foreach ($checks_categoria as $check_categoria) {
+                $check = Check::build($user, $structure, $id_record, $check_categoria['content'], null, $check_categoria['is_titolo'], $check_categoria['order']);
+                $check->id_plugin = null;
+                $check->note = $check_categoria['note'];
+                $check->save();
+            }
 
             if (isAjaxRequest()) {
                 echo json_encode(['id' => $id_record, 'text' => $matricola.' - '.$nome]);
@@ -152,6 +164,19 @@ switch ($op) {
         $dbo->query('DELETE FROM my_impianti WHERE id='.prepare($id_record));
 
         flash()->info(tr('Impianto e relativi componenti eliminati!'));
+        break;
+
+    case 'sync_checklist':
+        $checks_categoria = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($modulo_categorie_impianti['id']).' AND id_record = '.prepare(post('id_categoria')));
+
+        foreach ($checks_categoria as $check_categoria) {
+            $check = Check::build($user, $structure, $id_record, $check_categoria['content'], null, $check_categoria['is_titolo'], $check_categoria['order']);
+            $check->id_plugin = null;
+            $check->note = $check_categoria['note'];
+            $check->save();
+        }
+        flash()->info(tr('Checklist importate correttamente!'));
+
         break;
 }
 

@@ -33,17 +33,25 @@ $id_anagrafica = filter('id_anagrafica');
 		<div class="col-md-8">
 			{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1 ]}
 		</div>
+	</div>
 
-		<div class="col-md-4">
+	<div class="row">
+		<div class="col-md-6">
 			{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "id": "idanagrafica_impianto", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "clienti", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Cliente&readonly_tipo=1||<?php echo !empty($id_anagrafica) ? 'disabled' : ''; ?>", "readonly": "<?php echo !empty($id_anagrafica) ? 1 : 0; ?>"  ]}
 		</div>
 
-		<div class="col-md-4">
+		<div class="col-md-6">
 			{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "value": "$idsede$", "ajax-source": "sedi", "select-options": <?php echo json_encode(['idanagrafica' => $id_anagrafica]); ?>, "placeholder": "Sede legale" ]}
 		</div>
+	</div>
 
-		<div class="col-md-4">
+	<div class="row">
+		<div class="col-md-6">
 			{[ "type": "select", "label": "<?php echo tr('Tecnico predefinito'); ?>", "name": "idtecnico", "ajax-source": "tecnici", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Tecnico&readonly_tipo=1"  ]}
+		</div>
+
+		<div class="col-md-6">
+			{[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "values": "query=SELECT id, nome AS descrizione FROM my_impianti_categorie", "icon-after": "add|<?php echo Modules::get('Categorie impianti')['id']; ?>" ]}
 		</div>
 	</div>
 

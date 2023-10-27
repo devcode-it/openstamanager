@@ -51,3 +51,7 @@ INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `ord
 
 -- Aggiunta impostazione Giorni di preavviso di default alla creazione di un contratto
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES ("Giorni di preavviso di default", '2', 'decimal', 1, 'Contratti', 3, 'Inserire il numero di giorni di preavviso da impostare automaticamente alla creazione di un contratto.');
+
+-- Checklist plugin Impianti
+ALTER TABLE `zz_checks` ADD `id_module_from` INT NOT NULL AFTER `id`, ADD `id_record_from` INT NOT NULL AFTER `id_module_from`; 
+UPDATE `zz_modules` SET `use_checklists` = '1' WHERE `zz_modules`.`name` = 'Categorie impianti'; 

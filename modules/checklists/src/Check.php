@@ -46,7 +46,7 @@ class Check extends Model
      *
      * @return self
      */
-    public static function build(User $user, $structure, $id_record, $content, $parent_id = null, $is_titolo = 0, $order = 99)
+    public static function build(User $user, $structure, $id_record, $content, $parent_id = null, $is_titolo = 0, $order = 99, $id_module_from = 0, $id_record_from = 0)
     {
         $model = new static();
 
@@ -65,6 +65,9 @@ class Check extends Model
 
         // Ordinamento temporaneo alla creazione
         $model->order = $order;
+
+        $model->id_module_from = $id_module_from;
+        $model->id_record_from = $id_record_from;
 
         $model->save();
 

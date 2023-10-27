@@ -49,28 +49,29 @@ function renderChecklist($check, $level = 1, $parent = 0)
                     </td>';
 
         $result .= '
+                    <td style="border-top:0px;">
+                        <span class="label label-default pull-right verificato '.(!$check->checked_at ? 'hidden' : '').'" style="margin-right:5px;padding:6px 8px;">'.(!empty($check->checked_at) ? tr('Verificato da _NAME_ il _DATE_', [
+                            '_NAME_' => $check->checkUser->username,
+                            '_DATE_' => timestampFormat($check->checked_at),
+                        ]) : '').'
+                        </span>
+                    </td>';
+
+        $result .= '
                     <td style="width:500px;border-top:0px;"> 
                         {[ "type": "textarea", "class": "unblockable", "name": "note_checklist", "placeholder": "'.tr('Note').'...", "id": "note_'.$check->id.'", "value": "'.$check->note.'" ]}
                     </td>';
 
         $result .= '
-                    <td style="width:250px;border-top:0px;">
+                    <td style="width:150px;border-top:0px;">
                         <button class="btn btn-default btn-xs '.(!$enabled ? 'disabled' : '').' save-nota" onclick="saveNota(\''.$check->id.'\')"><i class="fa fa-check"></i> '.tr('Salva nota').'</button>';
 
         if (intval($check->assignedUsers->pluck('id')->toArray()) > 0) {
             $result .= '    <span class="label label-info pull-right" style="padding:6px 8px;" data-toggle="tooltip" title="Assegnato a '.implode(', ', $check->assignedUsers->pluck('username')->toArray()).'"><i class="fa fa-user"></i></span>';
         } else {
-            $result .= '    <span class="label label-danger pull-right"  style="padding:6px 8px;">'.tr('Nessun utente assegnato').'</span>';
+            $result .= '    <span class="label label-danger pull-right"  style="padding:6px 8px;" data-toggle="tooltip" title="'.tr('Nessun utente assegnato').'"><i class="fa fa-user-times"></i></span>';
         }
 
-        if (!empty($check->checked_at)) {
-            $result .= '
-                        <span class="label label-default pull-right" style="margin-right:5px;padding:6px 8px;">'.(!empty($check->checked_at) ? tr('Verificato da _NAME_ il _DATE_', [
-                            '_NAME_' => $check->checkUser->username,
-                            '_DATE_' => timestampFormat($check->checked_at),
-                        ]) : '').'
-                        </span>';
-        }
         $result .= '
                     </td>';
     }

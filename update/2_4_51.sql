@@ -63,4 +63,5 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Gestione task'), 'Prossima esecuzione', 'next_execution_at', 3, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Gestione task'), 'Precedente esecuzione', 'last_executed_at', 4, 1, 0, 0, 1);
 
-DELETE FROM `em_print_template` INNER JOIN `zz_prints` ON `em_print_template`.`id_print` = `zz_prints`.`id` WHERE `zz_prints`.`is_record` = 0;
+-- Fix che evita che venga allegato il riepilogo interventi con tutti gli interventi del tecnico
+DELETE FROM `em_print_template` WHERE `em_print_template`.`id_print` IN (SELECT `id` FROM `zz_prints` WHERE `zz_prints`.`is_record` = 0);

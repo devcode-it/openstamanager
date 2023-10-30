@@ -23,7 +23,7 @@ use Carbon\Carbon;
 use Models\Module;
 
 if (!empty($is_title_request)) {
-    echo tr('Notifiche interne');
+    echo tr('Note interne');
 
     return;
 }

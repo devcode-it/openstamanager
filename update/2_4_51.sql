@@ -69,3 +69,6 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 
 -- Fix che evita che venga allegato il riepilogo interventi con tutti gli interventi del tecnico
 DELETE FROM `em_print_template` WHERE `em_print_template`.`id_print` IN (SELECT `id` FROM `zz_prints` WHERE `zz_prints`.`is_record` = 0);
+
+-- Il widget Notifiche interne è ora Note interne
+UPDATE `zz_widgets` SET `text` = 'Note interne' WHERE `zz_widgets`.`name` = "Note interne";

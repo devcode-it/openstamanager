@@ -89,7 +89,12 @@ switch (filter('op')) {
                 'id_record' => $impianto['id'],
             ]);
             foreach ($checks_categoria as $check_categoria) {
-                $check = Check::build($user, $structure, $impianto['id'], $check_categoria['content'], null, $check_categoria['is_titolo'], $check_categoria['order']);
+                $id_parent_new = null;
+                if ($check_categoria['id_parent']) {
+                    $parent = $dbo->selectOne('zz_checks', '*', ['id' => $check_categoria['id_parent']]);
+                    $id_parent_new = $dbo->selectOne('zz_checks', '*', ['content' => $parent['content'], 'id_module' => $modulo_impianti['id'], 'id_record' => $impianto['id']])['id'];
+                }
+                $check = Check::build($user, $structure, $impianto['id'], $check_categoria['content'], $id_parent_new, $check_categoria['is_titolo'], $check_categoria['order']);
                 $check->id_module = $modulo_impianti['id'];
                 $check->id_plugin = null;
                 $check->note = $check_categoria['note'];

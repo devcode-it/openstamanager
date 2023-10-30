@@ -102,13 +102,26 @@ switch ($op) {
         $id_categoria = post('id_categoria');
 
         if (!empty($matricola)) {
-            $dbo->query('INSERT INTO my_impianti(matricola, idanagrafica, nome, data, idtecnico, idsede, id_categoria) VALUES ('.prepare($matricola).', '.prepare($idanagrafica).', '.prepare($nome).', NOW(), '.prepare($idtecnico).', '.prepare($idsede).', '.prepare($id_categoria).')');
+            $dbo->insert('my_impianti', [
+                'matricola' => $matricola,
+                'idanagrafica' => $idanagrafica,
+                'nome' => $nome,
+                'data' => date('Y-m-d'),
+                'idtecnico' => $idtecnico ?: 0,
+                'idsede' => $idsede ?: 0,
+                'id_categoria' => $id_categoria ?: null
+            ]);
 
             $id_record = $dbo->lastInsertedID();
 
             $checks_categoria = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($modulo_categorie_impianti['id']).' AND id_record = '.prepare($id_categoria));
             foreach ($checks_categoria as $check_categoria) {
-                $check = Check::build($user, $structure, $id_record, $check_categoria['content'], null, $check_categoria['is_titolo'], $check_categoria['order']);
+                $id_parent_new = null;
+                if ($check_categoria['id_parent']) {
+                    $parent = $dbo->selectOne('zz_checks', '*', ['id' => $check_categoria['id_parent']]);
+                    $id_parent_new = $dbo->selectOne('zz_checks', '*', ['content' => $parent['content'], 'id_module' => $id_module, 'id_record' => $id_record])['id'];
+                }
+                $check = Check::build($user, $structure, $id_record, $check_categoria['content'], $id_parent_new, $check_categoria['is_titolo'], $check_categoria['order']);
                 $check->id_plugin = null;
                 $check->note = $check_categoria['note'];
                 $check->save();
@@ -174,7 +187,12 @@ switch ($op) {
 
         $checks_categoria = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($modulo_categorie_impianti['id']).' AND id_record = '.prepare(post('id_categoria')));
         foreach ($checks_categoria as $check_categoria) {
-            $check = Check::build($user, $structure, $id_record, $check_categoria['content'], null, $check_categoria['is_titolo'], $check_categoria['order']);
+            $id_parent_new = null;
+                if ($check_categoria['id_parent']) {
+                    $parent = $dbo->selectOne('zz_checks', '*', ['id' => $check_categoria['id_parent']]);
+                    $id_parent_new = $dbo->selectOne('zz_checks', '*', ['content' => $parent['content'], 'id_module' => $id_module, 'id_record' => $id_record])['id'];
+                }
+            $check = Check::build($user, $structure, $id_record, $check_categoria['content'], $id_parent_new, $check_categoria['is_titolo'], $check_categoria['order']);
             $check->id_plugin = null;
             $check->note = $check_categoria['note'];
             $check->save();

@@ -56,9 +56,14 @@ if (filter('op') == 'link_impianti') {
 
             $checks_impianti = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare( $modulo_impianti['id']).' AND id_record = '.prepare($matricola));
             foreach ($checks_impianti as $check_impianto) {
-                $check = Check::build($user, $structure, $id_record, $check_impianto['content'], null, $check_impianto['is_titolo'], $check_impianto['order'], $modulo_impianti['id'], $matricola);
+                $id_parent_new = null;
+                if ($check_impianto['id_parent']) {
+                    $parent = $dbo->selectOne('zz_checks', '*', ['id' => $check_impianto['id_parent']]);
+                    $id_parent_new = $dbo->selectOne('zz_checks', '*', ['content' => $parent['content'], 'id_module' => $id_module, 'id_record' => $id_record])['id'];
+                }
+                $check = Check::build($user, $structure, $id_record, $check_impianto['content'], $id_parent_new, $check_impianto['is_titolo'], $check_impianto['order'], $modulo_impianti['id'], $matricola);
                 $check->id_module = $id_module;
-                $check->id_plugin = null;
+                $check->id_plugin = $id_plugin;
                 $check->note = $check_impianto['note'];
                 $check->save();
             }
@@ -138,7 +143,7 @@ echo '
 
                 $impianti_collegati = $dbo->fetchArray('SELECT * FROM my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto = my_impianti.id WHERE idintervento = '.prepare($id_record));
                 foreach ($impianti_collegati as $impianto) {
-                    $checks = Check::where('id_module_from', $modulo_impianti['id'])->where('id_record_from', $impianto['id'])->where('id_module', $id_module)->where('id_record', $id_record)->get();
+                    $checks = Check::where('id_module_from', $modulo_impianti['id'])->where('id_record_from', $impianto['id'])->where('id_module', $id_module)->where('id_record', $id_record)->where('id_parent', null)->get();
 
                     $type = 'muted';
                     $class = 'disabled';
@@ -179,7 +184,7 @@ echo '
                     </tr>
                     
                     <tr style="display: none">
-                        <td colspan="6">
+                        <td colspan="7">
                             <table class="table">
                                 <tbody class="sort check-impianto" data-sonof="0">';
                                 foreach ($checks as $check) {

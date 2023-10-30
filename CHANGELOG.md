@@ -66,7 +66,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 ### Aggiunto (Added)
 - Aggiunta la gestione checklist nel plugin impianti
 - Aggiunto il modulo **Gestione task**
-- Aggiunte notifiche interne per anagrafiche
+- Aggiunte Note interne per anagrafiche
 - Aggiunta la variabile email nei template delle anagrafiche
 - Aggiunta impostazioni **Crea contratto rinnovabile di default** e **Giorni di preavviso di default**
 - Aggiunta colonna Allegati in Attività
@@ -78,6 +78,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 
 ### Modificato (Changed)
 - Miglioria pulsanti mappa
+- Rinominato il widget Notifiche interne in Note interne
 
 ### Fixed
 - Corretta la stampa liquidazione iva per aliquote con natura iva non specificata

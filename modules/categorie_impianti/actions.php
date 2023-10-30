@@ -39,26 +39,32 @@ switch (filter('op')) {
         break;
 
     case 'add':
-        $nome = filter('nome');
-        $nota = filter('nota');
-        $colore = filter('colore');
+        $nome = post('nome');
+        $nota = post('nota');
+        $colore = post('colore');
 
-        if (isset($nome)) {
-            $dbo->query('INSERT INTO `my_impianti_categorie` (`nome`, `colore`, `nota`) VALUES ('.prepare($nome).', '.prepare($colore).', '.prepare($nota).')');
+        // Verifico che il nome non sia duplicato
+        $count = $dbo->fetchNum('SELECT `id` FROM `my_impianti_categorie` WHERE `nome`='.prepare($nome));
 
-            $id_record = $dbo->lastInsertedID();
-
-            if (isAjaxRequest()) {
-                echo json_encode(['id' => $id_record, 'text' => $nome]);
-            }
-
-            flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
-                '_TYPE_' => 'categoria',
+        if ($count != 0) {
+            flash()->error(tr('Categoria _NAME_ già esistente!', [
+                '_NAME_' => $nome,
             ]));
         } else {
-            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
-        }
+            if (isset($nome)) {
+                $dbo->query('INSERT INTO `my_impianti_categorie` (`nome`, `colore`, `nota`) VALUES ('.prepare($nome).', '.prepare($colore).', '.prepare($nota).')');
 
+                $id_record = $dbo->lastInsertedID();
+
+                if (isAjaxRequest()) {
+                    echo json_encode(['id' => $id_record, 'text' => $nome]);
+                }
+
+                flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
+                    '_TYPE_' => 'categoria',
+                ]));
+            } 
+        }
         break;
 
     case 'delete':

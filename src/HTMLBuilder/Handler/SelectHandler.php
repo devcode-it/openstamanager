@@ -41,7 +41,12 @@ class SelectHandler implements HandlerInterface
         $values['class'][] = !empty($source) ? 'superselectajax' : 'superselect';
 
         // Individuazione e gestione dei valori tramite array
-        $values['value'] = explode(',', $values['value']);
+        if (in_array('multiple', $extras)) {
+            $values['value'] = explode(',', $values['value']);
+        } else {
+            $values['value'] = (array)$values['value']; 
+        }
+
         if (count($values['value']) === 1 && strlen($values['value'][0]) === 0) {
             $values['value'] = [];
         }

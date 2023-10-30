@@ -27,7 +27,7 @@ use Modules\Anagrafiche\Sede;
 $servizio_abilitato = Services::isEnabled() && Services::verificaRisorsaAttiva('Servizio Newsletter');
 
 if (!empty($is_title_request)) {
-    echo tr('Notifiche interne');
+    echo tr('Note interne');
 
     return;
 }

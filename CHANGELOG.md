@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.51 (2023-10-30)](#2451-2023-10-30)
 - [2.4.50 (2023-10-06)](#2450-2023-10-06)
 - [2.4.49 (2023-09-22)](#2449-2023-09-25)
 - [2.4.48 (2023-08-01)](#2448-2023-08-01)
@@ -60,6 +61,33 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.3 (2018-02-16)](#23-2018-02-16)
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
+
+## 2.4.51 (2023-10-30)
+### Aggiunto (Added)
+- Aggiunta la gestione checklist nel plugin impianti
+- Aggiunto il modulo **Gestione task**
+- Aggiunte Note interne per anagrafiche
+- Aggiunta la variabile email nei template delle anagrafiche
+- Aggiunta impostazioni **Crea contratto rinnovabile di default** e **Giorni di preavviso di default**
+- Aggiunta colonna Allegati in Attività
+- Aggiunta la gestione di verifica dei movimenti contabili
+- Aggiunta gestione apertura mappe con applicazione dispositivo mobile
+- Aggiunto il modulo **Stati fatture**
+- Aggiunto il controllo di integrità del database su relazioni chiavi esterne
+- Aggiunta gestione filtro =data su tabelle
+
+### Modificato (Changed)
+- Miglioria pulsanti mappa
+- Rinominato il widget Notifiche interne in Note interne
+
+### Fixed
+- Corretta la stampa liquidazione iva per aliquote con natura iva non specificata
+- Corretta la selezione delle sedi azienda
+- Corretto il footer delle fatture
+- Corretta la generazione di autofatture per righe con natura iva N2 e N6
+- Corretta la query Invio sollecito di pagamento da azioni di gruppo per escludere le note di credito
+- Corretto l'invio scadenze per anagrafica da azioni di gruppo
+- Corretti i tooltip in dashboard
 
 
 ## 2.4.50 (2023-10-06)

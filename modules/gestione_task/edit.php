@@ -41,6 +41,9 @@ echo '
 	</div>
 	<div class="row">
 		<div class="col-md-offset-3 col-md-6">
+			<div class="alert alert-info">
+				<i class="fa fa-info-circle"></i> '.tr('Puoi trovare alcuni esempi qui:').' <a href="https://crontab-generator.com/it/" target="_blank">https://crontab-generator.com/it/</a>
+			</div>
 			{[ "type": "text", "label": "'.tr('Espressione').'", "name": "expression", "required": 1, "class": "text-center", "value": "$expression$", "extra": "", "readonly": 1 ]}
 		</div>';
 $expression = $record['expression'];

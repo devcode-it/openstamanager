@@ -233,7 +233,7 @@ switch (post('op')) {
                         'idimpianto' => $impianto,
                     ]);
 
-                    $checks_impianti = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare( $modulo_impianti['id']).' AND id_record = '.prepare($impianto));
+                    $checks_impianti = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($modulo_impianti['id']).' AND id_record = '.prepare($impianto));
                     foreach ($checks_impianti as $check_impianto) {
                         $id_parent_new = null;
                         if ($check_impianto['id_parent']) {

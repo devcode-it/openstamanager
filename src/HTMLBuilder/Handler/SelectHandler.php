@@ -44,7 +44,7 @@ class SelectHandler implements HandlerInterface
         if (in_array('multiple', $extras)) {
             $values['value'] = explode(',', $values['value']);
         } else {
-            $values['value'] = (array)$values['value']; 
+            $values['value'] = (array) $values['value'];
         }
 
         if (count($values['value']) === 1 && strlen($values['value'][0]) === 0) {

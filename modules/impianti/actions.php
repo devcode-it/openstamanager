@@ -109,7 +109,7 @@ switch ($op) {
                 'data' => date('Y-m-d'),
                 'idtecnico' => $idtecnico ?: 0,
                 'idsede' => $idsede ?: 0,
-                'id_categoria' => $id_categoria ?: null
+                'id_categoria' => $id_categoria ?: null,
             ]);
 
             $id_record = $dbo->lastInsertedID();
@@ -188,10 +188,10 @@ switch ($op) {
         $checks_categoria = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($modulo_categorie_impianti['id']).' AND id_record = '.prepare(post('id_categoria')));
         foreach ($checks_categoria as $check_categoria) {
             $id_parent_new = null;
-                if ($check_categoria['id_parent']) {
-                    $parent = $dbo->selectOne('zz_checks', '*', ['id' => $check_categoria['id_parent']]);
-                    $id_parent_new = $dbo->selectOne('zz_checks', '*', ['content' => $parent['content'], 'id_module' => $id_module, 'id_record' => $id_record])['id'];
-                }
+            if ($check_categoria['id_parent']) {
+                $parent = $dbo->selectOne('zz_checks', '*', ['id' => $check_categoria['id_parent']]);
+                $id_parent_new = $dbo->selectOne('zz_checks', '*', ['content' => $parent['content'], 'id_module' => $id_module, 'id_record' => $id_record])['id'];
+            }
             $check = Check::build($user, $structure, $id_record, $check_categoria['content'], $id_parent_new, $check_categoria['is_titolo'], $check_categoria['order']);
             $check->id_plugin = null;
             $check->note = $check_categoria['note'];

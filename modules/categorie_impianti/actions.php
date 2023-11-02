@@ -63,7 +63,7 @@ switch (filter('op')) {
                 flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
                     '_TYPE_' => 'categoria',
                 ]));
-            } 
+            }
         }
         break;
 

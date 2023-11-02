@@ -431,6 +431,43 @@ if (!empty($ordine->provvigione)) {
         </tr>';
 }
 
+if ($dir == 'entrata') {
+    // Margine
+    $margine = $ordine->margine;
+    $margine_class = ($margine <= 0 && $totale > 0) ? 'danger' : 'success';
+    $margine_icon = ($margine <= 0 && $totale > 0) ? 'warning' : 'check';
+
+    echo '
+            <tr>
+                <td colspan="'.$colspan.'" class="text-right">
+                    '.tr('Costi').':
+                </td>
+                <td class="text-right">
+                    '.moneyFormat($ordine->spesa).'
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="'.$colspan.'" class="text-right">
+                    '.tr('Margine (_PRC_%)', [
+                        '_PRC_' => numberFormat($ordine->margine_percentuale),
+                ]).':
+                </td>
+                <td class="text-right '.$margine_class.'" rowspan="2" style="vertical-align:middle;">
+                    <i class="fa fa-'.$margine_icon.' text-'.$margine_class.'"></i> '.moneyFormat($margine).'
+                </td>
+                <td rowspan="2"></td>
+            </tr>
+            
+            <tr>
+                <td colspan="'.$colspan.'" class="text-right">
+                    '.tr('Ricarico (_PRC_%)', [
+                        '_PRC_' => numberFormat($ordine->ricarico_percentuale),
+                ]).':
+                </td>
+            </tr>';
+}
+
 echo '
     </table>';
 if (!$block_edit && sizeof($righe) > 0) {

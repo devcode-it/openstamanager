@@ -671,7 +671,7 @@ class Validator
 
                 $output = str_replace(["\r", "\n"], '', $output);
 
-                //$output = self::sanitizeXML($output);
+                $output = self::sanitizeXML2($output);
             }
 
             // Riduzione delle dimensioni
@@ -4438,6 +4438,12 @@ class Validator
             '🯷' => '7',
             '🯸' => '8',
             '🯹' => '9',
+            'à' => 'a',
+            'é' => 'e',
+            'è' => 'e',
+            'ì' => 'i',
+            'ò' => 'o',
+            'ù' => 'u',
         ]);
 
         return $string;

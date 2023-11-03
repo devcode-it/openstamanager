@@ -25,6 +25,7 @@ use Models\Upload;
 use Modules;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Sede;
+use Modules\Anagrafiche\Tipo;
 use Modules\Articoli\Articolo;
 use Modules\Articoli\Categoria;
 use Modules\Iva\Aliquota;
@@ -262,8 +263,10 @@ class CSV extends CSVImporter
 
         // Fix per campi con contenuti derivati da query implicite
         if (!empty($record['id_fornitore'])) {
-            $record['id_fornitore'] = $database->fetchOne('SELECT idanagrafica AS id FROM an_anagrafiche WHERE LOWER(ragione_sociale) = LOWER('.prepare($record['id_fornitore']).')')['id'];
-        }
+            $dettagli['id_fornitore'] = $database->fetchOne('SELECT idanagrafica AS id FROM an_anagrafiche WHERE LOWER(ragione_sociale) = LOWER('.prepare($record['id_fornitore']).')')['id'];
+            $dettagli['anagrafica_listino'] = $record['id_fornitore'];
+        } 
+
 
         // Gestione categoria e sottocategoria
         $categoria = null;
@@ -324,18 +327,31 @@ class CSV extends CSVImporter
         $nuova_qta = (float) ($record['qta']);
         $nome_sede = $record['nome_sede'];
 
-        // Aggiornamento dettaglio prezzi
-        $dettagli['anagrafica_listino'] = $record['anagrafica_listino'];
-        $dettagli['qta_minima'] = $record['qta_minima'];
-        $dettagli['qta_massima'] = $record['qta_massima'];
-        $dettagli['prezzo_listino'] = $record['prezzo_listino'];
-        $dettagli['sconto_listino'] = $record['sconto_listino'];
-        $dettagli['dir'] = $record['dir'];
-        $dettagli['codice_fornitore'] = $record['codice_fornitore'];
-        $dettagli['barcode_fornitore'] = $record['barcode_fornitore'];
-        $dettagli['descrizione_fornitore'] = $record['descrizione_fornitore'];
-        $dettagli['id_fornitore'] = $record['id_fornitore'];
-        $this->aggiornaDettaglioPrezzi($articolo, $dettagli);
+        if (!empty($dettagli['id_fornitore']) || !empty($dettagli['anagrafica_listino'])) {
+            // Aggiornamento dettaglio prezzi
+            $dettagli['anagrafica_listino'] = $dettagli['anagrafica_listino'] ?: $record['anagrafica_listino'];
+            $dettagli['qta_minima'] = $record['qta_minima'];
+            $dettagli['qta_massima'] = $record['qta_massima'];
+            $dettagli['prezzo_listino'] = $record['prezzo_listino'];
+            $dettagli['sconto_listino'] = $record['sconto_listino'];
+            $dettagli['dir'] = $record['dir'];
+            $dettagli['codice_fornitore'] = $record['codice_fornitore'];
+            $dettagli['barcode_fornitore'] = $record['barcode_fornitore'];
+            $dettagli['descrizione_fornitore'] = $record['descrizione_fornitore'];
+            $this->aggiornaDettaglioPrezzi($articolo, $dettagli);
+        }
+
+        unset($record['anagrafica_listino']);
+        unset($record['qta_minima']);
+        unset($record['qta_massima']);
+        unset($record['prezzo_listino']);
+        unset($record['sconto_listino']);
+        unset($record['dir']);
+        unset($record['codice_fornitore']);
+        unset($record['barcode_fornitore']);
+        unset($record['descrizione_fornitore']);
+        unset($record['id_fornitore']);
+
 
         //Gestione immagine
         if (!empty($url) && !empty($record['import_immagine'])) {
@@ -381,16 +397,6 @@ class CSV extends CSVImporter
         }
 
         unset($record['import_immagine']);
-        unset($record['anagrafica_listino']);
-        unset($record['qta_minima']);
-        unset($record['qta_massima']);
-        unset($record['prezzo_listino']);
-        unset($record['sconto_listino']);
-        unset($record['dir']);
-        unset($record['codice_fornitore']);
-        unset($record['barcode_fornitore']);
-        unset($record['descrizione_fornitore']);
-        unset($record['id_fornitore']);
 
         // Salvataggio delle informazioni generali
         $articolo->fill($record);
@@ -447,6 +453,20 @@ class CSV extends CSVImporter
     {
         // Listini
         $anagrafica = Anagrafica::where('ragione_sociale', $dettagli['anagrafica_listino'])->first();
+
+        if (empty($anagrafica)) {
+            $anagrafica = Anagrafica::build($dettagli['anagrafica_listino']);
+        }
+
+        if ($dettagli['dir']) {
+            $tipo = Tipo::where('descrizione', $dettagli['dir'])->first();
+            $tipi = $anagrafica->tipi->pluck('idtipoanagrafica')->toArray();
+    
+            $tipi[] = $tipo->id;
+    
+            $anagrafica->tipologie = $tipi;
+            $anagrafica->save();
+        }
 
         $dettagli['dir'] = strtolower($dettagli['dir']);
         if ($dettagli['dir'] == 'fornitore') {

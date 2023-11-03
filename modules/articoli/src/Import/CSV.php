@@ -144,6 +144,14 @@ class CSV extends CSVImporter
                 ],
             ],
             [
+                'field' => 'p_iva',
+                'label' => 'Partita IVA',
+                'names' => [
+                    'partita iva',
+                    'Partita IVA',
+                ],
+            ],
+            [
                 'field' => 'codice_iva_vendita',
                 'label' => 'Codice IVA vendita',
                 'names' => [
@@ -265,8 +273,7 @@ class CSV extends CSVImporter
         if (!empty($record['id_fornitore'])) {
             $dettagli['id_fornitore'] = $database->fetchOne('SELECT idanagrafica AS id FROM an_anagrafiche WHERE LOWER(ragione_sociale) = LOWER('.prepare($record['id_fornitore']).')')['id'];
             $dettagli['anagrafica_listino'] = $record['id_fornitore'];
-        } 
-
+        }
 
         // Gestione categoria e sottocategoria
         $categoria = null;
@@ -327,9 +334,10 @@ class CSV extends CSVImporter
         $nuova_qta = (float) ($record['qta']);
         $nome_sede = $record['nome_sede'];
 
-        if (!empty($dettagli['id_fornitore']) || !empty($dettagli['anagrafica_listino'])) {
+        if (!empty($dettagli['id_fornitore']) || !empty($dettagli['anagrafica_listino'] || !empty($dettagli['partita_iva']))) {
             // Aggiornamento dettaglio prezzi
             $dettagli['anagrafica_listino'] = $dettagli['anagrafica_listino'] ?: $record['anagrafica_listino'];
+            $dettagli['partita_iva'] = $record['p_iva'];
             $dettagli['qta_minima'] = $record['qta_minima'];
             $dettagli['qta_massima'] = $record['qta_massima'];
             $dettagli['prezzo_listino'] = $record['prezzo_listino'];
@@ -342,6 +350,7 @@ class CSV extends CSVImporter
         }
 
         unset($record['anagrafica_listino']);
+        unset($record['partita_iva']);
         unset($record['qta_minima']);
         unset($record['qta_massima']);
         unset($record['prezzo_listino']);
@@ -351,7 +360,6 @@ class CSV extends CSVImporter
         unset($record['barcode_fornitore']);
         unset($record['descrizione_fornitore']);
         unset($record['id_fornitore']);
-
 
         //Gestione immagine
         if (!empty($url) && !empty($record['import_immagine'])) {
@@ -452,18 +460,22 @@ class CSV extends CSVImporter
     protected function aggiornaDettaglioPrezzi(Articolo $articolo, $dettagli)
     {
         // Listini
-        $anagrafica = Anagrafica::where('ragione_sociale', $dettagli['anagrafica_listino'])->first();
-
+        if ($dettagli['partita_iva']){
+            $anagrafica = Anagrafica::where('piva', $dettagli['partita_iva'])->first();
+        }
+        
         if (empty($anagrafica)) {
             $anagrafica = Anagrafica::build($dettagli['anagrafica_listino']);
+            $anagrafica->piva = $dettagli['partita_iva'];
+            $anagrafica->save();
         }
 
         if ($dettagli['dir']) {
             $tipo = Tipo::where('descrizione', $dettagli['dir'])->first();
             $tipi = $anagrafica->tipi->pluck('idtipoanagrafica')->toArray();
-    
+
             $tipi[] = $tipo->id;
-    
+
             $anagrafica->tipologie = $tipi;
             $anagrafica->save();
         }
@@ -501,6 +513,7 @@ class CSV extends CSVImporter
         }
 
         // Imposto fornitore e prezzo predefinito
+        $dettagli['id_fornitore'] = $anagrafica->id;
         $listino_id_fornitore = DettaglioPrezzo::dettaglioPredefinito($articolo->id, $dettagli['id_fornitore'], 'uscita')->first();
         if (!empty($listino_id_fornitore)) {
             $prezzo_acquisto = $listino_id_fornitore->prezzo_unitario - ($listino_id_fornitore->prezzo_unitario * $listino_id_fornitore->sconto_percentuale) / 100;

@@ -392,8 +392,8 @@ class Update
                     KEY_COLUMN_USAGE.COLUMN_NAME AS `column`,
                     KEY_COLUMN_USAGE.REFERENCED_TABLE_NAME AS `referenced_table`,
                     KEY_COLUMN_USAGE.REFERENCED_COLUMN_NAME AS `referenced_column`,
-                    DELETE_RULE AS `delete_rule`,
-                    UPDATE_RULE AS `update_rule`
+                    IF(DELETE_RULE=\'NO ACTION\', \'RESTRICT\', DELETE_RULE) AS `delete_rule`,
+                    IF(UPDATE_RULE=\'NO ACTION\', \'RESTRICT\', UPDATE_RULE) AS `update_rule`
                 FROM information_schema.KEY_COLUMN_USAGE INNER JOIN information_schema.REFERENTIAL_CONSTRAINTS ON (information_schema.KEY_COLUMN_USAGE.CONSTRAINT_NAME = information_schema.REFERENTIAL_CONSTRAINTS.CONSTRAINT_NAME AND information_schema.KEY_COLUMN_USAGE.CONSTRAINT_SCHEMA = information_schema.REFERENTIAL_CONSTRAINTS.CONSTRAINT_SCHEMA)
                 WHERE KEY_COLUMN_USAGE.TABLE_NAME = '.prepare($table).'
                     AND TABLE_SCHEMA = '.prepare($database_name).'

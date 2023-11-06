@@ -4444,6 +4444,7 @@ class Validator
             'ì' => 'i',
             'ò' => 'o',
             'ù' => 'u',
+            '‐' => '-',
         ]);
 
         return $string;

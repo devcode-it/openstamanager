@@ -1130,8 +1130,10 @@ class FatturaElettronica
 
             $dati = [];
 
-            if (!empty($element['riferimento_linea'])) {
+            if (!empty($element['riferimento_linea']['id'])) {
                 $dati['RiferimentoNumeroLinea'] = $element['riferimento_linea']['id'];
+            } else if (!empty($element['riferimento_linea'])) {
+                $dati['RiferimentoNumeroLinea'] = $element['riferimento_linea'];
             }
 
             $dati['IdDocumento'] = $element['id_documento'];

@@ -38,7 +38,7 @@ if (filter('op') == 'link_impianti') {
                 'id_module' => $id_module,
                 'id_record' => $id_record,
                 'id_module_from' => $modulo_impianti['id'],
-                'id_record_from' => $matricola,
+                'id_record_from' => $matricola
             ]);
 
             $components = $dbo->fetchArray('SELECT * FROM my_componenti WHERE id_impianto = '.prepare($matricola));
@@ -54,7 +54,7 @@ if (filter('op') == 'link_impianti') {
         if (!in_array($matricola, $matricole_old)) {
             $dbo->query('INSERT INTO my_impianti_interventi(idimpianto, idintervento) VALUES('.prepare($matricola).', '.prepare($id_record).')');
 
-            $checks_impianti = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($modulo_impianti['id']).' AND id_record = '.prepare($matricola));
+            $checks_impianti = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare( $modulo_impianti['id']).' AND id_record = '.prepare($matricola));
             foreach ($checks_impianti as $check_impianto) {
                 $id_parent_new = null;
                 if ($check_impianto['id_parent']) {
@@ -107,108 +107,105 @@ $impianti = !empty($impianti) ? array_column($impianti, 'idimpianto') : [];
 $sedi = $dbo->fetchArray('SELECT id, nomesede, citta FROM an_sedi WHERE idanagrafica='.prepare($record['idanagrafica'])." UNION SELECT 0, 'Sede legale', '' ORDER BY id");
 
 echo '
-        <form action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=link_impianti" method="post">
-            <input type="hidden" name="backto" value="record-edit">
-            <div class="row">
-                <div class="col-md-12">
-                    {[ "type": "select", "name": "matricole[]", "label": "'.tr('Impianti').'", "multiple": 1, "value": "'.implode(',', $impianti).'", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.($record['idsede_destinazione'] ?: '""').'}, "extra": "'.$readonly.'", "icon-after": "add|'.$modulo_impianti['id'].'|id_anagrafica='.$record['idanagrafica'].'" ]}
-                </div>
+    <form action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=link_impianti" method="post">
+        <input type="hidden" name="backto" value="record-edit">
+        <div class="row">
+            <div class="col-md-12">
+                {[ "type": "select", "name": "matricole[]", "label": "'.tr('Impianti').'", "multiple": 1, "value": "'.implode(',', $impianti).'", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.($record['idsede_destinazione'] ?: '""').'}, "extra": "'.$readonly.'", "icon-after": "add|'.$modulo_impianti['id'].'|id_anagrafica='.$record['idanagrafica'].'" ]}
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <button type="submit" class="btn btn-success pull-right" '.$disabled.'><i class="fa fa-check"></i> '.tr('Salva impianti').'</button>
-                </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <button type="submit" class="btn btn-success pull-right" '.$disabled.'><i class="fa fa-check"></i> '.tr('Salva impianti').'</button>
             </div>
-        </form>
-        <br>';
+        </div>
+    </form>
+    <br>';
 
-    if (!empty($impianti)) {
-        // IMPIANTI
-        echo '
-        <div class="box">
-            <div class="box-header with-border">
-                <h3 class="box-title">'.tr('Impianti soggetti ad intervento').'</h3>
-            </div>
-            <div class="box-body">
-                <table class="table table-hover table-condensed table-striped">
-                    <tr>
-                        <th class="text-center" width="1%"></th>
-                        <th class="text-center" width="10%">'.tr('Matricola').'</th>
-                        <th class="text-center" width="20%">'.tr('Nome').'</th>
-                        <th class="text-center" width="8%">'.tr('Data').'</th>
-                        <th class="text-center">'.tr('Descrizione').'</th>
-                        <th class="text-center" width="25%">'.tr("Componenti soggetti all'intervento").'</th>
-                        <th class="text-center" width="5%">Checklist</th>
-                    </tr>';
-
-        $impianti_collegati = $dbo->fetchArray('SELECT * FROM my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto = my_impianti.id WHERE idintervento = '.prepare($id_record));
-        foreach ($impianti_collegati as $impianto) {
-            $checks = Check::where('id_module_from', $modulo_impianti['id'])->where('id_record_from', $impianto['id'])->where('id_module', $id_module)->where('id_record', $id_record)->where('id_parent', null)->get();
-
-            $type = 'muted';
-            $class = 'disabled';
-            $icon = 'circle-o';
-            $icon2 = 'remove';
-            if (sizeof($checks)) {
-                $class = '';
-                $icon = 'plus';
-                $checks_not_verified = $checks->where('checked_at', null)->count();
-                $type = $checks_not_verified ? 'warning' : 'success';
-                $icon2 = $checks_not_verified ? 'clock-o' : 'check';
-            }
-            echo '
-                    <tr>
-                        <td class="text-left">
-                            <button type="button" class="btn btn-xs btn-default '.$class.'" onclick="toggleDettagli(this)">
-                                <i class="fa fa-'.$icon.'"></i>
-                            </button>
-                            
-                        </td>
-                        <td>'.$impianto['matricola'].'</td>
-                        <td>'.Modules::link('Impianti', $impianto['id'], $impianto['nome']).'</td>
-                        <td class="text-center">'.Translator::dateToLocale($impianto['data']).'</td>
-                        <td>'.$impianto['descrizione'].'</td>
-                        <td>
-                            <form action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=link_componenti&matricola='.$impianto['id'].'" method="post">
-                                <input type="hidden" name="backto" value="record-edit">
-                                <input type="hidden" name="id_impianto" value="'.$impianto['id'].'">';
-
-            $inseriti = $dbo->fetchArray('SELECT * FROM my_componenti_interventi WHERE id_intervento = '.prepare($id_record));
-            $ids = array_column($inseriti, 'id_componente');
-
-            echo '
-                                {[ "type": "select", "multiple": 1, "name": "componenti[]", "id": "componenti_'.$impianto['id'].'", "ajax-source": "componenti", "select-options": {"matricola": '.$impianto['id'].'}, "value": "'.implode(',', $ids).'", "readonly": "'.!empty($readonly).'", "disabled": "'.!empty($disabled).'", "icon-after": "<button type=\"submit\" class=\"btn btn-success\" '.$disabled.'> <i class=\"fa fa-check\"></i> '.tr('Salva').'</button>" ]}
-                            </form>
-                        </td>
-                        <td class="text-center"><i class="fa fa-'.$icon2.' fa-2x text-'.$type.'"></i></td>
-                    </tr>
-                    
-                    <tr style="display: none">
-                        <td colspan="7">
-                            <table class="table">
-                                <tbody class="sort check-impianto" data-sonof="0">';
-            foreach ($checks as $check) {
-                echo renderChecklist($check);
-            }
-            echo '
-                                </tbody>
-                            </table>
-                        </td>
-                    </tr>';
-        }
-        echo '
-                </table>
-            </div>
-        </div>';
-    } else {
-        echo '
-        <div class="alert alert-info text-center">
-            <i class="fa fa-info-circle"></i> '.tr('Nessun impianto collegato a questo intervento').'
-        </div>';
-    }
+if (!empty($impianti)) {
+    // IMPIANTI
     echo '
-    </div>
-</div>';
+    <div class="box">
+        <div class="box-header with-border">
+            <h3 class="box-title">'.tr('Impianti soggetti ad intervento').'</h3>
+        </div>
+        <div class="box-body">
+            <table class="table table-hover table-condensed table-striped">
+                <tr>
+                    <th class="text-center" width="1%"></th>
+                    <th class="text-center" width="10%">'.tr('Matricola').'</th>
+                    <th class="text-center" width="20%">'.tr('Nome').'</th>
+                    <th class="text-center" width="8%">'.tr('Data').'</th>
+                    <th class="text-center">'.tr('Descrizione').'</th>
+                    <th class="text-center" width="25%">'.tr("Componenti soggetti all'intervento").'</th>
+                    <th class="text-center" width="5%">Checklist</th>
+                </tr>';
+
+            $impianti_collegati = $dbo->fetchArray('SELECT * FROM my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto = my_impianti.id WHERE idintervento = '.prepare($id_record));
+            foreach ($impianti_collegati as $impianto) {
+                $checks = Check::where('id_module_from', $modulo_impianti['id'])->where('id_record_from', $impianto['id'])->where('id_module', $id_module)->where('id_record', $id_record)->where('id_parent', null)->get();
+
+                $type = 'muted';
+                $class = 'disabled';
+                $icon = 'circle-o';
+                $icon2 = 'remove';
+                if (sizeof($checks)) {
+                    $class = '';
+                    $icon = 'plus';
+                    $checks_not_verified = $checks->where('checked_at', null)->count();
+                    $type = $checks_not_verified ? 'warning' : 'success';
+                    $icon2 = $checks_not_verified ? 'clock-o' : 'check';
+                }
+                echo '
+                <tr>
+                    <td class="text-left">
+                        <button type="button" class="btn btn-xs btn-default '.$class.'" onclick="toggleDettagli(this)">
+                            <i class="fa fa-'.$icon.'"></i>
+                        </button>
+                        
+                    </td>
+                    <td>'.$impianto['matricola'].'</td>
+                    <td>'.Modules::link('Impianti', $impianto['id'], $impianto['nome']).'</td>
+                    <td class="text-center">'.Translator::dateToLocale($impianto['data']).'</td>
+                    <td>'.$impianto['descrizione'].'</td>
+                    <td>
+                        <form action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=link_componenti&matricola='.$impianto['id'].'" method="post">
+                            <input type="hidden" name="backto" value="record-edit">
+                            <input type="hidden" name="id_impianto" value="'.$impianto['id'].'">';
+
+                            $inseriti = $dbo->fetchArray('SELECT * FROM my_componenti_interventi WHERE id_intervento = '.prepare($id_record));
+                            $ids = array_column($inseriti, 'id_componente');
+
+                            echo '
+                            {[ "type": "select", "multiple": 1, "name": "componenti[]", "id": "componenti_'.$impianto['id'].'", "ajax-source": "componenti", "select-options": {"matricola": '.$impianto['id'].'}, "value": "'.implode(',', $ids).'", "readonly": "'.!empty($readonly).'", "disabled": "'.!empty($disabled).'", "icon-after": "<button type=\"submit\" class=\"btn btn-success\" '.$disabled.'> <i class=\"fa fa-check\"></i> '.tr('Salva').'</button>" ]}
+                        </form>
+                    </td>
+                    <td class="text-center"><i class="fa fa-'.$icon2.' fa-2x text-'.$type.'"></i></td>
+                </tr>
+                
+                <tr style="display: none">
+                    <td colspan="7">
+                        <table class="table">
+                            <tbody class="sort check-impianto" data-sonof="0">';
+                            foreach ($checks as $check) {
+                                echo renderChecklist($check);
+                            }
+                            echo '
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>';
+            }
+            echo '
+            </table>
+        </div>
+    </div>';
+} else {
+    echo '
+    <div class="alert alert-info text-center">
+        <i class="fa fa-info-circle"></i> '.tr('Nessun impianto collegato a questo intervento').'
+    </div>';
+}
 
 echo '
 <script>

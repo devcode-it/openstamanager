@@ -34,10 +34,10 @@ $data_conclusione = $contratto['data_conclusione'];
 $id_anagrafica = $contratto['idanagrafica'];
 
 // Impianti del contratto
-$impianti = $dbo->fetchArray('SELECT `idimpianto` FROM `my_impianti_contratti` WHERE `idcontratto` = :id', [
+$impianti = $dbo->fetchArray('SELECT `idimpianti` FROM `co_promemoria` WHERE `id` = '.$id_record.' AND `idcontratto` = :id', [
     ':id' => $id_parent,
 ]);
-$id_impianti = array_column($impianti, 'idimpianto');
+$id_impianti = explode(',', $impianti[0]['idimpianti']);
 
 // solo se ho selezionato un solo impianto nel contratto, altrimenti non so quale sede e tecnico prendere
 if (count($id_impianti) == 1) {

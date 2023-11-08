@@ -160,7 +160,7 @@ echo '
 			</div>
 
             <div class="row">
-				<div class="col-md-12">
+                <div class="col-md-12">
                     <?php echo input([
                         'type' => 'ckeditor',
                         'use_full_ckeditor' => 1,
@@ -471,6 +471,9 @@ $elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`,
 
 UNION
 SELECT `or_ordini`.`id`, `or_ordini`.`data`, `or_ordini`.`numero`, `or_ordini`.`numero_esterno`, `or_tipiordine`.`descrizione`, IF(`or_tipiordine`.`dir` = \'entrata\', \'Ordini cliente\', \'Ordini fornitore\') FROM `or_ordini` JOIN `or_righe_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id` JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine` WHERE `or_righe_ordini`.`idpreventivo` = '.prepare($id_record).'
+
+UNION
+SELECT `dt_ddt`.`id`, `dt_ddt`.`data`, `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`, `dt_tipiddt`.`descrizione`, IF(`dt_tipiddt`.`dir` = \'entrata\', \'Ddt di vendita\', \'Ddt di acquisto\') FROM `dt_ddt` JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id` JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` WHERE `dt_righe_ddt`.`original_document_id` = '.prepare($preventivo->id).' AND `dt_righe_ddt`.`original_document_type` = \'Modules\\\\Preventivi\\\\Preventivo\'
 
 UNION
 SELECT `in_interventi`.`id`, `in_interventi`.`data_richiesta`, `in_interventi`.`codice`, NULL, \'Attività\', \'Interventi\' FROM `in_interventi` JOIN `in_righe_interventi` ON `in_righe_interventi`.`idintervento` = `in_interventi`.`id` WHERE (`in_righe_interventi`.`original_document_id` = '.prepare($preventivo->id).' AND `in_righe_interventi`.`original_document_type` = '.prepare(get_class($preventivo)).') OR `in_interventi`.`id_preventivo` = '.prepare($id_record).'

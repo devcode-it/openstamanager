@@ -17,6 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Geocoder\Provider\GoogleMaps;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Export\CSV;
 
@@ -62,6 +63,32 @@ switch (post('op')) {
                 $anagrafica->lat = $data[0]->lat;
                 $anagrafica->lng = $data[0]->lon;
                 $anagrafica->save();
+            }
+        }
+
+        break;
+
+    case 'ricerca-coordinate-google':
+        $curl = new CurlHttpAdapter();
+        $geocoder = new GoogleMaps($curl, null, null, true, $google);
+
+        foreach ($id_records as $id) {
+            $anagrafica = Anagrafica::find($id);
+            if (empty($anagrafica->lat) && empty($anagrafica->lng) && !empty($anagrafica->sedeLegale->indirizzo) && !empty($anagrafica->sedeLegale->citta) && !empty($anagrafica->sedeLegale->cap)) {
+                $indirizzo = urlencode($anagrafica->sedeLegale->indirizzo.' '.$anagrafica->sedeLegale->citta.' '.$anagrafica->sedeLegale->cap);
+                
+                try{
+                    // Ricerca indirizzo
+                    $address = $geocoder->geocode($indirizzo)->first();
+                    $coordinates = $address->getCoordinates();
+    
+                    // Salvataggio informazioni
+                    $anagrafica->lat = $coordinates->getLatitude();
+                    $anagrafica->lng = $coordinates->getLongitude();
+                    $anagrafica->save();
+                }catch (Exception $e) {
+                    flash()->error("Impossibile recuperare le coordinate dell'anagrafica ".$anagrafica->ragione_sociale." per l'indirizzo ".$anagrafica->sedeLegale->indirizzo.' '.$anagrafica->sedeLegale->citta.' '.$anagrafica->sedeLegale->cap);
+                }
             }
         }
 
@@ -118,6 +145,15 @@ $operations['export-csv'] = [
 
 if (App::debug()) {
     $operations['ricerca-coordinate'] = [
+        'text' => '<span><i class="fa fa-map"></i> '.tr('Ricerca coordinate (google)').'</span>',
+        'data' => [
+            'msg' => tr('Ricercare le coordinate per le anagrafiche selezionate senza latitudine e longitudine?'),
+            'button' => tr('Procedi'),
+            'class' => 'btn btn-lg btn-warning',
+        ],
+    ];
+
+    $operations['ricerca-coordinate-google'] = [
         'text' => '<span><i class="fa fa-map"></i> '.tr('Ricerca coordinate').'</span>',
         'data' => [
             'msg' => tr('Ricercare le coordinate per le anagrafiche selezionate senza latitudine e longitudine?'),

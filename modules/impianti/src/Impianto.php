@@ -22,7 +22,6 @@ namespace Modules\Impianti;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Anagrafiche\Anagrafica;
-use Modules\Impianti\Categoria;
 
 class Impianto extends Model
 {
@@ -35,6 +34,7 @@ class Impianto extends Model
     {
         return $this->belongsTo(Anagrafica::class, 'idanagrafica');
     }
+
     public static function build($matricola, $nome, Categoria $categoria, $anagrafica)
     {
         $model = new static();
@@ -53,5 +53,4 @@ class Impianto extends Model
     {
         return $this->belongsTo(Categoria::class, 'id_categoria');
     }
-
 }

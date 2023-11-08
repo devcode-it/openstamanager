@@ -17,13 +17,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 namespace Modules\Impianti;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Traits\HierarchyTrait;
-
 
 class Categoria extends Model
 {

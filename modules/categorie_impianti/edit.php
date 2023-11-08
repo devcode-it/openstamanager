@@ -110,7 +110,7 @@ if (!empty($elementi)) {
 
     foreach ($elementi as $elemento) {
         $descrizione = tr('Impianto _MATRICOLA_', [
-        '_MATRICOLA_' => $elemento['matricola']
+        '_MATRICOLA_' => $elemento['matricola'],
     ]);
         $modulo = 'Impianti';
         $id = $elemento['id'];

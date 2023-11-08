@@ -38,7 +38,7 @@ if (filter('op') == 'link_impianti') {
                 'id_module' => $id_module,
                 'id_record' => $id_record,
                 'id_module_from' => $modulo_impianti['id'],
-                'id_record_from' => $matricola
+                'id_record_from' => $matricola,
             ]);
 
             $components = $dbo->fetchArray('SELECT * FROM my_componenti WHERE id_impianto = '.prepare($matricola));
@@ -54,7 +54,7 @@ if (filter('op') == 'link_impianti') {
         if (!in_array($matricola, $matricole_old)) {
             $dbo->query('INSERT INTO my_impianti_interventi(idimpianto, idintervento) VALUES('.prepare($matricola).', '.prepare($id_record).')');
 
-            $checks_impianti = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare( $modulo_impianti['id']).' AND id_record = '.prepare($matricola));
+            $checks_impianti = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($modulo_impianti['id']).' AND id_record = '.prepare($matricola));
             foreach ($checks_impianti as $check_impianto) {
                 $id_parent_new = null;
                 if ($check_impianto['id_parent']) {
@@ -141,22 +141,22 @@ if (!empty($impianti)) {
                     <th class="text-center" width="5%">Checklist</th>
                 </tr>';
 
-            $impianti_collegati = $dbo->fetchArray('SELECT * FROM my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto = my_impianti.id WHERE idintervento = '.prepare($id_record));
-            foreach ($impianti_collegati as $impianto) {
-                $checks = Check::where('id_module_from', $modulo_impianti['id'])->where('id_record_from', $impianto['id'])->where('id_module', $id_module)->where('id_record', $id_record)->where('id_parent', null)->get();
+    $impianti_collegati = $dbo->fetchArray('SELECT * FROM my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto = my_impianti.id WHERE idintervento = '.prepare($id_record));
+    foreach ($impianti_collegati as $impianto) {
+        $checks = Check::where('id_module_from', $modulo_impianti['id'])->where('id_record_from', $impianto['id'])->where('id_module', $id_module)->where('id_record', $id_record)->where('id_parent', null)->get();
 
-                $type = 'muted';
-                $class = 'disabled';
-                $icon = 'circle-o';
-                $icon2 = 'remove';
-                if (sizeof($checks)) {
-                    $class = '';
-                    $icon = 'plus';
-                    $checks_not_verified = $checks->where('checked_at', null)->count();
-                    $type = $checks_not_verified ? 'warning' : 'success';
-                    $icon2 = $checks_not_verified ? 'clock-o' : 'check';
-                }
-                echo '
+        $type = 'muted';
+        $class = 'disabled';
+        $icon = 'circle-o';
+        $icon2 = 'remove';
+        if (sizeof($checks)) {
+            $class = '';
+            $icon = 'plus';
+            $checks_not_verified = $checks->where('checked_at', null)->count();
+            $type = $checks_not_verified ? 'warning' : 'success';
+            $icon2 = $checks_not_verified ? 'clock-o' : 'check';
+        }
+        echo '
                 <tr>
                     <td class="text-left">
                         <button type="button" class="btn btn-xs btn-default '.$class.'" onclick="toggleDettagli(this)">
@@ -173,10 +173,10 @@ if (!empty($impianti)) {
                             <input type="hidden" name="backto" value="record-edit">
                             <input type="hidden" name="id_impianto" value="'.$impianto['id'].'">';
 
-                            $inseriti = $dbo->fetchArray('SELECT * FROM my_componenti_interventi WHERE id_intervento = '.prepare($id_record));
-                            $ids = array_column($inseriti, 'id_componente');
+        $inseriti = $dbo->fetchArray('SELECT * FROM my_componenti_interventi WHERE id_intervento = '.prepare($id_record));
+        $ids = array_column($inseriti, 'id_componente');
 
-                            echo '
+        echo '
                             {[ "type": "select", "multiple": 1, "name": "componenti[]", "id": "componenti_'.$impianto['id'].'", "ajax-source": "componenti", "select-options": {"matricola": '.$impianto['id'].'}, "value": "'.implode(',', $ids).'", "readonly": "'.!empty($readonly).'", "disabled": "'.!empty($disabled).'", "icon-after": "<button type=\"submit\" class=\"btn btn-success\" '.$disabled.'> <i class=\"fa fa-check\"></i> '.tr('Salva').'</button>" ]}
                         </form>
                     </td>
@@ -187,16 +187,16 @@ if (!empty($impianti)) {
                     <td colspan="7">
                         <table class="table">
                             <tbody class="sort check-impianto" data-sonof="0">';
-                            foreach ($checks as $check) {
-                                echo renderChecklist($check);
-                            }
-                            echo '
+        foreach ($checks as $check) {
+            echo renderChecklist($check);
+        }
+        echo '
                             </tbody>
                         </table>
                     </td>
                 </tr>';
-            }
-            echo '
+    }
+    echo '
             </table>
         </div>
     </div>';

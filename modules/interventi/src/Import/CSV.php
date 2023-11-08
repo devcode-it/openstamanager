@@ -22,10 +22,10 @@ namespace Modules\Interventi\Import;
 use Importer\CSVImporter;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Impianti\Impianto;
+use Modules\Interventi\Components\Sessione;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
 use Modules\TipiIntervento\Tipo;
-use Modules\Interventi\Components\Sessione;
 
 /**
  * Struttura per la gestione delle operazioni di importazione (da CSV) degli Interventi.
@@ -44,7 +44,7 @@ class CSV extends CSVImporter
             ],
             [
                 'field' => 'telefono',
-                'label' => 'Telefono',         
+                'label' => 'Telefono',
             ],
             [
                 'field' => 'data',
@@ -66,7 +66,7 @@ class CSV extends CSVImporter
                 'field' => 'tipo',
                 'label' => 'Tipo',
             ],
-            [ 
+            [
                 'field' => 'note',
                 'label' => 'Note',
             ],
@@ -98,7 +98,7 @@ class CSV extends CSVImporter
             $anagrafica = Anagrafica::where('telefono', $record['telefono'])->first();
         }
 
-        if (!empty($record['impianto'])){
+        if (!empty($record['impianto'])) {
             $impianto = Impianto::where('matricola', $record['impianto'])->first();
         }
 
@@ -128,7 +128,7 @@ class CSV extends CSVImporter
             // Crea l'intervento
             if (empty($intervento)) {
                 $intervento = Intervento::build($anagrafica, $tipo, $stato, $record['data_richiesta']);
-            } 
+            }
             unset($record['codice']);
             unset($record['data']);
             unset($record['ora_inizio']);
@@ -154,18 +154,18 @@ class CSV extends CSVImporter
 
             $intervento->save();
 
-            $inizio = date('Y-m-d H:i', strtotime($record['data'] . ' ' . $record['ora_inizio']));
-            $fine= '';
+            $inizio = date('Y-m-d H:i', strtotime($record['data'].' '.$record['ora_inizio']));
+            $fine = '';
 
             // Verifica il tecnico e inserisce la sessione
             $anagrafica_t = Anagrafica::where('ragione_sociale', $record['tecnico'])->first();
             $tipo = $database->fetchOne('SELECT idtipoanagrafica FROM an_tipianagrafiche_anagrafiche WHERE idanagrafica = '.prepare($anagrafica_t['idanagrafica']));
-            $tecnico = TipoAnagrafica::where('descrizione','Tecnico')->first();
+            $tecnico = TipoAnagrafica::where('descrizione', 'Tecnico')->first();
 
-            if ($tipo = $tecnico['idtipoanagrafica']){
+            if ($tipo = $tecnico['idtipoanagrafica']) {
                 $anagrafica_t['tipo'] = $tecnico['descrizione'];
             }
-            
+
             if (!empty($record['data']) && !empty($record['ora_inizio']) && !empty($record['tecnico'])) {
                 $sessione = Sessione::build($intervento, $anagrafica_t, $inizio, $fine);
                 $sessione->save();
@@ -177,8 +177,8 @@ class CSV extends CSVImporter
     {
         return [
             ['Codice', 'Telefono', 'Data', 'Data richiesta', 'Ora', 'Tecnico', 'Tipo', 'Note', 'Impianto', 'Richiesta', 'Descrizione', 'Stato'],
-            ['001', '044444444', '07/11/2023','03/11/2023', '18:30', 'Stefano Bianchi', '', '', '00000000001', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', 'Bozza'],
-            ['002', '044444444', '08/11/2023', '04/11/2023', '11:20', 'Stefano Bianchi', '', '', '00000000002', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', '']
+            ['001', '044444444', '07/11/2023', '03/11/2023', '18:30', 'Stefano Bianchi', '', '', '00000000001', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', 'Bozza'],
+            ['002', '044444444', '08/11/2023', '04/11/2023', '11:20', 'Stefano Bianchi', '', '', '00000000002', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', ''],
         ];
     }
 }

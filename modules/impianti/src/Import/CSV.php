@@ -25,8 +25,8 @@ use Modules;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Sede;
 use Modules\Anagrafiche\Tipo;
-use Modules\Impianti\Impianto;
 use Modules\Impianti\Categoria;
+use Modules\Impianti\Impianto;
 use Uploads;
 
 /**
@@ -103,7 +103,7 @@ class CSV extends CSVImporter
         if (!empty($anagrafica)) {
             $url = $record['immagine'];
             unset($record['immagine']);
-    
+
             // Gestione categoria e sottocategoria
             $categoria = null;
             $sottocategoria = null;
@@ -130,7 +130,7 @@ class CSV extends CSVImporter
                     $sottocategoria->save();
                 }
             }
-    
+
             // Individuazione impianto e generazione
             $impianto = null;
 
@@ -140,13 +140,13 @@ class CSV extends CSVImporter
             }
             if (empty($impianto)) {
                 $impianto = Impianto::build($record['matricola'], $record['nome'], $categoria, $record['cliente']);
-            } 
-    
+            }
+
             if (!empty($record['data'])) {
                 $impianto->data = $record['data'];
                 $impianto->save();
             }
-    
+
             $impianto->id_sottocategoria = $sottocategoria['id'];
             $impianto->save();
 
@@ -166,31 +166,29 @@ class CSV extends CSVImporter
                     ->where('idanagrafica', $anagrafica->idanagrafica)
                     ->first();
                 $impianto->idsede = $sede->id;
-                $impianto->save(); 
-                
+                $impianto->save();
             }
-    
-            
+
             //Gestione immagine
             if (!empty($url) && !empty($record['import_immagine'])) {
                 $file_content = file_get_contents($url);
-    
+
                 if (!empty($file_content)) {
                     if ($record['import_immagine'] == 2 || $record['import_immagine'] == 4) {
                         Uploads::deleteLinked([
                             'id_module' => Modules::get('Impianti')['id'],
                             'id_record' => $impianto->id,
                         ]);
-    
+
                         $database->update('mg_articoli', [
                             'immagine' => '',
                         ], [
                             'id' => $impianto->id,
                         ]);
                     }
-    
+
                     $name = 'immagine_'.$impianto->id.'.'.Upload::getExtensionFromMimeType($file_content);
-    
+
                     $upload = Uploads::upload($file_content, [
                         'name' => 'Immagine',
                         'category' => 'Immagini',
@@ -201,7 +199,7 @@ class CSV extends CSVImporter
                         'thumbnails' => true,
                     ]);
                     $filename = $upload->filename;
-    
+
                     if ($record['import_immagine'] == 1 || $record['import_immagine'] == 2) {
                         if (!empty($filename)) {
                             $database->update('mg_articoli', [
@@ -213,19 +211,18 @@ class CSV extends CSVImporter
                     }
                 }
             }
-    
+
             unset($record['import_immagine']);
         }
-       
     }
 
     public static function getExample()
     {
         return [
             ['Matricola', 'Nome', 'Categoria', 'Immagine', 'Data installazione', 'Cliente', 'Telefono', 'Sede'],
-            ['00001', 'Marca', 'Lavatrice','https://immagini.com/immagine.jpg', '01/10/2023', 'Mario Rossi', '04444444', 'Sede2'],
+            ['00001', 'Marca', 'Lavatrice', 'https://immagini.com/immagine.jpg', '01/10/2023', 'Mario Rossi', '04444444', 'Sede2'],
             ['00002', 'Marca2', 'Lavastoviglie', 'https://immagini.com/immagine2.jpg', '12/09/2023', 'Mario Rossi', '04444444', 'Sede2'],
-            ['00003', 'Marca3', 'Frigorifero','https://immagini.com/immagine3.jpg', '20/09/2023', 'Mario Rossi', '04444444', 'Sede2'],
+            ['00003', 'Marca3', 'Frigorifero', 'https://immagini.com/immagine3.jpg', '20/09/2023', 'Mario Rossi', '04444444', 'Sede2'],
             ['00004', 'Marca4', 'Caldaia', 'https://immagini.com/immagine4.jpg', '06/11/2023', 'Mario Rossi',  '04444444', 'Sede2'],
             [],
             ['Import immagine = 1 -> Permette di importare l\'immagine come principale dell\'impianto mantenendo gli altri allegati già presenti'],

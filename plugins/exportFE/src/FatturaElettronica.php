@@ -1132,7 +1132,7 @@ class FatturaElettronica
 
             if (!empty($element['riferimento_linea']['id'])) {
                 $dati['RiferimentoNumeroLinea'] = $element['riferimento_linea']['id'];
-            } else if (!empty($element['riferimento_linea'])) {
+            } elseif (!empty($element['riferimento_linea'])) {
                 $dati['RiferimentoNumeroLinea'] = $element['riferimento_linea'];
             }
 

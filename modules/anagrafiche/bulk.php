@@ -18,6 +18,7 @@
  */
 
 use Geocoder\Provider\GoogleMaps;
+use Ivory\HttpAdapter\CurlHttpAdapter;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Export\CSV;
 
@@ -145,7 +146,7 @@ $operations['export-csv'] = [
 
 if (App::debug()) {
     $operations['ricerca-coordinate'] = [
-        'text' => '<span><i class="fa fa-map"></i> '.tr('Ricerca coordinate (google)').'</span>',
+        'text' => '<span><i class="fa fa-map"></i> '.tr('Ricerca coordinate').'</span>',
         'data' => [
             'msg' => tr('Ricercare le coordinate per le anagrafiche selezionate senza latitudine e longitudine?'),
             'button' => tr('Procedi'),
@@ -154,7 +155,7 @@ if (App::debug()) {
     ];
 
     $operations['ricerca-coordinate-google'] = [
-        'text' => '<span><i class="fa fa-map"></i> '.tr('Ricerca coordinate').'</span>',
+        'text' => '<span><i class="fa fa-map"></i> '.tr('Ricerca coordinate (google)').'</span>',
         'data' => [
             'msg' => tr('Ricercare le coordinate per le anagrafiche selezionate senza latitudine e longitudine?'),
             'button' => tr('Procedi'),

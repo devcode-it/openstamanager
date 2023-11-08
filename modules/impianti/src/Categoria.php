@@ -17,41 +17,34 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+
 namespace Modules\Impianti;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
-use Modules\Anagrafiche\Anagrafica;
-use Modules\Impianti\Categoria;
+use Traits\HierarchyTrait;
 
-class Impianto extends Model
+
+class Categoria extends Model
 {
     use SimpleModelTrait;
+    use HierarchyTrait;
 
-    protected $table = 'my_impianti';
+    protected $table = 'my_impianti_categorie';
+    protected static $parent_identifier = 'parent';
 
-    // Relazioni Eloquent
-    public function anagrafica()
-    {
-        return $this->belongsTo(Anagrafica::class, 'idanagrafica');
-    }
-    public static function build($matricola, $nome, Categoria $categoria, $anagrafica)
+    public static function build($nome)
     {
         $model = new static();
 
-        $model->matricola = $matricola;
         $model->nome = $nome;
-
-        $model->categoria()->associate($categoria);
-
         $model->save();
 
         return $model;
     }
 
-    public function categoria()
+    public function impianti()
     {
-        return $this->belongsTo(Categoria::class, 'id_categoria');
+        return $this->hasMany(Impianto::class, 'id_categoria');
     }
-
 }

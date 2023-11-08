@@ -72,3 +72,9 @@ DELETE FROM `em_print_template` WHERE `em_print_template`.`id_print` IN (SELECT 
 
 -- Il widget Notifiche interne è ora Note interne
 UPDATE `zz_widgets` SET `text` = 'Note interne' WHERE `zz_widgets`.`name` = "Note interne";
+
+-- Aggiunta importazione impianti
+INSERT INTO `zz_imports` (`name`, `class`) VALUES ('Impianti', 'Modules\\Impianti\\Import\\CSV');
+
+-- Aggiunta importazione attività
+INSERT INTO `zz_imports` (`name`, `class`) VALUES ('Attività', 'Modules\\Interventi\\Import\\CSV');

@@ -90,12 +90,23 @@ switch ($operazione) {
             'enable_newsletter' => empty($opt_out_newsletter),
         ], ['id' => $id_record]);
 
+        $referenti = $dbo->fetchArray('SELECT id FROM an_referenti WHERE idsede = '.$id_record);
         $id_referenti = (array) post('id_referenti');
+        $refs = array_diff($referenti, $id_referenti);
+
         foreach ($id_referenti as $id_referente) {
             $dbo->update('an_referenti', [
                 'idsede' => $id_record,
             ], [
                 'id' => $id_referente,
+            ]);
+        }
+
+        foreach ($refs as $ref) {
+            $dbo->update('an_referenti', [
+                'idsede' => 0,
+            ], [
+                'id' => $ref,
             ]);
         }
 

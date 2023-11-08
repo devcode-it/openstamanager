@@ -73,6 +73,10 @@ class CSV extends CSVImporter
                 'label' => 'Categoria',
             ],
             [
+                'field' => 'id_sottocategoria',
+                'label' => 'Sottocategoria',
+            ],
+            [
                 'field' => 'sede',
                 'label' => 'Sede',
             ],
@@ -102,18 +106,34 @@ class CSV extends CSVImporter
     
             // Gestione categoria e sottocategoria
             $categoria = null;
-    
-            if (!empty($record['id_categoria'])) {
-                // Categoria
-                $categoria = Categoria::where('nome', strtolower($record['id_categoria']))->first();
-    
-                if (empty($categoria)) {
-                    $categoria = Categoria::build($record['id_categoria']);
+            $sottocategoria = null;
+
+            if (empty($record['id_categoria'])) {
+                $record['id_categoria'] = 'Nessuna';
+            }
+            // Categoria
+            $categoria = Categoria::where('nome', strtolower($record['id_categoria']))->first();
+
+            if (empty($categoria)) {
+                $categoria = Categoria::build($record['id_categoria']);
+            }
+
+            // Sotto-categoria
+            if (!empty($record['id_sottocategoria'])) {
+                $sottocategoria = Categoria::where('nome', $record['id_sottocategoria'])
+                    ->where('parent', $categoria->id)
+                    ->first();
+
+                if (empty($sottocategoria)) {
+                    $sottocategoria = Categoria::build($record['id_sottocategoria']);
+                    $sottocategoria->parent()->associate($categoria);
+                    $sottocategoria->save();
                 }
             }
     
             // Individuazione impianto e generazione
             $impianto = null;
+
             // Ricerca sulla base della chiave primaria se presente
             if (!empty($primary_key)) {
                 $impianto = Impianto::where($primary_key, $record[$primary_key])->first();
@@ -126,8 +146,10 @@ class CSV extends CSVImporter
                 $impianto->data = $record['data'];
                 $impianto->save();
             }
-
     
+            $impianto->id_sottocategoria = $sottocategoria['id'];
+            $impianto->save();
+
             $tipo = Tipo::where('descrizione', 'Cliente')->first();
             $tipi = $anagrafica->tipi->pluck('idtipoanagrafica')->toArray();
 

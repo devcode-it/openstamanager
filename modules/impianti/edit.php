@@ -62,17 +62,23 @@ if (!empty($record['immagine'])) {
                             ?>
 							{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "extra": "", "ajax-source": "clienti" ]}
 						</div>
+						<div class="col-md-6">
+							{[ "type": "select", "label": "<?php echo tr('Tecnico predefinito'); ?>", "name": "idtecnico", "ajax-source": "tecnici", "value": "$idtecnico$" ]}
+						</div>
+					</div>
+					<div class ="row">
                         <div class="col-md-6">
                             {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "values": "query=SELECT id, nome AS descrizione FROM my_impianti_categorie", "icon-after": "add|<?php echo Modules::get('Categorie impianti')['id']; ?>" ]}
                         </div>
+						<div class="col-md-6">
+							{[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "subcategoria", "value": "$id_sottocategoria$", "values": "query=SELECT id, nome AS descrizione FROM my_impianti_categorie WHERE parent = $id_categoria$", "select-options": <?php echo json_encode(['id_categoria' => $record['id_categoria']]); ?>, "icon-after": "add|<?php echo Modules::get('Categorie impianti')['id']; ?>|id_original=<?php echo $record['id_categoria']; ?>" ]}
+						</div>
 					</div>
 				</div>
 			</div>
 
 			<div class="row">
-				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Tecnico predefinito'); ?>", "name": "idtecnico", "ajax-source": "tecnici", "value": "$idtecnico$" ]}
-				</div>
+
 
 				<div class="col-md-4">
 					{[ "type": "date", "label": "<?php echo tr('Data installazione'); ?>", "name": "data", "value": "$data$" ]}

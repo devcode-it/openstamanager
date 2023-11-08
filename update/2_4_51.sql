@@ -78,3 +78,7 @@ INSERT INTO `zz_imports` (`name`, `class`) VALUES ('Impianti', 'Modules\\Impiant
 
 -- Aggiunta importazione attività
 INSERT INTO `zz_imports` (`name`, `class`) VALUES ('Attività', 'Modules\\Interventi\\Import\\CSV');
+
+ALTER TABLE `my_impianti_categorie` ADD `parent` INT NULL DEFAULT NULL; 
+ALTER TABLE `my_impianti` ADD `id_sottocategoria` INT NULL DEFAULT NULL AFTER `id_categoria`; 
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `my_impianti_categorie` WHERE 1=1 AND parent IS NULL HAVING 2=2' WHERE `zz_modules`.`name` = 'Categorie impianti'; 

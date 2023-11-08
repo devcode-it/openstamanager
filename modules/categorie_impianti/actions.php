@@ -28,43 +28,75 @@ switch (filter('op')) {
         $nome = filter('nome');
         $nota = filter('nota');
         $colore = filter('colore');
+        $id_original = filter('id_original') ?: null;
 
         if (isset($nome) && isset($nota) && isset($colore)) {
-            $dbo->query('UPDATE `my_impianti_categorie` SET `nome`='.prepare($nome).', `nota`='.prepare($nota).', `colore`='.prepare($colore).' WHERE `id`='.prepare($id_record));
+            $database->table('my_impianti_categorie')
+                ->where('id', '=', $id_record)
+                ->update([
+                    'nome' => $nome,
+                    'nota' => $nota,
+                    'colore' => $colore,
+                ]);
+
             flash()->info(tr('Salvataggio completato!'));
         } else {
             flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
         }
 
+        // Redirect alla categoria se si sta modificando una sottocategoria
+        if ($id_original != null) {
+            $database->commitTransaction();
+            redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.($id_original ?: $id_record));
+            exit();
+        }
+
         break;
 
     case 'add':
-        $nome = post('nome');
-        $nota = post('nota');
-        $colore = post('colore');
+        $nome = filter('nome');
+        $nota = filter('nota');
+        $colore = filter('colore');
 
-        // Verifico che il nome non sia duplicato
-        $count = $dbo->fetchNum('SELECT `id` FROM `my_impianti_categorie` WHERE `nome`='.prepare($nome));
+        $id_original = filter('id_original') ?: null;
 
-        if ($count != 0) {
-            flash()->error(tr('Categoria _NAME_ già esistente!', [
-                '_NAME_' => $nome,
+        // Ricerca corrispondenze con stesso nome
+        $corrispondenze = $database->table('my_impianti_categorie')
+            ->where('nome', '=', $nome);
+        if (!empty($id_original)) {
+            $corrispondenze = $corrispondenze->where('parent', '=', $id_original);
+        } else {
+            $corrispondenze = $corrispondenze->whereNull('parent');
+        }
+        $corrispondenze = $corrispondenze->get();
+
+        // Eventuale creazione del nuovo record
+        if ($corrispondenze->count() == 0) {
+            $id_record = $database->table('my_impianti_categorie')
+                ->insertGetId([
+                    'nome' => $nome,
+                    'nota' => $nota,
+                    'colore' => $colore,
+                    'parent' => $id_original,
+                ]);
+
+            flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
+                '_TYPE_' => 'categoria',
             ]));
         } else {
-            if (isset($nome)) {
-                $dbo->query('INSERT INTO `my_impianti_categorie` (`nome`, `colore`, `nota`) VALUES ('.prepare($nome).', '.prepare($colore).', '.prepare($nota).')');
-
-                $id_record = $dbo->lastInsertedID();
-
-                if (isAjaxRequest()) {
-                    echo json_encode(['id' => $id_record, 'text' => $nome]);
-                }
-
-                flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
-                    '_TYPE_' => 'categoria',
-                ]));
-            }
+            $id_record = $corrispondenze->first()->id;
+            flash()->error(tr('Esiste già una categoria con lo stesso nome!'));
         }
+
+        if (isAjaxRequest()) {
+            echo json_encode(['id' => $id_record, 'text' => $nome]);
+        } else {
+            // Redirect alla categoria se si sta aggiungendo una sottocategoria
+            $database->commitTransaction();
+            redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.($id_original ?: $id_record));
+            exit();
+        }
+
         break;
 
     case 'delete':
@@ -73,14 +105,14 @@ switch (filter('op')) {
             $id = $id_record;
         }
 
-        if ($dbo->fetchNum('SELECT * FROM `my_impianti` WHERE `id_categoria`='.prepare($id)) == 0) {
+        if ($dbo->fetchNum('SELECT * FROM `my_impianti` WHERE (`id_categoria`='.prepare($id).' ) AND `deleted_at` IS NULL') == 0) {
             $dbo->query('DELETE FROM `my_impianti_categorie` WHERE `id`='.prepare($id));
 
-            flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [
+            flash()->info(tr('_TYPE_ eliminata con successo!', [
                 '_TYPE_' => 'categoria',
             ]));
         } else {
-            flash()->error(tr('Esistono ancora alcuni articoli sotto questa categoria!'));
+            flash()->error(tr('Esistono alcuni impianti collegati a questa categoria. Impossibile eliminarla.'));
         }
 
         break;

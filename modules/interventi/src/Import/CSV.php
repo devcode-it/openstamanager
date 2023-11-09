@@ -56,7 +56,11 @@ class CSV extends CSVImporter
             ],
             [
                 'field' => 'ora_inizio',
-                'label' => 'Ora',
+                'label' => 'Ora inizio',
+            ],
+            [
+                'field' => 'ora_fine',
+                'label' => 'Ora fine',
             ],
             [
                 'field' => 'tecnico',
@@ -155,7 +159,7 @@ class CSV extends CSVImporter
             $intervento->save();
 
             $inizio = date('Y-m-d H:i', strtotime($record['data'].' '.$record['ora_inizio']));
-            $fine = '';
+            $fine = date('Y-m-d H:i', strtotime($record['data'].' '.$record['ora_fine']));
 
             // Verifica il tecnico e inserisce la sessione
             $anagrafica_t = Anagrafica::where('ragione_sociale', $record['tecnico'])->first();

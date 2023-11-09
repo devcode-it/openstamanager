@@ -21,11 +21,12 @@ namespace Modules\Interventi\Import;
 
 use Importer\CSVImporter;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Anagrafiche\Tipo as TipoAnagrafica;
 use Modules\Impianti\Impianto;
 use Modules\Interventi\Components\Sessione;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
-use Modules\TipiIntervento\Tipo;
+use Modules\TipiIntervento\Tipo as TipoIntervento;
 
 /**
  * Struttura per la gestione delle operazioni di importazione (da CSV) degli Interventi.
@@ -116,9 +117,9 @@ class CSV extends CSVImporter
 
             // Verifico tipo e stato per creare l'intervento
             if (empty($record['tipo'])) {
-                $tipo = Tipo::where('codice', 'GEN')->first();
+                $tipo = TipoIntervento::where('codice', 'GEN')->first();
             } else {
-                $tipo = Tipo::where('codice', $record['tipo'])->first();
+                $tipo = TipoIntervento::where('codice', $record['tipo'])->first();
             }
             unset($record['tipo']);
 
@@ -138,8 +139,12 @@ class CSV extends CSVImporter
             unset($record['ora_inizio']);
             unset($record['telefono']);
 
-            // Collega l'impianto all'intervento
-            $database->query('INSERT INTO my_impianti_interventi(idimpianto, idintervento) VALUES('.prepare($impianto['id']).', '.prepare($intervento['id']).')');
+            $collegamento = $database->table('my_impianti_interventi')->where('idimpianto', $impianto['id'])->where('idintervento', $intervento['id'])->first();
+
+            if (empty($collegamento)) {
+                // Collega l'impianto all'intervento
+                $database->query('INSERT INTO my_impianti_interventi(idimpianto, idintervento) VALUES('.prepare($impianto['id']).', '.prepare($intervento['id']).')');
+            }
             unset($record['impianto']);
 
             // Inserisce la data richiesta e la richiesta

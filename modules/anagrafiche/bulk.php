@@ -77,17 +77,17 @@ switch (post('op')) {
             $anagrafica = Anagrafica::find($id);
             if (empty($anagrafica->lat) && empty($anagrafica->lng) && !empty($anagrafica->sedeLegale->indirizzo) && !empty($anagrafica->sedeLegale->citta) && !empty($anagrafica->sedeLegale->cap)) {
                 $indirizzo = urlencode($anagrafica->sedeLegale->indirizzo.' '.$anagrafica->sedeLegale->citta.' '.$anagrafica->sedeLegale->cap);
-                
-                try{
+
+                try {
                     // Ricerca indirizzo
                     $address = $geocoder->geocode($indirizzo)->first();
                     $coordinates = $address->getCoordinates();
-    
+
                     // Salvataggio informazioni
                     $anagrafica->lat = $coordinates->getLatitude();
                     $anagrafica->lng = $coordinates->getLongitude();
                     $anagrafica->save();
-                }catch (Exception $e) {
+                } catch (Exception $e) {
                     flash()->error("Impossibile recuperare le coordinate dell'anagrafica ".$anagrafica->ragione_sociale." per l'indirizzo ".$anagrafica->sedeLegale->indirizzo.' '.$anagrafica->sedeLegale->citta.' '.$anagrafica->sedeLegale->cap);
                 }
             }

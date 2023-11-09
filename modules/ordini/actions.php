@@ -837,7 +837,7 @@ switch (post('op')) {
         }
 
         break;
-        
+
     // Duplica ordine
     case 'copy':
         $new = $ordine->replicate();

@@ -24,7 +24,6 @@ use Models\Upload;
 use Modules;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Sede;
-use Modules\Anagrafiche\Tipo;
 use Modules\Impianti\Categoria;
 use Modules\Impianti\Impianto;
 use Uploads;
@@ -148,16 +147,6 @@ class CSV extends CSVImporter
             }
 
             $impianto->id_sottocategoria = $sottocategoria['id'];
-            $impianto->save();
-
-            $tipo = Tipo::where('descrizione', 'Cliente')->first();
-            $tipi = $anagrafica->tipi->pluck('idtipoanagrafica')->toArray();
-
-            $tipi[] = $tipo->id;
-
-            $anagrafica->tipologie = $tipi;
-            $anagrafica->save();
-
             $impianto->idanagrafica = $anagrafica->idanagrafica;
             $impianto->save();
 

@@ -460,10 +460,10 @@ class CSV extends CSVImporter
     protected function aggiornaDettaglioPrezzi(Articolo $articolo, $dettagli)
     {
         // Listini
-        if ($dettagli['partita_iva']){
+        if ($dettagli['partita_iva']) {
             $anagrafica = Anagrafica::where('piva', $dettagli['partita_iva'])->first();
         }
-        
+
         if (empty($anagrafica)) {
             $anagrafica = Anagrafica::build($dettagli['anagrafica_listino']);
             $anagrafica->piva = $dettagli['partita_iva'];

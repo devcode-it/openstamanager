@@ -50,6 +50,36 @@ include_once __DIR__.'/../../core.php';
 
 </form>
 
+
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		<h3 class="panel-title"><?php echo tr('Sottocategorie'); ?></h3>
+	</div>
+
+	<div class="panel-body">
+		<div class="pull-left">
+			<a class="btn btn-primary" data-href="<?php echo base_path(); ?>/add.php?id_module=<?php echo $id_module; ?>&id_original=<?php echo $id_record; ?>" data-toggle="modal" data-title="<?php echo tr('Aggiungi riga'); ?>"><i class="fa fa-plus"></i> <?php echo tr('Sottocategoria'); ?></a><br>
+		</div>
+		<div class="clearfix"></div>
+		<hr>
+
+		<div class="row">
+			<div class="col-md-12">
+				<table class="table table-striped table-hover table-condensed">
+				<tr>
+					<th><?php echo tr('Nome'); ?></th>
+					<th><?php echo tr('Colore'); ?></th>
+					<th><?php echo tr('Nota'); ?></th>
+					<th width="20%"><?php echo tr('Opzioni'); ?></th>
+				</tr>
+
+				<?php include base_dir().'/modules/'.Modules::get($id_module)['directory'].'/row-list.php'; ?>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
 <script>
 	$(document).ready( function() {
 		$('.colorpicker').colorpicker({ format: 'hex' }).on('changeColor', function() {
@@ -62,13 +92,37 @@ include_once __DIR__.'/../../core.php';
 
 <?php
 
-$res = $dbo->fetchArray('SELECT * FROM `my_impianti` WHERE `id_categoria`='.prepare($id_record));
+$elementi = $dbo->fetchArray('SELECT `my_impianti`.`id`, `my_impianti`.`matricola`, `my_impianti`.`nome` FROM `my_impianti` WHERE (`id_categoria`='.prepare($id_record).' OR `id_sottocategoria`='.prepare($id_record).'  OR `id_sottocategoria` IN (SELECT id FROM `my_impianti_categorie` WHERE `parent`='.prepare($id_record).'))');
 
-if ($res) {
+if (!empty($elementi)) {
     echo '
-    <div class="alert alert-danger">
-        <p>'.tr('Ci sono '.sizeof($res).' impianti collegati a questa categoria. Non è possibile eliminarla.').'</p>
-    </div>';
+<div class="box box-warning collapsable collapsed-box">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Impianti collegati: _NUM_', [
+            '_NUM_' => count($elementi),
+        ]).'</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+    <div class="box-body">
+        <ul>';
+
+    foreach ($elementi as $elemento) {
+        $descrizione = tr('Impianto _MATRICOLA_', [
+        '_MATRICOLA_' => $elemento['matricola'],
+    ]);
+        $modulo = 'Impianti';
+        $id = $elemento['id'];
+
+        echo '
+		<li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+    }
+
+    echo '
+	</ul>
+</div>
+</div>';
 } else {
     echo '
     <a class="btn btn-danger ask" data-backto="record-list">

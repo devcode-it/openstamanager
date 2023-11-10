@@ -202,8 +202,10 @@ class FatturaOrdinaria extends FatturaElettronica
             }
 
             $obj->descrizione = $riga['Descrizione'];
+            $obj->save();
 
             // Collegamento al documento di riferimento
+            $has_serial_riferimento = false;
             if (!empty($tipi_riferimenti[$key]) && is_subclass_of($tipi_riferimenti[$key], Component::class) && !empty($id_riferimenti[$key])) {
                 $riga_origine = ($tipi_riferimenti[$key])::find($id_riferimenti[$key]);
                 list($riferimento_precedente, $nuovo_riferimento) = $obj->impostaOrigine($riga_origine);
@@ -211,9 +213,13 @@ class FatturaOrdinaria extends FatturaElettronica
                 // Correzione della descrizione
                 $obj->descrizione = str_replace($riferimento_precedente, '', $obj->descrizione);
                 $obj->descrizione .= $nuovo_riferimento;
-            }
 
-            $obj->save();
+                $serials_rif = $riga_origine->serials;
+                if ($serials_rif && $obj->abilita_serial) {
+                    $obj->serials = $serials_rif;
+                    $has_serial_riferimento = true;
+                }
+            }
 
             if (!empty($tipi_riferimenti_vendita[$key])) {
                 database()->insert('co_riferimenti_righe', [
@@ -364,7 +370,7 @@ class FatturaOrdinaria extends FatturaElettronica
                     }
 
                     // Gestione seriali
-                    if ($serials[$key]) {
+                    if ($serials[$key] && !$has_serial_riferimento) {
                         $obj->serials = $serials[$key];
                     }
                 }

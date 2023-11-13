@@ -26,3 +26,7 @@ HAVING
     2=2
 ORDER BY
     `matricola`" WHERE `name` = 'Impianti';
+
+-- Serial in Contratti
+ALTER TABLE `mg_prodotti` ADD `id_riga_contratto` INT NULL AFTER `id_riga_intervento`;
+ALTER TABLE `mg_prodotti` ADD FOREIGN KEY (`id_riga_contratto`) REFERENCES `co_righe_contratti`(`id`) ON DELETE CASCADE;

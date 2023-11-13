@@ -26,4 +26,5 @@ class Articolo extends Article
     use RelationTrait;
 
     protected $table = 'co_righe_contratti';
+    protected $serialRowID = 'contratto';
 }

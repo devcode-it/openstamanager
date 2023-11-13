@@ -28,6 +28,7 @@ $tipo_documento_finale = Fattura::class;
 $options = [
     'op' => 'add_documento',
     'type' => 'contratto',
+    'serials' => true,
     'module' => 'Fatture di vendita',
     'button' => tr('Aggiungi'),
     'create_document' => true,

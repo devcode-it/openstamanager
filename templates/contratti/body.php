@@ -146,6 +146,16 @@ foreach ($righe as $riga) {
                 <br><small>'.$text.'</small>';
 
         $autofill->count($text, true);
+
+        // Seriali
+        $seriali = $riga->serials;
+        if (!empty($seriali)) {
+            $text = tr('SN').': '.implode(', ', $seriali);
+            echo '
+                    <br><small>'.$text.'</small>';
+
+            $autofill->count($text, true);
+        }
     }
 
     echo '

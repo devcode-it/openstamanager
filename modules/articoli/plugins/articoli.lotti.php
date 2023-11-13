@@ -276,10 +276,28 @@ if (empty(get('modal'))) {
                     $id = $data[0]['idintervento'];
 
                     $data[0]['tipo_documento'] = tr('Intervento').' '.$data[0]['codice'];
+                }
 
-                    $extra = tr('(q.tà _QTA_)', [
-                    '_QTA_' => $data[0]['qta'],
-                ]);
+                // Inserito su contratto
+                elseif (!empty($vendita['id_riga_contratto'])) {
+                    $module_id = Modules::get('Contratti')['id'];
+
+                    // Ricerca vendite su contratti
+                    $query = 'SELECT *, "Contratto" AS tipo_documento, ( SELECT data_bozza FROM co_contratti WHERE id=idcontratto ) AS data, ( SELECT numero FROM co_contratti WHERE id=idcontratto ) AS numero FROM co_righe_contratti WHERE co_righe_contratti.id='.prepare($vendita['id_riga_contratto']);
+                    $data = $dbo->fetchArray($query);
+
+                    $id = $data[0]['idcontratto'];
+                }
+
+                 // Inserito su vendita banco
+                 elseif (!empty($vendita['id_riga_venditabanco'])) {
+                    $module_id = Modules::get('Vendita al banco')['id'];
+
+                    // Ricerca vendite su contratti
+                    $query = 'SELECT *, "Vendita al banco" AS tipo_documento, ( SELECT data FROM vb_venditabanco WHERE id=idvendita ) AS data, ( SELECT numero FROM vb_venditabanco WHERE id=idvendita ) AS numero FROM vb_righe_venditabanco WHERE vb_righe_venditabanco.id='.prepare($vendita['id_riga_venditabanco']);
+                    $data = $dbo->fetchArray($query);
+
+                    $id = $data[0]['idvendita'];
                 }
 
                 $totali[] = [($data[0]['prezzo_unitario'] - $data[0]['sconto_unitario']), $data[0]['iva_unitaria']];
@@ -287,10 +305,10 @@ if (empty(get('modal'))) {
                 $numero = !empty($data[0]['numero_esterno']) ? $data[0]['numero_esterno'] : $data[0]['numero'];
 
                 $text = tr('_DOC_ num. _NUM_ del _DATE_', [
-                '_DOC_' => $data[0]['tipo_documento'],
-                '_NUM_' => $numero,
-                '_DATE_' => Translator::dateToLocale($data[0]['data']),
-            ]).(!empty($extra) ? ' '.$extra : '');
+                    '_DOC_' => $data[0]['tipo_documento'],
+                    '_NUM_' => $numero,
+                    '_DATE_' => Translator::dateToLocale($data[0]['data']),
+                ]);
 
                 echo Modules::link($module_id, $id, $text).'<br>';
             }

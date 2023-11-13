@@ -55,6 +55,14 @@ $data = [
         'table' => 'in_righe_interventi',
         'id' => 'idintervento',
     ],
+    'veb' => [
+        'table' => 'vb_righe_venditabanco',
+        'id' => 'idvendita',
+    ],
+    'con' => [
+        'table' => 'co_righe_contratti',
+        'id' => 'idcontratto',
+    ],
 ];
 
 // Individuazione delle tabelle interessate
@@ -66,8 +74,12 @@ if (in_array($module['name'], ['Fatture di vendita', 'Fatture di acquisto'])) {
     $is_rientrabile = $database->fetchOne('SELECT * FROM `dt_causalet` WHERE `id` = '.prepare($ddt->idcausalet))['is_rientrabile'];
 } elseif (in_array($module['name'], ['Ordini cliente', 'Ordini fornitore'])) {
     $modulo = 'ord';
-} else {
+} elseif ($module['name'] == 'Interventi') {
     $modulo = 'int';
+} elseif ($module['name'] == 'Contratti') {
+    $modulo = 'con';
+} else {
+    $modulo = 'veb';
 }
 
 $table = $data[$modulo]['table'];
@@ -149,6 +161,12 @@ if ($dir == 'entrata') {
             } elseif (!empty($res[0]['id_riga_ordine'])) {
                 $modulo = 'Ordini cliente';
                 $pos = 'ord';
+            } elseif (!empty($res[0]['id_riga_contratto'])) {
+                $modulo = 'Contratti';
+                $pos = 'con';
+            } elseif (!empty($res[0]['id_riga_venditabanco'])) {
+                $modulo = 'Vendita al banco';
+                $pos = 'veb';
             }
 
             $r = $dbo->select($data[$pos]['table'], $data[$pos]['id'], [], ['id' => $res[0][str_replace('id', 'id_riga_', $data[$pos]['id'])]]);

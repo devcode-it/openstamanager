@@ -521,6 +521,13 @@ switch (post('op')) {
 
                 $copia = $riga->copiaIn($contratto, $qta);
 
+                // Aggiornamento seriali dalla riga dell'ordine
+                if ($copia->isArticolo()) {
+                    $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
+
+                    $copia->serials = $serials;
+                }
+
                 $copia->save();
             }
         }
@@ -759,6 +766,14 @@ switch (post('op')) {
         } else {
             flash()->warning(tr('Nessun prezzo modificato!'));
         }
+
+        break;
+
+    case 'add_serial':
+        $articolo = Articolo::find(post('idriga'));
+
+        $serials = (array) post('serial');
+        $articolo->serials = $serials;
 
         break;
 }

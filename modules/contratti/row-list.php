@@ -43,7 +43,7 @@ echo '
                 <th class="text-center" width="180">'.tr('Prezzo unitario').'</th>
                 <th class="text-center" width="140">'.tr('Sconto unitario').'</th>
                 <th class="text-center" width="130">'.tr('Importo').'</th>
-                <th width="80"></th>
+                <th width="100"></th>
             </tr>
         </thead>
 
@@ -54,8 +54,22 @@ $num = 0;
 foreach ($righe as $riga) {
     ++$num;
 
+    // Individuazione dei seriali
+    $extra = '';
+    $mancanti = 0;
+    if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
+        $serials = $riga->serials;
+        $mancanti = abs($riga->qta) - count($serials);
+
+        if ($mancanti > 0) {
+            $extra = 'class="warning"';
+        } else {
+            $mancanti = 0;
+        }
+    }
+
     echo '
-            <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'">
+            <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'" '.$extra.'>
                 <td class="text-center">';
     if (!$block_edit) {
         echo '
@@ -84,6 +98,19 @@ foreach ($righe as $riga) {
 
     echo '
                     '.$descrizione;
+
+    if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
+        if (!empty($mancanti)) {
+            echo '
+                <br><b><small class="text-danger">'.tr('_NUM_ serial mancanti', [
+                    '_NUM_' => $mancanti,
+                ]).'</small></b>';
+        }
+        if (!empty($serials)) {
+            echo '
+                <br>'.tr('SN').': '.implode(', ', $serials);
+        }
+    }
 
     if ($riga->isArticolo() && !empty($riga->articolo->barcode)) {
         echo '
@@ -173,7 +200,14 @@ foreach ($righe as $riga) {
 
     if (empty($record['is_completato'])) {
         echo '
-                    <div class="btn-group">
+                    <div class="btn-group">';
+                    if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
+                        echo '
+                        <a class="btn btn-primary btn-xs" title="'.tr('Modifica seriali della riga').'" onclick="modificaSeriali(this)">
+                            <i class="fa fa-barcode"></i>
+                        </a>';
+                    }
+                    echo '
                         <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga').'" onclick="modificaRiga(this)">
                             <i class="fa fa-edit"></i>
                         </a>
@@ -558,6 +592,14 @@ function aggiornaInline(id) {
             caricaRighe(null);
         }
     });
+}
+
+function modificaSeriali(button) {
+    let riga = $(button).closest("tr");
+    let id = riga.data("id");
+    let type = riga.data("type");
+
+    openModal("'.tr('Aggiorna SN').'", globals.rootdir + "/modules/fatture/add_serial.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&riga_id=" + id + "&riga_type=" + type);
 }
 init();
 </script>';

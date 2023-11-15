@@ -111,19 +111,19 @@ switch ($resource) {
 
         case 'categorie_imp':
             $query = 'SELECT `id`, `nome` AS descrizione FROM `my_impianti_categorie` |where| ORDER BY `nome`';
-    
+
             foreach ($elements as $element) {
                 $filter[] = '`id`='.prepare($element);
             }
-    
+
             $where[] = '`parent` IS NULL';
-    
+
             if (!empty($search)) {
                 $search_fields[] = '`nome` LIKE '.prepare('%'.$search.'%');
             }
-    
+
             break;
-    
+
         /*
          * Opzioni utilizzate:
          * - id_categoria
@@ -131,13 +131,13 @@ switch ($resource) {
         case 'sottocategorie_imp':
             if (isset($superselect['id_categoria'])) {
                 $query = 'SELECT `id`, `nome` AS descrizione FROM `my_impianti_categorie` |where| ORDER BY `nome`';
-    
+
                 foreach ($elements as $element) {
                     $filter[] = '`id`='.prepare($element);
                 }
-    
+
                 $where[] = '`parent`='.prepare($superselect['id_categoria']);
-    
+
                 if (!empty($search)) {
                     $search_fields[] = '`nome` LIKE '.prepare('%'.$search.'%');
                 }

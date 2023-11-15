@@ -81,8 +81,6 @@ if (!empty($record['immagine'])) {
 			</div>
 
 			<div class="row">
-
-
 				<div class="col-md-4">
 					{[ "type": "date", "label": "<?php echo tr('Data installazione'); ?>", "name": "data", "value": "$data$" ]}
 				</div>
@@ -93,19 +91,15 @@ if (!empty($record['immagine'])) {
 					{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "value": "$idsede$", "required": "1", "ajax-source": "sedi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "placeholder": "'.tr('Sede legale').'" ]}
 				</div>';
                 ?>
+				<div class="col-md-4">
+					{[ "type": "text", "label": "<?php echo tr('Proprietario'); ?>", "name": "proprietario", "value": "$proprietario$" ]}
+				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-md-12">
 					{[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "value": "$descrizione$" ]}
 				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-md-12">
-					{[ "type": "text", "label": "<?php echo tr('Proprietario'); ?>", "name": "proprietario", "value": "$proprietario$" ]}
-				</div>
-
 			</div>
 
 			<div class="row">

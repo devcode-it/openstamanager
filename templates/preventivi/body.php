@@ -170,12 +170,12 @@ echo "
 
 if ($options['pricing']) {
     echo "
-            <th class='text-center' style='width:15%'>".tr('Prezzo unitario', [], ['upper' => true])."</th>";
-            if (!$options['no-iva']) {
-                echo"
-                <th class='text-center' style='width:10%'>".tr('IVA', [], ['upper' => true])." (%)</th>";
-            }
-            echo"
+            <th class='text-center' style='width:15%'>".tr('Prezzo unitario', [], ['upper' => true]).'</th>';
+    if (!$options['no-iva']) {
+        echo "
+                <th class='text-center' style='width:10%'>".tr('IVA', [], ['upper' => true]).' (%)</th>';
+    }
+    echo "
             <th class='text-center' style='width:15%'>".($options['hide-total'] ? tr('Importo ivato', [], ['upper' => true]) : tr('Importo', [], ['upper' => true])).'</th>';
 }
 
@@ -299,7 +299,7 @@ foreach ($righe as $key => $riga) {
                 <td></td>
                 <td></td>';
                 if (!$options['no-iva']) {
-                    echo'
+                    echo '
                     <td></td>';
                 }
             }
@@ -323,7 +323,7 @@ foreach ($righe as $key => $riga) {
             </td>
         </tr>';
         if (!$options['no-iva']) {
-            echo'
+            echo '
         <tr>
             <td colspan="'.($options['show-only-total'] ? 2 : 5).'" class="text-right">
                 <b>'.tr('Iva', [], ['upper' => true]).':</b>
@@ -367,7 +367,7 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
     // Totale imponibile
     echo '
     <tr>
-        <td colspan="'.($options['show-only-total'] ? ($options['no-iva'] ?3:2) : 4).'" class="text-right border-top">
+        <td colspan="'.($options['show-only-total'] ? ($options['no-iva'] ? 3 : 2) : 4).'" class="text-right border-top">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
 
@@ -455,9 +455,8 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
 echo '
 </table>';
 
-
 if ($options['no-iva']) {
-    echo'
+    echo '
     <p colspan="3" class="text-right text-muted">
         <small>Importo IVA esclusa</small>
     </p>

@@ -502,6 +502,8 @@ class FatturaOrdinaria extends FatturaElettronica
             $id_rivalsa = $rivalsa['id'];
         }
 
+        $percentuale = 0;
+        $importo = 0;
         // Ritenuta d'Acconto
         $ritenuta = $dati_generali['DatiRitenuta'];
         if (!empty($ritenuta)) {

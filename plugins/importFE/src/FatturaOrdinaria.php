@@ -106,7 +106,20 @@ class FatturaOrdinaria extends FatturaElettronica
         $riepiloghi = $this->getBody()['DatiBeniServizi']['DatiRiepilogo'];
         $riepiloghi = $this->forceArray($riepiloghi);
 
+        $riepiloghi_raggruppati = [];
+
         foreach ($riepiloghi as $riepilogo) {
+            $aliquota_iva = $riepilogo['AliquotaIVA'];
+            
+            if (array_key_exists($aliquota_iva, $riepiloghi_raggruppati)) {
+                $riepiloghi_raggruppati[$aliquota_iva]['ImponibileImporto'] += $riepilogo['ImponibileImporto'];
+                $riepiloghi_raggruppati[$aliquota_iva]['Imposta'] += $riepilogo['Imposta'];
+            } else {
+                $riepiloghi_raggruppati[$aliquota_iva] = $riepilogo;
+            }
+        }
+
+        foreach ($riepiloghi_raggruppati as $riepilogo) {
             $valore = 0;
             if (isset($riepilogo['Arrotondamento']) && $riepilogo['Arrotondamento'] != 0 && round($totale_imposta[$riepilogo['AliquotaIVA']], 2) != (float) $riepilogo['Imposta']) {
                 $valore = $riepilogo['Arrotondamento'];

@@ -92,10 +92,6 @@ class CSV extends CSVImporter
                 'label' => 'Indirizzo',
             ],
             [
-                'field' => 'indirizzo2',
-                'label' => 'Civico',
-            ],
-            [
                 'field' => 'cap',
                 'label' => 'CAP',
             ],
@@ -131,8 +127,9 @@ class CSV extends CSVImporter
                 'field' => 'sitoweb',
                 'label' => 'Sito Web',
                 'names' => [
-                    'Sito',
+                    'Sito web',
                     'Website',
+                    'Sito',
                 ],
             ],
             [
@@ -211,13 +208,8 @@ class CSV extends CSVImporter
             [
                 'field' => 'tipo',
                 'label' => 'Tipologia (Privato, Ente pubblico, Azienda)',
-            ],
-            [
-                'field' => 'codice_destinatario',
-                'label' => 'Codice Destinatario FE',
                 'names' => [
-                    'Codice Destinatario FE',
-                    'codice destinatario FE',
+                    'Tipologia',
                 ],
             ],
             [
@@ -245,6 +237,13 @@ class CSV extends CSVImporter
         $database = database();
         $primary_key = $this->getPrimaryKey();
         $id_azienda = setting('Azienda predefinita');
+
+        // Compilo la ragione sociale se sono valorizzati cognome e nome
+        if (!$record['ragione_sociale'] && ($record['cognome'] && $record['nome'])) {
+            $record['ragione_sociale'] = $record['cognome'] . ' ' . $record['nome'];
+        }
+        unset($record['cognome']);
+        unset($record['nome']);
 
         // Individuazione del tipo dell'anagrafica
         $tipologie = [];
@@ -297,7 +296,6 @@ class CSV extends CSVImporter
         // Separazione dei campi relativi alla sede legale
         $campi_sede = [
             'indirizzo',
-            'indirizzo2',
             'citta',
             'cap',
             'provincia',
@@ -337,11 +335,11 @@ class CSV extends CSVImporter
         if ($anagrafica->id == $id_azienda) {
             return;
         }
+        unset($record['ragione_sociale']);
 
         $anagrafica->fill($record);
         $anagrafica->tipologie = $tipologie;
         $anagrafica->tipo = $tipi_selezionati;
-        $anagrafica->id_settore = $id_settore;
         $anagrafica->save();
 
         $sede = $anagrafica->sedeLegale;
@@ -352,8 +350,8 @@ class CSV extends CSVImporter
     public static function getExample()
     {
         return [
-            ['Codice', 'Ragione sociale', 'Nome', 'Cognome', 'Tipologia', 'Partita IVA', 'Codice destinatario', 'Nazione', 'Indirizzo', 'CAP', 'Città', 'Provincia', 'Telefono', 'Fax', 'Cellulare', 'Email', 'PEC', 'Sito Web', 'IBAN', 'Note', 'Tipo'],
-            ['00001', 'Mia anagrafica', '', '', 'Azienda', '12345678910', '1234567', 'ITALIA', 'Via Giuseppe Mazzini, 123', '12345', 'Este', 'PD', '+39 0429 60 25 12', '+39 0429 456 781', '+39 321 12 34 567', 'email@anagrafica.it', 'pec@anagrafica.it', 'www.sito.it', 'IT60 X054 2811 1010 0000 0123 456', 'Note dell\'anagrafica di esempio', 'Cliente,Fornitore'],
+            ['Codice', 'Ragione sociale', 'Nome', 'Cognome', 'Codice destinatario', 'Provincia', 'Città', 'Telefono', 'Indirizzo', 'CAP',  'Cellulare', 'Fax','Email', 'PEC', 'Sito Web', 'Codice fiscale', 'Data di nascita', 'Luogo di nascita', 'Sesso', 'Partita IVA', 'IBAN', 'Note', 'Nazione', 'ID Agente', 'ID pagamento', 'Tipo', 'Tipologia', 'Split Payment', 'Settore merceologico'],
+            ['001', 'Rossi Mario', '', '', '12345', 'PD', 'Este', '+39 0429 60 25 12', 'Via Rovigo, 51', '35042', '+39 321 12 34 567', '', 'email@anagrafica.it', 'email@pec.it', 'www.sito.it', '', '', '', '', '123456789', 'IT60 X054 2811 1010 0000 0123 456', 'Note dell\'anagrafica di esempio', 'Italia', '', '', 'Cliente', 'Privato', '0', 'Tessile'],
         ];
     }
 }

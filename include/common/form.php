@@ -21,7 +21,7 @@ $result['id'] = isset($result['id']) ? $result['id'] : null;
 
 // Form di inserimento riga documento
 echo '
-<form action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post">
+<form action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post" id="submit-form">
     <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
     <input type="hidden" name="hash" value="tab_'.$id_plugin.'">
     <input type="hidden" name="backto" value="record-edit">
@@ -41,10 +41,26 @@ echo '
     <!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary pull-right"><i class="fa '.$icon.'"></i> '.$button.'</button>
+			<button type="button" class="btn btn-primary pull-right" onclick="submitForm()"><i class="fa '.$icon.'"></i> '.$button.'</button>
 		</div>
     </div>
 </form>';
 
 echo '
 <script>$(document).ready(init)</script>';
+
+echo '
+<script>
+    function submitForm() {
+        var form = input("#submit-form");
+        salvaForm("#submit-form", {
+            id_module: "'.$id_module.'",
+            id_record: "'.$id_record.'",
+        }).then(function(response) {
+            form.getElement().closest("div[id^=bs-popup").modal("hide");
+            caricaRighe(null);
+        });
+
+        return false;
+    }
+</script>';

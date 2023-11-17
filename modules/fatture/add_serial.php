@@ -93,7 +93,7 @@ $rs = $dbo->fetchArray('SELECT mg_articoli.id AS idarticolo, mg_articoli.codice,
 echo '
 <h4 class="text-center">'.tr('Articolo').': '.$rs[0]['codice'].' - '.$rs[0]['descrizione'].'</h4>
 
-<form action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post">
+<form action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post" id="serial-form">
     <input type="hidden" name="op" value="add_serial">
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="idriga" value="'.$idriga.'">
@@ -277,10 +277,26 @@ echo '
         </div>
 
 		<div class="col-md-10 text-right">
-			<button type="submit" id="aggiorna" class="btn btn-primary pull-right"><i class="fa fa-barcode"></i> '.tr('Aggiorna').'</button>
+			<button type="button" id="aggiorna" class="btn btn-primary pull-right"><i class="fa fa-barcode"></i> '.tr('Aggiorna').'</button>
 		</div>
     </div>
 </form>';
 
 echo '
 <script>$(document).ready(init)</script>';
+
+echo '
+<script>
+    $("#aggiorna").on("click", function() {
+        var form = input("#serial-form");
+        salvaForm("#serial-form", {
+            id_module: "'.$id_module.'",
+            id_record: "'.$id_record.'",
+        }).then(function(response) {
+            form.getElement().closest("div[id^=bs-popup").modal("hide");
+            caricaRighe(null);
+        });
+
+        return false;
+    });
+</script>';

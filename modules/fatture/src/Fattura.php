@@ -625,6 +625,14 @@ class Fattura extends Document
             $this->movimentiContabili()->delete();
         }
 
+        if ($this->changes['data_competenza'] && !in_array($this->stato['descrizione'], ['Bozza', 'Annullata'])) {
+            $movimenti = Movimento::where('iddocumento', $this->id)->where('primanota', 0)->get();
+            foreach ($movimenti as $movimento) {
+                $movimento->data = $this->data_competenza;
+                $movimento->save();
+            }
+        }
+
         // Operazioni sulla dichiarazione d'intento
         if (!empty($dichiarazione_precedente) && $dichiarazione_precedente->id != $this->id_dichiarazione_intento) {
             // Correzione dichiarazione precedente

@@ -53,7 +53,7 @@ switch (filter('op')) {
             'server' => post('server'),
             'port' => post('port'),
             'username' => post('username'),
-            'password' => post('password'),
+            'password' => $_POST['password'],
             'from_name' => post('from_name'),
             'from_address' => post('from_address'),
             'encryption' => post('encryption'),

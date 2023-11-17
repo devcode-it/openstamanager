@@ -32,6 +32,7 @@ if (!empty($id_documento)) {
     $options = [
         'op' => 'add_documento',
         'type' => 'contratto',
+        'serials' => true,
         'button' => tr('Aggiungi'),
         'documento' => $documento,
         'documento_finale' => $documento_finale,

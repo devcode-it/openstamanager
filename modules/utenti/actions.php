@@ -57,7 +57,7 @@ switch (filter('op')) {
     case 'update_user':
         $username = filter('username');
         $email = filter('email');
-        $password = filter('password');
+        $password = $_POST['password'];
 
         $id_utente = filter('id_utente');
         if ($dbo->fetchNum('SELECT username FROM zz_users WHERE id != '.prepare($id_utente).' AND username='.prepare($username)) == 0) {
@@ -114,7 +114,7 @@ switch (filter('op')) {
 
     // Aggiunta di un nuovo utente
     case 'self_update':
-        $password = filter('password');
+        $password = filter('password', null, true);
 
         $utente = Auth::user();
 

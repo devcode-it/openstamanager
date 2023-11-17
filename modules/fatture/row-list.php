@@ -39,7 +39,7 @@ echo '
                 echo '
                 </th>
                 <th width="35" class="text-center" >'.tr('#').'</th>
-                <th class="text-left">'.tr('Descrizione').'</th>
+                <th class="text-left" style="width:30%;">'.tr('Descrizione').'</th>
                 <th class="text-center" width="120">'.tr('Q.tà').'</th>';
             if ($dir == 'entrata') {
                 echo '<th class="text-center" width="150">'.tr('Costo unitario').'</th>';

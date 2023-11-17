@@ -67,19 +67,20 @@ if (!empty($record['immagine'])) {
 						</div>
 					</div>
 					<div class ="row">
-                        <div class="col-md-6">
-                            {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "values": "query=SELECT id, nome AS descrizione FROM my_impianti_categorie", "icon-after": "add|<?php echo Modules::get('Categorie impianti')['id']; ?>" ]}
-                        </div>
 						<div class="col-md-6">
-							{[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "subcategoria", "value": "$id_sottocategoria$", "values": "query=SELECT id, nome AS descrizione FROM my_impianti_categorie WHERE parent = $id_categoria$", "select-options": <?php echo json_encode(['id_categoria' => $record['id_categoria']]); ?>, "icon-after": "add|<?php echo Modules::get('Categorie impianti')['id']; ?>|id_original=<?php echo $record['id_categoria']; ?>" ]}
-						</div>
+                            <?php echo (!empty($record['id_categoria'])) ?
+                                Modules::link('Categorie impianti', $record['id_categoria'], null, null, 'class="pull-right"') : ''; ?>
+                            {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie_imp", "icon-after": "add|<?php echo Modules::get('Categorie impianti')['id']; ?>" ]}
+                        </div>
+
+                        <div class="col-md-6">
+                            {[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "id_sottocategoria", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie_imp", "select-options": <?php echo json_encode(['id_categoria' => $record['id_categoria']]); ?>, "icon-after": "add|<?php echo Modules::get('Categorie impianti')['id']; ?>|id_original=<?php echo $record['id_categoria']; ?>" ]}
+                        </div>
 					</div>
 				</div>
 			</div>
 
 			<div class="row">
-
-
 				<div class="col-md-4">
 					{[ "type": "date", "label": "<?php echo tr('Data installazione'); ?>", "name": "data", "value": "$data$" ]}
 				</div>
@@ -90,19 +91,15 @@ if (!empty($record['immagine'])) {
 					{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "value": "$idsede$", "required": "1", "ajax-source": "sedi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "placeholder": "'.tr('Sede legale').'" ]}
 				</div>';
                 ?>
+				<div class="col-md-4">
+					{[ "type": "text", "label": "<?php echo tr('Proprietario'); ?>", "name": "proprietario", "value": "$proprietario$" ]}
+				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-md-12">
 					{[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "value": "$descrizione$" ]}
 				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-md-12">
-					{[ "type": "text", "label": "<?php echo tr('Proprietario'); ?>", "name": "proprietario", "value": "$proprietario$" ]}
-				</div>
-
 			</div>
 
 			<div class="row">
@@ -201,5 +198,12 @@ $(document).ready(function() {
 		$("#idsede").prop("disabled", value)
             .selectReset();
 	});
+
+	$("#id_categoria").change(function() {
+    updateSelectOption("id_categoria", $(this).val());
+
+	$("#id_sottocategoria").val(null).trigger("change");
+	});
+
 });
 </script>

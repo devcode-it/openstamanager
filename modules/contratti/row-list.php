@@ -201,13 +201,13 @@ foreach ($righe as $riga) {
     if (empty($record['is_completato'])) {
         echo '
                     <div class="btn-group">';
-                    if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
-                        echo '
+        if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
+            echo '
                         <a class="btn btn-primary btn-xs" title="'.tr('Modifica seriali della riga').'" onclick="modificaSeriali(this)">
                             <i class="fa fa-barcode"></i>
                         </a>';
-                    }
-                    echo '
+        }
+        echo '
                         <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga').'" onclick="modificaRiga(this)">
                             <i class="fa fa-edit"></i>
                         </a>

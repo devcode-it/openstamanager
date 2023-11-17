@@ -289,8 +289,8 @@ if (empty(get('modal'))) {
                     $id = $data[0]['idcontratto'];
                 }
 
-                 // Inserito su vendita banco
-                 elseif (!empty($vendita['id_riga_venditabanco'])) {
+                // Inserito su vendita banco
+                elseif (!empty($vendita['id_riga_venditabanco'])) {
                     $module_id = Modules::get('Vendita al banco')['id'];
 
                     // Ricerca vendite su contratti

@@ -1238,3 +1238,7 @@ kbd{
 .read-more-target:target {
     display: block;
 }
+
+.fc-day-today {
+    background:#fafad2 !important;
+} 

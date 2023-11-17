@@ -53,7 +53,7 @@ La documentazione ufficiale è disponibile all'indirizzo <https://docs.openstama
 
 <!-- /TOC -->
 
-## Requisiti
+## Requisiti software
 
 L'installazione del gestionale richiede la presenza di un server web con abilitato il [DBMS MySQL](https://www.mysql.com)  e il linguaggio di programmazione [PHP](https://php.net).
 
@@ -84,6 +84,18 @@ L'installazione del gestionale richiede la presenza di un server web con abilita
 </table>
 
 Per ulteriori informazioni sui pacchetti che forniscono questi elementi di default, visitare la sezione [Installazione](https://docs.openstamanager.com/configurazione/installazione) della documentazione.
+
+### Requisiti hardware
+
+Minimi:
+- 1 CPU
+- 2GB di ram
+- 200MB di spazio per il gestionale
+
+Consigliati:
+- 2 CPU
+- 4GB di ram
+- 2GB di spazio per il gestionale
 
 ## Installazione rapida
 ```bash

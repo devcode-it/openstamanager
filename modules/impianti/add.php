@@ -36,22 +36,25 @@ $id_anagrafica = filter('id_anagrafica');
 	</div>
 
 	<div class="row">
-		<div class="col-md-6">
+		<div class="col-md-4">
 			{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "id": "idanagrafica_impianto", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "clienti", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Cliente&readonly_tipo=1||<?php echo !empty($id_anagrafica) ? 'disabled' : ''; ?>", "readonly": "<?php echo !empty($id_anagrafica) ? 1 : 0; ?>"  ]}
 		</div>
 
-		<div class="col-md-6">
+		<div class="col-md-4">
 			{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "value": "$idsede$", "ajax-source": "sedi", "select-options": <?php echo json_encode(['idanagrafica' => $id_anagrafica]); ?>, "placeholder": "Sede legale" ]}
+		</div>
+		<div class="col-md-4">
+			{[ "type": "select", "label": "<?php echo tr('Tecnico predefinito'); ?>", "name": "idtecnico", "ajax-source": "tecnici", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Tecnico&readonly_tipo=1"  ]}
 		</div>
 	</div>
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Tecnico predefinito'); ?>", "name": "idtecnico", "ajax-source": "tecnici", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Tecnico&readonly_tipo=1"  ]}
+			{[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "id_categoria", "required": 0, "ajax-source": "categorie_imp", "icon-after": "add|<?php echo Modules::get('Categorie impianti')['id']; ?>" ]}
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "values": "query=SELECT id, nome AS descrizione FROM my_impianti_categorie", "icon-after": "add|<?php echo Modules::get('Categorie impianti')['id']; ?>" ]}
+			{[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "id_sottocategoria", "id": "sottocategoria_add", "ajax-source": "sottocategorie_imp", "icon-after": "add|<?php echo Modules::get('Categorie impianti')['id']; ?>||hide" ]}
 		</div>
 	</div>
 
@@ -64,7 +67,25 @@ $id_anagrafica = filter('id_anagrafica');
 </form>
 
 <script type="text/javascript">
-$(document).ready(function() {
+$(document).ready(function () {
+    var sub = $('#add-form').find('#sottocategoria_add');
+    var original = sub.parent().find(".input-group-addon button").attr("onclick");
+
+    $('#add-form').find('#id_categoria').change(function() {
+        updateSelectOption("id_categoria", $(this).val());
+        session_set('superselect,id_categoria', $(this).val(), 0);
+
+        sub.selectReset();
+
+        if($(this).val()){
+            sub.parent().find(".input-group-addon button").removeClass("hide");
+            sub.parent().find(".input-group-addon button").attr("onclick", original.replace('&ajax=yes', "&ajax=yes&id_original=" + $(this).val()));
+        }
+        else {
+            sub.parent().find(".input-group-addon button").addClass("hide");
+        }
+    });
+
 	input('idanagrafica').change(function() {
         updateSelectOption("idanagrafica", $(this).val());
 		session_set('superselect,idanagrafica', $(this).val(), 0);

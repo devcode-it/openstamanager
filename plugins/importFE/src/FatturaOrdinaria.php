@@ -106,7 +106,20 @@ class FatturaOrdinaria extends FatturaElettronica
         $riepiloghi = $this->getBody()['DatiBeniServizi']['DatiRiepilogo'];
         $riepiloghi = $this->forceArray($riepiloghi);
 
+        $riepiloghi_raggruppati = [];
+
         foreach ($riepiloghi as $riepilogo) {
+            $aliquota_iva = $riepilogo['AliquotaIVA'];
+            
+            if (array_key_exists($aliquota_iva, $riepiloghi_raggruppati)) {
+                $riepiloghi_raggruppati[$aliquota_iva]['ImponibileImporto'] += $riepilogo['ImponibileImporto'];
+                $riepiloghi_raggruppati[$aliquota_iva]['Imposta'] += $riepilogo['Imposta'];
+            } else {
+                $riepiloghi_raggruppati[$aliquota_iva] = $riepilogo;
+            }
+        }
+
+        foreach ($riepiloghi_raggruppati as $riepilogo) {
             $valore = 0;
             if (isset($riepilogo['Arrotondamento']) && $riepilogo['Arrotondamento'] != 0 && round($totale_imposta[$riepilogo['AliquotaIVA']], 2) != (float) $riepilogo['Imposta']) {
                 $valore = $riepilogo['Arrotondamento'];
@@ -238,14 +251,13 @@ class FatturaOrdinaria extends FatturaElettronica
                     $conto_arrotondamenti = $conto[$key];
                 }
 
-                $obj->id_rivalsa_inps = $id_rivalsa;
-
                 $obj->ritenuta_contributi = $ritenuta_contributi;
 
                 // Inserisco la ritenuta se è specificata nella riga o se non è specificata nella riga ma è presente in Dati ritenuta (quindi comprende tutte le righe)
                 if (!empty($riga['Ritenuta']) || $info['ritenuta_norighe'] == true) {
                     $obj->id_ritenuta_acconto = $id_ritenuta_acconto;
                     $obj->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
+                    $obj->id_rivalsa_inps = $id_rivalsa;
                 }
 
                 // Totale documento
@@ -474,7 +486,9 @@ class FatturaOrdinaria extends FatturaElettronica
         if (!empty($casse)) {
             $totale = 0;
             foreach ($righe as $riga) {
-                $totale += $riga['PrezzoTotale'];
+                if ($riga['Ritenuta']) {
+                    $totale += $riga['PrezzoTotale'];
+                }
             }
             $casse = isset($casse[0]) ? $casse : [$casse];
 
@@ -502,6 +516,8 @@ class FatturaOrdinaria extends FatturaElettronica
             $id_rivalsa = $rivalsa['id'];
         }
 
+        $percentuale = 0;
+        $importo = 0;
         // Ritenuta d'Acconto
         $ritenuta = $dati_generali['DatiRitenuta'];
         if (!empty($ritenuta)) {

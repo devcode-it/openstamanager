@@ -41,7 +41,7 @@ if (!empty(get('date_end'))) {
     $date_end = get('date_end');
 }
 
-if (get('id_anagrafica') != 'null') {
+if (get('id_anagrafica') && get('id_anagrafica') != 'null') {
     $module_query = str_replace('1=1', '1=1 AND co_scadenziario.idanagrafica="'.get('id_anagrafica').'"', $module_query);
     $id_anagrafica = get('id_anagrafica');
 }

@@ -28,7 +28,7 @@ $op = filter('op');
 switch ($op) {
     case 'login':
         $username = post('username');
-        $password = post('password');
+        $password = $_POST['password'];
 
         if ($dbo->isConnected() && $dbo->isInstalled() && auth()->attempt($username, $password)) {
             $_SESSION['keep_alive'] = true;

@@ -265,7 +265,7 @@ $query .= ' ORDER BY descrizione';
 
                 <!-- TODO: da nascondere per le fatture di vendita in quanto questa data sarà sempre uguale alla data di emissione -->
                 <div class="col-md-2" <?php echo ($is_fiscale) ? '' : 'hidden'; ?>>
-                    {[ "type": "date", "class":"<?php echo (dateFormat($fattura->data_competenza) <= dateFormat($fattura->data)) ? 'unblockable' : ''; ?>", "label": "<?php echo tr('Data competenza'); ?>", "name": "data_competenza", "required": 1, "value": "$data_competenza$", "min-date": "$data$", "help": "<?php echo tr('Data nella quale considerare il movimento contabile, che può essere posticipato rispetto la data della fattura'); ?>" ]}
+                    {[ "type": "date", "class":"unblockable", "label": "<?php echo tr('Data competenza'); ?>", "name": "data_competenza", "required": 1, "value": "$data_competenza$", "min-date": "$data$", "help": "<?php echo tr('Data nella quale considerare il movimento contabile, che può essere posticipato rispetto la data della fattura'); ?>" ]}
                 </div>
 
 					<?php

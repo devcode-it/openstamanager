@@ -116,19 +116,19 @@ if (!empty($interventi)) {
                 // Raggruppamento per tipologia descrizione
                 $tipologie[$sessione->tipo->descrizione]['ore'] += $sessione->ore;
                 $tipologie[$sessione->tipo->descrizione]['costo'] += $sessione->costo_manodopera + $sessione->costo_viaggio + $sessione->costo_diritto_chiamata;
-                $tipologie[$sessione->tipo->descrizione]['ricavo'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera + $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio + $sessione->prezzo_diritto_chiamata - $sessione->sconto_totale_viaggio;
+                $tipologie[$sessione->tipo->descrizione]['ricavo'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera + $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio + $sessione->prezzo_diritto_chiamata;
 
                 // Raggruppamento per tecnico
                 $tecnici[$sessione->anagrafica->ragione_sociale]['ore'] += $sessione->ore;
                 $tecnici[$sessione->anagrafica->ragione_sociale]['km'] += $sessione->km;
                 $tecnici[$sessione->anagrafica->ragione_sociale]['costo'] += $sessione->costo_manodopera + $sessione->costo_viaggio + $sessione->costo_diritto_chiamata;
-                $tecnici[$sessione->anagrafica->ragione_sociale]['ricavo'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera + $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio + $sessione->prezzo_diritto_chiamata - $sessione->sconto_totale_viaggio;
+                $tecnici[$sessione->anagrafica->ragione_sociale]['ricavo'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera + $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio + $sessione->prezzo_diritto_chiamata;
 
                 // Raggruppamento per stato intervento
                 $stati_intervento[$intervento->stato->descrizione]['colore'] = $intervento->stato->colore;
                 $stati_intervento[$intervento->stato->descrizione]['ore'] += $sessione->ore;
                 $stati_intervento[$intervento->stato->descrizione]['costo'] += $sessione->costo_manodopera + $sessione->costo_viaggio + $sessione->costo_diritto_chiamata;
-                $stati_intervento[$intervento->stato->descrizione]['ricavo'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera + $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio + $sessione->prezzo_diritto_chiamata - $sessione->sconto_totale_viaggio;
+                $stati_intervento[$intervento->stato->descrizione]['ricavo'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera + $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio + $sessione->prezzo_diritto_chiamata;
             }
 
             echo '

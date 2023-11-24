@@ -27,26 +27,32 @@ include_once __DIR__.'/../../core.php';
   <input type="hidden" name="dir" value="<?php echo $dir; ?>">
 
   <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
       {[ "type": "select", "label": "<?php echo tr('Anagrafica'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "anagrafiche" ]}
     </div>
 
-    <div class="col-md-4">
+    <div class="col-md-6">
       {[ "type": "select", "label": "<?php echo tr('Tipo'); ?>", "name": "tipo", "required": 1, "ajax-source": "tipi_scadenze", "icon-after": "add|<?php echo Modules::get('Tipi scadenze')['id']; ?>" ]}
     </div>
-
-    <div class="col-md-2">
+  </div>
+  <div class="row">
+    <div class="col-md-6">
       {[ "type": "date", "label": "<?php echo tr('Data scadenza'); ?>", "name": "data", "required": 1, "value": "-now-" ]}
     </div>
-
-    <div class="col-md-2">
+    <div class="col-md-6">
       {[ "type": "number", "label": "<?php echo tr('Importo'); ?>", "name": "da_pagare", "required": 1, "value": "", "help": "Le scadenze inserite con importo positivo indicano un credito da un cliente, le scadenze inserite con importo negativo indicano un debito verso un fornitore" ]}
     </div>
   </div>
-
   <div class='row'>
     <div class='col-md-12'>
-      {[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "" ]}
+      <?php echo input([
+        'type' => 'ckeditor',
+        'label' => tr('Descrizione'),
+        'name' => 'descrizione',
+        'required' => 1,
+        'value' => "",
+      ]); ?>
+
     </div>
   </div>
 

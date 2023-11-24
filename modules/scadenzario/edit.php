@@ -37,8 +37,6 @@ echo '
 		<div class="panel-heading">
 			<h3 class="panel-title">
 			    '.tr('Dettagli scadenza').'
-                <button type="button" class="btn btn-xs btn-info pull-right tip" id="add-scadenza" '.(empty($documento) ? 'disabled' : '').' title="'.tr('È possibile aggiungere scadenze solo se è presente il collegamento a un documento, in caso contrario è consigliato creare più scadenze con la stessa descrizione').'">
-                    <i class="fa fa-plus"></i> '.tr('Aggiungi scadenza').'
                 </button>
             </h3>
 		</div>
@@ -66,7 +64,9 @@ if (!empty($documento)) {
                             <th>'.tr('Numero').':</th>
                             <td>'.$numero.'</td>
                         </tr>
+                    </table>    
 
+                    <table class="table table-striped table-hover table-condensed table-bordered">
                         <tr>
                             <th>'.tr('Data').':</th>
                             <td>'.Translator::dateToLocale($documento->data).'</td>
@@ -75,30 +75,52 @@ if (!empty($documento)) {
                         <tr>
                             <th>'.tr('Netto a pagare').':</th>
                             <td>'.moneyFormat($documento->netto).'</td>
-                        </tr>';
-} else {
-    $scadenza = $dbo->fetchOne('SELECT * FROM co_scadenziario WHERE id = '.prepare($id_record));
-    echo '
-                        <tr>
-                            <th>'.tr('Descrizione').':</th>
-                            <td>
-                                {[ "type": "textarea", "name": "descrizione", "value": "'.$record['descrizione'].'" ]}
-                            </td>
-                        </tr>';
-}
-
-echo '
-                        <tr>
-                            <th>'.tr('Note').':</th>
-                            <td>
-                                {[ "type": "textarea", "name": "note", "value": "'.$record['note'].'" ]}
-                            </td>
                         </tr>
-
                         <tr>
                             <th>'.tr('Info distinta').' <span class="tip" title="'.tr('Informazioni/Note sulla distinta associata alla scadenza (es. numero)').'" ><i class="fa fa-question-circle-o" ></i></span>:</th>
                             <td>
                                 {[ "type": "text", "name": "distinta", "value": "'.$record['distinta'].'" ]}
+                            </td>
+                        </tr>
+                    </table>
+
+                    '.Modules::link($documento->module, $record['iddocumento'], '<i class="fa fa-folder-open"></i> '.tr('Apri documento'), null, 'class="btn btn-primary"').'
+                </div>';
+} else {
+    $scadenza = $dbo->fetchOne('SELECT * FROM co_scadenziario WHERE id = '.prepare($id_record));
+    echo '          
+                    </table>
+                    <table class="table table-striped table-hover table-condensed table-bordered">
+                        <tr>
+                            <td>';
+                                echo input([
+                                    'type' => 'ckeditor',
+                                    'label' => tr('descrizione'),
+                                    'name' => 'descrizione',
+                                    'required' => 1,
+                                    'extra' => 'rows="2"',
+                                    'value' => $record['descrizione'],
+                                ]);
+                                echo '
+                            </td>
+                        </tr>
+                    </table>
+                </div>';
+}
+
+echo '
+                <div class="col-md-6">
+                    <table class="table table-striped table-hover table-condensed table-bordered">
+                        <tr>
+                            <td>';
+                            echo input([
+                                'type' => 'ckeditor',
+                                'label' => tr('Note'),
+                                'name' => 'note',
+                                'extra' => 'rows="2"',
+                                'value' =>$record['note'],
+                            ]);
+                            echo '
                             </td>
                         </tr>';
 
@@ -112,25 +134,40 @@ echo '
 echo '
                     </table>';
 
-            if (!empty($documento)) {
-                echo Modules::link($documento->module, $record['iddocumento'], '<i class="fa fa-folder-open"></i> '.tr('Apri documento'), null, 'class="btn btn-primary"');
-            }
+
 echo '
 				</div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                '.tr('Rate scadenza').'
+                <button type="button" class="btn btn-xs btn-info pull-right tip" id="add-scadenza" '.(empty($documento) ? 'disabled' : '').' title="'.tr('È possibile aggiungere scadenze solo se è presente il collegamento a un documento, in caso contrario è consigliato creare più scadenze con la stessa descrizione').'">
+                    <i class="fa fa-plus"></i> '.tr('Aggiungi scadenza').'
+                </button>
+            </h3>
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-hover table-condensed table-bordered">
+                            <thead>
+                                <tr>
+                                    <th style="width:3%;">'.tr('Rata').'</th>
+                                    <th style="width:7%;">'.tr('Data').'</th>
+                                    <th style="width:10%;">'.tr('Importo').'</th>
+                                    <th style="width:10%;">'.tr('Pagato').'</th>
+                                    <th style="width:7%;">'.tr('Data concordata').'</th>
+                                    <th style="width:15%;">'.tr('Banca accredito').'</th> 
+                                    <th style="width:15%;">'.tr('Banca addebito').'</th> 
+                                    <th style="width:10%;">'.tr('Tipologia').'</th>
+                                </tr>
+                            </thead>
 
-				<!-- Elenco scadenze -->
-				<div class="col-md-6">
-					<table class="table table-hover table-condensed table-bordered">
-                        <thead>
-                            <tr>
-                                <th width="150">'.tr('Data').'</th>
-                                <th width="150">'.tr('Importo').'</th>
-                                <th width="150">'.tr('Pagato').'</th>
-                                <th width="150">'.tr('Data concordata').'</th>
-                            </tr>
-                        </thead>
-
-                        <tbody id="scadenze">';
+                            <tbody id="scadenze">';
 
 foreach ($scadenze as $i => $scadenza) {
     if ($scadenza['da_pagare'] == $scadenza['pagato']) {
@@ -144,50 +181,67 @@ foreach ($scadenze as $i => $scadenza) {
     }
 
     echo '
-                        <tr class="'.$class.'">
-                            <input type="hidden" name="id_scadenza['.$i.']" value="'.$scadenza['id'].'">
+                            <tr class="'.$class.'">
+                                <input type="hidden" name="id_scadenza['.$i.']" value="'.$scadenza['id'].'">
 
-                            <td align="center">
-                                {[ "type": "date", "name": "scadenza['.$i.']", "value": "'.$scadenza['scadenza'].'" ]}
-                            </td>
+                                <td align="center">
+                                    <a onclick="launch_modal(\''.tr('Registra contabile pagamento').'\', \''.base_path().'/add.php?id_module='.Modules::get('Prima nota')['id'].'&id_scadenze='.$scadenza['id'].'\');" class="btn btn-sm btn-primary">
+                                        <i class="fa fa-euro"></i> '.($scadenza['da_pagare'] > 0 ? tr('Incassa') : tr('Paga')).'
+                                    </a>
+                                </td>
 
-                            <td class="text-right">
-                                {[ "type": "number", "name": "da_pagare['.$i.']", "decimals": 2, "value": "'.numberFormat($scadenza['da_pagare'], 2).'", "onchange": "controlloTotale()" ]}
-                            </td>
+                                <td align="center">
+                                    {[ "type": "date", "name": "scadenza['.$i.']", "value": "'.$scadenza['scadenza'].'" ]}
+                                </td>
 
-                            <td class="text-right">
-                                {[ "type": "number", "name": "pagato['.$i.']", "decimals": 2, "value": "'.numberFormat($scadenza['pagato']).'"  ]}
-                            </td>
+                                <td class="text-right">
+                                    {[ "type": "number", "name": "da_pagare['.$i.']", "decimals": 2, "value": "'.numberFormat($scadenza['da_pagare'], 2).'", "onchange": "controlloTotale()" ]}
+                                </td>
 
-                            <td align="center">
-                                {[ "type": "date", "name": "data_concordata['.$i.']", "value": "'.$scadenza['data_concordata'].'" ]}
-                            </td>
-                        </tr>';
-}
+                                <td class="text-right">
+                                    {[ "type": "number", "name": "pagato['.$i.']", "decimals": 2, "value": "'.numberFormat($scadenza['pagato']).'"  ]}
+                                </td>
 
-echo '
+                                <td align="center">
+                                    {[ "type": "date", "name": "data_concordata['.$i.']", "value": "'.$scadenza['data_concordata'].'" ]}
+                                </td>
+
+                                <td align="center">
+                                    '.($scadenza['da_pagare'] > 0 ?
+                                    '{[ "type": "select", "name": "id_banca_azienda['.$i.']", "ajax-source": "banche", "select-options": '. json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['id_banca_azienda'].'", "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'" ]}' 
+                                    :
+                                    '{[ "type": "select", "name": "id_banca_controparte['.$i.']", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $documento->idanagrafica]).', "value": "'.$scadenza['id_banca_controparte'].'", "icon-after": "add|'. Modules::get('Banche')['id'].'|idanagrafica='. $record['idanagrafica'].'"]}
+                                    ').'
+                                </td>
+
+                                <td align="center">
+                                    '.($scadenza['da_pagare'] > 0 ?
+                                    '{[ "type": "select", "name": "id_banca_controparte['.$i.']", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $documento->idanagrafica]).', "value": "'.$scadenza['id_banca_controparte'].'", "icon-after": "add|'. Modules::get('Banche')['id'].'|idanagrafica='. $record['idanagrafica'].'"]}'
+                                    :
+                                    '{[ "type": "select", "name": "id_banca_azienda['.$i.']", "ajax-source": "banche", "select-options": '. json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['id_banca_azienda'].'", "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
+                                    ).'
+                                </td>
+
+                                <td>
+                                    {[ "type": "select", "name": "tipo_pagamento['.$i.']", "ajax-source": "pagamenti", "select-options": '. json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['tipo_pagamento'].'" ]}
+                                </td>
+                            </tr>';
+                        }
+                        
+                        echo '
                         </tbody>
                         <tfoot>
                             <tr>
+                            <td class="text-right"></td>
                                 <td class="text-right"><b>'.tr('Totale').'</b></td>
                                 <td class="text-right" id="totale_utente">'.numberFormat($totale_da_pagare).'</td>
+                                <td class="text-right"></td>
+                                <td class="text-right"></td>
                                 <td class="text-right"></td>
                                 <td class="text-right"></td>
                             </tr>
                         </tfoot>
 					</table>';
-
-if ($totale_da_pagare != 0) {
-    echo '
-                    <div class="pull-right">
-                        <a onclick="launch_modal(\''.tr('Registra contabile pagamento').'\', \''.base_path().'/add.php?id_module='.Modules::get('Prima nota')['id'].'&'.(!empty($record['iddocumento']) ? 'id_documenti='.$record['iddocumento'].'&single=1' : 'id_scadenze='.$id_record).'\');" class="btn btn-sm btn-primary">
-                            <i class="fa fa-euro"></i> '.tr('Registra contabile pagamento...').'
-                        </a>
-                    </div>
-
-					<div class="clearfix"></div>
-                    <br>';
-}
 ?>
 
 					<div class="alert alert-warning hide" id="totale"><?php echo tr('Il totale da pagare non corrisponde con il totale della fattura che è pari a _MONEY_', [

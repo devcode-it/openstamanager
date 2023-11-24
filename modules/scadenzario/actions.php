@@ -40,16 +40,17 @@ switch (post('op')) {
         $tipo = post('tipo');
         $descrizione = post('descrizione');
         $iddocumento = post('iddocumento') ?: 0;
+        $scadenze = Scadenza::where('iddocumento', $iddocumento)->get();
 
         $totale_pagato = 0;
         $id_scadenza_non_completa = null;
-        foreach (post('da_pagare') as $id => $da_pagare) {
+        foreach ($scadenze as $id => $scadenza) {
             $pagato = post('pagato')[$id];
             $scadenza = post('scadenza')[$id];
             $data_concordata = post('data_concordata')[$id];
 
             $pagato = floatval($pagato);
-            $da_pagare = floatval($da_pagare);
+            $da_pagare = post('da_pagare')[$id];
 
             if (!empty($iddocumento)) {
                 $id_tipo = $dbo->selectOne('co_documenti', 'idtipodocumento', ['id' => $iddocumento])['idtipodocumento'];
@@ -78,6 +79,9 @@ switch (post('op')) {
             }
 
             $totale_pagato = sum($totale_pagato, $pagato);
+            $tipo_pagamento = post('tipo_pagamento')[$id];
+            $id_banca_azienda = post('id_banca_azienda')[$id];
+            $id_banca_controparte = post('id_banca_controparte')[$id];
 
             $id_scadenza = post('id_scadenza')[$id];
             if (!empty($id_scadenza)) {
@@ -88,6 +92,9 @@ switch (post('op')) {
                     'pagato' => $pagato,
                     'scadenza' => $scadenza,
                     'data_concordata' => $data_concordata,
+                    'tipo_pagamento' => $tipo_pagamento,
+                    'id_banca_azienda' => $id_banca_azienda,
+                    'id_banca_controparte' => $id_banca_controparte,
                     'note' => post('note'),
                     'distinta' => post('distinta') ?: null,
                 ], ['id' => $id_scadenza]);

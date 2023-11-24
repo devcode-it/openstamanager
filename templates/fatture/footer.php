@@ -61,10 +61,10 @@ echo "
                 <tr>
                     <td style='width:10mm;'>&nbsp;</td>
 
-                    <td style='width:45mm;'>
+                    <td style='width:80mm;'>
                         <table class='border-bottom'>
                             <tr>
-                                <td colspan='3'>
+                                <td colspan='4'>
                                     <p class='small-bold'>".tr('Scadenze pagamenti', [], ['upper' => true]).'</p>
                                 </td>
                             </tr>';
@@ -73,16 +73,20 @@ echo "
 $rs2 = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE iddocumento='.prepare($id_record).' ORDER BY `scadenza` ASC');
 if (!empty($rs2)) {
     for ($i = 0; $i < sizeof($rs2); ++$i) {
+        $pagamento = $dbo->fetchOne('SELECT descrizione FROM co_pagamenti WHERE id='.$rs2[$i]['tipo_pagamento'])['descrizione'];
         echo '
                             <tr>
-                                <td>
+                                <td style=\'width:15%;\'>
                                     <small>'.Translator::dateToLocale($rs2[$i]['scadenza'])."</small>
                                 </td>
-                                <td style='width:25%;' class='text-right'>
+                                <td style='width:15%;' class='text-right'>
                                     ".(($rs2[$i]['pagato'] == $rs2[$i]['da_pagare']) ? '<small>PAGATO</small>' : '')."
                                 </td>
-                                <td style='width:35%;' class='text-right'>
+                                <td style='width:15%;' class='text-right'>
                                     <small>".moneyFormat($rs2[$i]['da_pagare'], 2).'</small>
+                                </td>
+                                <td style=\'width:15%;\'>
+                                    <small>'.$pagamento.'</small>
                                 </td>
                             </tr>';
     }

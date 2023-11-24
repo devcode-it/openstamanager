@@ -199,9 +199,7 @@ class Mastrino extends Model
             $totale_da_distribuire = Movimento::where('id_scadenza', '=', $scadenza->id)
                 ->where('totale', '>', 0)
                 ->sum('totale');
-        }
-
-        else if ($scadenza) {
+        } elseif ($scadenza) {
             $scadenze = [$scadenza];
             $dir = $documento->direzione;
 
@@ -209,10 +207,9 @@ class Mastrino extends Model
                 ->where('totale', '>', 0)
                 ->sum('totale');
         }
-        
 
         // Gestione delle scadenze di un documento
-        else if ($documento) {
+        elseif ($documento) {
             $dir = $documento->direzione;
             $scadenze = $documento->scadenze->sortBy('scadenza');
 

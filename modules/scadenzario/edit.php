@@ -89,11 +89,10 @@ if (!empty($documento)) {
 } else {
     $scadenza = $dbo->fetchOne('SELECT * FROM co_scadenziario WHERE id = '.prepare($id_record));
     echo '          
-                    </table>
                     <table class="table table-striped table-hover table-condensed table-bordered">
                         <tr>
                             <td>';
-                                echo input([
+    echo input([
                                     'type' => 'ckeditor',
                                     'label' => tr('descrizione'),
                                     'name' => 'descrizione',
@@ -101,7 +100,7 @@ if (!empty($documento)) {
                                     'extra' => 'rows="2"',
                                     'value' => $record['descrizione'],
                                 ]);
-                                echo '
+    echo '
                             </td>
                         </tr>
                     </table>
@@ -118,7 +117,7 @@ echo '
                                 'label' => tr('Note'),
                                 'name' => 'note',
                                 'extra' => 'rows="2"',
-                                'value' =>$record['note'],
+                                'value' => $record['note'],
                             ]);
                             echo '
                             </td>
@@ -134,7 +133,6 @@ echo '
 echo '
                     </table>';
 
-
 echo '
 				</div>
             </div>
@@ -149,25 +147,25 @@ echo '
                 </button>
             </h3>
         </div>
-        <div class="panel panel-primary">
-            <div class="panel-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <table class="table table-hover table-condensed table-bordered">
-                            <thead>
-                                <tr>
-                                    <th style="width:3%;">'.tr('Rata').'</th>
-                                    <th style="width:7%;">'.tr('Data').'</th>
-                                    <th style="width:10%;">'.tr('Importo').'</th>
-                                    <th style="width:10%;">'.tr('Pagato').'</th>
-                                    <th style="width:7%;">'.tr('Data concordata').'</th>
-                                    <th style="width:15%;">'.tr('Banca accredito').'</th> 
-                                    <th style="width:15%;">'.tr('Banca addebito').'</th> 
-                                    <th style="width:10%;">'.tr('Tipologia').'</th>
-                                </tr>
-                            </thead>
 
-                            <tbody id="scadenze">';
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-hover table-condensed table-bordered text-center">
+                        <thead>
+                            <tr>
+                                <th style="width:3%;">'.tr('Rata').'</th>
+                                <th style="width:10%;">'.tr('Data').'</th>
+                                <th style="width:10%;">'.tr('Importo').'</th>
+                                <th style="width:10%;">'.tr('Pagato').'</th>
+                                <th style="width:10%;">'.tr('Data concordata').'</th>
+                                <th style="width:20%;">'.tr('Banca accredito').'</th> 
+                                <th style="width:20%;">'.tr('Banca addebito').'</th> 
+                                <th style="width:20%;">'.tr('Tipologia').'</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="scadenze">';
 
 foreach ($scadenze as $i => $scadenza) {
     if ($scadenza['da_pagare'] == $scadenza['pagato']) {
@@ -208,26 +206,26 @@ foreach ($scadenze as $i => $scadenza) {
 
                                 <td align="center">
                                     '.($scadenza['da_pagare'] > 0 ?
-                                    '{[ "type": "select", "name": "id_banca_azienda['.$i.']", "ajax-source": "banche", "select-options": '. json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['id_banca_azienda'].'", "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'" ]}' 
+                                    '{[ "type": "select", "name": "id_banca_azienda['.$i.']", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['id_banca_azienda'].'", "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
                                     :
-                                    '{[ "type": "select", "name": "id_banca_controparte['.$i.']", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $documento->idanagrafica]).', "value": "'.$scadenza['id_banca_controparte'].'", "icon-after": "add|'. Modules::get('Banche')['id'].'|idanagrafica='. $record['idanagrafica'].'"]}
+                                    '{[ "type": "select", "name": "id_banca_controparte['.$i.']", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).', "value": "'.$scadenza['id_banca_controparte'].'", "icon-after": "add|'.Modules::get('Banche')['id'].'|idanagrafica='.$record['idanagrafica'].'"]}
                                     ').'
                                 </td>
 
                                 <td align="center">
                                     '.($scadenza['da_pagare'] > 0 ?
-                                    '{[ "type": "select", "name": "id_banca_controparte['.$i.']", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $documento->idanagrafica]).', "value": "'.$scadenza['id_banca_controparte'].'", "icon-after": "add|'. Modules::get('Banche')['id'].'|idanagrafica='. $record['idanagrafica'].'"]}'
+                                    '{[ "type": "select", "name": "id_banca_controparte['.$i.']", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).', "value": "'.$scadenza['id_banca_controparte'].'", "icon-after": "add|'.Modules::get('Banche')['id'].'|idanagrafica='.$record['idanagrafica'].'"]}'
                                     :
-                                    '{[ "type": "select", "name": "id_banca_azienda['.$i.']", "ajax-source": "banche", "select-options": '. json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['id_banca_azienda'].'", "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
+                                    '{[ "type": "select", "name": "id_banca_azienda['.$i.']", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['id_banca_azienda'].'", "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
                                     ).'
                                 </td>
 
                                 <td>
-                                    {[ "type": "select", "name": "tipo_pagamento['.$i.']", "ajax-source": "pagamenti", "select-options": '. json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['tipo_pagamento'].'" ]}
+                                    {[ "type": "select", "name": "tipo_pagamento['.$i.']", "ajax-source": "pagamenti", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['tipo_pagamento'].'" ]}
                                 </td>
                             </tr>';
-                        }
-                        
+}
+
                         echo '
                         </tbody>
                         <tfoot>
@@ -241,22 +239,22 @@ foreach ($scadenze as $i => $scadenza) {
                                 <td class="text-right"></td>
                             </tr>
                         </tfoot>
-					</table>';
+                    </table>
+                </div>';
 ?>
 
-					<div class="alert alert-warning hide" id="totale"><?php echo tr('Il totale da pagare non corrisponde con il totale della fattura che è pari a _MONEY_', [
-                        '_MONEY_' => '<b>'.moneyFormat($totale_da_pagare).'</b>',
-                    ]); ?>.<br><?php echo tr('Differenza di _TOT_ _CURRENCY_', [
-                            '_TOT_' => '<span id="diff"></span>',
-                            '_CURRENCY_' => currency(),
-                        ]); ?>.
-					</div>
+                <div class="alert alert-warning hide" id="totale"><?php echo tr('Il totale da pagare non corrisponde con il totale della fattura che è pari a _MONEY_', [
+                    '_MONEY_' => '<b>'.moneyFormat($totale_da_pagare).'</b>',
+                ]); ?>.<br><?php echo tr('Differenza di _TOT_ _CURRENCY_', [
+                        '_TOT_' => '<span id="diff"></span>',
+                        '_CURRENCY_' => currency(),
+                    ]); ?>.
+                </div>
 
-					<input type="hidden" id="totale_da_pagare" value="<?php echo round($totale_da_pagare, 2); ?>">
-				</div>
-			</div>
-		</div>
-	</div>
+                <input type="hidden" id="totale_da_pagare" value="<?php echo round($totale_da_pagare, 2); ?>">
+            </div>
+        </div>
+    </div>
 </form>
 
 {( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "<?php echo $id_record; ?>" )}
@@ -265,11 +263,11 @@ foreach ($scadenze as $i => $scadenza) {
 
 <?php
 if (empty($documento)) {
-                            echo '
+                        echo '
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> '.tr('Elimina').'
 </a>';
-                        }
+                    }
 
 echo '
 <table class="hide">

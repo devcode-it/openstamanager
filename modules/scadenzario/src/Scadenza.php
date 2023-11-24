@@ -47,7 +47,7 @@ class Scadenza extends Model
         $model->tipo_pagamento = $tipo_pagamento;
         $model->id_banca_azienda = $id_banca_azienda;
         $model->id_banca_controparte = $id_banca_controparte;
-        
+
         $model->pagato = $is_pagato ? $importo : 0;
         $model->data_pagamento = $is_pagato ? $data_scadenza : null;
 

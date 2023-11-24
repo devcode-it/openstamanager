@@ -50,7 +50,7 @@ include_once __DIR__.'/../../core.php';
         'label' => tr('Descrizione'),
         'name' => 'descrizione',
         'required' => 1,
-        'value' => "",
+        'value' => '',
       ]); ?>
 
     </div>

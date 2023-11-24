@@ -370,18 +370,24 @@ $query .= ' ORDER BY descrizione';
                     <?php if ($record['id_banca_azienda'] != 0) {
                     echo Modules::link('Banche', $record['id_banca_azienda'], null, null, 'class="pull-right"');
                 }
-                    ?>
-					{[ "type": "select", "label": "<?php echo $dir == 'entrata' ? tr('Banca accredito') : tr('Banca addebito'); ?>", "name": "id_banca_azienda", "ajax-source": "banche", "select-options": <?php echo json_encode(['id_anagrafica' => $anagrafica_azienda->id]); ?>, "value": "$id_banca_azienda$", "icon-after": "add|<?php echo Modules::get('Banche')['id']; ?>|id_anagrafica=<?php echo $anagrafica_azienda->id; ?>", "extra": " <?php echo (intval($block_edit)) ? 'disabled' : ''; ?> " ]}
-				</div>
+
+                if ($dir == 'entrata') {
+                    echo '
+                    {[ "type": "select", "label": "'.tr('Banca accredito').'", "name": "id_banca_azienda", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "$id_banca_azienda$", "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'", "extra": "'.(intval($block_edit) ? 'disabled' : '').'" ]}
+                </div>
                 <div class="col-md-3">
-                    <?php if ($record['id_banca_azienda'] != 0) {
-                    echo Modules::link('Banche', $record['id_banca_azienda'], null, null, 'class="pull-right"');
+                    {[ "type": "select", "label": "'.tr('Banca addebito').'", "name": "id_banca_controparte", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $record['idanagrafica']]).', "value": "$id_banca_controparte$", "icon-after": "add|'.Modules::get('Banche')['id'].'|idanagrafica='.$record['idanagrafica'].'", "extra": "'.(intval($block_edit) ? 'disabled' : '').'" ]}';
+                } else {
+                    echo '
+                    {[ "type": "select", "label": "'.tr('Banca accredito').'", "name": "id_banca_controparte", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $record['idanagrafica']]).', "value": "$id_banca_controparte$", "icon-after": "add|'.Modules::get('Banche')['id'].'|idanagrafica='.$record['idanagrafica'].'", "extra": "'.(intval($block_edit) ? 'disabled' : '').'" ]}
+                </div>
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "'.tr('Banca addebito').'", "name": "id_banca_azienda", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "$id_banca_azienda$", "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'", "extra": "'.(intval($block_edit) ? 'disabled' : '').'" ]}';
                 }
-                    ?>
-					{[ "type": "select", "label": "<?php echo $dir == 'entrata' ? tr('Banca addebito') : tr('Banca accredito'); ?>", "name": "id_banca_controparte", "ajax-source": "banche", "select-options": <?php echo json_encode(['id_anagrafica' => $record['idanagrafica']]); ?>, "value": "$id_banca_controparte$", "icon-after": "add|<?php echo Modules::get('Banche')['id']; ?>|idanagrafica=<?php echo $record['idanagrafica']; ?>", "extra": " <?php echo (intval($block_edit)) ? 'disabled' : ''; ?> " ]}
-				</div>
-			</div>
-            
+                ?>
+                </div>
+                </div>
+
             <!-- Split payment + Fattura per conto terzi (solo uscita) + Sconto in fattura (solo uscita) -->
             <div class="row">
 
@@ -400,6 +406,12 @@ $query .= ' ORDER BY descrizione';
                     <?php
                         echo '<div class="col-md-3">
                             {[ "type": "number", "label": "'.tr('Sconto in fattura').'", "name": "sconto_finale", "value": "'.($fattura->sconto_finale_percentuale ?: $fattura->sconto_finale).'", "icon-after": "choice|untprc|'.(empty($fattura->sconto_finale) ? 'PRC' : 'UNT').'", "help": "'.tr('Sconto in fattura, utilizzabile per applicare sconti sul Netto a pagare del documento e le relative scadenze').'. '.tr('Per utilizzarlo in relazione a una riga della Fattura Elettronica, inserire il tipo di dato in \'\'Attributi avanzati\'\' -> \'\'Altri Dati Gestionali\'\' -> \'\'TipoDato\'\' e il testo di descrizione in \'\'Attributi avanzati\'\' -> \'\'Altri Dati Gestionali\'\' -> \'\'RiferimentoTesto\'\' della specifica riga').'. '.tr('Nota: lo sconto in fattura non influenza i movimenti contabili').'." ]}
+                        </div>';
+                    } else {
+                        echo '
+                        <div class="col-md-3">
+                        </div>
+                        <div class="col-md-3">
                         </div>';
                     }
 

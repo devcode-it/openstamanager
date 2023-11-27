@@ -73,7 +73,7 @@ echo "
 $rs2 = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE iddocumento='.prepare($id_record).' ORDER BY `scadenza` ASC');
 if (!empty($rs2)) {
     for ($i = 0; $i < sizeof($rs2); ++$i) {
-        $pagamento = $dbo->fetchOne('SELECT descrizione FROM co_pagamenti WHERE id='.$rs2[$i]['tipo_pagamento'])['descrizione'];
+        $pagamento = $dbo->fetchOne('SELECT fe_modalita_pagamento.descrizione FROM co_pagamenti INNER JOIN fe_modalita_pagamento ON fe_modalita_pagamento.codice = co_pagamenti.codice_modalita_pagamento_fe WHERE co_pagamenti.id='.$rs2[$i]['tipo_pagamento'])['descrizione'];
         echo '
                             <tr>
                                 <td style=\'width:15%;\'>

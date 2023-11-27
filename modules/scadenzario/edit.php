@@ -154,14 +154,14 @@ echo '
                     <table class="table table-hover table-condensed table-bordered text-center">
                         <thead>
                             <tr>
-                                <th style="width:3%;">'.tr('Rata').'</th>
-                                <th style="width:10%;">'.tr('Data').'</th>
-                                <th style="width:10%;">'.tr('Importo').'</th>
-                                <th style="width:10%;">'.tr('Pagato').'</th>
-                                <th style="width:10%;">'.tr('Data concordata').'</th>
                                 <th style="width:20%;">'.tr('Banca accredito').'</th> 
                                 <th style="width:20%;">'.tr('Banca addebito').'</th> 
                                 <th style="width:20%;">'.tr('Tipologia').'</th>
+                                <th style="width:10%;">'.tr('Data').'</th>
+                                <th style="width:10%;">'.tr('Data concordata').'</th>
+                                <th style="width:10%;">'.tr('Importo').'</th>
+                                <th style="width:10%;">'.tr('Pagato').'</th>
+                                <th style="width:3%;">'.tr('Rata').'</th>
                             </tr>
                         </thead>
 
@@ -181,29 +181,6 @@ foreach ($scadenze as $i => $scadenza) {
     echo '
                             <tr class="'.$class.'">
                                 <input type="hidden" name="id_scadenza['.$i.']" value="'.$scadenza['id'].'">
-
-                                <td align="center">
-                                    <a onclick="launch_modal(\''.tr('Registra contabile pagamento').'\', \''.base_path().'/add.php?id_module='.Modules::get('Prima nota')['id'].'&id_scadenze='.$scadenza['id'].'\');" class="btn btn-sm btn-primary">
-                                        <i class="fa fa-euro"></i> '.($scadenza['da_pagare'] > 0 ? tr('Incassa') : tr('Paga')).'
-                                    </a>
-                                </td>
-
-                                <td align="center">
-                                    {[ "type": "date", "name": "scadenza['.$i.']", "value": "'.$scadenza['scadenza'].'" ]}
-                                </td>
-
-                                <td class="text-right">
-                                    {[ "type": "number", "name": "da_pagare['.$i.']", "decimals": 2, "value": "'.numberFormat($scadenza['da_pagare'], 2).'", "onchange": "controlloTotale()" ]}
-                                </td>
-
-                                <td class="text-right">
-                                    {[ "type": "number", "name": "pagato['.$i.']", "decimals": 2, "value": "'.numberFormat($scadenza['pagato']).'"  ]}
-                                </td>
-
-                                <td align="center">
-                                    {[ "type": "date", "name": "data_concordata['.$i.']", "value": "'.$scadenza['data_concordata'].'" ]}
-                                </td>
-
                                 <td align="center">
                                     '.($scadenza['da_pagare'] > 0 ?
                                     '{[ "type": "select", "name": "id_banca_azienda['.$i.']", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['id_banca_azienda'].'", "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
@@ -222,6 +199,28 @@ foreach ($scadenze as $i => $scadenza) {
 
                                 <td>
                                     {[ "type": "select", "name": "tipo_pagamento['.$i.']", "ajax-source": "pagamenti", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['tipo_pagamento'].'" ]}
+                                </td>
+
+                                <td align="center">
+                                    {[ "type": "date", "name": "scadenza['.$i.']", "value": "'.$scadenza['scadenza'].'" ]}
+                                </td>
+
+                                <td align="center">
+                                    {[ "type": "date", "name": "data_concordata['.$i.']", "value": "'.$scadenza['data_concordata'].'" ]}
+                                </td>
+
+                                <td class="text-right">
+                                    {[ "type": "number", "name": "da_pagare['.$i.']", "decimals": 2, "value": "'.numberFormat($scadenza['da_pagare'], 2).'", "onchange": "controlloTotale()" ]}
+                                </td>
+
+                                <td class="text-right">
+                                    {[ "type": "number", "name": "pagato['.$i.']", "decimals": 2, "value": "'.numberFormat($scadenza['pagato']).'"  ]}
+                                </td>
+
+                                <td align="center">
+                                    <a onclick="launch_modal(\''.tr('Registra contabile pagamento').'\', \''.base_path().'/add.php?id_module='.Modules::get('Prima nota')['id'].'&id_scadenze='.$scadenza['id'].'\');" class="btn btn-sm btn-primary">
+                                        <i class="fa fa-euro"></i> '.($scadenza['da_pagare'] > 0 ? tr('Incassa') : tr('Paga')).'
+                                    </a>
                                 </td>
                             </tr>';
 }

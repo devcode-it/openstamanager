@@ -180,12 +180,6 @@ $("#idarticolo").on("change", function() {
     });
 });
 
-$("#idsede").on("change", function() {
-    updateSelectOption("idsede_partenza", $(this).val());
-    session_set("superselect,idsede_partenza", $(this).val(), 0);
-    $("#idarticolo").selectReset();
-});
-
 $(document).on("change", "input[name^=qta], input[name^=prezzo_unitario], input[name^=sconto]", function() {
     verificaPrezzoArticolo();
     verificaScontoArticolo();

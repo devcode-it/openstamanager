@@ -192,8 +192,24 @@ class Mastrino extends Model
         $is_nota = false;
         $documento = $documento ?: $scadenza->documento;
 
+        if ($scadenza && empty($documento)) {
+            $scadenze = [$scadenza];
+            $dir = $movimento->totale < 0 ? 'uscita' : 'entrata';
+
+            $totale_da_distribuire = Movimento::where('id_scadenza', '=', $scadenza->id)
+                ->where('totale', '>', 0)
+                ->sum('totale');
+        } elseif ($scadenza) {
+            $scadenze = [$scadenza];
+            $dir = $documento->direzione;
+
+            $totale_da_distribuire = Movimento::where('id_scadenza', '=', $scadenza->id)
+                ->where('totale', '>', 0)
+                ->sum('totale');
+        }
+
         // Gestione delle scadenze di un documento
-        if ($documento) {
+        elseif ($documento) {
             $dir = $documento->direzione;
             $scadenze = $documento->scadenze->sortBy('scadenza');
 
@@ -213,20 +229,11 @@ class Mastrino extends Model
             $is_nota = $documento->isNota();
         }
 
-        // Gestione di una singola scadenza
-        else {
-            $scadenze = [$scadenza];
-            $dir = $movimento->totale < 0 ? 'uscita' : 'entrata';
-
-            $totale_da_distribuire = Movimento::where('id_scadenza', '=', $scadenza->id)
-                ->where('totale', '>', 0)
-                ->sum('totale');
-        }
-
         $totale_da_distribuire = abs($totale_da_distribuire);
 
         // Ciclo tra le rate dei pagamenti per inserire su `pagato` l'importo effettivamente pagato
         // Nel caso il pagamento superi la rata, devo distribuirlo sulle rate successive
+
         foreach ($scadenze as $scadenza) {
             $scadenza_da_pagare = abs($scadenza['da_pagare']);
 
@@ -248,7 +255,7 @@ class Mastrino extends Model
             }
 
             // Inversione di segno per la direzione del movimento contabile
-            $pagato = $dir == 'uscita' ? -$pagato : $pagato;
+            $pagato = ($dir == 'uscita' ? -$pagato : $pagato);
             $pagato = $is_nota ? -$pagato : $pagato; // Inversione di segno per le note
 
             // Salvataggio delle informazioni

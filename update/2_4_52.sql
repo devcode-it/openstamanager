@@ -36,3 +36,7 @@ INSERT INTO `zz_prints` (`id_module`, `is_record`, `name`, `title`, `filename`, 
 
 -- Aggiunta indice per ricerca su files più rapida
 ALTER TABLE `zz_files` ADD INDEX(`id_record`);
+
+ALTER TABLE `co_scadenziario` ADD `id_pagamento` INT NOT NULL;
+ALTER TABLE `co_scadenziario` ADD `id_banca_azienda` INT NULL;
+ALTER TABLE `co_scadenziario` ADD `id_banca_controparte` INT NULL;   

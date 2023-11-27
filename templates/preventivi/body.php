@@ -367,7 +367,7 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
     // Totale imponibile
     echo '
     <tr>
-        <td colspan="'.($options['show-only-total'] ? ($options['no-iva'] ? 3 : 2) : 4).'" class="text-right border-top">
+        <td colspan="'.($options['show-only-total'] ? (($has_image) ? 3 : 2) : 4).'" class="text-right border-top">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
 

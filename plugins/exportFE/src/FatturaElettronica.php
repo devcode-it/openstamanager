@@ -23,6 +23,7 @@ use FluidXml\FluidXml;
 use GuzzleHttp\Client;
 use Modules;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Banche\Banca;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Gestori\Bollo;
 use Modules\Iva\Aliquota;
@@ -1631,7 +1632,6 @@ class FatturaElettronica
         $documento = $fattura->getDocumento();
 
         $fattura = Fattura::find($documento['id']);
-        $banca = $fattura->getBanca();
 
         $database = database();
 
@@ -1648,6 +1648,9 @@ class FatturaElettronica
 
         $co_scadenziario = $database->fetchArray('SELECT * FROM `co_scadenziario` WHERE `iddocumento` = '.prepare($documento['id']));
         foreach ($co_scadenziario as $scadenza) {
+            $co_pagamenti = $database->fetchOne('SELECT * FROM `co_pagamenti` WHERE `id` = '.prepare($scadenza['id_pagamento']));
+            $banca = Banca::find($scadenza['id_banca_azienda']);
+
             $pagamento = [
                 'ModalitaPagamento' => $co_pagamenti['codice_modalita_pagamento_fe'],
                 'DataScadenzaPagamento' => $scadenza['scadenza'],

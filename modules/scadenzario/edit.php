@@ -198,7 +198,7 @@ foreach ($scadenze as $i => $scadenza) {
                                 </td>
 
                                 <td>
-                                    {[ "type": "select", "name": "tipo_pagamento['.$i.']", "ajax-source": "pagamenti", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['tipo_pagamento'].'" ]}
+                                    {[ "type": "select", "name": "id_pagamento['.$i.']", "ajax-source": "pagamenti", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['id_pagamento'].'" ]}
                                 </td>
 
                                 <td align="center">

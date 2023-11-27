@@ -79,7 +79,7 @@ switch (post('op')) {
             }
 
             $totale_pagato = sum($totale_pagato, $pagato);
-            $tipo_pagamento = post('tipo_pagamento')[$id];
+            $id_pagamento = post('id_pagamento')[$id];
             $id_banca_azienda = post('id_banca_azienda')[$id];
             $id_banca_controparte = post('id_banca_controparte')[$id];
 
@@ -92,7 +92,7 @@ switch (post('op')) {
                     'pagato' => $pagato,
                     'scadenza' => $scadenza,
                     'data_concordata' => $data_concordata,
-                    'tipo_pagamento' => $tipo_pagamento,
+                    'id_pagamento' => $id_pagamento,
                     'id_banca_azienda' => $id_banca_azienda,
                     'id_banca_controparte' => $id_banca_controparte,
                     'note' => post('note'),

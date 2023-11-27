@@ -97,13 +97,13 @@ class Scadenze
      * @param bool   $is_pagato
      * @param string $type
      */
-    protected function registraScadenza(Fattura $fattura, $importo, $data_scadenza, $is_pagato, $tipo_pagamento, $id_banca_azienda, $id_banca_controparte, $type = 'fattura')
+    protected function registraScadenza(Fattura $fattura, $importo, $data_scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte, $type = 'fattura')
     {
         $numero = $fattura->numero_esterno ?: $fattura->numero;
         $descrizione = $fattura->tipo->descrizione.' numero '.$numero;
         $idanagrafica = $fattura->idanagrafica;
 
-        $scadenza = Scadenza::build($idanagrafica, $descrizione, $importo, $data_scadenza, $tipo_pagamento, $id_banca_azienda, $id_banca_controparte, $type, $is_pagato);
+        $scadenza = Scadenza::build($idanagrafica, $descrizione, $importo, $data_scadenza, $id_pagamento, $id_banca_azienda, $id_banca_controparte, $type, $is_pagato);
 
         $scadenza->documento()->associate($fattura);
         $scadenza->data_emissione = $fattura->data;
@@ -164,11 +164,11 @@ class Scadenze
         foreach ($rate as $rata) {
             $scadenza = $rata['scadenza'];
             $importo = $direzione == 'uscita' ? -$rata['importo'] : $rata['importo'];
-            $tipo_pagamento = $this->fattura->idpagamento;
+            $id_pagamento = $this->fattura->idpagamento;
             $id_banca_azienda = $this->fattura->id_banca_azienda;
             $id_banca_controparte = $this->fattura->id_banca_controparte;
 
-            self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, $tipo_pagamento, $id_banca_azienda, $id_banca_controparte);
+            self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte);
         }
     }
 }

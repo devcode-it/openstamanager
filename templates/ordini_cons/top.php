@@ -74,7 +74,7 @@ echo '
     <thead>
         <tr>
             <th colspan="2">'.tr('Documento', [], ['upper' => true]).'</th>
-            <th class="text-center" style="width:10%">'.tr('KM', [], ['upper' => true]).'</th>
+            <th class="text-center" style="width:10%">'.tr('Km', [], ['upper' => true]).'</th>
             <th class="text-center" style="width:10%">'.tr('Ore', [], ['upper' => true]).'</th>
             <th class="text-center" style="width:15%">'.tr('Imponibile', [], ['upper' => true]).'</th>
             <th class="text-center" style="width:15%">'.tr('Sconto', [], ['upper' => true]).'</th>

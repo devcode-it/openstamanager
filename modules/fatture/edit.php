@@ -1097,16 +1097,16 @@ if ($dir == 'entrata') {
     function bolloAutomatico() {
         let bollo_automatico = input("bollo_automatico");
         let addebita_bollo = input("addebita_bollo");
-        let has_bollo ='.($bollo->getBollo() > 0 ? 'true' : 'false').';
         if(bollo_automatico.get()==0){
             $(".bollo").show();
             input("bollo").enable();
-        } else if(!has_bollo) {
-            $(".bollo").hide();
+            input("addebita_bollo").enable();
         } else {
-            $(".bollo").show();
+            $(".bollo").hide();
             input("bollo").disable();
             $("#bollo").val('.setting('Importo marca da bollo').');
+            $("addebita_bollo").hide();
+            input("addebita_bollo").disable(); 
         }
     }
     $(document).ready(function() {

@@ -154,8 +154,8 @@ switch ($op) {
 
         // Operazioni sul bollo
         if ($dir == 'entrata') {
-            $fattura->addebita_bollo = post('addebita_bollo');
             $bollo_automatico = post('bollo_automatico');
+            $fattura->addebita_bollo = $bollo_automatico == 1 ? $bollo_automatico : post('addebita_bollo');
             if (empty($bollo_automatico)) {
                 $fattura->bollo = post('bollo');
             } else {

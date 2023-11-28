@@ -48,8 +48,8 @@ $ops = ['update', 'add_intervento', 'manage_documento_fe', 'manage_riga_fe', 'ma
 
 if ($dir == 'entrata' && ($stato_fe['codice_stato_fe'] == 'WAIT' || $stato_fe['codice_stato_fe'] == 'RC' || $stato_fe['codice_stato_fe'] == 'MC' || $stato_fe['codice_stato_fe'] == 'QUEUE' || $stato_fe['codice_stato_fe'] == 'DT' || $stato_fe['codice_stato_fe'] == 'EC01' || $stato_fe['codice_stato_fe'] == 'NE') && setting('OSMCloud Services API Token') != '' && in_array($op, $ops)) {
     
-    //Permetto sempre la modifica delle note aggiuntive
-    if ($op == 'update'){
+    //Permetto sempre la modifica delle note aggiuntive e/o della data di competenza della fattura di vendita
+    if ($op == 'update' && ($fattura->note_aggiuntive != post('note_aggiuntive') || $fattura->data_competenza != post('data_competenza'))){
         if ($fattura->note_aggiuntive != post('note_aggiuntive')){
             $fattura->note_aggiuntive = post('note_aggiuntive');
             $fattura->save();

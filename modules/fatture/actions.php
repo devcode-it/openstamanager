@@ -31,6 +31,7 @@ use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
 use Modules\Fatture\Tipo;
 use Modules\Iva\Aliquota;
+use Plugins\ExportFE\Interaction;
 use Util\XML;
 
 $module = Modules::get($id_module);
@@ -46,7 +47,7 @@ $stato_fe = $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = 
 
 $ops = ['update', 'add_intervento', 'manage_documento_fe', 'manage_riga_fe', 'manage_articolo', 'manage_sconto', 'manage_riga', 'manage_descrizione', 'unlink_intervento', 'delete_riga', 'copy_riga', 'add_serial', 'add_articolo', 'edit-price'];
 
-if ($dir == 'entrata' && ($stato_fe['codice_stato_fe'] == 'WAIT' || $stato_fe['codice_stato_fe'] == 'RC' || $stato_fe['codice_stato_fe'] == 'MC' || $stato_fe['codice_stato_fe'] == 'QUEUE' || $stato_fe['codice_stato_fe'] == 'DT' || $stato_fe['codice_stato_fe'] == 'EC01' || $stato_fe['codice_stato_fe'] == 'NE') && setting('OSMCloud Services API Token') != '' && in_array($op, $ops)) {
+if ($dir === 'entrata' && in_array($stato_fe['codice_stato_fe'], ['WAIT', 'RC', 'MC', 'QUEUE', 'DT', 'EC01', 'NE']) && Interaction::isEnabled() && in_array($op, $ops)) {
     
     //Permetto sempre la modifica delle note aggiuntive e/o della data di competenza della fattura di vendita
     if ($op == 'update' && ($fattura->note_aggiuntive != post('note_aggiuntive') || $fattura->data_competenza != post('data_competenza'))){

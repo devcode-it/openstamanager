@@ -46,10 +46,28 @@ $stato_fe = $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = 
 
 $ops = ['update', 'add_intervento', 'manage_documento_fe', 'manage_riga_fe', 'manage_articolo', 'manage_sconto', 'manage_riga', 'manage_descrizione', 'unlink_intervento', 'delete_riga', 'copy_riga', 'add_serial', 'add_articolo', 'edit-price'];
 
-if ($dir == 'entrata' && $stato_fe['codice_stato_fe'] == 'WAIT' && setting('OSMCloud Services API Token') != '' && in_array($op, $ops)) {
-    flash()->warning(tr('La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile effettuare modifiche!', [
-        '_NUM_' => $fattura->numero_esterno,
-    ]));
+if ($dir == 'entrata' && ($stato_fe['codice_stato_fe'] == 'WAIT' || $stato_fe['codice_stato_fe'] == 'RC' || $stato_fe['codice_stato_fe'] == 'MC' || $stato_fe['codice_stato_fe'] == 'QUEUE' || $stato_fe['codice_stato_fe'] == 'DT' || $stato_fe['codice_stato_fe'] == 'EC01' || $stato_fe['codice_stato_fe'] == 'NE') && setting('OSMCloud Services API Token') != '' && in_array($op, $ops)) {
+    
+    //Permetto sempre la modifica delle note aggiuntive
+    if ($op == 'update'){
+        if ($fattura->note_aggiuntive != post('note_aggiuntive')){
+            $fattura->note_aggiuntive = post('note_aggiuntive');
+            $fattura->save();
+            flash()->info(tr('Note interne modificate correttamente.'));
+        }
+
+        if ($fattura->data_competenza != post('data_competenza')){
+            $fattura->data_competenza = post('data_competenza');
+            $fattura->save();
+            flash()->info(tr('Data competenza modificata correttamente.'));
+        }
+
+    }else{
+        flash()->warning(tr('La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile effettuare modifiche.', [
+            '_NUM_' => $fattura->numero_esterno,
+        ]));
+    }
+
     $op = null;
 }
 

@@ -383,11 +383,6 @@ function renderMessages() {
             let info = messages.info ? messages.info : [];
             info.forEach(function (element) {
                 if (element) toastr["success"](element);
-                Toast.fire({
-                    icon: "success",
-                    title: element,
-                    position: 'top',
-                });
             });
 
             let warning = messages.warning ? messages.warning : [];

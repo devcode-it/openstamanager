@@ -444,16 +444,8 @@ class CSV extends CSVImporter
     public static function getExample()
     {
         return [
-            ['Codice', 'Barcode', 'Immagine', 'Import immagine', 'Descrizione', 'Fornitore predefinito', 'Quantità', 'Unità di misura', 'Prezzo acquisto', 'Prezzo vendita', 'Peso lordo (KG)', 'Volume (M3)', 'Categoria', 'Sottocategoria', 'Ubicazione', 'Note', 'Anagrafica listino', 'Codice fornitore', 'Barcode fornitore', 'Descrizione fornitore', 'Qta minima', 'Qta massima', 'Prezzo listino', 'Sconto listino', 'Cliente/Fornitore listino', 'Sede'],
-            ['00004', '719376861871', 'https://immagini.com/immagine.jpg', '1', 'Articolo', 'Mario Rossi', '10', 'Kg', '5.25', '12.72', '10.2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova', 'Mario Rossi', 'artforn01', '384574557484', 'Articolo di prova fornitore', '', '', '10', '5', 'Fornitore', 'Sede2'],
-            ['00004', '719376861871', 'https://immagini.com/immagine.jpg', '2', 'Articolo', 'Mario Rossi', '10', 'Kg', '5.25', '12.72', '10.2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova', 'Mario Rossi', 'artforn01', '384574557484', 'Articolo di prova fornitore', '1', '10', '9', '', 'Fornitore', 'Sede2'],
-            ['00004', '719376861871', 'https://immagini.com/immagine.jpg', '3', 'Articolo', 'Mario Rossi', '10', 'Kg', '5.25', '12.72', '10.2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova', 'Mario Rossi', 'artforn01', '384574557484', 'Articolo di prova fornitore', '11', '20', '8', '5', 'Fornitore', 'Sede2'],
-            ['00004', '719376861871', '', '', 'Articolo', 'Mario Rossi', '10', 'Kg', '5.25', '12.72', '10.2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova', 'Mario Verdi', '', '', '', '1', '10', '20', '10', 'Cliente', 'Sede2'],
-            [],
-            ['Import immagine = 1 -> Permette di importare l\'immagine come principale dell\'articolo mantenendo gli altri allegati già presenti'],
-            ['Import immagine = 2 -> Permette di importare l\'immagine come principale dell\'articolo rimuovendo tutti gli allegati presenti'],
-            ['Import immagine = 3 -> Permette di importare l\'immagine come allegato dell\'articolo mantenendo gli altri allegati già presenti'],
-            ['Import immagine = 4 -> Permette di importare l\'immagine come allegato dell\'articolo rimuovendo tutti gli allegati presenti'],
+            ['Codice', 'Immagine', 'Import immagine', 'Descrizione', 'Quantità', 'Data inventario', 'Unità misura', 'Prezzo acquisto', 'Prezzo vendita', 'Peso', 'Volume', 'Categoria', 'Sottocategoria', 'Barcode', 'Fornitore', 'Partita IVA', 'Codice IVA vendita', 'Ubicazione', 'Note', 'Anagrafica listino', 'Codice fornitore', 'Barcode fornitore', 'Descrizione fornitore', 'Qta minima', 'Qta massima', 'Prezzo listino', 'Sconto listino', 'Cliente/Fornitore listino', 'Sede'],
+            ['001', 'https://openstamanager.com/moduli/budget/budget.webp', '2', 'Modulo Budget', '1', '2023-11-28', 'PZ', '180.00', '180.00', '', '', 'Licenze', 'Moduli aggiuntivi', '0001', 'DevCode s.r.l.', '05024030289', '', '', '', '', 'Budget', '', 'Modulo Budget', '', '', '', '', 'Fornitore', 'Sede'],
         ];
     }
 

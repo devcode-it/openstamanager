@@ -192,8 +192,8 @@ class CSV extends CSVImporter
     {
         return [
             ['Codice', 'Telefono', 'Data', 'Data richiesta', 'Ora inizio', 'Tecnico', 'Tipo', 'Note', 'Impianto', 'Richiesta', 'Descrizione', 'Stato'],
-            ['001', '044444444', '07/11/2023', '03/11/2023', '18:30', 'Stefano Bianchi', '', '', '00000000001', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', 'Bozza'],
-            ['002', '044444444', '08/11/2023', '04/11/2023', '11:20', 'Stefano Bianchi', '', '', '00000000002', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', ''],
+            ['001', '04444444', '07/11/2023', '03/11/2023', '18:30', 'Stefano Bianchi', '', '', '00001', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', 'Bozza'],
+            ['002', '04444444', '08/11/2023', '04/11/2023', '11:20', 'Stefano Bianchi', '', '', '00002', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', ''],
         ];
     }
 }

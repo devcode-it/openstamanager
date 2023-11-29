@@ -169,7 +169,7 @@ class CSV extends CSVImporter
                             'id_record' => $impianto->id,
                         ]);
 
-                        $database->update('mg_articoli', [
+                        $database->update('my_impianti', [
                             'immagine' => '',
                         ], [
                             'id' => $impianto->id,
@@ -191,7 +191,7 @@ class CSV extends CSVImporter
 
                     if ($record['import_immagine'] == 1 || $record['import_immagine'] == 2) {
                         if (!empty($filename)) {
-                            $database->update('mg_articoli', [
+                            $database->update('my_impianti', [
                                 'immagine' => $filename,
                             ], [
                                 'id' => $impianto->id,
@@ -208,16 +208,11 @@ class CSV extends CSVImporter
     public static function getExample()
     {
         return [
-            ['Matricola', 'Nome', 'Categoria', 'Immagine', 'Data installazione', 'Cliente', 'Telefono', 'Sede'],
-            ['00001', 'Marca', 'Lavatrice', 'https://immagini.com/immagine.jpg', '01/10/2023', 'Mario Rossi', '04444444', 'Sede2'],
-            ['00002', 'Marca2', 'Lavastoviglie', 'https://immagini.com/immagine2.jpg', '12/09/2023', 'Mario Rossi', '04444444', 'Sede2'],
-            ['00003', 'Marca3', 'Frigorifero', 'https://immagini.com/immagine3.jpg', '20/09/2023', 'Mario Rossi', '04444444', 'Sede2'],
-            ['00004', 'Marca4', 'Caldaia', 'https://immagini.com/immagine4.jpg', '06/11/2023', 'Mario Rossi',  '04444444', 'Sede2'],
-            [],
-            ['Import immagine = 1 -> Permette di importare l\'immagine come principale dell\'impianto mantenendo gli altri allegati già presenti'],
-            ['Import immagine = 2 -> Permette di importare l\'immagine come principale dell\'impianto rimuovendo tutti gli allegati presenti'],
-            ['Import immagine = 3 -> Permette di importare l\'immagine come allegato dell\'impianto mantenendo gli altri allegati già presenti'],
-            ['Import immagine = 4 -> Permette di importare l\'immagine come allegato dell\'impianto rimuovendo tutti gli allegati presenti'],
+            ['Matricola', 'Immagine', 'Import immagine', 'Nome', 'Cliente', 'Telefono', 'Categoria', 'Sottocategoria', 'Sede', 'Descrizione', 'Data installazione'],
+            ['00001', 'https://openstamanager.com/moduli/budget/budget.webp', '2', 'Lavatrice', 'Mario Rossi', '04444444', 'Elettrodomestici', 'Marca1', '', '', '2023-01-01'],
+            ['00002', 'https://openstamanager.com/moduli/3cx/3cx.webp', '2', 'Caldaia', 'Mario Rossi', '04444444', 'Elettrodomestici', 'Marca2', '', '', '2023-03-06'],
+            ['00003', 'https://openstamanager.com/moduli/disponibilita-tecnici/tecnici.webp', '2', 'Forno', 'Mario Rossi', '04444444', 'Elettrodomestici', 'Marca3', '', '', '2023-04-01'],
+            ['00004', 'https://openstamanager.com/moduli/distinta-base/distinta.webp', '2', 'Lavastoviglie', 'Mario Rossi', '04444444', 'Elettrodomestici', 'Marca4', '', '', '2023-08-06'],
         ];
     }
 }

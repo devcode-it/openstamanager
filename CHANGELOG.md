@@ -67,6 +67,8 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 ## 2.4.52 
 ### Aggiunto (Added)
 ### Modificato (Changed)
+- Aggiunta una limitazione sulle quantità scaricabili nei documenti di vendita in modo da non poter vendere più articoli di quelli presenti fisicamente nel magazzino selezionato. Questa limitazione è legata all'impostazione **Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita**
+
 ### Fixed
 - Risolto il problema di visualizzazione dei PDF negli allegati
 - Risolto un problema di movimentazione magazzino: gli articoli nelle attività venivano sempre movimentati da sede legale anche se specificata diversa sede di partenza nel documento (solo da popup di modifica articolo)

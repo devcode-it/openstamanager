@@ -300,8 +300,21 @@ abstract class Article extends Accounting
 
         // Fix per valori di sede a NULL
         $id_sede = $id_sede ?: 0;
+        $qta_finale = $qta_movimento;
 
-        $this->articolo->movimenta($qta_movimento, $movimento, $data, false, [
+        if( !setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita') && $documento->direzione == 'entrata' ){
+            $qta_sede = Movimento::where('idarticolo', $this->articolo->id)
+                ->where('idsede',$id_sede)
+                ->groupBy('idarticolo')
+                ->sum('qta');
+
+            if( ($qta_sede + $qta_finale) < 0 ){
+                $qta_finale = -$qta_sede;
+                $this->attributes['qta'] = $this->original['qta'] + abs($qta_finale);
+            }
+        }
+
+        $this->articolo->movimenta($qta_finale, $movimento, $data, false, [
             'reference_type' => get_class($documento),
             'reference_id' => $documento->id,
             'idsede' => $id_sede,

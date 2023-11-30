@@ -69,6 +69,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 ### Modificato (Changed)
 ### Fixed
 - Risolto il problema di visualizzazione dei PDF negli allegati
+- Risolto un problema di movimentazione magazzino: gli articoli nelle attività venivano sempre movimentati da sede legale anche se specificata diversa sede di partenza nel documento (solo da popup di modifica articolo)
 
 ## 2.4.51 (2023-10-30)
 ### Aggiunto (Added)

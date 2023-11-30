@@ -293,7 +293,7 @@ abstract class Article extends Accounting
         $movimento = Movimento::descrizioneMovimento($qta_movimento, $documento->direzione).' - '.$documento->getReference();
 
         if ($documento instanceof \Modules\Interventi\Intervento) {
-            $id_sede = $this->idsede_partenza;
+            $id_sede = $documento->idsede_partenza;
         } else {
             $id_sede = $documento->direzione == 'uscita' ? $documento->idsede_destinazione : $documento->idsede_partenza;
         }

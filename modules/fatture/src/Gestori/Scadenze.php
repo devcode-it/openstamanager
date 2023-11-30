@@ -74,10 +74,12 @@ class Scadenze
             $ultima_scadenza = $this->fattura->scadenze->last();
             $scadenza = $ultima_scadenza->scadenza->copy()->startOfMonth()->addMonth();
             $scadenza->setDate($scadenza->year, $scadenza->month, 15);
-
+            $id_pagamento = $this->fattura->idpagamento;
+            $id_banca_azienda = $this->fattura->id_banca_azienda;
+            $id_banca_controparte = $this->fattura->id_banca_controparte;
             $importo = -$ritenuta_acconto;
 
-            self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, 'ritenutaacconto');
+            self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte, 'ritenutaacconto');
         }
     }
 
@@ -134,12 +136,15 @@ class Scadenze
         foreach ($pagamenti as $pagamento) {
             $rate = $pagamento['DettaglioPagamento'];
             $rate = isset($rate[0]) ? $rate : [$rate];
+            $id_banca_azienda = $this->fattura->id_banca_azienda;
+            $id_banca_controparte = $this->fattura->id_banca_controparte;
+            $id_pagamento = $this->fattura->idpagamento;
 
             foreach ($rate as $rata) {
                 $scadenza = !empty($rata['DataScadenzaPagamento']) ? FatturaElettronicaImport::parseDate($rata['DataScadenzaPagamento']) : $this->fattura->data;
                 $importo = $this->fattura->isNota() ? $rata['ImportoPagamento'] : -$rata['ImportoPagamento'];
 
-                self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato);
+                self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte);
             }
         }
 

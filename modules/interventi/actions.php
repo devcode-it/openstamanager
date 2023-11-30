@@ -1153,6 +1153,7 @@ switch (post('op')) {
         break;
 
     case 'update_inline':
+        $qta = post('qta');
         $id_riga = post('riga_id');
         $riga = $riga ?: Riga::find($id_riga);
         $riga = $riga ?: Articolo::find($id_riga);
@@ -1162,7 +1163,7 @@ switch (post('op')) {
             if ($riga->isSconto()) {
                 $riga->setScontoUnitario(post('sconto'), $riga->idiva);
             } else {
-                $riga->qta = post('qta');
+                $riga->qta = $qta;
                 $riga->setPrezzoUnitario(post('prezzo'), $riga->idiva);
                 $riga->setSconto(post('sconto'), post('tipo_sconto'));
                 $riga->costo_unitario = post('costo') ?: 0;

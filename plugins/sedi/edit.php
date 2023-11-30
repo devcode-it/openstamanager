@@ -85,12 +85,16 @@ echo '
 	</div>
 
 	<div class="row">
-		<div class="col-md-6">
+		<div class="col-md-3">
 			{[ "type": "text", "label": "'.tr('Indirizzo email').'", "name": "email", "value": "$email$", "class": "email-mask", "validation": "email" ]}
 		</div>
 
         <div class="col-md-3">
             {[ "type": "checkbox", "label": "'.tr('Opt-out per newsletter').'", "name": "disable_newsletter", "id": "disable_newsletter_m", "value": "'.empty($record['enable_newsletter']).'", "help": "'.tr("Blocco per l'invio delle email.").'" ]}
+        </div>
+
+		<div class="col-md-3">
+            {[ "type": "checkbox", "label": "'.tr('Automezzo').'", "name": "is_automezzo", "id": "is_automezzo", "value": "'.$record['is_automezzo'].'", "help": "'.tr("Seleziona se questa sede rappresenta un automezzo.").'" ]}
         </div>
 
 		<div class="col-md-3">

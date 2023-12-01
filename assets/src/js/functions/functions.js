@@ -451,18 +451,17 @@ function alertPush() {
 
         $('.alert-success.push').each(function () {
             i++;
-            tops = 60 * i + 95;
+            bottoms = 60 * i;
 
             $(this).css({
                 'position': 'fixed',
-                'z-index': 3000,
-                'left': '50%',  
-                'transform': 'translate(-50%, -50%)',
-                'top': -100,
+                'z-index': 300000,
+                'right': '10px',  
+                'bottom': -100,
             }).delay(1000).animate({
-                'top': tops,
+                'bottom': bottoms,
             }).delay(3000).animate({
-                'top': -100,
+                'bottom': -100,
             });
         });
     }
@@ -470,7 +469,7 @@ function alertPush() {
     // Nascondo la notifica se passo sopra col mouse
     $('.alert-success.push').on('mouseover', function () {
         $(this).stop().animate({
-            'top': -100,
+            'bottom': -100,
             'opacity': 0
         });
     });

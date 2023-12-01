@@ -3,8 +3,7 @@
 include_once __DIR__.'/../../core.php';
 
 // Elenco articoli caricati sull'automezzo
-$rs2 = $dbo->fetchArray("SELECT mg_movimenti.idsede AS id, mg_articoli.codice AS codice, idarticolo, SUM(mg_movimenti.qta) AS qta_automezzo, mg_articoli.qta AS qta_magazzino, mg_articoli.descrizione, mg_articoli.prezzo_vendita, (SELECT percentuale FROM co_iva WHERE id=mg_articoli.idiva_vendita) AS prciva_vendita FROM mg_movimenti INNER JOIN mg_articoli ON mg_movimenti.idarticolo=mg_articoli.id WHERE mg_movimenti.idsede=".prepare($id_record)." GROUP BY idarticolo HAVING qta_automezzo>0 ORDER BY mg_articoli.descrizione");
-
+$rs2 = $dbo->fetchArray('SELECT mg_movimenti.idsede AS id, mg_articoli.codice AS codice, idarticolo, SUM(mg_movimenti.qta) AS qta_automezzo, mg_articoli.qta AS qta_magazzino, mg_articoli.descrizione, mg_articoli.prezzo_vendita, (SELECT percentuale FROM co_iva WHERE id=mg_articoli.idiva_vendita) AS prciva_vendita FROM mg_movimenti INNER JOIN mg_articoli ON mg_movimenti.idarticolo=mg_articoli.id WHERE mg_movimenti.idsede='.prepare($id_record).' GROUP BY idarticolo HAVING qta_automezzo>0 ORDER BY mg_articoli.descrizione');
 
 if (!empty($rs2)) {
     echo '
@@ -17,34 +16,34 @@ if (!empty($rs2)) {
             <th width="10%"></th>
         </tr>';
 
-        foreach ($rs2 as $r) {
-            echo '
+    foreach ($rs2 as $r) {
+        echo '
         <tr>';
-            // Articolo
-            echo '
+        // Articolo
+        echo '
             <td class="text-left">
                 '.Modules::link('Articoli', $r['idarticolo'], $r['codice'].' - '.$r['descrizione']).'
             </td>';
 
-            // Quantità
-            echo '
+        // Quantità
+        echo '
             <td class="first_cell center">
                 <span><big>'.Translator::numberToLocale($r['qta_automezzo']).'</big></span><br/>
                 <small>'.tr('Q.tà magazzino').': '.Translator::numberToLocale($r['qta_magazzino']).'</small><br/>
             </td>';
 
-            // Prezzo di vendita
-            $netto = $r['prezzo_vendita'];
-            $iva = $r['prezzo_vendita'] / 100 * $r['prciva_vendita'];
-            echo '
+        // Prezzo di vendita
+        $netto = $r['prezzo_vendita'];
+        $iva = $r['prezzo_vendita'] / 100 * $r['prciva_vendita'];
+        echo '
             <td class="table_cell center">
                 <span>'.Translator::numberToLocale($netto + $iva).' &euro;</span><br/>
                 <small>'.tr('Netto').': '.Translator::numberToLocale($netto).' &euro;</small><br/>
                 <small>'.tr('Iva').': '.Translator::numberToLocale($iva).' &euro;</small><br/>
             </td>';
 
-            // Pulsanti
-            echo '
+        // Pulsanti
+        echo '
             <td class="text-center">
                 <a class="btn btn-warning btn-xs" data-href="'.$structure->fileurl('add_articolo.php').'?idautomezzo='.$id_record.'&idarticolo='.$r['idarticolo'].'" data-toggle="modal" data-title="'.tr('Aggiungi articoli').'">
                     <i class="fa fa-edit"></i>
@@ -55,10 +54,10 @@ if (!empty($rs2)) {
             </td>
         </tr>';
 
-            $tot_articoli += $r['qta_automezzo'];
-        }
+        $tot_articoli += $r['qta_automezzo'];
+    }
 
-        echo '
+    echo '
     </table>
 </div>';
 } else {

@@ -1,15 +1,16 @@
 <?php
+
     include_once __DIR__.'/../../core.php';
 
-    echo "<br>";
-    
-    $targa = "";
-	for( $r=0; $r<sizeof($rs); $r++ ){
+    echo '<br>';
+
+    $targa = '';
+    for ($r = 0; $r < sizeof($rs); ++$r) {
         if ($targa != $rs[$r]['targa']) {
-            if ($targa != "") {
-                echo "
+            if ($targa != '') {
+                echo '
                 </table>
-                    <br/>";
+                    <br/>';
             }
             echo "
                 <table cellspacing='0' style='table-layout:fixed;'>
@@ -31,10 +32,10 @@
                     </tr>";
             $targa = $rs[$r]['targa'];
         }
-        echo "
-		<tr>";
-        
-        $qta = number_format( $rs[$r]['qta'], 3, ",", "." )."&nbsp;".$rs[$r]['um'];
+        echo '
+		<tr>';
+
+        $qta = number_format($rs[$r]['qta'], 3, ',', '.').'&nbsp;'.$rs[$r]['um'];
 
         echo "
             <td class='first_cell cell-padded'>".$rs[$r]['codice']."</td>
@@ -44,9 +45,7 @@
             <td class='table_cell cell-padded'></td>
         </tr>";
     }
-    if ($targa != "") {
-        echo "
-        </table>";
+    if ($targa != '') {
+        echo '
+        </table>';
     }
-
-?>

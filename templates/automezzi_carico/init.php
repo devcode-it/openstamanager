@@ -22,9 +22,9 @@ include_once __DIR__.'/../../core.php';
 $search_targa = get('search_targa');
 $search_nome = get('search_nome');
 $dt_carico = get('data_carico');
-$data_carico = strtotime(str_replace('/', '-',  $dt_carico));
-$startTM = date("Y-m-d", $data_carico) . " 00:00:00";
-$endTM   = date("Y-m-d", $data_carico) . " 23:59:59";
+$data_carico = strtotime(str_replace('/', '-', $dt_carico));
+$startTM = date('Y-m-d', $data_carico).' 00:00:00';
+$endTM = date('Y-m-d', $data_carico).' 23:59:59';
 
 $query = "
     SELECT
@@ -50,11 +50,11 @@ $query = "
         INNER JOIN an_sedi ON mg_movimenti.idsede=an_sedi.id
     WHERE 
         (mg_movimenti.idsede > 0) AND (mg_movimenti.idintervento IS NULL) AND
-        ((mg_movimenti.data BETWEEN ".prepare($startTM)." AND ".prepare($endTM).") AND (zz_groups.nome IN ('Titolari', 'Amministratori')))";
+        ((mg_movimenti.data BETWEEN ".prepare($startTM).' AND '.prepare($endTM).") AND (zz_groups.nome IN ('Titolari', 'Amministratori')))";
 
-$query .= " AND (an_sedi.targa LIKE ".prepare('%'.$search_targa.'%').") AND (an_sedi.nome LIKE ".prepare('%'.$search_nome.'%').") ";
-$query .= "	ORDER BY an_sedi.targa, mg_articoli.descrizione";
+$query .= ' AND (an_sedi.targa LIKE '.prepare('%'.$search_targa.'%').') AND (an_sedi.nome LIKE '.prepare('%'.$search_nome.'%').') ';
+$query .= '	ORDER BY an_sedi.targa, mg_articoli.descrizione';
 
 $rs = $dbo->fetchArray($query);
 $totrows = sizeof($rs);
-$azienda = $dbo->fetchOne("SELECT * FROM an_anagrafiche WHERE idanagrafica=".prepare(setting('Azienda predefinita')));
+$azienda = $dbo->fetchOne('SELECT * FROM an_anagrafiche WHERE idanagrafica='.prepare(setting('Azienda predefinita')));

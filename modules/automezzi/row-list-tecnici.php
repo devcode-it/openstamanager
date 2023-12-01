@@ -28,27 +28,26 @@ if (!empty($rs_art)) {
                 '.$r['ragione_sociale'].'
             </td>';
 
-            // Data di inizio
-            echo '
+        // Data di inizio
+        echo '
             <td>
                 {[ "type": "date", "name": "data_inizio['.$r['id'].']", "required": 1, "value": "'.$r['data_inizio'].'" ]}
             </td>';
 
-            // Data di fine
-            echo '
+        // Data di fine
+        echo '
             <td>
                 {[ "type": "date", "name": "data_fine['.$r['id'].']", "required": 1, "value": "'.$r['data_fine'].'", "min-date": "'.$r['data_inizio'].'" ]}
             </td>';
 
-            // Pulsanti per aggiornamento date tecnici
-            echo '
+        // Pulsanti per aggiornamento date tecnici
+        echo '
             <td>
                 <a class="btn btn-danger ask" data-backto="record-edit" data-op="deltech" data-id="'.$r['id'].'" data-msg="'.tr("Rimuovere il tecnico responsabile dell'automezzo?").'">
                     <i class="fa fa-trash"></i>
                 </a>
             </td>
         </tr>';
-
     }
 
     echo '

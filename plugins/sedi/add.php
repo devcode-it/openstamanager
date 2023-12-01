@@ -95,7 +95,7 @@ echo '
 			{[ "type": "checkbox", "label": "'.tr('Opt-out per newsletter').'", "name": "disable_newsletter", "id": "disable_newsletter_m",  "value": "0", "help": "'.tr("Blocco per l'invio delle email.").'" ]}
 		</div>
 		<div class="col-md-6">
-			{[ "type": "checkbox", "label": "'.tr('Automezzo').'", "name": "is_automezzo", "id": "is_automezzo", "value": "0", "help": "'.tr("Seleziona se questa sede rappresenta un automezzo.").'" ]}
+			{[ "type": "checkbox", "label": "'.tr('Automezzo').'", "name": "is_automezzo", "id": "is_automezzo", "value": "0", "help": "'.tr('Seleziona se questa sede rappresenta un automezzo.').'" ]}
 		</div>
 	</div>
 

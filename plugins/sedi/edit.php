@@ -94,7 +94,7 @@ echo '
         </div>
 
 		<div class="col-md-3">
-            {[ "type": "checkbox", "label": "'.tr('Automezzo').'", "name": "is_automezzo", "id": "is_automezzo", "value": "'.$record['is_automezzo'].'", "help": "'.tr("Seleziona se questa sede rappresenta un automezzo.").'" ]}
+            {[ "type": "checkbox", "label": "'.tr('Automezzo').'", "name": "is_automezzo", "id": "is_automezzo", "value": "'.$record['is_automezzo'].'", "help": "'.tr('Seleziona se questa sede rappresenta un automezzo.').'" ]}
         </div>
 
 		<div class="col-md-3">

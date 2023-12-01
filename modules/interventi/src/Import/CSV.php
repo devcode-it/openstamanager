@@ -128,7 +128,7 @@ class CSV extends CSVImporter
             } else {
                 $stato = Stato::where('descrizione', $record['stato'])->first();
             }
-            
+
             if (empty($stato)) {
                 $stato = Stato::build($record['stato']);
             }

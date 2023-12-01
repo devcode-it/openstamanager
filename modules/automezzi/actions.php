@@ -31,7 +31,7 @@ switch (post('op')) {
         if ($dbo->fetchNum('SELECT targa FROM an_sedi WHERE targa='.prepare($targa)) == 0) {
             $dbo->insert('an_sedi', [
                 'idanagrafica' => setting('Azienda predefinita'),
-                'nomesede' => $nome." - ".$targa,
+                'nomesede' => $nome.' - '.$targa,
                 'is_automezzo' => 1,
                 'targa' => $targa,
                 'nome' => $nome,
@@ -59,7 +59,7 @@ switch (post('op')) {
         $data_fine = isset($data_fine) ? $data_fine : '0000-00-00';
 
         // Inserisco il tecnico
-        $dbo->insert('an_sedi_tecnici',[
+        $dbo->insert('an_sedi_tecnici', [
             'idtecnico' => $idtecnico,
             'idsede' => $id_record,
             'data_inizio' => $data_inizio,
@@ -86,12 +86,12 @@ switch (post('op')) {
             }
             $data_fine = isset($data_fine) ? $data_fine : '0000-00-00';
 
-            $dbo->update('an_sedi_tecnici',[
+            $dbo->update('an_sedi_tecnici', [
                 'idtecnico' => $idtecnico,
                 'idsede' => $id_record,
                 'data_inizio' => $data_inizio,
                 'data_fine' => $data_fine,
-            ],['id' => $idautomezzotecnico]);
+            ], ['id' => $idautomezzotecnico]);
 
             if (!$dbo->query($query)) {
                 ++$errors;
@@ -122,15 +122,15 @@ switch (post('op')) {
         $qta = post('qta');
 
         $articolo = Articolo::find($idarticolo);
-        $automezzo = $dbo->table("an_sedi")->where('id',$id_record)->first();
+        $automezzo = $dbo->table('an_sedi')->where('id', $id_record)->first();
 
         // Registrazione del movimento verso la sede di destinazione
-        $articolo->registra($qta, tr('Carico dal magazzino sull\'automezzo _SEDE_',['_SEDE_' => $automezzo->nomesede]), Carbon::now(), 1, [
+        $articolo->registra($qta, tr('Carico dal magazzino sull\'automezzo _SEDE_', ['_SEDE_' => $automezzo->nomesede]), Carbon::now(), 1, [
             'idsede' => $id_record,
         ]);
 
         // Registrazione del movimento dalla sede di origine
-        $articolo->registra(-$qta, tr('Scarico nel magazzino dall\'automezzo  _SEDE_',['_SEDE_' => $automezzo->nomesede]), Carbon::now(), 1, [
+        $articolo->registra(-$qta, tr('Scarico nel magazzino dall\'automezzo  _SEDE_', ['_SEDE_' => $automezzo->nomesede]), Carbon::now(), 1, [
             'idsede' => 0,
         ]);
 
@@ -141,17 +141,17 @@ switch (post('op')) {
         $idarticolo = post('idarticolo');
 
         $articolo = Articolo::find($idarticolo);
-        $automezzo = $dbo->table("an_sedi")->where('id',$id_record)->first();
+        $automezzo = $dbo->table('an_sedi')->where('id', $id_record)->first();
 
-        $qta = post('qta') - $dbo->fetchOne("SELECT SUM(mg_movimenti.qta) AS qta FROM mg_movimenti WHERE mg_movimenti.idarticolo=".prepare($idarticolo)." AND mg_movimenti.idsede=".prepare($id_record))['qta'];
+        $qta = post('qta') - $dbo->fetchOne('SELECT SUM(mg_movimenti.qta) AS qta FROM mg_movimenti WHERE mg_movimenti.idarticolo='.prepare($idarticolo).' AND mg_movimenti.idsede='.prepare($id_record))['qta'];
 
         // Registrazione del movimento verso la sede di destinazione
-        $articolo->registra($qta, tr('Carico dal magazzino sull\'automezzo _SEDE_',['_SEDE_' => $automezzo->nomesede]), Carbon::now(), 1, [
+        $articolo->registra($qta, tr('Carico dal magazzino sull\'automezzo _SEDE_', ['_SEDE_' => $automezzo->nomesede]), Carbon::now(), 1, [
             'idsede' => $id_record,
         ]);
 
         // Registrazione del movimento dalla sede di origine
-        $articolo->registra(-$qta, tr('Scarico nel magazzino dall\'automezzo  _SEDE_',['_SEDE_' => $automezzo->nomesede]), Carbon::now(), 1, [
+        $articolo->registra(-$qta, tr('Scarico nel magazzino dall\'automezzo  _SEDE_', ['_SEDE_' => $automezzo->nomesede]), Carbon::now(), 1, [
             'idsede' => 0,
         ]);
 
@@ -164,17 +164,17 @@ switch (post('op')) {
         $idautomezzotecnico = post('idautomezzotecnico');
 
         $articolo = Articolo::find($idarticolo);
-        $automezzo = $dbo->table("an_sedi")->where('id',$idautomezzotecnico)->first();
-        $qta = $dbo->fetchOne("SELECT SUM(qta) AS qta FROM mg_movimenti WHERE idarticolo=".prepare($idarticolo)." AND idsede=".prepare($idautomezzotecnico))['qta'];
+        $automezzo = $dbo->table('an_sedi')->where('id', $idautomezzotecnico)->first();
+        $qta = $dbo->fetchOne('SELECT SUM(qta) AS qta FROM mg_movimenti WHERE idarticolo='.prepare($idarticolo).' AND idsede='.prepare($idautomezzotecnico))['qta'];
 
         // Registrazione del movimento verso la sede di destinazione
-        $articolo->registra($qta, tr('Carico nel magazzino dall\'automezzo _SEDE_',['_SEDE_' => $automezzo->nomesede]), Carbon::now(), 1, [
+        $articolo->registra($qta, tr('Carico nel magazzino dall\'automezzo _SEDE_', ['_SEDE_' => $automezzo->nomesede]), Carbon::now(), 1, [
             'idsede' => 0,
         ]);
 
         // Registrazione del movimento dalla sede di origine
-        $descrizione = tr('Scarico dall\'automezzo _SEDE_ nel magazzino',[
-            '_SEDE_' => $automezzo->nomesede
+        $descrizione = tr('Scarico dall\'automezzo _SEDE_ nel magazzino', [
+            '_SEDE_' => $automezzo->nomesede,
         ]);
         $articolo->registra(-$qta, $descrizione, Carbon::now(), 1, [
             'idsede' => $idautomezzotecnico,
@@ -183,7 +183,6 @@ switch (post('op')) {
         break;
 
     case 'delete':
-
         $dbo->query('DELETE FROM `an_sedi` WHERE `id`='.prepare($id_record));
 
         flash()->info(tr('Automezzo eliminato e articoli riportati in magazzino!'));

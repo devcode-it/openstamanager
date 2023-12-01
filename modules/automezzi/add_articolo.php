@@ -4,12 +4,12 @@ include_once __DIR__.'/../../core.php';
 
 $idautomezzo = get('idautomezzo');
 $idarticolo = get('idarticolo');
-$op = "addrow";
+$op = 'addrow';
 $qta = 1;
 
-if( !empty($idarticolo) && !empty($idautomezzo) ){
-    $qta = $dbo->fetchOne("SELECT SUM(mg_movimenti.qta) AS qta FROM mg_movimenti WHERE mg_movimenti.idarticolo=".prepare($idarticolo)." AND mg_movimenti.idsede=".prepare($idautomezzo))['qta'];
-    $op = "editrow";
+if (!empty($idarticolo) && !empty($idautomezzo)) {
+    $qta = $dbo->fetchOne('SELECT SUM(mg_movimenti.qta) AS qta FROM mg_movimenti WHERE mg_movimenti.idarticolo='.prepare($idarticolo).' AND mg_movimenti.idsede='.prepare($idautomezzo))['qta'];
+    $op = 'editrow';
 }
 
 /*

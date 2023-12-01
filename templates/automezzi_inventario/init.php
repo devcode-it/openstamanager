@@ -19,23 +19,23 @@
 
 include_once __DIR__.'/../../core.php';
 
-$azienda = $dbo->fetchOne("SELECT * FROM an_anagrafiche WHERE idanagrafica=".prepare(setting('Azienda predefinita')));
+$azienda = $dbo->fetchOne('SELECT * FROM an_anagrafiche WHERE idanagrafica='.prepare(setting('Azienda predefinita')));
 
 $where = [];
 $search_targa = get('search_targa');
-$search_nome  = get('search_nome');
+$search_nome = get('search_nome');
 
-$where[] = "movimenti.qta > 0";
-$where[] = "movimenti.qta > 0";
-if( $search_targa ){
-    $where[] = "an_sedi.targa like ".prepare('%'.$search_targa.'%');
+$where[] = 'movimenti.qta > 0';
+$where[] = 'movimenti.qta > 0';
+if ($search_targa) {
+    $where[] = 'an_sedi.targa like '.prepare('%'.$search_targa.'%');
 }
-if( $search_nome ){
-    $where[] = "an_sedi.nome like ".prepare('%'.$search_nome.'%');
+if ($search_nome) {
+    $where[] = 'an_sedi.nome like '.prepare('%'.$search_nome.'%');
 }
 
 //Ciclo tra gli articoli selezionati
-$query = "
+$query = '
     SELECT
         an_sedi.targa, an_sedi.nome,
         mg_articoli.codice, mg_articoli.descrizione,
@@ -46,10 +46,9 @@ $query = "
         INNER JOIN (SELECT SUM(mg_movimenti.qta) AS qta, idarticolo, idsede FROM mg_movimenti GROUP BY idsede,idarticolo) AS movimenti ON movimenti.idsede = an_sedi.id
         INNER JOIN mg_articoli ON movimenti.idarticolo = mg_articoli.id
     WHERE 
-        ".implode(" AND ", $where)."
+        '.implode(' AND ', $where).'
     ORDER BY 
-        an_sedi.targa, an_sedi.descrizione";
+        an_sedi.targa, an_sedi.descrizione';
 
 $rs = $dbo->fetchArray($query);
 $totrows = sizeof($rs);
-

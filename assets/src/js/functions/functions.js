@@ -456,7 +456,8 @@ function alertPush() {
             $(this).css({
                 'position': 'fixed',
                 'z-index': 3000,
-                'right': '50%',
+                'left': '50%',  
+                'transform': 'translate(-50%, -50%)',
                 'top': -100,
             }).delay(1000).animate({
                 'top': tops,

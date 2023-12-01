@@ -52,7 +52,7 @@ echo '
 		</div>
 
 		<div class="col-md-2">
-			{[ "type": "text", "label": "'.tr('C.A.P.').'", "name": "cap", "value": "$cap$" ]}
+			{[ "type": "text", "label": "'.tr('C.A.P.').'", "name": "cap", "value": "$cap$", "required":1 ]}
 		</div>
 
 		<div class="col-md-2">

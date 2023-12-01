@@ -349,7 +349,11 @@ switch (post('op')) {
             $riga = null;
         }
 
-        flash()->info(tr('Righe eliminate!'));
+        if (count($id_righe) == 1) {
+            flash()->info(tr('Riga eliminata!'));
+        } else {
+            flash()->info(tr('Righe eliminate!'));
+        }
 
         break;
 

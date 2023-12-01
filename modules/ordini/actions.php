@@ -342,7 +342,11 @@ switch (post('op')) {
 
         ricalcola_costiagg_ordine($id_record);
 
-        flash()->info(tr('Righe eliminate!'));
+        if (count($id_righe) == 1) {
+            flash()->info(tr('Riga eliminata!'));
+        } else {
+            flash()->info(tr('Righe eliminate!'));
+        }
 
         break;
 

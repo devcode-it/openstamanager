@@ -48,22 +48,20 @@ $stato_fe = $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = 
 $ops = ['update', 'add_intervento', 'manage_documento_fe', 'manage_riga_fe', 'manage_articolo', 'manage_sconto', 'manage_riga', 'manage_descrizione', 'unlink_intervento', 'delete_riga', 'copy_riga', 'add_serial', 'add_articolo', 'edit-price'];
 
 if ($dir === 'entrata' && in_array($stato_fe['codice_stato_fe'], ['WAIT', 'RC', 'MC', 'QUEUE', 'DT', 'EC01', 'NE']) && Interaction::isEnabled() && in_array($op, $ops)) {
-    
     //Permetto sempre la modifica delle note aggiuntive e/o della data di competenza della fattura di vendita
-    if ($op == 'update' && ($fattura->note_aggiuntive != post('note_aggiuntive') || $fattura->data_competenza != post('data_competenza'))){
-        if ($fattura->note_aggiuntive != post('note_aggiuntive')){
+    if ($op == 'update' && ($fattura->note_aggiuntive != post('note_aggiuntive') || $fattura->data_competenza != post('data_competenza'))) {
+        if ($fattura->note_aggiuntive != post('note_aggiuntive')) {
             $fattura->note_aggiuntive = post('note_aggiuntive');
             $fattura->save();
             flash()->info(tr('Note interne modificate correttamente.'));
         }
 
-        if ($fattura->data_competenza != post('data_competenza')){
+        if ($fattura->data_competenza != post('data_competenza')) {
             $fattura->data_competenza = post('data_competenza');
             $fattura->save();
             flash()->info(tr('Data competenza modificata correttamente.'));
         }
-
-    }else{
+    } else {
         flash()->warning(tr('La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile effettuare modifiche.', [
             '_NUM_' => $fattura->numero_esterno,
         ]));
@@ -674,6 +672,11 @@ switch ($op) {
             }
 
             $riga = null;
+        }
+
+        if (count($id_righe) == 1) {
+            flash()->info(tr('Riga eliminata!'));
+        } else {
             flash()->info(tr('Righe eliminate!'));
         }
 

@@ -90,4 +90,4 @@ INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`
 (NULL, 'Stampa giacenza', 'print', (SELECT `id` FROM `zz_modules` WHERE name='Automezzi'), 'controller_top', 'col-md-4', '', '#45a9f1', 'fa fa-truck', '', 'if( confirm(\'Stampare la giacenza attuale sugli automezzi?\') ){ window.open(\'pdfgen.php?id_print=53&search_targa=\'+$(\'#th_Targa input\').val()+\'&search_nome=\'+$(\'#th_Nome input\').val()); }', 'javascript', '', 'Stampa giacenza', '1', '1', NULL);
 
 -- Aggiunta flag rappresentante fiscale per sede
-ALTER TABLE `an_sedi` ADD `is_rappresentante_fiscale` BOOLEAN NOT NULL DEFAULT FALSE; 
+ALTER TABLE `an_sedi` ADD `is_rappresentante_fiscale` BOOLEAN NULL DEFAULT FALSE; 

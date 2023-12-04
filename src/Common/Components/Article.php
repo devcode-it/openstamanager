@@ -320,7 +320,7 @@ abstract class Article extends Accounting
                 $this->attributes['qta'] = $this->original['qta'] - abs($qta_sede);
             }
 
-            // Se la quantità sede per qualche motivo è negativa e supera la quantià della riga azzero quest'ultima
+            // Se la quantità sede per qualche motivo è negativa e supera la quantità della riga azzero quest'ultima
             elseif ($qta_sede < 0 && $this->original['qta'] < abs($qta_sede)) {
                 $qta_finale = $this->original['qta'];
                 $this->attributes['qta'] = 0;

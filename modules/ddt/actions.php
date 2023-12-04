@@ -413,11 +413,12 @@ switch (filter('op')) {
             $new_riga = $riga->replicate();
             $new_riga->setDocument($ddt);
             $new_riga->qta_evasa = 0;
-            $new_riga->save();
 
             if ($new_riga->isArticolo()) {
                 $new_riga->movimenta($new_riga->qta);
             }
+
+            $new_riga->save();
 
             $riga = null;
         }
@@ -507,12 +508,12 @@ switch (filter('op')) {
             $copia_riga->original_id = null;
             $copia_riga->original_type = null;
 
-            $copia_riga->save();
-
             // Movimentazione forzata in direzione del documento
             if ($copia_riga->isArticolo()) {
                 $copia_riga->movimenta($copia_riga->qta);
             }
+
+            $copia_riga->save();
         }
 
         // Salvataggio riferimento
@@ -544,11 +545,12 @@ switch (filter('op')) {
 
             $new_riga->qta_evasa = 0;
             $new_riga->idordine = 0;
-            $new_riga->save();
 
             if ($new_riga->isArticolo()) {
                 $new_riga->movimenta($new_riga->qta);
             }
+
+            $new_riga->save();
         }
 
         flash()->info(tr('DDT duplicato correttamente!'));

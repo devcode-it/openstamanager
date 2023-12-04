@@ -459,11 +459,12 @@ switch (post('op')) {
             $new_riga = $riga->replicate();
             $new_riga->setDocument($intervento);
             $new_riga->qta_evasa = 0;
-            $new_riga->save();
 
             if ($new_riga->isArticolo()) {
                 $new_riga->movimenta($new_riga->qta);
             }
+
+            $new_riga->save();
 
             $riga = null;
         }
@@ -980,11 +981,12 @@ switch (post('op')) {
                         $new_riga->setDocument($new);
 
                         $new_riga->qta_evasa = 0;
-                        $new_riga->save();
 
                         if ($new_riga->isArticolo()) {
                             $new_riga->movimenta($new_riga->qta);
                         }
+
+                        $new_riga->save();
                     }
                 }
 

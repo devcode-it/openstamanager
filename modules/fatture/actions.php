@@ -389,11 +389,12 @@ switch ($op) {
             $new_riga->idintervento = 0;
             $new_riga->idddt = 0;
             $new_riga->idordine = 0;
-            $new_riga->save();
 
             if ($new_riga->isArticolo()) {
                 $new_riga->movimenta($new_riga->qta);
             }
+
+            $new_riga->save();
         }
 
         flash()->info(tr('Fattura duplicata correttamente!'));
@@ -694,11 +695,12 @@ switch ($op) {
             $new_riga = $riga->replicate();
             $new_riga->setDocument($fattura);
             $new_riga->qta_evasa = 0;
-            $new_riga->save();
 
             if ($new_riga->isArticolo()) {
                 $new_riga->movimenta($new_riga->qta);
             }
+
+            $new_riga->save();
 
             $riga = null;
         }

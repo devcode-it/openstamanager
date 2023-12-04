@@ -308,10 +308,12 @@ abstract class Article extends Accounting
                 ->groupBy('idarticolo')
                 ->sum('qta');
 
+            $qta_modifica = $this->attributes['qta']-$this->original['qta'];
+
             //Se la quantità supera la giacenza in sede allora movimento solo quello che resta
             if (($qta_sede + $qta_finale) < 0 && $qta_sede >= 0) {
                 $qta_finale = -$qta_sede;
-                $this->attributes['qta'] = $this->original['qta'] + abs($qta_finale);
+                $this->attributes['qta'] = $qta_sede + ($qta_modifica != 0 ? $this->original['qta'] : 0);
             }
 
             // Se la quantità sede per qualche motivo è negativa correggo la quantità della riga con la differenza
@@ -332,6 +334,7 @@ abstract class Article extends Accounting
             'reference_id' => $documento->id,
             'idsede' => $id_sede,
         ]);
+
     }
 
     protected static function boot()

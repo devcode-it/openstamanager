@@ -88,3 +88,6 @@ INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filen
 INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`, `query`, `bgcolor`, `icon`, `print_link`, `more_link`, `more_link_type`, `php_include`, `text`, `enabled`, `order`, `help`) VALUES 
 (NULL, 'Stampa carico odierno', 'print', (SELECT `id` FROM `zz_modules` WHERE name='Automezzi'), 'controller_top', 'col-md-4', '', '#37a02d', 'fa fa-print', '', 'var data_carico = prompt(\'Data del carico da stampare?\', moment(new Date()).format(\'DD/MM/YYYY\'));\r\nif ( data_carico != null){ \r\nwindow.open(\'pdfgen.php?id_print=54&search_targa=\'+$(\'#th_Targa input\').val()+\'&search_nome=\'+$(\'#th_Nome input\').val()+\'&data_carico=\'+data_carico); \r\n}', 'javascript', '', 'Stampa carico odierno', '1', '2', NULL), 
 (NULL, 'Stampa giacenza', 'print', (SELECT `id` FROM `zz_modules` WHERE name='Automezzi'), 'controller_top', 'col-md-4', '', '#45a9f1', 'fa fa-truck', '', 'if( confirm(\'Stampare la giacenza attuale sugli automezzi?\') ){ window.open(\'pdfgen.php?id_print=53&search_targa=\'+$(\'#th_Targa input\').val()+\'&search_nome=\'+$(\'#th_Nome input\').val()); }', 'javascript', '', 'Stampa giacenza', '1', '1', NULL);
+
+-- Aggiunta flag rappresentante fiscale per sede
+ALTER TABLE `an_sedi` ADD `is_rappresentante_fiscale` BOOLEAN NOT NULL DEFAULT FALSE; 

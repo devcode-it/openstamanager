@@ -23,6 +23,7 @@ use FluidXml\FluidXml;
 use GuzzleHttp\Client;
 use Modules;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Anagrafiche\Sede;
 use Modules\Banche\Banca;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Gestori\Bollo;
@@ -825,6 +826,24 @@ class FatturaElettronica
                 $result['RiferimentoAmministrazione'] = $azienda['riferimento_amministrazione'];
             }
         }
+
+        return $result;
+    }
+
+    /**
+     * Restituisce l'array responsabile per la generazione del tag RappresentanteFiscale (1.3).
+     *
+     * @return array
+     */
+    protected static function getRappresentanteFiscale($fattura)
+    {
+        //Fattura per conto terzi, il cliente diventa il cedente al posto della mia Azienda (fornitore)
+        $cliente = $fattura->getCliente();
+        $azienda = Sede::where('idanagrafica', $cliente->id)->where('is_rappresentante_fiscale', 1)->selectRaw('*, nomesede AS ragione_sociale')->first();
+
+        $result = [
+            'DatiAnagrafici' => static::getDatiAnagrafici($azienda, true),
+        ];
 
         return $result;
     }
@@ -1757,11 +1776,31 @@ class FatturaElettronica
      */
     protected static function getHeader($fattura)
     {
-        $result = [
-            'DatiTrasmissione' => static::getDatiTrasmissione($fattura),
-            'CedentePrestatore' => static::getCedentePrestatore($fattura),
-            'CessionarioCommittente' => static::getCessionarioCommittente($fattura),
-        ];
+        $documento = $fattura->getDocumento();
+        $rappresentante_fiscale = null;
+    
+        //Fattura per conto terzi, il cliente diventa il cedente al posto della mia Azienda (fornitore)
+        if ($documento['is_fattura_conto_terzi']) {
+            $azienda = $fattura->getCliente();
+            $rappresentante_fiscale = Sede::where('idanagrafica', $azienda->id)->where('is_rappresentante_fiscale', 1)->first();
+        } else {
+            $azienda = static::getAzienda();
+        }
+
+        if ($rappresentante_fiscale) {
+            $result = [
+                'DatiTrasmissione' => static::getDatiTrasmissione($fattura),
+                'CedentePrestatore' => static::getCedentePrestatore($fattura),
+                'RappresentanteFiscale' => static::getRappresentanteFiscale($fattura),
+                'CessionarioCommittente' => static::getCessionarioCommittente($fattura),
+            ];
+        } else {
+            $result = [
+                'DatiTrasmissione' => static::getDatiTrasmissione($fattura),
+                'CedentePrestatore' => static::getCedentePrestatore($fattura),
+                'CessionarioCommittente' => static::getCessionarioCommittente($fattura),
+            ];
+        }
 
         // 1.5 Terzo Intermediario
         if (!empty(setting('Terzo intermediario'))) {

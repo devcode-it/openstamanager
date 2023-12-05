@@ -372,7 +372,7 @@ class Anagrafica extends Model
         // Verifica su un possibile conto esistente ma non collegato
         if (!empty($anagrafica->ragione_sociale)) {
             $conto = (clone $table)
-                ->where('descrizione', 'like', '%'.$anagrafica->ragione_sociale.'%')
+                ->where('descrizione', $anagrafica->ragione_sociale)
                 ->first();
             if (!empty($conto)) {
                 $anagrafiche_collegate = Anagrafica::where($campo, '=', $conto->id)->count();

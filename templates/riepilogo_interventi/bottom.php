@@ -30,7 +30,7 @@ $somma_km = sum($somma_km);
 if (setting('Formato ore in stampa') == 'Sessantesimi') {
     $somma_ore = Translator::numberToHours($somma_ore);
 } else {
-    $somma_ore = Translator::numberToLocale($somma_ore, 2);
+    $somma_ore = Translator::numberToLocale($somma_ore, $d_qta);
 }
 
 echo '
@@ -38,16 +38,12 @@ echo '
             <th width="5%" style="border-right: 0"></th>
             <th class="text-right" style="border-left: 0;">
                 <b>'.tr('Totale', [], ['upper' => true]).':</b>
-            </th>';
-            if (get('id_print') != 24) {
-                echo '
-                <th class="text-center">'.($somma_km).'</td>';
-            }
-            echo '
+            </th>
+            <th class="text-center">'.($somma_km).'</td>
             <th class="text-center">'.($pricing ? $somma_ore : '-').'</th>
-            <th class="text-center">'.($pricing ? moneyFormat($somma_imponibile, 2) : '-').'</th>
-            <th class="text-center">'.($pricing ? moneyFormat($somma_sconto, 2) : '-').'</th>
-            <th class="text-center">'.($pricing ? moneyFormat($somma_totale_imponibile, 2) : '-').'</th>
+            <th class="text-center">'.($pricing ? moneyFormat($somma_imponibile, $d_importi) : '-').'</th>
+            <th class="text-center">'.($pricing ? moneyFormat($somma_sconto, $d_importi) : '-').'</th>
+            <th class="text-center">'.($pricing ? moneyFormat($somma_totale_imponibile, $d_importi) : '-').'</th>
         </tr>
 
         <tr>
@@ -55,8 +51,8 @@ echo '
             <th class="text-right" style="border-left: 0;">
                 <b>'.tr('Iva', [], ['upper' => true]).':</b>
             </th>
-            <th colspan="'.(get('id_print') != 24 ? 4 : 3).'"></th>
-            <th class="text-center">'.($pricing ? moneyFormat($somma_iva, 2) : '-').'</th>
+            <th colspan="4"></th>
+            <th class="text-center">'.($pricing ? moneyFormat($somma_iva, $d_importi) : '-').'</th>
         </tr>
 
         <tr>
@@ -64,8 +60,8 @@ echo '
             <th class="text-right" style="border-left: 0;">
                 <b>'.tr('Totale Ivato', [], ['upper' => true]).':</b>
             </th>
-            <th colspan="'.(get('id_print') != 24 ? 4 : 3).'"></th>
-            <th class="text-center">'.($pricing ? moneyFormat($somma_totale_ivato, 2) : '-').'</th>
+            <th colspan="4"></th>
+            <th class="text-center">'.($pricing ? moneyFormat($somma_totale_ivato, $d_importi) : '-').'</th>
         </tr>
     </tbody>
 </table>';

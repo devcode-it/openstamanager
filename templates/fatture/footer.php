@@ -83,7 +83,7 @@ if (!empty($rs2)) {
                                     ".(($rs2[$i]['pagato'] == $rs2[$i]['da_pagare']) ? '<small>PAGATO</small>' : '')."
                                 </td>
                                 <td style='width:15%;' class='text-right'>
-                                    <small>".moneyFormat($rs2[$i]['da_pagare'], 2).'</small>
+                                    <small>".moneyFormat($rs2[$i]['da_pagare'], $d_importi).'</small>
                                 </td>
                                 <td style=\'width:15%;\'>
                                     <small>'.$pagamento.'</small>
@@ -130,11 +130,11 @@ if (!empty($v_iva)) {
                                 </td>
 
                                 <td class='text-right'>
-                                    <small>".moneyFormat($v_totale[$desc_iva], 2)."</small>
+                                    <small>".moneyFormat($v_totale[$desc_iva], $d_importi)."</small>
                                 </td>
 
                                 <td class='text-right'>
-                                    <small>".moneyFormat($v_iva[$desc_iva], 2).'</small>
+                                    <small>".moneyFormat($v_iva[$desc_iva], $d_importi).'</small>
                                 </td>
                             </tr>';
         }
@@ -190,28 +190,28 @@ echo "
 
     <tr>
         <td class='cell-padded text-center'>
-            ".moneyFormat($show_sconto ? $imponibile : $totale_imponibile, 2).'
+            ".moneyFormat($show_sconto ? $imponibile : $totale_imponibile, $d_importi).'
         </td>';
 
 if ($show_sconto) {
     echo "
 
         <td class='cell-padded text-center'>
-            ".moneyFormat(abs($sconto), 2)."
+            ".moneyFormat(abs($sconto), $d_importi)."
         </td>
 
         <td class='cell-padded text-center'>
-            ".moneyFormat($totale_imponibile, 2).'
+            ".moneyFormat($totale_imponibile, $d_importi).'
         </td>';
 }
 
 echo "
         <td class='cell-padded text-center'>
-            ".moneyFormat($totale_iva, 2)."
+            ".moneyFormat($totale_iva, $d_importi)."
         </td>
 
         <td class='cell-padded text-center'>
-            ".moneyFormat($totale, 2).'
+            ".moneyFormat($totale, $d_importi).'
         </td>
     </tr>';
 

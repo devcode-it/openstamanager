@@ -22,7 +22,8 @@ include_once __DIR__.'/../../core.php';
 use Modules\Contratti\Contratto;
 
 $documento = Contratto::find($id_record);
-
+$d_qta = (integer)setting('Cifre decimali per quantità in stampa');
+$d_importi = (integer)setting('Cifre decimali per importi in stampa');
 $id_cliente = $documento['idanagrafica'];
 
 // Leggo i dati della destinazione (se 0=sede legale, se!=altra sede da leggere da tabella an_sedi)

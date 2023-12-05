@@ -91,3 +91,7 @@ INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`
 
 -- Aggiunta flag rappresentante fiscale per sede
 ALTER TABLE `an_sedi` ADD `is_rappresentante_fiscale` BOOLEAN NULL DEFAULT FALSE; 
+
+-- Aggiunte impostazioni per definire il numero di decimali in stampa
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES ("Cifre decimali per importi in stampa", '2', 'list[0,1,2,3,4,5]', 1, 'Generali', '35', 'Definisce il numero di decimali per gli importi nei template di stampa');
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES ("Cifre decimali per quantità in stampa", '0', 'list[0,1,2,3,4,5]', 1, 'Generali', '36', 'Definisce il numero di decimali per le quantità nei template di stampa');

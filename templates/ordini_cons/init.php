@@ -23,7 +23,8 @@ use Modules\Ordini\Ordine;
 
 $documento = Ordine::find($id_record);
 $records = $documento->interventi;
-
+$d_qta = (integer)setting('Cifre decimali per quantità in stampa');
+$d_importi = (integer)setting('Cifre decimali per importi in stampa');
 $id_cliente = $documento['idanagrafica'];
 $id_sede = $documento['idsede'];
 

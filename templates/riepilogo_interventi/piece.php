@@ -22,6 +22,9 @@ include_once __DIR__.'/../../core.php';
 use Modules\Interventi\Intervento;
 use Modules\Iva\Aliquota;
 
+$d_qta = (integer)setting('Cifre decimali per quantità in stampa');
+$d_importi = (integer)setting('Cifre decimali per importi in stampa');
+
 $intervento = Intervento::find($record['id']);
 $sessioni = $intervento->sessioni;
 $iva_predefinita = floatval(Aliquota::find(setting('Iva predefinita'))->percentuale);
@@ -74,19 +77,15 @@ echo '
     if (setting('Formato ore in stampa') == 'Sessantesimi') {
         $ore = Translator::numberToHours($ore);
     } else {
-        $ore = Translator::numberToLocale($ore, 2);
+        $ore = Translator::numberToLocale($ore, $d_qta);
     }
 echo '
-    </td>';
-    if (get('id_print') != 24) {
-        echo '
-        <td class="text-center">'.($km).'</td>';
-    }
-echo '
+    </td>
+    <td class="text-center">'.($km).'</td>
     <td class="text-center">'.($pricing ? $ore : '-').'</td>
-    <td class="text-center">'.($pricing ? moneyFormat($imponibile, 2) : '-').'</td>
-    <td class="text-center">'.($pricing && empty($options['dir']) ? moneyFormat($sconto, 2) : '-').'</td>
-    <td class="text-center">'.($pricing ? moneyFormat($totale_imponibile, 2) : '-').'</td>
+    <td class="text-center">'.($pricing ? moneyFormat($imponibile, $d_importi) : '-').'</td>
+    <td class="text-center">'.($pricing && empty($options['dir']) ? moneyFormat($sconto, $d_importi) : '-').'</td>
+    <td class="text-center">'.($pricing ? moneyFormat($totale_imponibile, $d_importi) : '-').'</td>
 </tr>';
 
 // Sessioni
@@ -133,8 +132,8 @@ if (!$righe->isEmpty()) {
     <td style="border-top: 0; border-bottom: 0;"></td>
     <td colspan="'.(get('id_print') != 24 ? 3 : 2).'"><small>'.$riga->descrizione.'</small></td>
     <td class="text-center"><small>'.$riga->qta.' '.$riga->um.'</small></td>
-    <td class="text-center"><small>'.($pricing ? moneyFormat($prezzo) : '-').'</small></td>
-    <td class="text-center"><small>'.($pricing ? moneyFormat($totale) : '-').'</small></td>
+    <td class="text-center"><small>'.($pricing ? moneyFormat($prezzo, $d_importi) : '-').'</small></td>
+    <td class="text-center"><small>'.($pricing ? moneyFormat($totale, $d_importi) : '-').'</small></td>
 </tr>';
     }
 }

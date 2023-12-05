@@ -127,25 +127,6 @@ foreach ($righe as $riga) {
         $autofill->count($text, true);
     }
 
-    // Aggiunta dei riferimenti ai documenti
-    /*
-    if (setting('Riferimento dei documenti nelle stampe') && $riga->hasOriginal()) {
-        $ref = $riga->getOriginal()->getDcocument()->getReference();
-        if (!empty($riga->getOriginal()->getDcocument()->numero_cliente)) {
-            $ref .= '<br>'.tr('_DOC_ num. _NUM_ del _DATE_', [
-                '_DOC_' => 'Rif. Vs. ordine cliente',
-                '_NUM_' => $riga->getOriginalComponent()->getDocument()->numero_cliente,
-                '_DATE_' => dateFormat($riga->getOriginalComponent()->getDocument()->data_cliente),
-            ]);
-        }
-        if (!empty($ref)) {
-            echo '
-                <br><small>'.$ref.'</small>';
-
-            $autofill->count($ref, true);
-        }
-    }*/
-
     // Informazioni su CIG, CUP, ...
     if ($riga->hasOriginalComponent()) {
         $documento_originale = $riga->getOriginalComponent()->getDocument();
@@ -174,13 +155,13 @@ foreach ($righe as $riga) {
     if (!$riga->isDescrizione()) {
         echo '
             <td class="text-center">
-                '.Translator::numberToLocale(abs($riga->qta), 'qta').' '.$r['um'].'
+                '.Translator::numberToLocale(abs($riga->qta), $d_qta).' '.$r['um'].'
             </td>';
 
         // Prezzo unitario
         echo '
             <td class="text-right">
-				'.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario);
+				'.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario, $d_importi);
 
         if ($riga->sconto > 0) {
             $text = discountInfo($riga, false);
@@ -197,13 +178,13 @@ foreach ($righe as $riga) {
         // Imponibile
         echo '
             <td class="text-right">
-				'.moneyFormat($prezzi_ivati ? ($riga->totale_imponibile + $riga->iva) : $riga->totale_imponibile).'
+				'.moneyFormat($prezzi_ivati ? ($riga->totale_imponibile + $riga->iva) : $riga->totale_imponibile, $d_importi).'
             </td>';
 
         // Iva
         echo '
             <td class="text-center">
-                '.Translator::numberToLocale($riga->aliquota->percentuale, 2).'
+                '.Translator::numberToLocale($riga->aliquota->percentuale, $d_qta).'
             </td>';
     } else {
         echo '

@@ -161,14 +161,14 @@ foreach ($righe as $riga) {
 
         echo '
             <td class="text-center">
-                '.Translator::numberToLocale(abs($qta), 'qta').' '.$um.'
+                '.Translator::numberToLocale(abs($qta), $d_qta).' '.$um.'
             </td>';
 
         if ($options['pricing']) {
             // Prezzo unitario
             echo '
             <td class="text-right">
-                '.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario);
+                '.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario, $d_importi);
 
             if ($riga->sconto > 0) {
                 $text = discountInfo($riga, false);
@@ -185,13 +185,13 @@ foreach ($righe as $riga) {
             // Imponibile
             echo '
             <td class="text-right">
-				'.moneyFormat($prezzi_ivati ? $riga->totale : $riga->totale_imponibile).'
+				'.moneyFormat($prezzi_ivati ? $riga->totale : $riga->totale_imponibile, $d_importi).'
             </td>';
 
             // Iva
             echo '
             <td class="text-center">
-                '.Translator::numberToLocale($riga->aliquota->percentuale, 0).'
+                '.Translator::numberToLocale($riga->aliquota->percentuale, $d_qta).'
             </td>';
         }
 
@@ -246,7 +246,7 @@ if ($options['pricing']) {
         </td>
 
         <th colspan="2" class="text-right">
-            <b>'.moneyFormat($show_sconto ? $imponibile : $totale_imponibile, 2).'</b>
+            <b>'.moneyFormat($show_sconto ? $imponibile : $totale_imponibile, $d_importi).'</b>
         </th>
     </tr>';
 
@@ -259,7 +259,7 @@ if ($options['pricing']) {
         </td>
 
         <th colspan="2" class="text-right">
-            <b>'.moneyFormat($sconto, 2).'</b>
+            <b>'.moneyFormat($sconto, $d_importi).'</b>
         </th>
     </tr>';
 
@@ -271,7 +271,7 @@ if ($options['pricing']) {
         </td>
 
         <th colspan="2" class="text-right">
-            <b>'.moneyFormat($totale_imponibile, 2).'</b>
+            <b>'.moneyFormat($totale_imponibile, $d_importi).'</b>
         </th>
     </tr>';
     }
@@ -284,7 +284,7 @@ if ($options['pricing']) {
         </td>
 
         <th colspan="2" class="text-right">
-            <b>'.moneyFormat($totale_iva, 2).'</b>
+            <b>'.moneyFormat($totale_iva, $d_importi).'</b>
         </th>
     </tr>';
 
@@ -295,7 +295,7 @@ if ($options['pricing']) {
             <b>'.tr('Totale documento', [], ['upper' => true]).':</b>
     	</td>
     	<th colspan="2" class="text-right">
-    		<b>'.moneyFormat($totale, 2).'</b>
+    		<b>'.moneyFormat($totale, $d_importi).'</b>
     	</th>
     </tr>';
 
@@ -307,7 +307,7 @@ if ($options['pricing']) {
                 <b>'.tr('Sconto in fattura', [], ['upper' => true]).':</b>
             </td>
             <th colspan="2" class="text-right">
-                <b>'.moneyFormat($sconto_finale, 2).'</b>
+                <b>'.moneyFormat($sconto_finale, $d_importi).'</b>
             </th>
         </tr>';
 
@@ -318,7 +318,7 @@ if ($options['pricing']) {
                 <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
             </td>
             <th colspan="2" class="text-right">
-                <b>'.moneyFormat($netto_a_pagare, 2).'</b>
+                <b>'.moneyFormat($netto_a_pagare, $d_importi).'</b>
             </th>
         </tr>';
     }

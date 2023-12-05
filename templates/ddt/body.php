@@ -137,14 +137,14 @@ foreach ($righe as $riga) {
     if (!$riga->isDescrizione()) {
         echo '
             <td class="text-center" nowrap="nowrap">
-                '.Translator::numberToLocale(abs($riga->qta), 'qta').' '.$r['um'].'
+                '.Translator::numberToLocale(abs($riga->qta), $d_qta).' '.$r['um'].'
             </td>';
 
         if ($options['pricing']) {
             // Prezzo unitario
             echo '
             <td class="text-right" nowrap="nowrap">
-				'.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario);
+				'.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario, $d_importi);
 
             if ($riga->sconto > 0) {
                 $text = discountInfo($riga, false);
@@ -161,13 +161,13 @@ foreach ($righe as $riga) {
             // Imponibile
             echo '
             <td class="text-right" nowrap="nowrap">
-				'.moneyFormat($prezzi_ivati ? $riga->totale : $riga->totale_imponibile).'
+				'.moneyFormat($prezzi_ivati ? $riga->totale : $riga->totale_imponibile, $d_importi).'
             </td>';
 
             // Iva
             echo '
             <td class="text-center" nowrap="nowrap">
-                '.Translator::numberToLocale($riga->aliquota->percentuale, 2).'
+                '.Translator::numberToLocale($riga->aliquota->percentuale, $d_importi).'
             </td>';
         }
     } else {

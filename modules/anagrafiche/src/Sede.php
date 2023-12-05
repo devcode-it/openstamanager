@@ -62,4 +62,26 @@ class Sede extends Model
     {
         return $this->belongsTo(Nazione::class, 'id_nazione');
     }
+
+    public function save(array $options = [])
+    {
+        $this->fixRappresentanteFiscale();
+
+        return parent::save($options);
+    }
+
+    protected function fixRappresentanteFiscale()
+    {
+        $rappresentante_fiscale = post('is_rappresentante_fiscale');
+
+        if (!empty($rappresentante_fiscale)) {
+            self::where('idanagrafica', $this->idanagrafica)
+                ->where('id', '!=', $this->id)
+                ->update([
+                    'is_rappresentante_fiscale' => 0,
+                ]);
+
+            $this->attributes['is_rappresentante_fiscale'] = $rappresentante_fiscale;
+        }
+    }
 }

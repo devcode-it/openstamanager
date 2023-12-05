@@ -275,7 +275,7 @@ $operations['cambia_stato'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia stato'),
     'data' => [
         'title' => tr('Vuoi davvero aggiornare lo stato di questi contratti?'),
-        'msg' => '<br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT id, descrizione FROM co_staticontratti ORDER BY descrizione" ]}',
+        'msg' => '<br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT id, descrizione, colore as _bgcolor_ FROM co_staticontratti ORDER BY descrizione" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

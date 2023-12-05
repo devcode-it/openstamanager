@@ -31,6 +31,7 @@ use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
 use Modules\Fatture\Tipo;
 use Modules\Iva\Aliquota;
+use Plugins\ExportFE\Interaction;
 use Util\XML;
 
 $module = Modules::get($id_module);
@@ -46,10 +47,26 @@ $stato_fe = $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = 
 
 $ops = ['update', 'add_intervento', 'manage_documento_fe', 'manage_riga_fe', 'manage_articolo', 'manage_sconto', 'manage_riga', 'manage_descrizione', 'unlink_intervento', 'delete_riga', 'copy_riga', 'add_serial', 'add_articolo', 'edit-price'];
 
-if ($dir == 'entrata' && $stato_fe['codice_stato_fe'] == 'WAIT' && setting('OSMCloud Services API Token') != '' && in_array($op, $ops)) {
-    flash()->warning(tr('La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile effettuare modifiche!', [
-        '_NUM_' => $fattura->numero_esterno,
-    ]));
+if ($dir === 'entrata' && in_array($stato_fe['codice_stato_fe'], ['WAIT', 'RC', 'MC', 'QUEUE', 'DT', 'EC01', 'NE']) && Interaction::isEnabled() && in_array($op, $ops)) {
+    //Permetto sempre la modifica delle note aggiuntive e/o della data di competenza della fattura di vendita
+    if ($op == 'update' && ($fattura->note_aggiuntive != post('note_aggiuntive') || $fattura->data_competenza != post('data_competenza'))) {
+        if ($fattura->note_aggiuntive != post('note_aggiuntive')) {
+            $fattura->note_aggiuntive = post('note_aggiuntive');
+            $fattura->save();
+            flash()->info(tr('Note interne modificate correttamente.'));
+        }
+
+        if ($fattura->data_competenza != post('data_competenza')) {
+            $fattura->data_competenza = post('data_competenza');
+            $fattura->save();
+            flash()->info(tr('Data competenza modificata correttamente.'));
+        }
+    } else {
+        flash()->warning(tr('La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile effettuare modifiche.', [
+            '_NUM_' => $fattura->numero_esterno,
+        ]));
+    }
+
     $op = null;
 }
 
@@ -372,11 +389,12 @@ switch ($op) {
             $new_riga->idintervento = 0;
             $new_riga->idddt = 0;
             $new_riga->idordine = 0;
-            $new_riga->save();
 
             if ($new_riga->isArticolo()) {
                 $new_riga->movimenta($new_riga->qta);
             }
+
+            $new_riga->save();
         }
 
         flash()->info(tr('Fattura duplicata correttamente!'));
@@ -655,6 +673,11 @@ switch ($op) {
             }
 
             $riga = null;
+        }
+
+        if (count($id_righe) == 1) {
+            flash()->info(tr('Riga eliminata!'));
+        } else {
             flash()->info(tr('Righe eliminate!'));
         }
 
@@ -672,11 +695,12 @@ switch ($op) {
             $new_riga = $riga->replicate();
             $new_riga->setDocument($fattura);
             $new_riga->qta_evasa = 0;
-            $new_riga->save();
 
             if ($new_riga->isArticolo()) {
                 $new_riga->movimenta($new_riga->qta);
             }
+
+            $new_riga->save();
 
             $riga = null;
         }

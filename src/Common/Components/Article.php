@@ -293,19 +293,48 @@ abstract class Article extends Accounting
         $movimento = Movimento::descrizioneMovimento($qta_movimento, $documento->direzione).' - '.$documento->getReference();
 
         if ($documento instanceof \Modules\Interventi\Intervento) {
-            $id_sede = $this->idsede_partenza;
+            $id_sede = $documento->idsede_partenza;
         } else {
             $id_sede = $documento->direzione == 'uscita' ? $documento->idsede_destinazione : $documento->idsede_partenza;
         }
 
         // Fix per valori di sede a NULL
         $id_sede = $id_sede ?: 0;
+        $qta_finale = $qta_movimento;
 
-        $this->articolo->movimenta($qta_movimento, $movimento, $data, false, [
+        if (!setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita') && $documento->direzione == 'entrata') {
+            $qta_sede = Movimento::where('idarticolo', $this->articolo->id)
+                ->where('idsede', $id_sede)
+                ->groupBy('idarticolo')
+                ->sum('qta');
+
+            $qta_modifica = $this->attributes['qta']-$this->original['qta'];
+
+            //Se la quantità supera la giacenza in sede allora movimento solo quello che resta
+            if (($qta_sede + $qta_finale) < 0 && $qta_sede >= 0) {
+                $qta_finale = -$qta_sede;
+                $this->attributes['qta'] = $qta_sede + ($qta_modifica != 0 ? $this->original['qta'] : 0);
+            }
+
+            // Se la quantità sede per qualche motivo è negativa correggo la quantità della riga con la differenza
+            elseif ($qta_sede < 0 && $this->original['qta'] >= abs($qta_sede)) {
+                $qta_finale = abs($qta_sede);
+                $this->attributes['qta'] = $this->original['qta'] - abs($qta_sede);
+            }
+
+            // Se la quantità sede per qualche motivo è negativa e supera la quantità della riga azzero quest'ultima
+            elseif ($qta_sede < 0 && $this->original['qta'] < abs($qta_sede)) {
+                $qta_finale = $this->original['qta'];
+                $this->attributes['qta'] = 0;
+            }
+        }
+
+        $this->articolo->movimenta($qta_finale, $movimento, $data, false, [
             'reference_type' => get_class($documento),
             'reference_id' => $documento->id,
             'idsede' => $id_sede,
         ]);
+
     }
 
     protected static function boot()

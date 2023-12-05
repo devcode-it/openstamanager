@@ -19,75 +19,84 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Anagrafiche\Sede;
+
 $operazione = filter('op');
 
 switch ($operazione) {
     case 'addsede':
-         if (!empty(post('nomesede'))) {
-             $opt_out_newsletter = post('disable_newsletter');
-             $dbo->insert('an_sedi', [
+        if (!empty(post('nomesede'))) {
+            $opt_out_newsletter = post('disable_newsletter');
+            $dbo->insert('an_sedi', [
                 'idanagrafica' => $id_parent,
                 'nomesede' => post('nomesede'),
                 'indirizzo' => post('indirizzo'),
-                'codice_destinatario' => post('codice_destinatario'),
                 'citta' => post('citta'),
                 'cap' => post('cap'),
                 'provincia' => strtoupper(post('provincia')),
                 'km' => post('km'),
+                'id_nazione' => !empty(post('id_nazione')) ? post('id_nazione') : null,
+                'idzona' => !empty(post('idzona')) ? post('idzona') : 0,
                 'cellulare' => post('cellulare'),
                 'telefono' => post('telefono'),
                 'email' => post('email'),
-                'id_nazione' => !empty(post('id_nazione')) ? post('id_nazione') : null,
-                'idzona' => !empty(post('idzona')) ? post('idzona') : 0,
                 'enable_newsletter' => empty($opt_out_newsletter),
+                'codice_destinatario' => post('codice_destinatario'),
+                'is_automezzo' => post('is_automezzo'),
+                'is_rappresentante_fiscale' => post('is_rappresentante_fiscale'),
             ]);
-             $id_record = $dbo->lastInsertedID();
 
-             $id_referenti = (array) post('id_referenti');
-             foreach ($id_referenti as $id_referente) {
-                 $dbo->update('an_referenti', [
-                    'idsede' => $id_record,
-                ], [
-                    'id' => $id_referente,
-                ]);
-             }
+            $id_record = $dbo->lastInsertedID();
 
-             if (isAjaxRequest() && !empty($id_record)) {
-                 echo json_encode(['id' => $id_record, 'text' => post('nomesede').' - '.post('citta')]);
-             }
+            $id_referenti = (array) post('id_referenti');
+            foreach ($id_referenti as $id_referente) {
+                $dbo->update('an_referenti', [
+                'idsede' => $id_record,
+            ], [
+                'id' => $id_referente,
+            ]);
+            }
 
-             flash()->info(tr('Aggiunta una nuova sede!'));
-         } else {
-             flash()->warning(tr('Errore durante aggiunta della sede'));
-         }
+            if (isAjaxRequest() && !empty($id_record)) {
+                echo json_encode(['id' => $id_record, 'text' => post('nomesede').' - '.post('citta')]);
+            }
+
+            flash()->info(tr('Aggiunta una nuova sede!'));
+        } else {
+            flash()->warning(tr('Errore durante aggiunta della sede'));
+        }
+        
+        $sede = Sede::find($id_record);
+        $sede->save();
 
         break;
 
     case 'updatesede':
         $opt_out_newsletter = post('disable_newsletter');
+        $sede = Sede::find($id_record);
 
         $dbo->update('an_sedi', [
             'nomesede' => post('nomesede'),
             'indirizzo' => post('indirizzo'),
-            'codice_destinatario' => post('codice_destinatario'),
-            'piva' => post('piva'),
-            'codice_fiscale' => post('codice_fiscale'),
             'citta' => post('citta'),
             'cap' => post('cap'),
             'provincia' => strtoupper(post('provincia')),
-            'km' => post('km'),
-            'cellulare' => post('cellulare'),
-            'telefono' => post('telefono'),
-            'email' => post('email'),
-            'fax' => post('fax'),
             'id_nazione' => !empty(post('id_nazione')) ? post('id_nazione') : null,
+            'telefono' => post('telefono'),
+            'cellulare' => post('cellulare'),
+            'email' => post('email'),
+            'enable_newsletter' => empty($opt_out_newsletter),
+            'codice_destinatario' => post('codice_destinatario'),
+            'is_rappresentante_fiscale' => post('is_rappresentante_fiscale'),
+            'piva' => post('piva'),
+            'codice_fiscale' => post('codice_fiscale'),
+            'is_automezzo' => post('is_automezzo'),
             'idzona' => post('idzona'),
+            'km' => post('km'),
             'note' => post('note'),
             'gaddress' => post('gaddress'),
             'lat' => post('lat'),
             'lng' => post('lng'),
-
-            'enable_newsletter' => empty($opt_out_newsletter),
         ], ['id' => $id_record]);
 
         $referenti = $dbo->fetchArray('SELECT id FROM an_referenti WHERE idsede = '.$id_record);
@@ -109,6 +118,8 @@ switch ($operazione) {
                 'id' => $ref,
             ]);
         }
+
+        $sede->save();
 
         flash()->info(tr('Salvataggio completato!'));
 

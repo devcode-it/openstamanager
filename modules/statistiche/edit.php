@@ -209,7 +209,7 @@ if (!empty($clienti)) {
                         <td>'.Modules::link('Anagrafiche', $cliente['idanagrafica'], $cliente['ragione_sociale']).'</td>
                         <td class="text-right">'.intval($cliente['qta']).'</td>
                         <td class="text-right">'.moneyFormat($cliente['totale'], 2).'</td>
-                        <td class="text-right">'.Translator::numberToLocale($cliente['totale'] * 100 / $totale[0]['totale'], 2).' %</td>
+                        <td class="text-right">'.Translator::numberToLocale($cliente['totale'] * 100 / ($totale[0]['totale'] != 0 ? $totale[0]['totale'] : 1), 2).' %</td>
                     </tr>';
     }
     echo '
@@ -256,7 +256,7 @@ if (!empty($articoli)) {
                     <tr>
                         <td><div class="shorten"> '.Modules::link('Articoli', $articolo['id'], $articolo['codice'].' - '.$articolo['descrizione']).'</div></td>
                         <td class="text-right">'.Translator::numberToLocale($articolo['qta'], 'qta').' '.$articolo['um'].'</td>
-                        <td class="text-right">'.Translator::numberToLocale($articolo['qta'] * 100 / $totale[0]['totale_qta'], 2).' %</td>
+                        <td class="text-right">'.Translator::numberToLocale($articolo['qta'] * 100 / ($totale[0]['totale_qta'] != 0 ? $totale[0]['totale_qta'] : 1), 2).' %</td>
                         <td class="text-right">'.moneyFormat($articolo['totale'], 2).'</td>
                     </tr>';
     }

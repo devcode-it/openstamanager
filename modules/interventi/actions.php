@@ -440,7 +440,11 @@ switch (post('op')) {
             $riga = null;
         }
 
-        flash()->info(tr('Righe eliminate!'));
+        if (count($id_righe) == 1) {
+            flash()->info(tr('Riga eliminata!'));
+        } else {
+            flash()->info(tr('Righe eliminate!'));
+        }
 
         break;
 
@@ -455,11 +459,12 @@ switch (post('op')) {
             $new_riga = $riga->replicate();
             $new_riga->setDocument($intervento);
             $new_riga->qta_evasa = 0;
-            $new_riga->save();
 
             if ($new_riga->isArticolo()) {
                 $new_riga->movimenta($new_riga->qta);
             }
+
+            $new_riga->save();
 
             $riga = null;
         }
@@ -976,11 +981,12 @@ switch (post('op')) {
                         $new_riga->setDocument($new);
 
                         $new_riga->qta_evasa = 0;
-                        $new_riga->save();
 
                         if ($new_riga->isArticolo()) {
                             $new_riga->movimenta($new_riga->qta);
                         }
+
+                        $new_riga->save();
                     }
                 }
 
@@ -1153,6 +1159,7 @@ switch (post('op')) {
         break;
 
     case 'update_inline':
+        $qta = post('qta');
         $id_riga = post('riga_id');
         $riga = $riga ?: Riga::find($id_riga);
         $riga = $riga ?: Articolo::find($id_riga);
@@ -1162,7 +1169,7 @@ switch (post('op')) {
             if ($riga->isSconto()) {
                 $riga->setScontoUnitario(post('sconto'), $riga->idiva);
             } else {
-                $riga->qta = post('qta');
+                $riga->qta = $qta;
                 $riga->setPrezzoUnitario(post('prezzo'), $riga->idiva);
                 $riga->setSconto(post('sconto'), post('tipo_sconto'));
                 $riga->costo_unitario = post('costo') ?: 0;

@@ -40,72 +40,70 @@ echo '
 		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Indirizzo').'", "name": "indirizzo", "id": "indirizzo_", "required": 0, "value": "$indirizzo$" ]}
 		</div>
-
-		<div class="col-md-6">
-            {[ "type": "text", "label": "'.($record['tipo_anagrafica'] == 'Ente pubblico' ? tr('Codice unico ufficio') : tr('Codice destinatario')).'", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "value": "$codice_destinatario$", "maxlength": '.($record['tipo_anagrafica'] == 'Ente pubblico' ? '6' : '7').', "help": "'.tr('<b>Attenzione</b>: per impostare il codice specificare prima \'Tipologia\' e \'Nazione\' dell\'anagrafica:<br><ul><li>Ente pubblico (B2G/PA) - Codice Univoco Ufficio (www.indicepa.gov.it), 6 caratteri</li><li>Azienda (B2B) - Codice Destinatario, 7 caratteri</li><li>Privato (B2C) - viene utilizzato il Codice Fiscale</li></ul>').'", "readonly": "'.intval($record['iso2'] ? $record['iso2'] != 'IT' : 0).'" ]}
-        </div>
-	</div>
-
-	<div class="row">
 		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Città').'", "name": "citta", "id": "citta_", "value": "$citta$", "required": 1 ]}
 		</div>
+	</div>
 
-		<div class="col-md-2">
-			{[ "type": "text", "label": "'.tr('C.A.P.').'", "name": "cap", "value": "$cap$" ]}
+	<div class="row">
+		<div class="col-md-4">
+			{[ "type": "text", "label": "'.tr('C.A.P.').'", "name": "cap", "value": "$cap$", "required":1 ]}
 		</div>
 
-		<div class="col-md-2">
+		<div class="col-md-4">
 			{[ "type": "text", "label": "'.tr('Provincia').'", "name": "provincia", "value": "$provincia$", "maxlength": 2, "class": "text-center provincia-mask text-uppercase", "extra": "onkeyup=\"this.value = this.value.toUpperCase();\"" ]}
 		</div>
-
-		<div class="col-md-2">
-			{[ "type": "number", "label": "'.tr('Km').'", "name": "km", "value": "$km$" ]}
-		</div>
-	</div>
-
-	<div class="row">
-		<div class="col-md-6">
+		<div class="col-md-4">
 			{[ "type": "select", "label": "'.tr('Nazione').'", "name": "id_nazione", "value": "$id_nazione$", "ajax-source": "nazioni",  "required": 1 ]}
 		</div>
-
-		<div class="col-md-6">
+	</div>
+	<div class="row">
+		<div class="col-md-3">
 			{[ "type": "telefono", "label": "'.tr('Telefono').'", "name": "telefono", "value": "$telefono$" ]}
 		</div>
-	</div>
-
-	<div class="row">
-		<div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('Fax').'", "name": "fax", "value": "$fax$" ]}
-		</div>
-
-		<div class="col-md-6">
+		<div class="col-md-3">
 			{[ "type": "telefono", "label": "'.tr('Cellulare').'", "name": "cellulare", "value": "$cellulare$" ]}
 		</div>
-	</div>
-
-	<div class="row">
-		<div class="col-md-6">
+		<div class="col-md-3">
 			{[ "type": "text", "label": "'.tr('Indirizzo email').'", "name": "email", "value": "$email$", "class": "email-mask", "validation": "email" ]}
 		</div>
-
         <div class="col-md-3">
             {[ "type": "checkbox", "label": "'.tr('Opt-out per newsletter').'", "name": "disable_newsletter", "id": "disable_newsletter_m", "value": "'.empty($record['enable_newsletter']).'", "help": "'.tr("Blocco per l'invio delle email.").'" ]}
         </div>
+	</div>
+	<div class="row">
+		<div class="col-md-3">
+		{[ "type": "text", "label": "'.($record['tipo_anagrafica'] == 'Ente pubblico' ? tr('Codice unico ufficio') : tr('Codice destinatario')).'", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "value": "$codice_destinatario$", "maxlength": '.($record['tipo_anagrafica'] == 'Ente pubblico' ? '6' : '7').', "help": "'.tr('<b>Attenzione</b>: per impostare il codice specificare prima \'Tipologia\' e \'Nazione\' dell\'anagrafica:<br><ul><li>Ente pubblico (B2G/PA) - Codice Univoco Ufficio (www.indicepa.gov.it), 6 caratteri</li><li>Azienda (B2B) - Codice Destinatario, 7 caratteri</li><li>Privato (B2C) - viene utilizzato il Codice Fiscale</li></ul>').'", "readonly": "'.intval($record['iso2'] ? $record['iso2'] != 'IT' : 0).'" ]}
+		</div>
 
 		<div class="col-md-3">
+			{[ "type": "checkbox", "label": "'.tr('Rappresentante fiscale').'", "name": "is_rappresentante_fiscale", "value": "'.($record['is_rappresentante_fiscale']).'", "help": "'.tr("Utilizza questa sede come rappresentante fiscale per l'anagrafica.").'" ]}
+		</div>
+
+		<div class="col-md-3">
+			{[ "type": "text", "label": "'.tr('Partita IVA').'", "name": "piva", "value": "'.($record['piva']).'", "help": "'.tr('Partita IVA del rappresentante fiscale.').'", "disabled":"disabled"]}
+		</div>
+		<div class="col-md-3">
+			{[ "type": "text", "label": "'.tr('Codice fiscale').'", "name": "codice_fiscale", "value": "'.($record['codice_fiscale']).'", "help": "'.tr('Codice fiscale del rappresentante fiscale.').'", "disabled":"disabled" ]}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-4">
+            {[ "type": "checkbox", "label": "'.tr('Automezzo').'", "name": "is_automezzo", "id": "is_automezzo", "value": "'.$record['is_automezzo'].'", "help": "'.tr('Seleziona se questa sede rappresenta un automezzo.').'" ]}
+        </div>
+
+		<div class="col-md-4">
 			{[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "ajax-source": "zone",  "value": "$idzona$", "placeholder": "'.tr('Nessuna zona').'", "icon-after": "add|'.Modules::get('Zone')['id'].'" ]}
 		</div>
-	</div>
-
-	<div class="row">
-		<div class="col-md-12">
-			{[ "type": "select", "multiple": "1", "label": "'.tr('Referenti').'", "name": "id_referenti[]", "value": "'.$referenti.'", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$id_parent.'}, "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|id_plugin='.Plugins::get('Referenti')['id'].'&id_parent='.$id_parent.'" ]}
+		<div class="col-md-4">
+			{[ "type": "number", "label": "'.tr('Km').'", "name": "km", "value": "$km$" ]}
 		</div>
 	</div>
-
 	<div class="row">
-		<div class="col-md-12">
+		<div class="col-md-6">
+			{[ "type": "select", "multiple": "1", "label": "'.tr('Referenti').'", "name": "id_referenti[]", "value": "'.$referenti.'", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$id_parent.'}, "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|id_plugin='.Plugins::get('Referenti')['id'].'&id_parent='.$id_parent.'" ]}
+		</div>
+		<div class="col-md-6">
 			{[ "type": "textarea", "label": "'.tr('Note').'", "name": "note", "value": "$note$" ]}
 		</div>
 	</div>
@@ -210,6 +208,29 @@ echo '
 <script>$(document).ready(init)</script>
 
 <script>
+
+function rappresentante_fiscale() {
+	let rappresentante_fiscale = input("is_rappresentante_fiscale");
+	let piva = input("piva");
+	let codice_fiscale = input("codice_fiscale");
+
+	if(rappresentante_fiscale.get()==1){
+		input("piva").enable();
+		input("codice_fiscale").enable();
+	} else {
+		input("piva").disable();
+		input("codice_fiscale").disable();
+	}
+}
+
+$(document).ready(function() {
+	rappresentante_fiscale();
+});
+
+input("is_rappresentante_fiscale").change(function () {
+	rappresentante_fiscale();
+});
+
 $("#modals > div").on("shown.bs.modal", function () {
     if (input("lat").get() && input("lng").get()) {
         caricaMappaSede();
@@ -284,5 +305,4 @@ function rimuoviSede(button) {
         });
     }).catch(swal.noop);
 }
-
 </script>';

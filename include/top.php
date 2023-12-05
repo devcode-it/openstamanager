@@ -630,10 +630,12 @@ if (Auth::check()) {
 // Infomazioni
 if (!empty($messages['info'])) {
     foreach ($messages['info'] as $value) {
-        echo '
-							<div class="alert alert-success push">
-                                <i class="fa fa-check"></i> '.$value.'
-                            </div>';
+        echo ' 
+            <script>
+                $(document).ready( function(){
+                    window.parent.toastr.success("'.$value.'", toastr.options);
+                });
+            </script>';
     }
 }
 

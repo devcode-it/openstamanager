@@ -107,7 +107,7 @@ class CSV extends CSVImporter
             $impianto = Impianto::where('matricola', $record['impianto'])->first();
         }
 
-        if (!empty($anagrafica) && !empty($impianto)) {
+        if (!empty($anagrafica)) {
             $intervento = null;
 
             // Ricerca sulla base della chiave primaria se presente
@@ -128,6 +128,10 @@ class CSV extends CSVImporter
             } else {
                 $stato = Stato::where('descrizione', $record['stato'])->first();
             }
+
+            if (empty($stato)) {
+                $stato = Stato::build($record['stato']);
+            }
             unset($record['stato']);
 
             // Crea l'intervento
@@ -139,13 +143,15 @@ class CSV extends CSVImporter
             unset($record['ora_inizio']);
             unset($record['telefono']);
 
-            $collegamento = $database->table('my_impianti_interventi')->where('idimpianto', $impianto['id'])->where('idintervento', $intervento['id'])->first();
+            if (!empty($impianto)) {
+                $collegamento = $database->table('my_impianti_interventi')->where('idimpianto', $impianto['id'])->where('idintervento', $intervento['id'])->first();
 
-            if (empty($collegamento)) {
-                // Collega l'impianto all'intervento
-                $database->query('INSERT INTO my_impianti_interventi(idimpianto, idintervento) VALUES('.prepare($impianto['id']).', '.prepare($intervento['id']).')');
+                if (empty($collegamento)) {
+                    // Collega l'impianto all'intervento
+                    $database->query('INSERT INTO my_impianti_interventi(idimpianto, idintervento) VALUES('.prepare($impianto['id']).', '.prepare($intervento['id']).')');
+                }
+                unset($record['impianto']);
             }
-            unset($record['impianto']);
 
             // Inserisce la data richiesta e la richiesta
             $intervento->data_richiesta = $record['data_richiesta'];
@@ -185,9 +191,9 @@ class CSV extends CSVImporter
     public static function getExample()
     {
         return [
-            ['Codice', 'Telefono', 'Data', 'Data richiesta', 'Ora', 'Tecnico', 'Tipo', 'Note', 'Impianto', 'Richiesta', 'Descrizione', 'Stato'],
-            ['001', '044444444', '07/11/2023', '03/11/2023', '18:30', 'Stefano Bianchi', '', '', '00000000001', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', 'Bozza'],
-            ['002', '044444444', '08/11/2023', '04/11/2023', '11:20', 'Stefano Bianchi', '', '', '00000000002', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', ''],
+            ['Codice', 'Telefono', 'Data', 'Data richiesta', 'Ora inizio', 'Tecnico', 'Tipo', 'Note', 'Impianto', 'Richiesta', 'Descrizione', 'Stato'],
+            ['001', '04444444', '07/11/2023', '03/11/2023', '18:30', 'Stefano Bianchi', '', '', '00001', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', 'Bozza'],
+            ['002', '04444444', '08/11/2023', '04/11/2023', '11:20', 'Stefano Bianchi', '', '', '00002', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', ''],
         ];
     }
 }

@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.52 ](#2452)
 - [2.4.51 (2023-10-30)](#2451-2023-10-30)
 - [2.4.50 (2023-10-06)](#2450-2023-10-06)
 - [2.4.49 (2023-09-22)](#2449-2023-09-25)
@@ -61,6 +62,17 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.3 (2018-02-16)](#23-2018-02-16)
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
+
+
+## 2.4.52 
+### Aggiunto (Added)
+- Aggiunta la gestione delle sedi definite come automezzi con pratico modulo per il carico/scarico degli articoli nell'automezzo, l'assegnazione di tecnici/autisti con date di validità e stampe di carico filtrabili
+### Modificato (Changed)
+- Aggiunta una limitazione sulle quantità scaricabili nei documenti di vendita in modo da non poter vendere più articoli di quelli presenti fisicamente nel magazzino selezionato. Questa limitazione è legata all'impostazione **Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita**
+
+### Fixed
+- Risolto il problema di visualizzazione dei PDF negli allegati
+- Risolto un problema di movimentazione magazzino: gli articoli nelle attività venivano sempre movimentati da sede legale anche se specificata diversa sede di partenza nel documento (solo da popup di modifica articolo)
 
 ## 2.4.51 (2023-10-30)
 ### Aggiunto (Added)

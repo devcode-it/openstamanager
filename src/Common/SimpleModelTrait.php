@@ -37,14 +37,8 @@ trait SimpleModelTrait
      *
      * @return static
      */
-    public static function build($nome)
+    public static function build()
     {
-        $model = new static();
-
-        $model->codice = 'NEW';
-        $model->descrizione = $nome;
-        $model->save();
-
-        return $model;
+        return new static();
     }
 }

@@ -297,6 +297,7 @@ switch ($op) {
             }
 
             $totale_documento = abs($totale_documento);
+            $totale_documento = $dati_generali['ImportoTotaleDocumento'] ? $dati_generali['ImportoTotaleDocumento'] : $totale_documento;
         } catch (Exception $e) {
         }
 

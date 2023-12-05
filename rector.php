@@ -13,6 +13,7 @@ use Rector\Php81\Rector\ClassConst\FinalizePublicClassConstantRector;
 use Rector\Privatization\Rector\Class_\FinalizeClassesWithoutChildrenRector;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
+use Rector\TypeDeclaration\Rector\ArrowFunction\AddArrowFunctionReturnTypeRector;
 use RectorLaravel\Set\LaravelSetList;
 
 return static function (RectorConfig $rectorConfig): void {
@@ -27,16 +28,15 @@ return static function (RectorConfig $rectorConfig): void {
         SetList::PHP_80,
         SetList::PHP_81,
         SetList::PHP_82,
-        LevelSetList::UP_TO_PHP_82,
+        SetList::PHP_83,
+        LevelSetList::UP_TO_PHP_83,
         SetList::CODE_QUALITY,
         SetList::CODING_STYLE,
         SetList::DEAD_CODE,
         SetList::EARLY_RETURN,
-        SetList::MYSQL_TO_MYSQLI,
-        SetList::PSR_4,
         SetList::PRIVATIZATION,
         SetList::TYPE_DECLARATION,
-        LaravelSetList::LARAVEL_90,
+        LaravelSetList::LARAVEL_100,
         LaravelSetList::LARAVEL_CODE_QUALITY,
     ]);
 
@@ -47,5 +47,6 @@ return static function (RectorConfig $rectorConfig): void {
         FinalizeClassesWithoutChildrenRector::class,
         FinalizePublicClassConstantRector::class,
         CatchExceptionNameMatchingTypeRector::class,
+        AddArrowFunctionReturnTypeRector::class,
     ]);
 };

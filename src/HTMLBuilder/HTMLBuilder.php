@@ -168,6 +168,8 @@ class HTMLBuilder
                 $result = self::replace($result, $depth + 1);
             }
 
+            
+
             $html = str_replace($value, !empty($result) ? $result : $value, $html);
         }
 
@@ -196,6 +198,8 @@ class HTMLBuilder
 
         // Ricorsione
         $result = self::replace($result);
+
+        print_r($json);
 
         return !empty($result) ? $result : json_encode($json);
     }
@@ -374,7 +378,7 @@ class HTMLBuilder
      *
      * @return array
      */
-    protected static function decode($string, $type)
+    public static function decode($string, $type)
     {
         $string = '{'.substr($string, strlen(self::$open[$type]), -strlen(self::$close[$type])).'}';
 

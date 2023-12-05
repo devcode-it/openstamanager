@@ -101,6 +101,10 @@ class FieldManager implements ManagerInterface
                     $result .= '
         </div>';
                 }
+
+                // Forzatura inizializzazione componente
+                $component = \HTMLBuilder\HTMLBuilder::decode($field['content'], 'manager');
+                $result .= '<script>$(document).ready( function(){ input("#'.$component['name'].'").init(); });</script>';
             }
 
             if (($key + 1) % 3 != 0) {

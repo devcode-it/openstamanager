@@ -199,8 +199,6 @@ class HTMLBuilder
         // Ricorsione
         $result = self::replace($result);
 
-        print_r($json);
-
         return !empty($result) ? $result : json_encode($json);
     }
 

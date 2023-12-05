@@ -213,11 +213,13 @@ foreach ($righe as $riga) {
         $evasione_bar['in_righe_interventi'] = 'warning';
         $evasione_bar['or_righe_ordini'] = 'success';
         foreach ($evasione_bar as $table => $color) {
-            $righe_ev = $dbo->table($table)->where('original_id', $riga->id)->where('original_type', get_class($riga))->get();
-            $perc_ev = $righe_ev->sum('qta') * 100 / $riga->qta;
-            if ($perc_ev > 0) {
-                echo '
-                            <div class="progress-bar progress-bar-'.$color.'" style="width:'.$perc_ev.'%"></div>';
+            if ($righe_ev->count() > 0) {
+                $righe_ev = $dbo->table($table)->where('original_id', $riga->id)->where('original_type', get_class($riga))->get();
+                $perc_ev = $righe_ev->sum('qta') * 100 / $riga->qta;
+                if ($perc_ev > 0) {
+                    echo '
+                                <div class="progress-bar progress-bar-'.$color.'" style="width:'.$perc_ev.'%"></div>';
+                }
             }
         }
         echo '

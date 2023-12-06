@@ -434,8 +434,8 @@ echo '
         
         <tr>
             <td colspan="'.$colspan.'" class="text-right">
-                '.tr('Ricarico (_PRC_%)', [
-                    '_PRC_' => numberFormat($preventivo->ricarico_percentuale),
+                '.tr('Ricarico (_PRC_)', [
+                    '_PRC_' => ($preventivo->ricarico_percentuale != 0 ? numberFormat($preventivo->ricarico_percentuale). '%' : 'N.D.'),
             ]).':
             </td>
         </tr>';

@@ -22,39 +22,46 @@ include_once __DIR__.'/../../core.php';
 use Modules\Interventi\Intervento;
 use Modules\Preventivi\Preventivo;
 
+if (!function_exists('get_imponibile_preventivo')) {
 function get_imponibile_preventivo($idpreventivo)
-{
-    $preventivo = Preventivo::find($idpreventivo);
+    {
+        $preventivo = Preventivo::find($idpreventivo);
 
-    return $preventivo->totale_imponibile;
+        return $preventivo->totale_imponibile;
+    }
 }
 
 /**
  * Restituisce lo stato del preventivo in base alle righe.
  */
-function get_stato_preventivo($idpreventivo)
-{
-    $dbo = database();
 
-    $rs = $dbo->fetchArray('SELECT SUM(qta) AS qta, SUM(qta_evasa) AS qta_evasa FROM co_righe_preventivi GROUP BY idpreventivo HAVING idpreventivo='.prepare($idpreventivo));
+if (!function_exists('get_stato_preventivo')) {
+    function get_stato_preventivo($idpreventivo)
+    {
+        $dbo = database();
 
-    if ($rs[0]['qta_evasa'] > 0) {
-        if ($rs[0]['qta'] > $rs[0]['qta_evasa']) {
-            return 'Parzialmente evaso';
-        } elseif ($rs[0]['qta'] == $rs[0]['qta_evasa']) {
-            return 'Evaso';
+        $rs = $dbo->fetchArray('SELECT SUM(qta) AS qta, SUM(qta_evasa) AS qta_evasa FROM co_righe_preventivi GROUP BY idpreventivo HAVING idpreventivo='.prepare($idpreventivo));
+
+        if ($rs[0]['qta_evasa'] > 0) {
+            if ($rs[0]['qta'] > $rs[0]['qta_evasa']) {
+                return 'Parzialmente evaso';
+            } elseif ($rs[0]['qta'] == $rs[0]['qta_evasa']) {
+                return 'Evaso';
+            }
+        } else {
+            return 'Non evaso';
         }
-    } else {
-        return 'Non evaso';
     }
 }
 
-function get_totale_interventi_preventivo($idpreventivo)
-{
-    $interventi = Intervento::where('id_preventivo', $idpreventivo)->get();
-    $array_interventi = $interventi->toArray();
+if (!function_exists('get_totale_interventi_preventivo')) {
+    function get_totale_interventi_preventivo($idpreventivo)
+    {
+        $interventi = Intervento::where('id_preventivo', $idpreventivo)->get();
+        $array_interventi = $interventi->toArray();
 
-    $totale = sum(array_column($array_interventi, 'totale_imponibile'));
+        $totale = sum(array_column($array_interventi, 'totale_imponibile'));
 
-    return $totale;
+        return $totale;
+    }
 }

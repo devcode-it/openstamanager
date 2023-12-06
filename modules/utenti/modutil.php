@@ -19,53 +19,55 @@
 
 include_once __DIR__.'/../../core.php';
 
-function menuSelection($element, $group_id, $depth, $permessi_disponibili)
-{
-    $dbo = database();
-    ++$depth;
+if (!function_exists('menuSelection')) {
+    function menuSelection($element, $group_id, $depth, $permessi_disponibili)
+    {
+        $dbo = database();
+        ++$depth;
 
-    // Permessi impostati per il gruppo
-    $permesso_salvato = $dbo->fetchOne('SELECT permessi FROM zz_permissions WHERE idgruppo = '.prepare($group_id).' AND idmodule = '.prepare($element['id']));
+        // Permessi impostati per il gruppo
+        $permesso_salvato = $dbo->fetchOne('SELECT permessi FROM zz_permissions WHERE idgruppo = '.prepare($group_id).' AND idmodule = '.prepare($element['id']));
 
-    $permessi = $permesso_salvato ? $permesso_salvato['permessi'] : '-';
+        $permessi = $permesso_salvato ? $permesso_salvato['permessi'] : '-';
 
-    $result = '
-                <tr>
-					<td>'.str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', $depth).'<span>'.$element['title'].'</span></td>
-                    <td>
-						<select name="permesso_'.$element['id'].'" id="permesso_'.$element['id'].'" class="form-control superselect openstamanager-input select-input" onchange="update_permissions('.$element['id'].', $(this).find(\'option:selected\').val(), $(this).find(\'option:selected\').data(\'color\'))">';
+        $result = '
+                    <tr>
+                        <td>'.str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', $depth).'<span>'.$element['title'].'</span></td>
+                        <td>
+                            <select name="permesso_'.$element['id'].'" id="permesso_'.$element['id'].'" class="form-control superselect openstamanager-input select-input" onchange="update_permissions('.$element['id'].', $(this).find(\'option:selected\').val(), $(this).find(\'option:selected\').data(\'color\'))">';
 
-    foreach ($permessi_disponibili as $id => $nome) {
-        switch ($id) {
-            case 'rw':
-                $bgcolor = 'green';
-            break;
-            case 'r':
-                $bgcolor = 'orange';
-            break;
-            case '-':
-                $bgcolor = 'red';
-            break;
-            default:
-            break;
+        foreach ($permessi_disponibili as $id => $nome) {
+            switch ($id) {
+                case 'rw':
+                    $bgcolor = 'green';
+                break;
+                case 'r':
+                    $bgcolor = 'orange';
+                break;
+                case '-':
+                    $bgcolor = 'red';
+                break;
+                default:
+                break;
+            }
+            $attr = ($id == $permessi) ? ' selected="selected"' : '';
+
+            $result .= '
+                                <option data-color="text-'.$bgcolor.'" _bgcolor_="'.$bgcolor.'" value="'.$id.'" '.$attr.'>'.$nome.'</option>';
         }
-        $attr = ($id == $permessi) ? ' selected="selected"' : '';
 
         $result .= '
-							<option data-color="text-'.$bgcolor.'" _bgcolor_="'.$bgcolor.'" value="'.$id.'" '.$attr.'>'.$nome.'</option>';
-    }
+                            </select>
+                        </td>
+                    </tr>';
 
-    $result .= '
-						</select>
-					</td>
-				</tr>';
-
-    $submenus = $element['all_children'];
-    if (!empty($submenus)) {
-        foreach ($submenus as $submenu) {
-            $result .= menuSelection($submenu, $group_id, $depth, $permessi_disponibili, $perms_names);
+        $submenus = $element['all_children'];
+        if (!empty($submenus)) {
+            foreach ($submenus as $submenu) {
+                $result .= menuSelection($submenu, $group_id, $depth, $permessi_disponibili, $perms_names);
+            }
         }
-    }
 
-    return $result;
+        return $result;
+    }
 }

@@ -24,6 +24,8 @@ use Modules\DDT\DDT;
 $documento = DDT::find($id_record);
 $d_qta = (integer)setting('Cifre decimali per quantità in stampa');
 $d_importi = (integer)setting('Cifre decimali per importi in stampa');
+$d_totali = (integer)setting('Cifre decimali per totali in stampa');
+
 $id_cliente = $documento['idanagrafica'];
 $id_sede = $record['idsede_partenza'];
 

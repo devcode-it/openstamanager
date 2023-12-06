@@ -95,3 +95,4 @@ ALTER TABLE `an_sedi` ADD `is_rappresentante_fiscale` BOOLEAN NULL DEFAULT FALSE
 -- Aggiunte impostazioni per definire il numero di decimali in stampa
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES ("Cifre decimali per importi in stampa", '2', 'list[0,1,2,3,4,5]', 1, 'Generali', '35', 'Definisce il numero di decimali per gli importi nei template di stampa');
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES ("Cifre decimali per quantità in stampa", '0', 'list[0,1,2,3,4,5]', 1, 'Generali', '36', 'Definisce il numero di decimali per le quantità nei template di stampa');
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES ("Cifre decimali per totali in stampa", '2', 'list[0,1,2]', 1, 'Generali', '37', 'Definisce il numero di decimali per i totali nei template di stampa');

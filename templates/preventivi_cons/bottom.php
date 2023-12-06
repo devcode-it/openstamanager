@@ -22,8 +22,11 @@ include_once __DIR__.'/../riepilogo_interventi/bottom.php';
 $budget = get_imponibile_preventivo($id_record);
 $somma_totale_imponibile = get_totale_interventi_preventivo($id_record);
 $rapporto = floatval($budget) - floatval($somma_totale_imponibile) - $documento->provvigione;
+
 $d_qta = (integer)setting('Cifre decimali per quantità in stampa');
-$d_importi = (integer)setting('Cifre decimali per importi in stampa');
+$d_totali = (integer)setting('Cifre decimali per importi in stampa');
+$d_totali = (integer)setting('Cifre decimali per totali in stampa');
+
 if ($pricing && empty($options['dir'])) {
     // Totale imponibile
     echo '
@@ -36,7 +39,7 @@ if ($pricing && empty($options['dir'])) {
             <b>'.tr('Totale consuntivo (no iva)', [], ['upper' => true]).':</b>
     	</td>
     	<th colspan="2" class="text-center">
-    		<b>'.moneyFormat($somma_totale_imponibile, $d_importi).'</b>
+    		<b>'.moneyFormat($somma_totale_imponibile, $d_totali).'</b>
     	</th>
     </tr>';
 
@@ -47,7 +50,7 @@ if ($pricing && empty($options['dir'])) {
             <b>'.tr('Budget (no IVA)', [], ['upper' => true]).':</b>
         </td>
         <th colspan="2" class="text-center">
-            <b>'.moneyFormat($budget, $d_importi).'</b>
+            <b>'.moneyFormat($budget, $d_totali).'</b>
         </th>
     </tr>';
 
@@ -58,7 +61,7 @@ if ($pricing && empty($options['dir'])) {
             <b>'.tr('Rapporto budget/spesa (no IVA)', [], ['upper' => true]).':</b>
         </td>
         <th colspan="2" class="text-center">
-            <b>'.moneyFormat($rapporto, $d_importi).'</b>
+            <b>'.moneyFormat($rapporto, $d_totali).'</b>
         </th>
     </tr>';
 

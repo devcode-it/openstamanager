@@ -25,6 +25,8 @@ $documento = Fattura::find($id_record);
 $banca = $documento->getBanca();
 $d_qta = (integer)setting('Cifre decimali per quantità in stampa');
 $d_importi = (integer)setting('Cifre decimali per importi in stampa');
+$d_totali = (integer)setting('Cifre decimali per totali in stampa');
+
 // Lettura info fattura
 $record = $dbo->fetchOne('SELECT *,
     (SELECT descrizione FROM co_statidocumento WHERE id=idstatodocumento) AS stato_doc,

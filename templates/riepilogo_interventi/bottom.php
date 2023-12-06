@@ -19,6 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+$d_totali = (integer)setting('Cifre decimali per totali in stampa');
+
 $somma_ore = sum($somma_ore);
 $somma_imponibile = sum($somma_imponibile);
 $somma_sconto = sum($somma_sconto);
@@ -41,9 +43,9 @@ echo '
             </th>
             <th class="text-center">'.($somma_km).'</td>
             <th class="text-center">'.($pricing ? $somma_ore : '-').'</th>
-            <th class="text-center">'.($pricing ? moneyFormat($somma_imponibile, $d_importi) : '-').'</th>
-            <th class="text-center">'.($pricing ? moneyFormat($somma_sconto, $d_importi) : '-').'</th>
-            <th class="text-center">'.($pricing ? moneyFormat($somma_totale_imponibile, $d_importi) : '-').'</th>
+            <th class="text-center">'.($pricing ? moneyFormat($somma_imponibile, $d_totali) : '-').'</th>
+            <th class="text-center">'.($pricing ? moneyFormat($somma_sconto, $d_totali) : '-').'</th>
+            <th class="text-center">'.($pricing ? moneyFormat($somma_totale_imponibile, $d_totali) : '-').'</th>
         </tr>
 
         <tr>
@@ -52,7 +54,7 @@ echo '
                 <b>'.tr('Iva', [], ['upper' => true]).':</b>
             </th>
             <th colspan="4"></th>
-            <th class="text-center">'.($pricing ? moneyFormat($somma_iva, $d_importi) : '-').'</th>
+            <th class="text-center">'.($pricing ? moneyFormat($somma_iva, $d_totali) : '-').'</th>
         </tr>
 
         <tr>
@@ -61,7 +63,7 @@ echo '
                 <b>'.tr('Totale Ivato', [], ['upper' => true]).':</b>
             </th>
             <th colspan="4"></th>
-            <th class="text-center">'.($pricing ? moneyFormat($somma_totale_ivato, $d_importi) : '-').'</th>
+            <th class="text-center">'.($pricing ? moneyFormat($somma_totale_ivato, $d_totali) : '-').'</th>
         </tr>
     </tbody>
 </table>';

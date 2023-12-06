@@ -81,7 +81,7 @@ echo '
     }
 echo '
     </td>
-    <td class="text-center">'.($km).'</td>
+    <td class="text-center">'.($pricing ? $km : '-').'</td>
     <td class="text-center">'.($pricing ? $ore : '-').'</td>
     <td class="text-center">'.($pricing ? moneyFormat($imponibile, $d_importi) : '-').'</td>
     <td class="text-center">'.($pricing && empty($options['dir']) ? moneyFormat($sconto, $d_importi) : '-').'</td>

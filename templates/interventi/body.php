@@ -23,6 +23,7 @@ include_once __DIR__.'/../../core.php';
 
 $d_qta = (integer)setting('Cifre decimali per quantità in stampa');
 $d_importi = (integer)setting('Cifre decimali per importi in stampa');
+$d_totali = (integer)setting('Cifre decimali per totali in stampa');
 
 /*
     Dati intervento
@@ -258,7 +259,7 @@ if (!$righe->isEmpty()) {
         </td>
 
         <th class="text-center">
-            <b>'.moneyFormat($righe->sum('importo'), $d_importi).'</b>
+            <b>'.moneyFormat($righe->sum('importo'), $d_totali).'</b>
         </th>
     </tr>';
     }
@@ -338,7 +339,7 @@ foreach ($sessioni as $i => $sessione) {
 if (setting('Formato ore in stampa') == 'Sessantesimi') {
     $ore_totali = Translator::numberToHours($documento->ore_totali);
 } else {
-    $ore_totali = Translator::numberToLocale($documento->ore_totali, $d_importi);
+    $ore_totali = Translator::numberToLocale($documento->ore_totali, $d_totali);
 }
 
 echo '
@@ -351,7 +352,7 @@ echo '
 if ($options['pricing']) {
     echo '
         <td colspan="3" class="text-center">
-            <small>'.tr('Totale manodopera').':</small><br/><b>'.moneyFormat($sessioni->sum('prezzo_manodopera'), 2).'</b>
+            <small>'.tr('Totale manodopera').':</small><br/><b>'.moneyFormat($sessioni->sum('prezzo_manodopera'), $d_totali).'</b>
         </td>';
 } else {
     echo '
@@ -386,7 +387,7 @@ echo '
 if ($options['pricing']) {
     echo '
         <td class="text-center">
-            <small>'.tr('Costi di trasferta').':</small><br/><b>'.moneyFormat($sessioni->sum('prezzo_viaggio'), $d_importi).'</b>
+            <small>'.tr('Costi di trasferta').':</small><br/><b>'.moneyFormat($sessioni->sum('prezzo_viaggio'), $d_totali).'</b>
         </td>';
 } else {
     echo '
@@ -397,7 +398,7 @@ if ($options['pricing']) {
 if ($options['pricing']) {
     echo '
         <td class="text-center" colspan="2" width="120px" >
-            <small>'.tr('Diritto di chiamata').':</small><br/><b>'.moneyFormat($sessioni->sum('prezzo_diritto_chiamata'), $d_importi).'</b>
+            <small>'.tr('Diritto di chiamata').':</small><br/><b>'.moneyFormat($sessioni->sum('prezzo_diritto_chiamata'), $d_totali).'</b>
         </td>';
 } else {
     echo '
@@ -424,7 +425,7 @@ if ($options['pricing']) {
         </td>
 
         <th class="text-center">
-            '.moneyFormat($show_sconto ? $imponibile : $totale_imponibile, $d_importi).'
+            '.moneyFormat($show_sconto ? $imponibile : $totale_imponibile, $d_totali).'
         </th>
     </tr>';
 
@@ -437,7 +438,7 @@ if ($options['pricing']) {
         </td>
 
         <th class="text-center">
-            <b>'.moneyFormat($sconto, $d_importi).'</b>
+            <b>'.moneyFormat($sconto, $d_totali).'</b>
         </th>
     </tr>';
 
@@ -449,7 +450,7 @@ if ($options['pricing']) {
         </td>
 
         <th class="text-center">
-            <b>'.moneyFormat($totale_imponibile, $d_importi).'</b>
+            <b>'.moneyFormat($totale_imponibile, $d_totali).'</b>
         </th>
     </tr>';
     }
@@ -463,7 +464,7 @@ if ($options['pricing']) {
         </td>
 
         <th class="text-center">
-            <b>'.moneyFormat($totale_iva, $d_importi).'</b>
+            <b>'.moneyFormat($totale_iva, $d_totali).'</b>
         </th>
     </tr>';
 
@@ -474,7 +475,7 @@ if ($options['pricing']) {
             <b>'.tr('Totale intervento', [], ['upper' => true]).':</b>
     	</td>
     	<th class="text-center">
-    		<b>'.moneyFormat($totale, $d_importi).'</b>
+    		<b>'.moneyFormat($totale, $d_totali).'</b>
     	</th>
     </tr>';
 }

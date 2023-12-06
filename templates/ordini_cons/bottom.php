@@ -35,7 +35,7 @@ if ($pricing && empty($options['dir'])) {
             <b>'.tr('Totale consuntivo (no iva)', [], ['upper' => true]).':</b>
     	</td>
     	<th colspan="2" class="text-center">
-    		<b>'.moneyFormat($somma_totale_imponibile, $d_importi).'</b>
+    		<b>'.moneyFormat($somma_totale_imponibile, $d_totali).'</b>
     	</th>
     </tr>';
 
@@ -46,7 +46,7 @@ if ($pricing && empty($options['dir'])) {
             <b>'.tr('Budget (no IVA)', [], ['upper' => true]).':</b>
         </td>
         <th colspan="2" class="text-center">
-            <b>'.moneyFormat($budget, $d_importi).'</b>
+            <b>'.moneyFormat($budget, $d_totali).'</b>
         </th>
     </tr>';
 
@@ -57,7 +57,7 @@ if ($pricing && empty($options['dir'])) {
             <b>'.tr('Rapporto budget/spesa (no IVA)', [], ['upper' => true]).':</b>
         </td>
         <th colspan="2" class="text-center">
-            <b>'.moneyFormat($rapporto, $d_importi).'</b>
+            <b>'.moneyFormat($rapporto, $d_totali).'</b>
         </th>
     </tr>';
 

@@ -246,7 +246,7 @@ if ($options['pricing']) {
         </td>
 
         <th colspan="2" class="text-right">
-            <b>'.moneyFormat($show_sconto ? $imponibile : $totale_imponibile, $d_importi).'</b>
+            <b>'.moneyFormat($show_sconto ? $imponibile : $totale_imponibile, $d_totali).'</b>
         </th>
     </tr>';
 
@@ -259,7 +259,7 @@ if ($options['pricing']) {
         </td>
 
         <th colspan="2" class="text-right">
-            <b>'.moneyFormat($sconto, $d_importi).'</b>
+            <b>'.moneyFormat($sconto, $d_totali).'</b>
         </th>
     </tr>';
 
@@ -271,7 +271,7 @@ if ($options['pricing']) {
         </td>
 
         <th colspan="2" class="text-right">
-            <b>'.moneyFormat($totale_imponibile, $d_importi).'</b>
+            <b>'.moneyFormat($totale_imponibile, $d_totali).'</b>
         </th>
     </tr>';
     }
@@ -284,7 +284,7 @@ if ($options['pricing']) {
         </td>
 
         <th colspan="2" class="text-right">
-            <b>'.moneyFormat($totale_iva, $d_importi).'</b>
+            <b>'.moneyFormat($totale_iva, $d_totali).'</b>
         </th>
     </tr>';
 
@@ -295,7 +295,7 @@ if ($options['pricing']) {
             <b>'.tr('Totale documento', [], ['upper' => true]).':</b>
     	</td>
     	<th colspan="2" class="text-right">
-    		<b>'.moneyFormat($totale, $d_importi).'</b>
+    		<b>'.moneyFormat($totale, $d_totali).'</b>
     	</th>
     </tr>';
 
@@ -307,7 +307,7 @@ if ($options['pricing']) {
                 <b>'.tr('Sconto in fattura', [], ['upper' => true]).':</b>
             </td>
             <th colspan="2" class="text-right">
-                <b>'.moneyFormat($sconto_finale, $d_importi).'</b>
+                <b>'.moneyFormat($sconto_finale, $d_totali).'</b>
             </th>
         </tr>';
 
@@ -318,7 +318,7 @@ if ($options['pricing']) {
                 <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
             </td>
             <th colspan="2" class="text-right">
-                <b>'.moneyFormat($netto_a_pagare, $d_importi).'</b>
+                <b>'.moneyFormat($netto_a_pagare, $d_totali).'</b>
             </th>
         </tr>';
     }

@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\DDT\DDT;
 use Util\Generator;
 
-/**
+/*
  * Funzione per generare un nuovo numero per il ddt.
  *
  * @deprecated 2.4.5
@@ -36,13 +36,13 @@ if (!function_exists('get_new_numeroddt')) {
     }
 }
 
-/**
+/*
  * Funzione per calcolare il numero secondario successivo utilizzando la maschera dalle impostazioni.
  *
  * @deprecated 2.4.5
  */
 if (!function_exists('get_new_numerosecondarioddt')) {
- function get_new_numerosecondarioddt($data)
+    function get_new_numerosecondarioddt($data)
     {
         global $dir;
         global $id_segment;
@@ -51,7 +51,7 @@ if (!function_exists('get_new_numerosecondarioddt')) {
     }
 }
 
-/**
+/*
  * Calcolo imponibile ddt (totale_righe - sconto).
  *
  * @deprecated 2.4.5
@@ -65,7 +65,7 @@ if (!function_exists('get_imponibile_ddt')) {
     }
 }
 
-/**
+/*
  * Calcolo totale ddt (imponibile + iva).
  *
  * @deprecated 2.4.5
@@ -78,7 +78,7 @@ if (!function_exists('get_totale_ddt')) {
         return $ddt->totale;
     }
 }
-/**
+/*
  * Calcolo netto a pagare ddt (totale - ritenute - bolli).
  *
  * @deprecated 2.4.5
@@ -92,7 +92,7 @@ if (!function_exists('get_netto_ddt')) {
     }
 }
 
-/**
+/*
  * Calcolo iva detraibile ddt.
  *
  * @deprecated 2.4.5
@@ -106,7 +106,7 @@ if (!function_exists('get_ivadetraibile_ddt')) {
     }
 }
 
-/**
+/*
  * Calcolo iva indetraibile ddt.
  *
  * @deprecated 2.4.5
@@ -120,7 +120,7 @@ if (!function_exists('get_ivaindetraibile_ddt')) {
     }
 }
 
-/**
+/*
  * Ricalcola i costi aggiuntivi in ddt (rivalsa inps, ritenuta d'acconto, marca da bollo)
  * Deve essere eseguito ogni volta che si aggiunge o toglie una riga
  * $idddt				int		ID del ddt
@@ -207,7 +207,7 @@ if (!function_exists('ricalcola_costiagg_ddt')) {
     }
 }
 
-/**
+/*
  * Restituisce lo stato del ddt in base alle righe.
  */
 if (!function_exists('get_stato_ddt')) {

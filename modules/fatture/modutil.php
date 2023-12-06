@@ -20,7 +20,7 @@
 use Modules\Fatture\Fattura;
 use Util\Generator;
 
-/**
+/*
  * Funzione per generare un nuovo numero per la fattura.
  *
  * @deprecated 2.4.5
@@ -35,7 +35,7 @@ if (!function_exists('get_new_numerofattura')) {
     }
 }
 
-/**
+/*
  * Funzione per calcolare il numero secondario successivo utilizzando la maschera dalle impostazioni.
  *
  * @deprecated 2.4.5
@@ -51,7 +51,7 @@ if (!function_exists('get_new_numerosecondariofattura')) {
     }
 }
 
-/**
+/*
  * Calcolo imponibile fattura (totale_righe - sconto).
  *
  * @deprecated 2.4.5
@@ -66,7 +66,7 @@ if (!function_exists('get_imponibile_fattura')) {
     }
 }
 
-/**
+/*
  * Calcolo totale fattura (imponibile + iva).
  *
  * @deprecated 2.4.5
@@ -79,7 +79,7 @@ if (!function_exists('get_totale_fattura')) {
         return $fattura->totale;
     }
 }
-/**
+/*
  * Calcolo netto a pagare fattura (totale - ritenute - bolli).
  *
  * @deprecated 2.4.5
@@ -93,7 +93,7 @@ if (!function_exists('get_netto_fattura')) {
     }
 }
 
-/**
+/*
  * Calcolo iva detraibile fattura.
  *
  * @deprecated 2.4.5
@@ -107,7 +107,7 @@ if (!function_exists('get_ivadetraibile_fattura')) {
     }
 }
 
-/**
+/*
  * Calcolo iva indetraibile fattura.
  *
  * @deprecated 2.4.5
@@ -122,7 +122,7 @@ if (!function_exists('get_ivaindetraibile_fattura')) {
     }
 }
 
-/**
+/*
  * Elimina una scadenza in base al codice documento.
  *
  * @deprecated 2.4.17
@@ -135,7 +135,7 @@ if (!function_exists('elimina_scadenze')) {
         $fattura->rimuoviScadenze();
     }
 }
-/**
+/*
  * Funzione per ricalcolare lo scadenzario di una determinata fattura
  * $iddocumento	string		E' l'id del documento di cui ricalcolare lo scadenzario
  * $pagamento		string		Nome del tipo di pagamento. Se è vuoto lo leggo da co_pagamenti_documenti, perché significa che devo solo aggiornare gli importi.
@@ -152,7 +152,7 @@ if (!function_exists('aggiungi_scadenza')) {
     }
 }
 
-/**
+/*
  * Elimina i movimenti collegati ad una fattura.
  * Se il flag $prima_nota è impostato a 1 elimina solo i movimenti di Prima Nota, altrimenti rimuove quelli automatici.
  *
@@ -174,7 +174,7 @@ if (!function_exists('elimina_movimenti')) {
     }
 }
 
-/**
+/*
  * Funzione per aggiungere la fattura in prima nota
  * $iddocumento	string		E' l'id del documento da collegare alla prima nota
  * $dir			string		Direzione dell'importo (entrata, uscita)
@@ -382,7 +382,7 @@ if (!function_exists('aggiungi_movimento')) {
         }
     }
 }
-/**
+/*
  * Funzione per generare un nuovo codice per il mastrino.
  *
  * @deprecated 2.4.17
@@ -399,14 +399,14 @@ if (!function_exists('get_new_idmastrino')) {
     }
 }
 
-/**
+/*
  * Ricalcola i costi aggiuntivi in fattura (rivalsa inps, ritenuta d'acconto, marca da bollo)
  * Deve essere eseguito ogni volta che si aggiunge o toglie una riga
  * $iddocumento		int		ID della fattura.
  *
  * @deprecated 2.4.17
  */
-  
+
 if (!function_exists('ricalcola_costiagg_fattura')) {
     function ricalcola_costiagg_fattura($iddocumento)
     {
@@ -417,7 +417,7 @@ if (!function_exists('ricalcola_costiagg_fattura')) {
     }
 }
 
-/**
+/*
  * Verifica che il numero_esterno della fattura indicata sia correttamente impostato, a partire dai valori delle fatture ai giorni precedenti.
  * Restituisce il numero_esterno mancante in caso di numero errato.
  *

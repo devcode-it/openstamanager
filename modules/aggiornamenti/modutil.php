@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Controlla se il database presenta alcune sezioni personalizzate.
  *
  * @return array
@@ -70,7 +70,7 @@ if (!function_exists('customStructure')) {
     }
 }
 
-/**
+/*
  * Controlla se il database presenta alcune sezioni personalizzate.
  *
  * @return array
@@ -93,7 +93,7 @@ if (!function_exists('customTables')) {
     }
 }
 
-/**
+/*
  * Controlla se il database presenta alcune sezioni personalizzate.
  *
  * @return array

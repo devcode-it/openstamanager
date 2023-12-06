@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\Interventi\Intervento;
 use Modules\Ordini\Ordine;
 
-/**
+/*
  * Funzione per generare un nuovo numero per l'ordine.
  *
  * @deprecated 2.4.5
@@ -36,7 +36,7 @@ if (!function_exists('get_new_numeroordine')) {
     }
 }
 
-/**
+/*
  * Funzione per calcolare il numero secondario successivo utilizzando la maschera dalle impostazioni.
  *
  * @deprecated 2.4.5
@@ -52,7 +52,7 @@ if (!function_exists('get_new_numerosecondarioordine')) {
     }
 }
 
-/**
+/*
  * Calcolo imponibile ordine (totale_righe - sconto).
  *
  * @deprecated 2.4.5
@@ -67,7 +67,7 @@ if (!function_exists('get_imponibile_ordine')) {
     }
 }
 
-/**
+/*
  * Calcolo totale ordine (imponibile + iva).
  *
  * @deprecated 2.4.5
@@ -81,7 +81,7 @@ if (!function_exists('get_totale_ordine')) {
     }
 }
 
-/**
+/*
  * Calcolo netto a pagare ordine (totale - ritenute - bolli).
  *
  * @deprecated 2.4.5
@@ -95,7 +95,7 @@ if (!function_exists('get_netto_ordine')) {
         return $ordine->netto;
     }
 }
-/**
+/*
  * Calcolo iva detraibile ordine.
  *
  * @deprecated 2.4.5
@@ -109,7 +109,7 @@ if (!function_exists('get_ivadetraibile_ordine')) {
     }
 }
 
-/**
+/*
  * Calcolo iva indetraibile ordine.
  *
  * @deprecated 2.4.5
@@ -122,7 +122,7 @@ if (!function_exists('get_ivaindetraibile_ordine')) {
         return $ordine->iva_indetraibile;
     }
 }
-/**
+/*
  * Ricalcola i costi aggiuntivi in ordine (rivalsa inps, ritenuta d'acconto, marca da bollo)
  * Deve essere eseguito ogni volta che si aggiunge o toglie una riga
  * $idordine				int		ID del ordine
@@ -209,7 +209,7 @@ if (!function_exists('ricalcola_costiagg_ordine')) {
         }
     }
 }
-/**
+/*
  * Restituisce lo stato dell'ordine in base alle righe.
  */
 if (!function_exists('get_stato_ordine')) {

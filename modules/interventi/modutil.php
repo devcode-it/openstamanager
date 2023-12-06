@@ -32,7 +32,7 @@ use Modules\Interventi\Intervento;
 use Util\Generator;
 use Util\Ini;
 
-/**
+/*
  * Recupera il totale delle ore spese per un intervento.
  *
  * @param int $id_intervento
@@ -41,7 +41,7 @@ use Util\Ini;
  */
 
 if (!function_exists('get_ore_intervento')) {
- function get_ore_intervento($id_intervento)
+    function get_ore_intervento($id_intervento)
     {
         $intervento = Intervento::find($id_intervento);
 
@@ -49,7 +49,7 @@ if (!function_exists('get_ore_intervento')) {
     }
 }
 
-/**
+/*
  * Funzione per collegare gli articoli, usati in un intervento, ai rispettivi impianti.
  *
  * @param int $id_intervento
@@ -136,7 +136,7 @@ if (!function_exists('add_tecnico')) {
     }
 }
 
-/**
+/*
  * Calcola le ore presenti tra due date.
  *
  * @param string $orario_inizio
@@ -336,7 +336,7 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
     }
 }
 
-/**
+/*
  * Verifica che il numero_esterno della fattura indicata sia correttamente impostato, a partire dai valori delle fatture ai giorni precedenti.
  * Restituisce il numero_esterno mancante in caso di numero errato.
  *

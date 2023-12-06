@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-/**
+/*
  * Funzione per aggiornare le sedi nei movimenti di magazzino.
  */
 if (!function_exists('aggiorna_sedi_movimenti')) {

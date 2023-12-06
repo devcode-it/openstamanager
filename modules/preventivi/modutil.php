@@ -23,7 +23,7 @@ use Modules\Interventi\Intervento;
 use Modules\Preventivi\Preventivo;
 
 if (!function_exists('get_imponibile_preventivo')) {
-function get_imponibile_preventivo($idpreventivo)
+    function get_imponibile_preventivo($idpreventivo)
     {
         $preventivo = Preventivo::find($idpreventivo);
 
@@ -31,7 +31,7 @@ function get_imponibile_preventivo($idpreventivo)
     }
 }
 
-/**
+/*
  * Restituisce lo stato del preventivo in base alle righe.
  */
 

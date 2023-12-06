@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\Contratti\Contratto;
 use Modules\Interventi\Intervento;
 
-/**
+/*
  * Calcolo imponibile contratto (totale_righe - sconto).
  */
 if (!function_exists('get_imponibile_contratto')) {

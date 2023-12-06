@@ -415,7 +415,7 @@ class Sessione extends Model
      */
     public function getRicaricoPercentualeAttribute()
     {
-        return $this->imponibile ? (($this->imponibile / $this->spesa) - 1) * 100 : 100;
+        return $this->imponibile ? (($this->imponibile / $this->spesa) - 1) * 100 : 0;
     }
 
     public function getIvaIndetraibileAttribute()

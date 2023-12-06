@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Actions\Fortify\CreateNewUser;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
@@ -20,16 +21,13 @@ class CreateAdminUserCommand extends Command
         $username = text('Username', required: true);
         $email = text('Email', required: true);
         $password = password('Password', required: true);
+        $password_confirmation = password('Confirm Password', required: true);
 
         $this->table(['Username', 'Email', 'Password'], [[$username, $email, '********']]);
 
         if (confirm('Are you sure you want to create this user?')) {
-            $user = new User();
-            $user->username = $username;
-            $user->email = $email;
-            $user->password = $password;
+            $user = app(CreateNewUser::class)->create(compact('username', 'email', 'password', 'password_confirmation'));
             $user->email_verified_at = now();
-            $user->remember_token = Str::random(10);
             $user->save();
 
             $this->info('Admin user created successfully');

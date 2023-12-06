@@ -99,3 +99,5 @@ INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `ord
 
 -- Fix per vista modulo campi personalizzati
 UPDATE `zz_modules` SET `options` = 'SELECT\r\n |select|\r\nFROM\r\n `zz_fields`\r\n LEFT JOIN `zz_modules` ON `zz_modules`.`id` = `zz_fields`.`id_module`\r\n LEFT JOIN `zz_plugins` ON `zz_plugins`.`id` = `zz_fields`.`id_plugin`\r\nWHERE\r\n 1=1\r\nHAVING\r\n 2=2' WHERE `zz_modules`.`name` = 'Campi personalizzati';
+
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF(emails IS NOT NULL, \'fa fa-envelope text-success\', \'\')' WHERE `zz_modules`.`name` = 'Fatture di vendita' AND `zz_views`.`name` = 'icon_Inviata';

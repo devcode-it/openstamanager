@@ -675,8 +675,8 @@ ALTER TABLE `or_righe_ordini` CHANGE `sconto_unitario` `sconto_unitario` decimal
 ALTER TABLE `or_righe_ordini` CHANGE `qta` `qta` decimal(12, 6) NOT NULL;
 ALTER TABLE `or_righe_ordini` CHANGE `qta_evasa` `qta_evasa` decimal(12, 6) NOT NULL;
 
-UPDATE `zz_settings` SET `tipo` = 'list[1,2,3,4,5]' WHERE `nome` = 'Cifre decimali per importi';
-UPDATE `zz_settings` SET `tipo` = 'list[1,2,3,4,5]' WHERE `nome` = 'Cifre decimali per quantità';
+UPDATE `zz_settings` SET `tipo` = 'list[2,3,4,5]' WHERE `nome` = 'Cifre decimali per importi';
+UPDATE `zz_settings` SET `tipo` = 'list[0,1,2,3,4,5]' WHERE `nome` = 'Cifre decimali per quantità';
 
 -- Aggiunta percentuale combinata in listini
 ALTER TABLE `mg_listini` ADD `prc_combinato` VARCHAR(255);

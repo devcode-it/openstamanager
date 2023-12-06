@@ -496,7 +496,7 @@ if ($structure->permission == 'rw') {
                 foreach ($customs as $custom) {
                     if (post($custom['name']) !== null) {
                         $values[$custom['id']] = post($custom['name']);
-                    }else{
+                    } else {
                         $values[$custom['id']] = '';
                     }
                 }

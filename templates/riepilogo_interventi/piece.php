@@ -22,8 +22,8 @@ include_once __DIR__.'/../../core.php';
 use Modules\Interventi\Intervento;
 use Modules\Iva\Aliquota;
 
-$d_qta = (integer)setting('Cifre decimali per quantità in stampa');
-$d_importi = (integer)setting('Cifre decimali per importi in stampa');
+$d_qta = (int) setting('Cifre decimali per quantità in stampa');
+$d_importi = (int) setting('Cifre decimali per importi in stampa');
 
 $intervento = Intervento::find($record['id']);
 $sessioni = $intervento->sessioni;

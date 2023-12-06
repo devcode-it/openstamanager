@@ -42,5 +42,5 @@ return [
     'id_anagrafica' => $r['idanagrafica'],
     'revisione' => $revisione,
     'nome_referente' => $r['nome_referente'],
-    'nome_preventivo' => $r['nome_preventivo']
+    'nome_preventivo' => $r['nome_preventivo'],
 ];

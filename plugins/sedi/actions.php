@@ -65,7 +65,7 @@ switch ($operazione) {
         } else {
             flash()->warning(tr('Errore durante aggiunta della sede'));
         }
-        
+
         $sede = Sede::find($id_record);
         $sede->save();
 

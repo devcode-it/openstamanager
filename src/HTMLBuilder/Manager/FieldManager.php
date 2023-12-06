@@ -83,9 +83,9 @@ class FieldManager implements ManagerInterface
                 $field['value'] = isset($field['value']) ? $field['value'] : '';
 
                 //Gestione valori multipli
-                $values = json_decode((string)$field['value'],true);
-                if( is_array($values) ){
-                    $field['value'] = implode(",",$values);
+                $values = json_decode((string) $field['value'], true);
+                if (is_array($values)) {
+                    $field['value'] = implode(',', $values);
                 }
 
                 $replace = [

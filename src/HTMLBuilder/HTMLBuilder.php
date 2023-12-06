@@ -168,8 +168,6 @@ class HTMLBuilder
                 $result = self::replace($result, $depth + 1);
             }
 
-            
-
             $html = str_replace($value, !empty($result) ? $result : $value, $html);
         }
 
@@ -335,6 +333,26 @@ class HTMLBuilder
     }
 
     /**
+     * Decodifica i tag personalizzati e li converte in un array basato sul formato JSON.
+     *
+     * @param string $string
+     * @param string $type
+     *
+     * @return array
+     */
+    public static function decode($string, $type)
+    {
+        $string = '{'.substr($string, strlen(self::$open[$type]), -strlen(self::$close[$type])).'}';
+
+        // Fix per contenuti con newline integrati
+        $string = str_replace(["\n", "\r"], ['\\n', '\\r'], $string);
+
+        $json = (array) json_decode($string, true);
+
+        return $json;
+    }
+
+    /**
      * Genera il codice HTML per i singoli tag di input.
      *
      * @param string $json
@@ -366,26 +384,6 @@ class HTMLBuilder
         }
 
         return $result;
-    }
-
-    /**
-     * Decodifica i tag personalizzati e li converte in un array basato sul formato JSON.
-     *
-     * @param string $string
-     * @param string $type
-     *
-     * @return array
-     */
-    public static function decode($string, $type)
-    {
-        $string = '{'.substr($string, strlen(self::$open[$type]), -strlen(self::$close[$type])).'}';
-
-        // Fix per contenuti con newline integrati
-        $string = str_replace(["\n", "\r"], ['\\n', '\\r'], $string);
-
-        $json = (array) json_decode($string, true);
-
-        return $json;
     }
 
     /**

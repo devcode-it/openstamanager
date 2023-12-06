@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$d_totali = (integer)setting('Cifre decimali per totali in stampa');
+$d_totali = (int) setting('Cifre decimali per totali in stampa');
 
 $somma_ore = sum($somma_ore);
 $somma_imponibile = sum($somma_imponibile);

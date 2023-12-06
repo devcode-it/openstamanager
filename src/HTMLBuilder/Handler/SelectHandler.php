@@ -206,7 +206,7 @@ class SelectHandler implements HandlerInterface
                 }
             }
 
-            $element['text'] = ($element['text'] == "" || $element['text'] == null ) ? $element['descrizione'] : $element['text'];
+            $element['text'] = ($element['text'] == '' || $element['text'] == null) ? $element['descrizione'] : $element['text'];
 
             if ($link == 'stampa') {
                 $element['title'] = ' ';

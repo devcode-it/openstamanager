@@ -23,9 +23,9 @@ $budget = get_imponibile_preventivo($id_record);
 $somma_totale_imponibile = get_totale_interventi_preventivo($id_record);
 $rapporto = floatval($budget) - floatval($somma_totale_imponibile) - $documento->provvigione;
 
-$d_qta = (integer)setting('Cifre decimali per quantità in stampa');
-$d_totali = (integer)setting('Cifre decimali per importi in stampa');
-$d_totali = (integer)setting('Cifre decimali per totali in stampa');
+$d_qta = (int) setting('Cifre decimali per quantità in stampa');
+$d_totali = (int) setting('Cifre decimali per importi in stampa');
+$d_totali = (int) setting('Cifre decimali per totali in stampa');
 
 if ($pricing && empty($options['dir'])) {
     // Totale imponibile

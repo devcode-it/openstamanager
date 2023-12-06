@@ -496,6 +496,8 @@ if ($structure->permission == 'rw') {
                 foreach ($customs as $custom) {
                     if (post($custom['name']) !== null) {
                         $values[$custom['id']] = post($custom['name']);
+                    }else{
+                        $values[$custom['id']] = '';
                     }
                 }
 
@@ -520,6 +522,7 @@ if ($structure->permission == 'rw') {
                     $customs_present = array_column($customs_present, 'id_field');
 
                     foreach ($values as $key => $value) {
+                        $value = (!is_array($value) ? $value : json_encode($value));
                         if (in_array($key, $customs_present)) {
                             $dbo->update('zz_field_record', [
                                 'value' => $value,

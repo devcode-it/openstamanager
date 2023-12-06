@@ -96,3 +96,6 @@ ALTER TABLE `an_sedi` ADD `is_rappresentante_fiscale` BOOLEAN NULL DEFAULT FALSE
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES ("Cifre decimali per importi in stampa", '2', 'list[0,1,2,3,4,5]', 1, 'Generali', '35', 'Definisce il numero di decimali per gli importi nei template di stampa');
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES ("Cifre decimali per quantità in stampa", '0', 'list[0,1,2,3,4,5]', 1, 'Generali', '36', 'Definisce il numero di decimali per le quantità nei template di stampa');
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES ("Cifre decimali per totali in stampa", '2', 'list[0,1,2]', 1, 'Generali', '37', 'Definisce il numero di decimali per i totali nei template di stampa');
+
+-- Fix per vista modulo campi personalizzati
+UPDATE `zz_modules` SET `options` = 'SELECT\r\n |select|\r\nFROM\r\n `zz_fields`\r\n LEFT JOIN `zz_modules` ON `zz_modules`.`id` = `zz_fields`.`id_module`\r\n LEFT JOIN `zz_plugins` ON `zz_plugins`.`id` = `zz_fields`.`id_plugin`\r\nWHERE\r\n 1=1\r\nHAVING\r\n 2=2' WHERE `zz_modules`.`name` = 'Campi personalizzati';

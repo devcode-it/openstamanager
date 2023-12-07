@@ -83,6 +83,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Aggiunta la gestione del rappresentante fiscale negli XML
 - Aggiunte le impostazioni per definire il numero di decimali per gli importi, per le quantità e per i totali nelle stampe
 - Aggiunta la variabile Nome preventivo nei Preventivi
+- Aggiunto il tipo di pagamento e banca di accredito e addebito nelle scadenze
 
 ### Modificato (Changed)
 - Migliorata l'importazione degli articoli tramite CSV, le anagrafiche relative a clienti e fornitori vengono ora create se non presenti a gestionale
@@ -90,21 +91,17 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Ripristinata la funzionalità di duplicazione degli ordini
 - La modifica della data competenza di una fattura aggiorna ora la data del movimento relativo
 - Migliorato il caricamento della lista allegati
-- Aggiunto il tipo di pagamento e banca di accredito e addebito nelle scadenze
 - L'aggiunta di note aggiuntive e la modifica della data competenza è ora sempre possibile nelle fatture
 - Spostati tutti gli avvisi in basso a destra
-- Aggiunto il nuovo modulo Automezzi
 - Modificate le funzioni nei file Modutil per permettere l'aggiunta di file custom
 
 ### Fixed
-- Risolto il problema di visualizzazione dei PDF negli allegati
-- Risolto un problema di movimentazione magazzino: gli articoli nelle attività venivano sempre movimentati da sede legale anche se specificata diversa sede di partenza nel documento (solo da popup di modifica articolo)
-- Corretto il plugin impianti
+- Corretto il problema di visualizzazione dei PDF negli allegati
+- Corretto un problema di movimentazione magazzino: gli articoli nelle attività venivano sempre movimentati da sede legale anche se specificata diversa sede di partenza nel documento (solo da popup di modifica articolo)
 - Corretta la selezione degli impianti in pianificazione ciclica delle attività
 - Corretta la rimozione del referente nelle sedi
 - Corretta la visualizzazione del modulo fatture di vendita per schermi a bassa risoluzione
-- Corretti i calcoli della ritenuta in fattura
-- Corretti i calcoli della rivalsa in fattura
+- Corretti i calcoli della ritenuta e rivalsa in fattura
 - Corretta l'importazione delle anagrafiche da CSV
 - Corretta l'importazione di fatture elettroniche con aliquote IVA multiple
 - Corretta la stampa del consuntivo ordine, della scadenza e del consuntivo

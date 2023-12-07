@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
 include_once __DIR__.'/../../../core.php';
 
 use Modules\Interventi\Intervento;
@@ -381,8 +380,8 @@ if ($diff > 0) {
                 foreach ($materiali_array1 as $materiali_array2) {
                     foreach ($materiali_array2 as $materiale) {
                         $margine = $materiale['ricavo'] - $materiale['costo'];
-                        $margine_prc = (int) (1 - ($materiale['costo'] / $materiale['ricavo'])) * 100;
-                        $ricarico_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int) ((($materiale['ricavo'] / $materiale['costo']) - 1) * 100) : 100;
+                        $margine_prc = (int) (1 - ($materiale['costo'] / ($materiale['ricavo'] ? $materiale['ricavo'] : 1))) * 100;
+                        $ricarico_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int) ((($materiale['ricavo'] / ($materiale['costo'] ? $materiale['costo'] : 1)) - 1) * 100) : 100;
                         echo '
                 <tr>
                     <td>'.Modules::link('Articoli', $materiale['id'], $key).'</td>
@@ -399,9 +398,8 @@ if ($diff > 0) {
             ksort($materiali_righe);
             foreach ($materiali_righe as $key => $materiale) {
                 $margine = $materiale['ricavo'] - $materiale['costo'];
-                $margine_prc = (int) (1 - ($materiale['costo'] / $materiale['ricavo'])) * 100;
-                $ricarico_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int) ((($materiale['ricavo'] / $materiale['costo']) - 1) * 100) : 100;
-                echo '
+                $margine_prc = (int) (1 - ($materiale['costo'] / ($materiale['ricavo'] ? $materiale['ricavo'] : 1))) * 100;
+                $ricarico_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int) ((($materiale['ricavo'] / ($materiale['costo'] ? $materiale['costo'] : 1)) - 1) * 100) : 100;
                 <tr>
                     <td>'.$key.'</td>
                     <td class="text-center">'.$materiale['qta'].'</td>

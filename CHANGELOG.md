@@ -64,7 +64,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
 
-## 2.4.52 
+## 2.4.52 (2023-12-08)
 ### Aggiunto (Added)
 - Aggiunta la gestione delle sedi definite come automezzi con pratico modulo per il carico/scarico degli articoli nell'automezzo, l'assegnazione di tecnici/autisti con date di validità e stampe di carico filtrabili
 - Aggiunta una limitazione sulle quantità scaricabili nei documenti di vendita in modo da non poter vendere più articoli di quelli presenti fisicamente nel magazzino selezionato. Questa limitazione è legata all'impostazione **Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita**

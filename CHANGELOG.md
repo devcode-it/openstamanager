@@ -93,7 +93,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Migliorato il caricamento della lista allegati
 - L'aggiunta di note aggiuntive e la modifica della data competenza è ora sempre possibile nelle fatture
 - Spostati tutti gli avvisi in basso a destra
-- Modificate le funzioni nei file Modutil per permettere l'aggiunta di file custom
+- Modificate le funzioni nei file modutil.php per permettere l'aggiunta di file custom
 
 ### Fixed
 - Corretto il problema di visualizzazione dei PDF negli allegati

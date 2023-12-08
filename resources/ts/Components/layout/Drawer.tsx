@@ -1,13 +1,10 @@
 import '@material/web/list/list.js';
-import '../m3/NavigationDrawer';
-import '../m3/NavigationDrawerModal';
+import '../../WebComponents/NavDrawer';
 
 import {
   mdiAccountGroupOutline,
-  mdiMenuOpen,
   mdiViewDashboardOutline
 } from '@mdi/js';
-import MdIcon from '@osm/Components/MdIcon';
 import {VnodeCollectionItem} from '@osm/typings/jsx';
 import {isMobile} from '@osm/utils/misc';
 import {collect} from 'collect.js';
@@ -21,7 +18,7 @@ import {
   Component
 } from 'mithril-utilities';
 
-import {DrawerEntry} from './DrawerEntry';
+import {DrawerItem} from './DrawerItem';
 
 export interface DrawerAttributes extends Attributes {
   open: Stream<boolean>;
@@ -36,24 +33,27 @@ export default class Drawer<A extends DrawerAttributes = DrawerAttributes> exten
   }
 
   view(vnode: Vnode<A>): Children {
-    // noinspection LocalVariableNamingConventionJS
-    const DrawerTag = isMobile() ? 'md-navigation-drawer-modal' : 'md-navigation-drawer';
     return (
-      <DrawerTag opened={this.open()}>
-        {DrawerTag === 'md-navigation-drawer-modal' && <md-icon-button onclick={this.onMobileMenuButtonClick.bind(this)}><MdIcon icon={mdiMenuOpen}/></md-icon-button>}
-        <md-list>{this.entries().values<VnodeCollectionItem>().all()}</md-list>
-      </DrawerTag>
+      <nav-drawer {...vnode.attrs} open={this.open()} onclose={this.onDrawerClose.bind(this)}>
+        {vnode.children}
+        <md-list
+          aria-label="List of pages"
+          role="menubar"
+          class="nav">
+          {this.entries().values<VnodeCollectionItem>().all()}
+        </md-list>
+      </nav-drawer>
     );
   }
 
   entries() {
     return collect<VnodeCollectionItem>({
-      dashboard: <DrawerEntry href={route('dashboard')} icon={mdiViewDashboardOutline}>{__('Dashboard')}</DrawerEntry>,
-      users: <DrawerEntry href={route('users.index')} icon={mdiAccountGroupOutline}>{__('Utenti')}</DrawerEntry>
+      dashboard: <DrawerItem href={route('dashboard')} icon={mdiViewDashboardOutline}>{__('Dashboard')}</DrawerItem>,
+      users: <DrawerItem href={route('users.index')} icon={mdiAccountGroupOutline}>{__('Utenti')}</DrawerItem>
     });
   }
 
-  onMobileMenuButtonClick() {
-    this.open(!this.open());
+  onDrawerClose() {
+    this.open(false);
   }
 }

@@ -10,6 +10,9 @@ declare global {
   }
 }
 
+/**
+ * @deprecated Use `nav-drawer` instead until official Material Web NavigationDrawer is released.
+ */
 @customElement('md-navigation-drawer')
 export default class MdNavigationDrawer extends MDNavigationDrawer {
   static override readonly styles = [sharedStyles, styles, css`

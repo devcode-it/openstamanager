@@ -13,7 +13,7 @@ import {
 } from 'mithril-utilities';
 
 import logoUrl from '../../images/logo_completo.png';
-import TopAppBar from './layout/TopAppBar';
+import Scaffold from '@osm/Components/layout/Scaffold';
 
 export interface PageAttributes<A extends Record<string, any> & {external?: boolean} = Record<string, any>> extends Attributes, Required<ComponentAttributes<A>> {
 }
@@ -65,11 +65,10 @@ export default abstract class Page<A extends PageAttributes = PageAttributes> ex
           {contents}
         </md-elevated-card>
       </div>
-    ) : <>
-      <TopAppBar>
+    ) : (
+      <Scaffold>
         {contents}
-      </TopAppBar>
-      <Footer/>
-    </>;
+      </Scaffold>
+    );
   }
 }

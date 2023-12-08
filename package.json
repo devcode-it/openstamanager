@@ -12,8 +12,8 @@
     "scss-types": "typed-scss-modules resources/scss -i node_modules"
   },
   "dependencies": {
-    "@formkit/auto-animate": "0.8.0",
     "@formkit/auto-animate": "0.8.1",
+    "@lit-labs/motion": "^1.0.6",
     "@maicol07/inertia-mithril": "^1.0.3",
     "@maicol07/material-web-additions": "^1.4.4",
     "@material/mwc-snackbar": "^0.27.0",

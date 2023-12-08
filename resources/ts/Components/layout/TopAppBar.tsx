@@ -6,7 +6,6 @@ import {
   mdiMenuOpen
 } from '@mdi/js';
 import logo from '@osm/../images/logo.png';
-import Drawer from '@osm/Components/layout/Drawer';
 import NotificationsAction from '@osm/Components/layout/topappbar_actions/NotificationsAction';
 import PeriodSwitcherAction from '@osm/Components/layout/topappbar_actions/PeriodSwitcherAction';
 import PrintAction from '@osm/Components/layout/topappbar_actions/PrintAction';
@@ -28,62 +27,77 @@ import {
   Component
 } from 'mithril-utilities';
 
-export default class TopAppBar extends Component {
-  drawerOpenState = Stream(!isMobile());
+export interface TopAppBarAttributes extends Attributes {
+  'drawer-open-state'?: Stream<boolean>;
+}
 
-  view(vnode: Vnode) {
+export default class TopAppBar<A extends TopAppBarAttributes = TopAppBarAttributes> extends Component<A> {
+  drawerOpenState!: Stream<boolean>;
+
+  oninit(vnode: Vnode<A, this>) {
+    super.oninit(vnode);
+    this.drawerOpenState = vnode.attrs['drawer-open-state'] ?? Stream(!isMobile());
+  }
+
+  view(vnode: Vnode<A, this>) {
     return (
       <>
-        <top-app-bar>
+        <top-app-bar {...m.censor(vnode.attrs, ['drawer-open-state'])} drawer-open={this.drawerOpenState()} onmenu-button-toggle={this.onMenuButtonClick.bind(this)}>
           {this.navigationIcon(vnode)}
 
-          <div style={{display: 'flex'}}>
-            <Drawer open={this.drawerOpenState}/>
-            <main id="appContent" style={{marginLeft: (!isMobile() && !this.drawerOpenState()) ? '16px' : undefined}}>
-              {vnode.children}
-            </main>
+          <div slot="start">
+            {this.start(vnode)}
           </div>
 
-          {this.branding(vnode)}
-
-          {this.actions().toArray()}
+          <div slot="end">
+            {this.actions().toArray()}
+          </div>
         </top-app-bar>
       </>
     );
   }
 
-  navigationIcon(vnode: Vnode) {
+  navigationIcon(vnode: Vnode<A, this>) {
     return (
-      <md-icon-button slot="navigationIcon" onclick={this.onNavigationIconClick.bind(this)}>
-        <MdIcon icon={this.drawerOpenState() ? mdiMenuOpen : mdiMenu}/>
-      </md-icon-button>
+      <>
+        <MdIcon icon={mdiMenuOpen} slot="menu-button-icon-selected"/>
+        <MdIcon icon={mdiMenu} slot="menu-button-icon"/>
+      </>
     );
   }
 
-  branding(vnode: Vnode) {
+  start(vnode: Vnode<A, this>) {
     return (
-      <div slot="title" style={{display: 'flex', alignItems: 'center'}}>
+      <div style={{display: 'flex', alignItems: 'center'}}>
         {this.logo(vnode)}
         {this.title(vnode)}
       </div>
     );
   }
 
-  logo(vnode: Vnode) {
+  logo(vnode: Vnode<A, this>) {
     return <img src={logo} alt={__('OpenSTAManager')} style={{height: '50px', marginRight: '8px'}}/>;
   }
 
-  title(vnode: Vnode) {
+  title(vnode: Vnode<A, this>) {
     return <span>{__('OpenSTAManager')}</span>;
   }
 
-  oncreate(vnode: VnodeDOM<Attributes, this>) {
+  oncreate(vnode: VnodeDOM<A, this>) {
     super.oncreate(vnode);
 
     mobileMediaQuery().addEventListener('change', (event) => {
       this.drawerOpenState(event.matches || this.drawerOpenState());
       m.redraw();
     });
+  }
+
+  end(vnode: Vnode<A, this>) {
+    return (
+      <>
+        {this.actions().toArray()}
+      </>
+    );
   }
 
   actions() {
@@ -95,7 +109,7 @@ export default class TopAppBar extends Component {
     });
   }
 
-  onNavigationIconClick() {
+  onMenuButtonClick() {
     this.drawerOpenState(!this.drawerOpenState());
   }
 }

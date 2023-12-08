@@ -5,22 +5,13 @@
 
 @import "theme/theme";
 
-main {
-    flex: 1 0;
-}
-
-top-app-bar main {
-    margin-right: 16px;
-}
-
 body {
     margin: 0 !important;
 }
 
-#app {
+[slot="app-content"] {
     display: grid;
     grid-template-rows: 1fr auto;
-    min-height: 100vh;
 }
 
 .center-logo {

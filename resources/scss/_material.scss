@@ -8,24 +8,14 @@ md-icon svg {
     line-height: 0;
 }
 
-md-list-item md-icon {
-    margin-left: 16px;
-    color: var(--_leading-icon-color);
-
-    svg {
-        width: var(--_leading-icon-size, var(--_icon-size, var(--_size)));
-        height: var(--_leading-icon-size, var(--_icon-size, var(--_size)));
-    }
-}
-
 md-data-table md-icon[slot^="pagination"] {
     --_color: inherit;
 }
 
 label:has(> :is(md-checkbox, md-switch)) {
     display: flex;
-    align-items: center;
     gap: 8px;
+    align-items: center;
 }
 
 md-filled-text-field, md-outlined-text-field {
@@ -36,45 +26,52 @@ md-filled-select::part(menu), md-outlined-select::part(menu) {
     max-height: 300px;
 }
 
-md-navigation-drawer, md-navigation-drawer-modal {
-    > md-list {
-        display: flex;
-        justify-content: center;
-        min-width: 300px;
+nav-drawer md-list.nav {
+    --md-list-container-color: transparent;
+    display: block;
+    margin-inline: var(--nav-drawer-list-spacing, 12px);
+    min-width: unset;
 
-        md-list-item {
-            --md-list-item-container-shape: 100px;
-            --md-ripple-shape: 100px;
+    md-list-item[href] {
+        margin-block: var(--nav-drawer-list-spacing, 12px);
+        display: block;
+        --md-focus-ring-shape: var(--nav-drawer-items-border-radius, 28px);
+        border-radius: var(--nav-drawer-items-border-radius, 28px);
 
-            display: block;
-            width: 85%;
+        @media (forced-colors: active) {
+            border-radius: var(--nav-drawer-items-border-radius, 28px);
+            border: 1px solid CanvasText;
+        }
 
-            &[active] {
-                --md-list-item-container-color: var(--md-sys-color-secondary-container, #3f51b5);
-            }
+        &[selected] {
+            background-color: var(--md-sys-color-surface-container-highest);
 
-            md-icon[slot="start"] svg {
-                // TODO: Waiting for token implementation in Material Web
-                //  (see https://m3.material.io/components/navigation-drawer/specs#ce8bfbcf-3dec-45d2-9d8b-5e10af1cf87d)
-                width: 24px;
-                height: 24px;
+            @media (forced-colors: active) {
+                border: 4px double CanvasText;
             }
         }
     }
-}
 
-top-app-bar {
-    --mdc-theme-primary: var(--md-sys-color-surface, #fff);
-    --mdc-theme-on-primary: var(--md-sys-color-on-surface, #5f6368);
-
-    width: 100%;
-
-    [slot="navigationIcon"], [slot="title"] {
-        --md-icon-color: var(--md-sys-color-on-surface, #5f6368);
+    md-list-item::part(focus-ring) {
+        --md-focus-ring-shape: var(--nav-drawer-items-border-radius, 28px);
     }
 
-    [slot="actionItems"] {
-        --md-icon-color: var(--md-sys-color-on-surface-variant, #5f6368);
+    md-item {
+        font-size: var(--nav-drawer-item-font-size, 24px);
+        padding-block-end: 0;
+
+        &[slot="headline"] {
+            /* shadow root slot has overflow:hidden, it's cutting some text off */
+            padding: block 2px;
+        }
+
+        &:first-of-type {
+            padding-block: 0;
+        }
+
+        & + md-list-item[href] {
+            margin-block-start: 0;
+        }
     }
 }
 

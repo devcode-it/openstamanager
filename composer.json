@@ -29,9 +29,9 @@
     }
   ],
   "require": {
-    "php": ">=8.1",
+    "php": ">=8.2",
     "ext-pdo": "*",
-    "binaryk/laravel-restify": "dev-8.x-fixes",
+    "binaryk/laravel-restify": "dev-8.x-jsonapi-compatibility",
     "fakerphp/faker": "^1",
     "guzzlehttp/guzzle": "^7",
     "inertiajs/inertia-laravel": "^0",

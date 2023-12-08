@@ -1,25 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="JavaScriptSettings">
-    <option name="languageLevel" value="ES6" />
+  <component name="DiscordProjectSettings">
+    <option name="show" value="ASK" />
+    <option name="description" value="" />
   </component>
-  <component name="ProjectResources">
-    <resource url="https://cdn.jsdelivr.net/npm/@mdi/font@5.9.55/css/materialdesignicons.min.css" location="$PROJECT_DIR$" />
-  </component>
-  <component name="net.techminded.npmania.NpmaniaSettingsState">
-    <option name="actions">
-      <map>
-        <entry key="npm run-script build" value="npm run-script build" />
-        <entry key="npm run-script build:dev" value="npm run-script build:dev" />
-        <entry key="npm run-script dev" value="npm run-script dev" />
-        <entry key="npm run-script preinstall" value="npm run-script preinstall" />
-        <entry key="npm run-script scss-types" value="npm run-script scss-types" />
-        <entry key="npm run-script serve" value="npm run-script serve" />
-        <entry key="npm run-script serve-dev" value="npm run-script serve-dev" />
-        <entry key="npm run-script serve-watch" value="npm run-script serve-watch" />
-        <entry key="npm run-script vite-workaround" value="npm run-script vite-workaround" />
-        <entry key="npm run-script watch" value="npm run-script watch" />
-      </map>
-    </option>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
 </project>

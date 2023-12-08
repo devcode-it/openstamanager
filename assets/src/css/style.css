@@ -792,6 +792,18 @@ input.small-width {
     background-clip: padding-box;
 }
 
+.ui-menu .ui-menu-item-wrapper {
+    padding: 3px 1em 3px .4em;
+    cursor: pointer;
+}
+
+.ui-menu .ui-menu-item-wrapper:hover {
+    border: 1px solid #003eff;
+    background: #007fff;
+    font-weight: 400;
+    color: #fff;
+}
+
 .parsley-errors-list {
     color: red;
 }

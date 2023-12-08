@@ -65,6 +65,9 @@ echo '
 <script>$(document).ready(init)</script>
 
 <script>
+var indirizzi = [];
+var coords = [];
+
 $("#modals > div").on("shown.bs.modal", function () {
     if (input("lat").get() && input("lng").get()) {
         caricaMappa();
@@ -77,10 +80,26 @@ function initGeocomplete() {
         type : "GET",
         dataType: "JSON",
         success: function(data){
-            input("lat").set(data[0].lat);
-            input("lng").set(data[0].lon);
-            input("gaddress").set(data[0].display_name);
-            caricaMappa();
+            // Estrazione lista luoghi
+            for (var i = 0; i < data.length; i++) {
+                indirizzi.push(data[i].display_name);
+                coords[data[i].display_name] = [data[i].lat, data[i].lon];
+            }
+
+            // Autocompletamento indirizzi con risposta da Nominatim
+            $("#gaddress").autocomplete({
+                source: indirizzi,
+                minLength: 0,
+                select: function(event, ui) {
+                    input("lat").set(coords[ui.item.value][0]);
+                    input("lng").set(coords[ui.item.value][1]);
+                    input("gaddress").set(ui.item.value);
+                    caricaMappa();
+                }
+            }).autocomplete("search", "");
+
+            // Azzeramento indirizzi raccolti
+            indirizzi = [];
         }
     });
 }
@@ -146,5 +165,13 @@ function caricaMappa() {
 // Ricaricamento della pagina alla chiusura
 $("#modals > div button.close").on("click", function() {
     location.reload();
+});
+
+// Avvio ricerca indirizzo premendo Invio
+$("#gaddress").on("keypress", function(e){
+    if(e.which == 13){
+        e.preventDefault();
+        initGeocomplete();
+    }
 });
 </script>';

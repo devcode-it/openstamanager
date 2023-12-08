@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 echo '
 
 <div class="alert alert-warning">
-    <i class="fa fa-warning"></i> <b>'.tr('Attenzione', [], ['upper']).':</b> '.tr('le suddette stampe contabili non sono da considerarsi valide ai fini fiscali').'.
+    <i class="fa fa-warning"></i> <b>'.tr('Attenzione', [], ['upper']).':</b> '.tr('le seguenti stampe contabili possono essere utilizzate per fini fiscali previa verifica delle informazioni inserite nel gestionale.<br/> Rimane esclusiva responsabilità dell\'utente controllare la correttezza dei documenti qui prodotti').'.
 </div>
 
 <div class="row">

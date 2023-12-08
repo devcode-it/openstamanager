@@ -15,6 +15,7 @@ return [
     'an_tipianagrafiche_anagrafiche',
     'an_zone',
     'an_pagamenti_anagrafiche',
+    'an_sedi_tecnici',
     'co_banche',
     'co_contratti',
     'co_dichiarazioni_intento',

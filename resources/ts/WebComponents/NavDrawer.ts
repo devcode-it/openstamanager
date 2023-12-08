@@ -183,9 +183,6 @@ export default class NavDrawer extends LitElement {
               --_pane-margin-inline-start: var(--nav-drawer-pane-spacing-start, 28px);
           }
       }
-      .body:not(.open) .scroll-wrapper {
-          overflow-x: hidden;
-      }
 
     .pane {
       box-sizing: border-box;

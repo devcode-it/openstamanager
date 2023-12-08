@@ -32,7 +32,7 @@
   app = @js([
     'locale' => app()->getLocale(),
     'modules' => $modules,
-    'user' => Route::currentRouteName() !== 'setup.index' && auth()->user(),
+    'user' => Route::currentRouteName() !== 'setup.index' ? auth()->user() : null,
     'VERSION' => trim(file_get_contents(base_path('VERSION'))),
     'REVISION' => trim(file_get_contents(base_path('REVISION'))),
     'settings' => !str_starts_with(Route::getCurrentRoute()?->getName() ?? '', 'setup.') ? [

@@ -1,7 +1,7 @@
 import {mdiFloppy} from '@mdi/js';
 import RecordDialog, {RecordDialogAttributes} from '@osm/Components/Dialogs/RecordDialog';
 import MdIcon from '@osm/Components/MdIcon';
-import Model from '@osm/Models/Model';
+import Model from '@osm/Models/Record';
 import {
   VnodeCollection,
   VnodeCollectionItem
@@ -13,7 +13,6 @@ import {
   showSnackbar
 } from '@osm/utils/misc';
 import collect, {Collection} from 'collect.js';
-import {SaveResponse} from 'coloquent';
 import {
   Children,
   Vnode,
@@ -23,7 +22,7 @@ import Stream from 'mithril/stream';
 import {Form} from 'mithril-utilities';
 import {Class} from 'type-fest';
 
-export default abstract class AddEditRecordDialog<M extends Model<any, any>> extends RecordDialog<M> {
+export default abstract class AddEditRecordDialog<M extends Model> extends RecordDialog<M> {
   // eslint-disable-next-line unicorn/no-null
   protected formElement: HTMLFormElement | null = null;
   protected abstract formState: Map<string, Stream<any>>;
@@ -47,12 +46,13 @@ export default abstract class AddEditRecordDialog<M extends Model<any, any>> ext
     super.oncreate(vnode);
 
     this.formElement = this.element.querySelector('form');
-    this.element.querySelector(`#saveBtn${this.formId}`)?.setAttribute('form', this.formId!);
+    this.element.querySelector(`#saveBtn${this.formId!}`)?.setAttribute('form', this.formId!);
   }
 
   fillForm() {
     for (const [key, value] of this.formState) {
-      value(this.record.getAttribute(key) ?? value());
+      // @ts-ignore
+      value(this.record[key] ?? value());
     }
   }
 
@@ -126,27 +126,25 @@ export default abstract class AddEditRecordDialog<M extends Model<any, any>> ext
   }
 
   async save(): Promise<boolean> {
-    this.record.setAttributes(this.modelAttributesFromFormState);
+    this.record.assignAttributes(this.modelAttributesFromFormState);
     try {
-      const response = await this.record.save();
-      this.afterSave(response);
-      return response.getModelId() !== undefined;
+      const result = await this.record.save();
+      this.afterSave(result);
+      return result;
     } catch (error) {
       this.onSaveError(error as JSONAPI.RequestError);
       return false;
     }
   }
 
-  afterSave(response: SaveResponse<M>): void {
-    const responseModel = response.getModel() as M;
-    if (responseModel !== undefined) {
-      this.record = responseModel;
+  afterSave(result: boolean): void {
+    if (result) {
       void showSnackbar(__('Record salvato con successo'));
     }
   }
 
   onSaveError(error: JSONAPI.RequestError): void {
-    const message = error.response.data.message;
+    const {message} = error.response.data;
     void showSnackbar(message, false);
   }
 

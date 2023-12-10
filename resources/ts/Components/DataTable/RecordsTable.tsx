@@ -14,7 +14,7 @@ import DataTable, {DataTableAttributes} from '@osm/Components/DataTable/DataTabl
 import DataTableColumn, {DataTableColumnAttributes} from '@osm/Components/DataTable/DataTableColumn';
 import RecordsTableColumn from '@osm/Components/DataTable/RecordsTableColumn';
 import MdIcon from '@osm/Components/MdIcon';
-import Model from '@osm/Models/Model';
+import Model from '@osm/Models/Record';
 import {isVnode} from '@osm/utils/misc';
 import collect, {Collection} from 'collect.js';
 import {
@@ -28,7 +28,7 @@ export interface RecordsTableColumnAttributes extends DataTableColumnAttributes 
   label?: string;
 }
 
-export interface RecordsTableAttributes<M extends Model<any, any>> extends DataTableAttributes {
+export interface RecordsTableAttributes<M extends Model> extends DataTableAttributes {
   cols: Collection<Children> | Collection<RecordsTableColumnAttributes> | Collection<Children | RecordsTableColumnAttributes>;
   records: Map<string, M>;
   readonly?: boolean;
@@ -42,7 +42,7 @@ export interface RecordsTableAttributes<M extends Model<any, any>> extends DataT
   valueModifier?(value: any, attribute: string, record: M): any;
 }
 
-export default class RecordsTable<M extends Model<any, any>, A extends RecordsTableAttributes<M> = RecordsTableAttributes<M>> extends DataTable<A> {
+export default class RecordsTable<M extends Model, A extends RecordsTableAttributes<M> = RecordsTableAttributes<M>> extends DataTable<A> {
   element!: MdDataTable;
   selectedRecordsIds: string[] = [];
 
@@ -162,7 +162,7 @@ export default class RecordsTable<M extends Model<any, any>, A extends RecordsTa
         cells.put('actions', this.tableRowActions(vnode, record).values<Children>().all());
       }
 
-      rows.set(record.getId()!, cells);
+      rows.set(record.id!, cells);
     }
 
     return rows;
@@ -238,7 +238,7 @@ export default class RecordsTable<M extends Model<any, any>, A extends RecordsTa
 
   protected onDeleteRecordButtonClicked(vnode: Vnode<A>, record: M, event: MouseEvent) {
     event.stopPropagation();
-    vnode.attrs.onDeleteRecordButtonClick?.(record.getId()!, event);
+    vnode.attrs.onDeleteRecordButtonClick?.(record.id!, event);
   }
 
   protected onDeleteSelectedRecordsButtonClicked(vnode: Vnode<A>, event: MouseEvent) {
@@ -247,9 +247,10 @@ export default class RecordsTable<M extends Model<any, any>, A extends RecordsTa
 
   protected getModelValue(record: M, attribute: string, vnode: Vnode<A>): unknown {
     // Check if is a relation
-    let value: unknown = record.getAttribute(attribute);
+    // @ts-expect-error
+    let value: unknown = record[attribute];
     if (attribute === 'id') {
-      value = record.getId();
+      value = record.id;
     }
 
     return vnode.attrs.valueModifier?.(value, attribute, record) ?? value;

@@ -3,27 +3,27 @@ import '@material/web/button/outlined-button.js';
 import {mdiChevronLeft} from '@mdi/js';
 import MdIcon from '@osm/Components/MdIcon';
 import Page, {PageAttributes} from '@osm/Components/Page';
-import Model from '@osm/Models/Model';
+import Model from '@osm/Models/Record';
 import {showSnackbar} from '@osm/utils/misc';
-import {Builder} from 'coloquent';
 import {
   Children,
   Vnode
 } from 'mithril';
+import {Scope} from 'spraypaint';
 import {Class} from 'type-fest';
 
-export interface RecordPageAttributes<M extends Model<any, any>> extends PageAttributes {
+export interface RecordPageAttributes<M extends Model> extends PageAttributes {
   record: M;
 }
 
-export default abstract class RecordPage<M extends Model<any, any>, A extends RecordPageAttributes<M> = RecordPageAttributes<M>> extends Page<A> {
-  abstract recordType: Class<M> & typeof Model<any, any>;
+export default abstract class RecordPage<M extends Model, A extends RecordPageAttributes<M> = RecordPageAttributes<M>> extends Page<A> {
+  abstract recordType: Class<M> & typeof Model;
   record?: M;
 
   async oninit(vnode: Vnode<A, this>) {
     super.oninit(vnode);
     const {id: recordId} = route().params as {id: number | string};
-    if (recordId !== this.record?.getId()) {
+    if (recordId !== this.record?.id) {
       await this.loadRecord(recordId);
     }
   }
@@ -32,24 +32,23 @@ export default abstract class RecordPage<M extends Model<any, any>, A extends Re
     if (recordId && recordId !== 'new' && !this.record) {
       try {
         const response = await this.modelQuery().find(recordId);
-        this.record = response.getData() || undefined;
-      } catch (e) {
-        console.error(e);
+        this.record = response.data || undefined;
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(error);
         void showSnackbar(__('Errore durante il caricamento del record'));
         // Do nothing
       }
     }
 
     if (!this.record) {
-      // @ts-expect-error — This won't be abstract when implemented
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       this.record = new this.recordType();
     }
     m.redraw();
   }
 
-  modelQuery(): Builder<M> {
-    return this.recordType.query();
+  modelQuery(): Scope<M> {
+    return this.recordType as unknown as Scope<M>;
   }
 
   contents(vnode: Vnode<A>): Children {

@@ -11,3 +11,7 @@ rules:
     - error
     - except-parens
   no-plusplus: off
+  new-cap:
+    - error
+    - capIsNewExceptions: ['Model', 'Attr', 'HasMany', 'HasOne', 'BelongsTo', 'Link', 'Stream']
+      properties: false

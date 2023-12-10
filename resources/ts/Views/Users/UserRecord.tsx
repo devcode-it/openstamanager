@@ -12,9 +12,9 @@ export default class UserRecord extends RecordPage<User> {
     return (
       <>
         {this.backButton(vnode)}
-        <h1>{this.record?.getAttribute('username')}</h1>
+        <h1>{this.record?.username}</h1>
         <code>
-          {JSON.stringify(this.record?.getAttributes())}
+          {JSON.stringify(this.record?.attributes)}
         </code>
       </>
     );

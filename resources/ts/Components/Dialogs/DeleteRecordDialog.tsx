@@ -1,6 +1,6 @@
 import {mdiDelete} from '@mdi/js';
 import MdIcon from '@osm/Components/MdIcon';
-import Model from '@osm/Models/Model';
+import Model from '@osm/Models/Record';
 import {VnodeCollection} from '@osm/typings/jsx';
 import {showSnackbar} from '@osm/utils/misc';
 import collect from 'collect.js';
@@ -12,11 +12,11 @@ import {RequestError} from 'mithril-utilities';
 
 import RecordDialog, {RecordDialogAttributes} from './RecordDialog';
 
-export interface DeleteRecordDialogAttributes<M extends Model<any, any>> extends RecordDialogAttributes<M> {
+export interface DeleteRecordDialogAttributes<M extends Model> extends RecordDialogAttributes<M> {
   records: M | M[];
 }
 
-export default class DeleteRecordDialog<M extends Model<any, any>, A extends DeleteRecordDialogAttributes<M> = DeleteRecordDialogAttributes<M>> extends RecordDialog<M, A> {
+export default class DeleteRecordDialog<M extends Model, A extends DeleteRecordDialogAttributes<M> = DeleteRecordDialogAttributes<M>> extends RecordDialog<M, A> {
   records!: M[];
 
   oninit(vnode: Vnode<A, this>) {
@@ -32,7 +32,7 @@ export default class DeleteRecordDialog<M extends Model<any, any>, A extends Del
     return (
       <>
         <p>{text}</p>
-        <ul>{this.records.map((record) => <li key={record.getId()}>{this.recordSummary(record, vnode)}</li>)}</ul>
+        <ul>{this.records.map((record) => <li key={record.id}>{this.recordSummary(record, vnode)}</li>)}</ul>
       </>
     );
   }
@@ -61,7 +61,7 @@ export default class DeleteRecordDialog<M extends Model<any, any>, A extends Del
   }
 
   recordSummary(record: M, vnode: Vnode<A, this>): Children {
-    return __('ID: :recordId', {recordId: record.getId()!});
+    return __('ID: :recordId', {recordId: record.id!});
   }
 
   async onConfirmButtonClicked() {
@@ -74,12 +74,12 @@ export default class DeleteRecordDialog<M extends Model<any, any>, A extends Del
 
   async deleteRecord() {
     try {
-      const promises = this.records.map((record) => record.delete());
+      const promises = this.records.map((record) => record.destroy());
       await Promise.all(promises);
 
       // TODO: Better way for pluralization in i18n
       void showSnackbar(this.records.length > 1 ? __('Record eliminati!') : __('Record eliminato!'));
-      this.close('deleted');
+      void this.close('deleted');
     } catch (error) {
       void showSnackbar(__('Errore durante l\'eliminazione del record! :error', {error: (error as RequestError<{message: string}>).response.message}), false);
     }

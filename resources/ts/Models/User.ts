@@ -1,15 +1,10 @@
-import Model, {
-  ModelAttributes,
-  ModelRelations
-} from '@osm/Models/Model';
+import Record from '@osm/Models/Record';
+import {Attr, Model} from 'spraypaint';
 
-export interface UserAttributes extends ModelAttributes {
-  username: string;
-  email: string;
+@Model()
+export default class User extends Record {
+  static jsonapiType = 'users';
+
+  @Attr() username!: string;
+  @Attr() email!: string;
 }
-
-export interface UserRelations extends ModelRelations {
-  // Notifications: DatabaseNotifications
-}
-
-export default class User extends Model<UserAttributes, UserRelations> {}

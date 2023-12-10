@@ -35,9 +35,9 @@ export default class UsersRecordDialog extends AddEditRecordDialog<User> {
   }
 
   async save() {
-    if (this.record.isNew()) {
-      this.record.setAttribute('password', 'default');
-    }
+    // if (this.record.isNew()) {
+    //   this.record.password = 'default';
+    // }
     return super.save();
   }
 }

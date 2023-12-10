@@ -21,9 +21,8 @@ import DeleteRecordDialog, {DeleteRecordDialogAttributes} from '@osm/Components/
 import RecordDialog, {RecordDialogAttributes} from '@osm/Components/Dialogs/RecordDialog';
 import MdIcon from '@osm/Components/MdIcon';
 import Page, {PageAttributes} from '@osm/Components/Page';
-import Model from '@osm/Models/Model';
+import Record from '@osm/Models/Record';
 import collect, {type Collection} from 'collect.js';
-import {SortDirection} from 'coloquent';
 import dayjs from 'dayjs';
 import type {
   Children,
@@ -31,38 +30,25 @@ import type {
   VnodeDOM
 } from 'mithril';
 import Stream from 'mithril/stream';
+import {Scope} from 'spraypaint';
+import {SortDir} from 'spraypaint/lib-esm/scope';
 import {match} from 'ts-pattern';
 import {Match} from 'ts-pattern/dist/types/Match';
 import type {Class} from 'type-fest';
 
-export interface Meta {
-  current_page: number;
-  from: number;
-  last_page: number;
-  path: string;
-  per_page: number;
-  to: number;
-  total: number;
-}
-
-export interface JSONAPIResponse {
-  meta: Meta;
-}
-
-
-type RecordDialogVnode<M extends Model<any, any>, D extends RecordDialog<M>> = Vnode<RecordDialogAttributes<M>, D>;
-type DeleteRecordDialogVnode<M extends Model<any, any>, D extends DeleteRecordDialog<M>> = Vnode<DeleteRecordDialogAttributes<M>, D>;
+type RecordDialogVnode<M extends Record, D extends RecordDialog<M>> = Vnode<RecordDialogAttributes<M>, D>;
+type DeleteRecordDialogVnode<M extends Record, D extends DeleteRecordDialog<M>> = Vnode<DeleteRecordDialogAttributes<M>, D>;
 
 // noinspection JSUnusedLocalSymbols
 /**
  * @abstract
  */
 export default abstract class RecordsPage<
-  M extends Model<any, any>,
+  M extends Record,
   D extends AddEditRecordDialog<M> = AddEditRecordDialog<M>,
   DRD extends DeleteRecordDialog<M> = DeleteRecordDialog<M>
 > extends Page {
-  abstract modelType: Class<M> & typeof Model<any, any>;
+  abstract modelType: Class<M> & typeof Record;
   recordDialogType?: Class<D>;
   deleteRecordDialogType?: Class<DRD>;
 
@@ -86,15 +72,13 @@ export default abstract class RecordsPage<
   protected lastRowOfPage = this.totalRecords;
 
   protected filters: Map<string, string> = new Map();
-  protected sort: Map<string, SortDirection> = new Map([['id', SortDirection.ASC]]);
+  protected sort: Map<string, SortDir> = new Map();
   protected relatedFilters: Map<string, string> = new Map();
   private listenedFilterColumns: string[] = [];
   private listenedSortedColumns: string[] = [];
 
   oninit(vnode: Vnode<PageAttributes, this>) {
     super.oninit(vnode);
-    // @ts-ignore
-    this.modelType.pageSize = this.currentPageSize;
     // Redraw on a first load to call onbeforeupdate
     m.redraw();
   }
@@ -111,24 +95,21 @@ export default abstract class RecordsPage<
   async loadRecords() {
     this.isTableLoading = true;
 
-    let query = this.modelQuery();
+    const query = this.modelQuery();
 
-    // Fix Restify when filtering relations
-    query = query.option('related', query.getQuery().getInclude().join(','));
-
-    const response = await query.get(this.currentPage);
-    const rawResponse = response.getHttpClientResponse().getData() as JSONAPIResponse;
-    this.lastPage = rawResponse.meta.last_page;
-    this.firstRowOfPage = rawResponse.meta.from;
-    this.lastRowOfPage = rawResponse.meta.to;
-    this.currentPageSize = rawResponse.meta.per_page;
-    this.totalRecords = rawResponse.meta.total;
-    const data = response.getData();
+    const response = await query.page(this.currentPage).all();
+    const rawResponse = response.raw;
+    this.lastPage = rawResponse.meta?.last_page as number;
+    this.firstRowOfPage = rawResponse.meta?.from as number;
+    this.lastRowOfPage = rawResponse.meta?.to as number;
+    this.currentPageSize = rawResponse.meta?.per_page as number;
+    this.totalRecords = rawResponse.meta?.total as number;
+    const {data} = response;
 
     this.records.clear();
     if (data.length > 0) {
       for (const record of data) {
-        this.records.set(record.getId()!, record);
+        this.records.set(record.id, record);
       }
     }
 
@@ -144,31 +125,29 @@ export default abstract class RecordsPage<
    */
   private static convertToSnakeCase(string_: string, trim = false, removeSpecials = false, underscoredNumbers = false) {
     return string_.replace(removeSpecials ? /[^\w ]/g : '', '')
-      .replace(/([ _]+)/g, '_')
+      .replace(/[ _]+/g, '_')
       .replace(trim ? /(^_|_$)/gm : '', '')
-      .replace(underscoredNumbers ? /([^\dA-Z_])([^_a-z])/g : /([^\dA-Z_])([^\d_a-z])/g, (m, preUpper, upper) => `${preUpper}_${upper}`)
-      .replace(underscoredNumbers ? /([^\d_]\d|\d[^\d_])/g : '', (m, index) => (index ? index.split('').join('_') : ''))
-      .replace(/([A-Z])([A-Z])([^\dA-Z_])/g, (m, previousUpper, upper, lower) => `${previousUpper}_${upper}${lower}`)
-      .replaceAll('_.', '.') // remove redundant underscores
+      .replace(underscoredNumbers ? /([^\dA-Z_])([^_a-z])/g : /([^\dA-Z_])([^\d_a-z])/g, (m, preUpper: string, upper: string) => `${preUpper}_${upper}`)
+      .replace(underscoredNumbers ? /([^\d_]\d|\d[^\d_])/g : '', (m, index: string) => (index ? [...index].join('_') : ''))
+      .replace(/([A-Z])([A-Z])([^\dA-Z_])/g, (m, previousUpper: string, upper: string, lower: string) => `${previousUpper}_${upper}${lower}`)
+      .replaceAll('_.', '.') // Remove redundant underscores
       .toLowerCase();
   }
 
   modelQuery() {
-    // @ts-ignore
-    let query = this.modelType.query<M>();
+    let query: Scope<M> = this.modelType.per(this.currentPageSize);
 
     for (const [attribute, value] of this.filters) {
-      // Query = query.where(attribute, value); TODO: Revert when Restify uses JSONAPI syntax
-      query = query.option(RecordsPage.convertToSnakeCase(attribute), value);
+      query = query.where({[RecordsPage.convertToSnakeCase(attribute)]: value});
     }
 
     for (const [relation, value] of this.relatedFilters) {
-      query = query.option('related', relation)
-        .option('search', value);
+      query = query.where({related: relation, search: value}); // TODO: Check
+        // .where('search', value);
     }
 
     for (const [attribute, value] of this.sort) {
-      query = query.orderBy(RecordsPage.convertToSnakeCase(attribute), value);
+      query = query.order({[RecordsPage.convertToSnakeCase(attribute)]: value});
     }
 
     return query;
@@ -244,7 +223,7 @@ export default abstract class RecordsPage<
 
   updateRecord(model: M) {
     if (this.recordPageRouteName) {
-      router.visit(route(this.recordPageRouteName, {id: model.getId()!}));
+      router.visit(route(this.recordPageRouteName, {id: model.id}));
       return;
     }
 
@@ -258,8 +237,8 @@ export default abstract class RecordsPage<
     for (const [key, state] of this.recordDialogsStates) {
       // noinspection LocalVariableNamingConventionJS
       const RD = this.recordDialogType!;
-      const record = key instanceof Model ? key : this.records.get(key);
-      const vnodeKey = record?.getId() ?? (key as string);
+      const record = key instanceof Record ? key : this.records.get(key);
+      const vnodeKey = record?.id ?? (key as string);
       collection.put(vnodeKey, <RD key={vnodeKey} record={record} open={state}/>);
     }
 
@@ -303,14 +282,16 @@ export default abstract class RecordsPage<
   onTablePageChange(event: CustomEvent<PaginateDetail>) {
     const {pageSize, action} = event.detail;
     this.currentPageSize = pageSize;
-    const {currentPage} = this;
+    const {currentPage, lastPage} = this;
     match(action)
       .with('first', () => (this.currentPage = 1))
       .with('previous', () => (this.currentPage--))
       .with('next', () => (this.currentPage++))
-      .with('last', () => (this.currentPage = this.lastPage))
+      .with('last', () => (this.currentPage = lastPage))
       .with('current', () => {})
       .run();
+    // We need to check if the page has changed
+    // eslint-disable-next-line unicorn/consistent-destructuring
     if (currentPage !== this.currentPage) {
       this.refreshRecords = true;
       m.redraw();
@@ -356,13 +337,13 @@ export default abstract class RecordsPage<
     const {column, isDescending} = (event as CustomEvent<SortButtonClickedEventDetail>).detail;
     const modelAttribute = column.dataset.sortAttribute ?? column.dataset.modelAttribute!;
     this.sort.clear();
-    this.sort.set(modelAttribute, isDescending ? SortDirection.DESC : SortDirection.ASC);
+    this.sort.set(modelAttribute, isDescending ? 'desc' : 'asc');
     this.refreshRecords = true;
     m.redraw();
   }
 
   openDeleteRecordsDialog(records: M | M[]) {
-    const key = records instanceof Model ? records.getId()! : records.map((r) => r.getId()).join(',');
+    const key = records instanceof Record ? records.id! : records.map((r) => r.id).join(',');
     let state = this.deleteRecordsDialogStates.get(key);
 
     if (!state) {
@@ -386,7 +367,7 @@ export default abstract class RecordsPage<
   }
 
   protected getRecordDialogState(record?: M, slug?: string) {
-    const key: string = slug ?? record?.getId() ?? '';
+    const key: string = slug ?? record?.id ?? '';
 
     if (!this.recordDialogsStates.has(key)) {
       const state = Stream<boolean>(false);

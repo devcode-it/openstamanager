@@ -21,6 +21,8 @@ import {
 import Stream from 'mithril/stream';
 import {Form} from 'mithril-utilities';
 import {Class} from 'type-fest';
+import {JsonapiErrorDoc} from 'spraypaint';
+import {ResponseError} from 'spraypaint/lib-esm/request';
 
 export default abstract class AddEditRecordDialog<M extends Model> extends RecordDialog<M> {
   // eslint-disable-next-line unicorn/no-null
@@ -132,7 +134,7 @@ export default abstract class AddEditRecordDialog<M extends Model> extends Recor
       this.afterSave(result);
       return result;
     } catch (error) {
-      this.onSaveError(error as JSONAPI.RequestError);
+      this.onSaveError(error as ResponseError);
       return false;
     }
   }
@@ -143,8 +145,8 @@ export default abstract class AddEditRecordDialog<M extends Model> extends Recor
     }
   }
 
-  onSaveError(error: JSONAPI.RequestError): void {
-    const {message} = error.response.data;
+  async onSaveError(error: ResponseError) {
+    const {message} = (await error.response!.json()) as JsonapiErrorDoc;
     void showSnackbar(message, false);
   }
 

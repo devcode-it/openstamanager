@@ -51,10 +51,11 @@ export default class WelcomeStep<A extends WelcomeStepAttributes = WelcomeStepAt
           })}
         </p>
         <md-filled-select id="language-select" name="locale" label={__('Lingua')} required value={app.locale} style={{textAlign: 'initial'}} oninput={WelcomeStep.onLanguageSelected}>
-          {getFlag(app.locale, 'leadingicon')}
+          {getFlag(app.locale, 'leading-icon')}
           {vnode.attrs.languages.map((locale) => (
-            <md-select-option key={locale} value={locale} headline={capitalize(getLocaleDisplayName(locale))}>
+            <md-select-option key={locale} value={locale}>
               {getFlag(locale, 'start', {marginLeft: '16px'})}
+              <div slot="headline">{capitalize(getLocaleDisplayName(locale))}</div>
             </md-select-option>
           ))}
         </md-filled-select>

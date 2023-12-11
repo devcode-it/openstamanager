@@ -60,14 +60,14 @@ export default class RegionalSettings extends SetupStep {
         <md-filled-text-field name="long" label={__('Formato data lunga')} required supporting-text={__('Anteprima: :date', {
           date: dayjs().format(this.dateFormats.long())
         })}>
-          <MdIcon icon={mdiCalendarClockOutline} slot="leadingicon"/>
+          <MdIcon icon={mdiCalendarClockOutline} slot="leading-icon"/>
         </md-filled-text-field>
       ),
       short_date_format: (
         <md-filled-text-field name="short" label={__('Formato data corta')} required supporting-text={__('Anteprima: :date', {
           date: dayjs().format(this.dateFormats.short())
         })}>
-          <MdIcon icon={mdiCalendarMonthOutline} slot="leadingicon"/>
+          <MdIcon icon={mdiCalendarMonthOutline} slot="leading-icon"/>
         </md-filled-text-field>
       ),
       time_format: (
@@ -75,7 +75,7 @@ export default class RegionalSettings extends SetupStep {
           date: dayjs().format(this.dateFormats.time())
         })}
         >
-          <MdIcon icon={mdiClockOutline} slot="leadingicon"/>
+          <MdIcon icon={mdiClockOutline} slot="leading-icon"/>
         </md-filled-text-field>
       )
     });

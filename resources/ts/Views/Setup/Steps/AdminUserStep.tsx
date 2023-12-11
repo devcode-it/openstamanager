@@ -58,22 +58,22 @@ export default class AdminUserStep extends SetupStep<AdminUserStepAttributes> {
     return collect<VnodeCollectionItem>({
       email: (
         <md-filled-text-field name="email" label={__('Email')} required grid-span={6}>
-          <MdIcon icon={mdiEmailOutline} slot="leadingicon"/>
+          <MdIcon icon={mdiEmailOutline} slot="leading-icon"/>
         </md-filled-text-field>
       ),
       username: (
         <md-filled-text-field name="username" label={__('Nome utente')} required grid-span={6}>
-          <MdIcon icon={mdiAccountOutline} slot="leadingicon"/>
+          <MdIcon icon={mdiAccountOutline} slot="leading-icon"/>
         </md-filled-text-field>
       ),
       password: (
         <md-filled-text-field name="password" label={__('Password')} required type="password" minLength={8} grid-span={6}>
-          <MdIcon icon={mdiLockOutline} slot="leadingicon"/>
+          <MdIcon icon={mdiLockOutline} slot="leading-icon"/>
         </md-filled-text-field>
       ),
       password_confirmation: (
         <md-filled-text-field name="passwordConfirmation" label={__('Conferma password')} required type="password" minLength={8} grid-span={6}>
-          <MdIcon icon={mdiLockCheckOutline} slot="leadingicon"/>
+          <MdIcon icon={mdiLockCheckOutline} slot="leading-icon"/>
         </md-filled-text-field>
       )
     });

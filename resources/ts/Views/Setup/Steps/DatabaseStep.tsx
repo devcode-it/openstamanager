@@ -63,32 +63,32 @@ export default class DatabaseStep extends SetupStep {
       // TODO: Autocomplete/Select with possible drivers
       driver: (
         <md-filled-text-field name="driver" label={__('Driver')} required grid-span={4}>
-          <MdIcon icon={mdiPowerPlugOutline} slot="leadingicon"/>
+          <MdIcon icon={mdiPowerPlugOutline} slot="leading-icon"/>
         </md-filled-text-field>
       ),
       host: (
         <md-filled-text-field name="host" label={__('Host')} required grid-span={4} placeholder="localhost">
-          <MdIcon icon={mdiServerNetwork} slot="leadingicon"/>
+          <MdIcon icon={mdiServerNetwork} slot="leading-icon"/>
         </md-filled-text-field>
       ),
       username: (
         <md-filled-text-field name="username" label={__('Nome utente')} required grid-span={4} placeholder="root">
-          <MdIcon icon={mdiAccountOutline} slot="leadingicon"/>
+          <MdIcon icon={mdiAccountOutline} slot="leading-icon"/>
         </md-filled-text-field>
       ),
       password: (
         <md-filled-text-field type="password" name="password" label={__('Password')} grid-span={4}>
-          <MdIcon icon={mdiFormTextboxPassword} slot="leadingicon"/>
+          <MdIcon icon={mdiFormTextboxPassword} slot="leading-icon"/>
         </md-filled-text-field>
       ),
       database_name: (
         <md-filled-text-field name="database_name" label={__('Nome database')} required grid-span={4} placeholder="openstamanager">
-          <MdIcon icon={mdiDatabaseOutline} slot="leadingicon"/>
+          <MdIcon icon={mdiDatabaseOutline} slot="leading-icon"/>
         </md-filled-text-field>
       ),
       port: (
         <md-filled-text-field name="port" label={__('Porta')} required grid-span={4} placeholder="3306">
-          <MdIcon icon={mdiServerNetwork} slot="leadingicon"/>
+          <MdIcon icon={mdiServerNetwork} slot="leading-icon"/>
         </md-filled-text-field>
       )
     });

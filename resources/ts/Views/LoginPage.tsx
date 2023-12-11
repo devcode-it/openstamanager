@@ -83,12 +83,12 @@ export default class LoginPage extends Page {
     return collect<VnodeCollectionItem>({
       username: (
         <md-filled-text-field name="username" required label={__('Nome utente/email')}>
-          <MdIcon icon={mdiAccountOutline} slot="leadingicon"/>
+          <MdIcon icon={mdiAccountOutline} slot="leading-icon"/>
         </md-filled-text-field>
       ),
       password: (
         <md-filled-text-field name="password" required label={__('Password')} type="password">
-          <MdIcon icon={mdiLockOutline} slot="leadingicon"/>
+          <MdIcon icon={mdiLockOutline} slot="leading-icon"/>
         </md-filled-text-field>
       ),
       remember: (
@@ -104,7 +104,7 @@ export default class LoginPage extends Page {
     return collect<VnodeCollectionItem>({
       email: (
         <md-filled-text-field name="email" required label={__('Email')} type="email">
-          <MdIcon icon={mdiEmailOutline} slot="leadingicon"/>
+          <MdIcon icon={mdiEmailOutline} slot="leading-icon"/>
         </md-filled-text-field>
       )
     });

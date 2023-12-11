@@ -23,12 +23,12 @@ export default class UsersRecordDialog extends AddEditRecordDialog<User> {
     return collect({
       username: (
         <md-filled-text-field required label={__('Nome utente')}>
-          <MdIcon icon={mdiAccountOutline} slot="leadingicon"/>
+          <MdIcon icon={mdiAccountOutline} slot="leading-icon"/>
         </md-filled-text-field>
       ),
       email: (
         <md-filled-text-field required type="email" label={__('Email')}>
-          <MdIcon icon={mdiEmailOutline} slot="leadingicon"/>
+          <MdIcon icon={mdiEmailOutline} slot="leading-icon"/>
         </md-filled-text-field>
       )
     });

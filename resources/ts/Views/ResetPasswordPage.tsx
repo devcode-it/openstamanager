@@ -54,12 +54,12 @@ export default class ResetPasswordPage extends Page {
       token: <input type="hidden" name="token" value={this.parameters.get('token')}/>,
       password: (
         <md-filled-text-field name="password" required label={__('Password')} type="password">
-          <MdIcon icon={mdiLockOutline} slot="leadingicon"/>
+          <MdIcon icon={mdiLockOutline} slot="leading-icon"/>
         </md-filled-text-field>
       ),
       password_confirmation: (
         <md-filled-text-field name="password_confirmation" required label={__('Conferma password')} type="password">
-          <MdIcon icon={mdiLockCheckOutline} slot="leadingicon"/>
+          <MdIcon icon={mdiLockCheckOutline} slot="leading-icon"/>
         </md-filled-text-field>
       )
     });
@@ -70,7 +70,7 @@ export default class ResetPasswordPage extends Page {
       login: (
         <md-filled-button type="submit" onclick={this.onResetPasswordButtonClicked.bind(this)}>
           {__('Reimposta password')}
-          <MdIcon icon={mdiAccountOutline} slot="leadingicon"/>
+          <MdIcon icon={mdiAccountOutline} slot="leading-icon"/>
         </md-filled-button>
       )
     });

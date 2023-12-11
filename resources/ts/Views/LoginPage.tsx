@@ -93,7 +93,7 @@ export default class LoginPage extends Page {
       ),
       remember: (
         <label>
-          <md-checkbox name="remember" touch-target="wrapper"/>
+          <md-checkbox name="remember" touch-target="wrapper" data-preferred-value-prop="checked"/>
           <span>{__('Ricordami')}</span>
         </label>
       )

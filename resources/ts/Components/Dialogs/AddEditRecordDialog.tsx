@@ -113,7 +113,7 @@ export default abstract class AddEditRecordDialog<M extends Model> extends Recor
   actions(): VnodeCollection {
     return collect<VnodeCollectionItem>({
       cancelButton: (
-        <md-text-button onclick={this.onCancelButtonClicked.bind(this)}>
+        <md-text-button type="button" onclick={this.onCancelButtonClicked.bind(this)}>
           {__('Annulla')}
         </md-text-button>
       ),

@@ -6,7 +6,6 @@ import {
   VnodeCollection,
   VnodeCollectionItem
 } from '@osm/typings/jsx';
-import {JSONAPI} from '@osm/typings/request';
 import {
   isFormValid,
   isVnode,
@@ -27,7 +26,7 @@ import {ResponseError} from 'spraypaint/lib-esm/request';
 export default abstract class AddEditRecordDialog<M extends Model> extends RecordDialog<M> {
   // eslint-disable-next-line unicorn/no-null
   protected formElement: HTMLFormElement | null = null;
-  protected abstract formState: Map<string, Stream<any>>;
+  protected abstract formState: Map<string, Stream<any>> | Record<string, Stream<any>>;
   protected abstract modelType: Class<M>;
   // Recommended: <= 3
   protected numberOfColumns: number = 3;
@@ -52,7 +51,7 @@ export default abstract class AddEditRecordDialog<M extends Model> extends Recor
   }
 
   fillForm() {
-    for (const [key, value] of this.formState) {
+    for (const [key, value] of this.formStateAsMap) {
       // @ts-ignore
       value(this.record[key] ?? value());
     }
@@ -156,9 +155,13 @@ export default abstract class AddEditRecordDialog<M extends Model> extends Recor
 
   get modelAttributesFromFormState(): Record<string, unknown> {
     const state: Record<string, unknown> = {};
-    for (const [key, value] of this.formState) {
+    for (const [key, value] of this.formStateAsMap) {
       state[key] = value();
     }
     return state;
+  }
+
+  protected get formStateAsMap(): Map<string, Stream<any>> {
+    return this.formState instanceof Map ? this.formState : new Map(Object.entries(this.formState));
   }
 }

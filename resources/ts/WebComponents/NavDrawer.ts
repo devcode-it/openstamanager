@@ -272,6 +272,10 @@ export default class NavDrawer extends LitElement {
       box-sizing: border-box;
     }
 
+      .body:not(.open) .scroll-wrapper {
+          overflow: hidden;
+      }
+
     .pane .scroll-wrapper {
       padding-block: var(--nav-drawer-pane-spacing, 28px);
     }

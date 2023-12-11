@@ -57,7 +57,7 @@ export default abstract class RecordPage<M extends Model, A extends RecordPageAt
 
   backButton(vnode: Vnode<A>): Children {
     return (
-      <md-outlined-button onclick={this.onBackButtonClicked.bind(this)} style={{width: 'max-content'}}>
+      <md-outlined-button type="button" onclick={this.onBackButtonClicked.bind(this)} style={{width: 'max-content'}}>
         <span>{__('Indietro')}</span>
         <MdIcon icon={mdiChevronLeft} slot="icon"/>
       </md-outlined-button>

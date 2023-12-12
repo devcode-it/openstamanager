@@ -72,7 +72,7 @@ echo '
 ?>
 
 <script>
-    let is_add = <?php echo empty(get('id')) ? '1' : '0' ?>;
+    var is_add = <?php echo empty(get('id')) ? '1' : '0' ?>;
 
     $(document).ready(function(){
         init();

@@ -73,12 +73,6 @@ echo "
         <tr>
             <th class='text-center' style='width:4%'>".tr('#', [], ['upper' => true]).'</th>';
 
-            if ($documento->direzione == 'uscita') {
-                echo "
-            <th class='text-center' style='width:11%'>".tr('Codice', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:11%'>".tr('Codice fornitore', [], ['upper' => true]).'</th>';
-            }
-
             if ($has_image) {
                 echo "
             <th class='text-center' style='width:20%'>".tr('Immagine', [], ['upper' => true]).'</th>';
@@ -86,6 +80,14 @@ echo "
 
             echo "
             <th class='text-center'>".tr('Descrizione', [], ['upper' => true])."</th>
+            ";
+
+            if ($documento->direzione == 'uscita') {
+                echo "
+            <th class='text-center' style='width:11%'>".tr('Codice', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:11%'>".tr('Codice fornitore', [], ['upper' => true]).'</th>';
+            }
+            echo"
             <th class='text-center' style='width:9%'>".tr('Q.tà', [], ['upper' => true]).'</th>';
 
 if ($options['pricing']) {
@@ -125,6 +127,7 @@ foreach ($righe as $riga) {
                 $r['descrizione'] = str_replace('Rif. '.strtolower($key), '', $r['descrizione']);
                 preg_match("/Rif\.(.*)/s", $r['descrizione'], $rif2);
                 $r['descrizione'] = str_replace('Rif.'.strtolower($rif2[1]), '', $r['descrizione']);
+                
                 if (!empty($rif2)) {
                     $text .= '<b>'.$rif2[0].'</b>';
                 }
@@ -139,8 +142,12 @@ foreach ($righe as $riga) {
                 $text .= '<td></td><td></td></tr><tr><td class="text-center" nowrap="nowrap" style="vertical-align: middle">';
 
                 echo '
-                </td>
-        
+                </td>';
+                if ($has_image) {
+                    echo '
+                    <td></td>';
+                }
+                echo'
                 <td>
                     '.nl2br($text);
             }
@@ -149,10 +156,22 @@ foreach ($righe as $riga) {
         $autofill->count($r['descrizione']);
     }
 
+
     $source_type = get_class($riga);
     if (!setting('Visualizza riferimento su ogni riga in stampa')) {
-        echo $num.'
-            </td>
+        echo $num.'</td>';
+        if ($has_image) {
+            if ($riga->isArticolo() && !empty($riga->articolo->image)) {
+                echo '
+                <td align="center">
+                    <img src="'.$riga->articolo->image.'" style="max-height: 80px; max-width:120px">
+                </td>';
+            } else {
+                echo '
+                <td></td>';
+            }
+        }
+        echo'
             <td>'.$r['descrizione'];
     } else {
         echo $num.'
@@ -160,19 +179,6 @@ foreach ($righe as $riga) {
             <td>'.nl2br($r['descrizione']);
     }
 
-    if ($has_image) {
-        if ($riga->isArticolo() && !empty($riga->articolo->image)) {
-            echo '
-            <td align="center">
-                <img src="'.$riga->articolo->image.'" style="max-height: 80px; max-width:120px">
-            </td>';
-
-            $autofill->set(5);
-        } else {
-            echo '
-            <td></td>';
-        }
-    }
 
     if ($documento->direzione == 'uscita') {
         echo '

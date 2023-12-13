@@ -151,6 +151,25 @@ echo '
 
 $righe = $documento->getRighe();
 
+if (!setting('Visualizza riferimento su ogni riga in stampa')) {
+    $riferimenti = [];
+    $id_rif = [];
+
+    foreach ($righe as $riga) {
+        $riferimento = ($riga->getOriginalComponent() ? $riga->getOriginalComponent()->getDocument()->getReference() : null);
+        if (!empty($riferimento)) {
+            if (!array_key_exists($riferimento, $riferimenti)) {
+                $riferimenti[$riferimento] = [];
+            }
+
+            if (!in_array($riga->id, $riferimenti[$riferimento])) {
+                $id_rif[] = $riga->id;
+                $riferimenti[$riferimento][] = $riga->id;
+            }
+        }
+    }
+}
+
 if (!$righe->isEmpty()) {
     echo '
 <table class="table table-bordered">
@@ -194,29 +213,53 @@ if (!$righe->isEmpty()) {
         }
         // Articolo
         echo '
-    <tr>
-        <td>
-            '.nl2br(strip_tags($riga->descrizione));
+        <tr>
+            <td>';
+        $text = '';
+
+        foreach ($riferimenti as $key => $riferimento) {
+            if (in_array($riga->id, $riferimento)) {
+                if ($riga->id === $riferimento[0]) {
+                    $riga_ordine = $riga->getOriginalComponent()->getDocument();
+                    $text = '<b>'.$key.'</b><br>';
+
+                    if ($options['pricing']) {
+                        $text = $text.'</td><td></td><td>';
+                    }
+                    $text = $text.'</td><td></td></tr><tr><td>';
+
+                    echo nl2br($text);
+                }
+            }
+            $riga['descrizione'] = str_replace('Rif. '.strtolower($key), '', $riga['descrizione']);
+        }
+
+        $source_type = get_class($riga);
+
+        if (!setting('Visualizza riferimento su ogni riga in stampa')) {
+            echo $riga['descrizione'];
+        } else {
+            echo nl2br($riga['descrizione']);
+        }
 
         if ($riga->isArticolo()) {
-            // Codice articolo
-            $text = tr('COD. _COD_', [
-                '_COD_' => $riga->codice,
-            ]);
-            echo '
-                <br><small>'.$text.'</small>';
+            echo nl2br('<br><small>'.$riga->codice.'</small>');
+        }
 
+        if ($riga->isArticolo()) {
             // Seriali
             $seriali = $riga->serials;
             if (!empty($seriali)) {
                 $text = tr('SN').': '.implode(', ', $seriali);
                 echo '
-                    <br><small>'.$text.'</small>';
+                        <small>'.$text.'</small>';
+
+                $autofill->count($text, true);
             }
         }
 
         echo '
-        </td>';
+            </td>';
 
         // Quantità
         echo '

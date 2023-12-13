@@ -1,0 +1,1 @@
+UPDATE `zz_settings` SET `zz_settings`.`nome` = 'Visualizza riferimento su ogni riga in stampa', `help` = 'Se disabilitato, raggruppa il riferimento ai documenti collegati in un\'unica riga, se abilitato riporta i riferimenti ai documenti in ogni riga.' WHERE `zz_settings`.`nome` = "Riferimento dei documenti nelle stampe";

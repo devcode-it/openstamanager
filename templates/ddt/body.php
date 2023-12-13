@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
 // Creazione righe fantasma
-$autofill = new \Util\Autofill($options['pricing'] ? 7 : 4);
+$autofill = new \Util\Autofill($options['pricing'] ? 6 : 3);
 $rows_per_page = 16;
 if (!empty($options['last-page-footer'])) {
     $rows_per_page += 10;
@@ -35,7 +35,6 @@ echo "
     <thead>
         <tr>
             <th class='text-center' style='width:5%'>".tr('#', [], ['upper' => true])."</th>
-            <th class='text-center'>".tr('Cod.', [], ['upper' => true])."</th>
             <th class='text-center'>".tr('Descrizione', [], ['upper' => true])."</th>
             <th class='text-center'>".tr('Q.tà', [], ['upper' => true]).'</th>';
 
@@ -55,6 +54,26 @@ if ($options['pricing']) {
 // Righe documento
 $righe = $documento->getRighe();
 $num = 0;
+
+if (!setting('Visualizza riferimento su ogni riga in stampa')) {
+    $riferimenti = [];
+    $id_rif = [];
+
+    foreach ($righe as $riga) {
+        $riferimento = ($riga->getOriginalComponent() ? $riga->getOriginalComponent()->getDocument()->getReference() : null);
+        if (!empty($riferimento)) {
+            if (!array_key_exists($riferimento, $riferimenti)) {
+                $riferimenti[$riferimento] = [];
+            }
+
+            if (!in_array($riga->id, $riferimenti[$riferimento])) {
+                $id_rif[] = $riga->id;
+                $riferimenti[$riferimento][] = $riga->id;
+            }
+        }
+    }
+}
+
 foreach ($righe as $riga) {
     ++$num;
     $r = $riga->toArray();
@@ -63,73 +82,70 @@ foreach ($righe as $riga) {
 
     echo '
     <tr>
-        <td class="text-center" style="vertical-align: middle">
-            '.$num.'
-        </td>
+        <td class="text-center" style="vertical-align: middle">';
 
-        <td class="text-center" nowrap="nowrap" style="vertical-align: middle">';
+    $text = '';
+
+    foreach ($riferimenti as $key => $riferimento) {
+        if (in_array($riga->id, $riferimento)) {
+            if ($riga->id === $riferimento[0]) {
+                $riga_ordine = $database->fetchOne('SELECT numero_cliente, data_cliente FROM or_ordini WHERE id = '.prepare($riga->idordine));
+                if (!empty($riga_ordine['numero_cliente']) && !empty($riga_ordine['data_cliente'])) {
+                    $text = $text.'<b>Ordine n. '.$riga_ordine['numero_cliente'].' del '.Translator::dateToLocale($riga_ordine['data_cliente']).'</b><br>';
+                }
+                $r['descrizione'] = str_replace('Rif. '.strtolower($key), '', $r['descrizione']);
+                preg_match("/Rif\.(.*)/s", $r['descrizione'], $rif2);
+                $r['descrizione'] = str_replace('Rif.'.strtolower($rif2[1]), '', $r['descrizione']);
+                if (!empty($rif2)) {
+                    $text .= '<b>'.$rif2[0].'</b>';
+                }
+                $text .= '<b>'.$key.'</b>';
+
+                if ($options['pricing']) {
+                    $text .= '</td><td></td><td></td><td>';
+                }
+                $text .= '</td><td></td></tr><tr><td class="text-center" nowrap="nowrap" style="vertical-align: middle">';
+
+                echo '
+                </td>
+        
+                <td>
+                    '.nl2br($text);
+            }
+        }
+        $r['descrizione'] = preg_replace("/Rif\.(.*)/s", '', $r['descrizione']);
+        $autofill->count($r['descrizione']);
+    }
 
     $source_type = get_class($riga);
+
+    if (!setting('Visualizza riferimento su ogni riga in stampa')) {
+        echo $num.'
+            </td>
+            <td>'.$r['descrizione'];
+    } else {
+        echo $num.'
+            </td>
+            <td>'.nl2br($r['descrizione']);
+    }
+
     if ($riga->isArticolo()) {
-        echo $riga->codice;
+        echo '<br><small>'.$riga->codice.'</small>';
     } else {
         echo '-';
     }
 
-    echo '
-        </td>
-
-        <td>
-            '.nl2br($r['descrizione']);
-
-    //Riferimenti ordini/ddt righe
-    if ($riga->referenceTargets()->count()) {
-        $source = $source_type::find($riga->id);
-        $riferimenti = $source->referenceTargets;
-
-        foreach ($riferimenti as $riferimento) {
-            $documento_riferimento = $riferimento->target->getDocument();
-            echo '
-            <br><small>'.$riferimento->target->descrizione.'<br>'.tr('Rif. _DOCUMENT_', [
-                '_DOCUMENT_' => strtolower($documento_riferimento->getReference()),
-            ]).'</small>';
-        }
-    }
-
     if ($riga->isArticolo()) {
-        // Codice articolo
-        $text = tr('COD. _COD_', [
-            '_COD_' => $riga->codice,
-        ]);
-        echo '
-                <br><small>'.$text.'</small>';
-
-        $autofill->count($text, true);
-
         // Seriali
         $seriali = $riga->serials;
         if (!empty($seriali)) {
             $text = tr('SN').': '.implode(', ', $seriali);
             echo '
-                    <br><small>'.$text.'</small>';
+                    <small>'.$text.'</small>';
 
             $autofill->count($text, true);
         }
     }
-
-    // Aggiunta dei riferimenti ai documenti
-    /*
-    if (setting('Riferimento dei documenti nelle stampe') && $riga->hasOriginal()) {
-        $ref = $riga->getOriginal()->getDocument()->getReference();
-
-        if (!empty($ref)) {
-            echo '
-                <br><small>'.$ref.'</small>';
-
-            $autofill->count($ref, true);
-        }
-    }
-    */
 
     echo '
         </td>';

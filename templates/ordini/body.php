@@ -24,6 +24,25 @@ $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 // Righe documento
 $righe = $documento->getRighe();
 
+if (!setting('Visualizza riferimento su ogni riga in stampa')) {
+    $riferimenti = [];
+    $id_rif = [];
+
+    foreach ($righe as $riga) {
+        $riferimento = ($riga->getOriginalComponent() ? $riga->getOriginalComponent()->getDocument()->getReference() : null);
+        if (!empty($riferimento)) {
+            if (!array_key_exists($riferimento, $riferimenti)) {
+                $riferimenti[$riferimento] = [];
+            }
+
+            if (!in_array($riga->id, $riferimenti[$riferimento])) {
+                $id_rif[] = $riga->id;
+                $riferimenti[$riferimento][] = $riga->id;
+            }
+        }
+    }
+}
+
 $columns = 7;
 
 $has_image = $righe->search(function ($item) {
@@ -92,9 +111,54 @@ foreach ($righe as $riga) {
 
     echo '
         <tr>
-            <td class="text-center" style="vertical-align: middle">
-                '.$num.'
-            </td>';
+            <td class="text-center" style="vertical-align: middle">';
+
+    $text = '';
+
+    foreach ($riferimenti as $key => $riferimento) {
+        if (in_array($riga->id, $riferimento)) {
+            if ($riga->id === $riferimento[0]) {
+                $riga_ordine = $database->fetchOne('SELECT numero_cliente, data_cliente FROM or_ordini WHERE id = '.prepare($riga->idordine));
+                if (!empty($riga_ordine['numero_cliente']) && !empty($riga_ordine['data_cliente'])) {
+                    $text = $text.'<b>Ordine n. '.$riga_ordine['numero_cliente'].' del '.Translator::dateToLocale($riga_ordine['data_cliente']).'</b><br>';
+                }
+                $r['descrizione'] = str_replace('Rif. '.strtolower($key), '', $r['descrizione']);
+                preg_match("/Rif\.(.*)/s", $r['descrizione'], $rif2);
+                $r['descrizione'] = str_replace('Rif.'.strtolower($rif2[1]), '', $r['descrizione']);
+                if (!empty($rif2)) {
+                    $text .= '<b>'.$rif2[0].'</b>';
+                }
+                $text .= '<b>'.$key.'</b></td>';
+                if ($options['pricing']) {
+                    $text .= '
+                        <td></td>
+                        <td></td>
+                        <td></td>';
+                }
+
+                $text .= '<td></td><td></td></tr><tr><td class="text-center" nowrap="nowrap" style="vertical-align: middle">';
+
+                echo '
+                </td>
+        
+                <td>
+                    '.nl2br($text);
+            }
+        }
+        $r['descrizione'] = preg_replace("/Rif\.(.*)/s", '', $r['descrizione']);
+        $autofill->count($r['descrizione']);
+    }
+
+    $source_type = get_class($riga);
+    if (!setting('Visualizza riferimento su ogni riga in stampa')) {
+        echo $num.'
+            </td>
+            <td>'.$r['descrizione'];
+    } else {
+        echo $num.'
+            </td>
+            <td>'.nl2br($r['descrizione']);
+    }
 
     if ($has_image) {
         if ($riga->isArticolo() && !empty($riga->articolo->image)) {
@@ -119,10 +183,6 @@ foreach ($righe as $riga) {
                 '.($riga->articolo ? $riga->articolo->dettaglioFornitore($documento->idanagrafica)->codice_fornitore : '').'
             </td>';
     }
-
-    echo '
-            <td>
-                '.nl2br($r['descrizione']);
 
     if ($riga->isArticolo()) {
         if ($documento->direzione == 'entrata' && !$options['hide-item-number']) {

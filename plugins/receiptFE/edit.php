@@ -25,7 +25,7 @@ use Plugins\ReceiptFE\Interaction;
 use Util\XML;
 
 echo '
-<p>'.tr('Le ricevute delle Fatture Elettroniche permettono di individuare se una determinata fattura tramessa è stata accettata dal Sistema Di Interscambio').'.</p>';
+<p>'.tr('Le ricevute delle Fatture Elettroniche permettono di individuare se una determinata fattura trasmessa è stata accettata dal Sistema Di Interscambio').'.</p>';
 
 if (Interaction::isEnabled()) {
     echo '

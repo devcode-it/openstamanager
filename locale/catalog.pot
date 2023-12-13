@@ -12602,7 +12602,7 @@ msgstr ""
 
 #: plugins/receiptFE/edit.php:28
 msgid ""
-"Le ricevute delle Fatture Elettroniche permettono di individuare se una determinata fattura tramessa è stata accettata dal "
+"Le ricevute delle Fatture Elettroniche permettono di individuare se una determinata fattura trasmessa è stata accettata dal "
 "Sistema Di Interscambio"
 msgstr ""
 

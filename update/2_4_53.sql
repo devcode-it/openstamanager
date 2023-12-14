@@ -1,0 +1,2 @@
+-- Correzioni Automezzi
+UPDATE `zz_views` SET `query` = 'IFNULL(an_sedi.nome,an_sedi.nomesede)', `order` = '1' WHERE `zz_views`.`name` = 'Nome' AND `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE name='Automezzi');

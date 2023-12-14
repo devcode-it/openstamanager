@@ -24,7 +24,7 @@ echo '
 // Seleziona articolo
 echo '
     <div class="col-md-8">
-        {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$idarticolo.'", "ajax-source": "articoli" ]}
+        {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$idarticolo.'", "ajax-source": "articoli", "select-options": '.json_encode(['idsede_partenza' => 0]).' ]}
     </div>';
 
 // Quantità

@@ -417,7 +417,7 @@ switch (filter('op')) {
             $codici = $riga['CodiceArticolo'] ?: [];
             $codici = !empty($codici) && !isset($codici[0]) ? [$codici] : $codici;
 
-            // Ricerca dell'articolo collegato al codice
+            // Ricerca dell'articolo collegato a ogni codice associato alla riga
             $id_articolo = null;
             foreach ($codici as $codice) {
                 if (!empty($anagrafica) && empty($id_articolo)) {
@@ -433,6 +433,15 @@ switch (filter('op')) {
 
                     if (empty($id_articolo)) {
                         $id_articolo = $database->fetchOne('SELECT id FROM mg_articoli WHERE REPLACE(codice, " ", "") = '.prepare($codice['CodiceValore']).' AND deleted_at IS NULL')['id'];
+                    }
+
+                    // Controllo se esistono articoli con barcode corrispondente al codice
+                    if (empty($id_articolo)) {
+                        $id_articolo = $database->fetchOne('SELECT id FROM mg_articoli WHERE barcode = '.prepare($codice['CodiceValore']).' AND deleted_at IS NULL')['id'];
+                    }
+
+                    if (empty($id_articolo)) {
+                        $id_articolo = $database->fetchOne('SELECT id FROM mg_articoli WHERE REPLACE(barcode, " ", "") = '.prepare($codice['CodiceValore']).' AND deleted_at IS NULL')['id'];
                     }
                 }
 

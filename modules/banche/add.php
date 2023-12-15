@@ -77,6 +77,7 @@ echo '
     var bank_code = input("bank_code");
     var id_nazione = input("id_nazione");
     var bic = input("bic");
+    var id_module = <?php echo $id_module; ?>;
 
     var components = [branch_code, bank_code, id_nazione];
 
@@ -112,7 +113,7 @@ echo '
             $.ajax({
                 url: globals.rootdir + '/actions.php',
                 data: {
-                    id_module: globals.id_module,
+                    id_module: id_module,
                     op: "decompose",
                     iban: iban.get(),
                 },

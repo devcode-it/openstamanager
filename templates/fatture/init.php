@@ -23,6 +23,9 @@ use Modules\Fatture\Fattura;
 
 $documento = Fattura::find($id_record);
 $banca = $documento->getBanca();
+$d_qta = (int) setting('Cifre decimali per quantità in stampa');
+$d_importi = (int) setting('Cifre decimali per importi in stampa');
+$d_totali = (int) setting('Cifre decimali per totali in stampa');
 
 // Lettura info fattura
 $record = $dbo->fetchOne('SELECT *,

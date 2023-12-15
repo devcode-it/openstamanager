@@ -7,22 +7,24 @@
  *
  * @return array|array[]
  */
-function cartesian($input)
-{
-    $result = [[]];
+if (!function_exists('cartesian')) {
+    function cartesian($input)
+    {
+        $result = [[]];
 
-    foreach ($input as $key => $values) {
-        $append = [];
+        foreach ($input as $key => $values) {
+            $append = [];
 
-        foreach ($result as $product) {
-            foreach ($values as $item) {
-                $product[$key] = $item;
-                $append[] = $product;
+            foreach ($result as $product) {
+                foreach ($values as $item) {
+                    $product[$key] = $item;
+                    $append[] = $product;
+                }
             }
+
+            $result = $append;
         }
 
-        $result = $append;
+        return $result;
     }
-
-    return $result;
 }

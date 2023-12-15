@@ -22,92 +22,105 @@ include_once __DIR__.'/../../core.php';
 use Modules\DDT\DDT;
 use Util\Generator;
 
-/**
+/*
  * Funzione per generare un nuovo numero per il ddt.
  *
  * @deprecated 2.4.5
  */
-function get_new_numeroddt($data)
-{
-    global $dir;
+if (!function_exists('get_new_numeroddt')) {
+    function get_new_numeroddt($data)
+    {
+        global $dir;
 
-    return DDT::getNextNumero($data, $dir);
+        return DDT::getNextNumero($data, $dir);
+    }
 }
 
-/**
+/*
  * Funzione per calcolare il numero secondario successivo utilizzando la maschera dalle impostazioni.
  *
  * @deprecated 2.4.5
  */
-function get_new_numerosecondarioddt($data)
-{
-    global $dir;
-    global $id_segment;
+if (!function_exists('get_new_numerosecondarioddt')) {
+    function get_new_numerosecondarioddt($data)
+    {
+        global $dir;
+        global $id_segment;
 
-    return DDT::getNextNumeroSecondario($data, $dir, $id_segment);
+        return DDT::getNextNumeroSecondario($data, $dir, $id_segment);
+    }
 }
 
-/**
+/*
  * Calcolo imponibile ddt (totale_righe - sconto).
  *
  * @deprecated 2.4.5
  */
-function get_imponibile_ddt($id_ddt)
-{
-    $ddt = DDT::find($id_ddt);
+if (!function_exists('get_imponibile_ddt')) {
+    function get_imponibile_ddt($id_ddt)
+    {
+        $ddt = DDT::find($id_ddt);
 
-    return $ddt->imponibile;
+        return $ddt->imponibile;
+    }
 }
 
-/**
+/*
  * Calcolo totale ddt (imponibile + iva).
  *
  * @deprecated 2.4.5
  */
-function get_totale_ddt($id_ddt)
-{
-    $ddt = DDT::find($id_ddt);
+if (!function_exists('get_totale_ddt')) {
+    function get_totale_ddt($id_ddt)
+    {
+        $ddt = DDT::find($id_ddt);
 
-    return $ddt->totale;
+        return $ddt->totale;
+    }
 }
-
-/**
+/*
  * Calcolo netto a pagare ddt (totale - ritenute - bolli).
  *
  * @deprecated 2.4.5
  */
-function get_netto_ddt($id_ddt)
-{
-    $ddt = DDT::find($id_ddt);
+if (!function_exists('get_netto_ddt')) {
+    function get_netto_ddt($id_ddt)
+    {
+        $ddt = DDT::find($id_ddt);
 
-    return $ddt->netto;
+        return $ddt->netto;
+    }
 }
 
-/**
+/*
  * Calcolo iva detraibile ddt.
  *
  * @deprecated 2.4.5
  */
-function get_ivadetraibile_ddt($id_ddt)
-{
-    $ddt = DDT::find($id_ddt);
+if (!function_exists('get_ivadetraibile_ddt')) {
+    function get_ivadetraibile_ddt($id_ddt)
+    {
+        $ddt = DDT::find($id_ddt);
 
-    return $ddt->iva_detraibile;
+        return $ddt->iva_detraibile;
+    }
 }
 
-/**
+/*
  * Calcolo iva indetraibile ddt.
  *
  * @deprecated 2.4.5
  */
-function get_ivaindetraibile_ddt($id_ddt)
-{
-    $ddt = DDT::find($id_ddt);
+if (!function_exists('get_ivaindetraibile_ddt')) {
+    function get_ivaindetraibile_ddt($id_ddt)
+    {
+        $ddt = DDT::find($id_ddt);
 
-    return $ddt->iva_indetraibile;
+        return $ddt->iva_indetraibile;
+    }
 }
 
-/**
+/*
  * Ricalcola i costi aggiuntivi in ddt (rivalsa inps, ritenuta d'acconto, marca da bollo)
  * Deve essere eseguito ogni volta che si aggiunge o toglie una riga
  * $idddt				int		ID del ddt
@@ -115,148 +128,154 @@ function get_ivaindetraibile_ddt($id_ddt)
  * $idritenutaacconto	int		ID della ritenuta d'acconto da applicare. Se omesso viene utilizzata quella impostata di default
  * $bolli				float	Costi aggiuntivi delle marche da bollo. Se omesso verrà usata la cifra predefinita.
  */
-function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto = '', $bolli = '')
-{
-    global $dir;
+if (!function_exists('ricalcola_costiagg_ddt')) {
+    function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto = '', $bolli = '')
+    {
+        global $dir;
 
-    $dbo = database();
+        $dbo = database();
 
-    // Se ci sono righe nel ddt faccio i conteggi, altrimenti azzero gli sconti e le spese aggiuntive (inps, ritenuta, marche da bollo)
-    $query = "SELECT COUNT(id) AS righe FROM dt_righe_ddt WHERE idddt='$idddt'";
-    $rs = $dbo->fetchArray($query);
-    if ($rs[0]['righe'] > 0) {
-        $totale_imponibile = get_imponibile_ddt($idddt);
-        $totale_ddt = get_totale_ddt($idddt);
-
-        // Leggo gli id dei costi aggiuntivi
-        if ($dir == 'uscita') {
-            $query2 = "SELECT idrivalsainps, idritenutaacconto, bollo FROM dt_ddt WHERE id='$idddt'";
-            $rs2 = $dbo->fetchArray($query2);
-            $idrivalsainps = $rs2[0]['idrivalsainps'];
-            $idritenutaacconto = $rs2[0]['idritenutaacconto'];
-            $bollo = $rs2[0]['bollo'];
-        }
-
-        // Leggo la rivalsa inps se c'è (per i ddt di vendita lo leggo dalle impostazioni)
-        if ($dir == 'entrata') {
-            if (!empty($idrivalsainps)) {
-                $idrivalsainps = setting('Cassa previdenziale predefinita');
-            }
-        }
-
-        $query = "SELECT percentuale FROM co_rivalse WHERE id='".$idrivalsainps."'";
+        // Se ci sono righe nel ddt faccio i conteggi, altrimenti azzero gli sconti e le spese aggiuntive (inps, ritenuta, marche da bollo)
+        $query = "SELECT COUNT(id) AS righe FROM dt_righe_ddt WHERE idddt='$idddt'";
         $rs = $dbo->fetchArray($query);
-        $rivalsainps = $totale_imponibile / 100 * $rs[0]['percentuale'];
+        if ($rs[0]['righe'] > 0) {
+            $totale_imponibile = get_imponibile_ddt($idddt);
+            $totale_ddt = get_totale_ddt($idddt);
 
-        // Leggo l'iva predefinita per calcolare l'iva aggiuntiva sulla rivalsa inps
-        $qi = "SELECT percentuale FROM co_iva WHERE id='".setting('Iva predefinita')."'";
-        $rsi = $dbo->fetchArray($qi);
-        $iva_rivalsainps = $rivalsainps / 100 * $rsi[0]['percentuale'];
+            // Leggo gli id dei costi aggiuntivi
+            if ($dir == 'uscita') {
+                $query2 = "SELECT idrivalsainps, idritenutaacconto, bollo FROM dt_ddt WHERE id='$idddt'";
+                $rs2 = $dbo->fetchArray($query2);
+                $idrivalsainps = $rs2[0]['idrivalsainps'];
+                $idritenutaacconto = $rs2[0]['idritenutaacconto'];
+                $bollo = $rs2[0]['bollo'];
+            }
 
-        // Aggiorno la rivalsa inps
-        $dbo->query("UPDATE dt_ddt SET rivalsainps='$rivalsainps', iva_rivalsainps='$iva_rivalsainps' WHERE id='$idddt'");
-
-        $totale_ddt = get_totale_ddt($idddt);
-
-        // Leggo la ritenuta d'acconto se c'è (per i ddt di vendita lo leggo dalle impostazioni)
-        if (!empty($idritenutaacconto)) {
+            // Leggo la rivalsa inps se c'è (per i ddt di vendita lo leggo dalle impostazioni)
             if ($dir == 'entrata') {
-                $idritenutaacconto = setting("Ritenuta d'acconto predefinita");
-            }
-        }
-
-        $query = "SELECT percentuale FROM co_ritenutaacconto WHERE id='".$idritenutaacconto."'";
-        $rs = $dbo->fetchArray($query);
-        $ritenutaacconto = $totale_ddt / 100 * $rs[0]['percentuale'];
-        $netto_a_pagare = $totale_ddt - $ritenutaacconto;
-
-        // Leggo la marca da bollo se c'è e se il netto a pagare supera la soglia
-        $bolli = str_replace(',', '.', $bolli);
-        $bolli = floatval($bolli);
-        if ($dir == 'uscita') {
-            if ($bolli != 0.00) {
-                $bolli = str_replace(',', '.', $bolli);
-                if (abs($bolli) > 0 && abs($netto_a_pagare > setting("Soglia minima per l'applicazione della marca da bollo"))) {
-                    $marca_da_bollo = str_replace(',', '.', $bolli);
-                } else {
-                    $marca_da_bollo = 0.00;
+                if (!empty($idrivalsainps)) {
+                    $idrivalsainps = setting('Cassa previdenziale predefinita');
                 }
             }
-        } else {
-            $marca_da_bollo = 0.00;
-        }
 
-        $dbo->query("UPDATE dt_ddt SET ritenutaacconto='$ritenutaacconto', bollo='$marca_da_bollo' WHERE id='$idddt'");
-    } else {
-        $dbo->query("UPDATE dt_ddt SET ritenutaacconto='0', bollo='0', rivalsainps='0', iva_rivalsainps='0' WHERE id='$idddt'");
+            $query = "SELECT percentuale FROM co_rivalse WHERE id='".$idrivalsainps."'";
+            $rs = $dbo->fetchArray($query);
+            $rivalsainps = $totale_imponibile / 100 * $rs[0]['percentuale'];
+
+            // Leggo l'iva predefinita per calcolare l'iva aggiuntiva sulla rivalsa inps
+            $qi = "SELECT percentuale FROM co_iva WHERE id='".setting('Iva predefinita')."'";
+            $rsi = $dbo->fetchArray($qi);
+            $iva_rivalsainps = $rivalsainps / 100 * $rsi[0]['percentuale'];
+
+            // Aggiorno la rivalsa inps
+            $dbo->query("UPDATE dt_ddt SET rivalsainps='$rivalsainps', iva_rivalsainps='$iva_rivalsainps' WHERE id='$idddt'");
+
+            $totale_ddt = get_totale_ddt($idddt);
+
+            // Leggo la ritenuta d'acconto se c'è (per i ddt di vendita lo leggo dalle impostazioni)
+            if (!empty($idritenutaacconto)) {
+                if ($dir == 'entrata') {
+                    $idritenutaacconto = setting("Ritenuta d'acconto predefinita");
+                }
+            }
+
+            $query = "SELECT percentuale FROM co_ritenutaacconto WHERE id='".$idritenutaacconto."'";
+            $rs = $dbo->fetchArray($query);
+            $ritenutaacconto = $totale_ddt / 100 * $rs[0]['percentuale'];
+            $netto_a_pagare = $totale_ddt - $ritenutaacconto;
+
+            // Leggo la marca da bollo se c'è e se il netto a pagare supera la soglia
+            $bolli = str_replace(',', '.', $bolli);
+            $bolli = floatval($bolli);
+            if ($dir == 'uscita') {
+                if ($bolli != 0.00) {
+                    $bolli = str_replace(',', '.', $bolli);
+                    if (abs($bolli) > 0 && abs($netto_a_pagare > setting("Soglia minima per l'applicazione della marca da bollo"))) {
+                        $marca_da_bollo = str_replace(',', '.', $bolli);
+                    } else {
+                        $marca_da_bollo = 0.00;
+                    }
+                }
+            } else {
+                $marca_da_bollo = 0.00;
+            }
+
+            $dbo->query("UPDATE dt_ddt SET ritenutaacconto='$ritenutaacconto', bollo='$marca_da_bollo' WHERE id='$idddt'");
+        } else {
+            $dbo->query("UPDATE dt_ddt SET ritenutaacconto='0', bollo='0', rivalsainps='0', iva_rivalsainps='0' WHERE id='$idddt'");
+        }
     }
 }
 
-/**
+/*
  * Restituisce lo stato del ddt in base alle righe.
  */
-function get_stato_ddt($idddt)
-{
-    $dbo = database();
+if (!function_exists('get_stato_ddt')) {
+    function get_stato_ddt($idddt)
+    {
+        $dbo = database();
 
-    $rs = $dbo->fetchArray('SELECT SUM(qta) AS qta, SUM(qta_evasa) AS qta_evasa FROM dt_righe_ddt GROUP BY idddt HAVING idddt='.prepare($idddt));
+        $rs = $dbo->fetchArray('SELECT SUM(qta) AS qta, SUM(qta_evasa) AS qta_evasa FROM dt_righe_ddt GROUP BY idddt HAVING idddt='.prepare($idddt));
 
-    if ($rs[0]['qta'] == 0) {
-        return 'Bozza';
-    } else {
-        if ($rs[0]['qta_evasa'] > 0) {
-            if ($rs[0]['qta'] > $rs[0]['qta_evasa']) {
-                return 'Parzialmente fatturato';
-            } elseif ($rs[0]['qta'] == $rs[0]['qta_evasa']) {
-                return 'Fatturato';
-            }
+        if ($rs[0]['qta'] == 0) {
+            return 'Bozza';
         } else {
-            return 'Evaso';
+            if ($rs[0]['qta_evasa'] > 0) {
+                if ($rs[0]['qta'] > $rs[0]['qta_evasa']) {
+                    return 'Parzialmente fatturato';
+                } elseif ($rs[0]['qta'] == $rs[0]['qta_evasa']) {
+                    return 'Fatturato';
+                }
+            } else {
+                return 'Evaso';
+            }
         }
     }
 }
 
-function verifica_numero_ddt(DDT $ddt)
-{
-    global $dbo;
+if (!function_exists('verifica_numero_ddt')) {
+    function verifica_numero_ddt(DDT $ddt)
+    {
+        global $dbo;
 
-    $data = $ddt->data;
-    $tipo = $ddt->tipo;
-    $dir = $ddt->direzione;
-    $numero = ($dir == 'entrata' ? $ddt->numero_esterno : $ddt->numero);
-    $campo = ($dir == 'entrata' ? 'numero_esterno' : 'numero');
+        $data = $ddt->data;
+        $tipo = $ddt->tipo;
+        $dir = $ddt->direzione;
+        $numero = ($dir == 'entrata' ? $ddt->numero_esterno : $ddt->numero);
+        $campo = ($dir == 'entrata' ? 'numero_esterno' : 'numero');
 
-    if (empty($numero)) {
-        return null;
-    }
-
-    $documenti = DDT::where('idtipoddt', $tipo->id)
-        ->where('data', $data)
-        ->get();
-
-    // Recupero maschera per questo segmento
-    $maschera = setting('Formato numero secondario ddt');
-
-    $ultimo = Generator::getPreviousFrom($maschera, 'dt_ddt', $campo, [
-        'data < '.prepare(date('Y-m-d', strtotime($data))),
-        'YEAR(data) = '.prepare(date('Y', strtotime($data))),
-        'idtipoddt = '.prepare($tipo->id),
-    ], $data);
-
-    do {
-        $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
-
-        $filtered = $documenti->reject(function ($item, $key) use ($numero) {
-            return $item->numero_esterno == $numero;
-        });
-
-        if ($documenti->count() == $filtered->count()) {
-            return $numero;
+        if (empty($numero)) {
+            return null;
         }
 
-        $documenti = $filtered;
-        $ultimo = $numero;
-    } while ($numero != $ddt->numero_esterno);
+        $documenti = DDT::where('idtipoddt', $tipo->id)
+            ->where('data', $data)
+            ->get();
 
-    return null;
+        // Recupero maschera per questo segmento
+        $maschera = setting('Formato numero secondario ddt');
+
+        $ultimo = Generator::getPreviousFrom($maschera, 'dt_ddt', $campo, [
+            'data < '.prepare(date('Y-m-d', strtotime($data))),
+            'YEAR(data) = '.prepare(date('Y', strtotime($data))),
+            'idtipoddt = '.prepare($tipo->id),
+        ], $data);
+
+        do {
+            $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
+
+            $filtered = $documenti->reject(function ($item, $key) use ($numero) {
+                return $item->numero_esterno == $numero;
+            });
+
+            if ($documenti->count() == $filtered->count()) {
+                return $numero;
+            }
+
+            $documenti = $filtered;
+            $ultimo = $numero;
+        } while ($numero != $ddt->numero_esterno);
+
+        return null;
+    }
 }

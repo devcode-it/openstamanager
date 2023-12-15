@@ -71,7 +71,7 @@ switch (post('op')) {
 
     case 'ricerca-coordinate-google':
         $curl = new CurlHttpAdapter();
-        $geocoder = new GoogleMaps($curl, null, null, true, $google);
+        $geocoder = new GoogleMaps($curl, 'IT-it', null, true, $google);
 
         foreach ($id_records as $id) {
             $anagrafica = Anagrafica::find($id);

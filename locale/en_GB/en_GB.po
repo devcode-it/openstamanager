@@ -10853,7 +10853,7 @@ msgstr "Within"
 #: plugins/receiptFE/edit.php:27
 msgid ""
 "Le ricevute delle Fatture Elettroniche permettono di individuare se una "
-"determinata fattura tramessa è stata accettata dal Sistema Di Interscambio"
+"determinata fattura trasmessa è stata accettata dal Sistema Di Interscambio"
 msgstr ""
 "The receipts of the electronic invoice allow to detect if a determinate "
 "released invoice is been accepted from Interchange system and the associated "

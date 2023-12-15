@@ -1778,7 +1778,7 @@ class FatturaElettronica
     {
         $documento = $fattura->getDocumento();
         $rappresentante_fiscale = null;
-    
+
         //Fattura per conto terzi, il cliente diventa il cedente al posto della mia Azienda (fornitore)
         if ($documento['is_fattura_conto_terzi']) {
             $azienda = $fattura->getCliente();

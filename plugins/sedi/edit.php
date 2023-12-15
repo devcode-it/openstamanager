@@ -191,6 +191,37 @@ if (!empty($elementi)) {
     $disabled = 'disabled';
 }
 
+$espandi_dettagli = setting('Espandi automaticamente la sezione "Dettagli aggiuntivi"');
+echo '
+    <!-- DATI AGGIUNTIVI -->
+    <div class="box box-info collapsable '.(empty($espandi_dettagli) ? 'collapsed-box' : '').'">
+        <div class="box-header with-border">
+            <h3 class="box-title">'.tr('Dettagli aggiuntivi').'</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                    <i class="fa fa-'.(empty($espandi_dettagli) ? 'plus' : 'minus').'"></i>
+                </button>
+            </div>
+        </div>
+
+		<div class="box-body">
+			<div class="row">
+				<div class="col-md-6">
+					{[ "type": "text", "label": "'.tr('Nome').'", "name": "nome", "value": "$nome$" ]}
+				</div>
+				<div class="col-md-6">
+					{[ "type": "text", "label": "'.tr('Targa').'", "name": "targa", "maxlength": 10, "class": "alphanumeric-mask", "value": "$targa$" ]}
+				</div>
+
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					{[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "value": "$descrizione$" ]}
+				</div>
+			</div>
+		</div>
+	</div>';
+
 echo '
 	<!-- PULSANTI -->
 	<div class="row">

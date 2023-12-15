@@ -54,7 +54,7 @@ if ($options['pricing']) {
     echo "
     <tr>
         <td class='cell-padded text-right'>
-            ".moneyFormat($totale_imponibile, 2).'
+            ".moneyFormat($totale_imponibile, $d_totali).'
         </td>
     </tr>';
 
@@ -68,7 +68,7 @@ if ($options['pricing']) {
 
     <tr>
         <td class='cell-padded text-right'>
-            ".moneyFormat($totale_iva, 2).'
+            ".moneyFormat($totale_iva, $d_totali).'
         </td>
     </tr>';
 
@@ -82,7 +82,7 @@ if ($options['pricing']) {
 
     <tr>
         <td class='cell-padded text-right'>
-            ".moneyFormat($totale, 2).'
+            ".moneyFormat($totale, $d_totali).'
         </td>
     </tr>';
 
@@ -97,7 +97,7 @@ if ($options['pricing']) {
 
         <tr>
             <td class='cell-padded text-right'>
-                ".moneyFormat($sconto_finale, 2).'
+                ".moneyFormat($sconto_finale, $d_totali).'
             </td>
         </tr>';
 
@@ -111,7 +111,7 @@ if ($options['pricing']) {
 
         <tr>
             <td class='cell-padded text-right'>
-                ".moneyFormat($netto_a_pagare, 2).'
+                ".moneyFormat($netto_a_pagare, $d_totali).'
             </td>
         </tr>';
     }

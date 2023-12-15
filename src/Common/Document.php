@@ -246,7 +246,7 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
      */
     public function getRicaricoPercentualeAttribute()
     {
-        return ($this->totale_imponibile && ($this->spesa || $this->provvigione)) ? (($this->totale_imponibile / ($this->spesa + $this->provvigione)) - 1) * 100 : 100;
+        return ($this->totale_imponibile && ($this->spesa || $this->provvigione)) ? (($this->totale_imponibile / ($this->spesa + $this->provvigione)) - 1) * 100 : 0;
     }
 
     public function delete()

@@ -229,12 +229,12 @@ foreach ($scadenze as $i => $scadenza) {
                         </tbody>
                         <tfoot>
                             <tr>
-                            <td class="text-right"></td>
+                                <td class="text-right"></td>
+                                <td class="text-right"></td>
+                                <td class="text-right"></td>
+                                <td class="text-right"></td>
                                 <td class="text-right"><b>'.tr('Totale').'</b></td>
                                 <td class="text-right" id="totale_utente">'.numberFormat($totale_da_pagare).'</td>
-                                <td class="text-right"></td>
-                                <td class="text-right"></td>
-                                <td class="text-right"></td>
                                 <td class="text-right"></td>
                             </tr>
                         </tfoot>

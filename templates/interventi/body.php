@@ -21,6 +21,10 @@ use Carbon\Carbon;
 
 include_once __DIR__.'/../../core.php';
 
+$d_qta = (int) setting('Cifre decimali per quantità in stampa');
+$d_importi = (int) setting('Cifre decimali per importi in stampa');
+$d_totali = (int) setting('Cifre decimali per totali in stampa');
+
 /*
     Dati intervento
 */
@@ -147,6 +151,25 @@ echo '
 
 $righe = $documento->getRighe();
 
+if (!setting('Visualizza riferimento su ogni riga in stampa')) {
+    $riferimenti = [];
+    $id_rif = [];
+
+    foreach ($righe as $riga) {
+        $riferimento = ($riga->getOriginalComponent() ? $riga->getOriginalComponent()->getDocument()->getReference() : null);
+        if (!empty($riferimento)) {
+            if (!array_key_exists($riferimento, $riferimenti)) {
+                $riferimenti[$riferimento] = [];
+            }
+
+            if (!in_array($riga->id, $riferimenti[$riferimento])) {
+                $id_rif[] = $riga->id;
+                $riferimenti[$riferimento][] = $riga->id;
+            }
+        }
+    }
+}
+
 if (!$righe->isEmpty()) {
     echo '
 <table class="table table-bordered">
@@ -183,36 +206,60 @@ if (!$righe->isEmpty()) {
             if ($riga->um == 'ore') {
                 $qta = Translator::numberToHours($riga->qta);
             } else {
-                $qta = Translator::numberToLocale($riga->qta, 'qta');
+                $qta = Translator::numberToLocale($riga->qta, $d_qta);
             }
         } else {
-            $qta = Translator::numberToLocale($riga->qta, 'qta');
+            $qta = Translator::numberToLocale($riga->qta, $d_qta);
         }
         // Articolo
         echo '
-    <tr>
-        <td>
-            '.nl2br(strip_tags($riga->descrizione));
+        <tr>
+            <td>';
+        $text = '';
+
+        foreach ($riferimenti as $key => $riferimento) {
+            if (in_array($riga->id, $riferimento)) {
+                if ($riga->id === $riferimento[0]) {
+                    $riga_ordine = $riga->getOriginalComponent()->getDocument();
+                    $text = '<b>'.$key.'</b><br>';
+
+                    if ($options['pricing']) {
+                        $text = $text.'</td><td></td><td>';
+                    }
+                    $text = $text.'</td><td></td></tr><tr><td>';
+
+                    echo nl2br($text);
+                }
+            }
+            $riga['descrizione'] = str_replace('Rif. '.strtolower($key), '', $riga['descrizione']);
+        }
+
+        $source_type = get_class($riga);
+
+        if (!setting('Visualizza riferimento su ogni riga in stampa')) {
+            echo $riga['descrizione'];
+        } else {
+            echo nl2br($riga['descrizione']);
+        }
 
         if ($riga->isArticolo()) {
-            // Codice articolo
-            $text = tr('COD. _COD_', [
-                '_COD_' => $riga->codice,
-            ]);
-            echo '
-                <br><small>'.$text.'</small>';
+            echo nl2br('<br><small>'.$riga->codice.'</small>');
+        }
 
+        if ($riga->isArticolo()) {
             // Seriali
             $seriali = $riga->serials;
             if (!empty($seriali)) {
                 $text = tr('SN').': '.implode(', ', $seriali);
                 echo '
-                    <br><small>'.$text.'</small>';
+                        <small>'.$text.'</small>';
+
+                $autofill->count($text, true);
             }
         }
 
         echo '
-        </td>';
+            </td>';
 
         // Quantità
         echo '
@@ -223,7 +270,7 @@ if (!$righe->isEmpty()) {
         // Prezzo unitario
         echo '
         <td class="text-center">
-            '.($options['pricing'] ? moneyFormat($riga->prezzo_unitario_corrente) : '-');
+            '.($options['pricing'] ? moneyFormat($riga->prezzo_unitario_corrente, $d_importi) : '-');
 
         if ($options['pricing'] && $riga->sconto > 0) {
             $text = discountInfo($riga, false);
@@ -238,7 +285,7 @@ if (!$righe->isEmpty()) {
         // Prezzo totale
         echo '
         <td class="text-center">
-            '.($options['pricing'] ? Translator::numberToLocale($riga->importo) : '-').'
+            '.($options['pricing'] ? Translator::numberToLocale($riga->importo, $d_importi) : '-').'
         </td>
     </tr>';
     }
@@ -255,7 +302,7 @@ if (!$righe->isEmpty()) {
         </td>
 
         <th class="text-center">
-            <b>'.moneyFormat($righe->sum('importo'), 2).'</b>
+            <b>'.moneyFormat($righe->sum('importo'), $d_totali).'</b>
         </th>
     </tr>';
     }
@@ -335,7 +382,7 @@ foreach ($sessioni as $i => $sessione) {
 if (setting('Formato ore in stampa') == 'Sessantesimi') {
     $ore_totali = Translator::numberToHours($documento->ore_totali);
 } else {
-    $ore_totali = Translator::numberToLocale($documento->ore_totali, 2);
+    $ore_totali = Translator::numberToLocale($documento->ore_totali, $d_totali);
 }
 
 echo '
@@ -348,7 +395,7 @@ echo '
 if ($options['pricing']) {
     echo '
         <td colspan="3" class="text-center">
-            <small>'.tr('Totale manodopera').':</small><br/><b>'.moneyFormat($sessioni->sum('prezzo_manodopera'), 2).'</b>
+            <small>'.tr('Totale manodopera').':</small><br/><b>'.moneyFormat($sessioni->sum('prezzo_manodopera'), $d_totali).'</b>
         </td>';
 } else {
     echo '
@@ -376,14 +423,14 @@ echo '
 echo '
     <tr>
         <td class="text-center">
-            <small>'.tr('Km percorsi').':</small><br/><b>'.Translator::numberToLocale($documento->km_totali, 2).'</b>
+            <small>'.tr('Km percorsi').':</small><br/><b>'.Translator::numberToLocale($documento->km_totali, $d_qta).'</b>
         </td>';
 
 // Costo trasferta
 if ($options['pricing']) {
     echo '
         <td class="text-center">
-            <small>'.tr('Costi di trasferta').':</small><br/><b>'.moneyFormat($sessioni->sum('prezzo_viaggio'), 2).'</b>
+            <small>'.tr('Costi di trasferta').':</small><br/><b>'.moneyFormat($sessioni->sum('prezzo_viaggio'), $d_totali).'</b>
         </td>';
 } else {
     echo '
@@ -394,7 +441,7 @@ if ($options['pricing']) {
 if ($options['pricing']) {
     echo '
         <td class="text-center" colspan="2" width="120px" >
-            <small>'.tr('Diritto di chiamata').':</small><br/><b>'.moneyFormat($sessioni->sum('prezzo_diritto_chiamata'), 2).'</b>
+            <small>'.tr('Diritto di chiamata').':</small><br/><b>'.moneyFormat($sessioni->sum('prezzo_diritto_chiamata'), $d_totali).'</b>
         </td>';
 } else {
     echo '
@@ -421,7 +468,7 @@ if ($options['pricing']) {
         </td>
 
         <th class="text-center">
-            '.moneyFormat($show_sconto ? $imponibile : $totale_imponibile, 2).'
+            '.moneyFormat($show_sconto ? $imponibile : $totale_imponibile, $d_totali).'
         </th>
     </tr>';
 
@@ -434,7 +481,7 @@ if ($options['pricing']) {
         </td>
 
         <th class="text-center">
-            <b>'.moneyFormat($sconto, 2).'</b>
+            <b>'.moneyFormat($sconto, $d_totali).'</b>
         </th>
     </tr>';
 
@@ -446,7 +493,7 @@ if ($options['pricing']) {
         </td>
 
         <th class="text-center">
-            <b>'.moneyFormat($totale_imponibile, 2).'</b>
+            <b>'.moneyFormat($totale_imponibile, $d_totali).'</b>
         </th>
     </tr>';
     }
@@ -460,7 +507,7 @@ if ($options['pricing']) {
         </td>
 
         <th class="text-center">
-            <b>'.moneyFormat($totale_iva, 2).'</b>
+            <b>'.moneyFormat($totale_iva, $d_totali).'</b>
         </th>
     </tr>';
 
@@ -471,7 +518,7 @@ if ($options['pricing']) {
             <b>'.tr('Totale intervento', [], ['upper' => true]).':</b>
     	</td>
     	<th class="text-center">
-    		<b>'.moneyFormat($totale, 2).'</b>
+    		<b>'.moneyFormat($totale, $d_totali).'</b>
     	</th>
     </tr>';
 }

@@ -44,6 +44,9 @@ switch ($operazione) {
                 'codice_destinatario' => post('codice_destinatario'),
                 'is_automezzo' => post('is_automezzo'),
                 'is_rappresentante_fiscale' => post('is_rappresentante_fiscale'),
+                'targa' => post('targa'),
+                'nome' => post('nome'),
+                'descrizione' => post('descrizione'),
             ]);
 
             $id_record = $dbo->lastInsertedID();
@@ -65,7 +68,7 @@ switch ($operazione) {
         } else {
             flash()->warning(tr('Errore durante aggiunta della sede'));
         }
-        
+
         $sede = Sede::find($id_record);
         $sede->save();
 
@@ -97,6 +100,9 @@ switch ($operazione) {
             'gaddress' => post('gaddress'),
             'lat' => post('lat'),
             'lng' => post('lng'),
+            'targa' => post('targa'),
+            'nome' => post('nome'),
+            'descrizione' => post('descrizione'),
         ], ['id' => $id_record]);
 
         $referenti = $dbo->fetchArray('SELECT id FROM an_referenti WHERE idsede = '.$id_record);

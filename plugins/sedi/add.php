@@ -97,8 +97,40 @@ echo '
 		<div class="col-md-12">
 			{[ "type": "select", "multiple": "1", "label": "'.tr('Referenti').'", "name": "id_referenti[]", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$id_parent.'}, "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|id_plugin='.Plugins::get('Referenti')['id'].'&id_parent='.$id_parent.'" ]}
 		</div>
-	</div>
+	</div>';
 
+	$espandi_dettagli = setting('Espandi automaticamente la sezione "Dettagli aggiuntivi"');
+echo '
+    <!-- DATI AGGIUNTIVI -->
+    <div class="box box-info collapsable '.(empty($espandi_dettagli) ? 'collapsed-box' : '').'">
+        <div class="box-header with-border">
+            <h3 class="box-title">'.tr('Dettagli aggiuntivi').'</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                    <i class="fa fa-'.(empty($espandi_dettagli) ? 'plus' : 'minus').'"></i>
+                </button>
+            </div>
+        </div>
+
+		<div class="box-body">
+			<div class="row">
+				<div class="col-md-6">
+					{[ "type": "text", "label": "'.tr('Nome').'", "name": "nome", "value": "" ]}
+				</div>
+				<div class="col-md-6">
+					{[ "type": "text", "label": "'.tr('Targa').'", "name": "targa", "maxlength": 10, "class": "alphanumeric-mask", "value": "" ]}
+				</div>
+
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					{[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "value": "" ]}
+				</div>
+			</div>
+		</div>
+	</div>';
+
+echo '
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">

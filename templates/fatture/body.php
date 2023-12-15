@@ -17,8 +17,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Modules\Interventi\Intervento;
-
 include_once __DIR__.'/../../core.php';
 
 $v_iva = [];
@@ -53,6 +51,26 @@ echo "
 // Righe documento
 $righe = $documento->getRighe();
 $num = 0;
+
+if (!setting('Visualizza riferimento su ogni riga in stampa')) {
+    $riferimenti = [];
+    $id_rif = [];
+
+    foreach ($righe as $riga) {
+        $riferimento = ($riga->getOriginalComponent() ? $riga->getOriginalComponent()->getDocument()->getReference() : null);
+        if (!empty($riferimento)) {
+            if (!array_key_exists($riferimento, $riferimenti)) {
+                $riferimenti[$riferimento] = [];
+            }
+
+            if (!in_array($riga->id, $riferimenti[$riferimento])) {
+                $id_rif[] = $riga->id;
+                $riferimenti[$riferimento][] = $riga->id;
+            }
+        }
+    }
+}
+
 foreach ($righe as $riga) {
     ++$num;
     $r = $riga->toArray();
@@ -62,89 +80,66 @@ foreach ($righe as $riga) {
     $v_iva[$r['desc_iva']] = sum($v_iva[$r['desc_iva']], $riga->iva);
     $v_totale[$r['desc_iva']] = sum($v_totale[$r['desc_iva']], $riga->totale_imponibile);
 
-    // Descrizione della riga
-    $descrizione = $riga->descrizione;
+    echo '
+    <tr>
+        <td class="text-center" style="vertical-align: middle">';
 
-    // Aggiunta riferimento più profondo per DDT attraverso Interventi
-    if ($riga->hasOriginalComponent() && $riga->original_document_type == Intervento::class) {
-        $riga_origine = $riga->getOriginalComponent();
+    $text = '';
 
-        if ($riga_origine->hasOriginalComponent()) {
-            $riferimento = $riga_origine->getOriginalComponent()
-                ->getDocument()->getReference();
+    foreach ($riferimenti as $key => $riferimento) {
+        if (in_array($riga->id, $riferimento)) {
+            if ($riga->id === $riferimento[0]) {
+                $riga_ordine = $database->fetchOne('SELECT numero_cliente, data_cliente FROM or_ordini WHERE id = '.prepare($riga->idordine));
+                if (!empty($riga_ordine['numero_cliente']) && !empty($riga_ordine['data_cliente'])) {
+                    $text = $text.'<b>Ordine n. '.$riga_ordine['numero_cliente'].' del '.Translator::dateToLocale($riga_ordine['data_cliente']).'</b><br>';
+                }
+                $r['descrizione'] = str_replace('Rif. '.strtolower($key), '', $r['descrizione']);
+                preg_match("/Rif\.(.*)/s", $r['descrizione'], $rif2);
+                $r['descrizione'] = str_replace('Rif.'.strtolower($rif2[1]), '', $r['descrizione']);
+                if (!empty($rif2)) {
+                    $text .= '<b>'.$rif2[0].'</b>';
+                }
+                $text .= '<b>'.$key.'</b></td><td></td><td></td><td></td><td></td></tr><tr><td class="text-center" nowrap="nowrap" style="vertical-align: middle">';
 
-            $descrizione .= "\n".tr('Rif. _DOCUMENT_', [
-                '_DOCUMENT_' => strtolower($riferimento),
-            ]);
+                echo '
+                    </td>
+            
+                    <td>
+                        '.nl2br($text);
+            }
         }
+        $r['descrizione'] = preg_replace("/Rif\.(.*)/s", '', $r['descrizione']);
+        $autofill->count($r['descrizione']);
     }
 
-    echo '
-        <tr>';
-
-    echo '
-        <td class="text-center" style="vertical-align: middle">
-            '.$num.'
-        </td>';
-
-    echo '
-            <td>
-                '.nl2br(strip_tags($descrizione));
+    $source_type = get_class($riga);
+    if (!setting('Visualizza riferimento su ogni riga in stampa')) {
+        echo $num.'
+            </td>
+            <td>'.$r['descrizione'];
+    } else {
+        echo $num.'
+            </td>
+            <td>'.nl2br($r['descrizione']);
+    }
 
     if ($riga->isArticolo()) {
-        // Codice articolo
-        $text = tr('COD. _COD_', [
-            '_COD_' => $riga->codice,
-        ]);
-        echo '
-                <br><small>'.$text.'</small>';
+        echo '<br><small>'.$riga->codice.'</small>';
+    } else {
+        echo '-';
+    }
 
-        $autofill->count($text, true);
-
+    if ($riga->isArticolo()) {
         // Seriali
         $seriali = $riga->serials;
         if (!empty($seriali)) {
             $text = tr('SN').': '.implode(', ', $seriali);
             echo '
-                    <br><small>'.$text.'</small>';
+                    <small>'.$text.'</small>';
 
             $autofill->count($text, true);
         }
     }
-
-    // Aggiunta dei riferimenti ai documenti
-    if (!empty($record['ref_documento'])) {
-        $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM co_documenti WHERE id = ".prepare($record['ref_documento']));
-
-        $text = tr('Rif. fattura _NUM_ del _DATE_', [
-            '_NUM_' => $data[0]['numero'],
-            '_DATE_' => Translator::dateToLocale($data[0]['data']),
-        ]);
-
-        echo '
-        <br><small>'.$text.'</small>';
-
-        $autofill->count($text, true);
-    }
-
-    // Aggiunta dei riferimenti ai documenti
-    /*
-    if (setting('Riferimento dei documenti nelle stampe') && $riga->hasOriginal()) {
-        $ref = $riga->getOriginal()->getDcocument()->getReference();
-        if (!empty($riga->getOriginal()->getDcocument()->numero_cliente)) {
-            $ref .= '<br>'.tr('_DOC_ num. _NUM_ del _DATE_', [
-                '_DOC_' => 'Rif. Vs. ordine cliente',
-                '_NUM_' => $riga->getOriginalComponent()->getDocument()->numero_cliente,
-                '_DATE_' => dateFormat($riga->getOriginalComponent()->getDocument()->data_cliente),
-            ]);
-        }
-        if (!empty($ref)) {
-            echo '
-                <br><small>'.$ref.'</small>';
-
-            $autofill->count($ref, true);
-        }
-    }*/
 
     // Informazioni su CIG, CUP, ...
     if ($riga->hasOriginalComponent()) {
@@ -169,18 +164,18 @@ foreach ($righe as $riga) {
     }
 
     echo '
-            </td>';
+        </td>';
 
     if (!$riga->isDescrizione()) {
         echo '
             <td class="text-center">
-                '.Translator::numberToLocale(abs($riga->qta), 'qta').' '.$r['um'].'
+                '.Translator::numberToLocale(abs($riga->qta), $d_qta).' '.$r['um'].'
             </td>';
 
         // Prezzo unitario
         echo '
             <td class="text-right">
-				'.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario);
+				'.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario, $d_importi);
 
         if ($riga->sconto > 0) {
             $text = discountInfo($riga, false);
@@ -197,13 +192,13 @@ foreach ($righe as $riga) {
         // Imponibile
         echo '
             <td class="text-right">
-				'.moneyFormat($prezzi_ivati ? ($riga->totale_imponibile + $riga->iva) : $riga->totale_imponibile).'
+				'.moneyFormat($prezzi_ivati ? ($riga->totale_imponibile + $riga->iva) : $riga->totale_imponibile, $d_importi).'
             </td>';
 
         // Iva
         echo '
             <td class="text-center">
-                '.Translator::numberToLocale($riga->aliquota->percentuale, 2).'
+                '.Translator::numberToLocale($riga->aliquota->percentuale, $d_qta).'
             </td>';
     } else {
         echo '

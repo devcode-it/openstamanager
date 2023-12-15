@@ -82,6 +82,12 @@ class FieldManager implements ManagerInterface
 
                 $field['value'] = isset($field['value']) ? $field['value'] : '';
 
+                //Gestione valori multipli
+                $values = json_decode((string) $field['value'], true);
+                if (is_array($values)) {
+                    $field['value'] = implode(',', $values);
+                }
+
                 $replace = [
                     'value' => $field['value'],
                     'label' => $field['name'],
@@ -101,6 +107,10 @@ class FieldManager implements ManagerInterface
                     $result .= '
         </div>';
                 }
+
+                // Forzatura inizializzazione componente
+                $component = \HTMLBuilder\HTMLBuilder::decode(\Filter::sanitize($field['content']), 'manager');
+                $result .= '<script>$(document).ready( function(){ input("#'.(!empty($component['id']) ? $component['id'] : $component['name']).'").init(); });</script>';
             }
 
             if (($key + 1) % 3 != 0) {

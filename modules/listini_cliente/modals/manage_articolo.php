@@ -69,9 +69,18 @@ echo '
 		</div>
 	</div>
 </form>';
+?>
 
-echo '
 <script>
-$(document).ready(init);
-content_was_modified = false;
-</script>';
+    var is_add = <?php echo empty(get('id')) ? '1' : '0'; ?>;
+
+    $(document).ready(function(){
+        init();
+
+        // Inizializzazione prezzo di vendita articolo
+        if (is_add) {
+            $('#prezzo_unitario').val( $('#id_articolo').selectData().prezzo_vendita );
+        }
+    });
+    content_was_modified = false;
+</script>

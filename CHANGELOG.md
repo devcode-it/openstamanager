@@ -4,7 +4,8 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.4.52 ](#2452)
+- [2.4.53 (2024-00-00)](#2453-2024-00-00)
+- [2.4.52 (2023-12-08)](#2452-2023-12-08)
 - [2.4.51 (2023-10-30)](#2451-2023-10-30)
 - [2.4.50 (2023-10-06)](#2450-2023-10-06)
 - [2.4.49 (2023-09-22)](#2449-2023-09-25)
@@ -63,16 +64,66 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
-
-## 2.4.52 
+## 2.4.53 (2024-00-00)
 ### Aggiunto (Added)
-- Aggiunta la gestione delle sedi definite come automezzi con pratico modulo per il carico/scarico degli articoli nell'automezzo, l'assegnazione di tecnici/autisti con date di validità e stampe di carico filtrabili
+- Aggiunta sezione **dettagli aggiuntivi** nel plugin sedi per compilare i dettagli dell'automezzo (nome, descrizione, targa)
+
 ### Modificato (Changed)
-- Aggiunta una limitazione sulle quantità scaricabili nei documenti di vendita in modo da non poter vendere più articoli di quelli presenti fisicamente nel magazzino selezionato. Questa limitazione è legata all'impostazione **Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita**
 
 ### Fixed
-- Risolto il problema di visualizzazione dei PDF negli allegati
-- Risolto un problema di movimentazione magazzino: gli articoli nelle attività venivano sempre movimentati da sede legale anche se specificata diversa sede di partenza nel documento (solo da popup di modifica articolo)
+- Corretto filtro articoli negli automezzi prendendo correttamente la giacenza della sede centrale 
+
+## 2.4.52 (2023-12-08)
+### Aggiunto (Added)
+- Aggiunta la gestione delle sedi definite come automezzi con pratico modulo per il carico/scarico degli articoli nell'automezzo, l'assegnazione di tecnici/autisti con date di validità e stampe di carico filtrabili
+- Aggiunta una limitazione sulle quantità scaricabili nei documenti di vendita in modo da non poter vendere più articoli di quelli presenti fisicamente nel magazzino selezionato. Questa limitazione è legata all'impostazione **Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita**
+- Aggiunti costi e margine negli ordini cliente
+- Aggiunta la possibilità di importare tramite CSV Impianti e Attività
+- Aggiunte le sottocategorie in Impianti
+- Aggiunti i DDT alla lista dei documenti collegati nel modulo Preventivi
+- Aggiunto il calcolo della provvigione in pianificazione fatturazione
+- Aggiunta una seconda ricerca delle coordinate anagrafica da azione di gruppo con Google Maps
+- Aggiunta la gestione dei seriali da riferimento documento in fase di importazione di una fattura elettronica
+- Aggiunta la gestione dei seriali nei contratti
+- Aggiunta la stampa preventivo (solo totale imponibile)
+- Aggiunta la selezione delle sottocategorie in fase di aggiunta impianto
+- Aggiunta la creazione al volo dei referenti in attività
+- Aggiunto colore in base allo stato in modifica stato da azioni di gruppo in Preventivi, Contratti e Ordini
+- Aggiunta la gestione del rappresentante fiscale negli XML
+- Aggiunte le impostazioni per definire il numero di decimali per gli importi, per le quantità e per i totali nelle stampe
+- Aggiunta la variabile Nome preventivo nei Preventivi
+- Aggiunto il tipo di pagamento e banca di accredito e addebito nelle scadenze
+
+### Modificato (Changed)
+- Migliorata l'importazione degli articoli tramite CSV, le anagrafiche relative a clienti e fornitori vengono ora create se non presenti a gestionale
+- Migliorato il controllo sulle chiavi esterne nel controllo del database
+- Ripristinata la funzionalità di duplicazione degli ordini
+- La modifica della data competenza di una fattura aggiorna ora la data del movimento relativo
+- Migliorato il caricamento della lista allegati
+- L'aggiunta di note aggiuntive e la modifica della data competenza è ora sempre possibile nelle fatture
+- Spostati tutti gli avvisi in basso a destra
+- Modificate le funzioni nei file modutil.php per permettere l'aggiunta di file custom
+
+### Fixed
+- Corretto il problema di visualizzazione dei PDF negli allegati
+- Corretto un problema di movimentazione magazzino: gli articoli nelle attività venivano sempre movimentati da sede legale anche se specificata diversa sede di partenza nel documento (solo da popup di modifica articolo)
+- Corretta la selezione degli impianti in pianificazione ciclica delle attività
+- Corretta la rimozione del referente nelle sedi
+- Corretta la visualizzazione del modulo fatture di vendita per schermi a bassa risoluzione
+- Corretti i calcoli della ritenuta e rivalsa in fattura
+- Corretta l'importazione delle anagrafiche da CSV
+- Corretta l'importazione di fatture elettroniche con aliquote IVA multiple
+- Corretta la stampa del consuntivo ordine, della scadenza e del consuntivo
+- Corretta la validazione di password contenenti il carattere '&'
+- Corretto il calcolo del totale nei consuntivi
+- Corretta l'applicazione della marca da bollo in fattura
+- Corretta la visualizzazione della quantità articoli in fase di selezione
+- Corretta la visualizzazione delle righe nei documenti in presenza di articoli con quantità 0
+- Corretta la movimentazione degli articoli
+- Corretta la creazione del conto del piano dei conti per le anagrafiche
+- Corretto il funzionamento dei campi personalizzati
+- Corretta la vista Fatture di vendita per l'icona email
+- Corretta la crezione di attività da documenti, viene ora mantenuto il collegamento
 
 ## 2.4.51 (2023-10-30)
 ### Aggiunto (Added)

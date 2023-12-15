@@ -22,6 +22,9 @@ include_once __DIR__.'/../../core.php';
 use Modules\DDT\DDT;
 
 $documento = DDT::find($id_record);
+$d_qta = (int) setting('Cifre decimali per quantità in stampa');
+$d_importi = (int) setting('Cifre decimali per importi in stampa');
+$d_totali = (int) setting('Cifre decimali per totali in stampa');
 
 $id_cliente = $documento['idanagrafica'];
 $id_sede = $record['idsede_partenza'];

@@ -616,6 +616,15 @@ switch (post('op')) {
             $intervento->idreferente = $documento->idreferente;
             $intervento->idagente = $documento->idagente;
 
+            if ($class == 'Modules\Preventivi\Preventivo') {
+                $intervento->id_preventivo = $documento->id;
+                $intervento->richiesta = 'Attività creata da preventivo num. '.$documento->numero.'<br>'.$documento->nome;
+            }
+            if ($class == 'Modules\Ordini\Ordine') {
+                $intervento->id_ordine = $documento->id;
+                $intervento->richiesta = 'Attività creata da ordine num. '.$documento->numero_esterno;
+            }
+
             $intervento->save();
 
             $id_record = $intervento->id;

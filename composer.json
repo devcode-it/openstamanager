@@ -139,7 +139,7 @@
     ],
     "config": {
         "sort-packages": true,
-        "optimize-autoloader": false,
+        "optimize-autoloader": true,
         "apcu-autoloader": true,
         "minimum-stability": "dev",
         "prefer-stable": true,

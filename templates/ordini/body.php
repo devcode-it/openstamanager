@@ -24,6 +24,25 @@ $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 // Righe documento
 $righe = $documento->getRighe();
 
+if (!setting('Visualizza riferimento su ogni riga in stampa')) {
+    $riferimenti = [];
+    $id_rif = [];
+
+    foreach ($righe as $riga) {
+        $riferimento = ($riga->getOriginalComponent() ? $riga->getOriginalComponent()->getDocument()->getReference() : null);
+        if (!empty($riferimento)) {
+            if (!array_key_exists($riferimento, $riferimenti)) {
+                $riferimenti[$riferimento] = [];
+            }
+
+            if (!in_array($riga->id, $riferimenti[$riferimento])) {
+                $id_rif[] = $riga->id;
+                $riferimenti[$riferimento][] = $riga->id;
+            }
+        }
+    }
+}
+
 $columns = 7;
 
 $has_image = $righe->search(function ($item) {
@@ -54,12 +73,6 @@ echo "
         <tr>
             <th class='text-center' style='width:4%'>".tr('#', [], ['upper' => true]).'</th>';
 
-            if ($documento->direzione == 'uscita') {
-                echo "
-            <th class='text-center' style='width:11%'>".tr('Codice', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:11%'>".tr('Codice fornitore', [], ['upper' => true]).'</th>';
-            }
-
             if ($has_image) {
                 echo "
             <th class='text-center' style='width:20%'>".tr('Immagine', [], ['upper' => true]).'</th>';
@@ -67,6 +80,14 @@ echo "
 
             echo "
             <th class='text-center'>".tr('Descrizione', [], ['upper' => true])."</th>
+            ";
+
+            if ($documento->direzione == 'uscita') {
+                echo "
+            <th class='text-center' style='width:11%'>".tr('Codice', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:11%'>".tr('Codice fornitore', [], ['upper' => true]).'</th>';
+            }
+            echo"
             <th class='text-center' style='width:9%'>".tr('Q.tà', [], ['upper' => true]).'</th>';
 
 if ($options['pricing']) {
@@ -92,23 +113,72 @@ foreach ($righe as $riga) {
 
     echo '
         <tr>
-            <td class="text-center" style="vertical-align: middle">
-                '.$num.'
-            </td>';
+            <td class="text-center" style="vertical-align: middle">';
 
-    if ($has_image) {
-        if ($riga->isArticolo() && !empty($riga->articolo->image)) {
-            echo '
-            <td align="center">
-                <img src="'.$riga->articolo->image.'" style="max-height: 80px; max-width:120px">
-            </td>';
+    $text = '';
 
-            $autofill->set(5);
-        } else {
-            echo '
-            <td></td>';
+    foreach ($riferimenti as $key => $riferimento) {
+        if (in_array($riga->id, $riferimento)) {
+            if ($riga->id === $riferimento[0]) {
+                $riga_ordine = $database->fetchOne('SELECT numero_cliente, data_cliente FROM or_ordini WHERE id = '.prepare($riga->idordine));
+                if (!empty($riga_ordine['numero_cliente']) && !empty($riga_ordine['data_cliente'])) {
+                    $text = $text.'<b>Ordine n. '.$riga_ordine['numero_cliente'].' del '.Translator::dateToLocale($riga_ordine['data_cliente']).'</b><br>';
+                }
+                $r['descrizione'] = str_replace('Rif. '.strtolower($key), '', $r['descrizione']);
+                preg_match("/Rif\.(.*)/s", $r['descrizione'], $rif2);
+                $r['descrizione'] = str_replace('Rif.'.strtolower($rif2[1]), '', $r['descrizione']);
+                
+                if (!empty($rif2)) {
+                    $text .= '<b>'.$rif2[0].'</b>';
+                }
+                $text .= '<b>'.$key.'</b></td>';
+                if ($options['pricing']) {
+                    $text .= '
+                        <td></td>
+                        <td></td>
+                        <td></td>';
+                }
+
+                $text .= '<td></td><td></td></tr><tr><td class="text-center" nowrap="nowrap" style="vertical-align: middle">';
+
+                echo '
+                </td>';
+                if ($has_image) {
+                    echo '
+                    <td></td>';
+                }
+                echo'
+                <td>
+                    '.nl2br($text);
+            }
         }
+        $r['descrizione'] = preg_replace("/Rif\.(.*)/s", '', $r['descrizione']);
+        $autofill->count($r['descrizione']);
     }
+
+
+    $source_type = get_class($riga);
+    if (!setting('Visualizza riferimento su ogni riga in stampa')) {
+        echo $num.'</td>';
+        if ($has_image) {
+            if ($riga->isArticolo() && !empty($riga->articolo->image)) {
+                echo '
+                <td align="center">
+                    <img src="'.$riga->articolo->image.'" style="max-height: 80px; max-width:120px">
+                </td>';
+            } else {
+                echo '
+                <td></td>';
+            }
+        }
+        echo'
+            <td>'.$r['descrizione'];
+    } else {
+        echo $num.'
+            </td>
+            <td>'.nl2br($r['descrizione']);
+    }
+
 
     if ($documento->direzione == 'uscita') {
         echo '
@@ -119,10 +189,6 @@ foreach ($righe as $riga) {
                 '.($riga->articolo ? $riga->articolo->dettaglioFornitore($documento->idanagrafica)->codice_fornitore : '').'
             </td>';
     }
-
-    echo '
-            <td>
-                '.nl2br($r['descrizione']);
 
     if ($riga->isArticolo()) {
         if ($documento->direzione == 'entrata' && !$options['hide-item-number']) {
@@ -161,14 +227,14 @@ foreach ($righe as $riga) {
 
         echo '
             <td class="text-center">
-                '.Translator::numberToLocale(abs($qta), 'qta').' '.$um.'
+                '.Translator::numberToLocale(abs($qta), $d_qta).' '.$um.'
             </td>';
 
         if ($options['pricing']) {
             // Prezzo unitario
             echo '
             <td class="text-right">
-                '.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario);
+                '.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario, $d_importi);
 
             if ($riga->sconto > 0) {
                 $text = discountInfo($riga, false);
@@ -185,13 +251,13 @@ foreach ($righe as $riga) {
             // Imponibile
             echo '
             <td class="text-right">
-				'.moneyFormat($prezzi_ivati ? $riga->totale : $riga->totale_imponibile).'
+				'.moneyFormat($prezzi_ivati ? $riga->totale : $riga->totale_imponibile, $d_importi).'
             </td>';
 
             // Iva
             echo '
             <td class="text-center">
-                '.Translator::numberToLocale($riga->aliquota->percentuale, 0).'
+                '.Translator::numberToLocale($riga->aliquota->percentuale, $d_qta).'
             </td>';
         }
 
@@ -246,7 +312,7 @@ if ($options['pricing']) {
         </td>
 
         <th colspan="2" class="text-right">
-            <b>'.moneyFormat($show_sconto ? $imponibile : $totale_imponibile, 2).'</b>
+            <b>'.moneyFormat($show_sconto ? $imponibile : $totale_imponibile, $d_totali).'</b>
         </th>
     </tr>';
 
@@ -259,7 +325,7 @@ if ($options['pricing']) {
         </td>
 
         <th colspan="2" class="text-right">
-            <b>'.moneyFormat($sconto, 2).'</b>
+            <b>'.moneyFormat($sconto, $d_totali).'</b>
         </th>
     </tr>';
 
@@ -271,7 +337,7 @@ if ($options['pricing']) {
         </td>
 
         <th colspan="2" class="text-right">
-            <b>'.moneyFormat($totale_imponibile, 2).'</b>
+            <b>'.moneyFormat($totale_imponibile, $d_totali).'</b>
         </th>
     </tr>';
     }
@@ -284,7 +350,7 @@ if ($options['pricing']) {
         </td>
 
         <th colspan="2" class="text-right">
-            <b>'.moneyFormat($totale_iva, 2).'</b>
+            <b>'.moneyFormat($totale_iva, $d_totali).'</b>
         </th>
     </tr>';
 
@@ -295,7 +361,7 @@ if ($options['pricing']) {
             <b>'.tr('Totale documento', [], ['upper' => true]).':</b>
     	</td>
     	<th colspan="2" class="text-right">
-    		<b>'.moneyFormat($totale, 2).'</b>
+    		<b>'.moneyFormat($totale, $d_totali).'</b>
     	</th>
     </tr>';
 
@@ -307,7 +373,7 @@ if ($options['pricing']) {
                 <b>'.tr('Sconto in fattura', [], ['upper' => true]).':</b>
             </td>
             <th colspan="2" class="text-right">
-                <b>'.moneyFormat($sconto_finale, 2).'</b>
+                <b>'.moneyFormat($sconto_finale, $d_totali).'</b>
             </th>
         </tr>';
 
@@ -318,7 +384,7 @@ if ($options['pricing']) {
                 <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
             </td>
             <th colspan="2" class="text-right">
-                <b>'.moneyFormat($netto_a_pagare, 2).'</b>
+                <b>'.moneyFormat($netto_a_pagare, $d_totali).'</b>
             </th>
         </tr>';
     }

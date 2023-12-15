@@ -145,8 +145,8 @@ if ($dir == 'entrata') {
         }
 
         echo '
-        <div class="col-md-6">
-            {[ "type": "text", "name": "serial[]", "class": "serial", "id": "serial_'.$i.'", "value": "'.$serials[$i].'"'.(!empty($res) ? ', "readonly": 1' : '').' ]}';
+        <div class="col-md-4">
+            {[ "type": "text", "name": "serial['.$i.']", "class": "serial", "id": "serial_'.$i.'", "value": "'.$serials[$i].'"'.(!empty($res) ? ', "readonly": 1' : '').' ]}';
 
         if (!empty($res)) {
             if (!empty($res[0]['id_riga_intervento'])) {

@@ -635,7 +635,7 @@ switch (post('op')) {
                 }
                 $id_iva = ($ordine->anagrafica->idiva_vendite && (!$originale->idiva_vendita || $aliquota_articolo != 0) ? $ordine->anagrafica->idiva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
             } else {
-                $id_iva = ($ordine->anagrafica->idiva_acquisti ?: setting('Iva predefinita'));
+                $id_iva = ($ordine->anagrafica->idiva_acquisti ? $ordine->anagrafica->idiva_acquisti : ($originale->idiva_vendita ? $originale->idiva_vendita : setting('Iva predefinita')));
             }
             $id_anagrafica = $ordine->idanagrafica;
             $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');

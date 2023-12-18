@@ -91,17 +91,37 @@ class FatturaOrdinaria extends FatturaElettronica
 
         $imponibile = [];
         $totale_imposta = [];
-        foreach ($linee as $linea) {
-            if ($linea['ScontoMaggiorazione']['Percentuale']) {
-                $imponibile[$linea['AliquotaIVA']] += round(($linea['PrezzoUnitario'] * $linea['Quantita']) - ($linea['PrezzoUnitario'] * $linea['Quantita'] * $linea['ScontoMaggiorazione']['Percentuale'] / 100), 2);  
-            } else if ($linea['ScontoMaggiorazione']['Importo']) {
-                $imponibile[$linea['AliquotaIVA']] += round(($linea['PrezzoUnitario'] * $linea['Quantita']) - $linea['ScontoMaggiorazione']['Importo'], 2);  
-            } else if (!$linea['Quantita']) {
-                $imponibile[$linea['AliquotaIVA']] += $linea['PrezzoUnitario'];  
-            } else {
-                $imponibile[$linea['AliquotaIVA']] += round(($linea['PrezzoUnitario'] * $linea['Quantita']), 2);  
-            }
+        $importo = 0;
 
+        foreach ($linee as $linea) {
+            $importo = $linea['PrezzoUnitario'] * $linea['Quantita'];
+
+            if ($linea['ScontoMaggiorazione']) {
+                $linea['ScontoMaggiorazione'] = $this->forceArray($linea['ScontoMaggiorazione']);
+                foreach($linea['ScontoMaggiorazione'] as $sm) {
+                    if(isset($sm['Percentuale'])){
+                        $sconto = ($importo * $sm['Percentuale'] / 100);
+                        if ($sm['Tipo'] == 'SC') {
+                            $importo -= $sconto;
+                        } else {
+                            $importo += $sconto;
+                        }
+
+                    } elseif(isset($sm['Importo'])) {
+                        if ($sm['Tipo'] == 'SC') {
+                            $importo -= $sm['Importo'];
+                        } else {
+                            $importo += $sm['Importo'];
+                        }
+                    }
+                }
+            }
+            
+            if (!$linea['Quantita']) {
+                $importo = $linea['PrezzoUnitario'];  
+            } 
+            
+            $imponibile[$linea['AliquotaIVA']] = ($imponibile[$linea['AliquotaIVA']] ?? 0) + round($importo, 2);
         }
 
         // Aggiunta degli arrotondamenti IVA come righe indipendenti
@@ -430,24 +450,24 @@ class FatturaOrdinaria extends FatturaElettronica
         foreach ($riepiloghi as $riepilogo) {
             $riep_imp += $riepilogo['Imposta'];
         }
+
         $diff_iva = round($riep_imp - $fattura->iva, 2);
         $diff = round(abs($fattura->totale_imponibile) - abs($totale_righe + $tot_arr ), 2);
         $diff_tot = round($fattura->totale_imponibile + $fattura->rivalsa_inps - $totale_imp + $tot_arr, 2);
-
-        // Aggiunta della riga di arrotondamento nel caso in cui ci sia una differenza tra i totali, o tra l'imponibile dell'XML e quello ricavato dalla somma delle righe
+        
+        $iva_arrotondamento = database()->fetchOne('SELECT * FROM co_iva WHERE percentuale=0 AND deleted_at IS NULL');
+        
         if (($diff != 0 && $diff != $diff_tot) || (($diff_tot != $diff) && !$diff_iva) || ($diff_iva)) {
-            $iva_arrotondamento = database()->fetchOne('SELECT * FROM co_iva WHERE percentuale=0 AND deleted_at IS NULL');
-
             if ($diff != 0 && $diff != $diff_tot) {
-                $diff = $diff * 100 / (100 + $iva_arrotondamento['percentuale']);
+                $diff *= 100 / (100 + $iva_arrotondamento['percentuale']);
             } elseif (($diff == $diff_tot) && !$diff_iva) {
                 $diff = $totale_righe - $fattura->totale_imponibile;
-            } else if (($diff == $diff_tot) && $diff_iva) {
+            } elseif (($diff == $diff_tot) && $diff_iva) {
                 $diff = $diff_iva;
             } else {
                 $diff = -($diff_tot * 100) / (100 + $iva_arrotondamento['percentuale']);
             }
-
+        
             $obj = Riga::build($fattura);
 
             $obj->descrizione = tr('Arrotondamento calcolato in automatico');

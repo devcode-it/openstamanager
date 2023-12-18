@@ -76,7 +76,7 @@ $("#modals > div").on("shown.bs.modal", function () {
 
 function initGeocomplete() {
     $.ajax({
-        url: "https://nominatim.openstreetmap.org/search.php?q=" + encodeURI(input("gaddress").get()) + "&format=jsonv2",
+        url: "https://nominatim.openstreetmap.org/search.php?q=" + encodeURI(input("gaddress").get()) + "&format=jsonv2&accept-language='.$lang.'",
         type : "GET",
         dataType: "JSON",
         success: function(data){

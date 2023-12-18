@@ -50,7 +50,7 @@ switch (post('op')) {
 
                 // TODO: da riscrivere con Guzzle e spostare su hook
                 $ch = curl_init();
-                $url = 'https://nominatim.openstreetmap.org/search.php?q='.$indirizzo.'&format=jsonv2';
+                $url = 'https://nominatim.openstreetmap.org/search.php?q='.$indirizzo.'&format=jsonv2&accept-language='.$lang;
                 $user_agent = 'traccar';
                 curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
                 curl_setopt($ch, CURLOPT_URL, $url);

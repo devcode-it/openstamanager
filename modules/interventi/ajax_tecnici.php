@@ -80,7 +80,7 @@ if (!empty($sessioni)) {
             }
 
             echo '
-             '.$sessione['ragione_sociale'].' '.(($sessione['anagrafica_deleted_at']) ? '<small class="text-danger"><em>('.tr('Eliminato').')</em></small>' : '').'</th>
+            '.$sessione['ragione_sociale'].' '.(($sessione['anagrafica_deleted_at']) ? '<small class="text-danger"><em>('.tr('Eliminato').')</em></small>' : '').'</th>
             <th width="15%">'.tr('Orario inizio').'</th>
             <th width="15%">'.tr('Orario fine').'</th>
             <th width="12%">'.tr('Ore').'</th>
@@ -131,18 +131,20 @@ if (!empty($sessioni)) {
         // Orario di inizio
         echo '
             <td>
-                '.Translator::timestampToLocale($sessione['orario_inizio']).'
+            {[ "type": "timestamp", "name": "data_inizio_'.$sessione['id'].'", "required": 1, "value": "'.$sessione['orario_inizio'].'", "disabled": "'.$block_edit.'" ]}
             </td>';
 
         // Orario di fine
         echo '
             <td>
-                '.Translator::timestampToLocale($sessione['orario_fine']).'
+            {[ "type": "timestamp", "name": "data_fine_'.$sessione['id'].'", "required": 1, "value": "'.$sessione['orario_fine'].'",  "disabled": "'.$block_edit.'" ]}
             </td>';
 
         // ORE
         echo '
-            <td style="border-right:1px solid #aaa;">'.($ore <= 0 ? '<i class="fa fa-warning tip" style="position:relative;margin-left:-16px;" title="'.tr('Questa sessione è vuota').'" ></i>' : '').' '.numberFormat($ore, 'qta').'
+        <td style="border-right:1px solid #aaa;">'.($ore <= 0 ? '<i class="fa fa-warning tip" style="position:relative;margin-left:-16px;" title="'.tr('Questa sessione è vuota').'" ></i>' : '').' 
+            {[ "type": "number", "name": "ore_'.$sessione['id'].'", "required": 1, "value": "'.numberFormat($ore, 'qta').'", "disabled": "1" ]}
+
 
                 <div class="extra hide">
                     <table class="table table-condensed table-bordered">
@@ -171,7 +173,7 @@ if (!empty($sessioni)) {
         // KM
         echo '
             <td style="border-right:1px solid #aaa;">
-                '.numberFormat($km, 'qta').'
+                {[ "type": "number", "name": "sessione_km_'.$sessione['id'].'", "required": 1, "value": "'.numberFormat($sessione['km'], 'qta').'", "onchange": "aggiornaSessioneInline($(this).closest(\'tr\').data(\'id\'))", "disabled": "'.$block_edit.'" ]}
 
                 <div class="extra hide">
                     <table class="table table-condensed table-bordered">
@@ -203,12 +205,10 @@ if (!empty($sessioni)) {
 
         // Sconto ore
         if ($show_costi) {
+            $tipo_sconto = (setting('Tipo di sconto predefinito') == '%' ? 'PRC' : 'UNT');
             echo '
             <td style="border-right:1px solid #aaa;">
-                '.tr('_TOT_ _TYPE_', [
-                    '_TOT_' => Translator::numberToLocale($sessione['sconto_unitario']),
-                    '_TYPE_' => ($sessione['tipo_sconto'] == 'PRC' ? '%' : currency()),
-                ]).'
+                {[ "type": "number", "name": "sconto_unitario_'.$sessione['id'].'", "value": "'.Translator::numberToLocale($sessione['sconto_unitario']).'", "onchange": "aggiornaSessioneInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "choice|untprc|'.($sessione['tipo_sconto'] ? $sessione['tipo_sconto'] : $tipo_sconto).'", "disabled": "'.$block_edit.'" ]}
             </td>';
         }
 
@@ -216,10 +216,7 @@ if (!empty($sessioni)) {
         if ($show_costi) {
             echo '
             <td style="border-right:1px solid #aaa;">
-                '.tr('_TOT_ _TYPE_', [
-                    '_TOT_' => Translator::numberToLocale($sessione['scontokm_unitario']),
-                    '_TYPE_' => ($sessione['tipo_sconto_km'] == 'PRC' ? '%' : currency()),
-                ]).'
+                {[ "type": "number", "name": "scontokm_unitario_'.$sessione['id'].'", "value": "'.Translator::numberToLocale($sessione['scontokm_unitario']).'", "onchange": "aggiornaSessioneInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "choice|untprc|'.($sessione['tipo_sconto_km'] ? $sessione['tipo_sconto_km'] : $tipo_sconto).'", "disabled": "'.$block_edit.'" ]}
             </td>';
         }
 
@@ -423,4 +420,59 @@ async function copySessione(button) {
     openModal("'.tr('Copia sessione').'", "'.$module->fileurl('modals/copy_sessione.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&id_sessione=" + id);
 }
 
+$("#tecnici .tipo_icon_after").on("change", function() {
+    aggiornaSessioneInline($(this).closest("tr").data("id"));
+});
+
+$("[id^=data_inizio_], [id^=data_fine_]").on("dp.hide", function (e) {
+    aggiornaSessioneInline($(this).closest("tr").data("id"));
+});
+
+function caricaTecnici() {
+    let container = $("#tecnici");
+
+    localLoading(container, true);
+    $.get("'.$structure->fileurl('ajax_tecnici.php').'?id_module='.$id_module.'&id_record='.$id_record.'", function(data) {
+        container.html(data);
+        localLoading(container, false);
+    });
+}
+
+function aggiornaSessioneInline(id) {
+    var id_sessione = id;
+    var data_inizio = $("#data_inizio_" + id_sessione).val();
+    var data_fine = $("#data_fine_" + id_sessione).val();
+    var km = $("#sessione_km_" + id_sessione).val();
+    var sconto_unitario = $("#sconto_unitario_" + id_sessione).val();
+    var tipo_sconto = $("[id^=tipo_sconto_unitario_" + id_sessione + "]").val()
+    var scontokm_unitario = $("#scontokm_unitario_" + id_sessione).val();
+    var tipo_sconto_km =$("[id^=tipo_scontokm_unitario_" + id_sessione + "]").val()
+
+    $.ajax({
+        url: globals.rootdir + "/actions.php",
+        type: "POST",
+        data: {
+            id_module: globals.id_module,
+            id_record: globals.id_record,
+            op: "update_inline_sessione",
+            id_sessione: id_sessione,
+            data_inizio: data_inizio,
+            data_fine: data_fine,
+            km: km,
+            sconto_unitario: sconto_unitario,
+            tipo_sconto: tipo_sconto,
+            scontokm_unitario: scontokm_unitario,
+            tipo_sconto_km: tipo_sconto_km,
+        },
+        success: function(response) {
+            caricaTecnici();
+            caricaCosti();
+            renderMessages();
+        },
+        error: function(xhr, status, error) {
+            caricaCosti();
+            renderMessages();
+        }
+    });
+}
 </script>';

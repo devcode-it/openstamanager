@@ -948,6 +948,22 @@ switch (post('op')) {
 
         break;
 
+    case 'update_inline_sessione':
+        $id_sessione = post('id_sessione');
+        $sessione = Sessione::find($id_sessione);
+
+        $sessione->orario_inizio = post('data_inizio');
+        $sessione->orario_fine = post('data_fine');
+
+        $sessione->km = post('km');
+
+        $sessione->sconto_unitario = post('sconto_unitario');
+        $sessione->tipo_sconto = post('tipo_sconto');
+        $sessione->scontokm_unitario = post('scontokm_unitario');
+        $sessione->tipo_scontokm = post('tipo_sconto_km');
+        $sessione->save();
+        break;
+
     // Duplica intervento
     case 'copy':
         $id_stato = post('id_stato');

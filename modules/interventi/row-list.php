@@ -335,6 +335,7 @@ function aggiornaRighe(id) {
             success: function (response) {
                 renderMessages();
                 caricaRighe(null);
+                caricaCosti();
             },
             error: function() {
                 renderMessages();
@@ -363,12 +364,14 @@ function rimuoviRiga(id) {
                 righe: id,
             },
             success: function (response) {
-                renderMessages();
                 caricaRighe(null);
+                caricaCosti();
+                renderMessages();
             },
             error: function() {
-                renderMessages();
                 caricaRighe(null);
+                caricaCosti();
+                renderMessages();
             }
         });
     }).catch(swal.noop);
@@ -395,6 +398,7 @@ function duplicaRiga(id) {
             success: function (response) {
                 renderMessages();
                 caricaRighe(null);
+                caricaCosti();
             },
             error: function() {
                 renderMessages();
@@ -470,7 +474,7 @@ $("#check_all").click(function(){
     }
 });
 
-$(".tipo_icon_after").on("change", function() {
+$("#righe .tipo_icon_after").on("change", function() {
     aggiornaInline($(this).closest("tr").data("id"));
 });
 
@@ -498,6 +502,7 @@ function aggiornaInline(id) {
         },
         success: function (response) {
             caricaRighe(id);
+            caricaCosti();
             renderMessages();
         },
         error: function() {

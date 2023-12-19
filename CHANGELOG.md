@@ -73,6 +73,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 ### Fixed
 - Corretto filtro articoli negli automezzi prendendo correttamente la giacenza della sede centrale 
 - Corretta selezione automatica iva all'aggiunta degli articoli nei documenti di vendita. Il sistema da priorità all'iva del fornitore se presente, altrimenti passa all'iva dell'articolo se presente, altrimenti assegna l'iva di default definita in impostazioni.
+- Corretta la visata vista riferimenti negli ordini cliente aggiungendo il numero esterno del DDT al posto dell'id come veniva erronamente visualizzato prima
 
 ## 2.4.52 (2023-12-08)
 ### Aggiunto (Added)

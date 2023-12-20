@@ -23,6 +23,10 @@ $modules = [
         'server' => 'HTTP_MOD_REWRITE',
         'description' => tr('Fornisce un sistema di riscrittura URL basato su regole predefinite'),
     ],
+    'mod_mime' => [
+        'server' => 'text/javascript mjs',
+        'description' => tr('Consente di associare i tipi di file ai tipi di contenuto corretti.'),
+    ],
 ];
 
 if (function_exists('apache_get_modules')) {

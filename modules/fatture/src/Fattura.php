@@ -585,13 +585,13 @@ class Fattura extends Document
         // Salvataggio effettivo
         parent::save($options);
 
-        // Fix dei campi statici
-        $this->id_riga_bollo = $this->gestoreBollo->manageRigaMarcaDaBollo();
-
         $this->attributes['ritenutaacconto'] = $this->ritenuta_acconto;
         $this->attributes['iva_rivalsainps'] = $this->iva_rivalsa_inps;
         $this->attributes['rivalsainps'] = $this->rivalsa_inps;
         $this->attributes['ritenutaacconto'] = $this->ritenuta_acconto;
+
+        // Fix dei campi statici
+        $this->id_riga_bollo = $this->gestoreBollo->manageRigaMarcaDaBollo();
 
         // Generazione numero fattura se non presente (Bozza -> Emessa)
         if ((($stato_precedente->descrizione == 'Bozza' && $this->stato['descrizione'] == 'Emessa') or (!$is_fiscale)) && empty($this->numero_esterno)) {

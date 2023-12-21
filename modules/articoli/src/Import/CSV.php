@@ -456,6 +456,10 @@ class CSV extends CSVImporter
             $anagrafica = Anagrafica::where('piva', $dettagli['partita_iva'])->first();
         }
 
+        if (empty($anagrafica) && $dettagli['anagrafica_listino']) {
+            $anagrafica = Anagrafica::where('ragione_sociale', $dettagli['anagrafica_listino'])->first();
+        }
+
         if (empty($anagrafica)) {
             $anagrafica = Anagrafica::build($dettagli['anagrafica_listino']);
             $anagrafica->piva = $dettagli['partita_iva'];

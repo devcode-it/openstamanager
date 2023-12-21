@@ -6,3 +6,6 @@ UPDATE `zz_modules` SET `options` = '\r\nSELECT\r\n    |select|\r\nFROM\r\n	`or_
 
 -- Correzione campo icon_title_Inviata in vista Fatture di vendita
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF(emails IS NOT NULL, \'Inviata via email\', \'\')' WHERE `zz_modules`.`name` = 'Fatture di vendita' AND `zz_views`.`name` = 'icon_title_Inviata';
+
+-- Aggiunta colonna email in anagrafiche di default nascosta
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT id FROM zz_modules WHERE name = 'Anagrafiche'), 'Email', '`an_anagrafiche`.`email`', '17', '1', '0', '0', '0', '', '', '0', '0', '0'); 

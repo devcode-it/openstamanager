@@ -9,3 +9,6 @@ UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_module
 
 -- Aggiunta colonna email in anagrafiche di default nascosta
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT id FROM zz_modules WHERE name = 'Anagrafiche'), 'Email', '`an_anagrafiche`.`email`', '17', '1', '0', '0', '0', '', '', '0', '0', '0'); 
+
+-- Modifica valore di default di Cifre decimali per quantità in stampa
+UPDATE `zz_settings` SET `valore` = '2' WHERE `zz_settings`.`nome` = 'Cifre decimali per quantità in stampa';

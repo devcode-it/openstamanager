@@ -82,7 +82,8 @@ switch (post('op')) {
         $tecnici_assegnati = (array) post('tecnici_assegnati');
 
         $tecnici_presenti_array = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico', [], ['id_intervento' => $intervento->id]);
-
+        $tecnici_presenti = [];
+        
         foreach ($tecnici_presenti_array as $tecnico_presente) {
             $tecnici_presenti[] = $tecnico_presente['id_tecnico'];
 

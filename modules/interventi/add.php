@@ -218,7 +218,7 @@ echo '
     </div>
 
     <div class="row">
-        <div class="col-md-6">';
+        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">';
             echo input([
                 'type' => 'ckeditor',
                 'label' => tr('Richiesta'),
@@ -230,7 +230,7 @@ echo '
             ]);
             echo '
         </div>
-        <div class="col-md-6">';
+        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">';
             echo input([
                 'type' => 'ckeditor',
                 'label' => tr('Descrizione'),

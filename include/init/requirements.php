@@ -270,7 +270,7 @@ foreach ($db as $name => $values) {
 
 // Percorsi di servizio
 $dirs_to_check = [
-    'backup' => tr('Necessario per il salvataggio dei backup'),
+    $backup_dir => tr('Necessario per il salvataggio dei backup'),
     'files' => tr('Necessario per il salvataggio di file inseriti dagli utenti'),
     'files/temp' => tr('Necessario per la generazione delle stampe'),
     'logs' => tr('Necessario per la gestione dei file di log'),
@@ -278,7 +278,11 @@ $dirs_to_check = [
 
 $directories = [];
 foreach ($dirs_to_check as $name => $description) {
-    $status = is_writable(base_dir().DIRECTORY_SEPARATOR.$name);
+    if ($name == $backup_dir ){
+        $status = is_writable($name);
+    }else{
+        $status = is_writable(base_dir().DIRECTORY_SEPARATOR.$name);
+    }
 
     $directories[] = [
         'name' => $name,
@@ -410,7 +414,7 @@ foreach ($requirements as $key => $values) {
             <tr class="'.($value['status'] ? 'success' : 'danger').'">
                 <td style="width: 10px"><i class="fa fa-'.($value['status'] ? 'check' : 'times').'"></i></td>
                 <td style="width: 120px" >'.$value['type'].'</td>
-                <td style="width: 200px" >'.$value['name'].'</td>
+                <td style="width: 300px" >'.$value['name'].'</td>
                 <td>'.$value['description'].'</td>
             </tr>';
     }

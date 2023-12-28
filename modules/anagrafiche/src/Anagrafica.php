@@ -79,6 +79,11 @@ class Anagrafica extends Model
         $model->tipologie = $tipologie;
         $model->save();
 
+        if ($model->isTipo('Cliente') && setting('Listino cliente predefinito')) {
+            $model->id_listino = setting('Listino cliente predefinito');
+            $model->save();
+        }
+
         return $model;
     }
 

@@ -42,7 +42,7 @@ echo '
 				</div>
 
 				<div class="col-md-3">
-					{[ "type":"date", "label":"'.tr('Data scadenza default').'", "name":"data_scadenza_predefinita", "value":"$data_scadenza_predefinita$" ]}
+					{[ "type":"date", "label":"'.tr('Data scadenza predefinita').'", "name":"data_scadenza_predefinita", "value":"$data_scadenza_predefinita$", "required":"1" ]}
 				</div>
 			</div>
 	

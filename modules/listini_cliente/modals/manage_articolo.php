@@ -17,21 +17,25 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\Articoli\Articolo;
+use Modules\ListiniCliente\Articolo as ArticoloListino;
+
 include_once __DIR__.'/../../../core.php';
 include_once __DIR__.'/../../../../core.php';
 
-if (empty(get('id'))) {
-    $listino = $dbo->selectOne('mg_listini', '*', ['id' => get('id_record')]);
-    $data_scadenza = $listino['data_scadenza_predefinita'];
-    $id_articolo = get('id_articolo');
-} else {
-    $articolo = $dbo->selectOne('mg_listini_articoli', '*', ['id' => get('id')]);
-    $data_scadenza = $articolo['data_scadenza'];
-    $id_articolo = $articolo['id_articolo'];
-}
-
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
-$prezzo_unitario = $prezzi_ivati ? $articolo['prezzo_unitario_ivato'] : $articolo['prezzo_unitario'];
+
+if (empty(get('id'))) {
+    $articolo = Articolo::find(get('id_articolo'));
+    $data_scadenza = null;
+    $id_articolo = get('id_articolo');
+    $prezzo_unitario = $prezzi_ivati ? $articolo->prezzo_vendita_ivato : $articolo->prezzo_vendita;
+} else {
+    $articolo_listino = ArticoloListino::find(get('id'));
+    $data_scadenza = $articolo_listino->data_scadenza;
+    $id_articolo = $articolo_listino->id_articolo;
+    $prezzo_unitario = $prezzi_ivati ? $articolo_listino->prezzo_unitario_ivato : $articolo_listino->prezzo_unitario;
+}
 
 echo '
 <form id="add_form" action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.get('id_record').'" method="post">
@@ -48,7 +52,7 @@ echo '
 
     <div class="row">
         <div class="col-md-4">
-            {[ "type":"date", "label":"'.tr('Data scadenza').'", "name":"data_scadenza", "value":"'.$data_scadenza.'", "required": "1" ]}
+            {[ "type":"date", "label":"'.tr('Data scadenza').'", "name":"data_scadenza", "value":"'.$data_scadenza.'", "help": "'.tr('Se non valorizzata viene utilizzata la data di scadenza predefinita').'" ]}
         </div>
 
         <div class="col-md-4">
@@ -56,7 +60,7 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type":"number", "label":"'.tr('Sconto percentuale').'", "name":"sconto_percentuale", "icon-after": "%", "value":"'.$articolo['sconto_percentuale'].'" ]}
+            {[ "type":"number", "label":"'.tr('Sconto percentuale').'", "name":"sconto_percentuale", "icon-after": "%", "value":"'.$articolo_listino->sconto_percentuale.'" ]}
         </div>
     </div>
 
@@ -72,15 +76,8 @@ echo '
 ?>
 
 <script>
-    var is_add = <?php echo empty(get('id')) ? '1' : '0'; ?>;
-
     $(document).ready(function(){
         init();
-
-        // Inizializzazione prezzo di vendita articolo
-        if (is_add) {
-            $('#prezzo_unitario').val( $('#id_articolo').selectData().prezzo_vendita );
-        }
     });
     content_was_modified = false;
 </script>

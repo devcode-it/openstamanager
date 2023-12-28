@@ -12,3 +12,12 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 
 -- Modifica valore di default di Cifre decimali per quantità in stampa
 UPDATE `zz_settings` SET `valore` = '2' WHERE `zz_settings`.`nome` = 'Cifre decimali per quantità in stampa';
+
+-- Fix campo data in listini
+ALTER TABLE `mg_listini_articoli` CHANGE `data_scadenza` `data_scadenza` DATE NULL;
+
+-- Aggiunta importazione listini cliente
+INSERT INTO `zz_imports` (`name`, `class`) VALUES ('Listini cliente', 'Modules\\ListiniCliente\\Import\\CSV');
+
+-- Aggiunta impostazione per definire il listino cliente predefinito
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `order`, `help`) VALUES (NULL, 'Listino cliente predefinito', '', 'query=SELECT id, nome AS descrizione FROM `mg_listini` ORDER BY descrizione ASC', '1', 'Generali', NULL, NULL, 'In fase di creazione anagrafica cliente collega il listino all\'anagrafica stessa');

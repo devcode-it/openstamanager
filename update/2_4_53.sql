@@ -12,3 +12,6 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 
 -- Modifica valore di default di Cifre decimali per quantità in stampa
 UPDATE `zz_settings` SET `valore` = '2' WHERE `zz_settings`.`nome` = 'Cifre decimali per quantità in stampa';
+
+-- Aggiunta impostazione per importazione serial di default
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES ("Creazione seriali in import FE", '1', 'boolean', 1, 'Fatturazione Elettronica', '16', "Determina il valore predefinito dell'impostazione Creazione seriali in fase di importazione di una fattura elettronica");

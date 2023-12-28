@@ -21,6 +21,7 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo;
 use Modules\Articoli\Export\CSV;
 use Modules\Iva\Aliquota;
+use Modules\ListiniCliente\Articolo as ArticoloListino;
 use Modules\Preventivi\Components\Articolo as ArticoloPreventivo;
 use Modules\Preventivi\Preventivo;
 use Modules\TipiIntervento\Tipo as TipoSessione;
@@ -395,6 +396,28 @@ switch (post('op')) {
         ]));
 
         break;
+
+    case 'add-listino':
+        $id_listino = post('id_listino');
+        $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
+
+        foreach ($id_records as $id) {
+            $articolo = Articolo::find($id);
+            $prezzo_unitario = $prezzi_ivati ? $articolo->prezzo_vendita_ivato : $articolo->prezzo_vendita;
+            $articolo_listino = ArticoloListino::where('id_articolo', $id)->where('id_listino', $id_listino)->first();
+
+            if (!$articolo_listino) {
+                $articolo_listino = ArticoloListino::build($articolo, $id_listino);
+            }
+            $articolo_listino->data_scadenza = post('data_scadenza') ?: null;
+            $articolo_listino->setPrezzoUnitario($prezzo_unitario);
+            $articolo_listino->sconto_percentuale = post('sconto_percentuale');
+            $articolo_listino->save();
+        }
+
+        flash()->info(tr('Listino aggiornato correttamente!'));
+
+        break;
 }
 
 if (App::debug()) {
@@ -569,6 +592,17 @@ $operations['set-provvigione'] = [
         'msg' => tr('Selezionare un agente e la provvigione prevista:').'
         <br><br>{[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "required": 1, "ajax-source": "agenti" ]}
         <br>{[ "type": "number", "label": "'.tr('Provvigione').'", "name": "provvigione", "required": 1, "icon-after": "choice|untprc|" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
+
+$operations['add-listino'] = [
+    'text' => '<span><i class="fa fa-plus"></i> '.tr('Aggiungi a listino cliente').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi davvero aggiungere gli articoli al listino cliente?').'<br><br>{[ "type": "select", "label": "'.tr('Listino cliente').'", "name": "id_listino", "required": 1, "ajax-source": "listini" ]}
+        <br>{[ "type": "number", "label": "'.tr('Sconto percentuale').'", "name": "sconto_percentuale", "required": 1, "icon-after": "%" ]}
+        <br>{[ "type": "date", "label": "'.tr('Data scadenza').'", "name": "data_scadenza", "placeholder": "'.tr('Utilizza data scadenza predefinita listino').'" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
     ],

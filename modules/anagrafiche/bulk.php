@@ -119,6 +119,20 @@ switch (post('op')) {
             $anagrafica->save();
         }
         break;
+
+    case 'aggiorna-listino':
+        $id_listino = post('id_listino') ?: 0;
+        foreach ($id_records as $id) {
+            $anagrafica = Anagrafica::find($id);
+            if ($anagrafica->isTipo('Cliente')) {
+                $anagrafica->id_listino = $id_listino;
+                $anagrafica->save();
+            }
+        }
+
+        flash()->info(tr('Listino aggiornato correttamente!'));
+
+        break;
 }
 
 $operations = [];
@@ -168,6 +182,15 @@ $operations['cambia-relazione'] = [
     'text' => '<span><i class="fa fa-copy"></i> '.tr('Cambia relazione').'</span>',
     'data' => [
         'msg' => tr('Vuoi davvero cambiare la relazione delle anagrafiche selezionate?').'<br><br>{[ "type": "select", "label": "'.tr('Relazione con il cliente').'", "name": "idrelazione", "required": 1, "ajax-source": "relazioni"]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
+
+$operations['aggiorna-listino'] = [
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna listino cliente').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi davvero aggiornare il listino cliente delle anagrafiche selezionate?').'<br><br>{[ "type": "select", "label": "'.tr('Listino cliente').'", "name": "id_listino", "required": 0, "ajax-source": "listini", "placeholder": "'.tr('Listino scollegato').'" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
     ],

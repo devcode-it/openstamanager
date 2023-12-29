@@ -584,41 +584,10 @@ switch (post('op')) {
             $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
             // CALCOLO PREZZO UNITARIO
-            $prezzo_unitario = 0;
-            $sconto = 0;
-            // Prezzi netti clienti / listino fornitore
-            $prezzi = $dbo->fetchArray('SELECT minimo, massimo, sconto_percentuale, '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario
-            FROM mg_prezzi_articoli
-            WHERE id_articolo = '.prepare($id_articolo).' AND dir = '.prepare($dir).' AND id_anagrafica = '.prepare($id_anagrafica));
+            $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo);
+            $prezzo_unitario = $prezzo_consigliato['prezzo_unitario'];
+            $sconto = $prezzo_consigliato['sconto'];
 
-            if ($prezzi) {
-                foreach ($prezzi as $prezzo) {
-                    if ($qta >= $prezzo['minimo'] && $qta <= $prezzo['massimo']) {
-                        $prezzo_unitario = $prezzo['prezzo_unitario'];
-                        $sconto = $prezzo['sconto_percentuale'];
-                        continue;
-                    }
-
-                    if ($prezzo['minimo'] == null && $prezzo['massimo'] == null && $prezzo['prezzo_unitario'] != null) {
-                        $prezzo_unitario = $prezzo['prezzo_unitario'];
-                        $sconto = $prezzo['sconto_percentuale'];
-                        continue;
-                    }
-                }
-            }
-            if (empty($prezzo_unitario)) {
-                // Prezzi listini clienti
-                $listino = $dbo->fetchOne('SELECT sconto_percentuale AS sconto_percentuale_listino, '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino
-                FROM mg_listini
-                LEFT JOIN mg_listini_articoli ON mg_listini.id=mg_listini_articoli.id_listino
-                LEFT JOIN an_anagrafiche ON mg_listini.id=an_anagrafiche.id_listino
-                WHERE mg_listini.data_attivazione<=NOW() AND mg_listini_articoli.data_scadenza>=NOW() AND mg_listini.attivo=1 AND id_articolo = '.prepare($id_articolo).' AND dir = '.prepare($dir).' AND idanagrafica = '.prepare($id_anagrafica));
-
-                if ($listino) {
-                    $prezzo_unitario = $listino['prezzo_unitario_listino'];
-                    $sconto = $listino['sconto_percentuale_listino'];
-                }
-            }
             $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $originale->prezzo_vendita_ivato : $originale->prezzo_vendita);
             $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['idanagrafica' => $contratto->idagente])['provvigione_default'];
 
@@ -707,39 +676,11 @@ switch (post('op')) {
             $prezzo_unitario = 0;
             $sconto = 0;
             if ($riga->isArticolo()) {
-                // Prezzi netti clienti / listino fornitore
-                $prezzi = $dbo->fetchArray('SELECT minimo, massimo, sconto_percentuale, '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario
-                FROM mg_prezzi_articoli
-                WHERE id_articolo = '.prepare($riga->idarticolo).' AND dir = '.prepare($dir).' AND id_anagrafica = '.prepare($id_anagrafica));
+                $id_articolo = $riga->idarticolo;
+                $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo);
+                $prezzo_unitario = $prezzo_consigliato['prezzo_unitario'];
+                $sconto = $prezzo_consigliato['sconto'];
 
-                if ($prezzi) {
-                    foreach ($prezzi as $prezzo) {
-                        if ($riga->qta >= $prezzo['minimo'] && $riga->qta <= $prezzo['massimo']) {
-                            $prezzo_unitario = $prezzo['prezzo_unitario'];
-                            $sconto = $prezzo['sconto_percentuale'];
-                            continue;
-                        }
-
-                        if ($prezzo['minimo'] == null && $prezzo['massimo'] == null && $prezzo['prezzo_unitario'] != null) {
-                            $prezzo_unitario = $prezzo['prezzo_unitario'];
-                            $sconto = $prezzo['sconto_percentuale'];
-                            continue;
-                        }
-                    }
-                }
-                if (empty($prezzo_unitario)) {
-                    // Prezzi listini clienti
-                    $listino = $dbo->fetchOne('SELECT sconto_percentuale AS sconto_percentuale_listino, '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino
-                    FROM mg_listini
-                    LEFT JOIN mg_listini_articoli ON mg_listini.id=mg_listini_articoli.id_listino
-                    LEFT JOIN an_anagrafiche ON mg_listini.id=an_anagrafiche.id_listino
-                    WHERE mg_listini.data_attivazione<=NOW() AND mg_listini_articoli.data_scadenza>=NOW() AND mg_listini.attivo=1 AND id_articolo = '.prepare($riga->idarticolo).' AND dir = '.prepare($dir).' AND idanagrafica = '.prepare($id_anagrafica));
-
-                    if ($listino) {
-                        $prezzo_unitario = $listino['prezzo_unitario_listino'];
-                        $sconto = $listino['sconto_percentuale_listino'];
-                    }
-                }
                 $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $riga->articolo->prezzo_vendita_ivato : $riga->articolo->prezzo_vendita);
                 $riga->setPrezzoUnitario($prezzo_unitario, $riga->idiva);
 

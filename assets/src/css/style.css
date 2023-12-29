@@ -1253,4 +1253,10 @@ kbd{
 
 .fc-day-today {
     background:#fafad2 !important;
-} 
+}
+
+.notifica-prezzi {
+    position: absolute;
+    color: #ff8300;
+    z-index: 10;
+}

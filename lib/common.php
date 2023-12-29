@@ -232,10 +232,9 @@ function parseScontoCombinato($combinato)
 }
 
 /**
- * Funzione che gestisce il parsing di uno sconto combinato e la relativa trasformazione in sconto fisso.
- * Esempio: (40 + 10) % = 44 %.
+ * Visualizza le informazioni del segmento.
  *
- * @param $combinato
+ * @param $id_module
  *
  * @return float|int
  */
@@ -245,3 +244,103 @@ function getSegmentPredefined($id_module)
 
     return $id_segment;
 }
+
+/**
+ * Funzione che visualizza i prezzi degli articoli nei listini.
+ *
+ * @param $id_anagrafica
+ * @param $direzione
+ * @param $id_articolo
+ * @param $riga
+ *
+ * @return array
+ */
+function getPrezzoConsigliato($id_anagrafica, $direzione, $id_articolo, $riga = null)
+{
+    if ($riga) {
+        $qta = $riga->qta;
+        $prezzo_unitario_corrente = $riga->prezzo_unitario_corrente;
+        $sconto_percentuale_corrente = $riga->sconto_percentuale;
+    } else {
+        $qta = 1;
+    }
+    $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
+    $show_notifica_prezzo = null;
+    $show_notifica_sconto = null;
+    $prezzo_unitario = 0;
+    $sconto = 0;
+
+    // Prezzi netti clienti / listino fornitore
+    $query = 'SELECT minimo, massimo,
+        sconto_percentuale,
+        '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario
+    FROM mg_prezzi_articoli
+    WHERE id_articolo = '.prepare($id_articolo).' AND dir = '.prepare($direzione).' AND id_anagrafica = '.prepare($id_anagrafica).'
+    ORDER BY minimo ASC, massimo DESC';
+    $prezzi = database()->fetchArray($query);
+
+    // Prezzi listini clienti
+    $query = 'SELECT sconto_percentuale AS sconto_percentuale_listino,
+        '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino
+    FROM mg_listini
+    LEFT JOIN mg_listini_articoli ON mg_listini.id=mg_listini_articoli.id_listino
+    LEFT JOIN an_anagrafiche ON mg_listini.id=an_anagrafiche.id_listino
+    WHERE mg_listini.data_attivazione<=NOW() 
+    AND (mg_listini_articoli.data_scadenza>=NOW() OR (mg_listini_articoli.data_scadenza IS NULL AND mg_listini.data_scadenza_predefinita>=NOW()))
+    AND mg_listini.attivo=1
+    AND id_articolo = '.prepare($id_articolo).'
+    AND dir = '.prepare($direzione).'
+    AND idanagrafica = '.prepare($id_anagrafica);
+    $listino = database()->fetchOne($query);
+
+    // Prezzi listini clienti sempre visibili
+    $query = 'SELECT mg_listini.nome, sconto_percentuale AS sconto_percentuale_listino_visibile,
+        '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino_visibile
+    FROM mg_listini
+    LEFT JOIN mg_listini_articoli ON mg_listini.id=mg_listini_articoli.id_listino
+    WHERE mg_listini.data_attivazione<=NOW()
+    AND (mg_listini_articoli.data_scadenza>=NOW() OR (mg_listini_articoli.data_scadenza IS NULL AND mg_listini.data_scadenza_predefinita>=NOW()))
+    AND mg_listini.attivo=1 AND mg_listini.is_sempre_visibile=1 AND id_articolo = '.prepare($id_articolo).' AND dir = '.prepare($direzione);
+    $listini_sempre_visibili = database()->fetchArray($query);
+
+    if ($prezzi) {
+        foreach ($prezzi as $prezzo) {
+            if ($qta >= $prezzo['minimo'] && $qta <= $prezzo['massimo']) {
+                $show_notifica_prezzo = $prezzo['prezzo_unitario'] != $prezzo_unitario_corrente ? true : $show_notifica_prezzo;
+                $show_notifica_sconto = $prezzo['sconto_percentuale'] != $sconto_percentuale_corrente ? true : $show_notifica_sconto;
+                $prezzo_unitario = $prezzo['prezzo_unitario'];
+                $sconto = $prezzo['sconto_percentuale'];
+                continue;
+            }
+
+            if ($prezzo['minimo'] == null && $prezzo['massimo'] == null && $prezzo['prezzo_unitario'] != null) {
+                $show_notifica_prezzo = $prezzo['prezzo_unitario'] != $prezzo_unitario_corrente ? true : $show_notifica_prezzo;
+                $show_notifica_sconto = $prezzo['sconto_percentuale'] != $sconto_percentuale_corrente ? true : $show_notifica_sconto;
+                $prezzo_unitario = $prezzo['prezzo_unitario'];
+                $sconto = $prezzo['sconto_percentuale'];
+                continue;
+            }
+        }
+    }
+    if ($listino) {
+        $show_notifica_prezzo = $listino['prezzo_unitario_listino'] != $prezzo_unitario_corrente ? true : $show_notifica_prezzo;
+        $show_notifica_sconto = $listino['sconto_percentuale_listino'] != $sconto_percentuale_corrente ? true : $show_notifica_sconto;
+        $prezzo_unitario = $listino['prezzo_unitario_listino'];
+        $sconto = $listino['sconto_percentuale_listino'];
+    }
+    if ($listini_sempre_visibili) {
+        foreach ($listini_sempre_visibili as $listino_sempre_visibile) {
+            $show_notifica_prezzo = $listino_sempre_visibile['prezzo_unitario_listino_visibile'] != $prezzo_unitario_corrente ? true : $show_notifica_prezzo;
+            $show_notifica_sconto = $listino_sempre_visibile['sconto_percentuale_listino_visibile'] != $sconto_percentuale_corrente ? true : $show_notifica_sconto;
+        }
+    }
+
+    $result = [];
+    $result['show_notifica_prezzo'] = $show_notifica_prezzo;
+    $result['show_notifica_sconto'] = $show_notifica_sconto;
+    $result['prezzo_unitario'] = $prezzo_unitario;
+    $result['sconto'] = $sconto;
+
+    return $result;
+}
+

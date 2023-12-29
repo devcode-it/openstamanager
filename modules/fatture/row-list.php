@@ -57,6 +57,7 @@ echo '
 // Righe documento
 $num = 0;
 foreach ($righe as $riga) {
+    $show_notifica = [];
     ++$num;
     $extra = '';
     $mancanti = 0;
@@ -214,6 +215,11 @@ foreach ($righe as $riga) {
                 {[ "type": "number", "name": "qta_'.$riga->id.'", "value": "'.$riga->qta.'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "disabled": "'.($riga->isSconto() ? 1 : 0).'", "disabled": "'.($block_edit || $riga->isSconto()).'" ]}
             </td>';
 
+        if ($riga->isArticolo()) {
+            $id_anagrafica = $fattura->idanagrafica;
+            $show_notifica = getPrezzoConsigliato($id_anagrafica, $dir, $riga->idarticolo, $riga);
+        }
+
         // Costi unitari
         if ($dir == 'entrata') {
             if ($riga->isSconto()) {
@@ -234,6 +240,7 @@ foreach ($righe as $riga) {
         } else {
             echo '
             <td>
+                '.($show_notifica['show_notifica_prezzo'] ? '<i class="fa fa-info-circle notifica-prezzi"></i>' : '').'
                 {[ "type": "number", "name": "prezzo_'.$riga->id.'", "value": "'.$riga->prezzo_unitario_corrente.'", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-before": "'.(abs($riga->provvigione_unitaria) > 0 ? '<span class=\'tip text-info\' title=\''.provvigioneInfo($riga).'\'><small><i class=\'fa fa-handshake-o\'></i></small></span>' : '').'", "icon-after": "'.currency().'", "disabled": "'.$block_edit.'" ]}
             </td>';
         }
@@ -245,6 +252,7 @@ foreach ($righe as $riga) {
         }
         echo '
             <td>
+                '.($show_notifica['show_notifica_sconto'] ? '<i class="fa fa-info-circle notifica-prezzi"></i>' : '').'
                 {[ "type": "number", "name": "sconto_'.$riga->id.'", "value": "'.($riga->sconto_percentuale ?: $riga->sconto_unitario_corrente).'", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "'.($riga->isSconto() ? currency() : 'choice|untprc|'.($tipo_sconto ?: $riga->tipo_sconto)).'", "disabled": "'.$block_edit.'" ]}
             </td>';
 

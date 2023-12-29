@@ -59,6 +59,7 @@ echo '
         <tbody class="sortable" id="righe">';
 
     foreach ($righe as $riga) {
+        $show_notifica = [];
         $extra = '';
         $mancanti = $riga->isArticolo() ? $riga->missing_serials_number : 0;
         if ($mancanti > 0) {
@@ -127,6 +128,12 @@ echo '
                 </td>';
 
         if ($show_prezzi) {
+            if ($riga->isArticolo()) {
+                $id_anagrafica = $intervento->idanagrafica;
+                $dir = 'entrata';
+                $show_notifica = getPrezzoConsigliato($id_anagrafica, $dir, $riga->idarticolo, $riga);
+            }
+
             if ($riga->isSconto()) {
                 echo '
                     <td></td>
@@ -141,6 +148,7 @@ echo '
                 // Prezzo unitario
                 echo '
                 <td>
+                    '.($show_notifica['show_notifica_prezzo'] ? '<i class="fa fa-info-circle notifica-prezzi"></i>' : '').'
                     {[ "type": "number", "name": "prezzo_'.$riga->id.'", "value": "'.$riga->prezzo_unitario_corrente.'", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-before": "'.(abs($riga->provvigione_unitaria) > 0 ? '<span class=\'tip text-info\' title=\''.provvigioneInfo($riga).'\'><small><i class=\'fa fa-handshake-o\'></i></small></span>' : '').'", "icon-after": "'.currency().'", "disabled": "'.$block_edit.'" ]}
                 </td>';
             }
@@ -152,6 +160,7 @@ echo '
             }
             echo '
                 <td>
+                    '.($show_notifica['show_notifica_sconto'] ? '<i class="fa fa-info-circle notifica-prezzi"></i>' : '').'
                     {[ "type": "number", "name": "sconto_'.$riga->id.'", "value": "'.($riga->sconto_percentuale ?: $riga->sconto_unitario_corrente).'", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "'.($riga->isSconto() ? currency() : 'choice|untprc|'.($tipo_sconto ?: $riga->tipo_sconto)).'", "disabled": "'.$block_edit.'" ]}
                 </td>';
 

@@ -21,3 +21,6 @@ INSERT INTO `zz_imports` (`name`, `class`) VALUES ('Listini cliente', 'Modules\\
 
 -- Aggiunta impostazione per definire il listino cliente predefinito
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `order`, `help`) VALUES (NULL, 'Listino cliente predefinito', '', 'query=SELECT id, nome AS descrizione FROM `mg_listini` ORDER BY descrizione ASC', '1', 'Generali', NULL, NULL, 'In fase di creazione anagrafica cliente collega il listino all\'anagrafica stessa');
+
+-- Aggiunta impostazione per importazione serial di default
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES ("Creazione seriali in import FE", '1', 'boolean', 1, 'Fatturazione Elettronica', '16', "Determina il valore predefinito dell'impostazione Creazione seriali in fase di importazione di una fattura elettronica");

@@ -67,6 +67,10 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 ## 2.4.53 (2024-00-00)
 ### Aggiunto (Added)
 - Aggiunta sezione **dettagli aggiuntivi** nel plugin sedi per compilare i dettagli dell'automezzo (nome, descrizione, targa)
+- Aggiunta impostazione per definire il listino cliente predefinito in fase di aggiunta anagrafica cliente
+- Aggiunta azione di gruppo in Anagrafiche e Articoli per impostare il listino cliente massivamente ad Anagrafiche e Articoli
+- Aggiunto import listini cliente
+- Aggiunta icona nel campo input prezzo e sconto nelle righe dei documenti per segnalare incongruenza tra prezzo di listino e prezzo inserito.
 
 ### Modificato (Changed)
 

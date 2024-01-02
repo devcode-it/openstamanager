@@ -302,7 +302,7 @@ abstract class Article extends Accounting
         $id_sede = $id_sede ?: 0;
         $qta_finale = $qta_movimento;
 
-        if (!setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita') && $documento->direzione == 'entrata') {
+        if (!setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita') && $documento->direzione == 'entrata' && !$this->articolo->servizio) {
             $qta_sede = Movimento::where('idarticolo', $this->articolo->id)
                 ->where('idsede', $id_sede)
                 ->groupBy('idarticolo')

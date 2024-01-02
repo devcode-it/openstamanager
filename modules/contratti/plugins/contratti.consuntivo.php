@@ -342,8 +342,11 @@ if (empty($totale_ore_contratto)) {
             ksort($tipologie);
             foreach ($tipologie as $key => $tipologia) {
                 $margine = $tipologia['ricavo'] - $tipologia['costo'];
-                $margine_prc = (int) (1 - ($tipologia['costo'] / $tipologia['ricavo'])) * 100;
-                $ricarico_prc = ($tipologia['ricavo'] && $tipologia['costo']) ? (int) ((($tipologia['ricavo'] / $tipologia['costo']) - 1) * 100) : 100;
+                if ($tipologia['ricavo']) {
+                    $margine_prc = (int) (1 - ($tipologia['costo'] / $tipologia['ricavo'])) * 100;
+                    $ricarico_prc = ($tipologia['ricavo'] && $tipologia['costo']) ? (int) ((($tipologia['ricavo'] / $tipologia['costo']) - 1) * 100) : 100;
+                }
+                
                 echo '
                 <tr>
                     <td>'.$key.'</td>
@@ -372,8 +375,10 @@ if (empty($totale_ore_contratto)) {
             ksort($tecnici);
             foreach ($tecnici as $key => $tecnico) {
                 $margine = $tecnico['ricavo'] - $tecnico['costo'];
-                $margine_prc = (int) (1 - ($tecnico['costo'] / $tecnico['ricavo'])) * 100;
-                $ricarico_prc = ($tecnico['ricavo'] && $tecnico['costo']) ? (int) ((($tecnico['ricavo'] / $tecnico['costo']) - 1) * 100) : 100;
+                if ($tecnico['ricavo']) {
+                    $margine_prc = (int) (1 - ($tecnico['costo'] / $tecnico['ricavo'])) * 100;
+                    $ricarico_prc = ($tecnico['ricavo'] && $tecnico['costo']) ? (int) ((($tecnico['ricavo'] / $tecnico['costo']) - 1) * 100) : 100;
+                }
                 echo '
                 <tr>
                     <td>'.$key.'</td>
@@ -404,8 +409,10 @@ if (empty($totale_ore_contratto)) {
             ksort($stati_intervento);
             foreach ($stati_intervento as $key => $stato) {
                 $margine = $stato['ricavo'] - $stato['costo'];
-                $margine_prc = (int) (1 - ($stato['costo'] / $stato['ricavo'])) * 100;
-                $ricarico_prc = ($stato['ricavo'] && $stato['costo']) ? (int) ((($stato['ricavo'] / $stato['costo']) - 1) * 100) : 100;
+                if ($stato['ricavo']) {
+                    $margine_prc = (int) (1 - ($stato['costo'] / $stato['ricavo'])) * 100;
+                    $ricarico_prc = ($stato['ricavo'] && $stato['costo']) ? (int) ((($stato['ricavo'] / $stato['costo']) - 1) * 100) : 100;
+                }
                 echo '
                 <tr>
                     <td><div class="img-circle" style="width:18px; height:18px; position:relative; bottom:-2px; background:'.$stato['colore'].'; float:left;"></div> '.$key.'</td>

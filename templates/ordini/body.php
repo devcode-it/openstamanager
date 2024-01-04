@@ -79,15 +79,15 @@ echo "
             }
 
             echo "
-            <th class='text-center'>".tr('Descrizione', [], ['upper' => true])."</th>
-            ";
+            <th class='text-center'>".tr('Descrizione', [], ['upper' => true]).'</th>
+            ';
 
             if ($documento->direzione == 'uscita') {
                 echo "
             <th class='text-center' style='width:11%'>".tr('Codice', [], ['upper' => true])."</th>
             <th class='text-center' style='width:11%'>".tr('Codice fornitore', [], ['upper' => true]).'</th>';
             }
-            echo"
+            echo "
             <th class='text-center' style='width:9%'>".tr('Q.tà', [], ['upper' => true]).'</th>';
 
 if ($options['pricing']) {
@@ -127,7 +127,7 @@ foreach ($righe as $riga) {
                 $r['descrizione'] = str_replace('Rif. '.strtolower($key), '', $r['descrizione']);
                 preg_match("/Rif\.(.*)/s", $r['descrizione'], $rif2);
                 $r['descrizione'] = str_replace('Rif.'.strtolower($rif2[1]), '', $r['descrizione']);
-                
+
                 if (!empty($rif2)) {
                     $text .= '<b>'.$rif2[0].'</b>';
                 }
@@ -147,7 +147,7 @@ foreach ($righe as $riga) {
                     echo '
                     <td></td>';
                 }
-                echo'
+                echo '
                 <td>
                     '.nl2br($text);
             }
@@ -155,7 +155,6 @@ foreach ($righe as $riga) {
         $r['descrizione'] = preg_replace("/Rif\.(.*)/s", '', $r['descrizione']);
         $autofill->count($r['descrizione']);
     }
-
 
     $source_type = get_class($riga);
     if (!setting('Visualizza riferimento su ogni riga in stampa')) {
@@ -171,14 +170,13 @@ foreach ($righe as $riga) {
                 <td></td>';
             }
         }
-        echo'
+        echo '
             <td>'.$r['descrizione'];
     } else {
         echo $num.'
             </td>
             <td>'.nl2br($r['descrizione']);
     }
-
 
     if ($documento->direzione == 'uscita') {
         echo '

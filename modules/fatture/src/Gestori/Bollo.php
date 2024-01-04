@@ -78,15 +78,16 @@ class Bollo
 
         // Verifico se la fattura ha righe con rivalsa applicata, esclusa la marca da bollo
         $rivalsa = ($this->fattura->rivalsainps > 0 && $this->fattura->rivalsainps != (setting('Importo marca da bollo') * $cassa_pred['percentuale'] / 100)) ? 1 : 0;
-        
+
         // Rimozione riga bollo se nullo
         if (empty($addebita_bollo) || empty($marca_da_bollo)) {
             if (!empty($riga)) {
                 $riga->delete();
             }
+
             return null;
         }
-        
+
         // Creazione riga bollo se non presente
         if (empty($riga)) {
             $riga = Components\Riga::build($this->fattura);
@@ -96,14 +97,14 @@ class Bollo
         $riga->descrizione = setting('Descrizione addebito bollo');
         $riga->id_iva = setting('Iva da applicare su marca da bollo');
         $riga->idconto = setting('Conto predefinito per la marca da bollo');
-        
+
         // Applico la rivalsa alla marca da bollo se previsto
         if ((setting('Regime Fiscale') == 'RF19') && (!empty(setting('Cassa previdenziale predefinita')))) {
             $riga['id_rivalsa_inps'] = $rivalsa ? setting('Cassa previdenziale predefinita') : '';
         }
-        
+
         $riga->save();
-        
+
         return $riga->id;
     }
 }

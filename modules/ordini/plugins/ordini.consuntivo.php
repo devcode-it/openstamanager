@@ -400,7 +400,7 @@ if ($diff > 0) {
                 $margine = $materiale['ricavo'] - $materiale['costo'];
                 $margine_prc = (int) (1 - ($materiale['costo'] / ($materiale['ricavo'] ? $materiale['ricavo'] : 1))) * 100;
                 $ricarico_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int) ((($materiale['ricavo'] / ($materiale['costo'] ? $materiale['costo'] : 1)) - 1) * 100) : 100;
-                echo'
+                echo '
                 <tr>
                     <td>'.$key.'</td>
                     <td class="text-center">'.$materiale['qta'].'</td>

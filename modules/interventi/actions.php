@@ -83,7 +83,7 @@ switch (post('op')) {
 
         $tecnici_presenti_array = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico', [], ['id_intervento' => $intervento->id]);
         $tecnici_presenti = [];
-        
+
         foreach ($tecnici_presenti_array as $tecnico_presente) {
             $tecnici_presenti[] = $tecnico_presente['id_tecnico'];
 
@@ -1128,7 +1128,7 @@ switch (post('op')) {
                 $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo);
                 $prezzo_unitario = $prezzo_consigliato['prezzo_unitario'];
                 $sconto = $prezzo_consigliato['sconto'];
-                
+
                 $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $originale->prezzo_vendita_ivato : $originale->prezzo_vendita);
                 $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['idanagrafica' => $intervento->idagente])['provvigione_default'];
 

@@ -343,4 +343,3 @@ function getPrezzoConsigliato($id_anagrafica, $direzione, $id_articolo, $riga = 
 
     return $result;
 }
-

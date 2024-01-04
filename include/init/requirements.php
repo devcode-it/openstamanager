@@ -278,9 +278,9 @@ $dirs_to_check = [
 
 $directories = [];
 foreach ($dirs_to_check as $name => $description) {
-    if ($name == $backup_dir ){
+    if ($name == $backup_dir) {
         $status = is_writable($name);
-    }else{
+    } else {
         $status = is_writable(base_dir().DIRECTORY_SEPARATOR.$name);
     }
 

@@ -99,7 +99,7 @@ echo '
 		</div>
 	</div>';
 
-	$espandi_dettagli = setting('Espandi automaticamente la sezione "Dettagli aggiuntivi"');
+    $espandi_dettagli = setting('Espandi automaticamente la sezione "Dettagli aggiuntivi"');
 echo '
     <!-- DATI AGGIUNTIVI -->
     <div class="box box-info collapsable '.(empty($espandi_dettagli) ? 'collapsed-box' : '').'">

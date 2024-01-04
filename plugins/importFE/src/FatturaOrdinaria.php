@@ -98,16 +98,15 @@ class FatturaOrdinaria extends FatturaElettronica
 
             if ($linea['ScontoMaggiorazione']) {
                 $linea['ScontoMaggiorazione'] = $this->forceArray($linea['ScontoMaggiorazione']);
-                foreach($linea['ScontoMaggiorazione'] as $sm) {
-                    if(isset($sm['Percentuale'])){
+                foreach ($linea['ScontoMaggiorazione'] as $sm) {
+                    if (isset($sm['Percentuale'])) {
                         $sconto = ($importo * $sm['Percentuale'] / 100);
                         if ($sm['Tipo'] == 'SC') {
                             $importo -= $sconto;
                         } else {
                             $importo += $sconto;
                         }
-
-                    } elseif(isset($sm['Importo'])) {
+                    } elseif (isset($sm['Importo'])) {
                         if ($sm['Tipo'] == 'SC') {
                             $importo -= $sm['Importo'];
                         } else {
@@ -116,11 +115,11 @@ class FatturaOrdinaria extends FatturaElettronica
                     }
                 }
             }
-            
+
             if (!$linea['Quantita']) {
-                $importo = $linea['PrezzoUnitario'];  
-            } 
-            
+                $importo = $linea['PrezzoUnitario'];
+            }
+
             $imponibile[$linea['AliquotaIVA']] = ($imponibile[$linea['AliquotaIVA']] ?? 0) + round($importo, 2);
         }
 
@@ -130,7 +129,7 @@ class FatturaOrdinaria extends FatturaElettronica
 
         foreach ($riepiloghi as $riepilogo) {
             $aliquota_iva = $riepilogo['AliquotaIVA'];
-            $imponibile[$aliquota_iva] += (float)$riepilogo['Arrotondamento'];
+            $imponibile[$aliquota_iva] += (float) $riepilogo['Arrotondamento'];
         }
 
         foreach ($imponibile as $aliquota_iva => $importo) {
@@ -155,11 +154,11 @@ class FatturaOrdinaria extends FatturaElettronica
 
         foreach ($riepiloghi_raggruppati as $riepilogo) {
             $valore = 0;
-            $diff_iva = round((float)$riepilogo['Imposta'] - $totale_imposta[$riepilogo['AliquotaIVA']], 2);
+            $diff_iva = round((float) $riepilogo['Imposta'] - $totale_imposta[$riepilogo['AliquotaIVA']], 2);
 
             if ($diff_iva) {
                 $valore = $diff_iva * 100 / $riepilogo['AliquotaIVA'];
-            } 
+            }
 
             if ($valore != 0) {
                 $descrizione = tr('Arrotondamento IVA _VALUE_', [
@@ -452,11 +451,11 @@ class FatturaOrdinaria extends FatturaElettronica
         }
 
         $diff_iva = round($riep_imp - $fattura->iva, 2);
-        $diff = round(abs($fattura->totale_imponibile) - abs($totale_righe + $tot_arr ), 2);
+        $diff = round(abs($fattura->totale_imponibile) - abs($totale_righe + $tot_arr), 2);
         $diff_tot = round($fattura->totale_imponibile + $fattura->rivalsa_inps - $totale_imp + $tot_arr, 2);
-        
+
         $iva_arrotondamento = database()->fetchOne('SELECT * FROM co_iva WHERE percentuale=0 AND deleted_at IS NULL');
-        
+
         if (($diff != 0 && $diff != $diff_tot) || (($diff_tot != $diff) && !$diff_iva) || ($diff_iva)) {
             if ($diff != 0 && $diff != $diff_tot) {
                 $diff *= 100 / (100 + $iva_arrotondamento['percentuale']);
@@ -467,7 +466,7 @@ class FatturaOrdinaria extends FatturaElettronica
             } else {
                 $diff = -($diff_tot * 100) / (100 + $iva_arrotondamento['percentuale']);
             }
-        
+
             $obj = Riga::build($fattura);
 
             $obj->descrizione = tr('Arrotondamento calcolato in automatico');
@@ -576,14 +575,14 @@ class FatturaOrdinaria extends FatturaElettronica
         if (!empty($ritenuta)) {
             $totali = [];
             $ritenuta_norighe = true;
-            
+
             foreach ($righe as $riga) {
                 if (!empty($riga['Ritenuta'])) {
                     $totali[] = $riga['PrezzoTotale'];
                     $ritenuta_norighe = false;
                 }
             }
-            
+
             if (!empty($ritenuta)) {
                 $ritenuta = $this->forceArray($ritenuta);
                 foreach ($ritenuta as $rit) {
@@ -591,32 +590,33 @@ class FatturaOrdinaria extends FatturaElettronica
                     $importo += floatval($rit['ImportoRitenuta']);
                 }
             }
-            
+
             // Calcolo la ritenuta su tutte le righe se non è specificata su nessuna riga
             if (empty($totali)) {
                 $totale = array_sum(array_column($righe, 'PrezzoTotale'));
             } else {
                 $totale = sum($totali);
             }
-            
+
             $totale_previsto = round($importo * 100 / $percentuale, 2);
             $percentuale_importo = round($totale_previsto / $totale * 100, 2);
             $percentuale_importo = min($percentuale_importo, 100); // Nota: Fix per la percentuale che superava il 100% nel caso di importi con Rivalsa compresa
-            
-            $ritenuta_acconto = $database->fetchOne("SELECT * FROM `co_ritenutaacconto` WHERE `percentuale` = ".prepare($percentuale)." AND `percentuale_imponibile` = ".prepare($percentuale_importo));
-            
+
+            $ritenuta_acconto = $database->fetchOne('SELECT * FROM `co_ritenutaacconto` WHERE `percentuale` = '.prepare($percentuale).' AND `percentuale_imponibile` = '.prepare($percentuale_importo));
+
             if (empty($ritenuta_acconto)) {
                 $descrizione = tr('Ritenuta _PRC_% sul _TOT_%', [
                     '_PRC_' => numberFormat($percentuale),
                     '_TOT_' => numberFormat($percentuale_importo),
                 ]);
-                
-                $database->query("INSERT INTO `co_ritenutaacconto` (`descrizione`, `percentuale`, `percentuale_imponibile`) VALUES (".prepare($descrizione).", ".prepare($percentuale).", ".prepare($percentuale_importo).")");
-                $ritenuta_acconto = $database->fetchOne("SELECT * FROM `co_ritenutaacconto` WHERE `percentuale` = ".prepare($percentuale)." AND `percentuale_imponibile` = ".prepare($percentuale_importo));
+
+                $database->query('INSERT INTO `co_ritenutaacconto` (`descrizione`, `percentuale`, `percentuale_imponibile`) VALUES ('.prepare($descrizione).', '.prepare($percentuale).', '.prepare($percentuale_importo).')');
+                $ritenuta_acconto = $database->fetchOne('SELECT * FROM `co_ritenutaacconto` WHERE `percentuale` = '.prepare($percentuale).' AND `percentuale_imponibile` = '.prepare($percentuale_importo));
             }
-            
+
             $id_ritenuta_acconto = $ritenuta_acconto['id'];
         }
+
         return [
             'id_ritenuta_acconto' => $id_ritenuta_acconto,
             'id_rivalsa' => $id_rivalsa,

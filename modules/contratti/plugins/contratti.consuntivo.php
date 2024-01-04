@@ -346,7 +346,7 @@ if (empty($totale_ore_contratto)) {
                     $margine_prc = (int) (1 - ($tipologia['costo'] / $tipologia['ricavo'])) * 100;
                     $ricarico_prc = ($tipologia['ricavo'] && $tipologia['costo']) ? (int) ((($tipologia['ricavo'] / $tipologia['costo']) - 1) * 100) : 100;
                 }
-                
+
                 echo '
                 <tr>
                     <td>'.$key.'</td>

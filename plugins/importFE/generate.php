@@ -605,14 +605,14 @@ if (!empty($righe)) {
                         </div>
 
                         <div class="row">';
-                        if (setting('Creazione seriali in import FE') && $serial) {
-                            for ($i = 0; $i < $qta; ++$i) {
-                                echo '
+            if (setting('Creazione seriali in import FE') && $serial) {
+                for ($i = 0; $i < $qta; ++$i) {
+                    echo '
                                             <div class="col-md-3">
                                                 {[ "type": "text", "label": "'.tr('Serial').'", "name": "serial['.$key.'][]", "value": "'.$serial[$i].'" ]}
                                             </div>';
-                            }
-                        }
+                }
+            }
             echo '
                         </div>
                     </div> 

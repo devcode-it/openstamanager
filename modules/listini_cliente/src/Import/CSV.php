@@ -22,7 +22,7 @@ namespace Modules\ListiniCliente\Import;
 use Importer\CSVImporter;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\ListiniCliente\Articolo;
-use Modules\ListiniCliente\Listino;
+
 /**
  * Struttura per la gestione delle operazioni di importazione (da CSV) degli Articoli.
  *
@@ -53,7 +53,7 @@ class CSV extends CSVImporter
             [
                 'field' => 'sconto_percentuale',
                 'label' => 'Sconto percentuale',
-            ]
+            ],
         ];
     }
 

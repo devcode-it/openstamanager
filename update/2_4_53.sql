@@ -1,3 +1,6 @@
+-- Aggiunta impostazione per visualizzare riferimento su ogni riga in stampa
+UPDATE `zz_settings` SET `zz_settings`.`nome` = 'Visualizza riferimento su ogni riga in stampa', `help` = "Se disabilitato, raggruppa il riferimento ai documenti collegati in un\'unica riga, se abilitato riporta i riferimenti ai documenti in ogni riga." WHERE `zz_settings`.`nome` = "Riferimento dei documenti nelle stampe";
+
 -- Correzioni Automezzi
 UPDATE `zz_views` SET `query` = 'IFNULL(an_sedi.nome,an_sedi.nomesede)', `order` = '1' WHERE `zz_views`.`name` = 'Nome' AND `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE name='Automezzi');
 

@@ -4,7 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.4.53 (2024-00-00)](#2453-2024-00-00)
+- [2.4.53 (2024-01-05)](#2453-2024-01-05)
 - [2.4.52 (2023-12-08)](#2452-2023-12-08)
 - [2.4.51 (2023-10-30)](#2451-2023-10-30)
 - [2.4.50 (2023-10-06)](#2450-2023-10-06)
@@ -64,21 +64,36 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
-## 2.4.53 (2024-00-00)
+## 2.4.53 (2024-01-05)
 ### Aggiunto (Added)
 - Aggiunta sezione **dettagli aggiuntivi** nel plugin sedi per compilare i dettagli dell'automezzo (nome, descrizione, targa)
-- Aggiunta impostazione per definire il listino cliente predefinito in fase di aggiunta anagrafica cliente
-- Aggiunta azione di gruppo in Anagrafiche e Articoli per impostare il listino cliente massivamente ad Anagrafiche e Articoli
+- Aggiunta impostazione per definire il **listino cliente** predefinito in fase di aggiunta anagrafica cliente
+- Aggiunta azione di gruppo in **Anagrafiche** e **Articoli** per impostare il listino cliente massivamente ad Anagrafiche e Articoli
 - Aggiunto import listini cliente
-- Aggiunta icona nel campo input prezzo e sconto nelle righe dei documenti per segnalare incongruenza tra prezzo di listino e prezzo inserito.
+- Aggiunta icona nel campo input prezzo e sconto nelle righe dei documenti per segnalare incongruenza tra prezzo di listino e prezzo inserito
+- Aggiunta impostazione per scegliere di non importare i seriali in fase di importazione delle fatture elettroniche
+- Aggiunta colonna email in vista **Anagrafiche**
+- Aggiunto mod_mime ai requisiti server
+- Aggiunta la ricerca articolo per barcode in fase di importazione fattura elettronica
+- Aggiunta impostazione per raggruppare i riferimenti riga in fase di stampa
 
 ### Modificato (Changed)
+- Migliorata la visualizzazione del plugin movimenti in **Anagrafiche**
+- Migliorata la stampa **Automezzi** per automezzi senza magazzino registrato
+- Modificato il valore di decimali per le quantità in stampa di default a 2
+- Migliorate le ricerche indirizzo in italiano
 
 ### Fixed
-- Corretto filtro articoli negli automezzi prendendo correttamente la giacenza della sede centrale 
+- Corretto filtro articoli negli **Automezzi** per visualizzare correttamente la giacenza della sede centrale 
 - Corretta selezione automatica iva all'aggiunta degli articoli nei documenti di vendita. Il sistema da priorità all'iva del fornitore se presente, altrimenti passa all'iva dell'articolo se presente, altrimenti assegna l'iva di default definita in impostazioni.
-- Corretta la visata vista riferimenti negli ordini cliente aggiungendo il numero esterno del DDT al posto dell'id come veniva erronamente visualizzato prima
+- Corretta la vista riferimenti negli **Ordini cliente** aggiungendo il numero esterno del DDT al posto dell'id come veniva erroneamente visualizzato prima
 - Corretta l'applicazione della rivalsa sulla marca da bollo
+- Corretto l'automatismo che aggiorna la quantità degli articoli nelle righe quando sono servizi
+- Corretto il controllo che verifica la presenza della cartella backup/
+- Corretta l'IVA di acquisto degli articoli
+- Corretti gli arrotondamenti in fase di importazione fattura elettronica
+- Corretti i seriali in fase di importazione fattura elettronica
+- Corretta la ricerca coordinate con google maps
 
 ## 2.4.52 (2023-12-08)
 ### Aggiunto (Added)

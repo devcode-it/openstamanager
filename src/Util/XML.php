@@ -92,18 +92,33 @@ class XML
 
         $output_file = $directory.'/'.basename($file, '.p7m');
 
-        exec('openssl smime -verify -noverify -in "'.$file.'" -inform DER -out "'.$output_file.'"', $output, $cmd);
-        if (!file_exists($output_file)) {
-            $signer = $directory.'/signer';
-
-            self::decode($file, $output_file, $signer);
-
-            self::der2smime($file);
-            self::decode($file, $output_file, $signer);
+        try {
+          if (function_exists('exec')) {
+        
+            exec('openssl smime -verify -noverify -in "'.$file.'" -inform DER -out "'.$output_file.'"', $output, $cmd);
 
             if (!file_exists($output_file)) {
-                return false;
+                $signer = $directory.'/signer';
+
+                self::decode($file, $output_file, $signer);
+
+                self::der2smime($file);
+                self::decode($file, $output_file, $signer);
+
+                if (!file_exists($output_file)) {
+                    return false;
+                }
             }
+
+          }
+
+          if ($cmd === 0) {
+            return empty($output[0]) ? tr('Nessuna informazione sulla versione del client PHP') : $output[0];
+          }
+
+        }
+        catch (Exception $e) {
+            return false;
         }
 
         return $output_file;

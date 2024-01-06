@@ -125,6 +125,11 @@ $settings = [
         'type' => 'value',
         'description' => '>5000',
     ],
+
+    'exec' => [
+        'type' => 'function',
+        'description' => tr('Permette di importare file con estensione .p7m'),
+    ],
 ];
 
 $php = [];
@@ -140,6 +145,8 @@ foreach ($settings as $name => $values) {
         $status = ((version_compare(phpversion(), $values['minimum'], '>=') && version_compare(phpversion(), $values['maximum'], '<=')) ? 1 : 0);
     } elseif ($values['type'] == 'ext') {
         $status = extension_loaded($name);
+    } elseif ($values['type'] == 'function') {
+        $status = is_callable($name);
     } else {
         $ini = str_replace(['k', 'M'], ['000', '000000'], ini_get($name));
         $real = str_replace(['k', 'M'], ['000', '000000'], $description);
@@ -164,13 +171,13 @@ foreach ($settings as $name => $values) {
         ]);
     }
 
-    $type = ($values['type'] == 'ext') ? tr('Estensione') : tr('Impostazione');
-
     if ($values['type'] == 'ext') {
         $type = tr('Estensione');
     } elseif ($values['type'] == 'version') {
         $type = tr('Versione');
-    } else {
+    } elseif ($values['type'] == 'function') {
+        $type = tr('Funzione');
+    }else {
         $type = tr('Impostazione');
     }
 

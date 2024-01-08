@@ -42,16 +42,19 @@ if (null == $orario_inizio || '00:00:00' == $orario_inizio) {
 
 // Un utente del gruppo Tecnici può aprire attività solo a proprio nome
 $id_tecnico = filter('id_tecnico');
+$id_cliente = null;
+
 if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
     $id_tecnico = $user['idanagrafica'];
 } elseif ($user['gruppo'] == 'Clienti' && !empty($user['idanagrafica'])) {
     $id_cliente = $user['idanagrafica'];
 }
 
+
 // Se è indicata un'anagrafica relativa, si carica il tipo di intervento di default impostato
 if (!empty($id_anagrafica)) {
     $anagrafica = $dbo->fetchOne('SELECT idtipointervento_default, idzona FROM an_anagrafiche WHERE idanagrafica='.prepare($id_anagrafica));
-    $id_tipo = $id_tipo ?: $anagrafica['idtipointervento_default'];
+    $id_tipo ??= $anagrafica['idtipointervento_default'];
     $id_zona = $anagrafica['idzona'];
 }
 
@@ -70,7 +73,7 @@ if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
     // Informazioni del Promemoria
     $promemoria = $dbo->fetchOne('SELECT *, (SELECT tempo_standard FROM in_tipiintervento WHERE idtipointervento = co_promemoria.idtipointervento) AS tempo_standard FROM co_promemoria WHERE idcontratto='.prepare($id_contratto).' AND id = '.prepare($id_promemoria_contratto));
     $id_tipo = $promemoria['idtipointervento'];
-    $data = (null !== filter('data')) ? filter('data') : $promemoria['data_richiesta'];
+    $data = filter('data') ?? $promemoria['data_richiesta'];
     $richiesta = $promemoria['richiesta'];
     $descrizione = $promemoria['descrizione'];
     $id_sede = $promemoria['idsede'];
@@ -93,7 +96,7 @@ elseif (!empty($id_intervento)) {
     $intervento = $dbo->fetchOne('SELECT *, (SELECT idcontratto FROM co_promemoria WHERE idintervento = in_interventi.id LIMIT 0,1) AS idcontratto, in_interventi.id_preventivo as idpreventivo, (SELECT tempo_standard FROM in_tipiintervento WHERE idtipointervento = in_interventi.idtipointervento) AS tempo_standard FROM in_interventi WHERE id = '.prepare($id_intervento));
 
     $id_tipo = $intervento['idtipointervento'];
-    $data = (null !== filter('data')) ? filter('data') : $intervento['data_richiesta'];
+    $data = filter('data') ?? $intervento['data_richiesta'];
     $data_richiesta = $intervento['data_richiesta'];
     $data_scadenza = $intervento['data_scadenza'];
     $richiesta = $intervento['richiesta'];
@@ -124,21 +127,10 @@ if (!empty($impianti_collegati)) {
 }
 
 // Impostazione della data se mancante
-if (empty($data)) {
-    $data = filter('data');
-    if (null == $data) {
-        $data = date('Y-m-d');
-    }
-}
+$data ??= filter('data') ?? date('Y-m-d');
 
 // Impostazione della data di fine da Dashboard
-if (empty($data_fine)) {
-    $data_fine = filter('data_fine');
-    if (null == $data_fine) {
-        $data_fine = $data;
-    }
-}
-$data_fine = $data_fine ?: $data;
+$data_fine ??= filter('data_fine') ?? $data;
 
 $inizio_sessione = $data.' '.$orario_inizio;
 $fine_sessione = $data_fine.' '.$orario_fine;
@@ -586,16 +578,16 @@ echo '
         }
 
         plus_sede = $(".modal #idsede_destinazione").parent().find(".btn");
-        plus_sede.attr("onclick", plus_sede.attr("onclick").replace(/id_parent=[0-9]*/, "id_parent=" + value));
+        plus_sede.attr("onclick", plus_sede.attr("onclick").replace(/id_parent=null/, "id_parent=").replace(/id_parent=[0-9]*/, "id_parent=" + value));
 
         plus_impianto = $(".modal #idimpianti").parent().find(".btn");
-        plus_impianto.attr("onclick", plus_impianto.attr("onclick").replace(/id_anagrafica=[0-9]*/, "id_anagrafica=" + value));
+        plus_impianto.attr("onclick", plus_impianto.attr("onclick").replace(/id_anagrafica=null/, "id_anagrafica=").replace(/id_anagrafica=[0-9]*/, "id_anagrafica=" + value));
 
         plus_contratto = $(".modal #idcontratto").parent().find(".btn");
-        plus_contratto.attr("onclick", plus_contratto.attr("onclick").replace(/idanagrafica=[0-9]*/, "idanagrafica=" + value));
+        plus_contratto.attr("onclick", plus_contratto.attr("onclick").replace(/idanagrafica=null/, "idanagrafica=").replace(/idanagrafica=[0-9]*/, "idanagrafica=" + value));
 
         plus_referente = $(".modal #idreferente").parent().find(".btn");
-        plus_referente.attr("onclick", plus_referente.attr("onclick").replace(/id_parent=[0-9]*/, "id_parent=" + value));
+        plus_referente.attr("onclick", plus_referente.attr("onclick").replace(/id_parent=null/, "id_parent=").replace(/id_parent=[0-9]*/, "id_parent=" + value));
 	});
 
     //gestione del cliente finale

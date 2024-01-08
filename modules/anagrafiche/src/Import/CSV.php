@@ -267,9 +267,9 @@ class CSV extends CSVImporter
         }
         unset($record['idtipoanagrafica']);
 
-        $tipi_selezionati = [];
+        $tipo = '';
         if (!empty($record['tipo'])) {
-            $tipi_selezionati = explode(',', $record['tipo']);
+            $tipo = $record['tipo'];
         }
         unset($record['tipo']);
 
@@ -339,7 +339,7 @@ class CSV extends CSVImporter
 
         $anagrafica->fill($record);
         $anagrafica->tipologie = $tipologie;
-        $anagrafica->tipo = $tipi_selezionati;
+        $anagrafica->tipo = $tipo;
         $anagrafica->save();
 
         $sede = $anagrafica->sedeLegale;

@@ -50,7 +50,6 @@ if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
     $id_cliente = $user['idanagrafica'];
 }
 
-
 // Se è indicata un'anagrafica relativa, si carica il tipo di intervento di default impostato
 if (!empty($id_anagrafica)) {
     $anagrafica = $dbo->fetchOne('SELECT idtipointervento_default, idzona FROM an_anagrafiche WHERE idanagrafica='.prepare($id_anagrafica));

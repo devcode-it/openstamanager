@@ -146,7 +146,7 @@ foreach ($settings as $name => $values) {
     } elseif ($values['type'] == 'ext') {
         $status = extension_loaded($name);
     } elseif ($values['type'] == 'function') {
-        $status = ((function_exists($name) && is_callable($name)) ? 1: 0);
+        $status = ((function_exists($name) && is_callable($name)) ? 1 : 0);
     } else {
         $ini = str_replace(['k', 'M'], ['000', '000000'], ini_get($name));
         $real = str_replace(['k', 'M'], ['000', '000000'], $description);
@@ -177,7 +177,7 @@ foreach ($settings as $name => $values) {
         $type = tr('Versione');
     } elseif ($values['type'] == 'function') {
         $type = tr('Funzione');
-    }else {
+    } else {
         $type = tr('Impostazione');
     }
 

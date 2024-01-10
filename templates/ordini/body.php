@@ -174,7 +174,19 @@ foreach ($righe as $riga) {
             <td>'.$r['descrizione'];
     } else {
         echo $num.'
-            </td>
+            </td>';
+        if ($has_image) {
+            if ($riga->isArticolo() && !empty($riga->articolo->image)) {
+                echo '
+                    <td align="center">
+                        <img src="'.$riga->articolo->image.'" style="max-height: 80px; max-width:120px">
+                    </td>';
+            } else {
+                echo '
+                    <td></td>';
+            }
+        }
+        echo '
             <td>'.nl2br($r['descrizione']);
     }
 

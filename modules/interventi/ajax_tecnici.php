@@ -83,7 +83,8 @@ if (!empty($sessioni)) {
             '.$sessione['ragione_sociale'].' '.(($sessione['anagrafica_deleted_at']) ? '<small class="text-danger"><em>('.tr('Eliminato').')</em></small>' : '').'</th>
             <th width="15%">'.tr('Orario inizio').'</th>
             <th width="15%">'.tr('Orario fine').'</th>
-            <th width="12%">'.tr('Ore').'</th>
+            <th width="2%"> </th>
+            <th width="10%">'.tr('Ore').'</th>
             <th width="12%">'.tr('Km').'</th>';
 
             if ($show_costi) {
@@ -142,9 +143,10 @@ if (!empty($sessioni)) {
 
         // ORE
         echo '
-        <td style="border-right:1px solid #aaa;">'.($ore <= 0 ? '<i class="fa fa-warning tip" style="position:relative;margin-left:-16px;" title="'.tr('Questa sessione è vuota').'" ></i>' : '').' 
+        <td style="border-right:1px solid #aaa;">'.($ore <= 0 ? '<i class="fa fa-warning tip fa-2x text-danger" style="text-center;"></i>' : '').' 
+        </td>
+        <td style="border-right:1px solid #aaa;"> 
             {[ "type": "number", "name": "ore_'.$sessione['id'].'", "required": 1, "value": "'.numberFormat($ore, 'qta').'", "disabled": "1" ]}
-
 
                 <div class="extra hide">
                     <table class="table table-condensed table-bordered">
@@ -426,6 +428,12 @@ $("#tecnici .tipo_icon_after").on("change", function() {
 
 $("[id^=data_inizio_], [id^=data_fine_]").on("dp.hide", function (e) {
     aggiornaSessioneInline($(this).closest("tr").data("id"));
+});
+
+$("[id^=data_fine_]").on("dp.change", function (e) {
+    if($("[id^=data_inizio_]").data("DateTimePicker").date() > e.date){
+        $("[id^=data_inizio_]").data("DateTimePicker").date(e.date);
+    }
 });
 
 function caricaTecnici() {

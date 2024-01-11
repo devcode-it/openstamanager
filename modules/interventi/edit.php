@@ -332,59 +332,54 @@ $tecnici_assegnati = array_column($tecnici_assegnati, 'id_tecnico');
 echo '
                 <div class="col-md-4">
                     {[ "type": "select", "label": "'.tr('Tecnici assegnati').'", "multiple": "1", "name": "tecnici_assegnati[]", "ajax-source": "tecnici", "value": "'.implode(',', $tecnici_assegnati).'", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Tecnico&readonly_tipo=1" ]}
-                </div>';
-
-?>
+                </div>
             </div>
 
             <!-- RIGA 5 -->
             <div class="row">
-                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
-                <?php
-                echo input([
-                    'type' => 'ckeditor',
-                    'label' => tr('Richiesta'),
-                    'name' => 'richiesta',
-                    'required' => 1,
-                    'readonly' => $record['flag_completato'],
-                    'extra' => 'rows="5"',
-                    'value' => $record['richiesta'],
-                ]);
-                ?>
+                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">';
+                    echo input([
+                        'type' => 'ckeditor',
+                        'label' => tr('Richiesta'),
+                        'name' => 'richiesta',
+                        'id' => 'richiesta_add',
+                        'required' => 1,
+                        'value' => $richiesta,
+                        'extra' => 'style=\'max-height:80px;\'',
+                    ]);
+                    echo '
                 </div>
-
-                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
-                    <?php
+                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">';
                     echo input([
                         'type' => 'ckeditor',
                         'label' => tr('Descrizione'),
                         'name' => 'descrizione',
-                        'readonly' => $record['flag_completato'],
-                        'extra' => 'rows="10"',
-                        'value' => $record['descrizione'],
+                        'id' => 'descrizione_add',
+                        'value' => $descrizione,
+                        'extra' => 'style=\'max-height:80px;\'',
                     ]);
-                    ?>
+                    echo '
                 </div>
-<?php
+            </div>';
                 // Nascondo le note interne ai clienti
                 if ($user->gruppo != 'Clienti') {
                     echo '
-                    <div class="col-md-12">
-                        {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows=\'5\'" ]}
+                    <div class="row">
+                        <div class="col-md-12">
+                            {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows=\'5\'" ]}
+                        </div>
                     </div>';
                 }
 
                 // Conteggio numero articoli intervento per eventuale blocco della sede di partenza
                 $articoli = $intervento->articoli;
-?>
+                echo'
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "readonly": "<?php echo ($record['flag_completato'] || !$articoli->isEmpty()) ? 1 : 0; ?>" ]}
+                    {[ "type": "select", "label": "<'.tr('Partenza merce').'>", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "readonly": "'.(($record['flag_completato'] || !$articoli->isEmpty()) ? 1 : 0).'" ]}
                 </div>
             </div>
         </div>
-    </div>
-
-<?php
+    </div>';
 
     // Visualizzo solo se l'anagrafica cliente è un ente pubblico
     if (!empty($record['idcontratto'])) {

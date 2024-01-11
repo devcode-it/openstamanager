@@ -344,7 +344,7 @@ echo '
                         'name' => 'richiesta',
                         'id' => 'richiesta_add',
                         'required' => 1,
-                        'value' => $richiesta,
+                        'value' => $record['richiesta'],
                         'extra' => 'style=\'max-height:80px;\'',
                     ]);
                     echo '
@@ -355,7 +355,7 @@ echo '
                         'label' => tr('Descrizione'),
                         'name' => 'descrizione',
                         'id' => 'descrizione_add',
-                        'value' => $descrizione,
+                        'value' => $record['descrizione'],
                         'extra' => 'style=\'max-height:80px;\'',
                     ]);
                     echo '
@@ -374,9 +374,9 @@ echo '
                 // Conteggio numero articoli intervento per eventuale blocco della sede di partenza
                 $articoli = $intervento->articoli;
                 echo'
-                <div class="col-md-4">
-                    {[ "type": "select", "label": "<'.tr('Partenza merce').'>", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "readonly": "'.(($record['flag_completato'] || !$articoli->isEmpty()) ? 1 : 0).'" ]}
-                </div>
+                <div class="row"><div class="col-md-4">
+                    {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "readonly": "'.(($record['flag_completato'] || !$articoli->isEmpty()) ? 1 : 0).'" ]}
+                </div></div>
             </div>
         </div>
     </div>';

@@ -167,22 +167,23 @@ echo '
 
                         <tbody id="scadenze">';
 
-foreach ($scadenze as $i => $scadenza) {
-    if ($scadenza['da_pagare'] == $scadenza['pagato']) {
-        $class = 'success';
-    } elseif (abs($scadenza['pagato']) == 0) {
-        $class = 'danger';
-    } elseif (abs($scadenza['pagato']) <= abs($scadenza['da_pagare'])) {
-        $class = 'warning';
-    } else {
-        $class = 'danger';
-    }
+    foreach ($scadenze as $i => $scadenza) {
+        $scadenza = (array) $scadenza;
+        if ($scadenza['da_pagare'] === $scadenza['pagato'] && $scadenza['da_pagare'] > 0) {
+            $class = 'success';
+        } elseif (abs($scadenza['pagato']) === 0.000000) {
+            $class = 'danger';
+        } elseif (abs($scadenza['pagato']) <= abs($scadenza['da_pagare'])) {
+            $class = 'warning';
+        } else {
+            $class = 'danger';
+        }
 
-    echo '
+        echo '
                             <tr class="'.$class.'">
                                 <input type="hidden" name="id_scadenza['.$i.']" value="'.$scadenza['id'].'">
                                 <td align="center">
-                                    '.($scadenza['da_pagare'] > 0 ?
+                                    '.($dir == 'entrata' ?
                                     '{[ "type": "select", "name": "id_banca_azienda['.$i.']", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['id_banca_azienda'].'", "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
                                     :
                                     '{[ "type": "select", "name": "id_banca_controparte['.$i.']", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).', "value": "'.$scadenza['id_banca_controparte'].'", "icon-after": "add|'.Modules::get('Banche')['id'].'|idanagrafica='.$record['idanagrafica'].'"]}
@@ -190,7 +191,7 @@ foreach ($scadenze as $i => $scadenza) {
                                 </td>
 
                                 <td align="center">
-                                    '.($scadenza['da_pagare'] > 0 ?
+                                    '.($dir == 'entrata' ?
                                     '{[ "type": "select", "name": "id_banca_controparte['.$i.']", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).', "value": "'.$scadenza['id_banca_controparte'].'", "icon-after": "add|'.Modules::get('Banche')['id'].'|idanagrafica='.$record['idanagrafica'].'"]}'
                                     :
                                     '{[ "type": "select", "name": "id_banca_azienda['.$i.']", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['id_banca_azienda'].'", "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
@@ -219,11 +220,11 @@ foreach ($scadenze as $i => $scadenza) {
 
                                 <td align="center">
                                     <a onclick="launch_modal(\''.tr('Registra contabile pagamento').'\', \''.base_path().'/add.php?id_module='.Modules::get('Prima nota')['id'].'&id_scadenze='.$scadenza['id'].'\');" class="btn btn-sm btn-primary">
-                                        <i class="fa fa-euro"></i> '.($scadenza['da_pagare'] > 0 ? tr('Incassa') : tr('Paga')).'
+                                        <i class="fa fa-euro"></i> '.($dir == 'entrata' ? tr('Incassa') : tr('Paga')).'
                                     </a>
                                 </td>
                             </tr>';
-}
+    }
 
                         echo '
                         </tbody>
@@ -242,16 +243,16 @@ foreach ($scadenze as $i => $scadenza) {
                 </div>';
 ?>
 
-                <div class="alert alert-warning hide" id="totale"><?php echo tr('Il totale da pagare non corrisponde con il totale della fattura che è pari a _MONEY_', [
+            </div>
+            <div class="alert alert-warning hide" id="totale"><?php echo tr('Il totale da pagare non corrisponde con il totale della fattura che è pari a _MONEY_', [
                     '_MONEY_' => '<b>'.moneyFormat($totale_da_pagare).'</b>',
                 ]); ?>.<br><?php echo tr('Differenza di _TOT_ _CURRENCY_', [
                         '_TOT_' => '<span id="diff"></span>',
                         '_CURRENCY_' => currency(),
                     ]); ?>.
-                </div>
-
-                <input type="hidden" id="totale_da_pagare" value="<?php echo round($totale_da_pagare, 2); ?>">
             </div>
+
+            <input type="hidden" id="totale_da_pagare" value="<?php echo round($totale_da_pagare, 2); ?>">
         </div>
     </div>
 </form>
@@ -273,35 +274,81 @@ echo '
     <tbody id="scadenza-template">
         <tr class="danger">
             <input type="hidden" name="id_scadenza[-id-]" value="">
+                <td align="center">
+                    '.($dir == 'entrata' ?
+                    '{[ "type": "select", "name": "id_banca_azienda[-id-]", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
+                    :
+                    '{[ "type": "select", "name": "id_banca_controparte[-id-]", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).', "icon-after": "add|'.Modules::get('Banche')['id'].'|idanagrafica='.$record['idanagrafica'].'"]}
+                    ').'
+                </td>
+                <td align="center">
+                    '.($dir == 'entrata' ?
+                    '{[ "type": "select", "name": "id_banca_controparte[-id-]", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).',"icon-after": "add|'.Modules::get('Banche')['id'].'|idanagrafica='.$record['idanagrafica'].'"]}'
+                    :
+                    '{[ "type": "select", "name": "id_banca_azienda[-id-]", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
+                    ).'
+                </td>
 
-            <td align="center">
-                {[ "type": "date", "name": "scadenza[-id-]" ]}
-            </td>
+                <td>
+                    {[ "type": "select", "name": "id_pagamento[-id-]", "ajax-source": "pagamenti", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).']}
+                </td>
 
-            <td class="text-right">
-                {[ "type": "number", "name": "da_pagare[-id-]", "decimals": 2, "onchange": "controlloTotale()" ]}
-            </td>
+                <td align="center">
+                    {[ "type": "date", "name": "scadenza[-id-]" ]}
+                </td>
 
-            <td class="text-right">
-                {[ "type": "number", "name": "pagato[-id-]", "decimals": 2 ]}
-            </td>
+                <td align="center">
+                    {[ "type": "date", "name": "data_concordata[-id-]" ]}
+                </td>
 
-            <td align="center">
-                {[ "type": "date", "name": "data_concordata[-id-]" ]}
-            </td>
+                <td class="text-right">
+                    {[ "type": "number", "name": "da_pagare[-id-]", "decimals": 2, "onchange": "controlloTotale()" ]}
+                </td>
+
+                <td class="text-right">
+                    {[ "type": "number", "name": "pagato[-id-]", "decimals": 2 ]}
+                </td>
+
+                <td align="center">
+                    <a onclick="launch_modal(\''.tr('Registra contabile pagamento').'\', \''.base_path().'/add.php?id_module='.Modules::get('Prima nota')['id'].'&id_scadenze=-id-\');" class="btn btn-sm btn-primary">
+                        <i class="fa fa-euro"></i> '.($dir == 'entrata' ? tr('Incassa') : tr('Paga')).'
+                    </a>
+                </td>      
+            </input>    
         </tr>
     </tbody>
 </table>
 
 <script>
-    var i = '.$i.';
 	$(document).on("click", "#add-scadenza", function() {
+        var i = '.$i.';
         cleanup_inputs();
 
         i++;
 		var text = replaceAll($("#scadenza-template").html(), "-id-", "" + i);
 
 		$("#scadenze").append(text);
+
+        $.ajax({
+            url: globals.rootdir + "/actions.php",
+            method: "POST",
+            dataType: "json",
+            data: {
+                id_module: globals.id_module,
+                id_record: globals.id_record,
+                op: "add",
+                idanagrafica: '.$record['idanagrafica'].',
+                iddocumento: '.$documento['id'].',
+                data_emissione: "'.$documento['data_emissione'].'",
+            },
+            success: function(response) {
+                restart_inputs();
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+
 		restart_inputs();
 	});
 </script>';

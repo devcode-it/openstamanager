@@ -28,8 +28,10 @@ switch (post('op')) {
         $tipo = post('tipo');
         $da_pagare = post('da_pagare');
         $descrizione = post('descrizione');
+        $iddocumento = post('iddocumento') ?: '';
+        $data_emissione = post('data_emissione') ?: date('Y-m-d');
 
-        $dbo->query('INSERT INTO co_scadenziario(idanagrafica, descrizione, tipo, data_emissione, scadenza, da_pagare, pagato) VALUES('.prepare($idanagrafica).', '.prepare($descrizione).', '.prepare($tipo).', CURDATE(), '.prepare($data).', '.prepare($da_pagare).", '0')");
+        $dbo->query('INSERT INTO co_scadenziario(idanagrafica, iddocumento, descrizione, tipo, data_emissione, scadenza, da_pagare, pagato) VALUES('.prepare($idanagrafica).', '.prepare($iddocumento).', '.prepare($descrizione).', '.prepare($tipo).', '.prepare($data_emissione).', '.prepare($data).', '.prepare($da_pagare).", '0')");
         $id_record = $dbo->lastInsertedID();
 
         flash()->info(tr('Scadenza inserita!'));
@@ -40,16 +42,14 @@ switch (post('op')) {
         $tipo = post('tipo');
         $descrizione = post('descrizione');
         $iddocumento = post('iddocumento') ?: 0;
-        $scadenze = Scadenza::where('iddocumento', $iddocumento)->get();
-
+        $scadenze = database()->table('co_scadenziario')->where('iddocumento', '=', $iddocumento)->orderBy('scadenza')->get();
         $totale_pagato = 0;
         $id_scadenza_non_completa = null;
-        foreach ($scadenze as $id => $scadenza) {
-            $pagato = post('pagato')[$id];
-            $scadenza = post('scadenza')[$id];
-            $data_concordata = post('data_concordata')[$id];
 
-            $pagato = floatval($pagato);
+        foreach ($scadenze as $id => $scadenza) {
+            $pagato = floatval(post('pagato')[$id]);
+            $data_scadenza = post('scadenza')[$id];
+            $data_concordata = post('data_concordata')[$id];
             $da_pagare = post('da_pagare')[$id];
 
             if (!empty($iddocumento)) {
@@ -79,18 +79,18 @@ switch (post('op')) {
             }
 
             $totale_pagato = sum($totale_pagato, $pagato);
-            $id_pagamento = post('id_pagamento')[$id];
-            $id_banca_azienda = post('id_banca_azienda')[$id];
-            $id_banca_controparte = post('id_banca_controparte')[$id];
+            $id_pagamento = post('id_pagamento')[$id] ?: $documento->idpagamento;
+            $id_banca_azienda = post('id_banca_azienda')[$id] ?: $documento->id_banca_azienda;
+            $id_banca_controparte = post('id_banca_controparte')[$id] ?: $documento->id_banca_controparte;
 
-            $id_scadenza = post('id_scadenza')[$id];
+            $id_scadenza = $scadenza->id;
             if (!empty($id_scadenza)) {
                 $database->update('co_scadenziario', [
                     'idanagrafica' => $idanagrafica,
                     'descrizione' => $descrizione,
                     'da_pagare' => $da_pagare,
                     'pagato' => $pagato,
-                    'scadenza' => $scadenza,
+                    'scadenza' => $data_scadenza,
                     'data_concordata' => $data_concordata,
                     'id_pagamento' => $id_pagamento,
                     'id_banca_azienda' => $id_banca_azienda,
@@ -100,7 +100,7 @@ switch (post('op')) {
                 ], ['id' => $id_scadenza]);
 
                 if ($da_pagare == 0) {
-                    $database->delete('co_scadenziario', ['id' => $id]);
+                    $database->delete('co_scadenziario', ['id' => $id_scadenza]);
                 }
             } else {
                 $database->insert('co_scadenziario', [
@@ -110,7 +110,7 @@ switch (post('op')) {
                     'iddocumento' => $iddocumento,
                     'da_pagare' => $da_pagare,
                     'pagato' => $pagato,
-                    'scadenza' => $scadenza,
+                    'scadenza' => $data_scadenza,
                     'data_concordata' => $data_concordata,
                     'data_emissione' => date('Y-m-d'),
                     'note' => post('note'),

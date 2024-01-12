@@ -1260,3 +1260,7 @@ kbd{
     color: #ff8300;
     z-index: 10;
 }
+
+.login-box .form-control-feedback{
+    pointer-events: all;
+ }

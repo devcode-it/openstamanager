@@ -101,12 +101,8 @@ class DefaultHandler implements HandlerInterface
      */
     protected function password(&$values, &$extras)
     {
-        $values['icon-after'] = '<i onclick="togglePassword_'.$values['id'].'()" class="clickable fa" id="'.$values['id'].'_toggle"></i>';
-
         $result = '
     <script>
-
-       
         const characters ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!$£%-()*[]";
 
         function generateString(length) {
@@ -141,7 +137,7 @@ class DefaultHandler implements HandlerInterface
             }
         }
 
-        $(document).ready(function(){
+        $(document).ready(function(){            
             togglePassword_'.$values['id'].'();
         });
     </script>';
@@ -201,7 +197,7 @@ class DefaultHandler implements HandlerInterface
         }
 
         // Delega al metodo "text", per la generazione del codice HTML
-        $result .= $this->text($values, $extras);
+        $result .= $this->text($values, $extras).'<span class="fa fa-eye-slash clickable form-control-feedback" id="'.$values['id'].'_toggle" onclick="togglePassword_'.$values['id'].'();"></span>';
 
         return $result;
     }

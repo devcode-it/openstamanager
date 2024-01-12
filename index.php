@@ -148,33 +148,31 @@ if (!empty(flash()->getMessage('error'))) {
 }
 
 echo '
-			<form action="?op=login" method="post" class="login-box box" autocomplete="off" >
-				<div class="box-header with-border text-center">
-					<img src="'.App::getPaths()['img'].'/logo_completo.png" class="img-responsive" alt="'.tr('OpenSTAManager, il software gestionale open source per assistenza tecnica e fatturazione elettronica').'">
-				</div>
+			<form action="?op=login" method="post" autocomplete="off">
+				<div class="login-box">
+                    <div class="login-logo">
+					    <img src="'.App::getPaths()['img'].'/logo_completo.png" class="img-responsive" alt="'.tr('OpenSTAManager, il software gestionale open source per assistenza tecnica e fatturazione elettronica').'">
+                    </div>
 
-				<div class="login-box-body box-body">
-					<div class="form-group input-group">
-						<span class="input-group-addon before"><i class="fa fa-user"></i> </span>
-						<input type="text" name="username" autocomplete="username" class="form-control" placeholder="'.tr('Nome utente').'"';
+                    <div class="login-box-body">
+                        <p class="login-box-msg">'.tr('Accedi con le tue credenziali').'</p>
+                        <div class="form-group has-feedback">
+                            <input type="text" name="username" autocomplete="username" class="form-control" placeholder="'.tr('Nome utente').'"';
 if (isset($username)) {
     echo ' value="'.$username.'"';
 }
 echo ' required>
-					</div>
+                            <span class="form-control-feedback"><i class="fa fa-user"></i> </span>
+					    </div>
 
-					{[ "type": "password", "name": "password", "autocomplete": "current-password", "placeholder": "'.tr('Password').'", "icon-before": "<i class=\"fa fa-lock\"></i>"]}
+                        <div class="form-group has-feedback">
+					        {[ "type": "password", "name": "password", "autocomplete": "current-password", "placeholder": "'.tr('Password').'" ]}
+                        </div>
 
-                    <div class="text-right">
-                        <small><a href="'.base_path().'/reset.php">'.tr('Password dimenticata?').'</a></small>
-                    </div>
+                        <button type="submit" class="btn btn-danger btn-block btn-flat">'.tr('Accedi').'</button>
+                        <br>
+                        <p><a href="'.base_path().'/reset.php">'.tr('Password dimenticata?').'</a></p>
 				</div>
-
-				<!-- /.box-body -->
-				<div class="box-footer">
-					<button type="submit" id="login" class="btn btn-danger btn-block">'.tr('Accedi').'</button>
-				</div>
-				<!-- box-footer -->
 			</form>
 			<!-- /.box -->
 

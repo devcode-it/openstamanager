@@ -94,8 +94,14 @@ if (empty($data)) {
 $info = Update::getDatabaseStructure();
 $results = integrity_diff($data, $info);
 
+$contents = file_get_contents(base_dir().'/settings.json');
+$data = json_decode($contents, true);
+
+$settings = Update::getSettings();
+$results_settings = array_diff($data, $settings);
+
 // Schermata di visualizzazione degli errori
-if (!empty($results)) {
+if (!empty($results) || !empty($results_settings)) {
     echo '
 <p>'.tr("Segue l'elenco delle tabelle del database che presentano una struttura diversa rispetto a quella prevista nella versione ufficiale del gestionale").'.</p>
 <div class="alert alert-warning">
@@ -185,11 +191,37 @@ if (!empty($results)) {
             echo '
     </tbody>
 </table>';
-        }
+        }   
     }
-} else {
-    echo '
+    if (!empty($results_settings)) {
+    echo'
+<table class="table table-bordered">
+<thead>
+    <h3>Impostazioni mancanti</h3>
+    <tr>
+        <th>'.tr('Nome').'</th>
+        <th>'.tr('Tipo').'</th>
+    </tr>
+</thead>
+    <tbody>';
+        foreach ($results_settings as $key => $setting) {
+            echo'
+            <tr>
+                <td>
+                    '.$key.'
+                </td>
+                <td>
+                    '.$setting.'
+                </td>
+            </tr>';
+        }
+            echo '
+    </tbody>
+</table>';
+    }
+} else{
+echo '
 <div class="alert alert-info">
-    <i class="fa fa-info-circle"></i> '.tr('Il database non presenta problemi di integrità').'.
+<i class="fa fa-info-circle"></i> '.tr('Il database non presenta problemi di integrità').'.
 </div>';
 }

@@ -473,6 +473,7 @@ function release(done) {
         '!checksum.json',
         '!database.json',
         '!database_5_7.json',
+        '!settings.json',
         '!manifest.json',
         '!.idea/**',
         '!.git/**',
@@ -487,6 +488,7 @@ function release(done) {
         '!config.inc.php',
         '!psalm.xml',
         '!update/structure.php',
+        '!update/settings.php',
         '!**/*.(lock|phar|log|zip|bak|jar|txt)',
         '!**/~*',
         '!vendor/tecnickcom/tcpdf/examples/**',
@@ -533,6 +535,13 @@ function release(done) {
             silent: true
         }).stdout, {
             name: 'database.json'
+        });
+
+        // Aggiunta del file per il controllo delle impostazioni
+        archive.append(shell.exec('php update/settings.php', {
+            silent: true
+        }).stdout, {
+            name: 'settings.json'
         });
 
         // Aggiunta del commit corrente nel file REVISION

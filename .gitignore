@@ -93,6 +93,7 @@ manifest.json
 checksum.json
 database.json
 database_5_7.json
+settings.json
 
 /tests/_log/*
 /tests/_temp/*

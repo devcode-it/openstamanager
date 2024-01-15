@@ -208,7 +208,7 @@ class Update
             self::normalizeDatabase($database->getDatabaseName());
 
             if (class_exists('\Models\Cache')) {
-                \Models\Cache::pool('Ultima versione di OpenSTAManager disponibile')->set(null);
+                Models\Cache::pool('Ultima versione di OpenSTAManager disponibile')->set(null);
             }
 
             // Correzione permessi per le cartelle backup e files
@@ -259,7 +259,7 @@ class Update
                         for ($i = $start; $i < $end; ++$i) {
                             try {
                                 $database->query($queries[$i]);
-                            } catch (\Exception $e) {
+                            } catch (Exception $e) {
                                 throw new PDOException(tr('Aggiornamento fallito').': '.$queries[$i]);
                             }
 
@@ -343,9 +343,9 @@ class Update
                 self::normalizeDatabase($database->getDatabaseName());
 
                 return true;
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $logger = logger();
-                $logger->addRecord(\Monolog\Logger::EMERGENCY, $e->getMessage());
+                $logger->addRecord(Monolog\Logger::EMERGENCY, $e->getMessage());
             }
 
             return false;
@@ -417,6 +417,13 @@ class Update
         }
 
         return $info;
+    }
+
+    public static function getSettings()
+    {
+        $settings = database()->table('zz_settings')->pluck('tipo', 'nome')->toArray();
+
+        return $settings;
     }
 
     /**

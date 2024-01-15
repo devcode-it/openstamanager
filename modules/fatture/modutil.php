@@ -319,7 +319,7 @@ if (!function_exists('aggiungi_movimento')) {
 
         foreach ($righe as $riga) {
             // Retrocompatibilità
-            $idconto_riga = !empty($riga['idconto']) ? $riga['idconto'] : $idconto;
+            $idconto_riga = $riga['idconto'];
             $riga['imponibile'] = $is_nota ? -$riga['imponibile'] : $riga['imponibile'];
 
             $query2 = 'INSERT INTO co_movimenti(idmastrino, data, iddocumento, id_anagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_riga).', '.prepare($riga['imponibile'] * $segno_mov2_ricavivendite).', '.prepare($primanota).')';

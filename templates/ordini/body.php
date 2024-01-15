@@ -63,7 +63,7 @@ if ($documento->direzione == 'uscita') {
 $columns = $options['pricing'] ? $columns : $columns - 3;
 
 // Creazione righe fantasma
-$autofill = new \Util\Autofill($columns, $char_number);
+$autofill = new Util\Autofill($columns, $char_number);
 $autofill->setRows(30);
 
 // Intestazione tabella per righe
@@ -73,21 +73,21 @@ echo "
         <tr>
             <th class='text-center' style='width:4%'>".tr('#', [], ['upper' => true]).'</th>';
 
-            if ($has_image) {
-                echo "
+if ($has_image) {
+    echo "
             <th class='text-center' style='width:20%'>".tr('Immagine', [], ['upper' => true]).'</th>';
-            }
+}
 
-            echo "
+echo "
             <th class='text-center'>".tr('Descrizione', [], ['upper' => true]).'</th>
             ';
 
-            if ($documento->direzione == 'uscita') {
-                echo "
+if ($documento->direzione == 'uscita') {
+    echo "
             <th class='text-center' style='width:11%'>".tr('Codice', [], ['upper' => true])."</th>
             <th class='text-center' style='width:11%'>".tr('Codice fornitore', [], ['upper' => true]).'</th>';
-            }
-            echo "
+}
+echo "
             <th class='text-center' style='width:9%'>".tr('Q.tà', [], ['upper' => true]).'</th>';
 
 if ($options['pricing']) {
@@ -97,7 +97,7 @@ if ($options['pricing']) {
             <th class='text-center' style='width:5%'>".tr('IVA', [], ['upper' => true]).' (%)</th>';
 }
 
-            echo "
+echo "
             <th class='text-center' style='width:10%'>".tr('Data evasione', [], ['upper' => true]).'</th>
         </tr>
     </thead>
@@ -309,8 +309,8 @@ $netto_a_pagare = $documento->netto;
 $show_sconto = $sconto > 0;
 
 $colspan = 5;
-($documento->direzione == 'uscita' ? $colspan += 2 : $colspan);
-($has_image ? $colspan++ : $colspan);
+$documento->direzione == 'uscita' ? $colspan += 2 : $colspan;
+$has_image ? $colspan++ : $colspan;
 
 // TOTALE COSTI FINALI
 if ($options['pricing']) {

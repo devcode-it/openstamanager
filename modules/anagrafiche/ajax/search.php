@@ -103,7 +103,7 @@ foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE "%'.$term.'%"';
 }
 
-//$query .= Modules::getAdditionalsQuery('Anagrafiche');
+// $query .= Modules::getAdditionalsQuery('Anagrafiche');
 
 $rs = $dbo->fetchArray($query);
 

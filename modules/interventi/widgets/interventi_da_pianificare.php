@@ -81,7 +81,7 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
                 <td><a target="_blank" >'.Modules::link(Modules::get('Anagrafiche')['id'], $r['idanagrafica'], $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica='.prepare($r['idanagrafica']))['ragione_sociale']).'<br><small>Presso: ';
         // Sede promemoria
         if ($r['idsede'] == '-1') {
-            echo '- '.('Nessuna').' -';
+            echo '- Nessuna -';
         } elseif (empty($r['idsede'])) {
             echo tr('Sede legale');
         } else {

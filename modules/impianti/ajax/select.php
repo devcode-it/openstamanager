@@ -21,22 +21,22 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'impianti':
-            $query = 'SELECT id, CONCAT(matricola, " - ", nome) AS descrizione FROM my_impianti |where| ORDER BY id, idanagrafica';
+        $query = 'SELECT id, CONCAT(matricola, " - ", nome) AS descrizione FROM my_impianti |where| ORDER BY id, idanagrafica';
 
-            foreach ($elements as $element) {
-                $filter[] = 'id='.prepare($element);
-            }
+        foreach ($elements as $element) {
+            $filter[] = 'id='.prepare($element);
+        }
 
-            if (!empty($search)) {
-                $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
-                $search_fields[] = 'matricola LIKE '.prepare('%'.$search.'%');
-            }
+        if (!empty($search)) {
+            $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'matricola LIKE '.prepare('%'.$search.'%');
+        }
         break;
 
-    /*
-     * Opzioni utilizzate:
-     * - idanagrafica
-     */
+        /*
+         * Opzioni utilizzate:
+         * - idanagrafica
+         */
     case 'impianti-cliente':
         $query = 'SELECT my_impianti.id, CONCAT(my_impianti.matricola, " - ", my_impianti.nome) AS descrizione, my_impianti.idanagrafica, an_anagrafiche.ragione_sociale, my_impianti.idsede, IFNULL(an_sedi.nomesede, "Sede legale") AS nomesede FROM my_impianti LEFT JOIN an_anagrafiche ON my_impianti.idanagrafica=an_anagrafiche.idanagrafica LEFT JOIN an_sedi ON my_impianti.idsede=an_sedi.id |where| ORDER BY idsede';
 
@@ -56,10 +56,10 @@ switch ($resource) {
 
         break;
 
-    /*
-     * Opzioni utilizzate:
-     * - idintervento
-     */
+        /*
+         * Opzioni utilizzate:
+         * - idintervento
+         */
     case 'impianti-intervento':
         if (isset($superselect['idintervento'])) {
             $query = 'SELECT id, CONCAT(matricola, " - ", nome) AS descrizione FROM my_impianti INNER JOIN my_impianti_interventi ON my_impianti.id=my_impianti_interventi.idimpianto |where| ORDER BY idsede';
@@ -77,10 +77,10 @@ switch ($resource) {
         }
         break;
 
-    /*
-     * Opzioni utilizzate:
-     * - matricola
-     */
+        /*
+         * Opzioni utilizzate:
+         * - matricola
+         */
     case 'componenti':
         if (isset($superselect['matricola'])) {
             $query = 'SELECT my_componenti.id, CONCAT("#", my_componenti.id, ": ", mg_articoli.codice, " - ", mg_articoli.descrizione) AS descrizione
@@ -109,38 +109,38 @@ switch ($resource) {
 
         break;
 
-        case 'categorie_imp':
+    case 'categorie_imp':
+        $query = 'SELECT `id`, `nome` AS descrizione FROM `my_impianti_categorie` |where| ORDER BY `nome`';
+
+        foreach ($elements as $element) {
+            $filter[] = '`id`='.prepare($element);
+        }
+
+        $where[] = '`parent` IS NULL';
+
+        if (!empty($search)) {
+            $search_fields[] = '`nome` LIKE '.prepare('%'.$search.'%');
+        }
+
+        break;
+
+        /*
+         * Opzioni utilizzate:
+         * - id_categoria
+         */
+    case 'sottocategorie_imp':
+        if (isset($superselect['id_categoria'])) {
             $query = 'SELECT `id`, `nome` AS descrizione FROM `my_impianti_categorie` |where| ORDER BY `nome`';
 
             foreach ($elements as $element) {
                 $filter[] = '`id`='.prepare($element);
             }
 
-            $where[] = '`parent` IS NULL';
+            $where[] = '`parent`='.prepare($superselect['id_categoria']);
 
             if (!empty($search)) {
                 $search_fields[] = '`nome` LIKE '.prepare('%'.$search.'%');
             }
-
-            break;
-
-        /*
-         * Opzioni utilizzate:
-         * - id_categoria
-         */
-        case 'sottocategorie_imp':
-            if (isset($superselect['id_categoria'])) {
-                $query = 'SELECT `id`, `nome` AS descrizione FROM `my_impianti_categorie` |where| ORDER BY `nome`';
-
-                foreach ($elements as $element) {
-                    $filter[] = '`id`='.prepare($element);
-                }
-
-                $where[] = '`parent`='.prepare($superselect['id_categoria']);
-
-                if (!empty($search)) {
-                    $search_fields[] = '`nome` LIKE '.prepare('%'.$search.'%');
-                }
-            }
-            break;
+        }
+        break;
 }

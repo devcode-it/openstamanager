@@ -19,8 +19,6 @@
 
 namespace API\Exceptions;
 
-use Exception;
-
-class ServiceError extends Exception
+class ServiceError extends \Exception
 {
 }

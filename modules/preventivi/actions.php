@@ -103,7 +103,7 @@ switch (post('op')) {
 
         break;
 
-    // Duplica preventivo
+        // Duplica preventivo
     case 'copy':
         // Copia del preventivo
         $new = $preventivo->replicate();
@@ -156,7 +156,7 @@ switch (post('op')) {
         }
         break;
 
-    // Scollegamento intervento da preventivo
+        // Scollegamento intervento da preventivo
     case 'unlink':
         if (isset($_GET['idpreventivo']) && isset($_GET['idintervento'])) {
             $idintervento = get('idintervento');
@@ -171,7 +171,7 @@ switch (post('op')) {
         }
         break;
 
-    // Eliminazione preventivo
+        // Eliminazione preventivo
     case 'delete':
         try {
             $preventivo->delete();
@@ -336,7 +336,7 @@ switch (post('op')) {
 
         break;
 
-    // Eliminazione riga
+        // Eliminazione riga
     case 'delete_riga':
         $id_righe = (array) post('righe');
 
@@ -357,7 +357,7 @@ switch (post('op')) {
 
         break;
 
-    // Duplicazione riga
+        // Duplicazione riga
     case 'copy_riga':
         $id_righe = (array) post('righe');
 
@@ -505,7 +505,7 @@ switch (post('op')) {
         $numero_totale = 0;
 
         foreach ($righe as $riga) {
-            if (($riga['id']) != null) {
+            if ($riga['id'] != null) {
                 $articolo = Articolo::find($riga['id']);
             }
 

@@ -59,8 +59,8 @@ include_once __DIR__.'/../../core.php';
 <?php
     $rs_stati = $dbo->fetchArray('SELECT * FROM in_statiintervento');
 
-    foreach ($rs_stati as $stato) {
-        ?>
+foreach ($rs_stati as $stato) {
+    ?>
             <div class="col-md-4">
                 <label><?php echo $stato['descrizione']; ?></label>
                 <div class="material-switch">
@@ -69,7 +69,7 @@ include_once __DIR__.'/../../core.php';
                 </div>
 			</div>
 <?php
-    }
+}
 ?>
         </div>
     </div>

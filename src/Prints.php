@@ -143,7 +143,7 @@ class Prints
      */
     public static function render($print, $id_record, $directory = null, $return_string = false, $overwrite = true)
     {
-        //ob_end_clean(); // Compatibilità con versioni vecchie delle stampe
+        // ob_end_clean(); // Compatibilità con versioni vecchie delle stampe
         $dbo = $database = database();
         $infos = self::get($print);
 
@@ -182,7 +182,7 @@ class Prints
             echo '
                 <p align="center">'.$error.'</p>';
 
-            exit();
+            exit;
         }
 
         if (self::isCompletelyCustom($print)) {
@@ -527,8 +527,8 @@ class Prints
             'tempDir' => base_dir().'/files/temp',
 
             // Abilitazione per lo standard PDF/A
-            //'PDFA' => true,
-            //'PDFAauto' => true,
+            // 'PDFA' => true,
+            // 'PDFAauto' => true,
         ]);
 
         if (setting('Filigrana stampe')) {
@@ -692,7 +692,7 @@ class Prints
             if (!empty($options['last-page-footer'])) {
                 $mpdf->WriteHTML('<div class="hidden">'.$foot.'</div>');
 
-                $mpdf->WriteHTML('<div style="position:absolute; bottom: 13mm; margin-right: '.($settings['margins']['right']).'mm">'.$foot.'</div>');
+                $mpdf->WriteHTML('<div style="position:absolute; bottom: 13mm; margin-right: '.$settings['margins']['right'].'mm">'.$foot.'</div>');
             }
 
             $id_files = $dbo->select('zz_files_print', 'id_file', [], ['id_print' => $id_print]);
@@ -741,8 +741,6 @@ class Prints
      * Gestore per il formato di stampa completamente gestito dalla stampa stessa.
      * Rischiede la compilazione della variabile $file, utilizzata coe return.
      *
-     * @param $id_print
-     * @param $id_record
      * @param null  $directory
      * @param false $return_string
      *

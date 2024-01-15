@@ -25,7 +25,6 @@ use API\Interfaces\RetrieveInterface;
 use API\Interfaces\UpdateInterface;
 use API\Resource;
 use Carbon\Carbon;
-use Exception;
 use Illuminate\Support\Collection;
 
 /**
@@ -39,8 +38,6 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
      * - Cleanup (elenco di record da rimuovere nell'applicazione);
      * - Record modificati (elenco di record che sono stati aggiornati nel gestionale);
      * - Dettagli del record.
-     *
-     * @param $request
      *
      * @return array[]
      */
@@ -84,8 +81,6 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
     /**
      * Gestisce la richiesta di creazione di un record, delegando le operazioni relative a *createRecord* e forzando i risultati in formato stringa.
      *
-     * @param $request
-     *
      * @return array
      */
     public function create($request)
@@ -103,8 +98,6 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
     /**
      * Gestisce la richiesta di modifica di un record, delegando le operazioni relative a *updateRecord* e forzando i risultati in formato stringa.
      *
-     * @param $request
-     *
      * @return array
      */
     public function update($request)
@@ -120,8 +113,6 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
 
     /**
      * Gestisce la richiesta di eliminazione di un record, delegando le operazioni relative a *deleteRecord*.
-     *
-     * @param $request
      */
     public function delete($request)
     {
@@ -131,8 +122,6 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
 
     /**
      * Restituisce un array contenente gli ID dei record eliminati.
-     *
-     * @param $last_sync
      *
      * @return array
      */
@@ -194,8 +183,6 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
     /**
      * Genera la mappatura id => updated_at necessaria per la gestione dei record modificati.
      *
-     * @param $records
-     *
      * @return array[]
      */
     protected function mapModifiedRecords($records)
@@ -215,8 +202,6 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
 
     /**
      * Converte i valori numerici in stringhe.
-     *
-     * @param $list
      *
      * @return array
      */
@@ -244,7 +229,7 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
      * @param string $column       Colonna di tipo AUTO_INCREMENT della tabella
      * @param null   $last_sync_at
      *
-     * @throws Exception
+     * @throws \Exception
      *
      * @return array
      */
@@ -311,7 +296,7 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
      * @param string $column       Colonna di tipo AUTO_INCREMENT della tabella
      * @param null   $last_sync_at
      *
-     * @throws Exception
+     * @throws \Exception
      *
      * @return array
      */

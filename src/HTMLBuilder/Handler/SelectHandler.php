@@ -20,7 +20,6 @@
 namespace HTMLBuilder\Handler;
 
 use AJAX;
-use Prints;
 
 /**
  * Gestione dell'input di tipo "select".
@@ -145,7 +144,7 @@ class SelectHandler implements HandlerInterface
     protected function select2($op, $elements, $info, $link = null)
     {
         // Richiamo del file dedicato alle richieste AJAX per ottenere il valore iniziale del select
-        $response = AJAX::select($op, $elements, null, 0, 100, $info);
+        $response = \AJAX::select($op, $elements, null, 0, 100, $info);
 
         $html = '';
         $results = $response['results'];
@@ -162,7 +161,7 @@ class SelectHandler implements HandlerInterface
 
             if ($link == 'stampa') {
                 $element['title'] = ' ';
-                $element['text'] = '<a href="'.Prints::getHref($element['id'], get('id_record')).'" class="text-black" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
+                $element['text'] = '<a href="'.\Prints::getHref($element['id'], get('id_record')).'" class="text-black" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
             } elseif ($link == 'allegato') {
                 $element['title'] = ' ';
                 $element['text'] = '<a href="'.base_path().'/view.php?file_id='.$element['id'].'" class="text-black" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
@@ -210,7 +209,7 @@ class SelectHandler implements HandlerInterface
 
             if ($link == 'stampa') {
                 $element['title'] = ' ';
-                $element['text'] = '<a href="'.Prints::getHref($element['id'], get('id_record')).'" class="text-black" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
+                $element['text'] = '<a href="'.\Prints::getHref($element['id'], get('id_record')).'" class="text-black" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
             } elseif ($link == 'allegato') {
                 $element['title'] = ' ';
                 $element['text'] = '<a href="'.base_path().'/view.php?file_id='.$element['id'].'" class="text-black" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
@@ -261,7 +260,6 @@ class SelectHandler implements HandlerInterface
      * Esempio: {[ "type": "select", "label": "Sesso", "name": "sesso", "values": "list=\"\": \"Non specificato\", \"M\": \"Maschio\", \"F\": \"Femmina\", \"U\": \"Unisex\"", "value": "M" ]}.
      *
      * @param array $values
-     * @param array $extras
      *
      * @return string
      */

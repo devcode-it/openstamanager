@@ -21,7 +21,6 @@ namespace Plugins\ExportFE;
 
 use API\Services;
 use Modules\Fatture\Fattura;
-use UnexpectedValueException;
 
 /**
  * Classe per la gestione delle API esterne per l'invio delle Fatture Elettroniche e la ricerca di ricevute collegate.
@@ -65,7 +64,7 @@ class Interaction extends Services
                 'code' => $body['status'],
                 'message' => $body['message'],
             ];
-        } catch (UnexpectedValueException $e) {
+        } catch (\UnexpectedValueException $e) {
         }
 
         return [
@@ -89,7 +88,7 @@ class Interaction extends Services
                 'code' => $body['status'],
                 'results' => $body['results'],
             ];
-        } catch (UnexpectedValueException $e) {
+        } catch (\UnexpectedValueException $e) {
         }
 
         return [

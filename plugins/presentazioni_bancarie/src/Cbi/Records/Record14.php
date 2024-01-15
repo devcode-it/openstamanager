@@ -20,7 +20,7 @@ namespace Plugins\PresentazioniBancarie\Cbi\Records;
  * @property string codice_cliente_debitore Codice con il quale il debitore è conosciuto dal creditore.
  * @property string flag_tipo_debitore Nel caso il debitore sia una Banca deve assumere il valore "B" (il codice ABI è indicato in pos. 70-74).
  * @property string codice_divisa Questo campo deve coincidere con quello
-omonimo del record di testa.
+ * omonimo del record di testa.
  */
 class Record14 extends BaseRecord
 {

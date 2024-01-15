@@ -22,7 +22,6 @@ namespace API\App\v1;
 use API\App\AppResource;
 use API\Exceptions\InternalError;
 use Models\Upload;
-use Modules;
 
 class AllegatiInterventi extends AppResource
 {
@@ -89,7 +88,7 @@ class AllegatiInterventi extends AppResource
 
     public function createRecord($data)
     {
-        $module = Modules::get('Interventi');
+        $module = \Modules::get('Interventi');
 
         // Creazione del file temporaneo
         $content = explode(',', $data['contenuto']);

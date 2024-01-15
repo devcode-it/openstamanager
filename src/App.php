@@ -36,7 +36,7 @@ class App
     protected static $current_element;
 
     /** @var Messages Gestione dei messaggi flash */
-    protected static $flash = null;
+    protected static $flash;
 
     /** @var bool Stato di debug */
     protected static $config = [];

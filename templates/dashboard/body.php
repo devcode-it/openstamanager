@@ -53,13 +53,13 @@ if ($calendar['format'] == 'week') {
 
     $title = $_SESSION['dashboard']['week'];
 
-    //numero di giorni nel mese
+    // numero di giorni nel mese
     $maxday = cal_days_in_month(CAL_GREGORIAN, $month, $year) + 1;
 
     $min_date = $year.'-'.$month.'-'.$day;
     $max_date = $year.'-'.$maxmonth.'-'.$maxday_;
 
-    //aggiungo un giorno
+    // aggiungo un giorno
     $max_date = date('Y-m-d', date(strtotime('+1 day', strtotime($max_date))));
 
     $where = '  (in_interventi_tecnici.orario_inizio) <= '.prepare($max_date).' AND  (in_interventi_tecnici.orario_inizio) >= '.prepare($min_date).' AND ';

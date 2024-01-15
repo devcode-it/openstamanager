@@ -76,7 +76,7 @@ echo '
         </div>
     </div>';
 
-//Accoda a fatture non emesse
+// Accoda a fatture non emesse
 echo '
     <div class="row">
         <div class="col-md-6">
@@ -84,7 +84,7 @@ echo '
         </div>
     </div>';
 
-//gestione replace
+// gestione replace
 $descrizione = setting('Descrizione fattura pianificata');
 $modules = MODULES::get('Contratti')['id'];
 $variables = include Modules::filepath($modules, 'variables.php');

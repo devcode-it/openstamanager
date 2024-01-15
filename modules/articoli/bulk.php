@@ -155,7 +155,7 @@ switch (post('op')) {
         }
 
         redirect(base_path().'/pdfgen.php?id_print='.$id_print.'&id_record='.Articolo::where('codice', '!=', '')->first()->id);
-        exit();
+        exit;
 
     case 'change-qta':
         $descrizione = post('descrizione');
@@ -219,7 +219,7 @@ switch (post('op')) {
 
         $database->commitTransaction();
         redirect(base_path().'/editor.php?id_module='.Modules::get('Preventivi')['id'].'&id_record='.$id_preventivo);
-        exit();
+        exit;
 
     case 'export-csv':
         $file = temp_file();

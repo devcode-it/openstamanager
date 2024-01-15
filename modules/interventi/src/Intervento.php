@@ -32,7 +32,7 @@ use Util\Generator;
 class Intervento extends Document
 {
     use ReferenceTrait;
-    //use SoftDeletes;
+    // use SoftDeletes;
 
     use RecordTrait;
 
@@ -215,7 +215,7 @@ class Intervento extends Document
     {
         $maschera = Generator::getMaschera($id_segment);
 
-        //$ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice');
+        // $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice');
 
         if ((strpos($maschera, 'YYYY') == false) or (strpos($maschera, 'yy') == false)) {
             $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice', [

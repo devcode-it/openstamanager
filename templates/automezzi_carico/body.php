@@ -1,16 +1,16 @@
 <?php
 
-    echo '
+echo '
 	<br><br><span><big><b>CARICO SUGLI AUTOMEZZI IL '.date('d/m/Y', strtotime($dt_carico)).'</b></big></span><br>';
 
-    $targa = '';
-    $totale_qta = 0.000;
-    $totale_ven = 0.00;
-    if ($rs) {
-        for ($r = 0; $r < sizeof($rs); ++$r) {
-            if ($targa != $rs[$r]['targa']) {
-                if ($targa != '') {
-                    echo "
+$targa = '';
+$totale_qta = 0.000;
+$totale_ven = 0.00;
+if ($rs) {
+    for ($r = 0; $r < sizeof($rs); ++$r) {
+        if ($targa != $rs[$r]['targa']) {
+            if ($targa != '') {
+                echo "
                     <table cellspacing='0' style='table-layout:fixed;'>
                         <col width='35'><col width='275'><col width='50'><col width='70'><col width='45'><col width='65'><col width='65'>
                         <tr>
@@ -23,9 +23,9 @@
                             <td class='table_cell cell-padded'>".'&nbsp;'.'</td>
                         </tr>
                     </table>';
-                }
+            }
 
-                echo "
+            echo "
                 <br/>
                 <table cellspacing='0' style='table-layout:fixed;'>
                     <col width='150'><col width='250'>
@@ -35,7 +35,7 @@
                     </tr>
                 </table>';
 
-                echo "
+            echo "
                 <table class='table table-bordered' cellspacing='0' style='table-layout:fixed;'>
                     <col width='35'><col width='275'><col width='50'><col width='70'><col width='45'><col width='65'><col width='65'>
                     <tr>
@@ -47,19 +47,19 @@
                         <th bgcolor='#dddddd' class='full_cell cell-padded' width='10%'>Totale</th>
                         <th bgcolor='#dddddd' class='full_cell cell-padded' width='10%'>Utente</th>
                     </tr>";
-                $targa = $rs[$r]['targa'];
-                $totale_qta = 0.000;
-                $totale_ven = 0.00;
-            }
-            echo '
+            $targa = $rs[$r]['targa'];
+            $totale_qta = 0.000;
+            $totale_ven = 0.00;
+        }
+        echo '
                     <tr>';
-            $qta = number_format($rs[$r]['qta'], 3, ',', '.').'&nbsp;'.$rs[$r]['um'];
+        $qta = number_format($rs[$r]['qta'], 3, ',', '.').'&nbsp;'.$rs[$r]['um'];
 
-            $prz_vendita = number_format($rs[$r]['prezzo_vendita'], 2);
-            $prz_vendita += ($prz_vendita / 100) * $rs[$r]['iva'];
-            $totv = number_format($prz_vendita, 2) * $rs[$r]['qta'];
+        $prz_vendita = number_format($rs[$r]['prezzo_vendita'], 2);
+        $prz_vendita += ($prz_vendita / 100) * $rs[$r]['iva'];
+        $totv = number_format($prz_vendita, 2) * $rs[$r]['qta'];
 
-            echo "
+        echo "
                     <td class='first_cell cell-padded'>".$rs[$r]['codice']."</td>
                     <td class='table_cell cell-padded'>".$rs[$r]['descrizione']."</td>
                     <td class='table_cell cell-padded'>".$rs[$r]['subcategoria']."</td>
@@ -69,20 +69,20 @@
                     <td class='table_cell cell-padded'>".ucfirst($rs[$r]['username']).'</td>
                 </tr>';
 
-            $totale_ven = $totale_ven + $totv;
-            if ($rs[$r]['um'] == 'kg') {
-                $totale_qta = $totale_qta + $rs[$r]['qta'];
-            }
+        $totale_ven = $totale_ven + $totv;
+        if ($rs[$r]['um'] == 'kg') {
+            $totale_qta = $totale_qta + $rs[$r]['qta'];
         }
-    } else {
-        echo 'Nessun articolo caricato sugli automezzi il '.date('d/m/Y', strtotime($dt_carico)),'.';
     }
+} else {
+    echo 'Nessun articolo caricato sugli automezzi il '.date('d/m/Y', strtotime($dt_carico)),'.';
+}
 
-    echo '
+echo '
     </table>';
 
-    if ($targa != '') {
-        echo "
+if ($targa != '') {
+    echo "
 		<table cellspacing='0' style='table-layout:fixed;'>
             <tr>
                 <td class='first_cell cell-padded'>".'&nbsp;'."</td>
@@ -94,4 +94,4 @@
                 <td class='table_cell cell-padded'>".'&nbsp;'.'</td>
             </tr>
 		</table>';
-    }
+}

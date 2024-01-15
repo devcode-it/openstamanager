@@ -40,12 +40,6 @@ class Dichiarazione extends Model
     /**
      * Crea una nuova dichiarazione d'intento.
      *
-     * @param $data
-     * @param $numero_protocollo
-     * @param $numero_progressivo
-     * @param $data_inizio
-     * @param $data_fine
-     *
      * @return self
      */
     public static function build(Anagrafica $anagrafica, $data, $numero_protocollo, $numero_progressivo, $data_inizio, $data_fine)

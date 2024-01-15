@@ -31,7 +31,7 @@ class Firma extends Resource implements UpdateInterface
         $database = database();
         $data = $request['data'];
 
-        //$file = Upload::find($data['file_id']);
+        // $file = Upload::find($data['file_id']);
         $database->update('in_interventi', [
             'firma_file' => $data['firma_file'],
             'firma_data' => $data['firma_data'],

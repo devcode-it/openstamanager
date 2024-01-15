@@ -75,7 +75,7 @@ class Pagamento extends Model
                 // Opzione ultimo del mese più X giorni
                 $giorni = -$rata['giorno'] - 1;
                 if ($giorni > 0) {
-                    $date->modify('+'.($giorni).' day');
+                    $date->modify('+'.$giorni.' day');
                 } else {
                     $date->modify('last day of this month');
                 }

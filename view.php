@@ -35,8 +35,8 @@ if (get('download') == '1') {
     header('Content-Transfer-Encoding: Binary');
     header('Content-disposition: attachment; filename="'.basename($file->original_name).'"');
     readfile(base_dir().'/'.$file->filepath);
-    //download(base_dir().'/'.$file->filepath, basename($file->original_name));
-    exit();
+    // download(base_dir().'/'.$file->filepath, basename($file->original_name));
+    exit;
 }
 
 if ($file->isFatturaElettronica()) {
@@ -92,7 +92,7 @@ if ($file->isFatturaElettronica()) {
         echo '
     <img src="'.$link.'"></img>';
     } elseif ($file->isPDF()) {
-        $preview = \Prints::getPDFLink($file->filepath);
+        $preview = Prints::getPDFLink($file->filepath);
 
         echo '
     <iframe src="'.($preview ?: $link).'">

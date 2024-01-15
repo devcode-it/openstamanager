@@ -46,8 +46,6 @@ class Componente extends Model
     /**
      * Crea un nuovo Componente per Impianti.
      *
-     * @param $data_registrazione
-     *
      * @return self
      */
     public static function build(Impianto $impianto, Articolo $articolo, $data_registrazione)

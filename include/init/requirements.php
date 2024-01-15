@@ -47,7 +47,7 @@ foreach ($modules as $name => $values) {
     ];
 }
 
-//PHP
+// PHP
 $settings = [
     'php_version' => [
         'type' => 'version',
@@ -101,10 +101,10 @@ $settings = [
         'description' => tr('Permette la creazione dell\'immagine della firma per il rapportino d\'intervento (facoltativo)'),
     ],
 
-    //'display_errors' => [
+    // 'display_errors' => [
     //    'type' => 'value',
     //    'description' => true,
-    //],
+    // ],
 
     'allow_url_fopen' => [
         'type' => 'value',
@@ -233,7 +233,7 @@ foreach ($db as $name => $values) {
     } else {
         $type = tr('Impostazione');
 
-        //Vedo se riesco a recuperare l'impostazione dalle variabili di sessione o globali di mysql
+        // Vedo se riesco a recuperare l'impostazione dalle variabili di sessione o globali di mysql
         $rs_session_variabile = $dbo->fetchArray('SHOW SESSION VARIABLES LIKE '.prepare($name));
         $rs_global_variabile = $dbo->fetchArray('SHOW GLOBAL VARIABLES LIKE '.prepare($name));
 
@@ -263,7 +263,7 @@ foreach ($db as $name => $values) {
 
         $description = tr('Valore consigliato: _VALUE_ (Valore attuale: _INC_)', [
           '_VALUE_' => $description,
-          '_INC_' => \Util\FileSystem::formatBytes($inc),
+          '_INC_' => Util\FileSystem::formatBytes($inc),
         ]);
     }
 
@@ -364,7 +364,7 @@ foreach ($config_to_check as $name => $values) {
         ]);
     }
 
-    $status = ($values['operator']((!empty($values['section']) ? ${$values['section']}[$name] : $$name), $values['value_to_check']) ? 1 : 0);
+    $status = ($values['operator'](!empty($values['section']) ? ${$values['section']}[$name] : $$name, $values['value_to_check']) ? 1 : 0);
 
     $config[] = [
         'name' => $name,

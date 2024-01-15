@@ -77,7 +77,7 @@ switch (post('op')) {
             }
         }
 
-    break;
+        break;
 
     case 'crea_fattura':
         $id_documento_cliente = [];
@@ -159,7 +159,7 @@ switch (post('op')) {
             ]));
         }
 
-    break;
+        break;
 
     case 'cambia_stato':
         $id_stato = post('id_stato');
@@ -229,11 +229,11 @@ switch (post('op')) {
                         $orario_inizio = date('Y-m-d', strtotime($data_richiesta)).' '.date('H:i:s', strtotime($sessione->orario_inizio));
                     } else {
                         $diff = strtotime($sessione->orario_inizio) - strtotime($inizio_old);
-                        $orario_inizio = date('Y-m-d H:i:s', (strtotime($sessione->orario_inizio) + $diff));
+                        $orario_inizio = date('Y-m-d H:i:s', strtotime($sessione->orario_inizio) + $diff);
                     }
 
                     $diff_fine = strtotime($sessione->orario_fine) - strtotime($sessione->orario_inizio);
-                    $orario_fine = date('Y-m-d H:i:s', (strtotime($orario_inizio) + $diff_fine));
+                    $orario_fine = date('Y-m-d H:i:s', strtotime($orario_inizio) + $diff_fine);
 
                     $new_sessione = $sessione->replicate();
                     $new_sessione->idintervento = $new->id;
@@ -301,7 +301,7 @@ switch (post('op')) {
         $id_print = Prints::getPrints()['Riepilogo interventi'];
 
         redirect(base_path().'/pdfgen.php?id_print='.$id_print.'&tipo='.post('tipo'));
-        exit();
+        exit;
 
     case 'send-mail':
         $template = Template::find(post('id_template'));
@@ -367,88 +367,88 @@ if (App::debug()) {
     ];
 }
 
-    $operations['export-bulk'] = [
-        'text' => '<span><i class="fa fa-file-archive-o"></i> '.tr('Esporta stampe'),
-        'data' => [
-            'title' => tr('Vuoi davvero esportare queste stampe in un archivio ZIP?'),
-            'msg' => '',
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-warning',
-            'blank' => true,
-        ],
-    ];
+$operations['export-bulk'] = [
+    'text' => '<span><i class="fa fa-file-archive-o"></i> '.tr('Esporta stampe'),
+    'data' => [
+        'title' => tr('Vuoi davvero esportare queste stampe in un archivio ZIP?'),
+        'msg' => '',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => true,
+    ],
+];
 
-    $operations['crea_fattura'] = [
-        'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura _TYPE_', ['_TYPE_' => strtolower($module['name'])]),
-        'data' => [
-           'title' => tr('Fatturare gli _TYPE_ selezionati?', ['_TYPE_' => strtolower($module['name'])]).' <small><i class="fa fa-question-circle-o tip" title="'.tr('Verranno fatturati solo gli interventi completati non collegati a contratti o preventivi').'."></i></small>',
-            'msg' => '{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle fatture di vendita non ancora emesse?').'</small>", "placeholder": "'.tr('Aggiungere alle fatture di vendita nello stato bozza?').'", "name": "accodare" ]}<br>
+$operations['crea_fattura'] = [
+    'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura _TYPE_', ['_TYPE_' => strtolower($module['name'])]),
+    'data' => [
+       'title' => tr('Fatturare gli _TYPE_ selezionati?', ['_TYPE_' => strtolower($module['name'])]).' <small><i class="fa fa-question-circle-o tip" title="'.tr('Verranno fatturati solo gli interventi completati non collegati a contratti o preventivi').'."></i></small>',
+        'msg' => '{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle fatture di vendita non ancora emesse?').'</small>", "placeholder": "'.tr('Aggiungere alle fatture di vendita nello stato bozza?').'", "name": "accodare" ]}<br>
             {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_fatture, 'is_sezionale' => 1]).', "value": "'.$id_segment.'", "select-options-escape": true ]}<br>
             {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, CONCAT(codice_tipo_documento_fe, \' - \', descrizione) AS descrizione FROM co_tipidocumento WHERE enabled = 1 AND dir =\'entrata\' ORDER BY codice_tipo_documento_fe", "value": "'.$idtipodocumento.'" ]}',
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-warning',
-            'blank' => false,
-        ],
-    ];
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
+    ],
+];
 
-    $operations['cambia_stato'] = [
-        'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia stato'),
-        'data' => [
-            'title' => tr('Vuoi davvero cambiare lo stato per questi interventi?'),
-            'msg' => tr('Seleziona lo stato in cui spostare tutti gli interventi non completati').'.<br>
+$operations['cambia_stato'] = [
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia stato'),
+    'data' => [
+        'title' => tr('Vuoi davvero cambiare lo stato per questi interventi?'),
+        'msg' => tr('Seleziona lo stato in cui spostare tutti gli interventi non completati').'.<br>
             <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL ORDER BY descrizione" ]}',
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-warning',
-            'blank' => false,
-        ],
-    ];
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
+    ],
+];
 
-    $operations['copy-bulk'] = [
-        'text' => '<span><i class="fa fa-clone"></i> '.tr('Duplica attività'),
-        'data' => [
-            'title' => tr('Vuoi davvero fare una copia degli interventi selezionati?'),
-            'msg' => '<br>{[ "type": "timestamp", "label": "'.tr('Data/ora richiesta').'", "name": "data_richiesta", "required": 0, "value": "-now-", "required":1 ]}
+$operations['copy-bulk'] = [
+    'text' => '<span><i class="fa fa-clone"></i> '.tr('Duplica attività'),
+    'data' => [
+        'title' => tr('Vuoi davvero fare una copia degli interventi selezionati?'),
+        'msg' => '<br>{[ "type": "timestamp", "label": "'.tr('Data/ora richiesta').'", "name": "data_richiesta", "required": 0, "value": "-now-", "required":1 ]}
             <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL ORDER BY descrizione", "value": "" ]}
             <br>{[ "type":"checkbox", "label":"'.tr('Duplica righe').'", "name":"righe", "value":"" ]}
             <br>{[ "type":"checkbox", "label":"'.tr('Duplica sessioni').'", "name":"sessioni", "value":"" ]}
             <br>{[ "type":"checkbox", "label":"'.tr('Duplica impianti').'", "name":"impianti", "value":"" ]}
             <style>.swal2-modal{ width:600px !important; }</style>',
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-warning',
-            'blank' => false,
-        ],
-    ];
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
+    ],
+];
 
-    $operations['stampa-riepilogo'] = [
-        'text' => '<span><i class="fa fa-print"></i> '.tr('Stampa riepilogo'),
-        'data' => [
-            'title' => tr('Stampare il riepilogo delle attività selezionate?'),
-            'msg' => '<br>{[ "type": "select", "label": "'.tr('Stampa riepilogo').'", "name": "tipo", "required": "1", "values": "list=\"cliente\": \"Clienti\", \"interno\": \"Interno\"", "value": "cliente" ]}',
-            'button' => tr('Stampa'),
-            'class' => 'btn btn-lg btn-warning',
-            'blank' => true,
-        ],
-    ];
+$operations['stampa-riepilogo'] = [
+    'text' => '<span><i class="fa fa-print"></i> '.tr('Stampa riepilogo'),
+    'data' => [
+        'title' => tr('Stampare il riepilogo delle attività selezionate?'),
+        'msg' => '<br>{[ "type": "select", "label": "'.tr('Stampa riepilogo').'", "name": "tipo", "required": "1", "values": "list=\"cliente\": \"Clienti\", \"interno\": \"Interno\"", "value": "cliente" ]}',
+        'button' => tr('Stampa'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => true,
+    ],
+];
 
-    $operations['send-mail'] = [
-        'text' => '<span><i class="fa fa-envelope"></i> '.tr('Invia mail').'</span>',
-        'data' => [
-            'title' => tr('Inviare mail?'),
-            'msg' => tr('Per ciascuna attività selezionata, verrà inviata una mail').'<br><br>
+$operations['send-mail'] = [
+    'text' => '<span><i class="fa fa-envelope"></i> '.tr('Invia mail').'</span>',
+    'data' => [
+        'title' => tr('Inviare mail?'),
+        'msg' => tr('Per ciascuna attività selezionata, verrà inviata una mail').'<br><br>
             {[ "type": "select", "label": "'.tr('Template').'", "name": "id_template", "required": "1", "values": "query=SELECT id, name AS descrizione FROM em_templates WHERE id_module='.prepare($id_module).' AND deleted_at IS NULL;" ]}',
-            'button' => tr('Invia'),
-            'class' => 'btn btn-lg btn-warning',
-        ],
-    ];
+        'button' => tr('Invia'),
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
 
-    $operations['firma-intervento'] = [
-        'text' => '<span><i class="fa fa-pencil"></i> '.tr('Firma interventi').'</span>',
-        'data' => [
-            'title' => tr('Firma'),
-            'type' => 'modal',
-            'origine' => 'interventi',
-            'url' => $module->fileurl('modals/firma.php'),
-        ],
-    ];
+$operations['firma-intervento'] = [
+    'text' => '<span><i class="fa fa-pencil"></i> '.tr('Firma interventi').'</span>',
+    'data' => [
+        'title' => tr('Firma'),
+        'type' => 'modal',
+        'origine' => 'interventi',
+        'url' => $module->fileurl('modals/firma.php'),
+    ],
+];
 
 return $operations;

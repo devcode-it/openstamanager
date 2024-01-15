@@ -124,9 +124,9 @@ include_once __DIR__.'/../../core.php';
 </form>
 
 <?php
-//Permetto eliminazione tipo intervento solo se questo non è utilizzado da nessun'altra parte nel gestionale
-//UNION SELECT `in_tariffe`.`idtipointervento` FROM `in_tariffe` WHERE `in_tariffe`.`idtipointervento` = '.prepare($id_record).'
-//UNION SELECT `co_contratti_tipiintervento`.`idtipointervento` FROM `co_contratti_tipiintervento` WHERE `co_contratti_tipiintervento`.`idtipointervento` = '.prepare($id_record).'
+// Permetto eliminazione tipo intervento solo se questo non è utilizzado da nessun'altra parte nel gestionale
+// UNION SELECT `in_tariffe`.`idtipointervento` FROM `in_tariffe` WHERE `in_tariffe`.`idtipointervento` = '.prepare($id_record).'
+// UNION SELECT `co_contratti_tipiintervento`.`idtipointervento` FROM `co_contratti_tipiintervento` WHERE `co_contratti_tipiintervento`.`idtipointervento` = '.prepare($id_record).'
 $elementi = $dbo->fetchArray('SELECT `in_interventi`.`idtipointervento`, id, codice AS numero, data_richiesta AS data, "Intervento" AS tipo_documento FROM `in_interventi` WHERE `in_interventi`.`idtipointervento` = '.prepare($id_record).'
 UNION
 SELECT `in_interventi_tecnici`.`idtipointervento`, idintervento AS id, codice AS numero, orario_inizio AS data, "Sessione intervento" AS tipo_documento FROM `in_interventi_tecnici` LEFT JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE `in_interventi_tecnici`.`idtipointervento` = '.prepare($id_record).'

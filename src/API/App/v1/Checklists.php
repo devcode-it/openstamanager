@@ -20,7 +20,6 @@
 namespace API\App\v1;
 
 use API\App\AppResource;
-use Auth;
 use Carbon\Carbon;
 use Models\User;
 use Modules\Checklists\Check;
@@ -36,7 +35,7 @@ class Checklists extends AppResource
         $end = $today->copy()->addMonth();
 
         // Informazioni sull'utente
-        $user = Auth::user();
+        $user = \Auth::user();
 
         // Elenco di interventi di interesse
         $risorsa_interventi = $this->getRisorsaInterventi();
@@ -110,7 +109,7 @@ class Checklists extends AppResource
             return [];
         }
 
-        $user = Auth::user();
+        $user = \Auth::user();
 
         $id_interventi = array_keys($interventi);
         if ($user->is_admin) {

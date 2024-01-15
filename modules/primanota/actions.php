@@ -117,7 +117,7 @@ switch (post('op')) {
         flash()->info(tr('Movimento modificato in prima nota!'));
         break;
 
-    // eliminazione movimento prima nota
+        // eliminazione movimento prima nota
     case 'delete':
         $mastrino->delete();
         break;

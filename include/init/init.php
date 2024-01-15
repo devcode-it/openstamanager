@@ -116,7 +116,7 @@ if (post('action') == 'init') {
     }
 
     redirect(base_path(), 'js');
-    exit();
+    exit;
 }
 
 $img = App::getPaths()['img'];
@@ -263,4 +263,4 @@ echo '
 
 include_once App::filepath('include|custom|', 'bottom.php');
 
-exit();
+exit;

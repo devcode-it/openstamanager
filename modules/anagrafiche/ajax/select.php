@@ -149,10 +149,10 @@ switch ($resource) {
 
         break;
 
-    /*
-     * Opzioni utilizzate:
-     * - idanagrafica
-     */
+        /*
+         * Opzioni utilizzate:
+         * - idanagrafica
+         */
     case 'agenti':
         $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')')), IF(an_anagrafiche.deleted_at IS NULL, '', ' (".tr('eliminata').")'),' - ', an_anagrafiche.codice) AS descrizione, idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
 
@@ -204,7 +204,7 @@ switch ($resource) {
 
             if (setting('Permetti inserimento sessioni degli altri tecnici')) {
             } else {
-                //come tecnico posso aprire attività solo a mio nome
+                // come tecnico posso aprire attività solo a mio nome
                 $user = Auth::user();
                 if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
                     $where[] = 'an_anagrafiche.idanagrafica='.$user['idanagrafica'];
@@ -272,7 +272,7 @@ switch ($resource) {
 
         break;
 
-    // Nota Bene: nel campo id viene specificato idtipoanagrafica-idanagrafica -> modulo Utenti e permessi, creazione nuovo utente
+        // Nota Bene: nel campo id viene specificato idtipoanagrafica-idanagrafica -> modulo Utenti e permessi, creazione nuovo utente
     case 'anagrafiche':
         $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT_WS('', ragione_sociale, IF(citta !='' OR provincia != '', CONCAT(' (', citta, IF(provincia!='', CONCAT(' ', provincia), ''), ')'), ''), IF(an_anagrafiche.deleted_at IS NULL, '', ' (".tr('eliminata').")'),' - ', an_anagrafiche.codice) AS descrizione, `an_tipianagrafiche`.`descrizione` AS optgroup FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY `optgroup` ASC, ragione_sociale ASC";
 
@@ -319,10 +319,10 @@ switch ($resource) {
         }
         break;
 
-    /*
-     * Opzioni utilizzate:
-     * - idanagrafica
-     */
+        /*
+         * Opzioni utilizzate:
+         * - idanagrafica
+         */
     case 'sedi':
         if (isset($superselect['idanagrafica'])) {
             $query = "
@@ -369,7 +369,7 @@ switch ($resource) {
         }
 
         $where[] = 'idanagrafica='.prepare($id_azienda);
-        //admin o utente senza una sede prefissata, avrà accesso a tutte le sedi
+        // admin o utente senza una sede prefissata, avrà accesso a tutte le sedi
         if (!empty($user->sedi) and !$user->is_admin) {
             $where[] = 'id IN('.implode(',', $user->sedi).')';
         }
@@ -381,10 +381,10 @@ switch ($resource) {
 
         break;
 
-    /*
-     * Opzioni utilizzate:
-     * - idanagrafica
-     */
+        /*
+         * Opzioni utilizzate:
+         * - idanagrafica
+         */
     case 'referenti':
         if (isset($superselect['idanagrafica'])) {
             $query = 'SELECT an_referenti.id, an_referenti.nome AS descrizione, an_mansioni.nome AS optgroup FROM an_referenti LEFT JOIN an_mansioni ON an_referenti.idmansione=an_mansioni.id |where| ORDER BY optgroup, an_referenti.nome';
@@ -485,14 +485,14 @@ switch ($resource) {
 
         break;
 
-    /*
-     * Opzioni utilizzate:
-     * - idanagrafica
-     */
+        /*
+         * Opzioni utilizzate:
+         * - idanagrafica
+         */
 
     case 'dichiarazioni_intento':
         if (isset($superselect['idanagrafica']) && isset($superselect['data'])) {
-            //$query = "SELECT id, CONCAT('N. prot. ', numero_protocollo, ' (periodo dal ', DATE_FORMAT(data_inizio, '%d/%m/%Y'), ' al ' ,DATE_FORMAT(data_fine, '%d/%m/%Y'),') (utilizzati ',REPLACE(REPLACE(REPLACE(FORMAT(SUM(totale),2), ',', '#'), '.', ','), '#', '.'), ' su ' , REPLACE(REPLACE(REPLACE(FORMAT(SUM(massimale),2), ',', '#'), '.', ','), '#', '.'),  ' &euro;)' ) AS descrizione, data_inizio, data_fine FROM co_dichiarazioni_intento |where| ORDER BY `data`, `id`";
+            // $query = "SELECT id, CONCAT('N. prot. ', numero_protocollo, ' (periodo dal ', DATE_FORMAT(data_inizio, '%d/%m/%Y'), ' al ' ,DATE_FORMAT(data_fine, '%d/%m/%Y'),') (utilizzati ',REPLACE(REPLACE(REPLACE(FORMAT(SUM(totale),2), ',', '#'), '.', ','), '#', '.'), ' su ' , REPLACE(REPLACE(REPLACE(FORMAT(SUM(massimale),2), ',', '#'), '.', ','), '#', '.'),  ' &euro;)' ) AS descrizione, data_inizio, data_fine FROM co_dichiarazioni_intento |where| ORDER BY `data`, `id`";
 
             $query = 'SELECT id, numero_protocollo, data_inizio, data_fine, massimale, totale FROM co_dichiarazioni_intento |where| ORDER BY data';
 
@@ -500,10 +500,10 @@ switch ($resource) {
                 $filter[] = 'id='.prepare($element);
             }
 
-            //$where[] = '( '.prepare($superselect['data']).' BETWEEN data_inizio AND data_fine)';
+            // $where[] = '( '.prepare($superselect['data']).' BETWEEN data_inizio AND data_fine)';
 
-            //$where[] = 'data_inizio < NOW()';
-            //$where[] = 'data_fine > NOW()';
+            // $where[] = 'data_inizio < NOW()';
+            // $where[] = 'data_fine > NOW()';
 
             if (empty($filter)) {
                 $where[] = 'co_dichiarazioni_intento.deleted_at IS NULL';

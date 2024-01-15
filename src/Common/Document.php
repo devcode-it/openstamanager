@@ -20,7 +20,7 @@
 namespace Common;
 
 use Common\Components\Component;
-use Illuminate\Database\Eloquent\Model as Model;
+use Illuminate\Database\Eloquent\Model;
 
 abstract class Document extends Model implements ReferenceInterface, DocumentInterface
 {
@@ -92,11 +92,6 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
 
     /**
      * Restituisce la riga con tipo e identificativo corrispondente.
-     *
-     * @param $type
-     * @param $id
-     *
-     * @return mixed
      */
     public function getRiga($type, $id)
     {
@@ -236,7 +231,7 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
      */
     public function getMarginePercentualeAttribute()
     {
-        return ($this->totale_imponibile && $this->spesa) ? (1 - ($this->spesa / ($this->totale_imponibile))) * 100 : 100;
+        return ($this->totale_imponibile && $this->spesa) ? (1 - ($this->spesa / $this->totale_imponibile)) * 100 : 100;
     }
 
     /**
@@ -321,9 +316,6 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
 
     /**
      * Imposta lo sconto finale.
-     *
-     * @param $sconto
-     * @param $tipo
      */
     public function setScontoFinale($sconto, $tipo)
     {
@@ -388,8 +380,6 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
     /**
      * Calcola la somma degli attributi indicati come parametri.
      * Il metodo **non** deve essere adattato per ulteriori funzionalità: deve esclusivamente calcolare la somma richiesta in modo esplicito dagli argomenti.
-     *
-     * @param mixed ...$args
      *
      * @return float
      */

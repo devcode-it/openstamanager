@@ -21,7 +21,6 @@ namespace API\App\v1;
 
 use API\App\AppResource;
 use API\Exceptions\InternalError;
-use Auth;
 use Carbon\Carbon;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Interventi\Components\Articolo;
@@ -29,7 +28,6 @@ use Modules\Interventi\Components\Descrizione;
 use Modules\Interventi\Components\Riga;
 use Modules\Interventi\Components\Sconto;
 use Modules\Interventi\Intervento;
-use UnexpectedValueException;
 
 class RigheInterventi extends AppResource
 {
@@ -41,7 +39,7 @@ class RigheInterventi extends AppResource
         $end = $today->copy()->addMonth();
 
         // Informazioni sull'utente
-        $user = Auth::user();
+        $user = \Auth::user();
         $id_tecnico = $user->id_anagrafica;
 
         // Elenco di interventi di interesse
@@ -75,7 +73,7 @@ class RigheInterventi extends AppResource
         $end = $today->copy()->addMonth();
 
         // Informazioni sull'utente
-        $user = Auth::user();
+        $user = \Auth::user();
         $id_tecnico = $user->id_anagrafica;
 
         // Elenco di interventi di interesse
@@ -229,7 +227,7 @@ class RigheInterventi extends AppResource
 
         try {
             $record->qta = $data['qta'];
-        } catch (UnexpectedValueException $e) {
+        } catch (\UnexpectedValueException $e) {
             throw new InternalError();
         }
 

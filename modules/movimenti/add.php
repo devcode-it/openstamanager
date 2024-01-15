@@ -105,9 +105,9 @@ echo '
     // Lettura codici da lettore barcode
     $(document).unbind("keyup");
     $("#modals > div").on( "shown.bs.modal", function(){';
-        if (setting('Attiva scorciatoie da tastiera')) {
-            echo 'EnableHotkeys()';
-        }
+if (setting('Attiva scorciatoie da tastiera')) {
+    echo 'EnableHotkeys()';
+}
 echo '  
         $("#barcode").focus();
         $("#causale").trigger("change");
@@ -188,8 +188,8 @@ echo '
                     $("#idarticolo").selectSetNew(record.id, record.text, record);
                     let qta = record.qta-parseFloat($("#qta").val());';
 
-                    if (!setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita')) {
-                        echo '
+if (!setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita')) {
+    echo '
                         if( qta<=0 && $("#causale option:selected").text()!="Carico"  ){
                             if( record.qta>0 ){
                                 $("#qta").val(record.qta).trigger("change");
@@ -197,9 +197,9 @@ echo '
                                 $("#qta").val(0).trigger("change");
                             }
                         }';
-                    }
+}
 
-                echo '
+echo '
                     setTimeout(function(){
                         salva($("#aggiungi"));
                     },300);

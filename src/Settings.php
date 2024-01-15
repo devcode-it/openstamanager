@@ -98,7 +98,6 @@ class Settings
      * Imposta il valore dell'impostazione indicata.
      *
      * @param string|int $setting
-     * @param mixed      $value
      *
      * @return bool
      */
@@ -128,7 +127,7 @@ class Settings
         // multiple
         // verifico che il valore scelto sia nella lista enumerata nel db
         elseif (preg_match("/multiple\[(.+?)\]/", $setting->tipo, $m[0][0])) {
-            //$validator =  v::in(explode(',', $m[0][0][1]));
+            // $validator =  v::in(explode(',', $m[0][0][1]));
         }
 
         // Boolean (checkbox)
@@ -178,7 +177,7 @@ class Settings
         elseif (preg_match("/multiple\[(.+?)\]/", $setting->tipo, $m)) {
             $list = [];
 
-            //Gestisco il multiple da query trasformando i risultati in formato List
+            // Gestisco il multiple da query trasformando i risultati in formato List
             if (strstr($setting->tipo, 'query=')) {
                 $database = database();
 

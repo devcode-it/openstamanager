@@ -23,7 +23,6 @@ use API\Interfaces\CreateInterface;
 use API\Interfaces\RetrieveInterface;
 use API\Interfaces\UpdateInterface;
 use API\Resource;
-use Auth;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
@@ -34,7 +33,7 @@ class Interventi extends Resource implements RetrieveInterface, CreateInterface,
     public function retrieve($request)
     {
         // Periodo per selezionare interventi
-        $user = Auth::user();
+        $user = \Auth::user();
 
         $table = 'in_interventi';
 

@@ -72,7 +72,7 @@ if ($module['name'] == 'Ordini cliente') {
                     {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT *, colore AS _bgcolor_ FROM or_statiordine ORDER BY descrizione", "value": "$idstatoordine$", "class": "unblockable" ]}
                     <?php
                     }
-                    ?>
+?>
 				</div>
 <?php
             if ($dir == 'entrata') {
@@ -94,23 +94,23 @@ if ($module['name'] == 'Ordini cliente') {
 
                     echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
 
-                    if ($dir == 'entrata') {
-                        ?>
+if ($dir == 'entrata') {
+    ?>
 						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti" ]}
 					<?php
-                    } else {
-                        ?>
+} else {
+    ?>
 						{[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "fornitori", "value": "$idanagrafica$" ]}
 					<?php
-                    }
-                echo '
+}
+echo '
                 </div>
 
                 <div class="col-md-3">';
-                    if (!empty($record['idreferente'])) {
-                        echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
-                    }
-                    echo '
+if (!empty($record['idreferente'])) {
+    echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
+}
+echo '
                     {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.$record['idsede'].'} ]}
                 </div>
 
@@ -123,8 +123,8 @@ if ($module['name'] == 'Ordini cliente') {
 				</div>
             </div>';
 
-            if ($dir == 'entrata') {
-                ?>
+if ($dir == 'entrata') {
+    ?>
             <div class="row">
                 <div class="col-md-6">
                     {[ "type": "text", "label": "<?php echo tr('Numero ordine cliente'); ?>", "name": "numero_cliente", "required":0, "value": "<?php echo $record['numero_cliente']; ?>", "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>" ]}
@@ -139,19 +139,19 @@ if ($module['name'] == 'Ordini cliente') {
                 </div>
             </div>
                 <?php
-            }
-            ?>
+}
+?>
 
             <div class="row">
 				<div class="col-md-12">
                     <?php echo input([
-                        'type' => 'ckeditor',
-                        'use_full_ckeditor' => 0,
-                        'label' => tr('Condizioni generali di fornitura'),
-                        'name' => 'condizioni_fornitura',
-                        'value' => $record['condizioni_fornitura'],
-                    ]);
-                    ?>
+            'type' => 'ckeditor',
+            'use_full_ckeditor' => 0,
+            'label' => tr('Condizioni generali di fornitura'),
+            'name' => 'condizioni_fornitura',
+            'value' => $record['condizioni_fornitura'],
+        ]);
+?>
                 </div>
 			</div>
             
@@ -172,7 +172,7 @@ if ($module['name'] == 'Ordini cliente') {
         } else {
             $collapsed = '';
         }
-    ?>
+?>
 
     <!-- Fatturazione Elettronica PA-->
     <div class="panel-group">

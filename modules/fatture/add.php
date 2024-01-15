@@ -57,7 +57,7 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
             } else {
                 $size = 6;
             }
-        ?>
+?>
 
 		<div class="col-md-<?php echo $size; ?>">
 			 {[ "type": "date", "label": "<?php echo tr('Data'); ?>", "name": "data", "required": 1, "value": "-now-" ]}
@@ -79,8 +79,8 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
 	</div>
 
     <?php
-        if ($dir == 'entrata') {
-            echo '
+if ($dir == 'entrata') {
+    echo '
             <div id="info" class="hidden">
                 <div  class="row">
                     <div class="col-md-6 ">
@@ -128,8 +128,8 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
                     '.tr('Seleziona prima un cliente').'...
                 </div>
             </div>';
-        }
-    ?>
+}
+?>
 
 	<!-- PULSANTI -->
 	<div class="row">

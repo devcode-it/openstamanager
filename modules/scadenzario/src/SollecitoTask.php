@@ -21,12 +21,9 @@ namespace Modules\Scadenzario;
 
 use Models\OperationLog;
 use Models\User;
-use Modules;
 use Modules\Emails\Mail;
 use Modules\Emails\Template;
-use Prints;
 use Tasks\Manager;
-use Uploads;
 
 /**
  * Task dedicato alla gestione del backup giornaliero automatico, se abilitato da Impostazioni.
@@ -74,17 +71,17 @@ class SollecitoTask extends Manager
 
                         $id_documento = $documento->id;
                         $id_anagrafica = $documento->idanagrafica;
-                        $id_module = Modules::get('Scadenzario')->id;
+                        $id_module = \Modules::get('Scadenzario')->id;
 
                         $fattura_allegata = database()->selectOne('zz_files', 'id', ['id_module' => $id_module, 'id_record' => $id, 'original' => 'Fattura di vendita.pdf'])['id'];
 
                         // Allego stampa della fattura se non presente
                         if (empty($fattura_allegata)) {
-                            $print_predefined = database()->selectOne('zz_prints', '*', ['predefined' => 1, 'id_module' => Modules::get('Fatture di vendita')['id']]);
+                            $print_predefined = database()->selectOne('zz_prints', '*', ['predefined' => 1, 'id_module' => \Modules::get('Fatture di vendita')['id']]);
 
-                            $print = Prints::render($print_predefined['id'], $id_documento, null, true);
+                            $print = \Prints::render($print_predefined['id'], $id_documento, null, true);
                             $name = 'Fattura di vendita';
-                            $upload = Uploads::upload($print['pdf'], [
+                            $upload = \Uploads::upload($print['pdf'], [
                                 'name' => $name,
                                 'original_name' => $name.'.pdf',
                                 'category' => 'Generale',

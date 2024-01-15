@@ -48,7 +48,7 @@ $stato_fe = $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = 
 $ops = ['update', 'add_intervento', 'manage_documento_fe', 'manage_riga_fe', 'manage_articolo', 'manage_sconto', 'manage_riga', 'manage_descrizione', 'unlink_intervento', 'delete_riga', 'copy_riga', 'add_serial', 'add_articolo', 'edit-price'];
 
 if ($dir === 'entrata' && in_array($stato_fe['codice_stato_fe'], ['WAIT', 'RC', 'MC', 'QUEUE', 'DT', 'EC01', 'NE']) && Interaction::isEnabled() && in_array($op, $ops)) {
-    //Permetto sempre la modifica delle note aggiuntive e/o della data di competenza della fattura di vendita
+    // Permetto sempre la modifica delle note aggiuntive e/o della data di competenza della fattura di vendita
     if ($op == 'update' && ($fattura->note_aggiuntive != post('note_aggiuntive') || $fattura->data_competenza != post('data_competenza'))) {
         if ($fattura->note_aggiuntive != post('note_aggiuntive')) {
             $fattura->note_aggiuntive = post('note_aggiuntive');
@@ -111,7 +111,7 @@ switch ($op) {
             WHERE
                 co_statidocumento.descrizione = "Emessa" AND co_tipidocumento.dir="entrata" AND co_documenti.id_segment='.$fattura->id_segment);
 
-        if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && ($stato->descrizione == 'Emessa') && (Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax']))) && (!empty($data_fattura_precedente['datamax']))) {
+        if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && ($stato->descrizione == 'Emessa') && Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax'])) && (!empty($data_fattura_precedente['datamax']))) {
             $fattura->data = $data_fattura_precedente['datamax'];
             $fattura->data_competenza = $data_fattura_precedente['datamax'];
             flash()->info(tr('Data di emissione aggiornata, come da impostazione!'));
@@ -270,13 +270,13 @@ switch ($op) {
 
         break;
 
-    // Ricalcolo scadenze
+        // Ricalcolo scadenze
     case 'ricalcola_scadenze':
         $fattura->registraScadenze(false, true);
 
         break;
 
-    // Ricalcolo scadenze
+        // Ricalcolo scadenze
     case 'controlla_totali':
         $totale_documento = null;
 
@@ -308,7 +308,7 @@ switch ($op) {
 
         break;
 
-    // Elenco fatture in stato Bozza per il cliente
+        // Elenco fatture in stato Bozza per il cliente
     case 'fatture_bozza':
         $id_anagrafica = post('id_anagrafica');
         $stato = Stato::where('descrizione', 'Bozza')->first();
@@ -327,7 +327,7 @@ switch ($op) {
 
         break;
 
-    // Elenco fatture Scadute per il cliente
+        // Elenco fatture Scadute per il cliente
     case 'fatture_scadute':
         $id_anagrafica = post('id_anagrafica');
         $stato1 = Stato::where('descrizione', 'Emessa')->first();
@@ -353,7 +353,7 @@ switch ($op) {
 
         break;
 
-    // eliminazione documento
+        // eliminazione documento
     case 'delete':
         try {
             $fattura->delete();
@@ -371,7 +371,7 @@ switch ($op) {
 
         break;
 
-    // Duplicazione fattura
+        // Duplicazione fattura
     case 'copy':
         $new = $fattura->replicate();
         $new->id_autofattura = null;
@@ -633,7 +633,7 @@ switch ($op) {
 
         break;
 
-    // Scollegamento intervento da documento
+        // Scollegamento intervento da documento
     case 'unlink_intervento':
         if (!empty($id_record) && post('idriga') !== null) {
             $id_riga = post('idriga');
@@ -655,7 +655,7 @@ switch ($op) {
 
         break;
 
-    // Scollegamento riga generica da documento
+        // Scollegamento riga generica da documento
     case 'delete_riga':
         $id_righe = (array) post('righe');
 
@@ -684,7 +684,7 @@ switch ($op) {
 
         break;
 
-    // Duplicazione riga
+        // Duplicazione riga
     case 'copy_riga':
         $id_righe = (array) post('righe');
 
@@ -727,13 +727,13 @@ switch ($op) {
 
         break;
 
-    // Aggiunta di un documento esterno
+        // Aggiunta di un documento esterno
     case 'add_documento':
         $class = post('class');
         $id_documento = post('id_documento');
 
         // Individuazione del documento originale
-        if (!is_subclass_of($class, \Common\Document::class)) {
+        if (!is_subclass_of($class, Common\Document::class)) {
             return;
         }
         $documento = $class::find($id_documento);
@@ -822,7 +822,7 @@ switch ($op) {
 
         break;
 
-    // Nota di credito
+        // Nota di credito
     case 'nota_credito':
         $id_documento = post('id_documento');
         $fattura = Fattura::find($id_documento);
@@ -871,7 +871,7 @@ switch ($op) {
 
         break;
 
-    // Autofattura
+        // Autofattura
     case 'autofattura':
         $fattura = Fattura::find($id_record);
 
@@ -1034,7 +1034,7 @@ switch ($op) {
         }
         break;
 
-    // Controllo se impostare anagrafica azienda in base a tipologia documento
+        // Controllo se impostare anagrafica azienda in base a tipologia documento
     case 'check_tipodocumento':
         $idtipodocumento = post('idtipodocumento');
         $tipologie = Tipo::wherein('codice_tipo_documento_fe', ['TD21', 'TD27'])->where('dir', 'entrata')->get()->pluck('id')->toArray();
@@ -1066,7 +1066,7 @@ switch ($op) {
         $numero_totale = 0;
 
         foreach ($righe as $riga) {
-            if (($riga['id']) != null) {
+            if ($riga['id'] != null) {
                 $articolo = Articolo::find($riga['id']);
             }
 

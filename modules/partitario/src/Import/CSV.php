@@ -65,10 +65,10 @@ class CSV extends CSVImporter
         $codice_conto2 = $numero[0];
         $codice_conto3 = $numero[1];
 
-        //Estraggo il conto1
+        // Estraggo il conto1
         $idpianodeiconti1 = $database->fetchOne('SELECT id FROM co_pianodeiconti1 WHERE LOWER(descrizione)=LOWER('.prepare($record['idpianodeiconti1']).')')['id'];
 
-        //Estraggo il conto,
+        // Estraggo il conto,
         $idpianodeiconti2 = $database->fetchOne('SELECT id FROM co_pianodeiconti2 WHERE numero='.prepare($codice_conto2))['id'];
 
         if (empty($idpianodeiconti2) && empty($codice_conto3)) {

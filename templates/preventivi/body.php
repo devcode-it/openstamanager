@@ -66,7 +66,7 @@ if ($has_image) {
 }
 
 // Creazione righe fantasma
-$autofill = new \Util\Autofill($columns);
+$autofill = new Util\Autofill($columns);
 $autofill->setRows(20, 10);
 
 echo '
@@ -131,16 +131,16 @@ echo '
                     <small>$c_codicefiscale$</small>
                 </td>
             </tr>';
-        if (!empty($destinazione)) {
-            echo '
+if (!empty($destinazione)) {
+    echo '
             <tr>
                 <td colspan="2" class="border-full" style="height:16mm;">
                     <p class="small-bold">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
                     <small>'.$destinazione.'</small>
                 </td>
             </tr>';
-        }
-        echo '
+}
+echo '
         </table>
     </div>
 </div>';
@@ -312,7 +312,7 @@ foreach ($righe as $key => $riga) {
     $autofill->next();
 
     $next = $righe->flatten()[$num];
-    if ($has_gruppo && ($next->is_titolo || $next == null) && ($options['pricing'] || ($options['show-only-total']))) {
+    if ($has_gruppo && ($next->is_titolo || $next == null) && ($options['pricing'] || $options['show-only-total'])) {
         echo '
         <tr>
             <td colspan="'.($options['show-only-total'] ? 2 : 5).'" class="text-right">
@@ -490,19 +490,19 @@ echo '
 
         <td>';
 
-        if (!empty($documento->validita) && !empty($documento->tipo_validita)) {
-            $intervallo = CarbonInterval::make($documento->validita.' '.$documento->tipo_validita);
+if (!empty($documento->validita) && !empty($documento->tipo_validita)) {
+    $intervallo = CarbonInterval::make($documento->validita.' '.$documento->tipo_validita);
 
-            echo $intervallo->forHumans();
-        } elseif (!empty($documento->validita)) {
-            echo tr('_TOT_ giorni', [
-                '_TOT_' => $documento->validita,
-            ]);
-        } else {
-            echo '-';
-        }
+    echo $intervallo->forHumans();
+} elseif (!empty($documento->validita)) {
+    echo tr('_TOT_ giorni', [
+        '_TOT_' => $documento->validita,
+    ]);
+} else {
+    echo '-';
+}
 
-        echo '
+echo '
         </td>
     </tr>
 

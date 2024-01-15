@@ -103,7 +103,7 @@ switch (post('op')) {
                     if ($qta > 0) {
                         $copia = $riga->copiaIn($fattura, $qta);
 
-                        //Fix per idconto righe fattura
+                        // Fix per idconto righe fattura
                         $articolo = ArticoloOriginale::find($copia->idarticolo);
                         $copia->id_conto = ($articolo->idconto_vendita ? $articolo->idconto_vendita : $idconto);
 
@@ -220,31 +220,31 @@ switch (post('op')) {
         }
         break;
 
-        case 'cambia_stato':
-            $id_stato = post('id_stato');
+    case 'cambia_stato':
+        $id_stato = post('id_stato');
 
-            $n_contratti = 0;
-            $stato = StatoContratto::find($id_stato);
+        $n_contratti = 0;
+        $stato = StatoContratto::find($id_stato);
 
-            // Lettura righe selezionate
-            foreach ($id_records as $id) {
-                $contratto = Contratto::find($id);
+        // Lettura righe selezionate
+        foreach ($id_records as $id) {
+            $contratto = Contratto::find($id);
 
-                $contratto->stato()->associate($stato);
-                $contratto->save();
+            $contratto->stato()->associate($stato);
+            $contratto->save();
 
-                ++$n_contratti;
-            }
+            ++$n_contratti;
+        }
 
-            if ($n_contratti > 0) {
-                flash()->info(tr('Stato aggiornato a _NUM_ contratti!', [
-                    '_NUM_' => $n_contratti,
-                ]));
-            } else {
-                flash()->warning(tr('Nessuno stato aggiornato!'));
-            }
+        if ($n_contratti > 0) {
+            flash()->info(tr('Stato aggiornato a _NUM_ contratti!', [
+                '_NUM_' => $n_contratti,
+            ]));
+        } else {
+            flash()->warning(tr('Nessuno stato aggiornato!'));
+        }
 
-            break;
+        break;
 }
 
 $operations['crea_fattura'] = [

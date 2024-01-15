@@ -187,7 +187,7 @@ if (!function_exists('aggiungi_movimento')) {
     {
         $dbo = database();
 
-        $fattura = Modules\Fatture\Fattura::find($iddocumento);
+        $fattura = Fattura::find($iddocumento);
         $is_nota = $fattura->isNota();
 
         // Totale marca da bollo, inps, ritenuta, idagente

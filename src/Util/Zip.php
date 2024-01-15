@@ -20,7 +20,6 @@
 namespace Util;
 
 use Symfony\Component\Finder\Finder;
-use ZipArchive;
 
 /**
  * Classe dedicata alla gestione dei contenuti ZIP.
@@ -50,7 +49,7 @@ class Zip
     public static function extract($path, $destination = null)
     {
         // Lettura dell'archivio
-        $zip = new ZipArchive();
+        $zip = new \ZipArchive();
         if (!$zip->open($path)) {
             flash()->error(self::check($path));
 
@@ -81,9 +80,9 @@ class Zip
             return false;
         }
 
-        $zip = new ZipArchive();
+        $zip = new \ZipArchive();
 
-        $result = $zip->open($destination, ZipArchive::CREATE);
+        $result = $zip->open($destination, \ZipArchive::CREATE);
         if ($result === true && is_writable(dirname($destination))) {
             $finder = Finder::create()
                 ->files()
@@ -116,36 +115,36 @@ class Zip
      */
     public static function check($path)
     {
-        $zip = new ZipArchive();
+        $zip = new \ZipArchive();
         $errno = $zip->open($path);
         $errno = $zip->close();
 
         if (!is_resource($errno)) {
             // using constant name as a string to make this function PHP4 compatible
             $errors = [
-                ZipArchive::ER_MULTIDISK => tr('archivi multi-disco non supportati'),
-                ZipArchive::ER_RENAME => tr('ridenominazione del file temporaneo fallita'),
-                ZipArchive::ER_CLOSE => tr('impossibile chiudere il file zip'),
-                ZipArchive::ER_SEEK => tr('errore durante la ricerca dei file'),
-                ZipArchive::ER_READ => tr('errore di lettura'),
-                ZipArchive::ER_WRITE => tr('errore di scrittura'),
-                ZipArchive::ER_CRC => tr('errore CRC'),
-                ZipArchive::ER_ZIPCLOSED => tr("l'archivio zip è stato chiuso"),
-                ZipArchive::ER_NOENT => tr('file non trovato'),
-                ZipArchive::ER_EXISTS => tr('il file esiste già'),
-                ZipArchive::ER_OPEN => tr('impossibile aprire il file'),
-                ZipArchive::ER_TMPOPEN => tr('impossibile creare il file temporaneo'),
-                ZipArchive::ER_ZLIB => tr('errore nella libreria Zlib'),
-                ZipArchive::ER_MEMORY => tr("fallimento nell'allocare memoria"),
-                ZipArchive::ER_CHANGED => tr('voce modificata'),
-                ZipArchive::ER_COMPNOTSUPP => tr('metodo di compressione non supportato'),
-                ZipArchive::ER_EOF => tr('fine del file non prevista'),
-                ZipArchive::ER_INVAL => tr('argomento non valido'),
-                ZipArchive::ER_NOZIP => tr('file zip non valido'),
-                ZipArchive::ER_INTERNAL => tr('errore interno'),
-                ZipArchive::ER_INCONS => tr('archivio zip inconsistente'),
-                ZipArchive::ER_REMOVE => tr('impossibile rimuovere la voce'),
-                ZipArchive::ER_DELETED => tr('voce eliminata'),
+                \ZipArchive::ER_MULTIDISK => tr('archivi multi-disco non supportati'),
+                \ZipArchive::ER_RENAME => tr('ridenominazione del file temporaneo fallita'),
+                \ZipArchive::ER_CLOSE => tr('impossibile chiudere il file zip'),
+                \ZipArchive::ER_SEEK => tr('errore durante la ricerca dei file'),
+                \ZipArchive::ER_READ => tr('errore di lettura'),
+                \ZipArchive::ER_WRITE => tr('errore di scrittura'),
+                \ZipArchive::ER_CRC => tr('errore CRC'),
+                \ZipArchive::ER_ZIPCLOSED => tr("l'archivio zip è stato chiuso"),
+                \ZipArchive::ER_NOENT => tr('file non trovato'),
+                \ZipArchive::ER_EXISTS => tr('il file esiste già'),
+                \ZipArchive::ER_OPEN => tr('impossibile aprire il file'),
+                \ZipArchive::ER_TMPOPEN => tr('impossibile creare il file temporaneo'),
+                \ZipArchive::ER_ZLIB => tr('errore nella libreria Zlib'),
+                \ZipArchive::ER_MEMORY => tr("fallimento nell'allocare memoria"),
+                \ZipArchive::ER_CHANGED => tr('voce modificata'),
+                \ZipArchive::ER_COMPNOTSUPP => tr('metodo di compressione non supportato'),
+                \ZipArchive::ER_EOF => tr('fine del file non prevista'),
+                \ZipArchive::ER_INVAL => tr('argomento non valido'),
+                \ZipArchive::ER_NOZIP => tr('file zip non valido'),
+                \ZipArchive::ER_INTERNAL => tr('errore interno'),
+                \ZipArchive::ER_INCONS => tr('archivio zip inconsistente'),
+                \ZipArchive::ER_REMOVE => tr('impossibile rimuovere la voce'),
+                \ZipArchive::ER_DELETED => tr('voce eliminata'),
             ];
 
             if (isset($errors[$errno])) {

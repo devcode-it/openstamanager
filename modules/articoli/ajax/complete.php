@@ -57,7 +57,7 @@ switch ($resource) {
         echo '</small>';
         break;
 
-    // Legge gli ultimi prezzi di vendita di un determinato articolo e li visualizza per suggerire il prezzo di vendita
+        // Legge gli ultimi prezzi di vendita di un determinato articolo e li visualizza per suggerire il prezzo di vendita
     case 'getprezzivendita':
         $ids = [];
         echo '<small>';
@@ -116,7 +116,7 @@ switch ($resource) {
 
         break;
 
-    // Legge gli ultimi prezzi di acquisto di un determinato articolo e li visualizza per suggerire il prezzo di acquisto
+        // Legge gli ultimi prezzi di acquisto di un determinato articolo e li visualizza per suggerire il prezzo di acquisto
     case 'getprezziacquisto':
         $ids = [];
         echo '<small>';
@@ -175,11 +175,11 @@ switch ($resource) {
 
         break;
 
-    /*
-     * Opzioni utilizzate:
-     * - id_articolo
-     * - id_anagrafica
-     */
+        /*
+         * Opzioni utilizzate:
+         * - id_articolo
+         * - id_anagrafica
+         */
     case 'dettagli_articolo':
         $id_articolo = get('id_articolo');
         $id_anagrafica = get('id_anagrafica');

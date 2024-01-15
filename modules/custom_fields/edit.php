@@ -64,7 +64,7 @@ include_once __DIR__.'/../../core.php';
                 'name' => 'content',
                 'value' => $record['content'],
             ]);
-            ?>
+?>
 		</div>
 	</div>
 </form>

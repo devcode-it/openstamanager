@@ -69,9 +69,9 @@ echo '
             <th width="40"></th>
         </tr>';
 
-        // Tipi di interventi
-        foreach ($tipi_interventi as $tipo_intervento) {
-            echo '
+// Tipi di interventi
+foreach ($tipi_interventi as $tipo_intervento) {
+    echo '
         <tr>
 
             <td>'.$tipo_intervento['descrizione'].'</td>
@@ -106,7 +106,7 @@ echo '
                 </a>
             </td>
         </tr>';
-        }
+}
 echo '
     </table>
     </div>

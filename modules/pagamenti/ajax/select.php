@@ -63,7 +63,7 @@ switch ($resource) {
         $rs = $data['results'];
 
         foreach ($rs as $k => $r) {
-            //Controllo metodi di pagamento con ri.ba. solo per i documenti con dir entrata
+            // Controllo metodi di pagamento con ri.ba. solo per i documenti con dir entrata
             if ($dbo->fetchOne('SELECT `co_tipidocumento`.`dir` AS dir FROM `co_tipidocumento` WHERE `co_tipidocumento`.`id`='.prepare($superselect['idtipodocumento']))['dir'] == 'entrata') {
                 $rs[$k] = array_merge($r, [
                     'text' => (($r['codice_modalita_pagamento_fe'] == 'MP12' && empty($r['id_banca_cliente'])) ? $r['descrizione'].' '.tr('(Informazioni bancarie mancanti)') : $r['descrizione']),

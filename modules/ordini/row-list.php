@@ -33,20 +33,20 @@ echo '
         <thead>
             <tr>
                 <th width="5" class="text-center">';
-                if (!$block_edit && sizeof($righe) > 0) {
-                    echo '
+if (!$block_edit && sizeof($righe) > 0) {
+    echo '
                     <input id="check_all" type="checkbox"/>';
-                }
-                echo '
+}
+echo '
                 </th>
                 <th width="35" class="text-center" >'.tr('#').'</th>
                 <th>'.tr('Descrizione').'</th>
                 <th width="105">'.tr('Prev. evasione').'</th>
                 <th class="text-center tip" width="190">'.tr('Q.tà').'</th>';
-            if ($dir == 'entrata') {
-                echo '<th class="text-center" width="150">'.tr('Costo unitario').'</th>';
-            }
-            echo '
+if ($dir == 'entrata') {
+    echo '<th class="text-center" width="150">'.tr('Costo unitario').'</th>';
+}
+echo '
                 <th class="text-center" width="180">'.tr('Prezzo unitario').'</th>
                 <th class="text-center" width="140">'.tr('Sconto unitario').'</th>
                 <th class="text-center" width="130">'.tr('Importo').'</th>

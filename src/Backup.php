@@ -48,7 +48,7 @@ class Backup
 
         $result = rtrim($result, '/');
         if (!directory($result) || !is_writable($result)) {
-            //throw new UnexpectedValueException();
+            // throw new UnexpectedValueException();
         }
 
         return slashes($result);
@@ -312,7 +312,7 @@ class Backup
         // Errori visualizzati
         if (isset($soft_quota) && $soft_quota < ($spazio_necessario + $spazio_occupato) * $scarto) {
             throw new InvalidArgumentException('Spazio disponibile in esaurimento');
-        } elseif ($spazio_libero < ($spazio_necessario) * $scarto) {
+        } elseif ($spazio_libero < $spazio_necessario * $scarto) {
             throw new InvalidArgumentException('Spazio del server in esaurimento');
         }
     }

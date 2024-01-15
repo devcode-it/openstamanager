@@ -22,8 +22,6 @@ namespace Modules\Utenti\API\v1;
 use API\Interfaces\CreateInterface;
 use API\Resource;
 use API\Response;
-use Auth;
-use Update;
 
 class Login extends Resource implements CreateInterface
 {
@@ -46,15 +44,15 @@ class Login extends Resource implements CreateInterface
             $response['google_maps_token'] = setting('Google Maps API key');
             $response['prezzi_al_tecnico'] = setting('Mostra i prezzi al tecnico');
 
-            $response['version'] = Update::getVersion();
+            $response['version'] = \Update::getVersion();
         } else {
             $response = [
                 'status' => Response::getStatus()['unauthorized']['code'],
             ];
 
             // Se è in corso un brute-force, aggiunge il timeout
-            if (Auth::isBrute()) {
-                $response['timeout'] = Auth::getBruteTimeout();
+            if (\Auth::isBrute()) {
+                $response['timeout'] = \Auth::getBruteTimeout();
             }
         }
 

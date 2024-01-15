@@ -48,9 +48,9 @@ if (isset($id_record)) {
     </h4>
     <p style="color:#aaa; font-size:10px;" class="text-right">
     '.tr('_TEXT_',
-    [
-        '_TEXT_' => (!empty($text) ? 'Include: '.implode(', ', $text) : ''),
-    ]).'
+            [
+                '_TEXT_' => (!empty($text) ? 'Include: '.implode(', ', $text) : ''),
+            ]).'
 </p>';
 } else {
     echo '

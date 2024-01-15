@@ -82,22 +82,22 @@ echo '
 
 				<div class="col-md-3">';
 
-                    if (!empty($record['idreferente'])) {
-                        echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
-                    }
-                    echo '
+if (!empty($record['idreferente'])) {
+    echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
+}
+echo '
 					{[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].',"idsede_destinazione": '.$record['idsede'].'} ]}
 				</div>
 
 				<div class="col-md-3">';
-                    if ($record['idagente'] != 0) {
-                        echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
-                    }
+if ($record['idagente'] != 0) {
+    echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
+}
 echo '
                     {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
 				</div>
 			</div>';
-            ?>
+?>
 
             <div class="row">
                 <div class="col-md-6">
@@ -106,10 +106,10 @@ echo '
 
                 <div class="col-md-3">
                     <?php
-                        if (!empty($record['idpagamento'])) {
-                            echo Modules::link('Pagamenti', $record['idpagamento'], null, null, 'class="pull-right"');
-                        }
-                    ?>
+            if (!empty($record['idpagamento'])) {
+                echo Modules::link('Pagamenti', $record['idpagamento'], null, null, 'class="pull-right"');
+            }
+?>
 
                     {[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione", "value": "$idpagamento$" ]}
                 </div>
@@ -162,13 +162,13 @@ echo '
             <div class="row">
                 <div class="col-md-12">
                     <?php echo input([
-                        'type' => 'ckeditor',
-                        'use_full_ckeditor' => 1,
-                        'label' => tr('Condizioni generali di fornitura'),
-                        'name' => 'condizioni_fornitura',
-                        'value' => $record['condizioni_fornitura'],
-                    ]);
-                    ?>
+    'type' => 'ckeditor',
+    'use_full_ckeditor' => 1,
+    'label' => tr('Condizioni generali di fornitura'),
+    'name' => 'condizioni_fornitura',
+    'value' => $record['condizioni_fornitura'],
+]);
+?>
 				</div>
 			</div>
 
@@ -197,7 +197,7 @@ echo '
         } else {
             $collapsed = ' collapsed-box';
         }
-    ?>
+?>
 
     <!-- Fatturazione Elettronica PA-->
 

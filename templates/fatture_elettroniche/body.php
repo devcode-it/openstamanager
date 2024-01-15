@@ -85,7 +85,7 @@ if (empty($file)) {
         <img src="'.$link.'"></img>';
         } else {
             if ($file->isPDF()) {
-                $src = \Prints::getPDFLink($file->filepath);
+                $src = Prints::getPDFLink($file->filepath);
             }
 
             echo '

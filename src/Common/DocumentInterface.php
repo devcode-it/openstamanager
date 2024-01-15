@@ -32,11 +32,6 @@ interface DocumentInterface
 
     /**
      * Restituisce la riga identificata dall'ID indicato.
-     *
-     * @param $type
-     * @param $id
-     *
-     * @return mixed
      */
     public function getRiga($type, $id);
 

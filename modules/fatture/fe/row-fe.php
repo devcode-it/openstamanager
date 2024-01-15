@@ -82,7 +82,7 @@ echo '
         </tr>';
 
 // Tipo Cessione Prestazione
- echo '
+echo '
         <tr class="fourth-level">
             <td style="vertical-align: middle;">'.str_repeat($space, 3).'2.2.1.2 TipoCessionePrestazione</td>
             <td>
@@ -157,7 +157,7 @@ foreach ($result['altri_dati'] as $dato) {
     ++$key;
 }
 
- echo '
+echo '
 
 </table>';
 

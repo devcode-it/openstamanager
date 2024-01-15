@@ -71,7 +71,7 @@ if (Services::isEnabled()) {
         $servizi_in_scadenza = Services::getServiziInScadenza($limite_scadenze);
         $servizi_scaduti = Services::getServiziScaduti();
         if (!$servizi_in_scadenza->isEmpty() || !$servizi_scaduti->isEmpty()) {
-            //TODO: Il tasto deve preparare correttamente il carrello con servizi e le risorse in scadenza, considerando anche eventuali ampliamenti (es. spazio FE esaurito o in esaurimento)
+            // TODO: Il tasto deve preparare correttamente il carrello con servizi e le risorse in scadenza, considerando anche eventuali ampliamenti (es. spazio FE esaurito o in esaurimento)
             echo '      </tbody>
                     <tfoot>
                         <tr>
@@ -160,7 +160,7 @@ if (Services::isEnabled()) {
                 </tbody>
             </table></div></div>';
 
-        //Il servizio Fatturazione Elettronica deve essere presente per visualizzare le Statistiche su Fatture Elettroniche
+        // Il servizio Fatturazione Elettronica deve essere presente per visualizzare le Statistiche su Fatture Elettroniche
         if (Services::getRisorseAttive()->where('name', 'Fatturazione Elettronica')->count()) {
             echo '
 

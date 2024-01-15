@@ -61,8 +61,6 @@ abstract class Description extends Component
 
     /**
      * Azione personalizzata per la copia dell'oggetto (inizializzazione della copia).
-     *
-     * @param $original
      */
     protected function customInitCopiaIn($original)
     {

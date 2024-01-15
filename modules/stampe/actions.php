@@ -28,8 +28,8 @@ switch (post('op')) {
         $print->title = post('title');
         $print->filename = post('filename');
         $print->options = post('options');
-        //$print->id_module = post('module');
-        //$print->enabled = post('enabled');
+        // $print->id_module = post('module');
+        // $print->enabled = post('enabled');
         $print->order = post('order');
         $print->predefined = intval(post('predefined'));
 

@@ -281,42 +281,42 @@ echo '
     </big>
     <br><br>';
 
-    echo '
+echo '
     <div class="row">
         <big class="col-md-4 col-md-offset-4 text-center">
             <table class="table text-left table-striped table-bordered">';
-            if (!empty($totale_ore_contratto)) {
-                echo '
+if (!empty($totale_ore_contratto)) {
+    echo '
                 <tr>
                     <td>'.tr('Ore a contratto').':</td>
                     <td class="text-right">'.Translator::numberToLocale($totale_ore_contratto).'</td>
                 </tr>';
-            }
-                echo '
+}
+echo '
                 <tr>
                     <td>'.tr('Ore erogate totali').':</td>
                     <td class="text-right">'.Translator::numberToLocale($totale_ore).'</td>
                 </tr>';
-            if (!empty($totale_ore_contratto)) {
-                echo '
+if (!empty($totale_ore_contratto)) {
+    echo '
                 <tr>
                     <td>'.tr('Ore residue totali').':</td>
                     <td class="text-right">'.Translator::numberToLocale(floatval($totale_ore_contratto) - floatval($totale_ore)).'</td>
                 </tr>';
-            }
-                echo '
+}
+echo '
                 <tr>
                     <td>'.tr('Ore erogate concluse').':</td>
                     <td class="text-right">'.Translator::numberToLocale($totale_ore_completate).'</td>
                 </tr>';
-            if (!empty($totale_ore_contratto)) {
-                echo '
+if (!empty($totale_ore_contratto)) {
+    echo '
                 <tr>
                     <td>'.tr('Ore residue concluse').':</td>
                     <td class="text-right">'.Translator::numberToLocale(floatval($totale_ore_contratto) - floatval($totale_ore_completate)).'</td>
                 </tr>';
-            }
-            echo '
+}
+echo '
             </table>
         </big>
     </div>';
@@ -327,7 +327,7 @@ if (empty($totale_ore_contratto)) {
         <p>'.tr('Per monitorare il consumo ore, inserisci almeno una riga con unità di misura "ore"').'.</p>
     </div>';
 }
-    echo '
+echo '
     <div class="row">
         <div class="col-md-6">
             <table class="table text-left table-striped table-bordered">
@@ -339,15 +339,15 @@ if (empty($totale_ore_contratto)) {
                     <th width="10%">'.tr('Margine').'</th>
                     <th width="10%">'.tr('Ricarico').'</th>
                 </tr>';
-            ksort($tipologie);
-            foreach ($tipologie as $key => $tipologia) {
-                $margine = $tipologia['ricavo'] - $tipologia['costo'];
-                if ($tipologia['ricavo']) {
-                    $margine_prc = (int) (1 - ($tipologia['costo'] / $tipologia['ricavo'])) * 100;
-                    $ricarico_prc = ($tipologia['ricavo'] && $tipologia['costo']) ? (int) ((($tipologia['ricavo'] / $tipologia['costo']) - 1) * 100) : 100;
-                }
+ksort($tipologie);
+foreach ($tipologie as $key => $tipologia) {
+    $margine = $tipologia['ricavo'] - $tipologia['costo'];
+    if ($tipologia['ricavo']) {
+        $margine_prc = (int) (1 - ($tipologia['costo'] / $tipologia['ricavo'])) * 100;
+        $ricarico_prc = ($tipologia['ricavo'] && $tipologia['costo']) ? (int) ((($tipologia['ricavo'] / $tipologia['costo']) - 1) * 100) : 100;
+    }
 
-                echo '
+    echo '
                 <tr>
                     <td>'.$key.'</td>
                     <td class="text-right">'.Translator::numberToLocale($tipologia['ore']).'</td>
@@ -356,8 +356,8 @@ if (empty($totale_ore_contratto)) {
                     <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$margine_prc.'%)</td>
                     <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$ricarico_prc.'%)</td>
                 </tr>';
-            }
-            echo '
+}
+echo '
             </table>
         </div>
 
@@ -372,14 +372,14 @@ if (empty($totale_ore_contratto)) {
                     <th width="10%">'.tr('Margine').'</th>
                     <th width="10%">'.tr('Ricarico').'</th>
                 </tr>';
-            ksort($tecnici);
-            foreach ($tecnici as $key => $tecnico) {
-                $margine = $tecnico['ricavo'] - $tecnico['costo'];
-                if ($tecnico['ricavo']) {
-                    $margine_prc = (int) (1 - ($tecnico['costo'] / $tecnico['ricavo'])) * 100;
-                    $ricarico_prc = ($tecnico['ricavo'] && $tecnico['costo']) ? (int) ((($tecnico['ricavo'] / $tecnico['costo']) - 1) * 100) : 100;
-                }
-                echo '
+ksort($tecnici);
+foreach ($tecnici as $key => $tecnico) {
+    $margine = $tecnico['ricavo'] - $tecnico['costo'];
+    if ($tecnico['ricavo']) {
+        $margine_prc = (int) (1 - ($tecnico['costo'] / $tecnico['ricavo'])) * 100;
+        $ricarico_prc = ($tecnico['ricavo'] && $tecnico['costo']) ? (int) ((($tecnico['ricavo'] / $tecnico['costo']) - 1) * 100) : 100;
+    }
+    echo '
                 <tr>
                     <td>'.$key.'</td>
                     <td class="text-right">'.(int) $tecnico['km'].'</td>
@@ -389,8 +389,8 @@ if (empty($totale_ore_contratto)) {
                     <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$margine_prc.'%)</td>
                     <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$ricarico_prc.'%)</td>
                 </tr>';
-            }
-            echo '
+}
+echo '
             </table>
         </div>
     </div>
@@ -406,14 +406,14 @@ if (empty($totale_ore_contratto)) {
                     <th width="10%">'.tr('Margine').'</th>
                     <th width="10%">'.tr('Ricarico').'</th>
                 </tr>';
-            ksort($stati_intervento);
-            foreach ($stati_intervento as $key => $stato) {
-                $margine = $stato['ricavo'] - $stato['costo'];
-                if ($stato['ricavo']) {
-                    $margine_prc = (int) (1 - ($stato['costo'] / $stato['ricavo'])) * 100;
-                    $ricarico_prc = ($stato['ricavo'] && $stato['costo']) ? (int) ((($stato['ricavo'] / $stato['costo']) - 1) * 100) : 100;
-                }
-                echo '
+ksort($stati_intervento);
+foreach ($stati_intervento as $key => $stato) {
+    $margine = $stato['ricavo'] - $stato['costo'];
+    if ($stato['ricavo']) {
+        $margine_prc = (int) (1 - ($stato['costo'] / $stato['ricavo'])) * 100;
+        $ricarico_prc = ($stato['ricavo'] && $stato['costo']) ? (int) ((($stato['ricavo'] / $stato['costo']) - 1) * 100) : 100;
+    }
+    echo '
                 <tr>
                     <td><div class="img-circle" style="width:18px; height:18px; position:relative; bottom:-2px; background:'.$stato['colore'].'; float:left;"></div> '.$key.'</td>
                     <td class="text-right">'.Translator::numberToLocale($stato['ore']).'</td>
@@ -422,8 +422,8 @@ if (empty($totale_ore_contratto)) {
                     <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$margine_prc.'%)</td>
                     <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$ricarico_prc.'%)</td>
                 </tr>';
-            }
-            echo '
+}
+echo '
             </table>
         </div>
 
@@ -437,14 +437,14 @@ if (empty($totale_ore_contratto)) {
                     <th width="10%">'.tr('Margine').'</th>
                     <th width="10%">'.tr('Ricarico').'</th>
                 </tr>';
-            ksort($materiali_art);
-            foreach ($materiali_art as $key => $materiali_array1) {
-                foreach ($materiali_array1 as $materiali_array2) {
-                    foreach ($materiali_array2 as $materiale) {
-                        $margine = $materiale['ricavo'] - $materiale['costo'];
-                        $margine_prc = (int) (1 - ($materiale['costo'] / $materiale['ricavo'])) * 100;
-                        $ricarico_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int) ((($materiale['ricavo'] / $materiale['costo']) - 1) * 100) : 100;
-                        echo '
+ksort($materiali_art);
+foreach ($materiali_art as $key => $materiali_array1) {
+    foreach ($materiali_array1 as $materiali_array2) {
+        foreach ($materiali_array2 as $materiale) {
+            $margine = $materiale['ricavo'] - $materiale['costo'];
+            $margine_prc = (int) (1 - ($materiale['costo'] / $materiale['ricavo'])) * 100;
+            $ricarico_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int) ((($materiale['ricavo'] / $materiale['costo']) - 1) * 100) : 100;
+            echo '
                 <tr>
                     <td>'.Modules::link('Articoli', $materiale['id'], $key).'</td>
                     <td class="text-center">'.$materiale['qta'].'</td>
@@ -453,16 +453,16 @@ if (empty($totale_ore_contratto)) {
                     <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$margine_prc.'%)</td>
                     <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$ricarico_prc.'%)</td>
                 </tr>';
-                    }
-                }
-            }
+        }
+    }
+}
 
-            ksort($materiali_righe);
-            foreach ($materiali_righe as $key => $materiale) {
-                $margine = $materiale['ricavo'] - $materiale['costo'];
-                $margine_prc = (int) (1 - ($materiale['costo'] / $materiale['ricavo'])) * 100;
-                $ricarico_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int) ((($materiale['ricavo'] / $materiale['costo']) - 1) * 100) : 100;
-                echo '
+ksort($materiali_righe);
+foreach ($materiali_righe as $key => $materiale) {
+    $margine = $materiale['ricavo'] - $materiale['costo'];
+    $margine_prc = (int) (1 - ($materiale['costo'] / $materiale['ricavo'])) * 100;
+    $ricarico_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int) ((($materiale['ricavo'] / $materiale['costo']) - 1) * 100) : 100;
+    echo '
                 <tr>
                     <td>'.$key.'</td>
                     <td class="text-center">'.$materiale['qta'].'</td>
@@ -471,8 +471,8 @@ if (empty($totale_ore_contratto)) {
                     <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$margine_prc.'%)</td>
                     <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$ricarico_prc.'%)</td>
                 </tr>';
-            }
-            echo '
+}
+echo '
             </table>
         </div>
     </div>

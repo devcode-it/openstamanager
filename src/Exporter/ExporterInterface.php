@@ -28,15 +28,11 @@ interface ExporterInterface
 {
     /**
      * Restitusice i campi disponibili all'esportazione.
-     *
-     * @return mixed
      */
     public function getAvailableFields();
 
     /**
      * Imposta l'header (potenziale) per il documento da importare.
-     *
-     * @return mixed
      */
     public function setHeader();
 
@@ -49,8 +45,6 @@ interface ExporterInterface
 
     /**
      * Imposta l'insieme dei record del gestionale da esportare.
-     *
-     * @param $records
      *
      * @return void
      */
@@ -65,8 +59,6 @@ interface ExporterInterface
 
     /**
      * Gestisce le operazioni di esportazione per un singolo record.
-     *
-     * @param $record
      *
      * @return bool
      */

@@ -296,20 +296,20 @@ echo '
 </thead>
 <tbody>
     <tr>';
-        if ($totale_iva_anno_precedente >= 0) {
-            echo ' <td>DEBITO ANNO PRECEDENTE</td>';
-        } else {
-            echo ' <td>CREDITO ANNO PRECEDENTE</td>';
-        }
-        echo '<td class=text-right>'.moneyFormat(abs($totale_iva_anno_precedente), 2).'</td>
+if ($totale_iva_anno_precedente >= 0) {
+    echo ' <td>DEBITO ANNO PRECEDENTE</td>';
+} else {
+    echo ' <td>CREDITO ANNO PRECEDENTE</td>';
+}
+echo '<td class=text-right>'.moneyFormat(abs($totale_iva_anno_precedente), 2).'</td>
     </tr>
     <tr>';
-        if ($totale_iva_periodo_precedente >= 0) {
-            echo ' <td>DEBITO PERIODO PRECEDENTE</td>';
-        } else {
-            echo ' <td>CREDITO PERIODO PRECEDENTE</td>';
-        }
-        echo ' <td class=text-right>'.moneyFormat(abs($totale_iva_periodo_precedente), 2).'</td>
+if ($totale_iva_periodo_precedente >= 0) {
+    echo ' <td>DEBITO PERIODO PRECEDENTE</td>';
+} else {
+    echo ' <td>CREDITO PERIODO PRECEDENTE</td>';
+}
+echo ' <td class=text-right>'.moneyFormat(abs($totale_iva_periodo_precedente), 2).'</td>
     </tr>    
     <tr>
         <td>TOTALE IVA SU VENDITE ESIGIBILE</td>
@@ -329,14 +329,14 @@ echo '
     </tr>
     <tr>
         <td>VARIAZIONE DI IMPOSTA RELATIVE A PERIODI PRECEDENTI</td>';
-        if ($totale_iva_periodo_precedente < 25.82 && $totale_iva_periodo_precedente > 0) {
-            echo '
-            <td class=text-right>'.moneyFormat(abs($totale_iva_periodo_precedente), 2).'</td>';
-        } else {
-            echo '
-            <td class=text-right></td>';
-        }
+if ($totale_iva_periodo_precedente < 25.82 && $totale_iva_periodo_precedente > 0) {
     echo '
+            <td class=text-right>'.moneyFormat(abs($totale_iva_periodo_precedente), 2).'</td>';
+} else {
+    echo '
+            <td class=text-right></td>';
+}
+echo '
     </tr>
     <tr>
         <td>DI CUI INTERESSI PER RAVVEDIMENTO</td>
@@ -351,12 +351,12 @@ echo '
         <td class=text-right></td>
     </tr>
     <tr>';
-        if ($totale_iva >= 0) {
-            echo ' <td>IVA A DEBITO</td>';
-        } else {
-            echo ' <td>IVA A CREDITO</td>';
-        }
-        echo ' <td class=text-right>'.moneyFormat(abs($totale_iva), 2).'</td>
+if ($totale_iva >= 0) {
+    echo ' <td>IVA A DEBITO</td>';
+} else {
+    echo ' <td>IVA A CREDITO</td>';
+}
+echo ' <td class=text-right>'.moneyFormat(abs($totale_iva), 2).'</td>
     </tr>
     <tr>
         <td>CREDITO SPECIALE DI IMPOSTA</td>
@@ -368,30 +368,30 @@ echo '
     </tr>
     <tr>
         <td>IVA A DEBITO CON MAGGIORAZIONE</td>';
-        if ($totale_iva > 25.82 && $periodo['valore'] == 'Trimestrale') {
-            echo '
-            <td class=text-right>'.moneyFormat($totale_iva_maggiorata, 2).'</td>';
-        } else {
-            echo '
-            <td class=text-right></td>';
-        }
+if ($totale_iva > 25.82 && $periodo['valore'] == 'Trimestrale') {
     echo '
+            <td class=text-right>'.moneyFormat($totale_iva_maggiorata, 2).'</td>';
+} else {
+    echo '
+            <td class=text-right></td>';
+}
+echo '
     </tr>
     <tr>
         <td>IMPORTO DA VERSARE</td>';
-        if ($totale_iva > 25.82) {
-            if ($periodo['valore'] == 'Mensile') {
-                echo '
+if ($totale_iva > 25.82) {
+    if ($periodo['valore'] == 'Mensile') {
+        echo '
                 <td class=text-right>'.moneyFormat($totale_iva, 2).'</td>';
-            } else {
-                echo '
+    } else {
+        echo '
                 <td class=text-right>'.moneyFormat($totale_iva_maggiorata, 2).'</td>';
-            }
-        } else {
-            echo '
-            <td class=text-right></td>';
-        }
+    }
+} else {
     echo '
+            <td class=text-right></td>';
+}
+echo '
     </tr>
     <tr>
         <td>CREDITO INFRANNUALE DI IMPOSTA CHIESTO A RIMBORSO</td>

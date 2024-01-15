@@ -165,7 +165,7 @@ echo '
     '.$mail->content.'
 </div>';
 
-//Posso eliminare l'email solo se questa non è già stata inviata
+// Posso eliminare l'email solo se questa non è già stata inviata
 if (empty($mail->sent_at)) {
     echo '
 <a class="btn btn-danger ask" data-backto="record-list">

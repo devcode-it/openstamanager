@@ -31,10 +31,10 @@ switch (post('op')) {
         $articolo->restore();
         flash()->info(tr('Articolo ripristinato correttamente!'));
 
-    // Aggiunta articolo
-    // no break
+        // Aggiunta articolo
+        // no break
     case 'add':
-        //Se non specifico il codice articolo lo imposto uguale all'id della riga
+        // Se non specifico il codice articolo lo imposto uguale all'id della riga
         if (empty(post('codice'))) {
             $codice = $dbo->fetchOne('SELECT MAX(id) as codice FROM mg_articoli')['codice'] + 1;
         } else {
@@ -106,7 +106,7 @@ switch (post('op')) {
 
         break;
 
-    // Modifica articolo
+        // Modifica articolo
     case 'update':
         $qta = post('qta');
 
@@ -185,7 +185,7 @@ switch (post('op')) {
             // Se non è presente un componente, copia i valori dal file di origine
             $campi_componente = [];
             foreach ($contenuto_componente as $key => $value) {
-                //Fix per nomi con spazi che vengono tradotti con "_" (es. Data_di_installazione)
+                // Fix per nomi con spazi che vengono tradotti con "_" (es. Data_di_installazione)
                 $key = preg_replace('/\s+/', '_', $key);
 
                 $valore = $contenuto_precedente_esistente ? filter($key) : $value['valore'];
@@ -241,11 +241,11 @@ switch (post('op')) {
 
         break;
 
-    // Duplica articolo
+        // Duplica articolo
     case 'copy':
         $new = $articolo->replicate();
 
-        //Se non specifico il codice articolo lo imposto uguale all'id della riga
+        // Se non specifico il codice articolo lo imposto uguale all'id della riga
         if (empty(post('codice'))) {
             $codice = $dbo->fetchOne('SELECT MAX(id) as codice FROM mg_articoli')['codice'] + 1;
         } else {
@@ -277,9 +277,9 @@ switch (post('op')) {
 
         flash()->info(tr('Articolo duplicato correttamente!'));
 
-    break;
+        break;
 
-    // Generazione seriali in sequenza
+        // Generazione seriali in sequenza
     case 'generate_serials':
         // Seriali
         $serial_start = post('serial_start');
@@ -297,7 +297,7 @@ switch (post('op')) {
         // Combinazione di seriali
         $serials = [];
         for ($s = 0; $s < $totale; ++$s) {
-            $serial = $prefix.(str_pad($numero_start + $s, $pad_length, '0', STR_PAD_LEFT));
+            $serial = $prefix.str_pad($numero_start + $s, $pad_length, '0', STR_PAD_LEFT);
 
             $serials[] = $serial;
         }

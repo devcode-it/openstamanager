@@ -22,9 +22,9 @@ $db_host = '|host|';
 $db_username = '|username|';
 $db_password = '|password|';
 $db_name = '|database|';
-//$port = '|port|';
+// $port = '|port|';
 $db_options = [
-    //'sort_buffer_size' => '2M',
+    // 'sort_buffer_size' => '2M',
 ];
 
 // Percorso della cartella di backup

@@ -22,7 +22,6 @@ namespace Plugins\ImportFE;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Fatture\Components\Articolo;
 use Modules\Fatture\Components\Riga;
-use UnexpectedValueException;
 use Util\XML;
 
 /**
@@ -37,7 +36,7 @@ class FatturaSemplificata extends FatturaElettronica
         parent::__construct($name);
 
         if ($this->getHeader()['DatiTrasmissione']['FormatoTrasmissione'] != 'FSM10') {
-            throw new UnexpectedValueException();
+            throw new \UnexpectedValueException();
         }
     }
 

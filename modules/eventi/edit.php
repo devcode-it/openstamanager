@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-//$block_edit = $record['is_predefined'];
+// $block_edit = $record['is_predefined'];
 
 ?>
 

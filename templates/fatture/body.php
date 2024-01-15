@@ -25,7 +25,7 @@ $v_totale = [];
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
 // Creazione righe fantasma
-$autofill = new \Util\Autofill(6, 40);
+$autofill = new Util\Autofill(6, 40);
 $rows_per_page = $fattura_accompagnatoria ? 13 : 18;
 if (!empty($options['last-page-footer'])) {
     $rows_per_page += 7;
@@ -246,13 +246,13 @@ echo '
     <tr>
         <td width="100%">';
 
-    if (!empty($record['note'])) {
-        echo '
+if (!empty($record['note'])) {
+    echo '
             <p class="small-bold">'.tr('Note', [], ['upper' => true]).':</p>
             <p>'.nl2br($record['note']).'</p>';
-    }
+}
 
-    echo '
+echo '
         </td>';
 
 echo '

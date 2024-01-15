@@ -63,10 +63,10 @@ if (isset($id_record)) {
 			<button type="submit" class="btn btn-success"><i class="fa fa-save"></i> <?php echo tr('Salva'); ?></button>
 <?php
 } else {
-        ?>
+    ?>
 			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
 <?php
-    }
+}
 ?>
 		</div>
 	</div>

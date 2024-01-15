@@ -128,9 +128,9 @@ switch ($operazione) {
 
                         $riga->descrizione = $descrizione;
                         $riga->setPrezzoUnitario($prezzo_unitario, $r->idiva);
-                        $riga->setSconto(($r->tipo_sconto == 'PRC' ? $r->sconto_percentuale : $r->sconto_unitario), $r->tipo_sconto);
+                        $riga->setSconto($r->tipo_sconto == 'PRC' ? $r->sconto_percentuale : $r->sconto_unitario, $r->tipo_sconto);
                         $riga->qta = $qta_riga;
-                        $riga->setProvvigione(($r->provvigione_percentuale ? $r->provvigione_percentuale : $r->provvigione_unitaria), $r->tipo_provvigione);
+                        $riga->setProvvigione($r->provvigione_percentuale ? $r->provvigione_percentuale : $r->provvigione_unitaria, $r->tipo_provvigione);
                         $riga->idpianificazione = $pianificazioni[$rata];
 
                         $riga->save();
@@ -200,7 +200,7 @@ switch ($operazione) {
         flash()->info(tr('Rata fatturata correttamente!'));
         database()->commitTransaction();
         redirect(base_path().'/controller.php?id_module='.Modules::get('Fatture di vendita')['id'].'&id_record='.$fattura->id);
-        exit();
+        exit;
 
     case 'add_fattura_multipla':
         $rate = post('rata');
@@ -255,5 +255,5 @@ switch ($operazione) {
         flash()->info(tr('Rate fatturate correttamente!'));
         database()->commitTransaction();
         redirect(base_path().'/controller.php?id_module='.Modules::get('Fatture di vendita')['id']);
-        exit();
+        exit;
 }

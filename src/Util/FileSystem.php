@@ -19,10 +19,6 @@
 
 namespace Util;
 
-use FilesystemIterator;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-
 /**
  * @since 2.4.6
  */
@@ -70,7 +66,7 @@ class FileSystem
         $path = realpath($path);
 
         if ($path !== false && $path != '' && file_exists($path)) {
-            foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)) as $object) {
+            foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS)) as $object) {
                 if (!in_array($object->getExtension(), $exclusions) && (!in_array($object->getPath(), $exclusions))) {
                     $total += $object->getSize();
                 }
@@ -93,7 +89,7 @@ class FileSystem
         $path = realpath($path);
 
         if ($path !== false && $path != '' && file_exists($path)) {
-            foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)) as $object) {
+            foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS)) as $object) {
                 if (!in_array($object->getExtension(), $exclusions) && (!in_array($object->getPath(), $exclusions))) {
                     ++$total;
                 }

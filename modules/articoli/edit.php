@@ -425,8 +425,8 @@ if (!empty($elementi)) {
             '_DATE_' => Translator::dateToLocale($elemento['data']),
         ]);
 
-        //se non è un preventivo è un ddt o una fattura
-        //se non è un ddt è una fattura.
+        // se non è un preventivo è un ddt o una fattura
+        // se non è un ddt è una fattura.
         if (in_array($elemento['tipo_documento'], ['Preventivo'])) {
             $modulo = 'Preventivi';
         } elseif (!in_array($elemento['tipo_documento'], ['Ddt di vendita', 'Ddt di acquisto', 'Ddt in entrata', 'Ddt in uscita'])) {

@@ -25,8 +25,6 @@ use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\OAuth;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
-use Prints;
-use Uploads;
 
 class EmailNotification extends PHPMailer implements NotificationInterface
 {
@@ -209,7 +207,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
         $this->SmtpClose();
 
         // Pulizia file generati
-        //delete($this->getTempDirectory());
+        // delete($this->getTempDirectory());
 
         // Segnalazione degli errori
         if (!$result) {
@@ -251,7 +249,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
     {
         $attachment = database()->fetchOne('SELECT * FROM zz_files WHERE id = '.prepare($file_id));
 
-        $this->addAttachment(base_dir().'/'.Uploads::getDirectory($attachment['id_module'], $attachment['id_plugin']).'/'.$attachment['filename'], $attachment['original']);
+        $this->addAttachment(base_dir().'/'.\Uploads::getDirectory($attachment['id_module'], $attachment['id_plugin']).'/'.$attachment['filename'], $attachment['original']);
     }
 
     /**
@@ -263,9 +261,9 @@ class EmailNotification extends PHPMailer implements NotificationInterface
      */
     public function addPrint($print, $id_record, $name = null)
     {
-        $print = Prints::get($print);
+        $print = \Prints::get($print);
 
-        $info = Prints::render($print['id'], $id_record, null, true);
+        $info = \Prints::render($print['id'], $id_record, null, true);
         $name = $name ?: $info['path'];
 
         $this->AddStringAttachment($info['pdf'], $name);

@@ -2,9 +2,6 @@
 
 namespace Plugins\PresentazioniBancarie\Cbi;
 
-use DOMDocument;
-use DOMXPath;
-
 class CbiSepa
 {
     /**
@@ -84,11 +81,11 @@ class CbiSepa
 
         $CtrlSum = 0.00;
         $NbOfTxs = 1;
-        $domDoc = new DOMDocument();
+        $domDoc = new \DOMDocument();
         $domDoc->preserveWhiteSpace = false;
         $domDoc->formatOutput = true;
         $domDoc->loadXML($content);
-        $xpath = new DOMXPath($domDoc);
+        $xpath = new \DOMXPath($domDoc);
         $rootNamespace = $domDoc->lookupNamespaceUri($domDoc->namespaceURI);
         $xpath->registerNamespace('x', $rootNamespace);
         $results = $xpath->query('//x:GrpHdr/x:MsgId')->item(0);

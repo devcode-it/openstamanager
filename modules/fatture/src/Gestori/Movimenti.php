@@ -31,7 +31,7 @@ use Modules\PrimaNota\Movimento;
 class Movimenti
 {
     protected $fattura;
-    protected $mastrino = null;
+    protected $mastrino;
 
     public function __construct(Fattura $fattura)
     {

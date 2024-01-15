@@ -120,7 +120,7 @@ if (empty($dbo->fetchArray('SELECT * FROM co_scadenziario'))) {
     $disabled = '';
 }
 
-    echo '     
+echo '     
                 <div class="col-md-6">
                     <button type="button" '.$disabled.' class="btn btn-'.$class.' col-md-12" data-toggle="modal" data-title="'.tr('Stampa scadenzario').'" data-href="'.base_path().'/modules/stampe_contabili/stampa_scadenzario.php" >
                         <i class="fa fa-print fa-2x"></i><br>'.tr('Stampa<br>scadenzario').'

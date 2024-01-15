@@ -34,7 +34,7 @@ if ($search_nome) {
     $where[] = 'an_sedi.nome like '.prepare('%'.$search_nome.'%');
 }
 
-//Ciclo tra gli articoli selezionati
+// Ciclo tra gli articoli selezionati
 $query = '
     SELECT
         an_sedi.targa, an_sedi.nome,

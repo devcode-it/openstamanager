@@ -3,10 +3,8 @@
 namespace Plugins\PresentazioniBancarie;
 
 use Carbon\Carbon;
-use DateTime;
 use Digitick\Sepa\PaymentInformation;
 use Digitick\Sepa\TransferFile\Factory\TransferFileFacadeFactory;
-use Exception;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Banche\Banca;
 use Modules\Scadenzario\Scadenza;
@@ -205,7 +203,7 @@ class Gestore
         return false;
     }
 
-    public function aggiungiRiBa(int $identifier, Anagrafica $controparte, Banca $banca_controparte, string $descrizione, int $totale, DateTime $data_prevista)
+    public function aggiungiRiBa(int $identifier, Anagrafica $controparte, Banca $banca_controparte, string $descrizione, int $totale, \DateTime $data_prevista)
     {
         $data_scadenza = $data_prevista->format('dmy');
 
@@ -233,7 +231,7 @@ class Gestore
         $ricevuta->cab_banca = $cab_cliente;
         $ricevuta->codice_cliente = $controparte['codice'];
 
-        //controlli sulla ragione sociale
+        // controlli sulla ragione sociale
         $ragione_sociale = utf8_decode($controparte['ragione_sociale']);
 
         // Sostituzione di alcuni simboli noti
@@ -258,7 +256,7 @@ class Gestore
         return true;
     }
 
-    public function aggiungiBonifico(int $identifier, Anagrafica $controparte, Banca $banca_controparte, string $descrizione, float $totale, DateTime $data_prevista, $ctgypurp)
+    public function aggiungiBonifico(int $identifier, Anagrafica $controparte, Banca $banca_controparte, string $descrizione, float $totale, \DateTime $data_prevista, $ctgypurp)
     {
         $data_scadenza = $data_prevista->format('dmy');
 
@@ -297,7 +295,7 @@ class Gestore
             $ricevuta->codice_cliente = $controparte['codice'];
             $ricevuta->ctgypurp = $ctgypurp;
 
-            //controlli sulla ragione sociale
+            // controlli sulla ragione sociale
             $ragione_sociale = utf8_decode($controparte['ragione_sociale']);
 
             // Sostituzione di alcuni simboli noti
@@ -325,7 +323,7 @@ class Gestore
         return true;
     }
 
-    public function aggiungiCreditoDiretto(int $identifier, Anagrafica $controparte, Banca $banca_controparte, string $descrizione, $totale, DateTime $data_prevista, $ctgypurp)
+    public function aggiungiCreditoDiretto(int $identifier, Anagrafica $controparte, Banca $banca_controparte, string $descrizione, $totale, \DateTime $data_prevista, $ctgypurp)
     {
         $id = 'pagamento_'.$identifier;
 
@@ -351,7 +349,7 @@ class Gestore
         return true;
     }
 
-    public function aggiungiDebitoDirettoSEPA(int $identifier, Anagrafica $controparte, Banca $banca_controparte, string $descrizione, $totale, DateTime $data_prevista)
+    public function aggiungiDebitoDirettoSEPA(int $identifier, Anagrafica $controparte, Banca $banca_controparte, string $descrizione, $totale, \DateTime $data_prevista)
     {
         $id = 'pagamento_'.$identifier;
 
@@ -381,7 +379,7 @@ class Gestore
         return true;
     }
 
-    public function aggiungiDebitoDiretto(int $identifier, Anagrafica $controparte, Banca $banca_controparte, string $descrizione, $totale, DateTime $data_prevista, $method, $codice_sequenza)
+    public function aggiungiDebitoDiretto(int $identifier, Anagrafica $controparte, Banca $banca_controparte, string $descrizione, $totale, \DateTime $data_prevista, $method, $codice_sequenza)
     {
         $paymentInformation = new PaymentInformationCBI();
         $paymentInformation
@@ -392,7 +390,7 @@ class Gestore
             ->setRequestedExecutionDate($data_prevista->format('Y-m-d'))
             ->setLocalMethod($method)
             ->setServiceLevel('SEPA')
-            ->setSeqType(($codice_sequenza != '' ? $codice_sequenza : 'RCUR'));
+            ->setSeqType($codice_sequenza != '' ? $codice_sequenza : 'RCUR');
 
         $mandato = $this->getMandato($banca_controparte);
         $payment = new PaymentCBI();
@@ -481,7 +479,7 @@ class Gestore
 
             // Salvataggio del file
             file_put_contents(base_dir().'/'.$file, $content);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
         }
 
         // File per il pagamento delle vendite Bonifico
@@ -495,7 +493,7 @@ class Gestore
 
             // Salvataggio del file
             file_put_contents(base_dir().'/'.$file, $content);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
         }
 
         // File per il pagamento degli acquisti SEPA
@@ -509,7 +507,7 @@ class Gestore
 
             // Salvataggio del file
             file_put_contents(base_dir().'/'.$file, $xml);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
         }
 
         // File per il pagamento delle vendite SEPA CBI
@@ -532,7 +530,7 @@ class Gestore
 
             // Salvataggio del file
             file_put_contents(base_dir().'/'.$file, $xml);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
         }
 
         return $files;

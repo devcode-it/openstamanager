@@ -233,10 +233,10 @@ switch ($resource) {
 
         break;
 
-    /*
-     * Opzioni utilizzate:
-     * - id_categoria
-     */
+        /*
+         * Opzioni utilizzate:
+         * - id_categoria
+         */
     case 'sottocategorie':
         if (isset($superselect['id_categoria'])) {
             $query = 'SELECT `id`, `nome` AS descrizione FROM `mg_categorie` |where| ORDER BY `nome`';
@@ -265,10 +265,10 @@ switch ($resource) {
 
         break;
 
-    /*
-     * Opzioni utilizzate:
-     * - idanagrafica
-     */
+        /*
+         * Opzioni utilizzate:
+         * - idanagrafica
+         */
     case 'articoli_barcode':
         $id_anagrafica = filter('id_anagrafica'); // ID passato via URL in modo fisso
         $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');

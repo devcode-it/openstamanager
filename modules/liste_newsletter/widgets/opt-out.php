@@ -94,26 +94,26 @@ echo '
         <th>'.tr('Email').'</th>
     </tr>';
 
-    foreach ($destinatari as $destinatario) {
-        // Aggiornamento iscrizione locale
-        $destinatario->enable_newsletter = false;
-        $destinatario->save();
+foreach ($destinatari as $destinatario) {
+    // Aggiornamento iscrizione locale
+    $destinatario->enable_newsletter = false;
+    $destinatario->save();
 
-        $anagrafica = $destinatario instanceof Anagrafica ? $destinatario : $destinatario->anagrafica;
-        $descrizione = $anagrafica->ragione_sociale;
+    $anagrafica = $destinatario instanceof Anagrafica ? $destinatario : $destinatario->anagrafica;
+    $descrizione = $anagrafica->ragione_sociale;
 
-        if ($destinatario instanceof Sede) {
-            $descrizione .= ' ['.$destinatario->nomesede.']';
-        } elseif ($destinatario instanceof Referente) {
-            $descrizione .= ' ['.$destinatario->nome.']';
-        }
+    if ($destinatario instanceof Sede) {
+        $descrizione .= ' ['.$destinatario->nomesede.']';
+    } elseif ($destinatario instanceof Referente) {
+        $descrizione .= ' ['.$destinatario->nome.']';
+    }
 
-        echo '
+    echo '
     <tr>
         <td>'.$descrizione.'</td>
         <td>'.$destinatario->email.'</td>
     </tr>';
-    }
+}
 
 echo '
 </table>';

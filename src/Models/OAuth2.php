@@ -21,7 +21,6 @@ namespace Models;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
-use InvalidArgumentException;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
@@ -55,7 +54,7 @@ class OAuth2 extends Model
 
             $class = $this->class;
             if (!class_exists($class)) {
-                throw new InvalidArgumentException('Classe non esistente');
+                throw new \InvalidArgumentException('Classe non esistente');
             }
 
             $this->provider = new $class($config);
@@ -84,7 +83,7 @@ class OAuth2 extends Model
      * @param string|null $state
      *
      * @throws IdentityProviderException
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return string|null
      */
@@ -112,7 +111,7 @@ class OAuth2 extends Model
             $this->state = null;
             $this->save();
 
-            throw new InvalidArgumentException();
+            throw new \InvalidArgumentException();
         } else {
             $this->state = null;
             $this->save();

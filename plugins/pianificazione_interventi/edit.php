@@ -98,7 +98,7 @@ if (!$elenco_promemoria->isEmpty()) {
             $disabled = 'disabled';
             $title = 'Per eliminare il promemoria, eliminare prima l\'intervento associato.';
         } else {
-            $info_intervento = '- '.('Nessuno').' -';
+            $info_intervento = '- Nessuno -';
             $disabled = '';
             $title = 'Elimina promemoria...';
         }
@@ -106,7 +106,7 @@ if (!$elenco_promemoria->isEmpty()) {
         // Informazioni sugli impianti
         $info_impianti = '';
         if (!empty($promemoria['idimpianti'])) {
-            $impianti = $dbo->fetchArray('SELECT id, matricola, nome FROM my_impianti WHERE id IN ('.($promemoria['idimpianti']).')');
+            $impianti = $dbo->fetchArray('SELECT id, matricola, nome FROM my_impianti WHERE id IN ('.$promemoria['idimpianti'].')');
 
             foreach ($impianti as $impianto) {
                 $info_impianti .= Modules::link('MyImpianti', $impianto['id'], tr('_NOME_ (_MATRICOLA_)', [

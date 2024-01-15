@@ -268,7 +268,7 @@ switch (filter('op')) {
 
         break;
 
-    // Ordinamento moduli di primo livello
+        // Ordinamento moduli di primo livello
     case 'sort_modules':
         $order = explode(',', post('order', true));
 
@@ -351,7 +351,7 @@ switch (filter('op')) {
 
         foreach ($dirs as $dir => $description) {
             $excluded_extensions = ['htaccess', 'gitkeep'];
-            //Tutte le cartelle che non prevedono log in zz_files
+            // Tutte le cartelle che non prevedono log in zz_files
             $excluded_dir = [DOCROOT.'\files\impianti', DOCROOT.'\files\importFE', DOCROOT.'\files\exportFE', DOCROOT.'\files\receiptFE', DOCROOT.'\files\temp'];
 
             $size = FileSystem::folderSize($dir, array_merge($excluded_extensions, $excluded_dir));
@@ -395,14 +395,14 @@ switch (filter('op')) {
         // Formattazione dei contenuti dello storico
         foreach ($history as $key => $value) {
             $history[$key]['size'] = (($history[$key]['size']) ? Filesystem::formatBytes($value['size']) : '-');
-            //$history[$key]['invoices_size'] = Filesystem::formatBytes($value['invoices_size']);
-            //$history[$key]['notifies_size'] = Filesystem::formatBytes($value['notifies_size']);
+            // $history[$key]['invoices_size'] = Filesystem::formatBytes($value['invoices_size']);
+            // $history[$key]['notifies_size'] = Filesystem::formatBytes($value['notifies_size']);
         }
 
         // Formattazione dei contenuti generici
         echo json_encode([
-            //'invoices_size' => Filesystem::formatBytes($informazioni['invoices_size']),
-            //'notifies_size' => Filesystem::formatBytes($informazioni['notifies_size']),
+            // 'invoices_size' => Filesystem::formatBytes($informazioni['invoices_size']),
+            // 'notifies_size' => Filesystem::formatBytes($informazioni['notifies_size']),
 
             'invoice_number' => $informazioni['invoice_number'],
             'maxNumber' => $max_number,

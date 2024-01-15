@@ -93,7 +93,7 @@ class HTMLBuilder
         'list' => [
             'filelist_and_upload' => Manager\FileManager::class,
             'button' => Manager\ButtonManager::class,
-            //'csrf' => Manager\CSRFManager::class,
+            // 'csrf' => Manager\CSRFManager::class,
             'custom_fields' => Manager\FieldManager::class,
             'widgets' => Manager\WidgetManager::class,
             'log_email' => Manager\EmailManager::class,
@@ -218,8 +218,6 @@ class HTMLBuilder
      * Restituisce l'istanza della classe responsabile per la gestione di una determinata tipologia di tag di input.
      *
      * @param string $input
-     *
-     * @return mixed
      */
     public static function getHandler($input)
     {
@@ -251,8 +249,6 @@ class HTMLBuilder
 
     /**
      * Restituisce l'oggetto responsabile per la costruzione del codice HTML contenente gli input effettivi.
-     *
-     * @return mixed
      */
     public static function getWrapper()
     {
@@ -285,8 +281,6 @@ class HTMLBuilder
      * Restituisce l'oggetto responsabile per la costruzione del codice HTML per il tag personalizzato.
      *
      * @param string $input
-     *
-     * @return mixed
      */
     public static function getManager($input)
     {

@@ -109,7 +109,7 @@ if (filter('action') == 'do_update') {
         </a>';
     }
 
-    exit();
+    exit;
 } elseif (Update::isUpdateAvailable()) {
     // Controllo se l'aggiornamento è in esecuzione
     if (Update::isUpdateLocked() && filter('force') === null) {
@@ -131,7 +131,7 @@ if (filter('action') == 'do_update') {
 
         include_once App::filepath('include|custom|', 'bottom.php');
 
-        exit();
+        exit;
     }
 
     $firstuse = !$dbo->isInstalled() ? 'true' : 'false';

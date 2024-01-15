@@ -91,7 +91,7 @@ if ($dir == 'entrata') {
                             {[ "type": "span", "label": "'.tr('Numero ddt').'", "class": "text-center", "value": "$numero$" ]}
                         </div>';
                             }
-                        ?>
+?>
 
                         <div class="col-md-6">
                             {[ "type": "text", "label": "<?php echo tr('Numero secondario'); ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}
@@ -103,22 +103,22 @@ if ($dir == 'entrata') {
 
                         <div class="col-md-6">
                             <?php
-                            if (setting('Cambia automaticamente stato ddt fatturati')) {
-                                if ($record['stato'] == 'Fatturato' || $record['stato'] == 'Parzialmente fatturato') {
-                                    ?>
+    if (setting('Cambia automaticamente stato ddt fatturati')) {
+        if ($record['stato'] == 'Fatturato' || $record['stato'] == 'Parzialmente fatturato') {
+            ?>
                                     {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT *, colore AS _bgcolor_ FROM dt_statiddt ORDER BY descrizione", "value": "$idstatoddt$", "extra": "readonly", "class": "unblockable" ]}
                             <?php
-                                } else {
-                                    ?>
+        } else {
+            ?>
                                     {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT *, colore AS _bgcolor_ FROM dt_statiddt WHERE descrizione IN('Bozza', 'Evaso', 'Parzialmente evaso') ORDER BY descrizione", "value": "$idstatoddt$", "class": "unblockable" ]}
                             <?php
-                                }
-                            } else {
-                                ?>
+        }
+    } else {
+        ?>
                             {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT *, colore AS _bgcolor_ FROM dt_statiddt ORDER BY descrizione", "value": "$idstatoddt$", "class": "unblockable" ]}
                             <?php
-                            }
-                            ?>
+    }
+?>
                         </div>
 <?php
                     if ($dir == 'entrata') {
@@ -131,7 +131,7 @@ if ($dir == 'entrata') {
                             {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
                         </div>';
                     }
-                    ?>
+?>
                     </div>
 
                     <div class="row">
@@ -140,21 +140,21 @@ if ($dir == 'entrata') {
                             {[ "type": "select", "label": "<?php echo ($dir == 'uscita') ? tr('Mittente') : tr('Destinatario'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti_fornitori" ]}
                         </div>
 <?php
-                        echo '
+    echo '
                         <div class="col-md-6">';
-                            if (!empty($record['idreferente'])) {
-                                echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
-                            }
-                            echo '
+if (!empty($record['idreferente'])) {
+    echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
+}
+echo '
                             {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.$record['idsede_destinazione'].'} ]}
                         </div>';
 
-                        // Conteggio numero articoli ddt in uscita
-                        $articolo = $dbo->fetchArray('SELECT mg_articoli.id FROM ((mg_articoli INNER JOIN dt_righe_ddt ON mg_articoli.id=dt_righe_ddt.idarticolo) INNER JOIN dt_ddt ON dt_ddt.id=dt_righe_ddt.idddt) WHERE dt_ddt.id='.prepare($id_record));
-                        $id_modulo_anagrafiche = Modules::get('Anagrafiche')['id'];
-                        $id_plugin_sedi = Plugins::get('Sedi')['id'];
-                        if ($dir == 'entrata') {
-                            echo '
+// Conteggio numero articoli ddt in uscita
+$articolo = $dbo->fetchArray('SELECT mg_articoli.id FROM ((mg_articoli INNER JOIN dt_righe_ddt ON mg_articoli.id=dt_righe_ddt.idarticolo) INNER JOIN dt_ddt ON dt_ddt.id=dt_righe_ddt.idddt) WHERE dt_ddt.id='.prepare($id_record));
+$id_modulo_anagrafiche = Modules::get('Anagrafiche')['id'];
+$id_plugin_sedi = Plugins::get('Sedi')['id'];
+if ($dir == 'entrata') {
+    echo '
                         <div class="col-md-6">
                             {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "help": "'.tr("Sedi di partenza dell'azienda").'" ]}
                         </div>
@@ -162,8 +162,8 @@ if ($dir == 'entrata') {
                         <div class="col-md-6">
                             {[ "type": "select", "label": "'.tr('Destinazione merce').'", "name": "idsede_destinazione", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idsede_destinazione$", "help": "'.tr('Sedi del destinatario').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
                         </div>';
-                        } else {
-                            echo '
+} else {
+    echo '
                         <div class="col-md-6">
                             {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idsede_partenza$", "help": "'.tr('Sedi del mittente').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
                         </div>
@@ -171,8 +171,8 @@ if ($dir == 'entrata') {
                         <div class="col-md-6">
                             {[ "type": "select", "label": "'.tr('Destinazione merce').'", "name": "idsede_destinazione", "ajax-source": "sedi_azienda", "value": "$idsede_destinazione$", "help": "'.tr("Sedi di arrivo dell'azienda").'" ]}
                         </div>';
-                        }
-                        ?>
+}
+?>
                     </div>
                 </div>
             </div>
@@ -181,18 +181,18 @@ if ($dir == 'entrata') {
         <div class="col-md-4">
             <?php
             $sede_anagrafica = $ddt->anagrafica->sedeLegale;
-            $id_sede_anagrafica = $dir == 'entrata' ? $ddt->idsede_destinazione : $ddt->idsede_partenza;
-            if (!empty($id_sede_anagrafica)) {
-                $sede_anagrafica = Sede::find($id_sede_anagrafica);
-            }
+$id_sede_anagrafica = $dir == 'entrata' ? $ddt->idsede_destinazione : $ddt->idsede_partenza;
+if (!empty($id_sede_anagrafica)) {
+    $sede_anagrafica = Sede::find($id_sede_anagrafica);
+}
 
-            $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
-            $sede_azienda = $anagrafica_azienda->sedeLegale;
-            $id_sede_azienda = $dir == 'entrata' ? $ddt->idsede_partenza : $ddt->idsede_destinazione;
-            if (!empty($id_sede_azienda)) {
-                $sede_azienda = Sede::find($id_sede_azienda);
-            }
-            ?>
+$anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
+$sede_azienda = $anagrafica_azienda->sedeLegale;
+$id_sede_azienda = $dir == 'entrata' ? $ddt->idsede_partenza : $ddt->idsede_destinazione;
+if (!empty($id_sede_azienda)) {
+    $sede_azienda = Sede::find($id_sede_azienda);
+}
+?>
 
             <!-- GEOLOCALIZZAZIONE -->
             <div class="panel panel-primary">
@@ -201,38 +201,38 @@ if ($dir == 'entrata') {
                 </div>
                 <div class="panel-body">
                 <?php
-                if (!empty($sede_anagrafica->gaddress) || (!empty($sede_anagrafica->lat) && !empty($sede_anagrafica->lng))) {
-                    echo '
+    if (!empty($sede_anagrafica->gaddress) || (!empty($sede_anagrafica->lat) && !empty($sede_anagrafica->lng))) {
+        echo '
                     <div id="map-edit" style="width: 100%;"></div>
 
                     <div class="clearfix"></div>
                     <br>';
 
-                    // Navigazione diretta verso l'indirizzo
-                    echo '
+        // Navigazione diretta verso l'indirizzo
+        echo '
                     <a class="btn btn-info btn-block" onclick="$(\'#map-edit\').height(235); caricaMappa(); $(this).hide();">
                         <i class="fa fa-compass"></i> '.tr('Carica mappa').'
                     </a>';
 
-                    // Navigazione diretta verso l'indirizzo
-                    echo '
+        // Navigazione diretta verso l'indirizzo
+        echo '
                     <a class="btn btn-info btn-block" onclick="calcolaPercorso()">
                         <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
                     </a>';
-                } else {
-                    // Navigazione diretta verso l'indirizzo
-                    echo '
+    } else {
+        // Navigazione diretta verso l'indirizzo
+        echo '
                     <a class="btn btn-info btn-block" onclick="calcolaPercorso()">
                         <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
                     </a>';
 
-                    // Ricerca diretta su Mappa
-                    echo '
+        // Ricerca diretta su Mappa
+        echo '
                     <a class="btn btn-info btn-block" onclick="cercaOpenStreetMap()">
                         <i class="fa fa-map-marker"></i> '.tr('Cerca su Mappa').'
                         '.((!empty($sede_anagrafica->lat)) ? tr(' (GPS)') : '').'
                     </a>';
-                }
+    }
 
         echo '
                 </div>
@@ -319,7 +319,7 @@ if ($dir == 'entrata') {
                     map.setView([lat, lng], 10);
                 }
             </script>';
-            ?>
+?>
         </div>
     </div>
 
@@ -337,10 +337,10 @@ if ($dir == 'entrata') {
 
 				<div class="col-md-3">
                     <?php
-                        if (!empty($record['idcausalet'])) {
-                            echo Modules::link('Causali', $record['idcausalet'], null, null, 'class="pull-right"');
-                        }
-                    ?>
+            if (!empty($record['idcausalet'])) {
+                echo Modules::link('Causali', $record['idcausalet'], null, null, 'class="pull-right"');
+            }
+?>
 					{[ "type": "select", "label": "<?php echo tr('Causale trasporto'); ?>", "name": "idcausalet", "required": 1, "value": "$idcausalet$", "ajax-source": "causali", "icon-after": "add|<?php echo Modules::get('Causali')['id']; ?>|||<?php echo $block_edit ? 'disabled' : ''; ?>", "help": "<?php echo tr('Definisce la causale del trasporto'); ?>" ]}
 				</div>
 
@@ -364,13 +364,13 @@ if ($dir == 'entrata') {
 
 				<div class="col-md-3">
                     <?php
-                        if (!empty($record['idvettore'])) {
-                            echo Modules::link('Anagrafiche', $record['idvettore'], null, null, 'class="pull-right"');
-                        }
-                        $esterno = $dbo->selectOne('dt_spedizione', 'esterno', [
-                            'id' => $record['idspedizione'],
-                        ])['esterno'];
-                    ?>
+    if (!empty($record['idvettore'])) {
+        echo Modules::link('Anagrafiche', $record['idvettore'], null, null, 'class="pull-right"');
+    }
+    $esterno = $dbo->selectOne('dt_spedizione', 'esterno', [
+        'id' => $record['idspedizione'],
+    ])['esterno'];
+?>
 					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo empty($esterno) || (!empty($esterno) && !empty($record['idvettore'])) ? 1 : 0; ?>, "required": <?php echo !empty($esterno) ?: 0; ?>, "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo ($esterno and (intval(!$record['flag_completato']) || empty($record['idvettore']))) ? '' : 'disabled'; ?>", "class": "<?php echo empty($record['idvettore']) ? 'unblockable' : ''; ?>" ]}
 				</div>
 
@@ -441,7 +441,7 @@ if ($dir == 'entrata') {
 
         <div class="row">
             <div class="col-md-3">
-                {[ "type": "number", "label": "'.('Sconto in fattura').'", "name": "sconto_finale", "value": "'.($ddt->sconto_finale_percentuale ?: $ddt->sconto_finale).'", "icon-after": "choice|untprc|'.(empty($ddt->sconto_finale) ? 'PRC' : 'UNT').'", "help": "'.tr('Sconto in fattura, utilizzabile per applicare sconti sul netto a pagare del documento').'." ]}
+                {[ "type": "number", "label": "Sconto in fattura", "name": "sconto_finale", "value": "'.($ddt->sconto_finale_percentuale ?: $ddt->sconto_finale).'", "icon-after": "choice|untprc|'.(empty($ddt->sconto_finale) ? 'PRC' : 'UNT').'", "help": "'.tr('Sconto in fattura, utilizzabile per applicare sconti sul netto a pagare del documento').'." ]}
             </div>
         </div>';
 }
@@ -464,7 +464,7 @@ if ($dir == 'entrata') {
     } else {
         $collapsed = ' collapsed-box';
     }
-    ?>
+?>
 
     <!-- Fatturazione Elettronica PA-->
 

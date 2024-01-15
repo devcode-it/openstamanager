@@ -48,25 +48,25 @@ $calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto ?: setting("Metodologia ca
 echo '
 <div class="row">';
 
-    // Cassa previdenziale
-    echo '
+// Cassa previdenziale
+echo '
     <div class="col-md-4">
         {[ "type": "select", "label": "'.tr('Cassa previdenziale').'", "name": "id_rivalsa_inps", "value": "'.$id_rivalsa_inps.'", "values": "query=SELECT * FROM co_rivalse", "help": "'.(($options['dir'] == 'entrata') ? setting('Tipo Cassa Previdenziale') : null).'" ]}
     </div>';
 
-    // Ritenuta d'acconto
-    echo '
+// Ritenuta d'acconto
+echo '
     <div class="col-md-4">
         {[ "type": "select", "label": "'.tr("Ritenuta d'acconto").'", "name": "id_ritenuta_acconto", "value": "'.$id_ritenuta_acconto.'", "values": "query=SELECT * FROM co_ritenutaacconto" ]}
     </div>';
 
-    // Calcola ritenuta d'acconto su
-    echo '
+// Calcola ritenuta d'acconto su
+echo '
     <div class="col-md-4">
         {[ "type": "select", "label": "'.tr("Calcola ritenuta d'acconto su").'", "name": "calcolo_ritenuta_acconto", "value": "'.$calcolo_ritenuta_acconto.'", "values": "list=\"IMP\":\"Imponibile\", \"IMP+RIV\":\"Imponibile + rivalsa\""]}
     </div>';
 
-    echo '
+echo '
 </div>';
 
 if (!empty($options['show-ritenuta-contributi']) || empty($options['hide_conto'])) {

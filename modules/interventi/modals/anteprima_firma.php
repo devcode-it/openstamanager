@@ -26,7 +26,7 @@ if (get('anteprima') !== null) {
 
     if (empty($rs)) {
         echo tr('Intervento inesistente!');
-        exit();
+        exit;
     }
 
     // Gestione della stampa
@@ -133,7 +133,7 @@ if (setting('Sistema di firma') == 'Base') {
     </script>
 <?php
 } elseif (setting('Sistema di firma') == 'Tavoletta Wacom') {
-        echo '
+    echo '
     <div id="firma-div"></div>
 
     <script type="text/javascript">
@@ -166,4 +166,4 @@ if (setting('Sistema di firma') == 'Base') {
             });
         }
     </script>';
-    }
+}

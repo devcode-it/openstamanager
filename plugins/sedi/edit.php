@@ -77,14 +77,14 @@ echo '
 		</div>
 
 		<div class="col-md-3">
-			{[ "type": "checkbox", "label": "'.tr('Rappresentante fiscale').'", "name": "is_rappresentante_fiscale", "value": "'.($record['is_rappresentante_fiscale']).'", "help": "'.tr("Utilizza questa sede come rappresentante fiscale per l'anagrafica.").'" ]}
+			{[ "type": "checkbox", "label": "'.tr('Rappresentante fiscale').'", "name": "is_rappresentante_fiscale", "value": "'.$record['is_rappresentante_fiscale'].'", "help": "'.tr("Utilizza questa sede come rappresentante fiscale per l'anagrafica.").'" ]}
 		</div>
 
 		<div class="col-md-3">
-			{[ "type": "text", "label": "'.tr('Partita IVA').'", "name": "piva", "value": "'.($record['piva']).'", "help": "'.tr('Partita IVA del rappresentante fiscale.').'", "disabled":"disabled"]}
+			{[ "type": "text", "label": "'.tr('Partita IVA').'", "name": "piva", "value": "'.$record['piva'].'", "help": "'.tr('Partita IVA del rappresentante fiscale.').'", "disabled":"disabled"]}
 		</div>
 		<div class="col-md-3">
-			{[ "type": "text", "label": "'.tr('Codice fiscale').'", "name": "codice_fiscale", "value": "'.($record['codice_fiscale']).'", "help": "'.tr('Codice fiscale del rappresentante fiscale.').'", "disabled":"disabled" ]}
+			{[ "type": "text", "label": "'.tr('Codice fiscale').'", "name": "codice_fiscale", "value": "'.$record['codice_fiscale'].'", "help": "'.tr('Codice fiscale del rappresentante fiscale.').'", "disabled":"disabled" ]}
 		</div>
 	</div>
 	<div class="row">
@@ -126,8 +126,8 @@ echo '
 			{[ "type": "text", "label": "'.tr('Longitudine').'", "name": "lng", "id": "lng_", "value": "$lng$", "extra": "data-geo=\'lng\'", "class": "text-right", "readonly": true ]}
 		</div>';
 
-    if (!empty($record['indirizzo']) || (empty($record['citta']))) {
-        echo '
+if (!empty($record['indirizzo']) || (empty($record['citta']))) {
+    echo '
 		<div class="col-md-2">
 			<label>&nbsp;</label><br>
 			<a class="btn btn-info" title="'.tr('Mostra la sede su Mappa').'" onclick="cercaOpenStreetMap();">&nbsp;<i class="fa fa-map-marker">&nbsp;</i></a>
@@ -135,7 +135,7 @@ echo '
 			<a title="'.tr('Calcola percorso da sede legale a questa sede').'" class="btn btn-primary" onclick="calcolaPercorso();"><i class="fa fa-car"></i></a>
 		</div> 
 		<div class="clearfix"></div><br>';
-    }
+}
 
 echo '
 	</div>';

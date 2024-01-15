@@ -42,7 +42,7 @@ switch (post('op')) {
         $is_fatturabile = post('is_fatturabile') ?: null;
         $is_pianificabile = post('is_pianificabile') ?: null;
 
-        //controlla descrizione che non sia duplicata
+        // controlla descrizione che non sia duplicata
         if (count($dbo->fetchArray('SELECT descrizione FROM co_staticontratti WHERE descrizione='.prepare($descrizione))) > 0) {
             flash()->error(tr('Stato di contratto già esistente.'));
         } else {
@@ -55,7 +55,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        //scelgo se settare come eliminato o cancellare direttamente la riga se non è stato utilizzato nei contratti
+        // scelgo se settare come eliminato o cancellare direttamente la riga se non è stato utilizzato nei contratti
         if (count($dbo->fetchArray('SELECT id FROM co_contratti WHERE idstato='.prepare($id_record))) > 0) {
             $query = 'UPDATE co_staticontratti SET deleted_at = NOW() WHERE can_delete = 1 AND id='.prepare($id_record);
         } else {

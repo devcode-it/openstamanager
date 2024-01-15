@@ -54,8 +54,6 @@ function redirect($url, $type = 'php')
  * Verifica e corregge il nome di un file.
  *
  * @param string $filename
- *
- * @return mixed
  */
 function sanitizeFilename($filename)
 {
@@ -96,14 +94,13 @@ function delete($files)
  */
 function directory($path)
 {
-    return Util\FileSystem::directory($path);
+    return FileSystem::directory($path);
 }
 
 /**
  * Copy a file, or recursively copy a folder and its contents.
  *
  * @param array|string $source  Source path
- * @param string       $dest    Destination path
  * @param array|string $ignores Paths to ingore
  *
  * @return bool Returns TRUE on success, FALSE on failure
@@ -271,7 +268,7 @@ function translateTemplate()
 
     // Annullo le notifiche (AJAX)
     if (isAjaxRequest()) {
-        //flash()->clearMessage('info');
+        // flash()->clearMessage('info');
     }
 
     echo $template;
@@ -300,7 +297,7 @@ function slashes($string)
  */
 function isAjaxRequest()
 {
-    return \Whoops\Util\Misc::isAjaxRequest() && filter('ajax') !== null;
+    return Whoops\Util\Misc::isAjaxRequest() && filter('ajax') !== null;
 }
 
 /**
@@ -327,7 +324,7 @@ function redirectOperation($id_module, $id_record)
             redirect(base_path().'/controller.php?id_module='.$id_module.$hash);
         }
 
-        exit();
+        exit;
     }
 }
 

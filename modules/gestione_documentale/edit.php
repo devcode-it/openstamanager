@@ -57,7 +57,7 @@ include_once __DIR__.'/../../core.php';
                         'name' => 'descrizione',
                         'value' => $record['descrizione'],
                     ]);
-                    ?>
+?>
 				</div>
 			</div>
 		</div>

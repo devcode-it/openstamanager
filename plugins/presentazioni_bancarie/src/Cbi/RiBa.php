@@ -2,7 +2,6 @@
 
 namespace Plugins\PresentazioniBancarie\Cbi;
 
-use InvalidArgumentException;
 use Plugins\PresentazioniBancarie\Cbi\Records\Record14;
 use Plugins\PresentazioniBancarie\Cbi\Records\Record20;
 use Plugins\PresentazioniBancarie\Cbi\Records\Record30;
@@ -136,7 +135,7 @@ class RiBa
             $r30 = new Record30();
             $r30->numero_progressivo = $progressivo;
             $r30->descrizione_debitore_1 = $ricevuta->nome_debitore;
-            //$r30->descrizione_debitore_2 = $ricevuta->indirizzo_debitore;
+            // $r30->descrizione_debitore_2 = $ricevuta->indirizzo_debitore;
             $r30->codice_fiscale_debitore = $ricevuta->identificativo_debitore;
             $contenuto .= $r30->toCBI().$eol;
 
@@ -199,7 +198,7 @@ class RiBa
 
         // Eccezione in caso di assenza di ricevute interne
         if (empty($formato_ricevute)) {
-            throw new InvalidArgumentException();
+            throw new \InvalidArgumentException();
         }
 
         $cbi = new RibaAbiCbi();

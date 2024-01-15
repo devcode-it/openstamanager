@@ -76,7 +76,7 @@ if (function_exists('customComponents')) {
     }
 }
 
-//Fix per funzione base_path non trovata in fase di aggiornamento da versione < 2.4.19
+// Fix per funzione base_path non trovata in fase di aggiornamento da versione < 2.4.19
 if (!function_exists('base_path')) {
     function base_path()
     {
@@ -92,42 +92,42 @@ if (!function_exists('base_dir')) {
 }
 
 // Aggiornamenti
-    $alerts = [];
+$alerts = [];
 
-    if (!extension_loaded('zip')) {
-        $alerts[tr('Estensione ZIP')] = tr('da abilitare');
-    }
+if (!extension_loaded('zip')) {
+    $alerts[tr('Estensione ZIP')] = tr('da abilitare');
+}
 
-    $upload_max_filesize = ini_get('upload_max_filesize');
-    $upload_max_filesize = str_replace(['k', 'M'], ['000', '000000'], $upload_max_filesize);
-    // Dimensione minima: 32MB
-    if ($upload_max_filesize < 32000000) {
-        $alerts['upload_max_filesize'] = '32MB';
-    }
+$upload_max_filesize = ini_get('upload_max_filesize');
+$upload_max_filesize = str_replace(['k', 'M'], ['000', '000000'], $upload_max_filesize);
+// Dimensione minima: 32MB
+if ($upload_max_filesize < 32000000) {
+    $alerts['upload_max_filesize'] = '32MB';
+}
 
-    $post_max_size = ini_get('post_max_size');
-    $post_max_size = str_replace(['k', 'M'], ['000', '000000'], $post_max_size);
-    // Dimensione minima: 32MB
-    if ($post_max_size < 32000000) {
-        $alerts['post_max_size'] = '32MB';
-    }
+$post_max_size = ini_get('post_max_size');
+$post_max_size = str_replace(['k', 'M'], ['000', '000000'], $post_max_size);
+// Dimensione minima: 32MB
+if ($post_max_size < 32000000) {
+    $alerts['post_max_size'] = '32MB';
+}
 
-    if (!empty($alerts)) {
-        echo '
+if (!empty($alerts)) {
+    echo '
 <div class="alert alert-info">
     <p>'.tr('Devi modificare il seguenti parametri del file di configurazione PHP (_FILE_) per poter caricare gli aggiornamenti', [
-        '_FILE_' => '<b>php.ini</b>',
+    '_FILE_' => '<b>php.ini</b>',
     ]).':<ul>';
-        foreach ($alerts as $key => $value) {
-            echo '
-        <li><b>'.$key.'</b> = '.$value.'</li>';
-        }
+    foreach ($alerts as $key => $value) {
         echo '
+        <li><b>'.$key.'</b> = '.$value.'</li>';
+    }
+    echo '
     </ul></p>
 </div>';
-    }
+}
 
-    echo '
+echo '
 <script>
 function update() {
     if ($("#blob").val()) {
@@ -175,8 +175,8 @@ function search(button) {
             } else {
                 let beta_warning = data.includes("beta") ? "<br><b>'.tr('Attenzione: la versione individuata è in fase sperimentale, e pertanto può presentare diversi bug e malfunzionamenti').'.</b>" : "";
                 $("#update-search").html("'.tr("E' stato individuato un nuovo aggiornamento").': " + data + "." + beta_warning + "<br>'.tr('Scaricalo ora: _LINK_', [
-                    '_LINK_' => "<a target='_blank' href='https://github.com/devcode-it/openstamanager/releases'>https://github.com/devcode-it/openstamanager/releases</a>",
-                ]).'");
+                '_LINK_' => "<a target='_blank' href='https://github.com/devcode-it/openstamanager/releases'>https://github.com/devcode-it/openstamanager/releases</a>",
+            ]).'");
             }
         }
     });
@@ -201,9 +201,9 @@ echo '
 
                     ';
 
-                    if (!empty($custom) || !empty($tables)) {
-                        $disabled = 'disabled';
-                        echo '                  <input type="checkbox" id="aggiorna_custom" class="pull-left" style="margin-top:10px;"  value="1" >&nbsp;
+if (!empty($custom) || !empty($tables)) {
+    $disabled = 'disabled';
+    echo '                  <input type="checkbox" id="aggiorna_custom" class="pull-left" style="margin-top:10px;"  value="1" >&nbsp;
                         <label for="aggiorna_custom" style="margin-top:7px;" >'.tr("Desidero comunque procedere all'aggiornamento").'.</label>
                         <script>
                             $("#aggiorna_custom").change(function() {
@@ -214,7 +214,7 @@ echo '
                                 }
                             });
                         </script>';
-                    }
+}
 echo '
 
                     <button type="button" class="btn btn-primary pull-right '.$disabled.'" id="aggiorna" onclick="update()">
@@ -261,15 +261,15 @@ echo '
                 </h3>
             </div>
             <div class="box-body" id="update-search">';
-    if (extension_loaded('curl')) {
-        echo '		<button type="button" class="btn btn-info btn-block" onclick="search(this)">
+if (extension_loaded('curl')) {
+    echo '		<button type="button" class="btn btn-info btn-block" onclick="search(this)">
                     <i class="fa fa-search"></i> '.tr('Ricerca').'
                 </button>';
-    } else {
-        echo '		<button type="button" class="btn btn-warning btn-block disabled" >
+} else {
+    echo '		<button type="button" class="btn btn-warning btn-block disabled" >
                     <i class="fa fa-warning"></i> '.tr('Estensione curl non supportata').'.
                 </button>';
-    }
+}
 
 echo '   </div>
         </div>

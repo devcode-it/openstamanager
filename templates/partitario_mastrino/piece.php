@@ -44,17 +44,17 @@ echo '
         <td>'.Translator::dateToLocale($record['data']).'</td>
         <td>'.$record['descrizione'].'</td>';
 
-        if ($record['totale'] >= 0) {
-            echo '<td class="text-right">'.moneyFormat(abs($record['totale']), 2).'</td>
+if ($record['totale'] >= 0) {
+    echo '<td class="text-right">'.moneyFormat(abs($record['totale']), 2).'</td>
             <td></td>';
-        } else {
-            echo ' <td></td>
+} else {
+    echo ' <td></td>
             <td class="text-right">'.moneyFormat(abs($record['totale']), 2).'</td>';
-        }
+}
 
-        $scalare += $record['totale'];
+$scalare += $record['totale'];
 
-        echo '
+echo '
         <td class="text-right">
             '.moneyFormat($scalare, 2).'
         </td>';

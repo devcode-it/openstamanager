@@ -29,8 +29,8 @@ if (empty($records)) {
     return;
 }
 
-//print_r($records);
-//echo '<script>console.log('.$records.')</script>';
+// print_r($records);
+// echo '<script>console.log('.$records.')</script>';
 foreach ($records as $j => $record) {
     $id_rata[$j] = $record['rata'];
     $pianificazione[$j] = Pianificazione::find($id_rata);
@@ -54,36 +54,36 @@ echo '<form action="" method="post">
     <input type="hidden" name="id_module" value="'.$id_module.'">
     <input type="hidden" name="id_plugin" value="'.$id_plugin.'">';
 
-    foreach ($records as $j => $record) {
-        echo '<input type="hidden" name="rata['.$j.']" value="'.$record['rata'].'">';
-    }
+foreach ($records as $j => $record) {
+    echo '<input type="hidden" name="rata['.$j.']" value="'.$record['rata'].'">';
+}
 
-    // Data
-    echo '
+// Data
+echo '
     <div class="row">
         <div class="col-md-6">
             {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "class": "text-center", "value": "'.date('Y-m-d').'" ]}
         </div>';
 
-    //Tipo di documento
-    echo '
+// Tipo di documento
+echo '
         <div class="col-md-6">
             {[ "type": "select", "label": "'.tr('Tipo di fattura').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT * FROM co_tipidocumento WHERE dir=\'entrata\'" ]}
         </div>';
 
-    // Sezionale
-    echo '<div class="col-md-6">
+// Sezionale
+echo '<div class="col-md-6">
             {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.$module_fattura['id'].' ORDER BY name", "value":"'.$_SESSION['module_'.$module_fattura['id']]['id_segment'].'" ]}
         </div>';
 
-    // Conto
-    echo '
+// Conto
+echo '
         <div class="col-md-6">
             {[ "type": "select", "label": "'.tr('Conto').'", "name": "id_conto", "required": 1, "value": "'.$id_conto.'", "ajax-source": "conti-vendite" ]}
         </div>';
 
-    //Accoda a fatture non emesse
-    echo '<div class="col-md-6">
+// Accoda a fatture non emesse
+echo '<div class="col-md-6">
             {[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle fatture di vendita non ancora emesse?').'</small>", "placeholder": "'.tr('Aggiungere alle fatture di vendita nello stato bozza?').'", "name": "accodare" ]}
         </div>
     </div>';

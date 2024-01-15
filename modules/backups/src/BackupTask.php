@@ -29,13 +29,13 @@ class BackupTask extends Manager
 {
     public function needsExecution()
     {
-        return setting('Backup automatico') && !Backup::isDailyComplete();
+        return setting('Backup automatico') && !\Backup::isDailyComplete();
     }
 
     public function execute()
     {
-        if (setting('Backup automatico') && !Backup::isDailyComplete()) {
-            Backup::daily();
+        if (setting('Backup automatico') && !\Backup::isDailyComplete()) {
+            \Backup::daily();
         }
     }
 }

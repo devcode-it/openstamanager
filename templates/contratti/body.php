@@ -24,7 +24,7 @@ include_once __DIR__.'/../../core.php';
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
 // Creazione righe fantasma
-$autofill = new \Util\Autofill($options['pricing'] ? 4 : 2);
+$autofill = new Util\Autofill($options['pricing'] ? 4 : 2);
 $autofill->setRows(20, 10);
 
 echo '
@@ -84,16 +84,16 @@ echo '
                 </td>
             </tr>';
 
-        if (!empty($destinazione)) {
-            echo '
+if (!empty($destinazione)) {
+    echo '
             <tr>
                 <td colspan=2 class="border-full" style="height:16mm;">
                     <p class="small-bold">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
                     <small>'.$destinazione.'</small>
                 </td>
             </tr>';
-        }
-        echo '
+}
+echo '
         </table>
     </div>
 </div>';
@@ -387,19 +387,19 @@ echo '
 
         <td>';
 
-        if (!empty($documento->validita) && !empty($documento->tipo_validita)) {
-            $intervallo = CarbonInterval::make($documento->validita.' '.$documento->tipo_validita);
+if (!empty($documento->validita) && !empty($documento->tipo_validita)) {
+    $intervallo = CarbonInterval::make($documento->validita.' '.$documento->tipo_validita);
 
-            echo $intervallo->forHumans();
-        } elseif (!empty($documento->validita)) {
-            echo tr('_TOT_ giorni', [
-                '_TOT_' => $documento->validita,
-            ]);
-        } else {
-            echo '-';
-        }
+    echo $intervallo->forHumans();
+} elseif (!empty($documento->validita)) {
+    echo tr('_TOT_ giorni', [
+        '_TOT_' => $documento->validita,
+    ]);
+} else {
+    echo '-';
+}
 
-        echo '
+echo '
         </td>
     </tr>
 
@@ -410,17 +410,17 @@ echo '
 
         <td>';
 
-        if (!empty($documento['data_accettazione']) && !empty($documento['data_conclusione'])) {
-            echo '
+if (!empty($documento['data_accettazione']) && !empty($documento['data_conclusione'])) {
+    echo '
             '.tr('dal _START_ al _END_', [
-                '_START_' => Translator::dateToLocale($documento['data_accettazione']),
-                '_END_' => Translator::dateToLocale($documento['data_conclusione']),
-            ]);
-        } else {
-            echo '-';
-        }
+        '_START_' => Translator::dateToLocale($documento['data_accettazione']),
+        '_END_' => Translator::dateToLocale($documento['data_conclusione']),
+    ]);
+} else {
+    echo '-';
+}
 
-        echo '
+echo '
         </td>
     </tr>
 

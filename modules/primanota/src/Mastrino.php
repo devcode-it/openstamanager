@@ -61,8 +61,6 @@ class Mastrino extends Model
 
     /**
      * Rimuove tutti i movimenti collegati al mastrino.
-     *
-     * @return mixed
      */
     public function cleanup()
     {

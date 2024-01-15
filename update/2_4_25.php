@@ -26,5 +26,5 @@ foreach ($componenti_interessati as $componente) {
 }
 
 // Rimozione dati deprecati
-//$database->query('ALTER TABLE `my_componenti` DROP `pre_id_articolo`, DROP `id_componente_vecchio`');
-//$database->query('DROP TABLE `my_impianto_componenti`');
+// $database->query('ALTER TABLE `my_componenti` DROP `pre_id_articolo`, DROP `id_componente_vecchio`');
+// $database->query('DROP TABLE `my_impianto_componenti`');

@@ -48,8 +48,6 @@ if (!function_exists('array_clean')) {
     /**
      * Pulisce i contenuti vuoti di un array.
      *
-     * @param $array
-     *
      * @since 2.3.2
      *
      * @return array
@@ -67,8 +65,6 @@ if (!function_exists('array_clean')) {
 if (!function_exists('array_deep_clean')) {
     /**
      * Pulisce i contenuti vuoti di un array.
-     *
-     * @param $array
      *
      * @since 2.4.11
      *
@@ -111,7 +107,7 @@ if (!function_exists('string_starts_with')) {
      */
     function string_starts_with($string, $starts_with)
     {
-        //return strpos($string, $string_starts_with) === 0;
+        // return strpos($string, $string_starts_with) === 0;
         return S::create($string)->startsWith($starts_with);
     }
 }
@@ -127,7 +123,7 @@ if (!function_exists('string_ends_with')) {
      */
     function string_ends_with($string, $ends_with)
     {
-        //return substr($string, -strlen($string_ends_with)) === $string_ends_with;
+        // return substr($string, -strlen($string_ends_with)) === $string_ends_with;
         return S::create($string)->endsWith($ends_with);
     }
 }
@@ -143,7 +139,7 @@ if (!function_exists('string_contains')) {
      */
     function string_contains($string, $contains)
     {
-        //return strpos($string, $contains) !== false;
+        // return strpos($string, $contains) !== false;
         return S::create($string)->contains($contains);
     }
 }
@@ -240,7 +236,7 @@ if (!function_exists('random_string')) {
         // Don't allow duplicate letters to be disabled if the length is
         // longer than the available characters
         if ($no_duplicate_chars && strlen($pool) < $length) {
-            throw new \LengthException('$length exceeds the size of the pool and $no_duplicate_chars is enabled');
+            throw new LengthException('$length exceeds the size of the pool and $no_duplicate_chars is enabled');
         }
 
         // Convert the pool of characters into an array of characters and
@@ -286,7 +282,7 @@ if (!function_exists('secure_random_string')) {
             $bytes = openssl_random_pseudo_bytes($length * 2);
 
             if ($bytes === false) {
-                throw new \LengthException('$length is not accurate, unable to generate random string');
+                throw new LengthException('$length is not accurate, unable to generate random string');
             }
 
             return substr(str_replace(['/', '+', '='], '', base64_encode($bytes)), 0, $length);
@@ -304,9 +300,6 @@ if (!function_exists('download')) {
      *
      * @param string $filename The name of the filename to display to
      *                         browsers
-     * @param string $content  The content to output for the download.
-     *                         If you don't specify this, just the
-     *                         headers will be sent
      *
      * @since 2.3
      *
@@ -427,7 +420,7 @@ if (!function_exists('color_darken')) {
         }
         $rgb = '';
         for ($x = 0; $x < 3; ++$x) {
-            $c = hexdec(substr($color, (2 * $x), 2)) - $dif;
+            $c = hexdec(substr($color, 2 * $x, 2)) - $dif;
             $c = ($c < 0) ? 0 : dechex($c);
             $rgb .= (strlen($c) < 2) ? '0'.$c : $c;
         }
@@ -448,7 +441,7 @@ if (!function_exists('color_inverse')) {
      */
     function color_inverse($start_colour)
     {
-        if (preg_match('/^#[a-f0-9]{6}$/i', $start_colour)) { //hex color is valid
+        if (preg_match('/^#[a-f0-9]{6}$/i', $start_colour)) { // hex color is valid
             $R1 = hexdec(substr($start_colour, 1, 2));
             $G1 = hexdec(substr($start_colour, 3, 2));
             $B1 = hexdec(substr($start_colour, 5, 2));
@@ -542,9 +535,6 @@ if (!function_exists('readSQLFile')) {
 if (!function_exists('temp_file')) {
     /**
      * Crea un file temporaneo e lo imposta per la rimozione alla fine dell'esecuzione.
-     *
-     * @param $name
-     * @param $content
      *
      * @return string
      */

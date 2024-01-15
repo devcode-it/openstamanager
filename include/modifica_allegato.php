@@ -29,23 +29,23 @@ echo '
     <input type="hidden" name="op" value="modifica-allegato">
 
     <div class="row">';
-    if (sizeof($id_allegati) == 1) {
-        $allegato = Upload::find($id_allegati[0]);
-        echo '
+if (sizeof($id_allegati) == 1) {
+    $allegato = Upload::find($id_allegati[0]);
+    echo '
 		<div class="col-md-6">
             {[ "type": "text", "label": "'.tr('Nome').'", "name": "nome_allegato", "value": "'.$allegato->name.'" ]}
         </div>
         <div class="col-md-6">
             {[ "type": "text", "label": "'.tr('Categoria').'", "name": "categoria_allegato", "value": "'.$allegato->category.'", "disabled": "'.intval(in_array($allegato->category, ['Fattura Elettronica'])).'" ]}
         </div>';
-    } else {
-        $allegato = Upload::find($id_allegati[0]);
-        echo '
+} else {
+    $allegato = Upload::find($id_allegati[0]);
+    echo '
         <div class="col-md-6">
             {[ "type": "text", "label": "'.tr('Categoria').'", "name": "categoria_allegato", "value": "" ]}
         </div>';
-    }
-    echo '
+}
+echo '
     </div>
 
     <!-- PULSANTI -->

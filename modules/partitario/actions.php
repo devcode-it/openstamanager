@@ -58,7 +58,7 @@ switch (post('op')) {
 
         break;
 
-    // Modifica conto di livello 2 e 3 nel partitario
+        // Modifica conto di livello 2 e 3 nel partitario
     case 'edit':
         $idconto = post('idconto');
         $idpianodeiconti = post('idpianodeiconti');
@@ -88,15 +88,15 @@ switch (post('op')) {
 
         break;
 
-    // Eliminazione conto dal partitario
+        // Eliminazione conto dal partitario
     case 'del':
         $idconto = post('idconto');
 
-        //Controllo che non esistano movimenti associati al conto
+        // Controllo che non esistano movimenti associati al conto
         $movimenti = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE idconto = '.prepare($idconto));
 
         if ($idconto != '' and empty($movimenti)) {
-            //Se elimino il conto lo scollego anche da eventuali anagrafiche (cliente e fornitore)
+            // Se elimino il conto lo scollego anche da eventuali anagrafiche (cliente e fornitore)
             $dbo->query('UPDATE an_anagrafiche SET idconto_cliente = NULL WHERE idconto_cliente = '.prepare($idconto));
             $dbo->query('UPDATE an_anagrafiche SET idconto_fornitore = NULL WHERE idconto_fornitore = '.prepare($idconto));
 
@@ -108,7 +108,7 @@ switch (post('op')) {
         }
         break;
 
-    // Apertura bilancio
+        // Apertura bilancio
     case 'apri-bilancio':
         // Eliminazione eventuali movimenti di apertura fatti finora
         $dbo->query('DELETE FROM co_movimenti WHERE is_apertura=1 AND data='.prepare($_SESSION['period_start']));
@@ -162,7 +162,7 @@ switch (post('op')) {
 
         break;
 
-    // Chiusura bilancio
+        // Chiusura bilancio
     case 'chiudi-bilancio':
         // Eliminazione eventuali movimenti di chiusura fatti finora
         $dbo->query('DELETE FROM co_movimenti WHERE is_chiusura=1 AND data='.prepare($_SESSION['period_end']));
@@ -198,7 +198,7 @@ switch (post('op')) {
         }
 
         // Movimento sul conto di chiusura
-        //$totale = -$totale;
+        // $totale = -$totale;
 
         if ($totale >= 0) {
             $dare = abs($totale);

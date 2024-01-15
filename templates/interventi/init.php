@@ -38,7 +38,7 @@ if (!empty($documento['idsede_destinazione'])) {
     $s_provincia = $sedi['provincia'];
 }
 
-//Se ho deciso di NON mostrare i prezzi al tencico mi assicuro che non li possa vedere dalla stampa
+// Se ho deciso di NON mostrare i prezzi al tencico mi assicuro che non li possa vedere dalla stampa
 if (Auth::user()['gruppo'] == 'Tecnici' and $options['pricing'] == true and setting('Mostra i prezzi al tecnico') == 0) {
     $options['pricing'] = false;
 }

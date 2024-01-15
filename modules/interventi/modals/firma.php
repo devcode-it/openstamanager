@@ -51,8 +51,8 @@ echo '
                 <h3 class="box-title">'.tr('Interventi da firmare').'</h3>
             </div>
             <div class="box-body">';
-            if ($interventi_da_firmare) {
-                echo '
+if ($interventi_da_firmare) {
+    echo '
                 <table class="table table-hover table-bordered table-condensed">
                     <thead>
                         <tr>
@@ -61,28 +61,28 @@ echo '
                         </tr>
                     </thead>
                     <tbody>';
-                foreach ($interventi_da_firmare as $id) {
-                    $intervento = Intervento::find($id);
-                    echo '
+    foreach ($interventi_da_firmare as $id) {
+        $intervento = Intervento::find($id);
+        echo '
                         <tr>
                             <td>
                                 '.Modules::link('Interventi', $intervento->id, tr('Intervento num. _NUM_ del _DATE_', [
-                                    '_NUM_' => $intervento->codice,
-                                    '_DATE_' => Translator::dateToLocale($intervento->inizio),
-                                ])).'
+                        '_NUM_' => $intervento->codice,
+                        '_DATE_' => Translator::dateToLocale($intervento->inizio),
+                    ])).'
                             </td>
                             <td class="text-center">
                                 '.Prints::getLink($template, $id, 'btn btn-xs btn-primary', '', 'fa fa-print').'
                             </td>
                         <tr>';
-                }
-                echo '
+    }
+    echo '
                     </tbody>
                 </table>';
-            } else {
-                echo 'Nessun Intervento..';
-            }
-            echo '
+} else {
+    echo 'Nessun Intervento..';
+}
+echo '
             </div>
         </div>
     </div>
@@ -93,8 +93,8 @@ echo '
                 <h3 class="box-title">'.tr('Interventi firmati non completati').'</h3>
             </div>
             <div class="box-body">';
-            if ($interventi_firmati) {
-                echo '
+if ($interventi_firmati) {
+    echo '
                 <table class="table table-hover table-bordered table-condensed">
                     <thead>
                         <tr>
@@ -103,28 +103,28 @@ echo '
                         </tr>
                     </thead>
                     <tbody>';
-                foreach ($interventi_firmati as $id) {
-                    $intervento = Intervento::find($id);
-                    echo '
+    foreach ($interventi_firmati as $id) {
+        $intervento = Intervento::find($id);
+        echo '
                         <tr>
                             <td>
                                 '.Modules::link('Interventi', $intervento->id, tr('Intervento num. _NUM_ del _DATE_', [
-                                    '_NUM_' => $intervento->codice,
-                                    '_DATE_' => Translator::dateToLocale($intervento->inizio),
-                                ])).'
+                        '_NUM_' => $intervento->codice,
+                        '_DATE_' => Translator::dateToLocale($intervento->inizio),
+                    ])).'
                             </td>
                             <td class="text-center">
                                 '.Prints::getLink($template, $id, 'btn btn-xs btn-primary', '', 'fa fa-print').'
                             </td>
                         <tr>';
-                }
-                echo '
+    }
+    echo '
                     </tbody>
                 </table>';
-            } else {
-                echo 'Nessun Intervento..';
-            }
-            echo '
+} else {
+    echo 'Nessun Intervento..';
+}
+echo '
             </div>
         </div>
     </div>
@@ -135,8 +135,8 @@ echo '
                 <h3 class="box-title">'.tr('Interventi completati').'</h3>
             </div>
             <div class="box-body">';
-            if ($interventi_completati) {
-                echo '
+if ($interventi_completati) {
+    echo '
                 <table class="table table-hover table-bordered table-condensed">
                     <thead>
                         <tr>
@@ -145,32 +145,32 @@ echo '
                         </tr>
                     </thead>
                     <tbody>';
-                foreach ($interventi_completati as $id) {
-                    $intervento = Intervento::find($id);
-                    echo '
+    foreach ($interventi_completati as $id) {
+        $intervento = Intervento::find($id);
+        echo '
                         <tr>
                             <td>
                                 '.Modules::link('Interventi', $intervento->id, tr('Intervento num. _NUM_ del _DATE_', [
-                                    '_NUM_' => $intervento->codice,
-                                    '_DATE_' => Translator::dateToLocale($intervento->inizio),
-                                ])).'
+                        '_NUM_' => $intervento->codice,
+                        '_DATE_' => Translator::dateToLocale($intervento->inizio),
+                    ])).'
                             </td>
                             <td class="text-center">
                                 '.Prints::getLink($template, $id, 'btn btn-xs btn-primary', '', 'fa fa-print').'
                             </td>
                         <tr>';
-                }
-                echo '
+    }
+    echo '
                     </tbody>
                 </table>
                 <br>
                 <div class="alert alert-warning">
                     <i class="fa fa-warning"></i> '.tr('Questi interventi non verranno firmati').'
                 </div>';
-            } else {
-                echo 'Nessun Intervento..';
-            }
-            echo '
+} else {
+    echo 'Nessun Intervento..';
+}
+echo '
             </div>
         </div>
     </div>

@@ -19,10 +19,6 @@
 
 namespace Util;
 
-use Auth;
-use Modules;
-use Translator;
-
 /**
  * Classe per la gestione delle interazione di base per le query dinamiche.
  *
@@ -73,11 +69,11 @@ class Query
     {
         $id_parent = filter('id_parent');
 
-        $id_module = Modules::getCurrent()['id'];
+        $id_module = \Modules::getCurrent()['id'];
         $segment = !empty(self::$segments) ? $_SESSION['module_'.$id_module]['id_segment'] : null;
         $is_sezionale = database()->fetchOne('SELECT `is_sezionale` FROM `zz_segments` WHERE `id` = '.prepare($segment))['is_sezionale'];
 
-        $user = Auth::user();
+        $user = \Auth::user();
 
         // Sostituzione periodi temporali
         preg_match('|date_period\((.+?)\)|', (string) $query, $matches);
@@ -144,7 +140,6 @@ class Query
     /**
      * Genera la query prevista dalla struttura indicata.
      *
-     * @param $structure
      * @param array $search
      * @param array $order
      * @param array $limit
@@ -271,7 +266,7 @@ class Query
 
         // Ordinamento dei risultati
         if (isset($order['dir']) && isset($order['column'])) {
-            //$pos = array_search($order['column'], $total['fields']);
+            // $pos = array_search($order['column'], $total['fields']);
             $pos = $order['column'];
 
             if ($pos !== false) {
@@ -314,7 +309,6 @@ class Query
     /**
      * Restituisce le somme richieste dalla query prevista dalla struttura.
      *
-     * @param $structure
      * @param array $search
      *
      * @throws \Exception
@@ -334,7 +328,7 @@ class Query
 
         // Filtri derivanti dai permessi (eventuali)
         if (empty($structure->originalModule)) {
-            $result_query = Modules::replaceAdditionals($structure->id, $result_query);
+            $result_query = \Modules::replaceAdditionals($structure->id, $result_query);
         }
 
         $query = self::str_replace_once('SELECT', 'SELECT '.implode(', ', $total['summable']).' FROM(SELECT ', $result_query).') AS `z`';
@@ -344,7 +338,7 @@ class Query
         if (!empty($sums)) {
             foreach ($sums as $key => $sum) {
                 if (string_contains($key, 'sum_')) {
-                    $results[str_replace('sum_', '', $key)] = Translator::numberToLocale($sum);
+                    $results[str_replace('sum_', '', $key)] = \Translator::numberToLocale($sum);
                 }
             }
         }
@@ -377,8 +371,6 @@ class Query
     /**
      * Interpreta lo standard modulare per l'individuazione delle query di un modulo/plugin del progetto.
      *
-     * @param $element
-     *
      * @throws \Exception
      *
      * @return array
@@ -396,7 +388,7 @@ class Query
         $query = $element['option'];
 
         // Aggiunta eventuali filtri dai segmenti per eseguire la query filtrata
-        $query = str_replace('1=1', '1=1 '.Modules::getAdditionalsQuery($element['attributes']['name'], null, self::$segments), $query);
+        $query = str_replace('1=1', '1=1 '.\Modules::getAdditionalsQuery($element['attributes']['name'], null, self::$segments), $query);
         $views = self::getViews($element);
 
         $select = [];
@@ -495,8 +487,6 @@ class Query
     /**
      * Restituisce le singole componenti delle query per un determinato modulo/plugin.
      *
-     * @param $element
-     *
      * @throws \Exception
      *
      * @return array
@@ -505,7 +495,7 @@ class Query
     {
         $database = database();
 
-        $user = Auth::user();
+        $user = \Auth::user();
 
         $views = $database->fetchArray('SELECT * FROM `zz_views` WHERE `id_module`='.prepare($element['id']).' AND
         `id` IN (

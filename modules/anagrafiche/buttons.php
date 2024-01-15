@@ -26,7 +26,7 @@ if (in_array($id_cliente, $tipi_anagrafica) or in_array($id_fornitore, $tipi_ana
     </button>
     <ul class="dropdown-menu dropdown-menu-right">';
 
-    //Aggiunta utente per i tecnici
+    // Aggiunta utente per i tecnici
     if (in_array($id_tecnico, $tipi_anagrafica)) {
         echo '
         <li><a data-toggle="modal" data-title="'.tr('Aggiungi utente').'" data-href="modules/utenti/user.php?id_module='.Modules::get('Utenti e permessi')['id'].'&id_record='.$dbo->fetchOne('SELECT id FROM zz_groups WHERE nome=\'Tecnici\'')['id'].'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-user"></i>'.tr('Nuovo utente').'
@@ -77,7 +77,7 @@ if (in_array($id_cliente, $tipi_anagrafica) or in_array($id_fornitore, $tipi_ana
 }
 
 if (in_array($id_agente, $tipi_anagrafica)) {
-    //Aggiunta liquidazione provvigioni per agente
+    // Aggiunta liquidazione provvigioni per agente
     echo '
     <button type="button" class="btn btn-primary" data-title="'.tr('Liquida Provvigioni').'" data-href="'.base_path().'/modules/anagrafiche/liquida_provvigioni.php?nome_stampa=Provvigioni&id_record='.$id_record.'" ><i class="fa fa-print"></i>'.tr(' Liquida Provvigioni').'</button>';
 }

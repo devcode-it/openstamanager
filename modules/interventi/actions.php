@@ -316,7 +316,7 @@ switch (post('op')) {
                 while (strtotime($data) <= strtotime($data_fine)) {
                     $data = date('Y-m-d', strtotime('+'.$periodicita.' '.$interval.'', strtotime($data)));
                     $w = date('w', strtotime($data));
-                    //Escludo sabato e domenica
+                    // Escludo sabato e domenica
                     if ($w == '6') {
                         $data = date('Y-m-d', strtotime('+2 day', strtotime($data)));
                     } elseif ($w == '0') {
@@ -331,7 +331,7 @@ switch (post('op')) {
                 for ($i = 0; $i < $ricorrenze; ++$i) {
                     $data = date('Y-m-d', strtotime('+'.$periodicita.' '.$interval.'', strtotime($data)));
                     $w = date('w', strtotime($data));
-                    //Escludo sabato e domenica
+                    // Escludo sabato e domenica
                     if ($w == '6') {
                         $data = date('Y-m-d', strtotime('+2 day', strtotime($data)));
                     } elseif ($w == '0') {
@@ -362,11 +362,11 @@ switch (post('op')) {
                             $orario_inizio = date('Y-m-d', strtotime($data_ricorrenza)).' '.date('H:i:s', strtotime($sessione->orario_inizio));
                         } else {
                             $diff = strtotime($sessione->orario_inizio) - strtotime($inizio_old);
-                            $orario_inizio = date('Y-m-d H:i:s', (strtotime($new_sessione->orario_inizio) + $diff));
+                            $orario_inizio = date('Y-m-d H:i:s', strtotime($new_sessione->orario_inizio) + $diff);
                         }
 
                         $diff_fine = strtotime($sessione->orario_fine) - strtotime($sessione->orario_inizio);
-                        $orario_fine = date('Y-m-d H:i:s', (strtotime($orario_inizio) + $diff_fine));
+                        $orario_fine = date('Y-m-d H:i:s', strtotime($orario_inizio) + $diff_fine);
 
                         $new_sessione = $sessione->replicate();
                         $new_sessione->idintervento = $new->id;
@@ -402,7 +402,7 @@ switch (post('op')) {
 
         break;
 
-    // Eliminazione intervento
+        // Eliminazione intervento
     case 'delete':
         try {
             // Eliminazione associazioni tra interventi e contratti
@@ -449,7 +449,7 @@ switch (post('op')) {
 
         break;
 
-    // Duplicazione riga
+        // Duplicazione riga
     case 'copy_riga':
         $id_righe = (array) post('righe');
 
@@ -583,14 +583,14 @@ switch (post('op')) {
 
         break;
 
-    // Aggiunta di un documento in ordine
+        // Aggiunta di un documento in ordine
     case 'add_intervento':
     case 'add_documento':
         $class = post('class');
         $id_documento = post('id_documento');
 
         // Individuazione del documento originale
-        if (!is_subclass_of($class, \Common\Document::class)) {
+        if (!is_subclass_of($class, Common\Document::class)) {
             return;
         }
         $documento = $class::find($id_documento);
@@ -671,11 +671,11 @@ switch (post('op')) {
         }
 
         // Modifica finale dello stato
-    /*
-        if (post('create_document') == 'on') {
-            $intervento->idstatointervento = post('id_stato_intervento');
-            $intervento->save();
-        }*/
+        /*
+            if (post('create_document') == 'on') {
+                $intervento->idstatointervento = post('id_stato_intervento');
+                $intervento->save();
+            }*/
 
         // Messaggio informativo
         $message = tr('_DOC_ aggiunto!', [
@@ -765,100 +765,100 @@ switch (post('op')) {
 
         break;
 
-        case 'firma_bulk':
-            if (directory(base_dir().'/files/interventi')) {
-                $firmati = 0;
-                $non_firmati = 0;
-                $id_records = filter('records') ? explode(';', filter('records')) : null;
+    case 'firma_bulk':
+        if (directory(base_dir().'/files/interventi')) {
+            $firmati = 0;
+            $non_firmati = 0;
+            $id_records = filter('records') ? explode(';', filter('records')) : null;
 
-                if (post('firma_base64') != '') {
-                    foreach ($id_records as $id_record) {
-                        // Salvataggio firma
-                        $firma_file = 'firma_'.time().'.jpg';
-                        $firma_nome = post('firma_nome');
+            if (post('firma_base64') != '') {
+                foreach ($id_records as $id_record) {
+                    // Salvataggio firma
+                    $firma_file = 'firma_'.time().'.jpg';
+                    $firma_nome = post('firma_nome');
 
-                        $data = explode(',', post('firma_base64'));
+                    $data = explode(',', post('firma_base64'));
 
-                        $img = Intervention\Image\ImageManagerStatic::make(base64_decode($data[1]));
-                        $img->resize(680, 202, function ($constraint) {
-                            $constraint->aspectRatio();
-                        });
+                    $img = Intervention\Image\ImageManagerStatic::make(base64_decode($data[1]));
+                    $img->resize(680, 202, function ($constraint) {
+                        $constraint->aspectRatio();
+                    });
 
-                        if (!$img->save(base_dir().'/files/interventi/'.$firma_file)) {
-                            flash()->error(tr('Impossibile creare il file!'));
-                        } elseif ($dbo->query('UPDATE in_interventi SET firma_file='.prepare($firma_file).', firma_data=NOW(), firma_nome = '.prepare($firma_nome).' WHERE id='.prepare($id_record))) {
-                            ++$firmati;
+                    if (!$img->save(base_dir().'/files/interventi/'.$firma_file)) {
+                        flash()->error(tr('Impossibile creare il file!'));
+                    } elseif ($dbo->query('UPDATE in_interventi SET firma_file='.prepare($firma_file).', firma_data=NOW(), firma_nome = '.prepare($firma_nome).' WHERE id='.prepare($id_record))) {
+                        ++$firmati;
 
-                            $id_stato = setting("Stato dell'attività dopo la firma");
-                            $stato = $dbo->selectOne('in_statiintervento', '*', ['idstatointervento' => $id_stato]);
+                        $id_stato = setting("Stato dell'attività dopo la firma");
+                        $stato = $dbo->selectOne('in_statiintervento', '*', ['idstatointervento' => $id_stato]);
+                        $intervento = Intervento::find($id_record);
+                        if (!empty($stato)) {
                             $intervento = Intervento::find($id_record);
-                            if (!empty($stato)) {
-                                $intervento = Intervento::find($id_record);
-                                $intervento->idstatointervento = $stato['idstatointervento'];
-                                $intervento->save();
+                            $intervento->idstatointervento = $stato['idstatointervento'];
+                            $intervento->save();
+                        }
+
+                        // Notifica chiusura intervento
+                        if (!empty($stato['notifica'])) {
+                            $template = Template::find($stato['id_email']);
+
+                            if (!empty($stato['destinatari'])) {
+                                $mail = Mail::build(auth()->getUser(), $template, $id_record);
+                                $mail->addReceiver($stato['destinatari']);
+                                $mail->save();
                             }
 
-                            // Notifica chiusura intervento
-                            if (!empty($stato['notifica'])) {
-                                $template = Template::find($stato['id_email']);
-
-                                if (!empty($stato['destinatari'])) {
+                            if (!empty($stato['notifica_cliente'])) {
+                                if (!empty($intervento->anagrafica->email)) {
                                     $mail = Mail::build(auth()->getUser(), $template, $id_record);
-                                    $mail->addReceiver($stato['destinatari']);
+                                    $mail->addReceiver($intervento->anagrafica->email);
                                     $mail->save();
                                 }
+                            }
 
-                                if (!empty($stato['notifica_cliente'])) {
-                                    if (!empty($intervento->anagrafica->email)) {
+                            if (!empty($stato['notifica_tecnici'])) {
+                                $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'idtecnico', [], ['idintervento' => $id_record]);
+                                $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS idtecnico', [], ['id_intervento' => $id_record]);
+                                $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
+
+                                foreach ($tecnici as $tecnico) {
+                                    $mail_tecnico = $dbo->selectOne('an_anagrafiche', '*', ['idanagrafica' => $tecnico]);
+                                    if (!empty($mail_tecnico['email'])) {
                                         $mail = Mail::build(auth()->getUser(), $template, $id_record);
-                                        $mail->addReceiver($intervento->anagrafica->email);
+                                        $mail->addReceiver($mail_tecnico['email']);
                                         $mail->save();
                                     }
                                 }
-
-                                if (!empty($stato['notifica_tecnici'])) {
-                                    $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'idtecnico', [], ['idintervento' => $id_record]);
-                                    $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS idtecnico', [], ['id_intervento' => $id_record]);
-                                    $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
-
-                                    foreach ($tecnici as $tecnico) {
-                                        $mail_tecnico = $dbo->selectOne('an_anagrafiche', '*', ['idanagrafica' => $tecnico]);
-                                        if (!empty($mail_tecnico['email'])) {
-                                            $mail = Mail::build(auth()->getUser(), $template, $id_record);
-                                            $mail->addReceiver($mail_tecnico['email']);
-                                            $mail->save();
-                                        }
-                                    }
-                                }
                             }
-                        } else {
-                            ++$non_firmati;
                         }
+                    } else {
+                        ++$non_firmati;
                     }
-                } else {
-                    flash()->error(tr('Errore durante il salvataggio della firma!').tr('La firma risulta vuota').'...');
                 }
             } else {
-                flash()->error(tr("Non è stato possibile creare la cartella _DIRECTORY_ per salvare l'immagine della firma!", [
-                    '_DIRECTORY_' => '<b>/files/interventi</b>',
-                ]));
+                flash()->error(tr('Errore durante il salvataggio della firma!').tr('La firma risulta vuota').'...');
             }
+        } else {
+            flash()->error(tr("Non è stato possibile creare la cartella _DIRECTORY_ per salvare l'immagine della firma!", [
+                '_DIRECTORY_' => '<b>/files/interventi</b>',
+            ]));
+        }
 
-            if (!empty($firmati)) {
-                flash()->info(tr('_NUM_ interventi firmati correttamente!', [
-                    '_NUM_' => $firmati,
-                ]));
-            }
+        if (!empty($firmati)) {
+            flash()->info(tr('_NUM_ interventi firmati correttamente!', [
+                '_NUM_' => $firmati,
+            ]));
+        }
 
-            if (!empty($non_firmati)) {
-                flash()->info(tr('_NUM_ interventi non sono stati firmati correttamente!', [
-                    '_NUM_' => $non_firmati,
-                ]));
-            }
+        if (!empty($non_firmati)) {
+            flash()->info(tr('_NUM_ interventi non sono stati firmati correttamente!', [
+                '_NUM_' => $non_firmati,
+            ]));
+        }
 
-            break;
+        break;
 
-    // OPERAZIONI PER AGGIUNTA NUOVA SESSIONE DI LAVORO
+        // OPERAZIONI PER AGGIUNTA NUOVA SESSIONE DI LAVORO
     case 'add_sessione':
         $id_tecnico = post('id_tecnico');
 
@@ -870,7 +870,7 @@ switch (post('op')) {
         add_tecnico($id_record, $id_tecnico, $inizio, $fine, $idcontratto);
         break;
 
-    // OPERAZIONI PER AGGIUNTA SESSIONi DI LAVORO MULTIPLE
+        // OPERAZIONI PER AGGIUNTA SESSIONi DI LAVORO MULTIPLE
     case 'add_sessioni':
         $idcontratto = $intervento['id_contratto'];
         $orario_inizio = post('orario_inizio');
@@ -898,7 +898,7 @@ switch (post('op')) {
 
         break;
 
-    // RIMOZIONE SESSIONE DI LAVORO
+        // RIMOZIONE SESSIONE DI LAVORO
     case 'delete_sessione':
         $id_sessione = post('id_sessione');
 
@@ -965,7 +965,7 @@ switch (post('op')) {
         $sessione->save();
         break;
 
-    // Duplica intervento
+        // Duplica intervento
     case 'copy':
         $id_stato = post('id_stato');
         $ora_richiesta = post('ora_richiesta');
@@ -1026,11 +1026,11 @@ switch (post('op')) {
                             $orario_inizio = date('Y-m-d', strtotime($data_richiesta)).' '.date('H:i:s', strtotime($sessione->orario_inizio));
                         } else {
                             $diff = strtotime($sessione->orario_inizio) - strtotime($inizio_old);
-                            $orario_inizio = date('Y-m-d H:i:s', (strtotime($new_sessione->orario_inizio) + $diff));
+                            $orario_inizio = date('Y-m-d H:i:s', strtotime($new_sessione->orario_inizio) + $diff);
                         }
 
                         $diff_fine = strtotime($sessione->orario_fine) - strtotime($sessione->orario_inizio);
-                        $orario_fine = date('Y-m-d H:i:s', (strtotime($orario_inizio) + $diff_fine));
+                        $orario_fine = date('Y-m-d H:i:s', strtotime($orario_inizio) + $diff_fine);
 
                         $new_sessione = $sessione->replicate();
                         $new_sessione->idintervento = $new->id;
@@ -1063,7 +1063,7 @@ switch (post('op')) {
                     }
                 }
 
-                //copia allegati
+                // copia allegati
                 if (!empty($copia_allegati)) {
                     $allegati = $intervento->uploads();
                     foreach ($allegati as $allegato) {
@@ -1181,7 +1181,7 @@ switch (post('op')) {
         $numero_totale = 0;
 
         foreach ($righe as $riga) {
-            if (($riga['id']) != null) {
+            if ($riga['id'] != null) {
                 $articolo = Articolo::find($riga['id']);
             }
 

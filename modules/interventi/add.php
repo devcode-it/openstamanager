@@ -210,27 +210,27 @@ echo '
 
     <div class="row">
         <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">';
-            echo input([
-                'type' => 'ckeditor',
-                'label' => tr('Richiesta'),
-                'name' => 'richiesta',
-                'id' => 'richiesta_add',
-                'required' => 1,
-                'value' => htmlentities($richiesta),
-                'extra' => 'style=\'max-height:80px;\'',
-            ]);
-            echo '
+echo input([
+    'type' => 'ckeditor',
+    'label' => tr('Richiesta'),
+    'name' => 'richiesta',
+    'id' => 'richiesta_add',
+    'required' => 1,
+    'value' => htmlentities($richiesta),
+    'extra' => 'style=\'max-height:80px;\'',
+]);
+echo '
         </div>
         <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">';
-            echo input([
-                'type' => 'ckeditor',
-                'label' => tr('Descrizione'),
-                'name' => 'descrizione',
-                'id' => 'descrizione_add',
-                'value' => htmlentities($descrizione),
-                'extra' => 'style=\'max-height:80px;\'',
-            ]);
-            echo '
+echo input([
+    'type' => 'ckeditor',
+    'label' => tr('Descrizione'),
+    'name' => 'descrizione',
+    'id' => 'descrizione_add',
+    'value' => htmlentities($descrizione),
+    'extra' => 'style=\'max-height:80px;\'',
+]);
+echo '
         </div>
     </div>
 
@@ -276,8 +276,8 @@ echo '
 		</div>
 	</div>';
 
-//if (empty($id_intervento)) {
-    echo '
+// if (empty($id_intervento)) {
+echo '
 	<!-- ASSEGNAZIONE TECNICI -->
     <div class="box box-info collapsable collapsed-box">
         <div class="box-header with-border">
@@ -310,7 +310,7 @@ echo '
 			</div>
         </div>
     </div>';
-//}
+// }
 
 echo '
 	<!-- ORE LAVORO -->
@@ -677,17 +677,17 @@ echo '
         }
     });';
 
-        if (!$origine_dashboard) {
-            echo '
+if (!$origine_dashboard) {
+    echo '
 	input("idtecnico").change(function() {
 	    var value = $(this).val() > 0 ? true : false;
 	    input("orario_inizio").setRequired(value);
 	    input("orario_fine").setRequired(value);
 	    input("data").setRequired(value);
 	});';
-        }
+}
 
-        echo '
+echo '
 	var ref = "'.get('ref').'";
 
 	async function salva(button) {

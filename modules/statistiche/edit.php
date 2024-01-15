@@ -311,7 +311,7 @@ ORDER BY
 
     $interventi = Stats::monthly($interventi, $start, $end);
 
-    //Random color
+    // Random color
     $background = '#'.dechex(rand(256, 16777215));
 
     $dataset .= '{
@@ -367,7 +367,7 @@ foreach ($tipi as $tipo) {
 
     $interventi = Stats::monthly($interventi, $start, $end);
 
-    //Random color
+    // Random color
     $background = '#'.dechex(rand(256, 16777215));
 
     $dataset .= '{
@@ -433,10 +433,10 @@ foreach ($tecnici as $tecnico) {
 
     $sessioni = Stats::monthly($sessioni, $start, $end);
 
-    //Colore tecnico
+    // Colore tecnico
     $background = strtoupper($tecnico['colore']);
     if (empty($background) || $background == '#FFFFFF') {
-        //Random color
+        // Random color
         $background = '#'.dechex(rand(256, 16777215));
     }
 
@@ -545,7 +545,7 @@ INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipi
 INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica
 WHERE an_tipianagrafiche.descrizione = "Fornitore" AND deleted_at IS NULL AND an_anagrafiche.created_at BETWEEN '.prepare($start).' AND '.prepare($end).' GROUP BY YEAR(an_anagrafiche.created_at), MONTH(an_anagrafiche.created_at) ORDER BY YEAR(an_anagrafiche.created_at) ASC, MONTH(an_anagrafiche.created_at) ASC');
 
-//Nuovi clienti per i quali ho emesso almeno una fattura di vendita
+// Nuovi clienti per i quali ho emesso almeno una fattura di vendita
 $clienti_acquisiti = $dbo->fetchArray('SELECT COUNT(*) AS result, GROUP_CONCAT(an_anagrafiche.ragione_sociale, "<br>") AS ragioni_sociali, YEAR(an_anagrafiche.created_at) AS year, MONTH(an_anagrafiche.created_at) AS month FROM an_anagrafiche
 INNER JOIN co_documenti ON an_anagrafiche.idanagrafica = co_documenti.idanagrafica
 INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id
@@ -553,7 +553,7 @@ INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipi
 INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica
 WHERE an_tipianagrafiche.descrizione = "Cliente" AND co_tipidocumento.dir = "entrata" AND an_anagrafiche.created_at BETWEEN '.prepare($start).' AND '.prepare($end).' GROUP BY YEAR(an_anagrafiche.created_at), MONTH(an_anagrafiche.created_at) ORDER BY YEAR(an_anagrafiche.created_at) ASC, MONTH(an_anagrafiche.created_at) ASC');
 
-//Random color
+// Random color
 $background = '#'.dechex(rand(256, 16777215));
 
 $dataset .= '{
@@ -564,7 +564,7 @@ $dataset .= '{
     ]
 },';
 
-//Random color
+// Random color
 $background = '#'.dechex(rand(256, 16777215));
 
 $dataset .= '{
@@ -575,7 +575,7 @@ $dataset .= '{
     ]
 },';
 
-//Random color
+// Random color
 $background = '#'.dechex(rand(256, 16777215));
 
 $dataset .= '{

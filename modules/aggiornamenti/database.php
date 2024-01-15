@@ -191,10 +191,10 @@ if (!empty($results) || !empty($results_settings)) {
             echo '
     </tbody>
 </table>';
-        }   
+        }
     }
     if (!empty($results_settings)) {
-    echo'
+        echo '
 <table class="table table-bordered">
 <thead>
     <h3>Impostazioni mancanti</h3>
@@ -205,7 +205,7 @@ if (!empty($results) || !empty($results_settings)) {
 </thead>
     <tbody>';
         foreach ($results_settings as $key => $setting) {
-            echo'
+            echo '
             <tr>
                 <td>
                     '.$key.'
@@ -215,12 +215,12 @@ if (!empty($results) || !empty($results_settings)) {
                 </td>
             </tr>';
         }
-            echo '
+        echo '
     </tbody>
 </table>';
     }
-} else{
-echo '
+} else {
+    echo '
 <div class="alert alert-info">
 <i class="fa fa-info-circle"></i> '.tr('Il database non presenta problemi di integrità').'.
 </div>';

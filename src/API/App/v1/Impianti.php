@@ -20,7 +20,6 @@
 namespace API\App\v1;
 
 use API\App\AppResource;
-use Auth;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Impianti\Impianto;
 
@@ -38,11 +37,11 @@ class Impianti extends AppResource
                 $query->where('descrizione', '=', 'Cliente');
             });
 
-        //Limite impianti visualizzabili dal tecnico
+        // Limite impianti visualizzabili dal tecnico
         $limite_impianti = setting('Limita la visualizzazione degli impianti a quelli gestiti dal tecnico');
 
-        if ($limite_impianti == 1 && !Auth::user()->is_admin) {
-            $id_tecnico = Auth::user()->id_anagrafica;
+        if ($limite_impianti == 1 && !\Auth::user()->is_admin) {
+            $id_tecnico = \Auth::user()->id_anagrafica;
 
             // Elenco di interventi di interesse
             $risorsa_interventi = $this->getRisorsaInterventi();
@@ -50,7 +49,7 @@ class Impianti extends AppResource
             $interventi = $risorsa_interventi->getModifiedRecords(null);
             $id_interventi = array_keys($interventi);
 
-            $statement->where('idtecnico', $id_tecnico)->orWhere('id', 'IN', ('SELECT idimpianto FROM my_impianti_interventi WHERE idintervento IN ('.implode(',', $id_interventi).')'));
+            $statement->where('idtecnico', $id_tecnico)->orWhere('id', 'IN', 'SELECT idimpianto FROM my_impianti_interventi WHERE idintervento IN ('.implode(',', $id_interventi).')');
         }
 
         // Filtro per data

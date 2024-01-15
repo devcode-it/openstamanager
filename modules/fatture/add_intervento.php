@@ -78,7 +78,7 @@ $rs = $dbo->fetchArray('SELECT
         AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL)
         AND NOT in_interventi.id IN (SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL) '.$where);
 foreach ($rs as $key => $value) {
-    $intervento = \Modules\Interventi\Intervento::find($value['id']);
+    $intervento = Modules\Interventi\Intervento::find($value['id']);
     $prezzo = $intervento->totale;
 
     $rs[$key]['prezzo'] = Translator::numberToLocale($prezzo);

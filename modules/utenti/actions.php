@@ -39,21 +39,21 @@ switch (filter('op')) {
         }
         break;
 
-    // Abilita utente
+        // Abilita utente
     case 'enable_user':
         if ($dbo->query('UPDATE zz_users SET enabled=1 WHERE id='.prepare($id_utente))) {
             flash()->info(tr('Utente abilitato!'));
         }
         break;
 
-    // Disabilita utente
+        // Disabilita utente
     case 'disable_user':
         if ($dbo->query('UPDATE zz_users SET enabled=0 WHERE id='.prepare($id_utente))) {
             flash()->info(tr('Utente disabilitato!'));
         }
         break;
 
-    // Cambio di password e username dell'utente
+        // Cambio di password e username dell'utente
     case 'update_user':
         $username = filter('username');
         $email = filter('email');
@@ -61,7 +61,7 @@ switch (filter('op')) {
 
         $id_utente = filter('id_utente');
         if ($dbo->fetchNum('SELECT username FROM zz_users WHERE id != '.prepare($id_utente).' AND username='.prepare($username)) == 0) {
-            //Aggiunta/modifica utente
+            // Aggiunta/modifica utente
             if (!empty($id_utente)) {
                 $utente = User::find($id_utente);
 
@@ -73,7 +73,7 @@ switch (filter('op')) {
                     $utente->password = $password;
                 }
             } else {
-                $gruppo = \Models\Group::find($id_record);
+                $gruppo = Models\Group::find($id_record);
                 $utente = User::build($gruppo, $username, $email, $password);
             }
 
@@ -112,7 +112,7 @@ switch (filter('op')) {
 
         break;
 
-    // Aggiunta di un nuovo utente
+        // Aggiunta di un nuovo utente
     case 'self_update':
         $password = filter('password', null, true);
 
@@ -130,7 +130,7 @@ switch (filter('op')) {
 
         break;
 
-    // Elimina utente + disattivazione token
+        // Elimina utente + disattivazione token
     case 'delete_user':
         if ($dbo->query('DELETE FROM zz_users WHERE id='.prepare($id_utente))) {
             flash()->info(tr('Utente eliminato!'));
@@ -141,14 +141,14 @@ switch (filter('op')) {
         }
         break;
 
-    // Abilita API utente
+        // Abilita API utente
     case 'token_enable':
         $utente = User::find($id_utente);
 
         $already_token = $dbo->fetchOne('SELECT `id` FROM `zz_tokens` WHERE `id_utente` = '.prepare($id_utente))['id'];
 
         if (empty($already_token)) {
-            //Quando richiamo getApiTokens,  non trovando nessun token abilitato ne crea uno nuovo
+            // Quando richiamo getApiTokens,  non trovando nessun token abilitato ne crea uno nuovo
             $tokens = $utente->getApiTokens();
 
             foreach ($tokens as $token) {
@@ -161,7 +161,7 @@ switch (filter('op')) {
 
         break;
 
-    // Disabilita API utente
+        // Disabilita API utente
     case 'token_disable':
         $utente = User::find($id_utente);
         $tokens = $utente->getApiTokens();
@@ -173,7 +173,7 @@ switch (filter('op')) {
         flash()->info(tr('Token disabilitato!'));
         break;
 
-    // Elimina gruppo
+        // Elimina gruppo
     case 'deletegroup':
         // Verifico se questo gruppo si può eliminare
         $query = 'SELECT editable FROM zz_groups WHERE id='.prepare($id_record);
@@ -192,9 +192,9 @@ switch (filter('op')) {
 
         break;
 
-    // Impostazione/reimpostazione dei permessi di accesso di default
+        // Impostazione/reimpostazione dei permessi di accesso di default
     case 'restore_permission':
-        //Gruppo Tecnici
+        // Gruppo Tecnici
         if ($dbo->fetchArray('SELECT `nome` FROM `zz_groups` WHERE `id` = '.prepare($id_record))[0]['nome'] == 'Tecnici') {
             $permessi = [];
             $permessi['Dashboard'] = 'rw';
@@ -218,9 +218,9 @@ switch (filter('op')) {
             flash()->info(tr('Permessi reimpostati'));
         }
 
-    break;
+        break;
 
-    // Aggiornamento dei permessi di accesso
+        // Aggiornamento dei permessi di accesso
     case 'update_permission':
         $permessi = filter('permesso');
         $idmodulo = filter('idmodulo');

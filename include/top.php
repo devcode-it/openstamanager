@@ -204,7 +204,7 @@ if (Auth::check()) {
 
                 search: search,
                 translations: translations,
-                locale: "'.(explode('_', $lang)[0]).'",
+                locale: "'.explode('_', $lang)[0].'",
 				full_locale: "'.$lang.'",
 
                 start_date: "'.$_SESSION['period_start'].'",
@@ -274,7 +274,7 @@ if (Auth::check()) {
                 date_format: "'.formatter()->getDatePattern().'",
                 time_format: "'.formatter()->getTimePattern().'",
 
-                locale: "'.(explode('_', $lang)[0]).'",
+                locale: "'.explode('_', $lang)[0].'",
 				full_locale: "'.$lang.'",
             };
         </script>';
@@ -518,7 +518,7 @@ if (Auth::check()) {
         if (!empty($id_record)) {
             $plugins = $dbo->fetchArray('SELECT id, title, options, options2 FROM zz_plugins WHERE idmodule_to='.prepare($id_module)." AND position='tab' AND enabled = 1 ORDER BY zz_plugins.order DESC");
             foreach ($plugins as $plugin) {
-                //Badge count per record plugin
+                // Badge count per record plugin
                 $count = 0;
                 $opt = '';
                 if (!empty($plugin['options2'])) {
@@ -565,7 +565,7 @@ if (Auth::check()) {
                     <a class="bg-info" data-toggle="tab" href="#tab_checks" id="link-tab_checks">
                         '.tr('Checklist').'
                         '.(($checklists_total->count() > 0) ?
-                        '<span class="badge pull-right">'.$checklists_unchecked->count().tr(' / ').($checklists_total->count()).'</span>' : '').'                                         
+                        '<span class="badge pull-right">'.$checklists_unchecked->count().tr(' / ').$checklists_total->count().'</span>' : '').'                                         
                     </a>
                 </li>';
         }

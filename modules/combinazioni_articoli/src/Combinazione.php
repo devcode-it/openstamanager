@@ -36,7 +36,7 @@ class Combinazione extends Model
     protected static $campi_varianti = [
         'id_categoria',
         'id_sottocategoria',
-        //'descrizione',
+        // 'descrizione',
         'um',
         'gg_garanzia',
         'servizio',
@@ -76,8 +76,6 @@ class Combinazione extends Model
 
     /**
      * Metodo per generare dinamicamente una variante dell'articolo per la combinazione corrente.
-     *
-     * @param $valori_attributi
      */
     public function generaVariante($valori_attributi, $id_articolo = null)
     {
@@ -190,8 +188,6 @@ class Combinazione extends Model
 
     /**
      * Funzione per sincronizzare i campi condivisi dagli Articoli di tipo Variante.
-     *
-     * @param $values
      */
     protected function sincronizzaCampi($values)
     {

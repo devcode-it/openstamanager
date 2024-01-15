@@ -322,7 +322,7 @@ switch (post('op')) {
 
         break;
 
-    // Scollegamento riga generica da ordine
+        // Scollegamento riga generica da ordine
     case 'delete_riga':
         $id_righe = (array) post('righe');
 
@@ -350,7 +350,7 @@ switch (post('op')) {
 
         break;
 
-    // Duplicazione riga
+        // Duplicazione riga
     case 'copy_riga':
         $id_righe = (array) post('righe');
 
@@ -371,7 +371,7 @@ switch (post('op')) {
 
         break;
 
-    // Eliminazione ordine
+        // Eliminazione ordine
     case 'delete':
         try {
             $ordine->delete();
@@ -400,14 +400,14 @@ switch (post('op')) {
 
         break;
 
-    // Aggiunta di un documento in ordine
+        // Aggiunta di un documento in ordine
     case 'add_preventivo':
     case 'add_documento':
         $class = post('class');
         $id_documento = post('id_documento');
 
         // Individuazione del documento originale
-        if (!is_subclass_of($class, \Common\Document::class)) {
+        if (!is_subclass_of($class, Common\Document::class)) {
             return;
         }
         $documento = $class::find($id_documento);
@@ -472,7 +472,7 @@ switch (post('op')) {
 
         break;
 
-    // Aggiunta di un ordine fornitore da un ordine cliente
+        // Aggiunta di un ordine fornitore da un ordine cliente
     case 'add_ordine_cliente':
         $ordine_cliente = Ordine::find(post('id_documento'));
 
@@ -537,7 +537,7 @@ switch (post('op')) {
 
         break;
 
-    // Aggiunta di un ordine fornitore da un preventivo
+        // Aggiunta di un ordine fornitore da un preventivo
     case 'add_ordine_fornitore':
         $preventivo = Preventivo::find(post('id_documento'));
 
@@ -699,7 +699,7 @@ switch (post('op')) {
         $numero_totale = 0;
 
         foreach ($righe as $riga) {
-            if (($riga['id']) != null) {
+            if ($riga['id'] != null) {
                 $articolo = Articolo::find($riga['id']);
             }
 
@@ -777,7 +777,7 @@ switch (post('op')) {
 
         break;
 
-    // Duplica ordine
+        // Duplica ordine
     case 'copy':
         $new = $ordine->replicate();
         $new->numero = Ordine::getNextNumero(post('data'), $ordine->tipo->dir, $ordine->id_segment);
@@ -799,7 +799,7 @@ switch (post('op')) {
             }
         }
 
-        //copia allegati
+        // copia allegati
         if (!empty(post('copia_allegati'))) {
             $allegati = $ordine->uploads();
             foreach ($allegati as $allegato) {

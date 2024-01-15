@@ -307,7 +307,7 @@ function renderElencoModuli($elenco, $depth = 0)
                             <i class="fa fa-warning" title="'.tr('Non compatibile!').'"></i>
                         </span>
                     </div>'
-                ).'
+        ).'
 
                 '.($is_plugin ? '<span class="badge pull-right" style="margin-right: 5px">'.tr('Plugin').'</span>' : '').'
             </td>

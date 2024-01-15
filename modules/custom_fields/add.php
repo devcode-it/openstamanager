@@ -49,7 +49,7 @@ include_once __DIR__.'/../../core.php';
                 'required' => 1,
                 'value' => '{[ "type": "text", "label": "|label|", "name": "|name|", "value": "|value|" ]}',
             ]);
-            ?>
+?>
 		</div>
 	</div>
 

@@ -73,8 +73,8 @@ if (post('db_host') !== null) {
                 $privileges = current($result);
 
                 if (
-                    string_contains($privileges, ' ON `'.$db_name.'`.*') ||
-                    string_contains($privileges, ' ON *.*')
+                    string_contains($privileges, ' ON `'.$db_name.'`.*')
+                    || string_contains($privileges, ' ON *.*')
                 ) {
                     $pieces = explode(', ', explode(' ON ', str_replace('GRANT ', '', $privileges))[0]);
 
@@ -110,7 +110,7 @@ if (post('db_host') !== null) {
         }
 
         echo $state;
-        exit();
+        exit;
     }
 
     // Creazione della configurazione
@@ -182,7 +182,7 @@ if (post('db_host') !== null) {
             // Creazione manifest.json
             include_once App::filepath('include/init', 'manifest.php');
             redirect(base_path().'/index.php');
-            exit();
+            exit;
         }
     }
 }
@@ -587,4 +587,4 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 
 include_once App::filepath('include|custom|', 'bottom.php');
 
-exit();
+exit;

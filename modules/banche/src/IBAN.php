@@ -2,8 +2,6 @@
 
 namespace Modules\Banche;
 
-use UnexpectedValueException;
-
 /**
  * Format:
  * b = National bank code (Codice ABI)
@@ -418,7 +416,7 @@ class IBAN
         $matches = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
         foreach ($matches as $key => $value) {
             if (!isset($value[0])) {
-                throw new UnexpectedValueException('Invalid '.$key.' for format '.$regex);
+                throw new \UnexpectedValueException('Invalid '.$key.' for format '.$regex);
             }
 
             $this->{$key} = $value[0];
@@ -443,7 +441,7 @@ class IBAN
             if (in_array($char, $keys)) {
                 $count = substr_count($structure, $char);
                 $result .= str_pad(
-                        substr($contents[self::$parsers[$char]], 0, $count),
+                    substr($contents[self::$parsers[$char]], 0, $count),
                     $count, STR_PAD_LEFT);
                 $current += $count;
             } else {

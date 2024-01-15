@@ -27,7 +27,7 @@ class Destinatario extends Model
     use SimpleModelTrait;
 
     protected $table = 'em_list_receiver';
-    protected $origine = null;
+    protected $origine;
 
     public static function build(Lista $lista, $origine)
     {

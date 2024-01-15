@@ -90,7 +90,7 @@ echo '
 			{[ "type": "checkbox", "label": "'.tr('Automezzo').'", "name": "is_automezzo", "id": "is_automezzo", "value": "0", "help": "'.tr('Seleziona se questa sede rappresenta un automezzo.').'" ]}
 		</div>
 		<div class="col-md-4">
-			{[ "type": "checkbox", "label": "'.tr('Rappresentante fiscale').'", "name": "is_rappresentante_fiscale", "value": "'.($record['is_rappresentante_fiscale']).'", "help": "'.tr("Utilizza questa sede come rappresentante fiscale per l'anagrafica.").'" ]}
+			{[ "type": "checkbox", "label": "'.tr('Rappresentante fiscale').'", "name": "is_rappresentante_fiscale", "value": "'.$record['is_rappresentante_fiscale'].'", "help": "'.tr("Utilizza questa sede come rappresentante fiscale per l'anagrafica.").'" ]}
 		</div>
 	</div>
 	<div class="row">
@@ -99,7 +99,7 @@ echo '
 		</div>
 	</div>';
 
-    $espandi_dettagli = setting('Espandi automaticamente la sezione "Dettagli aggiuntivi"');
+$espandi_dettagli = setting('Espandi automaticamente la sezione "Dettagli aggiuntivi"');
 echo '
     <!-- DATI AGGIUNTIVI -->
     <div class="box box-info collapsable '.(empty($espandi_dettagli) ? 'collapsed-box' : '').'">

@@ -22,7 +22,6 @@ namespace Models;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Intervention\Image\ImageManagerStatic;
-use UnexpectedValueException;
 use Util\FileSystem;
 
 class Upload extends Model
@@ -59,9 +58,6 @@ class Upload extends Model
         return $this->attributes['category'] ?: 'Generale';
     }
 
-    /**
-     * @param $value
-     */
     public function setCategoryAttribute($value)
     {
         if ($value == 'Generale' || $value == '') {
@@ -107,7 +103,7 @@ class Upload extends Model
         $directory = base_dir().'/'.$model->directory;
         $filename = self::getNextName($original_name, $directory);
         if (empty($filename)) {
-            throw new UnexpectedValueException("Estensione dell'allegato non supportata");
+            throw new \UnexpectedValueException("Estensione dell'allegato non supportata");
         }
         $model->filename = $filename;
 
@@ -115,11 +111,11 @@ class Upload extends Model
         directory($directory);
         $file = slashes($directory.DIRECTORY_SEPARATOR.$filename);
         if (
-            (is_array($source) && is_uploaded_file($source['tmp_name']) && !move_uploaded_file($source['tmp_name'], $file)) ||
-            (is_string($source) && is_file($source) && !copy($source, $file)) ||
-            (is_string($source) && !is_file($source) && file_put_contents($file, $source) === false)
+            (is_array($source) && is_uploaded_file($source['tmp_name']) && !move_uploaded_file($source['tmp_name'], $file))
+            || (is_string($source) && is_file($source) && !copy($source, $file))
+            || (is_string($source) && !is_file($source) && file_put_contents($file, $source) === false)
         ) {
-            throw new UnexpectedValueException("Errore durante il salvataggio dell'allegato");
+            throw new \UnexpectedValueException("Errore durante il salvataggio dell'allegato");
         }
 
         // Aggiornamento dimensione fisica e responsabile del caricamento
@@ -276,7 +272,7 @@ class Upload extends Model
     public function save(array $options = [])
     {
         if ($this->isImage()) {
-            //self::generateThumbnails($this);
+            // self::generateThumbnails($this);
         }
 
         return parent::save($options);

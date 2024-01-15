@@ -302,7 +302,7 @@ switch (post('op')) {
 
         break;
 
-    // Informazioni sulla posizione della sede
+        // Informazioni sulla posizione della sede
     case 'posizione':
         $sede = $anagrafica->sedeLegale;
         $sede->gaddress = post('gaddress');
@@ -315,7 +315,7 @@ switch (post('op')) {
     case 'delete':
         // Se l'anagrafica non è l'azienda principale, la disattivo
         if (!$anagrafica->isAzienda()) {
-            //$anagrafica->delete();
+            // $anagrafica->delete();
             $dbo->query('UPDATE an_anagrafiche SET deleted_at = NOW() WHERE idanagrafica = '.prepare($id_record));
 
             // Se l'anagrafica è collegata ad un utente lo disabilito

@@ -43,7 +43,7 @@ switch (post('op')) {
         $is_fatturabile = post('is_fatturabile') ?: null;
         $is_pianificabile = post('is_pianificabile') ?: null;
 
-        //controlla descrizione che non sia duplicata
+        // controlla descrizione che non sia duplicata
         if (count($dbo->fetchArray('SELECT descrizione FROM co_statipreventivi WHERE descrizione='.prepare($descrizione))) > 0) {
             flash()->error(tr('Stato di preventivo già esistente.'));
         } else {
@@ -56,7 +56,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        //scelgo se settare come eliminato o cancellare direttamente la riga se non è stato utilizzato nei preventivi
+        // scelgo se settare come eliminato o cancellare direttamente la riga se non è stato utilizzato nei preventivi
         if (count($dbo->fetchArray('SELECT id FROM co_preventivi WHERE idstato='.prepare($id_record))) > 0) {
             $query = 'UPDATE co_statipreventivi SET deleted_at = NOW() WHERE can_delete = 1 AND id='.prepare($id_record);
         } else {

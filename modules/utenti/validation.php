@@ -49,10 +49,10 @@ switch ($name) {
 
         break;
 
-        case 'gruppo':
+    case 'gruppo':
         $disponibile = Group::where([
             ['nome', $value],
-            //['id', '<>', $id_record],
+            // ['id', '<>', $id_record],
         ])->count() == 0;
 
         $message = $disponibile ? tr('Il nome del gruppo è disponbile') : tr('Il nome per questo gruppo è già in uso');

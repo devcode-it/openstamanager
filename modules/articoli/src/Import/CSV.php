@@ -22,7 +22,6 @@ namespace Modules\Articoli\Import;
 use Carbon\Carbon;
 use Importer\CSVImporter;
 use Models\Upload;
-use Modules;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Sede;
 use Modules\Anagrafiche\Tipo;
@@ -31,7 +30,6 @@ use Modules\Articoli\Categoria;
 use Modules\Iva\Aliquota;
 use Plugins\ListinoClienti\DettaglioPrezzo;
 use Plugins\ListinoFornitori\DettaglioFornitore;
-use Uploads;
 
 /**
  * Struttura per la gestione delle operazioni di importazione (da CSV) degli Articoli.
@@ -331,7 +329,7 @@ class CSV extends CSVImporter
         $articolo->attivo = 1;
 
         // Esportazione della quantità indicata
-        $nuova_qta = (float) ($record['qta']);
+        $nuova_qta = (float) $record['qta'];
         $nome_sede = $record['nome_sede'];
 
         if (!empty($dettagli['id_fornitore']) || !empty($dettagli['anagrafica_listino'] || !empty($dettagli['partita_iva']))) {
@@ -361,14 +359,14 @@ class CSV extends CSVImporter
         unset($record['descrizione_fornitore']);
         unset($record['id_fornitore']);
 
-        //Gestione immagine
+        // Gestione immagine
         if (!empty($url) && !empty($record['import_immagine'])) {
             $file_content = file_get_contents($url);
 
             if (!empty($file_content)) {
                 if ($record['import_immagine'] == 2 || $record['import_immagine'] == 4) {
-                    Uploads::deleteLinked([
-                        'id_module' => Modules::get('Articoli')['id'],
+                    \Uploads::deleteLinked([
+                        'id_module' => \Modules::get('Articoli')['id'],
                         'id_record' => $articolo->id,
                     ]);
 
@@ -381,11 +379,11 @@ class CSV extends CSVImporter
 
                 $name = 'immagine_'.$articolo->id.'.'.Upload::getExtensionFromMimeType($file_content);
 
-                $upload = Uploads::upload($file_content, [
+                $upload = \Uploads::upload($file_content, [
                     'name' => 'Immagine',
                     'category' => 'Immagini',
                     'original_name' => $name,
-                    'id_module' => Modules::get('Articoli')['id'],
+                    'id_module' => \Modules::get('Articoli')['id'],
                     'id_record' => $articolo->id,
                 ], [
                     'thumbnails' => true,

@@ -196,7 +196,7 @@ switch (filter('op')) {
         // Selezione da lista newsletter
         $id_list = post('id_list');
         if (!empty($id_list)) {
-            //Aggiornamento della lista
+            // Aggiornamento della lista
             $lista = Lista::find($id_list);
             $query = $lista->query;
             if (check_query($query)) {
@@ -281,7 +281,7 @@ switch (filter('op')) {
 
         break;
 
-    // Duplica newsletter
+        // Duplica newsletter
     case 'copy':
         $new = $newsletter->replicate();
         $new->state = 'DEV';

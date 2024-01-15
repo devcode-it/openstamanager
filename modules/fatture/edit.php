@@ -73,7 +73,7 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione)) {
         </div>';
         }
     } else {
-        //TODO link ad impostazioni con nuova ricerca rapida
+        // TODO link ad impostazioni con nuova ricerca rapida
         echo '
         <div class="alert alert-warning">
         <i class="fa fa-warning"></i> '.tr("Attenzione nessuna aliq. IVA definita per la dichiarazione d'intento. _SETTING_", [
@@ -131,7 +131,7 @@ if (!empty($note_accredito)) {
         ]);
 
         echo '
-    <br>'.Modules::link(($dir == 'entrata' ? 'Fatture di vendita' : 'Fatture di acquisto'), $nota['id'], $text, $text);
+    <br>'.Modules::link($dir == 'entrata' ? 'Fatture di vendita' : 'Fatture di acquisto', $nota['id'], $text, $text);
     }
     echo '
 </div>';
@@ -227,7 +227,7 @@ if ($dir == 'entrata') {
                     $label = tr('Numero fattura');
                     $size = 4;
                 }
-                ?>
+?>
 
 				<div class="col-md-<?php echo $size; ?>">
 					{[ "type": "text", "label": "<?php echo $label; ?>", "required": "<?php echo ($dir == 'uscita') ? 1 : 0; ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$", "help": "<?php echo (empty($record['numero_esterno']) and $dir == 'entrata') ? tr('Il numero della fattura sarà generato automaticamente in fase di emissione.') : ''; ?>" ]}
@@ -255,9 +255,9 @@ $query .= ' ORDER BY descrizione';
 
 ?>
 				<?php if ($dir == 'entrata') {
-    $readonly = '"readonly":1,';
-}
-    ?>
+				    $readonly = '"readonly":1,';
+				}
+?>
 
 				<div class="col-md-2" <?php echo ($dir == 'entrata') ? 'hidden' : ''; ?>>
                     {[ "type": "date", "label": "<?php echo tr('Data registrazione'); ?>", <?php echo $readonly; ?> "name": "data_registrazione", "value": "$data_registrazione$", "help": "<?php echo tr('Data in cui si è effettuata la registrazione della fattura in contabilità'); ?>" ]}
@@ -269,17 +269,17 @@ $query .= ' ORDER BY descrizione';
                 </div>
 
 					<?php
-                    if ($dir == 'entrata') {
-                        ?>
+                if ($dir == 'entrata') {
+                    ?>
 
                 <div class="col-md-2" <?php echo ($is_fiscale) ? '' : 'hidden'; ?> >
                     {[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "values": "query=SELECT codice as id, CONCAT_WS(' - ',codice,descrizione) as text FROM fe_stati_documento", "value": "$codice_stato_fe$", "disabled": <?php echo intval(Interaction::isEnabled() || ($record['stato'] == 'Bozza' && $abilita_genera)); ?>, "class": "unblockable", "help": "<?php echo (!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : ''; ?>" ]}
                 </div>
 
                         <?php
-                    }
+                }
 
-                echo '
+            echo '
                 <div class="col-md-'.($is_fiscale ? 2 : 6).'">
                     {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatodocumento", "required": 1, "values": "query='.$query.'", "value": "$idstatodocumento$", "class": "'.(($record['stato'] != 'Bozza' && !$abilita_genera) ? '' : 'unblockable').'", "extra": "onchange=\"return cambiaStato()\"" ]}
                 </div>
@@ -289,48 +289,48 @@ $query .= ' ORDER BY descrizione';
 				<div class="col-md-4">
 				    '.Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
 
-                    if ($dir == 'entrata') {
-                        ?>
+if ($dir == 'entrata') {
+    ?>
 						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "clienti", "help": "<?php echo tr("In caso di autofattura indicare l'azienda: ").stripslashes($database->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')))['ragione_sociale']); ?>", "value": "$idanagrafica$" ]}
 					<?php
-                    } else {
-                        ?>
+} else {
+    ?>
 						{[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "fornitori", "value": "$idanagrafica$" ]}
 					<?php
-                    }
+}
 
-                    echo '
+echo '
                 </div>';
 
-                if ($dir == 'entrata') {
-                    echo '
+if ($dir == 'entrata') {
+    echo '
 				<div class="col-md-4">';
-                    if ($record['idagente'] != 0) {
-                        echo Modules::link('Anagrafiche', $record['idagente_fattura'], null, null, 'class="pull-right"');
-                    }
-                    echo '
+    if ($record['idagente'] != 0) {
+        echo Modules::link('Anagrafiche', $record['idagente_fattura'], null, null, 'class="pull-right"');
+    }
+    echo '
 					{[ "type": "select", "label": "'.tr('Agente di riferimento').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente_fattura$" ]}
 				</div>';
-                }
+}
 
-                echo '
+echo '
                 <div class="col-md-4">';
-                    if (!empty($record['idreferente'])) {
-                        echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
-                    }
-                    echo '
+if (!empty($record['idreferente'])) {
+    echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
+}
+echo '
                     {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.$record['idsede_destinazione'].'}, "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|id_plugin='.Plugins::get('Referenti')['id'].'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
                 </div>';
 
-                echo '
+echo '
             </div>
             <div class="row">';
-                // Conteggio numero articoli fatture
-                $articolo = $dbo->fetchArray('SELECT mg_articoli.id FROM ((mg_articoli INNER JOIN co_righe_documenti ON mg_articoli.id=co_righe_documenti.idarticolo) INNER JOIN co_documenti ON co_documenti.id=co_righe_documenti.iddocumento) WHERE co_documenti.id='.prepare($id_record));
-                    $id_modulo_anagrafiche = Modules::get('Anagrafiche')['id'];
-                    $id_plugin_sedi = Plugins::get('Sedi')['id'];
-                    if ($dir == 'entrata') {
-                        echo '
+// Conteggio numero articoli fatture
+$articolo = $dbo->fetchArray('SELECT mg_articoli.id FROM ((mg_articoli INNER JOIN co_righe_documenti ON mg_articoli.id=co_righe_documenti.idarticolo) INNER JOIN co_documenti ON co_documenti.id=co_righe_documenti.iddocumento) WHERE co_documenti.id='.prepare($id_record));
+$id_modulo_anagrafiche = Modules::get('Anagrafiche')['id'];
+$id_plugin_sedi = Plugins::get('Sedi')['id'];
+if ($dir == 'entrata') {
+    echo '
                 <div class="col-md-3">
                     {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "help": "'.tr("Sedi di partenza dell'azienda").'" ]}
                 </div>
@@ -338,8 +338,8 @@ $query .= ' ORDER BY descrizione';
                 <div class="col-md-3">
                     {[ "type": "select", "label": "'.tr('Destinazione merce').'", "name": "idsede_destinazione", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idsede_destinazione$", "help": "'.tr('Sedi del destinatario').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
                 </div>';
-                    } else {
-                        echo '
+} else {
+    echo '
                 <div class="col-md-3">
                     {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idsede_partenza$", "help": "'.tr('Sedi del mittente').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
                 </div>
@@ -347,8 +347,8 @@ $query .= ' ORDER BY descrizione';
                 <div class="col-md-3">
                     {[ "type": "select", "label": "'.tr('Destinazione merce').'", "name": "idsede_destinazione", "ajax-source": "sedi_azienda", "value": "$idsede_destinazione$", "help": "'.tr("Sedi di arrivo dell'azienda").'" ]}
                 </div>';
-                    }
-                ?>
+}
+?>
 			</div>
 			<hr>
 
@@ -368,23 +368,23 @@ $query .= ' ORDER BY descrizione';
 
 				<div class="col-md-3">
                     <?php if ($record['id_banca_azienda'] != 0) {
-                    echo Modules::link('Banche', $record['id_banca_azienda'], null, null, 'class="pull-right"');
-                }
+                        echo Modules::link('Banche', $record['id_banca_azienda'], null, null, 'class="pull-right"');
+                    }
 
-                if ($dir == 'entrata') {
-                    echo '
+if ($dir == 'entrata') {
+    echo '
                     {[ "type": "select", "label": "'.tr('Banca accredito').'", "name": "id_banca_azienda", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "$id_banca_azienda$", "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'", "extra": "'.(intval($block_edit) ? 'disabled' : '').'" ]}
                 </div>
                 <div class="col-md-3">
                     {[ "type": "select", "label": "'.tr('Banca addebito').'", "name": "id_banca_controparte", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $record['idanagrafica']]).', "value": "$id_banca_controparte$", "icon-after": "add|'.Modules::get('Banche')['id'].'|idanagrafica='.$record['idanagrafica'].'", "extra": "'.(intval($block_edit) ? 'disabled' : '').'" ]}';
-                } else {
-                    echo '
+} else {
+    echo '
                     {[ "type": "select", "label": "'.tr('Banca accredito').'", "name": "id_banca_controparte", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $record['idanagrafica']]).', "value": "$id_banca_controparte$", "icon-after": "add|'.Modules::get('Banche')['id'].'|idanagrafica='.$record['idanagrafica'].'", "extra": "'.(intval($block_edit) ? 'disabled' : '').'" ]}
                 </div>
                 <div class="col-md-3">
                     {[ "type": "select", "label": "'.tr('Banca addebito').'", "name": "id_banca_azienda", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "$id_banca_azienda$", "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'", "extra": "'.(intval($block_edit) ? 'disabled' : '').'" ]}';
-                }
-                ?>
+}
+?>
                 </div>
                 </div>
 
@@ -396,81 +396,81 @@ $query .= ' ORDER BY descrizione';
                     </div>
 
                     <?php
-                    // TODO: Fattura per conto del fornitore (es. cooperative agricole che emettono la fattura per conto dei propri soci produttori agricoli conferenti)
-                    if ($dir == 'entrata') {
-                        ?>
+    // TODO: Fattura per conto del fornitore (es. cooperative agricole che emettono la fattura per conto dei propri soci produttori agricoli conferenti)
+    if ($dir == 'entrata') {
+        ?>
                         <div class="col-md-3">
                             {[ "type": "checkbox", "label": "<?php echo tr('Fattura per conto terzi'); ?>", "name": "is_fattura_conto_terzi", "value": "$is_fattura_conto_terzi$", "help": "<?php echo tr('Nell\'XML della Fattura Elettronica sarà indicato il fornitore ('.stripslashes($database->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')))['ragione_sociale']).') come cessionario e il cliente come cedente/prestatore.'); ?>", "placeholder": "<?php echo tr('Fattura per conto terzi'); ?>" ]}
                         </div>
 
                     <?php
-                        echo '<div class="col-md-3">
+        echo '<div class="col-md-3">
                             {[ "type": "number", "label": "'.tr('Sconto in fattura').'", "name": "sconto_finale", "value": "'.($fattura->sconto_finale_percentuale ?: $fattura->sconto_finale).'", "icon-after": "choice|untprc|'.(empty($fattura->sconto_finale) ? 'PRC' : 'UNT').'", "help": "'.tr('Sconto in fattura, utilizzabile per applicare sconti sul Netto a pagare del documento e le relative scadenze').'. '.tr('Per utilizzarlo in relazione a una riga della Fattura Elettronica, inserire il tipo di dato in \'\'Attributi avanzati\'\' -> \'\'Altri Dati Gestionali\'\' -> \'\'TipoDato\'\' e il testo di descrizione in \'\'Attributi avanzati\'\' -> \'\'Altri Dati Gestionali\'\' -> \'\'RiferimentoTesto\'\' della specifica riga').'. '.tr('Nota: lo sconto in fattura non influenza i movimenti contabili').'." ]}
                         </div>';
-                    } else {
-                        echo '
+    } else {
+        echo '
                         <div class="col-md-3">
                         </div>
                         <div class="col-md-3">
                         </div>';
-                    }
+    }
 
-                if ($record['stato'] != 'Bozza' && $record['stato'] != 'Annullata') {
-                    $scadenze = $fattura->scadenze;
+if ($record['stato'] != 'Bozza' && $record['stato'] != 'Annullata') {
+    $scadenze = $fattura->scadenze;
 
-                    $ricalcola = true;
-                    foreach ($scadenze as $scadenza) {
-                        $ricalcola = empty(floatval($scadenza->pagato)) && $ricalcola;
-                    }
+    $ricalcola = true;
+    foreach ($scadenze as $scadenza) {
+        $ricalcola = empty(floatval($scadenza->pagato)) && $ricalcola;
+    }
 
-                    echo '
+    echo '
                 <div class="col-md-3">
                     <p class="pull-left"><strong>'.tr('Scadenze').'</strong></p>
 
                     <div class="btn-group pull-right">
                         '.Modules::link('Scadenzario', $scadenze[0]['id'], tr('<i class="fa fa-edit tip" title="'.tr('Modifica scadenze').'"></i>'), '', 'class="btn btn-xs btn-primary"');
 
-                    // Ricalcola scadenze disponibile solo per fatture di acquisto
-                    if ($fattura->isFE() && $ricalcola && $module['name'] == 'Fatture di acquisto') {
-                        echo '
+    // Ricalcola scadenze disponibile solo per fatture di acquisto
+    if ($fattura->isFE() && $ricalcola && $module['name'] == 'Fatture di acquisto') {
+        echo '
                     <button type="button" class="btn btn-info btn-xs pull-right tip" title="'.tr('Ricalcola le scadenze').'. '.tr('Per ricalcolare correttamente le scadenze, imposta la fattura di acquisto nello stato \'\'Bozza\'\' e correggi il documento come desiderato, poi re-imposta lo stato \'\'Emessa\'\' e utilizza questa funzione').'." id="ricalcola_scadenze">
                         <i class="fa fa-calculator" aria-hidden="true"></i>
                     </button>';
-                    }
-                    echo '
+    }
+    echo '
                     </div>
                     <div class="clearfix"></div>';
 
-                    foreach ($scadenze as $scadenza) {
-                        $pagamento_iniziato = !empty(floatval($scadenza->pagato)) || $scadenza->da_pagare == 0;
+    foreach ($scadenze as $scadenza) {
+        $pagamento_iniziato = !empty(floatval($scadenza->pagato)) || $scadenza->da_pagare == 0;
 
-                        echo '
+        echo '
                     <p>'.dateFormat($scadenza['scadenza']).': ';
 
-                        if ($pagamento_iniziato) {
-                            echo '
+        if ($pagamento_iniziato) {
+            echo '
                         <strike>';
-                        }
+        }
 
-                        echo(empty($scadenza->da_pagare) ? '<i class="fa fa-exclamation-triangle"></i>' : '').moneyFormat($scadenza->da_pagare);
+        echo (empty($scadenza->da_pagare) ? '<i class="fa fa-exclamation-triangle"></i>' : '').moneyFormat($scadenza->da_pagare);
 
-                        if ($pagamento_iniziato) {
-                            echo '
+        if ($pagamento_iniziato) {
+            echo '
                         </strike>';
-                        }
+        }
 
-                        if ($pagamento_iniziato && $scadenza->pagato != $scadenza->da_pagare) {
-                            echo ' ('.moneyFormat($scadenza->da_pagare - $scadenza->pagato).')';
-                        }
+        if ($pagamento_iniziato && $scadenza->pagato != $scadenza->da_pagare) {
+            echo ' ('.moneyFormat($scadenza->da_pagare - $scadenza->pagato).')';
+        }
 
-                        echo '
+        echo '
                     </p>';
-                    }
+    }
 
-                    echo '
+    echo '
                 </div>';
-                }
-                ?>
+}
+?>
             </div>
 
             <div class="row">
@@ -480,34 +480,34 @@ $query .= ' ORDER BY descrizione';
                 </div>
 
                 <?php
-                if ($dir == 'uscita') {
-                    echo '
+if ($dir == 'uscita') {
+    echo '
                     <div class="col-md-6">
                         {[ "type": "checkbox", "label": "'.tr('Ritenuta pagata dal fornitore').'", "name": "is_ritenuta_pagata", "value": "$is_ritenuta_pagata$" ]}
                     </div>';
-                }
-                if ($dir == 'entrata') {
-                    echo '
+}
+if ($dir == 'entrata') {
+    echo '
                     <div class="col-md-6">';
 
-                    if (!empty($record['id_dichiarazione_intento'])) {
-                        echo Plugins::link("Dichiarazioni d'Intento", $record['idanagrafica'], null, null, 'class="pull-right"');
-                    }
+    if (!empty($record['id_dichiarazione_intento'])) {
+        echo Plugins::link("Dichiarazioni d'Intento", $record['idanagrafica'], null, null, 'class="pull-right"');
+    }
 
-                    echo '
+    echo '
                         {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento", "help": "'.tr('Elenco delle dichiarazioni d\'intento definite all\'interno dell\'anagrafica del cliente').'.", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "data": "'.$record['data'].'"},"value": "$id_dichiarazione_intento$", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|id_plugin='.Plugins::get('Dichiarazioni d\'Intento')['id'].'&id_parent='.$record['idanagrafica'].'", "extra": "'.((intval($block_edit)) ? 'disabled' : '').'"  ]}
                     </div>';
-                }
+}
             echo '
             </div>';
 
-        if ($dir == 'entrata') {
-            echo '
+if ($dir == 'entrata') {
+    echo '
             <div class="row">
                 <div class="col-md-3">
                     {[ "type": "checkbox", "label": "'.tr('Marca da bollo automatica').'", "name": "bollo_automatico", "value": "'.intval(!isset($record['bollo'])).'", "help": "'.tr("Seleziona per impostare automaticamente l'importo della marca da bollo").'. '.tr('Applicata solo se il totale della fattura è maggiore di _MONEY_', [
-                            '_MONEY_' => moneyFormat(setting("Soglia minima per l'applicazione della marca da bollo")),
-                        ]).'.", "placeholder": "'.tr('Bollo automatico').'" ]}
+                    '_MONEY_' => moneyFormat(setting("Soglia minima per l'applicazione della marca da bollo")),
+                ]).'.", "placeholder": "'.tr('Bollo automatico').'" ]}
                 </div>
 
                 <div class="col-md-3 bollo">
@@ -519,8 +519,8 @@ $query .= ' ORDER BY descrizione';
                 </div>
             </div>';
 
-            $bollo = new Bollo($fattura);
-        }
+    $bollo = new Bollo($fattura);
+}
 ?>
 			<div class="row">
 				<div class="col-md-6">
@@ -702,7 +702,7 @@ if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
 echo '
 </form>';
 
-//Dich. intento collegata
+// Dich. intento collegata
 if ($dir == 'entrata' && !empty($fattura->dichiarazione)) {
     $ive_accettate = $dbo->table('co_iva')->where('codice_natura_fe', 'N3.5')->get();
     foreach ($ive_accettate as $iva_accettata) {
@@ -953,11 +953,11 @@ echo '
             }
         }';
 
-        if ($dir == 'entrata') {
-            echo '$("#idsede_destinazione").selectReset();';
-        } else {
-            echo '$("#idsede_partenza").selectReset();';
-        }
+if ($dir == 'entrata') {
+    echo '$("#idsede_destinazione").selectReset();';
+} else {
+    echo '$("#idsede_partenza").selectReset();';
+}
 
 echo '
 	});

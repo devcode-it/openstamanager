@@ -21,12 +21,12 @@ use Modules\Anagrafiche\Anagrafica;
 
 $anagrafica = Anagrafica::find($id_record);
 
-//cliente
+// cliente
 if ($anagrafica->idconto_cliente != '') {
     $conto = $anagrafica->idconto_cliente;
     $conto_descrizione = $dbo->fetchOne('SELECT CONCAT ((SELECT numero FROM co_pianodeiconti2 WHERE id=co_pianodeiconti3.idpianodeiconti2), ".", numero, " ", descrizione) AS descrizione FROM co_pianodeiconti3 WHERE id='.prepare($conto))['descrizione'];
 }
-//Fornitore
+// Fornitore
 elseif ($anagrafica->idconto_fornitore != '') {
     $conto = $anagrafica->idconto_fornitore;
     $conto_descrizione = $dbo->fetchOne('SELECT CONCAT ((SELECT numero FROM co_pianodeiconti2 WHERE id=co_pianodeiconti3.idpianodeiconti2), ".", numero, " ", descrizione) AS descrizione FROM co_pianodeiconti3 WHERE id='.prepare($conto))['descrizione'];

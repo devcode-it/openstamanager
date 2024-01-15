@@ -100,7 +100,7 @@ switch (post('op')) {
                     if ($qta > 0) {
                         $copia = $riga->copiaIn($fattura, $qta);
 
-                        //Fix per idconto righe fattura
+                        // Fix per idconto righe fattura
                         $articolo = ArticoloOriginale::find($copia->idarticolo);
                         $copia->idconto = ($articolo->idconto_vendita ? $articolo->idconto_vendita : $idconto);
 

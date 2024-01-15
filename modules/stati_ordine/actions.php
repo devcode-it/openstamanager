@@ -42,7 +42,7 @@ switch (post('op')) {
         $is_fatturabile = post('is_fatturabile') ?: null;
         $impegnato = post('impegnato') ?: null;
 
-        //controlla descrizione che non sia duplicata
+        // controlla descrizione che non sia duplicata
         if (count($dbo->fetchArray('SELECT descrizione FROM or_statiordine WHERE descrizione='.prepare($descrizione))) > 0) {
             flash()->error(tr('Stato ordine già esistente.'));
         } else {
@@ -55,7 +55,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        //scelgo se settare come eliminato o cancellare direttamente la riga se non è stato utilizzato negli ordini
+        // scelgo se settare come eliminato o cancellare direttamente la riga se non è stato utilizzato negli ordini
         if (count($dbo->fetchArray('SELECT id FROM or_statiordine WHERE id='.prepare($id_record))) > 0) {
             $query = 'UPDATE or_statiordine SET deleted_at = NOW() WHERE can_delete = 1 AND id='.prepare($id_record);
         } else {

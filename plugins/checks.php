@@ -65,7 +65,7 @@ foreach ($checks as $check) {
 echo '          </tbody>
             </table>';
 
-    echo '
+echo '
         </div>
     </div>
 </div>';

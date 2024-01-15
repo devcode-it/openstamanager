@@ -63,7 +63,7 @@ switch (filter('op')) {
             } else {
                 flash()->error(tr('Errore durante la creazione del backup!').' '.str_replace('_DIR_', '"'.$backup_dir.'"', tr('Verifica che la cartella _DIR_ abbia i permessi di scrittura!')));
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             flash()->error(tr('Errore durante la creazione del backup!').' '.$e->getMessage());
         }
 

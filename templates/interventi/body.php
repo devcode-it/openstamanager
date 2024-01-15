@@ -132,7 +132,7 @@ echo '
     <tr>
         <td colspan="4" style="height:20mm;">
             <b>'.tr('Richiesta').':</b>
-            <p>'.($documento['richiesta']).'</p>
+            <p>'.$documento['richiesta'].'</p>
         </td>
     </tr>';
 
@@ -142,7 +142,7 @@ echo '
     <tr>
         <td colspan="4" style="height:20mm;">
             <b>'.tr('Descrizione').':</b>
-            <p>'.($documento['descrizione']).'</p>
+            <p>'.$documento['descrizione'].'</p>
         </td>
     </tr>';
 

@@ -44,7 +44,7 @@ switch (post('op')) {
         $descrizione = post('descrizione');
         $colore = post('colore');
 
-        //controllo che il codice non sia duplicato
+        // controllo che il codice non sia duplicato
         if (count($dbo->fetchArray('SELECT idstatointervento FROM in_statiintervento WHERE codice='.prepare($codice))) > 0) {
             flash()->warning(tr('Attenzione: lo stato attività _COD_ risulta già esistente.', [
                 '_COD_' => $codice,
@@ -59,7 +59,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        //scelgo se settare come eliminato o cancellare direttamente la riga se non è stato utilizzato negli interventi
+        // scelgo se settare come eliminato o cancellare direttamente la riga se non è stato utilizzato negli interventi
         if (count($dbo->fetchArray('SELECT id FROM in_interventi WHERE idstatointervento='.prepare($id_record))) > 0) {
             $query = 'UPDATE in_statiintervento SET deleted_at = NOW() WHERE idstatointervento='.prepare($id_record).' AND `can_delete`=1';
         } else {

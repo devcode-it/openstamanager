@@ -27,11 +27,11 @@ use HTMLBuilder\HTMLBuilder;
 /**
  * Restituisce l'oggetto dedicato alla gestione della connessione con il database.
  *
- * @return \Database
+ * @return Database
  */
 function database()
 {
-    return \Database::getConnection();
+    return Database::getConnection();
 }
 
 /**
@@ -41,8 +41,6 @@ function database()
  * @param string $parameter
  *
  * @since 2.3
- *
- * @return mixed
  */
 function prepare($parameter)
 {
@@ -62,7 +60,7 @@ function prepare($parameter)
  */
 function filter($param, $method = null, $raw = false)
 {
-    return \Filter::getValue($param, $method, $raw);
+    return Filter::getValue($param, $method, $raw);
 }
 
 /**
@@ -77,7 +75,7 @@ function filter($param, $method = null, $raw = false)
  */
 function post($param, $raw = false)
 {
-    return \Filter::getValue($param, 'post', $raw);
+    return Filter::getValue($param, 'post', $raw);
 }
 
 /**
@@ -92,7 +90,7 @@ function post($param, $raw = false)
  */
 function get($param, $raw = false)
 {
-    return \Filter::getValue($param, 'get', $raw);
+    return Filter::getValue($param, 'get', $raw);
 }
 
 /**
@@ -107,7 +105,7 @@ function get($param, $raw = false)
  */
 function setting($name, $again = false)
 {
-    return \Settings::getValue($name);
+    return Settings::getValue($name);
 }
 
 /**
@@ -115,7 +113,7 @@ function setting($name, $again = false)
  *
  * @since 2.4.2
  *
- * @return \Util\Messages
+ * @return Util\Messages
  */
 function flash()
 {
@@ -127,11 +125,11 @@ function flash()
  *
  * @since 2.4.2
  *
- * @return \Auth
+ * @return Auth
  */
 function auth()
 {
-    return \Auth::getInstance();
+    return Auth::getInstance();
 }
 
 /**
@@ -139,11 +137,11 @@ function auth()
  *
  * @since 2.4.2
  *
- * @return \Translator
+ * @return Translator
  */
 function trans()
 {
-    return \Translator::getInstance();
+    return Translator::getInstance();
 }
 
 /**
@@ -151,11 +149,11 @@ function trans()
  *
  * @since 2.4.2
  *
- * @return \Intl\Formatter
+ * @return Intl\Formatter
  */
 function formatter()
 {
-    return \Translator::getFormatter();
+    return Translator::getFormatter();
 }
 
 /**
@@ -171,7 +169,7 @@ function formatter()
  */
 function tr($string, $parameters = [], $operations = [])
 {
-    return \Translator::translate($string, $parameters, $operations);
+    return Translator::translate($string, $parameters, $operations);
 }
 
 // Retrocompatibilità (con la funzione gettext)
@@ -187,7 +185,7 @@ if (!function_exists('_')) {
  *
  * @since 2.4.2
  *
- * @return \Monolog\Logger
+ * @return Monolog\Logger
  */
 function logger()
 {
@@ -213,7 +211,8 @@ function numberFormat($number, $decimals = null)
  * Restituisce il timestamp indicato formattato secondo la configurazione del sistema.
  *
  * @param string $timestamp
-+ *
+ *                          + *
+ *
  * @return string
  *
  * @since 2.4.8
@@ -260,13 +259,11 @@ function timeFormat($time)
  */
 function currency()
 {
-    return \Translator::getCurrency();
+    return Translator::getCurrency();
 }
 
 /**
  * Restituisce il numero indicato formattato come una valuta secondo la configurazione del sistema.
- *
- * @param string $time
  *
  * @return string
  *

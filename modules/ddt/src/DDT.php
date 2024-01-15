@@ -19,7 +19,6 @@
 
 namespace Modules\DDT;
 
-use Auth;
 use Common\Components\Component;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
@@ -59,7 +58,7 @@ class DDT extends Document
     {
         $model = new static();
 
-        $user = Auth::user();
+        $user = \Auth::user();
 
         $stato_documento = Stato::where('descrizione', 'Bozza')->first();
 

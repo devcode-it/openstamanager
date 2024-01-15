@@ -56,19 +56,19 @@ class WidgetManager implements ManagerInterface
 
                 break;
 
-            // Statistiche
+                // Statistiche
             case 'stats':
                 $result = $this->stats($widget);
 
                 break;
 
-            // Chart (codice PHP)
+                // Chart (codice PHP)
             case 'chart':
                 $result = $this->chart($widget);
 
                 break;
 
-            // Personalizzato (codice PHP e icona)
+                // Personalizzato (codice PHP e icona)
             case 'custom':
                 $result = $this->custom($widget);
 

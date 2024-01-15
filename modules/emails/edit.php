@@ -123,7 +123,7 @@ echo '
                         'name' => 'body',
                         'value' => $record['body'],
                     ]);
-                    ?>
+?>
                 </div>
             </div>
 

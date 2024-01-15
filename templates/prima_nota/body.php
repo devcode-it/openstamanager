@@ -31,33 +31,33 @@ echo '
     <tr>
         <th>#</th>';
 
-    foreach ($campi as $campo) {
-        echo '
+foreach ($campi as $campo) {
+    echo '
         <th>'.$campo.'</th>';
-    }
+}
 
 echo '
     </tr>';
-    $index = 0;
+$index = 0;
 
-    foreach ($records['results'] as $record) {
-        $record['Data'] = Translator::dateToLocale($record['Data']);
-        $record['Dare'] = Translator::numberToLocale($record['Dare'], 'qta');
-        $record['Avere'] = Translator::numberToLocale($record['Avere'], 'qta');
-        ++$index;
+foreach ($records['results'] as $record) {
+    $record['Data'] = Translator::dateToLocale($record['Data']);
+    $record['Dare'] = Translator::numberToLocale($record['Dare'], 'qta');
+    $record['Avere'] = Translator::numberToLocale($record['Avere'], 'qta');
+    ++$index;
 
-        echo '
+    echo '
         <tr>
             <td>'.$index.'</td>';
 
-        foreach ($campi as $campo) {
-            echo '
-            <td>'.$record[$campo].'</td>';
-        }
-
+    foreach ($campi as $campo) {
         echo '
-        </tr>';
+            <td>'.$record[$campo].'</td>';
     }
+
+    echo '
+        </tr>';
+}
 
 echo '
 </table>';

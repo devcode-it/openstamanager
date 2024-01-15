@@ -19,7 +19,6 @@
 
 namespace Plugins\ExportFE;
 
-use DateTime;
 use Respect\Validation\Validator as v;
 use Stringy\Stringy as S;
 
@@ -540,10 +539,10 @@ class Validator
     ];
 
     /** @var array Irregolarità nella fattura XML */
-    protected $errors = null;
+    protected $errors;
 
     /** @var string XML da validare */
-    protected $xml = null;
+    protected $xml;
 
     public function __construct($xml)
     {
@@ -586,10 +585,7 @@ class Validator
      * Prepara i contenuti per la generazione dell'XML della fattura.
      * Effettua inoltre dei controlli interni di validità sui campi previsti dallo standard.
      *
-     * @param mixed  $input
      * @param string $key
-     *
-     * @return mixed
      */
     public function prepareForXML($input, $key = null)
     {
@@ -610,7 +606,7 @@ class Validator
                 if (in_array($key, ['PrezzoUnitario'])) {
                     $output = number_format($output, 6, '.', '');
                 } elseif (in_array($key, ['Quantita'])) {
-                    //Se i decimali per la quantità sono < 2 li imposto a 2 che è il minimo per lo standard della fatturazione elettronica
+                    // Se i decimali per la quantità sono < 2 li imposto a 2 che è il minimo per lo standard della fatturazione elettronica
                     if (setting('Cifre decimali per quantità') == 1) {
                         $output = number_format($output, 2, '.', '');
                     } else {
@@ -623,7 +619,7 @@ class Validator
 
             // Formattazione date
             elseif ($info['type'] == 'date') {
-                $object = DateTime::createFromFormat('Y-m-d H:i:s', $output);
+                $object = \DateTime::createFromFormat('Y-m-d H:i:s', $output);
                 if (is_object($object)) {
                     $output = $object->format('Y-m-d');
                 }

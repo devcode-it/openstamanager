@@ -223,7 +223,7 @@ switch (post('op')) {
 
                     if ($result) {
                         ++$added;
-                    //operationLog('export-xml-bulk', ['id_record' => $r['id']]);
+                    // operationLog('export-xml-bulk', ['id_record' => $r['id']]);
                     } else {
                         $failed[] = $fattura->numero_esterno;
                     }
@@ -281,7 +281,7 @@ switch (post('op')) {
 
                 if ($result) {
                     ++$added;
-                //operationLog('export-xml-bulk', ['id_record' => $r['id']]);
+                // operationLog('export-xml-bulk', ['id_record' => $r['id']]);
                 } else {
                     $failed[] = $fattura->numero_esterno;
                 }
@@ -314,22 +314,22 @@ switch (post('op')) {
             $id_segment = (post('id_segment') ? post('id_segment') : $fattura->id_segment);
             $dir = $dbo->fetchOne('SELECT dir FROM co_tipidocumento WHERE id='.prepare($fattura->idtipodocumento))['dir'];
 
-            //+ 1 giorno
+            // + 1 giorno
             if (post('skip_time') == 'Giorno') {
                 $data = date('Y-m-d', strtotime('+1 day', strtotime($fattura->data)));
             }
 
-            //+ 1 settimana
+            // + 1 settimana
             if (post('skip_time') == 'Settimana') {
                 $data = date('Y-m-d', strtotime('+1 week', strtotime($fattura->data)));
             }
 
-            //+ 1 mese
+            // + 1 mese
             if (post('skip_time') == 'Mese') {
                 $data = date('Y-m-d', strtotime('+1 month', strtotime($fattura->data)));
             }
 
-            //+ 1 anno
+            // + 1 anno
             if (post('skip_time') == 'Anno') {
                 $data = date('Y-m-d', strtotime('+1 year', strtotime($fattura->data)));
             }
@@ -374,50 +374,50 @@ switch (post('op')) {
         break;
 
     case 'check-bulk':
-            $controllo = new DatiFattureElettroniche();
-            $fatture = [];
-            foreach ($id_records as $id) {
-                $fattura_vendita = Fattura::vendita()
-                    ->whereNotIn('codice_stato_fe', ['ERR', 'NS', 'EC02', 'ERVAL'])
-                    ->where('data', '>=', $_SESSION['period_start'])
-                    ->where('data', '<=', $_SESSION['period_end'])
-                    ->where('id', '=', $id)
-                    ->orderBy('data')
-                    ->first();
+        $controllo = new DatiFattureElettroniche();
+        $fatture = [];
+        foreach ($id_records as $id) {
+            $fattura_vendita = Fattura::vendita()
+                ->whereNotIn('codice_stato_fe', ['ERR', 'NS', 'EC02', 'ERVAL'])
+                ->where('data', '>=', $_SESSION['period_start'])
+                ->where('data', '<=', $_SESSION['period_end'])
+                ->where('id', '=', $id)
+                ->orderBy('data')
+                ->first();
 
-                if (!empty($fattura_vendita)) {
-                    $fatture[$id] = $fattura_vendita;
+            if (!empty($fattura_vendita)) {
+                $fatture[$id] = $fattura_vendita;
 
-                    $controllo->checkFattura($fattura_vendita);
-                }
+                $controllo->checkFattura($fattura_vendita);
             }
+        }
 
-            $results = $controllo->getResults();
-            $num = count($results);
+        $results = $controllo->getResults();
+        $num = count($results);
 
-            // Messaggi di risposta
-            if (empty($fatture)) {
-                flash()->warning(tr('Nessuna fattura utile per il controllo!'));
-            } elseif (empty($results)) {
-                flash()->info(tr('Nessuna anomalia!'));
-            } else {
-                flash()->info(tr('Fatture _LIST_ controllate.', [
-                    '_LIST_' => implode(',', array_column($results, 'numero')),
-                ]));
+        // Messaggi di risposta
+        if (empty($fatture)) {
+            flash()->warning(tr('Nessuna fattura utile per il controllo!'));
+        } elseif (empty($results)) {
+            flash()->info(tr('Nessuna anomalia!'));
+        } else {
+            flash()->info(tr('Fatture _LIST_ controllate.', [
+                '_LIST_' => implode(',', array_column($results, 'numero')),
+            ]));
 
-                $riepilogo_anomalie = tr('Attenzione: Trovate _NUM_ anomalie! Le seguenti fatture non trovano corrispondenza tra XML e dati nel documento', ['_NUM_' => $num]).':</br></br>';
+            $riepilogo_anomalie = tr('Attenzione: Trovate _NUM_ anomalie! Le seguenti fatture non trovano corrispondenza tra XML e dati nel documento', ['_NUM_' => $num]).':</br></br>';
 
-                foreach ($results as $anomalia) {
-                    $fattura = $fatture[$anomalia['id']];
+            foreach ($results as $anomalia) {
+                $fattura = $fatture[$anomalia['id']];
 
-                    $riepilogo_anomalie .= '<ul>
+                $riepilogo_anomalie .= '<ul>
     <li>'.reference($fattura, $fattura->getReference()).'</li>
     <li>'.$anomalia['descrizione'].'</li>
 </ul><br>';
-                }
-
-                flash()->warning($riepilogo_anomalie);
             }
+
+            flash()->warning($riepilogo_anomalie);
+        }
         break;
 
     case 'export-csv':
@@ -486,7 +486,7 @@ switch (post('op')) {
             WHERE
                 co_statidocumento.descrizione = "Emessa" AND co_tipidocumento.dir="entrata" AND co_documenti.id_segment='.$fattura->id_segment);
 
-            if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && (Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax']))) && (!empty($data_fattura_precedente['datamax']))) {
+            if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax'])) && (!empty($data_fattura_precedente['datamax']))) {
                 $fattura->data = $data_fattura_precedente['datamax'];
                 $fattura->data_competenza = $data_fattura_precedente['datamax'];
             }

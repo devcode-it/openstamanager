@@ -40,15 +40,15 @@ if (!function_exists('menuSelection')) {
             switch ($id) {
                 case 'rw':
                     $bgcolor = 'green';
-                break;
+                    break;
                 case 'r':
                     $bgcolor = 'orange';
-                break;
+                    break;
                 case '-':
                     $bgcolor = 'red';
-                break;
+                    break;
                 default:
-                break;
+                    break;
             }
             $attr = ($id == $permessi) ? ' selected="selected"' : '';
 

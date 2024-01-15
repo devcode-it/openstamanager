@@ -22,8 +22,6 @@ namespace Plugins\ReceiptFE;
 use Models\Upload;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
-use Plugins;
-use UnexpectedValueException;
 use Util\XML;
 use Util\Zip;
 
@@ -34,15 +32,15 @@ use Util\Zip;
  */
 class Ricevuta
 {
-    protected static $directory = null;
+    protected static $directory;
 
     /** @var array Percorso del file XML */
-    protected $file = null;
+    protected $file;
     /** @var array XML della ricevuta */
-    protected $xml = null;
+    protected $xml;
 
     /** @var array XML della ricevuta */
-    protected $fattura = null;
+    protected $fattura;
 
     public function __construct($name)
     {
@@ -76,7 +74,7 @@ class Ricevuta
         ])->first();
 
         if (empty($this->fattura)) {
-            throw new UnexpectedValueException();
+            throw new \UnexpectedValueException();
         }
     }
 
@@ -102,7 +100,7 @@ class Ricevuta
             $receipt->cleanup();
 
             Interaction::processReceipt($name);
-        } catch (UnexpectedValueException $e) {
+        } catch (\UnexpectedValueException $e) {
         }
 
         return $fattura;
@@ -135,7 +133,7 @@ class Ricevuta
     public static function getImportDirectory()
     {
         if (!isset(self::$directory)) {
-            $plugin = Plugins::get('Ricevute FE');
+            $plugin = \Plugins::get('Ricevute FE');
 
             self::$directory = base_dir().'/'.$plugin->upload_directory;
         }
@@ -177,9 +175,6 @@ class Ricevuta
 
     /**
      * Aggiorna lo stato della fattura relativa alla ricevuta in modo tale da rispecchiare i dati richiesti.
-     *
-     * @param $codice
-     * @param $id_allegato
      */
     public function saveStato($codice, $id_allegato)
     {

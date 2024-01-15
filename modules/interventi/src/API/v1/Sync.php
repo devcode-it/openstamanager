@@ -23,8 +23,6 @@ use API\Interfaces\RetrieveInterface;
 use API\Interfaces\UpdateInterface;
 use API\Resource;
 use Carbon\Carbon;
-use DateTime;
-use iCalEasyReader;
 
 class Sync extends Resource implements RetrieveInterface, UpdateInterface
 {
@@ -68,7 +66,7 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
             $result .= "BEGIN:VEVENT\n";
             $result .= 'UID:'.$r['idriga']."\n";
             $result .= 'DTSTAMP:'.$now->format('Ymd\THis')."\n";
-            //$result .= 'ORGANIZER;CN='.$azienda.':MAILTO:'.$email."\n";
+            // $result .= 'ORGANIZER;CN='.$azienda.':MAILTO:'.$email."\n";
             $result .= 'DTSTART:'.$inizio->format('Ymd\THis')."\n";
             $result .= 'DTEND:'.$fine->format('Ymd\THis')."\n";
             $result .= 'SUMMARY:'.html_entity_decode($r['summary'])."\n";
@@ -97,7 +95,7 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
 
         $response = API\Response::getRequest(true);
 
-        $ical = new iCalEasyReader();
+        $ical = new \iCalEasyReader();
         $events = $ical->load($response);
 
         foreach ($events['VEVENT'] as $event) {
@@ -111,10 +109,10 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
             }
 
             // Timestamp di inizio
-            $orario_inizio = DateTime::createFromFormat('Ymd\\THi', $event['DTSTART'])->format(Intl\Formatter::getStandardFormats()['timestamp']);
+            $orario_inizio = \DateTime::createFromFormat('Ymd\\THi', $event['DTSTART'])->format(Intl\Formatter::getStandardFormats()['timestamp']);
 
             // Timestamp di fine
-            $orario_fine = DateTime::createFromFormat('Ymd\\THi', $event['DTEND'])->format(Intl\Formatter::getStandardFormats()['timestamp']);
+            $orario_fine = \DateTime::createFromFormat('Ymd\\THi', $event['DTEND'])->format(Intl\Formatter::getStandardFormats()['timestamp']);
 
             // Descrizione
             $richiesta = $event['DESCRIPTION'];

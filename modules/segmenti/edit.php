@@ -103,11 +103,11 @@ $_SESSION['module_'.$record['id_module']]['id_segment'] = $previous_module;
             <div class="row">
 				<div class="col-md-12">
                     {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi[]", "multiple": "1", "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC", "value": "';
-                    $results = $dbo->fetchArray('SELECT GROUP_CONCAT(DISTINCT id_gruppo SEPARATOR \',\') AS gruppi FROM zz_group_segment WHERE id_segment='.prepare($id_record));
+$results = $dbo->fetchArray('SELECT GROUP_CONCAT(DISTINCT id_gruppo SEPARATOR \',\') AS gruppi FROM zz_group_segment WHERE id_segment='.prepare($id_record));
 
-                    echo $results[0]['gruppi'].'"';
+echo $results[0]['gruppi'].'"';
 
-                    echo ', "help": "'.tr('Gruppi di utenti in grado di visualizzare questo segmento').'" ]}
+echo ', "help": "'.tr('Gruppi di utenti in grado di visualizzare questo segmento').'" ]}
 				</div>
 			</div>';
 ?>

@@ -20,9 +20,7 @@
 namespace Modules\Interventi\Components;
 
 use Common\SimpleModelTrait;
-use DateTime;
 use Illuminate\Database\Eloquent\Model;
-use InvalidArgumentException;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
 /*
@@ -40,7 +38,7 @@ class Sessione extends Model
 
     protected $table = 'in_interventi_tecnici';
 
-    protected $aliquota_iva = null;
+    protected $aliquota_iva;
 
     /**
      * Crea un nuova sessione collegata ad un intervento.
@@ -53,7 +51,7 @@ class Sessione extends Model
     public static function build(Intervento $intervento, Anagrafica $anagrafica, $inizio, $fine)
     {
         if (!$anagrafica->isTipo('Tecnico')) {
-            throw new InvalidArgumentException('Anagrafica di tipo diverso da Tecnico');
+            throw new \InvalidArgumentException('Anagrafica di tipo diverso da Tecnico');
         }
 
         $model = new static();
@@ -131,8 +129,8 @@ class Sessione extends Model
 
     public function getOreCalcolateAttribute()
     {
-        $inizio = new DateTime($this->orario_inizio);
-        $diff = $inizio->diff(new DateTime($this->orario_fine));
+        $inizio = new \DateTime($this->orario_inizio);
+        $diff = $inizio->diff(new \DateTime($this->orario_fine));
 
         $ore = $diff->i / 60 + $diff->h + ($diff->days * 24);
 
@@ -405,7 +403,7 @@ class Sessione extends Model
      */
     public function getMarginePercentualeAttribute()
     {
-        return (1 - ($this->spesa / ($this->totale_imponibile))) * 100;
+        return (1 - ($this->spesa / $this->totale_imponibile)) * 100;
     }
 
     /**
@@ -425,7 +423,7 @@ class Sessione extends Model
 
     public function getIvaAttribute()
     {
-        return ($this->totale_imponibile) * $this->aliquota->percentuale / 100;
+        return $this->totale_imponibile * $this->aliquota->percentuale / 100;
     }
 
     public function getIvaDetraibileAttribute()

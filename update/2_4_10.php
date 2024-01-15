@@ -27,34 +27,34 @@ foreach ($fatture as $fattura) {
     $bollo = floatval($bollo);
     if ($bollo > 0) {
         $fatture = $database->query(
-        'insert into `co_righe_documenti` (`iddocumento`, `order`, `descrizione`, `um`, `idiva`, `idconto`, `calcolo_ritenuta_acconto`, `idritenutaacconto`, `ritenuta_contributi`, `idrivalsainps`, `prezzo_unitario_acquisto`, `sconto_unitario`, `tipo_sconto`, `qta`, `data_inizio_periodo`, `data_fine_periodo`, `riferimento_amministrazione`, `tipo_cessione_prestazione`, `ritenutaacconto`, `rivalsainps`, `subtotale`, `sconto`, `iva`, `desc_iva`, `iva_indetraibile`, `created_at`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
-            0 => $fattura['id'],
-            1 => 0,
-            2 => 'Marca da bollo',
-            3 => null,
-            4 => '110',
-            5 => '99',
-            6 => null,
-            7 => null,
-            8 => false,
-            9 => null,
-            10 => 0,
-            11 => 0.0,
-            12 => 'PRC',
-            13 => 1.0,
-            14 => null,
-            15 => null,
-            16 => '',
-            17 => '',
-            18 => 0.0,
-            19 => 0.0,
-            20 => $bollo,
-            21 => 0.0,
-            22 => 0.0,
-            23 => 'Escluso art. 15',
-            24 => 0.0,
-            25 => '2020-10-17 10:00:00',
-        ]);
+            'insert into `co_righe_documenti` (`iddocumento`, `order`, `descrizione`, `um`, `idiva`, `idconto`, `calcolo_ritenuta_acconto`, `idritenutaacconto`, `ritenuta_contributi`, `idrivalsainps`, `prezzo_unitario_acquisto`, `sconto_unitario`, `tipo_sconto`, `qta`, `data_inizio_periodo`, `data_fine_periodo`, `riferimento_amministrazione`, `tipo_cessione_prestazione`, `ritenutaacconto`, `rivalsainps`, `subtotale`, `sconto`, `iva`, `desc_iva`, `iva_indetraibile`, `created_at`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+                0 => $fattura['id'],
+                1 => 0,
+                2 => 'Marca da bollo',
+                3 => null,
+                4 => '110',
+                5 => '99',
+                6 => null,
+                7 => null,
+                8 => false,
+                9 => null,
+                10 => 0,
+                11 => 0.0,
+                12 => 'PRC',
+                13 => 1.0,
+                14 => null,
+                15 => null,
+                16 => '',
+                17 => '',
+                18 => 0.0,
+                19 => 0.0,
+                20 => $bollo,
+                21 => 0.0,
+                22 => 0.0,
+                23 => 'Escluso art. 15',
+                24 => 0.0,
+                25 => '2020-10-17 10:00:00',
+            ]);
         $id_riga_bollo = $database->lastInsertedId();
 
         $database->query('UPDATE co_documenti SET id_riga_bollo = '.prepare($id_riga_bollo).' WHERE id = '.prepare($fattura['id']));
@@ -137,7 +137,7 @@ $database->query('DROP TABLE dt_automezzi');
 $database->query('DROP TABLE dt_automezzi_tecnici');
 $database->query('DELETE FROM zz_modules WHERE name="Automezzi"');
 
-//Rimuovo il codice come indice per in_interventi
+// Rimuovo il codice come indice per in_interventi
 $database->query('ALTER TABLE `in_interventi` DROP INDEX `codice`');
 
 // File e cartelle deprecate

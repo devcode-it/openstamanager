@@ -22,7 +22,7 @@ namespace Notifications;
 abstract class Notification implements NotificationInterface
 {
     public $receivers = [];
-    public $content = null;
+    public $content;
 
     public function __construct($receivers = null, $content = null)
     {

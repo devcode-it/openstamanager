@@ -20,7 +20,6 @@
 namespace API\App\v1;
 
 use API\App\AppResource;
-use Auth;
 use Carbon\Carbon;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Components\Sessione;
@@ -37,7 +36,7 @@ class SessioniInterventi extends AppResource
         $end = $today->copy()->addMonth();
 
         // Informazioni sull'utente
-        $user = Auth::user();
+        $user = \Auth::user();
         $id_tecnico = $user->id_anagrafica;
 
         // Elenco di interventi di interesse
@@ -135,7 +134,7 @@ class SessioniInterventi extends AppResource
     public function createRecord($data)
     {
         // Informazioni sull'utente
-        $user = Auth::user();
+        $user = \Auth::user();
         $id_tecnico = $user->id_anagrafica;
 
         // Informazioni di base
@@ -176,9 +175,6 @@ class SessioniInterventi extends AppResource
 
     /**
      * Aggiorna i dati della sessione sulla base dei dati caricati dall'applicazione.
-     *
-     * @param $sessione
-     * @param $data
      *
      * @return array
      */

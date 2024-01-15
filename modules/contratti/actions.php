@@ -140,7 +140,7 @@ switch (post('op')) {
 
         break;
 
-     // Duplica contratto
+        // Duplica contratto
     case 'copy':
         $new = $contratto->replicate(['idcontratto_prev']);
         $new->numero = Contratto::getNextNumero($contratto->data_bozza, $contratto->id_segment);
@@ -272,7 +272,7 @@ switch (post('op')) {
 
         break;
 
-    // Eliminazione riga
+        // Eliminazione riga
     case 'delete_riga':
         $id_righe = (array) post('righe');
 
@@ -293,7 +293,7 @@ switch (post('op')) {
 
         break;
 
-    // Duplicazione riga
+        // Duplicazione riga
     case 'copy_riga':
         $id_righe = (array) post('righe');
 
@@ -314,7 +314,7 @@ switch (post('op')) {
 
         break;
 
-    // Scollegamento intervento da contratto
+        // Scollegamento intervento da contratto
     case 'unlink':
         if (get('idcontratto') !== null && get('idintervento') !== null) {
             $idcontratto = get('idcontratto');
@@ -338,7 +338,7 @@ switch (post('op')) {
 
         break;
 
-    // eliminazione contratto
+        // eliminazione contratto
     case 'delete':
         // Fatture o interventi collegati a questo contratto
         $elementi = $dbo->fetchArray('SELECT 0 AS `codice`, `co_documenti`.`id` AS `id`, `co_documenti`.`numero` AS `numero`, `co_documenti`.`numero_esterno` AS `numero_esterno`,  `co_documenti`.`data`, `co_tipidocumento`.`descrizione` AS `tipo_documento`, `co_tipidocumento`.`dir` AS `dir`  FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idcontratto` = '.prepare($id_record).')'.'
@@ -361,7 +361,7 @@ switch (post('op')) {
 
         break;
 
-    // Rinnovo contratto
+        // Rinnovo contratto
     case 'renew':
         $diff = $contratto->data_conclusione->diffAsCarbonInterval($contratto->data_accettazione);
 
@@ -471,14 +471,14 @@ switch (post('op')) {
 
         break;
 
-    // Aggiunta di un documento in contratto
+        // Aggiunta di un documento in contratto
     case 'add_preventivo':
     case 'add_documento':
         $class = post('class');
         $id_documento = post('id_documento');
 
         // Individuazione del documento originale
-        if (!is_subclass_of($class, \Common\Document::class)) {
+        if (!is_subclass_of($class, Common\Document::class)) {
             return;
         }
         $documento = $class::find($id_documento);
@@ -637,7 +637,7 @@ switch (post('op')) {
         $numero_totale = 0;
 
         foreach ($righe as $riga) {
-            if (($riga['id']) != null) {
+            if ($riga['id'] != null) {
                 $articolo = Articolo::find($riga['id']);
             }
 

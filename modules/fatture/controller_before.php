@@ -82,7 +82,7 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
             }
         }
     }
-    //Controllo già presente sul plugin Ricevute FE
+    // Controllo già presente sul plugin Ricevute FE
     if (sizeof($documenti_scarto) > 0) {
         echo '
         <div class="alert alert-danger">

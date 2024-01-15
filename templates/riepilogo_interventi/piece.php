@@ -69,16 +69,16 @@ echo '
         <p><small><b>'.tr('Stato').':</b> '.$intervento->stato->descrizione.'</small></p>
         <p><small><b>'.tr('Data richiesta').':</b> '.dateFormat($intervento->data_richiesta).'</small></p>
         <p><small><b>'.tr('Richiesta').':</b> '.$intervento->richiesta.'</p>';
-    if ($intervento->descrizione) {
-        echo '
+if ($intervento->descrizione) {
+    echo '
         <p><b>'.tr('Descrizione').':</b> '.$intervento->descrizione.'</small></p>';
-    }
+}
 
-    if (setting('Formato ore in stampa') == 'Sessantesimi') {
-        $ore = Translator::numberToHours($ore);
-    } else {
-        $ore = Translator::numberToLocale($ore, $d_qta);
-    }
+if (setting('Formato ore in stampa') == 'Sessantesimi') {
+    $ore = Translator::numberToHours($ore);
+} else {
+    $ore = Translator::numberToLocale($ore, $d_qta);
+}
 echo '
     </td>
     <td class="text-center">'.($pricing ? $km : '-').'</td>

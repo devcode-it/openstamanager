@@ -116,7 +116,7 @@ if (!function_exists('add_tecnico')) {
             }
         }
 
-        //Inserisco le righe aggiuntive previste dal tipo di intervento
+        // Inserisco le righe aggiuntive previste dal tipo di intervento
         $righe_aggiuntive = database()->fetchArray('SELECT * FROM in_righe_tipiinterventi WHERE id_tipointervento='.prepare($sessione->idtipointervento));
 
         foreach ($righe_aggiuntive as $riga_aggiuntiva) {
@@ -212,7 +212,7 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
 
                 $riga->prezzo_unitario = $sessione->prezzo_orario;
                 $riga->costo_unitario = $sessione->prezzo_ore_unitario_tecnico;
-                //Calcolo lo sconto unitario della sessione in base all'impostazione sui prezzi ivati
+                // Calcolo lo sconto unitario della sessione in base all'impostazione sui prezzi ivati
                 $iva = $dbo->table('co_iva')->where('id', $id_iva)->first();
                 if ($sessione->tipo_sconto == 'UNT' && setting('Utilizza prezzi di vendita comprensivi di IVA')) {
                     $sconto_unitario = $sessione->sconto_unitario + (($sessione->sconto_unitario * $iva->percentuale) / 100);
@@ -245,7 +245,7 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
                     '_DATE_' => dateFormat($data),
                 ]);
                 $riga->idintervento = $id_intervento;
-                //$riga->um = 'ore';
+                // $riga->um = 'ore';
 
                 $riga->id_iva = $id_iva;
                 $riga->idconto = $id_conto;

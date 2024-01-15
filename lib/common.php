@@ -95,12 +95,6 @@ function calcola_sconto($data)
 
 /**
  * Individua il valore della colonna order per i nuovi elementi di una tabella.
- *
- * @param $table
- * @param $field
- * @param $id
- *
- * @return mixed
  */
 function orderValue($table, $field, $id)
 {
@@ -109,10 +103,6 @@ function orderValue($table, $field, $id)
 
 /**
  * Ricalcola il riordinamento righe di una tabella.
- *
- * @param $table
- *
- * @return mixed
  */
 function reorderRows($table, $field, $id)
 {
@@ -172,14 +162,13 @@ function provvigioneInfo(Accounting $riga, $mostra_provigione = true)
 /**
  * Genera i riferimenti ai documenti del gestionale, attraverso l'interfaccia Common\ReferenceInterface.
  *
- * @param $document
  * @param string $text Formato "Contenuto descrittivo _DOCUMENT_"
  *
  * @return string
  */
 function reference($document, $text = null)
 {
-    if (!empty($document) && !($document instanceof \Common\ReferenceInterface)) {
+    if (!empty($document) && !($document instanceof Common\ReferenceInterface)) {
         return null;
     }
 
@@ -208,8 +197,6 @@ function reference($document, $text = null)
  * Funzione che gestisce il parsing di uno sconto combinato e la relativa trasformazione in sconto fisso.
  * Esempio: (40 + 10) % = 44 %.
  *
- * @param $combinato
- *
  * @return float|int
  */
 function parseScontoCombinato($combinato)
@@ -234,8 +221,6 @@ function parseScontoCombinato($combinato)
 /**
  * Visualizza le informazioni del segmento.
  *
- * @param $id_module
- *
  * @return float|int
  */
 function getSegmentPredefined($id_module)
@@ -247,11 +232,6 @@ function getSegmentPredefined($id_module)
 
 /**
  * Funzione che visualizza i prezzi degli articoli nei listini.
- *
- * @param $id_anagrafica
- * @param $direzione
- * @param $id_articolo
- * @param $riga
  *
  * @return array
  */

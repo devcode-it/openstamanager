@@ -57,7 +57,7 @@ unset($_SESSION['superselect']['idautomezzo']);
 
 							<?php
                             include $docroot.'/modules/automezzi/row-list-tecnici.php';
-                            ?>
+?>
 						</form>
 
 						<a href="javascript:;" class="btn btn-sm btn-success pull-right" title="Aggiorna date" onclick="$('#updatetech-form input[name=op]').val('savetech'); $('#updatetech-form').submit();"><i class="fa fa-edit"></i> <?php echo tr('Salva date'); ?></a>
@@ -89,7 +89,7 @@ unset($_SESSION['superselect']['idautomezzo']);
 					<div class="col-md-12">
 						<?php
                         include $docroot.'/modules/automezzi/row-list-articoli.php';
-                        ?>
+?>
 
 						<div class="pull-left">
 							<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir; ?>/modules/automezzi/add_articolo.php?idautomezzo=<?php echo $id_record; ?>" data-toggle="modal" data-title="Aggiungi articoli"><i class="fa fa-plus"></i> <?php echo tr('Articolo magazzino'); ?></a><br>

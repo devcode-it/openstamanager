@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-//$block_edit = $record['is_predefined'];
+// $block_edit = $record['is_predefined'];
 
 ?>
 
@@ -76,11 +76,11 @@ include_once __DIR__.'/../../core.php';
             <?php
 
                 $results = $dbo->fetchArray('SELECT * FROM `co_pagamenti` WHERE descrizione='.prepare($record['descrizione']).' ORDER BY `num_giorni` ASC');
-                $numero_data = 1;
-                foreach ($results as $result) {
-                }
+$numero_data = 1;
+foreach ($results as $result) {
+}
 
-            ?>
+?>
             
             </div>
             <div class="pull-right">

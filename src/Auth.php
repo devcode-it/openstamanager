@@ -25,7 +25,7 @@ use Models\User;
  *
  * @since 2.3
  */
-class Auth extends \Util\Singleton
+class Auth extends Util\Singleton
 {
     /** @var array Stati previsti dal sistema di autenticazione */
     protected static $status = [
@@ -135,9 +135,9 @@ class Auth extends \Util\Singleton
                 $module = $this->getFirstModule($module);
 
                 if (
-                    $this->isAuthenticated() &&
-                    $this->password_check($password, $user['password'], $user['id']) &&
-                    !empty($module)
+                    $this->isAuthenticated()
+                    && $this->password_check($password, $user['password'], $user['id'])
+                    && !empty($module)
                 ) {
                     // Accesso completato
                     $log['id_utente'] = $this->user->id;

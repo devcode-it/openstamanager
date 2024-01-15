@@ -56,8 +56,6 @@ class DettaglioPrezzo extends Model
 
     /**
      * Imposta il prezzo di vendita sulla base dell'impstazione per l'utilizzo dei prezzi comprensivi di IVA.
-     *
-     * @param $prezzo_unitario
      */
     public function setPrezzoUnitario($prezzo_unitario)
     {

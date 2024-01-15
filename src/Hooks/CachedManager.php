@@ -24,7 +24,7 @@ use Models\Hook;
 
 abstract class CachedManager extends Manager
 {
-    protected $cache = null;
+    protected $cache;
 
     public function __construct(Hook $hook)
     {

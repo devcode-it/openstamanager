@@ -19,7 +19,7 @@ class Microsoft extends Azure implements ProviderInterface
         'scope' => [
             'offline_access',
             'https://outlook.office.com/SMTP.Send',
-            //'https://outlook.office.com/IMAP.AccessAsUser.All'
+            // 'https://outlook.office.com/IMAP.AccessAsUser.All'
         ],
     ];
 

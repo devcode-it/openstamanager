@@ -24,7 +24,7 @@ use Illuminate\Support\Collection;
 trait LocalPoolTrait
 {
     /** @var Collection Collezione degli oggetti disponibili */
-    protected static $collection = null;
+    protected static $collection;
     /** @var bool Controllo sul salvataggio globale */
     protected static $all = false;
 

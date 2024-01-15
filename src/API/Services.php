@@ -30,7 +30,7 @@ use Models\Cache;
  */
 class Services
 {
-    protected static $client = null;
+    protected static $client;
 
     /**
      * Controlla se il gestionale ha accesso a Services.
@@ -159,8 +159,6 @@ class Services
     /**
      * Effettua una richiesta a Services.
      *
-     * @param $type
-     * @param $resource
      * @param array $data
      * @param array $options
      *
@@ -188,8 +186,6 @@ class Services
 
     /**
      * Restituisce il corpo JSON della risposta in array.
-     *
-     * @param $response
      *
      * @return array
      */

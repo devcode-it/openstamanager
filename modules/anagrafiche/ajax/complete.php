@@ -34,7 +34,7 @@ switch ($resource) {
         }
         break;
 
-    // Elenco sedi con <option>
+        // Elenco sedi con <option>
     case 'get_sedi_select':
         $idanagrafica = get('idanagrafica');
         $q = "SELECT id, CONCAT_WS( ' - ', nomesede, citta ) AS descrizione FROM an_sedi WHERE idanagrafica='".$idanagrafica."' ".Modules::getAdditionalsQuery('Anagrafiche').' ORDER BY id';
@@ -49,7 +49,7 @@ switch ($resource) {
         }
         break;
 
-    // Elenco e-mail
+        // Elenco e-mail
     case 'get_email':
         $id_anagrafica = get('id_anagrafica');
 
@@ -70,16 +70,16 @@ switch ($resource) {
             ];
         }
 
-         // Tutti le sedi per questo cliente
-         $q = "SELECT DISTINCT(email), id AS idanagrafica, nomesede AS ragione_sociale FROM an_sedi WHERE email != '' ".$where.' ORDER BY id';
+        // Tutti le sedi per questo cliente
+        $q = "SELECT DISTINCT(email), id AS idanagrafica, nomesede AS ragione_sociale FROM an_sedi WHERE email != '' ".$where.' ORDER BY id';
 
-         $rs = $dbo->fetchArray($q);
-         foreach ($rs as $r) {
-             $results[] = [
-                 'value' => $r['email'],
-                 'label' => $r['ragione_sociale'].' <'.$r['email'].'>',
-             ];
-         }
+        $rs = $dbo->fetchArray($q);
+        foreach ($rs as $r) {
+            $results[] = [
+                'value' => $r['email'],
+                'label' => $r['ragione_sociale'].' <'.$r['email'].'>',
+            ];
+        }
 
         // Tutti gli agenti del cliente
         $q = "SELECT DISTINCT(email), ragione_sociale, idanagrafica FROM an_anagrafiche WHERE email != '' AND (idanagrafica=(SELECT idagente FROM an_anagrafiche AS agenti WHERE 1=1 ".$where.') OR idanagrafica IN (SELECT idagente FROM an_anagrafiche_agenti WHERE 1=1 '.$where.'))';

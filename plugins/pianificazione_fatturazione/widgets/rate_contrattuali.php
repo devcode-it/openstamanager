@@ -39,26 +39,26 @@ echo '<div class="container"
         <div class="col-md-2 col-md-offset-9">
             <select class="form-control select-input openstamanager-input superselect select-year">';
 
-            for ($i = intval(date('Y')) - 1; $i <= intval(date('Y')) + 10; ++$i) {
-                $selectType = ($i == date('Y')) ? 'selected' : '';
-                echo '<option value="'.$i.'" '.$selectType.'>'.$i.'</option>';
-            }
+for ($i = intval(date('Y')) - 1; $i <= intval(date('Y')) + 10; ++$i) {
+    $selectType = ($i == date('Y')) ? 'selected' : '';
+    echo '<option value="'.$i.'" '.$selectType.'>'.$i.'</option>';
+}
 
-            echo '</select><br>
+echo '</select><br>
         </div>
     </div>
     <div class="div-month">';
-            for ($i = 1; $i <= 12; ++$i) {
-                $btnType = ($i == date('m')) ? 'btn-primary' : '';
-                echo '<div class="col-md-1">
+for ($i = 1; $i <= 12; ++$i) {
+    $btnType = ($i == date('m')) ? 'btn-primary' : '';
+    echo '<div class="col-md-1">
                 <a class="btn btn-month '.$btnType.'" data-month="'.$i.'" style="cursor:pointer" onclick="month_click($(this))">'.
-                $mesi[$i].' </br>('.$conteggio[$i - 1]->conto.')</a>
+    $mesi[$i].' </br>('.$conteggio[$i - 1]->conto.')</a>
             </div>';
-            }
+}
 
-    echo '</div>';
+echo '</div>';
 
-    echo '<div style="display:none" class="template-month">
+echo '<div style="display:none" class="template-month">
         <div class="col-md-1 " style="margin:10px 0px; padding:0px;">
             <a class="btn btn-month" onclick="month_click($(this))">
                 <div class="text"></div>
@@ -66,7 +66,7 @@ echo '<div class="container"
             </a>
         </div>
     </div>';
-    ?>
+?>
 
     <div class="row">
         <div class="col-md-6">
@@ -78,7 +78,7 @@ echo '<div class="container"
 
     <?php
 
-    echo '<div>
+echo '<div>
         <table id="tbl-rate" class="table-rate table table-hover table-striped">
             <thead>
                 <tr>
@@ -91,12 +91,12 @@ echo '<div class="container"
             </thead>
             <tbody>';
 
-            // Elenco fatture da emettere
-            foreach ($pianificazioni as $pianificazione) {
-                $contratto = $pianificazione->contratto;
-                $anagrafica = $contratto->anagrafica;
-                $numero_pianificazioni = $contratto->pianificazioni()->count();
-                echo '
+// Elenco fatture da emettere
+foreach ($pianificazioni as $pianificazione) {
+    $contratto = $pianificazione->contratto;
+    $anagrafica = $contratto->anagrafica;
+    $numero_pianificazioni = $contratto->pianificazioni()->count();
+    echo '
                 <tr>
                     <td>
                         <div class="form-check">
@@ -114,24 +114,24 @@ echo '<div class="container"
                     <td>
                         <div>'.moneyFormat($pianificazione->totale).'</div>
                         <small>'.tr('Rata _IND_/_NUM_ (totale: _TOT_)', [
-                                '_IND_' => numberFormat($pianificazione->getNumeroPianificazione(), 0),
-                                '_NUM_' => numberFormat($numero_pianificazioni, 0),
-                                '_TOT_' => moneyFormat($contratto->totale),
-                            ]).
-                        '</small>
+                    '_IND_' => numberFormat($pianificazione->getNumeroPianificazione(), 0),
+                    '_NUM_' => numberFormat($numero_pianificazioni, 0),
+                    '_TOT_' => moneyFormat($contratto->totale),
+                ]).
+            '</small>
                     </td>';
 
-                // Pulsanti
-                echo '
+    // Pulsanti
+    echo '
                     <td class="text-center">
                         <button type="button" class="btn btn-primary btn-sm" onclick="crea_fattura('.$contratto->id.', '.$pianificazione->id.')">
                             <i class="fa fa-euro"></i> '.tr('Crea fattura').'
                         </button>
                     </td>
                     </tr>';
-            }
+}
 
-                    echo '</tbody>
+echo '</tbody>
                     <tfoot style="display:none">
                     <tr>
 
@@ -162,14 +162,14 @@ echo '<div class="container"
             </tfoot>
         </table><br>
     </div>';
-    ?>
+?>
     <div class="row">
         <div class="col-md-4">
             <a class="btn btn-primary seleziona-tutti"><?php echo tr('Seleziona tutti'); ?></a>
             <a class="btn btn-default deseleziona-tutti"><?php echo tr('Deseleziona tutti'); ?></a>
         </div>
         <?php
-        echo '
+    echo '
     
         <div class="col-md-3 col-md-offset-5">
             <button type="button" class="btn btn-primary" onclick="crea_fattura_multipla($(this))">

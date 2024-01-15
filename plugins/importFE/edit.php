@@ -139,7 +139,7 @@ if (Interaction::isEnabled()) {
     include $structure->filepath('list.php');
 }
 
-    echo '
+echo '
 
     </div>
 </div>

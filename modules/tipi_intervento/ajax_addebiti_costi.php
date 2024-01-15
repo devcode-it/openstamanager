@@ -9,7 +9,7 @@ if (file_exists(__DIR__.'/../../../core.php')) {
 // Fasce orarie per il tipo di attività
 $fasce_orarie = $dbo->fetchArray("SELECT *, CONCAT (in_fasceorarie.nome, ' (', DATE_FORMAT(ora_inizio, '%H:%i'), '-', DATE_FORMAT(ora_fine, '%H:%i'), ')') AS descrizione FROM in_fasceorarie_tipiintervento INNER JOIN in_fasceorarie ON in_fasceorarie_tipiintervento.idfasciaoraria = in_fasceorarie.id   WHERE idtipointervento=".prepare($id_record));
 
-    echo '
+echo '
     <table class="table table-striped table-condensed table-hover table-bordered">
         <tr>
             <th>'.tr('Fascia oraria').'</th>
@@ -20,28 +20,28 @@ $fasce_orarie = $dbo->fetchArray("SELECT *, CONCAT (in_fasceorarie.nome, ' (', D
             <th width="12%">'.tr('Costo km ').'</th>
             <th width="12%">'.tr('Costo diritto ch.').'</th>
         </tr>';
-    $i = 0;
-    foreach ($fasce_orarie as $fascia_oraria) {
-        $descrizione = $fascia_oraria['descrizione'];
-        $giorni = '';
+$i = 0;
+foreach ($fasce_orarie as $fascia_oraria) {
+    $descrizione = $fascia_oraria['descrizione'];
+    $giorni = '';
 
-        if (!empty($fascia_oraria['giorni'])) {
-            if ($fascia_oraria['giorni'] == '1,2,3,4,5') {
-                $giorni .= 'Lun-Ven';
-            } elseif ($fascia_oraria['giorni'] == '6,7') {
-                $giorni .= 'Sab-Dom';
-            } elseif ($fascia_oraria['giorni'] == '6') {
-                $giorni .= 'Sab';
-            }
-
-            $descrizione .= ' ('.$giorni.')';
+    if (!empty($fascia_oraria['giorni'])) {
+        if ($fascia_oraria['giorni'] == '1,2,3,4,5') {
+            $giorni .= 'Lun-Ven';
+        } elseif ($fascia_oraria['giorni'] == '6,7') {
+            $giorni .= 'Sab-Dom';
+        } elseif ($fascia_oraria['giorni'] == '6') {
+            $giorni .= 'Sab';
         }
 
-        if (!empty($fascia_oraria['include_bank_holidays'])) {
-            $descrizione .= ' (Festivi)';
-        }
+        $descrizione .= ' ('.$giorni.')';
+    }
 
-        echo '
+    if (!empty($fascia_oraria['include_bank_holidays'])) {
+        $descrizione .= ' (Festivi)';
+    }
+
+    echo '
             <tr>
                 <td class="text-left">'.$descrizione.'</td>
                 
@@ -64,8 +64,8 @@ $fasce_orarie = $dbo->fetchArray("SELECT *, CONCAT (in_fasceorarie.nome, ' (', D
                 </td>
             </tr>';
 
-        ++$i;
-    }
+    ++$i;
+}
 
-    echo '
+echo '
     </table>';

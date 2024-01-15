@@ -34,13 +34,13 @@ switch ($operazione) {
         $dichiarazione->data_emissione = post('data_emissione');
         $dichiarazione->save();
 
-         $id_record = $dichiarazione->id;
+        $id_record = $dichiarazione->id;
 
-         if (isAjaxRequest() && !empty($id_record)) {
-             echo json_encode(['id' => $id_record, 'text' => $dichiarazione->numero_protocollo.' - '.$dichiarazione->numero_progressivo]);
-         }
+        if (isAjaxRequest() && !empty($id_record)) {
+            echo json_encode(['id' => $id_record, 'text' => $dichiarazione->numero_protocollo.' - '.$dichiarazione->numero_progressivo]);
+        }
 
-         flash()->info(tr("Dichiarazione d'intento aggiunta!"));
+        flash()->info(tr("Dichiarazione d'intento aggiunta!"));
 
         break;
 

@@ -19,8 +19,6 @@
 
 namespace Util;
 
-use Exception;
-
 /**
  * Classe dedicata all'interpretazione dei file XML.
  *
@@ -45,7 +43,7 @@ class XML
         if ($xml === false) {
             $message = libxml_get_last_error()->message;
 
-            throw new Exception($message);
+            throw new \Exception($message);
         }
 
         $xpath = '//*[not(normalize-space())]';
@@ -113,7 +111,7 @@ class XML
             if ($cmd === 0) {
                 return empty($output[0]) ? tr('Nessuna informazione sulla versione del client PHP') : $output[0];
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
 
@@ -122,8 +120,6 @@ class XML
 
     /**
      * Interpreta i contenuti di un file XML.
-     *
-     * @param string $file
      *
      * @return array
      */
@@ -142,12 +138,6 @@ class XML
 
     /**
      * Decodifica il file utilizzando le funzioni native PHP.
-     *
-     * @param $file
-     * @param $output_file
-     * @param $signer
-     *
-     * @return mixed
      */
     protected static function decode($file, $output_file, $signer)
     {
@@ -159,8 +149,6 @@ class XML
 
     /**
      * Remove UTF8 BOM.
-     *
-     * @param $text
      *
      * @return string
      *
@@ -175,8 +163,6 @@ class XML
     }
 
     /**
-     * @param $file
-     *
      * @return bool|int
      *
      * @source http://php.net/manual/en/function.openssl-pkcs7-verify.php#123118

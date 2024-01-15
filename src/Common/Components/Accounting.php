@@ -35,7 +35,7 @@ use Modules\Iva\Aliquota;
  * @property float sconto_iva_unitario = sconto_unitario * percentuale_iva
  * @property float sconto_unitario_ivato = sconto_unitario + sconto_iva_unitario
  * @property float iva_unitaria_scontata = iva_unitaria - sconto_iva_unitario
-
+ *
  * Introduce i seguenti campi ausiliari:
  * @property float imponibile = prezzo_unitario * qta
  * @property float sconto = sconto_unitario * qta
@@ -64,7 +64,7 @@ abstract class Accounting extends Component
         'sconto_unitario_ivato' => 'float',
         'provvigione_percentuale' => 'float',
         'provvigione_unitaria' => 'float',
-        //'qta_evasa' => 'float',
+        // 'qta_evasa' => 'float',
     ];
 
     protected $appends = [
@@ -102,9 +102,6 @@ abstract class Accounting extends Component
 
     /**
      * Imposta il prezzo unitario secondo le informazioni indicate per valore e tipologia (UNT o PRC).
-     *
-     * @param $value
-     * @param $type
      */
     public function setPrezzoUnitario($prezzo_unitario, $id_iva)
     {
@@ -180,8 +177,6 @@ abstract class Accounting extends Component
 
     /**
      * Imposta il sconto unitario ivato (con IVA) per la riga corrente.
-     *
-     * @param $value
      */
     public function setScontoUnitarioIvatoAttribute($value)
     {
@@ -239,9 +234,6 @@ abstract class Accounting extends Component
 
     /**
      * Imposta lo sconto secondo le informazioni indicate per valore e tipologia (UNT o PRC).
-     *
-     * @param $value
-     * @param $type
      */
     public function setSconto($value, $type)
     {
@@ -271,9 +263,6 @@ abstract class Accounting extends Component
 
     /**
      * Imposta la provvigione secondo le informazioni indicate per valore e tipologia (UNT o PRC).
-     *
-     * @param $value
-     * @param $type
      */
     public function setProvvigione($value, $type)
     {
@@ -297,8 +286,6 @@ abstract class Accounting extends Component
 
     /**
      * Imposta il prezzo unitario (senza IVA) per la riga corrente.
-     *
-     * @param $value
      */
     public function setPrezzoUnitarioAttribute($value)
     {
@@ -351,7 +338,7 @@ abstract class Accounting extends Component
      */
     public function getMarginePercentualeAttribute()
     {
-        return (1 - (($this->spesa + $this->provvigione) / ($this->totale_imponibile))) * 100;
+        return (1 - (($this->spesa + $this->provvigione) / $this->totale_imponibile)) * 100;
     }
 
     /**
@@ -366,8 +353,6 @@ abstract class Accounting extends Component
 
     /**
      * Imposta il prezzo unitario ivato (con IVA) per la riga corrente.
-     *
-     * @param $value
      */
     public function setPrezzoUnitarioIvatoAttribute($value)
     {
@@ -380,8 +365,6 @@ abstract class Accounting extends Component
 
     /**
      * Imposta il sconto unitario (senza IVA) per la riga corrente.
-     *
-     * @param $value
      */
     public function setScontoUnitarioAttribute($value)
     {

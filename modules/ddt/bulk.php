@@ -105,7 +105,7 @@ switch (post('op')) {
                         if ($qta > 0) {
                             $copia = $riga->copiaIn($fattura, $qta);
 
-                            //Fix per idconto righe fattura
+                            // Fix per idconto righe fattura
                             $articolo = ArticoloOriginale::find($copia->idarticolo);
                             $copia->id_conto = ($articolo->idconto_vendita ? $articolo->idconto_vendita : $idconto);
 
@@ -128,7 +128,7 @@ switch (post('op')) {
         } else {
             flash()->warning(tr('Nessun ddt fatturato!'));
         }
-    break;
+        break;
 
     case 'delete-bulk':
         foreach ($id_records as $id) {
@@ -140,7 +140,7 @@ switch (post('op')) {
         }
 
         flash()->info(tr('Ddt eliminati!'));
-    break;
+        break;
 
     case 'cambia_stato':
         $id_stato = post('id_stato');
@@ -163,7 +163,7 @@ switch (post('op')) {
             flash()->warning(tr('Nessun DDT modificato!'));
         }
 
-    break;
+        break;
 }
 
 if (App::debug()) {
@@ -190,16 +190,16 @@ $operations['crea_fattura'] = [
         ],
     ];
 
-    $operations['cambia_stato'] = [
-        'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia stato'),
-        'data' => [
-            'title' => tr('Vuoi davvero cambiare lo stato per questi DDT?'),
-            'msg' => tr('Seleziona lo stato in cui spostare tutti i DDT').'.<br>
+$operations['cambia_stato'] = [
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia stato'),
+    'data' => [
+        'title' => tr('Vuoi davvero cambiare lo stato per questi DDT?'),
+        'msg' => tr('Seleziona lo stato in cui spostare tutti i DDT').'.<br>
             <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT id, descrizione, colore as _bgcolor_ FROM dt_statiddt" ]}',
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-warning',
-            'blank' => false,
-        ],
-    ];
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
+    ],
+];
 
 return $operations;

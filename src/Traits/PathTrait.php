@@ -19,8 +19,6 @@
 
 namespace Traits;
 
-use App;
-
 trait PathTrait
 {
     /**
@@ -36,19 +34,15 @@ trait PathTrait
     /**
      * Restituisce il percorso completo per il file indicato della struttura.
      *
-     * @param $file
-     *
      * @return string|null
      */
     public function filepath($file)
     {
-        return App::filepath($this->path.'|custom|', $file);
+        return \App::filepath($this->path.'|custom|', $file);
     }
 
     /**
      * Restituisce l'URL completa per il file indicato della struttura.
-     *
-     * @param $file
      *
      * @return string|null
      */

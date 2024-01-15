@@ -279,7 +279,7 @@ class Preventivo extends Document
         $this->stato()->associate($stato);
         $this->save();
 
-        //cambio stato agli interventi solo se sto fatturando il preventivo
+        // cambio stato agli interventi solo se sto fatturando il preventivo
         if ($trigger->getDocument() instanceof Fattura) {
             // Trasferimento degli interventi collegati
             $interventi = $this->interventi;

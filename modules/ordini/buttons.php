@@ -51,23 +51,23 @@ echo '
             </a>
         </li>';
 
-    if ($dir == 'entrata') {
-        echo '
+if ($dir == 'entrata') {
+    echo '
         <li>
             <a data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ordine_fornitore" data-toggle="modal" data-title="'.tr('Crea ordine fornitore').'">
                 <i class="fa fa-file-o"></i> '.tr('Ordine fornitore').'
             </a>
         </li>';
-    } else {
-        /*echo '
-        <li>
-            <a data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ordine_cliente" data-toggle="modal" data-title="'.tr('Crea ordine cliente').'">
-                <i class="fa fa-file-o"></i> '.tr('Ordine cliente').'
-            </a>
-        </li>';*/
-    }
+} else {
+    /*echo '
+    <li>
+        <a data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ordine_cliente" data-toggle="modal" data-title="'.tr('Crea ordine cliente').'">
+            <i class="fa fa-file-o"></i> '.tr('Ordine cliente').'
+        </a>
+    </li>';*/
+}
 
-    echo '  
+echo '  
          <li>
             <a data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ddt" data-toggle="modal" data-title="'.tr('Crea ddt').'">
                 <i class="fa fa-truck"></i> '.tr('Ddt').'

@@ -29,13 +29,13 @@ include_once __DIR__.'/../../core.php';
     <div class="row">
 	<?php
 
-    //Controllo se alla prima nota solo collegate più fatture
+    // Controllo se alla prima nota solo collegate più fatture
     $rs_doc = $dbo->fetchArray('SELECT DISTINCT iddocumento, (SELECT IFNULL(numero_esterno, numero) FROM co_documenti WHERE id=co_movimenti.iddocumento) AS numero FROM co_movimenti WHERE idmastrino='.prepare($record['idmastrino']).' AND iddocumento!=0');
 
-    if (sizeof($rs_doc) > 0) {
-        if (sizeof($rs_doc) == 1) {
-            $rs = $dbo->fetchArray('SELECT dir FROM co_tipidocumento INNER JOIN co_documenti ON co_tipidocumento.id=co_documenti.idtipodocumento WHERE co_documenti.id='.prepare($rs_doc[0]['iddocumento']));
-            $modulo = ($rs[0]['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto'; ?>
+if (sizeof($rs_doc) > 0) {
+    if (sizeof($rs_doc) == 1) {
+        $rs = $dbo->fetchArray('SELECT dir FROM co_tipidocumento INNER JOIN co_documenti ON co_tipidocumento.id=co_documenti.idtipodocumento WHERE co_documenti.id='.prepare($rs_doc[0]['iddocumento']));
+        $modulo = ($rs[0]['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto'; ?>
             
             <div class="col-md-2">
                 <br>
@@ -51,8 +51,8 @@ include_once __DIR__.'/../../core.php';
                 </div>
             </div>
         <?php
-        } else {
-            ?>
+    } else {
+        ?>
             <div class="col-md-2">
                 <br>
                 <div class="btn-group">
@@ -66,19 +66,19 @@ include_once __DIR__.'/../../core.php';
 
                     <ul class="dropdown-menu">
         <?php
-            for ($i = 0; $i < sizeof($rs_doc); ++$i) {
-                $rs = $dbo->fetchArray('SELECT dir FROM co_tipidocumento INNER JOIN co_documenti ON co_tipidocumento.id=co_documenti.idtipodocumento WHERE co_documenti.id='.prepare($rs_doc[$i]['iddocumento']));
-                $modulo = ($rs[0]['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto'; ?>
+        for ($i = 0; $i < sizeof($rs_doc); ++$i) {
+            $rs = $dbo->fetchArray('SELECT dir FROM co_tipidocumento INNER JOIN co_documenti ON co_tipidocumento.id=co_documenti.idtipodocumento WHERE co_documenti.id='.prepare($rs_doc[$i]['iddocumento']));
+            $modulo = ($rs[0]['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto'; ?>
                         <li><a href="<?php echo base_path(); ?>/editor.php?id_module=<?php echo Modules::get($modulo)['id']; ?>&id_record=<?php echo $rs_doc[$i]['iddocumento']; ?>" class="dropdown-item"><i class="fa fa-chevron-left"></i> <?php echo tr('Vai alla fattura n. '.$rs_doc[$i]['numero']); ?></a></li>
         <?php
-            } ?>
+        } ?>
                     </ul>
                 </div>
             </div>
         <?php
-        }
     }
-    ?>
+}
+?>
 
 		<div class="col-md-3">
 			{[ "type": "date", "label": "<?php echo tr('Data movimento'); ?>", "name": "data", "required": 1, "value": "$data$" ]}

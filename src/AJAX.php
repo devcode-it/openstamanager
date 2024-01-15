@@ -33,7 +33,7 @@ class AJAX
      */
     public static function isAjaxRequest()
     {
-        return \Whoops\Util\Misc::isAjaxRequest() && filter('ajax') !== null;
+        return Whoops\Util\Misc::isAjaxRequest() && filter('ajax') !== null;
     }
 
     /**
@@ -41,7 +41,6 @@ class AJAX
      *
      * @param string $resource
      * @param array  $elements
-     * @param mixed  $search
      * @param int    $page
      * @param int    $length
      * @param array  $options
@@ -236,7 +235,6 @@ class AJAX
      * @param string $resource
      * @param array  $elements
      * @param array  $limit
-     * @param mixed  $search
      * @param array  $options
      *
      * @return array|null

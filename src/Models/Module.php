@@ -19,7 +19,6 @@
 
 namespace Models;
 
-use Auth;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -94,11 +93,11 @@ class Module extends Model
      */
     public function getPermissionAttribute()
     {
-        if (Auth::user()->is_admin) {
+        if (\Auth::user()->is_admin) {
             return 'rw';
         }
 
-        $group = Auth::user()->group->id;
+        $group = \Auth::user()->group->id;
 
         $pivot = $this->pivot ?: $this->groups->first(function ($item) use ($group) {
             return $item->id == $group;
@@ -114,7 +113,7 @@ class Module extends Model
      */
     public function getViewsAttribute()
     {
-        $user = Auth::user();
+        $user = \Auth::user();
 
         $views = database()->fetchArray('SELECT * FROM `zz_views` WHERE `id_module` = :module_id AND
         `id` IN (

@@ -45,15 +45,15 @@ switch ($op) {
                 $_SESSION['period_end'] = date('Y').'-12-31';
             }
 
-            // Rimozione log vecchi
-            //$dbo->query('DELETE FROM `zz_operations` WHERE DATE_ADD(`created_at`, INTERVAL 30*24*60*60 SECOND) <= NOW()');
+        // Rimozione log vecchi
+        // $dbo->query('DELETE FROM `zz_operations` WHERE DATE_ADD(`created_at`, INTERVAL 30*24*60*60 SECOND) <= NOW()');
         } else {
             $status = auth()->getCurrentStatus();
 
             flash()->error(Auth::getStatus()[$status]['message']);
 
             redirect(base_path().'/index.php');
-            exit();
+            exit;
         }
 
         break;
@@ -62,7 +62,7 @@ switch ($op) {
         Auth::logout();
 
         redirect(base_path().'/index.php');
-        exit();
+        exit;
 }
 
 if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) {
@@ -73,7 +73,7 @@ if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) 
     } else {
         redirect(base_path().'/index.php?op=logout');
     }
-    exit();
+    exit;
 }
 
 // Modalità manutenzione

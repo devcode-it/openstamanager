@@ -65,7 +65,7 @@ if (strtotime($record['data_conclusione']) < strtotime($record['data_accettazion
                 <div class="col-md-3">
                     <?php
                     echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
-                    ?>
+?>
 
                     {[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "id": "idanagrafica_c", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti" ]}
                 </div>
@@ -83,9 +83,9 @@ if (strtotime($record['data_conclusione']) < strtotime($record['data_accettazion
 				</div>
 
 				<div class="col-md-3">';
-                    if ($record['idagente'] != 0) {
-                        echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
-                    }
+if ($record['idagente'] != 0) {
+    echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
+}
 echo '
 					{[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
 				</div>
@@ -142,7 +142,7 @@ echo '
                         'name' => 'condizioni_fornitura',
                         'value' => $record['condizioni_fornitura'],
                     ]);
-                    ?>
+?>
 				</div>
 			</div>
 
@@ -167,7 +167,7 @@ echo '
         } else {
             $collapsed = ' collapsed-box';
         }
-    ?>
+?>
 
     <!-- Fatturazione Elettronica PA-->
 
@@ -271,7 +271,7 @@ echo '
                     <button type="button" onclick="$(this).next().toggleClass(\'hide\');" class="btn btn-info btn-sm"><i class="fa fa-th-list"></i> '.tr('Mostra tipi di attività non modificati').'</button>
 					<div class="hide">';
 
-//Loop fra i tipi di attività e i relativi costi del tipo intervento (quelli a 0)
+// Loop fra i tipi di attività e i relativi costi del tipo intervento (quelli a 0)
 $rs = $dbo->fetchArray('SELECT * FROM co_contratti_tipiintervento INNER JOIN in_tipiintervento ON in_tipiintervento.idtipointervento = co_contratti_tipiintervento.idtipointervento WHERE co_contratti_tipiintervento.idtipointervento NOT IN('.implode(',', $idtipiintervento).') AND idcontratto='.prepare($id_record).' ORDER BY descrizione');
 
 if (!empty($rs)) {
@@ -316,7 +316,7 @@ if (!empty($rs)) {
     echo '
                         </table>';
 }
-    echo '
+echo '
 
 					</div>
 				</div>

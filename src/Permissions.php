@@ -31,8 +31,6 @@ class Permissions
 
     /**
      * Aggiunge un modulo di cui eseguire il controllo dei permessi.
-     *
-     * @param string $id
      */
     public static function addModule($module)
     {
@@ -87,7 +85,7 @@ class Permissions
             if (!Auth::check() && getURLPath() == slashes(base_path().'/index.php')) {
                 redirect(base_path().'/index.php');
                 $result = false;
-                exit();
+                exit;
             } else {
                 if (!empty(self::$permissions)) {
                     foreach (self::$permissions as $module) {

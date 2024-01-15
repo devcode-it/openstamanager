@@ -34,7 +34,7 @@ if (!empty($_SESSION['superselect']['mastrini'])) {
 }
 
 // RISULTATI VISIBILI
-Util\Query::setSegments(false);
+Query::setSegments(false);
 $query = Query::getQuery($structure, $where, 0, []);
 $query = Modules::replaceAdditionals($id_module, $query);
 $query = str_replace('1=1', '1=1 AND '.$where, $query);

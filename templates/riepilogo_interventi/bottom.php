@@ -41,7 +41,7 @@ echo '
             <th class="text-right" style="border-left: 0;">
                 <b>'.tr('Totale', [], ['upper' => true]).':</b>
             </th>
-            <th class="text-center">'.($somma_km).'</td>
+            <th class="text-center">'.$somma_km.'</td>
             <th class="text-center">'.($pricing ? $somma_ore : '-').'</th>
             <th class="text-center">'.($pricing ? moneyFormat($somma_imponibile, $d_totali) : '-').'</th>
             <th class="text-center">'.($pricing ? moneyFormat($somma_sconto, $d_totali) : '-').'</th>

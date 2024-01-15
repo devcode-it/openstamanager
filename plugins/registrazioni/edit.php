@@ -50,16 +50,16 @@ echo '
             </thead>
             <tbody class="sortable">';
 
-    // Righe documento
-    if (!empty($fattura)) {
-        $optionsConti = AJAX::select($conti, [], null, 0, 10000);
-        $righe = $fattura->getRighe();
-        $num = 0;
-        foreach ($righe as $riga) {
-            ++$num;
+// Righe documento
+if (!empty($fattura)) {
+    $optionsConti = AJAX::select($conti, [], null, 0, 10000);
+    $righe = $fattura->getRighe();
+    $num = 0;
+    foreach ($righe as $riga) {
+        ++$num;
 
-            if (!$riga->isDescrizione()) {
-                echo '
+        if (!$riga->isDescrizione()) {
+            echo '
                 <tr>
                     <td class="text-center">
                         '.$num.'
@@ -67,52 +67,52 @@ echo '
 
                     <td>';
 
-                if ($riga->isArticolo()) {
-                    echo Modules::link('Articoli', $riga->idarticolo, $riga->codice.' - '.$riga->descrizione);
-                } else {
-                    echo nl2br($riga->descrizione);
-                }
+            if ($riga->isArticolo()) {
+                echo Modules::link('Articoli', $riga->idarticolo, $riga->codice.' - '.$riga->descrizione);
+            } else {
+                echo nl2br($riga->descrizione);
+            }
 
-                echo '
+            echo '
                     </td>';
 
-                // Quantità e unità di misura
-                echo '
+            // Quantità e unità di misura
+            echo '
                     <td class="text-center">
                         '.numberFormat($riga->qta, 'qta').' '.$riga->um.'
                     </td>';
 
-                // Prezzi unitari
-                echo '
+            // Prezzi unitari
+            echo '
                     <td class="text-right">
                         '.moneyFormat($riga->prezzo_unitario_corrente);
 
-                if ($dir == 'entrata' && $riga->costo_unitario != 0) {
-                    echo '
+            if ($dir == 'entrata' && $riga->costo_unitario != 0) {
+                echo '
                         <br><small class="text-muted">
                             '.tr('Acquisto').': '.moneyFormat($riga->costo_unitario).'
                         </small>';
-                }
+            }
 
-                if (abs($riga->sconto_unitario) > 0) {
-                    $text = discountInfo($riga);
-
-                    echo '
-                        <br><small class="label label-danger">'.$text.'</small>';
-                }
+            if (abs($riga->sconto_unitario) > 0) {
+                $text = discountInfo($riga);
 
                 echo '
+                        <br><small class="label label-danger">'.$text.'</small>';
+            }
+
+            echo '
                     </td>
 
                     <td>
                         {[ "type": "select", "name": "idconto['.$riga['id'].']", "required": 1, "value": "'.$riga->id_conto.'", "values": '.json_encode($optionsConti['results']).', "class": "unblockable" ]}
                     </td>
                 </tr>';
-            }
         }
     }
+}
 
-    echo '
+echo '
             </tbody>
         </table>
     </div>

@@ -19,8 +19,6 @@
 
 namespace API\Exceptions;
 
-use Exception;
-
-class Unauthorized extends Exception
+class Unauthorized extends \Exception
 {
 }

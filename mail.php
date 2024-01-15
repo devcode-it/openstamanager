@@ -112,21 +112,21 @@ echo '
     <b>'.tr('Destinatari').' <span class="tip" title="'.tr('Email delle sedi, dei referenti o agente collegato all\'anagrafica.').'"><i class="fa fa-question-circle-o"></i></span></b>
     <div class="row" id="lista-destinatari">';
 
-        $idx = 0;
+$idx = 0;
 
-        foreach ($emails as $email) {
-            echo '
+foreach ($emails as $email) {
+    echo '
             <div class="col-md-12">
                 {[ "type": "email", "name": "destinatari['.$idx++.']", "value": "'.$email.'", "icon-before": "choice|email", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari", "required": 0 ]}
             </div>';
-        }
+}
 
-        if (empty($emails)) {
-            echo '
+if (empty($emails)) {
+    echo '
             <div class="col-md-12">
                 {[ "type": "email", "name": "destinatari['.$idx++.']", "value": "", "icon-before": "choice|email", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari", "required": 0 ]}
             </div>';
-        }
+}
 echo '
     </div>
 
@@ -171,16 +171,16 @@ echo '
 
     <div class="row">
         <div class="col-md-12">';
-            echo input([
-                'type' => 'ckeditor',
-                'use_full_ckeditor' => 1,
-                'label' => tr('Contenuto'),
-                'name' => 'body',
-                'id' => 'body_'.rand(0, 999),
-                'value' => $body,
-            ]);
+echo input([
+    'type' => 'ckeditor',
+    'use_full_ckeditor' => 1,
+    'label' => tr('Contenuto'),
+    'name' => 'body',
+    'id' => 'body_'.rand(0, 999),
+    'value' => $body,
+]);
 
-            echo '
+echo '
             </div>
     </div>';
 

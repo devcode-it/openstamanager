@@ -32,4 +32,4 @@ echo '
     </thead>
     <tbody>';
 
-    $scalare = 0;
+$scalare = 0;

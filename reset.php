@@ -60,7 +60,7 @@ switch (post('op')) {
         }
 
         redirect(base_path().'/index.php');
-        exit();
+        exit;
 
     case 'update':
         $password = post('password');
@@ -76,7 +76,7 @@ switch (post('op')) {
         flash()->info(tr('Password cambiata!'));
 
         redirect(base_path().'/index.php');
-        exit();
+        exit;
 }
 
 $pageTitle = tr('Reimpostazione password');

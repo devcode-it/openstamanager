@@ -94,11 +94,11 @@ echo '
                     <p class="small-bold">'.tr('Spett.le', [], ['upper' => true]).'</p>
                     <p>$c_ragionesociale$</p>
 					<p>'.(!empty($c_indirizzo) ? $c_indirizzo : '').(!empty($c_citta_full) ? '<br>'.$c_citta_full : '').'</p>';
-                    if (empty($destinazione)) {
-                        echo '                
+if (empty($destinazione)) {
+    echo '                
 					<small>'.(!empty($c_codice_destinatario) ? tr('Cod.Fatturazione').': '.$c_codice_destinatario : '').'</small>';
-                    }
-                    echo '
+}
+echo '
                 </td>
             </tr>
 

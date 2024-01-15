@@ -119,8 +119,6 @@ class Ini
      *
      * @param array  $content
      * @param string $value
-     *
-     * @return mixed
      */
     public static function getValue($content, $value)
     {

@@ -25,7 +25,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Modules\Articoli\Articolo as Original;
 use Modules\Articoli\Movimento;
 use Plugins\ListinoFornitori\DettaglioFornitore;
-use UnexpectedValueException;
 
 abstract class Article extends Accounting
 {
@@ -33,8 +32,8 @@ abstract class Article extends Accounting
 
     protected $abilita_movimentazione = true;
 
-    protected $serialRowID = null;
-    protected $serialsList = null;
+    protected $serialRowID;
+    protected $serialsList;
 
     protected $qta_movimentazione = 0;
 
@@ -74,8 +73,6 @@ abstract class Article extends Accounting
 
     /**
      * Metodo dedicato a gestire in automatico la movimentazione del magazzino in relazione all'articolo di riferimento sulla base delle caratteristiche del movimento (magazzino abilitato o meno).
-     *
-     * @param $qta
      */
     public function movimenta($qta)
     {
@@ -215,7 +212,7 @@ abstract class Article extends Accounting
     public function setQtaAttribute($value)
     {
         if (!$this->cleanupSerials($value)) {
-            throw new UnexpectedValueException();
+            throw new \UnexpectedValueException();
         }
 
         $diff = parent::setQtaAttribute($value);
@@ -310,7 +307,7 @@ abstract class Article extends Accounting
 
             $qta_modifica = $this->attributes['qta'] - $this->original['qta'];
 
-            //Se la quantità supera la giacenza in sede allora movimento solo quello che resta
+            // Se la quantità supera la giacenza in sede allora movimento solo quello che resta
             if (($qta_sede + $qta_finale) < 0 && $qta_sede >= 0) {
                 $qta_finale = -$qta_sede;
                 $this->attributes['qta'] = $qta_sede + ($qta_modifica != 0 ? $this->original['qta'] : 0);
@@ -373,8 +370,6 @@ abstract class Article extends Accounting
     /**
      * Pulisce i seriali non utilizzati nel caso di riduzione della quantità, se possibile.
      *
-     * @param $new_qta
-     *
      * @return bool
      */
     protected function cleanupSerials($new_qta)
@@ -413,8 +408,6 @@ abstract class Article extends Accounting
      * Azione personalizzata per la copia dell'oggetto (dopo la copia).
      *
      * Forza il salvataggio del prezzo_unitario, per rendere compatibile il sistema con gli Interventi.
-     *
-     * @param $original
      */
     protected function customAfterDataCopiaIn($original)
     {
@@ -426,8 +419,6 @@ abstract class Article extends Accounting
 
     /**
      * Azione personalizzata per la copia dell'oggetto (inizializzazione della copia).
-     *
-     * @param $original
      */
     protected function customInitCopiaIn($original)
     {

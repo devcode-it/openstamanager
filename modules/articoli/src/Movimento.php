@@ -149,7 +149,6 @@ class Movimento extends Model
     /**
      * Restituisce una descrizione standard applicabile a un movimento sulla base della relativa quantità e alla direzione.
      *
-     * @param $qta
      * @param string $direzione
      *
      * @return string

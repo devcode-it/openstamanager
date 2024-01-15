@@ -48,23 +48,23 @@ $data_inizio = new Carbon(get('data_inizio'));
 echo '
 <div class="row" id="ajax_cadenza">';
 
-    $data_corrente = $data_inizio->startOfMonth();
-    $data_conclusione = $contratto->data_conclusione;
-    $count = 0;
+$data_corrente = $data_inizio->startOfMonth();
+$data_conclusione = $contratto->data_conclusione;
+$count = 0;
 
-    while ($data_corrente->lessThanOrEqualTo($data_conclusione)) {
-        $data = $data_corrente->endOfMonth()->format('Y-m-d');
-        $data_fatturazione = ($data_fatturazione ?: date('Y-m', strtotime($data)));
-        unset($checked);
+while ($data_corrente->lessThanOrEqualTo($data_conclusione)) {
+    $data = $data_corrente->endOfMonth()->format('Y-m-d');
+    $data_fatturazione = ($data_fatturazione ?: date('Y-m', strtotime($data)));
+    unset($checked);
 
-        if ($id_module == Modules::get('Contratti')['id']) {
-            if ($data == date('Y-m-t', strtotime($timeing, strtotime($data_fatturazione))) || $data_fatturazione == date('Y-m', strtotime($data_corrente))) {
-                $checked = 'checked';
-                $data_fatturazione = date('Y-m', strtotime($data));
-            }
+    if ($id_module == Modules::get('Contratti')['id']) {
+        if ($data == date('Y-m-t', strtotime($timeing, strtotime($data_fatturazione))) || $data_fatturazione == date('Y-m', strtotime($data_corrente))) {
+            $checked = 'checked';
+            $data_fatturazione = date('Y-m', strtotime($data));
         }
+    }
 
-        echo '
+    echo '
         <div class="col-md-3">
             <label for="m_'.$count.'">
                 <input type="checkbox" onchange="controlloProcedi();" class="unblockable check_periodo" id="m_'.$count.'" name="selezione_periodo['.$count.']" '.$checked.' />
@@ -73,11 +73,11 @@ echo '
             <input type="hidden" name="periodo['.$count.']" value="'.$data.'">
         </div>';
 
-        $data_corrente = $data_corrente->addDay();
-        ++$count;
-    }
+    $data_corrente = $data_corrente->addDay();
+    ++$count;
+}
 
-    echo '
+echo '
 </div>
 
 <script>

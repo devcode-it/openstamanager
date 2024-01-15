@@ -25,9 +25,9 @@ switch (filter('op')) {
         $nome = filter('nome');
 
         if (isset($nome)) {
-            //Se non esiste già una tipo di scadenza con lo stesso nome
+            // Se non esiste già una tipo di scadenza con lo stesso nome
             if ($dbo->fetchNum('SELECT * FROM `co_tipi_scadenze` WHERE `nome`='.prepare($nome).' AND `id`!='.prepare($id_record)) == 0) {
-                //nome_prev
+                // nome_prev
                 $nome_prev = $dbo->fetchOne('SELECT nome AS nome_prev FROM `co_tipi_scadenze` WHERE `id`='.prepare($id_record))['nome_prev'];
 
                 $dbo->update('co_tipi_scadenze', [
@@ -35,7 +35,7 @@ switch (filter('op')) {
                     'descrizione' => $descrizione,
                 ], ['id' => $id_record]);
 
-                //aggiorno anche il segmento
+                // aggiorno anche il segmento
                 $dbo->update('zz_segments', [
                     'clause' => 'co_scadenziario.tipo="'.$nome.'"',
                     'name' => 'Scadenzario '.$nome,
@@ -63,7 +63,7 @@ switch (filter('op')) {
         $nome = filter('nome');
 
         if (isset($nome)) {
-            //Se non esiste già un tipo di scadenza con lo stesso nome
+            // Se non esiste già un tipo di scadenza con lo stesso nome
             if ($dbo->fetchNum('SELECT * FROM `co_tipi_scadenze` WHERE `nome`='.prepare($nome)) == 0) {
                 $dbo->insert('co_tipi_scadenze', [
                     'nome' => $nome,
@@ -71,7 +71,7 @@ switch (filter('op')) {
                 ]);
                 $id_record = $dbo->lastInsertedID();
 
-                //Aggiungo anche il segmento
+                // Aggiungo anche il segmento
                 $dbo->insert('zz_segments', [
                     'id_module' => Modules::get('Scadenzario')['id'],
                     'name' => 'Scadenzario '.$nome,

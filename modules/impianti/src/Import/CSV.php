@@ -21,12 +21,10 @@ namespace Modules\Impianti\Import;
 
 use Importer\CSVImporter;
 use Models\Upload;
-use Modules;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Sede;
 use Modules\Impianti\Categoria;
 use Modules\Impianti\Impianto;
-use Uploads;
 
 /**
  * Struttura per la gestione delle operazioni di importazione (da CSV) degli Impianti.
@@ -158,14 +156,14 @@ class CSV extends CSVImporter
                 $impianto->save();
             }
 
-            //Gestione immagine
+            // Gestione immagine
             if (!empty($url) && !empty($record['import_immagine'])) {
                 $file_content = file_get_contents($url);
 
                 if (!empty($file_content)) {
                     if ($record['import_immagine'] == 2 || $record['import_immagine'] == 4) {
-                        Uploads::deleteLinked([
-                            'id_module' => Modules::get('Impianti')['id'],
+                        \Uploads::deleteLinked([
+                            'id_module' => \Modules::get('Impianti')['id'],
                             'id_record' => $impianto->id,
                         ]);
 
@@ -178,11 +176,11 @@ class CSV extends CSVImporter
 
                     $name = 'immagine_'.$impianto->id.'.'.Upload::getExtensionFromMimeType($file_content);
 
-                    $upload = Uploads::upload($file_content, [
+                    $upload = \Uploads::upload($file_content, [
                         'name' => 'Immagine',
                         'category' => 'Immagini',
                         'original_name' => $name,
-                        'id_module' => Modules::get('Impianti')['id'],
+                        'id_module' => \Modules::get('Impianti')['id'],
                         'id_record' => $impianto->id,
                     ], [
                         'thumbnails' => true,

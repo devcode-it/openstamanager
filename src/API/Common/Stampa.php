@@ -22,7 +22,6 @@ namespace API\Common;
 use API\Interfaces\RetrieveInterface;
 use API\Resource;
 use Models\PrintTemplate;
-use Prints;
 
 class Stampa extends Resource implements RetrieveInterface
 {
@@ -35,7 +34,7 @@ class Stampa extends Resource implements RetrieveInterface
             $directory = base_dir().'/files/api';
 
             $string = strpos($request['resource'], 'binary') !== false;
-            $data = Prints::render($print->id, $request['id_record'], $directory, $string);
+            $data = \Prints::render($print->id, $request['id_record'], $directory, $string);
 
             if (!$string) {
                 download($data['path']);

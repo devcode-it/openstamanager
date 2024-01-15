@@ -22,9 +22,6 @@ namespace API;
 use API\Exceptions\InternalError;
 use API\Exceptions\ResourceNotFound;
 use API\Exceptions\ServiceError;
-use Auth;
-use Exception;
-use Filter;
 use Models\ApiResource as Resource;
 
 /**
@@ -77,17 +74,17 @@ class Response
                 $type = 'update';
                 break;
 
-            // Richiesta POST (creazione elementi)
+                // Richiesta POST (creazione elementi)
             case 'POST':
                 $type = 'create';
                 break;
 
-            // Richiesta GET (ottenimento elementi)
+                // Richiesta GET (ottenimento elementi)
             case 'GET':
                 $type = 'retrieve';
                 break;
 
-            // Richiesta DELETE (eliminazione elementi)
+                // Richiesta DELETE (eliminazione elementi)
             case 'DELETE':
                 $type = 'delete';
                 break;
@@ -97,7 +94,7 @@ class Response
         $version = $request['version'];
 
         // Controllo sull'accesso
-        if (!Auth::check() && $request['resource'] != 'login') {
+        if (!\Auth::check() && $request['resource'] != 'login') {
             return self::response([
                 'status' => self::$status['unauthorized']['code'],
             ]);
@@ -129,7 +126,7 @@ class Response
             return self::error('internalError');
         } catch (ServiceError $e) {
             return self::error('externalError');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return self::error('serverError');
         }
 
@@ -231,11 +228,11 @@ class Response
 
             if (empty($raw)) {
                 $request = (array) json_decode($request, true);
-                $request = Filter::sanitize($request);
+                $request = \Filter::sanitize($request);
 
                 // Fallback per input standard vuoto (richiesta da browser o upload file)
                 if (empty($request)) { // $_SERVER['REQUEST_METHOD'] == 'GET'
-                    $request = Filter::getGET();
+                    $request = \Filter::getGET();
                 }
 
                 if (empty($request['token'])) {

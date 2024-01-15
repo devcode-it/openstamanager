@@ -34,7 +34,7 @@ WHERE mg_articoli.id = '.prepare($result['idarticolo']));
 
 $qta_minima = $articolo['qta_minima'];
 
-    echo '
+echo '
     {[ "type": "select", "disabled":"1", "label": "'.tr('Articolo').'", "name": "idarticolo", "value": "'.$result['idarticolo'].'", "ajax-source": "articoli", "select-options": '.json_encode($options['select-options']['articoli']).' ]}
 
     <script>
@@ -382,7 +382,7 @@ function verificaPrezzoArticolo() {
     let table = $(".table-prezzi");
 
     if (prezzo_anagrafica) { 
-        table.append(`<tr><td class="pr_anagrafica"><small>'.($options['dir'] == 'uscita' ? tr('Prezzo listino') : tr('Netto cliente')).': '.Plugins::link(($options['dir'] == 'uscita' ? 'Listino Fornitori' : 'Netto Clienti'), $result['idarticolo'], tr('Visualizza'), null, '').'</small></td><td align="right" class="pr_anagrafica"><small>` + prezzo_anagrafica.toLocale() + ` ` + globals.currency + `</small></td>`);
+        table.append(`<tr><td class="pr_anagrafica"><small>'.($options['dir'] == 'uscita' ? tr('Prezzo listino') : tr('Netto cliente')).': '.Plugins::link($options['dir'] == 'uscita' ? 'Listino Fornitori' : 'Netto Clienti', $result['idarticolo'], tr('Visualizza'), null, '').'</small></td><td align="right" class="pr_anagrafica"><small>` + prezzo_anagrafica.toLocale() + ` ` + globals.currency + `</small></td>`);
 
         let tr = $(".pr_anagrafica").parent();
         if (prezzo_unitario == prezzo_anagrafica.toFixed(2)) {

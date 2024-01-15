@@ -19,9 +19,6 @@
 
 namespace Intl;
 
-use DateTime;
-use NumberFormatter;
-
 /**
  * Classe per gestire la formattazione di date e numeri in convenzioni differenti.
  *
@@ -39,7 +36,7 @@ class Formatter
         ],
     ];
 
-    /** @var NumberFormatter|array Oggetto dedicato alla formattazione dei numeri */
+    /** @var \NumberFormatter|array Oggetto dedicato alla formattazione dei numeri */
     protected $numberFormatter;
     protected $precision;
 
@@ -56,9 +53,9 @@ class Formatter
     public function __construct($locale, $timestamp = null, $date = null, $time = null, $number = [])
     {
         if (class_exists('NumberFormatter')) {
-            $this->numberFormatter = new NumberFormatter($locale, NumberFormatter::DECIMAL);
+            $this->numberFormatter = new \NumberFormatter($locale, \NumberFormatter::DECIMAL);
 
-            $this->numberFormatter->setAttribute(NumberFormatter::ROUNDING_MODE, NumberFormatter::ROUND_HALFUP);
+            $this->numberFormatter->setAttribute(\NumberFormatter::ROUNDING_MODE, \NumberFormatter::ROUND_HALFUP);
         } else {
             $this->numberFormatter = $number;
         }
@@ -82,8 +79,6 @@ class Formatter
 
     /**
      * Restituisce gli elementi di separazione secondo la formattazione in utilizzo.
-     *
-     * @return mixed
      */
     public function format($value)
     {
@@ -104,8 +99,6 @@ class Formatter
 
     /**
      * Restituisce gli elementi di separazione secondo la formattazione in utilizzo.
-     *
-     * @return mixed
      */
     public function parse($value)
     {
@@ -233,7 +226,7 @@ class Formatter
     public function setPrecision($decimals)
     {
         if (is_object($this->numberFormatter)) {
-            $this->numberFormatter->setAttribute(NumberFormatter::FRACTION_DIGITS, $decimals);
+            $this->numberFormatter->setAttribute(\NumberFormatter::FRACTION_DIGITS, $decimals);
         } else {
             $this->precision = $decimals;
         }
@@ -246,7 +239,7 @@ class Formatter
      */
     public function getPrecision()
     {
-        return is_object($this->numberFormatter) ? $this->numberFormatter->getAttribute(NumberFormatter::FRACTION_DIGITS) : $this->precision;
+        return is_object($this->numberFormatter) ? $this->numberFormatter->getAttribute(\NumberFormatter::FRACTION_DIGITS) : $this->precision;
     }
 
     /**
@@ -257,8 +250,8 @@ class Formatter
     public function getNumberSeparators()
     {
         return [
-            'decimals' => is_object($this->numberFormatter) ? $this->numberFormatter->getSymbol(NumberFormatter::DECIMAL_SEPARATOR_SYMBOL) : $this->numberFormatter['decimals'],
-            'thousands' => is_object($this->numberFormatter) ? $this->numberFormatter->getSymbol(NumberFormatter::GROUPING_SEPARATOR_SYMBOL) : $this->numberFormatter['thousands'],
+            'decimals' => is_object($this->numberFormatter) ? $this->numberFormatter->getSymbol(\NumberFormatter::DECIMAL_SEPARATOR_SYMBOL) : $this->numberFormatter['decimals'],
+            'thousands' => is_object($this->numberFormatter) ? $this->numberFormatter->getSymbol(\NumberFormatter::GROUPING_SEPARATOR_SYMBOL) : $this->numberFormatter['thousands'],
         ];
     }
 
@@ -341,7 +334,7 @@ class Formatter
      */
     public function formatTimestamp($value)
     {
-        $object = DateTime::createFromFormat(static::$standards['timestamp'], $value);
+        $object = \DateTime::createFromFormat(static::$standards['timestamp'], $value);
         $result = is_object($object) ? $object->format($this->getTimestampPattern()) : false;
 
         return $result;
@@ -356,7 +349,7 @@ class Formatter
      */
     public function parseTimestamp($value)
     {
-        $object = DateTime::createFromFormat($this->getTimestampPattern(), $value);
+        $object = \DateTime::createFromFormat($this->getTimestampPattern(), $value);
         $result = is_object($object) ? $object->format(static::$standards['timestamp']) : false;
 
         return $result;
@@ -421,10 +414,10 @@ class Formatter
      */
     public function formatDate($value)
     {
-        $object = DateTime::createFromFormat(static::$standards['date'], (string) $value);
+        $object = \DateTime::createFromFormat(static::$standards['date'], (string) $value);
 
         // Fallback per la gestione dei timestamp
-        $object = !is_object($object) ? DateTime::createFromFormat(static::$standards['timestamp'], (string) $value) : $object;
+        $object = !is_object($object) ? \DateTime::createFromFormat(static::$standards['timestamp'], (string) $value) : $object;
 
         $result = is_object($object) ? $object->format($this->getDatePattern()) : false;
 
@@ -440,7 +433,7 @@ class Formatter
      */
     public function parseDate($value)
     {
-        $object = DateTime::createFromFormat($this->getDatePattern(), $value);
+        $object = \DateTime::createFromFormat($this->getDatePattern(), $value);
         $result = is_object($object) ? $object->format(static::$standards['date']) : false;
 
         return $result;
@@ -505,10 +498,10 @@ class Formatter
      */
     public function formatTime($value)
     {
-        $object = DateTime::createFromFormat(static::$standards['time'], $value);
+        $object = \DateTime::createFromFormat(static::$standards['time'], $value);
 
         // Fallback per la gestione dei timestamp
-        $object = !is_object($object) ? DateTime::createFromFormat(static::$standards['timestamp'], $value) : $object;
+        $object = !is_object($object) ? \DateTime::createFromFormat(static::$standards['timestamp'], $value) : $object;
 
         $result = is_object($object) ? $object->format($this->getTimePattern()) : false;
 
@@ -524,7 +517,7 @@ class Formatter
      */
     public function parseTime($value)
     {
-        $object = DateTime::createFromFormat($this->getTimePattern(), $value);
+        $object = \DateTime::createFromFormat($this->getTimePattern(), $value);
         $result = is_object($object) ? $object->format(static::$standards['time']) : false;
 
         return $result;

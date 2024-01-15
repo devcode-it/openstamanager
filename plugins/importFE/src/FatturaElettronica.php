@@ -19,7 +19,6 @@
 
 namespace Plugins\ImportFE;
 
-use Modules;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Nazione;
 use Modules\Anagrafiche\Tipo as TipoAnagrafica;
@@ -27,8 +26,6 @@ use Modules\Banche\Banca;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato as StatoFattura;
 use Modules\Fatture\Tipo as TipoFattura;
-use UnexpectedValueException;
-use Uploads;
 use Util\XML;
 
 /**
@@ -38,16 +35,16 @@ use Util\XML;
  */
 class FatturaElettronica
 {
-    protected static $directory = null;
+    protected static $directory;
 
     /** @var array Percorso del file XML */
-    protected $file = null;
+    protected $file;
 
     /** @var array XML della fattura */
-    protected $xml = null;
+    protected $xml;
 
     /** @var Fattura Fattura collegata */
-    protected $fattura = null;
+    protected $fattura;
 
     public function __construct($name)
     {
@@ -78,14 +75,14 @@ class FatturaElettronica
         ])->first();
 
         if (!empty($fattura) && $fattura->tipo->dir == 'uscita') {
-            throw new UnexpectedValueException();
+            throw new \UnexpectedValueException();
         }
     }
 
     public static function getImportDirectory()
     {
         if (!isset(self::$directory)) {
-            $module = Modules::get('Fatture di acquisto');
+            $module = \Modules::get('Fatture di acquisto');
 
             $plugins = $module->plugins;
             if (!empty($plugins)) {
@@ -117,7 +114,7 @@ class FatturaElettronica
             new static($name);
 
             return true;
-        } catch (UnexpectedValueException $e) {
+        } catch (\UnexpectedValueException $e) {
             $file = static::getImportDirectory().'/'.$name;
             delete($file);
 
@@ -134,7 +131,7 @@ class FatturaElettronica
             if ($tipo == 'TD06') {
                 $manager = new Parcella($name);
             }
-        } catch (UnexpectedValueException $e) {
+        } catch (\UnexpectedValueException $e) {
             $manager = new FatturaSemplificata($name);
         }
 
@@ -169,7 +166,7 @@ class FatturaElettronica
     {
         $allegati = $this->getAllegati();
 
-        $module = Modules::get('Fatture di acquisto');
+        $module = \Modules::get('Fatture di acquisto');
 
         $info = [
             'category' => tr('Fattura Elettronica'),
@@ -187,16 +184,16 @@ class FatturaElettronica
 
             $original = $allegato['NomeAttachment'].$extension;
             try {
-                Uploads::upload($content, array_merge($info, [
+                \Uploads::upload($content, array_merge($info, [
                     'name' => $allegato['NomeAttachment'],
                     'original_name' => $original,
                 ]));
-            } catch (UnexpectedValueException $e) {
+            } catch (\UnexpectedValueException $e) {
             }
         }
 
         // Registrazione XML come allegato
-        Uploads::upload($this->file, array_merge($info, [
+        \Uploads::upload($this->file, array_merge($info, [
             'name' => tr('Fattura Elettronica'),
             'original_name' => basename($this->file),
         ]));
@@ -225,7 +222,7 @@ class FatturaElettronica
                 ->orWhere('piva', 'like', '__'.$info['partita_iva']);
         }
 
-        //Se non trovo l'anagrafica tra i fornitori, provo a ricercarla anche tra i clienti
+        // Se non trovo l'anagrafica tra i fornitori, provo a ricercarla anche tra i clienti
         if (empty($anagrafica->first())) {
             $type = 'Cliente';
 

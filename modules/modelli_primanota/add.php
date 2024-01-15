@@ -86,41 +86,41 @@ echo '
 			<th width="20%">'.tr('Avere').'</th>
         </tr>';
 
-    $counter = 0;
+$counter = 0;
 
-    foreach ($rs as $r) {
-        renderRiga($counter++, $r);
-    }
+foreach ($rs as $r) {
+    renderRiga($counter++, $r);
+}
 
-    echo '
+echo '
         </table>';
 
-    // Variabili utilizzabili
-    $variables = include Modules::filepath(Modules::get('Fatture di vendita')['id'], 'variables.php');
+// Variabili utilizzabili
+$variables = include Modules::filepath(Modules::get('Fatture di vendita')['id'], 'variables.php');
 
-    echo '
+echo '
 		<!-- Istruzioni per il contenuto -->
 		<div class="box box-info">
 			<div class="box-body">';
 
-    if (!empty($variables)) {
-        echo '
+if (!empty($variables)) {
+    echo '
 				<p>'.tr("Puoi utilizzare le seguenti sequenze di testo all'interno del campo causale, verranno sostituite in fase generazione prima nota dalla fattura.").':</p>
 				<ul>';
 
-        foreach ($variables as $variable => $value) {
-            echo '
+    foreach ($variables as $variable => $value) {
+        echo '
 					<li><code>{'.$variable.'}</code></li>';
-        }
-
-        echo '
-				</ul>';
-    } else {
-        echo '
-				<p><i class="fa fa-warning"></i> '.tr('Non sono state definite variabili da utilizzare nel template').'.</p>';
     }
 
     echo '
+				</ul>';
+} else {
+    echo '
+				<p><i class="fa fa-warning"></i> '.tr('Non sono state definite variabili da utilizzare nel template').'.</p>';
+}
+
+echo '
 			</div>
 		</div>';
 ?>

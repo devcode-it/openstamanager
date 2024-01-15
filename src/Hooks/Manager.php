@@ -23,7 +23,7 @@ use Models\Hook;
 
 abstract class Manager
 {
-    protected $hook = null;
+    protected $hook;
 
     public function __construct(Hook $hook)
     {
@@ -32,8 +32,6 @@ abstract class Manager
 
     /**
      * Restituisce le informazioni sull'esecuzione dell'hook.
-     *
-     * @return mixed
      */
     abstract public function execute();
 

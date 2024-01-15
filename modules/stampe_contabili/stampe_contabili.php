@@ -76,7 +76,7 @@ echo '
 
 <form action="" method="post" id="form" >
 	<div class="row">';
-        echo '
+echo '
 		<div class="col-md-4">
 			{[ "type": "select", "label": "'.tr('Periodo').'", "name": "periodo", "required": "1", "values": '.json_encode($periodi).', "value": "manuale" ]}
 		</div>
@@ -90,15 +90,15 @@ echo '
 		</div>
 	</div>';
 
-    echo '
+echo '
 	<div class="row">';
-        if ($nome_stampa != 'Liquidazione IVA') {
-            echo '
+if ($nome_stampa != 'Liquidazione IVA') {
+    echo '
 		<div class="col-md-4">
 			{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_sezionale", "required": "1", "values": "query=SELECT id AS id, name AS descrizione FROM zz_segments WHERE id_module = (SELECT id FROM zz_modules WHERE name = \''.(($dir == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto').'\') AND is_fiscale = 1 UNION SELECT  -1 AS id, \'Tutti i sezionali\' AS descrizione" ]}
 		</div>';
-        }
-        echo '
+}
+echo '
 		<div class="col-md-4">
 			{[ "type": "select", "label": "'.tr('Formato').'", "name": "format", "required": "1", "values": "list=\"A4\": \"'.tr('A4').'\", \"A3\": \"'.tr('A3').'\"", "value": "'.$_SESSION['stampe_contabili']['format'].'" ]}
 		</div>
@@ -107,14 +107,14 @@ echo '
 			{[ "type": "select", "label": "'.tr('Orientamento').'", "name": "orientation", "required": "1", "values": "list=\"L\": \"'.tr('Orizzontale').'\", \"P\": \"'.tr('Verticale').'\"", "value": "'.$_SESSION['stampe_contabili']['orientation'].'" ]}
 		</div>';
 
-    if ($nome_stampa != 'Liquidazione IVA') {
-        echo '
+if ($nome_stampa != 'Liquidazione IVA') {
+    echo '
 		<div class="col-md-4">
 			{[ "type": "checkbox", "label": "'.tr('Definitiva').'", "disabled": "1", "name": "definitiva", "help": "'.tr('Per abilitare il pulsante è necessario impostare nei campi Data inizio e Data fine uno dei 4 trimestri o un singolo mese e non deve essere già stata creata la stampa definitiva del periodo selezionato').'" ]}
 		</div>';
-    }
+}
 
-    echo '
+echo '
 		<div class="col-md-4 pull-right">
 			<p style="line-height:14px;">&nbsp;</p>
 			<button type="button" class="btn btn-primary btn-block" onclick="if($(\'#form\').parsley().validate()) { return avvia_stampa(); }">
@@ -307,9 +307,9 @@ echo '
 			input("date_start").disable();
 			input("date_end").disable();
 		}';
-        if ($nome_stampa != 'Liquidazione IVA') {
-            echo 'eseguiControlli();';
-        }
-    echo '
+if ($nome_stampa != 'Liquidazione IVA') {
+    echo 'eseguiControlli();';
+}
+echo '
 	});
 </script>';

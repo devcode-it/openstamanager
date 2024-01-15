@@ -19,8 +19,6 @@
 
 namespace API\Exceptions;
 
-use Exception;
-
-class ResourceNotFound extends Exception
+class ResourceNotFound extends \Exception
 {
 }

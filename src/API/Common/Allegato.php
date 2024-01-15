@@ -23,13 +23,12 @@ use API\Interfaces\CreateInterface;
 use API\Interfaces\RetrieveInterface;
 use API\Resource;
 use Models\Upload;
-use Modules;
 
 class Allegato extends Resource implements RetrieveInterface, CreateInterface
 {
     public function create($request)
     {
-        $module = Modules::get($request['module']);
+        $module = \Modules::get($request['module']);
 
         $name = !empty($request['name']) ? $request['name'] : null;
         $category = !empty($request['category']) ? $request['category'] : null;

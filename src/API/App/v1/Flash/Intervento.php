@@ -98,10 +98,6 @@ class Intervento extends Resource implements UpdateInterface
         return $this->forceToString($this->response);
     }
 
-    /**
-     * @param $key
-     * @param $records
-     */
     protected function processaRecords($key, $request)
     {
         $records = [];
@@ -125,10 +121,6 @@ class Intervento extends Resource implements UpdateInterface
         }
     }
 
-    /**
-     * @param $key
-     * @param $records
-     */
     protected function importaRecords($key, $records)
     {
         $this->response[$key] = [];
@@ -156,9 +148,6 @@ class Intervento extends Resource implements UpdateInterface
     }
 
     /**
-     * @param $record
-     * @param $risorsa
-     *
      * @return bool
      */
     protected function verificaConflitti($record, $risorsa)
@@ -179,8 +168,6 @@ class Intervento extends Resource implements UpdateInterface
 
     /**
      * Converte i valori numerici in stringhe.
-     *
-     * @param $list
      *
      * @return array
      */

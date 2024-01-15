@@ -93,7 +93,7 @@ switch ($op) {
         }
         break;
 
-    // Aggiungo impianto
+        // Aggiungo impianto
     case 'add':
         $matricola = post('matricola');
         $idanagrafica = post('idanagrafica');
@@ -139,7 +139,7 @@ switch ($op) {
 
         break;
 
-    // Carica i campi da compilare del componente
+        // Carica i campi da compilare del componente
     case 'load_componente':
         $filename = post('filename');
         $idarticolo = post('idarticolo');
@@ -161,7 +161,7 @@ switch ($op) {
 
         break;
 
-    // Duplica impianto
+        // Duplica impianto
     case 'copy':
         $dbo->query('CREATE TEMPORARY TABLE tmp SELECT * FROM my_impianti WHERE id= '.prepare($id_record));
         $dbo->query('ALTER TABLE tmp DROP id');
@@ -175,7 +175,7 @@ switch ($op) {
 
         break;
 
-    // Rimuovo impianto e scollego tutti i suoi componenti
+        // Rimuovo impianto e scollego tutti i suoi componenti
     case 'delete':
         $dbo->query('DELETE FROM my_impianti WHERE id='.prepare($id_record));
 

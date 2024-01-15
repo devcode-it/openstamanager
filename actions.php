@@ -54,7 +54,7 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
 
     // Gestione delle operazioni
     else {
-        //UPLOAD PER CKEDITOR
+        // UPLOAD PER CKEDITOR
         if (filter('op') == 'aggiungi-allegato' && !empty($_FILES) && !empty($_FILES['upload']['name'])) {
             $CKEditor = get('CKEditor');
             $funcNum = get('CKEditorFuncNum');
@@ -63,8 +63,8 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
                 'png', 'jpg', 'jpeg',
             ];
 
-            //Maximum file limit (unit: byte)
-            $max_size = '2097152'; //2MB
+            // Maximum file limit (unit: byte)
+            $max_size = '2097152'; // 2MB
 
             // Get image file extension
             $file_extension = pathinfo($_FILES['upload']['name'], PATHINFO_EXTENSION);
@@ -86,7 +86,7 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
 
                 // Creazione file fisico
                 if (!empty($upload)) {
-                    //flash()->info(tr('File caricato correttamente!'));
+                    // flash()->info(tr('File caricato correttamente!'));
 
                     $id_allegato = $dbo->lastInsertedID();
                     $upload = Upload::find($id_allegato);
@@ -113,15 +113,15 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
                         echo json_encode($response);
                     }
                 } else {
-                    //flash()->error(tr('Errore durante il caricamento del file!'));
+                    // flash()->error(tr('Errore durante il caricamento del file!'));
                     echo '<script type="text/javascript">  window.parent.toastr.error("'.tr('Errore durante il caricamento del file!').'"); </script>';
                 }
             } else {
-                //flash()->error(tr('Estensione non permessa!'));
+                // flash()->error(tr('Estensione non permessa!'));
                 echo '<script type="text/javascript">  window.parent.toastr.error("'.tr('Estensione non permessa').'"); </script>';
             }
 
-            exit();
+            exit;
         }
 
         // UPLOAD
@@ -359,7 +359,7 @@ elseif (filter('op') == 'ordina-checks') {
 elseif (post('op') == 'send-email') {
     $template = Template::find(post('template'));
 
-    $mail = \Modules\Emails\Mail::build($user, $template, $id_record);
+    $mail = Modules\Emails\Mail::build($user, $template, $id_record);
 
     // Rimozione allegati predefiniti
     $mail->resetPrints();

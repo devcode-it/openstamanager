@@ -27,40 +27,40 @@ echo '
 
 		<div class="panel-body">';
 
-        $listini = $dbo->fetchArray('SELECT * FROM mg_piani_sconto ORDER BY id ASC');
+$listini = $dbo->fetchArray('SELECT * FROM mg_piani_sconto ORDER BY id ASC');
 
-        if (!empty($listini)) {
-            echo '
+if (!empty($listini)) {
+    echo '
 <table class="table table-striped table-condensed table-bordered">
                 <tr>
                     <th>'.tr('Piano di sconto/magg.').'</th>
                     <th>'.tr('Prezzo di vendita finale').'</th>
                 </tr>';
 
-            // listino base
-            echo '
+    // listino base
+    echo '
                 <tr>
                     <td>'.tr('Base').'</td>
                     <td>'.moneyFormat($articolo->prezzo_vendita).'</td>
                 </tr>';
 
-            foreach ($listini as $listino) {
-                $prezzo_vendita = $articolo->prezzo_vendita - $articolo->prezzo_vendita * $listino['prc_guadagno'] / 100;
-                echo '
+    foreach ($listini as $listino) {
+        $prezzo_vendita = $articolo->prezzo_vendita - $articolo->prezzo_vendita * $listino['prc_guadagno'] / 100;
+        echo '
 <tr>
                     <td>'.$listino['nome'].'</td>
                     <td>'.moneyFormat($prezzo_vendita).'</td>
                 </tr>';
-            }
+    }
 
-            echo '
+    echo '
             </table>';
-        } else {
-            echo '
+} else {
+    echo '
     <div class="alert alert-info">
 '.tr('Non ci sono piani di sconto/magg. caricati').'... '.Modules::link('Piani di sconto/maggiorazione', null, tr('Crea')).'
 </div>';
-        }
+}
 echo '
     </div>
 </div>';

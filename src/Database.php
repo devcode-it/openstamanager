@@ -26,7 +26,7 @@ use Illuminate\Database\Capsule\Manager as Capsule;
  */
 class Database extends Util\Singleton
 {
-    /** @var \Illuminate\Database\Capsule\Manager Gestore di connessione Laravel */
+    /** @var Capsule Gestore di connessione Laravel */
     protected $capsule;
 
     /** @var string Nome del database */
@@ -95,8 +95,8 @@ class Database extends Util\Singleton
                 }
 
                 // Fix per problemi di compatibilità delle password MySQL 4.1+ (da versione precedente)
-                //$this->getPDO()->exec('SET SESSION old_passwords = 0');
-                //$this->getPDO()->exec('SET PASSWORD = PASSWORD('.$this->prepare($this->password).')');
+                // $this->getPDO()->exec('SET SESSION old_passwords = 0');
+                // $this->getPDO()->exec('SET PASSWORD = PASSWORD('.$this->prepare($this->password).')');
 
                 // Reset della modalità di esecuzione MySQL per la sessione corrente
                 $this->getPDO()->exec("SET sql_mode = ''");
@@ -386,8 +386,6 @@ class Database extends Util\Singleton
      * @param string $parameter
      *
      * @since 2.3
-     *
-     * @return mixed
      */
     public function prepare($parameter)
     {
@@ -454,9 +452,9 @@ class Database extends Util\Singleton
     public function select($table, $array = [], $joins = [], $conditions = [], $order = [], $limit = null, $return = false, $group = [], $whereraw = [])
     {
         if (
-            !is_string($table) ||
-            (!empty($order) && !is_string($order) && !is_array($order)) ||
-            (!empty($limit) && !is_string($limit) && !is_integer($limit) && !is_array($limit))
+            !is_string($table)
+            || (!empty($order) && !is_string($order) && !is_array($order))
+            || (!empty($limit) && !is_string($limit) && !is_integer($limit) && !is_array($limit))
         ) {
             throw new UnexpectedValueException();
         }
@@ -582,10 +580,10 @@ class Database extends Util\Singleton
     public function sync($table, $conditions, $list)
     {
         if (
-            !is_string($table) ||
-            !is_array($conditions) ||
-            !is_array($list)
-            ) {
+            !is_string($table)
+            || !is_array($conditions)
+            || !is_array($list)
+        ) {
             throw new UnexpectedValueException();
         }
 
@@ -614,10 +612,10 @@ class Database extends Util\Singleton
     public function attach($table, $conditions, $list)
     {
         if (
-            !is_string($table) ||
-            !is_array($conditions) ||
-            !is_array($list)
-            ) {
+            !is_string($table)
+            || !is_array($conditions)
+            || !is_array($list)
+        ) {
             throw new UnexpectedValueException();
         }
 
@@ -649,10 +647,10 @@ class Database extends Util\Singleton
     public function detach($table, $conditions, $list)
     {
         if (
-            !is_string($table) ||
-            !is_array($conditions) ||
-            !is_array($list)
-            ) {
+            !is_string($table)
+            || !is_array($conditions)
+            || !is_array($list)
+        ) {
             throw new UnexpectedValueException();
         }
 
@@ -686,9 +684,7 @@ class Database extends Util\Singleton
     /**
      * Get a new raw query expression.
      *
-     * @param mixed $value
-     *
-     * @return \Illuminate\Database\Query\Expression
+     * @return Illuminate\Database\Query\Expression
      */
     public function raw($value)
     {
@@ -700,7 +696,7 @@ class Database extends Util\Singleton
      *
      * @param string $table
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return Illuminate\Database\Query\Builder
      */
     public function table($table)
     {
@@ -712,8 +708,7 @@ class Database extends Util\Singleton
      *
      * @since 2.0
      *
-     * @param string $filename  Percorso per raggiungere il file delle query
-     * @param string $delimiter Delimitatore delle query
+     * @param string $filename Percorso per raggiungere il file delle query
      */
     public function multiQuery($filename, $start = 0)
     {

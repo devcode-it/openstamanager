@@ -269,7 +269,7 @@ if ($diff > 0) {
     echo '
         <span><big>'.moneyFormat($diff).'</big></span>';
 }
-    echo '
+echo '
     </b></big></span>
     <br><br>
 
@@ -284,12 +284,12 @@ if ($diff > 0) {
                     <th width="15%">'.tr('Margine').'</th>
                     <th width="15%">'.tr('Ricarico').'</th>
                 </tr>';
-            ksort($tipologie);
-            foreach ($tipologie as $key => $tipologia) {
-                $margine = $tipologia['ricavo'] - $tipologia['costo'];
-                $margine_prc = ($tipologia['ricavo'] && $tipologia['costo']) ? (int) (1 - ($tipologia['costo'] / $tipologia['ricavo'])) * 100 : 100;
-                $ricarico_prc = ($tipologia['ricavo'] && $tipologia['costo']) ? (int) ((($tipologia['ricavo'] / $tipologia['costo']) - 1) * 100) : 100;
-                echo '
+ksort($tipologie);
+foreach ($tipologie as $key => $tipologia) {
+    $margine = $tipologia['ricavo'] - $tipologia['costo'];
+    $margine_prc = ($tipologia['ricavo'] && $tipologia['costo']) ? (int) (1 - ($tipologia['costo'] / $tipologia['ricavo'])) * 100 : 100;
+    $ricarico_prc = ($tipologia['ricavo'] && $tipologia['costo']) ? (int) ((($tipologia['ricavo'] / $tipologia['costo']) - 1) * 100) : 100;
+    echo '
                 <tr>
                     <td>'.$key.'</td>
                     <td class="text-right">'.Translator::numberToLocale($tipologia['ore']).'</td>
@@ -298,8 +298,8 @@ if ($diff > 0) {
                     <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$margine_prc.'%)</td>
                     <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$ricarico_prc.'%)</td>
                 </tr>';
-            }
-            echo '
+}
+echo '
             </table>
         </div>
 
@@ -314,12 +314,12 @@ if ($diff > 0) {
                     <th width="15%">'.tr('Margine').'</th>
                     <th width="15%">'.tr('Ricarico').'</th>
                 </tr>';
-            ksort($tecnici);
-            foreach ($tecnici as $key => $tecnico) {
-                $margine = $tecnico['ricavo'] - $tecnico['costo'];
-                $margine_prc = ($tecnico['ricavo'] && $tecnico['costo']) ? (int) (1 - ($tecnico['costo'] / $tecnico['ricavo'])) * 100 : 100;
-                $ricarico_prc = ($tecnico['ricavo'] && $tecnico['costo']) ? (int) ((($tecnico['ricavo'] / $tecnico['costo']) - 1) * 100) : 100;
-                echo '
+ksort($tecnici);
+foreach ($tecnici as $key => $tecnico) {
+    $margine = $tecnico['ricavo'] - $tecnico['costo'];
+    $margine_prc = ($tecnico['ricavo'] && $tecnico['costo']) ? (int) (1 - ($tecnico['costo'] / $tecnico['ricavo'])) * 100 : 100;
+    $ricarico_prc = ($tecnico['ricavo'] && $tecnico['costo']) ? (int) ((($tecnico['ricavo'] / $tecnico['costo']) - 1) * 100) : 100;
+    echo '
                 <tr>
                     <td>'.$key.'</td>
                     <td class="text-right">'.Translator::numberToLocale($tecnico['km']).'</td>
@@ -329,8 +329,8 @@ if ($diff > 0) {
                     <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$margine_prc.'%)</td>
                     <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$ricarico_prc.'%)</td>
                 </tr>';
-            }
-            echo '
+}
+echo '
             </table>
         </div>
     </div>
@@ -346,12 +346,12 @@ if ($diff > 0) {
                     <th width="15%">'.tr('Margine').'</th>
                     <th width="15%">'.tr('Ricarico').'</th>
                 </tr>';
-            ksort($stati_intervento);
-            foreach ($stati_intervento as $key => $stato) {
-                $margine = $stato['ricavo'] - $stato['costo'];
-                $margine_prc = ($stato['ricavo'] && $stato['costo']) ? (int) (1 - ($stato['costo'] / $stato['ricavo'])) * 100 : 100;
-                $ricarico_prc = ($stato['ricavo'] && $stato['costo']) ? (int) ((($stato['ricavo'] / $stato['costo']) - 1) * 100) : 100;
-                echo '
+ksort($stati_intervento);
+foreach ($stati_intervento as $key => $stato) {
+    $margine = $stato['ricavo'] - $stato['costo'];
+    $margine_prc = ($stato['ricavo'] && $stato['costo']) ? (int) (1 - ($stato['costo'] / $stato['ricavo'])) * 100 : 100;
+    $ricarico_prc = ($stato['ricavo'] && $stato['costo']) ? (int) ((($stato['ricavo'] / $stato['costo']) - 1) * 100) : 100;
+    echo '
                 <tr>
                     <td><div class="img-circle" style="width:18px; height:18px; position:relative; bottom:-2px; background:'.$stato['colore'].'; float:left;"></div> '.$key.'</td>
                     <td class="text-right">'.Translator::numberToLocale($stato['ore']).'</td>
@@ -360,8 +360,8 @@ if ($diff > 0) {
                     <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$margine_prc.'%)</td>
                     <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$ricarico_prc.'%)</td>
                 </tr>';
-            }
-            echo '
+}
+echo '
             </table>
         </div>
 
@@ -375,14 +375,14 @@ if ($diff > 0) {
                     <th width="15%">'.tr('Margine').'</th>
                     <th width="15%">'.tr('Ricarico').'</th>
                 </tr>';
-            ksort($materiali_art);
-            foreach ($materiali_art as $key => $materiali_array1) {
-                foreach ($materiali_array1 as $materiali_array2) {
-                    foreach ($materiali_array2 as $materiale) {
-                        $margine = $materiale['ricavo'] - $materiale['costo'];
-                        $margine_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int) (1 - ($materiale['costo'] / $materiale['ricavo'])) * 100 : 100;
-                        $ricarico_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int) ((($materiale['ricavo'] / $materiale['costo']) - 1) * 100) : 100;
-                        echo '
+ksort($materiali_art);
+foreach ($materiali_art as $key => $materiali_array1) {
+    foreach ($materiali_array1 as $materiali_array2) {
+        foreach ($materiali_array2 as $materiale) {
+            $margine = $materiale['ricavo'] - $materiale['costo'];
+            $margine_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int) (1 - ($materiale['costo'] / $materiale['ricavo'])) * 100 : 100;
+            $ricarico_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int) ((($materiale['ricavo'] / $materiale['costo']) - 1) * 100) : 100;
+            echo '
                 <tr>
                     <td>'.Modules::link('Articoli', $materiale['id'], $key).'</td>
                     <td class="text-center">'.$materiale['qta'].'</td>
@@ -391,16 +391,16 @@ if ($diff > 0) {
                     <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$margine_prc.'%)</td>
                     <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$ricarico_prc.'%)</td>
                 </tr>';
-                    }
-                }
-            }
+        }
+    }
+}
 
-            ksort($materiali_righe);
-            foreach ($materiali_righe as $key => $materiale) {
-                $margine = $materiale['ricavo'] - $materiale['costo'];
-                $margine_prc = ($materiale['ricavo']) ? (int) (1 - ($materiale['costo'] / $materiale['ricavo'])) * 100 : 0;
-                $ricarico_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int) ((($materiale['ricavo'] / $materiale['costo']) - 1) * 100) : 100;
-                echo '
+ksort($materiali_righe);
+foreach ($materiali_righe as $key => $materiale) {
+    $margine = $materiale['ricavo'] - $materiale['costo'];
+    $margine_prc = ($materiale['ricavo']) ? (int) (1 - ($materiale['costo'] / $materiale['ricavo'])) * 100 : 0;
+    $ricarico_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int) ((($materiale['ricavo'] / $materiale['costo']) - 1) * 100) : 100;
+    echo '
                 <tr>
                     <td>'.$key.'</td>
                     <td class="text-center">'.$materiale['qta'].'</td>
@@ -409,8 +409,8 @@ if ($diff > 0) {
                     <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$margine_prc.'%)</td>
                     <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$ricarico_prc.'%)</td>
                 </tr>';
-            }
-            echo '
+}
+echo '
             </table>
         </div>
     </div>
@@ -429,7 +429,7 @@ $query = 'SELECT id, CONCAT(\'Intervento \', codice, \' del \', DATE_FORMAT(IFNU
 
 $count = $dbo->fetchNum($query);
 
-    echo '<hr>
+echo '<hr>
 <form action="" method="post" id="aggiungi-intervento">
     <input type="hidden" name="op" value="addintervento">
     <input type="hidden" name="backto" value="record-edit">
@@ -442,7 +442,7 @@ $count = $dbo->fetchNum($query);
     <!-- PULSANTI -->
 		<div class="col-md-4">
             <p style="margin-top:-5px;" >&nbsp;</p>
-            <button type="button" class="btn btn-primary" onclick="if($(\'#aggiungi-intervento\').parsley().validate() && confirm(\''.tr('Aggiungere questo intervento al preventivo?').'\') ){ $(\'#aggiungi-intervento\').submit(); }" '.((($record['is_pianificabile']) && !$block_edit) ? '' : 'disabled').'>
+            <button type="button" class="btn btn-primary" onclick="if($(\'#aggiungi-intervento\').parsley().validate() && confirm(\''.tr('Aggiungere questo intervento al preventivo?').'\') ){ $(\'#aggiungi-intervento\').submit(); }" '.(($record['is_pianificabile'] && !$block_edit) ? '' : 'disabled').'>
                 <i class="fa fa-plus"></i> '.tr('Aggiungi').'
             </button>
 		</div>

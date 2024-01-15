@@ -112,24 +112,24 @@ echo '
                     <table class="table table-striped table-hover table-condensed table-bordered">
                         <tr>
                             <td>';
-                            echo input([
-                                'type' => 'ckeditor',
-                                'label' => tr('Note'),
-                                'name' => 'note',
-                                'extra' => 'rows="2"',
-                                'value' => $record['note'],
-                            ]);
-                            echo '
+echo input([
+    'type' => 'ckeditor',
+    'label' => tr('Note'),
+    'name' => 'note',
+    'extra' => 'rows="2"',
+    'value' => $record['note'],
+]);
+echo '
                             </td>
                         </tr>';
 
-                        if (!empty($record['presentazioni_exported_at'])) {
-                            $export_riba = '<i class="fa fa-check text-success"></i> '.tr('Esportata il _DATA_', [
-                                '_DATA_' => Translator::timestampToLocale($record['presentazioni_exported_at']),
-                            ]).'';
-                        } else {
-                            $export_riba = '<i class="fa fa-clock-o text-warning"></i> '.tr('Non ancora esportata');
-                        }
+if (!empty($record['presentazioni_exported_at'])) {
+    $export_riba = '<i class="fa fa-check text-success"></i> '.tr('Esportata il _DATA_', [
+        '_DATA_' => Translator::timestampToLocale($record['presentazioni_exported_at']),
+    ]).'';
+} else {
+    $export_riba = '<i class="fa fa-clock-o text-warning"></i> '.tr('Non ancora esportata');
+}
 echo '
                     </table>';
 
@@ -167,35 +167,35 @@ echo '
 
                         <tbody id="scadenze">';
 
-    foreach ($scadenze as $i => $scadenza) {
-        $scadenza = (array) $scadenza;
-        if ($scadenza['da_pagare'] === $scadenza['pagato'] && $scadenza['da_pagare'] > 0) {
-            $class = 'success';
-        } elseif (abs($scadenza['pagato']) === 0.000000) {
-            $class = 'danger';
-        } elseif (abs($scadenza['pagato']) <= abs($scadenza['da_pagare'])) {
-            $class = 'warning';
-        } else {
-            $class = 'danger';
-        }
+foreach ($scadenze as $i => $scadenza) {
+    $scadenza = (array) $scadenza;
+    if ($scadenza['da_pagare'] === $scadenza['pagato'] && $scadenza['da_pagare'] > 0) {
+        $class = 'success';
+    } elseif (abs($scadenza['pagato']) === 0.000000) {
+        $class = 'danger';
+    } elseif (abs($scadenza['pagato']) <= abs($scadenza['da_pagare'])) {
+        $class = 'warning';
+    } else {
+        $class = 'danger';
+    }
 
-        echo '
+    echo '
                             <tr class="'.$class.'">
                                 <input type="hidden" name="id_scadenza['.$i.']" value="'.$scadenza['id'].'">
                                 <td align="center">
                                     '.($dir == 'entrata' ?
-                                    '{[ "type": "select", "name": "id_banca_azienda['.$i.']", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['id_banca_azienda'].'", "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
-                                    :
-                                    '{[ "type": "select", "name": "id_banca_controparte['.$i.']", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).', "value": "'.$scadenza['id_banca_controparte'].'", "icon-after": "add|'.Modules::get('Banche')['id'].'|idanagrafica='.$record['idanagrafica'].'"]}
+                                '{[ "type": "select", "name": "id_banca_azienda['.$i.']", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['id_banca_azienda'].'", "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
+                                :
+                                '{[ "type": "select", "name": "id_banca_controparte['.$i.']", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).', "value": "'.$scadenza['id_banca_controparte'].'", "icon-after": "add|'.Modules::get('Banche')['id'].'|idanagrafica='.$record['idanagrafica'].'"]}
                                     ').'
                                 </td>
 
                                 <td align="center">
                                     '.($dir == 'entrata' ?
-                                    '{[ "type": "select", "name": "id_banca_controparte['.$i.']", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).', "value": "'.$scadenza['id_banca_controparte'].'", "icon-after": "add|'.Modules::get('Banche')['id'].'|idanagrafica='.$record['idanagrafica'].'"]}'
-                                    :
-                                    '{[ "type": "select", "name": "id_banca_azienda['.$i.']", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['id_banca_azienda'].'", "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
-                                    ).'
+                                '{[ "type": "select", "name": "id_banca_controparte['.$i.']", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).', "value": "'.$scadenza['id_banca_controparte'].'", "icon-after": "add|'.Modules::get('Banche')['id'].'|idanagrafica='.$record['idanagrafica'].'"]}'
+                                :
+                                '{[ "type": "select", "name": "id_banca_azienda['.$i.']", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['id_banca_azienda'].'", "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
+                                ).'
                                 </td>
 
                                 <td>
@@ -224,9 +224,9 @@ echo '
                                     </a>
                                 </td>
                             </tr>';
-    }
+}
 
-                        echo '
+echo '
                         </tbody>
                         <tfoot>
                             <tr>
@@ -263,11 +263,11 @@ echo '
 
 <?php
 if (empty($documento)) {
-                        echo '
+    echo '
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> '.tr('Elimina').'
 </a>';
-                    }
+}
 
 echo '
 <table class="hide">
@@ -276,17 +276,17 @@ echo '
             <input type="hidden" name="id_scadenza[-id-]" value="">
                 <td align="center">
                     '.($dir == 'entrata' ?
-                    '{[ "type": "select", "name": "id_banca_azienda[-id-]", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
-                    :
-                    '{[ "type": "select", "name": "id_banca_controparte[-id-]", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).', "icon-after": "add|'.Modules::get('Banche')['id'].'|idanagrafica='.$record['idanagrafica'].'"]}
+'{[ "type": "select", "name": "id_banca_azienda[-id-]", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
+:
+'{[ "type": "select", "name": "id_banca_controparte[-id-]", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).', "icon-after": "add|'.Modules::get('Banche')['id'].'|idanagrafica='.$record['idanagrafica'].'"]}
                     ').'
                 </td>
                 <td align="center">
                     '.($dir == 'entrata' ?
-                    '{[ "type": "select", "name": "id_banca_controparte[-id-]", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).',"icon-after": "add|'.Modules::get('Banche')['id'].'|idanagrafica='.$record['idanagrafica'].'"]}'
-                    :
-                    '{[ "type": "select", "name": "id_banca_azienda[-id-]", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
-                    ).'
+'{[ "type": "select", "name": "id_banca_controparte[-id-]", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).',"icon-after": "add|'.Modules::get('Banche')['id'].'|idanagrafica='.$record['idanagrafica'].'"]}'
+:
+'{[ "type": "select", "name": "id_banca_azienda[-id-]", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
+).'
                 </td>
 
                 <td>

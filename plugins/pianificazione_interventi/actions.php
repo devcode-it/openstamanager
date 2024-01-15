@@ -56,7 +56,7 @@ switch ($operazione) {
 
         break;
 
-    // Eliminazione pianificazione
+        // Eliminazione pianificazione
     case 'delete-promemoria':
         $id = post('id');
 
@@ -67,7 +67,7 @@ switch ($operazione) {
 
         break;
 
-    // Eliminazione tutti i promemoria di questo contratto con non hanno l'intervento associato
+        // Eliminazione tutti i promemoria di questo contratto con non hanno l'intervento associato
     case 'delete-non-associati':
         $dbo->query('DELETE FROM `co_righe_promemoria` WHERE id_promemoria IN (SELECT id FROM `co_promemoria` WHERE idcontratto = :id_contratto AND idintervento IS NULL)', [
             ':id_contratto' => $id_record,
@@ -81,7 +81,7 @@ switch ($operazione) {
 
         break;
 
-    // Pianificazione ciclica
+        // Pianificazione ciclica
     case 'pianificazione':
         $intervallo = post('intervallo');
         $data_inizio = post('data_inizio');
@@ -202,7 +202,7 @@ switch ($operazione) {
                 }
             }
         }
-    break;
+        break;
 
     case 'manage_articolo':
         if (post('idriga') != null) {

@@ -31,7 +31,7 @@ if (!empty(filter('order'))) {
 }
 array_shift($columns);
 
-$total = Util\Query::readQuery($structure);
+$total = Query::readQuery($structure);
 
 // Ricerca
 $search = [];
@@ -74,7 +74,7 @@ if (!empty($query)) {
     $results['recordsFiltered'] = $data['count'];
 
     // SOMME
-    $results['summable'] = Util\Query::getSums($structure, $search);
+    $results['summable'] = Query::getSums($structure, $search);
 
     // Allineamento delle righe
     $align = [];

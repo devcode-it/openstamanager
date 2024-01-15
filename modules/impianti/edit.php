@@ -59,7 +59,7 @@ if (!empty($record['immagine'])) {
 						<div class="col-md-6">
 							<?php
                                 echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
-                            ?>
+?>
 							{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "extra": "", "ajax-source": "clienti" ]}
 						</div>
 						<div class="col-md-6">
@@ -69,7 +69,7 @@ if (!empty($record['immagine'])) {
 					<div class ="row">
 						<div class="col-md-6">
                             <?php echo (!empty($record['id_categoria'])) ?
-                                Modules::link('Categorie impianti', $record['id_categoria'], null, null, 'class="pull-right"') : ''; ?>
+    Modules::link('Categorie impianti', $record['id_categoria'], null, null, 'class="pull-right"') : ''; ?>
                             {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie_imp", "icon-after": "add|<?php echo Modules::get('Categorie impianti')['id']; ?>" ]}
                         </div>
 
@@ -90,7 +90,7 @@ if (!empty($record['immagine'])) {
 				<div class="col-md-4">
 					{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "value": "$idsede$", "required": "1", "ajax-source": "sedi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "placeholder": "'.tr('Sede legale').'" ]}
 				</div>';
-                ?>
+?>
 				<div class="col-md-4">
 					{[ "type": "text", "label": "<?php echo tr('Proprietario'); ?>", "name": "proprietario", "value": "$proprietario$" ]}
 				</div>

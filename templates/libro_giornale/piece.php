@@ -39,15 +39,15 @@ echo '
     <td>'.$record['conto'].'</td>
     <td>'.$record['descrizione'].'</td>';
 
-    if ($record['totale'] >= 0) {
-        echo '<td class="text-right">'.moneyFormat(abs($record['totale']), 2).'</td>
+if ($record['totale'] >= 0) {
+    echo '<td class="text-right">'.moneyFormat(abs($record['totale']), 2).'</td>
         <td></td>';
-        $dare_giorno += $record['totale'];
-    } else {
-        echo ' <td></td>
+    $dare_giorno += $record['totale'];
+} else {
+    echo ' <td></td>
         <td class="text-right">'.moneyFormat(abs($record['totale']), 2).'</td>';
-        $avere_giorno += $record['totale'];
-    }
+    $avere_giorno += $record['totale'];
+}
 
 echo '
 </tr>';

@@ -125,8 +125,6 @@ class Filter
      * Sanitarizza i contenuti dell'input.
      *
      * @param mixed $input Contenuti
-     *
-     * @return mixed
      */
     public static function sanitize($input)
     {
@@ -146,8 +144,6 @@ class Filter
      * Interpreta e formatta correttamente i contenuti dell'input.
      *
      * @param mixed $input Contenuti
-     *
-     * @return mixed
      */
     public static function parse($input)
     {
@@ -166,16 +162,16 @@ class Filter
     /**
      * Restituisce l'istanza di HTMLPurifier in utilizzo.
      *
-     * @return \HTMLPurifier
+     * @return HTMLPurifier
      */
     public static function getPurifier()
     {
         if (empty(self::$purifier)) {
-            $config = \HTMLPurifier_Config::createDefault();
+            $config = HTMLPurifier_Config::createDefault();
 
             $config->set('HTML.Allowed', 'br,p[style],b[style],strong[style],i[style],em[style],u[style],strike,a[style|href|title|target],ol[style],ul[style],li[style],hr[style],blockquote[style],img[style|alt|title|width|height|src|align],table[style|width|bgcolor|align|cellspacing|cellpadding|border],tr[style],td[style],th[style],tbody,thead,caption,col,colgroup,span[style],sup,h1[style],h2[style],h3[style],h4[style],h5[style],h6[style]');
 
-            //$config->set('Cache.SerializerPath', realpath(__DIR__.'/cache/HTMLPurifier'));
+            // $config->set('Cache.SerializerPath', realpath(__DIR__.'/cache/HTMLPurifier'));
             $config->set('Cache.DefinitionImpl', null);
             $config->set('URI.AllowedSchemes', [
                 'http' => true,
@@ -186,7 +182,7 @@ class Filter
                 'data' => true,
             ]);
 
-            self::$purifier = new \HTMLPurifier($config);
+            self::$purifier = new HTMLPurifier($config);
         }
 
         return self::$purifier;
@@ -197,7 +193,6 @@ class Filter
      *
      * @param string $method
      * @param string $property
-     * @param mixed  $value
      */
     public static function set($method, $property, $value)
     {

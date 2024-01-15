@@ -50,8 +50,8 @@ $righe = $dbo->fetchArray(
                 <?php
                     $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
-                    $ultimo_prezzo_preventivo = $dbo->fetchArray(
-                        'SELECT
+                $ultimo_prezzo_preventivo = $dbo->fetchArray(
+                    'SELECT
                         co_righe_preventivi.idarticolo,
                         co_righe_preventivi.prezzo_unitario,
                         DATE(co_righe_preventivi.updated_at) AS updated_at
@@ -65,10 +65,10 @@ $righe = $dbo->fetchArray(
                         mg_articoli.id, co_righe_preventivi.id
                     ORDER BY
                         updated_at DESC'
-                    )[0];
+                )[0];
 
-                    $ultimo_prezzo_vendita = $dbo->fetchArray(
-                        'SELECT
+                $ultimo_prezzo_vendita = $dbo->fetchArray(
+                    'SELECT
                         co_righe_preventivi.idarticolo,
                         co_righe_documenti.prezzo_unitario,
                         DATE(co_righe_documenti.updated_at) AS updated_at
@@ -83,7 +83,7 @@ $righe = $dbo->fetchArray(
                         mg_articoli.id, co_righe_documenti.id
                     ORDER BY
                         updated_at DESC'
-                    )[0];
+                )[0];
                 ?>
 
                 <tr>
@@ -100,14 +100,14 @@ $righe = $dbo->fetchArray(
                         } else {
                             echo 'n.d.';
                         }
-                    ?></td>
+                ?></td>
                     <td class="text-center"><?php
-                        if (isset($ultimo_prezzo_vendita)) {
-                            echo moneyFormat($ultimo_prezzo_vendita['prezzo_unitario'], 2).(!empty($ultimo_prezzo_vendita['updated_at']) ? ' <br><small class="help-block tip" title="'.dateFormat($ultimo_prezzo_vendita['updated_at']).'">'.(new Carbon($ultimo_prezzo_vendita['updated_at']))->diffForHumans().'</small>' : '');
-                        } else {
-                            echo 'n.d.';
-                        }
-                    ?></td>
+                    if (isset($ultimo_prezzo_vendita)) {
+                        echo moneyFormat($ultimo_prezzo_vendita['prezzo_unitario'], 2).(!empty($ultimo_prezzo_vendita['updated_at']) ? ' <br><small class="help-block tip" title="'.dateFormat($ultimo_prezzo_vendita['updated_at']).'">'.(new Carbon($ultimo_prezzo_vendita['updated_at']))->diffForHumans().'</small>' : '');
+                    } else {
+                        echo 'n.d.';
+                    }
+                ?></td>
                 </tr>
             <?php } ?>
         </tbody>

@@ -52,9 +52,9 @@ if (!empty($date_start) and !empty($date_end)) {
 echo '
     <p style="color:#aaa; font-size:10px;" class="text-right">
         '.tr('_TEXT_',
-        [
-            '_TEXT_' => (empty($text) ? 'Solo fatture con stato \'Pagato\'' : 'Include fatture con stato \'Pagato\', '.implode(', ', $text)),
-        ]).'
+    [
+        '_TEXT_' => (empty($text) ? 'Solo fatture con stato \'Pagato\'' : 'Include fatture con stato \'Pagato\', '.implode(', ', $text)),
+    ]).'
     </p>
 <table class="table table-striped table-bordered" id="contents">
     <thead>

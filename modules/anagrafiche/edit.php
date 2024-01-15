@@ -115,7 +115,7 @@ if (sizeof($problemi_anagrafica) > 0) {
 
                 <!-- RIGA PER LE ANAGRAFICHE CON TIPOLOGIA 'PRIVATO' -->
                 <?php if ($record['tipo'] == 'Privato') {
-    ?>
+                    ?>
                     <div class="row">
                         <div class="col-md-4">
                             {[ "type": "text", "label": "<?php echo tr('Luogo di nascita'); ?>", "name": "luogo_nascita", "value": "$luogo_nascita$" ]}
@@ -130,7 +130,7 @@ if (sizeof($problemi_anagrafica) > 0) {
                         </div>
                     </div>
                 <?php
-} ?>
+                } ?>
 
                 <div class="row">
                     <div class="col-md-2">
@@ -139,18 +139,18 @@ if (sizeof($problemi_anagrafica) > 0) {
 
                     <div class="col-md-2">
                         <?php
-                        $help_codice_destinatario = tr("Per impostare il codice specificare prima il campo '_NATION_' dell'anagrafica", [
-                            '_NATION_' => '<b>Nazione</b>',
-                        ]).':<br><br><ul>
+                                        $help_codice_destinatario = tr("Per impostare il codice specificare prima il campo '_NATION_' dell'anagrafica", [
+                                            '_NATION_' => '<b>Nazione</b>',
+                                        ]).':<br><br><ul>
                                 <li>'.tr('Ente pubblico (B2G/PA) - Codice Univoco Ufficio (www.indicepa.gov.it), 6 caratteri').'</li>
                                 <li>'.tr('Azienda (B2B) - Codice Destinatario, 7 caratteri').'</li>
                                 <li>'.tr('Privato (B2C) - viene utilizzato il Codice Fiscale').'</li></ul>
                             '.tr('Se non si conosce il codice destinatario lasciare vuoto il campo, e verrà applicato in automatico quello previsto di default dal sistema (\'0000000\', \'999999\', \'XXXXXXX\')').'.';
 
-                        if (in_array($id_azienda, $tipi_anagrafica)) {
-                            $help_codice_destinatario .= ' <b>'.tr("Non è necessario comunicare il proprio codice destinatario ai fornitori in quanto è sufficiente che questo sia registrato nel portale del Sistema Di Interscambio dell'Agenzia Entrate (SDI)").'.</b>';
-                        }
-                        ?>
+if (in_array($id_azienda, $tipi_anagrafica)) {
+    $help_codice_destinatario .= ' <b>'.tr("Non è necessario comunicare il proprio codice destinatario ai fornitori in quanto è sufficiente che questo sia registrato nel portale del Sistema Di Interscambio dell'Agenzia Entrate (SDI)").'.</b>';
+}
+?>
                         {[ "type": "text", "label": "<?php echo ($record['tipo'] == 'Ente pubblico') ? tr('Codice unico ufficio') : tr('Codice destinatario'); ?>", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "value": "$codice_destinatario$", "maxlength": <?php echo ($record['tipo'] == 'Ente pubblico') ? '6' : '7'; ?>, "help": "<?php echo tr($help_codice_destinatario); ?>", "readonly": "<?php echo intval($nazione_anagrafica ? !(($nazione_anagrafica->iso2 === 'IT') || ($nazione_anagrafica->iso2 === 'SM')) : 0); ?>" ]}
                     </div>
 
@@ -243,10 +243,10 @@ if (sizeof($problemi_anagrafica) > 0) {
             <?php
             $sede_cliente = $anagrafica->sedeLegale;
 
-            $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
-            $sede_azienda = $anagrafica_azienda->sedeLegale;
+$anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
+$sede_azienda = $anagrafica_azienda->sedeLegale;
 
-            echo '
+echo '
             <div class="col-md-4">
                 <div class="panel panel-primary">
                     <div class="panel-heading">
@@ -254,48 +254,48 @@ if (sizeof($problemi_anagrafica) > 0) {
                     </div>
                     <div class="panel-body">';
 
-            // Area caricamento mappa
-            echo '
+// Area caricamento mappa
+echo '
                         <div id="map-edit" style="width: 100%;"></div>
 
                         <div class="clearfix"></div>
                         <br>';
 
-            if (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($sede_cliente->lng))) {
-                // Modifica manuale delle informazioni
-                echo '
+if (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($sede_cliente->lng))) {
+    // Modifica manuale delle informazioni
+    echo '
                         <a class="btn btn-info btn-block" onclick="modificaPosizione()">
                             <i class="fa fa-map"></i> '.tr('Aggiorna posizione').'
                         </a>';
-            } else {
-                // Definizione manuale delle informazioni
-                echo '
+} else {
+    // Definizione manuale delle informazioni
+    echo '
                         <a class="btn btn-primary btn-block" onclick="modificaPosizione()">
                             <i class="fa fa-map"></i> '.tr('Definisci posizione').'
                         </a>';
-            }
+}
 
-            // Navigazione diretta verso l'indirizzo
-            echo '
+// Navigazione diretta verso l'indirizzo
+echo '
                         <a class="btn btn-info btn-block '.((empty($sede_cliente->lat) && empty($sede_cliente->lng)) ? 'disabled' : '').'" onclick="$(\'#map-edit\').height(235); caricaMappa(); $(this).hide();">
                             <i class="fa fa-compass"></i> '.tr('Carica mappa').'
                         </a>';
 
-            // Navigazione diretta verso l'indirizzo
-            echo '
+// Navigazione diretta verso l'indirizzo
+echo '
                         <a class="btn btn-info btn-block '.(($anagrafica->isAzienda() || (empty($sede_cliente->lat) || empty($sede_cliente->lng)) || (empty($sede_azienda->lat) || empty($sede_azienda->lng))) ? 'disabled' : '').'" onclick="calcolaPercorso()">
                             <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
                             '.((!empty($sede_cliente->lat) && !empty($sede_azienda->lat)) ? tr('(GPS)') : '').'
                         </a>';
 
-            // Ricerca diretta su Mappa
-            echo '
+// Ricerca diretta su Mappa
+echo '
                         <a class="btn btn-info btn-block" onclick="cercaOpenStreetMap()">
                             <i class="fa fa-map-marker"></i> '.tr('Cerca su Mappa').'
                             '.((!empty($sede_cliente->lat)) ? tr(' (GPS)') : '').'
                         </a>';
 
-            echo '
+echo '
                     </div>
                 </div>
             </div>
@@ -423,8 +423,8 @@ if (sizeof($problemi_anagrafica) > 0) {
 
         </script>';
 
-            if ($is_cliente or $is_fornitore or $is_tecnico) {
-                echo '
+if ($is_cliente or $is_fornitore or $is_tecnico) {
+    echo '
 
     <div class="panel panel-primary">
         <div class="panel-heading">
@@ -463,13 +463,13 @@ if (sizeof($problemi_anagrafica) > 0) {
                             
                         </div>';
 
-                $banche = Banca::where('id_anagrafica', $anagrafica->id)->get();
-                $banca_predefinita = $banche->first(function ($item) {
-                    return !empty($item['predefined']);
-                });
-                $modulo_banche = Modules::get('Banche');
-                if (!$banche->isEmpty()) {
-                    echo '
+    $banche = Banca::where('id_anagrafica', $anagrafica->id)->get();
+    $banca_predefinita = $banche->first(function ($item) {
+        return !empty($item['predefined']);
+    });
+    $modulo_banche = Modules::get('Banche');
+    if (!$banche->isEmpty()) {
+        echo '
                         <div class="row">
                             <div class="col-md-6">
                                 <a href="'.base_path().'/editor.php?id_module='.$modulo_banche['id'].'&id_record='.$banca_predefinita->id.'">
@@ -483,14 +483,14 @@ if (sizeof($problemi_anagrafica) > 0) {
                                 </a>
                             </div>
                         </div>';
-                } else {
-                    echo '
+    } else {
+        echo '
                         <div class="alert alert-info">
                             '.tr('Non sono presenti banche per l\'anagrafica').'... '.Modules::link('Banche', null, tr('Creane una')).'
                         </div>';
-                }
+    }
 
-                echo '
+    echo '
                     </div>
 
                     <div class="tab-pane '.(!$is_cliente ? 'hide' : 'active').'" id="cliente">
@@ -553,26 +553,26 @@ if (sizeof($problemi_anagrafica) > 0) {
                                 {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento_default", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$id_record.', "data": "'.Carbon::now().'"},"value": "$id_dichiarazione_intento_default$" ]}
                             </div>';
 
-                // Collegamento con il conto
-                $conto = $dbo->fetchOne('SELECT co_pianodeiconti3.id, co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_cliente']));
+    // Collegamento con il conto
+    $conto = $dbo->fetchOne('SELECT co_pianodeiconti3.id, co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_cliente']));
 
-                echo '
+    echo '
                             <div class="col-md-6">
                                 <p><b>'.tr('Piano dei conti cliente').'</b></p>';
 
-                if (!empty($conto['numero_conto'])) {
-                    $piano_dei_conti_cliente = $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'];
-                    echo Modules::link('Piano dei conti', null, $piano_dei_conti_cliente, null, '', 1, 'movimenti-'.$conto['id']);
-                } else {
-                    $piano_dei_conti_cliente = tr('Nessuno');
-                }
+    if (!empty($conto['numero_conto'])) {
+        $piano_dei_conti_cliente = $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'];
+        echo Modules::link('Piano dei conti', null, $piano_dei_conti_cliente, null, '', 1, 'movimenti-'.$conto['id']);
+    } else {
+        $piano_dei_conti_cliente = tr('Nessuno');
+    }
 
-                echo '
+    echo '
                             </div>
                         </div>
                     </div>';
 
-                echo '
+    echo '
                     <div class="tab-pane '.(!$is_fornitore ? 'hide' : (!$is_cliente ? 'active' : '')).'" id="fornitore">
                         <div class="row">
                             <div class="col-md-6">
@@ -599,26 +599,26 @@ if (sizeof($problemi_anagrafica) > 0) {
                                 {[ "type": "select", "label": "'.tr('Piano di sconto/magg. su articoli').'", "name": "id_piano_sconto_acquisti", "values": "query=SELECT id, nome AS descrizione FROM mg_piani_sconto ORDER BY nome ASC", "value": "$id_piano_sconto_acquisti$" ]}
                             </div>';
 
-                // Collegamento con il conto
-                $conto = $dbo->fetchOne('SELECT co_pianodeiconti3.id, co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_fornitore']));
+    // Collegamento con il conto
+    $conto = $dbo->fetchOne('SELECT co_pianodeiconti3.id, co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_fornitore']));
 
-                echo '
+    echo '
                             <div class="col-md-6">
                                 <p><b>'.tr('Piano dei conti fornitore').'</b></p>';
 
-                if (!empty($conto['numero_conto'])) {
-                    $piano_dei_conti_fornitore = $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'];
-                    echo Modules::link('Piano dei conti', null, $piano_dei_conti_fornitore, null, '', 1, 'movimenti-'.$conto['id']);
-                } else {
-                    $piano_dei_conti_fornitore = tr('Nessuno');
-                }
+    if (!empty($conto['numero_conto'])) {
+        $piano_dei_conti_fornitore = $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'];
+        echo Modules::link('Piano dei conti', null, $piano_dei_conti_fornitore, null, '', 1, 'movimenti-'.$conto['id']);
+    } else {
+        $piano_dei_conti_fornitore = tr('Nessuno');
+    }
 
-                echo '
+    echo '
                             </div>
                         </div>
                     </div>';
 
-                echo '
+    echo '
                     <div class="tab-pane'.(!$is_cliente && !$is_fornitore && $is_tecnico ? ' active' : '').''.(!$is_tecnico ? ' hide' : '').'" id="tecnico">
                         <div class="row">
                             <div class="col-md-6">
@@ -627,13 +627,13 @@ if (sizeof($problemi_anagrafica) > 0) {
                         </div>
                     </div>';
 
-                echo '
+    echo '
                 </div>
             </div>
         </div>
     </div>';
-            }
-            ?>
+}
+?>
 
             <div class="panel panel-primary">
                 <div class="panel-heading">
@@ -648,22 +648,22 @@ if (sizeof($problemi_anagrafica) > 0) {
 
                         <div class="col-md-3">
                             {[ "type": "text", "label": "<?php echo tr('Codice R.E.A.').' <small>('.tr('provincia-C.C.I.A.A.').')</small>'; ?>", "name": "codicerea", "value": "$codicerea$", "class": "rea-mask text-uppercase", "help": "<?php echo tr('Esempio: _PATTERN_', [
-                                                                                                                                                                                                                                                        '_PATTERN_' => 'RM-123456',
-                                                                                                                                                                                                                                                    ]); ?>" ]}
+                                                                                                                                                                                                                                            '_PATTERN_' => 'RM-123456',
+                                                                                                                                                                                                                                        ]); ?>" ]}
                         </div>
 
                         <div class="col-md-3">
                             {[ "type": "text", "label": "<?php echo tr('Riferimento Amministrazione'); ?>", "name": "riferimento_amministrazione", "value": "$riferimento_amministrazione$", "maxlength": "20" ]}
                         </div>
                         <?php
-                        if ($is_agente) {
-                            ?>
+            if ($is_agente) {
+                ?>
                             <div class="col-md-3">
                                 {[ "type": "number", "label": "<?php echo tr('Provvigione predefinita'); ?>", "name": "provvigione_default", "value": "$provvigione_default$", "icon-after": "%" ]}
                             </div>
                         <?php
-                        }
-                        ?>
+            }
+?>
                     </div>
 
                     <div class="row">
@@ -706,11 +706,11 @@ if (sizeof($problemi_anagrafica) > 0) {
                         <div class="col-md-12">
                             {[ "type": "select", "multiple": "1", "label": "<?php echo tr('Tipo di anagrafica'); ?>", "name": "idtipoanagrafica[]", "values": "query=SELECT idtipoanagrafica AS id, descrizione FROM an_tipianagrafiche WHERE idtipoanagrafica NOT IN (SELECT DISTINCT(x.idtipoanagrafica) FROM an_tipianagrafiche_anagrafiche x INNER JOIN an_tipianagrafiche t ON x.idtipoanagrafica = t.idtipoanagrafica INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = x.idanagrafica WHERE t.descrizione = 'Azienda' AND deleted_at IS NULL) ORDER BY descrizione", "value": "$idtipianagrafica$" ]}
                             <?php
-                            if (in_array($id_azienda, $tipi_anagrafica)) {
-                                echo '
+    if (in_array($id_azienda, $tipi_anagrafica)) {
+        echo '
 						<p class="badge badge-info">'.tr('Questa anagrafica è di tipo "Azienda"').'.</p>';
-                            }
-                            ?>
+    }
+?>
                         </div>
                     </div>
 
@@ -779,8 +779,8 @@ if (!empty($elementi)) {
             '_DELETED_AT_' => (!empty($elemento['deleted_at']) ? tr('Eliminato il:').' '.Translator::dateToLocale($elemento['deleted_at']) : ''),
         ]);
 
-        //se non è un preventivo è un ddt o una fattura
-        //se non è un ddt è una fattura.
+        // se non è un preventivo è un ddt o una fattura
+        // se non è un ddt è una fattura.
         if (in_array($elemento['tipo_documento'], ['Utente'])) {
             $modulo = 'Utenti e permessi';
         } elseif (in_array($elemento['tipo_documento'], ['Intervento'])) {

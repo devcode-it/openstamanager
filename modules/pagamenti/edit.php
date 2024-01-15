@@ -253,8 +253,8 @@ echo '
         '_DELETED_AT_' => (!empty($elemento['deleted_at']) ? tr('Eliminato il:').' '.Translator::dateToLocale($elemento['deleted_at']) : ''),
     ]);
 
-        //se non è un preventivo è un ddt o una fattura
-        //se non è un ddt è una fattura.
+        // se non è un preventivo è un ddt o una fattura
+        // se non è un ddt è una fattura.
         if (in_array($elemento['tipo_documento'], ['Preventivo'])) {
             $modulo = 'Preventivi';
         } elseif (in_array($elemento['tipo_documento'], ['Contratto'])) {

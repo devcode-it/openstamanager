@@ -122,8 +122,6 @@ class Modules
     /**
      * Restituisce i filtri aggiuntivi dell'utente in relazione al modulo specificato.
      *
-     * @param int $id
-     *
      * @return string
      */
     public static function getAdditionals($module, $include_segments = true)
@@ -193,8 +191,6 @@ class Modules
     /**
      * Restituisce le condizioni SQL aggiuntive del modulo.
      *
-     * @param string $name
-     *
      * @return array
      */
     public static function getAdditionalsQuery($module, $type = null, $include_segments = true)
@@ -228,8 +224,6 @@ class Modules
 
     /**
      * Restituisce tutte le informazioni dei moduli installati in una scala gerarchica fino alla profondità indicata.
-     *
-     * @param int $depth
      *
      * @return array
      */

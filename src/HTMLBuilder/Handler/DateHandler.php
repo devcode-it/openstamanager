@@ -60,9 +60,9 @@ class DateHandler implements HandlerInterface
 
         // Controllo sulla correttezza sintattica del valore impostato
         if (!(
-            ($values['type'] == 'timestamp' && formatter()->isFormattedTimestamp($values['value'])) ||
-            ($values['type'] == 'date' && formatter()->isFormattedDate($values['value'])) ||
-            ($values['type'] == 'time' && formatter()->isFormattedTime($values['value']))
+            ($values['type'] == 'timestamp' && formatter()->isFormattedTimestamp($values['value']))
+            || ($values['type'] == 'date' && formatter()->isFormattedDate($values['value']))
+            || ($values['type'] == 'time' && formatter()->isFormattedTime($values['value']))
         )) {
             $values['value'] = '';
         }

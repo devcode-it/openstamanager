@@ -43,5 +43,5 @@ if ($config['maintenance_ip'] != $_SERVER['REMOTE_ADDR']) {
 
     include_once App::filepath('include|custom|', 'bottom.php');
 
-    exit();
+    exit;
 }

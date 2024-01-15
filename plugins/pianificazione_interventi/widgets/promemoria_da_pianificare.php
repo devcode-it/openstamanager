@@ -91,7 +91,7 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
 
         // Sede promemoria
         if ($promemoria->idsede == '-1') {
-            echo '- '.('Nessuna').' -';
+            echo '- Nessuna -';
         } elseif (empty($promemoria->idsede)) {
             echo tr('Sede legale');
         } else {

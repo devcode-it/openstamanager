@@ -126,7 +126,7 @@ if (!$pianificazioni->isEmpty()) {
     <div class="clearfix"></div>';
 }
 
-    echo '
+echo '
     <script type="text/javascript">
         $("#pianifica").click(function() {
             openModal("Nuova pianificazione", "'.$structure->fileurl('add_pianificazione.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'");

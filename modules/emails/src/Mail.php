@@ -32,7 +32,7 @@ class Mail extends Model
 
     protected $table = 'em_emails';
 
-    protected $options = null;
+    protected $options;
 
     public static function build(User $user, $template = null, $id_record = null, $account = null)
     {
@@ -75,8 +75,7 @@ class Mail extends Model
     /**
      * Aggiunge una stampa alla notifica.
      *
-     * @param string|int $print
-     * @param string     $name
+     * @param string $name
      */
     public function addPrint($print_id, $name = null)
     {

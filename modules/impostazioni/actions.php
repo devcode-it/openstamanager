@@ -70,7 +70,7 @@ switch (filter('op')) {
                 $value = implode(',', $value);
             }
 
-            //Se è un'impostazione editabile
+            // Se è un'impostazione editabile
             if ($result->editable) {
                 $is_valid = Settings::setValue($id, $value);
 

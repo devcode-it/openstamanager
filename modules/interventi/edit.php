@@ -28,7 +28,7 @@ $module_anagrafiche = Modules::get('Anagrafiche');
 // Verifica aggiuntive sulla sequenzialità dei numeri
 $numero_previsto = verifica_numero_intervento($intervento);
 
-if (!empty($numero_previsto) && intval((setting('Verifica numero intervento')))) {
+if (!empty($numero_previsto) && intval(setting('Verifica numero intervento'))) {
     echo '
 <div class="alert alert-warning alert-dismissable">
     <i class="fa fa-warning"></i> '.tr("E' assente una attività con numero _NUM_ in data precedente o corrispondente al _DATE_: potrebbero esserci alcuni errori di continuità con la numerazione delle attività", [
@@ -67,10 +67,10 @@ echo '
                         </div>
 
                         <div class="col-md-6">';
-                            if (!empty($record['idclientefinale'])) {
-                                echo '
+if (!empty($record['idclientefinale'])) {
+    echo '
                                                         '.Modules::link('Anagrafiche', $record['idclientefinale'], null, null, 'class="pull-right"');
-                            }
+}
 echo '
                             {[ "type": "select", "label": "'.tr('Per conto di').'", "name": "idclientefinale", "value": "$idclientefinale$", "ajax-source": "clienti", "readonly": "'.$record['flag_completato'].'" ]}
                         </div>
@@ -93,7 +93,7 @@ echo '
 
                         <div class="col-md-6">';
 
-                        $idpreventivo_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE idintervento='.prepare($id_record))['id'];
+$idpreventivo_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE idintervento='.prepare($id_record))['id'];
 
 if (!empty($record['idcontratto'])) {
     echo '
@@ -110,22 +110,22 @@ echo '
                     <div class="row">
                         <div class="col-md-6">';
 
-                    $idcontratto_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE idintervento='.prepare($id_record))['id'];
+$idcontratto_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE idintervento='.prepare($id_record))['id'];
 
-                    if (!empty($record['idordine'])) {
-                        echo '
+if (!empty($record['idordine'])) {
+    echo '
                             '.Modules::link('Ordini cliente', $record['idordine'], null, null, 'class="pull-right"');
-                    }
-                    echo '
+}
+echo '
 
                             {[ "type": "select", "label": "'.tr('Ordine').'", "name": "idordine", "value": "'.$record['id_ordine'].'", "ajax-source": "ordini-cliente", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'" ]}
                         </div>
 
                         <div class="col-md-6">';
-                        if ($record['idagente'] != 0) {
-                            echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
-                        }
-        echo '
+if ($record['idagente'] != 0) {
+    echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
+}
+echo '
                             {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
                         </div>
                     </div>
@@ -338,42 +338,42 @@ echo '
             <!-- RIGA 5 -->
             <div class="row">
                 <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">';
-                    echo input([
-                        'type' => 'ckeditor',
-                        'label' => tr('Richiesta'),
-                        'name' => 'richiesta',
-                        'id' => 'richiesta_add',
-                        'required' => 1,
-                        'value' => $record['richiesta'],
-                        'extra' => 'style=\'max-height:80px;\'',
-                    ]);
-                    echo '
+echo input([
+    'type' => 'ckeditor',
+    'label' => tr('Richiesta'),
+    'name' => 'richiesta',
+    'id' => 'richiesta_add',
+    'required' => 1,
+    'value' => $record['richiesta'],
+    'extra' => 'style=\'max-height:80px;\'',
+]);
+echo '
                 </div>
                 <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">';
-                    echo input([
-                        'type' => 'ckeditor',
-                        'label' => tr('Descrizione'),
-                        'name' => 'descrizione',
-                        'id' => 'descrizione_add',
-                        'value' => $record['descrizione'],
-                        'extra' => 'style=\'max-height:80px;\'',
-                    ]);
-                    echo '
+echo input([
+    'type' => 'ckeditor',
+    'label' => tr('Descrizione'),
+    'name' => 'descrizione',
+    'id' => 'descrizione_add',
+    'value' => $record['descrizione'],
+    'extra' => 'style=\'max-height:80px;\'',
+]);
+echo '
                 </div>
             </div>';
-                // Nascondo le note interne ai clienti
-                if ($user->gruppo != 'Clienti') {
-                    echo '
+// Nascondo le note interne ai clienti
+if ($user->gruppo != 'Clienti') {
+    echo '
                     <div class="row">
                         <div class="col-md-12">
                             {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows=\'5\'" ]}
                         </div>
                     </div>';
-                }
+}
 
-                // Conteggio numero articoli intervento per eventuale blocco della sede di partenza
-                $articoli = $intervento->articoli;
-                echo'
+// Conteggio numero articoli intervento per eventuale blocco della sede di partenza
+$articoli = $intervento->articoli;
+echo '
                 <div class="row"><div class="col-md-4">
                     {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "readonly": "'.(($record['flag_completato'] || !$articoli->isEmpty()) ? 1 : 0).'" ]}
                 </div></div>
@@ -381,26 +381,26 @@ echo '
         </div>
     </div>';
 
-    // Visualizzo solo se l'anagrafica cliente è un ente pubblico
-    if (!empty($record['idcontratto'])) {
-        $contratto = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM co_contratti WHERE id = '.prepare($record['idcontratto']));
-        $record['id_documento_fe'] = $contratto['id_documento_fe'];
-        $record['codice_cup'] = $contratto['codice_cup'];
-        $record['codice_cig'] = $contratto['codice_cig'];
-        $record['num_item'] = $contratto['num_item'];
-    }
+// Visualizzo solo se l'anagrafica cliente è un ente pubblico
+if (!empty($record['idcontratto'])) {
+    $contratto = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM co_contratti WHERE id = '.prepare($record['idcontratto']));
+    $record['id_documento_fe'] = $contratto['id_documento_fe'];
+    $record['codice_cup'] = $contratto['codice_cup'];
+    $record['codice_cig'] = $contratto['codice_cig'];
+    $record['num_item'] = $contratto['num_item'];
+}
 
-    ?>
+?>
     <!-- Fatturazione Elettronica PA-->
     <div class="panel panel-primary <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?>" >
         <div class="panel-heading">
             <h3 class="panel-title"><?php echo tr('Dati appalto'); ?>
 			<?php if (!empty($record['idcontratto'])) {
-        ?>
+			    ?>
 			<span class="tip" title="<?php echo tr('E\' possibile specificare i dati dell\'appalto solo se il cliente è di tipo \'Ente pubblico\' o \'Azienda\' e l\'attività non risulta già collegata ad un contratto.'); ?>" > <i class="fa fa-question-circle-o"></i></span>
 			</h3>
 			<?php
-    } ?>
+			} ?>
         </div>
 
         <div class="panel-body">
@@ -434,16 +434,16 @@ echo '
 
     <div class="panel-body">
     <?php
-    if ($show_prezzi) {
-        echo "
+			if ($show_prezzi) {
+			    echo "
         <div class=\"pull-right\">
             <a class='btn btn-default btn-details' onclick=\"$('.extra').removeClass('hide'); $(this).addClass('hide'); $('#dontshowall_dettagli').removeClass('hide');\" id='showall_dettagli'><i class='fa fa-square-o'></i> <?php echo tr('Visualizza dettaglio costi'); ?></a>
             <a class='btn btn-info btn-details hide' onclick=\"$('.extra').addClass('hide'); $(this).addClass('hide'); $('#showall_dettagli').removeClass('hide');\" id='dontshowall_dettagli'><i class='fa fa-check-square-o'></i> <?php echo tr('Visualizza dettaglio costi'); ?></a>
         </div>
         <div class=\"clearfix\"></div>
         <br>";
-    }
-    ?>
+			}
+?>
 
         <div class="row">
             <div class="col-md-12" id="tecnici"></div>

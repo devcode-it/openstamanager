@@ -58,22 +58,22 @@ echo '
     <tr>
         <th class="text-center col-md-4">'.($direzione == 'entrata' ? tr('Cliente') : tr('Fornitore')).'</th>
         <th class="text-center col-md-4">'.tr('Prezzo predefinito').'</th>';
-        if ($direzione == 'uscita') {
-            echo '<th class="text-center col-md-4">'.tr('E\' il fornitore predefinito?').'</th>';
-        } else {
-            echo '<th class="text-center col-md-4">'.tr('Fornitore predefinito').'</th>';
-        }
-    echo '
+if ($direzione == 'uscita') {
+    echo '<th class="text-center col-md-4">'.tr('E\' il fornitore predefinito?').'</th>';
+} else {
+    echo '<th class="text-center col-md-4">'.tr('Fornitore predefinito').'</th>';
+}
+echo '
     </tr>
     <tr>
         <td class="text-center">'.$anagrafica->ragione_sociale.'</td>
         <td class="text-center">'.moneyFormat($prezzo_predefinito).'</td>';
-        if ($direzione == 'uscita') {
-            echo '<td class="text-center"><i class="fa fa-'.$icon.' text-'.$color.'"></i> '.$text.'</td>';
-        } else {
-            echo '<td class="text-center">'.(!empty($articolo->id_fornitore) ? Anagrafica::find($articolo->id_fornitore)->ragione_sociale : tr('Nessuno')).'</td>';
-        }
-    echo '
+if ($direzione == 'uscita') {
+    echo '<td class="text-center"><i class="fa fa-'.$icon.' text-'.$color.'"></i> '.$text.'</td>';
+} else {
+    echo '<td class="text-center">'.(!empty($articolo->id_fornitore) ? Anagrafica::find($articolo->id_fornitore)->ragione_sociale : tr('Nessuno')).'</td>';
+}
+echo '
     </tr>
 </table>
 

@@ -22,7 +22,7 @@ switch (post('op')) {
 
         break;
 
-    // Aggiunta automezzo
+        // Aggiunta automezzo
     case 'add':
         $targa = post('targa');
         $nome = post('nome');
@@ -44,7 +44,7 @@ switch (post('op')) {
         }
         break;
 
-    // Aggiunta tecnico
+        // Aggiunta tecnico
     case 'addtech':
         $idtecnico = post('idtecnico');
         $data_inizio = post('data_inizio');
@@ -69,7 +69,7 @@ switch (post('op')) {
         flash()->info(tr('Collegato un nuovo tecnico!'));
         break;
 
-    // Salvataggio tecnici collegati
+        // Salvataggio tecnici collegati
     case 'savetech':
         $errors = 0;
 
@@ -105,7 +105,7 @@ switch (post('op')) {
         }
         break;
 
-    // Eliminazione associazione con tecnico
+        // Eliminazione associazione con tecnico
     case 'deltech':
         $idautomezzotecnico = post('id');
 
@@ -116,7 +116,7 @@ switch (post('op')) {
         }
         break;
 
-    // Aggiunta quantità nell'automezzo
+        // Aggiunta quantità nell'automezzo
     case 'addrow':
         $idarticolo = post('idarticolo');
         $qta = post('qta');
@@ -158,7 +158,7 @@ switch (post('op')) {
         flash()->info(tr("Caricato il magazzino dell'automezzo!"));
         break;
 
-    // Spostamento scorta da automezzo a magazzino generale
+        // Spostamento scorta da automezzo a magazzino generale
     case 'moverow':
         $idarticolo = post('idarticolo');
         $idautomezzotecnico = post('idautomezzotecnico');

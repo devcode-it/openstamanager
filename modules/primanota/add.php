@@ -308,10 +308,10 @@ if (!empty($id_anagrafica)) {
         echo '
         <div class="alert alert-warning">
             '.tr('Attenzione: è stato anticipato al fornitore un importo di _TOTALE_',
-                [
-                    '_TOTALE_' => moneyFormat($anticipo_fornitore['totale']),
-                ]
-            ).'
+            [
+                '_TOTALE_' => moneyFormat($anticipo_fornitore['totale']),
+            ]
+        ).'
         </div>';
     }
 
@@ -319,10 +319,10 @@ if (!empty($id_anagrafica)) {
         echo '
         <div class="alert alert-warning">
             '.tr('Attenzione: è stato ricevuto un anticipo dal cliente di _TOTALE_',
-                [
-                    '_TOTALE_' => moneyFormat($anticipo_cliente['totale']),
-                ]
-            ).'
+            [
+                '_TOTALE_' => moneyFormat($anticipo_cliente['totale']),
+            ]
+        ).'
         </div>';
     }
 }

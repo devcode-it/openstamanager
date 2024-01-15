@@ -39,8 +39,6 @@ class Pianificazione extends Document
     /**
      * Crea un nuovo promemoria.
      *
-     * @param string $data_richiesta
-     *
      * @return self
      */
     public static function build(Contratto $contratto, $data_scadenza)

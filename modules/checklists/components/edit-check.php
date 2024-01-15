@@ -42,7 +42,7 @@ if ($main_check) {
             'required' => 1,
             'value' => htmlentities($record->content),
         ]);
-    ?>
+?>
     </div>
 </div>
 

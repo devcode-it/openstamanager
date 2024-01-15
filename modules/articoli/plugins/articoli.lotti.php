@@ -181,7 +181,7 @@ if (empty(get('modal'))) {
                     $id = $data[0]['idordine'];
                 }
 
-                $totali[] = [($data[0]['prezzo_unitario'] - $data[0]['sconto_unitario']), $data[0]['iva_unitaria']];
+                $totali[] = [$data[0]['prezzo_unitario'] - $data[0]['sconto_unitario'], $data[0]['iva_unitaria']];
 
                 $numero = !empty($data[0]['numero_esterno']) ? $data[0]['numero_esterno'] : $data[0]['numero'];
 
@@ -300,7 +300,7 @@ if (empty(get('modal'))) {
                     $id = $data[0]['idvendita'];
                 }
 
-                $totali[] = [($data[0]['prezzo_unitario'] - $data[0]['sconto_unitario']), $data[0]['iva_unitaria']];
+                $totali[] = [$data[0]['prezzo_unitario'] - $data[0]['sconto_unitario'], $data[0]['iva_unitaria']];
 
                 $numero = !empty($data[0]['numero_esterno']) ? $data[0]['numero_esterno'] : $data[0]['numero'];
 

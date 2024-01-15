@@ -92,19 +92,19 @@ echo '
 
     <div class="row">';
 
-    // Sconto ore
-    echo '
+// Sconto ore
+echo '
         <div class="col-md-4 '.$class.'" >
             {[ "type": "number", "label": "'.tr('Sconto orario').'", "name": "sconto", "value": "'.$sessione['sconto_unitario'].'", "icon-after": "choice|untprc|'.$sessione['tipo_sconto'].'"]}
         </div>';
 
-    // Sconto km
-    echo '
+// Sconto km
+echo '
         <div class="col-md-4 '.$class.'">
             {[ "type": "number", "label": "'.tr('Sconto al km').'", "name": "sconto_km", "value": "'.$sessione['scontokm_unitario'].'", "icon-after": "choice|untprc|'.$sessione['tipo_sconto_km'].'"]}
         </div>';
 
-    echo '
+echo '
     </div>
 
     <!-- PULSANTI -->

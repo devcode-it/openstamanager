@@ -19,7 +19,6 @@
 
 namespace Importer;
 
-use Filter;
 use League\Csv\Reader;
 
 /**
@@ -86,7 +85,7 @@ abstract class CSVImporter implements ImporterInterface
             }
 
             // Aggiunta all'insieme dei record
-            $rows[] = Filter::parse($row);
+            $rows[] = \Filter::parse($row);
         }
 
         return $rows;
@@ -134,8 +133,6 @@ abstract class CSVImporter implements ImporterInterface
 
     /**
      * Interpreta una riga del CSV secondo i campi impostati dinamicamente.
-     *
-     * @param $row
      *
      * @return array
      */

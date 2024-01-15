@@ -30,11 +30,11 @@ echo '
         <thead>
             <tr>
                 <th width="5" class="text-center">';
-                if (!$block_edit && sizeof($righe) > 0) {
-                    echo '
+if (!$block_edit && sizeof($righe) > 0) {
+    echo '
                     <input id="check_all" type="checkbox"/>';
-                }
-                echo '
+}
+echo '
                 </th>
                 <th width="35" class="text-center">'.tr('#').'</th>
                 <th>'.tr('Descrizione').'</th>

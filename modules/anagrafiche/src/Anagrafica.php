@@ -30,7 +30,6 @@ use Modules\Ordini\Ordine;
 use Modules\Preventivi\Preventivo;
 use Modules\TipiIntervento\Tipo as TipoSessione;
 use Plugins\DichiarazioniIntento\Dichiarazione;
-use Settings;
 use Traits\RecordTrait;
 use Util\Generator;
 
@@ -100,7 +99,7 @@ class Anagrafica extends Model
 
     public static function fixAzienda(Anagrafica $anagrafica)
     {
-        Settings::setValue('Azienda predefinita', $anagrafica->id);
+        \Settings::setValue('Azienda predefinita', $anagrafica->id);
     }
 
     public static function fixCliente(Anagrafica $anagrafica)

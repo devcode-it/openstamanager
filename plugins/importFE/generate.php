@@ -329,15 +329,15 @@ echo '
             {[ "type": "checkbox", "label": "'.tr('Creazione seriali').'", "name": "flag_crea_seriali", "value": '.setting('Creazione seriali in import FE').', "help": "'.tr('Nel caso di righe contenenti serial, il gestionale procede alla registrazione del serial').'" ]}
         </div>';
 
-        $ritenuta = $dati_generali['DatiRitenuta'];
+$ritenuta = $dati_generali['DatiRitenuta'];
 
-        if (!empty($ritenuta)) {
-            echo '
+if (!empty($ritenuta)) {
+    echo '
             <div class="col-md-3">
                 {[ "type": "checkbox", "label": "'.tr('Ritenuta pagata dal fornitore').'", "name": "is_ritenuta_pagata", "value": 0, "help": "'.tr('Attivare se la ritenuta è stata pagata dal fornitore').'" ]}
             </div>';
-        }
-    echo '
+}
+echo '
     </div>';
 
 // Righe
@@ -382,7 +382,7 @@ if (!empty($righe)) {
         foreach ($dato['RiferimentoNumeroLinea'] as $dati => $linea) {
             $dati_ordini[(int) $linea] = [
                 'numero' => $dato['IdDocumento'],
-                'data' => ( new Carbon($dato['Data']) )->format('d/m/Y'),
+                'data' => (new Carbon($dato['Data']))->format('d/m/Y'),
             ];
         }
     }
@@ -393,7 +393,7 @@ if (!empty($righe)) {
         foreach ($dato['RiferimentoNumeroLinea'] as $dati => $linea) {
             $dati_ddt[(int) $linea] = [
                 'numero' => $dato['NumeroDDT'],
-                'data' => ( new Carbon($dato['DataDDT']) )->format('d/m/Y'),
+                'data' => (new Carbon($dato['DataDDT']))->format('d/m/Y'),
             ];
         }
     }

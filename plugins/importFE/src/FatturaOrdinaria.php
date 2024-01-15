@@ -28,7 +28,6 @@ use Modules\Fatture\Components\Descrizione;
 use Modules\Fatture\Components\Riga;
 use Modules\Fatture\Fattura;
 use Plugins\ListinoClienti\DettaglioPrezzo;
-use UnexpectedValueException;
 use Util\XML;
 
 /**
@@ -43,7 +42,7 @@ class FatturaOrdinaria extends FatturaElettronica
         parent::__construct($name);
 
         if ($this->getHeader()['DatiTrasmissione']['FormatoTrasmissione'] == 'FSM10') {
-            throw new UnexpectedValueException();
+            throw new \UnexpectedValueException();
         }
     }
 
@@ -456,7 +455,7 @@ class FatturaOrdinaria extends FatturaElettronica
 
         $iva_arrotondamento = database()->fetchOne('SELECT * FROM co_iva WHERE percentuale=0 AND deleted_at IS NULL');
 
-        if (($diff != 0 && $diff != $diff_tot) || (($diff_tot != $diff) && !$diff_iva) || ($diff_iva)) {
+        if (($diff != 0 && $diff != $diff_tot) || (($diff_tot != $diff) && !$diff_iva) || $diff_iva) {
             if ($diff != 0 && $diff != $diff_tot) {
                 $diff *= 100 / (100 + $iva_arrotondamento['percentuale']);
             } elseif (($diff == $diff_tot) && !$diff_iva) {

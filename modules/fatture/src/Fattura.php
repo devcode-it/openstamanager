@@ -19,12 +19,10 @@
 
 namespace Modules\Fatture;
 
-use Auth;
 use Carbon\Carbon;
 use Common\Components\Component;
 use Common\Document;
 use Illuminate\Database\Eloquent\Builder;
-use InvalidArgumentException;
 use Models\Upload;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Banche\Banca;
@@ -39,7 +37,6 @@ use Plugins\DichiarazioniIntento\Dichiarazione;
 use Plugins\ExportFE\FatturaElettronica;
 use Traits\RecordTrait;
 use Traits\ReferenceTrait;
-use Translator;
 use Util\Generator;
 
 class Fattura extends Document
@@ -95,7 +92,7 @@ class Fattura extends Document
     {
         $model = new static();
 
-        $user = Auth::user();
+        $user = \Auth::user();
         $database = database();
 
         // Individuazione dello stato predefinito per il documento
@@ -145,7 +142,7 @@ class Fattura extends Document
         $model->id_ritenuta_contributi = $id_ritenuta_contributi ?: null;
 
         // Banca predefinita per l'anagrafica controparte
-        //$model->id_banca_controparte = ;
+        // $model->id_banca_controparte = ;
 
         // Tipo di pagamento dall'anagrafica controparte
         $id_pagamento = $database->fetchOne('SELECT id FROM co_pagamenti WHERE id = :id_pagamento', [
@@ -210,8 +207,8 @@ class Fattura extends Document
             // Registrazione dell'operazione nelle note
             $notes[] = tr("Operazione non imponibile come da vostra dichiarazione d'intento nr _PROT_ del _PROT_DATE_ emessa in data _RELEASE_DATE_", [
                     '_PROT_' => $dichiarazione->numero_protocollo,
-                    '_PROT_DATE_' => Translator::dateToLocale($dichiarazione->data_protocollo),
-                    '_RELEASE_DATE_' => Translator::dateToLocale($dichiarazione->data_emissione),
+                    '_PROT_DATE_' => \Translator::dateToLocale($dichiarazione->data_protocollo),
+                    '_RELEASE_DATE_' => \Translator::dateToLocale($dichiarazione->data_emissione),
                 ]).'.';
         }
 
@@ -490,7 +487,7 @@ class Fattura extends Document
 
         $file = $this->uploads()->where('name', '=', 'Fattura Elettronica')->first();
         if (empty($file)) {
-            throw new InvalidArgumentException('Fattura Elettronica non trovata');
+            throw new \InvalidArgumentException('Fattura Elettronica non trovata');
         }
 
         return $file->getContent();
@@ -786,9 +783,9 @@ class Fattura extends Document
     /**
      * Scope per l'inclusione delle sole fatture con valore contabile.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param Builder $query
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function scopeContabile($query)
     {
@@ -849,9 +846,9 @@ class Fattura extends Document
     /**
      * Scope per l'inclusione delle fatture di vendita.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param Builder $query
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function scopeVendita($query)
     {
@@ -863,9 +860,9 @@ class Fattura extends Document
     /**
      * Scope per l'inclusione delle fatture di acquisto.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param Builder $query
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function scopeAcquisto($query)
     {

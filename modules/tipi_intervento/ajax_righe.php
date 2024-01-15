@@ -8,7 +8,7 @@ if (file_exists(__DIR__.'/../../../core.php')) {
 
 $righe = $dbo->fetchArray('SELECT * FROM in_righe_tipiinterventi WHERE id_tipointervento='.prepare($id_record));
 
-    echo '
+echo '
     <table class="table table-striped table-condensed table-hover table-bordered">
         <tr>
             <th>'.tr('Descrizione').'</th>
@@ -20,11 +20,11 @@ $righe = $dbo->fetchArray('SELECT * FROM in_righe_tipiinterventi WHERE id_tipoin
             <th class="text-center" width="8%">'.tr('#').'</th>
         </tr>';
 
-    foreach ($righe as $riga) {
-        $rs = $dbo->fetchArray('SELECT percentuale FROM co_iva WHERE id='.$riga['idiva']);
-        $iva = ($riga['subtotale'] * $rs[0]['percentuale']) / 100;
+foreach ($righe as $riga) {
+    $rs = $dbo->fetchArray('SELECT percentuale FROM co_iva WHERE id='.$riga['idiva']);
+    $iva = ($riga['subtotale'] * $rs[0]['percentuale']) / 100;
 
-        echo '
+    echo '
             <tr>
                 <td class="text-left">'.$riga['descrizione'].'</td>
                 <td class="text-right">'.number_format($riga['qta'], 2, ',', '.').' '.$riga['um'].'</td>
@@ -34,9 +34,9 @@ $righe = $dbo->fetchArray('SELECT * FROM in_righe_tipiinterventi WHERE id_tipoin
                 <td class="text-right">'.number_format($riga['subtotale'], 2, ',', '.').' &euro;</td>
                 <td class="text-center"><button type="button" class="btn btn-xs btn-warning" onclick="launch_modal(\''.tr('Aggiungi riga').'\', \''.$module->fileurl('add_righe.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga['id'].'\', 1);"><i class="fa fa-edit"></i></button> <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" onclick="if(confirm(\''.tr('Eliminare questa riga?').'\')){ elimina_riga( \''.$riga['id'].'\' ); }"><i class="fa fa-trash"></i></button></td>
             </tr>';
-    }
+}
 
-    echo '
+echo '
     </table>';
 
 ?>

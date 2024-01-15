@@ -33,15 +33,15 @@ if (!empty($search)) {
     $destinatari = $riferimento->destinatari()
         ->where(function ($query) use ($results) {
             $query->where('record_type', '=', Anagrafica::class)
-                ->whereIn('record_id', (!empty($results['anagrafica']) ? $results['anagrafica']->toArray() : []));
+                ->whereIn('record_id', !empty($results['anagrafica']) ? $results['anagrafica']->toArray() : []);
         })
         ->orWhere(function ($query) use ($results) {
             $query->where('record_type', '=', Sede::class)
-                ->whereIn('record_id', (!empty($results['sede']) ? $results['sede']->toArray() : []));
+                ->whereIn('record_id', !empty($results['sede']) ? $results['sede']->toArray() : []);
         })
         ->orWhere(function ($query) use ($results) {
             $query->where('record_type', '=', Referente::class)
-                ->whereIn('record_id', (!empty($results['referente']) ? $results['referente']->toArray() : []));
+                ->whereIn('record_id', !empty($results['referente']) ? $results['referente']->toArray() : []);
         });
 }
 // Elenco di tutti i destinatari

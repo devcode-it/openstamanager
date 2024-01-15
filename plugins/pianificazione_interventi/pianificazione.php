@@ -86,7 +86,7 @@ echo '
 	<input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="op" value="'.(!$block_edit ? 'edit-promemoria' : 'pianificazione').'">';
 
-    echo '
+echo '
 	<!-- DATI PROMEMORIA -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
@@ -121,16 +121,16 @@ echo '
 
 			<div class="row">
                 <div class="col-md-12">';
-                echo input([
-                    'type' => 'ckeditor',
-                    'label' => tr('Richiesta'),
-                    'name' => 'richiesta',
-                    'required' => 1,
-                    'readonly' => $record['flag_completato'],
-                    'extra' => 'rows="5"',
-                    'value' => $record['richiesta'],
-                ]);
-                echo '
+echo input([
+    'type' => 'ckeditor',
+    'label' => tr('Richiesta'),
+    'name' => 'richiesta',
+    'required' => 1,
+    'readonly' => $record['flag_completato'],
+    'extra' => 'rows="5"',
+    'value' => $record['richiesta'],
+]);
+echo '
                 </div>
             </div>
         </div>
@@ -147,19 +147,19 @@ echo '
             <div class="row">
                 <div class="col-md-12">';
 
-            if (!$block_edit) {
-                echo '
+if (!$block_edit) {
+    echo '
                     <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&is_articolo" data-toggle="tooltip" data-title="'.tr('Aggiungi articolo').'">
                         <i class="fa fa-plus"></i> '.tr('Articolo').'
                     </a>';
 
-                echo '
+    echo '
                     <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&is_riga" data-toggle="tooltip" data-title="'.tr('Aggiungi riga').'">
                         <i class="fa fa-plus"></i> '.tr('Riga').'
                     </a>';
-            }
+}
 
-            echo '
+echo '
                 </div>
             </div>
 
@@ -170,7 +170,7 @@ echo '
 
 include $structure->filepath('row-list.php');
 
-        echo '
+echo '
             </div>
         </div>
     </div>';

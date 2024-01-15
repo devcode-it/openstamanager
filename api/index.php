@@ -43,7 +43,7 @@ try {
 } catch (Exception $e) {
     // Log dell'errore
     $logger = logger();
-    $logger->addRecord(\Monolog\Logger::ERROR, $e);
+    $logger->addRecord(Monolog\Logger::ERROR, $e);
 
     $response = Response::error('serverError');
 }

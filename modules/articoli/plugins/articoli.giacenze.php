@@ -280,7 +280,7 @@ foreach ($sedi as $sede) {
                         </tr>';
 }
 
-                    echo '
+echo '
                     </tbody>
                 </table>
             </div>

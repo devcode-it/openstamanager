@@ -42,14 +42,14 @@ echo '
 
     <tbody>';
 
-    $righe = $documento->getRighe();
-    foreach ($righe as $riga) {
-        $riga_class = get_class($riga);
+$righe = $documento->getRighe();
+foreach ($righe as $riga) {
+    $riga_class = get_class($riga);
 
-        $riferimento_locale = $riga_class.'|'.$riga->id;
-        $presente = in_array($riferimento_locale, $riferimenti);
+    $riferimento_locale = $riga_class.'|'.$riga->id;
+    $presente = in_array($riferimento_locale, $riferimenti);
 
-        echo '
+    echo '
     <tr data-id="'.$riga->id.'" data-type="'.$riga_class.'">
         <td>'.$riga->descrizione.'</td>
         <td>'.numberFormat($riga->qta_rimanente, 'qta').' / '.numberFormat($riga->qta, 'qta').'</td>
@@ -59,8 +59,8 @@ echo '
             </button>
         </td>
     </tr>';
-    }
+}
 
-    echo '
+echo '
     </tbody>
 </table>';

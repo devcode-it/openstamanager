@@ -37,7 +37,7 @@ $period_end = $_SESSION['period_end'];
 $structure = Modules::get($id_module);
 
 // RISULTATI VISIBILI
-Util\Query::setSegments(false);
+Query::setSegments(false);
 $query = Query::getQuery($structure, $where, 0, []);
 
 $query = Modules::replaceAdditionals($id_module, $query);
@@ -73,9 +73,9 @@ echo '
 
 <p style="color:#aaa; font-size:10px;" class="text-right">
     '.tr('Prezzo di acquisto calcolato in base _TEXT_',
-        [
-            '_TEXT_' => $text,
-        ]).'
+    [
+        '_TEXT_' => $text,
+    ]).'
 </p>
 
 <table class="table table-bordered">

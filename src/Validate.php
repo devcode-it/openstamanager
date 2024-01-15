@@ -118,7 +118,7 @@ class Validate
             $data = json_decode(curl_exec($ch));
             curl_close($ch);
 
-            /*se la riposta è null imposto la relativa proprietà dell'oggetto a 0*/
+            /* se la riposta è null imposto la relativa proprietà dell'oggetto a 0 */
             if ($data->valid == null) {
                 $data->valid = 0;
             }
@@ -227,7 +227,7 @@ class Validate
 
             $data = json_decode($output, false);
 
-            /*se la riposta è null verficando il formato, il record mx o il server smtp imposto la relativa proprietà dell'oggetto a 0*/
+            /* se la riposta è null verficando il formato, il record mx o il server smtp imposto la relativa proprietà dell'oggetto a 0 */
             if ($data->format_valid == null) {
                 $data->format_valid = 0;
             }

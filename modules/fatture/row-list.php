@@ -32,19 +32,19 @@ echo '
         <thead>
             <tr>
                 <th width="5" class="text-center">';
-                if (!$block_edit && sizeof($righe) > 0) {
-                    echo '
+if (!$block_edit && sizeof($righe) > 0) {
+    echo '
                     <input id="check_all" type="checkbox"/>';
-                }
-                echo '
+}
+echo '
                 </th>
                 <th width="35" class="text-center" >'.tr('#').'</th>
                 <th class="text-left" style="width:30%;">'.tr('Descrizione').'</th>
                 <th class="text-center" width="120">'.tr('Q.tà').'</th>';
-            if ($dir == 'entrata') {
-                echo '<th class="text-center" width="150">'.tr('Costo unitario').'</th>';
-            }
-            echo '
+if ($dir == 'entrata') {
+    echo '<th class="text-center" width="150">'.tr('Costo unitario').'</th>';
+}
+echo '
                 <th class="text-center" width="180">'.tr('Prezzo unitario').'</th>
                 <th class="text-center" width="140">'.tr('Sconto unitario').'</th>
                 <th class="text-center" width="120">'.tr('Iva unitaria').'</th>
@@ -177,8 +177,8 @@ foreach ($righe as $riga) {
 
     if (!empty($riga->note)) {
         if (strlen($riga->note) > 50) {
-            $prima_parte = substr($riga->note, 0, ((strpos($riga->note, ' ', 50) < 60) && (strpos($riga->note, ' ', 50) != 0) ? strpos($riga->note, ' ', 50) : 50));
-            $seconda_parte = substr($riga->note, ((strpos($riga->note, ' ', 50) < 60) && (strpos($riga->note, ' ', 50) != 0) ? strpos($riga->note, ' ', 50) : 50));
+            $prima_parte = substr($riga->note, 0, (strpos($riga->note, ' ', 50) < 60) && (strpos($riga->note, ' ', 50) != 0) ? strpos($riga->note, ' ', 50) : 50);
+            $seconda_parte = substr($riga->note, (strpos($riga->note, ' ', 50) < 60) && (strpos($riga->note, ' ', 50) != 0) ? strpos($riga->note, ' ', 50) : 50);
             $stringa_modificata = '<small class="label label-default">'.$prima_parte.'</small>
                 <span id="read-more-target-'.$riga->id.'" class="read-more-target"><small class="label label-default">'.$seconda_parte.'</small></span><a href="#read-more-target-'.$riga->id.'" class="read-more-trigger">...</a>';
         } else {

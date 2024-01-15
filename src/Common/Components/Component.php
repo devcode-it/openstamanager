@@ -23,7 +23,6 @@ use Common\Document;
 use Common\RowReference;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use InvalidArgumentException;
 
 /**
  * Classe dedicata alla gestione delle informazioni di base dei componenti dei Documenti, e in particolare di:
@@ -48,7 +47,7 @@ abstract class Component extends Model
      *
      * @var Component|null
      */
-    protected $original_model = null;
+    protected $original_model;
 
     protected $guarded = [];
 
@@ -154,7 +153,7 @@ abstract class Component extends Model
     public function delete()
     {
         if (!$this->canDelete()) {
-            throw new InvalidArgumentException();
+            throw new \InvalidArgumentException();
         }
 
         if ($this->hasOriginalComponent()) {
@@ -271,9 +270,6 @@ abstract class Component extends Model
     /**
      * Imposta l'origine del componente, restituendo un array contenente i replace da effettuare per modificare la descrizione in modo coerente.
      *
-     * @param string $type
-     * @param string $id
-     *
      * @return array
      */
     public function impostaOrigine($riga)
@@ -324,6 +320,7 @@ abstract class Component extends Model
      * Imposta il proprietario dell'oggetto e l'ordine relativo all'interno delle righe.
      *
      * @param Document $document Documento di riferimento
+     *
      * @psalm-param T $document
      */
     public function setDocument(Document $document)
@@ -338,6 +335,7 @@ abstract class Component extends Model
 
     /**
      * @return Document
+     *
      * @psalm-return T
      */
     public function getDocument()
@@ -385,8 +383,6 @@ abstract class Component extends Model
     /**
      * Verifica e calcola quantità e differenziale delle quantità.
      *
-     * @param $value
-     *
      * @return array [nuova quantità, differenza rispetto alla quantità precedente]
      */
     protected function parseQta($value)
@@ -410,8 +406,6 @@ abstract class Component extends Model
 
     /**
      * Azione personalizzata per la copia dell'oggetto (inizializzazione della copia).
-     *
-     * @param $original
      */
     protected function customInitCopiaIn($original)
     {
@@ -419,8 +413,6 @@ abstract class Component extends Model
 
     /**
      * Azione personalizzata per la copia dell'oggetto (dopo la copia).
-     *
-     * @param $original
      */
     protected function customBeforeDataCopiaIn($original)
     {
@@ -431,8 +423,6 @@ abstract class Component extends Model
 
     /**
      * Azione personalizzata per la copia dell'oggetto (dopo la copia).
-     *
-     * @param $original
      */
     protected function customAfterDataCopiaIn($original)
     {

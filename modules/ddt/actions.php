@@ -275,14 +275,14 @@ switch (filter('op')) {
 
         break;
 
-    // Aggiunta di un documento in ddt
+        // Aggiunta di un documento in ddt
     case 'add_ordine':
     case 'add_documento':
         $class = post('class');
         $id_documento = post('id_documento');
 
         // Individuazione del documento originale
-        if (!is_subclass_of($class, \Common\Document::class)) {
+        if (!is_subclass_of($class, Common\Document::class)) {
             return;
         }
         $documento = $class::find($id_documento);
@@ -374,7 +374,7 @@ switch (filter('op')) {
 
         break;
 
-    // Eliminazione riga
+        // Eliminazione riga
     case 'delete_riga':
         $id_righe = (array) post('righe');
 
@@ -401,7 +401,7 @@ switch (filter('op')) {
 
         break;
 
-    // Duplicazione riga
+        // Duplicazione riga
     case 'copy_riga':
         $id_righe = (array) post('righe');
 
@@ -427,7 +427,7 @@ switch (filter('op')) {
 
         break;
 
-    // eliminazione ddt
+        // eliminazione ddt
     case 'delete':
         try {
             // Se il ddt è collegato ad un ddt di trasporto interno, devo annullare il movimento del magazzino
@@ -468,14 +468,14 @@ switch (filter('op')) {
 
         break;
 
-    /*
-     * Gestione della generazione di DDT in direzione opposta a quella corrente, per completare il riferimento di trasporto interno tra sedi distinte dell'anagrafica Azienda.
-     */
+        /*
+         * Gestione della generazione di DDT in direzione opposta a quella corrente, per completare il riferimento di trasporto interno tra sedi distinte dell'anagrafica Azienda.
+         */
     case 'completa_trasporto':
         $tipo = Tipo::where('dir', '!=', $ddt->direzione)->first();
         $stato = Stato::where('descrizione', '=', 'Evaso')->first();
 
-       // Duplicazione DDT
+        // Duplicazione DDT
         $id_segment = post('id_segment');
         if (get('id_segment')) {
             $id_segment = get('id_segment');
@@ -525,7 +525,7 @@ switch (filter('op')) {
 
         break;
 
-    // Duplica ddt
+        // Duplica ddt
     case 'copy':
         $new = $ddt->replicate();
 
@@ -653,7 +653,7 @@ switch (filter('op')) {
         $numero_totale = 0;
 
         foreach ($righe as $riga) {
-            if (($riga['id']) != null) {
+            if ($riga['id'] != null) {
                 $articolo = Articolo::find($riga['id']);
             }
 

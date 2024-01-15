@@ -35,7 +35,6 @@ class Tipo extends Model
      *
      * @param string $codice
      * @param string $descrizione
-     * @param string $tempo_standard
      *
      * @return self
      */
@@ -78,7 +77,7 @@ class Tipo extends Model
      */
     public function setTempoStandardAttribute($value)
     {
-        $result = round(($value / 2.5), 1) * 2.5;
+        $result = round($value / 2.5, 1) * 2.5;
 
         $this->attributes['tempo_standard'] = $result;
     }

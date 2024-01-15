@@ -40,13 +40,9 @@ function get_next_code($str, $qty = 1, $mask = '')
  * Se descrizione = 1 e il tipo è 'query=' mi restituisce il valore del campo descrizione della query.
  *
  * @deprecated 2.4.2
-
  *
- * @param string $name
  * @param string $sezione
  * @param string $descrizione
- *
- * @return mixed
  */
 function get_var($nome, $sezione = null, $descrizione = false, $again = false)
 {
@@ -163,7 +159,7 @@ function datediff($interval, $datefrom, $dateto, $using_timestamps = false)
             break;
         case 'm': // Number of full months
             $months_difference = floor($difference / 2678400);
-            while (mktime(date('H', $datefrom), date('i', $datefrom), date('s', $datefrom), date('n', $datefrom) + ($months_difference), date('j', $dateto), date('Y', $datefrom)) < $dateto) {
+            while (mktime(date('H', $datefrom), date('i', $datefrom), date('s', $datefrom), date('n', $datefrom) + $months_difference, date('j', $dateto), date('Y', $datefrom)) < $dateto) {
                 ++$months_difference;
             }
             --$months_difference;
@@ -207,12 +203,6 @@ function datediff($interval, $datefrom, $dateto, $using_timestamps = false)
 }
 
 /**
- * @param $field
- * @param $id_riga
- * @param $old_qta
- * @param $new_qta
- * @param $dir
- *
  * @throws Exception
  *
  * @return bool
@@ -274,8 +264,6 @@ function seriali_non_rimuovibili($field, $id_riga, $dir)
 /**
  * Restistuisce le informazioni sull'eventuale riferimento ai documenti.
  *
- * @param $info
- * @param $dir
  * @param array $ignore
  *
  * @deprecated

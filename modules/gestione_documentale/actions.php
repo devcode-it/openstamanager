@@ -41,7 +41,7 @@ switch (post('op')) {
         ], ['id' => $id_record]);
 
         flash()->info(tr('Informazioni salvate correttamente!'));
-    break;
+        break;
 
     case 'delete':
         $dbo->query('DELETE FROM do_documenti WHERE id = '.prepare($id_record));

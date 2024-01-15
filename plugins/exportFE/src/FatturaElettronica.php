@@ -28,9 +28,6 @@ use Modules\Banche\Banca;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Gestori\Bollo;
 use Modules\Iva\Aliquota;
-use Prints;
-use Translator;
-use UnexpectedValueException;
 use Uploads;
 
 /**
@@ -47,10 +44,10 @@ class FatturaElettronica
     protected $cliente = [];
 
     /** @var Modules\Fatture\Fattura Informazioni sul documento */
-    protected $documento = null;
+    protected $documento;
 
     /** @var Validator Oggetto dedicato alla validazione dell'XML */
-    protected $validator = null;
+    protected $validator;
 
     /** @var array Contratti collegati al documento */
     protected $contratti = [];
@@ -60,7 +57,7 @@ class FatturaElettronica
     protected $righe = [];
 
     /** @var array XML della fattura */
-    protected $xml = null;
+    protected $xml;
 
     public function __construct($id_documento)
     {
@@ -70,7 +67,7 @@ class FatturaElettronica
         // Controllo sulla possibilità di creare la fattura elettronica
         // Posso fatturare ai privati utilizzando il codice fiscale
         if ($this->documento->stato->descrizione == 'Bozza') {
-            throw new UnexpectedValueException();
+            throw new \UnexpectedValueException();
         }
     }
 
@@ -257,8 +254,6 @@ class FatturaElettronica
     /**
      * Ottiene il codice destinatario a partire dal database ufficiale indicepa www.indicepa.gov.it.
      *
-     * @param $codice_fiscale
-     *
      * @throws \GuzzleHttp\Exception\GuzzleException
      *
      * @return string|null
@@ -288,7 +283,7 @@ class FatturaElettronica
 
     public static function getDirectory()
     {
-        return Uploads::getDirectory(Modules::get('Fatture di vendita')['id']);
+        return \Uploads::getDirectory(\Modules::get('Fatture di vendita')['id']);
     }
 
     /**
@@ -313,7 +308,7 @@ class FatturaElettronica
         }
 
         // Registrazione come allegato
-        Uploads::upload($this->toXML(), array_merge($data, [
+        \Uploads::upload($this->toXML(), array_merge($data, [
             'name' => $name,
             'original_name' => $filename,
         ]));
@@ -337,7 +332,7 @@ class FatturaElettronica
         $previous = $this->getFilename();
         $data = $this->getUploadData();
 
-        Uploads::delete($previous, $data);
+        \Uploads::delete($previous, $data);
     }
 
     /**
@@ -435,7 +430,7 @@ class FatturaElettronica
         }
 
         if (!empty($missing)) {
-            $link = Modules::link('Fatture di vendita', $fattura->id);
+            $link = \Modules::link('Fatture di vendita', $fattura->id);
             $errors[] = [
                 'link' => $link,
                 'name' => tr('Fattura'),
@@ -460,7 +455,7 @@ class FatturaElettronica
             }
 
             if (!empty($missing)) {
-                $link = Modules::link('IVA', $data['id']);
+                $link = \Modules::link('IVA', $data['id']);
                 $errors[] = [
                     'link' => $link,
                     'name' => tr('IVA _DESC_', [
@@ -487,7 +482,7 @@ class FatturaElettronica
         }
 
         if (!empty($missing)) {
-            $link = Modules::link('Pagamenti', $data['id']);
+            $link = \Modules::link('Pagamenti', $data['id']);
             $errors[] = [
                 'link' => $link,
                 'name' => tr('Pagamento'),
@@ -516,7 +511,7 @@ class FatturaElettronica
         }
 
         if (!empty($missing)) {
-            $link = Modules::link('Anagrafiche', $data['id']);
+            $link = \Modules::link('Anagrafiche', $data['id']);
             $errors[] = [
                 'link' => $link,
                 'name' => tr('Anagrafica Azienda'),
@@ -556,7 +551,7 @@ class FatturaElettronica
         }
 
         if (!empty($missing)) {
-            $link = Modules::link('Anagrafiche', $data['id']);
+            $link = \Modules::link('Anagrafiche', $data['id']);
             $errors[] = [
                 'link' => $link,
                 'name' => tr('Anagrafica Cliente'),
@@ -583,7 +578,7 @@ class FatturaElettronica
             }
 
             if (!empty($missing)) {
-                $link = Modules::link('Anagrafiche', $data['id']);
+                $link = \Modules::link('Anagrafiche', $data['id']);
                 $errors[] = [
                     'link' => $link,
                     'name' => tr('Anagrafica Vettore'),
@@ -610,7 +605,7 @@ class FatturaElettronica
         }
 
         $documento = $fattura->getDocumento();
-        //Fattura per conto terzi, la mia Azienda (fornitore) diventa il cessionario al posto del cliente
+        // Fattura per conto terzi, la mia Azienda (fornitore) diventa il cessionario al posto del cliente
         if ($documento['is_fattura_conto_terzi']) {
             $cliente = static::getAzienda();
         } else {
@@ -680,18 +675,18 @@ class FatturaElettronica
             if (!empty($anagrafica->nazione->iso2)) {
                 $result['IdFiscaleIVA']['IdPaese'] = $anagrafica->nazione->iso2;
             }
-            //Rimuovo eventuali idicazioni relative alla nazione
+            // Rimuovo eventuali idicazioni relative alla nazione
             $result['IdFiscaleIVA']['IdCodice'] = str_replace($anagrafica->nazione->iso2, '', $anagrafica['piva']);
         }
 
         // Codice fiscale
-        //TODO: Nella fattura elettronica, emessa nei confronti di soggetti titolari di partita IVA (nodo CessionarioCommittente), non va indicato il codice fiscale se è già presente la partita iva.
+        // TODO: Nella fattura elettronica, emessa nei confronti di soggetti titolari di partita IVA (nodo CessionarioCommittente), non va indicato il codice fiscale se è già presente la partita iva.
         if (!empty($anagrafica['codice_fiscale'])) {
             $result['CodiceFiscale'] = preg_replace('/\s+/', '', $anagrafica['codice_fiscale']);
 
-            //$result['CodiceFiscale'] = str_replace($anagrafica->nazione->iso2, '', $result['CodiceFiscale']);
+            // $result['CodiceFiscale'] = str_replace($anagrafica->nazione->iso2, '', $result['CodiceFiscale']);
 
-            //Rimuovo eventuali idicazioni relative all'iso2 della nazione, solo se la stringa inizia con quest'ultima.
+            // Rimuovo eventuali idicazioni relative all'iso2 della nazione, solo se la stringa inizia con quest'ultima.
             $result['CodiceFiscale'] = preg_replace('/^'.preg_quote($anagrafica->nazione->iso2, '/').'/', '', $anagrafica['codice_fiscale']);
         }
 
@@ -704,7 +699,7 @@ class FatturaElettronica
 
         if (!empty($anagrafica['nome']) or !empty($anagrafica['cognome'])) {
             $result['Anagrafica'] = [
-                //'Denominazione' => $anagrafica['ragione_sociale'],
+                // 'Denominazione' => $anagrafica['ragione_sociale'],
                 'Nome' => $anagrafica['nome'],
                 'Cognome' => $anagrafica['cognome'],
                 // TODO: 'Titolo' => $anagrafica['ragione_sociale'],
@@ -713,8 +708,8 @@ class FatturaElettronica
         } else {
             $result['Anagrafica'] = [
                 'Denominazione' => $anagrafica['ragione_sociale'],
-                //'Nome' => $anagrafica['nome'],
-                //'Cognome' => $anagrafica['cognome'],
+                // 'Nome' => $anagrafica['nome'],
+                // 'Cognome' => $anagrafica['cognome'],
                 // TODO: 'Titolo' => $anagrafica['ragione_sociale'],
                 // TODO: CodEORI
             ];
@@ -768,7 +763,7 @@ class FatturaElettronica
     {
         $documento = $fattura->getDocumento();
 
-        //Fattura per conto terzi, il cliente diventa il cedente al posto della mia Azienda (fornitore)
+        // Fattura per conto terzi, il cliente diventa il cedente al posto della mia Azienda (fornitore)
         if ($documento['is_fattura_conto_terzi']) {
             $azienda = $fattura->getCliente();
         } else {
@@ -837,7 +832,7 @@ class FatturaElettronica
      */
     protected static function getRappresentanteFiscale($fattura)
     {
-        //Fattura per conto terzi, il cliente diventa il cedente al posto della mia Azienda (fornitore)
+        // Fattura per conto terzi, il cliente diventa il cedente al posto della mia Azienda (fornitore)
         $cliente = $fattura->getCliente();
         $azienda = Sede::where('idanagrafica', $cliente->id)->where('is_rappresentante_fiscale', 1)->selectRaw('*, nomesede AS ragione_sociale')->first();
 
@@ -857,7 +852,7 @@ class FatturaElettronica
     {
         $documento = $fattura->getDocumento();
 
-        //Fattura per conto terzi, la mia Azienda (fornitore) diventa il cessionario al posto del cliente
+        // Fattura per conto terzi, la mia Azienda (fornitore) diventa il cessionario al posto del cliente
         if ($documento['is_fattura_conto_terzi']) {
             $cliente = static::getAzienda();
         } else {
@@ -996,7 +991,7 @@ class FatturaElettronica
                 $dati_cassa['Natura'] = $iva['codice_natura_fe'];
             }
 
-            //$dati_cassa['RiferimentoAmministrazione'] = '';
+            // $dati_cassa['RiferimentoAmministrazione'] = '';
 
             $result['DatiCassaPrevidenziale'] = $dati_cassa;
         }
@@ -1366,8 +1361,6 @@ class FatturaElettronica
     /**
      * Restituisce l'array responsabile per la generazione del tag DatiBeniServizi.
      *
-     * @param $fattura
-     *
      * @throws \Exception
      *
      * @return array
@@ -1418,7 +1411,7 @@ class FatturaElettronica
                     }
                 }
 
-                //$descrizione = $riga['descrizione'];
+                // $descrizione = $riga['descrizione'];
 
                 // Aggiunta dei riferimenti ai documenti
                 if (setting('Riferimento dei documenti in Fattura Elettronica') && $riga->hasOriginalComponent()) {
@@ -1492,7 +1485,7 @@ class FatturaElettronica
                 if (!empty($riga['ritenuta_contributi'])) {
                     $dettaglio[]['AltriDatiGestionali'] = [
                         'TipoDato' => 'CASSA-PREV',
-                        'RiferimentoTesto' => setting('Tipo Cassa Previdenziale').' - '.$ritenuta_contributi->descrizione.' ('.Translator::numberToLocale($ritenuta_contributi->percentuale).'%)',
+                        'RiferimentoTesto' => setting('Tipo Cassa Previdenziale').' - '.$ritenuta_contributi->descrizione.' ('.\Translator::numberToLocale($ritenuta_contributi->percentuale).'%)',
                         'RiferimentoNumero' => $riga->ritenuta_contributi,
                     ];
                 }
@@ -1507,8 +1500,8 @@ class FatturaElettronica
                 }
 
                 // Dichiarazione d'intento
-                //Il numero di protocollo della dichiarazione d’intento, rilevabile dalla ricevuta telematica rilasciata dall’Agenzia delle entrate, è composto da 2 parti 17+6 (protocollo di ricezione della dichiarazione d’intento e il suo progressivo)
-                //$id_iva_dichiarazione = setting("Iva per lettere d'intento");
+                // Il numero di protocollo della dichiarazione d’intento, rilevabile dalla ricevuta telematica rilasciata dall’Agenzia delle entrate, è composto da 2 parti 17+6 (protocollo di ricezione della dichiarazione d’intento e il suo progressivo)
+                // $id_iva_dichiarazione = setting("Iva per lettere d'intento");
                 $dichiarazione = $documento->dichiarazione;
                 $ive_accettate = [];
                 $rs = $database->table('co_iva')->where('codice_natura_fe', 'N3.5')->get();
@@ -1707,11 +1700,11 @@ class FatturaElettronica
         $attachments = [];
 
         // Informazioni sul modulo
-        $id_module = Modules::get('Fatture di vendita')['id'];
-        $directory = Uploads::getDirectory($id_module);
+        $id_module = \Modules::get('Fatture di vendita')['id'];
+        $directory = \Uploads::getDirectory($id_module);
 
         // Allegati
-        $allegati = Uploads::get([
+        $allegati = \Uploads::get([
             'id_module' => $id_module,
             'id_record' => $documento['id'],
         ]);
@@ -1723,7 +1716,7 @@ class FatturaElettronica
 
                 $attachments[] = [
                     'NomeAttachment' => $allegato['name'],
-                    'FormatoAttachment' => Uploads::fileInfo($file)['extension'],
+                    'FormatoAttachment' => \Uploads::fileInfo($file)['extension'],
                     'Attachment' => base64_encode(file_get_contents($file)),
                 ];
             }
@@ -1746,14 +1739,14 @@ class FatturaElettronica
         $data = $fattura->getUploadData();
 
         // Generazione stampa
-        $print = Prints::getModulePredefinedPrint($id_module);
-        $info = Prints::render($print['id'], $documento['id'], null, true);
+        $print = \Prints::getModulePredefinedPrint($id_module);
+        $info = \Prints::render($print['id'], $documento['id'], null, true);
 
         // Salvataggio stampa come allegato
         $name = 'Stampa allegata';
         $is_presente = database()->fetchNum('SELECT id FROM zz_files WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($documento['id']).' AND name = '.prepare($name));
         if (empty($is_presente)) {
-            Uploads::upload($info['pdf'], array_merge($data, [
+            \Uploads::upload($info['pdf'], array_merge($data, [
                 'name' => $name,
                 'original_name' => $info['path'],
             ]));
@@ -1779,7 +1772,7 @@ class FatturaElettronica
         $documento = $fattura->getDocumento();
         $rappresentante_fiscale = null;
 
-        //Fattura per conto terzi, il cliente diventa il cedente al posto della mia Azienda (fornitore)
+        // Fattura per conto terzi, il cliente diventa il cedente al posto della mia Azienda (fornitore)
         if ($documento['is_fattura_conto_terzi']) {
             $azienda = $fattura->getCliente();
             $rappresentante_fiscale = Sede::where('idanagrafica', $azienda->id)->where('is_rappresentante_fiscale', 1)->first();
@@ -1854,7 +1847,7 @@ class FatturaElettronica
     {
         return [
             'category' => tr('Fattura Elettronica'),
-            'id_module' => Modules::get('Fatture di vendita')['id'],
+            'id_module' => \Modules::get('Fatture di vendita')['id'],
             'id_record' => $this->getDocumento()['id'],
         ];
     }

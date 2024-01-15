@@ -21,15 +21,13 @@ namespace Modules\Aggiornamenti;
 
 use GuzzleHttp\Client;
 use Hooks\CachedManager;
-use Modules;
-use Update;
 
 /**
  * Hook dedicato all'individuazione di nuove versioni del gestionale, pubblicate sulla repository ufficiale di GitHub.
  */
 class UpdateHook extends CachedManager
 {
-    protected static $client = null;
+    protected static $client;
 
     public function getCacheName()
     {
@@ -44,11 +42,11 @@ class UpdateHook extends CachedManager
     public function response()
     {
         $update = $this->getCache()->content[0];
-        if ($update == Update::getVersion() || empty(setting('Attiva aggiornamenti'))) {
+        if ($update == \Update::getVersion() || empty(setting('Attiva aggiornamenti'))) {
             $update = null;
         }
 
-        $module = Modules::get('Aggiornamenti');
+        $module = \Modules::get('Aggiornamenti');
         $link = base_path().'/controller.php?id_module='.$module->id;
 
         $message = tr("E' disponibile la versione _VERSION_ del gestionale", [
@@ -75,7 +73,7 @@ class UpdateHook extends CachedManager
         if (!$api['prerelease'] or setting('Abilita canale pre-release per aggiornamenti')) {
             $version[0] = ltrim($api['tag_name'], 'v');
             $version[1] = !empty($api['prerelease']) ? 'beta' : 'stabile';
-            $current = Update::getVersion();
+            $current = \Update::getVersion();
 
             if (version_compare($current, $version[0]) < 0) {
                 return $version;

@@ -22,14 +22,12 @@ namespace Modules\Articoli;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Modules;
 use Modules\AttributiCombinazioni\ValoreAttributo;
 use Modules\CombinazioniArticoli\Combinazione;
 use Modules\Interventi\Components\Articolo as ArticoloIntervento;
 use Modules\Iva\Aliquota;
 use Plugins\ListinoFornitori\DettaglioFornitore;
 use Traits\RecordTrait;
-use Uploads;
 
 class Articolo extends Model
 {
@@ -64,7 +62,6 @@ class Articolo extends Model
     /**
      * Funzione per registrare un movimento del magazzino in relazione all'articolo corrente, modificando di conseguenza la quantità dell'articolo stesso.
      *
-     * @param $qta
      * @param string $descrizone
      * @param string $data
      * @param bool   $manuale
@@ -89,7 +86,6 @@ class Articolo extends Model
     /**
      * Funzione per registrare un movimento del magazzino in relazione all'articolo corrente, senza movimentare la quantità dell'articolo stesso.
      *
-     * @param $qta
      * @param string $descrizone
      * @param string $data
      * @param bool   $manuale
@@ -124,9 +120,6 @@ class Articolo extends Model
 
     /**
      * Imposta il prezzo di vendita sulla base dell'impstazione per l'utilizzo dei prezzi comprensivi di IVA.
-     *
-     * @param $prezzo_vendita
-     * @param $id_iva
      */
     public function setPrezzoVendita($prezzo_vendita, $id_iva)
     {
@@ -147,9 +140,6 @@ class Articolo extends Model
 
     /**
      * Imposta il prezzo di vendita sulla base dell'impstazione per l'utilizzo dei prezzi comprensivi di IVA.
-     *
-     * @param $prezzo_vendita
-     * @param $id_iva
      */
     public function setMinimoVendita($prezzo_minimo, $id_iva)
     {
@@ -168,8 +158,6 @@ class Articolo extends Model
 
     /**
      * Imposta il prezzo di acquisto e aggiorna il prezzo di vendita in base al coefficiente.
-     *
-     * @param $value
      */
     public function setPrezzoAcquistoAttribute($value)
     {
@@ -217,8 +205,8 @@ class Articolo extends Model
             return null;
         }
 
-        $module = Modules::get($this->module);
-        $fileinfo = Uploads::fileInfo($this->immagine);
+        $module = \Modules::get($this->module);
+        $fileinfo = \Uploads::fileInfo($this->immagine);
 
         $directory = '/'.$module->upload_directory.'/';
         $image = $directory.$this->immagine;

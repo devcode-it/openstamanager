@@ -22,8 +22,6 @@ namespace API\App\v1;
 use API\Interfaces\CreateInterface;
 use API\Resource;
 use API\Response;
-use Auth;
-use Update;
 
 class Login extends Resource implements CreateInterface
 {
@@ -69,7 +67,7 @@ class Login extends Resource implements CreateInterface
                     'ragione_sociale' => $utente['ragione_sociale'],
                     'token' => $token,
                     'gruppo' => $utente['gruppo'],
-                    'version' => Update::getVersion(),
+                    'version' => \Update::getVersion(),
                 ];
             } else {
                 $response = [
@@ -82,8 +80,8 @@ class Login extends Resource implements CreateInterface
             ];
 
             // Se è in corso un brute-force, aggiunge il timeout
-            if (Auth::isBrute()) {
-                $response['timeout'] = Auth::getBruteTimeout();
+            if (\Auth::isBrute()) {
+                $response['timeout'] = \Auth::getBruteTimeout();
             }
         }
 

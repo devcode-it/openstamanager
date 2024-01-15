@@ -90,7 +90,7 @@ echo '
 	</div>
 </form>';
 
-//Documenti collegati
+// Documenti collegati
 $elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir`, NULL AS `deleted_at` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id_dichiarazione_intento` = '.prepare($record['id']));
 
 if (!empty($elementi)) {

@@ -74,12 +74,12 @@ $id_files = $dbo->select('zz_files_print', 'id_file', [], ['id_print' => $id_rec
                     ->where('id_module', $record['id_module'])
                     ->orderBy('id')
                     ->first();
-                    if (!empty($stampa_predefinita)) {
-                        $nome_stampa_predefinita = $stampa_predefinita->name;
-                    } else {
-                        $nome_stampa_predefinita = 'Nessuna';
-                    }
-                ?>
+if (!empty($stampa_predefinita)) {
+    $nome_stampa_predefinita = $stampa_predefinita->name;
+} else {
+    $nome_stampa_predefinita = 'Nessuna';
+}
+?>
 
                 <div class="col-md-4">
                     {[ "type": "checkbox", "label": "<?php echo tr('Predefinita'); ?>", "help" : "<?php echo tr('Attiva per impostare questa stampa come predefinita. Attualmente la stampa predefinita per questo modulo è: '.$nome_stampa_predefinita); ?>", "name": "predefined", "value": "$predefined$", "disabled": "<?php echo intval($record['predefined']); ?>" ]}
@@ -91,14 +91,14 @@ $id_files = $dbo->select('zz_files_print', 'id_file', [], ['id_print' => $id_rec
 
 				<div class="col-md-12">
                     <?php
-                    echo input([
-                        'type' => 'textarea',
-                        'label' => tr('Opzioni'),
-                        'name' => 'options',
-                        'value' => $record['options'],
-                        'help' => tr('Impostazioni personalizzabili della stampa, in formato JSON'),
-                    ]);
-                    ?>
+    echo input([
+        'type' => 'textarea',
+        'label' => tr('Opzioni'),
+        'name' => 'options',
+        'value' => $record['options'],
+        'help' => tr('Impostazioni personalizzabili della stampa, in formato JSON'),
+    ]);
+?>
                 </div>
             </div>
         </div>

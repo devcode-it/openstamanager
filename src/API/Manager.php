@@ -21,9 +21,7 @@ namespace API;
 
 use API\Exceptions\InternalError;
 use API\Exceptions\ResourceNotFound;
-use Auth;
 use Models\ApiResource as Resource;
-use PDOException;
 
 /**
  * Classe per la gestione delle API del progetto.
@@ -71,7 +69,7 @@ class Manager
      */
     public function retrieve($request)
     {
-        $user = Auth::user();
+        $user = \Auth::user();
 
         $where = [];
         $order = [];
@@ -219,7 +217,7 @@ class Manager
             if (empty($response['pages'])) {
                 $response['pages'] = intval(ceil($response['total-count'] / $length));
             }
-        } catch (PDOException $e) {
+        } catch (\PDOException $e) {
             // Log dell'errore
             $logger = logger();
             $logger->addRecord(\Monolog\Logger::ERROR, $e);
@@ -291,7 +289,7 @@ class Manager
 
         try {
             $database->commitTransaction();
-        } catch (PDOException $e) {
+        } catch (\PDOException $e) {
         }
 
         // Operazioni di completamento

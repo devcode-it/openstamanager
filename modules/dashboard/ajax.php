@@ -121,7 +121,7 @@ switch (filter('op')) {
         }
 
         if (setting('Visualizza informazioni aggiuntive sul calendario')) {
-            //# Box allDay preventivi
+            // # Box allDay preventivi
             $query = 'SELECT
                 co_preventivi.id,
                 co_preventivi.nome,
@@ -151,9 +151,9 @@ switch (filter('op')) {
                             'id' => 'A_'.$modulo_preventivi->id.'_'.$preventivo['id'],
                             'idintervento' => $preventivo['id'],
                             'idtecnico' => '',
-                            'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '<i class="fa fa-pencil" aria-hidden="true"></i>').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div>'.'<b>'.tr('Accettazione prev.').' '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
+                            'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '<i class="fa fa-pencil" aria-hidden="true"></i>').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div><b>'.tr('Accettazione prev.').' '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
                             'start' => $preventivo['data_accettazione'],
-                            //'end' => $preventivo['data_accettazione'],
+                            // 'end' => $preventivo['data_accettazione'],
                             'url' => base_path().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$preventivo['id'],
                             'backgroundColor' => '#ff7f50',
                             'textColor' => color_inverse('#ff7f50'),
@@ -169,9 +169,9 @@ switch (filter('op')) {
                             'id' => 'B_'.$modulo_preventivi->id.'_'.$preventivo['id'],
                             'idintervento' => $preventivo['id'],
                             'idtecnico' => '',
-                            'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '<i class="fa fa-pencil" aria-hidden="true"></i>').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div>'.'<b>'.tr('Conclusione prev.').' '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
+                            'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '<i class="fa fa-pencil" aria-hidden="true"></i>').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div><b>'.tr('Conclusione prev.').' '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
                             'start' => $preventivo['data_conclusione'],
-                            //'end' => $preventivo['data_conclusione'],
+                            // 'end' => $preventivo['data_conclusione'],
                             'url' => base_path().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$preventivo['id'],
                             'backgroundColor' => '#ff7f50',
                             'textColor' => color_inverse('#ff7f50'),
@@ -184,7 +184,7 @@ switch (filter('op')) {
                 }
             }
 
-            //# Box allDay eventi (escluse festività)
+            // # Box allDay eventi (escluse festività)
             $query = 'SELECT
                 *
             FROM 
@@ -197,7 +197,7 @@ switch (filter('op')) {
             OR 
             (`zz_events`.`is_recurring` = 0 AND `zz_events`.`data` >= '.prepare($start).' AND  `zz_events`.`data` <= '.prepare($end).')';
 
-            //echo $query;
+            // echo $query;
 
             $eventi = $dbo->fetchArray($query);
 
@@ -206,7 +206,7 @@ switch (filter('op')) {
                     'id' => $modulo_eventi->id.'_'.$evento['id'],
                     'title' => '<b>'.tr('Evento').':</b> '.$evento['nome'].'</b>',
                     'start' => ($evento['is_recurring'] ? date('Y-', strtotime($start)).date('m-d', strtotime($evento['data'])) : $evento['data']),
-                    //'end' => $evento['data'],
+                    // 'end' => $evento['data'],
                     'extendedProps' => [
                         'link' => base_path().'/editor.php?id_module='.$modulo_eventi->id.'&id_record='.$evento['id'],
                         'idintervento' => $evento['id'],
@@ -276,7 +276,7 @@ switch (filter('op')) {
                 $query = 'SELECT *, in_interventi.codice, an_anagrafiche.note AS note_anagrafica, idstatointervento AS parent_idstato, in_interventi.idtipointervento AS parent_idtipo, (SELECT GROUP_CONCAT(CONCAT(matricola, " - ", nome) SEPARATOR ", ") FROM my_impianti INNER JOIN my_impianti_interventi ON my_impianti.id=my_impianti_interventi.idimpianto WHERE my_impianti_interventi.idintervento='.prepare($id).' GROUP BY my_impianti_interventi.idintervento) AS impianti, (SELECT descrizione FROM in_statiintervento WHERE idstatointervento=parent_idstato) AS stato, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=parent_idtipo) AS tipo, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS idzona FROM in_interventi LEFT JOIN in_interventi_tecnici ON in_interventi.id =in_interventi_tecnici.idintervento LEFT JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE in_interventi.id='.prepare($id).' '.Modules::getAdditionalsQuery('Interventi', null, false);
                 $rs = $dbo->fetchArray($query);
 
-                //correggo info indirizzo citta cap provincia con quelle della sede di destinazione
+                // correggo info indirizzo citta cap provincia con quelle della sede di destinazione
                 if (!empty($rs[0]['idsede_destinazione'])) {
                     $sede = $database->fetchOne('SELECT * FROM an_sedi WHERE id = '.prepare($rs[0]['idsede_destinazione']));
                     $rs[0]['indirizzo'] = $sede['nomesede'].'<br>'.$sede['indirizzo'];
@@ -354,7 +354,7 @@ switch (filter('op')) {
             }
         }
 
-            $tooltip .= '
+        $tooltip .= '
             <script type="text/javascript">
                 $(".shorten").shorten({
                     moreText: "'.tr('Mostra tutto').'",
@@ -363,7 +363,7 @@ switch (filter('op')) {
                 });
             </script>';
 
-            echo $tooltip;
+        echo $tooltip;
 
         break;
 
@@ -413,16 +413,16 @@ switch (filter('op')) {
     FROM in_interventi
         INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica";
 
-    // Visualizzo solo promemoria del tecnico loggato
-    if (!empty($id_tecnico) && !empty($solo_promemoria_assegnati)) {
-        $query_interventi .= '
+        // Visualizzo solo promemoria del tecnico loggato
+        if (!empty($id_tecnico) && !empty($solo_promemoria_assegnati)) {
+            $query_interventi .= '
         INNER JOIN in_interventi_tecnici_assegnati ON in_interventi.id = in_interventi_tecnici_assegnati.id_intervento AND id_tecnico = '.prepare($id_tecnico);
-    } else {
-        $query_interventi .= '
+        } else {
+            $query_interventi .= '
         LEFT JOIN in_interventi_tecnici_assegnati ON in_interventi.id = in_interventi_tecnici_assegnati.id_intervento';
-    }
+        }
 
-    $query_interventi .= '
+        $query_interventi .= '
         LEFT JOIN in_interventi_tecnici ON in_interventi_tecnici.idintervento = in_interventi.id
         INNER JOIN in_statiintervento ON in_interventi.idstatointervento = in_statiintervento.idstatointervento
         LEFT JOIN an_anagrafiche AS tecnico ON in_interventi_tecnici_assegnati.id_tecnico = tecnico.idanagrafica
@@ -479,12 +479,12 @@ switch (filter('op')) {
 
         break;
 
-        case 'calendario_eventi':
-            $start = filter('start');
-            $end = filter('end');
+    case 'calendario_eventi':
+        $start = filter('start');
+        $end = filter('end');
 
-            //TODO: Problema con anni bisestili Es. 2024-02-29 e 2023-03-01 sono entrambi il 60 esimo giorno dell'anno.
-            $query = 'SELECT *, DAYOFYEAR(`zz_events`.`data`) AS d, DAYOFYEAR('.prepare($start).') AS st, DAYOFYEAR('.prepare($end).') AS fi FROM `zz_events` 
+        // TODO: Problema con anni bisestili Es. 2024-02-29 e 2023-03-01 sono entrambi il 60 esimo giorno dell'anno.
+        $query = 'SELECT *, DAYOFYEAR(`zz_events`.`data`) AS d, DAYOFYEAR('.prepare($start).') AS st, DAYOFYEAR('.prepare($end).') AS fi FROM `zz_events` 
             WHERE `zz_events`.`is_bank_holiday` = 1 
             AND 
             (`zz_events`.`is_recurring` = 1 
@@ -492,22 +492,22 @@ switch (filter('op')) {
             OR 
             (`zz_events`.`is_recurring` = 0 AND `zz_events`.`data` >= '.prepare($start).' AND  `zz_events`.`data` <= '.prepare($end).')';
 
-            $eventi = $dbo->fetchArray($query);
+        $eventi = $dbo->fetchArray($query);
 
-            $results = [];
-            foreach ($eventi as $evento) {
-                $results[] = [
-                'id' => $evento['id'],
-                'title' => $evento['nome'],
-                'start' => ($evento['is_recurring'] ? date('Y-', strtotime($start)).date('m-d', strtotime($evento['data'])) : $evento['data']),
-                //'end' => date('Y-m-d', strtotime($evento['data']. '+1 day')),
-                'display' => 'background',
-                'allDay' => true,
-                'overlap' => true,
-                ];
-            }
+        $results = [];
+        foreach ($eventi as $evento) {
+            $results[] = [
+            'id' => $evento['id'],
+            'title' => $evento['nome'],
+            'start' => ($evento['is_recurring'] ? date('Y-', strtotime($start)).date('m-d', strtotime($evento['data'])) : $evento['data']),
+            // 'end' => date('Y-m-d', strtotime($evento['data']. '+1 day')),
+            'display' => 'background',
+            'allDay' => true,
+            'overlap' => true,
+            ];
+        }
 
-            echo json_encode($results);
+        echo json_encode($results);
 
         break;
 }

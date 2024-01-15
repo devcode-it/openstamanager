@@ -242,7 +242,6 @@ class Translator extends Util\Singleton
      * Converte la data dalla formattazione inglese a quella locale.
      *
      * @param string $string
-     * @param string $fail
      *
      * @return string
      */
@@ -267,7 +266,6 @@ class Translator extends Util\Singleton
      * Converte la data dalla formattazione inglese a quella locale.
      *
      * @param string $string
-     * @param string $fail
      *
      * @return string
      */
@@ -279,8 +277,6 @@ class Translator extends Util\Singleton
     /**
      * Converte un timestamp dalla formattazione locale a quella inglese.
      *
-     * @param string $timestamp
-     *
      * @return string
      */
     public static function timestampToEnglish($string)
@@ -290,9 +286,6 @@ class Translator extends Util\Singleton
 
     /**
      * Converte un timestamp dalla formattazione inglese a quella locale.
-     *
-     * @param string $timestamp
-     * @param string $fail
      *
      * @return string
      */

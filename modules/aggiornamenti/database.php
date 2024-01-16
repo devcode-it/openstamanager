@@ -42,6 +42,33 @@ function integrity_diff($expected, $current)
     return !isset($difference) ? [] : $difference;
 }
 
+function settings_diff($expected, $current)
+{
+    foreach ($expected as $key => $value) {
+        if (array_key_exists($key, $current)) {
+            if (!is_array($current[$key])) {
+                if ($current[$key] !== $value) {
+                    $difference[$key] = [
+                        'current' => $current[$key],
+                        'expected' => $value,
+                    ];
+                }
+            } else {
+                $new_diff = integrity_diff($value, $current[$key]);
+                if (!empty($new_diff)) {
+                    $difference[$key] = $new_diff;
+                }
+            }
+        } else {
+            $difference[$key] = [
+                'current' => null,
+                'expected' => $value,
+            ];
+        }
+    }
+    return $difference;
+}
+
 $file = basename(__FILE__);
 $effettua_controllo = filter('effettua_controllo');
 
@@ -98,10 +125,11 @@ $contents = file_get_contents(base_dir().'/settings.json');
 $data = json_decode($contents, true);
 
 $settings = Update::getSettings();
-$results_settings = array_diff($data, $settings);
+$results_settings = settings_diff($data, $settings);
+$results_settings_added = settings_diff($settings, $data);
 
 // Schermata di visualizzazione degli errori
-if (!empty($results) || !empty($results_settings)) {
+if (!empty($results) || !empty($results_settings || !empty($results_settings_added))) {
     echo '
 <p>'.tr("Segue l'elenco delle tabelle del database che presentano una struttura diversa rispetto a quella prevista nella versione ufficiale del gestionale").'.</p>
 <div class="alert alert-warning">
@@ -193,27 +221,66 @@ if (!empty($results) || !empty($results_settings)) {
 </table>';
         }
     }
+
     if (!empty($results_settings)) {
         echo '
 <table class="table table-bordered">
 <thead>
-    <h3>Impostazioni mancanti</h3>
+    <h3>Problemi impostazioni</h3>
     <tr>
         <th>'.tr('Nome').'</th>
-        <th>'.tr('Tipo').'</th>
+        <th>'.tr('Valore attuale').'</th>
+        <th>'.tr('Valore atteso').'</th>
     </tr>
 </thead>
     <tbody>';
         foreach ($results_settings as $key => $setting) {
+                if (!$setting['current']) {
+                    $class = 'danger';
+                } else {
+                    $class = 'warning';
+                }
             echo '
-            <tr>
+            <tr class="bg-'.$class.'" >
                 <td>
                     '.$key.'
                 </td>
                 <td>
-                    '.$setting.'
+                    '.($setting['current'] ? $setting['current'] : '⚠️ Impostazione mancante').'
+                </td>
+                <td>
+                    '.$setting['expected'].'
                 </td>
             </tr>';
+        }
+        echo '
+    </tbody>
+</table>';
+    }
+
+    if (!empty($results_settings_added)) {
+        echo '
+<table class="table table-bordered">
+<thead>
+    <h3>Impostazioni non previste</h3>
+    <tr>
+        <th>'.tr('Nome').'</th>
+        <th>'.tr('Valore attuale').'</th>
+    </tr>
+</thead>
+    <tbody>';
+        foreach ($results_settings_added as $key => $setting) {
+            if ($setting['current'] == null) {
+                echo '
+                <tr class="bg-info" >
+                    <td>
+                        '.$key.'
+                    </td>
+                    <td>
+                        '.$setting['expected'].'
+                    </td>
+                </tr>';
+            }
         }
         echo '
     </tbody>

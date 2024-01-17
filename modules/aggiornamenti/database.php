@@ -129,99 +129,102 @@ $results_settings = settings_diff($data, $settings);
 $results_settings_added = settings_diff($settings, $data);
 
 // Schermata di visualizzazione degli errori
-if (!empty($results) || !empty($results_settings || !empty($results_settings_added))) {
-    echo '
-<p>'.tr("Segue l'elenco delle tabelle del database che presentano una struttura diversa rispetto a quella prevista nella versione ufficiale del gestionale").'.</p>
-<div class="alert alert-warning">
-    <i class="fa fa-warning"></i>
-    '.tr('Attenzione: questa funzionalità può presentare dei risultati falsamente positivi, sulla base del contenuto del file _FILE_ e la versione di _MYSQL_VERSION_ di MySQL rilevata a sistema', [
-            '_FILE_' => '<b>'.$file_to_check_database.'</b>',
-            '_MYSQL_VERSION_' => '<b>'.$database->getMySQLVersion().'</b>',
-        ]).'.
-</div>';
-
-    foreach ($results as $table => $errors) {
+if (!empty($results) || !empty($results_settings) || !empty($results_settings_added)) {
+    if (!empty($results)) {
         echo '
-<h3>'.$table.'</h3>';
+    <p>'.tr("Segue l'elenco delle tabelle del database che presentano una struttura diversa rispetto a quella prevista nella versione ufficiale del gestionale").'.</p>
+    <div class="alert alert-warning">
+        <i class="fa fa-warning"></i>
+        '.tr('Attenzione: questa funzionalità può presentare dei risultati falsamente positivi, sulla base del contenuto del file _FILE_ e la versione di _MYSQL_VERSION_ di MySQL rilevata a sistema', [
+                '_FILE_' => '<b>'.$file_to_check_database.'</b>',
+                '_MYSQL_VERSION_' => '<b>'.$database->getMySQLVersion().'</b>',
+            ]).'.
+    </div>';
 
-        if (array_key_exists('current', $errors) && $errors['current'] == null) {
+        foreach ($results as $table => $errors) {
             echo '
-<div class="alert alert-danger" ><i class="fa fa-times"></i> '.tr('Tabella assente').'</div>';
-            continue;
-        }
+    <h3>'.$table.'</h3>';
 
-        $foreign_keys = $errors['foreign_keys'] ?: [];
-        unset($errors['foreign_keys']);
-
-        if (!empty($errors)) {
-            echo '
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>'.tr('Colonna').'</th>
-            <th>'.tr('Conflitto').'</th>
-        </tr>
-    </thead>
-
-    <tbody>';
-
-            foreach ($errors as $name => $diff) {
-                if (count($diff) == 1 && array_key_exists('type', $diff) && string_contains($diff['type']['expected'], $diff['type']['current'])) {
-                    $class = 'info';
-                } else {
-                    $class = 'warning';
-                }
+            if (array_key_exists('current', $errors) && $errors['current'] == null) {
                 echo '
-        <tr class="bg-'.$class.'" >
-            <td>
-                '.$name.'
-            </td>
-            <td>
-                '.json_encode($diff).'
-            </td>
-        </tr>';
+    <div class="alert alert-danger" ><i class="fa fa-times"></i> '.tr('Tabella assente').'</div>';
+                continue;
             }
 
-            echo '
-    </tbody>
-</table>';
-        }
+            $foreign_keys = $errors['foreign_keys'] ?: [];
+            unset($errors['foreign_keys']);
 
-        if (!empty($foreign_keys)) {
-            echo '
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>'.tr('Foreign keys').'</th>
-            <th>'.tr('Conflitto').'</th>
-        </tr>
-    </thead>
-
-    <tbody>';
-
-            foreach ($foreign_keys as $name => $diff) {
-                if (count($diff) == 2 && array_key_exists('current', $diff) && $diff['current'] == null) {
-                    $class = 'info';
-                } else {
-                    $class = 'warning';
-                }
+            if (!empty($errors)) {
                 echo '
-        <tr class="bg-'.$class.'" >
-            <td>
-                '.$name.'
-            </td>
-            <td>
-                '.json_encode($diff).'
-            </td>
-        </tr>';
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>'.tr('Colonna').'</th>
+                <th>'.tr('Conflitto').'</th>
+            </tr>
+        </thead>
+
+        <tbody>';
+
+                foreach ($errors as $name => $diff) {
+                    if (count($diff) == 1 && array_key_exists('type', $diff) && string_contains($diff['type']['expected'], $diff['type']['current'])) {
+                        $class = 'info';
+                    } else {
+                        $class = 'warning';
+                    }
+                    echo '
+            <tr class="bg-'.$class.'" >
+                <td>
+                    '.$name.'
+                </td>
+                <td>
+                    '.json_encode($diff).'
+                </td>
+            </tr>';
+                }
+
+                echo '
+        </tbody>
+    </table>';
             }
 
-            echo '
-    </tbody>
-</table>';
+            if (!empty($foreign_keys)) {
+                echo '
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>'.tr('Foreign keys').'</th>
+                <th>'.tr('Conflitto').'</th>
+            </tr>
+        </thead>
+
+        <tbody>';
+
+                foreach ($foreign_keys as $name => $diff) {
+                    if (count($diff) == 2 && array_key_exists('current', $diff) && $diff['current'] == null) {
+                        $class = 'info';
+                    } else {
+                        $class = 'warning';
+                    }
+                    echo '
+            <tr class="bg-'.$class.'" >
+                <td>
+                    '.$name.'
+                </td>
+                <td>
+                    '.json_encode($diff).'
+                </td>
+            </tr>';
+                }
+
+                echo '
+        </tbody>
+    </table>';
+            }
         }
+
     }
-
+    
     if (!empty($results_settings)) {
         echo '
 <table class="table table-bordered">
@@ -257,7 +260,6 @@ if (!empty($results) || !empty($results_settings || !empty($results_settings_add
     </tbody>
 </table>';
     }
-
     if (!empty($results_settings_added)) {
         echo '
 <table class="table table-bordered">

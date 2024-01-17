@@ -165,7 +165,9 @@ class Checklists extends AppResource
             zz_checks.note,
             IF(zz_checks.id_parent IS NULL, 0, zz_checks.id_parent) AS id_parent,
             zz_checks.checked_by,
-            zz_checks.order AS ordine
+            zz_checks.order AS ordine,
+            zz_checks.is_titolo,
+            zz_checks.id_record_from AS idimpianto
         FROM zz_checks
         WHERE zz_checks.id = '.prepare($id);
 

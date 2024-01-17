@@ -198,7 +198,8 @@ class User extends Model
         $database = database();
 
         // Generazione del token per l'utente
-        $tokens = $database->fetchArray($query);
+        $query_utenti = 'SELECT * FROM `zz_tokens` WHERE `id_utente` = '.prepare($this->id);
+        $tokens = $database->fetchArray($query_utenti);
         if (empty($tokens)) {
             $token = secure_random_string();
 

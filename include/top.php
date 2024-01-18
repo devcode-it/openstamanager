@@ -616,7 +616,7 @@ if (Auth::check()) {
         include_once $extra_file;
     }
 
-    if (!empty($messages['info']) || !empty($messages['warning']) || !empty($messages['error'])) {
+    if (!empty($messages['warning']) || !empty($messages['error'])) {
         echo '
             <div class="box box-warning box-center">
                 <div class="box-header with-border text-center">

@@ -228,7 +228,7 @@ switch (post('op')) {
         $anagrafica->save();
 
         if ($anagrafica->isAzienda()) {
-            flash()->info(tr('Anagrafica Azienda impostata come predefinita').'. '.tr('Per ulteriori informazionioni, visitare "Strumenti -> Impostazioni -> Generali"'));
+            flash()->info(tr('Anagrafica Azienda impostata come predefinita').'. '.tr('Per ulteriori informazioni, visitare "Strumenti -> Impostazioni -> Generali"'));
         }
 
         // Lettura tipologia della nuova anagrafica

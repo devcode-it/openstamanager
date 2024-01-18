@@ -34,6 +34,9 @@ echo '
                 <div class="col-md-3 pull-right">
                     {["type":"select", "label":"'.tr('Modulo iniziale').'", "name":"id_module_start", "ajax-source":"moduli_gruppo", "select-options": '.json_encode(['idgruppo' => $record['id']]).', "placeholder":"'.tr('Modulo iniziale').'", "value":"'.$record['id_module_start'].'" ]}
                 </div>
+                 <div class="col-md-3 pull-right">
+                    {["type":"select", "label":"'.tr('Tema').'", "name":"theme", "values":"list=\"\": \"'.tr('Predefinito').'\",\"black\": \"'.tr('Nero').'\",\"red\": \"'.tr('Rosso').'\",\"blue\": \"'.tr('Blu').'\",\"green\": \"'.tr('Verde').'\",\"yellow\": \"'.tr('Giallo').'\",\"purple\": \"'.tr('Viola').'\" ", "value":"'.$record['theme'].'" ]}
+                </div>
             </div>
             <br>';
 
@@ -255,6 +258,7 @@ function update_permissions(id, value, color){
         globals.rootdir + "/actions.php?id_module='.$id_module.'&id_record='.$id_record.'&op=update_permission&idmodulo=" + id + "&permesso=" + value,
         function(data){
             if(data == "ok") {
+
                 toastr["success"]("'.tr('Permessi aggiornati!').'");
                 content_was_modified = false;
 
@@ -265,8 +269,9 @@ function update_permissions(id, value, color){
 
                 if( id==$("#id_module_start").val() && value=="-" ){
                     $("#id_module_start").selectReset();
-                    update_user($("#id_module_start").val());
+                    update_id_module_start($("#id_module_start").val());
                 }
+
             } else {
                 swal("'.tr('Errore').'", "'.tr("Errore durante l'aggiornamento dei permessi!").'", "error");
             }
@@ -275,18 +280,36 @@ function update_permissions(id, value, color){
 }
 
 $("#id_module_start").change(function(){
-    update_user($(this).val());
+    update_id_module_start($(this).val());
 });
 
-function update_user(value){
+$("#theme").change(function(){
+    update_theme($(this).val());
+});
+
+function update_id_module_start(value){
     $.get(
-        globals.rootdir + "/actions.php?id_module='.$id_module.'&id_record='.$id_record.'&op=update&id_module_start=" + value,
+        globals.rootdir + "/actions.php?id_module='.$id_module.'&id_record='.$id_record.'&op=update_id_module_start&id_module_start=" + value,
         function(data){
             if(data == "ok") {
-                toastr["success"]("'.tr('Informazioni aggiornate!').'");
+                toastr["success"]("'.tr('Modulo iniziale aggiornato!').'");
                 content_was_modified = false;
             } else {
-                swal("'.tr('Errore').'", "'.tr("Errore durante l'aggiornamento delle informazioni!").'", "error");
+                swal("'.tr('Errore').'", "'.tr("Errore durante l'aggiornamento delle impostazioni!").'", "error");
+            }
+        }
+    );
+}
+
+function update_theme(value){
+    $.get(
+        globals.rootdir + "/actions.php?id_module='.$id_module.'&id_record='.$id_record.'&op=update_theme&theme=" + value,
+        function(data){
+            if(data == "ok") {
+                toastr["success"]("'.tr('Tema aggiornato!').'");
+                content_was_modified = false;
+            } else {
+                swal("'.tr('Errore').'", "'.tr("Errore durante l'aggiornamento delle impostazioni!").'", "error");
             }
         }
     );

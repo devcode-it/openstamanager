@@ -33,6 +33,7 @@ class User extends Model
     protected $appends = [
         'is_admin',
         'gruppo',
+        'theme',
         'id_anagrafica',
     ];
 
@@ -47,6 +48,7 @@ class User extends Model
 
     protected $is_admin;
     protected $gruppo;
+    protected $theme;
 
     /**
      * The attributes that should be hidden for arrays.
@@ -109,6 +111,15 @@ class User extends Model
         }
 
         return $this->gruppo;
+    }
+
+    public function getThemeAttribute()
+    {
+        if (!isset($this->theme)) {
+            $this->theme = $this->group->theme;
+        }
+
+        return $this->theme;
     }
 
     public function getSediAttribute()

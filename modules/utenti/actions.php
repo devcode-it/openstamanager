@@ -26,12 +26,30 @@ $id_utente = filter('id_utente');
 switch (filter('op')) {
     // Aggiunta nuovo gruppo
     case 'add':
-        $nome = filter('nome');
 
+        $nome = filter('nome');
+        $id_module_start = filter('id_module_start') ?: null;
+        $theme = filter('theme') ?: null;
+       
         // Verifico che questo nome gruppo non sia già stato usato
         if ($dbo->fetchNum('SELECT nome FROM zz_groups WHERE nome='.prepare($nome)) == 0) {
-            $dbo->query('INSERT INTO zz_groups(nome, editable) VALUES('.prepare($nome).', 1)');
+
+             $dbo->insert('zz_groups', [
+                'nome' => $nome,
+                'id_module_start' => $id_module_start,
+                'theme' => $theme,
+                'editable' => 1,
+            ]);
+
             $id_record = $dbo->lastInsertedID();
+
+            if ($id_module_start){
+                $dbo->insert('zz_permissions', [
+                    'idgruppo' => $id_record,
+                    'idmodule' => $id_module_start,
+                    'permessi' => 'r',
+                ]);
+            }
 
             flash()->info(tr('Gruppo aggiunto!'));
         } else {
@@ -255,9 +273,19 @@ switch (filter('op')) {
 
         break;
 
-    case 'update':
+    case 'update_id_module_start':
         $dbo->update('zz_groups', [
             'id_module_start' => filter('id_module_start'),
+        ], ['id' => $id_record]);
+
+        ob_end_clean();
+        echo 'ok';
+
+        break;
+
+    case 'update_theme':
+        $dbo->update('zz_groups', [
+            'theme' => filter('theme'),
         ], ['id' => $id_record]);
 
         ob_end_clean();

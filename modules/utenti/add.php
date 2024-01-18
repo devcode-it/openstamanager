@@ -24,8 +24,14 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="backto" value="record-list">
 
 	<div class="row">
-		<div class="col-md-12">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "<?php echo tr('Nome gruppo'); ?>", "name": "nome", "required": 1, "validation": "gruppo", "help": "<?php echo tr('Compilando questo campo verrà creato un nuovo gruppo di utenti.'); ?>" ]}
+		</div>
+		<div class="col-md-3">
+			{[ "type": "select", "label": "<?php echo tr('Tema'); ?>", "name": "theme", "values": "list=\"\": \"<?php echo tr('Predefinito'); ?>\",\"black\": \"<?php echo tr('Nero'); ?>\",\"red\": \"<?php echo tr('Rosso'); ?>\",\"blue\": \"<?php echo tr('Blu'); ?>\",\"green\": \"<?php echo tr('Verde'); ?>\",\"yellow\": \"<?php echo tr('Giallo'); ?>\",\"purple\": \"<?php echo tr('Viola'); ?>\"", "value": "$theme$" ]}
+		</div>
+		<div class="col-md-3">
+			 {["type":"select", "label":"<?php echo tr('Modulo iniziale'); ?>", "name":"id_module_start", "ajax-source":"moduli_gruppo", "placeholder":"<?php tr('Modulo iniziale'); ?>" ]}
 		</div>
 	</div>
 
@@ -47,7 +53,7 @@ function submitCheck() {
 		$("#add-form").submit();
 	}else{
 		$("input[name=nome]").focus();
-		swal("<?php echo tr('Impossibile procedere'); ?>", "<?php echo tr('Nome gruppo già in uso'); ?>", "error");
+		swal("<?php echo tr('Impossibile procedere'); ?>", "<?php echo tr('Nome gruppo già utilizzato'); ?>.", "error");
 		
 	}
 }

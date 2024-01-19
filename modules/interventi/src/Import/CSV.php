@@ -191,9 +191,9 @@ class CSV extends CSVImporter
     public static function getExample()
     {
         return [
-            ['Codice', 'Telefono', 'Data', 'Data richiesta', 'Ora inizio', 'Tecnico', 'Tipo', 'Note', 'Impianto', 'Richiesta', 'Descrizione', 'Stato'],
-            ['001', '04444444', '07/11/2023', '03/11/2023', '18:30', 'Stefano Bianchi', '', '', '00001', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', 'Bozza'],
-            ['002', '04444444', '08/11/2023', '04/11/2023', '11:20', 'Stefano Bianchi', '', '', '00002', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', ''],
+            ['Codice', 'Telefono', 'Data', 'Data richiesta', 'Ora inizio', 'Ora fine', 'Tecnico', 'Tipo', 'Note', 'Impianto', 'Richiesta', 'Descrizione', 'Stato'],
+            ['00001/2024', '04444444', '07/11/2023', '03/11/2023', '8:30', '9:30', 'Stefano Bianchi', '', '', '12345-85A22', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', 'Bozza'],
+            ['0002/2024', '04444444', '08/11/2023', '04/11/2023', '11:20', '', 'Stefano Bianchi', '', '', '12345-85B23', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', ''],
         ];
     }
 }

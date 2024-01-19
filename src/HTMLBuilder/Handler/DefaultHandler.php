@@ -143,7 +143,7 @@ class DefaultHandler implements HandlerInterface
     </script>';
 
         if (!empty($values['strength'])) {
-            $values['icon-after'] .= ' | <i onclick="generatePassword_'.$values['id'].'()" class="clickable fa fa-cog"  id="'.$values['id'].'_generate"></i>';
+            $values['icon-after'] .= ' <i onclick="generatePassword_'.$values['id'].'()" class="clickable fa fa-cog"  id="'.$values['id'].'_generate"></i>&nbsp;|&nbsp;&nbsp;&nbsp;';
 
             $result .= '
     <div id="'.$values['id'].'_viewport_progress"></div>

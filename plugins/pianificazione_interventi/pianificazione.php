@@ -97,7 +97,7 @@ echo '
 
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "date",  "label": "'.tr('Data promemoria').'", "name": "data_richiesta", "required": 1, "value": "'.$data_accettazione.'", "readonly": '.intval($block_edit).', "min-date": "'.$data_accettazione.'", "max-date": "'.$data_conclusione.'" ]}
+					{[ "type": "date",  "label": "'.tr('Data promemoria').'", "name": "data_richiesta", "required": 1, "value": "'.$data_richiesta.'", "readonly": '.intval($block_edit).', "min-date": "'.$data_accettazione.'", "max-date": "'.$data_conclusione.'" ]}
 				</div>
 
 				<div class="col-md-4">

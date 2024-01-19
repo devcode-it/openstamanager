@@ -129,7 +129,6 @@ echo '
                             {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>';
@@ -144,18 +143,18 @@ $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 $sede_azienda = $anagrafica_azienda->sedeLegale;
 
 echo '
-            <div class="col-md-4">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><i class="fa fa-map"></i> '.tr('Geolocalizzazione').'</h3>
-                    </div>
-                    <div class="panel-body">';
+        <div class="col-md-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-map"></i> '.tr('Geolocalizzazione').'</h3>
+                </div>
+                <div class="panel-body">';
 
 if (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($sede_cliente->lng))) {
     echo '
-                        <div id="map-edit" style="width: 100%;"></div>
+                    <div id="map-edit" style="width: 100%;"></div>
 
-                        <div class="clearfix"></div>
+                    <div class="clearfix"></div>
                         <br>';
 
     // Navigazione diretta verso l'indirizzo
@@ -338,45 +337,46 @@ echo '
             <!-- RIGA 5 -->
             <div class="row">
                 <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">';
-echo input([
-    'type' => 'ckeditor',
-    'label' => tr('Richiesta'),
-    'name' => 'richiesta',
-    'id' => 'richiesta_add',
-    'required' => 1,
-    'value' => $record['richiesta'],
-    'extra' => 'style=\'max-height:80px;\'',
-]);
-echo '
+                    echo input([
+                        'type' => 'ckeditor',
+                        'label' => tr('Richiesta'),
+                        'name' => 'richiesta',
+                        'id' => 'richiesta_add',
+                        'required' => 1,
+                        'value' => $record['richiesta'],
+                        'extra' => 'style=\'max-height:80px;\'',
+                    ]);
+                    echo '
                 </div>
                 <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">';
-echo input([
-    'type' => 'ckeditor',
-    'label' => tr('Descrizione'),
-    'name' => 'descrizione',
-    'id' => 'descrizione_add',
-    'value' => $record['descrizione'],
-    'extra' => 'style=\'max-height:80px;\'',
-]);
-echo '
+                    echo input([
+                        'type' => 'ckeditor',
+                        'label' => tr('Descrizione'),
+                        'name' => 'descrizione',
+                        'id' => 'descrizione_add',
+                        'value' => $record['descrizione'],
+                        'extra' => 'style=\'max-height:80px;\'',
+                    ]);
+                    echo '
                 </div>
             </div>';
 // Nascondo le note interne ai clienti
 if ($user->gruppo != 'Clienti') {
     echo '
-                    <div class="row">
-                        <div class="col-md-12">
-                            {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows=\'5\'" ]}
-                        </div>
-                    </div>';
+            <div class="row">
+                <div class="col-md-12">
+                    {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows=\'5\'" ]}
+                </div>
+            </div>';
 }
 
 // Conteggio numero articoli intervento per eventuale blocco della sede di partenza
 $articoli = $intervento->articoli;
 echo '
-                <div class="row"><div class="col-md-4">
+            <div class="row">
+                <div class="col-md-4">
                     {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "readonly": "'.(($record['flag_completato'] || !$articoli->isEmpty()) ? 1 : 0).'" ]}
-                </div></div>
+                </div>
             </div>
         </div>
     </div>';

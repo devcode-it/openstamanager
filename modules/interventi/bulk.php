@@ -92,6 +92,7 @@ switch (post('op')) {
 
         $accodare = post('accodare');
         $id_segment = post('id_segment');
+        $raggruppamento = post('raggruppamento');
 
         $where = '';
         // Lettura interventi non collegati a preventivi, ordini e contratti
@@ -115,7 +116,8 @@ switch (post('op')) {
                 $id_anagrafica = $intervento['idanagrafica'];
             }
 
-            $id_documento = $id_documento_cliente[$id_anagrafica];
+            $idsede_destinazione = $raggruppamento == 'sede' ? $intervento['idsede_destinazione'] : 0;
+            $id_documento = $id_documento_cliente[$id_anagrafica][$idsede_destinazione];
 
             $anagrafica = Anagrafica::find($id_anagrafica);
             $id_iva = $anagrafica->idiva_vendite ?: setting('Iva predefinita');
@@ -123,7 +125,8 @@ switch (post('op')) {
             // Se non c'è già una fattura appena creata per questo cliente, creo una fattura nuova
             if (empty($id_documento)) {
                 if (!empty($accodare)) {
-                    $documento = $dbo->fetchOne('SELECT co_documenti.id FROM co_documenti INNER JOIN co_statidocumento ON co_documenti.idstatodocumento = co_statidocumento.id INNER JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento INNER JOIN zz_segments ON zz_segments.id = co_documenti.id_segment WHERE co_statidocumento.descrizione = "Bozza"  AND co_documenti.idanagrafica = '.prepare($id_anagrafica).' AND co_tipidocumento.id='.prepare($tipo_documento['id']).' AND co_documenti.id_segment = '.prepare($id_segment));
+                    $where = $raggruppamento == 'sede' ? ' AND idsede_destinazione = '.prepare($intervento['idsede_destinazione']) : '';
+                    $documento = $dbo->fetchOne('SELECT co_documenti.id FROM co_documenti INNER JOIN co_statidocumento ON co_documenti.idstatodocumento = co_statidocumento.id INNER JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento INNER JOIN zz_segments ON zz_segments.id = co_documenti.id_segment WHERE co_statidocumento.descrizione = "Bozza"  AND co_documenti.idanagrafica = '.prepare($id_anagrafica).' AND co_tipidocumento.id='.prepare($tipo_documento['id']).' AND co_documenti.id_segment = '.prepare($id_segment).$where);
 
                     $id_documento = $documento['id'];
                     $id_documento_cliente[$id_anagrafica] = $id_documento;
@@ -131,9 +134,11 @@ switch (post('op')) {
 
                 if (empty($id_documento)) {
                     $fattura = Fattura::build($anagrafica, $tipo_documento, $data, $id_segment);
+                    $fattura->idsede_destinazione = $idsede_destinazione;
+                    $fattura->save();
 
                     $id_documento = $fattura->id;
-                    $id_documento_cliente[$id_anagrafica] = $id_documento;
+                    $id_documento_cliente[$id_anagrafica][$idsede_destinazione] = $id_documento;
                 }
             }
 
@@ -384,7 +389,8 @@ $operations['crea_fattura'] = [
        'title' => tr('Fatturare gli _TYPE_ selezionati?', ['_TYPE_' => strtolower($module['name'])]).' <small><i class="fa fa-question-circle-o tip" title="'.tr('Verranno fatturati solo gli interventi completati non collegati a contratti o preventivi').'."></i></small>',
         'msg' => '{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle fatture di vendita non ancora emesse?').'</small>", "placeholder": "'.tr('Aggiungere alle fatture di vendita nello stato bozza?').'", "name": "accodare" ]}<br>
             {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_fatture, 'is_sezionale' => 1]).', "value": "'.$id_segment.'", "select-options-escape": true ]}<br>
-            {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, CONCAT(codice_tipo_documento_fe, \' - \', descrizione) AS descrizione FROM co_tipidocumento WHERE enabled = 1 AND dir =\'entrata\' ORDER BY codice_tipo_documento_fe", "value": "'.$idtipodocumento.'" ]}',
+            {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, CONCAT(codice_tipo_documento_fe, \' - \', descrizione) AS descrizione FROM co_tipidocumento WHERE enabled = 1 AND dir =\'entrata\' ORDER BY codice_tipo_documento_fe", "value": "'.$idtipodocumento.'" ]}<br>
+            {[ "type": "select", "label": "'.tr('Raggruppa per').'", "name": "raggruppamento", "required": 1, "values": "list=\"cliente\":\"Cliente\",\"sede\":\"Sede\"" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

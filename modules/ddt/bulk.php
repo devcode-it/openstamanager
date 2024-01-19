@@ -59,6 +59,7 @@ switch (post('op')) {
 
         $data = date('Y-m-d');
         $id_segment = post('id_segment');
+        $raggruppamento = post('raggruppamento');
 
         // Lettura righe selezionate
         foreach ($id_records as $id) {
@@ -73,16 +74,31 @@ switch (post('op')) {
                     ++$numero_totale;
 
                     // Ricerca fattura per anagrafica tra le registrate
-                    $fattura = $documenti->first(function ($item, $key) use ($id_anagrafica) {
-                        return $item->anagrafica->id == $id_anagrafica;
-                    });
+                    $id_sede = $raggruppamento == 'sede' ? $documento_import->idsede_destinazione : 0;
+                    if ($raggruppamento == 'sede') {
+                        $fattura = $documenti->first(function ($item, $key) use ($id_anagrafica, $id_sede) {
+                            return $item->anagrafica->id == $id_anagrafica && $item->idsede_destinazione == $id_sede;
+                        });
+                    } else {
+                        $fattura = $documenti->first(function ($item, $key) use ($id_anagrafica) {
+                            return $item->anagrafica->id == $id_anagrafica ;
+                        });
+                    }
 
                     // Ricerca fattura per anagrafica se l'impostazione di accodamento è selezionata
                     if (!empty($accodare) && empty($fattura)) {
-                        $fattura = Fattura::where('idanagrafica', $id_anagrafica)
-                            ->where('idstatodocumento', $stato_documenti_accodabili->id)
-                            ->where('idtipodocumento', $tipo_documento->id)
-                            ->first();
+                        if ($raggruppamento == 'sede') {
+                            $fattura = Fattura::where('idanagrafica', $id_anagrafica)
+                                ->where('idstatodocumento', $stato_documenti_accodabili->id)
+                                ->where('idtipodocumento', $tipo_documento->id)
+                                ->first();
+                        } else {
+                            $fattura = Fattura::where('idanagrafica', $id_anagrafica)
+                                ->where('idstatodocumento', $stato_documenti_accodabili->id)
+                                ->where('idtipodocumento', $tipo_standard->id)
+                                ->where('idsede_destinazione', $id_sede)
+                                ->first();
+                        }
 
                         if (!empty($fattura)) {
                             $documenti->push($fattura);
@@ -92,11 +108,10 @@ switch (post('op')) {
                     // Creazione fattura per anagrafica
                     if (empty($fattura)) {
                         $fattura = Fattura::build($anagrafica, $tipo_documento, $data, $id_segment);
+                        $fattura->idsede_destinazione = $id_sede;
+                        $fattura->save();
                         $documenti->push($fattura);
                     }
-
-                    $fattura->idsede_destinazione = $documento_import->idsede_destinazione;
-                    $fattura->save();
 
                     // Inserimento righe
                     foreach ($righe as $riga) {
@@ -183,7 +198,8 @@ $operations['crea_fattura'] = [
             'title' => tr('Fatturare i _TYPE_ selezionati?', ['_TYPE_' => strtolower($module['name'])]),
             'msg' => '{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle _TYPE_ non ancora emesse?', ['_TYPE_' => strtolower($module_fatture)]).'", "placeholder": "'.tr('Aggiungere alle _TYPE_ nello stato bozza?', ['_TYPE_' => strtolower($module_fatture)]).'</small>", "name": "accodare" ]}<br>
             {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_fatture, 'is_sezionale' => 1]).', "value": "'.$id_segment.'", "select-options-escape": true ]}<br>
-            {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, CONCAT(codice_tipo_documento_fe, \' - \', descrizione) AS descrizione FROM co_tipidocumento WHERE enabled = 1 AND dir ='.prepare($dir).' ORDER BY codice_tipo_documento_fe", "value": "'.$idtipodocumento.'" ]}',
+            {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, CONCAT(codice_tipo_documento_fe, \' - \', descrizione) AS descrizione FROM co_tipidocumento WHERE enabled = 1 AND dir ='.prepare($dir).' ORDER BY codice_tipo_documento_fe", "value": "'.$idtipodocumento.'" ]}<br>
+            {[ "type": "select", "label": "'.tr('Raggruppa per').'", "name": "raggruppamento", "required": 1, "values": "list=\"cliente\":\"Cliente\",\"sede\":\"Sede\"" ]}',
             'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',
             'blank' => false,

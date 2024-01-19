@@ -33,7 +33,6 @@ class User extends Model
     protected $appends = [
         'is_admin',
         'gruppo',
-        'theme',
         'id_anagrafica',
     ];
 

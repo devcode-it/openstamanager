@@ -310,7 +310,7 @@ $files_to_check = [
 
 $files = [];
 foreach ($files_to_check as $name => $description) {
-    $status = is_writable(base_dir().DIRECTORY_SEPARATOR.$name);
+    $status = is_readable(base_dir().DIRECTORY_SEPARATOR.$name);
 
     $files[] = [
         'name' => $name,

@@ -304,7 +304,6 @@ $files_to_check = [
     'manifest.json' => tr('Necessario per l\'aggiunta a schermata home da terminale (creato al termine della configurazione)'),
     'database_5_7.json' => tr('Necessario per il controllo integrità con database MySQL 5.7.x'),
     'database.json' => tr('Necessario per il controllo integrità con database MySQL 8.0.x'),
-    'settings.json' => tr('Necessario per il controllo integrità impostazioni del database'),
     'checksum.json' => tr('Necessario per il controllo integrità dei files del gestionale'),
     'settings.json' => tr('Necessario per il controllo delle impostazioni del gestionale'),
 ];

@@ -336,6 +336,13 @@ if (Auth::check()) {
     }
 }
 
+//Set the group theme
+if (isset($user)){
+    if ($user->getThemeAttribute()){
+        $theme = $user->getThemeAttribute();
+    }
+}
+
 $settings_collapse = session_get('settings.sidebar-collapse') ? 1 : 0;
 $hide_sidebar = Auth::check() && (setting('Nascondere la barra sinistra di default') || $settings_collapse);
 echo '

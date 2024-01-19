@@ -222,12 +222,6 @@ if (!API\Response::isAPIRequest()) {
     // Impostazione del tema grafico di default
     $theme = !empty($config['theme']) ? $config['theme'] : 'default';
     
-    //Set the group theme
-    $user = auth()->getUser();
-    if ($user->getThemeAttribute()){
-         $theme = $user->getThemeAttribute();
-    }
-
     if ($continue) {
         // Periodo di visualizzazione dei record
         // Personalizzato

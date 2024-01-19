@@ -285,7 +285,7 @@ if (!$righe->isEmpty()) {
         // Prezzo totale
         echo '
         <td class="text-center">
-            '.($options['pricing'] ? Translator::numberToLocale($riga->importo, $d_importi) : '-').'
+            '.($options['pricing'] ? moneyFormat($riga->importo, $d_importi) : '-').'
         </td>
     </tr>';
     }

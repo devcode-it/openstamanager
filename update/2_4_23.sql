@@ -105,7 +105,7 @@ UPDATE `zz_segments` SET `clause` = REPLACE(`clause`, 'co_pagamenti.riba=1', 'co
 ALTER TABLE `co_pagamenti` DROP `riba`;
 
 -- Aggiunto filtro in contratti per i clienti
-INSERT INTO `zz_group_module` (`idgruppo`, `idmodule`, `name`, `clause`, `position`, `enabled`, `default`) VALUES(4, 31, 'Mostra i contratti ai clienti coivolti', 'co_contratti.idanagrafica=|id_anagrafica|', 'WHR', 1, 1);
+INSERT INTO `zz_group_module` (`idgruppo`, `idmodule`, `name`, `clause`, `position`, `enabled`, `default`) VALUES((SELECT `id` FROM `zz_groups` WHERE `nome` = 'Clienti'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'Mostra i contratti ai clienti coivolti', 'co_contratti.idanagrafica=|id_anagrafica|', 'WHR', 1, 1);
 
 -- Aggiunto campo descrizione revisione in preventivi
 ALTER TABLE `co_preventivi` ADD `descrizione_revision` VARCHAR(255) NOT NULL AFTER `default_revision`;
@@ -134,6 +134,6 @@ UPDATE `zz_settings` SET `valore` = IF(`valore` ='', (SELECT `id` FROM `co_iva` 
 UPDATE `zz_prints` SET `predefined` = '0' WHERE `zz_prints`.`name` = 'Fattura elettronica di vendita'; 
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stampe'), 'Modulo', '(SELECT name FROM zz_modules WHERE zz_modules.id= zz_prints.id_module)', 4, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stampe'), 'Modulo', '(SELECT `name` FROM `zz_modules` WHERE `zz_modules`.`id` = `zz_prints`.`id_module`)', 4, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stampe'), 'Predefinita', 'zz_prints.predefined', 5, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stampe'), 'Ordine', 'zz_prints.order', 6, 1, 0, 0, 1);

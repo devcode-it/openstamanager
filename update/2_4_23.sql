@@ -105,7 +105,7 @@ UPDATE `zz_segments` SET `clause` = REPLACE(`clause`, 'co_pagamenti.riba=1', 'co
 ALTER TABLE `co_pagamenti` DROP `riba`;
 
 -- Aggiunto filtro in contratti per i clienti
-INSERT INTO `zz_group_module` (`idgruppo`, `idmodule`, `name`, `clause`, `position`, `enabled`, `default`) VALUES((SELECT `id` FROM `zz_groups` WHERE `nome` = 'Clienti'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'Mostra i contratti ai clienti coivolti', 'co_contratti.idanagrafica=|id_anagrafica|', 'WHR', 1, 1);
+INSERT INTO `zz_group_module` (`idgruppo`, `idmodule`, `name`, `clause`, `position`, `enabled`, `default`) VALUES((SELECT `id` FROM `zz_groups` WHERE `nome` = 'Clienti'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'Mostra i contratti ai clienti coinvolti', 'co_contratti.idanagrafica=|id_anagrafica|', 'WHR', 1, 1);
 
 -- Aggiunto campo descrizione revisione in preventivi
 ALTER TABLE `co_preventivi` ADD `descrizione_revision` VARCHAR(255) NOT NULL AFTER `default_revision`;
@@ -127,7 +127,7 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 -- Allineamento colore icona EC02
 UPDATE `fe_stati_documento` SET `icon` = 'fa fa-times text-danger' WHERE `fe_stati_documento`.`codice` = 'EC02'; 
 
--- Impostata aliquota iva per dichiarazone d'intento se non presente
+-- Impostata aliquota iva per dichiarazione d'intento se non presente
 UPDATE `zz_settings` SET `valore` = IF(`valore` ='', (SELECT `id` FROM `co_iva` WHERE `descrizione`='Non imp. art. 8 c.1 lett. c DPR 633/1972'), `valore`) WHERE `nome`="Iva per lettere d'intento";
 
 -- Ripristino Fattura di vendita come stampa predefinita

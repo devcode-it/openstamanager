@@ -101,7 +101,7 @@ echo '
     <input type="hidden" name="dir" value="'.$dir.'">';
 
 $info = $dbo->fetchArray('SELECT * FROM mg_prodotti WHERE serial IS NOT NULL AND '.$riga.'='.prepare($idriga));
-$serials = array_column($info, 'serial');
+$serials = $info ? array_column($info, 'serial') : [];
 
 if ($dir == 'entrata') {
     echo '

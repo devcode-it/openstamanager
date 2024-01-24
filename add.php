@@ -40,20 +40,20 @@ echo '
 // Campi personalizzati
 echo '
 
-<div class="hide" id="custom_fields_top-add">
+<div class="hide" id="custom_fields_top-add_'.$id_module.'-'.$id_plugin.'">
     <input type="hidden" name="id_module" value="'.$id_module.'">
     <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
 
     {( "name": "custom_fields", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "position": "top", "place": "add" )}
 </div>
 
-<div class="hide" id="custom_fields_bottom-add">
+<div class="hide" id="custom_fields_bottom-add_'.$id_module.'-'.$id_plugin.'">
     {( "name": "custom_fields", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "position": "bottom", "place": "add" )}
 </div>
 
 <script>
 $(document).ready(function(){
-    let form = $("#custom_fields_top-add").parent().find("form").first();
+    let form = $("#custom_fields_top-add_'.$id_module.'-'.$id_plugin.'").parent().find("form").first();
 
     // Ultima sezione/campo del form
     let last = form.find(".panel").last();
@@ -67,10 +67,10 @@ $(document).ready(function(){
     }
 
     // Campi a inizio form
-    aggiungiContenuto(form, "#custom_fields_top-add", {}, true);
+    aggiungiContenuto(form, "#custom_fields_top-add_'.$id_module.'-'.$id_plugin.'", {}, true);
 
     // Campi a fine form
-    aggiungiContenuto(last, "#custom_fields_bottom-add", {});
+    aggiungiContenuto(last, "#custom_fields_bottom-add_'.$id_module.'-'.$id_plugin.'", {});
 });
 </script>';
 

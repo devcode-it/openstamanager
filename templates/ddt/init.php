@@ -28,6 +28,7 @@ $d_totali = (int) setting('Cifre decimali per totali in stampa');
 
 $id_cliente = $documento['idanagrafica'];
 $id_sede = $record['idsede_partenza'];
+$id_azienda = setting('Azienda predefinita');
 
 $pagamento = $dbo->fetchOne('SELECT * FROM co_pagamenti WHERE id = '.prepare($documento['idpagamento']));
 $causale = $dbo->fetchOne('SELECT * FROM dt_causalet WHERE id = '.prepare($documento['idcausalet']));
@@ -82,6 +83,43 @@ if (!empty($documento['idsede_destinazione'])) {
     }
 }
 
+// Leggo i dati della destinazione (se 0=sede legale, se!=altra sede da leggere da tabella an_sedi)
+$partenza = '';
+if (!empty($documento['idsede_partenza'])) {
+    $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE idanagrafica='.prepare($id_azienda).' AND id='.prepare($documento['idsede_partenza']));
+
+    if (!empty($rsd[0]['nomesede'])) {
+        $partenza .= $rsd[0]['nomesede'].'<br/>';
+    }
+    if (!empty($rsd[0]['indirizzo'])) {
+        $partenza .= $rsd[0]['indirizzo'].'<br/>';
+    }
+    if (!empty($rsd[0]['indirizzo2'])) {
+        $partenza .= $rsd[0]['indirizzo2'].'<br/>';
+    }
+    if (!empty($rsd[0]['cap'])) {
+        $partenza .= $rsd[0]['cap'].' ';
+    }
+    if (!empty($rsd[0]['citta'])) {
+        $partenza .= $rsd[0]['citta'];
+    }
+    if (!empty($rsd[0]['provincia'])) {
+        $partenza .= ' ('.$rsd[0]['provincia'].')';
+    }
+    if (!empty($rsd[0]['id_nazione'])) {
+        $nazione = $database->fetchOne('SELECT * FROM an_nazioni WHERE id = '.prepare($rsd[0]['id_nazione']));
+        if ($nazione['iso2'] != 'IT') {
+            $partenza .= ' - '.$nazione['name'].'<br />';
+        }
+    }
+    if (!empty($rsd[0]['telefono'])) {
+        $partenza .= 'Tel: '.$rsd[0]['telefono'].'<br />';
+    }
+    if (!empty($rsd[0]['cellualre'])) {
+        $partenza .= 'Cell: '.$rsd[0]['cellulare'];
+    }
+}
+
 // Sostituzioni specifiche
 $custom = [
     'tipo_doc' => $tipo_doc,
@@ -89,6 +127,7 @@ $custom = [
     'data' => Translator::dateToLocale($documento['data']),
     'pagamento' => $pagamento['descrizione'],
     'c_destinazione' => $destinazione,
+    'c_partenza' => $partenza,
     'aspettobeni' => $aspetto_beni['descrizione'],
     'causalet' => $causale['descrizione'],
     'porto' => $porto['descrizione'],

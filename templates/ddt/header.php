@@ -90,6 +90,15 @@ if (!empty($destinazione)) {
                 </td>
             </tr>';
 }
+if (!empty($partenza)) {
+    echo '
+            <tr>
+                <td class="border-full" style="height:16mm;">
+                    <p class="small-bold">'.tr('Partenza merce', [], ['upper' => true]).'</p>
+                    <small>$c_partenza$</small>
+                </td>
+            </tr>';
+}
 
 echo '
         </table>

@@ -533,6 +533,7 @@ globals.dashboard = {
             nowIndicator: true,
             //height: "auto",
             //aspectRatio: 1.8,
+            defaultTimedEventDuration: "00:15",
             stickyHeaderDates: true,
             expandRows: true,
             //themeSystem: "bootstrap5",

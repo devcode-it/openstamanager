@@ -47,9 +47,7 @@ class OAuth2 extends Model
             $config = $this->config ?? [];
             $config = array_merge($config, [
                 'clientId' => $this->client_id,
-                'clientSecret' => $this->client_secret,
-                'redirectUri' => base_url().'/oauth2.php',
-                'accessType' => 'offline',
+                'clientSecret' => $this->client_secret
             ]);
 
             $class = $this->class;
@@ -106,7 +104,7 @@ class OAuth2 extends Model
             $this->save();
 
             // Redirect the user to the authorization URL.
-            return $authorization_url;
+            return ['authorization_url' => $authorization_url];
         } elseif (!empty($this->state) && $this->state !== $state) {
             $this->state = null;
             $this->save();
@@ -123,6 +121,8 @@ class OAuth2 extends Model
             $refresh_token = $access_token->getRefreshToken();
 
             $this->updateTokens($access_token, $refresh_token);
+
+            return ['access_token' => $access_token];
         }
 
         return null;

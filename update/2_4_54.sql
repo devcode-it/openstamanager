@@ -11,3 +11,17 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Utenti e permessi'), 'Tema', '`zz_groups`.`theme`', '4', '1', '0', '0', '0', '', '', '1', '0', '0'); 
 
+-- Creazione modulo Login
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES (NULL, 'Accesso con OAuth', 'Accesso con OAuth', 'oauth', 'SELECT |select| FROM zz_oauth2 WHERE 1=1 AND is_login=1 HAVING 2=2', '', 'fa fa-angle-right', '1.0', '2.4.54', '100', (SELECT `t`.`id` FROM `zz_modules` AS `t` WHERE `t`.`name` = 'Tabelle'), '1', '1', '0', '0');
+
+ALTER TABLE `zz_oauth2` ADD `nome` VARCHAR(255) NOT NULL AFTER `id`;
+ALTER TABLE `zz_oauth2` ADD `is_login` BOOLEAN NOT NULL AFTER `after_configuration`;
+ALTER TABLE `zz_oauth2` ADD `enabled` BOOLEAN NOT NULL DEFAULT TRUE AFTER `is_login`;
+
+-- Viste modulo Oauth
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE name='Accesso con OAuth'), 'id', 'id', 0, 1, 0, 0, '', '', 0, 0, 0),
+((SELECT `id` FROM `zz_modules` WHERE name='Accesso con OAuth'), 'Nome', 'nome', 1, 1, 0, 0, '', '', 1, 0, 0);
+
+INSERT INTO `zz_oauth2` (`nome`, `class`, `client_id`, `client_secret`, `config`, `state`, `access_token`, `refresh_token`, `after_configuration`, `is_login`, `enabled`) VALUES
+('Microsoft', 'Modules\\Emails\\OAuth2\\MicrosoftLogin', '', '', '{\"tenant_id\":\"consumers\"}', '', NULL, NULL, '', 1, 0);

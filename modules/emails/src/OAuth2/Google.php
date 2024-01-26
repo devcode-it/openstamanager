@@ -11,6 +11,16 @@ class Google extends OriginalProvider implements ProviderInterface
         'accessType' => 'offline',
     ];
 
+    public function __construct(array $options = [], array $collaborators = [])
+    {
+        // Configurazioni specifiche per il provider di Microsoft Azure
+        $config = array_merge($options, [
+            'redirectUri' => base_url().'/oauth2.php',
+        ]);
+
+        parent::__construct($config, $collaborators);
+    }
+
     public function getOptions()
     {
         return self::$options;

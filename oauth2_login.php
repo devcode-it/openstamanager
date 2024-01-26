@@ -21,7 +21,6 @@ use Models\OAuth2;
 
 $skip_permissions = true;
 include_once __DIR__.'/core.php';
-session_write_close();
 
 // Authorization information
 $state = $_GET['state'];
@@ -57,7 +56,18 @@ if (empty($response['authorization_url'])) {
 }
 
 if (empty($_GET['error'])) {
-    redirect($redirect);
+    if ($response['access_token']) {
+        $username = $account->getProvider()->getUser($response['access_token']);
+        
+        if (!auth()->attempt($username, null, true)) {
+            flash()->error(tr('Autenticazione fallita!'));
+        }
+        redirect(base_path());
+    } else {
+        redirect($redirect);
+    }
+
+    
     exit;
 } else {
     echo strip_tags($_GET['error']).'<br>'.strip_tags($_GET['error_description']).'

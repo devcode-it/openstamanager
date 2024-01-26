@@ -161,6 +161,9 @@ echo '
 if (isset($username)) {
     echo ' value="'.$username.'"';
 }
+
+$microsoft = $dbo->selectOne('zz_oauth2', '*', ['nome' => 'Microsoft', 'enabled' => 1, 'is_login' => 1]);
+
 echo ' required>
                             <span class="form-control-feedback"><i class="fa fa-user"></i> </span>
 					    </div>
@@ -171,7 +174,17 @@ echo ' required>
 
                         <button type="submit" class="btn btn-danger btn-block btn-flat">'.tr('Accedi').'</button>
                         <br>
-                        <p><a href="'.base_path().'/reset.php">'.tr('Password dimenticata?').'</a></p>
+                        <p><a href="'.base_path().'/reset.php">'.tr('Password dimenticata?').'</a></p>';
+                    if ($microsoft) {
+                        echo '
+                        <div class="social-auth-links text-center">
+                            <p>- oppure -</p>
+                        
+                            <a href="'.base_path().'/oauth2_login.php?id='.$microsoft['id'].'" class="btn btn-block btn-social btn-primary btn-flat"><i class="fa fa-windows"></i>'.tr('Accedi con Microsoft').'</a>
+                        </div>';
+                    }
+                    echo '
+                    </div>
 				</div>
 			</form>
 			<!-- /.box -->

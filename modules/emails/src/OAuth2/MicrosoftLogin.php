@@ -4,24 +4,18 @@ namespace Modules\Emails\OAuth2;
 
 use TheNetworg\OAuth2\Client\Provider\Azure;
 
-class Microsoft extends Azure implements ProviderInterface
+class MicrosoftLogin extends Azure implements ProviderInterface
 {
     /**
      * Impostazioni native per la connessione.
      *
-     * Ufficialmente lo scope dovrebbe comprendere 'https://graph.microsoft.com/SMTP.Send', a causa di un quirk interno bisogna utilizzare 'https://outlook.office.com/SMTP.Send'.
-     *
-     * @source https://github.com/decomplexity/SendOauth2/blob/main/MSFT%20OAuth2%20quirks.md
      *
      * @var \string[][]
      */
     protected static $options = [
         'scope' => [
-            'offline_access',
-            'https://outlook.office.com/SMTP.Send',
-            // 'https://outlook.office.com/IMAP.AccessAsUser.All'
+            'https://graph.microsoft.com/User.Read',
         ],
-        'accessType' => 'offline'
     ];
 
     public function __construct(array $options = [], array $collaborators = [])
@@ -30,7 +24,7 @@ class Microsoft extends Azure implements ProviderInterface
         $config = array_merge($options, [
             'defaultEndPointVersion' => parent::ENDPOINT_VERSION_2_0,
             'tenant' => $options['tenant_id'],
-            'redirectUri' => base_url().'/oauth2.php',
+            'redirectUri' => base_url().'/oauth2_login.php',
         ]);
 
         parent::__construct($config, $collaborators);
@@ -47,8 +41,14 @@ class Microsoft extends Azure implements ProviderInterface
             'tenant_id' => [
                 'label' => 'Tenant ID',
                 'type' => 'text',
-                'required' => true,
             ],
         ];
+    }
+
+    public function getUser($access_token)
+    {
+        $me = $this->get('https://graph.microsoft.com/v1.0/me', $access_token);
+
+        return $me['mail'];
     }
 }

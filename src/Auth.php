@@ -101,10 +101,11 @@ class Auth extends Util\Singleton
      *
      * @param string $username
      * @param string $password
+     * @param bool   $force     Forza il login solo tramite username (serve per l'autenticazione con Oauth2)
      *
      * @return bool
      */
-    public function attempt($username, $password)
+    public function attempt($username, $password, $force = false)
     {
         session_regenerate_id();
 
@@ -134,7 +135,14 @@ class Auth extends Util\Singleton
                 $module = $gruppo['id_module_start'];
                 $module = $this->getFirstModule($module);
 
-                if (
+                if ($force) {
+                    // Accesso completato
+                    $log['id_utente'] = $this->user->id;
+                    $status = 'success';
+
+                    // Salvataggio nella sessione
+                    $this->saveToSession();
+                } elseif (
                     $this->isAuthenticated()
                     && $this->password_check($password, $user['password'], $user['id'])
                     && !empty($module)

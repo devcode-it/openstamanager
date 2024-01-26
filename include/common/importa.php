@@ -180,7 +180,7 @@ if (!empty($options['create_document'])) {
 
     echo '
                 <div class="col-md-6">
-                    {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $final_module['id'], 'is_sezionale' => 1]).', "value": "'.$id_segment.'" ]}
+                    {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $final_module['id'], 'is_sezionale' => 1]).', "value": "'.$database->selectOne('co_tipidocumento', 'id_segment', ['id' => $idtipodocumento])['id_segment'].'" ]}
                 </div>
             </div>
         </div>

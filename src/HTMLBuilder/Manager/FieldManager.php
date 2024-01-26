@@ -125,4 +125,35 @@ class FieldManager implements ManagerInterface
 
         return $result;
     }
+
+    
+    public function getValue($options, $name) {
+        $database = database();
+
+        $query = 'SELECT `zz_fields`.*'.(isset($options['id_record']) ? ', `zz_field_record`.`value`' : '').' FROM `zz_fields`';
+
+        if (isset($options['id_record'])) {
+            $query .= ' LEFT JOIN `zz_field_record` ON `zz_fields`.`id` = `zz_field_record`.`id_field`  AND `zz_field_record`.`id_record` = '.prepare($options['id_record']);
+        }
+
+        $query .= ' WHERE ';
+
+        if (!empty($options['id_plugin'])) {
+            $query .= '`id_plugin` = '.prepare($options['id_plugin']);
+        } else {
+            $query .= '`id_module` = '.prepare($options['id_module']);
+        }
+
+        if (isset($options['place']) && $options['place'] == 'add') {
+            $query .= ' AND `on_add` = 1';
+        }
+        $query .= ' AND `zz_fields`.`name` = '.prepare($name);
+
+        $query .= ' AND `top` = '.((isset($options['position']) && $options['position'] == 'top') ? 1 : 0).' ORDER BY `order`';
+
+        $results = $database->fetchArray($query);
+
+        return $results[0]['value'];
+    }
 }
+

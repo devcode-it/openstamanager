@@ -836,7 +836,7 @@ switch (post('op')) {
                     }
                 }
             } else {
-                flash()->error(tr('Errore durante il salvataggio della firma!').tr('La firma risulta vuota').'...');
+                flash()->error(tr('Errore durante il salvataggio della firma!').' '.tr('La firma risulta vuota').'...');
             }
         } else {
             flash()->error(tr("Non è stato possibile creare la cartella _DIRECTORY_ per salvare l'immagine della firma!", [

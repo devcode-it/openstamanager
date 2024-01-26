@@ -260,7 +260,7 @@ class Prints
     {
         $info = self::render($print, $id_record, $directory);
 
-        return self::getPDFLink($info['path']);
+        return self::getPDFLink($info['path'].'?'.rand());
     }
 
     /**
@@ -272,7 +272,7 @@ class Prints
      */
     public static function getPDFLink($path)
     {
-        return base_path().'/assets/dist/pdfjs/web/viewer.html?file='.base_url().'/'.ltrim(str_replace(base_dir(), '', $path), '/');
+        return base_path().'/assets/dist/pdfjs/web/viewer.html?file='.base_url().'/'.ltrim(str_replace(base_dir(), '', $path.'?'.rand()), '/');
     }
 
     /**

@@ -110,7 +110,11 @@ echo '
 			</div>
 
 			<div class="row">
-				<div class="col-md-6">
+                <div class="col-md-3">
+                    {[ "type": "timestamp", "label": "'.tr('Data/ora scadenza').'", "name": "data_scadenza", "value": "'.$record['data_scadenza'].'", "readonly": '.intval($block_edit).' ]}
+                </div>
+
+				<div class="col-md-3">
 					{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede_c", "values": "query=SELECT 0 AS id, \'Sede legale\' AS descrizione UNION SELECT id, CONCAT( CONCAT_WS( \' (\', CONCAT_WS(\', \', `nomesede`, `citta`), `indirizzo` ), \')\') AS descrizione FROM an_sedi WHERE idanagrafica='.$id_anagrafica.'", "value": "'.$id_sede.'", "readonly": '.intval($block_edit).', "required" : "1" ]}
 			   </div>
 
@@ -118,6 +122,12 @@ echo '
                     {[ "type": "select", "multiple": "1", "label": "'.tr('Impianti a contratto').'", "name": "idimpianti[]", "help": "'.tr('Impianti della sede selezionata per il Contratto').'", "values": "query=SELECT my_impianti.id AS id, my_impianti.nome AS descrizione FROM my_impianti_contratti INNER JOIN my_impianti ON my_impianti_contratti.idimpianto = my_impianti.id  WHERE my_impianti_contratti.idcontratto = '.$id_parent.' ORDER BY descrizione", "value": "'.implode(',', $id_impianti).'", "readonly": '.intval($block_edit).' ]}
 				</div>
 			</div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    {[ "type": "select", "label": "'.tr('Tecnici assegnati').'", "multiple": "1", "name": "idtecnici[]", "ajax-source": "tecnici", "value": "'.$record['idtecnici'].'", "readonly": '.intval($block_edit).' ]}
+                </div>
+            </div>
 
 			<div class="row">
                 <div class="col-md-12">';
@@ -319,7 +329,7 @@ echo '
                     .prop("disabled", true);
             }
         });
-
+        content_was_modified = false;
     });
 
     function refreshRighe(id) {

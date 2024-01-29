@@ -77,6 +77,8 @@ if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
     $descrizione = $promemoria['descrizione'];
     $id_sede = $promemoria['idsede'];
     $impianti_collegati = $promemoria['idimpianti'];
+    $tecnici_assegnati = $promemoria['idtecnici'];
+    $data_scadenza = $promemoria['data_scadenza'];
 
     // Generazione dell'orario di fine sulla base del tempo standard definito dal Promemoria
     if (!empty($promemoria['tempo_standard'])) {

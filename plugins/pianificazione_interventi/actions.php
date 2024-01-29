@@ -50,6 +50,8 @@ switch ($operazione) {
             'richiesta' => post('richiesta'),
             'idimpianti' => implode(',', post('idimpianti') ?: []),
             'idsede' => post('idsede_c') ?: 0,
+            'data_scadenza' => post('data_scadenza') ?: null,
+            'idtecnici' => implode(',', post('idtecnici') ?: []),
         ], ['id' => $id_record]);
 
         flash()->info(tr('Promemoria inserito!'));

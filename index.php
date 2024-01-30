@@ -24,6 +24,13 @@ use Carbon\Carbon;
 
 $op = filter('op');
 
+$microsoft = null;
+
+if ($dbo->isConnected() && $dbo->isInstalled()) {
+    $microsoft = $dbo->selectOne('zz_oauth2', '*', ['nome' => 'Microsoft', 'enabled' => 1, 'is_login' => 1]);
+}
+
+
 // LOGIN
 switch ($op) {
     case 'login':
@@ -161,8 +168,6 @@ echo '
 if (isset($username)) {
     echo ' value="'.$username.'"';
 }
-
-$microsoft = $dbo->selectOne('zz_oauth2', '*', ['nome' => 'Microsoft', 'enabled' => 1, 'is_login' => 1]);
 
 echo ' required>
                             <span class="form-control-feedback"><i class="fa fa-user"></i> </span>

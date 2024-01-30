@@ -28,7 +28,7 @@ $code = $_GET['code'];
 
 // Account individuato via state
 if (!empty($state)) {
-    $account = OAuth2::where('state', '=', $state)
+    $account = OAuth2::find($_SESSION['oauth2_id'])
         ->first();
 } else {
     $account = OAuth2::find(get('id'));
@@ -37,6 +37,7 @@ if (!empty($state)) {
     $account->access_token = null;
     $account->refresh_token = null;
     $account->save();
+    $_SESSION['oauth2_id'] = $account->id;
 }
 
 if (empty($account)) {
@@ -62,7 +63,7 @@ if (empty($_GET['error'])) {
         if (!auth()->attempt($username, null, true)) {
             flash()->error(tr('Autenticazione fallita!'));
         }
-        redirect(base_path());
+        redirect(base_path().'/');
     } else {
         redirect($redirect);
     }

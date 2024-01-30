@@ -119,7 +119,7 @@ class Articolo extends Model
     }
 
     /**
-     * Imposta il prezzo di vendita sulla base dell'impstazione per l'utilizzo dei prezzi comprensivi di IVA.
+     * Imposta il prezzo di vendita sulla base dell'impostazione per l'utilizzo dei prezzi comprensivi di IVA.
      */
     public function setPrezzoVendita($prezzo_vendita, $id_iva)
     {
@@ -139,7 +139,7 @@ class Articolo extends Model
     }
 
     /**
-     * Imposta il prezzo di vendita sulla base dell'impstazione per l'utilizzo dei prezzi comprensivi di IVA.
+     * Imposta il prezzo di vendita sulla base dell'impostazione per l'utilizzo dei prezzi comprensivi di IVA.
      */
     public function setMinimoVendita($prezzo_minimo, $id_iva)
     {

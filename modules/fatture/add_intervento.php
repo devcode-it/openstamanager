@@ -76,7 +76,7 @@ $rs = $dbo->fetchArray('SELECT
         (in_interventi.idanagrafica='.prepare($idanagrafica).' OR in_interventi.idclientefinale='.prepare($idanagrafica).')
         AND in_statiintervento.is_completato=1 AND in_statiintervento.is_fatturabile=1
         AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL)
-        AND NOT in_interventi.id IN (SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL) '.$where);
+        '.$where);
 foreach ($rs as $key => $value) {
     $intervento = Modules\Interventi\Intervento::find($value['id']);
     $prezzo = $intervento->totale;

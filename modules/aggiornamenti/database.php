@@ -260,7 +260,7 @@ if (!empty($results) || !empty($results_settings) || !empty($results_settings_ad
     </tbody>
 </table>';
     }
-    if (!empty($results_settings_added)) {
+    if (!empty($results_settings_added) && empty($results_settings)) {
         echo '
 <table class="table table-bordered">
 <thead>

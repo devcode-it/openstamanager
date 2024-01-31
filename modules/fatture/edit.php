@@ -279,7 +279,7 @@ $query .= ' ORDER BY descrizione';
                         <?php
                 }
 
-            echo '
+echo '
                 <div class="col-md-'.($is_fiscale ? 2 : 6).'">
                     {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatodocumento", "required": 1, "values": "query='.$query.'", "value": "$idstatodocumento$", "class": "'.(($record['stato'] != 'Bozza' && !$abilita_genera) ? '' : 'unblockable').'", "extra": "onchange=\"return cambiaStato()\"" ]}
                 </div>
@@ -498,7 +498,7 @@ if ($dir == 'entrata') {
                         {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento", "help": "'.tr('Elenco delle dichiarazioni d\'intento definite all\'interno dell\'anagrafica del cliente').'.", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "data": "'.$record['data'].'"},"value": "$id_dichiarazione_intento$", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|id_plugin='.Plugins::get('Dichiarazioni d\'Intento')['id'].'&id_parent='.$record['idanagrafica'].'", "extra": "'.((intval($block_edit)) ? 'disabled' : '').'"  ]}
                     </div>';
 }
-            echo '
+echo '
             </div>';
 
 if ($dir == 'entrata') {

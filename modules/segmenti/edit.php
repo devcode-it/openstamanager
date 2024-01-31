@@ -99,7 +99,7 @@ $_SESSION['module_'.$record['id_module']]['id_segment'] = $previous_module;
 			</div>
 <?php
         }
-        echo '
+echo '
             <div class="row">
 				<div class="col-md-12">
                     {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi[]", "multiple": "1", "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC", "value": "';

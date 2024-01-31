@@ -491,7 +491,7 @@ if ($structure->permission == 'rw') {
             $query = 'SELECT `id`, `html_name` AS `name` FROM `zz_fields` WHERE '.$custom_where;
             $customs = $dbo->fetchArray($query);
 
-            if (post('op')!='delete') {
+            if (post('op') != 'delete') {
                 $values = [];
                 foreach ($customs as $custom) {
                     if (post($custom['name']) !== null) {
@@ -502,7 +502,7 @@ if ($structure->permission == 'rw') {
                 }
 
                 // Inserimento iniziale
-                if (post('op')=='add') {
+                if (post('op') == 'add') {
                     // Informazioni di log
                     Filter::set('get', 'id_record', $id_record);
 
@@ -516,7 +516,7 @@ if ($structure->permission == 'rw') {
                 }
 
                 // Aggiornamento
-                if (post('op')=='update') {
+                if (post('op') == 'update') {
                     $query = 'SELECT `zz_field_record`.`id_field` FROM `zz_field_record` JOIN `zz_fields` ON `zz_fields`.`id` = `zz_field_record`.`id_field` WHERE id_record = '.prepare($id_record).' AND '.$custom_where;
                     $customs_present = $dbo->fetchArray($query);
                     $customs_present = array_column($customs_present, 'id_field');

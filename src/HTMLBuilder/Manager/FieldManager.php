@@ -126,8 +126,8 @@ class FieldManager implements ManagerInterface
         return $result;
     }
 
-    
-    public function getValue($options, $name) {
+    public function getValue($options, $name)
+    {
         $database = database();
 
         $query = 'SELECT `zz_fields`.*'.(isset($options['id_record']) ? ', `zz_field_record`.`value`' : '').' FROM `zz_fields`';
@@ -156,4 +156,3 @@ class FieldManager implements ManagerInterface
         return $results[0]['value'];
     }
 }
-

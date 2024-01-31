@@ -47,7 +47,7 @@ class OAuth2 extends Model
             $config = $this->config ?? [];
             $config = array_merge($config, [
                 'clientId' => $this->client_id,
-                'clientSecret' => $this->client_secret
+                'clientSecret' => $this->client_secret,
             ]);
 
             $class = $this->class;

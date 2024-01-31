@@ -59,7 +59,7 @@ if (empty($response['authorization_url'])) {
 if (empty($_GET['error'])) {
     if ($response['access_token']) {
         $username = $account->getProvider()->getUser($response['access_token']);
-        
+
         if (!auth()->attempt($username, null, true)) {
             flash()->error(tr('Autenticazione fallita!'));
         }
@@ -68,7 +68,6 @@ if (empty($_GET['error'])) {
         redirect($redirect);
     }
 
-    
     exit;
 } else {
     echo strip_tags($_GET['error']).'<br>'.strip_tags($_GET['error_description']).'

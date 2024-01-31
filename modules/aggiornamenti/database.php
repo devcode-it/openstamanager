@@ -66,6 +66,7 @@ function settings_diff($expected, $current)
             ];
         }
     }
+
     return $difference;
 }
 
@@ -222,9 +223,8 @@ if (!empty($results) || !empty($results_settings) || !empty($results_settings_ad
     </table>';
             }
         }
-
     }
-    
+
     if (!empty($results_settings)) {
         echo '
 <table class="table table-bordered">
@@ -238,11 +238,11 @@ if (!empty($results) || !empty($results_settings) || !empty($results_settings_ad
 </thead>
     <tbody>';
         foreach ($results_settings as $key => $setting) {
-                if (!$setting['current']) {
-                    $class = 'danger';
-                } else {
-                    $class = 'warning';
-                }
+            if (!$setting['current']) {
+                $class = 'danger';
+            } else {
+                $class = 'warning';
+            }
             echo '
             <tr class="bg-'.$class.'" >
                 <td>

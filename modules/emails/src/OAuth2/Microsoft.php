@@ -21,7 +21,7 @@ class Microsoft extends Azure implements ProviderInterface
             'https://outlook.office.com/SMTP.Send',
             // 'https://outlook.office.com/IMAP.AccessAsUser.All'
         ],
-        'accessType' => 'offline'
+        'accessType' => 'offline',
     ];
 
     public function __construct(array $options = [], array $collaborators = [])

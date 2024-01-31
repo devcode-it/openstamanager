@@ -143,7 +143,7 @@ if (!empty($sessioni)) {
 
         // ORE
         echo '
-        <td style="border-right:1px solid #aaa;">'.(((\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $sessione['orario_inizio'])->eq(\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $sessione['orario_fine']))) || (\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $sessione['orario_inizio'])->gt(\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $sessione['orario_fine']))))  ? '<i  title="'.tr('Questa sessione non ha una durata valida.').'" class="fa fa-warning tip text-warning"></i>' : '').' 
+        <td style="border-right:1px solid #aaa;">'.((Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $sessione['orario_inizio'])->eq(Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $sessione['orario_fine'])) || Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $sessione['orario_inizio'])->gt(Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $sessione['orario_fine']))) ? '<i  title="'.tr('Questa sessione non ha una durata valida.').'" class="fa fa-warning tip text-warning"></i>' : '').' 
         </td>
         <td style="border-right:1px solid #aaa;"> 
             {[ "type": "number", "name": "ore_'.$sessione['id'].'", "required": 1, "value": "'.numberFormat($ore, 'qta').'", "disabled": "1" ]}

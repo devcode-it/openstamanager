@@ -336,9 +336,9 @@ if (Auth::check()) {
     }
 }
 
-//Set the group theme
-if (isset($user)){
-    if ($user->getThemeAttribute()){
+// Set the group theme
+if (isset($user)) {
+    if ($user->getThemeAttribute()) {
         $theme = $user->getThemeAttribute();
     }
 }

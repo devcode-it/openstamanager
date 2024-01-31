@@ -221,7 +221,7 @@ if (!API\Response::isAPIRequest()) {
 
     // Impostazione del tema grafico di default
     $theme = !empty($config['theme']) ? $config['theme'] : 'default';
-    
+
     if ($continue) {
         // Periodo di visualizzazione dei record
         // Personalizzato

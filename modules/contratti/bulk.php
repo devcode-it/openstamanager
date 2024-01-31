@@ -82,7 +82,7 @@ switch (post('op')) {
                     });
                 } else {
                     $fattura = $documenti->first(function ($item, $key) use ($id_anagrafica) {
-                        return $item->anagrafica->id == $id_anagrafica ;
+                        return $item->anagrafica->id == $id_anagrafica;
                     });
                 }
 

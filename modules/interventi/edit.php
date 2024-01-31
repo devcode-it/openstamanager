@@ -337,27 +337,27 @@ echo '
             <!-- RIGA 5 -->
             <div class="row">
                 <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">';
-                    echo input([
-                        'type' => 'ckeditor',
-                        'label' => tr('Richiesta'),
-                        'name' => 'richiesta',
-                        'id' => 'richiesta_add',
-                        'required' => 1,
-                        'value' => $record['richiesta'],
-                        'extra' => 'style=\'max-height:80px;\'',
-                    ]);
-                    echo '
+echo input([
+    'type' => 'ckeditor',
+    'label' => tr('Richiesta'),
+    'name' => 'richiesta',
+    'id' => 'richiesta_add',
+    'required' => 1,
+    'value' => $record['richiesta'],
+    'extra' => 'style=\'max-height:80px;\'',
+]);
+echo '
                 </div>
                 <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">';
-                    echo input([
-                        'type' => 'ckeditor',
-                        'label' => tr('Descrizione'),
-                        'name' => 'descrizione',
-                        'id' => 'descrizione_add',
-                        'value' => $record['descrizione'],
-                        'extra' => 'style=\'max-height:80px;\'',
-                    ]);
-                    echo '
+echo input([
+    'type' => 'ckeditor',
+    'label' => tr('Descrizione'),
+    'name' => 'descrizione',
+    'id' => 'descrizione_add',
+    'value' => $record['descrizione'],
+    'extra' => 'style=\'max-height:80px;\'',
+]);
+echo '
                 </div>
             </div>';
 // Nascondo le note interne ai clienti
@@ -592,7 +592,7 @@ if (!$block_edit) {
         ]).'</div>';
         }
 
-        echo '
+echo '
 	</div>
 </div>
 

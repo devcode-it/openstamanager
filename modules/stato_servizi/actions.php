@@ -394,7 +394,7 @@ switch (filter('op')) {
 
         // Formattazione dei contenuti dello storico
         foreach ($history as $key => $value) {
-            $history[$key]['size'] = (($history[$key]['size']) ? Filesystem::formatBytes($value['size']) : '-');
+            $history[$key]['size'] = (($history[$key]['size']) ? FileSystem::formatBytes($value['size']) : '-');
             // $history[$key]['invoices_size'] = Filesystem::formatBytes($value['invoices_size']);
             // $history[$key]['notifies_size'] = Filesystem::formatBytes($value['notifies_size']);
         }
@@ -408,8 +408,8 @@ switch (filter('op')) {
             'maxNumber' => $max_number,
             'avviso_numero' => $avviso_numero,
             'avviso_spazio' => $avviso_spazio,
-            'spazio_totale' => Filesystem::formatBytes($spazio_totale),
-            'spazio_occupato' => Filesystem::formatBytes($informazioni['size']),
+            'spazio_totale' => FileSystem::formatBytes($spazio_totale),
+            'spazio_occupato' => FileSystem::formatBytes($informazioni['size']),
 
             'history' => $history,
         ]);

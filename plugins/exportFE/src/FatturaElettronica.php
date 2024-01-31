@@ -21,7 +21,6 @@ namespace Plugins\ExportFE;
 
 use FluidXml\FluidXml;
 use GuzzleHttp\Client;
-use Modules;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Sede;
 use Modules\Banche\Banca;
@@ -43,7 +42,7 @@ class FatturaElettronica
     /** @var Anagrafica Informazioni sull'anagrafica Cliente del documento */
     protected $cliente = [];
 
-    /** @var Modules\Fatture\Fattura Informazioni sul documento */
+    /** @var Fattura Informazioni sul documento */
     protected $documento;
 
     /** @var Validator Oggetto dedicato alla validazione dell'XML */
@@ -314,7 +313,7 @@ class FatturaElettronica
         ]));
 
         // Aggiornamento effettivo
-        database()->update('co_documenti', [
+        $result=database()->update('co_documenti', [
             'progressivo_invio' => $this->getDocumento()['progressivo_invio'],
             'codice_stato_fe' => 'GEN',
             'id_ricevuta_principale' => null,

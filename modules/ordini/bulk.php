@@ -70,7 +70,7 @@ switch (post('op')) {
                 if (!empty($righe)) {
                     ++$numero_totale;
 
-                   // Ricerca fattura per anagrafica tra le registrate
+                    // Ricerca fattura per anagrafica tra le registrate
                     $id_sede = $raggruppamento == 'sede' ? $documento_import->idsede : 0;
                     if ($raggruppamento == 'sede') {
                         $fattura = $documenti->first(function ($item, $key) use ($id_anagrafica, $id_sede) {
@@ -78,7 +78,7 @@ switch (post('op')) {
                         });
                     } else {
                         $fattura = $documenti->first(function ($item, $key) use ($id_anagrafica) {
-                            return $item->anagrafica->id == $id_anagrafica ;
+                            return $item->anagrafica->id == $id_anagrafica;
                         });
                     }
 

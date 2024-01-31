@@ -101,7 +101,7 @@ class Auth extends Util\Singleton
      *
      * @param string $username
      * @param string $password
-     * @param bool   $force     Forza il login solo tramite username (serve per l'autenticazione con Oauth2)
+     * @param bool   $force    Forza il login solo tramite username (serve per l'autenticazione con Oauth2)
      *
      * @return bool
      */

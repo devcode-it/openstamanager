@@ -47,7 +47,7 @@ if (get('anteprima') !== null) {
 </div>';
 }
 
-if ((setting('Sistema di firma') == 'Base') || isMobile() ){
+if ((setting('Sistema di firma') == 'Base') || isMobile()) {
     ?>
     <form action="<?php echo base_path(); ?>/editor.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>" method="post" id="form-firma" class="hide">
         <input type="hidden" name="op" value="firma">

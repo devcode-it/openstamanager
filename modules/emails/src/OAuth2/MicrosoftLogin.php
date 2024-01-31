@@ -9,7 +9,6 @@ class MicrosoftLogin extends Azure implements ProviderInterface
     /**
      * Impostazioni native per la connessione.
      *
-     *
      * @var \string[][]
      */
     protected static $options = [

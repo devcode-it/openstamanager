@@ -28,7 +28,7 @@ $richiesta = filter('richiesta');
 $descrizione = filter('descrizione');
 $id_tipo = filter('id_tipo');
 
-$origine_dashboard = get('ref') == "dashboard" ? true : false;
+$origine_dashboard = get('ref') == 'dashboard' ? true : false;
 $module_anagrafiche = Modules::get('Anagrafiche');
 $id_plugin_sedi = Plugins::get('Sedi')['id'];
 

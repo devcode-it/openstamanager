@@ -49,16 +49,16 @@ include_once __DIR__.'/../../core.php';
                     {[ "type": "text", "label": "<?php echo tr('Client Secret'); ?>", "name": "client_secret", "value": "$client_secret$" ]}
                 </div>
 <?php
-			$config = $record['class']::getConfigInputs();
-			foreach ($config as $name => $field) {
-				$field['name'] = 'config['.$name.']';
-				$field['value'] = $oauth2->config[$name];
+            $config = $record['class']::getConfigInputs();
+foreach ($config as $name => $field) {
+    $field['name'] = 'config['.$name.']';
+    $field['value'] = $oauth2->config[$name];
 
-				echo '
+    echo '
 				<div class="col-md-4">
 					'.input($field).'
 				</div>';
-			}
+}
 ?>
 			</div>
 		</div>

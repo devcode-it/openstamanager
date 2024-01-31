@@ -275,11 +275,11 @@ if (empty($record) || !$has_access) {
     // Campi personalizzati
     echo '
 
-                <div class="hide" id="custom_fields_top-edit">
+                <div class="hide" id="custom_fields_top-edit_'.$id_module.'-'.$id_plugin.'">
                     {( "name": "custom_fields", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "top" )}
                 </div>
 
-                <div class="hide" id="custom_fields_bottom-edit">
+                <div class="hide" id="custom_fields_bottom-edit_'.$id_module.'-'.$id_plugin.'">
                     {( "name": "custom_fields", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'" )}
                 </div>
 
@@ -299,10 +299,10 @@ if (empty($record) || !$has_access) {
                     }
 
                     // Campi a inizio form
-                    aggiungiContenuto(form, "#custom_fields_top-edit", {}, true);
+                    aggiungiContenuto(form, "#custom_fields_top-edit_'.$id_module.'-'.$id_plugin.'", {}, true);
 
                     // Campi a fine form
-                    aggiungiContenuto(last, "#custom_fields_bottom-edit", {});
+                    aggiungiContenuto(last, "#custom_fields_bottom-edit_'.$id_module.'-'.$id_plugin.'", {});
                 });
                 </script>';
 

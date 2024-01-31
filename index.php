@@ -26,10 +26,9 @@ $op = filter('op');
 
 $microsoft = null;
 
-if ($dbo->isConnected() && $dbo->tableExists('zz_oauth2')) {
+try { 
     $microsoft = $dbo->selectOne('zz_oauth2', '*', ['nome' => 'Microsoft', 'enabled' => 1, 'is_login' => 1]);
-}
-
+} catch (Exception $e) {}
 
 // LOGIN
 switch ($op) {

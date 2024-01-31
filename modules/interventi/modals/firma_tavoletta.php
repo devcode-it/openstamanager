@@ -184,7 +184,7 @@ echo '
         config.minTimeOnSurface = parseInt(300);
 
         config.timeOut = {enabled:true};
-        config.timeOut.time = parseInt(15*1000);
+        config.timeOut.time = parseInt('.setting('Secondi timeout tavoletta Wacom').'*1000);
         config.timeOut.onTimeOut = timeOutCallback;
         
         return config;

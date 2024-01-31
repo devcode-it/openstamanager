@@ -57,3 +57,5 @@ UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_module
 
 ALTER TABLE `co_promemoria` ADD `data_scadenza` DATETIME NULL AFTER `data_richiesta`;
 ALTER TABLE `co_promemoria` ADD `idtecnici` VARCHAR(255) NOT NULL AFTER `idimpianti`;
+
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES ("Secondi timeout tavoletta Wacom", '15', 'text', 1, 'Tavoletta Wacom', '6', 'Definisce il numero di secondi prima del timeout della tavoletta Wacom');

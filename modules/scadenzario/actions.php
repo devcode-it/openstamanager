@@ -42,7 +42,9 @@ switch (post('op')) {
         $tipo = post('tipo');
         $descrizione = post('descrizione');
         $iddocumento = post('iddocumento') ?: 0;
-        $scadenze = database()->table('co_scadenziario')->where('iddocumento', '=', $iddocumento)->orderBy('scadenza')->get();
+        if (!empty($iddocumento)){
+            $scadenze = database()->table('co_scadenziario')->where('iddocumento', '=', $iddocumento)->orderBy('scadenza')->get();
+        }
         $totale_pagato = 0;
         $id_scadenza_non_completa = null;
 
@@ -83,7 +85,7 @@ switch (post('op')) {
             $id_banca_azienda = post('id_banca_azienda')[$id] ?: $documento->id_banca_azienda;
             $id_banca_controparte = post('id_banca_controparte')[$id] ?: $documento->id_banca_controparte;
 
-            $id_scadenza = $scadenza->id;
+            $id_scadenza = $scadenza->id ?? $scadenza['id'];
             if (!empty($id_scadenza)) {
                 $database->update('co_scadenziario', [
                     'idanagrafica' => $idanagrafica,

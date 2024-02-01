@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.54 (2024-02-02)](#2454-2024-02-02)
 - [2.4.53 (2024-01-05)](#2453-2024-01-05)
 - [2.4.52 (2023-12-08)](#2452-2023-12-08)
 - [2.4.51 (2023-10-30)](#2451-2023-10-30)
@@ -63,6 +64,37 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.3 (2018-02-16)](#23-2018-02-16)
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
+
+## 2.4.54 (2024-02-02)
+### Aggiunto (Added)
+- Aggiunto un controllo sulle impostazioni presenti a gestionale
+- Aggiunta la possibilità di impostare un tema diverso per ogni gruppo di utenti
+- Aggiunta la gestione della fatturazione da azione di gruppo raggruppata per sede
+- Aggiunto il metodo getValue per la lettura dei valori dei campi personalizzati
+- Aggiunta variabile random per evitare la cache del browser in fase di link pdf o anteprima di stampa
+- Aggiunta sede di partenza merce in stampa ddt
+- Aggiunta la gestione del login tramite Microsoft
+- Aggiunta impostazione per timeout tavoletta grafica
+
+### Modificato (Changed)
+- Migliorato il form di login AdminLTE
+- Migliorato l'esempio di importazione Attività
+- Migliorata la pianificazione dei promemoria
+
+### Fixed
+- Corretta la visualizzazione dei referenti in fase di aggiunta nuova sede
+- Corretta la stampa di ordini con immagini
+- Corretta la modifica inline dell'orario della sessione dei tecnici
+- Corretti i campi richiesta e descrizione in fase di aggiunta attività
+- Corretta l'aggiunta delle scadenze
+- Corretta la selezione del fornitore predefinito in articoli
+- Corrette le API delle checklist per gli impianti
+- Corrette le api per login da app
+- Corretta la firma da dispositivo mobile
+- Corretta la pianificazione degli interventi
+- Corretto l'avviso di sessioni tecnici senza ore in attività
+- Corretta l'aggiunta dei seriali
+- Corretta la gestione de campi personalizzati
 
 ## 2.4.53 (2024-01-05)
 ### Aggiunto (Added)

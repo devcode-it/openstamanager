@@ -27,7 +27,17 @@ class Impianti extends AppResource
 {
     public function getCleanupData($last_sync_at)
     {
-        return $this->getMissingIDs('my_impianti', 'id', $last_sync_at);
+        // TODO: modificare introducendo deleted_at su my_impianti
+        return database()
+            ->table('zz_operations')
+            ->select('id_record')
+            ->distinct()
+            ->join('zz_modules', 'zz_modules.id', '=', 'zz_operations.id_module')
+            ->where('zz_modules.name', '=', 'Impianti')
+            ->where('zz_operations.op', '=', 'delete')
+            ->where('zz_operations.created_at', '>', $last_sync_at)
+            ->pluck('id_record')
+            ->toArray();
     }
 
     public function getModifiedRecords($last_sync_at)

@@ -87,7 +87,7 @@ echo '
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "number", "label": "'.tr('Timeout coda di invio (millisecondi)').'", "name": "timeout", "value": "$timeout$", "decimals": 1, "min-value": 100 ]}
+                    {[ "type": "number", "label": "'.tr('Timeout coda di invio (millisecondi)').'", "name": "timeout", "value": "$timeout$", "decimals": 0, "min-value": 100 ]}
                 </div>
             </div>
 

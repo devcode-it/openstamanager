@@ -35,7 +35,8 @@ $(document).ready(function () {
     });
 
     // Nel caso la navigazione sia da mobile, disabilito il ritorno al punto precedente
-    if (!globals.is_mobile) {
+    // 2024-01-30 disabilito controllo in quanto non è chiaro il proposito
+    //if (!globals.is_mobile) {
         // Salvo lo scroll per riportare qui l'utente al reload
         $(window).on('scroll', function () {
             if (sessionStorage != undefined) {
@@ -49,7 +50,7 @@ $(document).ready(function () {
                 scrollToOffset(sessionStorage['scrollTop_' + globals.id_module + '_' + globals.id_record]);
             }, 1);
         }
-    }
+    //}
 
     $('.nav-tabs a').click(function (e) {
         $(this).tab('show');

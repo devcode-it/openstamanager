@@ -213,7 +213,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 				<h3 class="box-title">'.tr('Parametri non sufficienti!').'</h3>
 			</div>
 			<div class="box-body">
-				<p>'.tr("L'avvio del software è fallito a causa dell'assenza di alcuni paramentri nella configurazione di base").'.</p>
+				<p>'.tr("L'avvio del software è fallito a causa dell'assenza di alcuni parametri nella configurazione di base").'.</p>
 				<p>'.tr("Si prega di controllare che il file _FILE_ contenga tutti i dati inseriti durante la configurazione iniziale (con l'eccezione di password e indirizzo email amministrativi)", [
                     '_FILE_' => '<b>config.inc.php</b>',
                 ]).'.</p>

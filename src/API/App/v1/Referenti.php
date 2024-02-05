@@ -31,15 +31,21 @@ class Referenti extends AppResource implements RetrieveInterface
 
     public function getModifiedRecords($last_sync_at)
     {
-        $query = "SELECT DISTINCT(an_referenti.id) AS id, an_referenti.updated_at FROM an_referenti
-            INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = an_referenti.idanagrafica
-            INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.idanagrafica = an_anagrafiche.idanagrafica
-            INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica = an_tipianagrafiche.idtipoanagrafica
-        WHERE an_tipianagrafiche.descrizione = 'Cliente' AND (an_anagrafiche.deleted_at IS NULL OR an_anagrafiche.idanagrafica IN(SELECT in_interventi.idanagrafica FROM in_interventi))";
+        $query = 'SELECT 
+            DISTINCT(`an_referenti`.`id`) AS id, 
+            `an_referenti`.`updated_at` 
+        FROM 
+            `an_referenti`
+            INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `an_referenti`.`idanagrafica`
+            INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+            INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche`.`id`
+            LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(setting('Lingua'))."
+        WHERE 
+            `an_tipianagrafiche_lang`.`name` = 'Cliente' AND (an_anagrafiche.deleted_at IS NULL OR an_anagrafiche.idanagrafica IN(SELECT in_interventi.idanagrafica FROM in_interventi))";
 
         // Filtro per data
         if ($last_sync_at) {
-            $query .= ' AND an_referenti.updated_at > '.prepare($last_sync_at);
+            $query .= ' AND `an_referenti`.`updated_at` > '.prepare($last_sync_at);
         }
 
         $records = database()->fetchArray($query);
@@ -50,16 +56,18 @@ class Referenti extends AppResource implements RetrieveInterface
     public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
-        $query = 'SELECT an_referenti.id,
-            idanagrafica AS id_cliente,
-            IF(idsede = 0, NULL, idsede) AS id_sede,
-            an_referenti.nome,
-            an_mansioni.nome AS mansione,
-            telefono,
-            email
-        FROM an_referenti 
-        LEFT JOIN an_mansioni ON an_referenti.idmansione=an_mansioni.id 
-        WHERE an_referenti.id = '.prepare($id);
+        $query = 'SELECT `an_referenti`.`id`,
+            `idanagrafica` AS id_cliente,
+            IF(`idsede` = 0, NULL, `idsede`) AS id_sede,
+            `an_referenti`.`nome`,
+            `an_mansioni`.`nome` AS mansione,
+            `telefono`,
+            `email`
+        FROM 
+            `an_referenti` 
+            LEFT JOIN `an_mansioni` ON `an_referenti`.`idmansione`=`an_mansioni`.`id` 
+        WHERE 
+            `an_referenti`.`id` = '.prepare($id);
 
         $record = database()->fetchOne($query);
 

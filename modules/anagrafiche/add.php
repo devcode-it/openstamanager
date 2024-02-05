@@ -21,11 +21,11 @@ use Modules\Anagrafiche\Nazione;
 
 include_once __DIR__.'/../../core.php';
 
-$id_nazione_italia = Nazione::where('nome', 'Italia')->first()->id;
-
-if (get('tipoanagrafica') != '') {
-    $rs = $dbo->fetchArray('SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='.prepare(get('tipoanagrafica')));
-    $idtipoanagrafica = $rs[0]['idtipoanagrafica'];
+$id_nazione_italia = (new Nazione())->getByName('Italia')->id_record;
+$tipo = get('tipoanagrafica');
+if (!empty($tipo)) {
+    $rs = $dbo->fetchArray('SELECT `an_tipianagrafiche`.`id`, `an_tipianagrafiche_lang`.`name` as descrizione FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE name='.prepare($tipo));
+    $idtipoanagrafica = $rs[0]['id'];
 }
 
 echo '
@@ -39,7 +39,7 @@ echo '
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "'.tr('Tipo di anagrafica').'", "name": "idtipoanagrafica[]", "id": "idtipoanagrafica_add", "multiple": "1", "required": 1, "values": "query=SELECT idtipoanagrafica AS id, descrizione FROM an_tipianagrafiche WHERE idtipoanagrafica NOT IN (SELECT DISTINCT(x.idtipoanagrafica) FROM an_tipianagrafiche_anagrafiche x INNER JOIN an_tipianagrafiche t ON x.idtipoanagrafica = t.idtipoanagrafica INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = x.idanagrafica WHERE t.descrizione = \'Azienda\' AND deleted_at IS NULL) ORDER BY descrizione", "value": "'.(isset($idtipoanagrafica) ? $idtipoanagrafica : null).'", "readonly": '.(!empty(get('readonly_tipo')) ? 1 : 0).' ]}
+			{[ "type": "select", "label": "'.tr('Tipo di anagrafica').'", "name": "idtipoanagrafica[]", "id": "idtipoanagrafica_add", "multiple": "1", "required": 1, "values": "query=SELECT `an_tipianagrafiche`.`id`, `name` as descrizione FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `an_tipianagrafiche`.`id` NOT IN (SELECT DISTINCT(`x`.`idtipoanagrafica`) FROM `an_tipianagrafiche_anagrafiche` x INNER JOIN `an_tipianagrafiche` t ON `x`.`idtipoanagrafica` = `t`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`t`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(setting('Lingua')).') INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `x`.`idanagrafica` WHERE `an_tipianagrafiche_lang`.`name` = \'Azienda\' AND `deleted_at` IS NULL) ORDER BY `name`", "value": "'.(isset($idtipoanagrafica) ? $idtipoanagrafica : null).'", "readonly": '.(!empty(get('readonly_tipo')) ? 1 : 0).' ]}
 		</div>
 	</div>
 
@@ -99,7 +99,7 @@ echo '
 			<div class="row">
 
 				<div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Nazione').'", "name": "id_nazione", "id": "id_nazione_add", "values": "query=SELECT id AS id, CONCAT_WS(\' - \', iso2, nome) AS descrizione, iso2 FROM an_nazioni ORDER BY CASE WHEN iso2=\'IT\' THEN -1 ELSE iso2 END", "value": "'.$id_nazione_italia.'" ]}
+                    {[ "type": "select", "label": "'.tr('Nazione').'", "name": "id_nazione", "id": "id_nazione_add", "values": "query=SELECT `an_nazioni`.`id` AS id, CONCAT_WS(\' - \', `iso2`, `an_nazioni_lang`.`name`) AS descrizione, `iso2` FROM `an_nazioni` LEFT JOIN `an_nazioni_lang` ON (`an_nazioni`.`id` = `an_nazioni_lang`.`id_record` AND `an_nazioni_lang`.`id_lang` = '.prepare(setting('Lingua')).') ORDER BY CASE WHEN `iso2`=\'IT\' THEN -1 ELSE `iso2` END", "value": "'.$id_nazione_italia.'" ]}
                 </div>
 
 				<div class="col-md-4">

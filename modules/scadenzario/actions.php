@@ -42,7 +42,7 @@ switch (post('op')) {
         $tipo = post('tipo');
         $descrizione = post('descrizione');
         $iddocumento = post('iddocumento') ?: 0;
-        if (!empty($iddocumento)){
+        if (!empty($iddocumento)) {
             $scadenze = database()->table('co_scadenziario')->where('iddocumento', '=', $iddocumento)->orderBy('scadenza')->get();
         }
         $totale_pagato = 0;

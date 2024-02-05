@@ -26,8 +26,9 @@ switch (filter('op')) {
         $is_bloccata = filter('is_bloccata');
 
         if (isset($descrizione)) {
-            if ($dbo->fetchNum('SELECT * FROM `an_relazioni` WHERE `descrizione`='.prepare($descrizione).' AND `id`!='.prepare($id_record)) == 0) {
-                $dbo->query('UPDATE `an_relazioni` SET `descrizione`='.prepare($descrizione).', `colore`='.prepare($colore).', `is_bloccata`='.prepare($is_bloccata).' WHERE `id`='.prepare($id_record));
+            if ($dbo->fetchNum('SELECT * FROM `an_relazioni` LEFT JOIN (`an_relazioni_lang` ON `an_relazioni`.`id`=`an_relazioni_lang`.`id_record` AND `an_relazioni_lang`.`id_lang`='.setting('Lingua').') WHERE `an_relazioni_lang`.`name`='.prepare($descrizione).' AND `an_relazioni`.`id`!='.prepare($id_record)) == 0) {
+                $dbo->query('UPDATE `an_relazioni` SET `colore`='.prepare($colore).', `is_bloccata`='.prepare($is_bloccata).' WHERE `id`='.prepare($id_record));
+                $dbo->query('UPDATE `an_relazioni_lang` SET `name`='.prepare($descrizione).' WHERE `id_record`='.prepare($id_record));
                 flash()->info(tr('Salvataggio completato.'));
             } else {
                 flash()->error(tr("E' già presente una relazione '_NAME_'.", [
@@ -46,10 +47,10 @@ switch (filter('op')) {
         $is_bloccata = filter('is_bloccata');
 
         if (isset($descrizione)) {
-            if ($dbo->fetchNum('SELECT * FROM `an_relazioni` WHERE `descrizione`='.prepare($descrizione)) == 0) {
-                $dbo->query('INSERT INTO `an_relazioni` (`descrizione`, `colore`, `is_bloccata`  ) VALUES ('.prepare($descrizione).', '.prepare($colore).', '.prepare($is_bloccata).' )');
-
+            if ($dbo->fetchNum('SELECT * FROM `an_relazioni` LEFT JOIN (`an_relazioni_lang` ON `an_relazioni`.`id`=`an_relazioni_lang`.`id_record` AND `an_relazioni_lang`.`id_lang`='.setting('Lingua').') WHERE `an_relazioni_lang`.`name`='.prepare($descrizione)) == 0) {
+                $dbo->query('INSERT INTO `an_relazioni` (`colore`, `is_bloccata`) VALUES ('.prepare($colore).', '.prepare($is_bloccata).' )');
                 $id_record = $dbo->lastInsertedID();
+                $dbo->query('INSERT INTO `an_relazioni_lang` (`name`, `id_record`, `id_lang`) VALUES ('.prepare($descrizione).', '.prepare($id_record).', '.prepare(setting('Lingua')).')');
 
                 if (isAjaxRequest()) {
                     echo json_encode(['id' => $id_record, 'text' => $descrizione]);
@@ -70,7 +71,7 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        $dbo->query('UPDATE `an_relazioni` SET deleted_at=NOW() WHERE `id`='.prepare($id_record));
+        $dbo->query('UPDATE `an_relazioni` SET `deleted_at`=NOW() WHERE `id`='.prepare($id_record));
         flash()->info(tr('Relazione _NAME_ eliminata con successo!', [
             '_NAME_' => $descrizione,
         ]));

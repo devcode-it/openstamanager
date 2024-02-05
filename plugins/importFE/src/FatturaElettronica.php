@@ -206,7 +206,7 @@ class FatturaElettronica
         $tipologia = TipoAnagrafica::where('descrizione', $type)->first();
 
         $anagrafica = Anagrafica::whereHas('tipi', function ($query) use ($tipologia) {
-            $query->where('an_tipianagrafiche.idtipoanagrafica', '=', $tipologia->id);
+            $query->where('`an_tipianagrafiche`.`id`', '=', $tipologia->id);
         });
 
         if (!empty($info['partita_iva']) && !empty($info['codice_fiscale'])) {
@@ -225,11 +225,10 @@ class FatturaElettronica
         // Se non trovo l'anagrafica tra i fornitori, provo a ricercarla anche tra i clienti
         if (empty($anagrafica->first())) {
             $type = 'Cliente';
-
-            $tipologia = TipoAnagrafica::where('descrizione', $type)->first();
+            $tipologia = (new TipoAnagrafica())->getByName($type)->id_record;
 
             $anagrafica = Anagrafica::whereHas('tipi', function ($query) use ($tipologia) {
-                $query->where('an_tipianagrafiche.idtipoanagrafica', '=', $tipologia->id);
+                $query->where('`an_tipianagrafiche`.`id`', '=', $tipologia->id);
             });
 
             if (!empty($info['partita_iva']) && !empty($info['codice_fiscale'])) {

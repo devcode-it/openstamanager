@@ -38,24 +38,25 @@ class Login extends Resource implements CreateInterface
                 $utente = $database->fetchOne('SELECT
                     `an_anagrafiche`.`idanagrafica` AS id_anagrafica,
                     `an_anagrafiche`.`ragione_sociale`,
-                    zz_groups.nome AS gruppo
+                    `zz_groups`.`nome` AS gruppo
                 FROM `zz_users`
                     INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica`
-                    INNER JOIN zz_groups ON zz_users.idgruppo=zz_groups.id
+                    INNER JOIN `zz_groups` ON `zz_users`.`idgruppo`=`zz_groups`.`id`
                 WHERE `an_anagrafiche`.`deleted_at` IS NULL AND `zz_users`.`id` = :id', [
                     ':id' => $user['id'],
                 ]);
             } else {
-                $utente = $database->fetchOne("SELECT
+                $utente = $database->fetchOne('SELECT
                     `an_anagrafiche`.`idanagrafica` AS id_anagrafica,
                     `an_anagrafiche`.`ragione_sociale`,
-                    zz_groups.nome AS gruppo
+                    `zz_groups`.`nome` AS gruppo
                 FROM `zz_users`
                     INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica`
-                    INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.idanagrafica = an_anagrafiche.idanagrafica
-                    INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica = an_tipianagrafiche.idtipoanagrafica
-                    INNER JOIN zz_groups ON zz_users.idgruppo=zz_groups.id
-                WHERE an_tipianagrafiche.descrizione = 'Tecnico' AND `an_anagrafiche`.`deleted_at` IS NULL AND `id` = :id", [
+                    INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+                    INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche`.`id`
+                    LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(setting('Lingua')).")
+                    INNER JOIN `zz_groups` ON `zz_users`.`idgruppo`=`zz_groups`.`id`
+                WHERE `an_tipianagrafiche_lang`.`name` = 'Tecnico' AND `an_anagrafiche`.`deleted_at` IS NULL AND `id` = :id", [
                     ':id' => $user['id'],
                 ]);
             }

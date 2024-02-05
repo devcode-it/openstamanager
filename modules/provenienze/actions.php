@@ -25,8 +25,9 @@ switch (filter('op')) {
         $colore = filter('colore');
 
         if (isset($descrizione)) {
-            if ($dbo->fetchNum('SELECT * FROM `an_provenienze` WHERE `descrizione`='.prepare($descrizione).' AND `id`!='.prepare($id_record)) == 0) {
-                $dbo->query('UPDATE `an_provenienze` SET `descrizione`='.prepare($descrizione).', `colore`='.prepare($colore).' WHERE `id`='.prepare($id_record));
+            if ($dbo->fetchNum('SELECT * FROM `an_provenienze` LEFT JOIN `an_provenienze_lang` ON (`an_provenienze`.`id` = `an_provenienze_lang`.`id_record` AND `an_provenienze_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name`='.prepare($descrizione).' AND `an_provenienze`.`id`!='.prepare($id_record)) == 0) {
+                $dbo->query('UPDATE `an_provenienze_lang` SET `name`='.prepare($descrizione).' WHERE `id_record` = '.prepare($id_record));
+                $dbo->query('UPDATE `an_provenienze` SET `colore`='.prepare($colore).' WHERE `id`='.prepare($id_record));
                 flash()->info(tr('Salvataggio completato.'));
             } else {
                 flash()->error(tr("E' già presente una provenienza _NAME_.", [
@@ -44,10 +45,10 @@ switch (filter('op')) {
         $colore = filter('colore');
 
         if (isset($descrizione)) {
-            if ($dbo->fetchNum('SELECT * FROM `an_provenienze` WHERE `descrizione`='.prepare($descrizione)) == 0) {
-                $dbo->query('INSERT INTO `an_provenienze` (`descrizione`, `colore`) VALUES ('.prepare($descrizione).', '.prepare($colore).')');
-
+            if ($dbo->fetchNum('SELECT * FROM `an_provenienze` LEFT JOIN `an_provenienze_lang` ON (`an_provenienze`.`id` = `an_provenienze_lang`.`id_record` AND `an_provenienze_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name`='.prepare($descrizione)) == 0) {
+                $dbo->query('INSERT INTO `an_provenienze` (`colore`) VALUES ('.prepare($colore).')');
                 $id_record = $dbo->lastInsertedID();
+                $dbo->query('INSERT INTO `an_provenienze_lang` (`name`, `id_record`, `id_lang`) VALUES ('.prepare($descrizione).', '.prepare($id_record).', '.prepare(setting('Lingua')).')');
 
                 if (isAjaxRequest()) {
                     echo json_encode(['id' => $id_record, 'text' => $descrizione]);

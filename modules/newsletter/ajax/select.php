@@ -35,14 +35,18 @@ switch ($resource) {
         $destinatari = collect();
 
         // Gestione anagrafiche come destinatari
-        $query = "SELECT CONCAT('anagrafica_', an_anagrafiche.idanagrafica) AS id,
-           CONCAT(an_anagrafiche.ragione_sociale, IF(an_anagrafiche.citta != '' OR an_anagrafiche.provincia != '', CONCAT(' (', an_anagrafiche.citta, IF(an_anagrafiche.provincia != '', an_anagrafiche.provincia, ''), ')'), ''), ' [', email, ']') AS text,
-           `an_tipianagrafiche`.`descrizione` AS optgroup
-        FROM an_anagrafiche
-            INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica = an_tipianagrafiche_anagrafiche.idanagrafica
-            INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica = an_tipianagrafiche.idtipoanagrafica
-        WHERE an_anagrafiche.deleted_at IS NULL AND an_anagrafiche.enable_newsletter = 1 AND 1=1
-        ORDER BY `optgroup` ASC, ragione_sociale ASC";
+        $query = "SELECT CONCAT('anagrafica_', `an_anagrafiche`.`idanagrafica`) AS id,
+           CONCAT(`an_anagrafiche`.`ragione_sociale`, IF(`an_anagrafiche`.`citta` != '' OR `an_anagrafiche`.`provincia` != '', CONCAT(' (', `an_anagrafiche`.`citta`, IF(`an_anagrafiche`.`provincia` != '', `an_anagrafiche`.`provincia`, ''), ')'), ''), ' [', `email`, ']') AS text,
+           `an_tipianagrafiche_lang`.`name` AS optgroup
+        FROM 
+            `an_anagrafiche`
+            INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `an_tipianagrafiche_anagrafiche`.`idanagrafica`
+            INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche`.`id`
+            LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.id` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(setting('Lingua')).')
+        WHERE 
+            `an_anagrafiche`.`deleted_at` IS NULL AND `an_anagrafiche`.`enable_newsletter` = 1 AND 1=1
+        ORDER BY
+            `optgroup` ASC, `ragione_sociale` ASC';
 
         $query = str_replace('1=1', !empty($where) ? replace($where, [
             '|nome|' => 'ragione_sociale',
@@ -52,33 +56,39 @@ switch ($resource) {
         $destinatari = $destinatari->concat($anagrafiche);
 
         // Gestione sedi come destinatari
-        $query = "SELECT CONCAT('sede_', an_sedi.id) AS id,
-           CONCAT(an_anagrafiche.ragione_sociale, ' (', an_sedi.nomesede, IF(an_sedi.citta != '' OR an_sedi.provincia != '', CONCAT(' :', an_sedi.citta, IF(an_sedi.provincia != '', an_sedi.provincia, ''), ''), ''), ')', ' [', an_sedi.email, ']') AS text,
+        $query = "SELECT CONCAT('sede_', `an_sedi`.`id`) AS id,
+           CONCAT(`an_anagrafiche`.`ragione_sociale`, ' (', `an_sedi`.`nomesede`, IF(`an_sedi`.`citta` != '' OR `an_sedi`.`provincia` != '', CONCAT(' :', `an_sedi`.`citta`, IF(`an_sedi`.`provincia` != '', `an_sedi`.`provincia`, ''), ''), ''), ')', ' [', `an_sedi`.`email`, ']') AS text,
            'Sedi' AS optgroup
-        FROM an_sedi
-            INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = an_sedi.idanagrafica
-        WHERE an_anagrafiche.deleted_at IS NULL AND an_anagrafiche.enable_newsletter = 1 AND 1=1
-        ORDER BY `optgroup` ASC, ragione_sociale ASC";
+        FROM 
+            `an_sedi`
+            INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `an_sedi`.`idanagrafica`
+        WHERE 
+            `an_anagrafiche`.`deleted_at` IS NULL AND `an_anagrafiche`.`enable_newsletter` = 1 AND 1=1
+        ORDER BY 
+            `optgroup` ASC, `ragione_sociale` ASC";
 
         $query = str_replace('1=1', !empty($where) ? replace($where, [
-            '|nome|' => 'nomesede LIKE '.prepare('%'.$search.'%').' OR ragione_sociale',
-            '|table|' => 'an_sedi',
+            '|nome|' => '`nomesede` LIKE '.prepare('%'.$search.'%').' OR `ragione_sociale`',
+            '|table|' => '`an_sedi`',
         ]) : '', $query);
         $sedi = $database->fetchArray($query);
         $destinatari = $destinatari->concat($sedi);
 
         // Gestione referenti come destinatari
-        $query = "SELECT CONCAT('referente_', an_referenti.id) AS id,
-           CONCAT(an_anagrafiche.ragione_sociale, ' (', an_referenti.nome, ') [', an_referenti.email, ']') AS text,
+        $query = "SELECT CONCAT('referente_', `an_referenti`.`id`) AS id,
+           CONCAT(`an_anagrafiche`.`ragione_sociale`, ' (', `an_referenti`.`nome`, ') [', `an_referenti`.`email`, ']') AS text,
            'Referenti' AS optgroup
-        FROM an_referenti
-            INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = an_referenti.idanagrafica
-        WHERE an_anagrafiche.deleted_at IS NULL AND an_anagrafiche.enable_newsletter = 1 AND 1=1
-        ORDER BY `optgroup` ASC, ragione_sociale ASC";
+        FROM 
+            `an_referenti`
+            INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `an_referenti`.`idanagrafica`
+        WHERE 
+            `an_anagrafiche`.`deleted_at` IS NULL AND `an_anagrafiche`.`enable_newsletter` = 1 AND 1=1
+        ORDER BY 
+            `optgroup` ASC, `ragione_sociale` ASC";
 
         $query = str_replace('1=1', !empty($where) ? replace($where, [
-            '|nome|' => 'an_referenti.nome LIKE '.prepare('%'.$search.'%').' OR ragione_sociale',
-            '|table|' => 'an_anagrafiche',
+            '|nome|' => '`an_referenti`.`nome` LIKE '.prepare('%'.$search.'%').' OR ragione_sociale',
+            '|table|' => '`an_anagrafiche`',
         ]) : '', $query);
         $referenti = $database->fetchArray($query);
         $destinatari = $destinatari->concat($referenti);
@@ -88,18 +98,18 @@ switch ($resource) {
         break;
 
     case 'liste_newsletter':
-        $query = "SELECT id, CONCAT(name, ' (', (SELECT COUNT(*) FROM em_list_receiver WHERE em_lists.id = em_list_receiver.id_list), ' destinatari)') AS descrizione FROM em_lists |where| ORDER BY `name` ASC";
+        $query = "SELECT `id`, CONCAT(`name`, ' (', (SELECT COUNT(*) FROM `em_list_receiver` WHERE `em_lists`.`id` = `em_list_receiver`.`id_list`), ' `destinatari`)') AS descrizione FROM `em_lists` |where| ORDER BY `name` ASC";
 
         foreach ($elements as $element) {
-            $filter[] = 'id='.prepare($element);
+            $filter[] = '`id`='.prepare($element);
         }
 
         if (empty($filter)) {
-            $where[] = 'deleted_at IS NULL';
+            $where[] = '`deleted_at` IS NULL';
         }
 
         if (!empty($search)) {
-            $search_fields[] = 'name LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
         }
 
         // Aggiunta filtri di ricerca

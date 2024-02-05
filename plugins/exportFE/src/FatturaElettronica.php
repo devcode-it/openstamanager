@@ -22,6 +22,7 @@ namespace Plugins\ExportFE;
 use FluidXml\FluidXml;
 use GuzzleHttp\Client;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Anagrafiche\Nazione;
 use Modules\Anagrafiche\Sede;
 use Modules\Banche\Banca;
 use Modules\Fatture\Fattura;
@@ -313,7 +314,7 @@ class FatturaElettronica
         ]));
 
         // Aggiornamento effettivo
-        $result=database()->update('co_documenti', [
+        $result = database()->update('co_documenti', [
             'progressivo_invio' => $this->getDocumento()['progressivo_invio'],
             'codice_stato_fe' => 'GEN',
             'id_ricevuta_principale' => null,
@@ -1118,8 +1119,7 @@ class FatturaElettronica
             }
 
             if (!empty($sede['id_nazione'])) {
-                $rs_nazione = $database->fetchOne('SELECT * FROM an_nazioni WHERE id='.prepare($sede['id_nazione']));
-
+                $rs_nazione = Nazione::find($sede['id_nazione']);
                 $result['IndirizzoResa']['Nazione'] = $rs_nazione['iso2'];
             }
         }

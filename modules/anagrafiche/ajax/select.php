@@ -26,62 +26,61 @@ switch ($resource) {
         $id_azienda = setting('Azienda predefinita');
 
         $query = "SELECT
-                an_anagrafiche.idanagrafica AS id,
-                an_anagrafiche.lat,
-                an_anagrafiche.lng,
-                is_bloccata,
-                CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')')), IF(an_anagrafiche.deleted_at IS NULL, '', ' (".tr('eliminata').")'), IF(is_bloccata = 1, CONCAT(' (', an_relazioni.descrizione, ')'), ''),' - ', an_anagrafiche.codice ) AS descrizione,
-                idtipointervento_default AS idtipointervento,
-                in_tipiintervento.descrizione AS idtipointervento_descrizione,
-                an_anagrafiche.idzona,
-                contratto.id AS id_contratto,
-                contratto.descrizione AS descrizione_contratto,
-                co_pagamenti.id AS id_pagamento,
-                co_pagamenti.descrizione AS desc_pagamento,
-                banca_vendite.id AS id_banca_vendite,
-                CONCAT(banca_vendite.nome, ' - ', banca_vendite.iban) AS descrizione_banca_vendite
+                `an_anagrafiche`.`idanagrafica` AS id,
+                `an_anagrafiche`.`lat`,
+                `an_anagrafiche`.`lng`,
+                `is_bloccata`,
+                CONCAT(`ragione_sociale`, IF(`citta` IS NULL OR `citta` = '', '', CONCAT(' (', `citta`, ')')), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'), IF(`is_bloccata` = 1, CONCAT(' (', `an_relazioni_lang`.`name`, ')'), ''),' - ', `an_anagrafiche`.`codice` ) AS descrizione,
+                `idtipointervento_default` AS idtipointervento,
+                `in_tipiintervento`.`descrizione` AS idtipointervento_descrizione,
+                `an_anagrafiche`.`idzona`,
+                `contratto`.`id` AS id_contratto,
+                `contratto`.`descrizione` AS descrizione_contratto,
+                `co_pagamenti`.`id` AS id_pagamento,
+                `co_pagamenti`.`descrizione` AS desc_pagamento,
+                `banca_vendite`.`id` AS id_banca_vendite,
+                CONCAT(`banca_vendite`.`nome`, ' - ', `banca_vendite`.`iban`) AS descrizione_banca_vendite
             FROM
-                an_anagrafiche
-                INNER JOIN (an_tipianagrafiche_anagrafiche
-                    INNER JOIN an_tipianagrafiche
-                        ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica)
-                            ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica LEFT JOIN in_tipiintervento ON an_anagrafiche.idtipointervento_default=in_tipiintervento.idtipointervento
+                `an_anagrafiche`
+                INNER JOIN (`an_tipianagrafiche_anagrafiche`
+                    INNER JOIN `an_tipianagrafiche`ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id`
+                    LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = ".setting('Lingua').'))
+                        ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` LEFT JOIN `in_tipiintervento` ON `an_anagrafiche`.`idtipointervento_default`=`in_tipiintervento`.`idtipointervento`
+                LEFT JOIN `an_relazioni` ON `an_anagrafiche`.`idrelazione`=`an_relazioni`.`id`
+                LEFT JOIN `an_relazioni_lang` ON (`an_relazioni`.`id`=`an_relazioni_lang`.`id_record` AND `an_relazioni_lang`.`id_lang`= '.setting('Lingua').")
                 LEFT JOIN
-                    an_relazioni
-                        ON an_anagrafiche.idrelazione=an_relazioni.id
+                    (SELECT `co_contratti`.`id`, `idanagrafica`, CONCAT('Contratto ', `numero`, ' del ', DATE_FORMAT(`data_bozza`, '%d/%m/%Y'), ' - ', `co_contratti`.`nome`, ' [', `co_staticontratti`.`descrizione` , ']') AS descrizione FROM `co_contratti` LEFT JOIN `co_staticontratti` ON `co_contratti`.`idstato`=`co_staticontratti`.`id` WHERE `co_contratti`.`predefined`=1 AND `is_pianificabile`=1) AS contratto
+                        ON `an_anagrafiche`.`idanagrafica`=`contratto`.`idanagrafica`
                 LEFT JOIN
-                    (SELECT co_contratti.id, idanagrafica, CONCAT('Contratto ', numero, ' del ', DATE_FORMAT(data_bozza, '%d/%m/%Y'), ' - ', co_contratti.nome, ' [', `co_staticontratti`.`descrizione` , ']') AS descrizione FROM co_contratti LEFT JOIN co_staticontratti ON co_contratti.idstato=co_staticontratti.id WHERE co_contratti.predefined=1 AND is_pianificabile=1) AS contratto
-                        ON an_anagrafiche.idanagrafica=contratto.idanagrafica
+                    `co_pagamenti`
+                        ON `an_anagrafiche`.`idpagamento_vendite`=`co_pagamenti`.`id`
                 LEFT JOIN
-                    co_pagamenti
-                        ON an_anagrafiche.idpagamento_vendite=co_pagamenti.id
-                LEFT JOIN
-                    co_banche banca_vendite
-                        ON co_pagamenti.idconto_vendite = banca_vendite.id_pianodeiconti3 AND banca_vendite.id_anagrafica = ".prepare($id_azienda).' AND banca_vendite.deleted_at IS NULL AND banca_vendite.predefined = 1
+                    `co_banche` banca_vendite
+                        ON `co_pagamenti`.`idconto_vendite` = `banca_vendite`.`id_pianodeiconti3` AND `banca_vendite`.`id_anagrafica` = ".prepare($id_azienda).' AND `banca_vendite`.`deleted_at` IS NULL AND `banca_vendite`.`predefined` = 1
                 |where|
             ORDER BY
-                ragione_sociale';
+                `ragione_sociale`';
 
         foreach ($elements as $element) {
-            $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
+            $filter[] = '`an_anagrafiche`.`idanagrafica`='.prepare($element);
         }
 
-        $where[] = "an_tipianagrafiche.descrizione='Cliente'";
+        $where[] = "`an_tipianagrafiche_lang`.`name`='Cliente'";
         if (empty($filter)) {
-            $where[] = 'an_anagrafiche.deleted_at IS NULL';
+            $where[] = '`an_anagrafiche`.`deleted_at` IS NULL';
 
             if (!empty($filter_agente)) {
-                $where[] = 'idagente = '.Auth::user()['idanagrafica'];
+                $where[] = '`idagente` = '.Auth::user()['idanagrafica'];
             }
         }
 
         if (!empty($search)) {
-            $search_fields[] = 'ragione_sociale LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'provincia LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'an_anagrafiche.codice LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'an_anagrafiche.piva LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'an_anagrafiche.codice_fiscale LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`ragione_sociale` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`citta` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`provincia` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`codice` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`piva` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`codice_fiscale` LIKE '.prepare('%'.$search.'%');
         }
 
         $data = AJAX::selectResults($query, $where, $filter, $search_fields, $limit, $custom);
@@ -104,47 +103,47 @@ switch ($resource) {
     case 'fornitori':
         $id_azienda = setting('Azienda predefinita');
 
-        $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')')), IF(an_anagrafiche.deleted_at IS NULL, '', ' (".tr('eliminata').")'),' - ', an_anagrafiche.codice) AS descrizione, idtipointervento_default AS idtipointervento, co_pagamenti.id AS id_pagamento, co_pagamenti.descrizione AS desc_pagamento, banca_acquisti.id AS id_banca_acquisti, CONCAT(banca_acquisti.nome, ' - ', banca_acquisti.iban) AS descrizione_banca_acquisti FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica LEFT JOIN co_pagamenti ON an_anagrafiche.idpagamento_acquisti=co_pagamenti.id LEFT JOIN co_banche banca_acquisti ON co_pagamenti.idconto_acquisti = banca_acquisti.id_pianodeiconti3 AND banca_acquisti.id_anagrafica = ".prepare($id_azienda).' AND banca_acquisti.deleted_at IS NULL AND banca_acquisti.predefined = 1 |where| ORDER BY ragione_sociale';
+        $query = "SELECT `an_anagrafiche`.`idanagrafica` AS id, CONCAT(`ragione_sociale`, IF(`citta` IS NULL OR `citta` = '', '', CONCAT(' (', `citta`, ')')), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione, `idtipointervento_default` AS `idtipointervento`, `co_pagamenti`.`id` AS id_pagamento, `co_pagamenti`.`descrizione` AS desc_pagamento, `banca_acquisti`.`id` AS id_banca_acquisti, CONCAT(`banca_acquisti`.`nome`, ' - ', `banca_acquisti`.`iban`) AS descrizione_banca_acquisti FROM `an_anagrafiche` INNER JOIN (`an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(setting('Lingua')).')) ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` LEFT JOIN `co_pagamenti` ON `an_anagrafiche`.`idpagamento_acquisti`=`co_pagamenti`.`id` LEFT JOIN `co_banche` banca_acquisti ON `co_pagamenti`.`idconto_acquisti` = `banca_acquisti`.`id_pianodeiconti3` AND `banca_acquisti`.`id_anagrafica` = '.prepare($id_azienda).' AND `banca_acquisti`.`deleted_at` IS NULL AND `banca_acquisti`.`predefined` = 1 |where| ORDER BY `ragione_sociale`';
 
         foreach ($elements as $element) {
-            $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
+            $filter[] = '`an_anagrafiche`.`idanagrafica`='.prepare($element);
         }
 
-        $where[] = "an_tipianagrafiche.descrizione='Fornitore'";
         if (empty($filter)) {
-            $where[] = 'an_anagrafiche.deleted_at IS NULL';
+            $where[] = "`name` = 'Fornitore'";
+            $where[] = '`an_anagrafiche`.`deleted_at` IS NULL';
         }
 
         if (!empty($search)) {
-            $search_fields[] = 'ragione_sociale LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'provincia LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'an_anagrafiche.codice LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'an_anagrafiche.piva LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'an_anagrafiche.codice_fiscale LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`ragione_sociale` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`citta` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`provincia` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`codice` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`piva` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`codice_fiscale` LIKE '.prepare('%'.$search.'%');
         }
 
         break;
 
     case 'vettori':
-        $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')')), IF(an_anagrafiche.deleted_at IS NULL, '', ' (".tr('eliminata').")'),' - ', an_anagrafiche.codice) AS descrizione, idtipointervento_default AS idtipointervento FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
+        $query = "SELECT `an_anagrafiche`.`idanagrafica` AS id, CONCAT(`ragione_sociale`, IF(`citta` IS NULL OR `citta` = '', '', CONCAT(' (', `citta`, ')')), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione, `idtipointervento_default` AS idtipointervento FROM `an_anagrafiche` INNER JOIN (`an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(setting('Lingua')).')) ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` |where| ORDER BY `ragione_sociale`';
 
         foreach ($elements as $element) {
-            $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
+            $filter[] = '`an_anagrafiche`.`idanagrafica`='.prepare($element);
         }
 
-        $where[] = "descrizione='Vettore'";
+        $where[] = "`name`='Vettore'";
         if (empty($filter)) {
-            $where[] = 'an_anagrafiche.deleted_at IS NULL';
+            $where[] = '`an_anagrafiche`.`deleted_at` IS NULL';
         }
 
         if (!empty($search)) {
-            $search_fields[] = 'ragione_sociale LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'provincia LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'an_anagrafiche.codice LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'an_anagrafiche.piva LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'an_anagrafiche.codice_fiscale LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`ragione_sociale` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`citta` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`provincia` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`codice` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`piva` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`codice_fiscale` LIKE '.prepare('%'.$search.'%');
         }
 
         break;
@@ -154,31 +153,31 @@ switch ($resource) {
          * - idanagrafica
          */
     case 'agenti':
-        $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')')), IF(an_anagrafiche.deleted_at IS NULL, '', ' (".tr('eliminata').")'),' - ', an_anagrafiche.codice) AS descrizione, idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
+        $query = "SELECT `an_anagrafiche`.`idanagrafica` AS id, CONCAT(`ragione_sociale`, IF(`citta` IS NULL OR `citta` = '', '', CONCAT(' (', `citta`, ')')), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione, `idtipointervento_default` FROM `an_anagrafiche` INNER JOIN (`an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(setting('Lingua')).')) ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` |where| ORDER BY `ragione_sociale`';
 
         foreach ($elements as $element) {
-            $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
+            $filter[] = '`an_anagrafiche`.`idanagrafica`='.prepare($element);
         }
 
-        $where[] = "descrizione='Agente'";
+        $where[] = "`name`='Agente'";
         if (empty($filter)) {
-            $where[] = 'an_anagrafiche.deleted_at IS NULL';
+            $where[] = '`an_anagrafiche`.`deleted_at` IS NULL';
         }
 
         if (!empty($search)) {
-            $search_fields[] = 'ragione_sociale LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'provincia LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'an_anagrafiche.codice LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'an_anagrafiche.piva LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'an_anagrafiche.codice_fiscale LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`ragione_sociale` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`citta` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`provincia` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`codice` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`piva` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`codice_fiscale` LIKE '.prepare('%'.$search.'%');
         }
 
         $results = AJAX::selectResults($query, $where, $filter, $search, $limit, $custom);
 
         // Evidenzia l'agente di default
         if ($superselect['idanagrafica']) {
-            $rsa = $dbo->fetchArray('SELECT idagente FROM an_anagrafiche WHERE idanagrafica='.prepare($superselect['idanagrafica']));
+            $rsa = $dbo->fetchArray('SELECT `idagente` FROM `an_anagrafiche` WHERE `idanagrafica`='.prepare($superselect['idanagrafica']));
             $idagente_default = $rsa[0]['idagente'];
         } else {
             $idagente_default = 0;
@@ -192,57 +191,57 @@ switch ($resource) {
         break;
 
     case 'tecnici':
-        $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')')), IF(an_anagrafiche.deleted_at IS NULL, '', ' (".tr('eliminata').")'),' - ', an_anagrafiche.codice) AS descrizione, idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
+        $query = "SELECT `an_anagrafiche`.`idanagrafica` AS id, CONCAT(`ragione_sociale`, IF(`citta` IS NULL OR `citta` = '', '', CONCAT(' (', `citta`, ')')), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione, `idtipointervento_default` FROM `an_anagrafiche` INNER JOIN (`an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(setting('Lingua')).')) ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` |where| ORDER BY `ragione_sociale`';
 
         foreach ($elements as $element) {
-            $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
+            $filter[] = '`an_anagrafiche`.`idanagrafica`='.prepare($element);
         }
 
-        $where[] = "descrizione='Tecnico'";
+        $where[] = "`name`='Tecnico'";
         if (empty($filter)) {
-            $where[] = 'an_anagrafiche.deleted_at IS NULL';
+            $where[] = '`an_anagrafiche`.`deleted_at` IS NULL';
 
             if (setting('Permetti inserimento sessioni degli altri tecnici')) {
             } else {
                 // come tecnico posso aprire attività solo a mio nome
                 $user = Auth::user();
                 if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
-                    $where[] = 'an_anagrafiche.idanagrafica='.$user['idanagrafica'];
+                    $where[] = '`an_anagrafiche`.`idanagrafica`='.$user['idanagrafica'];
                 }
             }
         }
 
         if (!empty($search)) {
-            $search_fields[] = 'ragione_sociale LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'provincia LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'an_anagrafiche.codice LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'an_anagrafiche.piva LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'an_anagrafiche.codice_fiscale LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`ragione_sociale` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`citta` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`provincia` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`codice` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`piva` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`codice_fiscale` LIKE '.prepare('%'.$search.'%');
         }
 
         break;
 
     case 'clienti_fornitori':
-        $query = "SELECT `an_anagrafiche`.`idanagrafica` AS id, CONCAT_WS('', ragione_sociale, IF(citta !='' OR provincia != '', CONCAT(' (', citta, IF(provincia!='', CONCAT(' ', provincia), ''), ')'), ''), IF(an_anagrafiche.deleted_at IS NULL, '', ' (".tr('eliminata').")'),' - ', an_anagrafiche.codice) AS descrizione, `an_tipianagrafiche`.`descrizione` AS optgroup, idtipointervento_default, an_tipianagrafiche.idtipoanagrafica FROM `an_tipianagrafiche` INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` |where| ORDER BY `optgroup` ASC, ragione_sociale ASC";
+        $query = "SELECT `an_anagrafiche`.`idanagrafica` AS id, CONCAT_WS('', `ragione_sociale`, IF(`citta` !='' OR `provincia` != '', CONCAT(' (', `citta`, IF(`provincia`!='', CONCAT(' ', `provincia`), ''), ')'), ''), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione, `an_tipianagrafiche_lang`.`name` AS optgroup, `idtipointervento_default`, `an_tipianagrafiche`.`id` as id_tipo FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(setting('Lingua')).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` |where| ORDER BY `optgroup` ASC, `ragione_sociale` ASC';
 
         foreach ($elements as $element) {
-            $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
+            $filter[] = '`an_anagrafiche`.`idanagrafica`='.prepare($element);
         }
 
         $where = [];
         if (empty($filter)) {
-            $where[] = 'an_anagrafiche.deleted_at IS NULL';
-            $where[] = "an_tipianagrafiche_anagrafiche.idtipoanagrafica IN (SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione = 'Cliente' OR descrizione = 'Fornitore' OR descrizione = 'Azienda')";
+            $where[] = '`an_anagrafiche`.`deleted_at` IS NULL';
+            $where[] = '`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` IN (SELECT `an_tipianagrafiche`.`id` FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(setting('Lingua')).") WHERE `name` = 'Cliente' OR `name` = 'Fornitore' OR `name` = 'Azienda')";
         }
 
         if (!empty($search)) {
-            $search_fields[] = 'ragione_sociale LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'provincia LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'an_anagrafiche.codice LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'an_anagrafiche.piva LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'an_anagrafiche.codice_fiscale LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`ragione_sociale` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`citta` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`provincia` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`codice` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`piva` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`codice_fiscale` LIKE '.prepare('%'.$search.'%');
         }
 
         // Aggiunta filtri di ricerca
@@ -274,23 +273,23 @@ switch ($resource) {
 
         // Nota Bene: nel campo id viene specificato idtipoanagrafica-idanagrafica -> modulo Utenti e permessi, creazione nuovo utente
     case 'anagrafiche':
-        $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT_WS('', ragione_sociale, IF(citta !='' OR provincia != '', CONCAT(' (', citta, IF(provincia!='', CONCAT(' ', provincia), ''), ')'), ''), IF(an_anagrafiche.deleted_at IS NULL, '', ' (".tr('eliminata').")'),' - ', an_anagrafiche.codice) AS descrizione, `an_tipianagrafiche`.`descrizione` AS optgroup FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY `optgroup` ASC, ragione_sociale ASC";
+        $query = "SELECT `an_anagrafiche`.`idanagrafica` AS id, CONCAT_WS('', `ragione_sociale`, IF(`citta` !='' OR `provincia` != '', CONCAT(' (', `citta`, IF(`provincia`!='', CONCAT(' ', `provincia`), ''), ')'), ''), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione, `an_tipianagrafiche_lang`.`name` AS optgroup FROM `an_anagrafiche` INNER JOIN (`an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(setting('Lingua')).')) ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` |where| ORDER BY `optgroup` ASC, `ragione_sociale` ASC';
 
         foreach ($elements as $element) {
-            $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
+            $filter[] = '`an_anagrafiche`.`idanagrafica`='.prepare($element);
         }
 
         if (empty($filter)) {
-            $where[] = 'an_anagrafiche.deleted_at IS NULL';
+            $where[] = '`an_anagrafiche`.`deleted_at` IS NULL';
         }
 
         if (!empty($search)) {
-            $search_fields[] = 'ragione_sociale LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'provincia LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'an_anagrafiche.codice LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'an_anagrafiche.piva LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'an_anagrafiche.codice_fiscale LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`ragione_sociale` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`citta` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`provincia` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`codice` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`piva` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`codice_fiscale` LIKE '.prepare('%'.$search.'%');
         }
 
         // Aggiunta filtri di ricerca
@@ -329,26 +328,26 @@ switch ($resource) {
             SELECT
                 *
             FROM
-                (SELECT '0' AS id, (SELECT lat FROM an_anagrafiche |where|) AS lat, (SELECT lng FROM an_anagrafiche |where|) AS lng, (SELECT idzona FROM an_anagrafiche |where|) AS idzona, CONCAT_WS(' - ', \"".tr('Sede legale')."\" , (SELECT CONCAT (citta, IF(indirizzo!='',CONCAT(' (', indirizzo, ')'), ''), ' (',ragione_sociale,')') FROM an_anagrafiche |where|)) AS descrizione
+                (SELECT '0' AS id, (SELECT `lat` FROM `an_anagrafiche` |where|) AS lat, (SELECT `lng` FROM `an_anagrafiche` |where|) AS lng, (SELECT `idzona` FROM `an_anagrafiche` |where|) AS idzona, CONCAT_WS(' - ', \"".tr('Sede legale')."\" , (SELECT CONCAT (`citta`, IF(`indirizzo`!='',CONCAT(' (', `indirizzo`, ')'), ''), ' (',`ragione_sociale`,')') FROM `an_anagrafiche` |where|)) AS descrizione
             
             UNION
                 
             SELECT
-                id,
-                lat,
-                lng,
-                idzona,
-                CONCAT_WS(' - ', nomesede, CONCAT(citta, IF(indirizzo!='',CONCAT(' (', indirizzo, ')'), '')) ) FROM an_sedi |where|) AS tab
+                `id`,
+                `lat`,
+                `lng`,
+                `idzona`,
+                CONCAT_WS(' - ', `nomesede`, CONCAT(`citta`, IF(indirizzo!='',CONCAT(' (', `indirizzo`, ')'), '')) ) FROM `an_sedi` |where|) AS tab
             HAVING
-                descrizione LIKE ".prepare('%'.$search.'%').'
+                `descrizione` LIKE ".prepare('%'.$search.'%').'
             ORDER BY
-                descrizione';
+                `descrizione`';
 
             foreach ($elements as $element) {
-                $filter[] = 'id='.prepare($element);
+                $filter[] = '`id`='.prepare($element);
             }
 
-            $where[] = 'idanagrafica='.prepare($superselect['idanagrafica']);
+            $where[] = '`idanagrafica`='.prepare($superselect['idanagrafica']);
 
             /*
             if (!empty($search)) {
@@ -362,21 +361,21 @@ switch ($resource) {
         $user = Auth::user();
         $id_azienda = setting('Azienda predefinita');
 
-        $query = "SELECT * FROM (SELECT '0' AS id, 'Sede legale' AS nomesede, CONCAT_WS(' - ', \"".tr('Sede legale')."\" , (SELECT CONCAT (citta, IF(indirizzo!='',CONCAT(' (', indirizzo, ')'), ''),' (', ragione_sociale,')') FROM an_anagrafiche |where|)) AS descrizione UNION SELECT id, nomesede, CONCAT_WS(' - ', nomesede, CONCAT(citta, IF(indirizzo!='',CONCAT(' (', indirizzo, ')'), '')) ) FROM an_sedi |where|) AS tab |filter| ORDER BY descrizione";
+        $query = "SELECT * FROM (SELECT '0' AS id, 'Sede legale' AS `nomesede`, CONCAT_WS(' - ', \"".tr('Sede legale')."\" , (SELECT CONCAT (`citta`, IF(`indirizzo`!='',CONCAT(' (', `indirizzo`, ')'), ''),' (', `ragione_sociale`,')') FROM `an_anagrafiche` |where|)) AS descrizione UNION SELECT `id`, `nomesede`, CONCAT_WS(' - ', `nomesede`, CONCAT(`citta`, IF(`indirizzo`!='',CONCAT(' (', `indirizzo`, ')'), '')) ) FROM `an_sedi` |where|) AS tab |filter| ORDER BY descrizione";
 
         foreach ($elements as $element) {
-            $filter[] = 'id='.prepare($element);
+            $filter[] = '`id`='.prepare($element);
         }
 
-        $where[] = 'idanagrafica='.prepare($id_azienda);
+        $where[] = '`idanagrafica`='.prepare($id_azienda);
         // admin o utente senza una sede prefissata, avrà accesso a tutte le sedi
         if (!empty($user->sedi) and !$user->is_admin) {
-            $where[] = 'id IN('.implode(',', $user->sedi).')';
+            $where[] = '`id` IN('.implode(',', $user->sedi).')';
         }
 
         if (!empty($search)) {
-            $search_fields[] = 'nomesede LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`nomesede` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`citta` LIKE '.prepare('%'.$search.'%');
         }
 
         break;
@@ -387,100 +386,100 @@ switch ($resource) {
          */
     case 'referenti':
         if (isset($superselect['idanagrafica'])) {
-            $query = 'SELECT an_referenti.id, an_referenti.nome AS descrizione, an_mansioni.nome AS optgroup FROM an_referenti LEFT JOIN an_mansioni ON an_referenti.idmansione=an_mansioni.id |where| ORDER BY optgroup, an_referenti.nome';
+            $query = 'SELECT `an_referenti`.`id`, `an_referenti`.`nome` AS descrizione, `an_mansioni`.`nome` AS optgroup FROM `an_referenti` LEFT JOIN `an_mansioni` ON `an_referenti`.`idmansione`=`an_mansioni`.`id` |where| ORDER BY optgroup, `an_referenti`.`nome`';
 
             foreach ($elements as $element) {
-                $filter[] = 'an_referenti.id='.prepare($element);
+                $filter[] = '`an_referenti`.`id`='.prepare($element);
             }
 
             if (isset($superselect['idclientefinale'])) {
-                $where[] = '(idanagrafica='.prepare($superselect['idanagrafica']).' OR idanagrafica='.prepare($superselect['idclientefinale']).')';
+                $where[] = '(`idanagrafica`='.prepare($superselect['idanagrafica']).' OR `idanagrafica`='.prepare($superselect['idclientefinale']).')';
             } else {
-                $where[] = 'idanagrafica='.prepare($superselect['idanagrafica']);
+                $where[] = '`idanagrafica`='.prepare($superselect['idanagrafica']);
             }
 
             if (isset($superselect['idsede_destinazione'])) {
-                $where[] = 'idsede='.prepare($superselect['idsede_destinazione']);
+                $where[] = '`idsede`='.prepare($superselect['idsede_destinazione']);
             }
 
             if (!empty($search)) {
-                $search_fields[] = 'an_referenti.nome LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = '`an_referenti`.`nome` LIKE '.prepare('%'.$search.'%');
             }
         }
         break;
 
     case 'nazioni':
-        $query = 'SELECT id AS id, iso2, CONCAT_WS(\' - \', iso2, nome) AS descrizione FROM an_nazioni |where| ORDER BY CASE WHEN iso2=\'IT\' THEN -1 ELSE iso2 END';
+        $query = 'SELECT `an_nazioni`.`id` AS id, `iso2`, CONCAT_WS(\' - \', `iso2`, `an_nazioni_lang`.`name`) AS descrizione FROM `an_nazioni` LEFT JOIN `an_nazioni_lang` ON (`an_nazioni`.`id` = `an_nazioni_lang`.`id_record` AND `an_nazioni_lang`.`id_lang` = '.prepare(setting('Lingua')).') |where| ORDER BY CASE WHEN `iso2`=\'IT\' THEN -1 ELSE `iso2` END';
 
         foreach ($elements as $element) {
-            $filter[] = 'id='.prepare($element);
+            $filter[] = '`an_nazioni`.`id`='.prepare($element);
         }
 
         if (!empty($search)) {
-            $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'iso2 LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'CONCAT_WS(\' - \', iso2, nome) LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_nazioni_lang`.`name` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`iso2` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'CONCAT_WS(\' - \', `iso2`, `name`) LIKE '.prepare('%'.$search.'%');
         }
 
         break;
 
     case 'regioni':
         if (isset($superselect['id_nazione'])) {
-            $query = 'SELECT an_regioni.id AS id, an_regioni.iso2, CONCAT(CONCAT_WS(\' - \', an_regioni.iso2, an_regioni.nome), \' (\', an_nazioni.iso2, \')\') AS descrizione FROM an_regioni INNER JOIN an_nazioni ON an_regioni.id_nazione = an_nazioni.id |where| ORDER BY an_regioni.nome';
+            $query = 'SELECT `an_regioni`.`id` AS id, `an_regioni`.`iso2`, CONCAT(CONCAT_WS(\' - \', `an_regioni`.`iso2`, `an_regioni_lang`.`name`), \' (\', `an_nazioni`.`iso2`, \')\') AS descrizione FROM `an_regioni` LEFT JOIN `an_regioni_lang` ON (`an_regioni`.`id` = `an_regioni_lang`.`id_record` AND `an_regioni_lang`.`id_lang` = '.prepare(setting('Lingua')).') INNER JOIN `an_nazioni` ON `an_regioni`.`id_nazione` = `an_nazioni`.`id` |where| ORDER BY `an_regioni_lang`.`name`';
 
             foreach ($elements as $element) {
-                $filter[] = 'an_regioni.id='.prepare($element);
+                $filter[] = '`an_regioni`.`id`='.prepare($element);
             }
 
-            $where[] = 'an_regioni.id_nazione='.prepare($superselect['id_nazione']);
+            $where[] = '`an_regioni`.`id_nazione`='.prepare($superselect['id_nazione']);
 
             if (!empty($search)) {
-                $search_fields[] = 'an_regioni.nome LIKE '.prepare('%'.$search.'%');
-                $search_fields[] = 'an_regioni.iso2 LIKE '.prepare('%'.$search.'%');
-                $search_fields[] = 'CONCAT_WS(\' - \', an_regioni.iso2, an_regioni.nome) LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = '`an_regioni_lang`.`name` LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = '`an_regioni`.`iso2` LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = 'CONCAT_WS(\' - \', `an_regioni`.`iso2`, `an_regioni_lang`.`name`) LIKE '.prepare('%'.$search.'%');
             }
         }
         break;
 
     case 'relazioni':
-        $query = "SELECT id, CONCAT(descrizione, IF(an_relazioni.deleted_at IS NULL, '', ' (".tr('eliminata').")')) AS descrizione, colore AS _bgcolor_ FROM an_relazioni |where| ORDER BY descrizione";
+        $query = "SELECT `an_relazioni`.`id`, CONCAT(`name`, IF(`an_relazioni`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")')) AS descrizione, `colore` AS _bgcolor_ FROM `an_relazioni` LEFT JOIN `an_relazioni_lang` ON (`an_relazioni`.`id` = `an_relazioni_lang`.`id_record` AND `an_relazioni_lang`.`id_lang` = ".prepare(setting('Lingua')).') |where| ORDER BY descrizione';
 
         foreach ($elements as $element) {
-            $filter[] = 'id='.prepare($element);
+            $filter[] = '`an_relazioni`.`id`='.prepare($element);
         }
 
         if (empty($filter)) {
-            $where[] = 'an_relazioni.deleted_at IS NULL';
+            $where[] = '`an_relazioni`.`deleted_at` IS NULL';
         }
 
         if (!empty($search)) {
-            $search_fields[] = 'descrizione LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_relazioni_lang`.`name` LIKE '.prepare('%'.$search.'%');
         }
 
         break;
 
     case 'provenienze':
-        $query = 'SELECT id, descrizione, colore AS bgcolor FROM an_provenienze |where| ORDER BY descrizione';
+        $query = 'SELECT `an_provenienze`.`id`, `an_provenienze_lang`.`name` as descrizione, `colore` AS bgcolor FROM `an_provenienze` LEFT JOIN `an_provenienze_lang` ON (`an_provenienze`.`id` = `an_provenienze_lang`.`id_record` AND `an_provenienze_lang`.`id_lang` = '.prepare(setting('Lingua')).') |where| ORDER BY `descrizione`';
 
         foreach ($elements as $element) {
-            $filter[] = 'id='.prepare($element);
+            $filter[] = '`an_provenienze`.`id`='.prepare($element);
         }
 
         if (!empty($search)) {
-            $search_fields[] = 'descrizione LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_provenienze_lang`.`name` LIKE '.prepare('%'.$search.'%');
         }
 
         break;
 
     case 'settori':
-        $query = 'SELECT id, descrizione FROM an_settori |where| ORDER BY descrizione';
+        $query = 'SELECT `an_settori`.`id`, `an_settori_lang`.`name` as descrizione FROM `an_settori` LEFT JOIN `an_settori_lang` ON (`an_settori`.`id` = `an_settori_lang`.`id_record` AND `an_settori_lang`.`id_lang` = '.prepare(setting('Lingua')).') |where| ORDER BY `name`';
 
         foreach ($elements as $element) {
-            $filter[] = 'id='.prepare($element);
+            $filter[] = '`an_settori`.`id`='.prepare($element);
         }
 
         if (!empty($search)) {
-            $search_fields[] = 'descrizione LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
         }
 
         break;

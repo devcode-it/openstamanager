@@ -27,28 +27,39 @@ class Tipo extends Model
     use SimpleModelTrait;
 
     protected $table = 'an_tipianagrafiche';
-    protected $primaryKey = 'idtipoanagrafica';
-
-    protected $appends = [
-        'id',
-    ];
-
-    protected $hidden = [
-        'idtipoanagrafica',
-    ];
-
-    /**
-     * Restituisce l'identificativo.
-     *
-     * @return int
-     */
-    public function getIdAttribute()
-    {
-        return $this->idtipoanagrafica;
-    }
 
     public function anagrafiche()
     {
-        return $this->hasMany(Anagrafica::class, 'an_tipianagrafiche_anagrafiche', 'idtipoanagrafica', 'idanagrafica');
+        return $this->hasMany(Anagrafica::class, 'idtipoanagrafica');
+    }
+
+    /**
+     * Ritorna l'attributo name del tipo anagrafica.
+     *
+     * @return string
+     */
+    public function getNameAttribute()
+    {
+        return database()->table($this->table.'_lang')
+            ->select('name')
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first()->name;
+    }
+
+    /**
+     * Ritorna l'id del tipo di anagrafica a partire dal nome.
+     *
+     * @param string $name il nome da ricercare
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getByName($name)
+    {
+        return database()->table($this->table.'_lang')
+            ->select('id_record')
+            ->where('name', '=', $name)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first();
     }
 }

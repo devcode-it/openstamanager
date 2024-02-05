@@ -126,7 +126,7 @@ class CSV extends CSVExporter
                 'label' => 'ID Pagamento',
             ],
             [
-                'field' => 'idtipoanagrafica',
+                'field' => 'id',
                 'label' => 'Tipo',
             ],
             [

@@ -36,7 +36,7 @@ class Movimento extends Model
         'dare',
     ];
 
-    public static function build(Mastrino $mastrino, $id_conto, Fattura $documento = null, Scadenza $scadenza = null)
+    public static function build(Mastrino $mastrino, $id_conto, ?Fattura $documento = null, ?Scadenza $scadenza = null)
     {
         $model = new static();
 

@@ -44,15 +44,18 @@ class Contratti extends AppResource implements RetrieveInterface
 
     public function getModifiedRecords($last_sync_at)
     {
-        $query = "SELECT
-            DISTINCT(co_contratti.id) AS id,
-            co_contratti.updated_at
-        FROM co_contratti
-            INNER JOIN co_staticontratti ON co_staticontratti.id = co_contratti.idstato
-            INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = co_contratti.idanagrafica
-            INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.idanagrafica = an_anagrafiche.idanagrafica
-            INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica = an_tipianagrafiche.idtipoanagrafica
-        WHERE an_tipianagrafiche.descrizione = 'Cliente' AND co_staticontratti.is_pianificabile = 1 AND an_anagrafiche.deleted_at IS NULL";
+        $query = 'SELECT
+            DISTINCT(`co_contratti`.`id`) AS id,
+            `co_contratti`.`updated_at`
+        FROM 
+            `co_contratti`
+            INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`idstato`
+            INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `co_contratti`.`idanagrafica`
+            INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+            INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche`.`id`
+            LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(setting('Lingua')).")
+        WHERE 
+            `an_tipianagrafiche_lang`.`name` = 'Cliente' AND `co_staticontratti`.`is_pianificabile` = 1 AND `an_anagrafiche`.`deleted_at` IS NULL";
 
         // Filtro per data
         if ($last_sync_at) {

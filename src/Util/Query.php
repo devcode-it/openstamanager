@@ -72,6 +72,7 @@ class Query
         $id_module = \Modules::getCurrent()['id'];
         $segment = !empty(self::$segments) ? $_SESSION['module_'.$id_module]['id_segment'] : null;
         $is_sezionale = database()->fetchOne('SELECT `is_sezionale` FROM `zz_segments` WHERE `id` = '.prepare($segment))['is_sezionale'];
+        $lang = setting('Lingua');
 
         $user = \Auth::user();
 
@@ -98,7 +99,7 @@ class Query
             $date_query = !empty($filters) && !empty(self::$segments) ? ' AND ('.implode(' OR ', $filters).')' : '';
         }
 
-        // Sostituzione periodi temporali
+        // Sostituzione segmenti
         preg_match('|segment\((.+?)\)|', (string) $query, $matches);
         $segment_name = !empty($matches[1]) ? $matches[1] : 'id_segment';
         $segment_filter = !empty($matches[0]) ? $matches[0] : 'segment';
@@ -122,6 +123,9 @@ class Query
 
             // Filtro dinamico per il modulo Giacenze sedi
             '|giacenze_sedi_idsede|' => prepare(isset($_SESSION['giacenze_sedi']) ? $_SESSION['giacenze_sedi']['idsede'] : null),
+
+            // Filtro per lingua
+            '|lang|' => '`id_lang` = '.prepare($lang),
         ];
 
         // Sostituzione dei formati

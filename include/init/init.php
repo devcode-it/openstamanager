@@ -19,14 +19,17 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Anagrafiche\Tipo;
+
 if (Update::isUpdateAvailable() || !$dbo->isInstalled()) {
     return;
 }
 
-$has_azienda = $dbo->fetchNum("SELECT `an_anagrafiche`.`idanagrafica` FROM `an_anagrafiche`
+$has_azienda = $dbo->fetchNum('SELECT `an_anagrafiche`.`idanagrafica` FROM `an_anagrafiche`
     LEFT JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica`
-    LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`
-WHERE `an_tipianagrafiche`.`descrizione` = 'Azienda' AND `an_anagrafiche`.`deleted_at` IS NULL") != 0;
+    LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`
+    LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(setting('Lingua')).")
+WHERE `an_tipianagrafiche_lang`.`name` = 'Azienda' AND `an_anagrafiche`.`deleted_at` IS NULL") != 0;
 $has_user = $dbo->fetchNum('SELECT `id` FROM `zz_users`') != 0;
 
 $settings = [
@@ -168,7 +171,7 @@ if (!$has_azienda) {
 
                 <div class="panel-body" id="bs-popup">';
 
-    $idtipoanagrafica = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Azienda'")[0]['idtipoanagrafica'];
+    $idtipoanagrafica = (new Tipo())->getByName('Azienda')->id_record;
     $readonly_tipo = true;
 
     ob_start();

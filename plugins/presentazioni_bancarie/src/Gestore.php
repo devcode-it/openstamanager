@@ -162,7 +162,7 @@ class Gestore
         $this->debito_diretto = new DirectDebitCBI();
     }
 
-    public function aggiungi(Scadenza $scadenza, int $identifier, string $descrizione, string $codice_sequenza = null)
+    public function aggiungi(Scadenza $scadenza, int $identifier, string $descrizione, ?string $codice_sequenza = null)
     {
         $documento = $scadenza->documento;
         $controparte = $scadenza->anagrafica;

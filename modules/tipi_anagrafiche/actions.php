@@ -28,7 +28,7 @@ switch (post('op')) {
         // Nome accettato
 
         if (!in_array($descrizione, $block)) {
-            $dbo->query('UPDATE an_tipianagrafiche SET descrizione='.prepare($descrizione).' WHERE idtipoanagrafica='.prepare($idtipoanagrafica));
+            $dbo->query('UPDATE `an_tipianagrafiche_lang` SET `name`='.prepare($descrizione).' WHERE `id_record`='.prepare($idtipoanagrafica));
             flash()->info(tr('Informazioni salvate correttamente!'));
         } else {
             // Nome non consentito
@@ -42,22 +42,22 @@ switch (post('op')) {
 
         if (!empty($descrizione)) {
             // Verifico che il nome non sia duplicato
-            $rs = $dbo->fetchArray('SELECT descrizione FROM an_tipianagrafiche WHERE descrizione='.prepare($descrizione));
+            $rs = $dbo->fetchArray('SELECT `name` FROM `an_tipianagrafiche_lang` WHERE `name`='.prepare($descrizione));
 
             if (count($rs) > 0) {
                 flash()->error(tr('Nome già esistente!'));
             } else {
-                $query = 'INSERT INTO an_tipianagrafiche (descrizione) VALUES ('.prepare($descrizione).')';
-                $dbo->query($query);
-
+                $dbo->query('INSERT INTO `an_tipianagrafiche` (`id`) VALUES (NULL)');
                 $id_record = $dbo->lastInsertedID();
+                $dbo->query('INSERT INTO `an_tipianagrafiche_lang` (`name`, `id_record`, `id_lang`) VALUES ('.prepare($descrizione).'), ('.prepare($id_record).', '.prepare(setting('Lingua')).')');
+
                 flash()->info(tr('Nuovo tipo di anagrafica aggiunto!'));
             }
         }
         break;
 
     case 'delete':
-        $query = 'DELETE FROM an_tipianagrafiche WHERE idtipoanagrafica='.prepare($id_record);
+        $query = 'DELETE FROM `an_tipianagrafiche` WHERE `id`='.prepare($id_record);
         $dbo->query($query);
 
         flash()->info(tr('Tipo di anagrafica eliminato!'));

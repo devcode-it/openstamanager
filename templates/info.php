@@ -17,6 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\Anagrafiche\Nazione;
+
 $replaces = [];
 
 // Retrocompatibilità
@@ -85,9 +87,9 @@ foreach ($replace as $prefix => $values) {
         $citta .= ' ('.$values['provincia'].')';
     }
     if (!empty($values['id_nazione'])) {
-        $nazione = $database->fetchOne('SELECT * FROM an_nazioni WHERE id = '.prepare($values['id_nazione']));
+        $nazione = Nazione::find($values['id_nazione']);
         if ($nazione['iso2'] != 'IT') {
-            $citta .= ' - '.$nazione['name'];
+            $citta .= ' - '.$nazione->name;
         }
     }
 

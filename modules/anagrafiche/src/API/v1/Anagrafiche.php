@@ -30,20 +30,20 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
 {
     public function retrieve($request)
     {
-        $table = 'an_anagrafiche';
+        $table = '`an_anagrafiche`';
 
         $select = [
-            'an_anagrafiche.*',
-            'an_nazioni.nome AS nazione',
+            '`an_anagrafiche`.*',
+            '`an_nazioni_lang`.`name` AS nazione',
         ];
 
         $joins[] = [
-            'an_nazioni',
-            'an_anagrafiche.id_nazione',
-            'an_nazioni.id',
+            '`an_nazioni_lang`',
+            '`an_anagrafiche`.`id_nazione`',
+            '`an_nazioni_lang`.`name`',
         ];
 
-        $where[] = ['an_anagrafiche.deleted_at', '=', null];
+        $where[] = ['`an_anagrafiche`.`deleted_at`', '=', null];
 
         $order['an_anagrafiche.ragione_sociale'] = 'ASC';
 
@@ -51,18 +51,24 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
             $type = 'Cliente';
 
             $joins[] = [
-                'an_tipianagrafiche_anagrafiche',
-                'an_anagrafiche.idanagrafica',
-                'an_tipianagrafiche_anagrafiche.idanagrafica',
+                '`an_tipianagrafiche_anagrafiche`',
+                '`an_anagrafiche`.`idanagrafica`',
+                '`an_tipianagrafiche_anagrafiche`.`idanagrafica`',
             ];
 
             $joins[] = [
-                'an_tipianagrafiche',
-                'an_tipianagrafiche_anagrafiche.idtipoanagrafica',
-                'an_tipianagrafiche.idtipoanagrafica',
+                '`an_tipianagrafiche`',
+                '`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`',
+                '`an_tipianagrafiche`.`id`',
             ];
 
-            $where[] = ['an_tipianagrafiche.descrizione', '=', $type];
+            $joins[] = [
+                '`an_tipianagrafiche_lang`',
+                '`an_tipianagrafiche_lang`.`id_record`',
+                '`an_tipianagrafiche`.`id`',
+            ];
+
+            $where[] = ['`an_tipianagrafiche_lang`.`name`', '=', $type];
         }
 
         return [

@@ -19,6 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Anagrafiche\Nazione;
 use Modules\DDT\DDT;
 
 $documento = DDT::find($id_record);
@@ -70,9 +71,9 @@ if (!empty($documento['idsede_destinazione'])) {
         $destinazione .= ' ('.$rsd[0]['provincia'].')';
     }
     if (!empty($rsd[0]['id_nazione'])) {
-        $nazione = $database->fetchOne('SELECT * FROM an_nazioni WHERE id = '.prepare($rsd[0]['id_nazione']));
+        $nazione = Nazione::find($rsd[0]['id_nazione']);
         if ($nazione['iso2'] != 'IT') {
-            $destinazione .= ' - '.$nazione['name'].'<br />';
+            $destinazione .= ' - '.$nazione->name.'<br />';
         }
     }
     if (!empty($rsd[0]['telefono'])) {
@@ -107,9 +108,9 @@ if (!empty($documento['idsede_partenza'])) {
         $partenza .= ' ('.$rsd[0]['provincia'].')';
     }
     if (!empty($rsd[0]['id_nazione'])) {
-        $nazione = $database->fetchOne('SELECT * FROM an_nazioni WHERE id = '.prepare($rsd[0]['id_nazione']));
+        $nazione = Nazione::find($rsd[0]['id_nazione']);
         if ($nazione['iso2'] != 'IT') {
-            $partenza .= ' - '.$nazione['name'].'<br />';
+            $partenza .= ' - '.$nazione->name.'<br />';
         }
     }
     if (!empty($rsd[0]['telefono'])) {

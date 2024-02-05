@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Carbon\Carbon;
+use Modules\Anagrafiche\Tipo;
 use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
@@ -173,12 +174,13 @@ switch (filter('op')) {
         }
 
         // Aggiorno la tipologia di anagrafica fornitore
-        $anagrafica = $database->fetchOne('SELECT idanagrafica FROM co_documenti WHERE co_documenti.id='.prepare($id_fattura));
-        $rs_t = $database->fetchOne("SELECT * FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica=(SELECT an_tipianagrafiche.idtipoanagrafica FROM an_tipianagrafiche WHERE an_tipianagrafiche.descrizione='Fornitore') AND idanagrafica=".prepare($anagrafica['idanagrafica']));
+        $anagrafica = $database->fetchOne('SELECT `idanagrafica` FROM `co_documenti` WHERE `co_documenti`.`id`='.prepare($id_fattura));
+        $id_tipo = (new Tipo())->getByName('Fornitore')->id_record;
+        $rs_t = $database->fetchOne('SELECT * FROM `an_tipianagrafiche_anagrafiche` WHERE `idtipoanagrafica`='.prepare($id_tipo).' AND `idanagrafica`='.prepare($anagrafica['idanagrafica']));
 
         // Se non trovo corrispondenza aggiungo all'anagrafica la tipologia fornitore
         if (empty($rs_t)) {
-            $database->query("INSERT INTO an_tipianagrafiche_anagrafiche (idtipoanagrafica, idanagrafica) VALUES ((SELECT an_tipianagrafiche.idtipoanagrafica FROM an_tipianagrafiche WHERE an_tipianagrafiche.descrizione='Fornitore'), ".prepare($anagrafica['idanagrafica']).')');
+            $database->query("INSERT INTO `an_tipianagrafiche_anagrafiche` (`idtipoanagrafica`, `idanagrafica`) VALUES ($id_tipo, ".prepare($anagrafica['idanagrafica']).')');
         }
 
         // Processo il file ricevuto

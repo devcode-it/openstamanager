@@ -367,7 +367,7 @@ abstract class Component extends Model
         return $result;
     }
 
-    public function replicate(array $except = null)
+    public function replicate(?array $except = null)
     {
         $new = parent::replicate($except);
 

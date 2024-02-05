@@ -32,13 +32,16 @@ class Clienti extends AppResource
     public function getModifiedRecords($last_sync_at)
     {
         $parameters = [];
-        $query = "SELECT
-            an_anagrafiche.idanagrafica AS id,
-            an_anagrafiche.updated_at
-        FROM an_anagrafiche
-            INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.idanagrafica = an_anagrafiche.idanagrafica
-            INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica = an_tipianagrafiche.idtipoanagrafica
-        WHERE an_tipianagrafiche.descrizione = 'Cliente' AND (an_anagrafiche.deleted_at IS NULL OR an_anagrafiche.idanagrafica IN(SELECT in_interventi.idanagrafica FROM in_interventi))";
+        $query = 'SELECT
+            `an_anagrafiche`.`idanagrafica` AS id,
+            `an_anagrafiche`.`updated_at`
+        FROM 
+            `an_anagrafiche`
+            INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+            INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche`.`id`
+            LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.setting('Lingua').")
+        WHERE 
+            `an_tipianagrafiche_lang`.`name` = 'Cliente' AND (`an_anagrafiche`.`deleted_at` IS NULL OR `an_anagrafiche`.`idanagrafica` IN(SELECT `in_interventi`.`idanagrafica` FROM `in_interventi`))";
 
         // Sincronizzazione limitata ai Clienti con Interventi di interesse per il Tecnico corrente
         $sincronizza_lavorati = setting('Sincronizza solo i Clienti per cui il Tecnico ha lavorato in passato');
@@ -74,32 +77,33 @@ class Clienti extends AppResource
     public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
-        $query = 'SELECT an_anagrafiche.idanagrafica AS id,
-            an_anagrafiche.ragione_sociale,
-            an_anagrafiche.tipo,
-            an_anagrafiche.piva AS partita_iva,
-            an_anagrafiche.codice_fiscale,
-            an_anagrafiche.indirizzo,
-            an_anagrafiche.indirizzo2,
-            an_anagrafiche.citta,
-            an_anagrafiche.cap,
-            an_anagrafiche.provincia,
-            an_anagrafiche.km,
-            IFNULL(an_anagrafiche.lat, 0.00) AS latitudine,
-            IFNULL(an_anagrafiche.lng, 0.00) AS longitudine,
-            an_nazioni.nome AS nazione,
-            an_anagrafiche.fax,
-            an_anagrafiche.telefono,
-            an_anagrafiche.cellulare,
-            an_anagrafiche.email,
-            an_anagrafiche.sitoweb AS sito_web,
-            an_anagrafiche.note,
-            an_anagrafiche.deleted_at,
-            IF(an_anagrafiche.deleted_at IS NULL, 0, 1) AS deleted,
-            an_anagrafiche.idtipointervento_default AS id_tipo_intervento_default
-        FROM an_anagrafiche
-            LEFT OUTER JOIN an_nazioni ON an_anagrafiche.id_nazione = an_nazioni.id
-        WHERE an_anagrafiche.idanagrafica = '.prepare($id);
+        $query = 'SELECT `an_anagrafiche`.`idanagrafica` AS id,
+            `an_anagrafiche`.`ragione_sociale`,
+            `an_anagrafiche`.`tipo`,
+            `an_anagrafiche`.`piva` AS partita_iva,
+            `an_anagrafiche`.`codice_fiscale`,
+            `an_anagrafiche`.`indirizzo`,
+            `an_anagrafiche`.`indirizzo2`,
+            `an_anagrafiche`.`citta`,
+            `an_anagrafiche`.`cap`,
+            `an_anagrafiche`.`provincia`,
+            `an_anagrafiche`.`km`,
+            IFNULL(`an_anagrafiche`.`lat`, 0.00) AS latitudine,
+            IFNULL(`an_anagrafiche`.`lng`, 0.00) AS longitudine,
+            `an_nazioni_lang`.`name` AS nazione,
+            `an_anagrafiche`.`fax`,
+            `an_anagrafiche`.`telefono`,
+            `an_anagrafiche`.`cellulare`,
+            `an_anagrafiche`.`email`,
+            `an_anagrafiche`.`sitoweb` AS sito_web,
+            `an_anagrafiche`.`note`,
+            `an_anagrafiche`.`deleted_at`,
+            IF(`an_anagrafiche`.`deleted_at` IS NULL, 0, 1) AS deleted,
+            `an_anagrafiche`.`idtipointervento_default` AS id_tipo_intervento_default
+        FROM `an_anagrafiche`
+            LEFT JOIN `an_nazioni` ON `an_anagrafiche`.`id_nazione` = `an_nazioni`.`id`
+            LEFT JOIN `an_nazioni_lang` ON (`an_nazioni`.`id` = `an_nazioni_lang`.`id_record` AND `an_nazioni_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+        WHERE `an_anagrafiche`.`idanagrafica` = '.prepare($id);
 
         $record = database()->fetchOne($query);
 

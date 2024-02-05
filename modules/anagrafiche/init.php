@@ -21,19 +21,19 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
 
-$rs = $dbo->fetchArray('SELECT idtipoanagrafica, descrizione FROM an_tipianagrafiche');
+$rs = $dbo->fetchArray('SELECT `an_tipianagrafiche`.`id`, `name` descrizione FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(setting('Lingua')).')');
 foreach ($rs as $riga) {
-    ${'id_'.strtolower($riga['descrizione'])} = $riga['idtipoanagrafica'];
+    ${'id_'.strtolower($riga['descrizione'])} = $riga['id'];
 }
 
 if (isset($id_record)) {
     $anagrafica = Anagrafica::withTrashed()->find($id_record);
 
     $record = $dbo->fetchOne('SELECT *,
-        (SELECT GROUP_CONCAT(an_tipianagrafiche.idtipoanagrafica) FROM an_tipianagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche.idtipoanagrafica=an_tipianagrafiche_anagrafiche.idtipoanagrafica WHERE idanagrafica=an_anagrafiche.idanagrafica) AS idtipianagrafica,
-        (SELECT GROUP_CONCAT(idagente) FROM an_anagrafiche_agenti WHERE idanagrafica=an_anagrafiche.idanagrafica) AS idagenti,
-        (SELECT GROUP_CONCAT(descrizione) FROM an_tipianagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche.idtipoanagrafica=an_tipianagrafiche_anagrafiche.idtipoanagrafica WHERE idanagrafica=an_anagrafiche.idanagrafica) AS tipianagrafica
-    FROM an_anagrafiche WHERE idanagrafica='.prepare($id_record));
+        (SELECT GROUP_CONCAT(`an_tipianagrafiche`.`id`) FROM `an_tipianagrafiche` INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` WHERE `idanagrafica`=`an_anagrafiche`.`idanagrafica`) AS idtipianagrafica,
+        (SELECT GROUP_CONCAT(`idagente`) FROM `an_anagrafiche_agenti` WHERE `idanagrafica`=`an_anagrafiche`.`idanagrafica`) AS idagenti,
+        (SELECT GROUP_CONCAT(`name`) FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(setting('Lingua')).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` WHERE `idanagrafica`=`an_anagrafiche`.`idanagrafica`) AS tipianagrafica
+    FROM `an_anagrafiche` WHERE `idanagrafica`='.prepare($id_record));
 
     // Cast per latitudine e longitudine
     if (!empty($record)) {
@@ -41,6 +41,6 @@ if (isset($id_record)) {
         $record['lng'] = floatval($record['lng']);
     }
 
-    $tipi_anagrafica = $dbo->fetchArray('SELECT an_tipianagrafiche.idtipoanagrafica FROM an_tipianagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche.idtipoanagrafica=an_tipianagrafiche_anagrafiche.idtipoanagrafica WHERE idanagrafica='.prepare($id_record));
-    $tipi_anagrafica = array_column($tipi_anagrafica, 'idtipoanagrafica');
+    $tipi_anagrafica = $dbo->fetchArray('SELECT `an_tipianagrafiche`.`id` FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(setting('Lingua')).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` WHERE `idanagrafica`='.prepare($id_record));
+    $tipi_anagrafica = array_column($tipi_anagrafica, 'id');
 }

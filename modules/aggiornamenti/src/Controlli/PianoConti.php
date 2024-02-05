@@ -53,19 +53,20 @@ class PianoConti extends Controllo
          * Verifico se serve creare un conto per eventuali nuovi clienti o fornitori.
          */
         $anagrafiche_interessate = $database->fetchArray('SELECT
-            an_anagrafiche.idanagrafica AS id,
-            an_anagrafiche.idconto_cliente,
-            an_anagrafiche.idconto_fornitore,
-            an_anagrafiche.ragione_sociale,
-            GROUP_CONCAT(an_tipianagrafiche.descrizione) AS tipi_anagrafica
-        FROM an_anagrafiche
-           INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.idanagrafica = an_anagrafiche.idanagrafica
-           INNER JOIN an_tipianagrafiche ON an_tipianagrafiche.idtipoanagrafica = an_tipianagrafiche_anagrafiche.idtipoanagrafica
-       WHERE
-        (idconto_cliente = 0 OR idconto_cliente IS NULL OR idconto_fornitore = 0 OR idconto_fornitore IS NULL)
-        AND
-        deleted_at IS NULL
-       GROUP BY an_anagrafiche.idanagrafica');
+            `an_anagrafiche`.`idanagrafica` AS id,
+            `an_anagrafiche`.`idconto_cliente`,
+            `an_anagrafiche`.`idconto_fornitore`,
+            `an_anagrafiche`.`ragione_sociale`,
+            GROUP_CONCAT(`an_tipianagrafiche_lang`.`name`) AS tipi_anagrafica
+        FROM `an_anagrafiche`
+            INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+            INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`
+            LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+        WHERE
+            (`idconto_cliente` = 0 OR `idconto_cliente` IS NULL OR `idconto_fornitore` = 0 OR `idconto_fornitore` IS NULL)
+            AND
+            `deleted_at` IS NULL
+        GROUP BY `an_anagrafiche`.`idanagrafica`');
 
         foreach ($anagrafiche_interessate as $anagrafica) {
             $tipi = explode(',', $anagrafica['tipi_anagrafica']);

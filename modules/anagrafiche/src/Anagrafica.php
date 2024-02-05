@@ -22,6 +22,7 @@ namespace Modules\Anagrafiche;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\Anagrafiche\Tipo as TipoAnagrafica;
 use Modules\Contratti\Contratto;
 use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
@@ -88,10 +89,10 @@ class Anagrafica extends Model
 
     public static function fromTipo($type)
     {
-        $tipologia = Tipo::where('descrizione', $type)->first();
+        $tipologia = TipoAnagrafica::where('name', $type)->first();
 
         $anagrafiche = self::whereHas('tipi', function ($query) use ($tipologia) {
-            $query->where('an_tipianagrafiche.idtipoanagrafica', '=', $tipologia->id);
+            $query->where('`an_tipianagrafiche`.`id`', '=', $tipologia->id);
         });
 
         return $anagrafiche;
@@ -155,7 +156,7 @@ class Anagrafica extends Model
     public function setTipologieAttribute(array $tipologie)
     {
         if ($this->isAzienda()) {
-            $tipologie[] = Tipo::where('descrizione', 'Azienda')->first()->id;
+            $tipologie[] = (new TipoAnagrafica())->getByName('Azienda')->id_record;
         }
 
         $tipologie = array_clean($tipologie);
@@ -167,7 +168,7 @@ class Anagrafica extends Model
         $diff = $actual->diff($previous);
 
         foreach ($diff as $tipo) {
-            $method = 'fix'.$tipo->descrizione;
+            $method = 'fix'.$tipo->name;
             if (method_exists($this, $method)) {
                 self::$method($this);
             }
@@ -185,15 +186,16 @@ class Anagrafica extends Model
     }
 
     /**
-     * Controlla se l'anagrafica è di tipo 'Azienda'.
+     * Controlla il tipo di anagrafica.
      *
      * @return bool
      */
     public function isTipo($type)
     {
         return $this->tipi()->get()->search(function ($item, $key) use ($type) {
-            return $item->descrizione == $type;
+            return (TipoAnagrafica::find($item->id))->name == $type;
         }) !== false;
+
     }
 
     public function delete()
@@ -279,7 +281,7 @@ class Anagrafica extends Model
 
     public function tipi()
     {
-        return $this->belongsToMany(Tipo::class, 'an_tipianagrafiche_anagrafiche', 'idanagrafica', 'idtipoanagrafica');
+        return $this->belongsToMany(TipoAnagrafica::class, 'an_tipianagrafiche_anagrafiche', 'idanagrafica', 'idtipoanagrafica');
     }
 
     public function sedi()

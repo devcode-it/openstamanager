@@ -699,7 +699,7 @@ class Fattura extends Document
         return $result;
     }
 
-    public function replicate(array $except = null)
+    public function replicate(?array $except = null)
     {
         $new = parent::replicate($except);
         $now = Carbon::now();

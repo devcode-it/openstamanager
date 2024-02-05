@@ -26,15 +26,15 @@ include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'delete-bulk':
-        $id_tipo_azienda = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Azienda'")[0]['idtipoanagrafica'];
+        $id_tipo_azienda = $dbo->fetchArray('SELECT `an_tipianagrafiche`.`id` FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(setting('Lingua')).") WHERE `name`='Azienda'")[0]['id'];
 
         foreach ($id_records as $id) {
-            $anagrafica = $dbo->fetchArray('SELECT an_tipianagrafiche.idtipoanagrafica FROM an_tipianagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche.idtipoanagrafica=an_tipianagrafiche_anagrafiche.idtipoanagrafica WHERE idanagrafica='.prepare($id));
+            $anagrafica = $dbo->fetchArray('SELECT `an_tipianagrafiche`.`id` FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(setting('Lingua')).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` WHERE `idanagrafica`='.prepare($id));
             $tipi = array_column($anagrafica, 'idtipoanagrafica');
 
             // Se l'anagrafica non è di tipo Azienda
             if (!in_array($id_tipo_azienda, $tipi)) {
-                $dbo->query('UPDATE an_anagrafiche SET deleted_at = NOW() WHERE idanagrafica = '.prepare($id).Modules::getAdditionalsQuery($id_module));
+                $dbo->query('UPDATE `an_anagrafiche` SET `deleted_at` = NOW() WHERE `idanagrafica` = '.prepare($id).Modules::getAdditionalsQuery($id_module));
             }
         }
 

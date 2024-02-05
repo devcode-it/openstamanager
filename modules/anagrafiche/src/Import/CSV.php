@@ -21,6 +21,7 @@ namespace Modules\Anagrafiche\Import;
 
 use Importer\CSVImporter;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Anagrafiche\Nazione;
 
 /**
  * Struttura per la gestione delle operazioni di importazione (da CSV) delle Anagrafiche.
@@ -251,15 +252,18 @@ class CSV extends CSVImporter
             $tipi_selezionati = explode(',', $record['idtipoanagrafica']);
 
             foreach ($tipi_selezionati as $tipo) {
-                $tipo_anagrafica = $database->fetchOne('SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE LOWER(descrizione) = LOWER('.prepare($tipo).') OR idtipoanagrafica = '.prepare($tipo))['idtipoanagrafica'];
+                $tipo_anagrafica = $database->fetchOne('SELECT `id` FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE LOWER(`name`) = LOWER('.prepare($tipo).') OR `idtipoanagrafica` = '.prepare($tipo))['idtipoanagrafica'];
 
                 // Creo il tipo anagrafica se non esiste
                 if (empty($tipo_anagrafica)) {
-                    $database->insert('an_tipianagrafiche', [
-                        'descrizione' => $tipo,
-                    ])['idtipoanagrafica'];
+                    $id_tipoanagrafica = database()->query('INSERT INTO `an_tipianagrafiche` (`id`, `default`) VALUES (NULL, `1`)');
+                    $database->insert('an_tipianagrafiche_lang', [
+                        'id_lang' => setting('Lingua'),
+                        'id_record' => $id_tipoanagrafica,
+                        'name' => $tipo_anagrafica,
+                    ])['id'];
 
-                    $tipo_anagrafica = $database->fetchOne('SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE lower(descrizione) = LOWER('.prepare($tipo).') OR idtipoanagrafica = '.prepare($tipo))['idtipoanagrafica'];
+                    $tipo_anagrafica = $database->fetchOne('SELECT `an_tipianagrafiche`.`id` FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE lower(`name`) = LOWER('.prepare($tipo).') OR `idtipoanagrafica` = '.prepare($tipo))['idtipoanagrafica'];
                 }
 
                 $tipologie[] = $tipo_anagrafica;
@@ -275,7 +279,7 @@ class CSV extends CSVImporter
 
         // Fix per campi con contenuti derivati da query implicite
         if (!empty($record['id_nazione'])) {
-            $record['id_nazione'] = $database->fetchOne('SELECT id FROM an_nazioni WHERE LOWER(nome) = LOWER('.prepare($record['id_nazione']).') OR LOWER(iso2) = LOWER('.prepare($record['id_nazione']).')')['id'];
+            $record['id_nazione'] = (new Nazione())->getByName($record['id_nazione'])->id_record;
         } else {
             unset($record['id_nazione']);
         }
@@ -284,11 +288,14 @@ class CSV extends CSVImporter
         $id_settore = '';
         if (!empty($record['id_settore'])) {
             $settore = $record['id_settore'];
-            $id_settore = $database->fetchOne('SELECT id FROM an_settori WHERE LOWER(descrizione) = LOWER('.prepare($settore).')')['id'];
+            $id_settore = $database->fetchOne('SELECT `an_settori`.`id` FROM `an_settori` LEFT JOIN (`an_settori_lang` ON`an_settori`.`id` = `an_settori_lang`.`id_record` AND `an_settori_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE LOWER(`name`) = LOWER('.prepare($settore).')')['id'];
 
             if (empty($id_settore)) {
-                $id_settore = $database->insert('an_settori', [
-                    'descrizione' => $settore,
+                $id_settore = database()->query('INSERT INTO `an_settori` (`id`, `created_at`, `updated_at`) VALUES (NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)');
+                $database->insert('an_settori_lang', [
+                    'id_lang' => setting('Lingua'),
+                    'id_record' => $id_settore,
+                    'name' => $settore,
                 ])['id'];
             }
         }

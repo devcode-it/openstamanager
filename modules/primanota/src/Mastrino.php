@@ -185,7 +185,7 @@ class Mastrino extends Model
     /**
      * Funzione dedicata alla distribuzione del totale pagato del movimento nelle relative scadenze associate.
      */
-    protected function correggiScadenza(Movimento $movimento, Scadenza $scadenza = null, Fattura $documento = null)
+    protected function correggiScadenza(Movimento $movimento, ?Scadenza $scadenza = null, ?Fattura $documento = null)
     {
         $is_nota = false;
         $documento = $documento ?: $scadenza->documento;

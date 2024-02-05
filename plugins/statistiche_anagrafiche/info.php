@@ -74,8 +74,10 @@ elseif ($anagrafica->isTipo('Tecnico')) {
 $interventi = Intervento::whereIn('id', array_column($interventi, 'id'))->get();
 $totale_interventi = $interventi->sum('totale_imponibile');
 
-$sessioni = Sessione::whereIn('id', array_column($sessioni, 'id'))->get();
-$totale_ore_lavorate = $sessioni->sum('ore');
+if ($sessioni){
+    $sessioni = Sessione::whereIn('id', array_column($sessioni, 'id'))->get();
+    $totale_ore_lavorate = $sessioni->sum('ore');
+}
 
 // Ddt in uscita
 $ddt_uscita = DDT::whereBetween('data', [$start, $end])
@@ -222,15 +224,15 @@ echo '
         <div class="row">
             <div class="col-md-4">
                 <div class="info-box">
-                    <span class="info-box-icon bg-'.($sessioni->count() == 0 ? 'gray' : 'yellow').'"><i class="fa fa-wrench"></i></span>
+                    <span class="info-box-icon bg-'.(!empty($sessioni) ? 'gray' : 'yellow').'"><i class="fa fa-wrench"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text pull-left">'.tr('Ore lavorate').'</span>';
 if ($anagrafica->isTipo('Cliente')) {
     echo '
-                            '.($sessioni->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.Modules::get('Interventi')['id'].'&search_Ragione-sociale='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
+                            '.($sessioni ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.Modules::get('Interventi')['id'].'&search_Ragione-sociale='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
 } else {
     echo '
-                            '.($sessioni->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.Modules::get('Interventi')['id'].'&search_Tecnici='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
+                            '.($sessioni ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.Modules::get('Interventi')['id'].'&search_Tecnici='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
 }
 echo '                     
                         <br class="clearfix">

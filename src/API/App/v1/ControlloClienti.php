@@ -47,7 +47,7 @@ class ControlloClienti extends Resource implements RetrieveInterface
         // Aggiunta tipologia Cliente se non presente nell'anagrafica trovata
         if (!empty($cliente) && !$cliente->isTipo('Cliente')) {
             $tipo_cliente = Tipo::where('descrizione', '=', 'Cliente')->first();
-            $tipi = $cliente->tipi->pluck('idtipoanagrafica')->toArray();
+            $tipi = $cliente->tipi->pluck('id')->toArray();
 
             $tipi[] = $tipo_cliente->id;
 

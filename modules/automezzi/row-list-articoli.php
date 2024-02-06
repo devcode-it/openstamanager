@@ -3,7 +3,26 @@
 include_once __DIR__.'/../../core.php';
 
 // Elenco articoli caricati sull'automezzo
-$rs2 = $dbo->fetchArray('SELECT mg_movimenti.idsede AS id, mg_articoli.codice AS codice, idarticolo, SUM(mg_movimenti.qta) AS qta_automezzo, mg_articoli.qta AS qta_magazzino, mg_articoli.descrizione, mg_articoli.prezzo_vendita, (SELECT percentuale FROM co_iva WHERE id=mg_articoli.idiva_vendita) AS prciva_vendita FROM mg_movimenti INNER JOIN mg_articoli ON mg_movimenti.idarticolo=mg_articoli.id WHERE mg_movimenti.idsede='.prepare($id_record).' GROUP BY idarticolo HAVING qta_automezzo>0 ORDER BY mg_articoli.descrizione');
+$rs2 = $dbo->fetchArray('SELECT 
+    `mg_movimenti`.`idsede` AS id, 
+    `mg_articoli`.`codice` AS codice, 
+    `idarticolo`, 
+    SUM(`mg_movimenti`.`qta`) AS qta_automezzo, 
+    `mg_articoli`.`qta` AS qta_magazzino, 
+    `mg_articoli`.`descrizione`, 
+    `mg_articoli`.`prezzo_vendita`, 
+    (SELECT `percentuale` FROM `co_iva` LEFT JOIN `co_iva_lang` ON ( `co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = "'.prepare(setting('Lingua')).'") WHERE `co_iva`.`id`=`mg_articoli`.`idiva_vendita`) AS prciva_vendita 
+FROM 
+    `mg_movimenti` 
+    INNER JOIN `mg_articoli` ON `mg_movimenti`.`idarticolo`=`mg_articoli`.`id` 
+WHERE 
+    `mg_movimenti`.`idsede`='.prepare($id_record).' 
+GROUP BY 
+    `idarticolo`
+HAVING 
+    `qta_automezzo`>0 
+ORDER BY 
+    `mg_articoli`.`descrizione`');
 
 if (!empty($rs2)) {
     echo '

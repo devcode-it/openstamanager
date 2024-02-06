@@ -69,12 +69,12 @@ switch ($resource) {
         if ($usare_iva_anagrafica) {
             $query .= '
             IFNULL(`iva_anagrafica`.`id`, IFNULL(`iva_articolo`.`id`, `iva_predefinita`.`id`)) AS idiva_vendita,
-            IFNULL(`iva_anagrafica`.`descrizione`, IFNULL(`iva_articolo`.`descrizione`, `iva_predefinita`.`descrizione`)) AS iva_vendita,
+            IFNULL(`iva_anagrafica_lang`.`name`, IFNULL(`iva_articolo_lang`.`name`, `iva_predefinita_lang`.`name`)) AS iva_vendita,
             IFNULL(`iva_anagrafica`.`percentuale`, IFNULL(`iva_articolo`.`percentuale`, `iva_predefinita`.`percentuale`)) AS percentuale,';
         } else {
             $query .= '
             IFNULL(`iva_articolo`.`id`, `iva_predefinita`.`id`) AS idiva_vendita,
-            IFNULL(`iva_articolo`.`descrizione`, `iva_predefinita`.`descrizione`) AS iva_vendita,
+            IFNULL(`iva_articolo_lang`.`name`, `iva_predefinita_lang`.`name`) AS iva_vendita,
             IFNULL(`iva_articolo`.`percentuale`, `iva_predefinita`.`percentuale`) AS percentuale,';
         }
 
@@ -113,11 +113,14 @@ switch ($resource) {
             LEFT JOIN `co_tipidocumento` ON `co_tipidocumento`.`id`=`co_documenti`.`idtipodocumento` WHERE `co_tipidocumento`.`dir`='uscita' GROUP BY `co_righe_documenti`.`idarticolo`) AS righe
             ON `righe`.`id`=`mg_articoli`.`id`
             LEFT JOIN `co_iva` AS iva_articolo ON `iva_articolo`.`id` = `mg_articoli`.`idiva_vendita`
-            LEFT JOIN `co_iva` AS `iva_predefinita` ON `iva_predefinita`.`id` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = 'Iva predefinita')";
+            LEFT JOIN `co_iva_lang` AS iva_articolo_lang on (`iva_articolo`.`id` = `iva_articolo_lang`.`id_record` AND `iva_articolo_lang`.`id_lang` = ".prepare(setting('Lingua')).")
+            LEFT JOIN `co_iva` AS `iva_predefinita` ON `iva_predefinita`.`id` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = 'Iva predefinita')
+            LEFT JOIN `co_iva_lang` AS iva_predefinita_lang on (`iva_predefinita`.`id` = `iva_predefinita_lang`.`id_record` AND `iva_predefinita_lang`.`id_lang` = ".prepare(setting('Lingua')).')';
 
         if ($usare_iva_anagrafica) {
             $query .= '
-            LEFT JOIN `co_iva` AS iva_anagrafica ON `iva_anagrafica`.`id` = (SELECT `idiva_vendite` FROM `an_anagrafiche` WHERE `idanagrafica` = '.prepare($superselect['idanagrafica']).')';
+            LEFT JOIN `co_iva` AS iva_anagrafica ON `iva_anagrafica`.`id` = (SELECT `idiva_vendite` FROM `an_anagrafiche` WHERE `idanagrafica` = '.prepare($superselect['idanagrafica']).')
+            LEFT JOIN `co_iva_lang` AS iva_anagrafica_lang on (`iva_anagrafica`.`id` = `iva_anagrafica_lang`.`id_record` AND `iva_anagrafica_lang`.`id_lang` = '.prepare(setting('Lingua')).')';
         }
 
         if ($idagente) {

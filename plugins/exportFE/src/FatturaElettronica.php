@@ -439,7 +439,7 @@ class FatturaElettronica
         }
 
         // Natura obbligatoria per iva con esenzione
-        $iva = $database->fetchArray('SELECT * FROM `co_iva` WHERE `id` IN (SELECT idiva FROM co_righe_documenti WHERE iddocumento = '.prepare($fattura->id).') AND esente = 1');
+        $iva = $database->fetchArray('SELECT * FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `co_iva`.`id` IN (SELECT `idiva` FROM `co_righe_documenti` WHERE `iddocumento` = '.prepare($fattura->id).') AND `esente` = 1');
         $fields = [
             'codice_natura_fe' => 'Natura IVA',
         ];
@@ -973,7 +973,7 @@ class FatturaElettronica
         // Cassa Previdenziale (Rivalsa) (2.1.1.7)
         if (!empty($id_rivalsainps)) {
             $iva = database()->fetchOne('SELECT `percentuale`, `codice_natura_fe` FROM `co_iva` WHERE `id` = '.prepare($aliquota_iva_rivalsainps));
-            $percentuale = database()->fetchOne('SELECT percentuale FROM co_rivalse WHERE id = '.prepare($id_rivalsainps))['percentuale'];
+            $percentuale = database()->fetchOne('SELECT `percentuale` FROM `co_rivalse` WHERE `id` = '.prepare($id_rivalsainps))['percentuale'];
 
             $dati_cassa = [
                 'TipoCassa' => setting('Tipo Cassa Previdenziale'),

@@ -27,12 +27,11 @@ switch (filter('op')) {
         $esente = post('esente');
         $percentuale = empty($esente) ? post('percentuale') : 0;
 
-        if ($dbo->fetchNum('SELECT * FROM `co_iva` WHERE (`descrizione` = '.prepare($descrizione).' AND `codice` = '.prepare($codice).') AND `id` != '.prepare($id_record)) == 0) {
+        if ($dbo->fetchNum('SELECT * FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE (`name` = '.prepare($descrizione).' AND `codice` = '.prepare($codice).') AND `co_iva`.`id` != '.prepare($id_record)) == 0) {
             $codice_natura = post('codice_natura_fe') ?: null;
             $esigibilita = post('esigibilita');
 
             $dbo->update('co_iva', [
-                'descrizione' => $descrizione,
                 'esente' => $esente,
                 'percentuale' => $percentuale,
                 'indetraibile' => post('indetraibile'),
@@ -41,6 +40,10 @@ switch (filter('op')) {
                 'codice_natura_fe' => $codice_natura,
                 'esigibilita' => $esigibilita,
             ], ['id' => $id_record]);
+
+            $dbo->update('co_iva_lang', [
+                'name' => $descrizione,
+            ], ['id_record' => $id_record, 'id_lang' => setting('Lingua')]);
 
             // Messaggio di avvertenza
             if ((stripos('N6', (string) $codice_natura) === 0) && $esigibilita == 'S') {
@@ -66,9 +69,8 @@ switch (filter('op')) {
         $esigibilita = post('esigibilita');
         $indetraibile = post('indetraibile');
 
-        if ($dbo->fetchNum('SELECT * FROM `co_iva` WHERE `descrizione` = '.prepare($descrizione).' AND `codice` = '.prepare($codice)) == 0) {
+        if ($dbo->fetchNum('SELECT * FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name` = '.prepare($descrizione).' AND `codice` = '.prepare($codice)) == 0) {
             $dbo->insert('co_iva', [
-                'descrizione' => $descrizione,
                 'esente' => $esente,
                 'codice' => $codice,
                 'codice_natura_fe' => $codice_natura,
@@ -77,6 +79,12 @@ switch (filter('op')) {
                 'esigibilita' => $esigibilita,
             ]);
             $id_record = $dbo->lastInsertedID();
+
+            $dbo->insert('co_iva_lang', [
+                'id_record' => $id_record,
+                'name' => $descrizione,
+                'id_lang' => setting('Lingua'),
+            ]);
 
             flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
                 '_TYPE_' => 'IVA',

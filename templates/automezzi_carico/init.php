@@ -28,33 +28,34 @@ $endTM = date('Y-m-d', $data_carico).' 23:59:59';
 
 $query = "
     SELECT
-        mg_movimenti.data,
-        an_sedi.targa,
-        an_sedi.nome,
-        mg_articoli.codice,
-        mg_articoli.prezzo_vendita,
-        co_iva.percentuale AS 'iva',
-        (SELECT mg_categorie.nome FROM mg_categorie WHERE mg_categorie.id=mg_articoli.id_sottocategoria) AS subcategoria,
-        (SELECT mg_articoli.descrizione FROM mg_articoli WHERE mg_articoli.id=mg_movimenti.idarticolo) AS 'descrizione',
-        IF( mg_movimenti.movimento LIKE '%Scarico%', mg_movimenti.qta*(-1), mg_movimenti.qta) AS qta,
-        mg_movimenti.idutente,
-        zz_users.username,
-        mg_articoli.um,
-        zz_groups.nome as 'gruppo'
+        `mg_movimenti`.`data`,
+        `an_sedi`.`targa`,
+        `an_sedi`.`nome`,
+        `mg_articoli`.`codice`,
+        `mg_articoli`.`prezzo_vendita`,
+        `co_iva`.`percentuale` AS 'iva',
+        (SELECT `mg_categorie`.`nome` FROM `mg_categorie` WHERE `mg_categorie`.`id`=`mg_articoli`.`id_sottocategoria`) AS subcategoria,
+        (SELECT `mg_articoli`.`descrizione` FROM `mg_articoli` WHERE `mg_articoli`.`id`=`mg_movimenti`.`idarticolo`) AS 'descrizione',
+        IF( `mg_movimenti`.`movimento` LIKE '%Scarico%', `mg_movimenti`.`qta`*(-1), `mg_movimenti`.`qta`) AS qta,
+        `mg_movimenti`.`idutente`,
+        `zz_users`.`username`,
+        `mg_articoli`.`um`,
+        `zz_groups`.`nome` as 'gruppo'
     FROM 
-        mg_movimenti
-        INNER JOIN mg_articoli ON mg_movimenti.idarticolo=mg_articoli.id
-        INNER JOIN co_iva ON mg_articoli.idiva_vendita = co_iva.id
-        INNER JOIN zz_users ON mg_movimenti.idutente=zz_users.id
-        INNER JOIN zz_groups ON zz_users.idgruppo=zz_groups.id
-        INNER JOIN an_sedi ON mg_movimenti.idsede=an_sedi.id
+        `mg_movimenti`
+        INNER JOIN `mg_articoli` ON `mg_movimenti`.`idarticolo`=`mg_articoli`.`id`
+        INNER JOIN `co_iva` ON `mg_articoli`.`idiva_vendita` = `co_iva`.`id`
+        LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = ".prepare(setting('Lingua')).')
+        INNER JOIN `zz_users` ON `mg_movimenti`.`idutente`=`zz_users`.`id`
+        INNER JOIN `zz_groups` ON `zz_users`.`idgruppo`=`zz_groups`.`id`
+        INNER JOIN `an_sedi` ON `mg_movimenti`.`idsede`=`an_sedi`.`id`
     WHERE 
-        (mg_movimenti.idsede > 0) AND (mg_movimenti.idintervento IS NULL) AND
-        ((mg_movimenti.data BETWEEN ".prepare($startTM).' AND '.prepare($endTM).") AND (zz_groups.nome IN ('Titolari', 'Amministratori')))";
+        (`mg_movimenti`.`idsede` > 0) AND (`mg_movimenti`.`idintervento` IS NULL) AND
+        ((`mg_movimenti`.`data` BETWEEN '.prepare($startTM).' AND '.prepare($endTM).") AND (`zz_groups`.`nome` IN ('Titolari', 'Amministratori')))";
 
-$query .= ' AND (an_sedi.targa LIKE '.prepare('%'.$search_targa.'%').') AND (an_sedi.nome LIKE '.prepare('%'.$search_nome.'%').') ';
-$query .= '	ORDER BY an_sedi.targa, mg_articoli.descrizione';
+$query .= ' AND (`an_sedi`.`targa` LIKE '.prepare('%'.$search_targa.'%').') AND (`an_sedi`.`nome` LIKE '.prepare('%'.$search_nome.'%').') ';
+$query .= '	ORDER BY `an_sedi`.`targa`, `mg_articoli`.`descrizione`';
 
 $rs = $dbo->fetchArray($query);
 $totrows = sizeof($rs);
-$azienda = $dbo->fetchOne('SELECT * FROM an_anagrafiche WHERE idanagrafica='.prepare(setting('Azienda predefinita')));
+$azienda = $dbo->fetchOne('SELECT * FROM `an_anagrafiche` WHERE `idanagrafica`='.prepare(setting('Azienda predefinita')));

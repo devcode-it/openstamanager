@@ -21,7 +21,7 @@ echo '
         </tr>';
 
 foreach ($righe as $riga) {
-    $rs = $dbo->fetchArray('SELECT percentuale FROM co_iva WHERE id='.$riga['idiva']);
+    $rs = $dbo->fetchArray('SELECT `percentuale` FROM `co_iva` WHERE `id`='.$riga['idiva']);
     $iva = ($riga['subtotale'] * $rs[0]['percentuale']) / 100;
 
     echo '

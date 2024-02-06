@@ -29,6 +29,7 @@ use Modules\Fatture\Fattura;
 use Modules\Interventi\Components\Riga as RigaIntervento;
 use Modules\Interventi\Components\Sessione;
 use Modules\Interventi\Intervento;
+use Modules\IVA\Aliquota;
 use Util\Generator;
 use Util\Ini;
 
@@ -213,7 +214,7 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
                 $riga->prezzo_unitario = $sessione->prezzo_orario;
                 $riga->costo_unitario = $sessione->prezzo_ore_unitario_tecnico;
                 // Calcolo lo sconto unitario della sessione in base all'impostazione sui prezzi ivati
-                $iva = $dbo->table('co_iva')->where('id', $id_iva)->first();
+                $iva = Aliquota::find($sessione->id_iva);
                 if ($sessione->tipo_sconto == 'UNT' && setting('Utilizza prezzi di vendita comprensivi di IVA')) {
                     $sconto_unitario = $sessione->sconto_unitario + (($sessione->sconto_unitario * $iva->percentuale) / 100);
                 } else {

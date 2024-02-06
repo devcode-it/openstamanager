@@ -220,7 +220,7 @@ echo '
 </table>';
 
 // Aggiungo diciture particolari per l'anagrafica cliente
-$dicitura = $dbo->fetchOne('SELECT diciturafissafattura AS dicitura FROM an_anagrafiche WHERE idanagrafica = '.prepare($id_cliente));
+$dicitura = $dbo->fetchOne('SELECT `diciturafissafattura` AS dicitura FROM `an_anagrafiche` WHERE `idanagrafica` = '.prepare($id_cliente));
 
 if (!empty($dicitura['dicitura'])) {
     echo '
@@ -231,7 +231,7 @@ if (!empty($dicitura['dicitura'])) {
 
 // Aggiungo diciture per condizioni iva particolari
 foreach ($v_iva as $key => $value) {
-    $dicitura = $dbo->fetchOne('SELECT dicitura FROM co_iva WHERE descrizione = '.prepare($key));
+    $dicitura = $dbo->fetchOne('SELECT `dicitura` FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name` = '.prepare($key));
 
     if (!empty($dicitura['dicitura'])) {
         echo '

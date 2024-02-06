@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\DDT\DDT;
+use Modules\IVA\Aliquota;
 use Util\Generator;
 
 /*
@@ -163,7 +164,7 @@ if (!function_exists('ricalcola_costiagg_ddt')) {
             $rivalsainps = $totale_imponibile / 100 * $rs[0]['percentuale'];
 
             // Leggo l'iva predefinita per calcolare l'iva aggiuntiva sulla rivalsa inps
-            $qi = "SELECT percentuale FROM co_iva WHERE id='".setting('Iva predefinita')."'";
+            $qi = Aliquota::find(setting('Iva predefinita'))->percentuale;
             $rsi = $dbo->fetchArray($qi);
             $iva_rivalsainps = $rivalsainps / 100 * $rsi[0]['percentuale'];
 

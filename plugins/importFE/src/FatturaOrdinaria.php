@@ -293,7 +293,7 @@ class FatturaOrdinaria extends FatturaElettronica
                 $obj->ritenuta_contributi = $ritenuta_contributi;
 
                 // Inserisco la ritenuta se è specificata nella riga o se non è specificata nella riga ma è presente in Dati ritenuta (quindi comprende tutte le righe)
-                if (!empty($riga['Ritenuta']) || $info['ritenuta_norighe'] == true) {
+                if (!empty($riga['Ritenuta']) || $info['ritenuta_norighe'] == true || $info['rivalsa_norighe'] == true ) {
                     $obj->id_ritenuta_acconto = $id_ritenuta_acconto;
                     $obj->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
                     $obj->id_rivalsa_inps = $id_rivalsa;
@@ -536,11 +536,18 @@ class FatturaOrdinaria extends FatturaElettronica
         $casse = $dati_generali['DatiCassaPrevidenziale'];
         if (!empty($casse)) {
             $totale = 0;
+            $rivalsa_norighe = true;
+            $totale_norighe = 0;
+
             foreach ($righe as $riga) {
                 if ($riga['Ritenuta']) {
                     $totale += $riga['PrezzoTotale'];
+                    $rivalsa_norighe = false;
+                } else {
+                    $totale_norighe += $riga['PrezzoTotale'];
                 }
             }
+
             $casse = isset($casse[0]) ? $casse : [$casse];
 
             $importi = [];
@@ -552,7 +559,7 @@ class FatturaOrdinaria extends FatturaElettronica
             }
             $importo = sum($importi);
 
-            $percentuale = round($importo / $totale * 100, 2);
+            $percentuale = round($importo / ($rivalsa_norighe ? $totale_norighe : $totale) * 100, 2);
 
             $rivalsa = $database->fetchOne('SELECT * FROM`co_rivalse` WHERE `percentuale` = '.prepare($percentuale));
             if (empty($rivalsa)) {
@@ -619,6 +626,7 @@ class FatturaOrdinaria extends FatturaElettronica
         return [
             'id_ritenuta_acconto' => $id_ritenuta_acconto,
             'id_rivalsa' => $id_rivalsa,
+            'rivalsa_norighe' => $rivalsa_norighe,
             'rivalsa_in_ritenuta' => $rivalsa_in_ritenuta,
             'ritenuta_norighe' => $ritenuta_norighe,
         ];

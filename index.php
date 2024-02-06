@@ -21,14 +21,17 @@ $skip_permissions = true;
 include_once __DIR__.'/core.php';
 
 use Carbon\Carbon;
+use Illuminate\Database\QueryException;
 
 $op = filter('op');
 
 $microsoft = null;
 
-try {
-    $microsoft = $dbo->selectOne('zz_oauth2', '*', ['nome' => 'Microsoft', 'enabled' => 1, 'is_login' => 1]);
-} catch (Exception $e) {
+if ($dbo->isConnected()) {
+    try {
+        $microsoft = $dbo->selectOne('zz_oauth2', '*', ['nome' => 'Microsoft', 'enabled' => 1, 'is_login' => 1]);
+    } catch ( QueryException $e) {
+    }
 }
 
 // LOGIN

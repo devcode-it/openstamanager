@@ -21,8 +21,8 @@ namespace Modules\Anagrafiche\Import;
 
 use Importer\CSVImporter;
 use Modules\Anagrafiche\Anagrafica;
-use Modules\Anagrafiche\Tipo;
 use Modules\Anagrafiche\Nazione;
+use Modules\Anagrafiche\Tipo;
 
 /**
  * Struttura per la gestione delle operazioni di importazione (da CSV) delle Anagrafiche.
@@ -253,7 +253,7 @@ class CSV extends CSVImporter
             $tipi_selezionati = explode(',', $record['tipologia']);
 
             foreach ($tipi_selezionati as $tipo) {
-                $id_tipo = (new Tipo)->getByName($tipo)->id_record;
+                $id_tipo = (new Tipo())->getByName($tipo)->id_record;
 
                 // Creo il tipo anagrafica se non esiste
                 if (empty($id_tipo)) {
@@ -264,7 +264,7 @@ class CSV extends CSVImporter
                         'name' => $tipo,
                     ])['id'];
 
-                    $id_tipo = (new Tipo)->getByName($tipo)->id_record;
+                    $id_tipo = (new Tipo())->getByName($tipo)->id_record;
                 }
 
                 $tipologie[] = $id_tipo;

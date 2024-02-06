@@ -223,7 +223,7 @@ class FatturaElettronica
         // Se non trovo l'anagrafica tra i fornitori, provo a ricercarla anche tra i clienti
         if (empty($anagrafica)) {
             $type = 'Cliente';
-            
+
             $anagrafica = Anagrafica::where('tipo', $type);
 
             if (!empty($info['partita_iva']) && !empty($info['codice_fiscale'])) {
@@ -261,7 +261,7 @@ class FatturaElettronica
         $info = $this->getAnagrafe();
 
         $anagrafica = Anagrafica::build($info['ragione_sociale'], $info['nome'], $info['cognome'], [
-            (new TipoAnagrafica)->getByName($type)->id_record
+            (new TipoAnagrafica())->getByName($type)->id_record,
         ]);
 
         if (!empty($info['partita_iva'])) {

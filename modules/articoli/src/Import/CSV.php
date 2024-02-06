@@ -465,7 +465,7 @@ class CSV extends CSVImporter
         }
 
         if ($dettagli['dir']) {
-            $tipo = (new Tipo)->getByName($dettagli['dir'])->id_record;
+            $tipo = (new Tipo())->getByName($dettagli['dir'])->id_record;
             $tipi = $anagrafica->tipi->pluck('id')->toArray();
             $tipi[] = $tipo;
 

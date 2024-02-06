@@ -21,14 +21,14 @@ include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'update':
-        $idtipoanagrafica = post('id_record');
+        $id_tipo = post('id_record');
         $descrizione = post('descrizione');
 
         $block = ['Cliente', 'Tecnico', 'Azienda', 'Fornitore'];
         // Nome accettato
 
         if (!in_array($descrizione, $block)) {
-            $dbo->query('UPDATE `an_tipianagrafiche_lang` SET `name`='.prepare($descrizione).' WHERE `id_record`='.prepare($idtipoanagrafica));
+            $dbo->query('UPDATE `an_tipianagrafiche_lang` SET `name`='.prepare($descrizione).' WHERE `id_record`='.prepare($id_tipo));
             flash()->info(tr('Informazioni salvate correttamente!'));
         } else {
             // Nome non consentito
@@ -49,7 +49,7 @@ switch (post('op')) {
             } else {
                 $dbo->query('INSERT INTO `an_tipianagrafiche` (`id`) VALUES (NULL)');
                 $id_record = $dbo->lastInsertedID();
-                $dbo->query('INSERT INTO `an_tipianagrafiche_lang` (`name`, `id_record`, `id_lang`) VALUES ('.prepare($descrizione).'), ('.prepare($id_record).', '.prepare(setting('Lingua')).')');
+                $dbo->query('INSERT INTO `an_tipianagrafiche_lang` (`name`, `id_record`, `id_lang`) VALUES ('.prepare($descrizione).', '.prepare($id_record).', '.prepare(setting('Lingua')).')');
 
                 flash()->info(tr('Nuovo tipo di anagrafica aggiunto!'));
             }

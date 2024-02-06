@@ -207,10 +207,10 @@ class CSV extends CSVImporter
     {
         return [
             ['Matricola', 'Immagine', 'Import immagine', 'Nome', 'Cliente', 'Telefono', 'Categoria', 'Sottocategoria', 'Sede', 'Descrizione', 'Data installazione'],
-            ['00001', 'https://openstamanager.com/moduli/budget/budget.webp', '2', 'Lavatrice', 'Mario Rossi', '04444444', 'Elettrodomestici', 'Marca1', '', '', '2023-01-01'],
-            ['00002', 'https://openstamanager.com/moduli/3cx/3cx.webp', '2', 'Caldaia', 'Mario Rossi', '04444444', 'Elettrodomestici', 'Marca2', '', '', '2023-03-06'],
-            ['00003', 'https://openstamanager.com/moduli/disponibilita-tecnici/tecnici.webp', '2', 'Forno', 'Mario Rossi', '04444444', 'Elettrodomestici', 'Marca3', '', '', '2023-04-01'],
-            ['00004', 'https://openstamanager.com/moduli/distinta-base/distinta.webp', '2', 'Lavastoviglie', 'Mario Rossi', '04444444', 'Elettrodomestici', 'Marca4', '', '', '2023-08-06'],
+            ['00001', 'https://openstamanager.com/moduli/budget/budget.webp', '2', 'Lavatrice', 'Mario Rossi', '+39 0429 60 25 12', 'Elettrodomestici', 'Marca1', '', '', '2023-01-01'],
+            ['00002', 'https://openstamanager.com/moduli/3cx/3cx.webp', '2', 'Caldaia', 'Mario Rossi', '+39 0429 60 25 12', 'Elettrodomestici', 'Marca2', '', '', '2023-03-06'],
+            ['00003', 'https://openstamanager.com/moduli/disponibilita-tecnici/tecnici.webp', '2', 'Forno', 'Mario Rossi', '+39 0429 60 25 12', 'Elettrodomestici', 'Marca3', '', '', '2023-04-01'],
+            ['00004', 'https://openstamanager.com/moduli/distinta-base/distinta.webp', '2', 'Lavastoviglie', 'Mario Rossi', '+39 0429 60 25 12', 'Elettrodomestici', 'Marca4', '', '', '2023-08-06'],
         ];
     }
 }

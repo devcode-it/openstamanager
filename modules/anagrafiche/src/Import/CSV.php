@@ -21,6 +21,7 @@ namespace Modules\Anagrafiche\Import;
 
 use Importer\CSVImporter;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Anagrafiche\Tipo;
 use Modules\Anagrafiche\Nazione;
 
 /**
@@ -198,8 +199,8 @@ class CSV extends CSVImporter
                 ],
             ],
             [
-                'field' => 'idtipoanagrafica',
-                'label' => 'Tipo di anagrafica',
+                'field' => 'tipologia',
+                'label' => 'Tipo di anagrafica (Cliente, Fornitore)',
                 'names' => [
                     'Tipo',
                     'tipo',
@@ -248,28 +249,28 @@ class CSV extends CSVImporter
 
         // Individuazione del tipo dell'anagrafica
         $tipologie = [];
-        if (!empty($record['idtipoanagrafica'])) {
-            $tipi_selezionati = explode(',', $record['idtipoanagrafica']);
+        if (!empty($record['tipologia'])) {
+            $tipi_selezionati = explode(',', $record['tipologia']);
 
             foreach ($tipi_selezionati as $tipo) {
-                $tipo_anagrafica = $database->fetchOne('SELECT `id` FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE LOWER(`name`) = LOWER('.prepare($tipo).') OR `idtipoanagrafica` = '.prepare($tipo))['idtipoanagrafica'];
+                $id_tipo = (new Tipo)->getByName($tipo)->id_record;
 
                 // Creo il tipo anagrafica se non esiste
-                if (empty($tipo_anagrafica)) {
-                    $id_tipoanagrafica = database()->query('INSERT INTO `an_tipianagrafiche` (`id`, `default`) VALUES (NULL, `1`)');
+                if (empty($id_tipo)) {
+                    $id_tipo = database()->query('INSERT INTO `an_tipianagrafiche` (`id`, `default`) VALUES (NULL, `1`)');
                     $database->insert('an_tipianagrafiche_lang', [
                         'id_lang' => setting('Lingua'),
-                        'id_record' => $id_tipoanagrafica,
-                        'name' => $tipo_anagrafica,
+                        'id_record' => $id_tipo,
+                        'name' => $tipo,
                     ])['id'];
 
-                    $tipo_anagrafica = $database->fetchOne('SELECT `an_tipianagrafiche`.`id` FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE lower(`name`) = LOWER('.prepare($tipo).') OR `idtipoanagrafica` = '.prepare($tipo))['idtipoanagrafica'];
+                    $id_tipo = (new Tipo)->getByName($tipo)->id_record;
                 }
 
-                $tipologie[] = $tipo_anagrafica;
+                $tipologie[] = $id_tipo;
             }
         }
-        unset($record['idtipoanagrafica']);
+        unset($record['tipologia']);
 
         $tipo = '';
         if (!empty($record['tipo'])) {
@@ -358,7 +359,7 @@ class CSV extends CSVImporter
     {
         return [
             ['Codice', 'Ragione sociale', 'Nome', 'Cognome', 'Codice destinatario', 'Provincia', 'Città', 'Telefono', 'Indirizzo', 'CAP',  'Cellulare', 'Fax', 'Email', 'PEC', 'Sito Web', 'Codice fiscale', 'Data di nascita', 'Luogo di nascita', 'Sesso', 'Partita IVA', 'IBAN', 'Note', 'Nazione', 'ID Agente', 'ID pagamento', 'Tipo', 'Tipologia', 'Split Payment', 'Settore merceologico'],
-            ['001', 'Rossi Mario', '', '', '12345', 'PD', 'Este', '+39 0429 60 25 12', 'Via Rovigo, 51', '35042', '+39 321 12 34 567', '', 'email@anagrafica.it', 'email@pec.it', 'www.sito.it', '', '', '', '', '123456789', 'IT60 X054 2811 1010 0000 0123 456', 'Note dell\'anagrafica di esempio', 'Italia', '', '', 'Cliente', 'Privato', '0', 'Tessile'],
+            ['001', 'Mario Rossi', '', '', '12345', 'PD', 'Este', '+39 0429 60 25 12', 'Via Rovigo, 51', '35042', '+39 321 12 34 567', '', 'email@anagrafica.it', 'email@pec.it', 'www.sito.it', '', '', '', '', '123456789', 'IT60 X054 2811 1010 0000 0123 456', 'Note dell\'anagrafica di esempio', 'Italia', '', '', 'Cliente', 'Privato', '0', 'Tessile'],
         ];
     }
 }

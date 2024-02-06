@@ -916,9 +916,9 @@ switch ($op) {
 
         // Aggiunta tipologia cliente se necessario
         if (!$anagrafica->isTipo('Cliente')) {
-            $tipo_cliente = TipoAnagrafica::where('descrizione', 'Cliente')->first();
+            $tipo_cliente = (new TipoAnagrafica)->getByName('Cliente')->id_record;
             $tipi = $anagrafica->tipi->pluck('id')->toArray();
-            $tipi[] = $tipo_cliente->id;
+            $tipi[] = $tipo_cliente;
 
             $anagrafica->tipologie = $tipi;
             $anagrafica->save();
@@ -1044,9 +1044,9 @@ switch ($op) {
         if (in_array($idtipodocumento, $tipologie)) {
             // Aggiunta tipologia cliente se necessario
             if (!$azienda->isTipo('Cliente')) {
-                $tipo_cliente = TipoAnagrafica::where('descrizione', 'Cliente')->first();
+                $tipo_cliente = (new TipoAnagrafica)->getByName('Cliente')->id_record;
                 $tipi = $azienda->tipi->pluck('id')->toArray();
-                $tipi[] = $tipo_cliente->id;
+                $tipi[] = $tipo_cliente;
 
                 $azienda->tipologie = $tipi;
                 $azienda->save();

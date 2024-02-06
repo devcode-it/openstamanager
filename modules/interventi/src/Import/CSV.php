@@ -175,10 +175,10 @@ class CSV extends CSVImporter
             // Verifica il tecnico e inserisce la sessione
             $anagrafica_t = Anagrafica::where('ragione_sociale', $record['tecnico'])->first();
             $tipo = $database->fetchOne('SELECT `idtipoanagrafica` FROM `an_tipianagrafiche_anagrafiche` WHERE `idanagrafica` = '.prepare($anagrafica_t['idanagrafica']));
-            $tecnico = TipoAnagrafica::where('descrizione', 'Tecnico')->first();
+            $tecnico = (new TipoAnagrafica)->getByName('Tecnico')->id_record;
 
-            if ($tipo = $tecnico['idtipoanagrafica']) {
-                $anagrafica_t['tipo'] = $tecnico['descrizione'];
+            if ($tipo = $tecnico) {
+                $anagrafica_t['tipo'] = Tipoanagrafica::find($tecnico);
             }
 
             if (!empty($record['data']) && !empty($record['ora_inizio']) && !empty($record['tecnico'])) {
@@ -192,8 +192,8 @@ class CSV extends CSVImporter
     {
         return [
             ['Codice', 'Telefono', 'Data', 'Data richiesta', 'Ora inizio', 'Ora fine', 'Tecnico', 'Tipo', 'Note', 'Impianto', 'Richiesta', 'Descrizione', 'Stato'],
-            ['00001/2024', '04444444', '07/11/2023', '03/11/2023', '8:30', '9:30', 'Stefano Bianchi', '', '', '12345-85A22', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', 'Bozza'],
-            ['0002/2024', '04444444', '08/11/2023', '04/11/2023', '11:20', '', 'Stefano Bianchi', '', '', '12345-85B23', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', ''],
+            ['00001/2024', '+39 0429 60 25 12', '07/11/2024', '03/11/2024', '8:30', '9:30', 'Stefano Bianchi', '', '', '12345-85A22', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', 'Bozza'],
+            ['0002/2024', '+39 0429 60 25 12', '08/11/2024', '04/11/2024', '11:20', '', 'Stefano Bianchi', '', '', '12345-85B23', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', ''],
         ];
     }
 }

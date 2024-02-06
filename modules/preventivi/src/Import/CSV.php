@@ -96,8 +96,8 @@ class CSV extends CSVImporter
 
             if (empty($anagrafica)) {
                 $anagrafica = Anagrafica::build($record['ragione_sociale']);
-                $tipo_cliente = TipoAnagrafica::where('descrizione', 'Cliente')->first();
-                $anagrafica->tipologie = [$tipo_cliente->id];
+                $tipo_cliente = (new TipoAnagrafica)->getByName('Cliente')->id_record;
+                $anagrafica->tipologie = [$tipo_cliente];
                 $anagrafica->save();
             }
 
@@ -132,8 +132,8 @@ class CSV extends CSVImporter
     {
         return [
             ['Numero', 'Nome Preventivo', 'Descrizione Preventivo', 'Cliente', 'Tipo Attività', 'Data', 'Codice Articolo', 'Quantità riga', 'Data prevista evasione riga', 'Prezzo unitario riga'],
-            ['15', 'Preventivo Materiali', 'Preventivo iniziale', 'Rossi', 'Generico', '27/04/2023', '001', '2', '30/04/2023', '50'],
-            ['15', 'Preventivo Materiali', 'Preventivo iniziale', 'Rossi', 'Generico', '27/04/2023', '043', '1', '10/05/2023', '100'],
+            ['15', 'Preventivo Materiali', 'Preventivo iniziale', 'Rossi', 'Generico', '27/04/2024', '001', '2', '30/04/2024', '50'],
+            ['15', 'Preventivo Materiali', 'Preventivo iniziale', 'Rossi', 'Generico', '27/04/2024', '043', '1', '10/05/2024', '100'],
         ];
     }
 }

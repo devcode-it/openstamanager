@@ -180,7 +180,7 @@ if ($dir == 'entrata') {
     $interventi_collegati = $fattura->getDocumentiCollegati()[Intervento::class];
     if (!empty($interventi_collegati)) {
         foreach ($interventi_collegati as $intervento) {
-            $fine_intervento = $intervento->fine ?: $intervento->data_richiesta;
+            $fine_intervento = $intervento->fine;
             $fine_intervento = new Carbon($fine_intervento);
 
             if ($fine_intervento->diffInDays($data_fattura, false) < 0) {

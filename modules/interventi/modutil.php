@@ -71,7 +71,7 @@ if (!function_exists('link_componente_to_articolo')) {
         $intervento = Intervento::find($id_intervento);
 
         // Data di inizio dell'intervento (data_richiesta in caso di assenza di sessioni)
-        $data = $intervento->inizio ?: $intervento->data_richiesta;
+        $data = $intervento->inizio;
 
         // Se l'articolo aggiunto è collegato a un componente, aggiungo il componente all'impianto selezionato
         $componente_articolo = $dbo->fetchOne('SELECT componente_filename, contenuto FROM mg_articoli WHERE id = '.prepare($id_articolo));

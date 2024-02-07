@@ -350,7 +350,11 @@ class FatturaElettronica
             if (empty($banca_fornitore)) {
                 $anagrafica = $fattura->anagrafica;
                 $nome = $info_pagamento['IstitutoFinanziario'] ?: 'Banca di '.$anagrafica->ragione_sociale;
-                $banca_fornitore = Banca::build($anagrafica, $nome, $info_pagamento['IBAN'], $info_pagamento['BIC'] ?: '');
+                try {
+                    $banca_fornitore = Banca::build($anagrafica, $nome, $info_pagamento['IBAN'], $info_pagamento['BIC'] ?: '');
+                } catch (\UnexpectedValueException $e) {
+                    flash()->error(tr("Errore durante la creazione della banca: verificare la correttezza dei dati").'.');
+                }
             }
         }
 

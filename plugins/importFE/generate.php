@@ -326,7 +326,7 @@ echo '
         </div>
         
         <div class="col-md-3">
-            {[ "type": "checkbox", "label": "'.tr('Creazione seriali').'", "name": "flag_crea_seriali", "value": '.setting('Creazione seriali in import FE').', "help": "'.tr('Nel caso di righe contenenti serial, il gestionale procede alla registrazione del serial').'" ]}
+            {[ "type": "checkbox", "label": "'.tr('Creazione seriali').'", "name": "flag_crea_seriali", "value": "'.setting('Creazione seriali in import FE').'", "help": "'.tr('Nel caso di righe contenenti serial, il gestionale procede alla registrazione del serial').'" ]}
         </div>';
 
 $ritenuta = $dati_generali['DatiRitenuta'];

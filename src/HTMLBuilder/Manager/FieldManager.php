@@ -149,8 +149,6 @@ class FieldManager implements ManagerInterface
         }
         $query .= ' AND `zz_fields`.`name` = '.prepare($name);
 
-        $query .= ' AND `top` = '.((isset($options['position']) && $options['position'] == 'top') ? 1 : 0).' ORDER BY `order`';
-
         $results = $database->fetchArray($query);
 
         return $results[0]['value'];

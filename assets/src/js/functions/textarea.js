@@ -119,6 +119,7 @@ function initCKEditor(input) {
         filebrowserUploadMethod: 'form',
         fullPage: (input.hasAttribute('use_full_ckeditor')) ? true : false,
         allowedContent: (input.hasAttribute('use_full_ckeditor')) ? true : false,
+        versionCheck: false,
         extraPlugins: 'scayt,textwatcher,autocomplete,textmatch,emoji',
         skin: 'moono-lisa',
     });

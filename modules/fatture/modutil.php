@@ -18,6 +18,7 @@
  */
 
 use Modules\Fatture\Fattura;
+use Modules\IVA\Aliquota;
 use Util\Generator;
 
 /*
@@ -209,21 +210,21 @@ if (!function_exists('aggiungi_movimento')) {
         // Calcolo l'iva della rivalsa inps
         $iva_rivalsainps = 0;
 
-        $rsr = $dbo->fetchArray('SELECT idiva, rivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento));
+        $rsr = $dbo->fetchArray('SELECT `idiva`, `rivalsainps` FROM `co_righe_documenti` WHERE `iddocumento`='.prepare($iddocumento));
 
         for ($r = 0; $r < sizeof($rsr); ++$r) {
-            $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare($rsr[$r]['idiva']);
+            $qi = Aliquota::find(prepare($rsr[$r]['idiva']))->percentuale;
             $rsi = $dbo->fetchArray($qi);
             $iva_rivalsainps += $rsr[$r]['rivalsainps'] / 100 * $rsi[0]['percentuale'];
         }
 
         // Lettura iva indetraibile fattura
-        $query = 'SELECT SUM(iva_indetraibile) AS iva_indetraibile FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
+        $query = 'SELECT SUM(`iva_indetraibile`) AS iva_indetraibile FROM `co_righe_documenti` GROUP BY `iddocumento` HAVING `iddocumento`='.prepare($iddocumento);
         $rs = $dbo->fetchArray($query);
         $iva_indetraibile_fattura = $is_nota ? -$rs[0]['iva_indetraibile'] : $rs[0]['iva_indetraibile'];
 
         // Lettura iva delle righe in fattura
-        $query = 'SELECT iva FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento);
+        $query = 'SELECT `iva` FROM `co_righe_documenti` WHERE `iddocumento`='.prepare($iddocumento);
         $rs = $dbo->fetchArray($query);
         $iva_fattura = sum(array_column($rs, 'iva'), null) + $iva_rivalsainps - $iva_indetraibile_fattura;
         $iva_fattura = $is_nota ? -$iva_fattura : $iva_fattura;

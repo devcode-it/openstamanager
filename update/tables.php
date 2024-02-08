@@ -28,6 +28,7 @@ return [
     'co_contratti_tipiintervento',
     'co_documenti',
     'co_iva',
+    'co_iva_lang',
     'co_movimenti',
     'co_movimenti_modelli',
     'co_fatturazione_contratti',

@@ -27,18 +27,19 @@ $date_end = $_SESSION['period_end'];
 
 $raggruppamenti = $dbo->fetchArray('
     SELECT 
-        data_competenza, 
-        DATE_FORMAT(data_competenza, \'%m-%Y\') AS periodo,
-        SUM((subtotale-sconto+co_righe_documenti.rivalsainps) *percentuale/100 *(100-indetraibile)/100 *(IF(co_tipidocumento.reversed = 0, 1,-1 ))) AS iva,
-        SUM((co_righe_documenti.subtotale - co_righe_documenti.sconto + co_righe_documenti.rivalsainps) *(IF(co_tipidocumento.reversed = 0,1,-1))) AS imponibile
+        `data_competenza`, 
+        DATE_FORMAT(`data_competenza`, \'%m-%Y\') AS periodo,
+        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva,
+        SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS imponibile
     FROM 
-        co_iva 
-        INNER JOIN co_righe_documenti ON co_righe_documenti.idiva = co_iva.id 
-        INNER JOIN co_documenti ON co_documenti.id = co_righe_documenti.iddocumento 
-        INNER JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento 
+        `co_iva`
+        LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id` 
+        INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
+        INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
     WHERE 
-        co_tipidocumento.dir = '.prepare($dir).' AND co_righe_documenti.is_descrizione = 0 AND idstatodocumento NOT IN(SELECT id FROM co_statidocumento WHERE descrizione = "Bozza" OR descrizione = "Annullata") AND co_documenti.data_competenza >= '.prepare($date_start).' AND co_documenti.data_competenza <= '.prepare($date_end).'
+        `co_tipidocumento`.`dir` = '.prepare($dir).' AND `co_righe_documenti`.`is_descrizione` = 0 AND `idstatodocumento` NOT IN(SELECT `id` FROM `co_statidocumento` WHERE `descrizione` = "Bozza" OR `descrizione` = "Annullata") AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).'
     GROUP BY 
-        periodo
+        `periodo`
     ORDER BY
-        periodo ASC');
+        `periodo` ASC');

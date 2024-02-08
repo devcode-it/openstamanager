@@ -25,24 +25,24 @@ switch ($resource) {
      * - split_payment
      */
     case 'iva':
-        $query = 'SELECT id, IF( codice_natura_fe IS NULL, IF(codice IS NULL, descrizione, CONCAT(codice, " - ", descrizione)), CONCAT( IF(codice IS NULL, descrizione, CONCAT(codice, " - ", descrizione)), " (", codice_natura_fe, ")" ) ) AS descrizione, percentuale FROM co_iva |where| ORDER BY descrizione ASC';
+        $query = 'SELECT `co_iva`.`id`, IF( `codice_natura_fe` IS NULL, IF(`codice` IS NULL, `name`, CONCAT(`codice`, " - ", `name`)), CONCAT( IF(`codice` IS NULL, `name`, CONCAT(`codice`, " - ", `name`)), " (", `codice_natura_fe`, ")" ) ) AS descrizione, `percentuale` FROM co_iva LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(setting('Lingua')).') |where| ORDER BY `descrizione` ASC';
 
         foreach ($elements as $element) {
-            $filter[] = 'id='.prepare($element);
+            $filter[] = '`co_iva`.`id`='.prepare($element);
         }
 
         if (!empty($search)) {
-            $search_fields[] = 'descrizione LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'codice LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'codice_natura_fe LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`descrizione` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`codice` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`codice_natura_fe` LIKE '.prepare('%'.$search.'%');
         }
 
         if (empty($filter)) {
-            $where[] = 'deleted_at IS NULL';
+            $where[] = '`deleted_at` IS NULL';
 
             // se sto valorizzando un documento con lo split payment impedisco la selezione delle aliquote iva con natura N6.X (reverse charge)
             if (isset($superselect['split_payment']) and !empty($superselect['split_payment'])) {
-                $where[] = '(codice_natura_fe IS NULL OR codice_natura_fe NOT LIKE "N6%")';
+                $where[] = '(`codice_natura_fe` IS NULL OR `codice_natura_fe` NOT LIKE "N6%")';
             }
         }
 

@@ -96,7 +96,7 @@ class CSV extends CSVImporter
 
             if (empty($anagrafica)) {
                 $anagrafica = Anagrafica::build($record['ragione_sociale']);
-                $tipo_cliente = (new TipoAnagrafica)->getByName('Cliente')->id_record;
+                $tipo_cliente = (new TipoAnagrafica())->getByName('Cliente')->id_record;
                 $anagrafica->tipologie = [$tipo_cliente];
                 $anagrafica->save();
             }

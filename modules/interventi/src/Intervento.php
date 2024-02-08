@@ -102,7 +102,7 @@ class Intervento extends Document
             $this->info['inizio'] = $sessioni->min('orario_inizio');
         }
 
-        return $this->info['inizio'];
+        return $this->info['inizio'] ?: $this->data_richiesta;
     }
 
     public function getFineAttribute()
@@ -113,7 +113,7 @@ class Intervento extends Document
             $this->info['fine'] = $sessioni->max('orario_fine');
         }
 
-        return $this->info['fine'];
+        return $this->info['fine'] ?: $this->data_richiesta;
     }
 
     public function getModuleAttribute()

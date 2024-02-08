@@ -516,7 +516,7 @@ switch (post('op')) {
         $impianto = Impianto::find($id_impianto);
         if (!empty($impianto)) {
             // Data di inizio dell'intervento (data_richiesta in caso di assenza di sessioni)
-            $data_registrazione = $intervento->inizio ?: $intervento->data_richiesta;
+            $data_registrazione = $intervento->inizio;
 
             // Creazione in base alla quantità
             for ($q = 0; $q < $articolo->qta; ++$q) {

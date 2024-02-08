@@ -27,4 +27,34 @@ class Aliquota extends Model
     use SimpleModelTrait;
 
     protected $table = 'co_iva';
+
+    /**
+     * Ritorna l'attributo name dell'aliquota IVA.
+     *
+     * @return string
+     */
+    public function getNameAttribute()
+    {
+        return database()->table($this->table.'_lang')
+            ->select('name')
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first()->name;
+    }
+
+    /**
+     * Ritorna l'id dell'aliquota IVA.
+     *
+     * @param string $name il nome da ricercare
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getByName($name)
+    {
+        return database()->table($this->table.'_lang')
+            ->select('id_record')
+            ->where('name', '=', $name)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first();
+    }
 }

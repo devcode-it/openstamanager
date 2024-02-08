@@ -74,7 +74,7 @@ elseif ($anagrafica->isTipo('Tecnico')) {
 $interventi = Intervento::whereIn('id', array_column($interventi, 'id'))->get();
 $totale_interventi = $interventi->sum('totale_imponibile');
 
-if ($sessioni){
+if ($sessioni) {
     $sessioni = Sessione::whereIn('id', array_column($sessioni, 'id'))->get();
     $totale_ore_lavorate = $sessioni->sum('ore');
 }

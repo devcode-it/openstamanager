@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'delete-bulk':
-        $count_iva = $dbo->fetchNum('SELECT id FROM `co_iva` WHERE deleted_at IS NOT NULL');
+        $count_iva = $dbo->fetchNum('SELECT `id` FROM `co_iva` WHERE `deleted_at` IS NOT NULL');
         foreach ($id_records as $id) {
             $res = $dbo->fetchNum('SELECT `co_righe_documenti`.`id` FROM `co_righe_documenti` WHERE `co_righe_documenti`.`idiva`='.prepare($id).
             ' UNION SELECT `co_righe_preventivi`.`id` FROM `co_righe_preventivi` WHERE `co_righe_preventivi`.`idiva` = '.prepare($id).
@@ -32,10 +32,10 @@ switch (post('op')) {
             ' UNION SELECT `an_anagrafiche`.`idanagrafica` AS `id` FROM `an_anagrafiche` WHERE `an_anagrafiche`.`idiva_vendite` = '.prepare($id).' OR `an_anagrafiche`.`idiva_acquisti` = '.prepare($id));
 
             if (empty($res)) {
-                $dbo->query('UPDATE `co_iva` SET deleted_at = NOW() WHERE id = '.prepare($id).Modules::getAdditionalsQuery($id_module));
+                $dbo->query('UPDATE `co_iva` SET `deleted_at` = NOW() WHERE `id` = '.prepare($id).Modules::getAdditionalsQuery($id_module));
             }
         }
-        $count_iva = $dbo->fetchNum('SELECT id FROM `co_iva` WHERE deleted_at IS NOT NULL') - $count_iva;
+        $count_iva = $dbo->fetchNum('SELECT `id` FROM `co_iva` WHERE `deleted_at` IS NOT NULL') - $count_iva;
 
         if ($count_iva > 0) {
             $msg = tr('_NUM_ tipologi_A_ iva eliminat_A_.', [

@@ -326,7 +326,7 @@ echo '
         </div>
         
         <div class="col-md-3">
-            {[ "type": "checkbox", "label": "'.tr('Creazione seriali').'", "name": "flag_crea_seriali", "value": '.setting('Creazione seriali in import FE').', "help": "'.tr('Nel caso di righe contenenti serial, il gestionale procede alla registrazione del serial').'" ]}
+            {[ "type": "checkbox", "label": "'.tr('Creazione seriali').'", "name": "flag_crea_seriali", "value": "'.setting('Creazione seriali in import FE').'", "help": "'.tr('Nel caso di righe contenenti serial, il gestionale procede alla registrazione del serial').'" ]}
         </div>';
 
 $ritenuta = $dati_generali['DatiRitenuta'];
@@ -399,11 +399,11 @@ if (!empty($righe)) {
     }
 
     foreach ($righe as $key => $riga) {
-        $query = "SELECT id, IF(codice IS NULL, descrizione, CONCAT(codice, ' - ', descrizione)) AS descrizione FROM co_iva WHERE deleted_at IS NULL AND percentuale = ".prepare($riga['AliquotaIVA']);
+        $query = "SELECT `co_iva`.`id`, IF(`codice` IS NULL, `name`, CONCAT(`codice`, ' - ', `name`)) AS descrizione FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = ".prepare(setting('Lingua')).') WHERE `deleted_at` IS NULL AND `percentuale` = '.prepare($riga['AliquotaIVA']);
         $start_query = $query;
 
         if (!empty($riga['Natura'])) {
-            $query .= ' AND codice_natura_fe = '.prepare($riga['Natura']);
+            $query .= ' AND `codice_natura_fe` = '.prepare($riga['Natura']);
 
             // Fallback per natura iva mancante
             if (empty($dbo->fetchArray($query))) {
@@ -411,7 +411,7 @@ if (!empty($righe)) {
             }
         }
 
-        $query .= ' ORDER BY descrizione ASC';
+        $query .= ' ORDER BY `descrizione` ASC';
 
         // Visualizzazione codici articoli
         $codici = $riga['CodiceArticolo'] ?: [];

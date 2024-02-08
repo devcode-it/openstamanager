@@ -180,7 +180,7 @@ if ($dir == 'entrata') {
     $interventi_collegati = $fattura->getDocumentiCollegati()[Intervento::class];
     if (!empty($interventi_collegati)) {
         foreach ($interventi_collegati as $intervento) {
-            $fine_intervento = $intervento->fine ?: $intervento->data_richiesta;
+            $fine_intervento = $intervento->fine;
             $fine_intervento = new Carbon($fine_intervento);
 
             if ($fine_intervento->diffInDays($data_fattura, false) < 0) {
@@ -706,7 +706,7 @@ echo '
 if ($dir == 'entrata' && !empty($fattura->dichiarazione)) {
     $ive_accettate = $dbo->table('co_iva')->where('codice_natura_fe', 'N3.5')->get();
     foreach ($ive_accettate as $iva_accettata) {
-        $descrizione_iva_accettata .= '<li>'.$iva_accettata->descrizione.'</li>';
+        $descrizione_iva_accettata .= '<li>'.Aliquota::find($iva_accettata->id)->name.'</li>';
     }
 
     if ($fattura->stato->descrizione == 'Bozza') {

@@ -223,7 +223,7 @@ class FatturaElettronica
         // Se non trovo l'anagrafica tra i fornitori, provo a ricercarla anche tra i clienti
         if (empty($anagrafica)) {
             $type = 'Cliente';
-            
+
             $anagrafica = Anagrafica::where('tipo', $type);
 
             if (!empty($info['partita_iva']) && !empty($info['codice_fiscale'])) {
@@ -261,7 +261,7 @@ class FatturaElettronica
         $info = $this->getAnagrafe();
 
         $anagrafica = Anagrafica::build($info['ragione_sociale'], $info['nome'], $info['cognome'], [
-            (new TipoAnagrafica)->getByName($type)->id_record
+            (new TipoAnagrafica())->getByName($type)->id_record,
         ]);
 
         if (!empty($info['partita_iva'])) {
@@ -350,7 +350,11 @@ class FatturaElettronica
             if (empty($banca_fornitore)) {
                 $anagrafica = $fattura->anagrafica;
                 $nome = $info_pagamento['IstitutoFinanziario'] ?: 'Banca di '.$anagrafica->ragione_sociale;
-                $banca_fornitore = Banca::build($anagrafica, $nome, $info_pagamento['IBAN'], $info_pagamento['BIC'] ?: '');
+                try {
+                    $banca_fornitore = Banca::build($anagrafica, $nome, $info_pagamento['IBAN'], $info_pagamento['BIC'] ?: '');
+                } catch (\UnexpectedValueException $e) {
+                    flash()->error(tr("Errore durante la creazione della banca: verificare la correttezza dei dati").'.');
+                }
             }
         }
 

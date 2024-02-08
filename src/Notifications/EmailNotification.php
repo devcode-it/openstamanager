@@ -146,10 +146,10 @@ class EmailNotification extends PHPMailer implements NotificationInterface
 
         // Conferma di lettura
         if (!empty($mail->read_notify)) {
-            $this->ConfirmReadingTo = $mail->From;
-            $this->AddCustomHeader('X-Confirm-Reading-To: '.$mail->From);
-            $this->AddCustomHeader('Return-Receipt-To: '.$mail->From);
-            $this->AddCustomHeader('Disposition-Notification-To: '.$mail->From);
+            $this->ConfirmReadingTo = $this->From;
+            $this->AddCustomHeader('X-Confirm-Reading-To: '.$this->From);
+            $this->AddCustomHeader('Return-Receipt-To: '.$this->From);
+            $this->AddCustomHeader('Disposition-Notification-To: '.$this->From);
         }
 
         // Reply To

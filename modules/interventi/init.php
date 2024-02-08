@@ -25,12 +25,21 @@ if (isset($id_record)) {
     $intervento = Intervento::find($id_record);
 
     $record = $dbo->fetchOne('SELECT *,
-       (SELECT tipo FROM an_anagrafiche WHERE idanagrafica = in_interventi.idanagrafica) AS tipo_anagrafica,
-       (SELECT is_completato FROM in_statiintervento WHERE idstatointervento=in_interventi.idstatointervento) AS flag_completato,
-       IF((in_interventi.idsede_destinazione = 0), (SELECT idzona FROM an_anagrafiche WHERE idanagrafica = in_interventi.idanagrafica), (SELECT idzona FROM an_sedi WHERE id = in_interventi.idsede_destinazione)) AS idzona,
-       (SELECT colore FROM in_statiintervento WHERE idstatointervento=in_interventi.idstatointervento) AS colore,
-       in_interventi.id_preventivo as idpreventivo,
-       in_interventi.id_contratto as idcontratto,
-       in_interventi.id_ordine as idordine
-    FROM in_interventi WHERE id='.prepare($id_record));
+        `in_interventi`.`descrizione` AS descrizione,
+        `in_interventi`.`codice` AS codice,
+        `an_anagrafiche`.`tipo` AS tipo_anagrafica,
+        `in_statiintervento`.`is_completato` AS flag_completato,
+        IF((`in_interventi`.`idsede_destinazione` = 0), `an_anagrafiche`.`idzona`, `an_sedi`.`idzona`) AS idzona,
+        `in_statiintervento`.`colore` AS colore,
+        `in_interventi`.`idanagrafica` as idanagrafica,
+        `in_interventi`.`id_preventivo` as idpreventivo,
+        `in_interventi`.`id_contratto` as idcontratto,
+        `in_interventi`.`id_ordine` as idordine
+    FROM 
+            in_interventi
+            INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+            LEFT JOIN `an_sedi` ON `in_interventi`.`idsede_destinazione` = `an_sedi`.`id`
+            INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`idstatointervento`
+    WHERE 
+        `in_interventi`.`id`='.prepare($id_record));
 }

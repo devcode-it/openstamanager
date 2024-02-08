@@ -353,7 +353,7 @@ class FatturaElettronica
                 try {
                     $banca_fornitore = Banca::build($anagrafica, $nome, $info_pagamento['IBAN'], $info_pagamento['BIC'] ?: '');
                 } catch (\UnexpectedValueException $e) {
-                    flash()->error(tr("Errore durante la creazione della banca: verificare la correttezza dei dati").'.');
+                    flash()->error(tr('Errore durante la creazione della banca: verificare la correttezza dei dati').'.');
                 }
             }
         }

@@ -30,19 +30,34 @@ $d_totali = (int) setting('Cifre decimali per totali in stampa');
 
 // Lettura info fattura
 $record = $dbo->fetchOne('SELECT *,
-    (SELECT descrizione FROM co_statidocumento WHERE id=idstatodocumento) AS stato_doc,
-    (SELECT descrizione FROM co_tipidocumento WHERE id=idtipodocumento) AS tipo_doc,
-    (SELECT descrizione FROM co_pagamenti WHERE id=idpagamento) AS id_pagamento,
-    (SELECT dir FROM co_tipidocumento WHERE id=idtipodocumento) AS dir,
-    (SELECT descrizione FROM dt_causalet WHERE id=idcausalet) AS causalet,
-    (SELECT descrizione FROM dt_porto WHERE id=idporto) AS porto,
-    (SELECT descrizione FROM dt_aspettobeni WHERE id=idaspettobeni) AS aspettobeni,
-    (SELECT descrizione FROM dt_spedizione WHERE id=idspedizione) AS spedizione,
-    (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idvettore) AS vettore,
-    (SELECT id FROM co_banche WHERE id = id_banca_azienda) AS id_banca,
-    (SELECT is_fiscale FROM zz_segments WHERE id = id_segment) AS is_fiscale,
-    (SELECT tipo FROM an_anagrafiche WHERE idanagrafica=co_documenti.idanagrafica) AS tipo_cliente
-FROM co_documenti WHERE id='.prepare($id_record));
+    `co_statidocumenti`.`descrizione` AS stato_doc,
+    `co_tipidocumenti`.`descrizione` AS tipo_doc,
+    `co_tipidocumenti`.`dir` AS dir,
+    `co_pagamenti_lang`.`name` AS pagamento,
+    `dt_causalet`.`descrizione` AS causalet,
+    `dt_porto`.`descrizione` AS porto,
+    `dt_aspettobeni`.`descrizione` AS aspettobeni,
+    `dt_spedizione`.`descrizione` AS spedizione,
+    `vettore`.`ragione_sociale` AS vettore,
+    `co_banche`.`id` AS id_banca,
+    `zz_segments`.`is_fiscale` AS is_fiscale,
+    `an_anagrafiche`.`tipo` AS tipo_cliente
+FROM 
+    `co_documenti`
+    INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`co_documenti`.`idanagrafica`
+    LEFT JOIN `an_anagrafiche AS vettore ON vettore.idanagrafica = co_documenti.idvettore
+    INNER JOIN `co_statidocumenti` ON `co_documenti`.`idstatodocumento`=`co_statidocumenti`.`id`
+    INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
+    LEFT JOIN `co_pagamenti` ON `co_documenti`.`idpagamento`=`co_pagamenti`.`id`
+    LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+    LEFT JOIN `co_banche` ON `co_banche`.`id` = `co_documenti`.`id_banca_azienda`
+    INNER JOIN `zz_segments` ON `co_documenti`.`id_segment` = `zz_segments`.`id`
+    LEFT JOIN `dt_causalet` ON `dt_causalet`.`id` = `co_documenti`.`idcausalet`
+    LEFT JOIN `dt_porto` ON `dt_porto`.`id` = `co_documenti`.`idporto`
+    LEFT JOIN `dt_aspettobeni` ON `dt_aspettobeni`.`id` = `co_documenti`.`idaspettobeni`
+    LEFT JOIN `dt_spedizione` ON `dt_spedizione`.`id` = `co_documenti`.`idspedizione`
+WHERE 
+    `co_documenti`.`id`='.prepare($id_record));
 
 $record['rivalsainps'] = floatval($record['rivalsainps']);
 $record['ritenutaacconto'] = floatval($record['ritenutaacconto']);
@@ -71,7 +86,7 @@ if (empty($record['is_fiscale'])) {
 // Leggo i dati della destinazione (se 0=sede legale, se!=altra sede da leggere da tabella an_sedi)
 $destinazione = '';
 if (!empty($record['idsede_destinazione'])) {
-    $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale, id_nazione FROM an_sedi WHERE idanagrafica='.prepare($id_cliente).' AND id='.prepare($record['idsede_destinazione']));
+    $rsd = $dbo->fetchArray('SELECT (SELECT `codice` FROM `an_anagrafiche` WHERE `idanagrafica`=`an_sedi`.`idanagrafica`) AS codice, (SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `idanagrafica`=`an_sedi`.`idanagrafica`) AS ragione_sociale, `nomesede`, `indirizzo`, `indirizzo2`, `cap`, `citta`, `provincia`, `piva`, `codice_fiscale`, `id_nazione` FROM `an_sedi` WHERE `idanagrafica`='.prepare($id_cliente).' AND id='.prepare($record['idsede_destinazione']));
 
     if (!empty($rsd[0]['nomesede'])) {
         $destinazione .= $rsd[0]['nomesede'].'<br/>';

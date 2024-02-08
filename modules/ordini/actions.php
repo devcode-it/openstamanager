@@ -78,7 +78,7 @@ switch (post('op')) {
             }
 
             // Leggo la descrizione del pagamento
-            $query = 'SELECT descrizione FROM co_pagamenti WHERE id='.prepare($idpagamento);
+            $query = 'SELECT `name` AS descrizione FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `co_pagamenti`.`id`='.prepare($idpagamento);
             $rs = $dbo->fetchArray($query);
             $pagamento = $rs[0]['descrizione'];
 
@@ -113,7 +113,7 @@ switch (post('op')) {
             $ordine->condizioni_fornitura = post('condizioni_fornitura');
 
             // Verifica la presenza di ordini con lo stesso numero
-            $ordini = $dbo->fetchArray('SELECT * FROM or_ordini WHERE numero_cliente='.prepare(post('numero_cliente'))."AND numero_cliente IS NOT NULL AND numero_cliente != '' AND id!=".prepare($id_record).' AND idanagrafica='.prepare(post('idanagrafica'))." AND DATE_FORMAT(or_ordini.data, '%Y')=".prepare(Carbon::parse(post('data'))->copy()->format('Y')));
+            $ordini = $dbo->fetchArray('SELECT * FROM `or_ordini` WHERE `numero_cliente`='.prepare(post('numero_cliente'))."AND `numero_cliente` IS NOT NULL AND `numero_cliente` != '' AND `id`!=".prepare($id_record).' AND `idanagrafica`='.prepare(post('idanagrafica'))." AND DATE_FORMAT(`or_ordini`.`data`, '%Y')=".prepare(Carbon::parse(post('data'))->copy()->format('Y')));
 
             if (!empty($ordini)) {
                 $documento = '';
@@ -140,7 +140,7 @@ switch (post('op')) {
             $ordine->save();
 
             if ($dbo->query($query)) {
-                $query = 'SELECT descrizione FROM or_statiordine WHERE id='.prepare($idstatoordine);
+                $query = 'SELECT `descrizione` FROM `or_statiordine` WHERE `id`='.prepare($idstatoordine);
                 $rs = $dbo->fetchArray($query);
 
                 // Ricalcolo inps, ritenuta e bollo (se l'ordine non è stato evaso)

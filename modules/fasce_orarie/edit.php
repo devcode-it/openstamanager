@@ -19,6 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Pagamenti\Pagamento;
+
 // $block_edit = $record['is_predefined'];
 
 ?>
@@ -75,7 +77,7 @@ include_once __DIR__.'/../../core.php';
 
             <?php
 
-                $results = $dbo->fetchArray('SELECT * FROM `co_pagamenti` WHERE descrizione='.prepare($record['descrizione']).' ORDER BY `num_giorni` ASC');
+                $results = (new Pagamento())->getByName(prepare($record['descrizione']))->id_record;
 $numero_data = 1;
 foreach ($results as $result) {
 }

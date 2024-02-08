@@ -47,7 +47,6 @@ switch (filter('op')) {
                     'num_giorni' => post('distanza')[$key],
                     'giorno' => $giorno,
                     'prc' => post('percentuale')[$key],
-                    'descrizione' => $descrizione,
                     'idconto_vendite' => post('idconto_vendite') ?: null,
                     'idconto_acquisti' => post('idconto_acquisti') ?: null,
                     'codice_modalita_pagamento_fe' => post('codice_modalita_pagamento_fe'),
@@ -55,8 +54,10 @@ switch (filter('op')) {
 
                 if (!empty($id)) {
                     $dbo->update('co_pagamenti', $array, ['id' => $id]);
+                    $dbo->update('co_pagamenti_lang', ['name' => $descrizione], ['id_record' => $id, 'id_lang' => setting('Lingua')]);
                 } else {
                     $dbo->INSERT('co_pagamenti', $array);
+                    $dbo->INSERT('co_pagamenti_lang', ['name' => $descrizione, 'id_record' => $id, 'id_lang' => setting('Lingua')]);
                 }
             }
             flash()->info(tr('Salvataggio completato!'));
@@ -71,8 +72,9 @@ switch (filter('op')) {
         $codice_modalita_pagamento_fe = filter('codice_modalita_pagamento_fe');
 
         if (isset($descrizione)) {
-            $dbo->query('INSERT INTO `co_pagamenti` (`descrizione`, `codice_modalita_pagamento_fe`, `prc` ) VALUES ('.prepare($descrizione).', '.prepare($codice_modalita_pagamento_fe).', 100 )');
+            $dbo->query('INSERT INTO `co_pagamenti` (`codice_modalita_pagamento_fe`, `prc` ) VALUES ('.prepare($codice_modalita_pagamento_fe).', 100 )');
             $id_record = $dbo->lastInsertedID();
+            $dbo->query('INSERT INTO `co_pagamenti_lang` (`name`, `id_record`, `id_lang`) VALUES ('.prepare($descrizione).'), '.prepare($id_record).', '.prepare(setting('Lingua')).')');
 
             flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
                 '_TYPE_' => 'pagamento',
@@ -101,7 +103,7 @@ switch (filter('op')) {
             flash()->info(tr('Elemento eliminato con successo!'));
 
             if ($id_record == $id) {
-                $res = $dbo->fetchArray('SELECT * FROM `co_pagamenti` WHERE `id`!='.prepare($id).' AND `descrizione`='.prepare($record['descrizione']));
+                $res = $dbo->fetchArray('SELECT * FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` WHERE `co_pagamenti`.`id`!='.prepare($id).' AND `name`='.prepare($record['descrizione']));
                 if (count($res) != 0) {
                     redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$res[0]['id']);
                 } else {

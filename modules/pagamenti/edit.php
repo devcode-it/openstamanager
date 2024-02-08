@@ -32,7 +32,7 @@ include_once __DIR__.'/../../core.php';
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-md-8">
-					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "value": "$descrizione$", "required": 1 ]}
+					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "value": "$name$", "required": 1 ]}
                 </div>
 
                 <div class="col-md-4">
@@ -87,7 +87,7 @@ $tipi_scadenza_pagamento = [
     ],
 ];
 
-$results = $dbo->fetchArray('SELECT * FROM `co_pagamenti` WHERE descrizione='.prepare($record['descrizione']).' ORDER BY `num_giorni` ASC');
+$results = $dbo->fetchArray('SELECT * FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name`='.prepare($record['descrizione']).' ORDER BY `num_giorni` ASC');
 $numero_rata = 1;
 foreach ($results as $result) {
     $tipo_scadenza_pagamento = 3;

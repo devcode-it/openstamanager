@@ -30,6 +30,7 @@ use Modules\DDT\DDT;
 use Modules\DDT\Stato;
 use Modules\DDT\Tipo;
 use Modules\Iva\Aliquota;
+use Modules\Pagamenti\Pagamento;
 
 $module = Modules::get($id_module);
 
@@ -80,9 +81,7 @@ switch (filter('op')) {
             }
 
             // Leggo la descrizione del pagamento
-            $query = 'SELECT descrizione FROM co_pagamenti WHERE id='.prepare($idpagamento);
-            $rs = $dbo->fetchArray($query);
-            $pagamento = $rs[0]['descrizione'];
+            $pagamento = Pagamento::find($idpagamento)->name;
 
             $ddt->data = post('data');
             $ddt->numero_esterno = $numero_esterno;

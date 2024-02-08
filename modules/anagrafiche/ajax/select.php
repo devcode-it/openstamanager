@@ -37,7 +37,7 @@ switch ($resource) {
                 `contratto`.`id` AS id_contratto,
                 `contratto`.`descrizione` AS descrizione_contratto,
                 `co_pagamenti`.`id` AS id_pagamento,
-                `co_pagamenti`.`descrizione` AS desc_pagamento,
+                `co_pagamenti_lang`.`name` AS desc_pagamento,
                 `banca_vendite`.`id` AS id_banca_vendite,
                 CONCAT(`banca_vendite`.`nome`, ' - ', `banca_vendite`.`iban`) AS descrizione_banca_vendite
             FROM
@@ -51,12 +51,11 @@ switch ($resource) {
                 LEFT JOIN
                     (SELECT `co_contratti`.`id`, `idanagrafica`, CONCAT('Contratto ', `numero`, ' del ', DATE_FORMAT(`data_bozza`, '%d/%m/%Y'), ' - ', `co_contratti`.`nome`, ' [', `co_staticontratti`.`descrizione` , ']') AS descrizione FROM `co_contratti` LEFT JOIN `co_staticontratti` ON `co_contratti`.`idstato`=`co_staticontratti`.`id` WHERE `co_contratti`.`predefined`=1 AND `is_pianificabile`=1) AS contratto
                         ON `an_anagrafiche`.`idanagrafica`=`contratto`.`idanagrafica`
-                LEFT JOIN
-                    `co_pagamenti`
-                        ON `an_anagrafiche`.`idpagamento_vendite`=`co_pagamenti`.`id`
+                LEFT JOIN `co_pagamenti` ON `an_anagrafiche`.`idpagamento_vendite`=`co_pagamenti`.`id`
+                LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id`=`co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang`= ".prepare(setting('Lingua')).')
                 LEFT JOIN
                     `co_banche` banca_vendite
-                        ON `co_pagamenti`.`idconto_vendite` = `banca_vendite`.`id_pianodeiconti3` AND `banca_vendite`.`id_anagrafica` = ".prepare($id_azienda).' AND `banca_vendite`.`deleted_at` IS NULL AND `banca_vendite`.`predefined` = 1
+                        ON `co_pagamenti`.`idconto_vendite` = `banca_vendite`.`id_pianodeiconti3` AND `banca_vendite`.`id_anagrafica` = '.prepare($id_azienda).' AND `banca_vendite`.`deleted_at` IS NULL AND `banca_vendite`.`predefined` = 1
                 |where|
             ORDER BY
                 `ragione_sociale`';
@@ -103,14 +102,33 @@ switch ($resource) {
     case 'fornitori':
         $id_azienda = setting('Azienda predefinita');
 
-        $query = "SELECT `an_anagrafiche`.`idanagrafica` AS id, CONCAT(`ragione_sociale`, IF(`citta` IS NULL OR `citta` = '', '', CONCAT(' (', `citta`, ')')), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione, `idtipointervento_default` AS `idtipointervento`, `co_pagamenti`.`id` AS id_pagamento, `co_pagamenti`.`descrizione` AS desc_pagamento, `banca_acquisti`.`id` AS id_banca_acquisti, CONCAT(`banca_acquisti`.`nome`, ' - ', `banca_acquisti`.`iban`) AS descrizione_banca_acquisti FROM `an_anagrafiche` INNER JOIN (`an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(setting('Lingua')).')) ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` LEFT JOIN `co_pagamenti` ON `an_anagrafiche`.`idpagamento_acquisti`=`co_pagamenti`.`id` LEFT JOIN `co_banche` banca_acquisti ON `co_pagamenti`.`idconto_acquisti` = `banca_acquisti`.`id_pianodeiconti3` AND `banca_acquisti`.`id_anagrafica` = '.prepare($id_azienda).' AND `banca_acquisti`.`deleted_at` IS NULL AND `banca_acquisti`.`predefined` = 1 |where| ORDER BY `ragione_sociale`';
+        $query = "SELECT 
+            `an_anagrafiche`.`idanagrafica` AS id, 
+            CONCAT(`ragione_sociale`, IF(`citta` IS NULL OR `citta` = '', '', CONCAT(' (', `citta`, ')')), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione, 
+            `idtipointervento_default` AS `idtipointervento`, 
+            `co_pagamenti`.`id` AS id_pagamento, 
+            `co_pagamenti_lang`.`name` AS desc_pagamento, 
+            `banca_acquisti`.`id` AS id_banca_acquisti, 
+            CONCAT(`banca_acquisti`.`nome`, ' - ', `banca_acquisti`.`iban`) AS descrizione_banca_acquisti 
+        FROM 
+            `an_anagrafiche` 
+            INNER JOIN (
+                `an_tipianagrafiche_anagrafiche` 
+                INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id` 
+                LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(setting('Lingua')).')) ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` 
+                LEFT JOIN `co_pagamenti` ON `an_anagrafiche`.`idpagamento_acquisti`=`co_pagamenti`.`id`
+                LEFT JOIN `co_pagamenti_lang` co_pagamenti_lang ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(setting('Lingua')).") 
+                LEFT JOIN `co_banche` banca_acquisti ON `co_pagamenti`.`idconto_acquisti` = `banca_acquisti`.`id_pianodeiconti3` AND `banca_acquisti`.`id_anagrafica` = '.prepare($id_azienda).' AND `banca_acquisti`.`deleted_at` IS NULL AND `banca_acquisti`.`predefined` = 1 
+            |where| 
+            ORDER BY 
+                `ragione_sociale`";
 
         foreach ($elements as $element) {
             $filter[] = '`an_anagrafiche`.`idanagrafica`='.prepare($element);
         }
 
         if (empty($filter)) {
-            $where[] = "`name` = 'Fornitore'";
+            $where[] = "`an_tipianagrafiche_lang`.`name` = 'Fornitore'";
             $where[] = '`an_anagrafiche`.`deleted_at` IS NULL';
         }
 

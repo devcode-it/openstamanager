@@ -145,9 +145,7 @@ class Fattura extends Document
         // $model->id_banca_controparte = ;
 
         // Tipo di pagamento dall'anagrafica controparte
-        $id_pagamento = $database->fetchOne('SELECT id FROM co_pagamenti WHERE id = :id_pagamento', [
-            ':id_pagamento' => $anagrafica->{'idpagamento_'.$conto},
-        ])['id'];
+        $id_pagamento = Pagamento::find($anagrafica['idpagamento_'.$conto])->id_record;
 
         // Per Fatture di Vendita senza pagamento predefinito per il Cliente, si utilizza il pagamento predefinito dalle Impostazioni
         if ($direzione == 'entrata' && empty($id_pagamento)) {
@@ -163,12 +161,12 @@ class Fattura extends Document
         $id_banca_azienda = $anagrafica->{'idbanca_'.$conto};
         if (empty($id_banca_azienda)) {
             $azienda = Anagrafica::find(setting('Azienda predefinita'));
-            $id_banca_azienda = $database->fetchOne('SELECT id FROM co_banche WHERE deleted_at IS NULL AND predefined=1 AND id_pianodeiconti3 = (SELECT idconto_'.$conto.' FROM co_pagamenti WHERE id = :id_pagamento) AND id_anagrafica = :id_anagrafica', [
+            $id_banca_azienda = $database->fetchOne('SELECT `id` FROM `co_banche` WHERE `deleted_at` IS NULL AND `predefined`=1 AND `id_pianodeiconti3` = (SELECT idconto_'.$conto.' FROM `co_pagamenti` WHERE `id` = :id_pagamento) AND `id_anagrafica` = :id_anagrafica', [
                 ':id_pagamento' => $id_pagamento,
                 ':id_anagrafica' => $azienda->id,
             ])['id'];
             if (empty($id_banca_azienda)) {
-                $id_banca_azienda = $database->fetchOne('SELECT id FROM co_banche WHERE deleted_at IS NULL AND id_pianodeiconti3 = (SELECT idconto_'.$conto.' FROM co_pagamenti WHERE id = :id_pagamento) AND id_anagrafica = :id_anagrafica', [
+                $id_banca_azienda = $database->fetchOne('SELECT `id` FROM `co_banche` WHERE `deleted_at` IS NULL AND `id_pianodeiconti3` = (SELECT idconto_'.$conto.' FROM `co_pagamenti` WHERE `id` = :id_pagamento) AND `id_anagrafica` = :id_anagrafica', [
                     ':id_pagamento' => $id_pagamento,
                     ':id_anagrafica' => $azienda->id,
                 ])['id'];

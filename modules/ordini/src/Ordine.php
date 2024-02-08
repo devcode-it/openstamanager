@@ -24,6 +24,7 @@ use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\DDT\DDT;
 use Modules\Interventi\Intervento;
+use Modules\Pagamenti\Pagamento;
 use Traits\RecordTrait;
 use Traits\ReferenceTrait;
 use Util\Generator;
@@ -69,9 +70,7 @@ class Ordine extends Document
         }
 
         // Tipo di pagamento e banca predefinite dall'anagrafica
-        $id_pagamento = $database->fetchOne('SELECT id FROM co_pagamenti WHERE id = :id_pagamento', [
-            ':id_pagamento' => $anagrafica['idpagamento_'.$conto],
-        ])['id'];
+        $id_pagamento = Pagamento::find($anagrafica['idpagamento_'.$conto])->id_record;
 
         // Se il ordine è un ordine cliente e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
         if ($direzione == 'entrata' && empty($id_pagamento)) {

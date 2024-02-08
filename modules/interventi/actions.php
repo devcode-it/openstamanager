@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Carbon\CarbonPeriod;
+use Models\OperationLog;
 use Models\Plugin;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
@@ -38,7 +39,6 @@ use Modules\TipiIntervento\Tipo as TipoSessione;
 use Plugins\ComponentiImpianti\Componente;
 use Plugins\ListinoClienti\DettaglioPrezzo;
 use Plugins\PianificazioneInterventi\Promemoria;
-use Models\OperationLog;
 
 $modulo_impianti = Modules::get('Impianti');
 $plugin_impianti = Plugin::pool('Impianti');

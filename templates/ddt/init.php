@@ -21,6 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Nazione;
 use Modules\DDT\DDT;
+use Modules\Pagamenti\Pagamento;
 
 $documento = DDT::find($id_record);
 $d_qta = (int) setting('Cifre decimali per quantità in stampa');
@@ -31,7 +32,7 @@ $id_cliente = $documento['idanagrafica'];
 $id_sede = $record['idsede_partenza'];
 $id_azienda = setting('Azienda predefinita');
 
-$pagamento = $dbo->fetchOne('SELECT * FROM co_pagamenti WHERE id = '.prepare($documento['idpagamento']));
+$pagamento = Pagamento::find($documento['idpagamento']);
 $causale = $dbo->fetchOne('SELECT * FROM dt_causalet WHERE id = '.prepare($documento['idcausalet']));
 $porto = $dbo->fetchOne('SELECT * FROM dt_porto WHERE id = '.prepare($documento['idporto']));
 $aspetto_beni = $dbo->fetchOne('SELECT * FROM dt_aspettobeni WHERE id = '.prepare($documento['idaspettobeni']));
@@ -126,7 +127,7 @@ $custom = [
     'tipo_doc' => $tipo_doc,
     'numero' => $numero,
     'data' => Translator::dateToLocale($documento['data']),
-    'pagamento' => $pagamento['descrizione'],
+    'pagamento' => $pagamento->name,
     'c_destinazione' => $destinazione,
     'c_partenza' => $partenza,
     'aspettobeni' => $aspetto_beni['descrizione'],

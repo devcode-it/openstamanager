@@ -28,6 +28,7 @@ use Modules\Banche\Banca;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Gestori\Bollo;
 use Modules\Iva\Aliquota;
+use Modules\Pagamenti\Pagamento;
 use Uploads;
 
 /**
@@ -1646,7 +1647,7 @@ class FatturaElettronica
 
         $database = database();
 
-        $co_pagamenti = $database->fetchOne('SELECT * FROM `co_pagamenti` WHERE `id` = '.prepare($documento['idpagamento']));
+        $co_pagamenti = Pagamento::find($documento['idpagamento']);
 
         /**
          * TP01 - A Rate
@@ -1659,7 +1660,7 @@ class FatturaElettronica
 
         $co_scadenziario = $database->fetchArray('SELECT * FROM `co_scadenziario` WHERE `iddocumento` = '.prepare($documento['id']));
         foreach ($co_scadenziario as $scadenza) {
-            $co_pagamenti = $database->fetchOne('SELECT * FROM `co_pagamenti` WHERE `id` = '.prepare($scadenza['id_pagamento']));
+            $co_pagamenti = Pagamento::find($scadenza['id_pagamento']);
             $banca = Banca::find($scadenza['id_banca_azienda']);
 
             $pagamento = [

@@ -131,7 +131,7 @@ foreach ($righe as $riga) {
                         <td class="text-right">'.moneyFormat($riga->prezzo_unitario).'</td>
                         <td class="text-right">
                             '.moneyFormat($riga->iva).'<br>
-                            <small class="help-block">'.$riga->aliquota->descrizione.'</small>
+                            <small class="help-block">'.$riga->aliquota->name.'</small>
                         </td>
                         <td class="text-right">'.moneyFormat($riga->totale_imponibile).'</td>
                     </tr>';

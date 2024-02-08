@@ -33,6 +33,7 @@ return [
     'co_movimenti_modelli',
     'co_fatturazione_contratti',
     'co_pagamenti',
+    'co_pagamenti_lang',
     'co_pianodeiconti1',
     'co_pianodeiconti2',
     'co_pianodeiconti3',

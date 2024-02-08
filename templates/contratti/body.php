@@ -18,6 +18,7 @@
  */
 
 use Carbon\CarbonInterval;
+use Modules\Pagamenti\Pagamento;
 
 include_once __DIR__.'/../../core.php';
 
@@ -360,7 +361,7 @@ echo '
 </table>';
 
 // CONDIZIONI GENERALI DI FORNITURA
-$pagamento = $dbo->fetchOne('SELECT * FROM co_pagamenti WHERE id = '.$documento['idpagamento']);
+$pagamento = Pagamento::find($documento['idpagamento']);
 
 echo '
 <table class="table table-bordered">
@@ -376,7 +377,7 @@ echo '
         </th>
 
         <td>
-            '.$pagamento['descrizione'].'
+            '.$pagamento->name.'
         </td>
     </tr>
 

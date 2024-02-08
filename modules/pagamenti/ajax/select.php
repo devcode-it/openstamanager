@@ -28,30 +28,34 @@ switch ($resource) {
         // Filtri per banche dell'Azienda
         $id_azienda = setting('Azienda predefinita');
 
-        $query = "SELECT co_pagamenti.id,
-           CONCAT_WS(' - ', codice_modalita_pagamento_fe, descrizione) AS descrizione,
-           codice_modalita_pagamento_fe,
-           banca_vendite.id AS id_banca_vendite,
-           CONCAT(banca_vendite.nome, ' - ', banca_vendite.iban) AS descrizione_banca_vendite,
-           banca_acquisti.id AS id_banca_acquisti,
-           CONCAT(banca_acquisti.nome, ' - ', banca_acquisti.iban) AS descrizione_banca_acquisti,
-           banca_cliente.id AS id_banca_cliente
-        FROM co_pagamenti
-            LEFT JOIN co_banche banca_cliente ON banca_cliente.id_anagrafica = ".prepare($superselect['idanagrafica']).' AND banca_cliente.deleted_at IS NULL
-            LEFT JOIN co_banche banca_vendite ON co_pagamenti.idconto_vendite = banca_vendite.id_pianodeiconti3 AND banca_vendite.id_anagrafica = '.prepare($id_azienda).' AND banca_vendite.deleted_at IS NULL
-            LEFT JOIN co_banche banca_acquisti ON co_pagamenti.idconto_acquisti = banca_acquisti.id_pianodeiconti3 AND banca_acquisti.id_anagrafica = '.prepare($id_azienda).' AND banca_acquisti.deleted_at IS NULL
-        |where| GROUP BY co_pagamenti.descrizione ORDER BY co_pagamenti.descrizione ASC';
+        $query = "SELECT 
+            `co_pagamenti`.`id`,
+            CONCAT_WS(' - ', `codice_modalita_pagamento_fe`, `name`) AS descrizione,
+            `codice_modalita_pagamento_fe`,
+            `banca_vendite`.`id` AS id_banca_vendite,
+            CONCAT(`banca_vendite`.`nome`, ' - ', `banca_vendite`.`iban`) AS descrizione_banca_vendite,
+            `banca_acquisti`.`id` AS id_banca_acquisti,
+            CONCAT(`banca_acquisti`.`nome`, ' - ', `banca_acquisti`.`iban`) AS descrizione_banca_acquisti,
+            `banca_cliente`.`id` AS id_banca_cliente
+        FROM `co_pagamenti`
+            LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.`id_lang` = ".prepare(setting('Lingua')).')
+            LEFT JOIN `co_banche` banca_cliente ON `banca_cliente`.`id_anagrafica` = '.prepare($superselect['idanagrafica']).' AND `banca_cliente`.`deleted_at` IS NULL
+            LEFT JOIN `co_banche` banca_vendite ON `co_pagamenti`.`idconto_vendite` = `banca_vendite`.`id_pianodeiconti3` AND `banca_vendite`.`id_anagrafica` = '.prepare($id_azienda).' AND `banca_vendite`.`deleted_at` IS NULL
+            LEFT JOIN `co_banche` banca_acquisti ON `co_pagamenti`.`idconto_acquisti` = `banca_acquisti`.`id_pianodeiconti3` AND `banca_acquisti`.`id_anagrafica` = '.prepare($id_azienda).' AND `banca_acquisti`.`deleted_at` IS NULL
+        |where| 
+        GROUP BY 
+            `co_pagamenti_lang`.`name` ORDER BY `co_pagamenti_lang`.`name` ASC';
 
         foreach ($elements as $element) {
-            $filter[] = 'co_pagamenti.id = '.prepare($element);
+            $filter[] = '`co_pagamenti`.`id` = '.prepare($element);
         }
 
         if (!empty($superselect['codice_modalita_pagamento_fe'])) {
-            $where[] = 'codice_modalita_pagamento_fe = '.prepare($superselect['codice_modalita_pagamento_fe']);
+            $where[] = '`codice_modalita_pagamento_fe` = '.prepare($superselect['codice_modalita_pagamento_fe']);
         }
 
         if (!empty($search)) {
-            $search_fields[] = 'descrizione LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`descrizione` LIKE '.prepare('%'.$search.'%');
         }
 
         $data = AJAX::selectResults($query, $where,

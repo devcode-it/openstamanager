@@ -885,16 +885,16 @@ switch ($op) {
         $iva = Aliquota::find(setting('Iva predefinita'));
 
         $imponibile = $database->table('co_righe_documenti')
-            ->join('`co_iva`', '`co_iva`.`id`', '=', '`co_righe_documenti`.`idiva`')
-            ->where('`co_righe_documenti`.`iddocumento`', $fattura->id)
-            ->whereIn('`co_iva`.`codice_natura_fe`', ['N2', 'N2.1', 'N2.2', 'N3', 'N3.1', 'N3.2', 'N3.3', 'N3.4', 'N3.5', 'N3.6', 'N6', 'N6.1', 'N6.2', 'N6.3', 'N6.4', 'N6.5', 'N6.6', 'N6.7', 'N6.8', 'N6.9'])
-            ->sum('`subtotale`');
+            ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.idiva')
+            ->where('co_righe_documenti.iddocumento', $fattura->id)
+            ->whereIn('co_iva.codice_natura_fe', ['N2', 'N2.1', 'N2.2', 'N3', 'N3.1', 'N3.2', 'N3.3', 'N3.4', 'N3.5', 'N3.6', 'N6', 'N6.1', 'N6.2', 'N6.3', 'N6.4', 'N6.5', 'N6.6', 'N6.7', 'N6.8', 'N6.9'])
+            ->sum('subtotale');
 
         $sconto = $database->table('co_righe_documenti')
-            ->join('`co_iva`', '`co_iva`.`id`', '=', '`co_righe_documenti`.`idiva`')
-            ->where('`co_righe_documenti`.`iddocumento`', $fattura->id)
-            ->whereIn('`co_iva`.`codice_natura_fe`', ['N2', 'N2.1', 'N2.2', 'N3', 'N3.1', 'N3.2', 'N3.3', 'N3.4', 'N3.5', 'N3.6', 'N6', 'N6.1', 'N6.2', 'N6.3', 'N6.4', 'N6.5', 'N6.6', 'N6.7', 'N6.8', 'N6.9'])
-            ->sum('`sconto`');
+            ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.idiva')
+            ->where('co_righe_documenti.iddocumento', $fattura->id)
+            ->whereIn('co_iva.codice_natura_fe', ['N2', 'N2.1', 'N2.2', 'N3', 'N3.1', 'N3.2', 'N3.3', 'N3.4', 'N3.5', 'N3.6', 'N6', 'N6.1', 'N6.2', 'N6.3', 'N6.4', 'N6.5', 'N6.6', 'N6.7', 'N6.8', 'N6.9'])
+            ->sum('sconto');
 
         $totale_imponibile = setting('Utilizza prezzi di vendita comprensivi di IVA') ? ($imponibile - $sconto) + (($imponibile - $sconto) * $iva->percentuale / 100) : ($imponibile - $sconto);
         $totale_imponibile = $fattura->tipo->reversed == 1 ? -$totale_imponibile : $totale_imponibile;

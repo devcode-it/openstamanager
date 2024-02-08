@@ -29,41 +29,18 @@ class SessioniInterventi extends AppResource
 {
     public function getCleanupData($last_sync_at)
     {
-        // Periodo per selezionare interventi
-        $mesi_precedenti = intval(setting('Mesi per lo storico delle Attività'));
-        $today = new Carbon();
-        $start = $today->copy()->subMonths($mesi_precedenti);
-        $end = $today->copy()->addMonth();
-
-        // Informazioni sull'utente
-        $user = \Auth::user();
-        $id_tecnico = $user->id_anagrafica;
-
-        // Elenco di interventi di interesse
-        $risorsa_interventi = $this->getRisorsaInterventi();
-        $interventi = $risorsa_interventi->getCleanupData($last_sync_at);
-
-        // Elenco sessioni degli interventi da rimuovere
-        $da_interventi = [];
-        if (!empty($interventi)) {
-            $query = 'SELECT in_interventi_tecnici.id
-        FROM in_interventi_tecnici
-            INNER JOIN in_interventi ON in_interventi_tecnici.idintervento = in_interventi.id
-        WHERE
-            in_interventi.id IN ('.implode(',', $interventi).')
-            OR (orario_fine NOT BETWEEN :period_start AND :period_end)';
-            $records = database()->fetchArray($query, [
-                ':period_end' => $end,
-                ':period_start' => $start,
-            ]);
-            $da_interventi = array_column($records, 'id');
-        }
-
-        $mancanti = $this->getMissingIDs('in_interventi_tecnici', 'id', $last_sync_at);
-
-        $results = array_unique(array_merge($da_interventi, $mancanti));
-
-        return $results;
+        // TODO: modificare introducendo deleted_at su sessioni
+        return database()
+            ->table('zz_operations')
+            ->select('zz_operations.options')
+            ->distinct()
+            ->join('zz_modules', 'zz_modules.id', '=', 'zz_operations.id_module')
+            ->where('zz_modules.name', '=', 'Interventi')
+            ->where('zz_operations.op', '=', 'delete_sessione')
+            ->whereNotNull('zz_operations.options')
+            ->where('zz_operations.created_at', '>', $last_sync_at)
+            ->pluck('zz_operations.options')
+            ->toArray();
     }
 
     public function getModifiedRecords($last_sync_at)

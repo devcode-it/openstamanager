@@ -38,6 +38,7 @@ use Modules\TipiIntervento\Tipo as TipoSessione;
 use Plugins\ComponentiImpianti\Componente;
 use Plugins\ListinoClienti\DettaglioPrezzo;
 use Plugins\PianificazioneInterventi\Promemoria;
+use Models\OperationLog;
 
 $modulo_impianti = Modules::get('Impianti');
 $plugin_impianti = Plugin::pool('Impianti');
@@ -905,6 +906,13 @@ switch (post('op')) {
         $tecnico = $dbo->fetchOne('SELECT an_anagrafiche.email FROM an_anagrafiche INNER JOIN in_interventi_tecnici ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica WHERE in_interventi_tecnici.id = '.prepare($id_sessione));
 
         $dbo->query('DELETE FROM in_interventi_tecnici WHERE id='.prepare($id_sessione));
+
+        // Log specifico per la rimozione sessione
+        OperationLog::setInfo('id_module', $id_module);
+        OperationLog::setInfo('id_plugin', $id_plugin);
+        OperationLog::setInfo('id_record', $id_record);
+        OperationLog::setInfo('options', $id_sessione);
+        OperationLog::build(post('op'));
 
         // Notifica rimozione dell' intervento al tecnico
         if (setting('Notifica al tecnico la rimozione della sessione dall\'attività')) {

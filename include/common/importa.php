@@ -135,11 +135,11 @@ if (!empty($options['create_document'])) {
 
     // Opzioni aggiuntive per i Contratti
     elseif ($final_module['name'] == 'Contratti') {
-        $stato_predefinito = $database->fetchOne("SELECT * FROM co_staticontratti WHERE descrizione = 'Bozza'");
+        $stato_predefinito = $database->fetchOne('SELECT * FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(setting('Lingua')).") WHERE `name` = 'Bozza'");
 
         echo '
             <div class="col-md-6">
-                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT id, descrizione FROM co_staticontratti", "value": "'.$stato_predefinito['id'].'" ]}
+                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `co_staticontratti`.`id`, `co_staticontratti_lang`.`name` AS descrizione FROM co_staticontratti LEFT JOIN `co_staticontratti`_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(setting('Lingua')).')", "value": "'.$stato_predefinito['id'].'" ]}
             </div>';
     }
 

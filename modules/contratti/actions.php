@@ -145,7 +145,7 @@ switch (post('op')) {
         $new = $contratto->replicate(['idcontratto_prev']);
         $new->numero = Contratto::getNextNumero($contratto->data_bozza, $contratto->id_segment);
 
-        $stato = Stato::where('descrizione', '=', 'Bozza')->first();
+        $stato = (new Stato())->getByName('Bozza')->id_record;
         $new->stato()->associate($stato);
         $new->save();
 
@@ -373,7 +373,7 @@ switch (post('op')) {
         $new_contratto->data_bozza = Carbon::now();
         $new_contratto->numero = Contratto::getNextNumero($new_contratto->data_bozza, $new_contratto->id_segment);
 
-        $stato = Stato::where('descrizione', '=', 'Bozza')->first();
+        $stato = (new Stato())->getByName('Bozza')->id_record;
         $new_contratto->stato()->associate($stato);
 
         $new_contratto->save();
@@ -431,7 +431,7 @@ switch (post('op')) {
         }
 
         // Cambio stato precedente contratto in concluso (non più pianificabile)
-        $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `idstato`= (SELECT id FROM co_staticontratti WHERE descrizione = \'Concluso\')  WHERE `id` = '.prepare($id_record));
+        $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `idstato`= (SELECT `co_staticontratti`.`id` FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id`=`co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang`= '.setting('Lingua').') WHERE `name` = \'Concluso\')  WHERE `co_staticontratti`.`id` = '.prepare($id_record));
 
         flash()->info(tr('Contratto rinnovato!'));
 

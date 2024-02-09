@@ -20,5 +20,5 @@
 include_once __DIR__.'/../../core.php';
 
 if (isset($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM co_staticontratti WHERE id='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT * FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON `co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` WHERE `co_staticontratti`.`id`='.prepare($id_record));
 }

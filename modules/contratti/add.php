@@ -18,11 +18,13 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Modules\Contratti\Stato;
 
 $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 
-$stati = get('pianificabile') ? 'SELECT id, descrizione FROM co_staticontratti WHERE is_pianificabile=1' : 'SELECT id, descrizione FROM co_staticontratti';
-$stato = $database->query('SELECT id, descrizione FROM co_staticontratti WHERE descrizione = "Bozza"');
+$stati = get('pianificabile') ? 'SELECT `co_staticontratti`.`id`, `name` AS descrizione FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `is_pianificabile`=1' : 'SELECT `co_staticontratti`.`id`, `name` AS descrizione FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(setting('Lingua')).')';
+
+$stato = (new Stato())->getByName('Bozza')->id_record;
 
 echo '
 <form action="" method="post" id="add-form">

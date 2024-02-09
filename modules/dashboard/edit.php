@@ -242,15 +242,23 @@ if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
     $id_tecnico = $user['idanagrafica'];
 }
 
-$query_da_programmare = 'SELECT data_richiesta AS data FROM co_promemoria
-    INNER JOIN co_contratti ON co_promemoria.idcontratto = co_contratti.id
-    INNER JOIN an_anagrafiche ON co_contratti.idanagrafica = an_anagrafiche.idanagrafica
+$query_da_programmare = 'SELECT 
+    `data_richiesta` AS data 
+FROM 
+    `co_promemoria`
+    INNER JOIN `co_contratti` ON `co_promemoria`.`idcontratto` = `co_contratti`.`id`
+    INNER JOIN `co_staticontratti` ON `co_contratti`.`idstato` = `co_staticontratti`.`id`
+    LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+    INNER JOIN `an_anagrafiche` ON `co_contratti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
 WHERE
-    idcontratto IN (SELECT id FROM co_contratti WHERE idstato IN (SELECT id FROM co_staticontratti WHERE is_pianificabile = 1))
-    AND idintervento IS NULL
+    `co_staticontratti`.`is_pianificabile` = 1 AND `idintervento` IS NULL
 
-UNION SELECT IF(data_scadenza IS NULL, data_richiesta, data_scadenza) AS data FROM in_interventi
-    INNER JOIN an_anagrafiche ON in_interventi.idanagrafica = an_anagrafiche.idanagrafica';
+UNION 
+SELECT 
+    IF(`data_scadenza` IS NULL, `data_richiesta`, `data_scadenza`) AS data 
+FROM 
+    `in_interventi`
+    INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`';
 
 // Visualizzo solo promemoria del tecnico loggato
 if (!empty($id_tecnico) && !empty($solo_promemoria_assegnati)) {

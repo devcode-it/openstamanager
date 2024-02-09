@@ -24,12 +24,21 @@ use Modules\Contratti\Contratto;
 if (isset($id_record)) {
     $contratto = Contratto::find($id_record);
 
-    $record = $dbo->fetchOne('SELECT *,
-       (SELECT tipo FROM an_anagrafiche WHERE idanagrafica = co_contratti.idanagrafica) AS tipo_anagrafica,
-       (SELECT is_fatturabile FROM co_staticontratti WHERE id=idstato) AS is_fatturabile,
-       (SELECT is_pianificabile FROM co_staticontratti WHERE id=idstato) AS is_pianificabile,
-       (SELECT is_completato FROM co_staticontratti WHERE id=idstato) AS is_completato,
-       (SELECT descrizione FROM co_staticontratti WHERE id=idstato) AS stato,
-       (SELECT GROUP_CONCAT(my_impianti_contratti.idimpianto) FROM my_impianti_contratti WHERE idcontratto = co_contratti.id) AS idimpianti
-   FROM co_contratti WHERE id='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT 
+        *,
+        `co_contratti`.`nome` AS nome,
+        `an_anagrafiche`.`tipo` AS tipo_anagrafica,
+        `co_staticontratti`.`is_fatturabile` AS is_fatturabile,
+        `co_staticontratti`.`is_pianificabile` AS is_pianificabile,
+        `co_staticontratti`.`is_completato` AS is_completato,
+        `co_staticontratti_lang`.`name` AS stato,
+        GROUP_CONCAT(`my_impianti_contratti`.`idimpianto`) AS idimpianti
+    FROM 
+        `co_contratti`
+        INNER JOIN `an_anagrafiche` ON `co_contratti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+        INNER JOIN `co_staticontratti` ON `co_contratti`.`idstato` = `co_staticontratti`.`id`
+        LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+        LEFT JOIN `my_impianti_contratti` ON `my_impianti_contratti`.`idcontratto` = `co_contratti`.`id`
+    WHERE 
+        `co_contratti`.`id`='.prepare($id_record));
 }

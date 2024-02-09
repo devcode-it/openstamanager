@@ -19,16 +19,22 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Contratti\Stato;
+
 switch (post('op')) {
     case 'update':
+        $id_stato = (new Stato())->getByName(post('descrizione'))->id_record;
         $dbo->update('co_staticontratti', [
-            'descrizione' => (count($dbo->fetchArray('SELECT descrizione FROM co_staticontratti WHERE descrizione = '.prepare(post('descrizione')))) > 0) ? $dbo->fetchOne('SELECT descrizione FROM co_staticontratti WHERE id ='.$id_record)['descrizione'] : post('descrizione'),
             'icona' => post('icona'),
             'colore' => post('colore'),
             'is_completato' => post('is_completato') ?: null,
             'is_fatturabile' => post('is_fatturabile') ?: null,
             'is_pianificabile' => post('is_pianificabile') ?: null,
         ], ['id' => $id_record]);
+
+        $dbo->update('co_staticontratti_lang', [
+            'name' => post('descrizione'),
+        ], ['id_record' => $id_stato]);
 
         flash()->info(tr('Informazioni salvate correttamente.'));
 
@@ -43,12 +49,13 @@ switch (post('op')) {
         $is_pianificabile = post('is_pianificabile') ?: null;
 
         // controlla descrizione che non sia duplicata
-        if (count($dbo->fetchArray('SELECT descrizione FROM co_staticontratti WHERE descrizione='.prepare($descrizione))) > 0) {
-            flash()->error(tr('Stato di contratto già esistente.'));
+        if ((new Stato())->getByName($descrizione)->id_record) {
+            flash()->error(tr('Questo nome è già stato utilizzato per un altro stato dei contratti.'));
         } else {
-            $query = 'INSERT INTO co_staticontratti(descrizione, icona, colore, is_completato, is_fatturabile, is_pianificabile) VALUES ('.prepare($descrizione).', '.prepare($icona).', '.prepare($colore).', '.prepare($is_completato).', '.prepare($is_fatturabile).', '.prepare($is_pianificabile).' )';
-            $dbo->query($query);
+            $dbo->query('INSERT INTO `co_staticontratti` (`icona`, `colore`, `is_completato`, `is_fatturabile`, `is_pianificabile`) VALUES ('.prepare($icona).', '.prepare($colore).', '.prepare($is_completato).', '.prepare($is_fatturabile).', '.prepare($is_pianificabile).' )');
             $id_record = $dbo->lastInsertedID();
+            $dbo->query('INSERT INTO `co_staticontratti_lang` (`name`, `id_record`, `id_lang`) VALUES ('.prepare($descrizione).', '.prepare($id_record).', '.prepare(setting('Lingua')).' )');
+
             flash()->info(tr('Nuovo stato contratto aggiunto.'));
         }
 
@@ -56,15 +63,15 @@ switch (post('op')) {
 
     case 'delete':
         // scelgo se settare come eliminato o cancellare direttamente la riga se non è stato utilizzato nei contratti
-        if (count($dbo->fetchArray('SELECT id FROM co_contratti WHERE idstato='.prepare($id_record))) > 0) {
-            $query = 'UPDATE co_staticontratti SET deleted_at = NOW() WHERE can_delete = 1 AND id='.prepare($id_record);
+        if (count($dbo->fetchArray('SELECT `id` FROM `co_contratti` WHERE `idstato`='.prepare($id_record))) > 0) {
+            $query = 'UPDATE `co_staticontratti` SET `deleted_at` = NOW() WHERE `can_delete` = 1 AND `id`='.prepare($id_record);
         } else {
-            $query = 'DELETE FROM co_staticontratti WHERE can_delete = 1 AND id='.prepare($id_record);
+            $query = 'DELETE FROM `co_staticontratti` WHERE `can_delete` = 1 AND `id`='.prepare($id_record);
         }
 
         $dbo->query($query);
 
-        flash()->info(tr('Stato contratto eliminato.'));
+        flash()->info(tr('Questo stato dei contratti è stato correttamente eliminato.'));
 
         break;
 }

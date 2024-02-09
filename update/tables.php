@@ -49,6 +49,7 @@ return [
     'co_rivalse',
     'co_scadenziario',
     'co_staticontratti',
+    'co_staticontratti_lang',
     'co_statidocumento',
     'co_statipreventivi',
     'co_tipidocumento',

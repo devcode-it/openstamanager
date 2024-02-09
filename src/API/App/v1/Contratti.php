@@ -26,11 +26,11 @@ class Contratti extends AppResource implements RetrieveInterface
 {
     public function getCleanupData($last_sync_at)
     {
-        $query = 'SELECT DISTINCT(co_contratti.id) AS id FROM co_contratti
-            INNER JOIN co_staticontratti ON co_staticontratti.id = co_contratti.idstato
-        WHERE co_staticontratti.is_pianificabile = 0';
+        $query = 'SELECT DISTINCT(`co_contratti`.`id`) AS id FROM `co_contratti`
+            INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`idstato`
+        WHERE `co_staticontratti`.`is_pianificabile` = 0';
         if ($last_sync_at) {
-            $query .= ' AND (co_contratti.updated_at > '.prepare($last_sync_at).' OR co_staticontratti.updated_at > '.prepare($last_sync_at).')';
+            $query .= ' AND (`co_contratti`.`updated_at` > '.prepare($last_sync_at).' OR `co_staticontratti`.`updated_at` > '.prepare($last_sync_at).')';
         }
         $records = database()->fetchArray($query);
 
@@ -59,7 +59,7 @@ class Contratti extends AppResource implements RetrieveInterface
 
         // Filtro per data
         if ($last_sync_at) {
-            $query .= ' AND co_contratti.updated_at > '.prepare($last_sync_at);
+            $query .= ' AND `co_contratti`.`updated_at` > '.prepare($last_sync_at);
         }
 
         $records = database()->fetchArray($query);
@@ -70,16 +70,17 @@ class Contratti extends AppResource implements RetrieveInterface
     public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
-        $query = 'SELECT co_contratti.id,
-            co_contratti.idanagrafica AS id_cliente,
-            IF(co_contratti.idsede = 0, NULL, co_contratti.idsede) AS id_sede,
-            co_contratti.nome,
-            co_contratti.numero,
-            co_contratti.data_bozza,
-            co_staticontratti.descrizione AS stato
-        FROM co_contratti
-            INNER JOIN co_staticontratti ON co_staticontratti.id = co_contratti.idstato
-        WHERE co_contratti.id = '.prepare($id);
+        $query = 'SELECT `co_contratti`.`id`,
+            `co_contratti`.`idanagrafica` AS id_cliente,
+            IF(`co_contratti`.`idsede` = 0, NULL, `co_contratti`.`idsede`) AS id_sede,
+            `co_contratti`.`nome`,
+            `co_contratti`.`numero`,
+            `co_contratti`.`data_bozza`,
+            `co_staticontratti_lang`.`name` AS stato
+        FROM `co_contratti`
+            INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`idstato`
+            LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti_lang`.`id_record` = `co_staticontratti`.`id` AND `co_staticontratti_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+        WHERE `co_contratti`.`id` = '.prepare($id);
 
         $record = database()->fetchOne($query);
 

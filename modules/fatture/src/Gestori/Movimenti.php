@@ -220,10 +220,34 @@ class Movimenti
         }
 
         // Registrazione dei singoli Movimenti nel relativo Mastrino
+        $i = 0;
+
+        $totale_dare = 0;
+        $totale_avere = 0;
+
         $mastrino = $this->generateMastrino();
+
         foreach ($movimenti as $element) {
+            $dare = round($element['dare'], 2);
+            $avere = round($element['avere'], 2);
+
+            $totale_dare += $dare;
+            $totale_avere += $avere;
+            
+            // Nell'ultimo conto del mastrino inserisco l'eventuale differenza per evitare sbilanci nel totale
+            $aggiustamento_dare = 0;
+            $aggiustamento_avere = 0;
+
+            if ($i++ == count($movimenti) -1) {
+                if ($element['dare']) {
+                    $aggiustamento_dare -= round( $totale_dare - $totale_avere, 6 );
+                } elseif ($element['avere']) {
+                    $aggiustamento_avere -= round( $totale_avere - $totale_dare, 6 );
+                }
+            }
+
             $movimento = Movimento::build($mastrino, $element['id_conto'], $this->fattura);
-            $movimento->setTotale($element['avere'] ?: 0, $element['dare'] ?: 0);
+            $movimento->setTotale((float)$avere + $aggiustamento_avere, (float)$dare + $aggiustamento_dare);
             $movimento->save();
         }
     }

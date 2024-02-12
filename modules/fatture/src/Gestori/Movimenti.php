@@ -228,8 +228,8 @@ class Movimenti
         $mastrino = $this->generateMastrino();
 
         foreach ($movimenti as $element) {
-            $dare = round($element['dare'], 2);
-            $avere = round($element['avere'], 2);
+            $dare = round($element['dare'], 6);
+            $avere = round($element['avere'], 6);
 
             $totale_dare += $dare;
             $totale_avere += $avere;

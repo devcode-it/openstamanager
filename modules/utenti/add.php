@@ -28,7 +28,7 @@ include_once __DIR__.'/../../core.php';
 			{[ "type": "text", "label": "<?php echo tr('Nome gruppo'); ?>", "name": "nome", "required": 1, "validation": "gruppo", "help": "<?php echo tr('Compilando questo campo verrà creato un nuovo gruppo di utenti.'); ?>" ]}
 		</div>
 		<div class="col-md-3">
-			{[ "type": "select", "label": "<?php echo tr('Tema'); ?>", "name": "theme", "values": "list=\"\": \"<?php echo tr('Predefinito'); ?>\",\"black\": \"<?php echo tr('Nero'); ?>\",\"red\": \"<?php echo tr('Rosso'); ?>\",\"blue\": \"<?php echo tr('Blu'); ?>\",\"green\": \"<?php echo tr('Verde'); ?>\",\"yellow\": \"<?php echo tr('Giallo'); ?>\",\"purple\": \"<?php echo tr('Viola'); ?>\"", "value": "$theme$" ]}
+			{[ "type": "select", "label": "<?php echo tr('Tema'); ?>", "name": "theme", "values": "list=\"\": \"<?php echo tr('Predefinito'); ?>\",\"black-light\": \"<?php echo tr('Bianco'); ?>\",\"black\": \"<?php echo tr('Nero'); ?>\",\"red-light\": \"<?php echo tr('Rosso chiaro'); ?>\",\"red\": \"<?php echo tr('Rosso'); ?>\",\"blue-light\": \"<?php echo tr('Blu chiaro'); ?>\",\"blue\": \"<?php echo tr('Blu'); ?>\",\"green-light\": \"<?php echo tr('Verde chiaro'); ?>\",\"green\": \"<?php echo tr('Verde'); ?>\",\"yellow-light\": \"<?php echo tr('Giallo chiaro'); ?>\",\"yellow\": \"<?php echo tr('Giallo'); ?>\",\"purple-light\": \"<?php echo tr('Viola chiaro'); ?>\",\"purple\": \"<?php echo tr('Viola'); ?>\"", "value": "$theme$" ]}
 		</div>
 		<div class="col-md-3">
 			 {["type":"select", "label":"<?php echo tr('Modulo iniziale'); ?>", "name":"id_module_start", "ajax-source":"moduli_gruppo", "placeholder":"<?php tr('Modulo iniziale'); ?>" ]}

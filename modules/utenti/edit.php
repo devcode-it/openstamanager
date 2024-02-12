@@ -35,7 +35,7 @@ echo '
                     {["type":"select", "label":"'.tr('Modulo iniziale').'", "name":"id_module_start", "ajax-source":"moduli_gruppo", "select-options": '.json_encode(['idgruppo' => $record['id']]).', "placeholder":"'.tr('Modulo iniziale').'", "value":"'.$record['id_module_start'].'" ]}
                 </div>
                  <div class="col-md-3 pull-right">
-                    {["type":"select", "label":"'.tr('Tema').'", "name":"theme", "values":"list=\"\": \"'.tr('Predefinito').'\",\"black\": \"'.tr('Nero').'\",\"red\": \"'.tr('Rosso').'\",\"blue\": \"'.tr('Blu').'\",\"green\": \"'.tr('Verde').'\",\"yellow\": \"'.tr('Giallo').'\",\"purple\": \"'.tr('Viola').'\" ", "value":"'.$record['theme'].'" ]}
+                    {["type":"select", "label":"'.tr('Tema').'", "name":"theme", "values":"list=\"\": \"'.tr('Predefinito').'\",\"black-light\": \"'.tr('Bianco').'\",\"black\": \"'.tr('Nero').'\",\"red-light\": \"'.tr('Rosso chiaro').'\",\"red\": \"'.tr('Rosso').'\",\"blue-light\": \"'.tr('Blu chiaro').'\",\"blue\": \"'.tr('Blu').'\",\"green-light\": \"'.tr('Verde chiaro').'\",\"green\": \"'.tr('Verde').'\",\"yellow-light\": \"'.tr('Giallo chiaro').'\",\"yellow\": \"'.tr('Giallo').'\",\"purple-light\": \"'.tr('Viola chiaro').'\",\"purple\": \"'.tr('Viola').'\" ", "value":"'.$record['theme'].'" ]}
                 </div>
             </div>
             <br>';
@@ -279,12 +279,23 @@ function update_permissions(id, value, color){
     );
 }
 
+var mySkins=["skin-blue","skin-black","skin-red","skin-yellow","skin-purple","skin-green","skin-blue-light","skin-black-light","skin-red-light","skin-yellow-light","skin-purple-light","skin-green-light"];
+
+function changeSkin(cls){
+    $.each(mySkins,function(i){
+        $("body").removeClass(mySkins[i])
+    });
+    $("body").addClass("skin-"+cls);
+    return false;
+}
+
 $("#id_module_start").change(function(){
     update_id_module_start($(this).val());
 });
 
 $("#theme").change(function(){
     update_theme($(this).val());
+    changeSkin($(this).val());
 });
 
 function update_id_module_start(value){

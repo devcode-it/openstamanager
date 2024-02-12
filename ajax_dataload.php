@@ -113,7 +113,11 @@ if (!empty($query)) {
             $column = [];
 
             if (!empty($r['_bg_'])) {
-                $column['data-background'] = $r['_bg_'];
+                if (preg_match('/-light$/', $r['_bg_'])) {
+                    $column['data-background'] =  substr($r['_bg_'], 0, -6); // Remove the "-light" suffix from the word
+                }else{
+                    $column['data-background'] = $r['_bg_'];
+                }
             }
 
             // Allineamento

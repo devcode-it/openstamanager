@@ -98,7 +98,7 @@ if (filter('action') == 'do_update') {
         // Istruzioni per la prima installazione
         if ($_GET['firstuse'] == 'true') {
             echo '
-        <p class="text-danger">'.tr("E' fortemente consigliato rimuovere i permessi di scrittura dal file _FILE_", [
+        <p class="text-danger">'.tr("Si consiglia di rimuovere i permessi di scrittura dal file _FILE_", [
             '_FILE_' => '<b>config.inc.php</b>',
         ]).'.</p>';
         }

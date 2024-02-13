@@ -67,7 +67,7 @@ class FatturaElettronica
 
         // Controllo sulla possibilità di creare la fattura elettronica
         // Posso fatturare ai privati utilizzando il codice fiscale
-        if ($this->documento->stato->descrizione == 'Bozza') {
+        if ($this->documento->stato->name == 'Bozza') {
             throw new \UnexpectedValueException();
         }
     }
@@ -424,7 +424,7 @@ class FatturaElettronica
         $errors = [];
 
         // Controlli sulla fattura stessa
-        if ($fattura->stato->descrizione == 'Bozza') {
+        if ($fattura->stato->name == 'Bozza') {
             $missing = [
                 'state' => tr('Stato ("Emessa")'),
             ];

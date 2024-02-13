@@ -18,6 +18,7 @@
  */
 
 use Plugins\ListinoFornitori\DettaglioFornitore;
+use Modules\Fatture\Stato;
 
 // Inizializzazione
 $documento = $options['documento'];
@@ -88,7 +89,7 @@ if (!empty($options['create_document'])) {
 
     // Opzioni aggiuntive per le Fatture
     if (in_array($final_module['name'], ['Fatture di vendita', 'Fatture di acquisto'])) {
-        $stato_predefinito = $database->fetchOne("SELECT id FROM co_statidocumento WHERE descrizione = 'Bozza'");
+        $stato_predefinito = (new Stato())->getByName('Bozza')->id_record;
 
         if (!empty($options['reversed'])) {
             $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
@@ -109,7 +110,7 @@ if (!empty($options['create_document'])) {
 
         echo '
             <div class="col-md-6">
-                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT * FROM co_statidocumento WHERE descrizione IN (\'Emessa\', \'Bozza\')", "value": "'.$stato_predefinito['id'].'"]}
+                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT * FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name` IN (\'Emessa\', \'Bozza\')", "value": "'.$stato_predefinito['id'].'"]}
             </div>
 
             <div class="col-md-6">

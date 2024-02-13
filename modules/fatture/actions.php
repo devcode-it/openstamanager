@@ -102,14 +102,15 @@ switch ($op) {
 
         $data_fattura_precedente = $dbo->fetchOne('
             SELECT
-                MAX(DATA) AS datamax
+                MAX(`data`) AS datamax
             FROM
-                co_documenti
-            INNER JOIN co_statidocumento ON co_statidocumento.id = co_documenti.idstatodocumento
-            INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id
-            INNER JOIN zz_segments ON zz_segments.id = co_documenti.id_segment
+                `co_documenti`
+                INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
+                LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.setting('Lingua').')
+                INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
+                INNER JOIN `zz_segments` ON `zz_segments`.`id` = `co_documenti`.`id_segment`
             WHERE
-                co_statidocumento.descrizione = "Emessa" AND co_tipidocumento.dir="entrata" AND co_documenti.id_segment='.$fattura->id_segment);
+                `co_statidocumento_lang`.`name` = "Emessa" AND `co_tipidocumento`.`dir`="entrata" AND `co_documenti`.`id_segment`='.$fattura->id_segment);
 
         if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && ($stato->descrizione == 'Emessa') && Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax'])) && (!empty($data_fattura_precedente['datamax']))) {
             $fattura->data = $data_fattura_precedente['datamax'];
@@ -311,7 +312,7 @@ switch ($op) {
         // Elenco fatture in stato Bozza per il cliente
     case 'fatture_bozza':
         $id_anagrafica = post('id_anagrafica');
-        $stato = Stato::where('descrizione', 'Bozza')->first();
+        $stato = (new Stato())->getByName('Bozza')->id_record;
 
         $fatture = Fattura::vendita()
             ->where('idanagrafica', $id_anagrafica)
@@ -330,8 +331,8 @@ switch ($op) {
         // Elenco fatture Scadute per il cliente
     case 'fatture_scadute':
         $id_anagrafica = post('id_anagrafica');
-        $stato1 = Stato::where('descrizione', 'Emessa')->first();
-        $stato2 = Stato::where('descrizione', 'Parzialmente pagato')->first();
+        $stato1 = (new Stato())->getByName('Emessa')->id_record;
+        $stato2 = (new Stato())->getByName('Parzialmente pagato')->id_record;
 
         $fatture = Fattura::vendita()
             ->select('*', 'co_documenti.id AS id', 'co_documenti.data AS data')
@@ -404,10 +405,10 @@ switch ($op) {
 
     case 'reopen':
         if (!empty($id_record)) {
-            $stato = Stato::where('descrizione', 'Bozza')->first();
+            $stato = (new Stato())->getByName('Bozza')->id_record;
             $fattura->stato()->associate($stato);
             $fattura->save();
-            $stato = Stato::where('descrizione', 'Emessa')->first();
+            $stato = (new Stato())->getByName('Emessa')->id_record;
             $fattura->stato()->associate($stato);
             $fattura->save();
             flash()->info(tr('Fattura riaperta!'));

@@ -28,11 +28,10 @@ use Modules\Fatture\Stato;
 use Plugins\ExportFE\FatturaElettronica;
 use Plugins\ExportFE\Interaction;
 use Plugins\ReceiptFE\Ricevuta;
-use Util\XML;
 use Util\Zip;
 
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
-$stato_emessa = $dbo->selectOne('co_statidocumento', 'id', ['descrizione' => 'Emessa'])['id'];
+$stato_emessa = (new Stato())->getByName('Emessa')->id_record;
 $is_fiscale = $dbo->selectOne('zz_segments', 'is_fiscale', ['id' => $_SESSION['module_'.$id_module]])['is_fiscale'];
 
 switch (post('op')) {
@@ -185,7 +184,7 @@ switch (post('op')) {
         }
 
         // Selezione delle fatture da esportare
-        $fatture = $dbo->fetchArray('SELECT co_documenti.id, numero_esterno, data, ragione_sociale, co_tipidocumento.descrizione, co_tipidocumento.dir FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id WHERE co_documenti.id IN('.implode(',', $id_records).')');
+        $fatture = $dbo->fetchArray('SELECT `co_documenti`.`id`, `numero_esterno`, `data`, `ragione_sociale`, `co_tipidocumento`.`descrizione`, `co_tipidocumento`.`dir` FROM `co_documenti` INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica`=`an_anagrafiche`.`idanagrafica` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento`=`co_statidocumento`.`id` WHERE `co_documenti`.`id` IN('.implode(',', $id_records).')');
 
         $failed = [];
         $added = 0;
@@ -263,7 +262,7 @@ switch (post('op')) {
         }
 
         // Selezione delle fatture da esportare
-        $fatture = $dbo->fetchArray('SELECT co_documenti.id, numero_esterno, data, ragione_sociale, co_tipidocumento.descrizione, co_tipidocumento.dir FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id WHERE co_documenti.id IN('.implode(',', $id_records).')');
+        $fatture = $dbo->fetchArray('SELECT `co_documenti`.`id`, `numero_esterno`, `data`, `ragione_sociale`, `co_tipidocumento`.`descrizione`, `co_tipidocumento`.`dir` FROM `co_documenti` INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica`=`an_anagrafiche`.`idanagrafica` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento`=`co_statidocumento`.`id` WHERE `co_documenti`.`id` IN('.implode(',', $id_records).')');
 
         $failed = [];
         $added = 0;
@@ -463,7 +462,7 @@ switch (post('op')) {
 
     case 'change-stato':
         $list = [];
-        $new_stato = Stato::where('descrizione', 'Emessa')->first();
+        $new_stato = (new Stato())->getByName('Emessa')->id_record;
         $fatture = Fattura::vendita()
         ->whereIn('id', $id_records)
         ->orderBy('data')
@@ -477,14 +476,15 @@ switch (post('op')) {
 
             $data_fattura_precedente = $dbo->fetchOne('
             SELECT
-                MAX(DATA) AS datamax
+                MAX(`data`) AS datamax
             FROM
-                co_documenti
-            INNER JOIN co_statidocumento ON co_statidocumento.id = co_documenti.idstatodocumento
-            INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id
-            INNER JOIN zz_segments ON zz_segments.id = co_documenti.id_segment
+                `co_documenti`
+                INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
+                LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_documenti`.`idstatodocumento` AND `co_statidocumento_lang`.`id_lang` = '.setting('Lingua').')
+                INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
+                INNER JOIN `zz_segments` ON `zz_segments`.`id` = `co_documenti`.`id_segment`
             WHERE
-                co_statidocumento.descrizione = "Emessa" AND co_tipidocumento.dir="entrata" AND co_documenti.id_segment='.$fattura->id_segment);
+                `co_statidocumento_lang`.`name` = "Emessa" AND `co_tipidocumento`.`dir`="entrata" AND `co_documenti`.`id_segment`='.$fattura->id_segment);
 
             if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax'])) && (!empty($data_fattura_precedente['datamax']))) {
                 $fattura->data = $data_fattura_precedente['datamax'];
@@ -576,7 +576,7 @@ switch (post('op')) {
             $documento = Fattura::find($id);
             ++$count;
 
-            if ($documento->stato->descrizione == 'Bozza') {
+            if ($documento->stato->name == 'Bozza') {
                 $documento->id_segment = post('id_segment');
                 $documento->save();
                 ++$n_doc;

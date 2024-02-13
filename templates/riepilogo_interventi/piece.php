@@ -66,7 +66,7 @@ if (dateFormat($intervento->inizio)) {
 }
 echo '
         <p><small><b>'.tr('Cliente').':</b> '.$intervento->anagrafica->ragione_sociale.'</small></p>
-        <p><small><b>'.tr('Stato').':</b> '.$intervento->stato->descrizione.'</small></p>
+        <p><small><b>'.tr('Stato').':</b> '.$intervento->stato->name.'</small></p>
         <p><small><b>'.tr('Data richiesta').':</b> '.dateFormat($intervento->data_richiesta).'</small></p>
         <p><small><b>'.tr('Richiesta').':</b> '.$intervento->richiesta.'</p>';
 if ($intervento->descrizione) {

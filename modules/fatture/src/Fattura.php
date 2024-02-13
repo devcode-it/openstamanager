@@ -96,7 +96,7 @@ class Fattura extends Document
         $database = database();
 
         // Individuazione dello stato predefinito per il documento
-        $stato_documento = Stato::where('descrizione', 'Bozza')->first();
+        $stato_documento = (new Stato())->getByName('Bozza')->id_record;
         $direzione = $tipo_documento->dir;
 
         // Conto predefinito sulla base del flusso di denaro
@@ -249,7 +249,7 @@ class Fattura extends Document
 
             $this->numero = static::getNextNumero($data, $direzione, $value);
 
-            if ($this->stato->descrizione == 'Bozza') {
+            if ($this->stato->name == 'Bozza') {
                 $this->numero_esterno = null;
             } elseif (!empty($previous)) {
                 $this->numero_esterno = static::getNextNumeroSecondario($data, $direzione, $value);
@@ -719,7 +719,7 @@ class Fattura extends Document
         $new->id_ricevuta_principale = null;
 
         // Spostamento dello stato
-        $stato = Stato::where('descrizione', 'Bozza')->first();
+        $stato = (new Stato())->getByName('Bozza')->id_record;
         $new->stato()->associate($stato);
 
         return $new;

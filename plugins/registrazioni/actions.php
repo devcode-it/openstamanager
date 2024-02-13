@@ -42,7 +42,7 @@ switch ($operazione) {
 
         $fattura = Fattura::find($id_record);
 
-        if ($fattura->stato->descrizione != 'Bozza') {
+        if ($fattura->stato->name != 'Bozza') {
             $fattura->gestoreMovimenti = new GestoreMovimenti($fattura);
             $fattura->gestoreMovimenti->registra();
         }

@@ -165,7 +165,7 @@ switch (post('op')) {
             if (empty($id_documento)) {
                 if (!empty($accodare)) {
                     $where = $raggruppamento == 'sede' ? ' AND idsede_destinazione = '.prepare($intervento['idsede_destinazione']) : '';
-                    $documento = $dbo->fetchOne('SELECT co_documenti.id FROM co_documenti INNER JOIN co_statidocumento ON co_documenti.idstatodocumento = co_statidocumento.id INNER JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento INNER JOIN zz_segments ON zz_segments.id = co_documenti.id_segment WHERE co_statidocumento.descrizione = "Bozza"  AND co_documenti.idanagrafica = '.prepare($id_anagrafica).' AND co_tipidocumento.id='.prepare($tipo_documento['id']).' AND co_documenti.id_segment = '.prepare($id_segment).$where);
+                    $documento = $dbo->fetchOne('SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id` LEFT JOIN `co_statidocumenti_lang` ON (`co_statidocumenti`.`id` = `co_statidocumenti_lang`.`id_record` AND `co_statidocumenti_lang`.`id_lang` = "'.prepare(setting('Lingua')).'") INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` INNER JOIN `zz_segments` ON `zz_segments`.`id` = `co_documenti`.`id_segment` WHERE `co_statidocumento_lang`.`name` = "Bozza"  AND `co_documenti`.`idanagrafica` = '.prepare($id_anagrafica).' AND co_tipidocumento.id='.prepare($tipo_documento['id']).' AND `co_documenti`.`id_segment` = '.prepare($id_segment).$where);
 
                     $id_documento = $documento['id'];
                     $id_documento_cliente[$id_anagrafica] = $id_documento;

@@ -69,20 +69,22 @@ $righe = $dbo->fetchArray(
 
                 $ultimo_prezzo_vendita = $dbo->fetchArray(
                     'SELECT
-                        co_righe_preventivi.idarticolo,
-                        co_righe_documenti.prezzo_unitario,
-                        DATE(co_righe_documenti.updated_at) AS updated_at
+                        `co_righe_preventivi`.`idarticolo`,
+                        `co_righe_documenti`.`prezzo_unitario`,
+                        DATE(`co_righe_documenti`.`updated_at`) AS updated_at
                     FROM
-                        co_documenti
-                    INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento = co_documenti.id
-                    INNER JOIN mg_articoli ON mg_articoli.id = co_righe_documenti.idarticolo
-                    INNER JOIN co_righe_preventivi ON co_righe_preventivi.idarticolo = mg_articoli.id
+                        `co_documenti`
+                        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id`
+                        INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_documenti`.`idarticolo`
+                        INNER JOIN `co_righe_preventivi` ON `co_righe_preventivi`.`idarticolo` = `mg_articoli`.`id`
+                        INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
+                        LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).')
                     WHERE
-                        co_documenti.idanagrafica ='.prepare($id_anagrafica).' AND co_righe_documenti.idarticolo ='.prepare($riga['idarticolo']).' AND co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE descrizione = "Emessa" OR descrizione = "Pagato" OR descrizione = "Parzialmente pagato")
+                        `co_documenti`.`idanagrafica` ='.prepare($id_anagrafica).' AND `co_righe_documenti`.`idarticolo` ='.prepare($riga['idarticolo']).' AND `co_statidocumento_lang`.`name` IN ("Emessa", "Pagato", "Parzialmente pagato")
                     GROUP BY 
-                        mg_articoli.id, co_righe_documenti.id
+                        `mg_articoli`.`id`, `co_righe_documenti`.`id`
                     ORDER BY
-                        updated_at DESC'
+                        `updated_at` DESC'
                 )[0];
                 ?>
 

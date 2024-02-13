@@ -588,8 +588,9 @@ class Fattura extends Document
         // Fix dei campi statici
         $this->id_riga_bollo = $this->gestoreBollo->manageRigaMarcaDaBollo();
 
+        $stato = (new Stato())->getByName($this->stato['descrizione']);
         // Generazione numero fattura se non presente (Bozza -> Emessa)
-        if ((($stato_precedente->descrizione == 'Bozza' && $this->stato['descrizione'] == 'Emessa') or (!$is_fiscale)) && empty($this->numero_esterno)) {
+        if ((($stato_precedente->name == 'Bozza' && $stato->name == 'Emessa') or (!$is_fiscale)) && empty($this->numero_esterno)) {
             $this->numero_esterno = self::getNextNumeroSecondario($this->data, $this->direzione, $this->id_segment);
         }
 
@@ -599,8 +600,8 @@ class Fattura extends Document
         // Operazioni al cambiamento di stato
         // Bozza o Annullato -> Stato diverso da Bozza o Annullato
         if (
-            (in_array($stato_precedente->descrizione, ['Bozza', 'Annullata'])
-            && !in_array($this->stato['descrizione'], ['Bozza', 'Annullata']))
+            (in_array($stato_precedente->name, ['Bozza', 'Annullata'])
+            && !in_array($stato->name, ['Bozza', 'Annullata']))
             || $options[0] == 'forza_emissione'
         ) {
             // Registrazione scadenze
@@ -609,7 +610,7 @@ class Fattura extends Document
             // Registrazione movimenti
             $this->gestoreMovimenti->registra();
         } // Stato qualunque -> Bozza o Annullato
-        elseif (in_array($this->stato['descrizione'], ['Bozza', 'Annullata'])) {
+        elseif (in_array($stato->name, ['Bozza', 'Annullata'])) {
             // Rimozione delle scadenza
             $this->rimuoviScadenze();
 
@@ -620,7 +621,7 @@ class Fattura extends Document
             $this->movimentiContabili()->delete();
         }
 
-        if ($this->changes['data_competenza'] && !in_array($this->stato['descrizione'], ['Bozza', 'Annullata'])) {
+        if ($this->changes['data_competenza'] && !in_array($stato->name, ['Bozza', 'Annullata'])) {
             $movimenti = Movimento::where('iddocumento', $this->id)->where('primanota', 0)->get();
             foreach ($movimenti as $movimento) {
                 $movimento->data = $this->data_competenza;
@@ -643,7 +644,7 @@ class Fattura extends Document
         }
 
         // Operazioni automatiche per le Fatture Elettroniche
-        if ($this->direzione == 'entrata' && $stato_precedente->descrizione == 'Bozza' && $this->stato['descrizione'] == 'Emessa') {
+        if ($this->direzione == 'entrata' && $stato_precedente->name == 'Bozza' && $stato->name == 'Emessa') {
             $stato_fe = database()->fetchOne('SELECT * FROM fe_stati_documento WHERE codice = '.prepare($this->codice_stato_fe));
             $abilita_genera = empty($this->codice_stato_fe) || intval($stato_fe['is_generabile']);
 
@@ -788,7 +789,7 @@ class Fattura extends Document
     public function scopeContabile($query)
     {
         return $query->whereHas('stato', function (Builder $query) {
-            $query->whereIn('descrizione', ['Emessa', 'Parzialmente pagato', 'Pagato']);
+            $query->whereIn('name', ['Emessa', 'Parzialmente pagato', 'Pagato']);
         });
     }
 

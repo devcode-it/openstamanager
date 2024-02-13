@@ -206,12 +206,12 @@ $clienti = $dbo->fetchArray('SELECT
     ORDER BY 
         `totale` DESC LIMIT 20');
 
-$totale = $dbo->fetchArray("SELECT 
+$totale = $dbo->fetchArray('SELECT 
         SUM(IF(`reversed`=1, -(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))) AS totale 
     FROM 
         `co_documenti` 
         INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
-        LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = ".prepare(setting('Lingua')).") 
+        LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).") 
         INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` 
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` 
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id` 
@@ -305,8 +305,8 @@ $totale = $dbo->fetchArray("SELECT
     WHERE 
         `co_tipidocumento`.`dir`='entrata' 
         AND `co_statidocumento_lang`.name IN ('Pagato', 'Parzialmente pagato', 'Emessa') 
-        AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end)." 
-        AND `zz_segments`.`autofatture`=0");
+        AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).' 
+        AND `zz_segments`.`autofatture`=0');
 
 echo '
     <div class="col-md-6">

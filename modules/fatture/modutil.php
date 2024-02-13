@@ -266,7 +266,7 @@ if (!function_exists('aggiungi_movimento')) {
 
         // Lettura info fattura
         $query = 'SELECT *, `co_documenti`.`data_competenza`, `co_documenti`.`note`, `co_documenti`.`idpagamento`, `co_documenti`.`id` AS iddocumento, `co_statidocumento_lang`.`name` AS `stato`, `co_tipidocumento`.`descrizione` AS descrizione_tipo FROM ((`co_documenti` LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento`=`co_statidocumento`.`id`) INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`) INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` WHERE `co_documenti`.`id`='.prepare($iddocumento);
-        
+
         $rs = $dbo->fetchArray($query);
         $data = $rs[0]['data_competenza'];
         $ragione_sociale = $rs[0]['ragione_sociale'];

@@ -17,8 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Plugins\ListinoFornitori\DettaglioFornitore;
 use Modules\Fatture\Stato;
+use Plugins\ListinoFornitori\DettaglioFornitore;
 
 // Inizializzazione
 $documento = $options['documento'];

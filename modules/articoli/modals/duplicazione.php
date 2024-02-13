@@ -26,7 +26,7 @@ echo '
 
     <div class="row">
         <div class="col-md-9">
-            {[ "type": "text", "label": "'.tr('Codice').'", "name": "codice", "value": "", "validation": "codice", "help": "'.tr('Se non specificato, il codice verrà calcolato automaticamente').'" ]}
+            {[ "type": "text", "label": "'.tr('Codice').'", "name": "codice", "value": "", "validation": "codice|'.$id_module.'|null", "help": "'.tr('Se non specificato, il codice verrà calcolato automaticamente').'" ]}
         </div>
 
         <div class="col-md-3">

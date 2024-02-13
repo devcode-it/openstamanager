@@ -157,7 +157,7 @@ if (!empty($interventi)) {
             </tr>
             <tr>
                 <td colspan="2" class="text-left" >'.tr('Tipo').': <b>'.$intervento->tipo->descrizione.'</b></td>
-                <td colspan="2" class="text-left" >'.tr('stato').': <b>'.$intervento->stato->descrizione.'</b></td>
+                <td colspan="2" class="text-left" >'.tr('stato').': <b>'.$intervento->stato->name.'</b></td>
             </tr>
             <tr>
                 <td colspan="4" class="text-left" >'.tr('richiesta').': <b>'.$intervento->richiesta.'</b></td>

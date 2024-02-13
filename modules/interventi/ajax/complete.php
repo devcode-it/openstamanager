@@ -31,7 +31,7 @@ switch ($op) {
             if (!$contratti->isEmpty()) {
                 foreach ($contratti as $contratto) {
                     echo '
-                    <li>'.$contratto->getReference().' ['.$contratto->stato->descrizione.']: '.dateFormat($contratto->data_accettazione).' - '.dateFormat($contratto->data_conclusione).'</li>';
+                    <li>'.$contratto->getReference().' ['.$contratto->stato->name.']: '.dateFormat($contratto->data_accettazione).' - '.dateFormat($contratto->data_conclusione).'</li>';
                 }
             } else {
                 echo '

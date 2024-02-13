@@ -38,7 +38,7 @@ $raggruppamenti = $dbo->fetchArray('
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
     WHERE 
-        `co_tipidocumento`.`dir` = '.prepare($dir).' AND `co_righe_documenti`.`is_descrizione` = 0 AND `idstatodocumento` NOT IN(SELECT `id` FROM `co_statidocumento` WHERE `descrizione` = "Bozza" OR `descrizione` = "Annullata") AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).'
+        `co_tipidocumento`.`dir` = '.prepare($dir).' AND `co_righe_documenti`.`is_descrizione` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` = "Bozza" OR `name` = "Annullata") AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).'
     GROUP BY 
         `periodo`
     ORDER BY

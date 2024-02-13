@@ -462,15 +462,15 @@ if (!function_exists('color_inverse')) {
             }
         } else {
             switch ($start_colour) {
-            case 'black':
-                return 'white';
-            case 'blue':
-                return 'white';
-            case 'purple':
-                return 'white';
-            // Aggiungere altri casi per colori specifici
-            default:
-                return '#000'; // Se il colore non è specificato, restituisce il colore originale
+                case 'black':
+                    return 'white';
+                case 'blue':
+                    return 'white';
+                case 'purple':
+                    return 'white';
+                    // Aggiungere altri casi per colori specifici
+                default:
+                    return '#000'; // Se il colore non è specificato, restituisce il colore originale
             }
         }
     }

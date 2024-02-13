@@ -271,7 +271,7 @@ class Preventivo extends Document
             $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
             $codice_intervento = 'FAT';
         } else {
-            $descrizione = $this->stato->descrizione;
+            $descrizione = $this->stato->name;
             $codice_intervento = 'OK';
         }
 

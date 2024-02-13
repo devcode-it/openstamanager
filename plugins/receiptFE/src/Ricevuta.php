@@ -243,8 +243,8 @@ class Ricevuta
 
         // Correzione eventuale per lo stato della fattura in Bozza
         $fattura = $this->getFattura();
-        if ($fattura->stato->descrizione == 'Bozza') {
-            $stato_emessa = Stato::where('descrizione', 'Emessa')->first();
+        if ($fattura->stato->name == 'Bozza') {
+            $stato_emessa = (new Stato())->getByName('Emessa')->id_record;
             $fattura->stato()->associate($stato_emessa);
             $fattura->save();
         }

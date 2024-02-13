@@ -71,20 +71,22 @@ $righe = $dbo->fetchArray(
 
                 $ultimo_prezzo_vendita = $dbo->fetchArray(
                     'SELECT
-                            in_righe_interventi.idarticolo,
-                            co_righe_documenti.prezzo_unitario,
-                            DATE(co_righe_documenti.updated_at) AS updated_at
-                        FROM
-                            co_documenti
-                        INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento = co_documenti.id
-                        INNER JOIN mg_articoli ON mg_articoli.id = co_righe_documenti.idarticolo
-                        INNER JOIN in_righe_interventi ON in_righe_interventi.idarticolo = mg_articoli.id
-                        WHERE
-                            co_documenti.idanagrafica ='.prepare($id_anagrafica).' AND co_righe_documenti.idarticolo ='.prepare($riga['idarticolo']).' AND co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE descrizione = "Emessa" OR descrizione = "Pagato" OR descrizione = "Parzialmente pagato")
-                        GROUP BY 
-                            mg_articoli.id, co_righe_documenti.id
-                        ORDER BY
-                            updated_at DESC'
+                        `in_righe_interventi`.`idarticolo`,
+                        `co_righe_documenti`.`prezzo_unitario`,
+                        DATE(`co_righe_documenti`.`updated_at`) AS updated_at
+                    FROM
+                        `co_documenti`
+                        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id`
+                        INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_documenti`.`idarticolo`
+                        INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`idarticolo` = `mg_articoli`.`id`
+                        INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
+                        LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`idstatodocumento` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`lang` = "'.prepare(setting('Lingua')).'")
+                    WHERE
+                        `co_documenti`.`idanagrafica` ='.prepare($id_anagrafica).' AND `co_righe_documenti`.`idarticolo` ='.prepare($riga['idarticolo']).' AND `co_statidocumento_lang`.`name` IN ("Emessa", "Pagato", "Parzialmente pagato")
+                    GROUP BY 
+                        `mg_articoli`.`id`, `co_righe_documenti`.`id`
+                    ORDER BY
+                        `updated_at` DESC'
                 )[0];
                 ?>
 

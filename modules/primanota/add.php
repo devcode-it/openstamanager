@@ -121,7 +121,7 @@ foreach ($id_documenti as $id_documento) {
     $dir = $fattura->direzione;
 
     // Inclusione delle sole fatture in stato Emessa, Parzialmente pagato o Pagato
-    if (!in_array($fattura->stato->descrizione, ['Emessa', 'Parzialmente pagato', 'Pagato'])) {
+    if (!in_array($fattura->stato->name, ['Emessa', 'Parzialmente pagato', 'Pagato'])) {
         ++$counter;
         continue;
     }
@@ -243,9 +243,9 @@ if ($numero_documenti + $numero_scadenze > 1) {
 
 if (!empty($id_records) && get('origine') == 'fatture' && !empty($counter)) {
     $descrizione_stati = [];
-    $stati = $database->fetchArray("SELECT * FROM `co_statidocumento` WHERE descrizione IN ('Emessa', 'Parzialmente pagato', 'Pagato') ORDER BY descrizione");
+    $stati = $database->fetchArray("SELECT * FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '".prepare(setting('Lingua'))."') WHERE `name` IN ('Emessa', 'Parzialmente pagato', 'Pagato') ORDER BY `name`");
     foreach ($stati as $stato) {
-        $descrizione_stati[] = '<i class="'.$stato['icona'].'"></i> <small>'.$stato['descrizione'].'</small>';
+        $descrizione_stati[] = '<i class="'.$stato['icona'].'"></i> <small>'.$stato['name'].'</small>';
     }
 
     echo '

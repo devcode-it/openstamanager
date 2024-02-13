@@ -22,10 +22,13 @@ include_once __DIR__.'/../../core.php';
 switch (post('op')) {
     case 'update':
         $dbo->update('co_statidocumento', [
-            'descrizione' => (count($dbo->fetchArray('SELECT descrizione FROM co_statidocumento WHERE descrizione = '.prepare(post('descrizione')))) > 0) ? $dbo->fetchOne('SELECT descrizione FROM co_statidocumento WHERE id ='.$id_record)['descrizione'] : post('descrizione'),
             'icona' => post('icona'),
             'colore' => post('colore'),
         ], ['id' => $id_record]);
+
+        $dbo->update('co_statidocumento_lang', [
+            'name' => post('descrizione'),
+        ], ['id_record' => $id_record]);
 
         flash()->info(tr('Informazioni salvate correttamente.'));
 

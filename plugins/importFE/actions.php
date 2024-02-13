@@ -148,7 +148,7 @@ switch (filter('op')) {
         $fattura_pa->delete();
         $fattura = Fattura::find($id_fattura);
         $id_autofattura = post('autofattura');
-        $new_stato = Stato::where('descrizione', 'Pagato')->first();
+        $new_stato = (new Stato())->getByName('Pagato')->id_record;
 
         if ($fattura->isAutofattura() && !empty($id_autofattura)) {
             $autofattura_collegata = Fattura::find($id_autofattura);

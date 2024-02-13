@@ -24,23 +24,24 @@ $id_module = $module['id'];
 
 $module_query = '
 SELECT
-    numero_esterno,
-    an_anagrafiche.ragione_sociale,
-    SUM(prezzo_unitario*qta) as \'Totale\',
-    provvigione_percentuale,
-    provvigione
+    `numero_esterno`,
+    `an_anagrafiche`.`ragione_sociale`,
+    SUM(`prezzo_unitario`*`qta`) as \'Totale\',
+    `provvigione_percentuale`,
+    `provvigione`
 FROM
     `co_documenti`
     LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
     LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
     LEFT JOIN (SELECT `iddocumento`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`iva`) AS `iva` FROM `co_righe_documenti` GROUP BY `iddocumento`) AS righe ON `co_documenti`.`id` = `righe`.`iddocumento`
     LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
-	LEFT JOIN an_anagrafiche as agenti ON agenti.idanagrafica = co_documenti.idagente
-    LEFT JOIN co_righe_documenti ON co_righe_documenti.iddocumento = co_documenti.id
+    LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+	LEFT JOIN `an_anagrafiche` as agenti ON `agenti`.`idanagrafica` = `co_documenti`.`idagente`
+    LEFT JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id`
 WHERE
-    1=1 AND provvigione > 0
+    1=1 AND `provvigione` > 0
 GROUP BY
-    co_documenti.id
+    `co_documenti`.`id`
 HAVING
     2=2
 ORDER BY
@@ -58,15 +59,15 @@ if (!empty(get('date_end'))) {
     $date_end = get('date_end');
 }
 
-$module_query = str_replace('1=1', '1=1 AND co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE descrizione = "Pagato")', $module_query);
+$module_query = str_replace('1=1', '1=1 AND `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` = "Pagato")', $module_query);
 
 if (get('is_emessa') == 'true' && get('is_parz_pagata') == 'true') {
-    $module_query = str_replace('1=1 AND co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE descrizione = "Pagato")', '1=1 AND co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE descrizione = "Pagato" OR descrizione = "Emessa" OR descrizione = "Parzialmente pagato")', $module_query);
+    $module_query = str_replace('1=1 AND `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` = "Pagato")', '1=1 AND `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` IN ("Pagato", "Emessa", "Parzialmente pagato"))', $module_query);
 } elseif (get('is_emessa') == 'true') {
-    $module_query = str_replace('1=1 AND co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE descrizione = "Pagato")', '1=1 AND co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE descrizione = "Pagato" OR descrizione = "Emessa")', $module_query);
+    $module_query = str_replace('1=1 AND `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` = "Pagato")', '1=1 AND `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` IN ("Pagato", "Emessa"))', $module_query);
 } elseif (get('is_parz_pagata') == 'true') {
-    $module_query = str_replace('1=1 AND co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE descrizione = "Pagato")', '1=1 AND co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE descrizione = "Pagato" OR descrizione = "Parzialmente pagato")', $module_query);
+    $module_query = str_replace('1=1 AND `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` = "Pagato")', '1=1 AND `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` IN ("Pagato", "Parzialmente pagato"))', $module_query);
 }
 
-$module_query = str_replace('1=1', '1=1 AND co_documenti.idagente='.prepare($id_record), $module_query);
+$module_query = str_replace('1=1', '1=1 AND `co_documenti`.`idagente`='.prepare($id_record), $module_query);
 $records = $dbo->fetchArray($module_query);

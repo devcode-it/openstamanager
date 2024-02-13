@@ -233,21 +233,21 @@ class Movimenti
 
             $totale_dare += $dare;
             $totale_avere += $avere;
-            
+
             // Nell'ultimo conto del mastrino inserisco l'eventuale differenza per evitare sbilanci nel totale
             $aggiustamento_dare = 0;
             $aggiustamento_avere = 0;
 
-            if ($i++ == count($movimenti) -1) {
+            if ($i++ == count($movimenti) - 1) {
                 if ($element['dare']) {
-                    $aggiustamento_dare -= round( $totale_dare - $totale_avere, 6 );
+                    $aggiustamento_dare -= round($totale_dare - $totale_avere, 6);
                 } elseif ($element['avere']) {
-                    $aggiustamento_avere -= round( $totale_avere - $totale_dare, 6 );
+                    $aggiustamento_avere -= round($totale_avere - $totale_dare, 6);
                 }
             }
 
             $movimento = Movimento::build($mastrino, $element['id_conto'], $this->fattura);
-            $movimento->setTotale((float)$avere + $aggiustamento_avere, (float)$dare + $aggiustamento_dare);
+            $movimento->setTotale((float) $avere + $aggiustamento_avere, (float) $dare + $aggiustamento_dare);
             $movimento->save();
         }
     }

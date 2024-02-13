@@ -97,17 +97,16 @@ switch (post('op')) {
         $where = '';
         $query = 'SELECT *, IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id), in_interventi.data_richiesta) AS data, in_statiintervento.descrizione AS stato, in_interventi.codice AS codice_intervento FROM in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento WHERE in_statiintervento.is_fatturabile=1 AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND in_interventi.id IN ('.implode(',', $id_records).')';
 
-
         // Se non è attiva la relativa impostazione considero solo interventi non collegati a contratti, ordini o preventivi (default)
         if (!setting('Permetti fatturazione delle attività collegate a contratti')) {
             $where = ' AND in_interventi.id_contratto IS NULL';
-       
-            $num_interventi_collegati_a_contratti = $dbo->fetchArray($query.' '.'AND in_interventi.id_contratto IS NOT NULL');
 
-            if (count($num_interventi_collegati_a_contratti) >0){
+            $num_interventi_collegati_a_contratti = $dbo->fetchArray($query.' AND in_interventi.id_contratto IS NOT NULL');
+
+            if (count($num_interventi_collegati_a_contratti) > 0) {
                 flash()->warning(tr('_NUM_ interventi collegati a contratti non sono stati fatturati. Puoi procedere alla fatturazione abilitando la relativa impostazione: _SETTING_', [
-                    '_NUM_' =>  count($num_interventi_collegati_a_contratti),
-                    '_SETTING_' => Modules::link('Impostazioni', null, tr('Permetti fatturazione delle attività collegate a contratti'), true, null, true, null, "&search=Permetti fatturazione delle attività collegate a contratti"),
+                    '_NUM_' => count($num_interventi_collegati_a_contratti),
+                    '_SETTING_' => Modules::link('Impostazioni', null, tr('Permetti fatturazione delle attività collegate a contratti'), true, null, true, null, '&search=Permetti fatturazione delle attività collegate a contratti'),
                 ]));
             }
         }
@@ -115,37 +114,29 @@ switch (post('op')) {
         if (!setting('Permetti fatturazione delle attività collegate a ordini')) {
             $where .= ' AND in_interventi.id_ordine IS NULL';
 
-            $num_interventi_collegati_a_ordini = $dbo->fetchArray($query.' '.'AND in_interventi.id_ordine IS NOT NULL');
+            $num_interventi_collegati_a_ordini = $dbo->fetchArray($query.' AND in_interventi.id_ordine IS NOT NULL');
 
-            if (count($num_interventi_collegati_a_ordini) >0){
+            if (count($num_interventi_collegati_a_ordini) > 0) {
                 flash()->warning(tr('_NUM_ interventi collegati a ordini non sono stati fatturati. Puoi procedere alla fatturazione abilitando la relativa impostazione: _SETTING_', [
-                    '_NUM_' =>  count($num_interventi_collegati_a_ordini),
-                    '_SETTING_' => Modules::link('Impostazioni', null, tr('Permetti fatturazione delle attività collegate a ordini'), true, null, true, null, "&search=Permetti fatturazione delle attività collegate a ordini"),
+                    '_NUM_' => count($num_interventi_collegati_a_ordini),
+                    '_SETTING_' => Modules::link('Impostazioni', null, tr('Permetti fatturazione delle attività collegate a ordini'), true, null, true, null, '&search=Permetti fatturazione delle attività collegate a ordini'),
                 ]));
             }
-
-
         }
         if (!setting('Permetti fatturazione delle attività collegate a preventivi')) {
             $where .= ' AND in_interventi.id_preventivo IS NULL';
 
-            $num_interventi_collegati_a_preventivi = $dbo->fetchArray($query.' '.'AND in_interventi.id_preventivo IS NOT NULL');
+            $num_interventi_collegati_a_preventivi = $dbo->fetchArray($query.' AND in_interventi.id_preventivo IS NOT NULL');
 
-            if (count($num_interventi_collegati_a_preventivi) >0){
+            if (count($num_interventi_collegati_a_preventivi) > 0) {
                 flash()->warning(tr('_NUM_ interventi collegati a preventivi non sono stati fatturati. Puoi procedere alla fatturazione abilitando la relativa impostazione: _SETTING_', [
-                    '_NUM_' =>  count($num_interventi_collegati_a_preventivi),
-                    '_SETTING_' => Modules::link('Impostazioni', null, tr('Permetti fatturazione delle attività collegate a preventivi'), true, null, true, null, "&search=Permetti fatturazione delle attività collegate a preventivi"),
+                    '_NUM_' => count($num_interventi_collegati_a_preventivi),
+                    '_SETTING_' => Modules::link('Impostazioni', null, tr('Permetti fatturazione delle attività collegate a preventivi'), true, null, true, null, '&search=Permetti fatturazione delle attività collegate a preventivi'),
                 ]));
             }
         }
 
         $interventi = $dbo->fetchArray($query.' '.$where);
-
-
-       
-
-
-
 
         // Lettura righe selezionate
         foreach ($interventi as $intervento) {
@@ -165,7 +156,7 @@ switch (post('op')) {
             if (empty($id_documento)) {
                 if (!empty($accodare)) {
                     $where = $raggruppamento == 'sede' ? ' AND idsede_destinazione = '.prepare($intervento['idsede_destinazione']) : '';
-                    $documento = $dbo->fetchOne('SELECT co_documenti.id FROM co_documenti INNER JOIN co_statidocumento ON co_documenti.idstatodocumento = co_statidocumento.id INNER JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento INNER JOIN zz_segments ON zz_segments.id = co_documenti.id_segment WHERE co_statidocumento.descrizione = "Bozza"  AND co_documenti.idanagrafica = '.prepare($id_anagrafica).' AND co_tipidocumento.id='.prepare($tipo_documento['id']).' AND co_documenti.id_segment = '.prepare($id_segment).$where);
+                    $documento = $dbo->fetchOne('SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id` LEFT JOIN `co_statidocumenti_lang` ON (`co_statidocumenti`.`id` = `co_statidocumenti_lang`.`id_record` AND `co_statidocumenti_lang`.`id_lang` = "'.prepare(setting('Lingua')).'") INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` INNER JOIN `zz_segments` ON `zz_segments`.`id` = `co_documenti`.`id_segment` WHERE `co_statidocumento_lang`.`name` = "Bozza"  AND `co_documenti`.`idanagrafica` = '.prepare($id_anagrafica).' AND co_tipidocumento.id='.prepare($tipo_documento['id']).' AND `co_documenti`.`id_segment` = '.prepare($id_segment).$where);
 
                     $id_documento = $documento['id'];
                     $id_documento_cliente[$id_anagrafica] = $id_documento;

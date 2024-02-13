@@ -153,7 +153,7 @@ if (!empty($fattura->ref_documento) && $fattura->isNota()) {
 }
 
 // Ricordo che si sta emettendo una fattura conto terzi
-if ($dir == 'entrata' && $fattura->stato->descrizione == 'Bozza') {
+if ($dir == 'entrata' && $fattura->stato->name == 'Bozza') {
     if ($fattura->is_fattura_conto_terzi) {
         echo '
         <div class="alert alert-info">
@@ -239,19 +239,19 @@ if ($dir == 'entrata') {
 
 <?php
 
-$query = 'SELECT *, colore AS _bgcolor_ FROM co_statidocumento';
+$query = 'SELECT *, `colore` AS _bgcolor_, `co_statidocumento_lang`.`name` as descrizione FROM `co_statidocumento` LEFT JOIN `co_statidocumento` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).')';
 if (empty($record['is_fiscale'])) {
-    $query .= " WHERE descrizione = 'Bozza'";
+    $query .= " WHERE `name` = 'Bozza'";
 
     $plugin = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Fatturazione Elettronica' AND idmodule_to = ".prepare($id_module));
     echo '<script>$("#link-tab_'.$plugin[0]['id'].'").addClass("disabled");</script>';
 }
 // Forzo il passaggio della fattura da Bozza ad Emessa per il corretto calcolo del numero.
 elseif ($record['stato'] == 'Bozza') {
-    $query .= " WHERE descrizione IN ('Emessa', 'Bozza')";
+    $query .= " WHERE `name` IN ('Emessa', 'Bozza')";
 }
 
-$query .= ' ORDER BY descrizione';
+$query .= ' ORDER BY `name`';
 
 ?>
 				<?php if ($dir == 'entrata') {
@@ -709,7 +709,7 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione)) {
         $descrizione_iva_accettata .= '<li>'.Aliquota::find($iva_accettata->id)->name.'</li>';
     }
 
-    if ($fattura->stato->descrizione == 'Bozza') {
+    if ($fattura->stato->name == 'Bozza') {
         echo '
         <div class="alert alert-info">
             <i class="fa fa-info"></i> '.tr("La fattura è collegata ad una dichiarazione d'intento con diponibilità residura pari a _MONEY_.", ['_MONEY_' => moneyFormat($diff)]).'<br>'.tr('Per collegare una riga alla dichiarazione è sufficiente specificare come IVA <ul>_IVA_</ul>', ['_IVA_' => $descrizione_iva_accettata]).'</b>

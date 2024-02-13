@@ -588,7 +588,7 @@ class Fattura extends Document
         // Fix dei campi statici
         $this->id_riga_bollo = $this->gestoreBollo->manageRigaMarcaDaBollo();
 
-        $stato = (new Stato())->getByName($this->stato['descrizione']);
+        $stato = Stato::find($this->stato['id']);
         // Generazione numero fattura se non presente (Bozza -> Emessa)
         if ((($stato_precedente->name == 'Bozza' && $stato->name == 'Emessa') or (!$is_fiscale)) && empty($this->numero_esterno)) {
             $this->numero_esterno = self::getNextNumeroSecondario($this->data, $this->direzione, $this->id_segment);
@@ -605,7 +605,7 @@ class Fattura extends Document
             || $options[0] == 'forza_emissione'
         ) {
             // Registrazione scadenze
-            $this->registraScadenze($this->stato['descrizione'] == 'Pagato');
+            $this->registraScadenze($stato->name == 'Pagato');
 
             // Registrazione movimenti
             $this->gestoreMovimenti->registra();

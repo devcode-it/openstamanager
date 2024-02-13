@@ -51,7 +51,7 @@ return [
     'co_staticontratti',
     'co_staticontratti_lang',
     'co_statidocumento',
-    'co_statidocumento_lang'
+    'co_statidocumento_lang',
     'co_statipreventivi',
     'co_tipidocumento',
     'co_tipi_scadenze',

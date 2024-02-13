@@ -110,7 +110,7 @@ if (!empty($options['create_document'])) {
 
         echo '
             <div class="col-md-6">
-                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT * FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name` IN (\'Emessa\', \'Bozza\')", "value": "'.$stato_predefinito['id'].'"]}
+                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `co_statidocumento`.`id` as id, `co_statidocumento_lang`.`name` as descrizione FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name` IN (\'Emessa\', \'Bozza\')", "value": "'.$stato_predefinito.'"]}
             </div>
 
             <div class="col-md-6">

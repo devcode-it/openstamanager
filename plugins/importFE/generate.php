@@ -601,7 +601,7 @@ if (!empty($righe)) {
                             </div>
 
                             <div class="col-md-6">
-                                {[ "type": "select", "name": "update_info['.$key.']", "values": "list=\"update_not\":\"Nessuna operazione\", \"update_price\":\"Crea listino del fornitore (se non presente) e aggiorna il prezzo di acquisto\", \"update_all\":\"Crea listino del fornitore (se non presente) aggiorna prezzo di acquisto e imposta fornitore come predefinito\"", "label": "'.tr('Aggiorna info di acquisto').'", "value": "'.$update_info.'" ]}
+                                {[ "type": "select", "name": "update_info['.$key.']", "values": "list=\"update_not\":\"Nessuna operazione\", \"update_price\":\"Crea listino del fornitore (se non presente) e aggiorna il prezzo di acquisto\", \"update_all\":\"Crea listino del fornitore (se non presente) aggiorna prezzo di acquisto e imposta fornitore come predefinito\"", "label": "'.tr('Aggiorna info di acquisto').'", "value": "'.$update_info.'", "help": "'.tr('Creazione automatica articolo deve essere attiva o l\'articolo deve essere selezionato affinché questa impostazione abbia effetto').'." ]}
                             </div>
                         </div>
 

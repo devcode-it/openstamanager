@@ -228,27 +228,35 @@ class Movimenti
         $mastrino = $this->generateMastrino();
 
         foreach ($movimenti as $element) {
-            $dare = round($element['dare'], 6);
-            $avere = round($element['avere'], 6);
+            $dare = round($element['dare'], 8);
+            $avere = round($element['avere'], 8);
 
             $totale_dare += $dare;
             $totale_avere += $avere;
 
-            // Nell'ultimo conto del mastrino inserisco l'eventuale differenza per evitare sbilanci nel totale
-            $aggiustamento_dare = 0;
-            $aggiustamento_avere = 0;
+            $movimento = Movimento::build($mastrino, $element['id_conto'], $this->fattura);
+            $movimento->setTotale($avere, $dare);
+            $movimento->save();
+        }
 
-            if ($i++ == count($movimenti) - 1) {
-                if ($element['dare']) {
-                    $aggiustamento_dare -= round($totale_dare - $totale_avere, 6);
-                } elseif ($element['avere']) {
-                    $aggiustamento_avere -= round($totale_avere - $totale_dare, 6);
+        // Nel penultimo conto del mastrino inserisco l'eventuale differenza per evitare sbilanci nel totale,
+        // evitando di mettere differenze nell'iva
+        $diff = round($totale_avere - $totale_dare, 4);
+        
+        if ($diff) {
+            $movimenti = $mastrino->movimenti()->where('primanota', '=', 0)->get();
+            $m = 0;
+            foreach ($movimenti as $movimento) {
+                if ($m++ == $movimenti->count() - 2) {
+                    if ($movimento->totale < 0) {
+                        $movimento->setTotale(abs($movimento->totale) - $diff, 0);
+                    } else {
+                        $movimento->setTotale(0, abs($movimento->totale) + $diff);
+                    }
+
+                    $movimento->save();
                 }
             }
-
-            $movimento = Movimento::build($mastrino, $element['id_conto'], $this->fattura);
-            $movimento->setTotale((float) $avere + $aggiustamento_avere, (float) $dare + $aggiustamento_dare);
-            $movimento->save();
         }
     }
 

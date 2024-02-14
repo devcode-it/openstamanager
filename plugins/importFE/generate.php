@@ -428,6 +428,7 @@ if (!empty($righe)) {
 
         // Individuazione articolo con codice relativo
         $id_articolo = null;
+        //Prendo il codice articolo dal primo nodo CodiceValore che trovo
         $codice_principale = $codici[0]['CodiceValore'];
         if (!empty($codice_principale)) {
             if (!empty($anagrafica) && empty($id_articolo)) {
@@ -600,7 +601,7 @@ if (!empty($righe)) {
                             </div>
 
                             <div class="col-md-6">
-                                {[ "type": "select", "name": "update_info['.$key.']", "values": "list=\"update_not\":\"Non aggiornare\", \"update_price\":\"Aggiorna prezzo di listino\", \"update_all\":\"Aggiorna prezzo di acquisto + imposta fornitore predefinito\"", "label": "'.tr('Aggiorna info di acquisto').'", "value": "'.$update_info.'" ]}
+                                {[ "type": "select", "name": "update_info['.$key.']", "values": "list=\"update_not\":\"Nessuna operazione\", \"update_price\":\"Crea listino del fornitore (se non presente) e aggiorna il prezzo di acquisto\", \"update_all\":\"Crea listino del fornitore (se non presente) aggiorna prezzo di acquisto e imposta fornitore come predefinito\"", "label": "'.tr('Aggiorna info di acquisto').'", "value": "'.$update_info.'" ]}
                             </div>
                         </div>
 

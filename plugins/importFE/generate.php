@@ -322,11 +322,11 @@ echo '
         </div>
 
         <div class="col-md-3">
-            {[ "type": "checkbox", "label": "'.tr('Creazione automatica articoli').'", "name": "flag_crea_articoli", "value": 0, "help": "'.tr("Nel caso di righe con tag CodiceArticolo, il gestionale procede alla creazione dell'articolo se la riga non risulta assegnata manualmente").'" ]}
+            {[ "type": "checkbox", "label": "'.tr('Creazione automatica articoli').'", "name": "flag_crea_articoli", "value": 0, "help": "'.tr('Nel caso di righe con almeno un nodo \'CodiceArticolo\', il gestionale procede alla creazione dell\'articolo se la riga non risulta assegnata manualmente').'." ]}
         </div>
         
         <div class="col-md-3">
-            {[ "type": "checkbox", "label": "'.tr('Creazione seriali').'", "name": "flag_crea_seriali", "value": "'.setting('Creazione seriali in import FE').'", "help": "'.tr('Nel caso di righe contenenti serial, il gestionale procede alla registrazione del serial').'" ]}
+            {[ "type": "checkbox", "label": "'.tr('Creazione seriali').'", "name": "flag_crea_seriali", "value": "'.setting('Creazione seriali in import FE').'", "help": "'.tr('Nel caso di righe contenenti serial number, il gestionale procede alla loro registrazione. Controllare che l\'XML della fattura di acquisto contenga il nodo \'CodiceTipo\' valorizzato con \'serial\' o \'Serial\' ').'." ]}
         </div>';
 
 $ritenuta = $dati_generali['DatiRitenuta'];
@@ -419,11 +419,14 @@ if (!empty($righe)) {
 
         $codici_articoli = [];
         $serial = [];
+        $i = 0;
         foreach ($codici as $codice) {
-            $codici_articoli[] = $codice['CodiceValore'].' ('.$codice['CodiceTipo'].')';
+          
+            $codici_articoli[] = (($i==0)?'<b>':'').$codice['CodiceValore'].' ('.$codice['CodiceTipo'].')'.(($i==0)?'</b>':'');
             if (str_contains($codice['CodiceTipo'], 'serial') || str_contains($codice['CodiceTipo'], 'Serial')) {
                 $serial[] = $codice['CodiceValore'];
             }
+            $i++;
         }
 
         // Individuazione articolo con codice relativo
@@ -513,7 +516,7 @@ if (!empty($righe)) {
         echo '
         <tr data-id="'.$key.'" data-qta="'.$qta.'" data-prezzo_unitario="'.$prezzo_unitario.'" data-iva_percentuale="'.$riga['AliquotaIVA'].'">
             <td>
-                '.(empty($codice_principale) ? '<span class="label label-warning pull-right text-muted articolo-warning hidden">'.tr('Creazione automatica articolo non disponibile').'</span>' : '<span class="label label-success pull-right text-muted articolo-warning hidden"><input class="check" type="checkbox" name="crea_articoli['.$key.']"/> '.tr('Creazione automatica articolo').'</span>').'
+                '.(empty($codice_principale) ? '<div style="padding:7px;" class="label label-warning pull-right text-muted articolo-warning hidden">'.tr('Creazione automatica articolo non disponibile').'</div>' : '<label class="label label-success pull-right text-muted articolo-warning hidden"><input class="check" type="checkbox" name="crea_articoli['.$key.']"/> <span style="position:relative;top:-2px;" >'.tr('Crea automaticamente questo articolo').'</span></label>').'
                 <small class="pull-right text-muted" id="riferimento_'.$key.'"></small><br>
                 <small class="pull-right text-muted">'.$riferimento_fe.'</small>
 
@@ -601,7 +604,7 @@ if (!empty($righe)) {
                             </div>
 
                             <div class="col-md-6">
-                                {[ "type": "select", "name": "update_info['.$key.']", "values": "list=\"update_not\":\"Nessuna operazione\", \"update_price\":\"Crea listino del fornitore (se non presente) e aggiorna il prezzo di acquisto\", \"update_all\":\"Crea listino del fornitore (se non presente) aggiorna prezzo di acquisto e imposta fornitore come predefinito\"", "label": "'.tr('Aggiorna info di acquisto').'", "value": "'.$update_info.'", "help": "'.tr('Creazione automatica articolo deve essere attiva o l\'articolo deve essere selezionato affinché questa impostazione abbia effetto').'." ]}
+                                {[ "type": "select", "name": "update_info['.$key.']", "values": "list=\"update_not\":\"Nessuna operazione\", \"update_price\":\"Crea listino del fornitore (se non presente) e aggiorna il prezzo di acquisto\", \"update_all\":\"Crea listino del fornitore (se non presente) aggiorna prezzo di acquisto e imposta fornitore come predefinito\"", "label": "'.tr('Aggiorna informazioni di acquisto').'", "value": "'.$update_info.'", "help": "'.tr('Creazione automatica articolo deve essere attiva o l\'articolo deve essere selezionato affinché questa impostazione abbia effetto').'.", "readonly": "'.(empty($codice_principale)? 1 : 0).'" ]}
                             </div>
                         </div>
 
@@ -911,6 +914,15 @@ $("[id^=\'articoli\']").change(function() {
     }
 
     verificaSerial($(this));
+
+    
+    if($(this).val()){
+       $("#update_info"+$(this).data("id")).prop(\'disabled\', false);
+    }else{
+        $("#update_info"+$(this).data("id")).prop(\'disabled\', true);
+    }
+
+     
 });
 
 function copy_rif() {

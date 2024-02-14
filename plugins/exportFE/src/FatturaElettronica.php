@@ -716,15 +716,6 @@ class FatturaElettronica
             ];
         }
 
-        // Informazioni specifiche azienda
-        if ($azienda) {
-            if ($anagrafica == static::getAzienda()) {
-                $result['RegimeFiscale'] = setting('Regime Fiscale');
-            } else {
-                $result['RegimeFiscale'] = 'RF18';
-            }
-        }
-
         return $result;
     }
 
@@ -775,7 +766,12 @@ class FatturaElettronica
             'DatiAnagrafici' => static::getDatiAnagrafici($azienda, true),
             'Sede' => static::getSede($azienda),
         ];
-
+        if ($azienda == static::getAzienda()) {
+            $result['DatiAnagrafici']['RegimeFiscale'] = setting('Regime Fiscale');
+        } else {
+            $result['DatiAnagrafici']['RegimeFiscale'] = 'RF18';
+        }
+        
         // IscrizioneREA
         // Controllo che i codice non sia vuoto e che i primi due caratteri siano lettere
         if (!empty($azienda['codicerea']) && (ctype_alpha($azienda['codicerea'][0]) && ctype_alpha($azienda['codicerea'][1]))) {

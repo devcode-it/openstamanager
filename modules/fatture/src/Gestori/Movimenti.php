@@ -118,7 +118,8 @@ class Movimenti
             // Retro-compatibilità per versioni <= 2.4
             $id_conto = $riga->id_conto ?: $this->fattura->idconto;
 
-            $imponibile = $riga->totale_imponibile;
+            $indetraibile = $riga->iva_indetraibile;
+            $imponibile = $riga->totale_imponibile + $indetraibile;
             $imponibile = $is_nota ? -$imponibile : $imponibile; // Inversione di segno per le note
 
             $rivalsa_inps = $is_nota ? -$riga->rivalsa_inps : $riga->rivalsa_inps;
@@ -147,17 +148,6 @@ class Movimenti
             ];
         }
 
-        /*
-        * 4) IVA indetraibile sul relativo conto (Split Payment disabilitato)
-        * IVA indetraibile -> AVERE per Vendita, DARE per Acquisto
-        */
-        if (!empty($iva_indetraibile) && empty($split_payment)) {
-            $id_conto = setting('Conto per Iva indetraibile');
-            $movimenti[] = [
-                'id_conto' => $id_conto,
-                'avere' => $iva_indetraibile,
-            ];
-        }
 
         /*
         * 5) Rivalsa INPS sul relativo conto

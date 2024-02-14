@@ -24,7 +24,7 @@ use Modules\Anagrafiche\Nazione;
 use Modules\Anagrafiche\Tipo as TipoAnagrafica;
 use Modules\Banche\Banca;
 use Modules\Fatture\Fattura;
-use Modules\Fatture\Stato as StatoFattura;
+use Modules\Fatture\Stato;
 use Modules\Fatture\Tipo as TipoFattura;
 use Util\XML;
 
@@ -375,7 +375,7 @@ class FatturaElettronica
         $fattura->data_registrazione = $data_registrazione;
         $fattura->data_competenza = $fattura->data;
 
-        $stato_documento = StatoFattura::where('descrizione', 'Emessa')->first();
+        $stato_documento = (new Stato())->getByName('Emessa')->id_record;
         $fattura->stato()->associate($stato_documento);
 
         $causali = $dati_generali['Causale'];

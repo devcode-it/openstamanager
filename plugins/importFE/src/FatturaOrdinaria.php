@@ -453,7 +453,7 @@ class FatturaOrdinaria extends FatturaElettronica
         $diff = round(abs($fattura->totale_imponibile) - abs($totale_righe + $tot_arr), 2);
         $diff_tot = round($fattura->totale_imponibile + $fattura->rivalsa_inps - $totale_imp + $tot_arr, 2);
 
-        $iva_arrotondamento = database()->fetchOne('SELECT * FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang` = '.prepare(setting('Lingua')).') WHERE `percentuale`=0 AND `deleted_at` IS NULL');
+        $iva_arrotondamento = database()->fetchOne('SELECT * FROM `co_iva` WHERE `percentuale`= 0 AND `deleted_at` IS NULL LIMIT 1');
 
         if (($diff != 0 && $diff != $diff_tot) || (($diff_tot != $diff) && !$diff_iva) || $diff_iva) {
             if ($diff != 0 && $diff != $diff_tot) {

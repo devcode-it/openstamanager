@@ -17,7 +17,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Modules\Fatture\Stato;
+use Modules\Fatture\Stato as StatoFattura;
+use Modules\Contratti\Stato as StatoContratto;
+
 use Plugins\ListinoFornitori\DettaglioFornitore;
 
 // Inizializzazione
@@ -89,7 +91,7 @@ if (!empty($options['create_document'])) {
 
     // Opzioni aggiuntive per le Fatture
     if (in_array($final_module['name'], ['Fatture di vendita', 'Fatture di acquisto'])) {
-        $stato_predefinito = (new Stato())->getByName('Bozza')->id_record;
+        $stato_predefinito = (new StatoFattura())->getByName('Bozza')->id_record;
 
         if (!empty($options['reversed'])) {
             $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
@@ -136,11 +138,11 @@ if (!empty($options['create_document'])) {
 
     // Opzioni aggiuntive per i Contratti
     elseif ($final_module['name'] == 'Contratti') {
-        $stato_predefinito = $database->fetchOne('SELECT * FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(setting('Lingua')).") WHERE `name` = 'Bozza'");
+        $stato_predefinito = (new StatoContratto())->getByName('Bozza')->id_record;
 
         echo '
             <div class="col-md-6">
-                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `co_staticontratti`.`id`, `co_staticontratti_lang`.`name` AS descrizione FROM co_staticontratti LEFT JOIN `co_staticontratti`_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(setting('Lingua')).')", "value": "'.$stato_predefinito['id'].'" ]}
+                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `co_staticontratti`.`id`, `co_staticontratti_lang`.`name` AS descrizione FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(setting('Lingua')).')", "value": "'.$stato_predefinito.'" ]}
             </div>';
     }
 

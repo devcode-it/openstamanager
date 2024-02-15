@@ -299,6 +299,7 @@ class CSV extends CSVImporter
                     'name' => $settore,
                 ])['id'];
             }
+            unset($record['id_settore']);
         }
 
         // Separazione dei campi relativi alla sede legale
@@ -347,6 +348,7 @@ class CSV extends CSVImporter
 
         $anagrafica->fill($record);
         $anagrafica->tipologie = $tipologie;
+        $anagrafica->id_settore = $id_settore;
         $anagrafica->tipo = $tipo;
         $anagrafica->save();
 

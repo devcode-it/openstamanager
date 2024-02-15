@@ -38,11 +38,12 @@ $lvl = get('lvl');
         <div class="col-md-8">
             {[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1 ]}
         </div>
-
-        <div class="col-md-4">
-            {[ "type": "number", "decimals": 0, "label": "<?php echo tr('Percentuale deducibile'); ?>", "name": "percentuale_deducibile", "value": "<?php echo $info['percentuale_deducibile']; ?>", "icon-after": "<i class=\"fa fa-percent\"></i>", "max-value": "100", "min-value": "0" ]}
-        </div>
-
+            <div class="col-md-4 <?php echo intval($lvl != 3) ? 'hidden' : ''; ?>">
+                {[ "type": "number", "decimals": 0, "label": "<?php echo tr('Percentuale deducibile'); ?>", "name": "percentuale_deducibile", "value": "<?php echo $info['percentuale_deducibile']; ?>", "icon-after": "<i class='fa fa-percent'></i>", "max-value": "100", "min-value": "0" ]}
+            </div>
+            <div class="col-md-4 <?php echo intval($lvl != 2) ? 'hidden' : ''; ?>">
+                {[ "type": "select", "label": "<?php echo tr('Utilizza come'); ?>", "name": "dir", "value": "<?php echo $info['dir']; ?>", "values": "list=\"entrata\":\"Ricavo\", \"uscita\":\"Costo\", \"entrata/uscita\":\"Ricavo e Costo\", \"\": \"Non usare\"" ]}
+            </div>
     </div>
     <br>
 

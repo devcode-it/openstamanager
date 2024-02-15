@@ -51,7 +51,7 @@ $query = "
         INNER JOIN `an_sedi` ON `mg_movimenti`.`idsede`=`an_sedi`.`id`
     WHERE 
         (`mg_movimenti`.`idsede` > 0) AND (`mg_movimenti`.`idintervento` IS NULL) AND
-        ((`mg_movimenti`.`data` BETWEEN '.prepare($startTM).' AND '.prepare($endTM).") AND (`zz_groups`.`nome` IN ('Titolari', 'Amministratori')))";
+        ((`mg_movimenti`.`data` BETWEEN '.prepare($startTM).' AND '.prepare($endTM).") AND (`zz_groups`.`nome` IN ('Amministratori')))";
 
 $query .= ' AND (`an_sedi`.`targa` LIKE '.prepare('%'.$search_targa.'%').') AND (`an_sedi`.`nome` LIKE '.prepare('%'.$search_nome.'%').') ';
 $query .= '	ORDER BY `an_sedi`.`targa`, `mg_articoli`.`descrizione`';

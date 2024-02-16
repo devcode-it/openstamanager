@@ -342,9 +342,19 @@ class CSV extends CSVImporter
 
         // Impedisco di aggiornare l'anagrafica Azienda
         if ($anagrafica->id == $id_azienda) {
-            return;
+            return false;
         }
         unset($record['ragione_sociale']);
+
+        $id_banca = '';
+        if (!empty($record['codiceiban'])) {
+            $id_banca = $database->fetchOne('SELECT `co_banche`.`id` FROM `co_banche` WHERE LOWER(`iban`) = LOWER('.prepare($record['codiceiban']).') AND `id_anagrafica` = '.$anagrafica->id.' AND deleted_at IS NULL');
+
+            if (empty($id_banca)) {
+                $id_banca = $database->query('INSERT INTO `co_banche` (`iban`, `nome`,`id_anagrafica`) VALUES ('.prepare($record['codiceiban']).', "Banca da importazione '.$anagrafica->ragione_sociale.'", '.$anagrafica->id.')');
+            }
+            unset($record['codiceiban']);
+        }
 
         $anagrafica->fill($record);
         $anagrafica->tipologie = $tipologie;

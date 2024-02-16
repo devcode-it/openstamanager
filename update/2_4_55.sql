@@ -302,7 +302,7 @@ FROM
 WHERE
     1=1
 GROUP BY
-    `co_pagamenti`.`id`
+    `co_pagamenti_lang`.`name`
 HAVING
     2=2" WHERE `name` = 'Pagamenti';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_pagamenti_lang`.`name`' WHERE `zz_modules`.`name` = 'Pagamenti' AND `zz_views`.`name` = 'descrizione';

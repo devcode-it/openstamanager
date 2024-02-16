@@ -23,20 +23,27 @@ use Modules\Contratti\Stato;
 
 switch (post('op')) {
     case 'update':
+        $id_stato_old = (new Stato())->getByName($record['name'])->id_record;
         $id_stato = (new Stato())->getByName(post('descrizione'))->id_record;
-        $dbo->update('co_staticontratti', [
-            'icona' => post('icona'),
-            'colore' => post('colore'),
-            'is_completato' => post('is_completato') ?: null,
-            'is_fatturabile' => post('is_fatturabile') ?: null,
-            'is_pianificabile' => post('is_pianificabile') ?: null,
-        ], ['id' => $id_record]);
 
-        $dbo->update('co_staticontratti_lang', [
-            'name' => post('descrizione'),
-        ], ['id_record' => $id_stato]);
+        if (($id_stato)) {
+            flash()->error(tr('Questo nome è già stato utilizzato per un altro stato dei contratti.'));
+        } else {
+            $dbo->update('co_staticontratti', [
+                'icona' => post('icona'),
+                'colore' => post('colore'),
+                'is_completato' => post('is_completato') ?: null,
+                'is_fatturabile' => post('is_fatturabile') ?: null,
+                'is_pianificabile' => post('is_pianificabile') ?: null,
+            ], ['id' => $id_stato_old]);
+    
+            $dbo->update('co_staticontratti_lang', [
+                'name' => post('descrizione'),
+            ], ['id_record' => $id_stato_old]);
+    
+            flash()->info(tr('Informazioni salvate correttamente.'));
+        }
 
-        flash()->info(tr('Informazioni salvate correttamente.'));
 
         break;
 

@@ -53,8 +53,9 @@ switch (filter('op')) {
                 ];
 
                 if (!empty($id)) {
-                    $dbo->update('co_pagamenti', $array, ['id' => $id]);
-                    $dbo->update('co_pagamenti_lang', ['name' => $descrizione], ['id_record' => $id, 'id_lang' => setting('Lingua')]);
+                    $dbo->query('UPDATE `co_pagamenti_lang` SET `name` = '.$descrizione.' WHERE `id_record` = '.prepare($id).' AND `id_lang` = '.setting('Lingua').'');
+                    $id_record = $dbo->lastInsertedID();
+                    $dbo->update('co_pagamenti', $array, ['id' => $id_record]);
                 } else {
                     $dbo->INSERT('co_pagamenti', $array);
                     $dbo->INSERT('co_pagamenti_lang', ['name' => $descrizione, 'id_record' => $id, 'id_lang' => setting('Lingua')]);
@@ -74,7 +75,7 @@ switch (filter('op')) {
         if (isset($descrizione)) {
             $dbo->query('INSERT INTO `co_pagamenti` (`codice_modalita_pagamento_fe`, `prc` ) VALUES ('.prepare($codice_modalita_pagamento_fe).', 100 )');
             $id_record = $dbo->lastInsertedID();
-            $dbo->query('INSERT INTO `co_pagamenti_lang` (`name`, `id_record`, `id_lang`) VALUES ('.prepare($descrizione).'), '.prepare($id_record).', '.prepare(setting('Lingua')).')');
+            $dbo->query('INSERT INTO `co_pagamenti_lang` (`name`, `id_record`, `id_lang`) VALUES ('.prepare($descrizione).', '.prepare($id_record).', '.prepare(setting('Lingua')).')');
 
             flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
                 '_TYPE_' => 'pagamento',

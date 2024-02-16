@@ -148,7 +148,6 @@ class Movimenti
             ];
         }
 
-
         /*
         * 5) Rivalsa INPS sul relativo conto
         * Rivalsa INPS (senza IVA) -> AVERE per Vendita, DARE per Acquisto
@@ -232,7 +231,7 @@ class Movimenti
         // Nel penultimo conto del mastrino inserisco l'eventuale differenza per evitare sbilanci nel totale,
         // evitando di mettere differenze nell'iva
         $diff = round($totale_avere - $totale_dare, 4);
-        
+
         if ($diff) {
             $movimenti = $mastrino->movimenti()->where('primanota', '=', 0)->get();
             $m = 0;

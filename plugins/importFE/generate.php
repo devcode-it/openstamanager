@@ -421,17 +421,16 @@ if (!empty($righe)) {
         $serial = [];
         $i = 0;
         foreach ($codici as $codice) {
-          
-            $codici_articoli[] = (($i==0)?'<b>':'').$codice['CodiceValore'].' ('.$codice['CodiceTipo'].')'.(($i==0)?'</b>':'');
+            $codici_articoli[] = (($i == 0) ? '<b>' : '').$codice['CodiceValore'].' ('.$codice['CodiceTipo'].')'.(($i == 0) ? '</b>' : '');
             if (str_contains($codice['CodiceTipo'], 'serial') || str_contains($codice['CodiceTipo'], 'Serial')) {
                 $serial[] = $codice['CodiceValore'];
             }
-            $i++;
+            ++$i;
         }
 
         // Individuazione articolo con codice relativo
         $id_articolo = null;
-        //Prendo il codice articolo dal primo nodo CodiceValore che trovo
+        // Prendo il codice articolo dal primo nodo CodiceValore che trovo
         $codice_principale = $codici[0]['CodiceValore'];
         if (!empty($codice_principale)) {
             if (!empty($anagrafica) && empty($id_articolo)) {
@@ -604,7 +603,7 @@ if (!empty($righe)) {
                             </div>
 
                             <div class="col-md-6">
-                                {[ "type": "select", "name": "update_info['.$key.']", "values": "list=\"update_not\":\"Nessuna operazione\", \"update_price\":\"Crea listino del fornitore (se non presente) e aggiorna il prezzo di acquisto\", \"update_all\":\"Crea listino del fornitore (se non presente) aggiorna prezzo di acquisto e imposta fornitore come predefinito\"", "label": "'.tr('Aggiorna informazioni di acquisto').'", "value": "'.$update_info.'", "help": "'.tr('Creazione automatica articolo deve essere attiva o l\'articolo deve essere selezionato affinché questa impostazione abbia effetto').'.", "readonly": "'.(empty($codice_principale)? 1 : 0).'" ]}
+                                {[ "type": "select", "name": "update_info['.$key.']", "values": "list=\"update_not\":\"Nessuna operazione\", \"update_price\":\"Crea listino del fornitore (se non presente) e aggiorna il prezzo di acquisto\", \"update_all\":\"Crea listino del fornitore (se non presente) aggiorna prezzo di acquisto e imposta fornitore come predefinito\"", "label": "'.tr('Aggiorna informazioni di acquisto').'", "value": "'.$update_info.'", "help": "'.tr('Creazione automatica articolo deve essere attiva o l\'articolo deve essere selezionato affinché questa impostazione abbia effetto').'.", "readonly": "'.(empty($codice_principale) ? 1 : 0).'" ]}
                             </div>
                         </div>
 

@@ -771,7 +771,7 @@ class FatturaElettronica
         } else {
             $result['DatiAnagrafici']['RegimeFiscale'] = 'RF18';
         }
-        
+
         // IscrizioneREA
         // Controllo che i codice non sia vuoto e che i primi due caratteri siano lettere
         if (!empty($azienda['codicerea']) && (ctype_alpha($azienda['codicerea'][0]) && ctype_alpha($azienda['codicerea'][1]))) {

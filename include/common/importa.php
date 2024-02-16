@@ -17,9 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Modules\Fatture\Stato as StatoFattura;
 use Modules\Contratti\Stato as StatoContratto;
-
+use Modules\Fatture\Stato as StatoFattura;
 use Plugins\ListinoFornitori\DettaglioFornitore;
 
 // Inizializzazione

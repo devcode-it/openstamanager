@@ -270,11 +270,10 @@ function wacom(){
         'modules/digital-ink/digital-ink-min.js',
         'common/will/tools.js',	
         'modules/sjcl/sjcl.js',
-        'sigCaptDialog/libs/stu_capture/stu-sdk.min.js',
-        'sigCaptDialog/libs/stu_capture/stu_capture_encryption.js',    
         'common/libs/signature_sdk.js',
-        'common/libs/signature_sdk_helper.js',      
-        'modules/node-forge/dist/forge.min.js',					        
+        'common/libs/signature_sdk_helper.js',
+        'common/libs/stu-sdk.min.js',
+        'modules/node-forge/dist/forge.min.js',
         'sigCaptDialog/sigCaptDialog.js',
         'sigCaptDialog/stuCaptDialog.js'
     ];

@@ -1,5 +1,13 @@
 /* touch-action: none; is required to make pen works fine with WILL */
 /*#signatureWindow {touch-action: none;}*/
+body {
+	-webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+	/*touch-action: none;*/
+}
 
 #modal-background {
     position: absolute;

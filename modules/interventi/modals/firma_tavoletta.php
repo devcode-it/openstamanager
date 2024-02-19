@@ -54,27 +54,30 @@ echo '
 <div class="clearfix"></div>
 
 <script type="text/javascript">
-
-    const licence = "'.setting('Licenza Wacom SDK').'";
     var mSigObj;		
-    var documentHash;
+    var mHash;
     var backgroundImage;
     var sigCaptDialog
     var stuCapDialog;
     
-    // This var will store the public and private keys for encryption.
-    // Please note that this is only a demostration, but on a production application
-    // for security reasons the private key should not be stored in a global variable.
-    var encryptionKeys;
-
-    Module.onRuntimeInitialized = _ => {	            
-        documentHash = new Module.Hash(Module.HashType.None);
-        mSigObj = new Module.SigObj();	
-        mSigObj.setLicence(licence);
+    Module.onRuntimeInitialized = _ => {		
+        mSigObj = new Module.SigObj();
+        mHash = new Module.Hash(Module.HashType.SHA512);
+        
+        // Here we need to set the licence. The easiest way is directly using
+        // const promise = mSigObj.setLicence(key, secret);
+        // however here the problem it is that we expose the key and secret publically.
+        // if we want to hide the licence we can get the licence from an external server.				
+        // there is a php demo file in /common/licence_proxy.php
+        //const promise = mSigObj.setLicenceProxy("url from where to get the licence");
+        const promise = mSigObj.setLicence("'.setting('Licenza Wacom SDK - Key').'", "'.setting('Licenza Wacom SDK - Secret').'");
+        promise.then(value => {});
+        promise.catch(error => {
+            alert(error);
+        });
     }
 
     function capture() {
-
         let captureDiv = document.getElementById("signature-pad");													    
         captureDiv.style.width = "500px";
         captureDiv.style.height = "300px";
@@ -86,7 +89,7 @@ echo '
         stuCapDialog.addEventListener("ok", function() {
             renderSignature();
         });				
-        stuCapDialog.open(mSigObj, '.prepare($intervento->anagrafica->ragione_sociale).', "'.tr('Firma').'", [], Module.KeyType.SHA512, documentHash);				
+        stuCapDialog.open(mSigObj, "'.str_replace('"', "'", $intervento->anagrafica->ragione_sociale).'", "'.tr('Firma').'", null, null, Module.KeyType.SHA512, mHash);				
     }
 
     function generateConfig() {
@@ -188,7 +191,7 @@ echo '
         config.timeOut.onTimeOut = timeOutCallback;
         
         return config;
-    }			
+    }		
 
     function timeOutCallback(timeOnSurface) {
         const minTimeOnSurface = parseInt(300);
@@ -237,17 +240,6 @@ echo '
     }
 
     async function renderSignature() {
-        const image = await renderSignatureImage();
-                        
-        $("#signature-pad").hide();
-        $("#image-signature").show();
-        $("#btn-group-firma").show();
-
-        document.getElementById("image-signature").src = image;	
-        document.getElementById("firma_base64").value = image;        
-    }
-
-    async function renderSignatureImage() {
         // calculate the size
         let renderWidth = 500;
         let renderHeight = 300;
@@ -281,20 +273,27 @@ echo '
             renderWidth = Math.floor(renderWidth);
             renderHeight = Math.floor(renderHeight);				
             renderWidth += renderWidth % 4;
-        }															
-        
-        const backgroundColor = "'.setting('Sfondo firma tavoletta Wacom').'";
-        
+        }
+
         if (isRelative) {
             renderWidth = -96; //dpi
             renderHeight = -96;
         }
         
+        let canvas;
         const inkColor = "#000F55";
-        const comboTools = "pen";					
-        const inkTool = tools["pen"];
-        const image = await mSigObj.renderBitmap(renderWidth, renderHeight, "image/png", inkTool, inkColor, backgroundColor, 0, 0, renderFlags);				
-        return image;				
+        const backgroundColor = "'.setting('Sfondo firma tavoletta Wacom').'";
+        try {		
+            const image = await mSigObj.renderBitmap(renderWidth, renderHeight, "image/png", 4, inkColor, backgroundColor, 0, 0, 0x400000);
+            document.getElementById("image-signature").src = image;
+            document.getElementById("firma_base64").value = image;
+        } catch (e) {
+            alert(e);
+        }
+                        
+        $("#signature-pad").hide();
+        $("#image-signature").show();
+        $("#btn-group-firma").show();     
     }
 
     function mmToPx(mm) {
@@ -331,6 +330,6 @@ echo '
 
     setTimeout(function() {
         capture();
-    },1000);
+    }, 1000);
         
 </script>';

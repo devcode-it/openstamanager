@@ -558,3 +558,7 @@ ORDER BY
     ragione_sociale" WHERE `name` = 'Tecnici e tariffe';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`an_anagrafiche`.`idanagrafica`' WHERE `zz_modules`.`name` = 'Tecnici e tariffe' AND `zz_views`.`name` = 'id';
 
+-- Divisione chiave di licenza Wacom in 2 stringhe come da SDK v2
+UPDATE `zz_settings` SET `valore` = '' WHERE `nome` = 'Licenza Wacom SDK';
+UPDATE `zz_settings` SET `nome` = 'Licenza Wacom SDK - Key' WHERE `nome` = 'Licenza Wacom SDK';
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES ('Licenza Wacom SDK - Secret', '', 'string', '1', 'Tavoletta Wacom', '1');

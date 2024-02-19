@@ -139,32 +139,53 @@ function getLocateString(string) {
 				   "ru":ruStrings,
 				   "zh":zhStrings};
 				   
-	var userLang = (navigator.language || navigator.userLanguage).split("-")[0]; 
-	if (strings[userLang][string]) {
-	    return strings[userLang][string];
+	var userLang = (navigator.language || navigator.userLanguage || "en-GB").split("-")[0]; 
+	let strLang = strings[userLang];
+	if (strLang) {
 	} else {
-		return strings["en"][string];
+		strLang = strings["en"];
 	}
-	
+	return strLang[string];	
 }
 
-function getPenOrientation(event) {
-    
-    // Pointer Events for a stylus currently use tiltX, tiltY and twist to give the orientation of the stylus in space. 
-	// However there is an experimental API that include the altitudeAngle and azimuthAngle, so before check if these values exists
+function getPenOrientation(ev) {    
 	let altitudeAngle = 0;
 	let azimuthAngle = 0;
-	if (event.altitudeAngle !== undefined && event.azimuthAngle !== undefined) {
-		altitudeAngle = event.altitudeAngle;
-		azimuthAngle = event.azimuthAngle;
+	let rotationAngle = 0;
+	
+	if (ev instanceof PointerEvent) {
+	    // Pointer Events for a stylus currently use tiltX, tiltY and twist to give the orientation of the stylus in space. 
+	    // However there is an experimental API that include the altitudeAngle and azimuthAngle, so before check if these values exists
+	    if (event.altitudeAngle !== undefined && event.azimuthAngle !== undefined) {
+		    altitudeAngle = event.altitudeAngle;
+		    azimuthAngle = event.azimuthAngle;
+	    } else if (event.tiltX !== undefined && event.tilY !== undefined) {
+	        let params = tilt2spherical(event.tiltX, event.tiltY);	
+		    altitudeAngle = params.altitudeAngle;
+		    azimuthAngle = params.azimuthAngle;
+	    }
+		
+		return {"altitude":altitudeAngle, "azimuth":azimuthAngle, "twist":event.twist};	
 	} else {
-	    let params = tilt2spherical(event.tiltX, event.tiltY);	
-		altitudeAngle = params.altitudeAngle;
-		azimuthAngle = params.azimuthAngle;
+	    const touch = ev.touches ? ev.touches[0] : null;
+		
+	    if (touch) {
+	        if (touch.altitudeAngle) {
+		        altitudeAngle = touch.altitudeAngle;
+	        }
+	
+	        if (touch.azimuthAngle) {
+		        azimuthAngle = touch.azimuthAngle;
+	        }
+	
+	        if (touch.rotationAngle) {		    
+		        rotationAngle = touch.rotationAngle;
+		    }
+	    }	
+	
+	    return {"altitude":altitudeAngle, "azimuth":azimuthAngle, "twist":rotationAngle};	  
 	}
-	
-	return {"altitude":altitudeAngle, "azimuth":azimuthAngle, "twist":event.twist};
-	
+
     function tilt2spherical(tiltX, tiltY){
         const tiltXrad = tiltX * Math.PI/180;
         const tiltYrad = tiltY * Math.PI/180;
@@ -211,7 +232,7 @@ function getPenOrientation(event) {
         }
 
         return {"altitudeAngle":altitudeAngle, "azimuthAngle":azimuthAngle};
-    }
+    }	
 }
 
 class SigCaptDialog {	 
@@ -370,22 +391,12 @@ class SigCaptDialog {
 			  this.config.source.stu = config.source.stu;
 		  }
 	  }
-	  if (config.useWill != undefined) {
-		  this.config.useWill = config.useWill;
-	  }
+
 	  if (config.strokeColor != undefined) {
 		  this.config.strokeColor = config.strokeColor;
 	  }
 	  if (config.strokeSize != undefined) {
 		  this.config.strokeSize = config.strokeSize;
-	  }
-	  if (config.will) {
-		  if (config.will.tool) {
-			  this.config.will.tool = config.will.tool;
-		  }
-		  if (config.will.color) {
-			  this.config.will.color = config.will.color;
-		  }
 	  }
 	  
 	  if (config.buttons) {
@@ -399,15 +410,17 @@ class SigCaptDialog {
 	  if (config.minTimeOnSurface) {
 		  this.config.minTimeOnSurface = config.minTimeOnSurface;
 	  }
+	  
+	  if (config.onOutSide) {
+		  this.config.onOutSide = config.onOutSide;
+	  }
+	  
+	  if (config.allowZeroPressure != undefined) {
+		  this.config.allowZeroPressure = config.allowZeroPressure;
+	  }
   }
 	
-  constructor(config) {	  
-	const supportsPointerEvents = typeof document.defaultView.PointerEvent !== undefined;  
-	const supportsCoalescedEvents = supportsPointerEvents ? document.defaultView.PointerEvent.prototype.getCoalescedEvents : undefined;  
-	if (!supportsCoalescedEvents) {
-		console.warn("This web browser does not support getCoalescedEvents, the captured data won't be precisse enough for signature verification.");
-	}
-	
+  constructor(config) {	      
 	this.config = {
 	  width: 400,
 	  height: 300,
@@ -428,62 +441,14 @@ class SigCaptDialog {
 	  date: {visible:true, fontFace:"Arial", fontSize:16, color:"black", offsetY:20, offsetX:30},
 	  signingLine: {visible:true, left:30, right:30, width:2, color:"grey", offsetY:5},
 	  source: {mouse:true, touch:true, pen:true, stu:true},	 
-	  strokeColor:"#000F55",
-	  strokeSize:"2",	  
+	  strokeColor:"#0202FE",
+	  strokeSize:6,	  
 	  modal: true,
 	  draggable: true,
-	  timeOut: {enabled:false, time:10000, onTimeOut:null}
+	  timeOut: {enabled:false, time:10000, onTimeOut:null},
+	  allowZeroPressure: true
     };  
 	
-	if (window.DigitalInk) {
-		this.config.useWill = true;
-		this.config.will = {color:"#000F55",
-	        tool: {
-			    brush: BrushPalette.circle,
-			    dynamics: {
-				    size: {
-					    value: {
-						    min: 0.5,
-						    max: 1.6,
-						    remap: v => ValueTransformer.sigmoid(v, 0.62)
-					    },
-					    velocity: {
-						    min: 5,
-						    max: 210
-					    }
-				    },
-				    rotation: {
-					    dependencies: [window.DigitalInk.SensorChannel.Type.ROTATION, window.DigitalInk.SensorChannel.Type.AZIMUTH]
-				    },
-				    scaleX: {
-					    dependencies: [window.DigitalInk.SensorChannel.Type.RADIUS_X, window.DigitalInk.SensorChannel.Type.ALTITUDE],
-					    value: {
-						    min: 1,
-						    max: 3
-					    }
-				    },
-				    scaleY: {
-					    dependencies: [window.DigitalInk.SensorChannel.Type.RADIUS_Y],
-					    value: {
-						    min: 1,
-						    max: 3
-					    }
-				    },
-				    offsetX: {
-					    dependencies: [window.DigitalInk.SensorChannel.Type.ALTITUDE],
-
-					    value: {
-						    min: 2,
-						    max: 5
-					    }
-				    }
-			    }
-		    }  
-	    };
-	} else {
-		this.config.useWill = false;
-	}
-	  
 	if (config) {
 	    this.mapConfig(config);
 	}
@@ -493,7 +458,7 @@ class SigCaptDialog {
 	this.onCancelListeners = new Array();
 	this.onOkListeners = new Array();
 
-	this.timeOnSurface = 0;
+	this.timeOnSurface = 0;	
   }
   
   /**
@@ -513,10 +478,14 @@ class SigCaptDialog {
    * Connect to the first STU device found, and open the capture dialog.
    * @param {string} - Name of the person who is going to sign.
    * @param {string} - Reason for signing.
+   * @param {string} - Where, indicating the place where the signature is captured.
    * @param {IntegrityType} - Hash method to maintain the signature integrity. None by default.
    * @param {Hash} - Hash of an attached document. None by default.
+   * @param {string} - osInfo, string indicating the OS.
+   * @param {string} - digitizerInfo, string indicationg the digitalizer.
+   * @param {string} - nicInfo.
   **/	 
-  async open(sigObj, who, why, extraData, integrityType, documentHash) {	  
+  async open(sigObj, who, why, where, extraData, integrityType, documentHash, osInfo, digitizerInfo, nicInfo) {	  
       this.sigObj = sigObj;
 	  this.extraData = extraData;
 	  
@@ -531,6 +500,12 @@ class SigCaptDialog {
 	  } else {
 	      this.reason = getLocateString('defaultReason');
 	  }
+	  
+	  if (where) {
+		  this.where = where;
+	  } else {
+		  this.where = "";
+	  }
 		
 	  if (integrityType) {
 	      this.integrityType = integrityType;
@@ -543,18 +518,34 @@ class SigCaptDialog {
 	  } else {
 		  this.documentHash = new Module.Hash(Module.HashType.None);	
 	  }
+	  
+	  if (osInfo) {
+		  this.osInfo = osInfo;
+	  } else {
+		  this.osInfo = window.navigator.userAgent;
+	  }
+	  
+	  if (digitizerInfo) {
+		  this.digitizerInfo = digitizerInfo;
+	  } else {
+		  this.digitizerInfo = "Javascript canvas";
+	  }
+	  
+	  if (nicInfo) {
+		  this.nicInfo = nicInfo;
+	  } else {
+		  this.nicInfo = "";
+	  }
     
 	  this.createWindow(parseInt(this.config.width), parseInt(this.config.height));
-	  
-	  if (this.config.useWill) {
-	      await this.initInkController();	  	  
-	  } else {
-		  this.drawingCtx = this.drawingCanvas.getContext("2d");
-		  this.drawingCtx.lineWidth = this.config.strokeSize;
-		  this.drawingCtx.lineCap = 'round';
-	      this.drawingCtx.fillStyle = this.config.strokeColor;
-		  this.drawingCtx.strokeStyle = this.config.strokeColor;
-	  }
+	  	  	  
+	  this.drawingCtx = this.drawingCanvas.getContext("2d");
+	  this.drawingCtx.fillStyle = this.config.strokeColor;
+	  this.drawingCtx.strokeStyle = this.config.strokeColor;
+	  this.drawingCtx.lineJoin = "round";	  
+	  const devicePixelRatio = window.devicePixelRatio || 1;
+	  this.drawingCtx.scale(devicePixelRatio, devicePixelRatio);
+	  this.drawingPath = new Path2D();
 	  
 	  this.mBtns = new Array(this.config.buttons.length);
 	  if (this.config.buttons.length > 0) {
@@ -598,21 +589,123 @@ class SigCaptDialog {
   
       //this.startCapture();  // by default starts capturing data	  	  
 	  //$("#signatureWindow").show();	
-  }    
+	  
+  }   
+  
+  #onTouchStart(event) {
+	  this.onDown(event);
+  }
+  
+  #onMouseDown(event) {
+	  this.onDown(event);
+  }
+  
+  #onTouchMove(event) {
+	  this.onMove(event);
+  }
+  
+  #onMouseMove(event) {
+	  this.onMove(event);
+  }
+  
+  #onTouchEnd(event) {
+	  this.onUp(event);
+  }
+  
+  #onMouseUp(event) {
+	  this.onUp(event);
+  }
+  
+  #onTouchCancel(event) {
+	  this.onUp(event);
+  }
+  
+  #onPointerDown(event) {
+	  this.onDown(event);
+  }
+  
+  #onPointerMove(event) {
+	  this.onMovePointer(event);
+  }
+  
+  #onPointerUp(event) {
+	  this.onUp(event);
+  }
+  
+  #onPointerCancel(event) {
+	  this.onUp(event);
+  }
+  
+  #onMouseLeaveEvent(event) {
+	  this.onMouseLeave(event);
+  }
+  
+  #onMouseEnterEvent(event) {
+	  this.onMouseEnter(event);
+  }
+  
+  #onContextMenu(event) {
+	  event.preventDefault();
+  }
+  
+  #onPointerLeave(event) {
+	  this.onUp(event);
+  }
+  
+  #onPointerEnter(event) {
+	  this.onDown(event);
+  }
+  
   
   /**
    * Start capturing data
    **/
   startCapture() {
-	  if (!this.isCapturing) {
-	      this.drawingCanvas.addEventListener("pointerdown", this.onDown.bind(this), false);
-	      this.drawingCanvas.addEventListener("pointermove", this.onMove.bind(this), false);
-	      this.drawingCanvas.addEventListener("pointerup", this.onUp.bind(this), false);
-		  this.drawingCanvas.addEventListener("pointerenter", this.onDown.bind(this), false);
-		  this.drawingCanvas.addEventListener("pointerleave", this.onUp.bind(this), false);
+      if (!this.isCapturing) {
+		  // check if the browser support touch events
+		  const touch_capable = ('ontouchstart' in document.documentElement);
+		  if (touch_capable) {		
+              this.touchStartID = this.#onTouchStart.bind(this);		  
+			  this.mouseDownID = this.#onMouseDown.bind(this);
+			  this.touchMoveID = this.#onTouchMove.bind(this);
+			  this.mouseMoveID = this.#onMouseMove.bind(this);
+			  this.touchEndID = this.#onTouchEnd.bind(this);
+			  this.mouseUpID = this.#onMouseUp.bind(this);
+			  this.touchCancelID = this.#onTouchCancel.bind(this);			  
+			  
+			  this.drawingCanvas.addEventListener("touchstart", this.touchStartID);
+		      this.drawingCanvas.addEventListener("mousedown", this.mouseDownID);
+		      this.drawingCanvas.addEventListener("touchmove", this.touchMoveID);
+		      this.drawingCanvas.addEventListener("mousemove", this.mouseMoveID);
+		      this.drawingCanvas.addEventListener("touchend", this.touchEndID);
+		      this.drawingCanvas.addEventListener("mouseup", this.mouseUpID);	
+			  this.drawingCanvas.addEventListener("touchcancel", this.touchCancelID);	
+		  } else {
+			  this.pointerDownID = this.#onPointerDown.bind(this);
+			  this.pointerMoveID = this.#onPointerMove.bind(this);
+			  this.pointerUpID = this.#onPointerUp.bind(this);
+			  this.pointerCancelID = this.#onPointerCancel.bind(this);
+			  this.pointerLeaveID = this.#onPointerLeave.bind(this);
+			  this.pointerEnterID = this.#onPointerEnter.bind(this);
+			  
+	          this.drawingCanvas.addEventListener("pointerdown", this.pointerDownID);
+	          this.drawingCanvas.addEventListener("pointermove", this.pointerMoveID);
+	          this.drawingCanvas.addEventListener("pointerup", this.pointerUpID);
+			  this.drawingCanvas.addEventListener("pointercancel", this.pointerCancelID);
+			  this.drawingCanvas.addEventListener("pointerleave", this.pointerLeaveID);
+			  this.drawingCanvas.addEventListener("pointerenter", this.pointerEnterID);
+		  }		 
+		  this.mouseLeaveID = this.#onMouseLeaveEvent.bind(this);
+		  this.mouseEnterID = this.#onMouseEnterEvent.bind(this);
+		  this.contextMenuID = this.#onContextMenu.bind(this);
+		  
+		  this.drawingCanvas.addEventListener("mouseleave", this.mouseLeaveID);		  
+		  this.drawingCanvas.addEventListener("mouseenter", this.mouseEnterID);	
+		  document.addEventListener('contextmenu', this.contextMenuID);
+          		  
 		  this.isCapturing = true;
 		  this.showLoadingScreen(false);
-		  this.startTimeOut();
+		  this.startTimeOut();		  		  		  
 	  }
   }
   
@@ -620,15 +713,32 @@ class SigCaptDialog {
    * Stop capturing data
    **/   
   stopCapture() {
-	  this.drawingCanvas.removeEventListener("pointerdown", this.onDown.bind(this), false);
-	  this.drawingCanvas.removeEventListener("pointermove", this.onMove.bind(this), false);
-	  this.drawingCanvas.removeEventListener("pointerup", this.onUp.bind(this), false);
-	  this.drawingCanvas.removeEventListener("pointerenter", this.onDown.bind(this), false);
-	  this.drawingCanvas.removeEventListener("pointerleave", this.onUp.bind(this), false);
+	  const touch_capable = ('ontouchstart' in document.documentElement);
+	  if (touch_capable) {
+	      this.drawingCanvas.removeEventListener("touchstart", this.touchStartID);
+		  this.drawingCanvas.removeEventListener("mousedown", this.mouseDownID);
+		  this.drawingCanvas.removeEventListener("touchmove", this.touchMoveID);
+		  this.drawingCanvas.removeEventListener("mousemove", this.mouseMoveID);
+		  this.drawingCanvas.removeEventListener("touchend", this.touchEndID);
+		  this.drawingCanvas.removeEventListener("mouseup", this.mouseUpID);
+		  this.drawingCanvas.removeEventListener("touchcancel", this.touchCancelID);
+	  } else {
+	      this.drawingCanvas.removeEventListener("pointerdown", this.pointerDownID);
+	      this.drawingCanvas.removeEventListener("pointermove", this.pointerMoveID);
+	      this.drawingCanvas.removeEventListener("pointerup", this.pointerUpID);
+		  this.drawingCanvas.removeEventListener("pointercancel", this.pointerCancelID);
+		  this.drawingCanvas.removeEventListener("pointerleave", this.pointerLeaveID);
+		  this.drawingCanvas.removeEventListener("pointerenter", this.pointerEnterID);
+	  }		 
+	  this.drawingCanvas.removeEventListener("mouseleave", this.mouseLeaveID);		  
+	  this.drawingCanvas.removeEventListener("mouseenter", this.mouseEnterID);		
+      document.removeEventListener('contextmenu', this.contextMenuID);	  
+	  
 	  this.isCapturing = false;
 	  this.showLoadingScreen(true);
 	  this.stopTimeOut();	 
   }
+  
   
   /**
    * Close the Capture Window
@@ -674,6 +784,14 @@ class SigCaptDialog {
 	  } else {
 		  //this.canvas.style.display = "block";
 		  this.mLoadingImageDiv.style.display = "none";
+	  }
+  }
+  
+  showGeneratingSignatureScreen(value) {
+	  if (value) {
+		  this.mGeneratingSignatureDiv.style.display = "table";
+	  } else {
+		  this.mGeneratingSignatureDiv.style.display = "none";
 	  }
   }
   
@@ -727,8 +845,13 @@ class SigCaptDialog {
 	      this.drawingCanvas.style.position = "absolute";
 	      this.drawingCanvas.style.top = this.canvas.style.top;
 	      this.drawingCanvas.style.left = this.canvas.style.left;
-          this.drawingCanvas.height = this.canvas.height;
-          this.drawingCanvas.width = this.canvas.width;
+		  
+		  
+		  const devicePixelRatio = window.devicePixelRatio || 1;
+          this.drawingCanvas.height = this.canvas.height * devicePixelRatio;
+          this.drawingCanvas.width = this.canvas.width * devicePixelRatio;
+		  this.drawingCanvas.style.width = this.canvas.width + "px";
+		  this.drawingCanvas.style.height = this.canvas.height + "px";
           this.mFormDiv.appendChild(this.drawingCanvas);      
 	  } else {		  	  
 	      let titleBarHeight = this.config.hasTitle ? 25 : 0;
@@ -786,14 +909,16 @@ class SigCaptDialog {
 	      this.drawingCanvas.style.position = "absolute";
 	      this.drawingCanvas.style.top = this.canvas.style.top;
 	      this.drawingCanvas.style.left = this.canvas.style.left;
-          this.drawingCanvas.height = this.canvas.height;
-          this.drawingCanvas.width = this.canvas.width;
+          const devicePixelRatio = window.devicePixelRatio || 1;
+          this.drawingCanvas.height = this.canvas.height * devicePixelRatio;
+          this.drawingCanvas.width = this.canvas.width * devicePixelRatio;
+		  this.drawingCanvas.style.width = this.canvas.width + "px";
+		  this.drawingCanvas.style.height = this.canvas.height + "px";
           this.mFormDiv.appendChild(this.drawingCanvas);  
 
 	      if (this.config.draggable) {
-	          $("#signatureWindow").draggable({handle:"#titleBar"});
+	          this.setDraggable();
 		  }
-   	      //("#signatureWindow").hide();
 	  }
 	  
 	  this.mLoadingImageDiv = document.createElement('div');
@@ -802,8 +927,18 @@ class SigCaptDialog {
 	  this.mLoadingImageDiv.style.backgroundColor="white";
 	  this.mLoadingImageDiv.style.width = "100%";
 	  this.mLoadingImageDiv.style.height = "100%";
-	  this.mLoadingImageDiv.innerHTML = '<div id="loadingDiv" style="padding-left:10px;display:table-cell;vertical-align:middle;"><table><tr><td><div class="loader"></div></td><td>Loading the image, this could take a few seconds...</td></tr></div>';
+	  this.mLoadingImageDiv.innerHTML = '<div id="loadingDiv" style="padding-left:10px;display:table-cell;vertical-align:middle;"><table><tr><td><div class="loader"></div></td><td>Loading the image, this could take a few seconds...</td></tr></table></div>';
 	  this.mFormDiv.appendChild(this.mLoadingImageDiv);
+	  
+	  this.mGeneratingSignatureDiv = document.createElement('div');
+	  this.mGeneratingSignatureDiv.style.display="none"
+	  this.mGeneratingSignatureDiv.style.position = "absolute";
+	  this.mGeneratingSignatureDiv.style.backgroundColor="white";
+	  this.mGeneratingSignatureDiv.style.width = "100%";
+	  this.mGeneratingSignatureDiv.style.height = "100%";
+	  this.mGeneratingSignatureDiv.style.zIndex = "10";
+	  this.mGeneratingSignatureDiv.innerHTML = '<div id="generatingDiv" style="padding-left:10px;display:table-cell;vertical-align:middle;z-index:9"><table><tr><td><div class="loader"></div></td><td>Generating the signature, this could take a few seconds...</td></tr></table></div>';
+	  this.mFormDiv.appendChild(this.mGeneratingSignatureDiv);
   }
 	
   createScreenImage(useColor) {	  
@@ -873,7 +1008,7 @@ class SigCaptDialog {
 	    buttonsTop = bounds.height;		
 		
 		const button = document.createElement("button");  
-		button.setAttribute("style", "position:absolute;z-index:1002;padding:0;margin:0;");
+		button.setAttribute("style", "position:absolute;padding:0;margin:0;");
 		button.innerHTML = '<div style="line-height:'+yOffset+'px">'+btn.Text+'</div>';
 		button.style.left = bounds.x+"px";
 		button.style.top = bounds.y+"px";		
@@ -883,13 +1018,16 @@ class SigCaptDialog {
 		button.style.color = this.config.buttons[i].textColor;
 		button.style.backgroundColor = this.config.buttons[i].backgroundColor;
 		button.style.border = this.config.buttons[i].borderWidth + "px solid "+this.config.buttons[i].borderColor;
-        button.onclick = btn.Click;		
+        button.onclick = btn.Click;	
+		
+		// some touch browser wait for about 300 ms in case it is double touch. This code disables the delay
+        button.addEventListener("touchend", function(e) {e.preventDefault(); btn.Click(); return false;}, false);		
 		this.mFormDiv.appendChild(button);	  		       
 	}	  
 	
-	if (this.sigObj.isEvaluation()) {
-	    //this.drawEvaluationString(getLocateString("evaluation"), ctx, this.canvas.width, this.canvas.height - buttonsTop, useColor);
-	}
+	//if (this.sigObj.isEvaluation()) {
+	//    this.drawEvaluationString(getLocateString("evaluation"), ctx, this.canvas.width, this.canvas.height - buttonsTop, useColor);
+	//}
 	
 	// draw reason
 	if ((this.reason) && (this.config.reason.visible)) {
@@ -953,23 +1091,20 @@ class SigCaptDialog {
   }
   
   async clearScreen() {	
-    if (window.WILL) {
-		window.WILL.clear();	
-	} else {
-		this.drawingCtx.clearRect(0, 0, this.drawingCanvas.width, this.drawingCanvas.height);
-	}
-	
+    this.drawingPath = new Path2D();
+    this.drawingCtx.clearRect(0, 0, this.drawingCanvas.width, this.drawingCanvas.height);	
     this.capturedPoints = new Array();
 	this.clearTimeOnSurface();
   }
   
   async closeWindow() {	
-    this.stopCapture();
-	
-	if (this.config.useWill) {
-	    await this.deleteInkCanvas();
-	}
+    this.stopCapture();	
 	this.mSignatureWindow.remove();
+	
+	if (this.willEngine) {
+	    this.willEngine.delete();
+		this.willEngine = null;
+	}
 	
 	if (this.mModalBackground) {
 		this.mModalBackground.remove();
@@ -989,15 +1124,31 @@ class SigCaptDialog {
   }
 	
   async btnOkClick() {
-	  let minTimeOnSurface = 0;
-	  if (this.config.minTimeOnSurface) {
-		  minTimeOnSurface = this.config.minTimeOnSurface;
-	  }
+	  if (this.capturedPoints.length > 0) {	      
+	      let minTimeOnSurface = 0;
+	      if (this.config.minTimeOnSurface) {
+		      minTimeOnSurface = this.config.minTimeOnSurface;
+	      }
 
-      if (this.timeOnSurface > minTimeOnSurface) {	  
-          await this.getCaptureData();
-	      await this.close();
-	      this.onOkListeners.forEach(listener => listener());
+          if (this.timeOnSurface > minTimeOnSurface) {	
+		      this.stopTimeOut();
+		      this.showGeneratingSignatureScreen(true);			  
+              const promise = this.getCaptureData();
+		      promise.then(async (value) => {
+			      if (value) {
+			          await this.close();
+	                  this.onOkListeners.forEach(listener => listener());						  
+			      } else {
+				      alert("Error");
+			      }
+			      this.showGeneratingSignatureScreen(false);
+		      });
+		      promise.catch(error => {
+			      alert(error);
+			      this.showGeneratingSignatureScreen(false);
+		      });
+		  
+	      }
 	  }
   }
   
@@ -1014,37 +1165,6 @@ class SigCaptDialog {
       this.onCancelListeners.forEach(listener => listener());
   }
   
-  async initInkController() {
-	const inkCanvas = await new InkCanvas(this.drawingCanvas.width, this.drawingCanvas.height, this.drawingCanvas);
-	window.WILL = inkCanvas;
-	
-	if (this.config.will.tool.brush instanceof window.DigitalInk.BrushGL) {
-		await this.config.will.tool.brush.configure(window.WILL.canvas.ctx);
-	}
-	
-	WILL.setColor(this.config.will.color);
-	WILL.setTool(this.config.will.tool);			
-  }
-  
-  async deleteInkCanvas() {
-	 if (this.config.will.tool.brush instanceof window.DigitalInk.BrushGL) {
-		const brush = this.config.will.tool.brush;
-		//await brush.delete(); this is not working
-		if (brush.shapeTexture) {
-		    await brush.ctx.deleteTexture(brush.shapeTexture.texture);
-		    delete brush.shapeTexture;
-		}
-		if (brush.fillTexture) {
-		    await brush.ctx.deleteTexture(brush.fillTexture.texture);
-		    delete brush.fillTexture;
-		}
-		
-		delete brush.ctx;
-	  }
-	  await window.WILL.delete();
-	  window.WILL = null;	
-  }  
-
   fitTextOnCanvas(context, text, bounds, fontface){    
 
     // start with a large font size
@@ -1060,56 +1180,98 @@ class SigCaptDialog {
 
 	return fontsize;
 
-  } 
+  }
 
-  draw(phase, point) {
-      switch (phase) {
-		  case "begin" : window.WILL.begin(point); break;
-		  case "move"  : window.WILL.move(point); break;
-		  case "end"   : window.WILL.end(point); break;
-	  }
-  }	  
+  onMouseEnter(ev) {
+	  ev.preventDefault();
+	  /*if ((ev.buttons == 1) && (this.mDown === "out")) {
+		  this.onDown(ev);
+	  } else {
+		  this.mDown = "up";
+	  }*/
+  }
   
-  onDown(event) {	  
-      if (this.currentEventType) return; //to avoid multitouch
-	  if (event.buttons != 1) return;
+  onMouseLeave(ev) {
+	  ev.preventDefault();
+      /*if ((ev.buttons == 1) && (this.mDown === "down")) {	  
+	      this.onUp(ev);
+      
+	      if (!this.config.onOutSide || !this.config.onOutSide()) {
+	          this.mDown = "out";	    
+		  }
+	  }*/
+  }
+  
+  onDown(ev) {
+	  ev.preventDefault();
+	  if (this.mDown === "down") return false;	  
+	  let pressure = 0;
+	  let x, y;
+	  this.hasPressure = false;
+	  let pointerType;	 	  
+
+      if (ev instanceof PointerEvent) {
+		  if (ev.buttons != 1) return false;
+		  if (typeof ev.pressure !== "undefined" && (ev.pointerType === "pen" || ev.pointerType === "stu")) {
+			  pressure = ev.pressure;
+			  this.hasPressure = true;			  			  			  
+		  }
+		  x = ev.offsetX;
+		  y = ev.offsetY;
+		  pointerType = ev.pointerType;
+		  this.pointerId = ev.pointerId;		             		  
+		  
+		  //intuos pro draws with button pressed on hover
+	      //here we avoid it.
+		  if (!this.config.allowZeroPressure) {	
+              if (ev.pointerType === "pen" && ev.pressure === 0) {
+				  return false;
+			  }
+		  }
+		  
+	  } else {
+	      const bcr = ev.target.getBoundingClientRect();	  	  
+	      if (ev.touches && ev.touches[0]) {		  
+              if (typeof ev.touches[0]["force"] !== "undefined" && ev.touches[0]["force"] > 0 && ev.touches[0]["force"] < 1) {
+                  pressure = ev.targetTouches[0]["force"];
+			      this.hasPressure = true;
+			      //if we have pressure we assume is a pen
+			      pointerType = "pen";
+              } else {
+			      pointerType = "touch";
+		      }
+		      x = ev.targetTouches[0].clientX - bcr.x;;
+		      y = ev.targetTouches[0].clientY - bcr.y;
+			  this.pointerId = ev.targetTouches[0].identifier;
+          } else {
+		      pointerType = "mouse";
+		      x = ev.clientX - bcr.x;;
+		      y = ev.clientY - bcr.y;
+			  this.pointerId = "mouse";
+          }
+	  }
 	  
-	  switch (event.pointerType) {
+	  switch (pointerType) {
 	      case "mouse" : if (!this.config.source.mouse) return; break;
 		  case "touch" : if (!this.config.source.touch) return; break;
 		  case "pen"   : if (!this.config.source.pen) return; break;
 		  case "stu"   : if (!this.config.source.stu) return; break;
 	  }
 	  
-	  
-	  this.currentEventType = event.pointerType;	
-	  
-	  let pointerType = event.pointerType;
-	  let pressure = event.pressure;
-	  if (event.pointerType == "touch") {
-		  pointerType = "mouse";
-		  pressure = 0;
+	  this.mDown = "down";
+	  this.disableScroll();
+	  let time = Math.floor(ev.timeStamp);	  
+	  if (!this.willEngine) {
+	      this.willEngine = new Module.WillEngine(this.config.strokeSize, this.hasPressure);
 	  }
-	  
-	  let time = Math.floor(event.timeStamp);	  
-      const downEvent = new PointerEvent("pointerdown", {
-			                   pointerId: 1,
-                               pointerType: pointerType,							   
-                               isPrimary: true,	
-                               pressure: pressure							   
-                             });  	  
-		
-      downEvent.timestamp = time;
-	  
-	  if (window.WILL) {
-	      window.WILL.begin(window.DigitalInk.InkBuilder.createPoint(downEvent, {x:event.offsetX, y:event.offsetY}));
-	  }
-	  
-	  const orientation = getPenOrientation(event);
+	  this.willEngine.addPointerData(Module.Phase.BEGIN, x > 0 ? x : 0, y > 0 ? y : 0, pressure, time);
+	  this.currentPath = new Path2D();
+	  	  
+	  const orientation = getPenOrientation(ev);
 	  var point = {
 		    'type': 'down',
-            'x': event.offsetX > 0 ? event.offsetX : 0,
-            'y': event.offsetY > 0 ? event.offsetY : 0,
+            'x': x > 0 ? x : 0,
+            'y': y > 0 ? y : 0,
             'p': pressure,
             't': time,
 			'azimuth': orientation.azimuth,
@@ -1120,146 +1282,183 @@ class SigCaptDialog {
       };
       this.capturedPoints.push(point);
 	  this.stopTimeOut();
-	  this.startDown = Date.now();
+	  this.startDown = Date.now();	  	  
+	  this.drawingPoints = new Array();
+	  
   }
   
-  onMove(event) {	  
-	  if (typeof event.getCoalescedEvents === "function") {
-	      const events = event.getCoalescedEvents();
+  onMovePointer(ev) {
+	  ev.preventDefault();	  	  	  
+	  if (this.mDown === "up") return false;
+	  let lastEvent;
+      if (typeof ev.getCoalescedEvents === "function") {
+	      const events = ev.getCoalescedEvents();
           for (const myEvent of events) {
-			  this.onMoveInternal(myEvent);
+			  if (!lastEvent ||
+			      myEvent.offsetX != lastEvent.offsetX ||
+			      myEvent.offsetY != lastEvent.offsetY ||
+				  myEvent.timeStamp != lastEvent.timeStamp) {
+			      if (!this.onMove(myEvent)) {
+					  return false;
+				  }					  
+			  }
+			  lastEvent = myEvent;
+			  
 		  }
-		  
+		  // in case some browser does not put the current event on the coalescedEvents
+          if (!lastEvent ||
+		      event.offsetX != lastEvent.offsetX ||
+		      event.offsetY != lastEvent.offsetY ||
+			  event.timeStamp != lastEvent.timeStamp) {
+			      if (!this.onMove(event)) {
+					  return false;
+				  }					  
+		  }			  
 	  } else {
-		  this.onMoveInternal(event);
+	      this.onMove(event);
 	  }
-	  
   }
   
-  onMoveInternal(event) {
-	  //if ((event.buttons != 1) || (event.pointerType != this.currentEventType)) return;
-	  if (event.pointerType != this.currentEventType) return;	 	  	  
+  onMove(ev) {	
+	  ev.preventDefault();
+	  if (this.mDown === "up") return false;
 	  
-	  switch (event.pointerType) {
-	      case "mouse" : if (!this.config.source.mouse) return; break;
-		  case "touch" : if (!this.config.source.touch) return; break;
-		  case "pen"   : if (!this.config.source.pen) return; break;
-		  case "stu"   : if (!this.config.source.stu) return; break;
-	  }
+	  let pressure = 0;
+	  let x, y;	  
 	  
-	  let pointerType = "pointermove";
-	  
-	  let toolType = event.pointerType;
-	  let pressure = event.pressure;
-	  if (event.pointerType == "touch") {
-		  toolType = "mouse";
-		  pressure = 0;
-	  }
-	  
-	  if (event.offsetX > this.drawingCanvas.width || 
-	      event.offsetY > this.drawingCanvas.height ||
-		  event.offsetX < 0 ||
-		  event.offsetY < 0) {
-			  
-		  if (this.isOut) {
-			  return;
+	  if (ev instanceof PointerEvent) {
+		  if (typeof ev.pressure !== "undefined" && (ev.pointerType === "pen" || ev.pointerType === "stu")) {
+			  pressure = ev.pressure;
 		  }
-		  this.isOut = true;
-		  pointerType = "pointerup";
-	  } else {
-		  if (this.isOut) {
-			  pointerType = "pointerdown";
-		      this.isOut = false;
+		  x = ev.offsetX;
+		  y = ev.offsetY;
+		  if (this.pointerId !== "mouse" && this.pointerId !== ev.pointerId) {
+			  return false;
 		  }
-	  }
-	  	  
-	  let time = Math.floor(event.timeStamp);	  
-	  const moveEvent = new PointerEvent(pointerType, {
-			                   pointerId: 1,
-                               pointerType: toolType,
-                               isPrimary: true,
-							   pressure: pressure
-                             });							
-
-	  moveEvent.timestamp = time;
-	  let pointType = "move";
-	  /*switch (pointerType) {
-	      case "pointermove" : window.WILL.move(InkBuilder.createPoint(moveEvent, {x:event.offsetX, y:event.offsetY}));  pointType="move"; break;
-		  case "pointerup" : window.WILL.end(InkBuilder.createPoint(moveEvent, {x:event.offsetX, y:event.offsetY}));  pointType="up"; break;
-		  case "pointerdown" : window.WILL.begin(InkBuilder.createPoint(moveEvent, {x:event.offsetX, y:event.offsetY}));  pointType="down"; break;
-	  }*/
-	  
-	  if (window.WILL) {
-	      window.WILL.move(window.DigitalInk.InkBuilder.createPoint(moveEvent, {x:event.offsetX, y:event.offsetY}));
-	  } else {
-		  const lastPoint = this.capturedPoints[this.capturedPoints.length -1];
-		  this.drawingCtx.beginPath();
-		  this.drawingCtx.moveTo(lastPoint.x, lastPoint.y);
-          this.drawingCtx.lineTo(event.offsetX > 0 ? event.offsetX : 0, event.offsetY > 0 ? event.offsetY : 0);
-          this.drawingCtx.fill();
-		  this.drawingCtx.stroke();
-          this.drawingCtx.closePath();
+	  } else {	  
+	      const bcr = ev.target.getBoundingClientRect();	  
+	      if (ev.touches && ev.touches[0]) {
+              if (typeof ev.touches[0]["force"] !== "undefined" && ev.touches[0]["force"] > 0) {
+                  pressure = ev.touches[0]["force"];
+		      }
+		      x = ev.targetTouches[0].clientX - bcr.x;
+		      y = ev.targetTouches[0].clientY - bcr.y;		  		  
+			  if (this.pointerId !== ev.targetTouches[0].identifier) {
+				  return false;
+			  }
+          } else {
+		      x = ev.clientX - bcr.x;
+		      y = ev.clientY - bcr.y;			  
+			  if (this.pointerId !== "mouse") {
+				  return false;
+			  }
+          }	  
 	  }
 	  
-	  const orientation = getPenOrientation(event);
+	  // onpointerleave is not working fine with pen
+	  // so we handle it here.
+      if (x > this.drawingCanvas.width || 
+	      y > this.drawingCanvas.height ||
+		  x < 0 ||
+		  y < 0) {		
+		  if (this.mDown === "down") {			  		      
+		      this.onUp(ev);		
+		      if (!this.config.onOutSide || !this.config.onOutSide()) {
+				  this.mDown = "out";
+		      }			  
+		  }          
+          return false;		  
+	  } else if (this.mDown === "out") {
+		  this.onDown(ev);
+		  return false;
+	  } 	  	  	  
+	  
+	  let time = Math.floor(ev.timeStamp);	  
+	  const orientation = getPenOrientation(ev);
 	  var point = {
-		    'type': pointType,
-            'x': event.offsetX > 0 ? event.offsetX : 0,
-            'y': event.offsetY > 0 ? event.offsetY : 0,
+		    'type': "move",
+            'x': x > 0 ? x : 0,
+            'y': y > 0 ? y : 0,
             'p': pressure,
             't': time,
 			'azimuth': orientation.azimuth,
 			'altitude': orientation.altitude,
 			'twist': orientation.twist,
-            'isDown': event.buttons == 1 && !this.isOut,
+            'isDown': true,
             'stroke_id': this.currentStrokeID
       };
-	  	  
-	  if (this.capturedPoints.length == 0) {
-		  this.capturedPoints.push(point);
-	  } else if (this.capturedPoints[this.capturedPoints.length - 1].t < time) {
-		  // on firefox sometimes there is old event.
-          this.capturedPoints.push(point);
-	  }		  	  
+	  this.capturedPoints.push(point);
+	  if (this.willEngine) {
+	      this.willEngine.addPointerData(Module.Phase.UPDATE, x > 0 ? x : 0, y > 0 ? y : 0, pressure, time);
+	  
+	      const polygon = this.willEngine.getLastPolygon();
+	      const polygonPoints = polygon.getPoints();
+	      if (polygonPoints.size() > 0) {
+	          for (let i=0; i< polygonPoints.size(); i++) {
+		          const polygonPoint = polygonPoints.get(i);
+		          if (polygonPoint.pointType == Module.PolygonPointType.MOVE) {
+			          this.currentPath.moveTo(polygonPoint.x, polygonPoint.y); 
+		          } else {			  
+			          this.currentPath.lineTo(polygonPoint.x, polygonPoint.y); 
+				  }
+              }	
+	      }
+          this.currentPath.closePath();		  
+	      polygon.delete();
+		  this.repaintScreen();
+	  }	
+	  
+      return true;	  
   }
   
-  onUp(event) {
-	  if (event.pointerType != this.currentEventType) return;
+  onUp(ev) {
+	  ev.preventDefault();
+	  if (this.mDown !== "down") return false;	  
 	  
-	  switch (event.pointerType) {
-	      case "mouse" : if (!this.config.source.mouse) return; break;
-		  case "touch" : if (!this.config.source.touch) return; break;
-		  case "pen"   : if (!this.config.source.pen) return; break;
-		  case "stu"   : if (!this.config.source.stu) return; break;
-	  }
+	  let pressure = 0;
+	  let x, y;
 	  
-	  let pointerType = event.pointerType;
-	  let pressure = event.pressure;
-	  if (event.pointerType == "touch") {
-		  pointerType = "mouse";
-		  pressure = 0;
-	  }
+	  if (ev instanceof PointerEvent) {
+		  if (typeof ev.pressure !== "undefined" && (ev.pointerType === "pen" || ev.pointerType === "stu")) {
+			  pressure = ev.pressure;
+		  }
+		  x = ev.offsetX;
+		  y = ev.offsetY;
+	  } else {	  
+	      const bcr = ev.target.getBoundingClientRect();	  
+	      if (this.mDown === "out") {
+		      if (ev.touches && ev.touches[0]) {
+                  if (typeof ev.touches[0]["force"] !== "undefined" && ev.touches[0]["force"] > 0) {
+                      pressure = ev.touches[0]["force"];
+			      }
+		          x = ev.targetTouches[0].clientX - bcr.x;
+		          y = ev.targetTouches[0].clientY - bcr.y;
+              } else {
+		          x = ev.clientX - bcr.x;
+		          y = ev.clientY - bcr.y;
+              }
+	      } else {	  	  
+	          if (ev.changedTouches && ev.changedTouches[0]) {
+		          // on up event does not have touches coordinates
+		          if (ev.changedTouches[0]["force"] !== "undefined" && ev.changedTouches[0]["force"] > 0) {
+                      pressure = ev.changedTouches[0]["force"];
+			      }
+		          x = ev.changedTouches[0].clientX - bcr.x;;
+		          y = ev.changedTouches[0].clientY - bcr.y;
+              } else {
+		          x = ev.clientX - bcr.x;
+		          y = ev.clientY - bcr.y;
+		      }
+		  }
+      }
 	  
-	  let time = Math.floor(event.timeStamp);	  
-	  const upEvent = new PointerEvent("pointerup", {
-			                   pointerId: 1,
-                               pointerType: pointerType,
-							   pressure: pressure,
-                               isPrimary: true
-                             });
-	  upEvent.timestamp = time;
-	  
-	  if (window.WILL) {
-	      window.WILL.end(window.DigitalInk.InkBuilder.createPoint(upEvent, {x:event.offsetX, y:event.offsetY}));
-	  }
-	  this.currentEventType = null;
-	  
-	  const orientation = getPenOrientation(event);
+	  let time = Math.floor(ev.timeStamp);	  
+	  const orientation = getPenOrientation(ev);
 	  var point = {
 		    'type': 'up',
-            'x': event.offsetX > 0 ? event.offsetX : 0,
-            'y': event.offsetY > 0 ? event.offsetY : 0,
-            'p': pressure, 
+            'x': x > 0 ? x : 0,
+            'y': y > 0 ? y : 0,
+            'p': 0, 
             't': time,
 			'azimuth': orientation.azimuth,
 			'altitude': orientation.altitude,
@@ -1267,16 +1466,37 @@ class SigCaptDialog {
             'isDown': false,
             'stroke_id': this.currentStrokeID
       };
-      this.capturedPoints.push(point);	
-      this.startTimeOut();	  
+      this.capturedPoints.push(point);		  
+	  this.startTimeOut();	  
 	  this.addTimeOnSurface(Date.now() - this.startDown);
+	  this.enableScroll();	  	  
+	  	  
+	  if (this.willEngine) {		  
+	      this.willEngine.addPointerData(Module.Phase.END, x > 0 ? x : 0, y > 0 ? y : 0, 0, time);	  
+	      this.willEngine.getLastPolygon().delete(); //this call is necessary
 	  
+	      this.currentPath = null;
+	      const polygon = this.willEngine.getStroke();
+	      const polygonPoints = polygon.getPoints();
+	      for (let i=0; i< polygonPoints.size(); i++) {
+		      const polygonPoint = polygonPoints.get(i);
+		      if (polygonPoint.pointType == Module.PolygonPointType.MOVE) {
+			      this.drawingPath.moveTo(polygonPoint.x, polygonPoint.y); 
+		      } else {			  
+			      this.drawingPath.lineTo(polygonPoint.x, polygonPoint.y); 
+		      }
+	      }		  
+	      this.repaintScreen(true);
+	      polygon.delete();	      
+	  }
+	  
+	  this.mDown = "up";
   }  
   
-   /**
+    /**
 	 * Generate the signature from the raw data.
 	 **/
-    async getCaptureData() {
+    getCaptureData() {				
 	    //Create Stroke Data
         let strokeVector = new Module.StrokeVector();
         let currentStroke = new Module.PointVector();
@@ -1288,7 +1508,7 @@ class SigCaptDialog {
         for (let index = 0; index < this.capturedPoints.length; index++) {
 		    if (!this.capturedPoints[index].isDown && !hasDown) {
 				// the signature starts with the first pen down, so the hover
-				// points before first down are ingnored.
+				// points before first down are ignored.
 			    continue;
 		    }
 		
@@ -1319,45 +1539,67 @@ class SigCaptDialog {
 		
             currentStroke.push_back(point);	
 			
-        }		
+        }	
+
+        const dimensions = this.mmToPx(1000, 1000);		
 	
 	    //Create capture area character
         var device = {
             'device_max_X': this.canvas.width,
             'device_max_Y': this.canvas.height,
             'device_max_P': 1000,
-            'device_pixels_per_m_x': Math.trunc(this.mmToPx(1000)),
-		    'device_pixels_per_m_y': Math.trunc(this.mmToPx(1000)),
+            'device_pixels_per_m_x': dimensions.width,
+		    'device_pixels_per_m_y': dimensions.height,
             'device_origin_X': 0,
-            'device_origin_Y': 1
+            'device_origin_Y': 1,
+			'device_unit_pixels': true
 		}	
 
-        var digitizerInfo = "Javascript-Demo";
-        var nicInfo = "";
-        var timeResolution = 1000;
-		var where = "";
-	
-        await this.sigObj.generateSignature(this.signatory, this.reason, where, this.integrityType, this.documentHash, strokeVector, device, digitizerInfo, nicInfo, timeResolution);
-		
-		// put the extra data
-		if (this.extraData) {
-		    for (const data of this.extraData) {
-		        this.sigObj.setExtraData(data.name, data.value);
+        const timeResolution = 1000;		
+        const myPromise = new Promise((resolve, reject) => {
+			try {
+                const promise = this.sigObj.generateSignature(this.signatory, this.reason, this.where, this.integrityType, this.documentHash, strokeVector, device, this.osInfo, this.digitizerInfo, this.nicInfo, timeResolution);
+			    promise.then((value) => {
+				    if (value) {
+		                // put the extra data
+		                if (this.extraData) {
+		                    for (const data of this.extraData) {
+		                        this.sigObj.setExtraData(data.name, data.value);
+		                    }
+		                }                        
+				    }
+				    strokeVector.delete();
+                    currentStroke.delete();
+					resolve(value);
+			    });
+			
+			    promise.catch(error => {
+					strokeVector.delete();
+                    currentStroke.delete();
+				    reject(error);
+			    });
+		    } catch(exception) {
+		        strokeVector.delete();
+                currentStroke.delete();
+				reject(exception);
 		    }
-		}			    
-	
-        strokeVector.delete();
-        currentStroke.delete();
+		});			    	
+
+        return myPromise;		
     }
 	
-	mmToPx(mm){
-	    var dpr = window.devicePixelRatio;
-        var inch = 25.4; //1inch = 25.4 mm
-        var ppi = 96;	
-        return ((mm/inch)*ppi)/dpr;
+	mmToPx(width, height) {
+	    const el = document.createElement('div');
+	    el.style = 'width: '+width+'mm; height:'+height+'mm;'
+	    document.body.appendChild(el);
+	    const pxWidth = el.offsetWidth;
+	    const pxHeight = el.offsetHeight;
+	    document.body.removeChild(el);
+	    return {width:pxWidth, height:pxHeight};
     }
-	
+ 	
 	drawEvaluationString(evaluationString, context, width, height, useColor) {
+		return true;
 		evaluationString = " "+evaluationString+" ";
         // get the hypotenuse, as we are going to write the text in diagonal
 	    const hypotenuse = Math.sqrt(width*width + height*height);
@@ -1393,6 +1635,7 @@ class SigCaptDialog {
 	
 	startTimeOut() {
 		if ((this.config.timeOut) && (this.config.timeOut.enabled) && (this.config.timeOut.onTimeOut)) {
+			this.stopTimeOut();
 	        this.timeOutInterval = setInterval(this.timeOutCallback.bind(this), this.config.timeOut.time);
 	    }
 	}
@@ -1405,8 +1648,11 @@ class SigCaptDialog {
 	}
 	
 	timeOutCallback() {
-		clearInterval(this.timeOutInterval);
-		this.config.timeOut.onTimeOut(this.timeOnSurface);
+		if (this.timeOutInterval) {
+		    clearInterval(this.timeOutInterval);		
+			this.timeOutInterval = null;
+		    this.config.timeOut.onTimeOut(this.timeOnSurface);
+		}
 	}
 	
 	addTimeOnSurface(time) {
@@ -1417,4 +1663,59 @@ class SigCaptDialog {
 		this.timeOnSurface = 0;
 	}
 	
+	setDraggable() {
+		const self = this;
+		const titleBar = document.getElementById("titleBar");		
+		titleBar.style.cursor = "move";
+		const signatureWindow = document.getElementById("signatureWindow");
+		titleBar.addEventListener('pointerdown', function(e) {
+	        e.preventDefault();
+	        this.initX = signatureWindow.offsetLeft;
+	        this.initY = signatureWindow.offsetTop;
+	        this.firstX = e.pageX;
+	        this.firstY = e.pageY;
+
+	        titleBar.addEventListener('pointermove', self.dragIt, false);
+
+	        window.addEventListener('pointerup', function() {
+		        titleBar.removeEventListener('pointermove', self.dragIt, false);
+	        }, false);
+			
+        }, false);
+	}
+	
+	dragIt(e) {
+		const signatureWindow = document.getElementById("signatureWindow");
+	    signatureWindow.style.left = this.initX+e.pageX-this.firstX + 'px';
+	    signatureWindow.style.top = this.initY+e.pageY-this.firstY + 'px';
+    }
+	
+	//firefox seems to scroll instead of drawing when using pen
+	//so we use this function to disable the scroll while drawing
+	disableScroll() {
+		if (navigator.userAgent.indexOf('Firefox') !== -1) {
+		    document.body.style.overflowY = "hidden";
+		}
+	}
+	
+	enableScroll() {
+        if (navigator.userAgent.indexOf('Firefox') !== -1) {
+            document.body.style.overflowY = "auto";
+		}
+    }
+	
+	repaintScreen(force) {
+		if (!this.requestedDrawing || force) {
+			this.requestedDrawing = true;
+
+			this.drawingCtx.clearRect(0, 0, this.drawingCanvas.width, this.drawingCanvas.height);	
+		    this.drawingCtx.fill(this.drawingPath);
+			
+		    if (this.currentPath) {				
+				this.drawingCtx.fill(this.currentPath);							
+		    }		
+            
+			requestAnimationFrame(() => (this.requestedDrawing = false));					
+		}	        		
+	}	
 }

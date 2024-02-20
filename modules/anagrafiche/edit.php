@@ -150,6 +150,12 @@ if (sizeof($problemi_anagrafica) > 0) {
 if (in_array($id_azienda, $tipi_anagrafica)) {
     $help_codice_destinatario .= ' <b>'.tr("Non è necessario comunicare il proprio codice destinatario ai fornitori in quanto è sufficiente che questo sia registrato nel portale del Sistema Di Interscambio dell'Agenzia Entrate (SDI)").'.</b>';
 }
+
+if (strpos($record['cellulare'], '39') !== 0) {
+    // Aggiungi "39" all'inizio della variabile
+    $record['cellulare'] = '39'.$record['cellulare'];
+}
+
 ?>
                         {[ "type": "text", "label": "<?php echo ($record['tipo'] == 'Ente pubblico') ? tr('Codice unico ufficio') : tr('Codice destinatario'); ?>", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "value": "$codice_destinatario$", "maxlength": <?php echo ($record['tipo'] == 'Ente pubblico') ? '6' : '7'; ?>, "help": "<?php echo tr($help_codice_destinatario); ?>", "readonly": "<?php echo intval($nazione_anagrafica ? !(($nazione_anagrafica->iso2 === 'IT') || ($nazione_anagrafica->iso2 === 'SM')) : 0); ?>" ]}
                     </div>

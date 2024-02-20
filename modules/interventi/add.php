@@ -579,16 +579,28 @@ echo '
         }
 
         plus_sede = $(".modal #idsede_destinazione").parent().find(".btn");
-        plus_sede.attr("onclick", plus_sede.attr("onclick").replace(/id_parent=null/, "id_parent=").replace(/id_parent=[0-9]*/, "id_parent=" + value));
+
+        if (plus_sede.length == 1) {
+            plus_sede.attr("onclick", plus_sede.attr("onclick").replace(/id_parent=null/, "id_parent=").replace(/id_parent=[0-9]*/, "id_parent=" + value));
+        }
 
         plus_impianto = $(".modal #idimpianti").parent().find(".btn");
-        plus_impianto.attr("onclick", plus_impianto.attr("onclick").replace(/id_anagrafica=null/, "id_anagrafica=").replace(/id_anagrafica=[0-9]*/, "id_anagrafica=" + value));
+
+        if (plus_impianto.length == 1) {
+            plus_impianto.attr("onclick", plus_impianto.attr("onclick").replace(/id_anagrafica=null/, "id_anagrafica=").replace(/id_anagrafica=[0-9]*/, "id_anagrafica=" + value));
+        }
 
         plus_contratto = $(".modal #idcontratto").parent().find(".btn");
-        plus_contratto.attr("onclick", plus_contratto.attr("onclick").replace(/idanagrafica=null/, "idanagrafica=").replace(/idanagrafica=[0-9]*/, "idanagrafica=" + value));
+
+        if (plus_contratto.length == 1) {
+            plus_contratto.attr("onclick", plus_contratto.attr("onclick").replace(/idanagrafica=null/, "idanagrafica=").replace(/idanagrafica=[0-9]*/, "idanagrafica=" + value));
+        }
 
         plus_referente = $(".modal #idreferente").parent().find(".btn");
-        plus_referente.attr("onclick", plus_referente.attr("onclick").replace(/id_parent=null/, "id_parent=").replace(/id_parent=[0-9]*/, "id_parent=" + value));
+
+        if (plus_referente.length == 1) {
+            plus_referente.attr("onclick", plus_referente.attr("onclick").replace(/id_parent=null/, "id_parent=").replace(/id_parent=[0-9]*/, "id_parent=" + value));
+        }
 	});
 
     //gestione del cliente finale

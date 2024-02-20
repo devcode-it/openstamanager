@@ -64,7 +64,7 @@ if ($module['name'] == 'Ordini cliente') {
                     <?php
                         } else {
                             ?>
-                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT *, colore AS _bgcolor_ FROM or_statiordine WHERE descrizione IN('Bozza', 'Accettato', 'In attesa di conferma', 'Annullato') ORDER BY descrizione", "value": "$idstatoordine$", "class": "unblockable" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT *, colore AS _bgcolor_ FROM or_statiordine WHERE (is_fatturabile = 0 AND descrizione != 'Fatturato' || descrizione = 'Accettato') ORDER BY descrizione", "value": "$idstatoordine$", "class": "unblockable" ]}
                     <?php
                         }
                     } else {

@@ -65,10 +65,8 @@ CREATE TABLE `an_sedi_tecnici` (
     `idsede` INT NOT NULL ,  
     `idtecnico` INT NOT NULL ,  
     `data_inizio` DATE NULL DEFAULT NULL,
-    `data_fine` DATE NULL DEFAULT NULL,
-    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
-    `updated_at` TIMESTAMP on UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
-PRIMARY KEY (`id`)) ENGINE = InnoDB; 
+    `data_fine` DATE NULL DEFAULT NULL
+PRIMARY KEY (`id`)); 
 
 -- Aggiunta indici
 ALTER TABLE `an_sedi_tecnici` 

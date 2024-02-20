@@ -579,3 +579,7 @@ HAVING
     2=2
 ORDER BY
     `id`, `nome` ASC" WHERE `name` = 'Utenti e permessi';
+
+-- Fix per errore creazione tabella an_sedi_tecnici v. 2.4.52
+ALTER TABLE `an_sedi_tecnici`  CHANGE `updated_at` `updated_at` TIMESTAMP NULL on update CURRENT_TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE `an_sedi_tecnici`  CHANGE `created_at` `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP;

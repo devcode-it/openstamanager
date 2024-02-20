@@ -44,6 +44,10 @@ body {
     text-align: left;
 }
 
+.main-header .navbar{
+    background: #333;
+}
+
 textarea {
     resize: vertical;
 }
@@ -1074,9 +1078,16 @@ div.tip {
 
 /* Sidebar destra per i plugin */
 
-.control-sidebar {
-    top: 50px;
-    padding-top: 10px;
+.control-sidebar{
+    top: 0;
+    padding-top: 50px;
+}
+
+.control-sidebar > h4 {
+    font-size: 12px;
+    padding-left: 14px;
+    text-transform: uppercase;
+    color: #888;
 }
 
 @media screen and (min-width: 1140px) {

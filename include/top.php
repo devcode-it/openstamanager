@@ -513,11 +513,11 @@ if (Auth::check()) {
         // Menu laterale per la visualizzazione dei plugin
         echo '
         <aside class="control-sidebar control-sidebar-light">
-            <h4 class="text-center">'.tr('Plugin disponibili').'</h4>
+            <h4><i class="fa fa-plug"></i> '.tr('Plugin').'</h4>
             <ul class="nav nav-tabs nav-pills nav-stacked">
                 <li data-toggle="control-sidebar" class="active btn-default">
                     <a data-toggle="tab" href="#tab_0">
-                        <i class="'.$structure['icon'].'"></i> '.$structure['title'].'
+                        '.$structure['title'].'
                     </a>
                 </li>';
 

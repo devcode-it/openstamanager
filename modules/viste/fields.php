@@ -28,7 +28,7 @@ echo '
             <div class="data">';
 
 $key = 0;
-$fields = $dbo->fetchArray('SELECT * FROM zz_views WHERE id_module='.prepare($record['id']).' ORDER BY `order` ASC');
+$fields = $dbo->fetchArray('SELECT * FROM zz_views WHERE id_module='.prepare($record['id']).' ORDER BY `order` ASC, updated_at DESC ');
 foreach ($fields as $key => $field) {
     $editable = !($field['default'] && $enable_readonly);
 
@@ -38,7 +38,7 @@ foreach ($fields as $key => $field) {
                         <h3 class="box-title">'.
                             tr('Campo in posizione _POSITION_', [
                                 '_POSITION_' => $field['order'],
-                                ]).' ('.$field['name'].')
+                                ]).' ('.$field['name'].') <span class="badge tip" title="'.tr('Modificato il ').Translator::timestampToLocale($field['updated_at']).'" >'.Translator::timestampToLocale($field['created_at']).'</span>
                         </h3>
 
                         <div class="box-tools pull-right">

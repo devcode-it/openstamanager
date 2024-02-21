@@ -56,6 +56,7 @@ switch (post('op')) {
             'predefined_accredito' => $predefined_accredito,
             'predefined_addebito' => $predefined_addebito,
             'autofatture' => post('autofatture'),
+            'for_fe' => post('for_fe'),
         ], ['id' => $id_record]);
 
         // Aggiornamento dei permessi relativi

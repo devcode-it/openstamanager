@@ -242,7 +242,7 @@ $id_segment = $database->table('co_tipidocumento')->where('id', '=', $id_tipodoc
 
 echo '
         <div class="col-md-3">
-            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_fiscale' => 1, 'is_sezionale' => 1]).', "value": "'.$id_segment.'" ]}
+            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_fiscale' => 1, 'is_sezionale' => 1, 'for_fe' => 1]).', "value": "'.$id_segment.'" ]}
         </div>';
 
 // Data di registrazione

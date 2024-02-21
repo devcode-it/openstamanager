@@ -25,6 +25,7 @@ switch ($resource) {
         $id_module = $superselect['id_module'];
         $is_fiscale = $superselect['is_fiscale'];
         $is_sezionale = $superselect['is_sezionale'];
+        $for_fe = $superselect['for_fe'];
         $escludi_id = $superselect['escludi_id'];
 
         if (isset($id_module)) {
@@ -39,6 +40,10 @@ switch ($resource) {
 
             if ($is_sezionale != null) {
                 $where[] = 'zz_segments.is_sezionale = '.prepare($is_sezionale);
+            }
+            
+            if ($for_fe != null) {
+                $where[] = 'zz_segments.for_fe = '.prepare($for_fe);
             }
 
             if ($escludi_id != null) {

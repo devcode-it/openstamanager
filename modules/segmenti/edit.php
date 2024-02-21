@@ -131,16 +131,20 @@ if ($record['is_sezionale']) {
             </div>
 
 			<div class="row">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     {[ "type": "checkbox", "label": "<?php echo tr('Predefinito note di credito'); ?>", "name": "predefined_accredito", "value": "$predefined_accredito$", "help": "<?php echo tr('Seleziona per rendere il sezionale predefinito per le note di credito'); ?>", "placeholder": "<?php echo tr('Sezionale predefinito per le note di credito'); ?>", "extra": "<?php echo ($record['modulo'] != 'Fatture di vendita' && $record['modulo'] != 'Fatture di acquisto') ? 'readonly' : ''; ?>"  ]}
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                     {[ "type": "checkbox", "label": "<?php echo tr('Predefinito note di debito'); ?>", "name": "predefined_addebito", "value": "$predefined_addebito$", "help": "<?php echo tr('Seleziona per rendere il sezionale predefinito per le note di debito'); ?>", "placeholder": "<?php echo tr('Sezionale predefinito per le note di debito'); ?>", "extra": "<?php echo ($record['modulo'] != 'Fatture di vendita' && $record['modulo'] != 'Fatture di acquisto') ? 'readonly' : ''; ?>"  ]}
                 </div>
 
-                <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Autofatture'); ?>", "name": "autofatture", "value": "$autofatture$", "extra": "<?php echo ($record['modulo'] != 'Fatture di vendita' && $record['modulo'] != 'Fatture di acquisto') ? 'readonly' : ''; ?>" ]}
+                <div class="col-md-3">
+                    {[ "type": "checkbox", "label": "<?php echo tr('Utilizzabile per autofatture'); ?>", "name": "autofatture", "value": "$autofatture$", "help":  "<?php echo tr('Seleziona per rendere utilizzabile il sezionale per le autofatture'); ?>", "extra": "<?php echo ($record['modulo'] != 'Fatture di vendita' && $record['modulo'] != 'Fatture di acquisto') ? 'readonly' : ''; ?>" ]}
+                </div>
+
+                <div class="col-md-3">
+                    {[ "type": "checkbox", "label": "<?php echo tr('Utilizzabile per fatture elettroniche'); ?>", "name": "for_fe", "value": "$for_fe$", "help":  "<?php echo tr('Seleziona per rendere utilizzabile il sezionale per le fatture elettroniche'); ?>", "extra": "<?php echo ($record['modulo'] != 'Fatture di vendita' && $record['modulo'] != 'Fatture di acquisto') ? 'readonly' : ''; ?>" ]}
                 </div>
 			</div>
 

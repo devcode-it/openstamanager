@@ -60,13 +60,14 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE name='Automezzi'), 'Descrizione', 'an_sedi.descrizione', 4, 1, 0, 0, '', '', 1, 0, 0);
 
 -- Tabella per associazione automezzi-tecnici
-CREATE TABLE `an_sedi_tecnici` (
+CREATE TABLE IF NOT EXISTS `an_sedi_tecnici` (
     `id` INT NOT NULL AUTO_INCREMENT , 
     `idsede` INT NOT NULL ,  
     `idtecnico` INT NOT NULL ,  
     `data_inizio` DATE NULL DEFAULT NULL,
-    `data_fine` DATE NULL DEFAULT NULL
-PRIMARY KEY (`id`)); 
+    `data_fine` DATE NULL DEFAULT NULL,
+    PRIMARY KEY (`id`)
+); 
 
 -- Aggiunta indici
 ALTER TABLE `an_sedi_tecnici` 

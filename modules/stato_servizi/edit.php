@@ -260,7 +260,7 @@ echo '
         </div>
     </div>';
 
-// Widgets + Hooks
+// Widgets + Hooks + Sessioni
 echo '
     <div class="col-md-12 col-lg-6">
         <div class="box box-info">
@@ -285,8 +285,21 @@ echo '
             </div>
         </div>
 
+        <div class="box box-info">
+            <div class="box-header">
+                <h3 class="box-title">
+                    '.tr('Sessioni attive negli ultimi _MINUTI_ minuti', ['_MINUTI_' => setting('Timeout notifica di presenza (minuti)')]).'
+                </h3>
+            </div>
+
+            <div class="box-body" id="sessioni">
+            </div>
+        </div>
+
     </div>
-</div>
+</div>';
+
+echo '
 
 <script>
 
@@ -442,11 +455,23 @@ function caricaElencoHooks() {
     });
 }
 
+function caricaElencoSessioni() {
+    let container = $("#sessioni");
+
+    localLoading(container, true);
+    return $.get("'.$structure->fileurl('elenco-sessioni.php').'?id_module='.$id_module.'", function(data) {
+        container.html(data);
+        localLoading(container, false);
+
+        init();
+    });
+}
 
 $(document).ready(function() {
     caricaElencoModuli();
     caricaElencoWidget();
     caricaElencoHooks();
+    caricaElencoSessioni();
 
     init();
 });

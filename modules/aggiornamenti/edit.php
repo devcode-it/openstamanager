@@ -185,9 +185,61 @@ function search(button) {
 
 <div class="row">';
 
+//Verifiche di integrità
 echo '
     <div class="col-md-4">
-        <div class="box box-success">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">
+                    '.tr("Verifica l'integrità dell'installazione").' <span class="tip" title="'.tr("Verifica l'integrità della tua installazione attraverso un controllo sui checksum dei file e sulla struttura del database").'."><i class="fa fa-question-circle-o"></i></span>
+                </h3>
+            </div>
+            <div class="box-body">
+                <button type="button" class="btn btn-primary btn-block" onclick="checksum(this)">
+                    <i class="fa fa-list-alt"></i> '.tr('Controlla file').'
+                </button>
+
+                <button type="button" class="btn btn-info btn-block" onclick="database(this)">
+                    <i class="fa fa-database"></i> '.tr('Controlla database').'
+                </button>
+
+                <button type="button" class="btn btn-block" onclick="controlli(this)">
+                    <i class="fa fa-stethoscope"></i> '.tr('Controlla gestionale').'
+                </button>
+            </div>
+        </div>
+    </div>';
+
+//Controllo automatico della presenza di aggiornamenti per il gestionale
+echo '
+
+    <div class="col-md-4">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">
+                    '.tr('Ricerca aggiornamenti').' <span class="tip" title="'.tr('Controllo automatico della presenza di aggiornamenti per il gestionale').'."><i class="fa fa-question-circle-o"></i></span>
+                </h3>
+            </div>
+            <div class="box-body" id="update-search">';
+if (extension_loaded('curl')) {
+    echo '		<button type="button" class="btn btn-info btn-block" onclick="search(this)">
+                    <i class="fa fa-search"></i> '.tr('Ricerca').'
+                </button>';
+} else {
+    echo '		<button type="button" class="btn btn-warning btn-block disabled" >
+                    <i class="fa fa-warning"></i> '.tr('Estensione curl non supportata').'.
+                </button>';
+}
+
+echo '   </div>
+        </div>
+    </div>';
+
+
+//Form di caricamento aggiornamenti gestionale o moduli
+echo '
+    <div class="col-md-4">
+        <div class="box box-primary">
             <div class="box-header with-border">
                 <h3 class="box-title">
                     '.tr('Carica aggiornamenti o nuovi moduli').' <span class="tip" title="'.tr('Form di caricamento aggiornamenti del gestionale e innesti di moduli e plugin').'."><i class="fa fa-question-circle-o"></i></span>
@@ -224,54 +276,6 @@ echo '
 echo '
                 </form>
             </div>
-        </div>
-    </div>';
-
-echo '
-    <div class="col-md-4">
-        <div class="box box-warning">
-            <div class="box-header with-border">
-                <h3 class="box-title">
-                    '.tr("Verifica l'integrità dell'installazione").' <span class="tip" title="'.tr("Verifica l'integrità della tua installazione attraverso un controllo sui checksum dei file e sulla struttura del database").'."><i class="fa fa-question-circle-o"></i></span>
-                </h3>
-            </div>
-            <div class="box-body">
-                <button type="button" class="btn btn-primary btn-block" onclick="checksum(this)">
-                    <i class="fa fa-list-alt"></i> '.tr('Controlla file').'
-                </button>
-
-                <button type="button" class="btn btn-info btn-block" onclick="database(this)">
-                    <i class="fa fa-database"></i> '.tr('Controlla database').'
-                </button>
-
-                <button type="button" class="btn btn-block" onclick="controlli(this)">
-                    <i class="fa fa-stethoscope"></i> '.tr('Controlla gestionale').'
-                </button>
-            </div>
-        </div>
-    </div>';
-
-echo '
-
-    <div class="col-md-4">
-        <div class="box box-info">
-            <div class="box-header with-border">
-                <h3 class="box-title">
-                    '.tr('Ricerca aggiornamenti').' <span class="tip" title="'.tr('Controllo automatico della presenza di aggiornamenti per il gestionale').'."><i class="fa fa-question-circle-o"></i></span>
-                </h3>
-            </div>
-            <div class="box-body" id="update-search">';
-if (extension_loaded('curl')) {
-    echo '		<button type="button" class="btn btn-info btn-block" onclick="search(this)">
-                    <i class="fa fa-search"></i> '.tr('Ricerca').'
-                </button>';
-} else {
-    echo '		<button type="button" class="btn btn-warning btn-block disabled" >
-                    <i class="fa fa-warning"></i> '.tr('Estensione curl non supportata').'.
-                </button>';
-}
-
-echo '   </div>
         </div>
     </div>';
 

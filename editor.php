@@ -95,10 +95,10 @@ if (empty($record) || !$has_access) {
 				<h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Attenzione!').'</h3>
 			</div>
 			<div class="box-body">
-				<p>'.tr('I seguenti utenti stanno visualizzando questa pagina').':</p>
+				<p>'.tr('I seguenti utenti stanno consultando questa scheda').':</p>
 				<ul class="list">
 				</ul>
-				<p>'.tr('Prestare attenzione prima di effettuare modifiche, poichè queste potrebbero essere perse a causa di multipli salvataggi contemporanei').'.</p>
+				<p>'.tr('Prestare attenzione prima di effettuare modifiche, poiché queste potrebbero essere perse a causa di una sovrascrittura delle informazioni').'.</p>
 			</div>
 		</div>';
     }

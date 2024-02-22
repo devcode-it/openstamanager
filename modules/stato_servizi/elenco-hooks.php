@@ -39,7 +39,7 @@ foreach ($gruppi as $modulo => $hooks) {
     echo '
     <thead>
         <tr>
-            <th colspan="4">'.$modulo.'</th>
+            <th colspan="4" class="text-center text-muted" >'.$modulo.'</th>
         </tr>
     </thead>
 

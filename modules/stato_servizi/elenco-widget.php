@@ -41,7 +41,7 @@ foreach ($gruppi as $modulo => $widgets) {
     echo '
     <thead>
         <tr>
-            <th colspan="4">'.$modulo.'</th>
+            <th colspan="4" class="text-center text-muted" >'.$modulo.'</th>
         </tr>
     </thead>
 

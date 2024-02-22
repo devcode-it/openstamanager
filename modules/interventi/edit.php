@@ -25,6 +25,10 @@ include_once __DIR__.'/../../core.php';
 $block_edit = $record['flag_completato'];
 $module_anagrafiche = Modules::get('Anagrafiche');
 
+$codice = $database->FetchOne('SELECT codice FROM in_interventi WHERE id = '.$intervento->id.'')['codice'];
+$prev = $database->FetchOne('SELECT id FROM in_interventi WHERE codice = '.($codice - 1).'')['id'];
+$next = $database->FetchOne('SELECT id FROM in_interventi WHERE codice = '.($codice + 1).'')['id'];
+
 // Verifica aggiuntive sulla sequenzialità dei numeri
 $numero_previsto = verifica_numero_intervento($intervento);
 
@@ -41,6 +45,26 @@ if (!empty($numero_previsto) && intval(setting('Verifica numero intervento'))) {
 }
 
 echo '
+<div class="row">
+    <div class="col-md-2">';
+if ($prev) {
+    echo '
+            <a class="btn btn-info btn-block" href="'.base_path().'/editor.php?id_module=3&id_record='.$prev.'">
+                <i class="fa fa-arrow-circle-left"></i> '.tr('Precedente').'
+            </a>';
+} echo '
+    </div>
+    <div class="col-md-2 col-md-offset-8">';
+if ($next) {
+    echo '
+            <a class="btn btn-info btn-block" href="'.base_path().'/editor.php?id_module=3&id_record='.$next.'">
+                '.tr('Successivo').' <i class="fa fa-arrow-circle-right"></i>
+            </a>';
+}
+echo '
+    </div>
+</div>
+<br>
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="backto" value="record-edit">

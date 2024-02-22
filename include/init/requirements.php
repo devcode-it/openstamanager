@@ -32,43 +32,34 @@ $modules = [
 $sapi_name = php_sapi_name();
 
 if (strpos($sapi_name, 'apache') !== false) {
-    //PHP è in esecuzione come modulo Apache (4)
+    // PHP è in esecuzione come modulo Apache (4)
     $php_interface = 'apache';
-}
-elseif (strpos($sapi, 'fpm-fcgi') !== false) {
-    //PHP è in esecuzione come PHP-FPM FastCGI (3)
+} elseif (strpos($sapi, 'fpm-fcgi') !== false) {
+    // PHP è in esecuzione come PHP-FPM FastCGI (3)
     $php_interface = 'fpm-fcgi';
-}
-elseif (strpos($sapi_name, 'fpm') !== false) {
-    //PHP è in esecuzione come PHP-FPM (9)
+} elseif (strpos($sapi_name, 'fpm') !== false) {
+    // PHP è in esecuzione come PHP-FPM (9)
     $php_interface = 'fpm';
-}
-elseif (strpos($sapi, 'cgi-fcgi') !== false) {
-    //PHP è in esecuzione come FastCGI (8)
+} elseif (strpos($sapi, 'cgi-fcgi') !== false) {
+    // PHP è in esecuzione come FastCGI (8)
     $php_interface = 'cgi-fcgi';
-}
-elseif (strpos($sapi, 'cgi') !== false) {
-    //PHP è in esecuzione come modulo CGI (2)
+} elseif (strpos($sapi, 'cgi') !== false) {
+    // PHP è in esecuzione come modulo CGI (2)
     $php_interface = 'cgi';
-}
-elseif (strpos($sapi, 'cli') !== false) {
-    //PHP è in esecuzione dalla riga di comando (command line interface) (1)
+} elseif (strpos($sapi, 'cli') !== false) {
+    // PHP è in esecuzione dalla riga di comando (command line interface) (1)
     $php_interface = 'cli';
-}
-elseif (strpos($sapi, 'embed') !== false) {
-    //PHP è incorporato in un'applicazione (5)
+} elseif (strpos($sapi, 'embed') !== false) {
+    // PHP è incorporato in un'applicazione (5)
     $php_interface = 'embed';
-}
-elseif (strpos($sapi, 'litespeed') !== false) {
-    //PHP è in esecuzione come modulo LiteSpeed (6)
+} elseif (strpos($sapi, 'litespeed') !== false) {
+    // PHP è in esecuzione come modulo LiteSpeed (6)
     $php_interface = 'litespeed';
-}
-elseif (strpos($sapi, 'isapi') !== false) {
-    //PHP è in esecuzione come modulo ISAPI in IIS (7)
+} elseif (strpos($sapi, 'isapi') !== false) {
+    // PHP è in esecuzione come modulo ISAPI in IIS (7)
     $php_interface = 'isapi';
-}
-else {
-    //Non è possibile determinare il tipo di interfaccia di PHP (0)
+} else {
+    // Non è possibile determinare il tipo di interfaccia di PHP (0)
     $php_interface = 'n.d.';
 }
 
@@ -79,14 +70,14 @@ if (function_exists('apache_get_modules')) {
 $apache = [];
 foreach ($modules as $name => $values) {
     $description = $values['description'];
-    
+
     $status = isset($available_modules) ? in_array($name, $available_modules) : $_SERVER[$values['server']] == 'On';
 
-    if ($name == 'mod_mime' && $php_interface != 'apache' ){
-        $headers = get_headers( (!empty($config['redirectHTTPS']) && !isHTTPS(true))? 'https://' : 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'], 1); 
+    if ($name == 'mod_mime' && $php_interface != 'apache') {
+        $headers = get_headers((!empty($config['redirectHTTPS']) && !isHTTPS(true)) ? 'https://' : 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], 1);
         if (isset($headers['Content-Type'])) {
             $status = 1;
-        }else{
+        } else {
             $status = 0;
         }
     }

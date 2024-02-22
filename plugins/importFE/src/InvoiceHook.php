@@ -56,8 +56,9 @@ class InvoiceHook extends CachedManager
             $link = base_path().'/controller.php?id_module='.$module->id.'#tab_'.$plugin->id;
         }
 
-        $message = tr('Ci sono _NUM_ fatture passive da importare', [
-            '_NUM_' => $count,
+        $message = tr('_NUM_ fattur_A_ passiv_A_ da importare', [
+            '_NUM_' => (($count>1) ? tr('Ci sono'): tr('C\'é')).' '.$count,
+            '_A_' => (($count>1) ? tr('e'): tr('a'))
         ]);
 
         return [

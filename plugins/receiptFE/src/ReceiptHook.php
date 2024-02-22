@@ -101,8 +101,9 @@ class ReceiptHook extends Manager
         $total_number = $completed_number + (is_array($todo_cache->content) ? count($todo_cache->content) : 0);
 
         // Messaggio di importazione
-        $message = tr('Sono state importate _NUM_ ricevute su _TOT_', [
-            '_NUM_' => $completed_number,
+        $message = tr('_NUM_ ricevut_A_ su _TOT_ totali', [
+            '_NUM_' => (($completed_number>1) ? tr('Sono state importate'): tr('E\' stata importata')).' '.$completed_number,
+            '_A_' => (($completed_number>1) ? tr('e'): tr('a')),
             '_TOT_' => $total_number,
         ]);
 

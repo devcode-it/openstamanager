@@ -11,7 +11,6 @@ foreach ($files as $key => $value) {
 
 delete($files);
 
-
 /* Fix per file sql di update aggiornato dopo rilascio 2.4.35 */
 $has_column = null;
 $col_righe = $database->fetchArray('SHOW COLUMNS FROM `zz_groups`');

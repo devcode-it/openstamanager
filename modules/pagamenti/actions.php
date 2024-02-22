@@ -82,7 +82,7 @@ switch (filter('op')) {
         if (isset($descrizione)) {
             $id_pagamento = (new Pagamento())->getByName($descrizione)->id_record;
 
-            if (($id_pagamento)) {
+            if ($id_pagamento) {
                 flash()->error(tr('Esiste già un metodo di pagamento con questo nome!'));
             } else {
                 $dbo->query('INSERT INTO `co_pagamenti` (`codice_modalita_pagamento_fe`, `prc` ) VALUES ('.prepare($codice_modalita_pagamento_fe).', 100 )');

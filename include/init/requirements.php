@@ -73,41 +73,6 @@ switch (true) {
         $php_interface = 'n.d.';
 }
 
-<<<<<<< Updated upstream
-if (strpos($sapi_name, 'apache') !== false) {
-    // PHP è in esecuzione come modulo Apache (4)
-    $php_interface = 'apache';
-} elseif (strpos($sapi, 'fpm-fcgi') !== false) {
-    // PHP è in esecuzione come PHP-FPM FastCGI (3)
-    $php_interface = 'fpm-fcgi';
-} elseif (strpos($sapi_name, 'fpm') !== false) {
-    // PHP è in esecuzione come PHP-FPM (9)
-    $php_interface = 'fpm';
-} elseif (strpos($sapi, 'cgi-fcgi') !== false) {
-    // PHP è in esecuzione come FastCGI (8)
-    $php_interface = 'cgi-fcgi';
-} elseif (strpos($sapi, 'cgi') !== false) {
-    // PHP è in esecuzione come modulo CGI (2)
-    $php_interface = 'cgi';
-} elseif (strpos($sapi, 'cli') !== false) {
-    // PHP è in esecuzione dalla riga di comando (command line interface) (1)
-    $php_interface = 'cli';
-} elseif (strpos($sapi, 'embed') !== false) {
-    // PHP è incorporato in un'applicazione (5)
-    $php_interface = 'embed';
-} elseif (strpos($sapi, 'litespeed') !== false) {
-    // PHP è in esecuzione come modulo LiteSpeed (6)
-    $php_interface = 'litespeed';
-} elseif (strpos($sapi, 'isapi') !== false) {
-    // PHP è in esecuzione come modulo ISAPI in IIS (7)
-    $php_interface = 'isapi';
-} else {
-    // Non è possibile determinare il tipo di interfaccia di PHP (0)
-    $php_interface = 'n.d.';
-}
-=======
->>>>>>> Stashed changes
-
 if (function_exists('apache_get_modules')) {
     $available_modules = apache_get_modules();
 }

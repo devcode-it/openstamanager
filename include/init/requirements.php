@@ -29,6 +29,15 @@ $modules = [
     ],
 ];
 
+$sapi_name = php_sapi_name();
+if (strpos($sapi_name, 'apache') !== false) {
+    $apache_version = 'apache';
+}elseif (strpos($sapi_name, 'fpm') !== false) {
+    $apache_version = 'fpm';
+}else {
+    //echo "Non è possibile determinare il tipo di interfaccia di PHP.";
+}
+
 if (function_exists('apache_get_modules')) {
     $available_modules = apache_get_modules();
 }
@@ -36,8 +45,17 @@ if (function_exists('apache_get_modules')) {
 $apache = [];
 foreach ($modules as $name => $values) {
     $description = $values['description'];
-
+    
     $status = isset($available_modules) ? in_array($name, $available_modules) : $_SERVER[$values['server']] == 'On';
+
+    if ($name == 'mod_mime' && $apache_version == 'fpm' ){
+        $headers = get_headers( (!empty($config['redirectHTTPS']) && !isHTTPS(true))? 'https://' : 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'], 1); 
+        if (isset($headers['Content-Type'])) {
+            $status = 1;
+        }else{
+            $status = 0;
+        }
+    }
 
     $apache[] = [
         'name' => $name,
@@ -375,7 +393,9 @@ foreach ($config_to_check as $name => $values) {
 }
 
 $requirements = [
-    tr('Apache') => $apache,
+    tr('Apache (_VERSION_)', [
+         '_VERSION_' => $apache_version,
+    ]) => $apache,
     tr('PHP (_VERSION_ _SUPPORTED_)', [
         '_VERSION_' => phpversion(),
         '_SUPPORTED_' => ((version_compare(phpversion(), $settings['php_version']['minimum'], '>=') && version_compare(phpversion(), $settings['php_version']['maximum'], '<=')) ? '' : '<small><small class="label label-danger" ><i class="fa fa-warning"></i> '.tr('versioni supportate:').' '.$settings['php_version']['description'].'</small></small>'),

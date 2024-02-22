@@ -584,7 +584,6 @@ ORDER BY
 ALTER TABLE `an_sedi_tecnici`  CHANGE `updated_at` `updated_at` TIMESTAMP NULL on update CURRENT_TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP;
 ALTER TABLE `an_sedi_tecnici`  CHANGE `created_at` `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP;
 
-
 -- Aggiunto flag "Fatture Elettroniche" in segmenti
 ALTER TABLE `zz_segments` ADD `for_fe` BOOLEAN NOT NULL AFTER `autofatture`;
 UPDATE `zz_segments` SET `for_fe` = '1' WHERE `zz_segments`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE name = 'Fatture di vendita') OR `zz_segments`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE name = 'Fatture di acquisto') AND `is_sezionale` = 1 AND `is_fiscale` = 1 AND `name` NOT LIKE '%non elettroniche%'; 

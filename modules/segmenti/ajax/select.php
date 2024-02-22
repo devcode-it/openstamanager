@@ -41,7 +41,7 @@ switch ($resource) {
             if ($is_sezionale != null) {
                 $where[] = 'zz_segments.is_sezionale = '.prepare($is_sezionale);
             }
-            
+
             if ($for_fe != null) {
                 $where[] = 'zz_segments.for_fe = '.prepare($for_fe);
             }

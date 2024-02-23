@@ -281,7 +281,7 @@ class Ordine extends Document
 
     public function getReferenceDate()
     {
-        return $this->data;
+        return $this->data_cliente ?: $this->data;
     }
 
     public function getReferenceRagioneSociale()

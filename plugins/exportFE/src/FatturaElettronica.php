@@ -507,7 +507,7 @@ class FatturaElettronica
             $fields = array_merge($fields, $extraFields);
         }
         else if ($data['tipo']=='Privato'){
-            echo "<div class='alert alert-danger fade in'><a href='#' class='close' data-dismiss='alert'>&times;</a><strong>".tr('Errore').": </strong>".tr("L'Anagrafica Azienda non può avere tipologia \"Privato\"").".</div>";
+            echo "<div class='alert alert-danger fade in alert-dismissible'><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">×</button><h4><i class=\"icon fa fa-ban\"></i>".tr('Errore')." </h4>".tr("L'Anagrafica Azienda non può avere tipologia \"Privato\"").".</div>";
         }
 
         $missing = [];

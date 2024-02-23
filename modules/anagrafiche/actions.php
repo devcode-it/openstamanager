@@ -116,14 +116,20 @@ switch (post('op')) {
         }
 
         flash()->info(tr("Informazioni per l'anagrafica _NAME_ salvate correttamente!", [
-            '_NAME_' => $anagrafica->ragione_sociale,
+            '_NAME_' => '<strong>'.$anagrafica->ragione_sociale.'</strong>',
         ]));
 
         // Aggiorno il codice anagrafica se non è già presente, altrimenti lo ignoro
-        if ($anagrafica->codice != post('codice')) {
-            flash()->warning(tr('Attenzione: il codice anagrafica _COD_ esiste già', [
-                '_COD_' => $anagrafica->codice,
-            ]));
+         $codice = $anagrafica->codice;
+            if (!empty($codice)) {
+            $anagrafiche_codice = Anagrafica::where('codice', $codice)
+                ->where('idanagrafica', '!=', $anagrafica->id)
+                ->get();
+            if (!$anagrafiche_codice->isEmpty()) {
+                flash()->warning(tr('Il codice anagrafica _COD_ esiste già', [
+                    '_COD_' => $codice,
+                ]));
+            }
         }
 
         // Controllo che il Codice Fiscale non sia già presente
@@ -133,7 +139,7 @@ switch (post('op')) {
                 ->where('idanagrafica', '!=', $anagrafica->id)
                 ->get();
             if (!$anagrafiche_codice_fiscale->isEmpty()) {
-                $message = tr('Attenzione: il codice fiscale _COD_ è già stato censito', [
+                $message = tr('Il codice fiscale _COD_ è già stato censito', [
                     '_COD_' => $codice_fiscale,
                 ]);
 
@@ -153,7 +159,7 @@ switch (post('op')) {
                 ->where('idanagrafica', '!=', $anagrafica->id)
                 ->get();
             if (!$anagrafiche_partita_iva->isEmpty()) {
-                $message = tr('Attenzione: la partita IVA _IVA_ è già stata censita', [
+                $message = tr('La partita IVA _IVA_ risulta già censita.', [
                     '_IVA_' => $partita_iva,
                 ]);
 
@@ -168,7 +174,7 @@ switch (post('op')) {
             $vat_number = is_numeric($partita_iva) ? $anagrafica->nazione->iso2.$partita_iva : $partita_iva;
             $check_vat_number = Validate::isValidVatNumber($vat_number);
             if (empty($check_vat_number['valid-format'])) {
-                flash()->warning(tr('Attenzione: la partita IVA _IVA_ potrebbe non essere valida', [
+                flash()->warning(tr('La partita IVA _IVA_ potrebbe non essere valida.', [
                     '_IVA_' => $partita_iva,
                 ]));
             }
@@ -178,7 +184,7 @@ switch (post('op')) {
         if ($anagrafica->tipo != 'Ente pubblico' && !empty($anagrafica->codice_fiscale) && $anagrafica->codice_fiscale != $anagrafica->partita_iva) {
             $check_codice_fiscale = Validate::isValidTaxCode($codice_fiscale);
             if (empty($check_codice_fiscale)) {
-                flash()->warning(tr('Attenzione: il codice fiscale _COD_ potrebbe non essere valido.', [
+                flash()->warning(tr('Il codice fiscale _COD_ potrebbe non essere valido.', [
                     '_COD_' => $codice_fiscale,
                 ]));
             }
@@ -268,7 +274,7 @@ switch (post('op')) {
                 ->where('idanagrafica', '!=', $anagrafica->id)
                 ->get();
             if (!$anagrafiche_partita_iva->isEmpty()) {
-                $message = tr('Attenzione: la partita IVA _IVA_ è già stata censita', [
+                $message = tr('La partita IVA _IVA_ è già stata censita', [
                     '_IVA_' => $partita_iva,
                 ]);
 
@@ -283,7 +289,7 @@ switch (post('op')) {
             $vat_number = is_numeric($partita_iva) ? $anagrafica->nazione->iso2.$partita_iva : $partita_iva;
             $check_vat_number = Validate::isValidVatNumber($vat_number);
             if (empty($check_vat_number['valid-format'])) {
-                flash()->warning(tr('Attenzione: la partita IVA _IVA_ potrebbe non essere valida', [
+                flash()->warning(tr('La partita IVA _IVA_ potrebbe non essere valida', [
                     '_IVA_' => $partita_iva,
                 ]));
             }
@@ -293,7 +299,7 @@ switch (post('op')) {
         if ($anagrafica->tipo != 'Ente pubblico' && !empty($anagrafica->codice_fiscale) && !empty($anagrafica->partita_iva) && $anagrafica->codice_fiscale != $anagrafica->partita_iva) {
             $check_codice_fiscale = Validate::isValidTaxCode($codice_fiscale);
             if (empty($check_codice_fiscale)) {
-                flash()->warning(tr('Attenzione: il codice fiscale _COD_ potrebbe non essere valido.', [
+                flash()->warning(tr('Il codice fiscale _COD_ potrebbe non essere valido.', [
                     '_COD_' => $codice_fiscale,
                 ]));
             }

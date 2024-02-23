@@ -651,7 +651,8 @@ if (!empty($messages['error'])) {
     foreach ($messages['error'] as $value) {
         echo '
 							<div class="alert alert-danger push">
-                                <i class="fa fa-times"></i> '.$value.'
+                                <h4><i class="icon fa fa fa-ban"></i> '.tr("Errore").'</h4>
+                                '.$value.'
                             </div>';
     }
 }
@@ -661,7 +662,7 @@ if (!empty($messages['warning'])) {
     foreach ($messages['warning'] as $value) {
         echo '
 							<div class="alert alert-warning push">
-                                <i class="fa fa-warning"></i>
+                                <h4><i class="icon fa fa-warning"></i> '.tr("Attenzione").'</h4>
                                 '.$value.'
                             </div>';
     }

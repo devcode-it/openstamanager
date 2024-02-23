@@ -188,34 +188,50 @@ class Ricevuta
 
         $descrizione = null;
         // Processo la ricevuta e salvo data ricezione, codice e messaggio
-        if ($codice == 'RC') {
-            // Consegnata
-            $descrizione = $this->xml['Destinatario']['Descrizione'];
-        } elseif ($codice == 'AT') {
-            // Attestazione Trasmissione
-            $descrizione = $this->xml['Destinatario']['Descrizione'];
-        } elseif ($codice == 'MC') {
-            // Mancata Consegna
-            $descrizione = $this->xml['Descrizione'];
-        } elseif ($codice == 'EC01' || $codice == 'EC02') {
-            // Esito Committente
-            $descrizione = $this->xml['Descrizione'];
-        } elseif ($codice == 'DT') {
-            // Decorrenza Termini
-            $descrizione = $this->xml['Descrizione'];
-        } elseif ($codice == 'NE') {
-            // Notifica Esito
-            $descrizione = $this->xml['EsitoCommittente']['Descrizione'];
-        } elseif ($codice == 'NS') {
-            // Scartata
-            $descrizione = $this->xml['ListaErrori']['Errore']['Descrizione'];
+        switch ($codice) {
+            case 'RC':
+                // Consegnata
+                $descrizione = $this->xml['Destinatario']['Descrizione'];
+                break;
+            case 'AT':
+                // Attestazione Trasmissione
+                $descrizione = $this->xml['Destinatario']['Descrizione'];
+                break;
+            case 'MC':
+                // Mancata Consegna
+                $descrizione = $this->xml['Descrizione'];
+                break;
+            case 'EC01':
+            case 'EC02':
+                // Esito Committente
+                $descrizione = $this->xml['Descrizione'];
+                break;
+            case 'DT':
+                // Decorrenza Termini
+                $descrizione = $this->xml['Descrizione'];
+                break;
+            case 'NE':
+                // Notifica Esito
+                $descrizione = $this->xml['EsitoCommittente']['Descrizione'];
+                break;
+            case 'NS':
+                // Scartata
+                $descrizione = $this->xml['ListaErrori']['Errore']['Descrizione'];
+                $suggerimento = $this->xml['ListaErrori']['Errore']['Suggerimento'];
+                break;
+            default:
+                // Codice non gestito
+                $descrizione = 'Codice non gestito';
+                break;
         }
+
+
 
         $data = $this->xml['DataOraRicezione'];
 
         $fattura->data_stato_fe = $data ? date('Y-m-d H:i:s', strtotime($data)) : '';
         $fattura->codice_stato_fe = $codice;
-        $fattura->descrizione_ricevuta_fe = $descrizione;
+        $fattura->descrizione_ricevuta_fe = $descrizione.(!empty($suggerimento) ? '<br>'.$suggerimento: '');
         $fattura->id_ricevuta_principale = $id_allegato;
 
         $fattura->save();

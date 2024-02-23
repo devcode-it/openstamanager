@@ -42,7 +42,7 @@ include_once __DIR__.'/../../core.php';
 				</div>
 
 				<div class="col-md-2">
-					{[ "type": "checkbox", "label": "<?php echo tr('Predefinito'); ?>", "name": "predefined", "value": "$predefined$", "help": "<?php echo tr('Seleziona per rendere il segmento predefinito.'); ?>", "placeholder": "<?php echo tr('Segmento predefinito'); ?>", "extra": "<?php echo ($record['predefined']) ? 'readonly' : ''; ?>"  ]}
+					{[ "type": "checkbox", "label": "<?php echo tr('Predefinito'); ?>", "name": "predefined", "value": "$predefined$", "help": "<?php echo tr('Seleziona per rendere il segmento predefinito.'); ?>", "placeholder": "<?php echo tr('Segmento predefinito'); ?>", "extra": "<?php echo (($record['predefined']) || ($record['is_sezionale'] == 0) ? 'readonly' : ''); ?>"  ]}
 				</div>
 
                 <div class="col-md-2">

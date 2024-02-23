@@ -25,26 +25,31 @@ echo '
 <table class="table table-hover table-condensed">
     <thead>
         <tr>
-            <th>'.tr('Utente').'</th>
-            <th class="text-center">'.tr('Record').'</th>
-            <th class="text-center">'.tr('Data e ora accesso').'</th>
-            <th class="text-center">'.tr('Tempo trascorso').'</th>
-            <th class="text-center">'.tr('Permanenza').'</th>
+            <th>'.tr('Modulo').'</th>
+            <th>'.tr('Record').'</th>
+            <th>'.tr('Data e ora accesso').'</th>
+            <th>'.tr('Ultimo aggiornamento').'</th>
+            <!--th>'.tr('Permanenza').'</th-->
         </tr>
     </thead>';
 
-$sessioni = $dbo->fetchArray('SELECT zz_semaphores.*, SUBSTRING_INDEX(posizione, ",", -1) AS id_record, zz_modules.name AS modulo, TIMESTAMPDIFF(SECOND, zz_semaphores.created_at, zz_semaphores.updated_at) AS permanenza
+$sessioni = $dbo->fetchArray('SELECT zz_semaphores.*, SUBSTRING_INDEX(posizione, ",", -1) AS id_record, zz_modules.name AS modulo, TIMESTAMPDIFF(SECOND, zz_semaphores.created_at, zz_semaphores.updated) AS permanenza, zz_users.username AS utente
 FROM zz_semaphores
     INNER JOIN zz_modules ON SUBSTRING_INDEX(posizione, ",", 1) = zz_modules.id
     INNER JOIN zz_users ON zz_semaphores.id_utente = zz_users.id
-ORDER BY `modulo` ASC, SUBSTRING_INDEX(posizione, ",", -1) ASC');
+ORDER BY `utente` ASC, SUBSTRING_INDEX(posizione, ",", -1) ASC');
 
-$gruppi = collect($sessioni)->groupBy('modulo');
-foreach ($gruppi as $modulo => $sessioni) {
+$gruppi = collect($sessioni)->groupBy('utente');
+$i = 0;
+foreach ($gruppi as $utente => $sessioni) {
+
+    $utente = Models\User::find($sessioni[$i]['id_utente']);
+    $i++;
+
     echo '
     <thead>
         <tr>
-            <th colspan="6" class="text-center text-muted" >'.$modulo.'</th>
+            <th colspan="5" class="text-center text-muted" >'.(($utente->photo) ? "<img class='attachment-img tip' title=".$utente->username." src=".$utente->photo.">" : "<i class='fa fa-user-circle-o attachment-img tip' title=".$utente->username."></i>").'<span class="direct-chat-name"> '.$utente->anagrafica->ragione_sociale.' ['.$utente->gruppo.']</span></th>
         </tr>
     </thead>
 
@@ -52,30 +57,28 @@ foreach ($gruppi as $modulo => $sessioni) {
 
     foreach ($sessioni as $sessione) {
         $class ='info';
-        
-        $utente = Models\User::find($sessione['id_utente']);
 
         echo '
             <tr class="'.$class.'" data-id="'.$sessione['id'].'" data-nome='.json_encode($sessione['name']).'>
                 <td>
-                    '.(($utente->photo) ? "<img class='attachment-img tip' title=".$utente->nome_completo." src=".$utente->photo.">" : "<i class='fa fa-user-circle-o attachment-img tip' title=".$utente->nome_completo."></i>").'<span class="direct-chat-name"> '.$utente->nome_completo.'</span>
+                   '.$sessione['modulo'].'
                 </td>
              
-                <td class="text-center">
+                <td>
                     '.$sessione['id_record'].'
                 </td>
 
-                <td class="text-center">
+                <td>
                 '.Translator::timestampToLocale($sessione['created_at']).'
                 </td>
 
-                <td class="text-center">
-                <span class="tip" title="'.Translator::timestampToLocale($sessione['updated_at']).'" >'.Carbon\Carbon::parse($sessione['updated_at'])->diffForHumans().'</span>
+                <td>
+                <span class="tip" title="'.Translator::timestampToLocale($sessione['updated']).'" >'.Carbon\Carbon::parse($sessione['updated'])->diffForHumans().'</span>
                 </td>
 
-                <td class="text-center">
-                <span class="tip" title="'.Translator::timestampToLocale($sessione['updated_at']).'" >'.gmdate('H:i:s', $sessione['permanenza']).'</span>
-                </td>
+                <!--td>
+                <span class="tip" title="'.Translator::timestampToLocale($sessione['updated']).'" >'.gmdate('H:i:s', $sessione['permanenza']).'</span>
+                </td-->
 
             </tr>';
     }

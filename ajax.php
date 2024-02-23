@@ -83,7 +83,7 @@ switch (filter('op')) {
         }
 
         $user = Auth::user();
-        $interval = setting('Timeout notifica di presenza (minuti)') * 60 * 2;
+        $interval = setting('Timeout notifica di presenza (minuti)') * 60;
 
         $dbo->query('UPDATE zz_semaphores SET updated = NOW() WHERE id_utente = :user_id AND posizione = :position', [
             ':user_id' => $user['id'],

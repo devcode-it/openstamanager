@@ -288,7 +288,7 @@ echo '
         <div class="box box-info">
             <div class="box-header">
                 <h3 class="box-title">
-                    '.tr('Sessioni attive negli ultimi _MINUTI_ minuti', ['_MINUTI_' => setting('Timeout notifica di presenza (minuti)')]).'
+                    '.tr('Sessioni attive durante ultimi _MINUTI_ minuti', ['_MINUTI_' => setting('Timeout notifica di presenza (minuti)')]).'
                 </h3>
             </div>
 

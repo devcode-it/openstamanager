@@ -397,7 +397,7 @@ class FatturaElettronica
 
             // Attributo SistemaEmittente (max 10 caratteri)
             if (empty(setting('Terzo intermediario'))) {
-                $attributes['SistemaEmittente'] = 'OSM';
+                $attributes['SistemaEmittente'] = 'OpenSTAMan';
             }
 
             foreach ($attributes as $key => $value) {
@@ -494,13 +494,21 @@ class FatturaElettronica
         // Campi obbligatori per l'anagrafica Azienda
         $data = FatturaElettronica::getAzienda();
         $fields = [
-            'piva' => 'Partita IVA',
-            // 'codice_fiscale' => 'Codice Fiscale',
-            'citta' => 'Città',
-            'indirizzo' => 'Indirizzo',
-            'cap' => 'C.A.P.',
-            'nazione' => 'Nazione',
+            'citta' => tr('Città'),
+            'indirizzo' => tr('Indirizzo'),
+            'cap' => tr('C.A.P.'),
+            'nazione' => tr('Nazione'),
+            'tipo' => tr('Tipologia (Azienda o Ente pubblico)'),
         ];
+
+        //Controllo p.iva valorizzata in caso l'anagrafica Azienda sia di tipologia 'Azienda' o codice fiscale in caso sia tipologia 'Ente pubblico'
+        if ($data['tipo']=='Azienda' || $data['tipo']=='Ente pubblico'){
+            $extraFields = ($data['tipo']=='Azienda') ? ['piva' => tr('Partita IVA')] : ['codice_fiscale' => tr('Codice Fiscale')];
+            $fields = array_merge($fields, $extraFields);
+        }
+        else if ($data['tipo']=='Privato'){
+            echo "<div class='alert alert-danger fade in'><a href='#' class='close' data-dismiss='alert'>&times;</a><strong>".tr('Errore').": </strong>".tr("L'Anagrafica Azienda non può avere tipologia \"Privato\"").".</div>";
+        }
 
         $missing = [];
         if (!empty($data)) {
@@ -523,13 +531,18 @@ class FatturaElettronica
         // Campi obbligatori per l'anagrafica Cliente
         $data = $fattura->anagrafica;
         $fields = [
-            // 'piva' => 'Partita IVA',
-            // 'codice_fiscale' => 'Codice Fiscale',
-            'citta' => 'Città',
-            'indirizzo' => 'Indirizzo',
-            'cap' => 'C.A.P.',
-            'nazione' => 'Nazione',
+            'citta' => tr('Città'),
+            'indirizzo' => tr('Indirizzo'),
+            'cap' => tr('C.A.P.'),
+            'nazione' => tr('Nazione'),
+            'tipo' => tr('Tipologia (Azienda, Privato o Ente pubblico)'),
         ];
+
+        // Controllo p.iva valorizzata in caso l'anagrafica Azienda sia di tipologia 'Azienda' o codice fiscale in caso sia tipologia 'Ente pubblico' o 'Privato'
+        if (!empty($data['tipo'])){
+            $extraFields = ($data['tipo']=='Azienda') ? ['piva' => tr('Partita IVA')] : ['codice_fiscale' => tr('Codice Fiscale')];
+            $fields = array_merge($fields, $extraFields);
+        }
 
         // se privato/pa o azienda
         if ($data['tipo'] == 'Privato' or $data['tipo'] == 'Ente pubblico') {

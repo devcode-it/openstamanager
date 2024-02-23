@@ -36,7 +36,7 @@ $query = "
         `co_iva`.`percentuale` AS 'iva',
         (SELECT `mg_categorie`.`nome` FROM `mg_categorie` WHERE `mg_categorie`.`id`=`mg_articoli`.`id_sottocategoria`) AS subcategoria,
         (SELECT `mg_articoli`.`descrizione` FROM `mg_articoli` WHERE `mg_articoli`.`id`=`mg_movimenti`.`idarticolo`) AS 'descrizione',
-        IF( `mg_movimenti`.`movimento` LIKE '%Scarico%', `mg_movimenti`.`qta`*(-1), `mg_movimenti`.`qta`) AS qta,
+        `mg_movimenti`.`qta`,
         `mg_movimenti`.`idutente`,
         `zz_users`.`username`,
         `mg_articoli`.`um`,
@@ -50,7 +50,7 @@ $query = "
         INNER JOIN `zz_groups` ON `zz_users`.`idgruppo`=`zz_groups`.`id`
         INNER JOIN `an_sedi` ON `mg_movimenti`.`idsede`=`an_sedi`.`id`
     WHERE 
-        (`mg_movimenti`.`idsede` > 0) AND (`mg_movimenti`.`idintervento` IS NULL) AND
+        mg_movimenti.qta>0 AND (`mg_movimenti`.`idsede` > 0) AND (`mg_movimenti`.`idintervento` IS NULL) AND
         ((`mg_movimenti`.`data` BETWEEN '.prepare($startTM).' AND '.prepare($endTM).") AND (`zz_groups`.`nome` IN ('Amministratori')))";
 
 $query .= ' AND (`an_sedi`.`targa` LIKE '.prepare('%'.$search_targa.'%').') AND (`an_sedi`.`nome` LIKE '.prepare('%'.$search_nome.'%').') ';

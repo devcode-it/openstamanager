@@ -225,16 +225,21 @@ class Ricevuta
                 break;
         }
 
+        //Se la fattura presenta già una ricevuta principale con un codice che non di scarto e il codice delle ricevuta da importare è 00404 (Fattura duplicata), non aggiorno la ricevuta.
+        $codici_scarto = ['EC02', 'ERR', 'ERVAL', 'NS'];
+        if ($this->xml['ListaErrori']['Errore']['Codice'] == 00404 && !empty($fattura->id_ricevuta_principale) && !in_array($fattura->codice_stato_fe, $codici_scarto) ){
+            return;
+        }else{
+            $data = $this->xml['DataOraRicezione'];
 
+            $fattura->data_stato_fe = $data ? date('Y-m-d H:i:s', strtotime($data)) : '';
+            $fattura->codice_stato_fe = $codice;
+            $fattura->descrizione_ricevuta_fe = $descrizione.(!empty($suggerimento) ? '<br>'.$suggerimento: '');
+            $fattura->id_ricevuta_principale = $id_allegato;
 
-        $data = $this->xml['DataOraRicezione'];
+            $fattura->save();
+        }
 
-        $fattura->data_stato_fe = $data ? date('Y-m-d H:i:s', strtotime($data)) : '';
-        $fattura->codice_stato_fe = $codice;
-        $fattura->descrizione_ricevuta_fe = $descrizione.(!empty($suggerimento) ? '<br>'.$suggerimento: '');
-        $fattura->id_ricevuta_principale = $id_allegato;
-
-        $fattura->save();
     }
 
     /**

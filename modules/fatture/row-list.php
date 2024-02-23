@@ -75,6 +75,11 @@ foreach ($righe as $riga) {
         }
     }
 
+    // Imposto sfondo rosso alle righe con quantità a 0
+    if ($riga->qta == 0) {
+        $extra = 'class="danger"';
+    }
+
     $extra_riga = '';
     if (!$riga->isDescrizione()) {
         // Informazioni su CIG, CUP, ...

@@ -78,8 +78,13 @@ foreach ($righe as $riga) {
         }
     }
 
+    // Imposto sfondo rosso alle righe con quantità a 0
+    if ($riga->qta == 0) {
+        $extra = 'class="danger"';
+    }
+    
     echo '
-            <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'">
+            <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'" '.$extra.'>
                 <td class="text-center">';
     if (!$block_edit) {
         echo '

@@ -72,6 +72,12 @@ foreach ($righe as $riga) {
             $mancanti = 0;
         }
     }
+
+    // Imposto sfondo rosso alle righe con quantità a 0
+    if ($riga->qta == 0) {
+        $extra = 'class="danger"';
+    }
+
     echo '
             <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'">
                 <td class="text-center">';

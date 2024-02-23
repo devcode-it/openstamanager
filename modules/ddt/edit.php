@@ -68,6 +68,21 @@ if ($dir == 'entrata') {
     }
 }
 
+
+$righe = $ddt->getRighe();
+$righe_vuote = false;
+foreach ($righe as $riga) {
+    if ($riga->qta == 0) {
+        $righe_vuote = true;
+    }
+}
+if ($righe_vuote) {
+        echo '
+    <div class="alert alert-warning" id="righe-vuote">
+        <i class="fa fa-warning"></i> '.tr("Nel ddt sono presenti delle righe con quantità a 0.").'</b>
+    </div>';
+}
+
 ?>
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">

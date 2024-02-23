@@ -29,6 +29,20 @@ if ($module['name'] == 'Ordini cliente') {
     $dir = 'uscita';
 }
 
+$righe = $ordine->getRighe();
+$righe_vuote = false;
+foreach ($righe as $riga) {
+    if ($riga->qta == 0) {
+        $righe_vuote = true;
+    }
+}
+if ($righe_vuote) {
+        echo '
+    <div class="alert alert-warning" id="righe-vuote">
+        <i class="fa fa-warning"></i> '.tr("Nel documento sono presenti delle righe con quantità a 0.").'</b>
+    </div>';
+}
+
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">

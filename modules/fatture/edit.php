@@ -166,12 +166,12 @@ if ($dir == 'entrata') {
     $numero_previsto = verifica_numero_fattura($fattura);
     if (!empty($numero_previsto)) {
         echo '
-<div class="alert alert-warning">
-    <i class="fa fa-warning"></i> '.tr("E' assente una fattura di vendita di numero _NUM_ in data precedente o corrispondente a _DATE_: si potrebbero verificare dei problemi con la numerazione corrente delle fatture", [
-            '_DATE_' => dateFormat($fattura->data),
-            '_NUM_' => '"'.$numero_previsto.'"',
-        ]).'.</b>
-</div>';
+        <div class="alert alert-warning">
+            <i class="fa fa-warning"></i> '.tr("E' assente una fattura di vendita di numero _NUM_ in data precedente o corrispondente a _DATE_: si potrebbero verificare dei problemi con la numerazione corrente delle fatture", [
+                    '_DATE_' => dateFormat($fattura->data),
+                    '_NUM_' => '"'.$numero_previsto.'"',
+                ]).'.</b>
+        </div>';
     }
 
     // Verifica la data dell'intervento rispetto alla data della fattura
@@ -191,12 +191,27 @@ if ($dir == 'entrata') {
 
         if ($fatturazione_futura) {
             echo '
-<div class="alert alert-warning">
-    <i class="fa fa-warning"></i> '.tr("Stai fatturando un'attività futura rispetto alla data di fatturazione.").'</b>
-</div>';
+        <div class="alert alert-warning">
+            <i class="fa fa-warning"></i> '.tr("Stai fatturando un'attività futura rispetto alla data di fatturazione.").'</b>
+        </div>';
         }
     }
 }
+
+$righe = $fattura->getRighe();
+$righe_vuote = false;
+foreach ($righe as $riga) {
+    if ($riga->qta == 0) {
+        $righe_vuote = true;
+    }
+}
+if ($righe_vuote) {
+        echo '
+    <div class="alert alert-warning" id="righe-vuote">
+        <i class="fa fa-warning"></i> '.tr("Nel documento sono presenti delle righe con quantità a 0.").'</b>
+    </div>';
+}
+
 ?>
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">

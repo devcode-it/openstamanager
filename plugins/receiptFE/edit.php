@@ -43,9 +43,9 @@ $fatture_generate_errore = Fattura::vendita()
 
 if (!empty($fatture_generate_errore->count())) {
     echo '
-        <div class="alert alert-warning alert-dismissible" role="alert">
+        <div class="alert alert-warning push alert-dismissible" role="alert">
             <button class="close" type="button" data-dismiss="alert" aria-hidden="true"><span aria-hidden="true">×</span><span class="sr-only">'.tr('Chiudi').'</span></button>
-            <p><i class="fa fa-warning"></i> '.tr('Attenzione: le seguenti fatture hanno ricevuto uno scarto o presentano errori in fase di trasmissione').'.</p>
+            <h4><i class="icon fa fa-warning"></i>'.tr('Attenzione').'</h4>'.(($fatture_generate_errore->count()>1)? tr('Le seguenti fatture hanno ricevuto uno scarto o presentano errori in fase di trasmissione') : tr('La seguente fattura ha ricevuto uno scarto o presenta errori in fase di trasmissione')).':
             <ul>';
 
     foreach ($fatture_generate_errore as $fattura_generata) {
@@ -90,8 +90,8 @@ $fatture_generate = Fattura::vendita()
 
 if (!empty($fatture_generate->count())) {
     echo '
-    <div class="alert alert-info info-dismissible" role="alert"><button class="close" type="button" data-dismiss="alert" aria-hidden="true"><span aria-hidden="true">×</span><span class="sr-only">'.tr('Chiudi').'</span></button>
-        <p><i class="fa fa-info"></i> '.tr('Informazione: le seguenti fatture sono in attesa di una ricevuta da più di 7 giorni').'.</p>
+    <div class="alert alert-info push info-dismissible" role="alert"><button class="close" type="button" data-dismiss="alert" aria-hidden="true"><span aria-hidden="true">×</span><span class="sr-only">'.tr('Chiudi').'</span></button>
+        <h4><i class="icon fa fa-info"></i>'.tr('Informazione').'</h4> '.(($fatture_generate->count()>1)? tr('Le seguenti fatture sono in attesa di una ricevuta da più di 7 giorni') : tr('La seguente fattura è in attesa di una ricevuta da più di 7 giorni')).':
         <ul>';
 
     foreach ($fatture_generate as $fattura_generata) {

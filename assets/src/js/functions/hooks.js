@@ -19,6 +19,41 @@
 /**
  *
  */
+
+// Funzione per richiesta AJAX hooks completata con successo
+function handleHooksSuccess(hooks) {
+
+    completedRequests = 0;
+
+    $("#hooks-header").text(globals.translations.hooksExecuting);
+    $("#hooks-number").text(hooks.length);
+
+    if (hooks.length == 0) {
+        $("#hooks-loading").hide();
+        $("#hooks-number").text(0);
+        $("#hooks-header").text(globals.translations.hookNone);
+    }
+
+    hooks.forEach(function (item, index) {
+        renderHook(item, {
+            show: true,
+            message: globals.translations.hookExecuting.replace('_NAME_', item.name)
+        });
+
+        startHook(item, true);
+        completedRequests++;
+    });
+
+    totalRequests = hooks.length; 
+    if (completedRequests === totalRequests) {
+        // Verifica se tutte le richieste sono state completate con successo
+        //console.log("Tutte le richieste AJAX sono state eseguite con successo.");
+    }else{
+        console.log("Alcune richieste AJAX non sono state eseguite.");
+    }
+
+}
+
 function startHooks() {
     $.ajax({
         url: globals.rootdir + "/ajax.php",
@@ -28,25 +63,11 @@ function startHooks() {
         },
         success: function (data) {
             hooks = JSON.parse(data);
-
-            $("#hooks-header").text(globals.translations.hooksExecuting);
-            $("#hooks-number").text(hooks.length);
-
-            if (hooks.length == 0) {
-                $("#hooks-loading").hide();
-                $("#hooks-number").text(0);
-                $("#hooks-header").text(globals.translations.hookNone);
-            }
-
-            hooks.forEach(function (item, index) {
-                renderHook(item, {
-                    show: true,
-                    message: globals.translations.hookExecuting.replace('_NAME_', item.name)
-                });
-
-                startHook(item, true);
-            });
-        },
+            handleHooksSuccess(hooks);
+        }, 
+        error: function (xhr, status, error) {
+            console.error("Errore durante la richiesta AJAX relativa agli Hooks");
+        }
     });
 }
 
@@ -76,6 +97,7 @@ function startHook(hook, init) {
                 if (token) {
                     executeHook(hook, token);
                 } else {
+                    //Rallentamento esecuzione hooks
                     var timeout = 30;
 
                     setTimeout(function () {

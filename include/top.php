@@ -300,13 +300,13 @@ echo '
 if (Auth::check()) {
     if (setting('Abilita esportazione Excel e PDF')) {
         echo '
-        <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-        <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
-        <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>';
+        <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.9/pdfmake.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.9/vfs_fonts.min.js"></script>';
     }
 
     if (setting('Attiva scorciatoie da tastiera')) {
-        echo '<script type="text/javascript" charset="utf-8" src="'.App::getPaths()['js'].'/hotkeys-js/hotkeys.min.js"></script>';
+        echo '<script type="text/javascript" charset="utf-8" src="'.App::getPaths()['js'].'/hotkeys-js/hotkeys.min.js?v='.$version.'"></script>';
         echo '
         <script>
 

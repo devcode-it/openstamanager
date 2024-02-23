@@ -78,7 +78,7 @@ if (Auth::check()) {
     // Hooks
     if (!$config['disable_hooks']) {
         echo '
-                    setTimeout("startHooks();", 1000);';
+                    startHooks();';
     }
 
     // Abilitazione del cron autonoma

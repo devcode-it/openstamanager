@@ -115,8 +115,8 @@ switch (post('op')) {
             $dbo->query('DELETE FROM an_anagrafiche_agenti WHERE idanagrafica='.prepare($id_record).' AND idagente='.prepare(post('idagente')));
         }
 
-        flash()->info(tr("Informazioni per l'anagrafica _NAME_ salvate correttamente!", [
-            '_NAME_' => '<strong>'.$anagrafica->ragione_sociale.'</strong>',
+        flash()->info(tr('Informazioni per l\'anagrafica \"_NAME_\" salvate correttamente.', [
+            '_NAME_' => $anagrafica->ragione_sociale,
         ]));
 
         // Aggiorno il codice anagrafica se non è già presente, altrimenti lo ignoro
@@ -126,7 +126,7 @@ switch (post('op')) {
                 ->where('idanagrafica', '!=', $anagrafica->id)
                 ->get();
             if (!$anagrafiche_codice->isEmpty()) {
-                flash()->warning(tr('Il codice anagrafica _COD_ esiste già', [
+                flash()->warning(tr('Il codice anagrafica _COD_ risulta essere già stato censito.', [
                     '_COD_' => $codice,
                 ]));
             }
@@ -139,7 +139,7 @@ switch (post('op')) {
                 ->where('idanagrafica', '!=', $anagrafica->id)
                 ->get();
             if (!$anagrafiche_codice_fiscale->isEmpty()) {
-                $message = tr('Il codice fiscale _COD_ è già stato censito', [
+                $message = tr('Il codice fiscale _COD_ risulta essere già stato censito.', [
                     '_COD_' => $codice_fiscale,
                 ]);
 
@@ -159,7 +159,7 @@ switch (post('op')) {
                 ->where('idanagrafica', '!=', $anagrafica->id)
                 ->get();
             if (!$anagrafiche_partita_iva->isEmpty()) {
-                $message = tr('La partita IVA _IVA_ risulta già censita.', [
+                $message = tr('La partita IVA _IVA_ risulta essere già stato censita.', [
                     '_IVA_' => $partita_iva,
                 ]);
 

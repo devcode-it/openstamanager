@@ -115,7 +115,7 @@ if ($fattura !== null) {
         <i class="fa fa-arrow-right fa-fw text-muted"></i>
 
         <button type="button" onclick="verificaNotificheFE(this)" class="btn btn-warning btn-lg '.($verify ? '' : 'disabled').'">
-            <i class="fa fa-question-circle"></i> '.tr('Verifica notifiche').'
+            <i class="fa fa-question-circle"></i> '.tr('Verifica ricevute').'
         </button>
     </div>';
 

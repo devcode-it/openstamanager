@@ -754,7 +754,7 @@ $operations['registrazione-contabile'] = [
 
 if (Interaction::isEnabled()) {
     $operations['verify-notifiche'] = [
-        'text' => '<i class="fa fa-question-circle"></i> '.tr('Verifica notifiche').'</span>',
+        'text' => '<i class="fa fa-question-circle"></i> '.tr('Verifica ricevute').'</span>',
         'data' => [
             'title' => '',
             'msg' => tr('Vuoi verificare ed importare automaticamente le ricevute di queste fatture?'),

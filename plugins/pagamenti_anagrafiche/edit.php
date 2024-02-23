@@ -59,11 +59,11 @@ echo '
 
 	<div class="row">
 		<div class="col-md-4">
-				{[ "type": "select", "label": "'.tr('Mese da posticipare').'", "name": "mese", "values": '.json_encode($mesi_pagamento).', "value": "'.$record['mese'].'", "required": "1" ]}
+				{[ "type": "select", "label": "'.tr('Mese di chiusura').'", "name": "mese", "values": '.json_encode($mesi_pagamento).', "value": "'.$record['mese'].'", "required": "1" ]}
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "select", "label": "'.tr('Giorno riprogrammazione scadenza').'", "name": "giorno_fisso", "values": '.json_encode($giorni_pagamento).', "value": "'.$record['giorno_fisso'].'", "required": "1" ]}
+			{[ "type": "select", "label": "'.tr('Giorno di riprogrammazione').'", "name": "giorno_fisso", "values": '.json_encode($giorni_pagamento).', "value": "'.$record['giorno_fisso'].'", "required": "1" ]}
 		</div>
 	</div>
 

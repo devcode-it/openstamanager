@@ -103,8 +103,8 @@ foreach ($primo_livello as $conto_primo) {
             </div>
 
             <h5>
-                <button type="button" id="conto3-'.$conto_secondo['id'].'" class="btn btn-default btn-xs plus-btn search"><i class="fa fa-plus"></i></button>
-                <span class="clickable" id="conto3-'.$conto_secondo['id'].'">
+                <button type="button" id="conto2-'.$conto_secondo['id'].'" class="btn btn-default btn-xs plus-btn search"><i class="fa fa-plus"></i></button>
+                <span class="clickable" id="conto2-'.$conto_secondo['id'].'">
                     <b>'.$conto_secondo['numero'].' '.$conto_secondo['descrizione'].'</b>
                 </span>
                 <div id="conto2_'.$conto_secondo['id'].'" style="display:none;"></div>
@@ -288,22 +288,7 @@ echo '
             }
         });
 
-        $("button[id^=conto3-]").each(function() {
-            $(this).on("click", function() {
-                let conto3 = $(this).parent().find("div[id^=conto2_]");
-
-                if(!conto3.html()) {
-                    let id_conto = $(this).attr("id").split("-").pop();
-                    caricaConti3(conto3.attr("id"), id_conto);
-                } else {
-                    conto3.slideToggle();
-                }
-
-                $(this).parent().find(".plus-btn i").toggleClass("fa-plus").toggleClass("fa-minus");
-            });
-        });
-
-        $("span[id^=conto3-]").each(function() {
+        $("button[id^=conto2-]").each(function() {
             $(this).on("click", function() {
                 let conto3 = $(this).parent().find("div[id^=conto2_]");
 
@@ -341,11 +326,6 @@ echo '
                $("#" + selector).html(data)
                     .slideToggle();
 
-                if ($("#input-cerca").data("search-in-progress") == "1") {
-                    $("#button-search").trigger("click");
-                    $("#input-cerca").data("search-in-progress", "0");
-                }
-
                $("#main_loading").fadeOut();
             }
         });
@@ -357,8 +337,7 @@ echo '
 
     $("#button-search").on("click", function(){
         var text = $("#input-cerca").val();
-        if (text != "") $("#input-cerca").data("search-in-progress", "1");
-        
+
         $.ajax({
             url: globals.rootdir + "/actions.php",
             type: "POST",

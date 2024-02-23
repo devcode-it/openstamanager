@@ -26,9 +26,8 @@ $block_edit = $record['flag_completato'];
 $module_anagrafiche = Modules::get('Anagrafiche');
 
 $codice = $database->FetchOne('SELECT codice FROM in_interventi WHERE id = '.$intervento->id.'')['codice'];
-$prev = $database->FetchOne('SELECT id FROM in_interventi WHERE codice = '.($codice - 1).'')['id'];
-$next = $database->FetchOne('SELECT id FROM in_interventi WHERE codice = '.($codice + 1).'')['id'];
-
+$prev = $database->FetchOne('SELECT id FROM in_interventi WHERE codice = '.($codice-1).' AND data_richiesta > "'.$_SESSION['period_start'].'" AND data_richiesta < "'.$_SESSION['period_end'].'"')['id'];
+$next = $database->FetchOne('SELECT id FROM in_interventi WHERE codice = '.($codice+1).' AND data_richiesta > "'.$_SESSION['period_start'].'" AND data_richiesta < "'.$_SESSION['period_end'].'"')['id'];
 // Verifica aggiuntive sulla sequenzialità dei numeri
 $numero_previsto = verifica_numero_intervento($intervento);
 

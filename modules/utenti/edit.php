@@ -295,7 +295,8 @@ $("#id_module_start").change(function(){
 
 $("#theme").change(function(){
     update_theme($(this).val());
-    changeSkin($(this).val());
+    if ($(this).val())
+        changeSkin($(this).val());
 });
 
 function update_id_module_start(value){

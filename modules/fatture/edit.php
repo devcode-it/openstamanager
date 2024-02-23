@@ -162,7 +162,7 @@ if ($dir == 'entrata' && $fattura->stato->name == 'Bozza') {
     }
 }
 // Verifica aggiuntive sulla sequenzialità dei numeri
-if ($dir == 'entrata') {
+if ($dir == 'entrata' && strtotime(str_replace('/', '-', $fattura->data)) >= strtotime(str_replace('/', '-', setting('Data inizio verifica contatore fattura di vendita'))) ) {
     $numero_previsto = verifica_numero_fattura($fattura);
     if (!empty($numero_previsto)) {
         echo '

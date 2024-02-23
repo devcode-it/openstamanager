@@ -591,4 +591,8 @@ UPDATE `zz_segments` SET `for_fe` = '1' WHERE `zz_segments`.`id_module` = (SELEC
 -- Aggiunto help impostazioni
 UPDATE `zz_settings` SET `help` = 'Abilita esportazione delle viste anche nel formato xlsx e pdf' WHERE `zz_settings`.`nome` = 'Abilita esportazione Excel e PDF'; 
 
+-- Miglioria plugin Regole pagamenti 
 UPDATE `zz_plugins` SET `options` = '{ \"main_query\": [ { \"type\": \"table\", \"fields\": \"Mese di chiusura, Giorno di riprogrammazione\", \"query\": \"SELECT id, IF(mese=\'01\', \'Gennaio\', IF(mese=\'02\', \'Febbraio\',IF(mese=\'03\', \'Marzo\',IF(mese=\'04\', \'Aprile\',IF(mese=\'05\', \'Maggio\', IF(mese=\'06\', \'Giugno\', IF(mese=\'07\', \'Luglio\',IF(mese=\'08\', \'Agosto\',IF(mese=\'09\', \'Settembre\', IF(mese=\'10\', \'Ottobre\', IF(mese=\'11\', \'Novembre\',\'Dicembre\'))))))))))) AS `Mese di chiusura`, giorno_fisso AS `Giorno di riprogrammazione` FROM an_pagamenti_anagrafiche WHERE 1=1 AND idanagrafica=|id_parent| GROUP BY id HAVING 2=2 ORDER BY an_pagamenti_anagrafiche.mese ASC\"} ]}' WHERE `zz_plugins`.`name` = 'Regole pagamenti'; 
+
+-- Impostazione per data inizio verifica contatore fattura di vendita
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `help`) VALUES (NULL, 'Data inizio verifica contatore fattura di vendita', NULL, 'date', '1', 'Fatturazione', NULL);

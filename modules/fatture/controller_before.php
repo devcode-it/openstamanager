@@ -33,9 +33,13 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
     $codici_invio = ['GEN', 'QUEUE'];
     $data_limite = (new Carbon())->subMonths(6);
     $data_limite_invio = (new Carbon())->subDays(10);
+
     // Verifica se la data cade di sabato o domenica
-    if ($data_limite_invio->isWeekend()) {
-        $data_limite_invio = $data_limite_invio->subDays(2); // Anticipa la data di 2 giorni se cade di sabato o domenica
+    $giorno_settimana = $data_limite_invio->dayOfWeek;
+    if ($giorno_settimana == Carbon::SATURDAY) {
+        $data_limite_invio->subDays(); //Anticipa la data di 1 giorno se cade di sabato
+    } elseif ($giorno_settimana == Carbon::SUNDAY) {
+        $data_limite_invio->subDays(2); // Anticipa la data di 2 giorni se cade di domenica
     }
     $data_setting = Carbon::createFromFormat('d/m/Y', setting('Data inizio controlli su stati FE'))->format('Y-m-d');
 

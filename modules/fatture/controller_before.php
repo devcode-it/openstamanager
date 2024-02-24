@@ -33,6 +33,10 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
     $codici_invio = ['GEN', 'QUEUE'];
     $data_limite = (new Carbon())->subMonths(6);
     $data_limite_invio = (new Carbon())->subDays(10);
+    // Verifica se la data cade di sabato o domenica
+    if ($data_limite_invio->isWeekend()) {
+        $data_limite_invio = $data_limite_invio->subDays(2); // Anticipa la data di 2 giorni se cade di sabato o domenica
+    }
     $data_setting = Carbon::createFromFormat('d/m/Y', setting('Data inizio controlli su stati FE'))->format('Y-m-d');
 
     $documenti = Fattura::where('data', '>', $data_limite)->where('data', '>', $data_setting)->whereIn('codice_stato_fe', ['EC02', 'ERR', 'ERVAL', 'NS', 'GEN', 'QUEUE'])->get();
@@ -102,8 +106,8 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
 
     if (sizeof($documenti_invio) > 0) {
         echo '
-        <div class="alert alert-warning">
-            <i class="fa fa-clock-o"></i> '.tr('Le seguenti fatture sono in attesa di essere inviate').':<ul>';
+        <div class="alert push alert-warning">
+        <h4><i class="icon fa fa-clock-o"></i>'.tr('Attenzione').'</h4>'.tr('Le seguenti fatture sono in attesa di essere inviate').':<ul>';
         foreach ($documenti_invio as $documento) {
             echo '
                 <li><b>'.$documento.'</b></li>';

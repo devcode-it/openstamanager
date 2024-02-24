@@ -37,7 +37,7 @@ if ($dir == 'entrata') {
     $conto = 'acquisti';
 }
 
-// Informazioni sulla dichiarazione d'intento, visibili solo finchè la fattura è in bozza
+// Informazioni sulla dichiarazione d'intento, visibili solo finché la fattura è in bozza
 if ($dir == 'entrata' && !empty($fattura->dichiarazione)) {
     $diff = $fattura->dichiarazione->massimale - $fattura->dichiarazione->totale;
     $diff_in_days = Carbon::parse($fattura->dichiarazione->data_fine)->diffAsCarbonInterval($fattura->data);
@@ -162,7 +162,7 @@ if ($dir == 'entrata' && $fattura->stato->name == 'Bozza') {
     }
 }
 // Verifica aggiuntive sulla sequenzialità dei numeri
-if ($dir == 'entrata' && strtotime(str_replace('/', '-', $fattura->data)) >= strtotime(str_replace('/', '-', setting('Data inizio verifica contatore fattura di vendita'))) ) {
+if ($dir == 'entrata' && strtotime($fattura->data) >= strtotime(Carbon::createFromFormat('d/m/Y', setting('Data inizio verifica contatore fattura di vendita'))->format('Y-m-d'))) {
     $numero_previsto = verifica_numero_fattura($fattura);
     if (!empty($numero_previsto)) {
         echo '

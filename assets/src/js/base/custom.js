@@ -117,6 +117,14 @@ $(document).on('select2:open', () => {
 
 //Send a WhatsApp message using JavaScript
 function sendWhatsAppMessage(phoneNumber, message) {
+    // Rimuove eventuali spazi bianchi dal numero di telefono
+    phoneNumber = phoneNumber.replace(/\s/g, '');
+
+    // Rimuove il simbolo "+" all'inizio del numero, se presente
+    if (phoneNumber.startsWith('+')) {
+        phoneNumber = phoneNumber.slice(1);
+    }
+
     var text = message ? "&text=" + encodeURIComponent(message) : "";
     var url = "https://api.whatsapp.com/send?phone=" + phoneNumber + text;
     window.open(url);

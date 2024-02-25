@@ -148,16 +148,11 @@ if (sizeof($problemi_anagrafica) > 0) {
                             '.tr('Se non si conosce il codice destinatario lasciare vuoto il campo, e verrà applicato in automatico quello previsto di default dal sistema (\'0000000\', \'999999\', \'XXXXXXX\')').'.';
 
 if (in_array($id_azienda, $tipi_anagrafica)) {
-    $help_codice_destinatario .= ' <b>'.tr("Non è necessario comunicare il proprio codice destinatario ai fornitori in quanto è sufficiente che questo sia registrato nel portale del Sistema Di Interscambio dell'Agenzia Entrate (SDI)").'.</b>';
-}
-
-if (strpos($record['cellulare'], '+39') !== 0) {
-    // Aggiungi "39" all'inizio della variabile
-    $record['cellulare'] = '39'.$record['cellulare'];
+    $help_codice_destinatario .= ' <br><b>'.tr("Attenzione").': </b>'.tr("Non è necessario comunicare il proprio codice destinatario ai fornitori in quanto è sufficiente che questo sia registrato all'interno portale del Sistema Di Interscambio dell'Agenzia Entrate (SDI) (ivaservizi.agenziaentrate.gov.it)").'.';
 }
 
 ?>
-                        {[ "type": "text", "label": "<?php echo ($record['tipo'] == 'Ente pubblico') ? tr('Codice unico ufficio') : tr('Codice destinatario'); ?>", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "value": "$codice_destinatario$", "maxlength": <?php echo ($record['tipo'] == 'Ente pubblico') ? '6' : '7'; ?>, "help": "<?php echo tr($help_codice_destinatario); ?>", "readonly": "<?php echo intval($nazione_anagrafica ? !(($nazione_anagrafica->iso2 === 'IT') || ($nazione_anagrafica->iso2 === 'SM')) : 0); ?>" ]}
+                        {[ "type": "text", "label": "<?php echo ($record['tipo'] == 'Ente pubblico') ? tr('Codice unico ufficio') : tr('Codice destinatario'); ?>", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "value": "$codice_destinatario$", "maxlength": <?php echo ($record['tipo'] == 'Ente pubblico') ? '6' : '7'; ?>, "help": "<?php echo tr($help_codice_destinatario); ?>", "readonly": "<?php echo intval($nazione_anagrafica ? !(($nazione_anagrafica->iso2 === 'IT') || ($nazione_anagrafica->iso2 === 'SM')) : 0); ?>", "validation": "codice_intermediario" ]}
                     </div>
 
                     <div class="col-md-4">
@@ -214,7 +209,7 @@ if (strpos($record['cellulare'], '+39') !== 0) {
                             </div>
 
                             <div class="col-md-4">
-                                {[ "type": "telefono", "label": "<?php echo tr('Cellulare'); ?>", "name": "cellulare", "class": "text-center", "value": "$cellulare$", "icon-after": "<?php echo !empty($record['cellulare']) ? "<btn class='clickable' onclick=sendWhatsAppMessage(".prepare($record['cellulare']).") ><i class='fa fa-whatsapp'></i></btn>" : ''; ?>" ]}
+                                {[ "type": "telefono", "label": "<?php echo tr('Cellulare'); ?>", "name": "cellulare", "class": "text-center", "value": "$cellulare$", "icon-after": "<?php echo !empty($record['cellulare']) ? "<btn class='clickable' onclick=sendWhatsAppMessage(".prepare($record['cellulare']).") ><i class='fa fa-whatsapp tip' title='".((strpos($record['cellulare'], '+') === 0) ? substr($record['cellulare'], 1) : $record['cellulare'])."'></i>" : "<i class='fa fa-whatsapp tip' title='".tr('Compila il campo per utilizzare WhatsApp.')."'></i>"; ?>" ]}
                             </div>
 
                             <div class="col-md-4">

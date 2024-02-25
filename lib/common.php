@@ -323,3 +323,24 @@ function getPrezzoConsigliato($id_anagrafica, $direzione, $id_articolo, $riga = 
 
     return $result;
 }
+
+/**
+ * Funzione PHP che controlla se un campo "cellulare" contiene già un prefisso telefonico:
+ *
+ * @return boolean
+ */
+
+function checkPrefix($cellulare) {
+
+    // Array di prefissi telefonici da controllare
+    $internationalPrefixes = ['+1', '+44', '+49', '+33', '+39']; // Esempi di prefissi
+
+    // Controlla se il campo "cellulare" inizia con uno dei prefissi
+    foreach ($internationalPrefixes as $prefix) {
+        if (strpos($cellulare, $prefix) === 0) {
+            return true; // Un prefisso è già presente
+        }
+    }
+    
+    return false; // Nessun prefisso trovato
+}

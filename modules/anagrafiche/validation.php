@@ -30,7 +30,7 @@ switch ($name) {
             ['idanagrafica', '<>', $id_record],
         ])->count() == 0;
 
-        $message = $disponibile ? tr('Il codice è disponbile') : tr("Il codice è già utilizzato in un'altra anagrafica");
+        $message = $disponibile ? '<i class="icon fa fa-check text-green"></i> '.tr('Il codice anagrafica è disponibile.') : '<i class="icon fa fa-warning text-yellow"></i> '.tr("Il codice anagrafica è già utilizzato in un'altra anagrafica.");
 
         $response = [
             'result' => $disponibile,
@@ -46,31 +46,35 @@ switch ($name) {
             ['idanagrafica', '<>', $id_record],
         ])->count() == 0;
 
-        $message = $disponibile ? tr('Questo codice fiscale non è ancora stato utilizzato') : tr("Il codice fiscale è già utilizzato in un'altra anagrafica");
+        $message = $disponibile ? '<i class="icon fa fa-check text-green"></i> '.tr('Questo codice fiscale non è ancora stato utilizzato.') : '<i class="icon fa fa-warning text-yellow"></i> '. tr("Il codice fiscale è già utilizzato in un'altra anagrafica.");
 
-        // Validazione del Codice Fiscale, solo per anagrafiche Private e Aziende, ignoro controllo se codice fiscale e settato uguale alla p.iva
+        // Validazione del Codice Fiscale
+        // Se anagrafica non ancora definita OPPURE Se il codice fiscale è diverso dalla partita iva ma solo per anagrafiche Private e Aziende.
         if (empty($anagrafica) || ($anagrafica->tipo != 'Ente pubblico' && $value != $anagrafica->partita_iva)) {
             $check = Validate::isValidTaxCode($value);
             if (empty($check)) {
-                $message .= '. '.tr('Attenzione: il codice fiscale _COD_ potrebbe non essere valido', [
+                $disponibile = false;
+                 $message .= '<br><i class="icon fa fa-warning text-yellow"></i> '.tr('Il codice fiscale _COD_ non possiede un formato valido.', [
                     '_COD_' => $value,
                 ]);
-                $disponibile = false;
             }
         }
 
+        // Se il codice fiscale è uguale alla partiva iva
         if ($value == $anagrafica->partita_iva) {
             $partita_iva = !empty($anagrafica) && is_numeric($value) ? $anagrafica->nazione->iso2.$value : $value;
             $result = $disponibile;
             $check = Validate::isValidVatNumber($partita_iva);
             if (empty($check['valid-format'])) {
                 $disponibile = false;
-                $errors[] = tr('La partita iva inserita non possiede un formato valido');
+                $errors[] = tr('La partita iva _COD_ non possiede un formato valido.', [
+                    '_COD_' => $partita_iva,
+                ]);
             }
 
             if (isset($check['valid']) && empty($check['valid'])) {
                 $disponibile = false;
-                $errors[] = tr("Impossibile verificare l'origine della partita iva");
+                $errors[] = tr("Impossibile verificare l'origine della partita iva.");
             }
         }
 
@@ -88,7 +92,7 @@ switch ($name) {
             ['idanagrafica', '<>', $id_record],
         ])->count() == 0;
 
-        $message = $disponibile ? tr('Questa partita iva non è ancora stata utilizzata') : tr("La partita iva è già utilizzata in un'altra anagrafica");
+        $message = $disponibile ? '<i class="icon fa fa-check text-green"></i> '.tr('Questa partita iva non è ancora stata utilizzata.') : '<i class="icon fa fa-warning text-yellow"></i> '.tr("La partita iva è già utilizzata in un'altra anagrafica.");
 
         $partita_iva = !empty($anagrafica) && is_numeric($value) ? $anagrafica->nazione->iso2.$value : $value;
 
@@ -100,17 +104,19 @@ switch ($name) {
         $check = Validate::isValidVatNumber($partita_iva);
         if (empty($check['valid-format'])) {
             $result = false;
-            $errors[] = tr('La partita iva inserita non possiede un formato valido');
+            $errors[] = tr('La partita iva _COD_ non possiede un formato valido.', [
+                '_COD_' => $partita_iva,
+            ]);
         }
 
         if (isset($check['valid']) && empty($check['valid'])) {
             $result = false;
-            $errors[] = tr("Impossibile verificare l'origine della partita iva");
+            $errors[] = tr("Impossibile verificare l'origine della partita iva.");
         }
 
         $message .= '. ';
         if (!empty($errors)) {
-            $message .= tr('Attenzione').':<ul>';
+            $message .= '<br><i class="icon fa fa-times text-red"></i> '.tr('_NUM_ errori', ['_NUM_' => count($errors)]).':<ul>';
             foreach ($errors as $error) {
                 $message .= '<li>'.$error.'</li>';
             }
@@ -133,23 +139,27 @@ switch ($name) {
         ])->count() == 0;
         $result = $disponibile;
 
-        $message = $disponibile ? tr('Questa email non è ancora stata utilizzata') : tr("L'email è già utilizzata in un'altra anagrafica");
+        $message = $disponibile ? '<i class="icon fa fa-check text-green"></i> '.tr('Questa email non è ancora stata utilizzata.') : '<i class="icon fa fa-warning text-yellow"></i> '.tr("L'email è già utilizzata in un'altra anagrafica.");
 
         $errors = [];
         $check = Validate::isValidEmail($value);
         if (empty($check['valid-format'])) {
             $result = false;
-            $errors[] = tr("L'email inserita non possiede un formato valido");
+
+            $errors[] = tr("L'email _COD_ non possiede un formato valido.", [
+                '_COD_' => $value,
+            ]);
+
         }
 
         if (isset($check['smtp-check']) && empty($check['smtp-check'])) {
             $result = false;
-            $errors[] = tr("Impossibile verificare l'origine dell'email");
+            $errors[] = tr("Impossibile verificare l'origine dell'email.");
         }
 
         $message .= '. ';
         if (!empty($errors)) {
-            $message .= tr('Attenzione').':<ul>';
+            $message .= '<br><i class="icon fa fa-times text-red"></i> '.tr('_NUM_ errori', ['_NUM_' => count($errors)]).':<ul>';
             foreach ($errors as $error) {
                 $message .= '<li>'.$error.'</li>';
             }

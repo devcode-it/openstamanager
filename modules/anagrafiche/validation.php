@@ -85,6 +85,36 @@ switch ($name) {
 
         break;
 
+
+    case 'codice_intermediario':
+
+        if (!empty($anagrafica)){
+            $value = trim($value);
+
+            switch ($anagrafica->tipo) {
+            case "Azienda":
+            case "Privato":
+                $valido = (strlen($value) === 7 ? true : false);
+                break;
+            case "Ente pubblico":
+                $valido = (strlen($value) === 6 ? true : false);
+                break;
+            default:
+                $valido = true;
+                break;
+
+            }
+        }
+
+        $message = $valido ? '<i class="icon fa fa-check text-green"></i> '.tr('Il codice intermediario è valido.') : '<i class="icon fa fa-warning text-yellow"></i> '.tr("Il codice intermediario non sembra essere valido.");
+
+        $response = [
+            'result' => $valido,
+            'message' => $message,
+        ];
+
+        break;
+
     case 'partita_iva':
         $disponibile = Anagrafica::where([
             ['piva', $value],

@@ -431,9 +431,12 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     // LICENZA
     echo '
                     <div id="step-2">
-                        <p>'.tr('OpenSTAManager è tutelato dalla licenza _LICENSE_!', [
+                        <p>'.tr('OpenSTAManager è tutelato dalla licenza _LICENSE_', [
                             '_LICENSE_' => 'GPL 3.0',
-                        ]).'</p>
+                        ]).':</p>
+
+                        <textarea class="form-control autosize" rows="15" readonly>'.file_get_contents('LICENSE').'</textarea><br>
+                        <a class="pull-left" href="https://www.gnu.org/licenses/translations.en.html#GPL" target="_blank">[ '.tr('Versioni tradotte').' ]</a><hr>
 
                         <div class="row">
                             <div class="col-md-8">
@@ -445,10 +448,6 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                                 <label for="agree">'.tr('Ho visionato e accetto').'.</label>
                             </form>
                         </div>
-                        <hr>
-
-                        <textarea class="form-control autosize" rows="15" readonly>'.file_get_contents('LICENSE').'</textarea><br>
-                        <a class="pull-left" href="https://www.gnu.org/licenses/translations.en.html#GPL" target="_blank">[ '.tr('Versioni tradotte').' ]</a><br><br>
                     </div>';
 
     $host = !empty($db_host) ? $db_host : '';

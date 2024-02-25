@@ -832,10 +832,43 @@ if (empty($record['deleted_at'])) {
 <div class="alert alert-danger">'.tr('Questa anagrafica è stata eliminata').'.</div>';
 }
 
+if ($anagrafica->tipo == 'Azienda'){
+    $codici = $dbo->fetchArray('SELECT DISTINCT(BINARY `codice`) AS `codice` FROM `an_sdi` ORDER BY `codice`');
+    $elenco_an_sdi = array_clean(array_column($codici, 'codice'));
+}
 ?>
 
 <script>
+    var an_sdi = <?php echo json_encode($elenco_an_sdi); ?>;
     $(document).ready(function() {
+
+        // Auto-completamento codice intermediario per anagrafiche con tipologia Azienda
+        if (an_sdi !== undefined){
+            const input = $("#codice_destinatario")[0];
+            autocomplete({
+                minLength: 0,
+                input: input,
+                emptyMsg: globals.translations.noResults,
+                fetch: function (text, update) {
+                    text = text.toLowerCase();
+                    const suggestions = an_sdi.filter(n => n.toLowerCase().startsWith(text));
+
+                    // Trasformazione risultati in formato leggibile
+                    const results = suggestions.map(function (result) {
+                        return {
+                            label: result,
+                            value: result
+                        }
+                    });
+
+                    update(results);
+                },
+                onSelect: function (item) {
+                    input.value = item.label;
+                },
+            });
+        }
+
         $(".colorpicker").colorpicker({
             format: 'hex'
         }).on("changeColor", function() {

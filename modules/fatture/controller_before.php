@@ -36,10 +36,10 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
 
     // Verifica se la data cade di sabato o domenica
     $giorno_settimana = $data_limite_invio->dayOfWeek;
-    if ($giorno_settimana == Carbon::SATURDAY) {
-        $data_limite_invio->subDays(); //Anticipa la data di 1 giorno se cade di sabato
-    } elseif ($giorno_settimana == Carbon::SUNDAY) {
-        $data_limite_invio->subDays(2); // Anticipa la data di 2 giorni se cade di domenica
+    if ($giorno_settimana == Carbon::WEDNESDAY) {
+        $data_limite_invio->addDays(); //Anticipa la data di 1 giorno se la data limite cade di sabato (con data fattura mercoledì)
+    } elseif ($giorno_settimana == Carbon::THURSDAY) {
+        $data_limite_invio->addDays(2); // Anticipa la data di 2 giorni se la data limite cade di domenica (con data fattura giovedì)
     }
     $data_setting = Carbon::createFromFormat('d/m/Y', setting('Data inizio controlli su stati FE'))->format('Y-m-d');
 
@@ -81,11 +81,12 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
             }
 
             if ($documento->data <= $data_limite_invio && !$is_estera) {
-                $documenti_invio[] = Modules::link('Fatture di vendita', $documento->id, tr('_ICON_ Fattura numero _NUM_ del _DATE_ : <b>_STATO_</b>', [
+                $documenti_invio[] = Modules::link('Fatture di vendita', $documento->id, tr('_ICON_ Fattura numero _NUM_ del _DATE_ : <b>_STATO_</b> _ANTICIPATA_', [
                     '_ICON_' => '<i class="'.$stato_fe['icon'].'"></i>',
                     '_NUM_' => $documento->numero_esterno,
                     '_DATE_' => dateFormat($documento->data),
                     '_STATO_' => $stato_fe['descrizione'],
+                    '_ANTICIPATA_' => (($documento->data->diffInDays($data_limite_invio) < 10) ? '(Anticipata)': '' ),
                 ]));
             }
         }

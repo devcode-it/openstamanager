@@ -93,7 +93,7 @@ if (sizeof($problemi_anagrafica) > 0) {
                     </div>
 
                     <div class="col-md-3">
-                        {[ "type": "select", "label": "<?php echo tr('Tipologia'); ?>", "name": "tipo", "values": "list=\"\": \"<?php echo tr('Non specificato'); ?>\", \"Azienda\": \"<?php echo tr('Azienda'); ?>\", <?php echo ($anagrafica->isAzienda() ? "" : '\"Privato\":\"'.tr("Privato").'\",' ); ?> \"Ente pubblico\": \"<?php echo tr('Ente pubblico'); ?>\"", "value": "$tipo$" ]}
+                        {[ "type": "select", "label": "<?php echo tr('Tipologia'); ?>", "name": "tipo", "values": "list=\"Azienda\": \"<?php echo tr('Azienda'); ?>\", \"Ente pubblico\": \"<?php echo tr('Ente pubblico'); ?>\" <?php echo ($anagrafica->isAzienda() ? "" : ',\"Privato\":\"'.tr("Privato").'\"' ); ?>", "value": "$tipo$", "placeholder": "<?php echo tr('Non specificato'); ?>" ]}
                     </div>
                 </div>
 
@@ -142,8 +142,8 @@ if (sizeof($problemi_anagrafica) > 0) {
                                         $help_codice_destinatario = tr("Per impostare il codice specificare prima il campo '_NATION_' dell'anagrafica", [
                                             '_NATION_' => '<b>Nazione</b>',
                                         ]).':<br><br><ul>
-                                <li>'.tr('Ente pubblico (B2G/PA) - Codice Univoco Ufficio (www.indicepa.gov.it), 6 caratteri').'</li>
                                 <li>'.tr('Azienda (B2B) - Codice Destinatario, 7 caratteri').'</li>
+                                <li>'.tr('Ente pubblico (B2G/PA) - Codice Univoco Ufficio (www.indicepa.gov.it), 6 caratteri').'</li>
                                 <li>'.tr('Privato (B2C) - viene utilizzato il Codice Fiscale').'</li></ul>
                             '.tr('Se non si conosce il codice destinatario lasciare vuoto il campo, e verrà applicato in automatico quello previsto di default dal sistema (\'0000000\', \'999999\', \'XXXXXXX\')').'.';
 

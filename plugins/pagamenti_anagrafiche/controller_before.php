@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 echo '
-<div class="alert alert-info text-center">
+<div class="alert alert-info">
     '.tr("Questo plugin permette di riprogrammare le scadenze delle fatture in base alla chiusura aziendale dei clienti.").'<br>'.
     tr("Le scadenze verranno riprogrammate il mese successivo a quello impostato come Mese di chiusura, nel giorno indicato come Giorno di riprogrammazione.").'
 </div>';

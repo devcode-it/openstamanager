@@ -44,7 +44,7 @@ echo '
 
     <div class="row">
 		<div class="col-md-12">
-		{[ "type": "text", "label": "'.tr('Email').'", "name": "email", "required": 0, "value": "'.$utente['email'].'" ]}
+		{[ "type": "email", "label": "'.tr('Email').'", "name": "email", "required": 0, "value": "'.$utente['email'].'", "validation": "email" ]}
 		</div>
     </div>';
 

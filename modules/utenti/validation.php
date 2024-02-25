@@ -32,13 +32,13 @@ switch ($name) {
             ['id', '<>', $id_record],
         ])->count() == 0;
 
-        $message = $disponibile ? tr("L'username è disponbile") : tr("L'username aa ".$id_record.' è già in uso');
+        $message = ($disponibile ? tr("L'username è disponibile") : tr("L'username _COD_ è già stato utilizzato", [ '_COD_' => $value ])).'.';
         $result = $disponibile;
 
         // Lunghezza minima del nome utente (username)
         $min_length_username = 4;
         if (strlen($value) < $min_length_username) {
-            $message .= '. '.tr("Lunghezza dell'username non sufficiente").'.';
+            $message .= '<br>'.tr("Lunghezza dell'username non sufficiente: inserisci _MIN_ caratteri o più", ['_MIN_' => $min_length_username] ).'.';
             $result = false;
         }
 
@@ -55,8 +55,51 @@ switch ($name) {
             // ['id', '<>', $id_record],
         ])->count() == 0;
 
-        $message = $disponibile ? tr('Il nome del gruppo è disponbile') : tr('Il nome per questo gruppo è già in uso');
+        $message = ($disponibile ? tr('Il nome del gruppo è disponibile') : tr('Il nome del gruppo _COD_ è già stato utilizzato', [ '_COD_' => $value ])).'.';
         $result = $disponibile;
+
+        $response = [
+            'result' => $result,
+            'message' => $message,
+        ];
+
+        break;
+
+
+    case 'email':
+        $disponibile = User::where([
+            ['email', $value],
+            ['email', '<>', ''],
+            //['idanagrafica', '<>', $id_record],
+        ])->count() == 0;
+        $result = $disponibile;
+
+        $message = $disponibile ? '<i class="icon fa fa-check text-green"></i> '.tr('Questa email non è ancora stata utilizzata') : '<i class="icon fa fa-warning text-yellow"></i> '.tr("L'email è già utilizzata in un'altra anagrafica");
+
+        $errors = [];
+        $check = Validate::isValidEmail($value);
+        if (empty($check['valid-format'])) {
+            $result = false;
+
+            $errors[] = tr("L'email _COD_ non possiede un formato valido.", [
+                '_COD_' => $value,
+            ]);
+
+        }
+
+        if (isset($check['smtp-check']) && empty($check['smtp-check'])) {
+            $result = false;
+            $errors[] = tr("Impossibile verificare l'origine dell'email.");
+        }
+
+        $message .= '. ';
+        if (!empty($errors)) {
+            $message .= '<br><i class="icon fa fa-times text-red"></i> '.tr('_NUM_ errori', ['_NUM_' => count($errors)]).':<ul>';
+            foreach ($errors as $error) {
+                $message .= '<li>'.$error.'</li>';
+            }
+            $message .= '</ul>';
+        }
 
         $response = [
             'result' => $result,

@@ -122,7 +122,7 @@ switch ($name) {
             ['idanagrafica', '<>', $id_record],
         ])->count() == 0;
 
-        $message = $disponibile ? '<i class="icon fa fa-check text-green"></i> '.tr('Questa partita iva non è ancora stata utilizzata.') : '<i class="icon fa fa-warning text-yellow"></i> '.tr("La partita iva è già utilizzata in un'altra anagrafica.");
+        $message = $disponibile ? '<i class="icon fa fa-check text-green"></i> '.tr('Questa partita iva non è ancora stata utilizzata') : '<i class="icon fa fa-warning text-yellow"></i> '.tr("La partita iva è già utilizzata in un'altra anagrafica");
 
         $partita_iva = !empty($anagrafica) && is_numeric($value) ? $anagrafica->nazione->iso2.$value : $value;
 
@@ -169,7 +169,7 @@ switch ($name) {
         ])->count() == 0;
         $result = $disponibile;
 
-        $message = $disponibile ? '<i class="icon fa fa-check text-green"></i> '.tr('Questa email non è ancora stata utilizzata.') : '<i class="icon fa fa-warning text-yellow"></i> '.tr("L'email è già utilizzata in un'altra anagrafica.");
+        $message = $disponibile ? '<i class="icon fa fa-check text-green"></i> '.tr('Questa email non è ancora stata utilizzata') : '<i class="icon fa fa-warning text-yellow"></i> '.tr("L'email è già utilizzata in un'altra anagrafica");
 
         $errors = [];
         $check = Validate::isValidEmail($value);

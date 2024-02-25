@@ -596,3 +596,53 @@ UPDATE `zz_plugins` SET `options` = '{ \"main_query\": [ { \"type\": \"table\", 
 
 -- Impostazione per data inizio verifica contatore fattura di vendita
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `help`) VALUES (NULL, 'Data inizio verifica contatore fattura di vendita', NULL, 'date', '1', 'Fatturazione', NULL);
+
+-- Introduco tabella an_sdi per censire tutti i codici degli intermediari di fatturazione elettronica italiani
+CREATE TABLE IF NOT EXISTS `an_sdi` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nome` varchar(255),
+  `codice` varchar(7),
+  PRIMARY KEY (`id`)
+)
+
+INSERT INTO an_sdi (nome, codice) VALUES
+('Danea/TeamSystem', 'M5UXCR1'),
+('Zucchetti', 'SUBM70N'),
+('Wolters Kluwer', 'W7YVJK9'),
+('Fattura PA', '5RUO82D'),
+('Studio Rubino', 'T9K4ZHO'),
+('Aruba', 'KRRH6B9'),
+('WebClient', 'T04ZHR3'),
+('Sistemi', 'USAL8PV'),
+('LICON by Ix', 'A4707H7'),
+('Buffetti', 'BA6ET11'),
+('Tech Edge', '0G6TBBX'),
+('Ente autonomo volturno', '2LCMINU'),
+('Archivium srl', '3ZJY534'),
+('Coldiretti', '5W4A8J1'),
+('InfoCamere', '66OZKW1'),
+('CloudFinance', '6JXPS2J'),
+('Cia', '6RB0OU9'),
+('Consorzio CIAT', 'AU7YEU4'),
+('Alto Trevigiano Servizi', 'C1QQYZR'),
+('Linea Ufficio', 'EH1R83N'),
+('Danisoft', 'G1XGCBG'),
+('Arthur Informatica', 'G4AI1U8'),
+('BesideTech', 'G9HZJRW'),
+('SeDiCo Servizi', 'G9YK3BM'),
+('MultiWire', 'GR2P7ZP'),
+('MySond', 'H348Q01'),
+('Ediel', 'HHBD9AK'),
+('DocEasy', 'J6URRTW'),
+('InformItalia SRL', 'K0ROACV'),
+('QuickMastro', 'KJSRCTG'),
+('AGYO (Teamsystem)', 'KUPCRMI'),
+('Var Group', 'M5ITOJA'),
+('Nebu', 'MJEGRSK'),
+('K Link Solutions', 'MSUXCR1'),
+('Credemtel (gruppo Banca Credem)', 'MZO2A0U'),
+('Kalyos', 'N9KM26R'),
+('IDOCTORS', 'NKNH5UQ'),
+('Extreme software', 'E2VWRNU'),
+('Unimatica', 'E06UCUD'),
+('CompEd', 'WHP7LTE');

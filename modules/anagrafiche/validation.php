@@ -102,7 +102,8 @@ switch ($name) {
                 $valido = (strlen($value) === $length ? true : false);
                 break;
             default:
-                $valido = true;
+                $length = 7;
+                $valido = (strlen($value) >= $length ? true : false);
                 break;
 
             }

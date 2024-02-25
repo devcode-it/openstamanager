@@ -831,19 +831,16 @@ if (empty($record['deleted_at'])) {
     echo '
 <div class="alert alert-danger">'.tr('Questa anagrafica è stata eliminata').'.</div>';
 }
-
-if ($anagrafica->tipo == 'Azienda'){
-    $codici = $dbo->fetchArray('SELECT DISTINCT(BINARY `codice`) AS `codice` FROM `an_sdi` ORDER BY `codice`');
-    $elenco_an_sdi = array_clean(array_column($codici, 'codice'));
-}
 ?>
 
 <script>
-    var an_sdi = <?php echo json_encode($elenco_an_sdi); ?>;
+    
+    var an_sdi = <?php echo (($anagrafica->tipo == 'Azienda') ? $dbo->fetchOne('SELECT JSON_ARRAYAGG(`codice`) AS `elenco_codici` FROM `an_sdi`')['elenco_codici'] : '') ?>;
+
     $(document).ready(function() {
 
         // Auto-completamento codice intermediario per anagrafiche con tipologia Azienda
-        if (an_sdi !== undefined){
+        if (an_sdi){
             const input = $("#codice_destinatario")[0];
             autocomplete({
                 minLength: 0,

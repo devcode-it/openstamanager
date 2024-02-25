@@ -94,10 +94,12 @@ switch ($name) {
             switch ($anagrafica->tipo) {
             case "Azienda":
             case "Privato":
-                $valido = (strlen($value) === 7 ? true : false);
+                $length = 7;
+                $valido = (strlen($value) === $length ? true : false);
                 break;
             case "Ente pubblico":
-                $valido = (strlen($value) === 6 ? true : false);
+                $length = 6;
+                $valido = (strlen($value) === $length ? true : false);
                 break;
             default:
                 $valido = true;
@@ -106,7 +108,7 @@ switch ($name) {
             }
         }
 
-        $message = $valido ? '<i class="icon fa fa-check text-green"></i> '.tr('Il codice intermediario è valido.') : '<i class="icon fa fa-warning text-yellow"></i> '.tr("Il codice intermediario non sembra essere valido.");
+        $message = $valido ? '<i class="icon fa fa-check text-green"></i> '.tr('Il codice intermediario è valido.') : '<i class="icon fa fa-warning text-yellow"></i> '.tr("Il codice intermediario non sembra essere valido. Lunghezza attesa _LENGTH_ caratteri.", ['_LENGTH_' => $length]);
 
         $response = [
             'result' => $valido,

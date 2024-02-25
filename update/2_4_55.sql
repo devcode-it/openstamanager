@@ -603,7 +603,7 @@ CREATE TABLE IF NOT EXISTS `an_sdi` (
   `nome` varchar(255),
   `codice` varchar(7),
   PRIMARY KEY (`id`)
-)
+);
 
 INSERT INTO an_sdi (nome, codice) VALUES
 ('Danea/TeamSystem', 'M5UXCR1'),

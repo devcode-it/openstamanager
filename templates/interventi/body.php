@@ -122,7 +122,7 @@ echo '
 echo '
     <tr>
         <td colspan="4">
-            <b>'.tr('Tipo intervento').':</b> '.$documento->tipo->descrizione.'
+            <b>'.tr('Tipo intervento').':</b> '.$documento->tipo->name.'
         </td>
     </tr>';
 

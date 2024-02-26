@@ -219,7 +219,7 @@ if ($numero_documenti + $numero_scadenze > 1) {
     }
 } elseif ($numero_documenti == 1) {
     $numero_fattura = !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'];
-    $tipo_fattura = $fattura->isNota() ? $tipo->descrizione : tr('Fattura');
+    $tipo_fattura = $fattura->isNota() ? $tipo->name : tr('Fattura');
 
     if (!empty($is_insoluto)) {
         $operation = tr('Registrazione insoluto');

@@ -26,14 +26,13 @@ switch (filter('op')) {
         $codice_tipo_documento_fe = filter('codice_tipo_documento_fe');
 
         if (isset($descrizione) && isset($dir) && isset($codice_tipo_documento_fe)) {
-            if ($dbo->fetchNum('SELECT * FROM `co_tipidocumento` WHERE `dir`='.prepare($dir).' AND `descrizione`='.prepare($descrizione).' AND `codice_tipo_documento_fe`='.prepare($codice_tipo_documento_fe).' AND `id`!='.prepare($id_record)) == 0) {
+            if ($dbo->fetchNum('SELECT * FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `dir`='.prepare($dir).' AND `name`='.prepare($descrizione).' AND `codice_tipo_documento_fe`='.prepare($codice_tipo_documento_fe).' AND `id`!='.prepare($id_record)) == 0) {
                 $predefined = post('predefined');
                 if (!empty($predefined)) {
-                    $dbo->query('UPDATE co_tipidocumento SET predefined = 0 WHERE dir = '.prepare($dir));
+                    $dbo->query('UPDATE `co_tipidocumento` SET `predefined` = 0 WHERE `dir` = '.prepare($dir));
                 }
 
                 $dbo->update('co_tipidocumento', [
-                    'descrizione' => $descrizione,
                     'dir' => $dir,
                     'codice_tipo_documento_fe' => $codice_tipo_documento_fe,
                     'help' => filter('help'),
@@ -41,6 +40,10 @@ switch (filter('op')) {
                     'enabled' => post('enabled'),
                     'id_segment' => post('id_segment'),
                 ], ['id' => $id_record]);
+
+                $dbo->update('co_tipidocumento_lang', [
+                    'name' => $descrizione,
+                ], ['id_record' => $id_record, 'id_lang' => setting('Lingua')]);
 
                 flash()->info(tr('Salvataggio completato!'));
             } else {
@@ -60,13 +63,18 @@ switch (filter('op')) {
         $codice_tipo_documento_fe = filter('codice_tipo_documento_fe');
 
         if (isset($descrizione) && isset($dir) && isset($codice_tipo_documento_fe)) {
-            if ($dbo->fetchNum('SELECT * FROM `co_tipidocumento` WHERE `dir`='.prepare($dir).' AND `descrizione`='.prepare($descrizione).' AND `codice_tipo_documento_fe`='.prepare($codice_tipo_documento_fe)) == 0) {
+            if ($dbo->fetchNum('SELECT * FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `dir`='.prepare($dir).' AND `name`='.prepare($descrizione).' AND `codice_tipo_documento_fe`='.prepare($codice_tipo_documento_fe)) == 0) {
                 $dbo->insert('co_tipidocumento', [
-                    'descrizione' => $descrizione,
                     'dir' => $dir,
                     'codice_tipo_documento_fe' => $codice_tipo_documento_fe,
                 ]);
                 $id_record = $dbo->lastInsertedID();
+
+                $dbo->insert('co_tipidocumento_lang', [
+                    'name' => $descrizione,
+                    'id_record' => $id_record,
+                    'id_lang' => setting('Lingua'),
+                ]);
 
                 if (isAjaxRequest()) {
                     echo json_encode(['id' => $id_record, 'text' => $descrizione]);
@@ -87,7 +95,7 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        $documenti = $dbo->fetchNum('SELECT id FROM co_documenti WHERE idtipodocumento ='.prepare($id_record));
+        $documenti = $dbo->fetchNum('SELECT `id` FROM `co_documenti` WHERE `idtipodocumento` ='.prepare($id_record));
 
         if (isset($id_record) && empty($documenti)) {
             $dbo->query('DELETE FROM `co_tipidocumento` WHERE `id`='.prepare($id_record));
@@ -104,8 +112,6 @@ switch (filter('op')) {
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo.', [
                 '_TYPE_' => 'tipo documento',
             ]));
-
-            // flash()->error(tr('Sono presenti dei documenti collegati a questo tipo documento'));
         }
 
         break;

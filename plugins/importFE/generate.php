@@ -222,8 +222,8 @@ echo '
 	</div>';
 
 // Tipo del documento
-$query = "SELECT id, CONCAT('(', codice_tipo_documento_fe, ') ', descrizione) AS descrizione FROM co_tipidocumento WHERE dir = 'uscita'";
-$query_tipo = $query.' AND codice_tipo_documento_fe = '.prepare($dati_generali['TipoDocumento']);
+$query = "SELECT `co_tipidocumento`.`id`, CONCAT('(', `codice_tipo_documento_fe`, ') ', `name`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = ".prepare(setting('Lingua')).") WHERE `dir` = 'uscita'";
+$query_tipo = $query.' AND `codice_tipo_documento_fe` = '.prepare($dati_generali['TipoDocumento']);
 $numero_tipo = $database->fetchNum($query_tipo);
 if (!empty($numero_tipo)) {
     $query = $query_tipo;

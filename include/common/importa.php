@@ -19,6 +19,7 @@
 
 use Modules\Contratti\Stato as StatoContratto;
 use Modules\Fatture\Stato as StatoFattura;
+use Modules\Fatture\Tipo;
 use Plugins\ListinoFornitori\DettaglioFornitore;
 
 // Inizializzazione
@@ -93,20 +94,11 @@ if (!empty($options['create_document'])) {
         $stato_predefinito = (new StatoFattura())->getByName('Bozza')->id_record;
 
         if (!empty($options['reversed'])) {
-            $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
-                'dir' => $dir,
-                'descrizione' => 'Nota di credito',
-            ])['id'];
+            $idtipodocumento = $dbo->fetchOne('SELECT `id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name` = "Nota di credito" AND `dir` = '.$dir.'');
         } elseif (in_array($original_module['name'], ['Ddt di vendita', 'Ddt di acquisto'])) {
-            $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
-                'dir' => $dir,
-                'descrizione' => ($dir == 'uscita' ? 'Fattura differita di acquisto' : 'Fattura differita di vendita'),
-            ])['id'];
+            $idtipodocumento = $dbo->fetchOne('SELECT `id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name` = '.($dir == 'uscita' ? 'Fattura differita di acquisto' : 'Fattura differita di vendita').' AND `dir` = '.$dir.'');
         } else {
-            $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
-                'predefined' => 1,
-                'dir' => $dir,
-            ])['id'];
+            $idtipodocumento = $dbo->fetchOne('SELECT `id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `dir` = '.$dir.' AND `predefined` = 1');
         }
 
         echo '
@@ -115,7 +107,7 @@ if (!empty($options['create_document'])) {
             </div>
 
             <div class="col-md-6">
-                {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, CONCAT(codice_tipo_documento_fe, \' - \', descrizione) AS descrizione FROM co_tipidocumento WHERE enabled = 1 AND dir = '.prepare($dir).' ORDER BY codice_tipo_documento_fe", "value": "'.$idtipodocumento.'" ]}
+                {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`codice_tipo_documento_fe`, \' - \', `name`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `enabled` = 1 AND `dir` = '.prepare($dir).' ORDER BY `codice_tipo_documento_fe`", "value": "'.$idtipodocumento.'" ]}
             </div>
             
             <div class="col-md-6">

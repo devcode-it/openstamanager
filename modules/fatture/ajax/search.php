@@ -29,13 +29,13 @@ $fields = [
     'Righe' => 'righe.descrizione',
 ];
 
-$query = 'SELECT *, co_documenti.id, co_tipidocumento.descrizione AS tipologia';
+$query = 'SELECT *, `co_documenti`.`id`, `co_tipidocumento_lang`.`name` AS tipologia';
 
 foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id LEFT JOIN (SELECT GROUP_CONCAT(descrizione SEPARATOR " -- ") AS "descrizione", iddocumento FROM co_righe_documenti GROUP BY iddocumento) righe ON righe.iddocumento=co_documenti.id WHERE idanagrafica IN('.implode(',', $idanagrafiche).') ';
+$query .= ' FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') LEFT JOIN (SELECT GROUP_CONCAT(`descrizione` SEPARATOR " -- ") AS "descrizione", `iddocumento` FROM co_righe_documenti GROUP BY `iddocumento`) righe ON `righe`.`iddocumento`=`co_documenti`.`id` WHERE `idanagrafica` IN('.implode(',', $idanagrafiche).') ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE "%'.$term.'%"';

@@ -17,20 +17,23 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-$r = $dbo->fetchOne('SELECT co_documenti.*,
-    an_anagrafiche.pec,
-    IF( (an_referenti.email IS NOT NULL AND an_referenti.email!=""), an_referenti.email, an_anagrafiche.email) AS email,
-    an_anagrafiche.idconto_cliente,
-    an_anagrafiche.idconto_fornitore,
-	an_anagrafiche.ragione_sociale,
-    an_referenti.nome,
-	co_tipidocumento.descrizione AS tipo_documento,
-    (SELECT pec FROM em_accounts WHERE em_accounts.id='.prepare($template['id_account']).') AS is_pec
-FROM co_documenti
-    INNER JOIN an_anagrafiche ON co_documenti.idanagrafica = an_anagrafiche.idanagrafica
-    INNER JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento
-    LEFT OUTER JOIN an_referenti ON an_referenti.id = co_documenti.idreferente
-WHERE co_documenti.id='.prepare($id_record));
+$r = $dbo->fetchOne('SELECT 
+        `co_documenti`.*,
+        `an_anagrafiche`.`pec`,
+        IF ((`an_referenti`.`email` IS NOT NULL AND `an_referenti`.`email`!=""), `an_referenti`.`email`, `an_anagrafiche`.`email`) AS email,
+        `an_anagrafiche`.`idconto_cliente`,
+        `an_anagrafiche`.`idconto_fornitore`,
+        `an_anagrafiche`.`ragione_sociale`,
+        `an_referenti`.`nome`,
+        `co_tipidocumento_lang`.`name` AS tipo_documento,
+        (SELECT `pec` FROM `em_accounts` WHERE `em_accounts`.`id`='.prepare($template['id_account']).') AS is_pec
+    FROM `co_documenti`
+        INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+        INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
+        LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+        LEFT JOIN `an_referenti` ON `an_referenti`.`id` = `co_documenti`.`idreferente`
+    WHERE 
+        `co_documenti`.`id`='.prepare($id_record));
 
 if (!empty(setting('Logo stampe'))) {
     $logo_azienda = base_url().'/'.Models\Upload::where('filename', setting('Logo stampe'))->first()->fileurl;

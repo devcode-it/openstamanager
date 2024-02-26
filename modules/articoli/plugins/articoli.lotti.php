@@ -154,7 +154,7 @@ if (empty(get('modal'))) {
                     $module_id = Modules::get('Fatture di acquisto')['id'];
 
                     // Ricerca vendite su fatture
-                    $query = 'SELECT *, ( SELECT descrizione FROM co_tipidocumento WHERE id=(SELECT idtipodocumento FROM co_documenti WHERE id=iddocumento) ) AS tipo_documento, ( SELECT `dir` FROM co_tipidocumento WHERE id=(SELECT idtipodocumento FROM co_documenti WHERE id=iddocumento) ) AS `dir`, ( SELECT numero FROM co_documenti WHERE id=iddocumento ) AS numero, ( SELECT numero_esterno FROM co_documenti WHERE id=iddocumento ) AS numero_esterno, ( SELECT data FROM co_documenti WHERE id=iddocumento ) AS data FROM co_righe_documenti WHERE co_righe_documenti.id='.prepare($acquisto['id_riga_documento']);
+                    $query = 'SELECT *, `co_tipidocumento_lang`.`name` AS tipo_documento, `co_tipidocumento`.`dir`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_documenti`.`data` FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `co_righe_documenti`.`id`='.prepare($acquisto['id_riga_documento']);
                     $data = $dbo->fetchArray($query);
 
                     $id = $data[0]['iddocumento'];
@@ -238,7 +238,7 @@ if (empty(get('modal'))) {
                     $module_id = Modules::get('Fatture di vendita')['id'];
 
                     // Ricerca vendite su fatture
-                    $query = 'SELECT *, ( SELECT descrizione FROM co_tipidocumento WHERE id=(SELECT idtipodocumento FROM co_documenti WHERE id=iddocumento) ) AS tipo_documento, ( SELECT `dir` FROM co_tipidocumento WHERE id=(SELECT idtipodocumento FROM co_documenti WHERE id=iddocumento) ) AS `dir`, ( SELECT numero FROM co_documenti WHERE id=iddocumento ) AS numero, ( SELECT numero_esterno FROM co_documenti WHERE id=iddocumento ) AS numero_esterno, ( SELECT data FROM co_documenti WHERE id=iddocumento ) AS data FROM co_righe_documenti WHERE co_righe_documenti.id='.prepare($vendita['id_riga_documento']);
+                    $query = 'SELECT *, `co_tipidocumento_lang`.`name` AS tipo_documento, `co_tipidocumento`.`dir`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`,`co_documenti`.`data` FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id`=`co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang`='.prepare(setting('Lingua')).') WHERE `co_righe_documenti`.`id`='.prepare($vendita['id_riga_documento']);
                     $data = $dbo->fetchArray($query);
 
                     $id = $data[0]['iddocumento'];

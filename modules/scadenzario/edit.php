@@ -57,7 +57,7 @@ if (!empty($documento)) {
     echo '
                         <tr>
                             <th>'.tr('Documento').':</th>
-                            <td>'.$documento->tipo->descrizione.'</td>
+                            <td>'.$documento->tipo->name.'</td>
                         </tr>
 
                         <tr>

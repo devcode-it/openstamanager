@@ -45,7 +45,7 @@ if (isset($id_record)) {
         `co_documenti`.`id` AS iddocumento,
 		`co_documenti`.`split_payment` AS split_payment,
         `co_statidocumento_lang`.`name` AS `stato`,
-        `co_tipidocumento`.`descrizione` AS `descrizione_tipo`,
+        `co_tipidocumento_lang`.`name` AS `descrizione_tipo`,
         `co_tipidocumento`.`id` AS `idtipodocumento`,
         (SELECT `is_fiscale` FROM `zz_segments` WHERE `zz_segments`.`id` = `co_documenti`.`id_segment`) AS is_fiscale,
         (SELECT `descrizione` FROM `co_ritenutaacconto` WHERE `id`=`idritenutaacconto`) AS ritenutaacconto_desc,
@@ -56,6 +56,7 @@ if (isset($id_record)) {
         LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).')
         INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
         INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
+        LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).')
         LEFT JOIN `co_pagamenti` ON `co_documenti`.`idpagamento`=`co_pagamenti`.`id`
         LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.`id_lang` = '.prepare(setting('Lingua')).')
     WHERE `co_tipidocumento`.`dir` = '.prepare($dir).' AND `co_documenti`.`id`='.prepare($id_record));

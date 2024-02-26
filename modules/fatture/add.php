@@ -70,7 +70,7 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Tipo documento'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT co_tipidocumento.id, CONCAT(co_tipidocumento.codice_tipo_documento_fe, ' - ', co_tipidocumento.descrizione) AS descrizione, co_tipidocumento.id_segment, zz_segments.name as name_segment FROM co_tipidocumento INNER JOIN zz_segments ON zz_segments.id = co_tipidocumento.id_segment WHERE co_tipidocumento.enabled = 1 AND co_tipidocumento.dir = '<?php echo $dir; ?>' ORDER BY co_tipidocumento.codice_tipo_documento_fe", "value": "<?php echo $idtipodocumento; ?>" ]}
+			{[ "type": "select", "label": "<?php echo tr('Tipo documento'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`co_tipidocumento`.`codice_tipo_documento_fe`, ' - ', `co_tipidocumento_lang`.`name`) AS descrizione, `co_tipidocumento`.`id_segment`, `zz_segments`.`name` as name_segment FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = <?php echo prepare(setting('Lingua')) ?>) INNER JOIN `zz_segments` ON `zz_segments`.`id` = `co_tipidocumento`.`id_segment` WHERE `co_tipidocumento`.`enabled` = 1 AND `co_tipidocumento`.`dir` = '<?php echo $dir; ?>' ORDER BY `co_tipidocumento`.`codice_tipo_documento_fe`", "value": "<?php echo $idtipodocumento; ?>" ]}
 		</div>
 
 		<div class="col-md-6">

@@ -26,16 +26,22 @@ $prima_nota = Modules::get('Prima nota');
 $id_conto = get('id_conto');
 
 // Calcolo totale conto da elenco movimenti di questo conto
-$query = 'SELECT co_movimenti.*,
-    SUM(totale) AS totale,
-    dir FROM co_movimenti
-LEFT OUTER JOIN co_documenti ON co_movimenti.iddocumento = co_documenti.id
-LEFT OUTER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id
-WHERE co_movimenti.idconto='.prepare($id_conto).' AND
-    co_movimenti.data >= '.prepare($_SESSION['period_start']).' AND
-    co_movimenti.data <= '.prepare($_SESSION['period_end']).'
-GROUP BY co_movimenti.idmastrino
-ORDER BY co_movimenti.data DESC, co_movimenti.id DESC';
+$query = 'SELECT 
+    `co_movimenti`.*,
+    SUM(`totale`) AS totale,
+    `dir` 
+FROM 
+    `co_movimenti`
+    LEFT JOIN `co_documenti` ON `co_movimenti`.`iddocumento` = `co_documenti`.`id`
+    LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
+WHERE 
+    `co_movimenti`.`idconto`='.prepare($id_conto).' AND
+    `co_movimenti`.`data` >= '.prepare($_SESSION['period_start']).' AND
+    `co_movimenti`.`data` <= '.prepare($_SESSION['period_end']).'
+GROUP BY 
+    `co_movimenti`.`idmastrino`
+ORDER BY 
+    `co_movimenti`.`data` DESC, `co_movimenti`.`id` DESC';
 $movimenti = $dbo->fetchArray($query);
 
 if (!empty($movimenti)) {

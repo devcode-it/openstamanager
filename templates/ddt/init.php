@@ -40,7 +40,7 @@ $spedizione = $dbo->fetchOne('SELECT * FROM dt_spedizione WHERE id = '.prepare($
 
 $vettore = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare($documento['idvettore']));
 
-$tipo_doc = $documento->tipo->descrizione;
+$tipo_doc = $documento->tipo->name;
 if (empty($documento['numero_esterno'])) {
     $numero = 'pro-forma '.$documento['numero'];
     $tipo_doc = tr('DDT pro-forma', [], ['upper' => true]);

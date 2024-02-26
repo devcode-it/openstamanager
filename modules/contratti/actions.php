@@ -341,9 +341,36 @@ switch (post('op')) {
         // eliminazione contratto
     case 'delete':
         // Fatture o interventi collegati a questo contratto
-        $elementi = $dbo->fetchArray('SELECT 0 AS `codice`, `co_documenti`.`id` AS `id`, `co_documenti`.`numero` AS `numero`, `co_documenti`.`numero_esterno` AS `numero_esterno`,  `co_documenti`.`data`, `co_tipidocumento`.`descrizione` AS `tipo_documento`, `co_tipidocumento`.`dir` AS `dir`  FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idcontratto` = '.prepare($id_record).')'.'
+        $elementi = $dbo->fetchArray('SELECT 
+                0 AS `codice`, 
+                `co_documenti`.`id` AS `id`, 
+                `co_documenti`.`numero` AS `numero`, 
+                `co_documenti`.`numero_esterno` AS `numero_esterno`,  
+                `co_documenti`.`data`, 
+                `co_tipidocumento_lang`.`name` AS `tipo_documento`, 
+                `co_tipidocumento`.`dir` AS `dir` 
+            FROM 
+                `co_documenti` 
+                INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
+                LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') 
+                INNER JOIN co_righe_documenti ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` 
+            WHERE 
+                `co_righe_documenti`.`idcontratto` = '.prepare($id_record).')'.'
         UNION
-        SELECT  `in_interventi`.`codice` AS `codice`, `in_interventi`.`id` AS `id`, 0 AS `numero`, 0 AS `numero_esterno`, `in_interventi`.`data_richiesta` AS `data`, 0 AS `tipo_documento`, 0 AS `dir` FROM `in_interventi` WHERE `in_interventi`.`id_contratto` = '.prepare($id_record).' ORDER BY `data` ');
+            SELECT  
+                `in_interventi`.`codice` AS `codice`, 
+                `in_interventi`.`id` AS `id`, 
+                0 AS `numero`, 
+                0 AS `numero_esterno`, 
+                `in_interventi`.`data_richiesta` AS `data`, 
+                0 AS `tipo_documento`, 
+                0 AS `dir` 
+            FROM 
+                `in_interventi` 
+            WHERE 
+                `in_interventi`.`id_contratto` = '.prepare($id_record).' 
+        ORDER BY 
+                `data` ');
 
         if (empty($elementi)) {
             try {

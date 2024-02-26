@@ -25,16 +25,22 @@ $id_conto = get('id_conto');
 $conto = $dbo->fetchOne('SELECT co_pianodeiconti2.numero AS numero2, co_pianodeiconti3.numero AS numero3, co_pianodeiconti3.descrizione FROM co_pianodeiconti3 LEFT JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2 = co_pianodeiconti2.id WHERE co_pianodeiconti3.id='.prepare($id_conto));
 
 // Calcolo totale conto da elenco movimenti di questo conto
-$query = 'SELECT co_movimenti.*,
-    SUM(totale) AS totale,
-    dir FROM co_movimenti
-LEFT OUTER JOIN co_documenti ON co_movimenti.iddocumento = co_documenti.id
-LEFT OUTER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id
-WHERE co_movimenti.idconto='.prepare($id_conto).' AND
-    co_movimenti.data >= '.prepare($_SESSION['period_start']).' AND
-    co_movimenti.data <= '.prepare($_SESSION['period_end']).'
-GROUP BY co_movimenti.idmastrino
-ORDER BY co_movimenti.data ASC, co_movimenti.descrizione';
+$query = 'SELECT 
+        `co_movimenti`.*,
+        SUM(`totale`) AS totale,
+        `dir` 
+    FROM 
+        `co_movimenti`
+        LEFT JOIN `co_documenti` ON `co_movimenti`.`iddocumento` = `co_documenti`.`id`
+        LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
+    WHERE 
+        `co_movimenti`.`idconto`='.prepare($id_conto).' AND
+        `co_movimenti`.`data` >= '.prepare($_SESSION['period_start']).' AND
+        `co_movimenti`.`data` <= '.prepare($_SESSION['period_end']).'
+    GROUP BY 
+        `co_movimenti`.`idmastrino`
+    ORDER BY 
+        `co_movimenti`.`data` ASC, `co_movimenti`.`descrizione`';
 $movimenti = $dbo->fetchArray($query);
 
 echo ' 

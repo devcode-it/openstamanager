@@ -1080,7 +1080,7 @@ class FatturaElettronica
         $result = [];
 
         // Se imposto il vettore deve essere indicata anche la p.iva nella sua anagrafica
-        if ($documento->tipo->descrizione == 'Fattura accompagnatoria di vendita') {
+        if ($documento->tipo->name == 'Fattura accompagnatoria di vendita') {
             if ($documento['idvettore']) {
                 $vettore = Anagrafica::find($documento['idvettore']);
                 $result['DatiAnagraficiVettore'] = static::getDatiAnagrafici($vettore);
@@ -1360,7 +1360,7 @@ class FatturaElettronica
             }
         }
 
-        if ($documento->tipo->descrizione == 'Fattura accompagnatoria di vendita' || !empty($documento['idsede_destinazione'])) {
+        if ($documento->tipo->name == 'Fattura accompagnatoria di vendita' || !empty($documento['idsede_destinazione'])) {
             $result['DatiTrasporto'] = static::getDatiTrasporto($fattura);
         }
 

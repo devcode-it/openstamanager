@@ -146,12 +146,35 @@ if (!empty($record['gaddress']) || (!empty($record['lat']) && !empty($record['ln
 }
 
 // Permetto eliminazione tipo sede solo se non è utilizzata da nessun'altra parte nel gestionale
-$elementi = $dbo->fetchArray('SELECT `zz_users`.`idgruppo` AS `id`, "Utente" AS tipo, NULL AS dir FROM `zz_user_sedi` INNER JOIN `zz_users` ON `zz_user_sedi`.`id_user`=`zz_users`.`id` WHERE `zz_user_sedi`.`idsede` = '.prepare($id_record).'
-UNION
-SELECT `an_referenti`.`id` AS `id`, "Referente" AS tipo, NULL AS dir FROM `an_referenti` WHERE `an_referenti`.`idsede` = '.prepare($id_record).'
-UNION
-SELECT `co_documenti`.`id` AS `id`, "Fattura" AS tipo, `co_tipidocumento`.`dir` AS dir FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`idsede_destinazione` = '.prepare($id_record).'
-ORDER BY `id`');
+$elementi = $dbo->fetchArray('SELECT 
+			`zz_users`.`idgruppo` AS `id`, 
+			"Utente" AS tipo, 
+			NULL AS dir 
+		FROM 
+			`zz_user_sedi` 
+			INNER JOIN `zz_users` ON `zz_user_sedi`.`id_user`=`zz_users`.`id` 
+		WHERE 
+			`zz_user_sedi`.`idsede` = '.prepare($id_record).'
+	UNION
+		SELECT 
+			`an_referenti`.`id` AS `id`, 
+			"Referente" AS tipo, 
+			NULL AS dir 
+		FROM 
+			`an_referenti`
+		WHERE 
+			`an_referenti`.`idsede` = '.prepare($id_record).'
+	UNION
+		SELECT 
+			`co_documenti`.`id` AS `id`, 
+			"Fattura" AS tipo, 
+			`co_tipidocumento`.`dir` AS dir 
+		FROM 
+			`co_documenti` 
+			INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
+		WHERE 
+			`co_documenti`.`idsede_destinazione` = '.prepare($id_record).'
+	ORDER BY `id`');
 
 if (!empty($elementi)) {
     echo '

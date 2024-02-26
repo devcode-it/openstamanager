@@ -122,7 +122,7 @@ switch (post('op')) {
 
     case 'delete-bulk':
         foreach ($id_records as $id) {
-            $elementi = $dbo->fetchArray('SELECT `co_documenti`.`id` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idarticolo` = '.prepare($id).')
+            $elementi = $dbo->fetchArray('SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idarticolo` = '.prepare($id).')
 
             UNION SELECT `dt_ddt`.`id` FROM `dt_ddt` JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` WHERE `dt_ddt`.`id` IN (SELECT `idddt` FROM `dt_righe_ddt` WHERE `idarticolo` = '.prepare($id).')
 
@@ -286,7 +286,7 @@ switch (post('op')) {
             $articolo = Articolo::find($id);
 
             if ($articolo->prezzo_acquisto == 0 && empty($articolo->idfornitore)) {
-                $new_prezzo_acquisto = $dbo->fetchOne('SELECT (prezzo_unitario-sconto_unitario) AS prezzo_acquisto FROM co_righe_documenti LEFT JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id LEFT JOIN co_tipidocumento ON co_tipidocumento.id=co_documenti.idtipodocumento WHERE idarticolo='.prepare($id).' AND dir="uscita" ORDER BY co_documenti.data DESC, co_righe_documenti.id DESC LIMIT 0,1')['prezzo_acquisto'];
+                $new_prezzo_acquisto = $dbo->fetchOne('SELECT (`prezzo_unitario`-`sconto_unitario`) AS prezzo_acquisto FROM `co_righe_documenti` LEFT JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id`=`co_documenti`.`idtipodocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `idarticolo`='.prepare($id).' AND `dir`="uscita" ORDER BY `co_documenti`.`data` DESC, `co_righe_documenti`.`id` DESC LIMIT 0,1')['prezzo_acquisto'];
 
                 $articolo->prezzo_acquisto = $new_prezzo_acquisto;
                 $articolo->save();

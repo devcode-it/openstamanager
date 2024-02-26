@@ -65,7 +65,7 @@ $pagamento = $dbo->fetchOne('SELECT * FROM `co_pagamenti` LEFT JOIN `co_pagament
 
 // Sostituzioni specifiche
 $custom = [
-    'tipo_doc' => Stringy\Stringy::create($documento->tipo->descrizione)->toUpperCase(),
+    'tipo_doc' => Stringy\Stringy::create($documento->tipo->name)->toUpperCase(),
     'numero' => $numero,
     'data' => Translator::dateToLocale($documento['data']),
     'pagamento' => $pagamento['descrizione'],

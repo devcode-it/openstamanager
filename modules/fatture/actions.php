@@ -106,13 +106,13 @@ switch ($op) {
             FROM
                 `co_documenti`
                 INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
-                LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.setting('Lingua').')
+                LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).')
                 INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
                 INNER JOIN `zz_segments` ON `zz_segments`.`id` = `co_documenti`.`id_segment`
             WHERE
-                `co_statidocumento_lang`.`name` = "Emessa" AND `co_tipidocumento`.`dir`="entrata" AND `co_documenti`.`id_segment`='.$fattura->id_segment);
+                `co_statidocumento_lang`.`name` = "Emessa" AND `co_tipidocumento`.`dir` = "entrata" AND `co_documenti`.`id_segment`='.$fattura->id_segment);
 
-        if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && ($stato->descrizione == 'Emessa') && Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax'])) && (!empty($data_fattura_precedente['datamax']))) {
+        if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && ($stato->id == (new Stato())->getByName('Emessa')->id_record) && Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax'])) && (!empty($data_fattura_precedente['datamax']))) {
             $fattura->data = $data_fattura_precedente['datamax'];
             $fattura->data_competenza = $data_fattura_precedente['datamax'];
             flash()->info(tr('Data di emissione aggiornata, come da impostazione!'));
@@ -908,7 +908,7 @@ switch ($op) {
         $autofattura->save();
 
         $riga = Riga::build($autofattura);
-        $riga->descrizione = $tipo->descrizione;
+        $riga->descrizione = $tipo->name;
         $riga->id_iva = $iva->id;
         $riga->idconto = setting('Conto per autofattura') ?: setting('Conto predefinito fatture di vendita');
         $riga->setPrezzoUnitario($totale_imponibile, $iva->id);

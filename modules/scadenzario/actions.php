@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Scadenzario\Scadenza;
+use Modules\Fatture\Tipo;
 
 switch (post('op')) {
     case 'add':
@@ -56,7 +57,7 @@ switch (post('op')) {
 
             if (!empty($iddocumento)) {
                 $id_tipo = $dbo->selectOne('co_documenti', 'idtipodocumento', ['id' => $iddocumento])['idtipodocumento'];
-                $tipo_documento = $dbo->selectOne('co_tipidocumento', '*', ['id' => $id_tipo]);
+                $tipo_documento = Tipo::find($idtipo);
 
                 if ($tipo_documento['dir'] == 'uscita') {
                     if ($pagato > 0) {

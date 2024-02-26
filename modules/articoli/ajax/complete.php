@@ -32,9 +32,34 @@ switch ($resource) {
         echo '<small>';
         if (!empty($idarticolo)) {
             // Ultime 5 vendite al cliente
-            $documenti = $dbo->fetchArray('SELECT iddocumento AS id, "Fattura" AS tipo, "Fatture di vendita" AS modulo, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM co_documenti WHERE id=iddocumento) AS n_documento, (SELECT numero_esterno FROM co_documenti WHERE id=iddocumento) AS n2_documento, (SELECT data FROM co_documenti WHERE id=iddocumento) AS data_documento FROM co_righe_documenti WHERE idarticolo='.prepare($idarticolo).' AND iddocumento IN(SELECT id FROM co_documenti WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="entrata") AND idanagrafica='.prepare($idanagrafica).')
+            $documenti = $dbo->fetchArray('
+                SELECT 
+                    `iddocumento` AS id, 
+                    "Fattura" AS tipo, 
+                    "Fatture di vendita" AS modulo, 
+                    (`subtotale`-`sconto`)/`qta` AS costo_unitario, 
+                    `co_documenti`.`numero` AS n_documento, 
+                    `co_documenti`.`numero_esterno` AS n2_documento, 
+                    `co_documenti`.`data` AS data_documento 
+                FROM 
+                    `co_righe_documenti`
+                    INNER JOIN `co_documento` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento`
+                    INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
+                WHERE 
+                    `idarticolo`='.prepare($idarticolo).' AND `co_tipidocumento`.`dir`="entrata" AND `idanagrafica`='.prepare($idanagrafica).')
             UNION
-            SELECT idddt AS id, "Ddt" AS tipo, "Ddt di vendita" AS modulo, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM dt_ddt WHERE id=idddt) AS n_documento, (SELECT numero_esterno FROM dt_ddt WHERE id=idddt) AS n2_documento, (SELECT data FROM dt_ddt WHERE id=idddt) AS data_documento FROM dt_righe_ddt WHERE idarticolo='.$idarticolo.' AND idddt IN(SELECT id FROM dt_ddt WHERE idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir="entrata") AND idanagrafica='.prepare($idanagrafica).') ORDER BY id DESC LIMIT 0,5');
+                SELECT 
+                    `idddt` AS id, 
+                    "Ddt" AS tipo, 
+                    "Ddt di vendita" AS modulo, 
+                    (`subtotale`-`sconto`)/`qta` AS costo_unitario, 
+                    (SELECT `numero` FROM `dt_ddt` WHERE `id`=`idddt`) AS n_documento, 
+                    (SELECT `numero_esterno` FROM `dt_ddt` WHERE `id`=`idddt`) AS n2_documento, 
+                    (SELECT `data` FROM `dt_ddt` WHERE `id`=`idddt`) AS data_documento 
+                FROM 
+                    `dt_righe_ddt` 
+                WHERE 
+                    `idarticolo`='.$idarticolo.' AND `idddt` IN(SELECT `id` FROM `dt_ddt` WHERE `idtipoddt` IN(SELECT `id` FROM `dt_tipiddt` WHERE `dir`="entrata") AND `idanagrafica`='.prepare($idanagrafica).') ORDER BY `id` DESC LIMIT 0,5');
 
             if (sizeof($documenti) > 0) {
                 echo "<br/><table class='table table-striped table-bordered table-extra-condensed' >\n";
@@ -64,36 +89,37 @@ switch ($resource) {
         // Ultime 5 vendite totali
         $documenti = $dbo->fetchArray('
         SELECT
-            iddocumento AS id,
-            co_tipidocumento.descrizione AS tipo,
+            `iddocumento` AS id,
+            `co_tipidocumento_lang`.`name` AS tipo,
             "Fatture di vendita" AS modulo,
-            ((subtotale - sconto) / qta * IF(co_tipidocumento.reversed, -1, 1)) AS costo_unitario,
-            co_documenti.numero AS n_documento,
-            co_documenti.numero_esterno AS n2_documento,
-            co_documenti.data AS data_documento
+            ((`subtotale` - `sconto`) / `qta` * IF(`co_tipidocumento`.`reversed`, -1, 1)) AS costo_unitario,
+            `co_documenti`.`numero` AS n_documento,
+            `co_documenti`.`numero_esterno` AS n2_documento,
+            `co_documenti`.`data` AS data_documento
         FROM
-            co_righe_documenti
-            INNER JOIN co_documenti ON co_documenti.id = co_righe_documenti.iddocumento
-            INNER JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento
+            `co_righe_documenti`
+            INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento`
+            INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
+            LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).')
         WHERE
-            idarticolo = '.prepare($idarticolo).' AND dir = "entrata"
+            `idarticolo` = '.prepare($idarticolo).' AND `dir` = "entrata"
         UNION
         SELECT
-            idddt AS id,
-            dt_tipiddt.descrizione AS tipo,
+            `idddt` AS id,
+            `dt_tipiddt`.`descrizione` AS tipo,
             "Ddt di vendita" AS modulo,
-            (subtotale - sconto) / qta AS costo_unitario,
-            dt_ddt.numero AS n_documento,
-            dt_ddt.numero_esterno AS n2_documento,
-            dt_ddt.data AS data_documento
+            (`subtotale` - `sconto`) / `qta` AS costo_unitario,
+            `dt_ddt`.`numero` AS n_documento,
+            `dt_ddt`.`numero_esterno` AS n2_documento,
+            `dt_ddt`.`data` AS data_documento
         FROM
-            dt_righe_ddt
-            INNER JOIN dt_ddt ON dt_ddt.id = dt_righe_ddt.idddt
-            INNER JOIN dt_tipiddt ON dt_tipiddt.id = dt_ddt.idtipoddt
+            `dt_righe_ddt`
+            INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
+            INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
         WHERE
-            idarticolo = '.prepare($idarticolo).' AND dir = "entrata"
+            `idarticolo` = '.prepare($idarticolo).' AND `dir` = "entrata"
         ORDER BY
-            id
+            `id`
         DESC');
 
         if (sizeof($documenti) > 0) {
@@ -123,36 +149,37 @@ switch ($resource) {
         // Ultimi 5 acquisti totali
         $documenti = $dbo->fetchArray('
         SELECT
-            iddocumento AS id,
-            co_tipidocumento.descrizione AS tipo,
+            `iddocumento` AS id,
+            `co_tipidocumento_lang`.`name` AS tipo,
             "Fatture di acquisto" AS modulo,
-            ((subtotale - sconto) / qta * IF(co_tipidocumento.reversed, -1, 1)) AS costo_unitario,
-            co_documenti.numero AS n_documento,
-            co_documenti.numero_esterno AS n2_documento,
-            co_documenti.data AS data_documento
+            ((`subtotale` - `sconto`) / `qta` * IF(`co_tipidocumento`.`reversed`, -1, 1)) AS costo_unitario,
+            `co_documenti`.`numero` AS n_documento,
+            `co_documenti`.`numero_esterno` AS n2_documento,
+            `co_documenti`.`data` AS data_documento
         FROM
-            co_righe_documenti
-            INNER JOIN co_documenti ON co_documenti.id = co_righe_documenti.iddocumento
-            INNER JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento
+            `co_righe_documenti`
+            INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento`
+            INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
+            LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).')
         WHERE
-            idarticolo = '.prepare($idarticolo).' AND dir = "uscita"
+            `idarticolo` = '.prepare($idarticolo).' AND `dir` = "uscita"
         UNION
         SELECT
-            idddt AS id,
-            dt_tipiddt.descrizione AS tipo,
+            `idddt` AS id,
+            `dt_tipiddt`.`descrizione` AS tipo,
             "Ddt di acquisto" AS modulo,
-            (subtotale - sconto) / qta AS costo_unitario,
-            dt_ddt.numero AS n_documento,
-            dt_ddt.numero_esterno AS n2_documento,
-            dt_ddt.data AS data_documento
+            (`subtotale` - `sconto`) / `qta` AS costo_unitario,
+            `dt_ddt`.`numero` AS n_documento,
+            `dt_ddt`.`numero_esterno` AS n2_documento,
+            `dt_ddt`.`data` AS data_documento
         FROM
-            dt_righe_ddt
-            INNER JOIN dt_ddt ON dt_ddt.id = dt_righe_ddt.idddt
-            INNER JOIN dt_tipiddt ON dt_tipiddt.id = dt_ddt.idtipoddt
+            `dt_righe_ddt`
+            INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
+            INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
         WHERE
-            idarticolo = '.prepare($idarticolo).' AND dir = "uscita"
+            `idarticolo` = '.prepare($idarticolo).' AND `dir` = "uscita"
         ORDER BY
-            id
+            `id`
         DESC');
 
         if (sizeof($documenti) > 0) {
@@ -238,7 +265,7 @@ switch ($resource) {
         }
 
         // Ultimo prezzo al cliente
-        $ultimo_prezzo = $dbo->fetchArray('SELECT '.($prezzi_ivati ? '(prezzo_unitario_ivato-sconto_unitario_ivato)' : '(prezzo_unitario-sconto_unitario)').' AS prezzo_ultimo FROM co_righe_documenti LEFT JOIN co_documenti ON co_documenti.id=co_righe_documenti.iddocumento WHERE idarticolo='.prepare($id_articolo).' AND idanagrafica='.prepare($id_anagrafica).' AND idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir='.prepare($direzione).') ORDER BY data DESC LIMIT 0,1');
+        $ultimo_prezzo = $dbo->fetchArray('SELECT '.($prezzi_ivati ? '(`prezzo_unitario_ivato`-`sconto_unitario_ivato`)' : '(`prezzo_unitario`-`sconto_unitario`)').' AS prezzo_ultimo FROM `co_righe_documenti`  INNER JOIN `co_documenti` ON `co_documenti`.`id`=`co_righe_documenti`.`iddocumento` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id`=`co_documenti`.`idtipodocumento` WHERE `idarticolo`='.prepare($id_articolo).' AND `idanagrafica`='.prepare($id_anagrafica).' AND `co_tipidocumento`.`dir`='.prepare($direzione).') ORDER BY `data` DESC LIMIT 0,1');
 
         $results = array_merge($prezzi, $listino, $listini_sempre_visibili, $prezzo_articolo, $ultimo_prezzo);
 

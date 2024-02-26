@@ -663,7 +663,9 @@ FROM
     INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id`
     LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(setting('Lingua')).')
 WHERE 
-    `an_tipianagrafiche_lang`.`name` = "Cliente" AND `co_tipidocumento`.`dir` = "entrata" AND `an_anagrafiche`.`created_at` BETWEEN '.prepare($start).' AND '.prepare($end).' 
+    `an_tipianagrafiche_lang`.`name` = "Cliente" AND 
+    `co_tipidocumento`.`dir` = "entrata" AND 
+    `an_anagrafiche`.`created_at` BETWEEN '.prepare($start).' AND '.prepare($end).' 
 GROUP BY 
     YEAR(`an_anagrafiche`.`created_at`), MONTH(`an_anagrafiche`.`created_at`) 
 ORDER BY 

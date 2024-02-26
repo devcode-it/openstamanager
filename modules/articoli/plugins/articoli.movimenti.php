@@ -19,6 +19,8 @@
 
 include_once __DIR__.'/../../../core.php';
 
+use Modules\Anagrafiche\Anagrafica;
+
 echo '
 <div class="panel panel-primary">
     <div class="panel-heading">
@@ -103,6 +105,7 @@ if (!empty($movimenti)) {
                 <th class="text-center" width="120">'.tr('Q.tà').'</th>
                 <th class="text-center">'.tr('Q.tà progressiva').'</th>
                 <th>'.tr('Operazione').'</th>
+                <th>'.tr('Controparte').'</th>
                 <th class="text-center">'.tr('Sede').'</th>
                 <th class="text-center" width="120">'.tr('Data').'</th>
                 <th class="text-center" width="80">#</th>
@@ -133,11 +136,12 @@ if (!empty($movimenti)) {
                     <i class="fa fa-arrow-circle-right"></i>
                     '.numberFormat($movimento['progressivo_finale'], 'qta').' '.$record['um'].'
                 </td>
-
                 <td>
                     '.$movimento->descrizione.''.($movimento->hasDocument() ? ' - '.reference($movimento->getDocument()) : '').'
                 </td>
-
+                <td>
+                    '.Anagrafica::find($movimento->getDocument()->idanagrafica)->ragione_sociale.'
+                </td>
                 <td class="text-center">
                     '.($movimento->nomesede ?: tr('Sede legale')).'
                 </td>';

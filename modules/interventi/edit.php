@@ -488,7 +488,14 @@ if (!empty($record['idcontratto'])) {
 
 if (!$block_edit) {
     // Lettura preventivi accettati, in attesa di conferma o in lavorazione
-    $prev_query = 'SELECT COUNT(*) AS tot FROM co_preventivi WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstato IN(SELECT id FROM co_statipreventivi WHERE is_fatturabile = 1) AND default_revision=1 AND co_preventivi.id IN (SELECT idpreventivo FROM co_righe_preventivi WHERE co_righe_preventivi.idpreventivo = co_preventivi.id AND (qta - qta_evasa) > 0)';
+    $prev_query = 'SELECT 
+            COUNT(*) AS tot 
+        FROM 
+            `co_preventivi`
+            INNER JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
+            INNER JOIN `co_righe_preventivi` ON `co_preventivi`.`id` = `co_righe_preventivi`.`idpreventivo`
+        WHERE 
+            idanagrafica='.prepare($record['idanagrafica']).' AND `co_statipreventivi`.`is_fatturabile` = 1 AND `default_revision`=1 AND ((`co_righe_preventivi`.`qta` - `co_righe_preventivi`.`qta_evasa`) > 0)';
     $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
 
     // Lettura contratti accettati, in attesa di conferma o in lavorazione

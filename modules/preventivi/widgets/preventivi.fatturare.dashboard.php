@@ -23,7 +23,18 @@ use Modules\Preventivi\Stato;
 
 $id_module = Modules::get('Preventivi')['id'];
 
-$rs = $dbo->fetchArray('SELECT *, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=co_preventivi.idanagrafica) AS ragione_sociale FROM co_preventivi WHERE idstato IN (SELECT id FROM co_statipreventivi WHERE is_fatturabile = 1) AND default_revision = 1 ORDER BY data_conclusione ASC');
+$rs = $dbo->fetchArray('SELECT *, 
+        `an_anagrafiche`.`ragione_sociale` AS ragione_sociale 
+    FROM 
+        `co_preventivi`
+        INNER JOIN `an_anagrafiche` ON `co_preventivi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
+        INNER JOIN `co_statipreventivi` ON `co_preventivi`.`idstato`=`co_statipreventivi`.`id`
+        LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+    WHERE 
+        `is_fatturabile` = 1 
+        AND `default_revision` = 1 
+    ORDER BY 
+        `data_conclusione` ASC');
 
 if (!empty($rs)) {
     echo "

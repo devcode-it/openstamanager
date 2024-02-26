@@ -123,22 +123,25 @@ switch (filter('op')) {
         if (setting('Visualizza informazioni aggiuntive sul calendario')) {
             // # Box allDay preventivi
             $query = 'SELECT
-                co_preventivi.id,
-                co_preventivi.nome,
-                co_preventivi.numero,
-                co_preventivi.data_accettazione,
-                co_preventivi.data_conclusione,
-                co_statipreventivi.is_pianificabile,
-                co_statipreventivi.descrizione as stato,
-                co_statipreventivi.is_completato,
-                (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = co_preventivi.idanagrafica) AS cliente,
-                (SELECT id FROM zz_files WHERE id_record = co_preventivi.id AND id_module = '.prepare($modulo_preventivi->id).' LIMIT 1) AS have_attachments
-            FROM co_preventivi
-                LEFT JOIN co_statipreventivi ON co_preventivi.idstato = co_statipreventivi.id
+                `co_preventivi`.`id`,
+                `co_preventivi`.`nome`,
+                `co_preventivi`.`numero`,
+                `co_preventivi`.`data_accettazione`,
+                `co_preventivi`.`data_conclusione`,
+                `co_statipreventivi`.`is_pianificabile`,
+                `co_statipreventivi_lang`.`name` as stato,
+                `co_statipreventivi`.`is_completato`,
+                `an_anagrafiche`. `ragione_sociale` AS cliente,
+                `zz_files`.`id` AS have_attachments
+            FROM `co_preventivi`
+                INNER JOIN `an_anagrafiche` ON `co_preventivi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+                LEFT JOIN `zz_files` ON `zz_files`.`id_record` = `co_preventivi`.`id` AND `zz_files`.`id_module` = '.prepare($modulo_preventivi->id).'
+                LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
+                LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(setting('Lingua')).')
             WHERE
             (
-                (co_preventivi.data_accettazione >= '.prepare($start).' AND co_preventivi.data_accettazione <= '.prepare($end).')
-                OR (co_preventivi.data_conclusione >= '.prepare($start).' AND co_preventivi.data_conclusione <= '.prepare($end).')
+                (`co_preventivi`.`data_accettazione` >= '.prepare($start).' AND `co_preventivi`.`data_accettazione` <= '.prepare($end).')
+                OR (`co_preventivi`.`data_conclusione` >= '.prepare($start).' AND `co_preventivi`.`data_conclusione` <= '.prepare($end).')
             )';
 
             $preventivi = $dbo->fetchArray($query);
@@ -146,7 +149,7 @@ switch (filter('op')) {
             foreach ($preventivi as $preventivo) {
                 if ($preventivo['is_pianificabile'] == 1 || $preventivo['stato'] = 'In attesa di conferma') {
                     if (!empty($preventivo['data_accettazione']) && $preventivo['data_accettazione'] != '0000-00-00') {
-                        $query.'AND co_statipreventivi.is_pianificabile=1';
+                        $query.'AND `co_statipreventivi`.`is_pianificabile`=1';
                         $results[] = [
                             'id' => 'A_'.$modulo_preventivi->id.'_'.$preventivo['id'],
                             'idintervento' => $preventivo['id'],
@@ -335,15 +338,20 @@ switch (filter('op')) {
             }
         } else {
             $query = 'SELECT
-            co_preventivi.nome,
-            co_preventivi.numero,
-            co_preventivi.data_accettazione,
-            co_preventivi.data_conclusione,
-            (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = co_preventivi.idanagrafica) AS cliente,
-            (SELECT id FROM zz_files WHERE id_record = '.prepare($id).' AND id_module = '.prepare($modulo_preventivi->id).' LIMIT 1) AS have_attachments
-            FROM co_preventivi
-                LEFT JOIN co_statipreventivi ON co_preventivi.idstato = co_statipreventivi.id
-            WHERE co_preventivi.id='.prepare($id);
+                `co_preventivi`.`nome`,
+                `co_preventivi`.`numero`,
+                `co_preventivi`.`data_accettazione`,
+                `co_preventivi`.`data_conclusione`,
+                `an_anagrafiche`.`ragione_sociale` AS cliente,
+                `zz_files`.`id` AS have_attachments
+            FROM 
+                `co_preventivi`
+                INNER JOIN `an_anagrafiche` ON `co_preventivi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+                LEFT JOIN zz_files ON zz_files.id_record = co_preventivi.id AND zz_files.id_module = '.prepare($modulo_preventivi->id).'
+                LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
+                LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+            WHERE 
+                `co_preventivi`.`id`='.prepare($id);
 
             $rs = $dbo->fetchArray($query);
 

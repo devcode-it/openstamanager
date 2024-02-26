@@ -53,6 +53,7 @@ return [
     'co_statidocumento',
     'co_statidocumento_lang',
     'co_statipreventivi',
+    'co_statipreventivi_lang',
     'co_tipidocumento',
     'co_tipi_scadenze',
     'co_stampecontabili',

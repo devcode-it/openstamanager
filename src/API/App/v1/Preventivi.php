@@ -26,11 +26,15 @@ class Preventivi extends AppResource implements RetrieveInterface
 {
     public function getCleanupData($last_sync_at)
     {
-        $query = 'SELECT DISTINCT(co_preventivi.id) AS id FROM co_preventivi
-            INNER JOIN co_statipreventivi ON co_statipreventivi.id = co_preventivi.idstato
-        WHERE co_statipreventivi.is_pianificabile = 0';
+        $query = 'SELECT 
+            DISTINCT(`co_preventivi`.`id`) AS id 
+        FROM 
+            `co_preventivi`
+            INNER JOIN `co_statipreventivi` ON `co_statipreventivi`.`id` = `co_preventivi`.`idstato`
+        WHERE 
+            `co_statipreventivi`.`is_pianificabile` = 0';
         if ($last_sync_at) {
-            $query .= ' AND (co_preventivi.updated_at > '.prepare($last_sync_at).' OR co_statipreventivi.updated_at > '.prepare($last_sync_at).')';
+            $query .= ' AND (`co_preventivi`.`updated_at` > '.prepare($last_sync_at).' OR `co_statipreventivi`.`updated_at` > '.prepare($last_sync_at).')';
         }
         $records = database()->fetchArray($query);
 
@@ -76,10 +80,11 @@ class Preventivi extends AppResource implements RetrieveInterface
             `co_preventivi`.`nome`,
             `co_preventivi`.`numero`,
             `co_preventivi`.`data_bozza`,
-            `co_statipreventivi`.`descrizione` AS stato
+            `co_statipreventivi_lang`.`name` AS stato
         FROM 
             `co_preventivi`
             INNER JOIN `co_statipreventivi` ON `co_statipreventivi`.`id` = `co_preventivi`.`idstato`
+            LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_preventivi`.`idstato` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(setting('Lingua')).')
         WHERE 
             `co_preventivi`.`id` = '.prepare($id);
 

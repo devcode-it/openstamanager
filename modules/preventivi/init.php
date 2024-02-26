@@ -22,13 +22,19 @@ include_once __DIR__.'/../../core.php';
 if (isset($id_record)) {
     $preventivo = Modules\Preventivi\Preventivo::with('stato')->find($id_record);
 
-    $record = $dbo->fetchOne('SELECT co_preventivi.*,
-        (SELECT tipo FROM an_anagrafiche WHERE idanagrafica = co_preventivi.idanagrafica) AS tipo_anagrafica,
-        co_statipreventivi.is_fatturabile,
-        co_statipreventivi.is_pianificabile,
-        co_statipreventivi.is_completato,
-        co_statipreventivi.is_revisionabile,
-        co_statipreventivi.descrizione AS stato
-    FROM co_preventivi LEFT JOIN co_statipreventivi ON co_preventivi.idstato=co_statipreventivi.id
-    WHERE co_preventivi.id='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT 
+            `co_preventivi`.*,
+            `an_anagrafiche`.`tipo` AS tipo_anagrafica,
+            `co_statipreventivi`.`is_fatturabile`,
+            `co_statipreventivi`.`is_pianificabile`,
+            `co_statipreventivi`.`is_completato`,
+            `co_statipreventivi`.`is_revisionabile`,
+            `co_statipreventivi_lang`.`name` AS stato
+        FROM 
+            `co_preventivi` 
+            INNER JOIN `an_anagrafiche` ON `co_preventivi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
+            LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`idstato`=`co_statipreventivi`.`id`
+            LEFT JOIN `co_statipreventivi_lang` ON (`co_preventivi`.`idstato`=`co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang`='.prepare(setting('Lingua')).')
+        WHERE 
+            `co_preventivi`.`id`='.prepare($id_record));
 }

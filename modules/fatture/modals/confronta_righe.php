@@ -53,20 +53,21 @@ $righe = $dbo->fetchArray(
 
                 $ultimo_prezzo_preventivo = $dbo->fetchArray(
                     'SELECT
-                            co_righe_documenti.idarticolo,
-                            co_righe_preventivi.prezzo_unitario,
-                            DATE(co_righe_preventivi.updated_at) AS updated_at
-                        FROM
-                            co_preventivi
-                        INNER JOIN co_righe_preventivi ON co_righe_preventivi.idpreventivo = co_preventivi.id
-                        INNER JOIN mg_articoli ON mg_articoli.id = co_righe_preventivi.idarticolo
-                        INNER JOIN co_righe_documenti ON co_righe_documenti.idarticolo = mg_articoli.id
-                        WHERE
-                            co_preventivi.idanagrafica = '.prepare($id_anagrafica).' AND co_righe_documenti.idarticolo = '.prepare($riga['idarticolo']).' AND co_preventivi.idstato NOT IN (SELECT id FROM co_statipreventivi WHERE descrizione = "Bozza" OR descrizione = "In attesa di conferma" OR descrizione = "Rifiutato")
-                        GROUP BY
-                            mg_articoli.id, co_righe_preventivi.id
-                        ORDER BY
-                            updated_at DESC'
+                        `co_righe_documenti`.`idarticolo`,
+                        `co_righe_preventivi`.`prezzo_unitario`,
+                        DATE(`co_righe_preventivi`.`updated_at`) AS updated_at
+                    FROM
+                        `co_preventivi`
+                        INNER JOIN `co_righe_preventivi` ON `co_righe_preventivi`.`idpreventivo` = `co_preventivi`.`id`
+                        INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_preventivi`.`idarticolo`
+                        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idarticolo` = `mg_articoli`.`id`
+                        INNER JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
+                    WHERE
+                        `co_preventivi`.`idanagrafica` = '.prepare($id_anagrafica).' AND `co_righe_documenti`.`idarticolo` = '.prepare($riga['idarticolo']).' AND `co_statipreventivi`.`id` NOT IN ("Bozza", "In attesa di conferma", "Rifiutato")
+                    GROUP BY
+                        `mg_articoli`.`id`, `co_righe_preventivi`.`id`
+                    ORDER BY
+                        `updated_at` DESC'
                 )[0];
 
                 $ultimo_prezzo_vendita = $dbo->fetchArray(

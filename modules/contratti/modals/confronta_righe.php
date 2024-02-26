@@ -52,20 +52,24 @@ $righe = $dbo->fetchArray(
 
                 $ultimo_prezzo_preventivo = $dbo->fetchArray(
                     'SELECT
-                            co_righe_contratti.idarticolo,
-                            co_righe_preventivi.prezzo_unitario,
-                            DATE(co_righe_preventivi.updated_at) AS updated_at
-                        FROM
-                            co_preventivi
-                        INNER JOIN co_righe_preventivi ON co_righe_preventivi.idpreventivo = co_preventivi.id
-                        INNER JOIN mg_articoli ON mg_articoli.id = co_righe_preventivi.idarticolo
-                        INNER JOIN co_righe_contratti ON co_righe_contratti.idarticolo = mg_articoli.id
-                        WHERE
-                            co_preventivi.idanagrafica ='.prepare($id_anagrafica).' AND co_righe_contratti.idarticolo ='.prepare($riga['idarticolo']).' AND co_preventivi.idstato NOT IN (SELECT id FROM co_statipreventivi WHERE descrizione = "Bozza" OR descrizione = "In attesa di conferma" OR descrizione = "Rifiutato")
-                        GROUP BY 
-                            mg_articoli.id, co_righe_preventivi.id
-                        ORDER BY
-                            updated_at DESC'
+                        `co_righe_contratti`.`idarticolo`,
+                        `co_righe_preventivi`.`prezzo_unitario`,
+                        DATE(`co_righe_preventivi`.`updated_at`) AS updated_at
+                    FROM
+                        `co_preventivi`
+                        INNER JOIN `co_righe_preventivi` ON `co_righe_preventivi`.`idpreventivo` = `co_preventivi`.`id`
+                        INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_preventivi`.`idarticolo`
+                        INNER JOIN `co_righe_contratti` ON `co_righe_contratti`.`idarticolo` = `mg_articoli`.`id`
+                        LEFT JOIN `co_statipreventivi` ON `co_statipreventivi`.`id` = `co_preventivi`.`idstato`
+                        LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+                    WHERE
+                        `co_preventivi`.`idanagrafica` ='.prepare($id_anagrafica).' AND 
+                        `co_righe_contratti`.`idarticolo` ='.prepare($riga['idarticolo']).' AND 
+                        `co_statipreventivi_lang`.`name` NOT IN ("Bozza", "In attesa di conferma", "Rifiutato")
+                    GROUP BY 
+                        `mg_articoli`.`id`, `co_righe_preventivi`.`id`
+                    ORDER BY
+                        `updated_at` DESC'
                 )[0];
 
                 $ultimo_prezzo_vendita = $dbo->fetchArray(

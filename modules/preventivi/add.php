@@ -18,11 +18,13 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Modules\Preventivi\Stato;
 
 $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 
-$stati = get('pianificabile') ? 'SELECT id, descrizione FROM co_statipreventivi WHERE is_pianificabile=1' : 'SELECT id, descrizione FROM co_statipreventivi';
-$stato = $database->query('SELECT id, descrizione FROM co_statipreventivi WHERE descrizione = "Bozza"');
+$stati = get('pianificabile') ? 'SELECT `co_statipreventivi`.`id`, `co_statipreventivi_lang`.`name` as descrizione FROM `co_statipreventivi`  LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `is_pianificabile`=1' : 'SELECT `co_statipreventivi`.`id`, `co_statipreventivi_lang`.`name` as descrizione FROM `co_statipreventivi` LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(setting('Lingua')).')';
+
+$stato = (new Stato())->getByName('Bozza')->id_record;
 
 ?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">

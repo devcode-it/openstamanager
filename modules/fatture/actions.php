@@ -832,8 +832,8 @@ switch ($op) {
         $data = post('data');
 
         $anagrafica = $fattura->anagrafica;
-        $tipo = Tipo::where('descrizione', 'Nota di credito')->where('dir', 'entrata')->first();
-
+        $id_tipo = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name` = "Nota di credito" AND `dir` = "entrata"')['id'];
+        $tipo = Tipo::find($id_tipo);
         $nota = Fattura::build($anagrafica, $tipo, $data, $id_segment);
         $nota->ref_documento = $fattura->id;
         $nota->idconto = $fattura->idconto;
@@ -1178,7 +1178,8 @@ if (get('op') == 'nota_addebito') {
     }
 
     $anagrafica = $fattura->anagrafica;
-    $tipo = Tipo::where('descrizione', 'Nota di debito')->where('dir', 'entrata')->first();
+    $id_tipo = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name` = "Nota di debito" AND `dir` = "entrata"')['id'];
+    $tipo = Tipo::find($id_tipo);
     $data = $fattura->data;
 
     $nota = Fattura::build($anagrafica, $tipo, $data, $id_segment);

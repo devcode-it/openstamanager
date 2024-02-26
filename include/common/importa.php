@@ -94,11 +94,11 @@ if (!empty($options['create_document'])) {
         $stato_predefinito = (new StatoFattura())->getByName('Bozza')->id_record;
 
         if (!empty($options['reversed'])) {
-            $idtipodocumento = $dbo->fetchOne('SELECT `id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name` = "Nota di credito" AND `dir` = '.$dir.'');
+            $idtipodocumento = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name` = "Nota di credito" AND `dir` = \''.$dir.'\'')['id'];
         } elseif (in_array($original_module['name'], ['Ddt di vendita', 'Ddt di acquisto'])) {
-            $idtipodocumento = $dbo->fetchOne('SELECT `id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name` = '.($dir == 'uscita' ? 'Fattura differita di acquisto' : 'Fattura differita di vendita').' AND `dir` = '.$dir.'');
+            $idtipodocumento = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name` = '.($dir == 'uscita' ? 'Fattura differita di acquisto' : 'Fattura differita di vendita').' AND `dir` = \''.$dir.'\'')['id'];
         } else {
-            $idtipodocumento = $dbo->fetchOne('SELECT `id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `dir` = '.$dir.' AND `predefined` = 1');
+            $idtipodocumento = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `dir` = \''.$dir.'\' AND `predefined` = 1')['id'];
         }
 
         echo '

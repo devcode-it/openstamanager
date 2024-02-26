@@ -275,7 +275,7 @@ class Preventivo extends Document
             $codice_intervento = 'OK';
         }
 
-        $stato = Stato::where('descrizione', $descrizione)->first();
+        $stato = (new Stato())->getByName($descrizione)->id_record;
         $this->stato()->associate($stato);
         $this->save();
 

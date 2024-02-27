@@ -20,5 +20,5 @@
 include_once __DIR__.'/../../core.php';
 
 if (isset($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `dt_aspettobeni` WHERE id='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT * FROM `dt_aspettobeni` LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni`.`id`=`dt_aspettobeni_lang`.`id_record` AND `dt_aspettobeni_lang`.`id_lang`='.prepare(setting('Lingua')).') WHERE `dt_aspettobeni`.`id`='.prepare($id_record));
 }

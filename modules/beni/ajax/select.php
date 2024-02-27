@@ -21,14 +21,14 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'aspetto-beni':
-        $query = 'SELECT id, descrizione FROM dt_aspettobeni |where| ORDER BY descrizione ASC';
+        $query = 'SELECT `dt_aspettobeni`.`id`, `dt_aspettobeni_lang`.`name` as descrizione FROM `dt_aspettobeni` LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni`.`id`=`dt_aspettobeni_lang`.`id_record` AND `dt_aspettobeni_lang`.`id_lang`='.prepare(setting('Lingua')).') |where| ORDER BY `name` ASC';
 
         foreach ($elements as $element) {
-            $filter[] = 'id='.prepare($element);
+            $filter[] = '`dt_aspettobeni`.`id`='.prepare($element);
         }
 
         if (!empty($search)) {
-            $search_fields[] = 'descrizione LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
         }
 
         break;

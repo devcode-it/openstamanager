@@ -63,6 +63,7 @@ return [
     'do_documenti',
     'do_permessi',
     'dt_aspettobeni',
+    'dt_aspettobeni_lang',
     'dt_causalet',
     'dt_ddt',
     'dt_porto',

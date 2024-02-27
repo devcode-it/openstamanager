@@ -35,7 +35,7 @@ $id_azienda = setting('Azienda predefinita');
 $pagamento = Pagamento::find($documento['idpagamento']);
 $causale = $dbo->fetchOne('SELECT * FROM dt_causalet WHERE id = '.prepare($documento['idcausalet']));
 $porto = $dbo->fetchOne('SELECT * FROM dt_porto WHERE id = '.prepare($documento['idporto']));
-$aspetto_beni = $dbo->fetchOne('SELECT * FROM dt_aspettobeni WHERE id = '.prepare($documento['idaspettobeni']));
+$aspetto_beni = $dbo->fetchOne('SELECT * FROM `dt_aspettobeni` LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni`.`id`=`dt_aspettobeni_lang`.`id_record` AND `dt_aspettobeni_lang`.`id_lang`='.prepare(setting('Lingua')).') WHERE `dt_aspettobeni`.`id` = '.prepare($documento['idaspettobeni']));
 $spedizione = $dbo->fetchOne('SELECT * FROM dt_spedizione WHERE id = '.prepare($documento['idspedizione']));
 
 $vettore = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare($documento['idvettore']));

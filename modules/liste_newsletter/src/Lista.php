@@ -35,16 +35,6 @@ class Lista extends Model
 
     protected $table = 'em_lists';
 
-    public static function build($name)
-    {
-        $model = new static();
-        $model->name = $name;
-
-        $model->save();
-
-        return $model;
-    }
-
     public function save(array $options = [])
     {
         $result = parent::save($options);
@@ -129,5 +119,50 @@ class Lista extends Model
     public function getModuleAttribute()
     {
         return 'Liste';
+    }
+
+    /**
+     * Ritorna l'attributo name della lista.
+     *
+     * @return string
+     */
+    public function getNameAttribute()
+    {
+        return database()->table($this->table.'_lang')
+            ->select('name')
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first()->name;
+    }
+
+    /**
+     * Ritorna l'attributo description della lista.
+     *
+     * @return string
+     */
+    public function getDescriptionAttribute()
+    {
+        return database()->table($this->table.'_lang')
+            ->select('description')
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first()->description;
+    }
+
+    
+    /**
+     * Ritorna l'id della lista a partire dal nome.
+     *
+     * @param string $name il nome da ricercare
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getByName($name)
+    {
+        return database()->table($this->table.'_lang')
+            ->select('id_record')
+            ->where('name', '=', $name)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first();
     }
 }

@@ -82,6 +82,7 @@ return [
     'em_newsletters',
     'em_mansioni_template',
     'em_lists',
+    'em_lists_lang',
     'em_list_receiver',
     'em_emails',
     'em_email_receiver',

@@ -18,9 +18,11 @@
  */
 
 use Models\Module;
+use Modules\ListeNewsletter\Lista;
 
 include_once __DIR__.'/../../core.php';
 
+$lista = Lista::find($id_record);
 echo '
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">

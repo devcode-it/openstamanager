@@ -22,7 +22,5 @@ use Modules\ListeNewsletter\Lista;
 include_once __DIR__.'/../../core.php';
 
 if (isset($id_record)) {
-    $lista = Lista::find($id_record);
-
-    $record = $lista->toArray();
+    $record = $dbo->fetchOne('SELECT * FROM `em_lists` LEFT JOIN `em_lists_lang` ON (`em_lists`.`id` = `em_lists_lang`.`id_record` AND `em_lists_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `em_lists`.`id` = '.prepare($id_record));
 }

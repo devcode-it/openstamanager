@@ -1055,3 +1055,42 @@ ALTER TABLE `dt_tipiddt`
 ALTER TABLE `dt_tipiddt` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT; 
 
 ALTER TABLE `dt_tipiddt_lang` ADD CONSTRAINT `dt_tipiddt_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `dt_tipiddt`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+-- Aggiunta tabella em_lists_lang
+CREATE TABLE IF NOT EXISTS `em_lists_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `name` VARCHAR(255) NOT NULL,
+    `description` VARCHAR(255) NOT NULL
+);
+ALTER TABLE `em_lists_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `em_lists_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `em_lists_lang` (`id`, `id_lang`, `id_record`, `name`, `description`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name`, `description` FROM `em_lists`;
+
+ALTER TABLE `em_lists`
+    DROP `description`,
+    DROP `name`;
+
+ALTER TABLE `em_lists` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT; 
+
+ALTER TABLE `em_lists_lang` ADD CONSTRAINT `em_lists_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `em_lists_lang`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+-- Allineamento vista Liste newsletter
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select| 
+FROM 
+    `em_lists`
+    LEFT JOIN `em_lists_lang` ON (`em_lists_lang`.`id_record` = `em_lists`.`id` AND `em_lists_lang`.|lang|)
+WHERE 
+    1=1 AND deleted_at IS NULL 
+HAVING 
+    2=2" WHERE `name` = 'Liste newsletter';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_lists`.`id`' WHERE `zz_modules`.`name` = 'Liste newsletter' AND `zz_views`.`name` = 'id';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_lists_lang`.`description`' WHERE `zz_modules`.`name` = 'Liste newsletter' AND `zz_views`.`name` = 'Descrizione';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_lists_lang`.`name`' WHERE `zz_modules`.`name` = 'Liste newsletter' AND `zz_views`.`name` = 'Nome';

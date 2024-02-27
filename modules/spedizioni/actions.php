@@ -23,18 +23,20 @@ switch (filter('op')) {
     case 'update':
         $descrizione = filter('descrizione');
         $vettore = post('esterno');
+        $predefined = post('predefined');
 
-        if ($dbo->fetchNum('SELECT * FROM `dt_spedizione` WHERE `descrizione`='.prepare($descrizione).' AND `id`!='.prepare($id_record)) == 0) {
-            $predefined = post('predefined');
+        if ($dbo->fetchNum('SELECT * FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione`.`id`=`dt_spedizione_lang`.`idrecord` AND `dt_spedizione_lang`.`id_lang`='.prepare(setting('Lingua')).') WHERE `name`='.prepare($descrizione).' AND `dt_spedizione`.`id`!='.prepare($id_record)) == 0) {
             if (!empty($predefined)) {
-                $dbo->query('UPDATE dt_spedizione SET predefined = 0');
+                $dbo->query('UPDATE `dt_spedizione` SET `predefined` = 0');
             }
-
             $dbo->update('dt_spedizione', [
-                'descrizione' => $descrizione,
                 'predefined' => $predefined,
                 'esterno' => $vettore,
             ], ['id' => $id_record]);
+
+            $dbo->update('dt_spedizione_lang', [
+                'name' => $descrizione,
+            ], ['id_record' => $id_record, 'id_lang' => setting('Lingua')]);
 
             flash()->info(tr('Salvataggio completato!'));
         } else {
@@ -47,11 +49,17 @@ switch (filter('op')) {
     case 'add':
         $descrizione = filter('descrizione');
 
-        if ($dbo->fetchNum('SELECT * FROM `dt_spedizione` WHERE `descrizione`='.prepare($descrizione)) == 0) {
+        if ($dbo->fetchNum('SELECT * FROM `dt_spedizione_lang` WHERE `name`='.prepare($descrizione)) == 0) {
             $dbo->insert('dt_spedizione', [
-                'descrizione' => $descrizione,
+                'predefined' => 0,
             ]);
             $id_record = $dbo->lastInsertedID();
+
+            $dbo->insert('dt_spedizione_lang', [
+                'id_record' => $id_record,
+                'id_lang' => setting('Lingua'),
+                'name' => $descrizione,
+            ]);
 
             flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
                 '_TYPE_' => 'spedizione',
@@ -65,8 +73,8 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        $documenti = $dbo->fetchNum('SELECT id FROM dt_ddt WHERE idspedizione='.prepare($id_record).'
-            UNION SELECT id FROM co_documenti WHERE idspedizione='.prepare($id_record));
+        $documenti = $dbo->fetchNum('SELECT `id` FROM `dt_ddt` WHERE `idspedizione`='.prepare($id_record).'
+            UNION SELECT `id` FROM `co_documenti` WHERE `idspedizione`='.prepare($id_record));
 
         if (isset($id_record) && empty($documenti)) {
             $dbo->query('DELETE FROM `dt_spedizione` WHERE `id`='.prepare($id_record));

@@ -71,6 +71,7 @@ return [
     'dt_porto_lang',
     'dt_righe_ddt',
     'dt_spedizione',
+    'dt_spedizione_lang',
     'dt_statiddt',
     'dt_tipiddt',
     'em_print_template',

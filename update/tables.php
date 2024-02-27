@@ -75,6 +75,7 @@ return [
     'dt_statiddt',
     'dt_statiddt_lang',
     'dt_tipiddt',
+    'dt_tipiddt_lang',
     'em_print_template',
     'em_accounts',
     'em_templates',

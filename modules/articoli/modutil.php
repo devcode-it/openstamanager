@@ -28,11 +28,11 @@ if (!function_exists('aggiorna_sedi_movimenti')) {
         $dbo = database();
 
         if ($module == 'ddt') {
-            $rs = $dbo->fetchArray('SELECT idsede_partenza, idsede_destinazione, dir FROM dt_ddt INNER JOIN dt_tipiddt ON dt_tipiddt.id = dt_ddt.idtipoddt WHERE dt_ddt.id='.prepare($id));
+            $rs = $dbo->fetchArray('SELECT `idsede_partenza`, `idsede_destinazione`, `dir` FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` WHERE `dt_ddt`.`id`='.prepare($id));
 
             $idsede = ($rs[0]['dir'] == 'uscita') ? $rs[0]['idsede_destinazione'] : $rs[0]['idsede_partenza'];
 
-            $dbo->query('UPDATE mg_movimenti SET idsede='.prepare($idsede).' WHERE reference_type='.prepare('Modules\DDT\DDT').' AND reference_id='.prepare($id));
+            $dbo->query('UPDATE `mg_movimenti` SET `idsede`='.prepare($idsede).' WHERE `reference_type`='.prepare('Modules\DDT\DDT').' AND `reference_id`='.prepare($id));
         } elseif ($module == 'documenti') {
             $rs = $dbo->fetchArray('SELECT `idsede_partenza`, `idsede_destinazione`, `dir` FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id`='.prepare($id));
 

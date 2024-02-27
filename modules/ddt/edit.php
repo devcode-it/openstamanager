@@ -533,7 +533,18 @@ if (!$block_edit) {
     $ordini_query = 'SELECT COUNT(*) AS tot FROM or_ordini WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstatoordine IN (SELECT id FROM or_statiordine WHERE descrizione IN(\'Accettato\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoordine=(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') AND or_ordini.id IN (SELECT idordine FROM or_righe_ordini WHERE or_righe_ordini.idordine = or_ordini.id AND (qta - qta_evasa) > 0)';
     $tot_ordini = $dbo->fetchArray($ordini_query)[0]['tot'];
 
-    $ddt_query = 'SELECT COUNT(*) AS tot FROM `dt_ddt` INNER JOIN `dt_statiddt` ON `dt_ddt`.`idstatoddt` = `dt_statiddt`.`id` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = '.prepare(setting('Lingua')).') INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id` INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id` WHERE `name` IN("Evaso", "Parzialmente evaso", "Parzialmente fatturato") AND `dt_tipiddt`.`dir`="'.($dir == 'entrata' ? 'uscita' : 'entrata').'") AND (`dt_righe_ddt`.`qta` - `dt_righe_ddt`.`qta_evasa`) > 0';
+    $ddt_query = 'SELECT 
+            COUNT(*) AS tot 
+        FROM 
+            `dt_ddt` 
+            INNER JOIN `dt_statiddt` ON `dt_ddt`.`idstatoddt` = `dt_statiddt`.`id`
+            LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+            INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
+            INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
+        WHERE 
+            `name` IN("Evaso", "Parzialmente evaso", "Parzialmente fatturato") AND 
+            `dt_tipiddt`.`dir`="'.($dir == 'entrata' ? 'uscita' : 'entrata').'") AND 
+            (`dt_righe_ddt`.`qta` - `dt_righe_ddt`.`qta_evasa`) > 0';
     $tot_ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
 
     // Form di inserimento riga documento

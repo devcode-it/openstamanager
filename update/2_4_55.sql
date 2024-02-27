@@ -1033,3 +1033,25 @@ ORDER BY
     CAST(`numero_esterno` AS UNSIGNED) DESC,
     `dt_ddt`.`created_at` DESC" WHERE `name` = 'Ddt di acquisto';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_statiddt_lang`.`name`' WHERE `zz_modules`.`name` = 'Ddt di acquisto' AND `zz_views`.`name` = 'icon_title_Stato';
+
+-- Aggiunta tabella dt_tipiddt_lang
+CREATE TABLE IF NOT EXISTS `dt_tipiddt_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `name` VARCHAR(255) NOT NULL
+);
+ALTER TABLE `dt_tipiddt_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `dt_tipiddt_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `dt_tipiddt_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `dt_tipiddt`;
+
+ALTER TABLE `dt_tipiddt`
+    DROP `descrizione`;
+
+ALTER TABLE `dt_tipiddt` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT; 
+
+ALTER TABLE `dt_tipiddt_lang` ADD CONSTRAINT `dt_tipiddt_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `dt_tipiddt`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 

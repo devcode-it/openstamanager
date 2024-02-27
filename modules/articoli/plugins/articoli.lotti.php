@@ -164,7 +164,20 @@ if (empty(get('modal'))) {
                 elseif (!empty($acquisto['id_riga_ddt'])) {
                     $module_id = Modules::get('Ddt di acquisto')['id'];
 
-                    $query = 'SELECT *, ( SELECT descrizione FROM dt_tipiddt WHERE id=(SELECT idtipoddt FROM dt_ddt WHERE id=idddt) ) AS tipo_documento, ( SELECT `dir` FROM dt_tipiddt WHERE id=(SELECT idtipoddt FROM dt_ddt WHERE id=idddt) ) AS `dir`, ( SELECT numero FROM dt_ddt WHERE id=idddt ) AS numero, ( SELECT numero_esterno FROM dt_ddt WHERE id=idddt ) AS numero_esterno, ( SELECT data FROM dt_ddt WHERE id=idddt ) AS data FROM dt_righe_ddt WHERE dt_righe_ddt.id='.prepare($acquisto['id_riga_ddt']);
+                    $query = 'SELECT 
+                            *, 
+                            `dt_tipiddt_lang`.`name` AS tipo_documento,
+                            `dt_tipiddt`.`dir` AS `dir`,
+                            `dt_ddt`.`numero` AS numero,
+                            `dt_ddt`.`data` AS data,
+                            `dt_ddt`.`numero_esterno` AS numero_esterno
+                        FROM 
+                            `dt_righe_ddt`
+                            INNER JOIN `dt_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id` 
+                            INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
+                            LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt`.`id` = `dt_tipiddt_lang`.`id_record` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+                        WHERE 
+                            `dt_righe_ddt`.`id`='.prepare($acquisto['id_riga_ddt']);
                     $data = $dbo->fetchArray($query);
 
                     $id = $data[0]['idddt'];
@@ -248,7 +261,20 @@ if (empty(get('modal'))) {
                 elseif (!empty($vendita['id_riga_ddt'])) {
                     $module_id = Modules::get('Ddt di vendita')['id'];
 
-                    $query = 'SELECT *, ( SELECT descrizione FROM dt_tipiddt WHERE id=(SELECT idtipoddt FROM dt_ddt WHERE id=idddt) ) AS tipo_documento, ( SELECT `dir` FROM dt_tipiddt WHERE id=(SELECT idtipoddt FROM dt_ddt WHERE id=idddt) ) AS `dir`, ( SELECT numero FROM dt_ddt WHERE id=idddt ) AS numero, ( SELECT numero_esterno FROM dt_ddt WHERE id=idddt ) AS numero_esterno, ( SELECT data FROM dt_ddt WHERE id=idddt ) AS data FROM dt_righe_ddt WHERE dt_righe_ddt.id='.prepare($vendita['id_riga_ddt']);
+                    $query = 'SELECT 
+                            *, 
+                            `dt_tipiddt_lang`.`name` AS tipo_documento,
+                            `dt_ddt`.`dir`,
+                            `dt_ddt`.`numero`,
+                            `dt_ddt`.`numero_esterno`,
+                            `dt_ddt`.`data`
+                        FROM 
+                            `dt_righe_ddt`
+                            INNER JOIN `dt_ddt` ON `dt_righe_ddt`.`idddt`=`dt_ddt`.`id`
+                            INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt`=`dt_tipiddt`.`id`
+                            LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record`=`dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang`='.prepare(setting('Lingua')).')
+                        WHERE 
+                            `dt_righe_ddt`.`id`='.prepare($vendita['id_riga_ddt']);
                     $data = $dbo->fetchArray($query);
 
                     $id = $data[0]['idddt'];

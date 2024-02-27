@@ -48,76 +48,76 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione)) {
     if (!empty($iva)) {
         if ($diff == 0) {
             echo '
-        <div class="alert alert-info">
-            <i class="fa fa-info"></i> '.tr("La dichiarazione d'intento _PROTOCOLLO_ ha raggiunto il massimale previsto di _MONEY_.", [
-                    '_MONEY_' => moneyFormat(abs($fattura->dichiarazione->massimale)),
-                    '_PROTOCOLLO_' => $fattura->dichiarazione->numero_protocollo,
-                ]).'.</b>
-        </div>';
+<div class="alert alert-info">
+    <i class="fa fa-info"></i> '.tr("La dichiarazione d'intento _PROTOCOLLO_ ha raggiunto il massimale previsto di _MONEY_.", [
+            '_MONEY_' => moneyFormat(abs($fattura->dichiarazione->massimale)),
+            '_PROTOCOLLO_' => $fattura->dichiarazione->numero_protocollo,
+        ]).'.</b>
+</div>';
         } elseif ($diff < 0) {
             echo '
-        <div class="alert alert-warning">
-            <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento _PROTOCOLLO_ ha superato il massimale previsto di _MONEY_.", [
-                '_MONEY_' => moneyFormat(abs($diff)),
-                '_PROTOCOLLO_' => $fattura->dichiarazione->numero_protocollo,
-            ]).'.</b>
-        </div>';
+<div class="alert alert-warning">
+    <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento _PROTOCOLLO_ ha superato il massimale previsto di _MONEY_.", [
+        '_MONEY_' => moneyFormat(abs($diff)),
+        '_PROTOCOLLO_' => $fattura->dichiarazione->numero_protocollo,
+    ]).'.</b>
+</div>';
         } elseif ($diff_in_days < 0) {
             echo '
-        <div class="alert alert-warning">
-            <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento _PROTOCOLLO_ ha come data fine validità _SCADENZA_ mentre la fattura ha data _DATA_", [
-                '_SCADENZA_' => dateFormat($fattura->dichiarazione->data_fine),
-                '_DATA_' => dateFormat($fattura->data),
-                '_PROTOCOLLO_' => $fattura->dichiarazione->numero_protocollo,
-            ]).'.</b>
-        </div>';
+<div class="alert alert-warning">
+    <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento _PROTOCOLLO_ ha come data fine validità _SCADENZA_ mentre la fattura ha data _DATA_", [
+        '_SCADENZA_' => dateFormat($fattura->dichiarazione->data_fine),
+        '_DATA_' => dateFormat($fattura->data),
+        '_PROTOCOLLO_' => $fattura->dichiarazione->numero_protocollo,
+    ]).'.</b>
+</div>';
         }
     } else {
         // TODO link ad impostazioni con nuova ricerca rapida
         echo '
-        <div class="alert alert-warning">
-        <i class="fa fa-warning"></i> '.tr("Attenzione nessuna aliq. IVA definita per la dichiarazione d'intento. _SETTING_", [
-            '_SETTING_' => Modules::link('Impostazioni', null, tr('Selezionala dalle impostazioni'), true, null, true, null, "&search=Iva per lettere d'intento"),
-        ]).'
-        </div>';
+<div class="alert alert-warning">
+    <i class="fa fa-warning"></i> '.tr("Attenzione nessuna aliq. IVA definita per la dichiarazione d'intento. _SETTING_", [
+    '_SETTING_' => Modules::link('Impostazioni', null, tr('Selezionala dalle impostazioni'), true, null, true, null, "&search=Iva per lettere d'intento"),
+]).'
+</div>';
     }
 }
 
 // Autofattura
 if (!empty($fattura_acquisto_originale)) {
     echo '
-    <div class="alert alert-info">
-        <i class="fa fa-info"></i> '.tr("Questa è un'autofattura generata da una fattura di acquisto").':
-        <b>'.Modules::link('Fatture di acquisto', $fattura_acquisto_originale->id, tr('Fattura num. _NUM_ del _DATE_', [
-            '_NUM_' => $fattura_acquisto_originale->numero_esterno,
-            '_DATE_' => dateFormat($fattura_acquisto_originale->data),
-        ])).'</b>
-    </div>';
+<div class="alert alert-info">
+    <i class="fa fa-info"></i> '.tr("Questa è un'autofattura generata da una fattura di acquisto").':
+    <b>'.Modules::link('Fatture di acquisto', $fattura_acquisto_originale->id, tr('Fattura num. _NUM_ del _DATE_', [
+        '_NUM_' => $fattura_acquisto_originale->numero_esterno,
+        '_DATE_' => dateFormat($fattura_acquisto_originale->data),
+    ])).'</b>
+</div>';
 }
 
 if ($abilita_autofattura) {
     echo '
-    <div class="alert alert-info">
-        <i class="fa fa-info-circle"></i> '.tr("Per questa fattura è prevista la generazione di un'autofattura tramite <b>Crea » Autofattura</b>").'.
-    </div>';
+<div class="alert alert-info">
+    <i class="fa fa-info-circle"></i> '.tr("Per questa fattura è prevista la generazione di un'autofattura tramite <b>Crea » Autofattura</b>").'.
+</div>';
 } elseif ($fattura->id_autofattura != null) {
     echo '
-    <div class="alert alert-info">
-        <i class="fa fa-info"></i> '.tr("È presente un'autofattura collegata").':
-        <b>'.Modules::link('Fatture di vendita', $fattura->id_autofattura, tr('Fattura num. _NUM_ del _DATE_', [
-            '_NUM_' => $autofattura_vendita->numero_esterno,
-            '_DATE_' => dateFormat($autofattura_vendita->data),
-        ])).'</b>
-    </div>';
+<div class="alert alert-info">
+    <i class="fa fa-info"></i> '.tr("È presente un'autofattura collegata").':
+    <b>'.Modules::link('Fatture di vendita', $fattura->id_autofattura, tr('Fattura num. _NUM_ del _DATE_', [
+        '_NUM_' => $autofattura_vendita->numero_esterno,
+        '_DATE_' => dateFormat($autofattura_vendita->data),
+    ])).'</b>
+</div>';
 } elseif ($autofattura_collegata != null) {
     echo '
-    <div class="alert alert-info">
-        <i class="fa fa-info"></i> '.tr('Questa autofattura è già stata importata come fattura di acquisto').':
-        <b>'.Modules::link('Fatture di acquisto', $autofattura_collegata->id, tr('Fattura num. _NUM_ del _DATE_', [
-            '_NUM_' => $autofattura_collegata->numero_esterno,
-            '_DATE_' => dateFormat($autofattura_collegata->data),
-        ])).'</b>
-    </div>';
+<div class="alert alert-info">
+    <i class="fa fa-info"></i> '.tr('Questa autofattura è già stata importata come fattura di acquisto').':
+    <b>'.Modules::link('Fatture di acquisto', $autofattura_collegata->id, tr('Fattura num. _NUM_ del _DATE_', [
+        '_NUM_' => $autofattura_collegata->numero_esterno,
+        '_DATE_' => dateFormat($autofattura_collegata->data),
+    ])).'</b>
+</div>';
 }
 
 // Note di credito collegate
@@ -141,24 +141,24 @@ if (!empty($note_accredito)) {
 if (!empty($fattura->ref_documento) && $fattura->isNota()) {
     $nota = Fattura::find($fattura->ref_documento);
     echo '
-    <div class="alert alert-info">
-        <i class="fa fa-info"></i> '.tr('Questa è una _TIPO_ generata dalla seguente fattura', [
-            '_TIPO_' => $fattura->tipo->name,
-        ]).':
-        <b>'.Modules::link($module->name, $fattura->ref_documento, tr('Fattura num. _NUM_ del _DATE_', [
-            '_NUM_' => $nota->numero_esterno,
-            '_DATE_' => dateFormat($nota->data),
-        ])).'</b>
-    </div>';
+<div class="alert alert-info">
+    <i class="fa fa-info"></i> '.tr('Questa è una _TIPO_ generata dalla seguente fattura', [
+        '_TIPO_' => $fattura->tipo->name,
+    ]).':
+    <b>'.Modules::link($module->name, $fattura->ref_documento, tr('Fattura num. _NUM_ del _DATE_', [
+        '_NUM_' => $nota->numero_esterno,
+        '_DATE_' => dateFormat($nota->data),
+    ])).'</b>
+</div>';
 }
 
 // Ricordo che si sta emettendo una fattura conto terzi
 if ($dir == 'entrata' && $fattura->stato->name == 'Bozza') {
     if ($fattura->is_fattura_conto_terzi) {
         echo '
-        <div class="alert alert-info">
-            <i class="fa fa-info"></i> '.tr("Questa è una fattura per conto di terzi. Nell'XML della Fattura Elettronica sarà indicato il fornitore _FORNITORE_ come cessionario e il cliente come cedente/prestatore", ['_FORNITORE_' => '"<b>'.stripslashes($database->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')))['ragione_sociale']).'</b>"']).'.</b>
-        </div>';
+<div class="alert alert-info">
+    <i class="fa fa-info"></i> '.tr("Questa è una fattura per conto di terzi. Nell'XML della Fattura Elettronica sarà indicato il fornitore _FORNITORE_ come cessionario e il cliente come cedente/prestatore", ['_FORNITORE_' => '"<b>'.stripslashes($database->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')))['ragione_sociale']).'</b>"']).'.</b>
+</div>';
     }
 }
 // Verifica aggiuntive sulla sequenzialità dei numeri
@@ -172,12 +172,12 @@ if ($dir == 'entrata') {
     
     if (!empty($numero_previsto)) {
         echo '
-        <div class="alert alert-warning">
-            <i class="fa fa-warning"></i> '.tr("E' assente una fattura di vendita di numero _NUM_ in data precedente o corrispondente a _DATE_: si potrebbero verificare dei problemi con la numerazione corrente delle fatture", [
-                    '_DATE_' => dateFormat($fattura->data),
-                    '_NUM_' => '"'.$numero_previsto.'"',
-                ]).'.</b>
-        </div>';
+<div class="alert alert-warning">
+    <i class="fa fa-warning"></i> '.tr("E' assente una fattura di vendita di numero _NUM_ in data precedente o corrispondente a _DATE_: si potrebbero verificare dei problemi con la numerazione corrente delle fatture", [
+            '_DATE_' => dateFormat($fattura->data),
+            '_NUM_' => '"'.$numero_previsto.'"',
+        ]).'.</b>
+</div>';
     }
 
     // Verifica la data dell'intervento rispetto alla data della fattura
@@ -197,9 +197,9 @@ if ($dir == 'entrata') {
 
         if ($fatturazione_futura) {
             echo '
-        <div class="alert alert-warning">
-            <i class="fa fa-warning"></i> '.tr("Stai fatturando un'attività futura rispetto alla data di fatturazione.").'</b>
-        </div>';
+<div class="alert alert-warning">
+    <i class="fa fa-warning"></i> '.tr("Stai fatturando un'attività futura rispetto alla data di fatturazione.").'</b>
+</div>';
         }
     }
 }
@@ -213,9 +213,9 @@ foreach ($righe as $riga) {
 }
 if ($righe_vuote) {
         echo '
-    <div class="alert alert-warning" id="righe-vuote">
-        <i class="fa fa-warning"></i> '.tr("Nel documento sono presenti delle righe con quantità a 0.").'</b>
-    </div>';
+<div class="alert alert-warning" id="righe-vuote">
+    <i class="fa fa-warning"></i> '.tr("Nel documento sono presenti delle righe con quantità a 0.").'</b>
+</div>';
 }
 
 ?>
@@ -289,15 +289,15 @@ $query .= ' ORDER BY `name`';
                     {[ "type": "date", "class":"unblockable", "label": "<?php echo tr('Data competenza'); ?>", "name": "data_competenza", "required": 1, "value": "$data_competenza$", "min-date": "$data$", "help": "<?php echo tr('Data nella quale considerare il movimento contabile, che può essere posticipato rispetto la data della fattura'); ?>" ]}
                 </div>
 
-					<?php
+                <?php
                 if ($dir == 'entrata') {
-                    ?>
+                ?>
 
                 <div class="col-md-2" <?php echo ($is_fiscale) ? '' : 'hidden'; ?> >
                     {[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "values": "query=SELECT codice as id, CONCAT_WS(' - ',codice,descrizione) as text FROM fe_stati_documento", "value": "$codice_stato_fe$", "disabled": <?php echo intval(Interaction::isEnabled() || ($record['stato'] == 'Bozza' && $abilita_genera)); ?>, "class": "unblockable", "help": "<?php echo (!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : ''; ?>" ]}
                 </div>
 
-                        <?php
+                <?php
                 }
 
 echo '
@@ -313,11 +313,11 @@ echo '
 if ($dir == 'entrata') {
     ?>
 						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "clienti", "help": "<?php echo tr("In caso di autofattura indicare l'azienda: ").stripslashes($database->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')))['ragione_sociale']); ?>", "value": "$idanagrafica$" ]}
-					<?php
+<?php
 } else {
-    ?>
+?>
 						{[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "fornitori", "value": "$idanagrafica$" ]}
-					<?php
+<?php
 }
 
 echo '
@@ -407,33 +407,32 @@ if ($dir == 'entrata') {
 }
 ?>
                 </div>
-                </div>
+            </div>
 
             <!-- Split payment + Fattura per conto terzi (solo uscita) + Sconto in fattura (solo uscita) -->
             <div class="row">
 
                 <div class="col-md-3">
-                        {[ "type": "checkbox", "label": "<?php echo tr('Split payment'); ?>", "name": "split_payment", "value": "$split_payment$", "help": "<?php echo tr('Abilita lo split payment per questo documento. Le aliquote iva con natura N6.X (reverse charge) non saranno disponibili.'); ?>", "placeholder": "<?php echo tr('Split payment'); ?>" ]}
-                    </div>
+                    {[ "type": "checkbox", "label": "<?php echo tr('Split payment'); ?>", "name": "split_payment", "value": "$split_payment$", "help": "<?php echo tr('Abilita lo split payment per questo documento. Le aliquote iva con natura N6.X (reverse charge) non saranno disponibili.'); ?>", "placeholder": "<?php echo tr('Split payment'); ?>" ]}
+                </div>
 
-                    <?php
+                <?php
     // TODO: Fattura per conto del fornitore (es. cooperative agricole che emettono la fattura per conto dei propri soci produttori agricoli conferenti)
     if ($dir == 'entrata') {
         ?>
-                        <div class="col-md-3">
-                            {[ "type": "checkbox", "label": "<?php echo tr('Fattura per conto terzi'); ?>", "name": "is_fattura_conto_terzi", "value": "$is_fattura_conto_terzi$", "help": "<?php echo tr('Nell\'XML della Fattura Elettronica sarà indicato il fornitore ('.stripslashes($database->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')))['ragione_sociale']).') come cessionario e il cliente come cedente/prestatore.'); ?>", "placeholder": "<?php echo tr('Fattura per conto terzi'); ?>" ]}
-                        </div>
+                <div class="col-md-3">
+                    {[ "type": "checkbox", "label": "<?php echo tr('Fattura per conto terzi'); ?>", "name": "is_fattura_conto_terzi", "value": "$is_fattura_conto_terzi$", "help": "<?php echo tr('Nell\'XML della Fattura Elettronica sarà indicato il fornitore ('.stripslashes($database->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')))['ragione_sociale']).') come cessionario e il cliente come cedente/prestatore.'); ?>", "placeholder": "<?php echo tr('Fattura per conto terzi'); ?>" ]}
+                </div>
 
-                    <?php
-        echo '<div class="col-md-3">
-                            {[ "type": "number", "label": "'.tr('Sconto in fattura').'", "name": "sconto_finale", "value": "'.($fattura->sconto_finale_percentuale ?: $fattura->sconto_finale).'", "icon-after": "choice|untprc|'.(empty($fattura->sconto_finale) ? 'PRC' : 'UNT').'", "help": "'.tr('Sconto in fattura, utilizzabile per applicare sconti sul Netto a pagare del documento e le relative scadenze').'. '.tr('Per utilizzarlo in relazione a una riga della Fattura Elettronica, inserire il tipo di dato in \'\'Attributi avanzati\'\' -> \'\'Altri Dati Gestionali\'\' -> \'\'TipoDato\'\' e il testo di descrizione in \'\'Attributi avanzati\'\' -> \'\'Altri Dati Gestionali\'\' -> \'\'RiferimentoTesto\'\' della specifica riga').'. '.tr('Nota: lo sconto in fattura non influenza i movimenti contabili').'." ]}
-                        </div>';
+                <?php
+                echo '
+                <div class="col-md-3">
+                    {[ "type": "number", "label": "'.tr('Sconto in fattura').'", "name": "sconto_finale", "value": "'.($fattura->sconto_finale_percentuale ?: $fattura->sconto_finale).'", "icon-after": "choice|untprc|'.(empty($fattura->sconto_finale) ? 'PRC' : 'UNT').'", "help": "'.tr('Sconto in fattura, utilizzabile per applicare sconti sul Netto a pagare del documento e le relative scadenze').'. '.tr('Per utilizzarlo in relazione a una riga della Fattura Elettronica, inserire il tipo di dato in \'\'Attributi avanzati\'\' -> \'\'Altri Dati Gestionali\'\' -> \'\'TipoDato\'\' e il testo di descrizione in \'\'Attributi avanzati\'\' -> \'\'Altri Dati Gestionali\'\' -> \'\'RiferimentoTesto\'\' della specifica riga').'. '.tr('Nota: lo sconto in fattura non influenza i movimenti contabili').'." ]}
+                </div>';
     } else {
         echo '
-                        <div class="col-md-3">
-                        </div>
-                        <div class="col-md-3">
-                        </div>';
+                <div class="col-md-3"></div>
+                <div class="col-md-3"></div>';
     }
 
 if ($record['stato'] != 'Bozza' && $record['stato'] != 'Annullata') {
@@ -470,14 +469,14 @@ if ($record['stato'] != 'Bozza' && $record['stato'] != 'Annullata') {
 
         if ($pagamento_iniziato) {
             echo '
-                        <strike>';
+                    <strike>';
         }
 
         echo (empty($scadenza->da_pagare) ? '<i class="fa fa-exclamation-triangle"></i>' : '').moneyFormat($scadenza->da_pagare);
 
         if ($pagamento_iniziato) {
             echo '
-                        </strike>';
+                    </strike>';
         }
 
         if ($pagamento_iniziato && $scadenza->pagato != $scadenza->da_pagare) {
@@ -503,21 +502,21 @@ if ($record['stato'] != 'Bozza' && $record['stato'] != 'Annullata') {
                 <?php
 if ($dir == 'uscita') {
     echo '
-                    <div class="col-md-6">
-                        {[ "type": "checkbox", "label": "'.tr('Ritenuta pagata dal fornitore').'", "name": "is_ritenuta_pagata", "value": "$is_ritenuta_pagata$" ]}
-                    </div>';
+                <div class="col-md-6">
+                    {[ "type": "checkbox", "label": "'.tr('Ritenuta pagata dal fornitore').'", "name": "is_ritenuta_pagata", "value": "$is_ritenuta_pagata$" ]}
+                </div>';
 }
 if ($dir == 'entrata') {
     echo '
-                    <div class="col-md-6">';
+                <div class="col-md-6">';
 
     if (!empty($record['id_dichiarazione_intento'])) {
         echo Plugins::link("Dichiarazioni d'Intento", $record['idanagrafica'], null, null, 'class="pull-right"');
     }
 
     echo '
-                        {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento", "help": "'.tr('Elenco delle dichiarazioni d\'intento definite all\'interno dell\'anagrafica del cliente').'.", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "data": "'.$record['data'].'"},"value": "$id_dichiarazione_intento$", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|id_plugin='.Plugins::get('Dichiarazioni d\'Intento')['id'].'&id_parent='.$record['idanagrafica'].'", "extra": "'.((intval($block_edit)) ? 'disabled' : '').'"  ]}
-                    </div>';
+                    {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento", "help": "'.tr('Elenco delle dichiarazioni d\'intento definite all\'interno dell\'anagrafica del cliente').'.", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "data": "'.$record['data'].'"},"value": "$id_dichiarazione_intento$", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|id_plugin='.Plugins::get('Dichiarazioni d\'Intento')['id'].'&id_parent='.$record['idanagrafica'].'", "extra": "'.((intval($block_edit)) ? 'disabled' : '').'"  ]}
+                </div>';
 }
 echo '
             </div>';
@@ -597,42 +596,42 @@ if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
                     {[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo empty($esterno) || (!empty($esterno) && !empty($record['idvettore'])) ? 1 : 0; ?>, "required": <?php echo !empty($esterno) ?: 0; ?>, "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo ($esterno and (intval(!$record['flag_completato']) || empty($record['idvettore']))) ? '' : 'disabled'; ?>", "class": "<?php echo empty($record['idvettore']) ? 'unblockable' : ''; ?>" ]}
                 </div>
 
-                <script>
-                    $("#idspedizione").change(function() {
-                        if($(this).val()){
-                            if (!$(this).selectData().esterno) {
-                                $("#idvettore").attr("required", false);
-                                input("idvettore").disable();
-                                $("label[for=idvettore]").text("<?php echo tr('Vettore'); ?>");
-                                $("#idvettore").selectReset("<?php echo tr("Seleziona un\'opzione"); ?>");
-                                $(".btn_idvettore").prop("disabled", true);
-                                $(".btn_idvettore").addClass("disabled");
-                            }else{
-                                $("#idvettore").attr("required", true);
-                                input("idvettore").enable();
-                                $("label[for=idvettore]").text("<?php echo tr('Vettore'); ?>*");
-                                $(".btn_idvettore").prop("disabled", false);
-                                $(".btn_idvettore").removeClass("disabled");
+<script>
+    $("#idspedizione").change(function() {
+        if($(this).val()){
+            if (!$(this).selectData().esterno) {
+                $("#idvettore").attr("required", false);
+                input("idvettore").disable();
+                $("label[for=idvettore]").text("<?php echo tr('Vettore'); ?>");
+                $("#idvettore").selectReset("<?php echo tr("Seleziona un\'opzione"); ?>");
+                $(".btn_idvettore").prop("disabled", true);
+                $(".btn_idvettore").addClass("disabled");
+            }else{
+                $("#idvettore").attr("required", true);
+                input("idvettore").enable();
+                $("label[for=idvettore]").text("<?php echo tr('Vettore'); ?>*");
+                $(".btn_idvettore").prop("disabled", false);
+                $(".btn_idvettore").removeClass("disabled");
 
-                            }
-                        } else{
-                            $("#idvettore").attr("required", false);
-                            input("idvettore").disable();
-                            $("label[for=idvettore]").text("<?php echo tr('Vettore'); ?>");
-                            $("#idvettore").selectReset("<?php echo tr("Seleziona un\'opzione"); ?>");
-                            $(".btn_idvettore").prop("disabled", true);
-                            $(".btn_idvettore").addClass("disabled");
-                        }
-                    });
+            }
+        } else{
+            $("#idvettore").attr("required", false);
+            input("idvettore").disable();
+            $("label[for=idvettore]").text("<?php echo tr('Vettore'); ?>");
+            $("#idvettore").selectReset("<?php echo tr("Seleziona un\'opzione"); ?>");
+            $(".btn_idvettore").prop("disabled", true);
+            $(".btn_idvettore").addClass("disabled");
+        }
+    });
 
-                    $("#idcausalet").change(function() {
-                        if ($(this).val() == 3) {
-                            $("#tipo_resa").attr("disabled", false);
-                        }else{
-                            $("#tipo_resa").attr("disabled", true);
-                        }
-                    });
-                </script>
+    $("#idcausalet").change(function() {
+        if ($(this).val() == 3) {
+            $("#tipo_resa").attr("disabled", false);
+        }else{
+            $("#tipo_resa").attr("disabled", true);
+        }
+    });
+</script>
 <?php
 
     $tipo_resa = [
@@ -697,23 +696,24 @@ if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
             </div>';
 
     echo '
-        <div class="row">
-            <div class="col-md-3">
-                {[ "type": "number", "label": "'.tr('Peso').'", "name": "peso", "value": "$peso$", "readonly": "'.intval(empty($record['peso_manuale'])).'", "help": "'.tr('Il valore del campo Peso viene calcolato in automatico sulla base degli articoli inseriti nel documento, a meno dell\'impostazione di un valore manuale in questo punto').'" ]}
-                <input type="hidden" id="peso_calcolato" name="peso_calcolato" value="'.$fattura->peso_calcolato.'">
-            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    {[ "type": "number", "label": "'.tr('Peso').'", "name": "peso", "value": "$peso$", "readonly": "'.intval(empty($record['peso_manuale'])).'", "help": "'.tr('Il valore del campo Peso viene calcolato in automatico sulla base degli articoli inseriti nel documento, a meno dell\'impostazione di un valore manuale in questo punto').'" ]}
+                    <input type="hidden" id="peso_calcolato" name="peso_calcolato" value="'.$fattura->peso_calcolato.'">
+                </div>
 
-            <div class="col-md-3">
-                {[ "type": "checkbox", "label": "'.tr('Modifica peso').'", "name": "peso_manuale", "value":"$peso_manuale$", "help": "'.tr('Seleziona per modificare manualmente il campo Peso').'", "placeholder": "'.tr('Modifica peso').'" ]}
-            </div>
+                <div class="col-md-3">
+                    {[ "type": "checkbox", "label": "'.tr('Modifica peso').'", "name": "peso_manuale", "value":"$peso_manuale$", "help": "'.tr('Seleziona per modificare manualmente il campo Peso').'", "placeholder": "'.tr('Modifica peso').'" ]}
+                </div>
 
-            <div class="col-md-3">
-                {[ "type": "number", "label": "'.tr('Volume').'", "name": "volume", "value": "$volume$", "readonly": "'.intval(empty($record['volume_manuale'])).'", "help": "'.tr('Il valore del campo Volume viene calcolato in automatico sulla base degli articoli inseriti nel documento, a meno dell\'impostazione di un valore manuale in questo punto').'" ]}
-                <input type="hidden" id="volume_calcolato" name="volume_calcolato" value="'.$fattura->volume_calcolato.'">
-            </div>
+                <div class="col-md-3">
+                    {[ "type": "number", "label": "'.tr('Volume').'", "name": "volume", "value": "$volume$", "readonly": "'.intval(empty($record['volume_manuale'])).'", "help": "'.tr('Il valore del campo Volume viene calcolato in automatico sulla base degli articoli inseriti nel documento, a meno dell\'impostazione di un valore manuale in questo punto').'" ]}
+                    <input type="hidden" id="volume_calcolato" name="volume_calcolato" value="'.$fattura->volume_calcolato.'">
+                </div>
 
-            <div class="col-md-3">
-                {[ "type": "checkbox", "label": "'.tr('Modifica volume').'", "name": "volume_manuale", "value":"$volume_manuale$", "help": "'.tr('Seleziona per modificare manualmente il campo Volume').'", "placeholder": "'.tr('Modifica volume').'" ]}
+                <div class="col-md-3">
+                    {[ "type": "checkbox", "label": "'.tr('Modifica volume').'", "name": "volume_manuale", "value":"$volume_manuale$", "help": "'.tr('Seleziona per modificare manualmente il campo Volume').'", "placeholder": "'.tr('Modifica volume').'" ]}
+                </div>
             </div>
         </div>
     </div>';
@@ -731,9 +731,9 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione)) {
 
     if ($fattura->stato->name == 'Bozza') {
         echo '
-        <div class="alert alert-info">
-            <i class="fa fa-info"></i> '.tr("La fattura è collegata ad una dichiarazione d'intento con diponibilità residura pari a _MONEY_.", ['_MONEY_' => moneyFormat($diff)]).'<br>'.tr('Per collegare una riga alla dichiarazione è sufficiente specificare come IVA <ul>_IVA_</ul>', ['_IVA_' => $descrizione_iva_accettata]).'</b>
-        </div>';
+    <div class="alert alert-info">
+        <i class="fa fa-info"></i> '.tr("La fattura è collegata ad una dichiarazione d'intento con diponibilità residura pari a _MONEY_.", ['_MONEY_' => moneyFormat($diff)]).'<br>'.tr('Per collegare una riga alla dichiarazione è sufficiente specificare come IVA <ul>_IVA_</ul>', ['_IVA_' => $descrizione_iva_accettata]).'</b>
+    </div>';
     }
 }
 

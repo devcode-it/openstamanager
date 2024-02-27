@@ -531,7 +531,7 @@ switch (filter('op')) {
         $new->numero = DDT::getNextNumero($new->data, $dir, $id_segment);
         $new->numero_esterno = DDT::getNextNumeroSecondario($new->data, $dir, $new->id_segment);
 
-        $stato = Stato::where('descrizione', '=', 'Bozza')->first();
+        $stato = (new Stato())->getByName('Bozza')->id_record;
         $new->stato()->associate($stato);
         $new->save();
 

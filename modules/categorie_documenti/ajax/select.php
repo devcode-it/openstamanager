@@ -21,18 +21,18 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'categorie_documenti':
-        $query = 'SELECT id, descrizione FROM do_categorie |where| ORDER BY descrizione ASC';
+        $query = 'SELECT `do_categorie`.`id`, `do_categorie_lang`.`name` as descrizione FROM `do_categorie` LEFT JOIN `do_categorie_lang` ON (`do_categorie_lang`.`id_record` = `do_categorie`.`id` AND `do_categorie_lang`.`id_lang` = '.prepare(setting('Lingua')).')|where| ORDER BY `name` ASC';
 
         foreach ($elements as $element) {
-            $filter[] = 'do_categorie.id='.prepare($element);
+            $filter[] = '`do_categorie`.`id`='.prepare($element);
         }
 
         if (empty($filter)) {
-            $where[] = 'deleted_at IS NULL';
+            $where[] = '`deleted_at` IS NULL';
         }
 
         if (!empty($search)) {
-            $search_fields[] = 'descrizione LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
         }
 
         break;

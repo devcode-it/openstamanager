@@ -59,6 +59,7 @@ return [
     'co_tipi_scadenze',
     'co_stampecontabili',
     'do_categorie',
+    'do_categorie_lang',
     'do_documenti',
     'do_permessi',
     'dt_aspettobeni',

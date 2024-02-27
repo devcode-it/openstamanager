@@ -33,7 +33,7 @@ if ($record['doc_associati'] > 0) {
 
 	<div class="row">
 		<div class="col-md-9">
-			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
+			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$name$" ]}
 		</div>
 
         <div class="col-md-3">

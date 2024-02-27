@@ -26,15 +26,13 @@ switch (post('op')) {
         $descrizione = post('descrizione');
 
         // Verifico che il nome non sia duplicato
-        $count = $dbo->fetchNum('SELECT descrizione FROM do_categorie WHERE descrizione='.prepare($descrizione).' AND deleted_at IS NULL AND id !='.prepare($id_record));
+        $count = $dbo->fetchNum('SELECT `name` FROM `do_categorie` LEFT JOIN `do_categorie_lang` ON (`do_categorie_lang`.`id_record` = `do_categorie`.`id` AND `do_categorie_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name`='.prepare($descrizione).' AND `deleted_at` IS NULL AND `do_categorie`.`id` !='.prepare($id_record));
         if ($count != 0) {
             flash()->error(tr('Categoria _NAME_ già esistente!', [
                 '_NAME_' => $descrizione,
             ]));
         } else {
-            $categoria->descrizione = $descrizione;
-            $categoria->save();
-
+            $dbo->query('UPDATE `do_categorie_lang` SET `name` = '.prepare($descrizione).' WHERE `id_record` = '.prepare($id_record).' AND `id_lang` = '.prepare(setting('Lingua')));
             $categoria->syncPermessi(post('permessi') ?: []);
 
             flash()->info(tr('Informazioni salvate correttamente!'));
@@ -46,7 +44,7 @@ switch (post('op')) {
         $descrizione = post('descrizione');
 
         // Verifico che il nome non sia duplicato
-        $count = $dbo->fetchNum('SELECT descrizione FROM do_categorie WHERE descrizione='.prepare($descrizione).' AND deleted_at IS NULL');
+        $count = $dbo->fetchNum('SELECT `name` FROM `do_categorie`  LEFT JOIN `do_categorie_lang` ON (`do_categorie_lang`.`id_record` = `do_categorie`.`id` AND `do_categorie_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name`='.prepare($descrizione).' AND `deleted_at` IS NULL');
         if ($count != 0) {
             flash()->error(tr('Categoria _NAME_ già esistente!', [
                 '_NAME_' => $descrizione,
@@ -65,7 +63,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $dbo->query('UPDATE do_categorie SET deleted_at = NOW() WHERE id = '.prepare($id_record));
+        $dbo->query('UPDATE `do_categorie` SET `deleted_at` = NOW() WHERE `id` = '.prepare($id_record));
 
         flash()->info(tr('Categoria documenti eliminata!'));
 

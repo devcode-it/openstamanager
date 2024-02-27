@@ -745,3 +745,58 @@ ORDER BY
     `co_documenti`.`data` DESC,
     CAST(IF(`co_documenti`.`numero` = '', `co_documenti`.`numero_esterno`, `co_documenti`.`numero`) AS UNSIGNED) DESC" WHERE `name` = 'Fatture di acquisto';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_tipidocumento_lang`.`name`' WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = 'Tipo';
+
+-- Aggiunta tabella do_categorie_lang
+CREATE TABLE IF NOT EXISTS `do_categorie_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `name` VARCHAR(255) NOT NULL
+);
+ALTER TABLE `do_categorie_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `do_categorie_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `do_categorie_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `do_categorie`;
+
+ALTER TABLE `do_categorie`
+    DROP `descrizione`;
+
+ALTER TABLE `do_categorie` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT; 
+
+ALTER TABLE `do_categorie_lang` ADD CONSTRAINT `do_categorie_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `do_categorie`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+-- Allineamento vista Gestione documentale
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select| 
+FROM 
+    `do_documenti`
+    INNER JOIN `do_categorie` ON `do_categorie`.`id` = `do_documenti`.`idcategoria`
+    LEFT JOIN `do_categorie_lang` ON (`do_categorie_lang`.`id_record` = `do_categorie`.`id` AND `do_categorie_lang`.`id_lang` = |lang|)
+WHERE 
+    1=1 AND `deleted_at` IS NULL AND
+    (SELECT `idgruppo` FROM `zz_users` WHERE `zz_users`.`id` = |id_utente|) IN (SELECT `id_gruppo` FROM `do_permessi` WHERE `id_categoria` = `do_documenti`.`idcategoria`)
+    |date_period(`data`)| OR data IS NULL
+HAVING 
+    2=2 
+ORDER BY 
+    `data` DESC" WHERE `name` = 'Gestione documentale';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`do_categorie_lang`.`name`' WHERE `zz_modules`.`name` = 'Gestione documentale' AND `zz_views`.`name` = 'Categoria';
+
+-- Allineamento vista Categorie documenti
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select| 
+FROM 
+   `do_categorie`
+   LEFT JOIN `do_categorie_lang` ON (`do_categorie_lang`.`id_record` = `do_categorie`.`id` AND `do_categorie_lang`.`id_lang` = |lang|)
+WHERE 
+    1=1 AND `deleted_at` IS NULL AND
+    (SELECT `idgruppo` FROM `zz_users` WHERE `id` = |id_utente|) IN (SELECT `id_gruppo` FROM `do_permessi` WHERE `id_categoria` = `do_categorie`.`id`)
+HAVING
+    2=2" WHERE `name` = 'Categorie documenti';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`do_categorie_lang`.`name`' WHERE `zz_modules`.`name` = 'Categorie documenti' AND `zz_views`.`name` = 'Descrizione';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`do_categorie`.`id`' WHERE `zz_modules`.`name` = 'Categorie documenti' AND `zz_views`.`name` = 'id';

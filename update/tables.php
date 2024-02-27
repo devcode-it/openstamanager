@@ -65,6 +65,7 @@ return [
     'dt_aspettobeni',
     'dt_aspettobeni_lang',
     'dt_causalet',
+    'dt_causalet_lang',
     'dt_ddt',
     'dt_porto',
     'dt_righe_ddt',

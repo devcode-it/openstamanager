@@ -22,27 +22,28 @@ include_once __DIR__.'/../../core.php';
 switch (filter('op')) {
     case 'update':
         $descrizione = filter('descrizione');
+        $predefined = post('predefined');
 
         if (isset($descrizione)) {
-            if ($dbo->fetchNum('SELECT * FROM `dt_causalet` WHERE `deleted_at` IS NULL AND `descrizione`='.prepare($descrizione).' AND `id`!='.prepare($id_record)) == 0) {
-                $predefined = post('predefined');
+            if ($dbo->fetchNum('SELECT * FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(setting('Lingua')).') WHERE `deleted_at` IS NULL AND `name`='.prepare($descrizione).' AND `dt_causalet`.`id`!='.prepare($id_record)) == 0) {
                 if (!empty($predefined)) {
                     $dbo->query('UPDATE dt_causalet SET predefined = 0');
                 }
 
                 $dbo->update('dt_causalet', [
-                    'descrizione' => $descrizione,
                     'is_importabile' => filter('is_importabile'),
                     'reversed' => filter('reversed'),
                     'predefined' => $predefined,
                     'is_rientrabile' => filter('is_rientrabile'),
                 ], ['id' => $id_record]);
 
+                $dbo->update('dt_causalet_lang', [
+                    'name' => $descrizione,
+                ], ['id_record' => $id_record, 'id_lang' => setting('Lingua')]);
+
                 flash()->info(tr('Salvataggio completato!'));
             } else {
-                flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione", [
-                    '_TYPE_' => 'causale',
-                ]));
+                flash()->error(tr("E' già presente una causale di trasporto con la stessa descrizione"));
             }
         } else {
             flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio'));
@@ -54,24 +55,24 @@ switch (filter('op')) {
         $descrizione = filter('descrizione');
 
         if (isset($descrizione)) {
-            if ($dbo->fetchNum('SELECT * FROM `dt_causalet` WHERE `deleted_at` IS NULL AND `descrizione`='.prepare($descrizione)) == 0) {
+            if ($dbo->fetchNum('SELECT * FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(setting('Lingua')).') WHERE `deleted_at` IS NULL AND `name`='.prepare($descrizione)) == 0) {
                 $dbo->insert('dt_causalet', [
-                    'descrizione' => $descrizione,
                     'is_importabile' => 1,
                 ]);
                 $id_record = $dbo->lastInsertedID();
+                $dbo->insert('dt_causalet_lang', [
+                    'name' => $descrizione,
+                    'id_record' => $id_record,
+                    'id_lang' => setting('Lingua'),
+                ]);
 
                 if (isAjaxRequest()) {
                     echo json_encode(['id' => $id_record, 'text' => $descrizione]);
                 }
 
-                flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
-                    '_TYPE_' => 'causale',
-                ]));
+                flash()->info(tr('Aggiunta nuova causale di trasporto.'));
             } else {
-                flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione", [
-                    '_TYPE_' => 'causale',
-                ]));
+                flash()->error(tr("E' già presente una causale di trasporto con la stessa descrizione"));
             }
         } else {
             flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio'));
@@ -80,8 +81,7 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        $documenti = $dbo->fetchNum('SELECT id FROM dt_ddt WHERE idcausalet='.prepare($id_record).'
-                     UNION SELECT id FROM co_documenti WHERE idcausalet='.prepare($id_record));
+        $documenti = $dbo->fetchNum('SELECT `id` FROM `dt_ddt` WHERE `idcausalet`='.prepare($id_record).' UNION SELECT `id` FROM `co_documenti` WHERE `idcausalet`='.prepare($id_record));
 
         if (isset($id_record) && empty($documenti)) {
             $dbo->query('DELETE FROM `dt_causalet` WHERE `id`='.prepare($id_record));
@@ -91,9 +91,7 @@ switch (filter('op')) {
             ], ['id' => $id_record]);
         }
 
-        flash()->info(tr('Tipologia di _TYPE_ eliminata con successo.', [
-            '_TYPE_' => 'causale',
-        ]));
-
+        flash()->info(tr('Causale di trasporto eliminata.'));
+        
         break;
 }

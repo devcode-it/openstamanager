@@ -792,15 +792,20 @@ if (!$block_edit) {
         }
 
         // Lettura ddt (entrata o uscita)
-        $ddt_query = 'SELECT COUNT(*) AS tot FROM dt_ddt
+        $ddt_query = 'SELECT 
+            COUNT(*) AS tot 
+        FROM 
+            `dt_ddt`
             LEFT JOIN `dt_causalet` ON `dt_causalet`.`id` = `dt_ddt`.`idcausalet`
             LEFT JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`
             LEFT JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
-            WHERE idanagrafica='.prepare($record['idanagrafica']).'
-                AND `dt_statiddt`.`descrizione` IN (\'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')
-                AND `dt_tipiddt`.`dir` = '.prepare($dir).'
-                AND `dt_causalet`.`is_importabile` = 1
-                AND dt_ddt.id IN (SELECT idddt FROM dt_righe_ddt WHERE dt_righe_ddt.idddt = dt_ddt.id AND (qta - qta_evasa) > 0)';
+            INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
+        WHERE 
+            `idanagrafica`='.prepare($record['idanagrafica']).'
+            AND `dt_statiddt`.`descrizione` IN (\'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')
+            AND `dt_tipiddt`.`dir` = '.prepare($dir).'
+            AND `dt_causalet`.`is_importabile` = 1
+            AND (`dt_righe_ddt`.`qta` - `dt_righe_ddt`.`qta_evasa`) > 0';
         $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
 
         // Lettura ordini (cliente o fornitore)

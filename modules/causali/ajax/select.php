@@ -21,16 +21,16 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'causali':
-        $query = 'SELECT id, descrizione FROM dt_causalet |where| ORDER BY descrizione ASC';
+        $query = 'SELECT `dt_causalet`.`id`, `dt_causalet_lang`.`name` as descrizione FROM dt_causalet LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(setting('Lingua')).') |where| ORDER BY `name` ASC';
 
         foreach ($elements as $element) {
-            $filter[] = 'id='.prepare($element);
+            $filter[] = '`dt_causalet`.`id`='.prepare($element);
         }
         if (empty($filter)) {
-            $where[] = 'dt_causalet.deleted_at IS NULL';
+            $where[] = '`dt_causalet`.`deleted_at` IS NULL';
         }
         if (!empty($search)) {
-            $search_fields[] = 'descrizione LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
         }
 
         break;

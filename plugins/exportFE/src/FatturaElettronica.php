@@ -1074,7 +1074,7 @@ class FatturaElettronica
         $documento = $fattura->getDocumento();
         $database = database();
 
-        $causale = $database->fetchOne('SELECT descrizione FROM dt_causalet WHERE id = '.prepare($documento['idcausalet']))['descrizione'];
+        $causale = $database->fetchOne('SELECT `name` FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id`=`dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang`='.prepare(setting('Lingua')).') WHERE `dt_causalet`.`id` = '.prepare($documento['idcausalet']))['name'];
         $aspetto = $database->fetchOne('SELECT `name` FROM `dt_aspettobeni` LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni`.`id`=`dt_aspettobeni_lang`.`id_record` AND `dt_aspettobeni_lang`.`id_lang`='.prepare(setting('Lingua')).') WHERE `dt_aspettobeni`.`id` = '.prepare($documento['idaspettobeni']))['name'];
 
         $result = [];

@@ -36,7 +36,7 @@ if ($module['name'] == 'Ddt di vendita') {
     $tipo_anagrafica = tr('Fornitore');
     $label = tr('Mittente');
 }
-$id_causalet = $dbo->fetchOne('SELECT id FROM dt_causalet WHERE predefined=1')['id'];
+$id_causalet = $dbo->fetchOne('SELECT `id` FROM `dt_causalet` WHERE `predefined`=1')['id'];
 $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 
 ?><form action="" method="post" id="add-form">

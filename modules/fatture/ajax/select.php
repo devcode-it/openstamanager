@@ -42,23 +42,28 @@ switch ($resource) {
         HAVING SUM(or_righe_ordini.qta - or_righe_ordini.qta_evasa) > 0
         ORDER BY data DESC, numero DESC';
 
-        $query_ddt = "SELECT dt_ddt.id,
-           CONCAT('DDT num. ', IF(numero_esterno != '', numero_esterno, numero), ' del ', DATE_FORMAT(data, '%d/%m/%Y'), ' [', (SELECT descrizione FROM dt_statiddt WHERE id = idstatoddt)  , ']') AS text,
+        $query_ddt = "SELECT 
+            `dt_ddt`.`id`,
+           CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_statiddt_lang`.`name`, ']') AS text,
             'DDT' AS optgroup,
            'ddt' AS tipo,
            'uscita' AS dir
-        FROM dt_ddt
-            INNER JOIN dt_righe_ddt ON dt_righe_ddt.idddt = dt_ddt.id
-        WHERE idanagrafica = ".prepare($id_anagrafica)." AND
-            idstatoddt IN (
-                SELECT id FROM dt_statiddt WHERE descrizione != 'Fatturato'
-            ) AND
-            idtipoddt IN (
-                SELECT id FROM dt_tipiddt WHERE dir=".prepare($direzione).'
-            ) AND |where|
-         GROUP BY dt_ddt.id
-        HAVING SUM(dt_righe_ddt.qta - dt_righe_ddt.qta_evasa) > 0
-        ORDER BY data DESC, numero DESC';
+        FROM `dt_ddt`
+            INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
+            INNER JOIN `dt_statiddt` ON `dt_ddt`.`idstato` = `dt_statiddt`.`id`
+            INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
+            LEFT JOIN dt_statiddt_lang ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(setting('Lingua')).")
+        WHERE 
+            `idanagrafica` = ".prepare($id_anagrafica)." AND
+            `dt_statiddt_lang`.`name` != 'Fatturato' AND
+            `dt_tipiddt`.`dir`=".prepare($direzione).'AND 
+            |where|
+        GROUP BY 
+            `dt_ddt`.`id`
+        HAVING 
+            SUM(`dt_righe_ddt`.`qta` - `dt_righe_ddt`.`qta_evasa`) > 0
+        ORDER BY 
+            `data` DESC, `numero` DESC';
 
         // Sostituzione per la ricerca
         $query_ordini = replace($query_ordini, [
@@ -109,23 +114,28 @@ switch ($resource) {
         GROUP BY or_ordini.id
         ORDER BY data DESC, numero DESC';
 
-        $query_ddt = "SELECT dt_ddt.id,
-            CONCAT('DDT num. ', IF(numero_esterno != '', numero_esterno, numero), ' del ', DATE_FORMAT(data, '%d/%m/%Y'), ' [', (SELECT descrizione FROM dt_statiddt WHERE id = idstatoddt)  , ']') AS text,
+        $query_ddt = "SELECT 
+            `dt_ddt`.`id`,
+            CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_statiddt_lang`.`name`, ']') AS text,
             'DDT' AS optgroup,
             'ddt' AS tipo,
             'entrata' AS dir
-        FROM dt_ddt
-            INNER JOIN dt_righe_ddt ON dt_righe_ddt.idddt = dt_ddt.id
-        WHERE idarticolo = ".prepare($id_articolo)." AND
-            idstatoddt IN (
-                SELECT id FROM dt_statiddt WHERE descrizione != 'Fatturato'
-            ) AND
-            idtipoddt IN (
-                SELECT id FROM dt_tipiddt WHERE dir=".prepare($direzione).'
-            ) AND |where|
-            GROUP BY dt_ddt.id
-        HAVING SUM(dt_righe_ddt.qta - dt_righe_ddt.qta_evasa) > 0
-        ORDER BY data DESC, numero DESC';
+        FROM `dt_ddt`
+            INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
+            INNER JOIN `dt_statiddt` ON `dt_ddt`.`idstato` = `dt_statiddt`.`id`
+            LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(setting('Lingua')).")
+            INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
+        WHERE 
+            `idarticolo` = ".prepare($id_articolo)." AND
+            `dt_stati_lang`.`name` != 'Fatturato' AND
+            `dt_tipiddt`.`dir`=".prepare($direzione).'AND 
+            |where|
+        GROUP BY 
+            `dt_ddt`.`id`
+        HAVING 
+            SUM(`dt_righe_ddt`.`qta` - `dt_righe_ddt`.`qta_evasa`) > 0
+        ORDER BY 
+            `data` DESC, `numero` DESC';
 
         // Sostituzione per la ricerca
         $query_ordini = replace($query_ordini, [

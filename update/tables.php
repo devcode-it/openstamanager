@@ -73,6 +73,7 @@ return [
     'dt_spedizione',
     'dt_spedizione_lang',
     'dt_statiddt',
+    'dt_statiddt_lang',
     'dt_tipiddt',
     'em_print_template',
     'em_accounts',

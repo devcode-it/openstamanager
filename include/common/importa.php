@@ -19,7 +19,7 @@
 
 use Modules\Contratti\Stato as StatoContratto;
 use Modules\Fatture\Stato as StatoFattura;
-use Modules\Fatture\Tipo;
+use Modules\DDT\Stato;
 use Plugins\ListinoFornitori\DettaglioFornitore;
 
 // Inizializzazione
@@ -139,11 +139,11 @@ if (!empty($options['create_document'])) {
 
     // Opzioni aggiuntive per i DDT
     elseif (in_array($final_module['name'], ['Ddt di vendita', 'Ddt di acquisto'])) {
-        $stato_predefinito = $database->fetchOne("SELECT * FROM dt_statiddt WHERE descrizione = 'Bozza'");
+        $stato_predefinito = (new Stato())->getByName('Bozza')->id_record;
 
         echo '
             <div class="col-md-6">
-                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT * FROM dt_statiddt", "value": "'.$stato_predefinito['id'].'" ]}
+                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT * FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(setting('Lingua')).')", "value": "'.$stato_predefinito.'" ]}
             </div>
 
             <div class="col-md-6">

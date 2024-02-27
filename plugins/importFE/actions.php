@@ -454,25 +454,29 @@ switch (filter('op')) {
 
             // Se nella fattura elettronica è indicato un DDT cerco quel documento specifico
             $ddt = $dati_ddt[$numero_linea];
-            $query = "SELECT dt_righe_ddt.id, dt_righe_ddt.idddt AS id_documento, dt_righe_ddt.is_descrizione, dt_righe_ddt.idarticolo, dt_righe_ddt.is_sconto, 'ddt' AS ref,
-                CONCAT('DDT num. ', IF(numero_esterno != '', numero_esterno, numero), ' del ', DATE_FORMAT(data, '%d/%m/%Y'), ' [', (SELECT descrizione FROM dt_statiddt WHERE id = idstatoddt)  , ']') AS opzione
-            FROM dt_righe_ddt
-                INNER JOIN dt_ddt ON dt_ddt.id = dt_righe_ddt.idddt
+            $query = "SELECT 
+                `dt_righe_ddt`.`id`, 
+                `dt_righe_ddt`.`idddt` AS id_documento, 
+                `dt_righe_ddt`.`is_descrizione`, 
+                `dt_righe_ddt`.`idarticolo`, 
+                `dt_righe_ddt`.`is_sconto`, 'ddt' AS ref,
+                CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_statiddt_lang`.`name`, ']') AS opzione
+            FROM 
+                `dt_righe_ddt`
+                INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
+                INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`
+                LEFT JOIN `dt_statiddt_lang` ON `dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(setting('Lingua'))."
             WHERE
-                dt_ddt.numero_esterno = ".prepare($ddt['numero']).'
-                AND
-                YEAR(dt_ddt.data) = '.prepare($ddt['anno']).'
-                AND
-                dt_ddt.idanagrafica = '.prepare($anagrafica->id).'
-                AND
-                dt_righe_ddt.qta > dt_righe_ddt.qta_evasa
-                AND
+                `dt_ddt`.`numero_esterno` = ".prepare($ddt['numero']).' AND
+                YEAR(`dt_ddt`.`data`) = '.prepare($ddt['anno']).' AND
+                `dt_ddt`.`idanagrafica` = '.prepare($anagrafica->id).' AND
+                `dt_righe_ddt`.`qta` > `dt_righe_ddt`.`qta_evasa` AND
                 |where|';
 
             // Ricerca di righe DDT con stesso Articolo
             if (!empty($id_articolo)) {
                 $query_articolo = replace($query, [
-                    '|where|' => 'dt_righe_ddt.idarticolo = '.prepare($id_articolo),
+                    '|where|' => '`dt_righe_ddt`.`idarticolo` = '.prepare($id_articolo),
                 ]);
 
                 $collegamento = $database->fetchOne($query_articolo);
@@ -481,7 +485,7 @@ switch (filter('op')) {
             // Ricerca di righe DDT per stessa descrizione
             if (empty($collegamento)) {
                 $query_descrizione = replace($query, [
-                    '|where|' => 'dt_righe_ddt.descrizione = '.prepare($riga['Descrizione']),
+                    '|where|' => '`dt_righe_ddt`.`descrizione` = '.prepare($riga['Descrizione']),
                 ]);
 
                 $collegamento = $database->fetchOne($query_descrizione);
@@ -532,23 +536,50 @@ switch (filter('op')) {
             // Se non ci sono Ordini o DDT cerco per contenuto
             if (empty($collegamento)) {
                 $match_documento_da_fe = false;
-                $query = "SELECT dt_righe_ddt.id, dt_righe_ddt.idddt AS id_documento, dt_righe_ddt.is_descrizione, dt_righe_ddt.idarticolo, dt_righe_ddt.is_sconto, 'ddt' AS ref,
-                CONCAT('DDT num. ', IF(numero_esterno != '', numero_esterno, numero), ' del ', DATE_FORMAT(data, '%d/%m/%Y'), ' [', (SELECT descrizione FROM dt_statiddt WHERE id = idstatoddt)  , ']') AS opzione
-                FROM dt_righe_ddt
-                    INNER JOIN dt_ddt ON dt_ddt.id = dt_righe_ddt.idddt
-                WHERE dt_ddt.idanagrafica = ".prepare($anagrafica->id)." AND |where_ddt| AND dt_righe_ddt.qta > dt_righe_ddt.qta_evasa AND dt_ddt.idstatoddt IN (SELECT id FROM dt_statiddt WHERE descrizione != 'Fatturato') AND idtipoddt IN (SELECT id FROM dt_tipiddt WHERE dir='uscita')
-
-                UNION SELECT or_righe_ordini.id, or_righe_ordini.idordine AS id_documento, or_righe_ordini.is_descrizione, or_righe_ordini.idarticolo, or_righe_ordini.is_sconto, 'ordine' AS ref,
-                    CONCAT('Ordine num. ', IF(numero_esterno != '', numero_esterno, numero), ' del ', DATE_FORMAT(data, '%d/%m/%Y'), ' [', (SELECT descrizione FROM or_statiordine WHERE id = idstatoordine)  , ']') AS opzione
-                FROM or_righe_ordini
-                    INNER JOIN or_ordini ON or_ordini.id = or_righe_ordini.idordine
-                WHERE or_ordini.idanagrafica = ".prepare($anagrafica->id)." AND |where_ordini| AND or_righe_ordini.qta > or_righe_ordini.qta_evasa AND or_ordini.idstatoordine IN (SELECT id FROM or_statiordine WHERE descrizione != 'Fatturato') AND idtipoordine IN (SELECT id FROM or_tipiordine WHERE dir ='uscita')";
+                $query = "SELECT 
+                        `dt_righe_ddt`.`id`, 
+                        `dt_righe_ddt`.`idddt` AS id_documento, 
+                        `dt_righe_ddt`.`is_descrizione`, 
+                        `dt_righe_ddt`.`idarticolo`, 
+                        `dt_righe_ddt`.`is_sconto`, 
+                        'ddt' AS ref,
+                        CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_statiddt_lang`.`name`, ']') AS opzione
+                    FROM 
+                        `dt_righe_ddt`
+                        INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
+                        INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`
+                        LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(setting('Lingua')).")
+                        INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
+                    WHERE 
+                        `dt_ddt`.`idanagrafica` = ".prepare($anagrafica->id)." AND 
+                        |where_ddt| AND 
+                        `dt_righe_ddt`.`qta` > `dt_righe_ddt`.`qta_evasa` AND 
+                        `dt_statiddt_lang`.`name` != 'Fatturato' AND
+                        `dt_tipiddt`.`dir` = 'uscita'
+                UNION 
+                    SELECT 
+                        `or_righe_ordini`.`id`,
+                        `or_righe_ordini`.`idordine` AS id_documento,
+                        `or_righe_ordini`.`is_descrizione`, 
+                        `or_righe_ordini`.`idarticolo`, 
+                        `or_righe_ordini`.`is_sconto`, 
+                        'ordine' AS ref,
+                        CONCAT('Ordine num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', (SELECT `descrizione` FROM or_stati`ordine WHERE `id` = `idstatoordine`)  , ']') AS opzione
+                    FROM 
+                        `or_righe_ordini`
+                        INNER JOIN `or_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine`
+                    WHERE 
+                        `or_ordini`.`idanagrafica` = ".prepare($anagrafica->id)." AND 
+                        |where_ordini| AND 
+                        `or_righe_ordini`.`qta` > `or_righe_ordini`.`qta_evasa` AND 
+                        `or_ordini`.`idstatoordine` IN (SELECT `id` FROM `or_statiordine` WHERE `descrizione` != 'Fatturato') AND
+                        `idtipoordine` IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` ='uscita')";
 
                 // Ricerca di righe DDT/Ordine con stesso Articolo
                 if (!empty($id_articolo)) {
                     $query_articolo = replace($query, [
-                        '|where_ddt|' => 'dt_righe_ddt.idarticolo = '.prepare($id_articolo),
-                        '|where_ordini|' => 'or_righe_ordini.idarticolo = '.prepare($id_articolo),
+                        '|where_ddt|' => '`dt_righe_ddt`.`idarticolo` = '.prepare($id_articolo),
+                        '|where_ordini|' => '`or_righe_ordini`.`idarticolo` = '.prepare($id_articolo),
                     ]);
 
                     $collegamento = $database->fetchOne($query_articolo);
@@ -557,8 +588,8 @@ switch (filter('op')) {
                 // Ricerca di righe DDT/Ordine per stessa descrizione
                 if (empty($collegamento)) {
                     $query_descrizione = replace($query, [
-                        '|where_ddt|' => 'dt_righe_ddt.descrizione = '.prepare($riga['Descrizione']),
-                        '|where_ordini|' => 'or_righe_ordini.descrizione = '.prepare($riga['Descrizione']),
+                        '|where_ddt|' => '`dt_righe_ddt`.`descrizione` = '.prepare($riga['Descrizione']),
+                        '|where_ordini|' => '`or_righe_ordini`.`descrizione` = '.prepare($riga['Descrizione']),
                     ]);
 
                     $collegamento = $database->fetchOne($query_descrizione);
@@ -567,8 +598,8 @@ switch (filter('op')) {
                 // Ricerca di righe DDT/Ordine per stesso importo
                 if (empty($collegamento)) {
                     $query_descrizione = replace($query, [
-                        '|where_ddt|' => 'dt_righe_ddt.prezzo_unitario = '.prepare($riga['PrezzoUnitario']),
-                        '|where_ordini|' => 'or_righe_ordini.prezzo_unitario = '.prepare($riga['PrezzoUnitario']),
+                        '|where_ddt|' => '`dt_righe_ddt`.`prezzo_unitario` = '.prepare($riga['PrezzoUnitario']),
+                        '|where_ordini|' => '`or_righe_ordini`.`prezzo_unitario` = '.prepare($riga['PrezzoUnitario']),
                     ]);
 
                     $collegamento = $database->fetchOne($query_descrizione);

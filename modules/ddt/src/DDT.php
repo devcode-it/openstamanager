@@ -58,16 +58,12 @@ class DDT extends Document
     public static function build(Anagrafica $anagrafica, Tipo $tipo_documento, $data, $id_segment = null)
     {
         $model = new static();
-
         $user = \Auth::user();
 
-        $stato_documento = Stato::where('descrizione', 'Bozza')->first();
+        $stato_documento = (new Stato())->getByName('Bozza')->id_record;
 
-        $id_anagrafica = $anagrafica->id;
         $direzione = $tipo_documento->dir;
         $id_segment = $id_segment ?: getSegmentPredefined($model->getModule()->id);
-
-        $database = database();
 
         if ($direzione == 'entrata') {
             $conto = 'vendite';
@@ -131,7 +127,7 @@ class DDT extends Document
     public function isImportabile()
     {
         $database = database();
-        $stati = $database->fetchArray('SELECT `descrizione` FROM `dt_statiddt` WHERE `is_fatturabile` = 1');
+        $stati = $database->fetchArray('SELECT `name` FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `is_fatturabile` = 1');
         foreach ($stati as $stato) {
             $stati_importabili[] = $stato['descrizione'];
         }

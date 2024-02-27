@@ -949,6 +949,32 @@ HAVING
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_spedizione_lang`.`name`' WHERE `zz_modules`.`name` = 'Tipi di spedizione' AND `zz_views`.`name` = 'Descrizione';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_spedizione`.`id`' WHERE `zz_modules`.`name` = 'Tipi di spedizione' AND `zz_views`.`name` = 'id';
 
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_spedizione_lang`.`name`' WHERE `zz_modules`.`name` = 'Ddt di vendita' AND `zz_views`.`name` = 'Tipo spedizione';
+
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_spedizione_lang`.`name`' WHERE `zz_modules`.`name` = 'Ddt di acquisto' AND `zz_views`.`name` = 'Tipo spedizione';
+
+-- Aggiunta tabella dt_statiddt_lang
+CREATE TABLE IF NOT EXISTS `dt_statiddt_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `name` VARCHAR(255) NOT NULL
+);
+ALTER TABLE `dt_statiddt_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `dt_statiddt_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `dt_statiddt_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `dt_statiddt`;
+
+ALTER TABLE `dt_statiddt`
+    DROP `descrizione`;
+
+ALTER TABLE `dt_statiddt` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT; 
+
+ALTER TABLE `dt_statiddt_lang` ADD CONSTRAINT `dt_statiddt_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `dt_statiddt`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
 -- Allineamento vista Ddt di vendita
 UPDATE `zz_modules` SET `options` = "
 SELECT
@@ -965,7 +991,8 @@ FROM
     LEFT JOIN `an_sedi` AS sedi ON `dt_ddt`.`idsede_partenza` = sedi.`id`
     LEFT JOIN `an_sedi` AS `sedi_destinazione`ON `dt_ddt`.`idsede_destinazione` = `sedi_destinazione`.`id`
     LEFT JOIN (SELECT `idddt`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`subtotale` - `sconto` + `iva`) AS `totale` FROM `dt_righe_ddt` GROUP BY `idddt`) AS righe ON `dt_ddt`.`id` = `righe`.`idddt`
-    LEFT JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`    
+    LEFT JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`
+    LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.|lang|)    
     LEFT JOIN (SELECT GROUP_CONCAT(DISTINCT 'Fattura ',`co_documenti`.`numero_esterno` SEPARATOR ', ') AS `info`, `co_righe_documenti`.`original_document_id` AS `idddt` FROM `co_documenti` INNER JOIN `co_righe_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` WHERE `original_document_type`='Modules\\DDT\\DDT' GROUP BY `original_document_id`) AS `fattura` ON `fattura`.`idddt` = `dt_ddt`.`id`
     LEFT JOIN (SELECT COUNT(id) as emails, em_emails.id_record FROM em_emails INNER JOIN zz_operations ON zz_operations.id_email = em_emails.id WHERE id_module IN(SELECT id FROM zz_modules WHERE name = 'Ddt di vendita') AND `zz_operations`.`op` = 'send-email' GROUP BY id_record) AS `email` ON `email`.`id_record` = `dt_ddt`.`id`
 WHERE
@@ -976,7 +1003,7 @@ ORDER BY
     `data` DESC,
     CAST(`numero_esterno` AS UNSIGNED) DESC,
     `dt_ddt`.`created_at` DESC" WHERE `name` = 'Ddt di vendita';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_spedizione_lang`.`name`' WHERE `zz_modules`.`name` = 'Ddt di vendita' AND `zz_views`.`name` = 'Tipo spedizione';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_statiddt_lang`.`name`' WHERE `zz_modules`.`name` = 'Ddt di vendita' AND `zz_views`.`name` = 'icon_title_Stato';
 
 -- Allineamento vista Ddt di acquisto
 UPDATE `zz_modules` SET `options` = "
@@ -994,7 +1021,8 @@ FROM
     LEFT JOIN `an_sedi` AS sedi ON `dt_ddt`.`idsede_partenza` = sedi.`id`
     LEFT JOIN `an_sedi` AS `sedi_destinazione`ON `dt_ddt`.`idsede_destinazione` = `sedi_destinazione`.`id`
     LEFT JOIN(SELECT `idddt`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`subtotale` - `sconto` + `iva`) AS `totale` FROM `dt_righe_ddt` GROUP BY `idddt`) AS righe ON `dt_ddt`.`id` = `righe`.`idddt` 
-    LEFT JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`    
+    LEFT JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`
+    LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.|lang|)
     LEFT JOIN (SELECT GROUP_CONCAT(DISTINCT 'Fattura ',`co_documenti`.`numero` SEPARATOR ', ') AS `info`, `co_righe_documenti`.`original_document_id` AS `idddt` FROM `co_documenti` INNER JOIN `co_righe_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` WHERE `original_document_type`='Modules\\DDT\\DDT' GROUP BY `original_document_id`) AS `fattura` ON `fattura`.`idddt` = `dt_ddt`.`id`
 WHERE
     1=1 |segment(`dt_ddt`.`id_segment`)| AND `dir` = 'uscita' |date_period(`data`)|
@@ -1004,4 +1032,4 @@ ORDER BY
     `data` DESC,
     CAST(`numero_esterno` AS UNSIGNED) DESC,
     `dt_ddt`.`created_at` DESC" WHERE `name` = 'Ddt di acquisto';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_spedizione_lang`.`name`' WHERE `zz_modules`.`name` = 'Ddt di acquisto' AND `zz_views`.`name` = 'Tipo spedizione';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_statiddt_lang`.`name`' WHERE `zz_modules`.`name` = 'Ddt di acquisto' AND `zz_views`.`name` = 'icon_title_Stato';

@@ -32,4 +32,34 @@ class Stato extends Model
     {
         return $this->hasMany(DDT::class, 'idstatoddt');
     }
+
+    /**
+     * Ritorna l'attributo name dello stato del ddt.
+     *
+     * @return string
+     */
+    public function getNameAttribute()
+    {
+        return database()->table($this->table.'_lang')
+            ->select('name')
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first()->name;
+    }
+
+    /**
+     * Ritorna l'id dello stato a partire dal nome.
+     *
+     * @param string $name il nome da ricercare
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getByName($name)
+    {
+        return database()->table($this->table.'_lang')
+            ->select('id_record')
+            ->where('name', '=', $name)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first();
+    }
 }

@@ -64,7 +64,7 @@ function completaTrasporto() {
 }
 
 // Informazioni sull'importabilità del DDT
-$stati = $database->fetchArray('SELECT descrizione FROM `dt_statiddt` WHERE `is_fatturabile` = 1');
+$stati = $database->fetchArray('SELECT `name` as descrizione FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` ='.prepare(setting('Lingua')).') WHERE `is_fatturabile` = 1');
 foreach ($stati as $stato) {
     $stati_importabili[] = $stato['descrizione'];
 }

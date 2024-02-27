@@ -211,7 +211,7 @@ $operations['cambia_stato'] = [
     'data' => [
         'title' => tr('Vuoi davvero cambiare lo stato per questi DDT?'),
         'msg' => tr('Seleziona lo stato in cui spostare tutti i DDT').'.<br>
-            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT id, descrizione, colore as _bgcolor_ FROM dt_statiddt" ]}',
+            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `dt_statiddt`.`id`, `dt_statiddt`.`name` as descrizione, `colore` as _bgcolor_ FROM dt_statiddt LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(setting('Lingua')).')" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

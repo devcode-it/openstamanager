@@ -795,13 +795,14 @@ if (!$block_edit) {
             COUNT(*) AS tot 
         FROM 
             `dt_ddt`
-            LEFT JOIN `dt_causalet` ON `dt_causalet`.`id` = `dt_ddt`.`idcausalet`
-            LEFT JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`
+            INNER JOIN `dt_causalet` ON `dt_causalet`.`id` = `dt_ddt`.`idcausalet`
+            INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`
+            LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(setting('Lingua')).')
             LEFT JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
             INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
         WHERE 
             `idanagrafica`='.prepare($record['idanagrafica']).'
-            AND `dt_statiddt`.`descrizione` IN (\'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')
+            AND `dt_statiddt_lang`.`name` IN ("Evaso", "Parzialmente evaso", "Parzialmente fatturato")
             AND `dt_tipiddt`.`dir` = '.prepare($dir).'
             AND `dt_causalet`.`is_importabile` = 1
             AND (`dt_righe_ddt`.`qta` - `dt_righe_ddt`.`qta_evasa`) > 0';

@@ -68,6 +68,7 @@ return [
     'dt_causalet_lang',
     'dt_ddt',
     'dt_porto',
+    'dt_porto_lang',
     'dt_righe_ddt',
     'dt_spedizione',
     'dt_statiddt',

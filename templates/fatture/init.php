@@ -35,7 +35,7 @@ $record = $dbo->fetchOne('SELECT *,
     `co_tipidocumento`.`dir` AS dir,
     `co_pagamenti_lang`.`name` AS pagamento,
     `dt_causalet_lang`.`name` AS causalet,
-    `dt_porto`.`descrizione` AS porto,
+    `dt_porto_lang`.`name` AS porto,
     `dt_aspettobeni_lang`.`name` AS aspettobeni,
     `dt_spedizione`.`descrizione` AS spedizione,
     `vettore`.`ragione_sociale` AS vettore,
@@ -57,6 +57,7 @@ FROM
     LEFT JOIN `dt_causalet` ON `dt_causalet`.`id` = `co_documenti`.`idcausalet`
     LEFT JOIN `dt_causalet_lang` ON (`dt_causalet_lang`.`id_record` = `dt_causalet`.`id` AND `dt_causalet_lang`.`id_lang` = '.prepare(setting('Lingua')).')
     LEFT JOIN `dt_porto` ON `dt_porto`.`id` = `co_documenti`.`idporto`
+    LEFT JOIN `dt_porto_lang` ON (`dt_porto_lang`.`id_record` = `dt_porto`.`id` AND `dt_porto_lang`.`id_lang` = '.prepare(setting('Lingua')).')
     LEFT JOIN `dt_aspettobeni` ON `dt_aspettobeni`.`id` = `co_documenti`.`idaspettobeni`
     LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni_lang`.`id_record` = `dt_aspettobeni`.`id` AND `dt_aspettobeni_lang`.`id_lang` = '.prepare(setting('Lingua')).')
     LEFT JOIN `dt_spedizione` ON `dt_spedizione`.`id` = `co_documenti`.`idspedizione`

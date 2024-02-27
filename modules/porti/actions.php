@@ -22,34 +22,41 @@ include_once __DIR__.'/../../core.php';
 switch (filter('op')) {
     case 'update':
         $descrizione = filter('descrizione');
+        $predefined = post('predefined');
 
-        if ($dbo->fetchNum('SELECT * FROM `dt_porto` WHERE `descrizione`='.prepare($descrizione).' AND `id`!='.prepare($id_record)) == 0) {
-            $predefined = post('predefined');
+        if ($dbo->fetchNum('SELECT * FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto_lang`.`id_record` = `dt_porto`.`id` AND `dt_porto_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name`='.prepare($descrizione).' AND `dt_porto`.`id`!='.prepare($id_record)) == 0) {
             if (!empty($predefined)) {
-                $dbo->query('UPDATE dt_porto SET predefined = 0');
+                $dbo->query('UPDATE `dt_porto` SET `predefined` = 0');
             }
 
             $dbo->update('dt_porto', [
-                'descrizione' => $descrizione,
                 'predefined' => $predefined,
             ], ['id' => $id_record]);
 
+            $dbo->update('dt_porto_lang', [
+                'name' => $descrizione,
+            ], ['id_record' => $id_record, 'id_lang' => setting('Lingua')]);
+
             flash()->info(tr('Salvataggio completato!'));
         } else {
-            flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione", [
-                '_TYPE_' => 'porto',
-            ]));
+            flash()->error(tr("E' già presente un Porto con questa descrizione"));
         }
         break;
 
     case 'add':
         $descrizione = filter('descrizione');
 
-        if ($dbo->fetchNum('SELECT * FROM `dt_porto` WHERE `descrizione`='.prepare($descrizione)) == 0) {
+        if ($dbo->fetchNum('SELECT * FROM `dt_porto` LEFT JOIN `dt_porto_lang` 0N (`dt_porto_lang`.`id_record` = `dt_porto`.`id` AND `dt_porto_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name`='.prepare($descrizione)) == 0) {
             $dbo->insert('dt_porto', [
-                'descrizione' => $descrizione,
+                'created_at' => 'NOW()',
             ]);
             $id_record = $dbo->lastInsertedID();
+
+            $dbo->insert('dt_porto_lang', [
+                'name' => $descrizione,
+                'id_record' => $id_record,
+                'id_lang' => setting('Lingua'),
+            ]);
 
             flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
                 '_TYPE_' => 'porto',
@@ -63,9 +70,9 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        $documenti = $dbo->fetchNum('SELECT id FROM dt_ddt WHERE idporto='.prepare($id_record).'
-            UNION SELECT id FROM co_documenti WHERE idporto='.prepare($id_record).'
-            UNION SELECT id FROM co_preventivi WHERE idporto='.prepare($id_record));
+        $documenti = $dbo->fetchNum('SELECT `id` FROM `dt_ddt` WHERE `idporto`='.prepare($id_record).'
+            UNION SELECT `id` FROM `co_documenti` WHERE `idporto`='.prepare($id_record).'
+            UNION SELECT `id` FROM `co_preventivi` WHERE `idporto`='.prepare($id_record));
 
         if (isset($id_record) && empty($documenti)) {
             $dbo->query('DELETE FROM `dt_porto` WHERE `id`='.prepare($id_record));

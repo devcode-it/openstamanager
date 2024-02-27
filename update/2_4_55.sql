@@ -927,3 +927,39 @@ ORDER BY
     CAST(`numero_esterno` AS UNSIGNED) DESC,
     `dt_ddt`.`created_at` DESC" WHERE `name` = 'Ddt di acquisto';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_causalet_lang`.`name`' WHERE `zz_modules`.`name` = 'Ddt di acquisto' AND `zz_views`.`name` = 'Causale';
+
+-- Aggiunta tabella dt_porto_lang
+CREATE TABLE IF NOT EXISTS `dt_porto_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `name` VARCHAR(255) NOT NULL
+);
+ALTER TABLE `dt_porto_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `dt_porto_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `dt_porto_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `dt_porto`;
+
+ALTER TABLE `dt_porto`
+    DROP `descrizione`;
+
+ALTER TABLE `dt_porto` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT; 
+
+ALTER TABLE `dt_porto_lang` ADD CONSTRAINT `dt_porto_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `dt_porto`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+-- Allineamento vista Porto
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select| 
+FROM 
+    `dt_porto` 
+    LEFT JOIN `dt_porto_lang` ON (`dt_porto_lang`.`id_record` = `dt_porto`.`id` AND `dt_porto_lang`.`id_lang` = |lang|)
+WHERE 
+    1=1 
+HAVING 
+    2=2" WHERE `name` = 'Porto';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_porto_lang`.`name`' WHERE `zz_modules`.`name` = 'Porto' AND `zz_views`.`name` = 'Descrizione';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_porto`.`id`' WHERE `zz_modules`.`name` = 'Porto' AND `zz_views`.`name` = 'id';

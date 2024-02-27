@@ -46,9 +46,9 @@ if (isset($id_record)) {
     WHERE dt_ddt.id='.prepare($id_record));
 
     if (!empty($record)) {
-        $record['idporto'] = $record['idporto'] ?: $dbo->fetchOne('SELECT id FROM dt_porto WHERE predefined = 1')['id'];
+        $record['idporto'] = $record['idporto'] ?: $dbo->fetchOne('SELECT `id` FROM `dt_porto` WHERE `predefined` = 1')['id'];
         $record['idcausalet'] = $record['idcausalet'] ?: $dbo->fetchOne('SELECT `id` FROM `dt_causalet` WHERE `predefined` = 1')['id'];
-        $record['idspedizione'] = $record['idspedizione'] ?: $dbo->fetchOne('SELECT id FROM dt_spedizione WHERE predefined = 1')['id'];
+        $record['idspedizione'] = $record['idspedizione'] ?: $dbo->fetchOne('SELECT `id` FROM `dt_spedizione` WHERE `predefined` = 1')['id'];
     }
 
     // Se la sede del ddt non è di mia competenza, blocco il ddt in modifica

@@ -573,7 +573,7 @@ if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Porto').'", "name": "idporto", "placeholder": "", "values": "query=SELECT id, descrizione FROM dt_porto ORDER BY descrizione ASC", "value": "$idporto$" ]}
+                    {[ "type": "select", "label": "'.tr('Porto').'", "name": "idporto", "placeholder": "", "values": "query=SELECT `dt_porto`.`id`, `dt_porto_lang`.`name` as descrizione FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto`.`id` = `dt_porto_lang`.`id_record` AND `dt_porto_lang`.`id_lang` = '.prepare(setting('Lingua')).') ORDER BY `name` ASC", "value": "$idporto$" ]}
                 </div>
 
                 <div class="col-md-3">
@@ -694,8 +694,7 @@ if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
                 <div class="col-md-3">
                     {[ "type": "select", "label": "'.tr('Tipo Resa').'", "name": "tipo_resa", "value": "$tipo_resa$", "values": '.json_encode($tipo_resa).', "readonly": '.intval($record['causale_desc'] != 'Reso').' ]}
                 </div>
-            </div>
-        </div>';
+            </div>';
 
     echo '
         <div class="row">

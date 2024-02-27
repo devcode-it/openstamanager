@@ -218,7 +218,7 @@ class Fattura extends Document
         $model->note = implode("\n", $notes);
 
         if ($tipo_documento->descrizione == 'Fattura accompagnatoria di vendita') {
-            $model->idporto = database()->fetchOne('SELECT id FROM dt_porto WHERE predefined = 1')['id'];
+            $model->idporto = database()->fetchOne('SELECT `id` FROM `dt_porto` WHERE `predefined` = 1')['id'];
             $model->idcausalet = database()->fetchOne('SELECT `id` FROM `dt_causalet` WHERE `predefined` = 1')['id'];
             $model->idspedizione = database()->fetchOne('SELECT id FROM dt_spedizione WHERE predefined = 1')['id'];
         }

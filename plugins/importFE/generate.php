@@ -127,7 +127,7 @@ $provincia = $sede['provincia'];
 $fattura_body = $fattura_pa->getBody();
 $dati_generali = $fattura_body['DatiGenerali']['DatiGeneraliDocumento'];
 
-$tipo_documento = $database->fetchOne('SELECT CONCAT("(", codice, ") ", descrizione) AS descrizione FROM fe_tipi_documento WHERE codice = '.prepare($dati_generali['TipoDocumento']))['descrizione'];
+$tipo_documento = $database->fetchOne('SELECT CONCAT("(", `codice`, ") ", `name`) AS descrizione FROM `fe_tipi_documento` LEFT JOIN `fe_tipi_documento_lang` ON (`fe_tipi_documento_lang`.`id_record` = `fe_tipi_documento`.`codice` AND `fe_tipi_documento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE codice = '.prepare($dati_generali['TipoDocumento']))['descrizione'];
 
 // Gestione per fattura elettroniche senza pagamento definito
 $pagamenti = [];
@@ -234,7 +234,7 @@ $id_tipodocumento = $database->fetchOne($query_tipo)['id'];
 echo '
     <div class="row">
         <div class="col-md-3">
-            {[ "type": "select", "label": "'.tr('Tipo fattura').'", "name": "id_tipo", "required": 1, "values": "query='.$query.'", "value": "'.($numero_tipo == 1 ? $id_tipodocumento : '').'" ]}
+            {[ "type": "select", "label": "'.tr('Tipo fattura').'", "name": "id_tipo", "required": 1, "values": "query='.$query.'", "value": "'.($numero_tipo != 1 ? $id_tipodocumento : '').'" ]}
         </div>';
 
 // Sezionale

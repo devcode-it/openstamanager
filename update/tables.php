@@ -100,6 +100,7 @@ return [
     'fe_stati_documento',
     'fe_stati_documento_lang',
     'fe_tipi_documento',
+    'fe_tipi_documento_lang',
     'fe_tipo_cassa',
     'fe_tipi_ritenuta',
     'in_interventi',

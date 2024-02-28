@@ -1236,3 +1236,23 @@ ORDER BY
     `co_documenti`.`data` DESC,
     CAST(`co_documenti`.`numero_esterno` AS UNSIGNED) DESC" WHERE `name` = 'Fatture di vendita';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`fe_stati_documento_lang`.`name`' WHERE `zz_modules`.`name` = 'Fatture di vendita' AND `zz_views`.`name` = 'icon_title_FE';
+
+-- Aggiunta tabella fe_tipi_documento_lang
+CREATE TABLE IF NOT EXISTS `fe_tipi_documento_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` varchar(5) NOT NULL,
+    `name` VARCHAR(255) NOT NULL
+);
+ALTER TABLE `fe_tipi_documento_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `fe_tipi_documento_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `fe_tipi_documento_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `codice`, `descrizione` FROM `fe_tipi_documento`;
+
+ALTER TABLE `fe_tipi_documento`
+    DROP `descrizione`;
+
+ALTER TABLE `fe_tipi_documento_lang` ADD CONSTRAINT `fe_tipi_documento_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `fe_tipi_documento`(`codice`) ON DELETE CASCADE ON UPDATE RESTRICT; 

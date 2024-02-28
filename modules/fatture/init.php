@@ -18,6 +18,7 @@
  */
 
 use Modules\Fatture\Fattura;
+use Modules\Fatture\StatoFE;
 
 include_once __DIR__.'/../../core.php';
 
@@ -67,7 +68,7 @@ if (isset($id_record)) {
     $note_accredito = $dbo->fetchArray("SELECT `co_documenti`.`id`, IF(`numero_esterno` != '', `numero_esterno`, `numero`) AS numero, data FROM `co_documenti` JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` WHERE `reversed` = 1 AND `ref_documento`=".prepare($id_record));
 
     // Blocco gestito dallo stato della Fattura Elettronica
-    $stato_fe = $database->fetchOne('SELECT * FROM `fe_stati_documento` WHERE `codice` = '.prepare($fattura->codice_stato_fe));
+    $stato_fe = StatoFE::find($fattura->codice_stato_fe)->id_record;
     $abilita_genera = empty($fattura->codice_stato_fe) || intval($stato_fe['is_generabile']);
 
     // Controllo autofattura e gestione avvisi

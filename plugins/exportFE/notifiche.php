@@ -1,6 +1,7 @@
 <?php
 
 use Modules\Fatture\Fattura;
+use Modules\Fatture\StatoFE;
 use Plugins\ExportFE\Interaction;
 
 include_once __DIR__.'/../../core.php';
@@ -47,7 +48,7 @@ foreach ($recepits as $nome) {
     $codice_stato = $pieces[2];
 
     // Informazioni sullo stato indicato
-    $stato_fe = $database->fetchOne('SELECT * FROM fe_stati_documento WHERE codice = '.prepare($codice_stato));
+    $stato_fe = StatoFE::find($codice_stato)->id_record;
 
     echo '
         <tr data-name="'.$nome.'">

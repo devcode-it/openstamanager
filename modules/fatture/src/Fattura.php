@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Models\Upload;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Banche\Banca;
+use Modules\Fatture\StatoFE;
 use Modules\Fatture\Gestori\Bollo as GestoreBollo;
 use Modules\Fatture\Gestori\Movimenti as GestoreMovimenti;
 use Modules\Fatture\Gestori\Scadenze as GestoreScadenze;
@@ -645,7 +646,7 @@ class Fattura extends Document
 
         // Operazioni automatiche per le Fatture Elettroniche
         if ($this->direzione == 'entrata' && $stato_precedente->name == 'Bozza' && $stato->name == 'Emessa') {
-            $stato_fe = database()->fetchOne('SELECT * FROM fe_stati_documento WHERE codice = '.prepare($this->codice_stato_fe));
+            $stato_fe = StatoFE::find($this->codice_stato_fe);
             $abilita_genera = empty($this->codice_stato_fe) || intval($stato_fe['is_generabile']);
 
             // Generazione automatica della Fattura Elettronica

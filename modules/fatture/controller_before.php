@@ -22,6 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Carbon\Carbon;
 use Modules\Fatture\Fattura;
 use Plugins\ExportFE\Interaction;
+use Modules\Fatture\StatoFE;
 use Util\XML;
 
 $services_enable = Interaction::isEnabled();
@@ -46,7 +47,7 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
     $documenti = Fattura::where('data', '>', $data_limite)->where('data', '>', $data_setting)->whereIn('codice_stato_fe', ['EC02', 'ERR', 'ERVAL', 'NS', 'GEN', 'QUEUE'])->get();
 
     foreach ($documenti as $documento) {
-        $stato_fe = $database->fetchOne('SELECT descrizione, icon FROM fe_stati_documento WHERE codice = '.prepare($documento->codice_stato_fe));
+        $stato_fe = StatoFE::find($documento->codice_stato_fe)->id_record;
 
         if (in_array($documento->codice_stato_fe, $codici_scarto)) {
             // In caso di NS verifico che non sia semplicemente un codice 00404 (Fattura duplicata)

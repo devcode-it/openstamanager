@@ -98,6 +98,7 @@ return [
     'fe_regime_fiscale',
     'fe_regime_fiscale_lang',
     'fe_stati_documento',
+    'fe_stati_documento_lang',
     'fe_tipi_documento',
     'fe_tipo_cassa',
     'fe_tipi_ritenuta',

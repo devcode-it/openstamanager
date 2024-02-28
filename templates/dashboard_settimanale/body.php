@@ -64,22 +64,28 @@ $tipi = (array) $calendar['idtipiintervento'];
 $tecnici = (array) $calendar['idtecnici'];
 
 $query = "SELECT
-        DATE(orario_inizio) AS data,
-        in_interventi.richiesta AS richiesta,
-        DATE_FORMAT(orario_inizio, '%H:%i') AS ora_inizio,
-        DATE_FORMAT(orario_fine, '%H:%i') AS ora_fine,
-        (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS anagrafica,
-        GROUP_CONCAT((SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=in_interventi_tecnici.idtecnico) SEPARATOR ', ') AS tecnico,
-        in_statiintervento.colore AS color
-FROM in_interventi_tecnici
-    INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id
-    LEFT OUTER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento
-WHERE ".$where.'
-    idtecnico IN('.implode(',', $tecnici).') AND
-    in_interventi.idstatointervento IN('.implode(',', $stati).') AND
-    in_interventi_tecnici.idtipointervento IN('.implode(',', $tipi).') '.Modules::getAdditionalsQuery('Interventi').'
-GROUP BY in_interventi.id, data
-ORDER BY ora_inizio ASC';
+        DATE(`orario_inizio`) AS data,
+        `in_interventi`.`richiesta` AS richiesta,
+        DATE_FORMAT(`orario_inizio`, '%H:%i') AS ora_inizio,
+        DATE_FORMAT(`orario_fine`, '%H:%i') AS ora_fine,
+        `an_anagrafiche`.`ragione_sociale` AS anagrafica,
+        GROUP_CONCAT(`tecnico`.`ragione_sociale` SEPARATOR ', ') AS tecnico,
+        `in_statiintervento`.`colore` AS color
+    FROM 
+        `in_interventi_tecnici`
+        INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`
+        INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
+        LEFT JOIN `an_anagrafiche` AS tecnico ON `in_interventi_tecnici`.`idtecnico`=`tecnico`.`idanagrafica`
+        LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id`
+    WHERE 
+        ".$where.'
+        `idtecnico` IN('.implode(',', $tecnici).') AND
+        `in_interventi`.`idstatointervento` IN('.implode(',', $stati).') AND
+        `in_interventi_tecnici`.`idtipointervento` IN('.implode(',', $tipi).') '.Modules::getAdditionalsQuery('Interventi').'
+    GROUP BY 
+        `in_interventi`.`id`, `data`
+    ORDER BY 
+        `ora_inizio` ASC';
 $sessioni = $dbo->fetchArray($query);
 
 $sessioni = collect($sessioni)->groupBy('data');

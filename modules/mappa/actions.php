@@ -29,19 +29,19 @@ switch (get('op')) {
         $where = [];
         // Filtro per anagrafica
         if (!empty($idanagrafica) && $idanagrafica != 'null') {
-            $where[] = 'in_interventi.idanagrafica='.prepare($idanagrafica);
+            $where[] = '`in_interventi`.`idanagrafica`='.prepare($idanagrafica);
         }
 
         // Filtri per stato
         $checks = explode(',', $checks);
-        $where[] = "in_statiintervento.descrizione IN ('".implode("','", $checks)."')";
+        $where[] = "`in_statiintervento_lang`.`name` IN ('".implode("','", $checks)."')";
 
         $add_query = 'WHERE 1=1 AND '.implode(' AND ', $where);
 
         // Filtri per data
         $add_query .= ' |date_period(`orario_inizio`,`data_richiesta`)|';
 
-        $query = 'SELECT *, in_interventi.id AS idintervento, an_anagrafiche.lat AS lat_anagrafica, an_anagrafiche.lng AS lng_anagrafica, an_anagrafiche.indirizzo AS indirizzo_anagrafica, an_anagrafiche.cap AS cap_anagrafica, an_anagrafiche.citta AS citta_anagrafica, an_anagrafiche.provincia AS provincia_anagrafica, an_sedi.lat AS lat_sede, an_sedi.lng AS lng_sede, an_sedi.indirizzo AS indirizzo_sede, an_sedi.cap AS cap_sede, an_sedi.citta AS citta_sede, an_sedi.provincia AS provincia_sede, in_statiintervento.descrizione AS stato FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica LEFT JOIN an_sedi ON in_interventi.idsede_destinazione=an_sedi.id INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento LEFT JOIN in_interventi_tecnici ON in_interventi_tecnici.idintervento = in_interventi.id '.$add_query;
+        $query = 'SELECT *, `in_interventi`.`id` AS idintervento, `an_anagrafiche`.`lat` AS lat_anagrafica, `an_anagrafiche`.`lng` AS lng_anagrafica, `an_anagrafiche`.`indirizzo` AS indirizzo_anagrafica, `an_anagrafiche`.`cap` AS cap_anagrafica, `an_anagrafiche`.`citta` AS citta_anagrafica, `an_anagrafiche`.`provincia` AS provincia_anagrafica, `an_sedi`.`lat` AS lat_sede, `an_sedi`.`lng` AS lng_sede, `an_sedi`.`indirizzo` AS indirizzo_sede, `an_sedi`.`cap` AS cap_sede, `an_sedi`.`citta` AS citta_sede, `an_sedi`.`provincia` AS provincia_sede, `in_statiintervento_lang`.`name` AS stato FROM `in_interventi` INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica` LEFT JOIN `an_sedi` ON `in_interventi`.`idsede_destinazione`=`an_sedi`.`id` INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_interventi`.`id` AND `in_statiintervento_lang`.`id_lang`= '.prepare(setting('Lingua')).') LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` '.$add_query;
 
         $query = Query::replacePlaceholder($query);
         $query = Modules::replaceAdditionals(Modules::get('Interventi')['id'], $query);

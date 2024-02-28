@@ -97,8 +97,8 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
                     '.$rs_tecnici[0]['tecnici'].'
                 </td>
 
-                <td>'.$dbo->fetchOne("SELECT CONCAT_WS(' - ', codice,descrizione) AS descrizione FROM in_tipiintervento WHERE idtipointervento=".prepare($r['idtipointervento']))['descrizione'].'</td>
-                <td>'.$dbo->fetchOne("SELECT CONCAT_WS(' - ', codice,descrizione) AS descrizione FROM in_statiintervento WHERE idstatointervento=".prepare($r['idstatointervento']))['descrizione'].'</td>
+                <td>'.$dbo->fetchOne("SELECT CONCAT_WS(' - ', `codice`,`descrizione`) AS descrizione FROM `in_tipiintervento` WHERE `idtipointervento`=".prepare($r['idtipointervento']))['descrizione'].'</td>
+                <td>'.$dbo->fetchOne("SELECT CONCAT_WS(' - ', `codice`,`name`) AS descrizione FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = ".prepare(setting('Lingua')).") WHERE `in_statiintervento`.`id`=".prepare($r['idstatointervento']))['descrizione'].'</td>
                 <td>'.nl2br($r['richiesta']).'</td>
 				';
 

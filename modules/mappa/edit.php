@@ -57,15 +57,15 @@ include_once __DIR__.'/../../core.php';
 
         <div class="row">
 <?php
-    $rs_stati = $dbo->fetchArray('SELECT * FROM in_statiintervento');
+    $rs_stati = $dbo->fetchArray('SELECT * FROM `in_statiintervento`LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(setting('Lingua')).')');
 
 foreach ($rs_stati as $stato) {
     ?>
             <div class="col-md-4">
-                <label><?php echo $stato['descrizione']; ?></label>
+                <label><?php echo $stato['name']; ?></label>
                 <div class="material-switch">
-                    <input id="<?php echo $stato['descrizione']; ?>" name="<?php echo $stato['descrizione']; ?>" type="checkbox" checked/>
-                    <label for="<?php echo $stato['descrizione']; ?>" class="label-success"></label>
+                    <input id="<?php echo $stato['name']; ?>" name="<?php echo $stato['name']; ?>" type="checkbox" checked/>
+                    <label for="<?php echo $stato['name']; ?>" class="label-success"></label>
                 </div>
 			</div>
 <?php

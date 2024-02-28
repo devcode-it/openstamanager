@@ -41,56 +41,57 @@ switch (filter('op')) {
         $tecnici = (array) $_SESSION['dashboard']['idtecnici'];
 
         $query = 'SELECT
-            in_interventi_tecnici.id,
-            in_interventi_tecnici.idintervento,
-            in_interventi.codice,
-            colore,
-            in_interventi_tecnici.idtecnico,
-            in_interventi_tecnici.orario_inizio,
-            in_interventi_tecnici.orario_fine,
-            (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = idtecnico) AS nome_tecnico,
-            (SELECT id FROM zz_files WHERE id_record = in_interventi.id AND id_module = '.prepare($modulo_interventi->id).' LIMIT 1) AS have_attachments,
-            (SELECT colore FROM an_anagrafiche WHERE idanagrafica = idtecnico) AS colore_tecnico, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS cliente,
-            (SELECT idzona FROM an_anagrafiche WHERE idanagrafica = in_interventi.idanagrafica) AS idzona,
-            in_statiintervento.is_completato AS is_completato
-        FROM in_interventi_tecnici
-            INNER JOIN in_interventi ON in_interventi_tecnici.idintervento = in_interventi.id
-            LEFT OUTER JOIN in_statiintervento ON in_interventi.idstatointervento = in_statiintervento.idstatointervento
+            `in_interventi_tecnici`.`id`,
+            `in_interventi_tecnici`.`idintervento`,
+            `in_interventi`.`codice`,
+            `in_statiintervento`.`colore`,
+            `in_interventi_tecnici`.`idtecnico`,
+            `in_interventi_tecnici`.`orario_inizio`,
+            `in_interventi_tecnici`.`orario_fine`,
+            `tecnico`.`ragione_sociale` AS nome_tecnico,
+            `tecnico`.`colore` AS colore_tecnico, 
+            `zz_files`.`id` AS have_attachments,
+            `an_anagrafiche`.`ragione_sociale` as cliente,
+            `an_anagrafiche`.`idzona` as idzona,
+            `in_statiintervento`.`is_completato` AS is_completato
+        FROM `in_interventi_tecnici`
+            INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
+            LEFT JOIN `an_anagrafiche` as tecnico ON `in_interventi_tecnici`.`idtecnico` = `tecnico`.`idanagrafica`
+            INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+           LEFT JOIN `zz_files` ON (`zz_files`.`id_record` = `in_interventi`.`id` AND `zz_files`.`id_module` = '.prepare($modulo_interventi->id).')
+            INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`id`
         WHERE
             (
                 (
-                    in_interventi_tecnici.orario_inizio >= '.prepare($start).'
+                    `in_interventi_tecnici`.`orario_inizio` >= '.prepare($start).'
                     AND
-                    in_interventi_tecnici.orario_fine <= '.prepare($end).'
+                    `in_interventi_tecnici`.`orario_fine` <= '.prepare($end).'
                 )
                 OR
                 (
-                    in_interventi_tecnici.orario_inizio >= '.prepare($start).'
+                    `in_interventi_tecnici`.`orario_inizio` >= '.prepare($start).'
                     AND
-                    in_interventi_tecnici.orario_inizio <= '.prepare($end).'
+                    `in_interventi_tecnici`.`orario_inizio` <= '.prepare($end).'
                 )
                 OR
                 (
-                    in_interventi_tecnici.orario_inizio <= '.prepare($start).'
+                    `in_interventi_tecnici`.`orario_inizio` <= '.prepare($start).'
                     AND
-                    in_interventi_tecnici.orario_fine >= '.prepare($end).'
+                    `in_interventi_tecnici`.`orario_fine` >= '.prepare($end).'
                 )
                 OR
                 (
-                    in_interventi_tecnici.orario_fine >= '.prepare($start).'
+                    `in_interventi_tecnici`.`orario_fine` >= '.prepare($start).'
                     AND
-                    in_interventi_tecnici.orario_fine <= '.prepare($end).'
+                    `in_interventi_tecnici`.`orario_fine` <= '.prepare($end).'
                 )
             )
-            AND
-            idtecnico IN('.implode(',', $tecnici).')
-            AND
-            in_interventi.idstatointervento IN('.implode(',', $stati).')
-            AND
-            in_interventi_tecnici.idtipointervento IN('.implode(',', $tipi).')
+            AND `idtecnico` IN('.implode(',', $tecnici).')
+            AND `in_interventi`.`idstatointervento` IN('.implode(',', $stati).')
+            AND `in_interventi_tecnici`.`idtipointervento` IN('.implode(',', $tipi).')
             '.Modules::getAdditionalsQuery('Interventi').'
         HAVING
-            idzona IN ('.implode(',', $zone).')';
+            `idzona` IN ('.implode(',', $zone).')';
         $sessioni = $dbo->fetchArray($query);
 
         $results = [];
@@ -236,7 +237,17 @@ switch (filter('op')) {
         $orario_fine = filter('timeEnd');
 
         // Aggiornamento prezzo totale
-        $q = 'SELECT in_interventi_tecnici.prezzo_ore_unitario, idtecnico, in_statiintervento.is_completato FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id LEFT OUTER JOIN in_statiintervento ON in_interventi.idstatointervento =  in_statiintervento.idstatointervento WHERE in_interventi.id='.prepare($idintervento).' AND in_statiintervento.is_completato = 0 '.Modules::getAdditionalsQuery('Interventi');
+        $q = 'SELECT 
+                `in_interventi_tecnici`.`prezzo_ore_unitario`, 
+                `idtecnico`, 
+                `in_statiintervento`.`is_completato` 
+            FROM 
+                `in_interventi_tecnici` 
+                INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id` 
+                LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` =  `in_statiintervento`.`id` 
+            WHERE 
+                `in_interventi`.`id`='.prepare($idintervento).' AND 
+                `in_statiintervento`.`is_completato` = 0 '.Modules::getAdditionalsQuery('Interventi');
         $rs = $dbo->fetchArray($q);
         $prezzo_ore = 0.00;
 
@@ -276,7 +287,25 @@ switch (filter('op')) {
                 }
 
                 // Lettura dati intervento
-                $query = 'SELECT *, in_interventi.codice, an_anagrafiche.note AS note_anagrafica, idstatointervento AS parent_idstato, in_interventi.idtipointervento AS parent_idtipo, (SELECT GROUP_CONCAT(CONCAT(matricola, " - ", nome) SEPARATOR ", ") FROM my_impianti INNER JOIN my_impianti_interventi ON my_impianti.id=my_impianti_interventi.idimpianto WHERE my_impianti_interventi.idintervento='.prepare($id).' GROUP BY my_impianti_interventi.idintervento) AS impianti, (SELECT descrizione FROM in_statiintervento WHERE idstatointervento=parent_idstato) AS stato, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=parent_idtipo) AS tipo, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS idzona FROM in_interventi LEFT JOIN in_interventi_tecnici ON in_interventi.id =in_interventi_tecnici.idintervento LEFT JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE in_interventi.id='.prepare($id).' '.Modules::getAdditionalsQuery('Interventi', null, false);
+                $query = 'SELECT 
+                        *, 
+                        `in_interventi`.`codice`, 
+                        `an_anagrafiche`.`note` AS note_anagrafica, 
+                        `in_statiintervento`.`id` AS parent_idstato, 
+                        `in_statiintervento_lang`.`name` AS stato,
+                        `in_interventi`.`idtipointervento` AS parent_idtipo, 
+                        (SELECT GROUP_CONCAT(CONCAT(`matricola`, " - ", `nome`) SEPARATOR ", ") FROM `my_impianti` INNER JOIN `my_impianti_interventi` ON `my_impianti`.`id`=`my_impianti_interventi`.`idimpianto` WHERE `my_impianti_interventi`.`idintervento`='.prepare($id).' GROUP BY `my_impianti_interventi`.`idintervento`) AS impianti, 
+                        `in_tipiintervento`.`descrizione` AS tipo, 
+                        (SELECT idzona FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS idzona 
+                    FROM 
+                        `in_interventi` 
+                        INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id`
+                        LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+                        INNER JOIN `in_tipiintervento` ON `in_interventi`.`idtipointervento`=`in_tipiintervento`.`idtipointervento`
+                        LEFT JOIN `in_interventi_tecnici` ON `in_interventi`.`id` =`in_interventi_tecnici`.`idintervento` 
+                        LEFT JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica` 
+                    WHERE 
+                        `in_interventi`.`id`='.prepare($id).' '.Modules::getAdditionalsQuery('Interventi', null, false);
                 $rs = $dbo->fetchArray($query);
 
                 // correggo info indirizzo citta cap provincia con quelle della sede di destinazione
@@ -427,15 +456,15 @@ switch (filter('op')) {
         // Visualizzo solo promemoria del tecnico loggato
         if (!empty($id_tecnico) && !empty($solo_promemoria_assegnati)) {
             $query_interventi .= '
-        INNER JOIN `in_interventi_tecnici_assegnati` ON `in_interventi`.`id` = `in_interventi_tecnici_assegnati`.`id_intervento` AND `id_tecnico` = '.prepare($id_tecnico);
+            INNER JOIN `in_interventi_tecnici_assegnati` ON `in_interventi`.`id` = `in_interventi_tecnici_assegnati`.`id_intervento` AND `id_tecnico` = '.prepare($id_tecnico);
         } else {
             $query_interventi .= '
-        LEFT JOIN `in_interventi_tecnici_assegnati` ON `in_interventi`.`id` = `in_interventi_tecnici_assegnati`.`id_intervento`';
+            LEFT JOIN `in_interventi_tecnici_assegnati` ON `in_interventi`.`id` = `in_interventi_tecnici_assegnati`.`id_intervento`';
         }
 
         $query_interventi .= '
             LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
-            INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`idstatointervento`
+            INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`id`
             LEFT JOIN `an_anagrafiche` AS tecnico ON `in_interventi_tecnici_assegnati`.`id_tecnico` = `tecnico`.`idanagrafica`
         WHERE 
             `in_statiintervento`.`is_completato` = 0

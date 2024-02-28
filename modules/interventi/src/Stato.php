@@ -25,8 +25,7 @@ use Illuminate\Database\Eloquent\Model;
 class Stato extends Model
 {
     use SimpleModelTrait;
-
-    protected $primaryKey = 'idstatointervento';
+    
     protected $table = 'in_statiintervento';
 
     public function interventi()
@@ -43,5 +42,35 @@ class Stato extends Model
         $model->save();
 
         return $model;
+    }
+
+    /**
+     * Ritorna l'attributo name dello stato intervento.
+     *
+     * @return string
+     */
+    public function getNameAttribute()
+    {
+        return database()->table($this->table.'_lang')
+            ->select('name')
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first()->name;
+    }
+
+    /**
+     * Ritorna l'id dello stato intervento a partire dal nome.
+     *
+     * @param string $name il nome da ricercare
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getByName($name)
+    {
+        return database()->table($this->table.'_lang')
+            ->select('id_record')
+            ->where('name', '=', $name)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first();
     }
 }

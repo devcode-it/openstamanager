@@ -172,7 +172,7 @@ trait RelationTrait
         $result = parent::delete();
 
         if (!empty($this->idintervento) && $this->fattura->getRighe()->where('idintervento', $this->idintervento)->count() == 1) {
-            database()->query("UPDATE in_interventi SET idstatointervento = (SELECT idstatointervento FROM in_statiintervento WHERE codice = 'OK') WHERE id=".prepare($this->idintervento));
+            database()->query("UPDATE `in_interventi` SET `idstatointervento` = (SELECT `id` FROM `in_statiintervento` WHERE `codice` = 'OK') WHERE `id`=".prepare($this->idintervento));
         }
 
         return $result;

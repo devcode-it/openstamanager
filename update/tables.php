@@ -109,6 +109,7 @@ return [
     'in_righe_interventi',
     'in_righe_tipiinterventi',
     'in_statiintervento',
+    'in_statiintervento_lang',
     'in_tariffe',
     'in_tipiintervento',
     'in_vociservizio',

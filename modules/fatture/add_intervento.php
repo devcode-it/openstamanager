@@ -65,17 +65,19 @@ echo '
     <input type="hidden" name="dir" value="'.$dir.'">';
 
 $rs = $dbo->fetchArray('SELECT
-        in_interventi.id,
-        CONCAT(\'Attività numero \', in_interventi.codice, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), in_interventi.data_richiesta), \'%d/%m/%Y\'), " [", `in_statiintervento`.`descrizione` , "]") AS descrizione,
-        CONCAT(\'Attività numero \', in_interventi.codice, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), in_interventi.data_richiesta), \'%d/%m/%Y\')) AS info,
-        CONCAT(\'\n\', in_interventi.descrizione) AS descrizione_intervento,
-        IF(idclientefinale='.prepare($idanagrafica).', \'Interventi conto terzi\', \'Interventi diretti\') AS `optgroup`
+        `in_interventi`.`id`,
+        CONCAT(\'Attività numero \', `in_interventi`.`codice`, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`), `in_interventi`.`data_richiesta`), \'%d/%m/%Y\'), " [", `in_statiintervento_lang`.`name` , "]") AS descrizione,
+        CONCAT(\'Attività numero \', `in_interventi`.`codice`, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`), `in_interventi`.`data_richiesta`), \'%d/%m/%Y\')) AS info,
+        CONCAT(\'\n\', `in_interventi`.`descrizione`) AS descrizione_intervento,
+        IF(`idclientefinale`='.prepare($idanagrafica).', \'Interventi conto terzi\', \'Interventi diretti\') AS `optgroup`
     FROM
-        in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento
+        `in_interventi` 
+        INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id`
+        LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(setting('Lingua')).')
     WHERE
-        (in_interventi.idanagrafica='.prepare($idanagrafica).' OR in_interventi.idclientefinale='.prepare($idanagrafica).')
-        AND in_statiintervento.is_fatturabile=1
-        AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL)
+        (`in_interventi`.`idanagrafica`='.prepare($idanagrafica).' OR `in_interventi`.`idclientefinale`='.prepare($idanagrafica).')
+        AND `in_statiintervento`.`is_fatturabile`=1
+        AND `in_interventi`.`id` NOT IN (SELECT `idintervento` FROM `co_righe_documenti` WHERE `idintervento` IS NOT NULL)
         '.$where);
 foreach ($rs as $key => $value) {
     $intervento = Modules\Interventi\Intervento::find($value['id']);

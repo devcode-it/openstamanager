@@ -127,41 +127,38 @@ class Interventi extends AppResource
             if (\Auth::user()->is_admin) {
                 $query = '
                 SELECT
-                    in_interventi.id,
-                    in_interventi.updated_at
+                    `in_interventi`.`id`,
+                    `in_interventi`.`updated_at`
                 FROM
-                    in_interventi
+                    `in_interventi`
                 WHERE
-                    deleted_at IS NULL AND (in_interventi.id IN (
-                        SELECT idintervento FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id AND in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
+                    `deleted_at` IS NULL AND (`in_interventi`.`id` IN (
+                        SELECT `idintervento` FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` AND `in_interventi_tecnici`.`orario_fine` BETWEEN :period_start AND :period_end)
+                        OR 
+                        (`in_interventi`.`id` NOT IN (SELECT `idintervento` FROM `in_interventi_tecnici`) AND `in_interventi`.`idstatointervento` IN (SELECT `id` FROM `in_statiintervento` WHERE `is_completato` = 0)
                         )
-                        OR (
-                            in_interventi.id NOT IN (                             SELECT idintervento FROM in_interventi_tecnici
-                            )
-                            AND in_interventi.idstatointervento IN (SELECT idstatointervento FROM in_statiintervento WHERE is_completato = 0)
-                            )
-                        )';
+                    )';
             } else {
                 $query = '
                     SELECT
-                        in_interventi.id,
-                        in_interventi.updated_at
+                        `in_interventi`.`id`,
+                        `in_interventi`.`updated_at`
                     FROM 
-                        in_interventi 
+                        `in_interventi` 
                     WHERE
-                        deleted_at IS NULL AND (
-                        in_interventi.id IN (
-                            SELECT idintervento FROM in_interventi_tecnici
-                            WHERE in_interventi_tecnici.idintervento = in_interventi.id
-                                AND in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
-                                AND in_interventi_tecnici.idtecnico = :id_tecnico_q1
+                        `deleted_at` IS NULL AND (
+                        `in_interventi`.`id` IN (
+                            SELECT `idintervento` FROM `in_interventi_tecnici`
+                            WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
+                                AND `in_interventi_tecnici`.`orario_fine` BETWEEN :period_start AND :period_end
+                                AND `in_interventi_tecnici`.`idtecnico` = :id_tecnico_q1
                         )
                         OR (
-                            in_interventi.id NOT IN (
-                                SELECT idintervento FROM in_interventi_tecnici
+                            `in_interventi`.`id` NOT IN (
+                                SELECT `idintervento` FROM `in_interventi_tecnici`
                             )
-                            AND in_interventi.idstatointervento IN (SELECT idstatointervento FROM in_statiintervento WHERE is_completato = 0) AND in_interventi.id IN (
-                                SELECT id_intervento FROM in_interventi_tecnici_assegnati WHERE in_interventi_tecnici_assegnati.id_tecnico = :id_tecnico_q2
+                            AND `in_interventi`.`idstatointervento` IN (SELECT `id` FROM `in_statiintervento` WHERE `is_completato` = 0) AND `in_interventi`.`id` IN (
+                                SELECT `id_intervento` FROM `in_interventi_tecnici_assegnati` WHERE `in_interventi_tecnici_assegnati`.`id_tecnico` = :id_tecnico_q2
                             )
                         )
                     )';
@@ -170,44 +167,44 @@ class Interventi extends AppResource
             if (\Auth::user()->is_admin) {
                 $query = '
                     SELECT
-                        in_interventi.id,
-                        in_interventi.updated_at
+                        `in_interventi`.`id`,
+                        `in_interventi`.`updated_at`
                     FROM 
-                        in_interventi 
+                        `in_interventi` 
                     WHERE
-                        deleted_at IS NULL AND (
-                            in_interventi.id IN (
-                                SELECT idintervento FROM in_interventi_tecnici
-                                WHERE in_interventi_tecnici.idintervento = in_interventi.id
-                                    AND in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
+                        `deleted_at` IS NULL AND (
+                            `in_interventi`.`id` IN (
+                                SELECT `idintervento` FROM `in_interventi_tecnici`
+                                WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
+                                    AND `in_interventi_tecnici`.`orario_fine` BETWEEN :period_start AND :period_end
                             )
                             OR (
-                                in_interventi.id NOT IN (
-                                    SELECT idintervento FROM in_interventi_tecnici
+                                `in_interventi`.`id` NOT IN (
+                                    SELECT `idintervento` FROM `in_interventi_tecnici`
                                 )
-                                AND in_interventi.idstatointervento IN (SELECT idstatointervento FROM in_statiintervento WHERE is_completato = 0)
+                                AND `in_interventi`.`idstatointervento` IN (SELECT `id` FROM `in_statiintervento` WHERE `is_completato` = 0)
                             )
                         )';
             } else {
                 $query = '
                     SELECT
-                        in_interventi.id,
-                        in_interventi.updated_at
+                        `in_interventi`.`id`,
+                        `in_interventi`.`updated_at`
                     FROM 
-                        in_interventi 
+                        `in_interventi` 
                     WHERE
-                        deleted_at IS NULL AND (
-                            in_interventi.id IN (
-                                SELECT idintervento FROM in_interventi_tecnici
-                                WHERE in_interventi_tecnici.idintervento = in_interventi.id
-                                    AND in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
-                                    AND in_interventi_tecnici.idtecnico = :id_tecnico_q1
+                        `deleted_at` IS NULL AND (
+                            `in_interventi`.`id` IN (
+                                SELECT `idintervento` FROM `in_interventi_tecnici`
+                                WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
+                                    AND `in_interventi_tecnici`.`orario_fine` BETWEEN :period_start AND :period_end
+                                    AND `in_interventi_tecnici`.`idtecnico` = :id_tecnico_q1
                             )
                             OR (
-                                in_interventi.id NOT IN (
-                                    SELECT idintervento FROM in_interventi_tecnici
+                                `in_interventi`.`id` NOT IN (
+                                    SELECT `idintervento` FROM `in_interventi_tecnici`
                                 )
-                                AND in_interventi.idstatointervento IN (SELECT idstatointervento FROM in_statiintervento WHERE is_completato = 0)
+                                AND `in_interventi`.`idstatointervento` IN (SELECT `id` FROM `in_statiintervento` WHERE `is_completato` = 0)
                             )
                         )';
             }
@@ -218,10 +215,10 @@ class Interventi extends AppResource
         // Possibile problematica: in caso di rimozione di un tecnico assegnato o impianto collegato, la modifica non viene rilevata
         if ($last_sync_at) {
             $query .= ' AND (
-                in_interventi.updated_at > '.prepare($last_sync_at).' OR
-                in_interventi.id IN (
-                    SELECT idintervento FROM my_impianti_interventi WHERE my_impianti_interventi.created_at > '.prepare($last_sync_at).'
-                    UNION SELECT id_intervento FROM in_interventi_tecnici_assegnati WHERE in_interventi_tecnici_assegnati.created_at > '.prepare($last_sync_at).'
+                `in_interventi`.`updated_at` > '.prepare($last_sync_at).' OR
+                `in_interventi`.`id` IN (
+                    SELECT `idintervento` FROM `my_impianti_interventi` WHERE `my_impianti_interventi`.`created_at` > '.prepare($last_sync_at).'
+                    UNION SELECT `id_intervento` FROM `in_interventi_tecnici_assegnati` WHERE `in_interventi_tecnici_assegnati`.`created_at` > '.prepare($last_sync_at).'
                 )
             )';
         }

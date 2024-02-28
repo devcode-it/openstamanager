@@ -32,7 +32,6 @@ class StatiInterventi extends Resource implements RetrieveInterface
         if (empty($select)) {
             $select = [
                 '*',
-                'id' => 'idstatointervento',
             ];
         }
 

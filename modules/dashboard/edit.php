@@ -1,4 +1,3 @@
-
 <?php
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
@@ -24,7 +23,7 @@ include_once __DIR__.'/../../core.php';
 
 // Individuazione dati selezionabili
 // Stati interventi
-$stati_intervento = $dbo->fetchArray('SELECT `idstatointervento` AS id, `descrizione`, `colore` FROM `in_statiintervento` WHERE `deleted_at` IS NULL ORDER BY `descrizione` ASC');
+$stati_intervento = $dbo->fetchArray('SELECT `in_statiintervento`.`id`, `name` as descrizione, `colore` FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `deleted_at` IS NULL ORDER BY `name` ASC');
 
 // Tipi intervento
 $tipi_intervento = $dbo->fetchArray('SELECT `idtipointervento` AS id, `descrizione` FROM `in_tipiintervento` WHERE `deleted_at` IS NULL ORDER BY `descrizione` ASC');
@@ -243,31 +242,32 @@ if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
 }
 
 $query_da_programmare = 'SELECT 
-    `data_richiesta` AS data 
-FROM 
-    `co_promemoria`
-    INNER JOIN `co_contratti` ON `co_promemoria`.`idcontratto` = `co_contratti`.`id`
-    INNER JOIN `co_staticontratti` ON `co_contratti`.`idstato` = `co_staticontratti`.`id`
-    LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(setting('Lingua')).')
-    INNER JOIN `an_anagrafiche` ON `co_contratti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-WHERE
-    `co_staticontratti`.`is_pianificabile` = 1 AND `idintervento` IS NULL
-
-UNION 
-SELECT 
-    IF(`data_scadenza` IS NULL, `data_richiesta`, `data_scadenza`) AS data 
-FROM 
-    `in_interventi`
-    INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`';
+            `data_richiesta` AS data 
+        FROM 
+            `co_promemoria`
+            INNER JOIN `co_contratti` ON `co_promemoria`.`idcontratto` = `co_contratti`.`id`
+            INNER JOIN `co_staticontratti` ON `co_contratti`.`idstato` = `co_staticontratti`.`id`
+            LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+            INNER JOIN `an_anagrafiche` ON `co_contratti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+        WHERE
+            `co_staticontratti`.`is_pianificabile` = 1 AND `idintervento` IS NULL
+    UNION 
+        SELECT 
+            IF(`data_scadenza` IS NULL, `data_richiesta`, `data_scadenza`) AS data 
+        FROM 
+            `in_interventi`
+            INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`';
 
 // Visualizzo solo promemoria del tecnico loggato
 if (!empty($id_tecnico) && !empty($solo_promemoria_assegnati)) {
     $query_da_programmare .= '
-    INNER JOIN in_interventi_tecnici_assegnati ON in_interventi.id = in_interventi_tecnici_assegnati.id_intervento AND id_tecnico = '.prepare($id_tecnico);
+            INNER JOIN `in_interventi_tecnici_assegnati` ON `in_interventi`.`id` = `in_interventi_tecnici_assegnati`.`id_intervento` AND `id_tecnico` = '.prepare($id_tecnico);
 }
 
 $query_da_programmare .= '
-WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id) = 0 AND in_interventi.idstatointervento IN(SELECT idstatointervento FROM in_statiintervento WHERE is_completato = 0)';
+        WHERE 
+            (SELECT COUNT(*) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`) = 0 AND 
+            `in_interventi`.`idstatointervento` IN(SELECT `id` FROM `in_statiintervento` WHERE `is_completato` = 0)';
 $risultati_da_programmare = $dbo->fetchArray($query_da_programmare);
 
 if (!empty($risultati_da_programmare)) {
@@ -288,18 +288,33 @@ if (!empty($risultati_da_programmare)) {
 
     // Controllo pianificazioni mesi precedenti
     // Promemoria contratti + promemoria interventi
-    $query_mesi_precenti = 'SELECT co_promemoria.id FROM co_promemoria INNER JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1) AND idintervento IS NULL AND DATE_ADD(co_promemoria.data_richiesta, INTERVAL 1 DAY) <= NOW()
-    UNION SELECT in_interventi.id FROM in_interventi
-        INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica';
+    $query_mesi_precenti = 'SELECT 
+            `co_promemoria`.`id` 
+        FROM 
+            `co_promemoria` 
+            INNER JOIN `co_contratti` ON `co_promemoria`.`idcontratto`=`co_contratti`.`id`
+        WHERE 
+            `idstato` IN(SELECT `id` FROM `co_staticontratti` WHERE `is_pianificabile` = 1) 
+            AND `idintervento` IS NULL 
+            AND DATE_ADD(`co_promemoria`.`data_richiesta`, INTERVAL 1 DAY) <= NOW()
+    UNION 
+        SELECT 
+            `in_interventi`.`id` 
+        FROM 
+            `in_interventi`
+            INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`';
 
     // Visualizzo solo promemoria del tecnico loggato
     if (!empty($id_tecnico) && !empty($solo_promemoria_assegnati)) {
         $query_mesi_precenti .= '
-        INNER JOIN in_interventi_tecnici_assegnati ON in_interventi.id = in_interventi_tecnici_assegnati.id_intervento AND id_tecnico = '.prepare($id_tecnico);
+            INNER JOIN `in_interventi_tecnici_assegnati` ON `in_interventi`.`id` = `in_interventi_tecnici_assegnati`.`id_intervento` AND `id_tecnico` = '.prepare($id_tecnico);
     }
 
     $query_mesi_precenti .= '
-WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id) = 0 AND in_interventi.idstatointervento IN(SELECT idstatointervento FROM in_statiintervento WHERE is_completato = 0) AND DATE_ADD(IF(in_interventi.data_scadenza IS NULL, in_interventi.data_richiesta, in_interventi.data_scadenza), INTERVAL 1 DAY) <= NOW()';
+        WHERE 
+            (SELECT COUNT(*) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`) = 0 
+            AND `in_interventi`.`idstatointervento` IN(SELECT `id` FROM `in_statiintervento` WHERE `is_completato` = 0) 
+            AND DATE_ADD(IF(`in_interventi`.`data_scadenza` IS NULL, `in_interventi`.`data_richiesta`, `in_interventi`.`data_scadenza`), INTERVAL 1 DAY) <= NOW()';
     $numero_mesi_precenti = $dbo->fetchNum($query_mesi_precenti);
 
     if ($numero_mesi_precenti > 0) {

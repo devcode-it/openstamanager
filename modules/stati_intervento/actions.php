@@ -23,7 +23,6 @@ switch (post('op')) {
     case 'update':
         $dbo->update('in_statiintervento', [
             'codice' => post('codice'),
-            'descrizione' => post('descrizione'),
             'colore' => post('colore'),
             'is_completato' => post('is_completato'),
             'is_fatturabile' => post('is_fatturabile'),
@@ -33,7 +32,11 @@ switch (post('op')) {
             'notifica_tecnico_assegnato' => post('notifica_tecnico_sessione'),
             'id_email' => post('email') ?: null,
             'destinatari' => post('destinatari'),
-        ], ['idstatointervento' => $id_record]);
+        ], ['id' => $id_record]);
+
+        $dbo->update('in_statiintervento_lang', [
+            'descrizione' => post('descrizione'),
+        ], ['id_record' => $id_record, 'id_lang' => setting('Lingua')]);
 
         flash()->info(tr('Informazioni salvate correttamente.'));
 
@@ -45,14 +48,15 @@ switch (post('op')) {
         $colore = post('colore');
 
         // controllo che il codice non sia duplicato
-        if (count($dbo->fetchArray('SELECT idstatointervento FROM in_statiintervento WHERE codice='.prepare($codice))) > 0) {
+        if (count($dbo->fetchArray('SELECT `id` FROM `in_statiintervento` WHERE `codice`='.prepare($codice))) > 0) {
             flash()->warning(tr('Attenzione: lo stato attività _COD_ risulta già esistente.', [
                 '_COD_' => $codice,
             ]));
         } else {
-            $query = 'INSERT INTO in_statiintervento(codice, descrizione, colore) VALUES ('.prepare($codice).', '.prepare($descrizione).', '.prepare($colore).')';
-            $dbo->query($query);
+            $dbo->query('INSERT INTO in_statiintervento(codice, colore) VALUES ('.prepare($codice).', '.prepare($colore).')');
             $id_record = $database->lastInsertedID();
+
+            $dbo->query('INSERT INTO in_statiintervento_lang (name, id_record, id_lang) VALUES ('.prepare($descrizione).', '.prepare($id_record).', '.prepare(setting('Lingua')).')');
             flash()->info(tr('Nuovo stato attività aggiunto.'));
         }
 
@@ -60,10 +64,10 @@ switch (post('op')) {
 
     case 'delete':
         // scelgo se settare come eliminato o cancellare direttamente la riga se non è stato utilizzato negli interventi
-        if (count($dbo->fetchArray('SELECT id FROM in_interventi WHERE idstatointervento='.prepare($id_record))) > 0) {
-            $query = 'UPDATE in_statiintervento SET deleted_at = NOW() WHERE idstatointervento='.prepare($id_record).' AND `can_delete`=1';
+        if (count($dbo->fetchArray('SELECT `id` FROM `in_interventi` WHERE `idstatointervento`='.prepare($id_record))) > 0) {
+            $query = 'UPDATE `in_statiintervento` SET `deleted_at` = NOW() WHERE `id`='.prepare($id_record).' AND `can_delete`=1';
         } else {
-            $query = 'DELETE FROM in_statiintervento  WHERE idstatointervento='.prepare($id_record).' AND `can_delete`=1';
+            $query = 'DELETE FROM `in_statiintervento`  WHERE `id`='.prepare($id_record).' AND `can_delete`=1';
         }
 
         $dbo->query($query);

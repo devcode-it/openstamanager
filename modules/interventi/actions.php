@@ -132,8 +132,8 @@ switch (post('op')) {
         ]);
 
         // Notifica cambio stato intervento
-        $stato = $dbo->selectOne('in_statiintervento', '*', ['idstatointervento' => post('idstatointervento')]);
-        if (!empty($stato['notifica']) && $stato['idstatointervento'] != $record['idstatointervento']) {
+        $stato = $dbo->selectOne('in_statiintervento', '*', ['id' => post('idstatointervento')]);
+        if (!empty($stato['notifica']) && $stato['id'] != $record['idstatointervento']) {
             $template = Template::find($stato['id_email']);
 
             if (!empty($stato['destinatari'])) {
@@ -182,7 +182,7 @@ switch (post('op')) {
         if (post('id_intervento') == null) {
             $idanagrafica = post('idanagrafica');
             $idtipointervento = post('idtipointervento');
-            $idstatointervento = post('idstatointervento');
+            $idstatointervento = post('id');
             $data_richiesta = post('data_richiesta');
             $data_scadenza = post('data_scadenza') ?: null;
             $id_segment = post('id_segment');
@@ -349,7 +349,7 @@ switch (post('op')) {
                 // Calcolo il nuovo codice
                 $new->codice = Intervento::getNextCodice($data_ricorrenza, $new->id_segment);
                 $new->data_richiesta = $data_ricorrenza;
-                $new->idstatointervento = $stato->idstatointervento;
+                $new->idstatointervento = $stato->id;
                 $new->save();
                 $idintervento = $new->id;
 
@@ -674,7 +674,7 @@ switch (post('op')) {
         // Modifica finale dello stato
         /*
             if (post('create_document') == 'on') {
-                $intervento->idstatointervento = post('id_stato_intervento');
+                $intervento->id = post('id_stato_intervento');
                 $intervento->save();
             }*/
 
@@ -711,11 +711,11 @@ switch (post('op')) {
                     flash()->info(tr('Firma salvata correttamente!'));
 
                     $id_stato = setting("Stato dell'attività dopo la firma");
-                    $stato = $dbo->selectOne('in_statiintervento', '*', ['idstatointervento' => $id_stato]);
+                    $stato = $dbo->selectOne('in_statiintervento', '*', ['id' => $id_stato]);
                     $intervento = Intervento::find($id_record);
                     if (!empty($stato)) {
                         $intervento = Intervento::find($id_record);
-                        $intervento->idstatointervento = $stato['idstatointervento'];
+                        $intervento->id = $stato['id'];
                         $intervento->save();
                     }
 
@@ -791,11 +791,11 @@ switch (post('op')) {
                         ++$firmati;
 
                         $id_stato = setting("Stato dell'attività dopo la firma");
-                        $stato = $dbo->selectOne('in_statiintervento', '*', ['idstatointervento' => $id_stato]);
+                        $stato = $dbo->selectOne('in_statiintervento', '*', ['id' => $id_stato]);
                         $intervento = Intervento::find($id_record);
                         if (!empty($stato)) {
                             $intervento = Intervento::find($id_record);
-                            $intervento->idstatointervento = $stato['idstatointervento'];
+                            $intervento->id = $stato['id'];
                             $intervento->save();
                         }
 

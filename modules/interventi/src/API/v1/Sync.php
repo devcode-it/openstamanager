@@ -21,6 +21,7 @@ namespace Modules\Interventi\API\v1;
 
 use API\Interfaces\RetrieveInterface;
 use API\Interfaces\UpdateInterface;
+use Modules\Interventi\Stato;
 use API\Resource;
 use Carbon\Carbon;
 
@@ -144,7 +145,7 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
                     $idriga = $rs_copie[0]['id'];
                 } else {
                     $idintervento = get_new_idintervento();
-                    $stato = $database->fetchArray("SELECT * FROM in_statiintervento WHERE descrizione = 'Chiamata'");
+                    $stato = (new Stato())->getByName('Chiamata')->id_record;
 
                     $database->insert('in_interventi', [
                         'idintervento' => $idintervento,
@@ -152,7 +153,7 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
                         'data_richiesta' => Carbon::now(),
                         'richiesta' => $richiesta,
                         'idtipointervento' => 0,
-                        'idstatointervento' => $stato['idstatointerventoWIP'],
+                        'idstatointervento' => $stato,
                         'oggetto' => $summary,
                     ]);
 

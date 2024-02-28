@@ -19,7 +19,10 @@
 
 include_once __DIR__.'/../../../core.php';
 
-$rs = $dbo->fetchArray('SELECT * FROM in_interventi WHERE in_interventi.idstatointervento = (SELECT in_statiintervento.idstatointervento FROM in_statiintervento WHERE in_statiintervento.codice=\'WIP\') ORDER BY data_richiesta ASC');
+use Modules\Interventi\Stato;
+
+$stato_wip = (new Stato())->getByName('WIP')->id_record;
+$rs = $dbo->fetchArray('SELECT * FROM `in_interventi` WHERE `in_interventi`.`idstatointervento` = '.prepare($stato_wip).' ORDER BY `data_richiesta` ASC');
 
 if (!empty($rs)) {
     echo '

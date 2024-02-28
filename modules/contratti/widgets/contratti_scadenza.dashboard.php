@@ -35,7 +35,7 @@ $rs = $dbo->fetchArray('SELECT
         INNER JOIN `co_righe_contratti` ON (`co_righe_contratti`.`idcontratto`=`co_contratti`.`id` AND `co_righe_contratti`.`um`=\'ore\')
         INNER JOIN `co_staticontratti` ON `co_contratti`.`idstato`=`co_staticontratti`.`id`
         LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(setting('Lingua')).')
-        LEFT JOIN `in_interventi` ON (`in_interventi`.`id_contratto` = `co_contratti`.`id` AND `in_interventi`.`idstatointervento` IN (SELECT `in_statiintervento`.`idstatointervento` FROM `in_statiintervento` WHERE `in_statiintervento`.`is_completato` = 1))
+        LEFT JOIN `in_interventi` ON (`in_interventi`.`id_contratto` = `co_contratti`.`id` AND `in_interventi`.`idstatointervento` IN (SELECT `id` FROM `in_statiintervento` WHERE `in_statiintervento`.`is_completato` = 1))
         LEFT JOIN `in_interventi_tecnici` ON (`in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`)
     WHERE
         `co_contratti`.`rinnovabile` = 1 AND

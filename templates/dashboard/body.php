@@ -79,17 +79,22 @@ $tipi = (array) $calendar['idtipiintervento'];
 $tecnici = (array) $calendar['idtecnici'];
 
 $query = "SELECT
-        DATE(orario_inizio) AS data,
-        (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS anagrafica,
-        GROUP_CONCAT((SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=in_interventi_tecnici.idtecnico) SEPARATOR ', ') AS tecnico
-FROM in_interventi_tecnici
-    INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id
-    LEFT OUTER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento
-WHERE ".$where.'
-    idtecnico IN('.implode(',', $tecnici).') AND
-    in_interventi.idstatointervento IN('.implode(',', $stati).') AND
-    in_interventi_tecnici.idtipointervento IN('.implode(',', $tipi).') '.Modules::getAdditionalsQuery('Interventi').'
-GROUP BY in_interventi.id, data';
+        DATE(`orario_inizio`) AS data,
+        `an_anagrafiche`.`ragione_sociale` AS anagrafica,
+        GROUP_CONCAT(DISTINCT `tecnico`.`ragione_sociale` SEPARATOR ', ') AS tecnico
+    FROM 
+        `in_interventi_tecnici`
+        INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`
+        INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
+        LEFT JOIN `an_anagrafiche AS tecnico ON `in_interventi_tecnici`.`idtecnico`=`tecnico`.`idanagrafica`
+        INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id`
+    WHERE 
+        ".$where.'
+        `idtecnico` IN('.implode(',', $tecnici).') AND
+        `in_interventi`.`idstatointervento` IN('.implode(',', $stati).') AND
+        `in_interventi_tecnici`.`idtipointervento` IN('.implode(',', $tipi).') '.Modules::getAdditionalsQuery('Interventi').'
+    GROUP BY 
+        `in_interventi`.`id`, data';
 $sessioni = $dbo->fetchArray($query);
 
 $sessioni = collect($sessioni)->groupBy('data');

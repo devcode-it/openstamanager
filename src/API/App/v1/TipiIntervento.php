@@ -25,16 +25,16 @@ class TipiIntervento extends AppResource
 {
     public function getCleanupData($last_sync_at)
     {
-        return $this->getMissingIDs('in_tipiintervento', 'idtipointervento', $last_sync_at);
+        return $this->getMissingIDs('in_tipiintervento', 'id', $last_sync_at);
     }
 
     public function getModifiedRecords($last_sync_at)
     {
-        $query = 'SELECT in_tipiintervento.idtipointervento AS id, in_tipiintervento.updated_at FROM in_tipiintervento';
+        $query = 'SELECT `in_tipiintervento`.`id`, `in_tipiintervento`.`updated_at` FROM `in_tipiintervento`';
 
         // Filtro per data
         if ($last_sync_at) {
-            $query .= ' WHERE in_tipiintervento.updated_at > '.prepare($last_sync_at);
+            $query .= ' WHERE `in_tipiintervento`.`updated_at` > '.prepare($last_sync_at);
         }
 
         $records = database()->fetchArray($query);
@@ -45,13 +45,17 @@ class TipiIntervento extends AppResource
     public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
-        $query = 'SELECT in_tipiintervento.idtipointervento AS id,
-            in_tipiintervento.descrizione,
-            costo_orario AS prezzo_orario,
-            costo_km AS prezzo_chilometrico,
-            costo_diritto_chiamata AS prezzo_diritto_chiamata
-        FROM in_tipiintervento
-        WHERE in_tipiintervento.idtipointervento = '.prepare($id);
+        $query = 'SELECT 
+            `in_tipiintervento`.`id`,
+            `in_tipiintervento_lang`.`name`,
+            `costo_orario` AS prezzo_orario,
+            `costo_km` AS prezzo_chilometrico,
+            `costo_diritto_chiamata` AS prezzo_diritto_chiamata
+        FROM 
+            `in_tipiintervento`
+            LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+        WHERE 
+            `in_tipiintervento`.`id` = '.prepare($id);
 
         $record = database()->fetchOne($query);
 

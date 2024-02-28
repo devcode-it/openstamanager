@@ -26,7 +26,7 @@ include_once __DIR__.'/../../core.php';
 $stati_intervento = $dbo->fetchArray('SELECT `in_statiintervento`.`id`, `name` as descrizione, `colore` FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `deleted_at` IS NULL ORDER BY `name` ASC');
 
 // Tipi intervento
-$tipi_intervento = $dbo->fetchArray('SELECT `idtipointervento` AS id, `descrizione` FROM `in_tipiintervento` WHERE `deleted_at` IS NULL ORDER BY `descrizione` ASC');
+$tipi_intervento = $dbo->fetchArray('SELECT `in_tipiintervento`.`id`, `in_tipiintervento_lang`.`name` AS descrizione FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `deleted_at` IS NULL ORDER BY `name` ASC');
 
 // Tecnici disponibili
 $tecnici_disponibili = $dbo->fetchArray('SELECT 

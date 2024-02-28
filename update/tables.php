@@ -112,6 +112,7 @@ return [
     'in_statiintervento_lang',
     'in_tariffe',
     'in_tipiintervento',
+    'in_tipiintervento_lang',
     'in_vociservizio',
     'in_fasceorarie',
     'in_fasceorarie_lang',

@@ -70,7 +70,7 @@ if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
     $id_zona = $contratto['idzona'];
 
     // Informazioni del Promemoria
-    $promemoria = $dbo->fetchOne('SELECT *, (SELECT tempo_standard FROM in_tipiintervento WHERE idtipointervento = co_promemoria.idtipointervento) AS tempo_standard FROM co_promemoria WHERE idcontratto='.prepare($id_contratto).' AND id = '.prepare($id_promemoria_contratto));
+    $promemoria = $dbo->fetchOne('SELECT *, (SELECT `tempo_standard` FROM `in_tipiintervento` WHERE `id` = `co_promemoria`.`idtipointervento`) AS tempo_standard FROM `co_promemoria` WHERE `idcontratto`='.prepare($id_contratto).' AND `co_promemoria`.`id` = '.prepare($id_promemoria_contratto));
     $id_tipo = $promemoria['idtipointervento'];
     $data = filter('data') ?? $promemoria['data_richiesta'];
     $richiesta = $promemoria['richiesta'];
@@ -94,7 +94,7 @@ if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
 
 // Gestione dell'aggiunta di una sessione a un Intervento senza sessioni (Promemoria intervento) da Dashboard
 elseif (!empty($id_intervento)) {
-    $intervento = $dbo->fetchOne('SELECT *, (SELECT idcontratto FROM co_promemoria WHERE idintervento = in_interventi.id LIMIT 0,1) AS idcontratto, in_interventi.id_preventivo as idpreventivo, (SELECT tempo_standard FROM in_tipiintervento WHERE idtipointervento = in_interventi.idtipointervento) AS tempo_standard FROM in_interventi WHERE id = '.prepare($id_intervento));
+    $intervento = $dbo->fetchOne('SELECT *, (SELECT `idcontratto` FROM `co_promemoria` WHERE `idintervento` = `in_interventi`.`id` LIMIT 0,1) AS idcontratto, `in_interventi`.`id_preventivo` as idpreventivo, (SELECT `tempo_standard` FROM `in_tipiintervento` WHERE `id` = `in_interventi`.`idtipointervento`) AS tempo_standard FROM `in_interventi` WHERE `id` = '.prepare($id_intervento));
 
     $id_tipo = $intervento['idtipointervento'];
     $data = filter('data') ?? $intervento['data_richiesta'];

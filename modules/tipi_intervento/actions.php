@@ -99,17 +99,17 @@ switch (post('op')) {
 
     case 'delete':
         // Elimino le tariffe collegate ai vari tecnici
-        $query = 'DELETE FROM in_tariffe WHERE idtipointervento='.prepare($id_record);
+        $query = 'DELETE FROM `in_tariffe` WHERE `idtipointervento`='.prepare($id_record);
         $dbo->query($query);
 
         // Elimino le tariffe collegate ai contratti
-        $query = 'DELETE FROM co_contratti_tipiintervento WHERE idtipointervento='.prepare($id_record);
+        $query = 'DELETE FROM `co_contratti_tipiintervento` WHERE `idtipointervento`='.prepare($id_record);
         $dbo->query($query);
 
-        $query = 'DELETE FROM in_fasceorarie_tipiintervento WHERE idtipointervento='.prepare($id_record);
+        $query = 'DELETE FROM `in_fasceorarie_tipiintervento` WHERE `idtipointervento`='.prepare($id_record);
         $dbo->query($query);
 
-        $query = 'UPDATE `in_tipiintervento` SET deleted_at=NOW() WHERE idtipointervento='.prepare($id_record);
+        $query = 'UPDATE `in_tipiintervento` SET `deleted_at`=NOW() WHERE `id`='.prepare($id_record);
         $dbo->query($query);
 
         flash()->info(tr('Tipo di intervento eliminato!'));

@@ -75,7 +75,7 @@ switch (post('op')) {
             foreach ($tipi_intervento as $tipo_intervento) {
                 $dbo->insert('in_fasceorarie_tipiintervento', [
                     'idfasciaoraria' => $id_record,
-                    'idtipointervento' => $tipo_intervento['idtipointervento'],
+                    'idtipointervento' => $tipo_intervento['id'],
                     'costo_orario' => $tipo_intervento['costo_orario'],
                     'costo_km' => $tipo_intervento['costo_km'],
                     'costo_diritto_chiamata' => $tipo_intervento['costo_diritto_chiamata'],

@@ -124,13 +124,9 @@ class CSV extends CSVImporter
             unset($record['tipo']);
 
             if (empty($record['stato'])) {
-                $stato = Stato::where('descrizione', 'Completato')->first();
+                $stato = (new Stato())->getByName('Completato')->id_record;
             } else {
-                $stato = Stato::where('descrizione', $record['stato'])->first();
-            }
-
-            if (empty($stato)) {
-                $stato = Stato::build($record['stato']);
+                $stato = (new Stato())->getByName($record['stato'])->id_record;
             }
             unset($record['stato']);
 

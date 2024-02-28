@@ -46,7 +46,7 @@ if (count($id_impianti) == 1) {
 }
 
 // Informazioni del promemoria
-$record = $dbo->fetchOne('SELECT *, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_promemoria.idtipointervento) AS tipointervento, (SELECT tempo_standard FROM in_tipiintervento WHERE idtipointervento = co_promemoria.idtipointervento) AS tempo_standard FROM co_promemoria WHERE id = :id', [
+$record = $dbo->fetchOne('SELECT *, `in_tipiintervento_lang`.`name` AS tipointervento, `in_tipiintervento`.`tempo_standard` FROM `co_promemoria` INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_promemoria`.`idtipointervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `co_promemoria`.`id` = :id', [
     ':id' => $id_record,
 ]);
 $data_richiesta = $record['data_richiesta'] ?: date('Y-m-d');

@@ -360,33 +360,33 @@ $tipi = $dbo->fetchArray('SELECT * FROM `in_tipiintervento`');
 $dataset = '';
 foreach ($tipi as $tipo) {
     $interventi = $dbo->fetchArray('SELECT
-    COUNT(in_interventi.id) AS result,
-    YEAR(sessioni.orario_fine) AS `year`,
-    MONTH(sessioni.orario_fine) AS `month`
-FROM
-    in_interventi
-LEFT JOIN(
-    SELECT
-        in_interventi_tecnici.idintervento,
-        MAX(orario_fine) AS orario_fine
+        COUNT(`in_interventi`.`id`) AS result,
+        YEAR(`sessioni`.`orario_fine`) AS `year`,
+        MONTH(`sessioni`.`orario_fine`) AS `month`
     FROM
-        in_interventi_tecnici
+        `in_interventi`
+    LEFT JOIN(
+        SELECT
+            `in_interventi_tecnici`.`idintervento`,
+            MAX(`orario_fine`) AS orario_fine
+        FROM
+            `in_interventi_tecnici`
+        GROUP BY
+            `idintervento`
+    ) sessioni
+    ON
+        `in_interventi`.`id` = `sessioni`.`idintervento`
+    WHERE
+        `in_interventi`.`idtipointervento` = '.prepare($tipo['idtipointervento']).' AND IFNULL(
+            `sessioni`.`orario_fine`,
+            `in_interventi`.`data_richiesta`
+        ) BETWEEN '.prepare($start).' AND '.prepare($end).'
     GROUP BY
-        idintervento
-) sessioni
-ON
-    in_interventi.id = sessioni.idintervento
-WHERE
-    in_interventi.idtipointervento = '.prepare($tipo['idtipointervento']).' AND IFNULL(
-        sessioni.orario_fine,
-        in_interventi.data_richiesta
-    ) BETWEEN '.prepare($start).' AND '.prepare($end).'
-GROUP BY
-    YEAR(sessioni.orario_fine),
-    MONTH(sessioni.orario_fine)
-ORDER BY
-    YEAR(sessioni.orario_fine) ASC,
-    MONTH(sessioni.orario_fine) ASC');
+        YEAR(`sessioni`.`orario_fine`),
+        MONTH(`sessioni`.`orario_fine`)
+    ORDER BY
+        YEAR(`sessioni`.`orario_fine`) ASC,
+        MONTH(`sessioni`.`orario_fine`) ASC');
 
     $interventi = Stats::monthly($interventi, $start, $end);
 

@@ -32,7 +32,7 @@ switch ($resource) {
                 `is_bloccata`,
                 CONCAT(`ragione_sociale`, IF(`citta` IS NULL OR `citta` = '', '', CONCAT(' (', `citta`, ')')), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'), IF(`is_bloccata` = 1, CONCAT(' (', `an_relazioni_lang`.`name`, ')'), ''),' - ', `an_anagrafiche`.`codice` ) AS descrizione,
                 `idtipointervento_default` AS idtipointervento,
-                `in_tipiintervento`.`descrizione` AS idtipointervento_descrizione,
+                `in_tipiintervento_lang`.`name` AS idtipointervento_descrizione,
                 `an_anagrafiche`.`idzona`,
                 `contratto`.`id` AS id_contratto,
                 `contratto`.`descrizione` AS descrizione_contratto,
@@ -45,7 +45,7 @@ switch ($resource) {
                 INNER JOIN (`an_tipianagrafiche_anagrafiche`
                     INNER JOIN `an_tipianagrafiche`ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id`
                     LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = ".setting('Lingua').'))
-                        ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` LEFT JOIN `in_tipiintervento` ON `an_anagrafiche`.`idtipointervento_default`=`in_tipiintervento`.`idtipointervento`
+                        ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` LEFT JOIN `in_tipiintervento` ON `an_anagrafiche`.`idtipointervento_default`=`in_tipiintervento`.`id` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id`=`in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang`='.prepare(setting('Lingua')).')
                 LEFT JOIN `an_relazioni` ON `an_anagrafiche`.`idrelazione`=`an_relazioni`.`id`
                 LEFT JOIN `an_relazioni_lang` ON (`an_relazioni`.`id`=`an_relazioni_lang`.`id_record` AND `an_relazioni_lang`.`id_lang`= '.setting('Lingua').")
                 LEFT JOIN

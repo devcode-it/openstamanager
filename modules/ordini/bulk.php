@@ -50,7 +50,7 @@ switch (post('op')) {
 
         $tipo_documento = TipoFattura::where('id', post('idtipodocumento'))->first();
 
-        $stato_documenti_accodabili = Stato::where('descrizione', 'Bozza')->first();
+        $stato_documenti_accodabili = (new Stato())->getByName('Bozza')->id_record;
         $accodare = post('accodare');
 
         $data = date('Y-m-d');

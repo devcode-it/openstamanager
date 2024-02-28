@@ -19,6 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\TipiIntervento\Tipo;
+
 switch (post('op')) {
     case 'update':
         foreach ($tipi_interventi as $tipo_intervento) {
@@ -47,7 +49,7 @@ switch (post('op')) {
     case 'import':
         $id_tipo_intervento = post('idtipointervento');
 
-        $importi = $dbo->fetchOne('SELECT * FROM in_tipiintervento WHERE idtipointervento='.prepare($id_tipo_intervento));
+        $importi = Tipo::find($id_tipo_intervento);
 
         $values = [
             'costo_ore' => $importi['costo_orario'],

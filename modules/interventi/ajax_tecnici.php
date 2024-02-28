@@ -32,30 +32,29 @@ $is_completato = $rss[0]['flag_completato'];
 
 // Sessioni dell'intervento
 $query = 'SELECT
-    in_interventi_tecnici.*,
-    (in_interventi_tecnici.prezzo_ore_unitario * in_interventi_tecnici.ore - in_interventi_tecnici.sconto) AS prezzo_ore_consuntivo,
-    (in_interventi_tecnici.prezzo_km_unitario * in_interventi_tecnici.km - in_interventi_tecnici.scontokm) AS prezzo_km_consuntivo,
-    (in_interventi_tecnici.prezzo_ore_unitario_tecnico * in_interventi_tecnici.ore) AS prezzo_ore_consuntivo,
-    (in_interventi_tecnici.prezzo_km_unitario_tecnico * in_interventi_tecnici.km) AS prezzo_km_consuntivo,
-    an_anagrafiche.ragione_sociale,
-    an_anagrafiche.deleted_at AS anagrafica_deleted_at,
-    in_tipiintervento.deleted_at AS tipo_deleted_at,
-    in_tipiintervento.descrizione AS descrizione_tipo,
-    in_interventi_tecnici.tipo_scontokm AS tipo_sconto_km,
-    user.id AS id_user
-FROM
-    in_interventi_tecnici INNER JOIN an_anagrafiche
-    ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica
-        LEFT JOIN (SELECT zz_users.idanagrafica, zz_users.id FROM zz_users GROUP BY zz_users.idanagrafica) AS user
-        ON user.idanagrafica = an_anagrafiche.idanagrafica
-            INNER JOIN in_tipiintervento
-            ON in_interventi_tecnici.idtipointervento = in_tipiintervento.idtipointervento
-WHERE
-    in_interventi_tecnici.idintervento='.prepare($id_record).'
-ORDER BY
-    ragione_sociale ASC,
-    in_interventi_tecnici.orario_inizio ASC,
-    in_interventi_tecnici.id ASC';
+        `in_interventi_tecnici`.*,
+        (`in_interventi_tecnici`.`prezzo_ore_unitario` * `in_interventi_tecnici`.`ore` - `in_interventi_tecnici`.`sconto`) AS prezzo_ore_consuntivo,
+        (`in_interventi_tecnici`.`prezzo_km_unitario` * `in_interventi_tecnici`.`km` - `in_interventi_tecnici`.`scontokm`) AS prezzo_km_consuntivo,
+        (`in_interventi_tecnici`.`prezzo_ore_unitario_tecnico` * `in_interventi_tecnici`.`ore`) AS prezzo_ore_consuntivo,
+        (`in_interventi_tecnici`.`prezzo_km_unitario_tecnico` * `in_interventi_tecnici`.`km`) AS prezzo_km_consuntivo,
+        `an_anagrafiche`.`ragione_sociale`,
+        `an_anagrafiche`.`deleted_at` AS anagrafica_deleted_at,
+        `in_tipiintervento`.`deleted_at` AS tipo_deleted_at,
+        `in_tipiintervento_lang`.`name` AS descrizione_tipo,
+        `in_interventi_tecnici`.`tipo_scontokm` AS tipo_sconto_km,
+        `user`.`id` AS id_user
+    FROM
+        `in_interventi_tecnici` 
+        INNER JOIN `an_anagrafiche` ON `in_interventi_tecnici`.`idtecnico` = `an_anagrafiche`.`idanagrafica`
+        LEFT JOIN (SELECT `zz_users`.`idanagrafica`, `zz_users`.`id` FROM `zz_users` GROUP BY `zz_users`.`idanagrafica`) AS user ON `user`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` 
+        INNER JOIN `in_tipiintervento` ON `in_interventi_tecnici`.`idtipointervento` = `in_tipiintervento`.`id`
+        LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+    WHERE
+        `in_interventi_tecnici`.`idintervento`='.prepare($id_record).'
+    ORDER BY
+        `ragione_sociale` ASC,
+        `in_interventi_tecnici`.`orario_inizio` ASC,
+        `in_interventi_tecnici`.`id` ASC';
 $sessioni = $dbo->fetchArray($query);
 
 $prev_tecnico = '';

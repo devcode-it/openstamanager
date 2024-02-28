@@ -140,7 +140,7 @@ function aggiungiData() {
 
 <?php
 
-$elementi = $dbo->fetchArray('SELECT `in_tipiintervento`.`codice`, `in_tipiintervento`.`descrizione`, `in_tipiintervento`.`idtipointervento` FROM `in_tipiintervento` LEFT JOIN `in_fasceorarie_tipiintervento` ON `in_tipiintervento`.`idtipointervento`=`in_fasceorarie_tipiintervento`.`idtipointervento` WHERE `in_fasceorarie_tipiintervento`.`idfasciaoraria`='.prepare($id_record));
+$elementi = $dbo->fetchArray('SELECT `in_tipiintervento`.`codice`, `in_tipiintervento`.`descrizione`, `in_tipiintervento`.`id` FROM `in_tipiintervento` LEFT JOIN `in_fasceorarie_tipiintervento` ON `in_tipiintervento`.`id`=`in_fasceorarie_tipiintervento`.`idtipointervento` WHERE `in_fasceorarie_tipiintervento`.`idfasciaoraria`='.prepare($id_record));
 
 if (!empty($elementi)) {
     echo '

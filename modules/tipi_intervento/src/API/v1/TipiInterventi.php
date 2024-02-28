@@ -32,7 +32,6 @@ class TipiInterventi extends Resource implements RetrieveInterface
         if (empty($select)) {
             $select = [
                 '*',
-                'id' => 'idtipointervento',
             ];
         }
 

@@ -96,6 +96,7 @@ return [
     'fe_natura',
     'fe_natura_lang',
     'fe_regime_fiscale',
+    'fe_regime_fiscale_lang',
     'fe_stati_documento',
     'fe_tipi_documento',
     'fe_tipo_cassa',

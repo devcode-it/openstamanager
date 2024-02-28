@@ -1191,3 +1191,25 @@ ALTER TABLE `fe_natura`
     DROP `descrizione`;
 
 ALTER TABLE `fe_natura_lang` ADD CONSTRAINT `fe_natura_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `fe_natura`(`codice`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+-- Aggiunta tabella fe_regime_fiscale_lang
+CREATE TABLE IF NOT EXISTS `fe_regime_fiscale_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` varchar(5) NOT NULL,
+    `name` VARCHAR(255) NOT NULL
+);
+ALTER TABLE `fe_regime_fiscale_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `fe_regime_fiscale_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `fe_regime_fiscale_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `codice`, `descrizione` FROM `fe_regime_fiscale`;
+
+ALTER TABLE `fe_regime_fiscale`
+    DROP `descrizione`;
+
+ALTER TABLE `fe_regime_fiscale_lang` ADD CONSTRAINT `fe_regime_fiscale_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `fe_regime_fiscale`(`codice`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+UPDATE `zz_settings` SET `tipo` = 'query=SELECT `codice` AS id, CONCAT(`codice`, \' - \', `name`)as descrizione FROM fe_regime_fiscale LEFT JOIN `fe_regime_fiscale_lang` ON (`fe_regime_fiscale_lang`.`id_record`=`fe_regime_fiscale`.`codice` AND `fe_regime_fiscale_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = \'Lingua\'))' WHERE `zz_settings`.`nome` = 'Regime fiscale'; 

@@ -1094,3 +1094,59 @@ HAVING
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_lists`.`id`' WHERE `zz_modules`.`name` = 'Liste newsletter' AND `zz_views`.`name` = 'id';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_lists_lang`.`description`' WHERE `zz_modules`.`name` = 'Liste newsletter' AND `zz_views`.`name` = 'Descrizione';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_lists_lang`.`name`' WHERE `zz_modules`.`name` = 'Liste newsletter' AND `zz_views`.`name` = 'Nome';
+
+-- Aggiunta tabella em_templates_lang
+CREATE TABLE IF NOT EXISTS `em_templates_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `name` VARCHAR(255) NOT NULL,
+    `subject` VARCHAR(255) NOT NULL,
+    `body` TEXT NOT NULL
+);
+ALTER TABLE `em_templates_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `em_templates_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `em_templates_lang` (`id`, `id_lang`, `id_record`, `name`, `subject`, `body`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name`, `subject`, `body` FROM `em_templates`;
+
+ALTER TABLE `em_templates`
+    DROP `name`,
+    DROP `subject`,
+    DROP `body`;
+
+ALTER TABLE `em_templates_lang` ADD CONSTRAINT `em_templates_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `em_templates`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+-- Allineamento vista Template email
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select| 
+FROM
+    `em_templates`
+    LEFT JOIN `em_templates_lang` ON (`em_templates_lang`.`id_record` = `em_templates`.`id` AND `em_templates_lang`.|lang|)
+    INNER JOIN `zz_modules` on `zz_modules`.`id` = `em_templates`.`id_module`
+WHERE
+    1=1 AND `deleted_at` IS NULL
+HAVING
+    2=2
+ORDER BY
+    `zz_modules`.`name`" WHERE `name` = 'Template email';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_templates_lang`.`subject`' WHERE `zz_modules`.`name` = 'Template email' AND `zz_views`.`name` = 'Oggetto';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_templates_lang`.`name`' WHERE `zz_modules`.`name` = 'Template email' AND `zz_views`.`name` = 'Nome';
+
+-- Allineamento vista Newsletter
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select| 
+FROM 
+    `em_newsletters` 
+    LEFT JOIN `em_templates` ON `em_newsletters`.`id_template` = `em_templates`.`id`
+    LEFT JOIN `em_templates_lang` ON (`em_templates_lang`.`id_record` = `em_templates`.`id` AND `em_templates_lang`.|lang|)
+    LEFT JOIN (SELECT `id_newsletter`, COUNT(*) AS totale FROM `em_newsletter_receiver` GROUP BY  `id_newsletter`) AS riceventi ON `riceventi`.`id_newsletter` = `em_newsletters`.`id`
+WHERE 
+    1=1 AND `em_newsletters`.`deleted_at` IS NULL
+HAVING 
+    2=2" WHERE `name` = 'Newsletter';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_templates_lang`.`name`' WHERE `zz_modules`.`name` = 'Newsletter' AND `zz_views`.`name` = 'Template';

@@ -60,7 +60,7 @@ class ButtonManager implements ManagerInterface
 
             $result = [
                 'link' => base_path().'/mail.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id='.$options['id'].$options['parameters'],
-                'title' => tr('Invia').' '.((strtoupper($template_email['name']) == $template_email['name']) ? $template_email['name'] : lcfirst($template_email['name'])),
+                'title' => tr('Invia').' '.((strtoupper($template_email->name) == $template_email->name) ? $template_email->name : lcfirst($template_email->name)),
                 'icon' => $template_email['icon'],
                 'type' => 'modal',
             ];
@@ -118,7 +118,9 @@ class ButtonManager implements ManagerInterface
         if ($options['type'] == 'print') {
             $results = \Prints::getModulePrints($options['id_module']);
         } elseif ($options['type'] == 'email') {
-            $results = TemplateEmail::where('id_module', $options['id_module'])->orderBy('name')->get()->toArray();
+            $results = (TemplateEmail::where('id_module', $options['id_module']))->with(['translations' => function($query) {
+                $query->orderBy('name');
+            }])->get()->toArray();
         } elseif ($options['type'] == 'sms') {
             $results = TemplateSMS::where('id_module', $options['id_module'])->orderBy('name')->get()->toArray();
         }

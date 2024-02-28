@@ -60,4 +60,67 @@ class Template extends Model
     {
         return $this->belongsToMany(PrintTemplate::class, 'em_print_template', 'id_template', 'id_print');
     }
+
+    /**
+     * Ritorna l'attributo name del template.
+     *
+     * @return string
+     */
+    public function getNameAttribute()
+    {
+        return database()->table($this->table.'_lang')
+            ->select('name')
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first()->name;
+    }
+
+    /**
+     * Ritorna l'attributo subject del template.
+     *
+     * @return string
+     */
+    public function getSubjectAttribute()
+    {
+        return database()->table($this->table.'_lang')
+            ->select('subject')
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first()->subject;
+    }
+
+    /**
+     * Ritorna l'attributo body del template.
+     *
+     * @return string
+     */
+    public function getBodyAttribute()
+    {
+        return database()->table($this->table.'_lang')
+            ->select('body')
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first()->body;
+    }
+
+    /**
+     * Ritorna l'id del template a partire dal nome.
+     *
+     * @param string $name il nome da ricercare
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getByName($name)
+    {
+        return database()->table($this->table.'_lang')
+            ->select('id_record')
+            ->where('name', '=', $name)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first();
+    }
+
+    public function translations()
+    {
+        return $this->hasMany(TemplateLang::class, 'id');
+    }
 }

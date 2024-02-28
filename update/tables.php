@@ -79,6 +79,7 @@ return [
     'em_print_template',
     'em_accounts',
     'em_templates',
+    'em_templates_lang',
     'em_newsletters',
     'em_mansioni_template',
     'em_lists',

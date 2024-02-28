@@ -22,13 +22,16 @@ include_once __DIR__.'/../../core.php';
 switch (post('op')) {
     case 'add':
         $dbo->insert('em_templates', [
-            'name' => post('name'),
             'id_module' => post('module'),
             'id_account' => post('smtp'),
-            'subject' => post('subject'),
         ]);
-
         $id_record = $dbo->lastInsertedID();
+        $dbo->insert('em_templates_lang', [
+            'name' => post('name'),
+            'subject' => post('subject'),
+            'id_lang' => setting('Lingua'),
+            'id_record' => $id_record
+        ]);
 
         flash()->info(tr('Aggiunto nuovo template per le email!'));
 
@@ -36,18 +39,21 @@ switch (post('op')) {
 
     case 'update':
         $dbo->update('em_templates', [
-            'name' => post('name'),
             'id_account' => post('smtp'),
             'icon' => post('icon'),
-            'subject' => post('subject'),
             'tipo_reply_to' => post('tipo_reply_to'),
             'reply_to' => post('reply_to'),
             'cc' => post('cc'),
             'bcc' => post('bcc'),
-            'body' => $_POST['body'], // post('body', true),
             'read_notify' => post('read_notify'),
-            'note_aggiuntive' => post('note_aggiuntive'),
+            'note_aggiuntive' => post('note_aggiuntive')
         ], ['id' => $id_record]);
+
+        $dbo->update('em_templates_lang', [
+            'name' => post('name'),
+            'subject' => post('subject'),
+            'body' => post('body')
+        ], ['id_record' => $id_record, 'id_lang' => (setting('Lingua'))]);
 
         $dbo->sync('em_print_template', ['id_template' => $id_record], ['id_print' => (array) post('prints')]);
         $dbo->sync('em_mansioni_template', ['id_template' => $id_record], ['idmansione' => (array) post('idmansioni')]);
@@ -57,22 +63,25 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $dbo->query('UPDATE em_templates SET deleted_at = NOW() WHERE id='.prepare($id_record));
+        $dbo->query('UPDATE `em_templates` SET `deleted_at` = NOW() WHERE `id`='.prepare($id_record));
 
         flash()->info(tr('Template delle email eliminato!'));
 
         break;
 
     case 'copy':
-        $dbo->query('CREATE TEMPORARY TABLE tmp SELECT * FROM em_templates WHERE id= '.prepare($id_record));
-        $dbo->query('ALTER TABLE tmp DROP id');
-        $dbo->query('INSERT INTO em_templates SELECT NULL,tmp. * FROM tmp');
-        $id_record = $dbo->lastInsertedID();
-        $dbo->query('DROP TEMPORARY TABLE tmp');
-
-        $dbo->query('UPDATE em_templates SET name = CONCAT (name, " (copia)"), predefined=0 WHERE id = '.prepare($id_record));
-
+        $database->beginTransaction();
+        $database->query('CREATE TEMPORARY TABLE `tmp` SELECT * FROM `em_templates` WHERE `id`= '.prepare($id_record));
+        $database->query('CREATE TEMPORARY TABLE `tmp_lang` SELECT * FROM `em_templates_lang` WHERE `id_record`= '.prepare($id_record));
+        $database->query('ALTER TABLE `tmp` DROP `id`');
+        $database->query('ALTER TABLE `tmp_lang` DROP `id_record`');
+        $database->query('INSERT INTO `em_templates` SELECT NULL,tmp. * FROM tmp');
+        $id_record = $database->lastInsertedID();
+        $database->query('INSERT INTO `em_templates_lang` SELECT NULL, id_lang, '.$id_record.',name, subject, body FROM tmp_lang');
+        $database->query('DROP TEMPORARY TABLE tmp');
+        $database->query('DROP TEMPORARY TABLE tmp_lang');
+        $database->query('UPDATE `em_templates_lang` SET `name` = CONCAT (`name`, " (copia)") WHERE id_record = '.prepare($id_record));
+        $database->query('UPDATE `em_templates` SET `predefined` = 0 WHERE `id` = '.prepare($id_record));
         flash()->info(tr('Template duplicato correttamente!'));
-
         break;
 }

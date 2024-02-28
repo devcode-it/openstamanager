@@ -471,7 +471,7 @@ $operations['send-mail'] = [
     'data' => [
         'title' => tr('Inviare mail?'),
         'msg' => tr('Per ciascuna attività selezionata, verrà inviata una mail').'<br><br>
-            {[ "type": "select", "label": "'.tr('Template').'", "name": "id_template", "required": "1", "values": "query=SELECT id, name AS descrizione FROM em_templates WHERE id_module='.prepare($id_module).' AND deleted_at IS NULL;" ]}',
+            {[ "type": "select", "label": "'.tr('Template').'", "name": "id_template", "required": "1", "values": "query=SELECT `em_templates`.`id`, `em_templates_lang`.`name` AS descrizione FROM `em_templates` LEFT JOIN `em_templates_lang` ON (`em_templates`.`id` = `em_templates_lang`.`id_record` AND `em_templates_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `id_module`='.prepare($id_module).' AND `deleted_at` IS NULL;" ]}',
         'button' => tr('Invia'),
         'class' => 'btn btn-lg btn-warning',
     ],

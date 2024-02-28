@@ -1171,3 +1171,23 @@ GROUP BY
     `co_pagamenti_lang`.`name`
 HAVING
     2=2" WHERE `name` = 'Pagamenti';
+
+-- Aggiunta tabella fe_natura_lang
+CREATE TABLE IF NOT EXISTS `fe_natura_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` varchar(5) NOT NULL,
+    `name` VARCHAR(255) NOT NULL
+);
+ALTER TABLE `fe_natura_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `fe_natura_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `fe_natura_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `codice`, `descrizione` FROM `fe_natura`;
+
+ALTER TABLE `fe_natura`
+    DROP `descrizione`;
+
+ALTER TABLE `fe_natura_lang` ADD CONSTRAINT `fe_natura_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `fe_natura`(`codice`) ON DELETE CASCADE ON UPDATE RESTRICT; 

@@ -94,6 +94,7 @@ return [
     'fe_modalita_pagamento',
     'fe_modalita_pagamento_lang',
     'fe_natura',
+    'fe_natura_lang',
     'fe_regime_fiscale',
     'fe_stati_documento',
     'fe_tipi_documento',

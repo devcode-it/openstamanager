@@ -42,4 +42,29 @@ if (isset($id_record)) {
             INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`idstatointervento`
     WHERE 
         `in_interventi`.`id`='.prepare($id_record));
+
+
+
+    //Pulsante Precedente e Successivo all'interno della scheda attività
+    $module_query = Util\Query::getQuery(Models\Module::getCurrent());
+
+    if (!empty(getSearchValues($id_module))) {
+        $having = [];
+        $search_values = getSearchValues($id_module);
+        foreach($search_values as $key => $value) {
+            $having[] = '`'.$key.'` LIKE "%'.$value.'%"';
+        }
+        foreach($having as $condition) {
+            $module_query = str_replace('2=2', '2=2 AND '.$condition,  $module_query);
+        }
+    }
+
+
+    $prev_query = str_replace('1=1', '1=1 AND `in_interventi`.`codice` = '.($record['codice']-1),  $module_query);
+    $prev = $database->FetchOne($prev_query)['id'];
+
+    $next_query = str_replace('1=1', '1=1 AND `in_interventi`.`codice` = '.($record['codice']+1),  $module_query);
+    $next = $database->FetchOne($next_query)['id'];
+
+
 }

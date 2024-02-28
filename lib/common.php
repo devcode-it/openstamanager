@@ -344,3 +344,26 @@ function checkPrefix($cellulare) {
     
     return false; // Nessun prefisso trovato
 }
+
+
+/**
+ * Funzione PHP che dato id_modulo restituisce un array contenente tutti i valori di "search_" per quel modulo
+ *
+ * @param int $id_module
+ * 
+ * @return array
+ */
+function getSearchValues($id_module) {
+    $result = [];
+
+    if(isset($_SESSION['module_'.$id_module])) {
+        // Itera su tutti i valori
+        foreach($_SESSION['module_'.$id_module] as $key => $value) {
+            // Controlla se la chiave inizia con "search_"
+            if (!empty($value) && string_starts_with($key, 'search_')) {
+                $result[str_replace(["search_", "-"], ["", " "], $key)] = $value;
+            }
+        }
+    }
+    return $result;
+}

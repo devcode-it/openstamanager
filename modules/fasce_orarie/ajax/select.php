@@ -21,17 +21,17 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'fasce_orarie':
-        $query = 'SELECT id, nome AS descrizione FROM in_fasceorarie |where| ORDER BY nome ASC';
+        $query = 'SELECT `in_fasceorarie`.`id`, `name` AS `descrizione` FROM `in_fasceorarie` LEFT JOIN `in_fasceorarie_lang` ON (`in_fasceorarie_lang`.`id_record` = `in_fasceorarie`.`id` AND `in_fasceorarie_lang`.`id_lang` = '.prepare(setting('Lingua')).') |where| ORDER BY `name` ASC';
 
         foreach ($elements as $element) {
-            $filter[] = 'id='.prepare($element);
+            $filter[] = '`in_fasceorarie`.`id`='.prepare($element);
         }
         if (empty($filter)) {
-            $where[] = 'in_fasceorarie.deleted_at IS NULL';
+            $where[] = '`in_fasceorarie`.`deleted_at` IS NULL';
         }
 
         if (!empty($search)) {
-            $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
         }
 
         break;

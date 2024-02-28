@@ -28,21 +28,22 @@ switch (post('op')) {
         $include_bank_holidays = post('include_bank_holidays');
         $is_predefined = post('is_predefined');
 
-        if ($dbo->fetchNum('SELECT * FROM `in_fasceorarie` WHERE `nome`='.prepare($nome).' AND `id`!='.prepare($id_record)) == 0) {
+        if ($dbo->fetchNum('SELECT * FROM `in_fasceorarie` LEFT JOIN `in_fasceorarie_lang` ON (`in_fasceorarie_lang`.`id_record` = `in_fasceorarie`.`id` AND `in_fasceorarie_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name`='.prepare($nome).' AND `in_fasceorarie`.`id`!='.prepare($id_record)) == 0) {
             if (!empty($is_predefined)) {
-                $dbo->query('UPDATE in_fasceorarie SET is_predefined = 0');
+                $dbo->query('UPDATE `in_fasceorarie` SET `is_predefined` = 0');
             }
 
             $dbo->update('in_fasceorarie', [
-                'nome' => $nome,
                 'giorni' => $giorni ? implode(',', $giorni) : null,
                 'ora_inizio' => $ora_inizio,
                 'ora_fine' => $ora_fine,
                 'include_bank_holidays' => $include_bank_holidays,
                 'is_predefined' => $is_predefined,
-            ], [
-                'id' => $id_record,
-            ]);
+            ], ['id' => $id_record]);
+
+            $dbo->update('in_fasceorarie_lang', [
+                'name' => $nome
+            ], ['id_record' => $id_record, 'id_lang' => setting('Lingua')]);
 
             flash()->info(tr('Salvataggio completato.'));
         } else {
@@ -58,14 +59,17 @@ switch (post('op')) {
         $ora_inizio = post('ora_inizio');
         $ora_fine = post('ora_fine');
 
-        if ($dbo->fetchNum('SELECT * FROM `in_fasceorarie` WHERE `nome`='.prepare($nome)) == 0) {
+        if ($dbo->fetchNum('SELECT * FROM `in_fasceorarie` LEFT JOIN `in_fasceorarie_lang` ON (`in_fasceorarie_lang`.`id_record` = `in_fasceorarie`.`id` AND `in_fasceorarie_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name`='.prepare($nome)) == 0) {
             $dbo->insert('in_fasceorarie', [
-                'nome' => $nome,
                 'ora_inizio' => $ora_inizio,
                 'ora_fine' => $ora_fine,
             ]);
-
             $id_record = $dbo->lastInsertedID();
+            $dbo->insert('in_fasceorarie_lang', [
+                'name' => $nome,
+                'id_record' => $id_record,
+                'id_lang' => setting('Lingua'),
+            ]);
 
             $tipi_intervento = $dbo->select('in_tipiintervento', '*');
             foreach ($tipi_intervento as $tipo_intervento) {

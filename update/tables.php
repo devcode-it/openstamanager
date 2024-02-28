@@ -113,6 +113,7 @@ return [
     'in_tipiintervento',
     'in_vociservizio',
     'in_fasceorarie',
+    'in_fasceorarie_lang',
     'in_fasceorarie_tipiintervento',
     'mg_articoli',
     'mg_fornitore_articolo',

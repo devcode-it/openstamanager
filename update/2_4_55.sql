@@ -1256,3 +1256,38 @@ ALTER TABLE `fe_tipi_documento`
     DROP `descrizione`;
 
 ALTER TABLE `fe_tipi_documento_lang` ADD CONSTRAINT `fe_tipi_documento_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `fe_tipi_documento`(`codice`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+-- Aggiunta tabella in_fasceorarie_lang
+CREATE TABLE IF NOT EXISTS `in_fasceorarie_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `name` VARCHAR(255) NOT NULL
+);
+ALTER TABLE `in_fasceorarie_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `in_fasceorarie_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `in_fasceorarie_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `nome` FROM `in_fasceorarie`;
+
+ALTER TABLE `in_fasceorarie`
+    DROP `nome`;
+
+ALTER TABLE `in_fasceorarie` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT; 
+
+ALTER TABLE `in_fasceorarie_lang` ADD CONSTRAINT `in_fasceorarie_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `in_fasceorarie`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+-- Allineamento vista Fasce orarie
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select|
+FROM 
+    `in_fasceorarie`
+    LEFT JOIN `in_fasceorarie_lang` ON (`in_fasceorarie_lang`.`id_record` = `in_fasceorarie`.`id` AND `in_fasceorarie_lang`.|lang|)
+WHERE 
+    1=1 AND deleted_at IS NULL 
+HAVING 
+    2=2" WHERE `name` = 'Fasce orarie';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`in_fasceorarie_lang`.`name`' WHERE `zz_modules`.`name` = 'Fasce orarie' AND `zz_views`.`name` = 'nOME';

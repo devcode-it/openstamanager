@@ -38,7 +38,7 @@ use Modules\Pagamenti\Pagamento;
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-md-6">
-					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$name$" ]}
 				</div>
 
                 <div class="col-md-6">
@@ -140,7 +140,7 @@ function aggiungiData() {
 
 <?php
 
-$elementi = $dbo->fetchArray('SELECT in_tipiintervento.codice, in_tipiintervento.descrizione, in_tipiintervento.idtipointervento FROM in_tipiintervento LEFT JOIN in_fasceorarie_tipiintervento ON in_tipiintervento.idtipointervento=in_fasceorarie_tipiintervento.idtipointervento WHERE in_fasceorarie_tipiintervento.idfasciaoraria='.prepare($id_record));
+$elementi = $dbo->fetchArray('SELECT `in_tipiintervento`.`codice`, `in_tipiintervento`.`descrizione`, `in_tipiintervento`.`idtipointervento` FROM `in_tipiintervento` LEFT JOIN `in_fasceorarie_tipiintervento` ON `in_tipiintervento`.`idtipointervento`=`in_fasceorarie_tipiintervento`.`idtipointervento` WHERE `in_fasceorarie_tipiintervento`.`idfasciaoraria`='.prepare($id_record));
 
 if (!empty($elementi)) {
     echo '

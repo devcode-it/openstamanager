@@ -92,6 +92,7 @@ return [
     'em_newsletter_receiver',
     'fe_causali_pagamento_ritenuta',
     'fe_modalita_pagamento',
+    'fe_modalita_pagamento_lang',
     'fe_natura',
     'fe_regime_fiscale',
     'fe_stati_documento',

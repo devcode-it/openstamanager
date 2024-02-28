@@ -36,7 +36,7 @@ include_once __DIR__.'/../../core.php';
                 </div>
 
                 <div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Codice Modalità (Fatturazione Elettronica)'); ?>", "name": "codice_modalita_pagamento_fe", "value": "$codice_modalita_pagamento_fe$", "values": "query=SELECT codice as id, CONCAT(codice, ' - ', descrizione) AS descrizione FROM fe_modalita_pagamento", "required": 1, "help": "<?php echo tr('Impostando il codice MP12 il pagamento viene considerato di tipo Ri.Ba.: nelle fatture verrà visualizzata la banca della controparte'); ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Codice Modalità (Fatturazione Elettronica)'); ?>", "name": "codice_modalita_pagamento_fe", "value": "$codice_modalita_pagamento_fe$", "values": "query=SELECT `codice` as id, CONCAT(`codice`, ' - ', `name`) AS descrizione FROM `fe_modalita_pagamento` LEFT JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento_lang`.`id_record`=`fe_modalita_pagamento`.`codice` AND `fe_modalita_pagamento_lang`.`id_lang`=<?php echo prepare(setting('Lingua')); ?>)", "required": 1, "help": "<?php echo tr('Impostando il codice MP12 il pagamento viene considerato di tipo Ri.Ba.: nelle fatture verrà visualizzata la banca della controparte'); ?>" ]}
 				</div>
             </div>
 

@@ -291,20 +291,6 @@ ALTER TABLE `co_pagamenti`
 
 ALTER TABLE `co_pagamenti_lang` ADD CONSTRAINT `co_pagamenti_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `co_pagamenti`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
--- Allineamento vista Pagamenti
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select|
-FROM
-    `co_pagamenti`
-	LEFT JOIN (SELECT `fe_modalita_pagamento`.`codice`, CONCAT(`fe_modalita_pagamento`.`codice`, ' - ', `fe_modalita_pagamento`.`descrizione`) AS tipo FROM `fe_modalita_pagamento`) AS pagamenti ON `pagamenti`.`codice` = `co_pagamenti`.`codice_modalita_pagamento_fe`
-    LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND |lang|)
-WHERE
-    1=1
-GROUP BY
-    `co_pagamenti_lang`.`name`
-HAVING
-    2=2" WHERE `name` = 'Pagamenti';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_pagamenti_lang`.`name`' WHERE `zz_modules`.`name` = 'Pagamenti' AND `zz_views`.`name` = 'descrizione';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'COUNT(`co_pagamenti_lang`.`name`)' WHERE `zz_modules`.`name` = 'Pagamenti' AND `zz_views`.`name` = 'Rate';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_pagamenti`.`id`' WHERE `zz_modules`.`name` = 'Pagamenti' AND `zz_views`.`name` = 'id';
@@ -1150,3 +1136,38 @@ WHERE
 HAVING 
     2=2" WHERE `name` = 'Newsletter';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_templates_lang`.`name`' WHERE `zz_modules`.`name` = 'Newsletter' AND `zz_views`.`name` = 'Template';
+
+-- Aggiunta tabella fe_modalita_pagamento_lang
+CREATE TABLE IF NOT EXISTS `fe_modalita_pagamento_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` varchar(4) NOT NULL,
+    `name` VARCHAR(255) NOT NULL
+);
+ALTER TABLE `fe_modalita_pagamento_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `fe_modalita_pagamento_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `fe_modalita_pagamento_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `codice`, `descrizione` FROM `fe_modalita_pagamento`;
+
+ALTER TABLE `fe_modalita_pagamento`
+    DROP `descrizione`;
+
+ALTER TABLE `fe_modalita_pagamento_lang` ADD CONSTRAINT `fe_modalita_pagamento_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `fe_modalita_pagamento`(`codice`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+-- Allineamento vista Pagamenti
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select|
+FROM
+    `co_pagamenti`
+	LEFT JOIN (SELECT `fe_modalita_pagamento`.`codice`, CONCAT(`fe_modalita_pagamento`.`codice`, ' - ', `fe_modalita_pagamento_lang`.`name`) AS tipo FROM `fe_modalita_pagamento` LEFT JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento`.`codice` = `fe_modalita_pagamento_lang`.`id_record` AND `fe_modalita_pagamento_lang`.|lang|)) AS pagamenti ON `pagamenti`.`codice` = `co_pagamenti`.`codice_modalita_pagamento_fe`
+    LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.|lang|)
+WHERE
+    1=1
+GROUP BY
+    `co_pagamenti_lang`.`name`
+HAVING
+    2=2" WHERE `name` = 'Pagamenti';

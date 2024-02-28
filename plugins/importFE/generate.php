@@ -201,7 +201,7 @@ if (!empty($pagamenti)) {
 
         // Scadenze di pagamento
         foreach ($rate as $rata) {
-            $descrizione = !empty($rata['ModalitaPagamento']) ? $database->fetchOne('SELECT descrizione FROM fe_modalita_pagamento WHERE codice = '.prepare($rata['ModalitaPagamento']))['descrizione'] : '';
+            $descrizione = !empty($rata['ModalitaPagamento']) ? $database->fetchOne('SELECT `name` FROM `fe_modalita_pagamento` LEFT JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento_lang`.`id_record`=`fe_modalita_pagamento`.`codice` AND `fe_modalita_pagamento_lang`.`id_lang`='.prepare(setting('Lingua')).') WHERE `codice` = '.prepare($rata['ModalitaPagamento']))['descrizione'] : '';
             $data = !empty($rata['DataScadenzaPagamento']) ? FatturaElettronica::parseDate($rata['DataScadenzaPagamento']) : '';
 
             echo '

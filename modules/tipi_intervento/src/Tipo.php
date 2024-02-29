@@ -42,14 +42,13 @@ class Tipo extends Model
         $model = new static();
 
         $model->codice = $codice;
-        $model->descrizione = $descrizione;
+        $model->name = $descrizione;
 
         // Salvataggio delle informazioni
         $model->save();
 
         return $model;
     }
-
     public function fixTecnici()
     {
         // Fix per le relazioni con i tecnici
@@ -60,17 +59,7 @@ class Tipo extends Model
     }
 
     /**
-     * Restituisce l'identificativo.
-     *
-     * @return string
-     */
-    public function getIdAttribute()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Imposta il tempo stamdard per il tipo di intervento.
+     * Imposta il tempo standard per il tipo di intervento.
      *
      * @param string $value
      */

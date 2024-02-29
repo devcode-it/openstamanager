@@ -1425,6 +1425,8 @@ INSERT INTO `mg_articoli_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NUL
 ALTER TABLE `mg_articoli`
     DROP `descrizione`;
 
+ALTER TABLE `mg_articoli_lang` ADD CONSTRAINT `mg_articoli_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `mg_articoli`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
 -- Allineamento vista Articoli
 UPDATE `zz_modules` SET `options` = "
 SELECT
@@ -1447,3 +1449,51 @@ HAVING
 ORDER BY
     `mg_articoli_lang`.`name`" WHERE `name` = 'Articoli';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_articoli_lang`.`name`' WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = 'Descrizione';
+
+-- Aggiunta tabella mg_attributi_lang
+CREATE TABLE IF NOT EXISTS `mg_attributi_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `name` VARCHAR(255) NOT NULL,
+    `title` VARCHAR(255) NOT NULL
+);
+ALTER TABLE `mg_attributi_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `mg_attributi_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `mg_attributi_lang` (`id`, `id_lang`, `id_record`, `name`, `title`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `nome`, `titolo` FROM `mg_attributi`;
+
+ALTER TABLE `mg_attributi`
+    DROP `nome`,
+    DROP `titolo`;
+
+ALTER TABLE `mg_attributi_lang` ADD CONSTRAINT `mg_attributi_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `mg_attributi`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+-- Allineamento vista Attributi Combinazioni
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select|
+FROM 
+    `mg_attributi` 
+    LEFT JOIN `mg_attributi_lang` ON (`mg_attributi`.`id` = `mg_attributi_lang`.`id_record` AND `mg_attributi_lang`.|lang|)
+WHERE 
+    1=1 AND 
+    `mg_attributi`.`deleted_at` IS NULL 
+HAVING 
+    2=2" WHERE `name` = 'Attributi Combinazioni';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_attributi_lang`.`name`' WHERE `zz_modules`.`name` = 'Attributi Combinazioni' AND `zz_views`.`name` = 'Nome';
+
+-- Allineamento vista Combinazioni
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select|
+FROM 
+    `mg_combinazioni` 
+WHERE 
+    1=1 AND 
+    `mg_combinazioni`.`deleted_at` IS NULL 
+HAVING 
+    2=2" WHERE `name` = 'Combinazioni';

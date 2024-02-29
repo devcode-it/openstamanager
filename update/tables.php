@@ -136,6 +136,7 @@ return [
     'my_impianti_interventi',
     'mg_articolo_attributo',
     'mg_attributi',
+    'mg_attributi_lang',
     'mg_attributo_combinazione',
     'mg_combinazioni',
     'mg_valori_attributi',

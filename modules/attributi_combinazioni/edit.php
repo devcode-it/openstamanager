@@ -1,4 +1,22 @@
 <?php
+/*
+ * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
+ * Copyright (C) DevCode s.r.l.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 
 include_once __DIR__.'/../../core.php';
 
@@ -15,11 +33,11 @@ echo '
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-6">
-                    {[ "type": "span", "label": "'.tr('Nome').'", "name": "nome", "value": "'.$attributo->nome.'", "help": "'.tr("Nome univoco dell'attributo").'" ]}
+                    {[ "type": "span", "label": "'.tr('Nome').'", "name": "nome", "value": "'.$attributo->name.'", "help": "'.tr("Nome univoco dell'attributo").'" ]}
                 </div>
 
                 <div class="col-md-6">
-                    {[ "type": "text", "label": "'.tr('Titolo').'", "name": "titolo", "value": "'.$attributo->titolo.'", "required": 1, "help": "'.tr("Nome visibile dell'attributo").'" ]}
+                    {[ "type": "text", "label": "'.tr('Titolo').'", "name": "titolo", "value": "'.$attributo->title.'", "required": 1, "help": "'.tr("Nome visibile dell'attributo").'" ]}
                 </div>
             </div>
         </div>

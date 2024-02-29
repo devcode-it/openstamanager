@@ -41,19 +41,21 @@ if (!empty($id_record)) {
 }
 // Rimozione della condizione deleted_at IS NULL per visualizzare anche i record eliminati
 if (!empty($query)) {
-    if (preg_match('/[`]*([a-z0-9_]*)[`]*[\.]*([`]*deleted_at[`]* IS NULL)/i', $query, $m)) {
+    if (preg_match('/[`]*([a-z0-9_]*)[`]*[\.]*([`]*deleted_at[`]* IS NULL)/si', $query, $m)) {
+        $query = str_replace(["\n", "\t"], ' ', $query);
         $conditions_to_remove = [];
-
         $condition = trim($m[0]);
 
         if (!empty($table_name)) {
             $condition = $table_name.'.'.$condition;
         }
 
-        $conditions_to_remove[] = ' AND '.$condition;
-        $conditions_to_remove[] = $condition.' AND ';
+        $conditions_to_remove[] = ' AND\s*'.$condition;
+        $conditions_to_remove[] = $condition.'\s*AND ';
 
-        $query = str_replace($conditions_to_remove, '', $query);
+        foreach ($conditions_to_remove as $condition_to_remove) {
+            $query = preg_replace('/'.$condition_to_remove.'/si', '', $query);
+        }
         $query = str_replace($condition, '', $query);
     }
 }

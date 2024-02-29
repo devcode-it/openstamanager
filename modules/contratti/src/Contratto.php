@@ -104,10 +104,10 @@ class Contratto extends Document
     {
         $database = database();
 
-        $presenti = $database->fetchArray('SELECT idtipointervento AS id FROM co_contratti_tipiintervento WHERE idcontratto = '.prepare($this->id));
+        $presenti = $database->fetchArray('SELECT idtipointervento FROM co_contratti_tipiintervento WHERE idcontratto = '.prepare($this->id));
 
         // Aggiunta associazioni costi unitari al contratto
-        $tipi = TipoSessione::whereNotIn('idtipointervento', array_column($presenti, 'id'))->get();
+        $tipi = TipoSessione::whereNotIn('id', array_column($presenti, 'idtipointervento'))->get();
 
         foreach ($tipi as $tipo) {
             $database->insert('co_contratti_tipiintervento', [

@@ -56,7 +56,7 @@ class Ordine extends Document
     {
         $model = new static();
 
-        $stato_documento = (new Stato())->getByName('Bozza')->id_record;
+        $stato_documento = Stato::where('descrizione', 'Bozza')->first();
 
         $direzione = $tipo_documento->dir;
         $id_segment = $id_segment ?: getSegmentPredefined($model->getModule()->id);

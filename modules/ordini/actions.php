@@ -622,7 +622,6 @@ switch (post('op')) {
             $articolo = Articolo::build($ordine, $originale);
             $qta = 1;
 
-            $articolo->name = $originale->name;
             $articolo->um = $originale->um;
             $articolo->qta = 1;
             $articolo->costo_unitario = $originale->prezzo_acquisto;

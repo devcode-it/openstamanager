@@ -41,19 +41,16 @@ class Articolo extends Model
 
     protected $table = 'mg_articoli';
 
-    public static function build($codice, $nome, ?Categoria $categoria = null, ?Categoria $sottocategoria = null)
+    public static function build($codice, ?Categoria $categoria = null, ?Categoria $sottocategoria = null)
     {
         $model = new static();
 
         $model->codice = $codice;
-        $model->descrizione = $nome;
-
         $model->abilita_serial = false;
         $model->attivo = true;
 
         $model->categoria()->associate($categoria);
         $model->sottocategoria()->associate($sottocategoria);
-
         $model->save();
 
         return $model;
@@ -229,16 +226,19 @@ class Articolo extends Model
 
     public function getNomeVarianteAttribute()
     {
-        $valori = database()->fetchArray("SELECT CONCAT(`mg_attributi`.`titolo`, ': ', `mg_valori_attributi`.`nome`) AS nome
-        FROM `mg_articolo_attributo`
+        $valori = database()->fetchArray("SELECT 
+            CONCAT(`mg_attributi`.`titolo`, ': ', `mg_valori_attributi`.`nome`) AS nome
+        FROM 
+            `mg_articolo_attributo`
             INNER JOIN `mg_valori_attributi` ON `mg_valori_attributi`.`id` = `mg_articolo_attributo`.`id_valore`
             INNER JOIN `mg_attributi` ON `mg_attributi`.`id` = `mg_valori_attributi`.`id_attributo`
-
             INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `mg_articolo_attributo`.`id_articolo`
             INNER JOIN `mg_combinazioni` ON `mg_combinazioni`.`id` = `mg_articoli`.`id_combinazione`
             INNER JOIN `mg_attributo_combinazione` ON `mg_attributo_combinazione`.`id_combinazione` = `mg_combinazioni`.`id` AND `mg_attributo_combinazione`.`id_attributo` = `mg_attributi`.`id`
-        WHERE `mg_articoli`.`id` = ".prepare($this->id).'
-        ORDER BY `mg_attributo_combinazione`.`order`');
+        WHERE 
+            `mg_articoli`.`id` = ".prepare($this->id).'
+        ORDER BY 
+            `mg_attributo_combinazione`.`order`');
 
         return implode(', ', array_column($valori, 'nome'));
     }
@@ -335,6 +335,36 @@ class Articolo extends Model
     {
         return $this->dettaglioFornitori()
             ->where('id_fornitore', $id_fornitore)
+            ->first();
+    }
+
+    /**
+     * Ritorna l'attributo name dell'articolo.
+     *
+     * @return string
+     */
+    public function getNameAttribute()
+    {
+        return database()->table($this->table.'_lang')
+            ->select('name')
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first()->name;
+    }
+
+    /**
+     * Ritorna l'id dell'articoloa partire dal nome.
+     *
+     * @param string $name il nome da ricercare
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getByName($name)
+    {
+        return database()->table($this->table.'_lang')
+            ->select('id_record')
+            ->where('name', '=', $name)
+            ->where('id_lang', '=', setting('Lingua'))
             ->first();
     }
 }

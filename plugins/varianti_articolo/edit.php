@@ -50,7 +50,7 @@ foreach ($articoli as $articolo) {
                     <td><img class="img-thumbnail img-responsive" src="'.$articolo->image.'"></td>
                     <td>'.$articolo->nome_variante.'</td>
                     <td>
-                        '.Modules::link('Articoli', $articolo->id, $articolo->codice.' - '.$articolo->descrizione).'
+                        '.Modules::link('Articoli', $articolo->id, $articolo->codice.' - '.$articolo->name).'
                         '.($articolo->id == $articolo_originale->id ? '<span class="badge pull-right">'.tr('Articolo corrente').'</span>' : '').'
                     </td>
                 </tr>';

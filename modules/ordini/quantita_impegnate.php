@@ -49,7 +49,7 @@ foreach ($articoli as $elenco) {
     $articolo = $elenco->first()->articolo;
 
     $codice = $articolo ? $articolo->codice : tr('Articolo eliminato');
-    $descrizione = $articolo ? $articolo->descrizione : $elenco->first()->descrizione;
+    $descrizione = $articolo ? $articolo->name : $elenco->first()->name;
 
     $qta_impegnata = $database->fetchOne("SELECT SUM(qta) as qta
         FROM or_righe_ordini

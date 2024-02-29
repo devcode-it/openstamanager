@@ -118,6 +118,7 @@ return [
     'in_fasceorarie_lang',
     'in_fasceorarie_tipiintervento',
     'mg_articoli',
+    'mg_articoli_lang',
     'mg_fornitore_articolo',
     'mg_categorie',
     'mg_causali_movimenti',

@@ -115,7 +115,7 @@ class CSV extends CSVImporter
         if (!empty($articolo_orig)) {
             $articolo = Articolo::build($preventivo, $articolo_orig);
 
-            $articolo->descrizione = $articolo_orig->descrizione;
+            $articolo->name = $articolo_orig->name;
             $articolo->um = $articolo_orig->um ?: null;
             $articolo->data_evasione = new Carbon($record['data_evasione']) ?: null;
 

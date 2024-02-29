@@ -110,7 +110,7 @@ class Combinazione extends Model
                     $articolo->save();
                 }
             }
-            $articolo->descrizione = $this->nome.' ['.implode(', ', $variante).']';
+            $articolo->name = $this->nome.' ['.implode(', ', $variante).']';
             $articolo->codice = $this->codice.'-'.implode('|', $variante);
             $articolo->save();
         }

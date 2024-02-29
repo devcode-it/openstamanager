@@ -116,7 +116,7 @@ foreach ($elenchi as $elenco) {
         echo '
                 <tr class="riga-componente" data-id="'.$componente->id.'">
                     <td class="text-center">#'.$componente->id.'</td>
-                    <td class="text-center">'.$articolo->codice.' - '.$articolo->descrizione.'</td>
+                    <td class="text-center">'.$articolo->codice.' - '.$articolo->name.'</td>
                     <td class="text-center">'.$data.'</td>
                     <td class="text-center">'.dateFormat($componente->data_registrazione).'</td>
                     <td class="text-center">

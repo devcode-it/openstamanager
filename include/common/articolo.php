@@ -23,14 +23,17 @@ $id_listino = $dbo->selectOne('an_anagrafiche', 'id_listino', ['idanagrafica' =>
 
 // Articolo
 $database = database();
-$articolo = $database->fetchOne('SELECT mg_articoli.id,
-    mg_fornitore_articolo.id AS id_dettaglio_fornitore,
-    IFNULL(mg_fornitore_articolo.codice_fornitore, mg_articoli.codice) AS codice,
-    IFNULL(mg_fornitore_articolo.descrizione, mg_articoli.descrizione) AS descrizione,
-    IFNULL(mg_fornitore_articolo.qta_minima, 0) AS qta_minima
-FROM mg_articoli
-    LEFT JOIN mg_fornitore_articolo ON mg_fornitore_articolo.id_articolo = mg_articoli.id AND mg_fornitore_articolo.id = '.prepare($result['id_dettaglio_fornitore']).'
-WHERE mg_articoli.id = '.prepare($result['idarticolo']));
+$articolo = $database->fetchOne('SELECT 
+        `mg_articoli`.`id`,
+        `mg_fornitore_articolo`.`id` AS id_dettaglio_fornitore,
+        IFNULL(`mg_fornitore_articolo`.`codice_fornitore`, `mg_articoli`.`codice`) AS codice,
+        IFNULL(`mg_fornitore_articolo`.`descrizione`, `mg_articoli_lang`.`name`) AS descrizione,
+        IFNULL(`mg_fornitore_articolo`.`qta_minima`, 0) AS qta_minima
+    FROM `mg_articoli`
+        LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = "'.prepare(setting('Lingua')).')
+        LEFT JOIN `mg_fornitore_articolo` ON `mg_fornitore_articolo`.`id_articolo` = `mg_articoli`.`id` AND `mg_fornitore_articolo`.`id` = '.prepare($result['id_dettaglio_fornitore']).'
+    WHERE 
+        `mg_articoli`.`id` = '.prepare($result['idarticolo']));
 
 $qta_minima = $articolo['qta_minima'];
 

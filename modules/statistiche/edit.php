@@ -271,7 +271,7 @@ $articoli = $dbo->fetchArray("SELECT
         SUM(IF(`reversed`=1, -(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))) AS totale, 
         `mg_articoli`.`id`, 
         `mg_articoli`.`codice`, 
-        `mg_articoli`.`descrizione`, 
+        `mg_articoli_lang`.`name`, 
         `mg_articoli`.`um` 
     FROM 
         `co_documenti` 
@@ -280,6 +280,7 @@ $articoli = $dbo->fetchArray("SELECT
         INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` 
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` 
         INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`idarticolo` 
+        LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record`=`mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '".prepare(setting('Lingua')).")'
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id` 
     WHERE 
         `co_tipidocumento`.`dir`='entrata' 

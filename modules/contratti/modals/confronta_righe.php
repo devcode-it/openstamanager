@@ -28,10 +28,16 @@ $id_anagrafica = $contratto->idanagrafica;
 $righe = $_GET['righe'];
 
 $righe = $dbo->fetchArray(
-    'SELECT mg_articoli.descrizione, mg_articoli.codice, co_righe_contratti.*
-    FROM co_righe_contratti
-    JOIN mg_articoli ON mg_articoli.id = co_righe_contratti.idarticolo
-    WHERE co_righe_contratti.id IN ('.$righe.')'
+    'SELECT 
+        `mg_articoli_lang`.`name`, 
+        `mg_articoli`.`codice`, 
+        `co_righe_contratti`.*
+    FROM 
+        `co_righe_contratti`
+        INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_contratti`.`idarticolo`
+        LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+    WHERE 
+        `co_righe_contratti`.`id` IN ('.$righe.')'
 );
 ?>
 <form action="" method="post" id="add-form">
@@ -87,9 +93,9 @@ $righe = $dbo->fetchArray(
                     WHERE
                         `co_documenti`.`idanagrafica` ='.prepare($id_anagrafica).' AND `co_righe_documenti`.`idarticolo` ='.prepare($riga['idarticolo']).' AND `co_statidocumento_lang`.`name` IN ("Emessa", "Pagato", "Parzialmente pagato")
                     GROUP BY 
-                        mg_articoli.id, co_righe_documenti.id
+                        `mg_articoli`.`id`, `co_righe_documenti`.`id`
                     ORDER BY
-                        updated_at DESC'
+                        `updated_at` DESC'
                 )[0];
                 ?>
 

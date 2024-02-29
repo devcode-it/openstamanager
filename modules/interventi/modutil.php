@@ -74,7 +74,7 @@ if (!function_exists('link_componente_to_articolo')) {
         $data = $intervento->inizio;
 
         // Se l'articolo aggiunto è collegato a un componente, aggiungo il componente all'impianto selezionato
-        $componente_articolo = $dbo->fetchOne('SELECT componente_filename, contenuto FROM mg_articoli WHERE id = '.prepare($id_articolo));
+        $componente_articolo = $dbo->fetchOne('SELECT `componente_filename`, `contenuto` FROM `mg_articoli` WHERE `id` = '.prepare($id_articolo));
         if (!empty($componente_articolo) && !empty($componente_articolo['componente_filename'])) {
             $contenuto_ini = Ini::read($componente_articolo['contenuto']);
             $nome_componente = Ini::getValue($contenuto_ini, 'Nome');

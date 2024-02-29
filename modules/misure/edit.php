@@ -41,12 +41,12 @@ include_once __DIR__.'/../../core.php';
 </form>
 
 <?php
-$righe = $dbo->fetchNum('SELECT id FROM co_righe_documenti WHERE um='.prepare($record['valore']).'
-			 UNION SELECT id FROM dt_righe_ddt WHERE um='.prepare($record['valore']).'
-			 UNION SELECT id FROM or_righe_ordini WHERE um='.prepare($record['valore']).'
-			 UNION SELECT id FROM co_righe_contratti WHERE um='.prepare($record['valore']).'
-			 UNION SELECT id FROM mg_articoli WHERE um='.prepare($record['valore']).'
-			 UNION SELECT id FROM co_righe_preventivi WHERE um='.prepare($record['valore']));
+$righe = $dbo->fetchNum('SELECT `id` FROM `co_righe_documenti` WHERE `um`='.prepare($record['valore']).'
+	UNION SELECT `id` FROM `dt_righe_ddt` WHERE `um`='.prepare($record['valore']).'
+	UNION SELECT `id` FROM `or_righe_ordini` WHERE `um`='.prepare($record['valore']).'
+	UNION SELECT `id` FROM `co_righe_contratti` WHERE `um`='.prepare($record['valore']).'
+	UNION SELECT `id` FROM `mg_articoli` WHERE `um`='.prepare($record['valore']).'
+	UNION SELECT `id` FROM `co_righe_preventivi` WHERE `um`='.prepare($record['valore']));
 
 if (!empty($righe)) {
     echo '

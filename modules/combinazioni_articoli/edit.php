@@ -83,7 +83,7 @@ foreach ($articoli as $articolo) {
                 <tr data-id="'.$articolo->id.'">
                     <td><img class="img-thumbnail img-responsive" src="'.$articolo->image.'"></td>
                     <td>'.$articolo->nome_variante.'</td>
-                    <td>'.Modules::link('Articoli', $articolo->id, $articolo->codice.' - '.$articolo->descrizione).'</td>
+                    <td>'.Modules::link('Articoli', $articolo->id, $articolo->codice.' - '.$articolo->name).'</td>
                     <td class="text-center">
                         <button type="button" class="btn btn-warning btn-xs" onclick="modificaVariante('.$articolo->id.')">
                             <i class="fa fa-edit"></i> '.tr('Modifica').'

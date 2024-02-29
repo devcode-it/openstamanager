@@ -69,7 +69,7 @@ foreach ($moduli as $module_id => $note) {
 
         $documento = '';
         if ($modulo->title == 'Attività') {
-            $documento = $dbo->fetchOne("SELECT in_interventi.codice AS numero, ragione_sociale FROM zz_notes INNER JOIN in_interventi ON (in_interventi.id = zz_notes.id_record AND zz_notes.id_module=(SELECT id FROM zz_modules WHERE title = 'Attività')) INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = in_interventi.idanagrafica WHERE zz_notes.id = ".$nota->id);
+            $documento = $dbo->fetchOne("SELECT `in_interventi`.`codice` AS numero, `ragione_sociale` FROM `zz_notes` INNER JOIN `in_interventi` ON (`in_interventi`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id` FROM `zz_modules` WHERE `title` = 'Attività')) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `in_interventi`.`idanagrafica` WHERE `zz_notes`.`id` = ".$nota->id);
         } elseif ($modulo->title == 'Fatture di vendita') {
             $documento = $dbo->fetchOne("SELECT numero_esterno AS numero, ragione_sociale FROM zz_notes INNER JOIN co_documenti ON (co_documenti.id = zz_notes.id_record AND zz_notes.id_module=(SELECT id FROM zz_modules WHERE title = 'Fatture di vendita')) INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = co_documenti.idanagrafica WHERE zz_notes.id = ".$nota->id);
         } elseif ($modulo->title == 'Fatture di acquisto') {
@@ -87,7 +87,7 @@ foreach ($moduli as $module_id => $note) {
         } elseif ($modulo->title == 'Ddt in entrata') {
             $documento = $dbo->fetchOne("SELECT numero, ragione_sociale FROM zz_notes INNER JOIN dt_ddt ON (dt_ddt.id = zz_notes.id_record AND zz_notes.id_module=(SELECT id FROM zz_modules WHERE title = 'Ddt in uscita')) INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = dt_ddt.idanagrafica WHERE zz_notes.id = ".$nota->id);
         } elseif ($modulo->title == 'Articoli') {
-            $documento = $dbo->fetchOne("SELECT codice AS numero FROM zz_notes INNER JOIN mg_articoli ON (mg_articoli.id = zz_notes.id_record AND zz_notes.id_module=(SELECT id FROM zz_modules WHERE title = 'Articoli')) WHERE zz_notes.id = ".$nota->id);
+            $documento = $dbo->fetchOne("SELECT `codice` AS numero FROM `zz_notes` INNER JOIN `mg_articoli` ON (`mg_articoli`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id` FROM `zz_modules` WHERE `title` = 'Articoli')) WHERE `zz_notes`.`id` = ".$nota->id);
         } elseif ($modulo->title == 'Impianti') {
             $documento = $dbo->fetchOne("SELECT matricola AS numero, ragione_sociale FROM zz_notes INNER JOIN my_impianti ON (my_impianti.id = zz_notes.id_record AND zz_notes.id_module=(SELECT id FROM zz_modules WHERE title = 'Impianti')) INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = my_impianti.idanagrafica WHERE zz_notes.id = ".$nota->id);
         } elseif ($modulo->title == 'Anagrafiche') {

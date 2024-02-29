@@ -35,20 +35,26 @@ if ($search_nome) {
 }
 
 // Ciclo tra gli articoli selezionati
-$query = '
-    SELECT
-        an_sedi.targa, an_sedi.nome,
-        mg_articoli.codice, mg_articoli.descrizione,
-        (SELECT mg_categorie.nome FROM mg_categorie WHERE mg_categorie.id=mg_articoli.id_sottocategoria) AS subcategoria,
-        movimenti.qta,
-        mg_articoli.um
-        FROM an_sedi
-        INNER JOIN (SELECT SUM(mg_movimenti.qta) AS qta, idarticolo, idsede FROM mg_movimenti GROUP BY idsede,idarticolo) AS movimenti ON movimenti.idsede = an_sedi.id
-        INNER JOIN mg_articoli ON movimenti.idarticolo = mg_articoli.id
-    WHERE 
+$query = 'SELECT
+        `an_sedi`.`targa`,
+        `an_sedi`.`nome`,
+        `mg_articoli`.`codice`,
+        `mg_articoli_lang`.`name` as descrizione,
+        `mg_categorie`.`nome` AS subcategoria,
+        SUM(`mg_movimenti`.`qta`) AS qta,
+        `mg_articoli`.`um`
+    FROM 
+        `an_sedi`
+        INNER JOIN `mg_movimenti` ON `mg_movimenti`.`idsede` = `an_sedi`.`id`
+        INNER JOIN `mg_articoli` ON `mg_movimenti`.`idarticolo` = `mg_articoli`.`id`
+        LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id`=`mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+        LEFT JOIN `mg_categorie` ON `mg_categorie`.`id` = `mg_articoli`.`id_sottocategoria`
+    WHERE
         '.implode(' AND ', $where).'
+    GROUP BY 
+        `an_sedi`.`targa`, `an_sedi`.`nome`, `an_sedi`.`descrizione`, `mg_articoli`.`codice`, `mg_articoli_lang`.`name`, `mg_categorie`.`nome`, `mg_articoli`.`um`
     ORDER BY 
-        an_sedi.targa, an_sedi.descrizione';
+        `an_sedi`.`targa`, `an_sedi`.`descrizione`';
 
 $rs = $dbo->fetchArray($query);
 $totrows = sizeof($rs);

@@ -61,7 +61,7 @@ class CSV extends CSVImporter
     {
         $database = database();
         $id_listino = $database->fetchOne('SELECT id FROM mg_listini WHERE nome = '.prepare($record['nome_listino']))['id'];
-        $id_articolo = $database->fetchOne('SELECT id FROM mg_articoli WHERE codice = '.prepare($record['codice']))['id'];
+        $id_articolo = $database->fetchOne('SELECT `id` FROM `mg_articoli` WHERE `codice` = '.prepare($record['codice']))['id'];
         $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
         if (!empty($id_listino) && !empty($id_articolo)) {

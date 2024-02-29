@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 $subcategorie = $dbo->fetchArray('SELECT * FROM `mg_categorie` WHERE `parent`='.prepare($id_record).' ORDER BY nome ASC ');
 
 foreach ($subcategorie as $sub) {
-    $n_articoli = $dbo->fetchNum('SELECT * FROM `mg_articoli` WHERE `id_sottocategoria`='.prepare($sub['id']).' AND deleted_at IS NULL');
+    $n_articoli = $dbo->fetchNum('SELECT * FROM `mg_articoli` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `id_sottocategoria`='.prepare($sub['id']).' AND deleted_at IS NULL');
     echo '
 				<tr>
 					<td>'.$sub['nome'].'</td>

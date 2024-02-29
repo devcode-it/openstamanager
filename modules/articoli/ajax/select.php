@@ -41,7 +41,6 @@ switch ($resource) {
             DISTINCT `mg_articoli`.`id`,
             IF(`categoria`.`nome` IS NOT NULL, CONCAT(`categoria`.`nome`, IF(`sottocategoria`.`nome` IS NOT NULL, CONCAT(' (', `sottocategoria`.`nome`, ')'), '-')), '<i>".tr('Nessuna categoria')."</i>') AS optgroup,
             `mg_articoli`.`barcode`,
-
             `mg_articoli`.".($prezzi_ivati ? '`prezzo_vendita_ivato`' : '`prezzo_vendita`').' AS prezzo_vendita,
             `mg_articoli`.`prezzo_vendita_ivato` AS prezzo_vendita_ivato,
             `mg_articoli`.'.($prezzi_ivati ? '`minimo_vendita_ivato`' : '`minimo_vendita`').' AS minimo_vendita,';
@@ -50,7 +49,7 @@ switch ($resource) {
         if ($usare_dettaglio_fornitore) {
             $query .= '
             IFNULL(`mg_fornitore_articolo`.`codice_fornitore`, `mg_articoli`.`codice`) AS codice,
-            IFNULL(`mg_fornitore_articolo`.`descrizione`, `mg_articoli`.`descrizione`) AS descrizione,
+            IFNULL(`mg_fornitore_articolo`.`descrizione`, `mg_articoli_lang`.`name`) AS descrizione,
             IFNULL(`mg_fornitore_articolo`.`prezzo_acquisto`, `mg_articoli`.`prezzo_acquisto`) AS prezzo_acquisto,
             IFNULL(`mg_fornitore_articolo`.`qta_minima`, 0) AS qta_minima,
             `mg_fornitore_articolo`.`id` AS id_dettaglio_fornitore,';
@@ -59,7 +58,7 @@ switch ($resource) {
         else {
             $query .= '
             `mg_articoli`.`codice` AS codice,
-            `mg_articoli`.`descrizione` AS descrizione,
+            `mg_articoli_lang`.`name` AS descrizione,
             `mg_articoli`.`prezzo_acquisto` AS prezzo_acquisto,
             0 AS qta_minima,
             `mg_fornitore_articolo`.`codice_fornitore` AS codice_fornitore,
@@ -99,6 +98,7 @@ switch ($resource) {
             CONCAT(`conto_acquisto_categoria` .`numero`, '.', `conto_acquisto_sottocategoria`.`numero`, ' ', `conto_acquisto_sottocategoria`.`descrizione`) AS idconto_acquisto_title
         FROM 
             `mg_articoli`
+            LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = ".prepare(setting('Lingua')).")
             LEFT JOIN `mg_categorie` AS categoria ON `categoria`.`id` = `mg_articoli`.`id_categoria`
             LEFT JOIN `mg_categorie` AS sottocategoria ON `sottocategoria`.`id` = `mg_articoli`.`id_sottocategoria`
             LEFT JOIN `co_pianodeiconti3` AS conto_vendita_sottocategoria ON `conto_vendita_sottocategoria`.`id`=`mg_articoli`.`idconto_vendita`
@@ -155,7 +155,7 @@ switch ($resource) {
             `mg_articoli`.`id_categoria` ASC,
             `mg_articoli`.`id_sottocategoria` ASC,
             `mg_articoli`.`codice` ASC,
-            `mg_articoli`.`descrizione` ASC';
+            `mg_articoli_lang`.`name` ASC';
 
         foreach ($elements as $element) {
             $filter[] = '`mg_articoli`.`id`='.prepare($element);
@@ -173,7 +173,7 @@ switch ($resource) {
         }
 
         if (!empty($search)) {
-            $search_fields[] = '`mg_articoli`.`descrizione` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`mg_articoli_lang`.`name` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`mg_articoli`.`codice` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`mg_articoli`.`barcode` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`categoria`.`nome` LIKE '.prepare('%'.$search.'%');
@@ -278,7 +278,7 @@ switch ($resource) {
             `mg_articoli`.`id`,
             `mg_articoli`.`id`,
             IFNULL(`mg_fornitore_articolo`.`codice_fornitore`, `mg_articoli`.`codice`) AS codice,
-            IFNULL(`mg_fornitore_articolo`.`descrizione`, `mg_articoli`.`descrizione`) AS descrizione,
+            IFNULL(`mg_fornitore_articolo`.`descrizione`, `mg_articoli_lang`.`name`) AS descrizione,
             IFNULL(`mg_fornitore_articolo`.`prezzo_acquisto`, `mg_articoli`.`prezzo_acquisto`) AS prezzo_acquisto,
             `mg_articoli`.'.($prezzi_ivati ? '`prezzo_vendita_ivato`' : '`prezzo_vendita`').' AS prezzo_vendita,
             `mg_articoli`.`prezzo_vendita_ivato` AS prezzo_vendita_ivato,

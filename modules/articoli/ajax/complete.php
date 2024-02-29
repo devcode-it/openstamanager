@@ -265,9 +265,9 @@ switch ($resource) {
 
         // Prezzi scheda articolo
         if ($direzione == 'uscita') {
-            $prezzo_articolo = $database->fetchArray('SELECT prezzo_acquisto AS prezzo_scheda FROM mg_articoli WHERE id = '.prepare($id_articolo));
+            $prezzo_articolo = $database->fetchArray('SELECT `prezzo_acquisto` AS prezzo_scheda FROM `mg_articoli` WHERE `id` = '.prepare($id_articolo));
         } else {
-            $prezzo_articolo = $database->fetchArray('SELECT '.($prezzi_ivati ? 'prezzo_vendita_ivato' : 'prezzo_vendita').' AS prezzo_scheda FROM mg_articoli WHERE id = '.prepare($id_articolo));
+            $prezzo_articolo = $database->fetchArray('SELECT '.($prezzi_ivati ? 'prezzo_vendita_ivato' : 'prezzo_vendita').' AS prezzo_scheda FROM `mg_articoli` WHERE `id` = '.prepare($id_articolo));
         }
 
         // Ultimo prezzo al cliente

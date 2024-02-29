@@ -55,7 +55,7 @@ switch (post('op')) {
 
         $categoria = Categoria::find(post('categoria'));
         $sottocategoria = Categoria::find(post('subcategoria'));
-        $articolo = Articolo::build($codice, post('descrizione'), $categoria, $sottocategoria);
+        $articolo = Articolo::build($codice, $categoria, $sottocategoria);
 
         $articolo->barcode = post('barcode');
         $articolo->threshold_qta = post('threshold_qta');
@@ -72,8 +72,9 @@ switch (post('op')) {
         $articolo->um = post('um');
         $articolo->um_secondaria = post('um_secondaria');
         $articolo->fattore_um_secondaria = post('fattore_um_secondaria');
-
         $articolo->save();
+
+        $database->query('INSERT INTO `mg_articoli_lang` (`id_record`, `id_lang`, `name`) VALUES ('.$articolo->id.', '.setting('Lingua').', \''.post('descrizione').'\')');
 
         // Aggiornamento delle varianti per i campi comuni
         Combinazione::sincronizzaVarianti($articolo);
@@ -91,7 +92,6 @@ switch (post('op')) {
                 'id' => $id_record,
                 'text' => post('codice', true).' - '.post('descrizione'),
                 'data' => [
-                    'descrizione' => post('descrizione'),
                     'prezzo_acquisto' => post('prezzo_acquisto'),
                     'prezzo_vendita' => post('prezzo_vendita'),
                     'idiva_vendita' => post('idiva_vendita') ?: null,
@@ -124,7 +124,6 @@ switch (post('op')) {
 
         $articolo->codice = post('codice', true);
         $articolo->barcode = post('barcode');
-        $articolo->descrizione = post('descrizione');
         $articolo->um = post('um');
         $articolo->id_categoria = post('categoria');
         $articolo->id_sottocategoria = post('subcategoria');
@@ -157,6 +156,8 @@ switch (post('op')) {
         $articolo->note = post('note');
 
         $articolo->save();
+
+        $database->query('UPDATE `mg_articoli_lang` SET `name` = '.prepare(post('descrizione')).' WHERE `id_record` = '.prepare($id_record).' AND `id_lang` = '.prepare(setting('Lingua')).'');
 
         // Aggiornamento delle varianti per i campi comuni
         Combinazione::sincronizzaVarianti($articolo);
@@ -195,9 +196,9 @@ switch (post('op')) {
             $contenuto = Ini::write($contenuto, $campi_componente);
 
             // Salvataggio dei dati
-            $dbo->query('UPDATE mg_articoli SET contenuto='.prepare($contenuto).' WHERE id='.prepare($id_record));
+            $dbo->query('UPDATE `mg_articoli` SET `contenuto`='.prepare($contenuto).' WHERE `id`='.prepare($id_record));
         } else {
-            $dbo->query('UPDATE mg_articoli SET contenuto = \'\' WHERE id='.prepare($id_record));
+            $dbo->query('UPDATE `mg_articoli` SET `contenuto` = \'\' WHERE `id`='.prepare($id_record));
         }
 
         // Upload file
@@ -247,7 +248,7 @@ switch (post('op')) {
 
         // Se non specifico il codice articolo lo imposto uguale all'id della riga
         if (empty(post('codice'))) {
-            $codice = $dbo->fetchOne('SELECT MAX(id) as codice FROM mg_articoli')['codice'] + 1;
+            $codice = $dbo->fetchOne('SELECT MAX(`id`) as codice FROM `mg_articoli`')['codice'] + 1;
         } else {
             $codice = post('codice', true);
         }
@@ -359,7 +360,7 @@ switch (post('op')) {
         $idarticolo = $rs[0]['idarticolo'];
 
         // Aggiorno la quantità dell'articolo
-        $dbo->query('UPDATE mg_articoli SET qta=qta-'.$qta.' WHERE id='.prepare($idarticolo));
+        $dbo->query('UPDATE `mg_articoli` SET `qta`=`qta`-'.$qta.' WHERE `id`='.prepare($idarticolo));
 
         $query = 'DELETE FROM mg_movimenti WHERE id='.prepare($idmovimento);
         if ($dbo->query($query)) {

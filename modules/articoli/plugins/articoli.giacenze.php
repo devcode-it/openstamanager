@@ -54,7 +54,7 @@ echo '
             </div>
 
             <div class="col-md-6">
-                <span><b>'.tr('Descrizione: ').'</b>'.$articolo->descrizione.'</span>
+                <span><b>'.tr('Descrizione: ').'</b>'.$articolo->name.'</span>
             </div>
         </div>
     </div>

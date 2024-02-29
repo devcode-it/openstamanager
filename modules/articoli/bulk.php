@@ -198,7 +198,7 @@ switch (post('op')) {
             $articolo = ArticoloPreventivo::build($preventivo, $originale);
             $id_iva = $originale->idiva_vendita ?: setting('Iva predefinita');
             $articolo->qta = 1;
-            $articolo->descrizione = $originale->descrizione;
+            $articolo->name = $originale->name;
             $articolo->um = $originale->um ?: null;
             $articolo->costo_unitario = $originale->prezzo_acquisto;
             $articolo->prezzo_unitario = $originale->prezzo_vendita;

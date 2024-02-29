@@ -44,7 +44,7 @@ abstract class Article extends Accounting
 
         $model->articolo()->associate($articolo);
 
-        $model->descrizione = $articolo->descrizione;
+        $model->descrizione = $articolo->name;
         $model->abilita_serial = $articolo->abilita_serial;
         $model->um = $articolo->um;
 

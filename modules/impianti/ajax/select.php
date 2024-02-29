@@ -83,27 +83,33 @@ switch ($resource) {
          */
     case 'componenti':
         if (isset($superselect['matricola'])) {
-            $query = 'SELECT my_componenti.id, CONCAT("#", my_componenti.id, ": ", mg_articoli.codice, " - ", mg_articoli.descrizione) AS descrizione
-            FROM my_componenti
-                INNER JOIN mg_articoli ON mg_articoli.id = my_componenti.id_articolo
-            |where| ORDER BY my_componenti.id';
+            $query = 'SELECT 
+                `my_componenti`.`id`, 
+                CONCAT("#", `my_componenti`.`id`, ": ", `mg_articoli`.`codice`, " - ", `mg_articoli_lang`.`name`) AS descrizione
+            FROM 
+                `my_componenti`
+                INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `my_componenti`.`id_articolo`
+                LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_articolo` = `mg_articoli`.`id` AND `mg_articoli_lang`.`id_lingua` = '.prepare(setting('Lingua')).')
+            |where| 
+            ORDER BY 
+                `my_componenti`.`id`';
 
             foreach ($elements as $element) {
-                $filter[] = 'my_componenti.id = '.prepare($element);
+                $filter[] = '`my_componenti`.`id` = '.prepare($element);
             }
 
             $where = [
-                'my_componenti.data_sostituzione IS NULL',
-                'my_componenti.data_rimozione IS NULL',
+                '`my_componenti`.`data_sostituzione` IS NULL',
+                '`my_componenti`.`data_rimozione` IS NULL',
             ];
 
             $impianti = $superselect['matricola'];
             if (!empty($impianti)) {
-                $where[] = 'my_componenti.id_impianto IN ('.$impianti.')';
+                $where[] = '`my_componenti`.`id_impianto` IN ('.$impianti.')';
             }
 
             if (!empty($search)) {
-                $search[] = 'my_componenti.note LIKE '.prepare('%'.$search.'%');
+                $search[] = '`my_componenti`.`note` LIKE '.prepare('%'.$search.'%');
             }
         }
 

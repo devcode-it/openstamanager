@@ -38,6 +38,12 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
         ];
 
         $joins[] = [
+            'mg_articoli_lang',
+            'mg_articoli.id',
+            'mg_articoli_lang.id_record',
+        ];
+
+        $joins[] = [
             'mg_categorie AS categorie',
             'mg_articoli.id_categoria',
             'categorie.id',
@@ -95,7 +101,7 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
             $articolo->sottocategoria()->associate($sottocategoria);
         }
 
-        $articolo->descrizione = $data['descrizione'];
+        $articolo->name = $data['descrizione'];
         $articolo->setPrezzoVendita($data['prezzo_vendita'], $articolo->idiva_vendita);
 
         $articolo->save();

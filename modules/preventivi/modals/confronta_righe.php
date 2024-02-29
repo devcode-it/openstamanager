@@ -28,10 +28,16 @@ $id_anagrafica = $preventivo->idanagrafica;
 $righe = $_GET['righe'];
 
 $righe = $dbo->fetchArray(
-    'SELECT mg_articoli.descrizione, mg_articoli.codice, co_righe_preventivi.*
-    FROM co_righe_preventivi
-    JOIN mg_articoli ON mg_articoli.id = co_righe_preventivi.idarticolo
-    WHERE co_righe_preventivi.id IN ('.$righe.')'
+    'SELECT 
+        `mg_articoli_lang`.`name`,
+        `mg_articoli`.`codice`, 
+        `co_righe_preventivi`.*
+    FROM 
+        `co_righe_preventivi`
+        INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_preventivi`.`idarticolo`
+        LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+    WHERE 
+        `co_righe_preventivi`.`id` IN ('.$righe.')'
 );
 ?>
 <form action="" method="post" id="add-form">

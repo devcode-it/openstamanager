@@ -217,7 +217,7 @@ switch ($operazione) {
 
         $qta = post('qta');
 
-        $articolo->descrizione = post('descrizione');
+        $articolo->name = post('descrizione');
         $articolo->um = post('um') ?: null;
 
         $articolo->costo_unitario = post('costo_unitario') ?: 0;

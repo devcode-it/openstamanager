@@ -29,8 +29,8 @@ $fields = [
     'Codice' => 'codice',
     'Barcode' => 'barcode',
     'Descrizione' => 'descrizione',
-    'Categoria' => '(SELECT nome FROM mg_categorie WHERE mg_categorie.id =  mg_articoli.id_categoria)',
-    'Subcategoria' => '(SELECT nome FROM mg_categorie WHERE mg_categorie.id =  mg_articoli.id_sottocategoria)',
+    'Categoria' => '(SELECT `nome` FROM `mg_categorie` WHERE `mg_categorie`.`id` =  `mg_articoli`.`id_categoria`)',
+    'Subcategoria' => '(SELECT `nome` FROM `mg_categorie` WHERE `mg_categorie`.`id` =  `mg_articoli`.`id_sottocategoria`)',
     'Note' => 'note',
 ];
 
@@ -40,7 +40,7 @@ foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM mg_articoli WHERE 1=0 ';
+$query .= ' FROM `mg_articoli` WHERE 1=0 ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE "%'.$term.'%"';

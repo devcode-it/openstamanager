@@ -34,7 +34,7 @@ echo '
             </div>
 
             <div class="col-md-6">
-                <span><b>'.tr('Descrizione: ').'</b>'.$articolo->descrizione.'</span>
+                <span><b>'.tr('Descrizione: ').'</b>'.$articolo->name.'</span>
             </div>
         </div>
     </div>
@@ -68,7 +68,7 @@ if (empty($_GET['movimentazione_completa'])) {
 }
 
 echo '
-        <a class="btn btn-warning btn-xs" href="'.base_path().'/controller.php?id_module='.Modules::get('Movimenti')->id.'&search_Articolo='.($articolo->codice.' - '.$articolo->descrizione).'">
+        <a class="btn btn-warning btn-xs" href="'.base_path().'/controller.php?id_module='.Modules::get('Movimenti')->id.'&search_Articolo='.($articolo->codice.' - '.$articolo->name).'">
             <i class="fa fa-external-link"></i>
             '.tr('Visualizza dettagli').'
         </a>';

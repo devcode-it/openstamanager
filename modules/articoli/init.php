@@ -25,5 +25,5 @@ if (isset($id_record)) {
     $articolo = Articolo::withTrashed()->find($id_record);
     $articolo->nome_variante;
 
-    $record = $dbo->fetchOne('SELECT *, (SELECT COUNT(id) FROM mg_prodotti WHERE id_articolo = mg_articoli.id) AS serial FROM mg_articoli WHERE id='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT *, `mg_articoli_lang`.`name` as descrizione, (SELECT COUNT(id) FROM `mg_prodotti` WHERE `id_articolo` = `mg_articoli`.`id`) AS serial FROM `mg_articoli` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = "'.prepare(setting('Lingua')).'") WHERE `mg_articoli`.`id`='.prepare($id_record));
 }

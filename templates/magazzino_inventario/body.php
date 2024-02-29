@@ -18,6 +18,7 @@
  */
 
 use Util\Query;
+use Modules\Articoli\Articolo;
 
 include_once __DIR__.'/../../core.php';
 
@@ -97,16 +98,17 @@ $totale_qta = 0;
 $totali = [];
 
 foreach ($data['results'] as $r) {
-    $valore_magazzino = $r['Prezzo di acquisto'] * $r['qta_totale'];
+    $articolo = Articolo::find($r['id']);
+    $valore_magazzino = $articolo->prezzo_acquisto * $articolo->qta;
 
     echo '
         <tr>
-            <td>'.$r['Codice'].'</td>
+            <td>'.$articolo->codice.'</td>
             <td>'.$r['Categoria'].'</td>
-            <td>'.$r['Descrizione'].'</td>
-            <td class="text-right">'.moneyFormat($r['Prezzo di vendita']).'</td>
+            <td>'.$articolo->name.'</td>
+            <td class="text-right">'.moneyFormat($articolo->prezzo_vendita).'</td>
             <td class="text-right">'.Translator::numberToLocale($r['qta_totale']).' '.$r['um'].'</td>
-            <td class="text-right">'.moneyFormat($r['Prezzo di acquisto']).'</td>
+            <td class="text-right">'.moneyFormat($articolo->prezzo_acquisto).'</td>
             <td class="text-right">'.moneyFormat($valore_magazzino).'</td>
         </tr>';
 

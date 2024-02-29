@@ -71,7 +71,7 @@ foreach ($righe as $riga) {
         'id_iva' => $riga->id_iva,
         'iva_percentuale' => $riga->aliquota->percentuale,
         'id_articolo' => $riga->idarticolo,
-        'desc_articolo' => str_replace(' ', '_', $riga->articolo->codice.' - '.$riga->articolo->descrizione),
+        'desc_articolo' => str_replace(' ', '_', $riga->articolo->codice.' - '.$riga->articolo->name),
         'id_conto' => $riga->articolo->idconto_acquisto,
         'desc_conto' => str_replace(' ', '_', $desc_conto),
     ];

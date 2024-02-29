@@ -165,7 +165,7 @@ echo '
                         </div>';
 
 // Conteggio numero articoli ddt in uscita
-$articolo = $dbo->fetchArray('SELECT mg_articoli.id FROM ((mg_articoli INNER JOIN dt_righe_ddt ON mg_articoli.id=dt_righe_ddt.idarticolo) INNER JOIN dt_ddt ON dt_ddt.id=dt_righe_ddt.idddt) WHERE dt_ddt.id='.prepare($id_record));
+$articolo = $dbo->fetchArray('SELECT `mg_articoli`.`id` FROM ((`mg_articoli` INNER JOIN `dt_righe_ddt` ON `mg_articoli`.`id`=`dt_righe_ddt`.`idarticolo`) INNER JOIN `dt_ddt` ON `dt_ddt`.`id`=`dt_righe_ddt`.`idddt`) WHERE `dt_ddt`.`id`='.prepare($id_record));
 $id_modulo_anagrafiche = Modules::get('Anagrafiche')['id'];
 $id_plugin_sedi = Plugins::get('Sedi')['id'];
 if ($dir == 'entrata') {

@@ -152,7 +152,7 @@ if (!empty($interventi)) {
                 echo '
                 <tr>
                     <td>
-                        '.Modules::link('Articoli', $articolo->idarticolo, $articolo->descrizione).'
+                        '.Modules::link('Articoli', $articolo->idarticolo, $articolo->name).'
                     </td>
                     <td class="text-right">'.numberFormat($articolo->qta, 'qta').'</td>
                     <td class="text-right danger">'.moneyFormat($articolo->spesa).'</td>
@@ -164,7 +164,7 @@ if (!empty($interventi)) {
                     $ricavo = ($articolo->imponibile - $articolo->sconto) / $articolo->qta;
                     $costo = $articolo->spesa / $articolo->qta;
                 }
-                $descrizione = $articolo->articolo->codice.' - '.$articolo->articolo->descrizione;
+                $descrizione = $articolo->articolo->codice.' - '.$articolo->articolo->name;
 
                 $materiali_art[$descrizione][$ricavo][$costo]['id'] = $articolo->articolo->id;
                 $materiali_art[$descrizione][$ricavo][$costo]['qta'] += $articolo->qta;

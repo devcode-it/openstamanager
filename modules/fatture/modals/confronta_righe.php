@@ -29,10 +29,16 @@ $direzione = $documento->direzione;
 $righe = $_GET['righe'];
 
 $righe = $dbo->fetchArray(
-    'SELECT mg_articoli.descrizione, mg_articoli.codice, co_righe_documenti.*
-    FROM co_righe_documenti
-    JOIN mg_articoli ON mg_articoli.id = co_righe_documenti.idarticolo
-    WHERE co_righe_documenti.id IN ('.$righe.')'
+    'SELECT 
+        `mg_articoli_lang`.`name`,
+        `mg_articoli`.`codice`,
+        `co_righe_documenti`.*
+    FROM 
+        `co_righe_documenti`
+        INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_documenti`.`idarticolo`
+        LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+    WHERE
+        `co_righe_documenti`.`id` IN ('.$righe.')'
 );
 ?>
 <form action="" method="post" id="add-form">

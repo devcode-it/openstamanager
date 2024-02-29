@@ -30,7 +30,7 @@ class Articoli extends AppResource
 
     public function getModifiedRecords($last_sync_at)
     {
-        $query = 'SELECT mg_articoli.id, mg_articoli.updated_at FROM mg_articoli WHERE deleted_at IS NULL';
+        $query = 'SELECT `mg_articoli`.`id`, `mg_articoli`.`updated_at` FROM `mg_articoli` WHERE `deleted_at` IS NULL';
 
         // Filtro per data
         if ($last_sync_at) {
@@ -45,19 +45,23 @@ class Articoli extends AppResource
     public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
-        $query = 'SELECT mg_articoli.id AS id,
-            mg_articoli.codice,
-            mg_articoli.barcode,
-            mg_articoli.descrizione,
-            mg_articoli.prezzo_vendita,
-            mg_articoli.prezzo_acquisto,
-            mg_articoli.qta,
-            mg_articoli.um,
-            mg_articoli.idiva_vendita AS id_iva,
-            (SELECT nome FROM mg_categorie WHERE id = mg_articoli.id_categoria) AS categoria,
-            (SELECT nome FROM mg_categorie WHERE id = mg_articoli.id_sottocategoria) AS sottocategoria
-        FROM mg_articoli
-        WHERE mg_articoli.id = '.prepare($id);
+        $query = 'SELECT 
+            `mg_articoli`.`id` AS id,
+            `mg_articoli`.`codice`,
+            `mg_articoli`.`barcode`,
+            `mg_articoli_lang`.`name`,
+            `mg_articoli`.`prezzo_vendita`,
+            `mg_articoli`.`prezzo_acquisto`,
+            `mg_articoli`.`qta`,
+            `mg_articoli`.`um`,
+            `mg_articoli`.`idiva_vendita` AS id_iva,
+            (SELECT `nome` FROM `mg_categorie` WHERE `id` = `mg_articoli`.`id_categoria`) AS categoria,
+            (SELECT `nome` FROM `mg_categorie` WHERE `id` = `mg_articoli`.`id_sottocategoria`) AS sottocategoria
+        FROM 
+            `mg_articoli`
+            LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+        WHERE 
+            `mg_articoli`.`id` = '.prepare($id);
 
         $record = database()->fetchOne($query);
 

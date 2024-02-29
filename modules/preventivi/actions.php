@@ -194,7 +194,7 @@ switch (post('op')) {
 
         $qta = post('qta');
 
-        $articolo->descrizione = post('descrizione');
+        $articolo->name = post('descrizione');
         $articolo->note = post('note');
         $articolo->um = post('um') ?: null;
         $articolo->data_evasione = post('data_evasione') ?: null;
@@ -437,7 +437,7 @@ switch (post('op')) {
             $articolo = Articolo::build($preventivo, $originale);
             $qta = 1;
 
-            $articolo->descrizione = $originale->descrizione;
+            $articolo->name = $originale->name;
             $articolo->um = $originale->um;
             $articolo->qta = 1;
             $articolo->costo_unitario = $originale->prezzo_acquisto;

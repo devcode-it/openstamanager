@@ -431,19 +431,19 @@ switch (filter('op')) {
                 }
 
                 if (empty($id_articolo)) {
-                    $id_articolo = $database->fetchOne('SELECT id FROM mg_articoli WHERE codice = '.prepare($codice['CodiceValore']).' AND deleted_at IS NULL')['id'];
+                    $id_articolo = $database->fetchOne('SELECT `id` FROM `mg_articoli` WHERE `codice` = '.prepare($codice['CodiceValore']).' AND `deleted_at` IS NULL')['id'];
 
                     if (empty($id_articolo)) {
-                        $id_articolo = $database->fetchOne('SELECT id FROM mg_articoli WHERE REPLACE(codice, " ", "") = '.prepare($codice['CodiceValore']).' AND deleted_at IS NULL')['id'];
+                        $id_articolo = $database->fetchOne('SELECT `id` FROM `mg_articoli` WHERE REPLACE(`codice`, " ", "") = '.prepare($codice['CodiceValore']).' AND `deleted_at` IS NULL')['id'];
                     }
 
                     // Controllo se esistono articoli con barcode corrispondente al codice
                     if (empty($id_articolo)) {
-                        $id_articolo = $database->fetchOne('SELECT id FROM mg_articoli WHERE barcode = '.prepare($codice['CodiceValore']).' AND deleted_at IS NULL')['id'];
+                        $id_articolo = $database->fetchOne('SELECT `id` FROM `mg_articoli` WHERE `barcode` = '.prepare($codice['CodiceValore']).' AND `deleted_at` IS NULL')['id'];
                     }
 
                     if (empty($id_articolo)) {
-                        $id_articolo = $database->fetchOne('SELECT id FROM mg_articoli WHERE REPLACE(barcode, " ", "") = '.prepare($codice['CodiceValore']).' AND deleted_at IS NULL')['id'];
+                        $id_articolo = $database->fetchOne('SELECT `id` FROM `mg_articoli` WHERE REPLACE(`barcode`, " ", "") = '.prepare($codice['CodiceValore']).' AND `deleted_at` IS NULL')['id'];
                     }
                 }
 
@@ -649,7 +649,7 @@ switch (filter('op')) {
                         'id_iva' => $riga->id_iva,
                         'iva_percentuale' => $riga->aliquota->percentuale,
                         'id_articolo' => $riga->idarticolo,
-                        'desc_articolo' => str_replace(' ', '_', $riga->articolo->codice.' - '.$riga->articolo->descrizione),
+                        'desc_articolo' => str_replace(' ', '_', $riga->articolo->codice.' - '.$riga->articolo->name),
                         'id_conto' => $riga->articolo->idconto_acquisto,
                         'desc_conto' => str_replace(' ', '_', $desc_conto),
                     ],

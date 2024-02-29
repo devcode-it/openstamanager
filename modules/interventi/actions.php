@@ -487,7 +487,7 @@ switch (post('op')) {
         $qta = post('qta');
 
         $articolo->idsede_partenza = post('idsede_partenza');
-        $articolo->descrizione = post('descrizione');
+        $articolo->name = post('descrizione');
         $articolo->note = post('note');
         $articolo->um = post('um') ?: null;
         $articolo->idimpianto = post('id_impianto') ?: null;
@@ -1119,7 +1119,7 @@ switch (post('op')) {
                 $articolo = Articolo::build($intervento, $originale);
                 $qta = 1;
 
-                $articolo->descrizione = $originale->descrizione;
+                $articolo->name = $originale->name;
                 $articolo->um = $originale->um;
                 $articolo->qta = 1;
                 $articolo->costo_unitario = $originale->prezzo_acquisto;

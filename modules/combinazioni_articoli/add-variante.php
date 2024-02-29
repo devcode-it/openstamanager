@@ -2,19 +2,21 @@
 
 include_once __DIR__.'/init.php';
 
-$varianti_esistenti = $database->fetchArray('SELECT GROUP_CONCAT(`variazioni`.`id_valore`) AS variante
-FROM (SELECT `mg_articolo_attributo`.`id_valore`, `mg_articolo_attributo`.`id_articolo`
-        FROM `mg_articolo_attributo`
-            INNER JOIN `mg_valori_attributi` ON `mg_valori_attributi`.`id` = `mg_articolo_attributo`.`id_valore`
-            INNER JOIN `mg_attributi` ON `mg_attributi`.`id` = `mg_valori_attributi`.`id_attributo`
-
-            INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `mg_articolo_attributo`.`id_articolo`
-            INNER JOIN `mg_combinazioni` ON `mg_combinazioni`.`id` = `mg_articoli`.`id_combinazione`
-            INNER JOIN `mg_attributo_combinazione` ON `mg_attributo_combinazione`.`id_combinazione` = `mg_combinazioni`.`id` AND `mg_attributo_combinazione`.`id_attributo` = `mg_attributi`.`id`
-        WHERE `mg_articoli`.`deleted_at` IS NULL AND `mg_articoli`.`id_combinazione` = '.prepare($combinazione->id).'
-        ORDER BY `mg_attributo_combinazione`.`order`
-    ) AS variazioni
-GROUP BY `variazioni`.`id_articolo`');
+$varianti_esistenti = $database->fetchArray('SELECT 
+    `mg_articoli`.`id` AS id_articolo,
+    GROUP_CONCAT(`mg_articolo_attributo`.`id_valore`) AS variante
+FROM 
+    `mg_articolo_attributo`
+    INNER JOIN `mg_valori_attributi` ON `mg_valori_attributi`.`id` = `mg_articolo_attributo`.`id_valore`
+    INNER JOIN `mg_attributi` ON `mg_attributi`.`id` = `mg_valori_attributi`.`id_attributo`
+    INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `mg_articolo_attributo`.`id_articolo`
+    INNER JOIN `mg_combinazioni` ON `mg_combinazioni`.`id` = `mg_articoli`.`id_combinazione`
+    INNER JOIN `mg_attributo_combinazione` ON `mg_attributo_combinazione`.`id_combinazione` = `mg_combinazioni`.`id` AND `mg_attributo_combinazione`.`id_attributo` = `mg_attributi`.`id`
+WHERE 
+    `mg_articoli`.`deleted_at` IS NULL 
+    AND `mg_articoli`.`id_combinazione` = '.prepare($combinazione->id).'
+GROUP BY 
+    `mg_articoli`.`id`');
 $varianti_esistenti = array_column($varianti_esistenti, 'variante');
 
 echo '

@@ -1747,7 +1747,10 @@ ALTER TABLE `zz_cache`
 ALTER TABLE `zz_cache_lang` ADD CONSTRAINT `zz_cache_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_cache`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
 -- Introduzione stampa cespiti
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Magazzino cespiti', '', 'query=SELECT id, nomesede AS descrizione FROM an_sedi WHERE idanagrafica=(SEELCT valore FROM zz_settings WHERE name=\'Azienda predefinita\')', '1', 'Magazzino', NULL, 'Magazzino cespiti per la stampa dei cespiti dal modulo articoli');
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Magazzino cespiti', '', 'query=SELECT id, nomesede AS descrizione FROM an_sedi WHERE idanagrafica=(SELECT valore FROM zz_settings WHERE nome=\'Azienda predefinita\')', '1', 'Magazzino', NULL, 'Magazzino cespiti per la stampa dei cespiti dal modulo articoli');
 
 INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`, `query`, `bgcolor`, `icon`, `print_link`, `more_link`, `more_link_type`, `php_include`, `text`, `enabled`, `order`, `help`) VALUES
-(NULL, 'Stampa cespiti', 'print', 21, 'controller_top', 'col-md-12', '', '#45a9f1', 'fa fa-print', '', './modules/articoli/widgets/stampa_cespiti.php', 'popup', '', 'Stampa cespiti', 1, 1, NULL);
+(NULL, 'Stampa cespiti', 'print', 21, 'controller_top', 'col-md-3', '', '#45a9f1', 'fa fa-print', '', './modules/articoli/widgets/stampa_cespiti.php', 'popup', '', 'Stampa cespiti', 1, 1, NULL);
+
+INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES
+(NULL, (SELECT id FROM zz_modules WHERE name = 'Articoli'), 0, 'Inventario cespiti', 'Inventario cespiti', 'Cespiti', 'magazzino_cespiti', '', '', 'fa fa-print', '', '', 0, 0, 1, 1);

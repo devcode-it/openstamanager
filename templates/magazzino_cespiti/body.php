@@ -23,24 +23,7 @@ include_once __DIR__.'/../../core.php';
 
 if(!empty(setting('Magazzino cespiti'))){
 
-    $id_module = Modules::get('Articoli')['id'];
-    $structure = Modules::get($id_module);
-
-    // RISULTATI VISIBILI
-    Util\Query::setSegments(false);
-    $query = Query::getQuery($structure, $where, 0, []);
-
-    $query = Modules::replaceAdditionals($id_module, $query);
-
-    $query = preg_replace('/FROM `mg_articoli`/', ' FROM mg_articoli LEFT JOIN (SELECT idarticolo, SUM(qta) AS qta_totale FROM mg_movimenti WHERE idsede='.setting('Magazzino cespiti').' GROUP BY idarticolo) movimenti ON movimenti.idarticolo=mg_articoli.id ', $query);
-
-    // Modifiche alla query principale
-    $query = preg_replace('/^SELECT /', 'SELECT mg_articoli.prezzo_vendita,', $query);
-    $query = preg_replace('/^SELECT /', 'SELECT mg_articoli.um,', $query);
-    $query = preg_replace('/^SELECT /', 'SELECT movimenti.qta_totale,', $query);
-
-    $query = str_replace('1=1', '1=1 AND cespiti=1', $query);
-    $query = str_replace('cespiti=0', 'cespiti=1', $query);
+    $query = "SELECT mg_articoli.*, movimenti.qta_totale, `mg_articoli_lang`.`name` AS 'Descrizione', `mg_categorie_lang`.`name` AS 'Categoria' FROM `mg_articoli` LEFT JOIN (SELECT idarticolo, SUM(qta) AS qta_totale FROM mg_movimenti WHERE idsede=".setting("Magazzino cespiti")." GROUP BY idarticolo) movimenti ON movimenti.idarticolo=mg_articoli.id LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '1') LEFT JOIN `mg_categorie` ON `mg_articoli`.`id_categoria` = `mg_categorie`.`id` LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '1') WHERE 1=1 AND(`mg_articoli`.`deleted_at`) IS NULL HAVING 2=2 AND movimenti.qta_totale>0 ORDER BY `mg_articoli_lang`.`name`";
 
     if (post('tipo') == 'nozero') {
         $query = str_replace('2=2', '2=2 AND mg_articoli.qta > 0', $query);
@@ -73,7 +56,7 @@ if(!empty(setting('Magazzino cespiti'))){
 
         echo '
             <tr>
-                <td>'.$r['Codice'].'</td>
+                <td>'.$r['codice'].'</td>
                 <td>'.$r['Categoria'].'</td>
                 <td>'.$r['Descrizione'].'</td>
                 <td class="text-right">'.moneyFormat($r['prezzo_vendita']).'</td>

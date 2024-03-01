@@ -39,7 +39,7 @@ switch ($resource) {
 
         $query = "SELECT
             DISTINCT `mg_articoli`.`id`,
-            IF(`categoria`.`nome` IS NOT NULL, CONCAT(`categoria`.`nome`, IF(`sottocategoria`.`nome` IS NOT NULL, CONCAT(' (', `sottocategoria`.`nome`, ')'), '-')), '<i>".tr('Nessuna categoria')."</i>') AS optgroup,
+            IF(`categoria_lang`.`name` IS NOT NULL, CONCAT(`categoria_lang`.`name`, IF(`sottocategoria_lang`.`name` IS NOT NULL, CONCAT(' (', `sottocategoria_lang`.`name`, ')'), '-')), '<i>".tr('Nessuna categoria')."</i>') AS optgroup,
             `mg_articoli`.`barcode`,
             `mg_articoli`.".($prezzi_ivati ? '`prezzo_vendita_ivato`' : '`prezzo_vendita`').' AS prezzo_vendita,
             `mg_articoli`.`prezzo_vendita_ivato` AS prezzo_vendita_ivato,
@@ -91,8 +91,8 @@ switch ($resource) {
             `mg_articoli`.`abilita_serial`,
             `mg_articoli`.`idconto_vendita`,
             `mg_articoli`.`idconto_acquisto`,
-            `categoria`.`nome` AS categoria,
-            `sottocategoria`.`nome` AS sottocategoria,
+            `categoria_lang`.`name` AS categoria,
+            `sottocategoria_lang`.`name` AS sottocategoria,
             `righe`.`media_ponderata`,
             CONCAT(`conto_vendita_categoria` .`numero`, '.', `conto_vendita_sottocategoria`.`numero`, ' ', `conto_vendita_sottocategoria`.`descrizione`) AS idconto_vendita_title,
             CONCAT(`conto_acquisto_categoria` .`numero`, '.', `conto_acquisto_sottocategoria`.`numero`, ' ', `conto_acquisto_sottocategoria`.`descrizione`) AS idconto_acquisto_title
@@ -111,7 +111,7 @@ switch ($resource) {
             ON `righe`.`id`=`mg_articoli`.`id`
             LEFT JOIN `co_iva` AS iva_articolo ON `iva_articolo`.`id` = `mg_articoli`.`idiva_vendita`
             LEFT JOIN `co_iva_lang` AS iva_articolo_lang on (`iva_articolo`.`id` = `iva_articolo_lang`.`id_record` AND `iva_articolo_lang`.`id_lang` = ".prepare(setting('Lingua')).")
-            LEFT JOIN `co_iva` AS `iva_predefinita` ON `iva_predefinita`.`id` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = 'Iva predefinita')
+            LEFT JOIN `co_iva` AS `iva_predefinita` ON `iva_predefinita`.`id` = (SELECT `valore` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Iva predefinita')
             LEFT JOIN `co_iva_lang` AS iva_predefinita_lang on (`iva_predefinita`.`id` = `iva_predefinita_lang`.`id_record` AND `iva_predefinita_lang`.`id_lang` = ".prepare(setting('Lingua')).')';
 
         if ($usare_iva_anagrafica) {
@@ -178,8 +178,8 @@ switch ($resource) {
             $search_fields[] = '`mg_articoli_lang`.`name` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`mg_articoli`.`codice` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`mg_articoli`.`barcode` LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = '`categoria`.`nome` LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = '`sottocategoria`.`nome` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`categoria_lang`.`name` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`sottocategoria_lang`.`name` LIKE '.prepare('%'.$search.'%');
 
             if ($usare_dettaglio_fornitore) {
                 $search_fields[] = '`mg_fornitore_articolo`.`descrizione` LIKE '.prepare('%'.$search.'%');

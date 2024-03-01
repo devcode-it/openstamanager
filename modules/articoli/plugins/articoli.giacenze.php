@@ -22,7 +22,7 @@ include_once __DIR__.'/../../../core.php';
 $impegnato = 0;
 $ordinato = 0;
 
-$query = 'SELECT
+$query = "SELECT
         `or_ordini`.`id` AS id,
         `or_ordini`.`numero`,
         `or_ordini`.`numero_esterno`,
@@ -34,15 +34,13 @@ $query = 'SELECT
         `or_ordini`
         INNER JOIN `or_righe_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine`
         INNER JOIN `or_statiordine` ON `or_ordini`.`idstatoordine`=`or_statiordine`.`id`
-        INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipiordine`=`or_tipiordine`.`id`
+        INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine`=`or_tipiordine`.`id`
     WHERE 
-        `idarticolo` = '.prepare($articolo->id)."
+        `idarticolo` = ".prepare($articolo->id)."
         AND `or_tipiordine`.`dir`= '|dir|'
         AND (`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) > 0
         AND `or_righe_ordini`.`confermato` = 1
         AND `or_statiordine`.`impegnato` = 1
-    GROUP BY 
-        `or_ordini`.`id`
     HAVING 
         `qta_ordinata` > 0";
 
@@ -146,8 +144,9 @@ echo '
 			<div class="panel-body" style="min-height:98px;">';
 
 $ordini = $dbo->fetchArray(str_replace('|dir|', 'uscita', $query));
-$ordinato = sum(array_column($ordini, 'qta_ordinata'));
+
 if (!empty($ordini)) {
+    $ordinato = sum(array_column($ordini, 'qta_ordinata'));
     echo '
                 <table class="table table-bordered table-condensed table-striped">
                     <thead>

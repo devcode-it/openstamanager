@@ -48,10 +48,23 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
             'mg_articoli.id_categoria',
             'categorie.id',
         ];
+
+        $joins[] = [
+            'mg_categorie_lang AS categorie_lang',
+            'mg_categorie.id',
+            'categorie_lang.id_record',
+        ];
+
         $joins[] = [
             'mg_categorie AS sottocategorie',
             'mg_articoli.id_sottocategoria',
             'sottocategorie.id',
+        ];
+
+        $joins[] = [
+            'mg_categorie_lang AS sottocategorie_lang',
+            'mg_categorie.id',
+            'sottocategorie_lang.id_record',
         ];
 
         $where[] = ['mg_articoli.deleted_at', '=', null];

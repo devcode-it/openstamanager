@@ -32,7 +32,7 @@ include_once __DIR__.'/../../core.php';
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-md-8">
-					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$name$" ]}
 				</div>
 
 				<div class="col-md-4">
@@ -91,7 +91,7 @@ include_once __DIR__.'/../../core.php';
 
 <?php
 
-$elementi = $dbo->fetchArray('SELECT `mg_articoli`.`id`, `mg_articoli`.`codice`, `mg_articoli`.`barcode` FROM `mg_articoli` WHERE (`id_categoria`='.prepare($id_record).' OR `id_sottocategoria`='.prepare($id_record).'  OR `id_sottocategoria` IN (SELECT id FROM `mg_categorie` WHERE `parent`='.prepare($id_record).')) AND `deleted_at` IS NULL');
+$elementi = $dbo->fetchArray('SELECT `mg_articoli`.`id`, `mg_articoli`.`codice`, `mg_articoli`.`barcode` FROM `mg_articoli` WHERE (`id_categoria`='.prepare($id_record).' OR `id_sottocategoria`='.prepare($id_record).' OR `id_sottocategoria` IN (SELECT `id` FROM `mg_categorie` WHERE `parent`='.prepare($id_record).')) AND `deleted_at` IS NULL');
 
 if (!empty($elementi)) {
     echo '

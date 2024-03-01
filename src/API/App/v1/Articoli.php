@@ -55,11 +55,15 @@ class Articoli extends AppResource
             `mg_articoli`.`qta`,
             `mg_articoli`.`um`,
             `mg_articoli`.`idiva_vendita` AS id_iva,
-            (SELECT `nome` FROM `mg_categorie` WHERE `id` = `mg_articoli`.`id_categoria`) AS categoria,
-            (SELECT `nome` FROM `mg_categorie` WHERE `id` = `mg_articoli`.`id_sottocategoria`) AS sottocategoria
+            `categoria_lang`.`name` AS categoria,
+            `sottocategoria_lang`.`name` AS sottocategoria
         FROM 
             `mg_articoli`
             LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+            LEFT JOIN `mg_categorie` as categoria ON (`mg_articoli`.`id_categoria` = `mg_categorie`.`id`)
+            LEFT JOIN `mg_categorie_lang` as categoria_lang ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+            LEFT JOIN `mg_categorie` as sottocategoria ON (`mg_articoli`.`id_sottocategoria` = `mg_categorie`.`id`)
+            LEFT JOIN `mg_categorie_lang` as sottocategoria_lang ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(setting('Lingua')).')
         WHERE 
             `mg_articoli`.`id` = '.prepare($id);
 

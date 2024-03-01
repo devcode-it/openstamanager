@@ -121,6 +121,7 @@ return [
     'mg_articoli_lang',
     'mg_fornitore_articolo',
     'mg_categorie',
+    'mg_categorie_lang',
     'mg_causali_movimenti',
     'mg_listini',
     'mg_listini_articoli',

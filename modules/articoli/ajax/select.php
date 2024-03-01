@@ -100,7 +100,9 @@ switch ($resource) {
             `mg_articoli`
             LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = ".prepare(setting('Lingua')).")
             LEFT JOIN `mg_categorie` AS categoria ON `categoria`.`id` = `mg_articoli`.`id_categoria`
+            LEFT JOIN `mg_categorie_lang` AS categoria_lang ON (`categoria`.`id` = `categoria_lang`.`id_record` AND `categoria_lang`.`id_lang` = ".prepare(setting('Lingua')).")
             LEFT JOIN `mg_categorie` AS sottocategoria ON `sottocategoria`.`id` = `mg_articoli`.`id_sottocategoria`
+            LEFT JOIN `mg_categorie_lang` AS sottocategoria_lang ON (`sottocategoria`.`id` = `sottocategoria_lang`.`id_record` AND `sottocategoria_lang`.`id_lang` = ".prepare(setting('Lingua')).")
             LEFT JOIN `co_pianodeiconti3` AS conto_vendita_sottocategoria ON `conto_vendita_sottocategoria`.`id`=`mg_articoli`.`idconto_vendita`
                 LEFT JOIN `co_pianodeiconti2` AS conto_vendita_categoria ON `conto_vendita_sottocategoria`.`idpianodeiconti2`=`conto_vendita_categoria`.`id`
             LEFT JOIN `co_pianodeiconti3` AS conto_acquisto_sottocategoria ON `conto_acquisto_sottocategoria`.`id`=`mg_articoli`.`idconto_acquisto`
@@ -217,16 +219,16 @@ switch ($resource) {
         break;
 
     case 'categorie':
-        $query = 'SELECT `id`, `nome` AS descrizione FROM `mg_categorie` |where| ORDER BY `nome`';
+        $query = 'SELECT `mg_categorie`.`id`, `name` AS descrizione FROM `mg_categorie` LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(setting('Lingua')).') |where| ORDER BY `name`';
 
         foreach ($elements as $element) {
-            $filter[] = '`id`='.prepare($element);
+            $filter[] = '`mg_categorie`.`id`='.prepare($element);
         }
 
         $where[] = '`parent` IS NULL';
 
         if (!empty($search)) {
-            $search_fields[] = '`nome` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
         }
 
         break;
@@ -237,16 +239,16 @@ switch ($resource) {
          */
     case 'sottocategorie':
         if (isset($superselect['id_categoria'])) {
-            $query = 'SELECT `id`, `nome` AS descrizione FROM `mg_categorie` |where| ORDER BY `nome`';
+            $query = 'SELECT `mg_categorie`.`id`, `name` AS descrizione FROM `mg_categorie` LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(setting('Lingua')).') |where| ORDER BY `name`';
 
             foreach ($elements as $element) {
-                $filter[] = '`id`='.prepare($element);
+                $filter[] = '`mg_categorie`.`id`='.prepare($element);
             }
 
             $where[] = '`parent`='.prepare($superselect['id_categoria']);
 
             if (!empty($search)) {
-                $search_fields[] = '`nome` LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
             }
         }
         break;

@@ -30,9 +30,14 @@ switch (filter('op')) {
             $database->table('mg_categorie')
                 ->where('id', '=', $id_record)
                 ->update([
-                    'nome' => $nome,
                     'nota' => $nota,
                     'colore' => $colore,
+                ]);
+
+                $database->table('mg_categorie_lang')
+                ->where('id_record', '=', $id_record)
+                ->update([
+                    'name' => $nome,
                 ]);
 
             flash()->info(tr('Salvataggio completato!'));
@@ -58,7 +63,8 @@ switch (filter('op')) {
 
         // Ricerca corrispondenze con stesso nome
         $corrispondenze = $database->table('mg_categorie')
-            ->where('nome', '=', $nome);
+            ->join('mg_categorie_lang', 'mg_categorie.id', '=', 'mg_categorie_lang.id_record')
+            ->where('name', '=', $nome);
         if (!empty($id_original)) {
             $corrispondenze = $corrispondenze->where('parent', '=', $id_original);
         } else {
@@ -70,10 +76,16 @@ switch (filter('op')) {
         if ($corrispondenze->count() == 0) {
             $id_record = $database->table('mg_categorie')
                 ->insertGetId([
-                    'nome' => $nome,
                     'nota' => $nota,
                     'colore' => $colore,
                     'parent' => $id_original,
+                ]);
+
+                $database->table('mg_categorie_lang')
+                ->insertGetId([
+                    'id_record' => $id_record,
+                    'name' => $nome,
+                    'id_lang' => setting('Lingua'),
                 ]);
 
             flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [

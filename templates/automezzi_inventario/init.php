@@ -40,7 +40,7 @@ $query = 'SELECT
         `an_sedi`.`nome`,
         `mg_articoli`.`codice`,
         `mg_articoli_lang`.`name` as descrizione,
-        `mg_categorie`.`nome` AS subcategoria,
+        `mg_categorie_lang`.`name` AS subcategoria,
         SUM(`mg_movimenti`.`qta`) AS qta,
         `mg_articoli`.`um`
     FROM 
@@ -49,10 +49,11 @@ $query = 'SELECT
         INNER JOIN `mg_articoli` ON `mg_movimenti`.`idarticolo` = `mg_articoli`.`id`
         LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id`=`mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(setting('Lingua')).')
         LEFT JOIN `mg_categorie` ON `mg_categorie`.`id` = `mg_articoli`.`id_sottocategoria`
+        LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id`=`mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(setting('Lingua')).')
     WHERE
         '.implode(' AND ', $where).'
     GROUP BY 
-        `an_sedi`.`targa`, `an_sedi`.`nome`, `an_sedi`.`descrizione`, `mg_articoli`.`codice`, `mg_articoli_lang`.`name`, `mg_categorie`.`nome`, `mg_articoli`.`um`
+        `an_sedi`.`targa`, `an_sedi`.`nome`, `an_sedi`.`descrizione`, `mg_articoli`.`codice`, `mg_articoli_lang`.`name`, `mg_categorie_lang`.`name`, `mg_articoli`.`um`
     ORDER BY 
         `an_sedi`.`targa`, `an_sedi`.`descrizione`';
 

@@ -20,5 +20,6 @@
 include_once __DIR__.'/../../core.php';
 
 if (isset($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = "'.prepare(setting('Lingua')).'") WHERE `id`='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT * FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = "'.prepare(setting('Lingua')).'") WHERE `in_statiintervento`.`id`='.prepare($id_record));
+    
 }

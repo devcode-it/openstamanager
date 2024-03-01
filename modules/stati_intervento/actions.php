@@ -35,7 +35,7 @@ switch (post('op')) {
         ], ['id' => $id_record]);
 
         $dbo->update('in_statiintervento_lang', [
-            'descrizione' => post('descrizione'),
+            'name' => post('descrizione'),
         ], ['id_record' => $id_record, 'id_lang' => setting('Lingua')]);
 
         flash()->info(tr('Informazioni salvate correttamente.'));

@@ -99,85 +99,86 @@ echo '
     </div>
 </form>';
 
-$numero_destinatari = $lista->destinatari()->count();
-$destinatari_senza_mail = $lista->getNumeroDestinatariSenzaEmail();
+if ($lista) {
+    $numero_destinatari = $lista->destinatari()->count();
+    $destinatari_senza_mail = $lista->getNumeroDestinatariSenzaEmail();
 
-echo '
-<!-- Destinatari -->
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h3 class="panel-title">
-            '.tr('Destinatari').'
-            <span> ('.$numero_destinatari.')</span> <div class="pull-right" >
-            '.(($destinatari_senza_mail > 0) ? ' <span title="'.tr('Indirizzi e-mail mancanti').'" class="tip label label-danger clickable">'.$destinatari_senza_mail.'</span>' : '')
-    .'<span title="'.tr('Indirizzi e-mail senza consenso per newsletter').'" class="tip label label-warning clickable" id="numero_consenso_disabilitato"></span></div>
-        </h3>
+    echo '
+    <!-- Destinatari -->
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                '.tr('Destinatari').'
+                <span> ('.$numero_destinatari.')</span> <div class="pull-right" >
+                '.(($destinatari_senza_mail > 0) ? ' <span title="'.tr('Indirizzi e-mail mancanti').'" class="tip label label-danger clickable">'.$destinatari_senza_mail.'</span>' : '')
+        .'<span title="'.tr('Indirizzi e-mail senza consenso per newsletter').'" class="tip label label-warning clickable" id="numero_consenso_disabilitato"></span></div>
+            </h3>
+        </div>
+
+        <div class="panel-body">
+            <table class="table table-hover table-condensed table-bordered" id="destinatari">
+                <thead>
+                    <tr>
+                        <th>'.tr('Ragione sociale').'</th>
+                        <th>'.tr('Tipo').'</th>
+                        <th>'.tr('Tipologia').'</th>
+                        <th class="text-center">'.tr('E-mail').'</th>
+                        <th class="text-center">'.tr('Newsletter').'</th>
+                        <th class="text-center" width="60">#</th>
+                    </tr>
+                </thead>
+            </table>
+
+            <a class="btn btn-danger ask pull-right" data-backto="record-edit" data-op="remove_all_receivers">
+                <i class="fa fa-trash"></i> '.tr('Elimina tutti').'
+            </a>
+        </div>
     </div>
 
-    <div class="panel-body">
-        <table class="table table-hover table-condensed table-bordered" id="destinatari">
-            <thead>
-                <tr>
-                    <th>'.tr('Ragione sociale').'</th>
-                    <th>'.tr('Tipo').'</th>
-                    <th>'.tr('Tipologia').'</th>
-                    <th class="text-center">'.tr('E-mail').'</th>
-                    <th class="text-center">'.tr('Newsletter').'</th>
-                    <th class="text-center" width="60">#</th>
-                </tr>
-            </thead>
-        </table>
+    <a class="btn btn-danger ask" data-backto="record-list">
+        <i class="fa fa-trash"></i> '.tr('Elimina').'
+    </a>
+    
+    <script>
+    globals.newsletter = {
+        senza_consenso: "'.$lista->getNumeroDestinatariSenzaConsenso().'",
+        table_url: "'.Module::pool('Newsletter')->fileurl('ajax/table.php').'?id_list='.$id_record.'",
+    };
 
-        <a class="btn btn-danger ask pull-right" data-backto="record-edit" data-op="remove_all_receivers">
-            <i class="fa fa-trash"></i> '.tr('Elimina tutti').'
-        </a>
-    </div>
-</div>
-
-<a class="btn btn-danger ask" data-backto="record-list">
-    <i class="fa fa-trash"></i> '.tr('Elimina').'
-</a>';
-
-echo '
-<script>
-globals.newsletter = {
-    senza_consenso: "'.$lista->getNumeroDestinatariSenzaConsenso().'",
-    table_url: "'.Module::pool('Newsletter')->fileurl('ajax/table.php').'?id_list='.$id_record.'",
-};
-
-$(document).ready(function() {
-    const senza_consenso = $("#numero_consenso_disabilitato");
-    if (globals.newsletter.senza_consenso > 0) {
-        senza_consenso.text(globals.newsletter.senza_consenso);
-    } else {
-        senza_consenso.hide();
-    }
-
-    const table = $("#destinatari").DataTable({
-        language: globals.translations.datatables,
-        retrieve: true,
-        ordering: false,
-        searching: true,
-        paging: true,
-        order: [],
-        lengthChange: false,
-        processing: true,
-        serverSide: true,
-        ajax: {
-            url: globals.newsletter.table_url,
-            type: "GET",
-            dataSrc: "data",
-        },
-        searchDelay: 500,
-        pageLength: 50,
-    });
-
-    table.on("processing.dt", function (e, settings, processing) {
-        if (processing) {
-            $("#mini-loader").show();
+    $(document).ready(function() {
+        const senza_consenso = $("#numero_consenso_disabilitato");
+        if (globals.newsletter.senza_consenso > 0) {
+            senza_consenso.text(globals.newsletter.senza_consenso);
         } else {
-            $("#mini-loader").hide();
+            senza_consenso.hide();
         }
+
+        const table = $("#destinatari").DataTable({
+            language: globals.translations.datatables,
+            retrieve: true,
+            ordering: false,
+            searching: true,
+            paging: true,
+            order: [],
+            lengthChange: false,
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: globals.newsletter.table_url,
+                type: "GET",
+                dataSrc: "data",
+            },
+            searchDelay: 500,
+            pageLength: 50,
+        });
+
+        table.on("processing.dt", function (e, settings, processing) {
+            if (processing) {
+                $("#mini-loader").show();
+            } else {
+                $("#mini-loader").hide();
+            }
+        });
     });
-});
-</script>';
+    </script>';
+}

@@ -63,6 +63,7 @@ switch (filter('op')) {
         break;
 
     case 'delete':
+        $lista = Lista::find($id_record);
         $lista->delete();
 
         flash()->info(tr('Lista newsletter rimossa!'));

@@ -37,12 +37,11 @@ class Tipo extends Model
      *
      * @return self
      */
-    public static function build($codice, $descrizione)
+    public static function build($codice)
     {
         $model = new static();
 
         $model->codice = $codice;
-        $model->name = $descrizione;
 
         // Salvataggio delle informazioni
         $model->save();

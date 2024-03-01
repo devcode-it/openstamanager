@@ -23,7 +23,6 @@ include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'update':
-        $tipo->name = post('descrizione');
         $tipo->calcola_km = post('calcola_km');
         $tipo->tempo_standard = post('tempo_standard');
         $tipo->costo_orario = post('costo_orario');
@@ -33,6 +32,8 @@ switch (post('op')) {
         $tipo->costo_km_tecnico = post('costo_km_tecnico');
         $tipo->costo_diritto_chiamata_tecnico = post('costo_diritto_chiamata_tecnico');
         $tipo->save();
+
+        $database->query('UPDATE `in_tipiintervento_lang` SET `name` = '.prepare(post('descrizione')).' WHERE `id_record` = '.prepare($id_record).' AND `id_lang` = '.prepare(setting('Lingua')));
 
         $fasce_ore = (array) post('fascia_ore');
         $fascia_km = (array) post('fascia_km');
@@ -60,9 +61,9 @@ switch (post('op')) {
 
     case 'add':
         $codice = post('codice');
-        $descrizione = post('descrizione');
 
-        $tipo = Tipo::build($codice, $descrizione);
+        $tipo = Tipo::build($codice);
+        $database->query('INSERT INTO `in_tipiintervento_lang` (`id_lang`, `id_record`, `name`) VALUES ('.prepare(setting('Lingua')).', '.prepare($tipo->id).', '.prepare(post('descrizione')).')');
 
         $tipo->tempo_standard = post('tempo_standard');
         $tipo->calcola_km = post('calcola_km');

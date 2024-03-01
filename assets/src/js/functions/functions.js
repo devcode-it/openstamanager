@@ -94,7 +94,7 @@ function openModal(title, href) {
  * @param link
  */
 function openLink(event, link) {
-    if (event.ctrlKey) {
+    if (event.ctrlKey || event.metaKey) {
         window.open(link);
     } else {
         location.href = link;

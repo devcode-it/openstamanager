@@ -188,7 +188,20 @@ if (empty(get('modal'))) {
                     $module_id = Modules::get('Ordini cliente')['id'];
 
                     // Ricerca inserimenti su ordini
-                    $query = 'SELECT *, ( SELECT descrizione FROM or_tipiordine WHERE id=(SELECT idtipoordine FROM or_ordini WHERE id=idordine) ) AS tipo_documento, ( SELECT `dir` FROM or_tipiordine WHERE id=(SELECT idtipoordine FROM or_ordini WHERE id=idordine) ) AS `dir`, ( SELECT numero FROM or_ordini WHERE id=idordine ) AS numero, ( SELECT numero_esterno FROM or_ordini WHERE id=idordine ) AS numero_esterno, ( SELECT data FROM or_ordini WHERE id=idordine ) AS data FROM or_righe_ordini WHERE  or_righe_ordini.id='.prepare($acquisto['id_riga_ordine']);
+                    $query = 'SELECT 
+                            *, 
+                            `or_tipiordine_lang`.`name` AS tipo_documento, 
+                            `or_tipiordine`.`dir`,
+                            `or_ordini`.`numero`,
+                            `or_ordini`.`numero_esterno`,
+                            `or_ordini`.`data`
+                        FROM 
+                            `or_righe_ordini` 
+                            INNER JOIN `or_ordini` ON `or_righe_ordini`.`idordine`=`or_ordini`.`id`
+                            INNER JOIN `or_tipiordine` ON `or_ordini`.`ididtipordine`=`or_tipiordine`.`id`
+                            LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine`.`id` = `or_tipiordine_lang`.`id_record` AND `or_tipiordine_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+                        WHERE  
+                            `or_righe_ordini`.`id`='.prepare($acquisto['id_riga_ordine']);
                     $data = $dbo->fetchArray($query);
 
                     $id = $data[0]['idordine'];
@@ -285,7 +298,20 @@ if (empty(get('modal'))) {
                     $module_id = Modules::get('Ordini cliente')['id'];
 
                     // Ricerca inserimenti su ordini
-                    $query = 'SELECT *, ( SELECT descrizione FROM or_tipiordine WHERE id=(SELECT idtipoordine FROM or_ordini WHERE id=idordine) ) AS tipo_documento, ( SELECT `dir` FROM or_tipiordine WHERE id=(SELECT idtipoordine FROM or_ordini WHERE id=idordine) ) AS `dir`, ( SELECT numero FROM or_ordini WHERE id=idordine ) AS numero, ( SELECT numero_esterno FROM or_ordini WHERE id=idordine ) AS numero_esterno, ( SELECT data FROM or_ordini WHERE id=idordine ) AS data FROM or_righe_ordini WHERE  or_righe_ordini.id='.prepare($vendita['id_riga_ordine']);
+                    $query = 'SELECT 
+                            *, 
+                            `or_tipiordine_lang`.`name` AS tipo_ordine,
+                            `or_ordini`.`dir`,
+                            `or_ordini`.`numero`,
+                            `or_ordini`.`numero_esterno`,
+                            `or_ordini`.`data`
+                        FROM 
+                            `or_righe_ordini`
+                            INNER JOIN `or_ordini` ON `or_righe_ordini`.`idordine`=`or_ordini`.`id`
+                            INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine`=`or_tipiordine`.`id`
+                            LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine_lang`.`id_record`=`or_tipiordine`.`id` AND `or_tipiordine_lang`.`id_lang`='.prepare(setting('Lingua')).')
+                        WHERE  
+                            `or_righe_ordini`.`id`='.prepare($vendita['id_riga_ordine']);
                     $data = $dbo->fetchArray($query);
 
                     $id = $data[0]['idordine'];

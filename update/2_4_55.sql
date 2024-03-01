@@ -1703,3 +1703,25 @@ ORDER BY
 	`data` DESC, 
     CAST(`numero_esterno` AS UNSIGNED) DESC" WHERE `name` = 'Ordini cliente';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`or_statiordine_lang`.`name`' WHERE `zz_modules`.`name` = 'Ordini cliente' AND `zz_views`.`name` = 'icon_title_Stato';
+
+-- Aggiunta tabella or_tipiordine_lang
+CREATE TABLE IF NOT EXISTS `or_tipiordine_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `name` VARCHAR(255) NOT NULL
+);
+ALTER TABLE `or_tipiordine_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `or_tipiordine_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `or_tipiordine_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `or_tipiordine`;
+
+ALTER TABLE `or_tipiordine`
+    DROP `descrizione`;
+
+ALTER TABLE `or_tipiordine` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT; 
+
+ALTER TABLE `or_tipiordine_lang` ADD CONSTRAINT `or_tipiordine_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `or_tipiordine`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 

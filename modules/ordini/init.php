@@ -30,7 +30,7 @@ if (isset($id_record)) {
             `or_ordini`.`id` AS idordine,
             `or_ordini`.`idagente` AS idagente,
             `or_statiordine_lang`.`name` AS `stato`,
-            `or_tipiordine`.`descrizione` AS `descrizione_tipodoc`,
+            `or_tipiordine_lang`.`name` AS `descrizione_tipodoc`,
             `an_anagrafiche`.`tipo` AS tipo_anagrafica,
             `or_statiordine`.`completato` AS flag_completato
         FROM 
@@ -39,6 +39,7 @@ if (isset($id_record)) {
             LEFT JOIN `or_statiordine_lang` ON `or_statiordine_lang`.`id_record`=`or_statiordine`.`id`
             INNER JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
             INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine`=`or_tipiordine`.`id`
+            LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine_lang`.`id_record`=`or_tipiordine`.`id` AND `or_tipiordine_lang`.`id_lang`="'.prepare(setting('Lingua')).'")
         WHERE 
             `or_ordini`.`id`='.prepare($id_record));
 }

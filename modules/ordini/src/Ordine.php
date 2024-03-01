@@ -208,17 +208,17 @@ class Ordine extends Document
                 $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero', [
                     'YEAR(data) = '.prepare(date('Y', strtotime($data))),
                     'MONTH(data) = '.prepare(date('m', strtotime($data))),
-                    'idtipoordine IN (SELECT id FROM or_tipiordine WHERE dir = '.prepare($direzione).')',
+                    'idtipoordine IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` = '.prepare($direzione).')',
                 ]);
             } elseif ((strpos($maschera, 'YYYY') !== false) or (strpos($maschera, 'yy') !== false)) {
                 $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero', [
                     'YEAR(data) = '.prepare(date('Y', strtotime($data))),
-                    'idtipoordine IN (SELECT id FROM or_tipiordine WHERE dir = '.prepare($direzione).')',
+                    'idtipoordine IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` = '.prepare($direzione).')',
                 ]);
             } else {
                 $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero', [
                     'YEAR(data) = '.prepare(date('Y', strtotime($data))),
-                    'idtipoordine IN (SELECT id FROM or_tipiordine WHERE dir = '.prepare($direzione).')',
+                    'idtipoordine IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` = '.prepare($direzione).')',
                 ]);
             }
         }
@@ -248,17 +248,17 @@ class Ordine extends Document
             $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero_esterno', [
                 'YEAR(data) = '.prepare(date('Y', strtotime($data))),
                 'MONTH(data) = '.prepare(date('m', strtotime($data))),
-                'idtipoordine IN (SELECT id FROM or_tipiordine WHERE dir = '.prepare($direzione).')',
+                'idtipoordine IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` = '.prepare($direzione).')',
             ]);
         } elseif ((strpos($maschera, 'YYYY') !== false) or (strpos($maschera, 'yy') !== false)) {
             $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero_esterno', [
                 'YEAR(data) = '.prepare(date('Y', strtotime($data))),
-                'idtipoordine IN (SELECT id FROM or_tipiordine WHERE dir = '.prepare($direzione).')',
+                'idtipoordine IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` = '.prepare($direzione).')',
             ]);
         } else {
             $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero_esterno', [
                 'YEAR(data) = '.prepare(date('Y', strtotime($data))),
-                'idtipoordine IN (SELECT id FROM or_tipiordine WHERE dir = '.prepare($direzione).')',
+                'idtipoordine IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` = '.prepare($direzione).')',
             ]);
         }
 

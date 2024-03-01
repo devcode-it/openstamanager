@@ -541,7 +541,7 @@ if (!$block_edit) {
         WHERE 
             `idanagrafica`='.prepare($record['idanagrafica']).' 
             AND `or_statiordine_lang`.`name` IN(\'Accettato\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) 
-            AND `dir`='.prepare($dir).') 
+            AND `or_tipiordine`.`dir`='.prepare($dir).') 
             AND (`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) > 0)
         GROUP BY `or_ordini`.`id`';
     $tot_ordini = $dbo->fetchArray($ordini_query)[0]['tot'];

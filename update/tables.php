@@ -123,6 +123,7 @@ return [
     'mg_categorie',
     'mg_categorie_lang',
     'mg_causali_movimenti',
+    'mg_causali_movimenti_lang',
     'mg_listini',
     'mg_listini_articoli',
     'mg_piani_sconto',

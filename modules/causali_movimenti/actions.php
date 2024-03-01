@@ -23,12 +23,12 @@ switch (filter('op')) {
     case 'update':
         if (isset($id_record)) {
             $database->update('mg_causali_movimenti', [
-                'nome' => post('nome'),
                 'tipo_movimento' => post('tipo_movimento'),
-                'descrizione' => post('descrizione'),
-            ], [
-                'id' => $id_record,
-            ]);
+            ], ['id' => $id_record,]);
+            $database->update('mg_causali_movimenti_lang', [
+                'name' => post('nome'),
+                'description' => post('descrizione'),
+            ], ['id_record' => $id_record, 'id_lang' => setting('Lingua'),]);
         } else {
             flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio'));
         }
@@ -37,12 +37,15 @@ switch (filter('op')) {
 
     case 'add':
         $database->insert('mg_causali_movimenti', [
-            'nome' => post('nome'),
             'tipo_movimento' => post('tipo_movimento'),
-            'descrizione' => post('descrizione'),
         ]);
         $id_record = $database->lastInsertedID();
-
+        $database->insert('mg_causali_movimenti_lang', [
+            'nome' => post('nome'),
+            'descrizione' => post('descrizione'),
+            'id_record' => $id_record,
+            'id_lang' => setting('Lingua'),
+        ]);
         break;
 
     case 'delete':

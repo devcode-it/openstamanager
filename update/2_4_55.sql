@@ -1536,3 +1536,63 @@ ORDER BY
     `mg_articoli_lang`.`name`" WHERE `name` = 'Articoli';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_categorie_lang`.`name`' WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = 'Categoria';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_categorie_lang`.`name`' WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = 'Sottocategoria';
+
+-- Aggiunta tabella mg_causali_movimenti_lang
+CREATE TABLE IF NOT EXISTS `mg_causali_movimenti_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `name` VARCHAR(255) NOT NULL,
+    `description` VARCHAR(255) NOT NULL
+);
+ALTER TABLE `mg_causali_movimenti_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `mg_causali_movimenti_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `mg_causali_movimenti_lang` (`id`, `id_lang`, `id_record`, `name`, `description`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `nome`, `descrizione` FROM `mg_causali_movimenti`;
+
+ALTER TABLE `mg_causali_movimenti`
+    DROP `nome`,
+    DROP `descrizione`;
+
+ALTER TABLE `mg_causali_movimenti_lang` ADD CONSTRAINT `mg_causali_movimenti_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `mg_causali_movimenti`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+-- Allineamento vista Causali movimenti
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select|
+FROM 
+    `mg_causali_movimenti`
+    LEFT JOIN `mg_causali_movimenti_lang` ON (`mg_causali_movimenti`.`id` = `mg_causali_movimenti_lang`.`id_record` AND `mg_causali_movimenti_lang`.|lang|)
+WHERE 
+    1=1 
+HAVING 
+    2=2" WHERE `name` = 'Causali movimenti';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_causali_movimenti_lang`.`name`' WHERE `zz_modules`.`name` = 'Causali movimenti' AND `zz_views`.`name` = 'Nome';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_causali_movimenti_lang`.`description`' WHERE `zz_modules`.`name` = 'Causali movimenti' AND `zz_views`.`name` = 'Descrizione';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_causali_movimenti`.`id`' WHERE `zz_modules`.`name` = 'Causali movimenti' AND `zz_views`.`name` = 'id';
+
+-- Allineamento vista Movimenti
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select|
+FROM
+    `mg_movimenti`
+	INNER JOIN `mg_articoli` ON `mg_articoli`.id = `mg_movimenti`.`idarticolo`
+    LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.|lang|)
+	LEFT JOIN `an_sedi` ON `mg_movimenti`.`idsede` = `an_sedi`.`id`
+	LEFT JOIN `zz_modules` ON `zz_modules`.`name` = 'Articoli'
+	LEFT JOIN (SELECT `an_anagrafiche`.`idanagrafica`, `co_documenti`.`id`, `ragione_sociale` AS nomi FROM `co_documenti` LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` GROUP BY `idanagrafica`, `co_documenti`.`id`) AS fattura ON `fattura`.`id`= `mg_movimenti`.`reference_id`
+	LEFT JOIN (SELECT `an_anagrafiche`.`idanagrafica`, `dt_ddt`.`id`, `ragione_sociale` AS nomi FROM `dt_ddt` LEFT JOIN `an_anagrafiche` ON `dt_ddt`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` GROUP BY `idanagrafica`, `dt_ddt`.`id`) AS ddt ON `ddt`.`id`= `mg_movimenti`.`reference_id`
+	LEFT JOIN (SELECT `an_anagrafiche`.`idanagrafica`, `in_interventi`.`id`, `ragione_sociale` AS nomi FROM `in_interventi` LEFT JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` GROUP BY `idanagrafica`, `in_interventi`.`id`) AS intervento ON `intervento`.`id`= `mg_movimenti`.`reference_id`
+    LEFT JOIN (SELECT CONCAT('tab_', `zz_plugins`.`id`) AS link FROM `zz_plugins` INNER JOIN `zz_modules` ON `zz_plugins`.`idmodule_to` = `zz_modules`.`id` WHERE `zz_modules`.`name` = 'Articoli' AND `zz_plugins`.`name` = 'Movimenti') AS page ON `mg_movimenti`.`id` != ''
+WHERE
+    1=1 AND `mg_articoli`.`deleted_at` IS NULL
+HAVING
+    2=2
+ORDER BY
+    `mg_movimenti`.`data` DESC,
+    `mg_movimenti`.`created_at` DESC" WHERE `name` = 'Movimenti';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF(`mg_articoli_lang`.`name` != "", CONCAT(`mg_articoli`.`codice`, " - ", `mg_articoli_lang`.`name`), `mg_articoli`.`codice`)' WHERE `zz_modules`.`name` = 'Movimenti' AND `zz_views`.`name` = 'Articolo';

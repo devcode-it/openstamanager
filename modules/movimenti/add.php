@@ -57,7 +57,7 @@ if (setting('Attiva scorciatoie da tastiera')) {
         </div>
 
         <div class="col-md-4">
-            {["type": "select", "label": "<?php echo tr('Causale'); ?>", "name": "causale", "values": "query=SELECT id, nome as text, descrizione, tipo_movimento FROM mg_causali_movimenti", "value": 1, "required": 1 ]}
+            {["type": "select", "label": "<?php echo tr('Causale'); ?>", "name": "causale", "values": "query=SELECT `mg_causali_movimenti`.`id`, `name` as text, `description` as descrizione, `tipo_movimento` FROM `mg_causali_movimenti` LEFT JOIN `mg_causali_movimenti_lang` ON (`mg_causali_movimenti`.`id` = `mg_causali_movimenti_lang`.`id_record` AND `mg_causali_movimenti_lang`.`id_lang` = <?php echo setting('Lingua'); ?>) ORDER BY `name` ASC", "value": 1, "required": 1 ]}
             <input type="hidden" name="tipo_movimento" id="tipo_movimento" value="carico">
         </div>
     </div>

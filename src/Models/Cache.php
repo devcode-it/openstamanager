@@ -105,34 +105,4 @@ class Cache extends Model
     {
         return $query->where('expire_at', '<=', Carbon::now());
     }
-
-    /**
-     * Ritorna l'attributo name della cache.
-     *
-     * @return string
-     */
-    public function getNameAttribute()
-    {
-        return database()->table($this->table.'_lang')
-            ->select('name')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', setting('Lingua'))
-            ->first()->name;
-    }
-
-    /**
-     * Ritorna l'id della cache a partire dal nome.
-     *
-     * @param string $name il nome da ricercare
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getByName($name)
-    {
-        return database()->table($this->table.'_lang')
-            ->select('id_record')
-            ->where('name', '=', $name)
-            ->where('id_lang', '=', setting('Lingua'))
-            ->first();
-    }
 }

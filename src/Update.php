@@ -208,7 +208,7 @@ class Update
             self::normalizeDatabase($database->getDatabaseName());
 
             if (class_exists('\Models\Cache')) {
-                (new Models\Cache())->getByName('Ultima versione di OpenSTAManager disponibile')->set(null);
+                Models\Cache::pool('Ultima versione di OpenSTAManager disponibile')->set(null);
             }
 
             // Correzione permessi per le cartelle backup e files

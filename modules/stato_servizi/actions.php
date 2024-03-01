@@ -372,7 +372,7 @@ switch (filter('op')) {
         break;
 
     case 'informazioni-fe':
-        $info = (new Cache())->getByName('Informazioni su spazio FE');
+        $info = Cache::pool('Informazioni su spazio FE');
         if (!$info->isValid()) {
             $response = Services::request('POST', 'informazioni_fe');
             $response = Services::responseBody($response);

@@ -42,7 +42,7 @@ class Interaction extends Services
         $result = self::getFileList($list);
 
         // Aggiornamento cache hook
-        (new Cache())->getByName('Ricevute Elettroniche')->set($result);
+        Cache::pool('Ricevute Elettroniche')->set($result);
 
         return $result;
     }

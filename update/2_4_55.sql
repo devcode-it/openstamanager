@@ -1725,23 +1725,3 @@ ALTER TABLE `or_tipiordine`
 ALTER TABLE `or_tipiordine` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT; 
 
 ALTER TABLE `or_tipiordine_lang` ADD CONSTRAINT `or_tipiordine_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `or_tipiordine`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
-
--- Aggiunta tabella zz_cache_lang
-CREATE TABLE IF NOT EXISTS `zz_cache_lang` (
-    `id` int NOT NULL,
-    `id_lang` int NOT NULL,
-    `id_record` int NOT NULL,
-    `name` VARCHAR(255) NOT NULL
-);
-ALTER TABLE `zz_cache_lang`
-    ADD PRIMARY KEY (`id`);
-
-ALTER TABLE `zz_cache_lang`
-    MODIFY `id` int NOT NULL AUTO_INCREMENT;
-
-INSERT INTO `zz_cache_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name` FROM `zz_cache`;
-
-ALTER TABLE `zz_cache`
-    DROP `name`;
-
-ALTER TABLE `zz_cache_lang` ADD CONSTRAINT `zz_cache_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_cache`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 

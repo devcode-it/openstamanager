@@ -49,7 +49,7 @@ class Services
      */
     public static function getInformazioni($force = false)
     {
-        $cache = (new Cache())->getByName('Informazioni su Services');
+        $cache = Cache::pool('Informazioni su Services');
 
         // Aggiornamento dei contenuti della cache
         if (!$cache->isValid() || $force) {

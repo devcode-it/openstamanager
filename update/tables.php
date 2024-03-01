@@ -151,10 +151,9 @@ return [
     'or_statiordine',
     'or_statiordine_lang',
     'or_tipiordine',
-    'or_tipiordine_lang'
+    'or_tipiordine_lang',
     'zz_api_resources',
     'zz_cache',
-    'zz_cache_lang',
     'zz_currencies',
     'zz_checks',
     'zz_check_user',

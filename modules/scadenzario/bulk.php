@@ -72,7 +72,7 @@ switch (post('op')) {
         break;
 
     case 'send-sollecito':
-        $template = Template::pool('Sollecito di pagamento raggruppato per anagrafica');
+        $template = (new Template())->getByName('Sollecito di pagamento raggruppato per anagrafica');
 
         $list = [];
         $anagrafiche = [];

@@ -39,7 +39,7 @@ switch (filter('op')) {
         }
 
         // Salvataggio della versione nella cache
-        Cache::pool('Ultima versione di OpenSTAManager disponibile')->set($versione);
+        (new Cache())->getByName('Ultima versione di OpenSTAManager disponibile')->set($versione);
 
         echo $versione;
 

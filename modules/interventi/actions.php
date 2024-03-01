@@ -93,7 +93,7 @@ switch (post('op')) {
                 if (!in_array($tecnico_presente['id_tecnico'], $tecnici_assegnati)) {
                     $tecnico = Anagrafica::find($tecnico_presente['id_tecnico']);
                     if (!empty($tecnico['email'])) {
-                        $template = Template::pool('Notifica rimozione intervento');
+                        $template = (new Template())->getByName('Notifica rimozione intervento');
 
                         if (!empty($template)) {
                             $mail = Mail::build(auth()->getUser(), $template, $intervento->id);
@@ -112,7 +112,7 @@ switch (post('op')) {
                     $tecnico = Anagrafica::find($tecnico_assegnato);
 
                     if (!empty($tecnico['email'])) {
-                        $template = Template::pool('Notifica intervento');
+                        $template = (new Template())->getByName('Notifica intervento');
 
                         if (!empty($template)) {
                             $mail = Mail::build(auth()->getUser(), $template, $intervento->id);
@@ -294,7 +294,7 @@ switch (post('op')) {
             // Notifica al tecnico
             if (setting('Notifica al tecnico l\'assegnazione all\'attività')) {
                 if (!empty($tecnico['email'])) {
-                    $template = Template::pool('Notifica intervento');
+                    $template = (new Template())->getByName('Notifica intervento');
 
                     if (!empty($template)) {
                         $mail = Mail::build(auth()->getUser(), $template, $intervento->id);
@@ -917,7 +917,7 @@ switch (post('op')) {
         // Notifica rimozione dell' intervento al tecnico
         if (setting('Notifica al tecnico la rimozione della sessione dall\'attività')) {
             if (!empty($tecnico['email'])) {
-                $template = Template::pool('Notifica rimozione intervento');
+                $template = (new Template())->getByName('Notifica rimozione intervento');
 
                 if (!empty($template)) {
                     $mail = Mail::build(auth()->getUser(), $template, $id_record);

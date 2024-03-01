@@ -156,7 +156,7 @@ if (!empty($interventi)) {
                 <td class="text-left" >'.tr('Data inizio').': <b>'.Translator::dateToLocale($interventi[$i]['inizio']).'</b></td>
             </tr>
             <tr>
-                <td colspan="2" class="text-left" >'.tr('Tipo').': <b>'.$intervento->tipo->descrizione.'</b></td>
+                <td colspan="2" class="text-left" >'.tr('Tipo').': <b>'.$intervento->tipo->name.'</b></td>
                 <td colspan="2" class="text-left" >'.tr('stato').': <b>'.$intervento->stato->name.'</b></td>
             </tr>
             <tr>

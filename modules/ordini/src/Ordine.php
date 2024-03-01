@@ -271,7 +271,7 @@ class Ordine extends Document
 
     public function getReferenceName()
     {
-        return $this->tipo->descrizione;
+        return $this->tipo->name;
     }
 
     public function getReferenceNumber()

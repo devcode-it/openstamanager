@@ -346,7 +346,7 @@ foreach ($sessioni as $i => $sessione) {
     echo '
     	<td>
             '.$sessione->anagrafica->ragione_sociale.'
-            ('.$sessione->tipo->descrizione.')
+            ('.$sessione->tipo->name.')
     	</td>';
 
     $inizio = new Carbon($sessione['orario_inizio']);

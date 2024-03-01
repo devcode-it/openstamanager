@@ -323,7 +323,7 @@ switch (filter('op')) {
         $ddt->save();
 
         $evadi_qta_parent = true;
-        if ($documento->tipo->descrizione == 'Ddt in uscita' || $documento->tipo->descrizione == 'Ddt in entrata') {
+        if ($documento->tipo->name == 'Ddt in uscita' || $documento->tipo->name == 'Ddt in entrata') {
             $evadi_qta_parent = false;
         }
 
@@ -336,11 +336,11 @@ switch (filter('op')) {
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
-                    if ($documento->tipo->descrizione == 'Ddt in uscita' || $documento->tipo->descrizione == 'Ddt in entrata') {
+                    if ($documento->tipo->name == 'Ddt in uscita' || $documento->tipo->name == 'Ddt in entrata') {
                         // TODO: estrarre il listino corrispondente se presente
                         $originale = ArticoloOriginale::find($riga->idarticolo);
 
-                        $prezzo = $documento->tipo->descrizione == 'Ddt in entrata' ? $originale->prezzo_vendita : $originale->prezzo_acquisto;
+                        $prezzo = $documento->tipo->name == 'Ddt in entrata' ? $originale->prezzo_vendita : $originale->prezzo_acquisto;
                         if ($dir == 'entrata') {
                             $id_iva = ($ddt->anagrafica->idiva_vendite ?: setting('Iva predefinita'));
                         } else {

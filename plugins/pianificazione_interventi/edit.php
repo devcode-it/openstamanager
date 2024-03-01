@@ -140,7 +140,7 @@ if (!$elenco_promemoria->isEmpty()) {
         echo '
             <tr>
                 <td>'.Translator::dateToLocale($promemoria['data_richiesta']).'</td>
-                <td>'.$promemoria->tipo->descrizione.'</td>
+                <td>'.$promemoria->tipo->name.'</td>
                 <td>'.nl2br($promemoria['richiesta']).'</td>
                 <td>'.$info_intervento.'</td>
                 <td>'.$info_sede.'</td>

@@ -108,7 +108,7 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
                 </td>
 
                 <td>'.dateFormat($promemoria->data_richiesta).'</td>
-                <td>'.$promemoria->tipo->descrizione.'</td>
+                <td>'.$promemoria->tipo->name.'</td>
                 <td>'.nl2br($promemoria->richiesta).'</td>
 
                 <td>

@@ -104,7 +104,7 @@ if (!empty($interventi)) {
                 echo '
                 <tr>
                     <td>'.$sessione->anagrafica->ragione_sociale.'</td>
-                    <td>'.$sessione->tipo->descrizione.'</td>
+                    <td>'.$sessione->tipo->name.'</td>
                     <td class="text-right">'.numberFormat($sessione->ore).'</td>
                     <td class="text-right">'.numberFormat($sessione->km).'</td>
                     <td class="text-right danger">'.moneyFormat($sessione->costo_manodopera).'</td>
@@ -116,9 +116,9 @@ if (!empty($interventi)) {
                 </tr>';
 
                 // Raggruppamento per tipologia descrizione
-                $tipologie[$sessione->tipo->descrizione]['ore'] += $sessione->ore;
-                $tipologie[$sessione->tipo->descrizione]['costo'] += $sessione->costo_manodopera + $sessione->costo_viaggio + $sessione->costo_diritto_chiamata;
-                $tipologie[$sessione->tipo->descrizione]['ricavo'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera + $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio + $sessione->prezzo_diritto_chiamata;
+                $tipologie[$sessione->tipo->name]['ore'] += $sessione->ore;
+                $tipologie[$sessione->tipo->name]['costo'] += $sessione->costo_manodopera + $sessione->costo_viaggio + $sessione->costo_diritto_chiamata;
+                $tipologie[$sessione->tipo->name]['ricavo'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera + $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio + $sessione->prezzo_diritto_chiamata;
 
                 // Raggruppamento per tecnico
                 $tecnici[$sessione->anagrafica->ragione_sociale]['ore'] += $sessione->ore;

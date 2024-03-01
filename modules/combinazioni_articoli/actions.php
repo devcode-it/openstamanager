@@ -10,21 +10,21 @@ switch (filter('op')) {
         $nome = post('nome');
 
         // Ricerca combinazione con nome indicato
-        $esistente = Combinazione::where('nome', '=', $nome);
+        $esistente = (new Combinazione())->getByName($nome)->id_record;
         if (isset($combinazione)) {
-            $esistente = $esistente->where('id', '!=', $combinazione->id);
+            $esistente = Combinazione::find($esistente)->where('id', '!=', $combinazione->id);
         }
-        $esistente = $esistente->count() !== 0;
 
         if (!$esistente) {
             $combinazione = $combinazione ?: Combinazione::build();
-            $combinazione->nome = $nome;
             $combinazione->codice = post('codice');
             $combinazione->id_categoria = post('id_categoria');
             $combinazione->id_sottocategoria = post('id_sottocategoria');
             $combinazione->save();
 
             $id_record = $combinazione->id;
+
+            $database->query('INSERT INTO `mg_combinazioni_lang` (`id_record`, `id_lang`, `name`) VALUES ('.$id_record.', '.setting('Lingua').', \''.post('nome').'\')');
 
             // Selezione attributi per la combinazione
             $combinazione->attributi()->sync((array) post('attributi'));

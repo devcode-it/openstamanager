@@ -88,7 +88,7 @@ class Combinazione extends Model
         if (empty($id_articolo)) {
             $articoli = $this->articoli;
             if ($articoli->isEmpty()) {
-                $articolo = Articolo::build($this->nome, $this->nome);
+                $articolo = Articolo::build($this->codice);
                 $articolo->id_combinazione = $this->id;
 
                 $articolo->id_categoria = $this->id_categoria;
@@ -110,8 +110,8 @@ class Combinazione extends Model
                     $articolo->save();
                 }
             }
-            $articolo->name = $this->nome.' ['.implode(', ', $variante).']';
-            $articolo->codice = $this->codice.'-'.implode('|', $variante);
+            $database->query("INSERT INTO `mg_articoli_lang` (`id_record`, `id_lang`, `name`) VALUES ('" . $articolo->id . "', " . setting('Lingua') . ", '" . implode("', '", $variante) . "')");
+            $articolo->codice = $this->codice . '-' . implode('|', $variante);
             $articolo->save();
         }
 
@@ -210,5 +210,36 @@ class Combinazione extends Model
         database()->table('mg_combinazioni')
             ->where('id', $this->id)
             ->update($combo->toArray());
+    }
+
+
+    /**
+     * Ritorna l'attributo name della combinazione.
+     *
+     * @return string
+     */
+    public function getNameAttribute()
+    {
+        return database()->table($this->table.'_lang')
+            ->select('name')
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first()->name;
+    }
+
+    /**
+     * Ritorna l'id della combinazione a partire dal nome.
+     *
+     * @param string $name il nome da ricercare
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getByName($name)
+    {
+        return database()->table($this->table.'_lang')
+            ->select('id_record')
+            ->where('name', '=', $name)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first();
     }
 }

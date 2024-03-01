@@ -1465,18 +1465,6 @@ HAVING
     2=2" WHERE `name` = 'Attributi Combinazioni';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_attributi_lang`.`name`' WHERE `zz_modules`.`name` = 'Attributi Combinazioni' AND `zz_views`.`name` = 'Nome';
 
--- Allineamento vista Combinazioni
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select|
-FROM 
-    `mg_combinazioni` 
-WHERE 
-    1=1 AND 
-    `mg_combinazioni`.`deleted_at` IS NULL 
-HAVING 
-    2=2" WHERE `name` = 'Combinazioni';
-
 -- Aggiunta tabella mg_categorie_lang
 CREATE TABLE IF NOT EXISTS `mg_categorie_lang` (
     `id` int NOT NULL,
@@ -1596,3 +1584,37 @@ ORDER BY
     `mg_movimenti`.`data` DESC,
     `mg_movimenti`.`created_at` DESC" WHERE `name` = 'Movimenti';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF(`mg_articoli_lang`.`name` != "", CONCAT(`mg_articoli`.`codice`, " - ", `mg_articoli_lang`.`name`), `mg_articoli`.`codice`)' WHERE `zz_modules`.`name` = 'Movimenti' AND `zz_views`.`name` = 'Articolo';
+
+-- Aggiunta tabella mg_combinazioni_lang
+CREATE TABLE IF NOT EXISTS `mg_combinazioni_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `name` VARCHAR(255) NOT NULL
+);
+ALTER TABLE `mg_combinazioni_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `mg_combinazioni_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `mg_combinazioni_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `nome` FROM `mg_combinazioni`;
+
+ALTER TABLE `mg_combinazioni`
+    DROP `nome`;
+
+ALTER TABLE `mg_combinazioni_lang` ADD CONSTRAINT `mg_combinazioni_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `mg_combinazioni`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+-- Allineamento vista Combinazioni
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select|
+FROM 
+    `mg_combinazioni`
+    LEFT JOIN `mg_combinazioni_lang` ON (`mg_combinazioni`.`id` = `mg_combinazioni_lang`.`id_record` AND `mg_combinazioni_lang`.|lang|)
+WHERE 
+    1=1 AND 
+    `mg_combinazioni`.`deleted_at` IS NULL 
+HAVING 
+    2=2" WHERE `name` = 'Combinazioni';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_combinazioni_lang`.`name`' WHERE `zz_modules`.`name` = 'Combinazioni' AND `zz_views`.`name` = 'Nome';

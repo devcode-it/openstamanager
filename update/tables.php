@@ -141,6 +141,7 @@ return [
     'mg_attributi_lang',
     'mg_attributo_combinazione',
     'mg_combinazioni',
+    'mg_combinazioni_lang',
     'mg_valori_attributi',
     'my_impianto_componenti',
     'my_componenti',

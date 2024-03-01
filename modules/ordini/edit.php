@@ -74,16 +74,16 @@ if ($righe_vuote) {
                     if (setting('Cambia automaticamente stato ordini fatturati')) {
                         if ($record['stato'] == 'Evaso' || $record['stato'] == 'Parzialmente evaso' || $record['stato'] == 'Fatturato' || $record['stato'] == 'Parzialmente fatturato') {
                             ?>
-                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT *, colore AS _bgcolor_ FROM or_statiordine ORDER BY descrizione", "value": "$idstatoordine$", "extra": "readonly", "class": "unblockable" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT *, `or_statiordine_lang`.`name` as descrizione, `colore` AS _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(setting('Lingua')); ?>) ORDER BY `name`", "value": "$idstatoordine$", "extra": "readonly", "class": "unblockable" ]}
                     <?php
                         } else {
                             ?>
-                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT *, colore AS _bgcolor_ FROM or_statiordine WHERE (is_fatturabile = 0 AND descrizione != 'Fatturato' || descrizione = 'Accettato') ORDER BY descrizione", "value": "$idstatoordine$", "class": "unblockable" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT *, `or_statiordine_lang`.`name` as descrizione, `colore` AS _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(setting('Lingua')); ?>) WHERE (`is_fatturabile` = 0 AND `name` != 'Fatturato' || `name` = 'Accettato') ORDER BY `name`", "value": "$idstatoordine$", "class": "unblockable" ]}
                     <?php
                         }
                     } else {
                         ?>
-                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT *, colore AS _bgcolor_ FROM or_statiordine ORDER BY descrizione", "value": "$idstatoordine$", "class": "unblockable" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT *, `colore` AS _bgcolor_, `or_statiordine_lang`.`name` as descrizione FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(setting('Lingua')); ?>) ORDER BY `name`", "value": "$idstatoordine$", "class": "unblockable" ]}
                     <?php
                     }
 ?>

@@ -50,10 +50,8 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
         ];
 
         $joins[] = [
-            'mg_categorie_lang AS categorie_lang',
-            'mg_categorie.id',
-            'categorie_lang.id_record',
-        ];
+            'mg_categorie_lang AS categorie_lang' => 'mg_categorie_lang.id_record = categorie.id AND mg_categorie_lang.id_lang = '.setting('Lingua'),
+        ]; 
 
         $joins[] = [
             'mg_categorie AS sottocategorie',
@@ -62,9 +60,7 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
         ];
 
         $joins[] = [
-            'mg_categorie_lang AS sottocategorie_lang',
-            'mg_categorie.id',
-            'sottocategorie_lang.id_record',
+            'mg_categorie_lang AS sottocategorie_lang' => 'mg_categorie_lang.id_record = sottocategorie.id AND mg_categorie_lang.id_lang = '.setting('Lingua'),
         ];
 
         $where[] = ['mg_articoli.deleted_at', '=', null];

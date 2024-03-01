@@ -149,6 +149,7 @@ return [
     'or_ordini',
     'or_righe_ordini',
     'or_statiordine',
+    'or_statiordine_lang',
     'or_tipiordine',
     'zz_api_resources',
     'zz_cache',

@@ -21,19 +21,21 @@ use Plugins\PianificazioneFatturazione\Pianificazione;
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Contratti\Stato;
+
 $action = post('action');
 $ret = '';
 switch ($action) {
     case 'update_table':
         $month = post('currentMonth');
         $year = post('currentYear');
-
         $pianificazioni = Pianificazione::doesntHave('fattura')
             ->whereHas('contratto', function ($q) {
                 $q->whereHas('stato', function ($q) {
+                    $stato_concluso = (new Stato())->getByName('Concluso')->id_record;
                     $q
                         ->where('is_fatturabile', 1)
-                        ->where('descrizione', '<>', 'Concluso');
+                        ->where('id', '!=', $stato_concluso);
                 });
             })
             ->whereYear('co_fatturazione_contratti.data_scadenza', $year)
@@ -70,9 +72,10 @@ switch ($action) {
         $pianificazioni = Pianificazione::doesntHave('fattura')
             ->whereHas('contratto', function ($q) {
                 $q->whereHas('stato', function ($q) {
+                    $stato_concluso = (new Stato())->getByName('Concluso')->id_record;
                     $q
                         ->where('is_fatturabile', 1)
-                        ->where('descrizione', '<>', 'Concluso');
+                        ->where('id', '!=', $stato_concluso);
                 });
             })
             ->whereYear('co_fatturazione_contratti.data_scadenza', $year)

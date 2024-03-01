@@ -165,7 +165,7 @@ switch (post('op')) {
                 $new_contratto->data_conclusione = $new_contratto->data_accettazione->copy()->add($diff);
                 $new_contratto->data_bozza = Carbon::now();
 
-                $stato = StatoContratto::where('descrizione', '=', 'Bozza')->first();
+                $stato = (new StatoContratto())->getByName('Bozza')->id_record;
                 $new_contratto->stato()->associate($stato);
 
                 $new_contratto->save();

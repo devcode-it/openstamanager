@@ -32,6 +32,10 @@ class StatiOrdini extends Resource implements RetrieveInterface
             '*',
         ];
 
+        $joins = [
+            'or_statiordine_lang' => 'or_statiordine_lang.id_record = or_statiordine.id AND or_statiordine_lang.id_lang = '.setting('Lingua'),
+        ]; 
+
         $where = $request['where'];
         if (empty($where['deleted_at'])) {
             $where['deleted_at'] = null;
@@ -40,6 +44,8 @@ class StatiOrdini extends Resource implements RetrieveInterface
         return [
             'select' => $select,
             'table' => $table,
+            'join' => $joins,
+            'where' => $where,
         ];
     }
 }

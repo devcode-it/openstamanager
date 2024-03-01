@@ -140,16 +140,16 @@ switch (post('op')) {
             $ordine->save();
 
             if ($dbo->query($query)) {
-                $query = 'SELECT `descrizione` FROM `or_statiordine` WHERE `id`='.prepare($idstatoordine);
+                $query = 'SELECT `name` FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `or_statiordine`.`id`='.prepare($idstatoordine);
                 $rs = $dbo->fetchArray($query);
 
                 // Ricalcolo inps, ritenuta e bollo (se l'ordine non è stato evaso)
                 if ($dir == 'entrata') {
-                    if ($rs[0]['descrizione'] != 'Evaso') {
+                    if ($rs[0]['name'] != 'Evaso') {
                         ricalcola_costiagg_ordine($id_record);
                     }
                 } else {
-                    if ($rs[0]['descrizione'] != 'Evaso') {
+                    if ($rs[0]['name'] != 'Evaso') {
                         ricalcola_costiagg_ordine($id_record, $idrivalsainps, $idritenutaacconto, $bollo);
                     }
                 }

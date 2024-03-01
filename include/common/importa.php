@@ -19,6 +19,7 @@
 
 use Modules\Contratti\Stato as StatoContratto;
 use Modules\Fatture\Stato as StatoFattura;
+use Modules\Ordini\Stato as StatoOrdine;
 use Modules\DDT\Stato;
 use Plugins\ListinoFornitori\DettaglioFornitore;
 
@@ -153,11 +154,11 @@ if (!empty($options['create_document'])) {
 
     // Opzioni aggiuntive per gli Ordini
     elseif (in_array($final_module['name'], ['Ordini cliente', 'Ordini fornitore'])) {
-        $stato_predefinito = $database->fetchOne("SELECT * FROM or_statiordine WHERE descrizione = 'Bozza'");
+        $stato_predefinito = (new StatoOrdine())->getByName('Bozza')->id_record;
 
         echo '
             <div class="col-md-6">
-                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT * FROM or_statiordine WHERE descrizione IN(\'Bozza\', \'Accettato\', \'In attesa di conferma\', \'Annullato\')", "value": "'.$stato_predefinito['id'].'" ]}
+                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT * FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name` IN(\'Bozza\', \'Accettato\', \'In attesa di conferma\', \'Annullato\')", "value": "'.$stato_predefinito['id'].'" ]}
             </div>';
     }
 

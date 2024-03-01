@@ -5,6 +5,7 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Contratti\Contratto;
 use Modules\Fatture\Fattura;
 use Modules\Preventivi\Preventivo;
+use Modules\Fatture\Stato;
 
 include_once __DIR__.'/../../core.php';
 
@@ -57,7 +58,7 @@ switch ($op) {
             if (!$preventivi->isEmpty()) {
                 foreach ($preventivi as $preventivo) {
                     echo '
-                    <li>'.$preventivo->getReference().' ['.$preventivo->stato->descrizione.']</li>';
+                    <li>'.$preventivo->getReference().' ['.$preventivo->stato->name.']</li>';
                 }
             } else {
                 echo '
@@ -74,7 +75,9 @@ switch ($op) {
             // Fatture attive
             $fatture = Fattura::where('idanagrafica', '=', $id_anagrafica)
                 ->whereHas('stato', function ($query) {
-                    $query->whereIn('descrizione', ['Emessa', 'Parzialmente pagato']);
+                    $id_bozza = (new Stato())->getByName('Bozza')->id_record;
+                    $id_parz_pagato = (new Stato())->getByName('Parziale pagato')->id_record;
+                    $query->whereIn('id', [$id_bozza, $id_parz_pagato]);
                 })
                 ->latest()->take($numero_documenti)->get();
             echo '

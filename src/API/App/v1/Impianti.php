@@ -22,6 +22,7 @@ namespace API\App\v1;
 use API\App\AppResource;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Impianti\Impianto;
+use Modules\Anagrafiche\Tipo;
 
 class Impianti extends AppResource
 {
@@ -44,7 +45,8 @@ class Impianti extends AppResource
     {
         $statement = Impianto::select('id', 'updated_at', 'idtecnico')
             ->whereHas('anagrafica.tipi', function (Builder $query) {
-                $query->where('descrizione', '=', 'Cliente');
+                $tipo_cliente = (new Tipo())->getByName('Cliente')->id_record;
+                $query->where('id', '=', $tipo_cliente);
             });
 
         // Limite impianti visualizzabili dal tecnico

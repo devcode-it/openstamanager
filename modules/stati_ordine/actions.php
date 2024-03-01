@@ -19,16 +19,22 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Ordini\Stato;
+
 switch (post('op')) {
     case 'update':
+        $id_stato= (new Stato())->getByName(post('descrizione'))->id_record;
         $dbo->update('or_statiordine', [
-            'descrizione' => (count($dbo->fetchArray('SELECT descrizione FROM or_statiordine WHERE descrizione = '.prepare(post('descrizione')))) > 0) ? $dbo->fetchOne('SELECT descrizione FROM or_statiordine WHERE id ='.$id_record)['descrizione'] : post('descrizione'),
             'icona' => post('icona'),
             'colore' => post('colore'),
             'completato' => post('completato') ?: null,
             'is_fatturabile' => post('is_fatturabile') ?: null,
             'impegnato' => post('impegnato') ?: null,
         ], ['id' => $id_record]);
+
+        $dbo->update('or_statiordine_lang', [
+            'name' => $id_stato ? $id_stato->name : post('descrizione'),
+        ], ['id_record' => $id_record, 'id_lang' => setting('Lingua')]);
 
         flash()->info(tr('Informazioni salvate correttamente.'));
 
@@ -43,12 +49,13 @@ switch (post('op')) {
         $impegnato = post('impegnato') ?: null;
 
         // controlla descrizione che non sia duplicata
-        if (count($dbo->fetchArray('SELECT descrizione FROM or_statiordine WHERE descrizione='.prepare($descrizione))) > 0) {
+        $id_stato= (new Stato())->getByName(post('descrizione'))->id_record;
+        if ($id_stato) {
             flash()->error(tr('Stato ordine già esistente.'));
         } else {
-            $query = 'INSERT INTO or_statiordine(descrizione, icona, colore, completato, is_fatturabile, impegnato) VALUES ('.prepare($descrizione).', '.prepare($icona).', '.prepare($colore).','.prepare($completato).', '.prepare($is_fatturabile).', '.prepare($impegnato).' )';
-            $dbo->query($query);
+            $dbo->query('INSERT INTO `or_statiordine` (icona, colore, completato, is_fatturabile, impegnato) VALUES ('.prepare($icona).', '.prepare($colore).','.prepare($completato).', '.prepare($is_fatturabile).', '.prepare($impegnato).' )');
             $id_record = $dbo->lastInsertedID();
+            $dbo->query('INSERT INTO `or_statiordine_lang` (`name`, `id_record`, `id_lang`) VALUES ('.prepare($descrizione).', '.prepare($id_record).', '.prepare(setting('Lingua')).')');
             flash()->info(tr('Nuovo stato ordine aggiunto.'));
         }
 
@@ -56,10 +63,10 @@ switch (post('op')) {
 
     case 'delete':
         // scelgo se settare come eliminato o cancellare direttamente la riga se non è stato utilizzato negli ordini
-        if (count($dbo->fetchArray('SELECT id FROM or_statiordine WHERE id='.prepare($id_record))) > 0) {
-            $query = 'UPDATE or_statiordine SET deleted_at = NOW() WHERE can_delete = 1 AND id='.prepare($id_record);
+        if (count($dbo->fetchArray('SELECT `id` FROM `or_statiordine` WHERE `id`='.prepare($id_record))) > 0) {
+            $query = 'UPDATE `or_statiordine` SET `deleted_at` = NOW() WHERE `can_delete` = 1 AND `id`='.prepare($id_record);
         } else {
-            $query = 'DELETE FROM or_statiordine WHERE can_delete = 1 AND id='.prepare($id_record);
+            $query = 'DELETE FROM `or_statiordine` WHERE `can_delete` = 1 AND `id`='.prepare($id_record);
         }
 
         $dbo->query($query);

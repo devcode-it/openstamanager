@@ -530,7 +530,20 @@ if ($dir == 'entrata') {
 
 if (!$block_edit) {
     // Lettura ordini (cliente o fornitore)
-    $ordini_query = 'SELECT COUNT(*) AS tot FROM or_ordini WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstatoordine IN (SELECT id FROM or_statiordine WHERE descrizione IN(\'Accettato\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoordine=(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') AND or_ordini.id IN (SELECT idordine FROM or_righe_ordini WHERE or_righe_ordini.idordine = or_ordini.id AND (qta - qta_evasa) > 0)';
+    $ordini_query = 'SELECT 
+            COUNT(*) AS tot 
+        FROM 
+            `or_ordini` 
+            INNER JOIN `or_righe_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine` 
+            INNER JOIN `or_statiordine` ON `or_ordini`.`idstatoordine`=`or_statiordine`.`id` 
+            INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipiordine`=`or_tipiordine`.`id` 
+            LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = "'.prepare(setting('Lingua')).'")
+        WHERE 
+            `idanagrafica`='.prepare($record['idanagrafica']).' 
+            AND `or_statiordine_lang`.`name` IN(\'Accettato\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) 
+            AND `dir`='.prepare($dir).') 
+            AND (`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) > 0)
+        GROUP BY `or_ordini`.`id`';
     $tot_ordini = $dbo->fetchArray($ordini_query)[0]['tot'];
 
     $ddt_query = 'SELECT 
@@ -544,7 +557,8 @@ if (!$block_edit) {
         WHERE 
             `name` IN("Evaso", "Parzialmente evaso", "Parzialmente fatturato") AND 
             `dt_tipiddt`.`dir`="'.($dir == 'entrata' ? 'uscita' : 'entrata').'") AND 
-            (`dt_righe_ddt`.`qta` - `dt_righe_ddt`.`qta_evasa`) > 0';
+            (`dt_righe_ddt`.`qta` - `dt_righe_ddt`.`qta_evasa`) > 0
+        GROUP BY `dt_ddt`.`id`';
     $tot_ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
 
     // Form di inserimento riga documento

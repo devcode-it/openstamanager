@@ -30,7 +30,7 @@ if (empty($contratto)) {
 $is_pianificabile = $contratto->stato->is_pianificabile && !empty($contratto['data_accettazione']) && !empty($contratto['data_conclusione']); // Contratto permette la pianificazione
 $is_pianificato = false;
 $stati_pianificabili = Stato::where('is_pianificabile', 1)->get();
-$elenco_stati = $stati_pianificabili->implode('descrizione', ', ');
+$elenco_stati = $stati_pianificabili->implode('name', ', ');
 
 echo '
 <p>'.tr('Qui puoi pianificare la suddivisione del budget del contratto in rate uguali fatturabili in modo separato').'. '.tr('Questa procedura può essere effettuata solo una volta, e sovrascriverà in modo irreversibile tutte le righe del contratto').'.</p>

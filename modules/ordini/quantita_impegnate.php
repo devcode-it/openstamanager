@@ -51,14 +51,21 @@ foreach ($articoli as $elenco) {
     $codice = $articolo ? $articolo->codice : tr('Articolo eliminato');
     $descrizione = $articolo ? $articolo->name : $elenco->first()->name;
 
-    $qta_impegnata = $database->fetchOne("SELECT SUM(qta) as qta
-        FROM or_righe_ordini
-            JOIN or_ordini ON or_ordini.id = or_righe_ordini.idordine
-        WHERE idstatoordine = (SELECT id FROM or_statiordine WHERE descrizione = 'Bozza')
-              AND idtipoordine IN (SELECT id FROM or_tipiordine WHERE dir = 'entrata')
-              AND confermato = 1
-              AND idarticolo=".prepare($articolo->id).'
-        GROUP BY idarticolo')['qta'];
+    $qta_impegnata = $database->fetchOne("SELECT 
+            SUM(`qta`) as qta
+        FROM 
+            `or_righe_ordini`
+            INNER JOIN `or_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine`
+            INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`idstatoordine`
+            LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = ".prepare(setting('Lingua')).")
+            INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine`
+        WHERE 
+            `or_statiordine`.`name` = 'Bozza'
+            AND `dir` = 'entrata'
+            AND `confermato` = 1
+            AND `idarticolo`=".prepare($articolo->id).'
+        GROUP BY 
+            `idarticolo`')['qta'];
     $qta_impegnata = floatval($qta_impegnata);
 
     $class = $qta_impegnata + $qta > $articolo->qta ? 'danger' : 'success';

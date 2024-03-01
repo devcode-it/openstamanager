@@ -22,6 +22,7 @@ namespace API\App\v1;
 use API\App\AppResource;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Anagrafiche\Tipo;
 
 class Tecnici extends AppResource
 {
@@ -34,7 +35,8 @@ class Tecnici extends AppResource
     {
         $statement = Anagrafica::select('idanagrafica', 'updated_at')
             ->whereHas('tipi', function (Builder $query) {
-                $query->where('descrizione', '=', 'Tecnico');
+                $tipo_tecnico = (new Tipo())->getByName('Tecnico')->id_record;
+                $query->where('id', '=', $tipo_tecnico);
             });
 
         // Filtro per data

@@ -127,10 +127,10 @@ if (!empty($interventi)) {
                 $tecnici[$sessione->anagrafica->ragione_sociale]['ricavo'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera + $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio + $sessione->prezzo_diritto_chiamata;
 
                 // Raggruppamento per stato intervento
-                $stati_intervento[$intervento->stato->descrizione]['colore'] = $intervento->stato->colore;
-                $stati_intervento[$intervento->stato->descrizione]['ore'] += $sessione->ore;
-                $stati_intervento[$intervento->stato->descrizione]['costo'] += $sessione->costo_manodopera + $sessione->costo_viaggio + $sessione->costo_diritto_chiamata;
-                $stati_intervento[$intervento->stato->descrizione]['ricavo'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera + $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio + $sessione->prezzo_diritto_chiamata;
+                $stati_intervento[$intervento->stato->name]['colore'] = $intervento->stato->colore;
+                $stati_intervento[$intervento->stato->name]['ore'] += $sessione->ore;
+                $stati_intervento[$intervento->stato->name]['costo'] += $sessione->costo_manodopera + $sessione->costo_viaggio + $sessione->costo_diritto_chiamata;
+                $stati_intervento[$intervento->stato->name]['ricavo'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera + $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio + $sessione->prezzo_diritto_chiamata;
             }
 
             echo '

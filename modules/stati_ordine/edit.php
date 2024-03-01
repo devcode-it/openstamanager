@@ -34,7 +34,7 @@ if ($record['can_delete']) {
 
 	<div class="row">
 		<div class="col-md-4">
-			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$", "extra": "<?php echo $attr; ?>" ]}
+			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$name$", "extra": "<?php echo $attr; ?>" ]}
 		</div>
 
 		<div class="col-md-3">
@@ -63,7 +63,7 @@ if ($record['can_delete']) {
 
 
 <?php
-$ordini = $dbo->fetchNum('SELECT id FROM or_ordini WHERE idstatoordine='.prepare($id_record));
+$ordini = $dbo->fetchNum('SELECT `id` FROM `or_ordini` WHERE `idstatoordine`='.prepare($id_record));
 
 if (!empty($ordini)) {
     echo '

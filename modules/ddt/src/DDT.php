@@ -134,7 +134,7 @@ class DDT extends Document
 
         $causale = $database->fetchOne('SELECT * FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(setting('Lingua')).') WHERE `dt_causalet`.`id` = '.prepare($this->idcausalet));
 
-        return $causale['is_importabile'] && in_array($this->stato->descrizione, $stati_importabili);
+        return $causale['is_importabile'] && in_array($this->stato->name, $stati_importabili);
     }
 
     public function getReversedAttribute()
@@ -242,7 +242,7 @@ class DDT extends Document
                 $descrizione = $parziale_fatturato ? 'Parzialmente fatturato' : 'Fatturato';
             }
 
-            $stato = Stato::where('descrizione', $descrizione)->first();
+            $stato = (new Stato())->getByName($descrizione)->id_record;
             $this->stato()->associate($stato);
             $this->save();
         }

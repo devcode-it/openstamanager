@@ -51,9 +51,7 @@ class Interventi extends Resource implements RetrieveInterface, CreateInterface,
         ];
 
         $joins[] = [
-            'in_statiintervento_lang',
-            'in_statiintervento_lang.id_record',
-            'in_statiintervento.id',
+            'in_statiintervento_lang' => 'in_statiintervento_lang.id_record = in_statiintervento.id AND in_statiintervento_lang.id_lang = '.setting('Lingua'),
         ];
 
         $joins[] = [

@@ -26,24 +26,29 @@ switch ($resource) {
      */
     case 'ordini-cliente':
         if (isset($superselect['idanagrafica'])) {
-            $query = 'SELECT or_ordini.id AS id,
-                CONCAT("Ordine ", numero_esterno, " del ", DATE_FORMAT(data, "%d/%m/%Y"), " [", (SELECT `descrizione` FROM `or_statiordine` WHERE `or_statiordine`.`id` = `idstatoordine`) , "]") AS descrizione
-            FROM or_ordini
-                INNER JOIN or_tipiordine ON or_ordini.idtipoordine = or_tipiordine.id
-                INNER JOIN an_anagrafiche ON or_ordini.idanagrafica = an_anagrafiche.idanagrafica
+            $query = 'SELECT 
+                `or_ordini`.`id` AS id,
+                CONCAT("Ordine ", `numero_esterno`, " del ", DATE_FORMAT(data, "%d/%m/%Y"), " [", `or_statiordine_lang`.`name` , "]") AS descrizione
+            FROM 
+                `or_ordini`
+                INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
+                INNER JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+                INNER JOIN `or_statiordine` ON `or_ordini`.`idstatoordine` = `or_statiordine`.`id`
+                LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = '.prepare(setting('Lingua')).')
             |where|
-            ORDER BY or_ordini.id';
+            ORDER BY 
+                `or_ordini`.`id`';
 
             foreach ($elements as $element) {
-                $filter[] = 'or_ordini.id='.prepare($element);
+                $filter[] = '`or_ordini`.`id`='.prepare($element);
             }
 
-            $where[] = 'or_tipiordine.dir='.prepare('entrata');
+            $where[] = '`or_tipiordine`.`dir`='.prepare('entrata');
             if (empty($elements)) {
-                $where[] = 'an_anagrafiche.idanagrafica='.prepare($superselect['idanagrafica']);
+                $where[] = '`an_anagrafiche`.`idanagrafica`='.prepare($superselect['idanagrafica']);
 
                 $stato = !empty($superselect['stato']) ? $superselect['stato'] : 'is_fatturabile';
-                $where[] = 'idstatoordine IN (SELECT `id` FROM `or_statiordine` WHERE '.$stato.' = 1)';
+                $where[] = '`or_statiordine`.'.$stato.' = 1)';
             }
         }
 

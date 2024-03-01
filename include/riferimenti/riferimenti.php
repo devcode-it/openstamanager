@@ -21,6 +21,8 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\DDT\DDT;
 use Modules\Ordini\Ordine;
+use Modules\DDT\Stato as StatoDDT;
+use Modules\Ordini\Stato as StatoOrdine;
 
 // Informazioni generali sulla riga
 $source_type = filter('riga_type');
@@ -52,7 +54,8 @@ $direzione_richiesta = $source->getDocument()->direzione == 'entrata' ? 'uscita'
 
 // Individuazione DDT disponibili
 $ddt = DDT::whereHas('stato', function ($query) {
-    $query->where('descrizione', '!=', 'Bozza');
+    $id_stato = (new StatoDDT())->getByName('Bozza')->id_record;
+    $query->where('id', '!=', $id_stato);
 })->whereHas('tipo', function ($query) use ($direzione_richiesta) {
     $query->where('dir', '=', $direzione_richiesta);
 })->get();
@@ -67,7 +70,8 @@ foreach ($ddt as $elemento) {
 // Individuazione ordini disponibili
 $tipo_ordini = $direzione_richiesta == 'entrata' ? 'cliente' : 'fornitore';
 $ordini = Ordine::whereHas('stato', function ($query) {
-    $query->where('descrizione', '!=', 'Bozza');
+    $id_stato = (new StatoOrdine())->getByName('Bozza')->id_record;
+    $query->where('id', '!=', $id_stato);
 })->whereHas('tipo', function ($query) use ($direzione_richiesta) {
     $query->where('dir', '=', $direzione_richiesta);
 })->get();

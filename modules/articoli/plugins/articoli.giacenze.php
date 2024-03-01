@@ -23,23 +23,28 @@ $impegnato = 0;
 $ordinato = 0;
 
 $query = 'SELECT
-    or_ordini.id AS id,
-    or_ordini.numero,
-    or_ordini.numero_esterno,
-    data,
-    SUM(or_righe_ordini.qta) AS qta_ordinata,
-    SUM(or_righe_ordini.qta - or_righe_ordini.qta_evasa) AS qta_impegnata,
-    or_righe_ordini.um
-FROM or_ordini
-    INNER JOIN or_righe_ordini ON or_ordini.id = or_righe_ordini.idordine
-    INNER JOIN or_statiordine ON or_ordini.idstatoordine=or_statiordine.id
-WHERE idarticolo = '.prepare($articolo->id)."
-     AND (SELECT dir FROM or_tipiordine WHERE or_tipiordine.id=or_ordini.idtipoordine) = '|dir|'
-     AND (or_righe_ordini.qta - or_righe_ordini.qta_evasa) > 0
-     AND or_righe_ordini.confermato = 1
-     AND or_statiordine.impegnato = 1
-GROUP BY or_ordini.id
-HAVING qta_ordinata > 0";
+        `or_ordini`.`id` AS id,
+        `or_ordini`.`numero`,
+        `or_ordini`.`numero_esterno`,
+        `data`,
+        SUM(`or_righe_ordini`.`qta`) AS qta_ordinata,
+        SUM(`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) AS qta_impegnata,
+        `or_righe_ordini`.`um`
+    FROM 
+        `or_ordini`
+        INNER JOIN `or_righe_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine`
+        INNER JOIN `or_statiordine` ON `or_ordini`.`idstatoordine`=`or_statiordine`.`id`
+        INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipiordine`=`or_tipiordine`.`id`
+    WHERE 
+        `idarticolo` = '.prepare($articolo->id)."
+        AND `or_tipiordine`.`dir`= '|dir|'
+        AND (`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) > 0
+        AND `or_righe_ordini`.`confermato` = 1
+        AND `or_statiordine`.`impegnato` = 1
+    GROUP BY 
+        `or_ordini`.`id`
+    HAVING 
+        `qta_ordinata` > 0";
 
 echo '
 <div class="panel panel-primary">

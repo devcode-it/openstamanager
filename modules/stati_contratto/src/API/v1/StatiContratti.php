@@ -40,6 +40,7 @@ class StatiContratti extends Resource implements RetrieveInterface
         return [
             'select' => $select,
             'table' => $table,
+            'where' => $where,
         ];
     }
 

@@ -63,10 +63,8 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
             ];
 
             $joins[] = [
-                '`an_tipianagrafiche_lang`',
-                '`an_tipianagrafiche_lang`.`id_record`',
-                '`an_tipianagrafiche`.`id`',
-            ];
+                'an_tipianagrafiche_lang' => '`an_tipianagrafiche_lang`.`idrecord` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`idlang` = '.setting('Lingua'),
+            ]; 
 
             $where[] = ['`an_tipianagrafiche_lang`.`name`', '=', $type];
         }

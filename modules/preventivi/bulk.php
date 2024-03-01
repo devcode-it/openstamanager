@@ -48,7 +48,7 @@ switch (post('op')) {
         // Informazioni della fattura
         $tipo_documento = Tipo::where('id', post('idtipodocumento'))->first();
 
-        $stato_documenti_accodabili = StatoFattura::where('descrizione', 'Bozza')->first();
+        $stato_documenti_accodabili = (new StatoFattura())->getByName('Bozza')->id_record;
         $accodare = post('accodare');
 
         $data = date('Y-m-d');

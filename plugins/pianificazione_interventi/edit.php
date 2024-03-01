@@ -31,7 +31,7 @@ $is_pianificabile = $contratto->stato->is_pianificabile && !empty($contratto['da
 $elenco_promemoria = $contratto->promemoria->sortBy('data_richiesta');
 
 $stati_pianificabili = Stato::where('is_pianificabile', 1)->get();
-$elenco_stati = $stati_pianificabili->implode('descrizione', ', ');
+$elenco_stati = $stati_pianificabili->implode('name', ', ');
 
 echo '
 <p>'.tr('Puoi <b>pianificare dei "promemoria" o direttamente gli interventi</b> da effettuare entro determinate scadenze').'. '.tr('Per poter pianificare i promemoria, il contratto deve avere <b>data accettazione</b> e <b>data conclusione</b> definita ed essere in uno dei seguenti stati: _LINK_', [

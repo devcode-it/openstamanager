@@ -495,25 +495,29 @@ switch (filter('op')) {
             // cerco per quell'ordine
             if (empty($collegamento)) {
                 $ordine = $dati_ordini[$numero_linea];
-                $query = "SELECT or_righe_ordini.id, or_righe_ordini.idordine AS id_documento, or_righe_ordini.is_descrizione, or_righe_ordini.idarticolo, or_righe_ordini.is_sconto, 'ordine' AS ref,
-                    CONCAT('Ordine num. ', IF(numero_esterno != '', numero_esterno, numero), ' del ', DATE_FORMAT(data, '%d/%m/%Y'), ' [', (SELECT descrizione FROM or_statiordine WHERE id = idstatoordine)  , ']') AS opzione
-                FROM or_righe_ordini
-                    INNER JOIN or_ordini ON or_ordini.id = or_righe_ordini.idordine
+                $query = "SELECT 
+                    `or_righe_ordini`.`id`, 
+                    `or_righe_ordini`.`idordine` AS id_documento, 
+                    `or_righe_ordini`.`is_descrizione`, 
+                    `or_righe_ordini`.`idarticolo`, 
+                    `or_righe_ordini`.`is_sconto`, 
+                    'ordine' AS ref,
+                    CONCAT('Ordine num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `or_statiordine_lang`.`name`  , ']') AS opzione
+                FROM `or_righe_ordini`
+                    INNER JOIN `or_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine`
+                    INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`idstatoordine`
+                    LEFT JOIN `or_statiordine_lang` ON `or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = ".prepare(setting('Lingua'))."
                 WHERE
-                    or_ordini.numero_esterno = ".prepare($ordine['numero']).'
-                    AND
-                    YEAR(or_ordini.data) = '.prepare($ordine['anno']).'
-                    AND
-                    or_ordini.idanagrafica = '.prepare($anagrafica->id).'
-                    AND
-                    or_righe_ordini.qta > or_righe_ordini.qta_evasa
-                    AND
-                    |where|';
+                    `or_ordini`.`numero_esterno` = ".prepare($ordine['numero']).'
+                    AND YEAR(`or_ordini`.`data`) = '.prepare($ordine['anno']).'
+                    AND `or_ordini`.`idanagrafica` = '.prepare($anagrafica->id).'
+                    AND `or_righe_ordini`.`qta` > `or_righe_ordini`.`qta_evasa`
+                    AND |where|';
 
                 // Ricerca di righe Ordine con stesso Articolo
                 if (!empty($id_articolo)) {
                     $query_articolo = replace($query, [
-                        '|where|' => 'or_righe_ordini.idarticolo = '.prepare($id_articolo),
+                        '|where|' => '`or_righe_ordini`.`idarticolo` = '.prepare($id_articolo),
                     ]);
 
                     $collegamento = $database->fetchOne($query_articolo);
@@ -522,7 +526,7 @@ switch (filter('op')) {
                 // Ricerca di righe Ordine per stessa descrizione
                 if (empty($collegamento)) {
                     $query_descrizione = replace($query, [
-                        '|where|' => 'or_righe_ordini.descrizione = '.prepare($riga['Descrizione']),
+                        '|where|' => '`or_righe_ordini`.`descrizione` = '.prepare($riga['Descrizione']),
                     ]);
 
                     $collegamento = $database->fetchOne($query_descrizione);
@@ -568,12 +572,15 @@ switch (filter('op')) {
                     FROM 
                         `or_righe_ordini`
                         INNER JOIN `or_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine`
+                        INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`idstatoordine`
+                        LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = ".prepare(setting('Lingua')).")
+                        INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
                     WHERE 
                         `or_ordini`.`idanagrafica` = ".prepare($anagrafica->id)." AND 
                         |where_ordini| AND 
                         `or_righe_ordini`.`qta` > `or_righe_ordini`.`qta_evasa` AND 
-                        `or_ordini`.`idstatoordine` IN (SELECT `id` FROM `or_statiordine` WHERE `descrizione` != 'Fatturato') AND
-                        `idtipoordine` IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` ='uscita')";
+                        `or_statiordine_lang` WHERE `name` != 'Fatturato' AND
+                        `or_tipiordine`.`dir` ='uscita'";
 
                 // Ricerca di righe DDT/Ordine con stesso Articolo
                 if (!empty($id_articolo)) {

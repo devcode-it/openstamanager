@@ -205,6 +205,39 @@ class Database extends Util\Singleton
         return $this->mysql_version;
     }
 
+     /**
+     * Restituisce il tipo di DBMS.
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        $ver = $this->fetchArray('SELECT VERSION()');
+        if (preg_match('/MariaDB/', $ver[0]['VERSION()'])) {
+            return 'MariaDB';
+        } else {
+            return 'MySQL';
+        }
+
+    }
+
+
+    /**
+     * Controlla il tipo se il DBMS è MySQL.
+     *
+     * @return bool
+     */
+    public function isMySQL()
+    {
+        $ver = $this->fetchArray('SELECT VERSION()');
+        if (preg_match('/MariaDB/', $ver[0]['VERSION()'])) {
+            return false;
+        } else {
+            return true;
+        }
+
+    }
+
     /**
      * Restituisce il nome del database a cui si è connessi.
      *

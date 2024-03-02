@@ -247,9 +247,9 @@ if ($database->isInstalled()) {
     $db = [
         'mysql_version' => [
             'type' => 'version',
-            'description' => '5.7.x - 8.0.x',
-            'minimum' => '5.7.0',
-            'maximum' => '8.0.99',
+            'description' => (($database->isMySQL)? '5.7.x - 8.0.x' : '10.x'),
+            'minimum' => (($database->isMySQL)? '5.7.0' : '10.1.0'),
+            'maximum' => (($database->isMySQL)? '8.0.99' : '10.6.99'),
         ],
 
         'sort_buffer_size' => [
@@ -355,8 +355,9 @@ foreach ($dirs_to_check as $name => $description) {
 // File di servizio
 $files_to_check = [
     'manifest.json' => tr('Necessario per l\'aggiunta a schermata home da terminale (creato al termine della configurazione)'),
-    'database_5_7.json' => tr('Necessario per il controllo integrità con database MySQL 5.7.x'),
-    'database.json' => tr('Necessario per il controllo integrità con database MySQL 8.0.x'),
+    'mariadb_10_x.json' => tr('Necessario per il controllo integrità con database MariaDB 10.x'),
+    'mysql_5_7.json' => tr('Necessario per il controllo integrità con database MySQL 5.7.x'),
+    'mysql.json' => tr('Necessario per il controllo integrità con database MySQL 8.0.x'),
     'checksum.json' => tr('Necessario per il controllo integrità dei files del gestionale'),
     'settings.json' => tr('Necessario per il controllo delle impostazioni del gestionale'),
 ];
@@ -435,7 +436,9 @@ $requirements = [
         '_VERSION_' => phpversion(),
         '_SUPPORTED_' => ((version_compare(phpversion(), $settings['php_version']['minimum'], '>=') && version_compare(phpversion(), $settings['php_version']['maximum'], '<=')) ? '' : '<small><small class="label label-danger" ><i class="fa fa-warning"></i> '.tr('versioni supportate:').' '.$settings['php_version']['description'].'</small></small>'),
     ]) => $php,
-    tr('MySQL') => $mysql,
+    tr('DBMS (_TYPE_)', [
+        '_TYPE_' => $database->getType(),
+    ] ) => $mysql,
     tr('Percorsi di servizio') => $directories,
     tr('File di servizio') => $files,
     tr('Configurazioni') => $config,

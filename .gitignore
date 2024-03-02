@@ -91,8 +91,9 @@ REVISION
 .php_cs.cache
 manifest.json
 checksum.json
-database.json
-database_5_7.json
+mysql.json
+mysql_5_7.json
+mariadb_10_x.json
 settings.json
 
 /tests/_log/*

@@ -100,10 +100,20 @@ $(document).ready(function () {
     return;
 }
 
-$mysql_min_version = '5.7.0';
-$mysql_max_version = '5.7.99';
+switch ($database->getType()) {
+    case 'MariaDB':
+        $file_to_check_database = 'mariadb_10_x.json';
+        break;
+    case 'MySQL':
+        $mysql_min_version = '5.7.0';
+        $mysql_max_version = '5.7.99';
+        $file_to_check_database = ((version_compare($database->getMySQLVersion(), $mysql_min_version, '>=') && version_compare($database->getMySQLVersion(), $mysql_max_version, '<=')) ? 'mysql_5_7.json' :'mysql.json');
+        break;
+    default:
+        $file_to_check_database = 'mysql.json';
+        break;
+}
 
-$contents = ((version_compare($database->getMySQLVersion(), $mysql_min_version, '>=') && version_compare($database->getMySQLVersion(), $mysql_max_version, '<=')) ? $file_to_check_database = 'database_5_7.json' : $file_to_check_database = 'database.json');
 $contents = file_get_contents(base_dir().'/'.$file_to_check_database);
 $data = json_decode($contents, true);
 

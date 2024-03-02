@@ -470,8 +470,9 @@ function release(done) {
     glob([
         '**/*',
         '!checksum.json',
-        '!database.json',
-        '!database_5_7.json',
+        '!mysql.json',
+        '!mysql_5_7.json',
+        '!mariadb_10_x.json',
         '!settings.json',
         '!manifest.json',
         '!.idea/**',
@@ -533,7 +534,7 @@ function release(done) {
         archive.append(shell.exec('php update/structure.php', {
             silent: true
         }).stdout, {
-            name: 'database.json'
+            name: 'mysql.json'
         });
 
         // Aggiunta del file per il controllo delle impostazioni

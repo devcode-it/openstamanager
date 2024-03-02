@@ -365,7 +365,7 @@ DELETE FROM `zz_widgets` WHERE `name` = 'Ordini di servizio da impostare';
 --
 -- Aggiornamento FE in base alla normativa del 28/02/2020
 --
-ALTER TABLE `fe_natura` CHANGE `codice` `codice` VARCHAR(5) NOT NULL;
+ALTER TABLE `fe_natura` MODIFY `codice` VARCHAR(5) NOT NULL;
 
 -- Nuove nature IVA
 INSERT INTO `fe_natura` (`codice`, `descrizione`) VALUES

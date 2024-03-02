@@ -18,7 +18,7 @@
  */
 
 // Rimozione header X-Powered-By
-header_remove('X-Powered-By');
+//header_remove('X-Powered-By');
 
 // Impostazioni di configurazione PHP
 date_default_timezone_set('Europe/Rome');
@@ -54,13 +54,16 @@ $docroot = DOCROOT;
 $rootdir = ROOTDIR;
 $baseurl = BASEURL;
 
-// Sicurezza della sessioni
-ini_set('session.cookie_samesite', 'lax');
-ini_set('session.use_trans_sid', '0');
-ini_set('session.use_only_cookies', '1');
+// Controllo che le intestazioni non siano già state inviate.
+if (!headers_sent()){ 
+    // Sicurezza della sessioni
+    ini_set('session.cookie_samesite', 'lax');
+    ini_set('session.use_trans_sid', '0');
+    ini_set('session.use_only_cookies', '1');
 
-session_set_cookie_params(0, base_path(), null, isHTTPS(true));
-session_start();
+    session_set_cookie_params(0, base_path(), null, isHTTPS(true));
+    session_start();
+}
 
 // Lettura della configurazione
 $config = App::getConfig();

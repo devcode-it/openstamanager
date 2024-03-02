@@ -228,6 +228,7 @@ switch (post('op')) {
         $copia_sessioni = post('sessioni');
         $copia_righe = post('righe');
         $copia_impianti = post('impianti');
+        $copia_allegati = post('allegati');
 
         foreach ($id_records as $idintervento) {
             $intervento = Intervento::find($idintervento);
@@ -298,6 +299,18 @@ switch (post('op')) {
                 $dbo->insert('my_componenti_interventi', [
                     'id_intervento' => $id_record,
                     'id_componente' => $componente['id_componente'],
+                ]);
+            }
+        }
+
+
+        // copia allegati
+        if (!empty($copia_allegati)) {
+            $allegati = $intervento->uploads();
+            foreach ($allegati as $allegato) {
+                $allegato->copia([
+                    'id_module' => $new->getModule()->id,
+                    'id_record' => $new->id,
                 ]);
             }
         }
@@ -448,6 +461,7 @@ $operations['copy-bulk'] = [
             <br>{[ "type":"checkbox", "label":"'.tr('Duplica righe').'", "name":"righe", "value":"" ]}
             <br>{[ "type":"checkbox", "label":"'.tr('Duplica sessioni').'", "name":"sessioni", "value":"" ]}
             <br>{[ "type":"checkbox", "label":"'.tr('Duplica impianti').'", "name":"impianti", "value":"" ]}
+            <br>{[ "type":"checkbox", "label":"'.tr('Duplica allegati').'", "name":"allegati", "value":"" ]}
             <style>.swal2-modal{ width:600px !important; }</style>',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',

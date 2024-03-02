@@ -44,7 +44,7 @@ echo '
 
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "multiple":"1", "label": "'.tr('Giorni').'", "name": "giorni[]", "required": 0, "value": "'.strtolower(setting('Giorni lavorativi')).'", "values": "list=\"lunedì\":\"'.tr('Lunedì').'\", \"martedì\":\"'.tr('Martedì').'\", \"mercoledì\":\"'.tr('Mercoledì').'\", \"giovedì\":\"'.tr('Giovedì').'\", \"venerdì\":\"'.tr('Venerdì').'\", \"sabato\":\"'.tr('Sabato').'\", \"domenica\":\"'.tr('Domenica').'\"", "required":1 ]}
+            {[ "type": "select", "multiple":"1", "label": "'.tr('Giorni da considerare per la duplicazione').'", "name": "giorni[]", "required": 0, "value": "'.strtolower(setting('Giorni lavorativi')).'", "values": "list=\"lunedì\":\"'.tr('Lunedì').'\", \"martedì\":\"'.tr('Martedì').'\", \"mercoledì\":\"'.tr('Mercoledì').'\", \"giovedì\":\"'.tr('Giovedì').'\", \"venerdì\":\"'.tr('Venerdì').'\", \"sabato\":\"'.tr('Sabato').'\", \"domenica\":\"'.tr('Domenica').'\"", "required":1 ]}
         </div>
 
         <div class="col-md-6">
@@ -66,7 +66,7 @@ echo '
         </div>
 
         <div class="col-md-3">
-            {["type": "checkbox", "label": "'.tr('Duplica allegati').'", "name": "copia_allegati", "help": "'.tr('Selezione per riportare anche gli allegati nella nuova attività').'", "value": 1 ]}
+            {["type": "checkbox", "label": "'.tr('Duplica allegati').'", "name": "copia_allegati", "help": "'.tr('Selezione per riportare anche gli allegati nella nuova attività').'" ]}
         </div>
     </div>
 

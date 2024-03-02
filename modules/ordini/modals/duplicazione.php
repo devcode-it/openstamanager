@@ -38,7 +38,7 @@ echo '
         </div>
 
         <div class="col-md-3">
-            {["type": "checkbox", "label": "'.tr('Duplica allegati').'", "name": "copia_allegati", "help": "'.tr('Selezione per riportare anche gli allegati nella nuova attività').'", "value": 1 ]}
+            {["type": "checkbox", "label": "'.tr('Duplica allegati').'", "name": "copia_allegati", "help": "'.tr('Selezione per riportare anche gli allegati nella nuova attività').'" ]}
         </div>
 
     </div>

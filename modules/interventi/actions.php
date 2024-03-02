@@ -973,7 +973,7 @@ switch (post('op')) {
         $sessione->save();
         break;
 
-        // Duplica intervento
+    // Duplica intervento
     case 'copy':
         $id_stato = post('id_stato');
         $ora_richiesta = post('ora_richiesta');
@@ -986,105 +986,121 @@ switch (post('op')) {
         $giorni = (array) post('giorni');
 
         $period = CarbonPeriod::create($data_inizio, $data_fine);
+      
 
-        // Iterate over the period
-        foreach ($period as $date) {
-            $data_richiesta = $date->format('Y-m-d').' '.$ora_richiesta;
-            $giorno = $date->locale('IT')->dayName;
-            if (in_array($giorno, $giorni)) {
-                $new = $intervento->replicate();
-                $new->idstatointervento = $id_stato;
+        if (count($period)>0){
 
-                // Calcolo del nuovo codice sulla base della data di richiesta
-                $new->codice = Intervento::getNextCodice($data_richiesta, $new->id_segment);
-                $new->data_richiesta = $data_richiesta;
-                $new->data_scadenza = post('ora_scadenza') ? $date->format('Y-m-d').' '.post('ora_scadenza') : null;
-                $new->firma_file = '';
-                $new->firma_data = null;
-                $new->firma_nome = '';
+            $i = 0;
+            // Iterate over the period
+            foreach ($period as $date) {
+                
+                $data_richiesta = $date->format('Y-m-d').' '.$ora_richiesta;
+                $giorno = $date->locale('IT')->dayName;
 
-                $new->save();
+                if (in_array($giorno, $giorni)) {
+                    
+                    $i++;
+                    $new = $intervento->replicate();
+                    $new->idstatointervento = $id_stato;
 
-                $id_record = $new->id;
+                    // Calcolo del nuovo codice sulla base della data di richiesta
+                    $new->codice = Intervento::getNextCodice($data_richiesta, $new->id_segment);
+                    $new->data_richiesta = $data_richiesta;
+                    $new->data_scadenza = post('ora_scadenza') ? $date->format('Y-m-d').' '.post('ora_scadenza') : null;
+                    $new->firma_file = '';
+                    $new->firma_data = null;
+                    $new->firma_nome = '';
 
-                // Copio le righe
-                if (!empty($copia_righe)) {
-                    $righe = $intervento->getRighe();
-                    foreach ($righe as $riga) {
-                        $new_riga = $riga->replicate();
-                        $new_riga->setDocument($new);
+                    $new->save();
 
-                        $new_riga->qta_evasa = 0;
+                    $id_record = $new->id;
 
-                        if ($new_riga->isArticolo()) {
-                            $new_riga->movimenta($new_riga->qta);
+                    // Copio le righe
+                    if (!empty($copia_righe)) {
+                        $righe = $intervento->getRighe();
+                        foreach ($righe as $riga) {
+                            $new_riga = $riga->replicate();
+                            $new_riga->setDocument($new);
+
+                            $new_riga->qta_evasa = 0;
+
+                            if ($new_riga->isArticolo()) {
+                                $new_riga->movimenta($new_riga->qta);
+                            }
+
+                            $new_riga->save();
+                        }
+                    }
+
+                    // Copia delle sessioni
+                    $numero_sessione = 0;
+                    if (!empty($copia_sessioni)) {
+                        $sessioni = $intervento->sessioni;
+                        foreach ($sessioni as $sessione) {
+                            // Se è la prima sessione che copio importo la data con quella della richiesta
+                            if ($numero_sessione == 0) {
+                                $orario_inizio = date('Y-m-d', strtotime($data_richiesta)).' '.date('H:i:s', strtotime($sessione->orario_inizio));
+                            } else {
+                                $diff = strtotime($sessione->orario_inizio) - strtotime($inizio_old);
+                                $orario_inizio = date('Y-m-d H:i:s', strtotime($new_sessione->orario_inizio) + $diff);
+                            }
+
+                            $diff_fine = strtotime($sessione->orario_fine) - strtotime($sessione->orario_inizio);
+                            $orario_fine = date('Y-m-d H:i:s', strtotime($orario_inizio) + $diff_fine);
+
+                            $new_sessione = $sessione->replicate();
+                            $new_sessione->idintervento = $new->id;
+
+                            $new_sessione->orario_inizio = $orario_inizio;
+                            $new_sessione->orario_fine = $orario_fine;
+                            $new_sessione->save();
+
+                            ++$numero_sessione;
+                            $inizio_old = $sessione->orario_inizio;
+                        }
+                    }
+
+                    // Copia degli impianti
+                    if (!empty($copia_impianti)) {
+                        $impianti = $dbo->select('my_impianti_interventi', '*', [], ['idintervento' => $intervento->id]);
+                        foreach ($impianti as $impianto) {
+                            $dbo->insert('my_impianti_interventi', [
+                                'idintervento' => $id_record,
+                                'idimpianto' => $impianto['idimpianto'],
+                            ]);
                         }
 
-                        $new_riga->save();
-                    }
-                }
-
-                // Copia delle sessioni
-                $numero_sessione = 0;
-                if (!empty($copia_sessioni)) {
-                    $sessioni = $intervento->sessioni;
-                    foreach ($sessioni as $sessione) {
-                        // Se è la prima sessione che copio importo la data con quella della richiesta
-                        if ($numero_sessione == 0) {
-                            $orario_inizio = date('Y-m-d', strtotime($data_richiesta)).' '.date('H:i:s', strtotime($sessione->orario_inizio));
-                        } else {
-                            $diff = strtotime($sessione->orario_inizio) - strtotime($inizio_old);
-                            $orario_inizio = date('Y-m-d H:i:s', strtotime($new_sessione->orario_inizio) + $diff);
+                        $componenti = $dbo->select('my_componenti_interventi', '*', [], ['id_intervento' => $intervento->id]);
+                        foreach ($componenti as $componente) {
+                            $dbo->insert('my_componenti_interventi', [
+                                'id_intervento' => $id_record,
+                                'id_componente' => $componente['id_componente'],
+                            ]);
                         }
-
-                        $diff_fine = strtotime($sessione->orario_fine) - strtotime($sessione->orario_inizio);
-                        $orario_fine = date('Y-m-d H:i:s', strtotime($orario_inizio) + $diff_fine);
-
-                        $new_sessione = $sessione->replicate();
-                        $new_sessione->idintervento = $new->id;
-
-                        $new_sessione->orario_inizio = $orario_inizio;
-                        $new_sessione->orario_fine = $orario_fine;
-                        $new_sessione->save();
-
-                        ++$numero_sessione;
-                        $inizio_old = $sessione->orario_inizio;
-                    }
-                }
-
-                // Copia degli impianti
-                if (!empty($copia_impianti)) {
-                    $impianti = $dbo->select('my_impianti_interventi', '*', [], ['idintervento' => $intervento->id]);
-                    foreach ($impianti as $impianto) {
-                        $dbo->insert('my_impianti_interventi', [
-                            'idintervento' => $id_record,
-                            'idimpianto' => $impianto['idimpianto'],
-                        ]);
                     }
 
-                    $componenti = $dbo->select('my_componenti_interventi', '*', [], ['id_intervento' => $intervento->id]);
-                    foreach ($componenti as $componente) {
-                        $dbo->insert('my_componenti_interventi', [
-                            'id_intervento' => $id_record,
-                            'id_componente' => $componente['id_componente'],
-                        ]);
-                    }
-                }
-
-                // copia allegati
-                if (!empty($copia_allegati)) {
-                    $allegati = $intervento->uploads();
-                    foreach ($allegati as $allegato) {
-                        $allegato->copia([
-                            'id_module' => $new->getModule()->id,
-                            'id_record' => $new->id,
-                        ]);
+                    // copia allegati
+                    if (!empty($copia_allegati)) {
+                        $allegati = $intervento->uploads();
+                        foreach ($allegati as $allegato) {
+                            $allegato->copia([
+                                'id_module' => $new->getModule()->id,
+                                'id_record' => $new->id,
+                            ]);
+                        }
                     }
                 }
             }
+
+            if ($i>0)
+                flash()->info(tr('Sono state create _NUM_ attività!', ['_NUM_' => $i]));
+            else
+                flash()->warning(tr('Nessuna attività creata per il periodo indicato.'));
+        }else{
+            flash()->warning(tr('Nessuna attività creata.'));
         }
 
-        flash()->info(tr('Attività duplicate correttamente!'));
+        
 
         break;
 

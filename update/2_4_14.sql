@@ -365,7 +365,9 @@ DELETE FROM `zz_widgets` WHERE `name` = 'Ordini di servizio da impostare';
 --
 -- Aggiornamento FE in base alla normativa del 28/02/2020
 --
+ALTER TABLE `co_iva` DROP FOREIGN KEY `co_iva_ibfk_1`;
 ALTER TABLE `fe_natura` MODIFY `codice` VARCHAR(5) NOT NULL;
+ALTER TABLE `co_iva` ADD CONSTRAINT `co_iva_ibfk_1` FOREIGN KEY (`codice_natura_fe`) REFERENCES `fe_natura`(`codice`) ON DELETE CASCADE;
 
 -- Nuove nature IVA
 INSERT INTO `fe_natura` (`codice`, `descrizione`) VALUES

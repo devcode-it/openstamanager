@@ -82,7 +82,7 @@ function restore() {
 }
 
 // Creazione backup
-function creaBackup(button){
+function creaBackup(button, ignore_dirs = \'\'){
     swal({
         title: "'.tr('Nuovo backup').'",
         text: "'.tr('Sei sicuro di voler creare un nuovo backup?').'",
@@ -99,6 +99,7 @@ function creaBackup(button){
             type: "GET",
             data: {
                 id_module: globals.id_module,
+                ignore_dirs: JSON.parse(JSON.stringify(ignore_dirs)),
                 op: "backup",
             },
             success: function(data) {
@@ -315,9 +316,22 @@ if (file_exists($backup_dir)) {
 // Creazione backup
 if (!empty($backup_dir)) {
     echo '
-<button type="button" class="btn btn-primary pull-right" onclick="creaBackup(this)">
-    <i class="fa fa-database"></i> '.tr('Crea backup').'...
-</button>
+<div class="btn-group pull-right">
+    <a class="btn btn-primary" aria-haspopup="true" aria-expanded="false" onclick="creaBackup(this)">
+        <i class="fa fa-database"></i> '.tr('Crea backup').'
+    </a>
+    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="caret"></span>
+        <span class="sr-only">Toggle Dropdown</span>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-right">
+        <li>
+            <a class="clickable" data-toggle="modal" data-title="'.tr('Crea backup senza files').'" onclick="creaBackup(this, \'files\')">
+                <i class="fa fa-database"></i>'.tr('Crea backup senza files').'
+            </a>
+        </li>
+    </ul>
+</div>
 
 <div class="clearfix"></div>';
 }

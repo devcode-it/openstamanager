@@ -145,9 +145,11 @@ class Backup
     /**
      * Esegue il backup del progetto.
      *
+     * @param array $ignore_dirs Eventuali dirs da ignorare
+     * 
      * @return bool
      */
-    public static function create()
+    public static function create($ignore_dirs)
     {
         self::checkSpace();
 
@@ -173,8 +175,16 @@ class Backup
                 'tests',
                 'tmp',
                 '.git',
+                '.github',
             ],
         ];
+
+        // Altri percorsi da ignorare
+        if ($ignore_dirs){
+            foreach ((array) $ignore_dirs as $value)    {
+                $ignores['dirs'][] = basename($value);
+            }
+        }
 
         if (string_starts_with($backup_dir, slashes(base_dir()))) {
             $ignores['dirs'][] = basename($backup_dir);

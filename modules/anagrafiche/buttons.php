@@ -79,5 +79,5 @@ if (in_array($id_cliente, $tipi_anagrafica) or in_array($id_fornitore, $tipi_ana
 if (in_array($id_agente, $tipi_anagrafica)) {
     // Aggiunta liquidazione provvigioni per agente
     echo '
-    <button type="button" class="btn btn-primary" data-title="'.tr('Liquida Provvigioni').'" data-href="'.base_path().'/modules/anagrafiche/liquida_provvigioni.php?nome_stampa=Provvigioni&id_record='.$id_record.'" ><i class="fa fa-print"></i>'.tr(' Liquida Provvigioni').'</button>';
+    <button type="button" class="btn btn-primary" data-title="'.tr('Liquida Provvigioni').'" data-href="'.base_path().'/modules/anagrafiche/liquida_provvigioni.php?nome_stampa=Provvigioni&id_record='.$id_record.'" ><i class="fa fa-print"></i> '.tr('Liquida Provvigioni').'</button>';
 }

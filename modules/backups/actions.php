@@ -55,8 +55,14 @@ switch (filter('op')) {
         break;
 
     case 'backup':
+
+        $ignore_dirs = [];
+        if (!empty(filter('ignore_dirs'))){
+            $ignore_dirs = explode(',', filter('ignore_dirs')); 
+        }
+        
         try {
-            $result = Backup::create();
+            $result = Backup::create($ignore_dirs);
 
             if ($result) {
                 flash()->info(tr('Nuovo backup creato correttamente!'));

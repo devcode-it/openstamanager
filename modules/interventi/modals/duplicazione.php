@@ -26,25 +26,26 @@ echo '
 
     <div class="row">
         <div class="col-md-3">
-            {[ "type": "date", "label": "'.tr('Data inizio').'", "name": "data_inizio", "value": "-now-", "required":1 ]}
+            {[ "type": "date", "label": "'.tr('Data inizio periodo duplicazione').'", "name": "data_inizio", "value": "-now-", "required":1 ]}
         </div>
 
         <div class="col-md-3">
-            {[ "type": "date", "label": "'.tr('Data fine').'", "name": "data_fine", "value": "-now-", "required":1 ]}
+            {[ "type": "date", "label": "'.tr('Data fine periodo duplicazione').'", "name": "data_fine", "value": "-now-", "required":1 ]}
         </div>
 
+        <div class="col-md-6">
+            {[ "type": "select", "multiple":"1", "label": "'.tr('Giorni da considerare per la duplicazione').'", "name": "giorni[]", "required": 0, "value": "'.strtolower(setting('Giorni lavorativi')).'", "values": "list=\"lunedì\":\"'.tr('Lunedì').'\", \"martedì\":\"'.tr('Martedì').'\", \"mercoledì\":\"'.tr('Mercoledì').'\", \"giovedì\":\"'.tr('Giovedì').'\", \"venerdì\":\"'.tr('Venerdì').'\", \"sabato\":\"'.tr('Sabato').'\", \"domenica\":\"'.tr('Domenica').'\"", "required":1 ]}
+        </div>
+      
+    </div>
+
+    <div class="row">
         <div class="col-md-3">
             {[ "type": "time", "label": "'.tr('Ora richiesta').'", "name": "ora_richiesta", "value": "-now-", "required":1 ]}
         </div>
 
         <div class="col-md-3">
             {[ "type": "time", "label": "'.tr('Ora scadenza').'", "name": "ora_scadenza" ]}
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-6">
-            {[ "type": "select", "multiple":"1", "label": "'.tr('Giorni da considerare per la duplicazione').'", "name": "giorni[]", "required": 0, "value": "'.strtolower(setting('Giorni lavorativi')).'", "values": "list=\"lunedì\":\"'.tr('Lunedì').'\", \"martedì\":\"'.tr('Martedì').'\", \"mercoledì\":\"'.tr('Mercoledì').'\", \"giovedì\":\"'.tr('Giovedì').'\", \"venerdì\":\"'.tr('Venerdì').'\", \"sabato\":\"'.tr('Sabato').'\", \"domenica\":\"'.tr('Domenica').'\"", "required":1 ]}
         </div>
 
         <div class="col-md-6">

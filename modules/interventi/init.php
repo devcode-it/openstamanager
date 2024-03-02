@@ -43,9 +43,12 @@ if (isset($id_record)) {
     WHERE 
         `in_interventi`.`id`='.prepare($id_record));
 
+    
     //Pulsante Precedente e Successivo all'interno della scheda attività
+    //Ricavo la query del modulo
     $module_query = Util\Query::getQuery(Models\Module::getCurrent());
-
+    
+    //Aggiunto eventuali filtri applicati alla vista
     if (!empty(getSearchValues($id_module))) {
         $having = [];
         $search_values = getSearchValues($id_module);
@@ -55,14 +58,30 @@ if (isset($id_record)) {
         foreach($having as $condition) {
             $module_query = str_replace('2=2', '2=2 AND '.$condition,  $module_query);
         }
+
+        //Controllo se questo id_record è presente all'interno dei risultati, altrimenti non considero i filtri applicati alla vista
+        /*$query_test = str_replace('1=1', '1=1 AND `in_interventi`.`id` ='.prepare($id_record),  $module_query);
+        if (count($database->FetchArray($query_test))>0)
+            $module_query =  $module_query;
+        else 
+            $module_query = Util\Query::getQuery(Models\Module::getCurrent());*/
     }
-
-
-    $prev_query = str_replace('1=1', '1=1 AND `in_interventi`.`codice` = '.($record['codice']-1),  $module_query);
+    
+    //Mi ricavo la posizione di questo id_record
+    $database->FetchArray('SET @posizione = 0;');
+    $posizioni = $database->FetchArray($module_query);
+    foreach($posizioni as $posizione) {
+        if ($posizione['id'] == $id_record)
+            $posizione_attuale = $posizione['posizione']; 
+    }
+    
+    $prev_query = str_replace('2=2', '2=2 AND `posizione` ='.$posizione_attuale-1,  $module_query);
+    $database->FetchArray('SET @posizione = 0;');
     $prev = $database->FetchOne($prev_query)['id'];
-
-    $next_query = str_replace('1=1', '1=1 AND `in_interventi`.`codice` = '.($record['codice']+1),  $module_query);
+    
+    $next_query = str_replace('2=2', '2=2 AND `posizione` ='.$posizione_attuale+1,  $module_query);
+    $database->FetchArray('SET @posizione = 0;');
     $next = $database->FetchOne($next_query)['id'];
-
+   
 
 }

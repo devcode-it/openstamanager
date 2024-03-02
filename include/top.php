@@ -412,8 +412,8 @@ if (Auth::check()) {
                             <li class="nav-button" >
                                 <p style="padding:10px 15px;">&nbsp;</p>
                             </li>';
-
-    if ($user->gruppo == 'Amministratori') {
+    //Visualizzo gli hooks solo agli amministratori e solo se non sono stati disabilitati.
+    if ($user->gruppo == 'Amministratori' && !$config['disable_hooks']) {
         echo '
                             <li class="dropdown notifications-menu nav-button">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">

@@ -30,7 +30,7 @@ use Util\Zip;
 class Backup
 {
     /** @var string Pattern per i nomi dei backup */
-    public const PATTERN = 'OSM backup YYYY-m-d H_i_s AAAAAAAA';
+    public const PATTERN = 'OSM backup YYYY-m-d H_i_s AAAAAAA';
 
     /** @var array Elenco delle variabili che identificano i backup giornalieri */
     protected static $daily_replaces = [
@@ -154,7 +154,7 @@ class Backup
         self::checkSpace();
 
         $backup_dir = self::getDirectory();
-        $backup_name = tr(self::getNextName(), [ 'AAAAAAAA' => ($ignore_dirs)? 'PARZIALE' : 'COMPLETO' ]);
+        $backup_name = tr(self::getNextName(), [ 'AAAAAAA' => ($ignore_dirs)? 'PARTIAL' : 'FULL' ]);
 
         set_time_limit(0);
 

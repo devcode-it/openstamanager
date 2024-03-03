@@ -52,7 +52,7 @@ class Generator
         's' => [
             'date' => 'd',
         ],
-        'AAAAAAAA' => [
+        'AAAAAAA' => [
             'string' => '',
         ],
     ];

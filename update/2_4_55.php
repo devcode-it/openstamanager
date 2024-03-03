@@ -23,7 +23,7 @@ if (empty($has_column)) {
 
 
 if ($backup_dir){
-    /* Rinomino i file zip all'interno della cartella di backup, aggiungendo "COMPLETO" alla fine del nome*/
+    /* Rinomino i file zip all'interno della cartella di backup, aggiungendo "FULL" alla fine del nome*/
     $filesystem = new SymfonyFilesystem();
     //glob viene utilizzata per ottenere la lista dei file zip all'interno della cartella $backup_dir.
     $files = glob($backup_dir . '/*.zip');
@@ -31,8 +31,8 @@ if ($backup_dir){
     foreach ($files as $file) {
         $fileName = basename($file);
         
-        if (strpos($fileName, 'COMPLETO') === false) {
-            $newFileName = pathinfo($fileName, PATHINFO_FILENAME) . ' COMPLETO.zip';
+        if (strpos($fileName, 'FULL') === false) {
+            $newFileName = pathinfo($fileName, PATHINFO_FILENAME) . ' FULL.zip';
             $newFilePath = $backup_dir . '/' . $newFileName;
             
             $filesystem->rename($file, $newFilePath);

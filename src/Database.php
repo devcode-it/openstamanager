@@ -229,8 +229,8 @@ class Database extends Util\Singleton
      */
     public function isMySQL()
     {
-        $ver = $this->fetchArray('SELECT VERSION()');
-        if (preg_match('/MariaDB/', $ver[0]['VERSION()'])) {
+        $ver = $this->fetchOne('SELECT VERSION()')['VERSION()'];
+        if (preg_match('/MariaDB/', $ver)) {
             return false;
         } else {
             return true;

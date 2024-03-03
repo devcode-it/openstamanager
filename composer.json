@@ -15,7 +15,7 @@
     }],
     "type": "project",
     "require": {
-        "php": "^7.3|^8.0",
+        "php": "^7.4|^8.0",
         "ext-curl": "*",
         "ext-dom": "*",
         "ext-fileinfo": "*",
@@ -144,7 +144,7 @@
         "prefer-stable": true,
         "platform-check": false,
         "platform": {
-            "php": "8.0.17"
+            "php": "8.0.29"
         },
         "allow-plugins": {
             "kylekatarnls/update-helper": true

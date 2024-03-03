@@ -242,14 +242,16 @@ foreach ($settings as $name => $values) {
     ];
 }
 
+
 // MySQL
 if ($database->isInstalled()) {
     $db = [
         'mysql_version' => [
             'type' => 'version',
-            'description' => (($database->isMySQL)? '5.7.x - 8.0.x' : '10.x'),
-            'minimum' => (($database->isMySQL)? '5.7.0' : '10.1.0'),
-            'maximum' => (($database->isMySQL)? '8.0.99' : '10.6.99'),
+            'warning' => (($database->isMySQL())? false : true),
+            'description' => (($database->isMySQL())? '5.7.x - 8.0.x' : '10.x'),
+            'minimum' => (($database->isMySQL())? '5.7.0' : '10.1.0'),
+            'maximum' => (($database->isMySQL())? '8.0.99' : '10.6.99'),
         ],
 
         'sort_buffer_size' => [
@@ -283,6 +285,12 @@ foreach ($db as $name => $values) {
         ]);
 
         $status = ((version_compare($database->getMySQLVersion(), $values['minimum'], '>=') && version_compare($database->getMySQLVersion(), $values['maximum'], '<=')) ? 1 : 0);
+
+        if($values['warning'] && $status == 1){
+            $status = 0;
+            $description .= '. <i class="fa fa-exclamation-triangle text-danger" ></i><b> '.tr('Al momento MariaDB _MYSQL_VERSION_ non è completamente supportato, si consiglia di passare a MySQL.', ['_MYSQL_VERSION_'=>$database->getMySQLVersion()]).'</b>';
+        }
+
     } else {
         $type = tr('Impostazione');
 

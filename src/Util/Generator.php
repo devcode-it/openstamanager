@@ -29,7 +29,7 @@ use Illuminate\Database\Capsule\Manager;
  */
 class Generator
 {
-    /** @var array Elenco delle varabili da sostituire nel pattern */
+    /** @var array Elenco delle variabili da sostituire nel pattern */
     protected static $replaces = [
         'YYYY' => [
             'date' => 'Y',
@@ -51,6 +51,9 @@ class Generator
         ],
         's' => [
             'date' => 'd',
+        ],
+        'AAAAAAAA' => [
+            'string' => '',
         ],
     ];
 

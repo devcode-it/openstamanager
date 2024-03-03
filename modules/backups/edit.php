@@ -218,7 +218,7 @@ if (file_exists($backup_dir)) {
 
                 $data = $info['YYYY'].'-'.$info['m'].'-'.$info['d'];
                 $ora = $info['H'].':'.$info['i'].':'.$info['s'];
-
+                $tipo = $info['AAAAAAAA'];             
                 echo '
         <div class="callout callout-info">
             <h4>'.tr('Backup del _DATE_ alle _TIME_', [
@@ -227,6 +227,7 @@ if (file_exists($backup_dir)) {
             ]).'</h4>
             <p><small>
                 '.tr('Nome del file').': '.$name.'<br>
+                '.tr('Tipo').': '.(($tipo == 'PARZIALE')? '🟠 '.tr('Parziale'):'🟢 '.tr('Completo')).'<br>
                 '.tr('Dimensione').': <i id="c-'.$id.'"></i>
             </small></p>
 

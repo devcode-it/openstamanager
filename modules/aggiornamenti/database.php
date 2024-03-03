@@ -146,9 +146,11 @@ if (!empty($results) || !empty($results_settings) || !empty($results_settings_ad
     <p>'.tr("Segue l'elenco delle tabelle del database che presentano una struttura diversa rispetto a quella prevista nella versione ufficiale del gestionale").'.</p>
     <div class="alert alert-warning">
         <i class="fa fa-warning"></i>
-        '.tr('Attenzione: questa funzionalità può presentare dei risultati falsamente positivi, sulla base del contenuto del file _FILE_ e la versione di _MYSQL_VERSION_ di MySQL rilevata a sistema', [
+        '.tr('Attenzione: questa funzionalità può presentare dei risultati falsamente positivi, sulla base del contenuto del file _FILE_ e la versione di _MYSQL_VERSION_ di _DBMS_TYPE_ rilevata a sistema', [
                 '_FILE_' => '<b>'.$file_to_check_database.'</b>',
                 '_MYSQL_VERSION_' => '<b>'.$database->getMySQLVersion().'</b>',
+                '_DBMS_TYPE_' => '<b>'.$database->getType().'</b>',
+
             ]).'.
     </div>';
 

@@ -319,7 +319,7 @@ if (!empty($backup_dir)) {
     echo '
 <div class="btn-group pull-right">
     <a class="btn btn-primary" aria-haspopup="true" aria-expanded="false" onclick="creaBackup(this)">
-        <i class="fa fa-database"></i> '.tr('Crea backup').'
+        <i class="fa fa-archive"></i> '.tr('Crea backup').'
     </a>
     <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <span class="caret"></span>
@@ -327,8 +327,8 @@ if (!empty($backup_dir)) {
     </button>
     <ul class="dropdown-menu dropdown-menu-right">
         <li>
-            <a class="clickable" data-toggle="modal" data-title="'.tr('Crea backup senza files').'" onclick="creaBackup(this, \'files\')">
-                <i class="fa fa-database"></i>'.tr('Crea backup senza files').'
+            <a class="clickable" data-toggle="modal" data-title="'.tr('Crea backup parziale').'" onclick="creaBackup(this, \'files\')">
+                <i class="fa fa-database"></i>'.tr('Crea backup parziale').'
             </a>
         </li>
     </ul>

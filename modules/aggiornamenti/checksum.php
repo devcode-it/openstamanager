@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+use Models\OperationLog;
 
 include_once __DIR__.'/../../core.php';
 
@@ -40,7 +41,7 @@ $(document).ready(function () {
     loader.show();
 
     content.html("");
-    content.load("'.$structure->fileurl($file).'?effettua_controllo=1", function() {
+    content.load("'.$structure->fileurl($file).'?effettua_controllo=1&id_module='.$id_module.'", function() {
         loader.hide();
     });
 })
@@ -71,9 +72,11 @@ foreach ($checksum as $file => $md5) {
         $errors[] = $file;
     }
 }
+OperationLog::setInfo('id_module', $id_module);
 
 // Schermata di visualizzazione degli errori
 if (!empty($errors)) {
+    OperationLog::setInfo('options', 'KO');
     echo '
 <p>'.tr("Segue l'elenco dei file che presentano checksum diverso rispetto a quello registrato nella versione ufficiale").'.</p>
 <div class="alert alert-warning">
@@ -105,8 +108,12 @@ if (!empty($errors)) {
     </tbody>
 </table>';
 } else {
+
+    OperationLog::setInfo('options', 'OK');
+
     echo '
 <div class="alert alert-info">
     <i class="fa fa-info-circle"></i> '.tr('Nessun file con problemi di integrità').'.
 </div>';
 }
+OperationLog::build('effettua_controllo');

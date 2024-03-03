@@ -57,8 +57,15 @@ switch (filter('op')) {
     case 'backup':
 
         $ignore_dirs = [];
-        if (!empty(filter('ignore_dirs'))){
+        
+        /*if (!empty(filter('ignore_dirs'))){
             $ignore_dirs = explode(',', filter('ignore_dirs')); 
+        }*/
+
+        if (filter('exclude') == 'exclude_attachments'){
+            $ignore_dirs[] = 'files'; 
+        }else if (filter('exclude') == 'only_database'){
+            $ignore_dirs = ['vendor','update','templates','src','plugins','modules','logs','locale','lib','include','files','config','assets','api']; 
         }
         
         try {

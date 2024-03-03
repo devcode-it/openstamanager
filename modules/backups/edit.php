@@ -21,6 +21,8 @@ include_once __DIR__.'/../../core.php';
 
 $backups = Backup::getList();
 
+
+
 // Controllo sul requisito ZIP
 if (!extension_loaded('zip')) {
     echo "
@@ -82,25 +84,34 @@ function restore() {
 }
 
 // Creazione backup
-function creaBackup(button, ignore_dirs = \'\'){
+function creaBackup(button){
     swal({
-        title: "'.tr('Nuovo backup').'",
-        text: "'.tr('Sei sicuro di voler creare un nuovo backup?').'",
+        title: "'.tr('Creare un nuovo backup?').'",
+        text: "'.tr('Seleziona cosa escludere dal backup:').'",
+        input: "select",
+        inputOptions: {
+            "exclude_attachments": "📎 '.tr('Allegati').'",
+            "only_database": "🗃️ '.tr('Tutto tranne database').'"
+        },
+        inputAttributes: {
+            title: "'.tr('Seleziona cosa escludere dal backup').'"
+        },
+        inputPlaceholder: " '.tr('Non escludere nulla').'",
         type: "warning",
         showCancelButton: true,
         confirmButtonClass: "btn btn-lg btn-success",
         confirmButtonText: "'.tr('Crea').'",
-    }).then(function() {
+    }).then(function(result) {
         let restore = buttonLoading(button);
         $("#main_loading").show();
-
+        let selectedOption = result;
         $.ajax({
             url: globals.rootdir + "/actions.php",
             type: "GET",
             data: {
                 id_module: globals.id_module,
-                ignore_dirs: JSON.parse(JSON.stringify(ignore_dirs)),
                 op: "backup",
+                exclude: selectedOption
             },
             success: function(data) {
                 $("#main_loading").fadeOut();
@@ -321,18 +332,6 @@ if (!empty($backup_dir)) {
     <a class="btn btn-primary" aria-haspopup="true" aria-expanded="false" onclick="creaBackup(this)">
         <i class="fa fa-archive"></i> '.tr('Crea backup').'
     </a>
-    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <span class="caret"></span>
-        <span class="sr-only">Toggle Dropdown</span>
-    </button>
-    <ul class="dropdown-menu dropdown-menu-right">
-        <li>
-            <a class="clickable" data-toggle="modal" data-title="'.tr('Crea backup parziale').'" onclick="creaBackup(this, \'files\')">
-                <i class="fa fa-database"></i>'.tr('Crea backup parziale').'
-            </a>
-        </li>
-    </ul>
 </div>
-
 <div class="clearfix"></div>';
 }

@@ -29,7 +29,7 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
         <div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Plugin'); ?>", "name": "plugin_id", "values": "query=SELECT id, name as text FROM zz_plugins WHERE enabled = 1" ]}
+			{[ "type": "select", "label": "<?php echo tr('Plugin'); ?>", "name": "plugin_id", "values": "query=SELECT `zz_plugins`.`id`, `name` as text FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins`.`id_lang` = <?php echo prepare(setting('Lingua')); ?>) WHERE `enabled` = 1" ]}
 		</div>
     </div>
 

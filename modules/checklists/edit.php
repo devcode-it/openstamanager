@@ -41,7 +41,7 @@ echo '
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Plugin del template').'", "name": "plugin", "values": "query=SELECT id, title AS descrizione, (SELECT name FROM zz_modules WHERE zz_modules.id = zz_plugins.idmodule_from) AS optgroup FROM zz_plugins WHERE enabled = 1", "value": "'.$record['id_plugin'].'", "disabled": "'.!empty($record['id_module']).'" ]}
+                    {[ "type": "select", "label": "'.tr('Plugin del template').'", "name": "plugin", "values": "query=SELECT `zz_plugins`.`id`, `title` AS descrizione, `zz_modules`.`name` AS optgroup FROM zz_plugins INNER JOIN `zz_modules` ON (`zz_plugins`.`id_module_to` = `zz_modules`.`id`) LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `enabled` = 1", "value": "'.$record['id_plugin'].'", "disabled": "'.!empty($record['id_module']).'" ]}
                 </div>
             </div>
         </div>

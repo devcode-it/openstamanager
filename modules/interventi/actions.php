@@ -41,7 +41,7 @@ use Plugins\ListinoClienti\DettaglioPrezzo;
 use Plugins\PianificazioneInterventi\Promemoria;
 
 $modulo_impianti = Modules::get('Impianti');
-$plugin_impianti = Plugin::pool('Impianti');
+$plugin_impianti = (new Plugin())->getByName('Impianti')->id_record;
 
 switch (post('op')) {
     case 'update':
@@ -244,7 +244,7 @@ switch (post('op')) {
                         }
                         $check = Check::build($user, $structure, $id_record, $check_impianto['content'], $id_parent_new, $check_impianto['is_titolo'], $check_impianto['order'], $modulo_impianti['id'], $impianto);
                         $check->id_module = $id_module;
-                        $check->id_plugin = $plugin_impianti['id'];
+                        $check->id_plugin = $plugin_impianti;
                         $check->note = $check_impianto['note'];
                         $check->save();
                     }

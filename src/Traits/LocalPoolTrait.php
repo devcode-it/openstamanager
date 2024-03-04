@@ -98,7 +98,7 @@ trait LocalPoolTrait
             return null;
         }
 
-        return self::pool(self::$current);
+        return self::find(self::$current);
     }
 
     /**

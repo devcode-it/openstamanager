@@ -35,16 +35,16 @@ class PluginDuplicati extends Controllo
 
     public function check()
     {
-        $duplicati = database()->fetchArray('SELECT `idmodule_to`, `name` FROM `zz_plugins` GROUP BY `idmodule_to`, `name` HAVING COUNT(`name`) > 1');
+        $duplicati = database()->fetchArray('SELECT `idmodule_to`, `name` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins`.`id_lang` = '.prepare(setting('Lingua')).') GROUP BY `idmodule_to`, `name` HAVING COUNT(`name`) > 1');
 
         foreach ($duplicati as $plugin) {
             $modulo = Module::pool($plugin['idmodule_to']);
 
             $this->addResult([
-                'id' => $plugin['name'],
-                'nome' => $modulo->title.': '.$plugin['name'],
+                'id' => $plugin->name,
+                'nome' => $modulo->title.': '.$plugin->name,
                 'descrizione' => tr('Il plugin _NAME_ del modulo _MODULE_ esiste più volte', [
-                    '_NAME_' => $plugin['name'],
+                    '_NAME_' => $plugin->name,
                     '_MODULE_' => $modulo->title,
                 ]),
             ]);

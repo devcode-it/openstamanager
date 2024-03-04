@@ -30,7 +30,7 @@ $is_agente = in_array($id_agente, $tipi_anagrafica);
 $is_azienda = in_array($id_azienda, $tipi_anagrafica);
 
 if (!$is_cliente && !$is_fornitore && !$is_azienda && $is_tecnico) {
-    $ignore = $dbo->fetchArray("SELECT `id` FROM `zz_plugins` WHERE `name`='Sedi' OR `name`='Referenti' OR `name`='Dichiarazioni d\'intento'");
+    $ignore = $dbo->fetchArray("SELECT `zz_plugins`.`id` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins`.`id_lang` = ".prepare(setting('Lingua')).") WHERE `name`='Sedi' OR `name`='Referenti' OR `name`='Dichiarazioni d\'intento'");
 
     foreach ($ignore as $plugin) {
         echo '
@@ -41,7 +41,7 @@ if (!$is_cliente && !$is_fornitore && !$is_azienda && $is_tecnico) {
 }
 
 if (!$is_cliente) {
-    $ignore = $dbo->fetchArray("SELECT `id` FROM `zz_plugins` WHERE `name` IN ('Impianti del cliente','Contratti del cliente','Ddt del cliente')");
+    $ignore = $dbo->fetchArray("SELECT `zz_plugins`.`id` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins`.`id_lang` = ".prepare(setting('Lingua')).") WHERE `name` IN ('Impianti del cliente','Contratti del cliente','Ddt del cliente')");
 
     foreach ($ignore as $plugin) {
         echo '

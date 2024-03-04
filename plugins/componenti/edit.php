@@ -67,7 +67,7 @@ $elenchi = [
     ],
 ];
 
-$plugin = Plugin::pool('Componenti');
+$plugin = (new Plugin())->getByName('Componenti');
 $module = $plugin->module;
 
 // Generazione elenchi HTML

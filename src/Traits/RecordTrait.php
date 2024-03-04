@@ -33,7 +33,7 @@ trait RecordTrait
 
     public function getPlugin()
     {
-        return !empty($this->plugin) ? Plugin::pool($this->plugin) : null;
+        return !empty($this->plugin) ? (new Plugin())->getByName($this->plugin) : null;
     }
 
     /**

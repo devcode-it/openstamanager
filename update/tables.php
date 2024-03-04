@@ -176,6 +176,7 @@ return [
     'zz_notes',
     'zz_permissions',
     'zz_plugins',
+    'zz_plugins_lang',
     'zz_prints',
     'zz_segments',
     'zz_semaphores',

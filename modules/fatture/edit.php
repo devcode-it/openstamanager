@@ -264,7 +264,7 @@ $query = 'SELECT *, `colore` AS _bgcolor_, `co_statidocumento_lang`.`name` as de
 if (empty($record['is_fiscale'])) {
     $query .= " WHERE `name` = 'Bozza'";
 
-    $plugin = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Fatturazione Elettronica' AND idmodule_to = ".prepare($id_module));
+    $plugin = $dbo->fetchArray("SELECT `zz_plugins`.`id` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins`.`id_lang` = ".prepare(setting('Lingua')).") WHERE `name`='Fatturazione Elettronica' AND `idmodule_to` = ".prepare($id_module));
     echo '<script>$("#link-tab_'.$plugin[0]['id'].'").addClass("disabled");</script>';
 }
 // Forzo il passaggio della fattura da Bozza ad Emessa per il corretto calcolo del numero.

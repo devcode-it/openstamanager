@@ -145,16 +145,16 @@ class Backup
     /**
      * Esegue il backup del progetto.
      *
-     * @param array $ignore_dirs Eventuali dirs da ignorare
+     * @param array $ignores eventuali dirs o files da ignorare
      * 
      * @return bool
      */
-    public static function create($ignore_dirs)
+    public static function create($ignores)
     {
         self::checkSpace();
 
         $backup_dir = self::getDirectory();
-        $backup_name = tr(self::getNextName(), [ 'AAAAAAA' => ($ignore_dirs)? 'PARTIAL' : 'FULL' ]);
+        $backup_name = tr(self::getNextName(), [ 'AAAAAAA' => ($ignores['dirs'] || $ignores['files'] )? 'PARTIAL' : 'FULL' ]);
 
         set_time_limit(0);
 
@@ -162,8 +162,8 @@ class Backup
         $database_file = self::getDatabaseDirectory().'/database.sql';
         self::database($database_file);
 
-        // Percorsi da ignorare di default
-        $ignores = [
+        // Files e dirs da ignorare di default
+        $default_ignores = [
             'files' => [
                 'config.inc.php',
                 '*.lock',
@@ -179,13 +179,9 @@ class Backup
             ],
         ];
 
-        // Altri percorsi da ignorare
-        if ($ignore_dirs){
-            foreach ((array) $ignore_dirs as $value)    {
-                $ignores['dirs'][] = basename($value);
-            }
-        }
+        $ignores = array_merge_recursive($ignores, $default_ignores);
 
+        // Escludo la directory dei backup
         if (string_starts_with($backup_dir, slashes(base_dir()))) {
             $ignores['dirs'][] = basename($backup_dir);
         }

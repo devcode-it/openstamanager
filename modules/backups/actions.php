@@ -56,20 +56,16 @@ switch (filter('op')) {
 
     case 'backup':
 
-        $ignore_dirs = [];
+        $ignores = ['dirs' => [], 'files' => []]; 
         
-        /*if (!empty(filter('ignore_dirs'))){
-            $ignore_dirs = explode(',', filter('ignore_dirs')); 
-        }*/
-
         if (filter('exclude') == 'exclude_attachments'){
-            $ignore_dirs[] = 'files'; 
+            $ignores = ['dirs' => ['files']]; 
         }else if (filter('exclude') == 'only_database'){
-            $ignore_dirs = ['vendor','update','templates','src','plugins','modules','logs','locale','lib','include','files','config','assets','api']; 
+            $ignores = ['dirs' => ['vendor','update','templates','src','plugins','modules','logs','locale','lib','include','files','config','assets','api'], 'files' => ['*.php','*.md','*.json','*.js','*.xml','.*']]; 
         }
         
         try {
-            $result = Backup::create($ignore_dirs);
+            $result = Backup::create($ignores);
 
             if ($result) {
                 flash()->info(tr('Nuovo backup creato correttamente!'));

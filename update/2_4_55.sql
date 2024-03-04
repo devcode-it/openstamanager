@@ -1734,3 +1734,27 @@ INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`
 
 INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES
 (NULL, (SELECT id FROM zz_modules WHERE name = 'Articoli'), 0, 'Inventario cespiti', 'Inventario cespiti', 'Cespiti', 'magazzino_cespiti', '', '', 'fa fa-print', '', '', 0, 0, 1, 1);
+
+-- Aggiunta tabella zz_widgets_lang
+CREATE TABLE IF NOT EXISTS `zz_widgets_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `name` VARCHAR(255) NOT NULL
+);
+ALTER TABLE `zz_widgets_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `zz_widgets_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `zz_widgets_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name` FROM `zz_widgets`;
+
+ALTER TABLE `zz_widgets`
+    DROP `name`;
+
+ALTER TABLE `zz_widgets_lang` ADD CONSTRAINT `zz_widgets_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_widgets`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(co_preventivi.id) AS dato FROM co_preventivi INNER JOIN co_statipreventivi ON co_preventivi.idstato = co_statipreventivi.id LEFT JOIN co_statipreventivi_lang ON (co_statipreventivi_lang.id_record = co_statipreventivi.id AND co_statipreventivi_lang.id_lang = (SELECT valore FROM zz_settings WHERE nome = \"Lingua\")) WHERE name =\"In lavorazione\" AND default_revision=1' WHERE `zz_widgets`.`id` = (SELECT `id_record` FROM `zz_widgets_lang` WHERE  `name` = 'Preventivi in lavorazione'); 
+
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(`dati`.`id`) AS dato FROM (SELECT `co_contratti`.`id`,((SELECT SUM(`co_righe_contratti`.`qta`) FROM `co_righe_contratti` WHERE `co_righe_contratti`.`um` = \"ore\" AND `co_righe_contratti`.`idcontratto` = `co_contratti`.`id`) - IFNULL((SELECT SUM(`in_interventi_tecnici`.`ore`) FROM `in_interventi_tecnici` INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` WHERE `in_interventi`.`id_contratto` = `co_contratti`.`id` AND `in_interventi`.`idstatointervento` IN (SELECT `in_statiintervento`.`id` FROM `in_statiintervento` WHERE `in_statiintervento`.`is_completato` = 1)),0)) AS `ore_rimanenti`, DATEDIFF(`data_conclusione`, NOW()) AS giorni_rimanenti, `data_conclusione`, `ore_preavviso_rinnovo`, `giorni_preavviso_rinnovo`, (SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `idanagrafica` = `co_contratti`.`idanagrafica`) AS ragione_sociale FROM `co_contratti` INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`idstato` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `name` = "Lingua")) WHERE `rinnovabile` = 1 AND YEAR(`data_conclusione`) > 1970 AND `co_contratti`.`id` NOT IN (SELECT `idcontratto_prev` FROM `co_contratti` contratti) AND `co_staticontratti_lang`.`name` NOT IN (\"Concluso\", \"Rifiutato\", \"Bozza\") HAVING (`ore_rimanenti` <= `ore_preavviso_rinnovo` OR DATEDIFF(`data_conclusione`, NOW()) <= ABS(`giorni_preavviso_rinnovo`)) ORDER BY `giorni_rimanenti` ASC,`ore_rimanenti` ASC) dati' WHERE `zz_widgets`.`id` = (SELECT `id_record` FROM `zz_widgets_lang` WHERE  `name` = 'Contratti in scadenza'); 

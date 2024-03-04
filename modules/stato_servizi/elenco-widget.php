@@ -31,10 +31,15 @@ echo '
         </tr>
     </thead>';
 
-$widgets = $dbo->fetchArray('SELECT zz_widgets.*, zz_modules.name AS modulo
-FROM zz_widgets
-    INNER JOIN zz_modules ON zz_widgets.id_module = zz_modules.id
-ORDER BY `id_module` ASC, `zz_widgets`.`order` ASC');
+$widgets = $dbo->fetchArray('SELECT 
+        `zz_widgets`.*, 
+        `zz_widgets_lang`.`name` as name,
+        `zz_modules`.`name` AS modulo
+    FROM zz_widgets
+        LEFT JOIN `zz_widgets_lang` ON (`zz_widgets`.`id` = `zz_widgets_lang`.`id_record` AND `zz_widgets_lang`.`id_lang` = "'.setting('Lingua').'")
+        INNER JOIN `zz_modules` ON `zz_widgets`.`id_module` = `zz_modules`.`id`
+    ORDER BY 
+        `id_module` ASC, `zz_widgets`.`order` ASC');
 
 $gruppi = collect($widgets)->groupBy('modulo');
 foreach ($gruppi as $modulo => $widgets) {

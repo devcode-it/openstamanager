@@ -187,4 +187,5 @@ return [
     'zz_user_sedi',
     'zz_views',
     'zz_widgets',
+    'zz_widgets_lang',
 ];

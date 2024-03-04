@@ -105,7 +105,7 @@ foreach ($data['results'] as $r) {
             <td>'.$r['Categoria'].'</td>
             <td>'.$articolo->name.'</td>
             <td class="text-right">'.moneyFormat($articolo->prezzo_vendita).'</td>
-            <td class="text-right">'.Translator::numberToLocale($r['qta_totale']).' '.$r['um'].'</td>
+            <td class="text-right">'.Translator::numberToLocale($articolo->qta).' '.$articolo->um.'</td>
             <td class="text-right">'.moneyFormat($articolo->prezzo_acquisto).'</td>
             <td class="text-right">'.moneyFormat($valore_magazzino).'</td>
         </tr>';

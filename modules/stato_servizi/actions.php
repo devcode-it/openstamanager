@@ -124,9 +124,9 @@ switch (filter('op')) {
         }
 
         // Disabilitazione modulo/plugin indicato
-        $moduli_sempre_attivi = ['Utenti e permessi', 'Stato dei servizi'];
+        $moduli_sempre_attivi = [(new Module())->getByName('Utenti e permessi')->id_record, (new Module())->getByName('Stato dei servizi')->id_record];
         $database->table('zz_modules')
-            ->whereIn('name', $moduli_sempre_attivi)
+            ->whereIn('id', $moduli_sempre_attivi)
             ->update(['enabled' => 1]);
 
         // Messaggio informativo
@@ -189,7 +189,7 @@ switch (filter('op')) {
                 ]));
             }
         } else {
-            $modulo = Modules::get($id);
+            $modulo = Module::find($id);
             flash()->info(tr('Moduli sotto a "_NAME_" abilitati!', [
                 '_NAME_' => $struttura->title,
             ]));
@@ -273,7 +273,7 @@ switch (filter('op')) {
         $order = explode(',', post('order', true));
 
         foreach ($order as $i => $id) {
-            $dbo->query('UPDATE zz_modules SET `order`='.prepare($i).' WHERE id='.prepare($id));
+            $dbo->query('UPDATE `zz_modules` SET `order`='.prepare($i).' WHERE `id`='.prepare($id));
         }
 
         break;

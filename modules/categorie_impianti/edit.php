@@ -19,6 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Models\Module;
+
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
@@ -73,7 +75,7 @@ include_once __DIR__.'/../../core.php';
 					<th width="20%"><?php echo tr('Opzioni'); ?></th>
 				</tr>
 
-				<?php include base_dir().'/modules/'.Modules::get($id_module)['directory'].'/row-list.php'; ?>
+				<?php include base_dir().'/modules/'.Module::find($id_module)->directory.'/row-list.php'; ?>
 				</table>
 			</div>
 		</div>

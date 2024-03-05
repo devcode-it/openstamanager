@@ -18,6 +18,7 @@
  */
 
 use Modules\Articoli\Articolo;
+use Models\Module;
 
 $articolo = Articolo::find($result['idarticolo']);
 $width = $options['dir'] == 'uscita' && $articolo->fattore_um_secondaria ? 3 : 4;
@@ -44,7 +45,7 @@ echo '
 // Unità di misura
 echo '
         <div class="col-md-'.$width.'">
-            {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::get('Unità di misura')['id'].'", "name": "um", "value": "'.$result['um'].'", "ajax-source": "misure" ]}
+            {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.(new Module())->getByName('Unità di misura')->id_record.'", "name": "um", "value": "'.$result['um'].'", "ajax-source": "misure" ]}
         </div>';
 
 // Unità di misura

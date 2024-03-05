@@ -18,8 +18,9 @@
  */
 
 include_once __DIR__.'/../core.php';
+use Models\Module;
 
-$checklist_module = Modules::get('Checklists');
+$checklist_module = Module::find((new Module())->getByName('Checklists')->id_record);
 $checks_id = 'checklist_'.$id_module.'_'.$id_plugin;
 
 echo '

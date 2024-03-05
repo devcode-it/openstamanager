@@ -29,6 +29,8 @@ use Plugins\ExportFE\FatturaElettronica;
 use Plugins\ExportFE\Interaction;
 use Plugins\ReceiptFE\Ricevuta;
 use Util\Zip;
+use Models\Module;
+
 
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 $stato_emessa = (new Stato())->getByName('Emessa')->id_record;
@@ -85,7 +87,7 @@ switch (post('op')) {
             delete($file);
         }
 
-        $module = Modules::get($id_module);
+        $module = Module::find($id_module);
 
         if ($module['name'] == 'Fatture di vendita') {
             $print_name = 'Fattura elettronica di vendita';
@@ -748,7 +750,7 @@ $operations['registrazione-contabile'] = [
         'title' => tr('Registrazione contabile'),
         'type' => 'modal',
         'origine' => 'fatture',
-        'url' => base_path().'/add.php?id_module='.Modules::get('Prima nota')['id'],
+        'url' => base_path().'/add.php?id_module='.(new Module())->getByName('Prima nota')->id_record,
     ],
 ];
 

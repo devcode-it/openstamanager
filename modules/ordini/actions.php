@@ -31,10 +31,11 @@ use Modules\Ordini\Ordine;
 use Modules\Ordini\Tipo;
 use Modules\Preventivi\Preventivo;
 use Plugins\ListinoClienti\DettaglioPrezzo;
+use Models\Module;
 
-$module = Modules::get($id_module);
+$module = Module::find($id_module);
 
-if ($module['name'] == 'Ordini cliente') {
+if ($module->name == 'Ordini cliente') {
     $dir = 'entrata';
 } else {
     $dir = 'uscita';

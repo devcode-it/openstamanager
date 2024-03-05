@@ -22,6 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Banche\Banca;
 use Modules\Fatture\Fattura;
+use Models\Module;
 
 /**
  * Questo file gestisce la lettura delle informazioni di Scadenze e Fatture indicate per la generazione della Prima Nota. Per maggiori informazioni sulla grafica inerente alla visualizzazione delle diverse righe, consulare il file `movimenti.php`.
@@ -38,7 +39,8 @@ use Modules\Fatture\Fattura;
  * Nel caso in cui sia indicato una singola Scadenza (con o senza Fattura associata) viene permessa la gestione attraverso un Modello di Prima Nota, che prevede una compilazione di base per alcuni movimenti specificati nel relativo modulo.
  * Nota: questo comportamento viene abilitato dalla variabile `$permetti_modelli`.
  */
-$module = Modules::get('Prima nota');
+
+$id_module = (new Module())->GetByName('Prima nota')->id_record;
 $movimenti = [];
 
 // Registrazione da remoto
@@ -268,7 +270,7 @@ if (empty($id_anagrafica)) {
     $id_anagrafica = $dbo->fetchOne('SELECT idanagrafica FROM co_scadenziario WHERE id IN('.($id_scadenze ? implode(',', $id_scadenze) : 0).')')['idanagrafica'];
 }
 echo '
-<form action="'.base_path().'/controller.php?id_module='.$module->id.'" method="post" id="add-form">
+<form action="'.base_path().'/controller.php?id_module='.$id_module.'" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="crea_modello" id="crea_modello" value="0">
@@ -362,7 +364,7 @@ $("#modals > div #add-form").on("submit", function(e) {
 </script>';
 
 if ($permetti_modelli) {
-    $variables = Modules::get('Anagrafiche')->getPlaceholders($id_anagrafica);
+    $variables = Module::find((new Module())->getByName('Anagrafiche')->id_record)->getPlaceholders($id_anagrafica);
 
     echo '
 <script type="text/javascript">

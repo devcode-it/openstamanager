@@ -24,6 +24,7 @@ use Models\User;
 use Modules\Emails\Mail;
 use Modules\Emails\Template;
 use Tasks\Manager;
+use Models\Module;
 
 /**
  * Task dedicato alla gestione del backup giornaliero automatico, se abilitato da Impostazioni.
@@ -71,13 +72,13 @@ class SollecitoTask extends Manager
 
                         $id_documento = $documento->id;
                         $id_anagrafica = $documento->idanagrafica;
-                        $id_module = \Modules::get('Scadenzario')->id;
+                        $id_module = (new Module())->getByName('Scadenzario')->id_record;
 
                         $fattura_allegata = database()->selectOne('zz_files', 'id', ['id_module' => $id_module, 'id_record' => $id, 'original' => 'Fattura di vendita.pdf'])['id'];
 
                         // Allego stampa della fattura se non presente
                         if (empty($fattura_allegata)) {
-                            $print_predefined = database()->selectOne('zz_prints', '*', ['predefined' => 1, 'id_module' => \Modules::get('Fatture di vendita')['id']]);
+                            $print_predefined = database()->selectOne('zz_prints', '*', ['predefined' => 1, 'id_module' => (new Module())->getByName('Fatture di vendita')->id_record]);
 
                             $print = \Prints::render($print_predefined['id'], $id_documento, null, true);
                             $name = 'Fattura di vendita';

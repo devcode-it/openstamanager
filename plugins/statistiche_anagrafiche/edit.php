@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\Module;
 
 echo '
 <hr>
@@ -45,7 +46,7 @@ echo '
 
 </div>';
 
-$statistiche = Modules::get('Statistiche');
+$statistiche = Module::find((new Module())->getByName('Statistiche')->id_record);
 
 if ($statistiche != null) {
     echo '

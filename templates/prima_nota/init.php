@@ -18,11 +18,11 @@
  */
 
 use Util\Query;
+use Models\Module;
 
 include_once __DIR__.'/../../core.php';
 
-$id_module = Modules::get('Prima nota')['id'];
-$structure = Modules::get($id_module);
+$structure = Module::find((new Module())->getByName('Prima nota')->id_record);
 
 if (!empty($_SESSION['superselect']['mastrini'])) {
     $id_record = $_SESSION['superselect']['mastrini'];
@@ -36,7 +36,7 @@ if (!empty($_SESSION['superselect']['mastrini'])) {
 // RISULTATI VISIBILI
 Query::setSegments(false);
 $query = Query::getQuery($structure, $where, 0, []);
-$query = Modules::replaceAdditionals($id_module, $query);
+$query = Modules::replaceAdditionals($structure->id, $query);
 $query = str_replace('1=1', '1=1 AND '.$where, $query);
 
 $records = Query::executeAndCount($query);

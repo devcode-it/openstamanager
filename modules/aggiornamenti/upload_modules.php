@@ -20,6 +20,8 @@
 include_once __DIR__.'/../../core.php';
 
 use Util\Zip;
+use Models\Module;
+use Models\Plugin;
 
 if (!setting('Attiva aggiornamenti')) {
     exit(tr('Accesso negato'));
@@ -66,8 +68,8 @@ if (file_exists($extraction_dir.'/VERSION')) {
             $directory = 'modules';
             $table = 'zz_modules';
 
-            $installed = Modules::get($info['name']);
-            $insert['parent'] = Modules::get($info['parent'])['id'];
+            $installed = Module::find((new Module())->getByName($info['name'])->id_record);
+            $insert['parent'] = (new Module())->getByName($info['parent'])->id_record;
             $insert['icon'] = $info['icon'];
         }
 
@@ -114,9 +116,9 @@ if (file_exists($extraction_dir.'/VERSION')) {
             $directory = 'plugins';
             $table = 'zz_plugins';
 
-            $installed = Plugins::get($info['name']);
-            $insert['idmodule_from'] = Modules::get($info['module_from'])['id'];
-            $insert['idmodule_to'] = Modules::get($info['module_to'])['id'];
+            $installed = Plugin::find((new Plugin())->getByName($info['name'])->id_record);
+            $insert['idmodule_from'] = (new Module())->getByName($info['module_from'])->id_record;
+            $insert['idmodule_to'] = (new Module())->getByName($info['module_to'])->id_record;
             $insert['position'] = $info['position'];
         }
 
@@ -126,7 +128,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
             $table = 'zz_prints';
 
             $installed = Prints::getPrints()[$info['name']];
-            $insert['id_module'] = Modules::get($info['module'])['id'];
+            $insert['id_module'] = (new Module())->getByName($info['module'])->id_record;
             $insert['is_record'] = $info['is_record'];
             $insert['filename'] = $info['filename'];
             $insert['icon'] = $info['icon'];

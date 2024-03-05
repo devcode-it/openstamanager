@@ -18,6 +18,7 @@
  */
 
 namespace HTMLBuilder\Wrapper;
+use Models\Module;
 
 /**
  * @since 2.3
@@ -208,7 +209,7 @@ class HTMLWrapper implements WrapperInterface
         $pieces = explode('|', $string);
 
         $module_id = $pieces[1];
-        $module = \Modules::get($module_id);
+        $module = Module::find($module_id);
 
         $get = !empty($pieces[2]) ? '&'.$pieces[2] : null;
         $classes = !empty($pieces[3]) ? ' '.$pieces[3] : null;

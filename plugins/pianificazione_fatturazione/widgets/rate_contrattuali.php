@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/../../../core.php';
+use Models\Plugin;
 
 $mesi = [
     1 => 'Gennaio',
@@ -179,8 +180,8 @@ echo '</tbody>
     </div>
 </div>';
 
-$modulo_pianificazione = Modules::get('Contratti');
-$plugin_pianificazione = Plugins::get('Pianificazione fatturazione');
+$id_modulo_pianificazione = (new Module())->getByName('Contratti')->id_record;
+$plugin_pianificazione = Plugin::find((new Plugin())->getByName('Pianificazione fatturazione')->id_record);
 
 echo '
 <script>
@@ -284,7 +285,7 @@ function update_table(currentMonth, currentYear) {
     });
 }
 function crea_fattura(contratto, rata){
-    openModal("Crea fattura", "'.$plugin_pianificazione->fileurl('crea_fattura.php').'?id_module='.$modulo_pianificazione->id.'&id_plugin='.$plugin_pianificazione->id.'&id_record=" + contratto + "&rata=" + rata);
+    openModal("Crea fattura", "'.$plugin_pianificazione->fileurl('crea_fattura.php').'?id_module='.$id_modulo_pianificazione.'&id_plugin='.$plugin_pianificazione->id.'&id_record=" + contratto + "&rata=" + rata);
 }
 function crea_fattura_multipla($this) {
     var $table = $("table");
@@ -310,7 +311,7 @@ function crea_fattura_multipla($this) {
     if (records.length > 0) {
         openModal(
             "Crea fattura multipla",
-            "'.$plugin_pianificazione->fileurl('crea_fattura_multipla.php').'?id_module='.$modulo_pianificazione->id.
+            "'.$plugin_pianificazione->fileurl('crea_fattura_multipla.php').'?id_module='.$id_modulo_pianificazione.
               '&id_plugin='.$plugin_pianificazione->id.'&records=" + records
         );
     }

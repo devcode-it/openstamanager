@@ -33,11 +33,19 @@ echo '
         </tr>
     </thead>';
 
-$sessioni = $dbo->fetchArray('SELECT zz_semaphores.*, SUBSTRING_INDEX(posizione, ",", -1) AS id_record, zz_modules.name AS modulo, TIMESTAMPDIFF(SECOND, zz_semaphores.created_at, zz_semaphores.updated) AS permanenza, zz_users.username AS utente
-FROM zz_semaphores
-    INNER JOIN zz_modules ON SUBSTRING_INDEX(posizione, ",", 1) = zz_modules.id
-    INNER JOIN zz_users ON zz_semaphores.id_utente = zz_users.id
-ORDER BY `utente` ASC, SUBSTRING_INDEX(posizione, ",", -1) ASC');
+$sessioni = $dbo->fetchArray('SELECT 
+        `zz_semaphores`.*, 
+        SUBSTRING_INDEX(`posizione`, ",", -1) AS id_record, 
+        `zz_modules_lang`.`name` AS modulo, 
+        TIMESTAMPDIFF(SECOND, `zz_semaphores`.`created_at`, `zz_semaphores`.`updated`) AS permanenza, 
+        `zz_users`.`username` AS utente
+    FROM 
+        `zz_semaphores`
+        INNER JOIN `zz_modules` ON SUBSTRING_INDEX(`posizione`, ",", 1) = `zz_modules`.`id`
+        LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+        INNER JOIN `zz_users` ON `zz_semaphores`.`id_utente` = `zz_users`.`id`
+    ORDER BY 
+        `utente` ASC, SUBSTRING_INDEX(`posizione`, ",", -1) ASC');
 
 $gruppi = collect($sessioni)->groupBy('utente');
 $i = 0;

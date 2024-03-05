@@ -23,10 +23,10 @@ use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
 use Modules\Interventi\Intervento;
 use Modules\Ordini\Ordine;
+use Models\Module;
 
 $documento = Intervento::find($id_record);
-
-$module = Modules::get($documento->module);
+$id_module = (new Module())->getByName($documento->module)->id_record;
 
 if (get('documento') == 'fattura') {
     $final_module = 'Fatture di vendita';

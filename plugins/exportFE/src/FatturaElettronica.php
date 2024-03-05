@@ -30,6 +30,7 @@ use Modules\Fatture\Gestori\Bollo;
 use Modules\Iva\Aliquota;
 use Modules\Pagamenti\Pagamento;
 use Uploads;
+use Models\Module;
 
 /**
  * Classe per la gestione della fatturazione elettronica in XML.
@@ -284,7 +285,7 @@ class FatturaElettronica
 
     public static function getDirectory()
     {
-        return \Uploads::getDirectory(\Modules::get('Fatture di vendita')['id']);
+        return \Uploads::getDirectory((new Module())->getByName('Fatture di vendita')->id_record);
     }
 
     /**
@@ -1709,7 +1710,7 @@ class FatturaElettronica
         $attachments = [];
 
         // Informazioni sul modulo
-        $id_module = \Modules::get('Fatture di vendita')['id'];
+        $id_module = (new Module())->getByName('Fatture di vendita')->id_record;
         $directory = \Uploads::getDirectory($id_module);
 
         // Allegati
@@ -1856,7 +1857,7 @@ class FatturaElettronica
     {
         return [
             'category' => tr('Fattura Elettronica'),
-            'id_module' => \Modules::get('Fatture di vendita')['id'],
+            'id_module' => (new Module())->getByName('Fattire di vendita')->id_record,
             'id_record' => $this->getDocumento()['id'],
         ];
     }

@@ -172,6 +172,7 @@ return [
     'zz_imports',
     'zz_logs',
     'zz_modules',
+    'zz_modules_lang',
     'zz_operations',
     'zz_notes',
     'zz_permissions',

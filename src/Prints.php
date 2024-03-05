@@ -20,6 +20,7 @@
 use Jurosh\PDFMerge\PDFMerger;
 use Mpdf\Mpdf;
 use Util\Query;
+use Models\Module;
 
 /**
  * Classe per la gestione delle informazioni relative alle stampe installate.
@@ -93,7 +94,7 @@ class Prints
      */
     public static function getModulePrints($module)
     {
-        $module_id = Modules::get($module)['id'];
+        $module_id = Module::find($module)->id;
 
         self::getPrints();
 
@@ -153,7 +154,7 @@ class Prints
 
             $has_access = true;
             if (!empty($infos['is_record'])) {
-                $module = Modules::get($infos['id_module']);
+                $module = Module::find($infos['id_module']);
 
                 Query::setSegments(false);
                 $query = Query::getQuery($module, [
@@ -443,7 +444,7 @@ class Prints
 
     protected static function getFile($record, $id_record, $directory, $original_replaces)
     {
-        $module = Modules::get($record['id_module']);
+        $module = Module::find($record['id_module']);
 
         $name = $record['filename'].'.pdf';
         $name = $module->replacePlaceholders($id_record, $name);

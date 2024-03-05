@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\Module;
 
 echo '
 <form action="" method="post" role="form">
@@ -34,7 +35,7 @@ echo '
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "'.tr('Mansione').'", "name": "idmansione", "ajax-source": "mansioni", "required": 1, "icon-after": "add|'.Modules::get('Mansioni referenti')['id'].'" ]}
+			{[ "type": "select", "label": "'.tr('Mansione').'", "name": "idmansione", "ajax-source": "mansioni", "required": 1, "icon-after": "add|'.(new Module())->getByName('Mansioni referenti')->id_record.'" ]}
 		</div>
 	</div>
 

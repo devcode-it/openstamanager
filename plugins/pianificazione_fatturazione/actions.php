@@ -24,6 +24,7 @@ use Modules\Contratti\Contratto;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Tipo;
 use Plugins\PianificazioneFatturazione\Pianificazione;
+use Models\Module;
 
 include_once __DIR__.'/../../core.php';
 include_once __DIR__.'/../modutil.php';
@@ -199,7 +200,7 @@ switch ($operazione) {
 
         flash()->info(tr('Rata fatturata correttamente!'));
         database()->commitTransaction();
-        redirect(base_path().'/controller.php?id_module='.Modules::get('Fatture di vendita')['id'].'&id_record='.$fattura->id);
+        redirect(base_path().'/controller.php?id_module='.(new Module())->getByName('Fatture di vendita')->id_record.'&id_record='.$fattura->id);
         exit;
 
     case 'add_fattura_multipla':
@@ -253,6 +254,6 @@ switch ($operazione) {
 
         flash()->info(tr('Rate fatturate correttamente!'));
         database()->commitTransaction();
-        redirect(base_path().'/controller.php?id_module='.Modules::get('Fatture di vendita')['id']);
+        redirect(base_path().'/controller.php?id_module='.(new Module())->getByName('Fatture di vendita')->id_record);
         exit;
 }

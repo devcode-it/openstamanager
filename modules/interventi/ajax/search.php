@@ -18,8 +18,9 @@
  */
 
 include_once __DIR__.'/../../../core.php';
+use Models\Module;
 
-$link_id = Modules::get('Interventi')['id'];
+$link_id = (new Module())->getByName('Interventi')->id_record;
 
 $fields = [
     'Codice intervento' => 'codice',

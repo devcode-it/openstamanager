@@ -26,16 +26,15 @@ use Modules\Fatture\Stato;
 use Modules\Fatture\Tipo as TipoFattura;
 use Modules\Ordini\Ordine;
 use Modules\Ordini\Tipo;
-
-$module_fatture = 'Fatture di vendita';
+use Models\Module;
 
 // Segmenti
-$id_fatture = Modules::get($module_fatture)['id'];
-if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
-    $segments = Modules::getSegments($id_fatture);
-    $_SESSION['module_'.$id_fatture]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
+$id_modulo_fatture = (new Module())->getByName('Fatture di vendita')->id_record;
+if (!isset($_SESSION['module_'.$id_modulo_fatture]['id_segment'])) {
+    $segments = Modules::getSegments($id_modulo_fatture);
+    $_SESSION['module_'.$id_modulo_fatture]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
 }
-$id_segment = $_SESSION['module_'.$id_fatture]['id_segment'];
+$id_segment = $_SESSION['module_'.$id_modulo_fatture]['id_segment'];
 $id_segment_ordini = $_SESSION['module_'.$id_module]['id_segment'];
 $idconto = setting('Conto predefinito fatture di vendita');
 $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
@@ -219,7 +218,7 @@ if ($module['name'] == 'Ordini cliente') {
         'data' => [
             'title' => tr('Fatturare i _TYPE_ selezionati?', ['_TYPE_' => strtolower($module['name'])]),
             'msg' => '{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle _TYPE_ non ancora emesse?', ['_TYPE_' => strtolower($module_fatture)]).'", "placeholder": "'.tr('Aggiungere alle _TYPE_ nello stato bozza?', ['_TYPE_' => strtolower($module_fatture)]).'</small>", "name": "accodare" ]}
-            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_fatture, 'is_sezionale' => 1]).', "value": "'.$id_segment.'", "select-options-escape": true ]}
+            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_modulo_fatture, 'is_sezionale' => 1]).', "value": "'.$id_segment.'", "select-options-escape": true ]}
             {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`codice_tipo_documento_fe`, \' - \', `name`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `enabled` = 1 AND `dir` =\'entrata\' ORDER BY `codice_tipo_documento_fe`", "value": "'.$idtipodocumento.'" ]}<br>
             {[ "type": "select", "label": "'.tr('Raggruppa per').'", "name": "raggruppamento", "required": 1, "values": "list=\"cliente\":\"Cliente\",\"sede\":\"Sede\"" ]}',
             'button' => tr('Procedi'),

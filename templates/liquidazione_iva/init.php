@@ -19,6 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 use Carbon\Carbon;
+use Models\Module;
 
 $date_start = filter('date_start');
 $date_end = filter('date_end');
@@ -35,7 +36,7 @@ if ($periodo['valore'] == 'Mensile') {
     $periodo_precedente_end = (new Carbon($date_end))->subMonths(3)->format('Y-m-d');
 }
 
-$vendita_banco = $dbo->fetchNum("SELECT * FROM zz_modules WHERE name='Vendita al banco'");
+$vendita_banco = (new Module())->getByName('Vendita al banco')->id_record;
 $maggiorazione = 0;
 
 // calcolo IVA su fatture + vendite al banco

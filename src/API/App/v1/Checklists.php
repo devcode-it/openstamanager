@@ -46,17 +46,19 @@ class Checklists extends AppResource
         if (!empty($interventi)) {
             if ($user->is_admin) {
                 $query = '  
-                SELECT zz_checks.id
-                FROM zz_checks
-                    INNER JOIN in_interventi ON zz_checks.id_record = in_interventi.id
-                    INNER JOIN in_interventi_tecnici ON in_interventi_tecnici.idintervento = in_interventi.id
-                    INNER JOIN zz_modules ON zz_checks.id_module = zz_modules.id
-                    INNER JOIN zz_check_user ON zz_checks.id = zz_check_user.id_check
+                SELECT 
+                    `zz_checks`.`id`
+                FROM 
+                    `zz_checks`
+                    INNER JOIN `in_interventi` ON `zz_checks`.`id_record` = `in_interventi`.`id`
+                    INNER JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
+                    INNER JOIN `zz_modules` ON `zz_checks`.`id_module` = `zz_modules`.`id`
+                    LEFT JOIN `zz_modules_lang` ON `zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(setting('Lingua')).'
+                    INNER JOIN `zz_check_user` ON `zz_checks`.`id` = `zz_check_user`.`id_check`
                 WHERE
-                    zz_modules.name="Interventi"
-                    AND
-                    in_interventi.id IN ('.implode(',', $interventi).')
-                    OR (orario_fine NOT BETWEEN :period_start AND :period_end)';
+                    `zz_modules_lang`.`name`="Interventi"
+                    AND `in_interventi`.`id` IN ('.implode(',', $interventi).')
+                    OR (`orario_fine` NOT BETWEEN :period_start AND :period_end)';
 
                 $records = database()->fetchArray($query, [
                     ':period_end' => $end,
@@ -64,19 +66,20 @@ class Checklists extends AppResource
                 ]);
             } else {
                 $query = '  
-                SELECT zz_checks.id
-                FROM zz_checks
-                    INNER JOIN in_interventi ON zz_checks.id_record = in_interventi.id
-                    INNER JOIN in_interventi_tecnici ON in_interventi_tecnici.idintervento = in_interventi.id
-                    INNER JOIN zz_modules ON zz_checks.id_module = zz_modules.id
-                    INNER JOIN zz_check_user ON zz_checks.id = zz_check_user.id_check
+                SELECT 
+                    `zz_checks`.`id`
+                FROM
+                    `zz_checks`
+                    INNER JOIN `in_interventi` ON `zz_checks`.`id_record` = `in_interventi`.`id`
+                    INNER JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
+                    INNER JOIN `zz_modules` ON `zz_checks`.`id_module` = `zz_modules`.`id`
+                    LEFT JOIN `zz_modules_lang` ON `zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(setting('Lingua')).'
+                    INNER JOIN `zz_check_user` ON `zz_checks`.`id` = `zz_check_user`.`id_check`
                 WHERE
-                    zz_modules.name="Interventi"
-                    AND
-                    zz_check_user.id_utente = :id_tecnico
-                    AND
-                    in_interventi.id IN ('.implode(',', $interventi).')
-                    OR (orario_fine NOT BETWEEN :period_start AND :period_end)';
+                    `zz_modules_lang`.`name`="Interventi"
+                    AND `zz_check_user`.`id_utente` = :id_tecnico
+                    AND `in_interventi`.`id` IN ('.implode(',', $interventi).')
+                    OR (`orario_fine` NOT BETWEEN :period_start AND :period_end)';
 
                 $records = database()->fetchArray($query, [
                     ':period_end' => $end,
@@ -113,37 +116,43 @@ class Checklists extends AppResource
 
         $id_interventi = array_keys($interventi);
         if ($user->is_admin) {
-            $query = 'SELECT zz_checks.id
-            FROM zz_checks
-                INNER JOIN in_interventi ON zz_checks.id_record = in_interventi.id
-                INNER JOIN zz_modules ON zz_checks.id_module = zz_modules.id
-                INNER JOIN zz_check_user ON zz_checks.id = zz_check_user.id_check
+            $query = 'SELECT 
+                `zz_checks`.`id`
+            FROM 
+                `zz_checks`
+                INNER JOIN `in_interventi` ON `zz_checks`.`id_record` = `in_interventi`.`id`
+                INNER JOIN `zz_modules` ON `zz_checks`.`id_module` = `zz_modules`.`id`
+                LEFT JOIN `zz_modules_lang` ON `zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(setting('Lingua')).'
+                INNER JOIN `zz_check_user` ON `zz_checks`.`id` = `zz_check_user`.`id_check`
             WHERE
-                zz_modules.name="Interventi"
-                AND in_interventi.id IN ('.implode(',', $id_interventi).')';
+                `zz_modules_lang`.`name`="Interventi"
+                AND `in_interventi`.`id` IN ('.implode(',', $id_interventi).')';
 
             // Filtro per data
             if ($last_sync_at) {
-                $query .= ' AND zz_checks.updated_at > '.prepare($last_sync_at);
+                $query .= ' AND `zz_checks`.`updated_at` > '.prepare($last_sync_at);
             }
 
             $records = database()->fetchArray($query);
         } else {
-            $query = 'SELECT zz_checks.id
-            FROM zz_checks
-                INNER JOIN in_interventi ON zz_checks.id_record = in_interventi.id
-                INNER JOIN in_interventi_tecnici ON in_interventi_tecnici.idintervento = in_interventi.id
-                INNER JOIN zz_modules ON zz_checks.id_module = zz_modules.id
-                INNER JOIN zz_check_user ON zz_checks.id = zz_check_user.id_check
+            $query = 'SELECT 
+                `zz_checks`.`id`
+            FROM 
+                `zz_checks`
+                INNER JOIN `in_interventi` ON `zz_checks`.`id_record` = `in_interventi`.`id`
+                INNER JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
+                INNER JOIN `zz_modules` ON `zz_checks`.`id_module` = `zz_modules`.`id`
+                LEFT JOIN `zz_modules_lang` ON `zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(setting('Lingua')).'
+                INNER JOIN `zz_check_user` ON `zz_checks`.`id` = `zz_check_user`.`id_check`
             WHERE
-                zz_modules.name="Interventi"
-                AND zz_check_user.id_utente = :id_tecnico
-                AND in_interventi.id IN ('.implode(',', $id_interventi).')
-                AND (orario_fine BETWEEN :period_start AND :period_end)';
+                `zz_modules_lang`.`name`="Interventi"
+                AND `zz_check_user`.`id_utente` = :id_tecnico
+                AND `in_interventi`.`id` IN ('.implode(',', $id_interventi).')
+                AND (`orario_fine` BETWEEN :period_start AND :period_end)';
 
             // Filtro per data
             if ($last_sync_at) {
-                $query .= ' AND zz_checks.updated_at > '.prepare($last_sync_at);
+                $query .= ' AND `zz_checks`.`updated_at` > '.prepare($last_sync_at);
             }
             $records = database()->fetchArray($query, [
                 ':period_start' => $start,
@@ -158,18 +167,21 @@ class Checklists extends AppResource
     public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
-        $query = 'SELECT zz_checks.id,
-            zz_checks.id_record AS id_intervento,
-            zz_checks.checked_at,
-            zz_checks.content,
-            zz_checks.note,
-            IF(zz_checks.id_parent IS NULL, 0, zz_checks.id_parent) AS id_parent,
-            zz_checks.checked_by,
-            zz_checks.order AS ordine,
-            zz_checks.is_titolo,
-            zz_checks.id_record_from AS idimpianto
-        FROM zz_checks
-        WHERE zz_checks.id = '.prepare($id);
+        $query = 'SELECT 
+            `zz_checks`.`id`,
+            `zz_checks`.`id_record` AS id_intervento,
+            `zz_checks`.`checked_at`,
+            `zz_checks`.`content`,
+            `zz_checks`.`note`,
+            IF(`zz_checks`.`id_parent` IS NULL, 0, `zz_checks`.`id_parent`) AS id_parent,
+            `zz_checks`.`checked_by`,
+            `zz_checks`.`order` AS ordine,
+            `zz_checks`.`is_titolo`,
+            `zz_checks`.`id_record_from` AS idimpianto
+        FROM 
+            `zz_checks`
+        WHERE 
+            `zz_checks`.`id` = '.prepare($id);
 
         $record = database()->fetchOne($query);
 

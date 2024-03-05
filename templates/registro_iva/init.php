@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\Module;
 
 $dir = $_GET['dir'];
 
@@ -28,7 +29,7 @@ $date_start = filter('date_start');
 $date_end = filter('date_end');
 
 $tipo = $dir == 'entrata' ? 'vendite' : 'acquisti';
-$vendita_banco = $dbo->fetchNum("SELECT * FROM zz_modules WHERE name='Vendita al banco'");
+$vendita_banco = (new Module())->getByName('Vendita al banco')->id_record;
 
 $v_iva = [];
 $v_totale = [];

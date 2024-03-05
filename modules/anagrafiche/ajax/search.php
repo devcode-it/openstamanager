@@ -18,12 +18,13 @@
  */
 
 include_once __DIR__.'/../../../core.php';
+use Models\Module;
 
 /*
     Anagrafiche
 */
 
-$link_id = Modules::get('Anagrafiche')['id'];
+$link_id = (new Module())->getByName('Anagrafiche')->id_record;
 
 $fields = [
     'Codice' => 'codice',

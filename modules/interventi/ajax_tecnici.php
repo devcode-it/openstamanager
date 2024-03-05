@@ -19,6 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 use Models\User;
+use Models\Module;
 
 $show_costi = true;
 // Limitazione delle azioni dei tecnici
@@ -269,7 +270,7 @@ if (!$is_completato) {
     </div>
 
     <div class="col-md-offset-4 col-md-4">
-        {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "nuovo_tecnico", "placeholder": "'.tr('Seleziona un tecnico').'", "ajax-source": "tecnici", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica=Tecnico&readonly_tipo=1" ]}
+        {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "nuovo_tecnico", "placeholder": "'.tr('Seleziona un tecnico').'", "ajax-source": "tecnici", "icon-after": "add|'.(new Module())->getByName('Anagrafiche')->id_record.'|tipoanagrafica=Tecnico&readonly_tipo=1" ]}
     </div>
 
     <div class="col-md-2">

@@ -17,6 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Models\Module;
+
 /**
  * Classe per gestire i permessi di accesso alle diverse sezioni del progetto.
  *
@@ -34,7 +36,7 @@ class Permissions
      */
     public static function addModule($module)
     {
-        $id = Modules::get($module)['id'];
+        $id = Module::find($module)->id;
         if (!in_array($id, self::$permissions)) {
             self::$permissions[] = $id;
         }

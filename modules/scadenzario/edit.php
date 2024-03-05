@@ -18,9 +18,12 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\Module;
 
 $dir = $documento->direzione;
 $numero = $documento->numero_esterno ?: $documento->numero;
+$id_modulo_banche = (new Module())->GetByName('Banche')->id_record;
+$id_modulo_prima_nota = (new Module())->GetByName('Prima nota')->id_record;
 
 echo '
 <form action="" method="post" id="edit-form">
@@ -184,17 +187,17 @@ foreach ($scadenze as $i => $scadenza) {
                                 <input type="hidden" name="id_scadenza['.$i.']" value="'.$scadenza['id'].'">
                                 <td align="center">
                                     '.($dir == 'entrata' ?
-                                '{[ "type": "select", "name": "id_banca_azienda['.$i.']", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['id_banca_azienda'].'", "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
+                                '{[ "type": "select", "name": "id_banca_azienda['.$i.']", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['id_banca_azienda'].'", "icon-after": "add|'.$id_modulo_banche.'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
                                 :
-                                '{[ "type": "select", "name": "id_banca_controparte['.$i.']", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).', "value": "'.$scadenza['id_banca_controparte'].'", "icon-after": "add|'.Modules::get('Banche')['id'].'|idanagrafica='.$record['idanagrafica'].'"]}
+                                '{[ "type": "select", "name": "id_banca_controparte['.$i.']", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).', "value": "'.$scadenza['id_banca_controparte'].'", "icon-after": "add|'.$id_modulo_banche.'|idanagrafica='.$record['idanagrafica'].'"]}
                                     ').'
                                 </td>
 
                                 <td align="center">
                                     '.($dir == 'entrata' ?
-                                '{[ "type": "select", "name": "id_banca_controparte['.$i.']", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).', "value": "'.$scadenza['id_banca_controparte'].'", "icon-after": "add|'.Modules::get('Banche')['id'].'|idanagrafica='.$record['idanagrafica'].'"]}'
+                                '{[ "type": "select", "name": "id_banca_controparte['.$i.']", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).', "value": "'.$scadenza['id_banca_controparte'].'", "icon-after": "add|'.$id_modulo_banche.'|idanagrafica='.$record['idanagrafica'].'"]}'
                                 :
-                                '{[ "type": "select", "name": "id_banca_azienda['.$i.']", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['id_banca_azienda'].'", "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
+                                '{[ "type": "select", "name": "id_banca_azienda['.$i.']", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['id_banca_azienda'].'", "icon-after": "add|'.$id_modulo_banche.'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
                                 ).'
                                 </td>
 
@@ -219,7 +222,7 @@ foreach ($scadenze as $i => $scadenza) {
                                 </td>
 
                                 <td align="center">
-                                    <a onclick="launch_modal(\''.tr('Registra contabile pagamento').'\', \''.base_path().'/add.php?id_module='.Modules::get('Prima nota')['id'].'&id_scadenze='.$scadenza['id'].'\');" class="btn btn-sm btn-primary">
+                                    <a onclick="launch_modal(\''.tr('Registra contabile pagamento').'\', \''.base_path().'/add.php?id_module='.$id_modulo_prima_nota.'&id_scadenze='.$scadenza['id'].'\');" class="btn btn-sm btn-primary">
                                         <i class="fa fa-euro"></i> '.($dir == 'entrata' ? tr('Incassa') : tr('Paga')).'
                                     </a>
                                 </td>
@@ -276,16 +279,16 @@ echo '
             <input type="hidden" name="id_scadenza[-id-]" value="">
                 <td align="center">
                     '.($dir == 'entrata' ?
-'{[ "type": "select", "name": "id_banca_azienda[-id-]", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
+'{[ "type": "select", "name": "id_banca_azienda[-id-]", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "icon-after": "add|'.$id_modulo_banche.'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
 :
-'{[ "type": "select", "name": "id_banca_controparte[-id-]", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).', "icon-after": "add|'.Modules::get('Banche')['id'].'|idanagrafica='.$record['idanagrafica'].'"]}
+'{[ "type": "select", "name": "id_banca_controparte[-id-]", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).', "icon-after": "add|'.$id_modulo_banche.'|idanagrafica='.$record['idanagrafica'].'"]}
                     ').'
                 </td>
                 <td align="center">
                     '.($dir == 'entrata' ?
-'{[ "type": "select", "name": "id_banca_controparte[-id-]", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).',"icon-after": "add|'.Modules::get('Banche')['id'].'|idanagrafica='.$record['idanagrafica'].'"]}'
+'{[ "type": "select", "name": "id_banca_controparte[-id-]", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).',"icon-after": "add|'.$id_modulo_banche.'|idanagrafica='.$record['idanagrafica'].'"]}'
 :
-'{[ "type": "select", "name": "id_banca_azienda[-id-]", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
+'{[ "type": "select", "name": "id_banca_azienda[-id-]", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "icon-after": "add|'.$id_modulo_banche.'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
 ).'
                 </td>
 
@@ -310,7 +313,7 @@ echo '
                 </td>
 
                 <td align="center">
-                    <a onclick="launch_modal(\''.tr('Registra contabile pagamento').'\', \''.base_path().'/add.php?id_module='.Modules::get('Prima nota')['id'].'&id_scadenze=-id-\');" class="btn btn-sm btn-primary">
+                    <a onclick="launch_modal(\''.tr('Registra contabile pagamento').'\', \''.base_path().'/add.php?id_module='.$id_modulo_prima_nota.'&id_scadenze=-id-\');" class="btn btn-sm btn-primary">
                         <i class="fa fa-euro"></i> '.($dir == 'entrata' ? tr('Incassa') : tr('Paga')).'
                     </a>
                 </td>      

@@ -18,9 +18,9 @@
  */
 
 include_once __DIR__.'/../../../core.php';
+use Models\Module;
 
-$link_id = Modules::get('Articoli')['id'];
-
+$link_id = (new Module())->GetByName('Articoli')->id_record;
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
 $show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));

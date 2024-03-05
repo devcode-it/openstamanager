@@ -21,7 +21,7 @@ use Models\Module;
 
 include_once __DIR__.'/../../core.php';
 
-$id_module_collegamento = $ddt->direzione == 'entrata' ? Module::pool('Ddt di acquisto')->id : Module::pool('Ddt di vendita')->id;
+$id_module_collegamento = $ddt->direzione == 'entrata' ? (new Module())->getByName('Ddt di acquisto')->id_record : (new Module())->getByName('Ddt di vendita')->id_record;
 
 // Informazioni sui movimenti interni
 if (!empty($ddt->id_ddt_trasporto_interno)) {

@@ -77,7 +77,6 @@ trait LocalPoolTrait
 
         // Consultazione Database
         $result = self::where(self::$id, $identifier)
-            ->orWhere(self::$name, $identifier)
             ->first();
 
         if (!empty($result)) {

@@ -17,7 +17,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-if ($id_module == Modules::get('Fatture di acquisto')['id']) {
+use Models\Module;
+
+if ($id_module == (new Module())->getByName('Fatture di acquisto')->id_record) {
     $conti = 'conti-acquisti';
 } else {
     $conti = 'conti-vendite';

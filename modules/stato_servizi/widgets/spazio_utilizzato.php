@@ -18,8 +18,9 @@
  */
 
 include_once __DIR__.'/../../../core.php';
+use Models\Module;
 
-$module = Modules::get('Stato dei servizi');
+$id_module = (new Module())->getByName('Stato dei servizi')->id_record;
 
 echo '
 <script src="'.base_path().'/assets/dist/js/chartjs/chart.min.js"></script>';
@@ -35,7 +36,7 @@ $(document).ready(function() {
         url: globals.rootdir + "/actions.php",
         type: "get",
         data: {
-            id_module: '.$module->id.',
+            id_module: '.$id_module.',
             op: "sizes",
         },
         success: function(data) {

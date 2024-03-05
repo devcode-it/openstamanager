@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\Module;
 
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="op" value="update">
@@ -35,18 +36,18 @@ include_once __DIR__.'/../../core.php';
 if (sizeof($rs_doc) > 0) {
     if (sizeof($rs_doc) == 1) {
         $rs = $dbo->fetchArray('SELECT `dir` FROM `co_tipidocumento` INNER JOIN `co_documenti` ON `co_tipidocumento`.`id`=`co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id`='.prepare($rs_doc[0]['iddocumento']));
-        $modulo = ($rs[0]['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto'; ?>
+        $id_modulo = ($rs[0]['dir'] == 'entrata') ? (new Module())->GetByName('Fatture di vendita')->id_record : (new Module())->GetByName('Fatture di acquisto')->id_record; ?>
             
             <div class="col-md-2">
                 <br>
                 <div class="btn-group">
-                    <a href="<?php echo base_path(); ?>/editor.php?id_module=<?php echo Modules::get($modulo)['id']; ?>&id_record=<?php echo $rs_doc[0]['iddocumento']; ?>" class="btn btn-info"><i class="fa fa-chevron-left"></i> <?php echo tr('Vai alla fattura'); ?></a>
+                    <a href="<?php echo base_path(); ?>/editor.php?id_module=<?php echo (new Module())->GetByName('Preventivi')->id_record; ?>&id_record=<?php echo $rs_doc[0]['iddocumento']; ?>" class="btn btn-info"><i class="fa fa-chevron-left"></i> <?php echo tr('Vai alla fattura'); ?></a>
                     <a type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="caret"></span>
                         <span class="sr-only">Toggle Dropdown</span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="<?php echo base_path(); ?>/controller.php?id_module=<?php echo Modules::get($modulo)['id']; ?>" class="dropdown-item"><i class="fa fa-chevron-left"></i> <?php echo tr('Vai all\'elenco delle fatture'); ?></a></li>
+                        <li><a href="<?php echo base_path(); ?>/controller.php?id_module=<?php echo $id_modulo; ?>" class="dropdown-item"><i class="fa fa-chevron-left"></i> <?php echo tr('Vai all\'elenco delle fatture'); ?></a></li>
                     </ul>
                 </div>
             </div>
@@ -68,8 +69,8 @@ if (sizeof($rs_doc) > 0) {
         <?php
         for ($i = 0; $i < sizeof($rs_doc); ++$i) {
             $rs = $dbo->fetchArray('SELECT `dir` FROM `co_tipidocumento` INNER JOIN `co_documenti` ON `co_tipidocumento`.`id`=`co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id`='.prepare($rs_doc[$i]['iddocumento']));
-            $modulo = ($rs[0]['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto'; ?>
-                        <li><a href="<?php echo base_path(); ?>/editor.php?id_module=<?php echo Modules::get($modulo)['id']; ?>&id_record=<?php echo $rs_doc[$i]['iddocumento']; ?>" class="dropdown-item"><i class="fa fa-chevron-left"></i> <?php echo tr('Vai alla fattura n. '.$rs_doc[$i]['numero']); ?></a></li>
+            $id_modulo = ($rs[0]['dir'] == 'entrata') ? (new Module())->GetByName('Fatture di vendita')->id_record : (new Module())->GetByName('Fatture di acquisto')->id_record; ?>
+                        <li><a href="<?php echo base_path(); ?>/editor.php?id_module=<?php echo $id_modulo; ?>&id_record=<?php echo $rs_doc[$i]['iddocumento']; ?>" class="dropdown-item"><i class="fa fa-chevron-left"></i> <?php echo tr('Vai alla fattura n. '.$rs_doc[$i]['numero']); ?></a></li>
         <?php
         } ?>
                     </ul>

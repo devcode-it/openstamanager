@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Interventi\Stato;
+use Models\Module;
 
 $stato = Stato::find($id_record);
 if ($record['can_delete']) {
@@ -61,7 +62,7 @@ if ($record['can_delete']) {
 			<div class="row">
 
 				<div class="col-md-6">
-					{[ "type": "select", "label": "<?php echo tr('Template email'); ?>", "name": "email", "value": "$id_email$", "values": "query=SELECT `em_templates`.`id`, `em_templates_lang`.`name` AS descrizione FROM `em_templates`  LEFT JOIN `em_templates_lang` ON (`em_templates`.`id` = `em_templates_lang`.`id_record` AND `em_templates_lang`.`id_lang` = <?php echo prepare(setting('Lingua')); ?>) WHERE `id_module` = <?php echo Modules::get('Interventi')['id']; ?> AND `deleted_at` IS NULL", "disabled": <?php echo intval(empty($record['notifica'])); ?> ]}
+					{[ "type": "select", "label": "<?php echo tr('Template email'); ?>", "name": "email", "value": "$id_email$", "values": "query=SELECT `em_templates`.`id`, `em_templates_lang`.`name` AS descrizione FROM `em_templates`  LEFT JOIN `em_templates_lang` ON (`em_templates`.`id` = `em_templates_lang`.`id_record` AND `em_templates_lang`.`id_lang` = <?php echo prepare(setting('Lingua')); ?>) WHERE `id_module` = <?php echo (new Module())->getByName('Interventi')->id_record; ?> AND `deleted_at` IS NULL", "disabled": <?php echo intval(empty($record['notifica'])); ?> ]}
 				</div>
 
 				<div class="col-md-6">

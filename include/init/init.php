@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Tipo;
+use Models\Module;
 
 if (Update::isUpdateAvailable() || !$dbo->isInstalled()) {
     return;
@@ -69,7 +70,7 @@ if (post('action') == 'init') {
     // Azienda predefinita
     if (!$has_azienda) {
         Filter::set('post', 'op', 'add');
-        $id_module = Modules::get('Anagrafiche')['id'];
+        $id_module = (new Module())->getByName('Anagrafiche')->id_record;
         include base_dir().'/modules/anagrafiche/actions.php';
 
         // Logo stampe

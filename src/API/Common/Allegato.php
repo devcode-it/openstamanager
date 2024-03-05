@@ -23,18 +23,19 @@ use API\Interfaces\CreateInterface;
 use API\Interfaces\RetrieveInterface;
 use API\Resource;
 use Models\Upload;
+use Models\Module;
 
 class Allegato extends Resource implements RetrieveInterface, CreateInterface
 {
     public function create($request)
     {
-        $module = \Modules::get($request['module']);
+        $id_module =(new Module())->getByName($request['module'])->id_record;
 
         $name = !empty($request['name']) ? $request['name'] : null;
         $category = !empty($request['category']) ? $request['category'] : null;
 
         $upload = Upload::build($_FILES['upload'], [
-            'id_module' => $module['id'],
+            'id_module' => $id_module,
             'id_record' => $request['id'],
         ], $name, $category);
 

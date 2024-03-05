@@ -23,13 +23,14 @@ use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
 use Modules\Interventi\Intervento;
 use Modules\Ordini\Ordine;
+use Models\Module;
 
 $documento = Ordine::find($id_record);
 
-$module = Modules::get($documento->module);
+$module = Module::find($documento->module);
 
 if (get('documento') == 'fattura') {
-    $final_module = $module['name'] == 'Ordini cliente' ? 'Fatture di vendita' : 'Fatture di acquisto';
+    $final_module = $module->name == 'Ordini cliente' ? 'Fatture di vendita' : 'Fatture di acquisto';
     $op = 'add_documento';
     $tipo_documento_finale = Fattura::class;
 } elseif (get('documento') == 'ordine_fornitore') {
@@ -41,7 +42,7 @@ if (get('documento') == 'fattura') {
     $op = $module->name == 'Ordini cliente' ? 'add_documento' : 'add_intervento';
     $tipo_documento_finale = Intervento::class;
 } else {
-    $final_module = $module['name'] == 'Ordini cliente' ? 'Ddt di vendita' : 'Ddt di acquisto';
+    $final_module = $module->name == 'Ordini cliente' ? 'Ddt di vendita' : 'Ddt di acquisto';
     $op = 'add_ordine';
     $tipo_documento_finale = DDT::class;
 }

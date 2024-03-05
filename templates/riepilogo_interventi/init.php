@@ -18,12 +18,12 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\Module;
 
 $date_start = $_SESSION['period_start'];
 $date_end = $_SESSION['period_end'];
 
-$module = Modules::get('Interventi');
-$id_module = $module['id'];
+$module = Module::find((new Module())->getByName('Interventi')->id_record);
 
 $total = Util\Query::readQuery($module);
 
@@ -43,7 +43,7 @@ if (!empty($selected)) {
 }
 
 // Filtri derivanti dai permessi (eventuali)
-$module_query = Modules::replaceAdditionals($id_module, $module_query);
+$module_query = Modules::replaceAdditionals($module->id, $module_query);
 
 // Scadenze
 $records = $dbo->fetchArray($module_query);

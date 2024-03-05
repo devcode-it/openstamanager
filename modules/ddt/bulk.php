@@ -24,6 +24,7 @@ use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
 use Modules\Fatture\Tipo;
+use Models\Module;
 
 if ($module['name'] == 'Ddt di vendita') {
     $dir = 'entrata';
@@ -34,7 +35,7 @@ if ($module['name'] == 'Ddt di vendita') {
 }
 
 // Segmenti
-$id_fatture = Modules::get($module_fatture)['id'];
+$id_fatture = (new Module())->getByName($module_fatture)->id_record;
 if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
     $segments = Modules::getSegments($id_fatture);
     $_SESSION['module_'.$id_fatture]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;

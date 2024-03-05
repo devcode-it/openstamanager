@@ -19,10 +19,11 @@
 
 use Util\Query;
 use Modules\Articoli\Articolo;
+use Models\Module;
 
 include_once __DIR__.'/../../core.php';
 
-$id_module = Modules::get('Articoli')['id'];
+$structure = Module::find((new Module())->getByName('Articoli')->id_record);
 
 // Valori di ricerca
 $where['servizio'] = '0';
@@ -33,13 +34,11 @@ foreach(getSearchValues($id_module) as $key => $value) {
 
 $period_end = $_SESSION['period_end'];
 
-$structure = Modules::get($id_module);
-
 // RISULTATI VISIBILI
 Query::setSegments(false);
 $query = Query::getQuery($structure, $where, 0, []);
 
-$query = Modules::replaceAdditionals($id_module, $query);
+$query = Modules::replaceAdditionals($structure->id, $query);
 
 // Modifiche alla query principale
 $query = preg_replace('/FROM[\s\t\n]+`mg_articoli`/s', 'FROM `mg_articoli` LEFT JOIN (SELECT `idarticolo`, SUM(`qta`) AS qta_totale FROM `mg_movimenti` WHERE `data` <='.prepare($period_end).' GROUP BY `idarticolo`) movimenti ON `movimenti`.`idarticolo`=`mg_articoli`.`id` ', $query);

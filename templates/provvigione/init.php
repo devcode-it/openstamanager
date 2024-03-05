@@ -18,9 +18,9 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\Module;
 
-$module = Modules::get('Fatture di vendita');
-$id_module = $module['id'];
+$module = Module::find((new Module())->getByName('Fatture di vendita')->id_record);
 
 $module_query = '
 SELECT

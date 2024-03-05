@@ -20,8 +20,9 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Checklists\Checklist;
+use Models\Module;
 
-$checklist_module = Modules::get('Checklists');
+$checklist_module = (new Module())->getByName('Checklists')->id_record;
 
 if (isset($id_record)) {
     $record = Checklist::find($id_record);

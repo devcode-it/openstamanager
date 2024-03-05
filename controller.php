@@ -51,7 +51,7 @@ echo '
 					</a>
 				</li>';
 
-$plugins = $dbo->fetchArray('SELECT `zz_plugins`.`id`,`title` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins`.`id_lang` = '.setting('Lingua').') WHERE `idmodule_to`='.prepare($id_module)." AND `position`='tab_main' AND `enabled` = 1");
+$plugins = $dbo->fetchArray('SELECT `zz_plugins`.`id`,`title` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.setting('Lingua').') WHERE `idmodule_to`='.prepare($id_module)." AND `position`='tab_main' AND `enabled` = 1");
 
 // Tab dei plugin
 foreach ($plugins as $plugin) {

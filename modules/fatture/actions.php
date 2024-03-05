@@ -33,10 +33,11 @@ use Modules\Fatture\Tipo;
 use Modules\Iva\Aliquota;
 use Plugins\ExportFE\Interaction;
 use Util\XML;
+use Models\Module;
 
-$module = Modules::get($id_module);
+$module = Module::find($id_module);
 $op = post('op');
-if ($module['name'] == 'Fatture di vendita') {
+if ($module->name == 'Fatture di vendita') {
     $dir = 'entrata';
 } else {
     $dir = 'uscita';
@@ -928,7 +929,7 @@ switch ($op) {
         $fattura->id_autofattura = $autofattura->id;
         $fattura->save();
 
-        $id_module = Modules::get('Fatture di vendita')['id'];
+        $id_module = (new Module())->getByName('Fatture di vendita')->id_record;
         $id_record = $autofattura->id;
 
         break;

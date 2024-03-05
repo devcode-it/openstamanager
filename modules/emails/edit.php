@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\Module;
 
 if (!$record['predefined']) {
     $attr = '';
@@ -44,7 +45,7 @@ if (!$record['predefined']) {
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "span", "label": "<?php echo tr('Modulo del template'); ?>", "name": "module", "values": "query=SELECT `id`, `title` AS descrizione FROM `zz_modules` WHERE `enabled` = 1", "value": "<?php echo Modules::get($record['id_module'])['title']; ?>" ]}
+                    {[ "type": "span", "label": "<?php echo tr('Modulo del template'); ?>", "name": "module", "values": "query=SELECT `zz_modules`.`id`, `title` AS descrizione FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = <?php echo prepare(setting('Lingua')); ?>) WHERE `enabled` = 1", "value": "<?php echo Module::find($record['id_module'])->title; ?>" ]}
                 </div>
             </div>
 
@@ -136,7 +137,7 @@ echo '
 <?php
 
 // Variabili utilizzabili
-$module = Modules::get($record['id_module']);
+$module = Module::find($record['id_module']);
 $variables = $module->getPlaceholders($id_record);
 
 echo '

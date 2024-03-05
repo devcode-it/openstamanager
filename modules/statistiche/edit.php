@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Statistiche\Stats;
+use Models\Plugin;
 
 echo '
 <script src="'.base_path().'/assets/dist/js/chartjs/chart.min.js"></script>
@@ -343,7 +344,7 @@ if (!empty($articoli)) {
     echo '
                 </table>';
 
-    echo "<br><p class='pull-right' >".Modules::link('Articoli', null, tr('Vedi tutto...'), null, null, false, 'tab_'.Plugins::get('Statistiche vendita')['id']).'</p>';
+    echo "<br><p class='pull-right' >".Modules::link('Articoli', null, tr('Vedi tutto...'), null, null, false, 'tab_'.(new Plugin())->getByName('Statistiche vendita')->id_record).'</p>';
 } else {
     echo '
                 <p>'.tr('Nessun articolo venduto').'...</p>';

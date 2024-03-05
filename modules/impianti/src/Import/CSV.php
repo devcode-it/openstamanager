@@ -25,6 +25,7 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Sede;
 use Modules\Impianti\Categoria;
 use Modules\Impianti\Impianto;
+use Models\Module;
 
 /**
  * Struttura per la gestione delle operazioni di importazione (da CSV) degli Impianti.
@@ -163,7 +164,7 @@ class CSV extends CSVImporter
                 if (!empty($file_content)) {
                     if ($record['import_immagine'] == 2 || $record['import_immagine'] == 4) {
                         \Uploads::deleteLinked([
-                            'id_module' => \Modules::get('Impianti')['id'],
+                            'id_module' => Module::find('Impianti')->id,
                             'id_record' => $impianto->id,
                         ]);
 
@@ -180,7 +181,7 @@ class CSV extends CSVImporter
                         'name' => 'Immagine',
                         'category' => 'Immagini',
                         'original_name' => $name,
-                        'id_module' => \Modules::get('Impianti')['id'],
+                        'id_module' => Module::find('Impianti')->id,
                         'id_record' => $impianto->id,
                     ], [
                         'thumbnails' => true,

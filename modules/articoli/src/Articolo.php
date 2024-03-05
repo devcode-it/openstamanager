@@ -28,6 +28,7 @@ use Modules\Interventi\Components\Articolo as ArticoloIntervento;
 use Modules\Iva\Aliquota;
 use Plugins\ListinoFornitori\DettaglioFornitore;
 use Traits\RecordTrait;
+use Models\Module;
 
 class Articolo extends Model
 {
@@ -202,7 +203,7 @@ class Articolo extends Model
             return null;
         }
 
-        $module = \Modules::get($this->module);
+        $module = Module::find((new Module())->getByName($this->module)->id_record);
         $fileinfo = \Uploads::fileInfo($this->immagine);
 
         $directory = '/'.$module->upload_directory.'/';

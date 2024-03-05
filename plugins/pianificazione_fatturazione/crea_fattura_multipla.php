@@ -18,6 +18,7 @@
  */
 
 use Plugins\PianificazioneFatturazione\Pianificazione;
+use Models\Module;
 
 include_once __DIR__.'/../../core.php';
 
@@ -45,7 +46,7 @@ foreach ($records as $j => $record) {
     }
 }
 
-$module_fattura = Modules::get('Fatture di vendita');
+$id_module_fattura = (new Module())->getByName('Fatture di vendita')->id_record;
 $id_conto = setting('Conto predefinito fatture di vendita');
 
 echo '<form action="" method="post">
@@ -73,7 +74,7 @@ echo '
 
 // Sezionale
 echo '<div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.$module_fattura['id'].' ORDER BY name", "value":"'.$_SESSION['module_'.$module_fattura['id']]['id_segment'].'" ]}
+            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.$id_module_fattura.' ORDER BY name", "value":"'.$_SESSION['module_'.$id_module_fattura]['id_segment'].'" ]}
         </div>';
 
 // Conto

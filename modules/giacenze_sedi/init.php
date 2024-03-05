@@ -20,6 +20,6 @@
 include_once __DIR__.'/../../core.php';
 
 if (isset($id_record)) {
-    $id_module = Modules::get('Articoli')['id'];
+    $id_module = (new Module())->getByName('Articoli')->id_record;
     redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record);
 }

@@ -20,10 +20,11 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\DDT\DDT;
+use Models\Module;
+use Models\Plugin;
 
-$module = Modules::get($id_module);
-$module_articoli = Modules::get('Articoli');
-$plugin_serial = Plugins::get('Serial');
+$module = Module::find((new Module())->getByName($id_module)->id_record);
+$id_module_articoli = (new Module())->getByName('Articoli')->id_record;
 
 // Controllo sulla direzione monetaria
 $uscite = [
@@ -32,7 +33,7 @@ $uscite = [
     'Ordini fornitore',
 ];
 
-if (in_array($module['name'], $uscite)) {
+if (in_array($module->name, $uscite)) {
     $dir = 'uscita';
 } else {
     $dir = 'entrata';
@@ -66,17 +67,17 @@ $data = [
 ];
 
 // Individuazione delle tabelle interessate
-if (in_array($module['name'], ['Fatture di vendita', 'Fatture di acquisto'])) {
+if (in_array($module->name, ['Fatture di vendita', 'Fatture di acquisto'])) {
     $modulo = 'fat';
-} elseif (in_array($module['name'], ['Ddt di vendita', 'Ddt di acquisto'])) {
+} elseif (in_array($module->name, ['Ddt di vendita', 'Ddt di acquisto'])) {
     $modulo = 'ddt';
     $ddt = DDT::find($id_record);
     $is_rientrabile = $database->fetchOne('SELECT * FROM `dt_causalet` WHERE `id` = '.prepare($ddt->idcausalet))['is_rientrabile'];
-} elseif (in_array($module['name'], ['Ordini cliente', 'Ordini fornitore'])) {
+} elseif (in_array($module->name, ['Ordini cliente', 'Ordini fornitore'])) {
     $modulo = 'ord';
-} elseif ($module['name'] == 'Interventi') {
+} elseif ($module->name == 'Interventi') {
     $modulo = 'int';
-} elseif ($module['name'] == 'Contratti') {
+} elseif ($module->name == 'Contratti') {
     $modulo = 'con';
 } else {
     $modulo = 'veb';
@@ -195,7 +196,8 @@ if ($dir == 'entrata') {
     </div>';
     }
 
-    $module_fatture = Modules::get('Fatture di acquisto')['id'];
+    $module_fatture = (new Module())->getByName('Fatture di acquisto')->id_record;
+    
     echo '
     <br>
     <div class="alert alert-warning text-center has_serial hidden">
@@ -248,7 +250,7 @@ if ($dir == 'entrata') {
                 type: "POST",
                 dataType: "json",
                 data: {
-                    id_module: "'.$module_articoli->id.'",
+                    id_module: "'.$id_module_articoli.'",
                     id_record: "'.$rs[0]['idarticolo'].'",
                     serial_start: input("serial_start").get(),
                     serial_end: input("serial_end").get(),
@@ -273,7 +275,7 @@ echo '
     <!-- PULSANTI -->
 	<div class="row">
         <div class="col-md-2">
-            <button type="button" class="btn btn-info '.($dir == 'uscita' ? 'hidden' : '').'" data-toggle="modal" data-title="'.tr('Aggiungi serial').'" data-href="'.base_path().'/modules/articoli/plugins/articoli.lotti.php?id_module='.$module_articoli->id.'&id_record='.$rs[0]['idarticolo'].'&modal=1"><i class="fa fa-magic"></i> '.tr('Crea').'</button>
+            <button type="button" class="btn btn-info '.($dir == 'uscita' ? 'hidden' : '').'" data-toggle="modal" data-title="'.tr('Aggiungi serial').'" data-href="'.base_path().'/modules/articoli/plugins/articoli.lotti.php?id_module='.$id_module_articoli.'&id_record='.$rs[0]['idarticolo'].'&modal=1"><i class="fa fa-magic"></i> '.tr('Crea').'</button>
         </div>
 
 		<div class="col-md-10 text-right">

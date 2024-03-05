@@ -20,8 +20,9 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Checklists\Check;
+use Models\Module;
 
-$modulo_impianti = Modules::get('Impianti');
+$modulo_impianti = (new Module())->getByName('Impianti')->id_record;
 
 switch (filter('op')) {
     case 'update':

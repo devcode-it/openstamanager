@@ -20,10 +20,11 @@
 include_once __DIR__.'/../../../core.php';
 
 use Modules\Checklists\Check;
+use Models\Module;
 
 $matricole = (array) post('matricole');
-$modulo_impianti = Modules::get('Impianti');
-$checklist_module = Modules::get('Checklists');
+$id_modulo_impianti = (new Module())->getByName('Impianti')->id_record;
+$modulo_checklist = Module::find((new Module())->getByName('Checklists')->id_record);
 
 // Salvo gli impianti selezionati
 if (filter('op') == 'link_impianti') {
@@ -37,7 +38,7 @@ if (filter('op') == 'link_impianti') {
             Check::deleteLinked([
                 'id_module' => $id_module,
                 'id_record' => $id_record,
-                'id_module_from' => $modulo_impianti['id'],
+                'id_module_from' => $id_modulo_impianti,
                 'id_record_from' => $matricola,
             ]);
 
@@ -54,14 +55,14 @@ if (filter('op') == 'link_impianti') {
         if (!in_array($matricola, $matricole_old)) {
             $dbo->query('INSERT INTO my_impianti_interventi(idimpianto, idintervento) VALUES('.prepare($matricola).', '.prepare($id_record).')');
 
-            $checks_impianti = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($modulo_impianti['id']).' AND id_record = '.prepare($matricola));
+            $checks_impianti = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($id_modulo_impianti).' AND id_record = '.prepare($matricola));
             foreach ($checks_impianti as $check_impianto) {
                 $id_parent_new = null;
                 if ($check_impianto['id_parent']) {
                     $parent = $dbo->selectOne('zz_checks', '*', ['id' => $check_impianto['id_parent']]);
                     $id_parent_new = $dbo->selectOne('zz_checks', '*', ['content' => $parent['content'], 'id_module' => $id_module, 'id_record' => $id_record])['id'];
                 }
-                $check = Check::build($user, $structure, $id_record, $check_impianto['content'], $id_parent_new, $check_impianto['is_titolo'], $check_impianto['order'], $modulo_impianti['id'], $matricola);
+                $check = Check::build($user, $structure, $id_record, $check_impianto['content'], $id_parent_new, $check_impianto['is_titolo'], $check_impianto['order'], $id_modulo_impianti, $matricola);
                 $check->id_module = $id_module;
                 $check->id_plugin = $id_plugin;
                 $check->note = $check_impianto['note'];
@@ -111,7 +112,7 @@ echo '
         <input type="hidden" name="backto" value="record-edit">
         <div class="row">
             <div class="col-md-12">
-                {[ "type": "select", "name": "matricole[]", "label": "'.tr('Impianti').'", "multiple": 1, "value": "'.implode(',', $impianti).'", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.($record['idsede_destinazione'] ?: '""').'}, "extra": "'.$readonly.'", "icon-after": "add|'.$modulo_impianti['id'].'|id_anagrafica='.$record['idanagrafica'].'" ]}
+                {[ "type": "select", "name": "matricole[]", "label": "'.tr('Impianti').'", "multiple": 1, "value": "'.implode(',', $impianti).'", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.($record['idsede_destinazione'] ?: '""').'}, "extra": "'.$readonly.'", "icon-after": "add|'.$id_modulo_impianti.'|id_anagrafica='.$record['idanagrafica'].'" ]}
             </div>
         </div>
         <div class="row">
@@ -143,7 +144,7 @@ if (!empty($impianti)) {
 
     $impianti_collegati = $dbo->fetchArray('SELECT * FROM my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto = my_impianti.id WHERE idintervento = '.prepare($id_record));
     foreach ($impianti_collegati as $impianto) {
-        $checks = Check::where('id_module_from', $modulo_impianti['id'])->where('id_record_from', $impianto['id'])->where('id_module', $id_module)->where('id_record', $id_record)->where('id_parent', null)->get();
+        $checks = Check::where('id_module_from', $id_modulo_impianti)->where('id_record_from', $impianto['id'])->where('id_module', $id_module)->where('id_record', $id_record)->where('id_parent', null)->get();
 
         $type = 'muted';
         $class = 'disabled';
@@ -251,7 +252,7 @@ for(i=0; i<sortable_table; i++){
 
         let order = $(this).find(".sonof_"+sonof+"[data-id]").toArray().map(a => $(a).data("id"))
     
-        $.post("'.$checklist_module->fileurl('ajax.php').'", {
+        $.post("'.$modulo_checklist->fileurl('ajax.php').'", {
             op: "update_position",
             order: order.join(","),
         });
@@ -264,7 +265,7 @@ $("textarea[name=\'note_checklist\']").keyup(function() {
 });
 
 function saveNota(id) {
-    $.post("'.$checklist_module->fileurl('ajax.php').'", {
+    $.post("'.$modulo_checklist->fileurl('ajax.php').'", {
         op: "save_note",
         note: $("#note_" + id).val(),
         id: id
@@ -277,7 +278,7 @@ function saveNota(id) {
 
 $(".check-impianto .checkbox").click(function(){
     if($(this).is(":checked")){
-        $.post("'.$checklist_module->fileurl('ajax.php').'", {
+        $.post("'.$modulo_checklist->fileurl('ajax.php').'", {
             op: "save_checkbox",
             id: $(this).attr("data-id"),
         },function(result){
@@ -297,7 +298,7 @@ $(".check-impianto .checkbox").click(function(){
             '_DATE_' => dateFormat(date('Y-m-d')).' '.date('H:i'),
         ]).'");
     }else{
-        $.post("'.$checklist_module->fileurl('ajax.php').'", {
+        $.post("'.$modulo_checklist->fileurl('ajax.php').'", {
             op: "remove_checkbox",
             id: $(this).attr("data-id"),
         },function(result){
@@ -318,7 +319,7 @@ $(".check-impianto .checkbox").click(function(){
 
 function delete_check(id){
     if(confirm("Eliminare questa checklist?")){
-        $.post("'.$checklist_module->fileurl('ajax.php').'", {
+        $.post("'.$modulo_checklist->fileurl('ajax.php').'", {
             op: "delete_check",
             id: id,
         }, function(){
@@ -328,7 +329,7 @@ function delete_check(id){
 }
 
 function edit_check(id){
-    launch_modal("Modifica checklist", "'.$checklist_module->fileurl('components/edit-check.php').'?id_record="+id, 1);
+    launch_modal("Modifica checklist", "'.$modulo_checklist->fileurl('components/edit-check.php').'?id_record="+id, 1);
 }
 
 </script>';

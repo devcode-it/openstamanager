@@ -21,6 +21,7 @@ namespace Plugins\ReceiptFE;
 
 use Hooks\Manager;
 use Models\Cache;
+use Models\Module;
 
 /**
  * Hook per l'importazione e il conteggio delle ricevute rilevate come da importare.
@@ -111,13 +112,13 @@ class ReceiptHook extends Manager
         $notify = $total_number != 0;
         $color = $total_number == $completed_number ? 'success' : 'yellow';
 
-        $module = \Modules::get('Fatture di vendita');
+        $id_module = (new Module())->getByName('Fatture di vendita')->id_record;
 
         return [
             'icon' => 'fa fa-ticket text-'.$color,
             'message' => $message,
             'show' => $notify,
-            'link' => base_path().'/controller.php?id_module='.$module->id,
+            'link' => base_path().'/controller.php?id_module='.$id_module,
         ];
     }
 }

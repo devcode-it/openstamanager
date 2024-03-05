@@ -34,8 +34,12 @@ class Impianti extends AppResource
             ->select('id_record')
             ->distinct()
             ->join('zz_modules', 'zz_modules.id', '=', 'zz_operations.id_module')
-            ->where('zz_modules.name', '=', 'Impianti')
-            ->where('zz_operations.op', '=', 'delete')
+            ->leftJoin('zz_modules_lang', function ($join) use ($last_sync_at) {
+                $join->on('zz_modules.id', '=', 'zz_modules_lang.id_record')
+                    ->where('zz_modules.id_lang', '=', setting('Lingua'));
+            })
+            ->where('zz_modules_lang.name', '=', "Impianti")
+            ->where('zz_operations.op', '=', "delete")
             ->where('zz_operations.created_at', '>', $last_sync_at)
             ->pluck('id_record')
             ->toArray();

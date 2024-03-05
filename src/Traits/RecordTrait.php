@@ -28,7 +28,7 @@ trait RecordTrait
 
     public function getModule()
     {
-        return !empty($this->module) ? Module::pool($this->module) : null;
+        return !empty($this->module) ? Module::find($this->module) : null;
     }
 
     public function getPlugin()

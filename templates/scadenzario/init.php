@@ -21,8 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Fatture\Fattura;
 
-$module = Modules::get('Scadenzario');
-$id_module = $module['id'];
+$module = Module::find((new Module())->getByName('Scadenzario')->id_record);
 
 $total = Util\Query::readQuery($module);
 

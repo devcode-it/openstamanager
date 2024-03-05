@@ -30,6 +30,7 @@ use Modules\Contratti\Contratto;
 use Modules\Contratti\Stato;
 use Modules\Iva\Aliquota;
 use Plugins\PianificazioneInterventi\Promemoria;
+use Models\Plugin;
 
 switch (post('op')) {
     case 'add':
@@ -451,7 +452,7 @@ switch (post('op')) {
             foreach ($allegati as $allegato) {
                 $allegato->copia([
                     'id_module' => $id_module,
-                    'id_plugin' => Plugins::get('Pianificazione interventi')['id'],
+                    'id_plugin' => (new Plugin())->getByName('Pianificazione interventi')->id_record,
                     'id_record' => $id_promemoria,
                 ]);
             }

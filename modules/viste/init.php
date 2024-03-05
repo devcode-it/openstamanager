@@ -18,7 +18,8 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\Module;
 
 if (isset($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `zz_modules` WHERE id='.prepare($id_record));
+    $record = Module::find($id_record);
 }

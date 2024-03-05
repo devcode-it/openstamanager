@@ -19,6 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Models\Module;
+
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
@@ -51,8 +53,8 @@ echo ($record['dir'] == 'entrata') ? tr('Vendita') : tr('Acquisto'); ?>." ]}
 
         <?php
 
-        $id_module_acquisti = database()->fetchOne('SELECT id FROM zz_modules WHERE title = "Fatture di acquisto"')['id'];
-$id_module_vendite = database()->fetchOne('SELECT id FROM zz_modules WHERE title = "Fatture di vendita"')['id'];
+$id_module_acquisti = (new Module())->getByName('Fatture di acquisto')->id_record;
+$id_module_vendite = (new Module())->getByName('Fatture di vendita')->id_record;
 
 echo '
 		<div class="col-md-3">

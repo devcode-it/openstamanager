@@ -21,6 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Scadenzario\Scadenza;
 use Modules\Fatture\Tipo;
+use Models\Module;
 
 switch (post('op')) {
     case 'add':
@@ -139,7 +140,7 @@ switch (post('op')) {
     case 'allega_fattura':
         $scadenza = Scadenza::find($id_record);
         $id_documento = post('iddocumento');
-        $print_predefined = $dbo->selectOne('zz_prints', '*', ['predefined' => 1, 'id_module' => Modules::get('Fatture di vendita')['id']]);
+        $print_predefined = $dbo->selectOne('zz_prints', '*', ['predefined' => 1, 'id_module' => (new Module())->GetByName('Fatture di vendita')->id_record]);
 
         $print = Prints::render($print_predefined['id'], $id_documento, null, true);
         $upload = Uploads::upload($print['pdf'], [

@@ -38,7 +38,7 @@ class ColonneDuplicateViste extends Controllo
         $duplicati = database()->fetchArray('SELECT `id_module`, `name` FROM `zz_views` GROUP BY `id_module`, `name` HAVING COUNT(`name`) > 1');
 
         foreach ($duplicati as $colonna) {
-            $modulo = Module::pool($colonna['id_module']);
+            $modulo = Module::find($colonna['id_module']);
 
             $this->addResult([
                 'id' => $colonna['name'],

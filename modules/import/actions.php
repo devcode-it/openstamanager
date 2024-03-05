@@ -18,10 +18,11 @@
  */
 
 use Modules\Importazione\Import;
+use Models\Module;
 
 include_once __DIR__.'/../../core.php';
 
-$modulo_import = Modules::get($id_module);
+$modulo_import = Module::find($id_module);
 
 switch (filter('op')) {
     case 'add':

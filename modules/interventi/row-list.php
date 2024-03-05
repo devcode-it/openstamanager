@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/init.php';
+use Models\Module;
 
 $block_edit = $record['flag_completato'];
 $righe = $intervento->getRighe();
@@ -92,7 +93,7 @@ foreach ($righe as $riga) {
                 </small>';
 
     echo '
-                    '.Modules::link($riga->isArticolo() ? Modules::get('Articoli')['id'] : null, $riga->isArticolo() ? $riga['idarticolo'] : null, $descrizione);
+                    '.Modules::link($riga->isArticolo() ? (new Module())->getByName('Articoli')->id_record : null, $riga->isArticolo() ? $riga['idarticolo'] : null, $descrizione);
 
     if ($riga->isArticolo()) {
         if (!empty($mancanti)) {

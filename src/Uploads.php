@@ -18,6 +18,8 @@
  */
 
 use Models\Upload;
+use Models\Module;
+use Models\Plugin;
 
 /**
  * Classe per la gestione degli upload del progetto.
@@ -57,9 +59,9 @@ class Uploads
     public static function getDirectory($id_module, $id_plugin = null)
     {
         if (empty($id_plugin)) {
-            $structure = Modules::get($id_module);
+            $structure = Module::find($id_module);
         } else {
-            $structure = Plugins::get($id_plugin);
+            $structure = Plugin::find($id_plugin);
         }
 
         return $structure->upload_directory;
@@ -118,7 +120,7 @@ class Uploads
                     'id_record' => $data['id_record'],
                 ]);
 
-                if (Modules::get('Stampe')['id'] == $data['id_module']) {
+                if ((new Module())->getByName('Stampe')->id_record == $data['id_module']) {
                     $database->delete('zz_files_print', [
                         'id_file' => $file['id'],
                     ]);

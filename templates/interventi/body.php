@@ -18,6 +18,7 @@
  */
 
 use Carbon\Carbon;
+use Models\Module;
 
 include_once __DIR__.'/../../core.php';
 
@@ -527,7 +528,7 @@ echo '
 </table>';
 
 if ($options['checklist']) {
-    $structure = Modules::get('Interventi');
+    $structure = Module::find((new Module())->getByName('Interventi')->id_record);
     $checks = $structure->mainChecks($id_record);
 
     if (!empty($checks)) {
@@ -540,7 +541,7 @@ if ($options['checklist']) {
         </th>
     </tr>';
 
-        $structure = Modules::get('Interventi');
+        $structure = Module::find((new Module())->getByName('Interventi')->id_record);
         $checks = $structure->mainChecks($id_record);
 
         foreach ($checks as $check) {

@@ -19,6 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 use Modules\Preventivi\Stato;
+use Models\Module;
 
 $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 
@@ -40,7 +41,7 @@ $stato = (new Stato())->getByName('Bozza')->id_record;
 		</div>
 
 		<div class="col-md-6">
-				{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "clienti", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Cliente&readonly_tipo=1", "readonly": "<?php echo (empty(get('idanagrafica'))) ? 0 : 1; ?>" ]}
+				{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "clienti", "icon-after": "add|<?php echo (new Module())->GetByName('Anagrafiche')->id_record; ?>|tipoanagrafica=Cliente&readonly_tipo=1", "readonly": "<?php echo (empty(get('idanagrafica'))) ? 0 : 1; ?>" ]}
 		</div>
 	</div>
 	<div class="row">

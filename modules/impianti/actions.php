@@ -20,11 +20,12 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Checklists\Check;
+use Models\Module;
 
 $op = post('op');
 
-$upload_dir = base_dir().'/files/'.Modules::get('Impianti')['directory'];
-$modulo_categorie_impianti = Modules::get('Categorie impianti');
+$upload_dir = base_dir().'/files/'.Module::find((new Module())->getByName('Anagrafiche')->id_record)->directory;
+$id_modulo_categorie_impianti = (new Module())->getByName('Categorie impianti')->id_record;
 
 switch ($op) {
     // Aggiorno informazioni di base impianto
@@ -117,7 +118,7 @@ switch ($op) {
 
             $id_record = $dbo->lastInsertedID();
 
-            $checks_categoria = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($modulo_categorie_impianti['id']).' AND id_record = '.prepare($id_categoria));
+            $checks_categoria = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($id_modulo_categorie_impianti).' AND id_record = '.prepare($id_categoria));
             foreach ($checks_categoria as $check_categoria) {
                 $id_parent_new = null;
                 if ($check_categoria['id_parent']) {
@@ -189,7 +190,7 @@ switch ($op) {
             'id_record' => $id_record,
         ]);
 
-        $checks_categoria = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($modulo_categorie_impianti['id']).' AND id_record = '.prepare(post('id_categoria')));
+        $checks_categoria = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($id_modulo_categorie_impianti).' AND id_record = '.prepare(post('id_categoria')));
         foreach ($checks_categoria as $check_categoria) {
             $id_parent_new = null;
             if ($check_categoria['id_parent']) {

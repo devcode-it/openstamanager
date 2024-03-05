@@ -22,6 +22,7 @@ namespace API\App\v1;
 use API\App\AppResource;
 use API\Exceptions\InternalError;
 use Models\Upload;
+use Models\Module;
 
 class AllegatiInterventi extends AppResource
 {
@@ -34,7 +35,7 @@ class AllegatiInterventi extends AppResource
         // Elenco allegati degli interventi da rimuovere
         $da_interventi = [];
         if (!empty($interventi)) {
-            $query = 'SELECT zz_files.id FROM zz_files WHERE id_module = (SELECT `id` FROM `zz_modules` WHERE `name` = "Interventi") AND id_record IN ('.implode(',', $interventi).')';
+            $query = 'SELECT `zz_files`.`id` FROM `zz_files` WHERE `id_module` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = "Interventi" AND `id_lang` = '.prepare(setting('Lingua')).') AND `id_record` IN ('.implode(',', $interventi).')';
             $allegati_interventi = database()->fetchArray($query);
             $da_interventi = array_column($allegati_interventi, 'id');
         }
@@ -56,7 +57,7 @@ class AllegatiInterventi extends AppResource
         }
 
         $id_interventi = array_keys($interventi);
-        $query = 'SELECT zz_files.id, zz_files.updated_at FROM zz_files WHERE id_module = (SELECT `id` FROM `zz_modules` WHERE `name` = "Interventi") AND id_record IN ('.implode(',', $id_interventi).')';
+        $query = 'SELECT `zz_files`.`id`, `zz_files`.`updated_at` FROM `zz_files` WHERE `id_module` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = "Interventi" AND `id_lang` = '.prepare(setting('Lingua')).') AND `id_record` IN ('.implode(',', $id_interventi).')';
 
         // Filtro per data
         if ($last_sync_at) {
@@ -88,7 +89,7 @@ class AllegatiInterventi extends AppResource
 
     public function createRecord($data)
     {
-        $module = \Modules::get('Interventi');
+        $module = (new Module())->getByName('Anagrafiche');
 
         // Creazione del file temporaneo
         $content = explode(',', $data['contenuto']);

@@ -26,13 +26,12 @@ use Modules\Preventivi\Components\Articolo as ArticoloPreventivo;
 use Modules\Preventivi\Preventivo;
 use Modules\TipiIntervento\Tipo as TipoSessione;
 use Plugins\ListinoClienti\DettaglioPrezzo;
+use Models\Module;
 
 include_once __DIR__.'/../../core.php';
 
-$module_preventivi = 'Preventivi';
-
 // Segmenti
-$id_preventivi = Modules::get($module_preventivi)['id'];
+$id_preventivi =(new Module())->GetByName('Preventivi')->id_record; 
 $id_segment = $_SESSION['module_'.$id_preventivi]['id_segment'];
 
 switch (post('op')) {
@@ -218,7 +217,7 @@ switch (post('op')) {
         }
 
         $database->commitTransaction();
-        redirect(base_path().'/editor.php?id_module='.Modules::get('Preventivi')['id'].'&id_record='.$id_preventivo);
+        redirect(base_path().'/editor.php?id_module='.$id_preventivi.'&id_record='.$id_preventivo);
         exit;
 
     case 'export-csv':

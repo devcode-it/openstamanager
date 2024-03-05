@@ -250,7 +250,7 @@ class WidgetManager implements ManagerInterface
 
             // Aggiungo ad uno ad uno tutti i widget
             foreach ($widgets as $widget) {
-                if ($widget['id_module'] == $database->fetchOne('SELECT id FROM zz_modules WHERE title = "Stato dei servizi"')['id']) {
+                if ($widget['id_module'] == $database->fetchOne('SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = "Stato dei servizi" AND `id_lang` = '.setting('Lingua').'')['id']) {
                     $result .= '
                     <li class="col-sm-6 col-md-4 li-widget" id="widget_'.$widget['id'].'" style="height:100% !important;" data-id="'.$widget['id'].'">';
                 } else {

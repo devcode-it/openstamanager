@@ -22,6 +22,8 @@ namespace Plugins\ReceiptFE;
 use Carbon\Carbon;
 use Hooks\Manager;
 use Modules\Fatture\Fattura;
+use Models\Module;
+use Models\Plugin;
 
 /**
  * Hook specializzato per il conteggio e la segnalazione di Fatture senza ricevute oppure con ricevuta in stato di errore.
@@ -73,14 +75,14 @@ class NotificheRicevuteHook extends Manager
             ]);
         }
 
-        $module = \Modules::get('Fatture di vendita');
-        $plugin = \Plugins::get('Ricevute FE');
+        $id_module = (new Module())->getByName('Interventi')->id_record;
+        $id_plugin = (new Plugin())->getByName('Ricevute FE')->id_record;
 
         return [
             'icon' => 'fa fa-ticket text-yellow',
             'message' => $message,
             'show' => $con_errore != 0 || $in_attesa != 0,
-            'link' => base_path().'/controller.php?id_module='.$module->id.'#tab_'.$plugin->id,
+            'link' => base_path().'/controller.php?id_module='.$id_module.'#tab_'.$id_plugin,
         ];
     }
 

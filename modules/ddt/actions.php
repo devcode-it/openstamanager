@@ -33,9 +33,9 @@ use Modules\DDT\Tipo;
 use Modules\Iva\Aliquota;
 use Modules\Pagamenti\Pagamento;
 
-$module = Modules::get($id_module);
+$module = Module::find($id_module);
 
-if ($module['name'] == 'Ddt di vendita') {
+if ($module->name == 'Ddt di vendita') {
     $dir = 'entrata';
 } else {
     $dir = 'uscita';
@@ -521,7 +521,7 @@ switch (filter('op')) {
         $ddt->save();
 
         $id_record = $copia->id;
-        $id_module = $ddt->direzione == 'entrata' ? Module::pool('Ddt di acquisto')->id : Module::pool('Ddt di vendita')->id;
+        $id_module = $ddt->direzione == 'entrata' ? (new Module())->getByName('Ddt di acquisto')->id_record : (new Module())->getByName('Ddt di vendita')->id_record;
 
         break;
 

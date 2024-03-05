@@ -38,7 +38,7 @@ include_once __DIR__.'/../../core.php';
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "module", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_modules WHERE ( enabled = 1 AND options != 'custom' ) OR id = <?php echo $record['id_module']; ?> ORDER BY name ASC", "value": "<?php echo $record['id_module']; ?>", "extra": "<?php echo ($record['predefined']) ? 'readonly' : ''; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "module", "required": 1, "values": "query=SELECT `zz_modules`.`id`, `name` AS descrizione FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON(`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = <?php echo setting('Lingua'); ?>) WHERE (`enabled` = 1 AND `options` != 'custom' ) OR `zz_modules`.`id` = <?php echo $record['id_module']; ?> ORDER BY `name` ASC", "value": "<?php echo $record['id_module']; ?>", "extra": "<?php echo ($record['predefined']) ? 'readonly' : ''; ?>" ]}
 				</div>
 
 				<div class="col-md-2">

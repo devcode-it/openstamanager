@@ -33,7 +33,7 @@ echo '
         </div>
 
         <div class="col-md-6">
-        {[ "type": "select", "label": "'.tr('Mansione').'", "name": "idmansione", "ajax-source": "mansioni", "required": 1, "value" : "$idmansione$", "icon-after": "add|'.Modules::get('Mansioni referenti')['id'].'" ]}
+        {[ "type": "select", "label": "'.tr('Mansione').'", "name": "idmansione", "ajax-source": "mansioni", "required": 1, "value" : "$idmansione$", "icon-after": "add|'.(new Module())->getByName('Mansioni referenti')->id_record.'" ]}
         </div>
     </div>
 

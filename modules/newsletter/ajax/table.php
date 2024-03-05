@@ -57,7 +57,7 @@ $destinatari_filtrati = (clone $destinatari)
     ->skip($start)->take($length)
     ->get();
 
-$modulo_anagrafiche = Module::pool('Anagrafiche');
+$id_modulo_anagrafiche = (new Module())->getByName('Anagrafiche')->id_record;
 $righe = [];
 foreach ($destinatari_filtrati as $destinatario) {
     $origine = $destinatario->getOrigine();
@@ -86,7 +86,7 @@ foreach ($destinatari_filtrati as $destinatario) {
                 'readonly' => '1',
                 'class' => 'email-mask',
                 'value' => $origine->email,
-                'validation' => 'email|'.$modulo_anagrafiche->id.'|'.$destinatario->record_id,
+                'validation' => 'email|'.$id_modulo_anagrafiche.'|'.$destinatario->record_id,
             ]) :
             '<span class="text-danger"><i class="fa fa-close"></i> '.tr('Indirizzo e-mail mancante').'</span>'
         ).'

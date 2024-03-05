@@ -24,6 +24,7 @@ use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
 use Util\XML;
 use Util\Zip;
+use Models\Plugin;
 
 /**
  * Classe per la gestione delle ricevute collegate alle Fatture elettroniche in formato XML.
@@ -133,7 +134,7 @@ class Ricevuta
     public static function getImportDirectory()
     {
         if (!isset(self::$directory)) {
-            $plugin = \Plugins::get('Ricevute FE');
+            $plugin = Plugin::find((new Plugin())->getByName('Ricevute FE')->id_record);
 
             self::$directory = base_dir().'/'.$plugin->upload_directory;
         }

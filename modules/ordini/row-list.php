@@ -20,6 +20,7 @@
 include_once __DIR__.'/init.php';
 
 use Modules\Articoli\Articolo;
+use Models\Module;
 
 $block_edit = $record['flag_completato'];
 $order_row_desc = $_SESSION['module_'.$id_module]['order_row_desc'];
@@ -120,7 +121,7 @@ foreach ($righe as $riga) {
 
         echo Modules::link('Articoli', $riga->idarticolo, $articolo_riga->codice.' - '.$riga->descrizione);
 
-        if ($id_module == Modules::get('Ordini fornitore')['id']) {
+        if ($id_module == (new Module())->getByName('Ordini_fornitore')->id_record) {
             $codice_fornitore = $riga->articolo->dettaglioFornitore($ordine->idanagrafica)->codice_fornitore;
             if (!empty($codice_fornitore)) {
                 echo '

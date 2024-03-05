@@ -18,8 +18,9 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\Module;
 
-$prima_nota = Modules::get('Prima nota');
+$id_prima_nota = (new Module())->GetByName('Prima nota')->id_record;
 
 $id_conto = get('id_conto');
 $conto = $dbo->fetchOne('SELECT co_pianodeiconti2.numero AS numero2, co_pianodeiconti3.numero AS numero3, co_pianodeiconti3.descrizione FROM co_pianodeiconti3 LEFT JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2 = co_pianodeiconti2.id WHERE co_pianodeiconti3.id='.prepare($id_conto));
@@ -70,12 +71,12 @@ if (!empty($movimenti)) {
     <tr>
         <td>';
 
-            $modulo_fattura = ($movimento['dir'] == 'entrata') ? Modules::get('Fatture di vendita') : Modules::get('Fatture di acquisto');
+            $id_modulo_fattura = ($movimento['dir'] == 'entrata') ? (new Module())->GetByName('Fatture di vendita')->id_record : (new Module())->GetByName('Fatture di acquisto')->id_record;
 
             if (!empty($movimento['primanota'])) {
-                echo Modules::link($prima_nota->id, $movimento['idmastrino'], $movimento['descrizione']);
+                echo Modules::link($id_prima_nota, $movimento['idmastrino'], $movimento['descrizione']);
             } else {
-                echo Modules::link($modulo_fattura->id, $movimento['iddocumento'], $movimento['descrizione']);
+                echo Modules::link($id_modulo_fattura, $movimento['iddocumento'], $movimento['descrizione']);
             }
 
             echo '

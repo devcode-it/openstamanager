@@ -29,10 +29,14 @@ echo '
         </tr>
     </thead>';
 
-$hooks = $dbo->fetchArray('SELECT zz_hooks.*, zz_modules.name AS modulo
-FROM zz_hooks
-    INNER JOIN zz_modules ON zz_hooks.id_module = zz_modules.id
-ORDER BY `id_module` ASC, `zz_hooks`.`id` ASC');
+$hooks = $dbo->fetchArray('SELECT 
+    `zz_hooks`.*, 
+    `zz_modules_lang`.`name` AS modulo
+    FROM `zz_hooks`
+        INNER JOIN `zz_modules` ON `zz_hooks`.`id_module` = `zz_modules`.`id`
+        LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+    ORDER BY
+        `id_module` ASC, `zz_hooks`.`id` ASC');
 
 $gruppi = collect($hooks)->groupBy('modulo');
 foreach ($gruppi as $modulo => $hooks) {

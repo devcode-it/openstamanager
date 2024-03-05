@@ -39,8 +39,9 @@ use Modules\TipiIntervento\Tipo as TipoSessione;
 use Plugins\ComponentiImpianti\Componente;
 use Plugins\ListinoClienti\DettaglioPrezzo;
 use Plugins\PianificazioneInterventi\Promemoria;
+use Models\Module;
 
-$modulo_impianti = Modules::get('Impianti');
+$id_modulo_impianti = (new Module())->getByName('Impianti')->id_record;
 $plugin_impianti = (new Plugin())->getByName('Impianti')->id_record;
 
 switch (post('op')) {
@@ -235,14 +236,14 @@ switch (post('op')) {
                         'idimpianto' => $impianto,
                     ]);
 
-                    $checks_impianti = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($modulo_impianti['id']).' AND id_record = '.prepare($impianto));
+                    $checks_impianti = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($id_modulo_impianti).' AND id_record = '.prepare($impianto));
                     foreach ($checks_impianti as $check_impianto) {
                         $id_parent_new = null;
                         if ($check_impianto['id_parent']) {
                             $parent = $dbo->selectOne('zz_checks', '*', ['id' => $check_impianto['id_parent']]);
                             $id_parent_new = $dbo->selectOne('zz_checks', '*', ['content' => $parent['content'], 'id_module' => $id_module, 'id_record' => $id_record])['id'];
                         }
-                        $check = Check::build($user, $structure, $id_record, $check_impianto['content'], $id_parent_new, $check_impianto['is_titolo'], $check_impianto['order'], $modulo_impianti['id'], $impianto);
+                        $check = Check::build($user, $structure, $id_record, $check_impianto['content'], $id_parent_new, $check_impianto['is_titolo'], $check_impianto['order'], $id_modulo_impianti, $impianto);
                         $check->id_module = $id_module;
                         $check->id_plugin = $plugin_impianti;
                         $check->note = $check_impianto['note'];

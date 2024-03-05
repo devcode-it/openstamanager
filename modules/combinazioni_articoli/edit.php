@@ -32,7 +32,7 @@ if (!empty($record['id_categoria'])) {
                     '.Modules::link('Categorie articoli', $record['id_categoria'], null, null, 'class="pull-right"');
 }
 echo '
-                    {[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|'.Modules::get('Categorie articoli')['id'].'" ]}
+                    {[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|'.(new Module())->getByName('Categorie articoli')->id_record.'" ]}
                 </div>
 
                 <div class="col-md-6">

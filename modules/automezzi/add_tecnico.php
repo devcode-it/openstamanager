@@ -1,12 +1,13 @@
 <?php
 
 include_once __DIR__.'/../../core.php';
+use Models\Module;
 
 $id_record = get('idautomezzo');
 
 // Form di inserimento responsabili automezzo
 echo '
-<form action="'.$rootdir.'/editor.php?id_module='.Modules::get('Automezzi')['id'].'&id_record='.$id_record.'" method="post">
+<form action="'.$rootdir.'/editor.php?id_module='.(new Module())->getByName('Automezzi')->id_record.'&id_record='.$id_record.'" method="post">
     <input type="hidden" name="op" value="addtech">
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="id_record" value="'.$id_record.'">

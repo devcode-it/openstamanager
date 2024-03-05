@@ -1,8 +1,9 @@
 <?php
 
 include_once __DIR__.'/../../../core.php';
+use Models\Module;
 
-$link_id = Modules::get('Automezzi')['id'];
+$link_id = (new Module())->getByName('Automezzi')->id_record;
 
 $fields = [
     'Nome' => 'nome',

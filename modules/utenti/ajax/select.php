@@ -129,19 +129,19 @@ switch ($resource) {
         break;
 
     case 'moduli_gruppo':
-        $query = 'SELECT zz_modules.id, zz_modules.title AS descrizione FROM zz_modules LEFT JOIN zz_permissions ON zz_permissions.idmodule=zz_modules.id |where| GROUP BY id ORDER BY descrizione';
+        $query = 'SELECT `zz_modules`.`id`, `zz_modules_lang`.`title` AS descrizione FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON `zz_modules`.`id`=`zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang`='.prepare(setting('Lingua')).' LEFT JOIN `zz_permissions` ON `zz_permissions`.`idmodule`=`zz_modules`.`id` |where| GROUP BY `zz_modules`.`id` ORDER BY `title`';
 
-        $where[] = 'zz_modules.enabled=1';
+        $where[] = '`zz_modules`.`enabled`=1';
 
         if (isset($superselect['idgruppo']) && $superselect['idgruppo'] != 1) {
-            $where[] = 'zz_permissions.idgruppo='.prepare($superselect['idgruppo']);
+            $where[] = '`zz_permissions`.`idgruppo`='.prepare($superselect['idgruppo']);
         }
 
         foreach ($elements as $element) {
-            $filter[] = 'zz_modules.id='.prepare($element);
+            $filter[] = '`zz_modules`.`id`='.prepare($element);
         }
         if (!empty($search)) {
-            $search_fields[] = 'zz_modules.title LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`zz_modules_lang`.`title` LIKE '.prepare('%'.$search.'%');
         }
 
         break;

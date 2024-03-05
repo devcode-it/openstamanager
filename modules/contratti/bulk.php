@@ -27,11 +27,11 @@ use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
 use Modules\Fatture\Tipo;
 use Plugins\PianificazioneInterventi\Promemoria;
-
-$module_fatture = 'Fatture di vendita';
+use Models\Module;
+use Models\Plugin;
 
 // Segmenti
-$id_fatture = Modules::get($module_fatture)['id'];
+$id_fatture = (new Module())->getByName('Fatture di vendita')->id_record;
 if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
     $segments = Modules::getSegments($id_fatture);
     $_SESSION['module_'.$id_fatture]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
@@ -216,7 +216,7 @@ switch (post('op')) {
                     foreach ($allegati as $allegato) {
                         $allegato->copia([
                             'id_module' => $id_module,
-                            'id_plugin' => Plugins::get('Pianificazione interventi')['id'],
+                            'id_plugin' => (new Plugin())->getByName('Pianificazione interventi')->id_record,
                             'id_record' => $id_promemoria,
                         ]);
                     }

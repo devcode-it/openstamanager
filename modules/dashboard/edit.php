@@ -18,6 +18,7 @@
  */
 
 use Carbon\Carbon;
+use Models\Module;
 
 include_once __DIR__.'/../../core.php';
 
@@ -387,7 +388,7 @@ foreach ($days as $key => $day) {
     }
 }
 
-$modulo_interventi = Modules::get('Interventi');
+$modulo_interventi =Module::find((new Module())->getByName('Interventi')->id_record);
 
 echo '
 <script type="text/javascript">    

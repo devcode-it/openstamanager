@@ -18,6 +18,7 @@
  */
 
 use Plugins\PianificazioneFatturazione\Pianificazione;
+use Models\Module;
 
 include_once __DIR__.'/../../core.php';
 
@@ -34,7 +35,7 @@ foreach ($contratto->pianificazioni as $i => $p) {
     }
 }
 
-$module_fattura = Modules::get('Fatture di vendita');
+$id_module_fattura = (new Module())->getByName('Fatture di vendita')->id_record;
 
 $id_conto = setting('Conto predefinito fatture di vendita');
 $data = date('Y-m', strtotime($pianificazione->data_scadenza)).'-'.date('d', strtotime($contratto->data_accettazione));
@@ -66,7 +67,7 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $module_fattura['id'], 'is_sezionale' => 1]).', "value":"'.$_SESSION['module_'.$module_fattura['id']]['id_segment'].'" ]}
+            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module_fattura, 'is_sezionale' => 1]).', "value":"'.$_SESSION['module_'.$id_module_fattura]['id_segment'].'" ]}
         </div>';
 
 // Conto

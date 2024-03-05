@@ -35,7 +35,11 @@ class SessioniInterventi extends AppResource
             ->select('zz_operations.options')
             ->distinct()
             ->join('zz_modules', 'zz_modules.id', '=', 'zz_operations.id_module')
-            ->where('zz_modules.name', '=', 'Interventi')
+            ->leftJoin('zz_modules_lang', function ($join) use ($last_sync_at) {
+                $join->on('zz_modules.id', '=', 'zz_modules_lang.id_record')
+                    ->where('zz_modules.id_lang', '=', setting('Lingua'));
+            })
+            ->where('zz_modules_lang.name', '=', 'Interventi')
             ->where('zz_operations.op', '=', 'delete_sessione')
             ->whereNotNull('zz_operations.options')
             ->where('zz_operations.created_at', '>', $last_sync_at)

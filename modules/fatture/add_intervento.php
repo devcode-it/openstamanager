@@ -20,9 +20,10 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Fatture\Fattura;
+use Models\Module;
 
-$module = Modules::get($id_module);
-$module_interventi = Modules::get('Interventi');
+$module = Module::find($id_module);
+$module_interventi = (new Module())->getByName('Interventi')->id_record;
 
 if ($module['name'] == 'Fatture di vendita') {
     $dir = 'entrata';

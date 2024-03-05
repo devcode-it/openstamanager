@@ -26,7 +26,7 @@ $id_record = filter('id_record');
 $dir = filter('dir');
 $nome_stampa = filter('nome_stampa');
 $id_print = $dbo->fetchOne('SELECT id FROM zz_prints WHERE name='.prepare($nome_stampa))['id'];
-$id_module = Module::pool('Stampe contabili')->id;
+$id_module = (new Module())->getByName('Stampe contabili')->id_record;
 
 $year = (new Carbon($_SESSION['period_end']))->format('Y');
 

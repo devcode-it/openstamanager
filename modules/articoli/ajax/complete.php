@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/../../../core.php';
+use Models\Module;
 
 $idarticolo = get('idarticolo');
 $limit = get('limit');
@@ -75,7 +76,7 @@ switch ($resource) {
                 for ($i = 0; $i < sizeof($documenti); ++$i) {
                     ($documenti[$i]['n2_documento'] != '') ? $n_documento = $documenti[$i]['n2_documento'] : $n_documento = $documenti[$i]['n_documento'];
 
-                    $link_id = Modules::get($documenti[$i]['modulo'])['id'];
+                    $link_id = (new Module())->GetByName($documenti[$i]['modulo'])->id_record;
                     echo "<tr><td class='first_cell text-left'><a href='".base_path().'/editor.php?id_module='.$link_id.'&id_record='.$documenti[$i]['id']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">".$documenti[$i]['tipo'].'. n. '.$n_documento.' del '.Translator::dateToLocale($documenti[$i]['data_documento'])." </a></td>\n";
                     echo "<td class='table_cell text-right'>".moneyFormat($documenti[$i]['costo_unitario'])."</td></tr>\n";
                     $ids[] = '"'.$documenti[$i]['id'].'"';
@@ -136,7 +137,7 @@ switch ($resource) {
             for ($i = 0; $i < sizeof($documenti); ++$i) {
                 ($documenti[$i]['n2_documento'] != '') ? $n_documento = $documenti[$i]['n2_documento'] : $n_documento = $documenti[$i]['n_documento'];
 
-                $link_id = Modules::get($documenti[$i]['modulo'])['id'];
+                $link_id = (new Module())->GetByName($documenti[$i]['modulo'])->id_record;
                 echo "<tr><td class='first_cell text-left'><a href='".base_path().'/editor.php?id_module='.$link_id.'&id_record='.$documenti[$i]['id']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">".$documenti[$i]['tipo'].' n. '.$n_documento.' del '.Translator::dateToLocale($documenti[$i]['data_documento'])." </a></td>\n";
                 echo "<td class='table_cell text-right'>".moneyFormat($documenti[$i]['costo_unitario'])."</td></tr>\n";
                 $ids[] = '"'.$documenti[$i]['id'].'"';
@@ -196,7 +197,7 @@ switch ($resource) {
             for ($i = 0; $i < sizeof($documenti); ++$i) {
                 ($documenti[$i]['n2_documento'] != '') ? $n_documento = $documenti[$i]['n2_documento'] : $n_documento = $documenti[$i]['n_documento'];
 
-                $link_id = Modules::get($documenti[$i]['modulo'])['id'];
+                $link_id = (new Module())->GetByName($documenti[$i]['modulo'])->id_record;
                 echo "<tr><td class='first_cell text-left'><a href='".base_path().'/editor.php?id_module='.$link_id.'&id_record='.$documenti[$i]['id']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">".$documenti[$i]['tipo'].' n. '.$n_documento.' del '.Translator::dateToLocale($documenti[$i]['data_documento'])." </a></td>\n";
                 echo "<td class='table_cell text-right'>".moneyFormat($documenti[$i]['costo_unitario'])."</td></tr>\n";
                 $ids[] = '"'.$documenti[$i]['id'].'"';

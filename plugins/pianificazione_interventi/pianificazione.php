@@ -18,12 +18,13 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\Module;
+use Models\Plugin;
 
-$plugin = Plugins::get($id_plugin);
-
-$id_module = Modules::get('Contratti')['id'];
+$plugin = Plugin::find($id_plugin);
+$id_module = (new Module())->getByName('Contratti')->id_record;
 $block_edit = filter('add') ? false : true;
-$module_interventi = Modules::get('Interventi');
+$id_module_interventi = (new Module())->getByName('Interventi')->id_record;
 
 // Informazioni contratto
 $contratto = $dbo->fetchOne('SELECT * FROM `co_contratti` WHERE `id` = :id', [
@@ -105,7 +106,7 @@ echo '
 				</div>
 
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $module_interventi['id'], 'is_sezionale' => 1]).', "value":"'.$_SESSION['module_'.$module_interventi['id']]['id_segment'].'" ]}
+                    {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module_interventi, 'is_sezionale' => 1]).', "value":"'.$_SESSION['module_'.$id_module_interventi]['id_segment'].'" ]}
                 </div>
 			</div>
 

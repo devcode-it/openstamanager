@@ -25,11 +25,10 @@ use Modules\Fatture\Stato as StatoFattura;
 use Modules\Fatture\Tipo;
 use Modules\Preventivi\Preventivo;
 use Modules\Preventivi\Stato as StatoPreventivo;
-
-$module_fatture = 'Fatture di vendita';
+use Models\Module;
 
 // Segmenti
-$id_fatture = Modules::get($module_fatture)['id'];
+$id_fatture = (new Module())->GetByName('Fatture di vendita')->id_record;
 if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
     $segments = Modules::getSegments($id_fatture);
     $_SESSION['module_'.$id_fatture]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;

@@ -17,6 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Models\Module;
+
 $skip_permissions = true;
 include_once __DIR__.'/../../core.php';
 
@@ -38,7 +40,7 @@ if (!empty($rs)) {
 }
 
 $api = base_url().'/api/?token='.$token;
-$module = Modules::get('Utenti e permessi');
+$module = Module::find((new Module())->getByName('Utenti e permessi')->id_record);
 
 echo '
 <div class="box box-widget widget-user">

@@ -18,9 +18,10 @@
  */
 
 include_once __DIR__.'/../core.php';
+use Models\Module;
 
 // Compatibilità per controller ed editor
-$structure = Modules::get($id_module);
+$structure = Module::find($id_module);
 
 echo '
 <p>'.tr('Trascina le colonne per ordinare la struttura della tabella principale, seleziona e deseleziona le colonne per renderle visibili o meno').'.</p>

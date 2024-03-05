@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Interventi\Intervento;
+use Models\Module;
 
 if (isset($id_record)) {
     $intervento = Intervento::find($id_record);
@@ -46,7 +47,7 @@ if (isset($id_record)) {
     
     //Pulsante Precedente e Successivo all'interno della scheda attività
     // RISULTATI VISIBILI
-    $structure = Modules::get($id_module);
+    $structure = Module::find($id_module);
     $where = [];
     
 

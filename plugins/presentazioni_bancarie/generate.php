@@ -4,6 +4,7 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Banche\Banca;
 use Modules\Scadenzario\Scadenza;
 use Plugins\PresentazioniBancarie\Gestore;
+use Models\Module;
 
 include_once __DIR__.'/init.php';
 
@@ -220,7 +221,7 @@ echo '
     </div>
 </div>';
 
-$modulo_prima_nota = Modules::get('Prima nota');
+$modulo_prima_nota = (new Module())->getByName('Prima nota')->id_record;
 echo '
 <script>
 

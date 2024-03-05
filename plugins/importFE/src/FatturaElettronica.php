@@ -27,6 +27,7 @@ use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
 use Modules\Fatture\Tipo as TipoFattura;
 use Util\XML;
+use Models\Module;
 
 /**
  * Classe per la gestione della fatturazione elettronica in XML.
@@ -82,7 +83,7 @@ class FatturaElettronica
     public static function getImportDirectory()
     {
         if (!isset(self::$directory)) {
-            $module = \Modules::get('Fatture di acquisto');
+            $module = Module::find((new Module())->getByName('Fatture di acquisto')->id_record);
 
             $plugins = $module->plugins;
             if (!empty($plugins)) {
@@ -166,11 +167,11 @@ class FatturaElettronica
     {
         $allegati = $this->getAllegati();
 
-        $module = \Modules::get('Fatture di acquisto');
+        $id_module = (new Module())->getByName('Fatture di acquisto')->id_record;
 
         $info = [
             'category' => tr('Fattura Elettronica'),
-            'id_module' => $module->id,
+            'id_module' => $id_module,
             'id_record' => $this->fattura->id,
         ];
 

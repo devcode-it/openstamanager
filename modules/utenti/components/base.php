@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\Module;
 
 if (!empty(filter('idanagrafica'))) {
     $utente['id_anagrafica'] = filter('idanagrafica');
@@ -29,7 +30,7 @@ echo '
 
 	<div class="row">
 		<div class="col-md-12">
-		{[ "type": "select", "label": "'.tr('Gruppo di appartenenza').'", "name": "idgruppo", "required": 1, "ajax-source": "gruppi", "value": "'.(!empty($utente['idgruppo']) ? $utente['idgruppo'] : $current_idgruppo).'", "icon-after": "add|'.Modules::get('Utenti e permessi')['id'].'", "readonly": "'.(($utente['id'] == '1') ? 1 : 0).'" ]}
+		{[ "type": "select", "label": "'.tr('Gruppo di appartenenza').'", "name": "idgruppo", "required": 1, "ajax-source": "gruppi", "value": "'.(!empty($utente['idgruppo']) ? $utente['idgruppo'] : $current_idgruppo).'", "icon-after": "add|'.(new Module())->getByName('Utenti e permessi')->id_record.'", "readonly": "'.(($utente['id'] == '1') ? 1 : 0).'" ]}
 		</div>
 	</div>';
 
@@ -52,7 +53,7 @@ echo '
 
 	<div class="row">
 		<div class="col-md-12">
-		{[ "type": "select", "label": "'.tr('Collega ad una anagrafica').'", "name": "idanag", "required": 1, "ajax-source": "anagrafiche_utenti", "value": "'.$utente['id_anagrafica'].'", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].(isset($gruppo) ? '|tipoanagrafica='.$gruppo : '').'" ]}
+		{[ "type": "select", "label": "'.tr('Collega ad una anagrafica').'", "name": "idanag", "required": 1, "ajax-source": "anagrafiche_utenti", "value": "'.$utente['id_anagrafica'].'", "icon-after": "add|'.(new Module())->getByName('Anagrafiche')->id_record.(isset($gruppo) ? '|tipoanagrafica='.$gruppo : '').'" ]}
 		</div>
 	</div>
 

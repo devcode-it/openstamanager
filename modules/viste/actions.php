@@ -26,8 +26,8 @@ switch (filter('op')) {
         $options2 = htmlspecialchars_decode(post('options2'), ENT_QUOTES);
 
         if (check_query($options2)) {
-            $dbo->query('UPDATE `zz_modules` SET `title`='.prepare(post('title')).', `options2`='.prepare($options2).' WHERE `id`='.prepare($id_record));
-
+            $dbo->query('UPDATE `zz_modules` SET `options2`='.prepare($options2).' WHERE `id`='.prepare($id_record));
+            $dbo->query('UPDATE `zz_modules_lang` SET `title`='.prepare(post('title')).' WHERE (`id_record`='.prepare($id_record).' AND `id_lang`='.prepare(setting('Lingua')).')');
             $rs = true;
         } else {
             $rs = false;

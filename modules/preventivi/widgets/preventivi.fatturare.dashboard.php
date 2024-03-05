@@ -20,8 +20,9 @@
 include_once __DIR__.'/../../../core.php';
 
 use Modules\Preventivi\Stato;
+use Models\Module;
 
-$id_module = Modules::get('Preventivi')['id'];
+$id_module = (new Module())->GetByName('Preventivi')->id_record;
 
 $rs = $dbo->fetchArray('SELECT *, 
         `an_anagrafiche`.`ragione_sociale` AS ragione_sociale 

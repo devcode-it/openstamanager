@@ -19,6 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 use Modules\Contratti\Stato;
+use Models\Module;
 
 $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 
@@ -40,7 +41,7 @@ echo '
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "required": 1, "value": "'.$id_anagrafica.'", "ajax-source": "clienti", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica=Cliente&readonly_tipo=1", "readonly": "'.((empty(get('idanagrafica'))) ? 0 : 1).'" ]}
+			{[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "required": 1, "value": "'.$id_anagrafica.'", "ajax-source": "clienti", "icon-after": "add|'.(new Module())->getByName('Anagrafiche')->id_record.'|tipoanagrafica=Cliente&readonly_tipo=1", "readonly": "'.((empty(get('idanagrafica'))) ? 0 : 1).'" ]}
 		</div>
 	</div>
 

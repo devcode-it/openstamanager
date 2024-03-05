@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../../core.php';
 
 use Modules\Interventi\Stato;
+use Models\Module;
 
 $stato = (new Stato())->getByName('TODO')->id_record;
 $rs = $dbo->fetchArray('SELECT * FROM `in_interventi` WHERE `in_interventi`.`idstatointervento` = '.prepare($stato).' ORDER BY `data_richiesta` ASC');
@@ -41,8 +42,8 @@ if (!empty($rs)) {
 
         echo '
             <tr id="int_'.$r['id'].'">
-				<td><a target="_blank" >'.Modules::link(Modules::get('Interventi')['id'], $r['id'], $r['codice']).'</a></td>
-                <td><a target="_blank" >'.Modules::link(Modules::get('Anagrafiche')['id'], $r['idanagrafica'], $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica='.prepare($r['idanagrafica']))['ragione_sociale']).'<br><small>Presso: ';
+				<td><a target="_blank" >'.Modules::link((new Module())->getByName('Interventi')->id_record, $r['id'], $r['codice']).'</a></td>
+                <td><a target="_blank" >'.Modules::link((new Module())->getByName('Anagrafiche')->id_record, $r['idanagrafica'], $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica='.prepare($r['idanagrafica']))['ragione_sociale']).'<br><small>Presso: ';
         // Sede promemoria
         if ($r['idsede'] == '-1') {
             echo '- Nessuna -';

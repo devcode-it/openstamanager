@@ -170,6 +170,8 @@ class Module extends Model
     public function children()
     {
         return $this->hasMany(self::class, 'parent')->withoutGlobalScope('enabled')
+            ->selectRaw('zz_modules.*, zz_modules_lang.title as title')
+            ->join('zz_modules_lang', 'zz_modules.id', '=', 'zz_modules_lang.id_record')
             ->orderBy('order');
     }
 
@@ -191,6 +193,8 @@ class Module extends Model
     public static function getHierarchy()
     {
         return self::with('allChildren')
+            ->selectRaw('zz_modules.*, zz_modules_lang.title as title')
+            ->join('zz_modules_lang', 'zz_modules.id', '=', 'zz_modules_lang.id_record')
             ->withoutGlobalScope('enabled')
             ->whereNull('parent')
             ->orderBy('order')
@@ -209,4 +213,49 @@ class Module extends Model
             $builder->with('groups');
         });
     }
+    
+    /**
+     * Ritorna l'attributo name del modulo.
+     *
+     * @return string
+     */
+    public function getNameAttribute()
+    {
+        return database()->table($this->table.'_lang')
+            ->select('name')
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first()->name;
+    }
+        
+    /**
+     * Ritorna l'attributo title del modulo.
+     *
+     * @return string
+     */
+    public function getTitleAttribute()
+    {
+        return database()->table($this->table.'_lang')
+            ->select('title')
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first()->title;
+    }
+
+    /**
+     * Ritorna l'id del modulo a partire dal nome.
+     *
+     * @param string $name il nome da ricercare
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getByName($name)
+    {
+        return database()->table($this->table.'_lang')
+            ->select('id_record')
+            ->where('name', '=', $name)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first();
+    }
+
 }

@@ -20,6 +20,7 @@
 use Carbon\Carbon;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Banche\Banca;
+use Models\Module;
 
 include_once __DIR__.'/../../core.php';
 
@@ -30,7 +31,7 @@ $is_agente = in_array($id_agente, $tipi_anagrafica);
 $is_azienda = in_array($id_azienda, $tipi_anagrafica);
 
 if (!$is_cliente && !$is_fornitore && !$is_azienda && $is_tecnico) {
-    $ignore = $dbo->fetchArray("SELECT `zz_plugins`.`id` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins`.`id_lang` = ".prepare(setting('Lingua')).") WHERE `name`='Sedi' OR `name`='Referenti' OR `name`='Dichiarazioni d\'intento'");
+    $ignore = $dbo->fetchArray("SELECT `zz_plugins`.`id` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = ".prepare(setting('Lingua')).") WHERE `name`='Sedi' OR `name`='Referenti' OR `name`='Dichiarazioni d\'intento'");
 
     foreach ($ignore as $plugin) {
         echo '
@@ -41,7 +42,7 @@ if (!$is_cliente && !$is_fornitore && !$is_azienda && $is_tecnico) {
 }
 
 if (!$is_cliente) {
-    $ignore = $dbo->fetchArray("SELECT `zz_plugins`.`id` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins`.`id_lang` = ".prepare(setting('Lingua')).") WHERE `name` IN ('Impianti del cliente','Contratti del cliente','Ddt del cliente')");
+    $ignore = $dbo->fetchArray("SELECT `zz_plugins`.`id` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = ".prepare(setting('Lingua')).") WHERE `name` IN ('Impianti del cliente','Contratti del cliente','Ddt del cliente')");
 
     foreach ($ignore as $plugin) {
         echo '
@@ -223,7 +224,7 @@ if (in_array($id_azienda, $tipi_anagrafica)) {
                             </div>
 
                             <div class="col-md-4">
-                                {[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY descrizione ASC", "value": "$idzona$", "placeholder": "<?php echo tr('Nessuna zona'); ?>", "icon-after": "add|<?php echo Modules::get('Zone')['id']; ?>" ]}
+                                {[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY descrizione ASC", "value": "$idzona$", "placeholder": "<?php echo tr('Nessuna zona'); ?>", "icon-after": "add|<?php echo (new Module())->getByName('Zone')->id_record; ?>" ]}
                             </div>
 
                             <div class="col-md-4">
@@ -452,7 +453,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             </div>
 
                             <div class="col-md-3">
-                                    {[ "type": "select", "label": "'.tr('Relazione').'", "name": "idrelazione", "ajax-source": "relazioni", "value": "$idrelazione$", "icon-after": "add|'.Modules::get('Relazioni')['id'].'" ]}
+                                    {[ "type": "select", "label": "'.tr('Relazione').'", "name": "idrelazione", "ajax-source": "relazioni", "value": "$idrelazione$", "icon-after": "add|'.(new Module())->getByName('Relazioni')->id_record.'" ]}
                             </div>
 
                             <div class="col-md-9">
@@ -468,18 +469,18 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
     $banca_predefinita = $banche->first(function ($item) {
         return !empty($item['predefined']);
     });
-    $modulo_banche = Modules::get('Banche');
+    $modulo_banche = (new Module())->getByName('Banche')->id_record;
     if (!$banche->isEmpty()) {
         echo '
                         <div class="row">
                             <div class="col-md-6">
-                                <a href="'.base_path().'/editor.php?id_module='.$modulo_banche['id'].'&id_record='.$banca_predefinita->id.'">
+                                <a href="'.base_path().'/editor.php?id_module='.$modulo_banche.'&id_record='.$banca_predefinita->id.'">
                                     '.tr("Visualizza la banca predefinita per l'Anagrafica").' <i class="fa fa-external-link"></i>
                                 </a>
                             </div>
 
                             <div class="col-md-6">
-                                <a href="'.base_path().'/controller.php?id_module='.$modulo_banche['id'].'&search_Anagrafica='.rawurlencode($anagrafica['ragione_sociale']).'">
+                                <a href="'.base_path().'/controller.php?id_module='.$modulo_banche.'&search_Anagrafica='.rawurlencode($anagrafica['ragione_sociale']).'">
                                     '.tr("Visualizza le banche disponibili per l'Anagrafica").' <i class="fa fa-external-link"></i>
                                 </a>
                             </div>
@@ -497,7 +498,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                     <div class="tab-pane '.(!$is_cliente ? 'hide' : 'active').'" id="cliente">
                         <div class="row">
                             <div class="col-md-6">
-                                    {[ "type": "select", "label": "'.tr('Provenienza cliente').'", "name": "id_provenienza", "ajax-source": "provenienze", "value": "$id_provenienza$", "icon-after": "add|'.Modules::get('Provenienze')['id'].'" ]}
+                                    {[ "type": "select", "label": "'.tr('Provenienza cliente').'", "name": "id_provenienza", "ajax-source": "provenienze", "value": "$id_provenienza$", "icon-after": "add|'.(new Module())->getByName('Provenienze')->id_record.'" ]}
                             </div>
                         
                             <div class="col-md-6">
@@ -687,7 +688,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 
                     <div class="row">
                         <div class="col-md-3">
-                            {[ "type": "select", "label": "<?php echo tr('Settore merceologico'); ?>", "name": "id_settore", "ajax-source": "settori", "value": "$id_settore$", "icon-after": "add|<?php echo Modules::get('Settori')['id']; ?>" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Settore merceologico'); ?>", "name": "id_settore", "ajax-source": "settori", "value": "$id_settore$", "icon-after": "add|<?php echo (new Module())->getByName('Settori')->id_record; ?>" ]}
                         </div>
 
                         <div class="col-md-3">

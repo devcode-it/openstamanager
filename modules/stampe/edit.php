@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Models\PrintTemplate;
+use Models\Module;
 
 $id_files = $dbo->select('zz_files_print', 'id_file', [], ['id_print' => $id_record]);
 
@@ -50,7 +51,7 @@ $id_files = $dbo->select('zz_files_print', 'id_file', [], ['id_print' => $id_rec
             <div class="row">
 
                 <div class="col-md-6">
-					{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "module", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_modules WHERE ( enabled = 1 AND options != 'custom' ) OR id = <?php echo $record['id_module']; ?> ORDER BY name ASC", "value": "<?php echo $record['id_module']; ?>", "disabled": "1" ]}
+					{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "module", "required": 1, "values": "query=SELECT `zz_modules`.`id`, `name` AS descrizione FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = <?php echo prepare(setting('Lingua')); ?>) WHERE (`enabled` = 1 AND `options` != 'custom') OR `zz_modules`.`id` = <?php echo $record['id_module']; ?> ORDER BY `name` ASC", "value": "<?php echo $record['id_module']; ?>", "disabled": "1" ]}
 				</div>
 
                 <div class="col-md-6">
@@ -142,7 +143,7 @@ echo '
 </div>';
 
 // Variabili utilizzabili
-$module = Modules::get($record['id_module']);
+$module = Module::find($record['id_module']);
 $variables = $module->getPlaceholders($id_record);
 
 echo '

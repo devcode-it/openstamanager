@@ -18,10 +18,11 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\Module;
 
-$modulo_interventi = Modules::get('Interventi');
-$modulo_preventivi = Modules::get('Preventivi');
-$modulo_eventi = Modules::get('Eventi');
+$modulo_interventi = Module::find((new Module())->getByName('Interventi')->id_record);
+$modulo_preventivi = Module::find((new Module())->getByName('Preventivi')->id_record);
+$modulo_eventi = Module::find((new Module())->getByName('Eventi')->id_record);
 
 if (!isset($user['idanagrafica'])) {
     $user['idanagrafica'] = '';

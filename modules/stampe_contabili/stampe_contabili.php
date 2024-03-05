@@ -26,7 +26,7 @@ $id_record = filter('id_record');
 $dir = filter('dir');
 $nome_stampa = filter('nome_stampa');
 $id_print = $dbo->fetchOne('SELECT id FROM zz_prints WHERE name='.prepare($nome_stampa))['id'];
-$id_module = Module::pool('Stampe contabili')->id;
+$id_module = (new Module())->getByName('Stampe contabili')->id_record;
 
 $year = (new Carbon($_SESSION['period_end']))->format('Y');
 $periodi[] = [
@@ -95,7 +95,7 @@ echo '
 if ($nome_stampa != 'Liquidazione IVA') {
     echo '
 		<div class="col-md-4">
-			{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_sezionale", "required": "1", "values": "query=SELECT id AS id, name AS descrizione FROM zz_segments WHERE id_module = (SELECT id FROM zz_modules WHERE name = \''.(($dir == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto').'\') AND is_fiscale = 1 UNION SELECT  -1 AS id, \'Tutti i sezionali\' AS descrizione" ]}
+			{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_sezionale", "required": "1", "values": "query=SELECT `zz_segments`.`id`, `name` AS descrizione FROM `zz_segments` WHERE `id_module` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = \''.(($dir == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto').'\') AND `is_fiscale` = 1 UNION SELECT  -1 AS id, \'Tutti i sezionali\' AS descrizione" ]}
 		</div>';
 }
 echo '

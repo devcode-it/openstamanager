@@ -27,6 +27,7 @@ use Modules\Checklists\Checklist;
 use Modules\Emails\Template;
 use Notifications\EmailNotification;
 use Util\Zip;
+use Models\Module;
 
 if (empty($structure) || empty($structure['enabled'])) {
     exit(tr('Accesso negato'));
@@ -41,7 +42,7 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
     // Controllo sui permessi di scrittura per il modulo
     if (Modules::getPermission($id_module) != 'rw') {
         flash()->error(tr('Non hai permessi di scrittura per il modulo _MODULE_', [
-            '_MODULE_' => '"'.Modules::get($id_module)['name'].'"',
+            '_MODULE_' => '"'.Module::find($id_module)->name.'"',
         ]));
     }
 
@@ -73,7 +74,7 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
                 $upload = Uploads::upload($_FILES['upload'], [
                     'name' => filter('nome_allegato'),
                     'category' => filter('categoria'),
-                    'id_module' => Modules::get('Gestione documentale')['id'],
+                    'id_module' => (new Module())->getByName('Gestione documentale')->id_record,
                     'id_record' => $id_record,
                 ]);
 

@@ -34,10 +34,11 @@ echo '
 $widgets = $dbo->fetchArray('SELECT 
         `zz_widgets`.*, 
         `zz_widgets_lang`.`name` as name,
-        `zz_modules`.`name` AS modulo
+        `zz_modules_lang`.`name` AS modulo
     FROM zz_widgets
         LEFT JOIN `zz_widgets_lang` ON (`zz_widgets`.`id` = `zz_widgets_lang`.`id_record` AND `zz_widgets_lang`.`id_lang` = "'.setting('Lingua').'")
         INNER JOIN `zz_modules` ON `zz_widgets`.`id_module` = `zz_modules`.`id`
+        LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.setting('Lingua').')
     ORDER BY 
         `id_module` ASC, `zz_widgets`.`order` ASC');
 

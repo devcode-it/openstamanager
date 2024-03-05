@@ -103,8 +103,8 @@ if (!function_exists('customDatabase')) {
     function customDatabase()
     {
         $database = database();
-        $modules = $database->fetchArray("SELECT name, CONCAT('modules/', `directory`) AS directory FROM `zz_modules` WHERE `options2` != ''");
-        $plugins = $database->fetchArray("SELECT `name`, CONCAT('plugins/', `directory`) AS directory FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins`.`id_lang` = ".setting('Lingua').") WHERE `options2` != ''");
+        $modules = $database->fetchArray("SELECT `name`, CONCAT('modules/', `directory`) AS directory FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = ".setting('Lingua').") WHERE `options2` != ''");
+        $plugins = $database->fetchArray("SELECT `name`, CONCAT('plugins/', `directory`) AS directory FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = ".setting('Lingua').") WHERE `options2` != ''");
 
         $results = array_merge($modules, $plugins);
 

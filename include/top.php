@@ -18,6 +18,7 @@
  */
 
 use Util\FileSystem;
+use Models\Module;
 
 include_once __DIR__.'/../core.php';
 
@@ -236,7 +237,7 @@ if (Auth::check()) {
                     { name: "tools", items : [ "Maximize", "ShowBlocks" ] },
                     { name: "about", items: [ "About" ] }
                 ],
-                order_manager_id: "'.($dbo->isInstalled() ? Modules::get('Stato dei servizi')['id'] : '').'",
+                order_manager_id: "'.($dbo->isInstalled() ? (new Module())->getByName('Stato dei servizi')->id_record : '').'",
                 dataload_page_buffer: '.setting('Lunghezza in pagine del buffer Datatables').',
                 tempo_attesa_ricerche: '.setting('Tempo di attesa ricerche in secondi').',
                 restrict_summables_to_selected: '.setting('Totali delle tabelle ristretti alla selezione').',

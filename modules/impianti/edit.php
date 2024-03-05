@@ -18,6 +18,9 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\Module;
+
+$id_modulo_categorie_impianti = (new Module())->getByName('Categorie Impianti')->id_record;
 
 $img = null;
 if (!empty($record['immagine'])) {
@@ -70,11 +73,11 @@ if (!empty($record['immagine'])) {
 						<div class="col-md-6">
                             <?php echo (!empty($record['id_categoria'])) ?
     Modules::link('Categorie impianti', $record['id_categoria'], null, null, 'class="pull-right"') : ''; ?>
-                            {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie_imp", "icon-after": "add|<?php echo Modules::get('Categorie impianti')['id']; ?>" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie_imp", "icon-after": "add|<?php echo $id_modulo_categorie_impianti; ?>" ]}
                         </div>
 
                         <div class="col-md-6">
-                            {[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "id_sottocategoria", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie_imp", "select-options": <?php echo json_encode(['id_categoria' => $record['id_categoria']]); ?>, "icon-after": "add|<?php echo Modules::get('Categorie impianti')['id']; ?>|id_original=<?php echo $record['id_categoria']; ?>" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "id_sottocategoria", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie_imp", "select-options": <?php echo json_encode(['id_categoria' => $record['id_categoria']]); ?>, "icon-after": "add|<?php echo $id_modulo_categorie_impianti; ?>|id_original=<?php echo $record['id_categoria']; ?>" ]}
                         </div>
 					</div>
 				</div>

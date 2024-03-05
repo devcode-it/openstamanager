@@ -170,7 +170,7 @@ echo '
 			processing: true,
 			serverSide: true,
 			ajax: {
-				url: "'.Module::pool('Listini cliente')->fileurl('ajax/table.php').'?id_listino='.$id_record.'",
+				url: "'.Module::find((new Module())->getByName('Listini cliente')->id_record)->fileurl('ajax/table.php').'?id_listino='.$id_record.'",
 				type: "GET",
 				dataSrc: "data",
 			},

@@ -30,6 +30,7 @@ use Modules\Articoli\Categoria;
 use Modules\Iva\Aliquota;
 use Plugins\ListinoClienti\DettaglioPrezzo;
 use Plugins\ListinoFornitori\DettaglioFornitore;
+use Models\Module;
 
 /**
  * Struttura per la gestione delle operazioni di importazione (da CSV) degli Articoli.
@@ -366,7 +367,7 @@ class CSV extends CSVImporter
             if (!empty($file_content)) {
                 if ($record['import_immagine'] == 2 || $record['import_immagine'] == 4) {
                     \Uploads::deleteLinked([
-                        'id_module' => \Modules::get('Articoli')['id'],
+                        'id_module' => (new Module())->getByName('Articoli')->id_record,
                         'id_record' => $articolo->id,
                     ]);
 
@@ -383,7 +384,7 @@ class CSV extends CSVImporter
                     'name' => 'Immagine',
                     'category' => 'Immagini',
                     'original_name' => $name,
-                    'id_module' => \Modules::get('Articoli')['id'],
+                    'id_module' => (new Module())->getByName('Articoli')->id_record,
                     'id_record' => $articolo->id,
                 ], [
                     'thumbnails' => true,

@@ -18,12 +18,12 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\Module;
 
 $block_edit = $record['flag_completato'];
+$module = Module::find($id_module);
 
-$module = Modules::get($id_module);
-
-if ($module['name'] == 'Ordini cliente') {
+if ($module->name == 'Ordini cliente') {
     $dir = 'entrata';
 } else {
     $dir = 'uscita';
@@ -262,7 +262,7 @@ if (!$block_edit) {
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero":  1}, "icon-after": "add|'.Modules::get('Articoli')['id'].'" ]}
+                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero":  1}, "icon-after": "add|'.(new Module())->getByName('Articoli')->id_record.'" ]}
                 </div>
 
                 <div class="col-md-4" style="margin-top: 25px">

@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Models\User;
+use Models\Module;
 
 $id_utente = filter('id_utente');
 
@@ -148,13 +149,42 @@ switch (filter('op')) {
 
         // Elimina utente + disattivazione token
     case 'delete_user':
-        if ($dbo->query('DELETE FROM zz_users WHERE id='.prepare($id_utente))) {
-            flash()->info(tr('Utente eliminato!'));
+        $utente = User::find($id_utente);
 
-            if ($dbo->query('DELETE FROM zz_tokens WHERE id_utente='.prepare($id_utente))) {
-                flash()->info(tr('Token eliminato!'));
+        /* Controlla che non posso auto eliminarmi */
+        if (Auth::user()->id != $utente->id) {
+
+            /* Controlla che l'utente che voglio eliminare non presenti logs associati */
+            if (count($utente->logs)>0){
+
+                if ($dbo->query('DELETE FROM zz_users WHERE id='.prepare($id_utente))) {
+                    flash()->info(tr('Utente eliminato!'));
+
+                    if ($dbo->query('DELETE FROM zz_tokens WHERE id_utente='.prepare($id_utente))) {
+                        flash()->info(tr('Token eliminato!'));
+                    }
+                }
             }
+            else {
+                flash()->error(tr('L\'utente _USER_ presenta dei log attivi. Impossibile eliminare utente.', ['_USER_' => $utente->username]));
+
+                $dbo->update('zz_users', [
+                    'enabled' => 0,
+                ], ['id' => $id_utente]);
+
+
+                flash()->info(tr('Utente disabilitato!'));
+
+                if ($dbo->query('DELETE FROM zz_tokens WHERE id_utente='.prepare($id_utente))) {
+                    flash()->info(tr('Token eliminato!'));
+                } flash()->info(tr('Token eliminato!'));
+            }
+
+        }else{
+                flash()->error(tr('L\'utente _USER_ è l\'utente attuale. Impossibile eliminare utente.', ['_USER_' => $utente->username]));
         }
+
+
         break;
 
         // Abilita API utente
@@ -222,7 +252,7 @@ switch (filter('op')) {
             $dbo->query('DELETE FROM zz_permissions WHERE idgruppo='.prepare($id_record));
 
             foreach ($permessi as $module_name => $permesso) {
-                $module_id = $dbo->fetchArray('SELECT `id` FROM `zz_modules` WHERE `name` = "'.$module_name.'"')[0]['id'];
+                $module_id = (new Module())->getByName($module_name)->id_record;
 
                 $dbo->insert('zz_permissions', [
                     'idgruppo' => $id_record,

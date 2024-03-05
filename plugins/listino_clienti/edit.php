@@ -19,6 +19,7 @@
 
 use Carbon\Carbon;
 use Plugins\ListinoClienti\DettaglioPrezzo;
+use Models\Module;
 
 include_once __DIR__.'/../../core.php';
 
@@ -33,7 +34,7 @@ echo '
     <div class="box-body">
         <div class="row">
             <div class="col-md-9">
-                {[ "type": "select", "label": "'.tr('Cliente').'", "name": "id_cliente_informazioni",  "required":"1", "ajax-source": "clienti", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica=Cliente&readonly_tipo=1" ]}
+                {[ "type": "select", "label": "'.tr('Cliente').'", "name": "id_cliente_informazioni",  "required":"1", "ajax-source": "clienti", "icon-after": "add|'.(new Module())->getByName('Anagrafiche')->id_record.'|tipoanagrafica=Cliente&readonly_tipo=1" ]}
             </div>
 
             <div class="col-md-3">

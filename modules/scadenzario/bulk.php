@@ -25,6 +25,7 @@ use Modules\Emails\Mail;
 use Modules\Emails\Template;
 use Modules\Fatture\Fattura;
 use Modules\Scadenzario\Scadenza;
+use Models\Module;
 
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 
@@ -93,7 +94,7 @@ switch (post('op')) {
 
                     // Allego stampa della fattura se non presente
                     if (empty($fattura_allegata)) {
-                        $print_predefined = $dbo->selectOne('zz_prints', '*', ['predefined' => 1, 'id_module' => Modules::get('Fatture di vendita')['id']]);
+                        $print_predefined = $dbo->selectOne('zz_prints', '*', ['predefined' => 1, 'id_module' => (new Module())->GetByName('Fatture di vendita')->id_record]);
 
                         $print = Prints::render($print_predefined['id'], $id_documento, null, true);
                         $upload = Uploads::upload($print['pdf'], [
@@ -179,7 +180,7 @@ $operations['registrazione-contabile'] = [
         'title' => tr('Registrazione contabile'),
         'type' => 'modal',
         'origine' => 'scadenzario',
-        'url' => base_path().'/add.php?id_module='.Modules::get('Prima nota')['id'],
+        'url' => base_path().'/add.php?id_module='.(new Module())->GetByName('Prima nota')->id_record,
     ],
 ];
 

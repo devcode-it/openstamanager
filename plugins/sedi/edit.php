@@ -18,6 +18,8 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\Module;
+use Models\Plugin;
 
 $referenti = $dbo->select('an_referenti', 'id', [], ['idsede' => $id_record, 'idanagrafica' => $id_parent]);
 $referenti = implode(',', array_column($referenti, 'id'));
@@ -93,7 +95,7 @@ echo '
         </div>
 
 		<div class="col-md-4">
-			{[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "ajax-source": "zone",  "value": "$idzona$", "placeholder": "'.tr('Nessuna zona').'", "icon-after": "add|'.Modules::get('Zone')['id'].'" ]}
+			{[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "ajax-source": "zone",  "value": "$idzona$", "placeholder": "'.tr('Nessuna zona').'", "icon-after": "add|'.(new Module())->getByName('Zone')->id_record.'" ]}
 		</div>
 		<div class="col-md-4">
 			{[ "type": "number", "label": "'.tr('Km').'", "name": "km", "value": "$km$" ]}
@@ -101,7 +103,7 @@ echo '
 	</div>
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "select", "multiple": "1", "label": "'.tr('Referenti').'", "name": "id_referenti[]", "value": "'.$referenti.'", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$id_parent.'}, "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|id_plugin='.Plugins::get('Referenti')['id'].'&id_parent='.$id_parent.'" ]}
+			{[ "type": "select", "multiple": "1", "label": "'.tr('Referenti').'", "name": "id_referenti[]", "value": "'.$referenti.'", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$id_parent.'}, "icon-after": "add|'.(new Module())->getByName('Anagrafiche')->id_record.'|id_plugin='.(new Plugin())->getByName('Referenti')->id_record.'&id_parent='.$id_parent.'" ]}
 		</div>
 		<div class="col-md-6">
 			{[ "type": "textarea", "label": "'.tr('Note').'", "name": "note", "value": "$note$" ]}

@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\Module;
 
 if ($module->name == 'Fatture di vendita') {
     $attributi_visibili = $record['dati_aggiuntivi_fe'] != null || $record['stato'] == 'Bozza';
@@ -68,7 +69,7 @@ if (empty($record['is_fiscale'])) {
     </button>';
 }
 
-$modulo_prima_nota = Modules::get('Prima nota');
+$modulo_prima_nota = (new Module())->getByName('Prima nota')->id_record;
 $totale_scadenze = $dbo->fetchOne('SELECT SUM(da_pagare - pagato) AS differenza, SUM(da_pagare) AS da_pagare FROM co_scadenziario WHERE iddocumento = '.prepare($id_record));
 if (!empty($record['is_fiscale'])) {
     $differenza = isset($totale_scadenze) ? $totale_scadenze['differenza'] : 0;
@@ -86,7 +87,7 @@ if (!empty($record['is_fiscale'])) {
     }
 
     echo '
-        <a class="btn btn-primary '.(!empty($modulo_prima_nota) && !empty($registrazione_insoluto) ? '' : 'disabled').'" data-href="'.base_path().'/add.php?id_module='.$modulo_prima_nota['id'].'&id_documenti='.$id_record.'&single=1&is_insoluto=1" data-title="'.tr('Registra insoluto').'">
+        <a class="btn btn-primary '.(!empty($modulo_prima_nota) && !empty($registrazione_insoluto) ? '' : 'disabled').'" data-href="'.base_path().'/add.php?id_module='.$modulo_prima_nota.'&id_documenti='.$id_record.'&single=1&is_insoluto=1" data-title="'.tr('Registra insoluto').'">
             <i class="fa fa-ban fa-inverse"></i> '.tr('Registra insoluto').'
         </a>';
 
@@ -103,7 +104,7 @@ if (!empty($record['is_fiscale'])) {
     }
 
     echo '
-        <a class="btn btn-primary '.(!empty($modulo_prima_nota) && !empty($registrazione_contabile) ? '' : 'disabled').'" data-href="'.base_path().'/add.php?id_module='.$modulo_prima_nota['id'].'&id_documenti='.$id_record.'&single=1" data-title="'.tr('Registra contabile').'">
+        <a class="btn btn-primary '.(!empty($modulo_prima_nota) && !empty($registrazione_contabile) ? '' : 'disabled').'" data-href="'.base_path().'/add.php?id_module='.$modulo_prima_nota.'&id_documenti='.$id_record.'&single=1" data-title="'.tr('Registra contabile').'">
             <i class="fa fa-euro"></i> '.tr('Registra contabile').'
         </a>';
 

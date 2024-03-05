@@ -28,7 +28,7 @@ echo '
             <div class="data">';
 
 $key = 0;
-$fields = $dbo->fetchArray('SELECT * FROM zz_views WHERE id_module='.prepare($record['id']).' ORDER BY `order` ASC, updated_at DESC ');
+$fields = $dbo->fetchArray('SELECT * FROM `zz_views` WHERE `id_module`='.prepare($record->id).' ORDER BY `order` ASC, `updated_at` DESC ');
 foreach ($fields as $key => $field) {
     $editable = !($field['default'] && $enable_readonly);
 

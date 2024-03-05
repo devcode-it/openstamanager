@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/../../../core.php';
+use Models\Module;
 
 $record['abilita_serial'] = ($record['serial'] > 0) ? 1 : $record['abilita_serial'];
 if (empty($record['abilita_serial'])) {
@@ -151,7 +152,7 @@ if (empty(get('modal'))) {
             foreach ($acquisti as $acquisto) {
                 // Acquistato su fatture
                 if (!empty($acquisto['id_riga_documento'])) {
-                    $module_id = Modules::get('Fatture di acquisto')['id'];
+                    $module_id = (new Module())->GetByName('Fatture di acquisto')->id_record;
 
                     // Ricerca vendite su fatture
                     $query = 'SELECT *, `co_tipidocumento_lang`.`name` AS tipo_documento, `co_tipidocumento`.`dir`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_documenti`.`data` FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `co_righe_documenti`.`id`='.prepare($acquisto['id_riga_documento']);
@@ -162,7 +163,7 @@ if (empty(get('modal'))) {
 
                 // Acquistato su ddt
                 elseif (!empty($acquisto['id_riga_ddt'])) {
-                    $module_id = Modules::get('Ddt di acquisto')['id'];
+                    $module_id = (new Module())->GetByName('Ddt di acquisto')->id_record;
 
                     $query = 'SELECT 
                             *, 
@@ -185,7 +186,7 @@ if (empty(get('modal'))) {
 
                 // Inserito su ordini
                 elseif (!empty($acquisto['id_riga_ordine'])) {
-                    $module_id = Modules::get('Ordini cliente')['id'];
+                    $module_id = (new Module())->GetByName('Ordini cliente')->id_record;
 
                     // Ricerca inserimenti su ordini
                     $query = 'SELECT 
@@ -261,7 +262,7 @@ if (empty(get('modal'))) {
             foreach ($vendite as $vendita) {
                 // Venduto su fatture
                 if (!empty($vendita['id_riga_documento'])) {
-                    $module_id = Modules::get('Fatture di vendita')['id'];
+                    $module_id = (new Module())->GetByName('Fatture di vendita')->id_record;
 
                     // Ricerca vendite su fatture
                     $query = 'SELECT *, `co_tipidocumento_lang`.`name` AS tipo_documento, `co_tipidocumento`.`dir`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`,`co_documenti`.`data` FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id`=`co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang`='.prepare(setting('Lingua')).') WHERE `co_righe_documenti`.`id`='.prepare($vendita['id_riga_documento']);
@@ -272,7 +273,7 @@ if (empty(get('modal'))) {
 
                 // Venduto su ddt
                 elseif (!empty($vendita['id_riga_ddt'])) {
-                    $module_id = Modules::get('Ddt di vendita')['id'];
+                    $module_id = (new Module())->GetByName('Ddt di vendita')->id_record;
 
                     $query = 'SELECT 
                             *, 
@@ -295,7 +296,7 @@ if (empty(get('modal'))) {
 
                 // Inserito su ordini
                 elseif (!empty($vendita['id_riga_ordine'])) {
-                    $module_id = Modules::get('Ordini cliente')['id'];
+                    $module_id = (new Module())->GetByName('Ordini cliente')->id_record;
 
                     // Ricerca inserimenti su ordini
                     $query = 'SELECT 
@@ -319,7 +320,7 @@ if (empty(get('modal'))) {
 
                 // Inserito su intervento
                 elseif (!empty($vendita['id_riga_intervento'])) {
-                    $module_id = Modules::get('Interventi')['id'];
+                    $module_id = (new Module())->GetByName('Interventi')->id_record;
 
                     // Ricerca inserimenti su interventi
                     $query = 'SELECT in_righe_interventi.*, in_interventi.codice, ( SELECT orario_inizio FROM in_interventi_tecnici WHERE idintervento=in_righe_interventi.idintervento LIMIT 0,1 ) AS data FROM in_righe_interventi JOIN in_interventi ON in_interventi.id = in_righe_interventi.idintervento WHERE in_righe_interventi.id='.prepare($vendita['id_riga_intervento']);
@@ -332,7 +333,7 @@ if (empty(get('modal'))) {
 
                 // Inserito su contratto
                 elseif (!empty($vendita['id_riga_contratto'])) {
-                    $module_id = Modules::get('Contratti')['id'];
+                    $module_id = (new Module())->GetByName('Contratti')->id_record;
 
                     // Ricerca vendite su contratti
                     $query = 'SELECT *, "Contratto" AS tipo_documento, ( SELECT data_bozza FROM co_contratti WHERE id=idcontratto ) AS data, ( SELECT numero FROM co_contratti WHERE id=idcontratto ) AS numero FROM co_righe_contratti WHERE co_righe_contratti.id='.prepare($vendita['id_riga_contratto']);
@@ -343,7 +344,7 @@ if (empty(get('modal'))) {
 
                 // Inserito su vendita banco
                 elseif (!empty($vendita['id_riga_venditabanco'])) {
-                    $module_id = Modules::get('Vendita al banco')['id'];
+                    $module_id = (new Module())->GetByName('Vendita al banco')->id_record;
 
                     // Ricerca vendite su contratti
                     $query = 'SELECT *, "Vendita al banco" AS tipo_documento, ( SELECT data FROM vb_venditabanco WHERE id=idvendita ) AS data, ( SELECT numero FROM vb_venditabanco WHERE id=idvendita ) AS numero FROM vb_righe_venditabanco WHERE vb_righe_venditabanco.id='.prepare($vendita['id_riga_venditabanco']);

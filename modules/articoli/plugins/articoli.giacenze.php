@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/../../../core.php';
+use Models\Module;
 
 $impegnato = 0;
 $ordinato = 0;
@@ -90,7 +91,7 @@ if (!empty($ordini)) {
 
                     <tbody>';
 
-    $modulo = Modules::get('Ordini cliente');
+    $id_modulo = (new Module())->GetByName('Ordini cliente')->id_record;
     foreach ($ordini as $documento) {
         $numero = !empty($documento['numero_esterno']) ? $documento['numero_esterno'] : $documento['numero'];
         $qta = $documento['qta_impegnata'];
@@ -99,7 +100,7 @@ if (!empty($ordini)) {
                     <tr>
                         <td>
                             <small>
-                                '.Modules::link($modulo['id'], $documento['id'], tr('Ordine num. _NUM_ del _DATE_', [
+                                '.Modules::link($id_modulo, $documento['id'], tr('Ordine num. _NUM_ del _DATE_', [
                     '_NUM_' => $numero,
                     '_DATE_' => dateFormat($documento['data']),
                 ])).'
@@ -158,7 +159,7 @@ if (!empty($ordini)) {
 
                     <tbody>';
 
-    $modulo = Modules::get('Ordini fornitore');
+    $id_modulo = (new Module())->GetByName('Ordini fornitore')->id_record;
     foreach ($ordini as $documento) {
         $numero = !empty($documento['numero_esterno']) ? $documento['numero_esterno'] : $documento['numero'];
         $qta = $documento['qta_ordinata'];
@@ -167,7 +168,7 @@ if (!empty($ordini)) {
                     <tr>
                         <td>
                             <small>
-                                '.Modules::link($modulo['id'], $documento['id'], tr('Ordine num. _NUM_ del _DATE_', [
+                                '.Modules::link($id_modulo, $documento['id'], tr('Ordine num. _NUM_ del _DATE_', [
                                     '_NUM_' => $numero,
                                     '_DATE_' => dateFormat($documento['data']),
                                 ])).'

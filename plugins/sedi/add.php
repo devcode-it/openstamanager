@@ -18,6 +18,8 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\Module;
+use Models\Plugin;
 
 echo '
 <form action="" method="post" role="form">
@@ -62,7 +64,7 @@ echo '
 			{[ "type": "select", "label": "'.tr('Nazione').'", "name": "id_nazione", "ajax-source": "nazioni", "required": 1 ]}
 		</div>
         <div class="col-md-3">
-			{[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "ajax-source": "zone", "placeholder": "'.tr('Nessuna zona').'", "icon-after": "add|'.Modules::get('Zone')['id'].'" ]}
+			{[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "ajax-source": "zone", "placeholder": "'.tr('Nessuna zona').'", "icon-after": "add|'.(new Module())->getByName('Zone')->id_record.'" ]}
 		</div>
 	</div>
 
@@ -95,7 +97,7 @@ echo '
 	</div>
 	<div class="row">
 		<div class="col-md-12">
-			{[ "type": "select", "multiple": "1", "label": "'.tr('Referenti').'", "name": "id_referenti[]", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$id_parent.'}, "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|id_plugin='.Plugins::get('Referenti')['id'].'&id_parent='.$id_parent.'" ]}
+			{[ "type": "select", "multiple": "1", "label": "'.tr('Referenti').'", "name": "id_referenti[]", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$id_parent.'}, "icon-after": "add|'.(new Module())->getByName('Anagrafiche')->id_record.'|id_plugin='.(new Plugin())->getByName('Referenti')->id_record.'&id_parent='.$id_parent.'" ]}
 		</div>
 	</div>';
 

@@ -68,13 +68,13 @@ class ServicesHook extends Manager
                 ]).'</ul>';
             }
 
-            $module = Module::pool('Stato dei servizi');
+            $id_module = (new Module())->getByName('Stato dei servizi')->id_record;
         }
 
         return [
             'icon' => null,
             'message' => $message,
-            'link' => base_path().'/controller.php?id_module='.$module->id,
+            'link' => base_path().'/controller.php?id_module='.$id_module,
             'show' => Services::isEnabled() && !empty($message),
         ];
     }

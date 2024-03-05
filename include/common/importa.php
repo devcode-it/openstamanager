@@ -22,6 +22,7 @@ use Modules\Fatture\Stato as StatoFattura;
 use Modules\Ordini\Stato as StatoOrdine;
 use Modules\DDT\Stato;
 use Plugins\ListinoFornitori\DettaglioFornitore;
+use Models\Module;
 
 // Inizializzazione
 $documento = $options['documento'];
@@ -32,22 +33,22 @@ if (empty($documento)) {
 
 // Informazioni utili
 $dir = $documento->direzione;
-$original_module = Modules::get($documento->module);
+$original_module = Module::find((new Module())->getByName($documento->module)->id_record);
 
 $name = !empty($documento_finale) ? $documento_finale->module : $options['module'];
-$final_module = Modules::get($name);
-$id_segment = $_SESSION['module_'.$final_module['id']]['id_segment'];
+$final_module = Module::find((new Module())->getByName($name)->id_record);
+$id_segment = $_SESSION['module_'.$final_module->id]['id_segment'];
 
 // IVA predefinita
 $id_iva = $id_iva ?: setting('Iva predefinita');
 
 $righe_totali = $documento->getRighe();
-if ($final_module['name'] == 'Interventi') {
+if ($final_module->name == 'Interventi') {
     $righe = $righe_totali->where('is_descrizione', '=', 0)
         ->where('qta_rimanente', '>', 0);
     $righe_evase = $righe_totali->where('is_descrizione', '=', 0)
         ->where('qta_rimanente', '=', 0);
-} elseif ($final_module['name'] == 'Ordini fornitore') {
+} elseif ($final_module->name == 'Ordini fornitore') {
     $righe = $righe_totali;
     $righe_evase = collect();
 } else {
@@ -62,7 +63,7 @@ if ($righe->isEmpty()) {
     return;
 }
 
-$link = !empty($documento_finale) ? base_path().'/editor.php?id_module='.$final_module['id'].'&id_record='.$documento_finale->id : base_path().'/controller.php?id_module='.$final_module['id'];
+$link = !empty($documento_finale) ? base_path().'/editor.php?id_module='.$final_module->id.'&id_record='.$documento_finale->id : base_path().'/controller.php?id_module='.$final_module->id;
 
 echo '
 <form action="'.$link.'" method="post">
@@ -91,12 +92,12 @@ if (!empty($options['create_document'])) {
                 </div>';
 
     // Opzioni aggiuntive per le Fatture
-    if (in_array($final_module['name'], ['Fatture di vendita', 'Fatture di acquisto'])) {
+    if (in_array($final_module->name, ['Fatture di vendita', 'Fatture di acquisto'])) {
         $stato_predefinito = (new StatoFattura())->getByName('Bozza')->id_record;
 
         if (!empty($options['reversed'])) {
             $idtipodocumento = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name` = "Nota di credito" AND `dir` = \''.$dir.'\'')['id'];
-        } elseif (in_array($original_module['name'], ['Ddt di vendita', 'Ddt di acquisto'])) {
+        } elseif (in_array($original_module->name, ['Ddt di vendita', 'Ddt di acquisto'])) {
             $idtipodocumento = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name` = '.($dir == 'uscita' ? 'Fattura differita di acquisto' : 'Fattura differita di vendita').' AND `dir` = \''.$dir.'\'')['id'];
         } else {
             $idtipodocumento = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `dir` = \''.$dir.'\' AND `predefined` = 1')['id'];
@@ -117,7 +118,7 @@ if (!empty($options['create_document'])) {
     }
 
     // Opzioni aggiuntive per gli Interventi
-    elseif ($final_module['name'] == 'Interventi') {
+    elseif ($final_module->name == 'Interventi') {
         echo '
             <div class="col-md-6">
                 {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato_intervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `in_statiintervento_lang`.`name` as `descrizione`, `colore` AS _bgcolor_ FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `deleted_at` IS NULL AND `is_completato` = 0 ORDER BY `name`" ]}
@@ -129,7 +130,7 @@ if (!empty($options['create_document'])) {
     }       
 
     // Opzioni aggiuntive per i Contratti
-    elseif ($final_module['name'] == 'Contratti') {
+    elseif ($final_module->name == 'Contratti') {
         $stato_predefinito = (new StatoContratto())->getByName('Bozza')->id_record;
 
         echo '
@@ -139,7 +140,7 @@ if (!empty($options['create_document'])) {
     }
 
     // Opzioni aggiuntive per i DDT
-    elseif (in_array($final_module['name'], ['Ddt di vendita', 'Ddt di acquisto'])) {
+    elseif (in_array($final_module->name, ['Ddt di vendita', 'Ddt di acquisto'])) {
         $stato_predefinito = (new Stato())->getByName('Bozza')->id_record;
 
         echo '
@@ -148,12 +149,12 @@ if (!empty($options['create_document'])) {
             </div>
 
             <div class="col-md-6">
-                {[ "type": "select", "label": "'.tr('Causale trasporto').'", "name": "id_causale_trasporto", "required": 1, "ajax-source": "causali", "icon-after": "add|'.Modules::get('Causali')['id'].'", "help": "'.tr('Definisce la causale del trasporto').'" ]}
+                {[ "type": "select", "label": "'.tr('Causale trasporto').'", "name": "id_causale_trasporto", "required": 1, "ajax-source": "causali", "icon-after": "add|'.(new Module())->getByname('Causali')->id_record.'", "help": "'.tr('Definisce la causale del trasporto').'" ]}
             </div>';
     }
 
     // Opzioni aggiuntive per gli Ordini
-    elseif (in_array($final_module['name'], ['Ordini cliente', 'Ordini fornitore'])) {
+    elseif (in_array($final_module->name, ['Ordini cliente', 'Ordini fornitore'])) {
         $stato_predefinito = (new StatoOrdine())->getByName('Bozza')->id_record;
 
         echo '
@@ -169,13 +170,13 @@ if (!empty($options['create_document'])) {
 
         echo '
             <div class="col-md-6">
-                {[ "type": "select", "label": "'.$tipo_anagrafica.'", "name": "idanagrafica", "required": 1, "ajax-source": "'.$ajax.'", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica='.$tipo_anagrafica.'" ]}
+                {[ "type": "select", "label": "'.$tipo_anagrafica.'", "name": "idanagrafica", "required": 1, "ajax-source": "'.$ajax.'", "icon-after": "add|'.(new Module())->getByName('Anagrafiche')->id_record.'|tipoanagrafica='.$tipo_anagrafica.'" ]}
             </div>';
     }
 
     echo '
                 <div class="col-md-6">
-                    {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $final_module['id'], 'is_sezionale' => 1]).', "value": "'.$database->selectOne('co_tipidocumento', 'id_segment', ['id' => $idtipodocumento])['id_segment'].'" ]}
+                    {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $final_module->id, 'is_sezionale' => 1]).', "value": "'.$database->selectOne('co_tipidocumento', 'id_segment', ['id' => $idtipodocumento])['id_segment'].'" ]}
                 </div>
             </div>
         </div>
@@ -183,7 +184,7 @@ if (!empty($options['create_document'])) {
 }
 
 // Conto, rivalsa INPS, ritenuta d'acconto e ritenuta previdenziale
-if (in_array($final_module['name'], ['Fatture di vendita', 'Fatture di acquisto']) && !in_array($original_module['name'], ['Fatture di vendita', 'Fatture di acquisto'])) {
+if (in_array($final_module->name, ['Fatture di vendita', 'Fatture di acquisto']) && !in_array($original_module->name, ['Fatture di vendita', 'Fatture di acquisto'])) {
     $id_rivalsa_inps = setting('Cassa previdenziale predefinita');
     if ($dir == 'uscita') {
         $id_ritenuta_acconto = $documento->anagrafica->id_ritenuta_acconto_acquisti;
@@ -293,14 +294,14 @@ echo '
             <tbody id="righe_documento_importato">';
 
 foreach ($righe as $i => $riga) {
-    if ($final_module['name'] == 'Ordini fornitore') {
+    if ($final_module->name == 'Ordini fornitore') {
         $qta_rimanente = $riga['qta'];
     } else {
         $qta_rimanente = $riga['qta_rimanente'];
     }
 
     $attr = 'checked="checked"';
-    if ($original_module['name'] == 'Preventivi') {
+    if ($original_module->name == 'Preventivi') {
         if (empty($riga['confermato']) && $riga['is_descrizione'] == 0) {
             $attr = '';
         }

@@ -49,6 +49,13 @@ class OperationLog extends Model
      */
 
 
+    /**
+     * Build a new model instance and save it to the database.
+     *
+     * @param mixed $operation
+     * @return static|null
+     */
+
     public static function build($operation)
     {
         if (!\Auth::check()) {

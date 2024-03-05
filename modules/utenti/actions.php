@@ -149,6 +149,17 @@ switch (filter('op')) {
 
         // Elimina utente + disattivazione token
     case 'delete_user':
+
+        $utente = User::find($id_utente);
+
+        /* Controlla che non posso auto eliminarmi */
+        if (Auth::user()->id != $utente->id) {
+            
+            /* Controlla che l'utente che voglio eliminare non presenti logs associati */
+            if (count($utente->logs)>0){
+
+                if ($dbo->query('DELETE FROM zz_users WHERE id='.prepare($id_utente))) {
+                    flash()->info(tr('Utente eliminato!'));
         $utente = User::find($id_utente);
 
         /* Controlla che non posso auto eliminarmi */
@@ -159,6 +170,31 @@ switch (filter('op')) {
 
                 if ($dbo->query('DELETE FROM zz_users WHERE id='.prepare($id_utente))) {
                     flash()->info(tr('Utente eliminato!'));
+
+                    if ($dbo->query('DELETE FROM zz_tokens WHERE id_utente='.prepare($id_utente))) {
+                        flash()->info(tr('Token eliminato!'));
+                    }
+                }
+            }
+            else {
+                flash()->error(tr('L\'utente _USER_ presenta dei log attivi. Impossibile eliminare utente.', ['_USER_' => $utente->username]));
+                
+                $dbo->update('zz_users', [
+                    'enabled' => 0,
+                ], ['id' => $id_utente]);
+
+
+                flash()->info(tr('Utente disabilitato!'));
+
+                if ($dbo->query('DELETE FROM zz_tokens WHERE id_utente='.prepare($id_utente))) {
+                    flash()->info(tr('Token eliminato!'));
+                } flash()->info(tr('Token eliminato!'));
+            }
+
+        }else{
+                flash()->error(tr('L\'utente _USER_ è l\'utente attuale. Impossibile eliminare utente.', ['_USER_' => $utente->username]));
+        }
+
 
                     if ($dbo->query('DELETE FROM zz_tokens WHERE id_utente='.prepare($id_utente))) {
                         flash()->info(tr('Token eliminato!'));

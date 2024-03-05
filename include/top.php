@@ -413,8 +413,8 @@ if (Auth::check()) {
                             <li class="nav-button" >
                                 <p style="padding:10px 15px;">&nbsp;</p>
                             </li>';
-    //Visualizzo gli hooks solo agli amministratori e solo se non sono stati disabilitati.
-    if ($user->gruppo == 'Amministratori' && !$config['disable_hooks']) {
+    //Visualizzo gli hooks solo se non sono stati disabilitati
+    if (!$config['disable_hooks']) {
         echo '
                             <li class="dropdown notifications-menu nav-button">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -432,32 +432,31 @@ if (Auth::check()) {
 
                                     </ul></li>
                                 </ul>
-                            </li>
-
-                            <li class="nav-button"><a href="#" onclick="window.print()" class="tip nav-button" title="'.tr('Stampa').'">
-                                <i class="fa fa-print"></i>
-                            </a></li>
-
-                            <li class="nav-button"><a href="'.base_path().'/log.php" class="tip nav-button" title="'.tr('Log accessi').'">
-                                <i class="fa fa-book"></i>
-                            </a></li>';
+                            </li>';
     }
 
     echo '
-                            <li class="nav-button"><a data-href="'.base_path().'/shortcuts.php" data-title="'.tr('Scorciatoie da tastiera').'" class="tip nav-button" title="'.tr('Scorciatoie').'">
+                            <li class="nav-button"><a href="#" onclick="window.print()" class="tip nav-button" title="' . tr('Stampa') . '">
+                                <i class="fa fa-print"></i>
+                            </a></li>
+
+                            <li class="nav-button"><a href="' . base_path() . '/log.php" class="tip nav-button" title="' . tr('Log accessi') . '">
+                                <i class="fa fa-book"></i>
+                            </a></li>
+
+                            <li class="nav-button"><a data-href="' . base_path() . '/shortcuts.php" data-title="' . tr('Scorciatoie da tastiera') . '" class="tip nav-button" title="' . tr('Scorciatoie') . '">
                                 <i class="fa fa-keyboard-o"></i>
                             </a></li>
 
-                            <li class="nav-button"><a href="'.base_path().'/info.php" class="tip nav-button" title="'.tr('Informazioni').'">
+                            <li class="nav-button"><a href="' . base_path() . '/info.php" class="tip nav-button" title="' . tr('Informazioni') . '">
                                 <i class="fa fa-info"></i>
                             </a></li>
 
-                            <li class="nav-button"><a href="'.base_path().'/index.php?op=logout" onclick="sessionStorage.clear()" class="bg-red tip" title="'.tr('Esci').'">
+                            <li class="nav-button"><a href="' . base_path() . '/index.php?op=logout" onclick="sessionStorage.clear()" class="bg-red tip" title="' . tr('Esci') . '">
                                 <i class="fa fa-power-off"></i>
                             </a></li>
                         </ul>
                      </div>
-
 				</nav>
 			</header>
 

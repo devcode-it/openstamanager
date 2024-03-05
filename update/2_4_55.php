@@ -5,6 +5,7 @@ include __DIR__.'/../config.inc.php';
 // File e cartelle deprecate
 $files = [
     'assets/src/js/wacom/sigCaptDialog/libs/',
+    'modules/impianti/plugins/'
 ];
 
 foreach ($files as $key => $value) {

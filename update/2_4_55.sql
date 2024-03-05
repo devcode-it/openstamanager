@@ -1923,3 +1923,9 @@ HAVING
     2=2
 ORDER BY
     `id`, `nome` ASC' WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Utenti e permessi');
+
+-- Aggiunte note in impianto-intervento
+ALTER TABLE `my_impianti_interventi` ADD `note` TEXT NOT NULL AFTER `idimpianto`;
+
+-- Aggiornato plugin Impianti
+UPDATE `zz_plugins` SET `script` = '', `directory` = 'impianti_intervento', `options` = 'custom' WHERE `zz_plugins`.`id` = (SELECT `id_record` FROM `zz_plugins_lang` WHERE  `name` = 'Impianti');

@@ -49,6 +49,11 @@ switch ($resource) {
             $where[] = 'my_impianti.idsede='.prepare($superselect['idsede_destinazione'] ?: 0);
         }
 
+
+        if (!empty($superselect['idintervento'])) {
+            $where[] = 'my_impianti.id NOT IN(SELECT idimpianto FROM my_impianti_interventi WHERE idintervento='.prepare($superselect['idintervento']).')';
+        }
+
         if (!empty($search)) {
             $search_fields[] = 'my_impianti.nome LIKE '.prepare('%'.$search.'%');
             $search_fields[] = 'my_impianti.matricola LIKE '.prepare('%'.$search.'%');

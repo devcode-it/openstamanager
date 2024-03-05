@@ -82,7 +82,7 @@ class Modules
     {
         self::getModules();
 
-        return Module::pool($module);
+        return Module::find($module);
     }
 
     /**

@@ -61,13 +61,13 @@ $handler->setFormatter($formatter);
 $logger->pushHandler($handler);
 
 // Lettura della cache
-$ultima_esecuzione = Cache::pool('Ultima esecuzione del cron');
+$ultima_esecuzione = Cache::pool(Cache::where('name','Ultima esecuzione del cron')->first()->id);
 $data = $ultima_esecuzione->content;
 
-$in_esecuzione = Cache::pool('Cron in esecuzione');
-$cron_id = Cache::pool('ID del cron');
+$in_esecuzione = Cache::pool(Cache::where('name','Cron in esecuzione')->first()->id);
+$cron_id = Cache::pool(Cache::where('name','ID del cron')->first()->id);
 
-$disattiva = Cache::pool('Disabilita cron');
+$disattiva = Cache::pool(Cache::where('name','Disabilita cron')->first()->id);
 if ($disattiva->content || (in_array($_SERVER['HTTP_HOST'], ['localhost', '127.0.0.1']) && !$forza_cron_localhost)) {
     return;
 }

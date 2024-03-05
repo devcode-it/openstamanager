@@ -19,7 +19,7 @@
 
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
-
+use Models\Cache;
 /**
  * Classe dedicata alla gestione delle procedure di aggiornamento del database del progetto.
  *
@@ -208,8 +208,7 @@ class Update
             self::normalizeDatabase($database->getDatabaseName());
 
             if (class_exists('\Models\Cache')) {
-                Models\Cache::pool('Ultima versione di OpenSTAManager disponibile')->set(null);
-            }
+                Cache::pool(Cache::where('name','Ultima versione di OpenSTAManager disponibile')->first()->id)->set(null);            }
 
             // Correzione permessi per le cartelle backup e files
             $fs = new SymfonyFilesystem();

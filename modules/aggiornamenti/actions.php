@@ -39,8 +39,7 @@ switch (filter('op')) {
         }
 
         // Salvataggio della versione nella cache
-        Cache::pool('Ultima versione di OpenSTAManager disponibile')->set($versione);
-
+        Cache::pool(Cache::where('name','Ultima esecuzione del cron')->first()->id)->set($versione);
         echo $versione;
 
         break;

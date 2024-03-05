@@ -49,8 +49,8 @@ class Services
      */
     public static function getInformazioni($force = false)
     {
-        $cache = Cache::pool('Informazioni su Services');
-
+        $cache = Cache::pool(Cache::where('name','Informazioni su Services')->first()->id);
+        
         // Aggiornamento dei contenuti della cache
         if (!$cache->isValid() || $force) {
             $response = self::request('GET', 'info');

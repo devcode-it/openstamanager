@@ -335,6 +335,19 @@ if (empty($sessioni)) {
 }
 
 echo '
+    $("[id^=data_inizio_]").on("dp.change", function (e) {
+        let data_fine = $("#data_fine_" + $(this).closest("tr").data("id"));
+        if(data_fine.data("DateTimePicker").date() < e.date){
+            data_fine.data("DateTimePicker").date(e.date);
+        }
+    });
+
+    $("[id^=data_fine_]").on("dp.change", function (e) {
+        let data_inizio = $("#data_inizio_" + $(this).closest("tr").data("id"));
+        if(data_inizio.data("DateTimePicker").date() > e.date){
+            data_inizio.data("DateTimePicker").date(e.date);
+        }
+    });
 });
 
 /*
@@ -428,12 +441,6 @@ $("#tecnici .tipo_icon_after").on("change", function() {
 
 $("[id^=data_inizio_], [id^=data_fine_]").on("dp.hide", function (e) {
     aggiornaSessioneInline($(this).closest("tr").data("id"));
-});
-
-$("[id^=data_fine_]").on("dp.change", function (e) {
-    if($("[id^=data_inizio_]").data("DateTimePicker").date() > e.date){
-        $("[id^=data_inizio_]").data("DateTimePicker").date(e.date);
-    }
 });
 
 function caricaTecnici() {

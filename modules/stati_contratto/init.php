@@ -18,7 +18,10 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Modules\Contratti\Stato;
 
 if (isset($id_record)) {
     $record = $dbo->fetchOne('SELECT * FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON `co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` WHERE `co_staticontratti`.`id`='.prepare($id_record));
+
+    $stato = Stato::find($id_record);
 }

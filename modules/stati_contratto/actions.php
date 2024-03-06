@@ -23,23 +23,19 @@ use Modules\Contratti\Stato;
 
 switch (post('op')) {
     case 'update':
-        $id_stato_old = (new Stato())->getByName($record['name'])->id_record;
-        $id_stato = (new Stato())->getByName(post('descrizione'))->id_record;
+        $descrizione = post('descrizione');
+        $stato_new = Stato::find((new Stato())->getByName($descrizione)->id_record);
 
-        if ($id_stato) {
+        if ($stato_new) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato dei contratti.'));
         } else {
-            $dbo->update('co_staticontratti', [
-                'icona' => post('icona'),
-                'colore' => post('colore'),
-                'is_completato' => post('is_completato') ?: null,
-                'is_fatturabile' => post('is_fatturabile') ?: null,
-                'is_pianificabile' => post('is_pianificabile') ?: null,
-            ], ['id' => $id_stato_old]);
-
-            $dbo->update('co_staticontratti_lang', [
-                'name' => post('descrizione'),
-            ], ['id_record' => $id_stato_old]);
+            $stato->icona = post('icona');
+            $stato->colore = post('colore');
+            $stato->is_completato = post('is_completato');
+            $stato->is_fatturabile = post('is_fatturabile');
+            $stato->is_pianificabile = post('is_pianificabile');
+            $stato->name = $descrizione;
+            $stato->save();
 
             flash()->info(tr('Informazioni salvate correttamente.'));
         }
@@ -54,13 +50,15 @@ switch (post('op')) {
         $is_fatturabile = post('is_fatturabile') ?: null;
         $is_pianificabile = post('is_pianificabile') ?: null;
 
-        // controlla descrizione che non sia duplicata
-        if ((new Stato())->getByName($descrizione)->id_record) {
+        $stato_new = Stato::find((new Stato())->getByName($descrizione)->id_record);
+
+        if ($stato_new) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato dei contratti.'));
         } else {
-            $dbo->query('INSERT INTO `co_staticontratti` (`icona`, `colore`, `is_completato`, `is_fatturabile`, `is_pianificabile`) VALUES ('.prepare($icona).', '.prepare($colore).', '.prepare($is_completato).', '.prepare($is_fatturabile).', '.prepare($is_pianificabile).' )');
-            $id_record = $dbo->lastInsertedID();
-            $dbo->query('INSERT INTO `co_staticontratti_lang` (`name`, `id_record`, `id_lang`) VALUES ('.prepare($descrizione).', '.prepare($id_record).', '.prepare(setting('Lingua')).' )');
+            $stato = Stato::build($icona, $colore, $is_completato, $is_fatturabile, $is_pianificabile);
+            $id_record= $dbo->lastInsertedID();
+            $stato->name = $descrizione;
+            $stato->save();
 
             flash()->info(tr('Nuovo stato contratto aggiunto.'));
         }

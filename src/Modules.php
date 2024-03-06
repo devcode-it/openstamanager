@@ -248,7 +248,7 @@ class Modules
         $menus = self::getHierarchy();
 
         $module = Modules::getCurrent();
-        $module_name = isset($module) ? $module->name : '';
+        $module_name = isset($module) ? $module->title : '';
 
         $result = '';
         foreach ($menus as $menu) {

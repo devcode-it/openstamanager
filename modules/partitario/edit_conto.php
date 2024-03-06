@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\Module;
 
 $idconto = get('id');
 $lvl = get('lvl');
@@ -30,8 +31,8 @@ if ($lvl == 2) {
 }
 
 $info = $dbo->fetchOne($query);
-
-?><form action="<?php echo base_path(); ?>/editor.php?id_module=<?php echo Modules::get('Piano dei conti')['id']; ?>" method="post">
+?>
+<form action="<?php echo base_path(); ?>/editor.php?id_module=<?php echo (new Module())->getByName('Piano dei conti')->id_record; ?>" method="post">
     <input type="hidden" name="op" value="edit">
     <input type="hidden" name="backto" value="record-list">
     <input type="hidden" name="lvl" value="<?php echo $lvl; ?>">
@@ -50,7 +51,7 @@ $info = $dbo->fetchOne($query);
     </div>
     <div class="row">
         <div class="col-md-4 <?php echo intval($lvl != 3) ? 'hidden' : ''; ?>">
-            {[ "type": "number", "decimals": 0, "label": "<?php echo tr('Percentuale deducibile'); ?>", "name": "percentuale_deducibile", "value": "<?php echo $info['percentuale_deducibile']; ?>", "icon-after": "<i class=\"fa fa-percent\"></i>", "max-value": "100", "min-value": "0" ]}
+            {[ "type": "number", "decimals": 0, "label": "<?php echo tr('Percentuale deducibile'); ?>", "name": "percentuale_deducibile", "value": "<?php echo $info['percentuale_deducibile']; ?>", "icon-after": "<i class="fa fa-percent"></i>", "max-value": "100", "min-value": "0" ]}
         </div>
 
         <div class="col-md-4 <?php echo intval($lvl != 2) ? 'hidden' : ''; ?>">

@@ -363,7 +363,6 @@ echo input([
     'type' => 'ckeditor',
     'label' => tr('Richiesta'),
     'name' => 'richiesta',
-    'id' => 'richiesta_add',
     'required' => 1,
     'value' => $record['richiesta'],
     'extra' => 'style=\'max-height:80px;\'',
@@ -375,7 +374,6 @@ echo input([
     'type' => 'ckeditor',
     'label' => tr('Descrizione'),
     'name' => 'descrizione',
-    'id' => 'descrizione_add',
     'value' => $record['descrizione'],
     'extra' => 'style=\'max-height:80px;\'',
 ]);

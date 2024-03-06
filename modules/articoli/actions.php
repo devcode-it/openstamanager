@@ -95,7 +95,7 @@ switch (post('op')) {
                     'prezzo_acquisto' => post('prezzo_acquisto'),
                     'prezzo_vendita' => post('prezzo_vendita'),
                     'idiva_vendita' => post('idiva_vendita') ?: null,
-                    'iva_vendita' => $iva ? $iva->descrizione : null,
+                    'iva_vendita' => $iva ? $iva->name : null,
                     'um_secondaria' => post('um_secondaria'),
                     'um' => post('um'),
                 ],

@@ -33,12 +33,10 @@ class Stato extends Model
         return $this->hasMany(Intervento::class, 'idstatointervento');
     }
 
-    public static function build($nome)
+    public static function build($codice)
     {
         $model = new static();
-
-        $model->codice = 'NEW';
-        $model->descrizione = $nome;
+        $model->codice = $codice;
         $model->save();
 
         return $model;

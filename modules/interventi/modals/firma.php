@@ -20,10 +20,11 @@
 include_once __DIR__.'/../../../core.php';
 
 use Modules\Interventi\Intervento;
+use Models\PrintTemplate;
 
 $id_records = explode(';', get('id_records'));
 $id_print = setting('Stampa per anteprima e firma');
-$template = Prints::get($id_print)['name'];
+$template = PrintTemplate::find($id_print)->name;
 
 $interventi_completati = [];
 $interventi_firmati = [];

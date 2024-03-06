@@ -282,7 +282,7 @@ class Modules
             $testo = $testo.' <i class="fa fa-external-link"></i>';
         }
 
-        $module = self::get($modulo);
+        $module = self::get((new Module())->getByName($modulo)->id_record);
 
         $extra .= !empty($blank) ? ' target="_blank"' : '';
 
@@ -329,7 +329,7 @@ class Modules
         $link = (!empty($element['option']) && $element['option'] != 'menu') ? base_path().'/controller.php?id_module='.$element['id'] : 'javascript:;';
         $title = $element['title'];
         $target = '_self'; // $target = ($element['new'] == 1) ? '_blank' : '_self';
-        $active = ($actual == $element['name']);
+        $active = ($actual == $title);
         $show = (self::getPermission($element['id']) != '-' && !empty($element['enabled'])) ? true : false;
 
         $submenus = $element['all_children'];

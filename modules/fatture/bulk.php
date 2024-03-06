@@ -499,7 +499,7 @@ switch (post('op')) {
                 $fattura->data_registrazione = post('data_registrazione');
             }
 
-            if ($stato_precedente->descrizione == 'Bozza' && $fattura->isFiscale()) {
+            if ($stato_precedente->name == 'Bozza' && $fattura->isFiscale()) {
                 $fattura->stato()->associate($new_stato);
                 $results = $fattura->save();
                 $message = '';

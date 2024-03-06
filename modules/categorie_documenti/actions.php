@@ -50,8 +50,9 @@ switch (post('op')) {
                 '_NAME_' => $descrizione,
             ]));
         } else {
-            $categoria = Categoria::build($descrizione);
+            $categoria = Categoria::build();
             $id_record = $categoria->id;
+            $dbo->query('INSERT INTO `do_categorie_lang` (`id_record`, `id_lang`, `name`) VALUES ('.prepare($id_record).', '.prepare(setting('Lingua')).', '.prepare($descrizione).')');
 
             if (isAjaxRequest()) {
                 echo json_encode(['id' => $id_record, 'text' => $descrizione]);

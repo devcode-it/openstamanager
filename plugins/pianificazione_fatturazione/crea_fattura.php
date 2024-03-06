@@ -87,7 +87,7 @@ echo '
 
 // gestione replace
 $descrizione = setting('Descrizione fattura pianificata');
-$modules = MODULES::get('Contratti')['id'];
+$modules = (new Module())->getByName('Contratti')->id_record;
 $variables = include Modules::filepath($modules, 'variables.php');
 foreach ($variables as $variable => $value) {
     $descrizione = str_replace('{'.$variable.'}', $value, $descrizione);

@@ -1466,8 +1466,7 @@ class FatturaElettronica
                 $aliquota = $riga->aliquota ?: $iva_descrizioni;
                 // Se sono presenti solo righe descrittive uso l'iva da impostazioni
                 if (empty($aliquota)) {
-                    $aliquota_predefinita = Aliquota::find(setting('Iva predefinita'));
-                    $aliquota = $aliquota_predefinita;
+                    $aliquota = Aliquota::find(setting('Iva predefinita'));
                 }
                 $percentuale = floatval($aliquota->percentuale);
 
@@ -1628,11 +1627,11 @@ class FatturaElettronica
         // Se sono presenti solo righe descrittive uso l'iva da impostazioni e creo un riepilogo con gli importi a 0
         if (empty($iva)) {
             $iva = [
-                'AliquotaIVA' => $aliquota_predefinita->percentuale,
+                'AliquotaIVA' => $aliquota->percentuale,
                 'ImponibileImporto' => 0,
                 'Imposta' => 0,
-                'EsigibilitaIVA' => $aliquota_predefinita->esigibilita,
-                'RiferimentoNormativo' => $aliquota_predefinita->descrizione,
+                'EsigibilitaIVA' => $aliquota->esigibilita,
+                'RiferimentoNormativo' => $aliquota->name,
             ];
 
             // 2.2.2

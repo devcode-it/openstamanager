@@ -20,6 +20,7 @@
 namespace HTMLBuilder\Manager;
 
 use Util\Query;
+use Models\Module;
 
 /**
  * @since 2.4
@@ -80,7 +81,7 @@ class WidgetManager implements ManagerInterface
 
     protected static function getModule()
     {
-        return \Modules::get('Stato dei servizi');
+        return Module::find((new Module())->getByName('Stato dei servizi')->id_record);
     }
 
     protected function prints($widget)

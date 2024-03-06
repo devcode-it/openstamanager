@@ -19,6 +19,7 @@
 
 use Carbon\Carbon;
 use Plugins\PianificazioneInterventi\Promemoria;
+use Models\Module;
 
 include_once __DIR__.'/../../../core.php';
 
@@ -118,7 +119,7 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
         // Pulsanti
         echo '
                 <td>
-                    <button type="button" class="btn btn-primary btn-sm" title="Pianifica intervento ora..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica intervento\', \''.base_path().'/add.php?id_module='.Modules::get('Interventi')['id'].'&ref=interventi_contratti&idcontratto='.$contratto->id.'&idcontratto_riga='.$promemoria->id.'\');">
+                    <button type="button" class="btn btn-primary btn-sm" title="Pianifica intervento ora..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica intervento\', \''.base_path().'/add.php?id_module='.(new Module())->getByName('Interventi')->id_record.'&ref=interventi_contratti&idcontratto='.$contratto->id.'&idcontratto_riga='.$promemoria->id.'\');">
                         <i class="fa fa-calendar"></i>
                     </button>
                 </td>

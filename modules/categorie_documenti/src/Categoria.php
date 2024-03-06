@@ -30,11 +30,9 @@ class Categoria extends Model
 
     protected $table = 'do_categorie';
 
-    public static function build($descrizione)
+    public static function build()
     {
         $model = new static();
-        $model->descrizione = $descrizione;
-
         $model->save();
 
         $gruppi = database()->fetchArray('SELECT `id` FROM `zz_groups`');

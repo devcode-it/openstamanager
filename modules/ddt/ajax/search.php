@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/../../../core.php';
+use Models\Module;
 
 $fields = [
     'Numero' => 'numero',
@@ -45,7 +46,7 @@ foreach ($rs as $r) {
     $result = [];
 
     $module = ($r['dir'] == 'uscita') ? 'Ddt di acquisto' : 'Ddt di vendita';
-    $link_id = Modules::get($module)['id'];
+    $link_id = (new Module())->getByName($module)->id_record;
 
     $numero = empty($r['numero_esterno']) ? $r['numero'] : $r['numero_esterno'];
 

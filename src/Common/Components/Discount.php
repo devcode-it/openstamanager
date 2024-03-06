@@ -103,7 +103,7 @@ abstract class Discount extends Accounting
     {
         $this->attributes['iva'] = parent::getIvaAttribute();
 
-        $descrizione = $this->aliquota->descrizione;
+        $descrizione = $this->aliquota->name;
         if (!empty($descrizione)) {
             $this->attributes['desc_iva'] = $descrizione;
         }

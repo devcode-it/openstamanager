@@ -286,7 +286,7 @@ switch (filter('op')) {
 
             $iva[$key] = [
                 'id' => $aliquota->id,
-                'descrizione' => $aliquota->descrizione,
+                'descrizione' => $aliquota->name,
             ];
         }
 

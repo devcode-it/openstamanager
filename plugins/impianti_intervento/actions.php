@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Checklists\Check;
+use Models\Module;
 
 $operazione = filter('op');
 
@@ -28,14 +29,15 @@ switch ($operazione) {
         if (post('id_impianto')) {
             $dbo->query('INSERT INTO my_impianti_interventi(idimpianto, idintervento) VALUES('.prepare(post('id_impianto')).', '.prepare($id_record).')');
 
-            $checks_impianti = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare(Modules::get('Impianti')['id']).' AND id_record = '.prepare(post('id_impianto')));
+            $id_modulo_impianti = (new Module())->getByName('Impianti')->id_record;
+            $checks_impianti = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($id_modulo_impianti).' AND id_record = '.prepare(post('id_impianto')));
             foreach ($checks_impianti as $check_impianto) {
                 $id_parent_new = null;
                 if ($check_impianto['id_parent']) {
                     $parent = $dbo->selectOne('zz_checks', '*', ['id' => $check_impianto['id_parent']]);
                     $id_parent_new = $dbo->selectOne('zz_checks', '*', ['content' => $parent['content'], 'id_module' => $id_module, 'id_record' => $id_record])['id'];
                 }
-                $check = Check::build($user, $structure, $id_record, $check_impianto['content'], $id_parent_new, $check_impianto['is_titolo'], $check_impianto['order'], Modules::get('Impianti')['id'], post('id_impianto'));
+                $check = Check::build($user, $structure, $id_record, $check_impianto['content'], $id_parent_new, $check_impianto['is_titolo'], $check_impianto['order'], $id_modulo_impianti, post('id_impianto'));
                 $check->id_module = $id_module;
                 $check->id_plugin = $id_plugin;
                 $check->note = $check_impianto['note'];
@@ -72,11 +74,12 @@ switch ($operazione) {
         break;
 
     case 'delete_impianto':
+        $id_modulo_impianti = (new Module())->getByName('Impianti')->id_record;
         $dbo->query('DELETE FROM my_impianti_interventi WHERE idintervento='.prepare($id_record).' AND idimpianto = '.prepare(post('id')));
         Check::deleteLinked([
             'id_module' => $id_module,
             'id_record' => $id_record,
-            'id_module_from' => Modules::get('Impianti')['id'],
+            'id_module_from' => $id_modulo_impianti,
             'id_record_from' => post('id'),
         ]);
 

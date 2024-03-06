@@ -20,9 +20,10 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Checklists\Check;
+use Models\Module;
 
-$checklist_module = Modules::get('Checklists');
-
+$id_modulo_impianti = (new Module())->getByName('Impianti')->id_record;
+$checklist_module = Module::find((new Module())->getByName('Checklist')->id_record);
 // Blocco della modifica impianti se l'intervento è completato
 $dati_intervento = $dbo->fetchArray('SELECT `in_statiintervento`.`is_completato` FROM `in_statiintervento` INNER JOIN `in_interventi` ON `in_statiintervento`.`id` = `in_interventi`.`idstatointervento` WHERE `in_interventi`.`id`='.prepare($id_record));
 $is_completato = $dati_intervento[0]['is_completato'];
@@ -43,7 +44,7 @@ $impianti_non_completati = 0;
 $impianti_completati = 0;
 $impianti_non_previsti = 0;
 foreach ($impianti_collegati as $impianto) {
-    $checks = Check::where('id_module_from', Modules::get('Impianti')['id'])->where('id_record_from', $impianto['id'])->where('id_module', $id_module)->where('id_record', $id_record)->where('id_parent', null)->get();
+    $checks = Check::where('id_module_from', $id_modulo_impianti)->where('id_record_from', $impianto['id'])->where('id_module', $id_module)->where('id_record', $id_record)->where('id_parent', null)->get();
     if (sizeof($checks)) {
         $has_checks_not_verified = $checks->where('checked_at', null)->count();
         if ($has_checks_not_verified) {
@@ -94,7 +95,7 @@ echo '
         <th class="text-center" width="2%"></th>
     </tr>';
 foreach ($impianti_collegati as $impianto) {
-    $checks = Check::where('id_module_from', Modules::get('Impianti')['id'])->where('id_record_from', $impianto['id'])->where('id_module', $id_module)->where('id_record', $id_record)->where('id_parent', null)->get();
+    $checks = Check::where('id_module_from', $id_modulo_impianti)->where('id_record_from', $impianto['id'])->where('id_module', $id_module)->where('id_record', $id_record)->where('id_parent', null)->get();
 
     $type = 'warning';
     $class = 'disabled';

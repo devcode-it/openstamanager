@@ -19,10 +19,9 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Checklists\Check;
+use Models\Module;
 
-$modulo_impianti = Modules::get('Impianti');
-
+$id_modulo_impianti = (new Module())->getByName('Impianti')->id_record;
 // Blocco della modifica impianti se l'intervento è completato
 $dati_intervento = $dbo->fetchArray('SELECT `in_statiintervento`.`is_completato` FROM `in_statiintervento` INNER JOIN `in_interventi` ON `in_statiintervento`.`id` = `in_interventi`.`idstatointervento` WHERE `in_interventi`.`id`='.prepare($id_record));
 $is_completato = $dati_intervento[0]['is_completato'];
@@ -60,7 +59,7 @@ echo '
 
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "select", "name": "id_impianto_add", "label": "'.tr('Impianto').'", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.($record['idsede_destinazione'] ?: '""').', "idintervento": '.$id_record.'}, "extra": "'.$readonly.'", "icon-after": "add|'.$modulo_impianti['id'].'|id_anagrafica='.$record['idanagrafica'].'" ]}
+            {[ "type": "select", "name": "id_impianto_add", "label": "'.tr('Impianto').'", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.($record['idsede_destinazione'] ?: '""').', "idintervento": '.$id_record.'}, "extra": "'.$readonly.'", "icon-after": "add|'.$id_modulo_impianti.'|id_anagrafica='.$record['idanagrafica'].'" ]}
         </div>
 
         <div class="col-md-3" style="margin-top: 25px">

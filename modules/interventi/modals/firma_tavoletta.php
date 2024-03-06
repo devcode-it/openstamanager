@@ -70,8 +70,10 @@ echo '
         // if we want to hide the licence we can get the licence from an external server.				
         // there is a php demo file in /common/licence_proxy.php
         //const promise = mSigObj.setLicenceProxy("url from where to get the licence");
-        const promise = mSigObj.setLicence("'.setting('Licenza Wacom SDK - Key').'", "'.setting('Licenza Wacom SDK - Secret').'");
-        promise.then(value => {});
+        const promise = mSigObj.setLicence("'.setting('Licenza Wacom SDK - Key').'", "'.setting('Licenza Wacom SDK - Secret'). '");
+        promise.then(value => {
+
+        });
         promise.catch(error => {
             alert(error);
         });
@@ -244,6 +246,7 @@ echo '
         let renderWidth = 500;
         let renderHeight = 300;
         const isRelative = 1;
+        let image;
         
         let renderFlags = 0x400000;
         if (isRelative) {				
@@ -285,8 +288,11 @@ echo '
         const backgroundColor = "'.setting('Sfondo firma tavoletta Wacom').'";
         try {		
             const image = await mSigObj.renderBitmap(renderWidth, renderHeight, "image/png", 4, inkColor, backgroundColor, 0, 0, 0x400000);
-            document.getElementById("image-signature").src = image;
-            document.getElementById("firma_base64").value = image;
+          
+             document.getElementById("image-signature").src = image;
+             document.getElementById("firma_base64").value = image;
+             document.getElementById("form-firma").submit();
+
         } catch (e) {
             alert(e);
         }

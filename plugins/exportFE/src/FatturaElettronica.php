@@ -1856,7 +1856,7 @@ class FatturaElettronica
     {
         return [
             'category' => tr('Fattura Elettronica'),
-            'id_module' => (new Module())->getByName('Fattire di vendita')->id_record,
+            'id_module' => (new Module())->getByName('Fatture di vendita')->id_record,
             'id_record' => $this->getDocumento()['id'],
         ];
     }

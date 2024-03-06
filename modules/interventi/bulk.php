@@ -266,7 +266,7 @@ switch (post('op')) {
                         $orario_inizio = date('Y-m-d', strtotime($data_richiesta)).' '.date('H:i:s', strtotime($sessione->orario_inizio));
                     } else {
                         $diff = strtotime($sessione->orario_inizio) - strtotime($inizio_old);
-                        $orario_inizio = date('Y-m-d H:i:s', strtotime($sessione->orario_inizio) + $diff);
+                        $orario_inizio = date('Y-m-d H:i:s', strtotime($new_sessione->orario_inizio) + $diff);
                     }
 
                     $diff_fine = strtotime($sessione->orario_fine) - strtotime($sessione->orario_inizio);
@@ -283,36 +283,36 @@ switch (post('op')) {
                     $inizio_old = $sessione->orario_inizio;
                 }
             }
-        }
 
-        // Copia degli impianti
-        if (!empty($copia_impianti)) {
-            $impianti = $dbo->select('my_impianti_interventi', '*', [], ['idintervento' => $intervento->id]);
-            foreach ($impianti as $impianto) {
-                $dbo->insert('my_impianti_interventi', [
-                    'idintervento' => $id_record,
-                    'idimpianto' => $impianto['idimpianto'],
-                ]);
+            // Copia degli impianti
+            if (!empty($copia_impianti)) {
+                $impianti = $dbo->select('my_impianti_interventi', '*', [], ['idintervento' => $intervento->id]);
+                foreach ($impianti as $impianto) {
+                    $dbo->insert('my_impianti_interventi', [
+                        'idintervento' => $id_record,
+                        'idimpianto' => $impianto['idimpianto'],
+                    ]);
+                }
+
+                $componenti = $dbo->select('my_componenti_interventi', '*', [], ['id_intervento' => $intervento->id]);
+                foreach ($componenti as $componente) {
+                    $dbo->insert('my_componenti_interventi', [
+                        'id_intervento' => $id_record,
+                        'id_componente' => $componente['id_componente'],
+                    ]);
+                }
             }
 
-            $componenti = $dbo->select('my_componenti_interventi', '*', [], ['id_intervento' => $intervento->id]);
-            foreach ($componenti as $componente) {
-                $dbo->insert('my_componenti_interventi', [
-                    'id_intervento' => $id_record,
-                    'id_componente' => $componente['id_componente'],
-                ]);
-            }
-        }
 
-
-        // copia allegati
-        if (!empty($copia_allegati)) {
-            $allegati = $intervento->uploads();
-            foreach ($allegati as $allegato) {
-                $allegato->copia([
-                    'id_module' => $new->getModule()->id,
-                    'id_record' => $new->id,
-                ]);
+            // copia allegati
+            if (!empty($copia_allegati)) {
+                $allegati = $intervento->uploads();
+                foreach ($allegati as $allegato) {
+                    $allegato->copia([
+                        'id_module' => $new->getModule()->id,
+                        'id_record' => $new->id,
+                    ]);
+                }
             }
         }
 

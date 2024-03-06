@@ -355,18 +355,24 @@ class Articolo extends Model
     }
 
     /**
-     * Ritorna l'id dell'articoloa partire dal nome.
-     *
-     * @param string $name il nome da ricercare
-     *
-     * @return \Illuminate\Support\Collection
+     * Imposta l'attributo name dell'articolo.
      */
-    public function getByName($name)
+    public function setNameAttribute($value)
     {
-        return database()->table($this->table.'_lang')
-            ->select('id_record')
-            ->where('name', '=', $name)
-            ->where('id_lang', '=', setting('Lingua'))
-            ->first();
+        $translated = database()->table($this->table.'_lang')
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'));
+
+        if ($translated->count() > 0) {
+            $translated->update([
+                'name' => $value
+            ]);
+        } else {
+            $translated->insert([
+                'id_record' => $this->id,
+                'id_lang' => setting('Lingua'),
+                'name' => $value
+            ]);
+        }
     }
 }

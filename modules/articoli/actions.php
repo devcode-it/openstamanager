@@ -72,9 +72,8 @@ switch (post('op')) {
         $articolo->um = post('um');
         $articolo->um_secondaria = post('um_secondaria');
         $articolo->fattore_um_secondaria = post('fattore_um_secondaria');
+        $articolo->name = post('descrizione');
         $articolo->save();
-
-        $database->query('INSERT INTO `mg_articoli_lang` (`id_record`, `id_lang`, `name`) VALUES ('.$articolo->id.', '.setting('Lingua').', \''.post('descrizione').'\')');
 
         // Aggiornamento delle varianti per i campi comuni
         Combinazione::sincronizzaVarianti($articolo);
@@ -153,11 +152,10 @@ switch (post('op')) {
         $componente = post('componente_filename');
         $articolo->componente_filename = $componente;
         $articolo->attivo = post('attivo');
+        $articolo->name = post('descrizione');
         $articolo->note = post('note');
 
         $articolo->save();
-
-        $database->query('UPDATE `mg_articoli_lang` SET `name` = '.prepare(post('descrizione')).' WHERE `id_record` = '.prepare($id_record).' AND `id_lang` = '.prepare(setting('Lingua')).'');
 
         // Aggiornamento delle varianti per i campi comuni
         Combinazione::sincronizzaVarianti($articolo);

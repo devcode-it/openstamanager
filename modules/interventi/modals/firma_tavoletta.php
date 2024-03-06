@@ -25,7 +25,7 @@ echo '
 <script src="'.$rootdir.'/assets/dist/js/wacom.min.js"></script>';
 
 echo '
-<form action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record. '" method="post" id="form-firma">
+<form action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post" id="form-firma">
     <input type="hidden" name="op" value="firma">
     <input type="hidden" name="backto" value="record-edit">
 

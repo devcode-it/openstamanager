@@ -47,7 +47,7 @@ $stato = (new Stato())->getByName('Bozza')->id_record;
 	<div class="row">
 
 		<div class="col-md-4">
-				{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "ajax-source": "sedi", "placeholder": "Sede legale" ]}
+				{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "ajax-source": "sedi", "select-options": <?php echo json_encode(['idanagrafica' => $id_anagrafica]); ?>, "placeholder": "Sede legale" ]}
 		</div>
 
 		<div class="col-md-4">

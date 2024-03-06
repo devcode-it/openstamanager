@@ -29,7 +29,7 @@ use Modules\Fatture\Fattura;
 use Modules\Interventi\Components\Riga as RigaIntervento;
 use Modules\Interventi\Components\Sessione;
 use Modules\Interventi\Intervento;
-use Modules\IVA\Aliquota;
+use Modules\Iva\Aliquota;
 use Util\Generator;
 use Util\Ini;
 

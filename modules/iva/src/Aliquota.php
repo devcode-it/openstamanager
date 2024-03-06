@@ -28,6 +28,22 @@ class Aliquota extends Model
 
     protected $table = 'co_iva';
 
+
+    public static function build($esente, $percentuale, $indetraibile, $dicitura, $codice, $codice_natura_fe, $esigibilita)
+    {
+        $model = new static();
+        $model->esente = $esente;
+        $model->percentuale = $percentuale;
+        $model->indetraibile = $indetraibile;
+        $model->dicitura = $dicitura;
+        $model->codice = $codice;
+        $model->codice_natura_fe = $codice_natura_fe;
+        $model->esigibilita = $esigibilita;
+        $model->save();
+
+        return $model;
+    }
+
     /**
      * Ritorna l'attributo name dell'aliquota IVA.
      *
@@ -56,5 +72,27 @@ class Aliquota extends Model
             ->where('name', '=', $name)
             ->where('id_lang', '=', setting('Lingua'))
             ->first();
+    }
+
+    /**
+     * Imposta l'attributo name dell'aliquota.
+     */
+    public function setNameAttribute($value)
+    {
+        $translated = database()->table($this->table.'_lang')
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'));
+
+        if ($translated->count() > 0) {
+            $translated->update([
+                'name' => $value
+            ]);
+        } else {
+            $translated->insert([
+                'id_record' => $this->id,
+                'id_lang' => setting('Lingua'),
+                'name' => $value
+            ]);
+        }
     }
 }

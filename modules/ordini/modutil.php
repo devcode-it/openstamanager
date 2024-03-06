@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Interventi\Intervento;
-use Modules\IVA\Aliquota;
+use Modules\Iva\Aliquota;
 use Modules\Ordini\Ordine;
 
 /*

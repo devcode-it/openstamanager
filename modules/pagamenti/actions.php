@@ -24,13 +24,13 @@ use Modules\Pagamenti\Pagamento;
 switch (filter('op')) {
     case 'update':
         $descrizione = filter('descrizione');
-        $id_pagamento = (new Pagamento())->getByName($descrizione)->id_record;
 
         if (isset($descrizione)) {
             foreach (post('id') as $key => $id) {
                 // Data fatturazione
                 $giorno = 0;
 
+                $pagamento = Pagamento::find($id);
                 // Data fatturazione fine mese
                 if (post('scadenza')[$key] == 2) {
                     $giorno = -1;
@@ -46,28 +46,27 @@ switch (filter('op')) {
                     $giorno = -post('giorno')[$key] - 1;
                 }
 
-                $array = [
-                    'num_giorni' => post('distanza')[$key],
-                    'giorno' => $giorno,
-                    'prc' => post('percentuale')[$key],
-                    'idconto_vendite' => post('idconto_vendite') ?: null,
-                    'idconto_acquisti' => post('idconto_acquisti') ?: null,
-                    'codice_modalita_pagamento_fe' => post('codice_modalita_pagamento_fe'),
-                ];
-
-                if ($id_pagamento) {
-                    flash()->error(tr('Esiste più un metodo di pagamento con questo nome!'));
-                    break;
+                if (!empty($id)) {
+                    $pagamento->name = $descrizione;
+                    $pagamento->num_giorni = post('distanza')[$key];
+                    $pagamento->giorno = $giorno;
+                    $pagamento->prc = post('percentuale')[$key];
+                    $pagamento->idconto_vendite = post('idconto_vendite') ?: null;
+                    $pagamento->idconto_acquisti = post('idconto_acquisti') ?: null;
+                    $pagamento->codice_modalita_pagamento_fe = post('codice_modalita_pagamento_fe');
+                    $pagamento->save();
                 } else {
-                    if (!empty($id)) {
-                        $dbo->update('co_pagamenti_lang', ['name' => $descrizione], ['id' => $id, 'id_lang' => setting('Lingua')]);
-                        $dbo->update('co_pagamenti', $array, ['id' => $id_record]);
-                    } else {
-                        $dbo->INSERT('co_pagamenti', $array);
-                        $dbo->INSERT('co_pagamenti_lang', ['name' => $descrizione, 'id_record' => $id, 'id_lang' => setting('Lingua')]);
-                    }
+                    $pagamento = Pagamento::build(post('codice_modalita_pagamento_fe'));
+                    $pagamento->num_giorni = post('distanza')[$key];
+                    $pagamento->giorno = $giorno;
+                    $pagamento->prc = post('percentuale')[$key];
+                    $pagamento->idconto_vendite = post('idconto_vendite') ?: null;
+                    $pagamento->idconto_acquisti = post('idconto_acquisti') ?: null;
+                    $pagamento->name = $descrizione;
+                    $pagamento->save();
                 }
             }
+        
             flash()->info(tr('Salvataggio completato!'));
         } else {
             flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
@@ -85,9 +84,10 @@ switch (filter('op')) {
             if ($id_pagamento) {
                 flash()->error(tr('Esiste già un metodo di pagamento con questo nome!'));
             } else {
-                $dbo->query('INSERT INTO `co_pagamenti` (`codice_modalita_pagamento_fe`, `prc` ) VALUES ('.prepare($codice_modalita_pagamento_fe).', 100 )');
-                $id_record = $dbo->lastInsertedID();
-                $dbo->query('INSERT INTO `co_pagamenti_lang` (`name`, `id_record`, `id_lang`) VALUES ('.prepare($descrizione).', '.prepare($id_record).', '.prepare(setting('Lingua')).')');
+                $pagamento = Pagamento::build($codice_modalita_pagamento_fe);
+                $id_record= $dbo->lastInsertedID();
+                $pagamento->name = $descrizione;
+                $pagamento->save();
 
                 flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
                     '_TYPE_' => 'pagamento',
@@ -99,6 +99,11 @@ switch (filter('op')) {
 
     case 'delete':
         if (!empty($id_record)) {
+            $descrizione = filter('descrizione');
+
+            $dbo->query('DELETE FROM `co_pagamenti` WHERE `id` IN (SELECT `id_record` FROM `co_pagamenti_lang` WHERE `name` = "'.prepare($descrizione).'")');
+            $dbo->query('DELETE FROM `co_pagamenti_lang` WHERE `name` = "'.prepare($descrizione).'"');
+
             $dbo->query('DELETE FROM `co_pagamenti` WHERE `id`='.prepare($id_record));
 
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [

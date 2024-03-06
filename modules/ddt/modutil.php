@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\DDT\DDT;
-use Modules\IVA\Aliquota;
+use Modules\Iva\Aliquota;
 use Util\Generator;
 
 /*

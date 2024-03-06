@@ -18,32 +18,30 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Modules\Iva\Aliquota;
 
 switch (filter('op')) {
     case 'update':
-        $descrizione = post('descrizione');
-        $codice = post('codice');
-
         $esente = post('esente');
         $percentuale = empty($esente) ? post('percentuale') : 0;
+        $indetraibile = post('indetraibile');
+        $dicitura = post('dicitura');
+        $codice = post('codice');
+        $codice_natura_fe = post('codice_natura_fe');
+        $esigibilita = post('esigibilita');
+        $descrizione = post('descrizione');
 
-        if ($dbo->fetchNum('SELECT * FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE (`name` = '.prepare($descrizione).' AND `codice` = '.prepare($codice).') AND `co_iva`.`id` != '.prepare($id_record)) == 0) {
-            $codice_natura = post('codice_natura_fe') ?: null;
-            $esigibilita = post('esigibilita');
-
-            $dbo->update('co_iva', [
-                'esente' => $esente,
-                'percentuale' => $percentuale,
-                'indetraibile' => post('indetraibile'),
-                'dicitura' => post('dicitura'),
-                'codice' => $codice,
-                'codice_natura_fe' => $codice_natura,
-                'esigibilita' => $esigibilita,
-            ], ['id' => $id_record]);
-
-            $dbo->update('co_iva_lang', [
-                'name' => $descrizione,
-            ], ['id_record' => $id_record, 'id_lang' => setting('Lingua')]);
+        $aliquota = Aliquota::where('id', '=', (new Aliquota())->getByName($descrizione)->id_record)->where('codice', '=', $codice)->where('id', '!=', $iva->id)->first();
+        if (!$aliquota) {
+            $iva->esente = $esente;
+            $iva->percentuale = $percentuale;
+            $iva->indetraibile = $indetraibile;
+            $iva->dicitura = $dicitura;
+            $iva->codice = $codice;
+            $iva->codice_natura_fe = $codice_natura_fe;
+            $iva->esigibilita = $esigibilita;
+            $iva->name = $descrizione;
+            $iva->save();
 
             // Messaggio di avvertenza
             if ((stripos('N6', (string) $codice_natura) === 0) && $esigibilita == 'S') {
@@ -69,23 +67,13 @@ switch (filter('op')) {
         $esigibilita = post('esigibilita');
         $indetraibile = post('indetraibile');
 
-        if ($dbo->fetchNum('SELECT * FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name` = '.prepare($descrizione).' AND `codice` = '.prepare($codice)) == 0) {
-            $dbo->insert('co_iva', [
-                'esente' => $esente,
-                'codice' => $codice,
-                'codice_natura_fe' => $codice_natura,
-                'percentuale' => $percentuale,
-                'indetraibile' => $indetraibile,
-                'esigibilita' => $esigibilita,
-            ]);
-            $id_record = $dbo->lastInsertedID();
-
-            $dbo->insert('co_iva_lang', [
-                'id_record' => $id_record,
-                'name' => $descrizione,
-                'id_lang' => setting('Lingua'),
-            ]);
-
+        $aliquota = Aliquota::where('id', '=', (new Aliquota())->getByName($descrizione)->id_record)->where('codice', '=', $codice)->first();
+        if (!$aliquota) {
+            $iva = Aliquota::build($esente, $percentuale, $indetraibile, $dicitura, $codice, $codice_natura_fe, $esigibilita);
+            $id_record= $dbo->lastInsertedID();
+            $iva->name = $descrizione;
+            $iva->save();
+            
             flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
                 '_TYPE_' => 'IVA',
             ]));

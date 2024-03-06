@@ -28,6 +28,14 @@ class Tipo extends Model
 
     protected $table = 'an_tipianagrafiche';
 
+    public static function build($descrizione)
+    {
+        $model = new static();
+        $model->save();
+
+        return $model;
+    }
+
     public function anagrafiche()
     {
         return $this->hasMany(Anagrafica::class, 'idtipoanagrafica');
@@ -61,5 +69,27 @@ class Tipo extends Model
             ->where('name', '=', $name)
             ->where('id_lang', '=', setting('Lingua'))
             ->first();
+    }
+
+    /**
+     * Imposta l'attributo name del tipo di anagrafica.
+     */
+    public function setNameAttribute($value)
+    {
+        $translated = database()->table($this->table.'_lang')
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'));
+
+        if ($translated->count() > 0) {
+            $translated->update([
+                'name' => $value
+            ]);
+        } else {
+            $translated->insert([
+                'id_record' => $this->id,
+                'id_lang' => setting('Lingua'),
+                'name' => $value
+            ]);
+        }
     }
 }

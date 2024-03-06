@@ -18,7 +18,7 @@
  */
 
 use Modules\Fatture\Fattura;
-use Modules\IVA\Aliquota;
+use Modules\Iva\Aliquota;
 use Util\Generator;
 
 /*

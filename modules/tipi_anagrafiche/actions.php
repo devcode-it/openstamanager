@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Modules\Anagrafiche\Tipo;
 
 switch (post('op')) {
     case 'update':
@@ -28,7 +29,8 @@ switch (post('op')) {
         // Nome accettato
 
         if (!in_array($descrizione, $block)) {
-            $dbo->query('UPDATE `an_tipianagrafiche_lang` SET `name`='.prepare($descrizione).' WHERE `id_record`='.prepare($id_tipo));
+            $tipo->name = $descrizione;
+            $tipo->save();
             flash()->info(tr('Informazioni salvate correttamente!'));
         } else {
             // Nome non consentito
@@ -42,15 +44,15 @@ switch (post('op')) {
 
         if (!empty($descrizione)) {
             // Verifico che il nome non sia duplicato
-            $rs = $dbo->fetchArray('SELECT `name` FROM `an_tipianagrafiche_lang` WHERE `name`='.prepare($descrizione));
+            $tipo = Tipo::find((new Tipo())->getByName($descrizione)->id_record);
 
-            if (count($rs) > 0) {
+            if ($tipo) {
                 flash()->error(tr('Nome già esistente!'));
             } else {
-                $dbo->query('INSERT INTO `an_tipianagrafiche` (`id`) VALUES (NULL)');
+                $tipo = Tipo::build($descrizione);
                 $id_record = $dbo->lastInsertedID();
-                $dbo->query('INSERT INTO `an_tipianagrafiche_lang` (`name`, `id_record`, `id_lang`) VALUES ('.prepare($descrizione).', '.prepare($id_record).', '.prepare(setting('Lingua')).')');
-
+                $tipo->name = $descrizione;
+                $tipo->save();
                 flash()->info(tr('Nuovo tipo di anagrafica aggiunto!'));
             }
         }

@@ -22,12 +22,22 @@ namespace Modules\Pagamenti;
 use Carbon\Carbon;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
+use Modules\Fatture\Fattura;
 
 class Pagamento extends Model
 {
     use SimpleModelTrait;
 
     protected $table = 'co_pagamenti';
+
+    public static function build($codice)
+    {
+        $model = new static();
+        $model->codice_modalita_pagamento_fe = $codice;
+        $model->save();
+
+        return $model;
+    }
 
     public function fatture()
     {
@@ -168,5 +178,27 @@ class Pagamento extends Model
             ->where('name', '=', $name)
             ->where('id_lang', '=', setting('Lingua'))
             ->first();
+    }
+
+    /**
+     * Imposta l'attributo name del pagamento.
+     */
+    public function setNameAttribute($value)
+    {
+        $translated = database()->table($this->table.'_lang')
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'));
+
+        if ($translated->count() > 0) {
+            $translated->update([
+                'name' => $value
+            ]);
+        } else {
+            $translated->insert([
+                'id_record' => $this->id,
+                'id_lang' => setting('Lingua'),
+                'name' => $value
+            ]);
+        }
     }
 }

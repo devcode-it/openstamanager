@@ -327,8 +327,7 @@ class Modules
         }
 
         $link = (!empty($element['option']) && $element['option'] != 'menu') ? base_path().'/controller.php?id_module='.$element['id'] : 'javascript:;';
-        $module = Module::find($element['id']);
-        $title = $module->name ?? $module->title;
+        $title = $element['title'];
         $target = '_self'; // $target = ($element['new'] == 1) ? '_blank' : '_self';
         $active = ($actual == $title);
         $show = (self::getPermission($element['id']) != '-' && !empty($element['enabled'])) ? true : false;

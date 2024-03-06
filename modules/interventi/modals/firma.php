@@ -81,7 +81,7 @@ if ($interventi_da_firmare) {
                     </tbody>
                 </table>';
 } else {
-    echo 'Nessun Intervento..';
+    echo tr('Nessun Intervento.');
 }
 echo '
             </div>
@@ -123,7 +123,7 @@ if ($interventi_firmati) {
                     </tbody>
                 </table>';
 } else {
-    echo 'Nessun Intervento..';
+    echo tr('Nessun Intervento.');
 }
 echo '
             </div>
@@ -169,7 +169,7 @@ if ($interventi_completati) {
                     <i class="fa fa-warning"></i> '.tr('Questi interventi non verranno firmati').'
                 </div>';
 } else {
-    echo 'Nessun Intervento..';
+    echo tr('Nessun Intervento.');
 }
 echo '
             </div>

@@ -914,7 +914,7 @@ CREATE TABLE IF NOT EXISTS `em_lists_lang` (
     `id_lang` int NOT NULL,
     `id_record` int NOT NULL,
     `name` VARCHAR(255) NOT NULL,
-    `description` VARCHAR(255) NOT NULL
+    `description` VARCHAR(255) NULL
 );
 ALTER TABLE `em_lists_lang`
     ADD PRIMARY KEY (`id`);
@@ -930,7 +930,7 @@ ALTER TABLE `em_lists`
 
 ALTER TABLE `em_lists` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT; 
 
-ALTER TABLE `em_lists_lang` ADD CONSTRAINT `em_lists_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `em_lists_lang`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+ALTER TABLE `em_lists_lang` ADD CONSTRAINT `em_lists_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `em_lists`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
 -- Allineamento vista Liste newsletter
 UPDATE `zz_modules` SET `options` = "

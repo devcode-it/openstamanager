@@ -35,6 +35,15 @@ class Lista extends Model
 
     protected $table = 'em_lists';
 
+
+    public static function build($name)
+    {
+        $model = new static();
+        $model->save();
+
+        return $model;
+    }
+
     public function save(array $options = [])
     {
         $result = parent::save($options);
@@ -133,6 +142,54 @@ class Lista extends Model
             ->where('id_record', '=', $this->id)
             ->where('id_lang', '=', setting('Lingua'))
             ->first()->name;
+    }
+
+    /**
+     * Imposta l'attributo name della lista.
+     */
+    public function setDescriptionAttribute($value)
+    {
+        $table = database()->table($this->table.'_lang');
+
+        $translated = $table
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'));
+
+        if ($translated->count() > 0) {
+            $translated->update([
+                'description' => $value
+            ]);
+        } else {
+            $table->insert([
+                'id_record' => $this->id,
+                'id_lang' => setting('Lingua'),
+                'description' => $value
+            ]);
+        }
+    }
+
+    /**
+     * Imposta l'attributo description della lista.
+     */
+    public function setNameAttribute($value)
+    {
+        $table = database()->table($this->table.'_lang');
+
+        $translated = $table
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'));
+
+        if ($translated->count() > 0) {
+            $translated->update([
+                'name' => $value
+            ]);
+        } else {
+            $table->insert([
+                'id_record' => $this->id,
+                'id_lang' => setting('Lingua'),
+                'name' => $value
+            ]);
+        }
     }
 
     /**

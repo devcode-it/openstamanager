@@ -26,14 +26,16 @@ include_once __DIR__.'/../../core.php';
 
 switch (filter('op')) {
     case 'add':
-        $lista = post('name');
+        $name = post('name');
+        $lista_new = Lista::find((new Lista())->getByName($name)->id_record);
 
-        if ((new Lista())->getByName($lista)->id_record) {
+        if (!empty($lista_new) && $lista_new->id != $id_record){
             flash()->error(tr('Esiste già una lista con questo nome.'));
         } else {
-            $dbo->query('INSERT INTO `em_lists` (`created_at`) VALUES (NOW())');
-            $id_record = $dbo->lastInsertedID();
-            $dbo->query('INSERT INTO `em_lists_lang` (`name`, `id_record`, `id_lang`) VALUES ('.prepare($lista).', '.prepare($id_record).', '.prepare(setting('Lingua')).' )');
+            $lista = Lista::build($name);
+            $id_record = $lista->id;
+            $lista->name = $name;
+            $lista->save();
 
             flash()->info(tr('Nuova lista aggiunta.'));
         }
@@ -49,16 +51,18 @@ switch (filter('op')) {
             $query = html_entity_decode($query);
         }
 
-        $dbo->update('em_lists', [
-            'query' => $query
-        ], ['id' => $id_record]);
+        $lista_new = Lista::find((new Lista())->getByName($name)->id_record);
 
-        $dbo->update('em_lists_lang', [
-            'name' => $name,
-            'description' => $description
-        ], ['id_record' => $id_record, 'id_lang' => setting('Lingua')]);
+        if (!empty($lista_new) && $lista_new->id != $id_record){
+            flash()->error(tr('Esiste già una lista con questo nome.'));
+        } else {
+            $lista->name = $name;
+            $lista->description = $description;
+            $lista->query = $query;
+            $lista->save();
 
-        flash()->info(tr('Informazioni salvate correttamente.'));
+            flash()->info(tr('Informazioni salvate correttamente.'));
+        }
 
         break;
 

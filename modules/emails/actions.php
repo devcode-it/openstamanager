@@ -17,43 +17,40 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\Emails\Template;
+
 include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'add':
-        $dbo->insert('em_templates', [
-            'id_module' => post('module'),
-            'id_account' => post('smtp'),
-        ]);
-        $id_record = $dbo->lastInsertedID();
-        $dbo->insert('em_templates_lang', [
-            'name' => post('name'),
-            'subject' => post('subject'),
-            'id_lang' => setting('Lingua'),
-            'id_record' => $id_record
-        ]);
+        $id_module = post('module');
+        $id_account = post('smtp');
+        $name = post('name');
+        $subject = post('subject');
+
+        $template = Template::build($id_module, $id_account);
+        $id_record = $template->id;
+        $template->name = $name;
+        $template->subject = $subject;
+        $template->save();
 
         flash()->info(tr('Aggiunto nuovo template per le email!'));
 
         break;
 
     case 'update':
-        $dbo->update('em_templates', [
-            'id_account' => post('smtp'),
-            'icon' => post('icon'),
-            'tipo_reply_to' => post('tipo_reply_to'),
-            'reply_to' => post('reply_to'),
-            'cc' => post('cc'),
-            'bcc' => post('bcc'),
-            'read_notify' => post('read_notify'),
-            'note_aggiuntive' => post('note_aggiuntive')
-        ], ['id' => $id_record]);
-
-        $dbo->update('em_templates_lang', [
-            'name' => post('name'),
-            'subject' => post('subject'),
-            'body' => post('body')
-        ], ['id_record' => $id_record, 'id_lang' => (setting('Lingua'))]);
+        $template->name = post('name');
+        $template->id_account = post('smtp');
+        $template->icon = post('icon');
+        $template->tipo_reply_to = post('tipo_reply_to');
+        $template->reply_to = post('reply_to');
+        $template->cc = post('cc');
+        $template->bcc = post('bcc');
+        $template->read_notify = post('read_notify');
+        $template->note_aggiuntive = post('note_aggiuntive');
+        $template->subject = post('subject');
+        $template->body = post('body');
+        $template->save();
 
         $dbo->sync('em_print_template', ['id_template' => $id_record], ['id_print' => (array) post('prints')]);
         $dbo->sync('em_mansioni_template', ['id_template' => $id_record], ['idmansione' => (array) post('idmansioni')]);

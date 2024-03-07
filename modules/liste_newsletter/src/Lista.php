@@ -145,7 +145,7 @@ class Lista extends Model
     }
 
     /**
-     * Imposta l'attributo name della lista.
+     * Imposta l'attributo description della lista.
      */
     public function setDescriptionAttribute($value)
     {
@@ -169,7 +169,22 @@ class Lista extends Model
     }
 
     /**
-     * Imposta l'attributo description della lista.
+     * Ritorna l'attributo description della lista.
+     *
+     * @return string
+     */
+    public function getDescriptionAttribute()
+    {
+        return database()->table($this->table.'_lang')
+            ->select('description')
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first()->description;
+    }
+
+    
+    /**
+     * Imposta l'attributo name della lista.
      */
     public function setNameAttribute($value)
     {
@@ -191,21 +206,6 @@ class Lista extends Model
             ]);
         }
     }
-
-    /**
-     * Ritorna l'attributo description della lista.
-     *
-     * @return string
-     */
-    public function getDescriptionAttribute()
-    {
-        return database()->table($this->table.'_lang')
-            ->select('description')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', setting('Lingua'))
-            ->first()->description;
-    }
-
     
     /**
      * Ritorna l'id della lista a partire dal nome.

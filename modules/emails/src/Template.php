@@ -44,6 +44,16 @@ class Template extends Model
         return (array) $variables;
     }
 
+    public static function build($id_module, $id_account)
+    {
+        $model = new static();
+        $model->id_module = $id_module;
+        $model->id_account = $id_account;
+        $model->save();
+
+        return $model;
+    }
+
     /* Relazioni Eloquent */
 
     public function module()
@@ -76,6 +86,29 @@ class Template extends Model
     }
 
     /**
+     * Imposta l'attributo name della lista.
+     */
+    public function setNameAttribute($value)
+    {
+        $table = database()->table($this->table.'_lang');
+
+        $translated = $table
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'));
+
+        if ($translated->count() > 0) {
+            $translated->update([
+                'name' => $value
+            ]);
+        } else {
+            $table->insert([
+                'id_record' => $this->id,
+                'id_lang' => setting('Lingua'),
+                'name' => $value
+            ]);
+        }
+    }
+    /**
      * Ritorna l'attributo subject del template.
      *
      * @return string
@@ -90,6 +123,30 @@ class Template extends Model
     }
 
     /**
+     * Imposta l'attributo subject del template.
+     */
+    public function setSubjectAttribute($value)
+    {
+        $table = database()->table($this->table.'_lang');
+
+        $translated = $table
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'));
+
+        if ($translated->count() > 0) {
+            $translated->update([
+                'subject' => $value
+            ]);
+        } else {
+            $table->insert([
+                'id_record' => $this->id,
+                'id_lang' => setting('Lingua'),
+                'subject' => $value
+            ]);
+        }
+    }
+
+    /**
      * Ritorna l'attributo body del template.
      *
      * @return string
@@ -101,6 +158,29 @@ class Template extends Model
             ->where('id_record', '=', $this->id)
             ->where('id_lang', '=', setting('Lingua'))
             ->first()->body;
+    }
+    /**
+     * Imposta l'attributo body del template.
+     */
+    public function setBodyAttribute($value)
+    {
+        $table = database()->table($this->table.'_lang');
+
+        $translated = $table
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'));
+
+        if ($translated->count() > 0) {
+            $translated->update([
+                'body' => $value
+            ]);
+        } else {
+            $table->insert([
+                'id_record' => $this->id,
+                'id_lang' => setting('Lingua'),
+                'body' => $value
+            ]);
+        }
     }
 
     /**

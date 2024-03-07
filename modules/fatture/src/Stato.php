@@ -48,6 +48,31 @@ class Stato extends Model
     }
 
     /**
+     * Imposta l'attributo name dell'articolo.
+     */
+    public function setNameAttribute($value)
+    {
+        $table = database()->table($this->table.'_lang');
+
+        $translated = $table
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'));
+
+        if ($translated->count() > 0) {
+            $translated->update([
+                'name' => $value
+            ]);
+        } else {
+            $table->insert([
+                'id_record' => $this->id,
+                'id_lang' => setting('Lingua'),
+                'name' => $value
+            ]);
+        }
+    }
+
+
+    /**
      * Ritorna l'id dello stato fattura a partire dal nome.
      *
      * @param string $name il nome da ricercare

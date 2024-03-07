@@ -18,19 +18,20 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Modules\Fatture\Stato;
 
 switch (post('op')) {
     case 'update':
-        $dbo->update('co_statidocumento', [
-            'icona' => post('icona'),
-            'colore' => post('colore'),
-        ], ['id' => $id_record]);
-
-        $dbo->update('co_statidocumento_lang', [
-            'name' => post('descrizione'),
-        ], ['id_record' => $id_record]);
-
-        flash()->info(tr('Informazioni salvate correttamente.'));
-
+        $descrizione = post('descrizione');
+        $stato_new = Stato::find((new Stato())->getByName($descrizione)->id_record);
+        
+        if ($stato_new) {
+            flash()->error(tr('Questo nome è già stato utilizzato per un altro stato.'));
+        } else {
+            $stato->icona = post('icona');
+            $stato->colore = post('colore');
+            $stato->name = $descrizione;
+            $stato->save();
         break;
+    }
 }

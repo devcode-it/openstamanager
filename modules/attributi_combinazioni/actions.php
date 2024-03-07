@@ -24,30 +24,35 @@ use Modules\AttributiCombinazioni\ValoreAttributo;
 
 switch (filter('op')) {
     case 'add':
-        $nome = post('nome');
-        $esistente = (new Attributo())->getByName(post('nome'));
+        $descrizione = post('nome');
+        $title = post('titolo');
+        $attributo_new = (new Attributo())->getByName($descrizione)->id_record;
 
-        if (!$esistente) {
+        if ($stato_new) {
+            flash()->error(tr('Questo nome è già stato utilizzato per un altro attributo.'));
+        } else {
             $attributo = Attributo::build();
+            $id_record= $dbo->lastInsertedID();
+            $attributo->name = $descrizione;
+            $attributo->title = $title;
             $attributo->save();
 
-            $id_record = $attributo->id;
-
-            $database->query('INSERT INTO `mg_attributi_lang` (`id_record`, `id_lang`, `name`, `title`) VALUES ('.$id_record.', '.setting('Lingua').', \''.post('nome').'\', \''.post('titolo').'\')');
-
             flash()->info(tr('Nuovo attributo creato correttamente!'));
-        } else {
-            flash()->error(tr('Attributo esistente con lo stesso nome!'));
         }
-
         break;
 
     case 'update':
+        $title = post('titolo');
+        $attributo_new = (new Attributo())->getByName($descrizione)->id_record;
 
-        $attributo->save();
+        if (!empty($attributo_new) && $attributo_new != $id_record){
+            flash()->error(tr('Questo nome è già stato utilizzato per un altro attributo.'));
+        } else {
+            $attributo->title = $title;
+            $attributo->save();
 
-        flash()->info(tr('Attributo aggiornato correttamente!'));
-
+            flash()->info(tr('Attributo aggiornato correttamente!'));
+        }
         break;
 
     case 'delete':

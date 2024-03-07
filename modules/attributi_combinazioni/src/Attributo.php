@@ -13,6 +13,14 @@ class Attributo extends Model
 
     protected $table = 'mg_attributi';
 
+    public static function build()
+    {
+        $model = new static();
+        $model->save();
+
+        return $model;
+    }
+
     /* Relazioni Eloquent */
     public function valori()
     {
@@ -35,6 +43,30 @@ class Attributo extends Model
     }
 
     /**
+     * Imposta l'attributo name dell'attributo.
+     */
+    public function setNameAttribute($value)
+    {
+        $table = database()->table($this->table.'_lang');
+
+        $translated = $table
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'));
+
+        if ($translated->count() > 0) {
+            $translated->update([
+                'name' => $value
+            ]);
+        } else {
+            $table->insert([
+                'id_record' => $this->id,
+                'id_lang' => setting('Lingua'),
+                'name' => $value
+            ]);
+        }
+    }
+
+    /**
      * Ritorna l'attributo title dell'attributo.
      *
      * @return string
@@ -46,6 +78,30 @@ class Attributo extends Model
             ->where('id_record', '=', $this->id)
             ->where('id_lang', '=', setting('Lingua'))
             ->first()->title;
+    }
+
+    /**
+     * Imposta l'attributo title dell'attributo.
+     */
+    public function setTitleAttribute($value)
+    {
+        $table = database()->table($this->table.'_lang');
+
+        $translated = $table
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'));
+
+        if ($translated->count() > 0) {
+            $translated->update([
+                'title' => $value
+            ]);
+        } else {
+            $table->insert([
+                'id_record' => $this->id,
+                'id_lang' => setting('Lingua'),
+                'title' => $value
+            ]);
+        }
     }
 
     /**

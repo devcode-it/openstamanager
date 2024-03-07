@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 // Collegamenti con scadenzaio (numerici)
-$scadenze = $dbo->fetchNum('SELECT id FROM  co_scadenziario WHERE tipo = '.prepare($record['nome']));
+$scadenze = $dbo->fetchNum('SELECT id FROM co_scadenziario WHERE tipo = '.prepare($record['name']));
 
 if ($record['can_delete'] and empty($scadenze)) {
     $attr = '';
@@ -43,11 +43,11 @@ if ($record['can_delete'] and empty($scadenze)) {
 			<div class="row">
 
 				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$", "extra": "<?php echo $attr; ?>"  ]}
+					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$name$", "extra": "<?php echo $attr; ?>"  ]}
 				</div>
 
 				<div class="col-md-6">
-					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$description$" ]}
 				</div>
 
 			</div>

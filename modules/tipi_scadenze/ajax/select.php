@@ -21,15 +21,15 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'tipi_scadenze':
-        $query = 'SELECT nome AS id, descrizione FROM co_tipi_scadenze |where| ORDER BY nome ASC';
+        $query = 'SELECT `name` AS `id`, `description` as `descrizione` FROM `co_tipi_scadenze` LEFT JOIN `co_tipi_scadenze_lang` ON (`co_tipi_scadenze_lang`.`id_record` = `co_tipi_scadenze`.`id` AND `co_tipi_scadenze_lang`.`id_lang` = "'.prepare(setting('Lingua')).'") |where| ORDER BY `name` ASC';
 
         foreach ($elements as $element) {
-            $filter[] = 'id='.prepare($element);
+            $filter[] = '`co_tipi_scadenze`.`id`='.prepare($element);
         }
 
         if (!empty($search)) {
-            $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'descrizione LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`description` LIKE '.prepare('%'.$search.'%');
         }
 
         break;

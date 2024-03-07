@@ -57,6 +57,7 @@ return [
     'co_tipidocumento',
     'co_tipidocumento_lang',
     'co_tipi_scadenze',
+    'co_tipi_scadenze_lang',
     'co_stampecontabili',
     'do_categorie',
     'do_categorie_lang',

@@ -27,14 +27,15 @@ switch (filter('op')) {
 
         if (isset($nome)) {
             // Se non esiste già una tipo di scadenza con lo stesso nome
-            if ($dbo->fetchNum('SELECT * FROM `co_tipi_scadenze` WHERE `nome`='.prepare($nome).' AND `id`!='.prepare($id_record)) == 0) {
+            $nome_new = $dbo->fetchOne('SELECT * FROM `co_tipi_scadenze` LEFT JOIN `co_tipi_scadenze_lang` ON (`co_tipi_scadenze_lang`.`id_record` = `co_tipi_scadenze`.`id` AND `co_tipi_scadenze_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name` =  '.prepare($nome).' AND `co_tipi_scadenze_lang`.`id_record` != '.prepare($id_record));
+            if (empty($nome_new)) {
                 // nome_prev
-                $nome_prev = $dbo->fetchOne('SELECT nome AS nome_prev FROM `co_tipi_scadenze` WHERE `id`='.prepare($id_record))['nome_prev'];
+                $nome_prev = $dbo->fetchOne('SELECT `name` AS nome_prev FROM `co_tipi_scadenze` LEFT JOIN `co_tipi_scadenze_lang` ON (`co_tipi_scadenze_lang`.`id_record` = `co_tipi_scadenze`.`id` AND `co_tipi_scadenze_lang`.`id_lang` = "'.prepare(setting('Lingua')).'") WHERE `co_tipi_scadenze`.`id`='.prepare($id_record))['nome_prev'];
 
-                $dbo->update('co_tipi_scadenze', [
-                    'nome' => $nome,
-                    'descrizione' => $descrizione,
-                ], ['id' => $id_record]);
+                $dbo->update('co_tipi_scadenze_lang', [
+                    'name' => $nome,
+                    'description' => $descrizione,
+                ], ['id_record' => $id_record, 'id_lang' => setting('Lingua')]);
 
                 // aggiorno anche il segmento
                 $dbo->update('zz_segments', [
@@ -65,12 +66,17 @@ switch (filter('op')) {
 
         if (isset($nome)) {
             // Se non esiste già un tipo di scadenza con lo stesso nome
-            if ($dbo->fetchNum('SELECT * FROM `co_tipi_scadenze` WHERE `nome`='.prepare($nome)) == 0) {
+            if ($dbo->fetchNum('SELECT * FROM `co_tipi_scadenze` LEFT JOIN `co_tipi_scadenze_lang` ON (`co_tipi_scadenze_lang`.`id_record` = `co_tipi_scadenze`.`id` AND `co_tipi_scadenze_lang`.`id_lang` = "'.prepare(setting('Lingua')).'") WHERE `name`='.prepare($nome)) == 0) {
                 $dbo->insert('co_tipi_scadenze', [
-                    'nome' => $nome,
-                    'descrizione' => $descrizione,
+                    'created_at' => 'NOW()',
                 ]);
                 $id_record = $dbo->lastInsertedID();
+                $dbo->insert('co_tipi_scadenze_lang', [
+                    'name' => $nome,
+                    'description' => $descrizione,
+                    'id_record' => $id_record,
+                    'id_lang' => setting('Lingua')
+                ]);
 
                 // Aggiungo anche il segmento
                 $dbo->insert('zz_segments', [
@@ -100,7 +106,7 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        $documenti = $dbo->fetchNum('SELECT id FROM co_scadenziario WHERE tipo = (SELECT nome FROM co_tipi_scadenze WHERE id = '.prepare($id_record).')');
+        $documenti = $dbo->fetchNum('SELECT `id` FROM `co_scadenziario` WHERE `tipo` = (SELECT `name` FROM `co_tipi_scadenze` LEFT JOIN `co_tipi_scadenze_lang` ON (`co_tipi_scadenze_lang`.`id_record` = `co_tipi_scadenze`.`id` AND `co_tipi_scadenze_lang`.`id_lang` = "'.prepare(setting('Lingua')).'") WHERE `co_tipi_scadenze`.`id` = '.prepare($id_record).')');
 
         if (isset($id_record) && empty($documenti)) {
             $dbo->query('DELETE FROM `co_tipi_scadenze` WHERE `can_delete` = 1 AND `id`='.prepare($id_record));

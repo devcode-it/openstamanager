@@ -626,6 +626,28 @@ ORDER BY
     CAST(IF(`co_documenti`.`numero` = '', `co_documenti`.`numero_esterno`, `co_documenti`.`numero`) AS UNSIGNED) DESC" WHERE `name` = 'Fatture di acquisto';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_tipidocumento_lang`.`name`' WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = 'Tipo';
 
+-- Aggiunta tabella co_tipi_scadenze_lang
+CREATE TABLE IF NOT EXISTS `co_tipi_scadenze_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `name` VARCHAR(255) NOT NULL,
+    `description` VARCHAR(255) NOT NULL
+);
+ALTER TABLE `co_tipi_scadenze_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `co_tipi_scadenze_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `co_tipi_scadenze_lang` (`id`, `id_lang`, `id_record`, `name`, `description`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `nome`, `descrizione` FROM `co_tipi_scadenze`;
+
+ALTER TABLE `co_tipi_scadenze`
+    DROP `nome`,
+    DROP `descrizione`;
+
+ALTER TABLE `co_tipi_scadenze_lang` ADD CONSTRAINT `co_tipi_scadenze_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `co_tipi_scadenze`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
 -- Aggiunta tabella do_categorie_lang
 CREATE TABLE IF NOT EXISTS `do_categorie_lang` (
     `id` int NOT NULL,
@@ -1875,7 +1897,7 @@ HAVING
     2=2
 ORDER BY
     `zz_modules_lang`.`name`" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Template email');
-    UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_modules_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Template email' AND `zz_views`.`name` = 'Modulo';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_modules_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Template email' AND `zz_views`.`name` = 'Modulo';
 
 -- Allineamento vista Utenti e Permessi
 UPDATE `zz_modules` SET `options` = 'SELECT
@@ -1948,3 +1970,17 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 (NULL, 'app-v1', 'retrieve', 'campi-personalizzati-valori-cleanup', 'API\\App\\v1\\CampiPersonalizzatiValori', 1),
 (NULL, 'app-v1', 'update', 'campi-personalizzati-valori', 'API\\App\\v1\\CampiPersonalizzatiValori', 1);
 
+-- Allineamento vista Tipi scadenze
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select| 
+FROM 
+    `co_tipi_scadenze`
+    LEFT JOIN `co_tipi_scadenze_lang` ON (`co_tipi_scadenze_lang`.`id_record` = `co_tipi_scadenze`.`id` AND `co_tipi_scadenze_lang`.|lang|)
+WHERE 
+    1=1
+HAVING
+    2=2" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Tipi scadenze');
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`co_tipi_scadenze`.`id`' WHERE `zz_modules_lang`.`name` = 'Tipi scadenze' AND `zz_views`.`name` = 'id';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`co_tipi_scadenze_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Tipi scadenze' AND `zz_views`.`name` = 'Nome';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`co_tipi_scadenze_lang`.`description`' WHERE `zz_modules_lang`.`name` = 'Tipi scadenze' AND `zz_views`.`name` = 'Descrizione';

@@ -28,6 +28,19 @@ class Stato extends Model
 
     protected $table = 'co_statipreventivi';
 
+    public static function build($icona, $colore, $is_completato, $is_fatturabile, $is_pianificabile)
+    {
+        $model = new static();
+        $model->icona = $icona;
+        $model->colore = $colore;
+        $model->is_completato = $is_completato;
+        $model->is_fatturabile = $is_fatturabile;
+        $model->is_pianificabile = $is_pianificabile;
+        $model->save();
+
+        return $model;
+    }
+    
     public function preventivi()
     {
         return $this->hasMany(Preventivo::class, 'idstatopreventivo');
@@ -45,6 +58,30 @@ class Stato extends Model
             ->where('id_record', '=', $this->id)
             ->where('id_lang', '=', setting('Lingua'))
             ->first()->name;
+    }
+
+    /**
+     * Imposta l'attributo name dello stato del preventivo.
+     */
+    public function setNameAttribute($value)
+    {
+        $table = database()->table($this->table.'_lang');
+
+        $translated = $table
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'));
+
+        if ($translated->count() > 0) {
+            $translated->update([
+                'name' => $value
+            ]);
+        } else {
+            $table->insert([
+                'id_record' => $this->id,
+                'id_lang' => setting('Lingua'),
+                'name' => $value
+            ]);
+        }
     }
 
     /**

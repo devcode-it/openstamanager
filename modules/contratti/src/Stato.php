@@ -62,7 +62,7 @@ class Stato extends Model
 
 
     /**
-     * Imposta l'attributo name dell'articolo.
+     * Imposta l'attributo name dello stato contratto.
      */
     public function setNameAttribute($value)
     {

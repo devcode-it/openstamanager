@@ -23,9 +23,9 @@ use Modules\Fatture\Stato;
 switch (post('op')) {
     case 'update':
         $descrizione = post('descrizione');
-        $stato_new = Stato::find((new Stato())->getByName($descrizione)->id_record);
+        $stato_new = (new Stato())->getByName($descrizione)->id_record;
         
-        if ($stato_new) {
+        if (!empty($stato_new) && $stato_new != $id_record){
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato.'));
         } else {
             $stato->icona = post('icona');

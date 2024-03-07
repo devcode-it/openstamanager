@@ -53,7 +53,7 @@ if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
 // Se è indicata un'anagrafica relativa, si carica il tipo di intervento di default impostato
 if (!empty($id_anagrafica)) {
     $anagrafica = $dbo->fetchOne('SELECT idtipointervento_default, idzona FROM an_anagrafiche WHERE idanagrafica='.prepare($id_anagrafica));
-    $id_tipo ??= $anagrafica['idtipointervento_default'];
+    $id_tipo = $anagrafica['idtipointervento_default'];
     $id_zona = $anagrafica['idzona'];
 }
 
@@ -128,10 +128,10 @@ if (!empty($impianti_collegati)) {
 }
 
 // Impostazione della data se mancante
-$data ??= filter('data') ?? date('Y-m-d');
+$data = (!empty(filter('data')) ? filter('data') : date('Y-m-d'));
 
 // Impostazione della data di fine da Dashboard
-$data_fine ??= filter('data_fine') ?? $data;
+$data_fine = (!empty(filter('data')) ? filter('data') : $data);
 
 $inizio_sessione = $data.' '.$orario_inizio;
 $fine_sessione = $data_fine.' '.$orario_fine;

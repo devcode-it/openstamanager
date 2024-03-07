@@ -31,18 +31,21 @@ class Impianti extends AppResource
         // TODO: modificare introducendo deleted_at su my_impianti
         return database()
             ->table('zz_operations')
-            ->select('id_record')
+            ->select('zz_operations.id_record')
             ->distinct()
             ->join('zz_modules', 'zz_modules.id', '=', 'zz_operations.id_module')
             ->leftJoin('zz_modules_lang', function ($join) use ($last_sync_at) {
                 $join->on('zz_modules.id', '=', 'zz_modules_lang.id_record')
-                    ->where('zz_modules.id_lang', '=', setting('Lingua'));
+                    ->where('zz_modules_lang.id_lang', '=', setting('Lingua'));
             })
             ->where('zz_modules_lang.name', '=', "Impianti")
             ->where('zz_operations.op', '=', "delete")
+            ->whereNotNull('zz_operations.options')
             ->where('zz_operations.created_at', '>', $last_sync_at)
             ->pluck('id_record')
             ->toArray();
+
+        return [];
     }
 
     public function getModifiedRecords($last_sync_at)

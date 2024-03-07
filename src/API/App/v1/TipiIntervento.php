@@ -47,7 +47,7 @@ class TipiIntervento extends AppResource
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT 
             `in_tipiintervento`.`id`,
-            `in_tipiintervento_lang`.`name`,
+            `in_tipiintervento_lang`.`name` AS `descrizione`,
             `costo_orario` AS prezzo_orario,
             `costo_km` AS prezzo_chilometrico,
             `costo_diritto_chiamata` AS prezzo_diritto_chiamata

@@ -33,7 +33,7 @@ class CampiPersonalizzati extends AppResource
     {
         $module = (new Module())->getByName('Interventi');
 
-        $query = 'SELECT `zz_fields`.`id`, `zz_fields`.`updated_at` FROM `zz_fields` WHERE id_module='.prepare($module->id_record);
+        $query = 'SELECT `zz_fields`.`id`, `zz_fields`.`updated_at` FROM `zz_fields` WHERE id_module='.prepare($module->id_record)." AND `content` LIKE '%text%'";
 
         // Filtro per data
         if ($last_sync_at) {

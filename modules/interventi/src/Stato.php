@@ -33,10 +33,11 @@ class Stato extends Model
         return $this->hasMany(Intervento::class, 'idstatointervento');
     }
 
-    public static function build($codice)
+    public static function build($codice, $colore)
     {
         $model = new static();
         $model->codice = $codice;
+        $model->colore = $colore;
         $model->save();
 
         return $model;
@@ -54,6 +55,30 @@ class Stato extends Model
             ->where('id_record', '=', $this->id)
             ->where('id_lang', '=', setting('Lingua'))
             ->first()->name;
+    }
+
+    /**
+     * Imposta l'attributo name della lista.
+     */
+    public function setNameAttribute($value)
+    {
+        $table = database()->table($this->table.'_lang');
+
+        $translated = $table
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'));
+
+        if ($translated->count() > 0) {
+            $translated->update([
+                'name' => $value
+            ]);
+        } else {
+            $table->insert([
+                'id_record' => $this->id,
+                'id_lang' => setting('Lingua'),
+                'name' => $value
+            ]);
+        }
     }
 
     /**

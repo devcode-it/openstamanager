@@ -18,63 +18,52 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Modules\Fatture\Tipo;
 
 switch (filter('op')) {
     case 'update':
         $descrizione = filter('descrizione');
         $dir = filter('dir');
         $codice_tipo_documento_fe = filter('codice_tipo_documento_fe');
+        $predefined = post('predefined');
+        $tipo_new = Tipo::where('id', '=', (new Tipo())->getByName($descrizione)->id_record)->where('dir', '=', $dir)->where('codice_tipo_documento_fe', '=', $codice_tipo_documento_fe)->first();
 
         if (isset($descrizione) && isset($dir) && isset($codice_tipo_documento_fe)) {
-            if ($dbo->fetchNum('SELECT * FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `dir`='.prepare($dir).' AND `name`='.prepare($descrizione).' AND `codice_tipo_documento_fe`='.prepare($codice_tipo_documento_fe).' AND `id`!='.prepare($id_record)) == 0) {
-                $predefined = post('predefined');
+            if (!empty($tipo_new) && $tipo_new->id != $id_record){
+                flash()->error(tr('Questa combinazione di nome, codice e direzione è già stata utilizzata per un altro tipo di documento.'));
+            } else {
                 if (!empty($predefined)) {
                     $dbo->query('UPDATE `co_tipidocumento` SET `predefined` = 0 WHERE `dir` = '.prepare($dir));
                 }
-
-                $dbo->update('co_tipidocumento', [
-                    'dir' => $dir,
-                    'codice_tipo_documento_fe' => $codice_tipo_documento_fe,
-                    'help' => filter('help'),
-                    'predefined' => $predefined,
-                    'enabled' => post('enabled'),
-                    'id_segment' => post('id_segment'),
-                ], ['id' => $id_record]);
-
-                $dbo->update('co_tipidocumento_lang', [
-                    'name' => $descrizione,
-                ], ['id_record' => $id_record, 'id_lang' => setting('Lingua')]);
+                $tipo->dir = $dir;
+                $tipo->codice_tipo_documento_fe = $codice_tipo_documento_fe;
+                $tipo->help = filter('help');
+                $tipo->predefined = $predefined;
+                $tipo->enabled = post('enabled');
+                $tipo->id_segment = post('id_segment');
+                $tipo->name = $descrizione;
+                $tipo->save();
 
                 flash()->info(tr('Salvataggio completato!'));
-            } else {
-                flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa combinazione di direzione, descrizione e tipo documento FE", [
-                    '_TYPE_' => 'tipo documento',
-                ]));
             }
-        } else {
-            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio'));
         }
-
+ 
         break;
 
     case 'add':
         $descrizione = filter('descrizione');
         $dir = filter('dir');
         $codice_tipo_documento_fe = filter('codice_tipo_documento_fe');
+        $tipo_new = Tipo::where('id', '=', (new Tipo())->getByName($descrizione)->id_record)->where('dir', '=', $dir)->where('codice_tipo_documento_fe', '=', $codice_tipo_documento_fe)->first();
 
         if (isset($descrizione) && isset($dir) && isset($codice_tipo_documento_fe)) {
-            if ($dbo->fetchNum('SELECT * FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `dir`='.prepare($dir).' AND `name`='.prepare($descrizione).' AND `codice_tipo_documento_fe`='.prepare($codice_tipo_documento_fe)) == 0) {
-                $dbo->insert('co_tipidocumento', [
-                    'dir' => $dir,
-                    'codice_tipo_documento_fe' => $codice_tipo_documento_fe,
-                ]);
+            if (!empty($tipo_new) && $tipo_new->id != $id_record){
+                flash()->error(tr('Questa combinazione di nome, codice e direzione è già stata utilizzata per un altro tipo di documento.'));
+            } else {
+                $tipo = Tipo::build($dir, $codice_tipo_documento_fe);
                 $id_record = $dbo->lastInsertedID();
-
-                $dbo->insert('co_tipidocumento_lang', [
-                    'name' => $descrizione,
-                    'id_record' => $id_record,
-                    'id_lang' => setting('Lingua'),
-                ]);
+                $tipo->name = $descrizione;
+                $tipo->save();
 
                 if (isAjaxRequest()) {
                     echo json_encode(['id' => $id_record, 'text' => $descrizione]);
@@ -83,13 +72,7 @@ switch (filter('op')) {
                 flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
                     '_TYPE_' => 'tipo documento',
                 ]));
-            } else {
-                flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa combinazione di direzione, descrizione e tipo documento FE", [
-                    '_TYPE_' => 'tipo documento',
-                ]));
             }
-        } else {
-            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio'));
         }
 
         break;

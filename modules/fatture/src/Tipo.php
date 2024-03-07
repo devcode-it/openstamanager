@@ -28,6 +28,16 @@ class Tipo extends Model
 
     protected $table = 'co_tipidocumento';
 
+
+    public static function build($dir, $codice_tipo_documento_fe)
+    {
+        $model = new static();
+        $model->dir = $dir;
+        $model->codice_tipo_documento_fe = $codice_tipo_documento_fe;
+        $model->save();
+
+        return $model;
+    }
     public function fatture()
     {
         return $this->hasMany(Fattura::class, 'idtipodocumento');
@@ -45,6 +55,30 @@ class Tipo extends Model
             ->where('id_record', '=', $this->id)
             ->where('id_lang', '=', setting('Lingua'))
             ->first()->name;
+    }
+
+    /**
+     * Imposta l'attributo name del tipo di documento.
+     */
+    public function setNameAttribute($value)
+    {
+        $table = database()->table($this->table.'_lang');
+
+        $translated = $table
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'));
+
+        if ($translated->count() > 0) {
+            $translated->update([
+                'name' => $value
+            ]);
+        } else {
+            $table->insert([
+                'id_record' => $this->id,
+                'id_lang' => setting('Lingua'),
+                'name' => $value
+            ]);
+        }
     }
 
     /**

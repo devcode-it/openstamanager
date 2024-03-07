@@ -37,13 +37,18 @@ class Tipo extends Model
      *
      * @return self
      */
-    public static function build($codice)
+    public static function build($codice, $calcola_km, $tempo_standard, $costo_orario, $costo_km, $costo_diritto_chiamata, $costo_orario_tecnico, $costo_km_tecnico, $costo_diritto_chiamata_tecnico)
     {
         $model = new static();
-
         $model->codice = $codice;
-
-        // Salvataggio delle informazioni
+        $model->calcola_km = $calcola_km;
+        $model->tempo_standard = $tempo_standard;
+        $model->costo_orario = $costo_orario;
+        $model->costo_km = $costo_km;
+        $model->costo_diritto_chiamata = $costo_diritto_chiamata;
+        $model->costo_orario_tecnico = $costo_orario_tecnico;
+        $model->costo_km_tecnico = $costo_km_tecnico;
+        $model->costo_diritto_chiamata_tecnico = $costo_diritto_chiamata_tecnico;
         $model->save();
 
         return $model;
@@ -91,6 +96,30 @@ class Tipo extends Model
             ->where('id_record', '=', $this->id)
             ->where('id_lang', '=', setting('Lingua'))
             ->first()->name;
+    }
+
+   /**
+     * Imposta l'attributo name del tipo di intervento.
+     */
+    public function setNameAttribute($value)
+    {
+        $table = database()->table($this->table.'_lang');
+
+        $translated = $table
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'));
+
+        if ($translated->count() > 0) {
+            $translated->update([
+                'name' => $value
+            ]);
+        } else {
+            $table->insert([
+                'id_record' => $this->id,
+                'id_lang' => setting('Lingua'),
+                'name' => $value
+            ]);
+        }
     }
 
     /**

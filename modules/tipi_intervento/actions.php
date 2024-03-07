@@ -31,9 +31,8 @@ switch (post('op')) {
         $tipo->costo_orario_tecnico = post('costo_orario_tecnico');
         $tipo->costo_km_tecnico = post('costo_km_tecnico');
         $tipo->costo_diritto_chiamata_tecnico = post('costo_diritto_chiamata_tecnico');
+        $tipo->name = post('descrizione');
         $tipo->save();
-
-        $database->query('UPDATE `in_tipiintervento_lang` SET `name` = '.prepare(post('descrizione')).' WHERE `id_record` = '.prepare($id_record).' AND `id_lang` = '.prepare(setting('Lingua')));
 
         $fasce_ore = (array) post('fascia_ore');
         $fascia_km = (array) post('fascia_km');
@@ -61,24 +60,22 @@ switch (post('op')) {
 
     case 'add':
         $codice = post('codice');
+        $calcola_km = post('calcola_km');
+        $tempo_standard = post('tempo_standard');
+        $costo_orario = post('costo_orario');
+        $costo_km = post('costo_km');
+        $costo_diritto_chiamata = post('costo_diritto_chiamata');
+        $costo_orario_tecnico = post('costo_orario_tecnico');
+        $costo_km_tecnico = post('costo_km_tecnico');
+        $costo_diritto_chiamata_tecnico = post('costo_diritto_chiamata_tecnico');
 
-        $tipo = Tipo::build($codice);
-        $database->query('INSERT INTO `in_tipiintervento_lang` (`id_lang`, `id_record`, `name`) VALUES ('.prepare(setting('Lingua')).', '.prepare($tipo->id).', '.prepare(post('descrizione')).')');
-
-        $tipo->tempo_standard = post('tempo_standard');
-        $tipo->calcola_km = post('calcola_km');
-        $tipo->costo_orario = post('costo_orario');
-        $tipo->costo_km = post('costo_km');
-        $tipo->costo_diritto_chiamata = post('costo_diritto_chiamata');
-        $tipo->costo_orario_tecnico = post('costo_orario_tecnico');
-        $tipo->costo_km_tecnico = post('costo_km_tecnico');
-        $tipo->costo_diritto_chiamata_tecnico = post('costo_diritto_chiamata_tecnico');
+        $tipo = Tipo::build($codice, $calcola_km, $tempo_standard, $costo_orario, $costo_km, $costo_diritto_chiamata, $costo_orario_tecnico, $costo_km_tecnico, $costo_diritto_chiamata_tecnico);
+        $id_record= $dbo->lastInsertedID();
+        $tipo->name = post('descrizione');
         $tipo->save();
 
         // Fix per impostare i valori inziali a tutti i tecnici
         $tipo->fixTecnici();
-
-        $id_record = $tipo->id;
 
         $fasce_orarie = $dbo->select('in_fasceorarie', '*', [], ['deleted_at' => null]);
         foreach ($fasce_orarie as $fascia_oraria) {

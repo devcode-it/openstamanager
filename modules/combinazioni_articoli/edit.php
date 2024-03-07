@@ -1,6 +1,7 @@
 <?php
 
 include_once __DIR__.'/../../core.php';
+use Models\Module;
 
 $numero_varianti = $combinazione->articoli()->count();
 
@@ -27,16 +28,16 @@ echo '
 
             <div class="row">
                 <div class="col-md-6">';
-if (!empty($record['id_categoria'])) {
+if (!empty($combinazione->id_categoria)) {
     echo '
-                    '.Modules::link('Categorie articoli', $record['id_categoria'], null, null, 'class="pull-right"');
+                    '.Modules::link('Categorie articoli', $combinazione->id_categoria, null, null, 'class="pull-right"');
 }
 echo '
                     {[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|'.(new Module())->getByName('Categorie articoli')->id_record.'" ]}
                 </div>
 
                 <div class="col-md-6">
-                    {[ "type": "select", "label": "'.tr('Sottocategoria').'", "name": "id_sottocategoria", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie", "select-options": '.json_encode(['id_categoria' => $record['id_categoria']]).' ]}
+                    {[ "type": "select", "label": "'.tr('Sottocategoria').'", "name": "id_sottocategoria", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie", "select-options": '.json_encode(['id_categoria' => $combinazione->id_categoria]).' ]}
                 </div>
             </div>
 

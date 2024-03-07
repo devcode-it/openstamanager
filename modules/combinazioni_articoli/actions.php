@@ -10,13 +10,13 @@ switch (filter('op')) {
         $nome = post('nome');
 
         // Ricerca combinazione con nome indicato
-        $esistente = (new Combinazione())->getByName($nome)->id_record;
-        if (isset($combinazione)) {
-            $esistente = Combinazione::find($esistente)->where('id', '!=', $combinazione->id);
-        }
+        $combinazione_new = (new Combinazione())->getByName($nome)->id_record;
 
-        if (!$esistente) {
+        if (!empty($combinazione_new) && !empty($id_record) && $combinazione_new != $id_record){
+            flash()->error(tr('Questo nome è già stato utilizzato per un altra combinazione.'));
+        } else {
             $combinazione = $combinazione ?: Combinazione::build();
+            $combinazione->name = $nome;
             $combinazione->codice = post('codice');
             $combinazione->id_categoria = post('id_categoria');
             $combinazione->id_sottocategoria = post('id_sottocategoria');
@@ -30,8 +30,6 @@ switch (filter('op')) {
             $combinazione->attributi()->sync((array) post('attributi'));
 
             flash()->info(tr('Combinazione aggiornata correttamente!'));
-        } else {
-            flash()->error(tr('Combinazione esistente con lo stesso nome!'));
         }
 
         break;

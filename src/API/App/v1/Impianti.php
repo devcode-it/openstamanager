@@ -44,8 +44,6 @@ class Impianti extends AppResource
             ->where('zz_operations.created_at', '>', $last_sync_at)
             ->pluck('id_record')
             ->toArray();
-
-        return [];
     }
 
     public function getModifiedRecords($last_sync_at)

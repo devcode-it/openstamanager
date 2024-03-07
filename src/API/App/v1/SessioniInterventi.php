@@ -46,7 +46,6 @@ class SessioniInterventi extends AppResource
             ->pluck('zz_operations.id_record')
             ->toArray();
 
-        return [];
     }
 
     public function getModifiedRecords($last_sync_at)

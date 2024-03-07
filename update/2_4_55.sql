@@ -1937,8 +1937,8 @@ DELETE FROM `zz_modules` WHERE `id` = (SELECT `id_record` FROM `zz_modules_lang`
 DELETE FROM `zz_modules_lang` WHERE `name` = 'Voci di servizio';
 =======
 -- Api per campi personalizzati
-INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES (NULL, 'app-v1', 'retrieve', 'campi_personalizzati', 'API\\App\\v1\\CampiPersonalizzati', '1', NULL, NULL);
-INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES (NULL, 'app-v1', 'retrieve', 'campi-personalizzati-cleanup', 'API\\App\\v1\\CampiPersonalizzati', '1', NULL, NULL);
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES (NULL, 'app-v1', 'retrieve', 'campi_personalizzati', 'API\\App\\v1\\CampiPersonalizzati', '1');
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES (NULL, 'app-v1', 'retrieve', 'campi-personalizzati-cleanup', 'API\\App\\v1\\CampiPersonalizzati', '1');
 
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES
 (NULL, 'app-v1', 'retrieve', 'campi-personalizzati-valori', 'API\\App\\v1\\CampiPersonalizzatiValori', 1),

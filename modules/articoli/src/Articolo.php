@@ -359,7 +359,9 @@ class Articolo extends Model
      */
     public function setNameAttribute($value)
     {
-        $translated = database()->table($this->table.'_lang')
+        $table = database()->table($this->table.'_lang');
+
+        $translated = $table
             ->where('id_record', '=', $this->id)
             ->where('id_lang', '=', setting('Lingua'));
 
@@ -368,7 +370,7 @@ class Articolo extends Model
                 'name' => $value
             ]);
         } else {
-            $translated->insert([
+            $table->insert([
                 'id_record' => $this->id,
                 'id_lang' => setting('Lingua'),
                 'name' => $value

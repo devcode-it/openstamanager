@@ -24,15 +24,16 @@ use Modules\CategorieDocumentali\Categoria;
 switch (post('op')) {
     case 'update':
         $descrizione = post('descrizione');
+        $categoria_new = Categoria::where('id', '=', (new Categoria())->getByName($descrizione)->id_record)->where('deleted_at', '=', null)->first();
 
-        // Verifico che il nome non sia duplicato
-        $count = $dbo->fetchNum('SELECT `name` FROM `do_categorie` LEFT JOIN `do_categorie_lang` ON (`do_categorie_lang`.`id_record` = `do_categorie`.`id` AND `do_categorie_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name`='.prepare($descrizione).' AND `deleted_at` IS NULL AND `do_categorie`.`id` !='.prepare($id_record));
-        if ($count != 0) {
+        if (!empty($categoria_new) && $categoria_new->id != $id_record){
             flash()->error(tr('Categoria _NAME_ già esistente!', [
                 '_NAME_' => $descrizione,
             ]));
         } else {
-            $dbo->query('UPDATE `do_categorie_lang` SET `name` = '.prepare($descrizione).' WHERE `id_record` = '.prepare($id_record).' AND `id_lang` = '.prepare(setting('Lingua')));
+            $categoria->name = $descrizione;
+            $categoria->save();
+
             $categoria->syncPermessi(post('permessi') ?: []);
 
             flash()->info(tr('Informazioni salvate correttamente!'));
@@ -42,18 +43,18 @@ switch (post('op')) {
 
     case 'add':
         $descrizione = post('descrizione');
+        $categoria_new = Categoria::where('id', '=', (new Categoria())->getByName($descrizione)->id_record)->where('deleted_at', '=', null)->first();
 
-        // Verifico che il nome non sia duplicato
-        $count = $dbo->fetchNum('SELECT `name` FROM `do_categorie`  LEFT JOIN `do_categorie_lang` ON (`do_categorie_lang`.`id_record` = `do_categorie`.`id` AND `do_categorie_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name`='.prepare($descrizione).' AND `deleted_at` IS NULL');
-        if ($count != 0) {
+        if (!empty($categoria_new) && $categoria_new->id != $id_record){
             flash()->error(tr('Categoria _NAME_ già esistente!', [
                 '_NAME_' => $descrizione,
             ]));
         } else {
             $categoria = Categoria::build();
-            $id_record = $categoria->id;
-            $dbo->query('INSERT INTO `do_categorie_lang` (`id_record`, `id_lang`, `name`) VALUES ('.prepare($id_record).', '.prepare(setting('Lingua')).', '.prepare($descrizione).')');
-
+            $id_record = $dbo->lastInsertedID();
+            $categoria->name = $descrizione;
+            $categoria->save();
+            
             if (isAjaxRequest()) {
                 echo json_encode(['id' => $id_record, 'text' => $descrizione]);
             }

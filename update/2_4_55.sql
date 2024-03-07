@@ -1431,6 +1431,8 @@ FROM
 WHERE 
     1=1 AND 
     `mg_combinazioni`.`deleted_at` IS NULL 
+GROUP BY
+    `mg_combinazioni`.`id`
 HAVING 
     2=2" WHERE `name` = 'Combinazioni';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_combinazioni_lang`.`name`' WHERE `zz_modules`.`name` = 'Combinazioni' AND `zz_views`.`name` = 'Nome';
@@ -1933,6 +1935,7 @@ UPDATE `zz_plugins` SET `options` = '{ \"main_query\": [ { \"type\": \"table\", 
 
 DROP TABLE IF EXISTS `in_vociservizio`;
 
+DELETE FROM `zz_views` WHERE `id_module` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Voci di servizio');
 DELETE FROM `zz_modules` WHERE `id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Voci di servizio');
 DELETE FROM `zz_modules_lang` WHERE `name` = 'Voci di servizio';
 
@@ -1944,3 +1947,4 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 (NULL, 'app-v1', 'retrieve', 'campi-personalizzati-valori', 'API\\App\\v1\\CampiPersonalizzatiValori', 1),
 (NULL, 'app-v1', 'retrieve', 'campi-personalizzati-valori-cleanup', 'API\\App\\v1\\CampiPersonalizzatiValori', 1),
 (NULL, 'app-v1', 'update', 'campi-personalizzati-valori', 'API\\App\\v1\\CampiPersonalizzatiValori', 1);
+

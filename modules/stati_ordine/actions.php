@@ -23,20 +23,22 @@ use Modules\Ordini\Stato;
 
 switch (post('op')) {
     case 'update':
-        $id_stato= (new Stato())->getByName(post('descrizione'))->id_record;
-        $dbo->update('or_statiordine', [
-            'icona' => post('icona'),
-            'colore' => post('colore'),
-            'completato' => post('completato') ?: null,
-            'is_fatturabile' => post('is_fatturabile') ?: null,
-            'impegnato' => post('impegnato') ?: null,
-        ], ['id' => $id_record]);
+        $descrizione = post('descrizione');
+        $stato_new = (new Stato())->getByName($descrizione)->id_record;
 
-        $dbo->update('or_statiordine_lang', [
-            'name' => $id_stato ? $id_stato->name : post('descrizione'),
-        ], ['id_record' => $id_record, 'id_lang' => setting('Lingua')]);
+        if (!empty($stato_new) && $stato_new != $id_record){
+            flash()->error(tr('Questo nome è già stato utilizzato per un altro stato attività.'));
+        } else {
+            $stato->icona = post('icona');
+            $stato->colore = post('colore');
+            $stato->completato = post('completato');
+            $stato->is_fatturabile = post('is_fatturabile');
+            $stato->impegnato = post('impegnato');
+            $stato->name = $descrizione;
+            $stato->save();
 
-        flash()->info(tr('Informazioni salvate correttamente.'));
+            flash()->info(tr('Informazioni salvate correttamente.'));
+        }
 
         break;
 
@@ -44,18 +46,19 @@ switch (post('op')) {
         $descrizione = post('descrizione');
         $icona = post('icona');
         $colore = post('colore');
-        $completato = post('completato') ?: null;
-        $is_fatturabile = post('is_fatturabile') ?: null;
-        $impegnato = post('impegnato') ?: null;
+        $completato = post('completato');
+        $is_fatturabile = post('is_fatturabile');
+        $impegnato = post('impegnato');
 
-        // controlla descrizione che non sia duplicata
-        $id_stato= (new Stato())->getByName(post('descrizione'))->id_record;
-        if ($id_stato) {
-            flash()->error(tr('Stato ordine già esistente.'));
+        $stato_new = Stato::find((new Stato())->getByName($descrizione)->id_record);
+
+        if ($stato_new) {
+            flash()->error(tr('Questo nome è già stato utilizzato per un altro stato ordine.'));
         } else {
-            $dbo->query('INSERT INTO `or_statiordine` (icona, colore, completato, is_fatturabile, impegnato) VALUES ('.prepare($icona).', '.prepare($colore).','.prepare($completato).', '.prepare($is_fatturabile).', '.prepare($impegnato).' )');
-            $id_record = $dbo->lastInsertedID();
-            $dbo->query('INSERT INTO `or_statiordine_lang` (`name`, `id_record`, `id_lang`) VALUES ('.prepare($descrizione).', '.prepare($id_record).', '.prepare(setting('Lingua')).')');
+            $stato = Stato::build($icona, $colore, $completato, $is_fatturabile, $impegnato);
+            $id_record= $dbo->lastInsertedID();
+            $stato->name = $descrizione;
+            $stato->save();
             flash()->info(tr('Nuovo stato ordine aggiunto.'));
         }
 

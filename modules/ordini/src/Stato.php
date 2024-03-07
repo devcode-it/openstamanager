@@ -28,11 +28,23 @@ class Stato extends Model
 
     protected $table = 'or_statiordine';
 
+    public static function build($icona, $colore, $completato, $is_fatturabile, $impegnato)
+    {
+        $model = new static();
+        $model->icona = $icona;
+        $model->colore = $colore;
+        $model->completato = $completato;
+        $model->is_fatturabile = $is_fatturabile;
+        $model->impegnato = $impegnato;
+        $model->save();
+
+        return $model;
+    }
+
     public function ordini()
     {
         return $this->hasMany(Ordine::class, 'idstatoordine');
     }
-
 
     /**
      * Ritorna l'attributo name dello stato ordine.
@@ -46,6 +58,31 @@ class Stato extends Model
             ->where('id_record', '=', $this->id)
             ->where('id_lang', '=', setting('Lingua'))
             ->first()->name;
+    }
+
+
+    /**
+     * Imposta l'attributo name dello stato ordine.
+     */
+    public function setNameAttribute($value)
+    {
+        $table = database()->table($this->table.'_lang');
+
+        $translated = $table
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'));
+
+        if ($translated->count() > 0) {
+            $translated->update([
+                'name' => $value
+            ]);
+        } else {
+            $table->insert([
+                'id_record' => $this->id,
+                'id_lang' => setting('Lingua'),
+                'name' => $value
+            ]);
+        }
     }
 
     /**

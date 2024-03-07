@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Modules\Articoli\Categoria;
 
 switch (filter('op')) {
     case 'update':
@@ -27,20 +28,14 @@ switch (filter('op')) {
         $id_original = filter('id_original') ?: null;
 
         if (isset($nome) && isset($nota) && isset($colore)) {
-            $database->table('mg_categorie')
-                ->where('id', '=', $id_record)
-                ->update([
-                    'nota' => $nota,
-                    'colore' => $colore,
-                ]);
-
-                $database->table('mg_categorie_lang')
-                ->where('id_record', '=', $id_record)
-                ->update([
-                    'name' => $nome,
-                ]);
+            $categoria->nota = $nota;
+            $categoria->colore = $colore;
+            $categoria->parent = $id_original ?: null;
+            $categoria->name = $nome;
+            $categoria->save();
 
             flash()->info(tr('Salvataggio completato!'));
+
         } else {
             flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
         }
@@ -58,44 +53,30 @@ switch (filter('op')) {
         $nome = filter('nome');
         $nota = filter('nota');
         $colore = filter('colore');
-
         $id_original = filter('id_original') ?: null;
 
-        // Ricerca corrispondenze con stesso nome
-        $corrispondenze = $database->table('mg_categorie')
-            ->join('mg_categorie_lang', 'mg_categorie.id', '=', 'mg_categorie_lang.id_record')
-            ->where('name', '=', $nome);
+        $categoria_new = Categoria::where('id', "=", (new Categoria())->getByName($nome)->id_record);
         if (!empty($id_original)) {
-            $corrispondenze = $corrispondenze->where('parent', '=', $id_original);
+            $categoria_new = $categoria_new->where('parent', '=', $id_original);
         } else {
-            $corrispondenze = $corrispondenze->whereNull('parent');
+            $categoria_new = $categoria_new->whereNull('parent');
         }
-        $corrispondenze = $corrispondenze->get();
+        $categoria_new = $categoria_new->first();
 
-        // Eventuale creazione del nuovo record
-        if ($corrispondenze->count() == 0) {
-            $id_record = $database->table('mg_categorie')
-                ->insertGetId([
-                    'nota' => $nota,
-                    'colore' => $colore,
-                    'parent' => $id_original,
-                ]);
-
-                $database->table('mg_categorie_lang')
-                ->insertGetId([
-                    'id_record' => $id_record,
-                    'name' => $nome,
-                    'id_lang' => setting('Lingua'),
-                ]);
+        if (!empty($categoria_new)){
+            flash()->error(tr('Questo nome è già stato utilizzato per un altra categoria.'));
+        } else {
+            $categoria = Categoria::build($nota, $colore);
+            $id_record= $dbo->lastInsertedID();
+            $categoria->parent = $id_original;
+            $categoria->name = $nome;
+            $categoria->save();
 
             flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
                 '_TYPE_' => 'categoria',
             ]));
-        } else {
-            $id_record = $corrispondenze->first()->id;
-            flash()->error(tr('Esiste già una categoria con lo stesso nome!'));
         }
-
+        
         if (isAjaxRequest()) {
             echo json_encode(['id' => $id_record, 'text' => $nome]);
         } else {

@@ -32,7 +32,7 @@ include_once __DIR__.'/../../core.php';
 		<div class="panel-body">
             <div class="row">
                 <div class="col-md-9">
-                    {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
+                    {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$name$" ]}
                 </div>
 
                 <div class="col-md-3">
@@ -42,7 +42,7 @@ include_once __DIR__.'/../../core.php';
 
             <div class="row">
                 <div class="col-md-12">
-                    {[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
+                    {[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$description$" ]}
                 </div>
             </div>
 		</div>

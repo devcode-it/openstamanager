@@ -41,8 +41,8 @@ switch (filter('op')) {
         ]);
         $id_record = $database->lastInsertedID();
         $database->insert('mg_causali_movimenti_lang', [
-            'nome' => post('nome'),
-            'descrizione' => post('descrizione'),
+            'name' => post('nome'),
+            'description' => post('descrizione'),
             'id_record' => $id_record,
             'id_lang' => setting('Lingua'),
         ]);

@@ -127,9 +127,6 @@ INSERT INTO `an_regioni` (`id`, `nome`, `id_nazione`) VALUES
 -- Aggiunta sezionale per fatture non elettroniche
 INSERT INTO `zz_segments` (`id`, `id_module`, `name`, `clause`, `position`, `pattern`, `note`, `dicitura_fissa`, `predefined`, `predefined_accredito`, `predefined_addebito`, `is_fiscale`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'Fatture non elettroniche', '1=1', 'WHR', '#', '0', '0', '0', '0', '0', '1');
 
--- Fix widget attività da programmare
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM in_interventi WHERE in_interventi.idstatointervento = (SELECT in_statiintervento.idstatointervento FROM in_statiintervento WHERE in_statiintervento.codice=\'TODO\') ORDER BY in_interventi.data_richiesta ASC' WHERE `zz_widgets`.`name` = 'Attività nello stato da programmare'; 
-
 -- Ordinamento vista N. Prot.
 UPDATE `zz_views` SET `order_by` = 'CAST(co_documenti.numero AS UNSIGNED)' WHERE `zz_views`.`name` = 'N. Prot.'; 
 

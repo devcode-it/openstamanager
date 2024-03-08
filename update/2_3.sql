@@ -384,7 +384,6 @@ UPDATE `zz_modules` SET `options` = 'custom' WHERE `name` = 'Dashboard';
 UPDATE `zz_modules` SET `options` = 'custom' WHERE `name` = 'Gestione componenti';
 UPDATE `zz_modules` SET `options` = '' WHERE `name` = 'Magazzino';
 UPDATE `zz_modules` SET `options` = 'custom' WHERE `name` = 'Piano dei conti';
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `an_tipianagrafiche` WHERE 1=1 HAVING 2=2' WHERE `name` = 'Tipi di anagrafiche';
 UPDATE `zz_modules` SET `options` = '' WHERE `name` = 'Vendite';
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `in_vociservizio` WHERE 1=1 HAVING 2=2 ORDER BY `categoria`, `descrizione`' WHERE `name` = 'Voci di servizio';
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `an_zone` WHERE 1=1 HAVING 2=2 ORDER BY `id`' WHERE `name` = 'Zone';

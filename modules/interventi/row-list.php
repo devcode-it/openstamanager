@@ -93,7 +93,7 @@ foreach ($righe as $riga) {
                 </small>';
 
     echo '
-                    '.Modules::link($riga->isArticolo() ? (new Module())->getByName('Articoli')->id_record : null, $riga->isArticolo() ? $riga['idarticolo'] : null, $descrizione);
+                    '.Modules::link($riga->isArticolo() ? 'Articoli' : null, $riga->isArticolo() ? $riga['idarticolo'] : null, $descrizione);
 
     if ($riga->isArticolo()) {
         if (!empty($mancanti)) {

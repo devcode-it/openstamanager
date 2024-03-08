@@ -188,9 +188,6 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stampe'), 'Titolo', 'title', 2, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stampe'), 'id', 'id', 1, 1, 0, 0, 0);
 
--- Fix widget Attività confermate
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM in_interventi WHERE in_interventi.idstatointervento = (SELECT in_statiintervento.idstatointervento FROM in_statiintervento WHERE in_statiintervento.codice=''WIP'') ORDER BY in_interventi.data_richiesta ASC' WHERE `name` = 'Attività confermate';
-
 -- Permetto valore null per id_categoria articoli
 ALTER TABLE `mg_articoli` CHANGE `id_categoria` `id_categoria` INT(11) NULL;
 
@@ -292,9 +289,6 @@ ALTER TABLE `in_statiintervento` CHANGE `completato` `is_completato` TINYINT(1) 
 ALTER TABLE `in_statiintervento` ADD `is_fatturabile` TINYINT(1) NOT NULL AFTER `is_completato`;
 
 UPDATE `in_statiintervento` SET `is_fatturabile` = '1' WHERE `in_statiintervento`.`codice` = 'OK';
-
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM in_interventi WHERE id NOT IN (SELECT idintervento FROM in_interventi_tecnici) AND idstatointervento IN (SELECT idstatointervento FROM in_statiintervento WHERE is_completato = 0) ' WHERE `zz_widgets`.`name` = 'Attività da pianificare';
-
 
 -- Lista con indirizzi email validi per ogni anagrafica caricata a sistema
 INSERT INTO `em_lists` (`id`, `name`, `description`, `query`, `deleted_at`) VALUES

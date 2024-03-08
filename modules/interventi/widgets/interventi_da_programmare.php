@@ -42,8 +42,8 @@ if (!empty($rs)) {
 
         echo '
             <tr id="int_'.$r['id'].'">
-				<td><a target="_blank" >'.Modules::link((new Module())->getByName('Interventi')->id_record, $r['id'], $r['codice']).'</a></td>
-                <td><a target="_blank" >'.Modules::link((new Module())->getByName('Anagrafiche')->id_record, $r['idanagrafica'], $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica='.prepare($r['idanagrafica']))['ragione_sociale']).'<br><small>Presso: ';
+				<td><a target="_blank" >'.Modules::link('Interventi', $r['id'], $r['codice']).'</a></td>
+                <td><a target="_blank" >'.Modules::link('Anagrafiche', $r['idanagrafica'], $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica='.prepare($r['idanagrafica']))['ragione_sociale']).'<br><small>Presso: ';
         // Sede promemoria
         if ($r['idsede'] == '-1') {
             echo '- Nessuna -';

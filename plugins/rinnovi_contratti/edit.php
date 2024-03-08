@@ -19,8 +19,10 @@
 
 include_once __DIR__.'/../../core.php';
 include_once __DIR__.'/../init.php';
+use Models\Module;
 
 $id_contratto_precedente = $record['idcontratto_prev'];
+$module = Module::find($id_module);
 
 echo '
 <form action="" method="post" id="rinnovo-form">
@@ -80,7 +82,7 @@ while (!empty($id_contratto_precedente) && $counter < 50) {
     echo '
         <tr>
             <td>
-                '.Modules::link($id_module, $id_contratto_precedente, tr('Contratto num. _NUM_', [
+                '.Modules::link($module->name, $id_contratto_precedente, tr('Contratto num. _NUM_', [
                     '_NUM_' => $rs[0]['numero'],
                 ]).'<br><small class="text-muted">'.$rs[0]['nome'].'</small>').'
             </td>

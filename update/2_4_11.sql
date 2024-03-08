@@ -527,11 +527,6 @@ CREATE TABLE IF NOT EXISTS `do_permessi` (
     FOREIGN KEY (`id_gruppo`) REFERENCES `zz_groups`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `do_categorie`
-WHERE 1=1 AND `deleted_at` IS NULL AND
-    (SELECT `idgruppo` FROM `zz_users` WHERE `id` = |id_utente|) IN (SELECT `id_gruppo` FROM `do_permessi` WHERE `id_categoria` = `do_categorie`.`id`)
-HAVING 2=2' WHERE `name` = 'Categorie documenti';
-
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie documenti'), 'id', 'id', 1, 0, 0, 1, 0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie documenti'), 'Descrizione', 'descrizione', 2, 0, 0, 1, 1);

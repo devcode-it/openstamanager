@@ -1,18 +1,3 @@
--- Fix query viste Utenti e permessi
-UPDATE `zz_modules` SET `options` = "SELECT
-    |select|
-FROM 
-    `zz_groups` 
-    LEFT JOIN (SELECT `zz_users`.`idgruppo`, COUNT(`id`) AS num FROM `zz_users` GROUP BY `idgruppo`) AS utenti ON `zz_groups`.`id`=`utenti`.`idgruppo`
-WHERE 
-    1=1
-HAVING 
-    2=2 
-ORDER BY 
-    `id`, 
-    `nome` ASC" WHERE `name` = 'Utenti e permessi';
-
-
 -- Aggiunta campo Pagamento predefinito in vista Anagrafiche
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE name='Anagrafiche'), 'Pagamento cliente', '`pagvendita`.`nome`', '15', '1', '0', '0', '0', NULL, NULL, '0', '0', '0');

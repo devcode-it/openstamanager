@@ -22,7 +22,6 @@ include_once __DIR__.'/../../core.php';
 use Models\User;
 use Models\Module;
 
-$id_prima_nota = (new Module())->getByname('Prima nota')->id_record;
 $id_conto = get('id_conto');
 
 // Calcolo totale conto da elenco movimenti di questo conto
@@ -64,12 +63,10 @@ if (!empty($movimenti)) {
     <tr>
         <td>';
 
-        $id_modulo_fattura = ($movimento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
-
         if (!empty($movimento['primanota'])) {
-            echo Modules::link($id_prima_nota, $movimento['idmastrino'], $movimento['descrizione']);
+            echo Modules::link('Prima nota', $movimento['idmastrino'], $movimento['descrizione']);
         } else {
-            echo Modules::link($id_modulo_fattura, $movimento['iddocumento'], $movimento['descrizione']);
+            echo Modules::link(($movimento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto', $movimento['iddocumento'], $movimento['descrizione']);
         }
 
         echo '

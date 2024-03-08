@@ -15,9 +15,6 @@ UPDATE `mg_articoli` SET `idiva_vendita`=NULL WHERE `idiva_vendita`=0;
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES
 (NULL, 'Abilita la modifica di altri tecnici', '1', 'boolean', 1, 'Applicazione', 4, '');
 
--- Fix widget preventivi in lavorazione
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_preventivi WHERE idstato=(SELECT id FROM co_statipreventivi WHERE descrizione=\"In lavorazione\") AND default_revision=1' WHERE `zz_widgets`.`name` ='Preventivi in lavorazione';
-
 -- Aggiornamento ritenuta contributi in contributi previdenziali
 UPDATE `zz_settings` SET `nome` = 'Ritenuta previdenziale predefinita' WHERE `nome` = 'Ritenuta contributi';
 UPDATE `zz_modules` SET `name` = 'Ritenute previdenziali', `title` = 'Ritenute previdenziali' WHERE `name` = 'Ritenute contributi';

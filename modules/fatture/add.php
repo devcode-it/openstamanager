@@ -75,7 +75,7 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Sezionale'); ?>", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": <?php echo json_encode(['id_module' => $id_module, 'is_sezionale' => 1]); ?>, "value": "<?php echo $database->selectOne('co_tipidocumento', 'id_segment', ['id' => $idtipodocumento])['id_segment']; ?>" ]}
+			{[ "type": "select", "label": "<?php echo tr('Sezionale'); ?>", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": <?php echo json_encode(['id_module' => $id_module, 'is_sezionale' => 1]); ?>, "value": "<?php echo $database->selectOne('co_tipidocumento', 'id_segment', ['id' => $idtipodocumento, 'dir' => $dir])['id_segment']; ?>" ]}
 		</div>
 	</div>
 

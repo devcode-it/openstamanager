@@ -93,9 +93,6 @@ UPDATE `zz_plugins` SET `default` = 1, `version` = '' WHERE `zz_plugins`.`name` 
 -- Aggiunta eliminazione causale DDT
 ALTER TABLE `dt_causalet` ADD `deleted_at` TIMESTAMP NULL;
 
--- Modifico il filtro del modulo
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `dt_causalet` WHERE 1=1 AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_modules`.`name` = 'Causali';
-
 -- Fix query per la lista newsletter predefinita
 UPDATE `em_lists` SET `query` = 'SELECT idanagrafica AS id, ''Modules\\\\Anagrafiche\\\\Anagrafica'' AS tipo FROM an_anagrafiche WHERE deleted_at IS NULL', `name` = 'Tutte le Anagrafiche (Sedi legali)' WHERE `query` = 'SELECT idanagrafica AS id FROM an_anagrafiche WHERE email != ''''';
 

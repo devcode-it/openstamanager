@@ -155,6 +155,7 @@ return [
     'zz_api_resources',
     'zz_cache',
     'zz_currencies',
+    'zz_currencies_lang',
     'zz_checks',
     'zz_check_user',
     'zz_checklists',

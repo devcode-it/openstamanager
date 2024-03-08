@@ -187,7 +187,7 @@ class Translator extends Util\Singleton
     {
         if (!isset(self::$currency)) {
             $id = setting('Valuta');
-            $valuta = database()->fetchOne('SELECT symbol FROM zz_currencies WHERE id = '.prepare($id));
+            $valuta = database()->fetchOne('SELECT `symbol` FROM `zz_currencies` WHERE `id` = '.prepare($id));
 
             self::$currency = $valuta['symbol'];
         }

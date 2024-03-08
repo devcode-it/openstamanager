@@ -193,7 +193,7 @@ switch (post('op')) {
         break;
 
     case 'add':
-        $idtipoanagrafica = post('idtipoanagrafica');
+        $idtipoanagrafica  = (array)post('idtipoanagrafica');
         $ragione_sociale = post('ragione_sociale');
 
         $anagrafica = Anagrafica::build($ragione_sociale, post('nome'), post('cognome'), $idtipoanagrafica);

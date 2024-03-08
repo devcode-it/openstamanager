@@ -18,6 +18,13 @@ class Combinazione extends Model
 
     protected $table = 'mg_combinazioni';
 
+    public static function build()
+    {
+        $model = new static();
+        $model->save();
+
+        return $model;
+    }
     /**
      * Elenco dei campi della combinazione da sincronizzare da e verso gli Articoli della combinazione.
      *

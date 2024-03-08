@@ -23,13 +23,13 @@ include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'add':
-        $id_module = post('module');
+        $module = post('module');
         $id_account = post('smtp');
         $name = post('name');
         $subject = post('subject');
 
-        $template = Template::build($id_module, $id_account);
-        $id_record = $template->id;
+        $template = Template::build($module, $id_account);
+        $id_record = $dbo->lastInsertedID();
         $template->name = $name;
         $template->subject = $subject;
         $template->save();

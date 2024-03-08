@@ -127,9 +127,10 @@ class DDT extends Document
     public function isImportabile()
     {
         $database = database();
-        $stati = $database->fetchArray('SELECT `name` FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `is_fatturabile` = 1');
+        $stati = Stato::where('is_fatturabile', 1)->get();
+
         foreach ($stati as $stato) {
-            $stati_importabili[] = $stato['descrizione'];
+            $stati_importabili[] = $stato->name;
         }
 
         $causale = $database->fetchOne('SELECT * FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(setting('Lingua')).') WHERE `dt_causalet`.`id` = '.prepare($this->idcausalet));

@@ -15,7 +15,10 @@ switch (filter('op')) {
         if (!empty($combinazione_new) && !empty($id_record) && $combinazione_new != $id_record){
             flash()->error(tr('Questo nome è già stato utilizzato per un altra combinazione.'));
         } else {
-            $combinazione = $combinazione ?: Combinazione::build();
+            if (empty($combinazione)) {
+                $combinazione = Combinazione::build();
+                $id_record = $dbo->lastInsertedID();
+            }
             $combinazione->name = $nome;
             $combinazione->codice = post('codice');
             $combinazione->id_categoria = post('id_categoria');

@@ -19,21 +19,12 @@
 
 include_once __DIR__.'/../../../core.php';
 use Models\Module;
+use Modules\Preventivi\Preventivo;
+use Modules\Preventivi\Stato;
 
 $id_module = (new Module())->GetByName('Preventivi')->id_record;
 
-$rs = $dbo->fetchArray("SELECT *,
-        `an_anagrafiche`.`ragione_sociale` AS ragione_sociale 
-    FROM 
-        `co_preventivi`
-        INNER JOIN `an_anagrafiche` ON `co_preventivi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
-        INNER JOIN `co_statipreventivi` ON `co_preventivi`.`idstato`=`co_statipreventivi`.`id`
-        LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id`=`co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang` = ".prepare(setting('Lingua')).")
-    WHERE 
-        `co_statipreventivi_lang`.`name` = 'In lavorazione'
-        AND `default_revision` = 1 
-    ORDER BY 
-        `data_conclusione` ASC");
+$rs = Preventivo::where('idstato', '=', (new Stato())->getByName('In lavorazione')->id_record)->where('default_revision', '=', 1)->get();
 
 if (!empty($rs)) {
     echo "
@@ -45,16 +36,16 @@ if (!empty($rs)) {
     </tr>";
 
     foreach ($rs as $preventivo) {
-        $data_accettazione = ($preventivo['data_accettazione'] != '0000-00-00') ? Translator::dateToLocale($preventivo['data_accettazione']) : '';
-        $data_conclusione = ($preventivo['data_conclusione'] != '0000-00-00') ? Translator::dateToLocale($preventivo['data_conclusione']) : '';
+        $data_accettazione = ($preventivo->data_accettazione != '0000-00-00') ? Translator::dateToLocale($preventivo->data_accettazione) : '';
+        $data_conclusione = ($preventivo->data_conclusione != '0000-00-00') ? Translator::dateToLocale($preventivo->data_conclusione) : '';
 
-        if (strtotime($preventivo['data_conclusione']) < strtotime(date('Y-m-d')) && $data_conclusione != '') {
+        if (strtotime($preventivo->data_conclusione) < strtotime(date('Y-m-d')) && $data_conclusione != '') {
             $attr = ' class="danger"';
         } else {
             $attr = '';
         }
 
-        echo '<tr '.$attr.'><td><a href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$preventivo['id'].'">'.$preventivo['nome']."</a><br><small class='help-block'>".$preventivo['ragione_sociale'].'</small></td>';
+        echo '<tr '.$attr.'><td><a href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$preventivo->id.'">'.$preventivo->nome."</a><br><small class='help-block'>".$preventivo->ragione_sociale.'</small></td>';
         echo '<td '.$attr.'>'.$data_accettazione.'</td>';
         echo '<td '.$attr.'>'.$data_conclusione.'</td></tr>';
     }

@@ -19,6 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 use Models\Module;
+use Modules\Fatture\Tipo;
 
 $module = Module::find($id_module);
 
@@ -32,10 +33,7 @@ if ($module->name == 'Fatture di vendita') {
 
 $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 
-$idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
-    'predefined' => 1,
-    'dir' => $dir,
-])['id'];
+$idtipodocumento = Tipo::where('predefined', 1)->where('dir', $dir)->first()->id; 
 
 ?>
 <form action="" method="post" id="add-form">
@@ -75,7 +73,7 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Sezionale'); ?>", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": <?php echo json_encode(['id_module' => $id_module, 'is_sezionale' => 1]); ?>, "value": "<?php echo $database->selectOne('co_tipidocumento', 'id_segment', ['id' => $idtipodocumento, 'dir' => $dir])['id_segment']; ?>" ]}
+			{[ "type": "select", "label": "<?php echo tr('Sezionale'); ?>", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": <?php echo json_encode(['id_module' => $id_module, 'is_sezionale' => 1]); ?>, "value": "<?php echo Tipo::where('id', $idtipodocumento)->where('dir', $dir)->first()->id_segment; ?>" ]}
 		</div>
 	</div>
 

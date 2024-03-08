@@ -19,6 +19,7 @@
 
 include_once __DIR__.'/../../../core.php';
 use Models\Plugin;
+use Models\Module;
 
 $mesi = [
     1 => 'Gennaio',

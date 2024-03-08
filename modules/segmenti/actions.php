@@ -85,7 +85,7 @@ switch (post('op')) {
             'clause' => '1=1',
             'pattern' => $pattern,
             'note' => post('note'),
-            'predefined' => $predefined,
+            'predefined' => $predefined ?: 0,
             'is_sezionale' => post('is_sezionale'),
         ]);
 

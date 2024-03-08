@@ -20,10 +20,9 @@
 include_once __DIR__.'/../../../core.php';
 
 use Modules\Interventi\Stato;
-use Models\Module;
+use Modules\Interventi\Intervento;
 
-$stato = (new Stato())->getByName('TODO')->id_record;
-$rs = $dbo->fetchArray('SELECT * FROM `in_interventi` WHERE `in_interventi`.`idstatointervento` = '.prepare($stato).' ORDER BY `data_richiesta` ASC');
+$rs = Intervento::where('idstatointervento', '=', Stato::where('codice', '=', 'TODO')->first()->id)->get();
 
 if (!empty($rs)) {
     echo '
@@ -38,33 +37,33 @@ if (!empty($rs)) {
     </tr>';
 
     foreach ($rs as $r) {
-        $rs_tecnici = $dbo->fetchArray("SELECT GROUP_CONCAT(ragione_sociale SEPARATOR ',') AS tecnici FROM an_anagrafiche INNER JOIN in_interventi_tecnici_assegnati ON in_interventi_tecnici_assegnati.id_tecnico=an_anagrafiche.idanagrafica WHERE id_intervento=".prepare($r['id']).' GROUP BY id_intervento');
+        $rs_tecnici = $dbo->fetchArray("SELECT GROUP_CONCAT(ragione_sociale SEPARATOR ',') AS tecnici FROM an_anagrafiche INNER JOIN in_interventi_tecnici_assegnati ON in_interventi_tecnici_assegnati.id_tecnico=an_anagrafiche.idanagrafica WHERE id_intervento=".prepare($r->id).' GROUP BY id_intervento');
 
         echo '
-            <tr id="int_'.$r['id'].'">
-				<td><a target="_blank" >'.Modules::link('Interventi', $r['id'], $r['codice']).'</a></td>
-                <td><a target="_blank" >'.Modules::link('Anagrafiche', $r['idanagrafica'], $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica='.prepare($r['idanagrafica']))['ragione_sociale']).'<br><small>Presso: ';
+            <tr id="int_'.$r->id.'">
+				<td><a target="_blank" >'.Modules::link('Interventi', $r->id, $r->codice).'</a></td>
+                <td><a target="_blank" >'.Modules::link('Anagrafiche', $r->idanagrafica, $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica='.prepare($r->idanagrafica))['ragione_sociale']).'<br><small>Presso: ';
         // Sede promemoria
-        if ($r['idsede'] == '-1') {
+        if ($r->idsede == '-1') {
             echo '- Nessuna -';
-        } elseif (empty($r['idsede'])) {
+        } elseif (empty($r->idsede)) {
             echo tr('Sede legale');
         } else {
-            $rsp2 = $dbo->fetchArray("SELECT id, CONCAT( CONCAT_WS( ' (', CONCAT_WS(', ', nomesede, citta), indirizzo ), ')') AS descrizione FROM an_sedi WHERE id=".prepare($r['idsede']));
+            $rsp2 = $dbo->fetchArray("SELECT id, CONCAT( CONCAT_WS( ' (', CONCAT_WS(', ', nomesede, citta), indirizzo ), ')') AS descrizione FROM an_sedi WHERE id=".prepare($r->idsede));
 
             echo $rsp2[0]['descrizione'];
         }
         echo '
                 </small>
                 </td>
-                <td>'.Translator::dateToLocale($r['data_richiesta']).' '.((empty($r['data_scadenza'])) ? '' : '<br><small>Entro il '.Translator::dateToLocale($r['data_scadenza']).'</small>').'</td>
+                <td>'.Translator::dateToLocale($r->data_richiesta).' '.((empty($r->data_scadenza)) ? '' : '<br><small>Entro il '.Translator::dateToLocale($r->data_scadenza).'</small>').'</td>
                 <td>
                     '.$rs_tecnici[0]['tecnici'].'
                 </td>
 
-                <td>'.$dbo->fetchOne("SELECT CONCAT_WS(' - ', `codice`, `name`) AS descrizione FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = ".prepare(setting('Lingua')).") WHERE `id`=".prepare($r['idtipointervento']))['descrizione'].'</td>
+                <td>'.$dbo->fetchOne("SELECT CONCAT_WS(' - ', `codice`, `name`) AS descrizione FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = ".prepare(setting('Lingua')).") WHERE `in_tipiintervento`.`id`=".prepare($r->idtipointervento))['descrizione'].'</td>
 
-                <td>'.nl2br($r['richiesta']).'</td>
+                <td>'.nl2br($r->richiesta).'</td>
 				';
 
         echo '

@@ -22,12 +22,12 @@ use Modules\Iva\Aliquota;
 
 switch (filter('op')) {
     case 'update':
-        $esente = post('esente');
+        $esente = post('esente') ?: 0;
         $percentuale = empty($esente) ? post('percentuale') : 0;
         $indetraibile = post('indetraibile');
         $dicitura = post('dicitura');
         $codice = post('codice');
-        $codice_natura_fe = post('codice_natura_fe');
+        $codice_natura_fe = post('codice_natura_fe') ?: null;
         $esigibilita = post('esigibilita');
         $descrizione = post('descrizione');
 
@@ -36,7 +36,7 @@ switch (filter('op')) {
             $iva->esente = $esente;
             $iva->percentuale = $percentuale;
             $iva->indetraibile = $indetraibile;
-            $iva->dicitura = $dicitura;
+            $iva->dicitura = $dicitura?: 0;
             $iva->codice = $codice;
             $iva->codice_natura_fe = $codice_natura_fe;
             $iva->esigibilita = $esigibilita;
@@ -44,9 +44,9 @@ switch (filter('op')) {
             $iva->save();
 
             // Messaggio di avvertenza
-            if ((stripos('N6', (string) $codice_natura) === 0) && $esigibilita == 'S') {
+            if ((stripos('N6', (string) $codice_natura_fe) === 0) && $esigibilita == 'S') {
                 flash()->warning(tr('Combinazione di natura IVA _TYPE_ ed esigibilità non compatibile', [
-                    '_TYPE_' => $codice_natura,
+                    '_TYPE_' => $codice_natura_fe,
                 ]));
             }
 
@@ -63,7 +63,7 @@ switch (filter('op')) {
         $codice = post('codice');
         $esente = post('esente');
         $percentuale = empty($esente) ? post('percentuale') : 0;
-        $codice_natura = post('codice_natura_fe') ?: null;
+        $codice_natura = post('codice_natura_fe') ?: '';
         $esigibilita = post('esigibilita');
         $indetraibile = post('indetraibile');
 

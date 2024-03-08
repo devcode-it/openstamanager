@@ -20,9 +20,9 @@
 include_once __DIR__.'/../../../core.php';
 
 use Modules\Interventi\Stato;
+use Modules\Interventi\Intervento;
 
-$stato_wip = (new Stato())->getByName('WIP')->id_record;
-$rs = $dbo->fetchArray('SELECT * FROM `in_interventi` WHERE `in_interventi`.`idstatointervento` = '.prepare($stato_wip).' ORDER BY `data_richiesta` ASC');
+$rs = Intervento::where('idstatointervento', '=', Stato::where('codice', '=', 'WIP')->first()->id)->get();
 
 if (!empty($rs)) {
     echo '
@@ -33,13 +33,13 @@ if (!empty($rs)) {
     </tr>';
 
     foreach ($rs as $r) {
-        $data_richiesta = !empty($r['data_richiesta']) ? Translator::dateToLocale($r['data_richiesta']) : '';
+        $data_richiesta = !empty($r->data_richiesta) ? Translator::dateToLocale($r->data_richiesta) : '';
 
         echo '
     <tr >
         <td>
-            '.Modules::link('Interventi', $r['id'], 'Intervento n. '.$r['codice'].' del '.$data_richiesta).'<br>
-            <small class="help-block">'.$r['ragione_sociale'].'</small>
+            '.Modules::link('Interventi', $r->id, 'Intervento n. '.$r['codice'].' del '.$data_richiesta).'<br>
+            <small class="help-block">'.$r->ragione_sociale.'</small>
         </td>
         <td class="text-center">'.$data_richiesta.'</td>
     </tr>';

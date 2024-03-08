@@ -20,9 +20,10 @@
 include_once __DIR__.'/../../../core.php';
 
 use Carbon\Carbon;
+use Models\Module;
 
 // Trovo id_print della stampa
-$id_print = Prints::getModulePredefinedPrint('Dashboard')['id'];
+$id_print = Prints::getModulePredefinedPrint((new Module())->getByName('Dashboard')->id_record)['id'];
 $date = new Carbon($_SESSION['dashboard']['date']);
 
 echo '

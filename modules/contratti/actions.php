@@ -522,7 +522,8 @@ switch (post('op')) {
 
             $contratto->idpagamento = $documento->idpagamento;
             $contratto->idsede = $id_sede;
-
+            $contratto->rinnovabile = setting('Crea contratto rinnovabile di default');
+            $contratto->giorni_preavviso_rinnovo = setting('Giorni di preavviso di default');
             $contratto->id_documento_fe = $documento->id_documento_fe;
             $contratto->codice_cup = $documento->codice_cup;
             $contratto->codice_cig = $documento->codice_cig;

@@ -37,14 +37,20 @@ switch (filter('op')) {
                     'description' => $descrizione,
                 ], ['id_record' => $id_record, 'id_lang' => setting('Lingua')]);
 
+                $segmento = $dbo->fetchOne('SELECT `zz_segments`.`id` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments_lang`.`id_record` = `zz_segments`.`id` AND `zz_segments_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `id_module` = '.prepare((new Module())->getByName('Scadenzario')->id_record).' AND `clause` = "co_scadenziario.tipo=\''.$nome_prev.'\'" AND `zz_segments_lang`.`name` = "Scadenzario '.$nome_prev.'"')['id'];
+
                 // aggiorno anche il segmento
                 $dbo->update('zz_segments', [
                     'clause' => 'co_scadenziario.tipo="'.$nome.'"',
+                ], [
+                    'id' => $segmento,
+                ]);
+                
+                $dbo->update('zz_segments_lang', [
                     'name' => 'Scadenzario '.$nome,
                 ], [
-                    'clause' => 'co_scadenziario.tipo="'.$nome_prev.'"',
-                    'name' => 'Scadenzario '.$nome_prev,
-                    'id_module' => (new Module())->getByName('Scadenzario')->id_record,
+                    'id_record' => $segmento,
+                    'id_lang' => setting('Lingua'),
                 ]);
 
                 flash()->info(tr('Salvataggio completato!'));
@@ -81,9 +87,14 @@ switch (filter('op')) {
                 // Aggiungo anche il segmento
                 $dbo->insert('zz_segments', [
                     'id_module' => (new Module())->getByName('Scadenzario')->id_record,
-                    'name' => 'Scadenzario '.$nome,
                     'clause' => 'co_scadenziario.tipo="'.$nome.'"',
                     'position' => 'WHR',
+                ]);
+                $id_record = $dbo->lastInsertedID();
+                $dbo->insert('zz_segments', [
+                    'name' => 'Scadenzario '.$nome,
+                    'id_record' => $id_record,
+                    'id_lang' => setting('Lingua'),
                 ]);
 
                 if (isAjaxRequest()) {

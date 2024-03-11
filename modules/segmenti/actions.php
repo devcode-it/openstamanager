@@ -30,22 +30,21 @@ switch (post('op')) {
         }
 
         if ($predefined) {
-            $dbo->query('UPDATE zz_segments SET predefined = 0 WHERE id_module = '.prepare($module));
+            $dbo->query('UPDATE `zz_segments` SET `predefined` = 0 WHERE `id_module` = '.prepare($module));
         }
 
         $predefined_accredito = post('predefined_accredito');
         if ($predefined_accredito) {
-            $dbo->query('UPDATE zz_segments SET predefined_accredito = 0 WHERE id_module = '.prepare($module));
+            $dbo->query('UPDATE `zz_segments` SET `predefined_accredito` = 0 WHERE `id_module` = '.prepare($module));
         }
 
         $predefined_addebito = post('predefined_addebito');
         if ($predefined_addebito) {
-            $dbo->query('UPDATE zz_segments SET predefined_addebito = 0 WHERE id_module = '.prepare($module));
+            $dbo->query('UPDATE `zz_segments` SET `predefined_addebito` = 0 WHERE `id_module` = '.prepare($module));
         }
 
         $dbo->update('zz_segments', [
             'id_module' => $module,
-            'name' => post('name'),
             'clause' => $_POST['clause'],
             'pattern' => $pattern,
             'note' => post('note'),
@@ -58,6 +57,11 @@ switch (post('op')) {
             'autofatture' => post('autofatture'),
             'for_fe' => post('for_fe'),
         ], ['id' => $id_record]);
+
+        $dbo->update('zz_segments_lang', [
+            'name' => post('name'),
+        ], ['id_record' => $id_record, 'id_lang' => setting('Lingua')]);
+
 
         // Aggiornamento dei permessi relativi
         $dbo->sync('zz_group_segment', ['id_segment' => $id_record], ['id_gruppo' => (array) post('gruppi')]);
@@ -76,12 +80,11 @@ switch (post('op')) {
         }
 
         if ($predefined) {
-            $dbo->query('UPDATE zz_segments SET predefined = 0 WHERE id_module = '.prepare($module));
+            $dbo->query('UPDATE `zz_segments` SET `predefined` = 0 WHERE `id_module` = '.prepare($module));
         }
 
         $dbo->insert('zz_segments', [
             'id_module' => $module,
-            'name' => post('name'),
             'clause' => '1=1',
             'pattern' => $pattern,
             'note' => post('note'),
@@ -90,6 +93,12 @@ switch (post('op')) {
         ]);
 
         $id_record = $dbo->lastInsertedID();
+
+        $dbo->insert('zz_segments_lang', [
+            'name' => post('name'),
+            'id_record' => $id_record,
+            'id_lang' => setting('Lingua'),
+        ]);
 
         // Aggiunta permessi segmento
         $gruppi = $dbo->fetchArray('SELECT `id` FROM `zz_groups`');

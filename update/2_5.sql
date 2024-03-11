@@ -1837,21 +1837,6 @@ HAVING
 ORDER BY 
     `scadenza` ASC" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Scadenzario');
 
--- Allineamento vista Segmenti
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select| 
-FROM
-    `zz_segments`
-    INNER JOIN `zz_modules` ON `zz_modules`.`id` = `zz_segments`.`id_module`
-    LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.|lang|)
-    LEFT JOIN (SELECT GROUP_CONCAT(`zz_groups`.`nome` ORDER BY `zz_groups`.`nome`  SEPARATOR ', ') AS `gruppi`, `zz_group_segment`.`id_segment` FROM `zz_group_segment` INNER JOIN `zz_groups` ON `zz_groups`.`id` = `zz_group_segment`.`id_gruppo` GROUP BY  `zz_group_segment`.`id_segment`) AS `t` ON `t`.`id_segment` = `zz_segments`.`id`
-WHERE
-    1=1
-HAVING
-    2=2
-ORDER BY `zz_segments`.`name`,
-    `zz_segments`.`id_module`" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Segmenti');
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_modules_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Segmenti' AND `zz_views`.`name` = 'Modulo';
 
 -- Allineamento vista Stampe
@@ -2037,3 +2022,41 @@ ORDER BY
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`mg_articoli_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Giacenze sedi' AND `zz_views`.`name` = 'Descrizione';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`categoria_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Giacenze sedi' AND `zz_views`.`name` = 'Categoria';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`sottocategoria_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Giacenze sedi' AND `zz_views`.`name` = 'Sottocategoria';
+
+-- Aggiunta tabella zz_segments_lang
+CREATE TABLE IF NOT EXISTS `zz_segments_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `name` VARCHAR(255) NOT NULL
+);
+ALTER TABLE `zz_segments_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `zz_segments_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `zz_segments_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name` FROM `zz_segments`;
+
+ALTER TABLE `zz_segments`
+    DROP `name`;
+
+ALTER TABLE `zz_segments_lang` ADD CONSTRAINT `zz_segments_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_segments`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+-- Allineamento vista Segmenti
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select| 
+FROM
+    `zz_segments`
+    LEFT JOIN `zz_segments_lang` ON (`zz_segments_lang`.`id_record` = `zz_segments`.`id` AND `zz_segments_lang`.|lang|)
+    INNER JOIN `zz_modules` ON `zz_modules`.`id` = `zz_segments`.`id_module`
+    LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.|lang|)
+    LEFT JOIN (SELECT GROUP_CONCAT(`zz_groups`.`nome` ORDER BY `zz_groups`.`nome`  SEPARATOR ', ') AS `gruppi`, `zz_group_segment`.`id_segment` FROM `zz_group_segment` INNER JOIN `zz_groups` ON `zz_groups`.`id` = `zz_group_segment`.`id_gruppo` GROUP BY  `zz_group_segment`.`id_segment`) AS `t` ON `t`.`id_segment` = `zz_segments`.`id`
+WHERE
+    1=1
+HAVING
+    2=2
+ORDER BY `zz_segments_lang`.`name`,
+    `zz_segments`.`id_module`" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Segmenti');
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_segments_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Segmenti' AND `zz_views`.`name` = 'Nome';

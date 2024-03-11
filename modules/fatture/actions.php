@@ -1170,7 +1170,7 @@ switch ($op) {
 
 // Nota di debito
 if (get('op') == 'nota_addebito') {
-    $rs_segment = $dbo->fetchArray("SELECT * FROM zz_segments WHERE predefined_addebito='1'");
+    $rs_segment = $dbo->fetchArray("SELECT * FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = ".prepare(setting('Lingua')).") WHERE `predefined_addebito`='1'");
     if (!empty($rs_segment)) {
         $id_segment = $rs_segment[0]['id'];
     } else {

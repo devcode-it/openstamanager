@@ -29,33 +29,33 @@ switch ($resource) {
         $escludi_id = $superselect['escludi_id'];
 
         if (isset($id_module)) {
-            $query = 'SELECT `id`, `name` AS descrizione FROM zz_segments INNER JOIN `zz_group_segment` ON `zz_segments`.`id` = `zz_group_segment`.`id_segment` |where| ORDER BY `name` ASC';
+            $query = 'SELECT `zz_segments`.`id`, `zz_segments_lang`.`name` AS descrizione FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(setting('Lingua')).') INNER JOIN `zz_group_segment` ON `zz_segments`.`id` = `zz_group_segment`.`id_segment` |where| ORDER BY `name` ASC';
 
-            $where[] = 'zz_segments.id_module = '.prepare($id_module);
-            $where[] = 'zz_group_segment.id_gruppo = '.prepare($user->idgruppo);
+            $where[] = '`zz_segments`.`id_module` = '.prepare($id_module);
+            $where[] = '`zz_group_segment`.`id_gruppo` = '.prepare($user->idgruppo);
 
             if ($is_fiscale != null) {
-                $where[] = 'zz_segments.is_fiscale = '.prepare($is_fiscale);
+                $where[] = '`zz_segments`.`is_fiscale` = '.prepare($is_fiscale);
             }
 
             if ($is_sezionale != null) {
-                $where[] = 'zz_segments.is_sezionale = '.prepare($is_sezionale);
+                $where[] = '`zz_segments`.`is_sezionale` = '.prepare($is_sezionale);
             }
 
             if ($for_fe != null) {
-                $where[] = 'zz_segments.for_fe = '.prepare($for_fe);
+                $where[] = '`zz_segments`.`for_fe` = '.prepare($for_fe);
             }
 
             if ($escludi_id != null) {
-                $where[] = 'zz_segments.id != '.prepare($escludi_id);
+                $where[] = '`zz_segments`.`id` != '.prepare($escludi_id);
             }
 
             foreach ($elements as $element) {
-                $filter[] = 'id='.prepare($element);
+                $filter[] = '`zz_segments`.`id`='.prepare($element);
             }
 
             if (!empty($search)) {
-                $search_fields[] = 'zz_segments.name LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = '`zz_segments_lang`.`name` LIKE '.prepare('%'.$search.'%');
             }
         }
 

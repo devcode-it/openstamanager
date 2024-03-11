@@ -29,31 +29,31 @@ switch ($resource) {
             $query = 'SELECT `id`, `name` AS descrizione FROM zz_files |where|';
 
             if (isset($id_module)) {
-                $where[] = 'zz_files.id_module = '.prepare($id_module);
+                $where[] = '`zz_files`.`id_module` = '.prepare($id_module);
             }
             if (isset($id_plugin)) {
-                $where[] = 'zz_files.id_plugin = '.prepare($id_plugin);
+                $where[] = '`zz_files`.`id_plugin` = '.prepare($id_plugin);
             }
-            $where[] = 'zz_files.id_record = '.prepare($id_record);
+            $where[] = '`zz_files`.`id_record` = '.prepare($id_record);
 
             if ($is_fiscale != null) {
-                $where[] = 'zz_segments.is_fiscale = '.prepare($is_fiscale);
+                $where[] = '`zz_segments`.`is_fiscale` = '.prepare($is_fiscale);
             }
 
             if ($is_sezionale != null) {
-                $where[] = 'zz_segments.is_sezionale = '.prepare($is_sezionale);
+                $where[] = '`zz_segments`.`is_sezionale` = '.prepare($is_sezionale);
             }
 
             if ($escludi_id != null) {
-                $where[] = 'zz_segments.id != '.prepare($escludi_id);
+                $where[] = '`zz_segments`.`id` != '.prepare($escludi_id);
             }
 
             foreach ($elements as $element) {
-                $filter[] = 'id='.prepare($element);
+                $filter[] = '`id`='.prepare($element);
             }
 
             if (!empty($search)) {
-                $search_fields[] = 'zz_segments.name LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = '`zz_segments`.`name` LIKE '.prepare('%'.$search.'%');
             }
         }
 

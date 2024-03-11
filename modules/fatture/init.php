@@ -48,7 +48,7 @@ if (isset($id_record)) {
         `co_statidocumento_lang`.`name` AS `stato`,
         `co_tipidocumento_lang`.`name` AS `descrizione_tipo`,
         `co_tipidocumento`.`id` AS `idtipodocumento`,
-        (SELECT `is_fiscale` FROM `zz_segments` WHERE `zz_segments`.`id` = `co_documenti`.`id_segment`) AS is_fiscale,
+        `zz_segments`.`is_fiscale` AS is_fiscale,
         (SELECT `descrizione` FROM `co_ritenutaacconto` WHERE `id`=`idritenutaacconto`) AS ritenutaacconto_desc,
         (SELECT `descrizione` FROM `co_rivalse` WHERE `id`=`idrivalsainps`) AS rivalsainps_desc,
         `dt_causalet_lang`.`name` AS causale_desc
@@ -62,7 +62,9 @@ if (isset($id_record)) {
         LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.`id_lang` = '.prepare(setting('Lingua')).')
         LEFT JOIN `dt_causalet` ON `co_documenti`.`idcausalet`=`dt_causalet`.`id`
         LEFT JOIN `dt_causalet_lang` ON (`dt_causalet_lang`.`id_record` = `dt_causalet`.`id` AND `dt_causalet_lang`.`id_lang` = '.prepare(setting('Lingua')).')
-    WHERE `co_tipidocumento`.`dir` = '.prepare($dir).' AND `co_documenti`.`id`='.prepare($id_record));
+        INNER JOIN `zz_segments` ON `co_documenti`.`id_segment` = `zz_segments`.`id`
+    WHERE 
+        `co_tipidocumento`.`dir` = '.prepare($dir).' AND `co_documenti`.`id`='.prepare($id_record));
 
     // Note di credito collegate
     $note_accredito = $dbo->fetchArray("SELECT `co_documenti`.`id`, IF(`numero_esterno` != '', `numero_esterno`, `numero`) AS numero, data FROM `co_documenti` JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` WHERE `reversed` = 1 AND `ref_documento`=".prepare($id_record));

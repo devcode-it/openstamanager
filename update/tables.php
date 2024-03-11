@@ -181,6 +181,7 @@ return [
     'zz_plugins_lang',
     'zz_prints',
     'zz_segments',
+    'zz_segments_lang'
     'zz_semaphores',
     'zz_settings',
     'zz_tasks',

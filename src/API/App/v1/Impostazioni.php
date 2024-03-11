@@ -58,7 +58,7 @@ class Impostazioni extends AppResource
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT `id` AS id,
-            `zz_settings_lang`.`name`,
+            `zz_settings_lang`.`title`,
             `valore` AS contenuto,
             `tipo`
         FROM 

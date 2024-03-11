@@ -205,10 +205,7 @@ foreach ($righe as $riga) {
 
     // Possibilità di rimuovere una riga solo se il preventivo non è stato pagato
     echo '
-                <td class="text-center">';
-
-    if (empty($record['is_completato'])) {
-        echo '
+                <td class="text-center">
                     <div class="btn-group">';
         if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
             echo '
@@ -216,7 +213,9 @@ foreach ($righe as $riga) {
                             <i class="fa fa-barcode"></i>
                         </a>';
         }
-        echo '
+
+        if (empty($record['is_completato'])) {
+            echo '
                         <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga').'" onclick="modificaRiga(this)">
                             <i class="fa fa-edit"></i>
                         </a>
@@ -227,11 +226,10 @@ foreach ($righe as $riga) {
 
                         <a class="btn btn-xs btn-default handle '.($order_row_desc ? 'disabled' : '').'" title="'.tr('Modifica ordine delle righe').'">
                             <i class="fa fa-sort"></i>
-                        </a>
-                    </div>';
-    }
-
+                        </a>';
+        }
     echo '
+                    </div>
                 </td>
             </tr>';
 }

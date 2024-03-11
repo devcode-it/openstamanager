@@ -48,11 +48,8 @@ if ($show_prezzi) {
                 <th class="text-center" width="140">'.tr('Sconto unitario').'</th>
                 <th class="text-center" width="130">'.tr('Importo').'</th>';
 }
-
-if (!$record['flag_completato']) {
-    echo '
+echo '
                 <th class="text-center" width="60" class="text-center">'.tr('&nbsp;').'</th>';
-}
 echo '
             </tr>
         </thead>
@@ -176,38 +173,35 @@ foreach ($righe as $riga) {
                 </td>';
     }
 
-    // Pulsante per riportare nel magazzino centrale.
+    echo '
+                <td class="text-center">
+                    <div class="input-group-btn">';
+
+    if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
+        echo '
+                        <a class="btn btn-primary btn-xs" title="'.tr('Modifica seriali della riga').'" onclick="modificaSeriali(this)">
+                            <i class="fa fa-barcode"></i>
+                        </a>';
+    }
+
     // Visibile solo se l'intervento non è stato nè fatturato nè completato.
     if (!$record['flag_completato']) {
         echo '
-                <td class="text-center">
-                <div class="input-group-btn">';
+                        <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga').'" onclick="modificaRiga(this)">
+                            <i class="fa fa-edit"></i>
+                        </a>
 
-        if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
-            echo '
-                    <a class="btn btn-primary btn-xs" title="'.tr('Modifica seriali della riga').'" onclick="modificaSeriali(this)">
-                        <i class="fa fa-barcode"></i>
-                    </a>';
-        }
+                        <a class="btn btn-xs btn-danger" title="'.tr('Rimuovi riga').'" onclick="rimuoviRiga([$(this).closest(\'tr\').data(\'id\')])">
+                            <i class="fa fa-trash"></i>
+                        </a>
 
-        echo '
-                    <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga').'" onclick="modificaRiga(this)">
-                        <i class="fa fa-edit"></i>
-                    </a>
-
-                    <a class="btn btn-xs btn-danger" title="'.tr('Rimuovi riga').'" onclick="rimuoviRiga([$(this).closest(\'tr\').data(\'id\')])">
-                        <i class="fa fa-trash"></i>
-                    </a>
-
-                    <a class="btn btn-xs btn-default handle" title="'.tr('Modifica ordine delle righe').'">
-                        <i class="fa fa-sort"></i>
-                    </a>
-                </div>';
-
-        echo '
-                </td>';
+                        <a class="btn btn-xs btn-default handle" title="'.tr('Modifica ordine delle righe').'">
+                            <i class="fa fa-sort"></i>
+                        </a>';
     }
     echo '
+                    </div>
+                </td>
             </tr>';
 }
 

@@ -287,12 +287,8 @@ foreach ($righe as $riga) {
 
     // Possibilità di rimuovere una riga solo se l'ordine non è evaso
     echo '
-                <td class="text-center">';
-
-    if ($record['flag_completato'] == 0) {
-        echo '
+                <td class="text-center">
                     <div class="input-group-btn">';
-
         if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
             echo '
                         <a class="btn btn-primary btn-xs" title="'.tr('Modifica seriali della riga').'" onclick="modificaSeriali(this)">
@@ -300,7 +296,8 @@ foreach ($righe as $riga) {
                         </a>';
         }
 
-        echo '
+        if ($record['flag_completato'] == 0) {
+            echo '
                         <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga').'" onclick="modificaRiga(this)">
                             <i class="fa fa-edit"></i>
                         </a>
@@ -311,11 +308,10 @@ foreach ($righe as $riga) {
 
                         <a class="btn btn-xs btn-default handle '.($order_row_desc ? 'disabled' : '').'" title="'.tr('Modifica ordine delle righe').'">
                             <i class="fa fa-sort"></i>
-                        </a>
-                    </div>';
-    }
-
+                        </a>';
+        }
     echo '
+                    </div>
                 </td>
             </tr>';
 }

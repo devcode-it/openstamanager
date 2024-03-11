@@ -181,7 +181,7 @@ return [
     'zz_plugins_lang',
     'zz_prints',
     'zz_segments',
-    'zz_segments_lang'
+    'zz_segments_lang',
     'zz_semaphores',
     'zz_settings',
     'zz_tasks',
@@ -190,6 +190,7 @@ return [
     'zz_users',
     'zz_user_sedi',
     'zz_views',
+    'zz_views_lang',
     'zz_widgets',
     'zz_widgets_lang',
 ];

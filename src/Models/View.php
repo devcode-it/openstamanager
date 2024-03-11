@@ -45,4 +45,42 @@ class View extends Model
     {
         return $this->belongsTo(Module::class, 'id_module');
     }
+
+    /**
+     * Ritorna l'attributo name dell'articolo.
+     *
+     * @return string
+     */
+    public function getNameAttribute()
+    {
+        return database()->table($this->table.'_lang')
+            ->select('name')
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first()->name;
+    }
+
+    /**
+     * Imposta l'attributo name dell'articolo.
+     */
+    public function setNameAttribute($value)
+    {
+        $table = database()->table($this->table.'_lang');
+
+        $translated = $table
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'));
+
+        if ($translated->count() > 0) {
+            $translated->update([
+                'name' => $value
+            ]);
+        } else {
+            $table->insert([
+                'id_record' => $this->id,
+                'id_lang' => setting('Lingua'),
+                'name' => $value
+            ]);
+        }
+    }
 }

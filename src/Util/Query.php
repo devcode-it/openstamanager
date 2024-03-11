@@ -501,8 +501,8 @@ class Query
 
         $user = \Auth::user();
 
-        $views = $database->fetchArray('SELECT * FROM `zz_views` WHERE `id_module`='.prepare($element['id']).' AND
-        `id` IN (
+        $views = $database->fetchArray('SELECT *, `zz_views`.`id` FROM `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views`.`id` = `zz_views_lang`.`id_record` AND `zz_views_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `id_module`='.prepare($element['id']).' AND
+        `zz_views`.`id` IN (
             SELECT `id_vista` FROM `zz_group_view` WHERE `id_gruppo`=(
                 SELECT `idgruppo` FROM `zz_users` WHERE `id`='.prepare($user['id']).'
             ))

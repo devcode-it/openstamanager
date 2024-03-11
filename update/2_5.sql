@@ -2060,3 +2060,23 @@ HAVING
 ORDER BY `zz_segments_lang`.`name`,
     `zz_segments`.`id_module`" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Segmenti');
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_segments_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Segmenti' AND `zz_views`.`name` = 'Nome';
+
+-- Aggiunta tabella zz_views_lang
+CREATE TABLE IF NOT EXISTS `zz_views_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `name` VARCHAR(255) NOT NULL
+);
+ALTER TABLE `zz_views_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `zz_views_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `zz_views_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name` FROM `zz_views`;
+
+ALTER TABLE `zz_views`
+    DROP `name`;
+
+ALTER TABLE `zz_views_lang` ADD CONSTRAINT `zz_views_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_views`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 

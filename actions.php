@@ -411,12 +411,12 @@ elseif (post('op') == 'send-email') {
     $visible = filter('visible');
     $id_riga = filter('id_vista');
 
-    $dbo->query('UPDATE `zz_views` SET `visible` = '.prepare($visible).' WHERE id = '.prepare($id_riga));
+    $dbo->query('UPDATE `zz_views` SET `visible` = '.prepare($visible).' WHERE `id` = '.prepare($id_riga));
 } elseif (filter('op') == 'ordina_colonne') {
     $order = explode(',', post('order', true));
 
     foreach ($order as $i => $id_riga) {
-        $dbo->query('UPDATE `zz_views` SET `order` = '.prepare($i).' WHERE id='.prepare($id_riga));
+        $dbo->query('UPDATE `zz_views` SET `order` = '.prepare($i).' WHERE `id`='.prepare($id_riga));
     }
 } elseif (filter('op') == 'visualizza_righe_riferimenti') {
     include_once base_dir().'/include/riferimenti/riferimenti.php';

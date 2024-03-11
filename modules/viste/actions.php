@@ -49,7 +49,6 @@ switch (filter('op')) {
         foreach ($queries as $c => $query) {
             if (check_query($query)) {
                 $array = [
-                    'name' => post('name')[$c],
                     'query' => $query,
                     'visible' => post('visible')[$c],
                     'search' => post('search')[$c],
@@ -62,15 +61,19 @@ switch (filter('op')) {
                     'id_module' => $id_record,
                 ];
 
+                $name = post('name')[$c];
+
                 if (!empty(post('id')[$c]) && !empty($query)) {
                     $id = post('id')[$c];
 
                     $dbo->update('zz_views', $array, ['id' => $id]);
+                    $dbo->update('zz_views_lang', [
+                        'name' => $name
+                    ], ['id_record' => $id, 'id_lang' => setting('Lingua')]);
+
                 } elseif (!empty($query)) {
                     $array['order'] = orderValue('zz_views', 'id_module', $id_record);
-
                     $dbo->insert('zz_views', $array);
-
                     $id = $dbo->lastInsertedID();
                 }
 
@@ -171,7 +174,7 @@ switch (filter('op')) {
         $order = explode(',', post('order', true));
 
         foreach ($order as $i => $id_riga) {
-            $dbo->query('UPDATE `zz_views` SET `order` = '.prepare($i).' WHERE id='.prepare($id_riga));
+            $dbo->query('UPDATE `zz_views` SET `order` = '.prepare($i).' WHERE `id`='.prepare($id_riga));
         }
 
         break;
@@ -180,7 +183,7 @@ switch (filter('op')) {
         $visible = filter('visible');
         $id_riga = filter('id_vista');
 
-        $dbo->query('UPDATE `zz_views` SET `visible` = '.prepare($visible).' WHERE id = '.prepare($id_riga));
+        $dbo->query('UPDATE `zz_views` SET `visible` = '.prepare($visible).' WHERE `id` = '.prepare($id_riga));
 
         break;
 }

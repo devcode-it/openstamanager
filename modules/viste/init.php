@@ -19,7 +19,10 @@
 
 include_once __DIR__.'/../../core.php';
 use Models\Module;
+use Models\View;
 
 if (isset($id_record)) {
     $record = Module::find($id_record);
+
+    $vista = View::find($id_record);
 }

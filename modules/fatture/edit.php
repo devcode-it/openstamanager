@@ -287,7 +287,7 @@ $query .= ' ORDER BY `name`';
 				</div>
 
                 <!-- TODO: da nascondere per le fatture di vendita in quanto questa data sarà sempre uguale alla data di emissione -->
-                <div class="col-md-2" <?php echo ($is_fiscale) ? '' : 'hidden'; ?>>
+                <div class="col-md-2" <?php echo ($record['is_fiscale']) ? '' : 'hidden'; ?>>
                     {[ "type": "date", "class":"unblockable", "label": "<?php echo tr('Data competenza'); ?>", "name": "data_competenza", "required": 1, "value": "$data_competenza$", "min-date": "$data$", "help": "<?php echo tr('Data nella quale considerare il movimento contabile, che può essere posticipato rispetto la data della fattura'); ?>" ]}
                 </div>
 
@@ -295,7 +295,7 @@ $query .= ' ORDER BY `name`';
                 if ($dir == 'entrata') {
                 ?>
 
-                <div class="col-md-2" <?php echo ($is_fiscale) ? '' : 'hidden'; ?> >
+                <div class="col-md-2" <?php echo ($record['is_fiscale']) ? '' : 'hidden'; ?> >
                     {[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "values": "query=SELECT `codice` as id, CONCAT_WS(' - ',`codice`, `name`) as text FROM `fe_stati_documento` LEFT JOIN `fe_stati_documento_lang` ON (`fe_stati_documento_lang`.`id_record` = `fe_stati_documento`.`codice` AND `fe_stati_documento_lang`.`id_lang` = <?php echo prepare(setting('Lingua')); ?>)", "value": "$codice_stato_fe$", "disabled": <?php echo intval(Interaction::isEnabled() || ($record['stato'] == 'Bozza' && $abilita_genera)); ?>, "class": "unblockable", "help": "<?php echo (!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : ''; ?>" ]}
                 </div>
 
@@ -303,7 +303,7 @@ $query .= ' ORDER BY `name`';
                 }
 
 echo '
-                <div class="col-md-'.($is_fiscale ? 2 : 6).'">
+                <div class="col-md-'.($record['is_fiscale'] ? 2 : 6).'">
                     {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatodocumento", "required": 1, "values": "query='.$query.'", "value": "$idstatodocumento$", "class": "'.(($record['stato'] != 'Bozza' && !$abilita_genera) ? '' : 'unblockable').'", "extra": "onchange=\"return cambiaStato()\"" ]}
                 </div>
 			</div>

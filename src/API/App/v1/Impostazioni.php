@@ -30,7 +30,7 @@ class Impostazioni extends AppResource
 
     public function getModifiedRecords($last_sync_at)
     {
-        $query = "SELECT zz_settings.id, zz_settings.updated_at FROM zz_settings WHERE (sezione = 'Applicazione'";
+        $query = "SELECT `zz_settings`.`id`, `zz_settings`.`updated_at` FROM `zz_settings` LEFT JOIN `zz_settings_lang` ON (`zz_settings`.`id` = `zz_settings_lang`.`id_record` AND `zz_settings_lang`.`id_lang` = ".prepare(setting('Lingua')).") WHERE (`sezione` = 'Applicazione'";
 
         // Aggiunta delle impostazioni esterne alla sezione Applicazione
         $impostazioni_esterne = $this->getImpostazioniEsterne();
@@ -40,13 +40,13 @@ class Impostazioni extends AppResource
                 $impostazioni[] = prepare($imp);
             }
 
-            $query .= ' OR nome IN ('.implode(', ', $impostazioni).')';
+            $query .= ' OR `name` IN ('.implode(', ', $impostazioni).')';
         }
         $query .= ')';
 
         // Filtro per data
         if ($last_sync_at) {
-            $query .= ' AND zz_settings.updated_at > '.prepare($last_sync_at);
+            $query .= ' AND `zz_settings`.`updated_at` > '.prepare($last_sync_at);
         }
 
         $records = database()->fetchArray($query);
@@ -57,12 +57,15 @@ class Impostazioni extends AppResource
     public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
-        $query = 'SELECT id AS id,
-            nome,
-            valore AS contenuto,
-            tipo
-        FROM zz_settings
-        WHERE zz_settings.id = '.prepare($id);
+        $query = 'SELECT `id` AS id,
+            `zz_settings_lang`.`name`,
+            `valore` AS contenuto,
+            `tipo`
+        FROM 
+            `zz_settings`
+            LEFT JOIN `zz_settings_lang` ON (`zz_settings`.`id` = `zz_settings_lang`.`id_record` AND `zz_settings_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+        WHERE 
+            `zz_settings`.`id` = '.prepare($id);
 
         $record = database()->fetchOne($query);
 

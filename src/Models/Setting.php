@@ -49,4 +49,52 @@ class Setting extends Model
 
         return $value;
     }
+    
+    /**
+     * Ritorna l'attributo name dell'impostazione.
+     *
+     * @return string
+     */
+    public function getNameAttribute()
+    {
+        return database()->table($this->table.'_lang')
+            ->select('name')
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first()->name;
+    }
+
+
+    /**
+     * Ritorna l'attributo title dell'impostazione.
+     *
+     * @return string
+     */
+    public function getTitleAttribute()
+    {
+        $lang = database()->query('SELECT `valore` FROM `zz_settings` LEFT JOIN `zz_settings_lang` ON `zz_settings`.`id` = `zz_settings_lang`.`id_record` WHERE `name` = "Lingua"');
+        return database()->table($this->table.'_lang')
+            ->select('title')
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', $lang)
+            ->first()->title;
+    }
+
+
+    /**
+     * Ritorna l'id dell'impostazione a partire dal nome.
+     *
+     * @param string $name il nome da ricercare
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getByName($name)
+    {
+        $lang = database()->query('SELECT `valore` FROM `zz_settings` LEFT JOIN `zz_settings_lang` ON `zz_settings`.`id` = `zz_settings_lang`.`id_record` WHERE `name` = "Lingua"');
+        return database()->table($this->table.'_lang')
+            ->select('id_record')
+            ->where('name', '=', $name)
+            ->where('id_lang', '=', $lang)
+            ->first();
+    }
 }

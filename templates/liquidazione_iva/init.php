@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 use Carbon\Carbon;
 use Models\Module;
+use Models\Setting;
 
 $date_start = filter('date_start');
 $date_end = filter('date_end');
@@ -27,8 +28,8 @@ $date_end = filter('date_end');
 $anno_precedente_start = (new Carbon($date_start))->subYears(1)->format('Y-m-d');
 $anno_precedente_end = (new Carbon($date_end))->subYears(1)->format('Y-m-d');
 
-$periodo = $dbo->fetchOne('SELECT valore FROM zz_settings WHERE nome="Liquidazione iva"');
-if ($periodo['valore'] == 'Mensile') {
+$periodo = Setting::find((new Setting())->getByName('Liquidazione IVA')->id_record)->valore;
+if ($periodo == 'Mensile') {
     $periodo_precedente_start = (new Carbon($date_start))->subMonth()->format('Y-m-d');
     $periodo_precedente_end = (new Carbon($date_end))->subMonth()->format('Y-m-d');
 } else {

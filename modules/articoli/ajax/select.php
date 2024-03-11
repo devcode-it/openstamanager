@@ -36,7 +36,8 @@ switch ($resource) {
         $solo_non_varianti = $superselect['solo_non_varianti'];
         $idagente = $superselect['idagente'];
         $id_listino = $superselect['id_listino'];
-
+        $iva_predefinita = setting('IVA predefinita');
+        
         $query = "SELECT
             DISTINCT `mg_articoli`.`id`,
             IF(`categoria_lang`.`name` IS NOT NULL, CONCAT(`categoria_lang`.`name`, IF(`sottocategoria_lang`.`name` IS NOT NULL, CONCAT(' (', `sottocategoria_lang`.`name`, ')'), '-')), '<i>".tr('Nessuna categoria')."</i>') AS optgroup,
@@ -111,7 +112,7 @@ switch ($resource) {
             ON `righe`.`id`=`mg_articoli`.`id`
             LEFT JOIN `co_iva` AS iva_articolo ON `iva_articolo`.`id` = `mg_articoli`.`idiva_vendita`
             LEFT JOIN `co_iva_lang` AS iva_articolo_lang on (`iva_articolo`.`id` = `iva_articolo_lang`.`id_record` AND `iva_articolo_lang`.`id_lang` = ".prepare(setting('Lingua')).")
-            LEFT JOIN `co_iva` AS `iva_predefinita` ON `iva_predefinita`.`id` = (SELECT `valore` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Iva predefinita')
+            LEFT JOIN `co_iva` AS `iva_predefinita` ON `iva_predefinita`.`id` = '.$iva_predefinita.'
             LEFT JOIN `co_iva_lang` AS iva_predefinita_lang on (`iva_predefinita`.`id` = `iva_predefinita_lang`.`id_record` AND `iva_predefinita_lang`.`id_lang` = ".prepare(setting('Lingua')).')';
 
         if ($usare_iva_anagrafica) {

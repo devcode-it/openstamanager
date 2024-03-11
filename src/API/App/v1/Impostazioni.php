@@ -30,7 +30,7 @@ class Impostazioni extends AppResource
 
     public function getModifiedRecords($last_sync_at)
     {
-        $query = "SELECT `zz_settings`.`id`, `zz_settings`.`updated_at` FROM `zz_settings` LEFT JOIN `zz_settings_lang` ON (`zz_settings`.`id` = `zz_settings_lang`.`id_record` AND `zz_settings_lang`.`id_lang` = ".prepare(setting('Lingua')).") WHERE (`sezione` = 'Applicazione'";
+        $query = "SELECT `zz_settings`.`id`, `zz_settings`.`updated_at` FROM `zz_settings` WHERE `sezione` = 'Applicazione'";
 
         // Aggiunta delle impostazioni esterne alla sezione Applicazione
         $impostazioni_esterne = $this->getImpostazioniEsterne();

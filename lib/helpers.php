@@ -106,7 +106,7 @@ function get($param, $raw = false)
  */
 function setting($name, $again = false)
 {
-    return Setting::find((new Setting())->getByName($name)->id_record)->valore;
+    return Settings::getValue($name);
 }
 
 /**

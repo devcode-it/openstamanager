@@ -20,8 +20,6 @@
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
 use Models\Cache;
-use Models\Setting;
-
 /**
  * Classe dedicata alla gestione delle procedure di aggiornamento del database del progetto.
  *
@@ -422,7 +420,7 @@ class Update
 
     public static function getSettings()
     {
-        $settings = Setting::get()->toArray();
+        $settings = database()->table('zz_settings')->pluck('tipo', 'nome')->toArray();
 
         return $settings;
     }

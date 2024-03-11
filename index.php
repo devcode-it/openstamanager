@@ -212,7 +212,13 @@ echo '
             });
             </script>';
 
-$custom_css = $dbo->isInstalled() ? html_entity_decode(setting('CSS Personalizzato')) : '';
+if ($dbo->isInstalled()) {
+    try {
+        $custom_css = html_entity_decode(setting('CSS Personalizzato'));
+    } catch (QueryException $e) {
+    }
+}
+
 if (!empty($custom_css)) {
     echo '
     <style>'.$custom_css.'</style>';

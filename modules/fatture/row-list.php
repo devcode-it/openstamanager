@@ -277,28 +277,14 @@ foreach ($righe as $riga) {
 
     // Possibilità di rimuovere una riga solo se la fattura non è pagata
     echo '
-            <td class="text-center">';
+            <td class="text-center">
 
-    if ($dir == 'uscita') {
+                <div class="input-group-btn">';
+    if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
         echo '
-        <div class="input-group-btn">';
-
-        if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
-            echo '
-                        <a class="btn btn-primary btn-xs" title="'.tr('Modifica seriali della riga').'" onclick="modificaSeriali(this)">
-                            <i class="fa fa-barcode"></i>
-                        </a>';
-        }
-    } elseif ($record['stato'] != 'Pagato' && $record['stato'] != 'Emessa') {
-        echo '
-        <div class="input-group-btn">';
-
-        if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
-            echo '
                     <a class="btn btn-primary btn-xs" title="'.tr('Modifica seriali della riga').'" onclick="modificaSeriali(this)">
                         <i class="fa fa-barcode"></i>
                     </a>';
-        }
     }
 
     if ($record['stato'] != 'Pagato' && $record['stato'] != 'Emessa') {
@@ -320,11 +306,10 @@ foreach ($righe as $riga) {
         echo '
                     <a class="btn btn-xs btn-default handle '.($order_row_desc ? 'disabled' : '').'" title="'.tr('Modifica ordine delle righe').'">
                         <i class="fa fa-sort"></i>
-                    </a>
-                </div>';
+                    </a>';
     }
-
     echo '
+                </div>
             </td>
         </tr>';
 }

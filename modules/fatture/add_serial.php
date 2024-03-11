@@ -23,7 +23,7 @@ use Modules\DDT\DDT;
 use Models\Module;
 use Models\Plugin;
 
-$module = Module::find((new Module())->getByName($id_module)->id_record);
+$module = Module::find($id_module);
 $id_module_articoli = (new Module())->getByName('Articoli')->id_record;
 
 // Controllo sulla direzione monetaria
@@ -89,7 +89,7 @@ $riga = str_replace('id', 'id_riga_', $id);
 
 $idriga = get('idriga') ?: get('riga_id');
 
-$rs = $dbo->fetchArray('SELECT `mg_articoli`.`id` AS idarticolo, `mg_articoli`.`codice`, `mg_articoli_lang`.`name`, '.$table.'.`qta` FROM '.$table.' INNER JOIN `mg_articoli` ON '.$table.'.`idarticolo`=`mg_articoli`.`id` LEFT JOIN `mg_articoli_lang ON (`mg_articoli`.`id`=`mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang`='.prepare(setting('Lingua')).') WHERE '.$table.'.'.$id.'='.prepare($id_record).' AND '.$table.'.`id`='.prepare($idriga));
+$rs = $dbo->fetchArray('SELECT `mg_articoli`.`id` AS idarticolo, `mg_articoli`.`codice`, `mg_articoli_lang`.`name`, '.$table.'.`qta` FROM '.$table.' INNER JOIN `mg_articoli` ON '.$table.'.`idarticolo`=`mg_articoli`.`id` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id`=`mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang`='.prepare(setting('Lingua')).') WHERE '.$table.'.'.$id.'='.prepare($id_record).' AND '.$table.'.`id`='.prepare($idriga));
 
 echo '
 <h4 class="text-center">'.tr('Articolo').': '.$rs[0]['codice'].' - '.$rs[0]['descrizione'].'</h4>

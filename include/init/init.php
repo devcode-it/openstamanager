@@ -21,6 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Tipo;
 use Models\Module;
+use Models\Setting;
 
 if (Update::isUpdateAvailable() || !$dbo->isInstalled()) {
     return;
@@ -110,11 +111,11 @@ if (post('action') == 'init') {
 
     if (!$has_settings) {
         foreach ($settings as $setting => $required) {
-            $setting = Settings::get($setting);
+            $setting = Setting::find($setting);
 
-            $value = post('setting')[$setting['id']];
+            $value = post('setting')[$setting->id];
             if (!empty($value)) {
-                Settings::setValue($setting['nome'], $value);
+                Settings::setValue($setting->id, $value);
             }
         }
     }

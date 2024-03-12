@@ -28,7 +28,8 @@ echo '
             <div class="data">';
 
 $key = 0;
-$fields = $dbo->fetchArray('SELECT * FROM `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views`.`id` = `zz_views_lang`.`id_record` AND `zz_views_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `id_module`='.prepare($record->id).' ORDER BY `order` ASC, `updated_at` DESC ');
+$fields = $dbo->fetchArray('SELECT * FROM `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views`.`id` = `zz_views_lang`.`id_record` AND `zz_views_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `id_module`='.prepare($record->id).' ORDER BY `order` ASC');
+
 foreach ($fields as $key => $field) {
     $editable = !($field['default'] && $enable_readonly);
 

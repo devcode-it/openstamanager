@@ -107,7 +107,7 @@ while (true) {
     }
 
     // Rimozione dei log più vecchi
-    $database->query('DELETE FROM zz_tasks_logs WHERE DATE_ADD(created_at, INTERVAL :interval DAY) <= NOW()', [
+    $database->query('DELETE FROM `zz_tasks_logs` WHERE DATE_ADD(`created_at`, INTERVAL :interval DAY) <= NOW()', [
         ':interval' => 7,
     ]);
 

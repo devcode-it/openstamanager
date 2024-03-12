@@ -18,7 +18,10 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Tasks\Task;
 
 if (isset($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM zz_tasks WHERE id='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT * FROM `zz_tasks` LEFT JOIN `zz_tasks_lang` ON (`zz_tasks`.`id`=`zz_tasks_lang`.`id_record` AND `zz_tasks_lang`.`id_lang`='.prepare(setting('Lingua')).') WHERE `zz_tasks`.`id`='.prepare($id_record));
+
+    $task = Task::find($id_record);
 }

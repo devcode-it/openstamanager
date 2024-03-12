@@ -186,6 +186,7 @@ return [
     'zz_settings',
     'zz_settings_lang',
     'zz_tasks',
+    'zz_tasks_lang',
     'zz_tasks_logs',
     'zz_tokens',
     'zz_users',

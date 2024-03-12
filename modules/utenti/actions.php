@@ -300,15 +300,24 @@ switch (filter('op')) {
         break;
 
     case 'update_id_module_start':
-        $group->id_module_start = filter('id_module_start');
-        $group->save();
+        try {
+            $group->id_module_start = filter('id_module_start');
+            $group->save();
+            echo 'ok';
+        } catch (Exception $e) {
+            echo $e->getMessage();
+        }
 
-        flash()->info(tr('Modulo aggiornato!'));
         break;
-    case 'update_theme':
-        $group->theme = filter('theme');
-        $group->save();
 
-        flash()->info(tr('Tema aggiornato!'));
+    case 'update_theme':
+        try {
+            $group->theme = filter('theme');
+            $group->save();
+            echo 'ok';
+        } catch (Exception $e) {
+            echo $e->getMessage();
+        }
+
         break;
 }

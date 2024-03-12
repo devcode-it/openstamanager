@@ -307,7 +307,7 @@ function update_id_module_start(value){
                 toastr["success"]("'.tr('Modulo iniziale aggiornato!').'");
                 content_was_modified = false;
             } else {
-                swal("'.tr('Errore').'", "'.tr("Errore durante l'aggiornamento delle impostazioni!").'", "error");
+                swal("'.tr('Errore').'", data, "error");
             }
         }
     );
@@ -321,7 +321,7 @@ function update_theme(value){
                 toastr["success"]("'.tr('Tema aggiornato!').'");
                 content_was_modified = false;
             } else {
-                swal("'.tr('Errore').'", "'.tr("Errore durante l'aggiornamento delle impostazioni!").'", "error");
+                swal("'.tr('Errore').'", data, "error");
             }
         }
     );

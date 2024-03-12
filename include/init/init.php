@@ -111,7 +111,7 @@ if (post('action') == 'init') {
 
     if (!$has_settings) {
         foreach ($settings as $setting => $required) {
-            $setting = Setting::find($setting);
+            $setting = Setting::where('nome', '=', $setting)->first();
 
             $value = post('setting')[$setting->id];
             if (!empty($value)) {

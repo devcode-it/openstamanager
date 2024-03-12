@@ -171,6 +171,7 @@ return [
     'zz_group_view',
     'zz_hooks',
     'zz_imports',
+    'zz_imports_lang',
     'zz_logs',
     'zz_modules',
     'zz_modules_lang',

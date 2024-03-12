@@ -21,6 +21,7 @@ use Jurosh\PDFMerge\PDFMerger;
 use Mpdf\Mpdf;
 use Util\Query;
 use Models\Module;
+use Models\PrintTemplate;
 
 /**
  * Classe per la gestione delle informazioni relative alle stampe installate.
@@ -44,7 +45,7 @@ class Prints
         if (empty(self::$prints)) {
             $database = database();
 
-            $results = $database->fetchArray('SELECT * FROM zz_prints WHERE enabled = 1 ORDER BY `order`');
+            $results = PrintTemplate::where('enabled', 1)->orderBy('order')->get();
 
             $prints = [];
 

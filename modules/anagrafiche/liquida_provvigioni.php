@@ -21,11 +21,12 @@ include_once __DIR__.'/../../core.php';
 
 use Carbon\Carbon;
 use Models\Module;
+use Models\PrintTemplate;
 
 $id_record = filter('id_record');
 $dir = filter('dir');
 $nome_stampa = filter('nome_stampa');
-$id_print = $dbo->fetchOne('SELECT id FROM zz_prints WHERE name='.prepare($nome_stampa))['id'];
+$id_print = (new PrintTemplate())->getByName($nome_stampa)->id_record;
 $id_module = (new Module())->getByName('Stampe contabili')->id_record;
 
 $year = (new Carbon($_SESSION['period_end']))->format('Y');

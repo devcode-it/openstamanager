@@ -21,6 +21,7 @@ namespace HTMLBuilder\Manager;
 
 use Modules\Emails\Template as TemplateEmail;
 use Modules\SMS\Template as TemplateSMS;
+use Models\PrintTemplate;
 
 /**
  * @since 2.4
@@ -48,12 +49,12 @@ class ButtonManager implements ManagerInterface
     protected function getInfo($options)
     {
         if ($options['type'] == 'print') {
-            $print = \Prints::get($options['id']);
+            $print = PrintTemplate::find($options['id']);
 
             $result = [
                 'link' => \Prints::getHref($options['id'], $options['id_record'], $options['parameters']),
-                'title' => tr('Stampa').' '.((strtoupper($print['title']) == $print['title']) ? $print['title'] : lcfirst($print['title'])),
-                'icon' => $print['icon'],
+                'title' => tr('Stampa').' '.((strtoupper($print->title) == $print->title) ? $print->title : lcfirst($print->title)),
+                'icon' => $print->icon,
             ];
         } elseif ($options['type'] == 'email') {
             $template_email = TemplateEmail::find($options['id']);

@@ -65,6 +65,82 @@ class PrintTemplate extends Model
     }
 
     /**
+     * Ritorna l'attributo title del template.
+     *
+     * @return string
+     */
+    public function getTitleAttribute()
+    {
+        return database()->table($this->table.'_lang')
+            ->select('title')
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first()->title;
+    }
+
+    /**
+     * Imposta l'attributo title della categoria.
+     */
+    public function setTitleAttribute($value)
+    {
+        $table = database()->table($this->table.'_lang');
+
+        $translated = $table
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'));
+
+        if ($translated->count() > 0) {
+            $translated->update([
+                'title' => $value
+            ]);
+        } else {
+            $table->insert([
+                'id_record' => $this->id,
+                'id_lang' => setting('Lingua'),
+                'title' => $value
+            ]);
+        }
+    }
+
+    /**
+     * Ritorna l'attributo filename del template.
+     *
+     * @return string
+     */
+    public function getFilenameAttribute()
+    {
+        return database()->table($this->table.'_lang')
+            ->select('filename')
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first()->filename;
+    }
+
+    /**
+     * Imposta l'attributo filename della categoria.
+     */
+    public function setFilenameAttribute($value)
+    {
+        $table = database()->table($this->table.'_lang');
+
+        $translated = $table
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'));
+
+        if ($translated->count() > 0) {
+            $translated->update([
+                'filename' => $value
+            ]);
+        } else {
+            $table->insert([
+                'id_record' => $this->id,
+                'id_lang' => setting('Lingua'),
+                'filename' => $value
+            ]);
+        }
+    }
+
+    /**
      * Ritorna l'id del template a partire dal nome.
      *
      * @param string $name il nome da ricercare

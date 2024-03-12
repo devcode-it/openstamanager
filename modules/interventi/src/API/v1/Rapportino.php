@@ -39,7 +39,7 @@ class Rapportino extends Resource implements RetrieveInterface, CreateInterface
         $subject = $module->replacePlaceholders($id_record, $template['subject']);
         $email = $module->replacePlaceholders($id_record, '{email}');
 
-        $prints = $database->fetchArray('SELECT id, title, EXISTS(SELECT id_print FROM em_print_template WHERE id_template = '.prepare($template['id']).' AND em_print_template.id_print = zz_prints.id) AS selected FROM zz_prints WHERE id_module = '.prepare($module->id).' AND enabled = 1');
+        $prints = $database->fetchArray('SELECT `zz_prints`.`id`, `title`, EXISTS(SELECT `id_print` FROM `em_print_template` WHERE `id_template` = '.prepare($template['id']).' AND `em_print_template`.`id_print` = `zz_prints`.`id`) AS selected FROM `zz_prints` LEFT JOIN `zz_prints_lang` ON (`zz_prints`.`id` = `zz_prints_lang`.`id_record` AND `zz_prints_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `id_module` = '.prepare($module->id).' AND `enabled` = 1');
 
         return [
             'email' => $email,

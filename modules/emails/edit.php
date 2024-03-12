@@ -103,7 +103,7 @@ echo '
 
             <div class="row">
                 <div class="col-md-12">
-                    {[ "type": "select", "multiple": "1", "label": "'.tr('Stampe').'", "name": "prints[]", "value": "'.implode(',', $selected_prints).'", "values": "query=SELECT id, title AS text FROM zz_prints WHERE id_module = '.prepare($record['id_module']).' AND enabled=1 AND is_record=1" ]}
+                    {[ "type": "select", "multiple": "1", "label": "'.tr('Stampe').'", "name": "prints[]", "value": "'.implode(',', $selected_prints).'", "values": "query=SELECT `zz_prints`.`id`, `zz_prints_lang`.`title` AS text FROM `zz_prints` LEFT JOIN `zz_prints_lang` ON (`zz_prints`.`id` = `zz_prints_lang`.`id_record` AND `zz_prints_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `id_module` = '.prepare($record['id_module']).' AND `enabled`=1 AND `is_record`=1" ]}
                 </div>
             </div>
 

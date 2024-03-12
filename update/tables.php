@@ -180,6 +180,7 @@ return [
     'zz_plugins',
     'zz_plugins_lang',
     'zz_prints',
+    'zz_prints_lang',
     'zz_segments',
     'zz_segments_lang',
     'zz_semaphores',

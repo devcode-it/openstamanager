@@ -2164,3 +2164,45 @@ HAVING
     2=2" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Gestione task');
 UPDATE `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views_lang`.`id_record` = `zz_views`.`id` AND `zz_views_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_tasks_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Gestione task' AND `zz_views_lang`.`name` = 'Nome';
 UPDATE `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views_lang`.`id_record` = `zz_views`.`id` AND `zz_views_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_tasks`.`id`' WHERE `zz_modules_lang`.`name` = 'Gestione task' AND `zz_views_lang`.`name` = 'id';
+
+-- Aggiunta tabella zz_prints_lang
+CREATE TABLE IF NOT EXISTS `zz_prints_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `name` VARCHAR(255) NOT NULL,
+    `title` VARCHAR(255) NOT NULL,
+    `filename` VARCHAR(255) NOT NULL
+);
+
+ALTER TABLE `zz_prints_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `zz_prints_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `zz_prints_lang` (`id`, `id_lang`, `id_record`, `name`, `title`, `filename`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name`, `title`, `filename` FROM `zz_prints`;
+
+ALTER TABLE `zz_prints`
+    DROP `name`,
+    DROP `title`,
+    DROP `filename`;
+
+ALTER TABLE `zz_prints_lang` ADD CONSTRAINT `zz_prints_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_prints`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+-- Allineamento vista Stampe
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select| 
+FROM 
+    `zz_prints`
+    LEFT JOIN `zz_prints_lang` ON (`zz_prints_lang`.`id_record` = `zz_prints`.`id` AND `zz_prints_lang`.|lang|)
+    LEFT JOIN `zz_modules` ON `zz_modules`.`id` = `zz_prints`.`id_module`
+    LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.|lang|)
+WHERE 
+    1=1 
+    AND `zz_prints`.`enabled`=1 
+HAVING 
+    2=2" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Stampe');
+UPDATE `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views_lang`.`id_record` = `zz_views`.`id` AND `zz_views_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_prints_lang`.`title`' WHERE `zz_modules_lang`.`name` = 'Stampe' AND `zz_views_lang`.`name` = 'Titolo';
+UPDATE `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views_lang`.`id_record` = `zz_views`.`id` AND `zz_views_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_prints_lang`.`filename`' WHERE `zz_modules_lang`.`name` = 'Stampe' AND `zz_views_lang`.`name` = 'Nome del file';

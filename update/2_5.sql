@@ -2227,3 +2227,24 @@ ALTER TABLE `zz_imports`
     DROP `name`;
 
 ALTER TABLE `zz_imports_lang` ADD CONSTRAINT `zz_imports_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_imports`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+-- Aggiunta tabella zz_hooks_lang
+CREATE TABLE IF NOT EXISTS `zz_hooks_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `name` VARCHAR(255) NOT NULL
+);
+
+ALTER TABLE `zz_hooks_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `zz_hooks_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `zz_hooks_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name` FROM `zz_hooks`;
+
+ALTER TABLE `zz_hooks`
+    DROP `name`;
+
+ALTER TABLE `zz_hooks_lang` ADD CONSTRAINT `zz_hooks_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_hooks`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 

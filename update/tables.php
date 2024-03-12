@@ -170,6 +170,7 @@ return [
     'zz_group_segment',
     'zz_group_view',
     'zz_hooks',
+    'zz_hooks_lang',
     'zz_imports',
     'zz_imports_lang',
     'zz_logs',

@@ -155,7 +155,7 @@ class Settings
      */
     public static function input($setting, $required = false)
     {
-        $setting = Setting::where('name', '=', $setting)->orWhere('id', '=', $setting)->first();
+        $setting = Setting::where('nome', '=', $setting)->orWhere('id', '=', $setting)->first();
 
         // Lista predefinita
         if (preg_match("/list\[(.+?)\]/", $setting->tipo, $m)) {
@@ -170,7 +170,7 @@ class Settings
             }
 
             $result = '
-    {[ "type": "select", "multiple": 0, "label": '.json_encode($setting->name).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "values": '.json_encode($list).', "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'" ]}';
+    {[ "type": "select", "multiple": 0, "label": '.json_encode($setting->nome).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "values": '.json_encode($list).', "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'" ]}';
         }
 
         // Lista multipla
@@ -203,19 +203,19 @@ class Settings
             }
 
             $result = '
-        {[ "type": "select", "multiple": 1, "label": '.json_encode($setting->name).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.'][]", "values": '.json_encode($list).', "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'" ]}';
+        {[ "type": "select", "multiple": 1, "label": '.json_encode($setting->nome).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.'][]", "values": '.json_encode($list).', "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'" ]}';
         }
 
         // Lista da query
         elseif (preg_match('/^query=(.+?)$/', $setting->tipo, $m)) {
             $result = '
-    {[ "type": "select", "label": '.json_encode($setting->name).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "values": "'.str_replace('"', '\"', $setting->tipo).'", "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'"   ]}';
+    {[ "type": "select", "label": '.json_encode($setting->nome).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "values": "'.str_replace('"', '\"', $setting->tipo).'", "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'"   ]}';
         }
 
         // Boolean (checkbox)
         elseif ($setting->tipo == 'boolean') {
             $result = '
-    {[ "type": "checkbox", "label": '.json_encode($setting->name).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "placeholder": "'.tr('Attivo').'", "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'"  ]}';
+    {[ "type": "checkbox", "label": '.json_encode($setting->nome).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "placeholder": "'.tr('Attivo').'", "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'"  ]}';
         }
 
         // Editor
@@ -234,18 +234,18 @@ class Settings
         // Campi di default
         elseif (in_array($setting->tipo, ['textarea', 'timestamp', 'date', 'time'])) {
             $result = '
-    {[ "type": "'.$setting->tipo.'", "label": '.json_encode($setting->name).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "value": '.json_encode($setting->valore).', "required": "'.intval($required).'", "help": "'.$setting->help.'"  ]}';
+    {[ "type": "'.$setting->tipo.'", "label": '.json_encode($setting->nome).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "value": '.json_encode($setting->valore).', "required": "'.intval($required).'", "help": "'.$setting->help.'"  ]}';
         }
 
         // Campo di testo
         else {
             $numerico = in_array($setting->tipo, ['integer', 'decimal']);
 
-            $tipo = preg_match('/password/i', $setting->name, $m) ? 'password' : $setting->tipo;
+            $tipo = preg_match('/password/i', $setting->nome, $m) ? 'password' : $setting->tipo;
             $tipo = $numerico ? 'number' : 'text';
 
             $result = '
-    {[ "type": "'.$tipo.'", "label": '.json_encode($setting->name).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "value": "'.$setting->valore.'"'.($numerico && $setting->tipo == 'integer' ? ', "decimals": 0' : '').', "required": "'.intval($required).'", "help": "'.$setting->help.'"  ]}';
+    {[ "type": "'.$tipo.'", "label": '.json_encode($setting->nome).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "value": "'.$setting->valore.'"'.($numerico && $setting->tipo == 'integer' ? ', "decimals": 0' : '').', "required": "'.intval($required).'", "help": "'.$setting->help.'"  ]}';
         }
 
         return $result;

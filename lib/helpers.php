@@ -106,7 +106,7 @@ function get($param, $raw = false)
  */
 function setting($name, $again = false)
 {
-    return Setting::where('name', '=', $name)->first()->valore;
+    return Setting::where('nome', '=', $name)->first()->valore;
 }
 
 /**

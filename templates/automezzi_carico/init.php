@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Modules\Anagrafiche\Anagrafica;
 
 $search_targa = get('search_targa');
 $search_nome = get('search_nome');
@@ -40,13 +41,14 @@ $query = "
         `mg_movimenti`.`idutente`,
         `zz_users`.`username`,
         `mg_articoli`.`um`,
-        `zz_groups`.`nome` as gruppo
+        `zz_groups_lang`.`name` as gruppo
     FROM 
         `mg_movimenti`
         INNER JOIN `mg_articoli` ON `mg_movimenti`.`idarticolo`=`mg_articoli`.`id`
         INNER JOIN `co_iva` ON `mg_articoli`.`idiva_vendita` = `co_iva`.`id`
         INNER JOIN `zz_users` ON `mg_movimenti`.'idutente'=`zz_users`.'id'
         INNER JOIN `zz_groups` ON 'zz_users'.`idgruppo`=`zz_groups`.`id`
+        LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = ".prepare(setting('Lingua')).")
         INNER JOIN `an_sedi` ON `mg_movimenti`.`idsede`=`an_sedi`.`id`
         LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = ".prepare(setting('Lingua')).")
         LEFT JOIN `mg_categorie` ON `mg_categorie`.`id`=`mg_articoli`.`id_sottocategoria`
@@ -54,11 +56,11 @@ $query = "
         LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id`=`mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = ".prepare(setting('Lingua')).")
     WHERE 
         `mg_movimenti`.`qta`>0 AND (`mg_movimenti`.`idsede` > 0) AND (`mg_movimenti`.`idintervento` IS NULL) AND
-        ((`mg_movimenti`.`data` BETWEEN ".prepare($startTM)." AND ".prepare($endTM).") AND (`zz_groups`.`nome` IN ('Amministratori')))";
+        ((`mg_movimenti`.`data` BETWEEN ".prepare($startTM)." AND ".prepare($endTM).") AND (`zz_groups_lang`.`name` = 'Amministratori'))";
 
 $query .= ' AND (`an_sedi`.`targa` LIKE '.prepare('%'.$search_targa.'%').') AND (`an_sedi`.`nome` LIKE '.prepare('%'.$search_nome.'%').') ';
 $query .= '	ORDER BY `an_sedi`.`targa`, `mg_articoli`.`descrizione`';
 
 $rs = $dbo->fetchArray($query);
 $totrows = sizeof($rs);
-$azienda = $dbo->fetchOne('SELECT * FROM `an_anagrafiche` WHERE `idanagrafica`='.prepare(setting('Azienda predefinita')));
+$azienda = Anagrafica::where('id', setting('Azienda predefinita'))->first();

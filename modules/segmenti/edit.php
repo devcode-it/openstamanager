@@ -103,8 +103,8 @@ $_SESSION['module_'.$record['id_module']]['id_segment'] = $previous_module;
 echo '
             <div class="row">
 				<div class="col-md-12">
-                    {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi[]", "multiple": "1", "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC", "value": "';
-$results = $dbo->fetchArray('SELECT GROUP_CONCAT(DISTINCT id_gruppo SEPARATOR \',\') AS gruppi FROM zz_group_segment WHERE id_segment='.prepare($id_record));
+                    {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi[]", "multiple": "1", "values": "query=SELECT `zz_groups`.`id`, `name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(setting('Lingua')).') ORDER BY `zz_groups`.`id` ASC", "value": "';
+$results = $dbo->fetchArray('SELECT GROUP_CONCAT(DISTINCT `id_gruppo` SEPARATOR \',\') AS gruppi FROM `zz_group_segment` WHERE `id_segment`='.prepare($id_record));
 
 echo $results[0]['gruppi'].'"';
 

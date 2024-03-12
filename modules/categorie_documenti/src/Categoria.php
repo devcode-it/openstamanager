@@ -22,6 +22,7 @@ namespace Modules\CategorieDocumentali;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Models\Group;
 
 class Categoria extends Model
 {
@@ -35,7 +36,7 @@ class Categoria extends Model
         $model = new static();
         $model->save();
 
-        $gruppi = database()->fetchArray('SELECT `id` FROM `zz_groups`');
+        $gruppi = Group::get();
         $model->syncPermessi(array_column($gruppi, 'id'));
 
         return $model;

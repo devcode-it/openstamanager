@@ -19,6 +19,7 @@
 
 use API\Response as API;
 use Models\User;
+use Models\Group;
 
 /**
  * Classe per la gestione delle utenze.
@@ -130,9 +131,8 @@ class Auth extends Util\Singleton
 
             if (!empty($user['enabled'])) {
                 $this->identifyUser($user['id']);
-                $gruppo = $database->fetchOne('SELECT zz_groups.* FROM zz_groups INNER JOIN zz_users ON zz_users.idgruppo=zz_groups.id WHERE zz_users.id='.prepare($user['id']));
-
-                $module = $gruppo['id_module_start'];
+                $gruppo = Group::join('zz_users', 'zz_users.idgruppo', '=', 'zz_groups.id')->where('zz_users.id', '=', $user['id'])->first();
+                $module = $gruppo->id_module_start;
                 $module = $this->getFirstModule($module);
 
                 if ($force) {
@@ -265,9 +265,9 @@ class Auth extends Util\Singleton
 
             $query = 'SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `enabled` = 1';
             if (!$this->isAdmin()) {
-                $query .= " AND `id` IN (SELECT `idmodule` FROM `zz_permissions` WHERE `idgruppo` = (SELECT `id` FROM `zz_groups` WHERE `nome` = :group) AND `permessi` IN ('r', 'rw'))";
+                $group = $this->getUser()['gruppo'];
 
-                $parameters[':group'] = $this->getUser()['gruppo'];
+                $query .= " AND `id` IN (SELECT `idmodule` FROM `zz_permissions` WHERE `idgruppo` = ".(new Group())->getByName($group)->id_record." AND `permessi` IN ('r', 'rw'))";
             }
 
             $database = database();
@@ -475,7 +475,7 @@ class Auth extends Util\Singleton
         $database = database();
 
         try {
-            $results = $database->fetchArray('SELECT id, idanagrafica, username, (SELECT nome FROM zz_groups WHERE zz_groups.id = zz_users.idgruppo) AS gruppo FROM zz_users WHERE id = :user_id AND enabled = 1 LIMIT 1', [
+            $results = $database->fetchArray('SELECT `id`, `idanagrafica`, `username`, (SELECT `name` FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON `zz_groups`.`id`=`zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang`='.setting('Lingua').' WHERE `zz_groups`.`id` = `zz_users`.`idgruppo`) AS gruppo FROM `zz_users` WHERE `id` = :user_id AND `enabled` = 1 LIMIT 1', [
                 ':user_id' => $user_id,
             ]);
 

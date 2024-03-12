@@ -21,6 +21,7 @@ use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
 use Models\Cache;
 use Models\Setting;
+use Models\Group;
 
 /**
  * Classe dedicata alla gestione delle procedure di aggiornamento del database del progetto.
@@ -287,7 +288,7 @@ class Update
 
                 // Permessi di default delle viste
                 if ($database->tableExists('zz_views')) {
-                    $gruppi = $database->fetchArray('SELECT `id` FROM `zz_groups`');
+                    $gruppi = Group::get()->toArray();
                     $viste = $database->fetchArray('SELECT `id` FROM `zz_views` WHERE `id` NOT IN (SELECT `id_vista` FROM `zz_group_view`)');
 
                     $array = [];
@@ -306,7 +307,7 @@ class Update
 
                 // Permessi di default dei segmenti
                 if ($database->tableExists('zz_segments')) {
-                    $gruppi = $database->fetchArray('SELECT `id` FROM `zz_groups`');
+                    $gruppi = Group::get()->toArray();
                     $segments = $database->fetchArray('SELECT `id` FROM `zz_segments` WHERE `id` NOT IN (SELECT `id_segment` FROM `zz_group_segment`)');
 
                     $array = [];

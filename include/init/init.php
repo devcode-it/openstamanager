@@ -22,6 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\Anagrafiche\Tipo;
 use Models\Module;
 use Models\Setting;
+use Models\Group;
 
 if (Update::isUpdateAvailable() || !$dbo->isInstalled()) {
     return;
@@ -88,9 +89,7 @@ if (post('action') == 'init') {
 
     // Utente amministratore
     if (!$has_user) {
-        $admin = $dbo->selectOne('zz_groups', ['id'], [
-            'nome' => 'Amministratori',
-        ]);
+        $admin = Group::where('nome', '=', 'Amministratori')->first();
 
         // Creazione utente Amministratore
         $dbo->insert('zz_users', [

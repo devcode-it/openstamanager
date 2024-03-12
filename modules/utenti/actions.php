@@ -21,6 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 use Models\User;
 use Models\Module;
+use Models\Group;
 
 $id_utente = filter('id_utente');
 
@@ -32,15 +33,12 @@ switch (filter('op')) {
         $theme = filter('theme') ?: null;
 
         // Verifico che questo nome gruppo non sia già stato usato
-        if ($dbo->fetchNum('SELECT nome FROM zz_groups WHERE nome='.prepare($nome)) == 0) {
-            $dbo->insert('zz_groups', [
-               'nome' => $nome,
-               'id_module_start' => $id_module_start,
-               'theme' => $theme,
-               'editable' => 1,
-            ]);
-
+        if ((new Group())->getByName($nome)->id_record == null) {
+            $group = Group::build($nome, $theme, $id_module_start);
             $id_record = $dbo->lastInsertedID();
+            $group->editable = 1;
+            $group->name = $nome;
+            $group->save();
 
             if ($id_module_start) {
                 $dbo->insert('zz_permissions', [
@@ -58,14 +56,14 @@ switch (filter('op')) {
 
         // Abilita utente
     case 'enable_user':
-        if ($dbo->query('UPDATE zz_users SET enabled=1 WHERE id='.prepare($id_utente))) {
+        if ($dbo->query('UPDATE `zz_users` SET `enabled`=1 WHERE `id`='.prepare($id_utente))) {
             flash()->info(tr('Utente abilitato!'));
         }
         break;
 
         // Disabilita utente
     case 'disable_user':
-        if ($dbo->query('UPDATE zz_users SET enabled=0 WHERE id='.prepare($id_utente))) {
+        if ($dbo->query('UPDATE `zz_users` SET `enabled`=0 WHERE `id`='.prepare($id_utente))) {
             flash()->info(tr('Utente disabilitato!'));
         }
         break;
@@ -77,7 +75,7 @@ switch (filter('op')) {
         $password = $_POST['password'];
 
         $id_utente = filter('id_utente');
-        if ($dbo->fetchNum('SELECT username FROM zz_users WHERE id != '.prepare($id_utente).' AND username='.prepare($username)) == 0) {
+        if ($dbo->fetchNum('SELECT `username` FROM `zz_users` WHERE `id` != '.prepare($id_utente).' AND `username`='.prepare($username)) == 0) {
             // Aggiunta/modifica utente
             if (!empty($id_utente)) {
                 $utente = User::find($id_utente);
@@ -222,14 +220,14 @@ switch (filter('op')) {
         // Elimina gruppo
     case 'deletegroup':
         // Verifico se questo gruppo si può eliminare
-        $query = 'SELECT editable FROM zz_groups WHERE id='.prepare($id_record);
+        $query = 'SELECT `editable` FROM `zz_groups` WHERE `id`='.prepare($id_record);
         $rs = $dbo->fetchArray($query);
 
         if ($rs[0]['editable'] == 1) {
-            if ($dbo->query('DELETE FROM zz_groups WHERE id='.prepare($id_record))) {
-                $dbo->query('DELETE FROM zz_users WHERE idgruppo='.prepare($id_record));
-                $dbo->query('DELETE FROM zz_tokens WHERE id_utente IN (SELECT id FROM zz_users WHERE idgruppo='.prepare($id_record).')');
-                $dbo->query('DELETE FROM zz_permissions WHERE idgruppo='.prepare($id_record));
+            if ($dbo->query('DELETE FROM `zz_groups` WHERE `id`='.prepare($id_record))) {
+                $dbo->query('DELETE FROM `zz_users` WHERE `idgruppo`='.prepare($id_record));
+                $dbo->query('DELETE FROM `zz_tokens` WHERE `id_utente` IN (SELECT `id` FROM `zz_users` WHERE `idgruppo`='.prepare($id_record).')');
+                $dbo->query('DELETE FROM `zz_permissions` WHERE `idgruppo`='.prepare($id_record));
                 flash()->info(tr('Gruppo e relativi utenti eliminati!'));
             }
         } else {
@@ -302,22 +300,15 @@ switch (filter('op')) {
         break;
 
     case 'update_id_module_start':
-        $dbo->update('zz_groups', [
-            'id_module_start' => filter('id_module_start'),
-        ], ['id' => $id_record]);
+        $group->id_module_start = filter('id_module_start');
+        $group->save();
 
-        ob_end_clean();
-        echo 'ok';
-
+        flash()->info(tr('Modulo aggiornato!'));
         break;
-
     case 'update_theme':
-        $dbo->update('zz_groups', [
-            'theme' => filter('theme'),
-        ], ['id' => $id_record]);
+        $group->theme = filter('theme');
+        $group->save();
 
-        ob_end_clean();
-        echo 'ok';
-
+        flash()->info(tr('Tema aggiornato!'));
         break;
 }

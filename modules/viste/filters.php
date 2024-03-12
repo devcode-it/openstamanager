@@ -78,7 +78,7 @@ if (!empty($additionals)) {
                     </div>
 
                     <div class="col-md-3">
-                        {[ "type": "select", "label": "'.tr('Gruppo').'", "name": "gruppo['.$num.']", "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC", "value": "'.$additional['idgruppo'].'", "readonly": '.intval(!$editable).' ]}
+                        {[ "type": "select", "label": "'.tr('Gruppo').'", "name": "gruppo['.$num.']", "values": "query=SELECT `zz_groups`.`id`, `name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(setting('Lingua')).') ORDER BY `zz_groups`.`id` ASC", "value": "'.$additional['idgruppo'].'", "readonly": '.intval(!$editable).' ]}
                     </div>
 
                     <div class="col-md-3">
@@ -135,7 +135,7 @@ echo '
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "'.tr('Gruppo').'", "name": "gruppo[-id-]", "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC" ]}
+					{[ "type": "select", "label": "'.tr('Gruppo').'", "name": "gruppo[-id-]", "values": "query=SELECT `zz_groups`.`id`, `name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(setting('Lingua')).') ORDER BY `zz_groups`.`id` ASC" ]}
 				</div>
 
                 <div class="col-md-3">

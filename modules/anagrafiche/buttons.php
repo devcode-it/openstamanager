@@ -18,6 +18,7 @@
  */
 
 use Models\Module;
+use Models\Group;
 
 if (in_array($id_cliente, $tipi_anagrafica) or in_array($id_fornitore, $tipi_anagrafica)) {
     echo '
@@ -31,7 +32,7 @@ if (in_array($id_cliente, $tipi_anagrafica) or in_array($id_fornitore, $tipi_ana
     // Aggiunta utente per i tecnici
     if (in_array($id_tecnico, $tipi_anagrafica)) {
         echo '
-        <li><a data-toggle="modal" data-title="'.tr('Aggiungi utente').'" data-href="modules/utenti/user.php?id_module='.(new Module())->getByName('Utenti e permessi')->id_record.'&id_record='.$dbo->fetchOne('SELECT id FROM zz_groups WHERE nome=\'Tecnici\'')['id'].'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-user"></i>'.tr('Nuovo utente').'
+        <li><a data-toggle="modal" data-title="'.tr('Aggiungi utente').'" data-href="modules/utenti/user.php?id_module='.(new Module())->getByName('Utenti e permessi')->id_record.'&id_record='.(new Group())->getByName('Tecnici')->id_record.'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-user"></i>'.tr('Nuovo utente').'
         </a></li>';
     }
 

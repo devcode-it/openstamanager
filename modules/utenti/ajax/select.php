@@ -117,13 +117,13 @@ switch ($resource) {
         break;
 
     case 'gruppi':
-        $query = 'SELECT zz_groups.id, zz_groups.nome AS descrizione FROM zz_groups |where| ORDER BY descrizione';
+        $query = 'SELECT `zz_groups`.`id`, `zz_groups`.`name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON `zz_groups`.`id`=`zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang`='.prepare(setting('Lingua')).' |where| ORDER BY `name`';
 
         foreach ($elements as $element) {
-            $filter[] = 'zz_groups.id='.prepare($element);
+            $filter[] = '`zz_groups`.`id`='.prepare($element);
         }
         if (!empty($search)) {
-            $search_fields[] = 'zz_groups.nome LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`zz_groups`.`name` LIKE '.prepare('%'.$search.'%');
         }
 
         break;

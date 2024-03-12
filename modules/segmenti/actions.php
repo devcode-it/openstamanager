@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\Group;
 
 switch (post('op')) {
     case 'update':
@@ -101,11 +102,11 @@ switch (post('op')) {
         ]);
 
         // Aggiunta permessi segmento
-        $gruppi = $dbo->fetchArray('SELECT `id` FROM `zz_groups`');
+        $gruppi = Group::get();
         $array = [];
         foreach ($gruppi as $gruppo) {
             $array[] = [
-                'id_gruppo' => $gruppo['id'],
+                'id_gruppo' => $gruppo->id,
                 'id_segment' => $id_record,
             ];
         }

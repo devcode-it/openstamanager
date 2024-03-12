@@ -168,6 +168,7 @@ return [
     'zz_groups',
     'zz_groups_lang',
     'zz_group_module',
+    'zz_group_module_lang',
     'zz_group_segment',
     'zz_group_view',
     'zz_hooks',

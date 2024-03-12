@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Models\Module;
+use Models\Clause;
 
 switch (filter('op')) {
     case 'update':
@@ -102,7 +103,6 @@ switch (filter('op')) {
 
             if (check_query($query)) {
                 $array = [
-                    'name' => post('name')[$c],
                     'idgruppo' => post('gruppo')[$c],
                     'idmodule' => $id_record,
                     'clause' => $query,
@@ -111,12 +111,23 @@ switch (filter('op')) {
 
                 if (!empty(post('id')[$c]) && !empty($query)) {
                     $id = post('id')[$c];
-
-                    $dbo->update('zz_group_module', $array, ['id' => $id]);
+                    $clause = Clause::find($id);
+                    $clause->idgruppo = post('gruppo')[$c];
+                    $clause->idmodulo = $id_record;
+                    $clause->clause = $query;
+                    $clause->position = !empty(post('position')[$c]) ? 'HVN' : 'WHR';
+                    $clause->name = post('name')[$c];
+                    $clause->save();
+                    
                 } elseif (!empty($query)) {
-                    $dbo->insert('zz_group_module', $array);
-
-                    $id = $dbo->lastInsertedID();
+                    $clause = Clause::build();
+                    $id_record = $dbo->lastInsertedID();
+                    $clause->idgruppo = post('gruppo')[$c];
+                    $clause->idmodulo = $id_record;
+                    $clause->clause = $query;
+                    $clause->position = !empty(post('position')[$c]) ? 'HVN' : 'WHR';
+                    $clause->name = post('name')[$c];
+                    $clause->save();
                 }
             } else {
                 $rs = false;
@@ -134,11 +145,9 @@ switch (filter('op')) {
     case 'change':
         $id = filter('id');
 
-        $rs = $dbo->fetchArray('SELECT enabled FROM zz_group_module WHERE id='.prepare($id));
-
-        $dbo->update('zz_group_module', [
-            'enabled' => !empty($rs[0]['enabled']) ? 0 : 1,
-        ], ['id' => $id]);
+        $clause = Clause::find($id);
+        $clause->enabled = !empty($clause->enabled) ? 0 : 1;
+        $clause->save();
 
         flash()->info(tr('Salvataggio completato!'));
 

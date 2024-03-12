@@ -2266,3 +2266,24 @@ ALTER TABLE `zz_groups_lang`
 INSERT INTO `zz_groups_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `nome` FROM `zz_groups`;
 
 ALTER TABLE `zz_groups_lang` ADD CONSTRAINT `zz_groups_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_groups`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+-- Aggiunta tabella zz_group_module_lang
+CREATE TABLE IF NOT EXISTS `zz_group_module_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `name` VARCHAR(255) NOT NULL
+);
+
+ALTER TABLE `zz_group_module_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `zz_group_module_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `zz_group_module_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name` FROM `zz_group_module`;
+
+ALTER TABLE `zz_group_module`
+    DROP `name`;
+
+ALTER TABLE `zz_group_module_lang` ADD CONSTRAINT `zz_group_module_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_group_module`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 

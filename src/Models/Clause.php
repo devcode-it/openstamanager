@@ -29,6 +29,14 @@ class Clause extends Model
 
     protected $table = 'zz_group_module';
 
+    public static function build()
+    {
+        $model = new static();
+        $model->save();
+
+        return $model;
+    }
+
     /* Relazioni Eloquent */
 
     public function groups()
@@ -44,5 +52,42 @@ class Clause extends Model
     public function getClauseAttribute($value)
     {
         return Query::replacePlaceholder($value);
+    }
+    /**
+     * Ritorna l'attributo name della clausola.
+     *
+     * @return string
+     */
+    public function getNameAttribute()
+    {
+        return database()->table($this->table.'_lang')
+            ->select('name')
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'))
+            ->first()->name;
+    }
+
+    /**
+     * Imposta l'attributo name della clausola.
+     */
+    public function setNameAttribute($value)
+    {
+        $table = database()->table($this->table.'_lang');
+
+        $translated = $table
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', setting('Lingua'));
+
+        if ($translated->count() > 0) {
+            $translated->update([
+                'name' => $value
+            ]);
+        } else {
+            $table->insert([
+                'id_record' => $this->id,
+                'id_lang' => setting('Lingua'),
+                'name' => $value
+            ]);
+        }
     }
 }

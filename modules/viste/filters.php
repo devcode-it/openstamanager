@@ -17,6 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+ use Models\Clause;
+
 echo '
 <form action="" method="post" role="form">
 	<input type="hidden" name="backto" value="record-edit">
@@ -25,7 +27,7 @@ echo '
     <div class="data">';
 
 $num = 0;
-$additionals = $dbo->fetchArray('SELECT * FROM zz_group_module WHERE idmodule='.prepare($record['id']).' ORDER BY `id` ASC');
+$additionals = Clause::where('idmodule', $record['id'])->get();
 
 if (!empty($additionals)) {
     foreach ($additionals as $num => $additional) {

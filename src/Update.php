@@ -211,7 +211,8 @@ class Update
             self::normalizeDatabase($database->getDatabaseName());
 
             if (class_exists('\Models\Cache')) {
-                Cache::pool(Cache::where('name','Ultima versione di OpenSTAManager disponibile')->first()->id)->set(null);            }
+                Cache::find((new Cache())->getByName('Ultima versione di OpenSTAManager disponibile')->id_record)->set(null);
+            }
 
             // Correzione permessi per le cartelle backup e files
             $fs = new SymfonyFilesystem();

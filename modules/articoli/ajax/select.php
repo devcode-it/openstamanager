@@ -316,9 +316,23 @@ switch ($resource) {
         break;
 
     case 'serial-articolo':
-        $query = 'SELECT serial AS id, serial AS descrizione FROM mg_prodotti |where| AND mg_prodotti.dir=\'uscita\' AND id=(SELECT MAX(id) FROM mg_prodotti AS prodotti WHERE prodotti.id_articolo=mg_prodotti.id_articolo AND prodotti.serial=mg_prodotti.serial)';
+        $query = 'SELECT serial AS id, serial AS descrizione FROM mg_prodotti |where|';
 
-        $where[] = 'id_articolo='.prepare($superselect['idarticolo']);
+        foreach ($elements as $element) {
+            $filter[] = 'serial='.prepare($element);
+        }
+
+        if (!empty($filter)) {
+            $query .= ' OR (('.implode(' OR ', $filter).') AND mg_prodotti.dir=\'entrata\')';
+        }
+
+        $where[] = 'mg_prodotti.id_articolo='.prepare($superselect['idarticolo']);
+        $where[] = 'mg_prodotti.dir=\'uscita\'';
+        $where[] = 'mg_prodotti.id=(SELECT MAX(id) FROM mg_prodotti AS prodotti WHERE prodotti.id_articolo=mg_prodotti.id_articolo AND prodotti.serial=mg_prodotti.serial)';
+
+        if (!empty($search)) {
+            $search_fields[] = '`mg_prodotti`.`serial` LIKE '.prepare('%'.$search.'%');
+        }
 
         break;
 }

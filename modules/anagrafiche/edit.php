@@ -21,6 +21,7 @@ use Carbon\Carbon;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Banche\Banca;
 use Models\Module;
+use Models\Plugin;
 
 include_once __DIR__.'/../../core.php';
 
@@ -31,18 +32,24 @@ $is_agente = in_array($id_agente, $tipi_anagrafica);
 $is_azienda = in_array($id_azienda, $tipi_anagrafica);
 
 if (!$is_cliente && !$is_fornitore && !$is_azienda && $is_tecnico) {
-    $ignore = $dbo->fetchArray("SELECT `zz_plugins`.`id` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = ".prepare(setting('Lingua')).") WHERE `name`='Sedi' OR `name`='Referenti' OR `name`='Dichiarazioni d\'intento'");
+    $ignore = Plugin::where('id', '=', (new Plugin())->getByName('Sedi')->id_record)
+        ->orWhere('id', '=', (new Plugin())->getByName('Referenti')->id_record)
+        ->orWhere('id', '=', (new Plugin())->getByName('Dichiarazioni d\'intento')->id_record)
+        ->get();
 
     foreach ($ignore as $plugin) {
         echo '
         <script>
-            $("#link-tab_'.$plugin['id'].'").addClass("disabled");
+            $("#link-tab_'.$plugin->id.'").addClass("disabled");
         </script>';
     }
 }
 
 if (!$is_cliente) {
-    $ignore = $dbo->fetchArray("SELECT `zz_plugins`.`id` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = ".prepare(setting('Lingua')).") WHERE `name` IN ('Impianti del cliente','Contratti del cliente','Ddt del cliente')");
+    $ignore = Plugin::where('id', '=', (new Plugin())->getByName('Impianti del cliente')->id_record)
+        ->orWhere('id', '=', (new Plugin())->getByName('Contratti del cliente')->id_record)
+        ->orWhere('id', '=', (new Plugin())->getByName('Ddt del cliente')->id_record)
+        ->get();
 
     foreach ($ignore as $plugin) {
         echo '

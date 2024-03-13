@@ -103,7 +103,7 @@ class Settings
      */
     public static function setValue($setting, $value)
     {
-        $setting = Setting::find($setting);
+        $setting = Setting::where('id', '=', $setting)->orWhere('nome', '=', $setting)->first();
         $value = (is_array($value) ? implode(',', $value) : $value);
 
         // Trasformazioni

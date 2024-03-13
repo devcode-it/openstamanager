@@ -81,7 +81,7 @@ class Template extends Model
         return database()->table($this->table.'_lang')
             ->select('name')
             ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', setting('Lingua'))
+            ->where('id_lang', '=', \App::getLang())
             ->first()->name;
     }
 
@@ -94,7 +94,7 @@ class Template extends Model
 
         $translated = $table
             ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', setting('Lingua'));
+            ->where('id_lang', '=', \App::getLang());
 
         if ($translated->count() > 0) {
             $translated->update([
@@ -103,7 +103,7 @@ class Template extends Model
         } else {
             $table->insert([
                 'id_record' => $this->id,
-                'id_lang' => setting('Lingua'),
+                'id_lang' => \App::getLang(),
                 'name' => $value
             ]);
         }
@@ -118,7 +118,7 @@ class Template extends Model
         return database()->table($this->table.'_lang')
             ->select('subject')
             ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', setting('Lingua'))
+            ->where('id_lang', '=', \App::getLang())
             ->first()->subject;
     }
 
@@ -131,7 +131,7 @@ class Template extends Model
 
         $translated = $table
             ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', setting('Lingua'));
+            ->where('id_lang', '=', \App::getLang());
 
         if ($translated->count() > 0) {
             $translated->update([
@@ -140,7 +140,7 @@ class Template extends Model
         } else {
             $table->insert([
                 'id_record' => $this->id,
-                'id_lang' => setting('Lingua'),
+                'id_lang' => \App::getLang(),
                 'subject' => $value
             ]);
         }
@@ -156,7 +156,7 @@ class Template extends Model
         return database()->table($this->table.'_lang')
             ->select('body')
             ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', setting('Lingua'))
+            ->where('id_lang', '=', \App::getLang())
             ->first()->body;
     }
     /**
@@ -168,7 +168,7 @@ class Template extends Model
 
         $translated = $table
             ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', setting('Lingua'));
+            ->where('id_lang', '=', \App::getLang());
 
         if ($translated->count() > 0) {
             $translated->update([
@@ -177,7 +177,7 @@ class Template extends Model
         } else {
             $table->insert([
                 'id_record' => $this->id,
-                'id_lang' => setting('Lingua'),
+                'id_lang' => \App::getLang(),
                 'body' => $value
             ]);
         }
@@ -195,7 +195,7 @@ class Template extends Model
         return database()->table($this->table.'_lang')
             ->select('id_record')
             ->where('name', '=', $name)
-            ->where('id_lang', '=', setting('Lingua'))
+            ->where('id_lang', '=', \App::getLang())
             ->first();
     }
 

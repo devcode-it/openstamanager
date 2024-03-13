@@ -36,7 +36,7 @@ include_once __DIR__.'/../../core.php';
                 </div>
 
                 <div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Codice Modalità (Fatturazione Elettronica)'); ?>", "name": "codice_modalita_pagamento_fe", "value": "$codice_modalita_pagamento_fe$", "values": "query=SELECT `codice` as id, CONCAT(`codice`, ' - ', `name`) AS descrizione FROM `fe_modalita_pagamento` LEFT JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento_lang`.`id_record`=`fe_modalita_pagamento`.`codice` AND `fe_modalita_pagamento_lang`.`id_lang`=<?php echo prepare(setting('Lingua')); ?>)", "required": 1, "help": "<?php echo tr('Impostando il codice MP12 il pagamento viene considerato di tipo Ri.Ba.: nelle fatture verrà visualizzata la banca della controparte'); ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Codice Modalità (Fatturazione Elettronica)'); ?>", "name": "codice_modalita_pagamento_fe", "value": "$codice_modalita_pagamento_fe$", "values": "query=SELECT `codice` as id, CONCAT(`codice`, ' - ', `name`) AS descrizione FROM `fe_modalita_pagamento` LEFT JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento_lang`.`id_record`=`fe_modalita_pagamento`.`codice` AND `fe_modalita_pagamento_lang`.`id_lang`=<?php echo prepare(\App::getLang()); ?>)", "required": 1, "help": "<?php echo tr('Impostando il codice MP12 il pagamento viene considerato di tipo Ri.Ba.: nelle fatture verrà visualizzata la banca della controparte'); ?>" ]}
 				</div>
             </div>
 
@@ -87,7 +87,7 @@ $tipi_scadenza_pagamento = [
     ],
 ];
 
-$results = $dbo->fetchArray('SELECT *, `co_pagamenti`.`id` as id FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `name`='.prepare($record['name']).' ORDER BY `num_giorni` ASC');
+$results = $dbo->fetchArray('SELECT *, `co_pagamenti`.`id` as id FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `name`='.prepare($record['name']).' ORDER BY `num_giorni` ASC');
 $numero_rata = 1;
 foreach ($results as $result) {
     $tipo_scadenza_pagamento = 3;
@@ -105,13 +105,13 @@ foreach ($results as $result) {
     }
 
     // Collegamenti diretti
-    $elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento_lang`.`name` AS tipo_documento, `co_tipidocumento`.`dir`, NULL AS `deleted_at` FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id`=`co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang`= '.prepare(setting('Lingua')).') WHERE `co_documenti`.`idpagamento` = '.prepare($id_record).'
+    $elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento_lang`.`name` AS tipo_documento, `co_tipidocumento`.`dir`, NULL AS `deleted_at` FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id`=`co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang`= '.prepare(\App::getLang()).') WHERE `co_documenti`.`idpagamento` = '.prepare($id_record).'
 
 UNION
-SELECT `or_ordini`.`id`, `or_ordini`.`data`, `or_ordini`.`numero`, `or_ordini`.`numero_esterno`, `or_tipiordine_lang`.`name` AS tipo_documento, `or_tipiordine`.`dir`, NULL AS `deleted_at` FROM `or_ordini` INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine` LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine`.`id`=`or_tipiordine_lang`.`id_record` AND `or_tipiordine_lang`.`id_lang`= '.prepare(setting('Lingua')).') WHERE `or_ordini`.`idpagamento` = '.prepare($id_record).'
+SELECT `or_ordini`.`id`, `or_ordini`.`data`, `or_ordini`.`numero`, `or_ordini`.`numero_esterno`, `or_tipiordine_lang`.`name` AS tipo_documento, `or_tipiordine`.`dir`, NULL AS `deleted_at` FROM `or_ordini` INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine` LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine`.`id`=`or_tipiordine_lang`.`id_record` AND `or_tipiordine_lang`.`id_lang`= '.prepare(\App::getLang()).') WHERE `or_ordini`.`idpagamento` = '.prepare($id_record).'
 
 UNION
-SELECT `dt_ddt`.`id`, `dt_ddt`.`data`, `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`, `dt_tipiddt_lang`.`name` AS tipo_documento, `dt_tipiddt`.`dir`, NULL AS `deleted_at` FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt`.`id`=`dt_tipiddt_lang`.`id_record` AND `dt_tipiddt_lang`.`id_lang`= '.prepare(setting('Lingua')).') WHERE `dt_ddt`.`idpagamento` = '.prepare($id_record).'
+SELECT `dt_ddt`.`id`, `dt_ddt`.`data`, `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`, `dt_tipiddt_lang`.`name` AS tipo_documento, `dt_tipiddt`.`dir`, NULL AS `deleted_at` FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt`.`id`=`dt_tipiddt_lang`.`id_record` AND `dt_tipiddt_lang`.`id_lang`= '.prepare(\App::getLang()).') WHERE `dt_ddt`.`idpagamento` = '.prepare($id_record).'
 
 UNION
 SELECT `co_contratti`.`id`, `co_contratti`.`data_bozza`, `co_contratti`.`numero`, 0 AS numero_esterno , "Contratto" AS tipo_documento, 0 AS dir, NULL AS `deleted_at` FROM `co_contratti` WHERE `co_contratti`.`idpagamento` = '.prepare($id_record).'

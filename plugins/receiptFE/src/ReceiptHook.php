@@ -42,7 +42,7 @@ class ReceiptHook extends Manager
         }
 
         // Lettura cache
-        $todo_cache = Cache::pool(Cache::where('name','Ricevute Elettroniche')->first()->id);
+        $todo_cache = Cache::find((new Cache())->getByName('Ricevute Elettroniche')->id_record);
 
         return !$todo_cache->isValid() || !empty($todo_cache->content);
     }
@@ -50,8 +50,8 @@ class ReceiptHook extends Manager
     public function execute()
     {
         // Lettura cache
-        $todo_cache = Cache::pool(Cache::where('name','Ricevute Elettroniche')->first()->id);
-        $completed_cache = Cache::pool(Cache::where('name','Ricevute Elettroniche importate')->first()->id);
+        $todo_cache = Cache::find((new Cache())->getByName('Ricevute Elettroniche')->id_record);
+        $completed_cache = Cache::find((new Cache())->getByName('Ricevute Elettroniche importate')->id_record);
         
         // Refresh cache
         if (!$todo_cache->isValid()) {
@@ -95,8 +95,8 @@ class ReceiptHook extends Manager
     public function response()
     {
         // Lettura cache
-        $todo_cache = Cache::pool(Cache::where('name','Ricevute Elettroniche')->first()->id);
-        $completed_cache = Cache::pool(Cache::where('name','Ricevute Elettroniche importate')->first()->id);
+        $todo_cache = Cache::find((new Cache())->getByName('Ricevute Elettroniche')->id_record);
+        $completed_cache = Cache::find((new Cache())->getByName('Ricevute Elettroniche Importate')->id_record);
 
         $completed_number = (is_array($completed_cache->content) ? count($completed_cache->content) : 0);
         $total_number = $completed_number + (is_array($todo_cache->content) ? count($todo_cache->content) : 0);

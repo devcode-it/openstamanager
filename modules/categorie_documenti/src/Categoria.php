@@ -22,6 +22,7 @@ namespace Modules\CategorieDocumentali;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Models\Group;
 
 class Categoria extends Model
 {
@@ -35,7 +36,7 @@ class Categoria extends Model
         $model = new static();
         $model->save();
 
-        $gruppi = database()->fetchArray('SELECT `id` FROM `zz_groups`');
+        $gruppi = Group::get();
         $model->syncPermessi(array_column($gruppi, 'id'));
 
         return $model;
@@ -61,7 +62,7 @@ class Categoria extends Model
         return database()->table($this->table.'_lang')
             ->select('name')
             ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', setting('Lingua'))
+            ->where('id_lang', '=', \App::getLang())
             ->first()->name;
     }
 
@@ -75,7 +76,7 @@ class Categoria extends Model
 
         $translated = $table
             ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', setting('Lingua'));
+            ->where('id_lang', '=', \App::getLang());
 
         if ($translated->count() > 0) {
             $translated->update([
@@ -84,7 +85,7 @@ class Categoria extends Model
         } else {
             $table->insert([
                 'id_record' => $this->id,
-                'id_lang' => setting('Lingua'),
+                'id_lang' => \App::getLang(),
                 'name' => $value
             ]);
         }
@@ -102,7 +103,7 @@ class Categoria extends Model
         return database()->table($this->table.'_lang')
             ->select('id_record')
             ->where('name', '=', $name)
-            ->where('id_lang', '=', setting('Lingua'))
+            ->where('id_lang', '=', \App::getLang())
             ->first();
     }
 }

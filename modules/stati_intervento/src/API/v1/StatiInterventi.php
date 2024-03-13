@@ -35,8 +35,8 @@ class StatiInterventi extends Resource implements RetrieveInterface
             ];
         }
 
-        $join = [
-            'in_statiintervento_lang' => 'in_statiintervento_lang.id_record = in_statiintervento.id AND in_statiintervento_lang.id_lang = '.setting('Lingua'),
+        $joins[] = [
+            'in_statiintervento_lang' => 'in_statiintervento_lang.id_record = in_statiintervento.id AND in_statiintervento_lang.id_lang = '.\App::getLang(),
         ];
 
         $where = $request['where'];
@@ -47,7 +47,7 @@ class StatiInterventi extends Resource implements RetrieveInterface
         return [
             'select' => $select,
             'table' => $table,
-            'join' => $join,
+            'joins' => $joins,
             'where' => $where,
         ];
     }

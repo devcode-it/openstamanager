@@ -98,11 +98,11 @@ echo '
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "values": "query=SELECT `co_pagamenti`.`id`, `co_pagamenti_lang`.`name` AS `descrizione` FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = <?php echo prepare(setting('Lingua')); ?>) GROUP BY `descrizione` ORDER BY `descrizione`", "value": "$idpagamento$" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "values": "query=SELECT `co_pagamenti`.`id`, `co_pagamenti_lang`.`name` AS `descrizione` FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = <?php echo prepare(\App::getLang()); ?>) GROUP BY `descrizione` ORDER BY `descrizione`", "value": "$idpagamento$" ]}
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstato", "required": 1, "values": "query=SELECT `co_staticontratti`.`id`, `name` as `descrizione`, `colore` AS _bgcolor_ FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = <?php echo prepare(setting('Lingua')); ?>) ORDER BY `name`", "value": "$idstato$", "class": "unblockable" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstato", "required": 1, "values": "query=SELECT `co_staticontratti`.`id`, `name` as `descrizione`, `colore` AS _bgcolor_ FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = <?php echo prepare(\App::getLang()); ?>) ORDER BY `name`", "value": "$idstato$", "class": "unblockable" ]}
                 </div>
             </div>
 
@@ -222,7 +222,7 @@ echo '
 $idtipiintervento = ['-1'];
 
 // Loop fra i tipi di attività e i relativi costi del tipo intervento
-$rs = $dbo->fetchArray('SELECT `co_contratti_tipiintervento`.*, `in_tipiintervento_lang`.`name` FROM `co_contratti_tipiintervento` INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`idtipointervento` LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = "'.prepare(setting('Lingua')).'" WHERE `idcontratto`='.prepare($id_record).' AND (`co_contratti_tipiintervento`.`costo_ore` != `in_tipiintervento`.`costo_orario` OR `co_contratti_tipiintervento`.`costo_km` != `in_tipiintervento`.`costo_km` OR `co_contratti_tipiintervento`.`costo_dirittochiamata` != `in_tipiintervento`.`costo_diritto_chiamata`) ORDER BY `in_tipiintervento_lang`.`name`');
+$rs = $dbo->fetchArray('SELECT `co_contratti_tipiintervento`.*, `in_tipiintervento_lang`.`name` FROM `co_contratti_tipiintervento` INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`idtipointervento` LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(\App::getLang()).' WHERE `idcontratto`='.prepare($id_record).' AND (`co_contratti_tipiintervento`.`costo_ore` != `in_tipiintervento`.`costo_orario` OR `co_contratti_tipiintervento`.`costo_km` != `in_tipiintervento`.`costo_km` OR `co_contratti_tipiintervento`.`costo_dirittochiamata` != `in_tipiintervento`.`costo_diritto_chiamata`) ORDER BY `in_tipiintervento_lang`.`name`');
 
 if (!empty($rs)) {
     echo '
@@ -273,7 +273,7 @@ echo '
 					<div class="hide">';
 
 // Loop fra i tipi di attività e i relativi costi del tipo intervento (quelli a 0)
-$rs = $dbo->fetchArray('SELECT * FROM `co_contratti_tipiintervento` INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`idtipointervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id`=`in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `co_contratti_tipiintervento`.`idtipointervento` NOT IN('.implode(',', $idtipiintervento).') AND `idcontratto`='.prepare($id_record).' ORDER BY `name`');
+$rs = $dbo->fetchArray('SELECT * FROM `co_contratti_tipiintervento` INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`idtipointervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id`=`in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `co_contratti_tipiintervento`.`idtipointervento` NOT IN('.implode(',', $idtipiintervento).') AND `idcontratto`='.prepare($id_record).' ORDER BY `name`');
 
 if (!empty($rs)) {
     echo '
@@ -556,7 +556,7 @@ $("#link_form").bind("keypress", function(e) {
 
 // Collegamenti diretti
 // Fatture o interventi collegati a questo contratto
-$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento_lang`.`name` AS tipo_documento, IF(`co_tipidocumento`.`dir` = \'entrata\', \'Fatture di vendita\', \'Fatture di acquisto\') AS modulo FROM `co_documenti` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `co_righe_documenti`.`idcontratto` = '.prepare($id_record).')
+$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento_lang`.`name` AS tipo_documento, IF(`co_tipidocumento`.`dir` = \'entrata\', \'Fatture di vendita\', \'Fatture di acquisto\') AS modulo FROM `co_documenti` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `co_righe_documenti`.`idcontratto` = '.prepare($id_record).')
 
 UNION
 SELECT `in_interventi`.`id`, `in_interventi`.`data_richiesta`, `in_interventi`.`codice`, NULL, \'Attività\', \'Interventi\' FROM `in_interventi` JOIN `in_righe_interventi` ON `in_righe_interventi`.`idintervento` = `in_interventi`.`id` WHERE (`in_righe_interventi`.`original_document_id` = '.prepare($contratto->id).' AND `in_righe_interventi`.`original_document_type` = '.prepare(get_class($contratto)).') OR `in_interventi`.`id_contratto` = '.prepare($id_record).'

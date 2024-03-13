@@ -56,7 +56,7 @@ class Stato extends Model
         return database()->table($this->table.'_lang')
             ->select('name')
             ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', setting('Lingua'))
+            ->where('id_lang', '=', \App::getLang())
             ->first()->name;
     }
 
@@ -70,7 +70,7 @@ class Stato extends Model
 
         $translated = $table
             ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', setting('Lingua'));
+            ->where('id_lang', '=', \App::getLang());
 
         if ($translated->count() > 0) {
             $translated->update([
@@ -79,7 +79,7 @@ class Stato extends Model
         } else {
             $table->insert([
                 'id_record' => $this->id,
-                'id_lang' => setting('Lingua'),
+                'id_lang' => \App::getLang(),
                 'name' => $value
             ]);
         }
@@ -97,7 +97,7 @@ class Stato extends Model
         return database()->table($this->table.'_lang')
             ->select('id_record')
             ->where('name', '=', $name)
-            ->where('id_lang', '=', setting('Lingua'))
+            ->where('id_lang', '=', \App::getLang())
             ->first();
     }
 }

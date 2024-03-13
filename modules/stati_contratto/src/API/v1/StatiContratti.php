@@ -32,6 +32,10 @@ class StatiContratti extends Resource implements RetrieveInterface
             '*',
         ];
 
+        $joins[] = [
+            'co_staticontratti_lang' => '`co_staticontratti_lang`.`id_record` = `co_staticontratti`.`id` AND `co_staticontratti_lang`.`id_lang` = '.\App::getLang(),
+        ];
+
         $where = $request['where'];
         if (empty($where['deleted_at'])) {
             $where['deleted_at'] = null;
@@ -39,38 +43,10 @@ class StatiContratti extends Resource implements RetrieveInterface
 
         return [
             'select' => $select,
+            'joins' => $joins,
             'table' => $table,
             'where' => $where,
         ];
     }
 
-    /**
-     * Ritorna l'attributo name dello stato contratto.
-     *
-     * @return string
-     */
-    public function getNameAttribute()
-    {
-        return database()->table($this->table.'_lang')
-            ->select('name')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', setting('Lingua'))
-            ->first()->name;
-    }
-
-    /**
-     * Ritorna l'id dello stato contratto a partire dal nome.
-     *
-     * @param string $name il nome da ricercare
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getByName($name)
-    {
-        return database()->table($this->table.'_lang')
-            ->select('id_record')
-            ->where('name', '=', $name)
-            ->where('id_lang', '=', setting('Lingua'))
-            ->first();
-    }
 }

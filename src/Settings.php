@@ -103,7 +103,7 @@ class Settings
      */
     public static function setValue($setting, $value)
     {
-        $setting = self::get($setting);
+        $setting = Setting::where('id', '=', $setting)->orWhere('nome', '=', $setting)->first();
         $value = (is_array($value) ? implode(',', $value) : $value);
 
         // Trasformazioni
@@ -155,7 +155,7 @@ class Settings
      */
     public static function input($setting, $required = false)
     {
-        $setting = self::get($setting);
+        $setting = Setting::where('nome', '=', $setting)->orWhere('id', '=', $setting)->first();
 
         // Lista predefinita
         if (preg_match("/list\[(.+?)\]/", $setting->tipo, $m)) {
@@ -222,7 +222,7 @@ class Settings
         elseif ($setting->tipo == 'ckeditor') {
             $result = input([
                 'type' => 'ckeditor',
-                'label' => json_encode($setting->nome),
+                'label' => json_encode($setting->title),
                 'readonly' => !$setting->editable,
                 'name' => 'setting['.$setting->id.']',
                 'value' => $setting->valore,

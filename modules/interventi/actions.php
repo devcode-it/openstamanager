@@ -688,8 +688,10 @@ switch (post('op')) {
         break;
 
     case 'firma':
-        if (directory(base_dir().'/files/interventi')) {
+        if (is_writable(Uploads::getDirectory($id_module))) {
+
             if (post('firma_base64') != '') {
+
                 // Salvataggio firma
                 $firma_file = 'firma_'.time().'.jpg';
                 $firma_nome = post('firma_nome');
@@ -707,9 +709,9 @@ switch (post('op')) {
                 }
 
                 if (!$img->save(base_dir().'/files/interventi/'.$firma_file)) {
-                    flash()->error(tr('Impossibile creare il file!'));
+                    flash()->error(tr('Impossibile creare il file.'));
                 } elseif ($dbo->query('UPDATE in_interventi SET firma_file='.prepare($firma_file).', firma_data=NOW(), firma_nome = '.prepare($firma_nome).' WHERE id='.prepare($id_record))) {
-                    flash()->info(tr('Firma salvata correttamente!'));
+                    flash()->info(tr('Firma salvata correttamente.'));
 
                     $id_stato = setting("Stato dell'attività dopo la firma");
                     $stato = $dbo->selectOne('in_statiintervento', '*', ['id' => $id_stato]);
@@ -754,21 +756,21 @@ switch (post('op')) {
                         }
                     }
                 } else {
-                    flash()->error(tr('Errore durante il salvataggio della firma nel database!'));
+                    flash()->error(tr('Errore durante il salvataggio della firma nel database.'));
                 }
             } else {
-                flash()->error(tr('Errore durante il salvataggio della firma!').tr('La firma risulta vuota').'...');
+                flash()->error(tr('Errore durante il salvataggio della firma.').'<br>'.tr('La firma risulta vuota.'));
             }
         } else {
-            flash()->error(tr("Non è stato possibile creare la cartella _DIRECTORY_ per salvare l'immagine della firma!", [
-                '_DIRECTORY_' => '<b>/files/interventi</b>',
+            flash()->error(tr("Non è stato possibile creare la cartella _DIRECTORY_ per salvare l'immagine della firma.", [
+                '_DIRECTORY_' => '<b>'.Uploads::getDirectory($id_module).'</b>',
             ]));
         }
 
         break;
 
     case 'firma_bulk':
-        if (directory(base_dir().'/files/interventi')) {
+        if (is_writable(Uploads::getDirectory($id_module))) {
             $firmati = 0;
             $non_firmati = 0;
             $id_records = filter('records') ? explode(';', filter('records')) : null;
@@ -838,11 +840,11 @@ switch (post('op')) {
                     }
                 }
             } else {
-                flash()->error(tr('Errore durante il salvataggio della firma!').' '.tr('La firma risulta vuota').'...');
+                flash()->error(tr('Errore durante il salvataggio della firma.').'<br>'.tr('La firma risulta vuota'));
             }
         } else {
-            flash()->error(tr("Non è stato possibile creare la cartella _DIRECTORY_ per salvare l'immagine della firma!", [
-                '_DIRECTORY_' => '<b>/files/interventi</b>',
+            flash()->error(tr("Non è stato possibile creare la cartella _DIRECTORY_ per salvare l'immagine della firma.", [
+                '_DIRECTORY_' => '<b>' . Uploads::getDirectory($id_module) . '</b>',
             ]));
         }
 

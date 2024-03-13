@@ -57,7 +57,7 @@ include_once __DIR__.'/../../core.php';
 
         <div class="row">
 <?php
-    $rs_stati = $dbo->fetchArray('SELECT * FROM `in_statiintervento`LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(setting('Lingua')).')');
+    $rs_stati = $dbo->fetchArray('SELECT * FROM `in_statiintervento`LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(\App::getLang()).')');
 
 foreach ($rs_stati as $stato) {
     ?>

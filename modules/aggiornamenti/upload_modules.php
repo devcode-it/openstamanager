@@ -79,8 +79,6 @@ if (file_exists($extraction_dir.'/VERSION')) {
         // Eventuale registrazione nel database
         if (empty($installed)) {
             $dbo->insert($table, array_merge($insert, [
-                'name' => $info['name'],
-                'title' => !empty($info['title']) ? $info['title'] : $info['name'],
                 'directory' => $info['directory'],
                 'options' => $info['options'],
                 'version' => $info['version'],
@@ -88,6 +86,13 @@ if (file_exists($extraction_dir.'/VERSION')) {
                 'order' => 100,
                 'default' => 0,
                 'enabled' => 1,
+            ]));
+            $id_record = $dbo->lastInsertedID();
+            $dbo->insert($table.'_lang', array_merge($insert, [
+                'name' => $info['name'],
+                'title' => !empty($info['title']) ? $info['title'] : $info['name'],
+                'id_record' => $id_record,
+                'id_lang' => \App::getLang(),
             ]));
 
             flash()->error(tr('Installazione completata!'));
@@ -140,8 +145,6 @@ if (file_exists($extraction_dir.'/VERSION')) {
         // Eventuale registrazione nel database
         if (empty($installed)) {
             $dbo->insert($table, array_merge($insert, [
-                'name' => $info['name'],
-                'title' => !empty($info['title']) ? $info['title'] : $info['name'],
                 'directory' => $info['directory'],
                 'options' => $info['options'],
                 'version' => $info['version'],
@@ -150,7 +153,13 @@ if (file_exists($extraction_dir.'/VERSION')) {
                 'default' => 0,
                 'enabled' => 1,
             ]));
-
+            $id_record = $dbo->lastInsertedID();
+            $dbo->insert($table.'_lang', array_merge($insert, [
+                'name' => $info['name'],
+                'title' => !empty($info['title']) ? $info['title'] : $info['name'],
+                'id_record' => $id_record,
+                'id_lang' => \App::getLang(),
+            ]));
             flash()->error(tr('Installazione completata!'));
         } else {
             flash()->error(tr('Aggiornamento completato!'));

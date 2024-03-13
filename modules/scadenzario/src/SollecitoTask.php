@@ -78,8 +78,7 @@ class SollecitoTask extends Manager
 
                         // Allego stampa della fattura se non presente
                         if (empty($fattura_allegata)) {
-                            $print_predefined = database()->selectOne('zz_prints', '*', ['predefined' => 1, 'id_module' => (new Module())->getByName('Fatture di vendita')->id_record]);
-
+                            $print_predefined = PrintTemplate::where('predefined', 1)->where('id_module', (new Module())->getByName('Fatture di vendita')->id_record)->first();
                             $print = \Prints::render($print_predefined['id'], $id_documento, null, true);
                             $name = 'Fattura di vendita';
                             $upload = \Uploads::upload($print['pdf'], [

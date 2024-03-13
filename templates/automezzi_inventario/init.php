@@ -47,9 +47,9 @@ $query = 'SELECT
         `an_sedi`
         INNER JOIN `mg_movimenti` ON `mg_movimenti`.`idsede` = `an_sedi`.`id`
         INNER JOIN `mg_articoli` ON `mg_movimenti`.`idarticolo` = `mg_articoli`.`id`
-        LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id`=`mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+        LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id`=`mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(\App::getLang()).')
         LEFT JOIN `mg_categorie` ON `mg_categorie`.`id` = `mg_articoli`.`id_sottocategoria`
-        LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id`=`mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+        LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id`=`mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(\App::getLang()).')
     WHERE
         '.implode(' AND ', $where).'
     GROUP BY 

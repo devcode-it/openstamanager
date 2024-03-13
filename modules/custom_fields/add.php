@@ -25,11 +25,11 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "module_id", "values": "query=SELECT `zz_modules`.`id`, `name` as text FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = <?php echo prepare(setting('Lingua')); ?>) WHERE `enabled` = 1" ]}
+			{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "module_id", "values": "query=SELECT `zz_modules`.`id`, `name` as text FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = <?php echo prepare(\App::getLang()); ?>) WHERE `enabled` = 1" ]}
 		</div>
 
         <div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Plugin'); ?>", "name": "plugin_id", "values": "query=SELECT `zz_plugins`.`id`, `name` as text FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = <?php echo prepare(setting('Lingua')); ?>) WHERE `enabled` = 1" ]}
+			{[ "type": "select", "label": "<?php echo tr('Plugin'); ?>", "name": "plugin_id", "values": "query=SELECT `zz_plugins`.`id`, `name` as text FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = <?php echo prepare(\App::getLang()); ?>) WHERE `enabled` = 1" ]}
 		</div>
     </div>
 

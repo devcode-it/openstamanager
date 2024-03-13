@@ -28,7 +28,7 @@ switch (filter('op')) {
             $database->update('mg_causali_movimenti_lang', [
                 'name' => post('nome'),
                 'description' => post('descrizione'),
-            ], ['id_record' => $id_record, 'id_lang' => setting('Lingua'),]);
+            ], ['id_record' => $id_record, 'id_lang' => \App::getLang(),]);
         } else {
             flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio'));
         }
@@ -44,7 +44,7 @@ switch (filter('op')) {
             'name' => post('nome'),
             'description' => post('descrizione'),
             'id_record' => $id_record,
-            'id_lang' => setting('Lingua'),
+            'id_lang' => \App::getLang(),
         ]);
         break;
 

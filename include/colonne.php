@@ -27,7 +27,7 @@ echo '
 <p>'.tr('Trascina le colonne per ordinare la struttura della tabella principale, seleziona e deseleziona le colonne per renderle visibili o meno').'.</p>
 <div class="sortable">';
 
-$fields = $dbo->fetchArray('SELECT *, (SELECT GROUP_CONCAT(`zz_groups`.`nome`) FROM `zz_group_view` INNER JOIN `zz_groups` ON `zz_group_view`.`id_gruppo` = `zz_groups`.`id` WHERE `zz_group_view`.`id_vista` = `zz_views`.`id`) AS gruppi_con_accesso FROM `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views`.`id` = `zz_views_lang`.`id_record` AND `zz_views_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `id_module`='.prepare($id_module).' ORDER BY `order` ASC');
+$fields = $dbo->fetchArray('SELECT *, (SELECT GROUP_CONCAT(`zz_groups_lang`.`name`) FROM `zz_group_view` INNER JOIN `zz_groups` ON `zz_group_view`.`id_gruppo` = `zz_groups`.`id` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `zz_group_view`.`id_vista` = `zz_views`.`id`) AS gruppi_con_accesso FROM `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views`.`id` = `zz_views_lang`.`id_record` AND `zz_views_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `id_module`='.prepare($id_module).' ORDER BY `order` ASC');
 foreach ($fields as $field) {
     echo '
     <div class="panel panel-default clickable col-md-4" data-id="'.$field['id'].'">

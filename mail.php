@@ -151,7 +151,7 @@ echo '
 
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "multiple": "1", "label": "'.tr('Stampe').'", "name": "prints[]", "value": "'.implode(',', $selected).'", "values": "query=SELECT id, title AS text FROM zz_prints WHERE id_module = '.prepare($id_module).' AND enabled=1 AND is_record=1", "link": "stampa" ]}
+            {[ "type": "select", "multiple": "1", "label": "'.tr('Stampe').'", "name": "prints[]", "value": "'.implode(',', $selected).'", "values": "query=SELECT `zz_prints`.`id`, `title` AS text FROM `zz_prints` LEFT JOIN `zz_prints_lang` ON (`zz_prints`.`id` = `zz_prints_lang`.`id_record` AND `zz_prints_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `id_module` = '.prepare($id_module).' AND `enabled`=1 AND `is_record`=1", "link": "stampa" ]}
         </div>';
 
 $uploads = [];
@@ -164,7 +164,7 @@ if ($smtp['pec'] == 1 && $module['name'] == 'Fatture di vendita') {
 echo '
 
         <div class="col-md-6">
-            {[ "type": "select", "multiple": "1", "label": "'.tr('Allegati').'", "name": "uploads[]", "value": "'.implode(',', $uploads).'", "help": "'.tr('Allegati del documento o caricati nell\'anagrafica dell\'azienda.').'", "values": "query=SELECT `id`, `name` AS text FROM `zz_files` WHERE `id_module` = '.prepare($id_module).' AND `id_record` = '.prepare($id_record).' UNION SELECT `id`, CONCAT(`name`, \' (Azienda)\') AS text FROM `zz_files` WHERE `id_module` = '.(new Module())->getByName('Anagrafiche')->id_record.' AND `id_record` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = \'Azienda predefinita\')", "link": "allegato" ]}
+            {[ "type": "select", "multiple": "1", "label": "'.tr('Allegati').'", "name": "uploads[]", "value": "'.implode(',', $uploads).'", "help": "'.tr('Allegati del documento o caricati nell\'anagrafica dell\'azienda.').'", "values": "query=SELECT `id`, `name` AS text FROM `zz_files` WHERE `id_module` = '.prepare($id_module).' AND `id_record` = '.prepare($id_record).' UNION SELECT `id`, CONCAT(`name`, \' (Azienda)\') AS text FROM `zz_files` WHERE `id_module` = '.(new Module())->getByName('Anagrafiche')->id_record.' AND `id_record` = (SELECT `valore` FROM `zz_settings` WHERE `name` = \'Azienda predefinita\')", "link": "allegato" ]}
         </div>
     </div>';
 

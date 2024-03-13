@@ -74,7 +74,7 @@ $rs = $dbo->fetchArray('SELECT
     FROM
         `in_interventi` 
         INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id`
-        LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+        LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(\App::getLang()).')
     WHERE
         (`in_interventi`.`idanagrafica`='.prepare($idanagrafica).' OR `in_interventi`.`idclientefinale`='.prepare($idanagrafica).')
         AND `in_statiintervento`.`is_fatturabile`=1

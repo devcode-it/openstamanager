@@ -1086,8 +1086,6 @@ ALTER TABLE `fe_regime_fiscale`
 
 ALTER TABLE `fe_regime_fiscale_lang` ADD CONSTRAINT `fe_regime_fiscale_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `fe_regime_fiscale`(`codice`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
-UPDATE `zz_settings` SET `tipo` = 'query=SELECT `codice` AS id, CONCAT(`codice`, \' - \', `name`)as descrizione FROM fe_regime_fiscale LEFT JOIN `fe_regime_fiscale_lang` ON (`fe_regime_fiscale_lang`.`id_record`=`fe_regime_fiscale`.`codice` AND `fe_regime_fiscale_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = \'Lingua\'))' WHERE `zz_settings`.`nome` = 'Regime fiscale'; 
-
 -- Aggiunta tabella fe_stati_documento_lang
 CREATE TABLE IF NOT EXISTS `fe_stati_documento_lang` (
     `id` int NOT NULL,
@@ -1556,7 +1554,7 @@ ALTER TABLE `zz_widgets_lang` ADD CONSTRAINT `zz_widgets_lang_ibfk_1` FOREIGN KE
 
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(co_preventivi.id) AS dato FROM co_preventivi INNER JOIN co_statipreventivi ON co_preventivi.idstato = co_statipreventivi.id LEFT JOIN co_statipreventivi_lang ON (co_statipreventivi_lang.id_record = co_statipreventivi.id AND co_statipreventivi_lang.id_lang = (SELECT valore FROM zz_settings WHERE nome = \"Lingua\")) WHERE name =\"In lavorazione\" AND default_revision=1' WHERE `zz_widgets`.`id` = (SELECT `id_record` FROM `zz_widgets_lang` WHERE  `name` = 'Preventivi in lavorazione'); 
 
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(`dati`.`id`) AS dato FROM (SELECT `co_contratti`.`id`,((SELECT SUM(`co_righe_contratti`.`qta`) FROM `co_righe_contratti` WHERE `co_righe_contratti`.`um` = \"ore\" AND `co_righe_contratti`.`idcontratto` = `co_contratti`.`id`) - IFNULL((SELECT SUM(`in_interventi_tecnici`.`ore`) FROM `in_interventi_tecnici` INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` WHERE `in_interventi`.`id_contratto` = `co_contratti`.`id` AND `in_interventi`.`idstatointervento` IN (SELECT `in_statiintervento`.`id` FROM `in_statiintervento` WHERE `in_statiintervento`.`is_completato` = 1)),0)) AS `ore_rimanenti`, DATEDIFF(`data_conclusione`, NOW()) AS giorni_rimanenti, `data_conclusione`, `ore_preavviso_rinnovo`, `giorni_preavviso_rinnovo`, (SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `idanagrafica` = `co_contratti`.`idanagrafica`) AS ragione_sociale FROM `co_contratti` INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`idstato` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `name` = "Lingua")) WHERE `rinnovabile` = 1 AND YEAR(`data_conclusione`) > 1970 AND `co_contratti`.`id` NOT IN (SELECT `idcontratto_prev` FROM `co_contratti` contratti) AND `co_staticontratti_lang`.`name` NOT IN (\"Concluso\", \"Rifiutato\", \"Bozza\") HAVING (`ore_rimanenti` <= `ore_preavviso_rinnovo` OR DATEDIFF(`data_conclusione`, NOW()) <= ABS(`giorni_preavviso_rinnovo`)) ORDER BY `giorni_rimanenti` ASC,`ore_rimanenti` ASC) dati' WHERE `zz_widgets`.`id` = (SELECT `id_record` FROM `zz_widgets_lang` WHERE  `name` = 'Contratti in scadenza'); 
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(`dati`.`id`) AS dato FROM (SELECT `co_contratti`.`id`,((SELECT SUM(`co_righe_contratti`.`qta`) FROM `co_righe_contratti` WHERE `co_righe_contratti`.`um` = \"ore\" AND `co_righe_contratti`.`idcontratto` = `co_contratti`.`id`) - IFNULL((SELECT SUM(`in_interventi_tecnici`.`ore`) FROM `in_interventi_tecnici` INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` WHERE `in_interventi`.`id_contratto` = `co_contratti`.`id` AND `in_interventi`.`idstatointervento` IN (SELECT `in_statiintervento`.`id` FROM `in_statiintervento` WHERE `in_statiintervento`.`is_completato` = 1)),0)) AS `ore_rimanenti`, DATEDIFF(`data_conclusione`, NOW()) AS giorni_rimanenti, `data_conclusione`, `ore_preavviso_rinnovo`, `giorni_preavviso_rinnovo`, (SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `idanagrafica` = `co_contratti`.`idanagrafica`) AS ragione_sociale FROM `co_contratti` INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`idstato` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) WHERE `rinnovabile` = 1 AND YEAR(`data_conclusione`) > 1970 AND `co_contratti`.`id` NOT IN (SELECT `idcontratto_prev` FROM `co_contratti` contratti) AND `co_staticontratti_lang`.`name` NOT IN (\"Concluso\", \"Rifiutato\", \"Bozza\") HAVING (`ore_rimanenti` <= `ore_preavviso_rinnovo` OR DATEDIFF(`data_conclusione`, NOW()) <= ABS(`giorni_preavviso_rinnovo`)) ORDER BY `giorni_rimanenti` ASC,`ore_rimanenti` ASC) dati' WHERE `zz_widgets`.`id` = (SELECT `id_record` FROM `zz_widgets_lang` WHERE  `name` = 'Contratti in scadenza'); 
 
 -- Aggiunta tabella zz_plugins_lang
 CREATE TABLE IF NOT EXISTS `zz_plugins_lang` (
@@ -1860,7 +1858,7 @@ SELECT
     |select| 
 FROM 
     `an_anagrafiche`
-    INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `an_tipianagrafiche_anagrafiche`.`idanagrafica`
+    INNER JOIN `an_tipianzz_settings_langgrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `an_tipianagrafiche_anagrafiche`.`idanagrafica`
     LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche`.`id`
     LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND |lang|)
 WHERE 
@@ -2080,3 +2078,233 @@ ALTER TABLE `zz_views`
     DROP `name`;
 
 ALTER TABLE `zz_views_lang` ADD CONSTRAINT `zz_views_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_views`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+-- Aggiunta tabella zz_settings_lang
+CREATE TABLE IF NOT EXISTS `zz_settings_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `title` VARCHAR(255) NOT NULL
+);
+
+ALTER TABLE `zz_settings_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `zz_settings_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `nome` FROM `zz_settings`;
+
+ALTER TABLE `zz_settings_lang` ADD CONSTRAINT `zz_settings_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_settings`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+-- Allineamento impostazioni
+UPDATE `zz_settings` SET `tipo` = 'query=SELECT `id`, `title` AS descrizione FROM `zz_prints` WHERE `id_module` = (SELECT `zz_modules`.`id` FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = Lingua)) WHERE `name` = "Interventi") AND `is_record` = 1' WHERE `zz_settings`.`nome` = 'Stampa per anteprima e firma';
+
+UPDATE `zz_settings` SET `tipo` = 'query=SELECT `in_statiintervento`.`id`, `name` AS text FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) WHERE is_completato = 1' WHERE `zz_settings`.`nome` = "Stato dell'attività alla chiusura";
+
+UPDATE `zz_settings` SET `tipo` = 'query=SELECT `in_statiintervento`.`id`, `name` AS text FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua"))' WHERE `zz_settings`.`nome` = "Stato dell'attività dopo la firma";
+
+UPDATE `zz_settings` SET `tipo` = 'query=SELECT `in_statiintervento`.`id`, `name` AS text FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua"))' WHERE `zz_settings`.`nome` = "Stato predefinito dell'attività";
+
+UPDATE `zz_settings` SET `tipo` = 'query=SELECT `in_statiintervento`.`id`, `name` AS text FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua"))' WHERE `zz_settings`.`nome` = "Stato predefinito dell'attività da Dashboard";
+
+UPDATE `zz_settings` SET `tipo` = 'query=SELECT `co_iva`.`id`, `name` AS text FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva_lang`.`id_record` = `co_iva`.`id` AND `co_iva_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua"))' WHERE `zz_settings`.`nome` = "Iva predefinita";
+
+UPDATE `zz_settings` SET `tipo` = 'query=SELECT `co_pagamenti`.`id`, `name` AS descrizione FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua"))' WHERE `zz_settings`.`nome` = "Tipo di pagamento predefinito";
+
+UPDATE `zz_settings` SET `tipo` = 'query=SELECT `co_iva`.`id`, IF(`codice_natura_fe` IS NULL, IF(`codice` IS NULL, `name`, CONCAT(`codice`, " - ", `name`)), CONCAT( IF(`codice` IS NULL, `name`, CONCAT(`codice`, " - ", `name`)), " (", `codice_natura_fe`, ")" )) AS descrizione  FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva_lang`.`id_record` = `co_iva`.`id` AND `co_iva_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) WHERE `deleted_at` IS NULL ORDER BY `name` ASC' WHERE `zz_settings`.`nome` = "Iva da applicare su marca da bollo";
+
+UPDATE `zz_settings` SET `tipo` = 'query=SELECT `co_iva`.`id`, CONCAT(`codice`," - ",`name`) AS descrizione FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva_lang`.`id_record` = `co_iva`.`id` AND `co_iva_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) WHERE codice_natura_fe LIKE "N3.%" AND `deleted_at` IS NULL ORDER BY `name` ASC' WHERE `zz_settings`.`nome` = "Iva per lettere d'intento";
+
+UPDATE `zz_settings` SET `tipo` = 'query=SELECT `zz_segments`.`id`, `name` AS descrizione FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments_lang`.`id_record` = `zz_segments`.`id` AND `zz_segments_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = \"Lingua\")) WHERE `id_module` = (SELECT `zz_modules`.`id` FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) WHERE `name`="Fatture di vendita") ORDER BY `name`' WHERE `zz_settings`.`nome` = "Sezionale per autofatture di vendita";
+
+UPDATE `zz_settings` SET `tipo` = 'query=SELECT `zz_segments`.`id`, `name` AS descrizione FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments_lang`.`id_record` = `zz_segments`.`id` AND `zz_segments_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = \"Lingua\")) WHERE `id_module` = (SELECT `zz_modules`.`id` FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) WHERE `name`="Fatture di acquisto") ORDER BY `name`' WHERE `zz_settings`.`nome` = "Sezionale per autofatture di acquisto";
+
+UPDATE `zz_settings` SET `tipo` = 'query=SELECT `codice` AS id, CONCAT(`codice`, " - ", `name`)as descrizione FROM `fe_regime_fiscale` LEFT JOIN `fe_regime_fiscale_lang` ON (`fe_regime_fiscale_lang`.`id_record`=`fe_regime_fiscale`.`codice` AND `fe_regime_fiscale_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua"))' WHERE `zz_settings`.`nome` = "Regime fiscale";
+
+UPDATE `zz_settings` SET `tipo` = 'query=SELECT `an_anagrafiche`.`idanagrafica` AS id, `ragione_sociale` AS descrizione FROM `an_anagrafiche` INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `an_tipianagrafiche_anagrafiche`.`idanagrafica` WHERE `idtipoanagrafica` = (SELECT `idtipoanagrafica` FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) WHERE `name` = "Fornitore") AND `deleted_at` IS NULL' WHERE `zz_settings`.`nome` = "Terzo intermediario";
+
+UPDATE `zz_settings` SET `tipo` = 'query=SELECT `zz_modules`.`id`, `title` AS descrizione FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) WHERE `enabled` = 1 AND `options` != "" AND `options` != "menu" AND `options` IS NOT NULL ORDER BY `order` ASC' WHERE `zz_settings`.`nome` = "Prima pagina";
+
+UPDATE `zz_settings` SET `tipo` = 'query=SELECT `zz_currencies`.`id`, `name` AS descrizione FROM `zz_currencies` LEFT JOIN `zz_currencies_lang` ON (`zz_currencies_lang`.`id_record` = `zz_currencies`.`id` AND `zz_currencies_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua"))' WHERE `zz_settings`.`nome` = "Valuta";
+
+UPDATE `zz_settings` SET `tipo` = 'query=SELECT `em_templates`.`id`, `name` AS descrizione FROM `em_templates` LEFT JOIN `em_templates_lang` ON (`em_templates_lang`.`id_record` = `em_templates`.`id` AND `em_templates_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua"))' WHERE `zz_settings`.`nome` = "Template email invio sollecito";
+
+-- Aggiunta tabella zz_tasks_lang
+CREATE TABLE IF NOT EXISTS `zz_tasks_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `name` VARCHAR(255) NOT NULL
+);
+
+ALTER TABLE `zz_tasks_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `zz_tasks_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `zz_tasks_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name` FROM `zz_tasks`;
+
+ALTER TABLE `zz_tasks`
+    DROP `name`;
+
+ALTER TABLE `zz_tasks_lang` ADD CONSTRAINT `zz_tasks_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_tasks`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+-- Allineamento vista Gestione task
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select| 
+FROM 
+    `zz_tasks` 
+    LEFT JOIN `zz_tasks_lang` ON (`zz_tasks_lang`.`id_record` = `zz_tasks`.`id` AND `zz_tasks_lang`.|lang|)
+WHERE 
+    1=1 
+HAVING 
+    2=2" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Gestione task');
+UPDATE `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views_lang`.`id_record` = `zz_views`.`id` AND `zz_views_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_tasks_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Gestione task' AND `zz_views_lang`.`name` = 'Nome';
+UPDATE `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views_lang`.`id_record` = `zz_views`.`id` AND `zz_views_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_tasks`.`id`' WHERE `zz_modules_lang`.`name` = 'Gestione task' AND `zz_views_lang`.`name` = 'id';
+
+-- Aggiunta tabella zz_prints_lang
+CREATE TABLE IF NOT EXISTS `zz_prints_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `name` VARCHAR(255) NOT NULL,
+    `title` VARCHAR(255) NOT NULL,
+    `filename` VARCHAR(255) NOT NULL
+);
+
+ALTER TABLE `zz_prints_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `zz_prints_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `zz_prints_lang` (`id`, `id_lang`, `id_record`, `name`, `title`, `filename`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name`, `title`, `filename` FROM `zz_prints`;
+
+ALTER TABLE `zz_prints`
+    DROP `name`,
+    DROP `title`,
+    DROP `filename`;
+
+ALTER TABLE `zz_prints_lang` ADD CONSTRAINT `zz_prints_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_prints`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+-- Allineamento vista Stampe
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select| 
+FROM 
+    `zz_prints`
+    LEFT JOIN `zz_prints_lang` ON (`zz_prints_lang`.`id_record` = `zz_prints`.`id` AND `zz_prints_lang`.|lang|)
+    LEFT JOIN `zz_modules` ON `zz_modules`.`id` = `zz_prints`.`id_module`
+    LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.|lang|)
+WHERE 
+    1=1 
+    AND `zz_prints`.`enabled`=1 
+HAVING 
+    2=2" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Stampe');
+UPDATE `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views_lang`.`id_record` = `zz_views`.`id` AND `zz_views_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_prints_lang`.`title`' WHERE `zz_modules_lang`.`name` = 'Stampe' AND `zz_views_lang`.`name` = 'Titolo';
+UPDATE `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views_lang`.`id_record` = `zz_views`.`id` AND `zz_views_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_prints_lang`.`filename`' WHERE `zz_modules_lang`.`name` = 'Stampe' AND `zz_views_lang`.`name` = 'Nome del file';
+
+-- Aggiunta tabella zz_imports_lang
+CREATE TABLE IF NOT EXISTS `zz_imports_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `name` VARCHAR(255) NOT NULL
+);
+
+ALTER TABLE `zz_imports_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `zz_imports_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `zz_imports_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name` FROM `zz_imports`;
+
+ALTER TABLE `zz_imports`
+    DROP `name`;
+
+ALTER TABLE `zz_imports_lang` ADD CONSTRAINT `zz_imports_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_imports`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+-- Aggiunta tabella zz_hooks_lang
+CREATE TABLE IF NOT EXISTS `zz_hooks_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `name` VARCHAR(255) NOT NULL
+);
+
+ALTER TABLE `zz_hooks_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `zz_hooks_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `zz_hooks_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name` FROM `zz_hooks`;
+
+ALTER TABLE `zz_hooks`
+    DROP `name`;
+
+ALTER TABLE `zz_hooks_lang` ADD CONSTRAINT `zz_hooks_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_hooks`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+-- Aggiunta tabella zz_groups_lang
+CREATE TABLE IF NOT EXISTS `zz_groups_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `name` VARCHAR(255) NOT NULL
+);
+
+ALTER TABLE `zz_groups_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `zz_groups_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `zz_groups_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `nome` FROM `zz_groups`;
+
+ALTER TABLE `zz_groups_lang` ADD CONSTRAINT `zz_groups_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_groups`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+-- Aggiunta tabella zz_group_module_lang
+CREATE TABLE IF NOT EXISTS `zz_group_module_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `name` VARCHAR(255) NOT NULL
+);
+
+ALTER TABLE `zz_group_module_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `zz_group_module_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `zz_group_module_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name` FROM `zz_group_module`;
+
+ALTER TABLE `zz_group_module`
+    DROP `name`;
+
+ALTER TABLE `zz_group_module_lang` ADD CONSTRAINT `zz_group_module_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_group_module`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+-- Aggiunta tabella zz_cache_lang
+CREATE TABLE IF NOT EXISTS `zz_cache_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `name` VARCHAR(255) NOT NULL
+);
+
+ALTER TABLE `zz_cache_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `zz_cache_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `zz_cache_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name` FROM `zz_cache`;
+
+ALTER TABLE `zz_cache`
+    DROP `name`;
+
+ALTER TABLE `zz_cache_lang` ADD CONSTRAINT `zz_cache_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_cache`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 

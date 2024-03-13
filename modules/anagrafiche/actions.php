@@ -203,7 +203,7 @@ switch (post('op')) {
         // Lettura tipologia dell'utente loggato
         $agente_is_logged = false;
         if (!empty($user['idanagrafica'])) {
-            $rs = $dbo->fetchArray('SELECT `name` AS descrizione FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(setting('Lingua')).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` WHERE `idanagrafica` = '.prepare($user['idanagrafica']));
+            $rs = $dbo->fetchArray('SELECT `name` AS descrizione FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(\App::getLang()).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` WHERE `idanagrafica` = '.prepare($user['idanagrafica']));
 
             for ($i = 0; $i < count($rs); ++$i) {
                 if ($rs[$i]['descrizione'] == 'Agente') {

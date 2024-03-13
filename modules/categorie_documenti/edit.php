@@ -37,7 +37,7 @@ if ($record['doc_associati'] > 0) {
 		</div>
 
         <div class="col-md-3">
-            {[ "type": "select", "label": "<?php echo tr('Gruppi abilitati'); ?>", "name": "permessi[]", "value": "$permessi$", "values": "query=SELECT `id`, `nome` AS text FROM `zz_groups`", "multiple": 1 ]}
+            {[ "type": "select", "label": "<?php echo tr('Gruppi abilitati'); ?>", "name": "permessi[]", "value": "$permessi$", "values": "query=SELECT `zz_groups`.`id`, `zz_groups_lang`.`name` AS text FROM `zz_groups`", "multiple": 1 ]}
         </div>
 	</div>
 </form>

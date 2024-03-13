@@ -39,7 +39,7 @@ switch (filter('op')) {
         }
 
         // Salvataggio della versione nella cache
-        Cache::pool(Cache::where('name','Ultima esecuzione del cron')->first()->id)->set($versione);
+        Cache::find((new Cache())->getByName('Ultima esecuzione del cron')->id_record)->set($versione);
         echo $versione;
 
         break;

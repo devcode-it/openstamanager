@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\Group;
 
 switch (post('op')) {
     case 'update':
@@ -60,7 +61,7 @@ switch (post('op')) {
 
         $dbo->update('zz_segments_lang', [
             'name' => post('name'),
-        ], ['id_record' => $id_record, 'id_lang' => setting('Lingua')]);
+        ], ['id_record' => $id_record, 'id_lang' => \App::getLang()]);
 
 
         // Aggiornamento dei permessi relativi
@@ -97,15 +98,15 @@ switch (post('op')) {
         $dbo->insert('zz_segments_lang', [
             'name' => post('name'),
             'id_record' => $id_record,
-            'id_lang' => setting('Lingua'),
+            'id_lang' => \App::getLang(),
         ]);
 
         // Aggiunta permessi segmento
-        $gruppi = $dbo->fetchArray('SELECT `id` FROM `zz_groups`');
+        $gruppi = Group::get();
         $array = [];
         foreach ($gruppi as $gruppo) {
             $array[] = [
-                'id_gruppo' => $gruppo['id'],
+                'id_gruppo' => $gruppo->id,
                 'id_segment' => $id_record,
             ];
         }

@@ -29,8 +29,8 @@ $fields = [
     'Codice' => 'codice',
     'Barcode' => 'barcode',
     'Descrizione' => 'descrizione',
-    'Categoria' => '(SELECT `name` FROM `mg_categorie` LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `mg_categorie`.`id` =  `mg_articoli`.`id_categoria`)',
-    'Subcategoria' => '(SELECT `name` FROM `mg_categorie` LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `mg_categorie`.`id` =  `mg_articoli`.`id_sottocategoria`)',
+    'Categoria' => '(SELECT `name` FROM `mg_categorie` LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `mg_categorie`.`id` =  `mg_articoli`.`id_categoria`)',
+    'Subcategoria' => '(SELECT `name` FROM `mg_categorie` LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `mg_categorie`.`id` =  `mg_articoli`.`id_sottocategoria`)',
     'Note' => 'note',
 ];
 

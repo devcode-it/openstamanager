@@ -395,24 +395,17 @@ function csrf() {
 }
 
 function pdfjs() {
-    // Elenca tutte le cartelle dentro public e salva in una variabile l'ultima
-    const nodeModules = fs.readdirSync(config.nodeDirectory + '/pdf.js/public/',)
-    .filter(function (x) {
-        return x.indexOf('.') !== 0 && fs.statSync(config.nodeDirectory + '/pdf.js/public/' + x).isDirectory();
-    })
-    distDirectory = config.nodeDirectory + '/pdf.js/public/' + nodeModules[nodeModules.length - 1];
-
     const web = gulp.src([
-        distDirectory + '/web/**/*',
-        '!' + distDirectory + '/web/cmaps/*',
-        '!' + distDirectory + '/web/*.map',
-        '!' + distDirectory + '/web/*.pdf',
+        config.nodeDirectory + '/pdf.js/demo/vue/public/pdfjs-prebuilt/web/**/*',
+        '!' + config.nodeDirectory + '/pdf.js/demo/vue/public/pdfjs-prebuilt/web/cmaps/*',
+        '!' + config.nodeDirectory + '/pdf.js/demo/vue/public/pdfjs-prebuilt/web/*.map',
+        '!' + config.nodeDirectory + '/pdf.js/demo/vue/public/pdfjs-prebuilt/web/*.pdf',
     ])
         .pipe(gulp.dest(config.production + '/pdfjs/web'));
 
     const build = gulp.src([
-        distDirectory + '/build/*',
-        '!' + distDirectory + '/build/*.map',
+        config.nodeDirectory + '/pdf.js/demo/vue/public/pdfjs-prebuilt/build/*',
+        '!' + config.nodeDirectory + '/pdf.js/demo/vue/public/pdfjs-prebuilt/build/*.map',
     ])
         .pipe(gulp.dest(config.production + '/pdfjs/build'));
 

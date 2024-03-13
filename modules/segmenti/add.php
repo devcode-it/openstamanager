@@ -38,7 +38,7 @@ include_once __DIR__.'/../../core.php';
 			{[ "type": "checkbox", "label": "<?php echo tr('Sezionale'); ?>", "help": "<?php echo tr('Se attivo verrà utilizzato il contatore'); ?>", "name": "is_sezionale", "value": "$is_sezionale$" ]}
 		</div>
 		<div class="col-md-6">
-            {[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "module", "required": 1, "values": "query=SELECT `zz_modules`.`id`, IF(`title`!='', `title`, `name`) AS descrizione FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = <?php echo prepare(setting('Lingua')); ?>) WHERE `enabled` = 1 AND `options` != 'custom' ORDER BY `name` ASC", "value": "" ]}
+            {[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "module", "required": 1, "values": "query=SELECT `zz_modules`.`id`, IF(`title`!='', `title`, `name`) AS descrizione FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = <?php echo prepare(\App::getLang()); ?>) WHERE `enabled` = 1 AND `options` != 'custom' ORDER BY `name` ASC", "value": "" ]}
 		</div>
 	</div>
 

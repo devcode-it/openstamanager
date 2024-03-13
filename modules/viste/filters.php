@@ -17,6 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+ use Models\Clause;
+
 echo '
 <form action="" method="post" role="form">
 	<input type="hidden" name="backto" value="record-edit">
@@ -25,7 +27,7 @@ echo '
     <div class="data">';
 
 $num = 0;
-$additionals = $dbo->fetchArray('SELECT * FROM zz_group_module WHERE idmodule='.prepare($record['id']).' ORDER BY `id` ASC');
+$additionals = Clause::where('idmodule', $record['id'])->get();
 
 if (!empty($additionals)) {
     foreach ($additionals as $num => $additional) {
@@ -78,7 +80,7 @@ if (!empty($additionals)) {
                     </div>
 
                     <div class="col-md-3">
-                        {[ "type": "select", "label": "'.tr('Gruppo').'", "name": "gruppo['.$num.']", "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC", "value": "'.$additional['idgruppo'].'", "readonly": '.intval(!$editable).' ]}
+                        {[ "type": "select", "label": "'.tr('Gruppo').'", "name": "gruppo['.$num.']", "values": "query=SELECT `zz_groups`.`id`, `name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(\App::getLang()).') ORDER BY `zz_groups`.`id` ASC", "value": "'.$additional['idgruppo'].'", "readonly": '.intval(!$editable).' ]}
                     </div>
 
                     <div class="col-md-3">
@@ -135,7 +137,7 @@ echo '
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "'.tr('Gruppo').'", "name": "gruppo[-id-]", "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC" ]}
+					{[ "type": "select", "label": "'.tr('Gruppo').'", "name": "gruppo[-id-]", "values": "query=SELECT `zz_groups`.`id`, `name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(\App::getLang()).') ORDER BY `zz_groups`.`id` ASC" ]}
 				</div>
 
                 <div class="col-md-3">

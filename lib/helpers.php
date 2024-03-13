@@ -23,6 +23,7 @@
  * @since 2.4.2
  */
 use HTMLBuilder\HTMLBuilder;
+use Models\Setting;
 
 /**
  * Restituisce l'oggetto dedicato alla gestione della connessione con il database.
@@ -105,7 +106,7 @@ function get($param, $raw = false)
  */
 function setting($name, $again = false)
 {
-    return Settings::getValue($name);
+    return Setting::where('nome', '=', $name)->first()->valore;
 }
 
 /**

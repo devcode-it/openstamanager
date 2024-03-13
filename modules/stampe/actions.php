@@ -22,17 +22,14 @@ include_once __DIR__.'/../../core.php';
 switch (post('op')) {
     case 'update':
         if (!empty(intval(post('predefined'))) && !empty(post('module'))) {
-            $dbo->query('UPDATE zz_prints SET predefined = 0 WHERE zz_prints.id != '.prepare($id_record).' AND id_module = '.post('module'));
+            $dbo->query('UPDATE `zz_prints` SET `predefined` = 0 WHERE `id_module` = '.post('module'));
         }
 
         $print->title = post('title');
         $print->filename = post('filename');
         $print->options = post('options');
-        // $print->id_module = post('module');
-        // $print->enabled = post('enabled');
         $print->order = post('order');
         $print->predefined = intval(post('predefined'));
-
         $print->save();
 
         // Gestione file allegati

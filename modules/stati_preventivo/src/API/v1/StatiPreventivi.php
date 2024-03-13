@@ -32,6 +32,10 @@ class StatiPreventivi extends Resource implements RetrieveInterface
             '*',
         ];
 
+        $joins = [
+            'co_statipreventivi_lang' => 'co_statipreventivi_lang.id_record = co_statipreventivi.id AND co_statipreventivi_lang.id_lang = '.\App::getLang(),
+        ]; 
+
         $where = $request['where'];
         if (empty($where['deleted_at'])) {
             $where['deleted_at'] = null;
@@ -40,6 +44,7 @@ class StatiPreventivi extends Resource implements RetrieveInterface
         return [
             'select' => $select,
             'table' => $table,
+            'joins' => $joins,
         ];
     }
 }

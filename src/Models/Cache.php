@@ -24,6 +24,7 @@ use Carbon\CarbonInterval;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Traits\LocalPoolTrait;
+;
 
 /**
  * Risorsa di cache per la gestione delle informazioni temporanee del gestionale.
@@ -104,5 +105,35 @@ class Cache extends Model
     public function scopeInvalid($query)
     {
         return $query->where('expire_at', '<=', Carbon::now());
+    }
+
+        /**
+     * Ritorna l'attributo name della cache.
+     *
+     * @return string
+     */
+    public function getNameAttribute()
+    {
+        return database()->table($this->table.'_lang')
+            ->select('name')
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', \App::getLang())
+            ->first()->name;
+    }
+
+    /**
+     * Ritorna l'id della cache a partire dal nome.
+     *
+     * @param string $name il nome da ricercare
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getByName($name)
+    {
+        return database()->table($this->table.'_lang')
+            ->select('id_record')
+            ->where('name', '=', $name)
+            ->where('id_lang', '=', \App::getLang())
+            ->first();
     }
 }

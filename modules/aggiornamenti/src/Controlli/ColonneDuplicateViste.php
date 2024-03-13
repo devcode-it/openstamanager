@@ -35,7 +35,7 @@ class ColonneDuplicateViste extends Controllo
 
     public function check()
     {
-        $duplicati = database()->fetchArray('SELECT `id_module`, `name` FROM `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views`.`id` = `zz_views_lang`.`id_record` AND `zz_views_lang`.`id_lang` = '.prepare(setting('Lingua')).') GROUP BY `id_module`, `name` HAVING COUNT(`name`) > 1');
+        $duplicati = database()->fetchArray('SELECT `id_module`, `name` FROM `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views`.`id` = `zz_views_lang`.`id_record` AND `zz_views_lang`.`id_lang` = '.prepare(\App::getLang()).') GROUP BY `id_module`, `name` HAVING COUNT(`name`) > 1');
         
         foreach ($duplicati as $colonna) {
             $modulo = Module::find($colonna['id_module']);

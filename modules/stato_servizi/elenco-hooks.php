@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\Hook;
 
 echo '
 <table class="table table-hover table-condensed">
@@ -33,8 +34,9 @@ $hooks = $dbo->fetchArray('SELECT
     `zz_hooks`.*, 
     `zz_modules_lang`.`name` AS modulo
     FROM `zz_hooks`
+        LEFT JOIN `zz_hooks_lang` ON (`zz_hooks`.`id` = `zz_hooks_lang`.`id_record` AND `zz_hooks_lang`.`id_lang` = '.prepare(\App::getLang()).')
         INNER JOIN `zz_modules` ON `zz_hooks`.`id_module` = `zz_modules`.`id`
-        LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+        LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(\App::getLang()).')
     ORDER BY
         `id_module` ASC, `zz_hooks`.`id` ASC');
 
@@ -50,24 +52,25 @@ foreach ($gruppi as $modulo => $hooks) {
     <tbody>';
 
     foreach ($hooks as $hook) {
-        $class = $hook['enabled'] ? 'success' : 'warning';
+        $hook = Hook::find($hook['id']);
+        $class = $hook->enabled ? 'success' : 'warning';
         $nome_tipo = 'hook';
 
         echo '
-            <tr class="'.$class.'" data-id="'.$hook['id'].'" data-nome='.json_encode($hook['name']).'>
+            <tr class="'.$class.'" data-id="'.$hook->id.'" data-nome='.json_encode($hook->name).'>
                 <td>
-                    '.$hook['name'].(!empty($hook['help']) ? '
-                    <i class="tip fa fa-question-circle-o" title="'.$hook['help'].'"</i>' : '').'
+                    '.$hook->name.(!empty($hook->help) ? '
+                    <i class="tip fa fa-question-circle-o" title="'.$hook->help.'"</i>' : '').'
                 </td>
              
                 <td class="text-center">
-                    '.Translator::timestampToLocale($hook['processing_at']).'
+                    '.Translator::timestampToLocale($hook->processing_at).'
                 </td>
 
                 <td class="text-center">';
 
         // Possibilità di disabilitare o abilitare il hook
-        if ($hook['enabled']) {
+        if ($hook->enabled) {
             echo '
                 <div class="tip" data-toggle="tooltip" title="'.tr('Questo _TYPE_ è abilitato: clicca qui per disabilitarlo', [
                         '_TYPE_' => $nome_tipo,

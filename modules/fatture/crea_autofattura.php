@@ -30,7 +30,7 @@ echo '
 
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT_WS(\" - \",`codice_tipo_documento_fe`, `name`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id`=`co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang`= '.prepare(setting('Lingua')).') WHERE `dir`=\"entrata\" AND `codice_tipo_documento_fe` IN(\"TD16\", \"TD17\", \"TD18\", \"TD19\", \"TD20\", \"TD21\", \"TD28\") ORDER BY `codice_tipo_documento_fe`" ]}
+            {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT_WS(\" - \",`codice_tipo_documento_fe`, `name`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id`=`co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang`= '.prepare(\App::getLang()).') WHERE `dir`=\"entrata\" AND `codice_tipo_documento_fe` IN(\"TD16\", \"TD17\", \"TD18\", \"TD19\", \"TD20\", \"TD21\", \"TD28\") ORDER BY `codice_tipo_documento_fe`" ]}
         </div>
 
         <div class="col-md-6">

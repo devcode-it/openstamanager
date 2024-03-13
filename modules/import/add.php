@@ -29,7 +29,7 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "id_import", "required": 1, "values": "query=SELECT id, name AS text FROM zz_imports ORDER BY name" ]}
+			{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "id_import", "required": 1, "values": "query=SELECT `zz_imports`.`id`, `zz_imports_lang`.`name` AS text FROM `zz_imports` LEFT JOIN `zz_imports_lang` ON (`zz_imports`.`id`=`zz_imports_lang`.`id_record` AND `zz_imports_lang`.`id_lang` = <?php echo prepare(\App::getLang()); ?>) ORDER BY `name`" ]}
 		</div>
 	</div>
 

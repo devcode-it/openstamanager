@@ -19,11 +19,12 @@
 
 include_once __DIR__.'/../../core.php';
 use Models\Module;
+use Models\Group;
 
 if (!empty(filter('idanagrafica'))) {
     $utente['id_anagrafica'] = filter('idanagrafica');
 } else {
-    $current_idgruppo = $dbo->fetchOne('SELECT `id` FROM `zz_groups` WHERE `id` = '.prepare($id_record))['id'];
+    $current_idgruppo = Group::find($id_record)->id;
 }
 
 echo '

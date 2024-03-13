@@ -33,7 +33,7 @@ class StatiOrdini extends Resource implements RetrieveInterface
         ];
 
         $joins = [
-            'or_statiordine_lang' => 'or_statiordine_lang.id_record = or_statiordine.id AND or_statiordine_lang.id_lang = '.setting('Lingua'),
+            'or_statiordine_lang' => 'or_statiordine_lang.id_record = or_statiordine.id AND or_statiordine_lang.id_lang = '.\App::getLang(),
         ]; 
 
         $where = $request['where'];
@@ -44,7 +44,7 @@ class StatiOrdini extends Resource implements RetrieveInterface
         return [
             'select' => $select,
             'table' => $table,
-            'join' => $joins,
+            'joins' => $joins,
             'where' => $where,
         ];
     }

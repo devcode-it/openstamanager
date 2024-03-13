@@ -18,6 +18,8 @@
  */
 
 use Models\Module;
+use Models\Clause;
+use Models\View;
 
 include_once __DIR__.'/../../core.php';
 
@@ -101,8 +103,8 @@ if (!empty($options) && $options != 'custom' && $options != 'menu') {
     echo '
 <div class="nav-tabs-custom">
     <ul class="nav nav-tabs nav-justified">
-        <li class="active"><a data-toggle="tab" href="#fields">'.tr('Campi').' <span class="badge">'.$dbo->fetchNum('SELECT * FROM `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views`.`id` = `zz_views_lang`.`id_record` AND `zz_views_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `id_module`='.prepare($record['id']).' ORDER BY `order` ASC').'</a></li>
-        <li><a data-toggle="tab" href="#filters">'.tr('Filtri').' <span class="badge">'.$dbo->fetchNum('SELECT * FROM `zz_group_module` WHERE `idmodule`='.prepare($record['id']).' ORDER BY `id` ASC').'</span></a></li>
+        <li class="active"><a data-toggle="tab" href="#fields">'.tr('Campi').' <span class="badge">'.View::where('id_module', $record['id'])->count().'</a></li>
+        <li><a data-toggle="tab" href="#filters">'.tr('Filtri').' <span class="badge">'.Clause::where('idmodule', $record['id'])->count().' </span></a></li>
     </ul>
 
     <div class="tab-content">

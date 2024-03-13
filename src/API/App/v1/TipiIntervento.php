@@ -53,7 +53,7 @@ class TipiIntervento extends AppResource
             `costo_diritto_chiamata` AS prezzo_diritto_chiamata
         FROM 
             `in_tipiintervento`
-            LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+            LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(\App::getLang()).')
         WHERE 
             `in_tipiintervento`.`id` = '.prepare($id);
 

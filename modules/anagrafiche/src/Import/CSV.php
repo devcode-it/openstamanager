@@ -259,7 +259,7 @@ class CSV extends CSVImporter
                 if (empty($id_tipo)) {
                     $id_tipo = database()->query('INSERT INTO `an_tipianagrafiche` (`id`, `default`) VALUES (NULL, `1`)');
                     $database->insert('an_tipianagrafiche_lang', [
-                        'id_lang' => setting('Lingua'),
+                        'id_lang' => \App::getLang(),
                         'id_record' => $id_tipo,
                         'name' => $tipo,
                     ])['id'];
@@ -289,12 +289,12 @@ class CSV extends CSVImporter
         $id_settore = '';
         if (!empty($record['id_settore'])) {
             $settore = $record['id_settore'];
-            $id_settore = $database->fetchOne('SELECT `an_settori`.`id` FROM `an_settori` LEFT JOIN (`an_settori_lang` ON`an_settori`.`id` = `an_settori_lang`.`id_record` AND `an_settori_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE LOWER(`name`) = LOWER('.prepare($settore).')')['id'];
+            $id_settore = $database->fetchOne('SELECT `an_settori`.`id` FROM `an_settori` LEFT JOIN (`an_settori_lang` ON`an_settori`.`id` = `an_settori_lang`.`id_record` AND `an_settori_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE LOWER(`name`) = LOWER('.prepare($settore).')')['id'];
 
             if (empty($id_settore)) {
                 $id_settore = database()->query('INSERT INTO `an_settori` (`id`, `created_at`, `updated_at`) VALUES (NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)');
                 $database->insert('an_settori_lang', [
-                    'id_lang' => setting('Lingua'),
+                    'id_lang' => \App::getLang(),
                     'id_record' => $id_settore,
                     'name' => $settore,
                 ])['id'];

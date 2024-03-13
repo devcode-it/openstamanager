@@ -94,9 +94,9 @@ switch (post('op')) {
 
                     // Allego stampa della fattura se non presente
                     if (empty($fattura_allegata)) {
-                        $print_predefined = $dbo->selectOne('zz_prints', '*', ['predefined' => 1, 'id_module' => (new Module())->GetByName('Fatture di vendita')->id_record]);
+                        $print_predefined = PrintTemplate::where('predefined', 1)->where('id_module', (new Module())->GetByName('Fatture di vendita')->id_record)->first();
 
-                        $print = Prints::render($print_predefined['id'], $id_documento, null, true);
+                        $print = Prints::render($print_predefined->id, $id_documento, null, true);
                         $upload = Uploads::upload($print['pdf'], [
                             'name' => $scadenza->descrizione,
                             'original_name' => $scadenza->descrizione.'.pdf',

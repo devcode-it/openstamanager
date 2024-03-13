@@ -42,7 +42,7 @@ $sessioni = $dbo->fetchArray('SELECT
     FROM 
         `zz_semaphores`
         INNER JOIN `zz_modules` ON SUBSTRING_INDEX(`posizione`, ",", 1) = `zz_modules`.`id`
-        LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+        LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(\App::getLang()).')
         INNER JOIN `zz_users` ON `zz_semaphores`.`id_utente` = `zz_users`.`id`
     ORDER BY 
         `utente` ASC, SUBSTRING_INDEX(`posizione`, ",", -1) ASC');

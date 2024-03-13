@@ -49,4 +49,18 @@ class Setting extends Model
 
         return $value;
     }
+
+    /**
+     * Ritorna l'attributo title dell'impostazione.
+     *
+     * @return string
+     */
+    public function getTitleAttribute()
+    {
+        return database()->table($this->table.'_lang')
+            ->select('title')
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', \App::getLang())
+            ->first()->title;
+    }
 }

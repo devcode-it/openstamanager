@@ -18,14 +18,22 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Tasks\Task;
+
 
 switch (post('op')) {
     case 'update':
-        $dbo->update('zz_tasks', [
-            'name' => (count($dbo->fetchArray('SELECT `name` FROM `zz_tasks` WHERE `name` = '.prepare(post('name')))) > 0) ? $dbo->fetchOne('SELECT `name` FROM `zz_tasks` WHERE `id` ='.$id_record)['name'] : post('name'),
-            'class' => post('class'),
-            'expression' => post('expression'),
-        ], ['id' => $id_record]);
+        $name = post('name');
+        $task_new = (new Task())->getByName($name)->id_record;
+
+        if (!empty($task_new) && $task_new != $id_record){
+            flash()->error(tr('Questo nome è già stato utilizzato per un altro task.'));
+        } else {
+            $task->name = $name;
+            $task->class = post('class');
+            $task->expression = post('expression');
+            $task->save();
+        }
 
         flash()->info(tr('Informazioni salvate correttamente.'));
 

@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\Fatture\Tipo;
 
 if (isset($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `co_tipidocumento`.`id`='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT * FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `co_tipidocumento`.`id`='.prepare($id_record));
 
     $tipo = Tipo::find($id_record);
 }

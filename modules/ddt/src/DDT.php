@@ -133,7 +133,7 @@ class DDT extends Document
             $stati_importabili[] = $stato->name;
         }
 
-        $causale = $database->fetchOne('SELECT * FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(setting('Lingua')).') WHERE `dt_causalet`.`id` = '.prepare($this->idcausalet));
+        $causale = $database->fetchOne('SELECT * FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(\App::getLang()).') WHERE `dt_causalet`.`id` = '.prepare($this->idcausalet));
 
         return $causale['is_importabile'] && in_array($this->stato->name, $stati_importabili);
     }
@@ -141,7 +141,7 @@ class DDT extends Document
     public function getReversedAttribute()
     {
         $database = database();
-        $causale = $database->fetchOne('SELECT * FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(setting('Lingua')).') WHERE `dt_causalet`.`id` = '.prepare($this->idcausalet));
+        $causale = $database->fetchOne('SELECT * FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(\App::getLang()).') WHERE `dt_causalet`.`id` = '.prepare($this->idcausalet));
 
         return $causale['reversed'];
     }

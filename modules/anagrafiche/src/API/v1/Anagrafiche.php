@@ -38,7 +38,7 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
         ];
 
         $joins[] = [
-            'an_nazioni_lang' => '`an_nazioni_lang`.`id_record` = `an_nazioni`.`id` AND `an_nazioni_lang`.`id_lang` = '.setting('Lingua'),
+            'an_nazioni_lang' => '`an_nazioni_lang`.`id_record` = `an_nazioni`.`id` AND `an_nazioni_lang`.`id_lang` = '.\App::getLang(),
         ]; 
 
         $where[] = ['`an_anagrafiche`.`deleted_at`', '=', null];
@@ -61,7 +61,7 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
             ];
 
             $joins[] = [
-                'an_tipianagrafiche_lang' => '`an_tipianagrafiche_lang`.`idrecord` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`idlang` = '.setting('Lingua'),
+                'an_tipianagrafiche_lang' => '`an_tipianagrafiche_lang`.`idrecord` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`idlang` = '.\App::getLang(),
             ]; 
 
             $where[] = ['`an_tipianagrafiche_lang`.`name`', '=', $type];

@@ -84,7 +84,7 @@ class Preventivi extends AppResource implements RetrieveInterface
         FROM 
             `co_preventivi`
             INNER JOIN `co_statipreventivi` ON `co_statipreventivi`.`id` = `co_preventivi`.`idstato`
-            LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_preventivi`.`idstato` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+            LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_preventivi`.`idstato` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(\App::getLang()).')
         WHERE 
             `co_preventivi`.`id` = '.prepare($id);
 

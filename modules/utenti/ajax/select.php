@@ -21,7 +21,7 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'anagrafiche_utenti':
-        $query = 'SELECT `an_anagrafiche`.`idanagrafica` AS id, `an_anagrafiche`.`ragione_sociale` AS descrizione, `an_tipianagrafiche_lang`.`name` AS optgroup FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(setting('Lingua')).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` |where| ORDER BY `optgroup` ASC';
+        $query = 'SELECT `an_anagrafiche`.`idanagrafica` AS id, `an_anagrafiche`.`ragione_sociale` AS descrizione, `an_tipianagrafiche_lang`.`name` AS optgroup FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(\App::getLang()).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` |where| ORDER BY `optgroup` ASC';
 
         $where[] = '`an_anagrafiche`.`deleted_at` IS NULL';
 
@@ -70,7 +70,7 @@ switch ($resource) {
             LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica`
             INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica`
             INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`
-            LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`=".prepare(setting('Lingua')).')
+            LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`=".prepare(\App::getLang()).')
         |where| 
         ORDER BY 
             `optgroup` ASC';
@@ -117,7 +117,7 @@ switch ($resource) {
         break;
 
     case 'gruppi':
-        $query = 'SELECT `zz_groups`.`id`, `zz_groups`.`name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON `zz_groups`.`id`=`zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang`='.prepare(setting('Lingua')).' |where| ORDER BY `name`';
+        $query = 'SELECT `zz_groups`.`id`, `zz_groups`.`name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON `zz_groups`.`id`=`zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang`='.prepare(\App::getLang()).' |where| ORDER BY `name`';
 
         foreach ($elements as $element) {
             $filter[] = '`zz_groups`.`id`='.prepare($element);
@@ -129,7 +129,7 @@ switch ($resource) {
         break;
 
     case 'moduli_gruppo':
-        $query = 'SELECT `zz_modules`.`id`, `zz_modules_lang`.`title` AS descrizione FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON `zz_modules`.`id`=`zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang`='.prepare(setting('Lingua')).' LEFT JOIN `zz_permissions` ON `zz_permissions`.`idmodule`=`zz_modules`.`id` |where| GROUP BY `zz_modules`.`id` ORDER BY `title`';
+        $query = 'SELECT `zz_modules`.`id`, `zz_modules_lang`.`title` AS descrizione FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON `zz_modules`.`id`=`zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang`='.prepare(\App::getLang()).' LEFT JOIN `zz_permissions` ON `zz_permissions`.`idmodule`=`zz_modules`.`id` |where| GROUP BY `zz_modules`.`id` ORDER BY `title`';
 
         $where[] = '`zz_modules`.`enabled`=1';
 

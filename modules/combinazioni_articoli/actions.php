@@ -27,7 +27,7 @@ switch (filter('op')) {
 
             $id_record = $combinazione->id;
 
-            $database->query('INSERT INTO `mg_combinazioni_lang` (`id_record`, `id_lang`, `name`) VALUES ('.$id_record.', '.setting('Lingua').', \''.post('nome').'\')');
+            $database->query('INSERT INTO `mg_combinazioni_lang` (`id_record`, `id_lang`, `name`) VALUES ('.$id_record.', '.prepare(\App::getLang()).', \''.post('nome').'\')');
 
             // Selezione attributi per la combinazione
             $combinazione->attributi()->sync((array) post('attributi'));

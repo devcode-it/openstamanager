@@ -166,6 +166,8 @@ $translator->addLocalePath(base_dir().'/locale');
 $translator->addLocalePath(base_dir().'/modules/*/locale');
 $translator->setLocale($lang, $formatter);
 
+App::setLang(setting('Lingua'));
+
 // Individuazione di versione e revisione del progetto
 $version = Update::getVersion();
 $revision = Update::getRevision();

@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\Preventivi\Stato;
 
 if (isset($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `co_statipreventivi` LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id`=`co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang`='.prepare(setting('Lingua')).') WHERE `co_statipreventivi`.`id`='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT * FROM `co_statipreventivi` LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id`=`co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang`='.prepare(\App::getLang()).') WHERE `co_statipreventivi`.`id`='.prepare($id_record));
 
     $stato = Stato::find($id_record);
 }

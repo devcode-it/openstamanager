@@ -216,7 +216,7 @@ $(document).ready(function() {
 
 // Collegamenti diretti
 // Template email collegati a questo account
-$elementi = $dbo->fetchArray('SELECT `em_templates`.`id`, `em_templates_lang`.`name` FROM `em_templates` LEFT JOIN `em_templates_lang` ON (`em_templates`.`id` = `em_templates_lang`.`id_record` AND `em_templates_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `id_account` = '.prepare($id_record));
+$elementi = $dbo->fetchArray('SELECT `em_templates`.`id`, `em_templates_lang`.`name` FROM `em_templates` LEFT JOIN `em_templates_lang` ON (`em_templates`.`id` = `em_templates_lang`.`id_record` AND `em_templates_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `id_account` = '.prepare($id_record));
 
 if (!empty($elementi)) {
     echo '

@@ -33,7 +33,7 @@ class StatiContratti extends Resource implements RetrieveInterface
         ];
 
         $joins[] = [
-            'co_staticontratti_lang' => '`co_staticontratti_lang`.`id_record` = `co_staticontratti`.`id` AND `co_staticontratti_lang`.`id_lang` = '.setting('Lingua'),
+            'co_staticontratti_lang' => '`co_staticontratti_lang`.`id_record` = `co_staticontratti`.`id` AND `co_staticontratti_lang`.`id_lang` = '.\App::getLang(),
         ];
 
         $where = $request['where'];

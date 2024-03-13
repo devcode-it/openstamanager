@@ -29,7 +29,7 @@ $r = $dbo->fetchOne('SELECT `co_scadenziario`.*, `co_documenti`.*,
 FROM `co_scadenziario`
     INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_scadenziario`.`iddocumento`
     LEFT JOIN `co_pagamenti` ON `co_pagamenti`.`id` = `co_documenti`.`idpagamento`
-    LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+    LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.`id_lang` = '.prepare(\App::getLang()).')
     LEFT JOIN `em_accounts` ON `em_accounts`.`id` = '.prepare($template['id_account']).'
     INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` 
     LEFT JOIN `an_referenti` ON `an_referenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`

@@ -150,7 +150,7 @@ foreach ($raggruppamento as $id_anagrafica => $scadenze_anagrafica) {
         if ($is_sepa) {
             // Prima, successiva, singola
 
-            $scadenze_antecedenti = $dbo->fetchArray('SELECT * FROM `co_scadenziario` INNER JOIN `co_documenti` ON `co_scadenziario`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_pagamenti` ON `co_documenti`.`idpagamento`=`co_pagamenti`.`id` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `co_documenti`.`idanagrafica`='.prepare($id_anagrafica)." AND `codice_modalita_pagamento_fe` IN('MP19','MP20','MP21') AND `data_emissione`<".prepare($scadenza->data_emissione));
+            $scadenze_antecedenti = $dbo->fetchArray('SELECT * FROM `co_scadenziario` INNER JOIN `co_documenti` ON `co_scadenziario`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_pagamenti` ON `co_documenti`.`idpagamento`=`co_pagamenti`.`id` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `co_documenti`.`idanagrafica`='.prepare($id_anagrafica)." AND `codice_modalita_pagamento_fe` IN('MP19','MP20','MP21') AND `data_emissione`<".prepare($scadenza->data_emissione));
 
             $check_successiva = '';
             $check_prima = '';

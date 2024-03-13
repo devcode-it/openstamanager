@@ -28,7 +28,7 @@ echo '
             <div class="data">';
 
 $key = 0;
-$fields = $dbo->fetchArray('SELECT * FROM `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views`.`id` = `zz_views_lang`.`id_record` AND `zz_views_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `id_module`='.prepare($record->id).' ORDER BY `order` ASC');
+$fields = $dbo->fetchArray('SELECT * FROM `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views`.`id` = `zz_views_lang`.`id_record` AND `zz_views_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `id_module`='.prepare($record->id).' ORDER BY `order` ASC');
 
 foreach ($fields as $key => $field) {
     $editable = !($field['default'] && $enable_readonly);
@@ -82,7 +82,7 @@ foreach ($fields as $key => $field) {
 
                         <div class="row">
                             <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi['.$key.'][]", "multiple": "1", "values": "query=SELECT `zz_groups`.`id`, `name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(setting('Lingua')).') ORDER BY `zz_groups`.`id` ASC", "value": "';
+                                {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi['.$key.'][]", "multiple": "1", "values": "query=SELECT `zz_groups`.`id`, `name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(\App::getLang()).') ORDER BY `zz_groups`.`id` ASC", "value": "';
     $results = $dbo->fetchArray('SELECT GROUP_CONCAT(DISTINCT `id_gruppo` SEPARATOR \',\') AS gruppi FROM `zz_group_view` WHERE `id_vista`='.prepare($field['id']));
 
     echo $results[0]['gruppi'].'"';
@@ -202,7 +202,7 @@ echo '
 
             <div class="row">
                 <div class="col-md-6">
-                    {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi[-id-][]", "multiple": "1", "values": "query=SELECT `zz_groups`.`id`, `name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(setting('Lingua')).') ORDER BY `zz_groups`.`id` ASC" ]}
+                    {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi[-id-][]", "multiple": "1", "values": "query=SELECT `zz_groups`.`id`, `name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(\App::getLang()).') ORDER BY `zz_groups`.`id` ASC" ]}
                 </div>
 
                 <div class="col-md-6">

@@ -353,7 +353,7 @@ switch (post('op')) {
             FROM 
                 `co_documenti` 
                 INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
-                LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(setting('Lingua')).') 
+                LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(\App::getLang()).') 
                 INNER JOIN co_righe_documenti ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` 
             WHERE 
                 `co_righe_documenti`.`idcontratto` = '.prepare($id_record).')'.'
@@ -459,7 +459,7 @@ switch (post('op')) {
         }
 
         // Cambio stato precedente contratto in concluso (non più pianificabile)
-        $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `idstato`= (SELECT `co_staticontratti`.`id` FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id`=`co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang`= '.setting('Lingua').') WHERE `name` = \'Concluso\')  WHERE `co_staticontratti`.`id` = '.prepare($id_record));
+        $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `idstato`= (SELECT `co_staticontratti`.`id` FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id`=`co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang`= '.prepare(\App::getLang()).') WHERE `name` = \'Concluso\')  WHERE `co_staticontratti`.`id` = '.prepare($id_record));
 
         flash()->info(tr('Contratto rinnovato!'));
 

@@ -61,7 +61,7 @@ switch (post('op')) {
 
         $dbo->update('zz_segments_lang', [
             'name' => post('name'),
-        ], ['id_record' => $id_record, 'id_lang' => setting('Lingua')]);
+        ], ['id_record' => $id_record, 'id_lang' => \App::getLang()]);
 
 
         // Aggiornamento dei permessi relativi
@@ -98,7 +98,7 @@ switch (post('op')) {
         $dbo->insert('zz_segments_lang', [
             'name' => post('name'),
             'id_record' => $id_record,
-            'id_lang' => setting('Lingua'),
+            'id_lang' => \App::getLang(),
         ]);
 
         // Aggiunta permessi segmento

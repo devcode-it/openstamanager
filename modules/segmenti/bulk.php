@@ -37,7 +37,7 @@ $operations['set_groups'] = [
     'text' => '<span><i class="fa fa-users"></i> '.tr('Imposta l\'accesso ai segmenti').'</span>',
     'data' => [
         'title' => tr('Imposta l\'accesso ai segmenti.'),
-        'msg' => '{[ "type": "select", "multiple":"1", "label": "<small>'.tr('Seleziona i gruppi che avranno accesso ai segmenti selezionati:').'</small>", "values": "query=SELECT `zz_groups`.`id`, `name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(setting('Lingua')).') ORDER BY `zz_groups`.`id` ASC", "name": "gruppi[]" ]}',
+        'msg' => '{[ "type": "select", "multiple":"1", "label": "<small>'.tr('Seleziona i gruppi che avranno accesso ai segmenti selezionati:').'</small>", "values": "query=SELECT `zz_groups`.`id`, `name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(\App::getLang()).') ORDER BY `zz_groups`.`id` ASC", "name": "gruppi[]" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

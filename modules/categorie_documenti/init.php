@@ -29,7 +29,7 @@ if (isset($id_record)) {
         GROUP_CONCAT(`do_permessi`.`id_gruppo` SEPARATOR ',') AS permessi
     FROM 
         `do_categorie`
-        LEFT JOIN `do_categorie_lang` ON (`do_categorie_lang`.`id_record` = `do_categorie`.`id` AND `do_categorie_lang`.`id_lang` = ".prepare(setting('Lingua')).")
+        LEFT JOIN `do_categorie_lang` ON (`do_categorie_lang`.`id_record` = `do_categorie`.`id` AND `do_categorie_lang`.`id_lang` = ".prepare(\App::getLang()).")
         LEFT JOIN `do_permessi` ON `do_permessi`.`id_categoria` = `do_categorie`.`id`
     WHERE 
         `do_categorie`.`id`=".prepare($id_record)."

@@ -21,7 +21,7 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'categorie_documenti':
-        $query = 'SELECT `do_categorie`.`id`, `do_categorie_lang`.`name` as descrizione FROM `do_categorie` LEFT JOIN `do_categorie_lang` ON (`do_categorie_lang`.`id_record` = `do_categorie`.`id` AND `do_categorie_lang`.`id_lang` = '.prepare(setting('Lingua')).')|where| ORDER BY `name` ASC';
+        $query = 'SELECT `do_categorie`.`id`, `do_categorie_lang`.`name` as descrizione FROM `do_categorie` LEFT JOIN `do_categorie_lang` ON (`do_categorie_lang`.`id_record` = `do_categorie`.`id` AND `do_categorie_lang`.`id_lang` = '.prepare(\App::getLang()).')|where| ORDER BY `name` ASC';
 
         foreach ($elements as $element) {
             $filter[] = '`do_categorie`.`id`='.prepare($element);

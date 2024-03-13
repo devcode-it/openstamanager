@@ -31,7 +31,7 @@ function duplicaOrdine() {
 }
 </script>';
 
-$stati = $dbo->fetchArray('SELECT `name` FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id`=`or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang`= '.prepare(setting('Lingua')).') WHERE `is_fatturabile` = 1');
+$stati = $dbo->fetchArray('SELECT `name` FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id`=`or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang`= '.prepare(\App::getLang()).') WHERE `is_fatturabile` = 1');
 foreach ($stati as $stato) {
     $stati_importabili[] = $stato['name'];
 }

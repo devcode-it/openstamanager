@@ -21,6 +21,7 @@ namespace Models;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
+;
 
 class Group extends Model
 {
@@ -67,7 +68,7 @@ class Group extends Model
         return database()->table($this->table.'_lang')
             ->select('name')
             ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', setting('Lingua'))
+            ->where('id_lang', '=', \App::getLang())
             ->first()->name;
     }
 
@@ -80,7 +81,7 @@ class Group extends Model
 
         $translated = $table
             ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', setting('Lingua'));
+            ->where('id_lang', '=', \App::getLang());
 
         if ($translated->count() > 0) {
             $translated->update([
@@ -89,7 +90,7 @@ class Group extends Model
         } else {
             $table->insert([
                 'id_record' => $this->id,
-                'id_lang' => setting('Lingua'),
+                'id_lang' => \App::getLang(),
                 'name' => $value
             ]);
         }
@@ -107,7 +108,7 @@ class Group extends Model
         return database()->table($this->table.'_lang')
             ->select('id_record')
             ->where('name', '=', $name)
-            ->where('id_lang', '=', setting('Lingua'))
+            ->where('id_lang', '=', \App::getLang())
             ->first();
     }
 }

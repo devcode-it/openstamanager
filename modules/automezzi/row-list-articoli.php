@@ -11,11 +11,11 @@ $rs2 = $dbo->fetchArray('SELECT
         `mg_articoli`.`qta` AS qta_magazzino, 
         `mg_articoli_lang`.`name`, 
         `mg_articoli`.`prezzo_vendita`, 
-        (SELECT `percentuale` FROM `co_iva` LEFT JOIN `co_iva_lang` ON ( `co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = "'.prepare(setting('Lingua')).'") WHERE `co_iva`.`id`=`mg_articoli`.`idiva_vendita`) AS prciva_vendita 
+        (SELECT `percentuale` FROM `co_iva` LEFT JOIN `co_iva_lang` ON ( `co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `co_iva`.`id`=`mg_articoli`.`idiva_vendita`) AS prciva_vendita 
     FROM 
         `mg_movimenti` 
         INNER JOIN `mg_articoli` ON `mg_movimenti`.`idarticolo`=`mg_articoli`.`id` 
-        LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(setting('Lingua')).')
+        LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(\App::getLang()).')
     WHERE 
         `mg_movimenti`.`idsede`='.prepare($id_record).' 
     GROUP BY 

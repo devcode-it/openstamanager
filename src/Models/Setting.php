@@ -60,7 +60,7 @@ class Setting extends Model
         return database()->table($this->table.'_lang')
             ->select('title')
             ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', setting('Lingua'))
+            ->where('id_lang', '=', \App::getLang())
             ->first()->title;
     }
 }

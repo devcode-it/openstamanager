@@ -30,7 +30,7 @@ echo '
         </div>
 
         <div class="col-md-3">
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatoordine", "required": 1, "values": "query=SELECT * FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record`=`or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang`= '.prepare(setting('Lingua')).') WHERE `name` IN(\'Bozza\', \'Accettato\', \'In attesa di conferma\')", "value": "1" ]}
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatoordine", "required": 1, "values": "query=SELECT * FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record`=`or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang`= '.prepare(\App::getLang()).') WHERE `name` IN(\'Bozza\', \'Accettato\', \'In attesa di conferma\')", "value": "1" ]}
         </div>
 
         <div class="col-md-3">

@@ -32,7 +32,7 @@ echo '
 
     <div class="row">
 		<div class="col-md-12">
-			{[ "type": "select", "label": "'.tr('Attributi').'", "name": "attributi[]", "values": "query=SELECT `mg_attributi`.`id`, `mg_attributi_lang`.`name` AS descrizione FROM `mg_attributi` LEFT JOIN `mg_attributi_lang` ON (`mg_attributi_lang`.`id_record` = `mg_attributi`.`id` AND `mg_attributi_lang`.`id_lang` = '.setting('Lingua').') WHERE `deleted_at` IS NULL", "required": 1, "multiple": 1, "help": "'.tr('Attributi abilitati per la combinazione corrente').'" ]}
+			{[ "type": "select", "label": "'.tr('Attributi').'", "name": "attributi[]", "values": "query=SELECT `mg_attributi`.`id`, `mg_attributi_lang`.`name` AS descrizione FROM `mg_attributi` LEFT JOIN `mg_attributi_lang` ON (`mg_attributi_lang`.`id_record` = `mg_attributi`.`id` AND `mg_attributi_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `deleted_at` IS NULL", "required": 1, "multiple": 1, "help": "'.tr('Attributi abilitati per la combinazione corrente').'" ]}
 		</div>
     </div>
 

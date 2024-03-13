@@ -33,7 +33,7 @@ class StatiPreventivi extends Resource implements RetrieveInterface
         ];
 
         $joins = [
-            'co_statipreventivi_lang' => 'co_statipreventivi_lang.id_record = co_statipreventivi.id AND co_statipreventivi_lang.id_lang = '.setting('Lingua'),
+            'co_statipreventivi_lang' => 'co_statipreventivi_lang.id_record = co_statipreventivi.id AND co_statipreventivi_lang.id_lang = '.\App::getLang(),
         ]; 
 
         $where = $request['where'];

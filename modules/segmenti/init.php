@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 use PHPSQLParser\PHPSQLParser;
 
 if (isset($id_record)) {
-    $record = $dbo->fetchOne('SELECT *, `zz_modules`.`options`, `zz_modules_lang`.`name` AS modulo, (SELECT COUNT(`t`.`id`) FROM `zz_segments` t WHERE `t`.`id_module` = `zz_segments`.`id_module`) AS n_sezionali FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(setting('Lingua')).') INNER JOIN `zz_modules` ON `zz_modules`.`id` = `zz_segments`.`id_module` LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(setting('Lingua')).') WHERE `zz_segments`.`id`='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT *, `zz_modules`.`options`, `zz_modules_lang`.`name` AS modulo, (SELECT COUNT(`t`.`id`) FROM `zz_segments` t WHERE `t`.`id_module` = `zz_segments`.`id_module`) AS n_sezionali FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(\App::getLang()).') INNER JOIN `zz_modules` ON `zz_modules`.`id` = `zz_segments`.`id_module` LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `zz_segments`.`id`='.prepare($id_record));
 
     $parser = new PHPSQLParser();
     $parsed = $parser->parse($record['options']);

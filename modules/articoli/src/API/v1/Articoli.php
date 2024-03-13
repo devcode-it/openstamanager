@@ -38,7 +38,7 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
         ];
 
         $joins[] = [
-            'mg_articoli_lang' => 'mg_articoli_lang.id_record = mg_articoli.id AND mg_articoli_lang.id_lang = '.setting('Lingua'),
+            'mg_articoli_lang' => 'mg_articoli_lang.id_record = mg_articoli.id AND mg_articoli_lang.id_lang = '.\App::getLang(),
         ]; 
 
         $joins[] = [
@@ -48,7 +48,7 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
         ];
 
         $joins[] = [
-            'mg_categorie_lang AS categorie_lang' => '`mg_categorie_lang`.`id_record` = `categorie`.`id` AND `mg_categorie_lang`.`id_lang` = '.setting('Lingua'),
+            'mg_categorie_lang AS categorie_lang' => '`mg_categorie_lang`.`id_record` = `categorie`.`id` AND `mg_categorie_lang`.`id_lang` = '.\App::getLang(),
         ]; 
 
         $joins[] = [
@@ -58,7 +58,7 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
         ];
 
         $joins[] = [
-            '`mg_categorie_lang` AS sottocategorie_lang' => '`mg_categorie_lang`.`id_record` = `sottocategorie`.`id` AND `mg_categorie_lang`.`id_lang` = '.setting('Lingua'),
+            '`mg_categorie_lang` AS sottocategorie_lang' => '`mg_categorie_lang`.`id_record` = `sottocategorie`.`id` AND `mg_categorie_lang`.`id_lang` = '.\App::getLang(),
         ];
 
         $where[] = ['`mg_articoli`.`deleted_at`', '=', null];

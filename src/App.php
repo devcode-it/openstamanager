@@ -30,6 +30,8 @@ class App
     public static $rootdir;
     public static $baseurl;
 
+    public static $lang;
+
     /** @var array Identificativo del modulo corrente */
     protected static $current_module;
     /** @var int Identificativo dell'elemento corrente */
@@ -96,6 +98,16 @@ class App
         }
 
         return self::$config;
+    }
+
+    public static function getLang()
+    {
+        return self::$lang;
+    }
+
+    public static function setLang($value)
+    {
+        self::$lang = $value;
     }
 
     /**

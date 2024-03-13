@@ -37,7 +37,7 @@ class SessioniInterventi extends AppResource
             ->join('zz_modules', 'zz_modules.id', '=', 'zz_operations.id_module')
             ->leftJoin('zz_modules_lang', function ($join) use ($last_sync_at) {
                 $join->on('zz_modules.id', '=', 'zz_modules_lang.id_record')
-                    ->where('zz_modules_lang.id_lang', '=', setting('Lingua'));
+                    ->where('zz_modules_lang.id_lang', '=', \App::getLang());
             })
             ->where('zz_modules_lang.name', '=', 'Interventi')
             ->where('zz_operations.op', '=', 'delete_sessione')

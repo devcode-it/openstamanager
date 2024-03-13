@@ -35,7 +35,7 @@ class PluginDuplicati extends Controllo
 
     public function check()
     {
-        $duplicati = database()->fetchArray('SELECT `idmodule_to`, `name` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(setting('Lingua')).') GROUP BY `idmodule_to`, `name` HAVING COUNT(`name`) > 1');
+        $duplicati = database()->fetchArray('SELECT `idmodule_to`, `name` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(\App::getLang()).') GROUP BY `idmodule_to`, `name` HAVING COUNT(`name`) > 1');
 
         foreach ($duplicati as $plugin) {
             $modulo = Module::find($plugin['idmodule_to']);

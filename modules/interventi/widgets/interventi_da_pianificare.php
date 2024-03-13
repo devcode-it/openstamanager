@@ -98,8 +98,8 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
                     '.$rs_tecnici[0]['tecnici'].'
                 </td>
 
-                <td>'.$dbo->fetchOne("SELECT CONCAT_WS(' - ', `codice`,`name`) AS descrizione FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare(setting('Lingua')).") WHERE `id`=".prepare($r['idtipointervento']))['descrizione'].'</td>
-                <td>'.$dbo->fetchOne("SELECT CONCAT_WS(' - ', `codice`,`name`) AS descrizione FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = ".prepare(setting('Lingua')).") WHERE `in_statiintervento`.`id`=".prepare($r['idstatointervento']))['descrizione'].'</td>
+                <td>'.$dbo->fetchOne("SELECT CONCAT_WS(' - ', `codice`,`name`) AS descrizione FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare(\App::getLang()).") WHERE `id`=".prepare($r['idtipointervento']))['descrizione'].'</td>
+                <td>'.$dbo->fetchOne("SELECT CONCAT_WS(' - ', `codice`,`name`) AS descrizione FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = ".prepare(\App::getLang()).") WHERE `in_statiintervento`.`id`=".prepare($r['idstatointervento']))['descrizione'].'</td>
                 <td>'.nl2br($r['richiesta']).'</td>
 				';
 

@@ -28,7 +28,7 @@ switch (filter('op')) {
 
         if (check_query($options2)) {
             $dbo->query('UPDATE `zz_modules` SET `options2`='.prepare($options2).' WHERE `id`='.prepare($id_record));
-            $dbo->query('UPDATE `zz_modules_lang` SET `title`='.prepare(post('title')).' WHERE (`id_record`='.prepare($id_record).' AND `id_lang`='.prepare(setting('Lingua')).')');
+            $dbo->query('UPDATE `zz_modules_lang` SET `title`='.prepare(post('title')).' WHERE (`id_record`='.prepare($id_record).' AND `id_lang`='.prepare(\App::getLang()).')');
             $rs = true;
         } else {
             $rs = false;
@@ -70,7 +70,7 @@ switch (filter('op')) {
                     $dbo->update('zz_views', $array, ['id' => $id]);
                     $dbo->update('zz_views_lang', [
                         'name' => $name
-                    ], ['id_record' => $id, 'id_lang' => setting('Lingua')]);
+                    ], ['id_record' => $id, 'id_lang' => \App::getLang()]);
 
                 } elseif (!empty($query)) {
                     $array['order'] = orderValue('zz_views', 'id_module', $id_record);

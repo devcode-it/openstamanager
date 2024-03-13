@@ -22,6 +22,7 @@ namespace Models;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Util\Query;
+;
 
 class Clause extends Model
 {
@@ -63,7 +64,7 @@ class Clause extends Model
         return database()->table($this->table.'_lang')
             ->select('name')
             ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', setting('Lingua'))
+            ->where('id_lang', '=', \App::getLang())
             ->first()->name;
     }
 
@@ -76,7 +77,7 @@ class Clause extends Model
 
         $translated = $table
             ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', setting('Lingua'));
+            ->where('id_lang', '=', \App::getLang());
 
         if ($translated->count() > 0) {
             $translated->update([
@@ -85,7 +86,7 @@ class Clause extends Model
         } else {
             $table->insert([
                 'id_record' => $this->id,
-                'id_lang' => setting('Lingua'),
+                'id_lang' => \App::getLang(),
                 'name' => $value
             ]);
         }

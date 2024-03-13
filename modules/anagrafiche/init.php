@@ -40,7 +40,7 @@ if (isset($id_record)) {
         `an_anagrafiche`
         INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica`
         INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`
-        LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(setting('Lingua')).')
+        LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(\App::getLang()).')
         LEFT JOIN `an_anagrafiche_agenti` ON `an_anagrafiche`.`idanagrafica`=`an_anagrafiche_agenti`.`idanagrafica`
     WHERE 
         `an_anagrafiche`.`idanagrafica`='.prepare($id_record));

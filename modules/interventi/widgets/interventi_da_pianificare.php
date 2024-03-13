@@ -61,12 +61,12 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
         <thead>
             <tr>
 				<th width="70">'.tr('Codice').'</th>
-                <th width="120">'.tr('Cliente').'</th>
+                <th>'.tr('Cliente').'</th>
                 <th width="70"><small>'.tr('Data richiesta').'</small></th>
-                <th width="15%" class="text-center">'.tr('Tecnici assegnati').'</th>
+                <th width="20%" class="text-center">'.tr('Tecnici assegnati').'</th>
                 <th width="200">'.tr('Tipo intervento').'</th>
                 <th width="200">'.tr('Stato intervento').'</th>
-                <th>'.tr('Descrizione').'</th>
+                <th width="40"></th>
             </tr>
         </thead>
 
@@ -78,7 +78,7 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
 
         echo '
             <tr id="int_'.$r['id'].'">
-				<td><a target="_blank" >'.Modules::link('Interventi', $r['id'], $r['codice']).'</a></td>
+                <td><a target="_blank" >'.Modules::link('Interventi', $r['id'], $r['codice']).'</a></td>
                 <td><a target="_blank" >'.Modules::link('Anagrafiche', $r['idanagrafica'], $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica='.prepare($r['idanagrafica']))['ragione_sociale']).'<br><small>Presso: ';
         // Sede promemoria
         if ($r['idsede'] == '-1') {
@@ -100,10 +100,23 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
 
                 <td>'.$dbo->fetchOne("SELECT CONCAT_WS(' - ', `codice`,`name`) AS descrizione FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare(setting('Lingua')).") WHERE `id`=".prepare($r['idtipointervento']))['descrizione'].'</td>
                 <td>'.$dbo->fetchOne("SELECT CONCAT_WS(' - ', `codice`,`name`) AS descrizione FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = ".prepare(setting('Lingua')).") WHERE `in_statiintervento`.`id`=".prepare($r['idstatointervento']))['descrizione'].'</td>
-                <td>'.nl2br($r['richiesta']).'</td>
-				';
-
-        echo '
+                <td class="text-right">
+                    <button type="button" class="btn btn-xs btn-default" onclick="toggleDettagli(this)">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                    
+                </td>
+            </tr>
+            
+            <tr style="display: none">
+                <td colspan="7">
+                    '.input([
+                        'type' => 'ckeditor',
+                        'name' => 'descrizione_'.$r['id'],
+                        'value' => $r['richiesta'],
+                        'disabled' => true
+                    ]).'
+                </td>
             </tr>';
     }
 
@@ -117,3 +130,23 @@ if ($raggruppamenti->isEmpty()) {
     echo '
 <p>'.tr('Non ci sono interventi da pianificare').'.</p>';
 }
+
+echo '
+<script>
+    $(document).ready(function(){init();});
+
+    function toggleDettagli(trigger) {
+        const tr = $(trigger).closest("tr");
+        const dettagli = tr.next();
+
+        if (dettagli.css("display") === "none"){
+            dettagli.show(500);
+            $(trigger).children().removeClass("fa-plus"); 
+            $(trigger).children().addClass("fa-minus");
+        } else {
+            dettagli.hide(500);
+            $(trigger).children().removeClass("fa-minus"); 
+            $(trigger).children().addClass("fa-plus");
+        }
+    }
+</script>';

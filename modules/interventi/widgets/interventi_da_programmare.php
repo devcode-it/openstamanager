@@ -28,12 +28,13 @@ if (!empty($rs)) {
     echo '
 <table class="table table-hover">
     <tr>
-        <th width="100">'.tr('Codice').'</th>
-        <th width="180">'.tr('Cliente').'</th>
-        <th width="80"><small>'.tr('Data richiesta').'</small></th>
-        <th width="17%" class="text-center">'.tr('Tecnici assegnati').'</th>
-        <th width="210">'.tr('Tipo intervento').'</th>
-        <th>'.tr('Descrizione').'</th>
+        <th width="70">'.tr('Codice').'</th>
+        <th>'.tr('Cliente').'</th>
+        <th width="70"><small>'.tr('Data richiesta').'</small></th>
+        <th width="20%" class="text-center">'.tr('Tecnici assegnati').'</th>
+        <th width="200">'.tr('Tipo intervento').'</th>
+        <th width="200">'.tr('Stato intervento').'</th>
+        <th width="40"></th>
     </tr>';
 
     foreach ($rs as $r) {
@@ -63,10 +64,23 @@ if (!empty($rs)) {
 
                 <td>'.$dbo->fetchOne("SELECT CONCAT_WS(' - ', `codice`, `name`) AS descrizione FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = ".prepare(setting('Lingua')).") WHERE `in_tipiintervento`.`id`=".prepare($r->idtipointervento))['descrizione'].'</td>
 
-                <td>'.nl2br($r->richiesta).'</td>
-				';
-
-        echo '
+                <td class="text-right">
+                    <button type="button" class="btn btn-xs btn-default" onclick="toggleDettagli(this)">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                    
+                </td>
+            </tr>
+            
+            <tr style="display: none">
+                <td colspan="7">
+                    '.input([
+                        'type' => 'ckeditor',
+                        'name' => 'descrizione_'.$r->id,
+                        'value' => $r->richiesta,
+                        'disabled' => true
+                    ]).'
+                </td>
             </tr>';
     }
     echo '
@@ -75,3 +89,23 @@ if (!empty($rs)) {
     echo '
 <p>'.tr('Non ci sono attività da programmare').'.</p>';
 }
+
+echo '
+<script>
+    $(document).ready(function(){init();});
+
+    function toggleDettagli(trigger) {
+        const tr = $(trigger).closest("tr");
+        const dettagli = tr.next();
+
+        if (dettagli.css("display") === "none"){
+            dettagli.show(500);
+            $(trigger).children().removeClass("fa-plus"); 
+            $(trigger).children().addClass("fa-minus");
+        } else {
+            dettagli.hide(500);
+            $(trigger).children().removeClass("fa-minus"); 
+            $(trigger).children().addClass("fa-plus");
+        }
+    }
+</script>';

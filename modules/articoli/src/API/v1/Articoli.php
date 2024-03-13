@@ -33,41 +33,39 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
         $table = 'mg_articoli';
         $select = [
             'mg_articoli.*',
-            'categorie.nome AS categoria',
-            'sottocategorie.nome AS sottocategoria',
+            '`categorie`.`nome` AS categoria',
+            '`sottocategorie`.`nome` AS sottocategoria',
         ];
 
         $joins[] = [
-            'mg_articoli_lang',
-            'mg_articoli.id',
-            'mg_articoli_lang.id_record',
-        ];
-
-        $joins[] = [
-            'mg_categorie AS categorie',
-            'mg_articoli.id_categoria',
-            'categorie.id',
-        ];
-
-        $joins[] = [
-            'mg_categorie_lang AS categorie_lang' => 'mg_categorie_lang.id_record = categorie.id AND mg_categorie_lang.id_lang = '.setting('Lingua'),
+            'mg_articoli_lang' => 'mg_articoli_lang.id_record = mg_articoli.id AND mg_articoli_lang.id_lang = '.setting('Lingua'),
         ]; 
 
         $joins[] = [
-            'mg_categorie AS sottocategorie',
-            'mg_articoli.id_sottocategoria',
-            'sottocategorie.id',
+            '`mg_categorie` AS categorie',
+            '`mg_articoli`.`id_categoria`',
+            '`categorie`.`id`',
         ];
 
         $joins[] = [
-            'mg_categorie_lang AS sottocategorie_lang' => 'mg_categorie_lang.id_record = sottocategorie.id AND mg_categorie_lang.id_lang = '.setting('Lingua'),
+            'mg_categorie_lang AS categorie_lang' => '`mg_categorie_lang`.`id_record` = `categorie`.`id` AND `mg_categorie_lang`.`id_lang` = '.setting('Lingua'),
+        ]; 
+
+        $joins[] = [
+            '`mg_categorie` AS sottocategorie',
+            '`mg_articoli`.`id_sottocategoria`',
+            '`sottocategorie`.`id`',
         ];
 
-        $where[] = ['mg_articoli.deleted_at', '=', null];
+        $joins[] = [
+            '`mg_categorie_lang` AS sottocategorie_lang' => '`mg_categorie_lang`.`id_record` = `sottocategorie`.`id` AND `mg_categorie_lang`.`id_lang` = '.setting('Lingua'),
+        ];
+
+        $where[] = ['`mg_articoli`.`deleted_at`', '=', null];
 
         $whereraw = [];
 
-        $order['mg_articoli.id'] = 'ASC';
+        $order['`mg_articoli`.`id`'] = 'ASC';
 
         return [
             'table' => $table,

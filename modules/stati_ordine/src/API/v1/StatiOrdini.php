@@ -44,7 +44,7 @@ class StatiOrdini extends Resource implements RetrieveInterface
         return [
             'select' => $select,
             'table' => $table,
-            'join' => $joins,
+            'joins' => $joins,
             'where' => $where,
         ];
     }

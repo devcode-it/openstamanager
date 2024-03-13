@@ -38,14 +38,12 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
         ];
 
         $joins[] = [
-            '`an_nazioni_lang`',
-            '`an_anagrafiche`.`id_nazione`',
-            '`an_nazioni_lang`.`name`',
-        ];
+            'an_nazioni_lang' => '`an_nazioni_lang`.`id_record` = `an_nazioni`.`id` AND `an_nazioni_lang`.`id_lang` = '.setting('Lingua'),
+        ]; 
 
         $where[] = ['`an_anagrafiche`.`deleted_at`', '=', null];
 
-        $order['an_anagrafiche.ragione_sociale'] = 'ASC';
+        $order['`an_anagrafiche`.`ragione_sociale`'] = 'ASC';
 
         if ($request['resource'] != 'anagrafiche') {
             $type = 'Cliente';

@@ -23,7 +23,7 @@ use Modules\ListiniCliente\Listino;
 
 if (isset($id_record)) {
     $listino = Listino::find($id_record);
-    $record = $dbo->fetchOne('SELECT * FROM `mg_listini` WHERE id='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT * FROM `mg_listini` WHERE `id`='.prepare($id_record));
 
     $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 }

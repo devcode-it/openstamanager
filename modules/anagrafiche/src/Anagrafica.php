@@ -92,7 +92,7 @@ class Anagrafica extends Model
         $tipologia = (new TipoAnagrafica())->getByName($type)->id_record;
 
         $anagrafiche = self::whereHas('tipi', function ($query) use ($tipologia) {
-            $query->where('an_tipianagrafiche.id', '=', $tipologia->id);
+            $query->where('an_tipianagrafiche.id', '=', $tipologia);
         });
 
         return $anagrafiche;

@@ -90,10 +90,10 @@ switch (filter('op')) {
                     'clause' => 'co_scadenziario.tipo="'.$nome.'"',
                     'position' => 'WHR',
                 ]);
-                $id_record = $dbo->lastInsertedID();
-                $dbo->insert('zz_segments', [
+                $id_segment = $dbo->lastInsertedID();
+                $dbo->insert('zz_segments_lang', [
                     'name' => 'Scadenzario '.$nome,
-                    'id_record' => $id_record,
+                    'id_record' => $id_segment,
                     'id_lang' => \App::getLang(),
                 ]);
 

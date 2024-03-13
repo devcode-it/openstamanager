@@ -117,13 +117,13 @@ switch ($resource) {
         break;
 
     case 'gruppi':
-        $query = 'SELECT `zz_groups`.`id`, `zz_groups`.`name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON `zz_groups`.`id`=`zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang`='.prepare(\App::getLang()).' |where| ORDER BY `name`';
+        $query = 'SELECT `zz_groups`.`id`, `zz_groups_lang`.`name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON `zz_groups`.`id`=`zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang`='.prepare(\App::getLang()).' |where| ORDER BY `name`';
 
         foreach ($elements as $element) {
             $filter[] = '`zz_groups`.`id`='.prepare($element);
         }
         if (!empty($search)) {
-            $search_fields[] = '`zz_groups`.`name` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`zz_groups_lang`.`name` LIKE '.prepare('%'.$search.'%');
         }
 
         break;

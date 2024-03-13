@@ -17,6 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Models\View;
+
 echo '
 
 <form action="" method="post" role="form">
@@ -28,7 +30,7 @@ echo '
             <div class="data">';
 
 $key = 0;
-$fields = $dbo->fetchArray('SELECT * FROM `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views`.`id` = `zz_views_lang`.`id_record` AND `zz_views_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `id_module`='.prepare($record->id).' ORDER BY `order` ASC');
+$fields = View::where('id_module', '=', $record->id)->orderBy('order', 'asc')->get();
 
 foreach ($fields as $key => $field) {
     $editable = !($field['default'] && $enable_readonly);

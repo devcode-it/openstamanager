@@ -11,7 +11,7 @@ $length = filter('length');
 $tot_articoli = $dbo->select('mg_listini_articoli', '*', [], ['id_listino' => $id_listino]);
 
 if (empty($search)) {
-    $articoli = $dbo->fetchArray('SELECT `mg_listini_articoli`.*, `mg_articoli`.`codice`, `mg_articoli_lang`.`name` AS descrizione,  `mg_articoli`.'.($prezzi_ivati ? 'minimo_vendita_ivato' : 'minimo_vendita').' AS minimo_vendita FROM `mg_listini_articoli` LEFT JOIN `mg_articoli` ON `mg_listini_articoli`.`id_articolo`=`mg_articoli`.`id` WHERE `id_listino`='.prepare($id_listino).' LIMIT '.$start.', '.$length);
+    $articoli = $dbo->fetchArray('SELECT `mg_listini_articoli`.*, `mg_articoli`.`codice`, `mg_articoli_lang`.`name` AS descrizione,  `mg_articoli`.'.($prezzi_ivati ? 'minimo_vendita_ivato' : 'minimo_vendita').' AS minimo_vendita FROM `mg_listini_articoli` LEFT JOIN `mg_articoli` ON `mg_listini_articoli`.`id_articolo`=`mg_articoli`.`id` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `id_listino`='.prepare($id_listino).' LIMIT '.$start.', '.$length);
 } else {
     $resource = 'articoli_listino';
     include_once __DIR__.'/select.php';

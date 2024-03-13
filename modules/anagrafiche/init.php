@@ -32,8 +32,7 @@ if (isset($id_record)) {
     $anagrafica = Anagrafica::withTrashed()->find($id_record);
 
     $record = $dbo->fetchOne('SELECT 
-        *,
-        `an_anagrafiche`.`idanagrafica` AS idanagrafica,
+        `an_anagrafiche`.*,
         GROUP_CONCAT(`an_tipianagrafiche`.`id`) AS idtipianagrafica,
         GROUP_CONCAT(`an_anagrafiche_agenti`.`idagente`) AS idagenti,
         GROUP_CONCAT(`an_tipianagrafiche_lang`.`name`) AS tipianagrafica

@@ -44,6 +44,15 @@ class Contratti extends AppResource implements RetrieveInterface
 
     public function getModifiedRecords($last_sync_at)
     {
+
+        $risorsa_interventi = $this->getRisorsaInterventi();
+        $interventi = $risorsa_interventi->getModifiedRecords(null);
+        if (empty($interventi)) {
+            return [];
+        }
+
+        $id_interventi = array_keys($interventi);
+
         $query = 'SELECT
             DISTINCT(`co_contratti`.`id`) AS id,
             `co_contratti`.`updated_at`
@@ -55,7 +64,7 @@ class Contratti extends AppResource implements RetrieveInterface
             INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche`.`id`
             LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(setting('Lingua')).")
         WHERE 
-            `an_tipianagrafiche_lang`.`name` = 'Cliente' AND `co_staticontratti`.`is_pianificabile` = 1 AND `an_anagrafiche`.`deleted_at` IS NULL";
+            `an_tipianagrafiche_lang`.`name` = 'Cliente' AND `co_staticontratti`.`is_pianificabile` = 1 AND `an_anagrafiche`.`deleted_at` IS NULL AND (SELECT COUNT(id) FROM in_interventi WHERE id_contratto=co_contratti.id AND id IN (".implode(',', $id_interventi).")) > 0";
 
         // Filtro per data
         if ($last_sync_at) {
@@ -85,5 +94,10 @@ class Contratti extends AppResource implements RetrieveInterface
         $record = database()->fetchOne($query);
 
         return $record;
+    }
+
+    protected function getRisorsaInterventi()
+    {
+        return new Interventi();
     }
 }

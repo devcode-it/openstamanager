@@ -44,13 +44,23 @@ class TariffeContratti extends AppResource
 
     public function getModifiedRecords($last_sync_at)
     {
+
+        $risorsa_contratti = $this->getRisorsaContratti();
+        $contratti = $risorsa_contratti->getModifiedRecords(null);
+
+        if (empty($contratti)) {
+            return [];
+        }
+
+        $id_contratti = array_keys($contratti);
+
         $query = 'SELECT
             CONCAT(`idtipointervento`, "-", `idcontratto`) AS id,
             `co_contratti_tipiintervento`.`updated_at`
         FROM `co_contratti_tipiintervento`
             INNER JOIN `co_contratti` ON `co_contratti`.`id` = `co_contratti_tipiintervento`.`idcontratto`
             INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`idstato`
-        WHERE `co_staticontratti`.`is_pianificabile` = 1';
+        WHERE `co_staticontratti`.`is_pianificabile` = 1 AND `co_contratti`.`id` IN ('.implode(',', $id_contratti).')';
 
         // Filtro per data
         if ($last_sync_at) {
@@ -82,5 +92,10 @@ class TariffeContratti extends AppResource
         $record = database()->fetchOne($query);
 
         return $record;
+    }
+
+    protected function getRisorsaContratti()
+    {
+        return new Contratti();
     }
 }

@@ -230,7 +230,7 @@ class Query
 
                         if ($anno != '' && $giorno != '' && $mese != '') {
                             if ($data != "'1970-01-01'") {
-                                $search_filters[] = $search_query.' = '.$data.'';
+                                $search_filters[] = 'date('.$search_query.') = '.$data.'';
                             }
                         } else {
                             $search_filters[] = ($search_query.' = '.prepare($value).' OR '.$search_query.' LIKE '.prepare('% '.$value).' OR '.$search_query.' LIKE '.prepare($value.' %').' OR '.$search_query.' LIKE '.prepare('% '.$value.' %'));

@@ -69,18 +69,11 @@ echo '
         </div>
     </div>';
 
-if (!empty($impianti)) {
     // IMPIANTI
     echo '
     <div class="row">
 		<div class="col-md-12" id="righe-impianti"></div>
     </div>';
-} else {
-    echo '
-    <div class="alert alert-info text-center">
-        <i class="fa fa-info-circle"></i> '.tr('Nessun impianto collegato a questo intervento').'
-    </div>';
-}
 
 echo '
 <script>

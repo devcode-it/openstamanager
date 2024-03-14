@@ -236,6 +236,22 @@ echo '
         </div>
     </div>
 
+	<!-- DETTAGLI CLIENTE -->
+    <div class="box box-info collapsable collapsed-box">
+        <div class="box-header with-border">
+			<h3 class="box-title">'.tr('Dettagli cliente').'</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
+		</div>
+
+        <div class="box-body" id="dettagli_cliente">
+            '.tr('Seleziona prima un cliente').'...
+        </div>
+    </div>
+
     <!-- POSIZIONE -->
     <div class="box box-info collapsable collapsed-box">
         <div class="box-header with-border">
@@ -401,22 +417,6 @@ echo '
                     {[ "type": "checkbox", "label": "'.tr('Riporta sessioni di lavoro').'", "name": "riporta_sessioni", "value": "" ]}
                 </div>
             </div>
-        </div>
-    </div>
-
-	<!-- DETTAGLI CLIENTE -->
-    <div class="box box-info collapsable collapsed-box">
-        <div class="box-header with-border">
-			<h3 class="box-title">'.tr('Dettagli cliente').'</h3>
-            <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                    <i class="fa fa-plus"></i>
-                </button>
-            </div>
-		</div>
-
-        <div class="box-body" id="dettagli_cliente">
-            '.tr('Seleziona prima un cliente').'...
         </div>
     </div>
 

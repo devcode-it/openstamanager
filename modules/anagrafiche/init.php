@@ -28,7 +28,7 @@ foreach ($rs as $riga) {
     ${'id_'.strtolower($riga->name)} = $riga->id;
 }
 
-if (isset($id_record)) {
+if (!empty($id_record)) {
     $anagrafica = Anagrafica::withTrashed()->find($id_record);
 
     $record = $dbo->fetchOne('SELECT 

@@ -36,7 +36,7 @@ class Categoria extends Model
         $model = new static();
         $model->save();
 
-        $gruppi = Group::get();
+        $gruppi = Group::get()->toArray();
         $model->syncPermessi(array_column($gruppi, 'id'));
 
         return $model;

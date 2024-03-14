@@ -73,38 +73,37 @@ echo '
 // Tipi di interventi
 foreach ($tipi_interventi as $tipo_intervento) {
 
-    $tipo = Tipo::find($tipo_intervento['id']);
     echo '
         <tr>
 
-            <td>'.$tipo->name.'</td>
+            <td>'.$tipo_intervento['name'].'</td>
 
             <td>
-                {[ "type": "number", "name": "costo_ore['.$tipo->id.']", "required": 1, "value": "'.$tipo->costo_ore.'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
+                {[ "type": "number", "name": "costo_ore['.$tipo_intervento['id'].']", "required": 1, "value": "'.$tipo_intervento['costo_ore'].'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
             </td>
 
             <td>
-                {[ "type": "number", "name": "costo_km['.$tipo->id.']", "required": 1, "value": "'.$tipo->costo_km.'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
+                {[ "type": "number", "name": "costo_km['.$tipo_intervento['id'].']", "required": 1, "value": "'.$tipo_intervento['costo_km'].'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
             </td>
 
             <td>
-                {[ "type": "number", "name": "costo_dirittochiamata['.$tipo->id.']", "required": 1, "value": "'.$tipo->costo_dirittochiamata.'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
+                {[ "type": "number", "name": "costo_dirittochiamata['.$tipo_intervento['id'].']", "required": 1, "value": "'.$tipo_intervento['costo_dirittochiamata'].'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
             </td>
 
             <td>
-                {[ "type": "number", "name": "costo_ore_tecnico['.$tipo->id.']", "required": 1, "value": "'.$tipo->costo_ore_tecnico.'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
+                {[ "type": "number", "name": "costo_ore_tecnico['.$tipo_intervento['id'].']", "required": 1, "value": "'.$tipo_intervento['costo_ore_tecnico'].'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
             </td>
 
             <td>
-                {[ "type": "number", "name": "costo_km_tecnico['.$tipo->id.']", "required": 1, "value": "'.$tipo->costo_km_tecnico.'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
+                {[ "type": "number", "name": "costo_km_tecnico['.$tipo_intervento['id'].']", "required": 1, "value": "'.$tipo_intervento['costo_km_tecnico'].'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
             </td>
 
             <td>
-                {[ "type": "number", "name": "costo_dirittochiamata_tecnico['.$tipo->id.']", "required": 1, "value": "'.$tipo->costo_dirittochiamata_tecnico.'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
+                {[ "type": "number", "name": "costo_dirittochiamata_tecnico['.$tipo_intervento['id'].']", "required": 1, "value": "'.$tipo_intervento['costo_dirittochiamata_tecnico'].'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
             </td>
 
             <td>
-                <a class="btn btn-warning ask" data-backto="record-edit" data-method="post" data-op="import" data-idtipointervento="'.$tipo->id.'" data-msg="'.tr('Vuoi importare la tariffa standard?').'" data-button="'.tr('Importa').'" data-class="btn btn-lg btn-info">
+                <a class="btn btn-warning ask" data-backto="record-edit" data-method="post" data-op="import" data-idtipointervento="'.$tipo_intervento['id'].'" data-msg="'.tr('Vuoi importare la tariffa standard?').'" data-button="'.tr('Importa').'" data-class="btn btn-lg btn-info">
                     <i class="fa fa-download"></i>
                 </a>
             </td>

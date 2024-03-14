@@ -64,7 +64,7 @@ if (!function_exists('menuSelection')) {
         $submenus = $element['all_children'];
         if (!empty($submenus)) {
             foreach ($submenus as $submenu) {
-                $result .= menuSelection($submenu, $group_id, $depth, $permessi_disponibili, $perms_names);
+                $result .= menuSelection($submenu, $group_id, $depth, $permessi_disponibili);
             }
         }
 

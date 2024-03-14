@@ -265,6 +265,9 @@ if (!API\Response::isAPIRequest()) {
         }
 
         Permissions::check();
+
+        // Impostazione della lingua
+        App::setLang(setting('Lingua'));
     }
 
     // Retrocompatibilità
@@ -302,8 +305,4 @@ foreach ($custom_files as $key => $value) {
 $list = array_merge($files, $custom_files);
 foreach ($list as $file) {
     include_once $file;
-}
-
-if (database()->tableExists('zz_settings')) {
-    App::setLang(setting('Lingua'));
 }

@@ -166,8 +166,6 @@ $translator->addLocalePath(base_dir().'/locale');
 $translator->addLocalePath(base_dir().'/modules/*/locale');
 $translator->setLocale($lang, $formatter);
 
-App::setLang(setting('Lingua'));
-
 // Individuazione di versione e revisione del progetto
 $version = Update::getVersion();
 $revision = Update::getRevision();
@@ -304,4 +302,8 @@ foreach ($custom_files as $key => $value) {
 $list = array_merge($files, $custom_files);
 foreach ($list as $file) {
     include_once $file;
+}
+
+if (database()->tableExists('zz_settings')) {
+    App::setLang(setting('Lingua'));
 }

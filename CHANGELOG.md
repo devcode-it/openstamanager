@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.5 (2024-03-22)](#25-2024-03-22)
 - [2.4.54 (2024-02-02)](#2454-2024-02-02)
 - [2.4.53 (2024-01-05)](#2453-2024-01-05)
 - [2.4.52 (2023-12-08)](#2452-2023-12-08)
@@ -67,6 +68,69 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 
 ## 2.4.54 (2024-02-02)
 ### Aggiunto (Added)
+- Aggiunte le tabelle '_lang' per la gestione delle traduzioni dei dati presenti a database
+- Aggiunta log rimozione sessioni per velocizzare la sincronizzazione dell'app
+- Introduzione del file Known-issue.md
+- Aggiunle le skin light per i temi
+- Aggiunta colonna N. utenti abilitati e N. api abilitate nel modulo **Utenti e permessi**
+- Aggiunto il riferimento alle attività collegate nei moduli **DDT**
+- Aggiunto il blocco **Aggiorna informazioni di acquisto** in fase di importazione fattura elettronica
+- Aggiunta creazione automatica della banca in fase di importazione CSV anagrafiche
+- Aggiunta informazioni di creazione per campi delle viste
+- Aggiunto il flag 'Fatture elettroniche' in segmenti
+- Aggiunta la visualizzazione delle sessioni attive in **Stato dei servizi**
+- Aggiunta la navigazione tra **Attività** con codice precedente e successivo
+- Aggiunto un avviso nel caso di righe con quantità a 0 nelle **Fatture di vendita**
+- Aggiunto un controllo sulla partita IVA per **Fatture** emesse verso anagrafiche cliente di tipo Azienda o codice fiscale se Ente pubblico
+- Aggiunto controllo per validare il codice dell'intermediario in **Anagrafica**
+- Aggiunta la validazione dell'indirizzo email in aggiunta **Utente**
+- Aggiunta la controparte in plugin **Movimenti**
+- Aggiunta la **stampa cespiti**
+- Aggiunta la verifica di integrità database per MariaDB
+- Aggiunta la possibilità di creare **Backup** escludendo la cartella files e il database
+- Aggiunta la gestione dei campi personalizzati su applicazione
+- Aggiunta la gestione della visualizzazione articoli distinta inline nei documenti
+
+### Modificato (Changed)
+- Abilitato il ritorno al punto precedente anche per i dispositivi mobili
+- Aggiornata la chiave di licenza per Wacom v2
+- Migliorato graficamente il riquadro **Plugin**
+- Migliorata la **Stampa fatturato** escludendo le autofatture
+- Migliorato il plugin **Regole pagamenti**
+- Migliorata l'impostazione della ricevuta della fattura elettronica nel caso di ricevuta di scarto per fattura duplicata
+- Migliorato l'avviso della scadenza per l'invio della fattura elettronica nel caso in cui corrisponda a giorni non lavorativi
+- Migliorata l'eliminazione degli utente con un controllo sui logs associati
+- Rimosso il modulo **Voci di servizio**
+- Corretta la firma con tavoletta grafica
+- Migliorata la gestione dei seriali su documenti bloccati
+- Spostato il panel Dettagli cliente in fase di aggiunta intervento
+
+### Fixed
+- Corretto errore notifica di lettura email mancante
+- Corretto il flag per la fatturazione negli stati attività
+- Corretta l'importazione delle **Fatture di acquisto** con rivalsa non specificata nelle righe
+- Corretta la creazione del file config
+- Corretta la creazione della banca in fase di importazione fatture di acquisto
+- Corretta la lettura dei valori dai campi personalizzati
+- Corretto l'avviso di ckeditor
+- Corretto l'arrotondamento dei movimenti contabili che creavano incongruenze nel piano dei conti
+- Corretta la generazione delle scadenze
+- Corretta la valorizzazione del campo RegimeFiscale in generazione XML fattura
+- Corretta la gestione dell'IVA indetraibile
+- Corretta l'aggiunta di un conto in **Partitario**
+- Corretta l'aggiunta attività per utenti senza permessi specifici
+- Corretta la stampa **Carico automezzi**
+- Corretta la ricerca nel **Piano dei conti**
+- Corretta l'impostazione del segmento predefinito per tipo di documento limitandola ai sezionali
+- Corretto l'avviso del codice anagrafica già presente
+- Corretta la duplicazione dell'**Attività** dalla scheda attività
+- Corretto l'allineamento degli orari delle sessioni in line in **Attività**
+- Corrette le api dell'app
+- Corretta la gestione dei caratteri accentati sul file di esportazione delle ricevute bancarie
+- Corretta la ricerca articoli escludendo gli articoli eliminati
+
+## 2.4.54 (2024-02-02)
+### Aggiunto (Added)
 - Aggiunto un controllo sulle impostazioni presenti a gestionale
 - Aggiunta la possibilità di impostare un tema diverso per ogni gruppo di utenti
 - Aggiunta la gestione della fatturazione da azione di gruppo raggruppata per sede
@@ -81,7 +145,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Migliorato l'esempio di importazione Attività
 - Migliorata la pianificazione dei promemoria
 
-### Fixed
+
 - Corretta la visualizzazione dei referenti in fase di aggiunta nuova sede
 - Corretta la stampa di ordini con immagini
 - Corretta la modifica inline dell'orario della sessione dei tecnici

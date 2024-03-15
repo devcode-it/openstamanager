@@ -274,6 +274,8 @@ if ($database->isInstalled()) {
     }*/
 }
 
+$mysql = [];
+
 foreach ($db as $name => $values) {
     $description = $values['description'];
 
@@ -453,7 +455,9 @@ $requirements = [
 ];
 
 if (!$database->isInstalled() || empty($mysql)) {
-    unset($requirements['MySQL']);
+    unset($requirements[tr('DBMS (_TYPE_)', [
+        '_TYPE_' => $database->getType(),
+    ] )]);
 }
 
 // Tabelle di riepilogo

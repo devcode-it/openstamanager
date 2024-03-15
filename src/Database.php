@@ -212,13 +212,16 @@ class Database extends Util\Singleton
      */
     public function getType()
     {
-        $ver = $this->fetchArray('SELECT VERSION()');
-        if (preg_match('/MariaDB/', $ver[0]['VERSION()'])) {
-            return 'MariaDB';
+        if ($this->isInstalled()) {
+            $ver = $this->fetchArray('SELECT VERSION()');
+            if (preg_match('/MariaDB/', $ver[0]['VERSION()'])) {
+                return 'MariaDB';
+            } else {
+                return 'MySQL';
+            }
         } else {
-            return 'MySQL';
+            return '';
         }
-
     }
 
 

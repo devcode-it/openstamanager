@@ -367,3 +367,19 @@ function getSearchValues($id_module) {
     }
     return $result;
 }
+
+/**
+ * Funzione PHP che controlla se l'articolo ha una distinta
+ *
+ * @param int $id_articolo
+ *
+ * @return boolean
+ */
+function hasArticoliFiglio($id_articolo)
+{
+    if (function_exists('renderDistinta')) {
+        return database()->fetchOne('SELECT qta FROM mg_articoli_distinte WHERE id_articolo='.prepare($id_articolo));
+    } else {
+        return false;
+    }
+}

@@ -19,6 +19,8 @@
 
 include_once __DIR__.'/init.php';
 
+use Models\Plugin;
+
 $block_edit = $record['flag_completato'];
 $order_row_desc = $_SESSION['module_'.$id_module]['order_row_desc'];
 $righe = $order_row_desc ? $ddt->getRighe()->sortByDesc('created_at') : $ddt->getRighe();
@@ -235,6 +237,12 @@ foreach ($righe as $riga) {
     echo '
                 <td class="text-center">
                     <div class="input-group-btn">';
+        if (hasArticoliFiglio($riga->idarticolo)) {
+            echo '
+                        <a class="btn btn-xs btn-info" title="'.tr('Distinta base').'" onclick="viewDistinta('.$riga->idarticolo.')">
+                            <i class="fa fa-eye"></i>
+                        </a>';
+        }
 
         if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
             echo '
@@ -647,5 +655,13 @@ function aggiornaInline(id) {
         }
     });
 }
-init();
+init();';
+
+if (Plugin::find((new Plugin())->getByName('Distinta base')->id_record)) {
+    echo '
+    async function viewDistinta(id_articolo) {
+        openModal("'.tr('Distinta base').'", "'.Plugin::find((new Plugin())->getByName('Distinta base')->id_record)->fileurl('view.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&id_articolo=" + id_articolo);
+    }';
+}
+echo '
 </script>';

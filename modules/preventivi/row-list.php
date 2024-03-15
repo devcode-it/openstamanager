@@ -19,6 +19,8 @@
 
 include_once __DIR__.'/init.php';
 
+use Models\Plugin;
+
 $block_edit = $record['is_completato'];
 $order_row_desc = $_SESSION['module_'.$id_module]['order_row_desc'];
 $righe = $order_row_desc ? $preventivo->getRighe()->sortByDesc('created_at') : $preventivo->getRighe();
@@ -44,7 +46,7 @@ echo '
                 <th class="text-center" width="180">'.tr('Prezzo unitario').'</th>
                 <th class="text-center" width="140">'.tr('Sconto unitario').'</th>
                 <th class="text-center" width="130">'.tr('Importo').'</th>
-                <th width="80"></th>
+                <th width="100"></th>
             </tr>
         </thead>
         <tbody class="sortable" id="righe">';
@@ -238,11 +240,17 @@ foreach ($righe as $key => $riga) {
 
     // Possibilità di rimuovere una riga solo se il preventivo non è stato pagato
     echo '
-                <td class="text-center">';
+                <td class="text-center">
+                    <div class="btn-group">';
+        if (hasArticoliFiglio($riga->idarticolo)) {
+            echo '
+                        <a class="btn btn-xs btn-info" title="'.tr('Distinta base').'" onclick="viewDistinta('.$riga->idarticolo.')">
+                            <i class="fa fa-eye"></i>
+                        </a>';
+        }
 
-    if (empty($record['is_completato'])) {
-        echo '
-                    <div class="btn-group">
+        if (empty($record['is_completato'])) {
+            echo '
                         <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga').'" onclick="modificaRiga(this)">
                             <i class="fa fa-edit"></i>
                         </a>
@@ -253,11 +261,10 @@ foreach ($righe as $key => $riga) {
 
                         <a class="btn btn-xs btn-default handle '.($order_row_desc ? 'disabled' : '').'" title="'.tr('Modifica ordine delle righe').'">
                             <i class="fa fa-sort"></i>
-                        </a>
-                    </div>';
-    }
-
-    echo '
+                        </a>';
+        }
+        echo '
+                    </div>
                 </td>
             </tr>';
 
@@ -689,5 +696,13 @@ function aggiornaInline(id) {
         }
     });
 }
-init();
+init();';
+
+if (Plugin::find((new Plugin())->getByName('Distinta base')->id_record)) {
+    echo '
+    async function viewDistinta(id_articolo) {
+        openModal("'.tr('Distinta base').'", "'.Plugin::find((new Plugin())->getByName('Distinta base')->id_record)->fileurl('view.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&id_articolo=" + id_articolo);
+    }';
+}
+echo '
 </script>';

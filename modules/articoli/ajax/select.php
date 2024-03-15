@@ -155,8 +155,8 @@ switch ($resource) {
 
         $query .= '
         ORDER BY
-            `mg_articoli`.`id_categoria` ASC,
-            `mg_articoli`.`id_sottocategoria` ASC,
+            `categoria_lang`.`name` ASC,
+            `sottocategoria_lang`.`name` ASC,
             `mg_articoli`.`codice` ASC,
             `mg_articoli_lang`.`name` ASC';
 

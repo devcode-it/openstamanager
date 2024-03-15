@@ -55,7 +55,7 @@ abstract class BaseRecord implements RecordInterface
 
         // Completamento dei filler
         foreach ($contenuti as $inizio => $string) {
-            $dimensione_contenuto = strlen($contenuto) + 1;
+            $dimensione_contenuto = mb_strlen($contenuto) + 1;
 
             if ($dimensione_contenuto != $inizio) {
                 $contenuto .= str_repeat(' ', $inizio - $dimensione_contenuto);
@@ -65,7 +65,7 @@ abstract class BaseRecord implements RecordInterface
         }
 
         // Filler finale per la riga
-        $contenuto .= str_repeat(' ', 120 - strlen($contenuto));
+        $contenuto .= str_repeat(' ', 120 - mb_strlen($contenuto));
 
         return $contenuto;
     }

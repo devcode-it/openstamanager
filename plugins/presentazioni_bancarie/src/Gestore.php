@@ -76,9 +76,9 @@ class Gestore
     public function initRiBa()
     {
         $iban = $this->banca_azienda->iban;
-        $conto = substr($iban, 15, 12);
-        $abi_assuntrice = substr($iban, 5, 5);
-        $cab_assuntrice = substr($iban, 10, 5);
+        $conto = mb_substr($iban, 15, 12);
+        $abi_assuntrice = mb_substr($iban, 5, 5);
+        $cab_assuntrice = mb_substr($iban, 10, 5);
 
         $data = new Carbon();
         $supporto = $data->format('dmYHis');
@@ -91,9 +91,9 @@ class Gestore
         $intestazione->cab = $cab_assuntrice;
         $intestazione->data_creazione = $data->format('dmy');
         $intestazione->nome_supporto = $supporto;
-        $intestazione->citta_creditore = strtoupper($this->azienda['cap'].' '.$this->azienda['citta'].' '.$this->azienda['provincia']);
-        $intestazione->ragione_sociale_creditore = strtoupper($this->azienda->ragione_sociale);
-        $intestazione->indirizzo_creditore = strtoupper($this->azienda['indirizzo']);
+        $intestazione->citta_creditore = mb_strtoupper($this->azienda['cap'].' '.$this->azienda['citta'].' '.$this->azienda['provincia']);
+        $intestazione->ragione_sociale_creditore = mb_strtoupper($this->azienda->ragione_sociale);
+        $intestazione->indirizzo_creditore = mb_strtoupper($this->azienda['indirizzo']);
         $intestazione->partita_iva_o_codice_fiscale_creditore = !empty($this->azienda->partita_iva) ? $this->azienda->partita_iva : $this->azienda->codice_fiscale;
 
         $this->riba = new RiBa($intestazione);
@@ -105,9 +105,9 @@ class Gestore
     public function initBonifico()
     {
         $iban = $this->banca_azienda->iban;
-        $conto = substr($iban, 15, 12);
-        $abi_assuntrice = substr($iban, 5, 5);
-        $cab_assuntrice = substr($iban, 10, 5);
+        $conto = mb_substr($iban, 15, 12);
+        $abi_assuntrice = mb_substr($iban, 5, 5);
+        $cab_assuntrice = mb_substr($iban, 10, 5);
         $descrizione_banca = $this->banca_azienda->nome.' '.$this->banca_azienda->filiale;
 
         $data = new Carbon();
@@ -122,9 +122,9 @@ class Gestore
         $intestazione->iban = $iban;
         $intestazione->data_creazione = $data->format('dmy');
         $intestazione->nome_supporto = $supporto;
-        $intestazione->citta_creditore = strtoupper($this->azienda['cap'].' '.$this->azienda['citta'].' '.$this->azienda['provincia']);
-        $intestazione->ragione_sociale_creditore = strtoupper($this->azienda->ragione_sociale);
-        $intestazione->indirizzo_creditore = strtoupper($this->azienda['indirizzo']);
+        $intestazione->citta_creditore = mb_strtoupper($this->azienda['cap'].' '.$this->azienda['citta'].' '.$this->azienda['provincia']);
+        $intestazione->ragione_sociale_creditore = mb_strtoupper($this->azienda->ragione_sociale);
+        $intestazione->indirizzo_creditore = mb_strtoupper($this->azienda['indirizzo']);
         $intestazione->partita_iva_o_codice_fiscale_creditore = !empty($this->azienda->partita_iva) ? $this->azienda->partita_iva : $this->azienda->codice_fiscale;
         $intestazione->identificativo_creditore = !empty($this->azienda->partita_iva) ? $this->azienda->partita_iva : $this->azienda->codice_fiscale;
         $intestazione->descrizione_banca = $descrizione_banca;
@@ -208,8 +208,8 @@ class Gestore
         $data_scadenza = $data_prevista->format('dmy');
 
         // Dati banca cliente
-        $abi_cliente = substr($banca_controparte['iban'], 5, 5);
-        $cab_cliente = substr($banca_controparte['iban'], 10, 5);
+        $abi_cliente = $banca_controparte['bank_code'];
+        $cab_cliente = $banca_controparte['branch_code'];
 
         $descrizione_banca = $banca_controparte['nome'].' '.$banca_controparte['filiale'];
 
@@ -242,14 +242,14 @@ class Gestore
         ];
         $ragione_sociale = str_replace(array_keys($replaces), array_values($replaces), $ragione_sociale);
 
-        $ricevuta->nome_debitore = strtoupper($ragione_sociale);
+        $ricevuta->nome_debitore = mb_strtoupper($ragione_sociale);
         $ricevuta->identificativo_debitore = !empty($controparte->partita_iva) ? $controparte->partita_iva : $controparte->codice_fiscale;
-        $ricevuta->indirizzo_debitore = strtoupper($controparte['indirizzo']);
+        $ricevuta->indirizzo_debitore = mb_strtoupper($controparte['indirizzo']);
         $ricevuta->cap_debitore = $controparte['cap'];
-        $ricevuta->comune_debitore = strtoupper($controparte['citta']);
+        $ricevuta->comune_debitore = mb_strtoupper($controparte['citta']);
         $ricevuta->provincia_debitore = $controparte['provincia'];
         $ricevuta->descrizione_banca = $descrizione_banca;
-        $ricevuta->descrizione = strtoupper($descrizione);
+        $ricevuta->descrizione = mb_strtoupper($descrizione);
 
         $this->riba->addRicevuta($ricevuta);
 
@@ -261,8 +261,8 @@ class Gestore
         $data_scadenza = $data_prevista->format('dmy');
 
         // Dati banca cliente
-        $abi_cliente = substr($banca_controparte['iban'], 5, 5);
-        $cab_cliente = substr($banca_controparte['iban'], 10, 5);
+        $abi_cliente = $banca_controparte['bank_code'];
+        $cab_cliente = $banca_controparte['branch_code'];
 
         $descrizione_banca = $banca_controparte['nome'].' '.$banca_controparte['filiale'];
 
@@ -305,19 +305,19 @@ class Gestore
             ];
             $ragione_sociale = str_replace(array_keys($replaces), array_values($replaces), $ragione_sociale);
 
-            $ricevuta->nome_debitore = strtoupper($ragione_sociale);
+            $ricevuta->nome_debitore = mb_strtoupper($ragione_sociale);
             $ricevuta->identificativo_debitore = $identificativo_debitore;
-            $ricevuta->indirizzo_debitore = strtoupper($controparte['indirizzo']);
+            $ricevuta->indirizzo_debitore = mb_strtoupper($controparte['indirizzo']);
             $ricevuta->cap_debitore = $controparte['cap'];
-            $ricevuta->comune_debitore = strtoupper($controparte['citta']);
+            $ricevuta->comune_debitore = mb_strtoupper($controparte['citta']);
             $ricevuta->provincia_debitore = $controparte['provincia'];
             $ricevuta->descrizione_banca = $descrizione_banca;
-            $ricevuta->descrizione = strtoupper($descrizione);
+            $ricevuta->descrizione = mb_strtoupper($descrizione);
 
             $this->bonifico->addRicevuta($ricevuta);
         } else {
             $ricevuta->importo += $totale;
-            $ricevuta->descrizione .= ' - '.strtoupper($descrizione);
+            $ricevuta->descrizione .= ' - '.mb_strtoupper($descrizione);
         }
 
         return true;

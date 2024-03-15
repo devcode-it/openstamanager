@@ -26,11 +26,11 @@ $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 $show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
 $fields = [
-    'Codice' => 'codice',
-    'Barcode' => 'barcode',
-    'Descrizione' => 'descrizione',
-    'Categoria' => '(SELECT `name` FROM `mg_categorie` LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `mg_categorie`.`id` =  `mg_articoli`.`id_categoria`)',
-    'Subcategoria' => '(SELECT `name` FROM `mg_categorie` LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `mg_categorie`.`id` =  `mg_articoli`.`id_sottocategoria`)',
+    'codice' => 'mg_articoli.codice',
+    'barcode' => 'mg_articoli.barcode',
+    'descrizione' => 'mg_articoli_lang.name',
+    'categoria' => '(SELECT `name` FROM `mg_categorie` LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `mg_categorie`.`id` =  `mg_articoli`.`id_categoria`)',
+    'subcategoria' => '(SELECT `name` FROM `mg_categorie` LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `mg_categorie`.`id` =  `mg_articoli`.`id_sottocategoria`)',
     'Note' => 'note',
 ];
 
@@ -40,11 +40,12 @@ foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM `mg_articoli` WHERE 1=0 ';
+$query .= ' FROM `mg_articoli` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE deleted_at IS NULL AND (1=0 ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE "%'.$term.'%"';
 }
+$query .= ')';
 
 $query .= Modules::getAdditionalsQuery('Articoli');
 

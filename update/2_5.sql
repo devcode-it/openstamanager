@@ -2310,3 +2310,6 @@ ALTER TABLE `zz_cache`
     DROP `name`;
 
 ALTER TABLE `zz_cache_lang` ADD CONSTRAINT `zz_cache_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_cache`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES ('Raggruppa attività per tipologia in fattura', '0', 'boolean', '1', 'Fatturazione');
+INSERT INTO `zz_settings_lang` (`id_record`, `id_lang`, `title`) VALUES ((SELECT `id` FROM `zz_settings` WHERE `nome` = 'Raggruppa attività per tipologia in fattura'), (SELECT `valore` FROM `zz_settings` WHERE `nome` = 'Lingua'), 'Raggruppa attività per tipologia in fattura');

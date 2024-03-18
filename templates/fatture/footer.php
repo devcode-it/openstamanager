@@ -22,13 +22,30 @@ if (!empty($options['last-page-footer']) && !$is_last_page) {
 }
 
 // Calcoli
-$imponibile = abs($documento->imponibile);
-$sconto = $documento->sconto;
-$totale_imponibile = abs($documento->totale_imponibile);
-$totale_iva = abs($documento->iva);
-$sconto_finale = abs($documento->getScontoFinale());
+//$imponibile = abs($documento->imponibile);
+//$sconto = $documento->sconto;
+//$totale_imponibile = abs($documento->totale_imponibile);
+//$totale_iva = abs($documento->iva);
+//$totale = abs($documento->totale) - $rivalsa;
+
+$totale_imponibile = 0;
+foreach($v_totale as $key=>$v){
+    $totale_imponibile += $v;
+}
+
+$totale_iva = 0;
+foreach($v_iva as $key=>$v){
+    $totale_iva += $v;
+}
+
+$sconto = 0;
+foreach($righe as $riga){
+    $sconto += floatval($riga->sconto);
+}
+
 $rivalsa = floatval($record['rivalsainps']);
-$totale = abs($documento->totale) - $rivalsa;
+$imponibile = $totale_imponibile + $sconto;
+$totale = $totale_iva + $totale_imponibile;
 
 $show_sconto = $sconto > 0;
 

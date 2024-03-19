@@ -2354,3 +2354,10 @@ ALTER TABLE `zz_files` ADD `id_adapter` INT NOT NULL AFTER `id_record`;
 UPDATE zz_files SET id_adapter=1;
 
 DELETE FROM `zz_settings` WHERE `nome` = 'Iva da applicare su marca da bollo';
+
+-- Aggiunta gestione stato documento Non valida
+INSERT INTO `co_statidocumento` (`icona`, `colore`) VALUES ('fa fa-times text-muted', '#d3d3d3');
+INSERT INTO `co_statidocumento_lang` (`id_record`, `id_lang`, `name`) VALUES ((SELECT MAX(`id`) FROM `co_statidocumento`), (SELECT `valore` FROM `zz_settings` WHERE `nome` = 'Lingua'), 'Non valida');
+
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `help`) VALUES ('Giorni validità fattura scartata', '5', 'int', '0', 'Fatturazione Elettronica', 'Numero di giorni a disposizione per poter correggere una fattura scartata dallo SDI prima di non poter più utilizzare il suo numero di fatturazione. Una volta passati i giorni indicati è necessario emettere una nuova fattura e questa passa in stato Non valida.');
+INSERT INTO `zz_settings_lang` (`id_record`, `id_lang`, `title`) VALUES ((SELECT `id` FROM `zz_settings` WHERE `nome` = 'Giorni validità fattura scartata'), (SELECT `valore` FROM `zz_settings` WHERE `nome` = 'Lingua'), 'Giorni validità fattura scartata');

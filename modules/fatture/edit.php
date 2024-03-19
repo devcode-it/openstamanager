@@ -181,6 +181,18 @@ if ($dir == 'entrata') {
         ]).'.</b>
 </div>';
     }
+    
+    $data_fattura = new DateTime($fattura->data);
+    $data_odierna = new DateTime();
+    $differenza = $data_odierna->diff($data_fattura)->days;
+
+    if ($fattura->codice_stato_fe == 'NS' &&  $fattura->stato->name != 'Non valida' && ($differenza > setting('Giorni validità fattura scartata'))) {
+        echo '
+<div class="alert alert-error">
+    <i class="fa fa-warning"></i> '.tr("Questa fattura è stata scartata e sono trascorsi i termini di reinvio, è necessario invalidare il documento.").'</b>
+    <button type="button" class="btn btn-xs btn-success" onclick="risolviStato()"><i class="fa fa-cog"></i> '.tr('Invalida il documento').'</button>
+</div>';
+    }
 
     // Verifica la data dell'intervento rispetto alla data della fattura
     $fatturazione_futura = false;
@@ -262,7 +274,7 @@ if ($righe_vuote) {
 
 <?php
 
-$query = 'SELECT *, `colore` AS _bgcolor_, `co_statidocumento_lang`.`name` as descrizione FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(\App::getLang()).')';
+$query = 'SELECT *, `co_statidocumento`.`id` AS id, `colore` AS _bgcolor_, `co_statidocumento_lang`.`name` as descrizione FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(\App::getLang()).')';
 if (empty($record['is_fiscale'])) {
     $query .= " WHERE `name` = 'Bozza'";
 
@@ -304,7 +316,7 @@ $query .= ' ORDER BY `name`';
 
 echo '
                 <div class="col-md-'.($record['is_fiscale'] ? 2 : 6).'">
-                    {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatodocumento", "required": 1, "values": "query='.$query.'", "value": "$idstatodocumento$", "class": "'.(($record['stato'] != 'Bozza' && !$abilita_genera) ? '' : 'unblockable').'", "extra": "onchange=\"return cambiaStato()\"" ]}
+                    {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatodocumento", "required": 1, "values": "query='.$query.'", "value": "'.$fattura->stato->id.'", "class": "'.(($fattura->stato->name != 'Bozza' && !$abilita_genera) ? '' : 'unblockable').'", "extra": "onchange=\"return cambiaStato()\"" ]}
                 </div>
 			</div>
 
@@ -1238,4 +1250,23 @@ input("ordinamento").on("change", function(){
         });
     }
 });
+
+function risolviStato() {
+    $.ajax({
+        url: globals.rootdir + "/actions.php",
+        type: "POST",
+        dataType: "json",
+        data: {
+            id_module: globals.id_module,
+            id_record: globals.id_record,
+            op: "cambia_stato",
+        },
+        success: function (response) {
+            location.reload();
+        },
+        error: function() {
+            location.reload();
+        }
+    });
+}
 </script>';

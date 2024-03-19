@@ -42,6 +42,10 @@ class Articolo extends Model
 
     protected $table = 'mg_articoli';
 
+    protected static $translated_fields = [
+        'name',
+    ];
+
     public static function build($codice, ?Categoria $categoria = null, ?Categoria $sottocategoria = null)
     {
         $model = new static();
@@ -56,6 +60,7 @@ class Articolo extends Model
 
         return $model;
     }
+
 
     /**
      * Funzione per registrare un movimento del magazzino in relazione all'articolo corrente, modificando di conseguenza la quantità dell'articolo stesso.
@@ -376,5 +381,9 @@ class Articolo extends Model
                 'name' => $value
             ]);
         }
+    }
+
+    public static function getTranslatedFields(){
+        return self::$translated_fields;
     }
 }

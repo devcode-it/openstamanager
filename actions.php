@@ -46,13 +46,6 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
         ]));
     }
 
-    // Controllo sui permessi di scrittura per il file system
-    elseif (!directory($upload_dir)) {
-        flash()->error(tr('Non hai i permessi di scrittura nella cartella _DIR_!', [
-            '_DIR_' => '"files"',
-        ]));
-    }
-
     // Gestione delle operazioni
     else {
         // UPLOAD PER CKEDITOR
@@ -145,6 +138,7 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
 
         // DELETE
         elseif (filter('op') == 'rimuovi-allegato' && filter('filename') !== null) {
+            
             $name = Uploads::delete(filter('filename'), [
                 'id_module' => $id_module,
                 'id_plugin' => $id_plugin,
@@ -168,7 +162,17 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
 elseif (filter('op') == 'download-allegato') {
     $rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($id_module).' AND id='.prepare(filter('id')).' AND filename='.prepare(filter('filename')));
 
-    download($upload_dir.'/'.$rs[0]['filename'], $rs[0]['original']);
+    //download($upload_dir.'/'.$rs[0]['filename'], $rs[0]['original']);
+    $file = Models\Upload::find($rs[0]['id']);
+
+    if (!empty($file)) {
+        $content = $file->get_contents();
+
+        header('Content-Type: application/octet-stream');
+        header('Content-Transfer-Encoding: Binary');
+        header('Content-disposition: attachment; filename="'.basename($file->original_name).'"');
+        echo $content;
+    }
 } elseif (filter('op') == 'visualizza-modifica-allegato') {
     include_once base_dir().'/include/modifica_allegato.php';
 }

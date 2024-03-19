@@ -33,7 +33,7 @@ if (empty($id_record)) {
     $import_selezionato = $import->class;
 
     // Inizializzazione del lettore CSV
-    $csv = new $import_selezionato($record->filepath);
+    $csv = new $import_selezionato($record->local_filepath);
     $fields = $csv->getAvailableFields();
 
     // Generazione della base per i campi da selezionare

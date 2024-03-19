@@ -66,4 +66,49 @@ trait RecordTrait
 
         return collect();
     }
+
+
+    /**
+     * Estensione del salvataggio oggetto per popolare le lingue aggiuntive
+     */
+    public function save()
+    {
+        if ($this->id) {
+            // Lingue aggiuntive disponibili
+            $langs = \App::getAvailableLangs();
+            $other_langs = array_diff($langs, [\App::getLang()]);
+
+            // Popolo inizialmente i campi traducibili o allineo quelli uguali
+            foreach ($this->getTranslatedFields() as $field) {
+                foreach ($other_langs as $id_lang) {
+                    $translation = database()->table($this->table.'_lang')
+                        ->select($field)
+                        ->where('id_record', '=', $this->id)
+                        ->where('id_lang', '=', $id_lang);
+                    
+                    // Se la traduzione non è presente la creo...
+                    if ($translation->count() == 0) {
+                        $translation->insert([
+                            'id_record' => $this->id,
+                            'id_lang' => $id_lang,
+                            $field => $this->{$field},
+                        ]);
+                    }
+
+                    // ...altrimenti la aggiorno se è uguale (quindi probabilmente non ancora tradotta)
+                    /*
+                    else{
+                        if ($translation->first()->{$field} == $this->{$field}) {
+                            $translation->update([
+                                $field => $this->{$field},
+                            ]);
+                        }
+                    }
+                    */
+                }
+            }
+        }
+
+        parent::save();
+    }
 }

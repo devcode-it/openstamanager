@@ -19,6 +19,7 @@
 
 use Modules\Importazione\Import;
 use Models\Module;
+use Modules\FileAdapters\FileAdapter;
 
 include_once __DIR__.'/../../core.php';
 
@@ -28,13 +29,16 @@ switch (filter('op')) {
     case 'add':
         $id_import = filter('id_import');
         $import = Import::find($id_import);
+        $id_adapter = FileAdapter::getLocalConnector()->id;
 
         $id_record = $import->id;
 
         Uploads::upload($_FILES['file'], [
             'id_module' => $id_module,
             'id_record' => $id_record,
+            'id_adapter' => $id_adapter,
         ]);
+
         break;
 
     case 'example':

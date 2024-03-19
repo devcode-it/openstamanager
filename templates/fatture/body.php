@@ -49,7 +49,12 @@ echo "
     <tbody>';
 
 // Righe documento
-$righe = $documento->getRighe();
+if (setting('Raggruppa attività per tipologia in fattura')) {
+    $righe = get_righe_composte($documento);
+} else {
+    $righe = $documento->getRighe();
+}
+
 $num = 0;
 
 if (!setting('Visualizza riferimento su ogni riga in stampa')) {
@@ -108,15 +113,15 @@ foreach ($righe as $riga) {
                         '.nl2br($text);
             }
         }
-        $r['descrizione'] = preg_replace("/Rif\.(.*)/s", '', $r['descrizione']);
+        $r['descrizione'] = preg_replace("/Rif\.(.*)/s", ' ', $r['descrizione']);
         $autofill->count($r['descrizione']);
     }
 
     $source_type = get_class($riga);
-    if (!setting('Visualizza riferimento su ogni riga in stampa')) {
+    if (setting('Visualizza riferimento su ogni riga in stampa')) {
         echo $num.'
             </td>
-            <td>'.$r['descrizione'];
+            <td>'.nl2br($r['descrizione']).'<br>';
     } else {
         echo $num.'
             </td>
@@ -124,10 +129,8 @@ foreach ($righe as $riga) {
     }
 
     if ($riga->isArticolo()) {
-        echo '<br><small>'.$riga->codice.'</small>';
-    } else {
-        echo '-';
-    }
+        echo '<small>'.$riga->codice.'</small>';
+    };
 
     if ($riga->isArticolo()) {
         // Seriali

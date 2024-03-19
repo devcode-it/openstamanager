@@ -2310,3 +2310,54 @@ ALTER TABLE `zz_cache`
     DROP `name`;
 
 ALTER TABLE `zz_cache_lang` ADD CONSTRAINT `zz_cache_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_cache`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES ('Raggruppa attività per tipologia in fattura', '0', 'boolean', '1', 'Fatturazione');
+INSERT INTO `zz_settings_lang` (`id_record`, `id_lang`, `title`) VALUES ((SELECT `id` FROM `zz_settings` WHERE `nome` = 'Raggruppa attività per tipologia in fattura'), (SELECT `valore` FROM `zz_settings` WHERE `nome` = 'Lingua'), 'Raggruppa attività per tipologia in fattura');
+
+-- Introduzione adattatori di archiviazione
+CREATE TABLE `zz_storage_adapters` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `class` varchar(255) NOT NULL,
+  `options` text NOT NULL,
+  `can_delete` tinyint(1) NOT NULL DEFAULT '1',
+  `is_default` tinyint(1) NOT NULL,
+  `is_local` tinyint(1) NOT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `zz_storage_adapters` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `zz_storage_adapters` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `zz_storage_adapters` (`id`, `name`, `class`, `options`, `can_delete`, `is_default`, `is_local`) VALUES
+(1, 'Adattatore locale', '\Modules\FileAdapters\Adapters\LocalAdapter', '{ \"directory\":\"/files\" }', 0, 1, 1);
+
+-- Modulo adattatori di archiviazione
+INSERT INTO `zz_modules` (`id`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES (NULL, 'adattatori_archiviazione', 'SELECT |select| FROM zz_storage_adapters WHERE 1=1 HAVING 2=2', '', 'fa fa-angle-right', '2.5', '2.5', '100', '36', '1', '1', '0', '0');
+INSERT INTO `zz_modules_lang` (`id`, `id_lang`, `id_record`, `name`, `title`) VALUES (NULL, '1', (SELECT id FROM zz_modules WHERE directory='adattatori_archiviazione'), 'Adattatori di archiviazione', 'Adattatori di archiviazione');
+
+-- Viste modulo adattatori di archiviazione
+INSERT INTO `zz_views` (`id`, `id_module`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+(NULL, (SELECT id FROM zz_modules WHERE directory='adattatori_archiviazione'), 'id', 1, 0, 0, 0, 0, '', '', 0, 0, 0),
+(NULL, (SELECT id FROM zz_modules WHERE directory='adattatori_archiviazione'), 'name', 2, 1, 0, 0, 0, '', '', 1, 0, 0),
+(NULL, (SELECT id FROM zz_modules WHERE directory='adattatori_archiviazione'), 'if(is_default=1, "fa fa-check", "")', 2, 1, 0, 0, 0, '', '', 1, 0, 0);
+
+INSERT INTO `zz_views_lang` (`id`, `id_lang`, `id_record`, `name`) VALUES
+(NULL, 1, (SELECT id FROM zz_views WHERE id_module = (SELECT id FROM zz_modules WHERE directory='adattatori_archiviazione') AND query = 'id'), 'id'),
+(NULL, 1, (SELECT id FROM zz_views WHERE id_module = (SELECT id FROM zz_modules WHERE directory='adattatori_archiviazione') AND query = 'name'), 'Nome'),
+(NULL, 1, (SELECT id FROM zz_views WHERE id_module = (SELECT id FROM zz_modules WHERE directory='adattatori_archiviazione') AND query = 'if(is_default=1, "fa fa-check", "")'), 'icon_Predefinito');
+
+ALTER TABLE `zz_files` ADD `id_adapter` INT NOT NULL AFTER `id_record`;
+UPDATE zz_files SET id_adapter=1;
+
+DELETE FROM `zz_settings` WHERE `nome` = 'Iva da applicare su marca da bollo';
+
+-- Aggiunta gestione stato documento Non valida
+INSERT INTO `co_statidocumento` (`icona`, `colore`) VALUES ('fa fa-times text-muted', '#d3d3d3');
+INSERT INTO `co_statidocumento_lang` (`id_record`, `id_lang`, `name`) VALUES ((SELECT MAX(`id`) FROM `co_statidocumento`), (SELECT `valore` FROM `zz_settings` WHERE `nome` = 'Lingua'), 'Non valida');
+
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `help`) VALUES ('Giorni validità fattura scartata', '5', 'int', '0', 'Fatturazione Elettronica', 'Numero di giorni a disposizione per poter correggere una fattura scartata dallo SDI prima di non poter più utilizzare il suo numero di fatturazione. Una volta passati i giorni indicati è necessario emettere una nuova fattura e questa passa in stato Non valida.');
+INSERT INTO `zz_settings_lang` (`id_record`, `id_lang`, `title`) VALUES ((SELECT `id` FROM `zz_settings` WHERE `nome` = 'Giorni validità fattura scartata'), (SELECT `valore` FROM `zz_settings` WHERE `nome` = 'Lingua'), 'Giorni validità fattura scartata');

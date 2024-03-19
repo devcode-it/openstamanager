@@ -1166,6 +1166,14 @@ switch ($op) {
         }
 
         break;
+
+        case 'cambia_stato':
+            $stato = Stato::find((new Stato())->getByName('Non valida')->id_record);
+            $fattura->stato()->associate($stato);
+            $fattura->save();
+
+            break;
+
 }
 
 // Nota di debito

@@ -602,7 +602,7 @@ class Fattura extends Document
         // Bozza o Annullato -> Stato diverso da Bozza o Annullato
         if (
             (in_array($stato_precedente->name, ['Bozza', 'Annullata'])
-            && !in_array($stato->name, ['Bozza', 'Annullata']))
+            && !in_array($stato->name, ['Bozza', 'Annullata', 'Non valida']))
             || $options[0] == 'forza_emissione'
         ) {
             // Registrazione scadenze
@@ -611,7 +611,7 @@ class Fattura extends Document
             // Registrazione movimenti
             $this->gestoreMovimenti->registra();
         } // Stato qualunque -> Bozza o Annullato
-        elseif (in_array($stato->name, ['Bozza', 'Annullata'])) {
+        elseif (in_array($stato->name, ['Bozza', 'Annullata', 'Non valida'])) {
             // Rimozione delle scadenza
             $this->rimuoviScadenze();
 
@@ -622,7 +622,7 @@ class Fattura extends Document
             $this->movimentiContabili()->delete();
         }
 
-        if ($this->changes['data_competenza'] && !in_array($stato->name, ['Bozza', 'Annullata'])) {
+        if ($this->changes['data_competenza'] && !in_array($stato->name, ['Bozza', 'Annullata', 'Non valida'])) {
             $movimenti = Movimento::where('iddocumento', $this->id)->where('primanota', 0)->get();
             foreach ($movimenti as $movimento) {
                 $movimento->data = $this->data_competenza;

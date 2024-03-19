@@ -143,7 +143,7 @@ class DefaultHandler implements HandlerInterface
     </script>';
 
         if (!empty($values['strength'])) {
-            $values['icon-after'] .= ' <i onclick="generatePassword_'.$values['id'].'()" class="clickable fa fa-cog"  id="'.$values['id'].'_generate"></i>&nbsp;|&nbsp;&nbsp;&nbsp;';
+            $values['icon-after'] .= ' <i onclick="generatePassword_'.$values['id'].'()" class="clickable fa fa-cog"  id="'.$values['id'].'_generate"></i>&nbsp;|&nbsp;<span class="fa fa-eye-slash clickable" id="'.$values['id'].'_toggle" onclick="togglePassword_'.$values['id'].'();"></span>';
 
             $result .= '
     <div id="'.$values['id'].'_viewport_progress"></div>
@@ -197,7 +197,7 @@ class DefaultHandler implements HandlerInterface
         }
 
         // Delega al metodo "text", per la generazione del codice HTML
-        $result .= $this->text($values, $extras).'<span class="fa fa-eye-slash clickable form-control-feedback" id="'.$values['id'].'_toggle" onclick="togglePassword_'.$values['id'].'();"></span>';
+        $result .= $this->text($values, $extras);
 
         return $result;
     }

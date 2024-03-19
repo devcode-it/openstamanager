@@ -305,6 +305,10 @@ foreach ($list as $file) {
     include_once $file;
 }
 
+// Inizializzazione traduzioni
 if (database()->tableExists('zz_settings')) {
+    $available_langs = database()->table('zz_langs')->select('id')->pluck('id')->toArray();
+    App::setAvailableLangs($available_langs);
+
     App::setLang(setting('Lingua'));
 }

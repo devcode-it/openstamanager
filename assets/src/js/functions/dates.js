@@ -129,6 +129,7 @@ function start_complete_calendar(id, callback) {
     ranges[globals.translations.nextMonth] = [moment().add(1, 'month').startOf('month'), moment().add(1, 'month').endOf('month')];
     ranges[globals.translations.thisYear] = [moment().startOf('year'), moment().endOf('year')];
     ranges[globals.translations.lastYear] = [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')];
+    ranges[globals.translations.lastYear_thisYear] = [moment().subtract(1, 'year').startOf('year'), moment().endOf('year')];
 
     var format = dateFormatMoment(globals.date_format);
     $(id).daterangepicker({

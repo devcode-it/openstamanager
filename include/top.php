@@ -98,6 +98,7 @@ if (Auth::check()) {
         'nextMonth' => tr('Mese prossimo'),
         'thisYear' => tr("Quest'anno"),
         'lastYear' => tr('Anno scorso'),
+        'lastYear_thisYear' => tr("Quest'anno + prec."),
         'apply' => tr('Applica'),
         'cancel' => tr('Annulla'),
         'from' => tr('Da'),

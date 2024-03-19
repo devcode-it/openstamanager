@@ -74,6 +74,7 @@ switch (post('op')) {
         $intervento->id_preventivo = post('idpreventivo');
         $intervento->id_contratto = $idcontratto;
         $intervento->id_ordine = post('idordine');
+        $intervento->idpagamento = post('idpagamento');
 
         $intervento->id_documento_fe = post('id_documento_fe');
         $intervento->num_item = post('num_item');
@@ -611,6 +612,12 @@ switch (post('op')) {
 
             $intervento = Intervento::build($anagrafica, $tipo, $stato, post('data'), post('id_segment'));
             $intervento->idsede_destinazione = $id_sede;
+
+            if (!empty($documento->idpagamento)) {
+                $intervento->idpagamento = $documento->idpagamento;
+            } else {
+                $intervento->idpagamento = setting('Tipo di pagamento predefinito');
+            }
 
             $intervento->id_documento_fe = $documento->id_documento_fe;
             $intervento->codice_cup = $documento->codice_cup;

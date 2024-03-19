@@ -45,6 +45,8 @@ class Intervento extends Document
         'data_scadenza',
     ];
 
+    protected static $translated_fields = [];
+
     /**
      * Crea un nuovo intervento.
      *
@@ -66,6 +68,7 @@ class Intervento extends Document
         $model->data_richiesta = $data_richiesta;
         $model->id_segment = $id_segment;
         $model->idagente = $anagrafica->idagente;
+        $model->idpagamento = setting('Tipo di pagamento predefinito');
 
         $model->save();
 
@@ -250,5 +253,9 @@ class Intervento extends Document
     public function getReferenceRagioneSociale()
     {
         return $this->anagrafica->ragione_sociale;
+    }
+
+    public static function getTranslatedFields(){
+        return self::$translated_fields;
     }
 }

@@ -151,6 +151,14 @@ echo '
                             {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
                         </div>
                     </div>
+
+                    <div class="row">
+                        <div class="col-md-6">';
+                            echo !empty($record['idpagamento']) ? Modules::link('Pagamenti', $record['idpagamento'], null, null, 'class="pull-right"') : '';
+echo '
+                            {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "idpagamento", "required": 0, "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>';

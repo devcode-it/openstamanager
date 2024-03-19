@@ -415,75 +415,76 @@ switch (filter('op')) {
             $id_tecnico = $user['idanagrafica'];
         }
 
-        // Promemoria da contratti con stato pianificabile
-        $query_promemoria_contratti = "SELECT
-                `co_promemoria`.`id`,
-                `idcontratto`,
-                `richiesta`,
-                `co_contratti`.`nome` AS nome_contratto,
-                `co_contratti`.`numero` AS numero_contratto,
-                `co_contratti`.`data_bozza` AS data_contratto,
-                DATE_FORMAT( `data_richiesta`, '%m%Y') AS mese,
-                `data_richiesta`,
-                `an_anagrafiche`.`ragione_sociale`,
-                'promemoria' AS ref,
-                `in_tipiintervento_lang`.`name` AS tipo_intervento
-            FROM 
-                `co_promemoria`
-                INNER JOIN `co_contratti` ON `co_promemoria`.`idcontratto` = `co_contratti`.`id`
-                INNER JOIN `co_staticontratti` ON `co_contratti`.`idstato` = `co_staticontratti`.`id`
-                INNER JOIN `an_anagrafiche` ON `co_contratti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-                INNER JOIN `in_tipiintervento` ON `co_promemoria`.`idtipointervento` = `in_tipiintervento`.`id`
-                LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare($lingua)."
-            WHERE 
-                `idintervento` IS NULL AND `co_staticontratti`.`is_pianificabile` = 1
-            ORDER BY 
-                `data_richiesta` ASC";
-        $promemoria_contratti = $dbo->fetchArray($query_promemoria_contratti);
+        $query = "(SELECT
+            `co_promemoria`.`id` AS id,
+            `idcontratto` AS idcontratto,
+            `richiesta` AS richiesta,
+            `co_contratti`.`nome` AS nome_contratto,
+            `co_contratti`.`numero` AS numero_contratto,
+            `co_contratti`.`data_bozza` AS data_contratto,
+            DATE_FORMAT( `data_richiesta`, '%m%Y') AS mese,
+            `data_richiesta` AS data_richiesta,
+            `data_scadenza` AS data_scadenza,
+            `an_anagrafiche`.`ragione_sociale` AS ragione_sociale,
+            'promemoria' AS ref,
+            `in_tipiintervento_lang`.`name` AS tipo_intervento,
+            '' AS id_tecnico,
+            '' AS ragione_sociale_tecnico,
+            '' AS colore
+        FROM 
+            `co_promemoria`
+            INNER JOIN `co_contratti` ON `co_promemoria`.`idcontratto` = `co_contratti`.`id`
+            INNER JOIN `co_staticontratti` ON `co_contratti`.`idstato` = `co_staticontratti`.`id`
+            INNER JOIN `an_anagrafiche` ON `co_contratti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+            INNER JOIN `in_tipiintervento` ON `co_promemoria`.`idtipointervento` = `in_tipiintervento`.`id`
+            LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare($lingua)."
+        WHERE 
+            `idintervento` IS NULL AND `co_staticontratti`.`is_pianificabile` = 1)
+        UNION
+        (SELECT 
+            `in_interventi`.`id` AS id,
+            `in_interventi`.`id_contratto` AS idcontratto,
+            `in_interventi`.`richiesta` AS richiesta,
+            '' AS nome_contratto,
+            '' AS numero_contratto,
+            '' AS data_contratto,
+            DATE_FORMAT(IF(`in_interventi`.`data_scadenza` IS NULL, `in_interventi`.`data_richiesta`, `in_interventi`.`data_scadenza`), '%m%Y') AS mese,
+            `in_interventi`.`data_richiesta` AS data_richiesta,
+            `in_interventi`.`data_scadenza` AS data_scadenza,
+            `an_anagrafiche`.`ragione_sociale` AS ragione_sociale,
+            'intervento' AS ref,
+            `in_tipiintervento_lang`.`name` AS tipo_intervento,
+            `in_interventi_tecnici_assegnati`.`id_tecnico` AS id_tecnico,
+            `tecnico`.`ragione_sociale` AS ragione_sociale_tecnico,
+            `tecnico`.`colore`
+        FROM 
+            `in_interventi`
+            INNER JOIN `in_tipiintervento` ON `in_interventi`.`idtipointervento` = `in_tipiintervento`.`id`
+            LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare($lingua)."
+            INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`";
 
-        // Promemoria da interventi con stato NON completato
-        $query_interventi = "SELECT `in_interventi`.`id`,
-                `in_interventi`.`richiesta`,
-                `in_interventi`.`id_contratto` AS idcontratto,
-                `in_interventi_tecnici_assegnati`.`id_tecnico` AS id_tecnico,
-                `tecnico`.`ragione_sociale` AS ragione_sociale_tecnico,
-                DATE_FORMAT(IF(`in_interventi`.`data_scadenza` IS NULL, `in_interventi`.`data_richiesta`, `in_interventi`.`data_scadenza`), '%m%Y') AS mese,
-                IF(`in_interventi`.`data_scadenza` IS NULL, `in_interventi`.`data_richiesta`, `in_interventi`.`data_scadenza`) AS data_richiesta,
-                `in_interventi`.`data_scadenza`,
-                `an_anagrafiche`.`ragione_sociale`,
-                `tecnico`.`colore`,
-                'intervento' AS ref,
-                `in_tipiintervento_lang`.`name` AS tipo_intervento
-            FROM 
-                `in_interventi`
-                INNER JOIN `in_tipiintervento` ON `in_interventi`.`idtipointervento` = `in_tipiintervento`.`id`
-                LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare($lingua)."
-                INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`";
+            // Visualizzo solo promemoria del tecnico loggato
+            if (!empty($id_tecnico) && !empty($solo_promemoria_assegnati)) {
+                $query .= "
+                    INNER JOIN `in_interventi_tecnici_assegnati` ON `in_interventi`.`id` = `in_interventi_tecnici_assegnati`.`id_intervento` AND `id_tecnico` = ".prepare($id_tecnico);
+            } else {
+                $query .= "
+                    LEFT JOIN `in_interventi_tecnici_assegnati` ON `in_interventi`.`id` = `in_interventi_tecnici_assegnati`.`id_intervento`";
+            }
+            
+        $query .= "LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
+            INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`id`
+            LEFT JOIN `an_anagrafiche` AS tecnico ON `in_interventi_tecnici_assegnati`.`id_tecnico` = `tecnico`.`idanagrafica`
+        WHERE 
+            `in_statiintervento`.`is_completato` = 0
+        GROUP BY 
+            `in_interventi`.`id`, `in_interventi_tecnici_assegnati`.`id_tecnico`
+        HAVING 
+            COUNT(`in_interventi_tecnici`.`id`) = 0)
+        ORDER BY 
+            IF(`data_scadenza` IS NULL, `data_richiesta`, `data_scadenza`) ASC";
 
-        // Visualizzo solo promemoria del tecnico loggato
-        if (!empty($id_tecnico) && !empty($solo_promemoria_assegnati)) {
-            $query_interventi .= '
-                INNER JOIN `in_interventi_tecnici_assegnati` ON `in_interventi`.`id` = `in_interventi_tecnici_assegnati`.`id_intervento` AND `id_tecnico` = '.prepare($id_tecnico);
-        } else {
-            $query_interventi .= '
-                LEFT JOIN `in_interventi_tecnici_assegnati` ON `in_interventi`.`id` = `in_interventi_tecnici_assegnati`.`id_intervento`';
-        }
-
-        $query_interventi .= '
-                LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
-                INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`id`
-                LEFT JOIN `an_anagrafiche` AS tecnico ON `in_interventi_tecnici_assegnati`.`id_tecnico` = `tecnico`.`idanagrafica`
-            WHERE 
-                `in_statiintervento`.`is_completato` = 0
-            GROUP BY 
-                `in_interventi`.`id`, `in_interventi_tecnici_assegnati`.`id_tecnico`
-            HAVING 
-                COUNT(`in_interventi_tecnici`.`id`) = 0
-            ORDER BY 
-                `data_richiesta` ASC';
-        $promemoria_interventi = $dbo->fetchArray($query_interventi);
-
-        $promemoria = array_merge($promemoria_contratti, $promemoria_interventi);
+        $promemoria = $dbo->fetchArray($query);
 
         if (!empty($promemoria)) {
             $prev_mese = '';

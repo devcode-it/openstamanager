@@ -28,7 +28,7 @@ class PianoSconto extends Model
 
     protected $table = 'mg_piani_sconto';
 
-    public static function build($nome, $percentuale)
+    public static function build($nome = null, $percentuale = null)
     {
         $model = new static();
 

@@ -29,7 +29,7 @@ class Tipo extends Model
     protected $table = 'co_tipidocumento';
 
 
-    public static function build($dir, $codice_tipo_documento_fe)
+    public static function build($dir = null, $codice_tipo_documento_fe = null)
     {
         $model = new static();
         $model->dir = $dir;

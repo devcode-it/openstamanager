@@ -31,7 +31,7 @@ class Categoria extends Model
     protected $table = 'mg_categorie';
     protected static $parent_identifier = 'parent';
 
-    public static function build($nota, $colore)
+    public static function build($nota = null, $colore = null)
     {
         $model = new static();
         $model->nota = $nota;

@@ -28,7 +28,7 @@ class Stato extends Model
 
     protected $table = 'co_statipreventivi';
 
-    public static function build($icona, $colore, $is_completato, $is_fatturabile, $is_pianificabile)
+    public static function build($icona = null, $colore = null, $is_completato = null, $is_fatturabile = null, $is_pianificabile = null)
     {
         $model = new static();
         $model->icona = $icona;

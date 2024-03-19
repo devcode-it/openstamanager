@@ -35,7 +35,7 @@ class Scadenza extends Model
         'data_pagamento',
     ];
 
-    public static function build($idanagrafica, $descrizione, $importo, $data_scadenza, $id_pagamento, $id_banca_azienda, $id_banca_controparte, $type = 'fattura', $is_pagato = false)
+    public static function build($idanagrafica = null, $descrizione = null, $importo = null, $data_scadenza = null, $id_pagamento = null, $id_banca_azienda = null, $id_banca_controparte = null, $type = 'fattura', $is_pagato = false)
     {
         $model = new static();
 

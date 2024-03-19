@@ -152,7 +152,7 @@ if (!empty($interventi)) {
                 echo '
                 <tr>
                     <td>
-                        '.Modules::link('Articoli', $articolo->idarticolo, $articolo->name).'
+                        '.Modules::link('Articoli', $articolo->idarticolo, $articolo->getTranslation('name')).'
                     </td>
                     <td class="text-right">'.numberFormat($articolo->qta, 'qta').'</td>
                     <td class="text-right danger">'.moneyFormat($articolo->spesa).'</td>

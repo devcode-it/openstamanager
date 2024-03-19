@@ -29,7 +29,7 @@ class Destinatario extends Model
     protected $table = 'em_list_receiver';
     protected $origine;
 
-    public static function build(Lista $lista, $origine)
+    public static function build(Lista $lista = null, $origine = null)
     {
         $model = new static();
         $model->id_list = $lista->id;

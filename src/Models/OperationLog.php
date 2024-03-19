@@ -49,7 +49,7 @@ class OperationLog extends Model
      */
 
 
-    public static function build($operation)
+    public static function build($operation = null)
     {
         if (!\Auth::check()) {
             return null;

@@ -69,7 +69,7 @@ if (!empty($id_riga)) {
 }
 
 if ($fornitore['descrizione'] == '') {
-    $descrizione = json_encode($articolo->name);
+    $descrizione = json_encode($articolo->getTranslation('name'));
 } else {
     $descrizione = json_encode($fornitore['descrizione']);
 }

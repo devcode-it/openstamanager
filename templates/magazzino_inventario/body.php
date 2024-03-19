@@ -102,7 +102,7 @@ foreach ($data['results'] as $r) {
         <tr>
             <td>'.$articolo->codice.'</td>
             <td>'.$r['Categoria'].'</td>
-            <td>'.$articolo->name.'</td>
+            <td>'.$articolo->getTranslation('name').'</td>
             <td class="text-right">'.moneyFormat($articolo->prezzo_vendita).'</td>
             <td class="text-right">'.Translator::numberToLocale($articolo->qta).' '.$articolo->um.'</td>
             <td class="text-right">'.moneyFormat($articolo->prezzo_acquisto).'</td>

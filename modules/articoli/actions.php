@@ -72,7 +72,7 @@ switch (post('op')) {
         $articolo->um = post('um');
         $articolo->um_secondaria = post('um_secondaria');
         $articolo->fattore_um_secondaria = post('fattore_um_secondaria');
-        $articolo->name = post('descrizione');
+        $articolo->setTranslation('name', post('descrizione'));
         $articolo->save();
 
         // Aggiornamento delle varianti per i campi comuni
@@ -152,7 +152,7 @@ switch (post('op')) {
         $componente = post('componente_filename');
         $articolo->componente_filename = $componente;
         $articolo->attivo = post('attivo');
-        $articolo->name = post('descrizione');
+        $articolo->setTranslation('name', post('descrizione'));
         $articolo->note = post('note');
 
         $articolo->save();

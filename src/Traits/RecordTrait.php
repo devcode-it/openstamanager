@@ -71,7 +71,7 @@ trait RecordTrait
     /**
      * Estensione del salvataggio oggetto per popolare le lingue aggiuntive
      */
-    public function save()
+    public function save(array $options = [])
     {
         if ($this->id) {
             // Lingue aggiuntive disponibili
@@ -80,6 +80,8 @@ trait RecordTrait
 
             // Popolo inizialmente i campi traducibili o allineo quelli uguali
             foreach ($this->getTranslatedFields() as $field) {
+                $value = $this->getTranslation($field);
+                
                 foreach ($other_langs as $id_lang) {
                     $translation = database()->table($this->table.'_lang')
                         ->select($field)
@@ -88,11 +90,7 @@ trait RecordTrait
                     
                     // Se la traduzione non è presente la creo...
                     if ($translation->count() == 0) {
-                        $translation->insert([
-                            'id_record' => $this->id,
-                            'id_lang' => $id_lang,
-                            $field => $this->{$field},
-                        ]);
+                        $this->setTranslation($field, $value, $id_lang);
                     }
 
                     // ...altrimenti la aggiorno se è uguale (quindi probabilmente non ancora tradotta)
@@ -110,5 +108,43 @@ trait RecordTrait
         }
 
         parent::save();
+    }
+
+    /**
+     * Imposta l'attributo all'oggetto
+     */
+    public function setTranslation($field, $value, $id_lang = null)
+    {
+        $id_lang ??= \App::getLang();
+        $table = database()->table($this->table.'_lang');
+
+        $translated = $table
+            ->select($field)
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', $id_lang);
+
+        if ($translated->count() > 0) {
+            $translated->update([
+                $field => $value,
+            ]);
+        } else {
+            $table->insert([
+                'id_record' => $this->id,
+                'id_lang' => $id_lang,
+                $field => $value,
+            ]);
+        }
+    }
+
+    /**
+     * Legge l'attributo dell'oggetto
+     */
+    public function getTranslation($field)
+    {
+        return database()->table($this->table.'_lang')
+            ->select($field)
+            ->where('id_record', '=', $this->id)
+            ->where('id_lang', '=', \App::getLang())
+            ->first()->$field;
     }
 }

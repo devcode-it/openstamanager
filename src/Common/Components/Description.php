@@ -27,7 +27,7 @@ abstract class Description extends Component
 {
     use SimpleModelTrait;
 
-    public static function build(Document $document)
+    public static function build(Document $document = null)
     {
         $model = new static();
 

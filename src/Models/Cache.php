@@ -45,7 +45,7 @@ class Cache extends Model
         'expire_at',
     ];
 
-    public static function build($name, $valid_time, $expire_at = null)
+    public static function build($name = null, $valid_time = null, $expire_at = null)
     {
         $model = new self();
 

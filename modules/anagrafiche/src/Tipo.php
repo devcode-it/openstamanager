@@ -28,7 +28,7 @@ class Tipo extends Model
 
     protected $table = 'an_tipianagrafiche';
 
-    public static function build($descrizione)
+    public static function build($descrizione = null)
     {
         $model = new static();
         $model->save();

@@ -45,7 +45,7 @@ class Mastrino extends Model
         'id_anagrafica',
     ];
 
-    public static function build($descrizione, $data, $is_insoluto = false, $contabile = false, $id_anagrafica = null)
+    public static function build($descrizione = null, $data = null, $is_insoluto = false, $contabile = false, $id_anagrafica = null)
     {
         $model = new static();
 

@@ -36,7 +36,7 @@ class Lista extends Model
     protected $table = 'em_lists';
 
 
-    public static function build($name)
+    public static function build($name = null)
     {
         $model = new static();
         $model->save();

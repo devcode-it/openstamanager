@@ -35,7 +35,7 @@ echo '
             </div>
 
             <div class="col-md-6">
-                <span><b>'.tr('Descrizione: ').'</b>'.$articolo->name.'</span>
+                <span><b>'.tr('Descrizione: ').'</b>'.$articolo->getTranslation('name').'</span>
             </div>
         </div>
     </div>
@@ -69,7 +69,7 @@ if (empty($_GET['movimentazione_completa'])) {
 }
 
 echo '
-        <a class="btn btn-warning btn-xs" href="'.base_path().'/controller.php?id_module='.(new Module())->GetByName('Movimenti')->id_record.'&search_Articolo='.($articolo->codice.' - '.$articolo->name).'">
+        <a class="btn btn-warning btn-xs" href="'.base_path().'/controller.php?id_module='.(new Module())->GetByName('Movimenti')->id_record.'&search_Articolo='.($articolo->codice.' - '.$articolo->getTranslation('name')).'">
             <i class="fa fa-external-link"></i>
             '.tr('Visualizza dettagli').'
         </a>';

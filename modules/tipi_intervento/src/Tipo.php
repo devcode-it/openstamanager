@@ -37,7 +37,7 @@ class Tipo extends Model
      *
      * @return self
      */
-    public static function build($codice, $calcola_km, $tempo_standard, $costo_orario, $costo_km, $costo_diritto_chiamata, $costo_orario_tecnico, $costo_km_tecnico, $costo_diritto_chiamata_tecnico)
+    public static function build($codice = null, $calcola_km = null, $tempo_standard = null, $costo_orario = null, $costo_km = null, $costo_diritto_chiamata = null, $costo_orario_tecnico = null, $costo_km_tecnico = null, $costo_diritto_chiamata_tecnico = null)
     {
         $model = new static();
         $model->codice = $codice;

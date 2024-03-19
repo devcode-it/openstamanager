@@ -40,7 +40,7 @@ class Sede extends Model
      *
      * @return self
      */
-    public static function build(Anagrafica $anagrafica, $is_sede_legale = false)
+    public static function build(Anagrafica $anagrafica = null, $is_sede_legale = false)
     {
         $model = parent::make();
 

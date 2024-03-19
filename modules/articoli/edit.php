@@ -65,7 +65,7 @@ use Models\Module;
 
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo $articolo->name; ?>", "charcounter": 1 ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo $articolo->getTranslation('name'); ?>", "charcounter": 1 ]}
 				</div>
 			</div>
 

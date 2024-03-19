@@ -69,7 +69,7 @@ class Upload extends Model
      *
      * @return self
      */
-    public static function build($source, $data, $name = null, $category = null)
+    public static function build($source = null, $data = null, $name = null, $category = null)
     {
         $model = new static();
 
@@ -344,7 +344,7 @@ class Upload extends Model
     {
         if (!isset($this->file_info)) {
             $filepath = $this->local_filepath;
-            $infos = self::getInfo($local_filepath);
+            $infos = self::getInfo($filepath);
 
             $this->file_info = $infos;
         }

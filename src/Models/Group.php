@@ -29,7 +29,7 @@ class Group extends Model
 
     protected $table = 'zz_groups';
 
-    public static function build($nome, $theme, $id_module_start)
+    public static function build($nome = null, $theme = null, $id_module_start = null)
     {
         $model = new static();
         $model->nome = $nome;

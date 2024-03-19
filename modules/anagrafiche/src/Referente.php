@@ -42,7 +42,7 @@ class Referente extends Model
      *
      * @return self
      */
-    public static function build($idanagrafica, $nome, $idmansione, $idsede)
+    public static function build($idanagrafica = null, $nome = null, $idmansione = null, $idsede = null)
     {
         $model = new static();
 

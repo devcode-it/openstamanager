@@ -46,7 +46,7 @@ class Check extends Model
      *
      * @return self
      */
-    public static function build(User $user, $structure, $id_record, $content, $parent_id = null, $is_titolo = 0, $order = 99, $id_module_from = 0, $id_record_from = 0)
+    public static function build(User $user = null, $structure = null, $id_record = null, $content = null, $parent_id = null, $is_titolo = 0, $order = 99, $id_module_from = 0, $id_record_from = 0)
     {
         $model = new static();
 

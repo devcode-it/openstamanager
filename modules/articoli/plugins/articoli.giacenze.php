@@ -58,7 +58,7 @@ echo '
             </div>
 
             <div class="col-md-6">
-                <span><b>'.tr('Descrizione: ').'</b>'.$articolo->name.'</span>
+                <span><b>'.tr('Descrizione: ').'</b>'.$articolo->getTranslation('name').'</span>
             </div>
         </div>
     </div>

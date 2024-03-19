@@ -38,7 +38,7 @@ class Listino extends Model
      *
      * @return self
      */
-    public static function build($nome)
+    public static function build($nome = null)
     {
         $model = new static();
         $model->nome = $nome;

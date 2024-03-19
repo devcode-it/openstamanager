@@ -486,7 +486,7 @@ foreach ($articoli as $elenco) {
     $qta = $elenco->sum('qta');
     $articolo = $elenco->first()->articolo;
 
-    $descrizione_riga = $articolo->codice.' - '.$articolo->name;
+    $descrizione_riga = $articolo->codice.' - '.$articolo->getTranslation('name');
     $text = $articolo ? Modules::link('Articoli', $articolo->id, $descrizione_riga) : $descrizione_riga;
 
     $scorte[$articolo->id] = [

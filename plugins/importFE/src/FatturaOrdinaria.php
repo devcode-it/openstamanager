@@ -226,7 +226,8 @@ class FatturaOrdinaria extends FatturaElettronica
                         $categoria = Categoria::build($nome_categoria);
                     }
 
-                    $articolo = ArticoloOriginale::build($codice, $riga['Descrizione'], $categoria);
+                    $articolo = ArticoloOriginale::build($codice, $categoria);
+                    $articolo->setTranslation('descrizione', $riga['Descrizione']);
                     $articolo->um = $riga['UnitaMisura'];
                     $articolo->idconto_acquisto = $conto[$key];
                     $articolo->abilita_serial = setting('Serial number abilitato di default');

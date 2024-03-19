@@ -63,7 +63,7 @@ class Anagrafica extends Model
      *
      * @return self
      */
-    public static function build($ragione_sociale, $nome = '', $cognome = '', array $tipologie = [])
+    public static function build($ragione_sociale = null, $nome = '', $cognome = '', array $tipologie = [])
     {
         $model = new static();
 

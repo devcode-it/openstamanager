@@ -28,7 +28,7 @@ class Stato extends Model
 
     protected $table = 'or_statiordine';
 
-    public static function build($icona, $colore, $completato, $is_fatturabile, $impegnato)
+    public static function build($icona = null, $colore = null, $completato = null, $is_fatturabile = null, $impegnato = null)
     {
         $model = new static();
         $model->icona = $icona;

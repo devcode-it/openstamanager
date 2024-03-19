@@ -315,7 +315,8 @@ class CSV extends CSVImporter
             $articolo = Articolo::where($primary_key, $record[$primary_key])->withTrashed()->first();
         }
         if (empty($articolo)) {
-            $articolo = Articolo::build($record['codice'], $record['descrizione'], $categoria, $sottocategoria);
+            $articolo = Articolo::build($record['codice'], $categoria, $sottocategoria);
+            $articolo->setTranslation('name', $record['descrizione']);
         } else {
             $articolo->restore();
         }

@@ -31,7 +31,7 @@ class Categoria extends Model
     protected $table = 'my_impianti_categorie';
     protected static $parent_identifier = 'parent';
 
-    public static function build($nome)
+    public static function build($nome = null)
     {
         $model = new static();
 

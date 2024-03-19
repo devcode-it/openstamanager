@@ -29,7 +29,7 @@ class Aliquota extends Model
     protected $table = 'co_iva';
 
 
-    public static function build($esente, $percentuale, $indetraibile, $dicitura, $codice, $codice_natura_fe, $esigibilita)
+    public static function build($esente = null, $percentuale = null, $indetraibile = null, $dicitura = null, $codice = null, $codice_natura_fe = null, $esigibilita = null)
     {
         $model = new static();
         $model->esente = $esente;

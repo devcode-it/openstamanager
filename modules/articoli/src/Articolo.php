@@ -46,7 +46,7 @@ class Articolo extends Model
         'name',
     ];
 
-    public static function build($codice, ?Categoria $categoria = null, ?Categoria $sottocategoria = null)
+    public static function build($codice = null, ?Categoria $categoria = null, ?Categoria $sottocategoria = null)
     {
         $model = new static();
 
@@ -345,43 +345,6 @@ class Articolo extends Model
             ->first();
     }
 
-    /**
-     * Ritorna l'attributo name dell'articolo.
-     *
-     * @return string
-     */
-    public function getNameAttribute()
-    {
-        return database()->table($this->table.'_lang')
-            ->select('name')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->name;
-    }
-
-    /**
-     * Imposta l'attributo name dell'articolo.
-     */
-    public function setNameAttribute($value)
-    {
-        $table = database()->table($this->table.'_lang');
-
-        $translated = $table
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang());
-
-        if ($translated->count() > 0) {
-            $translated->update([
-                'name' => $value
-            ]);
-        } else {
-            $table->insert([
-                'id_record' => $this->id,
-                'id_lang' => \App::getLang(),
-                'name' => $value
-            ]);
-        }
-    }
 
     public static function getTranslatedFields(){
         return self::$translated_fields;

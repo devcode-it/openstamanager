@@ -30,7 +30,7 @@ class Pagamento extends Model
 
     protected $table = 'co_pagamenti';
 
-    public static function build($codice)
+    public static function build($codice = null)
     {
         $model = new static();
         $model->codice_modalita_pagamento_fe = $codice;

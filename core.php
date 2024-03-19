@@ -306,7 +306,7 @@ foreach ($list as $file) {
 }
 
 // Inizializzazione traduzioni
-if (database()->tableExists('zz_settings')) {
+if (database()->tableExists('zz_settings') && database()->tableExists('zz_langs')) {
     $available_langs = database()->table('zz_langs')->select('id')->pluck('id')->toArray();
     App::setAvailableLangs($available_langs);
 

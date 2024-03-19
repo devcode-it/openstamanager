@@ -30,7 +30,7 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
         <div class="col-md-5">
-			{[ "type": "select", "label": "<?php echo tr('Tipo archiviazione'); ?>", "name": "class", "value": "<?=explode('\\', $record["class"])[4]?>", "values": "list=\"LocalAdapter\":\"Archiviazione locale\",\"FTPAdapter\":\"Archiviazione FTP\"", "required": 1 ]}
+			{[ "type": "select", "label": "<?php echo tr('Tipo archiviazione'); ?>", "name": "class", "value": "<?=explode('\\', $record["class"])[4]?>", "values": "list=\"LocalAdapter\":\"Archiviazione locale\",\"FTPAdapter\":\"Archiviazione FTP\"", "required": 1, "disabled": "1" ]}
 		</div>
 
         <div class="col-md-2">
@@ -46,18 +46,29 @@ include_once __DIR__.'/../../core.php';
 
     <!-- PULSANTI -->
     <?php
-    if(!$adapter->is_default && $adapter->can_delete) {
+
+    $rs_files = Models\Upload::where('id_adapter', $record['id'])->get();
+
+    if(sizeof($rs_files)>0) {
         echo '
-    <a class="btn btn-danger ask" data-backto="record-list">
-        <i id ="elimina" class="fa fa-trash"></i> <?php echo tr(\'Elimina\'); ?>
-    </a>';
-    }else{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-warning">L\'adattatore non può essere eliminato perchè uno o più file sono collegati.</div>
+        </div>
+    </div>';
+
+    }else if($adapter->is_default && $adapter->can_delete){
         echo '
     <div class="row">
         <div class="col-md-12">
             <div class="alert alert-warning">L\'adattatore non può essere eliminato.</div>
         </div>
     </div>';
+    }else{
+        echo '
+    <a class="btn btn-danger ask" data-backto="record-list">
+        <i id ="elimina" class="fa fa-trash"></i> <?php echo tr(\'Elimina\'); ?>
+    </a>';
     }
     ?>
 

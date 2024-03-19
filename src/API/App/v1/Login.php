@@ -58,7 +58,7 @@ class Login extends Resource implements CreateInterface
                     LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(\App::getLang()).")
                     INNER JOIN `zz_groups` ON `zz_users`.`idgruppo`=`zz_groups`.`id`
                     LEFT JOIN `zz_groups_lang` ON (`zz_groups_lang`.`id_record` = `zz_groups`.`id` AND `zz_groups_lang`.`id_lang` = ".prepare(\App::getLang()).")
-                WHERE `an_tipianagrafiche_lang`.`name` = 'Tecnico' AND `an_anagrafiche`.`deleted_at` IS NULL AND `id` = :id", [
+                WHERE `an_tipianagrafiche_lang`.`name` = 'Tecnico' AND `an_anagrafiche`.`deleted_at` IS NULL AND `zz_users`.`id` = :id", [
                     ':id' => $user['id'],
                 ]);
             }

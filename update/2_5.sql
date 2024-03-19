@@ -2352,3 +2352,6 @@ INSERT INTO `zz_views_lang` (`id`, `id_lang`, `id_record`, `name`) VALUES
 
 ALTER TABLE `zz_files` ADD `id_adapter` INT NOT NULL AFTER `id_record`;
 UPDATE zz_files SET id_adapter=1;
+
+DELETE FROM `zz_settings` WHERE `nome` = 'Iva da applicare su marca da bollo';
+DELETE FROM `zz_settings_lang` WHERE `name` = 'Iva da applicare su marca da bollo';

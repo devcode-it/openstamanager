@@ -48,7 +48,7 @@ class Bollo
         }
 
         $righe_bollo = $this->fattura->getRighe()->filter(function ($item, $key) {
-            return $item->aliquota != null && in_array($item->aliquota->codice_natura_fe, ['N1', 'N2.1', 'N2.2', 'N3.5', 'N3.6', 'N4']);
+            return $item->aliquota != null && in_array($item->aliquota->codice_natura_fe, ['N2.1', 'N2.2', 'N3.5', 'N3.6', 'N4']);
         });
         $importo_righe_bollo = $righe_bollo->sum('subtotale');
 
@@ -72,6 +72,10 @@ class Bollo
     public function manageRigaMarcaDaBollo()
     {
         $riga = $this->fattura->rigaBollo;
+        $righe_bollo = $this->fattura->getRighe()->filter(function ($item, $key) {
+            return $item->aliquota != null && in_array($item->aliquota->codice_natura_fe, ['N2.1', 'N2.2', 'N3.5', 'N3.6', 'N4']);
+        })->first();
+
         $addebita_bollo = $this->fattura->addebita_bollo;
         $marca_da_bollo = $this->getBollo();
         $cassa_pred = database()->fetchOne('SELECT percentuale FROM co_rivalse WHERE id='.setting('Cassa previdenziale predefinita'));
@@ -95,7 +99,7 @@ class Bollo
         $riga->prezzo_unitario = $marca_da_bollo;
         $riga->qta = 1;
         $riga->descrizione = setting('Descrizione addebito bollo');
-        $riga->id_iva = setting('Iva da applicare su marca da bollo');
+        $riga->id_iva = $righe_bollo->idiva;
         $riga->idconto = setting('Conto predefinito per la marca da bollo');
 
         // Applico la rivalsa alla marca da bollo se previsto

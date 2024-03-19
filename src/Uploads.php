@@ -100,34 +100,18 @@ class Uploads
                 'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
                 'id_record' => $data['id_record'],
             ]);
-            $name = $file['name'];
-
-            $fileinfo = self::fileInfo($filename);
-            $directory = base_dir().'/'.self::getDirectory($data['id_module'], $data['id_plugin']);
-
-            $files = [
-                $directory.'/'.$fileinfo['basename'],
-                $directory.'/'.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'],
-                $directory.'/'.$fileinfo['filename'].'_thumb100.'.$fileinfo['extension'],
-                $directory.'/'.$fileinfo['filename'].'_thumb250.'.$fileinfo['extension'],
-            ];
-
-            if (delete($files)) {
-                $database->delete('zz_files', [
-                    'filename' => $fileinfo['basename'],
-                    'id_module' => !empty($data['id_module']) && empty($data['id_plugin']) ? $data['id_module'] : null,
-                    'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
-                    'id_record' => $data['id_record'],
-                ]);
-
-                if ((new Module())->getByName('Stampe')->id_record == $data['id_module']) {
-                    $database->delete('zz_files_print', [
-                        'id_file' => $file['id'],
-                    ]);
-                }
-
+            
+            if(!empty($file)){
+                $name = $file['name'];
+                
+                $upload = Upload::find($file['id']);
+                $upload->delete();
+                
                 return $name;
+            }else{
+                return null;
             }
+
         }
 
         return null;

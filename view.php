@@ -27,20 +27,38 @@ if (empty($file)) {
     return;
 }
 
-$link = base_path().'/'.$file->filepath;
+$file_content = $file->get_contents();
 
 // Force download of the file
 if (get('download') == '1') {
     header('Content-Type: application/octet-stream');
     header('Content-Transfer-Encoding: Binary');
     header('Content-disposition: attachment; filename="'.basename($file->original_name).'"');
-    readfile(base_dir().'/'.$file->filepath);
-    // download(base_dir().'/'.$file->filepath, basename($file->original_name));
+    echo $file_content;
+    exit;
+}
+
+// Force preview of the file
+if (get('preview') == '1') {
+    if ($file->isImage()) {
+
+        $finfo = finfo_open();
+        $mime_type = finfo_buffer($finfo, $file_content, FILEINFO_MIME_TYPE);
+        finfo_close($finfo);
+
+        header('Content-Type: '.$mime_type);
+        echo $file_content;
+
+    } elseif ($file->isPDF()) {
+
+        header("Content-type: application/pdf");  
+        echo $file_content;
+
+    }
     exit;
 }
 
 if ($file->isFatturaElettronica()) {
-    $content = file_get_contents(base_dir().'/'.$file->filepath);
 
     // Individuazione stylesheet
     $default_stylesheet = 'asso-invoice';
@@ -55,7 +73,7 @@ if ($file->isFatturaElettronica()) {
 
     // XML
     $xml = new DOMDocument();
-    $xml->loadXML($content);
+    $xml->loadXML($file_content);
 
     // XSL
     $xsl = new DOMDocument();
@@ -89,15 +107,19 @@ if ($file->isFatturaElettronica()) {
 </style>';
 
     if ($file->isImage()) {
-        echo '
-    <img src="'.$link.'"></img>';
-    } elseif ($file->isPDF()) {
-        $preview = Prints::getPDFLink($file->filepath);
 
         echo '
-    <iframe src="'.($preview ?: $link).'">
-        <a src="'.$link.'">'.tr('Il browser non supporta i contenuti iframe: clicca qui per raggiungere il file originale').'</a>
+    <iframe src="'.base_path().'/view.php?file_id='.$file_id.'&preview=1">
+        <a src="'.base_path().'/view.php?file_id='.$file_id.'&download=1">'.tr('Il browser non supporta i contenuti iframe: clicca qui per raggiungere il file originale').'</a>
     </iframe>';
+
+    } elseif ($file->isPDF()) {
+
+        echo '
+    <iframe src="'.base_path().'/view.php?file_id='.$file_id.'&preview=1">
+        <a src="'.base_path().'/view.php?file_id='.$file_id.'&download=1">'.tr('Il browser non supporta i contenuti iframe: clicca qui per raggiungere il file originale').'</a>
+    </iframe>';
+
     } else {
         echo '
     <iframe src="'.base_path().'/view.php?file_id='.$file_id.'&download=1">

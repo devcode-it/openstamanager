@@ -2318,7 +2318,7 @@ INSERT INTO `zz_settings_lang` (`id_record`, `id_lang`, `title`) VALUES ((SELECT
 CREATE TABLE `zz_storage_adapters` (
   `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `class` enum('LocalAdapter','FTPAdapter','') NOT NULL,
+  `class` varchar(255) NOT NULL,
   `options` text NOT NULL,
   `can_delete` tinyint(1) NOT NULL DEFAULT '1',
   `is_default` tinyint(1) NOT NULL,
@@ -2333,7 +2333,7 @@ ALTER TABLE `zz_storage_adapters` ADD PRIMARY KEY (`id`);
 ALTER TABLE `zz_storage_adapters` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 INSERT INTO `zz_storage_adapters` (`id`, `name`, `class`, `options`, `can_delete`, `is_default`, `is_local`) VALUES
-(1, 'Adattatore locale', '\Modules\FileAdapters\Adapters\LocalAdapter', '{   \"directory\":\"/files\" }', 0, 1, 1);
+(1, 'Adattatore locale', '\Modules\FileAdapters\Adapters\LocalAdapter', '{ \"directory\":\"/files\" }', 0, 1, 1);
 
 -- Modulo adattatori di archiviazione
 INSERT INTO `zz_modules` (`id`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES (NULL, 'adattatori_archiviazione', 'SELECT |select| FROM zz_storage_adapters WHERE 1=1 HAVING 2=2', '', 'fa fa-angle-right', '2.5', '2.5', '100', '36', '1', '1', '0', '0');

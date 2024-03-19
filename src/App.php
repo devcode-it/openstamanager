@@ -30,7 +30,8 @@ class App
     public static $rootdir;
     public static $baseurl;
 
-    public static $lang;
+    protected static $available_langs = [];
+    protected static $lang;
 
     /** @var array Identificativo del modulo corrente */
     protected static $current_module;
@@ -98,6 +99,16 @@ class App
         }
 
         return self::$config;
+    }
+
+    public static function getAvailableLangs()
+    {
+        return self::$available_langs;
+    }
+
+    public static function setAvailableLangs($values)
+    {
+        self::$available_langs = (array)$values;
     }
 
     public static function getLang()

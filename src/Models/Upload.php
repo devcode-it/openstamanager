@@ -79,7 +79,7 @@ class Upload extends Model
         $category = isset($data['category']) ? $data['category'] : $category;
 
         // Nome e categoria dell'allegato
-        $model->name = !empty($name) ? $name : $original_name;
+        $model->setTranslation('name', !empty($name) ? $name : $original_name);
         $model->category = $category;
 
         // Nome di origine dell'allegato
@@ -134,9 +134,9 @@ class Upload extends Model
 
         // Rimozione estensione dal nome visibile
         $extension = $file['extension'];
-        if (string_ends_with($model->name, $extension)) {
+        if (string_ends_with($model->getTranslation('name'), $extension)) {
             $length = strlen($extension) + 1;
-            $model->name = substr($model->name, 0, -$length);
+            $model->setTranslation('name', substr($model->getTranslation('name'), 0, -$length));
         }
 
         $model->save();
@@ -151,7 +151,7 @@ class Upload extends Model
     {
         $parent = $this->plugin ?: $this->module;
 
-        return strtolower($parent->name);
+        return strtolower($parent->getTranslation('name'));
     }
 
     /**
@@ -251,7 +251,7 @@ class Upload extends Model
 
         $file = $filesystem->read($this->directory."/".$this->filename);
 
-        $result = self::build($file, $data, $this->name, $this->category);
+        $result = self::build($file, $data, $this->getTranslation('name'), $this->category);
 
         return $result;
     }

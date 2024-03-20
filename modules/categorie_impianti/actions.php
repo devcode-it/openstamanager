@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\Checklists\Check;
 use Models\Module;
 
-$modulo_impianti = (new Module())->getByName('Impianti')->id_record;
+$modulo_impianti = (new Module())->getByField('name', 'Impianti');
 
 switch (filter('op')) {
     case 'update':

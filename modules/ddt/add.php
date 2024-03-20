@@ -24,17 +24,17 @@ use Models\Module;
 
 $module = Module::find($id_module);
 
-if ($module->name == 'Ddt di vendita') {
+if ($module->getTranslation('name') == 'Ddt di vendita') {
     $dir = 'entrata';
 
-    $id_tipoddt = (new Tipo())->getByName('Ddt in uscita')->id_record;
+    $id_tipoddt = (new Tipo())->getByField('name', 'Ddt in uscita');
 
     $tipo_anagrafica = tr('Cliente');
     $label = tr('Destinatario');
 } else {
     $dir = 'uscita';
 
-    $id_tipoddt = (new Tipo())->getByName('Ddt in entrata')->id_record;
+    $id_tipoddt = (new Tipo())->getByField('name', 'Ddt in entrata');
 
     $tipo_anagrafica = tr('Fornitore');
     $label = tr('Mittente');
@@ -56,7 +56,7 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo $label; ?>", "name": "idanagrafica", "id": "idanagrafica_add", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "clienti_fornitori", "icon-after": "add|<?php echo (new Module())->getByName('Anagrafiche')->id_record; ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>" ]}
+			{[ "type": "select", "label": "<?php echo $label; ?>", "name": "idanagrafica", "id": "idanagrafica_add", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "clienti_fornitori", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Anagrafiche'); ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>" ]}
 		</div>
 
 		<!-- il campo idtipoddt può essere anche rimosso -->
@@ -67,7 +67,7 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Causale trasporto'); ?>", "name": "idcausalet", "required": 1, "value": "<?php echo $id_causalet; ?>", "ajax-source": "causali", "icon-after": "add|<?php echo (new Module())->getByName('Causali')->id_record; ?>|||" ]}
+			{[ "type": "select", "label": "<?php echo tr('Causale trasporto'); ?>", "name": "idcausalet", "required": 1, "value": "<?php echo $id_causalet; ?>", "ajax-source": "causali", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Causali'); ?>|||" ]}
 		</div>
 
 		<div class="col-md-6">

@@ -19,7 +19,7 @@
 
 use Models\Module;
 
-if ($id_module == (new Module())->getByName('Fatture di acquisto')->id_record) {
+if ($id_module == (new Module())->getByField('name', 'Fatture di acquisto')) {
     $conti = 'conti-acquisti';
 } else {
     $conti = 'conti-vendite';

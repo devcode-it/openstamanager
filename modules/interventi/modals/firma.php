@@ -24,7 +24,7 @@ use Models\PrintTemplate;
 
 $id_records = explode(';', get('id_records'));
 $id_print = setting('Stampa per anteprima e firma');
-$template = PrintTemplate::find($id_print)->name;
+$template = PrintTemplate::find($id_print)->getTranslation('name');
 
 $interventi_completati = [];
 $interventi_firmati = [];

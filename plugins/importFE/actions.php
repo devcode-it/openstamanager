@@ -148,7 +148,7 @@ switch (filter('op')) {
         $fattura_pa->delete();
         $fattura = Fattura::find($id_fattura);
         $id_autofattura = post('autofattura');
-        $new_stato = (new Stato())->getByName('Pagato')->id_record;
+        $new_stato = (new Stato())->getByField('name', 'Pagato');
 
         if ($fattura->isAutofattura() && !empty($id_autofattura)) {
             $autofattura_collegata = Fattura::find($id_autofattura);
@@ -175,7 +175,7 @@ switch (filter('op')) {
 
         // Aggiorno la tipologia di anagrafica fornitore
         $anagrafica = $database->fetchOne('SELECT `idanagrafica` FROM `co_documenti` WHERE `co_documenti`.`id`='.prepare($id_fattura));
-        $id_tipo = (new Tipo())->getByName('Fornitore')->id_record;
+        $id_tipo = (new Tipo())->getByField('name', 'Fornitore');
         $rs_t = $database->fetchOne('SELECT * FROM `an_tipianagrafiche_anagrafiche` WHERE `idtipoanagrafica`='.prepare($id_tipo).' AND `idanagrafica`='.prepare($anagrafica['idanagrafica']));
 
         // Se non trovo corrispondenza aggiungo all'anagrafica la tipologia fornitore
@@ -286,7 +286,7 @@ switch (filter('op')) {
 
             $iva[$key] = [
                 'id' => $aliquota->id,
-                'descrizione' => $aliquota->name,
+                'descrizione' => $aliquota->getTranslation('name'),
             ];
         }
 
@@ -656,7 +656,7 @@ switch (filter('op')) {
                         'id_iva' => $riga->id_iva,
                         'iva_percentuale' => $riga->aliquota->percentuale,
                         'id_articolo' => $riga->idarticolo,
-                        'desc_articolo' => str_replace(' ', '_', $riga->articolo->codice.' - '.$riga->articolo->name),
+                        'desc_articolo' => str_replace(' ', '_', $riga->articolo->codice.' - '.$riga->articolo->getTranslation('name')),
                         'id_conto' => $riga->articolo->idconto_acquisto,
                         'desc_conto' => str_replace(' ', '_', $desc_conto),
                     ],

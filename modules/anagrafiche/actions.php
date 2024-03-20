@@ -348,14 +348,14 @@ switch (post('op')) {
 
 // Operazioni aggiuntive per il logo e filigrana stampe
 if (filter('op') == 'aggiungi-allegato' || filter('op') == 'modifica-allegato') {
-    $nome = $upload->name;
+    $nome = $upload->getTranslation('name');
 
     $logo_stampe = ['logo stampe', 'logo_stampe', 'logo stampe.jpg', 'logo stampe.png'];
     if (in_array(strtolower($nome), $logo_stampe)) {
         $nome = 'Logo stampe';
         $uploads = $structure->uploads($id_record)->where('filename', $upload->filename);
         foreach ($uploads as $logo) {
-            $logo->name = $nome;
+            $logo->setTranslation('name', $nome);
             $logo->save();
         }
     }
@@ -365,7 +365,7 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'modifica-allegato') 
         $nome = 'Filigrana stampe';
         $uploads = $structure->uploads($id_record)->where('filename', $upload->filename);
         foreach ($uploads as $filigrana) {
-            $filigrana->name = $nome;
+            $filigrana->setTranslation('name', $nome);
             $filigrana->save();
         }
     }

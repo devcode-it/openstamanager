@@ -27,6 +27,7 @@ use Traits\Components\NoteTrait;
 use Traits\Components\UploadTrait;
 use Traits\LocalPoolTrait;
 use Traits\ManagerTrait;
+use Traits\RecordTrait;
 
 class Plugin extends Model
 {
@@ -38,6 +39,13 @@ class Plugin extends Model
     }
     use NoteTrait;
     use ChecklistTrait;
+    use RecordTrait;
+
+
+    protected static $translated_fields = [
+        'name',
+        'title',
+    ];
 
     protected $table = 'zz_plugins';
     protected $main_folder = 'plugins';
@@ -135,48 +143,12 @@ class Plugin extends Model
         });
     }
 
-    /**
-     * Ritorna l'attributo title del plugin.
-     *
-     * @return string
-     */
-    public function getTitleAttribute()
+    public function getModuleAttribute()
     {
-        return database()->table($this->table.'_lang')
-            ->select('name')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->name;
+        return '';
     }
 
-    /**
-     * Ritorna l'attributo name del plugin.
-     *
-     * @return string
-     */
-    public function getNameAttribute()
-    {
-        return database()->table($this->table.'_lang')
-            ->select('name')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->name;
-    }
-
-
-    /**
-     * Ritorna l'id del plugin a partire dal nome.
-     *
-     * @param string $name il nome da ricercare
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getByName($name)
-    {
-        return database()->table($this->table.'_lang')
-            ->select('id_record')
-            ->where('name', '=', $name)
-            ->where('id_lang', '=', \App::getLang())
-            ->first();
+    public static function getTranslatedFields(){
+        return self::$translated_fields;
     }
 }

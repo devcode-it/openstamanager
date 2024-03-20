@@ -145,7 +145,7 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
                     $idriga = $rs_copie[0]['id'];
                 } else {
                     $idintervento = get_new_idintervento();
-                    $stato = (new Stato())->getByName('Chiamata')->id_record;
+                    $stato = (new Stato())->getByField('name', 'Chiamata');
 
                     $database->insert('in_interventi', [
                         'idintervento' => $idintervento,

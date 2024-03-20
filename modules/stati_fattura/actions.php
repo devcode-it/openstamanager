@@ -23,14 +23,14 @@ use Modules\Fatture\Stato;
 switch (post('op')) {
     case 'update':
         $descrizione = post('descrizione');
-        $stato_new = (new Stato())->getByName($descrizione)->id_record;
+        $stato_new = (new Stato())->getByField('name', $descrizione);
         
         if (!empty($stato_new) && $stato_new != $id_record){
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato.'));
         } else {
             $stato->icona = post('icona');
             $stato->colore = post('colore');
-            $stato->name = $descrizione;
+            $stato->setTranslation('name', $descrizione);
             $stato->save();
         break;
     }

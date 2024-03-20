@@ -181,8 +181,8 @@ echo '</tbody>
     </div>
 </div>';
 
-$id_modulo_pianificazione = (new Module())->getByName('Contratti')->id_record;
-$plugin_pianificazione = Plugin::find((new Plugin())->getByName('Pianificazione fatturazione')->id_record);
+$id_modulo_pianificazione = (new Module())->getByField('name', 'Contratti');
+$plugin_pianificazione = Plugin::find((new Plugin())->getByField('name', 'Pianificazione fatturazione'));
 
 echo '
 <script>

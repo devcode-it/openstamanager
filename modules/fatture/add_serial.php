@@ -24,7 +24,7 @@ use Models\Module;
 use Models\Plugin;
 
 $module = Module::find($id_module);
-$id_module_articoli = (new Module())->getByName('Articoli')->id_record;
+$id_module_articoli = (new Module())->getByField('name', 'Articoli');
 
 // Controllo sulla direzione monetaria
 $uscite = [
@@ -33,7 +33,7 @@ $uscite = [
     'Ordini fornitore',
 ];
 
-if (in_array($module->name, $uscite)) {
+if (in_array($module->getTranslation('name'), $uscite)) {
     $dir = 'uscita';
 } else {
     $dir = 'entrata';
@@ -67,17 +67,17 @@ $data = [
 ];
 
 // Individuazione delle tabelle interessate
-if (in_array($module->name, ['Fatture di vendita', 'Fatture di acquisto'])) {
+if (in_array($module->getTranslation('name'), ['Fatture di vendita', 'Fatture di acquisto'])) {
     $modulo = 'fat';
-} elseif (in_array($module->name, ['Ddt di vendita', 'Ddt di acquisto'])) {
+} elseif (in_array($module->getTranslation('name'), ['Ddt di vendita', 'Ddt di acquisto'])) {
     $modulo = 'ddt';
     $ddt = DDT::find($id_record);
     $is_rientrabile = $database->fetchOne('SELECT * FROM `dt_causalet` WHERE `id` = '.prepare($ddt->idcausalet))['is_rientrabile'];
-} elseif (in_array($module->name, ['Ordini cliente', 'Ordini fornitore'])) {
+} elseif (in_array($module->getTranslation('name'), ['Ordini cliente', 'Ordini fornitore'])) {
     $modulo = 'ord';
-} elseif ($module->name == 'Interventi') {
+} elseif ($module->getTranslation('name') == 'Interventi') {
     $modulo = 'int';
-} elseif ($module->name == 'Contratti') {
+} elseif ($module->getTranslation('name') == 'Contratti') {
     $modulo = 'con';
 } else {
     $modulo = 'veb';
@@ -196,7 +196,7 @@ if ($dir == 'entrata') {
     </div>';
     }
 
-    $module_fatture = (new Module())->getByName('Fatture di acquisto')->id_record;
+    $module_fatture = (new Module())->getByField('name', 'Fatture di acquisto');
     
     echo '
     <br>

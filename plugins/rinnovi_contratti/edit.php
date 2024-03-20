@@ -82,7 +82,7 @@ while (!empty($id_contratto_precedente) && $counter < 50) {
     echo '
         <tr>
             <td>
-                '.Modules::link($module->name, $id_contratto_precedente, tr('Contratto num. _NUM_', [
+                '.Modules::link($module->getTranslation('name'), $id_contratto_precedente, tr('Contratto num. _NUM_', [
                     '_NUM_' => $rs[0]['numero'],
                 ]).'<br><small class="text-muted">'.$rs[0]['nome'].'</small>').'
             </td>

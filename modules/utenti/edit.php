@@ -25,7 +25,7 @@ echo '
 	<div class="panel panel-primary">
 		<div class="panel-heading">
 			<h3 class="panel-title">'.tr('Utenti del gruppo: _GROUP_', [
-                '_GROUP_' => $group->name,
+                '_GROUP_' => $group->getTranslation('name'),
             ]).'</h3>
 		</div>
 

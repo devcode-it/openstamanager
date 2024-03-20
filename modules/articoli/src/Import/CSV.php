@@ -368,7 +368,7 @@ class CSV extends CSVImporter
             if (!empty($file_content)) {
                 if ($record['import_immagine'] == 2 || $record['import_immagine'] == 4) {
                     \Uploads::deleteLinked([
-                        'id_module' => (new Module())->getByName('Articoli')->id_record,
+                        'id_module' => (new Module())->getByField('name', 'Articoli'),
                         'id_record' => $articolo->id,
                     ]);
 
@@ -385,7 +385,7 @@ class CSV extends CSVImporter
                     'name' => 'Immagine',
                     'category' => 'Immagini',
                     'original_name' => $name,
-                    'id_module' => (new Module())->getByName('Articoli')->id_record,
+                    'id_module' => (new Module())->getByField('name', 'Articoli'),
                     'id_record' => $articolo->id,
                 ], [
                     'thumbnails' => true,
@@ -467,7 +467,7 @@ class CSV extends CSVImporter
         }
 
         if ($dettagli['dir']) {
-            $tipo = (new Tipo())->getByName($dettagli['dir'])->id_record;
+            $tipo = (new Tipo())->getByField('name', $dettagli['dir']);
             $tipi = $anagrafica->tipi->pluck('id')->toArray();
             $tipi[] = $tipo;
 

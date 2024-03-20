@@ -53,8 +53,8 @@ echo ($record['dir'] == 'entrata') ? tr('Vendita') : tr('Acquisto'); ?>." ]}
 
         <?php
 
-$id_module_acquisti = (new Module())->getByName('Fatture di acquisto')->id_record;
-$id_module_vendite = (new Module())->getByName('Fatture di vendita')->id_record;
+$id_module_acquisti = (new Module())->getByField('name', 'Fatture di acquisto');
+$id_module_vendite = (new Module())->getByField('name', 'Fatture di vendita');
 
 echo '
 		<div class="col-md-3">

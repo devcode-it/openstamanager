@@ -112,7 +112,7 @@ if (empty($record) || !$has_access) {
             <ul class="nav nav-tabs pull-right" id="tabs" role="tablist">
                 <li class="pull-left active header">
                     <a data-toggle="tab" href="#tab_0">
-                        <i class="'.$structure['icon'].'"></i> '.$structure['title'];
+                        <i class="'.$structure['icon'].'"></i> '.$structure->getTranslation('title');
 
     // Pulsante "Aggiungi" solo se il modulo è di tipo "table" e se esiste il template per la popup
     if ($structure->hasAddFile() && $structure->permission == 'rw') {
@@ -173,7 +173,7 @@ if (empty($record) || !$has_access) {
 
                             {( "name": "button", "type": "email", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "id_record": "'.$id_record.'" )}';
 
-    if (Module::find((new Module())->getByName('Account SMS')->id_record)) {
+    if (Module::find((new Module())->getByField('name', 'Account SMS'))) {
         echo '
                             {( "name": "button", "type": "sms", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "id_record": "'.$id_record.'" )}';
     }

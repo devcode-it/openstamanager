@@ -97,7 +97,7 @@ echo '
         </table>';
 
 // Variabili utilizzabili
-$variables = include Modules::filepath((new Module())->getByName('Fatture di vendita')->id_record, 'variables.php');
+$variables = include Modules::filepath((new Module())->getByField('name', 'Fatture di vendita'), 'variables.php');
 
 echo '
 		<!-- Istruzioni per il contenuto -->

@@ -21,14 +21,18 @@ namespace Modules\Fatture;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
-
+use Traits\RecordTrait;
 class StatoFE extends Model
 {
     use SimpleModelTrait;
-
+    use RecordTrait;
     public $incrementing = false;
     protected $table = 'fe_stati_documento';
     protected $primaryKey = 'codice';
+
+    protected static $translated_fields = [
+        'name',
+    ];
 
     public function fatture()
     {
@@ -40,28 +44,13 @@ class StatoFE extends Model
      *
      * @return string
      */
-    public function getNameAttribute()
-    {
-        return database()->table($this->table.'_lang')
-            ->select('name')
-            ->where('id_record', '=', $this->codice)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->name;
-    }
 
-    /**
-     * Ritorna l'id dello stato fe a partire dal nome.
-     *
-     * @param string $name il nome da ricercare
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getByName($name)
-    {
-        return database()->table($this->table.'_lang')
-            ->select('id_record')
-            ->where('name', '=', $name)
-            ->where('id_lang', '=', \App::getLang())
-            ->first();
-    }
+     public function getModuleAttribute()
+     {
+         return '';
+     }
+     
+     public static function getTranslatedFields(){
+         return self::$translated_fields;
+     }
 }

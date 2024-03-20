@@ -68,7 +68,7 @@ class ServicesHook extends Manager
                 ]).'</ul>';
             }
 
-            $id_module = (new Module())->getByName('Stato dei servizi')->id_record;
+            $id_module = (new Module())->getByField('name', 'Stato dei servizi');
         }
 
         return [

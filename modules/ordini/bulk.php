@@ -29,7 +29,7 @@ use Modules\Ordini\Tipo;
 use Models\Module;
 
 // Segmenti
-$id_modulo_fatture = (new Module())->getByName('Fatture di vendita')->id_record;
+$id_modulo_fatture = (new Module())->getByField('name', 'Fatture di vendita');
 if (!isset($_SESSION['module_'.$id_modulo_fatture]['id_segment'])) {
     $segments = Modules::getSegments($id_modulo_fatture);
     $_SESSION['module_'.$id_modulo_fatture]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
@@ -49,7 +49,7 @@ switch (post('op')) {
 
         $tipo_documento = TipoFattura::where('id', post('idtipodocumento'))->first();
 
-        $stato_documenti_accodabili = (new Stato())->getByName('Bozza')->id_record;
+        $stato_documenti_accodabili = (new Stato())->getByField('name', 'Bozza');
         $accodare = post('accodare');
 
         $data = date('Y-m-d');
@@ -175,7 +175,7 @@ switch (post('op')) {
         foreach ($id_records as $id) {
             $ordine = Ordine::find($id);
 
-            if (in_array($ordine->stato->name, ['Bozza', 'In attesa di conferma', 'Accettato'])) {
+            if (in_array($ordine->stato->getTranslation('name'), ['Bozza', 'In attesa di conferma', 'Accettato'])) {
                 // Controllo se è già stato creato un nuovo ordine per l'anagrafica
                 if (in_array($ordine->idanagrafica, array_keys($new_ordini))) {
                     $new_ordine = Ordine::find($new_ordini[$ordine->idanagrafica]);

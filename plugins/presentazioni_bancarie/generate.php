@@ -221,7 +221,7 @@ echo '
     </div>
 </div>';
 
-$modulo_prima_nota = (new Module())->getByName('Prima nota')->id_record;
+$modulo_prima_nota = (new Module())->getByField('name', 'Prima nota');
 echo '
 <script>
 

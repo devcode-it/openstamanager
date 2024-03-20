@@ -25,6 +25,6 @@ if (isset($id_record)) {
     $print = PrintTemplate::find($id_record);
     
     $record = $print->toArray();
-    $record['title'] = $print->title;
+    $record['title'] = $print->getTranslation('title');
     $record['filename'] = $print->filename;
 }

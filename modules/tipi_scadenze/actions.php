@@ -37,7 +37,7 @@ switch (filter('op')) {
                     'description' => $descrizione,
                 ], ['id_record' => $id_record, 'id_lang' => \App::getLang()]);
 
-                $segmento = $dbo->fetchOne('SELECT `zz_segments`.`id` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments_lang`.`id_record` = `zz_segments`.`id` AND `zz_segments_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `id_module` = '.prepare((new Module())->getByName('Scadenzario')->id_record).' AND `clause` = "co_scadenziario.tipo=\''.$nome_prev.'\'" AND `zz_segments_lang`.`name` = "Scadenzario '.$nome_prev.'"')['id'];
+                $segmento = $dbo->fetchOne('SELECT `zz_segments`.`id` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments_lang`.`id_record` = `zz_segments`.`id` AND `zz_segments_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `id_module` = '.prepare((new Module())->getByField('name', 'Scadenzario')).' AND `clause` = "co_scadenziario.tipo=\''.$nome_prev.'\'" AND `zz_segments_lang`.`name` = "Scadenzario '.$nome_prev.'"')['id'];
 
                 // aggiorno anche il segmento
                 $dbo->update('zz_segments', [
@@ -86,7 +86,7 @@ switch (filter('op')) {
 
                 // Aggiungo anche il segmento
                 $dbo->insert('zz_segments', [
-                    'id_module' => (new Module())->getByName('Scadenzario')->id_record,
+                    'id_module' => (new Module())->getByField('name', 'Scadenzario'),
                     'clause' => 'co_scadenziario.tipo="'.$nome.'"',
                     'position' => 'WHR',
                 ]);

@@ -52,7 +52,7 @@ foreach ($mansioni as $mansione) {
 }
 
 // Aggiungo email tecnici assegnati quando sono sul template Notifica intervento
-if ($template->name == 'Notifica intervento') {
+if ($template->getTranslation('name') == 'Notifica intervento') {
     $tecnici = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico', [], ['id_intervento' => $id_record]);
     foreach ($tecnici as $tecnico) {
         $anagrafica = $dbo->table('an_anagrafiche')->where('idanagrafica', $tecnico['id_tecnico'])->where('email', '!=', '')->first();
@@ -164,7 +164,7 @@ if ($smtp['pec'] == 1 && $module['name'] == 'Fatture di vendita') {
 echo '
 
         <div class="col-md-6">
-            {[ "type": "select", "multiple": "1", "label": "'.tr('Allegati').'", "name": "uploads[]", "value": "'.implode(',', $uploads).'", "help": "'.tr('Allegati del documento o caricati nell\'anagrafica dell\'azienda.').'", "values": "query=SELECT `id`, `name` AS text FROM `zz_files` WHERE `id_module` = '.prepare($id_module).' AND `id_record` = '.prepare($id_record).' UNION SELECT `id`, CONCAT(`name`, \' (Azienda)\') AS text FROM `zz_files` WHERE `id_module` = '.(new Module())->getByName('Anagrafiche')->id_record.' AND `id_record` = (SELECT `valore` FROM `zz_settings` WHERE `name` = \'Azienda predefinita\')", "link": "allegato" ]}
+            {[ "type": "select", "multiple": "1", "label": "'.tr('Allegati').'", "name": "uploads[]", "value": "'.implode(',', $uploads).'", "help": "'.tr('Allegati del documento o caricati nell\'anagrafica dell\'azienda.').'", "values": "query=SELECT `id`, `name` AS text FROM `zz_files` WHERE `id_module` = '.prepare($id_module).' AND `id_record` = '.prepare($id_record).' UNION SELECT `id`, CONCAT(`name`, \' (Azienda)\') AS text FROM `zz_files` WHERE `id_module` = '.(new Module())->getByField('name', 'Anagrafiche').' AND `id_record` = (SELECT `valore` FROM `zz_settings` WHERE `name` = \'Azienda predefinita\')", "link": "allegato" ]}
         </div>
     </div>';
 

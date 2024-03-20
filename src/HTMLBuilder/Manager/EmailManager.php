@@ -82,7 +82,7 @@ class EmailManager implements ManagerInterface
             ]) : tr('in coda di invio');
 
             $descrizione = \Modules::link('Stato email', $email->id, tr('Email "_EMAIL_" da _USER_', [
-                '_EMAIL_' => $email->template->name,
+                '_EMAIL_' => $email->template->getTranslation('name'),
                 '_USER_' => $email->user->username,
             ]));
 

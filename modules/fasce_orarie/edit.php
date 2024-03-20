@@ -77,7 +77,7 @@ use Modules\Pagamenti\Pagamento;
 
             <?php
 
-                $results = (new Pagamento())->getByName(prepare($record['descrizione']))->id_record;
+                $results = (new Pagamento())->getByField('name', prepare($record['descrizione']));
 $numero_data = 1;
 foreach ($results as $result) {
 }

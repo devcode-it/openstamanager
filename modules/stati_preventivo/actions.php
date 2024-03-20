@@ -23,7 +23,7 @@ use Modules\Preventivi\Stato;
 switch (post('op')) {
     case 'update':
         $descrizione = post('descrizione');
-        $stato_new = (new Stato())->getByName($descrizione)->id_record;
+        $stato_new = (new Stato())->getByField('name', $descrizione);
 
         if (!empty($stato_new) && $stato_new != $id_record){
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato dei preventivi.'));
@@ -34,7 +34,7 @@ switch (post('op')) {
             $stato->is_fatturabile = post('is_fatturabile');
             $stato->is_pianificabile = post('is_pianificabile');
             $stato->is_revisionabile = post('is_revisionabile');
-            $stato->name = $descrizione;
+            $stato->setTranslation('name', $descrizione);
             $stato->save();
         }
         break;
@@ -47,14 +47,14 @@ switch (post('op')) {
         $is_fatturabile = post('is_fatturabile');
         $is_pianificabile = post('is_pianificabile');
 
-        $stato_new = Stato::find((new Stato())->getByName($descrizione)->id_record);
+        $stato_new = Stato::find((new Stato())->getByField('name', $descrizione));
 
         if ($stato_new) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato dei preventivi.'));
         } else {
             $stato = Stato::build($icona, $colore, $is_completato, $is_fatturabile, $is_pianificabile);
             $id_record= $dbo->lastInsertedID();
-            $stato->name = $descrizione;
+            $stato->setTranslation('name', $descrizione);
             $stato->save();
 
             flash()->info(tr('Nuovo stato preventivi aggiunto.'));

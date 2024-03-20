@@ -21,45 +21,30 @@ namespace Modules\Anagrafiche;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
+use Traits\RecordTrait;
 
 class Nazione extends Model
 {
     use SimpleModelTrait;
+    use RecordTrait;
 
     protected $table = 'an_nazioni';
+
+    protected static $translated_fields = [
+        'name',
+    ];
 
     public function anagrafiche()
     {
         return $this->hasMany(Anagrafica::class, 'id_nazione');
     }
 
-    /**
-     * Ritorna l'attributo name della nazione.
-     *
-     * @return string
-     */
-    public function getNameAttribute()
+    public function getModuleAttribute()
     {
-        return database()->table($this->table.'_lang')
-            ->select('name')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->name;
+        return '';
     }
 
-    /**
-     * Ritorna l'id della nazione a partire dal nome.
-     *
-     * @param string $name il nome da ricercare
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getByName($name)
-    {
-        return database()->table($this->table.'_lang')
-            ->select('id_record')
-            ->where('name', '=', $name)
-            ->where('id_lang', '=', \App::getLang())
-            ->first();
+    public static function getTranslatedFields(){
+        return self::$translated_fields;
     }
 }

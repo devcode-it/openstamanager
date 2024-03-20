@@ -30,7 +30,7 @@ $documento = Ordine::find($id_record);
 $module = Module::find($documento->module);
 
 if (get('documento') == 'fattura') {
-    $final_module = $module->name == 'Ordini cliente' ? 'Fatture di vendita' : 'Fatture di acquisto';
+    $final_module = $module->getTranslation('name') == 'Ordini cliente' ? 'Fatture di vendita' : 'Fatture di acquisto';
     $op = 'add_documento';
     $tipo_documento_finale = Fattura::class;
 } elseif (get('documento') == 'ordine_fornitore') {
@@ -39,10 +39,10 @@ if (get('documento') == 'fattura') {
     $tipo_documento_finale = Ordine::class;
 } elseif (get('documento') == 'intervento') {
     $final_module = 'Interventi';
-    $op = $module->name == 'Ordini cliente' ? 'add_documento' : 'add_intervento';
+    $op = $module->getTranslation('name') == 'Ordini cliente' ? 'add_documento' : 'add_intervento';
     $tipo_documento_finale = Intervento::class;
 } else {
-    $final_module = $module->name == 'Ordini cliente' ? 'Ddt di vendita' : 'Ddt di acquisto';
+    $final_module = $module->getTranslation('name') == 'Ordini cliente' ? 'Ddt di vendita' : 'Ddt di acquisto';
     $op = 'add_ordine';
     $tipo_documento_finale = DDT::class;
 }

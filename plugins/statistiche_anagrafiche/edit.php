@@ -46,7 +46,7 @@ echo '
 
 </div>';
 
-$statistiche = Module::find((new Module())->getByName('Statistiche')->id_record);
+$statistiche = Module::find((new Module())->getByField('name', 'Statistiche'));
 
 if ($statistiche != null) {
     echo '

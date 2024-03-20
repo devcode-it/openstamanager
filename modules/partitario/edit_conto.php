@@ -32,7 +32,7 @@ if ($lvl == 2) {
 
 $info = $dbo->fetchOne($query);
 ?>
-<form action="<?php echo base_path(); ?>/editor.php?id_module=<?php echo (new Module())->getByName('Piano dei conti')->id_record; ?>" method="post">
+<form action="<?php echo base_path(); ?>/editor.php?id_module=<?php echo (new Module())->getByField('name', 'Piano dei conti'); ?>" method="post">
     <input type="hidden" name="op" value="edit">
     <input type="hidden" name="backto" value="record-list">
     <input type="hidden" name="lvl" value="<?php echo $lvl; ?>">

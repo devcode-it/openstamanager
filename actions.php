@@ -42,7 +42,7 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
     // Controllo sui permessi di scrittura per il modulo
     if (Modules::getPermission($id_module) != 'rw') {
         flash()->error(tr('Non hai permessi di scrittura per il modulo _MODULE_', [
-            '_MODULE_' => '"'.Module::find($id_module)->name.'"',
+            '_MODULE_' => '"'.Module::find($id_module)->getTranslation('name').'"',
         ]));
     }
 
@@ -67,7 +67,7 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
                 $upload = Uploads::upload($_FILES['upload'], [
                     'name' => filter('nome_allegato'),
                     'category' => filter('categoria'),
-                    'id_module' => (new Module())->getByName('Gestione documentale')->id_record,
+                    'id_module' => (new Module())->getByField('name', 'Gestione documentale'),
                     'id_record' => $id_record,
                 ]);
 
@@ -222,7 +222,7 @@ elseif (filter('op') == 'modifica-allegato') {
 
     if (sizeof($id_allegati) == 1) {
         $upload = Upload::find($id_allegati[0]);
-        $upload->name = post('nome_allegato');
+        $upload->setTranslation('name', post('nome_allegato'));
         $upload->category = post('categoria_allegato');
         $upload->save();
     } else {

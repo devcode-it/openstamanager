@@ -44,7 +44,7 @@ switch (post('op')) {
                 $utente->reset_token = secure_random_string();
                 $utente->save();
 
-                $template = (new Template())->getByName('Reset password');
+                $template = (new Template())->getByField('name', 'Reset password');
 
                 $mail = Mail::build($utente, $template, $utente->id);
                 $mail->addReceiver($utente->email);

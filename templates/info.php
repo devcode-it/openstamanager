@@ -90,7 +90,7 @@ foreach ($replace as $prefix => $values) {
     if (!empty($values['id_nazione'])) {
         $nazione = Nazione::find($values['id_nazione']);
         if ($nazione['iso2'] != 'IT') {
-            $citta .= ' - '.$nazione->name;
+            $citta .= ' - '.$nazione->getTranslation('name');
         }
     }
 

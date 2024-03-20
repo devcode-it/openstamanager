@@ -89,7 +89,7 @@ class Anagrafica extends Model
 
     public static function fromTipo($type)
     {
-        $tipologia = (new TipoAnagrafica())->getByName($type)->id_record;
+        $tipologia = (new TipoAnagrafica())->getByField('name', $type);
 
         $anagrafiche = self::whereHas('tipi', function ($query) use ($tipologia) {
             $query->where('an_tipianagrafiche.id', '=', $tipologia);
@@ -156,7 +156,7 @@ class Anagrafica extends Model
     public function setTipologieAttribute(array $tipologie)
     {
         if ($this->isAzienda()) {
-            $tipologie[] = (new TipoAnagrafica())->getByName('Azienda')->id_record;
+            $tipologie[] = (new TipoAnagrafica())->getByField('name', 'Azienda');
         }
 
         $tipologie = array_clean($tipologie);
@@ -168,7 +168,7 @@ class Anagrafica extends Model
         $diff = $actual->diff($previous);
 
         foreach ($diff as $tipo) {
-            $method = 'fix'.$tipo->name;
+            $method = 'fix'.$tipo->getTranslation('name');
             if (method_exists($this, $method)) {
                 self::$method($this);
             }
@@ -193,7 +193,7 @@ class Anagrafica extends Model
     public function isTipo($type)
     {
         return $this->tipi()->get()->search(function ($item, $key) use ($type) {
-            return TipoAnagrafica::find($item->id)->name == $type;
+            return TipoAnagrafica::find($item->id)->getTranslation('name') == $type;
         }) !== false;
     }
 

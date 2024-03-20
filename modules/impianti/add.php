@@ -21,8 +21,8 @@ include_once __DIR__.'/../../core.php';
 use Models\Module;
 
 $id_anagrafica = filter('id_anagrafica');
-$id_modulo_anagrafiche = (new Module())->getByName('Anagrafiche')->id_record;
-$id_modulo_categorie_impianti = (new Module())->getByName('Categorie impianti')->id_record;
+$id_modulo_anagrafiche = (new Module())->getByField('name', 'Anagrafiche');
+$id_modulo_categorie_impianti = (new Module())->getByField('name', 'Categorie impianti');
 ?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">

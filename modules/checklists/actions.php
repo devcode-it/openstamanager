@@ -37,7 +37,7 @@ switch (post('op')) {
         break;
 
     case 'update':
-        $record->name = post('name');
+        $record->setTranslation('name', post('name'));
 
         $record->id_module = post('module') ?: null;
         $record->id_plugin = post('plugin') ?: null;

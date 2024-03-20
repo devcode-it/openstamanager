@@ -248,7 +248,7 @@ class Modules
         $menus = self::getHierarchy();
 
         $module = Modules::getCurrent();
-        $module_name = isset($module) ? $module->title : '';
+        $module_name = isset($module) ? $module->getTranslation('title') : '';
 
         $result = '';
         foreach ($menus as $menu) {
@@ -282,7 +282,7 @@ class Modules
             $testo = $testo.' <i class="fa fa-external-link"></i>';
         }
 
-        $module = self::get((new Module())->getByName($modulo)->id_record);
+        $module = self::get((new Module())->getByField('name', $modulo));
 
         $extra .= !empty($blank) ? ' target="_blank"' : '';
 

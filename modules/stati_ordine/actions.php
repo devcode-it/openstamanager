@@ -24,7 +24,7 @@ use Modules\Ordini\Stato;
 switch (post('op')) {
     case 'update':
         $descrizione = post('descrizione');
-        $stato_new = (new Stato())->getByName($descrizione)->id_record;
+        $stato_new = (new Stato())->getByField('name', $descrizione);
 
         if (!empty($stato_new) && $stato_new != $id_record){
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato attività.'));
@@ -34,7 +34,7 @@ switch (post('op')) {
             $stato->completato = post('completato');
             $stato->is_fatturabile = post('is_fatturabile');
             $stato->impegnato = post('impegnato');
-            $stato->name = $descrizione;
+            $stato->setTranslation('name', $descrizione);
             $stato->save();
 
             flash()->info(tr('Informazioni salvate correttamente.'));
@@ -50,14 +50,14 @@ switch (post('op')) {
         $is_fatturabile = post('is_fatturabile');
         $impegnato = post('impegnato');
 
-        $stato_new = Stato::find((new Stato())->getByName($descrizione)->id_record);
+        $stato_new = Stato::find((new Stato())->getByField('name', $descrizione));
 
         if ($stato_new) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato ordine.'));
         } else {
             $stato = Stato::build($icona, $colore, $completato, $is_fatturabile, $impegnato);
             $id_record= $dbo->lastInsertedID();
-            $stato->name = $descrizione;
+            $stato->setTranslation('name', $descrizione);
             $stato->save();
             flash()->info(tr('Nuovo stato ordine aggiunto.'));
         }

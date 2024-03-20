@@ -388,7 +388,7 @@ foreach ($days as $key => $day) {
     }
 }
 
-$modulo_interventi =Module::find((new Module())->getByName('Interventi')->id_record);
+$modulo_interventi =Module::find((new Module())->getByField('name', 'Interventi'));
 
 echo '
 <script type="text/javascript">    

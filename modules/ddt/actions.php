@@ -35,7 +35,7 @@ use Modules\Pagamenti\Pagamento;
 
 $module = Module::find($id_module);
 
-if ($module->name == 'Ddt di vendita') {
+if ($module->getTranslation('name') == 'Ddt di vendita') {
     $dir = 'entrata';
 } else {
     $dir = 'uscita';
@@ -82,7 +82,7 @@ switch (filter('op')) {
             }
 
             // Leggo la descrizione del pagamento
-            $pagamento = Pagamento::find($idpagamento)->name;
+            $pagamento = Pagamento::find($idpagamento)->getTranslation('name');
 
             $ddt->data = post('data');
             $ddt->numero_esterno = $numero_esterno;
@@ -323,7 +323,7 @@ switch (filter('op')) {
         $ddt->save();
 
         $evadi_qta_parent = true;
-        if ($documento->tipo->name == 'Ddt in uscita' || $documento->tipo->name == 'Ddt in entrata') {
+        if ($documento->tipo->getTranslation('name') == 'Ddt in uscita' || $documento->tipo->getTranslation('name') == 'Ddt in entrata') {
             $evadi_qta_parent = false;
         }
 
@@ -336,11 +336,11 @@ switch (filter('op')) {
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
-                    if ($documento->tipo->name == 'Ddt in uscita' || $documento->tipo->name == 'Ddt in entrata') {
+                    if ($documento->tipo->getTranslation('name') == 'Ddt in uscita' || $documento->tipo->getTranslation('name') == 'Ddt in entrata') {
                         // TODO: estrarre il listino corrispondente se presente
                         $originale = ArticoloOriginale::find($riga->idarticolo);
 
-                        $prezzo = $documento->tipo->name == 'Ddt in entrata' ? $originale->prezzo_vendita : $originale->prezzo_acquisto;
+                        $prezzo = $documento->tipo->getTranslation('name') == 'Ddt in entrata' ? $originale->prezzo_vendita : $originale->prezzo_acquisto;
                         if ($dir == 'entrata') {
                             $id_iva = ($ddt->anagrafica->idiva_vendite ?: setting('Iva predefinita'));
                         } else {
@@ -473,7 +473,7 @@ switch (filter('op')) {
          */
     case 'completa_trasporto':
         $tipo = Tipo::where('dir', '!=', $ddt->direzione)->first();
-        $stato = (new Stato())->getByName('Evaso')->id_record;
+        $stato = (new Stato())->getByField('name', 'Evaso');
 
         // Duplicazione DDT
         $id_segment = post('id_segment');
@@ -521,7 +521,7 @@ switch (filter('op')) {
         $ddt->save();
 
         $id_record = $copia->id;
-        $id_module = $ddt->direzione == 'entrata' ? (new Module())->getByName('Ddt di acquisto')->id_record : (new Module())->getByName('Ddt di vendita')->id_record;
+        $id_module = $ddt->direzione == 'entrata' ? (new Module())->getByField('name', 'Ddt di acquisto')->id_record : (new Module())->getByField('name', 'Ddt di vendita');
 
         break;
 
@@ -532,7 +532,7 @@ switch (filter('op')) {
         $new->numero = DDT::getNextNumero($new->data, $dir, $id_segment);
         $new->numero_esterno = DDT::getNextNumeroSecondario($new->data, $dir, $new->id_segment);
 
-        $stato = (new Stato())->getByName('Bozza')->id_record;
+        $stato = (new Stato())->getByField('name', 'Bozza');
         $new->stato()->associate($stato);
         $new->save();
 
@@ -736,7 +736,7 @@ if (!empty($id_record) && setting('Cambia automaticamente stato ordini fatturati
     $rs = $dbo->fetchArray('SELECT `idordine` FROM `dt_righe_ddt` WHERE `idddt`='.prepare($id_record).' AND `idordine`!=0');
 
     for ($i = 0; $i < sizeof($rs); ++$i) {
-        $stato = (new StatoOrdine())->getByName(get_stato_ordine($rs[$i]['idordine']))->id_record;
+        $stato = (new StatoOrdine())->getByField('name', get_stato_ordine($rs[$i]['idordine']));
         $dbo->query('UPDATE `or_ordini` SET `idstatoordine`='.prepare($stato).'") WHERE `id` = '.prepare($rs[$i]['idordine']));
     }
 }

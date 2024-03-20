@@ -54,7 +54,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
         ->ignoreVCS(true)
         ->in($extraction_dir);
 
-    $files_module = $finder->name('MODULE');
+    $files_module = $finder->getTranslation('name')('MODULE');
 
     foreach ($files_module as $file) {
         // Informazioni dal file di configurazione
@@ -68,8 +68,8 @@ if (file_exists($extraction_dir.'/VERSION')) {
             $directory = 'modules';
             $table = 'zz_modules';
 
-            $installed = Module::find((new Module())->getByName($info['name'])->id_record);
-            $insert['parent'] = (new Module())->getByName($info['parent'])->id_record;
+            $installed = Module::find((new Module())->getByField('name', $info['name']));
+            $insert['parent'] = (new Module())->getByField('name', $info['parent']);
             $insert['icon'] = $info['icon'];
         }
 
@@ -107,7 +107,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
         ->ignoreVCS(true)
         ->in($extraction_dir);
 
-    $files_plugin_template = $finder->name('PLUGIN')->name('TEMPLATES');
+    $files_plugin_template = $finder->getTranslation('name')('PLUGIN')->getTranslation('name')('TEMPLATES');
 
     foreach ($files_plugin_template as $file) {
         // Informazioni dal file di configurazione
@@ -121,9 +121,9 @@ if (file_exists($extraction_dir.'/VERSION')) {
             $directory = 'plugins';
             $table = 'zz_plugins';
 
-            $installed = Plugin::find((new Plugin())->getByName($info['name'])->id_record);
-            $insert['idmodule_from'] = (new Module())->getByName($info['module_from'])->id_record;
-            $insert['idmodule_to'] = (new Module())->getByName($info['module_to'])->id_record;
+            $installed = Plugin::find((new Plugin())->getByField('name', $info['name']));
+            $insert['idmodule_from'] = (new Module())->getByField('name', $info['module_from']);
+            $insert['idmodule_to'] = (new Module())->getByField('name', $info['module_to']);
             $insert['position'] = $info['position'];
         }
 
@@ -133,7 +133,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
             $table = 'zz_prints';
 
             $installed = Prints::getPrints()[$info['name']];
-            $insert['id_module'] = (new Module())->getByName($info['module'])->id_record;
+            $insert['id_module'] = (new Module())->getByField('name', $info['module']);
             $insert['is_record'] = $info['is_record'];
             $insert['filename'] = $info['filename'];
             $insert['icon'] = $info['icon'];

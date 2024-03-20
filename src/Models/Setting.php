@@ -61,6 +61,6 @@ class Setting extends Model
             ->select('title')
             ->where('id_record', '=', $this->id)
             ->where('id_lang', '=', \App::getLang())
-            ->first()->title;
+            ->first()->getTranslation('title');
     }
 }

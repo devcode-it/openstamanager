@@ -28,7 +28,7 @@ use Traits\Components\NoteTrait;
 use Traits\Components\UploadTrait;
 use Traits\LocalPoolTrait;
 use Traits\ManagerTrait;
-;
+use Traits\RecordTrait;
 
 class Module extends Model
 {
@@ -38,8 +38,15 @@ class Module extends Model
     use LocalPoolTrait;
     use NoteTrait;
     use ChecklistTrait;
-
+    use RecordTrait;
+    
     protected $table = 'zz_modules';
+
+    protected static $translated_fields = [
+        'name',
+        'title',
+    ];
+
     protected $main_folder = 'modules';
     protected $component_identifier = 'id_module';
 
@@ -214,49 +221,14 @@ class Module extends Model
             $builder->with('groups');
         });
     }
-    
-    /**
-     * Ritorna l'attributo name del modulo.
-     *
-     * @return string
-     */
-    public function getNameAttribute()
-    {
-        return database()->table($this->table.'_lang')
-            ->select('name')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->name;
-    }
         
-    /**
-     * Ritorna l'attributo title del modulo.
-     *
-     * @return string
-     */
-    public function getTitleAttribute()
+    public function getModuleAttribute()
     {
-        return database()->table($this->table.'_lang')
-            ->select('title')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->title;
+        return '';
     }
 
-    /**
-     * Ritorna l'id del modulo a partire dal nome.
-     *
-     * @param string $name il nome da ricercare
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getByName($name)
-    {
-        return database()->table($this->table.'_lang')
-            ->select('id_record')
-            ->where('name', '=', $name)
-            ->where('id_lang', '=', \App::getLang())
-            ->first();
+    public static function getTranslatedFields(){
+        return self::$translated_fields;
     }
 
 }

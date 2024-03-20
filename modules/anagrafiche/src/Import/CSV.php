@@ -253,7 +253,7 @@ class CSV extends CSVImporter
             $tipi_selezionati = explode(',', $record['tipologia']);
 
             foreach ($tipi_selezionati as $tipo) {
-                $id_tipo = (new Tipo())->getByName($tipo)->id_record;
+                $id_tipo = (new Tipo())->getByField('name', $tipo);
 
                 // Creo il tipo anagrafica se non esiste
                 if (empty($id_tipo)) {
@@ -264,7 +264,7 @@ class CSV extends CSVImporter
                         'name' => $tipo,
                     ])['id'];
 
-                    $id_tipo = (new Tipo())->getByName($tipo)->id_record;
+                    $id_tipo = (new Tipo())->getByField('name', $tipo);
                 }
 
                 $tipologie[] = $id_tipo;
@@ -280,7 +280,7 @@ class CSV extends CSVImporter
 
         // Fix per campi con contenuti derivati da query implicite
         if (!empty($record['id_nazione'])) {
-            $record['id_nazione'] = (new Nazione())->getByName($record['id_nazione'])->id_record;
+            $record['id_nazione'] = (new Nazione())->getByField('name', 'Italia');
         } else {
             unset($record['id_nazione']);
         }

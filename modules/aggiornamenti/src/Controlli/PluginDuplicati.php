@@ -41,11 +41,11 @@ class PluginDuplicati extends Controllo
             $modulo = Module::find($plugin['idmodule_to']);
 
             $this->addResult([
-                'id' => $plugin->name,
-                'nome' => $modulo->title.': '.$plugin->name,
+                'id' => $plugin->getTranslation('name'),
+                'nome' => $modulo->getTranslation('title').': '.$plugin->getTranslation('name'),
                 'descrizione' => tr('Il plugin _NAME_ del modulo _MODULE_ esiste più volte', [
-                    '_NAME_' => $plugin->name,
-                    '_MODULE_' => $modulo->title,
+                    '_NAME_' => $plugin->getTranslation('name'),
+                    '_MODULE_' => $modulo->getTranslation('title'),
                 ]),
             ]);
         }

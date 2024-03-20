@@ -28,7 +28,7 @@ foreach ($subcategorie as $sub) {
 
     echo '
 		<tr>
-			<td>'.$sub->name.'</td>
+			<td>'.$sub->getTranslation('name').'</td>
 			<td>'.$sub->colore.'</td>
 			<td>'.$sub->nota.'</td>
 			<td>

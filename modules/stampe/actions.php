@@ -25,7 +25,7 @@ switch (post('op')) {
             $dbo->query('UPDATE `zz_prints` SET `predefined` = 0 WHERE `id_module` = '.post('module'));
         }
 
-        $print->title = post('title');
+        $print->setTranslation('title', post('title'));
         $print->filename = post('filename');
         $print->options = post('options');
         $print->order = post('order');

@@ -35,7 +35,7 @@ use Models\Module;
 
 $module = Module::find($id_module);
 
-if ($module->name == 'Ordini cliente') {
+if ($module->getTranslation('name') == 'Ordini cliente') {
     $dir = 'entrata';
 } else {
     $dir = 'uscita';

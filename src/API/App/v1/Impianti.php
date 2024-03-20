@@ -50,7 +50,7 @@ class Impianti extends AppResource
     {
         $statement = Impianto::select('id', 'updated_at', 'idtecnico')
             ->whereHas('anagrafica.tipi', function (Builder $query) {
-                $tipo_cliente = (new Tipo())->getByName('Cliente')->id_record;
+                $tipo_cliente = (new Tipo())->getByField('name', 'Cliente');
                 $query->where('id', '=', $tipo_cliente);
             });
 

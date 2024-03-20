@@ -25,7 +25,7 @@ include_once __DIR__.'/../core.php';
 $paths = App::getPaths();
 $user = Auth::user();
 
-$pageTitle = !empty($pageTitle) ? $pageTitle : $structure->title;
+$pageTitle = !empty($pageTitle) ? $pageTitle : $structure->getTranslation('title');
 
 $lang = (empty($lang) || $lang == '|lang|') ? 'it_IT' : $lang;
 
@@ -238,7 +238,7 @@ if (Auth::check()) {
                     { name: "tools", items : [ "Maximize", "ShowBlocks" ] },
                     { name: "about", items: [ "About" ] }
                 ],
-                order_manager_id: "'.($dbo->isInstalled() ? (new Module())->getByName('Stato dei servizi')->id_record : '').'",
+                order_manager_id: "'.($dbo->isInstalled() ? (new Module())->getByField('name', 'Stato dei servizi') : '').'",
                 dataload_page_buffer: '.setting('Lunghezza in pagine del buffer Datatables').',
                 tempo_attesa_ricerche: '.setting('Tempo di attesa ricerche in secondi').',
                 restrict_summables_to_selected: '.setting('Totali delle tabelle ristretti alla selezione').',

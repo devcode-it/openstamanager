@@ -66,7 +66,7 @@ if (dateFormat($intervento->inizio)) {
 }
 echo '
         <p><small><b>'.tr('Cliente').':</b> '.$intervento->anagrafica->ragione_sociale.'</small></p>
-        <p><small><b>'.tr('Stato').':</b> '.$intervento->stato->name.'</small></p>
+        <p><small><b>'.tr('Stato').':</b> '.$intervento->stato->getTranslation('name').'</small></p>
         <p><small><b>'.tr('Data richiesta').':</b> '.dateFormat($intervento->data_richiesta).'</small></p>
         <p><small><b>'.tr('Richiesta').':</b> '.$intervento->richiesta.'</p>';
 if ($intervento->descrizione) {
@@ -103,7 +103,7 @@ if (count($sessioni) > 0) {
         echo '
 <tr>
     <td style="border-top: 0; border-bottom: 0;"></td>
-    <td colspan="'.(get('id_print') != 24 ? 3 : 2).'"><small>'.$sessione->anagrafica->ragione_sociale.' <small>('.$sessione->tipo->name.')</small></td>
+    <td colspan="'.(get('id_print') != 24 ? 3 : 2).'"><small>'.$sessione->anagrafica->ragione_sociale.' <small>('.$sessione->tipo->getTranslation('name').')</small></td>
     <td class="text-center"><small>'.dateFormat($sessione->orario_inizio).'</small></td>
     <td class="text-center"><small>'.timeFormat($sessione->orario_inizio).'</small></td>
     <td class="text-center"><small>'.timeFormat($sessione->orario_fine).'</small></td>

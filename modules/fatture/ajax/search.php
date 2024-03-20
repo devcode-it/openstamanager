@@ -50,7 +50,7 @@ foreach ($rs as $r) {
     $result = [];
 
     $module = ($r['dir'] == 'uscita') ? 'Fatture di acquisto' : 'Fatture di vendita';
-    $link_id = (new Module())->getByName($module)->id_record;
+    $link_id = (new Module())->getByField('name', $module);
 
     $numero = empty($r['numero_esterno']) ? $r['numero'] : $r['numero_esterno'];
 

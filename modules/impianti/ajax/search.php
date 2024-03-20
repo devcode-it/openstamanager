@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../../core.php';
 use Models\Module;
 
-$link_id = (new Module())->getByName('Impianti')->id_record;
+$link_id = (new Module())->getByField('name', 'Impianti');
 
 $fields = [
     'Matricola' => 'matricola',

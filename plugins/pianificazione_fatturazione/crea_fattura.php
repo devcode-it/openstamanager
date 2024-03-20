@@ -35,7 +35,7 @@ foreach ($contratto->pianificazioni as $i => $p) {
     }
 }
 
-$id_module_fattura = (new Module())->getByName('Fatture di vendita')->id_record;
+$id_module_fattura = (new Module())->getByField('name', 'Fatture di vendita');
 
 $id_conto = setting('Conto predefinito fatture di vendita');
 $data = date('Y-m', strtotime($pianificazione->data_scadenza)).'-'.date('d', strtotime($contratto->data_accettazione));
@@ -87,7 +87,7 @@ echo '
 
 // gestione replace
 $descrizione = setting('Descrizione fattura pianificata');
-$modules = (new Module())->getByName('Contratti')->id_record;
+$modules = (new Module())->getByField('name', 'Contratti');
 $variables = include Modules::filepath($modules, 'variables.php');
 foreach ($variables as $variable => $value) {
     $descrizione = str_replace('{'.$variable.'}', $value, $descrizione);
@@ -132,7 +132,7 @@ foreach ($righe as $riga) {
                         <td class="text-right">'.moneyFormat($riga->prezzo_unitario).'</td>
                         <td class="text-right">
                             '.moneyFormat($riga->iva).'<br>
-                            <small class="help-block">'.$riga->aliquota->name.'</small>
+                            <small class="help-block">'.$riga->aliquota->getTranslation('name').'</small>
                         </td>
                         <td class="text-right">'.moneyFormat($riga->totale_imponibile).'</td>
                     </tr>';

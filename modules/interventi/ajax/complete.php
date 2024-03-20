@@ -16,7 +16,7 @@ $numero_documenti = 5;
 switch ($op) {
     case 'dettagli':
         // Informazioni sui contratti
-        $modulo_contratti = Module::find((new Module())->getByName('Contratti')->id_record);
+        $modulo_contratti = Module::find((new Module())->getByField('name', 'Contratti'));
         if ($modulo_contratti->permission != '-') {
             // Contratti attivi per l'anagrafica
             $contratti = Contratto::where('idanagrafica', '=', $id_anagrafica)
@@ -32,7 +32,7 @@ switch ($op) {
             if (!$contratti->isEmpty()) {
                 foreach ($contratti as $contratto) {
                     echo '
-                    <li>'.$contratto->getReference().' ['.$contratto->stato->name.']: '.dateFormat($contratto->data_accettazione).' - '.dateFormat($contratto->data_conclusione).'</li>';
+                    <li>'.$contratto->getReference().' ['.$contratto->stato->getTranslation('name').']: '.dateFormat($contratto->data_accettazione).' - '.dateFormat($contratto->data_conclusione).'</li>';
                 }
             } else {
                 echo '
@@ -44,7 +44,7 @@ switch ($op) {
         }
 
         // Informazioni sui preventivi
-        $modulo_preventivi = Module::find((new Module())->getByName('Preventivi')->id_record);
+        $modulo_preventivi = Module::find((new Module())->getByField('name', 'Preventivi'));
         if ($modulo_preventivi->permission != '-') {
             // Preventivi attivi
             $preventivi = Preventivo::where('idanagrafica', '=', $id_anagrafica)
@@ -58,7 +58,7 @@ switch ($op) {
             if (!$preventivi->isEmpty()) {
                 foreach ($preventivi as $preventivo) {
                     echo '
-                    <li>'.$preventivo->getReference().' ['.$preventivo->stato->name.']</li>';
+                    <li>'.$preventivo->getReference().' ['.$preventivo->stato->getTranslation('name').']</li>';
                 }
             } else {
                 echo '
@@ -70,13 +70,13 @@ switch ($op) {
         }
 
         // Informazioni sui preventivi
-        $modulo_fatture_vendita =Module::find((new Module())->getByName('Fatture di vendita')->id_record);
+        $modulo_fatture_vendita =Module::find((new Module())->getByField('name', 'Fatture di vendita'));
         if ($modulo_fatture_vendita->permission != '-') {
             // Fatture attive
             $fatture = Fattura::where('idanagrafica', '=', $id_anagrafica)
                 ->whereHas('stato', function ($query) {
-                    $id_bozza = (new Stato())->getByName('Bozza')->id_record;
-                    $id_parz_pagato = (new Stato())->getByName('Parziale pagato')->id_record;
+                    $id_bozza = (new Stato())->getByField('name', 'Bozza');
+                    $id_parz_pagato = (new Stato())->getByField('name', 'Parziale pagato');
                     $query->whereIn('id', [$id_bozza, $id_parz_pagato]);
                 })
                 ->latest()->take($numero_documenti)->get();

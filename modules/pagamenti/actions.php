@@ -47,7 +47,7 @@ switch (filter('op')) {
                 }
 
                 if (!empty($id)) {
-                    $pagamento->name = $descrizione;
+                    $pagamento->setTranslation('name', $descrizione);
                     $pagamento->num_giorni = post('distanza')[$key];
                     $pagamento->giorno = $giorno;
                     $pagamento->prc = post('percentuale')[$key];
@@ -62,7 +62,7 @@ switch (filter('op')) {
                     $pagamento->prc = post('percentuale')[$key];
                     $pagamento->idconto_vendite = post('idconto_vendite') ?: null;
                     $pagamento->idconto_acquisti = post('idconto_acquisti') ?: null;
-                    $pagamento->name = $descrizione;
+                    $pagamento->setTranslation('name', $descrizione);
                     $pagamento->save();
                 }
             }
@@ -79,14 +79,14 @@ switch (filter('op')) {
         $codice_modalita_pagamento_fe = filter('codice_modalita_pagamento_fe');
 
         if (isset($descrizione)) {
-            $id_pagamento = (new Pagamento())->getByName($descrizione)->id_record;
+            $id_pagamento = (new Pagamento())->getByField('name', $descrizione);
 
             if ($id_pagamento) {
                 flash()->error(tr('Esiste già un metodo di pagamento con questo nome!'));
             } else {
                 $pagamento = Pagamento::build($codice_modalita_pagamento_fe);
                 $id_record= $dbo->lastInsertedID();
-                $pagamento->name = $descrizione;
+                $pagamento->setTranslation('name', $descrizione);
                 $pagamento->save();
 
                 flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [

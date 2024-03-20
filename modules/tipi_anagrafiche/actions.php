@@ -29,7 +29,7 @@ switch (post('op')) {
         // Nome accettato
 
         if (!in_array($descrizione, $block)) {
-            $tipo->name = $descrizione;
+            $tipo->setTranslation('name', $descrizione);
             $tipo->save();
             flash()->info(tr('Informazioni salvate correttamente!'));
         } else {
@@ -44,14 +44,14 @@ switch (post('op')) {
 
         if (!empty($descrizione)) {
             // Verifico che il nome non sia duplicato
-            $tipo = Tipo::find((new Tipo())->getByName($descrizione)->id_record);
+            $tipo = Tipo::find((new Tipo())->getByField('name', $descrizione));
 
             if ($tipo) {
                 flash()->error(tr('Nome già esistente!'));
             } else {
                 $tipo = Tipo::build($descrizione);
                 $id_record = $dbo->lastInsertedID();
-                $tipo->name = $descrizione;
+                $tipo->setTranslation('name', $descrizione);
                 $tipo->save();
                 flash()->info(tr('Nuovo tipo di anagrafica aggiunto!'));
             }

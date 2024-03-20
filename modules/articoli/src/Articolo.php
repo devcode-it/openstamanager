@@ -208,7 +208,7 @@ class Articolo extends Model
             return null;
         }
 
-        $module = Module::find((new Module())->getByName($this->module)->id_record);
+        $module = Module::find((new Module())->getByField('name', $this->module));
         $fileinfo = \Uploads::fileInfo($this->immagine);
 
         $directory = '/'.$module->upload_directory.'/';

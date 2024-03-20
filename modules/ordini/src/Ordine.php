@@ -56,7 +56,7 @@ class Ordine extends Document
     {
         $model = new static();
 
-        $stato_documento = (new Stato())->getByName('Bozza')->id_record;
+        $stato_documento = (new Stato())->getByField('name', 'Bozza');
 
         $direzione = $tipo_documento->dir;
         $id_segment = $id_segment ?: getSegmentPredefined($model->getModule()->id);
@@ -174,13 +174,13 @@ class Ordine extends Document
             // Impostazione del nuovo stato
             if ($qta_evasa == 0) {
                 $descrizione = 'Accettato';
-            } elseif (!in_array($stato_attuale->name, ['Parzialmente fatturato', 'Fatturato']) && $trigger->getDocument() instanceof DDT) {
+            } elseif (!in_array($stato_attuale->getTranslation('name'), ['Parzialmente fatturato', 'Fatturato']) && $trigger->getDocument() instanceof DDT) {
                 $descrizione = $parziale ? 'Parzialmente evaso' : 'Evaso';
             } else {
                 $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
             }
 
-            $stato = (new Stato())->getByName($descrizione)->id_record;
+            $stato = (new Stato())->getByField('name', $descrizione);
             $this->stato()->associate($stato);
             $this->save();
         }
@@ -271,7 +271,7 @@ class Ordine extends Document
 
     public function getReferenceName()
     {
-        return $this->tipo->name;
+        return $this->tipo->getTranslation('name');
     }
 
     public function getReferenceNumber()

@@ -82,11 +82,11 @@ switch (filter('op')) {
         // Messaggio informativo
         if (!$is_plugin) {
             flash()->info(tr('Modulo "_NAME_" disinstallato!', [
-                '_NAME_' => $struttura->title,
+                '_NAME_' => $struttura->getTranslation('title'),
             ]));
         } else {
             flash()->info(tr('Plugin "_NAME_" disinstallato!', [
-                '_NAME_' => $struttura->title,
+                '_NAME_' => $struttura->getTranslation('title'),
             ]));
         }
 
@@ -124,7 +124,7 @@ switch (filter('op')) {
         }
 
         // Disabilitazione modulo/plugin indicato
-        $moduli_sempre_attivi = [(new Module())->getByName('Utenti e permessi')->id_record, (new Module())->getByName('Stato dei servizi')->id_record];
+        $moduli_sempre_attivi = [(new Module())->getByField('name', 'Utenti e permessi')->id_record, (new Module())->getByField('name', 'Stato dei servizi')];
         $database->table('zz_modules')
             ->whereIn('id', $moduli_sempre_attivi)
             ->update(['enabled' => 1]);
@@ -133,11 +133,11 @@ switch (filter('op')) {
         $struttura = $is_plugin ? Plugin::find($id) : Module::find($id);
         if (!$is_plugin) {
             flash()->info(tr('Modulo "_NAME_" disabilitato!', [
-                '_NAME_' => $struttura->title,
+                '_NAME_' => $struttura->getTranslation('title'),
             ]));
         } else {
             flash()->info(tr('Plugin "_NAME_" disabilitato!', [
-                '_NAME_' => $struttura->title,
+                '_NAME_' => $struttura->getTranslation('title'),
             ]));
         }
 
@@ -181,17 +181,17 @@ switch (filter('op')) {
         if (!isset($moduli_interessati)) {
             if (!$is_plugin) {
                 flash()->info(tr('Modulo "_NAME_" abilitato!', [
-                    '_NAME_' => $struttura->title,
+                    '_NAME_' => $struttura->getTranslation('title'),
                 ]));
             } else {
                 flash()->info(tr('Plugin "_NAME_" abilitato!', [
-                    '_NAME_' => $struttura->title,
+                    '_NAME_' => $struttura->getTranslation('title'),
                 ]));
             }
         } else {
             $modulo = Module::find($id);
             flash()->info(tr('Moduli sotto a "_NAME_" abilitati!', [
-                '_NAME_' => $struttura->title,
+                '_NAME_' => $struttura->getTranslation('title'),
             ]));
         }
 
@@ -212,7 +212,7 @@ switch (filter('op')) {
             ->where('id', '=', $id)
             ->first();
         flash()->info(tr('Widget "_NAME_" disabilitato!', [
-            '_NAME_' => $widget->name,
+            '_NAME_' => $widget->getTranslation('name'),
         ]));
 
         echo json_encode([]);
@@ -232,7 +232,7 @@ switch (filter('op')) {
             ->where('id', '=', $id)
             ->first();
         flash()->info(tr('Widget "_NAME_" abilitato!', [
-            '_NAME_' => $widget->name,
+            '_NAME_' => $widget->getTranslation('name'),
         ]));
 
         echo json_encode([]);
@@ -261,7 +261,7 @@ switch (filter('op')) {
 
         // Messaggio informativo
         flash()->info(tr('Posizione del widget "_NAME_" aggiornata!', [
-            '_NAME_' => $widget->name,
+            '_NAME_' => $widget->getTranslation('name'),
         ]));
 
         echo json_encode([]);
@@ -311,7 +311,7 @@ switch (filter('op')) {
             ->where('id', '=', $id)
             ->first();
         flash()->info(tr('Hook "_NAME_" disabilitato!', [
-            '_NAME_' => $hook->name,
+            '_NAME_' => $hook->getTranslation('name'),
         ]));
 
         echo json_encode([]);
@@ -331,7 +331,7 @@ switch (filter('op')) {
             ->where('id', '=', $id)
             ->first();
         flash()->info(tr('Hook "_NAME_" abilitato!', [
-            '_NAME_' => $hook->name,
+            '_NAME_' => $hook->getTranslation('name'),
         ]));
 
         echo json_encode([]);
@@ -372,7 +372,7 @@ switch (filter('op')) {
         break;
 
     case 'informazioni-fe':
-        $info = Cache::find((new Cache())->getByName('Informazioni su spazio FE')->id_record);
+        $info = Cache::find((new Cache())->getByField('name', 'Informazioni su spazio FE'));
         if (!$info->isValid()) {
             $response = Services::request('POST', 'informazioni_fe');
             $response = Services::responseBody($response);

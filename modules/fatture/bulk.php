@@ -33,7 +33,7 @@ use Models\Module;
 
 
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
-$stato_emessa = (new Stato())->getByName('Emessa')->id_record;
+$stato_emessa = (new Stato())->getByField('name', 'Emessa');
 $is_fiscale = $dbo->selectOne('zz_segments', 'is_fiscale', ['id' => $_SESSION['module_'.$id_module]])['is_fiscale'];
 
 switch (post('op')) {
@@ -464,7 +464,7 @@ switch (post('op')) {
 
     case 'change-stato':
         $list = [];
-        $new_stato = (new Stato())->getByName('Emessa')->id_record;
+        $new_stato = (new Stato())->getByField('name', 'Emessa');
         $fatture = Fattura::vendita()
         ->whereIn('id', $id_records)
         ->orderBy('data')
@@ -499,7 +499,7 @@ switch (post('op')) {
                 $fattura->data_registrazione = post('data_registrazione');
             }
 
-            if ($stato_precedente->name == 'Bozza' && $fattura->isFiscale()) {
+            if ($stato_precedente->getTranslation('name') == 'Bozza' && $fattura->isFiscale()) {
                 $fattura->stato()->associate($new_stato);
                 $results = $fattura->save();
                 $message = '';
@@ -578,7 +578,7 @@ switch (post('op')) {
             $documento = Fattura::find($id);
             ++$count;
 
-            if ($documento->stato->name == 'Bozza') {
+            if ($documento->stato->getTranslation('name') == 'Bozza') {
                 $documento->id_segment = post('id_segment');
                 $documento->save();
                 ++$n_doc;
@@ -636,7 +636,7 @@ if (Interaction::isEnabled()) {
     ];
 }
 
-if ($module->name == 'Fatture di vendita') {
+if ($module->getTranslation('name') == 'Fatture di vendita') {
     $operations['check-bulk'] = [
         'text' => '<span><i class="fa fa-list-alt"></i> '.tr('Controlla fatture elettroniche').'</span>',
         'data' => [
@@ -686,7 +686,7 @@ $operations['export-csv'] = [
     ],
 ];
 
-if ($module->name == 'Fatture di vendita') {
+if ($module->getTranslation('name') == 'Fatture di vendita') {
     $operations['export-bulk'] = [
         'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta stampe').'</span>',
         'data' => [
@@ -731,7 +731,7 @@ $operations['export-xml-bulk'] = [
     ],
 ];
 
-if ($module->name == 'Fatture di vendita') {
+if ($module->getTranslation('name') == 'Fatture di vendita') {
     $operations['genera-xml'] = [
         'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Genera fatture elettroniche').'</span>',
         'data' => [
@@ -750,7 +750,7 @@ $operations['registrazione-contabile'] = [
         'title' => tr('Registrazione contabile'),
         'type' => 'modal',
         'origine' => 'fatture',
-        'url' => base_path().'/add.php?id_module='.(new Module())->getByName('Prima nota')->id_record,
+        'url' => base_path().'/add.php?id_module='.(new Module())->getByField('name', 'Prima nota'),
     ],
 ];
 

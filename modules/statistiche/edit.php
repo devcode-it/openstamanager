@@ -344,7 +344,7 @@ if (!empty($articoli)) {
     echo '
                 </table>';
 
-    echo "<br><p class='pull-right' >".Modules::link('Articoli', null, tr('Vedi tutto...'), null, null, false, 'tab_'.(new Plugin())->getByName('Statistiche vendita')->id_record).'</p>';
+    echo "<br><p class='pull-right' >".Modules::link('Articoli', null, tr('Vedi tutto...'), null, null, false, 'tab_'.(new Plugin())->getByField('name', 'Statistiche vendita')).'</p>';
 } else {
     echo '
                 <p>'.tr('Nessun articolo venduto').'...</p>';

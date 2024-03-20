@@ -25,7 +25,7 @@ use Modules\Anagrafiche\Tipo;
 $rs = Tipo::get();
 
 foreach ($rs as $riga) {
-    ${'id_'.strtolower($riga->name)} = $riga->id;
+    ${'id_'.strtolower($riga->getTranslation('name'))} = $riga->id;
 }
 
 if (!empty($id_record)) {

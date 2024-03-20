@@ -68,7 +68,7 @@ class FatturaElettronica
 
         // Controllo sulla possibilità di creare la fattura elettronica
         // Posso fatturare ai privati utilizzando il codice fiscale
-        if ($this->documento->stato->name == 'Bozza') {
+        if ($this->documento->stato->getTranslation('name') == 'Bozza') {
             throw new \UnexpectedValueException();
         }
     }
@@ -285,7 +285,7 @@ class FatturaElettronica
 
     public static function getDirectory()
     {
-        return \Uploads::getDirectory((new Module())->getByName('Fatture di vendita')->id_record);
+        return \Uploads::getDirectory((new Module())->getByField('name', 'Fatture di vendita'));
     }
 
     /**
@@ -425,7 +425,7 @@ class FatturaElettronica
         $errors = [];
 
         // Controlli sulla fattura stessa
-        if ($fattura->stato->name == 'Bozza') {
+        if ($fattura->stato->getTranslation('name') == 'Bozza') {
             $missing = [
                 'state' => tr('Stato ("Emessa")'),
             ];
@@ -1081,7 +1081,7 @@ class FatturaElettronica
         $result = [];
 
         // Se imposto il vettore deve essere indicata anche la p.iva nella sua anagrafica
-        if ($documento->tipo->name == 'Fattura accompagnatoria di vendita') {
+        if ($documento->tipo->getTranslation('name') == 'Fattura accompagnatoria di vendita') {
             if ($documento['idvettore']) {
                 $vettore = Anagrafica::find($documento['idvettore']);
                 $result['DatiAnagraficiVettore'] = static::getDatiAnagrafici($vettore);
@@ -1361,7 +1361,7 @@ class FatturaElettronica
             }
         }
 
-        if ($documento->tipo->name == 'Fattura accompagnatoria di vendita' || !empty($documento['idsede_destinazione'])) {
+        if ($documento->tipo->getTranslation('name') == 'Fattura accompagnatoria di vendita' || !empty($documento['idsede_destinazione'])) {
             $result['DatiTrasporto'] = static::getDatiTrasporto($fattura);
         }
 
@@ -1631,7 +1631,7 @@ class FatturaElettronica
                 'ImponibileImporto' => 0,
                 'Imposta' => 0,
                 'EsigibilitaIVA' => $aliquota->esigibilita,
-                'RiferimentoNormativo' => $aliquota->name,
+                'RiferimentoNormativo' => $aliquota->getTranslation('name'),
             ];
 
             // 2.2.2
@@ -1709,7 +1709,7 @@ class FatturaElettronica
         $attachments = [];
 
         // Informazioni sul modulo
-        $id_module = (new Module())->getByName('Fatture di vendita')->id_record;
+        $id_module = (new Module())->getByField('name', 'Fatture di vendita');
         $directory = \Uploads::getDirectory($id_module);
 
         // Allegati
@@ -1856,7 +1856,7 @@ class FatturaElettronica
     {
         return [
             'category' => tr('Fattura Elettronica'),
-            'id_module' => (new Module())->getByName('Fatture di vendita')->id_record,
+            'id_module' => (new Module())->getByField('name', 'Fatture di vendita'),
             'id_record' => $this->getDocumento()['id'],
         ];
     }

@@ -238,7 +238,7 @@ class Articolo extends Model
             `mg_articolo_attributo`
             INNER JOIN `mg_valori_attributi` ON `mg_valori_attributi`.`id` = `mg_articolo_attributo`.`id_valore`
             INNER JOIN `mg_attributi` ON `mg_attributi`.`id` = `mg_valori_attributi`.`id_attributo`
-            LEFT JOIN `mg_attributi_lang` ON (`mg_attributi_lang`.`id_record` = `mg_attributi`.`id` AND `mg_attributi_lang`.`id_lang` = ".prepare(\App::getLang()).")
+            LEFT JOIN `mg_attributi_lang` ON (`mg_attributi_lang`.`id_record` = `mg_attributi`.`id` AND `mg_attributi_lang`.`id_lang` = ".prepare(\Models\Locale::getDefault()->id).")
             INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `mg_articolo_attributo`.`id_articolo`
             INNER JOIN `mg_combinazioni` ON `mg_combinazioni`.`id` = `mg_articoli`.`id_combinazione`
             INNER JOIN `mg_attributo_combinazione` ON `mg_attributo_combinazione`.`id_combinazione` = `mg_combinazioni`.`id` AND `mg_attributo_combinazione`.`id_attributo` = `mg_attributi`.`id`

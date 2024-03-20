@@ -23,7 +23,7 @@ use Modules\Emails\Template;
 include_once __DIR__.'/../../core.php';
 
 if (isset($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM em_templates LEFT JOIN `em_templates_lang` ON (`em_templates`.`id` = `em_templates_lang`.`id_record` AND `em_templates_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `em_templates`.`id`='.prepare($id_record).' AND `deleted_at` IS NULL');
+    $record = $dbo->fetchOne('SELECT * FROM em_templates LEFT JOIN `em_templates_lang` ON (`em_templates`.`id` = `em_templates_lang`.`id_record` AND `em_templates_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `em_templates`.`id`='.prepare($id_record).' AND `deleted_at` IS NULL');
 
     $template = Template::find($id_record);
     

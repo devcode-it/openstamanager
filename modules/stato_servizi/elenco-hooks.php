@@ -34,9 +34,9 @@ $hooks = $dbo->fetchArray('SELECT
     `zz_hooks`.*, 
     `zz_modules_lang`.`name` AS modulo
     FROM `zz_hooks`
-        LEFT JOIN `zz_hooks_lang` ON (`zz_hooks`.`id` = `zz_hooks_lang`.`id_record` AND `zz_hooks_lang`.`id_lang` = '.prepare(\App::getLang()).')
+        LEFT JOIN `zz_hooks_lang` ON (`zz_hooks`.`id` = `zz_hooks_lang`.`id_record` AND `zz_hooks_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
         INNER JOIN `zz_modules` ON `zz_hooks`.`id_module` = `zz_modules`.`id`
-        LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(\App::getLang()).')
+        LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
     ORDER BY
         `id_module` ASC, `zz_hooks`.`id` ASC');
 

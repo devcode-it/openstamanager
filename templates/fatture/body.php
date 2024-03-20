@@ -234,7 +234,7 @@ if (!empty($dicitura['dicitura'])) {
 
 // Aggiungo diciture per condizioni iva particolari
 foreach ($v_iva as $key => $value) {
-    $dicitura = $dbo->fetchOne('SELECT `dicitura` FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `name` = '.prepare($key));
+    $dicitura = $dbo->fetchOne('SELECT `dicitura` FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `name` = '.prepare($key));
 
     if (!empty($dicitura['dicitura'])) {
         echo '

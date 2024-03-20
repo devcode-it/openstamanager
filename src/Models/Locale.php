@@ -17,8 +17,26 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-include_once __DIR__.'/../../core.php';
+namespace Models;
 
-if (isset($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `dt_aspettobeni` LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni`.`id`=`dt_aspettobeni_lang`.`id_record` AND `dt_aspettobeni_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).') WHERE `dt_aspettobeni`.`id`='.prepare($id_record));
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
+
+class Locale extends Model
+{
+    use SimpleModelTrait;
+
+    protected $table = 'zz_langs';
+
+    protected static $lang;
+
+    public static function getDefault()
+    {
+        return self::$lang;
+    }
+
+    public static function setDefault($value)
+    {
+        self::$lang = database()->table('zz_langs')->where('id', '=', $value)->first();
+    }
 }

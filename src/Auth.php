@@ -475,7 +475,7 @@ class Auth extends Util\Singleton
         $database = database();
 
         try {
-            $results = $database->fetchArray('SELECT `id`, `idanagrafica`, `username`, (SELECT `name` FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON `zz_groups`.`id`=`zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang`='.prepare(\App::getLang()).' WHERE `zz_groups`.`id` = `zz_users`.`idgruppo`) AS gruppo FROM `zz_users` WHERE `id` = :user_id AND `enabled` = 1 LIMIT 1', [
+            $results = $database->fetchArray('SELECT `id`, `idanagrafica`, `username`, (SELECT `name` FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON `zz_groups`.`id`=`zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).' WHERE `zz_groups`.`id` = `zz_users`.`idgruppo`) AS gruppo FROM `zz_users` WHERE `id` = :user_id AND `enabled` = 1 LIMIT 1', [
                 ':user_id' => $user_id,
             ]);
 

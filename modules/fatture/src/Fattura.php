@@ -575,6 +575,7 @@ class Fattura extends Document
     {
         // Informazioni sul cambio dei valori
         $stato_precedente = Stato::find($this->original['idstatodocumento']);
+        $stato_precedente = $stato_precedente ? $stato_precedente->getTranslation('name') : null;
         $dichiarazione_precedente = Dichiarazione::find($this->original['id_dichiarazione_intento']);
         $is_fiscale = $this->isFiscale();
 
@@ -591,7 +592,7 @@ class Fattura extends Document
 
         $stato = Stato::find($this->stato['id']);
         // Generazione numero fattura se non presente (Bozza -> Emessa)
-        if ((($stato_precedente->getTranslation('name') == 'Bozza' && $stato->getTranslation('name') == 'Emessa') or (!$is_fiscale)) && empty($this->numero_esterno)) {
+        if ((($stato_precedente == 'Bozza' && $stato->getTranslation('name') == 'Emessa') or (!$is_fiscale)) && empty($this->numero_esterno)) {
             $this->numero_esterno = self::getNextNumeroSecondario($this->data, $this->direzione, $this->id_segment);
         }
 
@@ -601,7 +602,7 @@ class Fattura extends Document
         // Operazioni al cambiamento di stato
         // Bozza o Annullato -> Stato diverso da Bozza o Annullato
         if (
-            (in_array($stato_precedente->getTranslation('name'), ['Bozza', 'Annullata'])
+            (in_array($stato_precedente, ['Bozza', 'Annullata'])
             && !in_array($stato->getTranslation('name'), ['Bozza', 'Annullata', 'Non valida']))
             || $options[0] == 'forza_emissione'
         ) {
@@ -645,7 +646,7 @@ class Fattura extends Document
         }
 
         // Operazioni automatiche per le Fatture Elettroniche
-        if ($this->direzione == 'entrata' && $stato_precedente->getTranslation('name') == 'Bozza' && $stato->getTranslation('name') == 'Emessa') {
+        if ($this->direzione == 'entrata' && $stato_precedente == 'Bozza' && $stato->getTranslation('name') == 'Emessa') {
             $stato_fe = StatoFE::find($this->codice_stato_fe);
             $abilita_genera = empty($this->codice_stato_fe) || intval($stato_fe['is_generabile']);
 

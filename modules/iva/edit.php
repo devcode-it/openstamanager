@@ -78,7 +78,7 @@ if ($res) {
 				</div>
                 
                 <div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Codice Natura (Fatturazione Elettronica)'); ?>", "name": "codice_natura_fe", "value": "$codice_natura_fe$", "required": <?php echo intval($record['esente']); ?>, "disabled": <?php echo intval(!$record['esente']); ?>, "values": "query=SELECT `codice` as id, CONCAT(`codice`, ' - ', `name`) AS descrizione FROM fe_natura LEFT JOIN `fe_natura_lang` ON (`fe_natura`.`codice` = `fe_natura_lang`.`id_record` AND `fe_natura_lang`.`id_lang` = <?php echo prepare(\App::getLang()); ?>)", "readonly": "<?php echo $is_readonly; ?>", "extra": "<?php echo $attr; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Codice Natura (Fatturazione Elettronica)'); ?>", "name": "codice_natura_fe", "value": "$codice_natura_fe$", "required": <?php echo intval($record['esente']); ?>, "disabled": <?php echo intval(!$record['esente']); ?>, "values": "query=SELECT `codice` as id, CONCAT(`codice`, ' - ', `name`) AS descrizione FROM fe_natura LEFT JOIN `fe_natura_lang` ON (`fe_natura`.`codice` = `fe_natura_lang`.`id_record` AND `fe_natura_lang`.`id_lang` = <?php echo prepare(\Models\Locale::getDefault()->id); ?>)", "readonly": "<?php echo $is_readonly; ?>", "extra": "<?php echo $attr; ?>" ]}
 				</div>
 			</div>
 

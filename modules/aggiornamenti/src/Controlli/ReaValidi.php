@@ -60,7 +60,7 @@ class ReaValidi extends Controllo
         FROM `an_anagrafiche`
            INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
            INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.id = `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`
-           LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(\App::getLang()).')
+           LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
         WHERE
             `codicerea` NOT REGEXP "([A-Za-z]{2})-([0-9]{1,20})" AND `codicerea` != ""
         AND

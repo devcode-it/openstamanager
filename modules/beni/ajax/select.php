@@ -21,7 +21,7 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'aspetto-beni':
-        $query = 'SELECT `dt_aspettobeni`.`id`, `dt_aspettobeni_lang`.`name` as descrizione FROM `dt_aspettobeni` LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni`.`id`=`dt_aspettobeni_lang`.`id_record` AND `dt_aspettobeni_lang`.`id_lang`='.prepare(\App::getLang()).') |where| ORDER BY `name` ASC';
+        $query = 'SELECT `dt_aspettobeni`.`id`, `dt_aspettobeni_lang`.`name` as descrizione FROM `dt_aspettobeni` LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni`.`id`=`dt_aspettobeni_lang`.`id_record` AND `dt_aspettobeni_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).') |where| ORDER BY `name` ASC';
 
         foreach ($elements as $element) {
             $filter[] = '`dt_aspettobeni`.`id`='.prepare($element);

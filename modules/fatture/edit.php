@@ -274,11 +274,11 @@ if ($righe_vuote) {
 
 <?php
 
-$query = 'SELECT *, `co_statidocumento`.`id` AS id, `colore` AS _bgcolor_, `co_statidocumento_lang`.`name` as descrizione FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(\App::getLang()).')';
+$query = 'SELECT *, `co_statidocumento`.`id` AS id, `colore` AS _bgcolor_, `co_statidocumento_lang`.`name` as descrizione FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')';
 if (empty($record['is_fiscale'])) {
     $query .= " WHERE `name` = 'Bozza'";
 
-    $plugin = $dbo->fetchArray("SELECT `zz_plugins`.`id` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = ".prepare(\App::getLang()).") WHERE `name`='Fatturazione Elettronica' AND `idmodule_to` = ".prepare($id_module));
+    $plugin = $dbo->fetchArray("SELECT `zz_plugins`.`id` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = ".prepare(\Models\Locale::getDefault()->id).") WHERE `name`='Fatturazione Elettronica' AND `idmodule_to` = ".prepare($id_module));
     echo '<script>$("#link-tab_'.$plugin[0]['id'].'").addClass("disabled");</script>';
 }
 // Forzo il passaggio della fattura da Bozza ad Emessa per il corretto calcolo del numero.
@@ -308,7 +308,7 @@ $query .= ' ORDER BY `name`';
                 ?>
 
                 <div class="col-md-2" <?php echo ($record['is_fiscale']) ? '' : 'hidden'; ?> >
-                    {[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "values": "query=SELECT `codice` as id, CONCAT_WS(' - ',`codice`, `name`) as text FROM `fe_stati_documento` LEFT JOIN `fe_stati_documento_lang` ON (`fe_stati_documento_lang`.`id_record` = `fe_stati_documento`.`codice` AND `fe_stati_documento_lang`.`id_lang` = <?php echo prepare(\App::getLang()); ?>)", "value": "$codice_stato_fe$", "disabled": <?php echo intval(Interaction::isEnabled() || ($record['stato'] == 'Bozza' && $abilita_genera)); ?>, "class": "unblockable", "help": "<?php echo (!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : ''; ?>" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "values": "query=SELECT `codice` as id, CONCAT_WS(' - ',`codice`, `name`) as text FROM `fe_stati_documento` LEFT JOIN `fe_stati_documento_lang` ON (`fe_stati_documento_lang`.`id_record` = `fe_stati_documento`.`codice` AND `fe_stati_documento_lang`.`id_lang` = <?php echo prepare(\Models\Locale::getDefault()->id); ?>)", "value": "$codice_stato_fe$", "disabled": <?php echo intval(Interaction::isEnabled() || ($record['stato'] == 'Bozza' && $abilita_genera)); ?>, "class": "unblockable", "help": "<?php echo (!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : ''; ?>" ]}
                 </div>
 
                 <?php
@@ -392,7 +392,7 @@ if ($dir == 'entrata') {
 				<div class="col-md-3">
 					<!-- Nella realtà la fattura accompagnatoria non può esistere per la fatturazione elettronica, in quanto la risposta dal SDI potrebbe non essere immediata e le merci in viaggio. Dunque si può emettere una documento di viaggio valido per le merci ed eventualmente una fattura pro-forma per l'incasso della stessa, emettendo infine la fattura elettronica differita. -->
 
-					{[ "type": "select", "label": "<?php echo tr('Tipo documento'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT_WS(' - ',`codice_tipo_documento_fe`, `name`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = <?php echo prepare(\App::getLang()); ?>) WHERE `dir`='<?php echo $dir; ?>' AND ((`reversed` = 0 AND `id_segment` ='<?php echo $record['id_segment']; ?>') OR `co_tipidocumento`.`id` = <?php echo $record['idtipodocumento']; ?>) ORDER BY `codice_tipo_documento_fe`", "value": "$idtipodocumento$", "readonly": <?php echo intval($record['stato'] != 'Bozza' && $record['stato'] != 'Annullata'); ?>, "help": "<?php echo ($database->fetchOne('SELECT tipo FROM an_anagrafiche WHERE idanagrafica = '.prepare($record['idanagrafica']))['tipo'] == 'Ente pubblico') ? 'FPA12 - fattura verso PA (Ente pubblico)' : 'FPR12 - fattura verso soggetti privati (Azienda o Privato)'; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tipo documento'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT_WS(' - ',`codice_tipo_documento_fe`, `name`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = <?php echo prepare(\Models\Locale::getDefault()->id); ?>) WHERE `dir`='<?php echo $dir; ?>' AND ((`reversed` = 0 AND `id_segment` ='<?php echo $record['id_segment']; ?>') OR `co_tipidocumento`.`id` = <?php echo $record['idtipodocumento']; ?>) ORDER BY `codice_tipo_documento_fe`", "value": "$idtipodocumento$", "readonly": <?php echo intval($record['stato'] != 'Bozza' && $record['stato'] != 'Annullata'); ?>, "help": "<?php echo ($database->fetchOne('SELECT tipo FROM an_anagrafiche WHERE idanagrafica = '.prepare($record['idanagrafica']))['tipo'] == 'Ente pubblico') ? 'FPA12 - fattura verso PA (Ente pubblico)' : 'FPR12 - fattura verso soggetti privati (Azienda o Privato)'; ?>" ]}
 				</div>
                 
 				<div class="col-md-3">
@@ -586,7 +586,7 @@ if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Porto').'", "name": "idporto", "placeholder": "", "values": "query=SELECT `dt_porto`.`id`, `dt_porto_lang`.`name` as descrizione FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto`.`id` = `dt_porto_lang`.`id_record` AND `dt_porto_lang`.`id_lang` = '.prepare(\App::getLang()).') ORDER BY `name` ASC", "value": "$idporto$" ]}
+                    {[ "type": "select", "label": "'.tr('Porto').'", "name": "idporto", "placeholder": "", "values": "query=SELECT `dt_porto`.`id`, `dt_porto_lang`.`name` as descrizione FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto`.`id` = `dt_porto_lang`.`id_record` AND `dt_porto_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') ORDER BY `name` ASC", "value": "$idporto$" ]}
                 </div>
 
                 <div class="col-md-3">
@@ -596,7 +596,7 @@ if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
 
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Tipo di spedizione').'", "name": "idspedizione", "values": "query=SELECT `dt_spedizione`.`id`, `dt_spedizione_lang`.`name` as descrizione, `esterno` FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione`.`id` = `dt_spedizione_lang`.`id_record` AND `dt_spedizione_lang`.`id_lang` = '.prepare(\App::getLang()).') ORDER BY `name` ASC", "value": "$idspedizione$" ]}
+                    {[ "type": "select", "label": "'.tr('Tipo di spedizione').'", "name": "idspedizione", "values": "query=SELECT `dt_spedizione`.`id`, `dt_spedizione_lang`.`name` as descrizione, `esterno` FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione`.`id` = `dt_spedizione_lang`.`id_record` AND `dt_spedizione_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') ORDER BY `name` ASC", "value": "$idspedizione$" ]}
                 </div>
 
                 <div class="col-md-3">';
@@ -811,7 +811,7 @@ if (!$block_edit) {
             `dt_ddt`
             INNER JOIN `dt_causalet` ON `dt_causalet`.`id` = `dt_ddt`.`idcausalet`
             INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`
-            LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(\App::getLang()).')
+            LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
             LEFT JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
             INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
         WHERE 
@@ -829,7 +829,7 @@ if (!$block_edit) {
                 `or_ordini`
                 INNER JOIN `or_righe_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine`
                 INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`idstatoordine`
-                LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(\App::getLang()).')
+                LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
                 INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine`
             WHERE 
                 idanagrafica='.prepare($record['idanagrafica']).' 

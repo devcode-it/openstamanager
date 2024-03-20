@@ -107,7 +107,7 @@ switch ($op) {
             FROM
                 `co_documenti`
                 INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
-                LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(\App::getLang()).')
+                LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
                 INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
                 INNER JOIN `zz_segments` ON `zz_segments`.`id` = `co_documenti`.`id_segment`
             WHERE
@@ -833,7 +833,7 @@ switch ($op) {
         $data = post('data');
 
         $anagrafica = $fattura->anagrafica;
-        $id_tipo = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `name` = "Nota di credito" AND `dir` = "entrata"')['id'];
+        $id_tipo = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `name` = "Nota di credito" AND `dir` = "entrata"')['id'];
         $tipo = Tipo::find($id_tipo);
         $nota = Fattura::build($anagrafica, $tipo, $data, $id_segment);
         $nota->ref_documento = $fattura->id;
@@ -1178,7 +1178,7 @@ switch ($op) {
 
 // Nota di debito
 if (get('op') == 'nota_addebito') {
-    $rs_segment = $dbo->fetchArray("SELECT * FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = ".prepare(\App::getLang()).") WHERE `predefined_addebito`='1'");
+    $rs_segment = $dbo->fetchArray("SELECT * FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = ".prepare(\Models\Locale::getDefault()->id).") WHERE `predefined_addebito`='1'");
     if (!empty($rs_segment)) {
         $id_segment = $rs_segment[0]['id'];
     } else {
@@ -1186,7 +1186,7 @@ if (get('op') == 'nota_addebito') {
     }
 
     $anagrafica = $fattura->anagrafica;
-    $id_tipo = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `name` = "Nota di debito" AND `dir` = "entrata"')['id'];
+    $id_tipo = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `name` = "Nota di debito" AND `dir` = "entrata"')['id'];
     $tipo = Tipo::find($id_tipo);
     $data = $fattura->data;
 

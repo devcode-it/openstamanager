@@ -63,7 +63,7 @@ class Impostazioni extends AppResource
             `tipo`
         FROM 
             `zz_settings`
-            LEFT JOIN `zz_settings_lang` ON (`zz_settings`.`id` = `zz_settings_lang`.`id_record` AND `zz_settings_lang`.`id_lang` = '.prepare(\App::getLang()).')
+            LEFT JOIN `zz_settings_lang` ON (`zz_settings`.`id` = `zz_settings_lang`.`id_record` AND `zz_settings_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
         WHERE 
             `zz_settings`.`id` = '.prepare($id);
 

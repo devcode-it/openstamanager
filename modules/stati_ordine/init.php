@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\Ordini\Stato;
 
 if (isset($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record`=`or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `or_statiordine`.`id`='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT * FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record`=`or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `or_statiordine`.`id`='.prepare($id_record));
 
     $stato = Stato::find($id_record);
 }

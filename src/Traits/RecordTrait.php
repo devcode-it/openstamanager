@@ -21,6 +21,7 @@ namespace Traits;
 
 use Models\Module;
 use Models\Plugin;
+use Models\Locale;
 
 trait RecordTrait
 {
@@ -76,8 +77,8 @@ trait RecordTrait
     {
         if ($this->id) {
             // Lingue aggiuntive disponibili
-            $langs = \App::getAvailableLangs();
-            $other_langs = array_diff($langs, [\App::getLang()]);
+            $langs = Locale::All();
+            $other_langs = array_diff($langs, [Locale::getDefault()]);
 
             // Popolo inizialmente i campi traducibili o allineo quelli uguali
             foreach ($this->getTranslatedFields() as $field) {
@@ -116,7 +117,7 @@ trait RecordTrait
      */
     public function setTranslation($field, $value, $id_lang = null)
     {
-        $id_lang ??= \App::getLang();
+        $id_lang ??= \Models\Locale::getDefault()->id;
         $table = database()->table($this->table.'_lang');
 
         $translated = $table
@@ -140,21 +141,24 @@ trait RecordTrait
     /**
      * Legge l'attributo dell'oggetto
      */
-    public function getTranslation($field)
+    public function getTranslation($field, $id_lang = null)
     {
+        $id_lang ??= \Models\Locale::getDefault()->id;
         return database()->table($this->table.'_lang')
             ->select($field)
             ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->$field;
+            ->where('id_lang', '=', $id_lang)
+            ->first()
+            ->$field;
     }
 
-    public function getByField($field, $value)
+    public function getByField($field, $value, $id_lang = null)
     {
+        $id_lang ??= \Models\Locale::getDefault()->id;
         return database()->table($this->table.'_lang')
             ->select('id_record')
             ->where($field, '=', $value)
-            ->where('id_lang', '=', \App::getLang())
+            ->where('id_lang', '=', $id_lang)
             ->first()
             ->id_record;
     }

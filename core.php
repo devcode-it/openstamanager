@@ -307,8 +307,8 @@ foreach ($list as $file) {
 
 // Inizializzazione traduzioni
 if (database()->tableExists('zz_settings') && database()->tableExists('zz_langs')) {
-    $available_langs = database()->table('zz_langs')->select('id')->pluck('id')->toArray();
-    App::setAvailableLangs($available_langs);
+    $id_lang = setting('Lingua');
+    \Models\Locale::setDefault($id_lang);
 
-    App::setLang(setting('Lingua'));
+    $lang = \Models\Locale::find($id_lang)->language_code;
 }

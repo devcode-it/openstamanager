@@ -49,7 +49,7 @@ $query = 'SELECT
         INNER JOIN `an_anagrafiche` ON `in_interventi_tecnici`.`idtecnico` = `an_anagrafiche`.`idanagrafica`
         LEFT JOIN (SELECT `zz_users`.`idanagrafica`, `zz_users`.`id` FROM `zz_users` GROUP BY `zz_users`.`idanagrafica`) AS user ON `user`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` 
         INNER JOIN `in_tipiintervento` ON `in_interventi_tecnici`.`idtipointervento` = `in_tipiintervento`.`id`
-        LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(\App::getLang()).')
+        LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
     WHERE
         `in_interventi_tecnici`.`idintervento`='.prepare($id_record).'
     ORDER BY

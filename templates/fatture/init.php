@@ -48,21 +48,21 @@ FROM
     INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`co_documenti`.`idanagrafica`
     LEFT JOIN `an_anagrafiche` AS vettore ON `vettore`.`idanagrafica` = `co_documenti`.`idvettore`
     INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento`=`co_statidocumento`.`id`
-    LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(\App::getLang()).')
+    LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
     INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
-    LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(\App::getLang()).')
+    LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
     LEFT JOIN `co_pagamenti` ON `co_documenti`.`idpagamento`=`co_pagamenti`.`id`
-    LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.`id_lang` = '.prepare(\App::getLang()).')
+    LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
     LEFT JOIN `co_banche` ON `co_banche`.`id` = `co_documenti`.`id_banca_azienda`
     INNER JOIN `zz_segments` ON `co_documenti`.`id_segment` = `zz_segments`.`id`
     LEFT JOIN `dt_causalet` ON `dt_causalet`.`id` = `co_documenti`.`idcausalet`
-    LEFT JOIN `dt_causalet_lang` ON (`dt_causalet_lang`.`id_record` = `dt_causalet`.`id` AND `dt_causalet_lang`.`id_lang` = '.prepare(\App::getLang()).')
+    LEFT JOIN `dt_causalet_lang` ON (`dt_causalet_lang`.`id_record` = `dt_causalet`.`id` AND `dt_causalet_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
     LEFT JOIN `dt_porto` ON `dt_porto`.`id` = `co_documenti`.`idporto`
-    LEFT JOIN `dt_porto_lang` ON (`dt_porto_lang`.`id_record` = `dt_porto`.`id` AND `dt_porto_lang`.`id_lang` = '.prepare(\App::getLang()).')
+    LEFT JOIN `dt_porto_lang` ON (`dt_porto_lang`.`id_record` = `dt_porto`.`id` AND `dt_porto_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
     LEFT JOIN `dt_aspettobeni` ON `dt_aspettobeni`.`id` = `co_documenti`.`idaspettobeni`
-    LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni_lang`.`id_record` = `dt_aspettobeni`.`id` AND `dt_aspettobeni_lang`.`id_lang` = '.prepare(\App::getLang()).')
+    LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni_lang`.`id_record` = `dt_aspettobeni`.`id` AND `dt_aspettobeni_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
     LEFT JOIN `dt_spedizione` ON `dt_spedizione`.`id` = `co_documenti`.`idspedizione`
-    LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione_lang`.`id_record` = `dt_spedizione`.`id` AND `dt_spedizione_lang`.`id_lang` = '.prepare(\App::getLang()).')
+    LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione_lang`.`id_record` = `dt_spedizione`.`id` AND `dt_spedizione_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
 WHERE 
     `co_documenti`.`id`='.prepare($id_record));
 

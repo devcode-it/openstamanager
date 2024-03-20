@@ -23,7 +23,7 @@ use Models\Module;
 
 $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 
-$stati = get('pianificabile') ? 'SELECT `co_statipreventivi`.`id`, `co_statipreventivi_lang`.`name` as descrizione FROM `co_statipreventivi`  LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `is_pianificabile`=1' : 'SELECT `co_statipreventivi`.`id`, `co_statipreventivi_lang`.`name` as descrizione FROM `co_statipreventivi` LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(\App::getLang()).')';
+$stati = get('pianificabile') ? 'SELECT `co_statipreventivi`.`id`, `co_statipreventivi_lang`.`name` as descrizione FROM `co_statipreventivi`  LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `is_pianificabile`=1' : 'SELECT `co_statipreventivi`.`id`, `co_statipreventivi_lang`.`name` as descrizione FROM `co_statipreventivi` LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')';
 
 $stato = (new Stato())->getByField('name', 'Bozza');
 

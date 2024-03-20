@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$stati_abilitati = $dbo->fetchOne('SELECT GROUP_CONCAT(`name` SEPARATOR ", ") AS stati_abilitati FROM `co_statipreventivi` LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(\App::getLang()).' WHERE `is_revisionabile` = 1 ')['stati_abilitati'];
+$stati_abilitati = $dbo->fetchOne('SELECT GROUP_CONCAT(`name` SEPARATOR ", ") AS stati_abilitati FROM `co_statipreventivi` LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).' WHERE `is_revisionabile` = 1 ')['stati_abilitati'];
 
 // Crea revisione
 echo '
@@ -35,7 +35,7 @@ $rs_documento = $dbo->fetchArray('SELECT * FROM co_righe_preventivi WHERE idprev
 
 $disabled = ($record['is_fatturabile'] || $record['is_completato']) && !empty($rs_documento);
 
-$stati_abilitati = $dbo->fetchOne('SELECT GROUP_CONCAT(`name` SEPARATOR ", ") AS stati_abilitati FROM `co_statipreventivi` LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(\App::getLang()).' WHERE `is_fatturabile` = 1 OR `is_completato` = 1 ')['stati_abilitati'];
+$stati_abilitati = $dbo->fetchOne('SELECT GROUP_CONCAT(`name` SEPARATOR ", ") AS stati_abilitati FROM `co_statipreventivi` LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).' WHERE `is_fatturabile` = 1 OR `is_completato` = 1 ')['stati_abilitati'];
 
 // Creazione altri documenti
 echo '

@@ -20,5 +20,5 @@
 include_once __DIR__.'/../../core.php';
 
 if (isset($id_record)) {
-    $record = $dbo->fetchOne('SELECT *, `co_tipi_scadenze`.`id` as id FROM `co_tipi_scadenze` LEFT JOIN `co_tipi_scadenze_lang` ON (`co_tipi_scadenze_lang`.`id_record` = `co_tipi_scadenze`.`id` AND `co_tipi_scadenze_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `co_tipi_scadenze`.`id`='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT *, `co_tipi_scadenze`.`id` as id FROM `co_tipi_scadenze` LEFT JOIN `co_tipi_scadenze_lang` ON (`co_tipi_scadenze_lang`.`id_record` = `co_tipi_scadenze`.`id` AND `co_tipi_scadenze_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `co_tipi_scadenze`.`id`='.prepare($id_record));
 }

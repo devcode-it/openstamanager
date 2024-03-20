@@ -34,7 +34,7 @@ switch ($resource) {
                 `or_ordini`
                 INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id`
                 INNER JOIN `or_statiordine` ON `or_ordini`.`idstatoordine` = `or_statiordine`.`id`
-                LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = ".prepare(\App::getLang()).")
+                LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = ".prepare(\Models\Locale::getDefault()->id).")
                 INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
             WHERE 
                 `idanagrafica` = ".prepare($id_anagrafica)."
@@ -58,7 +58,7 @@ switch ($resource) {
                 INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
                 INNER JOIN `dt_statiddt` ON `dt_ddt`.`idstato` = `dt_statiddt`.`id`
                 INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
-                LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(\App::getLang()).")
+                LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(\Models\Locale::getDefault()->id).")
             WHERE 
                 `idanagrafica` = ".prepare($id_anagrafica)." AND
                 `dt_statiddt_lang`.`name` != 'Fatturato' AND
@@ -112,7 +112,7 @@ switch ($resource) {
             FROM `or_ordini`
                 INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id`
                 INNER JOIN `or_statiordine` ON `or_ordini`.`idstatoordine` = `or_statiordine`.`id`
-                LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = ".prepare(\App::getLang()).")
+                LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = ".prepare(\Models\Locale::getDefault()->id).")
                 INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipiordine` = `or_tipiordine`.`id`
             WHERE 
                 `idarticolo` = ".prepare($id_articolo)."
@@ -134,7 +134,7 @@ switch ($resource) {
                 `dt_ddt`
                 INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
                 INNER JOIN `dt_statiddt` ON `dt_ddt`.`idstato` = `dt_statiddt`.`id`
-                LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(\App::getLang()).")
+                LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(\Models\Locale::getDefault()->id).")
                 INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
             WHERE 
                 `idarticolo` = ".prepare($id_articolo)." AND

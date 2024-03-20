@@ -38,7 +38,7 @@ class Sedi extends AppResource
             INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `an_sedi`.`idanagrafica`
             INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
             INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche`.`id`
-            LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(\App::getLang()).")
+            LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).")
         WHERE 
             `an_tipianagrafiche_lang`.`name` = 'Cliente' AND `an_anagrafiche`.`deleted_at` IS NULL";
 
@@ -75,7 +75,7 @@ class Sedi extends AppResource
             `an_sedi`.`email`
         FROM `an_sedi`
             LEFT JOIN `an_nazioni` ON `an_sedi`.`id_nazione` = `an_nazioni`.`id`
-            LEFT JOIN `an_nazioni_lang` ON (`an_nazioni`.`id` = `an_nazioni_lang`.`id_record` AND `an_nazioni_lang`.`id_lang` = '.prepare(\App::getLang()).')
+            LEFT JOIN `an_nazioni_lang` ON (`an_nazioni`.`id` = `an_nazioni_lang`.`id_record` AND `an_nazioni_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
         WHERE `an_sedi`.`id` = '.prepare($id);
 
         $record = database()->fetchOne($query);

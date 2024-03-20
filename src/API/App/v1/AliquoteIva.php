@@ -50,7 +50,7 @@ class AliquoteIva extends AppResource
             `co_iva`.`percentuale`
         FROM 
             `co_iva`
-            LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\App::getLang()).')
+            LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
         WHERE 
             `co_iva`.`id` = '.prepare($id);
 

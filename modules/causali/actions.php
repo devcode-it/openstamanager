@@ -25,7 +25,7 @@ switch (filter('op')) {
         $predefined = post('predefined');
 
         if (isset($descrizione)) {
-            if ($dbo->fetchNum('SELECT * FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(\App::getLang()).') WHERE `deleted_at` IS NULL AND `name`='.prepare($descrizione).' AND `dt_causalet`.`id`!='.prepare($id_record)) == 0) {
+            if ($dbo->fetchNum('SELECT * FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(\Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `name`='.prepare($descrizione).' AND `dt_causalet`.`id`!='.prepare($id_record)) == 0) {
                 if (!empty($predefined)) {
                     $dbo->query('UPDATE dt_causalet SET predefined = 0');
                 }
@@ -39,7 +39,7 @@ switch (filter('op')) {
 
                 $dbo->update('dt_causalet_lang', [
                     'name' => $descrizione,
-                ], ['id_record' => $id_record, 'id_lang' => \App::getLang()]);
+                ], ['id_record' => $id_record, 'id_lang' => \Models\Locale::getDefault()->id]);
 
                 flash()->info(tr('Salvataggio completato!'));
             } else {
@@ -55,7 +55,7 @@ switch (filter('op')) {
         $descrizione = filter('descrizione');
 
         if (isset($descrizione)) {
-            if ($dbo->fetchNum('SELECT * FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(\App::getLang()).') WHERE `deleted_at` IS NULL AND `name`='.prepare($descrizione)) == 0) {
+            if ($dbo->fetchNum('SELECT * FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(\Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `name`='.prepare($descrizione)) == 0) {
                 $dbo->insert('dt_causalet', [
                     'is_importabile' => 1,
                 ]);
@@ -63,7 +63,7 @@ switch (filter('op')) {
                 $dbo->insert('dt_causalet_lang', [
                     'name' => $descrizione,
                     'id_record' => $id_record,
-                    'id_lang' => \App::getLang(),
+                    'id_lang' => \Models\Locale::getDefault()->id,
                 ]);
 
                 if (isAjaxRequest()) {

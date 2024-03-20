@@ -45,7 +45,7 @@ class WidgetManager implements ManagerInterface
         $database = database();
 
         // Widget richiesto
-        $widget = $database->fetchArray('SELECT * FROM `zz_widgets` LEFT JOIN `zz_widgets_lang` ON (`zz_widgets`.`id` = `zz_widgets_lang`.`id_record` AND `zz_widgets_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `zz_widgets`.`id` = '.prepare($options['id']))[0];
+        $widget = $database->fetchArray('SELECT * FROM `zz_widgets` LEFT JOIN `zz_widgets_lang` ON (`zz_widgets`.`id` = `zz_widgets_lang`.`id_record` AND `zz_widgets_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `zz_widgets`.`id` = '.prepare($options['id']))[0];
 
         $result = ' ';
 
@@ -251,7 +251,7 @@ class WidgetManager implements ManagerInterface
 
             // Aggiungo ad uno ad uno tutti i widget
             foreach ($widgets as $widget) {
-                if ($widget['id_module'] == $database->fetchOne('SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = "Stato dei servizi" AND `id_lang` = '.prepare(\App::getLang()).'')['id']) {
+                if ($widget['id_module'] == $database->fetchOne('SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = "Stato dei servizi" AND `id_lang` = '.prepare(\Models\Locale::getDefault()->id).'')['id']) {
                     $result .= '
                     <li class="col-sm-6 col-md-4 li-widget" id="widget_'.$widget['id'].'" style="height:100% !important;" data-id="'.$widget['id'].'">';
                 } else {

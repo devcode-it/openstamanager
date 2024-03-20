@@ -25,9 +25,9 @@ $id_print = $dbo->fetchOne('SELECT
 			`zz_prints`.`id` 
 		FROM 
 			`zz_prints`
-			LEFT JOIN `zz_prints_lang` ON (`zz_prints`.`id` = `zz_prints_lang`.`id_record` AND `zz_prints_lang`.`id_lang` = '.prepare(\App::getLang()).')
+			LEFT JOIN `zz_prints_lang` ON (`zz_prints`.`id` = `zz_prints_lang`.`id_record` AND `zz_prints_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
 			INNER JOIN `zz_modules` ON `zz_prints`.`id_module`=`zz_modules`.`id` 
-			LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(\App::getLang()).') 
+			LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') 
 		WHERE 
 			`zz_modules_lang`.`name`="Articoli" AND `zz_prints_lang`.`name`="Inventario magazzino"')['id'];
 

@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$utenti = $dbo->fetchArray('SELECT *, (SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `an_anagrafiche`.`idanagrafica`=`zz_users`.`idanagrafica` ) AS `ragione_sociale`, (SELECT GROUP_CONCAT(`name` SEPARATOR ", ") FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(\App::getLang()).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` WHERE `idanagrafica`=`zz_users`.`idanagrafica` GROUP BY `idanagrafica`) AS tipo FROM `zz_users` WHERE `idgruppo`='.prepare($record['id']));
+$utenti = $dbo->fetchArray('SELECT *, (SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `an_anagrafiche`.`idanagrafica`=`zz_users`.`idanagrafica` ) AS `ragione_sociale`, (SELECT GROUP_CONCAT(`name` SEPARATOR ", ") FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` WHERE `idanagrafica`=`zz_users`.`idanagrafica` GROUP BY `idanagrafica`) AS tipo FROM `zz_users` WHERE `idgruppo`='.prepare($record['id']));
 
 echo '
 	<div class="panel panel-primary">

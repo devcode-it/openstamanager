@@ -17,7 +17,8 @@ CREATE TABLE IF NOT EXISTS `zz_langs` (
     `timestamp` varchar(100) NOT NULL,
     `decimals` varchar(1) NOT NULL,
     `thousands` varchar(1) NULL,
-    `is_rtl` tinyint(1) NOT NULL
+    `is_rtl` tinyint(1) NOT NULL DEFAULT FALSE,
+    `predefined` tinyint(1) NOT NULL DEFAULT FALSE
 );
 
 ALTER TABLE `zz_langs`
@@ -26,8 +27,9 @@ ALTER TABLE `zz_langs`
 ALTER TABLE `zz_langs`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `zz_langs` (`id`, `name`, `enabled`, `iso_code`, `language_code`, `date`, `time`, `timestamp`, `decimals`, `thousands`, `is_rtl`) VALUES (NULL, 'Italiano (Italian)', '1', 'it', 'it-it', 'd/m/Y', 'H:i', 'd/m/Y H:i', ',', NULL, 0); 
-INSERT INTO `zz_langs` (`id`, `name`, `enabled`, `iso_code`, `language_code`, `date`, `time`, `timestamp`, `decimals`, `thousands`, `is_rtl`) VALUES (NULL, 'English (English)', '1', 'en', 'en-gb', 'm/d/Y', 'H:i', 'm/d/Y H:i', ',', NULL, 0); 
+INSERT INTO `zz_langs` (`name`, `enabled`, `iso_code`, `language_code`, `date`, `time`, `timestamp`, `decimals`, `thousands`, `is_rtl`, `predefined`) VALUES 
+('Italiano (Italian)', '1', 'it', 'it_IT', 'd/m/Y', 'H:i', 'd/m/Y H:i', ',', '.', 0, 1), 
+('English (English)', '1', 'en', 'en_GB', 'm/d/Y', 'H:i', 'm/d/Y H:i', '.', ',', 0, 0); 
 
 -- Aggiunta valuta dollaro
 INSERT INTO `zz_currencies` (`id`, `name`, `title`, `symbol`) VALUES (NULL, 'Dollaro', 'Dollaro', '&dollar;');

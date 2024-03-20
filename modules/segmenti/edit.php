@@ -39,7 +39,7 @@ use Models\Module;
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "module", "required": 1, "values": "query=SELECT `zz_modules`.`id`, `name` AS descrizione FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON(`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = <?php echo \App::getLang(); ?>) WHERE (`enabled` = 1 AND `options` != 'custom' ) OR `zz_modules`.`id` = <?php echo $record['id_module']; ?> ORDER BY `name` ASC", "value": "<?php echo $record['id_module']; ?>", "extra": "<?php echo ($record['predefined']) ? 'readonly' : ''; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "module", "required": 1, "values": "query=SELECT `zz_modules`.`id`, `name` AS descrizione FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON(`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = <?php echo \Models\Locale::getDefault()->id; ?>) WHERE (`enabled` = 1 AND `options` != 'custom' ) OR `zz_modules`.`id` = <?php echo $record['id_module']; ?> ORDER BY `name` ASC", "value": "<?php echo $record['id_module']; ?>", "extra": "<?php echo ($record['predefined']) ? 'readonly' : ''; ?>" ]}
 				</div>
 
 				<div class="col-md-2">
@@ -103,7 +103,7 @@ $_SESSION['module_'.$record['id_module']]['id_segment'] = $previous_module;
 echo '
             <div class="row">
 				<div class="col-md-12">
-                    {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi[]", "multiple": "1", "values": "query=SELECT `zz_groups`.`id`, `name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(\App::getLang()).') ORDER BY `zz_groups`.`id` ASC", "value": "';
+                    {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi[]", "multiple": "1", "values": "query=SELECT `zz_groups`.`id`, `name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') ORDER BY `zz_groups`.`id` ASC", "value": "';
 $results = $dbo->fetchArray('SELECT GROUP_CONCAT(DISTINCT `id_gruppo` SEPARATOR \',\') AS gruppi FROM `zz_group_segment` WHERE `id_segment`='.prepare($id_record));
 
 echo $results[0]['gruppi'].'"';

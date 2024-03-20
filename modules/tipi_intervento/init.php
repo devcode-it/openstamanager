@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\TipiIntervento\Tipo;
 
 if (isset($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `in_tipiintervento`.`id`='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT * FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `in_tipiintervento`.`id`='.prepare($id_record));
 
     $tipo = Tipo::find($id_record);
 }

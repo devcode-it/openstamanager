@@ -74,16 +74,16 @@ if ($righe_vuote) {
                     if (setting('Cambia automaticamente stato ordini fatturati')) {
                         if ($record['stato'] == 'Evaso' || $record['stato'] == 'Parzialmente evaso' || $record['stato'] == 'Fatturato' || $record['stato'] == 'Parzialmente fatturato') {
                             ?>
-                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT *, `or_statiordine_lang`.`name` as descrizione, `colore` AS _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(\App::getLang()); ?>) ORDER BY `name`", "value": "$idstatoordine$", "extra": "readonly", "class": "unblockable" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT *, `or_statiordine_lang`.`name` as descrizione, `colore` AS _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(\Models\Locale::getDefault()->id); ?>) ORDER BY `name`", "value": "$idstatoordine$", "extra": "readonly", "class": "unblockable" ]}
                     <?php
                         } else {
                             ?>
-                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT *, `or_statiordine_lang`.`name` as descrizione, `colore` AS _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(\App::getLang()); ?>) WHERE (`is_fatturabile` = 0 AND `name` != 'Fatturato' || `name` = 'Accettato') ORDER BY `name`", "value": "$idstatoordine$", "class": "unblockable" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT *, `or_statiordine_lang`.`name` as descrizione, `colore` AS _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(\Models\Locale::getDefault()->id); ?>) WHERE (`is_fatturabile` = 0 AND `name` != 'Fatturato' || `name` = 'Accettato') ORDER BY `name`", "value": "$idstatoordine$", "class": "unblockable" ]}
                     <?php
                         }
                     } else {
                         ?>
-                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT *, `colore` AS _bgcolor_, `or_statiordine_lang`.`name` as descrizione FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(\App::getLang()); ?>) ORDER BY `name`", "value": "$idstatoordine$", "class": "unblockable" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT *, `colore` AS _bgcolor_, `or_statiordine_lang`.`name` as descrizione FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(\Models\Locale::getDefault()->id); ?>) ORDER BY `name`", "value": "$idstatoordine$", "class": "unblockable" ]}
                     <?php
                     }
 ?>
@@ -484,9 +484,9 @@ input("ordinamento").on("change", function(){
 
 // Collegamenti diretti
 // Fatture o ddt collegati a questo ordine
-$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento_lang`.`name` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(\App::getLang()).') INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` WHERE `co_righe_documenti`.`idordine` = '.prepare($id_record).')
+$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento_lang`.`name` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` WHERE `co_righe_documenti`.`idordine` = '.prepare($id_record).')
 
-UNION SELECT `dt_ddt`.`id`, `dt_ddt`.`data`, `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`, `dt_tipiddt_lang`.`name` AS tipo_documento, `dt_tipiddt`.`dir` FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(\App::getLang()).') INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id` WHERE `dt_righe_ddt`.`idordine` = '.prepare($id_record).') ORDER BY `data`');
+UNION SELECT `dt_ddt`.`id`, `dt_ddt`.`data`, `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`, `dt_tipiddt_lang`.`name` AS tipo_documento, `dt_tipiddt`.`dir` FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id` WHERE `dt_righe_ddt`.`idordine` = '.prepare($id_record).') ORDER BY `data`');
 
 if (!empty($elementi)) {
     echo '

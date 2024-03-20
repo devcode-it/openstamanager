@@ -61,7 +61,7 @@ if (!empty($documento->idsede)) {
 }
 
 $numero = !empty($documento['numero_esterno']) ? $documento['numero_esterno'] : $documento['numero'];
-$pagamento = $dbo->fetchOne('SELECT * FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `co_pagamenti`.`id` = '.prepare($documento->idpagamento));
+$pagamento = $dbo->fetchOne('SELECT * FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `co_pagamenti`.`id` = '.prepare($documento->idpagamento));
 
 // Sostituzioni specifiche
 $custom = [

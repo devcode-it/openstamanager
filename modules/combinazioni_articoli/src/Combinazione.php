@@ -122,7 +122,7 @@ class Combinazione extends Model
                     $articolo->save();
                 }
             }
-            $database->query("INSERT INTO `mg_articoli_lang` (`id_record`, `id_lang`, `name`) VALUES ('" . $articolo->id . "', " . \App::getLang() . ", '" . implode("', '", $variante) . "')");
+            $database->query("INSERT INTO `mg_articoli_lang` (`id_record`, `id_lang`, `name`) VALUES ('" . $articolo->id . "', " . \Models\Locale::getDefault()->id . ", '" . implode("', '", $variante) . "')");
             $articolo->codice = $this->codice . '-' . implode('|', $variante);
             $articolo->save();
         }

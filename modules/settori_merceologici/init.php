@@ -20,5 +20,5 @@
 include_once __DIR__.'/../../core.php';
 
 if (isset($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `an_settori` LEFT JOIN `an_settori_lang` ON (`an_settori`.`id`=`an_settori_lang`.`id_record` AND `an_settori_lang`.`id_lang`='.prepare(\App::getLang()).') WHERE `an_settori`.`id`='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT * FROM `an_settori` LEFT JOIN `an_settori_lang` ON (`an_settori`.`id`=`an_settori_lang`.`id_record` AND `an_settori_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).') WHERE `an_settori`.`id`='.prepare($id_record));
 }

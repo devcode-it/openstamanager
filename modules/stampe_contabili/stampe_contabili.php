@@ -96,7 +96,7 @@ echo '
 if ($nome_stampa != 'Liquidazione IVA') {
     echo '
 		<div class="col-md-4">
-			{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_sezionale", "required": "1", "values": "query=SELECT `zz_segments`.`id`, `zz_segments_lang`.`name` AS descrizione FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `id_module` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = \''.(($dir == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto').'\') AND `is_fiscale` = 1 UNION SELECT  -1 AS id, \'Tutti i sezionali\' AS descrizione" ]}
+			{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_sezionale", "required": "1", "values": "query=SELECT `zz_segments`.`id`, `zz_segments_lang`.`name` AS descrizione FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `id_module` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = \''.(($dir == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto').'\') AND `is_fiscale` = 1 UNION SELECT  -1 AS id, \'Tutti i sezionali\' AS descrizione" ]}
 		</div>';
 }
 echo '

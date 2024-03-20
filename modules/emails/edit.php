@@ -45,7 +45,7 @@ if (!$record['predefined']) {
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "span", "label": "<?php echo tr('Modulo del template'); ?>", "name": "module", "values": "query=SELECT `zz_modules`.`id`, `title` AS descrizione FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = <?php echo prepare(\App::getLang()); ?>) WHERE `enabled` = 1", "value": "<?php echo Module::find($record['id_module'])->getTranslation('title'); ?>" ]}
+                    {[ "type": "span", "label": "<?php echo tr('Modulo del template'); ?>", "name": "module", "values": "query=SELECT `zz_modules`.`id`, `title` AS descrizione FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = <?php echo prepare(\Models\Locale::getDefault()->id); ?>) WHERE `enabled` = 1", "value": "<?php echo Module::find($record['id_module'])->getTranslation('title'); ?>" ]}
                 </div>
             </div>
 
@@ -103,7 +103,7 @@ echo '
 
             <div class="row">
                 <div class="col-md-12">
-                    {[ "type": "select", "multiple": "1", "label": "'.tr('Stampe').'", "name": "prints[]", "value": "'.implode(',', $selected_prints).'", "values": "query=SELECT `zz_prints`.`id`, `zz_prints_lang`.`title` AS text FROM `zz_prints` LEFT JOIN `zz_prints_lang` ON (`zz_prints`.`id` = `zz_prints_lang`.`id_record` AND `zz_prints_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `id_module` = '.prepare($record['id_module']).' AND `enabled`=1 AND `is_record`=1" ]}
+                    {[ "type": "select", "multiple": "1", "label": "'.tr('Stampe').'", "name": "prints[]", "value": "'.implode(',', $selected_prints).'", "values": "query=SELECT `zz_prints`.`id`, `zz_prints_lang`.`title` AS text FROM `zz_prints` LEFT JOIN `zz_prints_lang` ON (`zz_prints`.`id` = `zz_prints_lang`.`id_record` AND `zz_prints_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `id_module` = '.prepare($record['id_module']).' AND `enabled`=1 AND `is_record`=1" ]}
                 </div>
             </div>
 

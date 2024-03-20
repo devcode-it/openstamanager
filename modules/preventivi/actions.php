@@ -148,7 +148,7 @@ switch (post('op')) {
             ], ['id' => $idintervento]);
 
             // Imposto il preventivo nello stato "In lavorazione" se inizio ad aggiungere interventi
-            $dbo->query("UPDATE `co_preventivi` SET `idstato`=(SELECT `id` FROM `co_statipreventivi` LEFT JOIN `co_statipreventivi_lang ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = ".prepare(\App::getLang()).") WHERE `name`='In lavorazione') WHERE `co_preventivi`.`id`=".prepare($id_record));
+            $dbo->query("UPDATE `co_preventivi` SET `idstato`=(SELECT `id` FROM `co_statipreventivi` LEFT JOIN `co_statipreventivi_lang ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = ".prepare(\Models\Locale::getDefault()->id).") WHERE `name`='In lavorazione') WHERE `co_preventivi`.`id`=".prepare($id_record));
 
             flash()->info(tr('Intervento _NUM_ aggiunto!', [
                 '_NUM_' => $rs[0]['codice'],

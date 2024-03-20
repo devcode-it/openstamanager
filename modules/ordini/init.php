@@ -39,7 +39,7 @@ if (isset($id_record)) {
             LEFT JOIN `or_statiordine_lang` ON `or_statiordine_lang`.`id_record`=`or_statiordine`.`id`
             INNER JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
             INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine`=`or_tipiordine`.`id`
-            LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine_lang`.`id_record`=`or_tipiordine`.`id` AND `or_tipiordine_lang`.`id_lang`='.prepare(\App::getLang()).')
+            LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine_lang`.`id_record`=`or_tipiordine`.`id` AND `or_tipiordine_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).')
         WHERE 
             `or_ordini`.`id`='.prepare($id_record));
 }

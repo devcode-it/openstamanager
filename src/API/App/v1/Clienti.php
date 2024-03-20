@@ -39,7 +39,7 @@ class Clienti extends AppResource
             `an_anagrafiche`
             INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
             INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche`.`id`
-            LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(\App::getLang()).')
+            LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).')
         WHERE 
             `an_tipianagrafiche_lang`.`name` = "Cliente" AND (`an_anagrafiche`.`deleted_at` IS NULL OR `an_anagrafiche`.`idanagrafica` IN(SELECT `in_interventi`.`idanagrafica` FROM `in_interventi`))';
 
@@ -102,7 +102,7 @@ class Clienti extends AppResource
             `an_anagrafiche`.`idtipointervento_default` AS id_tipo_intervento_default
         FROM `an_anagrafiche`
             LEFT JOIN `an_nazioni` ON `an_anagrafiche`.`id_nazione` = `an_nazioni`.`id`
-            LEFT JOIN `an_nazioni_lang` ON (`an_nazioni`.`id` = `an_nazioni_lang`.`id_record` AND `an_nazioni_lang`.`id_lang` = '.prepare(\App::getLang()).')
+            LEFT JOIN `an_nazioni_lang` ON (`an_nazioni`.`id` = `an_nazioni_lang`.`id_record` AND `an_nazioni_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
         WHERE `an_anagrafiche`.`idanagrafica` = '.prepare($id);
 
         $record = database()->fetchOne($query);

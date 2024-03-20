@@ -48,7 +48,7 @@ class Pagamenti extends AppResource
         $query = 'SELECT `co_pagamenti`.`id`,
             `co_pagamenti_lang`.`name` AS `descrizione`
         FROM `co_pagamenti`
-        LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(\App::getLang()).')
+        LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
         WHERE `co_pagamenti`.`id` = '.prepare($id);
 
         $record = database()->fetchOne($query);

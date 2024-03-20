@@ -21,14 +21,18 @@ namespace Models;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
-use Util\Query;
-;
+use Traits\RecordTrait;
 
 class Clause extends Model
 {
     use SimpleModelTrait;
-
+    use RecordTrait;
     protected $table = 'zz_group_module';
+
+    protected static $translated_fields = [
+        'name',
+    ];
+    
 
     public static function build()
     {
@@ -50,45 +54,12 @@ class Clause extends Model
         return $this->belongsTo(Module::class, 'idmodule');
     }
 
-    public function getClauseAttribute($value)
+    public function getModuleAttribute()
     {
-        return Query::replacePlaceholder($value);
-    }
-    /**
-     * Ritorna l'attributo name della clausola.
-     *
-     * @return string
-     */
-    public function getNameAttribute()
-    {
-        return database()->table($this->table.'_lang')
-            ->select('name')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->getTranslation('name');
+        return '';
     }
 
-    /**
-     * Imposta l'attributo name della clausola.
-     */
-    public function setNameAttribute($value)
-    {
-        $table = database()->table($this->table.'_lang');
-
-        $translated = $table
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang());
-
-        if ($translated->count() > 0) {
-            $translated->update([
-                'name' => $value
-            ]);
-        } else {
-            $table->insert([
-                'id_record' => $this->id,
-                'id_lang' => \App::getLang(),
-                'name' => $value
-            ]);
-        }
+    public static function getTranslatedFields(){
+        return self::$translated_fields;
     }
 }

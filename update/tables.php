@@ -176,6 +176,7 @@ return [
     'zz_hooks_lang',
     'zz_imports',
     'zz_imports_lang',
+    'zz_langs',
     'zz_logs',
     'zz_modules',
     'zz_modules_lang',

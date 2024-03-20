@@ -22,12 +22,18 @@ namespace Models;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Util\Query;
+use Traits\RecordTrait;
 
 class View extends Model
 {
     use SimpleModelTrait;
-
+    use RecordTrait;
     protected $table = 'zz_views';
+
+    protected static $translated_fields = [
+        'name',
+    ];
+    
 
     public function getQueryAttribute($value)
     {
@@ -45,42 +51,12 @@ class View extends Model
     {
         return $this->belongsTo(Module::class, 'id_module');
     }
-
-    /**
-     * Ritorna l'attributo name dell'articolo.
-     *
-     * @return string
-     */
-    public function getNameAttribute()
+    public function getModuleAttribute()
     {
-        return database()->table($this->table.'_lang')
-            ->select('name')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->getTranslation('name');
+        return '';
     }
 
-    /**
-     * Imposta l'attributo name dell'articolo.
-     */
-    public function setNameAttribute($value)
-    {
-        $table = database()->table($this->table.'_lang');
-
-        $translated = $table
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang());
-
-        if ($translated->count() > 0) {
-            $translated->update([
-                'name' => $value
-            ]);
-        } else {
-            $table->insert([
-                'id_record' => $this->id,
-                'id_lang' => \App::getLang(),
-                'name' => $value
-            ]);
-        }
+    public static function getTranslatedFields(){
+        return self::$translated_fields;
     }
 }

@@ -36,9 +36,9 @@ $widgets = $dbo->fetchArray('SELECT
         `zz_widgets_lang`.`name` as name,
         `zz_modules_lang`.`name` AS modulo
     FROM zz_widgets
-        LEFT JOIN `zz_widgets_lang` ON (`zz_widgets`.`id` = `zz_widgets_lang`.`id_record` AND `zz_widgets_lang`.`id_lang` = '.prepare(\App::getLang()).')
+        LEFT JOIN `zz_widgets_lang` ON (`zz_widgets`.`id` = `zz_widgets_lang`.`id_record` AND `zz_widgets_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
         INNER JOIN `zz_modules` ON `zz_widgets`.`id_module` = `zz_modules`.`id`
-        LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(\App::getLang()).')
+        LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
     ORDER BY 
         `id_module` ASC, `zz_widgets`.`order` ASC');
 

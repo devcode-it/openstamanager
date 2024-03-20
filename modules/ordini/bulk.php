@@ -63,7 +63,7 @@ switch (post('op')) {
             $id_anagrafica = $anagrafica->id;
 
             // Proseguo solo se i documenti scelti sono fatturabili
-            $ordine = $dbo->fetchOne('SELECT `or_statiordine_lang`.`name` AS stato FROM `or_ordini` INNER JOIN `or_statiordine` ON `or_ordini`.`idstatoordine`=`or_statiordine`.`id` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id`=`or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang`= '.prepare(\App::getLang()).') WHERE `or_ordini`.`id`='.prepare($id))['stato'];
+            $ordine = $dbo->fetchOne('SELECT `or_statiordine_lang`.`name` AS stato FROM `or_ordini` INNER JOIN `or_statiordine` ON `or_ordini`.`idstatoordine`=`or_statiordine`.`id` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id`=`or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang`= '.prepare(\Models\Locale::getDefault()->id).') WHERE `or_ordini`.`id`='.prepare($id))['stato'];
             if (!in_array($ordine, ['Fatturato', 'Evaso', 'Bozza', 'In attesa di conferma', 'Annullato'])) {
                 $righe = $documento_import->getRighe();
                 if (!empty($righe)) {
@@ -219,7 +219,7 @@ if ($module['name'] == 'Ordini cliente') {
             'title' => tr('Fatturare i _TYPE_ selezionati?', ['_TYPE_' => strtolower($module['name'])]),
             'msg' => '{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle _TYPE_ non ancora emesse?', ['_TYPE_' => strtolower($module_fatture)]).'", "placeholder": "'.tr('Aggiungere alle _TYPE_ nello stato bozza?', ['_TYPE_' => strtolower($module_fatture)]).'</small>", "name": "accodare" ]}
             {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_modulo_fatture, 'is_sezionale' => 1]).', "value": "'.$id_segment.'", "select-options-escape": true ]}
-            {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`codice_tipo_documento_fe`, \' - \', `name`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `enabled` = 1 AND `dir` =\'entrata\' ORDER BY `codice_tipo_documento_fe`", "value": "'.$idtipodocumento.'" ]}<br>
+            {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`codice_tipo_documento_fe`, \' - \', `name`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `enabled` = 1 AND `dir` =\'entrata\' ORDER BY `codice_tipo_documento_fe`", "value": "'.$idtipodocumento.'" ]}<br>
             {[ "type": "select", "label": "'.tr('Raggruppa per').'", "name": "raggruppamento", "required": 1, "values": "list=\"cliente\":\"Cliente\",\"sede\":\"Sede\"" ]}',
             'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',
@@ -234,7 +234,7 @@ if ($module['name'] == 'Ordini cliente') {
                 'title' => tr('Unire gli ordini selezionati?'),
                 'msg' => tr('Gli ordini saranno processati solo se in uno dei seguenti stati: Bozza, In attesa di conferma, Accettato.<br>Tutti gli ordini processati verranno eliminati e verrà creato un nuovo ordine unificato per fornitore.').'
                 {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_sezionale' => 1]).', "value": "'.$id_segment_ordini.'", "select-options-escape": true ]}
-                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `or_statiordine`.`id`, `name` FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(\App::getLang()).') ORDER BY `name` ASC" ]}
+                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `or_statiordine`.`id`, `name` FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') ORDER BY `name` ASC" ]}
                 {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1]}',
                 'button' => tr('Procedi'),
                 'class' => 'btn btn-lg btn-warning',
@@ -249,7 +249,7 @@ $operations['cambia_stato'] = [
     'data' => [
         'title' => tr('Vuoi davvero cambiare lo stato per questi ordini?'),
         'msg' => tr('Seleziona lo stato in cui spostare tutti gli ordini').'.<br>
-        <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `or_statiordine`.`id`, `name`, `colore` as _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(\App::getLang()).') ORDER BY `name` ASC" ]}',
+        <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `or_statiordine`.`id`, `name`, `colore` as _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') ORDER BY `name` ASC" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

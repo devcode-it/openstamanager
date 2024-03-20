@@ -96,7 +96,7 @@ switch (post('op')) {
         $raggruppamento = post('raggruppamento');
 
         $where = '';
-        $query = 'SELECT `in_interventi`.*, IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`), `in_interventi`.`data_richiesta`) AS data, `in_statiintervento_lang`.`name` AS stato, `in_interventi`.`codice` AS codice_intervento FROM `in_interventi` INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record`=`in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang`='.prepare(\App::getLang()).') WHERE `in_statiintervento`.`is_fatturabile`=1 AND `in_interventi`.`id` NOT IN (SELECT `idintervento` FROM `co_righe_documenti` WHERE `idintervento` IS NOT NULL) AND `in_interventi`.`id` IN ('.implode(',', $id_records).')';
+        $query = 'SELECT `in_interventi`.*, IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`), `in_interventi`.`data_richiesta`) AS data, `in_statiintervento_lang`.`name` AS stato, `in_interventi`.`codice` AS codice_intervento FROM `in_interventi` INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record`=`in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).') WHERE `in_statiintervento`.`is_fatturabile`=1 AND `in_interventi`.`id` NOT IN (SELECT `idintervento` FROM `co_righe_documenti` WHERE `idintervento` IS NOT NULL) AND `in_interventi`.`id` IN ('.implode(',', $id_records).')';
 
         // Se non è attiva la relativa impostazione considero solo interventi non collegati a contratti, ordini o preventivi (default)
         if (!setting('Permetti fatturazione delle attività collegate a contratti')) {
@@ -157,7 +157,7 @@ switch (post('op')) {
             if (empty($id_documento)) {
                 if (!empty($accodare)) {
                     $where = $raggruppamento == 'sede' ? ' AND `idsede_destinazione` = '.prepare($intervento['idsede_destinazione']) : '';
-                    $documento = $dbo->fetchOne('SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id` LEFT JOIN `co_statidocumenti_lang` ON (`co_statidocumenti`.`id` = `co_statidocumenti_lang`.`id_record` AND `co_statidocumenti_lang`.`id_lang` = '.prepare(\App::getLang()).') INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` INNER JOIN `zz_segments` ON `zz_segments`.`id` = `co_documenti`.`id_segment` WHERE `co_statidocumento_lang`.`name` = "Bozza"  AND `co_documenti`.`idanagrafica` = '.prepare($id_anagrafica).' AND `co_tipidocumento`.`id`='.prepare($tipo_documento['id']).' AND `co_documenti`.`id_segment` = '.prepare($id_segment).$where);
+                    $documento = $dbo->fetchOne('SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id` LEFT JOIN `co_statidocumenti_lang` ON (`co_statidocumenti`.`id` = `co_statidocumenti_lang`.`id_record` AND `co_statidocumenti_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` INNER JOIN `zz_segments` ON `zz_segments`.`id` = `co_documenti`.`id_segment` WHERE `co_statidocumento_lang`.`name` = "Bozza"  AND `co_documenti`.`idanagrafica` = '.prepare($id_anagrafica).' AND `co_tipidocumento`.`id`='.prepare($tipo_documento['id']).' AND `co_documenti`.`id_segment` = '.prepare($id_segment).$where);
 
                     $id_documento = $documento['id'];
                     $id_documento_cliente[$id_anagrafica] = $id_documento;
@@ -433,7 +433,7 @@ $operations['crea_fattura'] = [
        'title' => tr('Fatturare gli _TYPE_ selezionati?', ['_TYPE_' => strtolower($module['name'])]).' <small><i class="fa fa-question-circle-o tip" title="'.tr('Verranno fatturati solo gli interventi completati non collegati a contratti o preventivi').'."></i></small>',
         'msg' => '{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle fatture di vendita non ancora emesse?').'</small>", "placeholder": "'.tr('Aggiungere alle fatture di vendita nello stato bozza?').'", "name": "accodare" ]}<br>
             {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_fatture, 'is_sezionale' => 1]).', "value": "'.$id_segment.'", "select-options-escape": true ]}<br>
-            {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`codice_tipo_documento_fe`, \' - \', `name`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `enabled` = 1 AND `dir` =\'entrata\' ORDER BY `codice_tipo_documento_fe`", "value": "'.$idtipodocumento.'" ]}<br>
+            {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`codice_tipo_documento_fe`, \' - \', `name`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `enabled` = 1 AND `dir` =\'entrata\' ORDER BY `codice_tipo_documento_fe`", "value": "'.$idtipodocumento.'" ]}<br>
             {[ "type": "select", "label": "'.tr('Raggruppa per').'", "name": "raggruppamento", "required": 1, "values": "list=\"cliente\":\"Cliente\",\"sede\":\"Sede\"" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
@@ -446,7 +446,7 @@ $operations['cambia_stato'] = [
     'data' => [
         'title' => tr('Vuoi davvero cambiare lo stato per questi interventi?'),
         'msg' => tr('Seleziona lo stato in cui spostare tutti gli interventi non completati').'.<br>
-            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `name` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `deleted_at` IS NULL ORDER BY `name`" ]}',
+            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `name` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `name`" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,
@@ -458,7 +458,7 @@ $operations['copy-bulk'] = [
     'data' => [
         'title' => tr('Vuoi davvero fare una copia degli interventi selezionati?'),
         'msg' => '<br>{[ "type": "timestamp", "label": "'.tr('Data/ora richiesta').'", "name": "data_richiesta", "required": 0, "value": "-now-", "required":1 ]}
-            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `name` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `deleted_at` IS NULL ORDER BY `name`", "value": "" ]}
+            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `name` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `name`", "value": "" ]}
             <br>{[ "type":"checkbox", "label":"'.tr('Duplica righe').'", "name":"righe", "value":"" ]}
             <br>{[ "type":"checkbox", "label":"'.tr('Duplica sessioni').'", "name":"sessioni", "value":"" ]}
             <br>{[ "type":"checkbox", "label":"'.tr('Duplica impianti').'", "name":"impianti", "value":"" ]}
@@ -486,7 +486,7 @@ $operations['send-mail'] = [
     'data' => [
         'title' => tr('Inviare mail?'),
         'msg' => tr('Per ciascuna attività selezionata, verrà inviata una mail').'<br><br>
-            {[ "type": "select", "label": "'.tr('Template').'", "name": "id_template", "required": "1", "values": "query=SELECT `em_templates`.`id`, `em_templates_lang`.`name` AS descrizione FROM `em_templates` LEFT JOIN `em_templates_lang` ON (`em_templates`.`id` = `em_templates_lang`.`id_record` AND `em_templates_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `id_module`='.prepare($id_module).' AND `deleted_at` IS NULL;" ]}',
+            {[ "type": "select", "label": "'.tr('Template').'", "name": "id_template", "required": "1", "values": "query=SELECT `em_templates`.`id`, `em_templates_lang`.`name` AS descrizione FROM `em_templates` LEFT JOIN `em_templates_lang` ON (`em_templates`.`id` = `em_templates_lang`.`id_record` AND `em_templates_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `id_module`='.prepare($id_module).' AND `deleted_at` IS NULL;" ]}',
         'button' => tr('Invia'),
         'class' => 'btn btn-lg btn-warning',
     ],

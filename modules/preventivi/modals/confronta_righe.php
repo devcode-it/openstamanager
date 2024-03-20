@@ -35,7 +35,7 @@ $righe = $dbo->fetchArray(
     FROM 
         `co_righe_preventivi`
         INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_preventivi`.`idarticolo`
-        LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(\App::getLang()).')
+        LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
     WHERE 
         `co_righe_preventivi`.`id` IN ('.$righe.')'
 );
@@ -66,7 +66,7 @@ $righe = $dbo->fetchArray(
                         INNER JOIN `co_righe_preventivi` ON `co_righe_preventivi`.`idpreventivo` = `co_preventivi`.`id`
                         INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_preventivi`.`idarticolo`
                         INNER JOIN `co_statipreventivi` ON `co_statipreventivi`.`id` = `co_preventivi`.`idstato`
-                        LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(\App::getLang()).')
+                        LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
                     WHERE
                         `co_preventivi`.`idanagrafica` ='.prepare($id_anagrafica).' AND `co_righe_preventivi`.`idarticolo` ='.prepare($riga['idarticolo']).' AND `co_statipreventivi_lang`.`name` NOT IN ("Bozza", "In attesa di conferma", "Rifiutato")
                     GROUP BY 
@@ -86,7 +86,7 @@ $righe = $dbo->fetchArray(
                         INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_documenti`.`idarticolo`
                         INNER JOIN `co_righe_preventivi` ON `co_righe_preventivi`.`idarticolo` = `mg_articoli`.`id`
                         INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
-                        LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(\App::getLang()).')
+                        LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
                     WHERE
                         `co_documenti`.`idanagrafica` ='.prepare($id_anagrafica).' AND `co_righe_documenti`.`idarticolo` ='.prepare($riga['idarticolo']).' AND `co_statidocumento_lang`.`name` IN ("Emessa", "Pagato", "Parzialmente pagato")
                     GROUP BY 

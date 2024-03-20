@@ -60,7 +60,7 @@ if (!empty($vendita_banco)) {
             SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
         FROM 
             `co_iva`
-            LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\App::getLang()).')
+            LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
             INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id` 
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
@@ -80,7 +80,7 @@ if (!empty($vendita_banco)) {
             ) AS subtotale
         FROM
             `co_iva`
-            LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\App::getLang()).')
+            LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
             INNER JOIN `vb_righe_venditabanco` ON `vb_righe_venditabanco`.`idiva` = `co_iva`.`id`
             INNER JOIN `vb_venditabanco` ON `vb_venditabanco`.`id` = `vb_righe_venditabanco`.`idvendita`
             INNER JOIN `vb_stati_vendita` ON `vb_venditabanco`.`idstato` = `vb_stati_vendita`.`id`
@@ -114,7 +114,7 @@ if (!empty($vendita_banco)) {
             SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
         FROM 
             `co_iva`
-            LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\App::getLang()).') 
+            LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') 
             INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = co_iva.id 
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
@@ -132,7 +132,7 @@ if (!empty($vendita_banco)) {
             SUM(`vb_righe_venditabanco`.`subtotale` - `vb_righe_venditabanco`.`sconto`) AS subtotale
         FROM
             `co_iva`
-            LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\App::getLang()).')
+            LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
             INNER JOIN `vb_righe_venditabanco` ON `vb_righe_venditabanco`.`idiva` = `co_iva`.`id`
             INNER JOIN `vb_venditabanco` ON `vb_venditabanco`.`id` = `vb_righe_venditabanco`.`idvendita`
             INNER JOIN `vb_stati_vendita` ON `vb_venditabanco`.`idstato` = `vb_stati_vendita`.`id`
@@ -166,7 +166,7 @@ if (!empty($vendita_banco)) {
             SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
         FROM 
             `co_iva`
-            LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\App::getLang()).') 
+            LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') 
             INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id` 
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
@@ -184,7 +184,7 @@ if (!empty($vendita_banco)) {
             SUM(`vb_righe_venditabanco`.`subtotale` - `vb_righe_venditabanco`.`sconto`) AS subtotale
         FROM
             `co_iva`
-            LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\App::getLang()).')
+            LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
             INNER JOIN `vb_righe_venditabanco` ON `vb_righe_venditabanco`.`idiva` = `co_iva`.`id`
             INNER JOIN `vb_venditabanco` ON `vb_venditabanco`.`id` = `vb_righe_venditabanco`.`idvendita`
             INNER JOIN `vb_stati_vendita` ON `vb_venditabanco`.`idstato` = `vb_stati_vendita`.`id`
@@ -218,7 +218,7 @@ if (!empty($vendita_banco)) {
             SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
         FROM 
             `co_iva`
-            LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\App::getLang()).')
+            LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
             INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id` 
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
@@ -236,7 +236,7 @@ if (!empty($vendita_banco)) {
             SUM(`vb_righe_venditabanco`.`subtotale` - `vb_righe_venditabanco`.`sconto`) AS subtotale
         FROM
             `co_iva`
-            LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\App::getLang()).')
+            LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
             INNER JOIN `vb_righe_venditabanco` ON `vb_righe_venditabanco`.`idiva` = `co_iva`.`id`
             INNER JOIN `vb_venditabanco` ON `vb_venditabanco`.`id` = `vb_righe_venditabanco`.`idvendita`
             INNER JOIN `vb_stati_vendita` ON `vb_venditabanco`.`idstato` = `vb_stati_vendita`.`id`
@@ -263,7 +263,7 @@ else {
         SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
     FROM 
         `co_iva`
-        LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\App::getLang()).') 
+        LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') 
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id` 
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
@@ -282,7 +282,7 @@ else {
         SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
     FROM 
         `co_iva`
-        LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\App::getLang()).') 
+        LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') 
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id` 
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
@@ -301,7 +301,7 @@ else {
         SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
     FROM 
         `co_iva`
-        LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\App::getLang()).') 
+        LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') 
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id` 
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
@@ -320,7 +320,7 @@ else {
         SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
     FROM 
         `co_iva`
-        LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\App::getLang()).')
+        LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id` 
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
@@ -340,7 +340,7 @@ $iva_vendite_nonesigibile = $dbo->fetchArray('
         SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
     FROM 
         `co_iva`
-        LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\App::getLang()).') 
+        LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') 
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id` 
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
@@ -359,7 +359,7 @@ $iva_acquisti_detraibile = $dbo->fetchArray('
         SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
     FROM 
         `co_iva` 
-        LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\App::getLang()).')
+        LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id` 
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
@@ -378,7 +378,7 @@ $iva_acquisti_nondetraibile = $dbo->fetchArray('
         SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
     FROM 
         `co_iva`
-        LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\App::getLang()).')
+        LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id` 
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
@@ -397,7 +397,7 @@ $iva_acquisti = $dbo->fetchArray('
         SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
     FROM 
         `co_iva`
-        LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\App::getLang()).') 
+        LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') 
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id` 
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
@@ -416,7 +416,7 @@ $iva_acquisti_anno_precedente = $dbo->fetchArray('
         SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
     FROM 
         `co_iva`
-        LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\App::getLang()).')
+        LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id` 
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
@@ -435,7 +435,7 @@ $iva_acquisti_periodo_precedente = $dbo->fetchArray('
         SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
     FROM 
         `co_iva`
-        LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\App::getLang()).')
+        LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id` 
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`  

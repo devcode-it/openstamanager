@@ -53,7 +53,7 @@ class Checklists extends AppResource
                     INNER JOIN `in_interventi` ON `zz_checks`.`id_record` = `in_interventi`.`id`
                     INNER JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
                     INNER JOIN `zz_modules` ON `zz_checks`.`id_module` = `zz_modules`.`id`
-                    LEFT JOIN `zz_modules_lang` ON `zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(\App::getLang()).'
+                    LEFT JOIN `zz_modules_lang` ON `zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).'
                     INNER JOIN `zz_check_user` ON `zz_checks`.`id` = `zz_check_user`.`id_check`
                 WHERE
                     `zz_modules_lang`.`name`="Interventi"
@@ -73,7 +73,7 @@ class Checklists extends AppResource
                     INNER JOIN `in_interventi` ON `zz_checks`.`id_record` = `in_interventi`.`id`
                     INNER JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
                     INNER JOIN `zz_modules` ON `zz_checks`.`id_module` = `zz_modules`.`id`
-                    LEFT JOIN `zz_modules_lang` ON `zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(\App::getLang()).'
+                    LEFT JOIN `zz_modules_lang` ON `zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).'
                     INNER JOIN `zz_check_user` ON `zz_checks`.`id` = `zz_check_user`.`id_check`
                 WHERE
                     `zz_modules_lang`.`name`="Interventi"
@@ -122,7 +122,7 @@ class Checklists extends AppResource
                 `zz_checks`
                 INNER JOIN `in_interventi` ON `zz_checks`.`id_record` = `in_interventi`.`id`
                 INNER JOIN `zz_modules` ON `zz_checks`.`id_module` = `zz_modules`.`id`
-                LEFT JOIN `zz_modules_lang` ON `zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(\App::getLang()).'
+                LEFT JOIN `zz_modules_lang` ON `zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).'
                 INNER JOIN `zz_check_user` ON `zz_checks`.`id` = `zz_check_user`.`id_check`
             WHERE
                 `zz_modules_lang`.`name`="Interventi"
@@ -142,7 +142,7 @@ class Checklists extends AppResource
                 INNER JOIN `in_interventi` ON `zz_checks`.`id_record` = `in_interventi`.`id`
                 INNER JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
                 INNER JOIN `zz_modules` ON `zz_checks`.`id_module` = `zz_modules`.`id`
-                LEFT JOIN `zz_modules_lang` ON `zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(\App::getLang()).'
+                LEFT JOIN `zz_modules_lang` ON `zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).'
                 INNER JOIN `zz_check_user` ON `zz_checks`.`id` = `zz_check_user`.`id_check`
             WHERE
                 `zz_modules_lang`.`name`="Interventi"

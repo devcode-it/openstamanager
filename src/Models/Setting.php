@@ -22,45 +22,29 @@ namespace Models;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Traits\LocalPoolTrait;
-
+use Traits\RecordTrait;
 class Setting extends Model
 {
     use SimpleModelTrait;
     use LocalPoolTrait;
-
+    use RecordTrait;
     protected $table = 'zz_settings';
 
     protected $appends = [
         'description',
     ];
 
-    public function getDescriptionAttribute()
+    protected static $translated_fields = [
+        'title',
+    ];
+    
+    public function getModuleAttribute()
     {
-        $value = $this->valore;
-
-        // Valore corrispettivo
-        $query = str_replace('query=', '', $this->tipo);
-        if ($query != $this->tipo) {
-            $data = database()->fetchArray($query);
-            if (!empty($data)) {
-                $value = $data[0]['descrizione'];
-            }
-        }
-
-        return $value;
+        return '';
     }
 
-    /**
-     * Ritorna l'attributo title dell'impostazione.
-     *
-     * @return string
-     */
-    public function getTitleAttribute()
-    {
-        return database()->table($this->table.'_lang')
-            ->select('title')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->getTranslation('title');
+    public static function getTranslatedFields(){
+        return self::$translated_fields;
     }
+
 }

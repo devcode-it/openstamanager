@@ -2363,3 +2363,22 @@ INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `hel
 INSERT INTO `zz_settings_lang` (`id_record`, `id_lang`, `title`) VALUES ((SELECT `id` FROM `zz_settings` WHERE `nome` = 'Giorni validità fattura scartata'), (SELECT `valore` FROM `zz_settings` WHERE `nome` = 'Lingua'), 'Giorni validità fattura scartata');
 
 ALTER TABLE in_interventi ADD `idpagamento` INT NOT NULL AFTER `id_ordine`;
+
+UPDATE `zz_views` 
+SET `query` = '(`righe`.`totale_imponibile` + IF(`co_documenti`.`split_payment` = 0, `righe`.`iva`, 0) + `co_documenti`.`rivalsainps` - `co_documenti`.`ritenutaacconto` - `co_documenti`.`sconto_finale` - IF(`co_documenti`.`id_ritenuta_contributi` != 0, (( `righe`.`totale_imponibile` * `co_ritenuta_contributi`.`percentuale_imponibile` / 100) / 100 * `co_ritenuta_contributi`.`percentuale`), 0)) *(1 - `co_documenti`.`sconto_finale_percentuale` / 100 ) * IF(`co_tipidocumento`.`reversed`, -1, 1)' 
+WHERE `zz_views`.`id` IN (
+    SELECT * 
+    FROM (
+        SELECT `id_record` 
+        FROM `zz_views_lang` 
+        INNER JOIN `zz_views` ON `zz_views`.`id` = `zz_views_lang`.`id_record` 
+        WHERE `name` = 'Netto a pagare' 
+        AND `id_module` = (
+            SELECT `zz_modules`.`id` 
+            FROM `zz_modules` 
+            LEFT JOIN `zz_modules_lang` ON `zz_modules`.`id` = `zz_modules_lang`.`id_record` 
+            WHERE `name` = 'Fatture di vendita'
+        )
+    ) AS tmp
+);
+

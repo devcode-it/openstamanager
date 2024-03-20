@@ -30,7 +30,7 @@ switch (post('op')) {
 
         $template = Template::build($module, $id_account);
         $id_record = $dbo->lastInsertedID();
-        $template->name = $name;
+        $template->setTranslation('name', $name);
         $template->subject = $subject;
         $template->save();
 
@@ -39,7 +39,7 @@ switch (post('op')) {
         break;
 
     case 'update':
-        $template->name = post('name');
+        $template->setTranslation('name', post('name'));
         $template->id_account = post('smtp');
         $template->icon = post('icon');
         $template->tipo_reply_to = post('tipo_reply_to');

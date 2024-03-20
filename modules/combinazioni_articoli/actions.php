@@ -10,7 +10,7 @@ switch (filter('op')) {
         $nome = post('nome');
 
         // Ricerca combinazione con nome indicato
-        $combinazione_new = (new Combinazione())->getByName($nome)->id_record;
+        $combinazione_new = (new Combinazione())->getByField('name', $nome);
 
         if (!empty($combinazione_new) && !empty($id_record) && $combinazione_new != $id_record){
             flash()->error(tr('Questo nome è già stato utilizzato per un altra combinazione.'));
@@ -19,7 +19,7 @@ switch (filter('op')) {
                 $combinazione = Combinazione::build();
                 $id_record = $dbo->lastInsertedID();
             }
-            $combinazione->name = $nome;
+            $combinazione->setTranslation('name', $nome);
             $combinazione->codice = post('codice');
             $combinazione->id_categoria = post('id_categoria');
             $combinazione->id_sottocategoria = post('id_sottocategoria');

@@ -109,7 +109,7 @@ echo '
 
 foreach ($righe as $riga) {
     $id_iva = $riga->id_iva;
-    $descrizione = $riga->name."\n{periodo}";
+    $descrizione = $riga->getTranslation('name')."\n{periodo}";
 
     $options = [
         'id' => $riga->id,
@@ -122,7 +122,7 @@ foreach ($righe as $riga) {
 
     echo '
                 <!--h5>'.tr('Informazioni generali sulle righe con IVA: _IVA_', [
-                    '_IVA_' => $riga->iva->name,
+                    '_IVA_' => $riga->iva->getTranslation('name'),
                 ]).'</h5-->
 
                 <div class="row">

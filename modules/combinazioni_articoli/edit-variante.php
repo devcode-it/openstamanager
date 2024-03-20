@@ -15,7 +15,7 @@ foreach ($attributi as $key => $attributo) {
     $value = $dbo->fetchOne('SELECT mg_valori_attributi.id AS valore FROM mg_valori_attributi LEFT JOIN mg_articolo_attributo ON mg_articolo_attributo.id_valore=mg_valori_attributi.id WHERE id_articolo='.prepare(get('id_articolo')).' AND id_attributo='.prepare($attributo->id).'  AND deleted_at IS NULL')['valore'];
     echo '
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.$attributo->name.'", "name": "attributo['.$key.']", "values": "query=SELECT id, nome AS descrizione FROM mg_valori_attributi WHERE id_attributo = '.prepare($attributo->id).' AND deleted_at IS NULL", "value": "'.$value.'", "required": 1 ]}
+            {[ "type": "select", "label": "'.$attributo->getTranslation('name').'", "name": "attributo['.$key.']", "values": "query=SELECT id, nome AS descrizione FROM mg_valori_attributi WHERE id_attributo = '.prepare($attributo->id).' AND deleted_at IS NULL", "value": "'.$value.'", "required": 1 ]}
 		</div>';
 }
 echo '

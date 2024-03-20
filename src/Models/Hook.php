@@ -26,15 +26,18 @@ use Hooks\Manager;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Traits\LocalPoolTrait;
-;
+use Traits\RecordTrait;
 
 class Hook extends Model
 {
     use SimpleModelTrait;
     use LocalPoolTrait;
-
+    use RecordTrait;
     protected $table = 'zz_hooks';
 
+    protected static $translated_fields = [
+        'name',
+    ];
     protected $appends = [
         'permission',
     ];
@@ -164,33 +167,12 @@ class Hook extends Model
         });
     }
 
-    /**
-     * Ritorna l'attributo name dell'hook.
-     *
-     * @return string
-     */
-    public function getNameAttribute()
+    public function getModuleAttribute()
     {
-        return database()->table($this->table.'_lang')
-            ->select('name')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->name;
+        return '';
     }
 
-    /**
-     * Ritorna l'id dell'hook a partire dal nome.
-     *
-     * @param string $name il nome da ricercare
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getByName($name)
-    {
-        return database()->table($this->table.'_lang')
-            ->select('id_record')
-            ->where('name', '=', $name)
-            ->where('id_lang', '=', \App::getLang())
-            ->first();
+    public static function getTranslatedFields(){
+        return self::$translated_fields;
     }
 }

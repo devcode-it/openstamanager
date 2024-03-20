@@ -44,14 +44,14 @@ class InvoiceHook extends CachedManager
         $count = count($results);
         $notify = false;
 
-        $module = Module::find((new Module())->getByName('Fatture di acquisto')->id_record);
+        $module = Module::find((new Module())->getByField('name', 'Fatture di acquisto'));
         $plugins = $module->plugins;
 
         if (!empty($plugins)) {
             $notify = !empty($count);
 
             $plugin = $plugins->first(function ($value, $key) {
-                return $value->name == 'Fatturazione Elettronica';
+                return $value->getTranslation('name') == 'Fatturazione Elettronica';
             });
 
             $link = base_path().'/controller.php?id_module='.$module->id.'#tab_'.$plugin->id;

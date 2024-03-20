@@ -30,7 +30,7 @@ abstract class CachedManager extends Manager
     {
         parent::__construct($hook);
 
-        $this->cache = Cache::find((new Cache())->getByName($this->getCacheName())->id_record);
+        $this->cache = Cache::find((new Cache())->getByField('name', $this->getCacheName()));
     }
 
     abstract public function cacheData();

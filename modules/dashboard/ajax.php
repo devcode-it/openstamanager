@@ -20,9 +20,9 @@
 include_once __DIR__.'/../../core.php';
 use Models\Module;
 
-$modulo_interventi = Module::find((new Module())->getByName('Interventi')->id_record);
-$modulo_preventivi = Module::find((new Module())->getByName('Preventivi')->id_record);
-$modulo_eventi = Module::find((new Module())->getByName('Eventi')->id_record);
+$modulo_interventi = Module::find((new Module())->getByField('name', 'Interventi'));
+$modulo_preventivi = Module::find((new Module())->getByField('name', 'Preventivi'));
+$modulo_eventi = Module::find((new Module())->getByField('name', 'Eventi'));
 
 if (!isset($user['idanagrafica'])) {
     $user['idanagrafica'] = '';

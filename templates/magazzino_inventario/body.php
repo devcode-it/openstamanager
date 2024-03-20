@@ -23,7 +23,7 @@ use Models\Module;
 
 include_once __DIR__.'/../../core.php';
 
-$structure = Module::find((new Module())->getByName('Articoli')->id_record);
+$structure = Module::find((new Module())->getByField('name', 'Articoli'));
 
 // Valori di ricerca
 $where['servizio'] = '0';

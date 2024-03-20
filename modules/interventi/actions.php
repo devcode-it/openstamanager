@@ -41,8 +41,8 @@ use Plugins\ListinoClienti\DettaglioPrezzo;
 use Plugins\PianificazioneInterventi\Promemoria;
 use Models\Module;
 
-$id_modulo_impianti = (new Module())->getByName('Impianti')->id_record;
-$plugin_impianti = (new Plugin())->getByName('Impianti')->id_record;
+$id_modulo_impianti = (new Module())->getByField('name', 'Impianti');
+$plugin_impianti = (new Plugin())->getByField('name', 'Impianti');
 
 switch (post('op')) {
     case 'update':
@@ -95,7 +95,7 @@ switch (post('op')) {
                 if (!in_array($tecnico_presente['id_tecnico'], $tecnici_assegnati)) {
                     $tecnico = Anagrafica::find($tecnico_presente['id_tecnico']);
                     if (!empty($tecnico['email'])) {
-                        $template = (new Template())->getByName('Notifica rimozione intervento');
+                        $template = (new Template())->getByField('name', 'Notifica rimozione intervento');
 
                         if (!empty($template)) {
                             $mail = Mail::build(auth()->getUser(), $template, $intervento->id);
@@ -114,7 +114,7 @@ switch (post('op')) {
                     $tecnico = Anagrafica::find($tecnico_assegnato);
 
                     if (!empty($tecnico['email'])) {
-                        $template = (new Template())->getByName('Notifica intervento');
+                        $template = (new Template())->getByField('name', 'Notifica intervento');
 
                         if (!empty($template)) {
                             $mail = Mail::build(auth()->getUser(), $template, $intervento->id);
@@ -296,7 +296,7 @@ switch (post('op')) {
             // Notifica al tecnico
             if (setting('Notifica al tecnico l\'assegnazione all\'attività')) {
                 if (!empty($tecnico['email'])) {
-                    $template = (new Template())->getByName('Notifica intervento');
+                    $template = (new Template())->getByField('name', 'Notifica intervento');
 
                     if (!empty($template)) {
                         $mail = Mail::build(auth()->getUser(), $template, $intervento->id);
@@ -927,7 +927,7 @@ switch (post('op')) {
         // Notifica rimozione dell' intervento al tecnico
         if (setting('Notifica al tecnico la rimozione della sessione dall\'attività')) {
             if (!empty($tecnico['email'])) {
-                $template = (new Template())->getByName('Notifica rimozione intervento');
+                $template = (new Template())->getByField('name', 'Notifica rimozione intervento');
 
                 if (!empty($template)) {
                     $mail = Mail::build(auth()->getUser(), $template, $id_record);

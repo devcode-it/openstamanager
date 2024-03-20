@@ -33,11 +33,11 @@ switch (filter('op')) {
         $theme = filter('theme') ?: null;
 
         // Verifico che questo nome gruppo non sia già stato usato
-        if ((new Group())->getByName($nome)->id_record == null) {
+        if ((new Group())->getByField('name', $nome) == null) {
             $group = Group::build($nome, $theme, $id_module_start);
             $id_record = $dbo->lastInsertedID();
             $group->editable = 1;
-            $group->name = $nome;
+            $group->setTranslation('name', $nome);
             $group->save();
 
             if ($id_module_start) {
@@ -250,7 +250,7 @@ switch (filter('op')) {
             $dbo->query('DELETE FROM zz_permissions WHERE idgruppo='.prepare($id_record));
 
             foreach ($permessi as $module_name => $permesso) {
-                $module_id = (new Module())->getByName($module_name)->id_record;
+                $module_id = (new Module())->getByField('name', $module_name);
 
                 $dbo->insert('zz_permissions', [
                     'idgruppo' => $id_record,

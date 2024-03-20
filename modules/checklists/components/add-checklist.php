@@ -26,7 +26,7 @@ $list = [];
 foreach ($checklists as $checklist) {
     $list[] = [
         'id' => $checklist->id,
-        'text' => $checklist->name,
+        'text' => $checklist->getTranslation('name'),
     ];
 }
 

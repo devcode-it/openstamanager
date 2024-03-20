@@ -377,7 +377,7 @@ echo '
         </th>
 
         <td>
-            '.$pagamento->name.'
+            '.$pagamento->getTranslation('name').'
         </td>
     </tr>
 

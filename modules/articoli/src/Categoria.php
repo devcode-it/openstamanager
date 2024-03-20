@@ -22,13 +22,19 @@ namespace Modules\Articoli;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Traits\HierarchyTrait;
+use Traits\RecordTrait;
 
 class Categoria extends Model
 {
     use SimpleModelTrait;
     use HierarchyTrait;
+    use RecordTrait;
 
     protected $table = 'mg_categorie';
+    protected static $translated_fields = [
+        'name',
+    ];
+
     protected static $parent_identifier = 'parent';
 
     public static function build($nota = null, $colore = null)
@@ -46,57 +52,12 @@ class Categoria extends Model
         return $this->hasMany(Articolo::class, 'id_categoria');
     }
 
-    /**
-     * Ritorna l'attributo name della categoria articolo.
-     *
-     * @return string
-     */
-    public function getNameAttribute()
+    public function getModuleAttribute()
     {
-        return database()->table($this->table.'_lang')
-            ->select('name')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->name;
+        return 'Categorie articoli';
     }
 
-    /**
-     * Ritorna l'id della categoria articolo a partire dal nome.
-     *
-     * @param string $name il nome da ricercare
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getByName($name)
-    {
-        return database()->table($this->table.'_lang')
-            ->select('id_record')
-            ->where('name', '=', $name)
-            ->where('id_lang', '=', \App::getLang())
-            ->first();
-    }
-
-    /**
-     * Imposta l'attributo name della categoria.
-     */
-    public function setNameAttribute($value)
-    {
-        $table = database()->table($this->table.'_lang');
-
-        $translated = $table
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang());
-
-        if ($translated->count() > 0) {
-            $translated->update([
-                'name' => $value
-            ]);
-        } else {
-            $table->insert([
-                'id_record' => $this->id,
-                'id_lang' => \App::getLang(),
-                'name' => $value
-            ]);
-        }
+    public static function getTranslatedFields(){
+        return self::$translated_fields;
     }
 }

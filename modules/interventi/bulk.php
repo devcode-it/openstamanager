@@ -31,7 +31,7 @@ use Util\Zip;
 use Models\Module;
 
 // Segmenti
-$id_fatture = (new Module())->getByName('Fatture di vendita')->id_record;
+$id_fatture = (new Module())->getByField('name', 'Fatture di vendita');
 if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
     $segments = Modules::getSegments($id_fatture);
     $_SESSION['module_'.$id_fatture]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;

@@ -33,11 +33,11 @@ echo '
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-6">
-                    {[ "type": "span", "label": "'.tr('Nome').'", "name": "nome", "value": "'.$attributo->name.'", "help": "'.tr("Nome univoco dell'attributo").'" ]}
+                    {[ "type": "span", "label": "'.tr('Nome').'", "name": "nome", "value": "'.$attributo->getTranslation('name').'", "help": "'.tr("Nome univoco dell'attributo").'" ]}
                 </div>
 
                 <div class="col-md-6">
-                    {[ "type": "text", "label": "'.tr('Titolo').'", "name": "titolo", "value": "'.$attributo->title.'", "required": 1, "help": "'.tr("Nome visibile dell'attributo").'" ]}
+                    {[ "type": "text", "label": "'.tr('Titolo').'", "name": "titolo", "value": "'.$attributo->getTranslation('title').'", "required": 1, "help": "'.tr("Nome visibile dell'attributo").'" ]}
                 </div>
             </div>
         </div>

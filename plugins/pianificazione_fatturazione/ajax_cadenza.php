@@ -58,7 +58,7 @@ while ($data_corrente->lessThanOrEqualTo($data_conclusione)) {
     $data_fatturazione = ($data_fatturazione ?: date('Y-m', strtotime($data)));
     unset($checked);
 
-    if ($id_module == (new Module())->getByName('Contratti')->id_record) {
+    if ($id_module == (new Module())->getByField('name', 'Contratti')) {
         if ($data == date('Y-m-t', strtotime($timeing, strtotime($data_fatturazione))) || $data_fatturazione == date('Y-m', strtotime($data_corrente))) {
             $checked = 'checked';
             $data_fatturazione = date('Y-m', strtotime($data));

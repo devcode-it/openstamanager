@@ -22,8 +22,8 @@ include_once __DIR__.'/../../core.php';
 use Modules\Checklists\Check;
 use Models\Module;
 
-$id_modulo_impianti = (new Module())->getByName('Impianti')->id_record;
-$checklist_module = Module::find((new Module())->getByName('Checklists')->id_record);
+$id_modulo_impianti = (new Module())->getByField('name', 'Impianti');
+$checklist_module = Module::find((new Module())->getByField('name', 'Checklists'));
 // Blocco della modifica impianti se l'intervento è completato
 $dati_intervento = $dbo->fetchArray('SELECT `in_statiintervento`.`is_completato` FROM `in_statiintervento` INNER JOIN `in_interventi` ON `in_statiintervento`.`id` = `in_interventi`.`idstatointervento` WHERE `in_interventi`.`id`='.prepare($id_record));
 $is_completato = $dati_intervento[0]['is_completato'];

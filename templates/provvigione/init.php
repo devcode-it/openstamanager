@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 use Models\Module;
 
-$module = Module::find((new Module())->getByName('Fatture di vendita')->id_record);
+$module = Module::find((new Module())->getByField('name', 'Fatture di vendita'));
 
 $module_query = '
 SELECT

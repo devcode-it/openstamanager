@@ -24,7 +24,7 @@ use Carbon\CarbonInterval;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Traits\LocalPoolTrait;
-;
+use Traits\RecordTrait;
 
 /**
  * Risorsa di cache per la gestione delle informazioni temporanee del gestionale.
@@ -34,9 +34,13 @@ class Cache extends Model
 {
     use SimpleModelTrait;
     use LocalPoolTrait;
+    use RecordTrait;
 
     protected $table = 'zz_cache';
 
+    protected static $translated_fields = [
+        'name',
+    ];
     protected $casts = [
         'content' => 'array',
     ];
@@ -49,7 +53,7 @@ class Cache extends Model
     {
         $model = new self();
 
-        $model->name = $name;
+        $model->setTranslation('name', $name);
         $model->valid_time = $valid_time;
         $model->expire_at = $expire_at;
 
@@ -107,33 +111,12 @@ class Cache extends Model
         return $query->where('expire_at', '<=', Carbon::now());
     }
 
-        /**
-     * Ritorna l'attributo name della cache.
-     *
-     * @return string
-     */
-    public function getNameAttribute()
+    public function getModuleAttribute()
     {
-        return database()->table($this->table.'_lang')
-            ->select('name')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->name;
+        return '';
     }
 
-    /**
-     * Ritorna l'id della cache a partire dal nome.
-     *
-     * @param string $name il nome da ricercare
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getByName($name)
-    {
-        return database()->table($this->table.'_lang')
-            ->select('id_record')
-            ->where('name', '=', $name)
-            ->where('id_lang', '=', \App::getLang())
-            ->first();
+    public static function getTranslatedFields(){
+        return self::$translated_fields;
     }
 }

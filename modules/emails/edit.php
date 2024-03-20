@@ -45,7 +45,7 @@ if (!$record['predefined']) {
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "span", "label": "<?php echo tr('Modulo del template'); ?>", "name": "module", "values": "query=SELECT `zz_modules`.`id`, `title` AS descrizione FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = <?php echo prepare(\App::getLang()); ?>) WHERE `enabled` = 1", "value": "<?php echo Module::find($record['id_module'])->title; ?>" ]}
+                    {[ "type": "span", "label": "<?php echo tr('Modulo del template'); ?>", "name": "module", "values": "query=SELECT `zz_modules`.`id`, `title` AS descrizione FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = <?php echo prepare(\App::getLang()); ?>) WHERE `enabled` = 1", "value": "<?php echo Module::find($record['id_module'])->getTranslation('title'); ?>" ]}
                 </div>
             </div>
 
@@ -187,7 +187,7 @@ if (!empty($newsletters[0])) {
 
     foreach ($newsletters as $newsletter) {
         echo '
-            <li>'.Modules::link('Newsletter', $newsletter->id, $newsletter->name, null, '').'</li>';
+            <li>'.Modules::link('Newsletter', $newsletter->id, $newsletter->getTranslation('name'), null, '').'</li>';
     }
 
     echo '

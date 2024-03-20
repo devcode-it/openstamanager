@@ -60,7 +60,7 @@ class DDT extends Document
         $model = new static();
         $user = \Auth::user();
 
-        $stato_documento = (new Stato())->getByName('Bozza')->id_record;
+        $stato_documento = (new Stato())->getByField('name', 'Bozza');
 
         $direzione = $tipo_documento->dir;
         $id_segment = $id_segment ?: getSegmentPredefined($model->getModule()->id);
@@ -130,12 +130,12 @@ class DDT extends Document
         $stati = Stato::where('is_fatturabile', 1)->get();
 
         foreach ($stati as $stato) {
-            $stati_importabili[] = $stato->name;
+            $stati_importabili[] = $stato->getTranslation('name');
         }
 
         $causale = $database->fetchOne('SELECT * FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(\App::getLang()).') WHERE `dt_causalet`.`id` = '.prepare($this->idcausalet));
 
-        return $causale['is_importabile'] && in_array($this->stato->name, $stati_importabili);
+        return $causale['is_importabile'] && in_array($this->stato->getTranslation('name'), $stati_importabili);
     }
 
     public function getReversedAttribute()
@@ -243,7 +243,7 @@ class DDT extends Document
                 $descrizione = $parziale_fatturato ? 'Parzialmente fatturato' : 'Fatturato';
             }
 
-            $stato = (new Stato())->getByName($descrizione)->id_record;
+            $stato = (new Stato())->getByField('name', $descrizione);
             $this->stato()->associate($stato);
             $this->save();
         }
@@ -305,7 +305,7 @@ class DDT extends Document
 
     public function getReferenceName()
     {
-        return $this->tipo->name;
+        return $this->tipo->getTranslation('name');
     }
 
     public function getReferenceNumber()

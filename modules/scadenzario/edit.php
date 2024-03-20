@@ -22,8 +22,8 @@ use Models\Module;
 
 $dir = $documento->direzione;
 $numero = $documento->numero_esterno ?: $documento->numero;
-$id_modulo_banche = (new Module())->GetByName('Banche')->id_record;
-$id_modulo_prima_nota = (new Module())->GetByName('Prima nota')->id_record;
+$id_modulo_banche = (new Module())->getByField('name', 'Banche');
+$id_modulo_prima_nota = (new Module())->getByField('name', 'Prima nota');
 
 echo '
 <form action="" method="post" id="edit-form">
@@ -60,7 +60,7 @@ if (!empty($documento)) {
     echo '
                         <tr>
                             <th>'.tr('Documento').':</th>
-                            <td>'.$documento->tipo->name.'</td>
+                            <td>'.$documento->tipo->getTranslation('name').'</td>
                         </tr>
 
                         <tr>

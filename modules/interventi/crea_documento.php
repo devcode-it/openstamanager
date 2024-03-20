@@ -26,7 +26,7 @@ use Modules\Ordini\Ordine;
 use Models\Module;
 
 $documento = Intervento::find($id_record);
-$id_module = (new Module())->getByName($documento->module)->id_record;
+$id_module = (new Module())->getByField('name', $documento->module);
 
 if (get('documento') == 'fattura') {
     $final_module = 'Fatture di vendita';

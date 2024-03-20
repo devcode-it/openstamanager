@@ -116,7 +116,7 @@ switch (filter('op')) {
                     $clause->idmodulo = $id_record;
                     $clause->clause = $query;
                     $clause->position = !empty(post('position')[$c]) ? 'HVN' : 'WHR';
-                    $clause->name = post('name')[$c];
+                    $clause->setTranslation('name', post('name')[$c]);
                     $clause->save();
                     
                 } elseif (!empty($query)) {
@@ -126,7 +126,7 @@ switch (filter('op')) {
                     $clause->idmodulo = $id_record;
                     $clause->clause = $query;
                     $clause->position = !empty(post('position')[$c]) ? 'HVN' : 'WHR';
-                    $clause->name = post('name')[$c];
+                    $clause->setTranslation('name', post('name')[$c]);
                     $clause->save();
                 }
             } else {

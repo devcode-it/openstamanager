@@ -94,7 +94,7 @@ switch (post('op')) {
                     'prezzo_acquisto' => post('prezzo_acquisto'),
                     'prezzo_vendita' => post('prezzo_vendita'),
                     'idiva_vendita' => post('idiva_vendita') ?: null,
-                    'iva_vendita' => $iva ? $iva->name : null,
+                    'iva_vendita' => $iva ? $iva->getTranslation('name') : null,
                     'um_secondaria' => post('um_secondaria'),
                     'um' => post('um'),
                 ],
@@ -268,7 +268,7 @@ switch (post('op')) {
         }
 
         // Salvataggio immagine relativa
-        $nome_immagine = $articolo->immagine_upload->name;
+        $nome_immagine = $articolo->immagine_upload->getTranslation('name');
         $new->immagine = $new->uploads()->where('name', $nome_immagine)->first()->filename;
         $new->save();
 

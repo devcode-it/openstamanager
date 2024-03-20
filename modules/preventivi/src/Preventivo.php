@@ -68,7 +68,7 @@ class Preventivo extends Document
     {
         $model = new static();
 
-        $stato_documento = (new Stato())->getByName('Bozza')->id_record;
+        $stato_documento = (new Stato())->getByField('name', 'Bozza');
 
         $id_agente = $anagrafica->idagente;
         $id_pagamento = $anagrafica->idpagamento_vendite;
@@ -271,11 +271,11 @@ class Preventivo extends Document
             $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
             $codice_intervento = 'FAT';
         } else {
-            $descrizione = $this->stato->name;
+            $descrizione = $this->stato->getTranslation('name');
             $codice_intervento = 'OK';
         }
 
-        $stato = (new Stato())->getByName($descrizione)->id_record;
+        $stato = (new Stato())->getByField('name', $descrizione);
         $this->stato()->associate($stato);
         $this->save();
 

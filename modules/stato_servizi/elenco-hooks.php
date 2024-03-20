@@ -57,9 +57,9 @@ foreach ($gruppi as $modulo => $hooks) {
         $nome_tipo = 'hook';
 
         echo '
-            <tr class="'.$class.'" data-id="'.$hook->id.'" data-nome='.json_encode($hook->name).'>
+            <tr class="'.$class.'" data-id="'.$hook->id.'" data-nome='.json_encode($hook->getTranslation('name')).'>
                 <td>
-                    '.$hook->name.(!empty($hook->help) ? '
+                    '.$hook->getTranslation('name').(!empty($hook->help) ? '
                     <i class="tip fa fa-question-circle-o" title="'.$hook->help.'"</i>' : '').'
                 </td>
              

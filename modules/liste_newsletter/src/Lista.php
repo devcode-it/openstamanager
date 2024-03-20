@@ -35,7 +35,10 @@ class Lista extends Model
 
     protected $table = 'em_lists';
 
-
+    protected static $translated_fields = [
+        'name',
+        'description',
+    ];
     public static function build($name = null)
     {
         $model = new static();
@@ -130,96 +133,7 @@ class Lista extends Model
         return 'Liste';
     }
 
-    /**
-     * Ritorna l'attributo name della lista.
-     *
-     * @return string
-     */
-    public function getNameAttribute()
-    {
-        return database()->table($this->table.'_lang')
-            ->select('name')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->name;
-    }
-
-    /**
-     * Imposta l'attributo description della lista.
-     */
-    public function setDescriptionAttribute($value)
-    {
-        $table = database()->table($this->table.'_lang');
-
-        $translated = $table
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang());
-
-        if ($translated->count() > 0) {
-            $translated->update([
-                'description' => $value
-            ]);
-        } else {
-            $table->insert([
-                'id_record' => $this->id,
-                'id_lang' => \App::getLang(),
-                'description' => $value
-            ]);
-        }
-    }
-
-    /**
-     * Ritorna l'attributo description della lista.
-     *
-     * @return string
-     */
-    public function getDescriptionAttribute()
-    {
-        return database()->table($this->table.'_lang')
-            ->select('description')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->description;
-    }
-
-    
-    /**
-     * Imposta l'attributo name della lista.
-     */
-    public function setNameAttribute($value)
-    {
-        $table = database()->table($this->table.'_lang');
-
-        $translated = $table
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang());
-
-        if ($translated->count() > 0) {
-            $translated->update([
-                'name' => $value
-            ]);
-        } else {
-            $table->insert([
-                'id_record' => $this->id,
-                'id_lang' => \App::getLang(),
-                'name' => $value
-            ]);
-        }
-    }
-    
-    /**
-     * Ritorna l'id della lista a partire dal nome.
-     *
-     * @param string $name il nome da ricercare
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getByName($name)
-    {
-        return database()->table($this->table.'_lang')
-            ->select('id_record')
-            ->where('name', '=', $name)
-            ->where('id_lang', '=', \App::getLang())
-            ->first();
+    public static function getTranslatedFields(){
+        return self::$translated_fields;
     }
 }

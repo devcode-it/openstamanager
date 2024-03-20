@@ -65,7 +65,7 @@ class Clause extends Model
             ->select('name')
             ->where('id_record', '=', $this->id)
             ->where('id_lang', '=', \App::getLang())
-            ->first()->name;
+            ->first()->getTranslation('name');
     }
 
     /**

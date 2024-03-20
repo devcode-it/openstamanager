@@ -24,15 +24,25 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Traits\LocalPoolTrait;
 use Traits\PathTrait;
+use Traits\RecordTrait;
 
 class PrintTemplate extends Model
 {
     use SimpleModelTrait;
     use PathTrait;
     use LocalPoolTrait;
+    use RecordTrait;
 
     protected $table = 'zz_prints';
     protected $main_folder = 'templates';
+
+
+    protected static $translated_fields = [
+        'name',
+        'filename',
+        'title',
+    ];
+
 
     /* Relazioni Eloquent */
 
@@ -50,109 +60,12 @@ class PrintTemplate extends Model
         });
     }
 
-    /**
-     * Ritorna l'attributo name del template.
-     *
-     * @return string
-     */
-    public function getNameAttribute()
+    public function getModuleAttribute()
     {
-        return database()->table($this->table.'_lang')
-            ->select('name')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->name;
+        return '';
     }
 
-    /**
-     * Ritorna l'attributo title del template.
-     *
-     * @return string
-     */
-    public function getTitleAttribute()
-    {
-        return database()->table($this->table.'_lang')
-            ->select('title')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->title;
-    }
-
-    /**
-     * Imposta l'attributo title della categoria.
-     */
-    public function setTitleAttribute($value)
-    {
-        $table = database()->table($this->table.'_lang');
-
-        $translated = $table
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang());
-
-        if ($translated->count() > 0) {
-            $translated->update([
-                'title' => $value
-            ]);
-        } else {
-            $table->insert([
-                'id_record' => $this->id,
-                'id_lang' => \App::getLang(),
-                'title' => $value
-            ]);
-        }
-    }
-
-    /**
-     * Ritorna l'attributo filename del template.
-     *
-     * @return string
-     */
-    public function getFilenameAttribute()
-    {
-        return database()->table($this->table.'_lang')
-            ->select('filename')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->filename;
-    }
-
-    /**
-     * Imposta l'attributo filename della categoria.
-     */
-    public function setFilenameAttribute($value)
-    {
-        $table = database()->table($this->table.'_lang');
-
-        $translated = $table
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang());
-
-        if ($translated->count() > 0) {
-            $translated->update([
-                'filename' => $value
-            ]);
-        } else {
-            $table->insert([
-                'id_record' => $this->id,
-                'id_lang' => \App::getLang(),
-                'filename' => $value
-            ]);
-        }
-    }
-
-    /**
-     * Ritorna l'id del template a partire dal nome.
-     *
-     * @param string $name il nome da ricercare
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getByName($name)
-    {
-        return database()->table($this->table.'_lang')
-            ->select('id_record')
-            ->where('name', '=', $name)
-            ->where('id_lang', '=', \App::getLang())
-            ->first();
+    public static function getTranslatedFields(){
+        return self::$translated_fields;
     }
 }

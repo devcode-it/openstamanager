@@ -54,11 +54,11 @@ foreach ($moduli as $module_id => $note) {
     $modulo = Module::find($module_id);
 
     echo '
-<h4>'.($modulo->title == 'Anagrafiche' ? 'Note' : $modulo->title).'</h4>
+<h4>'.($modulo->getTranslation('title') == 'Anagrafiche' ? 'Note' : $modulo->getTranslation('title')).'</h4>
 <table class="table table-hover">
     <tr>
-        <th width="15%" >'.(($modulo->title == 'Anagrafiche') ? '' : tr('Riferimento')).'</th>
-        <th width="20%" >'.($modulo->title == 'Anagrafiche' ? 'Tecnico' : (($modulo->title == 'Fatture di acquisto' || $modulo->title == 'Ordini fornitore' || $modulo->title == 'Ddt in entrata') ? tr('Fornitore') : tr('Cliente'))).'</th>
+        <th width="15%" >'.(($modulo->getTranslation('title') == 'Anagrafiche') ? '' : tr('Riferimento')).'</th>
+        <th width="20%" >'.($modulo->getTranslation('title') == 'Anagrafiche' ? 'Tecnico' : (($modulo->getTranslation('title') == 'Fatture di acquisto' || $modulo->getTranslation('title') == 'Ordini fornitore' || $modulo->getTranslation('title') == 'Ddt in entrata') ? tr('Fornitore') : tr('Cliente'))).'</th>
         <th>'.tr('Contenuto').'</th>
         <th width="20%" class="text-center">'.tr('Data di notifica').'</th>
         <th class="text-center">#</th>
@@ -68,29 +68,29 @@ foreach ($moduli as $module_id => $note) {
         $class = (strtotime($nota->notification_date) < strtotime(date('Y-m-d')) && !empty($nota->notification_date)) ? 'danger' : '';
 
         $documento = '';
-        if ($modulo->title == 'Attività') {
+        if ($modulo->getTranslation('title') == 'Attività') {
             $documento = $dbo->fetchOne("SELECT `in_interventi`.`codice` AS numero, `ragione_sociale` FROM `zz_notes` INNER JOIN `in_interventi` ON (`in_interventi`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = 'Attività' AND `id_lang` = ".prepare(\App::getLang()).")) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `in_interventi`.`idanagrafica` WHERE `zz_notes`.`id` = ".$nota->id);
-        } elseif ($modulo->title == 'Fatture di vendita') {
+        } elseif ($modulo->getTranslation('title') == 'Fatture di vendita') {
             $documento = $dbo->fetchOne("SELECT `numero_esterno` AS numero, `ragione_sociale` FROM `zz_notes` INNER JOIN `co_documenti` ON (`co_documenti`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = 'Fatture di vendita' AND `id_lang` = ".prepare(\App::getLang()).")) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `co_documenti`.`idanagrafica` WHERE `zz_notes`.`id` = ".$nota->id);
-        } elseif ($modulo->title == 'Fatture di acquisto') {
+        } elseif ($modulo->getTranslation('title') == 'Fatture di acquisto') {
             $documento = $dbo->fetchOne("SELECT `numero`, `ragione_sociale` FROM `zz_notes` INNER JOIN `co_documenti` ON (`co_documenti`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = 'Fatture di acquisto' AND `id_lang` = ".prepare(\App::getLang()).")) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `co_documenti`.`idanagrafica` WHERE `zz_notes`.`id` = ".$nota->id);
-        } elseif ($modulo->title == 'Preventivi') {
+        } elseif ($modulo->getTranslation('title') == 'Preventivi') {
             $documento = $dbo->fetchOne("SELECT `numero`, `ragione_sociale` FROM `zz_notes` INNER JOIN `co_preventivi` ON (`co_preventivi`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = 'Preventivi' AND `id_lang` = ".prepare(\App::getLang()).")) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `co_preventivi`.`idanagrafica` WHERE `zz_notes`.`id` = ".$nota->id);
-        } elseif ($modulo->title == 'Contratti') {
+        } elseif ($modulo->getTranslation('title') == 'Contratti') {
             $documento = $dbo->fetchOne("SELECT `numero`, `ragione_sociale` FROM `zz_notes` INNER JOIN `co_contratti` ON (`co_contratti`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = 'Contratti' AND `id_lang` = ".prepare(\App::getLang()).")) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `co_contratti`.`idanagrafica` WHERE `zz_notes`.`id` = ".$nota->id);
-        } elseif ($modulo->title == 'Ordini cliente') {
+        } elseif ($modulo->getTranslation('title') == 'Ordini cliente') {
             $documento = $dbo->fetchOne("SELECT `numero_esterno` as numero, `ragione_sociale` FROM `zz_notes` INNER JOIN `or_ordini` ON (`or_ordini`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = 'Ordini cliente' AND `id_lang` = ".prepare(\App::getLang()).")) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `or_ordini`.`idanagrafica` WHERE `zz_notes`.`id` = ".$nota->id);
-        } elseif ($modulo->title == 'Ordini fornitore') {
+        } elseif ($modulo->getTranslation('title') == 'Ordini fornitore') {
             $documento = $dbo->fetchOne("SELECT `numero`, `ragione_sociale` FROM `zz_notes` INNER JOIN `or_ordini` ON (`or_ordini`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = 'Ordini fornitore' AND `id_lang` = ".prepare(\App::getLang()).")) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `or_ordini`.`idanagrafica` WHERE `zz_notes`.`id` = ".$nota->id);
-        } elseif ($modulo->title == 'Ddt in uscita') {
+        } elseif ($modulo->getTranslation('title') == 'Ddt in uscita') {
             $documento = $dbo->fetchOne("SELECT `numero_esterno` as numero, `ragione_sociale` FROM `zz_notes` INNER JOIN `dt_ddt` ON (`dt_ddt`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_lang` FROM `zz_modules_lang` WHERE `title` = 'Ddt in uscita' AND `id_lang` = ".prepare(\App::getLang()).")) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `dt_ddt`.`idanagrafica` WHERE `zz_notes`.`id` = ".$nota->id);
-        } elseif ($modulo->title == 'Ddt in entrata') {
+        } elseif ($modulo->getTranslation('title') == 'Ddt in entrata') {
             $documento = $dbo->fetchOne("SELECT `numero`, `ragione_sociale` FROM `zz_notes` INNER JOIN `dt_ddt` ON (`dt_ddt`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = 'Ddt in uscita' AND `id_lang` = ".prepare(\App::getLang()).")) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `dt_ddt`.`idanagrafica` WHERE `zz_notes`.`id` = ".$nota->id);
-        } elseif ($modulo->title == 'Articoli') {
+        } elseif ($modulo->getTranslation('title') == 'Articoli') {
             $documento = $dbo->fetchOne("SELECT `codice` AS numero FROM `zz_notes` INNER JOIN `mg_articoli` ON (`mg_articoli`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = 'Articoli' AND `id_lang` = ".prepare(\App::getLang()).")) WHERE `zz_notes`.`id` = ".$nota->id);
-        } elseif ($modulo->title == 'Impianti') {
+        } elseif ($modulo->getTranslation('title') == 'Impianti') {
             $documento = $dbo->fetchOne("SELECT `matricola` AS numero, `ragione_sociale` FROM `zz_notes` INNER JOIN `my_impianti` ON (`my_impianti`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = 'Impianti' AND `id_lang` = ".prepare(\App::getLang()).")) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `my_impianti`.`idanagrafica` WHERE `zz_notes`.`id` = ".$nota->id);
-        } elseif ($modulo->title == 'Anagrafiche') {
+        } elseif ($modulo->getTranslation('title') == 'Anagrafiche') {
             $documento = $dbo->fetchOne("SELECT ' ' AS numero, `ragione_sociale` FROM `zz_notes` INNER JOIN `an_anagrafiche` ON (`an_anagrafiche`.`idanagrafica` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = 'Anagrafiche' AND `id_lang` = ".prepare(\App::getLang()).")) WHERE `zz_notes`.`id` = ".$nota->id);
         } else {
             $documento['numero'] = ' ';

@@ -104,7 +104,7 @@ if (!empty($interventi)) {
                 echo '
                 <tr>
                     <td>'.$sessione->anagrafica->ragione_sociale.'</td>
-                    <td>'.$sessione->tipo->name.'</td>
+                    <td>'.$sessione->tipo->getTranslation('name').'</td>
                     <td class="text-right">'.numberFormat($sessione->ore).'</td>
                     <td class="text-right">'.numberFormat($sessione->km).'</td>
                     <td class="text-right danger">'.moneyFormat($sessione->costo_manodopera).'</td>
@@ -116,9 +116,9 @@ if (!empty($interventi)) {
                 </tr>';
 
                 // Raggruppamento per tipologia descrizione
-                $tipologie[$sessione->tipo->name]['ore'] += $sessione->ore;
-                $tipologie[$sessione->tipo->name]['costo'] += $sessione->costo_manodopera + $sessione->costo_viaggio + $sessione->costo_diritto_chiamata;
-                $tipologie[$sessione->tipo->name]['ricavo'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera + $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio + $sessione->prezzo_diritto_chiamata;
+                $tipologie[$sessione->tipo->getTranslation('name')]['ore'] += $sessione->ore;
+                $tipologie[$sessione->tipo->getTranslation('name')]['costo'] += $sessione->costo_manodopera + $sessione->costo_viaggio + $sessione->costo_diritto_chiamata;
+                $tipologie[$sessione->tipo->getTranslation('name')]['ricavo'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera + $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio + $sessione->prezzo_diritto_chiamata;
 
                 // Raggruppamento per tecnico
                 $tecnici[$sessione->anagrafica->ragione_sociale]['ore'] += $sessione->ore;
@@ -127,10 +127,10 @@ if (!empty($interventi)) {
                 $tecnici[$sessione->anagrafica->ragione_sociale]['ricavo'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera + $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio + $sessione->prezzo_diritto_chiamata;
 
                 // Raggruppamento per stato intervento
-                $stati_intervento[$intervento->stato->name]['colore'] = $intervento->stato->colore;
-                $stati_intervento[$intervento->stato->name]['ore'] += $sessione->ore;
-                $stati_intervento[$intervento->stato->name]['costo'] += $sessione->costo_manodopera + $sessione->costo_viaggio + $sessione->costo_diritto_chiamata;
-                $stati_intervento[$intervento->stato->name]['ricavo'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera + $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio + $sessione->prezzo_diritto_chiamata;
+                $stati_intervento[$intervento->stato->getTranslation('name')]['colore'] = $intervento->stato->colore;
+                $stati_intervento[$intervento->stato->getTranslation('name')]['ore'] += $sessione->ore;
+                $stati_intervento[$intervento->stato->getTranslation('name')]['costo'] += $sessione->costo_manodopera + $sessione->costo_viaggio + $sessione->costo_diritto_chiamata;
+                $stati_intervento[$intervento->stato->getTranslation('name')]['ricavo'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera + $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio + $sessione->prezzo_diritto_chiamata;
             }
 
             echo '
@@ -165,7 +165,7 @@ if (!empty($interventi)) {
                 // Raggruppamento per articolo con lo stesso prezzo
                 $ricavo = ($articolo->imponibile - $articolo->sconto) / $articolo->qta;
                 $costo = $articolo->spesa / $articolo->qta;
-                $descrizione = $articolo->articolo->codice.' - '.$articolo->articolo->name;
+                $descrizione = $articolo->articolo->codice.' - '.$articolo->articolo->getTranslation('name');
 
                 $materiali_art[$descrizione][$ricavo][$costo]['id'] = $articolo->articolo->id;
                 $materiali_art[$descrizione][$ricavo][$costo]['qta'] += $articolo->qta;

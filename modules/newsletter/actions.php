@@ -41,7 +41,7 @@ switch (filter('op')) {
         break;
 
     case 'update':
-        $newsletter->name = filter('name');
+        $newsletter->setTranslation('name', filter('name'));
         $newsletter->state = filter('state');
         $newsletter->completed_at = filter('completed_at');
 

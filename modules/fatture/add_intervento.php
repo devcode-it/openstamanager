@@ -23,9 +23,9 @@ use Modules\Fatture\Fattura;
 use Models\Module;
 
 $module = Module::find($id_module);
-$module_interventi = Module::find((new Module())->getByName('Interventi')->id_record);
+$module_interventi = Module::find((new Module())->getByField('name', 'Interventi'));
 
-if ($module->name == 'Fatture di vendita') {
+if ($module->getTranslation('name') == 'Fatture di vendita') {
     $dir = 'entrata';
     $conti = 'conti-vendite';
 } else {

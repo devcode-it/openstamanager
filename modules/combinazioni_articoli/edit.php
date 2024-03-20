@@ -22,7 +22,7 @@ echo '
                 </div>
 
                 <div class="col-md-6">
-                    {[ "type": "text", "label": "'.tr('Nome').'", "name": "nome", "value": "'.$combinazione->name.'", "required": 1, "help": "'.tr('Nome univoco della combinazione').'" ]}
+                    {[ "type": "text", "label": "'.tr('Nome').'", "name": "nome", "value": "'.$combinazione->getTranslation('name.').'", "required": 1, "help": "'.tr('Nome univoco della combinazione').'" ]}
                 </div>
             </div>
 
@@ -33,7 +33,7 @@ if (!empty($combinazione->id_categoria)) {
                     '.Modules::link('Categorie articoli', $combinazione->id_categoria, null, null, 'class="pull-right"');
 }
 echo '
-                    {[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|'.(new Module())->getByName('Categorie articoli')->id_record.'" ]}
+                    {[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|'.(new Module())->getByField('name', 'Categorie articoli').'" ]}
                 </div>
 
                 <div class="col-md-6">

@@ -23,15 +23,19 @@ use Carbon\Carbon;
 use Common\SimpleModelTrait;
 use Cron\CronExpression;
 use Illuminate\Database\Eloquent\Model;
-
+use Traits\RecordTrait;
 /*
  * Risorsa per la gestione delle task ricorrenti del gestionale.
  */
 class Task extends Model
 {
     use SimpleModelTrait;
-
+    use RecordTrait;
     protected $table = 'zz_tasks';
+
+    protected static $translated_fields = [
+        'name',
+    ];
 
     protected $dates = [
         'next_execution_at',
@@ -103,34 +107,12 @@ class Task extends Model
         return $this->hasMany(Log::class, 'id_task');
     }
 
-    /**
-     * Ritorna l'attributo name del task.
-     *
-     * @return string
-     */
-    public function getNameAttribute()
+    public function getModuleAttribute()
     {
-        return database()->table($this->table.'_lang')
-            ->select('name')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->name;
+        return '';
     }
 
-    /**
-     * Ritorna l'id del task a partire dal nome.
-     *
-     * @param string $name il nome da ricercare
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getByName($name)
-    {
-        return database()->table($this->table.'_lang')
-            ->select('id_record')
-            ->where('name', '=', $name)
-            ->where('id_lang', '=', \App::getLang())
-            ->first();
+    public static function getTranslatedFields(){
+        return self::$translated_fields;
     }
-
 }

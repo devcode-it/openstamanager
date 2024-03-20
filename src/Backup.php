@@ -78,7 +78,7 @@ class Backup
 
         // Individuazione dei backup
         $backups = Symfony\Component\Finder\Finder::create()
-            ->name('/^'.$pattern.'/')
+            ->getTranslation('name')('/^'.$pattern.'/')
             ->sortByName()
             ->in($directory)
             ->depth('== 0');

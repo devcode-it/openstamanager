@@ -21,13 +21,16 @@ namespace Modules\Preventivi;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
-
+use Traits\RecordTrait;
 class Stato extends Model
 {
     use SimpleModelTrait;
-
+    use RecordTrait;
     protected $table = 'co_statipreventivi';
 
+    protected static $translated_fields = [
+        'name',
+    ];
     public static function build($icona = null, $colore = null, $is_completato = null, $is_fatturabile = null, $is_pianificabile = null)
     {
         $model = new static();
@@ -46,57 +49,12 @@ class Stato extends Model
         return $this->hasMany(Preventivo::class, 'idstatopreventivo');
     }
 
-    /**
-     * Ritorna l'attributo name dello stato del preventivo.
-     *
-     * @return string
-     */
-    public function getNameAttribute()
+    public function getModuleAttribute()
     {
-        return database()->table($this->table.'_lang')
-            ->select('name')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->name;
+        return '';
     }
 
-    /**
-     * Imposta l'attributo name dello stato del preventivo.
-     */
-    public function setNameAttribute($value)
-    {
-        $table = database()->table($this->table.'_lang');
-
-        $translated = $table
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang());
-
-        if ($translated->count() > 0) {
-            $translated->update([
-                'name' => $value
-            ]);
-        } else {
-            $table->insert([
-                'id_record' => $this->id,
-                'id_lang' => \App::getLang(),
-                'name' => $value
-            ]);
-        }
-    }
-
-    /**
-     * Ritorna l'id dello stato del preventivo a partire dal nome.
-     *
-     * @param string $name il nome da ricercare
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getByName($name)
-    {
-        return database()->table($this->table.'_lang')
-            ->select('id_record')
-            ->where('name', '=', $name)
-            ->where('id_lang', '=', \App::getLang())
-            ->first();
+    public static function getTranslatedFields(){
+        return self::$translated_fields;
     }
 }

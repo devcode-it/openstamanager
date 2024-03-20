@@ -21,45 +21,29 @@ namespace Modules\Ordini;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
-
+use Traits\RecordTrait;
 class Tipo extends Model
 {
     use SimpleModelTrait;
-
+    use RecordTrait;
     protected $table = 'or_tipiordine';
+
+    protected static $translated_fields = [
+        'name',
+    ];
 
     public function ordini()
     {
         return $this->hasMany(Ordine::class, 'idtipoordine');
     }
 
-    /**
-     * Ritorna l'attributo name del tipo ordine.
-     *
-     * @return string
-     */
-    public function getNameAttribute()
+
+    public function getModuleAttribute()
     {
-        return database()->table($this->table.'_lang')
-            ->select('name')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->name;
+        return 'Stati degli ordini';
     }
 
-    /**
-     * Ritorna l'id del tipo ordine a partire dal nome.
-     *
-     * @param string $name il nome da ricercare
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getByName($name)
-    {
-        return database()->table($this->table.'_lang')
-            ->select('id_record')
-            ->where('name', '=', $name)
-            ->where('id_lang', '=', \App::getLang())
-            ->first();
+    public static function getTranslatedFields(){
+        return self::$translated_fields;
     }
 }

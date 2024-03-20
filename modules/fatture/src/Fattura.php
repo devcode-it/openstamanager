@@ -97,7 +97,7 @@ class Fattura extends Document
         $database = database();
 
         // Individuazione dello stato predefinito per il documento
-        $stato_documento = (new Stato())->getByName('Bozza')->id_record;
+        $stato_documento = (new Stato())->getByField('name', 'Bozza');
         $direzione = $tipo_documento->dir;
 
         // Conto predefinito sulla base del flusso di denaro
@@ -218,7 +218,7 @@ class Fattura extends Document
 
         $model->note = implode("\n", $notes);
 
-        if ($tipo_documento->name == 'Fattura accompagnatoria di vendita') {
+        if ($tipo_documento->getTranslation('name') == 'Fattura accompagnatoria di vendita') {
             $model->idporto = database()->fetchOne('SELECT `id` FROM `dt_porto` WHERE `predefined` = 1')['id'];
             $model->idcausalet = database()->fetchOne('SELECT `id` FROM `dt_causalet` WHERE `predefined` = 1')['id'];
             $model->idspedizione = database()->fetchOne('SELECT `id` FROM `dt_spedizione` WHERE `predefined` = 1')['id'];
@@ -250,7 +250,7 @@ class Fattura extends Document
 
             $this->numero = static::getNextNumero($data, $direzione, $value);
 
-            if ($this->stato->name == 'Bozza') {
+            if ($this->stato->getTranslation('name') == 'Bozza') {
                 $this->numero_esterno = null;
             } elseif (!empty($previous)) {
                 $this->numero_esterno = static::getNextNumeroSecondario($data, $direzione, $value);
@@ -502,7 +502,7 @@ class Fattura extends Document
         $nome = 'Ricevuta';
 
         return $this->uploads()->filter(function ($item) use ($nome) {
-            return false !== strstr($item->name, $nome);
+            return false !== strstr($item->getTranslation('name'), $nome);
         })->sortBy('created_at');
     }
 
@@ -591,7 +591,7 @@ class Fattura extends Document
 
         $stato = Stato::find($this->stato['id']);
         // Generazione numero fattura se non presente (Bozza -> Emessa)
-        if ((($stato_precedente->name == 'Bozza' && $stato->name == 'Emessa') or (!$is_fiscale)) && empty($this->numero_esterno)) {
+        if ((($stato_precedente->getTranslation('name') == 'Bozza' && $stato->getTranslation('name') == 'Emessa') or (!$is_fiscale)) && empty($this->numero_esterno)) {
             $this->numero_esterno = self::getNextNumeroSecondario($this->data, $this->direzione, $this->id_segment);
         }
 
@@ -601,17 +601,17 @@ class Fattura extends Document
         // Operazioni al cambiamento di stato
         // Bozza o Annullato -> Stato diverso da Bozza o Annullato
         if (
-            (in_array($stato_precedente->name, ['Bozza', 'Annullata'])
-            && !in_array($stato->name, ['Bozza', 'Annullata', 'Non valida']))
+            (in_array($stato_precedente->getTranslation('name'), ['Bozza', 'Annullata'])
+            && !in_array($stato->getTranslation('name'), ['Bozza', 'Annullata', 'Non valida']))
             || $options[0] == 'forza_emissione'
         ) {
             // Registrazione scadenze
-            $this->registraScadenze($stato->name == 'Pagato');
+            $this->registraScadenze($stato->getTranslation('name') == 'Pagato');
 
             // Registrazione movimenti
             $this->gestoreMovimenti->registra();
         } // Stato qualunque -> Bozza o Annullato
-        elseif (in_array($stato->name, ['Bozza', 'Annullata', 'Non valida'])) {
+        elseif (in_array($stato->getTranslation('name'), ['Bozza', 'Annullata', 'Non valida'])) {
             // Rimozione delle scadenza
             $this->rimuoviScadenze();
 
@@ -622,7 +622,7 @@ class Fattura extends Document
             $this->movimentiContabili()->delete();
         }
 
-        if ($this->changes['data_competenza'] && !in_array($stato->name, ['Bozza', 'Annullata', 'Non valida'])) {
+        if ($this->changes['data_competenza'] && !in_array($stato->getTranslation('name'), ['Bozza', 'Annullata', 'Non valida'])) {
             $movimenti = Movimento::where('iddocumento', $this->id)->where('primanota', 0)->get();
             foreach ($movimenti as $movimento) {
                 $movimento->data = $this->data_competenza;
@@ -645,7 +645,7 @@ class Fattura extends Document
         }
 
         // Operazioni automatiche per le Fatture Elettroniche
-        if ($this->direzione == 'entrata' && $stato_precedente->name == 'Bozza' && $stato->name == 'Emessa') {
+        if ($this->direzione == 'entrata' && $stato_precedente->getTranslation('name') == 'Bozza' && $stato->getTranslation('name') == 'Emessa') {
             $stato_fe = StatoFE::find($this->codice_stato_fe);
             $abilita_genera = empty($this->codice_stato_fe) || intval($stato_fe['is_generabile']);
 
@@ -721,7 +721,7 @@ class Fattura extends Document
         $new->id_ricevuta_principale = null;
 
         // Spostamento dello stato
-        $stato = (new Stato())->getByName('Bozza')->id_record;
+        $stato = (new Stato())->getByField('name', 'Bozza');
         $new->stato()->associate($stato);
 
         return $new;
@@ -902,7 +902,7 @@ class Fattura extends Document
 
     public function getReferenceName()
     {
-        return $this->tipo->name;
+        return $this->tipo->getTranslation('name');
     }
 
     public function getReferenceNumber()

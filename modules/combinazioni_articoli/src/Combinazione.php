@@ -25,6 +25,11 @@ class Combinazione extends Model
 
         return $model;
     }
+
+    protected static $translated_fields = [
+        'name',
+    ];
+
     /**
      * Elenco dei campi della combinazione da sincronizzare da e verso gli Articoli della combinazione.
      *
@@ -104,7 +109,7 @@ class Combinazione extends Model
                 $articolo_base = $articoli->first();
                 $articolo = $articolo_base->replicate();
 
-                $nome_immagine = $articolo_base->immagine_upload->name;
+                $nome_immagine = $articolo_base->immagine_upload->getTranslation('name');
                 $allegato = $articolo_base->uploads()->where('name', $nome_immagine)->first();
 
                 if (!empty($allegato)) {
@@ -219,58 +224,7 @@ class Combinazione extends Model
             ->update($combo->toArray());
     }
 
-
-    /**
-     * Ritorna l'attributo name della combinazione.
-     *
-     * @return string
-     */
-    public function getNameAttribute()
-    {
-        return database()->table($this->table.'_lang')
-            ->select('name')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->name;
-    }
-
-    /**
-     * Imposta l'attributo name della combinazione.
-     */
-    public function setNameAttribute($value)
-    {
-        $table = database()->table($this->table.'_lang');
-
-        $translated = $table
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang());
-
-        if ($translated->count() > 0) {
-            $translated->update([
-                'name' => $value
-            ]);
-        } else {
-            $table->insert([
-                'id_record' => $this->id,
-                'id_lang' => \App::getLang(),
-                'name' => $value
-            ]);
-        }
-    }
-
-    /**
-     * Ritorna l'id della combinazione a partire dal nome.
-     *
-     * @param string $name il nome da ricercare
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getByName($name)
-    {
-        return database()->table($this->table.'_lang')
-            ->select('id_record')
-            ->where('name', '=', $name)
-            ->where('id_lang', '=', \App::getLang())
-            ->first();
+    public static function getTranslatedFields(){
+        return self::$translated_fields;
     }
 }

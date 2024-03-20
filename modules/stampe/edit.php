@@ -76,7 +76,7 @@ $id_files = $dbo->select('zz_files_print', 'id_file', [], ['id_print' => $id_rec
                     ->orderBy('id')
                     ->first();
 if (!empty($stampa_predefinita)) {
-    $nome_stampa_predefinita = $stampa_predefinita->name;
+    $nome_stampa_predefinita = $stampa_predefinita->getTranslation('name');
 } else {
     $nome_stampa_predefinita = 'Nessuna';
 }

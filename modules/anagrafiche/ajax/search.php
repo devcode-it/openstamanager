@@ -24,7 +24,7 @@ use Models\Module;
     Anagrafiche
 */
 
-$link_id = (new Module())->getByName('Anagrafiche')->id_record;
+$link_id = (new Module())->getByField('name', 'Anagrafiche');
 
 $fields = [
     'Codice' => 'codice',

@@ -25,14 +25,22 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Models\Module;
 use Models\PrintTemplate;
 use Traits\LocalPoolTrait;
+use Traits\RecordTrait;
 
 class Template extends Model
 {
     use SimpleModelTrait;
     use LocalPoolTrait;
     use SoftDeletes;
+    use RecordTrait;
 
     protected $table = 'em_templates';
+
+    protected static $translated_fields = [
+        'name',
+        'body',
+        'subject',
+    ];
 
     public function getVariablesAttribute()
     {
@@ -71,136 +79,17 @@ class Template extends Model
         return $this->belongsToMany(PrintTemplate::class, 'em_print_template', 'id_template', 'id_print');
     }
 
-    /**
-     * Ritorna l'attributo name del template.
-     *
-     * @return string
-     */
-    public function getNameAttribute()
-    {
-        return database()->table($this->table.'_lang')
-            ->select('name')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->name;
-    }
-
-    /**
-     * Imposta l'attributo name della lista.
-     */
-    public function setNameAttribute($value)
-    {
-        $table = database()->table($this->table.'_lang');
-
-        $translated = $table
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang());
-
-        if ($translated->count() > 0) {
-            $translated->update([
-                'name' => $value
-            ]);
-        } else {
-            $table->insert([
-                'id_record' => $this->id,
-                'id_lang' => \App::getLang(),
-                'name' => $value
-            ]);
-        }
-    }
-    /**
-     * Ritorna l'attributo subject del template.
-     *
-     * @return string
-     */
-    public function getSubjectAttribute()
-    {
-        return database()->table($this->table.'_lang')
-            ->select('subject')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->subject;
-    }
-
-    /**
-     * Imposta l'attributo subject del template.
-     */
-    public function setSubjectAttribute($value)
-    {
-        $table = database()->table($this->table.'_lang');
-
-        $translated = $table
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang());
-
-        if ($translated->count() > 0) {
-            $translated->update([
-                'subject' => $value
-            ]);
-        } else {
-            $table->insert([
-                'id_record' => $this->id,
-                'id_lang' => \App::getLang(),
-                'subject' => $value
-            ]);
-        }
-    }
-
-    /**
-     * Ritorna l'attributo body del template.
-     *
-     * @return string
-     */
-    public function getBodyAttribute()
-    {
-        return database()->table($this->table.'_lang')
-            ->select('body')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->body;
-    }
-    /**
-     * Imposta l'attributo body del template.
-     */
-    public function setBodyAttribute($value)
-    {
-        $table = database()->table($this->table.'_lang');
-
-        $translated = $table
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang());
-
-        if ($translated->count() > 0) {
-            $translated->update([
-                'body' => $value
-            ]);
-        } else {
-            $table->insert([
-                'id_record' => $this->id,
-                'id_lang' => \App::getLang(),
-                'body' => $value
-            ]);
-        }
-    }
-
-    /**
-     * Ritorna l'id del template a partire dal nome.
-     *
-     * @param string $name il nome da ricercare
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getByName($name)
-    {
-        return database()->table($this->table.'_lang')
-            ->select('id_record')
-            ->where('name', '=', $name)
-            ->where('id_lang', '=', \App::getLang())
-            ->first();
-    }
-
     public function translations()
     {
         return $this->hasMany(TemplateLang::class, 'id');
+    }
+
+    public function getModuleAttribute()
+    {
+        return 'Template email';
+    }
+    
+    public static function getTranslatedFields(){
+        return self::$translated_fields;
     }
 }

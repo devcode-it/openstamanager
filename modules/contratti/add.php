@@ -25,7 +25,7 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 
 $stati = get('pianificabile') ? 'SELECT `co_staticontratti`.`id`, `name` AS descrizione FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(\App::getLang()).') WHERE `is_pianificabile`=1' : 'SELECT `co_staticontratti`.`id`, `name` AS descrizione FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(\App::getLang()).')';
 
-$stato = (new Stato())->getByName('Bozza')->id_record;
+$stato = (new Stato())->getByField('name', 'Bozza');
 
 echo '
 <form action="" method="post" id="add-form">
@@ -41,7 +41,7 @@ echo '
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "required": 1, "value": "'.$id_anagrafica.'", "ajax-source": "clienti", "icon-after": "add|'.(new Module())->getByName('Anagrafiche')->id_record.'|tipoanagrafica=Cliente&readonly_tipo=1", "readonly": "'.((empty(get('idanagrafica'))) ? 0 : 1).'" ]}
+			{[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "required": 1, "value": "'.$id_anagrafica.'", "ajax-source": "clienti", "icon-after": "add|'.(new Module())->getByField('name', 'Anagrafiche').'|tipoanagrafica=Cliente&readonly_tipo=1", "readonly": "'.((empty(get('idanagrafica'))) ? 0 : 1).'" ]}
 		</div>
 	</div>
 

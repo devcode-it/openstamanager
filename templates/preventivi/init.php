@@ -55,7 +55,7 @@ if (!empty($documento->idsede)) {
     if (!empty($rsd[0]['id_nazione'])) {
         $nazione = Nazione::find($rsd[0]['id_nazione']);
         if ($nazione['iso2'] != 'IT') {
-            $destinazione .= ' - '.$nazione->name;
+            $destinazione .= ' - '.$nazione->getTranslation('name');
         }
     }
 }

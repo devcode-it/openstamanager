@@ -23,13 +23,16 @@ use Carbon\Carbon;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Fatture\Fattura;
-
+use Traits\RecordTrait;
 class Pagamento extends Model
 {
     use SimpleModelTrait;
-
+    use RecordTrait;
     protected $table = 'co_pagamenti';
 
+    protected static $translated_fields = [
+        'name',
+    ];
     public static function build($codice = null)
     {
         $model = new static();
@@ -150,57 +153,12 @@ class Pagamento extends Model
         return $this->codice_modalita_pagamento_fe == 'MP12';
     }
 
-    /**
-     * Ritorna l'attributo name del pagamento.
-     *
-     * @return string
-     */
-    public function getNameAttribute()
+    public function getModuleAttribute()
     {
-        return database()->table($this->table.'_lang')
-            ->select('name')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->name;
+        return 'Pagamenti';
     }
 
-    /**
-     * Ritorna l'id del pagamento a partire dal nome.
-     *
-     * @param string $name il nome da ricercare
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getByName($name)
-    {
-        return database()->table($this->table.'_lang')
-            ->select('id_record')
-            ->where('name', '=', $name)
-            ->where('id_lang', '=', \App::getLang())
-            ->first();
-    }
-
-    /**
-     * Imposta l'attributo name del pagamento.
-     */
-    public function setNameAttribute($value)
-    {
-        $table = database()->table($this->table.'_lang');
-
-        $translated = $table
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang());
-
-        if ($translated->count() > 0) {
-            $translated->update([
-                'name' => $value
-            ]);
-        } else {
-            $table->insert([
-                'id_record' => $this->id,
-                'id_lang' => \App::getLang(),
-                'name' => $value
-            ]);
-        }
+    public static function getTranslatedFields(){
+        return self::$translated_fields;
     }
 }

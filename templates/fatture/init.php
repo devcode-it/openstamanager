@@ -29,7 +29,8 @@ $d_importi = (int) setting('Cifre decimali per importi in stampa');
 $d_totali = (int) setting('Cifre decimali per totali in stampa');
 
 // Lettura info fattura
-$record = $dbo->fetchOne('SELECT *,
+$record = $dbo->fetchOne('SELECT 
+    `co_documenti`.*,
     `co_statidocumento_lang`.`name` AS stato_doc,
     `co_tipidocumento_lang`.`name` AS tipo_doc,
     `co_tipidocumento`.`dir` AS dir,
@@ -115,7 +116,7 @@ if (!empty($record['idsede_destinazione'])) {
     if (!empty($rsd[0]['id_nazione'])) {
         $nazione = Nazione::find($rsd[0]['id_nazione']);
         if ($nazione['iso2'] != 'IT') {
-            $destinazione .= ' - '.$nazione->name;
+            $destinazione .= ' - '.$nazione->getTranslation('name');
         }
     }
 }

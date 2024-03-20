@@ -46,7 +46,7 @@ foreach ($records as $j => $record) {
     }
 }
 
-$id_module_fattura = (new Module())->getByName('Fatture di vendita')->id_record;
+$id_module_fattura = (new Module())->getByField('name', 'Fatture di vendita');
 $id_conto = setting('Conto predefinito fatture di vendita');
 
 echo '<form action="" method="post">

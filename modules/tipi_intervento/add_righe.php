@@ -82,7 +82,7 @@ echo '
 // Unità di misura
 echo '
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.(new Module())->getByName('Unità di misura')->id_record.'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
+            {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.(new Module())->getByField('name', 'Unità di misura').'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
         </div>';
 
 // Iva

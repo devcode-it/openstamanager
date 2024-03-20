@@ -42,10 +42,10 @@ class ColonneDuplicateViste extends Controllo
 
             $this->addResult([
                 'id' => $colonna['name'],
-                'nome' => $modulo->title.': '.$colonna['name'],
+                'nome' => $modulo->getTranslation('title').': '.$colonna['name'],
                 'descrizione' => tr('La colonna _NAME_ del modulo _MODULE_ esiste più volte', [
                     '_NAME_' => $colonna['name'],
-                    '_MODULE_' => $modulo->title,
+                    '_MODULE_' => $modulo->getTranslation('title'),
                 ]),
             ]);
         }

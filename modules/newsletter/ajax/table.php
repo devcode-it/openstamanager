@@ -57,7 +57,7 @@ $destinatari_filtrati = (clone $destinatari)
     ->skip($start)->take($length)
     ->get();
 
-$id_modulo_anagrafiche = (new Module())->getByName('Anagrafiche')->id_record;
+$id_modulo_anagrafiche = (new Module())->getByField('name', 'Anagrafiche');
 $righe = [];
 foreach ($destinatari_filtrati as $destinatario) {
     $origine = $destinatario->getOrigine();

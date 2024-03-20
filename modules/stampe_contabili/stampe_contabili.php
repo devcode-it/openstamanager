@@ -26,8 +26,8 @@ use Models\PrintTemplate;
 $id_record = filter('id_record');
 $dir = filter('dir');
 $nome_stampa = filter('nome_stampa');
-$id_print = (new PrintTemplate ())->getByName(prepare($nome_stampa))->id_record;
-$id_module = (new Module())->getByName('Stampe contabili')->id_record;
+$id_print = (new PrintTemplate ())->getByField('name', prepare($nome_stampa));
+$id_module = (new Module())->getByField('name', 'Stampe contabili');
 
 $year = (new Carbon($_SESSION['period_end']))->format('Y');
 $periodi[] = [

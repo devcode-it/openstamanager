@@ -23,7 +23,7 @@ use Modules\Fatture\Tipo;
 
 $module = Module::find($id_module);
 
-if ($module->name == 'Fatture di vendita') {
+if ($module->getTranslation('name') == 'Fatture di vendita') {
     $dir = 'entrata';
     $tipo_anagrafica = tr('Cliente');
 } else {
@@ -63,7 +63,7 @@ $idtipodocumento = Tipo::where('predefined', 1)->where('dir', $dir)->first()->id
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo $tipo_anagrafica; ?>", "name": "idanagrafica", "id": "idanagrafica_add", "required": 1, "ajax-source": "<?php echo $module->name == 'Fatture di vendita' ? 'clienti' : 'fornitori'; ?>", "value": "<?php echo $id_anagrafica; ?>", "icon-after": "add|<?php echo (new Module())->getByName('Anagrafiche')->id_record; ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>" ]}
+			{[ "type": "select", "label": "<?php echo $tipo_anagrafica; ?>", "name": "idanagrafica", "id": "idanagrafica_add", "required": 1, "ajax-source": "<?php echo $module->getTranslation('name') == 'Fatture di vendita' ? 'clienti' : 'fornitori'; ?>", "value": "<?php echo $id_anagrafica; ?>", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Anagrafiche'); ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>" ]}
 		</div>
 	</div>
 

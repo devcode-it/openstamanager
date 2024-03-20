@@ -123,7 +123,7 @@ echo '
 echo '
     <tr>
         <td colspan="4">
-            <b>'.tr('Tipo intervento').':</b> '.$documento->tipo->name.'
+            <b>'.tr('Tipo intervento').':</b> '.$documento->tipo->getTranslation('name').'
         </td>
     </tr>';
 
@@ -347,7 +347,7 @@ foreach ($sessioni as $i => $sessione) {
     echo '
     	<td>
             '.$sessione->anagrafica->ragione_sociale.'
-            ('.$sessione->tipo->name.')
+            ('.$sessione->tipo->getTranslation('name').')
     	</td>';
 
     $inizio = new Carbon($sessione['orario_inizio']);
@@ -528,7 +528,7 @@ echo '
 </table>';
 
 if ($options['checklist']) {
-    $structure = Module::find((new Module())->getByName('Interventi')->id_record);
+    $structure = Module::find((new Module())->getByField('name', 'Interventi'));
     $checks = $structure->mainChecks($id_record);
 
     if (!empty($checks)) {
@@ -541,7 +541,7 @@ if ($options['checklist']) {
         </th>
     </tr>';
 
-        $structure = Module::find((new Module())->getByName('Interventi')->id_record);
+        $structure = Module::find((new Module())->getByField('name', 'Interventi'));
         $checks = $structure->mainChecks($id_record);
 
         foreach ($checks as $check) {

@@ -83,12 +83,12 @@ class FatturaElettronica
     public static function getImportDirectory()
     {
         if (!isset(self::$directory)) {
-            $module = Module::find((new Module())->getByName('Fatture di acquisto')->id_record);
+            $module = Module::find((new Module())->getByField('name', 'Fatture di acquisto'));
 
             $plugins = $module->plugins;
             if (!empty($plugins)) {
                 $plugin = $plugins->first(function ($value, $key) {
-                    return $value->name == 'Fatturazione Elettronica';
+                    return $value->getTranslation('name') == 'Fatturazione Elettronica';
                 });
 
                 self::$directory = base_dir().'/'.$plugin->upload_directory;
@@ -167,7 +167,7 @@ class FatturaElettronica
     {
         $allegati = $this->getAllegati();
 
-        $id_module = (new Module())->getByName('Fatture di acquisto')->id_record;
+        $id_module = (new Module())->getByField('name', 'Fatture di acquisto');
 
         $info = [
             'category' => tr('Fattura Elettronica'),
@@ -262,7 +262,7 @@ class FatturaElettronica
         $info = $this->getAnagrafe();
 
         $anagrafica = Anagrafica::build($info['ragione_sociale'], $info['nome'], $info['cognome'], [
-            (new TipoAnagrafica())->getByName($type)->id_record,
+            (new TipoAnagrafica())->getByField('name', $type),
         ]);
 
         if (!empty($info['partita_iva'])) {
@@ -376,7 +376,7 @@ class FatturaElettronica
         $fattura->data_registrazione = $data_registrazione;
         $fattura->data_competenza = $fattura->data;
 
-        $stato_documento = (new Stato())->getByName('Emessa')->id_record;
+        $stato_documento = (new Stato())->getByField('name', 'Emessa');
         $fattura->stato()->associate($stato_documento);
 
         $causali = $dati_generali['Causale'];

@@ -53,7 +53,7 @@ class ButtonManager implements ManagerInterface
 
             $result = [
                 'link' => \Prints::getHref($options['id'], $options['id_record'], $options['parameters']),
-                'title' => tr('Stampa').' '.((strtoupper($print->title) == $print->title) ? $print->title : lcfirst($print->title)),
+                'title' => tr('Stampa').' '.((strtoupper($print->getTranslation('title')) == $print->getTranslation('title')) ? $print->getTranslation('title') : lcfirst($print->getTranslation('title'))),
                 'icon' => $print->icon,
             ];
         } elseif ($options['type'] == 'email') {
@@ -61,7 +61,7 @@ class ButtonManager implements ManagerInterface
 
             $result = [
                 'link' => base_path().'/mail.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id='.$options['id'].$options['parameters'],
-                'title' => tr('Invia').' '.((strtoupper($template_email->name) == $template_email->name) ? $template_email->name : lcfirst($template_email->name)),
+                'title' => tr('Invia').' '.((strtoupper($template_email->getTranslation('name')) == $template_email->getTranslation('name')) ? $template_email->getTranslation('name') : lcfirst($template_email->getTranslation('name'))),
                 'icon' => $template_email['icon'],
                 'type' => 'modal',
             ];

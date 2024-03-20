@@ -145,9 +145,9 @@ if (!empty($fattura->ref_documento) && $fattura->isNota()) {
     echo '
 <div class="alert alert-info">
     <i class="fa fa-info"></i> '.tr('Questa è una _TIPO_ generata dalla seguente fattura', [
-        '_TIPO_' => $fattura->tipo->name,
+        '_TIPO_' => $fattura->tipo->getTranslation('name'),
     ]).':
-    <b>'.Modules::link($module->name, $fattura->ref_documento, tr('Fattura num. _NUM_ del _DATE_', [
+    <b>'.Modules::link($module->getTranslation('name'), $fattura->ref_documento, tr('Fattura num. _NUM_ del _DATE_', [
         '_NUM_' => $nota->numero_esterno,
         '_DATE_' => dateFormat($nota->data),
     ])).'</b>
@@ -155,7 +155,7 @@ if (!empty($fattura->ref_documento) && $fattura->isNota()) {
 }
 
 // Ricordo che si sta emettendo una fattura conto terzi
-if ($dir == 'entrata' && $fattura->stato->name == 'Bozza') {
+if ($dir == 'entrata' && $fattura->stato->getTranslation('name') == 'Bozza') {
     if ($fattura->is_fattura_conto_terzi) {
         echo '
 <div class="alert alert-info">
@@ -186,7 +186,7 @@ if ($dir == 'entrata') {
     $data_odierna = new DateTime();
     $differenza = $data_odierna->diff($data_fattura)->days;
 
-    if ($fattura->codice_stato_fe == 'NS' &&  $fattura->stato->name != 'Non valida' && ($differenza > setting('Giorni validità fattura scartata'))) {
+    if ($fattura->codice_stato_fe == 'NS' &&  $fattura->stato->getTranslation('name') != 'Non valida' && ($differenza > setting('Giorni validità fattura scartata'))) {
         echo '
 <div class="alert alert-error">
     <i class="fa fa-warning"></i> '.tr("Questa fattura è stata scartata e sono trascorsi i termini di reinvio, è necessario invalidare il documento.").'</b>
@@ -316,7 +316,7 @@ $query .= ' ORDER BY `name`';
 
 echo '
                 <div class="col-md-'.($record['is_fiscale'] ? 2 : 6).'">
-                    {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatodocumento", "required": 1, "values": "query='.$query.'", "value": "'.$fattura->stato->id.'", "class": "'.(($fattura->stato->name != 'Bozza' && !$abilita_genera) ? '' : 'unblockable').'", "extra": "onchange=\"return cambiaStato()\"" ]}
+                    {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatodocumento", "required": 1, "values": "query='.$query.'", "value": "'.$fattura->stato->id.'", "class": "'.(($fattura->stato->getTranslation('name') != 'Bozza' && !$abilita_genera) ? '' : 'unblockable').'", "extra": "onchange=\"return cambiaStato()\"" ]}
                 </div>
 			</div>
 
@@ -353,9 +353,9 @@ echo '
 if (!empty($record['idreferente'])) {
     echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
 }
-$id_modulo_anagrafiche = (new Module())->getByName('Anagrafiche')->id_record;
+$id_modulo_anagrafiche = (new Module())->getByField('name', 'Anagrafiche');
 echo '
-                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.$record['idsede_destinazione'].'}, "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.(new Plugin())->getByName('Referenti')->id_record.'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
+                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.$record['idsede_destinazione'].'}, "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.(new Plugin())->getByField('name', 'Referenti').'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
                 </div>';
 
 echo '
@@ -363,7 +363,7 @@ echo '
             <div class="row">';
 // Conteggio numero articoli fatture
 $articolo = $dbo->fetchArray('SELECT `mg_articoli`.`id` FROM ((`mg_articoli` INNER JOIN `co_righe_documenti` ON `mg_articoli`.`id`=`co_righe_documenti`.`idarticolo`) INNER JOIN `co_documenti` ON `co_documenti`.`id`=`co_righe_documenti`.`iddocumento`) WHERE `co_documenti`.`id`='.prepare($id_record));
-$id_plugin_sedi = (new Plugin())->getByName('Sedi')->id_record;
+$id_plugin_sedi = (new Plugin())->getByField('name', 'Sedi');
 if ($dir == 'entrata') {
     echo '
                 <div class="col-md-3">
@@ -405,7 +405,7 @@ if ($dir == 'entrata') {
                     <?php if ($record['id_banca_azienda'] != 0) {
                         echo Modules::link('Banche', $record['id_banca_azienda'], null, null, 'class="pull-right"');
                     }
-$id_module_banche = (new Module())->getByName('Banche')->id_record;
+$id_module_banche = (new Module())->getByField('name', 'Banche');
 if ($dir == 'entrata') {
     echo '
                     {[ "type": "select", "label": "'.tr('Banca accredito').'", "name": "id_banca_azienda", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "$id_banca_azienda$", "icon-after": "add|'.$id_module_banche.'|id_anagrafica='.$anagrafica_azienda->id.'", "extra": "'.(intval($block_edit) ? 'disabled' : '').'" ]}
@@ -529,7 +529,7 @@ if ($dir == 'entrata') {
     }
 
     echo '
-                    {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento", "help": "'.tr('Elenco delle dichiarazioni d\'intento definite all\'interno dell\'anagrafica del cliente').'.", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "data": "'.$record['data'].'"},"value": "$id_dichiarazione_intento$", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.(new Plugin())->getByName('Dichiarazioni d\'intento')->id_record.'&id_parent='.$record['idanagrafica'].'", "extra": "'.((intval($block_edit)) ? 'disabled' : '').'"  ]}
+                    {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento", "help": "'.tr('Elenco delle dichiarazioni d\'intento definite all\'interno dell\'anagrafica del cliente').'.", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "data": "'.$record['data'].'"},"value": "$id_dichiarazione_intento$", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.(new Plugin())->getByField('name', 'Dichiarazioni d\'intento').'&id_parent='.$record['idanagrafica'].'", "extra": "'.((intval($block_edit)) ? 'disabled' : '').'"  ]}
                 </div>';
 }
 echo '
@@ -578,11 +578,11 @@ if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
         <div class="box-body">
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Aspetto beni').'", "name": "idaspettobeni", "placeholder": "", "ajax-source": "aspetto-beni", "value": "$idaspettobeni$", "icon-after": "add|'.(new Module())->getByName('Aspetto beni')->id_record.'||'.(($record['stato'] != 'Bozza') ? 'disabled' : '').'" ]}
+                    {[ "type": "select", "label": "'.tr('Aspetto beni').'", "name": "idaspettobeni", "placeholder": "", "ajax-source": "aspetto-beni", "value": "$idaspettobeni$", "icon-after": "add|'.(new Module())->getByField('name', 'Aspetto beni').'||'.(($record['stato'] != 'Bozza') ? 'disabled' : '').'" ]}
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Causale trasporto').'", "name": "idcausalet", "placeholder": "", "ajax-source": "causali", "value": "$idcausalet$", "icon-after": "add|'.(new Module())->getByName('Causali')->id_record.'||'.(($record['stato'] != 'Bozza') ? 'disabled' : '').'" ]}
+                    {[ "type": "select", "label": "'.tr('Causale trasporto').'", "name": "idcausalet", "placeholder": "", "ajax-source": "causali", "value": "$idcausalet$", "icon-after": "add|'.(new Module())->getByField('name', 'Causali').'||'.(($record['stato'] != 'Bozza') ? 'disabled' : '').'" ]}
                 </div>
 
                 <div class="col-md-3">
@@ -740,10 +740,10 @@ echo '
 if ($dir == 'entrata' && !empty($fattura->dichiarazione)) {
     $ive_accettate = $dbo->table('co_iva')->where('codice_natura_fe', 'N3.5')->get();
     foreach ($ive_accettate as $iva_accettata) {
-        $descrizione_iva_accettata .= '<li>'.Aliquota::find($iva_accettata->id)->name.'</li>';
+        $descrizione_iva_accettata .= '<li>'.Aliquota::find($iva_accettata->id)->getTranslation('name').'</li>';
     }
 
-    if ($fattura->stato->name == 'Bozza') {
+    if ($fattura->stato->getTranslation('name') == 'Bozza') {
         echo '
     <div class="alert alert-info">
         <i class="fa fa-info"></i> '.tr("La fattura è collegata ad una dichiarazione d'intento con diponibilità residura pari a _MONEY_.", ['_MONEY_' => moneyFormat($diff)]).'<br>'.tr('Per collegare una riga alla dichiarazione è sufficiente specificare come IVA <ul>_IVA_</ul>', ['_IVA_' => $descrizione_iva_accettata]).'</b>
@@ -851,7 +851,7 @@ if (!$block_edit) {
                         </div>
 
                         <div class="col-md-4">
-                            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli",  "select-options": {"permetti_movimento_a_zero": '.($dir == 'entrata' ? 0 : 1).', "idsede_partenza": '.intval($fattura->idsede_partenza).', "idsede_destinazione": '.intval($fattura->idsede_destinazione).', "idanagrafica": '.$fattura->idanagrafica.', "dir": "'.$dir.'", "idagente": '.$fattura->idagente.'}, "icon-after": "add|'.(new Module())->getByName('Articoli')->id_record.'" ]}
+                            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli",  "select-options": {"permetti_movimento_a_zero": '.($dir == 'entrata' ? 0 : 1).', "idsede_partenza": '.intval($fattura->idsede_partenza).', "idsede_destinazione": '.intval($fattura->idsede_destinazione).', "idanagrafica": '.$fattura->idanagrafica.', "dir": "'.$dir.'", "idagente": '.$fattura->idagente.'}, "icon-after": "add|'.(new Module())->getByField('name', 'Articoli').'" ]}
                         </div>
 
                         <div class="col-md-3" style="margin-top: 25px">

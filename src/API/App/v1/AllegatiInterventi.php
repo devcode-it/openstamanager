@@ -77,7 +77,7 @@ class AllegatiInterventi extends AppResource
         $record = [
             'id' => $upload->id,
             'tipo' => $upload->extension,
-            'nome' => $upload->name,
+            'nome' => $upload->getTranslation('name'),
             'categoria' => $upload->category,
             'size' => $upload->size,
             'id_intervento' => $upload->id_record,
@@ -89,7 +89,7 @@ class AllegatiInterventi extends AppResource
 
     public function createRecord($data)
     {
-        $module = (new Module())->getByName('Anagrafiche');
+        $module = (new Module())->getByField('name', 'Anagrafiche');
 
         // Creazione del file temporaneo
         $content = explode(',', $data['contenuto']);
@@ -97,15 +97,14 @@ class AllegatiInterventi extends AppResource
             throw new InternalError();
         }
 
-        $file = temp_file($data['nome']);
-        file_put_contents($file, base64_decode($content[1]));
-
+        $file = base64_decode($content[1]);
+        
         // Salvataggio del file come allegato
         $upload = Upload::build($file, [
-            'id_module' => $module['id'],
+            'id_module' => $module,
             'id_record' => $data['id_intervento'],
         ], $data['nome'], $data['categoria']);
-
+    
         // Chiusura e rimozione del file temporaneo
         delete($file);
 

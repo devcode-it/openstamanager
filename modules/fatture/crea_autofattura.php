@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 use Models\Module;
 
-$id_module_fatture_vendita = (new Module())->getByName('Fatture di vendita')->id_record;
+$id_module_fatture_vendita = (new Module())->getByField('name', 'Fatture di vendita');
 $id_segment = setting('Sezionale per autofatture di vendita');
 
 echo '

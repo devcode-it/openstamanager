@@ -24,8 +24,8 @@ use Models\Module;
 
 $op = post('op');
 
-$upload_dir = base_dir().'/files/'.Module::find((new Module())->getByName('Anagrafiche')->id_record)->directory;
-$id_modulo_categorie_impianti = (new Module())->getByName('Categorie impianti')->id_record;
+$upload_dir = base_dir().'/files/'.Module::find((new Module())->getByField('name', 'Anagrafiche'))->directory;
+$id_modulo_categorie_impianti = (new Module())->getByField('name', 'Categorie impianti');
 
 switch ($op) {
     // Aggiorno informazioni di base impianto

@@ -40,7 +40,7 @@ use Models\Module;
  * Nota: questo comportamento viene abilitato dalla variabile `$permetti_modelli`.
  */
 
-$id_module = (new Module())->GetByName('Prima nota')->id_record;
+$id_module = (new Module())->getByField('name', 'Prima nota');
 $movimenti = [];
 
 // Registrazione da remoto
@@ -123,7 +123,7 @@ foreach ($id_documenti as $id_documento) {
     $dir = $fattura->direzione;
 
     // Inclusione delle sole fatture in stato Emessa, Parzialmente pagato o Pagato
-    if (!in_array($fattura->stato->name, ['Emessa', 'Parzialmente pagato', 'Pagato'])) {
+    if (!in_array($fattura->stato->getTranslation('name'), ['Emessa', 'Parzialmente pagato', 'Pagato'])) {
         ++$counter;
         continue;
     }
@@ -221,7 +221,7 @@ if ($numero_documenti + $numero_scadenze > 1) {
     }
 } elseif ($numero_documenti == 1) {
     $numero_fattura = !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'];
-    $tipo_fattura = $fattura->isNota() ? $tipo->name : tr('Fattura');
+    $tipo_fattura = $fattura->isNota() ? $tipo->getTranslation('name') : tr('Fattura');
 
     if (!empty($is_insoluto)) {
         $operation = tr('Registrazione insoluto');
@@ -364,7 +364,7 @@ $("#modals > div #add-form").on("submit", function(e) {
 </script>';
 
 if ($permetti_modelli) {
-    $variables = Module::find((new Module())->getByName('Anagrafiche')->id_record)->getPlaceholders($id_anagrafica);
+    $variables = Module::find((new Module())->getByField('name', 'Anagrafiche'))->getPlaceholders($id_anagrafica);
 
     echo '
 <script type="text/javascript">

@@ -31,7 +31,7 @@ use Models\Module;
 include_once __DIR__.'/../../core.php';
 
 // Segmenti
-$id_preventivi =(new Module())->GetByName('Preventivi')->id_record; 
+$id_preventivi =(new Module())->getByField('name', 'Preventivi'); 
 $id_segment = $_SESSION['module_'.$id_preventivi]['id_segment'];
 
 switch (post('op')) {

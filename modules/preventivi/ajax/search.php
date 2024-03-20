@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../../core.php';
 use Models\Module;
 
-$link_id = (new Module())->GetByName('Preventivi')->id_record;
+$link_id = (new Module())->getByField('name', 'Preventivi');
 
 $fields = [
     'Codice preventivo' => 'numero',

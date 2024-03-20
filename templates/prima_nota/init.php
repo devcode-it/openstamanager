@@ -22,7 +22,7 @@ use Models\Module;
 
 include_once __DIR__.'/../../core.php';
 
-$structure = Module::find((new Module())->getByName('Prima nota')->id_record);
+$structure = Module::find((new Module())->getByField('name', 'Prima nota'));
 
 if (!empty($_SESSION['superselect']['mastrini'])) {
     $id_record = $_SESSION['superselect']['mastrini'];

@@ -28,12 +28,12 @@ trait RecordTrait
 
     public function getModule()
     {
-        return !empty($this->module) ? Module::find((new Module())->getByName($this->module)->id_record) : null;
+        return !empty($this->module) ? Module::find((new Module())->getByField('name', $this->module)) : null;
     }
 
     public function getPlugin()
     {
-        return !empty($this->plugin) ? Plugin::find((new Plugin())->getByName($this->plugin)->id_record) : null;
+        return !empty($this->plugin) ? Plugin::find((new Plugin())->getByField('name', $this->plugin)) : null;
     }
 
     /**
@@ -51,7 +51,8 @@ trait RecordTrait
         return $field->value;
     }
 
-    public function uploads()
+    
+    public function uploads($record = null)
     {
         $module = $this->getModule();
         $plugin = $this->getPlugin();
@@ -66,7 +67,7 @@ trait RecordTrait
 
         return collect();
     }
-
+    
 
     /**
      * Estensione del salvataggio oggetto per popolare le lingue aggiuntive
@@ -146,5 +147,15 @@ trait RecordTrait
             ->where('id_record', '=', $this->id)
             ->where('id_lang', '=', \App::getLang())
             ->first()->$field;
+    }
+
+    public function getByField($field, $value)
+    {
+        return database()->table($this->table.'_lang')
+            ->select('id_record')
+            ->where($field, '=', $value)
+            ->where('id_lang', '=', \App::getLang())
+            ->first()
+            ->id_record;
     }
 }

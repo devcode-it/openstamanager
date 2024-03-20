@@ -21,12 +21,17 @@ namespace Modules\Anagrafiche;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
+use Traits\RecordTrait;
 
 class Tipo extends Model
 {
     use SimpleModelTrait;
-
+    use RecordTrait;
     protected $table = 'an_tipianagrafiche';
+
+    protected static $translated_fields = [
+        'name',
+    ];
 
     public static function build($descrizione = null)
     {
@@ -41,57 +46,13 @@ class Tipo extends Model
         return $this->hasMany(Anagrafica::class, 'idtipoanagrafica');
     }
 
-    /**
-     * Ritorna l'attributo name del tipo anagrafica.
-     *
-     * @return string
-     */
-    public function getNameAttribute()
+    public function getModuleAttribute()
     {
-        return database()->table($this->table.'_lang')
-            ->select('name')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->name;
+        return 'Tipi di anagrafiche';
     }
 
-    /**
-     * Ritorna l'id del tipo di anagrafica a partire dal nome.
-     *
-     * @param string $name il nome da ricercare
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getByName($name)
-    {
-        return database()->table($this->table.'_lang')
-            ->select('id_record')
-            ->where('name', '=', $name)
-            ->where('id_lang', '=', \App::getLang())
-            ->first();
+    public static function getTranslatedFields(){
+        return self::$translated_fields;
     }
 
-    /**
-     * Imposta l'attributo name del tipo di anagrafica.
-     */
-    public function setNameAttribute($value)
-    {
-        $table = database()->table($this->table.'_lang');
-
-        $translated = $table
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang());
-
-        if ($translated->count() > 0) {
-            $translated->update([
-                'name' => $value
-            ]);
-        } else {
-            $table->insert([
-                'id_record' => $this->id,
-                'id_lang' => \App::getLang(),
-                'name' => $value
-            ]);
-        }
-    }
 }

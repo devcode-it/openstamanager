@@ -21,45 +21,29 @@ namespace Modules\DDT;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
-
+use Traits\RecordTrait;
 class Tipo extends Model
 {
     use SimpleModelTrait;
-
+    use RecordTrait;
     protected $table = 'dt_tipiddt';
+
+    protected static $translated_fields = [
+        'name',
+    ];
 
     public function ddt()
     {
         return $this->hasMany(DDT::class, 'idtipoddt');
     }
 
-    /**
-     * Ritorna l'attributo name del tipo ddt.
-     *
-     * @return string
-     */
-    public function getNameAttribute()
+    public function getModuleAttribute()
     {
-        return database()->table($this->table.'_lang')
-            ->select('name')
-            ->where('id_record', '=', $this->id)
-            ->where('id_lang', '=', \App::getLang())
-            ->first()->name;
+        return '';
+    }
+    
+    public static function getTranslatedFields(){
+        return self::$translated_fields;
     }
 
-    /**
-     * Ritorna l'id del tipo ddt a partire dal nome.
-     *
-     * @param string $name il nome da ricercare
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getByName($name)
-    {
-        return database()->table($this->table.'_lang')
-            ->select('id_record')
-            ->where('name', '=', $name)
-            ->where('id_lang', '=', \App::getLang())
-            ->first();
-    }
 }

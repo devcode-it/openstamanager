@@ -109,6 +109,17 @@ if (filter('op') == 'restore') {
         $path = $backups[$number];
     }
 
-    Backup::restore($path, is_file($path));
-    $database->beginTransaction();
+    try {
+        $result = Backup::restore($path, is_file($path));
+        $database->beginTransaction();
+
+        if ($result) {
+            flash()->warning(tr('Ripristino eseguito correttamente!'));
+        } else {
+            flash()->error(tr('Errore durante il ripristino del backup!').'<br>'.$result);
+        }
+    } catch (Exception $e) {
+        flash()->error(tr('Errore durante il ripristino del backup!').' '.$e->getMessage());
+    }
+    
 }

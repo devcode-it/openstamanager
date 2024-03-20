@@ -2382,3 +2382,8 @@ WHERE `zz_views`.`id` IN (
     ) AS tmp
 );
 
+-- Risorsa api per la sincronizzazione dei pagamenti su app
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES 
+(NULL, 'app-v1', 'retrieve', 'pagamenti', 'API\\App\\v1\\Pagamenti', '1'), 
+(NULL, 'app-v1', 'retrieve', 'pagamenti-cleanup', 'API\\App\\v1\\Pagamenti', '1'), 
+(NULL, 'app-v1', 'retrieve', 'pagamento', 'API\\App\\v1\\Pagamenti', '1');

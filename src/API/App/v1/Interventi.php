@@ -271,6 +271,7 @@ class Interventi extends AppResource
             id_preventivo,
             idtipointervento AS id_tipo_intervento,
             idstatointervento AS id_stato_intervento,
+            idpagamento AS id_pagamento,
             informazioniaggiuntive AS informazioni_aggiuntive,
             IF(idsede_destinazione = 0, NULL, idsede_destinazione) AS id_sede,
             firma_file,

@@ -25,7 +25,7 @@ class Pagamenti extends AppResource
 {
     public function getCleanupData($last_sync_at)
     {
-        return $this->getDeleted('co_pagamenti', 'id', $last_sync_at);
+        return $this->getMissingIDs('co_pagamenti', 'id', $last_sync_at);
     }
 
     public function getModifiedRecords($last_sync_at)

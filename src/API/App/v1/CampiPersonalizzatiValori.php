@@ -26,7 +26,7 @@ class CampiPersonalizzatiValori extends AppResource
 {
     public function getCleanupData($last_sync_at)
     {
-        return $this->getDeleted('zz_field_record', 'id', $last_sync_at);
+        return $this->getMissingIDs('zz_field_record', 'id', $last_sync_at);
     }
 
     public function getModifiedRecords($last_sync_at)

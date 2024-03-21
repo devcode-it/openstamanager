@@ -48,7 +48,7 @@ ALTER TABLE `an_nazioni_lang`
 ALTER TABLE `an_nazioni_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `an_nazioni_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `nome` FROM `an_nazioni`;
+INSERT INTO `an_nazioni_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `nome` FROM `an_nazioni`;
 
 INSERT INTO `an_nazioni_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'en'), `id`, `name` FROM `an_nazioni`;
 
@@ -85,7 +85,7 @@ ALTER TABLE `an_provenienze_lang`
 ALTER TABLE `an_provenienze_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `an_provenienze_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `an_provenienze`;
+INSERT INTO `an_provenienze_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `descrizione` FROM `an_provenienze`;
 
 ALTER TABLE `an_provenienze`
     DROP `descrizione`;
@@ -118,7 +118,7 @@ ALTER TABLE `an_regioni_lang`
 ALTER TABLE `an_regioni_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `an_regioni_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `nome` FROM `an_regioni`;
+INSERT INTO `an_regioni_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `nome` FROM `an_regioni`;
 
 ALTER TABLE `an_regioni`
     DROP `nome`;
@@ -138,7 +138,7 @@ ALTER TABLE `an_relazioni_lang`
 ALTER TABLE `an_relazioni_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `an_relazioni_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `an_relazioni`;
+INSERT INTO `an_relazioni_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `descrizione` FROM `an_relazioni`;
 
 ALTER TABLE `an_relazioni`
     DROP `descrizione`;
@@ -173,7 +173,7 @@ ALTER TABLE `an_settori_lang`
 ALTER TABLE `an_settori_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `an_settori_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `an_settori`;
+INSERT INTO `an_settori_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `descrizione` FROM `an_settori`;
 
 ALTER TABLE `an_settori`
     DROP `descrizione`;
@@ -208,7 +208,7 @@ ALTER TABLE `an_tipianagrafiche_lang`
 ALTER TABLE `an_tipianagrafiche_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `an_tipianagrafiche_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `an_tipianagrafiche`;
+INSERT INTO `an_tipianagrafiche_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `descrizione` FROM `an_tipianagrafiche`;
 
 ALTER TABLE `an_tipianagrafiche`
     DROP `descrizione`;
@@ -247,7 +247,7 @@ ALTER TABLE `co_iva_lang`
 ALTER TABLE `co_iva_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `co_iva_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `co_iva`;
+INSERT INTO `co_iva_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `descrizione` FROM `co_iva`;
 
 ALTER TABLE `co_iva`
     DROP `descrizione`;
@@ -286,7 +286,7 @@ ALTER TABLE `co_pagamenti_lang`
 ALTER TABLE `co_pagamenti_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `co_pagamenti_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `co_pagamenti`;
+INSERT INTO `co_pagamenti_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `descrizione` FROM `co_pagamenti`;
 
 ALTER TABLE `co_pagamenti`
     DROP `descrizione`;
@@ -354,7 +354,7 @@ ALTER TABLE `co_staticontratti_lang`
 ALTER TABLE `co_staticontratti_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `co_staticontratti_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `co_staticontratti`;
+INSERT INTO `co_staticontratti_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `descrizione` FROM `co_staticontratti`;
 
 ALTER TABLE `co_staticontratti`
     DROP `descrizione`;
@@ -416,7 +416,7 @@ ALTER TABLE `co_statidocumento_lang`
 ALTER TABLE `co_statidocumento_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `co_statidocumento_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `co_statidocumento`;
+INSERT INTO `co_statidocumento_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `descrizione` FROM `co_statidocumento`;
 
 ALTER TABLE `co_statidocumento`
     DROP `descrizione`;
@@ -532,7 +532,7 @@ ALTER TABLE `co_statipreventivi_lang`
 ALTER TABLE `co_statipreventivi_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `co_statipreventivi_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `co_statipreventivi`;
+INSERT INTO `co_statipreventivi_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `descrizione` FROM `co_statipreventivi`;
 
 ALTER TABLE `co_statipreventivi`
     DROP `descrizione`;
@@ -570,7 +570,7 @@ ALTER TABLE `co_tipidocumento_lang`
 ALTER TABLE `co_tipidocumento_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `co_tipidocumento_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `co_tipidocumento`;
+INSERT INTO `co_tipidocumento_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `descrizione` FROM `co_tipidocumento`;
 
 ALTER TABLE `co_tipidocumento`
     DROP `descrizione`;
@@ -643,7 +643,7 @@ ALTER TABLE `co_tipi_scadenze_lang`
 ALTER TABLE `co_tipi_scadenze_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `co_tipi_scadenze_lang` (`id`, `id_lang`, `id_record`, `name`, `description`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `nome`, `descrizione` FROM `co_tipi_scadenze`;
+INSERT INTO `co_tipi_scadenze_lang` (`id`, `id_lang`, `id_record`, `name`, `description`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `nome`, `descrizione` FROM `co_tipi_scadenze`;
 
 ALTER TABLE `co_tipi_scadenze`
     DROP `nome`,
@@ -664,7 +664,7 @@ ALTER TABLE `do_categorie_lang`
 ALTER TABLE `do_categorie_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `do_categorie_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `do_categorie`;
+INSERT INTO `do_categorie_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `descrizione` FROM `do_categorie`;
 
 ALTER TABLE `do_categorie`
     DROP `descrizione`;
@@ -719,7 +719,7 @@ ALTER TABLE `dt_aspettobeni_lang`
 ALTER TABLE `dt_aspettobeni_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `dt_aspettobeni_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `dt_aspettobeni`;
+INSERT INTO `dt_aspettobeni_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `descrizione` FROM `dt_aspettobeni`;
 
 ALTER TABLE `dt_aspettobeni`
     DROP `descrizione`;
@@ -755,7 +755,7 @@ ALTER TABLE `dt_causalet_lang`
 ALTER TABLE `dt_causalet_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `dt_causalet_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `dt_causalet`;
+INSERT INTO `dt_causalet_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `descrizione` FROM `dt_causalet`;
 
 ALTER TABLE `dt_causalet`
     DROP `descrizione`;
@@ -795,7 +795,7 @@ ALTER TABLE `dt_porto_lang`
 ALTER TABLE `dt_porto_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `dt_porto_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `dt_porto`;
+INSERT INTO `dt_porto_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `descrizione` FROM `dt_porto`;
 
 ALTER TABLE `dt_porto`
     DROP `descrizione`;
@@ -831,7 +831,7 @@ ALTER TABLE `dt_spedizione_lang`
 ALTER TABLE `dt_spedizione_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `dt_spedizione_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `dt_spedizione`;
+INSERT INTO `dt_spedizione_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `descrizione` FROM `dt_spedizione`;
 
 ALTER TABLE `dt_spedizione`
     DROP `descrizione`;
@@ -871,7 +871,7 @@ ALTER TABLE `dt_statiddt_lang`
 ALTER TABLE `dt_statiddt_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `dt_statiddt_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `dt_statiddt`;
+INSERT INTO `dt_statiddt_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `descrizione` FROM `dt_statiddt`;
 
 ALTER TABLE `dt_statiddt`
     DROP `descrizione`;
@@ -924,7 +924,7 @@ ALTER TABLE `dt_tipiddt_lang`
 ALTER TABLE `dt_tipiddt_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `dt_tipiddt_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `dt_tipiddt`;
+INSERT INTO `dt_tipiddt_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `descrizione` FROM `dt_tipiddt`;
 
 ALTER TABLE `dt_tipiddt`
     DROP `descrizione`;
@@ -947,7 +947,7 @@ ALTER TABLE `em_lists_lang`
 ALTER TABLE `em_lists_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `em_lists_lang` (`id`, `id_lang`, `id_record`, `name`, `description`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name`, `description` FROM `em_lists`;
+INSERT INTO `em_lists_lang` (`id`, `id_lang`, `id_record`, `name`, `description`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name`, `description` FROM `em_lists`;
 
 ALTER TABLE `em_lists`
     DROP `description`,
@@ -987,7 +987,7 @@ ALTER TABLE `em_templates_lang`
 ALTER TABLE `em_templates_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `em_templates_lang` (`id`, `id_lang`, `id_record`, `name`, `subject`, `body`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name`, `subject`, `body` FROM `em_templates`;
+INSERT INTO `em_templates_lang` (`id`, `id_lang`, `id_record`, `name`, `subject`, `body`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name`, `subject`, `body` FROM `em_templates`;
 
 ALTER TABLE `em_templates`
     DROP `name`,
@@ -1027,7 +1027,7 @@ ALTER TABLE `fe_modalita_pagamento_lang`
 ALTER TABLE `fe_modalita_pagamento_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `fe_modalita_pagamento_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `codice`, `descrizione` FROM `fe_modalita_pagamento`;
+INSERT INTO `fe_modalita_pagamento_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `codice`, `descrizione` FROM `fe_modalita_pagamento`;
 
 ALTER TABLE `fe_modalita_pagamento`
     DROP `descrizione`;
@@ -1062,7 +1062,7 @@ ALTER TABLE `fe_natura_lang`
 ALTER TABLE `fe_natura_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `fe_natura_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `codice`, `descrizione` FROM `fe_natura`;
+INSERT INTO `fe_natura_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `codice`, `descrizione` FROM `fe_natura`;
 
 ALTER TABLE `fe_natura`
     DROP `descrizione`;
@@ -1082,7 +1082,7 @@ ALTER TABLE `fe_regime_fiscale_lang`
 ALTER TABLE `fe_regime_fiscale_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `fe_regime_fiscale_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `codice`, `descrizione` FROM `fe_regime_fiscale`;
+INSERT INTO `fe_regime_fiscale_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `codice`, `descrizione` FROM `fe_regime_fiscale`;
 
 ALTER TABLE `fe_regime_fiscale`
     DROP `descrizione`;
@@ -1102,7 +1102,7 @@ ALTER TABLE `fe_stati_documento_lang`
 ALTER TABLE `fe_stati_documento_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `fe_stati_documento_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `codice`, `descrizione` FROM `fe_stati_documento`;
+INSERT INTO `fe_stati_documento_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `codice`, `descrizione` FROM `fe_stati_documento`;
 
 ALTER TABLE `fe_stati_documento`
     DROP `descrizione`;
@@ -1124,7 +1124,7 @@ ALTER TABLE `fe_tipi_documento_lang`
 ALTER TABLE `fe_tipi_documento_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `fe_tipi_documento_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `codice`, `descrizione` FROM `fe_tipi_documento`;
+INSERT INTO `fe_tipi_documento_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `codice`, `descrizione` FROM `fe_tipi_documento`;
 
 ALTER TABLE `fe_tipi_documento`
     DROP `descrizione`;
@@ -1144,7 +1144,7 @@ ALTER TABLE `in_fasceorarie_lang`
 ALTER TABLE `in_fasceorarie_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `in_fasceorarie_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `nome` FROM `in_fasceorarie`;
+INSERT INTO `in_fasceorarie_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `nome` FROM `in_fasceorarie`;
 
 ALTER TABLE `in_fasceorarie`
     DROP `nome`;
@@ -1181,7 +1181,7 @@ ALTER TABLE `in_statiintervento_lang`
 
 ALTER TABLE `in_statiintervento` CHANGE `idstatointervento` `id` INT NOT NULL AUTO_INCREMENT; 
 
-INSERT INTO `in_statiintervento_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `in_statiintervento`;
+INSERT INTO `in_statiintervento_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `descrizione` FROM `in_statiintervento`;
 
 ALTER TABLE `in_statiintervento`
     DROP `descrizione`;
@@ -1223,7 +1223,7 @@ ALTER TABLE `in_tipiintervento_lang`
 
 ALTER TABLE `in_tipiintervento` CHANGE `idtipointervento` `id` INT NOT NULL AUTO_INCREMENT; 
 
-INSERT INTO `in_tipiintervento_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `in_tipiintervento`;
+INSERT INTO `in_tipiintervento_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `descrizione` FROM `in_tipiintervento`;
 
 ALTER TABLE `in_tipiintervento`
     DROP `descrizione`;
@@ -1259,7 +1259,7 @@ ALTER TABLE `mg_articoli_lang`
 ALTER TABLE `mg_articoli_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `mg_articoli_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `mg_articoli`;
+INSERT INTO `mg_articoli_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `descrizione` FROM `mg_articoli`;
 
 ALTER TABLE `mg_articoli`
     DROP `descrizione`;
@@ -1282,7 +1282,7 @@ ALTER TABLE `mg_attributi_lang`
 ALTER TABLE `mg_attributi_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `mg_attributi_lang` (`id`, `id_lang`, `id_record`, `name`, `title`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `nome`, `titolo` FROM `mg_attributi`;
+INSERT INTO `mg_attributi_lang` (`id`, `id_lang`, `id_record`, `name`, `title`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `nome`, `titolo` FROM `mg_attributi`;
 
 ALTER TABLE `mg_attributi`
     DROP `nome`,
@@ -1317,7 +1317,7 @@ ALTER TABLE `mg_categorie_lang`
 ALTER TABLE `mg_categorie_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `mg_categorie_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `nome` FROM `mg_categorie`;
+INSERT INTO `mg_categorie_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `nome` FROM `mg_categorie`;
 
 ALTER TABLE `mg_categorie`
     DROP `nome`;
@@ -1378,7 +1378,7 @@ ALTER TABLE `mg_causali_movimenti_lang`
 ALTER TABLE `mg_causali_movimenti_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `mg_causali_movimenti_lang` (`id`, `id_lang`, `id_record`, `name`, `description`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `nome`, `descrizione` FROM `mg_causali_movimenti`;
+INSERT INTO `mg_causali_movimenti_lang` (`id`, `id_lang`, `id_record`, `name`, `description`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `nome`, `descrizione` FROM `mg_causali_movimenti`;
 
 ALTER TABLE `mg_causali_movimenti`
     DROP `nome`,
@@ -1416,7 +1416,7 @@ ALTER TABLE `mg_combinazioni_lang`
 ALTER TABLE `mg_combinazioni_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `mg_combinazioni_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `nome` FROM `mg_combinazioni`;
+INSERT INTO `mg_combinazioni_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `nome` FROM `mg_combinazioni`;
 
 ALTER TABLE `mg_combinazioni`
     DROP `nome`;
@@ -1452,7 +1452,7 @@ ALTER TABLE `or_statiordine_lang`
 ALTER TABLE `or_statiordine_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `or_statiordine_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `or_statiordine`;
+INSERT INTO `or_statiordine_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `descrizione` FROM `or_statiordine`;
 
 ALTER TABLE `or_statiordine`
     DROP `descrizione`;
@@ -1493,7 +1493,7 @@ ALTER TABLE `or_tipiordine_lang`
 ALTER TABLE `or_tipiordine_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `or_tipiordine_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `descrizione` FROM `or_tipiordine`;
+INSERT INTO `or_tipiordine_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `descrizione` FROM `or_tipiordine`;
 
 ALTER TABLE `or_tipiordine`
     DROP `descrizione`;
@@ -1525,7 +1525,7 @@ ALTER TABLE `zz_currencies_lang`
 ALTER TABLE `zz_currencies_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `zz_currencies_lang` (`id`, `id_lang`, `id_record`, `name`, `title`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name`, `title` FROM `zz_currencies`;
+INSERT INTO `zz_currencies_lang` (`id`, `id_lang`, `id_record`, `name`, `title`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name`, `title` FROM `zz_currencies`;
 
 ALTER TABLE `zz_currencies`
     DROP `name`,
@@ -1548,7 +1548,7 @@ ALTER TABLE `zz_widgets_lang`
 ALTER TABLE `zz_widgets_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `zz_widgets_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name` FROM `zz_widgets`;
+INSERT INTO `zz_widgets_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name` FROM `zz_widgets`;
 
 ALTER TABLE `zz_widgets`
     DROP `name`;
@@ -1573,7 +1573,7 @@ ALTER TABLE `zz_plugins_lang`
 ALTER TABLE `zz_plugins_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `zz_plugins_lang` (`id`, `id_lang`, `id_record`, `name`, `title`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name`, `title` FROM `zz_plugins`;
+INSERT INTO `zz_plugins_lang` (`id`, `id_lang`, `id_record`, `name`, `title`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name`, `title` FROM `zz_plugins`;
 
 ALTER TABLE `zz_plugins`
     DROP `name`,
@@ -1595,7 +1595,7 @@ ALTER TABLE `zz_modules_lang`
 ALTER TABLE `zz_modules_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `zz_modules_lang` (`id`, `id_lang`, `id_record`, `name`, `title`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name`, `title` FROM `zz_modules`;
+INSERT INTO `zz_modules_lang` (`id`, `id_lang`, `id_record`, `name`, `title`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name`, `title` FROM `zz_modules`;
 
 ALTER TABLE `zz_modules`
     DROP `name`,
@@ -2037,7 +2037,7 @@ ALTER TABLE `zz_segments_lang`
 ALTER TABLE `zz_segments_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `zz_segments_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name` FROM `zz_segments`;
+INSERT INTO `zz_segments_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name` FROM `zz_segments`;
 
 ALTER TABLE `zz_segments`
     DROP `name`;
@@ -2076,7 +2076,7 @@ ALTER TABLE `zz_views_lang`
 ALTER TABLE `zz_views_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `zz_views_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name` FROM `zz_views`;
+INSERT INTO `zz_views_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name` FROM `zz_views`;
 
 ALTER TABLE `zz_views`
     DROP `name`;
@@ -2097,7 +2097,7 @@ ALTER TABLE `zz_settings_lang`
 ALTER TABLE `zz_settings_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `nome` FROM `zz_settings`;
+INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `nome` FROM `zz_settings`;
 
 ALTER TABLE `zz_settings_lang` ADD CONSTRAINT `zz_settings_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_settings`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
@@ -2148,7 +2148,7 @@ ALTER TABLE `zz_tasks_lang`
 ALTER TABLE `zz_tasks_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `zz_tasks_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name` FROM `zz_tasks`;
+INSERT INTO `zz_tasks_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name` FROM `zz_tasks`;
 
 ALTER TABLE `zz_tasks`
     DROP `name`;
@@ -2185,7 +2185,7 @@ ALTER TABLE `zz_prints_lang`
 ALTER TABLE `zz_prints_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `zz_prints_lang` (`id`, `id_lang`, `id_record`, `name`, `title`, `filename`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name`, `title`, `filename` FROM `zz_prints`;
+INSERT INTO `zz_prints_lang` (`id`, `id_lang`, `id_record`, `name`, `title`, `filename`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name`, `title`, `filename` FROM `zz_prints`;
 
 ALTER TABLE `zz_prints`
     DROP `name`,
@@ -2225,7 +2225,7 @@ ALTER TABLE `zz_imports_lang`
 ALTER TABLE `zz_imports_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `zz_imports_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name` FROM `zz_imports`;
+INSERT INTO `zz_imports_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name` FROM `zz_imports`;
 
 ALTER TABLE `zz_imports`
     DROP `name`;
@@ -2246,7 +2246,7 @@ ALTER TABLE `zz_hooks_lang`
 ALTER TABLE `zz_hooks_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `zz_hooks_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name` FROM `zz_hooks`;
+INSERT INTO `zz_hooks_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name` FROM `zz_hooks`;
 
 ALTER TABLE `zz_hooks`
     DROP `name`;
@@ -2267,7 +2267,7 @@ ALTER TABLE `zz_groups_lang`
 ALTER TABLE `zz_groups_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `zz_groups_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `nome` FROM `zz_groups`;
+INSERT INTO `zz_groups_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `nome` FROM `zz_groups`;
 
 ALTER TABLE `zz_groups_lang` ADD CONSTRAINT `zz_groups_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_groups`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
@@ -2285,7 +2285,7 @@ ALTER TABLE `zz_group_module_lang`
 ALTER TABLE `zz_group_module_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `zz_group_module_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name` FROM `zz_group_module`;
+INSERT INTO `zz_group_module_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name` FROM `zz_group_module`;
 
 ALTER TABLE `zz_group_module`
     DROP `name`;
@@ -2306,7 +2306,7 @@ ALTER TABLE `zz_cache_lang`
 ALTER TABLE `zz_cache_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `zz_cache_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `iso_code` = 'it'), `id`, `name` FROM `zz_cache`;
+INSERT INTO `zz_cache_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name` FROM `zz_cache`;
 
 ALTER TABLE `zz_cache`
     DROP `name`;
@@ -2364,7 +2364,7 @@ INSERT INTO `co_statidocumento_lang` (`id_record`, `id_lang`, `name`) VALUES ((S
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `help`) VALUES ('Giorni validità fattura scartata', '5', 'int', '0', 'Fatturazione Elettronica', 'Numero di giorni a disposizione per poter correggere una fattura scartata dallo SDI prima di non poter più utilizzare il suo numero di fatturazione. Una volta passati i giorni indicati è necessario emettere una nuova fattura e questa passa in stato Non valida.');
 INSERT INTO `zz_settings_lang` (`id_record`, `id_lang`, `title`) VALUES ((SELECT `id` FROM `zz_settings` WHERE `nome` = 'Giorni validità fattura scartata'), (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua"), 'Giorni validità fattura scartata');
 
-ALTER TABLE in_interventi ADD `idpagamento` INT NOT NULL AFTER `id_ordine`;
+ALTER TABLE `in_interventi` ADD `idpagamento` INT NOT NULL AFTER `id_ordine`;
 
 UPDATE `zz_views` 
 SET `query` = '(`righe`.`totale_imponibile` + IF(`co_documenti`.`split_payment` = 0, `righe`.`iva`, 0) + `co_documenti`.`rivalsainps` - `co_documenti`.`ritenutaacconto` - `co_documenti`.`sconto_finale` - IF(`co_documenti`.`id_ritenuta_contributi` != 0, (( `righe`.`totale_imponibile` * `co_ritenuta_contributi`.`percentuale_imponibile` / 100) / 100 * `co_ritenuta_contributi`.`percentuale`), 0)) *(1 - `co_documenti`.`sconto_finale_percentuale` / 100 ) * IF(`co_tipidocumento`.`reversed`, -1, 1)' 

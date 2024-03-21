@@ -100,12 +100,12 @@ foreach ($tables as $table) {
     $database->query('DROP TEMPORARY TABLE tmp');
 }
 
-// Traduzione moduli
 $traduzioni = [
-    ['zz_modules_lang', 'Customers', 'Anagrafiche'],
+    // traduzione moduli
+    ['zz_modules_lang', 'Entities', 'Anagrafiche'],
     ['zz_modules_lang', 'Tasks', 'Interventi'],
     ['zz_modules_lang', 'Updates', 'Aggiornamenti'],
-    ['zz_modules_lang', 'Type of customers', 'Tipi di anagrafiche'],
+    ['zz_modules_lang', 'Type of entities', 'Tipi di anagrafiche'],
     ['zz_modules_lang', 'Type of Tasks', 'Tipi di intervento'],
     ['zz_modules_lang', 'Tasks states', 'Stati di intervento'],
     ['zz_modules_lang', 'Accounting', 'Contabilità'],
@@ -178,14 +178,48 @@ $traduzioni = [
     ['zz_modules_lang', 'OAuth access', 'Accesso con OAuth'],
     ['zz_modules_lang', 'Storage connectors', 'Adattatori di archiviazione'],
     ['zz_modules_lang', 'test', 'test'],
+    // traduzione plugins
+    ['zz_plugins_lang', 'Client plants', 'Impianti del cliente'],
+    ['zz_plugins_lang', 'Plants', 'Impianti'],
+    ['zz_plugins_lang', 'Contacts', 'Referenti'],
+    ['zz_plugins_lang', 'Locations', 'Sedi'],
+    ['zz_plugins_lang', 'Statistics', 'Statistiche'],
+    ['zz_plugins_lang', 'Performed tasks', 'Interventi svolti'],
+    ['zz_plugins_lang', 'Movements', 'Movimenti'],
+    ['zz_plugins_lang', 'Serial', 'Serial'],
+    ['zz_plugins_lang', 'Final', 'Consuntivo'],
+    ['zz_plugins_lang', 'Tasks schedulation', 'Pianificazione attività'],
+    ['zz_plugins_lang', 'Customer sales delivery document', 'Ddt del cliente'],
+    ['zz_plugins_lang', 'Electronic invoicing', 'Fatturazione elettronica'],
+    ['zz_plugins_lang', 'Revisions', 'Revisioni'],
+    ['zz_plugins_lang', 'Electronic invoices receipts', 'Ricevute FE'],
+    ['zz_plugins_lang', 'Stocks', 'Giacenze'],
+    ['zz_plugins_lang', 'Renewals', 'Rinnovi'],
+    ['zz_plugins_lang', 'Statistics', 'Statistiche'],
+    ['zz_plugins_lang', 'Intent declarations', 'Dichiarazioni d\'intento'],
+    ['zz_plugins_lang', 'Billing scheduling', 'Pianificazione fatturazione'],
+    ['zz_plugins_lang', 'Net customers', 'Netto clienti'],
+    ['zz_plugins_lang', 'Tasks history', 'Storico attività'],
+    ['zz_plugins_lang', 'Attachments', 'Allegati'],
+    ['zz_plugins_lang', 'Components', 'Componenti'],
+    ['zz_plugins_lang', 'Supplier price list', 'Listino fornitori'],
+    ['zz_plugins_lang', 'Discount/surcharge plans', 'Piani di sconto/maggiorazione'],
+    ['zz_plugins_lang', 'Article variants', 'Varianti articolo'],
+    ['zz_plugins_lang', 'Customer contracts', 'Contratti del cliente'],
+    ['zz_plugins_lang', 'Accounting movements', 'Movimenti contabili'],
+    ['zz_plugins_lang', 'Bank presentations', 'Presentazioni bancarie'],
+    ['zz_plugins_lang', 'Payment rules', 'Regole pagamenti'],
+    ['zz_plugins_lang', 'Registrations', 'Registrazioni'],
+    ['zz_plugins_lang', 'Commissions', 'Provvigioni'],
+    ['zz_plugins_lang', 'Sales statistics', 'Statistiche vendita'],
 ];
 
 foreach ($traduzioni as $traduzione) {
     $database->query('UPDATE '.$traduzione[0].' SET `title` = "'.$traduzione[1].'" WHERE `name` = "'.$traduzione[2].'" AND `id_lang` = 2');
 }
 
-// Traduzione widget
 $traduzioni = [
+    // Traduzione widget
     ['zz_widgets_lang', 'Customers number', 'Numero di clienti'],
     ['zz_widgets_lang', 'Technicians number', 'Numero di tecnici'],
     ['zz_widgets_lang', 'Supplier number', 'Numero di fornitori'],
@@ -202,7 +236,7 @@ $traduzioni = [
     ['zz_widgets_lang', 'Customer credit balances', 'Crediti da clienti'],
     ['zz_widgets_lang', 'Bills due', 'Debiti verso fornitori'],
     ['zz_widgets_lang', 'Number of carriers', 'Numero di vettori'],
-    ['zz_widgets_lang', 'All company records', 'Tutte le anagrafiche'],
+    ['zz_widgets_lang', 'All entities records', 'Tutte le anagrafiche'],
     ['zz_widgets_lang', 'Inventory value', 'Valore magazzino'],
     ['zz_widgets_lang', 'Items in stock', 'Articoli in magazzino'],
     ['zz_widgets_lang', 'Print calendar', 'Stampa calendario'],

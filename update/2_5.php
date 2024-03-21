@@ -178,7 +178,14 @@ $traduzioni = [
     ['zz_modules_lang', 'OAuth access', 'Accesso con OAuth'],
     ['zz_modules_lang', 'Storage connectors', 'Adattatori di archiviazione'],
     ['zz_modules_lang', 'test', 'test'],
+];
 
+foreach ($traduzioni as $traduzione) {
+    $database->query('UPDATE '.$traduzione[0].' SET `title` = "'.$traduzione[1].'" WHERE `name` = "'.$traduzione[2].'" AND `id_lang` = 2');
+}
+
+// Traduzione widget
+$traduzioni = [
     ['zz_widgets_lang', 'Customers number', 'Numero di clienti'],
     ['zz_widgets_lang', 'Technicians number', 'Numero di tecnici'],
     ['zz_widgets_lang', 'Supplier number', 'Numero di fornitori'],
@@ -199,9 +206,9 @@ $traduzioni = [
     ['zz_widgets_lang', 'Inventory value', 'Valore magazzino'],
     ['zz_widgets_lang', 'Items in stock', 'Articoli in magazzino'],
     ['zz_widgets_lang', 'Print calendar', 'Stampa calendario'],
-    ['zz_widgets_lang', 'Planned activities', 'Attività da pianificare'],
-    ['zz_widgets_lang', 'Activities to be scheduled', 'Attività nello stato da programmare'],
-    ['zz_widgets_lang', 'Confirmed activities', 'Attività confermate'],
+    ['zz_widgets_lang', 'Planned tasks', 'Attività da pianificare'],
+    ['zz_widgets_lang', 'Tasks to be scheduled', 'Attività nello stato da programmare'],
+    ['zz_widgets_lang', 'Confirmed tasks', 'Attività confermate'],
     ['zz_widgets_lang', 'Inventory usage', 'Spazio utilizzato'],
     ['zz_widgets_lang', 'Internal notes', 'Note interne'],
     ['zz_widgets_lang', 'Unsubscribed synchronization', 'Sincronizzazione disiscritti'],
@@ -215,5 +222,6 @@ $traduzioni = [
 ];
 
 foreach ($traduzioni as $traduzione) {
-    $database->query('UPDATE '.$traduzione[0].' SET `title` = "'.$traduzione[1].'" WHERE `name` = "'.$traduzione[2].'" AND `id_lang` = 2');
+    $database->query('UPDATE '.$traduzione[0].' SET `text` = "'.$traduzione[1].'" WHERE `name` = "'.$traduzione[2].'" AND `id_lang` = 2');
+    $database->query('UPDATE '.$traduzione[0].' SET `name` = "'.$traduzione[1].'" WHERE `name` = "'.$traduzione[2].'" AND `id_lang` = 2');
 }

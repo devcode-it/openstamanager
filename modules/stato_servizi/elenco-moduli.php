@@ -273,7 +273,10 @@ function renderElencoModuli($elenco, $depth = 0)
         if (empty($record['idmodule_to'])) {
             $plugins = database()->table('zz_plugins')
                 ->selectRaw('zz_plugins.*, zz_plugins_lang.title as title')
-                ->join('zz_plugins_lang', 'zz_plugins_lang.id_record', '=', 'zz_plugins.id')
+                ->join('zz_plugins_lang', function ($join) {
+                    $join->on('zz_plugins.id', '=', 'zz_plugins_lang.id_record')
+                        ->where('zz_plugins_lang.id_lang', '=', \Models\Locale::getDefault()->id);
+                })
                 ->where('idmodule_to', '=', $record['id'])
                 ->get()->map(function ($i) {
                     return (array) $i;

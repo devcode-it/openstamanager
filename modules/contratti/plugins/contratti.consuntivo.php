@@ -460,7 +460,7 @@ foreach ($materiali_art as $key => $materiali_array1) {
 ksort($materiali_righe);
 foreach ($materiali_righe as $key => $materiale) {
     $margine = $materiale['ricavo'] - $materiale['costo'];
-    $margine_prc = (int) (1 - ($materiale['costo'] / $materiale['ricavo'])) * 100;
+    $margine_prc = (int) (1 - ($materiale['costo'] / ($materiale['ricavo'] > 0 ? $materiale['ricavo'] : 1))) * 100;
     $ricarico_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int) ((($materiale['ricavo'] / $materiale['costo']) - 1) * 100) : 100;
     echo '
                 <tr>

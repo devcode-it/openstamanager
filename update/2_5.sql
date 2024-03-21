@@ -1540,7 +1540,8 @@ CREATE TABLE IF NOT EXISTS `zz_widgets_lang` (
     `id` int NOT NULL,
     `id_lang` int NOT NULL,
     `id_record` int NOT NULL,
-    `name` VARCHAR(255) NOT NULL
+    `name` VARCHAR(255) NOT NULL,
+    `text` VARCHAR(255) NOT NULL
 );
 ALTER TABLE `zz_widgets_lang`
     ADD PRIMARY KEY (`id`);
@@ -1548,10 +1549,11 @@ ALTER TABLE `zz_widgets_lang`
 ALTER TABLE `zz_widgets_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `zz_widgets_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name` FROM `zz_widgets`;
+INSERT INTO `zz_widgets_lang` (`id`, `id_lang`, `id_record`, `name`, `text`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name`, `text` FROM `zz_widgets`;
 
 ALTER TABLE `zz_widgets`
-    DROP `name`;
+    DROP `name`,
+    DROP `text`;
 
 ALTER TABLE `zz_widgets_lang` ADD CONSTRAINT `zz_widgets_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_widgets`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 

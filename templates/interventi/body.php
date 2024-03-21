@@ -254,8 +254,6 @@ if (!$righe->isEmpty()) {
                 $text = tr('SN').': '.implode(', ', $seriali);
                 echo '
                         <small>'.$text.'</small>';
-
-                $autofill->count($text, true);
             }
         }
 

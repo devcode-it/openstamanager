@@ -177,9 +177,13 @@ class Module extends Model
 
     public function children()
     {
-        return $this->hasMany(self::class, 'parent')->withoutGlobalScope('enabled')
+        return $this->hasMany(self::class, 'parent')
+            ->withoutGlobalScope('enabled')
             ->selectRaw('zz_modules.*, zz_modules_lang.title as title')
-            ->join('zz_modules_lang', 'zz_modules.id', '=', 'zz_modules_lang.id_record')
+            ->join('zz_modules_lang', function ($join) {
+                $join->on('zz_modules.id', '=', 'zz_modules_lang.id_record')
+                    ->where('zz_modules_lang.id_lang', '=', \Models\Locale::getDefault()->id);
+            })
             ->orderBy('order');
     }
 
@@ -201,13 +205,16 @@ class Module extends Model
     public static function getHierarchy()
     {
         return self::with('allChildren')
-            ->selectRaw('zz_modules.*, zz_modules_lang.title as title')
-            ->join('zz_modules_lang', 'zz_modules.id', '=', 'zz_modules_lang.id_record')
+            ->select('zz_modules.*', 'zz_modules_lang.title as title')
+            ->join('zz_modules_lang', function ($join) {
+                $join->on('zz_modules.id', '=', 'zz_modules_lang.id_record')
+                    ->where('zz_modules_lang.id_lang', '=', \Models\Locale::getDefault()->id);
+            })
             ->withoutGlobalScope('enabled')
             ->whereNull('parent')
             ->orderBy('order')
             ->get();
-    }
+            }
 
     protected static function boot()
     {

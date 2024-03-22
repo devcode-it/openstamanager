@@ -396,16 +396,16 @@ function csrf() {
 
 function pdfjs() {
     const web = gulp.src([
-        config.nodeDirectory + '/pdf.js/demo/vue/public/pdfjs-prebuilt/web/**/*',
-        '!' + config.nodeDirectory + '/pdf.js/demo/vue/public/pdfjs-prebuilt/web/cmaps/*',
-        '!' + config.nodeDirectory + '/pdf.js/demo/vue/public/pdfjs-prebuilt/web/*.map',
-        '!' + config.nodeDirectory + '/pdf.js/demo/vue/public/pdfjs-prebuilt/web/*.pdf',
+        config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-4.0.379-dist/web/**/*',
+        '!' + config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-4.0.379-dist/web/cmaps/*',
+        '!' + config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-4.0.379-dist/web/*.map',
+        '!' + config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-4.0.379-dist/web/*.pdf',
     ])
         .pipe(gulp.dest(config.production + '/pdfjs/web'));
 
     const build = gulp.src([
-        config.nodeDirectory + '/pdf.js/demo/vue/public/pdfjs-prebuilt/build/*',
-        '!' + config.nodeDirectory + '/pdf.js/demo/vue/public/pdfjs-prebuilt/build/*.map',
+        config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-4.0.379-dist/build/*',
+        '!' + config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-4.0.379-dist/build/*.map',
     ])
         .pipe(gulp.dest(config.production + '/pdfjs/build'));
 

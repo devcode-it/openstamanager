@@ -52,7 +52,7 @@ if (!empty($id_record)) {
     }
 
     if (!empty($anagrafica)) {
-        $tipi_anagrafica = array_column($tipi_anagrafica, 'id');
         $tipi_anagrafica = $anagrafica->tipi->toArray();
+        $tipi_anagrafica = array_column($tipi_anagrafica, 'id');
     }
 }

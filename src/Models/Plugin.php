@@ -128,14 +128,9 @@ class Plugin extends Model
         return $this->belongsTo(Module::class, 'idmodule_from');
     }
 
-    public function module()
-    {
-        return $this->belongsTo(Module::class, 'idmodule_to');
-    }
-
     public function getModuleAttribute()
     {
-        return '';
+        return $this->belongsTo(Module::class, 'idmodule_to');
     }
 
     public static function getTranslatedFields()

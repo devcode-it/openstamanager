@@ -2090,7 +2090,8 @@ CREATE TABLE IF NOT EXISTS `zz_settings_lang` (
     `id` int NOT NULL,
     `id_lang` int NOT NULL,
     `id_record` int NOT NULL,
-    `title` VARCHAR(255) NOT NULL
+    `title` VARCHAR(255) NOT NULL,
+    `help` VARCHAR(500) NOT NULL
 );
 
 ALTER TABLE `zz_settings_lang`
@@ -2099,7 +2100,10 @@ ALTER TABLE `zz_settings_lang`
 ALTER TABLE `zz_settings_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `nome` FROM `zz_settings`;
+INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `nome`, `help` FROM `zz_settings`;
+
+ALTER TABLE `zz_settings`
+    DROP `help`;
 
 ALTER TABLE `zz_settings_lang` ADD CONSTRAINT `zz_settings_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_settings`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
@@ -2363,8 +2367,8 @@ DELETE FROM `zz_settings` WHERE `nome` = 'Iva da applicare su marca da bollo';
 INSERT INTO `co_statidocumento` (`icona`, `colore`) VALUES ('fa fa-times text-muted', '#d3d3d3');
 INSERT INTO `co_statidocumento_lang` (`id_record`, `id_lang`, `name`) VALUES ((SELECT MAX(`id`) FROM `co_statidocumento`), (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua"), 'Non valida');
 
-INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `help`) VALUES ('Giorni validità fattura scartata', '5', 'int', '0', 'Fatturazione Elettronica', 'Numero di giorni a disposizione per poter correggere una fattura scartata dallo SDI prima di non poter più utilizzare il suo numero di fatturazione. Una volta passati i giorni indicati è necessario emettere una nuova fattura e questa passa in stato Non valida.');
-INSERT INTO `zz_settings_lang` (`id_record`, `id_lang`, `title`) VALUES ((SELECT `id` FROM `zz_settings` WHERE `nome` = 'Giorni validità fattura scartata'), (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua"), 'Giorni validità fattura scartata');
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES ('Giorni validità fattura scartata', '5', 'int', '0', 'Fatturazione Elettronica');
+INSERT INTO `zz_settings_lang` (`id_record`, `id_lang`, `title`, `help`) VALUES ((SELECT `id` FROM `zz_settings` WHERE `nome` = 'Giorni validità fattura scartata'), (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua"), 'Giorni validità fattura scartata','Numero di giorni a disposizione per poter correggere una fattura scartata dallo SDI prima di non poter più utilizzare il suo numero di fatturazione. Una volta passati i giorni indicati è necessario emettere una nuova fattura e questa passa in stato Non valida.');
 
 ALTER TABLE `in_interventi` ADD `idpagamento` INT NOT NULL AFTER `id_ordine`;
 

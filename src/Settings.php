@@ -170,7 +170,7 @@ class Settings
             }
 
             $result = '
-    {[ "type": "select", "multiple": 0, "label": '.json_encode($setting->nome).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "values": '.json_encode($list).', "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'" ]}';
+    {[ "type": "select", "multiple": 0, "label": '.json_encode($setting->nome).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "values": '.json_encode($list).', "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->getTranslation('help').'" ]}';
         }
 
         // Lista multipla

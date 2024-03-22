@@ -107,7 +107,7 @@ $traduzioni = [
     ['zz_modules_lang', 'Updates', 'Aggiornamenti'],
     ['zz_modules_lang', 'Type of entities', 'Tipi di anagrafiche'],
     ['zz_modules_lang', 'Type of Tasks', 'Tipi di intervento'],
-    ['zz_modules_lang', 'Tasks states', 'Stati di intervento'],
+    ['zz_modules_lang', 'Tasks status', 'Stati di intervento'],
     ['zz_modules_lang', 'Accounting', 'Contabilità'],
     ['zz_modules_lang', 'Quotes', 'Preventivi'],
     ['zz_modules_lang', 'Sales invoices', 'Fatture di vendita'],

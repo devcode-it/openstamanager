@@ -44,7 +44,7 @@ if (!empty($id_plugin)) {
     echo '
         <h4>
 			<span  class="'.(!empty($structure['help']) ? ' tip' : '').'"'.(!empty($structure['help']) ? ' title="'.prepareToField($structure['help']).'" data-position="bottom"' : '').' >
-            '.$structure['title'].(!empty($structure['help']) ? ' <i class="fa fa-question-circle-o"></i>' : '').'</span>';
+            '.$structure->getTranslation('title').(!empty($structure['help']) ? ' <i class="fa fa-question-circle-o"></i>' : '').'</span>';
 
     if ($structure->hasAddFile()) {
         echo '

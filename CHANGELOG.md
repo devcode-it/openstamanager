@@ -90,6 +90,10 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Aggiunta la possibilità di creare **Backup** escludendo la cartella files e il database
 - Aggiunta la gestione dei campi personalizzati su applicazione
 - Aggiunta la gestione della visualizzazione articoli distinta inline nei documenti
+- Aggiunta impostazione Raggruppa attività per tipologia in fattura
+- Introduzione connettori per il caricamento dei file
+- Aggiunta gestione stato fattura Non valida
+- Aggiunta gestione pagamento in **Attività**
 
 ### Modificato (Changed)
 - Abilitato il ritorno al punto precedente anche per i dispositivi mobili
@@ -128,6 +132,8 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Corrette le api dell'app
 - Corretta la gestione dei caratteri accentati sul file di esportazione delle ricevute bancarie
 - Corretta la ricerca articoli escludendo gli articoli eliminati
+- Corretta la visualizzazione della password in impostazione
+- Corretto l'ordinamento dei promemoria in **Dashboard**
 
 ## 2.4.54 (2024-02-02)
 ### Aggiunto (Added)

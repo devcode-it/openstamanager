@@ -518,7 +518,7 @@ if (Auth::check()) {
             <ul class="nav nav-tabs nav-pills nav-stacked">
                 <li data-toggle="control-sidebar" class="active btn-default">
                     <a data-toggle="tab" href="#tab_0">
-                        '.$structure['title'].'
+                        '.$structure->getTranslation('title').'
                     </a>
                 </li>';
 

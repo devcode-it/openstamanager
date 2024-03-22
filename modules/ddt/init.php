@@ -24,7 +24,7 @@ use Modules\DDT\DDT;
 
 $azienda = Anagrafica::find(setting('Azienda predefinita'));
 
-if ($module['name'] == 'Ddt di vendita') {
+if ($module->getTranslation('name') == 'Ddt di vendita') {
     $dir = 'entrata';
 } else {
     $dir = 'uscita';

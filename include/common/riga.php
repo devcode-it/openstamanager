@@ -241,11 +241,11 @@ if ($options['dir'] == 'entrata') {
 
 // Data prevista evasione (per ordini)
 
-if (in_array($module['name'], ['Ordini cliente', 'Ordini fornitore', 'Preventivi'])) {
+if (in_array($module->getTranslation('name'), ['Ordini cliente', 'Ordini fornitore', 'Preventivi'])) {
     if ($options['action'] == 'add') {
-        if ($module['name'] == 'Ordini cliente') {
+        if ($module->getTranslation('name') == 'Ordini cliente') {
             $confermato = setting('Conferma automaticamente le quantità negli ordini cliente');
-        } elseif ($module['name'] == 'Ordini fornitore') {
+        } elseif ($module->getTranslation('name') == 'Ordini fornitore') {
             $confermato = setting('Conferma automaticamente le quantità negli ordini fornitore');
         } else {
             $confermato = setting('Conferma automaticamente le quantità nei preventivi');
@@ -279,7 +279,7 @@ if (in_array($module['name'], ['Ordini cliente', 'Ordini fornitore', 'Preventivi
 
                 </div>
                 <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "'.tr('Articolo confermato').'", "name": "confermato", "value": "'.$confermato.'", "help": "'.tr('Articolo confermato dal _ANA_ e che è possibile evadere', ['_ANA_' => $module['name'] == 'Ordini fornitore' ? tr('fornitore') : tr('cliente')]).'" ]}
+                    {[ "type": "checkbox", "label": "'.tr('Articolo confermato').'", "name": "confermato", "value": "'.$confermato.'", "help": "'.tr('Articolo confermato dal _ANA_ e che è possibile evadere', ['_ANA_' => $module->getTranslation('name') == 'Ordini fornitore' ? tr('fornitore') : tr('cliente')]).'" ]}
                 </div>
                 <div class="col-md-4">
                     {[ "type": "checkbox", "label": "'.tr('Cambia stato a tutte le righe').'", "name": "confermato_all", "value": "" ]}
@@ -306,7 +306,7 @@ if (in_array($module['name'], ['Ordini cliente', 'Ordini fornitore', 'Preventivi
         </script>';
 }
 
-if (in_array($module['name'], ['Fatture di vendita', 'Fatture di acquisto'])) {
+if (in_array($module->getTranslation('name'), ['Fatture di vendita', 'Fatture di acquisto'])) {
     echo '
     <script>
         $(document).ready(function() {

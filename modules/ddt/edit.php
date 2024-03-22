@@ -40,7 +40,7 @@ if ($dir == 'entrata') {
         echo '
         <div class="alert alert-warning">
             <i class="fa fa-warning"></i> '.tr("E' assente un _TYPE_ numero _NUM_ in data precedente o corrispondente a _DATE_: si potrebbero verificare dei problemi con la numerazione corrente dei DDT", [
-            '_TYPE_' => $module['name'],
+            '_TYPE_' => $module->getTranslation('name'),
             '_DATE_' => dateFormat($ddt->data),
             '_NUM_' => '"'.$numero_previsto.'"',
         ]).'.</b>

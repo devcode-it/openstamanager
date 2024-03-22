@@ -88,7 +88,7 @@ switch (post('op')) {
 
         $module = Module::find($id_module);
 
-        if ($module['name'] == 'Fatture di vendita') {
+        if ($module->getTranslation('name') == 'Fatture di vendita') {
             $print_name = 'Fattura elettronica di vendita';
         } else {
             $print_name = 'Fattura elettronica di acquisto';

@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\Module;
 
 echo '
 <form action="" method="post" role="form">

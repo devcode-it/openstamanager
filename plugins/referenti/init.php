@@ -21,6 +21,7 @@ include_once __DIR__.'/../../core.php';
 use Models\Plugin;
 
 if (isset($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM an_referenti WHERE id='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT * FROM `an_referenti` WHERE `id`='.prepare($id_record));
 }
+
 $id_plugin_sedi = (new Plugin())->getByField('name', 'Sedi');

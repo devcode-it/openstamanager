@@ -340,6 +340,7 @@ switch (post('op')) {
             $new->data = $data;
             $new->id_segment = $id_segment;
             $new->numero = Fattura::getNextNumero($data, $dir, $id_segment);
+            $new->id_autofattura = null;
 
             $new->save();
 

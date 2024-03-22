@@ -170,7 +170,7 @@ class Settings
             }
 
             $result = '
-    {[ "type": "select", "multiple": 0, "label": '.json_encode($setting->nome).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "values": '.json_encode($list).', "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->getTranslation('help').'" ]}';
+    {[ "type": "select", "multiple": 0, "label": '.json_encode($setting->getTranslation('title')).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "values": '.json_encode($list).', "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->getTranslation('help').'" ]}';
         }
 
         // Lista multipla
@@ -203,19 +203,19 @@ class Settings
             }
 
             $result = '
-        {[ "type": "select", "multiple": 1, "label": '.json_encode($setting->nome).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.'][]", "values": '.json_encode($list).', "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'" ]}';
+        {[ "type": "select", "multiple": 1, "label": '.json_encode($setting->getTranslation('title')).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.'][]", "values": '.json_encode($list).', "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->getTranslation('help').'" ]}';
         }
 
         // Lista da query
         elseif (preg_match('/^query=(.+?)$/', $setting->tipo, $m)) {
             $result = '
-    {[ "type": "select", "label": '.json_encode($setting->nome).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "values": "'.str_replace('"', '\"', $setting->tipo).'", "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'"   ]}';
+    {[ "type": "select", "label": '.json_encode($setting->getTranslation('title')).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "values": "'.str_replace('"', '\"', $setting->tipo).'", "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->getTranslation('help').'"   ]}';
         }
 
         // Boolean (checkbox)
         elseif ($setting->tipo == 'boolean') {
             $result = '
-    {[ "type": "checkbox", "label": '.json_encode($setting->nome).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "placeholder": "'.tr('Attivo').'", "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'"  ]}';
+    {[ "type": "checkbox", "label": '.json_encode($setting->getTranslation('title')).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "placeholder": "'.tr('Attivo').'", "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->getTranslation('help').'"  ]}';
         }
 
         // Editor
@@ -227,25 +227,25 @@ class Settings
                 'name' => 'setting['.$setting->id.']',
                 'value' => $setting->valore,
                 'required' => intval($required),
-                'help' => $setting->help,
+                'help' => $setting->getTranslation('help'),
             ]);
         }
 
         // Campi di default
         elseif (in_array($setting->tipo, ['textarea', 'timestamp', 'date', 'time'])) {
             $result = '
-    {[ "type": "'.$setting->tipo.'", "label": '.json_encode($setting->nome).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "value": '.json_encode($setting->valore).', "required": "'.intval($required).'", "help": "'.$setting->help.'"  ]}';
+    {[ "type": "'.$setting->tipo.'", "label": '.json_encode($setting->getTranslation('title')).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "value": '.json_encode($setting->valore).', "required": "'.intval($required).'", "help": "'.$setting->getTranslation('help').'"  ]}';
         }
 
         // Campo di testo
         else {
             $numerico = in_array($setting->tipo, ['integer', 'decimal']);
 
-            $tipo = preg_match('/password/i', $setting->nome, $m) ? 'password' : $setting->tipo;
+            $tipo = preg_match('/password/i', $setting->getTranslation('title'), $m) ? 'password' : $setting->tipo;
             $tipo = $numerico ? 'number' : 'text';
 
             $result = '
-    {[ "type": "'.$tipo.'", "label": '.json_encode($setting->nome).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "value": "'.$setting->valore.'"'.($numerico && $setting->tipo == 'integer' ? ', "decimals": 0' : '').', "required": "'.intval($required).'", "help": "'.$setting->help.'"  ]}';
+    {[ "type": "'.$tipo.'", "label": '.json_encode($setting->getTranslation('title')).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "value": "'.$setting->valore.'"'.($numerico && $setting->tipo == 'integer' ? ', "decimals": 0' : '').', "required": "'.intval($required).'", "help": "'.$setting->getTranslation('help').'"  ]}';
         }
 
         return $result;

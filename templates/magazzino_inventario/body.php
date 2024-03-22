@@ -17,9 +17,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Util\Query;
-use Modules\Articoli\Articolo;
 use Models\Module;
+use Modules\Articoli\Articolo;
+use Util\Query;
 
 include_once __DIR__.'/../../core.php';
 
@@ -28,7 +28,7 @@ $structure = Module::find((new Module())->getByField('name', 'Articoli'));
 // Valori di ricerca
 $where['servizio'] = '0';
 
-foreach(getSearchValues($id_module) as $key => $value) {
+foreach (getSearchValues($id_module) as $key => $value) {
     $where[$key] = $value;
 }
 

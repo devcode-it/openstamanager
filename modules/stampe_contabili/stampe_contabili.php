@@ -26,7 +26,7 @@ use Models\PrintTemplate;
 $id_record = filter('id_record');
 $dir = filter('dir');
 $nome_stampa = filter('nome_stampa');
-$id_print = (new PrintTemplate ())->getByField('name', prepare($nome_stampa));
+$id_print = (new PrintTemplate())->getByField('name', prepare($nome_stampa));
 $id_module = (new Module())->getByField('name', 'Stampe contabili');
 
 $year = (new Carbon($_SESSION['period_end']))->format('Y');
@@ -96,7 +96,7 @@ echo '
 if ($nome_stampa != 'Liquidazione IVA') {
     echo '
 		<div class="col-md-4">
-			{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_sezionale", "required": "1", "values": "query=SELECT `zz_segments`.`id`, `zz_segments_lang`.`name` AS descrizione FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `id_module` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = \''.(($dir == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto').'\') AND `is_fiscale` = 1 UNION SELECT  -1 AS id, \'Tutti i sezionali\' AS descrizione" ]}
+			{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_sezionale", "required": "1", "values": "query=SELECT `zz_segments`.`id`, `zz_segments_lang`.`name` AS descrizione FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_module` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = \''.(($dir == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto').'\') AND `is_fiscale` = 1 UNION SELECT  -1 AS id, \'Tutti i sezionali\' AS descrizione" ]}
 		</div>';
 }
 echo '
@@ -132,10 +132,10 @@ if ($nome_stampa != 'Liquidazione IVA') {
 	<div class="box box-primary collapsable collapsed-box">
 		<div class="box-header with-border">
 			<h3 class="box-title"><i class="fa fa-print"></i> '.tr('Stampe definitive registro iva _DIR_ dal _START_ al _END_', [
-                '_DIR_' => $dir == 'entrata' ? 'vendite' : 'acquisti',
-                '_START_' => dateFormat($_SESSION['period_start']),
-                '_END_' => dateFormat($_SESSION['period_end']),
-            ]).'</h3>
+        '_DIR_' => $dir == 'entrata' ? 'vendite' : 'acquisti',
+        '_START_' => dateFormat($_SESSION['period_start']),
+        '_END_' => dateFormat($_SESSION['period_end']),
+    ]).'</h3>
 			<div class="box-tools pull-right">
 				<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
 			</div>
@@ -145,11 +145,11 @@ if ($nome_stampa != 'Liquidazione IVA') {
 
     foreach ($elementi as $elemento) {
         $descrizione = tr('Stampa definitiva dal _START_ al _END_ (_FIRST_-_LAST_)', [
-                '_START_' => dateFormat($elemento['date_start']),
-                '_END_' => dateFormat($elemento['date_end']),
-                '_FIRST_' => $elemento['first_page'],
-                '_LAST_' => $elemento['last_page'],
-            ]);
+            '_START_' => dateFormat($elemento['date_start']),
+            '_END_' => dateFormat($elemento['date_end']),
+            '_FIRST_' => $elemento['first_page'],
+            '_LAST_' => $elemento['last_page'],
+        ]);
 
         $file = $dbo->selectOne('zz_files', '*', ['id_module' => $id_module, 'id_record' => $elemento['id']]);
 

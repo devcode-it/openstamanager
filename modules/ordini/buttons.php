@@ -31,15 +31,15 @@ function duplicaOrdine() {
 }
 </script>';
 
-$stati = $dbo->fetchArray('SELECT `name` FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id`=`or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang`= '.prepare(\Models\Locale::getDefault()->id).') WHERE `is_fatturabile` = 1');
+$stati = $dbo->fetchArray('SELECT `name` FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id`=`or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `is_fatturabile` = 1');
 foreach ($stati as $stato) {
     $stati_importabili[] = $stato['name'];
 }
 
 echo '
 <div class="btn-group tip" data-toggle="tooltip" title="'.tr("Per creare un documento deve essere inserita almeno una riga e lo stato dell'ordine deve essere tra: _STATE_LIST_", [
-        '_STATE_LIST_' => implode(', ', $stati_importabili),
-    ]).'">
+    '_STATE_LIST_' => implode(', ', $stati_importabili),
+]).'">
 	<button class="btn btn-info dropdown-toggle '.(in_array($record['stato'], $stati_importabili) ? '' : 'disabled').'" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 		<i class="fa fa-magic"></i> '.tr('Crea').'
 		<span class="caret"></span>

@@ -34,7 +34,7 @@ class Mail extends Model
 
     protected $options;
 
-    public static function build(User $user = null, $template = null, $id_record = null, $account = null)
+    public static function build(?User $user = null, $template = null, $id_record = null, $account = null)
     {
         $model = new static();
 

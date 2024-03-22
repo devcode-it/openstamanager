@@ -19,6 +19,7 @@
 
 include_once __DIR__.'/core.php';
 
+use Models\Module;
 use Models\Note;
 use Models\OperationLog;
 use Models\Upload;
@@ -27,7 +28,6 @@ use Modules\Checklists\Checklist;
 use Modules\Emails\Template;
 use Notifications\EmailNotification;
 use Util\Zip;
-use Models\Module;
 
 if (empty($structure) || empty($structure['enabled'])) {
     exit(tr('Accesso negato'));
@@ -138,7 +138,6 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
 
         // DELETE
         elseif (filter('op') == 'rimuovi-allegato' && filter('filename') !== null) {
-            
             $name = Uploads::delete(filter('filename'), [
                 'id_module' => $id_module,
                 'id_plugin' => $id_plugin,
@@ -162,8 +161,8 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
 elseif (filter('op') == 'download-allegato') {
     $rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($id_module).' AND id='.prepare(filter('id')).' AND filename='.prepare(filter('filename')));
 
-    //download($upload_dir.'/'.$rs[0]['filename'], $rs[0]['original']);
-    $file = Models\Upload::find($rs[0]['id']);
+    // download($upload_dir.'/'.$rs[0]['filename'], $rs[0]['original']);
+    $file = Upload::find($rs[0]['id']);
 
     if (!empty($file)) {
         $content = $file->get_contents();

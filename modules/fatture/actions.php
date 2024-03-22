@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Carbon\Carbon;
+use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Tipo as TipoAnagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
@@ -33,7 +34,6 @@ use Modules\Fatture\Tipo;
 use Modules\Iva\Aliquota;
 use Plugins\ExportFE\Interaction;
 use Util\XML;
-use Models\Module;
 
 $module = Module::find($id_module);
 $op = post('op');
@@ -107,7 +107,7 @@ switch ($op) {
             FROM
                 `co_documenti`
                 INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
-                LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+                LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                 INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
                 INNER JOIN `zz_segments` ON `zz_segments`.`id` = `co_documenti`.`id_segment`
             WHERE
@@ -207,8 +207,8 @@ switch ($op) {
                         flash()->warning(tr('La fattura elettronica num. _NUM_ potrebbe avere delle irregolarità!', [
                             '_NUM_' => $numero,
                         ]).' '.tr('Controllare i seguenti campi: _LIST_', [
-                                '_LIST_' => implode(', ', $errors),
-                            ]).'.');
+                            '_LIST_' => implode(', ', $errors),
+                        ]).'.');
                     } else {
                         $message .= '
                             <p><b>'.$title.' '.$link.'</b></p>
@@ -531,7 +531,7 @@ switch ($op) {
         $articolo->save();
 
         $database->query('UPDATE `co_righe_documenti` SET `descrizione` = \''.post('descrizione').'\' WHERE `iddocumento` = '.$fattura->id.' AND `idarticolo` = '.$articolo->idarticolo.';');
-        
+
         if (post('idriga') != null) {
             flash()->info(tr('Articolo modificato!'));
         } else {
@@ -833,7 +833,7 @@ switch ($op) {
         $data = post('data');
 
         $anagrafica = $fattura->anagrafica;
-        $id_tipo = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `name` = "Nota di credito" AND `dir` = "entrata"')['id'];
+        $id_tipo = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `name` = "Nota di credito" AND `dir` = "entrata"')['id'];
         $tipo = Tipo::find($id_tipo);
         $nota = Fattura::build($anagrafica, $tipo, $data, $id_segment);
         $nota->ref_documento = $fattura->id;
@@ -1167,18 +1167,17 @@ switch ($op) {
 
         break;
 
-        case 'cambia_stato':
-            $stato = Stato::find((new Stato())->getByField('name', 'Non valida'));
-            $fattura->stato()->associate($stato);
-            $fattura->save();
+    case 'cambia_stato':
+        $stato = Stato::find((new Stato())->getByField('name', 'Non valida'));
+        $fattura->stato()->associate($stato);
+        $fattura->save();
 
-            break;
-
+        break;
 }
 
 // Nota di debito
 if (get('op') == 'nota_addebito') {
-    $rs_segment = $dbo->fetchArray("SELECT * FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = ".prepare(\Models\Locale::getDefault()->id).") WHERE `predefined_addebito`='1'");
+    $rs_segment = $dbo->fetchArray('SELECT * FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).") WHERE `predefined_addebito`='1'");
     if (!empty($rs_segment)) {
         $id_segment = $rs_segment[0]['id'];
     } else {
@@ -1186,7 +1185,7 @@ if (get('op') == 'nota_addebito') {
     }
 
     $anagrafica = $fattura->anagrafica;
-    $id_tipo = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `name` = "Nota di debito" AND `dir` = "entrata"')['id'];
+    $id_tipo = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `name` = "Nota di debito" AND `dir` = "entrata"')['id'];
     $tipo = Tipo::find($id_tipo);
     $data = $fattura->data;
 

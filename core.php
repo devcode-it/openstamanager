@@ -18,7 +18,7 @@
  */
 
 // Rimozione header X-Powered-By
-//header_remove('X-Powered-By');
+// header_remove('X-Powered-By');
 
 // Impostazioni di configurazione PHP
 date_default_timezone_set('Europe/Rome');
@@ -55,7 +55,7 @@ $rootdir = ROOTDIR;
 $baseurl = BASEURL;
 
 // Controllo che le intestazioni non siano già state inviate.
-if (!headers_sent()){ 
+if (!headers_sent()) {
     // Sicurezza della sessioni
     ini_set('session.cookie_samesite', 'lax');
     ini_set('session.use_trans_sid', '0');
@@ -265,7 +265,6 @@ if (!API\Response::isAPIRequest()) {
         }
 
         Permissions::check();
-
     }
 
     // Retrocompatibilità
@@ -308,7 +307,7 @@ foreach ($list as $file) {
 // Inizializzazione traduzioni
 if (database()->tableExists('zz_settings') && database()->tableExists('zz_langs')) {
     $id_lang = setting('Lingua');
-    \Models\Locale::setDefault($id_lang);
+    Models\Locale::setDefault($id_lang);
 
-    $lang = \Models\Locale::find($id_lang)->language_code;
+    $lang = Models\Locale::find($id_lang)->language_code;
 }

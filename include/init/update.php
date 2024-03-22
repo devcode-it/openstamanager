@@ -45,8 +45,8 @@ if (filter('action') == 'do_update') {
                     echo '
         <script>
             $("#progress .info").html($("#progress .info").html() + "<p>&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"fa fa-check\"></i> '.tr('Aggiornamento del database (_FILENAME_)', [
-                '_FILENAME_' => '<i>'.$update['filename'].'.sql</i>',
-            ]).'</p>");
+                        '_FILENAME_' => '<i>'.$update['filename'].'.sql</i>',
+                    ]).'</p>");
         </script>';
                 }
 
@@ -56,8 +56,8 @@ if (filter('action') == 'do_update') {
                 echo '
         <script>
             $("#progress .info").html($("#progress .info").html() + "<p>&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"fa fa-check\"></i> '.tr('Esecuzione dello script di aggiornamento (_FILENAME_)', [
-                '_FILENAME_' => '<i>'.$update['filename'].'.php</i>',
-            ]).'</p>");
+                    '_FILENAME_' => '<i>'.$update['filename'].'.php</i>',
+                ]).'</p>");
         </script>';
 
                 $rate = $scriptValue;
@@ -80,8 +80,8 @@ if (filter('action') == 'do_update') {
             echo '
             <div class="alert alert-danger">
                 <i class="fa fa-times"></i> '.tr("Errore durante l'esecuzione dell'aggiornamento alla versione _VERSION_", [
-                    '_VERSION_' => $update['version'],
-                ]).'
+                '_VERSION_' => $update['version'],
+            ]).'
             </div>';
         }
     }
@@ -99,8 +99,8 @@ if (filter('action') == 'do_update') {
         if ($_GET['firstuse'] == 'true') {
             echo '
         <p class="text-danger">'.tr('Si consiglia di rimuovere i permessi di scrittura dal file _FILE_', [
-            '_FILE_' => '<b>config.inc.php</b>',
-        ]).'.</p>';
+                '_FILE_' => '<b>config.inc.php</b>',
+            ]).'.</p>';
         }
 
         echo '
@@ -156,8 +156,8 @@ if (filter('action') == 'do_update') {
     }
     echo '
                 <p>'.tr("Premi il tasto _BUTTON_ per procedere con l'".(!$dbo->isInstalled() ? tr('installazione') : tr('aggiornamento')).'!', [
-                    '_BUTTON_' => '<b>"'.$button.'"</b>',
-                ]).'</p>
+        '_BUTTON_' => '<b>"'.$button.'"</b>',
+    ]).'</p>
                 <input type="button" class="btn btn-primary" value="'.$button.'" onclick="continue_update()" id="contine_button">
 
                 <script>
@@ -248,10 +248,10 @@ if (filter('action') == 'do_update') {
                             current += 1;
 
                             $("#progress .info").html($("#progress .info").html() + "<p><strong>'.tr('Aggiornamento _DONE_ di _TODO_ (_VERSION_)', [
-                                '_DONE_' => '" + current + "',
-                                '_TODO_' => '" + count + "',
-                                '_VERSION_' => '" + version.trim() + "',
-                            ]).'</strong></p>");
+        '_DONE_' => '" + current + "',
+        '_TODO_' => '" + count + "',
+        '_VERSION_' => '" + version.trim() + "',
+    ]).'</strong></p>");
                         }
                     }
                 </script>

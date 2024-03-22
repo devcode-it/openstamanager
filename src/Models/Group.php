@@ -44,7 +44,6 @@ class Group extends Model
         return $model;
     }
 
-
     /* Relazioni Eloquent */
 
     public function users()
@@ -67,7 +66,8 @@ class Group extends Model
         return '';
     }
 
-    public static function getTranslatedFields(){
+    public static function getTranslatedFields()
+    {
         return self::$translated_fields;
     }
 }

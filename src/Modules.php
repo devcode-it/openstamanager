@@ -135,7 +135,7 @@ class Modules
             $additionals['WHR'] = [];
             $additionals['HVN'] = [];
 
-            $results = $database->fetchArray('SELECT * FROM `zz_group_module` LEFT JOIN `zz_group_module_lang` ON (`zz_group_module`.`id` = `zz_group_module_lang`.`id_record` AND `zz_group_module_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id']).') AND `enabled` = 1 AND `idmodule` = '.prepare($module['id']));
+            $results = $database->fetchArray('SELECT * FROM `zz_group_module` LEFT JOIN `zz_group_module_lang` ON (`zz_group_module`.`id` = `zz_group_module_lang`.`id_record` AND `zz_group_module_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id']).') AND `enabled` = 1 AND `idmodule` = '.prepare($module['id']));
             foreach ($results as $result) {
                 if (!empty($result['clause'])) {
                     $result['clause'] = Query::replacePlaceholder($result['clause']);
@@ -182,7 +182,7 @@ class Modules
         if (!isset(self::$segments[$module])) {
             $database = database();
 
-            self::$segments[$module] = $database->fetchArray('SELECT `zz_segments`.*, `zz_segments_lang`.`name` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') INNER JOIN `zz_group_segment` ON `zz_segments`.`id` = `zz_group_segment`.`id_segment` WHERE `id_gruppo` = '.prepare($user->idgruppo).' AND `id_module` = '.prepare($module).' ORDER BY `predefined` DESC, `zz_segments`.`id` ASC');
+            self::$segments[$module] = $database->fetchArray('SELECT `zz_segments`.*, `zz_segments_lang`.`name` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `zz_group_segment` ON `zz_segments`.`id` = `zz_group_segment`.`id_segment` WHERE `id_gruppo` = '.prepare($user->idgruppo).' AND `id_module` = '.prepare($module).' ORDER BY `predefined` DESC, `zz_segments`.`id` ASC');
         }
 
         return (array) self::$segments[$module];

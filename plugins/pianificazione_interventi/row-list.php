@@ -18,7 +18,6 @@
  */
 
 use Plugins\PianificazioneInterventi\Promemoria;
-use Models\Module;
 
 include_once __DIR__.'/../../core.php';
 

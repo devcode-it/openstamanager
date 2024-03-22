@@ -19,8 +19,8 @@
 
 include_once __DIR__.'/../../../core.php';
 
-use Modules\Interventi\Stato;
 use Modules\Interventi\Intervento;
+use Modules\Interventi\Stato;
 
 $rs = Intervento::where('idstatointervento', '=', Stato::where('codice', '=', 'WIP')->first()->id)->get()->toArray();
 

@@ -18,8 +18,8 @@
  */
 
 include_once __DIR__.'/../../core.php';
-use Modules\Articoli\Categoria;
 use Modules\Articoli\Articolo;
+use Modules\Articoli\Categoria;
 
 $subcategorie = Categoria::where('parent', '=', $id_record)->get();
 

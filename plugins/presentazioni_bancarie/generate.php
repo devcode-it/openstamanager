@@ -1,10 +1,10 @@
 <?php
 
+use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Banche\Banca;
 use Modules\Scadenzario\Scadenza;
 use Plugins\PresentazioniBancarie\Gestore;
-use Models\Module;
 
 include_once __DIR__.'/init.php';
 
@@ -112,8 +112,8 @@ foreach ($raggruppamento as $id_anagrafica => $scadenze_anagrafica) {
         if (!empty($data_esportazione)) {
             echo '
                 <span class="badge pull-right">'.tr('Esportato in data: _DATE_', [
-                    '_DATE_' => timestampFormat($data_esportazione),
-                ]).'</span>';
+                '_DATE_' => timestampFormat($data_esportazione),
+            ]).'</span>';
         }
 
         $banca_controparte = Gestore::getBancaControparte($scadenza);
@@ -150,7 +150,7 @@ foreach ($raggruppamento as $id_anagrafica => $scadenze_anagrafica) {
         if ($is_sepa) {
             // Prima, successiva, singola
 
-            $scadenze_antecedenti = $dbo->fetchArray('SELECT * FROM `co_scadenziario` INNER JOIN `co_documenti` ON `co_scadenziario`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_pagamenti` ON `co_documenti`.`idpagamento`=`co_pagamenti`.`id` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `co_documenti`.`idanagrafica`='.prepare($id_anagrafica)." AND `codice_modalita_pagamento_fe` IN('MP19','MP20','MP21') AND `data_emissione`<".prepare($scadenza->data_emissione));
+            $scadenze_antecedenti = $dbo->fetchArray('SELECT * FROM `co_scadenziario` INNER JOIN `co_documenti` ON `co_scadenziario`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_pagamenti` ON `co_documenti`.`idpagamento`=`co_pagamenti`.`id` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_documenti`.`idanagrafica`='.prepare($id_anagrafica)." AND `codice_modalita_pagamento_fe` IN('MP19','MP20','MP21') AND `data_emissione`<".prepare($scadenza->data_emissione));
 
             $check_successiva = '';
             $check_prima = '';

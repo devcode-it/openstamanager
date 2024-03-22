@@ -36,7 +36,7 @@ include_once __DIR__.'/../../core.php';
                 </div>
 
                 <div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Codice Modalità (Fatturazione Elettronica)'); ?>", "name": "codice_modalita_pagamento_fe", "value": "$codice_modalita_pagamento_fe$", "values": "query=SELECT `codice` as id, CONCAT(`codice`, ' - ', `name`) AS descrizione FROM `fe_modalita_pagamento` LEFT JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento_lang`.`id_record`=`fe_modalita_pagamento`.`codice` AND `fe_modalita_pagamento_lang`.`id_lang`=<?php echo prepare(\Models\Locale::getDefault()->id); ?>)", "required": 1, "help": "<?php echo tr('Impostando il codice MP12 il pagamento viene considerato di tipo Ri.Ba.: nelle fatture verrà visualizzata la banca della controparte'); ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Codice Modalità (Fatturazione Elettronica)'); ?>", "name": "codice_modalita_pagamento_fe", "value": "$codice_modalita_pagamento_fe$", "values": "query=SELECT `codice` as id, CONCAT(`codice`, ' - ', `name`) AS descrizione FROM `fe_modalita_pagamento` LEFT JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento_lang`.`id_record`=`fe_modalita_pagamento`.`codice` AND `fe_modalita_pagamento_lang`.`id_lang`=<?php echo prepare(Models\Locale::getDefault()->id); ?>)", "required": 1, "help": "<?php echo tr('Impostando il codice MP12 il pagamento viene considerato di tipo Ri.Ba.: nelle fatture verrà visualizzata la banca della controparte'); ?>" ]}
 				</div>
             </div>
 
@@ -87,7 +87,7 @@ $tipi_scadenza_pagamento = [
     ],
 ];
 
-$results = $dbo->fetchArray('SELECT *, `co_pagamenti`.`id` as id FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `name`='.prepare($record['name']).' ORDER BY `num_giorni` ASC');
+$results = $dbo->fetchArray('SELECT *, `co_pagamenti`.`id` as id FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `name`='.prepare($record['name']).' ORDER BY `num_giorni` ASC');
 $numero_rata = 1;
 foreach ($results as $result) {
     $tipo_scadenza_pagamento = 3;
@@ -105,13 +105,13 @@ foreach ($results as $result) {
     }
 
     // Collegamenti diretti
-    $elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento_lang`.`name` AS tipo_documento, `co_tipidocumento`.`dir`, NULL AS `deleted_at` FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id`=`co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang`= '.prepare(\Models\Locale::getDefault()->id).') WHERE `co_documenti`.`idpagamento` = '.prepare($id_record).'
+    $elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento_lang`.`name` AS tipo_documento, `co_tipidocumento`.`dir`, NULL AS `deleted_at` FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id`=`co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `co_documenti`.`idpagamento` = '.prepare($id_record).'
 
 UNION
-SELECT `or_ordini`.`id`, `or_ordini`.`data`, `or_ordini`.`numero`, `or_ordini`.`numero_esterno`, `or_tipiordine_lang`.`name` AS tipo_documento, `or_tipiordine`.`dir`, NULL AS `deleted_at` FROM `or_ordini` INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine` LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine`.`id`=`or_tipiordine_lang`.`id_record` AND `or_tipiordine_lang`.`id_lang`= '.prepare(\Models\Locale::getDefault()->id).') WHERE `or_ordini`.`idpagamento` = '.prepare($id_record).'
+SELECT `or_ordini`.`id`, `or_ordini`.`data`, `or_ordini`.`numero`, `or_ordini`.`numero_esterno`, `or_tipiordine_lang`.`name` AS tipo_documento, `or_tipiordine`.`dir`, NULL AS `deleted_at` FROM `or_ordini` INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine` LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine`.`id`=`or_tipiordine_lang`.`id_record` AND `or_tipiordine_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `or_ordini`.`idpagamento` = '.prepare($id_record).'
 
 UNION
-SELECT `dt_ddt`.`id`, `dt_ddt`.`data`, `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`, `dt_tipiddt_lang`.`name` AS tipo_documento, `dt_tipiddt`.`dir`, NULL AS `deleted_at` FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt`.`id`=`dt_tipiddt_lang`.`id_record` AND `dt_tipiddt_lang`.`id_lang`= '.prepare(\Models\Locale::getDefault()->id).') WHERE `dt_ddt`.`idpagamento` = '.prepare($id_record).'
+SELECT `dt_ddt`.`id`, `dt_ddt`.`data`, `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`, `dt_tipiddt_lang`.`name` AS tipo_documento, `dt_tipiddt`.`dir`, NULL AS `deleted_at` FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt`.`id`=`dt_tipiddt_lang`.`id_record` AND `dt_tipiddt_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `dt_ddt`.`idpagamento` = '.prepare($id_record).'
 
 UNION
 SELECT `co_contratti`.`id`, `co_contratti`.`data_bozza`, `co_contratti`.`numero`, 0 AS numero_esterno , "Contratto" AS tipo_documento, 0 AS dir, NULL AS `deleted_at` FROM `co_contratti` WHERE `co_contratti`.`idpagamento` = '.prepare($id_record).'
@@ -125,8 +125,8 @@ ORDER BY `data`');
 				<div class="box box-success">
 					<div class="box-header with-border">
 						<h3 class="box-title">'.tr('Rata _NUMBER_', [
-                            '_NUMBER_' => $numero_rata,
-                        ]).'</h3>';
+        '_NUMBER_' => $numero_rata,
+    ]).'</h3>';
     if (empty($elementi)) {
         echo '   
 						<button type="button" class="btn btn-danger pull-right" onclick="rimuoviRata('.$result['id'].')">
@@ -236,8 +236,8 @@ echo '
 <div class="box box-warning collapsable collapsed-box">
     <div class="box-header with-border">
         <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
-            '_NUM_' => count($elementi),
-        ]).'</h3>
+        '_NUM_' => count($elementi),
+    ]).'</h3>
         <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
         </div>
@@ -247,11 +247,11 @@ echo '
 
     foreach ($elementi as $elemento) {
         $descrizione = tr('_DOC_  _NUM_ del _DATE_ _DELETED_AT_', [
-        '_DOC_' => $elemento['tipo_documento'],
-        '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
-        '_DATE_' => Translator::dateToLocale($elemento['data']),
-        '_DELETED_AT_' => (!empty($elemento['deleted_at']) ? tr('Eliminato il:').' '.Translator::dateToLocale($elemento['deleted_at']) : ''),
-    ]);
+            '_DOC_' => $elemento['tipo_documento'],
+            '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
+            '_DATE_' => Translator::dateToLocale($elemento['data']),
+            '_DELETED_AT_' => (!empty($elemento['deleted_at']) ? tr('Eliminato il:').' '.Translator::dateToLocale($elemento['deleted_at']) : ''),
+        ]);
 
         // se non è un preventivo è un ddt o una fattura
         // se non è un ddt è una fattura.

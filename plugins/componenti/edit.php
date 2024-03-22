@@ -169,12 +169,12 @@ foreach ($elenchi as $elenco) {
                                         <div class="col-md-12">';
 
         echo input([
-                                                'type' => 'ckeditor',
-                                                'label' => tr('Note'),
-                                                'name' => 'note',
-                                                'id' => 'note_'.$componente->id,
-                                                'value' => $componente['note'],
-                                            ]);
+            'type' => 'ckeditor',
+            'label' => tr('Note'),
+            'name' => 'note',
+            'id' => 'note_'.$componente->id,
+            'value' => $componente['note'],
+        ]);
         echo '
                                         </div>
                                     </div>
@@ -194,8 +194,8 @@ foreach ($elenchi as $elenco) {
                                         <div class="col-md-1">
                                             <button type="button" class="btn btn-default" onclick="gestisciAllegati(this)">
                                                 <i class="fa fa-file-text-o"></i> '.tr('Allegati (_NUM_)', [
-                                                    '_NUM_' => $numero_allegati,
-                                                ]).'
+            '_NUM_' => $numero_allegati,
+        ]).'
                                             </button>
                                         </div>';
 

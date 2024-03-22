@@ -17,9 +17,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Models\Module;
 use Models\Upload;
 use Modules\Anagrafiche\Anagrafica;
-use Models\Module;
 
 include_once __DIR__.'/../../../core.php';
 

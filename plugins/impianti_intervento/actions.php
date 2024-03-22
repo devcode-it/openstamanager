@@ -19,8 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Checklists\Check;
 use Models\Module;
+use Modules\Checklists\Check;
 
 $operazione = filter('op');
 
@@ -55,18 +55,18 @@ switch ($operazione) {
         $components = (array) post('componenti');
         $note = post('note');
         $id_impianto = post('id_impianto');
-    
+
         $dbo->query('DELETE FROM my_componenti_interventi WHERE id_componente IN (SELECT id FROM my_componenti WHERE id_impianto = '.prepare($id_impianto).') AND id_intervento = '.prepare($id_record));
-    
+
         foreach ($components as $component) {
             $dbo->query('INSERT INTO my_componenti_interventi(id_componente, id_intervento) VALUES ('.prepare($component).', '.prepare($id_record).')');
         }
 
         $dbo->update('my_impianti_interventi', [
-            'note' => $note
+            'note' => $note,
         ], [
             'idintervento' => $id_record,
-            'idimpianto' => $id_impianto
+            'idimpianto' => $id_impianto,
         ]);
 
         flash()->info(tr('Impianto modificato correttamente!'));

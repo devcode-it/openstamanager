@@ -23,6 +23,7 @@ use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Traits\LocalPoolTrait;
 use Traits\RecordTrait;
+
 class Setting extends Model
 {
     use SimpleModelTrait;
@@ -37,14 +38,14 @@ class Setting extends Model
     protected static $translated_fields = [
         'title',
     ];
-    
+
     public function getModuleAttribute()
     {
         return '';
     }
 
-    public static function getTranslatedFields(){
+    public static function getTranslatedFields()
+    {
         return self::$translated_fields;
     }
-
 }

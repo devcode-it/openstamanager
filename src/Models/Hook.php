@@ -158,6 +158,16 @@ class Hook extends Model
         return $this->belongsTo(Module::class, 'id_module');
     }
 
+    public function getModuleAttribute()
+    {
+        return '';
+    }
+
+    public static function getTranslatedFields()
+    {
+        return self::$translated_fields;
+    }
+
     protected static function boot()
     {
         parent::boot();
@@ -165,14 +175,5 @@ class Hook extends Model
         static::addGlobalScope('enabled', function (Builder $builder) {
             $builder->where('enabled', true);
         });
-    }
-
-    public function getModuleAttribute()
-    {
-        return '';
-    }
-
-    public static function getTranslatedFields(){
-        return self::$translated_fields;
     }
 }

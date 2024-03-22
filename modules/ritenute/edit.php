@@ -23,8 +23,8 @@ include_once __DIR__.'/../../core.php';
 if ($record['doc_associati'] > 0) {
     echo '
 <div class="alert alert-warning">'.tr('Non puoi eliminare questa ritenuta.').' '.tr('Ci sono _NUM_ documenti associati.', [
-    '_NUM_' => $record['doc_associati'],
-]).'</div>';
+        '_NUM_' => $record['doc_associati'],
+    ]).'</div>';
 }
 
 ?>

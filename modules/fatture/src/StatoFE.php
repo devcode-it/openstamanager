@@ -22,6 +22,7 @@ namespace Modules\Fatture;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Traits\RecordTrait;
+
 class StatoFE extends Model
 {
     use SimpleModelTrait;
@@ -44,13 +45,13 @@ class StatoFE extends Model
      *
      * @return string
      */
+    public function getModuleAttribute()
+    {
+        return '';
+    }
 
-     public function getModuleAttribute()
-     {
-         return '';
-     }
-     
-     public static function getTranslatedFields(){
-         return self::$translated_fields;
-     }
+    public static function getTranslatedFields()
+    {
+        return self::$translated_fields;
+    }
 }

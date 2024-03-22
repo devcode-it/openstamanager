@@ -17,8 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Modules\Articoli\Articolo;
 use Models\Module;
+use Modules\Articoli\Articolo;
 
 $articolo = Articolo::find($result['idarticolo']);
 $width = $options['dir'] == 'uscita' && $articolo->fattore_um_secondaria ? 3 : 4;
@@ -52,7 +52,7 @@ echo '
 if ($options['dir'] == 'uscita' && $articolo->fattore_um_secondaria) {
     echo '
         <div class="col-md-3">
-            {[ "type": "number", "label": "'.tr('Q.tà secondaria').'", "name": "fattore_um_secondaria", "value": "'.abs((float) $articolo-> fattore_um_secondaria * $result['qta']).'", "icon-after": "'.$articolo->um_secondaria.'" ]}
+            {[ "type": "number", "label": "'.tr('Q.tà secondaria').'", "name": "fattore_um_secondaria", "value": "'.abs((float) $articolo->fattore_um_secondaria * $result['qta']).'", "icon-after": "'.$articolo->um_secondaria.'" ]}
         </div>
         
         <script>

@@ -21,6 +21,7 @@ namespace Plugins\ExportFE;
 
 use FluidXml\FluidXml;
 use GuzzleHttp\Client;
+use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Nazione;
 use Modules\Anagrafiche\Sede;
@@ -30,7 +31,6 @@ use Modules\Fatture\Gestori\Bollo;
 use Modules\Iva\Aliquota;
 use Modules\Pagamenti\Pagamento;
 use Uploads;
-use Models\Module;
 
 /**
  * Classe per la gestione della fatturazione elettronica in XML.
@@ -502,13 +502,12 @@ class FatturaElettronica
             'tipo' => tr('Tipologia (Azienda o Ente pubblico)'),
         ];
 
-        //Controllo p.iva valorizzata in caso l'anagrafica Azienda sia di tipologia 'Azienda' o codice fiscale in caso sia tipologia 'Ente pubblico'
-        if ($data['tipo']=='Azienda' || $data['tipo']=='Ente pubblico'){
-            $extraFields = ($data['tipo']=='Azienda') ? ['piva' => tr('Partita IVA')] : ['codice_fiscale' => tr('Codice Fiscale')];
+        // Controllo p.iva valorizzata in caso l'anagrafica Azienda sia di tipologia 'Azienda' o codice fiscale in caso sia tipologia 'Ente pubblico'
+        if ($data['tipo'] == 'Azienda' || $data['tipo'] == 'Ente pubblico') {
+            $extraFields = ($data['tipo'] == 'Azienda') ? ['piva' => tr('Partita IVA')] : ['codice_fiscale' => tr('Codice Fiscale')];
             $fields = array_merge($fields, $extraFields);
-        }
-        else if ($data['tipo']=='Privato'){
-            echo "<div class='alert alert-danger fade in alert-dismissible'><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">×</button><h4><i class=\"icon fa fa-ban\"></i>".tr('Errore')." </h4>".tr("L'Anagrafica Azienda non può avere tipologia \"Privato\"").".</div>";
+        } elseif ($data['tipo'] == 'Privato') {
+            echo "<div class='alert alert-danger fade in alert-dismissible'><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">×</button><h4><i class=\"icon fa fa-ban\"></i>".tr('Errore').' </h4>'.tr("L'Anagrafica Azienda non può avere tipologia \"Privato\"").'.</div>';
         }
 
         $missing = [];
@@ -540,8 +539,8 @@ class FatturaElettronica
         ];
 
         // Controllo p.iva valorizzata in caso l'anagrafica Azienda sia di tipologia 'Azienda' o codice fiscale in caso sia tipologia 'Ente pubblico' o 'Privato'
-        if (!empty($data['tipo'])){
-            $extraFields = ($data['tipo']=='Azienda') ? ['piva' => tr('Partita IVA')] : ['codice_fiscale' => tr('Codice Fiscale')];
+        if (!empty($data['tipo'])) {
+            $extraFields = ($data['tipo'] == 'Azienda') ? ['piva' => tr('Partita IVA')] : ['codice_fiscale' => tr('Codice Fiscale')];
             $fields = array_merge($fields, $extraFields);
         }
 

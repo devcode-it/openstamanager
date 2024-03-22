@@ -18,10 +18,10 @@
  */
 
 use Jurosh\PDFMerge\PDFMerger;
-use Mpdf\Mpdf;
-use Util\Query;
 use Models\Module;
 use Models\PrintTemplate;
+use Mpdf\Mpdf;
+use Util\Query;
 
 /**
  * Classe per la gestione delle informazioni relative alle stampe installate.

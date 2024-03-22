@@ -39,7 +39,7 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
 
         $joins[] = [
             'mg_articoli_lang' => 'mg_articoli_lang.id_record = mg_articoli.id AND mg_articoli_lang.id_lang = '.\Models\Locale::getDefault()->id,
-        ]; 
+        ];
 
         $joins[] = [
             '`mg_categorie` AS categorie',
@@ -49,7 +49,7 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
 
         $joins[] = [
             'mg_categorie_lang AS categorie_lang' => '`mg_categorie_lang`.`id_record` = `categorie`.`id` AND `mg_categorie_lang`.`id_lang` = '.\Models\Locale::getDefault()->id,
-        ]; 
+        ];
 
         $joins[] = [
             '`mg_categorie` AS sottocategorie',

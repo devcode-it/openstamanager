@@ -18,14 +18,14 @@
  */
 
 use Carbon\Carbon;
+use Models\Module;
+use Models\Plugin;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Gestori\Bollo;
 use Modules\Interventi\Intervento;
 use Modules\Iva\Aliquota;
 use Plugins\ExportFE\Interaction;
-use Models\Module;
-use Models\Plugin;
 
 include_once __DIR__.'/../../core.php';
 
@@ -52,26 +52,26 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione)) {
             echo '
 <div class="alert alert-info">
     <i class="fa fa-info"></i> '.tr("La dichiarazione d'intento _PROTOCOLLO_ ha raggiunto il massimale previsto di _MONEY_.", [
-            '_MONEY_' => moneyFormat(abs($fattura->dichiarazione->massimale)),
-            '_PROTOCOLLO_' => $fattura->dichiarazione->numero_protocollo,
-        ]).'.</b>
+                '_MONEY_' => moneyFormat(abs($fattura->dichiarazione->massimale)),
+                '_PROTOCOLLO_' => $fattura->dichiarazione->numero_protocollo,
+            ]).'.</b>
 </div>';
         } elseif ($diff < 0) {
             echo '
 <div class="alert alert-warning">
     <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento _PROTOCOLLO_ ha superato il massimale previsto di _MONEY_.", [
-        '_MONEY_' => moneyFormat(abs($diff)),
-        '_PROTOCOLLO_' => $fattura->dichiarazione->numero_protocollo,
-    ]).'.</b>
+                '_MONEY_' => moneyFormat(abs($diff)),
+                '_PROTOCOLLO_' => $fattura->dichiarazione->numero_protocollo,
+            ]).'.</b>
 </div>';
         } elseif ($diff_in_days < 0) {
             echo '
 <div class="alert alert-warning">
     <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento _PROTOCOLLO_ ha come data fine validità _SCADENZA_ mentre la fattura ha data _DATA_", [
-        '_SCADENZA_' => dateFormat($fattura->dichiarazione->data_fine),
-        '_DATA_' => dateFormat($fattura->data),
-        '_PROTOCOLLO_' => $fattura->dichiarazione->numero_protocollo,
-    ]).'.</b>
+                '_SCADENZA_' => dateFormat($fattura->dichiarazione->data_fine),
+                '_DATA_' => dateFormat($fattura->data),
+                '_PROTOCOLLO_' => $fattura->dichiarazione->numero_protocollo,
+            ]).'.</b>
 </div>';
         }
     } else {
@@ -79,8 +79,8 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione)) {
         echo '
 <div class="alert alert-warning">
     <i class="fa fa-warning"></i> '.tr("Attenzione nessuna aliq. IVA definita per la dichiarazione d'intento. _SETTING_", [
-    '_SETTING_' => Modules::link('Impostazioni', null, tr('Selezionala dalle impostazioni'), true, null, true, null, "&search=Iva per lettere d'intento"),
-]).'
+            '_SETTING_' => Modules::link('Impostazioni', null, tr('Selezionala dalle impostazioni'), true, null, true, null, "&search=Iva per lettere d'intento"),
+        ]).'
 </div>';
     }
 }
@@ -165,13 +165,14 @@ if ($dir == 'entrata' && $fattura->stato->getTranslation('name') == 'Bozza') {
 }
 // Verifica aggiuntive sulla sequenzialità dei numeri
 if ($dir == 'entrata') {
-
-    //Calcolo il numero previsto solo se la data della fattura è maggiore o uguale all'impostazione "Data inizio verifica contatore fattura di vendita" oppure l'impostazione non è valorizzata.
-    if (!empty(setting('Data inizio verifica contatore fattura di vendita')))
+    // Calcolo il numero previsto solo se la data della fattura è maggiore o uguale all'impostazione "Data inizio verifica contatore fattura di vendita" oppure l'impostazione non è valorizzata.
+    if (!empty(setting('Data inizio verifica contatore fattura di vendita'))) {
         $data_inizio_verifica_contatore = Carbon::createFromFormat('d/m/Y', setting('Data inizio verifica contatore fattura di vendita'))->format('Y-m-d');
-    if (strtotime($fattura->data) >= strtotime($data_inizio_verifica_contatore) || empty($data_inizio_verifica_contatore))
+    }
+    if (strtotime($fattura->data) >= strtotime($data_inizio_verifica_contatore) || empty($data_inizio_verifica_contatore)) {
         $numero_previsto = verifica_numero_fattura($fattura);
-    
+    }
+
     if (!empty($numero_previsto)) {
         echo '
 <div class="alert alert-warning">
@@ -181,15 +182,15 @@ if ($dir == 'entrata') {
         ]).'.</b>
 </div>';
     }
-    
+
     $data_fattura = new DateTime($fattura->data);
     $data_odierna = new DateTime();
     $differenza = $data_odierna->diff($data_fattura)->days;
 
-    if ($fattura->codice_stato_fe == 'NS' &&  $fattura->stato->getTranslation('name') != 'Non valida' && ($differenza > setting('Giorni validità fattura scartata'))) {
+    if ($fattura->codice_stato_fe == 'NS' && $fattura->stato->getTranslation('name') != 'Non valida' && ($differenza > setting('Giorni validità fattura scartata'))) {
         echo '
 <div class="alert alert-error">
-    <i class="fa fa-warning"></i> '.tr("Questa fattura è stata scartata e sono trascorsi i termini di reinvio, è necessario invalidare il documento.").'</b>
+    <i class="fa fa-warning"></i> '.tr('Questa fattura è stata scartata e sono trascorsi i termini di reinvio, è necessario invalidare il documento.').'</b>
     <button type="button" class="btn btn-xs btn-success" onclick="risolviStato()"><i class="fa fa-cog"></i> '.tr('Invalida il documento').'</button>
 </div>';
     }
@@ -226,9 +227,9 @@ foreach ($righe as $riga) {
     }
 }
 if ($righe_vuote) {
-        echo '
+    echo '
 <div class="alert alert-warning" id="righe-vuote">
-    <i class="fa fa-warning"></i> '.tr("Nel documento sono presenti delle righe con quantità a 0.").'</b>
+    <i class="fa fa-warning"></i> '.tr('Nel documento sono presenti delle righe con quantità a 0.').'</b>
 </div>';
 }
 
@@ -274,11 +275,11 @@ if ($righe_vuote) {
 
 <?php
 
-$query = 'SELECT *, `co_statidocumento`.`id` AS id, `colore` AS _bgcolor_, `co_statidocumento_lang`.`name` as descrizione FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')';
+$query = 'SELECT *, `co_statidocumento`.`id` AS id, `colore` AS _bgcolor_, `co_statidocumento_lang`.`name` as descrizione FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')';
 if (empty($record['is_fiscale'])) {
     $query .= " WHERE `name` = 'Bozza'";
 
-    $plugin = $dbo->fetchArray("SELECT `zz_plugins`.`id` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = ".prepare(\Models\Locale::getDefault()->id).") WHERE `name`='Fatturazione Elettronica' AND `idmodule_to` = ".prepare($id_module));
+    $plugin = $dbo->fetchArray('SELECT `zz_plugins`.`id` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).") WHERE `name`='Fatturazione Elettronica' AND `idmodule_to` = ".prepare($id_module));
     echo '<script>$("#link-tab_'.$plugin[0]['id'].'").addClass("disabled");</script>';
 }
 // Forzo il passaggio della fattura da Bozza ad Emessa per il corretto calcolo del numero.
@@ -305,10 +306,10 @@ $query .= ' ORDER BY `name`';
 
                 <?php
                 if ($dir == 'entrata') {
-                ?>
+                    ?>
 
                 <div class="col-md-2" <?php echo ($record['is_fiscale']) ? '' : 'hidden'; ?> >
-                    {[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "values": "query=SELECT `codice` as id, CONCAT_WS(' - ',`codice`, `name`) as text FROM `fe_stati_documento` LEFT JOIN `fe_stati_documento_lang` ON (`fe_stati_documento_lang`.`id_record` = `fe_stati_documento`.`codice` AND `fe_stati_documento_lang`.`id_lang` = <?php echo prepare(\Models\Locale::getDefault()->id); ?>)", "value": "$codice_stato_fe$", "disabled": <?php echo intval(Interaction::isEnabled() || ($record['stato'] == 'Bozza' && $abilita_genera)); ?>, "class": "unblockable", "help": "<?php echo (!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : ''; ?>" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "values": "query=SELECT `codice` as id, CONCAT_WS(' - ',`codice`, `name`) as text FROM `fe_stati_documento` LEFT JOIN `fe_stati_documento_lang` ON (`fe_stati_documento_lang`.`id_record` = `fe_stati_documento`.`codice` AND `fe_stati_documento_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>)", "value": "$codice_stato_fe$", "disabled": <?php echo intval(Interaction::isEnabled() || ($record['stato'] == 'Bozza' && $abilita_genera)); ?>, "class": "unblockable", "help": "<?php echo (!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : ''; ?>" ]}
                 </div>
 
                 <?php
@@ -329,7 +330,7 @@ if ($dir == 'entrata') {
 						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "clienti", "help": "<?php echo tr("In caso di autofattura indicare l'azienda: ").stripslashes($database->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')))['ragione_sociale']); ?>", "value": "$idanagrafica$" ]}
 <?php
 } else {
-?>
+    ?>
 						{[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "fornitori", "value": "$idanagrafica$" ]}
 <?php
 }
@@ -392,7 +393,7 @@ if ($dir == 'entrata') {
 				<div class="col-md-3">
 					<!-- Nella realtà la fattura accompagnatoria non può esistere per la fatturazione elettronica, in quanto la risposta dal SDI potrebbe non essere immediata e le merci in viaggio. Dunque si può emettere una documento di viaggio valido per le merci ed eventualmente una fattura pro-forma per l'incasso della stessa, emettendo infine la fattura elettronica differita. -->
 
-					{[ "type": "select", "label": "<?php echo tr('Tipo documento'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT_WS(' - ',`codice_tipo_documento_fe`, `name`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = <?php echo prepare(\Models\Locale::getDefault()->id); ?>) WHERE `dir`='<?php echo $dir; ?>' AND ((`reversed` = 0 AND `id_segment` ='<?php echo $record['id_segment']; ?>') OR `co_tipidocumento`.`id` = <?php echo $record['idtipodocumento']; ?>) ORDER BY `codice_tipo_documento_fe`", "value": "$idtipodocumento$", "readonly": <?php echo intval($record['stato'] != 'Bozza' && $record['stato'] != 'Annullata'); ?>, "help": "<?php echo ($database->fetchOne('SELECT tipo FROM an_anagrafiche WHERE idanagrafica = '.prepare($record['idanagrafica']))['tipo'] == 'Ente pubblico') ? 'FPA12 - fattura verso PA (Ente pubblico)' : 'FPR12 - fattura verso soggetti privati (Azienda o Privato)'; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tipo documento'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT_WS(' - ',`codice_tipo_documento_fe`, `name`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `dir`='<?php echo $dir; ?>' AND ((`reversed` = 0 AND `id_segment` ='<?php echo $record['id_segment']; ?>') OR `co_tipidocumento`.`id` = <?php echo $record['idtipodocumento']; ?>) ORDER BY `codice_tipo_documento_fe`", "value": "$idtipodocumento$", "readonly": <?php echo intval($record['stato'] != 'Bozza' && $record['stato'] != 'Annullata'); ?>, "help": "<?php echo ($database->fetchOne('SELECT tipo FROM an_anagrafiche WHERE idanagrafica = '.prepare($record['idanagrafica']))['tipo'] == 'Ente pubblico') ? 'FPA12 - fattura verso PA (Ente pubblico)' : 'FPR12 - fattura verso soggetti privati (Azienda o Privato)'; ?>" ]}
 				</div>
                 
 				<div class="col-md-3">
@@ -540,8 +541,8 @@ if ($dir == 'entrata') {
             <div class="row">
                 <div class="col-md-3">
                     {[ "type": "checkbox", "label": "'.tr('Marca da bollo automatica').'", "name": "bollo_automatico", "value": "'.intval(!isset($record['bollo'])).'", "help": "'.tr("Seleziona per impostare automaticamente l'importo della marca da bollo").'. '.tr('Applicata solo se il totale della fattura è maggiore di _MONEY_', [
-                    '_MONEY_' => moneyFormat(setting("Soglia minima per l'applicazione della marca da bollo")),
-                ]).'.", "placeholder": "'.tr('Bollo automatico').'" ]}
+        '_MONEY_' => moneyFormat(setting("Soglia minima per l'applicazione della marca da bollo")),
+    ]).'.", "placeholder": "'.tr('Bollo automatico').'" ]}
                 </div>
 
                 <div class="col-md-3 bollo">
@@ -586,7 +587,7 @@ if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Porto').'", "name": "idporto", "placeholder": "", "values": "query=SELECT `dt_porto`.`id`, `dt_porto_lang`.`name` as descrizione FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto`.`id` = `dt_porto_lang`.`id_record` AND `dt_porto_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') ORDER BY `name` ASC", "value": "$idporto$" ]}
+                    {[ "type": "select", "label": "'.tr('Porto').'", "name": "idporto", "placeholder": "", "values": "query=SELECT `dt_porto`.`id`, `dt_porto_lang`.`name` as descrizione FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto`.`id` = `dt_porto_lang`.`id_record` AND `dt_porto_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `name` ASC", "value": "$idporto$" ]}
                 </div>
 
                 <div class="col-md-3">
@@ -596,7 +597,7 @@ if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
 
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Tipo di spedizione').'", "name": "idspedizione", "values": "query=SELECT `dt_spedizione`.`id`, `dt_spedizione_lang`.`name` as descrizione, `esterno` FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione`.`id` = `dt_spedizione_lang`.`id_record` AND `dt_spedizione_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') ORDER BY `name` ASC", "value": "$idspedizione$" ]}
+                    {[ "type": "select", "label": "'.tr('Tipo di spedizione').'", "name": "idspedizione", "values": "query=SELECT `dt_spedizione`.`id`, `dt_spedizione_lang`.`name` as descrizione, `esterno` FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione`.`id` = `dt_spedizione_lang`.`id_record` AND `dt_spedizione_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `name` ASC", "value": "$idspedizione$" ]}
                 </div>
 
                 <div class="col-md-3">';
@@ -604,10 +605,10 @@ if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
         echo Modules::link('Anagrafiche', $record['idvettore'], null, null, 'class="pull-right"');
     }
     $esterno = $dbo->selectOne('dt_spedizione', 'esterno', [
-                        'id' => $record['idspedizione'],
-                    ])['esterno']; ?>
+        'id' => $record['idspedizione'],
+    ])['esterno']; ?>
 
-                    {[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo empty($esterno) || (!empty($esterno) && !empty($record['idvettore'])) ? 1 : 0; ?>, "required": <?php echo !empty($esterno) ?: 0; ?>, "icon-after": "add|<?php echo $id_modulo_anagrafiche ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo ($esterno and (intval(!$record['flag_completato']) || empty($record['idvettore']))) ? '' : 'disabled'; ?>", "class": "<?php echo empty($record['idvettore']) ? 'unblockable' : ''; ?>" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo empty($esterno) || (!empty($esterno) && !empty($record['idvettore'])) ? 1 : 0; ?>, "required": <?php echo !empty($esterno) ?: 0; ?>, "icon-after": "add|<?php echo $id_modulo_anagrafiche; ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo ($esterno and (intval(!$record['flag_completato']) || empty($record['idvettore']))) ? '' : 'disabled'; ?>", "class": "<?php echo empty($record['idvettore']) ? 'unblockable' : ''; ?>" ]}
                 </div>
 
 <script>
@@ -811,7 +812,7 @@ if (!$block_edit) {
             `dt_ddt`
             INNER JOIN `dt_causalet` ON `dt_causalet`.`id` = `dt_ddt`.`idcausalet`
             INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`
-            LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+            LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             LEFT JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
             INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
         WHERE 
@@ -829,7 +830,7 @@ if (!$block_edit) {
                 `or_ordini`
                 INNER JOIN `or_righe_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine`
                 INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`idstatoordine`
-                LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+                LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                 INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine`
             WHERE 
                 idanagrafica='.prepare($record['idanagrafica']).' 
@@ -965,10 +966,10 @@ if ($fattura->isFE()) {
                     div.addClass("alert-info").html("'.tr("Il file XML non contiene il nodo ''ImportoTotaleDocumento'': impossibile controllare corrispondenza dei totali").'.")
                 } else if (stored.toLocale() != calculated.toLocale()){
                     div.addClass("alert-warning").html("'.tr('Il totale del file XML non corrisponde a quello calcolato dal gestionale: previsto _XML_, calcolato _CALC_ (differenza _DIFF_)', [
-                        '_XML_' => '" + stored.toLocale() + " " + globals.currency + "',
-                        '_CALC_' => '" + calculated.toLocale() + " " + globals.currency + "',
-                        '_DIFF_' => '" + (calculated - stored).toLocale() + " " + globals.currency + "',
-                    ]).'.")
+        '_XML_' => '" + stored.toLocale() + " " + globals.currency + "',
+        '_CALC_' => '" + calculated.toLocale() + " " + globals.currency + "',
+        '_DIFF_' => '" + (calculated - stored).toLocale() + " " + globals.currency + "',
+    ]).'.")
                 }
 
             }

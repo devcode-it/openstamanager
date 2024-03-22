@@ -35,7 +35,7 @@ class SessioniInterventi extends AppResource
             ->select('zz_operations.id_record')
             ->distinct()
             ->join('zz_modules', 'zz_modules.id', '=', 'zz_operations.id_module')
-            ->leftJoin('zz_modules_lang', function ($join) use ($last_sync_at) {
+            ->leftJoin('zz_modules_lang', function ($join) {
                 $join->on('zz_modules.id', '=', 'zz_modules_lang.id_record')
                     ->where('zz_modules_lang.id_lang', '=', \Models\Locale::getDefault()->id);
             })
@@ -45,7 +45,6 @@ class SessioniInterventi extends AppResource
             ->where('zz_operations.created_at', '>', $last_sync_at)
             ->pluck('zz_operations.id_record')
             ->toArray();
-
     }
 
     public function getModifiedRecords($last_sync_at)

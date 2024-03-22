@@ -18,8 +18,8 @@
  */
 
 include_once __DIR__.'/../../../core.php';
-use Models\Plugin;
 use Models\Module;
+use Models\Plugin;
 
 $mesi = [
     1 => 'Gennaio',
@@ -116,10 +116,10 @@ foreach ($pianificazioni as $pianificazione) {
                     <td>
                         <div>'.moneyFormat($pianificazione->totale).'</div>
                         <small>'.tr('Rata _IND_/_NUM_ (totale: _TOT_)', [
-                    '_IND_' => numberFormat($pianificazione->getNumeroPianificazione(), 0),
-                    '_NUM_' => numberFormat($numero_pianificazioni, 0),
-                    '_TOT_' => moneyFormat($contratto->totale),
-                ]).
+        '_IND_' => numberFormat($pianificazione->getNumeroPianificazione(), 0),
+        '_NUM_' => numberFormat($numero_pianificazioni, 0),
+        '_TOT_' => moneyFormat($contratto->totale),
+    ]).
             '</small>
                     </td>';
 

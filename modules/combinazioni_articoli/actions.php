@@ -12,7 +12,7 @@ switch (filter('op')) {
         // Ricerca combinazione con nome indicato
         $combinazione_new = (new Combinazione())->getByField('name', $nome);
 
-        if (!empty($combinazione_new) && !empty($id_record) && $combinazione_new != $id_record){
+        if (!empty($combinazione_new) && !empty($id_record) && $combinazione_new != $id_record) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altra combinazione.'));
         } else {
             if (empty($combinazione)) {
@@ -27,7 +27,7 @@ switch (filter('op')) {
 
             $id_record = $combinazione->id;
 
-            $database->query('INSERT INTO `mg_combinazioni_lang` (`id_record`, `id_lang`, `name`) VALUES ('.$id_record.', '.prepare(\Models\Locale::getDefault()->id).', \''.post('nome').'\')');
+            $database->query('INSERT INTO `mg_combinazioni_lang` (`id_record`, `id_lang`, `name`) VALUES ('.$id_record.', '.prepare(Models\Locale::getDefault()->id).', \''.post('nome').'\')');
 
             // Selezione attributi per la combinazione
             $combinazione->attributi()->sync((array) post('attributi'));

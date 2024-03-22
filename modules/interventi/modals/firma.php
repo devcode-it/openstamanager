@@ -19,8 +19,8 @@
 
 include_once __DIR__.'/../../../core.php';
 
-use Modules\Interventi\Intervento;
 use Models\PrintTemplate;
+use Modules\Interventi\Intervento;
 
 $id_records = explode(';', get('id_records'));
 $id_print = setting('Stampa per anteprima e firma');
@@ -68,9 +68,9 @@ if ($interventi_da_firmare) {
                         <tr>
                             <td>
                                 '.Modules::link('Interventi', $intervento->id, tr('Intervento num. _NUM_ del _DATE_', [
-                        '_NUM_' => $intervento->codice,
-                        '_DATE_' => Translator::dateToLocale($intervento->inizio),
-                    ])).'
+            '_NUM_' => $intervento->codice,
+            '_DATE_' => Translator::dateToLocale($intervento->inizio),
+        ])).'
                             </td>
                             <td class="text-center">
                                 '.Prints::getLink($template, $id, 'btn btn-xs btn-primary', '', 'fa fa-print').'
@@ -110,9 +110,9 @@ if ($interventi_firmati) {
                         <tr>
                             <td>
                                 '.Modules::link('Interventi', $intervento->id, tr('Intervento num. _NUM_ del _DATE_', [
-                        '_NUM_' => $intervento->codice,
-                        '_DATE_' => Translator::dateToLocale($intervento->inizio),
-                    ])).'
+            '_NUM_' => $intervento->codice,
+            '_DATE_' => Translator::dateToLocale($intervento->inizio),
+        ])).'
                             </td>
                             <td class="text-center">
                                 '.Prints::getLink($template, $id, 'btn btn-xs btn-primary', '', 'fa fa-print').'
@@ -152,9 +152,9 @@ if ($interventi_completati) {
                         <tr>
                             <td>
                                 '.Modules::link('Interventi', $intervento->id, tr('Intervento num. _NUM_ del _DATE_', [
-                        '_NUM_' => $intervento->codice,
-                        '_DATE_' => Translator::dateToLocale($intervento->inizio),
-                    ])).'
+            '_NUM_' => $intervento->codice,
+            '_DATE_' => Translator::dateToLocale($intervento->inizio),
+        ])).'
                             </td>
                             <td class="text-center">
                                 '.Prints::getLink($template, $id, 'btn btn-xs btn-primary', '', 'fa fa-print').'

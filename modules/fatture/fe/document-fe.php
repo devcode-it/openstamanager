@@ -173,8 +173,8 @@ foreach ($documenti as $nome => $info) {
         <tr class="fifth-level" title="RiferimentoNumeroLinea-'.$nome.'--id-">
             <td style="vertical-align: middle;">
                 '.str_repeat($space, 4).$info['code'].'.1 RiferimentoNumeroLinea - '.tr('Riga _NUM_', [
-            '_NUM_' => '-num-',
-        ]).'
+        '_NUM_' => '-num-',
+    ]).'
             </td>
             <td>
                 {[ "type": "number", "name": "'.$nome.'[-id-][riferimento_linea][]", "value": "", "maxlength": 4, "decimals": 0 ]}

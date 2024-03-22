@@ -25,7 +25,7 @@ switch (filter('op')) {
         $vettore = post('esterno');
         $predefined = post('predefined');
 
-        if ($dbo->fetchNum('SELECT * FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione`.`id`=`dt_spedizione_lang`.`idrecord` AND `dt_spedizione_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).') WHERE `name`='.prepare($descrizione).' AND `dt_spedizione`.`id`!='.prepare($id_record)) == 0) {
+        if ($dbo->fetchNum('SELECT * FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione`.`id`=`dt_spedizione_lang`.`idrecord` AND `dt_spedizione_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `name`='.prepare($descrizione).' AND `dt_spedizione`.`id`!='.prepare($id_record)) == 0) {
             if (!empty($predefined)) {
                 $dbo->query('UPDATE `dt_spedizione` SET `predefined` = 0');
             }
@@ -36,7 +36,7 @@ switch (filter('op')) {
 
             $dbo->update('dt_spedizione_lang', [
                 'name' => $descrizione,
-            ], ['id_record' => $id_record, 'id_lang' => \Models\Locale::getDefault()->id]);
+            ], ['id_record' => $id_record, 'id_lang' => Models\Locale::getDefault()->id]);
 
             flash()->info(tr('Salvataggio completato!'));
         } else {
@@ -57,7 +57,7 @@ switch (filter('op')) {
 
             $dbo->insert('dt_spedizione_lang', [
                 'id_record' => $id_record,
-                'id_lang' => \Models\Locale::getDefault()->id,
+                'id_lang' => Models\Locale::getDefault()->id,
                 'name' => $descrizione,
             ]);
 

@@ -48,7 +48,7 @@ class Componente extends Model
      *
      * @return self
      */
-    public static function build(Impianto $impianto = null, Articolo $articolo = null, $data_registrazione = null)
+    public static function build(?Impianto $impianto = null, ?Articolo $articolo = null, $data_registrazione = null)
     {
         $model = new static();
 

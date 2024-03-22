@@ -22,6 +22,7 @@ namespace Modules\Fatture;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Traits\RecordTrait;
+
 class Tipo extends Model
 {
     use SimpleModelTrait;
@@ -41,6 +42,7 @@ class Tipo extends Model
 
         return $model;
     }
+
     public function fatture()
     {
         return $this->hasMany(Fattura::class, 'idtipodocumento');
@@ -51,7 +53,8 @@ class Tipo extends Model
         return '';
     }
 
-    public static function getTranslatedFields(){
+    public static function getTranslatedFields()
+    {
         return self::$translated_fields;
     }
 }

@@ -30,7 +30,7 @@ class Receiver extends Model
 
     /* Relazioni Eloquent */
 
-    public static function build(Mail $mail = null, $address = null, $type = null)
+    public static function build(?Mail $mail = null, $address = null, $type = null)
     {
         $model = new static();
 

@@ -17,9 +17,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Models\Upload;
 use Models\Module;
 use Models\Plugin;
+use Models\Upload;
 
 /**
  * Classe per la gestione degli upload del progetto.
@@ -100,18 +100,17 @@ class Uploads
                 'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
                 'id_record' => $data['id_record'],
             ]);
-            
-            if(!empty($file)){
+
+            if (!empty($file)) {
                 $name = $file['name'];
-                
+
                 $upload = Upload::find($file['id']);
                 $upload->delete();
-                
+
                 return $name;
-            }else{
+            } else {
                 return null;
             }
-
         }
 
         return null;

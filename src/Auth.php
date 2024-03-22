@@ -18,8 +18,8 @@
  */
 
 use API\Response as API;
-use Models\User;
 use Models\Group;
+use Models\User;
 
 /**
  * Classe per la gestione delle utenze.
@@ -267,7 +267,7 @@ class Auth extends Util\Singleton
             if (!$this->isAdmin()) {
                 $group = $this->getUser()['gruppo'];
 
-                $query .= " AND `id` IN (SELECT `idmodule` FROM `zz_permissions` WHERE `idgruppo` = ".(new Group())->getByField('name', $group)." AND `permessi` IN ('r', 'rw'))";
+                $query .= ' AND `id` IN (SELECT `idmodule` FROM `zz_permissions` WHERE `idgruppo` = '.(new Group())->getByField('name', $group)." AND `permessi` IN ('r', 'rw'))";
             }
 
             $database = database();
@@ -475,7 +475,7 @@ class Auth extends Util\Singleton
         $database = database();
 
         try {
-            $results = $database->fetchArray('SELECT `id`, `idanagrafica`, `username`, (SELECT `name` FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON `zz_groups`.`id`=`zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).' WHERE `zz_groups`.`id` = `zz_users`.`idgruppo`) AS gruppo FROM `zz_users` WHERE `id` = :user_id AND `enabled` = 1 LIMIT 1', [
+            $results = $database->fetchArray('SELECT `id`, `idanagrafica`, `username`, (SELECT `name` FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON `zz_groups`.`id`=`zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).' WHERE `zz_groups`.`id` = `zz_users`.`idgruppo`) AS gruppo FROM `zz_users` WHERE `id` = :user_id AND `enabled` = 1 LIMIT 1', [
                 ':user_id' => $user_id,
             ]);
 

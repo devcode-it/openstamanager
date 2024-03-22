@@ -23,6 +23,7 @@ use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Anagrafiche\Anagrafica;
 use Traits\RecordTrait;
+
 class Tipo extends Model
 {
     use SimpleModelTrait;
@@ -37,7 +38,6 @@ class Tipo extends Model
      * Crea un nuovo tipo di intervento.
      *
      * @param string $codice
-     * @param string $descrizione
      *
      * @return self
      */
@@ -57,6 +57,7 @@ class Tipo extends Model
 
         return $model;
     }
+
     public function fixTecnici()
     {
         // Fix per le relazioni con i tecnici
@@ -87,13 +88,14 @@ class Tipo extends Model
     {
         return $this->hasMany(Intervento::class, 'idtipointervento');
     }
-    
+
     public function getModuleAttribute()
     {
         return '';
     }
 
-    public static function getTranslatedFields(){
+    public static function getTranslatedFields()
+    {
         return self::$translated_fields;
     }
 }

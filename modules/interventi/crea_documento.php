@@ -19,11 +19,11 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Models\Module;
 use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
 use Modules\Interventi\Intervento;
 use Modules\Ordini\Ordine;
-use Models\Module;
 
 $documento = Intervento::find($id_record);
 $id_module = (new Module())->getByField('name', $documento->module);

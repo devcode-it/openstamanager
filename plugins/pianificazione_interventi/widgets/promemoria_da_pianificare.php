@@ -18,8 +18,8 @@
  */
 
 use Carbon\Carbon;
-use Plugins\PianificazioneInterventi\Promemoria;
 use Models\Module;
+use Plugins\PianificazioneInterventi\Promemoria;
 
 include_once __DIR__.'/../../../core.php';
 

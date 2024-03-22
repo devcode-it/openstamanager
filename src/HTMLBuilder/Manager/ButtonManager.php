@@ -19,9 +19,9 @@
 
 namespace HTMLBuilder\Manager;
 
+use Models\PrintTemplate;
 use Modules\Emails\Template as TemplateEmail;
 use Modules\SMS\Template as TemplateSMS;
-use Models\PrintTemplate;
 
 /**
  * @since 2.4
@@ -119,7 +119,7 @@ class ButtonManager implements ManagerInterface
         if ($options['type'] == 'print') {
             $results = \Prints::getModulePrints($options['id_module']);
         } elseif ($options['type'] == 'email') {
-            $results = (TemplateEmail::where('id_module', $options['id_module']))->with(['translations' => function($query) {
+            $results = TemplateEmail::where('id_module', $options['id_module'])->with(['translations' => function ($query) {
                 $query->orderBy('name');
             }])->get()->toArray();
         } elseif ($options['type'] == 'sms') {
@@ -167,14 +167,14 @@ class ButtonManager implements ManagerInterface
             foreach ($list as $i => $element) {
                 $result .= '
         <li>'.$this->link([
-            'type' => $options['type'],
-            'id' => $element['id'],
-            'id_module' => $options['id_module'],
-            'id_record' => $options['id_record'],
-            'class' => false,
-            'parameters' => $options['parameters'],
-            'html_id' => $options['html_id'].'_'.$i,
-        ]).'</li>';
+                    'type' => $options['type'],
+                    'id' => $element['id'],
+                    'id_module' => $options['id_module'],
+                    'id_record' => $options['id_record'],
+                    'class' => false,
+                    'parameters' => $options['parameters'],
+                    'html_id' => $options['html_id'].'_'.$i,
+                ]).'</li>';
             }
 
             $result .= '

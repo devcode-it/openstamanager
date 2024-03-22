@@ -81,9 +81,9 @@ if (!$pianificazioni->isEmpty()) {
             $is_pianificato = true;
             echo '
                     '.Modules::link('Fatture di vendita', $fattura->id, tr('Fattura num. _NUM_ del _DATE_', [
-                    '_NUM_' => $fattura->numero_esterno,
-                    '_DATE_' => dateFormat($fattura->data),
-                ])).' (<i class="'.$fattura->stato->icona.'"></i> '.$fattura->stato->getTranslation('name').')';
+                '_NUM_' => $fattura->numero_esterno,
+                '_DATE_' => dateFormat($fattura->data),
+            ])).' (<i class="'.$fattura->stato->icona.'"></i> '.$fattura->stato->getTranslation('name').')';
         } else {
             echo '
                     <i class="fa fa-hourglass-start"></i> '.tr('Non ancora fatturato');

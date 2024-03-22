@@ -18,6 +18,7 @@
  */
 
 namespace HTMLBuilder\Wrapper;
+
 use Models\Module;
 
 /**

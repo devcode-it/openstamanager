@@ -62,11 +62,11 @@ foreach ($revisioni as $i => $revisione) {
             </td>
             <td>
                 '.tr('(REV. _NUM_) _DESC_ creata il _DATE_ alle _TIME_', [
-                    '_NUM_' => $revisione['numero_revision'],
-                    '_DESC_' => $revisione['descrizione_revision'],
-                    '_DATE_' => dateFormat($revisione['created_at']),
-                    '_TIME_' => timeFormat($revisione['created_at']),
-                ])."
+        '_NUM_' => $revisione['numero_revision'],
+        '_DESC_' => $revisione['descrizione_revision'],
+        '_DATE_' => dateFormat($revisione['created_at']),
+        '_TIME_' => timeFormat($revisione['created_at']),
+    ])."
             </td>
             <td class='text-center'>
                 <button type='button' class='btn btn-danger ".$disabled."' onclick='delete_revision(".$revisione['id'].")' ".$disabled.">

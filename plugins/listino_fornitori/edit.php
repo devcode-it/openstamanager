@@ -17,9 +17,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Models\Module;
 use Plugins\ListinoClienti\DettaglioPrezzo;
 use Plugins\ListinoFornitori\DettaglioFornitore;
-use Models\Module;
 
 include_once __DIR__.'/../../core.php';
 
@@ -109,8 +109,8 @@ if (!$fornitori_disponibili->isEmpty()) {
 
             <td class="text-right">
                 '.tr('_NUM_ gg', [
-                    '_NUM_' => numberFormat($dettaglio['giorni_consegna'], 0),
-                ]).'
+                '_NUM_' => numberFormat($dettaglio['giorni_consegna'], 0),
+            ]).'
             </td>';
         } else {
             echo '

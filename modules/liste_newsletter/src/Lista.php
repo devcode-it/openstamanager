@@ -39,6 +39,7 @@ class Lista extends Model
         'name',
         'description',
     ];
+
     public static function build($name = null)
     {
         $model = new static();
@@ -133,7 +134,8 @@ class Lista extends Model
         return 'Liste';
     }
 
-    public static function getTranslatedFields(){
+    public static function getTranslatedFields()
+    {
         return self::$translated_fields;
     }
 }

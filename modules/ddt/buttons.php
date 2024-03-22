@@ -64,21 +64,21 @@ function completaTrasporto() {
 }
 
 // Informazioni sull'importabilità del DDT
-$stati = $database->fetchArray('SELECT `name` as descrizione FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` ='.prepare(\Models\Locale::getDefault()->id).') WHERE `is_fatturabile` = 1');
+$stati = $database->fetchArray('SELECT `name` as descrizione FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `is_fatturabile` = 1');
 foreach ($stati as $stato) {
     $stati_importabili[] = $stato['descrizione'];
 }
 
-$causali = $database->fetchArray('SELECT `name` FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(\Models\Locale::getDefault()->id).') WHERE `is_importabile` = 1');
+$causali = $database->fetchArray('SELECT `name` FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `is_importabile` = 1');
 foreach ($causali as $causale) {
     $causali_importabili[] = $causale['name'];
 }
 
 echo '
 <div class="tip" data-toggle="tooltip" title="'.tr('Il ddt è fatturabile solo se si trova negli stati _STATE_LIST_ e la relativa causale è una delle seguenti: _CAUSALE_LIST_', [
-        '_STATE_LIST_' => implode(', ', $stati_importabili),
-        '_CAUSALE_LIST_' => implode(', ', $causali_importabili),
-    ]).'">
+    '_STATE_LIST_' => implode(', ', $stati_importabili),
+    '_CAUSALE_LIST_' => implode(', ', $causali_importabili),
+]).'">
     <button class="btn btn-info '.($ddt->isImportabile() ? '' : 'disabled').'" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-toggle="modal" data-title="'.tr('Crea ').($ddt->reversed ? 'nota di credito' : ($dir == 'entrata' ? 'fattura di vendita' : 'fattura di acquisto')).'"><i class="fa fa-magic"></i> '.tr('Crea ').($ddt->reversed ? 'nota di credito' : ($dir == 'entrata' ? 'fattura di vendita' : 'fattura di acquisto')).'
     </button>
 </div>';

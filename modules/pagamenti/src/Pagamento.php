@@ -24,6 +24,7 @@ use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Fatture\Fattura;
 use Traits\RecordTrait;
+
 class Pagamento extends Model
 {
     use SimpleModelTrait;
@@ -33,6 +34,7 @@ class Pagamento extends Model
     protected static $translated_fields = [
         'name',
     ];
+
     public static function build($codice = null)
     {
         $model = new static();
@@ -158,7 +160,8 @@ class Pagamento extends Model
         return 'Pagamenti';
     }
 
-    public static function getTranslatedFields(){
+    public static function getTranslatedFields()
+    {
         return self::$translated_fields;
     }
 }

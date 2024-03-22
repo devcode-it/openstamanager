@@ -19,9 +19,9 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Util\Zip;
 use Models\Module;
 use Models\Plugin;
+use Util\Zip;
 
 if (!setting('Attiva aggiornamenti')) {
     exit(tr('Accesso negato'));
@@ -92,7 +92,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
                 'name' => $info['name'],
                 'title' => !empty($info['title']) ? $info['title'] : $info['name'],
                 'id_record' => $id_record,
-                'id_lang' => \Models\Locale::getDefault()->id,
+                'id_lang' => Models\Locale::getDefault()->id,
             ]));
 
             flash()->error(tr('Installazione completata!'));
@@ -158,7 +158,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
                 'name' => $info['name'],
                 'title' => !empty($info['title']) ? $info['title'] : $info['name'],
                 'id_record' => $id_record,
-                'id_lang' => \Models\Locale::getDefault()->id,
+                'id_lang' => Models\Locale::getDefault()->id,
             ]));
             flash()->error(tr('Installazione completata!'));
         } else {

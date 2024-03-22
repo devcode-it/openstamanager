@@ -91,38 +91,40 @@ class Upload extends Model
         $model->id_plugin = !empty($data['id_plugin']) ? $data['id_plugin'] : null;
         $model->id_record = !empty($data['id_record']) ? $data['id_record'] : null;
 
-        //Caricamento file con interfaccia di upload
-        
-        //Verifico qual'è il metodo predefinito al momento
-        if(!empty($data['id_adapter'])){
+        // Caricamento file con interfaccia di upload
+
+        // Verifico qual'è il metodo predefinito al momento
+        if (!empty($data['id_adapter'])) {
             $adapter_config = FileAdapter::find($data['id_adapter']);
-        }else{
+        } else {
             $adapter_config = FileAdapter::getDefaultConnector();
         }
         $class = $adapter_config->class;
 
-        //Costruisco l'oggetto che mi permetterà di effettuare il caricamento
+        // Costruisco l'oggetto che mi permetterà di effettuare il caricamento
         $adapter = new $class($adapter_config->options);
         $filesystem = new OSMFilesystem($adapter);
 
-        //Su source arriva direttamente il contenuto o il formato file
+        // Su source arriva direttamente il contenuto o il formato file
         if (is_array($source)) {
-            //Caricamento con l'interfaccia di upload
-            try{
+            // Caricamento con l'interfaccia di upload
+            try {
                 $file = $filesystem->upload($model->directory, $original_name, file_get_contents($source['tmp_name']));
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 flash()->error(tr('Impossibile creare il file!'));
+
                 return false;
             }
 
             // Aggiornamento dimensione fisica e responsabile del caricamento
             $model->size = $source['size'];
-        }else{
-            //Caricamento con l'interfaccia di upload
-            try{
+        } else {
+            // Caricamento con l'interfaccia di upload
+            try {
                 $file = $filesystem->upload($model->directory, $original_name, $source);
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 flash()->error(tr('Impossibile creare il file!'));
+
                 return false;
             }
         }
@@ -218,11 +220,11 @@ class Upload extends Model
         $adapter_config = FileAdapter::find($this->id_adapter);
         $class = $adapter_config->class;
 
-        //Costruisco l'oggetto che mi permetterà di effettuare il caricamento
+        // Costruisco l'oggetto che mi permetterà di effettuare il caricamento
         $adapter = new $class($adapter_config->options);
         $filesystem = new OSMFilesystem($adapter);
 
-        $filesystem->delete($this->directory."/".$this->filename);
+        $filesystem->delete($this->directory.'/'.$this->filename);
 
         return parent::delete();
     }
@@ -243,13 +245,13 @@ class Upload extends Model
         $adapter_config = FileAdapter::find($this->id_adapter);
         $class = $adapter_config->class;
 
-        //Costruisco l'oggetto che mi permetterà di effettuare il caricamento
+        // Costruisco l'oggetto che mi permetterà di effettuare il caricamento
         $adapter = new $class($adapter_config->options);
         $filesystem = new OSMFilesystem($adapter);
 
         $source = $this->get_contents();
 
-        $file = $filesystem->read($this->directory."/".$this->filename);
+        $file = $filesystem->read($this->directory.'/'.$this->filename);
 
         $result = self::build($file, $data, $this->getTranslation('name'), $this->category);
 
@@ -273,15 +275,16 @@ class Upload extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function get_contents(){
+    public function get_contents()
+    {
         $adapter_config = FileAdapter::find($this->id_adapter);
         $class = $adapter_config->class;
 
-        //Costruisco l'oggetto che mi permetterà di effettuare il caricamento
+        // Costruisco l'oggetto che mi permetterà di effettuare il caricamento
         $adapter = new $class($adapter_config->options);
         $filesystem = new OSMFilesystem($adapter);
 
-        return $filesystem->read($this->directory."/".$this->filename);
+        return $filesystem->read($this->directory.'/'.$this->filename);
     }
 
     /**
@@ -300,6 +303,47 @@ class Upload extends Model
     public function getLocalFileurlAttribute()
     {
         return str_replace('\\', '/', $this->local_filepath);
+    }
+
+    /**
+     * @return array
+     */
+    public function getInfoAttribute()
+    {
+        if (!isset($this->file_info)) {
+            $filepath = $this->local_filepath;
+            $infos = self::getInfo($filepath);
+
+            $this->file_info = $infos;
+        }
+
+        return $this->file_info;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getExtensionAttribute()
+    {
+        $extension = pathinfo($this->filename, PATHINFO_EXTENSION);
+        $extension = strtolower($extension);
+
+        return $extension;
+    }
+
+    /**
+     * Restituisce i contenuti del file locale.
+     *
+     * @return false|string
+     */
+    public function getContent()
+    {
+        return file_get_contents($this->local_filepath);
+    }
+
+    public static function getInfo($file)
+    {
+        return pathinfo($file);
     }
 
     /**
@@ -335,45 +379,5 @@ class Upload extends Model
             $constraint->aspectRatio();
         });
         $img->save(slashes($directory.'/'.$info['filename'].'_thumb100.'.$info['extension']));
-    }
-
-    /**
-     * @return array
-     */
-    public function getInfoAttribute()
-    {
-        if (!isset($this->file_info)) {
-            $filepath = $this->local_filepath;
-            $infos = self::getInfo($filepath);
-
-            $this->file_info = $infos;
-        }
-
-        return $this->file_info;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getExtensionAttribute()
-    {
-        $extension = pathinfo($this->filename, PATHINFO_EXTENSION);
-        $extension = strtolower($extension);
-        return $extension;
-    }
-
-    /**
-     * Restituisce i contenuti del file locale.
-     *
-     * @return false|string
-     */
-    public function getContent()
-    {
-        return file_get_contents($this->local_filepath);
-    }
-
-    public static function getInfo($file)
-    {
-        return pathinfo($file);
     }
 }

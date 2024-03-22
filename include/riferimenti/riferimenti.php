@@ -20,8 +20,8 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\DDT\DDT;
-use Modules\Ordini\Ordine;
 use Modules\DDT\Stato as StatoDDT;
+use Modules\Ordini\Ordine;
 use Modules\Ordini\Stato as StatoOrdine;
 
 // Informazioni generali sulla riga

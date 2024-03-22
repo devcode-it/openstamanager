@@ -21,8 +21,8 @@ namespace API\App\v1;
 
 use API\App\AppResource;
 use Illuminate\Database\Eloquent\Builder;
-use Modules\Impianti\Impianto;
 use Modules\Anagrafiche\Tipo;
+use Modules\Impianti\Impianto;
 
 class Impianti extends AppResource
 {
@@ -34,12 +34,12 @@ class Impianti extends AppResource
             ->select('zz_operations.id_record')
             ->distinct()
             ->join('zz_modules', 'zz_modules.id', '=', 'zz_operations.id_module')
-            ->leftJoin('zz_modules_lang', function ($join) use ($last_sync_at) {
+            ->leftJoin('zz_modules_lang', function ($join) {
                 $join->on('zz_modules.id', '=', 'zz_modules_lang.id_record')
                     ->where('zz_modules_lang.id_lang', '=', \Models\Locale::getDefault()->id);
             })
-            ->where('zz_modules_lang.name', '=', "Impianti")
-            ->where('zz_operations.op', '=', "delete")
+            ->where('zz_modules_lang.name', '=', 'Impianti')
+            ->where('zz_operations.op', '=', 'delete')
             ->whereNotNull('zz_operations.options')
             ->where('zz_operations.created_at', '>', $last_sync_at)
             ->pluck('id_record')

@@ -6,6 +6,7 @@ use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Traits\RecordTrait;
+
 class Attributo extends Model
 {
     use SimpleModelTrait;
@@ -13,7 +14,6 @@ class Attributo extends Model
     use RecordTrait;
 
     protected $table = 'mg_attributi';
-
 
     protected static $translated_fields = [
         'name',
@@ -34,13 +34,13 @@ class Attributo extends Model
         return $this->hasMany(ValoreAttributo::class, 'id_attributo');
     }
 
-
     public function getModuleAttribute()
     {
         return 'Attributi combinazioni';
     }
 
-    public static function getTranslatedFields(){
+    public static function getTranslatedFields()
+    {
         return self::$translated_fields;
     }
 }

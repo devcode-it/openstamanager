@@ -19,9 +19,9 @@
 
 include_once __DIR__.'/../../../core.php';
 
-use Modules\Preventivi\Stato;
 use Models\Module;
 use Modules\Preventivi\Preventivo;
+use Modules\Preventivi\Stato;
 
 $id_module = (new Module())->getByField('name', 'Preventivi');
 $stati = Stato::where('is_fatturabile', 1)->pluck('id')->toArray();

@@ -39,7 +39,7 @@ class Module extends Model
     use NoteTrait;
     use ChecklistTrait;
     use RecordTrait;
-    
+
     protected $table = 'zz_modules';
 
     protected static $translated_fields = [
@@ -123,7 +123,7 @@ class Module extends Model
     {
         $user = \Auth::user();
 
-        $views = database()->fetchArray('SELECT * FROM `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views`.`id` = `zz_views_lang`.`id_record` AND `zz_views_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `id_module` = :module_id AND
+        $views = database()->fetchArray('SELECT * FROM `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views`.`id` = `zz_views_lang`.`id_record` AND `zz_views_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') WHERE `id_module` = :module_id AND
         `zz_views`.`id` IN (
             SELECT `id_vista` FROM `zz_group_view` WHERE `id_gruppo` = (
                 SELECT `idgruppo` FROM `zz_users` WHERE `id` = :user_id
@@ -182,7 +182,7 @@ class Module extends Model
             ->selectRaw('zz_modules.*, zz_modules_lang.title as title')
             ->join('zz_modules_lang', function ($join) {
                 $join->on('zz_modules.id', '=', 'zz_modules_lang.id_record')
-                    ->where('zz_modules_lang.id_lang', '=', \Models\Locale::getDefault()->id);
+                    ->where('zz_modules_lang.id_lang', '=', Locale::getDefault()->id);
             })
             ->orderBy('order');
     }
@@ -208,13 +208,23 @@ class Module extends Model
             ->select('zz_modules.*', 'zz_modules_lang.title as title')
             ->join('zz_modules_lang', function ($join) {
                 $join->on('zz_modules.id', '=', 'zz_modules_lang.id_record')
-                    ->where('zz_modules_lang.id_lang', '=', \Models\Locale::getDefault()->id);
+                    ->where('zz_modules_lang.id_lang', '=', Locale::getDefault()->id);
             })
             ->withoutGlobalScope('enabled')
             ->whereNull('parent')
             ->orderBy('order')
             ->get();
-            }
+    }
+
+    public function getModuleAttribute()
+    {
+        return '';
+    }
+
+    public static function getTranslatedFields()
+    {
+        return self::$translated_fields;
+    }
 
     protected static function boot()
     {
@@ -228,14 +238,4 @@ class Module extends Model
             $builder->with('groups');
         });
     }
-        
-    public function getModuleAttribute()
-    {
-        return '';
-    }
-
-    public static function getTranslatedFields(){
-        return self::$translated_fields;
-    }
-
 }

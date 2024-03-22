@@ -32,10 +32,10 @@ echo '
     <div class="col-md-6 col-md-offset-3">
         <div class="input-group">
             '.input([
-                'type' => 'text',
-                'name' => 'ricerca_impostazioni',
-                'value' => $ricerca,
-            ]).'
+    'type' => 'text',
+    'name' => 'ricerca_impostazioni',
+    'value' => $ricerca,
+]).'
             <div class="input-group-btn">
                 <button class="btn btn-primary" type="button">
                     <span class="fa fa-search"></span>
@@ -59,8 +59,8 @@ foreach ($gruppi as $key => $gruppo) {
 <div class="box box-primary collapsed-box" title="'.$gruppo['nome'].'">
     <div class="box-header clickable" id="impostazioni-'.$key.'">
         <div class="box-title">'.tr('_SEZIONE_', [
-            '_SEZIONE_' => $gruppo['nome'],
-        ]).'</div>
+        '_SEZIONE_' => $gruppo['nome'],
+    ]).'</div>
         <div class="box-tools pull-right">
             <div class="badge">'.$gruppo['numero'].'</div>
         </div>

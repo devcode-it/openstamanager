@@ -19,6 +19,7 @@
 
 use Models\Module;
 use Models\Plugin;
+
 include_once __DIR__.'/../../core.php';
 
 // Lettura dei parametri di interesse
@@ -206,7 +207,7 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "id", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `in_statiintervento_lang`.`name` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `name`", "value": "'.($origine_dashboard ? setting('Stato predefinito dell\'attività da Dashboard') : setting('Stato predefinito dell\'attività')).'" ]}
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "id", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `in_statiintervento_lang`.`name` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `name`", "value": "'.($origine_dashboard ? setting('Stato predefinito dell\'attività da Dashboard') : setting('Stato predefinito dell\'attività')).'" ]}
         </div>
     </div>
 
@@ -410,7 +411,7 @@ echo '
 
             <div class="row ricorrenza">
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Stato ricorrenze').'", "name": "idstatoricorrenze", "values": "query=SELECT `in_statiintervento`.`id`,`in_statiintervento_lang`.`name` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `is_completato`=0 ORDER BY `name`" ]}
+                    {[ "type": "select", "label": "'.tr('Stato ricorrenze').'", "name": "idstatoricorrenze", "values": "query=SELECT `in_statiintervento`.`id`,`in_statiintervento_lang`.`name` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `is_completato`=0 ORDER BY `name`" ]}
                 </div>
 
                 <div class="col-md-4">

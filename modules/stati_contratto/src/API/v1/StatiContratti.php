@@ -48,5 +48,4 @@ class StatiContratti extends Resource implements RetrieveInterface
             'where' => $where,
         ];
     }
-
 }

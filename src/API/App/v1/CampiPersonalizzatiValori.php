@@ -31,7 +31,6 @@ class CampiPersonalizzatiValori extends AppResource
 
     public function getModifiedRecords($last_sync_at)
     {
-
         $module = (new Module())->getByField('name', 'Interventi');
 
         $query = 'SELECT `zz_field_record`.`id`, `zz_field_record`.`updated_at` FROM `zz_field_record` INNER JOIN `zz_fields` ON `zz_field_record`.`id_field` = `zz_fields`.`id` WHERE id_module='.prepare($module->id_record).' AND `zz_fields`.`content` LIKE "%text%"';
@@ -68,7 +67,7 @@ class CampiPersonalizzatiValori extends AppResource
     {
         $id = $data['id'];
 
-        database()->query("UPDATE `zz_field_record` SET `value` = ".prepare($data['value'])." WHERE `id` = ".prepare($id));
+        database()->query('UPDATE `zz_field_record` SET `value` = '.prepare($data['value']).' WHERE `id` = '.prepare($id));
 
         return [];
     }

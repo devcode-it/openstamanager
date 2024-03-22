@@ -17,9 +17,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Modules\Importazione\Import;
 use Models\Module;
 use Modules\FileAdapters\FileAdapter;
+use Modules\Importazione\Import;
 
 include_once __DIR__.'/../../core.php';
 

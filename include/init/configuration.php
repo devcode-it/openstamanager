@@ -147,8 +147,8 @@ if (post('db_host') !== null) {
 			</div>
 			<div class="box-body">
 				<p>'.tr('Sembra che non ci siano i permessi di scrittura sul file _FILE_', [
-                    '_FILE_' => '<b>config.inc.php</b>',
-                ]).'</p>
+                '_FILE_' => '<b>config.inc.php</b>',
+            ]).'</p>
 				<form action="'.base_path().'/index.php?action=updateconfig&firstuse=true" method="post">
 					<div class="hide">
 						<input type="hidden" name="db_name" value="'.$db_name.'">
@@ -169,8 +169,8 @@ if (post('db_host') !== null) {
 					</div>
 					<div class="box-body">
 						<p>'.tr('Inserire il seguente testo nel file _FILE_', [
-                            '_FILE_' => '<b>config.inc.php</b>',
-                        ]).'</p>
+                '_FILE_' => '<b>config.inc.php</b>',
+            ]).'</p>
 						<pre class="text-left">'.htmlentities($new_config).'</pre>
 					</div>
 				</div>
@@ -215,8 +215,8 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 			<div class="box-body">
 				<p>'.tr("L'avvio del software è fallito a causa dell'assenza di alcuni parametri nella configurazione di base").'.</p>
 				<p>'.tr("Si prega di controllare che il file _FILE_ contenga tutti i dati inseriti durante la configurazione iniziale (con l'eccezione di password e indirizzo email amministrativi)", [
-                    '_FILE_' => '<b>config.inc.php</b>',
-                ]).'.</p>
+            '_FILE_' => '<b>config.inc.php</b>',
+        ]).'.</p>
 				<p>'.tr("Nel caso il problema persista, rivolgersi all'assistenza ufficiale").'.</p>
 				<a class="btn btn-info" href="'.base_path().'/index.php"><i class="fa fa-repeat"></i> '.tr('Riprova').'</a>
             </div>
@@ -432,8 +432,8 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     echo '
                     <div id="step-2">
                         <p>'.tr('OpenSTAManager è tutelato dalla licenza _LICENSE_', [
-                            '_LICENSE_' => 'GPL 3.0',
-                        ]).':</p>
+        '_LICENSE_' => 'GPL 3.0',
+    ]).':</p>
 
                         <textarea class="form-control autosize" rows="15" readonly>'.file_get_contents('LICENSE').'</textarea><br>
                         <a class="pull-left" href="https://www.gnu.org/licenses/translations.en.html#GPL" target="_blank">[ '.tr('Versioni tradotte').' ]</a><hr>
@@ -462,8 +462,8 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 
                         <p>'.tr('Non hai ancora configurato OpenSTAManager').'.</p>
                         <p><small class="help-block">'.tr('Configura correttamente il software con i seguenti parametri (modificabili successivamente dal file _FILE_)', [
-                            '_FILE_' => '<b>config.inc.php</b>',
-                        ]).'</small></p>
+        '_FILE_' => '<b>config.inc.php</b>',
+    ]).'</small></p>
 
                         <hr>';
 
@@ -488,8 +488,8 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                             </div>
 
                             <small>'.tr('I formati sono impostabili attraverso lo standard previsto da PHP: _LINK_', [
-                                '_LINK_' => '<a href="https://www.php.net/manual/en/function.date.php#refsect1-function.date-parameters">https://www.php.net/manual/en/function.date.php#refsect1-function.date-parameters</a>',
-                            ]).'.</small>
+        '_LINK_' => '<a href="https://www.php.net/manual/en/function.date.php#refsect1-function.date-parameters">https://www.php.net/manual/en/function.date.php#refsect1-function.date-parameters</a>',
+    ]).'.</small>
 
                             <hr>';
 
@@ -519,8 +519,8 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                             </div>
 
                             <small>'.tr("Si consiglia l'abilitazione dell'estensione _EXT_ di PHP", [
-                                '_EXT_' => 'intl',
-                            ]).'.</small>
+            '_EXT_' => 'intl',
+        ]).'.</small>
 
                             <hr>';
     }

@@ -37,7 +37,7 @@ abstract class Article extends Accounting
 
     protected $qta_movimentazione = 0;
 
-    public static function build(Document $document = null, Original $articolo = null)
+    public static function build(?Document $document = null, ?Original $articolo = null)
     {
         $model = new static();
         $model->setDocument($document);

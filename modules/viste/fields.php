@@ -41,7 +41,7 @@ foreach ($fields as $key => $field) {
                         <h3 class="box-title">'.
                             tr('Campo in posizione _POSITION_', [
                                 '_POSITION_' => $field['order'],
-                                ]).' ('.$field['name'].') <span class="badge tip" title="'.tr('Modificato il ').Translator::timestampToLocale($field['updated_at']).'" >'.Translator::timestampToLocale($field['created_at']).'</span>
+                            ]).' ('.$field['name'].') <span class="badge tip" title="'.tr('Modificato il ').Translator::timestampToLocale($field['updated_at']).'" >'.Translator::timestampToLocale($field['created_at']).'</span>
                         </h3>
 
                         <div class="box-tools pull-right">
@@ -71,20 +71,20 @@ foreach ($fields as $key => $field) {
                         <div class="row">
                             <div class="col-md-12">
                                 '.input([
-                                    'type' => 'textarea',
-                                    'label' => tr('Query prevista'),
-                                    'name' => 'query['.$key.']',
-                                    'required' => 1,
-                                    'readonly' => ''.(!$editable).'',
-                                    'value' => $field['query'],
-                                    'help' => tr('Nome effettivo del campo sulla tabella oppure subquery che permette di ottenere il valore del campo.').'<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!'),
-                                ]).'
+        'type' => 'textarea',
+        'label' => tr('Query prevista'),
+        'name' => 'query['.$key.']',
+        'required' => 1,
+        'readonly' => ''.(!$editable).'',
+        'value' => $field['query'],
+        'help' => tr('Nome effettivo del campo sulla tabella oppure subquery che permette di ottenere il valore del campo.').'<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!'),
+    ]).'
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi['.$key.'][]", "multiple": "1", "values": "query=SELECT `zz_groups`.`id`, `name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') ORDER BY `zz_groups`.`id` ASC", "value": "';
+                                {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi['.$key.'][]", "multiple": "1", "values": "query=SELECT `zz_groups`.`id`, `name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `zz_groups`.`id` ASC", "value": "';
     $results = $dbo->fetchArray('SELECT GROUP_CONCAT(DISTINCT `id_gruppo` SEPARATOR \',\') AS gruppi FROM `zz_group_view` WHERE `id_vista`='.prepare($field['id']));
 
     echo $results[0]['gruppi'].'"';
@@ -204,7 +204,7 @@ echo '
 
             <div class="row">
                 <div class="col-md-6">
-                    {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi[-id-][]", "multiple": "1", "values": "query=SELECT `zz_groups`.`id`, `name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') ORDER BY `zz_groups`.`id` ASC" ]}
+                    {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi[-id-][]", "multiple": "1", "values": "query=SELECT `zz_groups`.`id`, `name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `zz_groups`.`id` ASC" ]}
                 </div>
 
                 <div class="col-md-6">

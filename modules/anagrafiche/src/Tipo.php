@@ -51,8 +51,8 @@ class Tipo extends Model
         return 'Tipi di anagrafiche';
     }
 
-    public static function getTranslatedFields(){
+    public static function getTranslatedFields()
+    {
         return self::$translated_fields;
     }
-
 }

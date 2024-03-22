@@ -18,7 +18,6 @@
  */
 
 include_once __DIR__.'/../../core.php';
-use Modules\TipiIntervento\Tipo;
 
 echo '
 <form action="" method="post" id="edit-form">
@@ -72,7 +71,6 @@ echo '
 
 // Tipi di interventi
 foreach ($tipi_interventi as $tipo_intervento) {
-
     echo '
         <tr>
 

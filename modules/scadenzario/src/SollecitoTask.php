@@ -19,12 +19,12 @@
 
 namespace Modules\Scadenzario;
 
+use Models\Module;
 use Models\OperationLog;
 use Models\User;
 use Modules\Emails\Mail;
 use Modules\Emails\Template;
 use Tasks\Manager;
-use Models\Module;
 
 /**
  * Task dedicato alla gestione del backup giornaliero automatico, se abilitato da Impostazioni.

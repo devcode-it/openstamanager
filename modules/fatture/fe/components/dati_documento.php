@@ -23,8 +23,8 @@ echo '
         <tr class="fourth-level">
             <th colspan="2">
                 '.str_repeat($space, 3).$info['code'].' '.$info['name'].' - '.tr('Riga _NUM_', [
-                    '_NUM_' => $key,
-                ]);
+    '_NUM_' => $key,
+]);
 
 if ($key == 1) {
     echo '
@@ -48,8 +48,8 @@ foreach ($dato['riferimento_linea'] as $linea) {
         <tr class="fifth-level" title="RiferimentoNumeroLinea-'.$nome.'-'.$key.'">
             <td style="vertical-align: middle;">
                 '.str_repeat($space, 4).$info['code'].'.1 RiferimentoNumeroLinea - '.tr('Riga _NUM_', [
-                    '_NUM_' => $index,
-                ]);
+        '_NUM_' => $index,
+    ]);
 
     if ($index == 1) {
         echo '

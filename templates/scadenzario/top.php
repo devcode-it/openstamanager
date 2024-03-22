@@ -44,13 +44,13 @@ if (isset($id_record)) {
     <h4><b>'.tr('Scadenze dal _START_ al _END_', [
         '_START_' => Translator::dateToLocale($date_start),
         '_END_' => Translator::dateToLocale($date_end),
-        ], ['upper' => true]).'</b>
+    ], ['upper' => true]).'</b>
     </h4>
     <p style="color:#aaa; font-size:10px;" class="text-right">
     '.tr('_TEXT_',
-            [
-                '_TEXT_' => (!empty($text) ? 'Include: '.implode(', ', $text) : ''),
-            ]).'
+        [
+            '_TEXT_' => (!empty($text) ? 'Include: '.implode(', ', $text) : ''),
+        ]).'
 </p>';
 } else {
     echo '

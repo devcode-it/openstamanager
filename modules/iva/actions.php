@@ -36,7 +36,7 @@ switch (filter('op')) {
             $iva->esente = $esente;
             $iva->percentuale = $percentuale;
             $iva->indetraibile = $indetraibile;
-            $iva->dicitura = $dicitura?: 0;
+            $iva->dicitura = $dicitura ?: 0;
             $iva->codice = $codice;
             $iva->codice_natura_fe = $codice_natura_fe;
             $iva->esigibilita = $esigibilita;
@@ -70,10 +70,10 @@ switch (filter('op')) {
         $aliquota = Aliquota::where('id', '=', (new Aliquota())->getByField('name', $descrizione))->where('codice', '=', $codice)->first();
         if (!$aliquota) {
             $iva = Aliquota::build($esente, $percentuale, $indetraibile, $dicitura, $codice, $codice_natura_fe, $esigibilita);
-            $id_record= $dbo->lastInsertedID();
+            $id_record = $dbo->lastInsertedID();
             $iva->setTranslation('name', $descrizione);
             $iva->save();
-            
+
             flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
                 '_TYPE_' => 'IVA',
             ]));

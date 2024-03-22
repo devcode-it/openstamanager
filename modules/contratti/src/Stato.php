@@ -33,7 +33,7 @@ class Stato extends Model
         'name',
     ];
 
-    public static function build($icona  = null, $colore = null, $is_completato = null, $is_fatturabile = null, $is_pianificabile = null)
+    public static function build($icona = null, $colore = null, $is_completato = null, $is_fatturabile = null, $is_pianificabile = null)
     {
         $model = new static();
         $model->icona = $icona;
@@ -50,13 +50,14 @@ class Stato extends Model
     {
         return $this->hasMany(Contratto::class, 'idstato');
     }
+
     public function getModuleAttribute()
     {
         return 'Stato dei contratti';
     }
 
-    public static function getTranslatedFields(){
+    public static function getTranslatedFields()
+    {
         return self::$translated_fields;
     }
-
 }

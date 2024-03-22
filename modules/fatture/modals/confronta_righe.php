@@ -36,7 +36,7 @@ $righe = $dbo->fetchArray(
     FROM 
         `co_righe_documenti`
         INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_documenti`.`idarticolo`
-        LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+        LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     WHERE
         `co_righe_documenti`.`id` IN ('.$righe.')'
 );
@@ -86,7 +86,7 @@ $righe = $dbo->fetchArray(
                         LEFT JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id`
                         LEFT JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_documenti`.`idarticolo`
                         INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
-                        LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).'
+                        LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).'
                     WHERE
                         `co_documenti`.`idanagrafica` = '.prepare($id_anagrafica).' AND `co_righe_documenti`.`idarticolo` = '.prepare($riga['idarticolo']).' AND `co_statidocumento_lang`.`name` IN ("Emessa", "Pagato", "Parzialmente pagato")
                     GROUP BY

@@ -27,9 +27,9 @@ $conto = $dbo->fetchOne($query);
 
 echo '
 <p>'.tr('Seleziona il periodo temporale per il quale desideri aggiornare la percentuale di deducibilità del conto "_DESC_". La nuova percentuale è: _PERC_%', [
-        '_DESC_' => $conto['descrizione'],
-        '_PERC_' => numberFormat($conto['percentuale_deducibile'], 0),
-    ]).'.</p>
+    '_DESC_' => $conto['descrizione'],
+    '_PERC_' => numberFormat($conto['percentuale_deducibile'], 0),
+]).'.</p>
 <form action="" method="post">
     <input type="hidden" name="op" value="aggiorna_reddito">
     <input type="hidden" name="backto" value="record-list">

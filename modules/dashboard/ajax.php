@@ -139,7 +139,7 @@ switch (filter('op')) {
                 INNER JOIN `an_anagrafiche` ON `co_preventivi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
                 LEFT JOIN `zz_files` ON `zz_files`.`id_record` = `co_preventivi`.`id` AND `zz_files`.`id_module` = '.prepare($modulo_preventivi->id).'
                 LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
-                LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+                LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             WHERE
             (
                 (`co_preventivi`.`data_accettazione` >= '.prepare($start).' AND `co_preventivi`.`data_accettazione` <= '.prepare($end).')
@@ -301,9 +301,9 @@ switch (filter('op')) {
                     FROM 
                         `in_interventi` 
                         INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id`
-                        LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+                        LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                         INNER JOIN `in_tipiintervento` ON `in_interventi`.`idtipointervento`=`in_tipiintervento`.`id`
-                        LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+                        LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                         LEFT JOIN `in_interventi_tecnici` ON `in_interventi`.`id` =`in_interventi_tecnici`.`idintervento` 
                         LEFT JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica` 
                     WHERE 
@@ -380,7 +380,7 @@ switch (filter('op')) {
                 INNER JOIN `an_anagrafiche` ON `co_preventivi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
                 LEFT JOIN zz_files ON zz_files.id_record = co_preventivi.id AND zz_files.id_module = '.prepare($modulo_preventivi->id).'
                 LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
-                LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+                LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             WHERE 
                 `co_preventivi`.`id`='.prepare($id);
 
@@ -460,19 +460,19 @@ switch (filter('op')) {
         FROM 
             `in_interventi`
             INNER JOIN `in_tipiintervento` ON `in_interventi`.`idtipointervento` = `in_tipiintervento`.`id`
-            LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare($lingua)."
-            INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`";
+            LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare($lingua).'
+            INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`';
 
-            // Visualizzo solo promemoria del tecnico loggato
-            if (!empty($id_tecnico) && !empty($solo_promemoria_assegnati)) {
-                $query .= "
-                    INNER JOIN `in_interventi_tecnici_assegnati` ON `in_interventi`.`id` = `in_interventi_tecnici_assegnati`.`id_intervento` AND `id_tecnico` = ".prepare($id_tecnico);
-            } else {
-                $query .= "
-                    LEFT JOIN `in_interventi_tecnici_assegnati` ON `in_interventi`.`id` = `in_interventi_tecnici_assegnati`.`id_intervento`";
-            }
-            
-        $query .= "LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
+        // Visualizzo solo promemoria del tecnico loggato
+        if (!empty($id_tecnico) && !empty($solo_promemoria_assegnati)) {
+            $query .= '
+                    INNER JOIN `in_interventi_tecnici_assegnati` ON `in_interventi`.`id` = `in_interventi_tecnici_assegnati`.`id_intervento` AND `id_tecnico` = '.prepare($id_tecnico);
+        } else {
+            $query .= '
+                    LEFT JOIN `in_interventi_tecnici_assegnati` ON `in_interventi`.`id` = `in_interventi_tecnici_assegnati`.`id_intervento`';
+        }
+
+        $query .= 'LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
             INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`id`
             LEFT JOIN `an_anagrafiche` AS tecnico ON `in_interventi_tecnici_assegnati`.`id_tecnico` = `tecnico`.`idanagrafica`
         WHERE 
@@ -482,7 +482,7 @@ switch (filter('op')) {
         HAVING 
             COUNT(`in_interventi_tecnici`.`id`) = 0)
         ORDER BY 
-            IF(`data_scadenza` IS NULL, `data_richiesta`, `data_scadenza`) ASC";
+            IF(`data_scadenza` IS NULL, `data_richiesta`, `data_scadenza`) ASC';
 
         $promemoria = $dbo->fetchArray($query);
 
@@ -549,13 +549,13 @@ switch (filter('op')) {
         $results = [];
         foreach ($eventi as $evento) {
             $results[] = [
-            'id' => $evento['id'],
-            'title' => $evento['nome'],
-            'start' => ($evento['is_recurring'] ? date('Y-', strtotime($start)).date('m-d', strtotime($evento['data'])) : $evento['data']),
-            // 'end' => date('Y-m-d', strtotime($evento['data']. '+1 day')),
-            'display' => 'background',
-            'allDay' => true,
-            'overlap' => true,
+                'id' => $evento['id'],
+                'title' => $evento['nome'],
+                'start' => ($evento['is_recurring'] ? date('Y-', strtotime($start)).date('m-d', strtotime($evento['data'])) : $evento['data']),
+                // 'end' => date('Y-m-d', strtotime($evento['data']. '+1 day')),
+                'display' => 'background',
+                'allDay' => true,
+                'overlap' => true,
             ];
         }
 

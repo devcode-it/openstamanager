@@ -216,15 +216,15 @@ $(document).ready(function() {
 
 // Collegamenti diretti
 // Template email collegati a questo account
-$elementi = $dbo->fetchArray('SELECT `em_templates`.`id`, `em_templates_lang`.`name` FROM `em_templates` LEFT JOIN `em_templates_lang` ON (`em_templates`.`id` = `em_templates_lang`.`id_record` AND `em_templates_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `id_account` = '.prepare($id_record));
+$elementi = $dbo->fetchArray('SELECT `em_templates`.`id`, `em_templates_lang`.`name` FROM `em_templates` LEFT JOIN `em_templates_lang` ON (`em_templates`.`id` = `em_templates_lang`.`id_record` AND `em_templates_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_account` = '.prepare($id_record));
 
 if (!empty($elementi)) {
     echo '
 <div class="box box-warning collapsable collapsed-box">
     <div class="box-header with-border">
         <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Template email collegati: _NUM_', [
-            '_NUM_' => count($elementi),
-        ]).'</h3>
+        '_NUM_' => count($elementi),
+    ]).'</h3>
         <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
         </div>

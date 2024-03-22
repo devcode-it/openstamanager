@@ -22,20 +22,21 @@ namespace Modules\Interventi;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Traits\RecordTrait;
+
 class Stato extends Model
 {
     use SimpleModelTrait;
     use RecordTrait;
     protected $table = 'in_statiintervento';
 
+    protected static $translated_fields = [
+        'name',
+    ];
+
     public function interventi()
     {
         return $this->hasMany(Intervento::class, 'idstatointervento');
     }
-
-    protected static $translated_fields = [
-        'name',
-    ];
 
     public static function build($codice = null, $colore = null)
     {
@@ -52,7 +53,8 @@ class Stato extends Model
         return 'Stato dei contratti';
     }
 
-    public static function getTranslatedFields(){
+    public static function getTranslatedFields()
+    {
         return self::$translated_fields;
     }
 }

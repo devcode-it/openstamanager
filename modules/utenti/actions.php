@@ -19,9 +19,9 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Models\User;
-use Models\Module;
 use Models\Group;
+use Models\Module;
+use Models\User;
 
 $id_utente = filter('id_utente');
 
@@ -88,7 +88,7 @@ switch (filter('op')) {
                     $utente->password = $password;
                 }
             } else {
-                $gruppo = Models\Group::find($id_record);
+                $gruppo = Group::find($id_record);
                 $utente = User::build($gruppo, $username, $email, $password);
             }
 
@@ -151,10 +151,8 @@ switch (filter('op')) {
 
         /* Controlla che non posso auto eliminarmi */
         if (Auth::user()->id != $utente->id) {
-
             /* Controlla che l'utente che voglio eliminare non presenti logs associati */
-            if (count($utente->logs)>0){
-
+            if (count($utente->logs) > 0) {
                 if ($dbo->query('DELETE FROM zz_users WHERE id='.prepare($id_utente))) {
                     flash()->info(tr('Utente eliminato!'));
 
@@ -162,14 +160,12 @@ switch (filter('op')) {
                         flash()->info(tr('Token eliminato!'));
                     }
                 }
-            }
-            else {
+            } else {
                 flash()->error(tr('L\'utente _USER_ presenta dei log attivi. Impossibile eliminare utente.', ['_USER_' => $utente->username]));
 
                 $dbo->update('zz_users', [
                     'enabled' => 0,
                 ], ['id' => $id_utente]);
-
 
                 flash()->info(tr('Utente disabilitato!'));
 
@@ -177,11 +173,9 @@ switch (filter('op')) {
                     flash()->info(tr('Token eliminato!'));
                 } flash()->info(tr('Token eliminato!'));
             }
-
-        }else{
-                flash()->error(tr('L\'utente _USER_ è l\'utente attuale. Impossibile eliminare utente.', ['_USER_' => $utente->username]));
+        } else {
+            flash()->error(tr('L\'utente _USER_ è l\'utente attuale. Impossibile eliminare utente.', ['_USER_' => $utente->username]));
         }
-
 
         break;
 

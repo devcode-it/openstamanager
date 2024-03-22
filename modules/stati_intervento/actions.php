@@ -25,7 +25,7 @@ switch (post('op')) {
         $descrizione = post('descrizione');
         $stato_new = (new Stato())->getByField('name', $descrizione);
 
-        if (!empty($stato_new) && $stato_new != $id_record){
+        if (!empty($stato_new) && $stato_new != $id_record) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato attività.'));
         } else {
             $stato->codice = post('codice');
@@ -58,7 +58,7 @@ switch (post('op')) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato attività.'));
         } else {
             $stato = Stato::build($codice, $colore);
-            $id_record= $dbo->lastInsertedID();
+            $id_record = $dbo->lastInsertedID();
             $stato->setTranslation('name', $descrizione);
             $stato->save();
 

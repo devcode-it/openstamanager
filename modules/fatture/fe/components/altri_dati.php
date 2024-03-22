@@ -23,8 +23,8 @@ echo '
         <tr class="fourth-level">
             <th colspan="2">
                 '.str_repeat($space, 3).'2.2.1.16 AltriDatiGestionali - '.tr('Riga _NUM_', [
-                    '_NUM_' => $key,
-                ]);
+    '_NUM_' => $key,
+]);
 
 if ($key == 1) {
     echo '

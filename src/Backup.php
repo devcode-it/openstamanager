@@ -146,7 +146,7 @@ class Backup
      * Esegue il backup del progetto.
      *
      * @param array $ignores eventuali dirs o files da ignorare
-     * 
+     *
      * @return bool
      */
     public static function create($ignores)
@@ -154,7 +154,7 @@ class Backup
         self::checkSpace();
 
         $backup_dir = self::getDirectory();
-        $backup_name = tr(self::getNextName(), [ 'AAAAAAA' => ($ignores['dirs'] || $ignores['files'] )? 'PARTIAL' : 'FULL' ]);
+        $backup_name = tr(self::getNextName(), ['AAAAAAA' => ($ignores['dirs'] || $ignores['files']) ? 'PARTIAL' : 'FULL']);
 
         set_time_limit(0);
 

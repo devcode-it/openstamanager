@@ -17,6 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Models\Module;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Contratti\Components\Articolo;
 use Modules\Contratti\Components\Riga;
@@ -24,7 +25,6 @@ use Modules\Contratti\Contratto;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Tipo;
 use Plugins\PianificazioneFatturazione\Pianificazione;
-use Models\Module;
 
 include_once __DIR__.'/../../core.php';
 include_once __DIR__.'/../modutil.php';
@@ -170,7 +170,7 @@ switch ($operazione) {
         $tipo = Tipo::find(post('idtipodocumento'));
 
         if (!empty($accodare)) {
-            $documento = $dbo->fetchOne('SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `co_statidocumento`.`name` = \'Bozza\' AND `idanagrafica` = '.prepare($contratto->idanagrafica));
+            $documento = $dbo->fetchOne('SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_statidocumento`.`name` = \'Bozza\' AND `idanagrafica` = '.prepare($contratto->idanagrafica));
 
             $id_documento = $documento['id'];
         }
@@ -220,7 +220,7 @@ switch ($operazione) {
             $contratto = $pianificazione->contratto;
             if (!empty($accodare)) {
                 $documento = $dbo->fetchOne(
-                    'SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `co_statidocumento_lang`.`name` = \'Bozza\' AND `idanagrafica` = '.prepare($contratto->idanagrafica)
+                    'SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_statidocumento_lang`.`name` = \'Bozza\' AND `idanagrafica` = '.prepare($contratto->idanagrafica)
                 );
 
                 $id_documento = $documento['id'];

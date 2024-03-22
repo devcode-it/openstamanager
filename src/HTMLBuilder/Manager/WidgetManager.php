@@ -19,9 +19,9 @@
 
 namespace HTMLBuilder\Manager;
 
-use Util\Query;
 use Models\Module;
-;
+use Util\Query;
+
 /**
  * @since 2.4
  */

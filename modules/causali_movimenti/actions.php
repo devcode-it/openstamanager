@@ -24,11 +24,11 @@ switch (filter('op')) {
         if (isset($id_record)) {
             $database->update('mg_causali_movimenti', [
                 'tipo_movimento' => post('tipo_movimento'),
-            ], ['id' => $id_record,]);
+            ], ['id' => $id_record]);
             $database->update('mg_causali_movimenti_lang', [
                 'name' => post('nome'),
                 'description' => post('descrizione'),
-            ], ['id_record' => $id_record, 'id_lang' => \Models\Locale::getDefault()->id,]);
+            ], ['id_record' => $id_record, 'id_lang' => Models\Locale::getDefault()->id]);
         } else {
             flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio'));
         }
@@ -44,7 +44,7 @@ switch (filter('op')) {
             'name' => post('nome'),
             'description' => post('descrizione'),
             'id_record' => $id_record,
-            'id_lang' => \Models\Locale::getDefault()->id,
+            'id_lang' => Models\Locale::getDefault()->id,
         ]);
         break;
 

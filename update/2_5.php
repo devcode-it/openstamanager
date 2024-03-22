@@ -1,12 +1,14 @@
 <?php
+
 use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
+
 include __DIR__.'/../config.inc.php';
 
 // File e cartelle deprecate
 $files = [
     'assets/src/js/wacom/sigCaptDialog/libs/',
     'modules/impianti/plugins/',
-    'modules/voci_servizio/'
+    'modules/voci_servizio/',
 ];
 
 foreach ($files as $key => $value) {
@@ -23,24 +25,23 @@ if (empty($has_column)) {
     $database->query('ALTER TABLE `zz_groups` ADD `id_module_start` INT NULL AFTER `editable`');
 }
 
-
-if ($backup_dir){
-    /* Rinomino i file zip all'interno della cartella di backup, aggiungendo "FULL" alla fine del nome*/
+if ($backup_dir) {
+    /* Rinomino i file zip all'interno della cartella di backup, aggiungendo "FULL" alla fine del nome */
     $filesystem = new SymfonyFilesystem();
-    //glob viene utilizzata per ottenere la lista dei file zip all'interno della cartella $backup_dir.
-    $files = glob($backup_dir . '/*.zip');
+    // glob viene utilizzata per ottenere la lista dei file zip all'interno della cartella $backup_dir.
+    $files = glob($backup_dir.'/*.zip');
 
     foreach ($files as $file) {
         $fileName = basename($file);
-        
+
         if (strpos($fileName, 'FULL') === false) {
-            $newFileName = pathinfo($fileName, PATHINFO_FILENAME) . ' FULL.zip';
-            $newFilePath = $backup_dir . '/' . $newFileName;
-            
+            $newFileName = pathinfo($fileName, PATHINFO_FILENAME).' FULL.zip';
+            $newFilePath = $backup_dir.'/'.$newFileName;
+
             $filesystem->rename($file, $newFilePath);
         }
     }
-}else{
+} else {
     echo "Impossibile completare l'aggiornamento. Variabile <b>$backup_dir</b> non impostata.\n";
 }
 
@@ -383,8 +384,8 @@ $traduzioni = [
     // traduzione co_tipidocumento_lang
     ['co_tipidocumento_lang', 'Purchase invoice', 'Fattura immediata di acquisto'],
     ['co_tipidocumento_lang', 'Sale invoice', 'Fattura immediata di vendita'],
-    ['co_tipidocumento_lang', 'Credit note', 'Nota di credito'],    
-    ['co_tipidocumento_lang', 'Debit note', 'Nota di debito'],    
+    ['co_tipidocumento_lang', 'Credit note', 'Nota di credito'],
+    ['co_tipidocumento_lang', 'Debit note', 'Nota di debito'],
     // traduzione do_categorie_lang
     ['do_categorie_lang', 'Company documents', 'Documenti società'],
     ['do_categorie_lang', 'Employee hiring contracts', 'Contratti assunzione personale'],
@@ -530,23 +531,23 @@ $traduzioni = [
     ['zz_tasks_lang', 'Automatic mail sending', 'Invio automatico mail'],
     ['zz_tasks_lang', 'Deadline reminders', 'Solleciti scadenze'],
     // traduzione zz_views_lang
-    ['zz_views_lang', 'Agent','Agente'],
-    ['zz_views_lang', 'Attachments','Allegati'],
-    ['zz_views_lang', 'Entity','Anagrafica'],
-    ['zz_views_lang', 'Entities','Anagrafiche'],
-    ['zz_views_lang', 'Products','Articoli'],
-    ['zz_views_lang', 'Product','Articolo'],
-    ['zz_views_lang', 'Active','Attivo'],
-    ['zz_views_lang', 'Bank','Banca'],
-    ['zz_views_lang', 'Company bank','Banca azienda'],
-    ['zz_views_lang', 'Category','Categoria'],
-    ['zz_views_lang', 'Causal','Causale'],
-    ['zz_views_lang', 'Mobile number','Cellulare'],
-    ['zz_views_lang', 'City','Città'],
-    ['zz_views_lang', 'Consumer','Cliente'],
-    ['zz_views_lang', 'Cod','Codice'],
-    ['zz_views_lang', 'Receiver code','Codice destinatario'],
-    ['zz_views_lang', 'Electric invoice code','Codice FE'],
+    ['zz_views_lang', 'Agent', 'Agente'],
+    ['zz_views_lang', 'Attachments', 'Allegati'],
+    ['zz_views_lang', 'Entity', 'Anagrafica'],
+    ['zz_views_lang', 'Entities', 'Anagrafiche'],
+    ['zz_views_lang', 'Products', 'Articoli'],
+    ['zz_views_lang', 'Product', 'Articolo'],
+    ['zz_views_lang', 'Active', 'Attivo'],
+    ['zz_views_lang', 'Bank', 'Banca'],
+    ['zz_views_lang', 'Company bank', 'Banca azienda'],
+    ['zz_views_lang', 'Category', 'Categoria'],
+    ['zz_views_lang', 'Causal', 'Causale'],
+    ['zz_views_lang', 'Mobile number', 'Cellulare'],
+    ['zz_views_lang', 'City', 'Città'],
+    ['zz_views_lang', 'Consumer', 'Cliente'],
+    ['zz_views_lang', 'Cod', 'Codice'],
+    ['zz_views_lang', 'Receiver code', 'Codice destinatario'],
+    ['zz_views_lang', 'Electric invoice code', 'Codice FE'],
     ['zz_views_lang', 'Code Mode', 'Codice Modalità'],
     ['zz_views_lang', 'Payment Code', 'Codice pagamento'],
     ['zz_views_lang', 'color', 'colore'],
@@ -728,10 +729,10 @@ $traduzioni = [
     // traduzioni mg_causali_movimenti_lang
     ['mg_causali_movimenti_lang', 'Load', 'Carico', 'Manual loading'],
     ['mg_causali_movimenti_lang', 'Unload', 'Scarico', 'Manual unloading'],
-    ['mg_causali_movimenti_lang', 'Movement', 'Spostamento'.'Manual movement'],
+    ['mg_causali_movimenti_lang', 'Movement', 'SpostamentoManual movement'],
     // traduzione em_lists_lang
     ['em_lists_lang', 'All entities', 'Tutte le anagrafiche (Sedi legali)', 'Valid email addresses for each entities'],
-    ['em_lists_lang', 'All contacts', 'Tutti i Referenti', 'Valid email addresses for each contacts'], 
+    ['em_lists_lang', 'All contacts', 'Tutti i Referenti', 'Valid email addresses for each contacts'],
 ];
 
 foreach ($traduzioni as $traduzione) {
@@ -770,7 +771,7 @@ $traduzioni = [
     ['zz_prints_lang', 'Balance', 'Bilancio', 'Balance'],
     ['zz_prints_lang', 'Contract summary', 'Consuntivo contratto', 'Contract summary num. {numero} of {data}'],
     ['zz_prints_lang', 'Contract summary (without costs)', 'Consuntivo contratto (senza costi)', 'Contract summary num. {numero} of {data}'],
-    ['zz_prints_lang', 'Contract summary internal', 'Consuntivo contratto interno', 'Contract summary num. {numero} of {data}'], 
+    ['zz_prints_lang', 'Contract summary internal', 'Consuntivo contratto interno', 'Contract summary num. {numero} of {data}'],
     ['zz_prints_lang', 'Order summary', 'Consuntivo ordine', 'Order summary num. {numero} of {data}'],
     ['zz_prints_lang', 'Quotation summary', 'Consuntivo preventivo', 'Quotation summary num. {numero} of {data}'],
     ['zz_prints_lang', 'Quotation summary (without costs)', 'Consuntivo preventivo (senza costi)', 'Quotation summary num. {numero} of {data}'],

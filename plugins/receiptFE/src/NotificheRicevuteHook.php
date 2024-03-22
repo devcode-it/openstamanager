@@ -21,9 +21,9 @@ namespace Plugins\ReceiptFE;
 
 use Carbon\Carbon;
 use Hooks\Manager;
-use Modules\Fatture\Fattura;
 use Models\Module;
 use Models\Plugin;
+use Modules\Fatture\Fattura;
 
 /**
  * Hook specializzato per il conteggio e la segnalazione di Fatture senza ricevute oppure con ricevuta in stato di errore.
@@ -53,25 +53,25 @@ class NotificheRicevuteHook extends Manager
         // Messaggio di importazione
         if (!empty($in_attesa) && !empty($con_errore)) {
             $message = tr('_ERR_ fattur_B_ elettronic_A_ con ricevut_B_ di scarto o errori di trasmissione, _WAIT_ fattur_D_ elettronic_C_ in attesa di ricevut_D_ da più di 7 giorni', [
-                '_ERR_' => (($con_errore>1) ? tr('Sono presenti') : tr('C\'è')).' '.$con_errore,
-                '_A_' => (($con_errore>1) ? 'he' : 'a'),
-                '_B_' => (($con_errore>1) ? 'e' : 'a'),
-                '_WAIT_' => (($in_attesa>1) ? tr('Sono presenti') : tr('C\'è')).' '.$in_attesa,
-                '_C_' => (($in_attesa>1) ? 'he' : 'a'),
-                '_D_' => (($in_attesa>1) ? 'e' : 'a'),
+                '_ERR_' => (($con_errore > 1) ? tr('Sono presenti') : tr('C\'è')).' '.$con_errore,
+                '_A_' => (($con_errore > 1) ? 'he' : 'a'),
+                '_B_' => (($con_errore > 1) ? 'e' : 'a'),
+                '_WAIT_' => (($in_attesa > 1) ? tr('Sono presenti') : tr('C\'è')).' '.$in_attesa,
+                '_C_' => (($in_attesa > 1) ? 'he' : 'a'),
+                '_D_' => (($in_attesa > 1) ? 'e' : 'a'),
             ]);
         } elseif (empty($in_attesa) && !empty($con_errore)) {
             $message = tr('_ERR_ fattur_B_ elettronic_A_ con ricevut_B_ di scarto o errori di trasmissione', [
-                '_ERR_' => (($con_errore>1) ? tr('Sono presenti') : tr('C\'è')).' '.$con_errore,
-                '_A_' => (($con_errore>1) ? 'he' : 'a'),
-                '_B_' => (($con_errore>1) ? 'e' : 'a'),
+                '_ERR_' => (($con_errore > 1) ? tr('Sono presenti') : tr('C\'è')).' '.$con_errore,
+                '_A_' => (($con_errore > 1) ? 'he' : 'a'),
+                '_B_' => (($con_errore > 1) ? 'e' : 'a'),
             ]);
         }
         if (!empty($in_attesa) && empty($con_errore)) {
             $message = tr('_WAIT_ fattur_B_ elettronic_A_ in attesa di ricevut_B_ da più di 7 giorni', [
-                '_WAIT_' => (($in_attesa>1) ? tr('Sono presenti') : tr('C\'è')).' '.$in_attesa,
-                '_A_' => (($in_attesa>1) ? 'he' : 'a'),
-                '_B_' => (($in_attesa>1) ? 'e' : 'a'),
+                '_WAIT_' => (($in_attesa > 1) ? tr('Sono presenti') : tr('C\'è')).' '.$in_attesa,
+                '_A_' => (($in_attesa > 1) ? 'he' : 'a'),
+                '_B_' => (($in_attesa > 1) ? 'e' : 'a'),
             ]);
         }
 

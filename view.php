@@ -41,25 +41,20 @@ if (get('download') == '1') {
 // Force preview of the file
 if (get('preview') == '1') {
     if ($file->isImage()) {
-
         $finfo = finfo_open();
         $mime_type = finfo_buffer($finfo, $file_content, FILEINFO_MIME_TYPE);
         finfo_close($finfo);
 
         header('Content-Type: '.$mime_type);
         echo $file_content;
-
     } elseif ($file->isPDF()) {
-
-        header("Content-type: application/pdf");  
+        header('Content-type: application/pdf');
         echo $file_content;
-
     }
     exit;
 }
 
 if ($file->isFatturaElettronica()) {
-
     // Individuazione stylesheet
     $default_stylesheet = 'asso-invoice';
 
@@ -107,19 +102,15 @@ if ($file->isFatturaElettronica()) {
 </style>';
 
     if ($file->isImage()) {
-
         echo '
     <iframe src="'.base_path().'/view.php?file_id='.$file_id.'&preview=1">
         <a src="'.base_path().'/view.php?file_id='.$file_id.'&download=1">'.tr('Il browser non supporta i contenuti iframe: clicca qui per raggiungere il file originale').'</a>
     </iframe>';
-
     } elseif ($file->isPDF()) {
-
         echo '
     <iframe src="'.base_path().'/view.php?file_id='.$file_id.'&preview=1">
         <a src="'.base_path().'/view.php?file_id='.$file_id.'&download=1">'.tr('Il browser non supporta i contenuti iframe: clicca qui per raggiungere il file originale').'</a>
     </iframe>';
-
     } else {
         echo '
     <iframe src="'.base_path().'/view.php?file_id='.$file_id.'&download=1">

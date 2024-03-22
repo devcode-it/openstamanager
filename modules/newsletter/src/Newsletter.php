@@ -40,7 +40,7 @@ class Newsletter extends Model
 
     protected $table = 'em_newsletters';
 
-    public static function build(User $user = null, Template $template = null, $name = null)
+    public static function build(?User $user = null, ?Template $template = null, $name = null)
     {
         $model = new static();
 

@@ -41,7 +41,7 @@ if (!empty($date_start) and !empty($date_end)) {
     <h4><b>'.tr('Provvigioni dal _START_ al _END_', [
         '_START_' => Translator::dateToLocale($date_start),
         '_END_' => Translator::dateToLocale($date_end),
-        ], ['upper' => true]).'</b>
+    ], ['upper' => true]).'</b>
     </h4>';
 } else {
     echo '

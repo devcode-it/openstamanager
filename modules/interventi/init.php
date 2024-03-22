@@ -19,8 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Interventi\Intervento;
 use Models\Module;
+use Modules\Interventi\Intervento;
 
 if (isset($id_record)) {
     $intervento = Intervento::find($id_record);
@@ -44,43 +44,36 @@ if (isset($id_record)) {
     WHERE 
         `in_interventi`.`id`='.prepare($id_record));
 
-    
-    //Pulsante Precedente e Successivo all'interno della scheda attività
+    // Pulsante Precedente e Successivo all'interno della scheda attività
     // RISULTATI VISIBILI
     $structure = Module::find($id_module);
     $where = [];
-    
 
-    //Ricavo la posizione per questo id_record
+    // Ricavo la posizione per questo id_record
     $where['id'] = $id_record;
     $posizione_query = Util\Query::getQuery($structure, $where, $order);
     $database->FetchArray('SET @posizione = 0;');
     $posizione_attuale = $database->FetchOne($posizione_query)['posizione'];
-   
-   
+
     unset($where['id']);
-  
-    
-    //Aggiungo eventuali filtri applicati alla vista
-    if (count(getSearchValues($id_module))>0) {
-        foreach(getSearchValues($id_module) as $key => $value) {
+
+    // Aggiungo eventuali filtri applicati alla vista
+    if (count(getSearchValues($id_module)) > 0) {
+        foreach (getSearchValues($id_module) as $key => $value) {
             $where[$key] = $value;
         }
     }
 
-    //Query del modulo
+    // Query del modulo
     $module_query = Util\Query::getQuery($structure, $where, $order);
 
-   
-    //Precedente
-    $prev_query = str_replace('2=2', '2=2 AND `posizione` ='.$posizione_attuale-1,  $module_query);
+    // Precedente
+    $prev_query = str_replace('2=2', '2=2 AND `posizione` ='.$posizione_attuale - 1, $module_query);
     $database->FetchArray('SET @posizione = 0;');
     $prev = $database->FetchOne($prev_query)['id'];
 
-    //Successivo
-    $next_query = str_replace('2=2', '2=2 AND `posizione` ='.$posizione_attuale+1,  $module_query);
+    // Successivo
+    $next_query = str_replace('2=2', '2=2 AND `posizione` ='.$posizione_attuale + 1, $module_query);
     $database->FetchArray('SET @posizione = 0;');
     $next = $database->FetchOne($next_query)['id'];
-   
-
 }

@@ -99,8 +99,8 @@ if (!empty($elementi)) {
 <div class="box box-warning collapsable collapsed-box">
     <div class="box-header with-border">
         <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Articoli collegati: _NUM_', [
-            '_NUM_' => count($elementi),
-        ]).'</h3>
+        '_NUM_' => count($elementi),
+    ]).'</h3>
         <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
         </div>
@@ -110,8 +110,8 @@ if (!empty($elementi)) {
 
     foreach ($elementi as $elemento) {
         $descrizione = tr('Articolo _CODICE_', [
-        '_CODICE_' => !empty($elemento['codice']) ? $elemento['codice'] : $elemento['barcode'],
-    ]);
+            '_CODICE_' => !empty($elemento['codice']) ? $elemento['codice'] : $elemento['barcode'],
+        ]);
         $modulo = 'Articoli';
         $id = $elemento['id'];
 

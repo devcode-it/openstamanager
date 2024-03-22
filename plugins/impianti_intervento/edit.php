@@ -69,8 +69,8 @@ echo '
         </div>
     </div>';
 
-    // IMPIANTI
-    echo '
+// IMPIANTI
+echo '
     <div class="row">
 		<div class="col-md-12" id="righe-impianti"></div>
     </div>';

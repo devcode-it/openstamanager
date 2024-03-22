@@ -27,17 +27,17 @@ switch (filter('op')) {
 
         if (isset($nome)) {
             // Se non esiste già una tipo di scadenza con lo stesso nome
-            $nome_new = $dbo->fetchOne('SELECT * FROM `co_tipi_scadenze` LEFT JOIN `co_tipi_scadenze_lang` ON (`co_tipi_scadenze_lang`.`id_record` = `co_tipi_scadenze`.`id` AND `co_tipi_scadenze_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `name` =  '.prepare($nome).' AND `co_tipi_scadenze_lang`.`id_record` != '.prepare($id_record));
+            $nome_new = $dbo->fetchOne('SELECT * FROM `co_tipi_scadenze` LEFT JOIN `co_tipi_scadenze_lang` ON (`co_tipi_scadenze_lang`.`id_record` = `co_tipi_scadenze`.`id` AND `co_tipi_scadenze_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `name` =  '.prepare($nome).' AND `co_tipi_scadenze_lang`.`id_record` != '.prepare($id_record));
             if (empty($nome_new)) {
                 // nome_prev
-                $nome_prev = $dbo->fetchOne('SELECT `name` AS nome_prev FROM `co_tipi_scadenze` LEFT JOIN `co_tipi_scadenze_lang` ON (`co_tipi_scadenze_lang`.`id_record` = `co_tipi_scadenze`.`id` AND `co_tipi_scadenze_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `co_tipi_scadenze`.`id`='.prepare($id_record))['nome_prev'];
+                $nome_prev = $dbo->fetchOne('SELECT `name` AS nome_prev FROM `co_tipi_scadenze` LEFT JOIN `co_tipi_scadenze_lang` ON (`co_tipi_scadenze_lang`.`id_record` = `co_tipi_scadenze`.`id` AND `co_tipi_scadenze_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_tipi_scadenze`.`id`='.prepare($id_record))['nome_prev'];
 
                 $dbo->update('co_tipi_scadenze_lang', [
                     'name' => $nome,
                     'description' => $descrizione,
-                ], ['id_record' => $id_record, 'id_lang' => \Models\Locale::getDefault()->id]);
+                ], ['id_record' => $id_record, 'id_lang' => Models\Locale::getDefault()->id]);
 
-                $segmento = $dbo->fetchOne('SELECT `zz_segments`.`id` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments_lang`.`id_record` = `zz_segments`.`id` AND `zz_segments_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `id_module` = '.prepare((new Module())->getByField('name', 'Scadenzario')).' AND `clause` = "co_scadenziario.tipo=\''.$nome_prev.'\'" AND `zz_segments_lang`.`name` = "Scadenzario '.$nome_prev.'"')['id'];
+                $segmento = $dbo->fetchOne('SELECT `zz_segments`.`id` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments_lang`.`id_record` = `zz_segments`.`id` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_module` = '.prepare((new Module())->getByField('name', 'Scadenzario')).' AND `clause` = "co_scadenziario.tipo=\''.$nome_prev.'\'" AND `zz_segments_lang`.`name` = "Scadenzario '.$nome_prev.'"')['id'];
 
                 // aggiorno anche il segmento
                 $dbo->update('zz_segments', [
@@ -45,12 +45,12 @@ switch (filter('op')) {
                 ], [
                     'id' => $segmento,
                 ]);
-                
+
                 $dbo->update('zz_segments_lang', [
                     'name' => 'Scadenzario '.$nome,
                 ], [
                     'id_record' => $segmento,
-                    'id_lang' => \Models\Locale::getDefault()->id,
+                    'id_lang' => Models\Locale::getDefault()->id,
                 ]);
 
                 flash()->info(tr('Salvataggio completato!'));
@@ -72,7 +72,7 @@ switch (filter('op')) {
 
         if (isset($nome)) {
             // Se non esiste già un tipo di scadenza con lo stesso nome
-            if ($dbo->fetchNum('SELECT * FROM `co_tipi_scadenze` LEFT JOIN `co_tipi_scadenze_lang` ON (`co_tipi_scadenze_lang`.`id_record` = `co_tipi_scadenze`.`id` AND `co_tipi_scadenze_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `name`='.prepare($nome)) == 0) {
+            if ($dbo->fetchNum('SELECT * FROM `co_tipi_scadenze` LEFT JOIN `co_tipi_scadenze_lang` ON (`co_tipi_scadenze_lang`.`id_record` = `co_tipi_scadenze`.`id` AND `co_tipi_scadenze_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `name`='.prepare($nome)) == 0) {
                 $dbo->insert('co_tipi_scadenze', [
                     'created_at' => 'NOW()',
                 ]);
@@ -81,7 +81,7 @@ switch (filter('op')) {
                     'name' => $nome,
                     'description' => $descrizione,
                     'id_record' => $id_record,
-                    'id_lang' => \Models\Locale::getDefault()->id
+                    'id_lang' => Models\Locale::getDefault()->id,
                 ]);
 
                 // Aggiungo anche il segmento
@@ -94,7 +94,7 @@ switch (filter('op')) {
                 $dbo->insert('zz_segments_lang', [
                     'name' => 'Scadenzario '.$nome,
                     'id_record' => $id_segment,
-                    'id_lang' => \Models\Locale::getDefault()->id,
+                    'id_lang' => Models\Locale::getDefault()->id,
                 ]);
 
                 if (isAjaxRequest()) {
@@ -117,7 +117,7 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        $documenti = $dbo->fetchNum('SELECT `id` FROM `co_scadenziario` WHERE `tipo` = (SELECT `name` FROM `co_tipi_scadenze` LEFT JOIN `co_tipi_scadenze_lang` ON (`co_tipi_scadenze_lang`.`id_record` = `co_tipi_scadenze`.`id` AND `co_tipi_scadenze_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `co_tipi_scadenze`.`id` = '.prepare($id_record).')');
+        $documenti = $dbo->fetchNum('SELECT `id` FROM `co_scadenziario` WHERE `tipo` = (SELECT `name` FROM `co_tipi_scadenze` LEFT JOIN `co_tipi_scadenze_lang` ON (`co_tipi_scadenze_lang`.`id_record` = `co_tipi_scadenze`.`id` AND `co_tipi_scadenze_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_tipi_scadenze`.`id` = '.prepare($id_record).')');
 
         if (isset($id_record) && empty($documenti)) {
             $dbo->query('DELETE FROM `co_tipi_scadenze` WHERE `can_delete` = 1 AND `id`='.prepare($id_record));

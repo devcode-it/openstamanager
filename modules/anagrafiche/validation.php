@@ -46,7 +46,7 @@ switch ($name) {
             ['idanagrafica', '<>', $id_record],
         ])->count() == 0;
 
-        $message = $disponibile ? '<i class="icon fa fa-check text-green"></i> '.tr('Questo codice fiscale non è ancora stato utilizzato.') : '<i class="icon fa fa-warning text-yellow"></i> '. tr("Il codice fiscale è già utilizzato in un'altra anagrafica.");
+        $message = $disponibile ? '<i class="icon fa fa-check text-green"></i> '.tr('Questo codice fiscale non è ancora stato utilizzato.') : '<i class="icon fa fa-warning text-yellow"></i> '.tr("Il codice fiscale è già utilizzato in un'altra anagrafica.");
 
         // Validazione del Codice Fiscale
         // Se anagrafica non ancora definita OPPURE Se il codice fiscale è diverso dalla partita iva ma solo per anagrafiche Private e Aziende.
@@ -54,7 +54,7 @@ switch ($name) {
             $check = Validate::isValidTaxCode($value);
             if (empty($check)) {
                 $disponibile = false;
-                 $message .= '<br><i class="icon fa fa-warning text-yellow"></i> '.tr('Il codice fiscale _COD_ non possiede un formato valido.', [
+                $message .= '<br><i class="icon fa fa-warning text-yellow"></i> '.tr('Il codice fiscale _COD_ non possiede un formato valido.', [
                     '_COD_' => $value,
                 ]);
             }
@@ -85,31 +85,28 @@ switch ($name) {
 
         break;
 
-
     case 'codice_intermediario':
-
-        if (!empty($anagrafica)){
+        if (!empty($anagrafica)) {
             $value = trim($value);
 
             switch ($anagrafica->tipo) {
-            case "Azienda":
-            case "Privato":
-                $length = 7;
-                $valido = (strlen($value) === $length ? true : false);
-                break;
-            case "Ente pubblico":
-                $length = 6;
-                $valido = (strlen($value) === $length ? true : false);
-                break;
-            default:
-                $length = 7;
-                $valido = (strlen($value) >= $length ? true : false);
-                break;
-
+                case 'Azienda':
+                case 'Privato':
+                    $length = 7;
+                    $valido = (strlen($value) === $length ? true : false);
+                    break;
+                case 'Ente pubblico':
+                    $length = 6;
+                    $valido = (strlen($value) === $length ? true : false);
+                    break;
+                default:
+                    $length = 7;
+                    $valido = (strlen($value) >= $length ? true : false);
+                    break;
             }
         }
 
-        $message = $valido ? '<i class="icon fa fa-check text-green"></i> '.tr('Il codice intermediario è valido.') : '<i class="icon fa fa-warning text-yellow"></i> '.tr("Il codice intermediario non sembra essere valido. Lunghezza attesa _LENGTH_ caratteri.", ['_LENGTH_' => $length]);
+        $message = $valido ? '<i class="icon fa fa-check text-green"></i> '.tr('Il codice intermediario è valido.') : '<i class="icon fa fa-warning text-yellow"></i> '.tr('Il codice intermediario non sembra essere valido. Lunghezza attesa _LENGTH_ caratteri.', ['_LENGTH_' => $length]);
 
         $response = [
             'result' => $valido,
@@ -182,7 +179,6 @@ switch ($name) {
             $errors[] = tr("L'email _COD_ non possiede un formato valido.", [
                 '_COD_' => $value,
             ]);
-
         }
 
         if (isset($check['smtp-check']) && empty($check['smtp-check'])) {

@@ -18,8 +18,8 @@
  */
 
 include_once __DIR__.'/../../core.php';
-use Models\Module;
 use Models\Group;
+use Models\Module;
 
 if (!empty(filter('idanagrafica'))) {
     $utente['id_anagrafica'] = filter('idanagrafica');

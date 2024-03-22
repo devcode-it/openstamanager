@@ -31,9 +31,9 @@ echo '
 	<tr>
         <td style="width:100mm; text-align:right;">
             '.tr('Pagina _PAGE_ di _TOTAL_', [
-                '_PAGE_' => '{PAGENO}',
-                '_TOTAL_' => '{nb}',
-            ]).'
+    '_PAGE_' => '{PAGENO}',
+    '_TOTAL_' => '{nb}',
+]).'
         </td>
     </tr>
 </table>';

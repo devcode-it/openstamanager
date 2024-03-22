@@ -19,10 +19,10 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Banche\Banca;
 use Modules\Fatture\Fattura;
-use Models\Module;
 
 /**
  * Questo file gestisce la lettura delle informazioni di Scadenze e Fatture indicate per la generazione della Prima Nota. Per maggiori informazioni sulla grafica inerente alla visualizzazione delle diverse righe, consulare il file `movimenti.php`.
@@ -39,7 +39,6 @@ use Models\Module;
  * Nel caso in cui sia indicato una singola Scadenza (con o senza Fattura associata) viene permessa la gestione attraverso un Modello di Prima Nota, che prevede una compilazione di base per alcuni movimenti specificati nel relativo modulo.
  * Nota: questo comportamento viene abilitato dalla variabile `$permetti_modelli`.
  */
-
 $id_module = (new Module())->getByField('name', 'Prima nota');
 $movimenti = [];
 
@@ -245,7 +244,7 @@ if ($numero_documenti + $numero_scadenze > 1) {
 
 if (!empty($id_records) && get('origine') == 'fatture' && !empty($counter)) {
     $descrizione_stati = [];
-    $stati = $database->fetchArray("SELECT * FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '".prepare(\Models\Locale::getDefault()->id)."') WHERE `name` IN ('Emessa', 'Parzialmente pagato', 'Pagato') ORDER BY `name`");
+    $stati = $database->fetchArray("SELECT * FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '".prepare(Models\Locale::getDefault()->id)."') WHERE `name` IN ('Emessa', 'Parzialmente pagato', 'Pagato') ORDER BY `name`");
     foreach ($stati as $stato) {
         $descrizione_stati[] = '<i class="'.$stato['icona'].'"></i> <small>'.$stato['name'].'</small>';
     }
@@ -253,11 +252,11 @@ if (!empty($id_records) && get('origine') == 'fatture' && !empty($counter)) {
     echo '
 <div class="alert alert-info">
 <p>'.tr('Solo le fatture in stato _STATE_ possono essere registrate contabilmente ignorate', [
-            '_STATE_' => implode(', ', $descrizione_stati),
-        ]).'.</p>
+        '_STATE_' => implode(', ', $descrizione_stati),
+    ]).'.</p>
 <p><b>'.tr('Sono state ignorate _NUM_ fatture', [
-            '_NUM_' => $counter,
-        ]).'.</b></p>
+        '_NUM_' => $counter,
+    ]).'.</b></p>
 </div>';
 }
 if (!empty(get('id_anagrafica'))) {

@@ -26,7 +26,7 @@ switch (post('op')) {
         $descrizione = post('descrizione');
         $categoria_new = Categoria::where('id', '=', (new Categoria())->getByField('name', $descrizione))->where('deleted_at', '=', null)->first();
 
-        if (!empty($categoria_new) && $categoria_new->id != $id_record){
+        if (!empty($categoria_new) && $categoria_new->id != $id_record) {
             flash()->error(tr('Categoria _NAME_ già esistente!', [
                 '_NAME_' => $descrizione,
             ]));
@@ -45,7 +45,7 @@ switch (post('op')) {
         $descrizione = post('descrizione');
         $categoria_new = Categoria::where('id', '=', (new Categoria())->getByField('name', $descrizione))->where('deleted_at', '=', null)->first();
 
-        if (!empty($categoria_new) && $categoria_new->id != $id_record){
+        if (!empty($categoria_new) && $categoria_new->id != $id_record) {
             flash()->error(tr('Categoria _NAME_ già esistente!', [
                 '_NAME_' => $descrizione,
             ]));
@@ -54,7 +54,7 @@ switch (post('op')) {
             $id_record = $dbo->lastInsertedID();
             $categoria->setTranslation('name', $descrizione);
             $categoria->save();
-            
+
             if (isAjaxRequest()) {
                 echo json_encode(['id' => $id_record, 'text' => $descrizione]);
             }

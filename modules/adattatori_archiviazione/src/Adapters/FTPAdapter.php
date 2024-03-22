@@ -22,13 +22,12 @@ namespace Modules\FileAdapters\Adapters;
 use League\Flysystem\Ftp\FTPAdapter as OriginalAdapter;
 use League\Flysystem\Ftp\FtpConnectionOptions;
 
-class FTPAdapter extends OriginalAdapter {
-
-    public function __construct( $options ){
-
+class FTPAdapter extends OriginalAdapter
+{
+    public function __construct($options)
+    {
         $options = json_decode($options, 1);
 
         parent::__construct(FtpConnectionOptions::fromArray($options));
     }
-
 }

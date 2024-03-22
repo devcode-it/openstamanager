@@ -27,7 +27,7 @@ abstract class Row extends Accounting
 {
     use SimpleModelTrait;
 
-    public static function build(Document $document = null)
+    public static function build(?Document $document = null)
     {
         $model = new static();
         $model->setDocument($document);

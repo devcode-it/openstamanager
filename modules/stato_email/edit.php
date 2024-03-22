@@ -47,8 +47,8 @@ echo '
             <div class="col-md-3">
                 <h4>'.tr('Ultimo tentativo').'</h4>
                 '.($mail->processing_at ? timestampFormat($mail->processing_at) : '-').' ('.tr('totale: _TOT_', [
-                    '_TOT_' => $mail->attempt,
-    ]).')
+    '_TOT_' => $mail->attempt,
+]).')
             </div>
         </div>
 

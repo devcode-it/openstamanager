@@ -38,7 +38,7 @@ switch ($resource) {
             CONCAT(`banca_acquisti`.`nome`, ' - ', `banca_acquisti`.`iban`) AS descrizione_banca_acquisti,
             `banca_cliente`.`id` AS id_banca_cliente
         FROM `co_pagamenti`
-            LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.`id_lang` = ".prepare(\Models\Locale::getDefault()->id).')
+            LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
             LEFT JOIN `co_banche` banca_cliente ON `banca_cliente`.`id_anagrafica` = '.prepare($superselect['idanagrafica']).' AND `banca_cliente`.`deleted_at` IS NULL
             LEFT JOIN `co_banche` banca_vendite ON `co_pagamenti`.`idconto_vendite` = `banca_vendite`.`id_pianodeiconti3` AND `banca_vendite`.`id_anagrafica` = '.prepare($id_azienda).' AND `banca_vendite`.`deleted_at` IS NULL
             LEFT JOIN `co_banche` banca_acquisti ON `co_pagamenti`.`idconto_acquisti` = `banca_acquisti`.`id_pianodeiconti3` AND `banca_acquisti`.`id_anagrafica` = '.prepare($id_azienda).' AND `banca_acquisti`.`deleted_at` IS NULL

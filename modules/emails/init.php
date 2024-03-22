@@ -17,16 +17,16 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Modules\Newsletter\Newsletter;
 use Modules\Emails\Template;
+use Modules\Newsletter\Newsletter;
 
 include_once __DIR__.'/../../core.php';
 
 if (isset($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM em_templates LEFT JOIN `em_templates_lang` ON (`em_templates`.`id` = `em_templates_lang`.`id_record` AND `em_templates_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `em_templates`.`id`='.prepare($id_record).' AND `deleted_at` IS NULL');
+    $record = $dbo->fetchOne('SELECT * FROM em_templates LEFT JOIN `em_templates_lang` ON (`em_templates`.`id` = `em_templates_lang`.`id_record` AND `em_templates_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `em_templates`.`id`='.prepare($id_record).' AND `deleted_at` IS NULL');
 
     $template = Template::find($id_record);
-    
+
     // Controllo se ci sono newletter collegate a questo template
     $newsletters = Newsletter::where('id_template', $id_record)->get();
 }

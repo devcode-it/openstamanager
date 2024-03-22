@@ -70,7 +70,7 @@ echo '
         // if we want to hide the licence we can get the licence from an external server.				
         // there is a php demo file in /common/licence_proxy.php
         //const promise = mSigObj.setLicenceProxy("url from where to get the licence");
-        const promise = mSigObj.setLicence("'.setting('Licenza Wacom SDK - Key').'", "'.setting('Licenza Wacom SDK - Secret'). '");
+        const promise = mSigObj.setLicence("'.setting('Licenza Wacom SDK - Key').'", "'.setting('Licenza Wacom SDK - Secret').'");
         promise.then(value => {
 
         });

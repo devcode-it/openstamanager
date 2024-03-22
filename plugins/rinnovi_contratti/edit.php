@@ -83,8 +83,8 @@ while (!empty($id_contratto_precedente) && $counter < 50) {
         <tr>
             <td>
                 '.Modules::link($module->getTranslation('name'), $id_contratto_precedente, tr('Contratto num. _NUM_', [
-                    '_NUM_' => $rs[0]['numero'],
-                ]).'<br><small class="text-muted">'.$rs[0]['nome'].'</small>').'
+        '_NUM_' => $rs[0]['numero'],
+    ]).'<br><small class="text-muted">'.$rs[0]['nome'].'</small>').'
             </td>
             <td class="text-right">'.moneyFormat($rs[0]['budget']).'</td>
             <td align="center">'.Translator::dateToLocale($rs[0]['data_accettazione']).'</td>

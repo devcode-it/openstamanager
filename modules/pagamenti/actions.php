@@ -66,7 +66,7 @@ switch (filter('op')) {
                     $pagamento->save();
                 }
             }
-        
+
             flash()->info(tr('Salvataggio completato!'));
         } else {
             flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
@@ -85,7 +85,7 @@ switch (filter('op')) {
                 flash()->error(tr('Esiste già un metodo di pagamento con questo nome!'));
             } else {
                 $pagamento = Pagamento::build($codice_modalita_pagamento_fe);
-                $id_record= $dbo->lastInsertedID();
+                $id_record = $dbo->lastInsertedID();
                 $pagamento->setTranslation('name', $descrizione);
                 $pagamento->save();
 

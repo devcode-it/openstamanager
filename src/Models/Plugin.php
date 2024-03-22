@@ -41,7 +41,6 @@ class Plugin extends Model
     use ChecklistTrait;
     use RecordTrait;
 
-
     protected static $translated_fields = [
         'name',
         'title',
@@ -134,6 +133,16 @@ class Plugin extends Model
         return $this->belongsTo(Module::class, 'idmodule_to');
     }
 
+    public function getModuleAttribute()
+    {
+        return '';
+    }
+
+    public static function getTranslatedFields()
+    {
+        return self::$translated_fields;
+    }
+
     protected static function boot()
     {
         parent::boot();
@@ -141,14 +150,5 @@ class Plugin extends Model
         static::addGlobalScope('enabled', function (Builder $builder) {
             $builder->where('enabled', true);
         });
-    }
-
-    public function getModuleAttribute()
-    {
-        return '';
-    }
-
-    public static function getTranslatedFields(){
-        return self::$translated_fields;
     }
 }

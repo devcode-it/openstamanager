@@ -41,7 +41,7 @@ class Banca extends Model
      *
      * @return self
      */
-    public static function build(Anagrafica $anagrafica = null, $nome = null, $iban = null, $bic = null)
+    public static function build(?Anagrafica $anagrafica = null, $nome = null, $iban = null, $bic = null)
     {
         $model = new static();
 

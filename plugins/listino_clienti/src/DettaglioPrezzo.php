@@ -41,7 +41,7 @@ class DettaglioPrezzo extends Model
      *
      * @return self
      */
-    public static function build(Articolo $articolo = null, Anagrafica $anagrafica = null, $direzione = 'uscita')
+    public static function build(?Articolo $articolo = null, ?Anagrafica $anagrafica = null, $direzione = 'uscita')
     {
         $model = new static();
 

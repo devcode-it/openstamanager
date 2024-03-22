@@ -19,9 +19,9 @@
 
 include_once __DIR__.'/init.php';
 
+use Modules\Fatture\StatoFE;
 use Plugins\ExportFE\FatturaElettronica;
 use Plugins\ExportFE\Interaction;
-use Modules\Fatture\StatoFE;
 use Util\XML;
 
 if ($fattura !== null) {

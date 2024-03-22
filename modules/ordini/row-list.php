@@ -19,9 +19,9 @@
 
 include_once __DIR__.'/init.php';
 
-use Modules\Articoli\Articolo;
 use Models\Module;
 use Models\Plugin;
+use Modules\Articoli\Articolo;
 
 $block_edit = $record['flag_completato'];
 $order_row_desc = $_SESSION['module_'.$id_module]['order_row_desc'];
@@ -84,7 +84,7 @@ foreach ($righe as $riga) {
     if ($riga->qta == 0) {
         $extra = 'class="danger"';
     }
-    
+
     echo '
             <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'" '.$extra.'>
                 <td class="text-center">';
@@ -128,8 +128,8 @@ foreach ($righe as $riga) {
                 echo '
                     <br>
                     <small class="text-muted">'.tr('Codice fornitore: _COD_FOR_', [
-                        '_COD_FOR_' => $codice_fornitore,
-                    ]).'</small>';
+                    '_COD_FOR_' => $codice_fornitore,
+                ]).'</small>';
             }
         }
     } else {
@@ -140,8 +140,8 @@ foreach ($righe as $riga) {
         if (!empty($mancanti)) {
             echo '
                     <br><b><small class="text-danger">'.tr('_NUM_ serial mancanti', [
-                        '_NUM_' => $mancanti,
-                    ]).'</small></b>';
+                '_NUM_' => $mancanti,
+            ]).'</small></b>';
         }
         if (!empty($serials)) {
             echo '
@@ -290,22 +290,22 @@ foreach ($righe as $riga) {
     echo '
                 <td class="text-center">
                     <div class="input-group-btn">';
-        if (hasArticoliFiglio($riga->idarticolo)) {
-            echo '
+    if (hasArticoliFiglio($riga->idarticolo)) {
+        echo '
                         <a class="btn btn-xs btn-info" title="'.tr('Distinta base').'" onclick="viewDistinta('.$riga->idarticolo.')">
                             <i class="fa fa-eye"></i>
                         </a>';
-        }
+    }
 
-        if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
-            echo '
+    if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
+        echo '
                         <a class="btn btn-primary btn-xs" title="'.tr('Modifica seriali della riga').'" onclick="modificaSeriali(this)">
                             <i class="fa fa-barcode"></i>
                         </a>';
-        }
+    }
 
-        if ($record['flag_completato'] == 0) {
-            echo '
+    if ($record['flag_completato'] == 0) {
+        echo '
                         <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga').'" onclick="modificaRiga(this)">
                             <i class="fa fa-edit"></i>
                         </a>
@@ -317,7 +317,7 @@ foreach ($righe as $riga) {
                         <a class="btn btn-xs btn-default handle '.($order_row_desc ? 'disabled' : '').'" title="'.tr('Modifica ordine delle righe').'">
                             <i class="fa fa-sort"></i>
                         </a>';
-        }
+    }
     echo '
                     </div>
                 </td>
@@ -470,8 +470,8 @@ if ($dir == 'entrata') {
             <tr>
                 <td colspan="'.$colspan.'" class="text-right">
                     '.tr('Margine (_PRC_%)', [
-                        '_PRC_' => numberFormat($ordine->margine_percentuale),
-                ]).':
+        '_PRC_' => numberFormat($ordine->margine_percentuale),
+    ]).':
                 </td>
                 <td class="text-right '.$margine_class.'" rowspan="2" style="vertical-align:middle;">
                     <i class="fa fa-'.$margine_icon.' text-'.$margine_class.'"></i> '.moneyFormat($margine).'
@@ -482,8 +482,8 @@ if ($dir == 'entrata') {
             <tr>
                 <td colspan="'.$colspan.'" class="text-right">
                     '.tr('Ricarico (_PRC_%)', [
-                        '_PRC_' => numberFormat($ordine->ricarico_percentuale),
-                ]).':
+        '_PRC_' => numberFormat($ordine->ricarico_percentuale),
+    ]).':
                 </td>
             </tr>';
 }

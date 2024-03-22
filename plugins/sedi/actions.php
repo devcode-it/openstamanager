@@ -54,10 +54,10 @@ switch ($operazione) {
             $id_referenti = (array) post('id_referenti');
             foreach ($id_referenti as $id_referente) {
                 $dbo->update('an_referenti', [
-                'idsede' => $id_record,
-            ], [
-                'id' => $id_referente,
-            ]);
+                    'idsede' => $id_record,
+                ], [
+                    'id' => $id_referente,
+                ]);
             }
 
             if (isAjaxRequest() && !empty($id_record)) {

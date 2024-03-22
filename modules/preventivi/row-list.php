@@ -242,15 +242,15 @@ foreach ($righe as $key => $riga) {
     echo '
                 <td class="text-center">
                     <div class="btn-group">';
-        if (hasArticoliFiglio($riga->idarticolo)) {
-            echo '
+    if (hasArticoliFiglio($riga->idarticolo)) {
+        echo '
                         <a class="btn btn-xs btn-info" title="'.tr('Distinta base').'" onclick="viewDistinta('.$riga->idarticolo.')">
                             <i class="fa fa-eye"></i>
                         </a>';
-        }
+    }
 
-        if (empty($record['is_completato'])) {
-            echo '
+    if (empty($record['is_completato'])) {
+        echo '
                         <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga').'" onclick="modificaRiga(this)">
                             <i class="fa fa-edit"></i>
                         </a>
@@ -262,8 +262,8 @@ foreach ($righe as $key => $riga) {
                         <a class="btn btn-xs btn-default handle '.($order_row_desc ? 'disabled' : '').'" title="'.tr('Modifica ordine delle righe').'">
                             <i class="fa fa-sort"></i>
                         </a>';
-        }
-        echo '
+    }
+    echo '
                     </div>
                 </td>
             </tr>';
@@ -439,8 +439,8 @@ echo '
         <tr>
             <td colspan="'.$colspan.'" class="text-right">
                 '.tr('Margine (_PRC_%)', [
-                    '_PRC_' => numberFormat($preventivo->margine_percentuale),
-            ]).':
+    '_PRC_' => numberFormat($preventivo->margine_percentuale),
+]).':
             </td>
             <td class="text-right '.$margine_class.'" rowspan="2" style="vertical-align:middle;">
                 <i class="fa fa-'.$margine_icon.' text-'.$margine_class.'"></i> '.moneyFormat($preventivo->margine).'
@@ -451,8 +451,8 @@ echo '
         <tr>
             <td colspan="'.$colspan.'" class="text-right">
                 '.tr('Ricarico (_PRC_)', [
-                    '_PRC_' => ($preventivo->ricarico_percentuale != 0 ? numberFormat($preventivo->ricarico_percentuale).'%' : 'N.D.'),
-            ]).':
+    '_PRC_' => ($preventivo->ricarico_percentuale != 0 ? numberFormat($preventivo->ricarico_percentuale).'%' : 'N.D.'),
+]).':
             </td>
         </tr>';
 

@@ -35,9 +35,9 @@ return '
 
     <td class="text-right" style="width:97mm;">
         '.tr('Pagina _PAGE_ di _TOTAL_', [
-            '_PAGE_' => '{PAGENO}',
-            '_TOTAL_' => '{nb}',
-        ]).'
+    '_PAGE_' => '{PAGENO}',
+    '_TOTAL_' => '{nb}',
+]).'
     </td>
 </tr>
 </table>';

@@ -19,8 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\DDT\Tipo;
 use Models\Module;
+use Modules\DDT\Tipo;
 
 $module = Module::find($id_module);
 
@@ -61,7 +61,7 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 
 		<!-- il campo idtipoddt può essere anche rimosso -->
 		<div class="col-md-4 hide">
-			{[ "type": "select", "label": "<?php echo tr('Tipo ddt'); ?>", "name": "idtipoddt", "required": 1, "values": "query=SELECT `dt_tipiddt`.`id`, `dt_tipiddt_lang`.`name` as descrizione FROM `dt_tipiddt` LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt`.`id`=`dt_tipiddt_lang`.`id_record` AND `dt_tipiddt_lang`.`id_lang`= <?php echo prepare(\Models\Locale::getDefault()->id); ?>) WHERE `dir`='<?php echo $dir; ?>'", "value": "<?php echo $id_tipoddt; ?>" ]}
+			{[ "type": "select", "label": "<?php echo tr('Tipo ddt'); ?>", "name": "idtipoddt", "required": 1, "values": "query=SELECT `dt_tipiddt`.`id`, `dt_tipiddt_lang`.`name` as descrizione FROM `dt_tipiddt` LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt`.`id`=`dt_tipiddt_lang`.`id_record` AND `dt_tipiddt_lang`.`id_lang`= <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `dir`='<?php echo $dir; ?>'", "value": "<?php echo $id_tipoddt; ?>" ]}
 		</div>
 	</div>
 

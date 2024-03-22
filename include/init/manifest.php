@@ -52,8 +52,8 @@ if (!$creation) {
 			</div>
 			<div class="box-body">
                 <p>'.tr('Sembra che non ci siano i permessi di scrittura sul file _FILE_', [
-                    '_FILE_' => '<b>manifest.json</b>',
-                ]).'</p>
+        '_FILE_' => '<b>manifest.json</b>',
+    ]).'</p>
             </div>
     </div>';
 }

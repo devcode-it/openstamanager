@@ -88,8 +88,8 @@ if (empty($id_record)) {
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">'.tr('Colonna _NUM_', [
-                    '_NUM_' => $column + 1,
-                ]).'</h3>
+            '_NUM_' => $column + 1,
+        ]).'</h3>
             </div>
 
             <div class="panel-body">';
@@ -207,8 +207,8 @@ function importPage(page) {
 
                 swal({
                     title: "'.tr('Importazione completata: _COUNT_  righe processate', [
-                        '_COUNT_' => '" + count + "',
-                    ]).'",
+        '_COUNT_' => '" + count + "',
+    ]).'",
                     type: "success",
                 });
             }

@@ -22,6 +22,7 @@ namespace Modules\DDT;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Traits\RecordTrait;
+
 class Tipo extends Model
 {
     use SimpleModelTrait;
@@ -41,9 +42,9 @@ class Tipo extends Model
     {
         return '';
     }
-    
-    public static function getTranslatedFields(){
+
+    public static function getTranslatedFields()
+    {
         return self::$translated_fields;
     }
-
 }

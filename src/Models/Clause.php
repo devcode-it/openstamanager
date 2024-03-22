@@ -32,7 +32,6 @@ class Clause extends Model
     protected static $translated_fields = [
         'name',
     ];
-    
 
     public static function build()
     {
@@ -59,7 +58,8 @@ class Clause extends Model
         return '';
     }
 
-    public static function getTranslatedFields(){
+    public static function getTranslatedFields()
+    {
         return self::$translated_fields;
     }
 }

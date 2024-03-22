@@ -22,6 +22,7 @@ namespace Modules\Fatture;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Traits\RecordTrait;
+
 class Stato extends Model
 {
     use SimpleModelTrait;
@@ -41,8 +42,9 @@ class Stato extends Model
     {
         return 'Stati dei documenti';
     }
-    
-    public static function getTranslatedFields(){
+
+    public static function getTranslatedFields()
+    {
         return self::$translated_fields;
     }
 }

@@ -18,7 +18,6 @@
  */
 
 include_once __DIR__.'/../../../core.php';
-use Models\Module;
 
 $record['abilita_serial'] = ($record['serial'] > 0) ? 1 : $record['abilita_serial'];
 if (empty($record['abilita_serial'])) {
@@ -155,7 +154,7 @@ if (empty(get('modal'))) {
                     $module = 'Fatture di acquisto';
 
                     // Ricerca vendite su fatture
-                    $query = 'SELECT *, `co_tipidocumento_lang`.`name` AS tipo_documento, `co_tipidocumento`.`dir`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_documenti`.`data` FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `co_righe_documenti`.`id`='.prepare($acquisto['id_riga_documento']);
+                    $query = 'SELECT *, `co_tipidocumento_lang`.`name` AS tipo_documento, `co_tipidocumento`.`dir`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_documenti`.`data` FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_righe_documenti`.`id`='.prepare($acquisto['id_riga_documento']);
                     $data = $dbo->fetchArray($query);
 
                     $id = $data[0]['iddocumento'];
@@ -176,7 +175,7 @@ if (empty(get('modal'))) {
                             `dt_righe_ddt`
                             INNER JOIN `dt_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id` 
                             INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
-                            LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt`.`id` = `dt_tipiddt_lang`.`id_record` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+                            LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt`.`id` = `dt_tipiddt_lang`.`id_record` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                         WHERE 
                             `dt_righe_ddt`.`id`='.prepare($acquisto['id_riga_ddt']);
                     $data = $dbo->fetchArray($query);
@@ -200,7 +199,7 @@ if (empty(get('modal'))) {
                             `or_righe_ordini` 
                             INNER JOIN `or_ordini` ON `or_righe_ordini`.`idordine`=`or_ordini`.`id`
                             INNER JOIN `or_tipiordine` ON `or_ordini`.`ididtipordine`=`or_tipiordine`.`id`
-                            LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine`.`id` = `or_tipiordine_lang`.`id_record` AND `or_tipiordine_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+                            LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine`.`id` = `or_tipiordine_lang`.`id_record` AND `or_tipiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                         WHERE  
                             `or_righe_ordini`.`id`='.prepare($acquisto['id_riga_ordine']);
                     $data = $dbo->fetchArray($query);
@@ -213,10 +212,10 @@ if (empty(get('modal'))) {
                 $numero = !empty($data[0]['numero_esterno']) ? $data[0]['numero_esterno'] : $data[0]['numero'];
 
                 $text = tr('_DOC_ num. _NUM_ del _DATE_', [
-                '_DOC_' => $data[0]['tipo_documento'],
-                '_NUM_' => $numero,
-                '_DATE_' => Translator::dateToLocale($data[0]['data']),
-            ]).(!empty($extra) ? ' '.$extra : '');
+                    '_DOC_' => $data[0]['tipo_documento'],
+                    '_NUM_' => $numero,
+                    '_DATE_' => Translator::dateToLocale($data[0]['data']),
+                ]).(!empty($extra) ? ' '.$extra : '');
 
                 echo Modules::link($module, $id, $text).'<br>';
             }
@@ -265,7 +264,7 @@ if (empty(get('modal'))) {
                     $module = 'Fatture di vendita';
 
                     // Ricerca vendite su fatture
-                    $query = 'SELECT *, `co_tipidocumento_lang`.`name` AS tipo_documento, `co_tipidocumento`.`dir`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`,`co_documenti`.`data` FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id`=`co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).') WHERE `co_righe_documenti`.`id`='.prepare($vendita['id_riga_documento']);
+                    $query = 'SELECT *, `co_tipidocumento_lang`.`name` AS tipo_documento, `co_tipidocumento`.`dir`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`,`co_documenti`.`data` FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id`=`co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `co_righe_documenti`.`id`='.prepare($vendita['id_riga_documento']);
                     $data = $dbo->fetchArray($query);
 
                     $id = $data[0]['iddocumento'];
@@ -286,7 +285,7 @@ if (empty(get('modal'))) {
                             `dt_righe_ddt`
                             INNER JOIN `dt_ddt` ON `dt_righe_ddt`.`idddt`=`dt_ddt`.`id`
                             INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt`=`dt_tipiddt`.`id`
-                            LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record`=`dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).')
+                            LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record`=`dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
                         WHERE 
                             `dt_righe_ddt`.`id`='.prepare($vendita['id_riga_ddt']);
                     $data = $dbo->fetchArray($query);
@@ -310,7 +309,7 @@ if (empty(get('modal'))) {
                             `or_righe_ordini`
                             INNER JOIN `or_ordini` ON `or_righe_ordini`.`idordine`=`or_ordini`.`id`
                             INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine`=`or_tipiordine`.`id`
-                            LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine_lang`.`id_record`=`or_tipiordine`.`id` AND `or_tipiordine_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).')
+                            LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine_lang`.`id_record`=`or_tipiordine`.`id` AND `or_tipiordine_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
                         WHERE  
                             `or_righe_ordini`.`id`='.prepare($vendita['id_riga_ordine']);
                     $data = $dbo->fetchArray($query);
@@ -434,8 +433,8 @@ function addSerial(form_id, numero) {
         swal({
             title: "'.tr('Nuovi seriali').'",
             html: "'.tr("Confermi l'inserimento di _NUM_ nuovi seriali?", [
-                '_NUM_' => '" + numero + "',
-            ]).'",
+    '_NUM_' => '" + numero + "',
+]).'",
             type: "success",
             showCancelButton: true,
             confirmButtonText: "'.tr('Continua').'"

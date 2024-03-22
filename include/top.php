@@ -17,8 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Util\FileSystem;
 use Models\Module;
+use Util\FileSystem;
 
 include_once __DIR__.'/../core.php';
 
@@ -414,7 +414,7 @@ if (Auth::check()) {
                             <li class="nav-button" >
                                 <p style="padding:10px 15px;">&nbsp;</p>
                             </li>';
-    //Visualizzo gli hooks solo se non sono stati disabilitati
+    // Visualizzo gli hooks solo se non sono stati disabilitati
     if (!$config['disable_hooks']) {
         echo '
                             <li class="dropdown notifications-menu nav-button">
@@ -437,23 +437,23 @@ if (Auth::check()) {
     }
 
     echo '
-                            <li class="nav-button"><a href="#" onclick="window.print()" class="tip nav-button" title="' . tr('Stampa') . '">
+                            <li class="nav-button"><a href="#" onclick="window.print()" class="tip nav-button" title="'.tr('Stampa').'">
                                 <i class="fa fa-print"></i>
                             </a></li>
 
-                            <li class="nav-button"><a href="' . base_path() . '/log.php" class="tip nav-button" title="' . tr('Log accessi') . '">
+                            <li class="nav-button"><a href="'.base_path().'/log.php" class="tip nav-button" title="'.tr('Log accessi').'">
                                 <i class="fa fa-book"></i>
                             </a></li>
 
-                            <li class="nav-button"><a data-href="' . base_path() . '/shortcuts.php" data-title="' . tr('Scorciatoie da tastiera') . '" class="tip nav-button" title="' . tr('Scorciatoie') . '">
+                            <li class="nav-button"><a data-href="'.base_path().'/shortcuts.php" data-title="'.tr('Scorciatoie da tastiera').'" class="tip nav-button" title="'.tr('Scorciatoie').'">
                                 <i class="fa fa-keyboard-o"></i>
                             </a></li>
 
-                            <li class="nav-button"><a href="' . base_path() . '/info.php" class="tip nav-button" title="' . tr('Informazioni') . '">
+                            <li class="nav-button"><a href="'.base_path().'/info.php" class="tip nav-button" title="'.tr('Informazioni').'">
                                 <i class="fa fa-info"></i>
                             </a></li>
 
-                            <li class="nav-button"><a href="' . base_path() . '/index.php?op=logout" onclick="sessionStorage.clear()" class="bg-red tip" title="' . tr('Esci') . '">
+                            <li class="nav-button"><a href="'.base_path().'/index.php?op=logout" onclick="sessionStorage.clear()" class="bg-red tip" title="'.tr('Esci').'">
                                 <i class="fa fa-power-off"></i>
                             </a></li>
                         </ul>
@@ -524,7 +524,7 @@ if (Auth::check()) {
 
         // Tab dei plugin
         if (!empty($id_record)) {
-            $plugins = $dbo->fetchArray('SELECT `zz_plugins`.`id`, `title`, `options`, `options2` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `idmodule_to`='.prepare($id_module)." AND `position`='tab' AND `enabled` = 1 ORDER BY `zz_plugins`.`order` DESC");
+            $plugins = $dbo->fetchArray('SELECT `zz_plugins`.`id`, `title`, `options`, `options2` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `idmodule_to`='.prepare($id_module)." AND `position`='tab' AND `enabled` = 1 ORDER BY `zz_plugins`.`order` DESC");
             foreach ($plugins as $plugin) {
                 // Badge count per record plugin
                 $count = 0;
@@ -652,7 +652,7 @@ if (!empty($messages['error'])) {
     foreach ($messages['error'] as $value) {
         echo '
 							<div class="alert alert-danger push">
-                                <h4><i class="icon fa fa fa-ban"></i> '.tr("Errore").'</h4>
+                                <h4><i class="icon fa fa fa-ban"></i> '.tr('Errore').'</h4>
                                 '.$value.'
                             </div>';
     }
@@ -663,7 +663,7 @@ if (!empty($messages['warning'])) {
     foreach ($messages['warning'] as $value) {
         echo '
 							<div class="alert alert-warning push">
-                                <h4><i class="icon fa fa-warning"></i> '.tr("Attenzione").'</h4>
+                                <h4><i class="icon fa fa-warning"></i> '.tr('Attenzione').'</h4>
                                 '.$value.'
                             </div>';
     }
@@ -685,8 +685,8 @@ if ($free_space < ($space_limit * (1024 ** 3))) {
             <i class="fa fa-warning"></i> '.tr('Spazio in esaurimento').'
         </h4>
          <p>'.tr('Lo spazio a disposizione del gestionale è in esaurimento: sono al momento disponibili _TOT_', [
-            '_TOT_' => FileSystem::formatBytes($free_space),
-        ]).'.</p>
+        '_TOT_' => FileSystem::formatBytes($free_space),
+    ]).'.</p>
          <p>'.tr('Questo può risultare un serio problema per la continuità di funzionamento del software, poiché le operazioni più espansive che richiedono spazio di archiviazione possono causare malfunzionamenti imprevisti').'. '.tr('Ad esempio, le attività di backup, caricamento di allegati o anche l\'utilizzo normale del gestionale potrebbero rendere i dati inaffidabili, provocando pertanto una perdita delle informazioni salvate').'.</p>
         <p>'.tr('Contatta gli amministratori di sistema per risolvere al più presto il problema').'.</p>
     </div>';

@@ -29,7 +29,7 @@ switch (filter('op')) {
         $tipo_new = Tipo::where('id', '=', (new Tipo())->getByField('name', $descrizione))->where('dir', '=', $dir)->where('codice_tipo_documento_fe', '=', $codice_tipo_documento_fe)->first();
 
         if (isset($descrizione) && isset($dir) && isset($codice_tipo_documento_fe)) {
-            if (!empty($tipo_new) && $tipo_new->id != $id_record){
+            if (!empty($tipo_new) && $tipo_new->id != $id_record) {
                 flash()->error(tr('Questa combinazione di nome, codice e direzione è già stata utilizzata per un altro tipo di documento.'));
             } else {
                 if (!empty($predefined)) {
@@ -47,7 +47,7 @@ switch (filter('op')) {
                 flash()->info(tr('Salvataggio completato!'));
             }
         }
- 
+
         break;
 
     case 'add':
@@ -57,7 +57,7 @@ switch (filter('op')) {
         $tipo_new = Tipo::where('id', '=', (new Tipo())->getByField('name', $descrizione))->where('dir', '=', $dir)->where('codice_tipo_documento_fe', '=', $codice_tipo_documento_fe)->first();
 
         if (isset($descrizione) && isset($dir) && isset($codice_tipo_documento_fe)) {
-            if (!empty($tipo_new) && $tipo_new->id != $id_record){
+            if (!empty($tipo_new) && $tipo_new->id != $id_record) {
                 flash()->error(tr('Questa combinazione di nome, codice e direzione è già stata utilizzata per un altro tipo di documento.'));
             } else {
                 $tipo = Tipo::build($dir, $codice_tipo_documento_fe);

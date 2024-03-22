@@ -40,7 +40,7 @@ class Articolo extends Model
      *
      * @return self
      */
-    public static function build(ArticoloOriginale $articolo = null, $id_listino = null, $direzione = 'entrata')
+    public static function build(?ArticoloOriginale $articolo = null, $id_listino = null, $direzione = 'entrata')
     {
         $model = new static();
 

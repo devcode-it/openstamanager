@@ -50,12 +50,12 @@ function disabilitaModulo(button){
 
     swal({
         title: "'.tr('Disabilitare il _TYPE_?', [
-            '_TYPE_' => '" + nome_tipo + "',
-        ]).'",
+    '_TYPE_' => '" + nome_tipo + "',
+]).'",
         html: "'.tr('Sei sicuro di voler disabilitare il _TYPE_ _NAME_?', [
-            '_TYPE_' => '" + nome_tipo + "',
-            '_NAME_' => '" + nome + "',
-        ]).'",
+    '_TYPE_' => '" + nome_tipo + "',
+    '_NAME_' => '" + nome + "',
+]).'",
         type: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"
@@ -99,12 +99,12 @@ function abilitaModulo(button) {
 
     swal({
         title: "'.tr('Abilitare il _TYPE_?', [
-            '_TYPE_' => '" + nome_tipo + "',
-        ]).'",
+    '_TYPE_' => '" + nome_tipo + "',
+]).'",
         html: "'.tr('Sei sicuro di voler abilitare il _TYPE_ _NAME_?', [
-            '_TYPE_' => '" + nome_tipo + "',
-            '_NAME_' => '" + nome + "',
-        ]).'",
+    '_TYPE_' => '" + nome_tipo + "',
+    '_NAME_' => '" + nome + "',
+]).'",
         type: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"
@@ -149,8 +149,8 @@ function abilitaSottoModuli(button) {
     swal({
         title: "'.tr('Abilitare tutti i sotto-moduli?').'",
         html: "'.tr('Sei sicuro di voler abilitare tutti i sotto-moduli del modulo _NAME_?', [
-            '_NAME_' => '" + nome + "',
-        ]).'",
+    '_NAME_' => '" + nome + "',
+]).'",
         type: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"
@@ -194,14 +194,14 @@ function rimuoviModulo(button) {
 
     swal({
         title: "'.tr('Rimuovere il _TYPE_?', [
-            '_TYPE_' => '" + nome_tipo + "',
-        ]).'",
+    '_TYPE_' => '" + nome_tipo + "',
+]).'",
         html: "'.tr('Sei sicuro di voler rimuovere il _TYPE_ _NAME_?', [
-            '_TYPE_' => '" + nome_tipo + "',
-            '_NAME_' => '" + nome + "',
-        ]).'<br>'.tr('Questa operazione è irreversibile e provocherà la potenziale perdita dei dati attualmente collegati al _TYPE_', [
-            '_TYPE_' => '" + nome_tipo + "',
-        ]).'.",
+    '_TYPE_' => '" + nome_tipo + "',
+    '_NAME_' => '" + nome + "',
+]).'<br>'.tr('Questa operazione è irreversibile e provocherà la potenziale perdita dei dati attualmente collegati al _TYPE_', [
+    '_TYPE_' => '" + nome_tipo + "',
+]).'.",
         type: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"
@@ -275,7 +275,7 @@ function renderElencoModuli($elenco, $depth = 0)
                 ->selectRaw('zz_plugins.*, zz_plugins_lang.title as title')
                 ->join('zz_plugins_lang', function ($join) {
                     $join->on('zz_plugins.id', '=', 'zz_plugins_lang.id_record')
-                        ->where('zz_plugins_lang.id_lang', '=', \Models\Locale::getDefault()->id);
+                        ->where('zz_plugins_lang.id_lang', '=', Models\Locale::getDefault()->id);
                 })
                 ->where('idmodule_to', '=', $record['id'])
                 ->get()->map(function ($i) {
@@ -354,8 +354,8 @@ function renderElencoModuli($elenco, $depth = 0)
         } else {
             $result .= '
                 <div class="tip" data-toggle="tooltip" title="'.tr('Questo _TYPE_ non può essere disabilitato', [
-                    '_TYPE_' => $nome_tipo,
-                ]).'">
+                '_TYPE_' => $nome_tipo,
+            ]).'">
                     <i class="fa fa-eye" title="'.tr('Modulo sempre abilitato').'"></i>
                 </div>';
         }
@@ -375,8 +375,8 @@ function renderElencoModuli($elenco, $depth = 0)
         } else {
             $result .= '
                 <div class="tip" data-toggle="tooltip" title="'.tr('Questo _TYPE_ non può essere disinstallato', [
-                    '_TYPE_' => $nome_tipo,
-                ]).'">
+                '_TYPE_' => $nome_tipo,
+            ]).'">
                     <i class="fa fa-trash text-muted" title="'.tr('Modulo non disinstallabile').'"></i>
                 </div>';
         }

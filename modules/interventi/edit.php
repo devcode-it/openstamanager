@@ -17,10 +17,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Modules\Anagrafiche\Anagrafica;
-use Modules\Anagrafiche\Sede;
 use Models\Module;
 use Models\Plugin;
+use Modules\Anagrafiche\Anagrafica;
+use Modules\Anagrafiche\Sede;
 
 include_once __DIR__.'/../../core.php';
 
@@ -34,9 +34,9 @@ if (!empty($numero_previsto) && intval(setting('Verifica numero intervento'))) {
     echo '
 <div class="alert alert-warning alert-dismissable">
     <i class="fa fa-warning"></i> '.tr("E' assente una attività con numero _NUM_ in data precedente o corrispondente al _DATE_: potrebbero esserci alcuni errori di continuità con la numerazione delle attività", [
-            '_DATE_' => dateFormat($intervento->data_richiesta),
-            '_NUM_' => '"'.$numero_previsto.'"',
-        ]).'.</b>
+        '_DATE_' => dateFormat($intervento->data_richiesta),
+        '_NUM_' => '"'.$numero_previsto.'"',
+    ]).'.</b>
 
     <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
 </div>';
@@ -154,7 +154,7 @@ echo '
 
                     <div class="row">
                         <div class="col-md-6">';
-                            echo !empty($record['idpagamento']) ? Modules::link('Pagamenti', $record['idpagamento'], null, null, 'class="pull-right"') : '';
+echo !empty($record['idpagamento']) ? Modules::link('Pagamenti', $record['idpagamento'], null, null, 'class="pull-right"') : '';
 echo '
                             {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "idpagamento", "required": 0, "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
                         </div>
@@ -352,7 +352,7 @@ echo '
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `name` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = <?php echo prepare(\Models\Locale::getDefault()->id); ?>) WHERE `deleted_at` IS NULL ORDER BY `name`", "value": "$id$", "class": "unblockable" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `name` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `deleted_at` IS NULL ORDER BY `name`", "value": "$id$", "class": "unblockable" ]}
                 </div>
 <?php
 
@@ -514,7 +514,7 @@ if (!$block_edit) {
             `dt_ddt`
             LEFT JOIN `dt_causalet` ON `dt_causalet`.`id` = `dt_ddt`.`idcausalet`
             INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`
-            LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+            LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
             INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
         WHERE 
@@ -627,10 +627,10 @@ if (!$block_edit) {
             echo '
 	    <img src="'.base_path().'/files/interventi/'.$record['firma_file'].'" class="img-thumbnail"><div>&nbsp;</div>
 	   	<div class="col-md-6 col-md-offset-3 alert alert-success"><i class="fa fa-check"></i> '.tr('Firmato il _DATE_ alle _TIME_ da _PERSON_', [
-            '_DATE_' => Translator::dateToLocale($record['firma_data']),
-            '_TIME_' => Translator::timeToLocale($record['firma_data']),
-            '_PERSON_' => (!empty($record['firma_nome']) ? $record['firma_nome'] : $intervento->anagrafica->ragione_sociale),
-        ]).'</div>';
+                '_DATE_' => Translator::dateToLocale($record['firma_data']),
+                '_TIME_' => Translator::timeToLocale($record['firma_data']),
+                '_PERSON_' => (!empty($record['firma_nome']) ? $record['firma_nome'] : $intervento->anagrafica->ragione_sociale),
+            ]).'</div>';
         }
 
 echo '
@@ -899,15 +899,15 @@ $(document).ready(function() {
 
 // Collegamenti diretti
 // Fatture collegate a questo intervento
-$elementi = $dbo->fetchArray('SELECT `co_documenti`.*, `co_tipidocumento_lang`.`name` AS tipo_documento, `co_statidocumento_lang`.`name` AS stato_documento, `co_tipidocumento`.`dir` FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`idtipodocumento` = `co_documenti`.`idtipodocumento` AND `co_tipidocumento_lang`.`lang` = '.prepare(\Models\Locale::getDefault()->id).') INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`idstatodocumento` = `co_documenti`.`idstatodocumento` AND `co_statidocumento_lang`.`lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idintervento` = '.prepare($id_record).') ORDER BY `data`');
+$elementi = $dbo->fetchArray('SELECT `co_documenti`.*, `co_tipidocumento_lang`.`name` AS tipo_documento, `co_statidocumento_lang`.`name` AS stato_documento, `co_tipidocumento`.`dir` FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`idtipodocumento` = `co_documenti`.`idtipodocumento` AND `co_tipidocumento_lang`.`lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`idstatodocumento` = `co_documenti`.`idstatodocumento` AND `co_statidocumento_lang`.`lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idintervento` = '.prepare($id_record).') ORDER BY `data`');
 
 if (!empty($elementi)) {
     echo '
 <div class="box box-warning collapsable collapsed-box">
     <div class="box-header with-border">
         <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
-            '_NUM_' => count($elementi),
-        ]).'</h3>
+        '_NUM_' => count($elementi),
+    ]).'</h3>
         <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
         </div>

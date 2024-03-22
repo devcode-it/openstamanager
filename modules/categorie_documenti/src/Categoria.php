@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Models\Group;
 use Traits\RecordTrait;
+
 class Categoria extends Model
 {
     use SimpleModelTrait;
@@ -31,7 +32,6 @@ class Categoria extends Model
     use RecordTrait;
 
     protected $table = 'do_categorie';
-
 
     protected static $translated_fields = [
         'name',
@@ -54,8 +54,8 @@ class Categoria extends Model
 
         $database = database();
         $database->sync('do_permessi', ['id_categoria' => $this->id], [
-           'id_gruppo' => $groups,
-       ]);
+            'id_gruppo' => $groups,
+        ]);
     }
 
     public function getModuleAttribute()
@@ -63,7 +63,8 @@ class Categoria extends Model
         return 'Categorie documenti';
     }
 
-    public static function getTranslatedFields(){
+    public static function getTranslatedFields()
+    {
         return self::$translated_fields;
     }
 }

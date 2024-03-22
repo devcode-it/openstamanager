@@ -34,7 +34,7 @@ foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt`=`dt_tipiddt`.`id` LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt`.`id`= `dt_tipiddt_lang` = `id_record` AND `dt_tipiddt_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).') WHERE `idanagrafica` IN('.implode(',', $idanagrafiche).') ';
+$query .= ' FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt`=`dt_tipiddt`.`id` LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt`.`id`= `dt_tipiddt_lang` = `id_record` AND `dt_tipiddt_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `idanagrafica` IN('.implode(',', $idanagrafiche).') ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE "%'.$term.'%"';

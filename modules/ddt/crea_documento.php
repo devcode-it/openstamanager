@@ -19,9 +19,9 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Models\Module;
 use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
-use Models\Module;
 
 $documento = DDT::find($id_record);
 $tipo_documento_finale = Fattura::class;

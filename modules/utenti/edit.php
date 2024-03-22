@@ -19,14 +19,14 @@
 
 include_once __DIR__.'/../../core.php';
 
-$utenti = $dbo->fetchArray('SELECT *, (SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `an_anagrafiche`.`idanagrafica`=`zz_users`.`idanagrafica` ) AS `ragione_sociale`, (SELECT GROUP_CONCAT(`name` SEPARATOR ", ") FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` WHERE `idanagrafica`=`zz_users`.`idanagrafica` GROUP BY `idanagrafica`) AS tipo FROM `zz_users` WHERE `idgruppo`='.prepare($record['id']));
+$utenti = $dbo->fetchArray('SELECT *, (SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `an_anagrafiche`.`idanagrafica`=`zz_users`.`idanagrafica` ) AS `ragione_sociale`, (SELECT GROUP_CONCAT(`name` SEPARATOR ", ") FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` WHERE `idanagrafica`=`zz_users`.`idanagrafica` GROUP BY `idanagrafica`) AS tipo FROM `zz_users` WHERE `idgruppo`='.prepare($record['id']));
 
 echo '
 	<div class="panel panel-primary">
 		<div class="panel-heading">
 			<h3 class="panel-title">'.tr('Utenti del gruppo: _GROUP_', [
-                '_GROUP_' => $group->getTranslation('name'),
-            ]).'</h3>
+    '_GROUP_' => $group->getTranslation('name'),
+]).'</h3>
 		</div>
 
 		<div class="panel-body">
@@ -171,8 +171,8 @@ echo '
 	<div class="panel panel-primary">
 		<div class="panel-heading">
             <h3 class="panel-title">'.tr('Permessi del gruppo: _GROUP_', [
-                '_GROUP_' => $record['nome'],
-            ]).((empty($record['editable']) && ($record['nome'] != 'Amministratori')) ? '<a class=\'clickable btn-xs pull-right ask\'  data-msg="'.tr('Verranno reimpostati i permessi di default per il gruppo \''.$record['nome'].'\' ').'." data-class="btn btn-lg btn-warning" data-button="'.tr('Reimposta permessi').'" data-op="restore_permission"  >'.tr('Reimposta permessi').'</a>' : '').'</h3>
+    '_GROUP_' => $record['nome'],
+]).((empty($record['editable']) && ($record['nome'] != 'Amministratori')) ? '<a class=\'clickable btn-xs pull-right ask\'  data-msg="'.tr('Verranno reimpostati i permessi di default per il gruppo \''.$record['nome'].'\' ').'." data-class="btn btn-lg btn-warning" data-button="'.tr('Reimposta permessi').'" data-op="restore_permission"  >'.tr('Reimposta permessi').'</a>' : '').'</h3>
 		</div>
 
 		<div class="panel-body">';

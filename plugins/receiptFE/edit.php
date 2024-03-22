@@ -30,8 +30,8 @@ echo '
 if (Interaction::isEnabled()) {
     echo '
 <p>'.tr('Tramite il pulsante _BTN_ è possibile procedere al recupero delle ricevute, aggiornando automaticamente lo stato delle relative fatture e allegandole ad esse', [
-    '_BTN_' => '<i class="fa fa-refresh"></i> <b>'.tr('Ricerca ricevute').'</b>',
-]).'.</p>';
+        '_BTN_' => '<i class="fa fa-refresh"></i> <b>'.tr('Ricerca ricevute').'</b>',
+    ]).'.</p>';
 }
 
 // Messaggio informativo su fatture con stato di errore
@@ -45,7 +45,7 @@ if (!empty($fatture_generate_errore->count())) {
     echo '
         <div class="alert alert-warning push alert-dismissible" role="alert">
             <button class="close" type="button" data-dismiss="alert" aria-hidden="true"><span aria-hidden="true">×</span><span class="sr-only">'.tr('Chiudi').'</span></button>
-            <h4><i class="icon fa fa-warning"></i>'.tr('Attenzione').'</h4>'.(($fatture_generate_errore->count()>1)? tr('Le seguenti fatture hanno ricevuto uno scarto o presentano errori in fase di trasmissione') : tr('La seguente fattura ha ricevuto uno scarto o presenta errori in fase di trasmissione')).':
+            <h4><i class="icon fa fa-warning"></i>'.tr('Attenzione').'</h4>'.(($fatture_generate_errore->count() > 1) ? tr('Le seguenti fatture hanno ricevuto uno scarto o presentano errori in fase di trasmissione') : tr('La seguente fattura ha ricevuto uno scarto o presenta errori in fase di trasmissione')).':
             <ul>';
 
     foreach ($fatture_generate_errore as $fattura_generata) {
@@ -91,7 +91,7 @@ $fatture_generate = Fattura::vendita()
 if (!empty($fatture_generate->count())) {
     echo '
     <div class="alert alert-info push info-dismissible" role="alert"><button class="close" type="button" data-dismiss="alert" aria-hidden="true"><span aria-hidden="true">×</span><span class="sr-only">'.tr('Chiudi').'</span></button>
-        <h4><i class="icon fa fa-info"></i>'.tr('Informazione').'</h4> '.(($fatture_generate->count()>1)? tr('Le seguenti fatture sono in attesa di una ricevuta da più di 7 giorni') : tr('La seguente fattura è in attesa di una ricevuta da più di 7 giorni')).':
+        <h4><i class="icon fa fa-info"></i>'.tr('Informazione').'</h4> '.(($fatture_generate->count() > 1) ? tr('Le seguenti fatture sono in attesa di una ricevuta da più di 7 giorni') : tr('La seguente fattura è in attesa di una ricevuta da più di 7 giorni')).':
         <ul>';
 
     foreach ($fatture_generate as $fattura_generata) {
@@ -157,8 +157,8 @@ echo '
 if (Interaction::isEnabled()) {
     echo '
         <p>'.tr('Per vedere le ricevute da importare utilizza il pulsante _BUTTON_', [
-            '_BUTTON_' => '<i class="fa fa-refresh"></i> <b>'.tr('Ricerca ricevute').'</b>',
-        ]).'.</p>';
+        '_BUTTON_' => '<i class="fa fa-refresh"></i> <b>'.tr('Ricerca ricevute').'</b>',
+    ]).'.</p>';
 } else {
     include $structure->filepath('list.php');
 }

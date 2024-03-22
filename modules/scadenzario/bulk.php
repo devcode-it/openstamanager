@@ -19,13 +19,13 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Models\Module;
 use Models\OperationLog;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Emails\Mail;
 use Modules\Emails\Template;
 use Modules\Fatture\Fattura;
 use Modules\Scadenzario\Scadenza;
-use Models\Module;
 
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 

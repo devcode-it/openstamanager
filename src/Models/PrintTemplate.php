@@ -36,19 +36,27 @@ class PrintTemplate extends Model
     protected $table = 'zz_prints';
     protected $main_folder = 'templates';
 
-
     protected static $translated_fields = [
         'name',
         'filename',
         'title',
     ];
 
-
     /* Relazioni Eloquent */
 
     public function module()
     {
         return $this->belongsTo(Module::class, 'id_module');
+    }
+
+    public function getModuleAttribute()
+    {
+        return '';
+    }
+
+    public static function getTranslatedFields()
+    {
+        return self::$translated_fields;
     }
 
     protected static function boot()
@@ -58,14 +66,5 @@ class PrintTemplate extends Model
         static::addGlobalScope('enabled', function (Builder $builder) {
             $builder->where('enabled', true);
         });
-    }
-
-    public function getModuleAttribute()
-    {
-        return '';
-    }
-
-    public static function getTranslatedFields(){
-        return self::$translated_fields;
     }
 }

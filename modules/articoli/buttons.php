@@ -23,8 +23,8 @@ include_once __DIR__.'/../../core.php';
 if ($articolo->isVariante()) {
     echo '
 <div class="badge badge-info">'.tr('Variante: _NAME_', [
-    '_NAME_' => $articolo->nome_variante,
-]).'</div>';
+        '_NAME_' => $articolo->nome_variante,
+    ]).'</div>';
 }
 
 echo '

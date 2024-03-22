@@ -22,6 +22,7 @@ namespace Modules\Ordini;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Traits\RecordTrait;
+
 class Tipo extends Model
 {
     use SimpleModelTrait;
@@ -37,13 +38,13 @@ class Tipo extends Model
         return $this->hasMany(Ordine::class, 'idtipoordine');
     }
 
-
     public function getModuleAttribute()
     {
         return 'Stati degli ordini';
     }
 
-    public static function getTranslatedFields(){
+    public static function getTranslatedFields()
+    {
         return self::$translated_fields;
     }
 }

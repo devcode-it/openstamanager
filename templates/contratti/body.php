@@ -34,9 +34,9 @@ echo '
         <div class="text-center" style="height:5mm;">
             <br><br>
             <b>'.tr('Contratto num. _NUM_ del _DATE_', [
-                '_NUM_' => $documento['numero'],
-                '_DATE_' => Translator::dateToLocale($documento['data_bozza']),
-            ], ['upper' => true]).'</b>
+    '_NUM_' => $documento['numero'],
+    '_DATE_' => Translator::dateToLocale($documento['data_bozza']),
+], ['upper' => true]).'</b>
         </div>';
 
 // Elenco impianti

@@ -19,9 +19,9 @@
 
 namespace Traits;
 
+use Models\Locale;
 use Models\Module;
 use Models\Plugin;
-use Models\Locale;
 
 trait RecordTrait
 {
@@ -52,7 +52,6 @@ trait RecordTrait
         return $field->value;
     }
 
-    
     public function uploads($record = null)
     {
         $module = $this->getModule();
@@ -68,10 +67,9 @@ trait RecordTrait
 
         return collect();
     }
-    
 
     /**
-     * Estensione del salvataggio oggetto per popolare le lingue aggiuntive
+     * Estensione del salvataggio oggetto per popolare le lingue aggiuntive.
      */
     public function save(array $options = [])
     {
@@ -83,13 +81,13 @@ trait RecordTrait
             // Popolo inizialmente i campi traducibili o allineo quelli uguali
             foreach ($this->getTranslatedFields() as $field) {
                 $value = $this->getTranslation($field);
-                
+
                 foreach ($other_langs as $id_lang) {
                     $translation = database()->table($this->table.'_lang')
                         ->select($field)
                         ->where('id_record', '=', $this->id)
                         ->where('id_lang', '=', $id_lang);
-                    
+
                     // Se la traduzione non è presente la creo...
                     if ($translation->count() == 0) {
                         $this->setTranslation($field, $value, $id_lang);
@@ -113,7 +111,7 @@ trait RecordTrait
     }
 
     /**
-     * Imposta l'attributo all'oggetto
+     * Imposta l'attributo all'oggetto.
      */
     public function setTranslation($field, $value, $id_lang = null)
     {
@@ -139,11 +137,12 @@ trait RecordTrait
     }
 
     /**
-     * Legge l'attributo dell'oggetto
+     * Legge l'attributo dell'oggetto.
      */
     public function getTranslation($field, $id_lang = null)
     {
         $id_lang ??= Locale::getDefault()->id;
+
         return database()->table($this->table.'_lang')
             ->select($field)
             ->where('id_record', '=', $this->id)
@@ -155,6 +154,7 @@ trait RecordTrait
     public function getByField($field, $value, $id_lang = null)
     {
         $id_lang ??= Locale::getDefault()->id;
+
         return database()->table($this->table.'_lang')
             ->select('id_record')
             ->where($field, '=', $value)

@@ -42,7 +42,7 @@ switch ($resource) {
             `an_anagrafiche`
             INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `an_tipianagrafiche_anagrafiche`.`idanagrafica`
             INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche`.`id`
-            LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.id` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(\Models\Locale::getDefault()->id).')
+            LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.id` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
         WHERE 
             `an_anagrafiche`.`deleted_at` IS NULL AND `an_anagrafiche`.`enable_newsletter` = 1 AND 1=1
         ORDER BY
@@ -98,7 +98,7 @@ switch ($resource) {
         break;
 
     case 'liste_newsletter':
-        $query = "SELECT `em_lists`.`id`, CONCAT(`em_lists_lang`.`name`, ' (', COUNT(*), ' `destinatari`)') AS descrizione FROM `em_lists` LEFT JOIN `em_lists_lang` ON (`em_lists_lang`.`id_record` = `em_lists`.`id` AND `em_lists_lang`.`id_lang` = ".prepare(\Models\Locale::getDefault()->id).") INNER JOIN `em_list_receiver` ON `em_lists`.`id` = `em_list_receiver`.`id_list` WHERE 1=1 |where| ORDER BY `name` ASC";
+        $query = "SELECT `em_lists`.`id`, CONCAT(`em_lists_lang`.`name`, ' (', COUNT(*), ' `destinatari`)') AS descrizione FROM `em_lists` LEFT JOIN `em_lists_lang` ON (`em_lists_lang`.`id_record` = `em_lists`.`id` AND `em_lists_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).') INNER JOIN `em_list_receiver` ON `em_lists`.`id` = `em_list_receiver`.`id_list` WHERE 1=1 |where| ORDER BY `name` ASC';
 
         foreach ($elements as $element) {
             $filter[] = '`id`='.prepare($element);

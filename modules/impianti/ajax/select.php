@@ -49,7 +49,6 @@ switch ($resource) {
             $where[] = 'my_impianti.idsede='.prepare($superselect['idsede_destinazione'] ?: 0);
         }
 
-
         if (!empty($superselect['idintervento'])) {
             $where[] = 'my_impianti.id NOT IN(SELECT idimpianto FROM my_impianti_interventi WHERE idintervento='.prepare($superselect['idintervento']).')';
         }
@@ -94,7 +93,7 @@ switch ($resource) {
             FROM 
                 `my_componenti`
                 INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `my_componenti`.`id_articolo`
-                LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+                LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             |where| 
             ORDER BY 
                 `my_componenti`.`id`';

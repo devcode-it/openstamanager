@@ -21,8 +21,8 @@ namespace API\App\v1;
 
 use API\App\AppResource;
 use API\Exceptions\InternalError;
-use Models\Upload;
 use Models\Module;
+use Models\Upload;
 
 class AllegatiInterventi extends AppResource
 {
@@ -98,13 +98,13 @@ class AllegatiInterventi extends AppResource
         }
 
         $file = base64_decode($content[1]);
-        
+
         // Salvataggio del file come allegato
         $upload = Upload::build($file, [
             'id_module' => $module,
             'id_record' => $data['id_intervento'],
         ], $data['nome'], $data['categoria']);
-    
+
         // Chiusura e rimozione del file temporaneo
         delete($file);
 

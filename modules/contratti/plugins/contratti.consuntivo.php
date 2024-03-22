@@ -51,9 +51,9 @@ if (!empty($interventi)) {
         <td>
             <a href="javascript:;" class="btn btn-primary btn-xs" onclick="$(\'#dettagli_'.$intervento->id.'\').toggleClass(\'hide\'); $(this).find(\'i\').toggleClass(\'fa-plus\').toggleClass(\'fa-minus\');"><i class="fa fa-plus"></i></a>
             '.Modules::link('Interventi', $intervento->id, tr('Intervento num. _NUM_ del _DATE_', [
-                '_NUM_' => $intervento->codice,
-                '_DATE_' => Translator::dateToLocale($intervento->inizio),
-            ])).'
+            '_NUM_' => $intervento->codice,
+            '_DATE_' => Translator::dateToLocale($intervento->inizio),
+        ])).'
         </td>
 
         <td class="text-right">

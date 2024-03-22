@@ -21,9 +21,9 @@ if (!empty($page)) {
     echo '
     <p class="text-right">
         '.tr('_YEAR_/_PAGE_', [
-            '_PAGE_' => $page++,
-            '_YEAR_' => date('Y'),
-        ]).'
+        '_PAGE_' => $page++,
+        '_YEAR_' => date('Y'),
+    ]).'
     </p>';
 } else {
     echo '<p></p>';

@@ -34,9 +34,9 @@ $hooks = $dbo->fetchArray('SELECT
     `zz_hooks`.*, 
     `zz_modules_lang`.`name` AS modulo
     FROM `zz_hooks`
-        LEFT JOIN `zz_hooks_lang` ON (`zz_hooks`.`id` = `zz_hooks_lang`.`id_record` AND `zz_hooks_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+        LEFT JOIN `zz_hooks_lang` ON (`zz_hooks`.`id` = `zz_hooks_lang`.`id_record` AND `zz_hooks_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         INNER JOIN `zz_modules` ON `zz_hooks`.`id_module` = `zz_modules`.`id`
-        LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+        LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     ORDER BY
         `id_module` ASC, `zz_hooks`.`id` ASC');
 
@@ -73,8 +73,8 @@ foreach ($gruppi as $modulo => $hooks) {
         if ($hook->enabled) {
             echo '
                 <div class="tip" data-toggle="tooltip" title="'.tr('Questo _TYPE_ è abilitato: clicca qui per disabilitarlo', [
-                        '_TYPE_' => $nome_tipo,
-                    ]).'">
+                '_TYPE_' => $nome_tipo,
+            ]).'">
                     <button type="button" class="btn btn-warning btn-xs" onclick="disabilitaHook(this)">
                         <i class="fa fa-power-off" title="'.tr('Disabilita').'"></i>
                     </button>
@@ -82,8 +82,8 @@ foreach ($gruppi as $modulo => $hooks) {
         } else {
             echo '
                 <div class="tip" data-toggle="tooltip" title="'.tr('Questo _TYPE_ è disabilitato: clicca qui per abilitarlo', [
-                        '_TYPE_' => $nome_tipo,
-                    ]).'">
+                '_TYPE_' => $nome_tipo,
+            ]).'">
                     <button type="button" class="btn btn-success btn-xs" onclick="abilitaHook(this)">
                         <i class="fa fa-plug" title="'.tr('Abilita').'"></i>
                     </button>
@@ -150,12 +150,12 @@ function disabilitaHook(button){
 
     swal({
         title: "'.tr('Disabilita _TYPE_', [
-            '_TYPE_' => '" + nome_tipo + "',
-        ]).'",
+    '_TYPE_' => '" + nome_tipo + "',
+]).'",
         html: "'.tr('Sei sicuro di voler disabilitare l\'_TYPE_ _NAME_?', [
-            '_TYPE_' => '" + nome_tipo + "',
-            '_NAME_' => '" + nome + "',
-        ]).'",
+    '_TYPE_' => '" + nome_tipo + "',
+    '_NAME_' => '" + nome + "',
+]).'",
         type: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"
@@ -197,12 +197,12 @@ function abilitaHook(button) {
 
     swal({
         title: "'.tr('Abilita _TYPE_', [
-            '_TYPE_' => '" + nome_tipo + "',
-        ]).'",
+    '_TYPE_' => '" + nome_tipo + "',
+]).'",
         html: "'.tr('Sei sicuro di voler abilitare l\'_TYPE_ _NAME_?', [
-            '_TYPE_' => '" + nome_tipo + "',
-            '_NAME_' => '" + nome + "',
-        ]).'",
+    '_TYPE_' => '" + nome_tipo + "',
+    '_NAME_' => '" + nome + "',
+]).'",
         type: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"

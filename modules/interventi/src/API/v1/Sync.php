@@ -21,9 +21,9 @@ namespace Modules\Interventi\API\v1;
 
 use API\Interfaces\RetrieveInterface;
 use API\Interfaces\UpdateInterface;
-use Modules\Interventi\Stato;
 use API\Resource;
 use Carbon\Carbon;
+use Modules\Interventi\Stato;
 
 class Sync extends Resource implements RetrieveInterface, UpdateInterface
 {

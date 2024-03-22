@@ -88,8 +88,9 @@ class Template extends Model
     {
         return 'Template email';
     }
-    
-    public static function getTranslatedFields(){
+
+    public static function getTranslatedFields()
+    {
         return self::$translated_fields;
     }
 }

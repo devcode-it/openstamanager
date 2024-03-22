@@ -33,7 +33,7 @@ include_once __DIR__.'/../../core.php';
         </div>
 
         <div class="col-md-6">
-            {[ "type": "select", "label": "<?php echo tr('Codice tipo documento FE'); ?>", "name": "codice_tipo_documento_fe", "values": "query=SELECT `codice` AS id, CONCAT_WS(' - ', `codice`, `name`) AS descrizione FROM `fe_tipi_documento` LEFT JOIN `fe_tipi_documento_lang` ON (`fe_tipi_documento_lang`.`id_record` = `fe_tipi_documento`.`codice` AND `fe_tipi_documento_lang`.`id_lang` = <?php echo prepare(\Models\Locale::getDefault()->id); ?>)", "required": 1 ]}
+            {[ "type": "select", "label": "<?php echo tr('Codice tipo documento FE'); ?>", "name": "codice_tipo_documento_fe", "values": "query=SELECT `codice` AS id, CONCAT_WS(' - ', `codice`, `name`) AS descrizione FROM `fe_tipi_documento` LEFT JOIN `fe_tipi_documento_lang` ON (`fe_tipi_documento_lang`.`id_record` = `fe_tipi_documento`.`codice` AND `fe_tipi_documento_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>)", "required": 1 ]}
         </div>
 	</div>
 

@@ -13,7 +13,7 @@ class ValoreAttributo extends Model
 
     protected $table = 'mg_valori_attributi';
 
-    public static function build(Attributo $attributo = null, $valore = null)
+    public static function build(?Attributo $attributo = null, $valore = null)
     {
         $model = new self();
 

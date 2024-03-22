@@ -56,7 +56,7 @@ switch (post('op')) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato dei contratti.'));
         } else {
             $stato = Stato::build($icona, $colore, $is_completato, $is_fatturabile, $is_pianificabile);
-            $id_record= $dbo->lastInsertedID();
+            $id_record = $dbo->lastInsertedID();
             $stato->setTranslation('name', $descrizione);
             $stato->save();
 

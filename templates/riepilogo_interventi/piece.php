@@ -55,14 +55,14 @@ echo '
 if (dateFormat($intervento->inizio)) {
     echo '
         <p>'.tr('Intervento _NUM_ del _DATE_', [
-            '_NUM_' => $intervento->codice,
-            '_DATE_' => dateFormat($intervento->inizio),
-        ]).'</p>';
+        '_NUM_' => $intervento->codice,
+        '_DATE_' => dateFormat($intervento->inizio),
+    ]).'</p>';
 } else {
     echo '
         <p>'.tr('Promemoria _NUM_', [
-            '_NUM_' => $intervento->codice,
-        ]).'</p>';
+        '_NUM_' => $intervento->codice,
+    ]).'</p>';
 }
 echo '
         <p><small><b>'.tr('Cliente').':</b> '.$intervento->anagrafica->ragione_sociale.'</small></p>

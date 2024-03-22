@@ -22,6 +22,7 @@ namespace Modules\Iva;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Traits\RecordTrait;
+
 class Aliquota extends Model
 {
     use SimpleModelTrait;
@@ -31,6 +32,7 @@ class Aliquota extends Model
     protected static $translated_fields = [
         'name',
     ];
+
     public static function build($esente = null, $percentuale = null, $indetraibile = null, $dicitura = null, $codice = null, $codice_natura_fe = null, $esigibilita = null)
     {
         $model = new static();
@@ -51,7 +53,8 @@ class Aliquota extends Model
         return 'Stato dei contratti';
     }
 
-    public static function getTranslatedFields(){
+    public static function getTranslatedFields()
+    {
         return self::$translated_fields;
     }
 }

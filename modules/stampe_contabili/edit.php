@@ -74,9 +74,9 @@ echo '
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">'.tr('Dati economici dal _START_ al _END_', [
-                    '_START_' => Translator::dateToLocale($_SESSION['period_start']),
-                    '_END_' => Translator::dateToLocale($_SESSION['period_end']),
-                ]).'</h3>
+    '_START_' => Translator::dateToLocale($_SESSION['period_start']),
+    '_END_' => Translator::dateToLocale($_SESSION['period_end']),
+]).'</h3>
             </div>
 
             <div class="panel-body">

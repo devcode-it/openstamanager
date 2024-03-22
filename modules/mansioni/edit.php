@@ -50,8 +50,8 @@ if (!empty($elementi)) {
 <div class="box box-warning collapsable collapsed-box">
     <div class="box-header with-border">
         <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Referenti collegati: _NUM_', [
-            '_NUM_' => count($elementi),
-        ]).'</h3>
+        '_NUM_' => count($elementi),
+    ]).'</h3>
         <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
         </div>
@@ -61,9 +61,9 @@ if (!empty($elementi)) {
 
     foreach ($elementi as $elemento) {
         $descrizione = tr('_REF_  (_ANAGRAFICA_)', [
-        '_REF_' => $elemento['nome'],
-        '_ANAGRAFICA_' => $elemento['ragione_sociale'],
-    ]);
+            '_REF_' => $elemento['nome'],
+            '_ANAGRAFICA_' => $elemento['ragione_sociale'],
+        ]);
 
         $plugin = 'Referenti';
         $id = $elemento['idanagrafica'];

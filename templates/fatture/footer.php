@@ -22,24 +22,24 @@ if (!empty($options['last-page-footer']) && !$is_last_page) {
 }
 
 // Calcoli
-//$imponibile = abs($documento->imponibile);
-//$sconto = $documento->sconto;
-//$totale_imponibile = abs($documento->totale_imponibile);
-//$totale_iva = abs($documento->iva);
-//$totale = abs($documento->totale) - $rivalsa;
+// $imponibile = abs($documento->imponibile);
+// $sconto = $documento->sconto;
+// $totale_imponibile = abs($documento->totale_imponibile);
+// $totale_iva = abs($documento->iva);
+// $totale = abs($documento->totale) - $rivalsa;
 
 $totale_imponibile = 0;
-foreach($v_totale as $key=>$v){
+foreach ($v_totale as $key => $v) {
     $totale_imponibile += $v;
 }
 
 $totale_iva = 0;
-foreach($v_iva as $key=>$v){
+foreach ($v_iva as $key => $v) {
     $totale_iva += $v;
 }
 
 $sconto = 0;
-foreach($righe as $riga){
+foreach ($righe as $riga) {
     $sconto += floatval($riga->sconto);
 }
 
@@ -90,7 +90,7 @@ echo "
 $rs2 = $dbo->fetchArray('SELECT * FROM `co_scadenziario` WHERE `iddocumento`='.prepare($id_record).' ORDER BY `scadenza` ASC');
 if (!empty($rs2)) {
     for ($i = 0; $i < sizeof($rs2); ++$i) {
-        $pagamento = $dbo->fetchOne('SELECT `fe_modalita_pagamento_lang`.`name` FROM `co_pagamenti` INNER JOIN `fe_modalita_pagamento` ON `fe_modalita_pagamento`.`codice` = `co_pagamenti`.`codice_modalita_pagamento_fe` LEFT JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento_lang`.`id_record`=`fe_modalita_pagamento`.`codice` AND `fe_modalita_pagamento_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).') WHERE `co_pagamenti`.`id`='.$rs2[$i]['id_pagamento'])['descrizione'];
+        $pagamento = $dbo->fetchOne('SELECT `fe_modalita_pagamento_lang`.`name` FROM `co_pagamenti` INNER JOIN `fe_modalita_pagamento` ON `fe_modalita_pagamento`.`codice` = `co_pagamenti`.`codice_modalita_pagamento_fe` LEFT JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento_lang`.`id_record`=`fe_modalita_pagamento`.`codice` AND `fe_modalita_pagamento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `co_pagamenti`.`id`='.$rs2[$i]['id_pagamento'])['descrizione'];
         echo '
                             <tr>
                                 <td style=\'width:15%;\'>
@@ -251,8 +251,8 @@ if ($has_rivalsa) {
     <tr>
         <th class="text-center small" colspan="'.$first_colspan.'">
             '.tr('Rivalsa _PRC_%', [
-                '_PRC_' => Translator::numberToLocale($rs2[0]['percentuale'], 0),
-            ], ['upper' => true]).'
+        '_PRC_' => Translator::numberToLocale($rs2[0]['percentuale'], 0),
+    ], ['upper' => true]).'
         </th>';
 
     echo '
@@ -312,7 +312,7 @@ if ($has_ritenuta) {
         <th class="text-center small" colspan="'.$first_colspan.'">
             '.tr('Ritenuta _ACCONTO_', [
             '_ACCONTO_' => $acconto,
-            ], ['upper' => true]).'
+        ], ['upper' => true]).'
         </th>';
     }
 
@@ -322,7 +322,7 @@ if ($has_ritenuta) {
             '.tr('_CONTRIBUTI_', [
             '_ACCONTO_' => $acconto,
             '_CONTRIBUTI_' => empty($documento->ritenutaContributi) ? null : $contributi,
-            ], ['upper' => true]).'
+        ], ['upper' => true]).'
         </th>';
     }
 

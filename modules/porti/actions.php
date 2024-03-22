@@ -24,7 +24,7 @@ switch (filter('op')) {
         $descrizione = filter('descrizione');
         $predefined = post('predefined');
 
-        if ($dbo->fetchNum('SELECT * FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto_lang`.`id_record` = `dt_porto`.`id` AND `dt_porto_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `name`='.prepare($descrizione).' AND `dt_porto`.`id`!='.prepare($id_record)) == 0) {
+        if ($dbo->fetchNum('SELECT * FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto_lang`.`id_record` = `dt_porto`.`id` AND `dt_porto_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `name`='.prepare($descrizione).' AND `dt_porto`.`id`!='.prepare($id_record)) == 0) {
             if (!empty($predefined)) {
                 $dbo->query('UPDATE `dt_porto` SET `predefined` = 0');
             }
@@ -35,7 +35,7 @@ switch (filter('op')) {
 
             $dbo->update('dt_porto_lang', [
                 'name' => $descrizione,
-            ], ['id_record' => $id_record, 'id_lang' => \Models\Locale::getDefault()->id]);
+            ], ['id_record' => $id_record, 'id_lang' => Models\Locale::getDefault()->id]);
 
             flash()->info(tr('Salvataggio completato!'));
         } else {
@@ -46,7 +46,7 @@ switch (filter('op')) {
     case 'add':
         $descrizione = filter('descrizione');
 
-        if ($dbo->fetchNum('SELECT * FROM `dt_porto` LEFT JOIN `dt_porto_lang` 0N (`dt_porto_lang`.`id_record` = `dt_porto`.`id` AND `dt_porto_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `name`='.prepare($descrizione)) == 0) {
+        if ($dbo->fetchNum('SELECT * FROM `dt_porto` LEFT JOIN `dt_porto_lang` 0N (`dt_porto_lang`.`id_record` = `dt_porto`.`id` AND `dt_porto_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `name`='.prepare($descrizione)) == 0) {
             $dbo->insert('dt_porto', [
                 'created_at' => 'NOW()',
             ]);
@@ -55,7 +55,7 @@ switch (filter('op')) {
             $dbo->insert('dt_porto_lang', [
                 'name' => $descrizione,
                 'id_record' => $id_record,
-                'id_lang' => \Models\Locale::getDefault()->id,
+                'id_lang' => Models\Locale::getDefault()->id,
             ]);
 
             flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [

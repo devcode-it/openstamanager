@@ -255,7 +255,8 @@ class Intervento extends Document
         return $this->anagrafica->ragione_sociale;
     }
 
-    public static function getTranslatedFields(){
+    public static function getTranslatedFields()
+    {
         return self::$translated_fields;
     }
 }

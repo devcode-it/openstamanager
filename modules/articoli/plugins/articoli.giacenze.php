@@ -18,12 +18,11 @@
  */
 
 include_once __DIR__.'/../../../core.php';
-use Models\Module;
 
 $impegnato = 0;
 $ordinato = 0;
 
-$query = "SELECT
+$query = 'SELECT
         `or_ordini`.`id` AS id,
         `or_ordini`.`numero`,
         `or_ordini`.`numero_esterno`,
@@ -37,7 +36,7 @@ $query = "SELECT
         INNER JOIN `or_statiordine` ON `or_ordini`.`idstatoordine`=`or_statiordine`.`id`
         INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine`=`or_tipiordine`.`id`
     WHERE 
-        `idarticolo` = ".prepare($articolo->id)."
+        `idarticolo` = '.prepare($articolo->id)."
         AND `or_tipiordine`.`dir`= '|dir|'
         AND (`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) > 0
         AND `or_righe_ordini`.`confermato` = 1
@@ -100,9 +99,9 @@ if (!empty($ordini)) {
                         <td>
                             <small>
                                 '.Modules::link('Ordini cliente', $documento['id'], tr('Ordine num. _NUM_ del _DATE_', [
-                    '_NUM_' => $numero,
-                    '_DATE_' => dateFormat($documento['data']),
-                ])).'
+            '_NUM_' => $numero,
+            '_DATE_' => dateFormat($documento['data']),
+        ])).'
                             </small>
                         </td>
                         <td class="text-right">
@@ -167,9 +166,9 @@ if (!empty($ordini)) {
                         <td>
                             <small>
                                 '.Modules::link('Ordini fornitore', $documento['id'], tr('Ordine num. _NUM_ del _DATE_', [
-                                    '_NUM_' => $numero,
-                                    '_DATE_' => dateFormat($documento['data']),
-                                ])).'
+            '_NUM_' => $numero,
+            '_DATE_' => dateFormat($documento['data']),
+        ])).'
                                 </small>
                         </td>
                         <td class="text-right">

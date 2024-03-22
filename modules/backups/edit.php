@@ -54,8 +54,8 @@ if (string_starts_with($backup_dir, base_dir())) {
     echo '
     <div class="alert alert-warning">
         <i class="fa fa-warning"></i> '.tr('Per motivi di sicurezza si consiglia di modificare il percorso della cartella di backup al di fuori della cartella di OSM, possibilmente in una unità esterna. Puoi modificare il percorso di backup dal tuo file _FILE_', [
-            '_FILE_' => '<b>config.inc.php</b>',
-        ]).'.
+        '_FILE_' => '<b>config.inc.php</b>',
+    ]).'.
     </div>';
 }
 
@@ -153,11 +153,11 @@ echo '
         <div class="alert bg-light-blue-active">
             <p>'.$message.'</p><br>
 			<p>'.tr('Spazio totale occupato dai backup: _SPAZIO_', [
-                '_SPAZIO_' => '<i id="total_size"></i>',
-            ]).'</p>
+    '_SPAZIO_' => '<i id="total_size"></i>',
+]).'</p>
 			<p>'.tr('Numero di backup: _NUM_', [
-                '_NUM_' => count($backups),
-            ]).'</p>
+    '_NUM_' => count($backups),
+]).'</p>
         </div>
     </div>
 
@@ -227,16 +227,16 @@ if (file_exists($backup_dir)) {
 
                 $data = $info['YYYY'].'-'.$info['m'].'-'.$info['d'];
                 $ora = $info['H'].':'.$info['i'].':'.$info['s'];
-                $tipo = $info['AAAAAAA'];             
+                $tipo = $info['AAAAAAA'];
                 echo '
         <div class="callout callout-info">
             <h4>'.tr('Backup del _DATE_ alle _TIME_', [
-                '_DATE_' => Translator::dateToLocale($data),
-                '_TIME_' => Translator::timeToLocale($ora),
-            ]).'</h4>
+                    '_DATE_' => Translator::dateToLocale($data),
+                    '_TIME_' => Translator::timeToLocale($ora),
+                ]).'</h4>
             <p><small>
                 '.tr('Nome del file').': '.$name.'<br>
-                '.tr('Tipo').': '.(($tipo == 'PARTIAL')? '🟠 '.tr('Parziale'):'🟢 '.tr('Completo')).'<br>
+                '.tr('Tipo').': '.(($tipo == 'PARTIAL') ? '🟠 '.tr('Parziale') : '🟢 '.tr('Completo')).'<br>
                 '.tr('Dimensione').': <i id="c-'.$id.'"></i>
             </small></p>
 
@@ -282,9 +282,9 @@ if (file_exists($backup_dir)) {
                 echo '
         <div class="callout callout-warning">
             <h4>'.tr('Backup del _DATE_ alle _TIME_', [
-                '_DATE_' => Translator::dateToLocale($data),
-                '_TIME_' => Translator::timeToLocale($ora),
-            ]).'</h4>
+                    '_DATE_' => Translator::dateToLocale($data),
+                    '_TIME_' => Translator::timeToLocale($ora),
+                ]).'</h4>
             <p><small>
                 '.tr('Nome del file').': '.$name.'<br>
                 '.tr('Dimensione').': <i id="n-'.$id.'"></i>

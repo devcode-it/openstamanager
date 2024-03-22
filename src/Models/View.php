@@ -21,8 +21,8 @@ namespace Models;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
-use Util\Query;
 use Traits\RecordTrait;
+use Util\Query;
 
 class View extends Model
 {
@@ -33,7 +33,6 @@ class View extends Model
     protected static $translated_fields = [
         'name',
     ];
-    
 
     public function getQueryAttribute($value)
     {
@@ -51,12 +50,14 @@ class View extends Model
     {
         return $this->belongsTo(Module::class, 'id_module');
     }
+
     public function getModuleAttribute()
     {
         return '';
     }
 
-    public static function getTranslatedFields(){
+    public static function getTranslatedFields()
+    {
         return self::$translated_fields;
     }
 }

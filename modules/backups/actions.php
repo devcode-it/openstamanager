@@ -55,15 +55,14 @@ switch (filter('op')) {
         break;
 
     case 'backup':
+        $ignores = ['dirs' => [], 'files' => []];
 
-        $ignores = ['dirs' => [], 'files' => []]; 
-        
-        if (filter('exclude') == 'exclude_attachments'){
-            $ignores = ['dirs' => ['files']]; 
-        }else if (filter('exclude') == 'only_database'){
-            $ignores = ['dirs' => ['vendor','update','templates','src','plugins','modules','logs','locale','lib','include','files','config','assets','api'], 'files' => ['*.php','*.md','*.json','*.js','*.xml','.*']]; 
+        if (filter('exclude') == 'exclude_attachments') {
+            $ignores = ['dirs' => ['files']];
+        } elseif (filter('exclude') == 'only_database') {
+            $ignores = ['dirs' => ['vendor', 'update', 'templates', 'src', 'plugins', 'modules', 'logs', 'locale', 'lib', 'include', 'files', 'config', 'assets', 'api'], 'files' => ['*.php', '*.md', '*.json', '*.js', '*.xml', '.*']];
         }
-        
+
         try {
             $result = Backup::create($ignores);
 
@@ -93,8 +92,8 @@ switch (filter('op')) {
 if (filter('op') == 'restore') {
     if (!extension_loaded('zip')) {
         flash()->error(tr('Estensione zip non supportata!').'<br>'.tr('Verifica e attivala sul tuo file _FILE_', [
-                '_FILE_' => '<b>php.ini</b>',
-            ]));
+            '_FILE_' => '<b>php.ini</b>',
+        ]));
 
         return;
     }
@@ -121,5 +120,4 @@ if (filter('op') == 'restore') {
     } catch (Exception $e) {
         flash()->error(tr('Errore durante il ripristino del backup!').' '.$e->getMessage());
     }
-    
 }

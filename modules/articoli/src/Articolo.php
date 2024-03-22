@@ -22,13 +22,13 @@ namespace Modules\Articoli;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Models\Module;
 use Modules\AttributiCombinazioni\ValoreAttributo;
 use Modules\CombinazioniArticoli\Combinazione;
 use Modules\Interventi\Components\Articolo as ArticoloIntervento;
 use Modules\Iva\Aliquota;
 use Plugins\ListinoFornitori\DettaglioFornitore;
 use Traits\RecordTrait;
-use Models\Module;
 
 class Articolo extends Model
 {
@@ -60,7 +60,6 @@ class Articolo extends Model
 
         return $model;
     }
-
 
     /**
      * Funzione per registrare un movimento del magazzino in relazione all'articolo corrente, modificando di conseguenza la quantità dell'articolo stesso.
@@ -238,12 +237,12 @@ class Articolo extends Model
             `mg_articolo_attributo`
             INNER JOIN `mg_valori_attributi` ON `mg_valori_attributi`.`id` = `mg_articolo_attributo`.`id_valore`
             INNER JOIN `mg_attributi` ON `mg_attributi`.`id` = `mg_valori_attributi`.`id_attributo`
-            LEFT JOIN `mg_attributi_lang` ON (`mg_attributi_lang`.`id_record` = `mg_attributi`.`id` AND `mg_attributi_lang`.`id_lang` = ".prepare(\Models\Locale::getDefault()->id).")
+            LEFT JOIN `mg_attributi_lang` ON (`mg_attributi_lang`.`id_record` = `mg_attributi`.`id` AND `mg_attributi_lang`.`id_lang` = ".prepare(\Models\Locale::getDefault()->id).')
             INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `mg_articolo_attributo`.`id_articolo`
             INNER JOIN `mg_combinazioni` ON `mg_combinazioni`.`id` = `mg_articoli`.`id_combinazione`
             INNER JOIN `mg_attributo_combinazione` ON `mg_attributo_combinazione`.`id_combinazione` = `mg_combinazioni`.`id` AND `mg_attributo_combinazione`.`id_attributo` = `mg_attributi`.`id`
         WHERE 
-            `mg_articoli`.`id` = ".prepare($this->id).'
+            `mg_articoli`.`id` = '.prepare($this->id).'
         ORDER BY 
             `mg_attributo_combinazione`.`order`');
 
@@ -345,8 +344,8 @@ class Articolo extends Model
             ->first();
     }
 
-
-    public static function getTranslatedFields(){
+    public static function getTranslatedFields()
+    {
         return self::$translated_fields;
     }
 }

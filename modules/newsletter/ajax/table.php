@@ -71,7 +71,7 @@ foreach ($destinatari_filtrati as $destinatario) {
         $descrizione .= ' ['.$origine->nome.']';
     }
 
-    $tipo_anagrafica = $database->fetchOne('SELECT GROUP_CONCAT(`an_tipianagrafiche_lang`.`name`) AS descrizione FROM `an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `an_tipianagrafiche_anagrafiche`.`idanagrafica`='.prepare($anagrafica->id))['descrizione'];
+    $tipo_anagrafica = $database->fetchOne('SELECT GROUP_CONCAT(`an_tipianagrafiche_lang`.`name`) AS descrizione FROM `an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `an_tipianagrafiche_anagrafiche`.`idanagrafica`='.prepare($anagrafica->id))['descrizione'];
 
     $riga = [
         Modules::link('Anagrafiche', $anagrafica->id, $descrizione),

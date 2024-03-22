@@ -35,7 +35,6 @@ switch (filter('op')) {
             $categoria->save();
 
             flash()->info(tr('Salvataggio completato!'));
-
         } else {
             flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
         }
@@ -55,7 +54,7 @@ switch (filter('op')) {
         $colore = filter('colore');
         $id_original = filter('id_original') ?: null;
 
-        $categoria_new = Categoria::where('id', "=", (new Categoria())->getByField('name', $nome));
+        $categoria_new = Categoria::where('id', '=', (new Categoria())->getByField('name', $nome));
         if (!empty($id_original)) {
             $categoria_new = $categoria_new->where('parent', '=', $id_original);
         } else {
@@ -63,11 +62,11 @@ switch (filter('op')) {
         }
         $categoria_new = $categoria_new->first();
 
-        if (!empty($categoria_new)){
+        if (!empty($categoria_new)) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altra categoria.'));
         } else {
             $categoria = Categoria::build($nota, $colore);
-            $id_record= $dbo->lastInsertedID();
+            $id_record = $dbo->lastInsertedID();
             $categoria->parent = $id_original;
             $categoria->setTranslation('name', $nome);
             $categoria->save();
@@ -76,7 +75,7 @@ switch (filter('op')) {
                 '_TYPE_' => 'categoria',
             ]));
         }
-        
+
         if (isAjaxRequest()) {
             echo json_encode(['id' => $id_record, 'text' => $nome]);
         } else {

@@ -124,8 +124,8 @@ foreach ($righe as $riga) {
         if (!empty($mancanti)) {
             echo '
                     <br><b><small class="text-danger">'.tr('_NUM_ serial mancanti', [
-                            '_NUM_' => $mancanti,
-                        ]).'</small></b>';
+                '_NUM_' => $mancanti,
+            ]).'</small></b>';
         }
         if (!empty($serials)) {
             echo '
@@ -237,22 +237,22 @@ foreach ($righe as $riga) {
     echo '
                 <td class="text-center">
                     <div class="input-group-btn">';
-        if (hasArticoliFiglio($riga->idarticolo)) {
-            echo '
+    if (hasArticoliFiglio($riga->idarticolo)) {
+        echo '
                         <a class="btn btn-xs btn-info" title="'.tr('Distinta base').'" onclick="viewDistinta('.$riga->idarticolo.')">
                             <i class="fa fa-eye"></i>
                         </a>';
-        }
+    }
 
-        if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
-            echo '
+    if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
+        echo '
                         <a class="btn btn-primary btn-xs" title="'.tr('Modifica seriali della riga').'" onclick="modificaSeriali(this)">
                             <i class="fa fa-barcode"></i>
                         </a>';
-        }
+    }
 
-        if ($record['flag_completato'] == 0) {
-            echo '
+    if ($record['flag_completato'] == 0) {
+        echo '
                         <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga').'" onclick="modificaRiga(this)">
                             <i class="fa fa-edit"></i>
                         </a>
@@ -264,7 +264,7 @@ foreach ($righe as $riga) {
                         <a class="btn btn-xs btn-default handle '.($order_row_desc ? 'disabled' : '').'" title="'.tr('Modifica ordine delle righe').'">
                             <i class="fa fa-sort"></i>
                         </a>';
-        }
+    }
     echo '
                     </div>
                 </td>

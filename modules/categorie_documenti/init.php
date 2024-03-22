@@ -24,15 +24,15 @@ use Modules\CategorieDocumentali\Categoria;
 if (isset($id_record)) {
     $categoria = Categoria::find($id_record);
 
-    $record = $dbo->fetchOne("SELECT *,
-        (SELECT COUNT(`id`) FROM `do_documenti` WHERE `idcategoria` = ".prepare($id_record).") AS doc_associati,
+    $record = $dbo->fetchOne('SELECT *,
+        (SELECT COUNT(`id`) FROM `do_documenti` WHERE `idcategoria` = '.prepare($id_record).") AS doc_associati,
         GROUP_CONCAT(`do_permessi`.`id_gruppo` SEPARATOR ',') AS permessi
     FROM 
         `do_categorie`
-        LEFT JOIN `do_categorie_lang` ON (`do_categorie_lang`.`id_record` = `do_categorie`.`id` AND `do_categorie_lang`.`id_lang` = ".prepare(\Models\Locale::getDefault()->id).")
+        LEFT JOIN `do_categorie_lang` ON (`do_categorie_lang`.`id_record` = `do_categorie`.`id` AND `do_categorie_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
         LEFT JOIN `do_permessi` ON `do_permessi`.`id_categoria` = `do_categorie`.`id`
     WHERE 
-        `do_categorie`.`id`=".prepare($id_record)."
+        `do_categorie`.`id`='.prepare($id_record).'
     GROUP BY 
-        `do_categorie`.`id`");
+        `do_categorie`.`id`');
 }

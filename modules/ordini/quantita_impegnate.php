@@ -51,13 +51,13 @@ foreach ($articoli as $elenco) {
     $codice = $articolo ? $articolo->codice : tr('Articolo eliminato');
     $descrizione = $articolo ? $articolo->getTranslation('name') : $elenco->first()->getTranslation('name');
 
-    $qta_impegnata = $database->fetchOne("SELECT 
+    $qta_impegnata = $database->fetchOne('SELECT 
             SUM(`qta`) as qta
         FROM 
             `or_righe_ordini`
             INNER JOIN `or_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine`
             INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`idstatoordine`
-            LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = ".prepare(\Models\Locale::getDefault()->id).")
+            LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
             INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine`
         WHERE 
             `or_statiordine`.`name` = 'Bozza'

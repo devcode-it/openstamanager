@@ -32,13 +32,13 @@ switch ($name) {
             ['id', '<>', $id_record],
         ])->count() == 0;
 
-        $message = ($disponibile ? tr("L'username è disponibile") : tr("L'username _COD_ è già stato utilizzato", [ '_COD_' => $value ])).'.';
+        $message = ($disponibile ? tr("L'username è disponibile") : tr("L'username _COD_ è già stato utilizzato", ['_COD_' => $value])).'.';
         $result = $disponibile;
 
         // Lunghezza minima del nome utente (username)
         $min_length_username = 4;
         if (strlen($value) < $min_length_username) {
-            $message .= '<br>'.tr("Lunghezza dell'username non sufficiente: inserisci _MIN_ caratteri o più", ['_MIN_' => $min_length_username] ).'.';
+            $message .= '<br>'.tr("Lunghezza dell'username non sufficiente: inserisci _MIN_ caratteri o più", ['_MIN_' => $min_length_username]).'.';
             $result = false;
         }
 
@@ -55,7 +55,7 @@ switch ($name) {
             // ['id', '<>', $id_record],
         ])->count() == 0;
 
-        $message = ($disponibile ? tr('Il nome del gruppo è disponibile') : tr('Il nome del gruppo _COD_ è già stato utilizzato', [ '_COD_' => $value ])).'.';
+        $message = ($disponibile ? tr('Il nome del gruppo è disponibile') : tr('Il nome del gruppo _COD_ è già stato utilizzato', ['_COD_' => $value])).'.';
         $result = $disponibile;
 
         $response = [
@@ -65,12 +65,11 @@ switch ($name) {
 
         break;
 
-
     case 'email':
         $disponibile = User::where([
             ['email', $value],
             ['email', '<>', ''],
-            //['idanagrafica', '<>', $id_record],
+            // ['idanagrafica', '<>', $id_record],
         ])->count() == 0;
         $result = $disponibile;
 
@@ -84,7 +83,6 @@ switch ($name) {
             $errors[] = tr("L'email _COD_ non possiede un formato valido.", [
                 '_COD_' => $value,
             ]);
-
         }
 
         if (isset($check['smtp-check']) && empty($check['smtp-check'])) {

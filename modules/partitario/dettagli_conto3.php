@@ -20,7 +20,6 @@
 include_once __DIR__.'/../../core.php';
 
 use Models\User;
-use Models\Module;
 
 $id_conto = get('id_conto');
 
@@ -150,9 +149,9 @@ function Verifica(id_movimento) {
                 $("#checked_"+id_movimento).parent().parent().effect("highlight", {}, 500);
                 if ($("#checked_"+id_movimento).is(":checked")) {
                     $("#checked_"+id_movimento).attr("title", "'.tr('Verificato da _USER_ il _DATE_', [
-                        '_USER_' => $user->username,
-                        '_DATE_' => dateFormat(date('Y-m-d')).' '.date('H:i'),
-                    ]).'");
+    '_USER_' => $user->username,
+    '_DATE_' => dateFormat(date('Y-m-d')).' '.date('H:i'),
+]).'");
                 } else {
                     $("#checked_"+id_movimento).attr("title", "");
                 }

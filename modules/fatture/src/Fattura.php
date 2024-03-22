@@ -26,7 +26,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Models\Upload;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Banche\Banca;
-use Modules\Fatture\StatoFE;
 use Modules\Fatture\Gestori\Bollo as GestoreBollo;
 use Modules\Fatture\Gestori\Movimenti as GestoreMovimenti;
 use Modules\Fatture\Gestori\Scadenze as GestoreScadenze;
@@ -205,10 +204,10 @@ class Fattura extends Document
 
             // Registrazione dell'operazione nelle note
             $notes[] = tr("Operazione non imponibile come da vostra dichiarazione d'intento nr _PROT_ del _PROT_DATE_ emessa in data _RELEASE_DATE_", [
-                    '_PROT_' => $dichiarazione->numero_protocollo,
-                    '_PROT_DATE_' => \Translator::dateToLocale($dichiarazione->data_protocollo),
-                    '_RELEASE_DATE_' => \Translator::dateToLocale($dichiarazione->data_emissione),
-                ]).'.';
+                '_PROT_' => $dichiarazione->numero_protocollo,
+                '_PROT_DATE_' => \Translator::dateToLocale($dichiarazione->data_protocollo),
+                '_RELEASE_DATE_' => \Translator::dateToLocale($dichiarazione->data_emissione),
+            ]).'.';
         }
 
         $dicitura_fissa = database()->selectOne('zz_segments', 'dicitura_fissa', ['id' => $id_segment])['dicitura_fissa'];
@@ -766,7 +765,7 @@ class Fattura extends Document
     public function isAutofattura()
     {
         return in_array($this->tipo->codice_tipo_documento_fe, ['TD16', 'TD17', 'TD18', 'TD19',
-        'TD20', 'TD21', 'TD28', ]);
+            'TD20', 'TD21', 'TD28', ]);
     }
 
     /**

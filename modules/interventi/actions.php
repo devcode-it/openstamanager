@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Carbon\CarbonPeriod;
+use Models\Module;
 use Models\OperationLog;
 use Models\Plugin;
 use Modules\Anagrafiche\Anagrafica;
@@ -39,7 +40,6 @@ use Modules\TipiIntervento\Tipo as TipoSessione;
 use Plugins\ComponentiImpianti\Componente;
 use Plugins\ListinoClienti\DettaglioPrezzo;
 use Plugins\PianificazioneInterventi\Promemoria;
-use Models\Module;
 
 $id_modulo_impianti = (new Module())->getByField('name', 'Impianti');
 $plugin_impianti = (new Plugin())->getByField('name', 'Impianti');
@@ -394,7 +394,7 @@ switch (post('op')) {
             }
 
             flash()->info(tr('Aggiunte _NUM_ nuove ricorrenze!', [
-              '_NUM_' => $n_ricorrenze,
+                '_NUM_' => $n_ricorrenze,
             ]));
         }
 
@@ -696,9 +696,7 @@ switch (post('op')) {
 
     case 'firma':
         if (is_writable(Uploads::getDirectory($id_module))) {
-
             if (post('firma_base64') != '') {
-
                 // Salvataggio firma
                 $firma_file = 'firma_'.time().'.jpg';
                 $firma_nome = post('firma_nome');
@@ -851,7 +849,7 @@ switch (post('op')) {
             }
         } else {
             flash()->error(tr("Non è stato possibile creare la cartella _DIRECTORY_ per salvare l'immagine della firma.", [
-                '_DIRECTORY_' => '<b>' . Uploads::getDirectory($id_module) . '</b>',
+                '_DIRECTORY_' => '<b>'.Uploads::getDirectory($id_module).'</b>',
             ]));
         }
 
@@ -983,7 +981,7 @@ switch (post('op')) {
         $sessione->save();
         break;
 
-    // Duplica intervento
+        // Duplica intervento
     case 'copy':
         $id_stato = post('id_stato');
         $ora_richiesta = post('ora_richiesta');
@@ -996,20 +994,16 @@ switch (post('op')) {
         $giorni = (array) post('giorni');
 
         $period = CarbonPeriod::create($data_inizio, $data_fine);
-      
 
-        if (count($period)>0){
-
+        if (count($period) > 0) {
             $i = 0;
             // Iterate over the period
             foreach ($period as $date) {
-                
                 $data_richiesta = $date->format('Y-m-d').' '.$ora_richiesta;
                 $giorno = $date->locale('IT')->dayName;
 
                 if (in_array($giorno, $giorni)) {
-                    
-                    $i++;
+                    ++$i;
                     $new = $intervento->replicate();
                     $new->idstatointervento = $id_stato;
 
@@ -1102,15 +1096,14 @@ switch (post('op')) {
                 }
             }
 
-            if ($i>0)
+            if ($i > 0) {
                 flash()->info(tr('Sono state create _NUM_ attività!', ['_NUM_' => $i]));
-            else
+            } else {
                 flash()->warning(tr('Nessuna attività creata per il periodo indicato.'));
-        }else{
+            }
+        } else {
             flash()->warning(tr('Nessuna attività creata.'));
         }
-
-        
 
         break;
 

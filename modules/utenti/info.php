@@ -129,17 +129,17 @@ echo '
             <div class="box-body">
             <div>
                 <p>'.tr("Per _ANDROID_, scarica un'applicazione dedicata dal _LINK_", [
-                    '_ANDROID_' => '<b>'.tr('Android').'</b>',
-                    '_LINK_' => '<a href="https://play.google.com/store/search?q=iCalSync&c=apps" target="_blank">'.tr('Play Store').'</a>',
-                ]).'.</p>
+    '_ANDROID_' => '<b>'.tr('Android').'</b>',
+    '_LINK_' => '<a href="https://play.google.com/store/search?q=iCalSync&c=apps" target="_blank">'.tr('Play Store').'</a>',
+]).'.</p>
 
                 <p>'.tr("Per _APPLE_, puoi configurare un nuovo calendario dall'app standard del calendario", [
-                    '_APPLE_' => '<b>'.tr('Apple').'</b>',
-                ]).'.</p>
+    '_APPLE_' => '<b>'.tr('Apple').'</b>',
+]).'.</p>
 
                 <p>'.tr('Per _PC_ e altri client di posta, considerare le relative funzionalità o eventuali plugin', [
-                    '_PC_' => '<b>'.tr('PC').'</b>',
-                ]).'.</p>
+    '_PC_' => '<b>'.tr('PC').'</b>',
+]).'.</p>
             </div>
         </div>
     </div>

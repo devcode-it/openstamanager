@@ -122,16 +122,16 @@ foreach ($righe as $riga) {
 
     echo '
                 <!--h5>'.tr('Informazioni generali sulle righe con IVA: _IVA_', [
-                    '_IVA_' => $riga->iva->getTranslation('name'),
-                ]).'</h5-->
+        '_IVA_' => $riga->iva->getTranslation('name'),
+    ]).'</h5-->
 
                 <div class="row">
                     <div class="col-md-9">
                         {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione['.$riga->id.']", "value": "'.$descrizione.'", "extra": "rows=6" ]}
 
                         {[ "type": "number", "label": "'.tr('Q.tà per fattura').'", "class":"qta_fattura", "name": "qta['.$riga->id.']", "required": 1, "value": "1", "decimals": "qta", "min-value": "1", "icon-after":"'.tr('su _TOT_ totali', [
-                            '_TOT_' => Translator::numberToLocale($riga->qta - $riga->qta_evasa),
-                        ]).'", "options":"'.str_replace('"', '\"', $options).'" ]}
+        '_TOT_' => Translator::numberToLocale($riga->qta - $riga->qta_evasa),
+    ]).'", "options":"'.str_replace('"', '\"', $options).'" ]}
                     </div>
                     <div class="col-md-3" id="totali_'.$riga->id.'">
                     </div>
@@ -139,9 +139,9 @@ foreach ($righe as $riga) {
 
     echo '          <div class="label label-warning alert_rate hide">
                     <i class="fa fa-warning"></i> <span>'.tr('Attenzione, sono previste _RATE_ rate su _TOT_ quantità totali', [
-                        '_RATE_' => '<span class="num_rate"></span>',
-                        '_TOT_' => '<span class="qta_disponibili">'.Translator::numberToLocale($riga->qta - $riga->qta_evasa).'</span>',
-                    ]).'</span>.
+        '_RATE_' => '<span class="num_rate"></span>',
+        '_TOT_' => '<span class="qta_disponibili">'.Translator::numberToLocale($riga->qta - $riga->qta_evasa).'</span>',
+    ]).'</span>.
                 </div><hr>';
 }
 

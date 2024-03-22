@@ -18,14 +18,6 @@ class Combinazione extends Model
 
     protected $table = 'mg_combinazioni';
 
-    public static function build()
-    {
-        $model = new static();
-        $model->save();
-
-        return $model;
-    }
-
     protected static $translated_fields = [
         'name',
     ];
@@ -53,6 +45,14 @@ class Combinazione extends Model
         'gg_garanzia',
         'servizio',
     ];
+
+    public static function build()
+    {
+        $model = new static();
+        $model->save();
+
+        return $model;
+    }
 
     public function delete()
     {
@@ -122,8 +122,8 @@ class Combinazione extends Model
                     $articolo->save();
                 }
             }
-            $database->query("INSERT INTO `mg_articoli_lang` (`id_record`, `id_lang`, `name`) VALUES ('" . $articolo->id . "', " . \Models\Locale::getDefault()->id . ", '" . implode("', '", $variante) . "')");
-            $articolo->codice = $this->codice . '-' . implode('|', $variante);
+            $database->query("INSERT INTO `mg_articoli_lang` (`id_record`, `id_lang`, `name`) VALUES ('".$articolo->id."', ".\Models\Locale::getDefault()->id.", '".implode("', '", $variante)."')");
+            $articolo->codice = $this->codice.'-'.implode('|', $variante);
             $articolo->save();
         }
 
@@ -198,6 +198,11 @@ class Combinazione extends Model
         return $this->hasMany(Articolo::class, 'id_combinazione');
     }
 
+    public static function getTranslatedFields()
+    {
+        return self::$translated_fields;
+    }
+
     /**
      * Funzione per sincronizzare i campi condivisi dagli Articoli di tipo Variante.
      */
@@ -222,9 +227,5 @@ class Combinazione extends Model
         database()->table('mg_combinazioni')
             ->where('id', $this->id)
             ->update($combo->toArray());
-    }
-
-    public static function getTranslatedFields(){
-        return self::$translated_fields;
     }
 }

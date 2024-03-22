@@ -65,8 +65,8 @@ if (function_exists('customComponents')) {
 			<div class="alert alert-warning">
 				<i class="fa fa-warning"></i>
 				<b>'.tr('Attenzione!').'</b> '.tr('Ci sono delle tabelle non previste nella versione standard del gestionale: _LIST_', [
-                    '_LIST_' => implode(', ', $tables),
-                ]).'.
+                '_LIST_' => implode(', ', $tables),
+            ]).'.
 			</div>';
         }
 
@@ -116,7 +116,7 @@ if (!empty($alerts)) {
     echo '
 <div class="alert alert-info">
     <p>'.tr('Devi modificare il seguenti parametri del file di configurazione PHP (_FILE_) per poter caricare gli aggiornamenti', [
-    '_FILE_' => '<b>php.ini</b>',
+        '_FILE_' => '<b>php.ini</b>',
     ]).':<ul>';
     foreach ($alerts as $key => $value) {
         echo '
@@ -175,8 +175,8 @@ function search(button) {
             } else {
                 let beta_warning = data.includes("beta") ? "<br><b>'.tr('Attenzione: la versione individuata è in fase sperimentale, e pertanto può presentare diversi bug e malfunzionamenti').'.</b>" : "";
                 $("#update-search").html("'.tr("E' stato individuato un nuovo aggiornamento").': " + data + "." + beta_warning + "<br>'.tr('Scaricalo ora: _LINK_', [
-                '_LINK_' => "<a target='_blank' href='https://github.com/devcode-it/openstamanager/releases'>https://github.com/devcode-it/openstamanager/releases</a>",
-            ]).'");
+    '_LINK_' => "<a target='_blank' href='https://github.com/devcode-it/openstamanager/releases'>https://github.com/devcode-it/openstamanager/releases</a>",
+]).'");
             }
         }
     });
@@ -185,7 +185,7 @@ function search(button) {
 
 <div class="row">';
 
-//Verifiche di integrità
+// Verifiche di integrità
 echo '
     <div class="col-md-4">
         <div class="box box-primary">
@@ -210,7 +210,7 @@ echo '
         </div>
     </div>';
 
-//Controllo automatico della presenza di aggiornamenti per il gestionale
+// Controllo automatico della presenza di aggiornamenti per il gestionale
 echo '
 
     <div class="col-md-4">
@@ -235,8 +235,7 @@ echo '   </div>
         </div>
     </div>';
 
-
-//Form di caricamento aggiornamenti gestionale o moduli
+// Form di caricamento aggiornamenti gestionale o moduli
 echo '
     <div class="col-md-4">
         <div class="box box-primary">

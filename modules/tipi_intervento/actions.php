@@ -70,7 +70,7 @@ switch (post('op')) {
         $costo_diritto_chiamata_tecnico = post('costo_diritto_chiamata_tecnico');
 
         $tipo = Tipo::build($codice, $calcola_km, $tempo_standard, $costo_orario, $costo_km, $costo_diritto_chiamata, $costo_orario_tecnico, $costo_km_tecnico, $costo_diritto_chiamata_tecnico);
-        $id_record= $dbo->lastInsertedID();
+        $id_record = $dbo->lastInsertedID();
         $tipo->setTranslation('name', post('descrizione'));
         $tipo->save();
 

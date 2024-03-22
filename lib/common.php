@@ -327,11 +327,10 @@ function getPrezzoConsigliato($id_anagrafica, $direzione, $id_articolo, $riga = 
 /**
  * Funzione PHP che controlla se un campo "cellulare" contiene già un prefisso telefonico:
  *
- * @return boolean
+ * @return bool
  */
-
-function checkPrefix($cellulare) {
-
+function checkPrefix($cellulare)
+{
     // Array di prefissi telefonici da controllare
     $internationalPrefixes = ['+1', '+44', '+49', '+33', '+39']; // Esempi di prefissi
 
@@ -341,39 +340,40 @@ function checkPrefix($cellulare) {
             return true; // Un prefisso è già presente
         }
     }
-    
+
     return false; // Nessun prefisso trovato
 }
 
-
 /**
- * Funzione PHP che dato id_modulo restituisce un array contenente tutti i valori di "search_" per quel modulo
+ * Funzione PHP che dato id_modulo restituisce un array contenente tutti i valori di "search_" per quel modulo.
  *
  * @param int $id_module
- * 
+ *
  * @return array
  */
-function getSearchValues($id_module) {
+function getSearchValues($id_module)
+{
     $result = [];
 
-    if(isset($_SESSION['module_'.$id_module])) {
+    if (isset($_SESSION['module_'.$id_module])) {
         // Itera su tutti i valori
-        foreach($_SESSION['module_'.$id_module] as $key => $value) {
+        foreach ($_SESSION['module_'.$id_module] as $key => $value) {
             // Controlla se la chiave inizia con "search_"
             if (!empty($value) && string_starts_with($key, 'search_')) {
-                $result[str_replace(["search_", "-"], ["", " "], $key)] = $value;
+                $result[str_replace(['search_', '-'], ['', ' '], $key)] = $value;
             }
         }
     }
+
     return $result;
 }
 
 /**
- * Funzione PHP che controlla se l'articolo ha una distinta
+ * Funzione PHP che controlla se l'articolo ha una distinta.
  *
  * @param int $id_articolo
  *
- * @return boolean
+ * @return bool
  */
 function hasArticoliFiglio($id_articolo)
 {

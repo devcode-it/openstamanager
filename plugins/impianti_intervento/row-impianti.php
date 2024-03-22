@@ -19,8 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Checklists\Check;
 use Models\Module;
+use Modules\Checklists\Check;
 
 $id_modulo_impianti = (new Module())->getByField('name', 'Impianti');
 $checklist_module = Module::find((new Module())->getByField('name', 'Checklists'));
@@ -48,12 +48,12 @@ foreach ($impianti_collegati as $impianto) {
     if (sizeof($checks)) {
         $has_checks_not_verified = $checks->where('checked_at', null)->count();
         if ($has_checks_not_verified) {
-            $impianti_non_completati += 1;
+            ++$impianti_non_completati;
         } else {
-            $impianti_completati += 1;
+            ++$impianti_completati;
         }
     } else {
-        $impianti_non_previsti += 1;
+        ++$impianti_non_previsti;
     }
 }
 
@@ -64,7 +64,7 @@ $percentuale_non_previsti = $n_impianti ? round(($impianti_non_previsti * 100) /
 echo '
 <div class="row">
     <div class="col-md-offset-4 col-md-4 text-center">
-        <h4>'.strtoupper( tr('Impianti') ).': '.$n_impianti.'</h4>
+        <h4>'.strtoupper(tr('Impianti')).': '.$n_impianti.'</h4>
         <div class="progress">
             <div class="progress-bar progress-bar-striped progress-bar-success" role="progressbar" style="width:'.$percentuale_completati.'%"><i class="fa fa-check"></i> <b>'.$impianti_completati.'</b></div>
 
@@ -108,7 +108,7 @@ foreach ($impianti_collegati as $impianto) {
         $type = $checks_not_verified ? 'danger' : 'success';
         $icon2 = $checks_not_verified ? 'clock-o' : 'check';
     }
-echo '
+    echo '
     <tr data-id="'.$impianto['id'].'">
         <td class="text-left">
             <button type="button" class="btn btn-xs btn-default '.$class.'" onclick="toggleDettagli(this)">
@@ -123,10 +123,10 @@ echo '
             {[ "type": "textarea", "name": "note", "id": "note_imp_'.$impianto['id'].'", "value": "'.$impianto['note'].'", "onchange": "updateImpianto($(this).closest(\'tr\').data(\'id\'))", "readonly": "'.!empty($readonly).'", "disabled": "'.!empty($disabled).'" ]}
         </td>
         <td>';
-        $inseriti = $dbo->fetchArray('SELECT * FROM my_componenti_interventi WHERE id_intervento = '.prepare($id_record));
-        $ids = array_column($inseriti, 'id_componente');
+    $inseriti = $dbo->fetchArray('SELECT * FROM my_componenti_interventi WHERE id_intervento = '.prepare($id_record));
+    $ids = array_column($inseriti, 'id_componente');
 
-        echo '
+    echo '
                 {[ "type": "select", "multiple": 1, "name": "componenti[]", "id": "componenti_imp_'.$impianto['id'].'", "ajax-source": "componenti", "select-options": {"matricola": '.$impianto['id'].'}, "value": "'.implode(',', $ids).'", "onchange": "updateImpianto($(this).closest(\'tr\').data(\'id\'))", "readonly": "'.!empty($readonly).'", "disabled": "'.!empty($disabled).'" ]}
             </form>
         </td>
@@ -138,10 +138,10 @@ echo '
         <td colspan="7">
             <table class="table">
                 <tbody class="sort check-impianto" data-sonof="0">';
-                    foreach ($checks as $check) {
-                        echo renderChecklist($check);
-                    }
-                echo '
+    foreach ($checks as $check) {
+        echo renderChecklist($check);
+    }
+    echo '
                 </tbody>
             </table>
         </td>
@@ -268,9 +268,9 @@ $(".check-impianto .checkbox").click(function(){
         });
         $(this).parent().parent().find(".verificato").removeClass("hidden");
         $(this).parent().parent().find(".verificato").text("'.tr('Verificato da _USER_ il _DATE_', [
-            '_USER_' => $user->username,
-            '_DATE_' => dateFormat(date('Y-m-d')).' '.date('H:i'),
-        ]).'");
+    '_USER_' => $user->username,
+    '_DATE_' => dateFormat(date('Y-m-d')).' '.date('H:i'),
+]).'");
     }else{
         $.post("'.$checklist_module->fileurl('ajax.php').'", {
             op: "remove_checkbox",

@@ -41,10 +41,10 @@ if (isset($id_record)) {
         `an_anagrafiche`.`tipo` AS tipo_anagrafica
     FROM `dt_ddt`
         INNER JOIN `dt_statiddt` ON dt_ddt.idstatoddt=dt_statiddt.id
-        LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+        LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         INNER JOIN `an_anagrafiche` ON `dt_ddt`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
         INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt`=`dt_tipiddt`.`id`
-        LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+        LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     WHERE 
         `dt_ddt`.`id`='.prepare($id_record));
 

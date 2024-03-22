@@ -67,7 +67,7 @@ class User extends Model
      *
      * @return self
      */
-    public static function build(Group $gruppo = null, $username = null, $email = null, $password = null)
+    public static function build(?Group $gruppo = null, $username = null, $email = null, $password = null)
     {
         $model = new static();
 

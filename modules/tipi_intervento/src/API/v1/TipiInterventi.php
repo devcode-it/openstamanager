@@ -37,7 +37,7 @@ class TipiInterventi extends Resource implements RetrieveInterface
 
         $joins = [
             'in_tipiintervento_lang' => 'in_tipiintervento_lang.id_record = in_tipiintervento.id AND in_tipiintervento_lang.id_lang = '.\Models\Locale::getDefault()->id,
-        ]; 
+        ];
 
         return [
             'select' => $select,

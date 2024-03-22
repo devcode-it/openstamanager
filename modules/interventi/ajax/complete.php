@@ -4,8 +4,8 @@ use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Contratti\Contratto;
 use Modules\Fatture\Fattura;
-use Modules\Preventivi\Preventivo;
 use Modules\Fatture\Stato;
+use Modules\Preventivi\Preventivo;
 
 include_once __DIR__.'/../../core.php';
 
@@ -70,7 +70,7 @@ switch ($op) {
         }
 
         // Informazioni sui preventivi
-        $modulo_fatture_vendita =Module::find((new Module())->getByField('name', 'Fatture di vendita'));
+        $modulo_fatture_vendita = Module::find((new Module())->getByField('name', 'Fatture di vendita'));
         if ($modulo_fatture_vendita->permission != '-') {
             // Fatture attive
             $fatture = Fattura::where('idanagrafica', '=', $id_anagrafica)

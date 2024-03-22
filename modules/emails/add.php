@@ -32,7 +32,7 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Modulo del template'); ?>", "name": "module", "required": 1 , "values": "query=SELECT `zz_modules`.`id`, `title` AS descrizione FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = <?php echo prepare(\Models\Locale::getDefault()->id); ?>) WHERE `enabled` = 1" ]}
+			{[ "type": "select", "label": "<?php echo tr('Modulo del template'); ?>", "name": "module", "required": 1 , "values": "query=SELECT `zz_modules`.`id`, `title` AS descrizione FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `enabled` = 1" ]}
 		</div>
 
 		<div class="col-md-6">

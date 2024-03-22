@@ -58,8 +58,8 @@ class InvoiceHook extends CachedManager
         }
 
         $message = tr('_NUM_ fattur_A_ passiv_A_ da importare', [
-            '_NUM_' => (($count>1) ? tr('Ci sono'): tr('C\'è')).' '.$count,
-            '_A_' => (($count>1) ? tr('e'): tr('a'))
+            '_NUM_' => (($count > 1) ? tr('Ci sono') : tr('C\'è')).' '.$count,
+            '_A_' => (($count > 1) ? tr('e') : tr('a')),
         ]);
 
         return [

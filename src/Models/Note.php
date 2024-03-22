@@ -38,7 +38,7 @@ class Note extends Model
      *
      * @return self
      */
-    public static function build(User $user = null, $structure = null, $id_record = null, $contenuto = null, $data_notifica = null)
+    public static function build(?User $user = null, $structure = null, $id_record = null, $contenuto = null, $data_notifica = null)
     {
         $model = new static();
 

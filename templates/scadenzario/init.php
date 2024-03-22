@@ -19,8 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Fatture\Fattura;
 use Models\Module;
+use Modules\Fatture\Fattura;
 
 $module = Module::find((new Module())->getByField('name', 'Scadenzario'));
 

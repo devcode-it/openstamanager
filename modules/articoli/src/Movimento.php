@@ -32,7 +32,7 @@ class Movimento extends Model
     protected $document;
     protected $table = 'mg_movimenti';
 
-    public static function build(Articolo $articolo = null, $qta = null, $descrizione = null, $data = null, $document = null, $id_sede = null)
+    public static function build(?Articolo $articolo = null, $qta = null, $descrizione = null, $data = null, $document = null, $id_sede = null)
     {
         $model = new static();
 

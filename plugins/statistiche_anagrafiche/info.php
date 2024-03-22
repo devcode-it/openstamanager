@@ -19,6 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Contratti\Contratto;
 use Modules\DDT\DDT;
@@ -27,7 +28,6 @@ use Modules\Interventi\Components\Sessione;
 use Modules\Interventi\Intervento;
 use Modules\Ordini\Ordine;
 use Modules\Preventivi\Preventivo;
-use Models\Module;
 
 $calendar_id = filter('calendar_id');
 $start = filter('start');
@@ -112,11 +112,11 @@ echo '
 <div class="box box-info" id="row-'.$calendar_id.'">
     <div class="box-header">
         <h3 class="box-title">'.tr('Dal _START_ al _END_', [
-            '_START_' => dateFormat($start),
-            '_END_' => dateFormat($end),
-        ]).' - '.tr('Periodo _NUM_', [
-            '_NUM_' => $calendar_id,
-    ]).'</h3>
+    '_START_' => dateFormat($start),
+    '_END_' => dateFormat($end),
+]).' - '.tr('Periodo _NUM_', [
+    '_NUM_' => $calendar_id,
+]).'</h3>
     </div>
 
     <div class="box-body">

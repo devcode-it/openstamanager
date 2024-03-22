@@ -19,9 +19,9 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Models\Module;
 use Modules\Contratti\Contratto;
 use Modules\Contratti\Stato;
-use Models\Module;
 
 $contratto = Contratto::find($id_record);
 if (empty($contratto)) {

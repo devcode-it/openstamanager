@@ -39,7 +39,7 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
 
         $joins[] = [
             'an_nazioni_lang' => '`an_nazioni_lang`.`id_record` = `an_nazioni`.`id` AND `an_nazioni_lang`.`id_lang` = '.\Models\Locale::getDefault()->id,
-        ]; 
+        ];
 
         $where[] = ['`an_anagrafiche`.`deleted_at`', '=', null];
 
@@ -62,7 +62,7 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
 
             $joins[] = [
                 'an_tipianagrafiche_lang' => '`an_tipianagrafiche_lang`.`idrecord` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`idlang` = '.\Models\Locale::getDefault()->id,
-            ]; 
+            ];
 
             $where[] = ['`an_tipianagrafiche_lang`.`name`', '=', $type];
         }

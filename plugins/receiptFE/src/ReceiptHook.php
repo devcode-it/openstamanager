@@ -52,7 +52,7 @@ class ReceiptHook extends Manager
         // Lettura cache
         $todo_cache = Cache::find((new Cache())->getByField('name', 'Ricevute Elettroniche'));
         $completed_cache = Cache::find((new Cache())->getByField('name', 'Ricevute Elettroniche importate'));
-        
+
         // Refresh cache
         if (!$todo_cache->isValid()) {
             $list = Interaction::getRemoteList();
@@ -103,8 +103,8 @@ class ReceiptHook extends Manager
 
         // Messaggio di importazione
         $message = tr('_NUM_ ricevut_A_ su _TOT_ totali', [
-            '_NUM_' => (($completed_number>1) ? tr('Sono state importate'): tr('E\' stata importata')).' '.$completed_number,
-            '_A_' => (($completed_number>1) ? tr('e'): tr('a')),
+            '_NUM_' => (($completed_number > 1) ? tr('Sono state importate') : tr('E\' stata importata')).' '.$completed_number,
+            '_A_' => (($completed_number > 1) ? tr('e') : tr('a')),
             '_TOT_' => $total_number,
         ]);
 

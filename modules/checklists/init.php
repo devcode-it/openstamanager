@@ -19,8 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Checklists\Checklist;
 use Models\Module;
+use Modules\Checklists\Checklist;
 
 $checklist_module = Module::find((new Module())->getByField('name', 'Checklists'));
 

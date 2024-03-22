@@ -21,13 +21,12 @@ namespace Modules\FileAdapters\Adapters;
 
 use League\Flysystem\Local\LocalFilesystemAdapter as OriginalAdapter;
 
-class LocalAdapter extends OriginalAdapter {
-
-    public function __construct( $options ){
-
+class LocalAdapter extends OriginalAdapter
+{
+    public function __construct($options)
+    {
         $options = json_decode($options);
 
-        parent::__construct(base_dir()."/".$options->directory);
+        parent::__construct(base_dir().'/'.$options->directory);
     }
-
 }

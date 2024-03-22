@@ -22,6 +22,7 @@ namespace Modules\Preventivi;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Traits\RecordTrait;
+
 class Stato extends Model
 {
     use SimpleModelTrait;
@@ -31,6 +32,7 @@ class Stato extends Model
     protected static $translated_fields = [
         'name',
     ];
+
     public static function build($icona = null, $colore = null, $is_completato = null, $is_fatturabile = null, $is_pianificabile = null)
     {
         $model = new static();
@@ -43,7 +45,7 @@ class Stato extends Model
 
         return $model;
     }
-    
+
     public function preventivi()
     {
         return $this->hasMany(Preventivo::class, 'idstatopreventivo');
@@ -54,7 +56,8 @@ class Stato extends Model
         return '';
     }
 
-    public static function getTranslatedFields(){
+    public static function getTranslatedFields()
+    {
         return self::$translated_fields;
     }
 }

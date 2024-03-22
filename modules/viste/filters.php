@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Models\Clause;
+use Models\Clause;
 
 echo '
 <form action="" method="post" role="form">
@@ -38,8 +38,8 @@ if (!empty($additionals)) {
             <div class="box-header with-border">
                 <h3 class="box-title">'.
                     tr('Filtro: _NAME_', [
-'_NAME_' => $additional['name'],
-]).'
+                        '_NAME_' => $additional['name'],
+                    ]).'
                 </h3>
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse">
@@ -80,7 +80,7 @@ if (!empty($additionals)) {
                     </div>
 
                     <div class="col-md-3">
-                        {[ "type": "select", "label": "'.tr('Gruppo').'", "name": "gruppo['.$num.']", "values": "query=SELECT `zz_groups`.`id`, `name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') ORDER BY `zz_groups`.`id` ASC", "value": "'.$additional['idgruppo'].'", "readonly": '.intval(!$editable).' ]}
+                        {[ "type": "select", "label": "'.tr('Gruppo').'", "name": "gruppo['.$num.']", "values": "query=SELECT `zz_groups`.`id`, `name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `zz_groups`.`id` ASC", "value": "'.$additional['idgruppo'].'", "readonly": '.intval(!$editable).' ]}
                     </div>
 
                     <div class="col-md-3">
@@ -137,7 +137,7 @@ echo '
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "'.tr('Gruppo').'", "name": "gruppo[-id-]", "values": "query=SELECT `zz_groups`.`id`, `name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') ORDER BY `zz_groups`.`id` ASC" ]}
+					{[ "type": "select", "label": "'.tr('Gruppo').'", "name": "gruppo[-id-]", "values": "query=SELECT `zz_groups`.`id`, `name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `zz_groups`.`id` ASC" ]}
 				</div>
 
                 <div class="col-md-3">

@@ -35,12 +35,12 @@ echo '
     <div class="row">
         <div class="col-md-12">
             '.input([
-                'type' => 'ckeditor',
-                'label' => tr('Contenuto'),
-                'name' => 'content',
-                'required' => 1,
-                'value' => '',
-            ]).'
+    'type' => 'ckeditor',
+    'label' => tr('Contenuto'),
+    'name' => 'content',
+    'required' => 1,
+    'value' => '',
+]).'
         </div> 
     </div>
 
@@ -56,7 +56,7 @@ echo '
 
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Gruppo assegnato').'", "name": "group_id", "values": "query=SELECT `zz_groups`.`id`, `name` AS text FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')" ]}
+            {[ "type": "select", "label": "'.tr('Gruppo assegnato').'", "name": "group_id", "values": "query=SELECT `zz_groups`.`id`, `name` AS text FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')" ]}
         </div>
 
         <div class="col-md-6">

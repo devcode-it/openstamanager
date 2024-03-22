@@ -44,7 +44,6 @@ class TariffeContratti extends AppResource
 
     public function getModifiedRecords($last_sync_at)
     {
-
         $risorsa_contratti = $this->getRisorsaContratti();
         $contratti = $risorsa_contratti->getModifiedRecords(null);
 

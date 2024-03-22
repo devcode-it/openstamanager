@@ -22,8 +22,8 @@ echo '
 <div class="box box-info">
     <div class="box-header">
         <h3 class="box-title">'.tr('Istruzioni per il campo _FIELD_', [
-            '_FIELD_' => tr('Codice'),
-        ]).'</h3>
+    '_FIELD_' => tr('Codice'),
+]).'</h3>
     </div>
 
     <div class="box-body">
@@ -38,15 +38,15 @@ $list = [
 foreach ($list as $key => $value) {
     echo '
             <li>'.tr('_TEXT_ con il valore del campo "_FIELD_"', [
-                '_TEXT_' => '<code>|'.$key.'|</code>',
-                '_FIELD_' => $value,
-            ]).'</li>';
+        '_TEXT_' => '<code>|'.$key.'|</code>',
+        '_FIELD_' => $value,
+    ]).'</li>';
 }
 
 echo '
             <li>'.tr('_TEXT_ con il valore impostato per il record', [
-                '_TEXT_' => '<code>|value|</code>',
-            ]).'</li>';
+    '_TEXT_' => '<code>|value|</code>',
+]).'</li>';
 
 echo '
         </ul>

@@ -146,7 +146,7 @@ class Database extends Util\Singleton
      *
      * @since 2.3
      *
-     * @return \DebugBar\DataCollector\PDO\TraceablePDO|PDO
+     * @return DebugBar\DataCollector\PDO\TraceablePDO|PDO
      */
     public function getPDO()
     {
@@ -205,7 +205,7 @@ class Database extends Util\Singleton
         return $this->mysql_version;
     }
 
-     /**
+    /**
      * Restituisce il tipo di DBMS.
      *
      * @return string
@@ -224,7 +224,6 @@ class Database extends Util\Singleton
         }
     }
 
-
     /**
      * Controlla il tipo se il DBMS è MySQL.
      *
@@ -238,7 +237,6 @@ class Database extends Util\Singleton
         } else {
             return true;
         }
-
     }
 
     /**

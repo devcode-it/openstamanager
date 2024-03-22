@@ -33,43 +33,43 @@ $sapi_name = php_sapi_name();
 $php_interface = '';
 switch (true) {
     case strpos($sapi_name, 'apache') !== false:
-        //PHP è in esecuzione come modulo Apache (4)
+        // PHP è in esecuzione come modulo Apache (4)
         $php_interface = 'apache';
         break;
     case strpos($sapi_name, 'fpm-fcgi') !== false:
-        //PHP è in esecuzione come PHP-FPM FastCGI (3)
+        // PHP è in esecuzione come PHP-FPM FastCGI (3)
         $php_interface = 'fpm-fcgi';
         break;
     case strpos($sapi_name, 'fpm') !== false:
-        //PHP è in esecuzione come PHP-FPM (9)
+        // PHP è in esecuzione come PHP-FPM (9)
         $php_interface = 'fpm';
         break;
     case strpos($sapi_name, 'cgi-fcgi') !== false:
-        //PHP è in esecuzione come FastCGI (8)
+        // PHP è in esecuzione come FastCGI (8)
         $php_interface = 'cgi-fcgi';
         break;
     case strpos($sapi_name, 'cgi') !== false:
-        //PHP è in esecuzione come modulo CGI (2)
+        // PHP è in esecuzione come modulo CGI (2)
         $php_interface = 'cgi';
         break;
     case strpos($sapi_name, 'cli') !== false:
-        //PHP è in esecuzione dalla riga di comando (command line interface) (1)
+        // PHP è in esecuzione dalla riga di comando (command line interface) (1)
         $php_interface = 'cli';
         break;
     case strpos($sapi_name, 'embed') !== false:
-        //PHP è incorporato in un'applicazione (5)
+        // PHP è incorporato in un'applicazione (5)
         $php_interface = 'embed';
         break;
     case strpos($sapi_name, 'litespeed') !== false:
-        //PHP è in esecuzione come modulo LiteSpeed (6)
+        // PHP è in esecuzione come modulo LiteSpeed (6)
         $php_interface = 'litespeed';
         break;
     case strpos($sapi_name, 'isapi') !== false:
-        //PHP è in esecuzione come modulo ISAPI in IIS (7)
+        // PHP è in esecuzione come modulo ISAPI in IIS (7)
         $php_interface = 'isapi';
         break;
     default:
-        //Non è possibile determinare il tipo di interfaccia di PHP (0)
+        // Non è possibile determinare il tipo di interfaccia di PHP (0)
         $php_interface = 'n.d.';
 }
 
@@ -219,8 +219,8 @@ foreach ($settings as $name => $values) {
         }
 
         $description = tr('Valore consigliato: _VALUE_ (Valore attuale: _INI_)', [
-          '_VALUE_' => $description,
-          '_INI_' => ini_get($name),
+            '_VALUE_' => $description,
+            '_INI_' => ini_get($name),
         ]);
     }
 
@@ -242,7 +242,6 @@ foreach ($settings as $name => $values) {
     ];
 }
 
-
 // MySQL
 if ($database->isInstalled()) {
     if (method_exists($database, 'isMySQL')) {
@@ -254,7 +253,7 @@ if ($database->isInstalled()) {
                 'minimum' => $database->isMySQL() ? '5.7.0' : '10.1.0',
                 'maximum' => $database->isMySQL() ? '8.0.99' : '10.6.99',
             ],
-    
+
             'sort_buffer_size' => [
                 'type' => 'value',
                 'description' => '>2M',
@@ -297,11 +296,10 @@ foreach ($db as $name => $values) {
 
         $status = ((version_compare($database->getMySQLVersion(), $values['minimum'], '>=') && version_compare($database->getMySQLVersion(), $values['maximum'], '<=')) ? 1 : 0);
 
-        if($values['warning'] && $status == 1){
+        if ($values['warning'] && $status == 1) {
             $status = 0;
-            $description .= '. <i class="fa fa-exclamation-triangle text-danger" ></i><b> '.tr('Al momento MariaDB _MYSQL_VERSION_ non è completamente supportato, si consiglia di passare a MySQL.', ['_MYSQL_VERSION_'=>$database->getMySQLVersion()]).'</b>';
+            $description .= '. <i class="fa fa-exclamation-triangle text-danger" ></i><b> '.tr('Al momento MariaDB _MYSQL_VERSION_ non è completamente supportato, si consiglia di passare a MySQL.', ['_MYSQL_VERSION_' => $database->getMySQLVersion()]).'</b>';
         }
-
     } else {
         $type = tr('Impostazione');
 
@@ -334,8 +332,8 @@ foreach ($db as $name => $values) {
         }
 
         $description = tr('Valore consigliato: _VALUE_ (Valore attuale: _INC_)', [
-          '_VALUE_' => $description,
-          '_INC_' => Util\FileSystem::formatBytes($inc),
+            '_VALUE_' => $description,
+            '_INC_' => Util\FileSystem::formatBytes($inc),
         ]);
     }
 
@@ -449,7 +447,7 @@ foreach ($config_to_check as $name => $values) {
 
 $requirements = [
     tr('Apache (_INTERFACE_)', [
-         '_INTERFACE_' => $php_interface,
+        '_INTERFACE_' => $php_interface,
     ]) => $apache,
     tr('PHP (_VERSION_ _SUPPORTED_)', [
         '_VERSION_' => phpversion(),
@@ -457,7 +455,7 @@ $requirements = [
     ]) => $php,
     tr('DBMS (_TYPE_)', [
         '_TYPE_' => method_exists($database, 'getType') ? $database->getType() : '',
-    ] ) => $mysql,
+    ]) => $mysql,
     tr('Percorsi di servizio') => $directories,
     tr('File di servizio') => $files,
     tr('Configurazioni') => $config,
@@ -466,7 +464,7 @@ $requirements = [
 if (!$database->isInstalled() || empty($mysql)) {
     unset($requirements[tr('DBMS (_TYPE_)', [
         '_TYPE_' => $database->getType(),
-    ] )]);
+    ])]);
 }
 
 // Tabelle di riepilogo

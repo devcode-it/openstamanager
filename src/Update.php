@@ -17,11 +17,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Models\Cache;
+use Models\Group;
+use Models\Setting;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
-use Models\Cache;
-use Models\Setting;
-use Models\Group;
 
 /**
  * Classe dedicata alla gestione delle procedure di aggiornamento del database del progetto.

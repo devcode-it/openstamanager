@@ -17,8 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Plugins\PianificazioneFatturazione\Pianificazione;
 use Models\Module;
+use Plugins\PianificazioneFatturazione\Pianificazione;
 
 include_once __DIR__.'/../../core.php';
 
@@ -69,12 +69,12 @@ echo '
 // Tipo di documento
 echo '
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Tipo di fattura').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT * FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON(`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `dir`=\'entrata\'" ]}
+            {[ "type": "select", "label": "'.tr('Tipo di fattura').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT * FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON(`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `dir`=\'entrata\'" ]}
         </div>';
 
 // Sezionale
 echo '<div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT `zz_segments`.`id`, `name` AS descrizione FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments_lang`.`id_record` = `zz_segments`.`id` AND `zz_segments_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `id_module`='.$id_module_fattura.' ORDER BY `name`", "value":"'.$_SESSION['module_'.$id_module_fattura]['id_segment'].'" ]}
+            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT `zz_segments`.`id`, `name` AS descrizione FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments_lang`.`id_record` = `zz_segments`.`id` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_module`='.$id_module_fattura.' ORDER BY `name`", "value":"'.$_SESSION['module_'.$id_module_fattura]['id_segment'].'" ]}
         </div>';
 
 // Conto

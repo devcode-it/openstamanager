@@ -37,9 +37,9 @@ class FileAdapter extends Model
         return true;
     }
 
-    public function setIsDefaultAttribute($valore){
-
-        self::getAll()->where('id', '!=', $this->id)->each(function($item){
+    public function setIsDefaultAttribute($valore)
+    {
+        self::getAll()->where('id', '!=', $this->id)->each(function ($item) {
             $item->attributes['is_default'] = false;
             $item->save();
         });
@@ -47,15 +47,13 @@ class FileAdapter extends Model
         $this->attributes['is_default'] = $valore;
     }
 
-    public static function getDefaultConnector(){
-
+    public static function getDefaultConnector()
+    {
         return self::where('is_default', 1)->first();
     }
 
-    public static function getLocalConnector(){
-
+    public static function getLocalConnector()
+    {
         return self::where('is_local', 1)->first();
     }
-
-
 }

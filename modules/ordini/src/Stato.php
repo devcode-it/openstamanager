@@ -22,6 +22,7 @@ namespace Modules\Ordini;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Traits\RecordTrait;
+
 class Stato extends Model
 {
     use SimpleModelTrait;
@@ -49,12 +50,14 @@ class Stato extends Model
     {
         return $this->hasMany(Ordine::class, 'idstatoordine');
     }
+
     public function getModuleAttribute()
     {
         return 'Stati degli ordini';
     }
 
-    public static function getTranslatedFields(){
+    public static function getTranslatedFields()
+    {
         return self::$translated_fields;
     }
 }

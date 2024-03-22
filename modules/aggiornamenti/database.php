@@ -107,7 +107,7 @@ switch ($database->getType()) {
     case 'MySQL':
         $mysql_min_version = '5.7.0';
         $mysql_max_version = '5.7.99';
-        $file_to_check_database = ((version_compare($database->getMySQLVersion(), $mysql_min_version, '>=') && version_compare($database->getMySQLVersion(), $mysql_max_version, '<=')) ? 'mysql_5_7.json' :'mysql.json');
+        $file_to_check_database = ((version_compare($database->getMySQLVersion(), $mysql_min_version, '>=') && version_compare($database->getMySQLVersion(), $mysql_max_version, '<=')) ? 'mysql_5_7.json' : 'mysql.json');
         break;
     default:
         $file_to_check_database = 'mysql.json';
@@ -121,8 +121,8 @@ if (empty($data)) {
     echo '
 <div class="alert alert-warning">
     <i class="fa fa-warning"></i> '.tr('Impossibile effettuare controlli di integrità in assenza del file _FILE_', [
-            '_FILE_' => '<b>'.$file_to_check_database.'</b>',
-        ]).'.
+        '_FILE_' => '<b>'.$file_to_check_database.'</b>',
+    ]).'.
 </div>';
 
     return;
@@ -147,11 +147,10 @@ if (!empty($results) || !empty($results_settings) || !empty($results_settings_ad
     <div class="alert alert-warning">
         <i class="fa fa-warning"></i>
         '.tr('Attenzione: questa funzionalità può presentare dei risultati falsamente positivi, sulla base del contenuto del file _FILE_ e la versione di _MYSQL_VERSION_ di _DBMS_TYPE_ rilevata a sistema', [
-                '_FILE_' => '<b>'.$file_to_check_database.'</b>',
-                '_MYSQL_VERSION_' => '<b>'.$database->getMySQLVersion().'</b>',
-                '_DBMS_TYPE_' => '<b>'.$database->getType().'</b>',
-
-            ]).'.
+            '_FILE_' => '<b>'.$file_to_check_database.'</b>',
+            '_MYSQL_VERSION_' => '<b>'.$database->getMySQLVersion().'</b>',
+            '_DBMS_TYPE_' => '<b>'.$database->getType().'</b>',
+        ]).'.
     </div>';
 
         foreach ($results as $table => $errors) {

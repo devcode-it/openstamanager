@@ -96,13 +96,13 @@ if (!empty($documento)) {
                         <tr>
                             <td>';
     echo input([
-                                    'type' => 'ckeditor',
-                                    'label' => tr('descrizione'),
-                                    'name' => 'descrizione',
-                                    'required' => 1,
-                                    'extra' => 'rows="2"',
-                                    'value' => $record['descrizione'],
-                                ]);
+        'type' => 'ckeditor',
+        'label' => tr('descrizione'),
+        'name' => 'descrizione',
+        'required' => 1,
+        'extra' => 'rows="2"',
+        'value' => $record['descrizione'],
+    ]);
     echo '
                             </td>
                         </tr>
@@ -248,11 +248,11 @@ echo '
 
             </div>
             <div class="alert alert-warning hide" id="totale"><?php echo tr('Il totale da pagare non corrisponde con il totale della fattura che è pari a _MONEY_', [
-                    '_MONEY_' => '<b>'.moneyFormat($totale_da_pagare).'</b>',
-                ]); ?>.<br><?php echo tr('Differenza di _TOT_ _CURRENCY_', [
-                        '_TOT_' => '<span id="diff"></span>',
-                        '_CURRENCY_' => currency(),
-                    ]); ?>.
+                '_MONEY_' => '<b>'.moneyFormat($totale_da_pagare).'</b>',
+            ]); ?>.<br><?php echo tr('Differenza di _TOT_ _CURRENCY_', [
+                '_TOT_' => '<span id="diff"></span>',
+                '_CURRENCY_' => currency(),
+            ]); ?>.
             </div>
 
             <input type="hidden" id="totale_da_pagare" value="<?php echo round($totale_da_pagare, 2); ?>">

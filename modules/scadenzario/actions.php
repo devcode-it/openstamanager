@@ -19,10 +19,10 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Scadenzario\Scadenza;
-use Modules\Fatture\Tipo;
 use Models\Module;
 use Models\PrintTemplate;
+use Modules\Fatture\Tipo;
+use Modules\Scadenzario\Scadenza;
 
 switch (post('op')) {
     case 'add':

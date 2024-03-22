@@ -110,8 +110,8 @@ function renderTabella($nome, $righe, &$totale_dare, &$totale_avere)
     echo '
     <div class="alert alert-warning hide sbilancio">
         <i class="fa fa-warning"></i> '.tr('Sbilancio di _MONEY_', [
-            '_MONEY_' => '<span class="money"></span> '.currency(),
-        ]).'
+        '_MONEY_' => '<span class="money"></span> '.currency(),
+    ]).'
     </div>
 </div>';
 }

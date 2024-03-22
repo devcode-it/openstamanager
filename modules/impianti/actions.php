@@ -19,8 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Checklists\Check;
 use Models\Module;
+use Modules\Checklists\Check;
 
 $op = post('op');
 

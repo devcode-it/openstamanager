@@ -82,8 +82,8 @@ if (!empty($errors)) {
 <div class="alert alert-warning">
     <i class="fa fa-warning"></i>
     '.tr('Attenzione: questa funzionalità può presentare dei risultati falsamente positivi, sulla base del contenuto del file _FILE_', [
-    '_FILE_' => '<b>checksum.json</b>',
-]).'.
+        '_FILE_' => '<b>checksum.json</b>',
+    ]).'.
 </div>
 
 <table class="table table-bordered table-striped">
@@ -108,7 +108,6 @@ if (!empty($errors)) {
     </tbody>
 </table>';
 } else {
-
     OperationLog::setInfo('options', 'OK');
 
     echo '

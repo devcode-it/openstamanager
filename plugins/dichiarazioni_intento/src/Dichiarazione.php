@@ -42,7 +42,7 @@ class Dichiarazione extends Model
      *
      * @return self
      */
-    public static function build(Anagrafica $anagrafica = null, $data = null, $numero_protocollo = null, $numero_progressivo = null, $data_inizio = null, $data_fine = null)
+    public static function build(?Anagrafica $anagrafica = null, $data = null, $numero_protocollo = null, $numero_progressivo = null, $data_inizio = null, $data_fine = null)
     {
         $model = new static();
 

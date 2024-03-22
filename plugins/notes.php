@@ -96,12 +96,12 @@ if ($structure->permission == 'rw') {
             <div class="row" >
                 <div class="col-md-12" >';
     echo input([
-                        'type' => 'ckeditor',
-                        'label' => tr('Nuova nota'),
-                        'name' => 'contenuto',
-                        'required' => 1,
-                        'class' => 'unblockable',
-                    ]);
+        'type' => 'ckeditor',
+        'label' => tr('Nuova nota'),
+        'name' => 'contenuto',
+        'required' => 1,
+        'class' => 'unblockable',
+    ]);
     echo '
                 </div>
                 <div class="col-md-4" >

@@ -21,6 +21,7 @@ namespace Modules\Articoli\Import;
 
 use Carbon\Carbon;
 use Importer\CSVImporter;
+use Models\Module;
 use Models\Upload;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Sede;
@@ -30,7 +31,6 @@ use Modules\Articoli\Categoria;
 use Modules\Iva\Aliquota;
 use Plugins\ListinoClienti\DettaglioPrezzo;
 use Plugins\ListinoFornitori\DettaglioFornitore;
-use Models\Module;
 
 /**
  * Struttura per la gestione delle operazioni di importazione (da CSV) degli Articoli.

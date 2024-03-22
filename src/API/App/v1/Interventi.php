@@ -98,12 +98,12 @@ class Interventi extends AppResource
             )';
 
             $records = database()->fetchArray($query, [
-            ':period_end' => $end,
-            ':period_start' => $start,
-            ':remove_period_end' => $remove_end,
-            ':remove_period_start' => $remove_start,
-            ':id_tecnico_q1' => $id_tecnico,
-            ':id_tecnico_q2' => $id_tecnico,
+                ':period_end' => $end,
+                ':period_start' => $start,
+                ':remove_period_end' => $remove_end,
+                ':remove_period_start' => $remove_start,
+                ':id_tecnico_q1' => $id_tecnico,
+                ':id_tecnico_q2' => $id_tecnico,
             ]);
         }
 

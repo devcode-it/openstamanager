@@ -18,11 +18,11 @@
  */
 
 use Carbon\Carbon;
+use Models\Module;
 use Modules\Fatture\Fattura;
 use Modules\Pagamenti\Pagamento;
 use Plugins\ImportFE\FatturaElettronica;
 use Util\XML;
-use Models\Module;
 
 include_once __DIR__.'/../../core.php';
 
@@ -50,13 +50,13 @@ if (empty($fattura_pa)) {
     if (!empty($error)) {
         echo '
 <p>'.tr("Errore durante l'apertura della fattura elettronica _NAME_", [
-    '_NAME_' => $record['name'],
-]).'.</p>';
+            '_NAME_' => $record['name'],
+        ]).'.</p>';
     } elseif (!empty($imported)) {
         echo '
 <p>'.tr('La fattura elettronica _NAME_ è già stata importata in passato', [
-    '_NAME_' => $record['name'],
-]).'.</p>';
+            '_NAME_' => $record['name'],
+        ]).'.</p>';
     }
 
     echo '
@@ -128,7 +128,7 @@ $provincia = $sede['provincia'];
 $fattura_body = $fattura_pa->getBody();
 $dati_generali = $fattura_body['DatiGenerali']['DatiGeneraliDocumento'];
 
-$tipo_documento = $database->fetchOne('SELECT CONCAT("(", `codice`, ") ", `name`) AS descrizione FROM `fe_tipi_documento` LEFT JOIN `fe_tipi_documento_lang` ON (`fe_tipi_documento_lang`.`id_record` = `fe_tipi_documento`.`codice` AND `fe_tipi_documento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE codice = '.prepare($dati_generali['TipoDocumento']))['descrizione'];
+$tipo_documento = $database->fetchOne('SELECT CONCAT("(", `codice`, ") ", `name`) AS descrizione FROM `fe_tipi_documento` LEFT JOIN `fe_tipi_documento_lang` ON (`fe_tipi_documento_lang`.`id_record` = `fe_tipi_documento`.`codice` AND `fe_tipi_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE codice = '.prepare($dati_generali['TipoDocumento']))['descrizione'];
 
 // Gestione per fattura elettroniche senza pagamento definito
 $pagamenti = [];
@@ -191,9 +191,9 @@ if (!empty($pagamenti)) {
             <h4>'.tr('Pagamento').'</h4>
 
             <p>'.tr('La fattura importata presenta _NUM_ rat_E_ di pagamento con le seguenti scadenze', [
-                '_NUM_' => count($metodi),
-                '_E_' => ((count($metodi) > 1) ? 'e' : 'a'),
-            ]).':</p>
+        '_NUM_' => count($metodi),
+        '_E_' => ((count($metodi) > 1) ? 'e' : 'a'),
+    ]).':</p>
             <ol>';
 
     foreach ($pagamenti as $pagamento) {
@@ -202,7 +202,7 @@ if (!empty($pagamenti)) {
 
         // Scadenze di pagamento
         foreach ($rate as $rata) {
-            $descrizione = !empty($rata['ModalitaPagamento']) ? $database->fetchOne('SELECT `name` FROM `fe_modalita_pagamento` LEFT JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento_lang`.`id_record`=`fe_modalita_pagamento`.`codice` AND `fe_modalita_pagamento_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).') WHERE `codice` = '.prepare($rata['ModalitaPagamento']))['descrizione'] : '';
+            $descrizione = !empty($rata['ModalitaPagamento']) ? $database->fetchOne('SELECT `name` FROM `fe_modalita_pagamento` LEFT JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento_lang`.`id_record`=`fe_modalita_pagamento`.`codice` AND `fe_modalita_pagamento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `codice` = '.prepare($rata['ModalitaPagamento']))['descrizione'] : '';
             $data = !empty($rata['DataScadenzaPagamento']) ? FatturaElettronica::parseDate($rata['DataScadenzaPagamento']) : '';
 
             echo '
@@ -223,7 +223,7 @@ echo '
 	</div>';
 
 // Tipo del documento
-$query = "SELECT `co_tipidocumento`.`id`, CONCAT('(', `codice_tipo_documento_fe`, ') ', `name`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = ".prepare(\Models\Locale::getDefault()->id).") WHERE `dir` = 'uscita'";
+$query = "SELECT `co_tipidocumento`.`id`, CONCAT('(', `codice_tipo_documento_fe`, ') ', `name`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).") WHERE `dir` = 'uscita'";
 $query_tipo = $query.' AND `codice_tipo_documento_fe` = '.prepare($dati_generali['TipoDocumento']);
 $numero_tipo = $database->fetchNum($query_tipo);
 if (!empty($numero_tipo)) {
@@ -273,7 +273,7 @@ if (!empty($anagrafica)) {
             {[ "type": "select", "label": "'.tr('Fattura collegata').'", "name": "ref_fattura", "required": 0, "values": "query='.$query.'" ]}
         </div>';
     } elseif ($dati_generali['TipoDocumento'] == 'TD06') {
-        $query .= "AND `co_documenti`.`id_segment` = (SELECT `zz_segments`.`id` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments_lang`.`id_record` = `zz_segments`.`id` AND `zz_segments_lang`.`id_lang` = ".prepare(\Models\Locale::getDefault()->id).") WHERE `name` = 'Fatture pro-forma' AND `id_module` = ".prepare($id_module).')';
+        $query .= 'AND `co_documenti`.`id_segment` = (SELECT `zz_segments`.`id` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments_lang`.`id_record` = `zz_segments`.`id` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).") WHERE `name` = 'Fatture pro-forma' AND `id_module` = ".prepare($id_module).')';
 
         echo '
         <div class="col-md-3">
@@ -400,7 +400,7 @@ if (!empty($righe)) {
     }
 
     foreach ($righe as $key => $riga) {
-        $query = "SELECT `co_iva`.`id`, IF(`codice` IS NULL, `name`, CONCAT(`codice`, ' - ', `name`)) AS descrizione FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = ".prepare(\Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `percentuale` = '.prepare($riga['AliquotaIVA']);
+        $query = "SELECT `co_iva`.`id`, IF(`codice` IS NULL, `name`, CONCAT(`codice`, ' - ', `name`)) AS descrizione FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `percentuale` = '.prepare($riga['AliquotaIVA']);
         $start_query = $query;
 
         if (!empty($riga['Natura'])) {
@@ -546,9 +546,9 @@ if (!empty($righe)) {
 
             <td class="text-right">
                 '.replace('_VALUE_ _DESC_', [
-                    '_VALUE_' => empty($riga['Natura']) ? numberFormat($riga['AliquotaIVA'], 0).'%' : $riga['Natura'],
-                    '_DESC_' => $riga['RiferimentoNormativo'] ? ' - '.$riga['RiferimentoNormativo'] : '',
-                ]).'
+            '_VALUE_' => empty($riga['Natura']) ? numberFormat($riga['AliquotaIVA'], 0).'%' : $riga['Natura'],
+            '_DESC_' => $riga['RiferimentoNormativo'] ? ' - '.$riga['RiferimentoNormativo'] : '',
+        ]).'
                 <span id="riferimento_'.$key.'_iva"></span>
             </td>
         </tr>';

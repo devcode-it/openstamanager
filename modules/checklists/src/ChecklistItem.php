@@ -39,7 +39,7 @@ class ChecklistItem extends Model
      *
      * @return self
      */
-    public static function build(Checklist $checklist = null, $contenuto = null, $id_parent = null, $is_titolo = 0)
+    public static function build(?Checklist $checklist = null, $contenuto = null, $id_parent = null, $is_titolo = 0)
     {
         $model = new static();
 

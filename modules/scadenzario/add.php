@@ -47,11 +47,11 @@ use Models\Module;
   <div class='row'>
     <div class='col-md-12'>
       <?php echo input([
-        'type' => 'ckeditor',
-        'label' => tr('Descrizione'),
-        'name' => 'descrizione',
-        'required' => 1,
-        'value' => '',
+          'type' => 'ckeditor',
+          'label' => tr('Descrizione'),
+          'name' => 'descrizione',
+          'required' => 1,
+          'value' => '',
       ]); ?>
 
     </div>

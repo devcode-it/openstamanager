@@ -25,7 +25,7 @@ switch (post('op')) {
         $descrizione = post('descrizione');
         $stato_new = (new Stato())->getByField('name', $descrizione);
 
-        if (!empty($stato_new) && $stato_new != $id_record){
+        if (!empty($stato_new) && $stato_new != $id_record) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato dei preventivi.'));
         } else {
             $stato->icona = post('icona');
@@ -53,7 +53,7 @@ switch (post('op')) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato dei preventivi.'));
         } else {
             $stato = Stato::build($icona, $colore, $is_completato, $is_fatturabile, $is_pianificabile);
-            $id_record= $dbo->lastInsertedID();
+            $id_record = $dbo->lastInsertedID();
             $stato->setTranslation('name', $descrizione);
             $stato->save();
 

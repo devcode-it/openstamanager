@@ -42,7 +42,7 @@ class DettaglioFornitore extends Model
      *
      * @return self
      */
-    public static function build(Anagrafica $fornitore = null, Articolo $articolo = null)
+    public static function build(?Anagrafica $fornitore = null, ?Articolo $articolo = null)
     {
         $model = new static();
 

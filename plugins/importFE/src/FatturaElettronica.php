@@ -19,6 +19,7 @@
 
 namespace Plugins\ImportFE;
 
+use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Nazione;
 use Modules\Anagrafiche\Tipo as TipoAnagrafica;
@@ -27,7 +28,6 @@ use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
 use Modules\Fatture\Tipo as TipoFattura;
 use Util\XML;
-use Models\Module;
 
 /**
  * Classe per la gestione della fatturazione elettronica in XML.

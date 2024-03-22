@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Carbon\Carbon;
+use Models\Module;
 use Modules\Aggiornamenti\Controlli\DatiFattureElettroniche;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Export\CSV;
@@ -29,8 +30,6 @@ use Plugins\ExportFE\FatturaElettronica;
 use Plugins\ExportFE\Interaction;
 use Plugins\ReceiptFE\Ricevuta;
 use Util\Zip;
-use Models\Module;
-
 
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 $stato_emessa = (new Stato())->getByField('name', 'Emessa');
@@ -51,7 +50,7 @@ switch (post('op')) {
         }
 
         // Selezione delle fatture da stampare
-        $fatture = $dbo->fetchArray('SELECT `co_documenti`.`id`, `numero_esterno`, `data`, `ragione_sociale`, `co_tipidocumento_lang`.`name` FROM `co_documenti` INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica`=`an_anagrafiche`.`idanagrafica` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id`=`co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).') WHERE `co_documenti`.`id` IN('.implode(',', $id_records).')');
+        $fatture = $dbo->fetchArray('SELECT `co_documenti`.`id`, `numero_esterno`, `data`, `ragione_sociale`, `co_tipidocumento_lang`.`name` FROM `co_documenti` INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica`=`an_anagrafiche`.`idanagrafica` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id`=`co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `co_documenti`.`id` IN('.implode(',', $id_records).')');
 
         if (!empty($fatture)) {
             foreach ($fatture as $r) {
@@ -186,7 +185,7 @@ switch (post('op')) {
         }
 
         // Selezione delle fatture da esportare
-        $fatture = $dbo->fetchArray('SELECT `co_documenti`.`id`, `numero_esterno`, `data`, `ragione_sociale`, `co_tipidocumento_lang`.`name`, `co_tipidocumento`.`dir` FROM `co_documenti` INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica`=`an_anagrafiche`.`idanagrafica` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record`=`co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).') INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento`=`co_statidocumento`.`id` WHERE `co_documenti`.`id` IN('.implode(',', $id_records).')');
+        $fatture = $dbo->fetchArray('SELECT `co_documenti`.`id`, `numero_esterno`, `data`, `ragione_sociale`, `co_tipidocumento_lang`.`name`, `co_tipidocumento`.`dir` FROM `co_documenti` INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica`=`an_anagrafiche`.`idanagrafica` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record`=`co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento`=`co_statidocumento`.`id` WHERE `co_documenti`.`id` IN('.implode(',', $id_records).')');
 
         $failed = [];
         $added = 0;
@@ -264,7 +263,7 @@ switch (post('op')) {
         }
 
         // Selezione delle fatture da esportare
-        $fatture = $dbo->fetchArray('SELECT `co_documenti`.`id`, `numero_esterno`, `data`, `ragione_sociale`, `co_tipidocumento_lang`.`name`, `co_tipidocumento`.`dir` FROM `co_documenti` INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica`=`an_anagrafiche`.`idanagrafica` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento`=`co_statidocumento`.`id` WHERE `co_documenti`.`id` IN('.implode(',', $id_records).')');
+        $fatture = $dbo->fetchArray('SELECT `co_documenti`.`id`, `numero_esterno`, `data`, `ragione_sociale`, `co_tipidocumento_lang`.`name`, `co_tipidocumento`.`dir` FROM `co_documenti` INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica`=`an_anagrafiche`.`idanagrafica` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento`=`co_statidocumento`.`id` WHERE `co_documenti`.`id` IN('.implode(',', $id_records).')');
 
         $failed = [];
         $added = 0;
@@ -483,7 +482,7 @@ switch (post('op')) {
             FROM
                 `co_documenti`
                 INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
-                LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_documenti`.`idstatodocumento` AND `co_statidocumento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+                LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_documenti`.`idstatodocumento` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                 INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
                 INNER JOIN `zz_segments` ON `zz_segments`.`id` = `co_documenti`.`id_segment`
             WHERE
@@ -512,8 +511,8 @@ switch (post('op')) {
                                 flash()->warning(tr('La fattura elettronica num. _NUM_ potrebbe avere delle irregolarità!', [
                                     '_NUM_' => $numero,
                                 ]).' '.tr('Controllare i seguenti campi: _LIST_', [
-                                        '_LIST_' => implode(', ', $errors),
-                                    ]).'.');
+                                    '_LIST_' => implode(', ', $errors),
+                                ]).'.');
                             } else {
                                 $message .= '
                                     <p><b>'.$title.' '.$link.'</b></p>
@@ -615,7 +614,7 @@ $operations['change-bank'] = [
 $operations['cambia-sezionale'] = [
     'text' => '<span><i class="fa fa-tags"></i> '.tr('Cambia sezionale'),
     'data' => [
-       'title' => tr('Cambia sezionale'),
+        'title' => tr('Cambia sezionale'),
         'msg' => tr('Scegli il sezionale _TIPOLOGIA_ in cui spostare le fatture in stato "Bozza" selezionate', [
             '_TIPOLOGIA_' => $is_fiscale ? tr('fiscale') : tr('non fiscale'),
         ]).':<br><br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_sezionale' => 1, 'is_fiscale' => $is_fiscale, 'escludi_id' => $_SESSION['module_'.$id_module]['id_segment']]).', "select-options-escape": true ]}',

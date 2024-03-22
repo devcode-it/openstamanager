@@ -19,8 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Iva\Aliquota;
 use Models\Module;
+use Modules\Iva\Aliquota;
 
 ?><form action="" method="post" id="edit-form" enctype="multipart/form-data">
 	<input type="hidden" name="backto" value="record-edit">
@@ -393,9 +393,9 @@ $("#scorporaIva").click( function() {
 
 // Collegamenti diretti
 // Fatture, ddt, preventivi collegati a questo articolo
-$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento_lang`.`name` AS tipo_documento, `co_tipidocumento`.`dir`, SUM(`co_righe_documenti`.`qta`) AS qta_totale, ((SUM(`co_righe_documenti`.`prezzo_unitario`)-SUM(`co_righe_documenti`.`sconto_unitario`))*SUM(`co_righe_documenti`.`qta`)) AS prezzo_totale, SUM(`co_righe_documenti`.`prezzo_unitario`)-SUM(`co_righe_documenti`.`sconto_unitario`) AS prezzo_unitario FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') INNER JOIN `co_righe_documenti` ON `co_documenti`.`id`=`co_righe_documenti`.`iddocumento` WHERE `co_righe_documenti`.`idarticolo` = '.prepare($id_record).' GROUP BY `co_documenti`.`id`
+$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento_lang`.`name` AS tipo_documento, `co_tipidocumento`.`dir`, SUM(`co_righe_documenti`.`qta`) AS qta_totale, ((SUM(`co_righe_documenti`.`prezzo_unitario`)-SUM(`co_righe_documenti`.`sconto_unitario`))*SUM(`co_righe_documenti`.`qta`)) AS prezzo_totale, SUM(`co_righe_documenti`.`prezzo_unitario`)-SUM(`co_righe_documenti`.`sconto_unitario`) AS prezzo_unitario FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `co_righe_documenti` ON `co_documenti`.`id`=`co_righe_documenti`.`iddocumento` WHERE `co_righe_documenti`.`idarticolo` = '.prepare($id_record).' GROUP BY `co_documenti`.`id`
 
-UNION SELECT `dt_ddt`.`id`, `dt_ddt`.`data`, `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`, `dt_tipiddt_lang`.`name` AS tipo_documento, `dt_tipiddt`.`dir`, SUM(dt_righe_ddt.qta) AS qta_totale, ((SUM(dt_righe_ddt.prezzo_unitario)-SUM(dt_righe_ddt.sconto_unitario))*SUM(dt_righe_ddt.qta)) AS prezzo_totale, SUM(dt_righe_ddt.prezzo_unitario)-SUM(dt_righe_ddt.sconto_unitario) AS prezzo_unitario FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') INNER JOIN `dt_righe_ddt` ON `dt_ddt`.`id`=`dt_righe_ddt`.`idddt` WHERE `dt_righe_ddt`.`idarticolo` = '.prepare($id_record).' GROUP BY `dt_ddt`.`id`
+UNION SELECT `dt_ddt`.`id`, `dt_ddt`.`data`, `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`, `dt_tipiddt_lang`.`name` AS tipo_documento, `dt_tipiddt`.`dir`, SUM(dt_righe_ddt.qta) AS qta_totale, ((SUM(dt_righe_ddt.prezzo_unitario)-SUM(dt_righe_ddt.sconto_unitario))*SUM(dt_righe_ddt.qta)) AS prezzo_totale, SUM(dt_righe_ddt.prezzo_unitario)-SUM(dt_righe_ddt.sconto_unitario) AS prezzo_unitario FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `dt_righe_ddt` ON `dt_ddt`.`id`=`dt_righe_ddt`.`idddt` WHERE `dt_righe_ddt`.`idarticolo` = '.prepare($id_record).' GROUP BY `dt_ddt`.`id`
 
 UNION SELECT `co_preventivi`.`id`, `co_preventivi`.`data_bozza`, `co_preventivi`.`numero`,  0 AS numero_esterno , "Preventivo" AS tipo_documento, 0 AS dir, SUM(co_righe_preventivi.qta) AS qta_totale, ((SUM(co_righe_preventivi.prezzo_unitario)-SUM(co_righe_preventivi.sconto_unitario))*SUM(co_righe_preventivi.qta)) AS prezzo_totale, SUM(co_righe_preventivi.prezzo_unitario)-SUM(co_righe_preventivi.sconto_unitario) AS prezzo_unitario FROM `co_preventivi` INNER JOIN `co_righe_preventivi` ON `co_preventivi`.`id`=`co_righe_preventivi`.`idpreventivo` WHERE `co_righe_preventivi`.`idarticolo` = '.prepare($id_record).' GROUP BY co_preventivi.id ORDER BY `data`');
 
@@ -404,8 +404,8 @@ if (!empty($elementi)) {
 <div class="box box-warning collapsable collapsed-box">
     <div class="box-header with-border">
         <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
-            '_NUM_' => count($elementi),
-        ]).'</h3>
+        '_NUM_' => count($elementi),
+    ]).'</h3>
         <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
         </div>

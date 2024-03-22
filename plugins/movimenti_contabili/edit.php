@@ -20,8 +20,8 @@
 include_once __DIR__.'/../../core.php';
 include_once __DIR__.'/../init.php';
 
-use Modules\Fatture\Fattura;
 use Models\Module;
+use Modules\Fatture\Fattura;
 
 if (empty($_GET['visualizza_movimenti'])) {
     echo '

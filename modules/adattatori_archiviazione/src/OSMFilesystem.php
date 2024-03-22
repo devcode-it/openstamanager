@@ -23,7 +23,6 @@ use League\Flysystem\Filesystem;
 
 class OSMFilesystem extends Filesystem
 {
-
     /** @var array Elenco delle tipologie di file pericolose */
     protected static $not_allowed_types = [
         'php' => 'application/php',
@@ -33,9 +32,9 @@ class OSMFilesystem extends Filesystem
         'htm' => 'text/html',
     ];
 
-    public function upload($directory, $filename, $contents){
-
-        //Verifico se l'esensione non è consentita
+    public function upload($directory, $filename, $contents)
+    {
+        // Verifico se l'esensione non è consentita
         $extension = pathinfo($filename, PATHINFO_EXTENSION);
         $extension = strtolower($extension);
 
@@ -43,14 +42,16 @@ class OSMFilesystem extends Filesystem
         $allowed = self::isSupportedType($extension);
         if (!$allowed) {
             flash()->error(tr('Estensione non supportata!'));
+
             return false;
         }
 
-        if(!$this->directoryExists($directory)){
-            try{
+        if (!$this->directoryExists($directory)) {
+            try {
                 $this->createDirectory($directory);
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 flash()->error(tr('Impossibile creare la cartella controllare i permessi!'));
+
                 return false;
             }
         }
@@ -59,15 +60,13 @@ class OSMFilesystem extends Filesystem
             $filename = random_string().'.'.$extension;
         } while ($this->fileExists($directory.'/'.$filename));
 
+        $this->write($directory.'/'.$filename, $contents);
 
-        $this->write($directory."/".$filename, $contents);
-        return ["filename" => $filename, "extension" => $extension];
+        return ['filename' => $filename, 'extension' => $extension];
     }
 
     protected static function isSupportedType($extension)
     {
         return !in_array(strtolower($extension), array_keys(self::$not_allowed_types));
     }
-
-    
 }

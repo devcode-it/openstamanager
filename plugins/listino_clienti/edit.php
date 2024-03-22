@@ -18,8 +18,8 @@
  */
 
 use Carbon\Carbon;
-use Plugins\ListinoClienti\DettaglioPrezzo;
 use Models\Module;
+use Plugins\ListinoClienti\DettaglioPrezzo;
 
 include_once __DIR__.'/../../core.php';
 

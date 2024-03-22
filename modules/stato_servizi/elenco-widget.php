@@ -36,9 +36,9 @@ $widgets = $dbo->fetchArray('SELECT
         `zz_widgets_lang`.`name` as name,
         `zz_modules_lang`.`name` AS modulo
     FROM zz_widgets
-        LEFT JOIN `zz_widgets_lang` ON (`zz_widgets`.`id` = `zz_widgets_lang`.`id_record` AND `zz_widgets_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+        LEFT JOIN `zz_widgets_lang` ON (`zz_widgets`.`id` = `zz_widgets_lang`.`id_record` AND `zz_widgets_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         INNER JOIN `zz_modules` ON `zz_widgets`.`id_module` = `zz_modules`.`id`
-        LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+        LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     ORDER BY 
         `id_module` ASC, `zz_widgets`.`order` ASC');
 
@@ -77,8 +77,8 @@ foreach ($gruppi as $modulo => $widgets) {
         if ($widget['enabled']) {
             echo '
                 <div class="tip" data-toggle="tooltip" title="'.tr('Questo _TYPE_ è abilitato: clicca qui per disabilitarlo', [
-                        '_TYPE_' => $nome_tipo,
-                    ]).'">
+                '_TYPE_' => $nome_tipo,
+            ]).'">
                     <button type="button" class="btn btn-warning btn-xs" onclick="disabilitaWidget(this)">
                         <i class="fa fa-power-off" title="'.tr('Disabilita').'"></i>
                     </button>
@@ -86,8 +86,8 @@ foreach ($gruppi as $modulo => $widgets) {
         } else {
             echo '
                 <div class="tip" data-toggle="tooltip" title="'.tr('Questo _TYPE_ è disabilitato: clicca qui per abilitarlo', [
-                        '_TYPE_' => $nome_tipo,
-                    ]).'">
+                '_TYPE_' => $nome_tipo,
+            ]).'">
                     <button type="button" class="btn btn-success btn-xs" onclick="abilitaWidget(this)">
                         <i class="fa fa-plug" title="'.tr('Abilita').'"></i>
                     </button>
@@ -145,12 +145,12 @@ function disabilitaWidget(button){
 
     swal({
         title: "'.tr('Disabilitare il _TYPE_?', [
-            '_TYPE_' => '" + nome_tipo + "',
-        ]).'",
+    '_TYPE_' => '" + nome_tipo + "',
+]).'",
         html: "'.tr('Sei sicuro di voler disabilitare il _TYPE_ _NAME_?', [
-            '_TYPE_' => '" + nome_tipo + "',
-            '_NAME_' => '" + nome + "',
-        ]).'",
+    '_TYPE_' => '" + nome_tipo + "',
+    '_NAME_' => '" + nome + "',
+]).'",
         type: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"
@@ -192,12 +192,12 @@ function abilitaWidget(button) {
 
     swal({
         title: "'.tr('Abilitare il _TYPE_?', [
-            '_TYPE_' => '" + nome_tipo + "',
-        ]).'",
+    '_TYPE_' => '" + nome_tipo + "',
+]).'",
         html: "'.tr('Sei sicuro di voler abilitare il _TYPE_ _NAME_?', [
-            '_TYPE_' => '" + nome_tipo + "',
-            '_NAME_' => '" + nome + "',
-        ]).'",
+    '_TYPE_' => '" + nome_tipo + "',
+    '_NAME_' => '" + nome + "',
+]).'",
         type: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"

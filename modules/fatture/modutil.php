@@ -18,9 +18,9 @@
  */
 
 use Modules\Fatture\Fattura;
+use Modules\Interventi\Intervento;
 use Modules\Iva\Aliquota;
 use Util\Generator;
-use Modules\Interventi\Intervento;
 
 /*
  * Funzione per generare un nuovo numero per la fattura.
@@ -266,7 +266,7 @@ if (!function_exists('aggiungi_movimento')) {
         }
 
         // Lettura info fattura
-        $query = 'SELECT *, `co_documenti`.`data_competenza`, `co_documenti`.`note`, `co_documenti`.`idpagamento`, `co_documenti`.`id` AS iddocumento, `co_statidocumento_lang`.`name` AS `stato`, `co_tipidocumento_lang`.`name` AS descrizione_tipo FROM `co_documenti` INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento`=`co_statidocumento`.`id` INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica`=`an_anagrafiche`.`idanagrafica` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `co_documenti`.`id`='.prepare($iddocumento);
+        $query = 'SELECT *, `co_documenti`.`data_competenza`, `co_documenti`.`note`, `co_documenti`.`idpagamento`, `co_documenti`.`id` AS iddocumento, `co_statidocumento_lang`.`name` AS `stato`, `co_tipidocumento_lang`.`name` AS descrizione_tipo FROM `co_documenti` INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento`=`co_statidocumento`.`id` INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica`=`an_anagrafiche`.`idanagrafica` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_documenti`.`id`='.prepare($iddocumento);
 
         $rs = $dbo->fetchArray($query);
         $data = $rs[0]['data_competenza'];
@@ -467,86 +467,84 @@ if (!function_exists('verifica_numero_fattura')) {
     function get_righe_composte(Fattura $documento)
     {
         global $dbo;
-        
+
         $righe = [];
 
         // Righe documento
-        $righe_documento = $documento->getRighe()->where('idintervento','!=',NULL)->groupBy(function ($item, $key) {
+        $righe_documento = $documento->getRighe()->where('idintervento', '!=', null)->groupBy(function ($item, $key) {
             return $item['prezzo_unitario'].'|'.$item['idiva'].'|'.$item['sconto_unitario'];
         });
 
-        if (setting('Raggruppa attività per tipologia in fattura') && !$righe_documento->isEmpty() ){
+        if (setting('Raggruppa attività per tipologia in fattura') && !$righe_documento->isEmpty()) {
             $articoli = [];
             foreach ($righe_documento as $gruppo) {
                 $riga_base = [];
-                foreach($gruppo as $riga){
+                foreach ($gruppo as $riga) {
                     $intervento = Intervento::find($riga->idintervento);
-        
-                    if (!empty($intervento) ){
-                        if ($riga['is_descrizione']==1 ){
-                            if( empty($riga_base[$intervento->idtipointervento]['descrizione']) ){
+
+                    if (!empty($intervento)) {
+                        if ($riga['is_descrizione'] == 1) {
+                            if (empty($riga_base[$intervento->idtipointervento]['descrizione'])) {
                                 $riga_base[$intervento->idtipointervento]['descrizione'] = $riga;
-                            }else{
+                            } else {
                                 $riga_base[$intervento->idtipointervento]['descrizione']['descrizione'] .= "\n".$riga->descrizione;
                                 $riga_base[$intervento->idtipointervento]['descrizione']['qta'] += $riga->qta;
                             }
                         }
-        
-                        if( $riga['is_descrizione']==0 ){
-                            if( empty($riga_base[$intervento->idtipointervento]['riga']) && empty($riga->idarticolo) ){
+
+                        if ($riga['is_descrizione'] == 0) {
+                            if (empty($riga_base[$intervento->idtipointervento]['riga']) && empty($riga->idarticolo)) {
                                 $riga_base[$intervento->idtipointervento]['riga'] = $riga;
-                            }elseif( empty($riga->idarticolo) ){
+                            } elseif (empty($riga->idarticolo)) {
                                 $riga_base[$intervento->idtipointervento]['riga']['descrizione'] .= "\n".$riga->descrizione;
                                 $riga_base[$intervento->idtipointervento]['riga']['qta'] += $riga->qta;
-                            }else{
+                            } else {
                                 $riga_base[$intervento->idtipointervento]['articoli'][] = $riga;
                             }
                         }
-                    }else{
+                    } else {
                         $articoli[] = $riga;
                     }
-
                 }
 
-                foreach($riga_base as $riga){
-                    if( !empty($riga['descrizione']) ){
+                foreach ($riga_base as $riga) {
+                    if (!empty($riga['descrizione'])) {
                         $righe[] = $riga['descrizione'];
                     }
 
-                    if( !empty($riga['riga']) ){
+                    if (!empty($riga['riga'])) {
                         $righe[] = $riga['riga'];
                     }
 
-                    if( !empty($riga['articoli']) ){
-                        foreach($riga['articoli'] as $articolo){
+                    if (!empty($riga['articoli'])) {
+                        foreach ($riga['articoli'] as $articolo) {
                             $righe[] = $articolo;
                         }
                     }
                 }
-        
-                if( !empty($articoli) ){
-                    $righe = array_merge($righe,$articoli);
+
+                if (!empty($articoli)) {
+                    $righe = array_merge($righe, $articoli);
                 }
             }
 
-            //Estraggo le righe non collegate a interventi
-            $righe_esterne = $documento->getRighe()->where('idintervento','=',NULL);
-            foreach($righe_esterne as $riga){
+            // Estraggo le righe non collegate a interventi
+            $righe_esterne = $documento->getRighe()->where('idintervento', '=', null);
+            foreach ($righe_esterne as $riga) {
                 $righe[] = $riga;
             }
-
-        }else{
+        } else {
             $righe = $documento->getRighe();
         }
 
-        for($index=0;$index<count($righe);$index++){
-            if( empty($righe[$index]) ){
+        for ($index = 0; $index < count($righe); ++$index) {
+            if (empty($righe[$index])) {
                 unset($righe[$index]);
             }
         }
 
         $righe = collect($righe);
 
-        return $righe;    
+        return $righe;
     }
 }

@@ -24,6 +24,7 @@ use Common\SimpleModelTrait;
 use Cron\CronExpression;
 use Illuminate\Database\Eloquent\Model;
 use Traits\RecordTrait;
+
 /*
  * Risorsa per la gestione delle task ricorrenti del gestionale.
  */
@@ -112,7 +113,8 @@ class Task extends Model
         return '';
     }
 
-    public static function getTranslatedFields(){
+    public static function getTranslatedFields()
+    {
         return self::$translated_fields;
     }
 }

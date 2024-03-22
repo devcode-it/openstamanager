@@ -19,8 +19,8 @@
 
 include_once __DIR__.'/../../../core.php';
 
-use Modules\Anagrafiche\Anagrafica;
 use Models\Module;
+use Modules\Anagrafiche\Anagrafica;
 
 echo '
 <div class="panel panel-primary">
@@ -152,9 +152,9 @@ if (!empty($movimenti)) {
         $data = ($movimento->data ? $movimento->data : $movimento->data_movimento);
         echo '
                 <td class="text-center">'.dateFormat($data).' <span  class="tip" title="'.tr('Creazione movimento: _DATE_ <br>Creatore movimento: _USER_', [
-               '_DATE_' => timestampFormat($movimento->data_movimento),
-               '_USER_' => $utente->username,
-            ]).'"><i class="fa fa-question-circle-o"></i></span> </td>';
+            '_DATE_' => timestampFormat($movimento->data_movimento),
+            '_USER_' => $utente->username,
+        ]).'"><i class="fa fa-question-circle-o"></i></span> </td>';
 
         // Operazioni
         echo '

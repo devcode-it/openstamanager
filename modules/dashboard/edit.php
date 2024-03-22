@@ -24,10 +24,10 @@ include_once __DIR__.'/../../core.php';
 
 // Individuazione dati selezionabili
 // Stati interventi
-$stati_intervento = $dbo->fetchArray('SELECT `in_statiintervento`.`id`, `name` as descrizione, `colore` FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `name` ASC');
+$stati_intervento = $dbo->fetchArray('SELECT `in_statiintervento`.`id`, `name` as descrizione, `colore` FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `name` ASC');
 
 // Tipi intervento
-$tipi_intervento = $dbo->fetchArray('SELECT `in_tipiintervento`.`id`, `in_tipiintervento_lang`.`name` AS descrizione FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `name` ASC');
+$tipi_intervento = $dbo->fetchArray('SELECT `in_tipiintervento`.`id`, `in_tipiintervento_lang`.`name` AS descrizione FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `name` ASC');
 
 // Tecnici disponibili
 $tecnici_disponibili = $dbo->fetchArray('SELECT 
@@ -36,7 +36,7 @@ FROM
     `an_anagrafiche`
     INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica`
     INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id`
-    LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).")
+    LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).")
     LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idtecnico` = `an_anagrafiche`.`idanagrafica`
     INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`
 WHERE 
@@ -248,7 +248,7 @@ $query_da_programmare = 'SELECT
             `co_promemoria`
             INNER JOIN `co_contratti` ON `co_promemoria`.`idcontratto` = `co_contratti`.`id`
             INNER JOIN `co_staticontratti` ON `co_contratti`.`idstato` = `co_staticontratti`.`id`
-            LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+            LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             INNER JOIN `an_anagrafiche` ON `co_contratti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
         WHERE
             `co_staticontratti`.`is_pianificabile` = 1 AND `idintervento` IS NULL
@@ -320,7 +320,7 @@ if (!empty($risultati_da_programmare)) {
 
     if ($numero_mesi_precenti > 0) {
         echo '<div class="alert alert-warning alert-dismissible" role="alert"><button class="close" type="button" data-dismiss="alert" aria-hidden="true"><span aria-hidden="true">×</span><span class="sr-only">'.tr('Chiudi').'</span></button><i class="fa fa-exclamation-triangle"></i><span class="text-sm"> '.tr('Ci sono _NUM_ promemoria scaduti', [
-                '_NUM_' => $numero_mesi_precenti,
+            '_NUM_' => $numero_mesi_precenti,
         ]).'.</span></div>';
     }
 
@@ -371,13 +371,13 @@ if ($vista == 'mese') {
 }
 
 $days = [
-  1 => 'Lunedì',
-  2 => 'Martedì',
-  3 => 'Mercoledì',
-  4 => 'Giovedì',
-  5 => 'Venerdì',
-  6 => 'Sabato',
-  0 => 'Domenica',
+    1 => 'Lunedì',
+    2 => 'Martedì',
+    3 => 'Mercoledì',
+    4 => 'Giovedì',
+    5 => 'Venerdì',
+    6 => 'Sabato',
+    0 => 'Domenica',
 ];
 $working_days = explode(',', setting('Giorni lavorativi'));
 $non_working_days = [];
@@ -388,7 +388,7 @@ foreach ($days as $key => $day) {
     }
 }
 
-$modulo_interventi =Module::find((new Module())->getByField('name', 'Interventi'));
+$modulo_interventi = Module::find((new Module())->getByField('name', 'Interventi'));
 
 echo '
 <script type="text/javascript">    

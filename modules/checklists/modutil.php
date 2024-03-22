@@ -52,9 +52,9 @@ if (!function_exists('renderChecklist')) {
             $result .= '
                         <td style="border-top:0px;">
                             <span class="label label-default pull-right verificato '.(!$check->checked_at ? 'hidden' : '').'" style="margin-right:5px;padding:6px 8px;">'.(!empty($check->checked_at) ? tr('Verificato da _NAME_ il _DATE_', [
-                                '_NAME_' => $check->checkUser->username,
-                                '_DATE_' => timestampFormat($check->checked_at),
-                            ]) : '').'
+                '_NAME_' => $check->checkUser->username,
+                '_DATE_' => timestampFormat($check->checked_at),
+            ]) : '').'
                             </span>
                         </td>';
 

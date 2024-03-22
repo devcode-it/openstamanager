@@ -97,8 +97,8 @@ foreach ($righe as $riga) {
         if (!empty($mancanti)) {
             echo '
                     <br><b><small class="text-danger">'.tr('_NUM_ serial mancanti', [
-                    '_NUM_' => $mancanti,
-                ]).'</small></b>';
+                '_NUM_' => $mancanti,
+            ]).'</small></b>';
         }
 
         $serials = $riga->serials;

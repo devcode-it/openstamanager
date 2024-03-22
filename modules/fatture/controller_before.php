@@ -21,9 +21,9 @@ include_once __DIR__.'/../../core.php';
 
 use Carbon\Carbon;
 use Modules\Fatture\Fattura;
-use Plugins\ExportFE\Interaction;
-use Modules\Fatture\StatoFE;
 use Modules\Fatture\Stato;
+use Modules\Fatture\StatoFE;
+use Plugins\ExportFE\Interaction;
 use Util\XML;
 
 $services_enable = Interaction::isEnabled();
@@ -39,7 +39,7 @@ if ($module->getTranslation('name') == 'Fatture di vendita' && $services_enable)
     // Verifica se la data cade di sabato o domenica
     $giorno_settimana = $data_limite_invio->dayOfWeek;
     if ($giorno_settimana == Carbon::WEDNESDAY) {
-        $data_limite_invio->addDays(); //Anticipa la data di 1 giorno se la data limite cade di sabato (con data fattura mercoledì)
+        $data_limite_invio->addDays(); // Anticipa la data di 1 giorno se la data limite cade di sabato (con data fattura mercoledì)
     } elseif ($giorno_settimana == Carbon::THURSDAY) {
         $data_limite_invio->addDays(2); // Anticipa la data di 2 giorni se la data limite cade di domenica (con data fattura giovedì)
     }
@@ -79,7 +79,7 @@ if ($module->getTranslation('name') == 'Fatture di vendita' && $services_enable)
             $is_estera = false;
 
             if (setting('Rimuovi avviso fatture estere')) {
-                $is_estera = $database->fetchOne('SELECT `idanagrafica` FROM `an_anagrafiche` INNER JOIN `an_nazioni` ON `an_anagrafiche`.`id_nazione` = `an_nazioni`.`id` LEFT JOIN `an_nazioni_lang` ON (`an_nazioni`.`id` = `an_nazioni_lang`.`id_record` AND `an_nazioni_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `an_nazioni_lang`.`name` != "Italia" AND `an_anagrafiche`.`idanagrafica` = '.prepare($documento->idanagrafica));
+                $is_estera = $database->fetchOne('SELECT `idanagrafica` FROM `an_anagrafiche` INNER JOIN `an_nazioni` ON `an_anagrafiche`.`id_nazione` = `an_nazioni`.`id` LEFT JOIN `an_nazioni_lang` ON (`an_nazioni`.`id` = `an_nazioni_lang`.`id_record` AND `an_nazioni_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `an_nazioni_lang`.`name` != "Italia" AND `an_anagrafiche`.`idanagrafica` = '.prepare($documento->idanagrafica));
             }
 
             if ($documento->data <= $data_limite_invio && !$is_estera) {
@@ -88,7 +88,7 @@ if ($module->getTranslation('name') == 'Fatture di vendita' && $services_enable)
                     '_NUM_' => $documento->numero_esterno,
                     '_DATE_' => dateFormat($documento->data),
                     '_STATO_' => $stato_fe['descrizione'],
-                    '_ANTICIPATA_' => (($documento->data->diffInDays($data_limite_invio) < 10) ? '(Anticipata)': '' ),
+                    '_ANTICIPATA_' => (($documento->data->diffInDays($data_limite_invio) < 10) ? '(Anticipata)' : ''),
                 ]));
             }
         }

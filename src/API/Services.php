@@ -50,7 +50,7 @@ class Services
     public static function getInformazioni($force = false)
     {
         $cache = Cache::find((new Cache())->getByField('name', 'Informazioni su Services'));
-        
+
         // Aggiornamento dei contenuti della cache
         if (!$cache->isValid() || $force) {
             $response = self::request('GET', 'info');

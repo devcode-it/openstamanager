@@ -22,7 +22,6 @@ include_once __DIR__.'/../../core.php';
 use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
-use Modules\Ordini\Stato as StatoOrdine;
 use Modules\DDT\Components\Articolo;
 use Modules\DDT\Components\Descrizione;
 use Modules\DDT\Components\Riga;
@@ -31,6 +30,7 @@ use Modules\DDT\DDT;
 use Modules\DDT\Stato;
 use Modules\DDT\Tipo;
 use Modules\Iva\Aliquota;
+use Modules\Ordini\Stato as StatoOrdine;
 use Modules\Pagamenti\Pagamento;
 
 $module = Module::find($id_module);
@@ -124,7 +124,7 @@ switch (filter('op')) {
 
             $ddt->save();
 
-            $query = 'SELECT `name` FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`idstatoddt` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `dt_statiddt`.`id`='.prepare($idstatoddt);
+            $query = 'SELECT `name` FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`idstatoddt` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `dt_statiddt`.`id`='.prepare($idstatoddt);
             $rs = $dbo->fetchArray($query);
 
             // Ricalcolo inps, ritenuta e bollo (se l'ddt non è stato evaso)

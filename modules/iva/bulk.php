@@ -39,8 +39,8 @@ switch (post('op')) {
 
         if ($count_iva > 0) {
             $msg = tr('_NUM_ tipologi_A_ iva eliminat_A_.', [
-            '_NUM_' => $count_iva,
-            '_A_' => ($count_iva == 1) ? 'a' : 'e', ]);
+                '_NUM_' => $count_iva,
+                '_A_' => ($count_iva == 1) ? 'a' : 'e', ]);
 
             flash()->info($msg);
         } else {

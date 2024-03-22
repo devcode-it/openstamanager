@@ -50,21 +50,21 @@ echo '
             <div class="row">
                 <div class="col-md-12">
                 '.input([
-                    'type' => 'textarea',
-                    'label' => tr('Query dinamica'),
-                    'name' => 'query',
-                    'required' => 0,
-                    'value' => $lista->query,
-                    'help' => tr("La query SQL deve restituire gli identificativi delle anagrafiche da inserire nella lista, sotto un campo di nome ''id''").'. <br>'.tr('Per esempio: _SQL_', [
-                        '_SQL_' => 'SELECT idanagrafica AS id, \'Modules\\\\Anagrafiche\\\\Anagrafica\' AS tipo FROM an_anagrafiche',
-                    ]).'. <br>'.tr('Sono supportati i seguenti oggetti: _LIST_', [
-                        '_LIST_' => implode(', ', [
-                            slashes(Modules\Anagrafiche\Anagrafica::class),
-                            slashes(Modules\Anagrafiche\Sede::class),
-                            slashes(Modules\Anagrafiche\Referente::class),
-                        ]),
-                    ]).'.',
-                ]).'
+    'type' => 'textarea',
+    'label' => tr('Query dinamica'),
+    'name' => 'query',
+    'required' => 0,
+    'value' => $lista->query,
+    'help' => tr("La query SQL deve restituire gli identificativi delle anagrafiche da inserire nella lista, sotto un campo di nome ''id''").'. <br>'.tr('Per esempio: _SQL_', [
+        '_SQL_' => 'SELECT idanagrafica AS id, \'Modules\\\\Anagrafiche\\\\Anagrafica\' AS tipo FROM an_anagrafiche',
+    ]).'. <br>'.tr('Sono supportati i seguenti oggetti: _LIST_', [
+        '_LIST_' => implode(', ', [
+            slashes(Modules\Anagrafiche\Anagrafica::class),
+            slashes(Modules\Anagrafiche\Sede::class),
+            slashes(Modules\Anagrafiche\Referente::class),
+        ]),
+    ]).'.',
+]).'
                 </div>
             </div>
         </div>

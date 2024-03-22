@@ -18,8 +18,8 @@
  */
 
 use Carbon\Carbon;
-use Modules\Contratti\Contratto;
 use Models\Module;
+use Modules\Contratti\Contratto;
 
 include_once __DIR__.'/../../core.php';
 

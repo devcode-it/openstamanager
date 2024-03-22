@@ -980,6 +980,6 @@ $traduzioni = [
 ];
 
 foreach ($traduzioni as $traduzione) {
-    //$database->query('UPDATE '.$traduzione[0].' SET `help` = "'.$traduzione[3].'" WHERE `title` = "'.$traduzione[2].'" AND `id_lang` = 2');
+    $database->query('UPDATE '.$traduzione[0].' SET `help` = "'.$traduzione[3].'" WHERE `title` = "'.$traduzione[2].'" AND `id_lang` = 2');
     $database->query('UPDATE '.$traduzione[0].' SET `title` = "'.$traduzione[1].'" WHERE `title` = "'.$traduzione[2].'" AND `id_lang` = 2');
 }

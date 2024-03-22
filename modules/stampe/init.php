@@ -26,5 +26,5 @@ if (isset($id_record)) {
 
     $record = $print->toArray();
     $record['title'] = $print->getTranslation('title');
-    $record['filename'] = $print->filename;
+    $record['filename'] = $print->getTranslation('filename');
 }

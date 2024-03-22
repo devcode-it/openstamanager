@@ -86,7 +86,7 @@ class Template extends Model
 
     public function getModuleAttribute()
     {
-        return 'Template email';
+        return $this->belongsTo(Module::class, 'id_module')->first();
     }
 
     public static function getTranslatedFields()

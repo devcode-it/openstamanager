@@ -44,14 +44,9 @@ class PrintTemplate extends Model
 
     /* Relazioni Eloquent */
 
-    public function module()
-    {
-        return $this->belongsTo(Module::class, 'id_module');
-    }
-
     public function getModuleAttribute()
     {
-        return '';
+        return $this->belongsTo(Module::class, 'id_module')->first();
     }
 
     public static function getTranslatedFields()

@@ -447,7 +447,7 @@ class Prints
     {
         $module = Module::find($record['id_module']);
 
-        $name = $record['filename'].'.pdf';
+        $name = $record->getTranslation('filename').'.pdf';
         $name = $module->replacePlaceholders($id_record, $name);
 
         $replaces = [];

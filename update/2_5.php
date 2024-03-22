@@ -817,7 +817,7 @@ $traduzioni = [
 
 foreach ($traduzioni as $traduzione) {
     $database->query('UPDATE '.$traduzione[0].' SET `title` = "'.$traduzione[1].'" WHERE `name` = "'.$traduzione[2].'" AND `id_lang` = 2');
-    $database->query('UPDATE '.$traduzione[0].' SET `filename` = "'.$traduzione[4].'" WHERE `name` = "'.$traduzione[2].'" AND `id_lang` = 2');
+    $database->query('UPDATE '.$traduzione[0].' SET `filename` = "'.$traduzione[3].'" WHERE `name` = "'.$traduzione[2].'" AND `id_lang` = 2');
     $database->query('UPDATE '.$traduzione[0].' SET `name` = "'.$traduzione[1].'" WHERE `name` = "'.$traduzione[2].'" AND `id_lang` = 2');
 }
 

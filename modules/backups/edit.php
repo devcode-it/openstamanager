@@ -21,8 +21,6 @@ include_once __DIR__.'/../../core.php';
 
 $backups = Backup::getList();
 
-
-
 // Controllo sul requisito ZIP
 if (!extension_loaded('zip')) {
     echo "

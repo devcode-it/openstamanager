@@ -165,11 +165,11 @@ if ($dir == 'entrata' && $fattura->stato->getTranslation('name') == 'Bozza') {
 }
 // Verifica aggiuntive sulla sequenzialità dei numeri
 if ($dir == 'entrata') {
-    //Calcolo il numero previsto solo se la data della fattura è maggiore o uguale all'impostazione "Data inizio verifica contatore fattura di vendita" oppure l'impostazione non è valorizzata.
+    // Calcolo il numero previsto solo se la data della fattura è maggiore o uguale all'impostazione "Data inizio verifica contatore fattura di vendita" oppure l'impostazione non è valorizzata.
     if (!empty(setting('Data inizio verifica contatore fattura di vendita'))) {
-        $dateFormat = "d/m/Y";
+        $dateFormat = 'd/m/Y';
         $carbonDate = Carbon::createFromFormat($dateFormat, setting('Data inizio verifica contatore fattura di vendita'));
-        $data_inizio_verifica_contatore = (($carbonDate !== false)? $carbonDate->format('Y-m-d') : null) ;
+        $data_inizio_verifica_contatore = (($carbonDate !== false) ? $carbonDate->format('Y-m-d') : null);
     }
     if (strtotime($fattura->data) >= strtotime($data_inizio_verifica_contatore) || empty($data_inizio_verifica_contatore)) {
         $numero_previsto = verifica_numero_fattura($fattura);

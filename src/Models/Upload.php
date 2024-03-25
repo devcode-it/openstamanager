@@ -136,9 +136,9 @@ class Upload extends Model
 
         // Rimozione estensione dal nome visibile
         $extension = $file['extension'];
-        if (string_ends_with($model->getTranslation('name'), $extension)) {
+        if (string_ends_with($model->name, $extension)) {
             $length = strlen($extension) + 1;
-            $model->setTranslation('name', substr($model->getTranslation('name'), 0, -$length));
+            $model->name = substr($model->name, 0, -$length);
         }
 
         $model->save();
@@ -153,7 +153,7 @@ class Upload extends Model
     {
         $parent = $this->plugin ?: $this->module;
 
-        return strtolower($parent->getTranslation('name'));
+        return strtolower($parent->name);
     }
 
     /**
@@ -253,7 +253,7 @@ class Upload extends Model
 
         $file = $filesystem->read($this->directory.'/'.$this->filename);
 
-        $result = self::build($file, $data, $this->getTranslation('name'), $this->category);
+        $result = self::build($file, $data, $this->name, $this->category);
 
         return $result;
     }

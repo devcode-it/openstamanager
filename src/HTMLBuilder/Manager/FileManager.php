@@ -130,7 +130,7 @@ class FileManager implements ManagerInterface
                     $file = Upload::find($r['id']);
 
                     $result .= '
-        <tr id="row_'.$file->id.'" data-id="'.$file->id.'" data-filename="'.$file->filename.'" data-nome="'.$file->getTranslation('name').'">
+        <tr id="row_'.$file->id.'" data-id="'.$file->id.'" data-filename="'.$file->filename.'" data-nome="'.$file->name.'">
             <td class="text-center">
                 <input class="check_files unblockable" type="checkbox"/>
             </td>
@@ -148,7 +148,7 @@ class FileManager implements ManagerInterface
                     $result .= '
 
                 <a href="'.base_path().'/view.php?file_id='.$file->id.'" target="_blank">
-                    <i class="fa fa-external-link"></i> '.$file->getTranslation('name').'
+                    <i class="fa fa-external-link"></i> '.$file->name.'
                 </a>
 
                 <small> ('.$file->extension.')'.((!empty($file->size)) ? ' ('.FileSystem::formatBytes($file->size).')' : '').' '.(((setting('Logo stampe') == $file->filename) || (setting('Filigrana stampe') == $file->filename)) ? '<span class="tip" title="'.tr('Logo caricato correttamente').'." >✔️</span>' : '').'</small>'.'

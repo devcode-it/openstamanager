@@ -186,7 +186,7 @@ class FatturaElettronica
             if (preg_match('/\./', $allegato['NomeAttachment'])) {
                 $original = $allegato['NomeAttachment'];
             } else {
-            $original = $allegato['NomeAttachment'].$extension;
+                $original = $allegato['NomeAttachment'].$extension;
             }
             try {
                 \Uploads::upload($content, array_merge($info, [

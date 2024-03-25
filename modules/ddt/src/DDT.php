@@ -85,8 +85,6 @@ class DDT extends Document
         $model->id_segment = $id_segment;
         $model->idagente = $anagrafica->idagente;
 
-        $model->save();
-
         // Salvataggio delle informazioni
         $model->data = $data;
 

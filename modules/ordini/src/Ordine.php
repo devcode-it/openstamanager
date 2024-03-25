@@ -61,8 +61,6 @@ class Ordine extends Document
         $direzione = $tipo_documento->dir;
         $id_segment = $id_segment ?: getSegmentPredefined($model->getModule()->id);
 
-        $database = database();
-
         if ($direzione == 'entrata') {
             $conto = 'vendite';
         } else {
@@ -82,8 +80,7 @@ class Ordine extends Document
         $model->stato()->associate($stato_documento);
         $model->id_segment = $id_segment;
         $model->idagente = $anagrafica->idagente;
-        $model->save();
-
+        
         // Salvataggio delle informazioni
         $model->data = $data;
 

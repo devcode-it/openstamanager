@@ -82,7 +82,7 @@ switch (filter('op')) {
             }
 
             // Leggo la descrizione del pagamento
-            $pagamento = Pagamento::find($idpagamento)->getTranslation('name');
+            $pagamento = ($idpagamento ? Pagamento::find($idpagamento)->getTranslation('name') : null);
 
             $ddt->data = post('data');
             $ddt->numero_esterno = $numero_esterno;

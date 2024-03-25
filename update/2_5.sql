@@ -1993,6 +1993,8 @@ FROM
     LEFT JOIN (SELECT CONCAT('tab_', `zz_plugins`.`id`) AS link FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins_lang`.`id_record` = `zz_plugins`.`id` AND `zz_plugins_lang`.|lang|) INNER JOIN `zz_modules` ON `zz_plugins`.`idmodule_to` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.|lang|) WHERE `zz_modules_lang`.`name` = 'Articoli' AND `zz_plugins_lang`.`name` = 'Movimenti') AS page ON `mg_movimenti`.`id` != ''
 WHERE
     1=1 AND `mg_articoli`.`deleted_at` IS NULL
+GROUP BY 
+    `mg_movimenti`.`id`
 HAVING
     2=2
 ORDER BY

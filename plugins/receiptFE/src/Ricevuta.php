@@ -155,7 +155,7 @@ class Ricevuta
         // Controllo sulla presenza della stessa ricevuta
         $module = $fattura->getModule();
         $upload_esistente = $module
-            ->uploads($fattura->id)
+            ->files($fattura->id)
             ->where('original_name', $filename)
             ->first();
         if (!empty($upload_esistente)) {

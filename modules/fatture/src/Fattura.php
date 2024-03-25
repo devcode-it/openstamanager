@@ -517,7 +517,7 @@ class Fattura extends Document
         }
 
         return $this->getModule()
-            ->uploads($this->id)
+            ->files($this->id)
             ->where('id', $this->id_ricevuta_principale)
             ->first();
     }

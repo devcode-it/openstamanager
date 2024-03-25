@@ -40,7 +40,7 @@ trait UploadTrait
         return $result;
     }
 
-    public function uploadsNumber($id_record)
+    public function files($id_record)
     {
         return $this->hasMany(Upload::class, $this->component_identifier)->where('id_record', $id_record)->get();
     }

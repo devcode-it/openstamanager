@@ -58,11 +58,11 @@ trait RecordTrait
         $plugin = $this->getPlugin();
 
         if (!empty($module)) {
-            return $module->uploads($this->id);
+            return $module->files($this->id);
         }
 
         if (!empty($plugin)) {
-            return $plugin->uploads($this->id);
+            return $plugin->files($this->id);
         }
 
         return collect();

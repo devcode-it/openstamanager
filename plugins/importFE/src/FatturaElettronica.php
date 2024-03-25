@@ -183,7 +183,11 @@ class FatturaElettronica
                 $extension = '.'.strtolower($allegato['FormatoAttachment']);
             }
 
+            if (preg_match('/\./', $allegato['NomeAttachment'])) {
+                $original = $allegato['NomeAttachment'];
+            } else {
             $original = $allegato['NomeAttachment'].$extension;
+            }
             try {
                 \Uploads::upload($content, array_merge($info, [
                     'name' => $allegato['NomeAttachment'],

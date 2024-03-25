@@ -119,14 +119,13 @@ switch (filter('op')) {
         break;
 
     case 'sync_checklist':
+        // Azzeramento checklist impianti della categoria
+        database()->query('DELETE FROM `zz_checks` WHERE `id_module` = '.prepare($modulo_impianti['id']).' AND `id_record` IN(SELECT `id` FROM `my_impianti` WHERE `id_categoria` = '.prepare($id_record).')');
+        
         $checks_categoria = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record));
 
         $impianti = $dbo->select('my_impianti', '*', [], ['id_categoria' => $id_record]);
         foreach ($impianti as $impianto) {
-            Check::deleteLinked([
-                'id_module' => $modulo_impianti['id'],
-                'id_record' => $impianto['id'],
-            ]);
             foreach ($checks_categoria as $check_categoria) {
                 $id_parent_new = null;
                 if ($check_categoria['id_parent']) {

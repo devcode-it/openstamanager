@@ -73,10 +73,11 @@ trait RecordTrait
      */
     public function save(array $options = [])
     {
-        if ($this->id) {
+        if ($this->id && method_exists($this, 'getTranslatedFields')) {
             // Lingue aggiuntive disponibili
-            $langs = Locale::All()->toArray();
-            $other_langs = array_diff($langs, [Locale::getDefault()->id]);
+            $langs = Locale::All()->pluck('id')->toArray();
+            $default_lang = Locale::getDefault();
+            $other_langs = array_diff($langs, [$default_lang->id]);
 
             // Popolo inizialmente i campi traducibili o allineo quelli uguali
             foreach ($this->getTranslatedFields() as $field) {

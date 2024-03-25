@@ -135,8 +135,8 @@ if (!empty($interventi)) {
         }
 
         // Lettura articoli utilizzati
-        $articoli = $intervento->articoli;
-        if (!$articoli->isEmpty()) {
+        $righe_articoli = $intervento->articoli;
+        if (!$righe_articoli->isEmpty()) {
             echo '
             <table class="table table-striped table-condensed table-bordered">
                 <tr>
@@ -146,30 +146,30 @@ if (!empty($interventi)) {
                     <th width="150">'.tr('Prezzo di vendita').'</th>
                 </tr>';
 
-            foreach ($articoli as $articolo) {
-                $sconto = !empty($articolo->sconto) ? '<br><span class="label label-danger">'.moneyFormat(-$articolo->sconto).'</span>' : '';
+            foreach ($righe_articoli as $riga_articolo) {
+                $sconto = !empty($riga_articolo->sconto) ? '<br><span class="label label-danger">'.moneyFormat(-$riga_articolo->sconto).'</span>' : '';
 
                 echo '
                 <tr>
                     <td>
-                        '.Modules::link('Articoli', $articolo->idarticolo, $articolo->getTranslation('name')).'
+                        '.Modules::link('Articoli', $riga_articolo->idarticolo, $riga_articolo->descrizione).'
                     </td>
-                    <td class="text-right">'.numberFormat($articolo->qta, 'qta').'</td>
-                    <td class="text-right danger">'.moneyFormat($articolo->spesa).'</td>
-                    <td class="text-right success">'.moneyFormat($articolo->imponibile).$sconto.'</td>
+                    <td class="text-right">'.numberFormat($riga_articolo->qta, 'qta').'</td>
+                    <td class="text-right danger">'.moneyFormat($riga_articolo->spesa).'</td>
+                    <td class="text-right success">'.moneyFormat($riga_articolo->imponibile).$sconto.'</td>
                 </tr>';
 
                 // Raggruppamento per articolo con lo stesso prezzo
-                if ($articolo->qta) {
-                    $ricavo = ($articolo->imponibile - $articolo->sconto) / $articolo->qta;
-                    $costo = $articolo->spesa / $articolo->qta;
+                if ($riga_articolo->qta) {
+                    $ricavo = ($riga_articolo->imponibile - $riga_articolo->sconto) / $riga_articolo->qta;
+                    $costo = $riga_articolo->spesa / $riga_articolo->qta;
                 }
-                $descrizione = $articolo->articolo->codice.' - '.$articolo->articolo->getTranslation('name');
+                $descrizione = $riga_articolo->articolo->codice.' - '.$riga_articolo->articolo->getTranslation('name');
 
-                $materiali_art[$descrizione][$ricavo][$costo]['id'] = $articolo->articolo->id;
-                $materiali_art[$descrizione][$ricavo][$costo]['qta'] += $articolo->qta;
-                $materiali_art[$descrizione][$ricavo][$costo]['costo'] += $articolo->spesa;
-                $materiali_art[$descrizione][$ricavo][$costo]['ricavo'] += $articolo->imponibile - $articolo->sconto;
+                $materiali_art[$descrizione][$ricavo][$costo]['id'] = $riga_articolo->articolo->id;
+                $materiali_art[$descrizione][$ricavo][$costo]['qta'] += $riga_articolo->qta;
+                $materiali_art[$descrizione][$ricavo][$costo]['costo'] += $riga_articolo->spesa;
+                $materiali_art[$descrizione][$ricavo][$costo]['ricavo'] += $riga_articolo->imponibile - $riga_articolo->sconto;
             }
 
             echo '

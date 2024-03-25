@@ -33,15 +33,15 @@ $key = 0;
 $fields = View::where('id_module', '=', $record->id)->orderBy('order', 'asc')->get();
 
 foreach ($fields as $key => $field) {
-    $editable = !($field['default'] && $enable_readonly);
+    $editable = !($field->default && $enable_readonly);
 
     echo '
-                <div class="box collapsed-box box-'.($field['visible'] ? 'success' : 'danger').'">
+                <div class="box collapsed-box box-'.($field->visible ? 'success' : 'danger').'">
                     <div class="box-header with-border">
                         <h3 class="box-title">'.
                             tr('Campo in posizione _POSITION_', [
-                                '_POSITION_' => $field['order'],
-                            ]).' ('.$field['name'].') <span class="badge tip" title="'.tr('Modificato il ').Translator::timestampToLocale($field['updated_at']).'" >'.Translator::timestampToLocale($field['created_at']).'</span>
+                                '_POSITION_' => $field->order,
+                            ]).' ('.$field->getTranslation('name').') <span class="badge tip" title="'.tr('Modificato il ').Translator::timestampToLocale($field->updated_at).'" >'.Translator::timestampToLocale($field->created_at).'</span>
                         </h3>
 
                         <div class="box-tools pull-right">
@@ -52,19 +52,19 @@ foreach ($fields as $key => $field) {
 
     if ($editable) {
         echo '
-                        <a class="btn btn-danger ask pull-right" data-backto="record-edit" data-id="'.$field['id'].'">
+                        <a class="btn btn-danger ask pull-right" data-backto="record-edit" data-id="'.$field->id.'">
                             <i class="fa fa-trash"></i> '.tr('Elimina').'
                         </a>';
     }
 
     echo '
                     </div>
-                    <div id="field-'.$field['id'].'" class="box-body collapse">
+                    <div id="field-'.$field->id.'" class="box-body collapse">
                         <div class="row">
-                            <input type="hidden" value="'.$field['id'].'" name="id['.$key.']">
+                            <input type="hidden" value="'.$field->id.'" name="id['.$key.']">
 
                             <div class="col-md-12">
-                                {[ "type": "text", "label": "'.tr('Nome').'", "name": "name['.$key.']", "value": "'.$field['name'].'", "readonly": "'.(!$editable).'", "help": "'.tr('Nome con cui il campo viene identificato e visualizzato nella tabella').'" ]}
+                                {[ "type": "text", "label": "'.tr('Nome').'", "name": "name['.$key.']", "value": "'.$field->getTranslation('name').'", "readonly": "'.(!$editable).'", "help": "'.tr('Nome con cui il campo viene identificato e visualizzato nella tabella').'" ]}
                             </div>
                         </div>
 
@@ -76,7 +76,7 @@ foreach ($fields as $key => $field) {
         'name' => 'query['.$key.']',
         'required' => 1,
         'readonly' => ''.(!$editable).'',
-        'value' => $field['query'],
+        'value' => $field->query,
         'help' => tr('Nome effettivo del campo sulla tabella oppure subquery che permette di ottenere il valore del campo.').'<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!'),
     ]).'
                             </div>
@@ -85,7 +85,7 @@ foreach ($fields as $key => $field) {
                         <div class="row">
                             <div class="col-md-6">
                                 {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi['.$key.'][]", "multiple": "1", "values": "query=SELECT `zz_groups`.`id`, `name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `zz_groups`.`id` ASC", "value": "';
-    $results = $dbo->fetchArray('SELECT GROUP_CONCAT(DISTINCT `id_gruppo` SEPARATOR \',\') AS gruppi FROM `zz_group_view` WHERE `id_vista`='.prepare($field['id']));
+    $results = $dbo->fetchArray('SELECT GROUP_CONCAT(DISTINCT `id_gruppo` SEPARATOR \',\') AS gruppi FROM `zz_group_view` WHERE `id_vista`='.prepare($field->id));
 
     echo $results[0]['gruppi'].'"';
 
@@ -93,41 +93,41 @@ foreach ($fields as $key => $field) {
                             </div>
 
                             <div class="col-xs-12 col-md-6">
-                                {[ "type": "select", "label": "'.tr('Visibilità').'", "name": "visible['.$key.']", "values": "list=\"0\":\"'.tr('Nascosto (variabili di stato)').'\",\"1\": \"'.tr('Visibile nella sezione').'\"", "value": "'.$field['visible'].'", "help": "'.tr('Stato del campo: visibile nella tabella oppure nascosto').'" ]}
+                                {[ "type": "select", "label": "'.tr('Visibilità').'", "name": "visible['.$key.']", "values": "list=\"0\":\"'.tr('Nascosto (variabili di stato)').'\",\"1\": \"'.tr('Visibile nella sezione').'\"", "value": "'.$field->visible.'", "help": "'.tr('Stato del campo: visibile nella tabella oppure nascosto').'" ]}
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-4">
-                                {[ "type": "checkbox", "label": "'.tr('Ricercabile').'", "name": "search['.$key.']", "value": "'.$field['search'].'", "help": "'.tr('Indica se il campo è ricercabile').'" ]}
+                                {[ "type": "checkbox", "label": "'.tr('Ricercabile').'", "name": "search['.$key.']", "value": "'.$field->search.'", "help": "'.tr('Indica se il campo è ricercabile').'" ]}
                             </div>
 
                             <div class="col-md-4">
-                                {[ "type": "checkbox", "label": "'.tr('Ricerca lenta').'", "name": "slow['.$key.']", "value": "'.$field['slow'].'", "help": "'.tr("Indica se la ricerca per questo campo è lenta (da utilizzare nel caso di evidenti rallentamenti, mostra solo un avviso all'utente").'" ]}
+                                {[ "type": "checkbox", "label": "'.tr('Ricerca lenta').'", "name": "slow['.$key.']", "value": "'.$field->slow.'", "help": "'.tr("Indica se la ricerca per questo campo è lenta (da utilizzare nel caso di evidenti rallentamenti, mostra solo un avviso all'utente").'" ]}
                             </div>
 
                             <div class="col-md-4">
-                                {[ "type": "checkbox", "label": "'.tr('Sommabile').'", "name": "sum['.$key.']", "value": "'.$field['summable'].'", "help": "'.tr('Indica se il campo è da sommare').'" ]}
+                                {[ "type": "checkbox", "label": "'.tr('Sommabile').'", "name": "sum['.$key.']", "value": "'.$field->summable.'", "help": "'.tr('Indica se il campo è da sommare').'" ]}
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-4">
-                                {[ "type": "checkbox", "label": "'.tr('Formattazione automatica').'", "name": "format['.$key.']", "value": "'.$field['format'].'", "help": "'.tr('Indica se il campo deve essere formattabile in modo automatico, per esempio valori numerici o date.').'" ]}
+                                {[ "type": "checkbox", "label": "'.tr('Formattazione automatica').'", "name": "format['.$key.']", "value": "'.$field->format.'", "help": "'.tr('Indica se il campo deve essere formattabile in modo automatico, per esempio valori numerici o date.').'" ]}
                             </div>
 
                             <div class="col-md-4">
-                                {[ "type": "checkbox", "label": "'.tr('Utilizza HTML').'", "name": "html_format['.$key.']", "value": "'.$field['html_format'].'", "help": "'.tr('Indica se il campo deve mantenere la formattazione HTML. Impostazione utile per i campi di testo con editor.').'" ]}
+                                {[ "type": "checkbox", "label": "'.tr('Utilizza HTML').'", "name": "html_format['.$key.']", "value": "'.$field->html_format.'", "help": "'.tr('Indica se il campo deve mantenere la formattazione HTML. Impostazione utile per i campi di testo con editor.').'" ]}
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6">
-                                {[ "type": "text", "label": "'.tr('Ricerca tramite').'", "name": "search_inside['.$key.']", "value": "'.$field['search_inside'].'", "readonly": "'.(!$editable).'", "help": "'.tr('Query personalizzata per la ricerca (consigliata per colori e icone)').'.<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!').'" ]}
+                                {[ "type": "text", "label": "'.tr('Ricerca tramite').'", "name": "search_inside['.$key.']", "value": "'.$field->search_inside.'", "readonly": "'.(!$editable).'", "help": "'.tr('Query personalizzata per la ricerca (consigliata per colori e icone)').'.<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!').'" ]}
                             </div>
 
                             <div class="col-md-6">
-                                {[ "type": "text", "label": "'.tr('Ordina tramite').'", "name": "order_by['.$key.']", "value": "'.$field['order_by'].'", "readonly": "'.(!$editable).'", "help": "'.tr("Query personalizzata per l'ordinamento (date e numeri formattati tramite query)").'.<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!').'" ]}
+                                {[ "type": "text", "label": "'.tr('Ordina tramite').'", "name": "order_by['.$key.']", "value": "'.$field->order_by.'", "readonly": "'.(!$editable).'", "help": "'.tr("Query personalizzata per l'ordinamento (date e numeri formattati tramite query)").'.<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!').'" ]}
                             </div>
                         </div>
                     </div>
@@ -161,14 +161,14 @@ echo '
 
 foreach ($fields as $field) {
     echo '
-                    <p class="clickable no-selection" data-id="'.$field['id'].'">
+                    <p class="clickable no-selection" data-id="'.$field->id.'">
                         <i class="fa fa-sort"></i>
                         ';
 
-    if ($field['visible']) {
-        echo '<strong class="text-success">'.$field['name'].'</strong>';
+    if ($field->visible) {
+        echo '<strong class="text-success">'.$field->getTranslation('name').'</strong>';
     } else {
-        echo '<span class="text-danger">'.$field['name'].'</span>';
+        echo '<span class="text-danger">'.$field->getTranslation('name').'</span>';
     }
 
     echo '

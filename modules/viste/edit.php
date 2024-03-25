@@ -37,7 +37,7 @@ echo '
 		</div>
 
 		<div class="panel-body">';
-$options = ($record['options2'] == '') ? $record['options'] : $record['options2'];
+$options = ($record->options2 == '') ? $record->options : $record->options2;
 if ($options == 'menu') {
     echo '
 			<p><strong>'.tr('Il modulo che stai analizzando è un semplice menu').'.</strong></p>';
@@ -49,21 +49,21 @@ if ($options == 'menu') {
 echo '
 			<div class="row">
 				<div class="col-md-6">
-					{[ "type": "text", "label": "'.tr('Codice del modulo').'", "name": "name", "value": "'.$record['name'].'", "readonly": "1" ]}
+					{[ "type": "text", "label": "'.tr('Codice del modulo').'", "name": "name", "value": "'.$record->getTranslation('name').'", "readonly": "1" ]}
 				</div>
 
 				<div class="col-md-6">
-					{[ "type": "text", "label": "'.tr('Nome del modulo').'", "name": "title", "value": "'.$record['title'].'", "help": "'.tr('Il nome che identifica il modulo').'" ]}
+					{[ "type": "text", "label": "'.tr('Nome del modulo').'", "name": "title", "value": "'.$record->getTranslation('title').'", "help": "'.tr('Il nome che identifica il modulo').'" ]}
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-md-6">
-					{[ "type": "textarea", "label": "'.tr('Query di default').'", "name": "options", "value": '.json_encode(str_replace(']}', '] }', $record['options'])).', "readonly": "1", "class": "autosize" ]}
+					{[ "type": "textarea", "label": "'.tr('Query di default').'", "name": "options", "value": '.json_encode(str_replace(']}', '] }', $record->options)).', "readonly": "1", "class": "autosize" ]}
 				</div>
 
 				<div class="col-md-6">
-					{[ "type": "textarea", "label": "'.tr('Query personalizzata').'", "name": "options2", "value": '.json_encode(str_replace(']}', '] }', $record['options2'])).', "class": "autosize", "help": "'.tr('La query in sostituzione a quella di default: custom, menu oppure SQL').'" ]}
+					{[ "type": "textarea", "label": "'.tr('Query personalizzata').'", "name": "options2", "value": '.json_encode(str_replace(']}', '] }', $record->options2)).', "class": "autosize", "help": "'.tr('La query in sostituzione a quella di default: custom, menu oppure SQL').'" ]}
 				</div>
             </div>';
 
@@ -103,8 +103,8 @@ if (!empty($options) && $options != 'custom' && $options != 'menu') {
     echo '
 <div class="nav-tabs-custom">
     <ul class="nav nav-tabs nav-justified">
-        <li class="active"><a data-toggle="tab" href="#fields">'.tr('Campi').' <span class="badge">'.View::where('id_module', $record['id'])->count().'</a></li>
-        <li><a data-toggle="tab" href="#filters">'.tr('Filtri').' <span class="badge">'.Clause::where('idmodule', $record['id'])->count().' </span></a></li>
+        <li class="active"><a data-toggle="tab" href="#fields">'.tr('Campi').' <span class="badge">'.View::where('id_module', $record->id)->count().'</a></li>
+        <li><a data-toggle="tab" href="#filters">'.tr('Filtri').' <span class="badge">'.Clause::where('idmodule', $record->id)->count().' </span></a></li>
     </ul>
 
     <div class="tab-content">

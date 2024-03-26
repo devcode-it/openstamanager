@@ -410,6 +410,11 @@ function drawCallback(settings) {
             }).select();
         }
     });
+
+    // Fix larghezza colonne datatables
+    setTimeout( function(){
+        datatable.columns.adjust()
+    }, 100);
 }
 
 function footerCallback(row, data, start, end, display) {

@@ -81,9 +81,6 @@ switch (filter('op')) {
                 $bollo = 0;
             }
 
-            // Leggo la descrizione del pagamento
-            $pagamento = ($idpagamento ? Pagamento::find($idpagamento)->getTranslation('name') : null);
-
             $ddt->data = post('data');
             $ddt->numero_esterno = $numero_esterno;
             $ddt->note = post('note');
@@ -323,10 +320,13 @@ switch (filter('op')) {
         $ddt->save();
 
         $evadi_qta_parent = true;
-        if ($documento->tipo->getTranslation('name') == 'Ddt in uscita' || $documento->tipo->getTranslation('name') == 'Ddt in entrata') {
+        $tipo = $documento->tipo ? $documento->tipo->getTranslation('name') : null;
+        if ($tipo == 'Ddt in uscita' || $tipo == 'Ddt in entrata') {
             $evadi_qta_parent = false;
         }
 
+
+   
         $righe = $documento->getRighe();
         foreach ($righe as $riga) {
             if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
@@ -336,11 +336,11 @@ switch (filter('op')) {
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
-                    if ($documento->tipo->getTranslation('name') == 'Ddt in uscita' || $documento->tipo->getTranslation('name') == 'Ddt in entrata') {
+                    if ($tipo == 'Ddt in uscita' || $tipo == 'Ddt in entrata') {
                         // TODO: estrarre il listino corrispondente se presente
                         $originale = ArticoloOriginale::find($riga->idarticolo);
 
-                        $prezzo = $documento->tipo->getTranslation('name') == 'Ddt in entrata' ? $originale->prezzo_vendita : $originale->prezzo_acquisto;
+                        $prezzo = ($tipo == 'Ddt in entrata' ? $originale->prezzo_vendita : $originale->prezzo_acquisto);
                         if ($dir == 'entrata') {
                             $id_iva = ($ddt->anagrafica->idiva_vendite ?: setting('Iva predefinita'));
                         } else {

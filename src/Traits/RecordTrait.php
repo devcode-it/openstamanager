@@ -144,23 +144,32 @@ trait RecordTrait
     {
         $id_lang ??= Locale::getDefault()->id;
 
-        return database()->table($this->table.'_lang')
+        if (!empty($this)) {
+            return database()->table($this->table.'_lang')
             ->select($field)
             ->where('id_record', '=', $this->id)
             ->where('id_lang', '=', $id_lang)
             ->first()
             ->$field;
+        } else {
+            return '';
+        }
+
     }
 
     public function getByField($field, $value, $id_lang = null)
     {
         $id_lang ??= Locale::getDefault()->id;
 
-        return database()->table($this->table.'_lang')
-            ->select('id_record')
-            ->where($field, '=', $value)
-            ->where('id_lang', '=', $id_lang)
-            ->first()
-            ->id_record;
+        if (!empty($this)) {
+            return database()->table($this->table.'_lang')
+                ->select('id_record')
+                ->where($field, '=', $value)
+                ->where('id_lang', '=', $id_lang)
+                ->first()
+                ->id_record;
+        } else {
+            return '';
+        }
     }
 }

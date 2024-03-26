@@ -341,6 +341,9 @@ switch (post('op')) {
             $new->numero = Fattura::getNextNumero($data, $dir, $id_segment);
             $new->id_autofattura = null;
 
+            // rimuovi riferimenti all'autofattura, se presenti
+            $new->id_autofattura = null;
+            
             $new->save();
 
             $righe = $fattura->getRighe();

@@ -20,7 +20,6 @@
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Referente;
 use Modules\Anagrafiche\Sede;
-use Modules\Emails\Mail;
 use Modules\Emails\Template;
 use Modules\ListeNewsletter\Lista;
 use Modules\Newsletter\Newsletter;
@@ -31,9 +30,8 @@ include_once __DIR__.'/../../core.php';
 
 switch (filter('op')) {
     case 'add':
-        $template = Template::find(filter('id_template'));
+        $template = Template::find(post('id_template'));
         $newsletter = Newsletter::build($user, $template, filter('name'));
-
         $id_record = $newsletter->id;
 
         flash()->info(tr('Nuova campagna newsletter creata!'));
@@ -41,7 +39,7 @@ switch (filter('op')) {
         break;
 
     case 'update':
-        $newsletter->setTranslation('name', filter('name'));
+        $newsletter->name = filter('name');
         $newsletter->state = filter('state');
         $newsletter->completed_at = filter('completed_at');
 

@@ -31,7 +31,7 @@ switch (post('op')) {
         $template = Template::build($module, $id_account);
         $id_record = $dbo->lastInsertedID();
         $template->setTranslation('name', $name);
-        $template->subject = $subject;
+        $template->setTranslation('subject', $subject);
         $template->save();
 
         flash()->info(tr('Aggiunto nuovo template per le email!'));
@@ -48,8 +48,8 @@ switch (post('op')) {
         $template->bcc = post('bcc');
         $template->read_notify = post('read_notify');
         $template->note_aggiuntive = post('note_aggiuntive');
-        $template->subject = post('subject');
-        $template->body = post('body');
+        $template->setTranslation('subject', post('subject'));
+        $template->setTranslation('body', post('body'));
         $template->save();
 
         $dbo->sync('em_print_template', ['id_template' => $id_record], ['id_print' => (array) post('prints')]);

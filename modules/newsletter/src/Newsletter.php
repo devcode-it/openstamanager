@@ -46,10 +46,9 @@ class Newsletter extends Model
 
         $model->user()->associate($user);
         $model->template()->associate($template);
-        $model->setTranslation('name', $name);
-
-        $model->subject = $template->subject;
-        $model->content = $template->body;
+        $model->name = $name;
+        $model->subject = $template->getTranslation('subject');
+        $model->content = $template->getTranslation('body');
 
         $model->state = 'DEV';
 

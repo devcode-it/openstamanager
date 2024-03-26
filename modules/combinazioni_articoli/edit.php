@@ -22,7 +22,7 @@ echo '
                 </div>
 
                 <div class="col-md-6">
-                    {[ "type": "text", "label": "'.tr('Nome').'", "name": "nome", "value": "'.$combinazione->getTranslation('name.').'", "required": 1, "help": "'.tr('Nome univoco della combinazione').'" ]}
+                    {[ "type": "text", "label": "'.tr('Nome').'", "name": "nome", "value": "'.$combinazione->getTranslation('name').'", "required": 1, "help": "'.tr('Nome univoco della combinazione').'" ]}
                 </div>
             </div>
 

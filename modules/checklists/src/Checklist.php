@@ -42,7 +42,7 @@ class Checklist extends Model
     {
         $model = new static();
 
-        $model->setTranslation('name', $nome);
+        $model->name = $nome;
         $model->save();
 
         return $model;

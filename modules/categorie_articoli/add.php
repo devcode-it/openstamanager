@@ -40,7 +40,7 @@ if (isset($id_original)) {
 
 	<div class="row">
         <div class="col-md-8">
-            {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "<?php echo $categoria->getTranslation('name'); ?>" ]}
+            {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$name$" ]}
         </div>
 
         <div class="col-md-4">

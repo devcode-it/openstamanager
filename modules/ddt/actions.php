@@ -31,7 +31,6 @@ use Modules\DDT\Stato;
 use Modules\DDT\Tipo;
 use Modules\Iva\Aliquota;
 use Modules\Ordini\Stato as StatoOrdine;
-use Modules\Pagamenti\Pagamento;
 
 $module = Module::find($id_module);
 
@@ -438,7 +437,7 @@ switch (filter('op')) {
 
                 // per ogni riga del ddt di trasporto movimento il magazzino con la quantità negativa
                 foreach ($righe_trasporto as $riga_trasporto) {
-                    $riga_trasporto->movimenta(-$riga_trasporto->qta);
+                    $riga_trasporto->qta = 0;
                 }
             }
 
@@ -521,7 +520,7 @@ switch (filter('op')) {
         $ddt->save();
 
         $id_record = $copia->id;
-        $id_module = $ddt->direzione == 'entrata' ? (new Module())->getByField('name', 'Ddt di acquisto')->id_record : (new Module())->getByField('name', 'Ddt di vendita');
+        $id_module = $ddt->direzione == 'entrata' ? (new Module())->getByField('name', 'Ddt di acquisto') : (new Module())->getByField('name', 'Ddt di vendita');
 
         break;
 

@@ -43,7 +43,7 @@ if ($record['can_delete']) {
 				</div>
 
 				<div class="col-md-6">
-					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo $stato->getTranslation('name'); ?>" ]}
+					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$name$" ]}
 				</div>
 
 				<div class="col-md-3">

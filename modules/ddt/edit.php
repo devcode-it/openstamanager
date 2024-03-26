@@ -26,21 +26,13 @@ include_once __DIR__.'/../../core.php';
 
 $block_edit = $record['flag_completato'];
 
-$module = Module::find($id_module);
-
-if ($module->getTranslation('name') == 'Ddt di acquisto') {
-    $dir = 'uscita';
-} else {
-    $dir = 'entrata';
-}
-
 if ($dir == 'entrata') {
     $numero_previsto = verifica_numero_ddt($ddt);
     if (!empty($numero_previsto)) {
         echo '
         <div class="alert alert-warning">
             <i class="fa fa-warning"></i> '.tr("E' assente un _TYPE_ numero _NUM_ in data precedente o corrispondente a _DATE_: si potrebbero verificare dei problemi con la numerazione corrente dei DDT", [
-            '_TYPE_' => $module->getTranslation('name'),
+            '_TYPE_' => $module_name,
             '_DATE_' => dateFormat($ddt->data),
             '_NUM_' => '"'.$numero_previsto.'"',
         ]).'.</b>

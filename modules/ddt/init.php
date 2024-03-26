@@ -21,13 +21,16 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
 use Modules\DDT\DDT;
+use Models\Module;
 
 $azienda = Anagrafica::find(setting('Azienda predefinita'));
 
-if ($module->getTranslation('name') == 'Ddt di vendita') {
-    $dir = 'entrata';
-} else {
+$module_name = $module ? $module->getTranslation('name') : '';
+
+if ($module_name == 'Ddt di acquisto') {
     $dir = 'uscita';
+} else {
+    $dir = 'entrata';
 }
 
 if (isset($id_record)) {

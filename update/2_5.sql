@@ -2459,3 +2459,6 @@ ALTER TABLE `mg_categorie` CHANGE `colore` `colore` VARCHAR(255) NULL;
 
 ALTER TABLE `my_impianti_categorie` CHANGE `nota` `nota` VARCHAR(1000) NULL; 
 ALTER TABLE `my_impianti_categorie` CHANGE `colore` `colore` VARCHAR(255) NULL; 
+
+-- Esclusioni default in preventivi
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Esclusioni default preventivi', '', 'textarea', '1', 'Preventivi', NULL, NULL);

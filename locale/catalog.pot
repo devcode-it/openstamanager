@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenSTAManager\n"
-"POT-Creation-Date: 2024-03-27 15:53+0100\n"
+"POT-Creation-Date: 2024-03-27 23:19+0100\n"
 "PO-Revision-Date: 2017-09-06 09:35+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -5386,7 +5386,7 @@ msgstr ""
 msgid "Contratto duplicato correttamente!"
 msgstr ""
 
-#: modules/contratti/actions.php:191 modules/ddt/actions.php:182 modules/ddt/actions.php:387 modules/fatture/actions.php:529
+#: modules/contratti/actions.php:191 modules/ddt/actions.php:182 modules/ddt/actions.php:385 modules/fatture/actions.php:529
 #: modules/fatture/actions.php:675 modules/interventi/actions.php:441 modules/interventi/actions.php:505
 #: modules/ordini/actions.php:190 modules/ordini/actions.php:338 modules/preventivi/actions.php:213
 #: plugins/pianificazione_interventi/actions.php:230 plugins/pianificazione_interventi/actions.php:282
@@ -5437,18 +5437,18 @@ msgstr ""
 msgid "Riga descrittiva aggiunta!"
 msgstr ""
 
-#: modules/contratti/actions.php:290 modules/ddt/actions.php:396 modules/fatture/actions.php:682
+#: modules/contratti/actions.php:290 modules/ddt/actions.php:394 modules/fatture/actions.php:682
 #: modules/interventi/actions.php:448 modules/ordini/actions.php:347 modules/preventivi/actions.php:354
 #: modules/tipi_intervento/actions.php:182
 msgid "Riga eliminata!"
 msgstr ""
 
-#: modules/contratti/actions.php:292 modules/ddt/actions.php:398 modules/fatture/actions.php:684
+#: modules/contratti/actions.php:292 modules/ddt/actions.php:396 modules/fatture/actions.php:684
 #: modules/interventi/actions.php:450 modules/ordini/actions.php:349 modules/preventivi/actions.php:356
 msgid "Righe eliminate!"
 msgstr ""
 
-#: modules/contratti/actions.php:314 modules/ddt/actions.php:425 modules/fatture/actions.php:711
+#: modules/contratti/actions.php:314 modules/ddt/actions.php:423 modules/fatture/actions.php:711
 #: modules/interventi/actions.php:476 modules/ordini/actions.php:371 modules/preventivi/actions.php:378
 msgid "Righe duplicate!"
 msgstr ""
@@ -5461,7 +5461,7 @@ msgstr ""
 msgid "Contratto eliminato!"
 msgstr ""
 
-#: modules/contratti/actions.php:386 modules/ddt/actions.php:448 modules/fatture/actions.php:371
+#: modules/contratti/actions.php:386 modules/ddt/actions.php:446 modules/fatture/actions.php:371
 #: modules/interventi/actions.php:427 modules/ordini/actions.php:382 modules/preventivi/actions.php:182
 msgid "Sono stati utilizzati alcuni serial number nel documento: impossibile procedere!"
 msgstr ""
@@ -5478,41 +5478,41 @@ msgstr ""
 msgid "Errore durante l'importazione tariffe!"
 msgstr ""
 
-#: modules/contratti/actions.php:577 modules/ddt/actions.php:369 modules/fatture/actions.php:820
+#: modules/contratti/actions.php:577 modules/ddt/actions.php:367 modules/fatture/actions.php:820
 #: modules/interventi/actions.php:690 modules/ordini/actions.php:469
 msgid "_DOC_ aggiunto!"
 msgstr ""
 
-#: modules/contratti/actions.php:633 modules/ddt/actions.php:618 modules/fatture/actions.php:1030
+#: modules/contratti/actions.php:633 modules/ddt/actions.php:616 modules/fatture/actions.php:1030
 #: modules/interventi/actions.php:1173 modules/ordini/actions.php:667 modules/preventivi/actions.php:473
 msgid "Nuovo articolo aggiunto!"
 msgstr ""
 
-#: modules/contratti/actions.php:635 modules/ddt/actions.php:621 modules/fatture/actions.php:1033
+#: modules/contratti/actions.php:635 modules/ddt/actions.php:619 modules/fatture/actions.php:1033
 #: modules/interventi/actions.php:1176 modules/ordini/actions.php:669 modules/preventivi/actions.php:475
 msgid "Nessun articolo corrispondente a magazzino"
 msgstr ""
 
-#: modules/contratti/actions.php:658 modules/ddt/actions.php:644 modules/fatture/actions.php:1165
+#: modules/contratti/actions.php:658 modules/ddt/actions.php:642 modules/fatture/actions.php:1165
 #: modules/interventi/actions.php:1200 modules/ordini/actions.php:692 modules/preventivi/actions.php:498
 msgid "Riga aggiornata!"
 msgstr ""
 
-#: modules/contratti/actions.php:680 modules/contratti/actions.php:732 modules/ddt/actions.php:666 modules/ddt/actions.php:719
+#: modules/contratti/actions.php:680 modules/contratti/actions.php:732 modules/ddt/actions.php:664 modules/ddt/actions.php:717
 #: modules/fatture/actions.php:1082 modules/fatture/actions.php:1135 modules/interventi/actions.php:1222
 #: modules/interventi/actions.php:1274 modules/ordini/actions.php:714 modules/ordini/actions.php:767
 #: modules/preventivi/actions.php:520 modules/preventivi/actions.php:572
 msgid "_NUM_ prezzi modificati!"
 msgstr ""
 
-#: modules/contratti/actions.php:684 modules/contratti/actions.php:736 modules/ddt/actions.php:670 modules/ddt/actions.php:723
+#: modules/contratti/actions.php:684 modules/contratti/actions.php:736 modules/ddt/actions.php:668 modules/ddt/actions.php:721
 #: modules/fatture/actions.php:1086 modules/fatture/actions.php:1139 modules/interventi/actions.php:1226
 #: modules/interventi/actions.php:1278 modules/ordini/actions.php:718 modules/ordini/actions.php:771
 #: modules/preventivi/actions.php:524 modules/preventivi/actions.php:576
 msgid "_NUM_ prezzo modificato!"
 msgstr ""
 
-#: modules/contratti/actions.php:688 modules/contratti/actions.php:740 modules/ddt/actions.php:674 modules/ddt/actions.php:727
+#: modules/contratti/actions.php:688 modules/contratti/actions.php:740 modules/ddt/actions.php:672 modules/ddt/actions.php:725
 #: modules/fatture/actions.php:1090 modules/fatture/actions.php:1143 modules/interventi/actions.php:1230
 #: modules/interventi/actions.php:1282 modules/ordini/actions.php:722 modules/ordini/actions.php:775
 #: modules/preventivi/actions.php:528 modules/preventivi/actions.php:580
@@ -6422,15 +6422,15 @@ msgstr ""
 msgid "Ddt modificato correttamente!"
 msgstr ""
 
-#: modules/ddt/actions.php:446
+#: modules/ddt/actions.php:444
 msgid "Ddt eliminato!"
 msgstr ""
 
-#: modules/ddt/actions.php:555
+#: modules/ddt/actions.php:553
 msgid "DDT duplicato correttamente!"
 msgstr ""
 
-#: modules/ddt/actions.php:574 modules/fatture/actions.php:975 modules/interventi/actions.php:1135
+#: modules/ddt/actions.php:572 modules/fatture/actions.php:975 modules/interventi/actions.php:1135
 msgid "Quantità a magazzino non sufficiente"
 msgstr ""
 
